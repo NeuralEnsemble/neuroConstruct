@@ -109,7 +109,7 @@ public class Section implements Serializable
 
     /**
      * Returns a string with the internal info on the section
-     * @return String representation of section
+     * @return String representation of the section
      */
     public String toHTMLString(boolean includeTabs)
     {
