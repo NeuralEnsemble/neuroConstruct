@@ -1,0 +1,294 @@
+/**
+ * neuroConstruct
+ *
+ * Software for developing large scale 3D networks of biologically realistic neurons
+ * Copyright (c) 2007 Padraig Gleeson
+ * UCL Department of Physiology
+ *
+ * Development of this software was made possible with funding from the
+ * Medical Research Council
+ *
+ */
+
+package ucl.physiol.neuroconstruct.dataset;
+
+import javax.swing.*;
+import java.util.*;
+import javax.swing.table.*;
+import ucl.physiol.neuroconstruct.utils.*;
+import ucl.physiol.neuroconstruct.j3D.*;
+import javax.swing.event.*;
+import java.io.*;
+import java.beans.*;
+import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.cell.*;
+import ucl.physiol.neuroconstruct.utils.units.*;
+import ucl.physiol.neuroconstruct.gui.*;
+import java.text.*;
+
+/**
+ * Extension of AbstractTableModel to store the info on saved DataSets
+ *
+ * @author Padraig Gleeson
+ * @version 1.0.3
+ */
+
+public class DataSetInfo extends AbstractTableModel
+{
+
+    ClassLogger logger = new ClassLogger("DataSetInfo");
+
+    public final static int COL_NUM_FILE_NAME = 0;
+    public final static int COL_NUM_DATE = 1;
+    public final static int COL_NUM_NAME = 2;
+    public final static int COL_NUM_DESC = 3;
+
+    public static final String COL_NAME_FILE_NAME = "File";
+    public static final String COL_NAME_DATE = "Last saved";
+    public static final String COL_NAME_NAME = "Data Set Reference";
+    public static final String COL_NAME_DESC = "Description";
+
+    SimpleDateFormat formatter = new SimpleDateFormat("H:mm (MMM d, yy)");
+
+    Vector allColumns = new Vector(3);
+
+    Vector dataSetObjs = new Vector();
+
+    File dataSetDir = null;
+
+    public DataSetInfo()
+    {
+
+    }
+
+    public DataSetInfo(File dataSetDir)
+    {
+        logger.logComment("New DataSetInfo created with dir: "+ dataSetDir);
+        this.dataSetDir = dataSetDir;
+        //this.columnsShown = preferredColumns;
+
+        refresh();
+    }
+
+    public File getDataSetDir()
+    {
+        if (!dataSetDir.exists())
+        {
+            logger.logComment("Creating the data set dir...");
+            boolean success = dataSetDir.mkdir();
+            //if (!s)
+        }
+        return dataSetDir;
+    }
+
+    public void refresh()
+    {
+        logger.logComment("Refreshing the contents of the table model");
+
+        allColumns.removeAllElements();
+        dataSetObjs.removeAllElements();
+
+
+        allColumns.add(COL_NUM_FILE_NAME, COL_NAME_FILE_NAME);
+        allColumns.add(COL_NUM_DATE, COL_NAME_DATE);
+        allColumns.add(COL_NUM_NAME, COL_NAME_NAME);
+        allColumns.add(COL_NUM_DESC, COL_NAME_DESC);
+
+        File[] childrenDirs = dataSetDir.listFiles();
+
+        if (childrenDirs!=null)
+        {
+
+            logger.logComment("There are " + childrenDirs.length + " files in dir: " +
+                              dataSetDir.getAbsolutePath());
+
+            // Quick reorder...
+            if (childrenDirs.length > 1)
+            {
+                for (int j = 1; j < childrenDirs.length; j++)
+                {
+
+                    for (int k = 0; k < j; k++)
+                    {
+
+                        if (childrenDirs[j].lastModified() < childrenDirs[k].lastModified())
+                        {
+                            File earlierFile = childrenDirs[j];
+                            File laterFile = childrenDirs[k];
+                            childrenDirs[j] = laterFile;
+                            childrenDirs[k] = earlierFile;
+                        }
+                    }
+                }
+            }
+
+            // int rowNumber = 0;
+
+            for (int i = 0; i < childrenDirs.length; i++)
+            {
+                if (!childrenDirs[i].isDirectory()
+                    && childrenDirs[i].getName().endsWith(ProjectStructure.getDataSetExtension()))
+                {
+                    logger.logComment("Looking at directory: " + childrenDirs[i].getAbsolutePath());
+
+                    DataSet dataSet = null;
+
+                    try
+                    {
+                        dataSet = DataSetManager.loadFromDataSetFile(childrenDirs[i], true);
+
+                        dataSetObjs.add(dataSet);
+
+                        logger.logComment("That's a valid data set...");
+                    }
+                    catch (DataSetException ex1)
+                    {
+                        logger.logComment("That's not a valid data set");
+                        GuiUtils.showErrorMessage(logger, "Problem with that Data Set", ex1, null);
+                    }
+
+                }
+            }
+        }
+        this.fireTableStructureChanged();
+
+    }
+
+
+    public int getColumnCount()
+    {
+        return allColumns.size();
+    }
+
+    public int getRowCount()
+    {
+        return dataSetObjs.size();
+    }
+
+    public String getColumnName(int col) {
+        return (String)allColumns.elementAt(col);
+    }
+
+    public Vector getAllDataSetRefs()
+    {
+        Vector allRefs = new Vector();
+        for (int i = 0; i < dataSetObjs.size(); i++)
+        {
+            DataSet ds = (DataSet)dataSetObjs.elementAt(i);
+            allRefs.add(ds.getRefrence());
+        }
+        return allRefs;
+    }
+
+
+    public DataSet getDataSet(int row) throws DataSetException
+    {
+        DataSet ds = (DataSet)dataSetObjs.elementAt(row);
+
+        return DataSetManager.loadFromDataSetFile(ds.getDataSetFile(), false);
+    }
+
+    public String getDataSetReference(int row) throws DataSetException
+    {
+        DataSet ds = (DataSet)dataSetObjs.elementAt(row);
+
+        return ds.getRefrence();
+    }
+
+
+    public String getDataSetDescription(int row) throws DataSetException
+    {
+        DataSet ds = (DataSet)dataSetObjs.elementAt(row);
+
+        return ds.getDescription();
+    }
+
+
+
+    public File getDataSetFile(int row) throws DataSetException
+    {
+        DataSet ds = (DataSet)dataSetObjs.elementAt(row);
+        //File
+        return ds.getDataSetFile();
+    }
+
+
+    public Object getValueAt(int row, int col)
+    {
+
+        DataSet dataSet = (DataSet)dataSetObjs.elementAt(row);
+
+        switch (col)
+        {
+            case COL_NUM_FILE_NAME:
+            {
+                return dataSet.getDataSetFile().getName();
+            }
+
+            case COL_NUM_DATE:
+            {
+                long timeModified = dataSet.getDataSetFile().lastModified();
+                java.util.Date modified = new java.util.Date(timeModified);
+                return formatter.format(modified);
+            }
+
+            case COL_NUM_NAME:
+            {
+                return dataSet.getRefrence();
+            }
+
+            case COL_NUM_DESC:
+            {
+                return dataSet.getDescription();//sim.getDateModified();
+            }
+            default:
+            {
+                return null;//sim.getDateModified();
+                /*
+                String colName = (String)columnsShown.elementAt(col);
+                Properties propsForSim = (Properties)extraColumns.elementAt(row);
+                if (propsForSim==null) return "- n/a -";
+
+                return propsForSim.getProperty(colName);*/
+            }
+        }
+    }
+
+/*
+    protected class DataSetHolder
+    {
+        private DataSet partialDataSet = null;
+        private File file = null;
+
+        protected DataSetHolder(DataSet partialDataSet, File file)
+        {
+            this.partialDataSet = partialDataSet;
+            this.file = file;
+        }
+
+        DataSet getPartialDataSet()
+        {
+            return partialDataSet;
+        }
+
+        File getFile()
+        {
+            return file;
+        }
+
+    }
+*/
+
+    public boolean isCellEditable(int row, int col)
+    {
+        return false;
+    }
+
+
+
+    public Vector getAllColumns()
+    {
+        return allColumns;
+    }
+
+}

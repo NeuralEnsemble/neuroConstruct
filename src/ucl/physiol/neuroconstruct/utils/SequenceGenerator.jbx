@@ -1,0 +1,13 @@
+[PropertyInfo]
+end,float,false,false, , ,false,<default>
+interval,float,false,false, , ,false,<default>
+lastNumReturned,float,false,false, , ,false,<default>
+logger,ucl.physiol.neuroconstruct.utils.ClassLogger,false,false, , ,false,<default>
+number,float,false,false, , ,true,<default>
+numInSequence,int,false,false, , ,true,<default>
+start,float,false,false, , ,false,<default>
+[IconNames]
+
+
+
+

@@ -1,0 +1,15 @@
+[PropertyInfo]
+defaultInstanceName,String,false,false, , ,false,<default>
+description,String,false,false, , ,false,<default>
+instanceName,String,false,false, , ,false,<default>
+logger,ClassLogger,false,false, , ,false,<default>
+physicalParameterList,InternalPhysicalParameter[],false,false, , ,true,<default>
+physParamList,InternalPhysicalParameter[],false,false, , ,false,<default>
+processImpls,ProcessImplementation[],false,false, , ,false,<default>
+processModel,String,false,false, , ,false,<default>
+processType,String,false,false, , ,false,<default>
+[IconNames]
+
+
+
+

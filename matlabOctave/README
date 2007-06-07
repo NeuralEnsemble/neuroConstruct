@@ -1,0 +1,4 @@
+All *.m files found in this directory will be copied to the directory 
+of new simulations, making the scripts placed here available when the loadsimdata.m
+file for the simulation is run
+

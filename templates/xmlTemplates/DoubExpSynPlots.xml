@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+  
+<plotlist xmlns="http://www.physiol.ucl.ac.uk/research/silver_a/neuroConstruct/" 
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+          xsi:schemaLocation="http://www.physiol.ucl.ac.uk/research/silver_a/neuroConstruct/ CellProcessPlot.xsd">
+    
+    <parameter>
+        <parametername>Tau Rise</parametername>
+        <symbol>t1</symbol>
+    </parameter>
+    
+    <parameter>
+        <parametername>Tau Decay</parametername>
+        <symbol>t2</symbol>
+    </parameter>
+    
+    <parameter>
+        <parametername>Max Conductance</parametername>
+        <symbol>gmax</symbol>
+    </parameter>
+        
+    <plot>
+        <plotname>Rise and fall</plotname>
+        <independentvariable>t</independentvariable>
+        <maxvalue>10</maxvalue>
+        <minvalue>0</minvalue>
+        <expression>exp(-t/t2)-exp(-t/t1)</expression>
+    </plot>  
+    
+    <plot>
+        <plotname>Decay only</plotname>
+        <independentvariable>t</independentvariable>
+        <maxvalue>10</maxvalue>
+        <minvalue>0</minvalue>
+        <expression>exp(-t/t2)</expression>
+    </plot>    
+    
+    
+</plotlist>

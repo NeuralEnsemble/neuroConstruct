@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+     This is a ChannelML Metadata file. It gives some additional information on
+     a particular type of channel mechanism described in ChannelML format.
+
+     NOTE: This is not part of the official ChannelML spec. All of the
+     essential information on the parameters of the channel will be in the
+     ChannelML file, this file is used by neuroConstruct to make that data
+     more user friendly
+ -->
+
+<cmlmetadata xmlns="http://www.neuroConstruct.org"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.neuroConstruct.org ChannelMLMetadata.xsd">
+
+    <parameter>
+        <parameterpath>channelml/channel_type/current_voltage_relation/ohmic/conductance/@default_gmax</parameterpath>
+        <alias>gmax</alias>
+        <description>Maximum Conductance Density</description>
+    </parameter>
+
+    <parameter>
+        <parameterpath>channelml/channel_type/current_voltage_relation/ohmic/@default_erev</parameterpath>
+        <alias>e</alias>
+        <description>Reversal Potential</description>
+    </parameter>
+
+    <plot>
+        <plotname>Current out of cell</plotname>
+        <independentvariable>v</independentvariable>
+        <maxvalue>100</maxvalue>
+        <minvalue>-100</minvalue>
+        <expression>gmax * (v-e)</expression>
+    </plot>
+
+</cmlmetadata>

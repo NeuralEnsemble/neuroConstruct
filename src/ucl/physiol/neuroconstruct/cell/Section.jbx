@@ -1,0 +1,15 @@
+[PropertyInfo]
+fractionAlongParentSection,float,false,false, , ,false,<default>
+groups,Vector,false,false, , ,true,<default>
+numberInternalDivisions,int,false,false, , ,true,<default>
+sectionName,String,false,false, , ,true,<default>
+startPointPosition,Point3f,false,false, , ,true,<default>
+startPointPositionX,float,false,false, , ,true,<default>
+startPointPositionY,float,false,false, , ,true,<default>
+startPointPositionZ,float,false,false, , ,true,<default>
+startRadius,float,false,false, , ,true,<default>
+[IconNames]
+
+
+
+

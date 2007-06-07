@@ -1,0 +1,7 @@
+The Examples and Schema directories are taken from the standard NeuroML distribution.
+
+The ChannelMLPrototypes directory outlines how some of the examples can be incorporated 
+as templates for channels in neuroConstruct
+
+The other files in this dir are remnants of older methods of creating channels in 
+neuroConstruct and can be ignored...

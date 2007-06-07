@@ -1,0 +1,4 @@
+This folder contains the source XML file for the main Glossary. This will be transformed into other 
+HTML/XML documents as needed. See Glossary.xml for details.
+
+The Glossary.xml file should be the only place to add new glossary entries

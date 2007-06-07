@@ -1,0 +1,8 @@
+#This file provides some additional information to help the import of the ChannelML files into neuroConstruct
+DefaultName=DoubExpSyn
+Description=Simple Double Exponential Synapse mapped to a Exp2Syn based mod file (NEURON) or a synchan object (GENESIS)
+ChannelMLFile=../../Examples/ChannelML/DoubExpSyn.xml
+MappingNEURON=../../Schemata/v1.5/Level2/ChannelML_v1.5_NEURONmod.xsl
+MappingGENESIS=../../Schemata/v1.5/Level2/ChannelML_v1.5_GENESIStab.xsl
+NEURONNeedsCompilation=true
+CellProcessType=Synaptic mechanism

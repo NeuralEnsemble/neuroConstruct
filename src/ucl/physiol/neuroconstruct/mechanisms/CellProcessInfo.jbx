@@ -1,0 +1,13 @@
+[PropertyInfo]
+allCellProcesses,Vector,false,false, , ,false,<default>
+allCellProcessNames,Vector,false,false, , ,true,<default>
+allChannelMechanismNames,Vector,false,false, , ,true,<default>
+allSynapticProcessNames,Vector,false,false, , ,true,<default>
+columnCount,int,false,false, , ,true,<default>
+logger,ClassLogger,false,false, , ,false,<default>
+rowCount,int,false,false, , ,true,<default>
+[IconNames]
+
+
+
+

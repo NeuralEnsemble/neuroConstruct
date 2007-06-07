@@ -1,0 +1,123 @@
+/**
+ * neuroConstruct
+ *
+ * Software for developing large scale 3D networks of biologically realistic neurons
+ * Copyright (c) 2007 Padraig Gleeson
+ * UCL Department of Physiology
+ *
+ * Development of this software was made possible with funding from the
+ * Medical Research Council
+ *
+ */
+
+package ucl.physiol.neuroconstruct.utils;
+
+import java.io.*;
+
+
+/**
+ * A number of settings required from the user
+ *
+ * @author Padraig Gleeson
+ * @version 1.0.3
+ */
+
+public class UserSettings
+{
+
+    private File nCProjectsDir = null;
+
+    private String neuronHome = null;
+    private String executableCommandLine = null;
+
+
+    private String browserExecutable = null;
+    private String editorExecutable = null;
+
+
+    private String locationLogFiles = null;
+    private boolean logFilePrintToScreenPolicy = false;
+    private boolean logFileSaveToFilePolicy = false;
+
+
+    public UserSettings()
+    {
+    }
+
+
+
+    public File getnCProjectsDir()
+    {
+        return nCProjectsDir;
+    }
+
+    public void setnCProjectsDir(File dir)
+    {
+        nCProjectsDir = dir;
+    }
+
+
+
+
+
+    public String getExecutableCommandLine()
+    {
+        return executableCommandLine;
+    }
+    public String getLocationLogFiles()
+    {
+        return locationLogFiles;
+    }
+    public boolean getLogFilePrintToScreenPolicy()
+    {
+        return logFilePrintToScreenPolicy;
+    }
+    public boolean getLogFileSaveToFilePolicy()
+    {
+        return logFileSaveToFilePolicy;
+    }
+    public String getNeuronHome()
+    {
+        return neuronHome;
+    }
+    public void setExecutableCommandLine(String executableCommandLine)
+    {
+        this.executableCommandLine = executableCommandLine;
+    }
+    public void setLocationLogFiles(String locationLogFiles)
+    {
+        this.locationLogFiles = locationLogFiles;
+    }
+    public void setLogFilePrintToScreenPolicy(boolean logFilePrintToScreenPolicy)
+    {
+        this.logFilePrintToScreenPolicy = logFilePrintToScreenPolicy;
+    }
+    public void setLogFileSaveToFilePolicy(boolean logFileSaveToFilePolicy)
+    {
+        this.logFileSaveToFilePolicy = logFileSaveToFilePolicy;
+    }
+    public void setNeuronHome(String neuronHome)
+    {
+        this.neuronHome = neuronHome;
+    }
+    public String getBrowserPath()
+    {
+        return this.browserExecutable;
+    }
+    public void setBrowserPath(String browserExecutable)
+    {
+        this.browserExecutable = browserExecutable;
+    }
+
+
+    public String getEditorPath()
+    {
+        return this.editorExecutable;
+    }
+    public void setEditorPath(String editorExecutable)
+    {
+        this.editorExecutable = editorExecutable;
+    }
+
+
+}

@@ -1,0 +1,57 @@
+
+     University College London
+        LICENCE AGREEMENT
+
+The copyright in this software and its associated documentation (if applicable electronic documentation) (together "the Software") is owned by University College London of Gower Street, London WC1E 7HN ("the Owner"). By proceeding to use the Software you (an individual or legal entity) agree with the Owner to be bound by the terms of this Agreement which will govern your use of the Software.
+
+The Software is not free or shareware.
+
+1	Licence
+
+1.1	You are permitted:
+
+(a)	to load the Software into and use it on a single computer which is under your control;
+
+(b)	to transfer the Software from one computer to another provided it is used on only one computer at any one time; and
+
+(c)	to transfer the Software (complete with all its associated documentation) and the benefit of this Agreement to another person provided he has agreed to accept the terms of this Agreement and you contemporaneously transfer all copies of the Software you have made to that person or destroy all copies not transferred. If any transferee does not accept such terms then this Agreement shall automatically terminate. The transferor does not retain any rights under this Agreement in respect of the transferred Software.
+
+(d)	to use the software for academic use only. By academic use it is meant that you can only use the software within an recognised academic institution and then only for the purposes of research and study. Any use of the software not in accordance with the previous sentence and also if used, whether directly or indirectly, for any commercial activity shall automatically terminate this Licence. 
+
+1.2	You are not permitted:
+
+(a)	to use or copy the Software other than as permitted by this Licence;
+
+(b)	to load the Software on to a network server for the purposes of distribution to one or more other computer(s) on that network or to effect such distribution (such use requiring a separate licence);
+
+(c)	except as expressly permitted by this Agreement and save to the extent and in the circumstances expressly required to be permitted by law, to rent, lease, sub license, loan, copy, modify, adapt, merge, translate, reverse engineer, decompile, disassemble or create derivative works based on the whole or any part of the Software or its associated documentation or use, reproduce or deal in the Software or any part thereof in any way.
+
+2	Duration
+
+This Agreement is effective until you terminate it by destroying the Software and its documentation together with all copies. It will also terminate if you fail to abide by its terms. Upon termination you agree to destroy all copies of the Software and its documentation including any Software stored on the hard disk of any computer or floppy disk or other removeable media under your control.
+
+3	Warranties
+
+3.1	The Licensor warrants that the Software will perform substantially in accordance with its accompanying documentation (provided that the Software is properly used) and that the documentation correctly describes the operation of the Software in all material respects. The above represent your sole remedies for any breach of the Owner's warranties, which are given only to the original registered user.
+
+3.2	The express terms of this Agreement are in lieu of all warranties, conditions, undertakings, terms and obligations implied by statute, common law, trade usage, course of dealing or otherwise all of which are hereby excluded to the fullest extent permitted by law.
+
+3.3	The Owner does not warrant that the Software will meet your requirements or that the operation of the Software will be uninterrupted or error free or that defects in the Software will be corrected. You shall load and use the Software at your own risk and in no event will the Owner be liable to you for any loss or damage of any kind (except personal injury or death resulting from the Owner's negligence) including lost profits or other consequential loss arising from your use of or inability to use the Software or from errors or deficiencies in it whether caused by negligence or otherwise except as expressly provided herein.
+
+3.4	Without limiting the above disclaimers, the Owner will not be responsible for the use of the Software in conjunction with any computer, printer or other equipment other than those on the Owner's list of approved equipment from time to time.  Copies of this list are available from the Owner.
+ 
+4	Support
+
+4.1	Owner's technical support will endeavour to answer by email any queries you may have about the Software. For email support contact: info@neuroConstruct.org
+
+5	Intellectual Property
+
+All copyright, trade marks and other intellectual property rights subsisting in or used in connection with the Software (including but not limited to all images, animations, audio and other identifiable material relating to the Software) are and remain the sole property of the Owner.
+
+6	Law
+
+This Agreement shall be governed by English law.
+
+
+If you have any questions concerning this Agreement please write to: 
+a.silver@ucl.ac.uk

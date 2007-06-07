@@ -1,0 +1,15 @@
+[PropertyInfo]
+allRegionNames,String[],false,false, , ,true,<default>
+columnCount,int,false,false, , ,true,<default>
+internalData,Hashtable,false,false, , ,true,<default>
+logger,ClassLogger,false,false, , ,false,<default>
+numberRegions,int,false,false, , ,true,<default>
+regionEnclosingAllRegions,RectangularBox,false,false, , ,true,<default>
+rowCount,int,false,false, , ,true,<default>
+vectorNames,Vector,false,false, , ,false,<default>
+vectorRegionObjects,Vector,false,false, , ,false,<default>
+[IconNames]
+
+
+
+

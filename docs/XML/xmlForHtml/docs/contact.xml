@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document>
+  <header>
+    <title>Contact us</title>
+  </header>
+  <body>
+
+
+<p>For more information on neuroConstruct please contact:</p>
+
+
+
+<table  class="noborder">
+	<tr >
+		<td >
+			Padraig Gleeson
+		</td>
+	</tr>
+	<tr  >
+		<td >
+			Email:
+		</td>
+		<td>
+			p.gleeson - at - ucl.ac.uk
+		</td>
+	</tr>	<tr>
+		<td>
+			Tel:
+		</td>
+		<td>
+			+44 20 7679 3214
+		</td>
+
+	</tr>
+</table>
+
+<p>Alternatively, to report a problem/desired feature, mail: bugs - at - neuroConstruct.org</p>
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+  </body>
+</document>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document> 
+  <header> 
+    <title>neuroConstruct Documentation</title> 
+  </header> 
+  <body> 
+  
+  
+<p>This is the main documentation for neuroConstruct</p>
+
+
+    <p>&nbsp;&nbsp;&nbsp;<a  href="install.html" >Installation</a></p>
+    
+<p>First you'll need to get the application installed. Click <a  href="install.html" >here</a> for instructions 
+on the system requirements and installation instructions for neuroConstruct</p>
+
+    
+    
+    <p>&nbsp;&nbsp;<a  href="docMenu.html" >Documentation contents</a></p>
+    
+<p>More details on the <a  href="docMenu.html" >contents</a> of the neuroConstruct documentation</p>
+
+
+    
+    <p>&nbsp;&nbsp;<a  href="Glossary_gen.html" >Glossary</a></p>
+    
+<p>Details on most of the main terms used in the application are provided in a <a  href="Glossary_gen.html" >glossary</a>,
+which provides links to more details on the key concepts used (e.g. Cell Group, Cell Mechanisms) </p>
+
+    <p>&nbsp;&nbsp;<a  href="tutorials/index.html" >Tutorials</a></p>
+    
+<p>A number of <a  href="tutorials/index.html" >tutorials</a> illustrating the functionality of the application. More
+will be added to these in the near future.</p>
+
+    
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+  </body>
+</document>
