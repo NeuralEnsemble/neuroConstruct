@@ -123,7 +123,7 @@ public class GeneralUtils
      */
     public static void timeCheck(String marker)
     {
-        boolean alsoSysOut = true; // for debugging
+        boolean alsoSysOut = false; // for debugging
         String currentTime = null;
 
         java.util.Date today = null;
