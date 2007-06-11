@@ -151,15 +151,11 @@
   <property category="team" name="ignorePath.8" value="neuroconstruct.jar"/>
   <property category="team" name="ignorePath.9" value="neuroconstruct_0.4.zip"/>
   <file path="build.xml"/>
-  <file path="templates/xmlTemplates/ChannelMLMetadata.xsd"/>
   <file path="docs/XML/glossary/Glossary.xml"/>
-  <file path="CellML/hodgkin_huxley_squid_axon_1952.xml"/>
   <file path="docs/XML/xmlForHtml/index.xml"/>
-  <file path="morphml/JavaXMLToMorphML.xsl"/>
-  <file path="templates/xmlTemplates/Examples/ChannelML/KChannel.xml"/>
-  <file path="morphml/MorphMLToJavaXML.xsl"/>
-  <file path="templates/xmlTemplates/Examples/ChannelML/NaChannel.xml"/>
   <file path="templates/genesisUtils/nCtools.g"/>
   <file path="templates/neuronUtils/nCtools.hoc"/>
   <file path="src/ucl/physiol/neuroconstruct/cell/compartmentalisation/package.html"/>
+  <file path="README"/>
+  <file path="RELEASE_NOTES"/>
 </project>
