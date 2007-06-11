@@ -1,21 +1,23 @@
 Release notes/change log for neuroConstruct
 
-See also README
+See also the README file
 
 
-Version 1.0.3 (XXXXXX)
+- Version 1.0.3 (XXXXXX)
+
+Update to options for stimulations (Tab Input and Output): repeated pulses, ...
+Some extra tool tips added
+Uses NeuroML v1.6
 
 
 
-
-
-Version 1.0.1 (Apr 07)
+- Version 1.0.1 (Apr 07)
 
 Basically the same as v0.9.8, but with examples outlined in paper included.
 
 
 
-Version 0.9.8 (Mar 07)
+- Version 0.9.8 (Mar 07)
 
-The first full public release, just before publication of the paper
+The first full public release, just before publication of the paper. Uses NeuroML v1.5
 
