@@ -127,7 +127,7 @@ public class RandomSpikeTrainExt extends ElectricalInput
     public String toString()
     {
         return this.getType()+": [rate: "
-            +rate.toShortString()+", syn: "+synapseType+", del: "+delay+", dur: "+duration+"]";
+            +rate.toShortString()+", syn: "+synapseType+", del: "+delay+", dur: "+duration+", repeats: "+repeat+"]";
     }
 
     public String getDescription()

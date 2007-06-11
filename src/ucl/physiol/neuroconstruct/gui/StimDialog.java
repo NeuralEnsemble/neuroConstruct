@@ -354,7 +354,7 @@ public class StimDialog extends JDialog
                 jRadioButtonRandSpike_actionPerformed(e);
             }
         });
-        jRadioButtonRandSpikeExt.setText("Random spike input (extended)");
+        jRadioButtonRandSpikeExt.setText("Random spike input (extended, not complete!!)");
         jRadioButtonRandSpikeExt.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -609,7 +609,9 @@ public class StimDialog extends JDialog
 
             NumberGenerator oldNumGen = tempRandSpike.getRate();
 
-            NumberGenerator newNumGen = NumberGeneratorDialog.showDialog(this, "Frequency of the spike train", "Please enter frequency of the spike train (ms\u207b\u00b9). Note that frequency of this input will not necessarily be equal to the resultant firing  frequency of the cell.", oldNumGen);
+            NumberGenerator newNumGen = NumberGeneratorDialog.showDialog(this,
+                                                                         "Frequency of the spike train",
+                                                                         "Please enter frequency of the spike train (ms\u207b\u00b9). Note that frequency of this input will not necessarily be equal to the resultant firing frequency of the cell.", oldNumGen);
 
             //if (inputValue==null) return;
 
@@ -650,9 +652,10 @@ public class StimDialog extends JDialog
         {
             NumberGenerator oldNumGen = tempRandSpikeExt.getRate();
 
-            NumberGenerator newNumGen = NumberGeneratorDialog.showDialog(this, "Frequency of the spike train", "Please enter frequency of the spike train (ms\u207b\u00b9). Note that frequency of this input will not necessarily be equal to the resultant firing  frequency of the cell.",
+            NumberGenerator newNumGen = NumberGeneratorDialog.showDialog(this,
+                                                                         "Frequency of the spike train",
+                                                                         "Please enter frequency of the spike train (ms\u207b\u00b9). Note that frequency of this input will not necessarily be equal to the resultant firing frequency of the cell.",
                                                                          oldNumGen);
-
 
             try
             {
@@ -663,6 +666,94 @@ public class StimDialog extends JDialog
                 GuiUtils.showErrorMessage(logger, "Please enter a proper value for the spike rate", ex, this);
                 return;
             }
+
+            Vector synapticTypes =  project.cellMechanismInfo.getAllSynMechNames();
+
+            if (synapticTypes.size()==0)
+            {
+                GuiUtils.showErrorMessage(logger,
+                                          "Please add at least one synapse type at the Cell Process Tab",
+                                          null, this);
+                return;
+            }
+
+            Object selection = JOptionPane.showInputDialog(this,
+                                        "Please select the type of synaptic input to use as the input for the random spike train",
+                                        "Select synapse type",
+                                        JOptionPane.QUESTION_MESSAGE,
+                                        null,
+                                        synapticTypes.toArray(),
+                                        tempRandSpikeExt.getSynapseType());
+
+            if (selection==null) return;
+
+            tempRandSpikeExt.setSynapseType((String)selection);
+
+            try
+            {
+                tempRandSpikeExt.setRate(newNumGen);
+            }
+            catch (Exception ex)
+            {
+                GuiUtils.showErrorMessage(logger, "Please enter a proper value for the spike rate", ex, this);
+                return;
+            }
+
+
+
+            String delayString = JOptionPane.showInputDialog("Please enter the delay before onset of the stimulation (ms)",
+                                                       tempRandSpikeExt.getDelay());
+
+
+            try
+            {
+                float delay = Float.parseFloat(delayString);
+                assert delay>=0;
+                tempRandSpikeExt.setDelay(delay);
+            }
+            catch (Exception ex)
+            {
+                GuiUtils.showErrorMessage(logger, "Please enter a proper value for the delay (>=0ms)", ex, this);
+                return;
+            }
+
+            String durationString = JOptionPane.showInputDialog("Please enter the duration of the stimulation (ms)",
+                                                       tempRandSpikeExt.getDuration());
+
+
+            try
+            {
+                float duration = Float.parseFloat(durationString);
+                assert duration>=0;
+                tempRandSpikeExt.setDuration(duration);
+            }
+            catch (Exception ex)
+            {
+                GuiUtils.showErrorMessage(logger, "Please enter a proper value for the duration (>=0ms)", ex, this);
+                return;
+            }
+
+
+            Object[] opts = new Object[]{"Pulse once", "Repeat pulse"};
+
+            int selected  = 0;
+            if (tempRandSpikeExt.isRepeat()) selected  = 1;
+
+
+            Object sel = JOptionPane.showInputDialog(this,
+                                        "Should the stimulation repeat continuously after the given duration?",
+                                        "Repeat stimulation?",
+                                        JOptionPane.QUESTION_MESSAGE ,
+                                        null,
+                                        opts,
+                                        opts[selected]);
+
+            if (sel.equals(opts[0])) tempRandSpikeExt.setRepeat(false);
+
+            else if (sel.equals(opts[1])) tempRandSpikeExt.setRepeat(true);
+
+
+            jTextFieldInfo.setText(tempRandSpikeExt.toString());
         }
 
 

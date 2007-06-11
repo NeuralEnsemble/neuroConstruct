@@ -487,7 +487,7 @@
     <term hidden="true">
         <name>Cell Type Tab</name>
         <defined>Add new Cell Types to the project here. These Cell Types can be based on the existing examples which come with neuroConstruct,
-                 or can be based on imported morphology files (e.g. GENESIS *.p files, Neurolucida files)</defined>
+                 or can be based on imported morphology files (e.g. GENESIS *.p, Neurolucida, MorphML files. etc.)</defined>
     </term>
 
     <term hidden="true">
