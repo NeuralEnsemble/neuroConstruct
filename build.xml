@@ -463,8 +463,9 @@
       <copy todir="${temp_ver.dir}/templates">
         <fileset dir="${templates.dir}">
           <include name="xmlTemplates/**/*"/>
-          <include name="genesisUtils/**/*.*"/>
-          <include name="neuronUtils/**/*.*"/>
+          <include name="genesisUtils/**/*"/>
+          <include name="neuronUtils/**/*"/>
+          <include name="modFileTemplates/**/*"/>
           <include name="README"/>
         </fileset>
       </copy>
