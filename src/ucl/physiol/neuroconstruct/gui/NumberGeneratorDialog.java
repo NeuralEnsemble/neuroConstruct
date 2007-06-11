@@ -73,6 +73,7 @@ public class NumberGeneratorDialog extends JDialog
         this.setTitle(title);
 
         logger.logComment("NumberGeneratorDialog created with: "+ numGenOriginal);
+
         if (numGenOriginal == null)
             numGen = new NumberGenerator();
         else
@@ -181,6 +182,8 @@ public class NumberGeneratorDialog extends JDialog
         panel1.add(jPanelVariables,  BorderLayout.CENTER);
 
         jLabelComment.setText("Please select the type of number...");
+        jLabelComment.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        jLabelComment.setHorizontalAlignment(JLabel.CENTER);
         jPanelMain.add(jLabelComment, BorderLayout.NORTH);
         jPanelMain.add(jPanelType, BorderLayout.CENTER);
         jPanelMain.add(jPanelIntOrFloat,  BorderLayout.SOUTH);

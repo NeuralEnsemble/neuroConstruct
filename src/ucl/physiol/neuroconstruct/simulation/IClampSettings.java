@@ -43,11 +43,12 @@ public class IClampSettings extends StimulationSettings
                           int segmentID,
                           float delay,
                           float duration,
-                          float amplitude)
+                          float amplitude,
+                          boolean repeat)
     {
         super(reference, cellGroup, cellChooser, segmentID);
 
-        iclamp = new IClamp(delay,duration,amplitude);
+        iclamp = new IClamp(delay,duration,amplitude, repeat);
     }
 
     public ElectricalInput getElectricalInput()
@@ -74,6 +75,18 @@ public class IClampSettings extends StimulationSettings
     {
         iclamp.setDelay(del);
     }
+
+
+    public boolean isRepeat()
+    {
+        return iclamp.isRepeat();
+    }
+
+    public void setRepeat(boolean repeat)
+    {
+        iclamp.setRepeat(repeat);
+    }
+
 
 
 

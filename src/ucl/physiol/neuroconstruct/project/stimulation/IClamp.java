@@ -30,6 +30,8 @@ public class IClamp extends ElectricalInput
     private SequenceGenerator duration = new SequenceGenerator(80);
     private SequenceGenerator amplitude = new SequenceGenerator(0.1f);
 
+    private boolean repeat = false;
+
 
     public IClamp()
     {
@@ -38,23 +40,27 @@ public class IClamp extends ElectricalInput
 
     public IClamp(float delay,
                   float duration,
-                  float amplitude)
+                  float amplitude,
+                  boolean repeat)
     {
         this.setType(TYPE);
 
         this.delay = new SequenceGenerator(delay);
         this.duration = new SequenceGenerator(duration);
         this.amplitude = new SequenceGenerator(amplitude);
+        this.repeat = repeat;
     }
 
     public IClamp(SequenceGenerator delay,
                   SequenceGenerator duration,
-                  SequenceGenerator amplitude)
+                  SequenceGenerator amplitude,
+                  boolean repeat)
     {
         this.setType(TYPE);
         this.delay = delay;
         this.duration = duration;
         this.amplitude = amplitude;
+        this.repeat = repeat;
     }
 
 
@@ -70,6 +76,17 @@ public class IClamp extends ElectricalInput
     public SequenceGenerator getDelay()
     {
         return delay;
+    }
+
+
+    public boolean isRepeat()
+    {
+        return repeat;
+    }
+
+    public void setRepeat(boolean repeat)
+    {
+        this.repeat = repeat;
     }
 
 
@@ -113,8 +130,8 @@ public class IClamp extends ElectricalInput
 
     public String toString()
     {
-        return type+": [del: "+ delay
+        return this.getType()+": [del: "+ delay
             +", dur: "+ duration
-            + ", amp: "+ amplitude + "]";
+            + ", amp: "+ amplitude + ", repeats: "+repeat+"]";
     }
 }

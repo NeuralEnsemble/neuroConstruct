@@ -46,7 +46,8 @@ public class StimDialog extends JDialog
                                                    0,
                                                    20,
                                                    60,
-                                                   0.2f);
+                                                   0.2f,
+                                                   false);
 
     RandomSpikeTrainSettings tempRandSpike = new RandomSpikeTrainSettings("tempRandSpike",
                                                                           null,
@@ -55,6 +56,16 @@ public class StimDialog extends JDialog
                                                                           new NumberGenerator(0.05f),
                                                                           10,
                                                                           null);
+
+    RandomSpikeTrainExtSettings tempRandSpikeExt = new RandomSpikeTrainExtSettings("tempRandSpikeExt",
+                                                                          null,
+                                                                          null,
+                                                                          0,
+                                                                          new NumberGenerator(0.05f),
+                                                                          10,
+                                                                          null);
+
+
 
     int chosenSegmentId = 0;
 
@@ -84,8 +95,14 @@ public class StimDialog extends JDialog
     GridBagLayout gridBagLayout1 = new GridBagLayout();
     //JLabel jLabelCellNum2 = new JLabel();
     JButton jButtonSegment = new JButton();
+
+
     JRadioButton jRadioButtonIClamp = new JRadioButton();
     JRadioButton jRadioButtonRandSpike = new JRadioButton();
+    JRadioButton jRadioButtonRandSpikeExt = new JRadioButton();
+
+
+
     JButton jButtonStimChange = new JButton();
     JButton jButtonCellChooserChange = new JButton();
 
@@ -134,6 +151,7 @@ public class StimDialog extends JDialog
             if (synapticTypes.size()>0)
             {
                 tempRandSpike.setSynapseType((String)synapticTypes.elementAt(0));
+                tempRandSpikeExt.setSynapseType((String)synapticTypes.elementAt(0));
             }
             else
             {
@@ -143,6 +161,7 @@ public class StimDialog extends JDialog
                 project.cellMechanismInfo.addCellMechanism(exp2);
 
                 tempRandSpike.setSynapseType(exp2.getInstanceName());
+                tempRandSpikeExt.setSynapseType(exp2.getInstanceName());
             }
             jbInit();
             extraInit();
@@ -228,8 +247,6 @@ public class StimDialog extends JDialog
     public StimulationSettings getFinalStim()
     {
         StimulationSettings  stim = null;
-        //new StimulationSettings();
-        //stim.set
 
         if (jRadioButtonIClamp.isSelected())
         {
@@ -239,12 +256,16 @@ public class StimDialog extends JDialog
         {
             stim = tempRandSpike;
         }
+        else if (jRadioButtonRandSpikeExt.isSelected())
+        {
+            stim = tempRandSpikeExt;
+        }
+
         stim.setReference(jTextFieldReference.getText());
         stim.setCellGroup((String)jComboBoxCellGroup.getSelectedItem());
 
         stim.setCellChooser(this.myCellChooser);
 
-        //System.out.println("chosenSegmentId: "+chosenSegmentId);
         stim.setSegmentID(chosenSegmentId);
         stim.setFractionAlong(Float.parseFloat(jTextFieldFractionAlong.getText()));
 
@@ -269,7 +290,6 @@ public class StimDialog extends JDialog
     private void jbInit() throws Exception
     {
         jTextFieldCellNumber.setEditable(false);
-
 
         border1 = BorderFactory.createEmptyBorder(6,6,6,6);
         this.getContentPane().setLayout(borderLayout1);
@@ -305,7 +325,8 @@ public class StimDialog extends JDialog
         jTextFieldSegmentId.setEditable(false);
         jTextFieldSegmentId.setText("...");
         jTextFieldSegmentId.setColumns(10);
-        //jLabelCellNum2.setText("n% for n percent of cells in the group):");
+
+
         jButtonSegment.setText("...");
         jButtonSegment.addActionListener(new java.awt.event.ActionListener()
         {
@@ -315,7 +336,7 @@ public class StimDialog extends JDialog
             }
         });
         jRadioButtonIClamp.setSelected(true);
-        jRadioButtonIClamp.setText("Single current pulse");
+        jRadioButtonIClamp.setText("Current clamp");
         jRadioButtonIClamp.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -323,6 +344,8 @@ public class StimDialog extends JDialog
                 jRadioButtonIClamp_actionPerformed(e);
             }
         });
+
+
         jRadioButtonRandSpike.setText("Random spike input");
         jRadioButtonRandSpike.addActionListener(new java.awt.event.ActionListener()
         {
@@ -331,6 +354,19 @@ public class StimDialog extends JDialog
                 jRadioButtonRandSpike_actionPerformed(e);
             }
         });
+        jRadioButtonRandSpikeExt.setText("Random spike input (extended)");
+        jRadioButtonRandSpikeExt.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jRadioButtonRandSpikeExt_actionPerformed(e);
+            }
+        });
+
+
+
+
+
         jButtonStimChange.setText("Change..");
         jButtonCellChooserChange.setText("Change...");
         jButtonStimChange.addActionListener(new java.awt.event.ActionListener()
@@ -388,29 +424,43 @@ public class StimDialog extends JDialog
         jPanelMain.add(jButtonSegment,          new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(6, 6, 6, 14), 0, 0));
 
-        jPanelMain.add(jRadioButtonIClamp,    new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 14, 6, 0), 0, 0));
+        jPanelMain.add(jRadioButtonIClamp,
+                       new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
+                                              GridBagConstraints.WEST,
+                                              GridBagConstraints.NONE,
+                                              new Insets(6, 14, 6, 0), 0, 0));
 
-        jPanelMain.add(jRadioButtonRandSpike,    new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 14, 6, 0), 0, 0));
+        jPanelMain.add(jRadioButtonRandSpike,
+                       new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0,
+                                              GridBagConstraints.WEST,
+                                              GridBagConstraints.NONE,
+                                              new Insets(6, 14, 6, 0), 0, 0));
 
-        jPanelMain.add(jButtonStimChange,    new GridBagConstraints(1, 5, 2, 2, 0.0, 0.0
+        jPanelMain.add(jRadioButtonRandSpikeExt,
+                       new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0,
+                                              GridBagConstraints.WEST,
+                                              GridBagConstraints.NONE,
+                                              new Insets(6, 14, 6, 0), 0, 0));
+
+
+        jPanelMain.add(jButtonStimChange,    new GridBagConstraints(1, 5, 2, 3, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-        jPanelMain.add(jTextFieldInfo,   new GridBagConstraints(0, 7, 3, 1, 0.0, 0.0
+        jPanelMain.add(jTextFieldInfo,   new GridBagConstraints(0, 8, 3, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(6, 14, 6, 14), 0, 0));
 
 
         jPanelMain.add(jLabelFraction,  new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
             ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 14, 6, 0), 0, 0));
 
-        ////jPanelMain.add(jScrollPaneDescription, null);
 
-        ////JViewport vp = jScrollPaneDescription.getViewport();
 
-       //// vp.add(jTextAreaDescription);
+
         buttonGroupStims.add(jRadioButtonIClamp);
         buttonGroupStims.add(jRadioButtonRandSpike);
+        buttonGroupStims.add(jRadioButtonRandSpikeExt);
+
+
         jPanelMain.add(jTextFieldFractionAlong,   new GridBagConstraints(1, 4, 2, 1, 0.0, 0.0
             ,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 14, 6, 14), 0, 0));
     }
@@ -424,7 +474,7 @@ public class StimDialog extends JDialog
     {
         try
         {
-            Project p = Project.loadProject(new File("projects/spiker/spiker.neuro.xml").getCanonicalFile(), null);
+            Project p = Project.loadProject(new File("examples/Ex5-Networks/Ex5-Networks.neuro.xml").getCanonicalFile(), null);
 
             String suggestedName = "Stim_0";
 
@@ -461,6 +511,13 @@ public class StimDialog extends JDialog
 
     }
 
+    void jRadioButtonRandSpikeExt_actionPerformed(ActionEvent e)
+    {
+        jTextFieldInfo.setText(tempRandSpikeExt.toString());
+
+    }
+
+
 
     void jButtonCellChooserChange_actionPerformed(ActionEvent e)
     {
@@ -496,23 +553,19 @@ public class StimDialog extends JDialog
                                                                           "Please enter the delay before the pulse (ms)",
                                                                           sg1);
 
-
             if (newSg1==null) return;
 
             tempIClamp.setDelay(newSg1);
 
             SequenceGenerator sg2 = tempIClamp.getDuration();
 
-
             SequenceGenerator newSg2 = SequenceGeneratorDialog.showDialog(this,
                                                                           "Please enter the duration of the pulse (ms)",
                                                                           sg2);
 
-
             if (newSg2==null) return;
 
             tempIClamp.setDuration(newSg2);
-
 
 
             SequenceGenerator sg3 = tempIClamp.getAmplitude();
@@ -525,6 +578,27 @@ public class StimDialog extends JDialog
 
             tempIClamp.setAmplitude(newSg3);
 
+
+
+            Object[] opts = new Object[]{"Pulse once", "Repeat pulse"};
+
+            int selected  = 0;
+            if (tempIClamp.isRepeat()) selected  = 1;
+
+
+            Object sel = JOptionPane.showInputDialog(this,
+                                        "Should the stimulation repeat continuously after the given duration?",
+                                        "Repeat stimulation?",
+                                        JOptionPane.QUESTION_MESSAGE ,
+                                        null,
+                                        opts,
+                                        opts[selected]);
+
+            if (sel.equals(opts[0])) tempIClamp.setRepeat(false);
+            else if (sel.equals(opts[1])) tempIClamp.setRepeat(true);
+
+
+
             jTextFieldInfo.setText(tempIClamp.toString());
 
         }
@@ -535,7 +609,7 @@ public class StimDialog extends JDialog
 
             NumberGenerator oldNumGen = tempRandSpike.getRate();
 
-            NumberGenerator newNumGen = NumberGeneratorDialog.showDialog(this, "Frequency of the spike train", "Please enter frequency of the spike train (ms^-1). Note that frequency of this input will not necessarily be equal to the frequency of the firing of the cell.", oldNumGen);
+            NumberGenerator newNumGen = NumberGeneratorDialog.showDialog(this, "Frequency of the spike train", "Please enter frequency of the spike train (ms\u207b\u00b9). Note that frequency of this input will not necessarily be equal to the resultant firing  frequency of the cell.", oldNumGen);
 
             //if (inputValue==null) return;
 
@@ -572,6 +646,26 @@ public class StimDialog extends JDialog
             jTextFieldInfo.setText(tempRandSpike.toString());
 
         }
+        else if (jRadioButtonRandSpikeExt.isSelected())
+        {
+            NumberGenerator oldNumGen = tempRandSpikeExt.getRate();
+
+            NumberGenerator newNumGen = NumberGeneratorDialog.showDialog(this, "Frequency of the spike train", "Please enter frequency of the spike train (ms\u207b\u00b9). Note that frequency of this input will not necessarily be equal to the resultant firing  frequency of the cell.",
+                                                                         oldNumGen);
+
+
+            try
+            {
+                tempRandSpikeExt.setRate(newNumGen);
+            }
+            catch (Exception ex)
+            {
+                GuiUtils.showErrorMessage(logger, "Please enter a proper value for the spike rate", ex, this);
+                return;
+            }
+        }
+
+
     }
 
 
@@ -612,6 +706,14 @@ public class StimDialog extends JDialog
 
             tempRandSpike = (RandomSpikeTrainSettings)stim;
         }
+        else if (stim instanceof RandomSpikeTrainExtSettings)
+        {
+            jRadioButtonRandSpikeExt.setSelected(true);
+
+            tempRandSpikeExt = (RandomSpikeTrainExtSettings)stim;
+        }
+
+
         jTextFieldInfo.setText(stim.toString());
 
     }

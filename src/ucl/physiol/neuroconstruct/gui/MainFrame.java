@@ -590,7 +590,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     BorderLayout borderLayout35 = new BorderLayout();
     Border border8;
     JPanel jPanelNeuronGraphOptions = new JPanel();
+
+
     GridBagLayout gridBagLayout6 = new GridBagLayout();
+    GridBagLayout gridBagLayoutGen = new GridBagLayout();
 
 
     JCheckBox jCheckBoxNeuronShowShapePlot = new JCheckBox();
@@ -888,7 +891,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jLabelGenesisMain.setEnabled(false);
         jLabelGenesisMain.setBorder(border8);
         jLabelGenesisMain.setHorizontalAlignment(SwingConstants.CENTER);
-        jLabelGenesisMain.setText("Settings for GENESIS simulation");
+        jLabelGenesisMain.setText("Generate code for the GENESIS simulation");
         jPanelExportGenesis.setDebugGraphicsOptions(0);
         jLabelSimulatorNeosimMain.setText("To be continued...");
         //jPanelExportNeosim.setLayout(borderLayout27);
@@ -2727,10 +2730,32 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         jPanelGenesisSettings.add(jLabelGenesisMain,  BorderLayout.NORTH);
 
-        jPanelGenesisMain.add(jPanelGenesisSettings);//, BorderLayout.NORTH);
-        jPanelGenesisMain.add(this.jPanelGenesisRandomGen);//, BorderLayout.CENTER);
-        jPanelGenesisMain.add(this.jPanelGenesisComps);//, BorderLayout.CENTER);
-        jPanelGenesisMain.add(jPanelGenesisButtons);//, BorderLayout.SOUTH);
+        jPanelGenesisMain.setLayout(this.gridBagLayoutGen);
+
+        jPanelGenesisMain.add(jPanelGenesisSettings,
+                              new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
+                                                     ,GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(20, 0, 20, 0), 20, 20));
+
+        jPanelGenesisMain.add(this.jPanelGenesisRandomGen,
+                              new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
+                                                     , GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(0, 0, 20, 0), 0, 0));
+
+        jPanelGenesisMain.add(this.jPanelGenesisComps,
+                              new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
+                                                     , GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(0, 0, 0, 0), 20, 0));
+
+        jPanelGenesisMain.add(jPanelGenesisButtons,
+                              new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
+                                                     , GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(0, 0, 200, 0), 0, 0));
+
 
 
         //jTabbedPaneExportFormats.addTab(NEOSIM_SIMULATOR_TAB, null, jPanelExportNeosim, toolTipText.getToolTip("NEOSIM"));
@@ -3458,6 +3483,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         this.jRadioButtonNeuronSimSaveToFile.setToolTipText(newSavingTip);
 
         jCheckBoxGenesisShapePlot.setToolTipText(toolTipText.getToolTip("GENESIS 3D"));
+        this.jCheckBoxGenesisSymmetric.setToolTipText(toolTipText.getToolTip("GENESIS Symmetric"));
+        this.jRadioButtonGenesisPhy.setToolTipText(toolTipText.getToolTip("GENESIS Units"));
+        this.jRadioButtonGenesisSI.setToolTipText(toolTipText.getToolTip("GENESIS Units"));
+        this.jLabelGenesisNumMethod.setToolTipText(toolTipText.getToolTip("GENESIS Num Integration method"));
 
         this.jButtonSimConfigEdit.setToolTipText(toolTipText.getToolTip("Simulation Configuration"));
 
@@ -4143,7 +4172,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                      0,
                                                      20,
                                                      60,
-                                                     0.2f);
+                                                     0.2f,
+                                                     false);
 
             projManager.getCurrentProject().elecInputInfo.addStim(stim);
 
@@ -5345,16 +5375,16 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             return;
         }
 
-        Vector cellMechanismsGenerated = projManager.getCurrentProject().neuronFileManager.getCellMechFilesGenAndIncl();
+        Vector allModFiles = projManager.getCurrentProject().neuronFileManager.getModFilesToCompile();
 
 
-        logger.logComment("--- Neuron files generated: "+cellMechanismsGenerated);
+        logger.logComment("--- Neuron mod files generated: "+allModFiles);
 
 
-                GeneralUtils.timeCheck("Neuron files all generated...");
+        GeneralUtils.timeCheck("Neuron files all generated...");
 
         boolean compileSuccess = true;
-        if (cellMechanismsGenerated.size()>0)
+        if (allModFiles.size()>0)
         {
             try
             {
@@ -7212,6 +7242,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             long timeModified = projManager.getCurrentProject().getProjectFile().lastModified();
 
             SimpleDateFormat formatter = new SimpleDateFormat("H:mm:ss, MMM d, yyyy");
+
             java.util.Date modified = new java.util.Date(timeModified);
 
             this.jTextFieldMainLastModified.setText(formatter.format(modified));

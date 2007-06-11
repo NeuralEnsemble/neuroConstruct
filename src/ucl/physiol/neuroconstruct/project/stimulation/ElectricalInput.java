@@ -23,7 +23,7 @@ package ucl.physiol.neuroconstruct.project.stimulation;
 
 public abstract class ElectricalInput
 {
-    String type = null;
+    private String type = null;
 
     public String getType()
     {

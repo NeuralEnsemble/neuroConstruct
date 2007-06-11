@@ -47,6 +47,11 @@ public class SequenceGeneratorDialog extends JDialog
     JButton jButtonCancel = new JButton();
     JButton jButtonOK = new JButton();
     JLabel jLabelType = new JLabel();
+
+    JLabel jLabelRequest = new JLabel("Please enter the value below");
+
+
+
     JComboBox jComboBoxType = new JComboBox();
     JPanel jPanelVariables = new JPanel();
     GridLayout gridLayout1 = new GridLayout();
@@ -56,7 +61,8 @@ public class SequenceGeneratorDialog extends JDialog
     //JRadioButton jRadioButtonInt = new JRadioButton();
     //ButtonGroup buttonGroupNumType = new ButtonGroup();
     BorderLayout borderLayout2 = new BorderLayout();
-    JPanel jPanel2 = new JPanel();
+    JPanel jPanelType = new JPanel();
+    JPanel jPanelTop = new JPanel();
 
     public SequenceGeneratorDialog(Frame frame, SequenceGenerator seqGenOriginal)
     {
@@ -167,13 +173,19 @@ public class SequenceGeneratorDialog extends JDialog
         jPanelButtons.add(jButtonCancel, null);
         jPanelMain.add(jPanel1,  BorderLayout.CENTER);
         panel1.add(jPanelVariables,  BorderLayout.CENTER);
-        jPanelMain.add(jPanel2, BorderLayout.NORTH);
-        jPanel2.add(jLabelType, null);
-        jPanel2.add(jComboBoxType, null);
 
-        Dimension dim = new Dimension(300, 50);
-        jPanelMain.setMinimumSize(dim);
-        jPanelMain.setPreferredSize(dim);
+        jPanelTop.add(jLabelRequest, null);
+
+        //jPanelType.add(jLabelRequest, null);
+        jPanelType.add(jLabelType, null);
+        jPanelType.add(jComboBoxType, null);
+        jPanelTop.add(jPanelType, null);
+
+        Dimension dim = new Dimension(300, 70);
+        jPanelTop.setMinimumSize(dim);
+        jPanelTop.setPreferredSize(dim);
+
+        jPanelMain.add(jPanelTop, BorderLayout.NORTH);
 
         /*
         buttonGroupNumType.add(jRadioButtonFloat);
@@ -215,7 +227,7 @@ public class SequenceGeneratorDialog extends JDialog
         SequenceGenerator sg3 = new SequenceGenerator(1,6,5f);
 
 
-        sg3 = showDialog((Frame)null, "Tester", sg3);
+        sg3 = showDialog((Frame)null, "This is just a simple Tester dialog example", sg3);
 
         //dlg.pack();
         //dlg.show();
@@ -233,6 +245,12 @@ public class SequenceGeneratorDialog extends JDialog
         {
             ex.printStackTrace();
         }
+    }
+
+    public void setTitle(String title)
+    {
+        super.setTitle(title);
+        this.jLabelRequest.setText(title);
     }
 
 

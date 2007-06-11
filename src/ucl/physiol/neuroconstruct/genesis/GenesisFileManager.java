@@ -364,7 +364,11 @@ public class GenesisFileManager
                                       UnitConverter.currentUnits[project.genesisSettings.getUnitSystemToUse()].getSafeSymbol()
                                       + ", "+input+" \n");
 
-                    addComment(response, "Pulses are shifted one dt step, so that pulse will begin at delay1\n");
+                    addComment(response, "Pulses are shifted one dt step, so that pulse will begin at delay1, as in NEURON\n");
+
+                    float recurDelay = Integer.MAX_VALUE; // A long time before any recurrance
+
+                    if (iClamp.isRepeat())  recurDelay = 0;
 
                     response.append("setfield ^ level1 "
                                     + current
@@ -373,7 +377,7 @@ public class GenesisFileManager
                                     + " delay1 "
                                     + convertNeuroConstructTime(iClamp.getDelay().getStart() - project.simulationParameters.getDt())
                                     + " delay2 "
-                                    + convertNeuroConstructTime(100000) /* Really long delay...*/
+                                    + convertNeuroConstructTime(recurDelay)
                                     + "  \n");
 
                     String cellElement = getCellElementName(cellGroup,cellNum);

@@ -16,16 +16,17 @@ import ucl.physiol.neuroconstruct.utils.NumberGenerator;
 
 
 /**
- * Settings specifically for single NetStim/randomspike like stimulation
+ * Settings specifically for NetStim/randomspike like stimulation, extended to allow specification
+ * of duration etc.
  *
  * @author Padraig Gleeson
  * @version 1.0.3
  */
 
 
-public class RandomSpikeTrain extends ElectricalInput
+public class RandomSpikeTrainExt extends ElectricalInput
 {
-    public static final String TYPE =  "RandomSpikeTrain";
+    public static final String TYPE =  "RandomSpikeTrainExt";
 
 
     //public float rate;
@@ -34,19 +35,25 @@ public class RandomSpikeTrain extends ElectricalInput
      * they can all have a fixed rate, or a random/gaussian set of rates, etc.
      */
     public NumberGenerator rate = null;
-
-
     public float noise;
     public String synapseType = null;
 
-    public RandomSpikeTrain()
+
+    private float delay = 0;
+    private float duration = 1000000;
+
+
+    private boolean repeat = false;
+
+
+    public RandomSpikeTrainExt()
     {
         this.setType(TYPE);
     }
 
-    public RandomSpikeTrain(NumberGenerator rate,
-                           float noise,
-                           String synapseType)
+    public RandomSpikeTrainExt(NumberGenerator rate,
+                               float noise,
+                               String synapseType)
    {
         this.setType(TYPE);
         this.rate = rate;
@@ -59,11 +66,31 @@ public class RandomSpikeTrain extends ElectricalInput
         return rate;
     }
 
+    public boolean isRepeat()
+    {
+        return repeat;
+    }
+
+    public void setRepeat(boolean repeat)
+    {
+        this.repeat = repeat;
+    }
 
     public float getNoise()
     {
         return noise;
     }
+
+    public float getDelay()
+    {
+        return delay;
+    }
+
+    public float getDuration()
+    {
+        return duration;
+    }
+
 
     /**
      * This is left in to cope with old code where rate was always fixed
@@ -86,17 +113,27 @@ public class RandomSpikeTrain extends ElectricalInput
     {
         this.noise = noise;
     }
+    public void setDelay(float delay)
+    {
+        this.delay = delay;
+    }
+
+    public void setDuration(float duration)
+    {
+        this.duration = duration;
+    }
+
 
     public String toString()
     {
         return this.getType()+": [rate: "
-            +rate.toShortString()+", synaptic input: "+synapseType+"]";
+            +rate.toShortString()+", syn: "+synapseType+", del: "+delay+", dur: "+duration+"]";
     }
 
     public String getDescription()
     {
         return this.getType()+" with a rate of "
-            +rate.toShortString()+" "+" and synaptic input type: "+synapseType+"";
+            +rate.toShortString()+" "+" and syn input type: "+synapseType+", delay: "+delay+", duration: "+duration+"";
     }
 
 

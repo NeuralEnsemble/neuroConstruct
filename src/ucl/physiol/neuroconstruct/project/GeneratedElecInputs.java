@@ -351,7 +351,7 @@ public class GeneratedElecInputs
 
             System.out.println("Internal info: \n"+ gei.toString());
 
-            IClamp ic = new IClamp(2,3,4);
+            IClamp ic = new IClamp(2,3,4, true);
 
             gei.addSingleInput("Input_0", "IClamp", "cg1", 3, 3, 3);
             gei.addSingleInput("Input_0", "IClamp", "cg1", 38, 3, 3);
