@@ -1,6 +1,7 @@
 This directory contains some useful files for GENESIS and NEURON.
 
-The xxxTemplate directories contain some simple mod/GENESIS script files for making basic channels/synaptic mechanisms. These have been largely superceded by ChannelML based templates.
+The xxxTemplate directories contain some simple mod/GENESIS script files for making basic channels/synaptic mechanisms. 
+These have been largely superceded by ChannelML based templates (apart from templates for stimulations).
 
 The xxxUtils directories contain some handy utility functions for use within GENESIS/NEURON. See the files for details.
 
