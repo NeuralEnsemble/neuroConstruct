@@ -221,6 +221,8 @@ public class Project implements TableModelListener
                                                   ex3);
         }
 
+       // System.exit(-9);
+
         if (!userAgreedUpdate)
         {
             logger.logComment("User cancelled update...");

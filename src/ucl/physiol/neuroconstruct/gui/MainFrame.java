@@ -4491,6 +4491,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         this.jTextAreaProjDescription.setText("\n   Loading project: "+projectName+"...");
 
         File projFile = new File(projectName);
+
         if (!projFile.exists())
         {
             GuiUtils.showErrorMessage(logger,
