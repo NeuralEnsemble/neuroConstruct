@@ -7242,7 +7242,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             long timeModified = projManager.getCurrentProject().getProjectFile().lastModified();
 
-            SimpleDateFormat formatter = new SimpleDateFormat("H:mm:ss, MMM d, yyyy");
+            SimpleDateFormat formatter = new SimpleDateFormat("H:mm:ss, EEEE MMMM d, yyyy");
 
             java.util.Date modified = new java.util.Date(timeModified);
 
