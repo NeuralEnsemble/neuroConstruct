@@ -4437,7 +4437,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
      * for saving the current project
      *
      */
-    public void doSave()
+    private void doSave()
     {
         if (projManager.getCurrentProject() == null)
         {
@@ -4486,7 +4486,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     public void doLoadProject(String projectName)
     {
 
-        logger.logComment("Loading a project at startup...");
+        logger.logComment(">>>>>>>>>>>   Loading a project at startup...");
 
         this.jTextAreaProjDescription.setText("\n   Loading project: "+projectName+"...");
 
@@ -4513,7 +4513,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         refreshAll();
         enableTableCellEditingFunctionality();
 
-        logger.logComment("--------------   *Finished loading the project*   --------------");
+        logger.logComment("<<<<<<<<<<   --------------   *Finished loading the project*   --------------");
         initialisingProject = false;
         createSimulationSummary();
     }
@@ -4567,10 +4567,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             initialisingProject = true;
             try
             {
-                logger.logComment(">>>>  Loading project: "+ chooser.getSelectedFile());
+                logger.logComment(">>>>>>>>  Loading project: "+ chooser.getSelectedFile());
                 //projManager.getCurrentProject() = Project.loadProject(chooser.getSelectedFile(), this);
                 projManager.doLoadProject(chooser.getSelectedFile());
-                logger.logComment("<<<<  Loaded project: "+ projManager.getCurrentProject().getProjectFileName());
+                logger.logComment("<<<<<<<<  Loaded project: "+ projManager.getCurrentProject().getProjectFileName());
             }
             catch (ProjectFileParsingException ex2)
             {

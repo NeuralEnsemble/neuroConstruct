@@ -209,12 +209,11 @@ public class Project implements TableModelListener
     public static Project loadProject(File projectFile,
                                       ProjectEventListener projectEventListner) throws ProjectFileParsingException
     {
-
-        boolean userAgreed = false;
+        boolean userAgreedUpdate = false;
 
         try
         {
-            userAgreed = ProjectFileUpdate.updateProjectFile(projectFile);
+            userAgreedUpdate = ProjectFileUpdate.updateProjectFile(projectFile);
         }
         catch (Exception ex3)
         {
@@ -222,7 +221,7 @@ public class Project implements TableModelListener
                                                   ex3);
         }
 
-        if (!userAgreed)
+        if (!userAgreedUpdate)
         {
             logger.logComment("User cancelled update...");
             return null;
@@ -258,9 +257,11 @@ public class Project implements TableModelListener
         boolean oldCellProcObjectFound = false;
 
         File dirForCellMechs = ProjectStructure.getCellMechanismDir(proj.getProjectMainDirectory(), false);
+
         boolean newCellMechDirPresent = (dirForCellMechs != null && dirForCellMechs.exists());
 
         ComplexConnectionsInfo tempComplexConnectionsInfo = null;
+
         try
         {
             while ( (nextReadObject = xmlDecoder.readObject()) != null)
@@ -271,6 +272,7 @@ public class Project implements TableModelListener
                     logger.logComment("Found BasicProjectInfo object in project file...");
                     proj.basicProjectInfo = (BasicProjectInfo) nextReadObject;
                 }
+
                 /* --  Reading Regions Info -- */
                 if (nextReadObject instanceof RegionsInfo)
                 {
@@ -294,36 +296,42 @@ public class Project implements TableModelListener
                     proj.cellGroupsInfo = (CellGroupsInfo) nextReadObject;
                     proj.cellGroupsInfo.addTableModelListener(proj);
                 }
+
                 /* --  Reading 3D Info -- */
                 if (nextReadObject instanceof Display3DProperties)
                 {
                     logger.logComment("Found Project3DProperties object in project file...");
                     proj.proj3Dproperties = (Display3DProperties) nextReadObject;
                 }
+
                 /* --  Reading NEURON Info --*/
                 if (nextReadObject instanceof NeuronSettings)
                 {
                     logger.logComment("Found NeuronSettings object in project file...");
                     proj.neuronSettings = (NeuronSettings) nextReadObject;
                 }
+
                 /* --  Reading GENESIS Info --*/
                 if (nextReadObject instanceof GenesisSettings)
                 {
                     logger.logComment("Found GenesisSettings object in project file...");
                     proj.genesisSettings = (GenesisSettings) nextReadObject;
                 }
+
                 /* --  Reading Simulation Info --*/
                 if (nextReadObject instanceof SimulationParameters)
                 {
                     logger.logComment("Found SimulationParameters object in project file...");
                     proj.simulationParameters = (SimulationParameters) nextReadObject;
                 }
+
                 /* --  Reading SimConfigInfo --*/
                 if (nextReadObject instanceof SimConfigInfo)
                 {
                     logger.logComment("Found SimConfigInfo object in project file...");
                     proj.simConfigInfo = (SimConfigInfo) nextReadObject;
                 }
+
                 /* --  Reading ElecInputInfo --*/
                 if (nextReadObject instanceof ElecInputInfo)
                 {
@@ -338,6 +346,7 @@ public class Project implements TableModelListener
                     proj.morphNetworkConnectionsInfo = (SimpleNetworkConnectionsInfo) nextReadObject;
                     proj.morphNetworkConnectionsInfo.addTableModelListener(proj);
                 }
+
                 /* --  Reading Complex Conn Info -- */
                 if (nextReadObject instanceof ComplexConnectionsInfo)
                 {
@@ -416,6 +425,18 @@ public class Project implements TableModelListener
         }
 
         xmlDecoder.close();
+        try
+        {
+            fis.close();
+            bis.close();
+        }
+        catch (IOException ex)
+        {
+            GuiUtils.showErrorMessage(logger,
+                                      "Error loading project from file: "+ projectFile, ex, null);
+            return null;
+        }
+
 
         // As the complexConnectionsInfo is deprecated...
         if (tempComplexConnectionsInfo != null)
@@ -584,52 +605,6 @@ public class Project implements TableModelListener
             }
         }
 
-        /*
-                 if (proj.simulationParameters.getRecordingMode()==SimulationParameters.SIMULATION_RECORD_TO_FILE)
-                 {
-            ArrayList<String> cellGroups = proj.cellGroupsInfo.getAllCellGroupNames();
-
-            String whatToRecord = "*";
-
-            if (proj.simulationParameters.getWhatToRecord() == SimulationParameters.RECORD_ONLY_SOMA)
-            {
-                whatToRecord = "0";
-            }
-            ArrayList<SimPlot> plotsCreated = new ArrayList<SimPlot>();
-
-
-
-            for (String cellGroup: cellGroups)
-            {
-                SimPlot plot = new SimPlot(cellGroup + "_voltage",
-                                           cellGroup + "_voltage",
-                                           cellGroup,
-                                           "*",
-                                           whatToRecord,
-                                           SimPlot.VOLTAGE,
-                                           -90,
-                                           50,
-                                           SimPlot.SAVE_ONLY);
-
-                plotsCreated.add(plot);
-
-                proj.simPlotInfo.addSimPlot(plot);
-            }
-
-            ArrayList<SimConfig> simConfigs = proj.simConfigInfo.getAllSimConfigs();
-
-            for (SimConfig simConfig : simConfigs)
-            {
-                for (SimPlot plotCreated : plotsCreated)
-                {
-                    if (simConfig.getCellGroups().contains(plotCreated.getCellGroup()))
-                    simConfig.addPlot(plotCreated.getPlotReference());
-
-                }
-            }
-
-         proj.simulationParameters.setRecordingMode(SimulationParameters.SIMULATION_NOT_RECORDED); // for next time...
-                 }*/
 
 
         try
@@ -680,29 +655,6 @@ public class Project implements TableModelListener
                         // to cope with a legacy method for storing channels
                         CellTopologyHelper.updateChannelMechanisms(cellGenerated, proj);
 
-                        /*
-                                                // to cope with a time before cell specific  biophys...
-                                                if (cellGenerated.getInitialPotential()==null)
-                                                {
-                                                    NumberGenerator initPot = new NumberGenerator();
-                         initPot.initialiseAsFixedFloatGenerator(proj.simulationParameters.getInitVm());
-                                                    cellGenerated.setInitialPotential(initPot);
-                                                }
-                                                // to cope with a time before cell specific  biophys...
-                                                if (cellGenerated.getSpecAxRes()==null)
-                                                {
-                                                    //NumberGenerator specAxRes = new NumberGenerator();
-                                                    //specAxRes.initialiseAsFixedFloatGenerator(proj.simulationParameters.getGlobalRa());
-                         cellGenerated.associateGroupWithSpecAxRes(Section.ALL, proj.simulationParameters.getGlobalRa());
-                                                }
-                                                // to cope with a time before cell specific  biophys...
-                                                if (cellGenerated.getSpecCapacitance()==null)
-                                                {
-                                                    logger.logComment("Updating capacitance...");
-                                                    //NumberGenerator specCap = new NumberGenerator();
-                                                    //specCap.initialiseAsFixedFloatGenerator(proj.simulationParameters.getGlobalCm());
-                         cellGenerated.associateGroupWithSpecCap(Section.ALL, proj.simulationParameters.getGlobalCm());
-                                                }*/
                         proj.cellManager.addCellType(cellGenerated);
                     }
                     catch (NamingException ex2)
@@ -724,7 +676,7 @@ public class Project implements TableModelListener
                     {
                         try
                         {
-                            userAgreed = MorphologyFileUpdate.updateMorphologyFile(contents[i]);
+                            userAgreedUpdate = MorphologyFileUpdate.updateMorphologyFile(contents[i]);
                         }
                         catch (Exception ex3)
                         {
@@ -732,7 +684,7 @@ public class Project implements TableModelListener
                                 "Problem while attempting to check the version of the morphology file", ex3);
                         }
 
-                        if (!userAgreed)
+                        if (!userAgreedUpdate)
                         {
                             logger.logComment("User cancelled update...");
                             return null;

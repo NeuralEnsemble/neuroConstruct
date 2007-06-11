@@ -105,6 +105,11 @@ public class ProjectFileUpdate
         replacements.put(oldToken, newToken);
     }
 
+
+    /**
+     * Updates project files when there is a change in the names of classes used,
+     * e.g. class named CellProcess changed to CellMechanism
+     */
     public static boolean updateProjectFile(File projFile) throws FileNotFoundException, IOException
     {
         Reader in = null;

@@ -35,7 +35,8 @@ public class UserSettings
     private String editorExecutable = null;
 
 
-    private String locationLogFiles = null;
+    private String locationLogFiles = "logs";
+
     private boolean logFilePrintToScreenPolicy = false;
     private boolean logFileSaveToFilePolicy = false;
 

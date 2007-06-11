@@ -777,6 +777,7 @@ public class GeneralProperties
         // NOTE: don't change this! It's used to quickly toggle the log to screen option
         // via the logtog task in build.xml
         boolean logToScreenOn = GeneralProperties.getLogFilePrintToScreenPolicy();
+
         GeneralProperties.setLogFilePrintToScreenPolicy(!logToScreenOn);
 
         GeneralProperties.saveToSettingsFile();
@@ -786,6 +787,9 @@ public class GeneralProperties
 
 
     }
+
+
+
     public static ReplaySettings getReplaySettings()
     {
         return replaySettings;
