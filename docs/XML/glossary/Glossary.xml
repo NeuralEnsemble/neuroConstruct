@@ -598,8 +598,25 @@
 </term>
 
 <term hidden="true">
+    <name>GENESIS Symmetric</name>
+    <defined>Symmetrical or asymmetrical compartments. Generally asymmetrical is better as sims are faster. See GENESIS documentation for other details.</defined>
+</term>
+
+<term hidden="true">
+    <name>GENESIS Units</name>
+    <defined>Which set of units to use in the GENESIS simulation (m/s/V or cm/ms/mV, see Help -> Units). <br/>
+        Note: when simulations are loaded back into neuroConstruct, saved values are converted to neuroConstruct units (um/ms/mV etc.)</defined>
+</term>
+
+
+<term hidden="true">
+    <name>GENESIS Num Integration method</name>
+    <defined>Which numerical integration method to use. See GENESIS documentation for full details.</defined>
+</term>
+
+<term hidden="true">
     <name>NEURON 3D</name>
-    <defined>This pops up a NEURON Shape plot during the simulation, so that the membrane potential of all cells can be visualised</defined>
+    <defined>This creates a NEURON Shape plot during the simulation, so that the membrane potential of all cells can be visualised (Note: slows simulation)</defined>
 </term>
 
 
@@ -1007,7 +1024,7 @@ Set to MAX if no restriction applies.</defined>
 
 <term hidden="true">
     <name>Generate comments</name>
-    <defined>Select this to have extra comment lines in the generated scripts, to make them more readable. Unchecking this <br/>
+    <defined>Select this to have extra comment lines in the generated scripts, to facilitate readability. Unchecking this <br/>
              option keeps the generated files short, and also supresses most of the console output when running the simulation
 </defined>
 </term>
