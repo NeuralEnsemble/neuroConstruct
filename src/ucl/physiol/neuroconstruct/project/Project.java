@@ -211,6 +211,8 @@ public class Project implements TableModelListener
     {
         boolean userAgreedUpdate = false;
 
+
+
         try
         {
             userAgreedUpdate = ProjectFileUpdate.updateProjectFile(projectFile);
@@ -220,6 +222,8 @@ public class Project implements TableModelListener
             throw new ProjectFileParsingException("Problem while attempting to check the version of the project file",
                                                   ex3);
         }
+
+
 
        // System.exit(-9);
 

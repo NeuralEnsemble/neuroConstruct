@@ -7,6 +7,7 @@ See also the README file
 
 Update to options for stimulations (Tab Input and Output): repeated pulses, ...
 Some extra tool tips added
+Fixed minor bug where project file modified date is changed on loading
 Uses NeuroML v1.6
 
 

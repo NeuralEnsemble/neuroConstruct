@@ -4485,7 +4485,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     public void doLoadProject(String projectName)
     {
-
         logger.logComment(">>>>>>>>>>>   Loading a project at startup...");
 
         this.jTextAreaProjDescription.setText("\n   Loading project: "+projectName+"...");
@@ -4498,6 +4497,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                       "Cannot find startup file: " + projFile.getAbsolutePath(), null, this);
             return;
         }
+
 
         initialisingProject = true;
         try

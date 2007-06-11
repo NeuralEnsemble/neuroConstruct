@@ -124,6 +124,8 @@ public class ProjectFileUpdate
         // As an empty line is produced by the toString of the Elements
         int lineNumber = 0;
 
+        boolean updatePerformed = false;
+
         boolean userWarned = false;
 
 
@@ -172,6 +174,7 @@ public class ProjectFileUpdate
                     }
 
                     nextLine = GeneralUtils.replaceAllTokens(nextLine, nextOldToken, newToken);
+                    updatePerformed = true;
 
                     logger.logComment("Replaced with line: "+ nextLine);
                 }
@@ -182,10 +185,12 @@ public class ProjectFileUpdate
 
         //logger.logComment("New file contents: "+newFileString);
 
-        FileWriter fw = new FileWriter(projFile);
-        fw.write(newFileString.toString());
-        fw.close();
-
+        if (updatePerformed)
+        {
+            FileWriter fw = new FileWriter(projFile);
+            fw.write(newFileString.toString());
+            fw.close();
+        }
         return true;
     }
 
