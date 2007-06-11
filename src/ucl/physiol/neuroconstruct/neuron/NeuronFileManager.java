@@ -1511,8 +1511,9 @@ public class NeuronFileManager
 
     public static String getHocFriendlyFilename(String filename)
     {
-        //System.out.println(filename);
+        logger.logComment("filename: " + filename, true);
         filename = GeneralUtils.replaceAllTokens(filename, "\\", "/");
+
         filename = GeneralUtils.replaceAllTokens(filename,
                                                  "Program Files",
                                                  "Progra~1");
@@ -1521,13 +1522,35 @@ public class NeuronFileManager
                                                  "Documents and Settings",
                                                  "Docume~1");
 
-        //System.out.println(filename);
-        /*
-        Pattern p = Pattern.compile("\\\\"); // looking for one \ (there's \\ needed for java, and twice this for perl)
-        Matcher m = p.matcher(filename);
-        return m.replaceAll("\\/"); // replacing with \\ (see above)
-*/
-    return filename;
+        if (GeneralUtils.isWindowsBasedPlatform())
+        {
+            boolean canFix = true;
+            // Can catch spaces if a dir is called c:\Padraig Gleeson and change it to c:\Padrai~1
+            while (filename.indexOf(" ") > 0 && canFix)
+            {
+                int indexOfSpace = filename.indexOf(" ");
+
+                int prevSlash = filename.substring(0,indexOfSpace).lastIndexOf("/");
+                int nextSlash = filename.indexOf("/", indexOfSpace);
+
+                String spacedWord = filename.substring(prevSlash+1, nextSlash);
+
+                logger.logComment("spacedWord: " + spacedWord, true);
+
+                if (spacedWord.indexOf(" ")<6) canFix = false;
+                else
+                {
+                    String shortened = spacedWord.substring(0,6)+"~1";
+                    filename = GeneralUtils.replaceAllTokens(filename, spacedWord, shortened);
+                    logger.logComment("filename now: " + filename, true);
+                }
+            }
+        }
+
+
+        logger.logComment("filename now: " + filename, true);
+
+        return filename;
 
     }
 

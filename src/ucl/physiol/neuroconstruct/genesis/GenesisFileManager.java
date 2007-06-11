@@ -2744,11 +2744,11 @@ public class GenesisFileManager
 
     }
 
-    public String getFriendlyDirName(String dataFileDirName)
+    public static String getFriendlyDirName(String fileDirName)
     {
 
         Pattern p = Pattern.compile("\\\\"); // looking for one \ (there's \\ needed for java, and twice this for perl)
-        Matcher m = p.matcher(dataFileDirName);
+        Matcher m = p.matcher(fileDirName);
         String friendlyDirName = m.replaceAll("\\/"); // replacing with \\ (see above)
 
         if (friendlyDirName.indexOf("Program Files")>=0)
@@ -2759,6 +2759,36 @@ public class GenesisFileManager
         {
             friendlyDirName = GeneralUtils.replaceAllTokens(friendlyDirName, "Documents and Settings", "Docume~1");
         }
+                logger.logComment("a friendlyDirName: " + friendlyDirName, true);
+
+        if (GeneralUtils.isWindowsBasedPlatform())
+        {
+            boolean canFix = true;
+
+
+            // Can catch spaces if a dir is called c:\Padraig Gleeson and change it to c:\Padrai~1
+            while (friendlyDirName.indexOf(" ") > 0 && canFix)
+            {
+                int indexOfSpace = friendlyDirName.indexOf(" ");
+
+                int prevSlash = friendlyDirName.substring(0, indexOfSpace).lastIndexOf("/");
+                int nextSlash = friendlyDirName.indexOf("/", indexOfSpace);
+
+                String spacedWord = friendlyDirName.substring(prevSlash + 1, nextSlash);
+
+                logger.logComment("spacedWord: " + spacedWord, true);
+
+                if (spacedWord.indexOf(" ") < 6) canFix = false;
+                else
+                {
+                    String shortened = spacedWord.substring(0, 6) + "~1";
+                    friendlyDirName = GeneralUtils.replaceAllTokens(friendlyDirName, spacedWord, shortened);
+                    logger.logComment("filename now: " + friendlyDirName, true);
+                }
+            }
+        }
+                logger.logComment("c friendlyDirName now: " + friendlyDirName, true);
+
 
         return friendlyDirName;
 
@@ -3315,6 +3345,14 @@ public class GenesisFileManager
 
         try
         {
+
+
+            getFriendlyDirName("\\doccccccc and se\\paaaaaat gell\\1234");
+            System.exit(2);
+
+
+
+
             //Project p = Project.loadProject(new File("projects/Moro/Moro.neuro.xml"), null);
             Project p = Project.loadProject(new File("examples/Ex-Simple/Ex-Simple.neuro.xml"), null);
             //Proje
@@ -3323,6 +3361,8 @@ public class GenesisFileManager
 
             pm.doGenerate(SimConfigInfo.DEFAULT_SIM_CONFIG_NAME, 123);
             GenesisFileManager gen = new GenesisFileManager(p);
+
+
 
             OriginalCompartmentalisation oc = new OriginalCompartmentalisation();
 

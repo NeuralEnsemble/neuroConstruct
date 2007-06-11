@@ -609,6 +609,34 @@ public class GeneralUtils
         }
 
 
+        if (GeneralUtils.isWindowsBasedPlatform())
+        {
+            boolean canFix = true;
+                    logger.logComment("filename : " + winPath, true);
+            // Can catch spaces if a dir is called c:\Padraig Gleeson and change it to c:\Padrai~1
+            while (winPath.indexOf(" ") > 0 && canFix)
+            {
+                int indexOfSpace = winPath.indexOf(" ");
+
+                int prevSlash = winPath.substring(0, indexOfSpace).lastIndexOf("\\");
+                int nextSlash = winPath.indexOf("\\", indexOfSpace);
+
+                String spacedWord = winPath.substring(prevSlash + 1, nextSlash);
+
+                logger.logComment("spacedWord: " + spacedWord, true);
+
+                if (spacedWord.indexOf(" ") < 6) canFix = false;
+                else
+                {
+                    String shortened = spacedWord.substring(0, 6) + "~1";
+                    winPath = GeneralUtils.replaceAllTokens(winPath, spacedWord, shortened);
+                    logger.logComment("filename now: " + winPath, true);
+                }
+            }
+        }
+
+
+
         String drive = winPath.substring(0, winPath.indexOf( ":")).toLowerCase();
         String cygwinPath = "/cygdrive/"+ drive +"/" + replaceAllTokens(winPath.substring(winPath.indexOf( ":")+2), "\\", "/");
         logger.logComment("As cygwin: "+ cygwinPath);
