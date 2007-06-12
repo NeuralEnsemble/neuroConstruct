@@ -45,8 +45,8 @@ public class GeneralProperties
     /** This is changed automatically by Ant. Look in build.xml...*/
     private static final String versionNumber = "1.0.3";
 
-    private static final String neuroMLVersionNumberShort = "1.5";
-    private static final String neuroMLVersionNumberLong = "1.5";
+    private static final String neuroMLVersionNumberShort = "1.6";
+    private static final String neuroMLVersionNumberLong = "1.6";
 
     private static final String minimumVersionJava = "J2SE 5.0";
 
