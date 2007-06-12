@@ -531,6 +531,8 @@ public class ProjectManager
                     }
                 }
 
+                //cmlCm.getValue(ChannelMLHelper.);
+
             }
 
             overallValidity = ValidityStatus.combineValidities(overallValidity, cellMechValidity);
