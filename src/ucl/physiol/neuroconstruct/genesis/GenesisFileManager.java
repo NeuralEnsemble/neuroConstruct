@@ -1282,15 +1282,21 @@ public class GenesisFileManager
                     catch (CMLMechNotInitException e)
                     {
                         ChannelMLCellMechanism cp = (ChannelMLCellMechanism) cellMech;
-                        cp.initialise(project, false);
                         try
                         {
+                            cp.initialise(project, false);
                             isCMLPassive = cp.isPassiveNonSpecificCond();
                         }
                         catch (CMLMechNotInitException cmle)
                         {
                             // nothing more to try...
                         }
+                        catch (ChannelMLException cmle2)
+                        {
+                            // nothing more to do...
+                        }
+
+
                     }
                 }
 

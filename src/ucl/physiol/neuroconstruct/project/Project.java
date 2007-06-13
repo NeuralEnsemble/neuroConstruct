@@ -478,9 +478,21 @@ public class Project implements TableModelListener
 
                             cmlcm.initPropsFromPropsFile(propsFile);
 
-                            cmlcm.initialise(proj, false);
+                            try
+                            {
+                                cmlcm.initialise(proj, false);
+                            }
+                            catch (ChannelMLException ex1)
+                            {
+                                GuiUtils.showErrorMessage(logger,
+                                                          "Error creating implementation of Cell Mechanism: " +
+                                                          cmlcm.getInstanceName(),
+                                                          ex1,
+                                                          null);
+                            }
 
                             proj.cellMechanismInfo.addCellMechanism(cmlcm);
+
                         }
                         else if (implMethod.equals(CellMechanism.ABSTRACTED_CELL_MECHANISM) ||
                                  implMethod.equals(CellMechanism.FILE_BASED_CELL_MECHANISM))

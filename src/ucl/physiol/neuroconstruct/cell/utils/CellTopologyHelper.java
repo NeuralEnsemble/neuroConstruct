@@ -2221,6 +2221,7 @@ public class CellTopologyHelper
                     {
                         errorReport.append("Error: Project does not contain the cell mechanism: " + cm.getName() +
                                            " referred to in this cell\n");
+
                         missingCellProcs.add(cm.getName());
                     }
                     if (passChans.contains(cm)) numPassiveChans++;
@@ -3008,15 +3009,22 @@ public class CellTopologyHelper
                 }
                 catch (CMLMechNotInitException e)
                 {
-                    cmlProc.initialise(project, false);
                     try
                     {
+                        cmlProc.initialise(project, false);
                         isCMLPassive = cmlProc.isPassiveNonSpecificCond();
                     }
                     catch (CMLMechNotInitException cmle)
                     {
                         // nothing more to try...
                     }
+                    catch (ChannelMLException ex2)
+                    {
+                        logger.logError("Error initialising Cell mech: "+ cmlProc.getInstanceName(), ex2);
+                        //return null;
+                    }
+
+
                 }
 
                 if (isCMLPassive)

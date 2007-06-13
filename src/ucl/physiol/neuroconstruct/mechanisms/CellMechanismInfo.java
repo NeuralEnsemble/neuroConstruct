@@ -155,7 +155,7 @@ public class CellMechanismInfo extends AbstractTableModel
 
 
 
-    public void reinitialiseCMLMechs(Project project)
+    public void reinitialiseCMLMechs(Project project) throws ChannelMLException
     {
         logger.logComment("reinitialiseCMLMechs...");
         for (int i = 0; i < getRowCount(); i++)

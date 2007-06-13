@@ -3653,7 +3653,20 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     public void cellMechanismUpdated()
     {
-        projManager.getCurrentProject().cellMechanismInfo.reinitialiseCMLMechs(projManager.getCurrentProject());
+        try
+        {
+            projManager.getCurrentProject().cellMechanismInfo.reinitialiseCMLMechs(projManager.getCurrentProject());
+        }
+        catch (ChannelMLException ex1)
+        {
+            GuiUtils.showErrorMessage(logger,
+                                      "Error reinitialising Cell Mechanisms: " +
+                                      ex1.getMessage(),
+                                      ex1,
+                                      null);
+
+        }
+
         projManager.getCurrentProject().markProjectAsEdited();
         this.refreshTabCellProcesses();
     }
@@ -11314,7 +11327,19 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         projManager.getCurrentProject().cellMechanismInfo.addCellMechanism(cmlm);
 
 
-        cmlm.initialise(projManager.getCurrentProject(), true);
+        try
+        {
+            cmlm.initialise(projManager.getCurrentProject(), true);
+        }
+        catch (ChannelMLException ex1)
+        {
+            GuiUtils.showErrorMessage(logger,
+                                      "Error initialising Cell Mechanism: " +cmlm.getInstanceName() +", "+
+                                      ex1.getMessage(),
+                                      ex1,
+                                      null);
+
+        }
 
 
         ChannelMLEditor frame = new ChannelMLEditor(cmlm, projManager.getCurrentProject(), this);

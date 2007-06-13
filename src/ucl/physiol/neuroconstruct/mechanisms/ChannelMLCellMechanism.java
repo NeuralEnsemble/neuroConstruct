@@ -379,7 +379,7 @@ public class ChannelMLCellMechanism extends CellMechanism
     /**
      * Sets the xmlDoc to null and reinitialises
      */
-    public File reset(Project project, boolean save)
+    public File reset(Project project, boolean save) throws ChannelMLException
     {
         xmlDoc = null;
         return initialise(project, save);
@@ -391,7 +391,7 @@ public class ChannelMLCellMechanism extends CellMechanism
      * location based on the project directory
      * @return The actual File used
      */
-    public File initialise(Project project, boolean save)
+    public File initialise(Project project, boolean save) throws ChannelMLException
     {
         //this.initialiseProperties(project);
 
@@ -443,22 +443,23 @@ public class ChannelMLCellMechanism extends CellMechanism
         }
         catch (ParserConfigurationException e)
         {
-            GuiUtils.showErrorMessage(logger, "Error when parsing XML file: "+channelMLFile, e, null);
+            throw new ChannelMLException( "Error when parsing XML file: "+channelMLFile, e);
         }
         catch (SAXException e)
         {
-            GuiUtils.showErrorMessage(logger, "Error when parsing XML file: "+channelMLFile, e, null);
+            throw new ChannelMLException("Error when parsing XML file: "+channelMLFile, e);
         }
 
         catch (IOException e)
         {
-            GuiUtils.showErrorMessage(logger, "Error with XML file: "+channelMLFile, e, null);
+            throw new ChannelMLException("Error with XML file: "+channelMLFile, e);
         }
 
         catch (ChannelMLException e)
         {
-            GuiUtils.showErrorMessage(logger, "Error with XML file: "+channelMLFile, e, null);
+            throw new ChannelMLException("Error with XML file: "+channelMLFile, e);
         }
+
         return fileUsed;
 
     }
@@ -557,8 +558,23 @@ public class ChannelMLCellMechanism extends CellMechanism
                             fileOut.write(commentLinePrefix + "with parameters: \n");
 
                             if (xmlDoc == null)
-                                this.initialise(project, false);
+                            {
+                                try
+                                {
+                                    this.initialise(project, false);
+                                }
+                                catch (ChannelMLException ex1)
+                                {
+                                    GuiUtils.showErrorMessage(logger,
+                                                              "Error creating implementation of Cell Mechanism: " +
+                                                              this.getInstanceName(),
+                                                              ex1,
+                                                              null);
 
+                                    return false;
+
+                                }
+                            }
                             ArrayList<String> xpathLocs = xmlDoc.getXPathLocations(true);
 
                             for (int j = 0; j < xpathLocs.size(); j++)

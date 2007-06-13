@@ -165,10 +165,11 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         this.eventIf = eventIf;
         this.cmlMechanism = cmlMechanism;
 
-        File cmlFileUsed = cmlMechanism.initialise(project, false);  // in case..
 
         try
         {
+            File cmlFileUsed = cmlMechanism.initialise(project, false);  // in case..
+
             refreshingInterface = true;
             jbInit();
             refreshingInterface = false;
@@ -753,7 +754,19 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         logger.logComment("Reloading file...");
         //this.dispose();
 
-        cmlMechanism.reset(project, false);
+        try
+        {
+            cmlMechanism.reset(project, false);
+        }
+        catch (ChannelMLException ex1)
+        {
+            GuiUtils.showErrorMessage(logger,
+                                      "Error initialising Cell Mechanism: " +cmlMechanism.getInstanceName(),
+                                      ex1,
+                                      null);
+
+        }
+
         this.refresh();
 
         if (eventIf!=null)

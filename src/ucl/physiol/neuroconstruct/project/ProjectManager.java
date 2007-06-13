@@ -26,7 +26,7 @@ import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.simulation.*;
-import ucl.physiol.neuroconstruct.neuroml.NeuroMLException;
+import ucl.physiol.neuroconstruct.neuroml.*;
 
 /**
  * A class for handling interaction with the project
@@ -494,45 +494,78 @@ public class ProjectManager
             {
                 ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism)next;
 
-                File cmlFile = cmlCm.getChannelMLFile(activeProject);
+                try
+                {
+                    File cmlFile = cmlCm.initialise(activeProject, false);
 
-                if (cmlFile!=null && cmlFile.exists())
-                {
-                    if (verbose) report.addTaggedElement("ChannelML file: " + cmlFile.getAbsolutePath() + " found", "p");
+                    if (cmlFile != null && cmlFile.exists())
+                    {
+                        if (verbose) report.addTaggedElement("ChannelML file: " + cmlFile.getAbsolutePath() + " found", "p");
+                    }
+                    else
+                    {
+                        report.addTaggedElement("Error, ChannelML file: " + cmlFile.getAbsolutePath() + " not found",
+                                                "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
+
+                        cellMechValidity = ValidityStatus.VALIDATION_ERROR;
+
+                    }
+
+                    ArrayList<SimXSLMapping> simMappings = cmlCm.getSimMappings();
+
+                    for (SimXSLMapping simMapping : simMappings)
+                    {
+                        File f = simMapping.getXslFileObject(activeProject, next.getInstanceName());
+
+                        if (f != null && f.exists())
+                        {
+                            if (verbose) report.addTaggedElement("Implementation file: " + f.getAbsolutePath() + " found", "p");
+                        }
+                        else
+                        {
+                            report.addTaggedElement("Error, implementation file: " + f.getAbsolutePath() + " not found",
+                                                    "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
+
+                            cellMechValidity = ValidityStatus.VALIDATION_ERROR;
+
+                        }
+                    }
+
+                    String status = cmlCm.getValue(ChannelMLConstants.getChannelStatusValueXPath());
+
+                    if (status != null)
+                    {
+                        if (status.equals(ChannelMLConstants.STATUS_VALUE_ATTR_STABLE))
+                        {
+                            report.addTaggedElement("Status of ChannelML entry: " + status,
+                                                    "font color=\"" + ValidityStatus.VALIDATION_COLOUR_OK + "\"");
+                        }
+                        else if (status.equals(ChannelMLConstants.STATUS_VALUE_ATTR_IN_PROGRESS))
+                        {
+                            report.addTaggedElement("Status of ChannelML entry: " + status,
+                                                    "font color=\"" + ValidityStatus.VALIDATION_COLOUR_WARN + "\"");
+
+                            cellMechValidity = ValidityStatus.combineValidities(cellMechValidity, ValidityStatus.VALIDATION_WARN);
+                        }
+                        else if (status.equals(ChannelMLConstants.STATUS_VALUE_ATTR_KNOWN_ISSUES))
+                        {
+                            report.addTaggedElement("Status of ChannelML entry: " + status,
+                                                    "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
+
+                            cellMechValidity = ValidityStatus.combineValidities(cellMechValidity, ValidityStatus.VALIDATION_ERROR);
+                        }
+
+                    }
                 }
-                else
+                catch (ChannelMLException ex)
                 {
-                    report.addTaggedElement("Error, ChannelML file: " + cmlFile.getAbsolutePath() + " not found",
+                    report.addTaggedElement("Error instantiating Channel mechanism: " + cmlCm.getInstanceName()
+                                            +", file: "+ cmlCm.getChannelMLFile(),
                                             "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
 
                     cellMechValidity = ValidityStatus.VALIDATION_ERROR;
 
                 }
-
-
-                ArrayList<SimXSLMapping> simMappings = cmlCm.getSimMappings();
-
-
-                for (SimXSLMapping simMapping: simMappings)
-                {
-                    File f = simMapping.getXslFileObject(activeProject, next.getInstanceName());
-
-                    if (f!=null && f.exists())
-                    {
-                        if (verbose) report.addTaggedElement("Implementation file: "+f.getAbsolutePath()+" found", "p");
-                    }
-                    else
-                    {
-                        report.addTaggedElement("Error, implementation file: "+f.getAbsolutePath()+" not found",
-                                                "font color=\""+ValidityStatus.VALIDATION_COLOUR_ERROR+"\"");
-
-                        cellMechValidity = ValidityStatus.VALIDATION_ERROR;
-
-                    }
-                }
-
-                //cmlCm.getValue(ChannelMLHelper.);
-
             }
 
             overallValidity = ValidityStatus.combineValidities(overallValidity, cellMechValidity);

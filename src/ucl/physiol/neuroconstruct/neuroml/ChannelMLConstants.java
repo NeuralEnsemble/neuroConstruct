@@ -118,6 +118,13 @@ public class ChannelMLConstants
 
     public static String NAME_ATTR = "name";
 
+    public static String STATUS_ELEMENT = "status";
+    public static String STATUS_VALUE_ATTR = "value";
+
+    public static String STATUS_VALUE_ATTR_STABLE = "stable";
+    public static String STATUS_VALUE_ATTR_IN_PROGRESS = "in_progress";
+    public static String STATUS_VALUE_ATTR_KNOWN_ISSUES = "known_issues";
+
 
     public static String HH_GATE_ELEMENT = "hh_gate";
 
@@ -176,6 +183,23 @@ public class ChannelMLConstants
             ChannelMLConstants.NAME_ATTR;
 
     }
+
+    public static String getChannelStatusXPath()
+    {
+        return getChannelTypeXPath()+ "/" +
+            ChannelMLConstants.STATUS_ELEMENT;
+
+    }
+
+
+    public static String getChannelStatusValueXPath()
+    {
+        return getChannelStatusXPath()+ "/@" +
+            ChannelMLConstants.STATUS_VALUE_ATTR;
+
+    }
+
+
 
     public static String getSynapseNameXPath()
     {

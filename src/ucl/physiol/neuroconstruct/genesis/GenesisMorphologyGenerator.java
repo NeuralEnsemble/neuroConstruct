@@ -320,15 +320,25 @@ public class GenesisMorphologyGenerator
                             catch (CMLMechNotInitException e)
                             {
                                 ChannelMLCellMechanism cp = (ChannelMLCellMechanism) cellMech;
-                                cp.initialise(project, false);
                                 try
                                 {
                                     isCMLPassive = cp.isPassiveNonSpecificCond();
+                                    cp.initialise(project, false);
                                 }
                                 catch (CMLMechNotInitException cmle)
                                 {
                                     // nothing more to try...
                                 }
+                                catch (ChannelMLException ex1)
+                                {
+                                    GuiUtils.showErrorMessage(logger,
+                                                              "Error creating implementation of Cell Mechanism: " +
+                                                              cellMech.getInstanceName(),
+                                                              ex1,
+                                                              null);
+
+                                }
+
                             }
                         }
 
