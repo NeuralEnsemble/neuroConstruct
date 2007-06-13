@@ -18,7 +18,6 @@ import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 
 import org.w3c.dom.*;
-import org.xml.sax.*;
 
 /**
  * Utilities for dealing with XML files

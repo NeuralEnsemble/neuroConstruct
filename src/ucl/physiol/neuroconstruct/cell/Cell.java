@@ -12,7 +12,6 @@
 
 package ucl.physiol.neuroconstruct.cell;
 
-import java.io.*;
 import java.util.*;
 import javax.vecmath.*;
 
@@ -31,7 +30,7 @@ import ucl.physiol.neuroconstruct.utils.*;
   */
 
 
-public class Cell implements Serializable
+public class Cell/* implements Serializable*/
 {
     ClassLogger logger = new ClassLogger("Cell");
 
@@ -48,7 +47,7 @@ public class Cell implements Serializable
     /**
      * A vector containing the segments for the soma/dends/axons
      */
-    private Vector<Segment> allSegments = new Vector();
+    private Vector<Segment> allSegments = new Vector<Segment>();
 
     /**
      * For the recording of Synapse potential locations
@@ -199,13 +198,13 @@ public class Cell implements Serializable
 
     public Vector<Segment> getOnlySomaSegments()
     {
-        Vector onlySomaSegments = new Vector();
+        Vector<Segment> onlySomaSegments = new Vector<Segment>();
 
         for (int i = 0; i < allSegments.size(); i++)
         {
             Vector groups = ((Segment)allSegments.elementAt(i)).getGroups();
              if (groups.contains(Section.SOMA_GROUP))
-                 onlySomaSegments.add(allSegments.elementAt(i));
+                 onlySomaSegments.add(allSegments.get(i));
         }
         return onlySomaSegments;
     }
@@ -213,7 +212,7 @@ public class Cell implements Serializable
 
     public Vector<Segment> getOnlyAxonalSegments()
     {
-        Vector onlyAxonalSegments = new Vector();
+        Vector<Segment> onlyAxonalSegments = new Vector<Segment>();
 
         for (int i = 0; i < allSegments.size(); i++)
         {
@@ -227,7 +226,7 @@ public class Cell implements Serializable
 
     public Vector<Segment> getOnlyDendriticSegments()
     {
-        Vector onlyDendriticSegments = new Vector();
+        Vector<Segment> onlyDendriticSegments = new Vector<Segment>();
 
         for (int i = 0; i < allSegments.size(); i++)
         {
@@ -704,7 +703,7 @@ public class Cell implements Serializable
     public ArrayList<String> getAllAllowedSynapseTypes()
     {
         ArrayList<String> allTypes = new ArrayList<String>();
-        Set synapses = synapsesVsGroups.keySet();
+        Set<String> synapses = synapsesVsGroups.keySet();
         allTypes.addAll(synapses);
 
         return allTypes;
@@ -730,7 +729,7 @@ public class Cell implements Serializable
     {
         this.checkSpecAxRes();
         ArrayList<Float> allSpecAxRes = new ArrayList<Float>();
-        Set specAxReses = this.specAxResVsGroups.keySet();
+        Set<Float> specAxReses = this.specAxResVsGroups.keySet();
         allSpecAxRes.addAll(specAxReses);
 
         return allSpecAxRes;
@@ -740,7 +739,7 @@ public class Cell implements Serializable
     {
         this.checkSpecCap();
         ArrayList<Float> allSpecCaps = new ArrayList<Float>();
-        Set specCaps = this.specCapVsGroups.keySet();
+        Set<Float> specCaps = this.specCapVsGroups.keySet();
         allSpecCaps.addAll(specCaps);
 
         return allSpecCaps;
@@ -751,7 +750,7 @@ public class Cell implements Serializable
     public ArrayList<ApPropSpeed> getAllApPropSpeeds()
     {
         ArrayList<ApPropSpeed> allAPPVs = new ArrayList<ApPropSpeed>();
-        Set appvs = this.apPropSpeedsVsGroups.keySet();
+        Set<ApPropSpeed> appvs = this.apPropSpeedsVsGroups.keySet();
         allAPPVs.addAll(appvs);
 
         return allAPPVs;
@@ -775,15 +774,15 @@ public class Cell implements Serializable
 */
 
 
-    public Vector getAllGroupNames()
+    public Vector<String> getAllGroupNames()
     {
-        Vector allGroups = new Vector();
+        Vector<String> allGroups = new Vector<String>();
 
-        Vector groups = new Vector();
+        Vector<String> groups = new Vector<String>();
 
         for (int i = 0; i < allSegments.size(); i++)
         {
-            Segment segment = (Segment) allSegments.elementAt(i);
+            Segment segment = allSegments.get(i);
             groups = segment.getGroups();
             for (int j = 0; j < groups.size(); j++)
             {
@@ -808,7 +807,8 @@ public class Cell implements Serializable
 
     public Vector<String> getGroupsWithSynapse(String synapseType)
     {
-        if (!synapsesVsGroups.containsKey(synapseType)) return new Vector();
+        if (!synapsesVsGroups.containsKey(synapseType)) return new Vector<String>();
+        
         return (Vector)synapsesVsGroups.get(synapseType);
     }
 

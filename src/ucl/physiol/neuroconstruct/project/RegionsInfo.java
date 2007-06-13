@@ -12,15 +12,14 @@
 
 package ucl.physiol.neuroconstruct.project;
 
-import javax.swing.*;
-import java.util.*;
-import javax.swing.table.*;
-import ucl.physiol.neuroconstruct.utils.*;
-import ucl.physiol.neuroconstruct.j3D.*;
-import javax.swing.event.*;
-import java.io.*;
-import java.beans.*;
 import java.awt.*;
+import java.beans.*;
+import java.io.*;
+import java.util.*;
+
+import javax.swing.table.*;
+
+import ucl.physiol.neuroconstruct.utils.*;
 
 /**
  * Extension of AbstractTableModel to store the info on the regions
@@ -28,6 +27,8 @@ import java.awt.*;
  * @author Padraig Gleeson
  * @version 1.0.3
  */
+
+@SuppressWarnings("serial")
 
 public class RegionsInfo extends AbstractTableModel
 {
@@ -264,7 +265,7 @@ public class RegionsInfo extends AbstractTableModel
     public Hashtable getInternalData()
     {
         logger.logComment("Internal data being got...");
-        Hashtable allInfo = new Hashtable();
+        Hashtable<String, Vector> allInfo = new Hashtable<String, Vector>();
         allInfo.put(columnNames[COL_NUM_REGIONNAME], vectorNames);
         allInfo.put(columnNames[COL_NUM_REGION], vectorRegionObjects);
         allInfo.put(columnNames[COL_NUM_COLOUR], vectorColours);

@@ -12,12 +12,9 @@
 
 package ucl.physiol.neuroconstruct.project;
 
-import java.io.*;
-import java.lang.reflect.*;
 import java.util.*;
 
 import ucl.physiol.neuroconstruct.cell.*;
-import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.utils.*;
 
 /**
@@ -31,7 +28,7 @@ public class CellManager
 {
     ClassLogger logger = new ClassLogger("CellManager");
 
-    private Vector<Cell> allCells = new Vector();
+    private Vector<Cell> allCells = new Vector<Cell>();
 
 
     public CellManager()
@@ -102,7 +99,7 @@ public class CellManager
                 throw new NamingException("The cell name: "
                                           + newCell.getInstanceName()
                                           + " has already been taken");
-            }
+            } 
         }
         if (newCell.getInstanceName().indexOf(" ")>=0)
         {

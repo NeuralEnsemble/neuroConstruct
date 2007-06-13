@@ -55,11 +55,11 @@ public class NeuronMorphReader extends FormatImporter
     /**
      * Hashtable of the Section name vs. Segment of the first segment in a new section
      */
-    private Hashtable<String, Segment> createdFirstSegments = new Hashtable();
+    private Hashtable<String, Segment> createdFirstSegments = new Hashtable<String, Segment>();
     /**
      * Hashtable of the Section name vs. Segment of the last segment in each section
      */
-    private Hashtable<String, Segment> lastAddedChildSegs = new Hashtable();
+    private Hashtable<String, Segment> lastAddedChildSegs = new Hashtable<String, Segment>();
 
     int indexOfValidSegments = 0;
 
@@ -123,8 +123,8 @@ public class NeuronMorphReader extends FormatImporter
 
         this.morphologyFile = newFile;
 
-        this.moveDendsToConnectionPoint = moveDendsToConnectionPoint;
-        this.moveSomaToOrigin = moveSomaToOrigin;
+        //this.moveDendsToConnectionPoint = moveDendsToConnectionPoint;
+        //this.moveSomaToOrigin = moveSomaToOrigin;
 
         Segment somaPrimarySegment = null;
 
@@ -942,7 +942,7 @@ public class NeuronMorphReader extends FormatImporter
 
     private static float getDiamInfofromPt3dadd(String line)
     {
-        Point3f point = new Point3f();
+       
         int startIndexX = line.indexOf("(")+1;
         int startIndexY = line.indexOf(",", startIndexX)+1;
         int startIndexZ = line.indexOf(",", startIndexY)+1;
@@ -963,7 +963,7 @@ public class NeuronMorphReader extends FormatImporter
     {
         //File neuronFile = new File("projects/Project_1/pyramid.nrn");
 
-        File neuronFile = new File("C:\\Documents and Settings\\padraig\\Desktop\\Datas\\Datas\\ub\\simp.hoc");
+        //File neuronFile = new File("C:\\Documents and Settings\\padraig\\Desktop\\Datas\\Datas\\ub\\simp.hoc");
 
         //File neuronFile = new File("Y:\\Padraig\\neuron\\examples\\Disjointed\\triang.hoc");
         //File neuronFile = new File("C:\\neuroConstruct\\projects\\Project_1\\10-3.nrn");

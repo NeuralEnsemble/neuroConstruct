@@ -13,15 +13,14 @@
 package ucl.physiol.neuroconstruct.gui.plotter;
 
 import java.awt.*;
+import java.awt.event.*;
+
+import javax.swing.*;
+import javax.swing.border.*;
+
+import ucl.physiol.neuroconstruct.dataset.*;
 import ucl.physiol.neuroconstruct.gui.*;
 import ucl.physiol.neuroconstruct.utils.*;
-import java.text.*;
-import java.awt.event.*;
-import ucl.physiol.neuroconstruct.j3D.*;
-import ucl.physiol.neuroconstruct.dataset.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
 
 /**
  * Simple Dialog for editing points in Data Set
@@ -29,6 +28,8 @@ import javax.swing.border.*;
  * @author Padraig Gleeson
  * @version 1.0.3
  */
+
+@SuppressWarnings("serial")
 
 public class EditPointsDialog extends JDialog implements FocusListener, KeyListener
 {

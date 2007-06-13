@@ -32,7 +32,10 @@ import ucl.physiol.neuroconstruct.utils.*;
 
 public class View2DPlane extends JFrame
 {
-    ClassLogger logger = new ClassLogger("View2DPlane");
+	private static final long serialVersionUID = -5927916856156987118L;
+
+
+	ClassLogger logger = new ClassLogger("View2DPlane");
 
 
     boolean standAlone = true;

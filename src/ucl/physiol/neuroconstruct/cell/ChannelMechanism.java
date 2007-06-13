@@ -11,10 +11,8 @@
  */
 
 package ucl.physiol.neuroconstruct.cell;
+ 
 
-import java.io.*;
-import ucl.physiol.neuroconstruct.cell.examples.SimpleCell;
-import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import ucl.physiol.neuroconstruct.utils.units.*;
 
  /**
@@ -28,7 +26,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
 
 
 
-public class ChannelMechanism implements Serializable
+public class ChannelMechanism/* implements Serializable*/
 {
     public String name = null;
     public float density;
@@ -96,12 +94,12 @@ public class ChannelMechanism implements Serializable
 
     public static void main(String[] args) throws CloneNotSupportedException
     {
-        Cell cell = new SimpleCell("hh");
+        //Cell cell = new SimpleCell("hh");
 
-        Cell c2 = (Cell)cell.clone();
+        //Cell c2 = (Cell)cell.clone();
 
         ChannelMechanism cm = new ChannelMechanism("na", 1200);
-        ChannelMechanism cm3 = new ChannelMechanism("na", 1200.0f);
+        //ChannelMechanism cm3 = new ChannelMechanism("na", 1200.0f);
 
         System.out.println("ChannelMechanism: "+ cm);
 /*

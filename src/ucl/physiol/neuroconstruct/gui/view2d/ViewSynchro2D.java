@@ -12,16 +12,11 @@
 
 package ucl.physiol.neuroconstruct.gui.view2d;
 
-import java.util.*;
-
 import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
+import java.util.*;
 
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
-import ucl.physiol.neuroconstruct.gui.*;
 
 /**
  * Frame for showing 2D view of synchrony of a cell rel to a cell group
@@ -30,6 +25,8 @@ import ucl.physiol.neuroconstruct.gui.*;
  * @version 1.0.3
  */
 
+
+@SuppressWarnings("serial")
 
 public class ViewSynchro2D extends View2DPlane
 {
@@ -93,7 +90,7 @@ public class ViewSynchro2D extends View2DPlane
 
     public static void main(String[] args)
     {
-        ArrayList<PositionRecord> positions = new ArrayList();
+        ArrayList<PositionRecord> positions = new ArrayList<PositionRecord>();
 
 
         positions.add(new PositionRecord(0,    0.5f, 0.5f, 1));

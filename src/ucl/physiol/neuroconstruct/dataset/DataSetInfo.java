@@ -12,19 +12,16 @@
 
 package ucl.physiol.neuroconstruct.dataset;
 
-import javax.swing.*;
-import java.util.*;
-import javax.swing.table.*;
-import ucl.physiol.neuroconstruct.utils.*;
-import ucl.physiol.neuroconstruct.j3D.*;
-import javax.swing.event.*;
-import java.io.*;
-import java.beans.*;
-import ucl.physiol.neuroconstruct.project.*;
-import ucl.physiol.neuroconstruct.cell.*;
-import ucl.physiol.neuroconstruct.utils.units.*;
-import ucl.physiol.neuroconstruct.gui.*;
-import java.text.*;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Vector;
+
+import javax.swing.table.AbstractTableModel;
+
+import ucl.physiol.neuroconstruct.gui.DataSetManager;
+import ucl.physiol.neuroconstruct.project.ProjectStructure;
+import ucl.physiol.neuroconstruct.utils.ClassLogger;
+import ucl.physiol.neuroconstruct.utils.GuiUtils;
 
 /**
  * Extension of AbstractTableModel to store the info on saved DataSets
@@ -32,6 +29,8 @@ import java.text.*;
  * @author Padraig Gleeson
  * @version 1.0.3
  */
+
+@SuppressWarnings("serial")
 
 public class DataSetInfo extends AbstractTableModel
 {
@@ -50,9 +49,9 @@ public class DataSetInfo extends AbstractTableModel
 
     SimpleDateFormat formatter = new SimpleDateFormat("H:mm (MMM d, yy)");
 
-    Vector allColumns = new Vector(3);
+    Vector<String> allColumns = new Vector<String>(3);
 
-    Vector dataSetObjs = new Vector();
+    Vector<DataSet> dataSetObjs = new Vector<DataSet>();
 
     File dataSetDir = null;
 
@@ -75,7 +74,7 @@ public class DataSetInfo extends AbstractTableModel
         if (!dataSetDir.exists())
         {
             logger.logComment("Creating the data set dir...");
-            boolean success = dataSetDir.mkdir();
+            //boolean success = dataSetDir.mkdir();
             //if (!s)
         }
         return dataSetDir;
@@ -169,12 +168,12 @@ public class DataSetInfo extends AbstractTableModel
         return (String)allColumns.elementAt(col);
     }
 
-    public Vector getAllDataSetRefs()
+    public Vector<String> getAllDataSetRefs()
     {
-        Vector allRefs = new Vector();
+        Vector<String> allRefs = new Vector<String>();
         for (int i = 0; i < dataSetObjs.size(); i++)
         {
-            DataSet ds = (DataSet)dataSetObjs.elementAt(i);
+            DataSet ds = dataSetObjs.get(i);
             allRefs.add(ds.getRefrence());
         }
         return allRefs;

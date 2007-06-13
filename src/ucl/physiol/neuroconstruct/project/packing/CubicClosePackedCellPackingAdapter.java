@@ -14,7 +14,6 @@ package ucl.physiol.neuroconstruct.project.packing;
 
 import javax.vecmath.*;
 import java.util.*;
-import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.cell.examples.*;
 import ucl.physiol.neuroconstruct.project.*;
@@ -37,7 +36,7 @@ public class CubicClosePackedCellPackingAdapter extends CellPackingAdapter
 
     // this will be like positionsAlreadyTaken, but will include ALL the points
     // attempted, including ones removed with cancelPosition(Point3d point)
-    Vector positionsAlreadyAttempted = new Vector();
+    Vector<Point3f> positionsAlreadyAttempted = new Vector<Point3f>();
 
     int currentYLayerNumber = 0;
 

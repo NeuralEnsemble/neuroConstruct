@@ -13,8 +13,6 @@
 package ucl.physiol.neuroconstruct.utils.compartment;
 
 import ucl.physiol.neuroconstruct.utils.*;
-import ucl.physiol.neuroconstruct.gui.plotter.*;
-import ucl.physiol.neuroconstruct.dataset.*;
 
 
 /**

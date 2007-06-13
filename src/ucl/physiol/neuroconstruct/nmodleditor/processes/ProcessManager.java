@@ -13,7 +13,6 @@
 package ucl.physiol.neuroconstruct.nmodleditor.processes;
 
 import java.io.*;
-import javax.swing.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.nmodleditor.modfile.*;
 import ucl.physiol.neuroconstruct.project.*;

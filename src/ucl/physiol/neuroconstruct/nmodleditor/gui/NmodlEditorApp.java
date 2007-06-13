@@ -12,10 +12,10 @@
 
 package ucl.physiol.neuroconstruct.nmodleditor.gui;
 
-import javax.swing.UIManager;
 import java.awt.*;
-import javax.swing.plaf.metal.*;
+
 import javax.swing.*;
+
 import ucl.physiol.neuroconstruct.gui.*;
 
 /**

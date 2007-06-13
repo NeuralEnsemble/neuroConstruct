@@ -14,21 +14,17 @@ package ucl.physiol.neuroconstruct.neuron;
 
 import java.io.*;
 import java.util.*;
+
 import javax.vecmath.*;
-import ucl.physiol.neuroconstruct.utils.*;
+
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
-import ucl.physiol.neuroconstruct.cell.examples.*;
-import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
 import ucl.physiol.neuroconstruct.mechanisms.*;
-import ucl.physiol.neuroconstruct.project.Project;
-import ucl.physiol.neuroconstruct.neuroml.ChannelMLConstants;
-import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLElement;
-import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLEntity;
-import ucl.physiol.neuroconstruct.utils.xml.*;
-import ucl.physiol.neuroconstruct.project.ProjectEventListener;
-import ucl.physiol.neuroconstruct.simulation.SimEnvHelper;
+import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.utils.*;
+import ucl.physiol.neuroconstruct.utils.units.*;
+import ucl.physiol.neuroconstruct.utils.xml.*;
 
 /**
  * Generates the hoc file for a specific cell template
@@ -323,6 +319,7 @@ public class NeuronTemplateGenerator
         ArrayList<Section> sections = cell.getAllSections();
         if (sections.size() > 0)
         {
+        	/*
             if (addGrowthFunctions)
             {
                 response.append("create additional_axons[1]\n");
@@ -332,9 +329,9 @@ public class NeuronTemplateGenerator
                 response.append(this.getProcSpecifyNumExtraAxons());
                 response.append(this.getProcCreateDummyAxons());
                 response.append(this.getFuncAddAxonSection());
-            }
+            }*/
 
-            Hashtable arraySectionsVsSize = new Hashtable();
+            Hashtable<String, Integer> arraySectionsVsSize = new Hashtable<String, Integer>();
 
             for (int i = 0; i < sections.size(); i++)
             {
@@ -356,7 +353,7 @@ public class NeuronTemplateGenerator
                         if (greatestIndexSoFar == null
                             || greatestIndexSoFar.intValue() < thisIndex)
                         {
-                            arraySectionsVsSize.put(arrayName, new Integer(thisIndex));
+                            arraySectionsVsSize.put(arrayName, thisIndex);
                         }
                     }
                     else
@@ -450,9 +447,9 @@ public class NeuronTemplateGenerator
     }
 
 
-    private Vector getConnectLines()
+    private Vector<String> getConnectLines()
     {
-        Vector connectLines = new Vector();
+        Vector<String> connectLines = new Vector<String>();
 
         Vector segments = cell.getExplicitlyModelledSegments();
 
@@ -479,6 +476,7 @@ public class NeuronTemplateGenerator
                     CellTopologyHelper.getFractionAlongSection(cell,
                                                                segment.getParentSegment(),
                                                                segment.getFractionAlongParent());
+                
                 connectLines.add("    connect " + segment.getSection().getSectionName()
                                  + "(0), "
                                  + parent.getSection().getSectionName()
@@ -625,7 +623,7 @@ public class NeuronTemplateGenerator
         Vector segments = cell.getExplicitlyModelledSegments();
 
         logger.logComment("Investigating " + segments.size() + " segments...");
-        Vector shapeLines = new Vector();
+        Vector<String> shapeLines = new Vector<String>();
 
         for (int i = 0; i < segments.size(); i++)
         {
@@ -739,7 +737,7 @@ public class NeuronTemplateGenerator
 
         StringBuffer response = new StringBuffer();
 
-        Vector subsetLines = new Vector();
+        Vector<String> subsetLines = new Vector<String>();
 
         logger.logComment("Adding channel mechs for soma (etc)");
 
@@ -900,7 +898,7 @@ public class NeuronTemplateGenerator
         return response.toString();
     }
 
-
+    /*
     private String getProcCreateDummyAxons()
     {
         logger.logComment("calling getProcCreateDummyAxons");
@@ -1030,7 +1028,7 @@ public class NeuronTemplateGenerator
             response.append("\n");
             return response.toString();
         }
-
+*/
 
 
     private String getProcGeomNseg()
@@ -1040,9 +1038,10 @@ public class NeuronTemplateGenerator
         //response.append("//external lambda_f\n");
 
 
-        Vector nsegLines = new Vector();
+        Vector<String> nsegLines = new Vector<String>();
 
         Vector allSegments = cell.getExplicitlyModelledSegments();
+        
         for (int i = 0; i < allSegments.size(); i++)
         {
             Segment segment = (Segment) allSegments.elementAt(i);
@@ -1282,6 +1281,7 @@ public class NeuronTemplateGenerator
                             }
 
                         }
+                        /*
                         else if (cellProc instanceof HHMembraneMechanism)
                         {
                             HHMembraneMechanism hhProc = (HHMembraneMechanism) cellProc;
@@ -1313,7 +1313,7 @@ public class NeuronTemplateGenerator
                             {
                                 logger.logError("Error: ", e);
                             }
-                        }
+                        }*/
 
                     response.append("    }\n\n");
 
@@ -1387,7 +1387,7 @@ public class NeuronTemplateGenerator
 
 
 
-
+/*
     private String getProcSynapses()
     {
         logger.logComment("calling getProcSynapses");
@@ -1398,7 +1398,7 @@ public class NeuronTemplateGenerator
         response.append("}\n");
         response.append("\n");
         return response.toString();
-    }
+    }*/
 
 
 

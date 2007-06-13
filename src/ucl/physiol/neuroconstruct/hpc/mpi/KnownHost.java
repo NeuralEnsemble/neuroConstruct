@@ -12,10 +12,6 @@
 
 package ucl.physiol.neuroconstruct.hpc.mpi;
 
-import java.awt.*;
-import javax.swing.*;
-
-import ucl.physiol.neuroconstruct.gui.*;
 
 /**
  * Host information to use in deciding cell distribution

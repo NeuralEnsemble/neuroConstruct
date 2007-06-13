@@ -16,7 +16,6 @@ import java.io.*;
 import java.util.*;
 import javax.vecmath.*;
 
-import ucl.physiol.neuroconstruct.cell.compartmentalisation.SegmentLocMapper.*;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.project.*;

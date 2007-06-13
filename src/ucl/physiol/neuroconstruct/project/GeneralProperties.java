@@ -20,7 +20,7 @@ import javax.swing.*;
 
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.hpc.mpi.*;
-
+ 
 /**
  * Storing of general properties associated with the application
  *
@@ -89,7 +89,7 @@ public class GeneralProperties
                                   Display3DProperties.DISPLAY_SOMA_NEURITE_SOLID,
                                   0.85f);
 
-
+/*
     private static String[] neuronHomeSearch
         = new String[]{"c:\\nrn61",
                        "c:\\nrn60",
@@ -99,7 +99,7 @@ public class GeneralProperties
                        "c:\\nrn56",
                        "c:\\nrn55",
                        "c:\\nrn54",
-                       "c:\\nrn61"};
+                       "c:\\nrn61"};*/
 
 
 

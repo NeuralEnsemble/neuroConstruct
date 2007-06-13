@@ -13,7 +13,6 @@
 package ucl.physiol.neuroconstruct.gui;
 
 import java.io.*;
-import java.util.*;
 import javax.swing.filechooser.FileFilter;
 import ucl.physiol.neuroconstruct.utils.*;
 

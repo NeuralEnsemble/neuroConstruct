@@ -15,8 +15,6 @@ package ucl.physiol.neuroconstruct.project;
 import javax.swing.table.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
-import java.io.*;
-import ucl.physiol.neuroconstruct.nmodleditor.modfile.*;
 
 /**
  * Extension of AbstractTableModel for storing info on what plots to show during a simulation
@@ -24,6 +22,8 @@ import ucl.physiol.neuroconstruct.nmodleditor.modfile.*;
  * @author Padraig Gleeson
  * @version 1.0.3
  */
+
+@SuppressWarnings("serial")
 
 public class SimPlotInfo extends AbstractTableModel
 {

@@ -13,8 +13,6 @@
 package ucl.physiol.neuroconstruct.gui.plotter;
 
 import javax.swing.UIManager;
-import java.awt.*;
-import javax.swing.*;
 import ucl.physiol.neuroconstruct.gui.*;
 
 /**

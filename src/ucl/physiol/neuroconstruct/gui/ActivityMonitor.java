@@ -12,18 +12,14 @@
 
 package ucl.physiol.neuroconstruct.gui;
 
-import javax.swing.*;
 import java.awt.*;
-import java.io.*;
 import java.awt.event.*;
+
+import javax.swing.*;
+import javax.swing.border.*;
+
 import ucl.physiol.neuroconstruct.j3D.*;
 import ucl.physiol.neuroconstruct.utils.*;
-import ucl.physiol.neuroconstruct.neuron.*;
-import ucl.physiol.neuroconstruct.simulation.*;
-import javax.swing.border.*;
-import ucl.physiol.neuroconstruct.project.*;
-import ucl.physiol.neuroconstruct.simulation.SimulationDataException;
-import java.util.Vector;
 
 /**
  * Frame for showing activity in cell groups
@@ -32,6 +28,8 @@ import java.util.Vector;
  * @version 1.0.3
  */
 
+
+@SuppressWarnings("serial")
 
 public class ActivityMonitor extends JFrame
 {

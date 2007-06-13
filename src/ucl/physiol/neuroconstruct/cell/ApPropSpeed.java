@@ -13,7 +13,7 @@
 package ucl.physiol.neuroconstruct.cell;
 
 import ucl.physiol.neuroconstruct.utils.units.*;
-import java.io.Serializable;
+
 
  /**
   * A class representing the propagation velocity of an action potential along a segment
@@ -31,7 +31,7 @@ import java.io.Serializable;
 
 
 
-public class ApPropSpeed implements Serializable
+public class ApPropSpeed
 {
      public static final String MECHANISM_NAME = "AP propagation speed";
 

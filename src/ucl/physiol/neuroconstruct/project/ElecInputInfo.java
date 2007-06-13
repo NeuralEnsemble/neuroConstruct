@@ -15,8 +15,6 @@ package ucl.physiol.neuroconstruct.project;
 import javax.swing.table.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
-import java.io.*;
-import ucl.physiol.neuroconstruct.nmodleditor.modfile.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 
 /**
@@ -25,6 +23,8 @@ import ucl.physiol.neuroconstruct.simulation.*;
  * @author Padraig Gleeson
  * @version 1.0.3
  */
+
+@SuppressWarnings("serial")
 
 public class ElecInputInfo extends AbstractTableModel
 {
@@ -181,7 +181,7 @@ public class ElecInputInfo extends AbstractTableModel
     /**
      * Added to allow storing of data by XMLEncoder. Should not normally be called!!!
      */
-    public void setAllStims(Vector allStims)
+    public void setAllStims(Vector<StimulationSettings> allStims)
     {
         this.allStims = allStims;
     }

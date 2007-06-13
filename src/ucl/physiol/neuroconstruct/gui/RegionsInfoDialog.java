@@ -30,11 +30,13 @@ import javax.swing.event.*;
  */
 
 
+@SuppressWarnings("serial")
+
 public class RegionsInfoDialog extends JDialog implements DocumentListener
 {
     ClassLogger logger = new ClassLogger("RegionsInfoDialog");
 
-    Hashtable textFieldsForParameters = new Hashtable();
+    Hashtable<String, JTextField> textFieldsForParameters = new Hashtable<String, JTextField>();
 
     boolean cancelled = false;
     JPanel jPanelButtons = new JPanel();
@@ -254,7 +256,7 @@ public class RegionsInfoDialog extends JDialog implements DocumentListener
         {
             jbInit();
 
-            textFieldsForParameters = new Hashtable();
+            textFieldsForParameters = new Hashtable<String, JTextField>();
         }
         catch(Exception e)
         {
@@ -351,7 +353,7 @@ public class RegionsInfoDialog extends JDialog implements DocumentListener
 
         InternalParameter[] paramList = region.getParameterList();
 
-        textFieldsForParameters = new Hashtable(); // to remove previous items
+        textFieldsForParameters = new Hashtable<String, JTextField>(); // to remove previous items
         jPanelParameters.removeAll();
 
         logger.logComment("Adding "+
@@ -374,9 +376,6 @@ public class RegionsInfoDialog extends JDialog implements DocumentListener
     private void addRegionParameter(InternalParameter param)
     {
         JPanel jPanelNew = new JPanel();
-        BorderLayout borderLayoutNew = new BorderLayout();
-        //jPanelNew.setLayout(borderLayoutNew);
-
         JLabel jLabelName = new JLabel(param.parameterName+": ");
         jLabelName.setPreferredSize(new Dimension(100, 20));
         jLabelName.setMinimumSize(new Dimension(100, 20));
@@ -419,7 +418,7 @@ public class RegionsInfoDialog extends JDialog implements DocumentListener
         RegionsInfoDialog dlg = new RegionsInfoDialog(new Frame(),
                                                       suggestedRegion,
                                                       suggestedName);
-        Dimension dlgSize = dlg.getPreferredSize();
+        //Dimension dlgSize = dlg.getPreferredSize();
         //Dimension frmSize = getSize();
         //Point loc = getLocation();
        // dlg.setLocation( (frmSize.width - dlgSize.width) / 2 + loc.x,

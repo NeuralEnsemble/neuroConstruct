@@ -11,19 +11,11 @@
  */
 
 package ucl.physiol.neuroconstruct.gui;
-import java.util.*;
-
 import java.awt.*;
-import java.awt.event.*;
+
 import javax.swing.*;
 
-import ucl.physiol.neuroconstruct.cell.*;
-import ucl.physiol.neuroconstruct.project.*;
-import ucl.physiol.neuroconstruct.project.packing.*;
 import ucl.physiol.neuroconstruct.utils.*;
-import ucl.physiol.neuroconstruct.project.cellchoice.CellChooser;
-import ucl.physiol.neuroconstruct.project.cellchoice.FixedNumberCells;
-import ucl.physiol.neuroconstruct.project.cellchoice.AllCellsChosenException;
 
 /**
  * GUI element to allow easy linking between neuroConstruct tabs
@@ -31,6 +23,8 @@ import ucl.physiol.neuroconstruct.project.cellchoice.AllCellsChosenException;
  * @author Padraig Gleeson
  * @version 1.0.3
  */
+
+@SuppressWarnings("serial")
 
 public class ClickPanel extends JPanel
 {

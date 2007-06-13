@@ -18,14 +18,10 @@ import java.util.*;
 import javax.swing.table.*;
 
 import ucl.physiol.neuroconstruct.cell.*;
+import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
-import ucl.physiol.neuroconstruct.neuron.*;
-import com.sun.org.apache.xerces.internal.dom.*;
-import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
-import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings;
-import ucl.physiol.neuroconstruct.hpc.mpi.MpiHost;
 
 /**
  * Extension of AbstractTableModel to store the info on multiple simulations
@@ -33,6 +29,8 @@ import ucl.physiol.neuroconstruct.hpc.mpi.MpiHost;
  * @author Padraig Gleeson
  * @version 1.0.3
  */
+
+@SuppressWarnings("serial")
 
 public class SimulationsInfo extends AbstractTableModel
 {

@@ -12,7 +12,6 @@
 
 package ucl.physiol.neuroconstruct.j3D;
 
-import ucl.physiol.neuroconstruct.cell.*;
 
 /**
  * Interface to update the OneCell representation when changing groups

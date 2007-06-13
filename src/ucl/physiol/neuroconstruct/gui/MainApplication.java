@@ -16,7 +16,6 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.plaf.metal.*;
 import ucl.physiol.neuroconstruct.utils.*;
-import java.io.*;
 import ucl.physiol.neuroconstruct.neuron.*;
 import javax.swing.UIManager.*;
 import java.util.Locale;

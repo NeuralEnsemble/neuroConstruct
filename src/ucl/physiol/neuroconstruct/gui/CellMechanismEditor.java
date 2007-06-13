@@ -13,19 +13,18 @@
 
 package ucl.physiol.neuroconstruct.gui;
 
-import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
-import ucl.physiol.neuroconstruct.utils.*;
-import ucl.physiol.neuroconstruct.mechanisms.*;
-import javax.swing.border.*;
-import ucl.physiol.neuroconstruct.project.*;
+import java.io.*;
 import java.util.*;
+
+import javax.swing.*;
+import javax.swing.border.*;
 import javax.swing.event.*;
-import ucl.physiol.neuroconstruct.gui.plotter.*;
-import ucl.physiol.neuroconstruct.utils.equation.*;
-import ucl.physiol.neuroconstruct.dataset.*;
+
+import ucl.physiol.neuroconstruct.mechanisms.*;
+import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.utils.*;
 
 /**
  * Dialog for creating and editing the older, non ChannelML cell mechs..
@@ -35,12 +34,15 @@ import ucl.physiol.neuroconstruct.dataset.*;
  */
 
 
+@SuppressWarnings("serial")
+
 public class CellMechanismEditor extends JDialog implements FocusListener
 {
-    ClassLogger logger = new ClassLogger("CellMechanismEditor");
+	
+	ClassLogger logger = new ClassLogger("CellMechanismEditor");
     public boolean cancelled = false;
 
-    Hashtable textFieldsForParameters = new Hashtable();
+    Hashtable<String, JTextField> textFieldsForParameters = new Hashtable<String, JTextField>();
 
     String firstLineCombo = "-- Please select a Cell Mechanism --";
 
@@ -374,7 +376,9 @@ public class CellMechanismEditor extends JDialog implements FocusListener
         {
             UIManager.setLookAndFeel(favouredLookAndFeel);
 
-            Project testProj = Project.loadProject(new File("projects/exy-mel/exy-mel.neuro.xml"),
+            @SuppressWarnings("unused")
+            
+			Project testProj = Project.loadProject(new File("projects/exy-mel/exy-mel.neuro.xml"),
                                                    new ProjectEventListener()
             {
                 public void tableDataModelUpdated(String tableModelName)
@@ -387,12 +391,13 @@ public class CellMechanismEditor extends JDialog implements FocusListener
                 };
 
             });
-
+            
+            /*
             CellMechanismEditor cpEditor = new CellMechanismEditor(testProj, new Frame());
-
+            
             Exp2SynMechanism exp2 = new Exp2SynMechanism();
 
-/*
+
             exp2.setPlotInfoFile("../temp/Generic2.xml");
 
             try
@@ -405,7 +410,7 @@ public class CellMechanismEditor extends JDialog implements FocusListener
             {
                 ex1.printStackTrace();
             }
-*/
+
             cpEditor.setVisible(true);
 
             System.out.println("Shown the dialog");
@@ -413,7 +418,7 @@ public class CellMechanismEditor extends JDialog implements FocusListener
             AbstractedCellMechanism cp = cpEditor.getFinalCellMechanism();
 
             System.out.println("Final cell mechanism: ");
-            cp.printDetails();
+            cp.printDetails();*/
         }
         catch (Exception ex)
         {
@@ -755,7 +760,7 @@ public class CellMechanismEditor extends JDialog implements FocusListener
 
             jTextAreaDescription.setText(cellMech.getDescription());
 
-            textFieldsForParameters = new Hashtable(); // to remove previous items
+            textFieldsForParameters = new Hashtable<String, JTextField>(); // to remove previous items
 
             logger.logComment("Adding " + cellMech.getPhysicalParameterList().length
                               + " params for this cell mechanism");

@@ -43,7 +43,7 @@ public class SimpleXMLDocument extends SimpleXMLEntity
 
     public SimpleXMLDocument()
     {
-        this.logger.setThisClassSilent(true);
+        logger.setThisClassSilent(true);
     }
 
 

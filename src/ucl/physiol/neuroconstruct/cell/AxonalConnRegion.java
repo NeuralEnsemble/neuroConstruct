@@ -27,7 +27,7 @@ import ucl.physiol.neuroconstruct.utils.*;
   *
   */
 
-public class AxonalConnRegion implements Serializable
+public class AxonalConnRegion
 {
      private String name = null;
      private Region region = null;

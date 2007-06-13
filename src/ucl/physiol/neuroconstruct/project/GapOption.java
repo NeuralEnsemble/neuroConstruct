@@ -12,11 +12,6 @@
 
 package ucl.physiol.neuroconstruct.project;
 
-import java.util.*;
-
-import javax.swing.table.*;
-
-import ucl.physiol.neuroconstruct.utils.*;
 
 /**
  * Options for what to do with gap between pre & post synaptic connection point

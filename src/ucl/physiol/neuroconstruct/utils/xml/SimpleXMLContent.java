@@ -12,13 +12,9 @@
 
 package ucl.physiol.neuroconstruct.utils.xml;
 
-import java.util.*;
-import ucl.physiol.neuroconstruct.utils.GeneralUtils;
-import ucl.physiol.neuroconstruct.utils.XMLUtils;
-import java.io.File;
-import javax.xml.parsers.*;
-import org.xml.sax.*;
 import java.io.*;
+
+import ucl.physiol.neuroconstruct.utils.*;
 
 /**
  * Simple XML API. Note this is a very limited XML API, just enough to handle
@@ -99,7 +95,7 @@ public class SimpleXMLContent extends SimpleXMLEntity
         {
             File xmlFile = new File("templates/xmlTemplates/Examples/ChannelML/KChannelCom.xml");
             File xslFile = new File("templates/xmlTemplates/Schemata/v1.2/Level2/ChannelML_v1.2_GENESIStab.xsl");
-            File tempFile = new File("../temp");
+            //File tempFile = new File("../temp");
 
             SimpleXMLDocument xmlDoc = SimpleXMLReader.getSimpleXMLDoc(xmlFile);
             SimpleXMLDocument xslDoc = SimpleXMLReader.getSimpleXMLDoc(xslFile);

@@ -14,17 +14,11 @@ package ucl.physiol.neuroconstruct.gui.plotter;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
-import java.util.*;
-import ucl.physiol.neuroconstruct.utils.*;
-import ucl.physiol.neuroconstruct.gui.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
-import ucl.physiol.neuroconstruct.project.*;
-import ucl.physiol.neuroconstruct.j3D.*;
-import java.io.*;
-import ucl.physiol.neuroconstruct.simulation.*;
+
 import ucl.physiol.neuroconstruct.dataset.*;
+import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.equation.*;
 
 /**
@@ -33,6 +27,8 @@ import ucl.physiol.neuroconstruct.utils.equation.*;
  * @author Padraig Gleeson
  * @version 1.0.3
  */
+
+@SuppressWarnings("serial")
 
 public class PlotEquationDialog extends JDialog
 {

@@ -12,8 +12,6 @@
 
 package ucl.physiol.neuroconstruct.utils.xml;
 
-import java.util.*;
-import java.awt.*;
 
 /**
  * Simple XML API. Note this is a very limited XML API, just enough to handle

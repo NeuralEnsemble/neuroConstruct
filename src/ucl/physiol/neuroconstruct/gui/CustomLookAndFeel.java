@@ -13,14 +13,12 @@
 
 package ucl.physiol.neuroconstruct.gui;
 
-import javax.swing.LookAndFeel;
-import javax.swing.Icon;
-import javax.swing.plaf.metal.OceanTheme;
-import javax.swing.plaf.ColorUIResource;
-import java.util.Arrays;
-import java.awt.Insets;
-import java.awt.Color;
-import javax.swing.UIDefaults;
+import java.awt.*;
+import java.util.*;
+
+import javax.swing.*;
+import javax.swing.plaf.*;
+import javax.swing.plaf.metal.*;
 
 
 /**
@@ -132,7 +130,7 @@ public class CustomLookAndFeel extends OceanTheme
 
 
         Color anImportantColor1 = new ColorUIResource(0xCCCCCC);
-        Color anImportantColor2 = new ColorUIResource(Color.GREEN);
+        //Color anImportantColor2 = new ColorUIResource(Color.GREEN);
 
 
         //Color anImportantColor3 = new ColorUIResource(Color.red);

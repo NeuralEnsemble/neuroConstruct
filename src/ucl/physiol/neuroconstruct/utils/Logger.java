@@ -13,8 +13,6 @@
 package ucl.physiol.neuroconstruct.utils;
 
 import java.io.*;
-import java.text.*;
-import java.util.*;
 import ucl.physiol.neuroconstruct.project.*;
 
 /**
@@ -24,7 +22,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * @version 1.0.3
  */
 
-public class Logger implements Serializable
+public class Logger 
 {
     //private static boolean isInstantiated = false;
 

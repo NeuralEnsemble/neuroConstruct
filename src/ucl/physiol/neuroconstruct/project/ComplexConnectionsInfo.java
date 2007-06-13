@@ -15,7 +15,6 @@ package ucl.physiol.neuroconstruct.project;
 import javax.swing.table.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
-import javax.swing.event.*;
 
 /**
  * deprecated. Any extra functionality incorporated into SimpleNetworkConnectionsInfo
@@ -23,6 +22,8 @@ import javax.swing.event.*;
  * @author Padraig Gleeson
  * @version 1.0.3
  */
+
+@SuppressWarnings("serial")
 
 public class ComplexConnectionsInfo extends AbstractTableModel
 {
@@ -40,9 +41,9 @@ public class ComplexConnectionsInfo extends AbstractTableModel
 
     final String[] columnNames = new String[9];
 
-    Vector vectorNames = new Vector();
-    Vector vectorSource = new Vector();
-    Vector vectorTarget = new Vector();
+    Vector<String> vectorNames = new Vector<String>();
+    Vector<String> vectorSource = new Vector<String>();
+    Vector<String> vectorTarget = new Vector<String>();
     Vector vectorSynapseList = new Vector();
     Vector vectorSynTargetOption = new Vector();
     Vector vectorSearchPattern = new Vector();

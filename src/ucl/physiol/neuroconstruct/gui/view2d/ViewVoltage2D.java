@@ -12,16 +12,12 @@
 
 package ucl.physiol.neuroconstruct.gui.view2d;
 
+import java.awt.*;
 import java.util.*;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
-
+import ucl.physiol.neuroconstruct.gui.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
-import ucl.physiol.neuroconstruct.gui.*;
 
 /**
  * Frame for showing 2D view of Cell Group(s) during simulation rerun
@@ -30,6 +26,8 @@ import ucl.physiol.neuroconstruct.gui.*;
  * @version 1.0.3
  */
 
+
+@SuppressWarnings("serial")
 
 public class ViewVoltage2D extends View2DPlane implements VoltageEventListener
 {
@@ -63,7 +61,7 @@ public class ViewVoltage2D extends View2DPlane implements VoltageEventListener
 
     public static void main(String[] args)
     {
-        ArrayList<PositionRecord> positions = new ArrayList();
+        ArrayList<PositionRecord> positions = new ArrayList<PositionRecord>();
 
 
         positions.add(new PositionRecord(0,    0, 0, 0));

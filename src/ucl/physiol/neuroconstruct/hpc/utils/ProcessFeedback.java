@@ -12,8 +12,6 @@
 
 package ucl.physiol.neuroconstruct.hpc.utils;
 
-import java.io.*;
-import ucl.physiol.neuroconstruct.utils.*;
 
 /**
  * Simple interface for giving feedback from processes

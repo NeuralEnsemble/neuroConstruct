@@ -13,10 +13,6 @@
 package ucl.physiol.neuroconstruct.project;
 
 import ucl.physiol.neuroconstruct.utils.*;
-import java.util.*;
-import ucl.physiol.neuroconstruct.cell.*;
-import ucl.physiol.neuroconstruct.cell.utils.*;
-import javax.vecmath.*;
 
 /**
  * Thread to handle generation of the complex connections based on the project settings
@@ -53,9 +49,14 @@ public class ComplexConnectionGenerator extends Thread
 
     }
 
-    public void setSimConfig(SimConfig simConfig)
+    public void setSimConfig(SimConfig simConf)
     {
-        this.simConfig = simConfig;
+        this.simConfig = simConf;
+    }
+
+    public SimConfig getSimConfig()
+    {
+        return this.simConfig;
     }
 
 
@@ -66,27 +67,7 @@ public class ComplexConnectionGenerator extends Thread
         continueGeneration = false;
     }
 
-/*
-    public ArrayList<String> getRelevantNetConns()
-    {
-        Vector allComplexConns = project.complexConnectionsInfo.getAllComplexConnNames();
 
-        //Vector allSimpleNetConns = project.simpleNetworkConnectionsInfo.getAllSimpleNetConnNames();
-
-        ArrayList<String> allNetConnsInSimConfig = simConfig.getNetConns();
-
-        ArrayList<String> compNetConnsInSimConfig = new ArrayList<String>();
-
-        for (int i = 0; i < allNetConnsInSimConfig.size(); i++)
-        {
-            if (allComplexConns.contains(allNetConnsInSimConfig.get(i)))
-                compNetConnsInSimConfig.add(allNetConnsInSimConfig.get(i));
-        }
-
-        return compNetConnsInSimConfig;
-
-    }
-*/
 
     public void run()
     {

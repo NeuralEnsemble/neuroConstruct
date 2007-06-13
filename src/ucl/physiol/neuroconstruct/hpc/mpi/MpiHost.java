@@ -12,11 +12,6 @@
 
 package ucl.physiol.neuroconstruct.hpc.mpi;
 
-import java.awt.*;
-import javax.swing.*;
-
-import ucl.physiol.neuroconstruct.gui.*;
-import java.io.File;
 
 /**
  * Support for interacting with MPI platform

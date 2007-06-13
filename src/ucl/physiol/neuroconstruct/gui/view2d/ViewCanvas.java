@@ -33,6 +33,8 @@ import javax.vecmath.*;
  * @version 1.0.3
  */
 
+@SuppressWarnings("serial")
+
 public class ViewCanvas extends Canvas
 {
     ClassLogger logger = new ClassLogger("ViewCanvas");
@@ -458,7 +460,7 @@ public class ViewCanvas extends Canvas
 
     public void paint(Graphics g)
     {
-        long startTime = System.currentTimeMillis();
+        //long startTime = System.currentTimeMillis();
 
         logger.logComment("");
         logger.logComment(">>>>>>>>>>>    Paint called, view dir: "+ this.viewingDir);
@@ -572,8 +574,7 @@ public class ViewCanvas extends Canvas
        //logger.logComment("("+ doubleFormatterFull.format(x)
       //                            +", "+ doubleFormatterFull.format(y)+")");
 
-      String coords =
-          coords = "("+ get3DSpaceCoord(x2DMappedSpace, y2DMappedSpace, X_COORD)
+      String coords= "("+ get3DSpaceCoord(x2DMappedSpace, y2DMappedSpace, X_COORD)
                    + ", " + get3DSpaceCoord(x2DMappedSpace, y2DMappedSpace, Y_COORD)
                    + ", " + get3DSpaceCoord(x2DMappedSpace, y2DMappedSpace, Z_COORD) + ")";
 

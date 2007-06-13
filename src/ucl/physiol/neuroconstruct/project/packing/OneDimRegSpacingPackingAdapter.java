@@ -13,9 +13,7 @@
 package ucl.physiol.neuroconstruct.project.packing;
 
 import javax.vecmath.*;
-import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.utils.*;
-import java.util.*;
 import ucl.physiol.neuroconstruct.cell.examples.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
@@ -253,10 +251,10 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
                 throw new CellPackingException("Invalid Parameter value");
         }
 
-        else if (parameterName.equals(this.OTHER_OVERLAP_POLICY))
+        else if (parameterName.equals(OTHER_OVERLAP_POLICY))
         {
             if (parameterValue == 0 || parameterValue == 1)
-                parameterList[this.OTHER_OVERLAP_PARAM].value = parameterValue;
+                parameterList[OTHER_OVERLAP_PARAM].value = parameterValue;
             else
                 throw new CellPackingException("Invalid Parameter value");
         }
@@ -296,7 +294,7 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
         else sb.append("0, ");
 
 
-        sb.append(OTHER_OVERLAP_POLICY+": "+parameterList[this.OTHER_OVERLAP_PARAM].value+"]");
+        sb.append(OTHER_OVERLAP_POLICY+": "+parameterList[OTHER_OVERLAP_PARAM].value+"]");
 
 
 

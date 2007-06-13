@@ -12,7 +12,6 @@
 
 package ucl.physiol.neuroconstruct.cell;
 
-import java.io.*;
 import java.util.*;
 import javax.vecmath.*;
 
@@ -33,7 +32,7 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
  */
 
 
-public class Segment implements Serializable
+public class Segment
 {
     private ClassLogger logger = new ClassLogger("Segment");
 
@@ -354,7 +353,7 @@ public class Segment implements Serializable
         else sb.append(", section: " + section.getSectionName());
 
         if (getSegmentShape()==SPHERICAL_SHAPE) sb.append(", SPHERICAL");
-        if (getSegmentShape()==this.UNDETERMINED_SHAPE) sb.append(", **UNDETERMINED SHAPE**");
+        if (getSegmentShape()==UNDETERMINED_SHAPE) sb.append(", **UNDETERMINED SHAPE**");
         sb.append(", ID: " + segmentId );
 
         if(this.isFirstSectionSegment() && parentSegment == null)
@@ -441,7 +440,7 @@ public class Segment implements Serializable
 
 
 
-    public Vector getGroups()
+    public Vector<String> getGroups()
     {
         return section.getGroups();
     }
@@ -707,7 +706,7 @@ public class Segment implements Serializable
         Point3f startPoint = getStartPointPosition();
         if (startPoint==null)
         {
-            return this.UNDETERMINED_SHAPE;
+            return UNDETERMINED_SHAPE;
         }
         if (this.getEndPointPosition().equals(startPoint))
             return Segment.SPHERICAL_SHAPE; // by definition...

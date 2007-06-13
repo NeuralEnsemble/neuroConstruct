@@ -15,10 +15,6 @@ package ucl.physiol.neuroconstruct.project;
 import javax.swing.table.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
-import javax.swing.event.*;
-import ucl.physiol.neuroconstruct.utils.equation.EquationUnit;
-import ucl.physiol.neuroconstruct.utils.equation.Constant;
-
 /**
  * Stores info on volume/arbourisation based connections
  *
@@ -28,7 +24,10 @@ import ucl.physiol.neuroconstruct.utils.equation.Constant;
 
 public class ArbourConnectionsInfo extends AbstractTableModel
 {
-    ClassLogger logger = new ClassLogger("ArbourConnectionsInfo");
+
+	private static final long serialVersionUID = -3868462712734389810L;
+
+	ClassLogger logger = new ClassLogger("ArbourConnectionsInfo");
 
     public final static int COL_NUM_COMP_CONN_NAME = 0;
     public final static int COL_NUM_SOURCE = 1;
@@ -42,12 +41,13 @@ public class ArbourConnectionsInfo extends AbstractTableModel
 
     final String[] columnNames = new String[8];
 
-    Vector<String> vectorNames = new Vector();
-    Vector<String> vectorSource = new Vector();
-    Vector<String> vectorTarget = new Vector();
-    Vector<Vector<SynapticProperties>> vectorSynapseList = new Vector();
-    Vector<Vector<String>> vectorSourceRegion = new Vector();
-    Vector<ConnectivityConditions> vectorConnConds = new Vector();
+    Vector<String> vectorNames = new Vector<String>();
+    Vector<String> vectorSource = new Vector<String>();
+    Vector<String> vectorTarget = new Vector<String>();
+    
+    Vector<Vector<SynapticProperties>> vectorSynapseList = new Vector<Vector<SynapticProperties>>();
+    Vector<Vector<String>> vectorSourceRegion = new Vector<Vector<String>>();
+    Vector<ConnectivityConditions> vectorConnConds = new Vector<ConnectivityConditions>();
 
 
     Vector<Float> vectorApSpeed = new Vector<Float>();
@@ -149,7 +149,7 @@ public class ArbourConnectionsInfo extends AbstractTableModel
                 this.vectorNames.setElementAt((String)value , row);
                 break;
             case COL_NUM_SYNAPSE_LIST:
-                this.vectorSynapseList.setElementAt((Vector)value , row);
+                this.vectorSynapseList.setElementAt((Vector<SynapticProperties>)value , row);
                 break;
             case COL_NUM_SOURCE:
                 this.vectorSource.setElementAt((String)value , row);
@@ -158,7 +158,10 @@ public class ArbourConnectionsInfo extends AbstractTableModel
                 this.vectorTarget.setElementAt((String)value , row);
                 break;
             case COL_NUM_SOURCE_REGION:
-                this.vectorSourceRegion.setElementAt((Vector)value , row);
+            	Vector<String> v1 = new Vector<String>((Vector<String>)value);
+
+            	
+                this.vectorSourceRegion.setElementAt(v1 , row);
                 break;
             case COL_NUM_CONN_CONDS:
                 this.vectorConnConds.setElementAt((ConnectivityConditions)value , row);
@@ -239,7 +242,7 @@ public class ArbourConnectionsInfo extends AbstractTableModel
 
     public Vector<String> getAllAAConnNames()
     {
-        return new Vector(vectorNames);
+        return new Vector<String>(vectorNames);
     }
 
     public Vector<SynapticProperties> getSynapseList(String complexConnName)
@@ -260,7 +263,7 @@ public class ArbourConnectionsInfo extends AbstractTableModel
     public void setSynapseProperties(String complexConnName, Vector synPropList)
     {
         int index = vectorNames.indexOf(complexConnName);
-        this.setValueAt(synPropList, index, this.COL_NUM_SYNAPSE_LIST);
+        this.setValueAt(synPropList, index, COL_NUM_SYNAPSE_LIST);
     }
 
 
@@ -275,13 +278,13 @@ public class ArbourConnectionsInfo extends AbstractTableModel
     public void setSourceCellGroup(String complexConnName, String source)
     {
         int index = vectorNames.indexOf(complexConnName);
-        this.setValueAt(source, index, this.COL_NUM_SOURCE);
+        this.setValueAt(source, index, COL_NUM_SOURCE);
     }
 
     public void setSourceConnRegions(String complexConnName, Vector<String> regs)
     {
         int index = vectorNames.indexOf(complexConnName);
-        this.setValueAt(regs, index, this.COL_NUM_SOURCE_REGION);
+        this.setValueAt(regs, index, COL_NUM_SOURCE_REGION);
     }
 
 
@@ -298,7 +301,7 @@ public class ArbourConnectionsInfo extends AbstractTableModel
     public void setTargetCellGroup(String complexConnName, String target)
     {
         int index = vectorNames.indexOf(complexConnName);
-        this.setValueAt(target, index, this.COL_NUM_TARGET);
+        this.setValueAt(target, index, COL_NUM_TARGET);
     }
 
 
@@ -306,13 +309,13 @@ public class ArbourConnectionsInfo extends AbstractTableModel
     public float getAPSpeed(String netConnName)
     {
         int index = this.vectorNames.indexOf(netConnName);
-        return (Float)this.getValueAt(index, this.COL_NUM_AP_SPEED);
+        return (Float)this.getValueAt(index, COL_NUM_AP_SPEED);
     }
 
     public String getInhomogenousExp(String netConnName)
     {
         int index = this.vectorNames.indexOf(netConnName);
-        return (String)this.getValueAt(index, this.COL_NUM_INHOMO_EXP);
+        return (String)this.getValueAt(index, COL_NUM_INHOMO_EXP);
     }
 
 
@@ -327,7 +330,7 @@ public class ArbourConnectionsInfo extends AbstractTableModel
     public void setAPSpeed(String netConnName, float aps)
     {
         int index = vectorNames.indexOf(netConnName);
-        this.setValueAt(new Float(aps), index, this.COL_NUM_AP_SPEED);
+        this.setValueAt(new Float(aps), index, COL_NUM_AP_SPEED);
     }
 
 
@@ -341,7 +344,7 @@ public class ArbourConnectionsInfo extends AbstractTableModel
     public void setConnectivityConditions(String complexConnName, ConnectivityConditions cc)
     {
         int index = vectorNames.indexOf(complexConnName);
-        this.setValueAt(cc, index, this.COL_NUM_CONN_CONDS);
+        this.setValueAt(cc, index, COL_NUM_CONN_CONDS);
     }
 
 
@@ -393,7 +396,7 @@ public class ArbourConnectionsInfo extends AbstractTableModel
      */
     public Hashtable getInternalData()
     {
-        Hashtable allInfo = new Hashtable();
+        Hashtable<String, Vector> allInfo = new Hashtable<String, Vector>();
         allInfo.put(columnNames[COL_NUM_COMP_CONN_NAME], vectorNames);
         allInfo.put(columnNames[COL_NUM_SOURCE], vectorSource);
         allInfo.put(columnNames[COL_NUM_TARGET], vectorTarget);
@@ -401,7 +404,7 @@ public class ArbourConnectionsInfo extends AbstractTableModel
         allInfo.put(columnNames[COL_NUM_SOURCE_REGION], vectorSourceRegion);
         allInfo.put(columnNames[COL_NUM_CONN_CONDS], vectorConnConds);
         allInfo.put(columnNames[COL_NUM_AP_SPEED], vectorApSpeed);
-        allInfo.put(columnNames[this.COL_NUM_INHOMO_EXP], this.vectorInhExp);
+        allInfo.put(columnNames[COL_NUM_INHOMO_EXP], this.vectorInhExp);
 
 
         return allInfo;

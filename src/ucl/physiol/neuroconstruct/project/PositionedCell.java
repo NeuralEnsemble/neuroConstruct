@@ -12,7 +12,6 @@
 
 package ucl.physiol.neuroconstruct.project;
 
-import ucl.physiol.neuroconstruct.j3D.*;
 import javax.vecmath.*;
 
 /**

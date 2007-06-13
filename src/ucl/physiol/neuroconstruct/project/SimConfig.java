@@ -113,7 +113,7 @@ public class SimConfig
         return cellGroups;
     }
 
-    public void setCellGroups(ArrayList cellGroups)
+    public void setCellGroups(ArrayList<String> cellGroups)
     {
         this.cellGroups = cellGroups;
     }
@@ -123,7 +123,7 @@ public class SimConfig
         return netConns;
     }
 
-    public void setNetConns(ArrayList netConns)
+    public void setNetConns(ArrayList<String> netConns)
     {
         this.netConns = netConns;
     }
@@ -133,7 +133,7 @@ public class SimConfig
         return plots;
     }
 
-    public void setPlots(ArrayList plots)
+    public void setPlots(ArrayList<String> plots)
     {
         this.plots = plots;
     }
@@ -144,7 +144,7 @@ public class SimConfig
         return inputs;
     }
 
-    public void setInputs(ArrayList inputs)
+    public void setInputs(ArrayList<String> inputs)
     {
         this.inputs = inputs;
     }

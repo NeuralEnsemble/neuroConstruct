@@ -12,15 +12,16 @@
 
 package ucl.physiol.neuroconstruct.utils.xml;
 
-import java.util.*;
-import org.xml.sax.helpers.*;
-import org.xml.sax.*;
-import javax.xml.parsers.*;
 import java.io.*;
+import java.util.*;
+
+import javax.xml.parsers.*;
+
 import org.xml.sax.*;
-import ucl.physiol.neuroconstruct.utils.*;
 import org.xml.sax.ext.*;
-import ucl.physiol.neuroconstruct.neuroml.ChannelMLConstants;
+import org.xml.sax.helpers.*;
+
+import ucl.physiol.neuroconstruct.utils.*;
 
 /**
  * Simple XML Reader. Note this is part of a very limited XML API, just enough to handle
@@ -72,11 +73,11 @@ public class SimpleXMLReader extends XMLFilterImpl implements LexicalHandler
         {
             currentElement.addContent(gotString);
         }
-    }
+    } 
 
     public void startDocument()
     {
-        this.logger.setThisClassSilent(true);
+        logger.setThisClassSilent(true);
         docRead = new SimpleXMLDocument();
     }
 

@@ -13,9 +13,6 @@
 package ucl.physiol.neuroconstruct.j3D;
 
 import java.awt.*;
-import java.util.*;
-import ucl.physiol.neuroconstruct.cell.*;
-import ucl.physiol.neuroconstruct.project.*;
 
 /**
  * Interface for panel on which simulation data can be run (i.e cell colours

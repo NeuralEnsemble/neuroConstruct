@@ -31,7 +31,7 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
  *
  */
 
-public class Section implements Serializable
+public class Section
 {
     public static final String ALL = "all";
     public static final String SOMA_GROUP = "soma_group";
@@ -57,7 +57,7 @@ public class Section implements Serializable
     /**
      * Groups to which ALL segments in this section belong
      */
-    private Vector<String> groups = new Vector();
+    private Vector<String> groups = new Vector<String>();
 
     /**
      * This corresponds to nseg in NEURON
@@ -133,7 +133,7 @@ public class Section implements Serializable
         newSection.setStartPointPositionX(startPointPosition.x);
         newSection.setStartPointPositionY(startPointPosition.y);
         newSection.setStartPointPositionZ(startPointPosition.z);
-        newSection.setGroups((Vector)groups.clone());
+        newSection.setGroups((Vector<String>)groups.clone());
         newSection.setNumberInternalDivisions(numberInternalDivisions);
         newSection.setComment(comment);
 
@@ -284,7 +284,7 @@ public class Section implements Serializable
         groups.remove(group);
     }
 
-    public void setGroups(Vector groups)
+    public void setGroups(Vector<String> groups)
     {
         // ensure group all is here...
         if (!groups.contains("all")) groups.add("all");
@@ -299,7 +299,7 @@ public class Section implements Serializable
 
     public boolean isSomaSection()
     {
-        return this.groups.contains(this.SOMA_GROUP);
+        return this.groups.contains(SOMA_GROUP);
     }
 
     public Point3f getStartPointPosition()
@@ -404,7 +404,7 @@ public class Section implements Serializable
       Section s2 = null;
 
       s2 = (Section) s1.clone();
-      Vector newGroups = new Vector();
+      Vector<String> newGroups = new Vector<String>();
       newGroups.add("hdghkg");
       s2.setGroups(newGroups);
 

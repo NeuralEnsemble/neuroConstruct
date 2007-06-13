@@ -22,7 +22,6 @@ import ucl.physiol.neuroconstruct.j3D.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
-import java.awt.*;
 
 /**
  * Extension of Regions in 3D
