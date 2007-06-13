@@ -29,6 +29,8 @@ import ucl.physiol.neuroconstruct.hpc.utils.*;
 
 
 
+@SuppressWarnings("serial")
+
 public class MpiFrame extends JFrame implements ProcessFeedback
 {
     ClassLogger logger = new ClassLogger("MpiFrame");

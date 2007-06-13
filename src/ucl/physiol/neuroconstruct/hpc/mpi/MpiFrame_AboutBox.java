@@ -23,8 +23,10 @@ import javax.swing.*;
  * @author Padraig Gleeson
  * @version 1.0.3
  */
+ 
 
 
+@SuppressWarnings("serial")
 
 public class MpiFrame_AboutBox extends JDialog implements ActionListener
 {

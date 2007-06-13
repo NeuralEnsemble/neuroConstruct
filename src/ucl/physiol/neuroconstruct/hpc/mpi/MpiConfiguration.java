@@ -28,7 +28,7 @@ public class MpiConfiguration
 
     public static void main(String[] args)
     {
-        MpiConfiguration mpiconfiguration = new MpiConfiguration();
+        new MpiConfiguration();
     }
 
     private MpiConfiguration()

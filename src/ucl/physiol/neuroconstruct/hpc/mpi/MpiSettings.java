@@ -51,7 +51,7 @@ public class MpiSettings
         {
             MpiConfiguration p = new MpiConfiguration(multiConfig);
           //  p.getHostList().add(new MpiHost("padraigneuro", 1, 1));
-            p.getHostList().add(new MpiHost("avicenna",1, 1));
+            //p.getHostList().add(new MpiHost("avicenna",1, 1));
             //p.getHostList().add(new MpiHost("localhost", 4, 1));
             p.getHostList().add(new MpiHost("bernal", 4, 1));
             configurations.add(p);
@@ -92,7 +92,7 @@ public class MpiSettings
 
     public static void main(String[] args)
     {
-        MpiSettings mpisettings = new MpiSettings();
+        new MpiSettings();
     }
 
 }
