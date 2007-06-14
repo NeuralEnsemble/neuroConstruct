@@ -65,7 +65,7 @@ public class Cell/* implements Serializable*/
      * there can only be one ap prop speed assiciated with each group. The ApPropSpeed vs Array of groups storage
      * method is still used so it will work easily in the EditGroupChanMechAssociations dialog
      */
-    private Hashtable<ApPropSpeed, Vector> apPropSpeedsVsGroups = new Hashtable<ApPropSpeed, Vector>();
+    private Hashtable<ApPropSpeed, Vector<String>> apPropSpeedsVsGroups = new Hashtable<ApPropSpeed, Vector<String>>();
 
     /**
      * Fos the second connection method, specify the region in space, relative to the coordinate
@@ -809,23 +809,23 @@ public class Cell/* implements Serializable*/
     {
         if (!synapsesVsGroups.containsKey(synapseType)) return new Vector<String>();
         
-        return (Vector)synapsesVsGroups.get(synapseType);
+        return (Vector<String>)synapsesVsGroups.get(synapseType);
     }
 
 
     public Vector<String> getGroupsWithSpecAxRes(float specAxRes)
     {
         checkSpecAxRes();
-        if (!this.specAxResVsGroups.containsKey(specAxRes)) return new Vector();
-        return (Vector)specAxResVsGroups.get(specAxRes);
+        if (!this.specAxResVsGroups.containsKey(specAxRes)) return new Vector<String>();
+        return (Vector<String>)specAxResVsGroups.get(specAxRes);
     }
 
 
     public Vector<String> getGroupsWithSpecCap(float specCap)
     {
         this.checkSpecCap();
-        if (!this.specCapVsGroups.containsKey(specCap)) return new Vector();
-        return (Vector)specCapVsGroups.get(specCap);
+        if (!this.specCapVsGroups.containsKey(specCap)) return new Vector<String>();
+        return (Vector<String>)specCapVsGroups.get(specCap);
     }
 
 
@@ -840,7 +840,7 @@ public class Cell/* implements Serializable*/
         for (ChannelMechanism nextChanMech : chanMechsVsGroups.keySet())
         {
             if (nextChanMech.equals(chanMech))
-                theGroups.addAll((Vector)chanMechsVsGroups.get(nextChanMech));
+                theGroups.addAll(chanMechsVsGroups.get(nextChanMech));
         }
 
         return theGroups;
@@ -897,9 +897,9 @@ public class Cell/* implements Serializable*/
         return chanMechs;
     }
 
-    public Vector getSynapsesForGroup(String group)
+    public Vector<String> getSynapsesForGroup(String group)
     {
-        Vector syns = new Vector();
+        Vector<String> syns = new Vector<String>();
 
         Enumeration allSyns = synapsesVsGroups.keys();
         while (allSyns.hasMoreElements())
@@ -940,7 +940,7 @@ public class Cell/* implements Serializable*/
         //logger.logComment("checkSpecAxRes called");
         if (specAxResVsGroups.size()==0 && tempGlobalSpecAxRes !=null)
         {
-            Vector all = new Vector();
+            Vector<String> all = new Vector<String>();
             all.add(Section.ALL);
             specAxResVsGroups.put(this.tempGlobalSpecAxRes.getNominalNumber(), all);
             tempGlobalSpecAxRes = null;
@@ -957,7 +957,7 @@ public class Cell/* implements Serializable*/
         if (specCapVsGroups.size()==0 && tempGlobalSpecCapacitance != null)
         {
             logger.logComment("** Adding global spec cap: " + tempGlobalSpecCapacitance +" in cell: "+this.hashCode());
-            Vector all = new Vector();
+            Vector<String> all = new Vector<String>();
             all.add(Section.ALL);
             specCapVsGroups.put(this.tempGlobalSpecCapacitance.getNominalNumber(), all);
             tempGlobalSpecCapacitance = null;
@@ -1074,15 +1074,15 @@ public class Cell/* implements Serializable*/
 
 
         if (!getAllGroupNames().contains(group)) return false;
-        Vector groups = null;
+        Vector<String> groups = null;
 
         if (!synapsesVsGroups.containsKey(synapseType))
         {
-            groups = new Vector();
+            groups = new Vector<String>();
         }
         else
         {
-            groups = (Vector)synapsesVsGroups.get(synapseType);
+            groups = (Vector<String>)synapsesVsGroups.get(synapseType);
         }
         if (!groups.contains(group)) groups.add(group);
         synapsesVsGroups.put(synapseType, groups);
@@ -1113,7 +1113,7 @@ public class Cell/* implements Serializable*/
             if (otherChanMech.getName().equals(chanMech.getName()))
             {
                 logger.logComment("otherChanMech: " +otherChanMech+", chanMech: " +chanMech );
-                Vector groups = chanMechsVsGroups.get(otherChanMech);
+                Vector<String> groups = chanMechsVsGroups.get(otherChanMech);
 
                     logger.logComment("groups: " + groups);
                 if (groups.contains(group))
@@ -1131,17 +1131,17 @@ public class Cell/* implements Serializable*/
 
 
 
-        Vector groups = null;
+        Vector<String> groups = null;
 
         if (!chanMechsVsGroups.containsKey(chanMech))
         {
             logger.logComment("Making new group" );
-            groups = new Vector();
+            groups = new Vector<String>();
         }
         else
         {
             logger.logComment("Not Making new group" );
-            groups = (Vector)chanMechsVsGroups.get(chanMech);
+            groups = (Vector<String>)chanMechsVsGroups.get(chanMech);
         }
         if (!groups.contains(group)) groups.add(group);
 
@@ -1185,15 +1185,15 @@ public class Cell/* implements Serializable*/
 
 
 
-        Vector groups = null;
+        Vector<String> groups = null;
 
         if (!this.specCapVsGroups.containsKey(specCap))
         {
-            groups = new Vector();
+            groups = new Vector<String>();
         }
         else
         {
-            groups = (Vector)specCapVsGroups.get(specCap);
+            groups = (Vector<String>)specCapVsGroups.get(specCap);
         }
         if (!groups.contains(group)) groups.add(group);
         specCapVsGroups.put(specCap, groups);
@@ -1229,15 +1229,15 @@ public class Cell/* implements Serializable*/
             }
         }
 
-        Vector groups = null;
+        Vector<String> groups = null;
 
         if (!specAxResVsGroups.containsKey(specAxRes))
         {
-            groups = new Vector();
+            groups = new Vector<String>();
         }
         else
         {
-            groups = (Vector)specAxResVsGroups.get(specAxRes);
+            groups = (Vector<String>)specAxResVsGroups.get(specAxRes);
         }
         if (!groups.contains(group)) groups.add(group);
         specAxResVsGroups.put(specAxRes, groups);
@@ -1255,15 +1255,15 @@ public class Cell/* implements Serializable*/
                           + apPropSpeed);
 
         if (!getAllGroupNames().contains(group)) return false;
-        Vector groups = null;
+        Vector<String> groups = null;
 
         if (!this.apPropSpeedsVsGroups.containsKey(apPropSpeed))
         {
-            groups = new Vector();
+            groups = new Vector<String>();
         }
         else
         {
-            groups = (Vector)apPropSpeedsVsGroups.get(apPropSpeed);
+            groups = (Vector<String>)apPropSpeedsVsGroups.get(apPropSpeed);
         }
 
         if (!groups.contains(group)) groups.add(group);
@@ -1324,12 +1324,12 @@ public class Cell/* implements Serializable*/
                           + getAllGroupNames());
 
         if (!getAllGroupNames().contains(group)) return false;
-        Vector groups = null;
+        Vector<String> groups = null;
         boolean success = false;
 
         if (synapsesVsGroups.containsKey(synapseType))
         {
-            groups = (Vector)synapsesVsGroups.get(synapseType);
+            groups = synapsesVsGroups.get(synapseType);
             success = groups.remove(group);
             if (groups.size()>0) synapsesVsGroups.put(synapseType, groups);
             else synapsesVsGroups.remove(synapseType);
@@ -1351,7 +1351,7 @@ public class Cell/* implements Serializable*/
                           + group + ". My groups: " + getAllGroupNames());
 
         if (!getAllGroupNames().contains(group)) return false;
-        Vector groups = null;
+        Vector<String> groups = null;
         boolean success = false;
 
         Enumeration<Float> specCaps = specCapVsGroups.keys();
@@ -1360,7 +1360,7 @@ public class Cell/* implements Serializable*/
        {
            Float spCaps  = specCaps.nextElement();
 
-            groups = (Vector)specCapVsGroups.get(spCaps);
+            groups = specCapVsGroups.get(spCaps);
             success = groups.remove(group);
             if (groups.size()>0) specCapVsGroups.put(spCaps, groups);
             else specCapVsGroups.remove(spCaps);
@@ -1380,7 +1380,7 @@ public class Cell/* implements Serializable*/
                           + group + ". My groups: " + getAllGroupNames());
 
         if (!getAllGroupNames().contains(group)) return false;
-        Vector groups = null;
+        Vector<String> groups = null;
         boolean success = false;
 
         Enumeration<Float> specAxReses = specAxResVsGroups.keys();
@@ -1388,7 +1388,7 @@ public class Cell/* implements Serializable*/
         while (specAxReses.hasMoreElements())
         {
             Float spAxRes  = specAxReses.nextElement();
-            groups = (Vector)specAxResVsGroups.get(spAxRes);
+            groups = (Vector<String>)specAxResVsGroups.get(spAxRes);
             success = groups.remove(group);
             if (groups.size()>0) specAxResVsGroups.put(spAxRes, groups);
             else specAxResVsGroups.remove(spAxRes);
@@ -1406,11 +1406,11 @@ public class Cell/* implements Serializable*/
                           + chanMech);
 
         if (!getAllGroupNames().contains(group)) return false;
-        Vector groups = null;
+        Vector<String> groups = null;
         boolean success = false;
         if (chanMechsVsGroups.containsKey(chanMech))
         {
-            groups = (Vector)chanMechsVsGroups.get(chanMech);
+            groups = (Vector<String>)chanMechsVsGroups.get(chanMech);
             success = groups.remove(group);
             if (groups.size()>0) chanMechsVsGroups.put(chanMech, groups);
             else chanMechsVsGroups.remove(chanMech);
@@ -1429,7 +1429,7 @@ public class Cell/* implements Serializable*/
                           + chanMechName);
 
         if (!getAllGroupNames().contains(group)) return false;
-        Vector groups = null;
+        //Vector<String> groups = null;
         boolean success = false;
 
         Enumeration enumeration = chanMechsVsGroups.keys();
@@ -1461,9 +1461,9 @@ public class Cell/* implements Serializable*/
         //clonedCell.setSpecAxRes((NumberGenerator)this.getSpecAxRes().clone());
         ///clonedCell.setSpecCapacitance((NumberGenerator)this.getSpecCapacitance().clone());
 
-        Vector newSegments = new Vector();
-        Hashtable newSectionsVsOldSections = new Hashtable();
-        Hashtable newSegmentsVsOldSegments = new Hashtable();
+        Vector<Segment> newSegments = new Vector<Segment>();
+        Hashtable<Section, Section> newSectionsVsOldSections = new Hashtable<Section, Section>();
+        Hashtable<Segment, Segment> newSegmentsVsOldSegments = new Hashtable<Segment, Segment>();
 
         for (int i = 0; i < allSegments.size(); i++)
         {
@@ -1647,7 +1647,7 @@ public class Cell/* implements Serializable*/
         else
             this.cellDescription = cellDescription;
     }
-    public void setAllSegments(Vector allSegments)
+    public void setAllSegments(Vector<Segment> allSegments)
     {
         this.allSegments = allSegments;
     }
@@ -1662,7 +1662,7 @@ public class Cell/* implements Serializable*/
         return synapsesVsGroups;
     }
 
-    public void setSynapsesVsGroups(Hashtable synapsesVsGroups)
+    public void setSynapsesVsGroups(Hashtable<String, Vector<String>> synapsesVsGroups)
     {
         this.synapsesVsGroups = synapsesVsGroups;
     }
@@ -1684,32 +1684,32 @@ public class Cell/* implements Serializable*/
     }
 
 
-    public Hashtable<ApPropSpeed, Vector> getApPropSpeedsVsGroups()
+    public Hashtable<ApPropSpeed, Vector<String>> getApPropSpeedsVsGroups()
     {
         return this.apPropSpeedsVsGroups;
     }
 
 
-    public void setChanMechsVsGroups(Hashtable chanMechsVsGroups)
+    public void setChanMechsVsGroups(Hashtable<ChannelMechanism, Vector<String>> chanMechsVsGroups)
     {
         this.chanMechsVsGroups = chanMechsVsGroups;
     }
 
-    public void setSpecCapVsGroups(Hashtable specCapVsGroups)
+    public void setSpecCapVsGroups(Hashtable<Float, Vector<String>> specCapVsGroups)
     {
         this.specCapVsGroups = specCapVsGroups;
     }
 
 
-    public void setSpecAxResVsGroups(Hashtable specAxResVsGroups)
+    public void setSpecAxResVsGroups(Hashtable<Float, Vector<String>> sp)
     {
-        this.specAxResVsGroups = specAxResVsGroups;
+        this.specAxResVsGroups = sp;
     }
 
 
-    public void setApPropSpeedsVsGroups(Hashtable apPropSpeedsVsGroups)
+    public void setApPropSpeedsVsGroups(Hashtable<ApPropSpeed, Vector<String>> ap)
     {
-        this.apPropSpeedsVsGroups = apPropSpeedsVsGroups;
+        this.apPropSpeedsVsGroups = ap;
     }
 
 

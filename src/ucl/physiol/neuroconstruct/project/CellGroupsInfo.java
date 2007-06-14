@@ -28,6 +28,8 @@ import ucl.physiol.neuroconstruct.utils.*;
  * @version 1.0.3
  */
 
+@SuppressWarnings("serial")
+
 public class CellGroupsInfo extends AbstractTableModel
 {
     ClassLogger logger = new ClassLogger("CellGroupsInfo");
@@ -42,12 +44,12 @@ public class CellGroupsInfo extends AbstractTableModel
     String[] columnNames = new String[6];
 
 
-    Vector vectorCellGroupNames = new Vector();
-    Vector vectorCellTypes = new Vector();
-    Vector vectorRegionNames = new Vector();
-    Vector vectorColours = new Vector();
-    Vector vectorPackingAdapter = new Vector();
-    Vector vectorPriority = new Vector();
+    Vector<String> vectorCellGroupNames = new Vector<String>();
+    Vector<String> vectorCellTypes = new Vector<String>();
+    Vector<String> vectorRegionNames = new Vector<String>();
+    Vector<Color> vectorColours = new Vector<Color>();
+    Vector<CellPackingAdapter> vectorPackingAdapter = new Vector<CellPackingAdapter>();
+    Vector<Integer> vectorPriority = new Vector<Integer>();
 
 
     public CellGroupsInfo()
@@ -132,14 +134,14 @@ public class CellGroupsInfo extends AbstractTableModel
             case COL_NUM_PRIORITY:
                 if (vectorPriority.size()<vectorCellGroupNames.size())
                 {
-                    vectorPriority = new Vector();
+                    vectorPriority = new Vector<Integer>();
 
                     for (int i = 0; i < vectorCellGroupNames.size(); i++)
                     {
-                        vectorPriority.add(new Integer(10  - i));
+                        vectorPriority.add(10  - i);
                     }
                 }
-                return (Integer)this.vectorPriority.elementAt(row);
+                return vectorPriority.elementAt(row);
 
             default:
                 return null;
@@ -195,7 +197,6 @@ public class CellGroupsInfo extends AbstractTableModel
             case COL_NUM_PRIORITY:
                 vectorPriority.setElementAt((Integer)value , row);
                 break;
-
         }
         fireTableCellUpdated(row, col);
     }
@@ -303,14 +304,14 @@ public class CellGroupsInfo extends AbstractTableModel
     public void setColourOfCellGroup(String cellGroupName, Color c)
     {
         int index = vectorCellGroupNames.indexOf(cellGroupName);
-        this.setValueAt(c, index, this.COL_NUM_COLOUR);
+        this.setValueAt(c, index, COL_NUM_COLOUR);
     }
 
 
     public void setCellGroupPriority(String cellGroupName, int priority)
     {
         int index = vectorCellGroupNames.indexOf(cellGroupName);
-        this.setValueAt(new Integer(priority), index, this.COL_NUM_PRIORITY);
+        this.setValueAt(new Integer(priority), index, COL_NUM_PRIORITY);
     }
 
 
@@ -318,7 +319,7 @@ public class CellGroupsInfo extends AbstractTableModel
     {
         logger.logComment("Setting region: "+ regionName);
         int index = vectorCellGroupNames.indexOf(cellGroupName);
-        this.setValueAt(regionName, index, this.COL_NUM_REGIONNAME);
+        this.setValueAt(regionName, index, COL_NUM_REGIONNAME);
     }
 
 
@@ -326,7 +327,7 @@ public class CellGroupsInfo extends AbstractTableModel
     public void setPriority(String cellGroupName, int priority)
     {
         int index = vectorCellGroupNames.indexOf(cellGroupName);
-        this.setValueAt(new Integer(priority), index, this.COL_NUM_PRIORITY);
+        this.setValueAt(new Integer(priority), index, COL_NUM_PRIORITY);
     }
 
 
@@ -334,14 +335,14 @@ public class CellGroupsInfo extends AbstractTableModel
     {
         logger.logComment("Setting cellType: "+ cellType);
         int index = vectorCellGroupNames.indexOf(cellGroupName);
-        this.setValueAt(cellType, index, this.COL_NUM_CELLTYPE);
+        this.setValueAt(cellType, index, COL_NUM_CELLTYPE);
     }
 
 
     public void setAdapter(String cellGroupName, CellPackingAdapter adapter)
     {
         int index = vectorCellGroupNames.indexOf(cellGroupName);
-        this.setValueAt(adapter, index, this.COL_NUM_PACKING_ADAPTER);
+        this.setValueAt(adapter, index, COL_NUM_PACKING_ADAPTER);
     }
 
 
@@ -349,9 +350,9 @@ public class CellGroupsInfo extends AbstractTableModel
     /**
      * Gets the cellgroups names which are in regionName
      */
-    public Vector getCellGroupsInRegion(String regionName)
+    public Vector<String> getCellGroupsInRegion(String regionName)
     {
-        Vector cellGroups = new Vector();
+        Vector<String> cellGroups = new Vector<String>();
 
         for (int i = 0; i < vectorRegionNames.size(); i++)
         {
@@ -370,15 +371,15 @@ public class CellGroupsInfo extends AbstractTableModel
     /**
      * Gets the cellgroups names use cell type specified
      */
-    public Vector getCellGroupsUsingCellType(String cellType)
+    public Vector<String> getCellGroupsUsingCellType(String cellType)
     {
-        Vector cellGroups = new Vector();
+        Vector<String> cellGroups = new Vector<String>();
 
         for (int i = 0; i < vectorCellTypes.size(); i++)
         {
             if ( ( (String) vectorCellTypes.elementAt(i)).equals(cellType))
             {
-                String cellGroupName = (String) vectorCellGroupNames.elementAt(i);
+                String cellGroupName = vectorCellGroupNames.elementAt(i);
                 if (!cellGroups.contains(cellGroupName))
                     cellGroups.add(cellGroupName);
             }
@@ -392,9 +393,9 @@ public class CellGroupsInfo extends AbstractTableModel
     /**
      * Added to allow storing of data by XMLEncoder
      */
-    public Hashtable getInternalData()
+    public Hashtable<String, Vector> getInternalData()
     {
-        Hashtable allInfo = new Hashtable();
+        Hashtable<String, Vector> allInfo = new Hashtable<String, Vector>();
         allInfo.put(columnNames[COL_NUM_CELLGROUPNAME], vectorCellGroupNames);
         allInfo.put(columnNames[COL_NUM_CELLTYPE], vectorCellTypes);
         allInfo.put(columnNames[COL_NUM_REGIONNAME], vectorRegionNames);
@@ -408,9 +409,9 @@ public class CellGroupsInfo extends AbstractTableModel
     /**
      * Added to allow storing of data by XMLEncoder
      */
-    public void setInternalData(Hashtable allInfo)
+    public void setInternalData(Hashtable<String, Vector> allInfo)
     {
-        Vector vectorCellGroupNamesTemp = (Vector) allInfo.get(columnNames[COL_NUM_CELLGROUPNAME]);
+        Vector<String> vectorCellGroupNamesTemp = (Vector<String>)allInfo.get(columnNames[COL_NUM_CELLGROUPNAME]);
         if (vectorCellGroupNamesTemp != null) vectorCellGroupNames = vectorCellGroupNamesTemp;
 
         Vector vectorCellTypesTemp = (Vector) allInfo.get(columnNames[COL_NUM_CELLTYPE]);

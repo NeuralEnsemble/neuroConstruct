@@ -1040,7 +1040,8 @@ public class SegmentSelector extends JFrame
         Segment parent = currentlyAddressedSegment.getParentSegment();
 
         Vector allSegments = myCell.getAllSegments();
-        ArrayList<Section> allSections = myCell.getAllSections();
+        
+        //ArrayList<Section> allSections = myCell.getAllSections();
 
         for (int i = 0; i < segmentsForDeletion.size(); i++)
         {

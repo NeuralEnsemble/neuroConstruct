@@ -15,7 +15,6 @@ package ucl.physiol.neuroconstruct.gui;
 import java.awt.*;
 import javax.swing.*;
 import java.util.*;
-import java.io.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.awt.event.*;
@@ -28,6 +27,8 @@ import java.awt.event.*;
  * @version 1.0.3
  */
 
+
+@SuppressWarnings("serial")
 
 public class SynapticPropertiesDialog extends JDialog
 {
@@ -323,7 +324,7 @@ public class SynapticPropertiesDialog extends JDialog
 
 
 
-        Dimension dlgSize = dlg.getPreferredSize();
+    //    Dimension dlgSize = dlg.getPreferredSize();
         dlg.setModal(true);
         dlg.pack();
         dlg.setVisible(true);

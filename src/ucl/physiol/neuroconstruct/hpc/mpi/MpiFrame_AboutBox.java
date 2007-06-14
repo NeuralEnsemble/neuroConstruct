@@ -49,7 +49,7 @@ public class MpiFrame_AboutBox extends JDialog implements ActionListener
     GridLayout gridLayout1 = new GridLayout();
     String product = "";
     String version = "";
-    String copyright = "";
+    String copyright = "";  
     String comments = "";
 
     public MpiFrame_AboutBox(Frame parent)

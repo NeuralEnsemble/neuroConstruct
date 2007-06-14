@@ -23,7 +23,7 @@ import java.util.*;
 
 public class CellChooserHelper
 {
-    private static Vector cellChoices = new Vector();
+    private static Vector<String> cellChoices = new Vector<String>();
 
     static
     {

@@ -12,7 +12,6 @@
 
 package ucl.physiol.neuroconstruct.utils.units;
 
-import ucl.physiol.neuroconstruct.utils.units.*;
 import ucl.physiol.neuroconstruct.utils.*;
 
 /**
@@ -676,9 +675,9 @@ public class UnitConverter
 
     public static void main(String[] args)
     {
-        double value = 0.1;
+       // double value = 0.1;
         int from = NEUROCONSTRUCT_UNITS;
-        int to = GENESIS_SI_UNITS;
+       // int to = GENESIS_SI_UNITS;
 /*
         System.out.println("From: "+from+" to: "+ to+ ":  "+ UnitConverter.getTime(value, from, to));
         System.out.println("From: "+from+" to: "+ to+ ":  "+ UnitConverter.getVoltage(value, from, to));
@@ -704,8 +703,8 @@ public class UnitConverter
 
         //System.out.println("Equal: " + areaUnits[from].equals(lengthUnits[from]));
 
-        PhysicalQuantity area = UnitConverter.convertFromNeuroConstruct(value, areaUnits[from],
-                                                                        to);
+        //PhysicalQuantity area = UnitConverter.convertFromNeuroConstruct(value, areaUnits[from],
+                                                                //        to);
 
         System.out.println("Area: " + areaUnits[from]);
 

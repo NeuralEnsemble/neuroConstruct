@@ -758,7 +758,7 @@ public class MorphMLConverter extends FormatImporter
                        bioElement.addChildElement(potSynLocEl);
                    }
 
-                   Hashtable<ApPropSpeed, Vector> appTable = cell.getApPropSpeedsVsGroups();
+                   Hashtable<ApPropSpeed, Vector<String>> appTable = cell.getApPropSpeedsVsGroups();
 
                    if (appTable.size()>0)
                    {

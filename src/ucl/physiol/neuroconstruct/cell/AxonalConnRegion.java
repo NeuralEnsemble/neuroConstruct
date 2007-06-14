@@ -12,7 +12,6 @@
 
  package ucl.physiol.neuroconstruct.cell;
 
-import java.io.*;
 
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
@@ -32,7 +31,7 @@ public class AxonalConnRegion
      private String name = null;
      private Region region = null;
 
-     private String connectivityProbability = null;
+     //private String connectivityProbability = null;
 
     public AxonalConnRegion()
     {
@@ -114,6 +113,6 @@ public class AxonalConnRegion
 
     public static void main(String[] args)
     {
-        AxonalConnRegion axonalconnregion = new AxonalConnRegion();
+        new AxonalConnRegion();
     }
 }
