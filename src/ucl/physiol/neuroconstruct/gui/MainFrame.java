@@ -87,7 +87,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     String CELL_TYPES_TAB = "Cell Types";
     String REGIONS_TAB = "Regions";
     String CELL_GROUPS_TAB = "Cell Groups";
-    String CELL_MECHANISM_TAB = "Cell Mechanism";
+    String CELL_MECHANISM_TAB = "Cell Mechanisms";
     String NETWORK_TAB = "Network";
     String GENERATE_TAB = "Generate";
     String VISUALISATION_TAB = "Visualisation";
@@ -3556,6 +3556,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     }
 
+    @SuppressWarnings("serial")
     private void enableTableCellEditingFunctionality()
     {
         DefaultTableCellRenderer colorRenderer = new DefaultTableCellRenderer()
@@ -4715,170 +4716,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     }
 
 
-    /**
-     * pops up the create new synapse type dialog
-     *
-     */
-    private void doCreateNewSynapseType()
-    {
-        if (projManager.getCurrentProject() == null)
-        {
-            logger.logError("No project loaded...");
-            return;
-        }
-
-        NewModFileDialog dlg = new NewModFileDialog(this, "New Custom Synapse");
-        dlg.initialiseAsSynapseMaker();
-
-        Dimension dlgSize = dlg.getPreferredSize();
-        Dimension frmSize = getSize();
-        Point loc = getLocation();
-        dlg.setLocation( (frmSize.width - dlgSize.width) / 2 + loc.x,
-                      (frmSize.height - dlgSize.height) / 2 + loc.y);
 
 
-        dlg.pack();
-        dlg.setVisible(true);
-
-        if (dlg.cancelled)
-        {
-            logger.logComment("They've changed their mind...");
-            return;
-        }
-
-        String synapseName = dlg.getNewSynapseName();
-        ModFile synapseModFile = dlg.getChosenModFile();
-
-        if (synapseModFile != null)
-        {
-            logger.logComment("Creating a new Synapse called: " + synapseName + " based on file: " +
-                              synapseModFile.getFullFileName());
-
-            /** @todo check for name used already... */
-
-            String oldFileName = synapseModFile.getFullFileName();
-            String newFileName = null;
-
-            newFileName = (new File(ProjectStructure.getNeuronCodeDir(projManager.getCurrentProject().getProjectMainDirectory()),
-                synapseName
-                + ".mod")).getAbsolutePath();
-
-            logger.logComment("New file will be called: " + newFileName);
-
-            try
-            {
-                synapseModFile.myNeuronElement.setProcessName(synapseName);
-                synapseModFile.saveAs(newFileName);
-            }
-            catch (ModFileException ex)
-            {
-                GuiUtils.showErrorMessage(logger,
-                                          "Problem saving file: "
-                                          + oldFileName
-                                          + " as: "
-                                          + newFileName, ex, this);
-                return;
-            }
-
-            GuiUtils.showInfoMessage(logger,
-                                     "File copied to project",
-                                     "The file "
-                                     + oldFileName
-                                     + " has been copied into the project as: "
-                                     + newFileName, this);
-
-
-
-
-            NmodlEditorApp nmodlApp = new NmodlEditorApp(projManager.getCurrentProject().getProjectMainDirectory().getAbsolutePath());
-            nmodlApp.editModFile(newFileName, false);
-
-        }
-
-    }
-
-
-
-    /**
-     * pops up the create new channel mechanism dialog
-     *
-     */
-    private void doCreateNewChannelMechanism()
-    {
-        if (projManager.getCurrentProject() == null)
-        {
-            logger.logError("No project loaded...");
-            return;
-        }
-
-        NewModFileDialog dlg = new NewModFileDialog(this, "New Channel Mechanism");
-        dlg.initialiseAsChannelMechanismMaker();
-
-        Dimension dlgSize = dlg.getPreferredSize();
-        Dimension frmSize = getSize();
-        Point loc = getLocation();
-        dlg.setLocation( (frmSize.width - dlgSize.width) / 2 + loc.x,
-                      (frmSize.height - dlgSize.height) / 2 + loc.y);
-
-
-        dlg.pack();
-        dlg.setVisible(true);
-
-        if (dlg.cancelled)
-        {
-            logger.logComment("They've changed their mind...");
-            return;
-        }
-
-        String synapseName = dlg.getNewSynapseName();
-        ModFile synapseModFile = dlg.getChosenModFile();
-
-        if (synapseModFile != null)
-        {
-            logger.logComment("Creating a new Synapse called: " + synapseName + " based on file: " +
-                              synapseModFile.getFullFileName());
-
-            /** @todo check for name used already... */
-
-            String oldFileName = synapseModFile.getFullFileName();
-            String newFileName = null;
-
-            newFileName = ProjectStructure.getNeuronCodeDir(projManager.getCurrentProject().getProjectMainDirectory()).getAbsolutePath()
-                + System.getProperty("file.separator")
-                + synapseName
-                + ".mod";
-
-            logger.logComment("New file will be called: " + newFileName);
-
-            try
-            {
-                synapseModFile.myNeuronElement.setProcessName(synapseName);
-                synapseModFile.saveAs(newFileName);
-            }
-            catch (ModFileException ex)
-            {
-                GuiUtils.showErrorMessage(logger,
-                                          "Problem saving file: "
-                                          + oldFileName
-                                          + " as: "
-                                          + newFileName, ex, this);
-                return;
-            }
-
-            GuiUtils.showInfoMessage(logger,
-                                     "File copied to project",
-                                     "The file "
-                                     + oldFileName
-                                     + " has been copied into the project as: "
-                                     + newFileName, this);
-
-            NmodlEditorApp nmodlApp = new NmodlEditorApp(projManager.getCurrentProject().getProjectMainDirectory().getAbsolutePath());
-            nmodlApp.editModFile(newFileName, false);
-
-
-        }
-
-    }
 
 
 

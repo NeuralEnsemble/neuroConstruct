@@ -1138,7 +1138,7 @@ public class NetworkConnectionDialog extends JDialog
     }*/
 
 
-    public Vector getSynapticPropsList()
+    public Vector<SynapticProperties> getSynapticPropsList()
     {
         return chosenSynapticPropList;
     }
