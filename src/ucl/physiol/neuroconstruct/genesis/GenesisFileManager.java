@@ -15,7 +15,6 @@ package ucl.physiol.neuroconstruct.genesis;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
-import javax.vecmath.*;
 
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
@@ -23,7 +22,6 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.project.*;
-import ucl.physiol.neuroconstruct.project.GeneratedElecInputs.*;
 import ucl.physiol.neuroconstruct.project.GeneratedPlotSaves.*;
 import ucl.physiol.neuroconstruct.project.packing.*;
 import ucl.physiol.neuroconstruct.project.stimulation.*;
@@ -54,7 +52,7 @@ public class GenesisFileManager
 
     boolean mainFileGenerated = false;
 
-    Vector cellTemplatesGenAndIncl = new Vector();
+    ArrayList<String> cellTemplatesGenAndIncl = new ArrayList<String>();
 
     boolean newRecordingToBeMade = false;
 
@@ -76,7 +74,7 @@ public class GenesisFileManager
 
     public static final String CONTROLS_ELEMENT_ROOT = "/controls";
 
-    Vector graphsCreated = new Vector();
+    ArrayList<String> graphsCreated = new ArrayList<String>();
 
     SimConfig simConfig = null;
 
@@ -98,8 +96,8 @@ public class GenesisFileManager
 
     public void reset()
     {
-        cellTemplatesGenAndIncl = new Vector();
-        graphsCreated = new Vector();
+        cellTemplatesGenAndIncl = new ArrayList<String>();
+        graphsCreated = new ArrayList<String>();
         nextColour = 1; // reset it...
 
         addComments = project.genesisSettings.isGenerateComments();
@@ -520,7 +518,7 @@ public class GenesisFileManager
 
 
             String targetCellType = project.cellGroupsInfo.getCellType(targetCellGroup);
-            Cell targetCell = mappedCells.get(targetCellType);
+            //Cell targetCell = mappedCells.get(targetCellType);
 
             String sourceCellType = project.cellGroupsInfo.getCellType(sourceCellGroup);
             Cell sourceCell = mappedCells.get(sourceCellType);
@@ -730,7 +728,7 @@ public class GenesisFileManager
 
     private void removeAllPreviousGenesisFiles()
     {
-        cellTemplatesGenAndIncl.removeAllElements();
+        cellTemplatesGenAndIncl.clear();
 
         File genesisFileDir = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory());
 
@@ -765,7 +763,7 @@ public class GenesisFileManager
         }
         StringBuffer response = new StringBuffer();
         addComment(response, "Including neuroConstruct utilities file");
-        response.append("include "+ this.getFriendlyDirName(dir)+"nCtools \n\n");
+        response.append("include "+ getFriendlyDirName(dir)+"nCtools \n\n");
 
         addComment(response, "Including external files");
         response.append("include compartments \n\n");
@@ -817,7 +815,7 @@ public class GenesisFileManager
 
         ArrayList<String> cellGroupNames = project.cellGroupsInfo.getAllCellGroupNames();
 
-        Vector includedChanMechNames = new Vector();
+        ArrayList<String> includedChanMechNames = new ArrayList<String>();
 
         String dir = ""; // needed under windows...
         if (GeneralUtils.isWindowsBasedPlatform())
@@ -900,7 +898,7 @@ public class GenesisFileManager
 
                             }
 
-                            response.append("include " + this.getFriendlyDirName(dir) + cellProcess.getInstanceName() + "\n");
+                            response.append("include " + getFriendlyDirName(dir) + cellProcess.getInstanceName() + "\n");
                             response.append("make_" + cellProcess.getInstanceName() + "\n\n");
 
                             includedChanMechNames.add(nextChanMech.getName());
@@ -933,7 +931,7 @@ public class GenesisFileManager
 
         ArrayList<String> cellGroupNames = project.cellGroupsInfo.getAllCellGroupNames();
 
-        Vector includedSynapses = new Vector();
+        ArrayList<String> includedSynapses = new ArrayList<String>();
 
         for (int ii = 0; ii < cellGroupNames.size(); ii++)
         {
@@ -942,10 +940,10 @@ public class GenesisFileManager
             logger.logComment("***  Looking at cell group number " + ii + ", called: " +
                               cellGroupName);
 
-            String cellTypeName = project.cellGroupsInfo.getCellType(cellGroupName);
+            //String cellTypeName = project.cellGroupsInfo.getCellType(cellGroupName);
             //Cell cell = project.cellManager.getCell(cellTypeName);
 
-            Vector synNames = new Vector();
+            Vector<String> synNames = new Vector<String>();
 
             Iterator allNetConns = project.generatedNetworkConnections.getNamesNetConns();
 
@@ -1044,7 +1042,7 @@ public class GenesisFileManager
                         return "";
                     }
 
-                    response.append("include "+ this.getFriendlyDirName(dir) + cellMech.getInstanceName() + "\n");
+                    response.append("include "+ getFriendlyDirName(dir) + cellMech.getInstanceName() + "\n");
 
                     includedSynapses.add(nextSynMechName);
 
@@ -1116,7 +1114,7 @@ public class GenesisFileManager
                         return "";
                     }
 
-                    response.append("include " + this.getFriendlyDirName(dir) + cellMech.getInstanceName() + "\n");
+                    response.append("include " + getFriendlyDirName(dir) + cellMech.getInstanceName() + "\n");
 
                     includedSynapses.add(randStim.getSynapseType());
 
@@ -1227,7 +1225,7 @@ public class GenesisFileManager
             return simConfig.getSimDuration();
     }
 
-
+/*
     private String generateCellParamControl()
     {
         StringBuffer response = new StringBuffer();
@@ -1240,8 +1238,8 @@ public class GenesisFileManager
 
         logger.logComment("Looking at " + cellGroupNames.size() + " cell groups");
 
-        response.append("if (!{exists "+this.CONTROLS_ELEMENT_ROOT+"})\n"+
-                "    create neutral "+this.CONTROLS_ELEMENT_ROOT+"\n"+
+        response.append("if (!{exists "+CONTROLS_ELEMENT_ROOT+"})\n"+
+                "    create neutral "+CONTROLS_ELEMENT_ROOT+"\n"+
                 "end\n");
 
 
@@ -1254,7 +1252,7 @@ public class GenesisFileManager
 
             String cellTypeName = project.cellGroupsInfo.getCellType(cellGroupName);
 
-            String paramControl = this.CONTROLS_ELEMENT_ROOT + "/params"+cellGroupName;
+            String paramControl = CONTROLS_ELEMENT_ROOT + "/params"+cellGroupName;
 
             response.append("create xform " + paramControl + " [700, 20, 250, 200] -title \"Parameters for cell "+cellTypeName+" in group "+cellGroupName+"\"\n");
 
@@ -1337,7 +1335,7 @@ public class GenesisFileManager
                                     "_0/" + SimEnvHelper.getSimulatorFriendlyName(cell.getFirstSomaSegment().getSegmentName()) + "/" + cm.getName() +
                                     " Gbar}\n" +
                                     "       str tempCellName\n" +
-                                    /*"       foreach tempCellName ({el /cells/"+cellGroupName+"/#/#})\n"+*/
+                                    //"       foreach tempCellName ({el /cells/"+cellGroupName+"/#/#})\n"+
                                     "       foreach tempCellName ({el " + allComps + "})\n" +
                                     "           echo Setting chan dens of " + cm.getName() +
                                     " in {tempCellName} to 0 \n" +
@@ -1365,7 +1363,7 @@ public class GenesisFileManager
         return response.toString();
     }
 
-
+*/
 
 
     public static float convertToGenesisValue(Float val, String simIndepVarName, int units)
@@ -1566,8 +1564,8 @@ public class GenesisFileManager
                         else if (simIndepVarPart.indexOf(SimPlot.CURRENT)>=0)
                         {
 
-                            String ion = simIndepVarPart.substring(simIndepVarPart.indexOf(SimPlot.
-                                                                             PLOTTED_VALUE_SEPARATOR) + 1);
+                            //String ion = simIndepVarPart.substring(simIndepVarPart.indexOf(SimPlot.
+                            //                                                 PLOTTED_VALUE_SEPARATOR) + 1);
 
                             //System.out.println("Looking to plot the current due to ion: " + ion + "...");
 
@@ -1766,7 +1764,7 @@ public class GenesisFileManager
                     String error = "Note, synaptic mechanism variable plotting/saving not supported yet in GENESIS, so not plotting: "+plot.simPlot;
                     logger.logError(error);
 
-                    this.addComment(response, error);
+                    addComment(response, error);
 
                 }
                 else
@@ -1776,28 +1774,28 @@ public class GenesisFileManager
 
                     String plotFrameName = PLOT_ELEMENT_ROOT + "/" + plot.simPlot.getGraphWindow();
 
-                    float minVal = this.convertToGenesisValue(plot.simPlot.getMinValue(),
+                    float minVal = convertToGenesisValue(plot.simPlot.getMinValue(),
                                                               plot.simPlot.getValuePlotted(),
                                                               project.genesisSettings.getUnitSystemToUse());
 
-                    float maxVal = this.convertToGenesisValue(plot.simPlot.getMaxValue(),
+                    float maxVal = convertToGenesisValue(plot.simPlot.getMaxValue(),
                                                               plot.simPlot.getValuePlotted(),
                                                               project.genesisSettings.getUnitSystemToUse());
 
                     //Cell nextCell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(plot.simPlot.getCellGroup()));
                     String cellType = project.cellGroupsInfo.getCellType(plot.simPlot.getCellGroup());
-                    Cell nextCell = this.mappedCells.get(cellType);
+                    //Cell nextCell = this.mappedCells.get(cellType);
 
                     for (Integer cellNum : cellNumsToPlot)
                     {
                         for (Integer segId : segIdsToPlot)
                         {
-                            Segment segInOrigCell = project.cellManager.getCell(cellType).getSegmentWithId(segId);
+                            //Segment segInOrigCell = project.cellManager.getCell(cellType).getSegmentWithId(segId);
 
                             Segment segInMappedCell = this.getMappedSegment(cellType, segId, 0.5f);
 
-                            String compElement = getCellElementName(plot.simPlot.getCellGroup(), cellNum)
-                                + "/" + SimEnvHelper.getSimulatorFriendlyName(segInMappedCell.getSegmentName());
+                            //String compElement = getCellElementName(plot.simPlot.getCellGroup(), cellNum)
+                            //    + "/" + SimEnvHelper.getSimulatorFriendlyName(segInMappedCell.getSegmentName());
 
                             VariableHelper var = new VariableHelper(plot, cellNum, segInMappedCell);
 
@@ -1897,11 +1895,11 @@ public class GenesisFileManager
 
         addMajorComment(response, "Creating a simple Run Control");
 
-        response.append("if (!{exists "+this.CONTROLS_ELEMENT_ROOT+"})\n"+
-                        "    create neutral "+this.CONTROLS_ELEMENT_ROOT+"\n"+
+        response.append("if (!{exists "+CONTROLS_ELEMENT_ROOT+"})\n"+
+                        "    create neutral "+CONTROLS_ELEMENT_ROOT+"\n"+
                         "end\n");
 
-        String runControl = this.CONTROLS_ELEMENT_ROOT + "/runControl";
+        String runControl = CONTROLS_ELEMENT_ROOT + "/runControl";
         response.append("create xform "+runControl + " [700, 20, 200, 120] -title \"Run Controls\"\n");
 
         response.append("xshow " + runControl+"\n\n");
@@ -2171,8 +2169,7 @@ public class GenesisFileManager
             logger.logComment("Will need a cell template file called: " +
                               filenameToBeGenerated);
 
-            if (cellTemplatesGenAndIncl.contains(
-                filenameToBeGenerated))
+            if (cellTemplatesGenAndIncl.contains(filenameToBeGenerated))
             {
                 logger.logComment("It's already been generated!");
             }
@@ -2275,9 +2272,9 @@ public class GenesisFileManager
 
 
 
-                Point3f point = new Point3f(posRecord.x_pos, posRecord.y_pos, posRecord.z_pos);
+                //Point3f point = new Point3f(posRecord.x_pos, posRecord.y_pos, posRecord.z_pos);
 
-                PositionedCell cellPosn = new PositionedCell(point, cellGroupName, cellTypeName);
+                //PositionedCell cellPosn = new PositionedCell(point, cellGroupName, cellTypeName);
 
             }
 
@@ -2286,9 +2283,9 @@ public class GenesisFileManager
             ArrayList<ChannelMechanism> chanMechs = mappedCell.getAllChannelMechanisms(false);
             logger.logComment("Chan mechs: "+ chanMechs);
 
-            Hashtable<String, ArrayList> ionCurrentSources = new Hashtable<String,ArrayList>();
-            Hashtable<String, ArrayList> ionRateDependence = new Hashtable<String,ArrayList>();
-            Hashtable<String, ArrayList> ionConcentration = new Hashtable<String,ArrayList>();
+            Hashtable<String, ArrayList<String>> ionCurrentSources = new Hashtable<String,ArrayList<String>>();
+            Hashtable<String, ArrayList<String>> ionRateDependence = new Hashtable<String,ArrayList<String>>();
+            Hashtable<String, ArrayList<String>> ionConcentration = new Hashtable<String,ArrayList<String>>();
 
             for (int j = 0; j < chanMechs.size(); j++)
             {
@@ -2323,7 +2320,8 @@ public class GenesisFileManager
                                 if (role!=null && (role.equals(ChannelMLConstants.ION_ROLE_MODULATING) ||
                                     role.equals(ChannelMLConstants.ION_ROLE_MODULATING_v1_2)))
                                 {
-                                    ArrayList cellProcsDepOnIonConc = ionRateDependence.get(name);
+                                    ArrayList<String> cellProcsDepOnIonConc = ionRateDependence.get(name);
+                                    
                                     if (cellProcsDepOnIonConc==null)
                                     {
                                         cellProcsDepOnIonConc = new ArrayList<String> ();
@@ -2335,7 +2333,7 @@ public class GenesisFileManager
                                 else if (role!=null && (role.equals(ChannelMLConstants.ION_ROLE_SIGNALLING) ||
                                     role.equals(ChannelMLConstants.ION_ROLE_SIGNALLING_v1_2)))
                                 {
-                                    ArrayList cellProcsInfluencingConc = ionConcentration.get(name);
+                                    ArrayList<String> cellProcsInfluencingConc = ionConcentration.get(name);
                                     if (cellProcsInfluencingConc==null)
                                     {
                                         cellProcsInfluencingConc = new ArrayList<String> ();
@@ -2363,7 +2361,7 @@ public class GenesisFileManager
                             String ion_name = ((SimpleXMLElement)ohmicElement[0]).getAttributeValue(ChannelMLConstants.OHMIC_ION_ATTR);
                             logger.logComment("Found transmitted ion: "+ion_name);
 
-                            ArrayList cellProcsTransmittingIon = ionCurrentSources.get(ion_name);
+                            ArrayList<String> cellProcsTransmittingIon = ionCurrentSources.get(ion_name);
                             if (cellProcsTransmittingIon == null)
                             {
                                 cellProcsTransmittingIon = new ArrayList<String> ();
@@ -2410,7 +2408,7 @@ public class GenesisFileManager
                     nameDefined = true;
                 }
 
-                this.addComment(response,
+                addComment(response,
                                        "The concentration of: " + ion + " has an effect on rate of " + cellProcsAffected);
 
                 response.append("foreach tempCompName ({el "+getCellGroupElementName(cellGroupName)+"/#/#})\n");
@@ -2603,7 +2601,7 @@ public class GenesisFileManager
 
                 logger.logComment("Going to execute command: " + commandToExecute);
 
-                Process currentProcess = rt.exec(commandToExecute);
+                rt.exec(commandToExecute);
 
                 logger.logComment("Have executed command: " + commandToExecute);
 
@@ -2676,7 +2674,7 @@ public class GenesisFileManager
                 try
                 {
                     // This is to make sure the file permission is updated..
-                    Thread.currentThread().sleep(600);
+                    Thread.sleep(600);
                 }
                 catch (InterruptedException ex)
                 {
@@ -2713,7 +2711,7 @@ public class GenesisFileManager
 
                 logger.logComment("Going to execute command: " + commandToExecute);
 
-                Process currentProcess = rt.exec(commandToExecute);
+                rt.exec(commandToExecute);
 
                 logger.logComment("Have successfully executed command: " + commandToExecute);
             }
@@ -2765,7 +2763,7 @@ public class GenesisFileManager
         {
             friendlyDirName = GeneralUtils.replaceAllTokens(friendlyDirName, "Documents and Settings", "Docume~1");
         }
-                logger.logComment("a friendlyDirName: " + friendlyDirName, true);
+                logger.logComment("a friendlyDirName: " + friendlyDirName);
 
         if (GeneralUtils.isWindowsBasedPlatform())
         {
@@ -2782,18 +2780,18 @@ public class GenesisFileManager
 
                 String spacedWord = friendlyDirName.substring(prevSlash + 1, nextSlash);
 
-                logger.logComment("spacedWord: " + spacedWord, true);
+                logger.logComment("spacedWord: " + spacedWord);
 
                 if (spacedWord.indexOf(" ") < 6) canFix = false;
                 else
                 {
                     String shortened = spacedWord.substring(0, 6) + "~1";
                     friendlyDirName = GeneralUtils.replaceAllTokens(friendlyDirName, spacedWord, shortened);
-                    logger.logComment("filename now: " + friendlyDirName, true);
+                    logger.logComment("filename now: " + friendlyDirName);
                 }
             }
         }
-                logger.logComment("c friendlyDirName now: " + friendlyDirName, true);
+                logger.logComment("c friendlyDirName now: " + friendlyDirName);
 
 
         return friendlyDirName;
@@ -2876,7 +2874,7 @@ public class GenesisFileManager
             String timeFileElement = FILE_ELEMENT_ROOT + "/timefile";
 
 
-            this.addComment(response, "Saving file containing time details");
+            addComment(response, "Saving file containing time details");
 
             response.append("create neutral " + FILE_ELEMENT_ROOT + "\n");
             response.append("create asc_file " + timeFileElement + "\n");
@@ -2912,18 +2910,18 @@ public class GenesisFileManager
                     String error = "Note, synaptic mechanism variable plotting/saving not supported yet in GENESIS, so not saving: "+record.simPlot;
                     logger.logError(error);
 
-                    this.addComment(response, error);
+                    addComment(response, error);
                 }
                 else
                 {
 
-                    this.addComment(response, record.getDescription(true));
+                    addComment(response, record.getDescription(true));
                     String cellGroupName = record.simPlot.getCellGroup();
                     int numInCellGroup = project.generatedCellPositions.getNumberInCellGroup(cellGroupName);
 
                     String cellType = project.cellGroupsInfo.getCellType(cellGroupName);
                     //Cell cell = project.cellManager.getCell(cellType);
-                    Cell cell = this.mappedCells.get(cellType);
+                    //Cell cell = this.mappedCells.get(cellType);
 
                     boolean isSpikeRecording = record.simPlot.getValuePlotted().indexOf(SimPlot.SPIKE) >= 0;
 
@@ -2953,7 +2951,7 @@ public class GenesisFileManager
 
                                 Segment segInMappedCell = this.getMappedSegment(cellType, segId, 0.5f);
 
-                                this.addComment(response,
+                                addComment(response,
                                                 "Recording at segInOrigCell: " +
                                                 SimEnvHelper.getSimulatorFriendlyName(segInOrigCell.getSegmentName()) +
                                                 " (Id: "
@@ -3007,7 +3005,7 @@ public class GenesisFileManager
                                 else
                                 {
                                     /** @todo Get better solution for this. */
-                                    this.addComment(response,
+                                    addComment(response,
                                         "Note: currently event_tofile is used for spike saving. This saves all times that the voltage is above threshold.");
                                     response.append("    create event_tofile " + fileElement + "\n");
                                     response.append("    echo Created:  " + fileElement + "\n");
@@ -3024,7 +3022,7 @@ public class GenesisFileManager
                                         try
                                         {
                                             float threshold = Float.parseFloat(thresholdString);
-                                            threshold = this.convertToGenesisValue(threshold,
+                                            threshold = convertToGenesisValue(threshold,
                                                 record.simPlot.getValuePlotted(),
                                                 project.genesisSettings.getUnitSystemToUse());
 
@@ -3033,14 +3031,14 @@ public class GenesisFileManager
                                         }
                                         catch (NumberFormatException ex)
                                         {
-                                            this.addComment(response,
+                                            addComment(response,
                                                             "Error:  failuer to set threshold taken from: " +
                                                             record.simPlot.getValuePlotted());
                                         }
                                     }
                                     else
                                     {
-                                        float threshold = this.convertToGenesisValue(SimPlot.DEFAULT_THRESHOLD,
+                                        float threshold = convertToGenesisValue(SimPlot.DEFAULT_THRESHOLD,
                                             record.simPlot.getValuePlotted(),
                                             project.genesisSettings.getUnitSystemToUse());
 
@@ -3097,7 +3095,7 @@ public class GenesisFileManager
                             {
                                 String cellEl = getCellElementName(cellGroupName, cellNum);
 
-                                this.addComment(response, "Recording cell: " + cellEl);
+                                addComment(response, "Recording cell: " + cellEl);
 
                                 response.append("cellName = \"" + cellEl + "\"\n");
 
@@ -3117,7 +3115,7 @@ public class GenesisFileManager
 
                                     Segment segInMappedCell = this.getMappedSegment(cellType, segId, 0.5f);
 
-                                    this.addComment(response,
+                                    addComment(response,
                                                     "Recording at segInOrigCell: " +
                                                     SimEnvHelper.getSimulatorFriendlyName(segInOrigCell.getSegmentName()) +
                                                     " (Id: "
@@ -3138,8 +3136,8 @@ public class GenesisFileManager
                                             record.simPlot.getSafeVarName();
                                     }
 
-                                    String compElement = "{cellName}/" +
-                                        SimEnvHelper.getSimulatorFriendlyName(segInMappedCell.getSegmentName());
+                                    //String compElement = "{cellName}/" +
+                                    //    SimEnvHelper.getSimulatorFriendlyName(segInMappedCell.getSegmentName());
 
                                     VariableHelper var = new VariableHelper(record, cellNum, segInMappedCell);
 
@@ -3174,7 +3172,7 @@ public class GenesisFileManager
                                     else
                                     {
                                         /** @todo Get better solution for this. */
-                                        this.addComment(response,
+                                        addComment(response,
                                                         "Note: currently event_tofile is used for spike saving. This saves all times that the voltage is above threshold.");
                                         response.append("    create event_tofile " + fileElement + "\n");
                                         response.append("    echo Created:  " + fileElement + "\n");
@@ -3191,7 +3189,7 @@ public class GenesisFileManager
                                             try
                                             {
                                                 threshold = Float.parseFloat(thresholdString);
-                                                threshold = this.convertToGenesisValue(threshold,
+                                                threshold = convertToGenesisValue(threshold,
                                                     record.simPlot.getValuePlotted(),
                                                     project.genesisSettings.getUnitSystemToUse());
 
@@ -3200,7 +3198,7 @@ public class GenesisFileManager
                                             }
                                             catch (NumberFormatException ex)
                                             {
-                                                this.addComment(response,
+                                                addComment(response,
                                                                 "Error:  failuer to set threshold taken from: " +
                                                                 record.simPlot.getValuePlotted());
                                             }
@@ -3208,7 +3206,7 @@ public class GenesisFileManager
                                         }
                                         else
                                         {
-                                            float threshold = this.convertToGenesisValue(SimPlot.DEFAULT_THRESHOLD,
+                                            float threshold = convertToGenesisValue(SimPlot.DEFAULT_THRESHOLD,
                                                 record.simPlot.getValuePlotted(),
                                                 project.genesisSettings.getUnitSystemToUse());
 

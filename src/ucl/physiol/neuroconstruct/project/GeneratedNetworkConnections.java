@@ -15,7 +15,6 @@ package ucl.physiol.neuroconstruct.project;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
 import ucl.physiol.neuroconstruct.cell.*;
-import java.io.File;
 import java.io.*;
 import ucl.physiol.neuroconstruct.utils.xml.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
@@ -73,7 +72,7 @@ public class GeneratedNetworkConnections
                                       int targetCellNumber)
     {
         addSynapticConnection(netConnectionName,
-                              this.MORPH_NETWORK_CONNECTION,
+                              MORPH_NETWORK_CONNECTION,
                               sourceCellNumber,
                               0,
                               0.5f,
@@ -128,7 +127,7 @@ public class GeneratedNetworkConnections
     public ArrayList<SingleSynapticConnection> getSynapticConnections(String netConnectionName)
     {
         logger.logComment("SynapticConnections sought for: " + this.hashCode() + " out of my " +
-                          getNumberSynapticConnections(this.ANY_NETWORK_CONNECTION)
+                          getNumberSynapticConnections(ANY_NETWORK_CONNECTION)
                           + " net conns from " + mySynapticConnectionVectors.keySet());
 
         //System.out.println("Details: " + this.toString());
@@ -136,7 +135,7 @@ public class GeneratedNetworkConnections
         if (!mySynapticConnectionVectors.containsKey(netConnectionName))
         {
             logger.logComment("No SingleSynapticConnections yet...");
-            return new ArrayList();
+            return new ArrayList<SingleSynapticConnection>();
         }
 
         ArrayList<SingleSynapticConnection> synapticConnectionVector
@@ -148,7 +147,7 @@ public class GeneratedNetworkConnections
     }
 
 
-    public Iterator getNamesNetConns()
+    public Iterator<String> getNamesNetConns()
     {
         return mySynapticConnectionVectors.keySet().iterator();
     }
@@ -164,9 +163,9 @@ public class GeneratedNetworkConnections
         while(keys.hasMoreElements())
         {
             ArrayList<SingleSynapticConnection> synConns = (ArrayList<SingleSynapticConnection>)mySynapticConnectionVectors.get((String)keys.nextElement());
-            if (connType == this.ANY_NETWORK_CONNECTION ||
-                (connType == this.MORPH_NETWORK_CONNECTION && (synConns.get(0).connectionType == connType)) ||
-                 (connType == this.VOL_NETWORK_CONNECTION && (synConns.get(0).connectionType == connType)))
+            if (connType == ANY_NETWORK_CONNECTION ||
+                (connType == MORPH_NETWORK_CONNECTION && (synConns.get(0).connectionType == connType)) ||
+                 (connType == VOL_NETWORK_CONNECTION && (synConns.get(0).connectionType == connType)))
             {
                 totalCount = totalCount + synConns.size();
             }
@@ -293,7 +292,8 @@ public class GeneratedNetworkConnections
     {
         StringBuffer sb = new StringBuffer();
 
-        sb.append("GeneratedNetworkConnections with " + getNumberSynapticConnections(this.ANY_NETWORK_CONNECTION) +
+        sb.append("GeneratedNetworkConnections with " 
+                + getNumberSynapticConnections(ANY_NETWORK_CONNECTION) +
                   " positions in total\n");
 
         Enumeration keys = mySynapticConnectionVectors.keys();
@@ -313,7 +313,7 @@ public class GeneratedNetworkConnections
     public void saveToFile(File netConnFile) throws java.io.IOException
     {
         logger.logComment("Saving "
-                          + getNumberSynapticConnections(this.ANY_NETWORK_CONNECTION)
+                          + getNumberSynapticConnections(ANY_NETWORK_CONNECTION)
                           + " connection records to file: "
                           + netConnFile.getAbsolutePath()+ ": "+ this.hashCode());
 
@@ -346,10 +346,10 @@ public class GeneratedNetworkConnections
         StringBuffer generationReport = new StringBuffer();
         ArrayList<String> netConns = new ArrayList<String>();
 
-        if (connType == this.MORPH_NETWORK_CONNECTION || connType == this.ANY_NETWORK_CONNECTION)
+        if (connType == MORPH_NETWORK_CONNECTION || connType == ANY_NETWORK_CONNECTION)
             netConns.addAll(project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames());
 
-        if (connType == this.VOL_NETWORK_CONNECTION || connType == this.ANY_NETWORK_CONNECTION)
+        if (connType == VOL_NETWORK_CONNECTION || connType == ANY_NETWORK_CONNECTION)
             netConns.addAll(project.volBasedConnsInfo.getAllAAConnNames());
 
 
@@ -490,7 +490,7 @@ public class GeneratedNetworkConnections
         String metadataPrefix = MetadataConstants.PREFIX + ":";
         try
         {
-            logger.logComment("Going to save file in NeuroML format: " + this.getNumberSynapticConnections(this.ANY_NETWORK_CONNECTION) +
+            logger.logComment("Going to save file in NeuroML format: " + this.getNumberSynapticConnections(ANY_NETWORK_CONNECTION) +
                               " connections in total");
 
             projectionsElement = new SimpleXMLElement(NetworkMLConstants.PROJECTIONS_ELEMENT);

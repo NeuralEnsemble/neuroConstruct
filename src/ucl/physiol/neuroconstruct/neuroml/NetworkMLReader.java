@@ -33,7 +33,7 @@ public class NetworkMLReader extends XMLFilterImpl
     private static ClassLogger logger = new ClassLogger("NetworkMLReader");
 
 
-    private String importationComment = "Importation comment: ";
+    //private String importationComment = "Importation comment: ";
 
     private Stack<String> elementStack = new Stack<String>();
 
@@ -69,7 +69,7 @@ public class NetworkMLReader extends XMLFilterImpl
 
     private ArrayList<ConnSpecificProps> props = null;
 
-    private String metadataPrefix = MetadataConstants.PREFIX + ":";
+    //private String metadataPrefix = MetadataConstants.PREFIX + ":";
 
     private GeneratedCellPositions cellPos = null;
 
@@ -359,7 +359,7 @@ public class NetworkMLReader extends XMLFilterImpl
         {
 
             this.netConns.addSynapticConnection(this.currentProjection,
-                                                netConns.MORPH_NETWORK_CONNECTION,
+                    GeneratedNetworkConnections.MORPH_NETWORK_CONNECTION,
                                                 currentSourceCellNumber,
                                                 currentSourceCellSegmentIndex,
                                                 currentSourceCellDisplacement,

@@ -12,7 +12,6 @@
 
 package ucl.physiol.neuroconstruct.utils;
 
-import java.io.*;
 import java.util.*;
 
 /**
@@ -22,14 +21,14 @@ import java.util.*;
  * @version 1.0.3
  */
 
-public class ClassLogger implements Serializable
+public class ClassLogger
 {
     private String myClassName = null;
     private Logger logger = null;
     private boolean silentMode = false;
     private boolean verboseMode = false;
 
-    private static Vector silentClasses = new Vector();
+    private static Vector<String> silentClasses = new Vector<String>();
 
     private ClassLogger()
     {

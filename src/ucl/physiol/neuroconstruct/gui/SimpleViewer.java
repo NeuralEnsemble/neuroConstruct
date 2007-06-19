@@ -28,6 +28,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  */
 
 
+@SuppressWarnings("serial")
 public class SimpleViewer extends JDialog
 {
 
@@ -573,7 +574,7 @@ public class SimpleViewer extends JDialog
 
     }
 
-
+/*
     public void showValidationButton(String message, String url)
     {
         JButton newButton = new JButton(message);
@@ -621,7 +622,7 @@ public class SimpleViewer extends JDialog
     };
 
 
-
+*/
 
 
 /*
@@ -746,7 +747,7 @@ public class SimpleViewer extends JDialog
 
         SimpleViewer sv = showString("<h1>ffff</h1>This is a <b>big</b> testThis is a <b>big</b> test<br><p>This is</p> a <b>big</b> testThis is a <b>big</b> testThis is a <b>big</b> test", "Tester", 12, true,true);
 
-        sv.showValidationButton("Test", "http://neuron.la.asu.edu:8080/NeuroMLValidator/ValidationResults.jsp");
+        //sv.showValidationButton("Test", "http://neuron.la.asu.edu:8080/NeuroMLValidator/ValidationResults.jsp");
 
         //sv.showValidationButton("Test", "http://neuron.la.asu.edu:8080/NeuroMLValidator/");
 

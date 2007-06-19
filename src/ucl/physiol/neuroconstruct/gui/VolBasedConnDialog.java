@@ -32,6 +32,7 @@ import ucl.physiol.neuroconstruct.utils.equation.*;
  */
 
 
+@SuppressWarnings("serial")
 public class VolBasedConnDialog extends JDialog
 {
     ClassLogger logger = new ClassLogger("VolBasedConnDialog");
@@ -39,7 +40,7 @@ public class VolBasedConnDialog extends JDialog
     boolean cancelled = false;
     JPanel jPanelMain = new JPanel();
 
-    Vector chosenSynapticPropList = null;
+    Vector<SynapticProperties> chosenSynapticPropList = null;
 
     ToolTipHelper toolTipText = ToolTipHelper.getInstance();
 
@@ -175,6 +176,7 @@ public class VolBasedConnDialog extends JDialog
 
 
     private DefaultListModel listModelSyns = new DefaultListModel();
+    
     JList jListSyns = new JList(listModelSyns);
 
     JScrollPane scrollPaneSyns = new JScrollPane(jListSyns);
@@ -200,7 +202,7 @@ public class VolBasedConnDialog extends JDialog
 
         Vector synapticTypes =  project.cellMechanismInfo.getAllSynMechNames();
 
-        chosenSynapticPropList = new Vector();
+        chosenSynapticPropList = new Vector<SynapticProperties>();
         chosenSynapticPropList.add(new SynapticProperties((String)synapticTypes.firstElement()));
 
         if (synapticTypes.size()>1)
@@ -927,7 +929,7 @@ c       */
         chosenSynapticPropList.removeAllElements();
         for (int i = 0; i < listModelSyns.getSize(); i++)
         {
-            chosenSynapticPropList.add(listModelSyns.getElementAt(i));
+            chosenSynapticPropList.add((SynapticProperties)listModelSyns.getElementAt(i));
         }
 
 
@@ -963,7 +965,7 @@ c       */
         String cellType = project.cellGroupsInfo.getCellType(sourceCG);
         jTextFieldCellTypeSrc.setText(cellType);
 
-        String region = project.cellGroupsInfo.getRegionName(sourceCG);
+        //String region = project.cellGroupsInfo.getRegionName(sourceCG);
         //jTextFieldRegionSrc.setText(region);
 
         Cell cell = project.cellManager.getCell(cellType);
@@ -1013,7 +1015,7 @@ c       */
         String cellType = project.cellGroupsInfo.getCellType(targetCG);
         jTextFieldCellTypeTrgt.setText(cellType);
 
-        String region = project.cellGroupsInfo.getRegionName(targetCG);
+        //String region = project.cellGroupsInfo.getRegionName(targetCG);
         //jTextFieldRegionTgt.setText(region);
 
 
@@ -1050,7 +1052,7 @@ c       */
 
 
 
-    public Vector getSynapticProperties()
+    public Vector<SynapticProperties> getSynapticProperties()
     {
         return chosenSynapticPropList;
     }

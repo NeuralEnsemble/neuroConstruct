@@ -29,6 +29,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  */
 
 
+@SuppressWarnings("serial")
 public class NetworkConnectionDialog extends JDialog
 {
     ClassLogger logger = new ClassLogger("NetworkConnectionDialog");
@@ -206,7 +207,7 @@ public class NetworkConnectionDialog extends JDialog
         //    = new SynapticProperties((String)synapticTypes.firstElement());
 
 
-        chosenSynapticPropList = new Vector();
+        chosenSynapticPropList = new Vector<SynapticProperties>();
         chosenSynapticPropList.add(new SynapticProperties((String)synapticTypes.firstElement()));
 
 
@@ -281,11 +282,11 @@ public class NetworkConnectionDialog extends JDialog
             }
 
 
-            if (searchPattern.type==searchPattern.CLOSEST)
+            if (searchPattern.type==SearchPattern.CLOSEST)
             {
                 jRadioButtonClosest.setSelected(true);
             }
-            else if (searchPattern.type==searchPattern.RANDOM_CLOSE)
+            else if (searchPattern.type==SearchPattern.RANDOM_CLOSE)
             {
                 jRadioButtonRandClose.setSelected(true);
                 jTextFieldRandCloseNumber.setText(searchPattern.randomCloseNumber+"");

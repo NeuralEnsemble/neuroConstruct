@@ -37,6 +37,11 @@ public class ValidityStatus
     public static final String VALIDATION_COLOUR_ERROR = "red";
 
     /**
+     * Extra info on vlaidity status, not necessarily problematic
+     */
+    public static final String VALIDATION_COLOUR_INFO = "#A9A9A9";
+
+    /**
      * These are used to colour the html representation of the warning, etc.
      */
     public static final Color VALIDATION_COLOUR_OK_OBJ = Color.GREEN;

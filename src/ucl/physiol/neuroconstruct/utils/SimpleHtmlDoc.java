@@ -112,10 +112,12 @@ public class SimpleHtmlDoc
         public String toHtmlString()
         {
             String tabbedUp = contents;
+            
             for (int i = 0; i < tabs.size(); i++)
             {
                 tabbedUp = GeneralUtils.getTabbedString(tabbedUp, tabs.get(i), true);
             }
+            
             return tabbedUp;
         }
 

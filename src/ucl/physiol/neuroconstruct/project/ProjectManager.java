@@ -17,6 +17,13 @@ import java.util.*;
 
 import java.awt.*;
 
+import org.xml.sax.*;
+
+import javax.xml.*;
+import javax.xml.transform.*;
+import javax.xml.transform.stream.*;
+import javax.xml.validation.*;
+
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.dataset.*;
@@ -388,6 +395,9 @@ public class ProjectManager
         //StringBuffer info = new StringBuffer();
 
         boolean verbose = false;
+        
+
+        File schemaFile = GeneralProperties.getNeuroMLSchemaFile();
 
         SimpleHtmlDoc report = new SimpleHtmlDoc();
 
@@ -448,7 +458,8 @@ public class ProjectManager
 
         }
 
-
+        report.addBreak();
+        report.addBreak();
 
         report.addTaggedElement("Validating Cell Mechanisms", "p");
 
@@ -523,7 +534,8 @@ public class ProjectManager
                         }
                         else
                         {
-                            report.addTaggedElement("Error, implementation file: " + f.getAbsolutePath() + " not found",
+                            report.addTaggedElement("Error, implementation file: "+simMapping
+                                    +" for cell mechanism: "+cmlCm.getInstanceName()+" not found",
                                                     "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
 
                             cellMechValidity = ValidityStatus.VALIDATION_ERROR;
@@ -531,31 +543,87 @@ public class ProjectManager
                         }
                     }
 
-                    String status = cmlCm.getValue(ChannelMLConstants.getChannelStatusValueXPath());
+                    String status = null;
+                    
+                    if (cmlCm.isChannelMechanism())
+                        status = cmlCm.getValue(ChannelMLConstants.getChannelStatusValueXPath());
+                    else if (cmlCm.isSynapticMechanism())
+                        status = cmlCm.getValue(ChannelMLConstants.getSynapseStatusValueXPath());
+                    else if (cmlCm.isIonConcMechanism())
+                        status = cmlCm.getValue(ChannelMLConstants.getIonConcStatusValueXPath());
 
                     if (status != null)
                     {
                         if (status.equals(ChannelMLConstants.STATUS_VALUE_ATTR_STABLE))
                         {
-                            report.addTaggedElement("Status of ChannelML entry: " + status,
+                            report.addTaggedElement("Status of ChannelML file: " + status,
                                                     "font color=\"" + ValidityStatus.VALIDATION_COLOUR_OK + "\"");
                         }
                         else if (status.equals(ChannelMLConstants.STATUS_VALUE_ATTR_IN_PROGRESS))
                         {
-                            report.addTaggedElement("Status of ChannelML entry: " + status,
+                            report.addTaggedElement("Status of ChannelML file: " + status,
                                                     "font color=\"" + ValidityStatus.VALIDATION_COLOUR_WARN + "\"");
 
                             cellMechValidity = ValidityStatus.combineValidities(cellMechValidity, ValidityStatus.VALIDATION_WARN);
                         }
                         else if (status.equals(ChannelMLConstants.STATUS_VALUE_ATTR_KNOWN_ISSUES))
                         {
-                            report.addTaggedElement("Status of ChannelML entry: " + status,
+                            report.addTaggedElement("Status of ChannelML file: " + status,
                                                     "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
 
                             cellMechValidity = ValidityStatus.combineValidities(cellMechValidity, ValidityStatus.VALIDATION_ERROR);
                         }
 
                     }
+                    else
+                    {
+                        report.addTaggedElement("Note: status of ChannelML file cannot be determined. &lt;status&gt; element added in NeuroML v1.6",
+                                "font color=\"" + ValidityStatus.VALIDATION_COLOUR_INFO + "\"");
+                    }
+                    
+                    
+                    try
+                    {
+                        SchemaFactory factory 
+                            = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+                        logger.logComment("Found the XSD file: " + schemaFile.getAbsolutePath());
+
+                        Source schemaFileSource = new StreamSource(schemaFile);
+                        Schema schema = factory.newSchema(schemaFileSource);
+
+                        Validator validator = schema.newValidator();
+
+                        Source xmlFileSource = new StreamSource(cmlCm.getChannelMLFile(activeProject));
+
+                        validator.validate(xmlFileSource);
+
+                    }
+                    catch (SAXException ex)
+                    {
+                        logger.logError("Problem validating ChannelML file", ex);
+                        
+                        report.addTaggedElement("<br>Problem validating ChannelML file against NeuroML v"
+                                +GeneralProperties.getNeuroMLVersionNumber()
+                                +". Note it may be compliant to an earlier version of the standard and this may "
+                                +"not matter if the XSL mappings are for that version of the specification too.",
+                                "font color=\"" + ValidityStatus.VALIDATION_COLOUR_WARN + "\"");
+
+                        cellMechValidity = ValidityStatus.combineValidities(cellMechValidity, ValidityStatus.VALIDATION_WARN);
+                       
+                    }
+
+                    catch (IOException ex)
+                    {
+                        logger.logError("<br>Problem validating ChannelML file", ex);
+                        report.addTaggedElement("Problem validating ChannelML file: "+ cmlCm.getChannelMLFile()
+                                +" against XSD file: " +schemaFile.getAbsolutePath()+".",
+                                "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
+
+                        cellMechValidity = ValidityStatus.combineValidities(cellMechValidity, ValidityStatus.VALIDATION_ERROR);
+                       
+                    }
+                    
                 }
                 catch (ChannelMLException ex)
                 {
@@ -571,6 +639,9 @@ public class ProjectManager
             overallValidity = ValidityStatus.combineValidities(overallValidity, cellMechValidity);
 
         }
+        
+
+        report.addBreak();
 
 
         report.addTaggedElement("Validating Cell Groups...", "p");

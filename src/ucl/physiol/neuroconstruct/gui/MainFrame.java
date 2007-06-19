@@ -48,7 +48,6 @@ import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.neuron.*;
 import ucl.physiol.neuroconstruct.nmodleditor.gui.*;
-import ucl.physiol.neuroconstruct.nmodleditor.modfile.*;
 import ucl.physiol.neuroconstruct.nmodleditor.processes.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
@@ -67,6 +66,7 @@ import ucl.physiol.neuroconstruct.utils.xml.*;
  * @version 1.0.3
  */
 
+@SuppressWarnings("serial")
 public class MainFrame extends JFrame implements ProjectEventListener, GenerationReport
 {
     ClassLogger logger = new ClassLogger("MainFrame");
@@ -4959,7 +4959,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
         if (selectedObjectToView.equals(LATEST_GENERATED_POSITIONS)
-            && (sourceOfCellPosnsInMemory==this.RELOADED_POSITIONS))
+            && (sourceOfCellPosnsInMemory==RELOADED_POSITIONS))
         {
 
             GuiUtils.showInfoMessage(logger, "Info",
@@ -5083,7 +5083,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
 
-            sourceOfCellPosnsInMemory = this.RELOADED_POSITIONS;
+            sourceOfCellPosnsInMemory = RELOADED_POSITIONS;
 
             logger.logComment("Resetting plot/save info...");
             projManager.getCurrentProject().generatedPlotSaves.reset();
@@ -5110,12 +5110,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         Panel panel = new Panel();
         panel.setLayout(new BorderLayout());
 
-        if (sourceOfCellPosnsInMemory == GENERATED_POSITIONS || sourceOfCellPosnsInMemory == this.NETWORKML_POSITIONS )
+        if (sourceOfCellPosnsInMemory == GENERATED_POSITIONS || sourceOfCellPosnsInMemory == NETWORKML_POSITIONS )
         {
             // viewing the generated positions
             base3DPanel = new Main3DPanel(this.projManager.getCurrentProject(), null);
         }
-        else if (sourceOfCellPosnsInMemory == this.RELOADED_POSITIONS)
+        else if (sourceOfCellPosnsInMemory == RELOADED_POSITIONS)
         {
             base3DPanel = new Main3DPanel(this.projManager.getCurrentProject(), simData.getSimulationDirectory());
         }
@@ -5151,7 +5151,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             return;
         }
 
-        if (sourceOfCellPosnsInMemory==this.RELOADED_POSITIONS)
+        if (sourceOfCellPosnsInMemory==RELOADED_POSITIONS)
         {
             boolean cont = GuiUtils.showYesNoMessage(logger,
                                                      "The set of positions, connections and inputs in memory have been reloaded from a saved simulation."
@@ -5171,10 +5171,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         long seed = 0;
 
-        long startTime = System.currentTimeMillis();
+        //long startTime = System.currentTimeMillis();
 
 
-                GeneralUtils.timeCheck("Starting generating the hoc code...");
+        GeneralUtils.timeCheck("Starting generating the hoc code...");
 
 
 
@@ -5338,7 +5338,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
 
 
-        if (sourceOfCellPosnsInMemory==this.RELOADED_POSITIONS)
+        if (sourceOfCellPosnsInMemory==RELOADED_POSITIONS)
         {
             boolean cont = GuiUtils.showYesNoMessage(logger,
                                                      "The set of positions, connections and inputs in memory have been reloaded from a saved simulation."
@@ -5476,7 +5476,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
          */
         String primarySimDirName = projManager.getCurrentProject().simulationParameters.getReference();
 
-        File primarySimDir = ProjectStructure.getDirForSimFiles(primarySimDirName, projManager.getCurrentProject());
+        //File primarySimDir = ProjectStructure.getDirForSimFiles(primarySimDirName, projManager.getCurrentProject());
 
 
         File positionsFile = new File(genNeuronDir, SimulationData.POSITION_DATA_FILE);
@@ -6155,7 +6155,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             logger.logComment("No row selected...");
             return;
         }
-        String regionName = (String)projManager.getCurrentProject().regionsInfo.getValueAt(selectedRow, projManager.getCurrentProject().regionsInfo.COL_NUM_REGIONNAME);
+        String regionName = (String)projManager.getCurrentProject().regionsInfo.getValueAt(selectedRow, RegionsInfo.COL_NUM_REGIONNAME);
 
         Vector cellGroupsUsingIt = projManager.getCurrentProject().cellGroupsInfo.getCellGroupsInRegion(regionName);
 
@@ -6231,8 +6231,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             return;
         }
 
-        Vector netConnsUsingIt = projManager.getCurrentProject().morphNetworkConnectionsInfo.getNetConnsUsingCellGroup(cellGroupName);
-        Vector aaNetConnsUsingIt = projManager.getCurrentProject().volBasedConnsInfo.getAAConnsUsingCellGroup(cellGroupName);
+        Vector<String> netConnsUsingIt = projManager.getCurrentProject().morphNetworkConnectionsInfo.getNetConnsUsingCellGroup(cellGroupName);
+        Vector<String> aaNetConnsUsingIt = projManager.getCurrentProject().volBasedConnsInfo.getAAConnsUsingCellGroup(cellGroupName);
         netConnsUsingIt.addAll(aaNetConnsUsingIt);
 
 
@@ -7464,8 +7464,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             jCheckBoxGenerateZip.setEnabled(true);
             jCheckBoxGenerateExtraNetComments.setEnabled(true);
             ArrayList<String> cellGroupNames = projManager.getCurrentProject().cellGroupsInfo.getAllCellGroupNames();
-            Vector netConnNames = projManager.getCurrentProject().morphNetworkConnectionsInfo.getAllSimpleNetConnNames();
-            Vector moreNetConnNames = projManager.getCurrentProject().volBasedConnsInfo.getAllAAConnNames();
+            Vector<String> netConnNames = projManager.getCurrentProject().morphNetworkConnectionsInfo.getAllSimpleNetConnNames();
+            Vector<String> moreNetConnNames = projManager.getCurrentProject().volBasedConnsInfo.getAllAAConnNames();
 
             netConnNames.addAll(moreNetConnNames);
 
@@ -8703,7 +8703,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
         if (this.projManager.getCurrentProject()==null) return;
 
-        if (e.getStateChange() == e.DESELECTED)
+        if (e.getStateChange() == ItemEvent.DESELECTED)
         {
                 NativeCodeLocation nclDeselected = (NativeCodeLocation) e.getItem();
 
@@ -8712,7 +8712,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 projManager.getCurrentProject().neuronSettings.setNativeBlock(nclDeselected, this.jTextAreaNeuronBlock.getText());
         }
 
-        else if (e.getStateChange() == e.SELECTED)
+        else if (e.getStateChange() == ItemEvent.SELECTED)
         {
 
             NativeCodeLocation ncl = (NativeCodeLocation) e.getItem();
@@ -8750,7 +8750,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
         if (this.projManager.getCurrentProject()==null) return;
 
-        if (e.getStateChange() == e.DESELECTED)
+        if (e.getStateChange() == ItemEvent.DESELECTED)
         {
                 ScriptLocation nclDeselected = (ScriptLocation) e.getItem();
 
@@ -8759,7 +8759,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 projManager.getCurrentProject().genesisSettings.setNativeBlock(nclDeselected, this.jTextAreaGenesisBlock.getText());
         }
 
-        else if (e.getStateChange() == e.SELECTED)
+        else if (e.getStateChange() == ItemEvent.SELECTED)
         {
 
             ScriptLocation ncl = (ScriptLocation) e.getItem();
@@ -9394,8 +9394,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 if (randomSeed!=Long.MIN_VALUE)
                 {
                     this.jTextFieldRandomGen.setText(randomSeed+"");
-                    this.projManager.setRandomGeneratorSeed(randomSeed);
-                    this.projManager.reinitialiseRandomGenerator();
+                    ProjectManager.setRandomGeneratorSeed(randomSeed);
+                    ProjectManager.reinitialiseRandomGenerator();
                 }
                 if (prevSimConfig!=null)
                 {
@@ -9426,7 +9426,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             projManager.elecInputGenerator.start();
 
-            sourceOfCellPosnsInMemory = this.NETWORKML_POSITIONS;
+            sourceOfCellPosnsInMemory = NETWORKML_POSITIONS;
 
             jComboBoxView3DChoice.setSelectedItem(LATEST_GENERATED_POSITIONS);
 
@@ -9663,7 +9663,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
 
         String cellGroupName = (String) projManager.getCurrentProject().cellGroupsInfo.getValueAt(selectedRow,
-            projManager.getCurrentProject().cellGroupsInfo.COL_NUM_CELLGROUPNAME);
+            CellGroupsInfo.COL_NUM_CELLGROUPNAME);
 
         doRemoveCellGroup(cellGroupName);
         refreshTabCellGroupInfo();
@@ -9689,7 +9689,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         else
             dir = ProjectStructure.getnCProjectsDirectory().getAbsolutePath();
 
-        NmodlEditorApp nmodlApp = new NmodlEditorApp(dir);
+        new NmodlEditorApp(dir);
     }
 /*
     void jButtonSynapseAdd_actionPerformed(ActionEvent e)
@@ -9953,7 +9953,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         logger.logComment("Zipping up the project...");
         String nameOfZippedFile = null;
-        String projectDir = null;
+        //String projectDir = null;
 
         nameOfZippedFile = projManager.getCurrentProject().getProjectMainDirectory()
             + System.getProperty("file.separator")
@@ -10523,7 +10523,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     {
         logger.logComment("CondorMonitor to run...");
 
-        CondorApp condorApp = new CondorApp(false);
+        new CondorApp(false);
 
     }
 
@@ -11155,7 +11155,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         try
         {
             // This is to make sure the files have been copied into the correct dirs..
-            Thread.currentThread().sleep(1000);
+            Thread.sleep(1000);
         }
         catch (InterruptedException ex)
         {
@@ -11491,7 +11491,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             try
             {
                 // This is to make sure the files have been copied into the correct dirs..
-                Thread.currentThread().sleep(1000);
+                Thread.sleep(1000);
             }
             catch (InterruptedException ex)
             {
@@ -12095,7 +12095,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     void jButtonCellTypeEditDesc_actionPerformed(ActionEvent e)
     {
-        int selIndex = jComboBoxCellTypes.getSelectedIndex();
+        //int selIndex = jComboBoxCellTypes.getSelectedIndex();
         Cell cell = (Cell)jComboBoxCellTypes.getSelectedItem();
 
         String oldDecs = new String(cell.getCellDescription());
@@ -12244,6 +12244,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jComboBoxCellTypes.setSelectedItem(importedCell);
 
                 ArrayList cellMechs = importedCell.getAllChannelMechanisms(true);
+                
                 ArrayList<String> synapses = importedCell.getAllAllowedSynapseTypes();
 
                 cellMechs.addAll(synapses);
@@ -12370,7 +12371,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                             else if (importedCellProc instanceof ChannelMLCellMechanism)
                             {
                                 logger.logComment("Copying the ChannelMLCellProcess files into the project");
-                                ChannelMLCellMechanism cmlp = (ChannelMLCellMechanism) importedCellProc;
+                                //ChannelMLCellMechanism cmlp = (ChannelMLCellMechanism) importedCellProc;
 
                                 File otherProjCellProcFilesLoc = new File(
                                     ProjectStructure.getCellMechanismDir(otherProj.getProjectMainDirectory()),
@@ -12468,7 +12469,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                         else if (importedCellProc instanceof ChannelMLCellMechanism)
                         {
                             logger.logComment("Copying the ChannelMLCellProcess files into the project");
-                            ChannelMLCellMechanism cmlp = (ChannelMLCellMechanism) importedCellProc;
+                            //ChannelMLCellMechanism cmlp = (ChannelMLCellMechanism) importedCellProc;
 
                             File otherProjCellProcFilesLoc = new File(
                                 ProjectStructure.getCellMechanismDir(otherProj.getProjectMainDirectory()),

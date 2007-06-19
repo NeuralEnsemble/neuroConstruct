@@ -359,15 +359,15 @@ public class ArbourConnectionsInfo extends AbstractTableModel
      * Gets the complexConns names where cellGroupName is source or target.
      * Used when deleting a cell group...
      */
-    public Vector getAAConnsUsingCellGroup(String cellGroupName)
+    public Vector<String> getAAConnsUsingCellGroup(String cellGroupName)
     {
-        Vector aaConns = new Vector();
+        Vector<String> aaConns = new Vector<String>();
 
         for (int i = 0; i < vectorSource.size(); i++)
         {
             if (((String)vectorSource.elementAt(i)).equals(cellGroupName))
             {
-                String complexConnName = (String)vectorNames.elementAt(i);
+                String complexConnName = vectorNames.elementAt(i);
                 if (!aaConns.contains(complexConnName))
                     aaConns.add(complexConnName);
             }
@@ -376,7 +376,7 @@ public class ArbourConnectionsInfo extends AbstractTableModel
         {
             if (((String)vectorTarget.elementAt(i)).equals(cellGroupName))
             {
-                String complexConnName = (String)vectorNames.elementAt(i);
+                String complexConnName = vectorNames.elementAt(i);
                 if (!aaConns.contains(complexConnName))
                     aaConns.add(complexConnName);
             }

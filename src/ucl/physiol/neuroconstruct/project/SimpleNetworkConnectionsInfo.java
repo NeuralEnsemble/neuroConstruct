@@ -447,15 +447,15 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
      * Gets the netconn names where cellGroupName is source or target.
      * Used when deleting a cell group...
      */
-    public Vector getNetConnsUsingCellGroup(String cellGroupName)
+    public Vector<String> getNetConnsUsingCellGroup(String cellGroupName)
     {
-        Vector netConns = new Vector();
+        Vector<String> netConns = new Vector<String>();
 
         for (int i = 0; i < vectorSource.size(); i++)
         {
-            if (((String)vectorSource.elementAt(i)).equals(cellGroupName))
+            if ((vectorSource.elementAt(i)).equals(cellGroupName))
             {
-                String netConnName = (String)vectorNames.elementAt(i);
+                String netConnName = vectorNames.get(i);
                 if (!netConns.contains(netConnName))
                     netConns.add(netConnName);
             }
@@ -463,9 +463,9 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
 
         for (int i = 0; i < vectorTarget.size(); i++)
         {
-            if (((String)vectorTarget.elementAt(i)).equals(cellGroupName))
+            if ((vectorTarget.elementAt(i)).equals(cellGroupName))
             {
-                String netConnName = (String)vectorNames.elementAt(i);
+                String netConnName = vectorNames.get(i);
                 if (!netConns.contains(netConnName))
                     netConns.add(netConnName);
             }

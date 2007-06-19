@@ -199,6 +199,36 @@ public class ChannelMLConstants
 
     }
 
+    public static String getSynapseStatusXPath()
+    {
+        return getSynapseTypeXPath()+ "/" +
+            ChannelMLConstants.STATUS_ELEMENT;
+
+    }
+
+
+    public static String getSynapseStatusValueXPath()
+    {
+        return getSynapseStatusXPath()+ "/@" +
+            ChannelMLConstants.STATUS_VALUE_ATTR;
+
+    }
+
+    public static String getIonConcStatusXPath()
+    {
+        return getIonConcTypeXPath()+ "/" +
+            ChannelMLConstants.STATUS_ELEMENT;
+
+    }
+
+
+    public static String getIonConcStatusValueXPath()
+    {
+        return getIonConcStatusXPath()+ "/@" +
+            ChannelMLConstants.STATUS_VALUE_ATTR;
+
+    }
+
 
 
     public static String getSynapseNameXPath()

@@ -41,7 +41,7 @@ public class SimPlotInfo extends AbstractTableModel
 
     final String[] columnNames = new String[9];
 
-    Vector allPlots = new Vector();
+    private Vector<SimPlot> allPlots = new Vector<SimPlot>();
 
 
     public SimPlotInfo()
@@ -72,7 +72,7 @@ public class SimPlotInfo extends AbstractTableModel
 
     public Object getValueAt(int rowIndex, int columnIndex)
     {
-        SimPlot simPlot = (SimPlot)allPlots.elementAt(rowIndex);
+        SimPlot simPlot = allPlots.get(rowIndex);
 
         if (simPlot==null) return null;
 
@@ -117,14 +117,14 @@ public class SimPlotInfo extends AbstractTableModel
 
     public SimPlot getSimPlot(int index)
     {
-        return (SimPlot)allPlots.elementAt(index);
+        return allPlots.elementAt(index);
     }
 
     public void updateSimPlot(SimPlot simPlot)
     {
         for (int i = 0; i < allPlots.size(); i++)
         {
-            SimPlot nextSimPlot = (SimPlot) allPlots.elementAt(i);
+            SimPlot nextSimPlot =  allPlots.elementAt(i);
             if (simPlot.getPlotReference().equals(nextSimPlot.getPlotReference()))
             {
                 allPlots.setElementAt(simPlot, i);
@@ -140,7 +140,7 @@ public class SimPlotInfo extends AbstractTableModel
     {
         for (int i = 0; i < allPlots.size(); i++)
         {
-            SimPlot nextSimPlot = (SimPlot) allPlots.elementAt(i);
+            SimPlot nextSimPlot =  allPlots.elementAt(i);
             if (nextSimPlot.getPlotReference().equals(simPlotRef))
             {
                 return nextSimPlot;
@@ -174,7 +174,7 @@ public class SimPlotInfo extends AbstractTableModel
         Vector<String> allNames = new Vector<String>();
         for (int i = 0; i < allPlots.size(); i++)
         {
-            SimPlot next = (SimPlot)allPlots.elementAt(i);
+            SimPlot next = allPlots.elementAt(i);
             allNames.add(next.getPlotReference());
         }
         return allNames;
@@ -183,10 +183,10 @@ public class SimPlotInfo extends AbstractTableModel
 
     public Vector getAllGraphWindows()
     {
-        Vector allWins = new Vector();
+        Vector<String> allWins = new Vector<String>();
         for (int i = 0; i < allPlots.size(); i++)
         {
-            SimPlot next = (SimPlot)allPlots.elementAt(i);
+            SimPlot next = allPlots.elementAt(i);
             if (!allWins.contains(next.getGraphWindow()))
                 allWins.add(next.getGraphWindow());
         }
@@ -209,7 +209,7 @@ public class SimPlotInfo extends AbstractTableModel
     /**
      * Added to allow storing of data by XMLEncoder. Should not normally be called!!!
      */
-    public void setAllSimPlots(Vector allPlots)
+    public void setAllSimPlots(Vector<SimPlot> allPlots)
     {
         this.allPlots = allPlots;
     }
