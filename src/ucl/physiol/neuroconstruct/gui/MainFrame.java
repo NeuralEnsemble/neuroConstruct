@@ -7300,12 +7300,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             jButtonMechanismNewCML.setEnabled(false);
             jButtonMechanismTemplateCML.setEnabled(false);
 
-            jTableMechanisms.setModel(new CellMechanismInfo());
+            jTableMechanisms = new JTable((new CellMechanismInfo()));
 
         }
         else
         {
-            jTableMechanisms.setModel(projManager.getCurrentProject().cellMechanismInfo);
 
             this.jButtonMechanismAbstract.setEnabled(true);
             this.jButtonMechanismEdit.setEnabled(true);
@@ -7313,6 +7312,30 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             jButtonMechanismFileBased.setEnabled(true);
             jButtonMechanismNewCML.setEnabled(true);
             jButtonMechanismTemplateCML.setEnabled(true);
+            
+
+            jTableMechanisms = new JTable(projManager.getCurrentProject().cellMechanismInfo)
+            {
+                public String getToolTipText(MouseEvent e) {
+                  String tip = null;
+                  java.awt.Point p = e.getPoint();
+                  int rowIndex = rowAtPoint(p);
+                  int colIndex = columnAtPoint(p);
+                  
+                  int realColumnIndex = convertColumnIndexToModel(colIndex);
+
+
+                  //if (realColumnIndex==CellMechanismInfo.COL_NUM_DESC)
+                  {
+                      String desc = projManager.getCurrentProject().cellMechanismInfo.getCellMechanismAt(rowIndex).getDescription();
+                      tip = "<html><b>"+GeneralUtils.replaceAllTokens(desc, "  ", " ")+"</b></html>";
+                  }
+                  return tip;
+                }
+            };
+            
+
+            jScrollPaneMechanisms.getViewport().add(jTableMechanisms, null);
 
         }
 
