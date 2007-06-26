@@ -30,9 +30,9 @@ public class RecentFiles
 {
     private static ClassLogger logger = new ClassLogger("RecentFiles");
 
-    private static Hashtable recentFilesInstances = new Hashtable();
+    private static Hashtable<String, RecentFiles> recentFilesInstances = new Hashtable<String, RecentFiles>();
 
-    private LinkedList fileList = new LinkedList();
+    private LinkedList<String> fileList = new LinkedList<String>();
     private int maxFiles = 11;
 
     private File myRecentFilesFile = null;
@@ -44,7 +44,7 @@ public class RecentFiles
     /**
      * The interesting columns to show in the simulation browser
      */
-    private Vector preferredSimBrowserCols = null;
+    private Vector<String> preferredSimBrowserCols = null;
 
     /**
      * Don't use! Should be private, but XMLEncoder doesn't like that...
@@ -62,7 +62,7 @@ public class RecentFiles
 
         for (int i = 0; i < fileList.size(); i++)
         {
-            String tempFile = (String)fileList.get(i);
+            String tempFile = fileList.get(i);
             if (tempFile.equals(fileName))
             {
                 logger.logComment("File: "+ fileName+" already present");
@@ -84,9 +84,9 @@ public class RecentFiles
 
     public void removeFromList(File f)
     {
-        if (fileList.contains(f))
+        if (fileList.contains(f.getAbsolutePath()))
         {
-            fileList.remove(f);
+            fileList.remove(f.getAbsolutePath());
             return;
         }
     }
@@ -97,7 +97,7 @@ public class RecentFiles
         String[] files = new String[fileList.size()];
         for (int i = 0; i < fileList.size(); i++)
         {
-            files[i] = (String)fileList.get(i);
+            files[i] = fileList.get(i);
         }
         return files;
     }
@@ -156,7 +156,7 @@ public class RecentFiles
         if (recentFilesInstances.containsKey(recentFilesFilename))
         {
             logger.logComment("Using existing one");
-            return (RecentFiles)recentFilesInstances.get(recentFilesFilename);
+            return recentFilesInstances.get(recentFilesFilename);
         }
         RecentFiles newRecentFiles = null;
 
@@ -223,7 +223,7 @@ public class RecentFiles
             else
             {
                 allExes.add(subDirs[i]);
-            }
+            } 
         }
         for (File f:addAfter) allExes.add(f);
 
@@ -320,7 +320,7 @@ public class RecentFiles
 
     public void setFileNames(String[] files)
     {
-        this.fileList = new LinkedList();
+        this.fileList = new LinkedList<String>();
         for (int i = 0; i < files.length; i++)
         {
             fileList.add(files[i]);
@@ -337,13 +337,14 @@ public class RecentFiles
     }
 
 
-    public Vector getPreferredSimBrowserCols()
+    public Vector<String> getPreferredSimBrowserCols()
     {
         return preferredSimBrowserCols;
     }
-    public void setPreferredSimBrowserCols(Vector preferredSimBrowserCols)
+    
+    public void setPreferredSimBrowserCols(Vector<String> preferredCols)
     {
-        this.preferredSimBrowserCols = preferredSimBrowserCols;
+        this.preferredSimBrowserCols = preferredCols;
     }
 
 

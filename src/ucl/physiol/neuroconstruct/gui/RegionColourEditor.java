@@ -27,6 +27,7 @@ import javax.swing.table.*;
 
 
 
+@SuppressWarnings("serial")
 public class RegionColourEditor extends AbstractCellEditor implements TableCellEditor, ActionListener
 {
     Color currentColour;

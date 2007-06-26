@@ -31,6 +31,8 @@ import ucl.physiol.neuroconstruct.project.*;
  * @version 1.0.3
  */
 
+@SuppressWarnings("serial")
+
 public class SimulationBrowser extends JDialog
 {
     ClassLogger logger = new ClassLogger("SimulationBrowser");
@@ -72,13 +74,13 @@ public class SimulationBrowser extends JDialog
         enableEvents(AWTEvent.WINDOW_EVENT_MASK);
 
 
-        Vector columnsToShow = recentFiles.getPreferredSimBrowserCols();
+        Vector<String> columnsToShow = recentFiles.getPreferredSimBrowserCols();
 
         logger.logComment("columnsToShow: "+ columnsToShow);
 
         if (columnsToShow==null || columnsToShow.size()<=2)
         {
-            columnsToShow = new Vector();
+            columnsToShow = new Vector<String>();
             columnsToShow.add(SimulationsInfo.COL_NAME_NAME);
             columnsToShow.add(SimulationsInfo.COL_NAME_DATE);
             columnsToShow.add("Simulator");
@@ -467,7 +469,7 @@ public class SimulationBrowser extends JDialog
             return;
         }
 
-        Properties props = simData.getSimulationProperties();
+        simData.getSimulationProperties();
 
 
 

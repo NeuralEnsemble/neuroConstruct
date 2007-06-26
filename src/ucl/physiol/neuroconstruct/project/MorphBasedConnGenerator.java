@@ -17,7 +17,6 @@ import java.util.*;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import javax.vecmath.*;
-import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
 
 /**
  * Thread to handle generation of the morphology based network connections

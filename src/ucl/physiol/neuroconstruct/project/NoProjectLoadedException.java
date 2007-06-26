@@ -20,6 +20,7 @@ package ucl.physiol.neuroconstruct.project;
  * @version 1.0.3
  */
 
+@SuppressWarnings("serial")
 public class NoProjectLoadedException extends Exception
 {
     public NoProjectLoadedException()

@@ -181,129 +181,135 @@ public class MainApplication
 
     public static void main(String[] args)
     {
-        // Check on java version...
-
-        String javaVersion = System.getProperty("java.version");
-
-        if (javaVersion.compareTo("1.5") < 0)
-        {
-            System.err.println("You are running Java version "
-                               + javaVersion + ".");
-            System.err.println("neuroConstruct requires Java 1.5 (J2SE 5.0) or later.");
-            System.exit(1);
-        }
-
-        // Check for presence of Java3D
-
-        try
-        {
-            ClassLoader cl  = ClassLoader.getSystemClassLoader();
-            cl.loadClass("javax.vecmath.Point3f");
-        }
-        catch(Exception ex)
-        {
-            GuiUtils.showErrorMessage(null, "Problem finding Java 3D. Please ensure it is installed correctly.\n"
-                                      +"The latest version can be downloaded from: https://java3d.dev.java.net\n\n"
-                                      +"Correct installation should result in Java 3D jarfiles being installed in:\n"
-                                      +System.getProperty("java.ext.dirs"), ex, null);
-        }
-
-
-        try
-        {
-            UIManager.setLookAndFeel(favouredLookAndFeel);
-        }
-        catch (Exception ex)
-        {
-            System.out.println("Error with Look and Feel: " + favouredLookAndFeel);
-
-        }
-
-
-
-        String fileToOpen = null;
-        boolean reloadLastProject = false;
-        boolean generate = false;
-        boolean createHoc = false;
-        boolean runHoc = false;
-
-
-        for (int i = 0; i < args.length; i++)
-        {
-            if (args[i].equals("-?") || args[i].equalsIgnoreCase("-help") || args[i].equalsIgnoreCase("-h"))
+        try {
+            // Check on java version...
+    
+            String javaVersion = System.getProperty("java.version");
+    
+            if (javaVersion.compareTo("1.5") < 0)
             {
-                printVersionDetails();
-                printUsageAndQuit();
+                System.err.println("You are running Java version "
+                                   + javaVersion + ".");
+                System.err.println("neuroConstruct requires Java 1.5 (J2SE 5.0) or later.");
+                System.exit(1);
             }
-            else if (args[i].equalsIgnoreCase("-v") || args[i].equalsIgnoreCase("-version"))
+    
+            // Check for presence of Java3D
+    
+            try
             {
-                printVersionDetails();
+                ClassLoader cl  = ClassLoader.getSystemClassLoader();
+                cl.loadClass("javax.vecmath.Point3f");
+            }
+            catch(Exception ex)
+            {
+                GuiUtils.showErrorMessage(null, "Problem finding Java 3D. Please ensure it is installed correctly.\n"
+                                          +"The latest version can be downloaded from: https://java3d.dev.java.net\n\n"
+                                          +"Correct installation should result in Java 3D jarfiles being installed in:\n"
+                                          +System.getProperty("java.ext.dirs"), ex, null);
+            }
+    
+    
+            try
+            {
+                UIManager.setLookAndFeel(favouredLookAndFeel);
+            }
+            catch (Exception ex)
+            {
+                System.out.println("Error with Look and Feel: " + favouredLookAndFeel);
+    
+            }
+    
+    
+    
+            String fileToOpen = null;
+            boolean reloadLastProject = false;
+            boolean generate = false;
+            boolean createHoc = false;
+            boolean runHoc = false;
+    
+    
+            for (int i = 0; i < args.length; i++)
+            {
+                if (args[i].equals("-?") || args[i].equalsIgnoreCase("-help") || args[i].equalsIgnoreCase("-h"))
+                {
+                    printVersionDetails();
+                    printUsageAndQuit();
+                }
+                else if (args[i].equalsIgnoreCase("-v") || args[i].equalsIgnoreCase("-version"))
+                {
+                    printVersionDetails();
+                    System.exit(0);
+                }
+                else if (args[i].equalsIgnoreCase("-nogui"))
+                {
+                    noGuiMode = true;
+                }
+    
+                else if (args[i].equalsIgnoreCase("-lastproj"))
+                {
+                    reloadLastProject = true;
+                }
+    
+                else if (args[i].equalsIgnoreCase("-generate"))
+                {
+                    generate = true;
+                }
+                else if (args[i].equalsIgnoreCase("-createhoc"))
+                {
+                    createHoc = true;
+                }
+    
+                else if (args[i].equalsIgnoreCase("-runhoc"))
+                {
+                    runHoc = true;
+                }
+    
+                else if (args[i].startsWith("-"))
+                {
+                    printVersionDetails();
+                    System.out.println("Unrecognised option: "+ args[i]+ "\n");
+                    printUsageAndQuit();
+                }
+                else
+                {
+                    fileToOpen = args[i];
+                }
+            }
+            if ((generate || createHoc) &&
+                (fileToOpen==null && !reloadLastProject))
+            {
+                System.out.println("Please only use -generate etc. when a project file is specified.");
                 System.exit(0);
             }
-            else if (args[i].equalsIgnoreCase("-nogui"))
+    
+            MainApplication app = new MainApplication();
+    
+            if (fileToOpen!=null) app.setOpenProject(fileToOpen);
+    
+            if (reloadLastProject) app.reloadLastProject();
+    
+            if (generate|| createHoc|| runHoc)
             {
-                noGuiMode = true;
+    
+                app.generate();
             }
-
-            else if (args[i].equalsIgnoreCase("-lastproj"))
+    
+            if (createHoc|| runHoc)
             {
-                reloadLastProject = true;
+                app.createHoc();
             }
-
-            else if (args[i].equalsIgnoreCase("-generate"))
+    
+            if (runHoc)
             {
-                generate = true;
-            }
-            else if (args[i].equalsIgnoreCase("-createhoc"))
-            {
-                createHoc = true;
-            }
-
-            else if (args[i].equalsIgnoreCase("-runhoc"))
-            {
-                runHoc = true;
-            }
-
-            else if (args[i].startsWith("-"))
-            {
-                printVersionDetails();
-                System.out.println("Unrecognised option: "+ args[i]+ "\n");
-                printUsageAndQuit();
-            }
-            else
-            {
-                fileToOpen = args[i];
+                app.runHoc();
             }
         }
-        if ((generate || createHoc) &&
-            (fileToOpen==null && !reloadLastProject))
+        catch (Exception e)
         {
-            System.out.println("Please only use -generate etc. when a project file is specified.");
-            System.exit(0);
+            System.err.println("An exception has been caught in the mian function: ");
+            e.printStackTrace();
         }
-
-        MainApplication app = new MainApplication();
-
-        if (fileToOpen!=null) app.setOpenProject(fileToOpen);
-
-        if (reloadLastProject) app.reloadLastProject();
-
-        if (generate|| createHoc|| runHoc)
-        {
-
-            app.generate();
-        }
-
-        if (createHoc|| runHoc)
-        {
-            app.createHoc();
-        }
-
-        if (runHoc)
-        {
-            app.runHoc();
-        }
-
 
     }
 }

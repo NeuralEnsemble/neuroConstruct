@@ -28,6 +28,7 @@ import ucl.physiol.neuroconstruct.hpc.utils.*;
  */
 
 
+@SuppressWarnings("serial")
 
 public class CondorFrame extends JFrame implements ProcessFeedback
 {

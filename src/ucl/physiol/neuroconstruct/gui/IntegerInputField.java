@@ -24,6 +24,8 @@ import ucl.physiol.neuroconstruct.utils.*;
  */
 
 
+@SuppressWarnings("serial")
+
 public class IntegerInputField extends JFormattedTextField
 {
     ClassLogger logger = new ClassLogger("IntegerInputField");

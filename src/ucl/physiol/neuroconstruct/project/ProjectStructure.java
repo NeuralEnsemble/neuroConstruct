@@ -193,9 +193,9 @@ public class ProjectStructure
 
     private static String glossaryHtmlFile = helpFileDir + "Glossary_gen.html";
 
-    private static String neuronModSourcesDir = "src"
-        + System.getProperty("file.separator")
-        + "nrnoc";
+   // private static String neuronModSourcesDir = "src"
+    //    + System.getProperty("file.separator")
+     //   + "nrnoc";
 
     private static File javaXMLToMorphMLFile = new File("morphml"
                                                         + System.getProperty("file.separator")
@@ -288,7 +288,7 @@ public class ProjectStructure
             }
             newDir.mkdir();
         }
-        File readmeFile = new File(newDir, "README");
+        File readmeFile = new File(newDir, README);
 
         if (readmeText!=null && !readmeFile.exists())
         {

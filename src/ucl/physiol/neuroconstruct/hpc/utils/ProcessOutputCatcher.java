@@ -58,8 +58,6 @@ public class ProcessOutputCatcher extends Thread
     {
         try
         {
-            int numberOfBytesRead;
-
             BufferedReader br = new BufferedReader(inputStrReader);
             String line=null;
             while ( (line = br.readLine()) != null)

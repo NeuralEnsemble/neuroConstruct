@@ -7322,7 +7322,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                   int rowIndex = rowAtPoint(p);
                   int colIndex = columnAtPoint(p);
                   
-                  int realColumnIndex = convertColumnIndexToModel(colIndex);
+                  //int realColumnIndex = convertColumnIndexToModel(colIndex);
 
 
                   //if (realColumnIndex==CellMechanismInfo.COL_NUM_DESC)
@@ -11014,24 +11014,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         }
         dirForCMLFiles.mkdir();
-/*
-        File readmeFile = new File(dirForCMLFiles, "README");
-
-        if (!readmeFile.exists())
-        {
-            try
-            {
-                FileWriter fwReadme = new FileWriter(readmeFile);
-                fwReadme.write("This is a directory for the ChannelML files for the Cell Mechanism: "+ cellMechanismName
-                    +"\nThese files are referenced by the ChannelMLCellProcess object as listed under the Tab Cell Mechanism "
-                    +"in the neuroConstruct main interface. It is not simply a matter of adding ");
-                fwReadme.close();
-            }
-            catch (IOException ex)
-            {
-                logger.logError("Exception creating readme file...");
-            }
-        }*/
 
 
         ChannelMLCellMechanism cmlm = new ChannelMLCellMechanism();

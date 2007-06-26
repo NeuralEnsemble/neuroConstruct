@@ -24,7 +24,7 @@ import javax.swing.*;
  * @version 1.0.3
  */
 
-
+@SuppressWarnings("serial")
 
 public class CondorFrame_AboutBox extends JDialog implements ActionListener
 {

@@ -28,8 +28,10 @@ import ucl.physiol.neuroconstruct.utils.*;
  */
 
 
+@SuppressWarnings("serial")
 
-public class SynapticPropertiesEditor extends AbstractCellEditor implements TableCellEditor, ActionListener
+public class SynapticPropertiesEditor extends AbstractCellEditor 
+                    implements TableCellEditor, ActionListener
 {
     public SynapticPropertiesEditor()
     {

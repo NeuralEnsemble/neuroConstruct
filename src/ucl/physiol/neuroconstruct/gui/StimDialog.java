@@ -36,6 +36,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
  */
 
 
+@SuppressWarnings("serial")
 public class StimDialog extends JDialog
 {
     ClassLogger logger = new ClassLogger("StimDialog");
@@ -157,6 +158,7 @@ public class StimDialog extends JDialog
             {
 
                 Exp2SynMechanism exp2 = new Exp2SynMechanism();
+                
                 exp2.setInstanceName("SynForRndSpike");
                 project.cellMechanismInfo.addCellMechanism(exp2);
 
@@ -482,7 +484,6 @@ public class StimDialog extends JDialog
                                             suggestedName,
                                             p);
 
-            Dimension dlgSize = dlg.getPreferredSize();
             dlg.setModal(true);
             dlg.pack();
             dlg.setVisible(true);

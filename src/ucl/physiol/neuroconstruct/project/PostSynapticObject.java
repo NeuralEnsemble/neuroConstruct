@@ -12,7 +12,6 @@
 
 package ucl.physiol.neuroconstruct.project;
 
-import ucl.physiol.neuroconstruct.project.GeneratedPlotSaves.*;
 
 /**
  * Helper class for specifying a single post synaptic

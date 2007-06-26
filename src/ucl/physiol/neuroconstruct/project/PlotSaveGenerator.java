@@ -94,8 +94,8 @@ public class PlotSaveGenerator extends Thread
 
                 Cell nextCell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(simPlot.getCellGroup()));
 
-                ArrayList<Integer> cellNumsToPlot = new ArrayList();
-                ArrayList<Integer> segIdsToPlot = new ArrayList();
+                ArrayList<Integer> cellNumsToPlot = new ArrayList<Integer>();
+                ArrayList<Integer> segIdsToPlot = new ArrayList<Integer>();
 
                 int numInCellGroup = project.generatedCellPositions.getNumberInCellGroup(simPlot.getCellGroup());
 

@@ -56,7 +56,7 @@ public class ProcessManager
 
         try
         {
-            Thread.currentThread().sleep(millisToWait);
+            Thread.sleep(millisToWait);
             int retVal = currentProcess.exitValue();
             return ""+retVal;
         }
