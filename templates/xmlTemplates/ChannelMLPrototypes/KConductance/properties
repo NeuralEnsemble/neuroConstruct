@@ -2,7 +2,7 @@
 DefaultName=KConductance
 Description=Simple HH K channel mapped to a mod file (NEURON) and a tabbed channel (GENESIS)
 ChannelMLFile=../../Examples/ChannelML/KChannel.xml
-MappingNEURON=../../Schemata/v1.5/Level2/ChannelML_v1.5_NEURONmod.xsl
-MappingGENESIS=../../Schemata/v1.5/Level2/ChannelML_v1.5_GENESIStab.xsl
+MappingNEURON=../../Schemata/v1.6/Level2/ChannelML_v1.6_NEURONmod.xsl
+MappingGENESIS=../../Schemata/v1.6/Level2/ChannelML_v1.6_GENESIStab.xsl
 NEURONNeedsCompilation=true
 CellProcessType=Channel mechanism

@@ -2,6 +2,6 @@
 DefaultName=SimpleIntFire
 Description=Simple integrate and fire mechanism. Mapping only available for NEURON
 ChannelMLFile=../../Examples/ChannelML/IntFireMechanism.xml
-MappingNEURON=../../Schemata/v1.5/Level2/ChannelML_v1.5_NEURONmod.xsl
+MappingNEURON=../../Schemata/v1.6/Level2/ChannelML_v1.6_NEURONmod.xsl
 NEURONNeedsCompilation=true
 CellProcessType=Channel mechanism
