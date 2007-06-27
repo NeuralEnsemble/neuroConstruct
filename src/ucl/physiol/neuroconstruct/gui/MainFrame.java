@@ -5125,7 +5125,48 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         this.validate();
     }
 
-
+    /**
+     * Checks if cell posns were reloaded & asks to use these or regenerate
+     * @return true to continue, false to stop
+     *
+     */
+    private boolean checkReloadOrRegenerate()
+    {
+        if (sourceOfCellPosnsInMemory==RELOADED_POSITIONS)
+        {
+            String warning = "The set of positions, connections and inputs in memory have been reloaded from a saved simulation."
+                +"\nThere is not any information on what to plot/save during a simulation associated with this.\n"
+                +"To use current information in memory to generate the NEURON network select Continue.\n"
+                +"Alternatively, select Regenerate to recreate the network with the appropriate Simulation Configuration.";
+                    
+           Object[] opts = new Object[]{"Continue", "Regenerate network", "Cancel"};
+        
+        
+           String picked = (String)JOptionPane.showInputDialog(this, 
+                                   warning,
+                                   "Reuse or regenerate cell positions?", 
+                                   JOptionPane.WARNING_MESSAGE , 
+                                   null,
+                                   opts, 
+                                   opts[0]);
+        
+           
+           
+           if (picked == null || picked.equals(opts[2])) return false;
+           
+        
+           if (picked.equals(opts[1]))
+           {
+               jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(this.GENERATE_TAB));
+               
+               this.doGenerate();
+               
+               return false;
+           }
+        }
+        return true;
+    }
+    
 
     /**
      * Creates the *.hoc file for the project
@@ -5151,16 +5192,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             return;
         }
 
-        if (sourceOfCellPosnsInMemory==RELOADED_POSITIONS)
-        {
-            boolean cont = GuiUtils.showYesNoMessage(logger,
-                                                     "The set of positions, connections and inputs in memory have been reloaded from a saved simulation."
-                                                     +"\nThere has not been any information on what to plot/save in a simulation associated with this.\n"
-                                                     +"To use current information in memory to generate the NEURON network select Yes.\n"
-                                                     +"Alternatively, select No and regenerate the network with the appropriate Simulation Configuration.", this);
-            if (!cont) return;
-
-        }
+        boolean cont = this.checkReloadOrRegenerate();
+        
+        if (!cont) return;
 
 
         if (this.jCheckBoxNeuronRandomGen.isSelected())
@@ -5201,7 +5235,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                   projManager.getCurrentProject().simulationParameters.getReference());
 
 
-            boolean cont = multiRunManager.checkMultiJobSettings();
+            cont = multiRunManager.checkMultiJobSettings();
 
             if (!cont)
             {
@@ -5338,16 +5372,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
 
 
-        if (sourceOfCellPosnsInMemory==RELOADED_POSITIONS)
-        {
-            boolean cont = GuiUtils.showYesNoMessage(logger,
-                                                     "The set of positions, connections and inputs in memory have been reloaded from a saved simulation."
-                                                     +"\nThere has not been any information on what to plot/save in a simulation associated with this.\n"
-                                                     +"To use current information in memory to generate the GENESIS network select Yes.\n"
-                                                     +"Alternatively, select No and regenerate the network with the appropriate Simulation Configuration.", this);
-            if (!cont) return;
-
-        }
+        boolean cont = this.checkReloadOrRegenerate();
+        
+        if (!cont) return;
 
 
 
@@ -5379,7 +5406,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                               getSelectedSimConfig(),
                                               projManager.getCurrentProject().simulationParameters.getReference());
 
-        boolean cont = multiRunManager.checkMultiJobSettings();
+        cont = multiRunManager.checkMultiJobSettings();
 
         if (!cont)
         {
@@ -10945,7 +10972,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 chooser.setCurrentDirectory(defaultDir);
                 logger.logComment("Set Dialog dir to: " + defaultDir.getAbsolutePath());
-                chooser.setDialogTitle("Choose "+simEnvs[i]+" file for Cell Mechanism: "+ cellMechanismName);
+                chooser.setDialogTitle("Choose "+simEnvs[i]+" file for Cell Mechanism: "
+                        + cellMechanismName);
                 int retval = chooser.showDialog(this, "Choose "+simEnvs[i]+" file");
 
                 if (retval == JOptionPane.OK_OPTION)

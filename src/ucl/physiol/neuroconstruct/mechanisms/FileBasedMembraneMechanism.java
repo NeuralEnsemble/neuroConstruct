@@ -69,7 +69,7 @@ public class FileBasedMembraneMechanism extends AbstractedCellMechanism
             //System.out.println("Adding new param...");
             addNewParameter(DistMembraneMechanism.COND_DENSITY,
                             DistMembraneMechanism.COND_DENSITY_DESC,
-                            0.001f,
+                            0.001e-3f,
                             UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS]);
 
         }
