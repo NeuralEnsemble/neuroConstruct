@@ -37,7 +37,7 @@ public class ValidityStatus
     public static final String VALIDATION_COLOUR_ERROR = "red";
 
     /**
-     * Extra info on vlaidity status, not necessarily problematic
+     * Extra info on validity status, not necessarily problematic
      */
     public static final String VALIDATION_COLOUR_INFO = "#A9A9A9";
 

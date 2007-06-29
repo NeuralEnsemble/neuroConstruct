@@ -3079,6 +3079,12 @@ public class CellTopologyHelper
                                            segment.getSegmentSurfaceArea(),
                                            UnitConverter.areaUnits,
                                            html) + GeneralUtils.getEndLine(html));
+        
+        
+        if (segment.isSpherical())
+        {
+            info.append("Spherical segment. Volume: " + segment.getSegmentVolume() +" \u03bcm\u00b3" + GeneralUtils.getEndLine(html));
+        }
 
         info.append(getMainUnitDesc("Surface Area",
                                     segment.getSegmentSurfaceArea(),
