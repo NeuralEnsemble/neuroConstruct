@@ -32,7 +32,6 @@ import ucl.physiol.neuroconstruct.dataset.*;
 import ucl.physiol.neuroconstruct.gui.*;
 import ucl.physiol.neuroconstruct.gui.plotter.*;
 import ucl.physiol.neuroconstruct.project.*;
-import ucl.physiol.neuroconstruct.project.GeneratedElecInputs.*;
 import ucl.physiol.neuroconstruct.project.Project;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
 import ucl.physiol.neuroconstruct.simulation.*;
@@ -47,6 +46,8 @@ import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
  * @author Padraig Gleeson
  * @version 1.0.3
  */
+
+@SuppressWarnings("serial")
 
 public class Main3DPanel extends Base3DPanel implements SimulationInterface
 {
@@ -258,7 +259,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         MultiTransformGroup mtg = simpleU.getViewingPlatform().getMultiTransformGroup();
 
-        TransformGroup tempTG = mtg.getTransformGroup(mtg.getNumTransforms() - 1);
+        //TransformGroup tempTG = mtg.getTransformGroup(mtg.getNumTransforms() - 1);
 
         viewTG = mtg.getTransformGroup(mtg.getNumTransforms() - 1);
         Utils3D.addBackgroundLights(bounds, pg);
@@ -510,8 +511,8 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                         if (project.proj3Dproperties.getShowSynapseEndpoints())
                         {
-                            Primitive srcPrim
-                                = addPositionedSphere(mainTG, sourceSynAbsolutePosition, Color.green, sphereRadius, false);
+                            //Primitive srcPrim
+                            //    = addPositionedSphere(mainTG, sourceSynAbsolutePosition, Color.green, sphereRadius, false);
 
                             Primitive tgtPrim
                                 = addPositionedSphere(mainTG, targetSynAbsolutePosition, Color.red, sphereRadius, true);
@@ -2094,7 +2095,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
     {
         StringBuffer sb = new StringBuffer();
 
-        Properties props = SimulationsInfo.getSimulationProperties(simRerunFrame.getSimulationDirectory());
+        //Properties props = SimulationsInfo.getSimulationProperties(simRerunFrame.getSimulationDirectory());
 
         sb.append("\n<h3>Simulation reference     : " + simRerunFrame.getSimReference() + "<h3>\n");
         sb.append("<p>Date recorded            : <b>" + simRerunFrame.getDateModified() + "</b></p>\n\n");
@@ -2289,8 +2290,8 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
             Point3f posn = project.generatedCellPositions.getOneCellPosition(cellGroupSelected, cellNumber);
             info.append("Position: " + posn + "\n\n");
 
-            Vector allNetConns = project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames();
-            Vector allAAConns = project.volBasedConnsInfo.getAllAAConnNames();
+            Vector<String> allNetConns = project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames();
+            Vector<String> allAAConns = project.volBasedConnsInfo.getAllAAConnNames();
 
             allNetConns.addAll(allAAConns);
 
@@ -2486,7 +2487,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
     void jComboBoxAnalyse_itemStateChanged(ItemEvent e)
     {
-        if (e.getStateChange()!=e.SELECTED) return;
+        if (e.getStateChange()!=ItemEvent.SELECTED) return;
 
         if (!jComboBoxAnalyse.isEnabled()) return;
 
@@ -2589,7 +2590,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         ArrayList<String> everyCellGroup = project.cellGroupsInfo.getAllCellGroupNames();
 
-        Vector allNonEmptyCellGroups = new Vector();
+        Vector<String> allNonEmptyCellGroups = new Vector<String>();
 
         for (int i = 0; i < everyCellGroup.size(); i++)
         {
@@ -2785,7 +2786,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
 
             boolean spiking = false;
-            Vector spikeTimes = new Vector();
+            Vector<Double> spikeTimes = new Vector<Double>();
 
             for (int i = 0; i < voltages.length; i++)
             {
@@ -2839,7 +2840,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         ArrayList<String> everyCellGroup = project.cellGroupsInfo.getAllCellGroupNames();
 
-        Vector allNonEmptyCellGroups = new Vector();
+        Vector<String> allNonEmptyCellGroups = new Vector<String>();
 
         for (int i = 0; i < everyCellGroup.size(); i++)
         {
@@ -2868,7 +2869,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         }
 
 
-        int total = project.generatedCellPositions.getNumberInCellGroup(cellGroup);
+        //int total = project.generatedCellPositions.getNumberInCellGroup(cellGroup);
 
         ArrayList<PositionRecord> positions = project.generatedCellPositions.getPositionRecords(cellGroup);
 
@@ -3248,7 +3249,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         }
 
 
-        int total = project.generatedCellPositions.getNumberInCellGroup(chosenCellGroup);
+        //int total = project.generatedCellPositions.getNumberInCellGroup(chosenCellGroup);
 
         PlotterFrame frame = PlotManager.getPlotterFrame("Rasterplot for "+chosenCellGroup + " in "+ this.simRerunFrame.getSimReference());
         updatePlotList();
@@ -3413,9 +3414,9 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         GuiUtils.centreWindow(view2d);*/
 
-        Color selectedColor = Color.red;
+        //Color selectedColor = Color.red;
 
-        Point3f posSelected = project.generatedCellPositions.getOneCellPosition(cellGroupSelected, selcellNum);
+        //Point3f posSelected = project.generatedCellPositions.getOneCellPosition(cellGroupSelected, selcellNum);
 
 
         String cellRef = SimulationData.getCellRef(cellGroupSelected, selcellNum);
@@ -3526,7 +3527,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         ArrayList<String> everyCellGroup = project.cellGroupsInfo.getAllCellGroupNames();
 
-        Vector allNonEmptyCellGroups = new Vector();
+        Vector<String> allNonEmptyCellGroups = new Vector<String>();
 
         for (int i = 0; i < everyCellGroup.size(); i++)
         {
@@ -3699,7 +3700,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         preferredSpikeValsEntered = true;
 
-        double simDuration = (stopTime - startTime);
+        //double simDuration = (stopTime - startTime);
 
 
         //

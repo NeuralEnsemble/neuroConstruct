@@ -113,7 +113,7 @@ public class SpikeAnalyser
 
     }
 
-    public static Vector getInterSpikeIntervals(float[] voltages,
+    public static Vector<Double> getInterSpikeIntervals(float[] voltages,
                                                 float[] times,
                                                 float threshold,
                                                 float startTime,
@@ -135,7 +135,7 @@ public class SpikeAnalyser
     }
 
 
-    public static Vector getInterSpikeIntervals(double[] voltages,
+    public static Vector<Double> getInterSpikeIntervals(double[] voltages,
                                                 double[] times,
                                                 float threshold,
                                                 float startTime,
@@ -148,8 +148,8 @@ public class SpikeAnalyser
         }
 
         boolean spiking = false;
-        Vector spikeTimes = new Vector();
-        Vector interSpikeIntervals = new Vector();
+        Vector<Double> spikeTimes = new Vector<Double>();
+        Vector<Double> interSpikeIntervals = new Vector<Double>();
 
         for (int i = 0; i < voltages.length; i++)
         {
