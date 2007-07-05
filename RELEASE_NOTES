@@ -11,6 +11,9 @@ See also the README file
 - Caught most (but not all) sources of problems for NEURON/cygwin GENESIS when spaces are present in a
   Windows file/directory name, e.g. C:\Documents and Settings\Padraig Gleeson\nC_projects
 - Uses NeuroML v1.6
+- Added dialog box choice when prev simulation has been reloaded and generate NEURON/GENESIS is requested.
+  Had been a problem that no plots were generated in that case as no info on plots is stored with simulation info.
+- Made generated GENESIS more portable between directories: one variable targetDir specifies where all sim data will be stroed
 
 
 
