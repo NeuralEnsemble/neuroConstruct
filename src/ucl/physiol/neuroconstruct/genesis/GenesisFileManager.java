@@ -658,10 +658,10 @@ public class GenesisFileManager
                     String spikeElement = triggeringElement + "/spike";
 
                     response.append("if (!({exists " + spikeElement + "}))\n");
-                    response.append("create spikegen " + spikeElement + "\n");
+                    response.append("    create spikegen " + spikeElement + "\n");
 
                     /** @todo Change handling of abs_refract */
-                    response.append("setfield " + spikeElement + "  thresh "
+                    response.append("    setfield " + spikeElement + "  thresh "
                                     + UnitConverter.getVoltage(synProps.getThreshold(),
                                                                UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                project.genesisSettings.getUnitSystemToUse())
@@ -672,7 +672,7 @@ public class GenesisFileManager
                                                             project.genesisSettings.getUnitSystemToUse())
                                     + " output_amp 1\n");
 
-                    response.append("addmsg  " + triggeringElement
+                    response.append("    addmsg  " + triggeringElement
                                     + "  " + spikeElement + "  INPUT Vm\n");
 
                     response.append("end\n\n");
@@ -2838,7 +2838,7 @@ public class GenesisFileManager
         File dirForDataFiles = getDirectoryForSimulationFiles();
         String dataFileDirName = dirForDataFiles.getAbsolutePath() + System.getProperty("file.separator");
 
-        String friendlyDirName = getFriendlyDirName(dataFileDirName);
+        String friendlyDataDirName = getFriendlyDirName(dataFileDirName);
 
 
         if (newRecordingToBeMade)
@@ -2852,7 +2852,8 @@ public class GenesisFileManager
             response.append("simReference = \"" + project.simulationParameters.getReference() + "\"\n\n");
 
             response.append("str targetDir\n");
-            response.append("targetDir =  {strcat {simsDir} {simReference}}\n\n");
+            response.append("targetDir =  {strcat {simsDir} {simReference}}\n");
+            response.append("targetDir =  {strcat {targetDir} {\"/\"}}\n\n");
 
             if (addComments)
             {
@@ -2879,7 +2880,9 @@ public class GenesisFileManager
             response.append("create neutral " + FILE_ELEMENT_ROOT + "\n");
             response.append("create asc_file " + timeFileElement + "\n");
             response.append("setfield " + timeFileElement + "    flush 1    leave_open 1    append 1  notime 1\n");
-            response.append("setfield " + timeFileElement + " filename " + friendlyDirName + SimulationData.TIME_DATA_FILE +  "\n");
+            //response.append("str targetDir\n");
+            
+            response.append("setfield " + timeFileElement + " filename {strcat {targetDir} {\"" + SimulationData.TIME_DATA_FILE +  "\"}}\n");
             response.append("call " + timeFileElement + " OUT_OPEN\n");
             //response.append("call " + timeFileElement +
             //                " OUT_WRITE \"//This is a file containing the time values of the simulation\"\n");
@@ -2997,9 +3000,11 @@ public class GenesisFileManager
                                     response.append("    setfield " + fileElement +
                                                     "    flush 1    leave_open 1    append 1 notime 1\n");
 
-                                    response.append("    setfield " + fileElement + " filename " + friendlyDirName +
-                                                    "{getpath {cellName} -tail}" + segFileNamePart + varFileNamePart +
-                                                    "." + extension + "\n");
+                                    response.append("    str fileNameStr\n");
+                                    response.append("    fileNameStr = {strcat {getpath {cellName} -tail} {\"" + segFileNamePart + varFileNamePart +
+                                                    "." + extension + "\"} }\n");
+
+                                    response.append("    setfield " + fileElement + " filename {strcat {targetDir} {fileNameStr}}\n");
 
                                 }
                                 else
@@ -3047,9 +3052,9 @@ public class GenesisFileManager
 
                                     }
 
-                                    response.append("    setfield " + fileElement + " fname " + friendlyDirName +
-                                                    "{getpath {cellName} -tail}" + segFileNamePart + varFileNamePart +
-                                                    "." + extension + "\n");
+                                    response.append("    setfield " + fileElement + " fname { strcat {strcat {targetDir} "  +
+                                                    "{getpath {cellName} -tail}} {\"" + segFileNamePart + varFileNamePart +
+                                                    "." + extension + "\"}}\n");
 
                                 }
 
@@ -3164,9 +3169,9 @@ public class GenesisFileManager
                                         response.append("setfield " + fileElement +
                                                         "    flush 1    leave_open 1    append 1 notime 1\n");
 
-                                        response.append("setfield " + fileElement + " filename " + friendlyDirName +
-                                                        "{getpath {cellName} -tail}" + segFileNamePart +
-                                                        varFileNamePart + "." + SimPlot.CONTINUOUS_DATA_EXT + "\n");
+                                        response.append("setfield " + fileElement + " filename { strcat {strcat {targetDir} "  +
+                                                        "{getpath {cellName} -tail} } {\"" + segFileNamePart +
+                                                        varFileNamePart + "." + SimPlot.CONTINUOUS_DATA_EXT + "\"}}\n");
 
                                     }
                                     else
@@ -3215,9 +3220,9 @@ public class GenesisFileManager
 
                                         }
 
-                                        response.append("    setfield " + fileElement + " fname " + friendlyDirName +
-                                                        "{getpath {cellName} -tail}" + segFileNamePart +
-                                                        varFileNamePart + "." + extension + "\n");
+                                        response.append("    setfield " + fileElement + " fname { strcat {strcat {targetDir} " +
+                                                        "{getpath {cellName} -tail} } {\"" + segFileNamePart +
+                                                        varFileNamePart + "." + extension + "\"}}\n");
 
                                     }
 
@@ -3276,42 +3281,62 @@ public class GenesisFileManager
         response.append("reset\n");
         response.append(generateScriptBlock(ScriptLocation.AFTER_FINAL_RESET));
 
-        String startTimeFile = friendlyDirName+"starttime";
-        String stopTimeFile = friendlyDirName+"stoptime";
+        //String startTimeFile = friendlyDirName+"starttime";
+        //String stopTimeFile = friendlyDirName+"stoptime";
+
+        response.append("str startTimeFile\n");
+        response.append("str stopTimeFile\n");
+
+
+        response.append("startTimeFile = {strcat {targetDir} {\"starttime\"}}\n");
+
+        response.append("stopTimeFile = {strcat {targetDir} {\"stoptime\"}}\n");
+        
 
         response.append("echo \"Starting simulation reference: "+project.simulationParameters.getReference()+" at: \" {getdate}\n");
-        response.append("sh \"date +%s.%N > "+startTimeFile+"\"\n\n");
+        response.append("sh {strcat {\"date +%s.%N > \"} {startTimeFile}}\n\n");
 
         response.append("step "+((int)Math.round(getSimDuration()/project.simulationParameters.getDt()))+"\n\n"); // +1 to include 0 and last timestep
 
         response.append("echo \"Finished simulation reference: "+project.simulationParameters.getReference()+" at: \" {getdate}\n");
 
-        response.append("sh \"date +%s.%N > "+stopTimeFile+"\"\n\n"); // if you know a better way to get output of a system command from a sh call, let me know...
+        response.append("sh {strcat {\"date +%s.%N > \"} {stopTimeFile}}\n\n"); // if you know a better way to get output of a system command from a sh call, let me know...
 
-        if (addComments) response.append("echo Data stored in directory: "+friendlyDirName+"\n\n");
-
-
-        response.append("openfile "+startTimeFile+" r\n");
-        response.append("openfile "+stopTimeFile+" r\n");
+        if (addComments) response.append("echo Data stored in directory: {targetDir}\n\n");
 
 
-        response.append("float starttime = {readfile "+startTimeFile+"}  \n");
-        response.append("float stoptime =  {readfile "+stopTimeFile+"}  \n");
+        response.append("openfile {startTimeFile} r\n");
+        response.append("openfile {stopTimeFile} r\n");
+
+
+        response.append("float starttime = {readfile {startTimeFile}}  \n");
+        response.append("float stoptime =  {readfile {stopTimeFile}}  \n");
         response.append("float runTime = {stoptime - starttime}  \n");
 
         response.append("echo Simulation took : {runTime} seconds  \n");
 
 
-        response.append("closefile "+startTimeFile+" \n");
-        response.append("closefile "+stopTimeFile+" \n\n\n");
+        response.append("closefile {startTimeFile} \n");
+        response.append("closefile {stopTimeFile} \n\n\n");
+        
 
-        response.append("sh \"hostname > hostname\";openfile hostname r;str hostnamestr = {readfile hostname};closefile hostname\n\n");
+        response.append("str hostnameFile\n");
+        response.append("hostnameFile = {strcat {targetDir} {\"hostname\"}}\n");
 
-        response.append("openfile "+friendlyDirName+SimulationsInfo.simulatorPropsFileName+" w\n");
+        response.append("sh {strcat {\"hostname > \"} {hostnameFile}}\n");
+        response.append("openfile {hostnameFile} r\n");
+        response.append("str hostnamestr = {readfile {hostnameFile}}\n");
+        response.append("closefile {hostnameFile}\n\n");
 
-        response.append("writefile "+friendlyDirName+SimulationsInfo.simulatorPropsFileName+" \"RealSimulationTime=\"{runTime}\n");
-        response.append("writefile "+friendlyDirName+SimulationsInfo.simulatorPropsFileName+" \"Host=\"{hostnamestr}\n");
-        response.append("closefile "+friendlyDirName+SimulationsInfo.simulatorPropsFileName+" \n");
+
+        response.append("str simPropsFile\n");
+        response.append("simPropsFile = {strcat {targetDir} {\""+SimulationsInfo.simulatorPropsFileName+"\"}}\n");
+        
+        response.append("openfile {simPropsFile} w\n");
+
+        response.append("writefile {simPropsFile} \"RealSimulationTime=\"{runTime}\n");
+        response.append("writefile {simPropsFile} \"Host=\"{hostnamestr}\n");
+        response.append("closefile {simPropsFile} \n");
 
 
 
