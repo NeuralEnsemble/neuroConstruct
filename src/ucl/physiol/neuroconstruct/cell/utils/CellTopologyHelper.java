@@ -2315,8 +2315,10 @@ public class CellTopologyHelper
      */
     public static String compare(Cell cellA, Cell cellB)
     {
-        String header = "Comparing " + cellA.getInstanceName() + " to " + cellB.getInstanceName() +
-                                             "\n\n";
+        String header = "Comparing " + cellA.getInstanceName() + " (<) to " + cellB.getInstanceName() +
+                                             " (>)\n\n";
+        
+        boolean identical = true;
 
         StringBuilder info = new StringBuilder(header);
 
@@ -2326,6 +2328,7 @@ public class CellTopologyHelper
         }
         if (!cellA.getInstanceName().equals(cellB.getInstanceName()))
         {
+            identical = false;
             info.append("Instance names do not match:\n");
             info.append("< " + cellA.getInstanceName() + "\n");
             info.append("> " + cellB.getInstanceName() + "\n");
@@ -2333,6 +2336,7 @@ public class CellTopologyHelper
         }
         if (!cellA.getCellDescription().equals(cellB.getCellDescription()))
         {
+            identical = false;
             info.append("Descriptions do not match:\n");
             info.append("< " + cellA.getCellDescription() + "\n");
             info.append("> " + cellB.getCellDescription() + "\n");
@@ -2340,6 +2344,7 @@ public class CellTopologyHelper
         }
         if (!cellA.getInitialPotential().equals(cellB.getInitialPotential()))
         {
+            identical = false;
             info.append("Initial potentials do not match:\n");
             info.append("< " + cellA.getInitialPotential() + "\n");
             info.append("> " + cellB.getInitialPotential() + "\n");
@@ -2368,6 +2373,7 @@ public class CellTopologyHelper
             }
             if (mismatch)
             {
+                identical = false;
                 info.append("Specific Axial Resistances do not match:\n");
                 info.append("< " + cellA.getSpecAxResVsGroups() + "\n");
                 info.append("> " + cellB.getSpecAxResVsGroups() + "\n");
@@ -2397,6 +2403,7 @@ public class CellTopologyHelper
             }
             if(mismatch)
             {
+                identical = false;
                 info.append("Specific Capacitances do not match:\n");
                 info.append("< " + cellA.getSpecCapVsGroups() + "\n");
                 info.append("> " + cellB.getSpecCapVsGroups() + "\n");
@@ -2406,12 +2413,23 @@ public class CellTopologyHelper
 
         Vector<Segment> segmentsA = cellA.getAllSegments();
         Vector<Segment> segmentsB = cellB.getAllSegments();
+        
+        if (segmentsB.size()==segmentsA.size())
+        {
+            info.append("The numbers of segments in the cells are IDENTICAL\n\n");
+        }
+        else
+        {
+            identical = false;
+            info.append("The numbers of segments in the cells are DIFFERENT\n\n");
+        }
 
         int minSize = Math.min(segmentsA.size(), segmentsB.size());
         for (int i = 0; i < minSize; i++)
         {
             if (!segmentsA.get(i).fullEquals(segmentsB.get(i)))
             {
+                identical = false;
                 info.append("A segment does not match:\n");
                 info.append("< " + segmentsA.get(i) + "\n");
                 info.append("> " + segmentsB.get(i) + "\n");
@@ -2444,6 +2462,7 @@ public class CellTopologyHelper
 
         if (!cellA.getApPropSpeedsVsGroups().equals(cellB.getApPropSpeedsVsGroups()))
         {
+            identical = false;
             info.append("Action potential propagation speeds do not match\n");
             info.append("< " + cellA.getApPropSpeedsVsGroups() + "\n");
             info.append("> " + cellB.getApPropSpeedsVsGroups() + "\n");
@@ -2461,6 +2480,7 @@ public class CellTopologyHelper
 
         if (chanMechsA.size()!=chanMechsB.size())
         {
+            identical = false;
             error.append("Difference in number of channel mechanism to group relations between cells\n");
         }
         else
@@ -2477,6 +2497,7 @@ public class CellTopologyHelper
 
                 if (groupsB==null)
                 {
+                    identical = false;
                     error.append(cellB.getInstanceName() + " does not contain Channel Mechanism: "+cm+"\n");
                     //error.append("groupsA: "+groupsA+", groupsB: "+groupsB+"\n");
                 }
@@ -2487,6 +2508,7 @@ public class CellTopologyHelper
                     if (groupsA.size()!=groupsB.size() ||
                         !(groupsA.containsAll(groupsB) && groupsB.containsAll(groupsA)))
                     {
+                        identical = false;
                         error.append("Mismatch in groups containing Channel Mechanism: "+cm+"\n");
                     }
                 }
@@ -2495,6 +2517,7 @@ public class CellTopologyHelper
 
         if (error.length()>0)
         {
+            identical = false;
             info.append(error);
             info.append("< " + cellA.getChanMechsVsGroups() + "\n");
             info.append("> " + cellB.getChanMechsVsGroups() + "\n");
@@ -2507,6 +2530,7 @@ public class CellTopologyHelper
 
         if (!cellA.getSynapsesVsGroups().equals(cellB.getSynapsesVsGroups()))
         {
+            identical = false;
             info.append("Synaptic mechanisms do not match\n");
                 info.append("< " + cellA.getSynapsesVsGroups() + "\n");
                 info.append("> " + cellB.getSynapsesVsGroups() + "\n");
@@ -2523,6 +2547,7 @@ public class CellTopologyHelper
         {
             if (!axonalArboursA.get(i).equals(axonalArboursB.get(i)))
             {
+                identical = false;
                 info.append("An Axonal Arbour does not match:\n");
                 info.append("< " + axonalArboursA.get(i) + "\n");
                 info.append("> " + axonalArboursB.get(i) + "\n");
@@ -2531,27 +2556,48 @@ public class CellTopologyHelper
         }
         if (axonalArboursA.size() > minSize)
         {
+            identical = false;
             info.append("There are " + (axonalArboursA.size() - minSize) + " extra Axonal Arbour(s) in " +
                         cellA.getInstanceName() + "\n");
             info.append("\n\n");
         }
         if (axonalArboursB.size() > minSize)
         {
+            identical = false;
             info.append("There are " + (axonalArboursB.size() - minSize) + " extra Axonal Arbour(s) in " +
                         cellB.getInstanceName() + "\n");
             info.append("\n\n");
         }
 
+        float totalSurfaceAreaA = 0;
+        float totalLengthA = 0;
+        float totalSurfaceAreaB = 0;
+        float totalLengthB = 0;
 
 
-        if (info.toString().equals(header))
+        for (int segNum = 0; segNum < segmentsA.size(); segNum++)
+        {
+            totalLengthA = totalLengthA + segmentsA.get(segNum).getSegmentLength();
+            totalSurfaceAreaA = totalSurfaceAreaA + segmentsA.get(segNum).getSegmentSurfaceArea();
+        }
+        for (int segNum = 0; segNum < segmentsB.size(); segNum++)
+        {
+            totalLengthB = totalLengthB + segmentsB.get(segNum).getSegmentLength();
+            totalSurfaceAreaB = totalSurfaceAreaB + segmentsB.get(segNum).getSegmentSurfaceArea();
+        }
+        info.append("< Total length: " + totalLengthA + "\n");
+        info.append("> Total length: " + totalLengthB + "\n\n");
+
+
+        info.append("< Total surface area: " + totalSurfaceAreaA + "\n");
+        info.append("> Total surface area: " + totalSurfaceAreaB + "\n\n");
+        
+
+
+        if (identical)
         {
             info.append("Cells are identical");
         }
-
-
-
-
 
         return info.toString();
     }

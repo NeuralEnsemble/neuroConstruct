@@ -34,6 +34,9 @@ import javax.xml.parsers.SAXParserFactory;
 public class MorphMLReader extends XMLFilterImpl
 {
     private static ClassLogger logger = new ClassLogger("MorphMLReader");
+    
+    // If getAncestorElement is called for non existent ancestors...
+    private static String NULL_ELEMENT = "--- Null Element ---";
 
 
     private String importationComment = "Importation comment: ";
@@ -252,7 +255,7 @@ public class MorphMLReader extends XMLFilterImpl
      */
     public String getAncestorElement(int generationsBack)
     {
-        if (elementStack.size()<generationsBack+1) return null;
+        if (elementStack.size()<generationsBack+1) return NULL_ELEMENT;
         return elementStack.elementAt(elementStack.size()-(generationsBack+1));
     }
 
@@ -395,6 +398,8 @@ public class MorphMLReader extends XMLFilterImpl
          else if (getCurrentElement().equals(MorphMLConstants.SECTION_ELEMENT)
                   &&getAncestorElement(1).equals(MorphMLConstants.SECTIONS_ELEMENT))
          {
+
+             logger.logComment("\n                           +++++    New Cable/Section!!  +++++");
              String id = attributes.getValue(MorphMLConstants.SECTION_ID_ATTR);
              String name = attributes.getValue(MorphMLConstants.SECTION_NAME_ATTR);
 
@@ -421,12 +426,19 @@ public class MorphMLReader extends XMLFilterImpl
                  float fractAlongSec = Float.parseFloat(fractAttr);
                  Segment firstSegInSec = cell.getAllSegmentsInSection(currentSection).getFirst();
                  logger.logComment("fract along sec: " + fractAlongSec);
-
-                 Section parentSec = firstSegInSec.getParentSegment().getSection();
-
-                 SegmentLocation loc = CellTopologyHelper.getFractionAlongSegment(cell, parentSec, fractAlongSec);
-
-                 firstSegInSec.setFractionAlongParent(loc.getFractAlong());
+                 
+                 if (firstSegInSec.getParentSegment() !=null)
+                 {
+                     Section parentSec = firstSegInSec.getParentSegment().getSection();
+    
+                     SegmentLocation loc = CellTopologyHelper.getFractionAlongSegment(cell, parentSec, fractAlongSec);
+    
+                     firstSegInSec.setFractionAlongParent(loc.getFractAlong());
+                 }
+                 else
+                 {
+                     logger.logComment("Ignoring fract along sec; no parent on the first segment of this section");
+                 }
              }
 
          }
@@ -674,6 +686,13 @@ public class MorphMLReader extends XMLFilterImpl
 
         }
 
+        else if (getCurrentElement().equals(MorphMLConstants.SEGMENT_ELEMENT))
+        {
+            logger.logComment("<<<<      End of segment: " + this.currentSegment);
+
+
+        }
+
 
         stepDownElement();
     }
@@ -749,7 +768,7 @@ public class MorphMLReader extends XMLFilterImpl
 
             //File f = new File("models/DentateGyrus/generatedMorphML/MossyCell.morph.xml");
 
-            File f = new File("../NeuroMLValidator/web/NeuroMLFiles/Examples/ChannelML/InhomogeneousBiophys.xml");
+            File f = new File("../nC_projects/Morph/generatedNEURON/mm.xml");
 
             logger.logComment("Loading mml cell from "+ f.getAbsolutePath());
 
