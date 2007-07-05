@@ -319,18 +319,6 @@ public class NeuronTemplateGenerator
         ArrayList<Section> sections = cell.getAllSections();
         if (sections.size() > 0)
         {
-        	/*
-            if (addGrowthFunctions)
-            {
-                response.append("create additional_axons[1]\n");
-                response.append("nAdditionalAxons = 0\n");
-                response.append("nMaxAdditionalAxons = 0\n\n");
-
-                response.append(this.getProcSpecifyNumExtraAxons());
-                response.append(this.getProcCreateDummyAxons());
-                response.append(this.getFuncAddAxonSection());
-            }*/
-
             Hashtable<String, Integer> arraySectionsVsSize = new Hashtable<String, Integer>();
 
             for (int i = 0; i < sections.size(); i++)
@@ -339,8 +327,8 @@ public class NeuronTemplateGenerator
 
                 if (cell.getApPropSpeedForSection(next)==null)
                 {
-
-                    String name = next.getSectionName();
+                    String name = NeuronFileManager.getHocSectionName(next.getSectionName());
+                    System.out.println(name);
 
                     if (name.indexOf("[") > 0)
                     {
@@ -477,9 +465,9 @@ public class NeuronTemplateGenerator
                                                                segment.getParentSegment(),
                                                                segment.getFractionAlongParent());
                 
-                connectLines.add("    connect " + segment.getSection().getSectionName()
+                connectLines.add("    connect " + NeuronFileManager.getHocSectionName(segment.getSection().getSectionName())
                                  + "(0), "
-                                 + parent.getSection().getSectionName()
+                                 + NeuronFileManager.getHocSectionName(parent.getSection().getSectionName())
                                  + "("
                                  + fractionAlongParentSection
                                  + ")");
@@ -641,7 +629,7 @@ public class NeuronTemplateGenerator
                     Point3f endPoint = segment.getEndPointPosition();
 
 
-                    shapeLines.add("    "+segment.getSection().getSectionName() +" {pt3dclear() pt3dadd("
+                    shapeLines.add("    "+NeuronFileManager.getHocSectionName(segment.getSection().getSectionName()) +" {pt3dclear() pt3dadd("
                                     + startPoint.x + ", "
                                     + startPoint.y + ", "
                                     + startPoint.z + ", "
@@ -657,7 +645,7 @@ public class NeuronTemplateGenerator
                     Point3f startPoint = getSphericalSegmentStartPoint(segment, cell);
                     Point3f endPoint = getSphericalSegmentEndPoint(segment, cell);
 
-                    shapeLines.add("    "+segment.getSection().getSectionName()
+                    shapeLines.add("    "+NeuronFileManager.getHocSectionName(segment.getSection().getSectionName())
                                    + " {pt3dclear() pt3dadd("
                                    + startPoint.x + ", "
                                    + startPoint.y + ", "
@@ -678,7 +666,7 @@ public class NeuronTemplateGenerator
                     !segment.isSomaSegment())
                 {
 
-                    shapeLines.add("    "+segment.getSection().getSectionName() + " {pt3dclear() pt3dadd(0,0,0,"
+                    shapeLines.add("    "+NeuronFileManager.getHocSectionName(segment.getSection().getSectionName()) + " {pt3dclear() pt3dadd(0,0,0,"
                                    + (segment.getRadius() * 2) + ") "
                                    + "pt3dadd("
                                    + segment.getEndPointPositionX() + ","
@@ -702,7 +690,7 @@ public class NeuronTemplateGenerator
                         startRadius = segment.getParentSegment().getRadius();
                     }
 
-                    StringBuffer lineToAdd = new StringBuffer("    "+segment.getSection().getSectionName() + " {");
+                    StringBuffer lineToAdd = new StringBuffer("    "+NeuronFileManager.getHocSectionName(segment.getSection().getSectionName()) + " {");
 
                     if (segment.isFirstSectionSegment())
                     {
@@ -762,7 +750,7 @@ public class NeuronTemplateGenerator
                     {
                         if (segment.getGroups().contains(groupName))
                         {
-                            subsetLines.add("    "+segment.getSection().getSectionName() + " " + groupName + ".append()");
+                            subsetLines.add("    "+NeuronFileManager.getHocSectionName(segment.getSection().getSectionName()) + " " + groupName + ".append()");
                         }
                     }
                 }
@@ -779,7 +767,7 @@ public class NeuronTemplateGenerator
             Segment segment = (Segment) segments.elementAt(i);
             if (segment.isFirstSectionSegment())
             {
-                subsetLines.add("    "+segment.getSection().getSectionName() + " all.append()");
+                subsetLines.add("    "+NeuronFileManager.getHocSectionName(segment.getSection().getSectionName()) + " all.append()");
             }
 
         }
@@ -1048,7 +1036,7 @@ public class NeuronTemplateGenerator
             if (segment.isFirstSectionSegment())
             {
 
-                    nsegLines.add("    "+segment.getSection().getSectionName()
+                    nsegLines.add("    "+NeuronFileManager.getHocSectionName(segment.getSection().getSectionName())
                                     + " nseg = "
                                     + segment.getSection().getNumberInternalDivisions());
 
@@ -1326,9 +1314,9 @@ public class NeuronTemplateGenerator
                         for (Section sec: secs)
                         {
                             Point3f midpoint = CellTopologyHelper.convertSectionDisplacement(cell, sec, 0.5f);
-                            response.append("    "+sec.getSectionName()+".x_"+nextChanMech.getName()+" = "+midpoint.x+"\n");
-                            response.append("    "+sec.getSectionName()+".y_"+nextChanMech.getName()+" = "+midpoint.y+"\n");
-                            response.append("    "+sec.getSectionName()+".z_"+nextChanMech.getName()+" = "+midpoint.z+"\n\n");
+                            response.append("    "+NeuronFileManager.getHocSectionName(sec.getSectionName())+".x_"+nextChanMech.getName()+" = "+midpoint.x+"\n");
+                            response.append("    "+NeuronFileManager.getHocSectionName(sec.getSectionName())+".y_"+nextChanMech.getName()+" = "+midpoint.y+"\n");
+                            response.append("    "+NeuronFileManager.getHocSectionName(sec.getSectionName())+".z_"+nextChanMech.getName()+" = "+midpoint.z+"\n\n");
                         }
                     }
 
@@ -1356,7 +1344,7 @@ public class NeuronTemplateGenerator
         response.append("proc position() { local i\n");
 
 
-        response.append("    "+cell.getFirstSomaSegment().getSection().getSectionName()
+        response.append("    "+NeuronFileManager.getHocSectionName(cell.getFirstSomaSegment().getSection().getSectionName())
                         + "  for i = 0, n3d()-1 {\n");
         response.append("        pt3dchange(i, $1-x+x3d(i), $2-y+y3d(i), $3-z+z3d(i), diam3d(i))\n");
         response.append("    }\n");
@@ -1378,7 +1366,8 @@ public class NeuronTemplateGenerator
 
          NeuronFileManager.addComment(response, "Using standard NetBuilder form. (Overly) simple assumption that first soma seg is trigger for AP.../n");
 
-        response.append("    "+this.cell.getFirstSomaSegment().getSection().getSectionName()+" $o2 = new NetCon(&v(1), $o1)\n");
+        response.append("    "+NeuronFileManager.getHocSectionName(cell.getFirstSomaSegment().getSection().getSectionName())
+                +" $o2 = new NetCon(&v(1), $o1)\n");
 
         response.append("}\n");
         response.append("\n");

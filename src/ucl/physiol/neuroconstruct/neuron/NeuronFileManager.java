@@ -21,7 +21,6 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.gui.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.project.*;
-import ucl.physiol.neuroconstruct.project.GeneratedElecInputs.*;
 import ucl.physiol.neuroconstruct.project.packing.*;
 import ucl.physiol.neuroconstruct.project.stimulation.*;
 import ucl.physiol.neuroconstruct.simulation.*;
@@ -75,13 +74,13 @@ public class NeuronFileManager
     /**
      * A list of the NEURON template files which will be needed by the cells in the simulation
      */
-    private Vector cellTemplatesGenAndIncluded = new Vector();
+    private Vector<String> cellTemplatesGenAndIncluded = new Vector<String>();
 
     private MultiRunManager multiRunManager = null;
 
     private int nextColour = 1;
 
-    private Vector graphsCreated = new Vector();
+    private Vector<String> graphsCreated = new Vector<String>();
 
     private static boolean addComments = true;
 
@@ -108,11 +107,11 @@ public class NeuronFileManager
 
     public void reset()
     {
-        cellTemplatesGenAndIncluded = new Vector();
-        cellMechFilesGenAndIncl = new Vector();
-        this.stimModFilesRequired =  new Vector();
+        cellTemplatesGenAndIncluded = new Vector<String>();
+        cellMechFilesGenAndIncl = new Vector<String>();
+        this.stimModFilesRequired =  new Vector<String>();
         nextColour = 1; // reset it...
-        graphsCreated = new Vector();
+        graphsCreated = new Vector<String>();
         addComments = project.neuronSettings.isGenerateComments();
 
     }
@@ -270,10 +269,10 @@ public class NeuronFileManager
     {
         try
         {
-            Vector allFiles = new Vector();
+            Vector<String> allFiles = new Vector<String>();
             for (int i = 0; i < cellTemplatesGenAndIncluded.size(); i++)
             {
-                allFiles.add( (new File( (String) cellTemplatesGenAndIncluded.elementAt(i))).getName());
+                allFiles.add( (new File( cellTemplatesGenAndIncluded.get(i))).getName());
             }
             allFiles.add(getMainHocFile().getName());
             return allFiles;
@@ -357,7 +356,7 @@ public class NeuronFileManager
                 int ref = neuronFInitNcls[i].getPositionReference();
                 String objName = "fih_" + ref;
                 String procName = "callfi" + ref;
-                this.addComment(nativeBlocks, "Hoc commands to run at location: " + neuronFInitNcls[i].toString());
+                addComment(nativeBlocks, "Hoc commands to run at location: " + neuronFInitNcls[i].toString());
                 nativeBlocks.append("objref " + objName + "\n");
                 nativeBlocks.append(objName + " = new FInitializeHandler(" + neuronFInitNcls[i].getPositionReference() +
                                 ", \"" +
@@ -430,16 +429,16 @@ public class NeuronFileManager
                         addComment(response,
                                    "Giving cell " + posRecord.cellNumber + " an initial potential of: " + initVolt+" based on: "+ cell.getInitialPotential().toString());
 
-                        if (runMode==this.RUN_PARALLEL) response.append("  if(pnm.gid_exists(getGid(\""+cellGroupName+"\", "
+                        if (runMode==RUN_PARALLEL) response.append("  if(pnm.gid_exists(getGid(\""+cellGroupName+"\", "
                                                                         + posRecord.cellNumber + "))) {\n");
 
                         response.append("    forsec " + nameOfArrayOfTheseCells + "[" + posRecord.cellNumber + "].all {\n");
                         response.append("        v = " + initVolt + "\n");
                         response.append("    }\n\n");
-                        if (runMode==this.RUN_PARALLEL) response.append("  }\n\n");
+                        if (runMode==RUN_PARALLEL) response.append("  }\n\n");
                     }
 
-                    Point3f point = new Point3f(posRecord.x_pos, posRecord.y_pos, posRecord.z_pos);
+                    //Point3f point = new Point3f(posRecord.x_pos, posRecord.y_pos, posRecord.z_pos);
 
                 }
 
@@ -456,7 +455,7 @@ public class NeuronFileManager
                     response.append("    for i = 0, " + nameOfNumberOfTheseCells + "-1 {" + "\n");
                     response.append("        ");
 
-                        if (runMode==this.RUN_PARALLEL) response.append("if(pnm.gid_exists(getGid(\""+cellGroupName
+                        if (runMode==RUN_PARALLEL) response.append("if(pnm.gid_exists(getGid(\""+cellGroupName
                                                                         +"\", i))) ");
 
                         response.append("forsec " + nameOfArrayOfTheseCells + "[i].all "
@@ -532,7 +531,7 @@ public class NeuronFileManager
 
         //this.addHocFileComment(response, "Accessing cell by it's type.. ");
         response.append("access " + cellToWatch.getInstanceName() + "[" + cellNumToWatch + "]."
-                        + cellToWatch.getFirstSomaSegment().getSection().getSectionName());
+                        + getHocSectionName(cellToWatch.getFirstSomaSegment().getSection().getSectionName()));
         response.append("\n");
 
         return response.toString();
@@ -542,7 +541,7 @@ public class NeuronFileManager
     {
         StringBuffer response = new StringBuffer();
 
-        this.addComment(response, "Initializes random-number generator");
+        addComment(response, "Initializes random-number generator");
         response.append("use_mcell_ran4(1)\n");
         response.append("mcell_ran4_init(" + this.randomSeed + ")\n");
         return response.toString();
@@ -554,7 +553,7 @@ public class NeuronFileManager
         StringBuffer response = new StringBuffer();
 
 
-        this.addComment(response, "Getting hostname");
+        addComment(response, "Getting hostname");
 
         response.append("objref strFuncs\n");
         response.append("strFuncs = new StringFunctions()\n");
@@ -576,12 +575,12 @@ public class NeuronFileManager
     {
         StringBuffer response = new StringBuffer();
 
-        this.addMajorComment(response, "Initialising parallelization");
+        addMajorComment(response, "Initialising parallelization");
 
 
         response.append("ncell = " + project.generatedCellPositions.getNumberInAllCellGroups() + "\n\n");
 
-        this.addComment(response, "Parallel NEURON setup");
+        addComment(response, "Parallel NEURON setup");
 
         response.append("load_file(\"netparmpi.hoc\")\n");
         response.append("objref pnm\n");
@@ -605,7 +604,7 @@ public class NeuronFileManager
     {
         StringBuffer response = new StringBuffer();
 
-        this.addMajorComment(response, "Associating cells with nodes");
+        addMajorComment(response, "Associating cells with nodes");
 
         ArrayList<String> cellGroupNames = simConfig.getCellGroups();
 
@@ -623,7 +622,7 @@ public class NeuronFileManager
             String cellGroupName = cellGroupNames.get(cellGroupIndex);
             response.append("    if (strcmp($s1,\""+cellGroupName+"\")==0) {\n");
 
-            this.addComment(response, "There are " + project.generatedCellPositions.getNumberInCellGroup(cellGroupName)
+            addComment(response, "There are " + project.generatedCellPositions.getNumberInCellGroup(cellGroupName)
                             + " cells in this Cell Group", "        ", false);
 
             response.append("        gid = "+currentGid+" + $2\n");
@@ -724,7 +723,7 @@ public class NeuronFileManager
     {
         StringBuffer response = new StringBuffer();
 
-        this.addComment(response, "Shutting down parallelisation");
+        addComment(response, "Shutting down parallelisation");
 
         ///response.append("forall psection()\n");
         response.append("\n");
@@ -913,7 +912,7 @@ public class NeuronFileManager
                         String prefix = "";
                         String post = "";
 
-                        if (runMode==this.RUN_PARALLEL)
+                        if (runMode==RUN_PARALLEL)
                         {
                             prefix = "    ";
                             post = "}" + "\n";
@@ -989,7 +988,7 @@ public class NeuronFileManager
                         String prefix = "";
                         String post = "";
 
-                        if (runMode==this.RUN_PARALLEL)
+                        if (runMode==RUN_PARALLEL)
                         {
                             prefix = "    ";
                             post = "}" + "\n";
@@ -1111,7 +1110,7 @@ public class NeuronFileManager
                         String prefix = "";
                         String post = "";
 
-                        if (runMode==this.RUN_PARALLEL)
+                        if (runMode==RUN_PARALLEL)
                         {
                             prefix = "    ";
                             post = "}" + "\n";
@@ -1509,6 +1508,22 @@ public class NeuronFileManager
         return response.toString();
     }
 
+
+    public static String getHocSectionName(String secname)
+    {
+        String newName = GeneralUtils.replaceAllTokens(secname,
+                ".",
+                "_");
+        newName = GeneralUtils.replaceAllTokens(newName,
+                "[",
+                "_");
+        newName = GeneralUtils.replaceAllTokens(newName,
+                "]",
+                "_");
+        
+        return newName;
+    }
+
     public static String getHocFriendlyFilename(String filename)
     {
         logger.logComment("filename: " + filename, true);
@@ -1588,7 +1603,7 @@ public class NeuronFileManager
             String prefix = "";
             String post = "";
 
-            if (runMode == this.RUN_PARALLEL)
+            if (runMode == RUN_PARALLEL)
             {
                 prefix = "    ";
                 post = "}" + "\n";
@@ -1658,7 +1673,7 @@ public class NeuronFileManager
                         String prefix = "";
                         String post = "";
 
-                        if (runMode==this.RUN_PARALLEL)
+                        if (runMode==RUN_PARALLEL)
                         {
                             prefix = "    ";
                             post = "    }" + "\n";
@@ -1735,7 +1750,7 @@ public class NeuronFileManager
                                     String prefix = "";
                                     String post = "";
 
-                                    if (runMode == this.RUN_PARALLEL)
+                                    if (runMode == RUN_PARALLEL)
                                     {
                                         prefix = "    ";
                                         post = "}" + "\n";
@@ -1774,7 +1789,7 @@ public class NeuronFileManager
                                 String prefix = "";
                                 String post = "";
 
-                                if (runMode == this.RUN_PARALLEL)
+                                if (runMode == RUN_PARALLEL)
                                 {
                                     prefix = "    ";
                                     post = "}" + "\n";
@@ -1860,7 +1875,7 @@ public class NeuronFileManager
             String prefix = "";
             String post = "";
 
-            if (runMode == this.RUN_PARALLEL)
+            if (runMode == RUN_PARALLEL)
             {
                 prefix = "    ";
                 post = "}" + "\n";
@@ -1913,7 +1928,7 @@ public class NeuronFileManager
                             prefix = "";
                             post = "";
 
-                            if (runMode == this.RUN_PARALLEL)
+                            if (runMode == RUN_PARALLEL)
                             {
                                 prefix = "    ";
                                 post = "    }" + "\n";
@@ -1960,7 +1975,7 @@ public class NeuronFileManager
                                     {
                                         String synObjName = this.getSynObjName(postSynObj);
 
-                                        String var = synObjName + "." + neuronVar;
+                                        //String var = synObjName + "." + neuronVar;
 
                                         String vectorObj = "v_" + synObjName + "_" + neuronVar;
                                         String fileObj = "f_" + synObjName + "_" + neuronVar;
@@ -1968,7 +1983,7 @@ public class NeuronFileManager
                                         prefix = "";
                                         post = "";
 
-                                        if (runMode == this.RUN_PARALLEL)
+                                        if (runMode == RUN_PARALLEL)
                                         {
                                             prefix = "    ";
                                             post = "}" + "\n";
@@ -2009,7 +2024,7 @@ public class NeuronFileManager
                                     prefix = "";
                                     post = "";
 
-                                    if (runMode == this.RUN_PARALLEL)
+                                    if (runMode == RUN_PARALLEL)
                                     {
                                         prefix = "    ";
                                         post = "}" + "\n";
@@ -2039,7 +2054,7 @@ public class NeuronFileManager
             prefix = "";
             post = "";
 
-            if (runMode == this.RUN_PARALLEL)
+            if (runMode == RUN_PARALLEL)
             {
                 prefix = "    ";
                 post = "}" + "\n";
@@ -2552,6 +2567,7 @@ public class NeuronFileManager
             }
             ArrayList<SingleSynapticConnection> allSynapses = project.generatedNetworkConnections.getSynapticConnections(netConnName);
 
+            /*
             for (int i = 0; i < allSynapses.size(); i++)
             {
                 GeneratedNetworkConnections.SingleSynapticConnection syn = allSynapses.get(i);
@@ -2568,7 +2584,7 @@ public class NeuronFileManager
                     + syn.sourceEndPoint.cellNumber
                     + "]";
 
-            }
+            }*/
         }
 
 
@@ -2769,7 +2785,7 @@ public class NeuronFileManager
 
 
 
-                    if (runMode != this.RUN_PARALLEL)
+                    if (runMode != RUN_PARALLEL)
                     {
                         // put synaptic start point on source axon
                         response.append("a_" + targetCellGroup
@@ -2920,8 +2936,8 @@ public class NeuronFileManager
 
             String neuronVar = this.convertToNeuronVarName(plot.simPlot.getValuePlotted());
 
-            float minVal = this.convertToNeuronValue(plot.simPlot.getMinValue(), plot.simPlot.getValuePlotted());
-            float maxVal = this.convertToNeuronValue(plot.simPlot.getMaxValue(), plot.simPlot.getValuePlotted());
+            float minVal = convertToNeuronValue(plot.simPlot.getMinValue(), plot.simPlot.getValuePlotted());
+            float maxVal = convertToNeuronValue(plot.simPlot.getMaxValue(), plot.simPlot.getValuePlotted());
 
             Cell nextCell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(plot.simPlot.getCellGroup()));
 
@@ -3372,13 +3388,13 @@ public class NeuronFileManager
 
         if (!project.neuronSettings.isVarTimeStep())
         {
-            this.addMajorComment(response, "Main run statement");
+            addMajorComment(response, "Main run statement");
             response.append("run()\n\n");
         }
         else
         {
-            this.addMajorComment(response, "Main run statement");
-            this.addComment(response, "Setting basic variable time step active");
+            addMajorComment(response, "Main run statement");
+            addComment(response, "Setting basic variable time step active");
 
             response.append("cvode.active(1)\n");
             response.append("run()\n\n");
@@ -3922,7 +3938,7 @@ public class NeuronFileManager
                     try
                     {
                         // This is to make sure the file permission is updated..
-                        Thread.currentThread().sleep(600);
+                        Thread.sleep(600);
                     }
                     catch (InterruptedException ex)
                     {
@@ -4074,7 +4090,7 @@ public class NeuronFileManager
                                       dirToRunIn);
 
 
-                    Process currentProcess = rt.exec(executable, null, dirToRunIn);
+                    rt.exec(executable, null, dirToRunIn);
                     logger.logComment("Have successfully executed command: " + executable + " in dir: " +
                                       dirToRunIn);
 
@@ -4118,7 +4134,7 @@ public class NeuronFileManager
                         }
                     }
 
-                    File libsDir = new File(dirForSimFiles, this.getArchSpecificDir());
+                    File libsDir = new File(dirForSimFiles, getArchSpecificDir());
 
                     // Messy roundabout way to do it...
                     File tempDir = new File(dirForSimFiles, "temp");
@@ -4133,7 +4149,10 @@ public class NeuronFileManager
 
                     File zipFile = new File(dirForSimFiles, zippedLibsFilename);
 
-                    zipFile = ZipUtils.zipUp(tempDir, zipFile.getAbsolutePath(),new ArrayList(),new ArrayList());
+                    zipFile = ZipUtils.zipUp(tempDir, 
+                            zipFile.getAbsolutePath(),
+                            new ArrayList<String>(),
+                            new ArrayList<String>());
 
                     //System.out.println("Zip file created with mod libs: "+ zipFile.getAbsolutePath());
 
@@ -4193,7 +4212,7 @@ public class NeuronFileManager
                                       dirToRunIn);
 
 
-                    Process currentProcess = rt.exec(executable, null, dirToRunIn);
+                    rt.exec(executable, null, dirToRunIn);
                     logger.logComment("Have successfully executed command: " + executable + " in dir: " +
                                       dirToRunIn);
 
@@ -4275,7 +4294,7 @@ public class NeuronFileManager
 
             System.out.println("Snoozing...");
 
-            Thread.currentThread().sleep(500);
+            Thread.sleep(500);
 
             System.out.println("Coming out of sleep");
 
