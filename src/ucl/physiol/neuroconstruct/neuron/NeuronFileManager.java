@@ -552,20 +552,23 @@ public class NeuronFileManager
     {
         StringBuffer response = new StringBuffer();
 
-
-        addComment(response, "Getting hostname");
-
-        response.append("objref strFuncs\n");
-        response.append("strFuncs = new StringFunctions()\n");
-
-        response.append("strdef host\n");
-
-        if (GeneralUtils.isWindowsBasedPlatform())
-            response.append("system(\"C:/WINDOWS/SYSTEM32/hostname.exe\", host)\n");
-        else
-            response.append("system(\"hostname\", host)\n");
-
-        response.append("strFuncs.left(host, strFuncs.len(host)-1)\n\n");
+        if (this.savingHostname()) // temporarily disabled for win, will it ever be needed?
+        {
+            addComment(response, "Getting hostname");
+    
+            response.append("objref strFuncs\n");
+            response.append("strFuncs = new StringFunctions()\n");
+    
+            response.append("strdef host\n");
+    
+            if (GeneralUtils.isWindowsBasedPlatform())
+                response.append("system(\"C:/WINDOWS/SYSTEM32/hostname.exe\", host)\n");
+            else
+                response.append("system(\"hostname\", host)\n");
+    
+            response.append("strFuncs.left(host, strFuncs.len(host)-1)\n\n");
+        }
+        
         return response.toString();
     }
 
@@ -2071,7 +2074,8 @@ public class NeuronFileManager
 
 
 
-            response.append(prefix+"propsFile.printf(\"Host=%s\\n\", host)\n");
+            if (this.savingHostname()) response.append(prefix+"propsFile.printf(\"Host=%s\\n\", host)\n");
+            
             response.append(prefix+"propsFile.printf(\"RealSimulationTime=%g\\n\", realtime)\n");
 
             response.append(generateMultiRunPostScript());
@@ -2084,6 +2088,17 @@ public class NeuronFileManager
 
         return response.toString();
 
+    }
+    
+    private boolean savingHostname()
+    {
+        // There have been some problems getting C:/WINDOWS/SYSTEM32/hostname.exe to run on win
+        // so temporarily disableing it. It's only needed for parallel running of sims, which is 
+        // unlikely on win for the forseeable future.
+        
+        if (GeneralUtils.isWindowsBasedPlatform()) return false;
+        
+        return true;
     }
 
     private String getObjectName(PlotSaveDetails record, int cellNum, String segName)
