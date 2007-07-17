@@ -3392,12 +3392,20 @@ public class NeuronFileManager
 
 
         //if (this.windowsTargetEnv()) dateCommand = "c:/windows/time.exe /T";
-
-        response.append("strdef date\n");
-        response.append("system(\"" + dateCommand + "\", date)\n");
+        
+        boolean announceDate = !GeneralUtils.isWindowsBasedPlatform();
+        String dateInfo = "";
+        
+        if(announceDate)
+        {
+    
+            response.append("strdef date\n");
+            response.append("system(\"" + dateCommand + "\", date)\n");
+            dateInfo = " at time: \", date, \"";
+        }
 
         response.append("print \"Starting simulation of duration "+simConfig.getSimDuration()+" ms, reference: " + project.simulationParameters.getReference() +
-                        " at time: \", date\n\n");
+                dateInfo+"\"\n\n");
 
         response.append("startsw()\n\n");
 
@@ -3416,10 +3424,16 @@ public class NeuronFileManager
 
 
         }
-        response.append("system(\"" + dateCommand + "\", date)\n");
+        dateInfo = "";
+        
+        if(announceDate)
+        {
+            response.append("system(\"" + dateCommand + "\", date)\n");
+            dateInfo = "print \"Current time: \", date\n\n";
+        }
 
         response.append("print \"Finished simulation in \", realtime ,\"seconds\"\n\n");
-        response.append("print \"Current time: \", date\n\n");
+        response.append(dateInfo);
 
         return response.toString();
 

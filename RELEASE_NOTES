@@ -14,6 +14,7 @@ See also the README file
 - Added dialog box choice when prev simulation has been reloaded and generate NEURON/GENESIS is requested.
   Had been a problem that no plots were generated in that case as no info on plots is stored with simulation info.
 - Made generated GENESIS more portable between directories: one variable targetDir specifies where all sim data will be stroed
+- Removed use of the NEURON system() calls in generated scripts when running under windows, to deal with some instability there. Mainly recording of hostname, date, etc.
 
 
 
