@@ -3740,7 +3740,6 @@ public class NeuronFileManager
 
         Runtime rt = Runtime.getRuntime();
         
-        String[] commandToExe = null;
         String fullCommand = "";
 
         if(runMode==RUN_LOCALLY || runMode==RUN_PARALLEL)
@@ -3753,6 +3752,7 @@ public class NeuronFileManager
 
                 if (GeneralUtils.isWindowsBasedPlatform())
                 {
+                    
                     logger.logComment("Assuming Windows environment...");
                     neuronExecutable = locationOfNeuron
                         + System.getProperty("file.separator")
@@ -3769,20 +3769,16 @@ public class NeuronFileManager
 
                     }
 
-                    commandToExe = new String[]{GeneralProperties.getExecutableCommandLine(),
-                        neuronExecutable,filename};
-
+                    fullCommand = GeneralProperties.getExecutableCommandLine() + " "
+                    	+ neuronExecutable + " "+filename;
+                  
 
 
                     File dirToRunIn = dirForDataFiles;
 
 
                     String scriptText = "cd "+dirToRunIn.getAbsolutePath()+"\n";
-                    fullCommand = "";
-                    for (int i=0;i<commandToExe.length;i++)
-                    {
-                        fullCommand = fullCommand+" "+ commandToExe[i];
-                    }
+                  
                     scriptText = scriptText + fullCommand;
                     
                     File scriptFile = new File(ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory()), "runsim.bat");
@@ -3790,7 +3786,12 @@ public class NeuronFileManager
                     fw.write(scriptText);
                     fw.close();
 
-                    rt.exec(commandToExe, null, dirToRunIn);
+                    logger.logComment("Going to execute command: " + fullCommand + " in dir: " +
+                                      dirToRunIn);
+
+
+                    rt.exec(fullCommand, null, dirToRunIn);
+                    
 
                     logger.logComment("Have executed command: " + fullCommand + " in dir: " +
                                       dirToRunIn);
@@ -3798,6 +3799,7 @@ public class NeuronFileManager
                 }
                 else
                 {
+                    String[] commandToExe = null;
                     
                     if (dirForDataFiles.getAbsolutePath().indexOf(" ")>=0)
                     {
