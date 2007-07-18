@@ -1150,15 +1150,15 @@ public class NeuronTemplateGenerator
 
                     ChannelMechanism nextChanMech = allChanMechs.get(j);
 
-                    CellMechanism cellProc = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
+                    CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
 
                     boolean requiresXYZ = false;
 
                     try
                     {
-                        requiresXYZ = cellProc instanceof AbstractedCellMechanism &&
-                            ( (AbstractedCellMechanism) cellProc).parameterExists("RequiresXYZ") &&
-                            ( (AbstractedCellMechanism) cellProc).getParameter("RequiresXYZ") == 1;
+                        requiresXYZ = cellMech instanceof AbstractedCellMechanism &&
+                            ( (AbstractedCellMechanism) cellMech).parameterExists("RequiresXYZ") &&
+                            ( (AbstractedCellMechanism) cellMech).getParameter("RequiresXYZ") == 1;
                     }
                     catch (CellMechanismException ex1)
                     {
@@ -1166,142 +1166,113 @@ public class NeuronTemplateGenerator
                     }
 
 
-                        response.append("    forsec " + nextGroup + " { ");
+                    response.append("    forsec " + nextGroup + " { ");
 
-                        NeuronFileManager.addComment(response,
-                                                     "    Assuming parameters other than max cond dens are set in the mod file...");
-                        response.append("        insert " + nextChanMech.getName() + "");
+                    NeuronFileManager.addComment(response,
+                                                 "    Assuming parameters other than max cond dens are set in the mod file...");
+                    response.append("        insert " + nextChanMech.getName() + "");
 
-                        double condDens = UnitConverter.getConductanceDensity(nextChanMech.getDensity(),
-                                                                              UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                                              UnitConverter.NEURON_UNITS);
+                    double condDens = UnitConverter.getConductanceDensity(nextChanMech.getDensity(),
+                                                                          UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                          UnitConverter.NEURON_UNITS);
+                    
+                    if (cellMech.getMechanismType().equals(DistMembraneMechanism.CHANNEL_MECHANISM))
+                    {
 
                         response.append("  { gmax_" + nextChanMech.getName() + " = " + condDens + " }  ");
+                    }
 
-                        if (cellProc instanceof ChannelMLCellMechanism)
+                    if (cellMech instanceof ChannelMLCellMechanism)
+                    {
+                        //float revPotential = Float.NaN;
+                        //NeuronFileManager.addHocFileComment(response, "This Cell Process is based on a ChannelML file");
+
+                        ChannelMLCellMechanism cmlProc = (ChannelMLCellMechanism) cellMech;
+
+                        //cmlProc
+                        String xpath = ChannelMLConstants.getIonsXPath();
+
+                        logger.logComment("Checking xpath: " + xpath);
+
+                        SimpleXMLEntity[] ions = null;
+                        try
                         {
-                            //float revPotential = Float.NaN;
-                            //NeuronFileManager.addHocFileComment(response, "This Cell Process is based on a ChannelML file");
 
-                            ChannelMLCellMechanism cmlProc = (ChannelMLCellMechanism) cellProc;
+                            cmlProc.initialise(project, false); // just in case...
 
-                            //cmlProc
-                            String xpath = ChannelMLConstants.getIonsXPath();
+                            ions = cmlProc.getXMLDoc().getXMLEntities(xpath);
+                        }
+                        catch (ChannelMLException ex)
+                        {
+                            GuiUtils.showErrorMessage(logger,
+                                                      "Error getting information from ChannelML process: "
+                                                      + cmlProc.getInstanceName(), ex, null);
 
-                            logger.logComment("Checking xpath: " + xpath);
+                            return "Error in generation: " + ex.getMessage();
+                        }
 
-                            SimpleXMLEntity[] ions = null;
-                            try
+                        if (ions != null && ions.length > 0)
+                        {
+                            for (int i = 0; i < ions.length; i++)
                             {
+                                SimpleXMLElement ion = (SimpleXMLElement) ions[i];
+                                logger.logComment("Got ion: " + ion.getXMLString("", false));
 
-                                cmlProc.initialise(project, false); // just in case...
+                                NeuronFileManager.addComment(response, "    Ion "
+                                                             + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR)
+                                                             + " is used in this process...");
 
-                                ions = cmlProc.getXMLDoc().getXMLEntities(xpath);
-                            }
-                            catch (ChannelMLException ex)
-                            {
-                                GuiUtils.showErrorMessage(logger,
-                                                          "Error getting information from ChannelML process: "
-                                                          + cmlProc.getInstanceName(), ex, null);
-
-                                return "Error in generation: " + ex.getMessage();
-                            }
-
-                            if (ions != null && ions.length > 0)
-                            {
-                                for (int i = 0; i < ions.length; i++)
+                                if (! (ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR)
+                                       .equals(ChannelMLConstants.NON_SPECIFIC_ION_NAME)))
                                 {
-                                    SimpleXMLElement ion = (SimpleXMLElement) ions[i];
-                                    logger.logComment("Got ion: " + ion.getXMLString("", false));
+                                    String erev = ion.getAttributeValue(ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR);
 
-                                    NeuronFileManager.addComment(response, "    Ion "
-                                                                 + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR)
-                                                                 + " is used in this process...");
-
-                                    if (! (ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR)
-                                           .equals(ChannelMLConstants.NON_SPECIFIC_ION_NAME)))
+                                    logger.logComment("Setting erev: " + erev);
+                                    if (erev != null)
                                     {
-                                        String erev = ion.getAttributeValue(ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR);
 
-                                        logger.logComment("Setting erev: " + erev);
-                                        if (erev != null)
+                                        String unitsUsed = cmlProc.getUnitsUsedInFile();
+
+                                        logger.logComment("Units used = " + unitsUsed);
+
+                                        if (unitsUsed != null)
                                         {
+                                            double suggValDouble = Double.parseDouble(erev);
 
-                                            String unitsUsed = cmlProc.getUnitsUsedInFile();
-
-                                            logger.logComment("Units used = " + unitsUsed);
-
-                                            if (unitsUsed != null)
+                                            if (unitsUsed.equals(ChannelMLConstants.SI_UNITS))
                                             {
-                                                double suggValDouble = Double.parseDouble(erev);
-
-                                                if (unitsUsed.equals(ChannelMLConstants.SI_UNITS))
-                                                {
-                                                    suggValDouble = UnitConverter.getVoltage(suggValDouble,
-                                                        UnitConverter.GENESIS_SI_UNITS,
-                                                        UnitConverter.NEUROCONSTRUCT_UNITS);
-                                                }
-                                                else if (unitsUsed.equals(ChannelMLConstants.PHYSIOLOGICAL_UNITS))
-                                                {
-                                                    suggValDouble = UnitConverter.getVoltage(suggValDouble,
-                                                        UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS,
-                                                        UnitConverter.NEUROCONSTRUCT_UNITS);
-                                                }
-
-                                                erev = suggValDouble + "";
+                                                suggValDouble = UnitConverter.getVoltage(suggValDouble,
+                                                    UnitConverter.GENESIS_SI_UNITS,
+                                                    UnitConverter.NEUROCONSTRUCT_UNITS);
+                                            }
+                                            else if (unitsUsed.equals(ChannelMLConstants.PHYSIOLOGICAL_UNITS))
+                                            {
+                                                suggValDouble = UnitConverter.getVoltage(suggValDouble,
+                                                    UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS,
+                                                    UnitConverter.NEUROCONSTRUCT_UNITS);
                                             }
 
-                                            response.append("        e" + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR)
-                                                            + " = " + erev + "\n");
+                                            erev = suggValDouble + "";
                                         }
-                                        else
-                                        {
-                                            NeuronFileManager.addComment(response,
-                                                                         "Note: there is no reversal potential present for ion: "
-                                                                         + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR));
-                                        }
+
+                                        response.append("        e" + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR)
+                                                        + " = " + erev + "\n");
                                     }
                                     else
                                     {
-                                        logger.logComment("That's a non specific process...");
+                                        NeuronFileManager.addComment(response,
+                                                                     "Note: there is no reversal potential present for ion: "
+                                                                     + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR));
                                     }
                                 }
-                            }
-
-                        }
-                        /*
-                        else if (cellProc instanceof HHMembraneMechanism)
-                        {
-                            HHMembraneMechanism hhProc = (HHMembraneMechanism) cellProc;
-
-                            MechanismImplementation neuronProcImpl = null;
-
-                            MechanismImplementation[] impls = hhProc.getMechanismImpls();
-                            for (int i = 0; i < impls.length; i++)
-                            {
-                                if (impls[i].getSimulationEnvironment().equals(SimEnvHelper.NEURON))
+                                else
                                 {
-                                    neuronProcImpl = impls[i];
+                                    logger.logComment("That's a non specific process...");
                                 }
                             }
+                        }
 
-                            try
-                            {
-                                Hashtable valueStrings = (Hashtable) neuronProcImpl.getParamValueSubstitutes().get(HHMembraneMechanism.
-                                    ION_SPECIES);
-
-                                String replacementString
-                                    = (String) valueStrings.get(new Float(hhProc.getParameter(HHMembraneMechanism.ION_SPECIES)));
-
-                                response.append("e" + replacementString
-                                                + " = " + hhProc.getParameter(HHMembraneMechanism.REV_POTENTIAL) + "\n");
-
-                            }
-                            catch (Exception e)
-                            {
-                                logger.logError("Error: ", e);
-                            }
-                        }*/
+                    }
 
                     response.append("    }\n\n");
 
