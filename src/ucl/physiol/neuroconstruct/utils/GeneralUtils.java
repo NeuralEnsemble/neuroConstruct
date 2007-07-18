@@ -418,21 +418,22 @@ public class GeneralUtils
         File copiedFile = new File(copiedFileFullName);
 
 
-        /** @todo Doing it this way to avoid probs with symbolic links in compiles mod on linux...
+        /** @todo Doing it this way to avoid probs with symbolic links in compiled mod on linux...
          * Check if there is a better way to handle links
          */
-        if (System.getProperty("os.name").indexOf("indow") < 0)
+        if (false || !GeneralUtils.isWindowsBasedPlatform() &&
+                !originalFile.getAbsolutePath().equals(originalFile.getCanonicalPath()))
         {
-            //logger.logComment("Assuming we have a symbolic link in linux as abs path "+
-            //    originalFile.getAbsolutePath()+" != canonical path"+originalFile.getCanonicalPath());
+            logger.logComment("Assuming we have a symbolic link in linux as abs path: "+
+                originalFile.getAbsolutePath()+" != canonical path: "+originalFile.getCanonicalPath());
 
-            String commandToExecute = "cp " + originalFile.getAbsolutePath() + " "
-                + copiedFile.getAbsolutePath()+"";
+                String[] commandToExecute = new String[]{"cp", 
+                        originalFile.getCanonicalPath(),
+                        copiedFile.getCanonicalPath()};
 
-            logger.logComment("Going to execute command: " + commandToExecute);
+            logger.logComment("Going to execute command: " + commandToExecute[0]+"...");
             Runtime rt = Runtime.getRuntime();
             Process currentProcess = rt.exec(commandToExecute);
-            logger.logComment("Have successfully executed command: " + commandToExecute);
 
             try
             {
@@ -442,14 +443,15 @@ public class GeneralUtils
             {
                 logger.logError("Wait interrupted..", ex1);
             }
+            logger.logComment("Ret val: "+currentProcess.exitValue()+", from executed command: " + commandToExecute[0]+"...");
 
             //while (currentProcess.exitValue())
         }
         else
         {
 
-            InputStream in = new FileInputStream(originalFile);
-            OutputStream out = new FileOutputStream(copiedFile);
+            InputStream in = new FileInputStream(originalFile.getCanonicalFile());
+            OutputStream out = new FileOutputStream(copiedFile.getCanonicalFile());
 
             // Transfer bytes from in to out
             byte[] buf = new byte[1024];
@@ -465,7 +467,7 @@ public class GeneralUtils
             out.close();
 
         }
-        logger.logComment("Just created: " + copiedFile.getAbsolutePath());
+        logger.logComment("Just created: " + copiedFile.getAbsolutePath()+": "+ copiedFile.exists());
 
         return copiedFile;
     }
@@ -729,6 +731,29 @@ public class GeneralUtils
 
     public static void main(String[] args)
     {
+        //String dir = "/home/padraig/temp/gg gg/";
+        String dir = "../../temp/gg gg/";
+        
+        File f1 = new File(dir+"uuu");
+        File f2 = new File(dir+"temp");
+        
+        File ftarget = new File(dir+"temp/uuu");
+        
+        try
+        {
+            if (ftarget.exists()) ftarget.delete();
+            
+             File newF = copyFileIntoDir(f1, f2); 
+            System.out.println("File: "+newF.getAbsolutePath()+" exists: "+newF.exists());
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        
+        
+        if (true) return;
+        
         /*
         String path = "c:\\temp\\gg";
 

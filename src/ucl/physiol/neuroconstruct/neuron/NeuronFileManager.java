@@ -3726,39 +3726,9 @@ public class NeuronFileManager
         logger.logComment("Getting rid of old simulation files...");
 
         File dirForDataFiles = mainHocFile.getParentFile();
-/*
-        if (dirForDataFiles.exists())
-        {
-            SimpleFileFilter sff = new SimpleFileFilter(new String[]{".dat"}, null);
-            File[] files = dirForDataFiles.listFiles(sff);
-            for (int i = 0; i < files.length; i++)
-            {
-                files[i].delete();
-            }
-            logger.logComment("Directory " + dirForDataFiles + " being cleansed");
-        }
-        else
-        {
-            GuiUtils.showErrorMessage(logger, "Directory " + dirForDataFiles + " doesn't exist...", null, null);
-            return;
-        }
+        
 
 
-        File positionsFile = new File(dirForDataFiles, SimulationData.positionsFileName);
-        File netConnsFile = new File(dirForDataFiles, SimulationData.netConnsFileName);
-        File elecInputFile = new File(dirForDataFiles, SimulationData.elecInputsFileName);
-
-        try
-        {
-            project.generatedCellPositions.saveToFile(positionsFile);
-            project.generatedNetworkConnections.saveToFile(netConnsFile);
-            project.generatedElecInputs.saveToFile(elecInputFile);
-        }
-        catch (IOException ex)
-        {
-            GuiUtils.showErrorMessage(logger, "Problem saving generated positions in file: "+ positionsFile.getAbsolutePath(), ex, null);
-            return;
-        }*/
 
         File[] filesInDir = dirForDataFiles.listFiles();
 
@@ -3769,20 +3739,9 @@ public class NeuronFileManager
         }
 
         Runtime rt = Runtime.getRuntime();
-        String commandToExecute = null;
-/*
-        // Saving summary of the simulation params
-        try
-        {
-            SimulationsInfo.recordSimulationSummary(project, simConfig, dirForDataFiles, "NEURON");
-        }
-        catch (IOException ex2)
-        {
-            GuiUtils.showErrorMessage(logger, "Error when trying to save a summary of the simulation settings in dir: "
-                                      + dirForDataFiles +
-                                      "\nThere will be less info on this simulation in the previous simulation browser dialog",
-                                      ex2, null);
-        }*/
+        
+        String[] commandToExe = null;
+        String fullCommand = "";
 
         if(runMode==RUN_LOCALLY || runMode==RUN_PARALLEL)
         {
@@ -3800,6 +3759,7 @@ public class NeuronFileManager
                         + "bin"
                         + System.getProperty("file.separator")
                         + "neuron.exe";
+                    
                     String filename = getHocFriendlyFilename(mainHocFile.getAbsolutePath());
 
                     if (filename.indexOf(" ")>=0)
@@ -3809,28 +3769,44 @@ public class NeuronFileManager
 
                     }
 
-                    commandToExecute = GeneralProperties.getExecutableCommandLine() + " " +
-                        neuronExecutable + " " + filename;
+                    commandToExe = new String[]{GeneralProperties.getExecutableCommandLine(),
+                        neuronExecutable,filename};
 
 
 
                     File dirToRunIn = dirForDataFiles;
 
 
-                    String scriptText = "cd "+dirToRunIn.getAbsolutePath()+"\n"+ commandToExecute;
+                    String scriptText = "cd "+dirToRunIn.getAbsolutePath()+"\n";
+                    fullCommand = "";
+                    for (int i=0;i<commandToExe.length;i++)
+                    {
+                        fullCommand = fullCommand+" "+ commandToExe[i];
+                    }
+                    scriptText = scriptText + fullCommand;
+                    
                     File scriptFile = new File(ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory()), "runsim.bat");
                     FileWriter fw = new FileWriter(scriptFile);
                     fw.write(scriptText);
                     fw.close();
 
-                    Process currentProcess = rt.exec(commandToExecute, null, dirToRunIn);
+                    rt.exec(commandToExe, null, dirToRunIn);
 
-                    logger.logComment("Have executed command: " + commandToExecute + " in dir: " +
+                    logger.logComment("Have executed command: " + fullCommand + " in dir: " +
                                       dirToRunIn);
 
                 }
                 else
                 {
+                    
+                    if (dirForDataFiles.getAbsolutePath().indexOf(" ")>=0)
+                    {
+                        throw new NeuronException("NEURON files cannot be run in a directory like: "+ dirForDataFiles
+                                + " containing spaces.\nThis is due to the way neuroConstruct starts the external processes (e.g. konsole) to run NEURON.\nArguments need to be given to this executable and spaces in filenames cause problems.\n"
+                                +"Try saving the project in a directory without spaces.");
+                    }
+                    
+                    
                     String mainExecutable = "nrngui";
                     if (runMode==RUN_PARALLEL) mainExecutable = "nrniv";
 
@@ -3841,9 +3817,6 @@ public class NeuronFileManager
                         + mainExecutable;
 
                     String title = "NEURON_simulation" + "__"+ project.simulationParameters.getReference();
-
-
-                    //File dirToRunIn = ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory());
 
                     File dirToRunIn = dirForDataFiles;
 
@@ -3885,18 +3858,18 @@ public class NeuronFileManager
                         if (basicCommLine.indexOf("konsole") >= 0)
                         {
                             logger.logComment("Assume we're using KDE");
-                            titleOpt = " -T="+title;
-                            workdirOpt = " --workdir="
-                                + dirToRunIn.getAbsolutePath();
-                            extraArgs = "-e ";
+                            titleOpt = "-T";
+                            workdirOpt = "--workdir";
+                               // + dirToRunIn.getAbsolutePath();
+                            
+                            extraArgs = "-e";
                             executable = basicCommLine.trim();
                         }
                         else if (basicCommLine.indexOf("gnome") >= 0)
                         {
                             logger.logComment("Assume we're using Gnome");
-                            titleOpt = " --title="+title;
-                            workdirOpt = " --working-directory="
-                                + dirToRunIn.getAbsolutePath();
+                            titleOpt = "--title";
+                            workdirOpt = "--working-directory";
 
                             if (basicCommLine.trim().indexOf(" ") > 0) // case where basicCommLine is gnome-terminal -x
                             {
@@ -3933,37 +3906,24 @@ public class NeuronFileManager
                             dirToRunIn = ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory());
                     }
 
-
-
-/*
-                    commandToExecute = executable
-                        + " "
-                        + titleOpt
-                        + " "
-                        + workdirOpt
-                        + " "
-                        + extraArgs
-                        + " "
+                    String scriptText = "cd '" + dirToRunIn.getAbsolutePath() + "'\n" 
+                        + preCommand
                         + neuronExecutable
-                        + " "
-                        + mainHocFile.getName()
-                        + postArgs;*/
-
-
-                    String scriptText = "cd " + dirToRunIn.getAbsolutePath() + "\n" +preCommand+ neuronExecutable
                         + " "
                         + mainHocFile.getName()
                         + postArgs;
 
                     File scriptFile = new File(ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory()),
                                                "runsim.sh");
+                    
                     FileWriter fw = new FileWriter(scriptFile);
                     //scriptFile.se
                     fw.write(scriptText);
                     fw.close();
 
                     // bit of a hack...
-                    rt.exec("chmod u+x "+scriptFile.getAbsolutePath());
+                    rt.exec(new String[]{"chmod","u+x",scriptFile.getAbsolutePath()});
+                    
                     try
                     {
                         // This is to make sure the file permission is updated..
@@ -3974,67 +3934,33 @@ public class NeuronFileManager
                         ex.printStackTrace();
                     }
 
-                    commandToExecute = executable
-                        + " "
-                        + titleOpt
-                        + " "
-                        + workdirOpt
-                        + " "
-                        + extraArgs
-                        + " " +
-                        scriptFile.getAbsolutePath();
+                    commandToExe = new String[]{executable, 
+                            titleOpt, title,
+                            workdirOpt, dirToRunIn.getAbsolutePath(),
+                            extraArgs,
+                            scriptFile.getAbsolutePath()};
 
-
-                    /*
-                    String basicCommLine = GeneralProperties.getExecutableCommandLine();
-
-                    String executable = basicCommLine.substring(0, basicCommLine.indexOf(" ")).trim();
-                    String commandLineArgs = basicCommLine.substring(basicCommLine.indexOf(" ")).trim();
-
-                    String title = "NEURON_simulation";
-                    if (project.simulationParameters.getRecordingMode()==
-                        SimulationParameters.SIMULATION_RECORD_TO_FILE)
+                    fullCommand = "";
+                    for (int i=0;i<commandToExe.length;i++)
                     {
-                        title = title + "___"+ project.simulationParameters.getReference();
+                        fullCommand = fullCommand+" "+ commandToExe[i];
                     }
 
-                    String titleOpt = " --title=";
-                    String wdOpt = " --working-directory=";
+                    logger.logComment("Going to execute command: " + fullCommand);
 
-                    if (executable.indexOf("konsole") >= 0) // using KDE
-                    {
-                        titleOpt = " -T=";
-                        wdOpt = " --workdir=";
-                    }
+                    Process pr = rt.exec(commandToExe, null);
+                    
+                    pr.waitFor();
 
-                    commandToExecute = executable
-                        + titleOpt
-                        + title
-                        + wdOpt
-                        + dirToRunIn.getAbsolutePath()
-
-                        + " "
-                        + commandLineArgs
-                        + " "
-                        + neuronExecutable
-                        + " "
-                        + mainHocFile.getAbsolutePath();
-                    */
-
-
-                    logger.logComment("Going to execute command: " + commandToExecute);
-
-                    Process currentProcess = rt.exec(commandToExecute, null);
-
-                    logger.logComment("Have successfully executed command: " + commandToExecute);
+                    logger.logComment("Have successfully executed command: " + fullCommand+": "+pr.exitValue());
 
                 }
 
             }
             catch (Exception ex)
             {
-                logger.logError("Error running the command: " + commandToExecute, ex);
-                throw new NeuronException("Error executing the hoc file: " + mainHocFile, ex);
+                logger.logError("Error running the command: " + fullCommand, ex);
+                throw new NeuronException("Error executing the hoc file: " + mainHocFile+"\n"+ex.getMessage(), ex);
             }
         }
         else if (runMode==RUN_VIA_CONDOR)

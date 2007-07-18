@@ -21,6 +21,7 @@ import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
+import ucl.physiol.neuroconstruct.neuron.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.GeneratedPlotSaves.*;
 import ucl.physiol.neuroconstruct.project.packing.*;
@@ -2550,6 +2551,15 @@ public class GenesisFileManager
         File positionsFile = new File(dirForDataFiles, SimulationData.POSITION_DATA_FILE);
         File netConnsFile = new File(dirForDataFiles, SimulationData.NETCONN_DATA_FILE);
         File elecInputFile = new File(dirForDataFiles, SimulationData.ELEC_INPUT_DATA_FILE);
+        
+
+        
+        if (dirForDataFiles.getAbsolutePath().indexOf(" ")>=0)
+        {
+            throw new GenesisException("GENESIS files cannot be run in a directory like: "+ dirForDataFiles
+                    + " containing spaces.\nThis is due to the way neuroConstruct starts the external processes (e.g. konsole) to run GENESIS.\nArguments need to be given to this executable and spaces in filenames cause problems.\n"
+                    +"Try saving the project in a directory without spaces.");
+        }
 
         try
         {
@@ -2690,22 +2700,6 @@ public class GenesisFileManager
                     + extraArgs
                     + " " +
                     scriptFile.getAbsolutePath();
-
-
-
-/*
-                commandToExecute = executable
-                    + " "
-                    + titleOpt
-                    + title
-                    + workdirOpt
-                    + dirToRunIn.getAbsolutePath()
-                    + " "
-                    + extraArgs
-                    + " "
-                    + genesisExecutable
-                    + " "
-                    + mainGenesisFile.getName();*/
 
 
 
