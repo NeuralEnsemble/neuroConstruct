@@ -926,14 +926,14 @@ public class NeuronFileManager
 
                         addComment(response, "Note: the stimulation was specified as being at a point "
                                           + fractionAlongSegment + " along segment: " + segToStim.getSegmentName(),prefix, false);
-                        addComment(response, "in section: " + segToStim.getSection().getSectionName() +
+                        addComment(response, "in section: " + getHocSectionName(segToStim.getSection().getSectionName()) +
                                           ". For NEURON, this translates to a point " + fractionAlongSection +
                                           " along section: " +
-                                          segToStim.getSection().getSectionName(),prefix,true);
+                                          getHocSectionName(segToStim.getSection().getSectionName()),prefix,true);
 
                         response.append(prefix+"a_" + nextInput.getCellGroup()
                                         + "[" + nextInput.getCellNumber() + "]"
-                                        + "." + segToStim.getSection().getSectionName() + " {\n");
+                                        + "." + getHocSectionName(segToStim.getSection().getSectionName()) + " {\n");
 
                         response.append(prefix+"    "+stimName + "[" + j + "] = new "+stimObjectName+"(" +
                                         fractionAlongSection +
@@ -983,7 +983,7 @@ public class NeuronFileManager
                                         + nextInput.getCellGroup()
                                         + "["
                                         + nextInput.getCellNumber()
-                                        + "]." + segToStim.getSection().getSectionName() + " \n");
+                                        + "]." + getHocSectionName(segToStim.getSection().getSectionName()) + " \n");
                          */
 
 
@@ -1004,7 +1004,7 @@ public class NeuronFileManager
                                         + "a_" + nextInput.getCellGroup()
                                         + "["
                                         + nextInput.getCellNumber()
-                                        + "]." + segToStim.getSection().getSectionName() + " \n");
+                                        + "]." + getHocSectionName(segToStim.getSection().getSectionName()) + " \n");
 
                         response.append(prefix+stimName + "[" + j + "] = new NetStim(" +
                                         fractionAlongSection + ")\n");
@@ -1105,7 +1105,7 @@ public class NeuronFileManager
                                         + nextInput.getCellGroup()
                                         + "["
                                         + nextInput.getCellNumber()
-                                        + "]." + segToStim.getSection().getSectionName() + " \n");
+                                        + "]." + getHocSectionName(segToStim.getSection().getSectionName(() + " \n");
                          */
 
 
@@ -1126,7 +1126,7 @@ public class NeuronFileManager
                                         + "a_" + nextInput.getCellGroup()
                                         + "["
                                         + nextInput.getCellNumber()
-                                        + "]." + segToStim.getSection().getSectionName() + " \n");
+                                        + "]." + getHocSectionName(segToStim.getSection().getSectionName()) + " \n");
 
                         response.append(prefix+stimName + "[" + j + "] = new "+stimObjectName+"(" +
                                         fractionAlongSection + ")\n");
@@ -1237,10 +1237,10 @@ public class NeuronFileManager
 
                         addHocFileComment(response, "Note: the stimulation was specified as being at a point "
                                           + fractionAlongSegment + " along segment: " + segToStim.getSegmentName());
-                        addHocFileComment(response, "in section: " + segToStim.getSection().getSectionName() +
+                        addHocFileComment(response, "in section: " + getHocSectionName(segToStim.getSection().getSectionName() +
                                           ". For NEURON, this translates to a point " + fractionAlongSection +
                                           " along section: " +
-                                          segToStim.getSection().getSectionName());
+                                          getHocSectionName(segToStim.getSection().getSectionName());
 
                         int singleCellToStim = -1;
                         float percentage = -1;
@@ -1323,7 +1323,7 @@ public class NeuronFileManager
                                             logger.logComment("Adding stim to cell " + nextCellNum);
                                             response.append("a_" + icStim.cellGroup
                                                             + "[" + nextCellNum + "]"
-                                                            + "." + segToStim.getSection().getSectionName() + " {\n");
+                                                            + "." + getHocSectionName(segToStim.getSection().getSectionName() + " {\n");
                                             response.append(stimName + "[" + numAlreadyUsed + "] = new IClamp(" +
                                                             fractionAlongSection +
                                                             ")\n");
@@ -1353,7 +1353,7 @@ public class NeuronFileManager
                             if (singleCellToStim >= 0)
                             {
                                 response.append("access a_" + randStim.cellGroup + "[" + singleCellToStim +
-                                                "]." + segToStim.getSection().getSectionName() + " \n");
+                                                "]." + getHocSectionName(segToStim.getSection().getSectionName() + " \n");
 
                                 String stimName = "spikesource_" + nextStim.getReference();
                                 String synapseName = "synapse_" + nextStim.getReference();
@@ -1433,7 +1433,7 @@ public class NeuronFileManager
                                                             + randStim.cellGroup
                                                             + "["
                                                             + nextCellNum
-                                                            + "]." + segToStim.getSection().getSectionName() + " \n");
+                                                            + "]." + getHocSectionName(segToStim.getSection().getSectionName() + " \n");
 
                                             response.append(stimName + "[" + numAlreadyUsed + "] = new NetStim(" +
                                                             fractionAlongSection + ")\n");
@@ -1525,6 +1525,12 @@ public class NeuronFileManager
                 "_");
         
         return newName;
+    }
+    
+
+    public static String getHocSegmentName(String secname)
+    {
+        return getHocSectionName(secname);
     }
 
     public static String getHocFriendlyFilename(String filename)
@@ -1660,7 +1666,7 @@ public class NeuronFileManager
                                    "Creating vector for segment: " + segToRecord.getSegmentName() + "(ID: " +
                                    segToRecord.getSegmentId() + ")");
 
-                        String objName = this.getObjectName(record, -1, segToRecord.getSegmentName());
+                        String objName = this.getObjectName(record, -1, getHocSegmentName(segToRecord.getSegmentName()));
 
                         if (isSpikeRecording) objName = objName + "_spike";
 
@@ -1690,7 +1696,7 @@ public class NeuronFileManager
                         if (!isSpikeRecording)
                         {
                             response.append(prefix+"    " + vectorObj + "[i].record(&a_" + cellGroupName + "[i]"
-                                            + "." + segToRecord.getSection().getSectionName() + "." + whatToRecord + "(" +
+                                            + "." + getHocSectionName(segToRecord.getSection().getSectionName()) + "." + whatToRecord + "(" +
                                             lenAlongSection +
                                             "))\n");
                             response.append(prefix+"    " + vectorObj + "[i].resize(" + numStepsTotal + ")\n");
@@ -1698,7 +1704,7 @@ public class NeuronFileManager
                         else
                         {
                             response.append(prefix+"    a_" + cellGroupName + "[i]"
-                                            + "." + segToRecord.getSection().getSectionName() + " " + apCountObj
+                                            + "." + getHocSectionName(segToRecord.getSection().getSectionName()) + " " + apCountObj
                                             + "[i] = new APCount(" + lenAlongSection + ")\n");
 
                             if (record.simPlot.getValuePlotted().indexOf(SimPlot.PLOTTED_VALUE_SEPARATOR) > 0)
@@ -1779,7 +1785,7 @@ public class NeuronFileManager
                                            "Creating vector for segment: " + segToRecord.getSegmentName() +
                                            "(ID: " + segToRecord.getSegmentId() + ") in cell number: " + cellNum);
 
-                                String objName = this.getObjectName(record, cellNum, segToRecord.getSegmentName());
+                                String objName = this.getObjectName(record, cellNum, getHocSegmentName(segToRecord.getSegmentName()));
 
                                 if (isSpikeRecording) objName = objName + "_spike";
 
@@ -1808,7 +1814,7 @@ public class NeuronFileManager
                                 {
                                     response.append(prefix + vectorObj + ".record(&a_" + cellGroupName + "[" + cellNum +
                                                     "]"
-                                                    + "." + segToRecord.getSection().getSectionName() + "." +
+                                                    + "." + getHocSectionName(segToRecord.getSection().getSectionName()) + "." +
                                                     whatToRecord + "(" + lenAlongSection + "))\n");
 
                                     response.append(prefix + vectorObj + ".resize(" + numStepsTotal + ")\n");
@@ -1816,7 +1822,7 @@ public class NeuronFileManager
                                 else
                                 {
                                     response.append(prefix + "    a_" + cellGroupName + "[" + cellNum + "]"
-                                                    + "." + segToRecord.getSection().getSectionName() + " " +
+                                                    + "." + getHocSectionName(segToRecord.getSection().getSectionName()) + " " +
                                                     apCountObj
                                                     + " = new APCount(" + lenAlongSection + ")\n");
 
@@ -1919,7 +1925,7 @@ public class NeuronFileManager
                             addComment(response, "Saving vector for segment: "
                                        + segToRecord.getSegmentName() + "(ID: " + segToRecord.getSegmentId() + ")");
 
-                            String objName = this.getObjectName(record, -1, segToRecord.getSegmentName());
+                            String objName = this.getObjectName(record, -1, getHocSegmentName(segToRecord.getSegmentName()));
 
                             if (isSpikeRecording) objName = objName + "_spike";
 
@@ -2017,7 +2023,7 @@ public class NeuronFileManager
                                                "(ID: " + segToRecord.getSegmentId() + ") in cell number: " +
                                                cellNum);
 
-                                    String objName = this.getObjectName(record, cellNum, segToRecord.getSegmentName());
+                                    String objName = this.getObjectName(record, cellNum, getHocSegmentName(segToRecord.getSegmentName()));
 
                                     if (isSpikeRecording) objName = objName + "_spike";
 
@@ -2806,7 +2812,7 @@ public class NeuronFileManager
                         response.append("a_" + targetCellGroup
                                         + "[" + synConn.targetEndPoint.cellNumber + "]"
                                         + "."
-                                        + targetSegment.getSection().getSectionName()
+                                        + getHocSectionName(targetSegment.getSection().getSectionName())
                                         + " "
                                         + objectVarName
                                         + " = new "
@@ -2816,7 +2822,7 @@ public class NeuronFileManager
                         response.append("a_" + sourceCellGroup
                                         + "[" + synConn.sourceEndPoint.cellNumber + "]"
                                         + "."
-                                        + sourceSegment.getSection().getSectionName()
+                                        + getHocSectionName(sourceSegment.getSection().getSectionName())
                                         + " "
                                         + "a_" + targetCellGroup
                                         + "[" + synConn.targetEndPoint.cellNumber + "]"
@@ -2886,7 +2892,7 @@ public class NeuronFileManager
                         response.append("    a_" + targetCellGroup
                                         + "[" + synConn.targetEndPoint.cellNumber + "]"
                                         + "."
-                                        + targetSegment.getSection().getSectionName()
+                                        + getHocSectionName(targetSegment.getSection().getSectionName())
                                         + " "
                                         + objectVarName
                                         + " = new "
@@ -2969,7 +2975,7 @@ public class NeuronFileManager
 
                     String title = "a_" + plot.simPlot.getCellGroup()
                         + "[" + cellNum + "]"
-                        + "." + seg.getSection().getSectionName()
+                        + "." + getHocSectionName(seg.getSection().getSectionName())
                         + "." + neuronVar;
 
                     String varRefIncFract = title + "(" + lenAlongSegment + ")";
@@ -3264,7 +3270,7 @@ public class NeuronFileManager
                                                                simPlot.getGraphWindow(),
                                                                cellGroup,
                                                                nextCellNum,
-                                                               seg.getSection().getSectionName(),
+                                                               getHocSectionName(seg.getSection().getSectionName(),
                                                                lenAlongSegment,
                                                                minVal,
                                                                maxVal,
@@ -3950,11 +3956,9 @@ public class NeuronFileManager
 
                     logger.logComment("Going to execute command: " + fullCommand);
 
-                    Process pr = rt.exec(commandToExe, null);
-                    
-                    pr.waitFor();
+                    rt.exec(commandToExe, null);
 
-                    logger.logComment("Have successfully executed command: " + fullCommand+": "+pr.exitValue());
+                    logger.logComment("Have successfully executed command: " + fullCommand);
 
                 }
 
