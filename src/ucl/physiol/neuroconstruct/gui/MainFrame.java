@@ -71,8 +71,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 {
     ClassLogger logger = new ClassLogger("MainFrame");
 
-    //public Project getCurrentProject() = null;
-
     public ProjectManager projManager = new ProjectManager(this, this);
 
     Base3DPanel base3DPanel = null;
@@ -136,9 +134,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     public static final String LATEST_GENERATED_POSITIONS = "Latest Generated Positions";
 
-    String choice3DChoiceMain         = "     -- Please select: --";
-    String choice3DSingleCells        = "     -- Cell Types: --";
-    String choice3DPrevSims           = "     -- NEURON Simulations: --";
+    String choice3DChoiceMain  = "     -- Please select: --";
+    String choice3DSingleCells = "     -- Cell Types: --";
+    String choice3DPrevSims    = "     -- NEURON Simulations: --";
 
 
     String defaultCellTypeToView = "-- Select a Cell Type --";
@@ -2102,9 +2100,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jScrollPaneProjDesc.setPreferredSize(new Dimension(100, 100));
         jLabelSimConfigs.setEnabled(false);
         jLabelSimConfigs.setText("Simulation Configurations:");
-        //jTextField1.setText("");
-        //jTextFieldNumRegions.setEditable(false);
-    //    jComboBox3DCellToView.setEnabled(false);
+
 
         jMenuItemCopyProject.setEnabled(false);
         jPanelNetworkSettings.setLayout(borderLayout9);
