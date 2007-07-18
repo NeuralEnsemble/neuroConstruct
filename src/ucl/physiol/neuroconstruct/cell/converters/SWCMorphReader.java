@@ -92,8 +92,8 @@ public class SWCMorphReader extends FormatImporter
                     }
                     else
                     {
-                        String segmentName = items[0];
-                        String parentName = items[6];
+                        String segmentName = cleanUpName(items[0]);
+                        String parentName = cleanUpName(items[6]);
                         float xCoord = Float.parseFloat(items[2]);
                         float yCoord = Float.parseFloat(items[3]);
                         float zCoord = Float.parseFloat(items[4]);
@@ -191,6 +191,22 @@ public class SWCMorphReader extends FormatImporter
         logger.logComment("Completed parsing of file: " + morphologyFile);
 
         return cell;
+    }
+    
+    
+    private static String cleanUpName(String secNameInFile)
+    {
+       try
+       {
+           Float.parseFloat(secNameInFile);
+           return "Comp_"+secNameInFile;
+       }
+       catch(NumberFormatException nfe)
+       {
+           
+       }
+       return secNameInFile;
+       
     }
 
     public static void main(String[] args)
