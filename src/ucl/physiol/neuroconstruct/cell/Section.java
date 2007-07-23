@@ -121,7 +121,7 @@ public class Section
                 + ", internal divs: " + numberInternalDivisions
                 + ", groups: <b>"+ groups+ "</b>";
 
-        if (comment!=null)  info = info +"<span style=\"color:red;font-weight:bold\">"+" // "+comment+"</span>";
+        if (comment!=null)  info = info +"<span style=\"color:#A9A9A9;font-weight:bold\">"+" // "+comment+"</span>";
             return info;
     }
 

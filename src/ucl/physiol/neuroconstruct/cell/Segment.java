@@ -432,7 +432,7 @@ public class Segment
 
         if (isFiniteVolume()) sb.append(" (FINITE VOLUME)");
 
-        if (comment!=null)  sb.append("<span style=\"color:red;font-weight:bold\">"+" // "+comment+"</span>");
+        if (comment!=null)  sb.append("<span style=\"color:#A9A9A9;font-weight:bold\">"+" // "+comment+"</span>");
 
         return sb.toString();
 
