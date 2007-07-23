@@ -175,8 +175,6 @@ public class ZipUtils
         ByteArrayInputStream fi = new ByteArrayInputStream(contents.getBytes());
         origin = new BufferedInputStream(fi, BUFFER);
 
-        StringReader in = new StringReader(contents);
-
 
         ZipEntry entry = new ZipEntry(internalFilename);
         out.putNextEntry(entry);

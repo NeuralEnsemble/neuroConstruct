@@ -20,6 +20,8 @@ package ucl.physiol.neuroconstruct.utils.units;
  * @version 1.0.3
  */
 
+@SuppressWarnings("serial")
+
 public class UnitsException extends Exception
 {
     public UnitsException(String exception)

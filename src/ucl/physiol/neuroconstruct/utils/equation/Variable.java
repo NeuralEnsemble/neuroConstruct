@@ -13,8 +13,6 @@
 
 package ucl.physiol.neuroconstruct.utils.equation;
 
-import ucl.physiol.neuroconstruct.utils.ClassLogger;
-
 
 /**
  * Helper class for parsing equations
@@ -25,7 +23,6 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
 
 public class Variable extends EquationUnit
 {
-    private ClassLogger logger = new ClassLogger("Variable");
 
 
     public Variable(String name)

@@ -247,20 +247,6 @@ public class GuiUtils
    }
 
 
-   private void throwTestException() throws Exception
-   {
-       String[] strings = new String[2];
-
-       try
-       {
-           System.out.println(strings[9]);
-       }
-       catch (Exception ex)
-       {
-           throw new Exception("Big error nhere", ex);
-       }
-
-   }
 
 
    public static void setMainFrame(Frame frame)

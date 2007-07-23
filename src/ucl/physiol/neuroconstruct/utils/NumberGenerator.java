@@ -25,6 +25,8 @@ import ucl.physiol.neuroconstruct.project.*;
  * @version 1.0.3
  */
 
+@SuppressWarnings("serial")
+
 public class NumberGenerator implements Serializable
 {
     ClassLogger logger = new ClassLogger("NumberGenerator");

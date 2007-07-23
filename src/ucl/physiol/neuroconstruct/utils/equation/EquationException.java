@@ -21,6 +21,8 @@ package ucl.physiol.neuroconstruct.utils.equation;
  * @version 1.0.3
  */
 
+@SuppressWarnings("serial")
+
 public class EquationException extends Exception
 {
     public EquationException(String exception)

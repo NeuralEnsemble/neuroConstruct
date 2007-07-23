@@ -92,7 +92,7 @@ public class Units
     {
         this.name = name;
 
-        Vector usedUnits = new Vector();
+        Vector<Units> usedUnits = new Vector<Units>();
 
         for (int i = 0; i < subUnitList.length; i++)
         {
@@ -373,6 +373,11 @@ public class Units
     {
         //logger.logComment("Base unit? being set to: "+ baseUnit);
         this.baseUnit = baseUnit;
+    }
+
+    public static void main(String[] args)
+    {
+        
     }
 
 }

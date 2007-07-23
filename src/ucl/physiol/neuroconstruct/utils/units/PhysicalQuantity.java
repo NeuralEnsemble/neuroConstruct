@@ -195,8 +195,8 @@ public class PhysicalQuantity
 
 
         PhysicalQuantity condDens
-            = new PhysicalQuantity(0.001,
-                                   UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS]);
+            = new PhysicalQuantity(0.5e-18,
+                                   UnitConverter.concentrationUnits[UnitConverter.NEUROCONSTRUCT_UNITS]);
 
         System.out.println("\n\n\nOrig value: "+ condDens.toString());
 

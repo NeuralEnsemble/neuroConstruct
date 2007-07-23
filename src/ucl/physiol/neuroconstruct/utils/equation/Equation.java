@@ -15,7 +15,6 @@ package ucl.physiol.neuroconstruct.utils.equation;
 
 import ucl.physiol.neuroconstruct.dataset.*;
 import ucl.physiol.neuroconstruct.gui.plotter.*;
-import ucl.physiol.neuroconstruct.utils.ClassLogger;
 
 
 /**
@@ -27,7 +26,6 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
 
 public class Equation
 {
-    private static ClassLogger logger = new ClassLogger("Equation");
     public Equation()
     {
     }

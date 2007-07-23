@@ -76,7 +76,7 @@ public class Expression
         boolean isValidNum = false;
         try
         {
-            Double d = Double.parseDouble(line);
+            Double.parseDouble(line);
             isValidNum = true;
             logger.logComment("isValidNum!!");
         }
@@ -242,7 +242,7 @@ public class Expression
     {
         //BinaryOperation.allBinaryOps
 
-        Vector foundBinOps = new Vector();
+        Vector<Integer> foundBinOps = new Vector<Integer>();
 
         for (int checkPosn = 0; checkPosn < line.length()-1; checkPosn++)
         {
@@ -284,8 +284,6 @@ public class Expression
 
         String originalLine = new String(line);
 
-        EquationUnit myExpression = null;
-
         line = line.trim();
 
         if (line.startsWith("=")) line = line.substring(1).trim();
@@ -295,7 +293,7 @@ public class Expression
         boolean isValidNum = false;
         try
         {
-            Double d = Double.parseDouble(line);
+            Double.parseDouble(line);
             isValidNum = true;
         }
         catch(NumberFormatException nfe)

@@ -13,7 +13,6 @@
 package ucl.physiol.neuroconstruct.utils;
 
 
-import ucl.physiol.neuroconstruct.project.*;
 
 /**
  * Generates a fixed set of numbers in a sequence
@@ -191,6 +190,8 @@ public class SequenceGenerator
     }
 
 
+    @SuppressWarnings("serial")
+    
     public class EndOfSequenceException extends Exception
     {
 

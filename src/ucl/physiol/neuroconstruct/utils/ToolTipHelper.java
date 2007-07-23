@@ -34,7 +34,7 @@ public class ToolTipHelper
     ClassLogger logger = new ClassLogger("ToolTipHelper");
 
     //private Properties toolTips = new Properties();
-    private Hashtable toolTips = new Hashtable();
+    private Hashtable<String, String> toolTips = new Hashtable<String, String>();
 
     private static ToolTipHelper myInstance = null;
 
