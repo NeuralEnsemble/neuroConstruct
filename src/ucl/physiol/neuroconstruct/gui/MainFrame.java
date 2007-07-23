@@ -3665,7 +3665,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
 
         projManager.getCurrentProject().markProjectAsEdited();
-        this.refreshTabCellProcesses();
+        this.refreshTabCellMechanisms();
     }
 
     public void tabUpdated(String tableModelName)
@@ -5144,7 +5144,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                    JOptionPane.WARNING_MESSAGE , 
                                    null,
                                    opts, 
-                                   opts[0]);
+                                   opts[1]);
         
            
            
@@ -6759,7 +6759,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         this.refreshTabRegionsInfo();
         this.refreshTabCellTypes();
         this.refreshTabCellGroupInfo();
-        this.refreshTabCellProcesses();
+        this.refreshTabCellMechanisms();
         this.refreshTabNetSettings();
         this.refreshTabGenerate();
         this.refreshTabExport();
@@ -7309,9 +7309,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
      * Refreshes the tab related to synapses
      *
      */
-    private void refreshTabCellProcesses()
+    private void refreshTabCellMechanisms()
     {
-        logger.logComment("> Refreshing the Tab for CellProcesses...");
+        logger.logComment("> Refreshing the Tab for CellMechanisms...");
 
         if (projManager.getCurrentProject() == null ||
             projManager.getCurrentProject().getProjectStatus() == Project.PROJECT_NOT_INITIALISED)
@@ -7324,6 +7324,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             jButtonMechanismTemplateCML.setEnabled(false);
 
             jTableMechanisms = new JTable((new CellMechanismInfo()));
+
+            jScrollPaneMechanisms.getViewport().removeAll();
+            jScrollPaneMechanisms.getViewport().add(jTableMechanisms, null);
 
         }
         else
@@ -7343,7 +7346,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                   String tip = null;
                   java.awt.Point p = e.getPoint();
                   int rowIndex = rowAtPoint(p);
-                  int colIndex = columnAtPoint(p);
+                  //int colIndex = columnAtPoint(p);
                   
                   //int realColumnIndex = convertColumnIndexToModel(colIndex);
 
@@ -7516,13 +7519,18 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             netConnNames.addAll(moreNetConnNames);
 
             int selectedSimConfig = jComboBoxSimConfig.getSelectedIndex();
+            String selectedSimConfigName = (String)jComboBoxSimConfig.getSelectedItem();
+            
             jComboBoxSimConfig.removeAllItems();
+            
             ArrayList simConfigs = projManager.getCurrentProject().simConfigInfo.getAllSimConfigNames();
             for (int i = 0; i < simConfigs.size(); i++)
             {
                 jComboBoxSimConfig.addItem(simConfigs.get(i));
             }
-            if (selectedSimConfig>=0 && jComboBoxSimConfig.getItemCount()>(selectedSimConfig))
+            if (selectedSimConfig>=0 
+                    && jComboBoxSimConfig.getItemCount()>(selectedSimConfig)
+                    && ((String)jComboBoxSimConfig.getItemAt(selectedSimConfig)).equals(selectedSimConfigName))
                 jComboBoxSimConfig.setSelectedIndex(selectedSimConfig);
 
 
@@ -7610,6 +7618,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
            jTableSimPlot.setModel(new SimPlotInfo());
            jTableStims.setModel(new ElecInputInfo());
 
+           this.jButtonSimPlotAdd.setEnabled(false);
+           this.jButtonSimPlotDelete.setEnabled(false);
+           this.jButtonSimPlotEdit.setEnabled(false);
+           
+
+           this.jButtonSimStimAdd.setEnabled(false);
+           this.jButtonSimStimDelete.setEnabled(false);
+           this.jButtonSimStimEdit.setEnabled(false);
+
 
        }
        else
@@ -7623,6 +7640,16 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
            TableColumn nextColumn2 = jTableSimPlot.getColumnModel().getColumn(SimPlotInfo.COL_NUM_VALUE);
            nextColumn2.setMinWidth(220);
+           
+
+           this.jButtonSimPlotAdd.setEnabled(true);
+           this.jButtonSimPlotDelete.setEnabled(true);
+           this.jButtonSimPlotEdit.setEnabled(true);
+           
+
+           this.jButtonSimStimAdd.setEnabled(true);
+           this.jButtonSimStimDelete.setEnabled(true);
+           this.jButtonSimStimEdit.setEnabled(true);
 
        }
 
