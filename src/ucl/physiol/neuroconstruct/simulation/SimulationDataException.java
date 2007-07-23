@@ -19,6 +19,7 @@ package ucl.physiol.neuroconstruct.simulation;
  * @version 1.0.3
  */
 
+@SuppressWarnings("serial")
 
 public class SimulationDataException extends Exception
 {
@@ -40,9 +41,5 @@ public class SimulationDataException extends Exception
     public SimulationDataException(Throwable cause)
     {
         super(cause);
-    }
-    public static void main(String[] args)
-    {
-        SimulationDataException simulationDataRetrievalException1 = new SimulationDataException();
     }
 }
