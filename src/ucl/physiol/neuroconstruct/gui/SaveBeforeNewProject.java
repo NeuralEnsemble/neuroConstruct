@@ -21,6 +21,7 @@ import java.awt.Frame;
  * @version 1.0.3
  */
 
+@SuppressWarnings("serial")
 
 public class SaveBeforeNewProject extends SaveBeforeExitDialog
 {

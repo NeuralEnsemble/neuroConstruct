@@ -28,6 +28,8 @@ import ucl.physiol.neuroconstruct.utils.*;
  */
 
 
+@SuppressWarnings("serial")
+
 public class SimpleTextInput extends JDialog
 {
 

@@ -393,7 +393,7 @@ public class NewModFileDialog extends JDialog
 
             if (suggestedFileName == null || suggestedFileName.length() < 3)
             {
-                defaultDir = ProjectStructure.getnCProjectsDirectory();
+                defaultDir = GeneralProperties.getnCProjectsDir();
             }
             else
             {
@@ -401,7 +401,7 @@ public class NewModFileDialog extends JDialog
                 defaultDir = suggestDir.getParentFile();
                 if (defaultDir == null || ! (defaultDir.isDirectory()))
                 {
-                    defaultDir = ProjectStructure.getnCProjectsDirectory();
+                    defaultDir = GeneralProperties.getnCProjectsDir();;
                 }
             }
             chooser.setCurrentDirectory(defaultDir);
@@ -410,7 +410,7 @@ public class NewModFileDialog extends JDialog
         catch (Exception ex)
         {
             logger.logError("Problem with default dir setting: " +
-                            ProjectStructure.getnCProjectsDirectory(), ex);
+            		GeneralProperties.getnCProjectsDir(), ex);
         }
 
         int retval = chooser.showDialog(frame, null);

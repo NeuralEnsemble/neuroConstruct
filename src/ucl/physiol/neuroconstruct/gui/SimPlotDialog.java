@@ -31,6 +31,8 @@ import ucl.physiol.neuroconstruct.utils.*;
  */
 
 
+@SuppressWarnings("serial")
+
 public class SimPlotDialog extends JDialog
 {
     ClassLogger logger = new ClassLogger("SimPlotDialog");
@@ -156,7 +158,7 @@ public class SimPlotDialog extends JDialog
         Vector allChanMechs = project.cellMechanismInfo.getAllChannelMechanismNames();
         for (int i = 0; i < allChanMechs.size(); i++)
         {
-            String next = (String) allChanMechs.elementAt(i);
+            //String next = (String) allChanMechs.elementAt(i);
            ///////////////////// jComboBoxKnownValues.addItem(next + ":" + SimPlot.PLOT_COND_DENS);
         }
 

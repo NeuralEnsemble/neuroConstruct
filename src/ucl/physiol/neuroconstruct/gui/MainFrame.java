@@ -4538,13 +4538,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     private void loadProject()
     {
         File defaultDir = null;
+        
         if (projManager.getCurrentProject()!=null)
         {
             defaultDir = projManager.getCurrentProject().getProjectMainDirectory();
         }
         else
         {
-            defaultDir = new File(ProjectStructure.getnCProjectsDirectory().getAbsolutePath());
+            defaultDir = GeneralProperties.getnCProjectsDir();
         }
 
         boolean continueClosing = checkToSave();
@@ -5883,7 +5884,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         this.closeProject();
 
 
-        File defaultDir = ProjectStructure.getnCProjectsDirectory();
+        File defaultDir = GeneralProperties.getnCProjectsDir();
 
         logger.logComment("Unzipping a project...");
 
@@ -5928,7 +5929,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             destDirChooser.setDialogTitle("Please select a directory for the project: "+ newProjName);
 
 
-            destDirChooser.setCurrentDirectory(ProjectStructure.getnCProjectsDirectory());
+            destDirChooser.setCurrentDirectory(GeneralProperties.getnCProjectsDir());
 
             boolean validEmptyDirectory = false;
 
@@ -9761,7 +9762,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         if (projManager.getCurrentProject()!=null)
             dir = projManager.getCurrentProject().getProjectMainDirectory().getAbsolutePath();
         else
-            dir = ProjectStructure.getnCProjectsDirectory().getAbsolutePath();
+            dir = GeneralProperties.getnCProjectsDir().getAbsolutePath();
 
         new NmodlEditorApp(dir);
     }
@@ -10990,7 +10991,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 String lastCellMechDir = recentFiles.getMyLastCellProcessesDir();
 
                 if (lastCellMechDir == null) lastCellMechDir
-                    = ProjectStructure.getnCProjectsDirectory().getAbsolutePath();
+                    = GeneralProperties.getnCProjectsDir().getAbsolutePath();
 
                 File defaultDir = new File(lastCellMechDir);
 
@@ -11713,7 +11714,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         try
         {
-            chooser.setCurrentDirectory(ProjectStructure.getnCProjectsDirectory());
+            chooser.setCurrentDirectory(GeneralProperties.getnCProjectsDir());
         }
         catch (Exception ex)
         {

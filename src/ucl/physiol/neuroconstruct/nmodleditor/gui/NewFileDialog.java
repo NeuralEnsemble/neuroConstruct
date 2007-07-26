@@ -27,6 +27,8 @@ import ucl.physiol.neuroconstruct.project.*;
  * @version 1.0.3
  */
 
+@SuppressWarnings("serial")
+
 public class NewFileDialog extends JDialog
 {
     String newFileName = null;
@@ -229,7 +231,7 @@ public class NewFileDialog extends JDialog
         }
         catch (Exception ex)
         {
-            File defLocation = ProjectStructure.getnCProjectsDirectory();
+            File defLocation = GeneralProperties.getnCProjectsDir();
             chooser.setCurrentDirectory(defLocation);
         }
 

@@ -958,7 +958,7 @@ public class CellMechanismEditor extends JDialog implements FocusListener
         String lastCellMechDir = recentFiles.getMyLastCellProcessesDir();
 
         if (lastCellMechDir == null) lastCellMechDir
-            = ProjectStructure.getnCProjectsDirectory().getAbsolutePath();
+            = GeneralProperties.getnCProjectsDir().getAbsolutePath();
 
         File defaultDir = new File(lastCellMechDir);
 

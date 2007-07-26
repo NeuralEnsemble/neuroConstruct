@@ -15,7 +15,10 @@ package ucl.physiol.neuroconstruct.gui;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
+import java.io.File;
+
 import ucl.physiol.neuroconstruct.utils.*;
+
 import java.util.*;
 import ucl.physiol.neuroconstruct.project.*;
 
@@ -601,6 +604,7 @@ public class OptionsFrame extends JFrame
             jTextFieldEditor.setText(GeneralProperties.getEditorPath(false));
             jTextFieldNeuronLocation.setText(GeneralProperties.getNeuronHomeDir());
             jTextFieldCommandLine.setText(GeneralProperties.getExecutableCommandLine());
+            jTextFieldPrefProjDir.setText(GeneralProperties.getnCProjectsDir().getAbsolutePath());
 
             jCheckBoxConsole.setSelected(GeneralProperties.getLogFilePrintToScreenPolicy());
             jCheckBoxFileOutput.setSelected(GeneralProperties.getLogFileSaveToFilePolicy());
@@ -687,16 +691,34 @@ public class OptionsFrame extends JFrame
 
     }
 
-    private void saveToGeneralProperties()
+    private boolean saveToGeneralProperties()
     {
 
         if (this.myStartupMode==GENERAL_PROPERTIES_MODE
             /*|| this.myStartupMode==NMODL_PROPERTIES_MODE*/)
         {
+        	File propDir = new File(jTextFieldPrefProjDir.getText());
+
+            if (!propDir.exists())
+            {
+            	if (propDir.getParentFile()==null || !propDir.getParentFile().exists())
+            	{
+            		GuiUtils.showErrorMessage(logger, "Neither "+propDir.getAbsolutePath()+" nor it's parent directory exist. Please choose a correct default location for new projects.", null, this);
+            		return false;
+            	}
+            	else
+            	{
+            		propDir.mkdir();
+            	}
+            }
+            GeneralProperties.setnCProjectsDir(propDir);
+            
+            
             GeneralProperties.setNeuronHomeDir(jTextFieldNeuronLocation.getText());
             GeneralProperties.setBrowserPath(jTextFieldBrowser.getText());
             GeneralProperties.setEditorPath(jTextFieldEditor.getText());
             GeneralProperties.setExecutableCommandLine(jTextFieldCommandLine.getText());
+        
         }
 
 
@@ -762,15 +784,16 @@ public class OptionsFrame extends JFrame
             somethingAlteredInProject = true;
 
         }
+        return true;
 
     }
 
     void jButtonSave_actionPerformed(ActionEvent e)
     {
         logger.logComment("Save button pressed...");
-        this.saveToGeneralProperties();
+        boolean cont = this.saveToGeneralProperties();
         if (somethingAlteredInProject) myMainFrame.applyNew3DSettings();
-        this.dispose();
+        if (cont) this.dispose();
 
 
        myMainFrame.alertChangeToolTipsState();

@@ -14,6 +14,8 @@ package ucl.physiol.neuroconstruct.utils;
 
 import java.io.*;
 
+import ucl.physiol.neuroconstruct.project.ProjectStructure;
+
 
 /**
  * A number of settings required from the user
@@ -24,8 +26,9 @@ import java.io.*;
 
 public class UserSettings
 {
+    private static ClassLogger logger = new ClassLogger("UserSettings");
 
-    private File nCProjectsDir = null;
+    private String nCProjectsDir = null;
 
     private String neuronHome = null;
     private String executableCommandLine = null;
@@ -47,12 +50,20 @@ public class UserSettings
 
 
 
-    public File getnCProjectsDir()
-    {
+
+
+	public String getNCProjectsDir()
+	{
+    	if (nCProjectsDir == null)
+    	{
+            logger.logComment("Getting new nCprojectsDir...", true);
+    		nCProjectsDir = ProjectStructure.getDefaultnCProjectsDir().getAbsolutePath();
+    	}
+        logger.logComment("Returning nCprojectsDir as: "+ nCProjectsDir, true);
         return nCProjectsDir;
     }
 
-    public void setnCProjectsDir(File dir)
+    public void setNCProjectsDir(String dir)
     {
         nCProjectsDir = dir;
     }
@@ -109,8 +120,6 @@ public class UserSettings
     {
         this.browserExecutable = browserExecutable;
     }
-
-
     public String getEditorPath()
     {
         return this.editorExecutable;

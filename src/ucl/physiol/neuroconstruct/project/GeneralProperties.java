@@ -89,52 +89,59 @@ public class GeneralProperties
                                   Display3DProperties.DISPLAY_SOMA_NEURITE_SOLID,
                                   0.85f);
 
-/*
-    private static String[] neuronHomeSearch
-        = new String[]{"c:\\nrn61",
-                       "c:\\nrn60",
-                       "c:\\nrn59",
-                       "c:\\nrn58",
-                       "c:\\nrn57",
-                       "c:\\nrn56",
-                       "c:\\nrn55",
-                       "c:\\nrn54",
-                       "c:\\nrn61"};*/
+
 
 
 
     static
     {
-
-        if (GeneralUtils.isWindowsBasedPlatform())
+        GeneralProperties.loadFromSettingsFile();
+        //System.out.println("Neuron home: "+userSettings.getNeuronHome());
+        
+        if (userSettings.getNeuronHome()==null)
         {
-            userSettings.setNeuronHome(new String("C:\\nrn59"));
-            userSettings.setExecutableCommandLine("cmd /K start \"Neuron\" /wait ");
+        	if (GeneralUtils.isWindowsBasedPlatform())
+        	{
+
+        		if ((new File("C:\\nrn61")).exists()) userSettings.setNeuronHome(new String("C:\\nrn61"));
+        		else if ((new File("C:\\nrn60")).exists()) userSettings.setNeuronHome(new String("C:\\nrn60"));
+        		else if ((new File("C:\\nrn59")).exists()) userSettings.setNeuronHome(new String("C:\\nrn59"));
+        		else if ((new File("C:\\nrn58")).exists()) userSettings.setNeuronHome(new String("C:\\nrn58"));
+        		else if ((new File("C:\\nrn57")).exists()) userSettings.setNeuronHome(new String("C:\\nrn57"));
+        		else userSettings.setNeuronHome(new String("C:\\nrn60"));
+
+        		//System.out.println("Neuron home: "+userSettings.getNeuronHome());
+
+        		userSettings.setExecutableCommandLine("cmd /K start \"Neuron\" /wait ");
+        	}
+        	else if (GeneralUtils.isMacBasedPlatform())
+        	{
+        		if ((new File("/Applications/NEURON-6.1/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.1/nrn/powerpc"));
+        		else if ((new File("/Applications/NEURON-6.0/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.0/nrn/powerpc"));
+        		else if ((new File("/Applications/NEURON-5.9/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.9/nrn/powerpc"));
+        		else if ((new File("/Applications/NEURON-5.8/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.8/nrn/powerpc"));
+        		else if ((new File("/Applications/NEURON-5.7/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.7/nrn/powerpc"));
+        		else  userSettings.setNeuronHome(new String("/Applications/NEURON-6.0/nrn/powerpc"));
+
+
+        		userSettings.setExecutableCommandLine("/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal ");
+        	}
+        	else
+        	{
+        		userSettings.setNeuronHome(new String("/usr/local"));
+        		userSettings.setExecutableCommandLine("konsole ");
+        	}
         }
-        else if (GeneralUtils.isMacBasedPlatform())
+
+        if (userSettings.getLocationLogFiles()==null)
         {
-            userSettings.setNeuronHome(new String("/Applications/NEURON-5.9/nrn/powerpc"));
-            userSettings.setExecutableCommandLine("/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal ");
+        	userSettings.setLocationLogFiles(System.getProperty("user.dir")
+        			+ System.getProperty("file.separator")
+        			+ "logs");
         }
-        else
-        {
-            userSettings.setNeuronHome(new String("/usr/local"));
-            userSettings.setExecutableCommandLine("konsole ");
-        }
-
-
-
-        //defaultLocNewProjects = System.getProperty("user.dir")
-                           //     + System.getProperty("file.separator")
-                     //           + "projects";
-
-        userSettings.setLocationLogFiles(System.getProperty("user.dir")
-                                + System.getProperty("file.separator")
-                                + "logs");
 
         //userSettings.setFormatForSavingMorphologies(UserSettings.JAVAXML_FORMAT);
 
-        GeneralProperties.loadFromSettingsFile();
 
     }
 
@@ -177,8 +184,8 @@ public class GeneralProperties
         xmlEncoder.flush();
         try
         {
-            String message = new String("\n<!-- This is a neuroConstruct general properties file. It's best to change\nthese settings in "
-                                        + "neuroConstruct, as opposed to editing this file manually. -->\n\n");
+            String message = new String("\n<!-- \n\nThis is a neuroConstruct general properties file. It's best to change\nthese settings in "
+                                        + "neuroConstruct, as opposed to editing this file manually.\n\n -->\n\n");
 
             fos.write(message.getBytes());
         }
@@ -197,6 +204,8 @@ public class GeneralProperties
 
         /* -- Writing User Settings -- */
         xmlEncoder.writeObject(userSettings);
+        
+        System.out.println("def: "+ userSettings.getNCProjectsDir());
 
         /* -- Writing Replay Settings -- */
         xmlEncoder.writeObject(replaySettings);
@@ -305,21 +314,27 @@ public class GeneralProperties
          userSettings.setExecutableCommandLine(commLine);
      }
 
-     public static String getNeuronHomeDir()
-     {
-         String nrnHome = userSettings.getNeuronHome();
+    public static File getnCProjectsDir()
+    {
+        File nCProjectsDir = new File(userSettings.getNCProjectsDir());
+        return nCProjectsDir;	
+    }
 
-         //if (nrnHome!=null)
+    public static void setnCProjectsDir(File nCProjectsDir)
+    {
+        userSettings.setNCProjectsDir(nCProjectsDir.getAbsolutePath());
+    }
 
-             return nrnHome;
+    public static String getNeuronHomeDir()
+    {
+        String nrnHome = userSettings.getNeuronHome();
+        return nrnHome;	
+    }
 
-        // return ;
-     }
-
-     public static void setNeuronHomeDir(String neuronHomeDir)
-     {
-         userSettings.setNeuronHome(neuronHomeDir);
-     }
+    public static void setNeuronHomeDir(String neuronHomeDir)
+    {
+        userSettings.setNeuronHome(neuronHomeDir);
+    }
 
 
      public static String getEditorPath(boolean askIfNull)

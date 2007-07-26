@@ -87,7 +87,7 @@ public class NewProjectDialog extends JDialog
                 jTextFieldProjName_keyReleased(e);
             }
         });
-        jTextFieldProjDir.setText(ProjectStructure.getnCProjectsDirectory().getAbsolutePath());
+        jTextFieldProjDir.setText(GeneralProperties.getnCProjectsDir().getAbsolutePath());
         jTextFieldProjDir.addKeyListener(new java.awt.event.KeyAdapter()
         {
             public void keyReleased(KeyEvent e)

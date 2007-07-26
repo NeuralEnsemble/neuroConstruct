@@ -23,6 +23,8 @@ import ucl.physiol.neuroconstruct.utils.*;
  * @version 1.0.3
  */
 
+@SuppressWarnings("serial")
+
 public class ClickLink extends JLabel
 {
     String text  = null;
@@ -74,9 +76,9 @@ public class ClickLink extends JLabel
     public static void main(String[] args)
     {
         ClickLink cl = new ClickLink("Click it!", "<html>Go ahead, have a <b>click</b></html>");
-        ClickLink cl2 = new ClickLink("No! Me!", "Go ahead, <b>click this instead</b>");
+        new ClickLink("No! Me!", "Go ahead, <b>click this instead</b>");
 
-        String favouredLookAndFeel = MainApplication.getFavouredLookAndFeel();
+        //String favouredLookAndFeel = MainApplication.getFavouredLookAndFeel();
          try
          {
              //Object[] opts = new Object[]{cl2};

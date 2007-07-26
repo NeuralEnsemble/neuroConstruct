@@ -377,15 +377,18 @@ public class ProjectStructure
 
 
 
-    public static File getnCProjectsDirectory()
+    public static File getDefaultnCProjectsDir()
     {
 
         File homeDir = new File(System.getProperty("user.home"));
 
         File dir = getDirandReadme(homeDir,
                                    nCprojectsDir,
-                                   "This is the default directory for a user's new neuroConstruct projects.\n",
+                                   "This is the default directory for a user's new neuroConstruct projects. The default location to use can be changed through the GUI\n",
                                    true);
+        
+
+        logger.logComment("Just defined nCprojectsDir: "+ dir, true);
 
         return dir;
 

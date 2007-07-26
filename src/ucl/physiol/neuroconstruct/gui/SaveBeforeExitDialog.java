@@ -24,6 +24,8 @@ import ucl.physiol.neuroconstruct.utils.*;
  */
 
 
+@SuppressWarnings("serial")
+
 public class SaveBeforeExitDialog extends JDialog
 {
     /** @todo remove this altogether and replace with JOptionPane.showOptionDialog() */
