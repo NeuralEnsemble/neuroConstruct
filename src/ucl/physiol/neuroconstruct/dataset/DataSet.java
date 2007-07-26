@@ -62,7 +62,7 @@ public class DataSet
     /**
      * Only stores String comment against (Integer) point num for points which have one
      */
-    private Hashtable comments = new Hashtable();
+    private Hashtable<Integer, String> comments = new Hashtable<Integer, String>();
 
     /**
      * Quick summary on whether point has comment, to avoid looking up Hashtable every time
@@ -472,7 +472,7 @@ public class DataSet
         for (int i = 0; i < numPointsInData; i++)
         {
             double[] nextPoint = data1.getPoint(i);
-          //  System.out.println("nextPoint: ("+ nextPoint[0]+", "+ nextPoint[1]+"]");
+            System.out.println("nextPoint: ("+ nextPoint[0]+", "+ nextPoint[1]+"]");
         }
 
         System.out.println("Time taken to parse data set: "+(System.currentTimeMillis()-start)); ;

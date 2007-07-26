@@ -32,7 +32,7 @@ public class SegmentLocMapper
 {
     private static ClassLogger logger = new ClassLogger("SegmentLocMapper");
 
-    private Hashtable<SegmentRange, SegmentRange[]> maps = new Hashtable();
+    private Hashtable<SegmentRange, SegmentRange[]> maps = new Hashtable<SegmentRange, SegmentRange[]>();
     private ArrayList<Integer> allSegIdsMappedFrom = new ArrayList<Integer>(); // caching...
     private ArrayList<Integer> allSegIdsMappedTo = new ArrayList<Integer>(); // caching...
 

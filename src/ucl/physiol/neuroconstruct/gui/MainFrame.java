@@ -67,6 +67,7 @@ import ucl.physiol.neuroconstruct.utils.xml.*;
  */
 
 @SuppressWarnings("serial")
+
 public class MainFrame extends JFrame implements ProjectEventListener, GenerationReport
 {
     ClassLogger logger = new ClassLogger("MainFrame");

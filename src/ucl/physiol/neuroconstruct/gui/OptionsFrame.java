@@ -27,6 +27,8 @@ import ucl.physiol.neuroconstruct.project.*;
  */
 
 
+@SuppressWarnings("serial")
+
 public class OptionsFrame extends JFrame
 {
     ClassLogger logger = new ClassLogger("OptionsFrame");
@@ -73,6 +75,9 @@ public class OptionsFrame extends JFrame
 
     JLabel jLabelNeuronDir = new JLabel();
     JTextField jTextFieldNeuronLocation = new JTextField();
+    
+    JLabel jLabelPrefProjDir = new JLabel();
+    JTextField jTextFieldPrefProjDir = new JTextField();
 
     JLabel jLabelBrowserDir = new JLabel();
     JTextField jTextFieldBrowser = new JTextField();
@@ -223,6 +228,10 @@ public class OptionsFrame extends JFrame
         jTextFieldNeuronLocation.setText("");
         jTextFieldNeuronLocation.setColumns(20);
 
+        jLabelPrefProjDir.setText("Default location projects:");
+        jTextFieldPrefProjDir.setText("");
+        jTextFieldPrefProjDir.setColumns(20);
+
         jLabelBrowserDir.setText("Path to browser:");
         jTextFieldBrowser.setText("");
         jTextFieldBrowser.setColumns(20);
@@ -314,44 +323,7 @@ public class OptionsFrame extends JFrame
 
         jTabbedPane1.add(jPanelGeneral, GENERAL_PREFERENCES);
 
-        jPanelGeneral.setPreferredSize(new Dimension(200,200));
-        jPanelGeneral.setMinimumSize(new Dimension(200,200));
 
-        jPanelGeneral.add(jLabelNeuronDir,
-                          new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-                                                 GridBagConstraints.WEST,
-                                                 GridBagConstraints.NONE,
-                                                 new Insets(6, 20, 6, 6), 0, 0));
-
-        jPanelGeneral.add(jTextFieldNeuronLocation,
-                          new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
-                                                 GridBagConstraints.WEST,
-                                                 GridBagConstraints.HORIZONTAL,
-                                                 new Insets(6, 6, 6, 20), 0, 0));
-
-        jPanelGeneral.add(jLabelBrowserDir,
-                          new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-                                                 GridBagConstraints.WEST,
-                                                 GridBagConstraints.NONE,
-                                                 new Insets(6, 20, 6, 6), 0, 0));
-
-        jPanelGeneral.add(jTextFieldBrowser,
-                          new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0,
-                                                 GridBagConstraints.WEST,
-                                                 GridBagConstraints.HORIZONTAL,
-                                                 new Insets(6, 6, 6, 20), 0, 0));
-
-        jPanelGeneral.add(jLabelEditorDir,
-                          new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
-                                                 GridBagConstraints.WEST,
-                                                 GridBagConstraints.NONE,
-                                                 new Insets(6, 20, 6, 6), 0, 0));
-
-        jPanelGeneral.add(jTextFieldEditor,
-                          new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0,
-                                                 GridBagConstraints.WEST,
-                                                 GridBagConstraints.HORIZONTAL,
-                                                 new Insets(6, 6, 6, 20), 0, 0));
 
 
 
@@ -468,37 +440,98 @@ public class OptionsFrame extends JFrame
 
 
 
+        jPanelGeneral.setPreferredSize(new Dimension(200,200));
+        jPanelGeneral.setMinimumSize(new Dimension(200,200));
 
+        
+
+        jPanelGeneral.add(jLabelPrefProjDir,
+                          new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+                                                 GridBagConstraints.WEST,
+                                                 GridBagConstraints.NONE,
+                                                 new Insets(6, 20, 6, 6), 0, 0));
+
+        jPanelGeneral.add(jTextFieldPrefProjDir,
+                          new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
+                                                 GridBagConstraints.WEST,
+                                                 GridBagConstraints.HORIZONTAL,
+                                                 new Insets(6, 6, 6, 20), 0, 0));
+        
+
+        jPanelGeneral.add(jLabelNeuronDir,
+                          new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                                                 GridBagConstraints.WEST,
+                                                 GridBagConstraints.NONE,
+                                                 new Insets(6, 20, 6, 6), 0, 0));
+
+        jPanelGeneral.add(jTextFieldNeuronLocation,
+                          new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0,
+                                                 GridBagConstraints.WEST,
+                                                 GridBagConstraints.HORIZONTAL,
+                                                 new Insets(6, 6, 6, 20), 0, 0));
+
+        jPanelGeneral.add(jLabelBrowserDir,
+                          new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+                                                 GridBagConstraints.WEST,
+                                                 GridBagConstraints.NONE,
+                                                 new Insets(6, 20, 6, 6), 0, 0));
+
+        jPanelGeneral.add(jTextFieldBrowser,
+                          new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0,
+                                                 GridBagConstraints.WEST,
+                                                 GridBagConstraints.HORIZONTAL,
+                                                 new Insets(6, 6, 6, 20), 0, 0));
+
+        jPanelGeneral.add(jLabelEditorDir,
+                          new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
+                                                 GridBagConstraints.WEST,
+                                                 GridBagConstraints.NONE,
+                                                 new Insets(6, 20, 6, 6), 0, 0));
+
+        jPanelGeneral.add(jTextFieldEditor,
+                          new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0,
+                                                 GridBagConstraints.WEST,
+                                                 GridBagConstraints.HORIZONTAL,
+                                                 new Insets(6, 6, 6, 20), 0, 0));
 
         jPanelGeneral.add(jLabelCommandLine,
-                          new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
-                                                 , GridBagConstraints.WEST, GridBagConstraints.NONE,
+                          new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
+                                                 , GridBagConstraints.WEST, 
+                                                 GridBagConstraints.NONE,
                                                  new Insets(6, 20, 0, 6), 0, 0));
 
         jPanelGeneral.add(jTextFieldCommandLine,
-                          new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0
-                                                 , GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+                          new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0
+                                                 , GridBagConstraints.WEST, 
+                                                 GridBagConstraints.HORIZONTAL,
                                                  new Insets(6, 6, 6, 20), 0, 0));
         jPanelGeneral.add(jLabelExplination,
-                          new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
+                          new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0
                                                  , GridBagConstraints.WEST,
                                                  GridBagConstraints.NONE,
                                                  new Insets(6, 6, 0, 0), 0, 0));
         jPanelGeneral.add(jLabel1,
-                          new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0
-                                                 , GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                          new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0
+                                                 , GridBagConstraints.CENTER, 
+                                                 GridBagConstraints.NONE,
                                                  new Insets(0, 0, 0, 0), 0, 0));
         jPanelGeneral.add(jTextPaneExplaination,
-                          new GridBagConstraints(0, 4, 2, 1, 0.0, 0.0
-                                                 , GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+                          new GridBagConstraints(0, 5, 2, 1, 0.0, 0.0
+                                                 , GridBagConstraints.WEST, 
+                                                 GridBagConstraints.HORIZONTAL,
                                                  new Insets(6, 20, 6, 20), 0, 0));
 
         jPanelGeneral.add(jCheckBoxToolTips,
-                          new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0
+                          new GridBagConstraints(0, 7, 2, 1, 0.0, 0.0
                                                  , GridBagConstraints.CENTER, GridBagConstraints.NONE,
                                                  new Insets(12, 12, 12, 12), 0, 0));
 
 
+        
+        
+        
+        
+        
 
         buttonGroupSaveOptions.add(jRadioButtonJavaXML);
         buttonGroupSaveOptions.add(jRadioButtonSaveMorphML);
@@ -623,7 +656,7 @@ public class OptionsFrame extends JFrame
     {
         if (e.getID() == WindowEvent.WINDOW_CLOSING)
         {
-            this.beingDisplayed = false;
+            beingDisplayed = false;
         }
         super.processWindowEvent(e);
     }
@@ -631,7 +664,7 @@ public class OptionsFrame extends JFrame
     public void setVisible(boolean setVis)
     {
         super.setVisible(setVis);
-        this.beingDisplayed = setVis;
+        beingDisplayed = setVis;
     }
 
     public static boolean isOptionsFrameCurrentlyDisplayed()
@@ -748,7 +781,7 @@ public class OptionsFrame extends JFrame
     public void dispose()
     {
         super.dispose();
-        this.beingDisplayed = false;
+        beingDisplayed = false;
 
     }
 

@@ -19,6 +19,8 @@ package ucl.physiol.neuroconstruct.genesis;
  * @version 1.0.3
  */
 
+@SuppressWarnings("serial")
+
 public class GenesisException extends Exception
 {
 

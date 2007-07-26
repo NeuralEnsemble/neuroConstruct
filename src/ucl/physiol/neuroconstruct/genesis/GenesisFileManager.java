@@ -21,7 +21,7 @@ import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
-import ucl.physiol.neuroconstruct.neuron.*;
+
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.GeneratedPlotSaves.*;
 import ucl.physiol.neuroconstruct.project.packing.*;
@@ -2830,9 +2830,9 @@ public class GenesisFileManager
 
 
         File dirForDataFiles = getDirectoryForSimulationFiles();
-        String dataFileDirName = dirForDataFiles.getAbsolutePath() + System.getProperty("file.separator");
+        //String dataFileDirName = dirForDataFiles.getAbsolutePath() + System.getProperty("file.separator");
 
-        String friendlyDataDirName = getFriendlyDirName(dataFileDirName);
+        //String friendlyDataDirName = getFriendlyDirName(dataFileDirName);
 
 
         if (newRecordingToBeMade)

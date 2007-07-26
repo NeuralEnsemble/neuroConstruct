@@ -65,7 +65,7 @@ public class GenesisSettings
      * Should only be used by XMLEncoder, hence use of deprecated
      * @deprecated
      */
-    public void setNativeBlocks(Hashtable nb)
+    public void setNativeBlocks(Hashtable<Integer, String> nb)
     {
         nativeBlocks = nb;
     }

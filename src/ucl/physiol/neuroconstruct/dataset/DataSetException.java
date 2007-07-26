@@ -19,6 +19,8 @@ package ucl.physiol.neuroconstruct.dataset;
  * @version 1.0.3
  */
 
+@SuppressWarnings("serial")
+
 public class DataSetException extends Exception
 {
 

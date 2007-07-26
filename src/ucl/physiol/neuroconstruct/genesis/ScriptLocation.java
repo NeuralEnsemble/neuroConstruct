@@ -120,8 +120,8 @@ public class ScriptLocation
         StringBuffer parsed = new StringBuffer();
         String[] lines = block.split("\n");
 
-        ArrayList whiteList = new ArrayList();
-        ArrayList blackList = new ArrayList();
+        ArrayList<String> whiteList = new ArrayList<String>();
+        ArrayList<String> blackList = new ArrayList<String>();
 
         for (int i = 0; i < lines.length; i++)
         {
