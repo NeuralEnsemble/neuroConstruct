@@ -35,6 +35,8 @@ import ucl.physiol.neuroconstruct.utils.equation.*;
  * @version 1.0.4
  */
 
+@SuppressWarnings("serial")
+
 public class PlotterFrame extends JFrame
 {
     private static ClassLogger logger = new ClassLogger("PlotterFrame");
@@ -548,6 +550,12 @@ public class PlotterFrame extends JFrame
             spikeAnalysisMenuItem.add(simpSpikeMenuItem);
             simpSpikeMenuItem.addActionListener(new DataSetSpikeMenuListener(nextDataSet));
 
+            JMenuItem phasePlaneMenuItem = new JMenuItem();
+            phasePlaneMenuItem.setText("Phase plane plot (dV/dt vs V)");
+            phasePlaneMenuItem.setToolTipText("Phase plane plot which plots rate of increase of membrane potential versus membrate potential");
+            spikeAnalysisMenuItem.add(phasePlaneMenuItem);
+            phasePlaneMenuItem.addActionListener(new DataSetPhasePlanePlotMenuListener(nextDataSet));
+
 
             JMenuItem peaksMenuItem = new JMenuItem();
             peaksMenuItem.setText("Times of peaks");
@@ -641,7 +649,7 @@ public class PlotterFrame extends JFrame
             String[] options = new String[]{PlotCanvas.USE_POINTS_FOR_PLOT,
                                                         PlotCanvas.USE_LINES_FOR_PLOT,
                                                         PlotCanvas.USE_CIRCLES_FOR_PLOT,
-                                                        plotCanvas.USE_BARCHART_FOR_PLOT};
+                                                        PlotCanvas.USE_BARCHART_FOR_PLOT};
 
             for (int optionNum = 0; optionNum < options.length; optionNum++)
             {
@@ -2066,6 +2074,64 @@ public class PlotterFrame extends JFrame
 
 
 
+    public class DataSetPhasePlanePlotMenuListener implements ActionListener
+    {
+        DataSet dataSet = null;
+
+        public DataSetPhasePlanePlotMenuListener(DataSet dataSet)
+        {
+            this.dataSet = dataSet;
+        }
+
+        public void actionPerformed(ActionEvent e)
+        {
+
+            String newYUnit = "";
+            String newYLegend = "";
+            
+            if (dataSet.getYUnit().length()>0 & dataSet.getXUnit().length()>0)
+            {
+                newYUnit = "("+dataSet.getYUnit()+") / ("+dataSet.getXUnit()+")";
+            }
+            
+            if (dataSet.getYLegend().length()>0)
+            {
+                newYLegend = "Derivative of "+ dataSet.getYLegend();
+            }
+            
+            DataSet ds = new DataSet("Phase plane plot of " + dataSet.getRefrence(),
+                                     "Phase plane plot of \n" + dataSet.getDescription(),
+                                     dataSet.getYUnit(),
+                                     newYUnit,
+                                     dataSet.getYLegend(),
+                                     newYLegend);
+            
+            ds.setGraphFormat(PlotCanvas.USE_LINES_FOR_PLOT);
+            ds.setGraphColour(new Color(204,0,102));
+
+            double[] prevPoint = dataSet.getPoint(0);
+
+            for (int i = 1; i < dataSet.getNumberPoints(); i++)
+            {
+                double[] currPoint = dataSet.getPoint(i);
+                
+                double newX = (prevPoint[1]+currPoint[1])/2;
+                double newY = (currPoint[1]-prevPoint[1])/(currPoint[0]-prevPoint[0]);
+                
+                //System.out.println("Adding point ("+x+","+y+")");
+                ds.addPoint(newX, newY);
+                prevPoint = currPoint;
+            }
+
+            PlotterFrame frame = PlotManager.getPlotterFrame(ds.getRefrence(), false, true);
+            //frame.setViewMode(PlotCanvas.INCLUDE_ORIGIN_VIEW);
+            frame.addDataSet(ds);
+
+        }
+    }
+
+
+
 
     public class DataSetFormatMenuListener implements ActionListener
     {
@@ -2211,8 +2277,6 @@ public class PlotterFrame extends JFrame
 
             double[] xVals = dataSet.getXValues();
             double[] yVals = dataSet.getYValues();
-
-            boolean pos = (yVals[0] > 0);
 
             //StringBuffer zeros = new StringBuffer();
             //int count = 0;
@@ -2522,9 +2586,9 @@ public class PlotterFrame extends JFrame
         data1.setGraphColour(Color.blue);
         data2.setGraphColour(Color.RED);
 
-        data1.setGraphFormat(plotCanvas.USE_LINES_FOR_PLOT);
-        data2.setGraphFormat(plotCanvas.USE_CIRCLES_FOR_PLOT);
-        data3.setGraphFormat(plotCanvas.USE_CIRCLES_FOR_PLOT);
+        data1.setGraphFormat(PlotCanvas.USE_LINES_FOR_PLOT);
+        data2.setGraphFormat(PlotCanvas.USE_CIRCLES_FOR_PLOT);
+        data3.setGraphFormat(PlotCanvas.USE_CIRCLES_FOR_PLOT);
 
 
         for (int i = 0; i < numPoints; i++)
@@ -2803,7 +2867,7 @@ public class PlotterFrame extends JFrame
 
         File defaultDir = new File(lastDir);
 
-        DataSet ds = this.addNewDataSet(defaultDir, this);
+        DataSet ds = addNewDataSet(defaultDir, this);
 
         if (ds!=null) this.addDataSet(ds);
     }
@@ -3026,7 +3090,6 @@ public class PlotterFrame extends JFrame
     public static void main(String[] args)
     {
 
-        String favouredLookAndFeel = MainApplication.getFavouredLookAndFeel();
         try
         {
             // UIManager.setLookAndFeel(favouredLookAndFeel);

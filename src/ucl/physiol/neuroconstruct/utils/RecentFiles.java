@@ -311,7 +311,6 @@ public class RecentFiles
 
     public void setMyLastExportPointsDir(String myLastExportPointsDir)
     {
-        logger.logComment("Saving the export path to: "+ myLastExportPointsDir);
         this.myLastExportPointsDir = myLastExportPointsDir;
 
         //saveToFile();

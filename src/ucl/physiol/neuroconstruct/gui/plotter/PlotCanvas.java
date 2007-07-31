@@ -28,6 +28,8 @@ import ucl.physiol.neuroconstruct.utils.*;
  * @version 1.0.4
  */
 
+@SuppressWarnings("serial")
+
 public class PlotCanvas extends Canvas
 {
     ClassLogger logger = new ClassLogger("PlotCanvas");
@@ -335,13 +337,10 @@ public class PlotCanvas extends Canvas
         if (viewMode.equals(STACKED_VIEW))
         {
 
-            int heightOneArea = (int) ( (float)this.getHeight() / (float) dataSets.length);
-
-            double yLenSinglePixInArea = (maxYScaleValue - minYScaleValue) / (double) heightOneArea;
-
             int areaNumMouseIn = (int) Math.floor( ( (double) mouseYval / (double)this.getHeight()) *
                                                   (double) dataSets.length);
-           dataSetForUnits = areaNumMouseIn;
+            
+            dataSetForUnits = areaNumMouseIn;
 
             //logger.logComment("areaNumMouseIn: " + areaNumMouseIn);
             dataSetInfo = "Data set: " + dataSets[areaNumMouseIn].getRefrence() + " ";
@@ -850,7 +849,7 @@ public class PlotCanvas extends Canvas
 
     private void generateMaxMinForAxes(int totalNumAreas, int numThisArea)
     {
-        if (viewMode.equals(this.USER_SET_VIEW))
+        if (viewMode.equals(USER_SET_VIEW))
         {
             logger.logComment("Using values set by user");
             logger.logComment("SCREEN NOW has X vals: max: " + maxXScaleValue + " and min: " + minXScaleValue);

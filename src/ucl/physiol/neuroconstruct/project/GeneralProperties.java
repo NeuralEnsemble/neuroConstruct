@@ -212,8 +212,6 @@ public class GeneralProperties
         xmlEncoder.writeObject(mpiSettings);
 
 
-
-
         /* -- Writing 3D info -- */
         xmlEncoder.writeObject(defaultDisplay3DProps);
 

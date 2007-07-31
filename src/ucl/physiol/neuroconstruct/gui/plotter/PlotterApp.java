@@ -13,7 +13,6 @@
 package ucl.physiol.neuroconstruct.gui.plotter;
 
 import javax.swing.UIManager;
-import ucl.physiol.neuroconstruct.gui.*;
 
 /**
  * Application for popping up a graph of a vector of points
@@ -45,7 +44,6 @@ public class PlotterApp
     //Main method
     public static void main(String[] args)
     {
-        String favouredLookAndFeel = MainApplication.getFavouredLookAndFeel();
         try
         {
            // UIManager.setLookAndFeel(favouredLookAndFeel);
