@@ -21,7 +21,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Dialog for options when importing NEURON hoc/nrn files
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

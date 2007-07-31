@@ -20,7 +20,7 @@ import ucl.physiol.neuroconstruct.project.Project;
  * Base class for all Cell Mechanisms (Abstract or ChannelML)
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public abstract class CellMechanism

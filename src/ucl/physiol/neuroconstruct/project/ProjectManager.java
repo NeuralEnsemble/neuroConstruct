@@ -42,7 +42,7 @@ import ucl.physiol.neuroconstruct.neuroml.*;
  * via the command line interface
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class ProjectManager

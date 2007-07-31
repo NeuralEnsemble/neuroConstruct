@@ -19,7 +19,7 @@ import java.util.*;
  * Provides information on available morphological compartmentalisations
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  *
  */
 

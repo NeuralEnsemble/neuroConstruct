@@ -28,7 +28,7 @@ import ucl.physiol.neuroconstruct.utils.equation.*;
  * Dialog for new network connection based on xonal arbourisations
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

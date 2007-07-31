@@ -30,7 +30,7 @@ import ucl.physiol.neuroconstruct.utils.xml.*;
  * Generates the hoc file for a specific cell template
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class NeuronTemplateGenerator

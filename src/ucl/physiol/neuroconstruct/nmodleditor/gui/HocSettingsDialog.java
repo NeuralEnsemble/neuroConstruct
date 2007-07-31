@@ -27,7 +27,7 @@ import ucl.physiol.neuroconstruct.gui.*;
  * nmodlEditor application software
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

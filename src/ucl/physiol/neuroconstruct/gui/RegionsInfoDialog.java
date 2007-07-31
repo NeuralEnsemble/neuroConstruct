@@ -26,7 +26,7 @@ import javax.swing.event.*;
  * Dialog to specify Region parameters
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

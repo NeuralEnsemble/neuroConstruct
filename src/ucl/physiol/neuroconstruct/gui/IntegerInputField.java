@@ -20,7 +20,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Extension of JFormattedTextField for simplified input of integer values in a text field
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

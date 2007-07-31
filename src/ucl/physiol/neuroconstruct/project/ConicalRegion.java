@@ -27,7 +27,7 @@ import java.awt.*;
  * Extension of Regions in 3D
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class ConicalRegion extends Region

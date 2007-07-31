@@ -24,7 +24,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Morphological projection/compartmentalisations for test purposes only. Will not produce a cell with similar behaviour
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  *
  */
 

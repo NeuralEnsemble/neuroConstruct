@@ -19,7 +19,7 @@ import java.util.EventListener;
  * during rerun of simulations
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public interface VoltageEventListener extends EventListener

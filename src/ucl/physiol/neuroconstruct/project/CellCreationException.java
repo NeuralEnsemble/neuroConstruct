@@ -16,7 +16,7 @@ package ucl.physiol.neuroconstruct.project;
  * Exception when trying to create new cells
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class CellCreationException extends Exception

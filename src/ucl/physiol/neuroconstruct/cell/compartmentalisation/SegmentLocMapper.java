@@ -23,7 +23,7 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
  * cell to its recompartmentalised counterpart.
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  * @see     SegmentRange
  *
  */

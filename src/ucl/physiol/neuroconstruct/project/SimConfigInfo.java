@@ -20,7 +20,7 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
  * default sim config
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class SimConfigInfo

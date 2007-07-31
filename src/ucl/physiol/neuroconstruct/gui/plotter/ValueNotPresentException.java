@@ -16,7 +16,7 @@ package ucl.physiol.neuroconstruct.gui.plotter;
  * Exception thrown when a value is not present
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class ValueNotPresentException extends Exception

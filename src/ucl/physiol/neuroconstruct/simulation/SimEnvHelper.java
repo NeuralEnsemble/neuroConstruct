@@ -18,7 +18,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * A helper class for getting info on the simulation environments
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class SimEnvHelper

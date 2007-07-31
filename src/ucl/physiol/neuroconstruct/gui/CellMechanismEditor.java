@@ -30,7 +30,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Dialog for creating and editing the older, non ChannelML cell mechs..
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

@@ -28,7 +28,7 @@ import ucl.physiol.neuroconstruct.cell.examples.*;
  * Dialog for editing section groups in cells
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class EditGroupsDialog

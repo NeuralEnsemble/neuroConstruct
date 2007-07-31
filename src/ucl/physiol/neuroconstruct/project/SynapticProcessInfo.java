@@ -22,7 +22,7 @@ import ucl.physiol.neuroconstruct.nmodleditor.modfile.*;
  * Extension of AbstractTableModel for storing Synapse info
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class SynapticProcessInfo extends AbstractTableModel

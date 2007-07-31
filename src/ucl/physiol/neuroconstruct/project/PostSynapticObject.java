@@ -19,7 +19,7 @@ package ucl.physiol.neuroconstruct.project;
  * on a section in Neuron.
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class PostSynapticObject

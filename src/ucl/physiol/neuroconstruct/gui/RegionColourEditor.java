@@ -22,7 +22,7 @@ import javax.swing.table.*;
  * Implementation of AbstractCellEditor for region colour column
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

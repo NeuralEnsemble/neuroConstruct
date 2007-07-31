@@ -28,7 +28,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * Frame for viewing simple HTML files or XML files with XSL creating HTML
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 @SuppressWarnings("serial")

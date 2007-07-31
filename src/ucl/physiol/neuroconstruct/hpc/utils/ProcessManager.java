@@ -19,7 +19,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Simple class for spawning external processes
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

@@ -17,7 +17,7 @@
   * Location of a synaptic endpoint on an axonal section
   *
   * @author Padraig Gleeson
-  * @version 1.0.3
+  * @version 1.0.4
   *
   */
 

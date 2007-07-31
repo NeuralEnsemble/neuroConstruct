@@ -24,7 +24,7 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
  * Frame for displaying the 3D model at maximum size
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class FullScreen3D extends JFrame

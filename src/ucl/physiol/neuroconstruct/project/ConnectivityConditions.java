@@ -19,7 +19,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * can be connected to by source cells, and vice versa
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

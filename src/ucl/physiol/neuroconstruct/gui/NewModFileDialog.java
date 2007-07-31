@@ -24,7 +24,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * Dialog for creating new Synapse types
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

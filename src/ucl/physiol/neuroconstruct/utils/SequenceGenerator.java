@@ -18,7 +18,7 @@ package ucl.physiol.neuroconstruct.utils;
  * Generates a fixed set of numbers in a sequence
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class SequenceGenerator

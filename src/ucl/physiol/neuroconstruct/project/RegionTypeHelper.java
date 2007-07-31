@@ -20,7 +20,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Helper class for getting list of Region types
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class RegionTypeHelper

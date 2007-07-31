@@ -24,7 +24,7 @@ import ucl.physiol.neuroconstruct.nmodleditor.gui.*;
  * nmodlEditor application software. The main class representing a *.mod file
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class ModFile implements ModFileChangeListener

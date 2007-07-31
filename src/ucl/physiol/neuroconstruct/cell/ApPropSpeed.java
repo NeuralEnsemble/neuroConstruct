@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
   * might be most suitable because of the difficulty in obtaining data on axons.
   *
   * @author Padraig Gleeson
-  * @version 1.0.3
+  * @version 1.0.4
   *
   */
 

@@ -28,7 +28,7 @@ import javax.xml.parsers.SAXParserFactory;
  * MorphML file Reader. Importer of MorphML files to neuroConstruct format using SAX
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class MorphMLReader extends XMLFilterImpl

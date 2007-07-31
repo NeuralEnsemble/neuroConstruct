@@ -19,7 +19,7 @@ import ucl.physiol.neuroconstruct.utils.NumberGenerator;
  * Settings specifically for single NetStim/randomspike like stimulation
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

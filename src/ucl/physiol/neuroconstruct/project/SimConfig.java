@@ -20,7 +20,7 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
  * specified whenever the network is generated
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

@@ -17,7 +17,7 @@ package ucl.physiol.neuroconstruct.utils;
  * A number of settings required from the user
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class ReplaySettings

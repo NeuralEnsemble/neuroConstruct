@@ -21,7 +21,7 @@ import ucl.physiol.neuroconstruct.simulation.*;
  * Extension of AbstractTableModel for storing info on electrophysiological inputs
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 @SuppressWarnings("serial")

@@ -21,7 +21,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * GUI element to allow easy linking between neuroConstruct tabs
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 @SuppressWarnings("serial")

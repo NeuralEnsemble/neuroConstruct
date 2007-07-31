@@ -20,7 +20,7 @@ import java.util.*;
  * Extension of AbstractTableModel for storing info on what plots to show during a simulation
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 @SuppressWarnings("serial")

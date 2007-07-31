@@ -18,7 +18,7 @@ import java.util.*;
  * Support for interacting with MPI platform
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class MpiConfiguration

@@ -20,7 +20,7 @@ import java.text.*;
  * scheme for dealing with units
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class PhysicalQuantity

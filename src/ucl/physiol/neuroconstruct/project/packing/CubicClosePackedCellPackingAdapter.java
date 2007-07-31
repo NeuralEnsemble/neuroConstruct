@@ -26,7 +26,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * <p>http://www.tg.rim.or.jp/~kanai/chemistry/cry3d-e.htm</p>
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class CubicClosePackedCellPackingAdapter extends CellPackingAdapter

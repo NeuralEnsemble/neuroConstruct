@@ -20,7 +20,7 @@ import java.util.*;
  * deprecated. Any extra functionality incorporated into SimpleNetworkConnectionsInfo
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 @SuppressWarnings("serial")

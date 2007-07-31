@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.utils.*;
   * extra information describing the cell, including biophysical information.
   *
   * @author Padraig Gleeson
-  * @version 1.0.3
+  * @version 1.0.4
   *
   */
 

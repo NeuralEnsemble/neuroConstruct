@@ -18,7 +18,7 @@ package ucl.physiol.neuroconstruct.neuroml;
  * MorphML file format. Defines tags needed in MorphML files...
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class MorphMLConstants

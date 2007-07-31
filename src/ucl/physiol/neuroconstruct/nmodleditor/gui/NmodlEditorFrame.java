@@ -31,7 +31,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * nmodlEditor application software. Main Frame of application
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

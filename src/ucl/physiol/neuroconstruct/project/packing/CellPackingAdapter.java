@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * The main function which needs to be overridden is generateNextPosition()
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public abstract class CellPackingAdapter

@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.hpc.mpi.*;
  * Storing of general properties associated with the application
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 
@@ -43,7 +43,7 @@ public class GeneralProperties
 
 
     /** This is changed automatically by Ant. Look in build.xml...*/
-    private static final String versionNumber = "1.0.3";
+    private static final String versionNumber = "1.0.4";
 
     private static final String neuroMLVersionNumberShort = "1.6";
     private static final String neuroMLVersionNumberLong = "1.6";

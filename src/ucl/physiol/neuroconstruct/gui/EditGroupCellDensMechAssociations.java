@@ -33,7 +33,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
  * Dialog for editing which channel mechanisms are associated with which groups
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class EditGroupCellDensMechAssociations extends JDialog implements ListSelectionListener

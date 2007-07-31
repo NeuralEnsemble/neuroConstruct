@@ -23,7 +23,7 @@ import ucl.physiol.neuroconstruct.utils.xml.*;
  * ChannelML file format. Defines tags needed in ChannelML files...
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class ChannelMLConstants

@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.utils.xml.*;
  * is pressed
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class GeneratedCellPositions

@@ -17,7 +17,7 @@ package ucl.physiol.neuroconstruct.project.cellchoice;
  * Can be thrown by CellChooser subclass
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

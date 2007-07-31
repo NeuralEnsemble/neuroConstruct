@@ -22,7 +22,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * Any number of these can be generated from a single NumberGenerator
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 @SuppressWarnings("serial")

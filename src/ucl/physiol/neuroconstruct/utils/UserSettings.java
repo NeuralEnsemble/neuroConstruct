@@ -21,7 +21,7 @@ import ucl.physiol.neuroconstruct.project.ProjectStructure;
  * A number of settings required from the user
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class UserSettings

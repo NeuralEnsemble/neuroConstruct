@@ -10,7 +10,7 @@ import java.awt.event.*;
  * Dialog for specifying parameters for sequence generator
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

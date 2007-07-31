@@ -16,7 +16,7 @@ package ucl.physiol.neuroconstruct.simulation;
  * Exception when dealing with data from a Neuron simulation
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 @SuppressWarnings("serial")

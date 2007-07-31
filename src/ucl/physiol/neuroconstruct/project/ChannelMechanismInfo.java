@@ -22,7 +22,7 @@ import ucl.physiol.neuroconstruct.nmodleditor.modfile.*;
  * Extension of AbstractTableModel for storing Channel Mechanism info
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class ChannelMechanismInfo extends AbstractTableModel

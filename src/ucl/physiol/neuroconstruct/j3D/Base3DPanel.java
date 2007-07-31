@@ -23,7 +23,7 @@ import com.sun.j3d.utils.geometry.*;
  * couldn't be opened in JBuilder if it was...
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class Base3DPanel extends Panel

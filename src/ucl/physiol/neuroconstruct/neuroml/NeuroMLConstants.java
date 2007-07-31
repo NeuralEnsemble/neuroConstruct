@@ -18,7 +18,7 @@ package ucl.physiol.neuroconstruct.neuroml;
  * NeuroML constants. Defines tags needed in NeuroML files...
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class NeuroMLConstants

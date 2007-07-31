@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * NetworkML file Reader. Importer of NetworkML files to neuroConstruct format using SAX
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class NetworkMLReader extends XMLFilterImpl

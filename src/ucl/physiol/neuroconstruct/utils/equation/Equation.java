@@ -21,7 +21,7 @@ import ucl.physiol.neuroconstruct.gui.plotter.*;
  * Helper class for parsing equations
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class Equation

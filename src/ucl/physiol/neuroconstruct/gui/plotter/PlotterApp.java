@@ -19,7 +19,7 @@ import ucl.physiol.neuroconstruct.gui.*;
  * Application for popping up a graph of a vector of points
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

@@ -22,7 +22,7 @@ import ucl.physiol.neuroconstruct.simulation.SimEnvHelper;
  * Cell Mechanism representing a HH channel on the membrane
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  *
  * @deprecated Use ChannelML instead...
  *

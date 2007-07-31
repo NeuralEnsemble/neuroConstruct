@@ -16,7 +16,7 @@ package ucl.physiol.neuroconstruct.dataset;
  * Exception thrown when there is a problem with a Data Set
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 @SuppressWarnings("serial")

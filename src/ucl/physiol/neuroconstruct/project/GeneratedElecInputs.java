@@ -24,7 +24,7 @@ import ucl.physiol.neuroconstruct.project.stimulation.*;
  * cell positions... button is pressed
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class GeneratedElecInputs

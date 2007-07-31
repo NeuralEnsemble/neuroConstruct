@@ -23,7 +23,7 @@ import java.util.*;
  * Implementation of AbstractCellEditor for generic list of int->String combos
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

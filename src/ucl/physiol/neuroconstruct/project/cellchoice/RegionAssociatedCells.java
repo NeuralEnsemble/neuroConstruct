@@ -23,7 +23,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * a specific region will be chosen
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class RegionAssociatedCells extends CellChooser

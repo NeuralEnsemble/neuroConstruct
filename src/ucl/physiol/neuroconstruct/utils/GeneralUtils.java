@@ -23,7 +23,7 @@ import javax.swing.*;
  * Assorted handy utilities
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

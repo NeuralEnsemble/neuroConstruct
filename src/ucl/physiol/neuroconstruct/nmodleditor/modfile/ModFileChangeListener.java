@@ -18,7 +18,7 @@ import java.util.*;
  * nmodlEditor application software. Interface for elements of Mod File to inform parent of change in data
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

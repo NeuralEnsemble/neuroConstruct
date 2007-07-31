@@ -22,7 +22,7 @@ import javax.vecmath.*;
  * Thread to handle generation of the cell positions based on the project settings
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

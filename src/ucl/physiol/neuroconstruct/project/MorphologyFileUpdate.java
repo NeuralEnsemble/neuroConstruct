@@ -23,7 +23,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Class used to update morphology files when there is a change in the names of classes/fields used
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class MorphologyFileUpdate

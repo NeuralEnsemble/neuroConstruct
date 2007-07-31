@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * Starts the main neuroConstruct application
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

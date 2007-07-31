@@ -31,7 +31,7 @@ import ucl.physiol.neuroconstruct.utils.XMLUtils;
  * Class for handling XML stored info on interesting plots for Cell Mechanism
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class CellMechanismPlotInfo

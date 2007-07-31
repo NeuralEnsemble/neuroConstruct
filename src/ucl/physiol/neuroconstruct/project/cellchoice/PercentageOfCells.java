@@ -24,7 +24,7 @@ import ucl.physiol.neuroconstruct.project.InternalStringFloatParameter;
  * in the Cell Group will be chosen at random.
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class PercentageOfCells extends CellChooser

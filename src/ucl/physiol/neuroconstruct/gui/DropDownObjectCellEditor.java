@@ -24,7 +24,7 @@ import java.util.*;
  * Object should have good toString implemented
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

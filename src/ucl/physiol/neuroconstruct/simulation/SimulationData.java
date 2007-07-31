@@ -24,7 +24,7 @@ import ucl.physiol.neuroconstruct.project.PostSynapticObject;
  * Class which stores all the data from a simulation, including references to data files
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class SimulationData

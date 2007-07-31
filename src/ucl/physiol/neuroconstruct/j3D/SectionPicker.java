@@ -23,7 +23,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Extension of PickMouseBehavior to allow sections to be picked in the 3D Panels
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

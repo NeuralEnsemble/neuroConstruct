@@ -18,7 +18,7 @@ import java.util.*;
  * Simple logging facility
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class ClassLogger

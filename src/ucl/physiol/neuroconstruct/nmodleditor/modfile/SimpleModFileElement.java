@@ -18,7 +18,7 @@ import java.util.*;
  * nmodlEditor application software
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

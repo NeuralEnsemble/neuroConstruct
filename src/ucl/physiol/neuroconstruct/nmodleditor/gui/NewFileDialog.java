@@ -24,7 +24,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * nmodlEditor application software
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 @SuppressWarnings("serial")

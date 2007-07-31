@@ -26,7 +26,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Dialog for creating new or editing existing Cell Groups
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

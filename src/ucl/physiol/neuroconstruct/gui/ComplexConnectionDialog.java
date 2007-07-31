@@ -26,7 +26,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Dialog for new Complex network connection
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

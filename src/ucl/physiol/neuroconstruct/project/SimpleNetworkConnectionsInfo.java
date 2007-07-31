@@ -23,7 +23,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Info
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class SimpleNetworkConnectionsInfo extends AbstractTableModel

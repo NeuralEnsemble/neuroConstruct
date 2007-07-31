@@ -24,7 +24,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * in each PlotFrame.
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

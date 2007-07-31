@@ -26,7 +26,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Simple Dialog for editing points in Data Set
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 @SuppressWarnings("serial")

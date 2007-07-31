@@ -17,7 +17,7 @@ package ucl.physiol.neuroconstruct.mechanisms;
  * Class for specifying a ChannelML related Exception
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class ChannelMLException extends CellMechanismException

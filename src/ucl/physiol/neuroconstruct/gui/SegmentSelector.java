@@ -30,7 +30,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Dialog for selecting and viewing properties of segments
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

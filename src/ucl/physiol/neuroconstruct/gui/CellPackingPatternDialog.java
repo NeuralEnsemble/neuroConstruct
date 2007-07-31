@@ -26,7 +26,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * Dialog to specify Cell packing parameters
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

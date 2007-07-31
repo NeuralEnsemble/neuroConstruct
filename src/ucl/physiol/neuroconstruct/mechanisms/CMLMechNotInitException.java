@@ -17,7 +17,7 @@ package ucl.physiol.neuroconstruct.mechanisms;
  * Class for specifying when a ChannelML Mechanism is not initialised
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class CMLMechNotInitException extends ChannelMLException

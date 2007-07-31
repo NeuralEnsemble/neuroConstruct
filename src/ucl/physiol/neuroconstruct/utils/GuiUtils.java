@@ -19,7 +19,7 @@ import javax.swing.*;
  * Some helper stuff for the GUIs
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

@@ -22,7 +22,7 @@ import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
  * Storing of various properties related to how the cells should be displayed in 3D
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

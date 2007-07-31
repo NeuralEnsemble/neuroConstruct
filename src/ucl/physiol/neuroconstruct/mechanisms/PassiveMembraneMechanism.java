@@ -23,7 +23,7 @@ import ucl.physiol.neuroconstruct.simulation.SimEnvHelper;
  * Cell Mechanism representing a leaky membrane
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  *
  *
  */

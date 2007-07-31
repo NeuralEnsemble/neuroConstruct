@@ -31,7 +31,7 @@ import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
  * Convenient as it helps keep Cell class simpler
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  *
  */
 

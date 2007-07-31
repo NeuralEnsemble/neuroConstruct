@@ -16,7 +16,7 @@ package ucl.physiol.neuroconstruct.project;
  * Class containing basic information about the project
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class BasicProjectInfo

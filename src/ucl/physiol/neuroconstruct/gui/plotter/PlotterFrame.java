@@ -32,7 +32,7 @@ import ucl.physiol.neuroconstruct.utils.equation.*;
  * Main frame of application for popping up a graph of a vector of points
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class PlotterFrame extends JFrame

@@ -34,7 +34,7 @@ import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
  * Main file for generating the script files for NEURON
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 

@@ -20,7 +20,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * A lot of the maths taken from http://mathworld.wolfram.com/ConicalFrustum.html
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class CompartmentHelper

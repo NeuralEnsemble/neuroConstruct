@@ -23,7 +23,7 @@ import ucl.physiol.neuroconstruct.utils.SequenceGenerator;
  * reference this class...
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 public class IClampSettings extends StimulationSettings

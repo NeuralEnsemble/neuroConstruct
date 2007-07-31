@@ -17,7 +17,7 @@ package ucl.physiol.neuroconstruct.project;
  * Spec of a single electrical input
  *
  * @author Padraig Gleeson
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 
