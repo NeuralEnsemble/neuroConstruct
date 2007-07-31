@@ -154,7 +154,7 @@ public class Logger
             if (GeneralProperties.getLogFileSaveToFilePolicy()
                 && initialSaveToFileState)
             {
-                myLogFileWriter.write(comment + "\n");
+                myLogFileWriter.write(comment + "\r\n");
                 myLogFileWriter.flush();
             }
         }

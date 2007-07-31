@@ -614,7 +614,9 @@ public class GeneralUtils
         if (GeneralUtils.isWindowsBasedPlatform())
         {
             boolean canFix = true;
-                    logger.logComment("filename : " + winPath, true);
+                    
+            logger.logComment("filename : " + winPath);
+            
             // Can catch spaces if a dir is called c:\Padraig Gleeson and change it to c:\Padrai~1
             while (winPath.indexOf(" ") > 0 && canFix)
             {
@@ -625,14 +627,14 @@ public class GeneralUtils
 
                 String spacedWord = winPath.substring(prevSlash + 1, nextSlash);
 
-                logger.logComment("spacedWord: " + spacedWord, true);
+                logger.logComment("spacedWord: " + spacedWord);
 
                 if (spacedWord.indexOf(" ") < 6) canFix = false;
                 else
                 {
                     String shortened = spacedWord.substring(0, 6) + "~1";
                     winPath = GeneralUtils.replaceAllTokens(winPath, spacedWord, shortened);
-                    logger.logComment("filename now: " + winPath, true);
+                    logger.logComment("filename now: " + winPath);
                 }
             }
         }

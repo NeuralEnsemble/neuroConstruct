@@ -93,6 +93,11 @@ public class Display3DProperties
         this.displayOption = dendriteDisplayOption;
         this.transparency = transparency;
     }
+    
+    public String toString()
+    {
+    	return "Display3DProperties: backgroundColour3D: "+backgroundColour3D+", displayOption: "+displayOption;
+    }
 
 
 
@@ -213,6 +218,7 @@ public class Display3DProperties
      */
     public String getDisplayOption()
     {
+    	if (displayOption== null) displayOption = DISPLAY_SOMA_NEURITE_SOLID;
         return displayOption;
     }
 

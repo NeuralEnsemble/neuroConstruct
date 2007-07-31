@@ -259,6 +259,8 @@ public class OneCell3D
      */
     public boolean shiny()
     {
+
+        logger.logComment("proj3Dproperties: "+ project.proj3Dproperties);
         return
             !project.proj3Dproperties.getDisplayOption().equals(Display3DProperties.DISPLAY_SOMA_NEURITE_SOLID_UNSHINY);
     }

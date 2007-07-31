@@ -31,6 +31,8 @@ import ucl.physiol.neuroconstruct.project.*;
  * @version 1.0.3
  */
 
+@SuppressWarnings("serial")
+
 public class HelpFrame extends JFrame implements HyperlinkListener
 {
     private static ClassLogger logger = new ClassLogger("HelpFrame");
@@ -424,7 +426,7 @@ public class HelpFrame extends JFrame implements HyperlinkListener
 
                 try
                 {
-                    Process currentProcess = rt.exec(command);
+                    rt.exec(command);
 
                     logger.logComment("Have successfully executed command: " + command);
 

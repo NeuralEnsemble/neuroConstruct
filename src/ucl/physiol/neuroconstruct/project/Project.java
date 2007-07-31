@@ -833,7 +833,7 @@ public class Project implements TableModelListener
         ///synapticProcessInfo = new SynapticProcessInfo();
         ///channelMechanismInfo = new ChannelMechanismInfo();
 
-        File projNeuronCodeDir = ProjectStructure.getNeuronCodeDir(getProjectMainDirectory());
+        //File projNeuronCodeDir = ProjectStructure.getNeuronCodeDir(getProjectMainDirectory());
 
         ///synapticProcessInfo.setDirectories(projNeuronCodeDir,
         //                                   ProjectStructure.getModTemplatesDir());

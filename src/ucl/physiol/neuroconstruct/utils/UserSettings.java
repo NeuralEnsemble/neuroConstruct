@@ -56,10 +56,10 @@ public class UserSettings
 	{
     	if (nCProjectsDir == null)
     	{
-            logger.logComment("Getting new nCprojectsDir...", true);
+            logger.logComment("Getting new nCprojectsDir...");
     		nCProjectsDir = ProjectStructure.getDefaultnCProjectsDir().getAbsolutePath();
     	}
-        logger.logComment("Returning nCprojectsDir as: "+ nCProjectsDir, true);
+        logger.logComment("Returning nCprojectsDir as: "+ nCProjectsDir);
         return nCProjectsDir;
     }
 

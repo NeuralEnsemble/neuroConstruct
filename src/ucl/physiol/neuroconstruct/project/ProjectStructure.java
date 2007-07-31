@@ -388,7 +388,7 @@ public class ProjectStructure
                                    true);
         
 
-        logger.logComment("Just defined nCprojectsDir: "+ dir, true);
+        logger.logComment("Just defined nCprojectsDir: "+ dir);
 
         return dir;
 

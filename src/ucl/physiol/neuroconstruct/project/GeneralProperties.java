@@ -98,6 +98,7 @@ public class GeneralProperties
         GeneralProperties.loadFromSettingsFile();
         //System.out.println("Neuron home: "+userSettings.getNeuronHome());
         
+        
         if (userSettings.getNeuronHome()==null)
         {
         	if (GeneralUtils.isWindowsBasedPlatform())
@@ -141,7 +142,6 @@ public class GeneralProperties
         }
 
         //userSettings.setFormatForSavingMorphologies(UserSettings.JAVAXML_FORMAT);
-
 
     }
 
@@ -204,8 +204,6 @@ public class GeneralProperties
 
         /* -- Writing User Settings -- */
         xmlEncoder.writeObject(userSettings);
-        
-        System.out.println("def: "+ userSettings.getNCProjectsDir());
 
         /* -- Writing Replay Settings -- */
         xmlEncoder.writeObject(replaySettings);
@@ -680,6 +678,7 @@ public class GeneralProperties
      */
     public static String getDefaultDisplayOption()
     {
+        
         return defaultDisplay3DProps.getDisplayOption();
     }
 

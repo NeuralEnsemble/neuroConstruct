@@ -282,6 +282,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JLabel jLabelSimSummary = new JLabel();
     JPanel jPanelCellTypeInfo = new JPanel();
     JButton jButton3DSettings = new JButton();
+    JButton jButton3DHelp = new JButton();
+    
+    
     JButton jButtonNeuronView = new JButton();
     JPanel jPanelSimStorage = new JPanel();
     JLabel jLabelSimRef = new JLabel();
@@ -2091,9 +2094,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelMainInfo.setLayout(gridBagLayout2);
 
         jPanelMainInfo.setBorder(BorderFactory.createEtchedBorder());
-        jPanelMainInfo.setMaximumSize(new Dimension(800, 470));
-        jPanelMainInfo.setMinimumSize(new Dimension(800, 470));
-        jPanelMainInfo.setPreferredSize(new Dimension(800, 470));
+        
+        //jPanelMainInfo.setMaximumSize(new Dimension(850, 470));
+        jPanelMainInfo.setMinimumSize(new Dimension(850, 470));
+        jPanelMainInfo.setPreferredSize(new Dimension(850, 470));
+        
+        
         //jScrollPaneProjDesc.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         jScrollPaneProjDesc.setMaximumSize(new Dimension(100, 100));
@@ -2160,6 +2166,18 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jButton3DSettings_actionPerformed(e);
             }
         });
+        
+        jButton3DHelp.setText("?");
+        
+
+        jButton3DHelp.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButton3DHelp_actionPerformed(e);
+            }
+        });
+        
         jButtonNeuronView.setEnabled(false);
         jButtonNeuronView.setText("View:");
         jButtonNeuronView.addActionListener(new java.awt.event.ActionListener()
@@ -2815,65 +2833,86 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelCellGroupButtons.add(jButtonCellGroupsEdit, null);
         jPanelCellGroupButtons.add(jButtonCellGroupsDelete, null);
 
-        jPanelProjInfo.add(jLabelTitle, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
-            , GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(25, 0, 0, 0), 0, 0));
+        
+        
+        jPanelProjInfo.add(jLabelTitle, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, 
+        		GridBagConstraints.CENTER, GridBagConstraints.NONE, 
+        		new Insets(25, 0, 0, 0), 0, 0));
 
-        jPanelProjInfo.add(jPanelMainInfo,    new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
-            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 34));
+        jPanelProjInfo.add(jPanelMainInfo,    new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0,
+        		GridBagConstraints.CENTER, GridBagConstraints.NONE, 
+        		new Insets(0, 0, 0, 0), 0, 0));
+        
+        
 
-        jPanelMainInfo.add(jLabelName,     new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 20, 6, 0), 0, 0));
+        jPanelMainInfo.add(jLabelName,     new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+        		GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 20, 6, 0), 0, 0));
+        
         jPanelMainInfo.add(jTextFieldProjName,      new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0
             ,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 6, 20), 0, 0));
+        
+        
+        
         jPanelMainInfo.add(jLabelProjDescription,    new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 20, 0, 0), 77, 70));
-
-        //jPanelMainInfo.add(jTextAreaProjDescription,    new GridBagConstraints(1, 1, 1, 1, 1.0, 1.0
-        //   ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(12, 0, 12, 0), 0, 0));
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 20, 0, 0), 0, 0));
 
         jPanelMainInfo.add(jScrollPaneProjDesc,              new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 0, 6, 0), 438,100));
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 0, 6, 0), 550,80));
 
 
 
 
-        jPanelMainInfo.add(jLabelMainNumCells, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
-                                                                      , GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                                                      new Insets(6, 20, 6, 0), 0, 0));
+        jPanelMainInfo.add(jLabelMainNumCells, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,	 
+        		GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 20, 6, 0), 0, 0));
 
-        jPanelMainInfo.add(jLabelNumCellGroups, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
-                                                                       , GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                                                       new Insets(6, 20, 6, 0), 0, 0));
-
-        jPanelMainInfo.add(jLabelSimConfigs, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
-                                                                    , GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                                                    new Insets(6, 20, 6, 0), 0, 0));
+        jPanelMainInfo.add(jLabelNumCellGroups, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, 
+        		GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 20, 6, 0), 0, 0));
 
 
 
-        jPanelCellClicks.setBorder(BorderFactory.createEtchedBorder());
 
-        jPanelMainInfo.add(this.jPanelCellClicks, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0
-                                                                      , GridBagConstraints.WEST,
-                                                                      GridBagConstraints.HORIZONTAL, new Insets(6, 0, 6, 20),
-                                                                      0, 0));
+        jPanelMainInfo.add(this.jPanelCellClicks, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, 
+        		GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 6, 20), 0, 0));
+
+
+        jPanelMainInfo.add(jPanelCellGroupClicks, new GridBagConstraints(2, 3, 1, 1, 1.0, 0.0, 
+        		GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 6, 20), 0, 0));
+        
+        
+
+
+        jPanelMainInfo.add(jLabelSimConfigs, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, 	
+        		GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 20, 6, 6), 0, 0));
+        
+        jPanelMainInfo.add(jPanelSimConfigClicks, new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0, 
+        		GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 6, 20), 0, 0));
+        
+        
+
+        jPanelMainInfo.add(jLabelProjFileVersion,     new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 20, 6, 0), 0, 0));
+        
+        jPanelMainInfo.add(jTextFieldProjFileVersion,       new GridBagConstraints(2, 5, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 6, 20), 0, 0));
+        
+        
+        
+        jPanelMainInfo.add(jLabelMainLastModified,  new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 20, 0, 0), 0, 0));
+        
+        jPanelMainInfo.add(jTextFieldMainLastModified,   new GridBagConstraints(2, 6, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 0, 20), 0, 0));
+
+
+
 
         jPanelCellGroupClicks.setBorder(BorderFactory.createEtchedBorder());
-
-        jPanelMainInfo.add(jPanelCellGroupClicks, new GridBagConstraints(2, 3, 1, 1, 1.0, 0.0
-                                                                        , GridBagConstraints.WEST,
-                                                                        GridBagConstraints.HORIZONTAL,
-                                                                        new Insets(6, 0, 6, 20), 0, 0));
-
-
+        
+        
         this.jPanelSimConfigClicks.setBorder(BorderFactory.createEtchedBorder());
-        jPanelMainInfo.add(jPanelSimConfigClicks, new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0
-                                                                         , GridBagConstraints.CENTER,
-                                                                         GridBagConstraints.HORIZONTAL,
-                                                                         new Insets(6, 0, 6, 20), 0, 0));
-
-
-
+        jPanelCellClicks.setBorder(BorderFactory.createEtchedBorder());
+        
+        
         //jScrollPaneProjDesc.setViewportView(jTextAreaProjDescription);
 
         //jPanel1.add(jComboBox1, null);
@@ -2884,6 +2923,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanel3DButtons.add(jComboBoxView3DChoice, null);
         jPanel3DButtons.add(jButton3DDestroy, null);
         jPanel3DButtons.add(jButton3DSettings, null);
+        jPanel3DButtons.add(jButton3DHelp, null);
 
         jPanel3DButtons.add(new JLabel("         "), null);
 
@@ -2998,12 +3038,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
 
-        jPanelMainInfo.add(jLabelProjFileVersion,     new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 20, 6, 0), 0, 0));
-        jPanelMainInfo.add(jTextFieldProjFileVersion,       new GridBagConstraints(2, 5, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 6, 20), 0, 0));
-        jPanelMainInfo.add(jLabelMainLastModified,  new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 20, 0, 0), 0, 0));
         jPanelNetSetAA.add(jPanelNetSetAAControls,  BorderLayout.NORTH);
         jPanelNetSetAAControls.add(jLabelNetSetAA,  BorderLayout.NORTH);
         jPanelNetSetAA.add(jPanelNetSetAATable, BorderLayout.CENTER);
@@ -3022,8 +3056,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelCellTypeManageNumbers.add(jButtonCellTypeCompare, null);
 
         jPanelCellTypeManageNumbers.add(jButtonCellTypeCopy, null);
-        jPanelMainInfo.add(jTextFieldMainLastModified,   new GridBagConstraints(2, 6, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 0, 20), 0, 0));
+        
         jPanelGenesisButtons.add(jButtonGenesisGenerate, null);
         jPanelGenesisButtons.add(jButtonGenesisView, null);
         jPanelGenesisButtons.add(jComboBoxGenesisFiles, null);
@@ -7029,88 +7062,120 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
             jPanelCellClicks.removeAll();
+
+            int leftToDo = 9;
             for (Cell cell: projManager.getCurrentProject().cellManager.getAllCells())
             {
-                ClickLink cl = new ClickLink(cell.getInstanceName(), cell.getCellDescription());
-                this.jPanelCellClicks.add(cl);
 
-
-                cl.addMouseListener(new MouseListener()
-                {
-                    //String cellGroup = cellGroup;
-                    public void mouseClicked(MouseEvent e)
-                    {
-
-                        jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(CELL_TYPES_TAB));
-
-                        String clicked = e.getComponent().getName();
-
-                        Cell clickedCell = projManager.getCurrentProject().cellManager.getCell(clicked);
-
-                        jComboBoxCellTypes.setSelectedItem(clickedCell);
-
-                      //  logger.logComment("Name: "+ clicked, true);
-                      //  int index = projManager.getCurrentProject().cellGroupsInfo.getAllCellGroupNames().indexOf(clicked);
-                      //  jTableCellGroups.setRowSelectionInterval(index, index);
-
-                        //System.out.println("mouseClicked");
-                        //setText("Ouch");
-                    };
-
-                    public void mousePressed(MouseEvent e)
-                    {};
-
-                    public void mouseReleased(MouseEvent e)
-                    {};
-
-                    public void mouseEntered(MouseEvent e)
-                    {};
-
-                    public void mouseExited(MouseEvent e)
-                    {};
-
-                });
+            	String linkText = cell.getInstanceName();
+            	String tip = cell.getCellDescription();
+            	
+            	if (leftToDo == 0)
+            	{
+            		linkText = "(See all Cells...)";
+            		tip = "Click to view list of all Cells";
+            	}
+            	
+            	if (leftToDo>=0)
+            	{
+	                ClickLink cl = new ClickLink(linkText, tip);
+	                this.jPanelCellClicks.add(cl);
+	
+	
+	                cl.addMouseListener(new MouseListener()
+	                {
+	                    //String cellGroup = cellGroup;
+	                    public void mouseClicked(MouseEvent e)
+	                    {
+	
+	                        jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(CELL_TYPES_TAB));
+	
+	                        String clicked = e.getComponent().getName();
+	
+	                        Cell clickedCell = projManager.getCurrentProject().cellManager.getCell(clicked);
+	
+	                        jComboBoxCellTypes.setSelectedItem(clickedCell);
+	
+	                      //  logger.logComment("Name: "+ clicked, true);
+	                      //  int index = projManager.getCurrentProject().cellGroupsInfo.getAllCellGroupNames().indexOf(clicked);
+	                      //  jTableCellGroups.setRowSelectionInterval(index, index);
+	
+	                        //System.out.println("mouseClicked");
+	                        //setText("Ouch");
+	                    };
+	
+	                    public void mousePressed(MouseEvent e)
+	                    {};
+	
+	                    public void mouseReleased(MouseEvent e)
+	                    {};
+	
+	                    public void mouseEntered(MouseEvent e)
+	                    {};
+	
+	                    public void mouseExited(MouseEvent e)
+	                    {};
+	
+	                });
+            	}
+            	leftToDo--;
             }
 
             jPanelCellGroupClicks.removeAll();
+            leftToDo = 20;
+            
             for (String cellGroup: projManager.getCurrentProject().cellGroupsInfo.getAllCellGroupNames())
             {
-
-                ClickLink cl = new ClickLink(cellGroup, "Cell Group: "+cellGroup+"<br>"+
-                                             "Cell Type: "+projManager.getCurrentProject().cellGroupsInfo.getCellType(cellGroup));
-                this.jPanelCellGroupClicks.add(cl);
-
-
-                cl.addMouseListener(new MouseListener()
-                {
-                    //String cellGroup = cellGroup;
-                    public void mouseClicked(MouseEvent e)
-                    {
-
-                        jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(CELL_GROUPS_TAB));
-
-                        String clicked = e.getComponent().getName();
-                        logger.logComment("Name: "+ clicked);
-                        int index = projManager.getCurrentProject().cellGroupsInfo.getAllCellGroupNames().indexOf(clicked);
-                        jTableCellGroups.setRowSelectionInterval(index, index);
-
-                        //System.out.println("mouseClicked");
-                        //setText("Ouch");
-                    };
-
-                    public void mousePressed(MouseEvent e)
-                    {};
-
-                    public void mouseReleased(MouseEvent e)
-                    {};
-
-                    public void mouseEntered(MouseEvent e)
-                    {};
-
-                    public void mouseExited(MouseEvent e)
-                    {};
-
-                });
+            	String linkText = cellGroup;
+            	String tip = "Cell Group: "+cellGroup+"<br>"+
+                "Cell Type: "+projManager.getCurrentProject().cellGroupsInfo.getCellType(cellGroup);
+            	
+            	if (leftToDo == 0)
+            	{
+            		linkText = "(See all Cell Groups...)";
+            		tip = "Click to view list of Cell Groups";
+            	}
+            	
+            	if (leftToDo >= 0)
+            	{
+            		
+            		ClickLink cl = new ClickLink(linkText, tip);
+	                this.jPanelCellGroupClicks.add(cl);
+	
+	
+	                cl.addMouseListener(new MouseListener()
+	                {
+	                    //String cellGroup = cellGroup;
+	                    public void mouseClicked(MouseEvent e)
+	                    {
+	
+	                        jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(CELL_GROUPS_TAB));
+	
+	                        String clicked = e.getComponent().getName();
+	                        logger.logComment("Name: "+ clicked);
+	                        int index = projManager.getCurrentProject().cellGroupsInfo.getAllCellGroupNames().indexOf(clicked);
+	                        jTableCellGroups.setRowSelectionInterval(index, index);
+	
+	                        //System.out.println("mouseClicked");
+	                        //setText("Ouch");
+	                    };
+	
+	                    public void mousePressed(MouseEvent e)
+	                    {};
+	
+	                    public void mouseReleased(MouseEvent e)
+	                    {};
+	
+	                    public void mouseEntered(MouseEvent e)
+	                    {};
+	
+	                    public void mouseExited(MouseEvent e)
+	                    {};
+	
+	                });
+            	}
+                
+            	leftToDo--;
             }
 
 
@@ -9223,6 +9288,18 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         this.doOptionsPane(OptionsFrame.THREE_D_PREFERENCES, OptionsFrame.PROJECT_PROPERTIES_MODE);
 
     }
+    
+    void jButton3DHelp_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("Help for 3D requested");
+   
+
+        File f = new File(ProjectStructure.getGlossaryHtmlFile()+"#3D View of Cells");
+
+        showFileInHelpFrame(f);
+        
+
+    }
 
     void jButtonNeuronView_actionPerformed(ActionEvent e)
     {
@@ -10113,34 +10190,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         logger.logComment("Going to show glossary...");
 
         File f = new File(ProjectStructure.getGlossaryHtmlFile());
-        try
-        {
-            HelpFrame simpleViewer = HelpFrame.showFrame(f.toURL(), f.getAbsolutePath(), false);
 
-
-            simpleViewer.setFrameSize(800, 600);
-
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            Dimension frameSize = simpleViewer.getSize();
-
-            if (frameSize.height > screenSize.height)
-                frameSize.height = screenSize.height;
-            if (frameSize.width > screenSize.width)
-                frameSize.width = screenSize.width;
-
-            simpleViewer.setLocation( (screenSize.width - frameSize.width) / 2,
-                                     (screenSize.height - frameSize.height) / 2);
-
-            simpleViewer.setVisible(true);
-
-        }
-        catch(IOException io)
-        {
-            GuiUtils.showErrorMessage(logger, "Problem showing help frame", io, this);
-        }
-
-
-
+        showFileInHelpFrame(f);
 
     }
 
@@ -12083,11 +12134,16 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         logger.logComment("Going to show help menu...");
 
         File f = new File(ProjectStructure.getMainHelpFile());
+        
+        showFileInHelpFrame(f);
+        
+    }
+    
+    private void showFileInHelpFrame(File f)
+    {
         try
         {
             HelpFrame simpleViewer = HelpFrame.showFrame(f.toURL(), f.getAbsolutePath(), false);
-
-            //System.out.println("Created viewer");
 
             simpleViewer.setFrameSize(800, 600);
 

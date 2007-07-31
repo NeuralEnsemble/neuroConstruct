@@ -1535,7 +1535,7 @@ public class NeuronFileManager
 
     public static String getHocFriendlyFilename(String filename)
     {
-        logger.logComment("filename: " + filename, true);
+        logger.logComment("filename: " + filename);
         filename = GeneralUtils.replaceAllTokens(filename, "\\", "/");
 
         filename = GeneralUtils.replaceAllTokens(filename,
@@ -1559,20 +1559,20 @@ public class NeuronFileManager
 
                 String spacedWord = filename.substring(prevSlash+1, nextSlash);
 
-                logger.logComment("spacedWord: " + spacedWord, true);
+                logger.logComment("spacedWord: " + spacedWord);
 
                 if (spacedWord.indexOf(" ")<6) canFix = false;
                 else
                 {
                     String shortened = spacedWord.substring(0,6)+"~1";
                     filename = GeneralUtils.replaceAllTokens(filename, spacedWord, shortened);
-                    logger.logComment("filename now: " + filename, true);
+                    logger.logComment("filename now: " + filename);
                 }
             }
         }
 
 
-        logger.logComment("filename now: " + filename, true);
+        logger.logComment("filename now: " + filename);
 
         return filename;
 
