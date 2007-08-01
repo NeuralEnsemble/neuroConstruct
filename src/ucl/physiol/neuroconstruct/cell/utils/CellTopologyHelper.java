@@ -96,7 +96,7 @@ public class CellTopologyHelper
             return null;
         }
 
-        Vector idsOfPossibleSegments = new Vector();
+        Vector<Integer> idsOfPossibleSegments = new Vector<Integer>();
 
         for (int i = 0; i < allSegments.size(); i++)
         {
@@ -110,7 +110,7 @@ public class CellTopologyHelper
                     {
                         if (!idsOfPossibleSegments.contains(new Integer(dend.getSegmentId())))
                         {
-                            idsOfPossibleSegments.add(new Integer(dend.getSegmentId()));
+                            idsOfPossibleSegments.add(dend.getSegmentId());
                         }
                     }
                 }
@@ -219,7 +219,7 @@ public class CellTopologyHelper
 
         logger.logComment("groupsWithSynapse: "+ groupsWithSynapse);
 
-        Vector idsOfPossibleSegments = new Vector();
+        Vector<Integer> idsOfPossibleSegments = new Vector<Integer>();
 
         for (int i = 0; i < allSegments.size(); i++)
         {
@@ -231,9 +231,9 @@ public class CellTopologyHelper
                 {
                     if (groupsWithSynapse.contains( (String) groups.elementAt(j)))
                     {
-                        if (!idsOfPossibleSegments.contains(new Integer(axon.getSegmentId())))
+                        if (!idsOfPossibleSegments.contains(axon.getSegmentId()))
                         {
-                            idsOfPossibleSegments.add(new Integer(axon.getSegmentId()));
+                            idsOfPossibleSegments.add(axon.getSegmentId());
                         }
                     }
                 }
@@ -574,7 +574,7 @@ public class CellTopologyHelper
                           + ", etc among my dendritic segments, closest to: "
                           + Utils3D.getShortStringDesc(extPoint));
 
-        Vector idsOfPossibleSegments = new Vector();
+        Vector<Integer> idsOfPossibleSegments = new Vector<Integer>();
 
         for (int i = 0; i < allSegments.size(); i++)
         {
@@ -586,9 +586,9 @@ public class CellTopologyHelper
                 {
                     if (groupsWithSynapse.contains( (String) groups.elementAt(j)))
                     {
-                        if (!idsOfPossibleSegments.contains(new Integer(dend.getSegmentId())))
+                        if (!idsOfPossibleSegments.contains(dend.getSegmentId()))
                         {
-                            idsOfPossibleSegments.add(new Integer(dend.getSegmentId()));
+                            idsOfPossibleSegments.add(dend.getSegmentId());
                         }
                     }
                 }
@@ -691,7 +691,7 @@ public class CellTopologyHelper
                           + ", etc. among my axonal segments, closest to: "
                           + Utils3D.getShortStringDesc(extPoint));
 
-        Vector idsOfPossibleSegments = new Vector();
+        Vector<Integer> idsOfPossibleSegments = new Vector<Integer>();
 
         for (int i = 0; i < allSegments.size(); i++)
         {
@@ -703,9 +703,9 @@ public class CellTopologyHelper
                 {
                     if (groupsWithSynapse.contains( (String) groups.elementAt(j)))
                     {
-                        if (!idsOfPossibleSegments.contains(new Integer(axon.getSegmentId())))
+                        if (!idsOfPossibleSegments.contains(axon.getSegmentId()))
                         {
-                            idsOfPossibleSegments.add(new Integer(axon.getSegmentId()));
+                            idsOfPossibleSegments.add(axon.getSegmentId());
                         }
                     }
                 }
@@ -978,7 +978,7 @@ public class CellTopologyHelper
      */
     public static Cell moveSectionsToConnPointsOnParents(Cell cell)
     {
-        Hashtable sectionMovements = new Hashtable();
+        Hashtable<String, Vector3f> sectionMovements = new Hashtable<String, Vector3f>();
         Vector allSegments = cell.getAllSegments();
 
         for (int i = 0; i < allSegments.size(); i++)
@@ -1222,10 +1222,10 @@ public class CellTopologyHelper
      * Gets the child segments of the specified segment in the cell. If onlySameSection is true,
      * only returns the segments in the same section
      */
-    public static Vector getAllChildSegments(Cell cell, Segment segment, boolean onlySameSection)
+    public static Vector<Segment> getAllChildSegments(Cell cell, Segment segment, boolean onlySameSection)
     {
-        Vector allSegments = cell.getAllSegments();
-        Vector allChildren = new Vector();
+        Vector<Segment> allSegments = cell.getAllSegments();
+        Vector<Segment> allChildren = new Vector<Segment>();
 
         logger.logComment("Get all kids called for: "+ segment);
 
@@ -1658,13 +1658,13 @@ public class CellTopologyHelper
             Hashtable chanMechs = cell.getChanMechsVsGroups();
 
             logger.logComment("Old ChanMechsVsGroups: "+ chanMechs);
-            Hashtable newChanMechs = new Hashtable();
+            Hashtable<ChannelMechanism, Vector<String>> newChanMechs = new Hashtable<ChannelMechanism, Vector<String>>();
 
             Enumeration enumeration = chanMechs.keys();
             while (enumeration.hasMoreElements())
             {
                 String oldName = (String)enumeration.nextElement();
-                Vector groups = (Vector)chanMechs.get(oldName);
+                Vector<String> groups = (Vector)chanMechs.get(oldName);
                 float defaultVal = -1;
                 try
                 {
@@ -1711,8 +1711,7 @@ public class CellTopologyHelper
         logger.logComment("Printing cell details...");
         StringBuilder sb = new StringBuilder();
 
-        String cellName = cell.getClass().getName();
-        int indexLastDot = cellName.lastIndexOf('.');
+
         String indent = "    ";
         if (html) indent = "&nbsp;&nbsp;&nbsp;&nbsp;";
 
@@ -1814,12 +1813,13 @@ public class CellTopologyHelper
         ArrayList<Section> sections = cell.getAllSections();
 
 
-        sb.append("    Number of segments            : " + cell.getAllSegments().size()
-                  + ", somatic: "+cell.getOnlySomaSegments().size()
+        sb.append("    Number of segments            : " 
+                + GeneralUtils.getTabbedString(cell.getAllSegments().size()+"", "b", html)
+                  + " (somatic: "+cell.getOnlySomaSegments().size()
                   + ", dendritic: "+cell.getOnlyDendriticSegments().size()
-                  + ", axonal: "+cell.getOnlyAxonalSegments().size()
+                  + ", axonal: "+cell.getOnlyAxonalSegments().size() +")"
                   + GeneralUtils.getEndLine(html));
-        sb.append("    Number of sections            : " + sections.size()
+        sb.append("    Number of sections            : " + GeneralUtils.getTabbedString(sections.size()+"", "b", html)
                   + GeneralUtils.getEndLine(html));
 
         float totalSurfaceArea = 0;
@@ -1863,16 +1863,16 @@ public class CellTopologyHelper
 
         sb.append(" " + GeneralUtils.getEndLine(html)+ GeneralUtils.getEndLine(html));
 
-        sb.append("Total surface area of all segments: " + totalSurfaceArea + " "
-                  + UnitConverter.areaUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()
+        sb.append("Total surface area of all segments: " + GeneralUtils.getTabbedString(totalSurfaceArea + " "
+                  + UnitConverter.areaUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol(), "b", html)
                   + GeneralUtils.getEndLine(html));
 
-        sb.append("Total length of all segments: " + totalLength + " "
-                  + UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()
+        sb.append("Total length of all segments: " + GeneralUtils.getTabbedString(totalLength + " "
+                  + UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol(), "b", html)
                   + GeneralUtils.getEndLine(html));
 
-        if (longFormat) sb.append("Sum of axial resistance in all segments: " + totalAxResistance + " "
-                                  + UnitConverter.resistanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()
+        if (longFormat) sb.append("Sum of axial resistance in all segments: " + GeneralUtils.getTabbedString(totalAxResistance + " "
+                                  + UnitConverter.resistanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol(), "b", html)
                                   + GeneralUtils.getEndLine(html));
 
 
@@ -2168,7 +2168,7 @@ public class CellTopologyHelper
         else
         {
             Vector cellProcNames = project.cellMechanismInfo.getAllCellMechanismNames();
-            Vector missingCellProcs = new Vector();
+            Vector<String> missingCellProcs = new Vector<String>();
 
             ArrayList<Section> allSections = cell.getAllSections();
 
@@ -2611,28 +2611,28 @@ public class CellTopologyHelper
      */
     public static ValidityStatus getValidityStatus(Cell cell)
     {
-        Vector segmentsWithNullParent = new Vector();
-        Vector segmentsWithNoSection = new Vector();
-        Vector segmentsWithNoEndPoint = new Vector();
-        Vector segmentsWithParentsAstray = new Vector();
+        Vector<String> segmentsWithNullParent = new Vector<String>();
+        Vector<String> segmentsWithNoSection = new Vector<String>();
+        Vector<String> segmentsWithNoEndPoint = new Vector<String>();
+        Vector<String> segmentsWithParentsAstray = new Vector<String>();
 
-        Vector repeatedIds = new Vector();
-        Vector allSegmentIds = new Vector();
-        Vector segmentsWithNegRadius = new Vector();
+        Vector<String> repeatedIds = new Vector<String>();
+        Vector<Integer> allSegmentIds = new Vector<Integer>();
+        Vector<String> segmentsWithNegRadius = new Vector<String>();
 
-        Vector repeatedNameSegments = new Vector();
-        Vector allSegmentNames = new Vector();
+        Vector<String> repeatedNameSegments = new Vector<String>();
+        Vector<String> allSegmentNames = new Vector<String>();
 
-        Vector repeatedNameSections = new Vector();
-        Vector allSectionNames = new Vector();
+        Vector<String> repeatedNameSections = new Vector<String>();
+        Vector<String> allSectionNames = new Vector<String>();
 
-        Vector segmentsDisconnected = new Vector();
+        Vector<String> segmentsDisconnected = new Vector<String>();
 
-        Vector badlyConnectedSegments = new Vector();
+        Vector<String> badlyConnectedSegments = new Vector<String>();
 
 
-        Vector sphericalSegments = new Vector();
-        Vector sphericalErrors = new Vector();
+        Vector<String> sphericalSegments = new Vector<String>();
+        Vector<String> sphericalErrors = new Vector<String>();
 
         StringBuilder errorReport = new StringBuilder();
         StringBuilder warningReport = new StringBuilder();
@@ -2983,6 +2983,12 @@ public class CellTopologyHelper
 
         }
 
+        if (cell.getSegmentWithId(0)==null)
+        {
+            warningReport.append("NOTE: There is no segment with ID = 0. There doesn't strictly have to be, but the convention is that the root segment has ID=0. This could lead to problems too with inputs/plots, as the default values for these assume ID=0.\n");
+
+        }
+
 
 
         if(segmentsDisconnected.size()>0)
@@ -3002,9 +3008,6 @@ public class CellTopologyHelper
         if (!checkSimplyConnected(cell))
             warningReport.append("NOTE: Cell is not Simply Connected, i.e. some segments are connected at points other than the start or end point (0 or 1) of parent\n");
 
-        //String rep = report.toString();
-
-        ///////if (rep.trim().endsWith("\n")) rep = rep.trim().substring(0, rep.length()-2);
 
 
         if (errorReport.length() > 0)
@@ -3605,7 +3608,7 @@ public class CellTopologyHelper
 
             boolean useHtml = true;
 
-            String summary = CellTopologyHelper.getSegmentBiophysics(cell.getSegmentWithId(7),
+           CellTopologyHelper.getSegmentBiophysics(cell.getSegmentWithId(7),
                                                                      cell,
                                                                      testProj,
                                                                      useHtml);
@@ -3616,7 +3619,6 @@ public class CellTopologyHelper
           //                      .6f);
 
           GenesisCompartmentalisation gc = new GenesisCompartmentalisation();
-          SimpleCompartmentalisation sc = new SimpleCompartmentalisation();
 
           Cell genCell = gc.getCompartmentalisation(cell);
 

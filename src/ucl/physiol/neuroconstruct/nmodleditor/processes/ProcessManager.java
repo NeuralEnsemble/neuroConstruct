@@ -14,9 +14,8 @@ package ucl.physiol.neuroconstruct.nmodleditor.processes;
 
 import java.io.*;
 import ucl.physiol.neuroconstruct.utils.*;
-import ucl.physiol.neuroconstruct.nmodleditor.modfile.*;
 import ucl.physiol.neuroconstruct.project.*;
-import ucl.physiol.neuroconstruct.neuron.NeuronFileManager;
+import ucl.physiol.neuroconstruct.neuron.*;
 
 /**
  * nmodlEditor application software
@@ -39,7 +38,7 @@ public class ProcessManager
 
 
 
-    public boolean testFileWithNeuron() throws ModFileException
+    public boolean testFileWithNeuron() throws NeuronException
     {
         Runtime rt = Runtime.getRuntime();
         String commandToExecute = null;
@@ -114,13 +113,13 @@ public class ProcessManager
         catch (Exception ex)
         {
             logger.logError("Error running the command: " + commandToExecute);
-            throw new ModFileException("Error testing: " +
+            throw new NeuronException("Error testing: " +
                                        myFile.getAbsolutePath(), ex);
         }
 
     }
 
-    public boolean compileFileWithNeuron() throws ModFileException
+    public boolean compileFileWithNeuron() throws NeuronException
     {
         logger.logComment("Going to compile the file: "+ myFile.getAbsolutePath());
 
@@ -268,7 +267,7 @@ public class ProcessManager
         catch (Exception ex)
         {
             logger.logError("Error running the command: " + commandToExecute);
-            throw new ModFileException("Error testing: " +
+            throw new NeuronException("Error testing: " +
                                        myFile.getAbsolutePath()+".\nIs NEURON correctly installed?\nNEURON home dir: "+GeneralProperties.getNeuronHomeDir()
                                        +"\nThis should be set to the correct location at Settings -> General Properties & Project Defaults", ex);
         }
@@ -276,7 +275,7 @@ public class ProcessManager
     }
 
 
-    public void runAsHocFile() throws ModFileException
+    public void runAsHocFile() throws NeuronException
     {
 
         logger.logComment("Trying to run file as hoc: "+ myFile.getAbsolutePath());
@@ -333,7 +332,7 @@ public class ProcessManager
         }
         catch (Exception ex)
         {
-            throw new ModFileException("Error running the command: "+ commandToExecute);
+            throw new NeuronException("Error running the command: "+ commandToExecute);
         }
     }
 

@@ -47,7 +47,7 @@ import ucl.physiol.neuroconstruct.j3D.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.neuron.*;
-import ucl.physiol.neuroconstruct.nmodleditor.gui.*;
+
 import ucl.physiol.neuroconstruct.nmodleditor.processes.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
@@ -1925,6 +1925,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
         });
         jMenuTools.setText("Tools");
+        /*
         jMenuItemNmodlEditor.setText("nmodlEditor...");
         jMenuItemNmodlEditor.setEnabled(false);
         jMenuItemNmodlEditor.addActionListener(new java.awt.event.ActionListener()
@@ -1933,7 +1934,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             {
                 jMenuItemNmodlEditor_actionPerformed(e);
             }
-        });
+        });*/
         jMenuItemNewProject.setText("New Project...");
         jMenuItemNewProject.addActionListener(new java.awt.event.ActionListener()
         {
@@ -9829,7 +9830,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         refreshTabNetSettings();
 
     }
-
+    /*
     void jMenuItemNmodlEditor_actionPerformed(ActionEvent e)
     {
         logger.logComment("nmodlEditor to run...");
@@ -9843,7 +9844,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         new NmodlEditorApp(dir);
     }
-/*
+
     void jButtonSynapseAdd_actionPerformed(ActionEvent e)
     {
         logger.logComment("Adding new Synapse Type");

@@ -119,14 +119,6 @@
             <include name="*.GIF"/>
         </fileset>
     </copy>
-    <copy todir="${build.dest}/${nmodl.gui.dir}">
-        <fileset dir="${src.dir}/${nmodl.gui.dir}">
-            <include name="*.png"/>
-            <include name="*.PNG"/>
-            <include name="*.gif"/>
-            <include name="*.GIF"/>
-        </fileset>
-    </copy>
 
   </target>
 

@@ -1315,11 +1315,13 @@ public class NeuronTemplateGenerator
         response.append("proc position() { local i\n");
 
 
-        response.append("    "+NeuronFileManager.getHocSectionName(cell.getFirstSomaSegment().getSection().getSectionName())
-                        + "  for i = 0, n3d()-1 {\n");
-        response.append("        pt3dchange(i, $1-x+x3d(i), $2-y+y3d(i), $3-z+z3d(i), diam3d(i))\n");
+        response.append("    forsec all {\n");
+        response.append("        for i = 0, n3d()-1 {\n");
+        
+        response.append("            pt3dchange(i, $1+x3d(i), $2+y3d(i), $3+z3d(i), diam3d(i))\n");
+        response.append("        }\n");        
         response.append("    }\n");
-        response.append("    x = $1  y = $2  z = $3\n");
+        response.append("    //x = $1  y = $2  z = $3\n");
         response.append("}\n");
 
         response.append("\n");

@@ -47,8 +47,8 @@ public class MorphMLConverter extends FormatImporter
 
     public MorphMLConverter()
     {
-        super("MorphMLConverter",
-                            "Importer of MorphML files",
+        super("NeuroMLConverter",
+                            "Importer of NeuroML (Level 1/2/3) files containing a single cell",
                             new String[]{".xml", ".mml"});
     }
 

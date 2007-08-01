@@ -636,6 +636,7 @@ public class Cell implements Serializable
     {
         // do this quick check first. This will be the case if the ids are simply incremented
         // when new segments are added. This will fail if segments have been deleted.
+        
         if (allSegments.size() > id &&
             ((Segment)allSegments.elementAt(id)).getSegmentId()==id)
             return (Segment)allSegments.elementAt(id);
