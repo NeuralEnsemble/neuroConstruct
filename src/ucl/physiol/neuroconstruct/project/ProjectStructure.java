@@ -610,11 +610,11 @@ public class ProjectStructure
                                          "This is the directory for the cell morphology files associated with the project.\n"
                                          + "The following types of files are found here: \n\n"
                                          + "   *" + ProjectStructure.getJavaXMLFileExtension() +
-                                         ": morphologies (ucl.physiol.neuroconstruct.cell.Cell class) saved in Java XML serialized form (note: not part of NeuroML).\n"
+                                         ": morphologies (based on the ucl.physiol.neuroconstruct.cell.Cell Java class) saved in Java XML serialized form (note: not part of NeuroML).\n"
                                          + "   *" + ProjectStructure.getJavaObjFileExtension() +
                                          ": morphologies saved in Java binary serialized object form (smaller files & quicker to load)\n\n"
-                                         + "   *.bak files backup the previously stored morphology before a new one is saved.\n\n"
-            + "Note that the cells aren't currently stored here in NeuroML format, as functionality can be added to the neuroConstruct Cell class before it is supported in the standards.");
+                                         + "   *.bak files backup the previously stored morphology before a new one is saved (if a problem occurs saving a morphology, remove the .bak and use that file to load into the project).\n\n"
+            + "Note that the cells aren't currently stored here in NeuroML/MorphML format, as new functionality is added to the neuroConstruct Cell class before it is supported in the standards.");
 
         return morphDir;
     }

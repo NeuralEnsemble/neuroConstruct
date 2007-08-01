@@ -22,6 +22,8 @@
   */
 
 
+@SuppressWarnings("serial")
+
 public class PostSynapticTerminalLocation extends SegmentLocation
 {
 

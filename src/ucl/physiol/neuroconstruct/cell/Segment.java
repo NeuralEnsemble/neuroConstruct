@@ -12,6 +12,7 @@
 
 package ucl.physiol.neuroconstruct.cell;
 
+import java.io.Serializable;
 import java.util.*;
 import javax.vecmath.*;
 
@@ -32,9 +33,11 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
  */
 
 
-public class Segment
+@SuppressWarnings("serial")
+
+public class Segment implements Serializable
 {
-    private ClassLogger logger = new ClassLogger("Segment");
+    private transient ClassLogger logger = new ClassLogger("Segment");
 
     /**
      * Name given to Segment, unique within a cell

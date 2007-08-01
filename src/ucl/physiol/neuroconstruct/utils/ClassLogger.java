@@ -13,6 +13,7 @@
 package ucl.physiol.neuroconstruct.utils;
 
 import java.util.*;
+import java.io.*;
 
 /**
  * Simple logging facility
@@ -21,7 +22,8 @@ import java.util.*;
  * @version 1.0.4
  */
 
-public class ClassLogger
+
+public class ClassLogger implements Serializable
 {
     private String myClassName = null;
     private Logger logger = null;

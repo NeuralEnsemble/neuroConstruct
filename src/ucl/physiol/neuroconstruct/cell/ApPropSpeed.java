@@ -12,6 +12,8 @@
 
 package ucl.physiol.neuroconstruct.cell;
 
+import java.io.Serializable;
+
 import ucl.physiol.neuroconstruct.utils.units.*;
 
 
@@ -30,8 +32,9 @@ import ucl.physiol.neuroconstruct.utils.units.*;
   */
 
 
+@SuppressWarnings("serial")
 
-public class ApPropSpeed
+public class ApPropSpeed implements Serializable
 {
      public static final String MECHANISM_NAME = "AP propagation speed";
 

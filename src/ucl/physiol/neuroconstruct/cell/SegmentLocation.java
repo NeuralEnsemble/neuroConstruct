@@ -12,6 +12,8 @@
 
  package ucl.physiol.neuroconstruct.cell;
 
+ import java.io.*;
+
 /**
  * The location along a specified segment, e.g. a (pre or post) synaptic end point
  *
@@ -19,7 +21,8 @@
  * @version 1.0.4
  */
 
-public class SegmentLocation
+@SuppressWarnings("serial")
+public class SegmentLocation implements Serializable
 {
     private int segmentId;
 

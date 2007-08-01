@@ -22,6 +22,8 @@
   */
 
 
+@SuppressWarnings("serial")
+
 public class PreSynapticTerminalLocation extends SegmentLocation
 {
     public PreSynapticTerminalLocation(int sectionIndex,

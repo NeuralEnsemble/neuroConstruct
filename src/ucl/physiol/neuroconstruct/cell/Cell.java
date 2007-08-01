@@ -13,6 +13,7 @@
 package ucl.physiol.neuroconstruct.cell;
 
 import java.util.*;
+import java.io.*;
 import javax.vecmath.*;
 
 import ucl.physiol.neuroconstruct.cell.examples.*;
@@ -30,9 +31,11 @@ import ucl.physiol.neuroconstruct.utils.*;
   */
 
 
-public class Cell/* implements Serializable*/
+public class Cell implements Serializable
 {
-    ClassLogger logger = new ClassLogger("Cell");
+	private static final long serialVersionUID = -1542517048619766744L;
+
+	private transient ClassLogger logger = new ClassLogger("Cell");
 
     /**
      * A short description of the cell type...
@@ -73,11 +76,12 @@ public class Cell/* implements Serializable*/
      */
     private Vector<AxonalConnRegion> axonalArbours = new Vector<AxonalConnRegion>();
 
+    private float defaultInitPot = -65; // mV
 
     /**
      * Value for the initial membrane potential for the cell
      */
-    private NumberGenerator initialPotential = new NumberGenerator(-65); // mV
+    private NumberGenerator initialPotential = new NumberGenerator(defaultInitPot); 
 
 
 
@@ -1727,13 +1731,14 @@ public class Cell/* implements Serializable*/
 
     public NumberGenerator getInitialPotential()
     {
-        logger.logComment("initialPotential being got: " + initialPotential);
+    	if (initialPotential == null)
+    		initialPotential = new NumberGenerator(defaultInitPot); 
+    	
         return initialPotential;
     }
-    public void setInitialPotential(NumberGenerator initialPotential)
+    public void setInitialPotential(NumberGenerator initPot)
     {
-        logger.logComment("initialPotential being set: " + initialPotential);
-        this.initialPotential = initialPotential;
+        this.initialPotential = initPot;
     }
 
     /**

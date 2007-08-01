@@ -145,6 +145,16 @@ public class SWCMorphReader extends FormatImporter
                             logger.logError("Error reading section type info from line", e);
                         }
 
+                        // To mimic the cvapp/neurolucida colours..
+                        
+                        String somaColourGroup = "Colour_White";
+                        String dendColourGroup = "Colour_Green";
+                        String dendApicalColourGroup = "Colour_Magenta";
+                        String axonColourGroup = "Colour_DarkGrey";
+                        String c1ColourGroup = "Colour_Red";
+                        String c2ColourGroup = "Colour_Blue";
+                        String c3ColourGroup = "Colour_Yellow";
+
                         switch (sectionType)
                         {
                             case 0:
@@ -152,24 +162,32 @@ public class SWCMorphReader extends FormatImporter
                                 break;
                             case 1:
                                 newSeg.getSection().addToGroup(Section.SOMA_GROUP);
+                                newSeg.getSection().addToGroup(somaColourGroup);
                                 break;
                             case 2:
                                 newSeg.getSection().addToGroup(Section.AXONAL_GROUP);
+                                newSeg.getSection().addToGroup(axonColourGroup);
+                                
                                 break;
                             case 3:
                                 newSeg.getSection().addToGroup(Section.DENDRITIC_GROUP);
+                                newSeg.getSection().addToGroup(dendColourGroup);
                                 break;
                             case 4:
                                 newSeg.getSection().addToGroup("apical_dendrite");
+                                newSeg.getSection().addToGroup(dendApicalColourGroup);
                                 break;
                             case 5:
                                 newSeg.getSection().addToGroup("custom-1");
+                                newSeg.getSection().addToGroup(c1ColourGroup);
                                 break;
                             case 6:
                                 newSeg.getSection().addToGroup("custom-2");
+                                newSeg.getSection().addToGroup(c2ColourGroup);
                                 break;
                             case 7:
                                 newSeg.getSection().addToGroup("custom-n");
+                                newSeg.getSection().addToGroup(c3ColourGroup);
                                 break;
 
                         }

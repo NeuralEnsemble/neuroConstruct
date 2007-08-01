@@ -15,6 +15,7 @@ package ucl.physiol.neuroconstruct.cell;
 import java.util.*;
 import javax.vecmath.*;
 import java.io.*;
+
 import ucl.physiol.neuroconstruct.cell.examples.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 
@@ -31,7 +32,9 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
  *
  */
 
-public class Section
+@SuppressWarnings("serial")
+
+public class Section implements Serializable
 {
     public static final String ALL = "all";
     public static final String SOMA_GROUP = "soma_group";

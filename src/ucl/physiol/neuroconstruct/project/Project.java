@@ -60,8 +60,8 @@ public class Project implements TableModelListener
     // Interface to let the project know if something has been altered...
     ProjectEventListener projectEventListner;
 
-    private String preferredSaveFormat = ProjectStructure.JAVA_XML_FORMAT;
-    //private String preferredSaveFormat = ProjectStructure.JAVA_OBJ_FORMAT;
+    //private String preferredSaveFormat = ProjectStructure.JAVA_XML_FORMAT;
+    private String preferredSaveFormat = ProjectStructure.JAVA_OBJ_FORMAT;
 
     /**
      * These hold the main info of the project. They will be written to/read from
@@ -630,7 +630,7 @@ public class Project implements TableModelListener
             // this is to make sure all the tables which have just been populated
             // have time to send tableChanged notifications before the status of the
             // project is changed
-            Thread.currentThread().sleep(200);
+            Thread.sleep(200);
         }
         catch (InterruptedException ex)
         {
@@ -750,13 +750,16 @@ public class Project implements TableModelListener
                 if (contents[i].getName().endsWith(ProjectStructure.getJavaObjFileExtension()) ||
                     contents[i].getName().endsWith(".obj")) /** @todo remove... */
                 {
-                    //System.out.println("Reading Cell Type info from: " + contents[i]);
+                    System.out.println("----Reading Cell Type info from: " + contents[i]);
 
                     Cell cellGenerated = null;
                     try
                     {
-
                         cellGenerated = MorphMLConverter.loadFromJavaObjFile(contents[i]);
+
+                        //System.out.println("----cellGenerated: " + cellGenerated.getAllSegments());
+                        //System.out.println("----cellGenerated: " + CellTopologyHelper.printDetails(cellGenerated, null) );
+                        
                     }
                     catch (MorphologyException ex1)
                     {

@@ -29,7 +29,7 @@ import ucl.physiol.neuroconstruct.project.*;
 
 public class NumberGenerator implements Serializable
 {
-    ClassLogger logger = new ClassLogger("NumberGenerator");
+    private transient ClassLogger logger = new ClassLogger("NumberGenerator");
 
     public static final int FIXED_NUM = 0;
     public static final int RANDOM_NUM = 1;

@@ -13,6 +13,8 @@
  package ucl.physiol.neuroconstruct.cell;
 
 
+import java.io.Serializable;
+
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
 
@@ -26,7 +28,9 @@ import ucl.physiol.neuroconstruct.utils.*;
   *
   */
 
-public class AxonalConnRegion
+@SuppressWarnings("serial")
+
+public class AxonalConnRegion implements Serializable
 {
      private String name = null;
      private Region region = null;
@@ -79,18 +83,6 @@ public class AxonalConnRegion
         return "AxonalConnRegion: "+name+", region: "+region;
     }
 
-/*
-    public Vector<SynapticProperties> getSynapticPropsList()
-    {
-        return synapticPropList;
-    }
-
-
-    public void setSynapticPropsList(Vector<SynapticProperties> synPropList)
-    {
-        this.synapticPropList = synPropList;
-    }
-*/
 
     public String getInfo(boolean html)
     {
