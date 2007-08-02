@@ -698,6 +698,16 @@ public class OptionsFrame extends JFrame
             /*|| this.myStartupMode==NMODL_PROPERTIES_MODE*/)
         {
         	File propDir = new File(jTextFieldPrefProjDir.getText());
+            
+            if (propDir.getAbsolutePath().indexOf(" ")>=0)
+            {
+
+                GuiUtils.showErrorMessage(logger, "The name of the path for new projects: "+propDir.getAbsolutePath()+" should not contain any spaces.\n"+
+                        "This is due to possible errors when processes are started (e.g. NEURON running) which need to be handed arguments containing full pathnames.\n"
+                        +"Please select another path without spaces.", null, this);
+                
+                return false;
+            }
 
             if (!propDir.exists())
             {

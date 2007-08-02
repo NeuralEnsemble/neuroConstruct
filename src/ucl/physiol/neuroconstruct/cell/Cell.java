@@ -35,7 +35,7 @@ public class Cell implements Serializable
 {
 	private static final long serialVersionUID = -1542517048619766744L;
 
-	private transient ClassLogger logger = new ClassLogger("Cell");
+	private static transient ClassLogger logger = new ClassLogger("Cell");
 
     /**
      * A short description of the cell type...
@@ -106,13 +106,19 @@ public class Cell implements Serializable
      */
     private NumberGenerator tempGlobalSpecCapacitance = new NumberGenerator(1e-8f);
 
+    
+    static {
+
+        /** @todo Double check instantiation of logger when using serialised form of Java... */
+        if (logger==null) logger = new ClassLogger("Cell");
+    }
 
     /**
      * Default constructor is needed for XMLEncoder.
      */
     public Cell()
     {
-
+        
     }
 
 
@@ -1102,7 +1108,7 @@ public class Cell implements Serializable
 
     public boolean associateGroupWithChanMech(String group, ChannelMechanism chanMech)
     {
-        logger.logComment(this.hashCode()+", being told to associate group: "
+        logger.logComment("Cell being told to associate group: "
                           + group
                           + " with channel mechanism: "
                           + chanMech);
@@ -1162,7 +1168,7 @@ public class Cell implements Serializable
     {
         this.checkSpecCap();
 
-        logger.logComment(this.hashCode()+", being told to associate group: "
+        logger.logComment("Cell being told to associate group: "
                           + group + " with specCap: " + specCap);
 
         if (!getAllGroupNames().contains(group)) return false;
@@ -1209,7 +1215,7 @@ public class Cell implements Serializable
     public boolean associateGroupWithSpecAxRes(String group, float specAxRes)
     {
         checkSpecAxRes();
-        logger.logComment(this.hashCode()+", being told to associate group: "
+        logger.logComment("Cell being told to associate group: "
                           + group
                           + " with specAxRes: "
                           + specAxRes);
@@ -1254,7 +1260,7 @@ public class Cell implements Serializable
 
     public boolean associateGroupWithApPropSpeed(String group, ApPropSpeed apPropSpeed)
     {
-        logger.logComment(this.hashCode()+", being told to associate group: "
+        logger.logComment("Cell being told to associate group: "
                           + group
                           + " with AP propagation speed: "
                           + apPropSpeed);

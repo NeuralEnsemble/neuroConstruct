@@ -768,7 +768,7 @@ public class MorphMLReader extends XMLFilterImpl
 
             //File f = new File("models/DentateGyrus/generatedMorphML/MossyCell.morph.xml");
 
-            File f = new File("../nC_projects/Morph/generatedNEURON/mm.xml");
+            File f = new File("/home/padraig/models/L23Traub/test.xml");
 
             logger.logComment("Loading mml cell from "+ f.getAbsolutePath());
 
