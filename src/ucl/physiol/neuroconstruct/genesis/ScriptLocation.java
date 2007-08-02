@@ -33,7 +33,7 @@ public class ScriptLocation
     private String shortDescription = null;
     private String usage = null;
 
-    static ArrayList<ScriptLocation> allLocations = new ArrayList<ScriptLocation>();
+    public static ArrayList<ScriptLocation> allLocations = new ArrayList<ScriptLocation>();
 
 
     public static ScriptLocation BEFORE_CELL_CREATION = new ScriptLocation(-1, "Before Cells created", "The GENESIS code will be called before any of the generated cells are created");

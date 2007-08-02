@@ -37,7 +37,7 @@ public class NativeCodeLocation
     private String usage = null;
 
 
-    static ArrayList<NativeCodeLocation> allLocations = new ArrayList<NativeCodeLocation>();
+    public static ArrayList<NativeCodeLocation> allLocations = new ArrayList<NativeCodeLocation>();
 
     public static NativeCodeLocation BEFORE_CELL_CREATION = new NativeCodeLocation(-1, "Before Cells created", "The NEURON code will be called before any of the generated cells are created in hoc");
     public static NativeCodeLocation BEFORE_INITIAL = new NativeCodeLocation(0, "Before Cell Process mechanism INITIAL blocks", "NEURON FInitializeHandler location. A/c to NEURON docs: \"Called before the mechanism INITIAL blocks\"");
@@ -123,8 +123,8 @@ public class NativeCodeLocation
         StringBuffer parsed = new StringBuffer();
         String[] lines = block.split("\n");
 
-        ArrayList whiteList = new ArrayList();
-        ArrayList blackList = new ArrayList();
+        ArrayList<String> whiteList = new ArrayList<String>();
+        ArrayList<String> blackList = new ArrayList<String>();
 
         for (int i = 0; i < lines.length; i++)
         {

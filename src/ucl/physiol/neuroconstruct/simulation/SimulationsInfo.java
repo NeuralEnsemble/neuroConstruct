@@ -19,6 +19,8 @@ import javax.swing.table.*;
 
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
+import ucl.physiol.neuroconstruct.neuron.*;
+import ucl.physiol.neuroconstruct.genesis.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
@@ -371,6 +373,18 @@ public class SimulationsInfo extends AbstractTableModel
             props.setProperty("GENESIS random seed", project.genesisFileManager.getCurrentRandomSeed()+"");
             props.setProperty("No GUI Mode", !project.genesisSettings.isGraphicsMode()+"");
 
+            
+            for (ScriptLocation sl: ScriptLocation.allLocations)
+            {
+                String text = project.genesisSettings.getNativeBlock(sl);
+                text = NativeCodeLocation.parseForSimConfigSpecifics(text, simConfig.getName());
+                if (text.trim().length()>0)
+                {
+                    text = GeneralUtils.replaceAllTokens(text, "\n", " \n"); //to make reading it in the table easier...
+                    props.setProperty("GENESIS extra script, Type "+sl.getPositionReference() ,
+                            text);
+                }
+            }
 
         }
         else if (simulator.equals("NEURON"))
@@ -386,6 +400,18 @@ public class SimulationsInfo extends AbstractTableModel
             else
             {
                 props.setProperty("Num integration method","Fixed time step");
+            }
+            
+            for (NativeCodeLocation ncl: NativeCodeLocation.allLocations)
+            {
+                String text = project.neuronSettings.getNativeBlock(ncl);
+                text = NativeCodeLocation.parseForSimConfigSpecifics(text, simConfig.getName());
+                if (text.trim().length()>0)
+                {
+                    text = GeneralUtils.replaceAllTokens(text, "\n", " \n"); //to make reading it in the table easier...
+                    props.setProperty("NEURON extra hoc, Type "+ncl.getPositionReference() ,
+                            text);
+                }
             }
 
 
@@ -625,6 +651,7 @@ public class SimulationsInfo extends AbstractTableModel
 
         if (html)
         {
+            val = GeneralUtils.replaceAllTokens(val, "\n", "<br></br>");
             return "<tr><td>" + name + "</td><td><b>" + val + "</b></td></tr>\n";
         }
         else
