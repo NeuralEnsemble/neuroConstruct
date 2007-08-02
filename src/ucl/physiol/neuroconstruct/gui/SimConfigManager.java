@@ -150,8 +150,12 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
             {
                 jButtonHelp_actionPerformed(e);
             }
-        }); jPanelCheckBoxes.setBorder(BorderFactory.createEtchedBorder()); jLabelSimDur.setText("Simulation Duration:");
-        jTextFieldSimDur.setText("..."); jTextFieldSimDur.setColumns(6); jLabelMs.setText("ms");
+        }); 
+        jPanelCheckBoxes.setBorder(BorderFactory.createEtchedBorder()); 
+        jLabelSimDur.setText("Simulation Duration:");
+        jTextFieldSimDur.setText("..."); 
+        jTextFieldSimDur.setColumns(6); 
+        jLabelMs.setText("ms");
 
         jTextFieldSimDur.getDocument().addDocumentListener(this);
 
@@ -315,8 +319,8 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         if (plots.size()>6 || inputs.size()>6 || netConns.size()>6 || cellGroups.size()>6)
         {
             // Enlarges all...
-            jPanelPlots.setMinimumSize(new Dimension(500,200));
-            jPanelPlots.setPreferredSize(new Dimension(500,100));
+            jPanelPlots.setMinimumSize(new Dimension(500,260));
+            jPanelPlots.setPreferredSize(new Dimension(500,180));
         }
 
         //jPanelPlots.setMaximumSize(new Dimension(500,500));
