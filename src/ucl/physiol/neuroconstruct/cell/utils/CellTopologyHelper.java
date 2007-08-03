@@ -1472,10 +1472,11 @@ public class CellTopologyHelper
         float minValue = Float.MAX_VALUE;
 
         Vector somaSegments = null;
-                if (somaOnly)
-                    somaSegments = cell.getOnlySomaSegments();
-                else
-                    somaSegments = cell.getAllSegments();
+
+        if (somaOnly)
+            somaSegments = cell.getOnlySomaSegments();
+        else
+            somaSegments = cell.getAllSegments();
 
         for (int i = 0; i < somaSegments.size(); i++)
         {

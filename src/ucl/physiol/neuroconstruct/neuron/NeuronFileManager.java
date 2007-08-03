@@ -55,6 +55,11 @@ public class NeuronFileManager
      */
     private long randomSeed = 0;
 
+    /**
+     * The runMode used in the generated NEURON code
+     */
+    private long genRunMode = -1;
+
     private Project project = null;
 
     private File mainHocFile = null;
@@ -123,6 +128,8 @@ public class NeuronFileManager
     {
 
         this.simConfig = simConfig;
+        
+        this.genRunMode = runMode;
 
         this.multiRunManager = multiRunManager;
 
@@ -613,7 +620,7 @@ public class NeuronFileManager
 
         logger.logComment("Looking at " + cellGroupNames.size() + " cell groups");
 
-        int totalProcs = GeneralProperties.getMpiSettings().getMpiConfigurations().get(1).getTotalNumProcessors();
+        int totalProcs = GeneralProperties.getMpiSettings().getMpiConfigurations().get(MpiSettings.favouredConfig).getTotalNumProcessors();
 
 
         response.append("func getGid() {\n\n");
@@ -746,6 +753,11 @@ public class NeuronFileManager
     public long getCurrentRandomSeed()
     {
         return this.randomSeed;
+    }
+
+    public long getCurrentRunMode()
+    {
+        return this.genRunMode;
     }
 
     private String generateWelcomeComments()

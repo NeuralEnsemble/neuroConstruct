@@ -60,8 +60,8 @@ public class Project implements TableModelListener
     // Interface to let the project know if something has been altered...
     ProjectEventListener projectEventListner;
 
-    //private String preferredSaveFormat = ProjectStructure.JAVA_XML_FORMAT;
-    private String preferredSaveFormat = ProjectStructure.JAVA_OBJ_FORMAT;
+    private String preferredSaveFormat = ProjectStructure.JAVA_XML_FORMAT;
+   // private String preferredSaveFormat = ProjectStructure.JAVA_OBJ_FORMAT;
 
     /**
      * These hold the main info of the project. They will be written to/read from

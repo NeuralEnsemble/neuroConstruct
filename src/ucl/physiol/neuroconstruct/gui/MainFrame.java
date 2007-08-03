@@ -220,7 +220,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
    // JPanel jPanelCellTypeAddNew = new JPanel();
     JPanel jPanelCellTypeDetails = new JPanel();
     JTree jTreeCellDetails = null;
-    JPanel jPanelHocFileButtons = new JPanel();
+
+    JPanel jPanelHocFile1Buttons = new JPanel();
+    JPanel jPanelHocFile2Buttons = new JPanel();
+    
+    
     JPanel jPanelCellGroupsMainPanel = new JPanel();
     BorderLayout borderLayout6 = new BorderLayout();
     JButton jButtonNeuronRun = new JButton();
@@ -540,7 +544,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     ////JTextArea jTextAreaNeuronAfter = new JTextArea();
     FlowLayout flowLayout4 = new FlowLayout();
     FlowLayout flowLayout5 = new FlowLayout();
-    JComboBox jComboBoxNeuronFiles = new JComboBox();
+    JComboBox jComboBoxNeuronFileList = new JComboBox();
+    JCheckBox jCheckBoxNeuronLineNums = new JCheckBox("Show line numbers");
     Border border5;
     Border border6;
     JMenuItem jMenuItemCondorMonitor = new JMenuItem();
@@ -983,10 +988,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelNeuronMainSettings.setLayout(gridBagLayout6);
 
         //jPanelNeuronMainSettings.setLayout(new GridLayout(4,1));
-        jPanelHocFileButtons.setBorder(null);
-        jPanelHocFileButtons.setMinimumSize(new Dimension(709, 50));
-        jPanelHocFileButtons.setPreferredSize(new Dimension(473, 50));
-        jTabbedPaneNeuron.setPreferredSize(new Dimension(478, 572));
+        
+        //jPanelHocFileButtons.setBorder(null);
+        jPanelHocFile1Buttons.setMinimumSize(new Dimension(709, 60));
+        jPanelHocFile1Buttons.setPreferredSize(new Dimension(473, 60));
+        jPanelHocFile2Buttons.setMinimumSize(new Dimension(709, 60));
+        jPanelHocFile2Buttons.setPreferredSize(new Dimension(473, 60));
+        
+        
+        jTabbedPaneNeuron.setPreferredSize(new Dimension(478, 615));
 
         jButtonNeuroMLExportLevel1.setEnabled(false);
         jButtonNeuroMLExportLevel1.setText("Export all Cell Types to Level 1 NeuroML files (just anatomy)");
@@ -1159,7 +1169,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         ////jScrollPaneNeuronAfter.setMaximumSize(new Dimension(440, 450));
         ////jScrollPaneNeuronAfter.setMinimumSize(new Dimension(440, 450));
         ////jScrollPaneNeuronAfter.setPreferredSize(new Dimension(440, 450));
-        jComboBoxNeuronFiles.setEnabled(false);
+        jComboBoxNeuronFileList.setEnabled(false);
+        this.jCheckBoxNeuronLineNums.setEnabled(false);
 
         jMenuItemPlotEquation.setText("Create plot from expression");
         jMenuItemPlotEquation.addActionListener(new java.awt.event.ActionListener()
@@ -2036,7 +2047,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jButtonNeuronCreateLocal_actionPerformed(e);
             }
         });
-        jPanelHocFileButtons.setEnabled(true);
+        jPanelHocFile1Buttons.setEnabled(true);
+        jPanelHocFile2Buttons.setEnabled(true);
         jPanelCellGroupsMainPanel.setBorder(BorderFactory.createEtchedBorder());
         jPanelCellGroupsMainPanel.setLayout(borderLayout7);
         jButton3DDestroy.setEnabled(false);
@@ -2779,15 +2791,17 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelExportNeuron.setLayout(gridLayout5);
 
 
-        jPanelHocFileButtons.add(jButtonNeuronCreateLocal, null);
+        jPanelHocFile1Buttons.add(jButtonNeuronCreateLocal, null);
 
         //jPanelHocFileButtons.add(jButto nNeuronCreateCondor, null);
 
-        if (includeParallelFunc()) jPanelHocFileButtons.add(jButtonNeuronCreateMPI, null);
+        if (includeParallelFunc()) jPanelHocFile1Buttons.add(jButtonNeuronCreateMPI, null);
 
-        jPanelHocFileButtons.add(jButtonNeuronView, null);
-        jPanelHocFileButtons.add(jComboBoxNeuronFiles, null);
-        jPanelHocFileButtons.add(jButtonNeuronRun, null);
+        jPanelHocFile2Buttons.add(jButtonNeuronView, null);
+        jPanelHocFile2Buttons.add(jComboBoxNeuronFileList, null);
+        jPanelHocFile2Buttons.add(jCheckBoxNeuronLineNums, null);
+        
+        jPanelHocFile1Buttons.add(jButtonNeuronRun, null);
 
         jPanelNeuronMainSettings.add(jLabelNeuronMainLabel,  new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 673, 20));
@@ -2801,11 +2815,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 20));
 
         jPanelNeuronMainSettings.add(this.jPanelNeuronRandomGen,    new GridBagConstraints(0, 3, 1, 1, 1.0, 1.0
-            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 12));
 
 
-        jPanelNeuronMainSettings.add(jPanelHocFileButtons,        new GridBagConstraints(0, 4, 1, 1, 1.0, 1.0
-            ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 250, 0), 0, 70));
+        jPanelNeuronMainSettings.add(jPanelHocFile1Buttons,        new GridBagConstraints(0, 4, 1, 1, 1.0, 1.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 12));
+
+        jPanelNeuronMainSettings.add(jPanelHocFile2Buttons,        new GridBagConstraints(0, 5, 1, 1, 1.0, 1.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 180, 0), 0, 70));
 
 
   /*      jPanelNeuronMainSettings.add(jLabelNeuronMainLabel);
@@ -5276,7 +5293,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
 
 
-            projManager.getCurrentProject().neuronFileManager.generateTheNeuronFiles(this.getSelectedSimConfig(), multiRunManager, runMode, seed);
+            projManager.getCurrentProject().neuronFileManager.generateTheNeuronFiles(this.getSelectedSimConfig(), 
+                                                                                     multiRunManager, 
+                                                                                     runMode, 
+                                                                                     seed);
         }
         catch (Exception ex)
         {
@@ -5348,7 +5368,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
         setNeuronRunEnabled(true);
-        jComboBoxNeuronFiles.removeAllItems();
+        jComboBoxNeuronFileList.removeAllItems();
 
         String[] types = new String[]{".hoc", ".mod", ".nrn"};
         SimpleFileFilter filter = new SimpleFileFilter(types, "Any NEURON file");
@@ -5362,7 +5382,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             logger.logComment("----    Checking file: "+ genFiles[i]);
             if (!genFiles[i].isDirectory() && !genFiles[i].getName().equals("README"))
             {
-                jComboBoxNeuronFiles.addItem(genFiles[i].getName());
+                jComboBoxNeuronFileList.addItem(genFiles[i].getName());
             }
         }
 
@@ -5377,7 +5397,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         this.jButtonNeuronRun.setEnabled(enabled);
         this.jButtonNeuronView.setEnabled(enabled);
-        this.jComboBoxNeuronFiles.setEnabled(enabled);
+        this.jComboBoxNeuronFileList.setEnabled(enabled);
+        this.jCheckBoxNeuronLineNums.setEnabled(enabled);
 
     }
 
@@ -8100,7 +8121,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             this.jCheckBoxNeuronNumInt.setEnabled(false);
 
-            this.jComboBoxNeuronFiles.setEnabled(false);
+            this.jComboBoxNeuronFileList.setEnabled(false);
+            this.jCheckBoxNeuronLineNums.setEnabled(false);
             this.jTextFieldSimDT.setText("0");
             this.jTextFieldSimDefDur.setText("0");
             this.jTextFieldSimRef.setText("");
@@ -8155,8 +8177,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jTextAreaNeuronBlock.setBackground(b.getBackground());
             this.jTextAreaNeuronBlockDesc.setBackground(b.getBackground());
 
-            jComboBoxNeuronFiles.removeAllItems();
-            jComboBoxNeuronFiles.addItem(defaultNeuronFilesText);
+            jComboBoxNeuronFileList.removeAllItems();
+            jComboBoxNeuronFileList.addItem(defaultNeuronFilesText);
 
             this.jTextFieldNeuronRandomGen.setEnabled(false);
             this.jCheckBoxNeuronRandomGen.setEnabled(false);
@@ -9314,9 +9336,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         try
         {
-            String selectedFile = (String)jComboBoxNeuronFiles.getSelectedItem();
+            String selectedFile = (String)jComboBoxNeuronFileList.getSelectedItem();
             File file = new File(ProjectStructure.getNeuronCodeDir(projManager.getCurrentProject().getProjectMainDirectory()), selectedFile);
-            SimpleViewer.showFile(file.getAbsolutePath(), 12, false, false, true);
+            SimpleViewer.showFile(file.getAbsolutePath(), 12, false, false, this.jCheckBoxNeuronLineNums.isSelected());
         }
         catch (Exception ex)
         {

@@ -33,7 +33,7 @@ public class MpiSettings
     public static int favouredConfig = 1;
 
 
-    ArrayList<MpiConfiguration> configurations = new ArrayList<MpiConfiguration>();
+    private ArrayList<MpiConfiguration> configurations = new ArrayList<MpiConfiguration>();
 
     public MpiSettings()
     {

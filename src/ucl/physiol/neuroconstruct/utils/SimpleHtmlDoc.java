@@ -26,6 +26,8 @@ import java.io.*;
 
 public class SimpleHtmlDoc
 {
+    private static ClassLogger logger = new ClassLogger("SimpleHtmlDoc");
+    
     ArrayList<SimpleHtmlElement> contents = new ArrayList<SimpleHtmlElement>();
 
     public void addTaggedElement(String text, String tab)
@@ -150,18 +152,18 @@ public class SimpleHtmlDoc
 
     public void saveAsFile(File file)
     {
-/*
+
         try
         {
-            FileWriter fw = new FileWriter(targetFile);
-            fw.write(result);
+            FileWriter fw = new FileWriter(file);
+            fw.write(this.toHtmlString());
             fw.close();
         }
         catch (IOException ex)
         {
-            GuiUtils.showErrorMessage(logger, "Exception writing to file: "+ targetFile, ex, null);
-            return false;
-        }*/
+            GuiUtils.showErrorMessage(logger, "Exception writing to file: "+ file, ex, null);
+            return;
+        }
 
     }
 

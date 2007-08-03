@@ -321,6 +321,8 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         {
             String nextCellGroup = allCellGroups.get(cellGroupIndex);
             Cell cell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(nextCellGroup));
+
+            logger.logComment("cell: "+ cell, true);
             largestExtent = Math.max(largestExtent, CellTopologyHelper.getXExtentOfCell(cell, false, true));
             largestExtent = Math.max(largestExtent, CellTopologyHelper.getYExtentOfCell(cell, false, true));
             largestExtent = Math.max(largestExtent, CellTopologyHelper.getZExtentOfCell(cell, false, true));

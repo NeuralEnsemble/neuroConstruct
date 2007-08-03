@@ -21,6 +21,7 @@ import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.neuron.*;
 import ucl.physiol.neuroconstruct.genesis.*;
+import ucl.physiol.neuroconstruct.hpc.mpi.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
@@ -414,9 +415,22 @@ public class SimulationsInfo extends AbstractTableModel
                 }
             }
 
-
-            //props.setProperty("Target hosts",
-            //                  GeneralProperties.getMpiSettings().getMpiConfigurations().get(MpiSettings.favouredConfig).getHostList().toString());
+            if (project.neuronFileManager.getCurrentRunMode()==NeuronFileManager.RUN_LOCALLY)
+            {
+                props.setProperty("Run mode", "Run on local machine");
+            }
+            else if (project.neuronFileManager.getCurrentRunMode()==NeuronFileManager.RUN_PARALLEL)
+            {
+                props.setProperty("Run mode",
+                                  "Parallel: "+GeneralProperties.getMpiSettings().getMpiConfigurations().get(MpiSettings.favouredConfig).getHostList().toString());
+                
+            }  
+            else if (project.neuronFileManager.getCurrentRunMode()==NeuronFileManager.RUN_VIA_CONDOR)
+            {
+                props.setProperty("Run mode",
+                                  "Run via Condor");
+                
+            }   
 
 
 

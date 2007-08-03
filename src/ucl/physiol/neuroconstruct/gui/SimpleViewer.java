@@ -731,6 +731,8 @@ public class SimpleViewer extends JDialog
 
     public static void main(String[] args)
     {
+        System.out.println("Showning simp viewer");
+        
         String favouredLookAndFeel = MainApplication.getFavouredLookAndFeel();
         try
         {
@@ -738,20 +740,20 @@ public class SimpleViewer extends JDialog
         }
         catch (Exception ex)
         {
-
+            ex.printStackTrace();
         }
-        //showFile("projects/Simplest/generatedMorphML/Simple.morph.xml", 12, true);
+        showFile("build.xml", 12, true, false, true);
 
         //System.out.println("This is returned: "
         //                   + showEditableString("This is a <b>big</b> test", "Tester", 12, true));
 
-        SimpleViewer sv = showString("<h1>ffff</h1>This is a <b>big</b> testThis is a <b>big</b> test<br><p>This is</p> a <b>big</b> testThis is a <b>big</b> testThis is a <b>big</b> test", "Tester", 12, true,true);
+        //SimpleViewer sv = showString("<h1>ffff</h1>This is a <b>big</b> testThis is a <b>big</b> test<br><p>This is</p> a <b>big</b> testThis is a <b>big</b> testThis is a <b>big</b> test", "Tester", 12, true,true);
 
         //sv.showValidationButton("Test", "http://neuron.la.asu.edu:8080/NeuroMLValidator/ValidationResults.jsp");
 
         //sv.showValidationButton("Test", "http://neuron.la.asu.edu:8080/NeuroMLValidator/");
 
-        System.out.println("Shown string: "+ sv.getShownText());
+        //System.out.println("Shown string: "+ sv.getShownText());
 
 /*
 
