@@ -1,10 +1,16 @@
 package ucl.physiol.neuroconstruct.gui;
 
 import javax.swing.*;
+
+import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.ClassLogger;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.*;
+import java.net.*;
+
+@SuppressWarnings("serial")
 
 public class NeurolucidaImportOptions extends JDialog
 {
@@ -25,6 +31,7 @@ public class NeurolucidaImportOptions extends JDialog
     JCheckBox jCheckBoxDaughter = new JCheckBox();
     JTextArea jTextAreaDaughter = new JTextArea();
     BorderLayout borderLayout2 = new BorderLayout();
+    JButton jButtonMore = new JButton();
 
     public NeurolucidaImportOptions(Frame frame, String title, boolean modal)
     {
@@ -60,6 +67,18 @@ public class NeurolucidaImportOptions extends JDialog
                 jButtonCancel_actionPerformed(e);
             }
         });
+        
+
+        jButtonMore.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonMore_actionPerformed(e);
+            }
+        });
+
+        jButtonMore.setText("More on importing Neurolucida files");
+        
         jButtonOK.setText("OK");
         jCheckBoxSO.setText("Include Soma Outline");
        // Button b = new Button();
@@ -100,6 +119,7 @@ public class NeurolucidaImportOptions extends JDialog
         jCheckBoxDaughter.setText("Daughters inherit radii");
         jPanelMain.setLayout(borderLayout2);
         jPanelButtons.add(jButtonOK);
+        jPanelButtons.add(jButtonMore);
         jPanelButtons.add(jButtonCancel);
         this.getContentPane().add(jPanelButtons, java.awt.BorderLayout.SOUTH);
         this.getContentPane().add(jPanelMain, java.awt.BorderLayout.CENTER); jPanelDaughter.add(jCheckBoxDaughter);
@@ -145,6 +165,26 @@ public class NeurolucidaImportOptions extends JDialog
         return this.jCheckBoxDaughter.isSelected();
     }
 
+
+    public void jButtonMore_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("More pressed...");
+
+        cancelled = true;
+        this.dispose();
+
+        File f = new File(ProjectStructure.getHelpImportFile());
+        
+        try 
+        {
+            HelpFrame.showFrame(f.toURL(), "Importing morphologies", false);
+        }
+        catch (MalformedURLException m)
+        {
+            logger.logError("Error showing help file", m);
+        }
+
+    }
 
 
     public void jButtonOK_actionPerformed(ActionEvent e)

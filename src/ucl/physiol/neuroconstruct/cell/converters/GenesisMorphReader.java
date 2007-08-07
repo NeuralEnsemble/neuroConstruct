@@ -76,7 +76,7 @@ public class GenesisMorphReader extends FormatImporter
             String commentStart = "/*";
             String commentEnd = "*/";
 
-            Hashtable namesVsSegments = new Hashtable();
+            Hashtable<String, Segment> namesVsSegments = new Hashtable<String, Segment>();
 
             while ( (nextLine = lineReader.readLine()) != null)
             {
@@ -282,13 +282,18 @@ public class GenesisMorphReader extends FormatImporter
                                                                    yCoord,
                                                                    zCoord);
                                     }
+                                    
+                                    Segment parent = cell.getFirstSomaSegment();
+                                    
+                                    
                                     newSegment
                                         = cell.addDendriticSegment(radius,
                                                                    segmentName,
                                                                    posnEndPoint,
-                                                                   cell.getFirstSomaSegment(),
+                                                                   parent,
                                                                    1,                            // as this is the convention in GENESIS
-                                                                   segmentName);
+                                                                   segmentName,
+                                                                   false);       // false, as GENESIS compartments are cylindrical anyway
 
                                     newSegment.getSection().setStartRadius(radius);
 
@@ -325,12 +330,13 @@ public class GenesisMorphReader extends FormatImporter
                                     logger.logComment("End point: " + Utils3D.getShortStringDesc(posnNewEndPoint));
 
 
-                                        newSegment = cell.addDendriticSegment(radius,
-                                                                 segmentName,
-                                                                 posnNewEndPoint,
-                                                                 parentSeg,
-                                                                 1,
-                                                                 segmentName);
+                                    newSegment = cell.addDendriticSegment(radius,
+                                                             segmentName,
+                                                             posnNewEndPoint,
+                                                             parentSeg,
+                                                             1,
+                                                             segmentName,
+                                                             false);
 
                                     newSegment.getSection().setStartRadius(radius);
 

@@ -424,6 +424,7 @@ public class NeurolucidaReader extends FormatImporter
                         if (ascInfo.getState().equals(ASC_State.CELL_BODY))
                         {
                             logger.logComment("Point belongs on cell body details.");
+                            
                             if (this.includeSomaOutline)
                             {
                                 Segment lastSegThisBranch = ascInfo.getLastSegThisBranch();
@@ -452,7 +453,8 @@ public class NeurolucidaReader extends FormatImporter
                                                                  ascLine.getPoint().getPoint3f(),
                                                                  rootSegment,
                                                                  0,
-                                                                 somaOutlineName);
+                                                                 somaOutlineName,
+                                                                 false);
 
                                     newSeg.getSection().setStartPointPositionX(start.x);
                                     newSeg.getSection().setStartPointPositionY(start.y);
@@ -477,7 +479,8 @@ public class NeurolucidaReader extends FormatImporter
                                                                  ascLine.getPoint().getPoint3f(),
                                                                  lastSegThisBranch,
                                                                  1,
-                                                                 somaOutlineName);
+                                                                 somaOutlineName,
+                                                                 true);
 
                                     ascInfo.setLastSegThisBranch(newSeg);
 
@@ -558,7 +561,8 @@ public class NeurolucidaReader extends FormatImporter
                                                                  ascLine.getPoint().getPoint3f(),
                                                                  parent,
                                                                  fractAlong,
-                                                                 secName);
+                                                                 secName,
+                                                                 daughtersInherit);
 
                                     connectingSeg.getSection().setStartPointPositionX(parent.getEndPointPositionX());
                                     connectingSeg.getSection().setStartPointPositionY(parent.getEndPointPositionY());
@@ -637,7 +641,8 @@ public class NeurolucidaReader extends FormatImporter
                                                                  ascLine.getPoint().getPoint3f(),
                                                                  parent,
                                                                  fractAlong,
-                                                                 secName);
+                                                                 secName,
+                                                                 daughtersInherit);
 
                                     newSeg.setComment("First segment of new sub branch");
 
@@ -699,12 +704,13 @@ public class NeurolucidaReader extends FormatImporter
                                         cell.addDendriticSegment(ascLine.getPoint().diam / 2,
                                                                  segName,
                                                                  new Point3f(ascLine.getPoint().x,
-                                        ascLine.getPoint().y,
-                                        ascLine.getPoint().z),
+                                                                             ascLine.getPoint().y,
+                                                                             ascLine.getPoint().z),
                                                                  ascInfo.getLastSegThisBranch(),
                                                                  1,
                                                                  ascInfo.getLastSegThisBranch().getSection().
-                                                                 getSectionName());
+                                                                 getSectionName(),
+                                                                 daughtersInherit);
 
                                     //newSeg.setComment("normal...");
 

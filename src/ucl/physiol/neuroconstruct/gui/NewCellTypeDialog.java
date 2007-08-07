@@ -267,9 +267,46 @@ public class NewCellTypeDialog extends JDialog
                     }
                     dlg.setLocation( (screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
                     dlg.setVisible(true);
+                    
+                    if (dlg.cancelled)
+                    {
+                        this.dispose();
+                        createCancelled = true;
+                        return;
+                    }
 
                     nlReader.includeSomaOutline(dlg.includeSomaOutline());
                     nlReader.daughtersInherit(dlg.daughtersInherit());
+                }
+                else if (importer instanceof SWCMorphReader)
+                {
+                    SWCMorphReader swcReader = (SWCMorphReader)importer;
+
+                    SwcImportOptions dlg = new SwcImportOptions(new Frame(), "SWC/CVapp import options", true);
+
+                    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                    Dimension frameSize = dlg.getSize();
+                    if (frameSize.height > screenSize.height)
+                    {
+                        frameSize.height = screenSize.height;
+                    }
+                    if (frameSize.width > screenSize.width)
+                    {
+                        frameSize.width = screenSize.width;
+                    }
+                    dlg.setLocation( (screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+                    dlg.setVisible(true);
+
+                    if (dlg.cancelled)
+                    {
+                        this.dispose();
+                        createCancelled = true;
+                        return;
+                    }
+
+                    //swcReader.includeSomaOutline(dlg.includeSomaOutline());
+                    swcReader.daughtersInherit(dlg.daughtersInherit());
+                    swcReader.includeAnatFeatures(dlg.includeAnatFeatures());
                 }
 
 
@@ -414,7 +451,7 @@ public class NewCellTypeDialog extends JDialog
 
                 recentFiles.setMyLastMorphologiesDir(new String(chooser.getSelectedFile().getParent()));
 
-                System.out.println("Morph dir1: "+ recentFiles.getMyLastMorphologiesDir());
+                //System.out.println("Morph dir1: "+ recentFiles.getMyLastMorphologiesDir());
 
                 this.jTextFieldFileName.setText(selectedFileName);
 

@@ -33,8 +33,8 @@ public class CellTypeHelper
 {
     static ClassLogger logger = new ClassLogger("CellTypeHelper");
 
-    private static Vector ordinaryCellTypes = new Vector();
-    private static Vector morphFileCellTypes = new Vector();
+    private static Vector<String> ordinaryCellTypes = new Vector<String>();
+    private static Vector<Object> morphFileCellTypes = new Vector<Object>();
 
     private static Hashtable extensionsVsMorphCellTypes = new Hashtable();
     private static Hashtable descriptionsVsCellTypes = new Hashtable();
@@ -59,22 +59,6 @@ public class CellTypeHelper
         addNewMorphCellType("ucl.physiol.neuroconstruct.cell.converters.NeuronMorphReader");
 
 
-
-
-
-/*
-        addNewMorphCellType("GenesisMorphReader",
-                            "Importer of Genesis *.p files",
-                            new String[]{".p"});
-
-        addNewMorphCellType("NeuronMorphReader",
-                            "Importer of Neuron *.nrn and *.hoc files",
-                            new String[]{".nrn", ".hoc"});
-
-        addNewMorphCellType("MorphMLConverter",
-                            "Importer of MorphML files",
-                            new String[]{".xml"});
-*/
 
         Vector allCellTypes = new Vector(ordinaryCellTypes);
         allCellTypes.addAll(morphFileCellTypes);

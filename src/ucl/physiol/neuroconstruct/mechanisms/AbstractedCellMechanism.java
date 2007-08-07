@@ -43,8 +43,6 @@ public abstract class AbstractedCellMechanism extends CellMechanism
 
     String plotInfoFile = null;
 
-
-
     // Needs to be public for XMLEncoder...
     public AbstractedCellMechanism()
     {

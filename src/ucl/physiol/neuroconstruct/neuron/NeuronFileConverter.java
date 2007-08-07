@@ -62,7 +62,7 @@ public class NeuronFileConverter
      */
     public String convertNeuronFile(File neuFile) throws NeuronException, IOException
     {
-        String commentless = trimComments(neuFile);
+        String commentless = trimCommentsAndDecimals(neuFile);
 
         logger.logComment("Commentless: ");
         //printLines(commentless);
@@ -99,7 +99,7 @@ public class NeuronFileConverter
      * and all comments enclosed in /* */
      /*
      */
-    private String trimComments(File neuFile) throws NeuronException, IOException
+    private String trimCommentsAndDecimals(File neuFile) throws NeuronException, IOException
     {
         Reader in = new FileReader(neuFile);
         BufferedReader lineReader = new BufferedReader(in);
@@ -166,16 +166,41 @@ public class NeuronFileConverter
 
                 if(nextLine.length()>0)
                 {
+                    String toAppend = "";
                     if (nextLine.charAt(nextLine.length()-1)=='\\')
                     {
                         nextLine = nextLine.substring(0, nextLine.length()-1);
-                        sb.append(nextLine+" ");
+                        toAppend = nextLine+" ";
                     }
                     else
                     {
-                        sb.append(nextLine + "\n");
+                        toAppend = nextLine + "\n";
                     }
+                    
+                    if (toAppend.indexOf("[")>=0 && toAppend.indexOf("]")>=0)
+                    {
+                        String inside = toAppend.substring(toAppend.indexOf("[")+1, toAppend.indexOf("]"));
+                        String better = "";
+                        
+                        if (inside.endsWith("."))
+                        {
+                            better = inside.substring(0,inside.length()-1);
+                            toAppend = GeneralUtils.replaceAllTokens(toAppend, "["+inside+"]", "["+better+"]");                            
+                        }
+                        if (inside.endsWith(".0"))
+                        {
+                            better = inside.substring(0,inside.length()-2);
+                            toAppend = GeneralUtils.replaceAllTokens(toAppend, "["+inside+"]", "["+better+"]");                            
+                        }
+                        
+                    }
+                    
+                    
+                    sb.append(toAppend);
+                    
+                    
                 }
+                
             }
         }
 

@@ -229,6 +229,10 @@ public class ProjectManager
                                 boolean extraComments,
                                 String simConfig) throws NeuroMLException
     {
+
+        logger.logComment("Going to save thee  networkmlFile: "+networkmlFile);
+        
+        
         StringBuffer notes = new StringBuffer("\nNetwork structure for project: "
                                               + getCurrentProject().getProjectName() +
                                               " saved with neuroConstruct v" +
@@ -261,11 +265,11 @@ public class ProjectManager
         notes.append("\n");
 
 
-            getCurrentProject().saveNetworkStructure(networkmlFile,
-                                                                 notes.toString(),
-                                                                 zip,
-                                                                 extraComments,
-                                                                 simConfig);
+        getCurrentProject().saveNetworkStructure(networkmlFile,
+                                                 notes.toString(),
+                                                 zip,
+                                                 extraComments,
+                                                 simConfig);
 
 
     }

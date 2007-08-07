@@ -1615,11 +1615,11 @@ public class OneCell3D
 
         for (int i = 0; i < this.myCell.getAllSegments().size(); i++)
         {
-            Segment nextSeg = (Segment) this.myCell.getAllSegments().elementAt(i);
+            Segment nextSeg = myCell.getAllSegments().get(i);
 
             if (selectedSegment!=null && nextSeg.getSection().equals(selectedSegment.getSection()))
             {
-                logger.logComment("Setting seg in sec");
+                logger.logComment("Setting seg in sec: "+nextSeg);
                 setSegmentAppearance(appSection, nextSeg.getSegmentId());
             }
             else

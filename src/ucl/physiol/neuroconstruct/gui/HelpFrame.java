@@ -192,6 +192,17 @@ public class HelpFrame extends JFrame implements HyperlinkListener
 
     public static HelpFrame showFrame(URL url, String title, boolean standalone)
     {
+        if (url==null)
+        {
+            try
+            {
+                url = (new File(ProjectStructure.getGlossaryHtmlFile())).toURL();
+            }
+            catch (MalformedURLException m)
+            {
+                
+            }
+        }
         if (theHelpFrame ==null)
         {
             theHelpFrame = new HelpFrame(url, title, standalone);
@@ -201,6 +212,10 @@ public class HelpFrame extends JFrame implements HyperlinkListener
             theHelpFrame.setTitle(title);
             theHelpFrame.setStandalone(standalone);
         }
+        theHelpFrame.setFrameSize(800, 600);
+        
+        GuiUtils.centreWindow(theHelpFrame);
+        theHelpFrame.setVisible(true);
 
         return theHelpFrame;
     }
@@ -210,7 +225,11 @@ public class HelpFrame extends JFrame implements HyperlinkListener
         File f = new File(ProjectStructure.getGlossaryHtmlFile());
         try
         {
-            URL internalURL = new URL("file:///"+ f.getCanonicalPath()+ "#"+ item);
+            String extra = "";
+            if (item.trim().length()>0) extra = "#"+ item;
+            
+            URL internalURL = new URL("file:"+ f.getCanonicalPath()+ extra);
+            
             HelpFrame simpleViewer = HelpFrame.showFrame(internalURL, f.getAbsolutePath(), false);
 
             simpleViewer.setFrameSize(800, 600);

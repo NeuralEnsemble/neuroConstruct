@@ -14,6 +14,7 @@ package ucl.physiol.neuroconstruct.gui;
 
 import java.beans.*;
 import java.io.*;
+import java.net.*;
 import java.text.*;
 import java.util.*;
 import java.util.zip.*;
@@ -631,7 +632,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     BorderLayout borderLayout36 = new BorderLayout();
     JTable jTableMechanisms = new JTable();
     JButton jButtonMechanismDelete = new JButton();
-    JButton jButtonMechanismEdit = new JButton();
+    JButton jButtonMechanismCopy = new JButton();
+    JButton jButtonMechanismEditIt = new JButton();
+    
     JButton jButtonMechanismAbstract = new JButton();
     JButton jButtonMechanismTemplateCML = new JButton();
     BorderLayout borderLayout37 = new BorderLayout();
@@ -1372,12 +1375,23 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jButtonMechanismDelete_actionPerformed(e);
       }
     });
-        jButtonMechanismEdit.setText("Edit selected Cell Mechanism");
-    jButtonMechanismEdit.addActionListener(new java.awt.event.ActionListener() {
+
+    jButtonMechanismEditIt.setText("Edit selected Cell Mechanism");
+    
+    jButtonMechanismEditIt.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         jButtonMechanismEdit_actionPerformed(e);
       }
     });
+    
+    jButtonMechanismCopy.setText("Create copy of selected Cell Mechanism");
+    
+    jButtonMechanismCopy.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+          jButtonMechanismCopy_actionPerformed(e);
+      }
+    });
+    
     jButtonMechanismAbstract.setEnabled(false);
     jButtonMechanismTemplateCML.setEnabled(false);
     jButtonMechanismFileBased.setEnabled(false);
@@ -3254,7 +3268,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelProcessButtonsTop.add(this.jButtonMechanismTemplateCML, null);
 
 
-        jPanelProcessButtonsBottom.add(jButtonMechanismEdit, null);
+        jPanelProcessButtonsBottom.add(jButtonMechanismEditIt, null);
+        //// not enough time to finish this..//// jPanelProcessButtonsBottom.add(jButtonMechanismCopy, null);
         jPanelProcessButtonsBottom.add(jButtonMechanismDelete, null);
 
         jPanelMechanismLabel.add(jPanelProcessButtons,  BorderLayout.SOUTH);
@@ -7406,7 +7421,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             projManager.getCurrentProject().getProjectStatus() == Project.PROJECT_NOT_INITIALISED)
         {
             this.jButtonMechanismAbstract.setEnabled(false);
-            this.jButtonMechanismEdit.setEnabled(false);
+            this.jButtonMechanismEditIt.setEnabled(false);
+            this.jButtonMechanismCopy.setEnabled(false);
             this.jButtonMechanismDelete.setEnabled(false);
             jButtonMechanismFileBased.setEnabled(false);
             jButtonMechanismNewCML.setEnabled(false);
@@ -7422,7 +7438,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
 
             this.jButtonMechanismAbstract.setEnabled(true);
-            this.jButtonMechanismEdit.setEnabled(true);
+            this.jButtonMechanismEditIt.setEnabled(true);
+            this.jButtonMechanismCopy.setEnabled(true);
             this.jButtonMechanismDelete.setEnabled(true);
             jButtonMechanismFileBased.setEnabled(true);
             jButtonMechanismNewCML.setEnabled(true);
@@ -9316,12 +9333,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     {
         logger.logComment("Help for 3D requested");
    
-
-        File f = new File(ProjectStructure.getGlossaryHtmlFile()+"#3D View of Cells");
-
-        showFileInHelpFrame(f);
-        
-
+        HelpFrame.showGlossaryItem("3D View of Cells");
+       
     }
 
     void jButtonNeuronView_actionPerformed(ActionEvent e)
@@ -10212,9 +10225,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     {
         logger.logComment("Going to show glossary...");
 
-        File f = new File(ProjectStructure.getGlossaryHtmlFile());
-
-        showFileInHelpFrame(f);
+        HelpFrame.showGlossaryItem("");
 
     }
 
@@ -10886,6 +10897,63 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 */
 
     }
+    
+
+
+    void jButtonMechanismCopy_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("----------------------------         Copying a cell mechanism...");
+
+            if (true) return;
+
+        int selectedRow = jTableMechanisms.getSelectedRow();
+
+        if (selectedRow < 0)
+        {
+            logger.logComment("No row selected...");
+            return;
+        }
+        CellMechanism cellMechPre = projManager.getCurrentProject().cellMechanismInfo.getCellMechanismAt(selectedRow);
+
+        
+        String cellMechanismName = JOptionPane.showInputDialog(this,
+                                    "Please enter the name of the Channel Mechanism which is copied from "+ cellMechPre.getInstanceName(),
+                                    "New ChannelML Cell Mechanism",
+                                    JOptionPane.QUESTION_MESSAGE);
+
+        logger.logComment("Input: "+ cellMechanismName);
+
+        //File cellMechDir = ProjectStructure.getCellProcessesDir(projManager.getCurrentProject().getProjectMainDirectory());
+
+
+        if (cellMechanismName==null || cellMechanismName.trim().length()==0)
+        {
+            logger.logError("No cellMechanismName inputted...");
+            return;
+        }
+
+        if (cellMechanismName.indexOf(" ")>=0)
+        {
+            GuiUtils.showErrorMessage(logger, "Please type a Cell Mechanism name without spaces", null, this);
+            jButtonMechanismCopy_actionPerformed(e);
+            return;
+        }
+
+        File dirForCMLFiles = ProjectStructure.getDirForCellMechFiles(projManager.getCurrentProject(), cellMechanismName);
+
+        if (dirForCMLFiles.exists())
+        {
+            GuiUtils.showErrorMessage(logger, "The Cell Mechanism name: "+ cellMechanismName +" is already being used.", null, this);
+            jButtonMechanismCopy_actionPerformed(e);
+            return;
+
+        }
+        dirForCMLFiles.mkdir();
+        
+        //CellMechanism cmPost = new CellMechanism();
+        
+    }
+    
 
     void jButtonMechanismEdit_actionPerformed(ActionEvent e)
     {
@@ -12158,37 +12226,17 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         File f = new File(ProjectStructure.getMainHelpFile());
         
-        showFileInHelpFrame(f);
+        try
+        {
+            HelpFrame.showFrame(f.toURL(), "neuroConstruct Help documentation", false);
+        }
+        catch (MalformedURLException m)
+        {
+            
+        }
         
     }
     
-    private void showFileInHelpFrame(File f)
-    {
-        try
-        {
-            HelpFrame simpleViewer = HelpFrame.showFrame(f.toURL(), f.getAbsolutePath(), false);
-
-            simpleViewer.setFrameSize(800, 600);
-
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            Dimension frameSize = simpleViewer.getSize();
-
-            if (frameSize.height > screenSize.height)
-                frameSize.height = screenSize.height;
-            if (frameSize.width > screenSize.width)
-                frameSize.width = screenSize.width;
-
-            simpleViewer.setLocation( (screenSize.width - frameSize.width) / 2,
-                                     (screenSize.height - frameSize.height) / 2);
-
-            simpleViewer.setVisible(true);
-        }
-        catch (IOException io)
-        {
-            GuiUtils.showErrorMessage(logger, "Problem showing help frame", io, this);
-        }
-
-    }
 
 
     public void jButtonNeuroMLValidate_actionPerformed(ActionEvent e)

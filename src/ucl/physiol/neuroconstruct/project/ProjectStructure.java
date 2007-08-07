@@ -191,6 +191,8 @@ public class ProjectStructure
 
     private static String helpMenuFile = helpFileDir + "docMenu.html";
 
+    private static String importDocFile = helpFileDir + "import.html";
+
     private static String glossaryHtmlFile = helpFileDir + "Glossary_gen.html";
 
    // private static String neuronModSourcesDir = "src"
@@ -335,6 +337,12 @@ public class ProjectStructure
     public static String getHelpMenuFile()
     {
         return helpMenuFile;
+    }
+    
+    
+    public static String getHelpImportFile()
+    {
+        return importDocFile;
     }
 
 

@@ -253,7 +253,8 @@ public class Cell implements Serializable
                                        Point3f endPointPosn,
                                        Segment parent,
                                        float fractionAlongParentSegment,
-                                       String sectionName)
+                                       String sectionName,
+                                       boolean inheritParentsRadius)
     {
         int nextId = getNextSegmentId();
 
@@ -295,6 +296,7 @@ public class Cell implements Serializable
 
                     Point3f parentStart = parent.getStartPointPosition();
                     Point3f parentEnd = parent.getEndPointPosition();
+                    
                     Point3f newSectionStart
                         = new Point3f(parentStart.x + (fractionAlongParentSegment) * (parentEnd.x - parentStart.x),
                                       parentStart.y + (fractionAlongParentSegment) * (parentEnd.y - parentStart.y),
@@ -305,18 +307,28 @@ public class Cell implements Serializable
                         segmentSection.setStartPointPositionZ(newSectionStart.z);
 
                     // use parent end point radius as opposed to a tapered radius between the start and end...
-                    segmentSection.setStartRadius(parent.getRadius());
-
+                    ////////////////segmentSection.setStartRadius(parent.getRadius());
                 }
+                
+                
                 if (parent.getSegmentShape() == Segment.SPHERICAL_SHAPE)
                 {
                     segmentSection.setStartPointPositionX(parent.getEndPointPosition().x);
                     segmentSection.setStartPointPositionY(parent.getEndPointPosition().y);
                     segmentSection.setStartPointPositionZ(parent.getEndPointPosition().z);
 
-                    segmentSection.setStartRadius(radius);
+                    ////////////segmentSection.setStartRadius(radius);
                     realFractionAlongParent = 0.5f; // for NEURON, so when sphere mapped to
                     // a cylinder, child segment added at middle
+                }
+                
+                if (inheritParentsRadius)
+                {
+                    segmentSection.setStartRadius(parent.getRadius());
+                }
+                else
+                {
+                    segmentSection.setStartRadius(radius);
                 }
             }
             else

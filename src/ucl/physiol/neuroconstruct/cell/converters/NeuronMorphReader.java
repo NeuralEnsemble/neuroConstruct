@@ -99,6 +99,34 @@ public class NeuronMorphReader extends FormatImporter
 
         return newCell;
     }
+    
+    
+    public static String getBetterSectionName(String origSecName)
+    {
+        if (origSecName.indexOf("[")>=0 && origSecName.indexOf("]")>=0)
+        {
+            String inside = origSecName.substring(origSecName.indexOf("[")+1, origSecName.indexOf("]"));
+            String better = "";
+            
+            if (inside.endsWith("."))
+            {
+                better = inside.substring(0,inside.length()-1);
+                origSecName = GeneralUtils.replaceAllTokens(origSecName, "["+inside+"]", "["+better+"]");                            
+            }
+            if (inside.endsWith(".0"))
+            {
+                better = inside.substring(0,inside.length()-2);
+                origSecName = GeneralUtils.replaceAllTokens(origSecName, "["+inside+"]", "["+better+"]");                            
+            }
+        }
+        
+        String newName = GeneralUtils.replaceAllTokens(origSecName, "[", "_");
+        
+        newName = GeneralUtils.replaceAllTokens(newName, "]", "");
+        
+        return newName;
+    }
+    
 
     /**
      * Creates a Cell based on the contents of the NEURON morphology file
@@ -158,111 +186,155 @@ public class NeuronMorphReader extends FormatImporter
                 {
                     String sectionsToCreate = nextLine.substring("create ".length());
 
-                    String[] sectionNames = sectionsToCreate.split(",");
-                    String probSomaSecName = sectionNames[0].trim(); // usually...
+                    String[] origSecNames = sectionsToCreate.split(",");
+                    String probSomaSecName = origSecNames[0].trim(); // usually...
 
-                    for (int i = 0; i < sectionNames.length; i++)
+                    for (int i = 0; i < origSecNames.length; i++)
                     {
-                        if (sectionNames[i].toUpperCase().indexOf("SOMA")>=0)
+                        if (origSecNames[i].toUpperCase().indexOf("SOMA")>=0)
                         {
-                            probSomaSecName = sectionNames[i].trim();
+                            probSomaSecName = origSecNames[i].trim();
+                            if (probSomaSecName.indexOf("[")>=0)
+                            {
+                                probSomaSecName = probSomaSecName.substring(0, probSomaSecName.indexOf("["))+"_0";
+                            }
                         }
                     }
                     logger.logComment("probSomaSecName: " + probSomaSecName);
 
-                    for (int numNewSections = 0; numNewSections < sectionNames.length; numNewSections++)
+                    for (int numNewSections = 0; numNewSections < origSecNames.length; numNewSections++)
                     {
-                        sectionNames[numNewSections] = sectionNames[numNewSections].trim();
-                        logger.logComment("Creating section(s): "+ sectionNames[numNewSections]);
-
-                        if (somaPrimarySegment == null && sectionNames[numNewSections].equals(probSomaSecName))
+                        origSecNames[numNewSections] = origSecNames[numNewSections].trim();
+                        
+                        logger.logComment("Creating section(s): "+ origSecNames[numNewSections]);
+                        
+                        ArrayList<String> actualSections = new ArrayList<String>();
+                        
+                        if (origSecNames[numNewSections].indexOf("[")>0)
                         {
-                            logger.logComment("Assuming this section: " + sectionNames[numNewSections]
-                                              + " is soma section");
+                            String arrayName = origSecNames[numNewSections].substring(0,origSecNames[numNewSections].indexOf("[")).trim();
 
-                            somaPrimarySegment = cell.addFirstSomaSegment( -1, -1,
-                                                                          sectionNames[numNewSections] + "__0",
-                                                                          null,
-                                                                          null,
-                                                                          new Section(sectionNames[numNewSections]));
+                            String intString = origSecNames[numNewSections].substring(origSecNames[numNewSections].indexOf("[")+1,
+                                    origSecNames[numNewSections].indexOf("]")).trim();
 
-                            somaPrimarySegment.getSection().setStartPointPositionX(Float.MAX_VALUE); // since we know there's pt3d data coming...
-                            somaPrimarySegment.getSection().setStartPointPositionY(Float.MAX_VALUE); // since we know there's pt3d data coming...
-                            somaPrimarySegment.getSection().setStartPointPositionZ(Float.MAX_VALUE); // since we know there's pt3d data coming...
+                            
+                            int arraySize = Integer.parseInt(intString);
 
-                            ///somaPrimarySegment.setShape(Segment.CYLINDRICAL_SHAPE); // always with neuron morphs
-
-                            somaPrimarySegment.setEndPointPositionX(Float.MAX_VALUE); // since we know there's pt3d data coming...
-                            somaPrimarySegment.setEndPointPositionY(Float.MAX_VALUE); // since we know there's pt3d data coming...
-                            somaPrimarySegment.setEndPointPositionZ(Float.MAX_VALUE); // since we know there's pt3d data coming...
-
-                            createdFirstSegments.put(sectionNames[numNewSections], somaPrimarySegment);
-                            lastAddedChildSegs.put(sectionNames[numNewSections], somaPrimarySegment);
-
-                            latestCreatedSection = somaPrimarySegment.getSection();
+                            logger.logComment("Creating array of "+arrayName+" of  size: " + arraySize);
+                            
+                            for(int i=0;i<arraySize;i++)
+                            {
+                                actualSections.add(arrayName+"_"+i);
+                            }
                         }
                         else
                         {
-                            if (sectionNames[numNewSections].indexOf("[")>0)
+                            actualSections.add(origSecNames[numNewSections]);
+                        }
+                        
+                        logger.logComment("actualSections: "+actualSections);
+                        
+                        
+                        for (String newSecName: actualSections)
+                        {
+                            if (somaPrimarySegment == null && 
+                                    newSecName.equals(probSomaSecName))
                             {
-                                String arrayName = sectionNames[numNewSections].substring(0,sectionNames[numNewSections].indexOf("[")).trim();
-
-                                int arraySize = Integer.parseInt(sectionNames[numNewSections].substring(sectionNames[numNewSections].indexOf("[")+1,
-                                    sectionNames[numNewSections].indexOf("]")).trim());
-
-                                logger.logComment("Creating array of "+arrayName+" of  size: " + arraySize);
-
-                                for (int i = 0; i < arraySize; i++)
-                                {
-                                        String newSectionName = arrayName + "[" +i+"]";
-
-                                        Segment newSegment
-                                            = cell.addDendriticSegment( -1,
-                                                                        newSectionName+"__0",
-                                                                        new Point3f(),
-                                                                        null,
-                                                                        1,
-                                                                        newSectionName);
-
-                                        newSegment.getSection().setStartPointPositionX(Float.MAX_VALUE); // since we know there's pt3d data coming...
-                                        newSegment.getSection().setStartPointPositionY(Float.MAX_VALUE); // since we know there's pt3d data coming...
-                                        newSegment.getSection().setStartPointPositionZ(Float.MAX_VALUE); // since we know there's pt3d data coming...
-
-                                        newSegment.setEndPointPositionX(Float.MAX_VALUE); // since we know there's pt3d data coming...
-                                        newSegment.setEndPointPositionY(Float.MAX_VALUE); // since we know there's pt3d data coming...
-                                        newSegment.setEndPointPositionZ(Float.MAX_VALUE); // since we know there's pt3d data coming...
-
-                                        createdFirstSegments.put(newSectionName, newSegment);
-                                        lastAddedChildSegs.put(newSectionName, newSegment);
-
-                                        latestCreatedSection = newSegment.getSection();
-                                }
+                                logger.logComment("Assuming this section: " + newSecName
+                                                  + " is soma section");
+    
+                                somaPrimarySegment = cell.addFirstSomaSegment( -1, -1,
+                                                                              newSecName + "__0",
+                                                                              null,
+                                                                              null,
+                                                                              new Section(newSecName));
+    
+                                somaPrimarySegment.getSection().setStartPointPositionX(Float.MAX_VALUE); // since we know there's pt3d data coming...
+                                somaPrimarySegment.getSection().setStartPointPositionY(Float.MAX_VALUE); // since we know there's pt3d data coming...
+                                somaPrimarySegment.getSection().setStartPointPositionZ(Float.MAX_VALUE); // since we know there's pt3d data coming...
+    
+                                ///somaPrimarySegment.setShape(Segment.CYLINDRICAL_SHAPE); // always with neuron morphs
+    
+                                somaPrimarySegment.setEndPointPositionX(Float.MAX_VALUE); // since we know there's pt3d data coming...
+                                somaPrimarySegment.setEndPointPositionY(Float.MAX_VALUE); // since we know there's pt3d data coming...
+                                somaPrimarySegment.setEndPointPositionZ(Float.MAX_VALUE); // since we know there's pt3d data coming...
+    
+                                createdFirstSegments.put(newSecName, somaPrimarySegment);
+                                lastAddedChildSegs.put(newSecName, somaPrimarySegment);
+    
+                                latestCreatedSection = somaPrimarySegment.getSection();
                             }
                             else
                             {
-                                String newSectionName = new String(sectionNames[numNewSections]);
-                                Segment newSegment
-                                = cell.addDendriticSegment( -1,
-                                                            newSectionName+"__0",
-                                                            new Point3f(),
-                                                            null,
-                                                            1,
-                                                            newSectionName);
-
-                                newSegment.getSection().setStartPointPositionX(Float.MAX_VALUE); // since we know there's pt3d data coming...
-                                newSegment.getSection().setStartPointPositionY(Float.MAX_VALUE); // since we know there's pt3d data coming...
-                                newSegment.getSection().setStartPointPositionZ(Float.MAX_VALUE); // since we know there's pt3d data coming...
-
-                                newSegment.setEndPointPositionX(Float.MAX_VALUE); // since we know there's pt3d data coming...
-                                newSegment.setEndPointPositionY(Float.MAX_VALUE); // since we know there's pt3d data coming...
-                                newSegment.setEndPointPositionZ(Float.MAX_VALUE); // since we know there's pt3d data coming...
-
-
-                                createdFirstSegments.put(newSectionName, newSegment);
-                                lastAddedChildSegs.put(newSectionName, newSegment);
-
-                                latestCreatedSection = newSegment.getSection();
+                                /*
+                                if (sectionNames[numNewSections].indexOf("[")>0)
+                                {
+                                    String arrayName = sectionNames[numNewSections].substring(0,sectionNames[numNewSections].indexOf("[")).trim();
+    
+                                    String intString = sectionNames[numNewSections].substring(sectionNames[numNewSections].indexOf("[")+1,
+                                            sectionNames[numNewSections].indexOf("]")).trim();
+    
+                                    
+                                    int arraySize = Integer.parseInt(intString);
+    
+                                    logger.logComment("Creating array of "+arrayName+" of  size: " + arraySize);
+    
+                                    for (int i = 0; i < arraySize; i++)
+                                    {
+                                            String newSectionName = arrayName + "[" +i+"]";
+    
+                                            Segment newSegment
+                                                = cell.addDendriticSegment( -1,
+                                                                            newSectionName+"__0",
+                                                                            new Point3f(),
+                                                                            null,
+                                                                            1,
+                                                                            newSectionName,
+                                                                            false);
+    
+                                            newSegment.getSection().setStartPointPositionX(Float.MAX_VALUE); // since we know there's pt3d data coming...
+                                            newSegment.getSection().setStartPointPositionY(Float.MAX_VALUE); // since we know there's pt3d data coming...
+                                            newSegment.getSection().setStartPointPositionZ(Float.MAX_VALUE); // since we know there's pt3d data coming...
+    
+                                            newSegment.setEndPointPositionX(Float.MAX_VALUE); // since we know there's pt3d data coming...
+                                            newSegment.setEndPointPositionY(Float.MAX_VALUE); // since we know there's pt3d data coming...
+                                            newSegment.setEndPointPositionZ(Float.MAX_VALUE); // since we know there's pt3d data coming...
+    
+                                            createdFirstSegments.put(newSectionName, newSegment);
+                                            lastAddedChildSegs.put(newSectionName, newSegment);
+    
+                                            latestCreatedSection = newSegment.getSection();
+                                    }
+                                }
+                                else
+                                {*/
+                                    String newSectionName = new String(newSecName);
+                                    Segment newSegment
+                                    = cell.addDendriticSegment( -1,
+                                                                newSectionName+"__0",
+                                                                new Point3f(),
+                                                                null,
+                                                                1,
+                                                                newSectionName,
+                                                                false);
+    
+                                    newSegment.getSection().setStartPointPositionX(Float.MAX_VALUE); // since we know there's pt3d data coming...
+                                    newSegment.getSection().setStartPointPositionY(Float.MAX_VALUE); // since we know there's pt3d data coming...
+                                    newSegment.getSection().setStartPointPositionZ(Float.MAX_VALUE); // since we know there's pt3d data coming...
+    
+                                    newSegment.setEndPointPositionX(Float.MAX_VALUE); // since we know there's pt3d data coming...
+                                    newSegment.setEndPointPositionY(Float.MAX_VALUE); // since we know there's pt3d data coming...
+                                    newSegment.setEndPointPositionZ(Float.MAX_VALUE); // since we know there's pt3d data coming...
+    
+    
+                                    createdFirstSegments.put(newSectionName, newSegment);
+                                    lastAddedChildSegs.put(newSectionName, newSegment);
+    
+                                    latestCreatedSection = newSegment.getSection();
+                                //}
                             }
+                            
+                            
                         }
                     }
 
@@ -273,10 +345,12 @@ public class NeuronMorphReader extends FormatImporter
 
                 else if (isValidSection(possSectionName))
                 {
-                    String sectionName = possSectionName;
-                    logger.logComment("Line referring to section: " + sectionName);
+                    String origSecName = possSectionName;
+                    logger.logComment("Line referring to section: " + origSecName);
+                    
+                    String usedSecName = getBetterSectionName(origSecName);
 
-                    Segment primarySegment = getFirstSegment(sectionName);
+                    Segment primarySegment = getFirstSegment(usedSecName);
 
                     String parentName = "-- null --";
 
@@ -286,7 +360,7 @@ public class NeuronMorphReader extends FormatImporter
                     logger.logComment("It's primarySegment: " + primarySegment.getSegmentName() +
                                       ", parent: " + parentName);
 
-                    String restOfLine = nextLine.substring(nextLine.indexOf(sectionName)+sectionName.length()).trim();
+                    String restOfLine = nextLine.substring(nextLine.indexOf(origSecName)+origSecName.length()).trim();
 
                     logger.logComment("nextLine: " + nextLine);
                     logger.logComment("restOfLine: " + restOfLine);
@@ -322,11 +396,11 @@ public class NeuronMorphReader extends FormatImporter
                     {
                         logger.logComment("          -----------    Using line num "
                                           + lineCount
-                                          + ": " + nextLine
+                                          + ": " + restOfLine
                                           + " for section: "
                                           + primarySegment.getSection());
 
-                        useLineForSection(nextLine, primarySegment);
+                        useLineForSection(restOfLine, primarySegment);
                         logger.logComment("Finished using line in bracket...");
                     }
 
@@ -359,7 +433,8 @@ public class NeuronMorphReader extends FormatImporter
 
                else if (nextLine.startsWith("access "))
                {
-                   String sectionToAccess = nextLine.substring("access ".length()).trim();
+                   String sectionToAccess = getBetterSectionName(nextLine.substring("access ".length()).trim());
+                   
                    logger.logComment("Being told to access: " + sectionToAccess);
 
                    // will generally be the case...
@@ -403,9 +478,6 @@ public class NeuronMorphReader extends FormatImporter
                    useLineForSection(nextLine, primarySegment);
 
                }
-
-
-
 
                else
                {
@@ -454,6 +526,8 @@ public class NeuronMorphReader extends FormatImporter
 
     private boolean isValidSection(String sectionName)
     {
+        if (sectionName.equals("")) return false;
+        
         Segment seg = createdFirstSegments.get(sectionName);
         logger.logComment("Got for "+sectionName+": " + seg);
 
@@ -464,7 +538,9 @@ public class NeuronMorphReader extends FormatImporter
         logger.logComment("Searching for "+alternateName+" in segs: " + this.createdFirstSegments.keySet());
 
         // try...
-        return createdFirstSegments.get(alternateName)!=null;
+        if (createdFirstSegments.get(alternateName)!=null) return true;
+        
+        return (createdFirstSegments.get(getBetterSectionName(sectionName))!=null);
 
     }
 
@@ -514,7 +590,7 @@ public class NeuronMorphReader extends FormatImporter
 
             GuiUtils.showInfoMessage(logger, "NEURON file simplified",
                                      "That NEURON file has been converted to a simplified format for importation.\nThe new version is at: " +
-                                     simplifiedNeuronFile, null);
+                                     simplifiedNeuronFile.getCanonicalPath(), null);
         }
 
         catch (Exception ex)
@@ -566,6 +642,8 @@ public class NeuronMorphReader extends FormatImporter
     private void useLineForSection(String line, Segment primarySegmentOfSection) throws MorphologyException
     {
         logger.logComment("Using line: ("+line+") for section: "+ primarySegmentOfSection.getSection().getSectionName());
+        
+        
         line = line.trim();
         Section section = primarySegmentOfSection.getSection();
         Segment newSegment = null;
@@ -734,13 +812,17 @@ public class NeuronMorphReader extends FormatImporter
                 else
                 {
                     logger.logComment("Adding info for new dend segment");
+                    
+                    boolean inheritRadius = true;
+                    if (lastChildSegment!=null && lastChildSegment.isSpherical()) inheritRadius=false;
 
                     newSegment = cell.addDendriticSegment(getDiamInfofromPt3dadd(line) / 2f,
                                                           newSegmentName,
                                                           point,
                                                           lastChildSegment,
                                                           1,
-                                                          section.getSectionName());
+                                                          section.getSectionName(),
+                                                          inheritRadius);
 
                     newSegment.setSegmentId(indexOfValidSegments);
                     // Swap them about so segs are in proper order (same as id)
@@ -774,6 +856,8 @@ public class NeuronMorphReader extends FormatImporter
             logger.logComment("connect... " + line);
 
             String childSectionName = line.substring("connect ".length(), line.indexOf("(")).trim();
+            
+            childSectionName = getBetterSectionName(childSectionName);
 
             if (childSectionName.indexOf("(")>=0)
                 childSectionName = childSectionName.substring(0,childSectionName.indexOf("("));
@@ -824,6 +908,9 @@ public class NeuronMorphReader extends FormatImporter
                          String parentSectionName,
                          float distAlongParentSection)
     {
+        childSectionName = getBetterSectionName(childSectionName);
+        parentSectionName = getBetterSectionName(parentSectionName);        
+        
         Segment firstSegOfChildSection = getFirstSegment(childSectionName);
         Segment firstSegOfParentSection = getFirstSegment(parentSectionName);
         Segment lastSegOfParentSection = this.getLastAddedChildSegment(parentSectionName);
@@ -976,7 +1063,8 @@ public class NeuronMorphReader extends FormatImporter
 
         //File newFile = new File("C:\\nrn54\\Morphology\\testFormats\\generated.nrn");
 
-        File newFile = new File("C:\\Documents and Settings\\padraig\\Desktop\\Datas\\Datas\\ub\\simp.hoc");
+        //File newFile = new File("C:\\Documents and Settings\\padraig\\Desktop\\Datas\\Datas\\ub\\simp.hoc");
+        File newFile = new File("../temp/hh.hoc");
 
         try
         {

@@ -212,6 +212,9 @@ public class Project implements TableModelListener
         boolean userAgreedUpdate = false;
 
 
+        if (!projectFile.exists())
+            throw new ProjectFileParsingException("The project file: "+projectFile.getAbsolutePath()+" does not exist!");
+        
 
         try
         {
@@ -917,7 +920,7 @@ public class Project implements TableModelListener
     {
         try
         {
-            logger.logComment("Going to save network in NeuroML format in " + neuroMLFile);
+            logger.logComment("Going to save network in NeuroML format in " + neuroMLFile.getAbsolutePath());
 
             SimpleXMLDocument doc = new SimpleXMLDocument();
 
@@ -996,7 +999,10 @@ public class Project implements TableModelListener
         }
         catch (Exception ex)
         {
-            throw new NeuroMLException("Problem creating NeuroML file: " + neuroMLFile.getAbsolutePath(), ex);
+            logger.logError("Problem creating NeuroML file: " 
+                    + neuroMLFile.getAbsolutePath(), ex);
+            throw new NeuroMLException("Problem creating NeuroML file: " 
+                    + neuroMLFile.getAbsolutePath(), ex);
         }
     }
 

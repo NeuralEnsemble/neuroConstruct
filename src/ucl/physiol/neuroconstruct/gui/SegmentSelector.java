@@ -34,6 +34,8 @@ import ucl.physiol.neuroconstruct.utils.*;
  */
 
 
+@SuppressWarnings("serial")
+
 public class SegmentSelector extends JFrame
 {
     ClassLogger logger = new ClassLogger("SegmentSelector");
@@ -63,7 +65,7 @@ public class SegmentSelector extends JFrame
 
     OneCell3DPanel oneCell3DPanel = null;
 
-    Vector segmentsForDeletion = new Vector();
+    Vector<Segment> segmentsForDeletion = new Vector<Segment>();
 
     static final int SECTIONS_SHOWN = 0;
     static final int SEGMENTS_SHOWN = 1;
@@ -233,8 +235,12 @@ public class SegmentSelector extends JFrame
             isFirstSegment = (currentlyAddressedSegment.getSegmentId()==0);
 
         boolean isFirstSectionSegment = false;
+        
         if (currentlyAddressedSegment!=null)
             isFirstSectionSegment = currentlyAddressedSegment.isFirstSectionSegment();
+
+        logger.logComment("isFirstSegment: "+isFirstSegment);
+        logger.logComment("isFirstSectionSegment: "+isFirstSectionSegment);
 
 
         this.jComboBoxFunctions.setEnabled(this.currentlyAddressedSegment!=null);
@@ -496,12 +502,12 @@ public class SegmentSelector extends JFrame
         jComboBoxSegment.setEnabled(false);
 
         jComboBoxFunctions.removeAllItems();
-        this.jComboBoxFunctions.addItem(this.FUNCTION_INSTR);
+        this.jComboBoxFunctions.addItem(FUNCTION_INSTR);
         this.jComboBoxFunctions.addItem(ADD_SEG_IN_NEW_SEC);
         this.jComboBoxFunctions.addItem(ADD_SEG_IN_THIS_SEC);
         /////////////this.jComboBoxFunctions.addItem(this.SPLIT_SEC);
-        this.jComboBoxFunctions.addItem(this.SPEC_AXONAL_ARBOUR);
-        this.jComboBoxFunctions.addItem(this.COMMENT);
+        this.jComboBoxFunctions.addItem(SPEC_AXONAL_ARBOUR);
+        this.jComboBoxFunctions.addItem(COMMENT);
 
 
     }
@@ -863,7 +869,7 @@ public class SegmentSelector extends JFrame
 
         //updateCellWithEnteredInfo();
 
-        if (e.getStateChange()==e.SELECTED)
+        if (e.getStateChange()==ItemEvent.SELECTED)
         {
             logger.logComment("Selected: "+e.getItem());
             if (e.getItem().equals(defaultSectionItem))
@@ -930,7 +936,7 @@ public class SegmentSelector extends JFrame
 
         //updateCellWithEnteredInfo();
 
-        if (e.getStateChange() == e.SELECTED)
+        if (e.getStateChange() == ItemEvent.SELECTED)
         {
             if (e.getItem().equals(defaultSegmentItem))
             {
@@ -1039,7 +1045,7 @@ public class SegmentSelector extends JFrame
 
         Segment parent = currentlyAddressedSegment.getParentSegment();
 
-        Vector allSegments = myCell.getAllSegments();
+        Vector<Segment> allSegments = myCell.getAllSegments();
         
         //ArrayList<Section> allSections = myCell.getAllSections();
 
@@ -1197,12 +1203,15 @@ public class SegmentSelector extends JFrame
         if (currentlyAddressedSegment.getSection().getGroups().contains(Section.SOMA_GROUP) ||
             currentlyAddressedSegment.getSection().getGroups().contains(Section.DENDRITIC_GROUP))
         {
+            boolean inheritRadius = currentlyAddressedSegment.getSection().getGroups().contains(Section.DENDRITIC_GROUP);
+            
             newSegment = myCell.addDendriticSegment(currentlyAddressedSegment.getRadius(),
                                        newSegmentName,
                                        newEndPoint,
                                        currentlyAddressedSegment,
                                        1,
-                                       newSectionName);
+                                       newSectionName,
+                                       inheritRadius);
         }
         else
         {
@@ -1312,7 +1321,8 @@ public class SegmentSelector extends JFrame
                                        newEndPoint,
                                        currentlyAddressedSegment,
                                        1,
-                                       currentlyAddressedSegment.getSection().getSectionName());
+                                       currentlyAddressedSegment.getSection().getSectionName(),
+                                       true);
         }
         else if (currentlyAddressedSegment.getSection().getGroups().contains(Section.AXONAL_GROUP))
         {
@@ -1590,31 +1600,31 @@ public class SegmentSelector extends JFrame
 
 
         if (selected !=null && /* Might be null on delete...*/
-            selected != this.FUNCTION_INSTR)
+            selected != FUNCTION_INSTR)
         {
             logger.logComment("Selected: "+ selected);
 
-            if (selected.equals(this.ADD_SEG_IN_NEW_SEC))
+            if (selected.equals(ADD_SEG_IN_NEW_SEC))
             {
                  addInNewSec_actionPerformed(e);
 
              }
-             if (selected.equals(this.ADD_SEG_IN_THIS_SEC))
+             if (selected.equals(ADD_SEG_IN_THIS_SEC))
              {
                   this.addInThisSec_actionPerformed(e);
 
               }
-              else if (selected.equals(this.SPLIT_SEC))
+              else if (selected.equals(SPLIT_SEC))
               {
                    this.splitAtCurrentSection();
 
                }
-               else if (selected.equals(this.SPEC_AXONAL_ARBOUR))
+               else if (selected.equals(SPEC_AXONAL_ARBOUR))
                {
                     this.specAxonalArbour();
 
                 }
-                else if (selected.equals(this.COMMENT))
+                else if (selected.equals(COMMENT))
                 {
                      this.editComment();
 
