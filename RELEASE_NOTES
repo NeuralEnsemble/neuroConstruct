@@ -3,18 +3,20 @@ Release notes/change log for neuroConstruct
 See also the README file
 
 
---- Version 1.0.4 (XXXXXX)
+--- Version 1.0.4 (Aug 07)
 
-- Uses NeuroML v1.6. Changes to that are at http://www.morphml.org:8080/NeuroMLValidator/NeuroMLFiles/Schemata/v1.6/RELEASE_NOTES. Main change is 
-  addition of <status> element in ChannelML, which is picked up in nC when validating proj with non stable ChannelML elements
+
+- Uses NeuroML v1.6. Changes to that are at http://www.morphml.org:8080/NeuroMLValidator/NeuroMLFiles/Schemata/v1.6/RELEASE_NOTES. 
+  Main change is addition of <status> element in ChannelML, which is picked up in nC when validating proj with non stable 
+  ChannelML elements
   
-- Allows user to change default location of new projects, from <user home dir>/nC_projects
+- Allows user to change default location of new projects, from <user home dir>/nC_projects to wherever (note: no space allowed in dir name)
 
 - Added phase plane plots (dV/dt versus V), for analysis of regular spiking cells, via Plot Info -> Spike Analysis
 
-- Update to options for stimulations (Tab Input and Output): repeated pulses, ...
+- Update to options for stimulations (Tab Input and Output): pulses can be repeated. Required new version of IClamp.mod (CurrentClampExt)
 
-- Some extra tool tips added
+- Some extra tool tips added, along with warnings/advice, e.g. info on getting extra memory in run.bat/run.sh
 
 - Fixed minor bug where project file modified date is changed on loading of project; now reflects when proj last saved
 
@@ -28,17 +30,19 @@ See also the README file
 - Made generated GENESIS more portable between directories: one variable targetDir specifies where all sim data will be stroed
 
 - Removed use of the NEURON system() calls in generated scripts when running under Windows, to deal with some instability there. 
-  Mainly recording of hostname, date, etc.
+  Was mainly used for recording of hostname, date, etc.
 
 
 
 ---- Version 1.0.1 (Apr 07)
+
 
 Basically the same as v0.9.8, but with examples outlined in paper included.
 
 
 
 ---- Version 0.9.8 (Mar 07)
+
 
 The first full public release, just before publication of the paper. Uses NeuroML v1.5
 

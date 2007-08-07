@@ -169,7 +169,7 @@ public class MainApplication
 
     public static void main(String[] args)
     {
-  
+
 		        try {
 		            // Check on java version...
 		    
@@ -271,7 +271,13 @@ public class MainApplication
 		            }
 		    
 		            MainApplication app = new MainApplication();
-		    
+                    
+                    String script = GeneralUtils.isWindowsBasedPlatform()?"run.bat":"run.sh";
+
+                    System.out.println("\nneuroConstruct "+GeneralProperties.getVersionNumber()
+                            +" starting...\nTo start application with extra memory, see "+script+" in the neuroConstruct home directory.\n");
+
+                    
 		            if (fileToOpen!=null) app.setOpenProject(fileToOpen);
 		    
 		            if (reloadLastProject) app.reloadLastProject();
