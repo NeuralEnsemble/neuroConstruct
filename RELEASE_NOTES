@@ -16,16 +16,22 @@ See also the README file
 
 - Update to options for stimulations (Tab Input and Output): pulses can be repeated. Required new version of IClamp.mod (CurrentClampExt)
 
+- Added more information in network generation summary on total synaptic conductance for post synaptic cells
+
+- Updated import of NeuroML morphologies, to ease NEURON ModelView exported files. 
+  See http://neuroml.svn.sourceforge.net/viewvc/neuroml/nrn2NeuroML/ to export cells from NEURON in Level 1 & 2 NeuroML.
+
 - Some extra tool tips added, along with warnings/advice, e.g. info on getting extra memory in run.bat/run.sh
 
 - Fixed minor bug where project file modified date is changed on loading of project; now reflects when proj last saved
 
 - Caught most (but not all) sources of problems for NEURON/cygwin GENESIS when spaces are present in a
   Windows file/directory name, e.g. C:\Documents and Settings\Padraig Gleeson\nC_projects. Will give specific warnings 
-  when spaces are present in a directory name: this can cause errors when file names are handed to the procss running NEURON, for example
+  when spaces are present in a directory name: this can cause errors when file names are handed to the process running NEURON, 
+  for example. If an error is thrown, the project should be copied (Save as..) in a dir without spaces in the name.
   
-- Added dialog box choice when prev simulation has been reloaded and generate NEURON/GENESIS is requested.
-  Had been a problem that no plots were generated in that case as no info on plots is stored with simulation info.
+- Added dialog box choice when a previous simulation has been reloaded and generate NEURON/GENESIS is requested.
+  Had been a problem that no plots were generated in that case, as no info on plots is stored with simulation structure.
   
 - Made generated GENESIS more portable between directories: one variable targetDir specifies where all sim data will be stroed
 
