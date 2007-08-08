@@ -328,7 +328,7 @@ public class NeuronTemplateGenerator
                 if (cell.getApPropSpeedForSection(next)==null)
                 {
                     String name = NeuronFileManager.getHocSectionName(next.getSectionName());
-                    System.out.println(name);
+                    /////System.out.println(name);
 
                     if (name.indexOf("[") > 0)
                     {

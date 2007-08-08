@@ -1158,9 +1158,10 @@ public class PlotterFrame extends JFrame
              sb.append("Frequency based on ISI: <b>"+ Utils3D.trimDouble((1/averageISI),5) + " Hz</b><br><br><br>");
 
 
+             String spikeTimeInfo = "";
+             for(double st: spikeTimes) spikeTimeInfo = spikeTimeInfo + (float)st+ "  ";
 
-
-            sb.append("Actual spikeTimes: " + spikeTimes+ "<br><br>");
+            sb.append("Actual spikeTimes: <br>" + spikeTimeInfo+ "<br><br>");
 
             sb.append("Number of points: " + dataSet.getNumberPoints() + "<br>");
 

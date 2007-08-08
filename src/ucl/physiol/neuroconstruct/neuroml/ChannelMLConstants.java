@@ -91,6 +91,7 @@ public class ChannelMLConstants
     public static String SYN_TYPE_ELEMENT = "synapse_type";
 
     public static String DOUB_EXP_SYN_ELEMENT = "doub_exp_syn";
+    public static String BLOCKING_SYN_ELEMENT = "blocking_syn";
 
     public static String DES_MAX_COND_ATTR = "max_conductance";
     public static String DES_RISE_TIME_ATTR = "rise_time";

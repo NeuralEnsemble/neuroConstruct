@@ -32,7 +32,7 @@ public class ColourUtils
         addColourRecord("Black", Color.black, 1);
         addColourRecord("Red", Color.red, 2);
         addColourRecord("Blue", Color.blue, 3);
-        addColourRecord("Green", Color.green, 4);
+        addColourRecord("Green", new Color(0, 155, 0), 4); // easier to see against the 3D default background
         addColourRecord("Orange", Color.orange, 5);
         addColourRecord("Brown", new Color(140, 100, 0), 6);
         addColourRecord("Magenta", Color.magenta, 7);

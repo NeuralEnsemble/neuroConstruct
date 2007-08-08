@@ -42,6 +42,7 @@ public class SWCMorphReader extends FormatImporter
     
     private int compTypeSoma = 1;
     private String somaSectionName = "Soma";
+    private String somaExtraSecPrefix = "ExtraSomaSec_";
     
 
     // To mimic the cvapp/neurolucida colours..
@@ -150,9 +151,8 @@ public class SWCMorphReader extends FormatImporter
                             
                             somaPoints.add(pi);
                             
-                        }
-
-                        if (includeAnatFeatures || sectionType<compTypeCutoff)
+                        } 
+                        else if (includeAnatFeatures || sectionType<compTypeCutoff)
                         {
                             PointInfo pi = new PointInfo(new Point3f(xCoord, yCoord, zCoord),
                                     sectionType, radius, segmentName, parentName);
@@ -331,43 +331,44 @@ public class SWCMorphReader extends FormatImporter
 
             logger.logComment("somaPoints: "+ somaPoints);
             
-            //int nextId = 0;
             
             Hashtable<String, Segment> origNamesVsSegments = new Hashtable<String, Segment>();
+
+            String firstSegName = null;
+            String firstSegEndpointName = null;
+            Segment firstSeg = null;
             
             if (somaPoints.size()>0)
             {
-                String firstSegName = null;
-                String firstSegEndpointName = null;
                 
                 Section somaSec = null;
                 
-                PointInfo pi = somaPoints.get(0);
+                PointInfo firstPi = somaPoints.get(0);
                 
                 somaSec = new Section(somaSectionName);
                 
-                Segment firstSeg = cell.addFirstSomaSegment(pi.radius,
-                        pi.radius,
-                        cleanUpName(pi.name),
-                        pi.xyz,
-                        pi.xyz,
+                firstSeg = cell.addFirstSomaSegment(firstPi.radius,
+                        firstPi.radius,
+                        cleanUpName(firstPi.name),
+                        firstPi.xyz,
+                        firstPi.xyz,
                         somaSec);
                 
-                firstSegName = (pi.name);
+                firstSegName = (firstPi.name);
                 
-                addGroups(firstSeg, pi.type);
+                addGroups(firstSeg, firstPi.type);
                 
-                origNamesVsSegments.put(pi.name, firstSeg);
-                
-
+                origNamesVsSegments.put(firstPi.name, firstSeg);
                 logger.logComment("firstSeg: "+ firstSeg);
+                logger.logComment("firstSeg section: "+ firstSeg.getSection());
                 
-            
+                ArrayList<String> takenParentOrigNames = new ArrayList<String>();
+                
                 for(int i=1;i<somaPoints.size();i++)
                 {
-                    pi = somaPoints.get(i);
-                    logger.logComment("pi: "+ pi);
-                    
+                    PointInfo pi = somaPoints.get(i);
+                    logger.logComment("---  next soma pi: "+ pi);
+                    logger.logComment("takenParentOrigNames: "+ takenParentOrigNames);
                     
                     if (i==1)
                     {
@@ -379,39 +380,130 @@ public class SWCMorphReader extends FormatImporter
                         firstSegEndpointName = pi.name;
 
                         logger.logComment("firstSeg now: "+ firstSeg);
-                        
+                        logger.logComment("firstSeg section: "+ firstSeg.getSection());
                     }
                     else
                     {
                         Segment parSegment = null;
+
+                        logger.logComment("pi.parentName: "+ pi.parentName);
+                        logger.logComment("firstSeg section: "+ firstSeg.getSection());
                         
-                        if (pi.parentName.equals(firstSegEndpointName))  
-                            parSegment = firstSeg;
-                        else
+                        if(!takenParentOrigNames.contains(pi.parentName)) // check parent not already connected...
+                        {
+                            if (pi.parentName.equals(firstSegEndpointName))  
+                            {
+                                parSegment = firstSeg;
+                                takenParentOrigNames.add(pi.parentName);
+                                takenParentOrigNames.add(firstSegName);
+                            }
+                            else
+                            {
+                                parSegment = origNamesVsSegments.get(pi.parentName);
+                                takenParentOrigNames.add(pi.parentName);
+                            }
+    
+                            logger.logComment("parSegment: "+ parSegment);
+                            
+                            // Doesn't matter if this is add dend seg, parent's groups will determine soma/dend, etc.
+                            Segment nextSeg = cell.addDendriticSegment(pi.radius,
+                                    cleanUpName(pi.name),
+                                    pi.xyz,
+                                    parSegment,
+                                    1,
+                                    parSegment.getSection().getSectionName(),
+                                    true);
+    
+                            logger.logComment("nextSeg: "+ nextSeg);
+                            
+                            origNamesVsSegments.put(pi.name, nextSeg);
+                            
+                        }
+                        else // make a new section...
+                        {
                             parSegment = origNamesVsSegments.get(pi.parentName);
-                        
+                            
+                            float connPoint = 1;
 
-                        logger.logComment("parSegment: "+ parSegment);
-                        
-                        Segment nextSeg = cell.addSomaSegment(pi.radius,
-                                cleanUpName(pi.name),
-                                pi.xyz,
-                                parSegment,
-                                somaSec);
-                        
+                            if (pi.parentName.equals(firstSegName))  connPoint = 0; 
+                            
+                            logger.logComment("parSegment for runt: "+ parSegment);
+                            
+                            String segName = cleanUpName(pi.name);
+                            String secName = somaExtraSecPrefix + segName;
+                            
+                            Segment nextSeg = cell.addDendriticSegment(pi.radius,
+                                    segName,
+                                    pi.xyz,
+                                    parSegment,
+                                    connPoint,
+                                    secName,
+                                    true);
+                            
+                            nextSeg.getSection().addToGroup("ExtraSomaSegments");
 
-                        logger.logComment("nextSeg: "+ nextSeg);
+                            nextSeg.getSection().addToGroup(somaColourGroup);
+                            
+                            nextSeg.setComment("Segment originally specified as in soma being put in seperate section, as it's parent segment already has a child in the soma section");
+    
+                            logger.logComment("nextSeg: "+ nextSeg);
+                            
+                            origNamesVsSegments.put(pi.name, nextSeg);
+                        }
                         
-                        //addGroups(nextSeg, pi.type); // neo needed as first seg sets section groups
-                        
-
                         logger.logComment("Soma segs: "+ cell.getOnlySomaSegments()+" \n \n");
                     }
+                    firstSeg.getSection().addToGroup(Section.SOMA_GROUP); // to ensure...
+
+                    logger.logComment("firstSeg section: "+ firstSeg.getSection());
                 }
             }
+            logger.logComment("otherPoints: "+ otherPoints);
             
+            ArrayList<String> parents = new ArrayList<String>();
             
-            //logger.logComment("otherPoints: "+ otherPoints);
+            for(PointInfo pi: otherPoints) parents.add(pi.parentName);
+            
+            String currentSectionName = null;
+            
+            for(PointInfo pi: otherPoints)
+            {
+                Segment parSegment = origNamesVsSegments.get(pi.parentName);
+                
+                if (pi.parentName.equals(firstSegEndpointName)) parSegment = firstSeg;
+
+                logger.logComment("Adding point: "+pi+", parent: "+ parSegment);
+                
+                float connPoint = 1;
+
+                if (pi.parentName.equals(firstSegName))  connPoint = 0; 
+               
+                
+                String segName = cleanUpName(pi.name);
+                String secName = "Sec_"+ segName;
+                
+                boolean inherit = false;
+                
+                if (parSegment.isSomaSegment() || 
+                        parSegment.getSection().getGroups().contains(somaColourGroup)) // for the extra soma segs
+                {
+                    inherit = this.daughtersOfSomaInherit;
+                }
+                
+                Segment nextSeg = cell.addDendriticSegment(pi.radius,
+                        segName,
+                        pi.xyz,
+                        parSegment,
+                        connPoint,
+                        secName,
+                        inherit);
+                
+                addGroups(nextSeg, pi.type);
+                
+                logger.logComment("nextSeg: "+ nextSeg);
+                
+                origNamesVsSegments.put(pi.name, nextSeg);
+            }
 
             cell.setCellDescription(description.toString());
         }
@@ -531,7 +623,7 @@ public class SWCMorphReader extends FormatImporter
 
         try
         {
-            File f = (new File("../temp/l22.swc")).getCanonicalFile();
+            File f = (new File("../temp/III22.swc")).getCanonicalFile();
             //File f = (new File("../temp/c73162.CNG.swc")).getCanonicalFile();
             
             logger.logComment("loading cell...");

@@ -324,7 +324,11 @@ public class Cell implements Serializable
                 
                 if (inheritParentsRadius)
                 {
-                    segmentSection.setStartRadius(parent.getRadius());
+                    float startRad = parent.getSegmentStartRadius();
+                    float endRad = parent.getRadius();
+                    
+                    segmentSection.setStartRadius(startRad 
+                            + (realFractionAlongParent * (endRad-startRad)));
                 }
                 else
                 {

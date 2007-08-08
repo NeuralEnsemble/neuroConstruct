@@ -12,11 +12,13 @@
 
 package ucl.physiol.neuroconstruct.project;
 
+import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
 import ucl.physiol.neuroconstruct.cell.*;
 import java.io.*;
 import ucl.physiol.neuroconstruct.utils.xml.*;
+import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
@@ -45,8 +47,6 @@ public class GeneratedNetworkConnections
     public static final int ANY_NETWORK_CONNECTION = -1;
 
     private Project project = null;
-
-
 
 
     public GeneratedNetworkConnections(Project project)
@@ -366,8 +366,8 @@ public class GeneratedNetworkConnections
             String src = null;
             String tgt = null;
 
-            ArrayList<SingleSynapticConnection>
-                conns = project.generatedNetworkConnections.getSynapticConnections(netConnName);
+            ArrayList<SingleSynapticConnection> conns 
+                = project.generatedNetworkConnections.getSynapticConnections(netConnName);
 
             if (! (conns.size() == 0))
             {
@@ -383,13 +383,8 @@ public class GeneratedNetworkConnections
                     src = project.volBasedConnsInfo.getSourceCellGroup(netConnName);
                     tgt = project.volBasedConnsInfo.getTargetCellGroup(netConnName);
                 }
-
-                for (int k = 0; k < syns.size(); k++)
-                {
-                    synNames.append(syns.get(k).getSynapseType());
-                    if (k < syns.size() - 1) synNames.append(", ");
-                    else synNames.append("]");
-                }
+                
+                
 
                 int srcCellNum = project.generatedCellPositions.getNumberInCellGroup(src);
                 int tgtCellNum = project.generatedCellPositions.getNumberInCellGroup(tgt);
@@ -451,19 +446,91 @@ public class GeneratedNetworkConnections
                 {
                     tgtStdString = " +/- " + tgtStd + " (" + tgtMin + " to " + tgtMax + ")";
                 }
+                
+                
+                StringBuffer synReport = new StringBuffer();
 
-                generationReport.append("<b>" + netConnName + "</b> (From: "
+                for (int k = 0; k < syns.size(); k++)
+                {
+                    String synType = syns.get(k).getSynapseType();
+                    
+                    float weight = syns.get(k).getWeightsGenerator().getNominalNumber();
+                    
+                    CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(synType);
+                    
+                    if (cellMech instanceof AbstractedCellMechanism)
+                    {
+                        //todo: add info on file based syns...
+                    }
+                    else if(cellMech instanceof ChannelMLCellMechanism)
+                    {
+                        ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism)cellMech;
+                        try
+                        {
+                            String units = cmlMech.getXMLDoc().getValueByXPath(ChannelMLConstants.getUnitsXPath());
+
+                            SimpleXMLEntity[] synTypes = cmlMech.getXMLDoc().getXMLEntities(ChannelMLConstants.getSynapseTypeXPath());
+
+                            SimpleXMLElement firstSyn = (SimpleXMLElement)synTypes[0];
+
+                            SimpleXMLEntity[] doubExpSyns = firstSyn.getXMLEntities(ChannelMLConstants.DOUB_EXP_SYN_ELEMENT);
+                            SimpleXMLEntity[] blockingSyns = firstSyn.getXMLEntities(ChannelMLConstants.BLOCKING_SYN_ELEMENT);
+
+                            ArrayList<SimpleXMLEntity> all = new ArrayList<SimpleXMLEntity>();
+                            for (SimpleXMLEntity s: doubExpSyns) all.add(s);
+                            for (SimpleXMLEntity s: blockingSyns) all.add(s);
+                            
+                            //all.addAll(doubExpSyns);
+                            
+                            for(SimpleXMLEntity next: all)
+                            {
+                                SimpleXMLElement des = (SimpleXMLElement)next;
+                                float maxCond = Float.parseFloat(des.getAttributeValue(ChannelMLConstants.DES_MAX_COND_ATTR));
+                                
+                                maxCond = (float)UnitConverter.getConductance(maxCond, 
+                                        UnitConverter.getUnitSystemIndex(units), 
+                                        UnitConverter.NEUROCONSTRUCT_UNITS);
+                                
+                                float avMaxCond = tgtAvg * weight * maxCond;
+                                String symbol = UnitConverter.conductanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
+                                
+                                
+                                synReport.append("Syn "+synType+" av max cond: <b>"+avMaxCond+" "+symbol+"</b> ("+tgtAvg+" x "+weight+" (weight) x "+maxCond+" "
+                                        +symbol+")<br>");
+                            }
+
+                        }
+                        catch(ChannelMLException e)
+                        {
+                            logger.logError("Problem getting info out of "+cmlMech);
+                        }
+                        
+                    }
+                    
+                    synNames.append(synType);
+                    if (k < syns.size() - 1) synNames.append(", ");
+                    else synNames.append("]");
+                    
+                }
+                
+                
+
+                generationReport.append("<b>" + netConnName + "</b> (<font color=\"green\">"
                                         + src
-                                        + " to: "
+                                        + "</font> -> <font color=\"red\">"
                                         + tgt +
-                                        ", syn: " + synNames.toString() + ")<br>");
+                                        "</font>, " + synNames.toString() + ")<br>");
 
-                generationReport.append("Number of connections: <b>"
+                generationReport.append("No. of conns: <b>"
                                         +
                                         project.generatedNetworkConnections.getSynapticConnections(netConnName).
                                         size()
-                                        + "</b> (" + src + " have " + srcAvg + srcStdString + " each, " +
-                                        "" + tgt + " have " + tgtAvg + tgtStdString + " each) <br><br>");
+                                        + "</b> (<font color=\"green\">" + srcAvg + srcStdString + " each</font>, " +
+                                        "<font color=\"red\">" + tgtAvg + tgtStdString + " each</font>)<br>");
+                
+                generationReport.append(synReport);
+
+                generationReport.append("<br>");
             }
             else
             {

@@ -636,6 +636,12 @@ public class UnitConverter
 
     public static int getUnitSystemIndex(String unitSystemDescription)
     {
+        if (unitSystemDescription.equalsIgnoreCase("SI Units"))
+            return GENESIS_SI_UNITS;
+        
+        if (unitSystemDescription.equalsIgnoreCase("Physiological Units"))
+            return GENESIS_PHYSIOLOGICAL_UNITS;
+        
         for (int i = 0; i < unitSystemDescriptions.length; i++)
         {
             if (unitSystemDescriptions[i].equals(unitSystemDescription))
