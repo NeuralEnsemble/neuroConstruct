@@ -16,6 +16,10 @@ See also the README file
 
 - Update to options for stimulations (Tab Input and Output): pulses can be repeated. Required new version of IClamp.mod (CurrentClampExt)
 
+- Updated import of SWC files. Fixed error of giving segments numbers as names (added suffix Comp_), added a number of options on import and
+  now group compartments in unbranched dendrites into Sections with multiple Segments. Note: this will lead to fewer sections when run on NEURON
+  but the nseg value will have to be increased in long dendrites (automatic calculation of this will be in next release).
+
 - Added more information in network generation summary on total synaptic conductance for post synaptic cells
 
 - Updated import of NeuroML morphologies, to ease NEURON ModelView exported files. 

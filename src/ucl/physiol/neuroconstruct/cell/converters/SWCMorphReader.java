@@ -459,12 +459,17 @@ public class SWCMorphReader extends FormatImporter
                 }
             }
             logger.logComment("otherPoints: "+ otherPoints);
+
+            ArrayList<String> singleParents = new ArrayList<String>();
+            ArrayList<String> doubleParents = new ArrayList<String>();
             
-            ArrayList<String> parents = new ArrayList<String>();
+            for(PointInfo pi: otherPoints)
+           {
+                if (singleParents.contains(pi.parentName)) doubleParents.add(pi.parentName);
+                singleParents.add(pi.parentName);
+           }
             
-            for(PointInfo pi: otherPoints) parents.add(pi.parentName);
-            
-            String currentSectionName = null;
+            //String currentSectionName = null;
             
             for(PointInfo pi: otherPoints)
             {
@@ -472,7 +477,7 @@ public class SWCMorphReader extends FormatImporter
                 
                 if (pi.parentName.equals(firstSegEndpointName)) parSegment = firstSeg;
 
-                logger.logComment("Adding point: "+pi+", parent: "+ parSegment);
+                logger.logComment("----      Adding point: "+pi+", parent: "+ parSegment);
                 
                 float connPoint = 1;
 
@@ -480,7 +485,9 @@ public class SWCMorphReader extends FormatImporter
                
                 
                 String segName = cleanUpName(pi.name);
-                String secName = "Sec_"+ segName;
+
+                String secName = null;
+                //if ()
                 
                 boolean inherit = false;
                 
@@ -488,7 +495,21 @@ public class SWCMorphReader extends FormatImporter
                         parSegment.getSection().getGroups().contains(somaColourGroup)) // for the extra soma segs
                 {
                     inherit = this.daughtersOfSomaInherit;
+                    secName = "Sec_"+ segName;
+                    
                 }
+                else if (doubleParents.contains(pi.parentName)) // i.e. a split...
+                {
+                    secName = "Sec_"+ segName;
+                }
+                else
+                {
+                    secName = parSegment.getSection().getSectionName();
+                }
+                
+
+                logger.logComment("secName: "+ secName);
+                    
                 
                 Segment nextSeg = cell.addDendriticSegment(pi.radius,
                         segName,
@@ -623,7 +644,7 @@ public class SWCMorphReader extends FormatImporter
 
         try
         {
-            File f = (new File("../temp/III22.swc")).getCanonicalFile();
+            File f = (new File("../temp/l22s.swc")).getCanonicalFile();
             //File f = (new File("../temp/c73162.CNG.swc")).getCanonicalFile();
             
             logger.logComment("loading cell...");

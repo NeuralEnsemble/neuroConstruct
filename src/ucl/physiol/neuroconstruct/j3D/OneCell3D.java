@@ -970,6 +970,9 @@ public class OneCell3D
                                         TransformGroup parentTG)
     {
         logger.logComment("---   Adding positioned segment: "+ segment);
+        logger.logComment("---   Positioned segment section: "+ segment.getSection());
+        logger.logComment("---   Positioned segment parent: "+ segment.getParentSegment());
+        
 
         if (Float.isInfinite(segment.getRadius())||Float.isInfinite(segment.getSection().getStartRadius()))
         {
