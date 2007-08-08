@@ -50,7 +50,7 @@
                  of electrotonic distance (usually a max of 0.1 microns is fine). Too small an electrotonic length can sometimes lead<br/>
                  to problems in numerical integration, and neuroConstruct will perform validity checks for both of these. To fix the<br/>
                  internal divisions in a section to keep to a maximum electrotonic length, e.g. on an imported morphology, visualise<br/>
-                 the cell in 3D, showing all solids, click on any section, then <b>Edit...<b> and select Remesh option in drop down<br/>
+                 the cell in 3D, showing all solids, click on any section, then <b>Edit...</b> and select Remesh option in drop down<br/>
                  function selector.</defined>
     </term>
 
