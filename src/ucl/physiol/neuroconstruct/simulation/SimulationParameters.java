@@ -31,14 +31,8 @@ public class SimulationParameters
     private float duration;
     private float dt;
 
-    /**
-     * pretty much deprecated, what to save set in tab Input and Output instead...
-     *
-     * private int recordingMode = SIMULATION_NOT_RECORDED;
-    public static final int SIMULATION_NOT_RECORDED = 0;
-    public static final int SIMULATION_RECORD_TO_FILE = 1;
-     */
-
+    public static final float PREF_MAX_ELECT_LEN = 0.1f;
+    public static final float PREF_MIN_ELECT_LEN = 0.0001f;
 
     /**
      * deprecated, what to save set in tab Input and Output instead...
@@ -51,6 +45,10 @@ public class SimulationParameters
     private float initVm = -60;
     private float globalVLeak = -59.4f;
     private float temperature = 6.3f;
+    
+
+    private float maxElectroLen = PREF_MAX_ELECT_LEN;
+    private float minElectroLen = PREF_MIN_ELECT_LEN;
 
     /**
      * True implies that the simulation name will be taken from the text field,
@@ -96,6 +94,8 @@ public class SimulationParameters
         whatToRecord =  SimulationParameters.RECORD_ONLY_SOMA;
         specifySimName = false;
         saveCopyGenSimFiles = true;
+        maxElectroLen = PREF_MAX_ELECT_LEN;
+        minElectroLen = PREF_MIN_ELECT_LEN;
     }
 
 
@@ -211,6 +211,27 @@ public class SimulationParameters
     public void setTemperature(float temperature)
     {
         this.temperature = temperature;
+    }
+
+    
+
+    public float getMaxElectroLen()
+    {
+        return maxElectroLen;
+    }
+    public void setMaxElectroLen(float maxElectroLen)
+    {
+        this.maxElectroLen = maxElectroLen;
+    }
+    
+
+    public float getMinElectroLen()
+    {
+        return minElectroLen;
+    }
+    public void setMinElectroLen(float minElectroLen)
+    {
+        this.minElectroLen = minElectroLen;
     }
 
 }

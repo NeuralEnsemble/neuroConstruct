@@ -2275,19 +2275,44 @@ public class CellTopologyHelper
                     try
                     {
                         specMembRes = CellTopologyHelper.getSpecMembResistance(cell, project, nextSec);
+                        
+                        boolean isSpherical = true;
 
                         for (int i = 0; i < segs.size(); i++)
                         {
                             Segment nextSeg = segs.get(i);
+                            
+                            isSpherical = isSpherical && nextSeg.isSpherical();
 
                             totalElecLen = totalElecLen + getElectrotonicLength(nextSeg, specMembRes, specAxRes);
                         }
 
-                        if (totalElecLen/(float)nextSec.getNumberInternalDivisions() > GeneralProperties.getMaxElectrotonicLength())
-                        {
+                        float maxELen = project.simulationParameters.getMaxElectroLen();
+                        float minELen = project.simulationParameters.getMinElectroLen();
 
+                        if (totalElecLen/(float)nextSec.getNumberInternalDivisions() > maxELen)
+                        {
+                            String per = "";
+                            if (nextSec.getNumberInternalDivisions()>1)
+                                per = ", "+totalElecLen/(float)nextSec.getNumberInternalDivisions()+" per int div ";
+                            
                             errorReport.append("Error: Section: " + nextSec.getSectionName() +
-                                               " (int divs: "+nextSec.getNumberInternalDivisions()+") has too long an electrotonic length: " + totalElecLen + ", "+totalElecLen/(float)nextSec.getNumberInternalDivisions()+" per int div > "+GeneralProperties.getMaxElectrotonicLength()+"\n");
+                                               " (int divs: "+nextSec.getNumberInternalDivisions()+") has too long an electrotonic length: " 
+                                               + totalElecLen +" " + per+"> "+maxELen+"\n"
+                                               +"This can be rectified by viewing the cell in 3D, and setting a larger number of internal divisions in the section.\n");
+                        }
+                        
+                        if (!isSpherical && totalElecLen/(float)nextSec.getNumberInternalDivisions() < minELen)
+                        {
+                            String per = "";
+                            
+                            if (nextSec.getNumberInternalDivisions()>1)
+                                per = ", "+totalElecLen/(float)nextSec.getNumberInternalDivisions()+" per int div ";
+                            
+                            errorReport.append("Error: Section: " + nextSec.getSectionName() +
+                                               " (int divs: "+nextSec.getNumberInternalDivisions()+") has too short an electrotonic length: " 
+                                               + totalElecLen +" " + per+"is less than "+minELen+"\n"
+                                               +"This can lead to instabilities in the numeric integration. Consider if such a short section is needed.\n");
                         }
                     }
                     catch (CellMechanismException ex)

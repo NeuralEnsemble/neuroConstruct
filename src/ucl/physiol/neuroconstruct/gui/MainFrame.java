@@ -644,8 +644,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     BorderLayout borderLayout38 = new BorderLayout();
     JButton jButtonMechanismFileBased = new JButton();
     JButton jButtonMechanismNewCML = new JButton();
-    JLabel jLabelSimulationTemp = new JLabel();
-    JTextField jTextFieldSimulationTemperature = new JTextField();
+    JLabel jLabelSimTemp = new JLabel();
+    
+    JTextField jTextFieldSimulationTemp = new JTextField();
+    JLabel jLabelElectroLenMax = new JLabel();
+    JTextField jTextFieldElectroLenMax = new JTextField();
+    JLabel jLabelElectroLenMin = new JLabel();
+    JTextField jTextFieldElectroLenMin = new JTextField();
+    
     JCheckBox jCheckBoxGenesisComments = new JCheckBox();
     JCheckBox jCheckBoxGenesisShapePlot = new JCheckBox();
 
@@ -691,7 +697,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JTextField jTextFieldSimUnitGlobRa = new JTextField();
     JTextField jTextFieldSimUnitGlotCm = new JTextField();
     JTextField jTextFieldSimUnitGlobRm = new JTextField();
-    JTextField jTextFieldSimUnitTemp = new JTextField();
+    JTextField jTextFieldSimUnitsTemp = new JTextField();
+    JTextField jTextFieldElecLenMaxUnits = new JTextField();
+    JTextField jTextFieldElecLenMinUnits = new JTextField();
     JMenuItem jMenuItemHelp = new JMenuItem();
     JCheckBox jCheckBoxNeuronComments = new JCheckBox();
     JButton jButtonCellTypeBioPhys = new JButton();
@@ -1434,9 +1442,18 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         });
 
 
-        jLabelSimulationTemp.setText("Temperature:");
-        jTextFieldSimulationTemperature.setText("25");
-        jTextFieldSimulationTemperature.setColumns(6);
+        jLabelSimTemp.setText("Temperature:");
+        jTextFieldSimulationTemp.setText("25");
+        jTextFieldSimulationTemp.setColumns(6);
+
+        jLabelElectroLenMax.setText("Max electrotonic length:");
+        jTextFieldElectroLenMax.setText("25");
+        jTextFieldElectroLenMax.setColumns(6);
+        jLabelElectroLenMin.setText("Min electrotonic length:");
+        jTextFieldElectroLenMin.setText("25");
+        jTextFieldElectroLenMin.setColumns(6);
+        
+        
         jCheckBoxGenesisComments.setEnabled(false);
         jCheckBoxGenesisComments.setText("Generate comments");
 
@@ -1554,11 +1571,18 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTextFieldSimUnitVLeak.setEditable(false);
         jTextFieldSimUnitVLeak.setText("");
         jTextFieldSimUnitVLeak.setColumns(7);
-        jTextFieldSimUnitTemp.setDebugGraphicsOptions(0);
-        jTextFieldSimUnitTemp.setDoubleBuffered(false);
-        jTextFieldSimUnitTemp.setEditable(false);
-        jTextFieldSimUnitTemp.setText("");
-        jTextFieldSimUnitTemp.setColumns(7);
+
+        jTextFieldSimUnitsTemp.setEditable(false);
+        jTextFieldSimUnitsTemp.setText("");
+        jTextFieldSimUnitsTemp.setColumns(7);
+
+        jTextFieldElecLenMaxUnits.setEditable(false);
+        jTextFieldElecLenMaxUnits.setText(UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol());
+        jTextFieldElecLenMaxUnits.setColumns(7);
+        
+        jTextFieldElecLenMinUnits.setEditable(false);
+        jTextFieldElecLenMinUnits.setText(UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol());
+        jTextFieldElecLenMinUnits.setColumns(7);
 
         jMenuItemHelp.setText("Help");
         jMenuItemHelp.addActionListener(new java.awt.event.ActionListener()
@@ -3178,11 +3202,31 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
 
-        jPanelSimulationGlobal.add(jLabelSimulationTemp,      new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0
+        jPanelSimulationGlobal.add(jLabelSimTemp,      new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0
             ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 14, 6, 14), 0, 0));
-        jPanelSimulationGlobal.add(jTextFieldSimulationTemperature,        new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0
+        jPanelSimulationGlobal.add(jTextFieldSimulationTemp,        new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0
             ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 14, 6, 14), 0, 0));
-        jPanelSimulationGlobal.add(jTextFieldSimUnitTemp,   new GridBagConstraints(2, 7, 1, 1, 0.0, 0.0
+        jPanelSimulationGlobal.add(jTextFieldSimUnitsTemp,   new GridBagConstraints(2, 7, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 14), 0, 0));
+
+
+
+
+
+
+        jPanelSimulationGlobal.add(jLabelElectroLenMax,      new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 14, 6, 14), 0, 0));
+        jPanelSimulationGlobal.add(jTextFieldElectroLenMax,        new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 14, 6, 14), 0, 0));
+        jPanelSimulationGlobal.add(jTextFieldElecLenMaxUnits,   new GridBagConstraints(2, 8, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 14), 0, 0));
+
+
+        jPanelSimulationGlobal.add(jLabelElectroLenMin,      new GridBagConstraints(0, 9, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 14, 6, 14), 0, 0));
+        jPanelSimulationGlobal.add(jTextFieldElectroLenMin,        new GridBagConstraints(1, 9, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 14, 6, 14), 0, 0));
+        jPanelSimulationGlobal.add(jTextFieldElecLenMinUnits,   new GridBagConstraints(2, 9, 1, 1, 0.0, 0.0
             ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 14), 0, 0));
 
 
@@ -3334,7 +3378,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTextFieldSimUnitGlobRa.setText(UnitConverter.specificAxialResistanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol());
         jTextFieldSimUnitGlotCm.setText(UnitConverter.specificCapacitanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol());
         jTextFieldSimUnitGlobRm.setText(UnitConverter.specificMembraneResistanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol());
-        jTextFieldSimUnitTemp.setText(Units.CELSIUS.getSymbol());
+        jTextFieldSimUnitsTemp.setText(Units.CELSIUS.getSymbol());
 
 
     }
@@ -3422,7 +3466,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         addNamedDocumentListner(NEURON_SIMULATOR_TAB, jTextFieldSimulationGlobRm);
         addNamedDocumentListner(NEURON_SIMULATOR_TAB, jTextFieldSimulationVLeak);
         addNamedDocumentListner(NEURON_SIMULATOR_TAB, jTextFieldSimulationInitVm);
-        addNamedDocumentListner(NEURON_SIMULATOR_TAB, jTextFieldSimulationTemperature);
+        addNamedDocumentListner(NEURON_SIMULATOR_TAB, jTextFieldSimulationTemp);
+        addNamedDocumentListner(NEURON_SIMULATOR_TAB, jTextFieldElectroLenMax);
+        addNamedDocumentListner(NEURON_SIMULATOR_TAB, jTextFieldElectroLenMin);
 
 
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxSpecifySimRef);
@@ -3593,7 +3639,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTextFieldSimulationGlobCm.setToolTipText(toolTipText.getToolTip("Global specific membrane capacitance"));
         jLabelSimulationGlobRm.setToolTipText(toolTipText.getToolTip("Global specific membrane resistance"));
         jTextFieldSimulationGlobRm.setToolTipText(toolTipText.getToolTip("Global specific membrane resistance"));
-        jTextFieldSimulationTemperature.setToolTipText(toolTipText.getToolTip("Simulation Temperature"));
+        jTextFieldSimulationTemp.setToolTipText(toolTipText.getToolTip("Simulation Temperature"));
+        jTextFieldElectroLenMax.setToolTipText(toolTipText.getToolTip("Electrotonic length"));
+        jTextFieldElectroLenMin.setToolTipText(toolTipText.getToolTip("Electrotonic length"));
 
         this.jCheckBoxGenesisComments.setToolTipText(toolTipText.getToolTip("Generate comments"));
         this.jCheckBoxNeuronComments.setToolTipText(toolTipText.getToolTip("Generate comments"));
@@ -3829,7 +3877,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     String globRm = jTextFieldSimulationGlobRm.getText();
                     String initVm = jTextFieldSimulationInitVm.getText();
                     String globVLeak = jTextFieldSimulationVLeak.getText();
-                    String temp = jTextFieldSimulationTemperature.getText();
+                    String temp = jTextFieldSimulationTemp.getText();
+                    String max = jTextFieldElectroLenMax.getText();
+                    String min = jTextFieldElectroLenMin.getText();
 
                     if (globCm.length() > 0 && !globCm.equals("-"))
                         projManager.getCurrentProject().simulationParameters.setGlobalCm(Float.parseFloat(globCm));
@@ -3862,6 +3912,23 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     else
                         projManager.getCurrentProject().simulationParameters.setTemperature(0);
 
+
+                    
+                    if (max.length() > 0 && !max.equals("-"))
+                        projManager.getCurrentProject().simulationParameters.setMaxElectroLen(Float.parseFloat(max));
+                    else
+                        projManager.getCurrentProject().simulationParameters.setMaxElectroLen(SimulationParameters.PREF_MAX_ELECT_LEN);
+
+
+
+                    
+                    if (min.length() > 0 && !min.equals("-"))
+                        projManager.getCurrentProject().simulationParameters.setMinElectroLen(Float.parseFloat(min));
+                    else
+                        projManager.getCurrentProject().simulationParameters.setMinElectroLen(SimulationParameters.PREF_MIN_ELECT_LEN);
+
+                    
+                    
 
                     if (dur.length()>0)
                         projManager.getCurrentProject().simulationParameters.setDuration(Float.parseFloat(dur));
@@ -7979,7 +8046,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             jTextFieldSimulationGlobRm.setText(projManager.getCurrentProject().simulationParameters.getGlobalRm()+"");
             jTextFieldSimulationGlobRa.setText(projManager.getCurrentProject().simulationParameters.getGlobalRa()+"");
             jTextFieldSimulationInitVm.setText(projManager.getCurrentProject().simulationParameters.getInitVm()+"");
-            jTextFieldSimulationTemperature.setText(projManager.getCurrentProject().simulationParameters.getTemperature()+"");
+            
+            
+            jTextFieldSimulationTemp.setText(projManager.getCurrentProject().simulationParameters.getTemperature()+"");
+
+            jTextFieldElectroLenMax.setText(projManager.getCurrentProject().simulationParameters.getMaxElectroLen()+"");
+            jTextFieldElectroLenMin.setText(projManager.getCurrentProject().simulationParameters.getMinElectroLen()+"");
+            
+                       
             jTextFieldSimulationVLeak.setText(projManager.getCurrentProject().simulationParameters.getGlobalVLeak()+"");
 
 

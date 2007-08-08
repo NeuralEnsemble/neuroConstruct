@@ -43,6 +43,18 @@
     </term>
 
     <term>
+        <name>Electrotonic length</name>
+        <defined>This measure of the length of dendrites, etc. as "seen" by electrical charge is dependant on the shape, axial<br/>
+                 and membrane resistance of the section. See the NEURON or GENESIS books for more details. It is important when<br/>
+                 simulating neurons with realistic morphologies that individually simulated points are not too far apart in terms<br/>
+                 of electrotonic distance (usually a max of 0.1 microns is fine). Too small an electrotonic length can sometimes lead<br/>
+                 to problems in numerical integration, and neuroConstruct will perform validity checks for both of these. To fix the<br/>
+                 internal divisions in a section to keep to a maximum electrotonic length, e.g. on an imported morphology, visualise<br/>
+                 the cell in 3D, showing all solids, click on any section, then <b>Edit...<b> and select Remesh option in drop down<br/>
+                 function selector.</defined>
+    </term>
+
+    <term>
         <name>Simulation Configuration</name>
         <defined>Most neuroConstruct <intref>Project</intref>s will illustrate not just a single aspect of a cell <br/>
                  or network, but will seek to show how the cells react under different inputs, or how a network behaves <br/>
@@ -449,7 +461,7 @@
 
          The following checks, when failed, lead to warnings:
          <ul>
-             <li>At most one passive conductance on a segment (more than one can lead to erroneous calculations of electrotonic lengths)</li>
+             <li>At most one passive conductance on a segment (more than one can lead to erroneous calculations of <intref>Electrotonic length</intref>)</li>
          </ul>
          The intention is to expand these checks to make it easier for non/new computational neuroscientists to catch some
          common errors when creating cell models. If there are any suggestions for checks to be made, please <a  href="contact.html" >get in touch</a>.

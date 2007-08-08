@@ -38,8 +38,7 @@ public class GeneralProperties
 
     //private static String defaultLocNewProjects = null;
 
-    /** @todo Make optional... */
-    private static float maxElectrotonicLength = 0.1f;
+    //private static float maxElectrotonicLength = 0.1f;
 
 
     /** This is changed automatically by Ant. Look in build.xml...*/
@@ -527,10 +526,6 @@ public class GeneralProperties
         return versionNumber;
     }
 
-    public static float getMaxElectrotonicLength()
-    {
-        return maxElectrotonicLength;
-    }
 
     /**
      * The version of the NeuroML specs being used

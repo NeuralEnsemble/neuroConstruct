@@ -14,6 +14,7 @@ package ucl.physiol.neuroconstruct.gui;
 
 import java.io.*;
 import java.util.*;
+
 import javax.vecmath.*;
 
 import java.awt.*;
@@ -23,6 +24,7 @@ import javax.swing.*;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.j3D.*;
+import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
 
@@ -76,8 +78,9 @@ public class SegmentSelector extends JFrame
     private static final String ADD_SEG_IN_NEW_SEC = "Add segment in new section";
     private static final String ADD_SEG_IN_THIS_SEC = "Add segment in this section";
     private static final String SPLIT_SEC = "Split section here";
-    private static final String SPEC_AXONAL_ARBOUR = "Specify axonal arbour";
     private static final String COMMENT = "Edit Segment comment";
+    private static final String SPECIFY_AXONAL_ARBOUR = "Specify axonal arbour";
+    private static final String REMESH_CELL =   "Remesh - correct num int divs/nseg";
 
     Segment currentlyAddressedSegment = null;
 
@@ -506,7 +509,8 @@ public class SegmentSelector extends JFrame
         this.jComboBoxFunctions.addItem(ADD_SEG_IN_NEW_SEC);
         this.jComboBoxFunctions.addItem(ADD_SEG_IN_THIS_SEC);
         /////////////this.jComboBoxFunctions.addItem(this.SPLIT_SEC);
-        this.jComboBoxFunctions.addItem(SPEC_AXONAL_ARBOUR);
+        this.jComboBoxFunctions.addItem(SPECIFY_AXONAL_ARBOUR);
+        this.jComboBoxFunctions.addItem(REMESH_CELL);
         this.jComboBoxFunctions.addItem(COMMENT);
 
 
@@ -1440,6 +1444,77 @@ public class SegmentSelector extends JFrame
         if (newComment.length()>0) currentlyAddressedSegment.setComment(newComment);
     }
 
+    
+    public void reMesh()
+    {
+        String note = 
+            "This will remesh the cell, choosing the number of internal divisions in each Section to ensure\n"
+            +"a sufficiently small electrotonic length per division. That number of divisions is analogous to\n"+
+            "nseg in NEURON (and used exactly as such in that simulator). With GENESIS, assuming the GENESIS\n"+
+            "Compartmentalisation option is used, this value will be used to determine the number of GENESIS\n"+
+            "compartments to use to represent the complex 3D Section with multiple Segments.\n\n"
+            +"The cell will be remeshed to get the electronic length per internal division as close as possible to:\n "
+            +""+ project.simulationParameters.getMaxElectroLen()+" microns (set via Common Simulation Settings)\n\nProceed?";
+        
+        boolean proceed = GuiUtils.showYesNoMessage(logger, note, this);
+        
+        if (!proceed) return;
+        
+        StringBuffer report = new StringBuffer();
+        
+        ArrayList<Section> secs = myCell.getAllSections();
+        
+       
+        
+        for(Section nextSec: secs)
+        {
+            try
+            {
+                LinkedList<Segment> segs = myCell.getAllSegmentsInSection(nextSec);
+    
+                //float specAxResVal = cell.getSpecAxRes().getNominalNumber();
+                float totalElecLen = 0;
+    
+                float specMembRes = CellTopologyHelper.getSpecMembResistance(myCell, project, nextSec);
+    
+                float specAxRes = myCell.getSpecAxResForSection(nextSec);
+                
+                boolean isSpherical = true;
+    
+                for (int i = 0; i < segs.size(); i++)
+                {
+                    Segment nextSeg = segs.get(i);
+                    
+                    isSpherical = isSpherical && nextSeg.isSpherical();
+    
+                    totalElecLen = totalElecLen + CellTopologyHelper.getElectrotonicLength(nextSeg, specMembRes, specAxRes);
+                }
+                
+                String sphercalNote = isSpherical?" (spherical section)":"";
+                
+                report.append(nextSec.getSectionName()+" has a total electrotonic length of: "+ totalElecLen+sphercalNote+"\n");
+                
+                int oldNseg = nextSec.getNumberInternalDivisions();
+                
+                int bestNseg = Math.max(1, (int)Math.ceil(totalElecLen/project.simulationParameters.getMaxElectroLen()));
+                
+                nextSec.setNumberInternalDivisions(bestNseg);
+
+                report.append("Old num internal divs: "+oldNseg+", new number of internal divs: "+bestNseg+"\n\n");
+                
+            }
+            catch (CellMechanismException ex)
+            {
+                report.append("Error: Could not determine the electrotonic length of section: " + nextSec.getSectionName() +
+                                   "\n");
+            }
+            
+        }
+        
+        SimpleViewer.showString(report.toString(), "Remeshing report", 12, false, false, 0.8f, 0.8f);
+        
+        
+    }
 
 
 
@@ -1600,40 +1675,43 @@ public class SegmentSelector extends JFrame
 
 
         if (selected !=null && /* Might be null on delete...*/
-            selected != FUNCTION_INSTR)
+                selected != FUNCTION_INSTR)
         {
             logger.logComment("Selected: "+ selected);
 
             if (selected.equals(ADD_SEG_IN_NEW_SEC))
             {
-                 addInNewSec_actionPerformed(e);
+                addInNewSec_actionPerformed(e);
 
-             }
-             if (selected.equals(ADD_SEG_IN_THIS_SEC))
-             {
-                  this.addInThisSec_actionPerformed(e);
+            }
+            if (selected.equals(ADD_SEG_IN_THIS_SEC))
+            {
+                this.addInThisSec_actionPerformed(e);
 
-              }
-              else if (selected.equals(SPLIT_SEC))
-              {
-                   this.splitAtCurrentSection();
+            }
+            else if (selected.equals(SPLIT_SEC))
+            {
+                this.splitAtCurrentSection();
 
-               }
-               else if (selected.equals(SPEC_AXONAL_ARBOUR))
-               {
-                    this.specAxonalArbour();
+            }
+            else if (selected.equals(SPECIFY_AXONAL_ARBOUR))
+            {
+                this.specAxonalArbour();
 
-                }
-                else if (selected.equals(COMMENT))
-                {
-                     this.editComment();
+            }
+            else if (selected.equals(REMESH_CELL))
+            {
+                this.reMesh();
 
-                }
+            }
+            else if (selected.equals(COMMENT))
+            {
+                this.editComment();
+
+            }
 
 
-
-
-              jComboBoxFunctions.setSelectedItem(FUNCTION_INSTR);
+            jComboBoxFunctions.setSelectedItem(FUNCTION_INSTR);
         }
 
     }
