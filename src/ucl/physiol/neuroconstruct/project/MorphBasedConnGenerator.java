@@ -72,7 +72,6 @@ public class MorphBasedConnGenerator extends Thread
         Vector allSimpleNetConns = project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames();
 
         ArrayList<String> allNetConnsInSimConfig = simConfig.getNetConns();
-
         ArrayList<String> simpNetConnsInSimConfig = new ArrayList<String>();
 
         for (int i = 0; i < allSimpleNetConns.size(); i++)
@@ -238,7 +237,7 @@ public class MorphBasedConnGenerator extends Thread
 
                         SegmentLocation genStartConnPoint = null;
 
-                        ArrayList<Integer> genFinishCellsAlreadyConnected = null;
+                        ArrayList<Integer> genFinishCellsAlreadyConnected = new ArrayList<Integer>();
 
                         if (connConds.getGenerationDirection() == ConnectivityConditions.SOURCE_TO_TARGET)
                         {
@@ -298,7 +297,6 @@ public class MorphBasedConnGenerator extends Thread
                         if (continueSingleConnGeneration && continueGeneration)
                         {
                             SegmentLocation genFinishConnPoint = null;
-
 
                             float connectionDistance = -1;
 
@@ -397,8 +395,7 @@ public class MorphBasedConnGenerator extends Thread
 
                                                 if (connConds.isOnlyConnectToUniqueCells())
                                                 {
-                                                    if (!genFinishCellsAlreadyConnected.contains(new Integer(
-                                                        genFinishCellNumber)))
+                                                    if (!genFinishCellsAlreadyConnected.contains(genFinishCellNumber))
                                                     {
                                                         satisfiesUniqueness = true;
                                                         logger.logComment("Needs uniqueness, satisfiesUniqueness: " + satisfiesUniqueness);

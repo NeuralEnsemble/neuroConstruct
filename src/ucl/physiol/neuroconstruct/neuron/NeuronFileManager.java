@@ -38,6 +38,10 @@ import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
  */
 
 
+/**
+ * @author padraig
+ *
+ */
 public class NeuronFileManager
 {
     private static ClassLogger logger = new ClassLogger("NeuronFileManager");
@@ -59,6 +63,11 @@ public class NeuronFileManager
      * The runMode used in the generated NEURON code
      */
     private long genRunMode = -1;
+    
+    /**
+     * The time last taken to generate the main files
+     */
+    private float genTime = -1;
 
     private Project project = null;
 
@@ -118,6 +127,9 @@ public class NeuronFileManager
         nextColour = 1; // reset it...
         graphsCreated = new Vector<String>();
         addComments = project.neuronSettings.isGenerateComments();
+        
+        genRunMode = -1;
+        genTime = -1;
 
     }
 
@@ -126,7 +138,11 @@ public class NeuronFileManager
                                        int runMode,
                                        long randomSeed) throws NeuronException, IOException
     {
+        logger.logComment("Starting generation of the hoc files...", true);
 
+
+        long generationTimeStart = System.currentTimeMillis();
+        
         this.simConfig = simConfig;
         
         this.genRunMode = runMode;
@@ -172,8 +188,10 @@ public class NeuronFileManager
             fw.write(generateCellGroups(runMode));
 
             fw.write(generateInitialParameters(runMode));
+            fw.flush();
 
             fw.write(generateNetworkConnections(runMode));
+            fw.flush();
 
             fw.write(generateStimulations(runMode));
 
@@ -246,9 +264,15 @@ public class NeuronFileManager
                                       +
                 "\nEnsure the NEURON files you are trying to generate are not currently being used");
         }
-        logger.logComment("... Created Main hoc file: " + mainHocFile);
         //generatedRunMode = runMode;
         this.hocFileGenerated = true;
+        
+
+        long generationTimeEnd = System.currentTimeMillis();
+        genTime = (float) (generationTimeEnd - generationTimeStart) / 1000f;
+
+        logger.logComment("... Created Main hoc file: " + mainHocFile+" in "+genTime+" seconds. ", true);
+        
         return;
 
     }
@@ -758,6 +782,11 @@ public class NeuronFileManager
     public long getCurrentRunMode()
     {
         return this.genRunMode;
+    }
+
+    public float getCurrentGenTime()
+    {
+        return genTime;
     }
 
     private String generateWelcomeComments()
@@ -2554,9 +2583,12 @@ public class NeuronFileManager
 
     private String generateNetworkConnections(int runMode)
     {
+
+        logger.logComment("Starting generation of the net conns", true);
+        
         int totNetConns = project.generatedNetworkConnections.getNumberSynapticConnections(GeneratedNetworkConnections.ANY_NETWORK_CONNECTION);
 
-        StringBuffer response = new StringBuffer(totNetConns*1000); // initial capacity...
+        StringBuffer response = new StringBuffer(totNetConns*800); // initial capacity...
 
         response.append("\n");
 
@@ -2572,6 +2604,7 @@ public class NeuronFileManager
         }
 
             GeneralUtils.timeCheck("Starting gen of syn conns");
+            
 
 
         // this section calculates the number of ADDITIONAL dendritic/axonal
@@ -2584,6 +2617,7 @@ public class NeuronFileManager
         while (allNetConnNames.hasNext())
         {
             String netConnName = (String) allNetConnNames.next();
+            /*
             String sourceCellGroup = null;
             String targetCellGroup = null;
 
@@ -2599,7 +2633,7 @@ public class NeuronFileManager
                 targetCellGroup = project.volBasedConnsInfo.getTargetCellGroup(netConnName);
             }
             ArrayList<SingleSynapticConnection> allSynapses = project.generatedNetworkConnections.getSynapticConnections(netConnName);
-
+*/
             /*
             for (int i = 0; i < allSynapses.size(); i++)
             {
@@ -2628,6 +2662,8 @@ public class NeuronFileManager
         while (allNetConnNames.hasNext())
         {
             String netConnName = (String) allNetConnNames.next();
+
+            GeneralUtils.timeCheck("Generating net conn: "+ netConnName);
 
             String sourceCellGroup = null;
             String targetCellGroup = null;
@@ -2699,8 +2735,11 @@ public class NeuronFileManager
             ArrayList<SingleSynapticConnection> allSynapses = project.generatedNetworkConnections.getSynapticConnections(netConnName);
 
 
+            GeneralUtils.timeCheck("Have all info for net conn: "+ netConnName);
+
             for (int singleConnIndex = 0; singleConnIndex < allSynapses.size(); singleConnIndex++)
             {
+                
                 GeneratedNetworkConnections.SingleSynapticConnection synConn = allSynapses.get(singleConnIndex);
 
                 for (int synPropIndex = 0; synPropIndex < synPropList.size(); synPropIndex++)
@@ -2715,7 +2754,6 @@ public class NeuronFileManager
 
 
                     String objectVarName = getSynObjName(synObj);
-
 
                     /** @todo Remove the need for this... Revise how inbuilt synapses are stored/checked.. */
 
@@ -2746,15 +2784,17 @@ public class NeuronFileManager
 
                     Segment sourceSegment = null;
                     float fractionAlongSegment = -1;
+                    
                     int origId = synConn.sourceEndPoint.location.getSegmentId();
 
                     float apSegmentPropDelay = 0;
 
                     if (substituteConnPoints.size() == 0 || // there is no ApPropSpeed on cell
-                        !substituteConnPoints.containsKey(new Integer(origId))) // none on this segment
+                        !substituteConnPoints.containsKey(origId)) // none on this segment
                     {
                         sourceSegment = sourceCell.getSegmentWithId(origId);
                         fractionAlongSegment = synConn.sourceEndPoint.location.getFractAlong();
+                        if (sourceSegment.isSpherical()) fractionAlongSegment = 1; // as it doesn't really matter
                     }
                     else
                     {
@@ -2950,6 +2990,8 @@ public class NeuronFileManager
         //GeneralUtils.timeCheck("Finsihed gen of syn conns, totNetConns: "+totNetConns+", response len: "+response.length()+ ", ratio: "+ (float)response.length()/totNetConns);
         GeneralUtils.timeCheck("Finsihed gen of syn conns");
 
+
+        logger.logComment("Finsihed generation of the net conns", true);
 
         return response.toString();
     }

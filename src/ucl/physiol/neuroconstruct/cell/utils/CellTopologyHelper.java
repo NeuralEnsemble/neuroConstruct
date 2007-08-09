@@ -1259,6 +1259,8 @@ public class CellTopologyHelper
     public static float getFractionAlongSection(Cell cell, Segment segment, float fractionAlongSegment)
     {
         logger.logComment("Getting fract along: " + segment);
+        
+        if (cell.getAllSegments().size()==1) return fractionAlongSegment; // as only 1 seg & section
 
         LinkedList<Segment> allSectionSegments = cell.getAllSegmentsInSection(segment.getSection());
 

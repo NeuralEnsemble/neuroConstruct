@@ -415,6 +415,9 @@ public class SimulationsInfo extends AbstractTableModel
                 }
             }
 
+            props.setProperty("Script generation time",
+                    project.neuronFileManager.getCurrentGenTime()+"");
+
             if (project.neuronFileManager.getCurrentRunMode()==NeuronFileManager.RUN_LOCALLY)
             {
                 props.setProperty("Run mode", "Run on local machine");

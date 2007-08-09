@@ -660,13 +660,15 @@ public class Cell implements Serializable
         // when new segments are added. This will fail if segments have been deleted.
         
         if (allSegments.size() > id &&
-            ((Segment)allSegments.elementAt(id)).getSegmentId()==id)
-            return (Segment)allSegments.elementAt(id);
+            allSegments.elementAt(id).getSegmentId()==id)
+        {
+            return allSegments.elementAt(id);
+        }
 
         // now just cycle through all to try to find it
         for (int i = 0; i < allSegments.size(); i++)
         {
-            Segment seg = (Segment) allSegments.elementAt(i);
+            Segment seg = allSegments.elementAt(i);
 
             if (seg.getSegmentId()==id) return seg;
         }

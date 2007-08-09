@@ -392,7 +392,7 @@ public class SegmentSelector extends JFrame
         jTextFieldStartPoint.setEditable(false);
 
         jLabelFractAlong.setVerifyInputWhenFocusTarget(true);
-        jLabelFractAlong.setText("Fraction along parent:");
+        jLabelFractAlong.setText("Fraction along parent seg:  ");
         jLabelStartRadius.setText("Start radius:");
         jTextFieldStartRadius.setText("...");
         jTextFieldFractAlong.setText("...");
