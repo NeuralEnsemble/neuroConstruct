@@ -29,7 +29,8 @@ See also the README file
 - Updated import of NeuroML morphologies, to ease NEURON ModelView exported files. 
   See http://neuroml.svn.sourceforge.net/viewvc/neuroml/nrn2NeuroML/ to export cells from NEURON in Level 1 & 2 NeuroML.
 
-- Some extra tool tips added, along with warnings/advice, e.g. info on getting extra memory in run.bat/run.sh
+- Some extra tool tips added, along with warnings/advice, e.g. info on getting extra memory in run.bat/run.sh. Updated Glossary and added a number of
+  new entries.
 
 - Fixed minor bug where project file modified date is changed on loading of project; now reflects when proj last saved
 
