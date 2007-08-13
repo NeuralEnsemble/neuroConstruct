@@ -15,15 +15,19 @@
           <a href="http://www.ucl.ac.uk">UCL</a>. neuroConstruct has been designed to simplify development of complex networks
           of biologically realistic neurons, i.e. models incorporating dendritic morphologies and realistic cell membrane conductances.
 	  It is implemented in Java and generates script files for the <a  href="http://www.neuron.yale.edu/neuron/">NEURON</a> and
-	  <a  href="http://www.genesis-sim.org/GENESIS">GENESIS</a> simulators. It uses the latest <a href="http://www.neuroml.org">NeuroML</a> specifications for neuronal
-	  information exchange including <a href="http://www.neuroml.org/standards.html">MorphML</a> and <a href="http://www.neuroml.org/standards.html">ChannelML</a>.</p>
+	  <a  href="http://www.genesis-sim.org/GENESIS">GENESIS</a> simulators. It uses the latest <a href="http://www.neuroml.org">NeuroML</a> specifications,
+	  including <a href="http://www.neuroml.org/standards.html">MorphML</a>, <a href="http://www.neuroml.org/standards.html">ChannelML</a> and <a href="http://www.neuroml.org/standards.html">NetworkML</a>.</p>
     </section>
 	
 	
 	<section>
 		<title>** Latest News **</title>
-		<p>The latest version of neuroConstruct is available for download <a href="download/index.html">here</a>.</p> 
-		<p>There is a mailing list for neuroConstruct related news. Sign up <a href="http://www.mailinglists.ucl.ac.uk/mailman/listinfo/neuroconstruct">here</a>. </p> 
+		<p>The latest version of neuroConstruct (v1.0.4) is available for download <a href="download/index.html">here</a>.</p> 
+        <p>The paper describing the application has been published: <em>
+            P. Gleeson, V. Steuber and R. A. Silver, neuroConstruct: A Tool for Modeling Networks of Neurons in 3D Space, Neuron, 
+            Volume 54, Issue 2, 19 April 2007, Pages 219-235.</em>
+            It is available via Open Access <a href="http://www.neuron.org/content/article/abstract?uid=PIIS0896627307002486">here</a>.</p>
+		<p>There is a <strong>mailing list</strong> for neuroConstruct related news. Sign up <a href="http://www.mailinglists.ucl.ac.uk/mailman/listinfo/neuroconstruct">here</a>. </p> 
   	</section>	
 
     <section>
@@ -52,22 +56,18 @@
 <p>These packages have sophisticated environments for creating neuronal simulations from scratch,
 and controlling all aspects of the simulation run. neuroConstruct automates the generation of script files for these platforms, and provides
 a framework for creating conductance based neuronal models, creating, visualising and analysing networks of cells in 3D, managing simualtions and analysing network firing behaviour.</p>
-  </section>
-
-      <section>
-      <title>Presentations</title>
-
-<p>The application was presented at the <a
- href="http://www.neuron.yale.edu/neuron/nsm2004/events.html">2004
-NEURON Simulator Meeting</a> at Northwestern University in May 2004. A tutorial "Building 3D Network Models with neuroConstruct" was given at the
-<a href="http://wam-bamm.org/">World Association of Modelers, First Annual Biologically Accurate Modeling Meeting</a> in March 2005.
-A poster entitled "Simulation of Synaptic Integration in Biologically Realistic 3D Neuronal Networks" has been presented at <a href="http://web.sfn.org/am2005/">Neuroscience 2005</a>.
-There was a poster presentation on the latest developments with neuroConstruct at <a href="http://www.cnsorg.org/cns_meeting.htm">CNS*2006</a> in Edinburgh.</p>
 
 
 <p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 
   </section>
+
+
+
+
 
   </body>
 </document>

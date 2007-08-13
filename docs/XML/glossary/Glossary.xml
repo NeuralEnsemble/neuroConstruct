@@ -26,16 +26,20 @@
 
     <term>
         <name>Cell Type</name>
-        <defined>A prototype cell containing information on its 3D morphology and the various <intref>Cell density mechanism</intref>s which determine its electrophysiological behaviour.<br/>
-        Each <intref>Cell Group</intref> specifies a particular Cell Type and from these networks are built. Cell Types can be hard-coded (e.g. Simple Cell, Purkinje Cell)<br/>
+        <defined>A prototype cell containing information on its 3D morphology and the various <intref>Cell density mechanism</intref>s which determine its 
+        electrophysiological behaviour.<br/>
+        Each <intref>Cell Group</intref> specifies a particular Cell Type and from these networks are built. Cell Types can be hard-coded (e.g. Simple Cell, 
+        Purkinje Cell)<br/>
         (which can form the basis of manually edited abstract neurons) or ones based on imported morphology files, e.g. using GenesisMorphReader<br/>
-        where a morphology file (ending in .p) as used in <intref>GENESIS</intref> is specified. A Cell Type can be checked for <a  href="Glossary_gen.html#Validity checks">validity</a>. More on<br/>
+        where a morphology file (ending in .p) as used in <intref>GENESIS</intref> is specified. A Cell Type can be checked for 
+        <a  href="Glossary_gen.html#Validity checks">validity</a>. More on<br/>
         Cell Types in the <a  href="celltypes.html">main documentation</a></defined>
 
     </term>
 
     <term>
         <name>Cell Group</name>
+        <alias>Cell Groups</alias>
         <defined>A number of cells of the same <intref>Cell Type</intref> positioned in 3D space.
                  These will be laid out relative to a specified <intref>Region</intref> <br/>
                  and arranged according to a <intref>Packing Pattern</intref>. Only Cell Groups<br/>
@@ -44,21 +48,23 @@
 
     <term>
         <name>Electrotonic length</name>
-        <defined>This measure of the length of dendrites, etc. as "seen" by electrical charge is dependant on the shape, axial<br/>
+        <alias>electrotonic length</alias>
+        <defined>This measure of the length of dendrites, etc. as "seen" by electrical charge is dependent on the shape, axial<br/>
                  and membrane resistance of the section. See the NEURON or GENESIS books for more details. It is important when<br/>
                  simulating neurons with realistic morphologies that individually simulated points are not too far apart in terms<br/>
-                 of electrotonic distance (usually a max of 0.1 microns is fine). Too small an electrotonic length can sometimes lead<br/>
-                 to problems in numerical integration, and neuroConstruct will perform validity checks for both of these. To fix the<br/>
-                 internal divisions in a section to keep to a maximum electrotonic length, e.g. on an imported morphology, visualise<br/>
-                 the cell in 3D, showing all solids, click on any section, then <b>Edit...</b> and select Remesh option in drop down<br/>
-                 function selector.</defined>
+                 of electrotonic distance (a max of 0.1 microns is fine), i.e. a sufficiently fine-graned spatial discretisation<br/>
+                 should be used. Too small an electrotonic length can sometimes lead to problems in numerical integration, and <br/>
+                 neuroConstruct will perform validity checks for both of these. To correct the number of internal divisions in a<br/>
+                 <intref>Section</intref> to stay below a maximum electrotonic length, e.g. on an imported morphology, visualise the cell in 3D, <br/>
+                 showing all solids, click on any section, then <b>Edit...</b> and select the Remesh option in the drop down function<br/>
+                 selector. See also the note about <intref>Compartmentalisations</intref>.</defined>
     </term>
 
     <term>
         <name>Simulation Configuration</name>
-        <defined>Most neuroConstruct <intref>Project</intref>s will illustrate not just a single aspect of a cell <br/>
+        <defined>Most neuroConstruct <intref>Projects</intref> will illustrate not just a single aspect of a cell <br/>
                  or network, but will seek to show how the cells react under different inputs, or how a network behaves <br/>
-                 with different <intref>Cell Group</intref>s/cell populations present, etc. A particular Simulation <br/>
+                 with different <intref>Cell Groups</intref>/cell populations present, etc. A particular Simulation <br/>
                  Configuration has a number of Cell Groups, Network Connections, Electrical Inputs, and Plots <br/>
                  associated with it, along with a simulation duration. As an example, a project accompanying a publication<br/>
                  might have one Simulation Configuration for each figure in the paper. More on Simulation Configurations in <br/>
@@ -79,27 +85,33 @@
         <defined>This Java application, developed by Robert Cannon, allows transformation between various morphology formats
         (e.g. from <intref>Neurolucida</intref> to <intref>NEURON</intref> or <intref>GENESIS</intref>), editing of loaded
         morphologies, along with other functions for cleaning up and optimising morphology files. It also has its own
-        file format (stored in *.swc files). More information <a href="http://www.compneuro.org/CDROM/docs/cvapp.html">here</a></defined>
+        file format (stored in *.swc files). More information <a href="http://www.compneuro.org/CDROM/docs/cvapp.html">here</a>.
+        The <a href="http://www.neuromorpho.org">Neuromorpho database</a> uses SWC as the format for it's curated morphologies.</defined>
+    </term>
+
+    <term>
+        <name>SWC</name>
+        <defined>The file ending given to morphologies saved in the file format initially developed for <intref>Cvapp</intref>.</defined>
+    </term>
+
+    <term>
+        <name>ASC</name>
+        <defined>The file ending given to morphologies saved in the file format used by <intref>Neurolucida</intref>.</defined>
     </term>
 
     <term>
         <name>Neurolucida</name>
         <defined>A product by MicroBrightField Bioscience which is a system for "3D neuron reconstruction, serial section reconstruction, and anatomical mapping".
         It is a popular product for creating 3D morphological reconstructions of neurons with complex dendritic trees (although this is not the only functionality).
-        A number of databases exist containing neuronal information in the file format used by these products. neuroConstruct can <a  href="import.html#Neurolucida">import</a> these files and extract the
-        morphological information to use as the basis of detailed single cell models.</defined>
+        A number of databases exist containing neuronal information in the file format used by these products. neuroConstruct can import these files and extract the
+        morphological information to use as the basis of detailed single cell models. See <a  href="import.html#Neurolucida">here</a> for more information/limitations.</defined>
     </term>
 
 
-    <term>
-        <name>NEOSIM</name>
-        <defined>NEOSIM is a framework to support large scale multi-level modelling of the nervous system. NEOSIM simulation models<br/>
-                 are specified in a recent version the <intref>NeuroML</intref> declarative <intref>XML</intref> model specification language. More information on the current status is available <a target="_blank" href="http://www.neosim.org/">here</a>.</defined>
-    </term>
 
     <term>
         <name>Cell Mechanism</name>
-        <defined>A general term for an electrophysiological process (currently  either a <intref>Channel Mechanism</intref>, a <intref>Synaptic Mechanism</intref> or an <intref>Ion Concentration</intref>) which is placed <br/>
+        <defined>A general term for an electrophysiological process (currently either a <intref>Channel Mechanism</intref>, a <intref>Synaptic Mechanism</intref> or an <intref>Ion Concentration</intref>) which is placed <br/>
         on modelled cell membranes or at the interface of two cells to alter their internal electrical and chemical state.<br/>
         More on Cell Mechanisms in the <a  href="cellmechanism.html">main documentation</a>.</defined>
 
@@ -126,7 +138,7 @@
     <term>
         <name>Cell density mechanism</name>
         <defined>A term used to describe the mechanisms which can be applied to cell segments to allow simulation of electrophysiological<br/>
-                 mechanisms. Density refers to the fact the the effect of the mechanism is dependent on the physical size of the segment. A <br/>
+                 mechanisms. Density refers to the fact that the effect of the mechanism is dependent on the physical size (surface area/length) of the segment. A <br/>
                  <intref>Channel Mechanism</intref> is specified as a conductance per unit area, or alternatively an <intref>Action Potential Propagation Speed</intref> measures the <br/>
                  rate of propagation of signals along a segment to synaptic connections. Specific capacitance and specific axial resistance can <br/>
                  be specified on a per group basis also. To specify which cell density mechanisms are present on a cell, select<br/>
@@ -136,19 +148,71 @@
 
     <term>
         <name>Compartmentalisation</name>
-        <defined>Imported morphologies (e.g. <intref>Neurolucida</intref> files) may not always be in the most efficient spatial discretisation<br/>
-                 for a particular simulator (a number of 3D points/daimeters can be specified along an unbranched dendrite to describe the structure,<br/>
-                 but these will lead to many segments). A Compartmentalisation is a reorganisation of the structure of segments/sections to retain as many<br/>
-                 of the properties the cell which are important for electrophysiological simulations (total membrane area, total axial resistance<br/>
-                 along branches, total length etc.) but enables mapping on to a smaller number of simulated compartments. See <intref>GENESIS Compartmentalisation</intref></defined>
+        <alias>Compartmentalisations</alias>
+        <defined>Imported morphologies (e.g. <intref>Neurolucida</intref> files) may not always be in the most efficient <intref>spatial discretisation</intref><br/>
+                 for a particular simulator (a number of 3D points/diameters can be specified along an unbranched dendrite to describe the structure,<br/>
+                 but these will lead to many segments in a simulator which maps all segments to individual compartments). A Compartmentalisation is a<br/>
+                 reorganisation of the structure of segments/sections to retain as many of the properties the cell which are important for electrophysiological<br/>
+                 simulations (total membrane area, total axial resistance along branches, total length etc.) but enables mapping on to a smaller number of <br/>
+                 simulated compartments. See <intref>GENESIS Compartmentalisation</intref>. The various Compartmentalisations can be visualised in 3D, see <intref>3D View of Cells</intref>.</defined>
     </term>
+    
+    
+    <term>
+        <name>nseg</name>
+             <defined>A <intref>NEURON</intref> section property. See <intref>Internal number of divisions</intref>.</defined>
+    </term>
+    <term>
+        
+        <name>Internal number of divisions</name>
+        <alias>spatial discretisation</alias>
+        <alias>internal number of divisions</alias>
+        <alias>internal divisions</alias>
+             <defined>A <intref>Section</intref> can consist of a long list of 3D point/diameters (<intref>Segment</intref>s). Not all of this 3D information is relevant for 
+             all Sections, sometimes just the surface area/axial resistance at a point is sufficient for modelling the dendrite. This is the approach <intref>NEURON</intref>
+             takes modelling cables/sections. For long sections, it is possible to specify a number of internal divisions of the dendrite, and the membrane potential at each
+             time step is calculated at the centre of each of these divisions (this is also known as setting the spatial discretisation of the morphology). The term 
+             <intref>nseg</intref> is used for this number in NEURON. It is also possible to set this parameter for Sections in neuroConstruct. View the cell in 3D (All solid),
+             click on a segment, click <strong>Edit...</strong>, and in the second drop down box, select <strong>Section details</strong>. The number of internal divisions can 
+             be chosen automatically too (especially convenient for imported detailed morphologies), see <intref>electrotonic length</intref>. See information too on 
+         <intref>Compartmentalisations</intref>.
+     </defined>
+    </term>
+    
+    <term>
+    <name>Section</name>
+    <alias>Sections</alias>
+    <defined>Unbranched part of a cell morphology. An example would be a non bifurcating dendritic section, or the soma. <br/>
+             Each Section contains at least one <intref>Segment</intref>. The Section provides the start point and <br/>
+             start radius, and each of the Segments has an end point and radius corresponding to the 3D points along the Section<br/>
+             (these are similar to the pt3d points used to specify sections in <intref>NEURON</intref>). Sections which have similar<br/>
+             properties can be assigned to a <intref>Section Group</intref>. All of the Segments in a Section are also in the same <br/>
+             Section Groups.</defined>
+</term>
+
+<term>
+    <name>Segment</name>
+    <alias>Segments</alias>
+    <defined>The basic unit of the morphological description of the cell. Segments correspond to the concept of a compartment as <br/>
+             used in <intref>GENESIS</intref>. One or more Segments go to make up a <intref>Section</intref>, which maps to a cable in<br/>
+             simulation environments using that concept (e.g. the section in <intref>NEURON</intref>, where the start point of the Section,<br/>
+             and the Segment end points provide the pt3d points along the section). A Segment has a unique name, an end point, a pointer to<br/>
+             its <intref>Section</intref>, a pointer to its parent <strong>Segment</strong>, and a value for the fraction (0 to 1) of the<br/>
+             <strong>parent Segment's</strong> length at which it's connected. The first Segment in a Section can be connected at a point between 0 and 1 along<br/>
+             its parent segment (which will be in another section) but all other segments need to be connected at the 1 point to their<br/>
+             parent. Note: there is a difference with how NEURON handles sections, they specify the 0 to 1 point of connectivity along their<br/>
+             parent section. When there are n Segments in a Section in neuroConstruct, this will translate to a NEURON section with n+1 pt3d points.</defined>
+</term>
 
 
     <term>
         <name>GENESIS Compartmentalisation</name>
-        <defined>This <intref>Compartmentalisation</intref> for the <intref>GENESIS</intref> platform is needed as a simple mapping of each <intref>Segment</intref> in a detailed neuronal reconstruction<br/>
-        to a compartment for running on GENESIS would lead to too great a spatial discretization. This Compartmentalisation maps the n Segments in each <intref>Section</intref> on to two CYLINDRICAL Sections<br/>
-        each of half the original Section length, with the radii chosen to preserve total curved surface area and total axial resistance along the length. </defined>
+        <defined>This <intref>Compartmentalisation</intref> for the <intref>GENESIS</intref> platform is needed since a simple mapping of each <intref>Segment</intref> in a detailed neuronal reconstruction<br/>
+        to a compartment for running on GENESIS would lead to too great a spatial discretization. This Compartmentalisation maps the n Segments in each <intref>Section</intref><br/>
+        on to two CYLINDRICAL Sections each of half the original Section length, with the radii chosen to preserve total curved surface area and total axial resistance along <br/>
+        the length. For sections with large <intref>electrotonic length</intref>, and which have an <intref>internal number of divisions</intref> (<intref>nseg</intref>) <br/>
+        greater than 2, these cylinders will be split accordingly (e.g for num int divs = 7 or 8, the 2 cylinders will be split in 4 each).
+    </defined>
     </term>
 
     <term>
@@ -162,8 +226,7 @@
     <term>
         <name>Abstracted Cell Mechanisms</name>
         <defined>A <intref>Cell Mechanism</intref> which has been split between model template and parameters, allowing easy mapping onto<br/>
-                 each of the available simulation platforms. A limited number of examples exist in the current version of neuroConstruct<br/>
-                 e.g. Double Exponential Synapse, Hodgkin Huxley channel. <b>Note: This is a pre-</b><intref>ChannelML</intref><b> approach to implementing
+                 each of the available simulation platforms. <b>Note: This is a pre-</b><intref>ChannelML</intref><b> approach to implementing
                  Cell Mechanisms and shouldn't be used anymore</b>.</defined>
     </term>
 
@@ -185,7 +248,7 @@
 
     <term>
         <name>NeuroML</name>
-        <defined>NeuroML, the Neural Open Markup Language, is an open standard in <intref>XML</intref> for describing models, data, literature, methods and other aspects of neuroscience. <br/>
+        <defined><a target="_blank" href="http://www.neuroml.org">NeuroML</a>, the Neural Open Markup Language, is an open standard in <intref>XML</intref> for describing models, data, literature, methods and other aspects of neuroscience. <br/>
                  Currently, there are three Levels of compliance to the NeuroML standards:
 
                 <ul>
@@ -193,7 +256,9 @@
             <li><b>Level 2</b> builds on Level 1 to include standards for describing passive membrane properties, and the distributions of channels on neuron models.<br/>
                 The dynamics of ion channels, synapses, and ion concentration mechanisms can also be described at this Level in <intref>ChannelML</intref></li>
             <li><b>Level 3</b> allows networks of cells to be described, either in template form (from which networks can be generated) or as explicit descriptions of <br/>
-                cell placement and synaptic connectivity. The core of this level is described in <intref>NetworkML</intref>.</li>
+                cell placement and synaptic connectivity. The core of this level is described in <intref>NetworkML</intref>. neuroConstruct can save generated networks in <br/>
+                NetworkML, and load NetworkML files from any other application to use in simulations, provided cell type/group/network connection names match those in the project.
+            </li>
                 </ul>
 
 
@@ -202,9 +267,11 @@
 
     <term>
         <name>MorphML</name>
-        <defined>MorphML is an standard which is being developed (using <intref>XML</intref> technologies) to allow data on cell morphologies to be <br/>
-        easily transferred between neuronal simulation applications. More information is available <a target="_blank" href="http://www.morphml.org">here</a>.<br/>
-        It is a part of the <intref>NeuroML</intref> initiative, and is the core of NeuroML Level 1.</defined>
+        <defined>MorphML is an standard which has been developed (using <intref>XML</intref> technologies) to allow data on cell morphologies to be <br/>
+        easily transferred between neuronal simulation applications. More information is available <a target="_blank" href="http://www.neuroml.org">here</a>.<br/>
+        It is a part of the <intref>NeuroML</intref> initiative, and is the core of NeuroML Level 1. Detailed specifications of the elements allowed in a MorphML document are<br/>
+        available <a target="_blank" href="http://www.morphml.org:8080/NeuroMLValidator/Latest.jsp?spec=MorphML">here</a>.
+    </defined>
     </term>
 
     <term>
@@ -212,14 +279,15 @@
         <defined>ChannelML is a standard (using <intref>XML</intref> technologies) for specifying the dynamics of various subcellular processes
         (<intref>Channel Mechanism</intref>s, <intref>Synaptic Mechanism</intref>s, etc.) which are present on biologically accurate model neurons.
         It is a part of Level 2 of the <intref>NeuroML</intref> set of standards.
-        The ability to model these mechanisms is one of the key features of platforms like <intref>NEURON</intref> or <intref>GENESIS</intref>, but the implementation
+        The ability to model these types of mechanisms is one of the key features of platforms like <intref>NEURON</intref> or <intref>GENESIS</intref>, but the implementation
         of the mechanisms is far from trivial, requiring both knowledge of the physiological processes and of a low level programming language. ChannelML seeks to separate the
         electrophysiological data from any specific implementation, defining a template for numerous types of cellular mechanism, containing only the relevant biophysical parameters
-        (e.g. reversal potentials, (in)activation variable equations) which can be automatically validated for completeness. These files can then be mapped to
+        (e.g. reversal potentials, (in)activation rate equations) which can be automatically validated for completeness. These files can then be mapped to
         script files in the language of the target simulator for inclusion in cell models.
         The format for valid ChannelML files is described in an <a href="http://www.w3schools.com/schema/default.asp">XML Schema</a> document.
         Examples of valid ChannelML files and mappings to simulators can be found
-        <a  href="http://www.MorphML.org:8080/NeuroMLValidator/">here</a>.
+        <a  href="http://www.MorphML.org:8080/NeuroMLValidator/">here</a>, and detailed specifications of the elements allowed in a ChannelML document are<br/>
+        available <a target="_blank" href="http://www.morphml.org:8080/NeuroMLValidator/Latest.jsp?spec=ChannelML">here</a>.
         </defined>
     </term>
 
@@ -255,7 +323,7 @@
 
     <term>
         <name>Channel Mechanism</name>
-        <defined>An implementation of a model of an electrophysiological process (e.g. an ion channel, ion pump, etc.) which is placed <br/>
+        <defined>An implementation of a model of an electrophysiological process (e.g. a voltage gated ion channel, ion pump, etc.) which is placed <br/>
         on modelled cells' membranes to alter their behaviour. For <intref>NEURON</intref> these are usually implemented in <intref>NMODL</intref>.</defined>
     </term>
 
@@ -361,26 +429,7 @@
 
 <!--  General Cell/morphology terms -->
 
-<term>
-    <name>Section</name>
-    <defined>Unbranched part of a cell morphology. An example would be a non bifurcating dendritic section, or the soma. <br/>
-             Each Section contains at least one <intref>Segment</intref>. The Section provides the start point and <br/>
-             start radius, and each of the Segments has an end point and radius corresponding to the 3D points along the Section<br/>
-             (these are similar to the pt3d points used to specify sections in <intref>NEURON</intref>). Sections which have similar<br/>
-             properties can be assigned to a <intref>Section Group</intref>. All of the Segments in a Section are also in the same <br/>
-             Section Groups.</defined>
-</term>
 
-<term>
-    <name>Segment</name>
-    <defined>The basic unit of the morphological description of the cell. Segments correspond to the concept of a compartment as <br/>
-             used in <intref>GENESIS</intref>. One or more Segments go to make up a <intref>Section</intref>, which maps to a cable in<br/>
-             simulation environments using that concept (e.g. the section in <intref>NEURON</intref>, where the start point of the Section,<br/>
-             and the Segment end points provide the pt3d points along the section). A Segment has a unique name, an end point, a pointer to<br/>
-             its <intref>Section</intref>, a pointer to its parent Segment, and a value for the fraction (0 to 1) of the parent's <br/>
-             length at which it's connected. The first Segment in a Section can be connected at a point between 0 and 1 along<br/>
-             its parent segment (in another section) but all other segments need to be connected at the 1 point to their parent.</defined>
-</term>
 
 <term>
     <name>Finite volume Segment</name>
@@ -395,14 +444,15 @@
 
 <term>
     <name>Section Group</name>
+    <alias>Section Groups</alias>
     <defined>A group of <intref>Section</intref>s sharing some properties. These can be used to specify the <intref>Channel Mechanism</intref>s placed<br/>
     on areas of the cell (e.g. apical dendrites), or the locations where specific <intref>Synaptic Mechanism</intref>s are allowed (see <intref>Synaptic Connection Location</intref>).
     There are four special groups:
     <ul>
-                 <li><b>all:</b> every Section is included in this Group</li>
-                 <li><b>soma_group:</b> The Group containing only one Section, representing the soma</li>
-                 <li><b>dendrite_group:</b> The Group of dendritic Sections</li>
-                 <li><b>axon_group:</b> The Group of axonal Sections</li>
+                 <li><b>all</b>: every Section is included in this Group</li>
+                 <li><b>soma_group</b>: The Group containing only one Section, representing the soma</li>
+                 <li><b>dendrite_group</b>: The Group of dendritic Sections</li>
+                 <li><b>axon_group</b>: The Group of axonal Sections</li>
                  </ul>
                  Every Section is part of one and only one of the last 3 Groups. Sections in groups whose names start with <b>colour_</b>, e.g. <b>colour_Yellow</b>,
                  will be coloured as such in the single cell 3D view (these colourings may come from morphology files, e.g. <intref>Neurolucida</intref> format).
@@ -443,9 +493,9 @@
                  </ul>
             The following checks, when failed, lead to warnings (due to potential problems when packing, for example):
             <ul>
-                 <li>  First soma segment not at origin</li>
+                 <li>  First soma segment is at origin</li>
                  <li>  Start point matches point at specified fraction along parent</li>
-                 <li>  Not a <intref>Simply Connected cell</intref></li>
+                 <li>  Cell is a <intref>Simply Connected cell</intref></li>
                  </ul>
         </defined>
 </term>
@@ -457,6 +507,7 @@
          <ul>
              <li>At least one membrane mechanism on each segment</li>
              <li>At least one passive conductance on each segment </li>
+             <li>Each section has an appropriate <intref>internal number of divisions</intref> for the specified maximum <intref>electrotonic length</intref></li>
          </ul>
 
          The following checks, when failed, lead to warnings:
@@ -470,13 +521,14 @@
 
 <term>
     <name>Project validity</name>
-    <defined>To catch many, but not all, potential sources of error in a project a number of validity checks are performed. These include <br/>
+    <defined>To catch many, but not all, potential sources of error in a project a number of <intref>validity checks</intref> are performed. These include <br/>
         checks on the morphology and biophysical parameters of each of the cells in the project, and various global checks on the project<br/>
-        settings.</defined>
+        settings, e.g. appropriate temperature, electrical input or network connection to all cell groups, etc.</defined>
 </term>
 
 <term>
     <name>Validity checks</name>
+    <alias>validity checks</alias>
     <defined>Due to the large number of parameters present in a simulation of a network of realistic neurons, a number
         of automated checks have been created to help ensure sensible data is being given to the simulators. Note that these
         are <b>*not complete*</b> and there is still plenty of opportunity for "garbage in, garbage out". There are checks on:
@@ -947,6 +999,8 @@ Set to MAX if no restriction applies.</defined>
 
 <term>
     <name>Project</name>
+    <alias>Projects</alias>
+    <alias>projects</alias>
     <defined>In neuroConstruct, a Project contains the specification of the <intref>Cell Type</intref>s, <intref>Region</intref>s,<br/>
     <intref>Cell Group</intref>s and <intref>Network Connection</intref>s in a model, along with the simulation parameters (duration, dt, <br/>
     etc.) and inputs into the network. Also associated with a Project are a number of Previous Simulations, <br/>
@@ -1060,8 +1114,8 @@ Set to MAX if no restriction applies.</defined>
 <term>
     <name>Plot/Graph</name>
     <defined>These terms are used in various ways by <intref>NEURON</intref> and <intref>GENESIS</intref> for a) the frame/window showing a number of sets of data and
-    b) the individual sets of points in each trace. In neuroConstruct, <intref>Data Set</intref> is generally used for a set of points which can be plotted, and
-    <intref>Plot Frame</intref> is use for the window in which a number of these can be viewed. In the <b>Input and Output</b> tab, the second table lists the values to
+    b) the individual sets of points in each trace. In neuroConstruct, <intref>Data Set</intref> is used for a set of points which can be plotted, and
+    <intref>Plot Frame</intref> is used for the window in which a number of these can be viewed. In the <b>Input and Output</b> tab, the second table lists the values to
     to be plotted during a simulation run. For example, the membrane potential of a subset of cells in each group could be plotted. Note that here too is where variables
     to be saved during the simulation are specified, e.g. all cells' membrane potential could be saved but just one specified to be plotted, etc. The names to use for variables
     to plot and/or save are given <a  href="#Variables to plot/save">here</a>
@@ -1112,7 +1166,7 @@ Set to MAX if no restriction applies.</defined>
     <defined>The window in which a number of <intref>Data Set</intref>s can be viewed. Each Plot Frame has a name and new Data Sets can be added to existing Plot Frames.
     The Data Sets can be viewed in a number of different ways: all graphs using the same axes, graphs stacked vertically, zoomed in to user selected area, etc. Each Data Set is
     listed and can be individually analysed (e.g. for mean/std dev values, spiking rates calculated) or the format (colour/point type) edited. See <a  href="#Variables to plot/save">here</a>
-    for information on what veriables can be saved/plotted during a simulation run.</defined>
+    for information on what variables can be saved/plotted during a simulation run.</defined>
 </term>
 
 <term>
@@ -1314,34 +1368,36 @@ Set to MAX if no restriction applies.</defined>
 
 <term hidden="false">
     <name>Cell Group Priority</name>
-    <defined>Specifies the order in which <intref>Cell Group</intref>s are placed. Higher priority Cell Groups are always placed first.</defined>
+    <defined>Specifies the order in which <intref>Cell Groups</intref> are placed. Higher priority Cell Groups are always placed first.</defined>
 </term>
 
 <term>
     <name>3D View of Cells</name>
-    <defined>When a single cell is viewed in 3D (at tab <b>Visualisation</b>, select the name of the <intref>Cell Type</intref> in the drop down box) there are a number of<br/>
-             functions possible:
+    <defined>When a single cell is viewed in 3D (at tab <b>Visualisation</b>, select the name of the <intref>Cell Type</intref> in the drop down box and press <b>View</b>)<br/>
+    there are a number of actions possible:
     <ul>
             <li>Left click anywhere in the view and drag to rotate the cell</li>
             <li>Right click anywhere and drag to translate the cell</li>
             <li>Clicking the middle mouse button and dragging (or turning the middle wheel) will zoom the view. Note that if there
             is no middle button, there is a zoom slider bar on the GUI</li>
-            <li>Pressing the <b>Find</b> button will reset the view, usually centering on the cell</li>
-            <li>Left clicking on one of <intref>Segment</intref>s will highlight that segment and any other segments in the same <intref>Section</intref> (only when <b>All solid</b> is selected)</li>
+            <li>Pressing the <b>0</b> button will reset the view, usually centering on the cell</li>
+            <li>Pressing the <b>^</b> button will open a window in full screen with just the 3D objects (good for capturing screenshots)</li>
+            <li>Left clicking on one of <intref>Segments</intref> will highlight that segment (red) and any other segments in the same <intref>Section</intref> (yellow) (only when <b>All solid</b> is selected)</li>
             <li>When a Segment is selected, a summary of the 3D information on it appears, and the endpoints, etc. can be altered by pressing the <b>Edit...</b> button</li>
     </ul>
-    Specifying <intref>Section Group</intref>s allows different subsections of the cell to be assigned as dendrites, etc. and can be used to colour regions of the cells.
+    Specifying <intref>Section Groups</intref> allows different subsections of the cell to be assigned as dendrites, etc. and can be used to colour regions of the cells.
     When multiple cells are being displayed (e.g. when <b>Latest Generated Positions</b> is selected, or a simulation is reloaded) the following options are also possible:
         <ul>
             <li>Clicking on part of a cell highlights that cell. Note this is easiest when the level of detail displayed is <b>All Solid</b> (see below). Selecting cells can also be
-                difficult is other objects are close, e.g. transparent regions, synaptic endpoint spheres, 3D axes. If a cell can't be selected by clicking, the cell group and cell number can be selected in the drop down boxes.</li>
-            <li>When a single cell is selected, checking the Transparent mode box will keep that cell opaque, make cells it's connected to partially transparent and turn other cells almost completely transparent.</li>
+                difficult is other objects are close, e.g. transparent regions, synaptic endpoint spheres, 3D axes (turn some of these off via <b>3D Settings</b>). If a cell can't be selected by clicking, the cell group and cell number can be selected in the drop down boxes.</li>
+                <li>Multiple cells in a cell group can be selected too via the drop down boxes (e.g. all cells, a percentage of cells, etc.). These can then be plotted together as a group if a previous simulation has been loaded.</li>
+            <li>When one or more cells are selected, checking the <b>Transparent mode</b> box keeps that/those cell opaque, makes cells it's/they are connected to partially transparent and turns other cells almost completely transparent.</li>
 
         </ul>
     There are a number of settings which can be changed by pressing the <b>3D Settings</b> button:
         <ul>
             <li>The background colour and preferred cell segment colour</li>
-            <li>Whether the <a  href="#Axes+in+3D">3D axes</a> will be shown.</li>
+            <li>Whether the <a  href="#Axes in 3D">3D axes</a> will be shown.</li>
             <li>The resolution of 3D elements. <b>Note for better 3D performance when viewing large cells this should be set low (&lt;12)!</b></li>
             <li>A number of items can be excluded or included from the 3D view, e.g. Regions (when viewing generated networks), Inputs, Synaptic Endponts (green for presynaptic location, red for post), etc.</li>
             <li>The level of detail to display (see below)</li>
@@ -1353,14 +1409,16 @@ Set to MAX if no restriction applies.</defined>
             <li><b>Soma solid, neurite lines:</b> segments in the soma group are solid, all other segments are lines through their centres</li>
             <li><b>Soma solid, no neurites:</b> just the soma segments are shown in 3D</li>
             <li><b>All lines:</b> all segments are represented by lines</li>
-            <li><b>Original Compartmentalisation:</b> a transparent view of the cell, showing the segments in 3D, white lines through their centres, blue spheres for their end points, and yellow lines
-            linking segments which are electrically connected, but not physically linked. There will be a red sphere in the middle of each internal division, with small blue spheres connecting them.
-            These red spheres correspond to the simulation points in NEURON as defined by nseg</li>
+            <li><b>Original Compartmentalisation:</b> a transparent view of the cell, showing the segments in 3D, white lines through their centres, blue spheres 
+            for their end points, and yellow lines linking segments which are electrically connected, but not physically linked. There will be a red sphere in 
+            the middle of each of the <intref>internal divisions</intref>, with small blue spheres connecting them. These red spheres correspond to the simulated 
+            points in NEURON as defined by the <intref>nseg</intref> value.</li>
             <li><b>GENESIS Compartmentalisation:</b> this is a <intref>Compartmentalisation</intref> of the cell which converts it to a smaller number of compartments for GENESIS
-            but retains the section groups, total surface area, total dendritic length and total axial resistance</li>
+            but retains the section groups, total surface area, total dendritic length and total axial resistance.</li>
+            
         </ul>
-        Note: see points on allocating memory for the application <a  href="install.html#Building+and+running">here</a>, which will be important when displaying large networks in 3D. Also,
-        there is sometimes excessive flickering when showing 3D on Windows (a common problem when mixing Java3D and Swing, see <a  href="http://www.int.com/products/3d/jview3d/problem_resolution/index.html">here</a>), try updating the drivers for your graphics card, or adding -Dsun.java2d.noddraw=true to the command in run.bat.
+        Note: see points on allocating extra memory for the application <a  href="install.html#Building+and+running">here</a>, which will be important when displaying large networks in 3D. Also,
+        there is sometimes excessive flickering when showing 3D on Windows (a common problem when mixing Java3D and Swing, see <a  href="http://www.int.com/products/3d/jview3d/problem_resolution/index.html">here</a>), try updating the drivers for your graphics card, or adding <b>-Dsun.java2d.noddraw=true</b> to the command in run.bat.
     </defined>
 </term>
 

@@ -21,26 +21,29 @@
 
     <document>
         <header>
-            <title>Glossary of the main terms in neuroConstruct</title>
+            <title>Glossary of the main terms used in neuroConstruct</title>
         </header>
         <body>
+            
+        <anchor id="top"/>
+        <a name="top"/>
+        <xsl:for-each select="glossary/term">
+            <xsl:sort select="name"/>
+            <xsl:if test="not(starts-with(@hidden,'true'))">
+                <xsl:element name="a">
+                  <xsl:attribute name="href">#<xsl:value-of select="name"/></xsl:attribute> <xsl:value-of select="name"/>
+                </xsl:element><xsl:text> - </xsl:text>
+            </xsl:if>
+        </xsl:for-each>
 
-                <xsl:for-each select="glossary/term">
-                    <xsl:sort select="name"/>
-                    <xsl:if test="not(starts-with(@hidden,'true'))">
-                        <xsl:element name="a">
-                          <xsl:attribute name="href">#<xsl:value-of select="name"/>
-                          </xsl:attribute> <xsl:value-of select="name"/>
-                        </xsl:element><xsl:text> - </xsl:text>
-                    </xsl:if>
-                </xsl:for-each>
-
-                <xsl:for-each select="glossary/term">
-                    <xsl:sort select="name"/>
-                    <xsl:if test="not(starts-with(@hidden,'true'))">
-                        <xsl:apply-templates/>
-                    </xsl:if>
-                </xsl:for-each>
+        <xsl:for-each select="glossary/term">
+            <xsl:sort select="name"/>
+            <xsl:if test="not(starts-with(@hidden,'true'))">
+                <xsl:apply-templates select = "alias"/>
+                <xsl:apply-templates select = "name"/>
+                <xsl:apply-templates select = "defined"/>
+            </xsl:if>
+        </xsl:for-each>
 
 
         </body>
@@ -53,23 +56,29 @@
             <xsl:element name="a">
             <xsl:attribute name="name"><xsl:value-of select="."/></xsl:attribute>
 
-        <p style="font-size: 16">
-            <b>
-                <xsl:value-of select="."/>
-            </b>
-        </p>
+                <p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+                     <b> <xsl:value-of select="."/>  </b>
+                </p>
+                </xsl:element>
+    </xsl:template>
 
-        </xsl:element>
+    <xsl:template match="alias">
+
+            <xsl:element name="a">
+                <xsl:attribute name="name"><xsl:value-of select="."/></xsl:attribute>
+            </xsl:element>
     </xsl:template>
 
 
     <xsl:template match="defined">
         <xsl:element name="span">
-    <xsl:attribute name="style">padding: 5px 5px 5px 5px;</xsl:attribute>
-        <xsl:element name="p">
-            <xsl:apply-templates/>
+            <!--<xsl:attribute name="style">padding: 2px 2px 2px 2px;</xsl:attribute>-->
+            <xsl:element name="p">
+                <xsl:apply-templates/>
+            </xsl:element>
         </xsl:element>
-        </xsl:element>
+        <p style="font-size: 11"><a href = "#top">index</a></p>
+        
     </xsl:template>
 
 

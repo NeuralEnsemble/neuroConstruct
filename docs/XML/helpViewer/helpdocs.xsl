@@ -39,7 +39,10 @@
 
 
     <xsl:template match="p">
+        
         <xsl:element name="p">
+           <xsl:attribute name="style"><xsl:value-of select="@style"/></xsl:attribute>
+
            <xsl:apply-templates/>
         </xsl:element>
     </xsl:template>
@@ -80,6 +83,7 @@
 
     <xsl:template match="section/title">
         <xsl:element name="h3">
+            <xsl:attribute name="style">font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px</xsl:attribute>
             <xsl:text>&#160;&#160;</xsl:text>
             <xsl:value-of select="section/title"/>
            <xsl:apply-templates/>
@@ -89,6 +93,7 @@
 
     <xsl:template match="document/header/title">
         <xsl:element name="h3">
+            <xsl:attribute name="style">font-size: 16;color: black</xsl:attribute>
             <xsl:value-of select="document/header/title"/>
            <xsl:apply-templates/>
         </xsl:element>

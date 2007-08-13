@@ -55,10 +55,12 @@ This issue has been addressed with the introduction of <a  href="Glossary_gen.ht
   <title>NEURON</title>
 
 
-<p>A subset of <a  href="Glossary_gen.html#NEURON" >NEURON</a> files can be imported. In contrast to GENESIS, there is no fixed format in NEURON for specifying morphologies.
-(note however, MorphML export is being implemented in a new vesion of NEURON) However, a number of models exist with the cellular morphology in separate files, many of which were created by the ntscable program.
-These files are usually characterised by a large number of lines of coordinates (lines of 4 floats) containing information accessed previously in the file
-by the fscan() command.</p>
+<p>A subset of <a  href="Glossary_gen.html#NEURON" >NEURON</a> files can be imported. In contrast to GENESIS, there is no fixed format in 
+    NEURON for specifying morphologies (note however, MorphML export is being implemented in a new vesion of NEURON, see 
+    <a  href="http://neuroml.svn.sourceforge.net/viewvc/neuroml/nrn2NeuroML/">here</a>) However, a number of models exist with the 
+    cellular morphology in separate files, many of which were created by the ntscable program. These files are usually characterised 
+    by a large number of lines of coordinates (lines of 4 floats) containing information accessed previously in the file by the fscan()
+    command.</p>
 
 <p> The following is a summary of what can be imported from a given NEURON morphology file:</p>
 <ul>
@@ -84,7 +86,11 @@ format which could easily be imported please <a  href="contact.html" >get in tou
 cover most of the information common between in <a  href="Glossary_gen.html#Neurolucida" >Neurolucida</a>,
 <a  href="Glossary_gen.html#NEURON">NEURON</a> and
 <a  href="Glossary_gen.html#GENESIS">GENESIS</a> formats. This format is pretty straightforward, but as mentioned,
-care must be taken with the <strong>first soma segment</strong>. Check the morphology when imported and ensure the root segment is as intended </p>
+care must be taken with the <strong>first soma segment</strong>. Check the morphology when imported and ensure the root segment 
+is as intended. Note that as of v1.0.4, there was a change in the import of SWC format files, to automatically create 
+<a  href="Glossary_gen.html#Section" >Sections</a> from the 3D points between splits in the dendritic morphologies, resulting in a 
+lower number of Sections but the same number of <a  href="Glossary_gen.html#Segment" >Segments</a>. See the note on 
+<a  href="Glossary_gen.html#Electrotonic length" >Electrotonic length</a> before using those morphologies in simulations.</p>
 
 </section>
 
@@ -98,7 +104,8 @@ care must be taken with the <strong>first soma segment</strong>. Check the morph
 <a href="http://www.morphml.org:8080/NeuroMLValidator/">this web service</a> should be used.</p>
 
 <p>There is a close relation between the internal model of a cell in neuroConstruct and the information present in a MorphML file,
-so exporting and importing a cell in this format should lead to identical cells.</p>
+so exporting and importing a cell in this format should lead to identical cells (though the names need to be different 
+if they are in the same project).</p>
 
 </section>
 
@@ -111,7 +118,7 @@ on neuronal reconstructions. Both binary and ASCII format files can be generated
 ASCII (*.asc) format V3 files (a heirarchical file structure with "CellBody", "Dendrite", etc). The format allows recording of various anatomical features, not only neuronal processes such as dendrites and cell bodies, but
 can record other microanatomical features of potential interest to anatomists. Not all of these features will be relevant when constructing
 a single cell computational model. Go to <strong>Cell Types -> Add New Cell Type</strong> and select <strong>NeurolucidaReader</strong> in the first drop down box.
-Specify the location of the morphology file and choose a name for the Cell Type. A dialog box will be presented with options outlined below.
+Specify the location of the morphology file and choose a name for the Cell Type. A dialog box will be presented with some options as mentioned below.
 </p>
 
 <p> The main points to note when importing Neurolucida files are:</p>

@@ -14,10 +14,11 @@
     <section>
       <title>General points</title>
 
-<p>neuroConstruct is written in <a href="http://java.sun.com/">Java</a> and so can be used on any platform with a JVM together with an implementation
-of Java3D.</p>
-<p>In general, NEURON and/or GENESIS should be present on the same machine as neuroConstruct. The scripts for the target platform are generated based
-on the network created by neuroConstruct, and these are set running in separate processes via the Java Runtime.exec() command.</p>
+<p>neuroConstruct is written in <a href="http://java.sun.com/">Java</a> and so can be used on any platform with a Java Virtual Machine
+    together with an implementation of Java3D.</p>
+<p>In general, NEURON and/or GENESIS should be present on the same machine as neuroConstruct. The scripts for the target platform 
+    are generated based on the network created by neuroConstruct, and these are set running in separate processes via the 
+    Java <strong>Runtime.exec()</strong> command.</p>
 <p></p>
 
 
@@ -29,16 +30,17 @@ on the network created by neuroConstruct, and these are set running in separate 
   <p>&nbsp;&nbsp;<strong>NEURON</strong></p>
 
   <p>NEURON hoc and mod files are generated from the network model in neuroConstruct. First, the mod files are compiled using
-  <strong>nrnivmodl</strong>. This executable is found using the value for the NEURON home directory in <strong>Settings -> General Properties</strong>.
+  <strong>nrnivmodl</strong>. This executable is found using the value for the NEURON home directory in <strong>Settings -> 
+      General Properties</strong>.
   </p>
-  <p>Once the native machine libraries for the channels are generated, the main hoc file is run with <strong>nrngui</strong>. Note that this is
-  executed in a console window (by prefixing the command with <strong>gnome-terminal -x</strong> (Gnome desktop) or <strong>konsole</strong> (KDE),
-  also set via <strong>Settings -> General Properties</strong>)</p>
+  <p>Once the native machine libraries for the channels are generated, the main hoc file is run with <strong>nrngui</strong>. Note that 
+      this is   executed in a console window (by prefixing the command with <strong>gnome-terminal -x</strong> (Gnome desktop) or 
+      <strong>konsole</strong> (KDE), also set via <strong>Settings -> General Properties</strong>)</p>
 
   <p>&nbsp;&nbsp;<strong>GENESIS</strong></p>
   <p>GENESIS script is generated from the network model and the main file can be run straight away. The <strong>genesis</strong> command,
-  together with the name of the main file are executed via Runtime.exec(), therefore the location of this executable should be in the PATH.
-  The command is executed in a new console window as above.</p>
+  together with the name of the main file are executed via <strong>Runtime.exec()</strong>, therefore the location of this executable
+  should be in the PATH variable. The command is executed in a new console window as above.</p>
 
 
 </section>
@@ -50,19 +52,22 @@ on the network created by neuroConstruct, and these are set running in separate 
   <p>&nbsp;&nbsp;<strong>NEURON</strong></p>
 
   <p>NEURON hoc and mod files are generated from the network model in neuroConstruct. First, the mod files are compiled using a command of the form
-  <strong>C:\nrn57\bin\rxvt.exe -e C:\nrn57\bin\sh C:\nrn57\lib\mknrndll.sh C:\nrn57</strong>. The C:\nrn57 is found using the value for the NEURON home directory in <strong>Settings -> General Properties</strong>.
+  <strong>C:\nrn60\bin\rxvt.exe -e C:\nrn60\bin\sh C:\nrn60\lib\mknrndll.sh C:\nrn60</strong>. The <strong>C:\nrn60</strong> is found using the 
+          value for the NEURON home directory in <strong>Settings -> General Properties</strong>.
   </p>
   <p>Once the native machine libraries for the channels are generated, the main hoc file is run with <strong>neuron.exe</strong>.</p>
 
   <p>&nbsp;&nbsp;<strong>GENESIS</strong></p>
-  <p>GENESIS was for many years not available on Windows. A <a href="http://www.genesis-sim.org/GENESIS/genesis-cygwin/">port</a> has recently been created,
-  which while slower than under Linux, can be used to test generated GENESIS code under Windows. The following assumes Cygwin has been installed at C:\cygwin and GENESIS installed at /usr/local/genesis i.e.
-  C:\cygwin\usr\local\genesis.</p>
+  <p>GENESIS was for many years not available on Windows. A <a href="http://www.genesis-sim.org/GENESIS/genesis-cygwin/">port</a> has 
+      recently been created, which while slower than under Linux, can be used to test generated GENESIS code under Windows. The 
+      following assumes Cygwin has been installed at <strong>C:\cygwin</strong> and GENESIS installed at <strong>/usr/local/genesis</strong> i.e.
+  <strong>C:\cygwin\usr\local\genesis</strong>.</p>
   <p>
   GENESIS script is generated from the network model and the main file can be run straight away without further compilation.
-  The file <strong>{NEUROCONSTRUCT_HOME}/templates/genesisUtils/startxwin2.bat</strong> is used to launch the genesis executable. This is a slightly modified version
-  of the <strong>startxwin.bat</strong> supplied with Cygwin for running an XTerm. This mechanism is a bit flaky (e.g. it doesn't like NEURON running under Cygwin at the same time).
-  Please report any problems/solutions to bugs - at - neuroConstruct.org</p>
+  The file <strong>{NEUROCONSTRUCT_HOME}/templates/genesisUtils/startxwin2.bat</strong> is used to launch the genesis executable. 
+  This is a slightly modified version
+  of the <strong>startxwin.bat</strong> supplied with Cygwin for running an XTerm. This mechanism is a bit flaky (e.g. it doesn't 
+  like NEURON running under Cygwin at the same time). Please report any problems/solutions to bugs - at - neuroConstruct.org</p>
 
 </section>
 
