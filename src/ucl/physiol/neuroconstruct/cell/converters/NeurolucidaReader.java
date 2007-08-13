@@ -527,9 +527,18 @@ public class NeurolucidaReader extends FormatImporter
                                     // which was the same point as ITS parent's end point, i.e.
                                     // we were waiting for 2nd point to form first seg of that
                                     // branches section.
-
-                                    ascInfo.getLowerBranchEndSegs().removeLast();
-                                    parent = ascInfo.getLowerBranchEndSegs().getLast();
+                                    try
+                                    {
+                                        ascInfo.getLowerBranchEndSegs().removeLast();
+                                        parent = ascInfo.getLowerBranchEndSegs().getLast();
+                                    }
+                                    catch(NoSuchElementException ex)
+                                    {
+                                        throw new MorphologyException("There was an error importing the Neurolucida morphology.\n"
+                                                +"Note that the present implementation assumes a CellBody outline at the start of the file.\n"
+                                                +"If none is present, adding a dummy CellBody (from another Neurolucida file) may help the problem.");
+                                    }
+                                    
                                 }
 
                                 float fractAlong = 1;

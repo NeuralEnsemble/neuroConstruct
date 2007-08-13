@@ -19,6 +19,8 @@ package ucl.physiol.neuroconstruct.gui.plotter;
  * @version 1.0.4
  */
 
+@SuppressWarnings("serial")
+
 public class ValueNotPresentException extends Exception
 {
 

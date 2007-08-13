@@ -18,7 +18,6 @@ import ucl.physiol.neuroconstruct.cell.examples.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.awt.event.*;
-import ucl.physiol.neuroconstruct.cell.utils.*;
 
 /**
  * Frame for displaying the 3D model at maximum size
@@ -26,6 +25,8 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
  * @author Padraig Gleeson
  * @version 1.0.4
  */
+
+@SuppressWarnings("serial")
 
 public class FullScreen3D extends JFrame
 {
@@ -46,7 +47,7 @@ public class FullScreen3D extends JFrame
         try
         {
             jbInit();
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            //Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
             jPanelMain.add("Center", panel3D);
 
@@ -109,7 +110,7 @@ public class FullScreen3D extends JFrame
 
              OneCell3DPanel viewer = new OneCell3DPanel(cell, dummyProj, null);
 
-             FullScreen3D frame = new FullScreen3D(viewer, true);
+             new FullScreen3D(viewer, true);
 
              //frame.add("Center", viewer);
              //frame.pack();

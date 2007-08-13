@@ -30,6 +30,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  *
  */
 
+@SuppressWarnings("serial")
 public class NeuronException extends Exception
 {
     private NeuronException()
@@ -102,7 +103,7 @@ public class NeuronException extends Exception
 
            System.out.println("sl: "+sl);
 
-           Vector<Segment> segs = cell.getAllSegments();
+           //Vector<Segment> segs = cell.getAllSegments();
 
            if (true) return;
 

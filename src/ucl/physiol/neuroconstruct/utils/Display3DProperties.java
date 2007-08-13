@@ -127,7 +127,7 @@ public class Display3DProperties
      */
     public static Vector getDisplayOptions(boolean inclComps)
     {
-        Vector options = new Vector();
+        Vector<Object> options = new Vector<Object>();
         options.add(DISPLAY_SOMA_NEURITE_SOLID);
         //options.add(DISPLAY_SOMA_NEURITE_SOLID_UNSHINY);
         options.add(DISPLAY_SOMA_SOLID_NEURITE_LINE);

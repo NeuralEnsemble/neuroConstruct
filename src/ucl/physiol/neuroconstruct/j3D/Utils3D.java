@@ -84,14 +84,14 @@ public class Utils3D
         /** @todo remove cyls here and use static cyl methods */
 
 
-        Cylinder yAxisCyl = addCylinderAtLocation(radius,
-                                                 length,
-                                                 4,
-                                                 4,
-                                                 POS_Y_DIRECTION,
-                                                 new Vector3f(0,length/-2,0),
-                                                 tg,
-                                                 Utils3D.Y_AXIS_COLOUR);
+        addCylinderAtLocation(radius,
+                             length,
+                             4,
+                             4,
+                             POS_Y_DIRECTION,
+                             new Vector3f(0,length/-2,0),
+                             tg,
+                             Utils3D.Y_AXIS_COLOUR);
 
         Transform3D toEndYAxis = new Transform3D();
 
@@ -358,12 +358,12 @@ public class Utils3D
         Color3f black = new Color3f(0.1f, 0.1f, 0.1f);
         Color3f objColor = new Color3f(c);
         TransparencyAttributes ta = new TransparencyAttributes();
-        ta.setTransparencyMode(ta.BLENDED);
+        ta.setTransparencyMode(TransparencyAttributes.BLENDED);
         ta.setTransparency(transparency);
         app.setTransparencyAttributes(ta);
 
         PolygonAttributes pa = new PolygonAttributes();
-        pa.setCullFace(pa.CULL_NONE);
+        pa.setCullFace(PolygonAttributes.CULL_NONE);
         app.setPolygonAttributes(pa);
         Material mat =  new Material(objColor, black, objColor, black, 1.0f);
         mat.setCapability(Material.ALLOW_COMPONENT_READ);

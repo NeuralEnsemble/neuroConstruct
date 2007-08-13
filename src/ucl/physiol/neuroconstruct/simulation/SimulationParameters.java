@@ -12,7 +12,6 @@
 
 package ucl.physiol.neuroconstruct.simulation;
 
-import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.project.*;
 
 /**

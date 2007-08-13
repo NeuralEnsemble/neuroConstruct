@@ -138,8 +138,7 @@ public class NeuronFileManager
                                        int runMode,
                                        long randomSeed) throws NeuronException, IOException
     {
-        logger.logComment("Starting generation of the hoc files...", true);
-
+        logger.logComment("Starting generation of the hoc files...");
 
         long generationTimeStart = System.currentTimeMillis();
         
@@ -271,7 +270,8 @@ public class NeuronFileManager
         long generationTimeEnd = System.currentTimeMillis();
         genTime = (float) (generationTimeEnd - generationTimeStart) / 1000f;
 
-        logger.logComment("... Created Main hoc file: " + mainHocFile+" in "+genTime+" seconds. ", true);
+        logger.logComment("... Created Main hoc file: " + mainHocFile+" in "
+                +genTime+" seconds. ");
         
         return;
 
@@ -2584,7 +2584,7 @@ public class NeuronFileManager
     private String generateNetworkConnections(int runMode)
     {
 
-        logger.logComment("Starting generation of the net conns", true);
+        logger.logComment("Starting generation of the net conns");
         
         int totNetConns = project.generatedNetworkConnections.getNumberSynapticConnections(GeneratedNetworkConnections.ANY_NETWORK_CONNECTION);
 
@@ -2991,7 +2991,7 @@ public class NeuronFileManager
         GeneralUtils.timeCheck("Finsihed gen of syn conns");
 
 
-        logger.logComment("Finsihed generation of the net conns", true);
+        logger.logComment("Finsihed generation of the net conns");
 
         return response.toString();
     }

@@ -32,7 +32,8 @@ public class PlotManager
 {
     ClassLogger logger = new ClassLogger("PlotManager");
 
-    private static Hashtable existingPlotFrames = new Hashtable();
+    private static Hashtable<String, PlotterFrame> existingPlotFrames 
+                                    = new Hashtable<String, PlotterFrame>();
 
     /**
      * Reference to current project, needed for interaction with saved projects
@@ -50,7 +51,9 @@ public class PlotManager
     }
 
 
-    public static PlotterFrame getPlotterFrame(String reference, boolean standalone, boolean setVisible)
+    public static PlotterFrame getPlotterFrame(String reference, 
+                                                boolean standalone, 
+                                                boolean setVisible)
     {
 
         if (existingPlotFrames.containsKey(reference))
@@ -81,10 +84,10 @@ public class PlotManager
     }
 
 
-    public static Vector getPlotterFrameReferences()
+    public static Vector<String> getPlotterFrameReferences()
     {
-        Vector allRefs = new Vector();
-        Enumeration enumeration = existingPlotFrames.keys();
+        Vector<String> allRefs = new Vector<String>();
+        Enumeration<String> enumeration = existingPlotFrames.keys();
         while (enumeration.hasMoreElements()) {
             allRefs.add(enumeration.nextElement());
 

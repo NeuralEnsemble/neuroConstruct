@@ -12,7 +12,6 @@
 
 package ucl.physiol.neuroconstruct.utils;
 
-import java.io.*;
 
 import ucl.physiol.neuroconstruct.project.ProjectStructure;
 
@@ -26,7 +25,6 @@ import ucl.physiol.neuroconstruct.project.ProjectStructure;
 
 public class UserSettings
 {
-    private static ClassLogger logger = new ClassLogger("UserSettings");
 
     private String nCProjectsDir = null;
 

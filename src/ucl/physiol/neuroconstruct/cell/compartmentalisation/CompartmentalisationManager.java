@@ -33,7 +33,7 @@ public class CompartmentalisationManager
     {
         morphProjections.add(origMorphIndex, new OriginalCompartmentalisation());
         morphProjections.add(new GenesisCompartmentalisation());
-        morphProjections.add(new SimpleCompartmentalisation());
+        //morphProjections.add(new SimpleCompartmentalisation());
     }
 
 

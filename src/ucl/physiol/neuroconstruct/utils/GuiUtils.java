@@ -188,6 +188,20 @@ public class GuiUtils
        return yesNo == JOptionPane.YES_OPTION;
    }
 
+   public static void centreWindow(Window win, float fraction)
+   {
+       Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+       
+       win.setSize(new Dimension((int)(screenSize.getWidth()*fraction), (int)(screenSize.getHeight()*fraction)));
+
+       Dimension dlgSize = win.getSize();
+
+
+       win.setLocation( (screenSize.width - dlgSize.width) / 2,
+                       (screenSize.height - dlgSize.height) / 2);
+
+   }
+
    public static void centreWindow(Window win)
    {
        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

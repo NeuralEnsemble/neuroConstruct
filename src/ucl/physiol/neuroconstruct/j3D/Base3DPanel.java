@@ -26,6 +26,8 @@ import com.sun.j3d.utils.geometry.*;
  * @version 1.0.4
  */
 
+@SuppressWarnings("serial")
+
 public class Base3DPanel extends Panel
 {
     /**

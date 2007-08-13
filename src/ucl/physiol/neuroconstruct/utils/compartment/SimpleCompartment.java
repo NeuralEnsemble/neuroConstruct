@@ -12,7 +12,6 @@
 
 package ucl.physiol.neuroconstruct.utils.compartment;
 
-import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.cell.*;
 
 
@@ -25,7 +24,7 @@ import ucl.physiol.neuroconstruct.cell.*;
  */
 public class SimpleCompartment
 {
-    private ClassLogger logger = new ClassLogger("SimpleCompartment");
+    //private ClassLogger logger = new ClassLogger("SimpleCompartment");
 
     private double startRadius = 0;
     private double endRadius = 0;

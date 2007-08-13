@@ -152,7 +152,6 @@ public class CompartmentHelper
         }
         if (smallerRad>largerRad)
         {
-            float temp = smallerRad;
             smallerRad = largerRad;
             largerRad = smallerRad;
         }
@@ -620,7 +619,6 @@ public class CompartmentHelper
         //SimpleCompartment comp1 = new SimpleCompartment(5,5, 10);
 
         double specAxRes = 300;
-        double specMembRes = 3.333333;
 
 
         SimpleCompartment[] multiComp

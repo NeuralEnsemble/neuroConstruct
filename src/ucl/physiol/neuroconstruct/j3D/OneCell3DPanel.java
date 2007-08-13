@@ -44,6 +44,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
  * @version 1.0.4
  */
 
+@SuppressWarnings("serial")
 
 public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 {
@@ -851,8 +852,8 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         }
         jPanelColourControls.repaint();
 
-        ColourGenerator colourGen = new ColourGenerator();
-        Color c = colourGen.getNextColour();
+        //ColourGenerator colourGen = new ColourGenerator();
+        //Color c = colourGen.getNextColour();
 
         if (selectedDensMechName==null) return;
 
@@ -1012,7 +1013,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         }
 
-        else if (jComboBoxHighlight.getSelectedItem().equals(this.highlightDensMechs))
+        else if (jComboBoxHighlight.getSelectedItem().equals(highlightDensMechs))
         {
             logger.logComment("Creating chan dens list...");
             latestSelectedSegment = myOneCell3D.getSelectedPrimitive(selectedPrim);
@@ -1709,7 +1710,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         File jxmlFile = new File("../temp/final.java.xml");
 
-        MorphMLConverter mmlc = new MorphMLConverter();
+        //MorphMLConverter mmlc = new MorphMLConverter();
 
         try
         {
@@ -1717,7 +1718,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
             if (useLargeCell)
             {
-                cell = mmlc.loadFromJavaXMLFile(jxmlFile);
+                cell = MorphMLConverter.loadFromJavaXMLFile(jxmlFile);
             }
             else
             {
@@ -1726,7 +1727,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                 axSec.setStartPointPositionY(15);
                 ArrayList<Section> secs = cell.getAllSections();
 
-                Section lastSec = secs.get(secs.size()-1);
+                secs.get(secs.size()-1);
 
                // cell.addDendriticSegment(lastSec.getStartRadius(), "new", );
 
@@ -1770,7 +1771,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         this.updateButtonEnabling();
 
-        if (!initialising && e.getStateChange() == e.SELECTED)
+        if (!initialising && e.getStateChange() == ItemEvent.SELECTED)
         {
             Object selOpt = jComboBoxView.getSelectedItem();
 
@@ -1823,7 +1824,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         float lowestYToShow = Math.min(0, CellTopologyHelper.getMinYExtent(this.displayedCell, false, true));
         float highestYToShow = Math.max(0, CellTopologyHelper.getMaxYExtent(this.displayedCell, false, true));
 
-        float lowestZToShow = Math.min(0, CellTopologyHelper.getMinZExtent(this.displayedCell, false, true));
+        //float lowestZToShow = Math.min(0, CellTopologyHelper.getMinZExtent(this.displayedCell, false, true));
         float highestZToShow = Math.max(0, CellTopologyHelper.getMaxZExtent(this.displayedCell, false, true));
 
         if (highestZToShow ==0) highestZToShow =60;

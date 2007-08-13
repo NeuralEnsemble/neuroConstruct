@@ -47,8 +47,8 @@ public class SimulationsInfo extends AbstractTableModel
 
     private int minNumberColumns = 2;// due to COL_NUM_NAME and COL_NUM_DATE
 
-    Vector allColumns = new Vector(minNumberColumns);
-    Vector columnsShown = new Vector(minNumberColumns);
+    Vector<String> allColumns = new Vector<String>(minNumberColumns);
+    Vector<String> columnsShown = new Vector<String>(minNumberColumns);
 
     public static final String simSummaryFileName = new String("simulation.props");
 
@@ -56,13 +56,13 @@ public class SimulationsInfo extends AbstractTableModel
 
     public static final String simulatorPropsFileName = new String("simulator.props");
 
-    Vector simDataObjs = new Vector();
-    Vector extraColumns = new Vector();
+    Vector<SimulationData> simDataObjs = new Vector<SimulationData>();
+    Vector<Properties> extraColumns = new Vector<Properties>();
 
     File simulationsDir = null;
 
 
-    public SimulationsInfo(File simulationsDir, Vector preferredColumns)
+    public SimulationsInfo(File simulationsDir, Vector<String> preferredColumns)
     {
         logger.logComment("New SimulationsInfo created");
         this.simulationsDir = simulationsDir;
@@ -146,7 +146,7 @@ public class SimulationsInfo extends AbstractTableModel
                             //simProps.load(fis);
                             //fis.close();
 
-                            simProps = this.getSimulationProperties(simSummaryFile.getParentFile());
+                            simProps = getSimulationProperties(simSummaryFile.getParentFile());
 
                             extraColumns.setElementAt(simProps, rowNumber);
                             logger.logComment("extraColumns: " + extraColumns);
@@ -386,6 +386,10 @@ public class SimulationsInfo extends AbstractTableModel
                             text);
                 }
             }
+            
+
+            props.setProperty("Script generation time",
+                    project.genesisFileManager.getCurrentGenTime()+"");
 
         }
         else if (simulator.equals("NEURON"))
@@ -624,9 +628,9 @@ public class SimulationsInfo extends AbstractTableModel
 
         StringBuffer sb = new StringBuffer();
 
-        Set names = props.keySet();
+        Set<Object> names = props.keySet();
 
-        ArrayList<String> allPropNames = new ArrayList<String>();
+        ArrayList<Object> allPropNames = new ArrayList<Object>();
         allPropNames.addAll(names);
 
         if (html)
@@ -650,7 +654,7 @@ public class SimulationsInfo extends AbstractTableModel
         // Do the rest
         for (int i = 0; i < allPropNames.size(); i++)
         {
-            String propName = allPropNames.get(i);
+            String propName = (String)allPropNames.get(i);
             String val = props.getProperty(propName);
 
             sb.append(createLine(propName, val, html));

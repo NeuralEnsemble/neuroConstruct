@@ -36,7 +36,6 @@ public class GeneralUtils
 
 
     private static long lastTimeCheck = 0;
-    private static String lastTimeCheckString = null;
 
 
     public GeneralUtils()
@@ -123,7 +122,7 @@ public class GeneralUtils
      */
     public static void timeCheck(String marker)
     {
-        boolean alsoSysOut = true; // for debugging
+        boolean alsoSysOut = false; // for debugging
         String currentTime = null;
 
         java.util.Date today = null;
@@ -146,7 +145,7 @@ public class GeneralUtils
                 System.out.println("                       ****               Time since last timecheck:                                    " + timeSecDiff + " secs\n");
         }
         lastTimeCheck = currTime;
-        lastTimeCheckString = marker;
+        //lastTimeCheckString = marker;
     }
 
     /**

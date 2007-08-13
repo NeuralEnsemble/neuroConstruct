@@ -12,7 +12,7 @@
 
 package ucl.physiol.neuroconstruct.neuron;
 
-import ucl.physiol.neuroconstruct.project.*;
+
 import java.util.*;
 import ucl.physiol.neuroconstruct.utils.*;
 
@@ -61,7 +61,7 @@ public class NeuronSettings
      * Should only be used by XMLEncoder, hence use of deprecated
      * @deprecated
      */
-    public void setNativeBlocks(Hashtable nb)
+    public void setNativeBlocks(Hashtable<Integer, String> nb)
     {
         nativeBlocks = nb;
     }

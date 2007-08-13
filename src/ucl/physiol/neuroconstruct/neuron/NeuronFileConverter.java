@@ -40,12 +40,12 @@ public class NeuronFileConverter
 {
     private static ClassLogger logger = new ClassLogger("NeuronFileConverter");
 
-    Vector fscanData = new Vector();
+    Vector<Float> fscanData = new Vector<Float>();
 
     int indexOfNextFscan = 0;
 
-    Hashtable allProcedures = new Hashtable();
-    Hashtable globalVariables = new Hashtable();
+    Hashtable<String, Procedure> allProcs = new Hashtable<String, Procedure>();
+    Hashtable<String, Float> globalVariables = new Hashtable<String, Float>();
 
     /**
      * Default constructor
@@ -87,7 +87,7 @@ public class NeuronFileConverter
         logger.logComment("Number of fscan entries found: "+ fscanData.size());
         logger.logComment("Number of fscan entries used: "+ indexOfNextFscan);
 
-        logger.logComment("Procedures found: "+ allProcedures);
+        logger.logComment("Procedures found: "+ allProcs);
 
 
         return connectEnded;
@@ -281,8 +281,10 @@ public class NeuronFileConverter
                 try
                 {
                     float val = Float.parseFloat(after);
-                    if (val == (int)val) globalVariables.put(before, new Integer((int)val));
-                    else globalVariables.put(before, new Float(val));
+                    //if (val == (int)val) globalVariables.put(before, new Integer((int)val));
+                    //else 
+                        
+                    globalVariables.put(before, new Float(val));
 
                     logger.logComment("Recording global var: "+ before+ ", value: "+ val);
                 }
@@ -303,10 +305,14 @@ public class NeuronFileConverter
                 if (lines[currLineNum].indexOf("["+globalVarName+"]")>0)
                 {
                     logger.logComment("Found possible global variable: "+globalVarName);
-                    Object value = globalVariables.get(globalVarName);
+                    Float value = globalVariables.get(globalVarName);
+                    String strVal =value+"";
+                    
+                    if ((int)value.floatValue()==value) strVal =(int)value.floatValue()+""; // remove .0
+                    
                     lines[currLineNum] = GeneralUtils.replaceToken(lines[currLineNum],
                                  "["+globalVarName+"]",
-                                 "["+value+"]",
+                                 "["+strVal+"]",
                                  0);
                     logger.logComment("Line now: "+ lines[currLineNum]);
                 }
@@ -448,7 +454,7 @@ public class NeuronFileConverter
                 parsingTemplate = false;
 
                 sb.append("\n");
-                sb.append(evaluateProcedureCall("topol()", allProcedures) + "\n");
+                sb.append(evaluateProcedureCall("topol()", allProcs) + "\n");
 
                 //sb.append(evaluateProcedureCall(lines[currLineNum], allProcedures) + "\n");
             }
@@ -471,15 +477,15 @@ public class NeuronFileConverter
                     if (bracketCount > 0) procedureLines.append(lines[currLineNum] + "\n");
                 }
 
-                Procedure proc = new Procedure(procName, procedureLines.toString(), allProcedures);
+                Procedure proc = new Procedure(procName, procedureLines.toString(), allProcs);
 
-                if (allProcedures.containsKey(procName))
+                if (allProcs.containsKey(procName))
                 {
-                    Procedure oldProc = (Procedure) allProcedures.get(procName);
-                    allProcedures.remove(procName);
-                    allProcedures.put(procName + "_OLD", oldProc);
+                    Procedure oldProc = allProcs.get(procName);
+                    allProcs.remove(procName);
+                    allProcs.put(procName + "_OLD", oldProc);
                 }
-                allProcedures.put(procName, proc);
+                allProcs.put(procName, proc);
 
             }
             else if (lines[currLineNum].indexOf("(") >= 0 &&
@@ -487,7 +493,7 @@ public class NeuronFileConverter
                      lines[currLineNum].indexOf("pt3dadd") < 0)     // procedure being called
             {
 
-                sb.append(evaluateProcedureCall(lines[currLineNum], allProcedures) + "\n");
+                sb.append(evaluateProcedureCall(lines[currLineNum], allProcs) + "\n");
             }
             else if (!parsingTemplate || lines[currLineNum].indexOf("create") >= 0)
             {
@@ -669,7 +675,7 @@ public class NeuronFileConverter
         String[] lines = allLines.split("\\n+");
         StringBuffer sb = new StringBuffer();
 
-        Vector connectLines = new Vector();
+        Vector<String> connectLines = new Vector<String>();
 
         for (int currLineNum = 0; currLineNum < lines.length; currLineNum++)
         {
@@ -711,7 +717,7 @@ public class NeuronFileConverter
         else return ""+f.floatValue();
     }
 
-
+/*
 
     private void printLines(String lines)
     {
@@ -719,7 +725,7 @@ public class NeuronFileConverter
         System.out.println(lines);
         System.out.println("-------------------------------------------------------");
 
-    }
+    }*/
 
 
 
@@ -803,7 +809,7 @@ public class NeuronFileConverter
 
             for (int currLineNum = 0; currLineNum < individualLines.length; currLineNum++)
             {
-                String originalLine = new String(individualLines[currLineNum]);
+                //String originalLine = new String(individualLines[currLineNum]);
                 //logger.logComment("Evaluating proc line: " + originalLine);
                 if (args!=null && args.length>0)
                 {

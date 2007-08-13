@@ -99,8 +99,8 @@ public class OneCell3D
     /**
      * Colours for internal points for NEURON/GENESIS views
      */
-    private final Color genesisConnectionColour = Color.blue;
-    private final Color genesisMidPointColour = Color.red;
+    //private final Color genesisConnectionColour = Color.blue;
+    //private final Color genesisMidPointColour = Color.red;
     private final Color neuronConnectionColour = Color.blue;
     private final Color neuronNsegPointColour = Color.red;
 
@@ -530,7 +530,7 @@ public class OneCell3D
             stickSegmentGeom.setCapability(LineArray.ALLOW_COUNT_READ);
         }
 
-        Hashtable sectionEndPoints = new Hashtable();
+        Hashtable<String, Vector3f> sectionEndPoints = new Hashtable<String, Vector3f>();
 
         ArrayList<Section> allSections = this.myCell.getAllSections();
         int secSize = allSections.size();
@@ -760,10 +760,10 @@ public class OneCell3D
         // adding the section endpoints
         if (this.showingProjection())
         {
-            Enumeration enumeration = sectionEndPoints.elements();
+            Enumeration<Vector3f> enumeration = sectionEndPoints.elements();
             while (enumeration.hasMoreElements())
             {
-                Vector3f endPoint = (Vector3f)enumeration.nextElement();
+                Vector3f endPoint = enumeration.nextElement();
 
                 Utils3D.addSphereAtLocation(0.5f,
                                             endPoint,

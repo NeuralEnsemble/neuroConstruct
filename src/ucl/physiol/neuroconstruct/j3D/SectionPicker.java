@@ -53,7 +53,7 @@ public class SectionPicker extends PickMouseBehavior
     public void updateScene(int xpos, int ypos)
     {
         logger.logComment("Point picked: (" + xpos + "," + ypos + ")");
-        TransformGroup tg = null;
+        //TransformGroup tg = null;
         pickCanvas.setShapeLocation(xpos, ypos);
         PickResult pr = pickCanvas.pickClosest();
 

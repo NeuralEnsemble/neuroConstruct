@@ -315,7 +315,7 @@ public class NewCellTypeDialog extends JDialog
             }
             catch (Exception ex1)
             {
-                GuiUtils.showErrorMessage(logger, "Problem creating that cell", ex1, this);
+                GuiUtils.showErrorMessage(logger, "Problem creating that cell: "+ex1.getMessage(), ex1, this);
 
             }
 

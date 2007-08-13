@@ -23,6 +23,8 @@ import java.io.*;
  */
 
 
+@SuppressWarnings("serial")
+
 public class ClassLogger implements Serializable
 {
     private String myClassName = null;

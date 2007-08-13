@@ -23,6 +23,8 @@ import ucl.physiol.neuroconstruct.project.*;
  * @version 1.0.4
  */
 
+@SuppressWarnings("serial")
+
 public class Logger implements Serializable
 {
     //private static boolean isInstantiated = false;

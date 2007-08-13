@@ -51,6 +51,11 @@ public class GenesisFileManager
 
     int randomSeed = 0;
 
+    /**
+     * The time last taken to generate the main files
+     */
+    private float genTime = -1;
+
     boolean mainFileGenerated = false;
 
     ArrayList<String> cellTemplatesGenAndIncl = new ArrayList<String>();
@@ -112,6 +117,10 @@ public class GenesisFileManager
                                         MorphCompartmentalisation mc,
                                         int seed) throws GenesisException
     {
+        logger.logComment("Starting generation of the files...");
+
+        long generationTimeStart = System.currentTimeMillis();
+        
         this.simConfig = simConfig;
 
         this.multiRunManager = multiRunManager;
@@ -136,7 +145,6 @@ public class GenesisFileManager
                                  +project.genesisSettings.getUnitSystemToUse());
 
 
-
         try
         {
             generateCellMappings();
@@ -148,9 +156,6 @@ public class GenesisFileManager
 
             logger.logComment("generating: "+ mainGenesisFile);
             fw = new FileWriter(mainGenesisFile);
-
-
-                        //System.out.println("Encoding, "+mainGenesisFile+": "+ fw.getEncoding());
 
             fw.write(getGenesisFileHeader());
 
@@ -189,8 +194,6 @@ public class GenesisFileManager
 
             fw.write(generateRunControls());
 
-
-
             //fw.write(generateCellParamControl());
 
             fw.write(generateGenesisSimulationRecording());
@@ -220,8 +223,15 @@ public class GenesisFileManager
                                       + "\n"+ ex.getMessage());
 
         }
-        logger.logComment("... Created Main GENESIS file: " + mainGenesisFile);
+
         this.mainFileGenerated = true;
+
+        long generationTimeEnd = System.currentTimeMillis();
+        genTime = (float) (generationTimeEnd - generationTimeStart) / 1000f;
+
+        logger.logComment("... Created Main GENESIS file: " + mainGenesisFile
+                +" in "+genTime+" seconds. ");
+        
 
     }
 
@@ -229,6 +239,11 @@ public class GenesisFileManager
     public int getCurrentRandomSeed()
     {
         return this.randomSeed;
+    }
+
+    public float getCurrentGenTime()
+    {
+        return this.genTime;
     }
 
 

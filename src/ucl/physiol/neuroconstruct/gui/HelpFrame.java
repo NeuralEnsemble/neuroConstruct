@@ -212,9 +212,9 @@ public class HelpFrame extends JFrame implements HyperlinkListener
             theHelpFrame.setTitle(title);
             theHelpFrame.setStandalone(standalone);
         }
-        theHelpFrame.setFrameSize(800, 600);
+        //theHelpFrame.setFrameSize(900, 600);
         
-        GuiUtils.centreWindow(theHelpFrame);
+        GuiUtils.centreWindow(theHelpFrame, .85f);
         theHelpFrame.setVisible(true);
 
         return theHelpFrame;

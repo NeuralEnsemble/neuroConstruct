@@ -126,10 +126,10 @@ public class SWCMorphReader extends FormatImporter
                         
                         //boolean hasParent = (!items[6].equals("-1"));
                         
-                        float xCoord = Float.parseFloat(items[2]);
-                        float yCoord = Float.parseFloat(items[3]);
-                        float zCoord = Float.parseFloat(items[4]);
-                        float radius = Float.parseFloat(items[5]);
+                        float xCoord = Float.parseFloat(GeneralUtils.replaceAllTokens(items[2], ",", ""));
+                        float yCoord = Float.parseFloat(GeneralUtils.replaceAllTokens(items[3], ",", ""));
+                        float zCoord = Float.parseFloat(GeneralUtils.replaceAllTokens(items[4], ",", ""));
+                        float radius = Float.parseFloat(GeneralUtils.replaceAllTokens(items[5], ",", ""));
                         
                         int sectionType = -1;
                         
