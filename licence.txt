@@ -1,6 +1,6 @@
 
      University College London
-        LICENCE AGREEMENT
+        LICENCE AGREEMENT 
 
 The copyright in this software and its associated documentation (if applicable electronic documentation) (together "the Software") is owned by University College London of Gower Street, London WC1E 7HN ("the Owner"). By proceeding to use the Software you (an individual or legal entity) agree with the Owner to be bound by the terms of this Agreement which will govern your use of the Software.
 
