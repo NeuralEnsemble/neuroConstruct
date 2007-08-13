@@ -6,7 +6,7 @@ See also the README file
 --- Version 1.0.4 (Aug 07)
 
 
-- Uses NeuroML v1.6. Changes to that are at http://www.morphml.org:8080/NeuroMLValidator/NeuroMLFiles/Schemata/v1.6/RELEASE_NOTES. 
+- Uses NeuroML v1.6. Changes to that are listed at http://www.morphml.org:8080/NeuroMLValidator/NeuroMLFiles/Schemata/v1.6/RELEASE_NOTES. 
   Main change is addition of <status> element in ChannelML, which is picked up in nC when validating proj with non stable 
   ChannelML elements
   
