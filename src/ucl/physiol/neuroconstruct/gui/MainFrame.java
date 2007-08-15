@@ -7126,48 +7126,63 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
             jPanelSimConfigClicks.removeAll();
+            int leftToDo = 8;
+            
             for (SimConfig simConfig: projManager.getCurrentProject().simConfigInfo.getAllSimConfigs())
             {
-                ClickLink cl = new ClickLink(simConfig.getName(), simConfig.getDescription());
-
-                this.jPanelSimConfigClicks.add(cl);
-
-
-                cl.addMouseListener(new MouseListener()
+                String linkText = simConfig.getName();
+                String tip = simConfig.getDescription();
+                
+                final String seeAll = "(See all Sim Configs...)";
+                
+                if (leftToDo == 0)
                 {
-                    //String cellGroup = cellGroup;
-                    public void mouseClicked(MouseEvent e)
+                    linkText = seeAll;
+                    tip = "Click to go to Generate tab with list of all Simulation Configurations";
+                }
+
+                if (leftToDo>=0)
+                {
+                    ClickLink cl = new ClickLink(linkText, tip);
+    
+                    this.jPanelSimConfigClicks.add(cl);
+    
+    
+                    cl.addMouseListener(new MouseListener()
                     {
-
-                        jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(GENERATE_TAB));
-
-                        String clicked = e.getComponent().getName();
-
-                        jComboBoxSimConfig.setSelectedItem(clicked);
-
-                        doGenerate();
-                    };
-
-                    public void mousePressed(MouseEvent e)
-                    {};
-
-                    public void mouseReleased(MouseEvent e)
-                    {};
-
-                    public void mouseEntered(MouseEvent e)
-                    {};
-
-                    public void mouseExited(MouseEvent e)
-                    {};
-
-                });
+                        //String cellGroup = cellGroup;
+                        public void mouseClicked(MouseEvent e)
+                        {
+    
+                            jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(GENERATE_TAB));
+    
+                            String clicked = e.getComponent().getName();
+                            
+                            if (!clicked.equals(seeAll))
+                            {
+                                jComboBoxSimConfig.setSelectedItem(clicked);
+                                doGenerate();   
+                            }
+                        };
+    
+                        public void mousePressed(MouseEvent e) {};
+    
+                        public void mouseReleased(MouseEvent e) {};
+    
+                        public void mouseEntered(MouseEvent e) {};
+    
+                        public void mouseExited(MouseEvent e) {};
+    
+                    });
+                    leftToDo--;
+                }
             }
 
 
 
             jPanelCellClicks.removeAll();
 
-            int leftToDo = 9;
+            leftToDo = 9;
             for (Cell cell: projManager.getCurrentProject().cellManager.getAllCells())
             {
 
