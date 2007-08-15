@@ -33,6 +33,7 @@ include("ute.php");
 $pwParam="into";
 $referenceParam="reference";
 $countryParam="country";
+$regionParam="brainRegion";
 
 $filename="/export/home/ucgbpgl/basing/silvera";
 
@@ -73,7 +74,7 @@ else
 		echo "<div class='h3'><h3><i>Showing detail for request $ref!</em></i></div>";
 
 		echo "<a href='$mainUrl'><b>Show all</b></a>";
-	}
+	} 
 
 	if (isset($_REQUEST[$countryParam]))
 	{
@@ -148,6 +149,8 @@ else
 		</tr>";
 	}
 
+
+
 	echo"</table><br/>";
 
 
@@ -182,6 +185,48 @@ else
 			$lastNum = $count;
 		}
 	}
+
+
+
+	echo "</td></tr></table>";
+
+
+	echo "<br/>";
+
+	if (!isset($_REQUEST[$regionParam]))
+	{
+		$counts = mysql_query("SELECT brainRegion, count( brainRegion ), count(DISTINCT email) counter FROM `DownloadRequests` ".
+				$whereQualifier." GROUP BY brainRegion ORDER BY counter DESC");
+	
+		echo "<table border='2' cellpadding='3' style='border-style: solid;'>";
+	
+	
+		$lastNum = -1;
+	
+		while($row = mysql_fetch_array($counts))
+		{
+			$brainRegion = $row['brainRegion'];
+			$count = $row['counter'];
+	
+			$brainRegionLink = "$brainRegion";
+	
+			if ($count!=$lastNum)
+			{
+				echo "</td></tr><tr>";
+	
+				echo "<td width='70' align='center'><b>$count</b></td><td width='400'>$brainRegionLink";			
+			}
+			else
+			{
+				echo ", $brainRegionLink";
+			}
+	
+			$lastNum = $count;
+		}
+	}
+
+
+
 
 	echo "</td></tr></table>";
 

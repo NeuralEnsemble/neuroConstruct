@@ -336,7 +336,7 @@ else if (!isset($_REQUEST['email']) || $_REQUEST['email'] == "")
 					<option value='Kenya'>Kenya</option>
 					<option value='Kiribati'>Kiribati</option>
 					<option value='Korea North'>Korea North</option>
-					<option value='Korea Sout'>Korea South</option>
+					<option value='Korea South'>Korea South</option>
 					<option value='Kuwait'>Kuwait</option>
 					<option value='Kyrgyzstan'>Kyrgyzstan</option>
 					<option value='Laos'>Laos</option>
@@ -601,8 +601,9 @@ else
 	$randNum = rand();
 
     $to = "p.gleeson@ucl.ac.uk";
+    $to2 = "a.silver@ucl.ac.uk";
 
-    $subject = "The code has been downloaded by: $email";
+    $subject = "$email has downloaded the code";
 
 	$brainRegionToTake = $brainRegionSel;
 
@@ -616,7 +617,6 @@ else
 				"Email: $email " . "\r\n".
 				"Institution: $institution " . "\r\n".
 				"Country: $country " . "\r\n".
-
 			   	"Brain region:  $brainRegionToTake " . "\r\n".
 				"Research Type: $researchTopic "  . "\r\n".
 			 	"Research description: $descriptionResearch "  . "\r\n".
@@ -625,15 +625,22 @@ else
 				"Comment: $comment" . "\r\n\r\n";
 
     $from = "info@neuroconstruct.org";
+
     $headers = "From: $from " . "\r\n" . "Reply-To: $from";
 
 	//$extraArgs = "-f$from";	
 
-		$extraArgs = "-f$from -pSMTP:smtp-server.ucl.ac.uk";
-
+	$extraArgs = "-f$from -pSMTP:smtp-server.ucl.ac.uk";
 
 
     mail($to,$subject,$message,$headers, $extraArgs);
+
+	if  ($researchTopic!='' || $descriptionResearch!='')
+	{
+   		//mail($to2,$subject,$message,$headers, $extraArgs);
+	}
+
+
 
 
     //echo "A confirmation Mail has been sent to $to about $email";
