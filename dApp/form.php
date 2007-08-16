@@ -4,7 +4,7 @@
 
 <head>
 <style type="text/css">
-    
+
 @import "../neuroConstruct/skin/tigris.css";
 @import "../neuroConstruct/skin/quirks.css";
 @import "../neuroConstruct/skin/inst.css";
@@ -33,12 +33,11 @@
 
 <br/>
 
-<?php 
+<?php
 }
 
 
-include("ute.php"); 
-
+include("ute.php");
 
 
 $mailServer= "smtp-server.ucl.ac.uk";
@@ -52,7 +51,7 @@ if (isset($_REQUEST['reference']))
 
  	$conn = getConnection();
 
-    $sql="select * from DownloadRequests 
+    $sql="select * from DownloadRequests
     		where reference = '$ref' ";
 
 	$result = mysql_query($sql,$conn);
@@ -60,7 +59,7 @@ if (isset($_REQUEST['reference']))
     if (!$result)
     {
         die('<p>Error: ' . mysql_error() . "</p>");
-    }    
+    }
 	else if (mysql_num_rows($result)== 0 )
     {
         die('<p>Error: No results returned!!' . "</p>");
@@ -72,17 +71,17 @@ if (isset($_REQUEST['reference']))
 		if (isset($_REQUEST['dl']))
 		{
 			$dl = $_REQUEST['dl'];
-		
+
 			nastiesPresent($dl);
 
 
 			$hostname = gethostbyaddr($_SERVER['REMOTE_ADDR']);
-		
+
 			$t = time();
-	
+
 			$sql="INSERT INTO Downloads (downloadDate, clientserver, reference, filename)
 					VALUES ('$t', '$hostname', '$ref', '$dl')";
-		
+
 			if (!mysql_query($sql,$conn))
 			{
 				die('Error in SQL: ' . mysql_error().'<br/>'."SQL: ".$sql);
@@ -90,20 +89,20 @@ if (isset($_REQUEST['reference']))
 			else
 			{
 			}
-				
+
 			$filename="/export/home/ucgbpgl/basing/downloads/".$dl;
 
 			$extension = substr($dl,strrpos($dl,".")+1);
 			//header("Content-type:application/$extension");
-		
+
 			header("Content-Type: application/octet-stream");
-		
+
 			header("Content-Disposition:attachment;filename=$dl");
 			header("Content-Transfer-Encoding: binary");
-			header("Content-Length: ".@filesize($filename)); 
+			header("Content-Length: ".@filesize($filename));
 			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 			header("Expires: 0");
-	
+
 			@readfile($filename);
 
 
@@ -114,74 +113,65 @@ if (isset($_REQUEST['reference']))
 		{
 
 			echo "<h2>Downloading neuroConstruct</h2>";
-	/*
-			echo "
-				<table>
-					<tr>
-						<td>Name: </td>
-						<td>" . $row['name'] ."</td>
-					</tr>
-					<tr>
-						<td>Email: </td>
-						<td>" . $row['email'] ."</td>
-					</tr>
-					<tr>
-					<tr>
-						<td>Institution: </td>
-						<td>" . $row['institution'] ."</td>
-					</tr>
-					<tr>
-					<tr>
-						<td>Country: </td>
-						<td>" . $row['country'] ."</td>
-					</tr>
-				</table>";*/
-	
-		
+
+
 			//echo "<h3>Please select one of the links below to download the application.</h3>";
 
 
 
 			echo "<p><a href ='../neuroConstruct/docs/install.html'>Installation instructions</a></p>";
 
-			echo "<h3>The latest version contains the extra example networks in the neuroConstruct paper (Gleeson et al. Neuron 2007).</h3>";
-			echo "<h3><span style='color:#FF0000;'>Uninstallation of any previous version is advised before updating.</h3></h3>";
+						echo "<h3><span style='color:#FF0000;'>The current version of the application is v1.0.4</h3></h3>";
+
+
+
+			echo "<p><a href ='RELEASE_NOTES'>Release Notes for v1.0.4</a></p>";
+
 
 
 			echo "<h4>Installer for Windows</h4>";
-			echo "<p><a href='form.php?reference=".$ref."&dl=neuroConstruct_windows_1_0_1.exe'>neuroConstruct_windows_1_0_1.exe</a></p>";
-		
+			echo "<p><a href='form.php?reference=".$ref."&dl=neuroConstruct_windows_1_0_4.exe'>neuroConstruct_windows_1_0_4.exe</a></p>";
+
 			echo "<h4>Installer for Linux</h4>";
-			echo "<p><a href='form.php?reference=".$ref."&dl=neuroConstruct_unix_1_0_1.sh'>neuroConstruct_unix_1_0_1.sh</a></p>";
-		
+			echo "<p><a href='form.php?reference=".$ref."&dl=neuroConstruct_unix_1_0_4.sh'>neuroConstruct_unix_1_0_4.sh</a></p>";
+
 			echo "<h4>Installer for Mac</h4>";
-			echo "<p><a href='form.php?reference=".$ref."&dl=neuroConstruct_macos_1_0_1.dmg'>neuroConstruct_macos_1_0_1.dmg</a></p>";
-				
+			echo "<p><a href='form.php?reference=".$ref."&dl=neuroConstruct_macos_1_0_4.dmg'>neuroConstruct_macos_1_0_4.dmg</a></p>";
+
 			echo "<h4>Zip file for manual install</h4>";
-			echo "<p><a href='form.php?reference=".$ref."&dl=neuroConstruct_1.0.1.zip'>neuroConstruct_1.0.1.zip</a></p>";
-		
+			echo "<p><a href='form.php?reference=".$ref."&dl=neuroConstruct_1.0.4.zip'>neuroConstruct_1.0.4.zip</a></p>";
+
+
 			echo "<h3>Older versions...</h3>";
 
 
+			echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_windows_1_0_1.exe'>neuroConstruct_windows_1_0_1.exe</a></p>";
 
-			echo "<p><a href='form.php?reference=".$ref."&dl=neuroConstruct_windows_0_9_8.exe'>neuroConstruct_windows_0_9_8.exe</a></p>";
-		
-			echo "<p><a href='form.php?reference=".$ref."&dl=neuroConstruct_unix_0_9_8.sh'>neuroConstruct_unix_0_9_8.sh</a></p>";
-		
-			echo "<p><a href='form.php?reference=".$ref."&dl=neuroConstruct_macos_0_9_8.dmg'>neuroConstruct_macos_0_9_8.dmg</a></p>";
-				
-			echo "<p><a href='form.php?reference=".$ref."&dl=neuroConstruct_0.9.8.zip'>neuroConstruct_0.9.8.zip</a></p>";
-		
-		
+			echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_unix_1_0_1.sh'>neuroConstruct_unix_1_0_1.sh</a></p>";
 
-				
+			echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_macos_1_0_1.dmg'>neuroConstruct_macos_1_0_1.dmg</a></p>";
+
+			echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_1.0.1.zip'>neuroConstruct_1.0.1.zip</a></p>";
+
+
+			echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_windows_0_9_8.exe'>neuroConstruct_windows_0_9_8.exe</a></p>";
+
+			echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_unix_0_9_8.sh'>neuroConstruct_unix_0_9_8.sh</a></p>";
+
+			echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_macos_0_9_8.dmg'>neuroConstruct_macos_0_9_8.dmg</a></p>";
+
+			echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_0.9.8.zip'>neuroConstruct_0.9.8.zip</a></p>";
+
+
+
+
 		}
 
 		mysql_close($conn);
 
 	}
 
-	
+
 }
 
 else if (!isset($_REQUEST['email']) || $_REQUEST['email'] == "")
@@ -190,7 +180,7 @@ else if (!isset($_REQUEST['email']) || $_REQUEST['email'] == "")
 	//echo "Sendmail: " . sendmail_path;
 
   echo "<div class='h3'>
-		<h3><em>Download neuroConstruct</em></h3>
+		<h3><em>Downloading neuroConstruct</em></h3>
 		</div>
 
 		<p>Please enter your details below:</p>
@@ -199,20 +189,20 @@ else if (!isset($_REQUEST['email']) || $_REQUEST['email'] == "")
   	<table>
   		<tr>
 			<td>Name: </td>
-			<td><input type='text' name='name' size='50'/> 
+			<td><input type='text' name='name' size='50'/>
 			</td>
 			<td>*</td></td>
   		</tr>
   		<tr>
    			<td>Email: </td>
-		    <td><input type='text' name='email'  size='50'/> 
+		    <td><input type='text' name='email'  size='50'/>
 			</td>
 			<td>*</td></td>
   		</tr>
   		<tr>
   		<tr>
    			<td>Institution: </td>
-		    <td><input type='text' name='institution' size='50' /> 
+		    <td><input type='text' name='institution' size='50' />
 			</td>
 			<td>*</td> </td>
   		</tr>
@@ -467,7 +457,7 @@ else if (!isset($_REQUEST['email']) || $_REQUEST['email'] == "")
 					<option value='Zaire'>Zaire</option>
 					<option value='Zambia'>Zambia</option>
 					<option value='Zimbabwe'>Zimbabwe</option>
-				</select> 
+				</select>
 			</td>
 			<td>*
 			</td>
@@ -494,7 +484,7 @@ else if (!isset($_REQUEST['email']) || $_REQUEST['email'] == "")
 					<option value='Spinal cord'>Spinal cord</option>
 
 
-				</select>  or: <input type='text' name='brainRegion' size='22' /> 
+				</select>  or: <input type='text' name='brainRegion' size='22' />
 			</td>
 			<td>*</td>
   		</tr>
@@ -507,7 +497,7 @@ else if (!isset($_REQUEST['email']) || $_REQUEST['email'] == "")
 					<option value='Basic research'>Basic research</option>
 					<option value='Clinical research'>Clinical research</option>
 					<option value='Commercially focused research'>Commercially focused research</option>
-				</select> 
+				</select>
 			</td>
 			<td>*</td>
   		</tr>
@@ -526,21 +516,21 @@ else if (!isset($_REQUEST['email']) || $_REQUEST['email'] == "")
   		<tr>
     		<td><input type='submit' value='Submit'/></td>
       	</tr>
-    
+
 
 
 		<tr>
     		<td colspan='2'>* = required field</td>
       	</tr>
-    
-	
+
+
 		<tr>
 			<td colspan='3' width='500' >We ask for an email address and other details as numbers of downloads, geographical spread of users etc. is very interesting
 			to funding bodies, and will help ensure that neuroConstruct stays in development and remains free to the community.
 			 We won't give names or email addresses out to any 3rd party.
 			</td>
 		</tr>
-    
+
 
  </table>
     </form>";
@@ -628,7 +618,7 @@ else
 
     $headers = "From: $from " . "\r\n" . "Reply-To: $from";
 
-	//$extraArgs = "-f$from";	
+	//$extraArgs = "-f$from";
 
 	$extraArgs = "-f$from -pSMTP:smtp-server.ucl.ac.uk";
 
@@ -653,9 +643,9 @@ else
     $t = time();
 
 
-    $sql="INSERT INTO DownloadRequests (name, email, comment, country, institution, 
+    $sql="INSERT INTO DownloadRequests (name, email, comment, country, institution,
                requestDate, clientserver, reference, brainRegion, researchTopic, descriptionResearch)
-    		VALUES ('$name','$email','$comment','$country','$institution', 
+    		VALUES ('$name','$email','$comment','$country','$institution',
 				'$t', '$hostname', '$randNum', '$brainRegionToTake', '$researchTopic', '$descriptionResearch')";
 
     if (!mysql_query($sql,$conn))
@@ -666,29 +656,29 @@ else
 	{
 
 		$to = $email;
-	
+
 		$subject = "Downloading neuroConstruct";
 
 		$myURL = "http://www.physiol.ucl.ac.uk/research/silver_a/nCinfo/form.php?reference=$randNum";
-	
+
 		$message =  "Hi," . "\r\n\r\n" .
 					"Thank you for your interest in neuroConstruct. " . "\r\n".
 				     "The latest version of the software can be downloaded from: "  . "\r\n\r\n".
 				     "$myURL "  . "\r\n\r\n".
 				     "Regards, "  . "\r\n".
 				     "The neuroConstruct team "  . "\r\n";
-	
+
 		$from = "info@neuroConstruct.org";
 
 		$headers = "From: $from " . "\r\n" . "Reply-To: $from";
 
 		$extraArgs = "-f$from -pSMTP:smtp-server.ucl.ac.uk";
-	
+
 		//$accepted = mail($to,$subject,$message,$headers, $extraArgs);
-	
-	
+
+
 		//echo "<p>A mail has been sent to $to with a link for downloading the application</p>";
-	
+
 
 		//echo "<p>Note: if you do not receive the mail within the next hour please contact <a href='mailto:info@neuroConstruct.org'>info@neuroConstruct.org</a></p>";
 
@@ -705,7 +695,7 @@ else
 ?>
 <?php if (!isset($_REQUEST['dl'])) { ?>
 <br/><br/>
-<p><i>If there are any problems with this download procedure please contact <b>info - at - neuroConstruct.org</b></i></p>
+<p><i>If there are any problems with this download procedure please contact: <b>info - at - neuroConstruct.org</b></i></p>
 
 </body>
 </html>
