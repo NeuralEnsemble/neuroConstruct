@@ -1,12 +1,12 @@
 <html>
 <head>
 <style type="text/css">
-  
+
 @import "../neuroConstruct/skin/tigris.css";
 @import "../neuroConstruct/skin/quirks.css";
 @import "../neuroConstruct/skin/inst.css";
-    
-        </style> 
+
+        </style>
 
 <link media="print" href="skin/print.css" type="text/css" rel="stylesheet">
 <link href="skin/forrest.css" type="text/css" rel="stylesheet">
@@ -17,7 +17,7 @@
 <meta content="text/css" http-equiv="Content-style-type">
 
 </head>
-<body> 
+<body>
 
 <p>
 <a href="http://www.neuroConstruct.org">
@@ -28,7 +28,7 @@
 
 
 <?php
-include("ute.php"); 
+include("ute.php");
 
 $pwParam="into";
 $referenceParam="reference";
@@ -38,7 +38,7 @@ $regionParam="brainRegion";
 $filename="/export/home/ucgbpgl/basing/silvera";
 
 $file=fopen($filename,"r");
-$adminPasswd = trim(fgets($file));	
+$adminPasswd = trim(fgets($file));
 
 
 if (!isset($_REQUEST[$pwParam]) || $_REQUEST[$pwParam] != $adminPasswd)
@@ -49,16 +49,16 @@ else
 {
 	$mainUrl = "info.php?$pwParam=$adminPasswd";
 
-	
-	
+
+
 	$con = getConnection();
-	
+
 	if (!$con)
 	{
 	die('Could not connect: ' . mysql_error());
 	}
-	
-	
+
+
 	mysql_select_db("neuroConstruct", $con);
 
 	$whereQualifier = "WHERE 1 ";
@@ -74,7 +74,7 @@ else
 		echo "<div class='h3'><h3><i>Showing detail for request $ref!</em></i></div>";
 
 		echo "<a href='$mainUrl'><b>Show all</b></a>";
-	} 
+	}
 
 	if (isset($_REQUEST[$countryParam]))
 	{
@@ -105,7 +105,7 @@ else
 		<tr>
 			<td>Total download requests:</td>
 			<td>". $totReqs[0] ."</td>
-		</tr>		
+		</tr>
 		<tr>
 			<td>Total requests (distinct emails):</td>
 			<td>". $totReqsEmail[0] ."</td>
@@ -116,14 +116,14 @@ else
 
 		$totDlQ = mysql_query("SELECT COUNT(*) FROM Downloads ".$dLWhereQualifier);
 		$totDl = mysql_fetch_array($totDlQ);
-	
+
 		$totDlWQ = mysql_query("SELECT COUNT(*) FROM Downloads ".$dLWhereQualifier." AND `filename` like '%exe'");
 		$totDlW = mysql_fetch_array($totDlWQ);
 		$totDlLQ = mysql_query("SELECT COUNT(*) FROM Downloads ".$dLWhereQualifier." AND `filename` like '%sh'");
 		$totDlL = mysql_fetch_array($totDlLQ);
 		$totDlMQ = mysql_query("SELECT COUNT(*) FROM Downloads ".$dLWhereQualifier." AND `filename` like '%dmg'");
 		$totDlM = mysql_fetch_array($totDlMQ);
-	
+
 		$totDlZQ = mysql_query("SELECT COUNT(*) FROM Downloads ".$dLWhereQualifier." AND `filename` like '%zip'");
 		$totDlZ = mysql_fetch_array($totDlZQ);
 
@@ -158,30 +158,30 @@ else
 	{
 		$counts = mysql_query("SELECT country, count( country ), count(DISTINCT email) counter FROM `DownloadRequests` ".
 				$whereQualifier." GROUP BY country ORDER BY counter DESC");
-	
+
 		echo "<table border='2' cellpadding='3' style='border-style: solid;'>";
-	
-	
+
+
 		$lastNum = -1;
-	
+
 		while($row = mysql_fetch_array($counts))
 		{
 			$country = $row['country'];
 			$count = $row['counter'];
-	
+
 			$countryLink = "<a href='$mainUrl&$countryParam=$country'>$country</a>";
-	
+
 			if ($count!=$lastNum)
 			{
 				echo "</td></tr><tr>";
-	
-				echo "<td width='70' align='center'><b>$count</b></td><td width='400'>$countryLink";			
+
+				echo "<td width='70' align='center'><b>$count</b></td><td width='400'>$countryLink";
 			}
 			else
 			{
 				echo ", $countryLink";
 			}
-	
+
 			$lastNum = $count;
 		}
 	}
@@ -197,30 +197,30 @@ else
 	{
 		$counts = mysql_query("SELECT brainRegion, count( brainRegion ), count(DISTINCT email) counter FROM `DownloadRequests` ".
 				$whereQualifier." GROUP BY brainRegion ORDER BY counter DESC");
-	
+
 		echo "<table border='2' cellpadding='3' style='border-style: solid;'>";
-	
-	
+
+
 		$lastNum = -1;
-	
+
 		while($row = mysql_fetch_array($counts))
 		{
 			$brainRegion = $row['brainRegion'];
 			$count = $row['counter'];
-	
+
 			$brainRegionLink = "$brainRegion";
-	
+
 			if ($count!=$lastNum)
 			{
 				echo "</td></tr><tr>";
-	
-				echo "<td width='70' align='center'><b>$count</b></td><td width='400'>$brainRegionLink";			
+
+				echo "<td width='70' align='center'><b>$count</b></td><td width='400'>$brainRegionLink";
 			}
 			else
 			{
 				echo ", $brainRegionLink";
 			}
-	
+
 			$lastNum = $count;
 		}
 	}
@@ -231,20 +231,20 @@ else
 	echo "</td></tr></table>";
 
 	echo "<div class='h3'><h3><em>Requests for downloads:</em></h3></div>";
-	
-	
+
+
 	//$result = mysql_query("SELECT * FROM DownloadRequests ORDER BY ID".$whereQualifier);
 	$result = mysql_query("SELECT * FROM DownloadRequests ".$whereQualifier." ORDER BY ID DESC");
 
 	echo "<table border='2' cellpadding='5'>
 	<tr>
-	<th>Who</th>  
+	<th>Who</th>
 	<th>Comments</th>
 	<th>Request</th>
 	<th>Downloaded</th>
 	</tr>";
-	
-	
+
+
 	while($row = mysql_fetch_array($result))
 	{
 		$thisRef = $row['reference'];
@@ -255,19 +255,23 @@ else
 		echo "<tr>";
 
 		echo "<td><b>"
-			. $row['name'] . "</b><br/>" . $row['email'] . "<br/>" . $row['institution'] ."<br/>" 
+			. $row['name'] . "</b><br/>" . $row['email'] . "<br/>" . $row['institution'] ."<br/>"
 			. "<b>".$row['country'] . "</b></td><td>"
-			
-			. "<b>Brain region:</b> ". $row['brainRegion']  . "<br/>" 
-			. "<b>Research Type:</b> ". $row['researchTopic']  . "<br/>" 
-			. "<b>Research:</b> ". $row['descriptionResearch']  . "<br/>" 
+
+			. "<b>Brain region:</b> ". $row['brainRegion']  . "<br/>"
+			. "<b>Research Type:</b> ". $row['researchTopic']  . "<br/>"
+			. "<b>Research:</b> ". $row['descriptionResearch']  . "<br/>"
 
 			. "<b>Comment:</b> ". $row['comment'] . "</td><td>"
 
-			. date("l dS \of F Y H:i:s", $row['requestDate']) . "<br/>" 
-			. "<b>Host:</b> " . $row['clientserver'] . "<br/>" 
-			. "<b>Ref:</b> " . $thisRef . "</td><td>"
+			. date("l dS \of F Y H:i:s", $row['requestDate']) . "<br/>"
+			. "<b>Host:</b> " . $row['clientserver'] . "<br/>"
+			. "<b>Ref: <a href='$mainUrl&$referenceParam=$thisRef'></b>" . $thisRef . "</a></td><td>"
+
+
 			. "<a href='$mainUrl&$referenceParam=$thisRef'>".$numDownloaded[0] . "</a></td>";
+
+
 		echo "</tr>";
 	}
 
@@ -279,11 +283,11 @@ else
 	{
 
 		echo "<div class='h3'><h3><em>Actual downloads:</em></h3></div>";
-		
+
 		$downloadQuery = "SELECT * FROM Downloads ".$whereQualifier." ORDER BY ID";
-	
+
 		$result = mysql_query($downloadQuery);
-	
+
 		echo "<table border='1' cellpadding='3'>
 		<tr>
 		<th>ID</th>
@@ -292,9 +296,9 @@ else
 		<th>Reference</th>
 		<th>File</th>
 		</tr>";
-	
-		
-		
+
+
+
 		while($row = mysql_fetch_array($result))
 		{
 		echo "<tr>";
@@ -305,11 +309,11 @@ else
 			. $row['filename'] . "</td>";
 		echo "</tr>";
 		}
-	
+
 		echo "</table>";
 	}
 
-	
+
 	mysql_close($con);
 
 }
