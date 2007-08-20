@@ -28,7 +28,7 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
  * Dialog for editing which synapses are associated with which groups
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public class EditGroupSynapseAssociations extends JDialog implements ListSelectionListener

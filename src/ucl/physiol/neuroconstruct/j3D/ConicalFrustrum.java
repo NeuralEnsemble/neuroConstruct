@@ -20,7 +20,7 @@ import javax.media.j3d.*;
  * For creating a Primitive shape in the form of a truncated cone
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

@@ -22,7 +22,7 @@ import ucl.physiol.neuroconstruct.gui.plotter.*;
  * Useful class for analysing spike trains
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public class SpikeAnalyser

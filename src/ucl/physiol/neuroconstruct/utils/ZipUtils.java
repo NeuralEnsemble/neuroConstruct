@@ -21,7 +21,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * Utilities for zipping files
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

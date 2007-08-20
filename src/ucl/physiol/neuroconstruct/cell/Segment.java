@@ -28,7 +28,7 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
  * specifying the points along a section
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  *
  */
 

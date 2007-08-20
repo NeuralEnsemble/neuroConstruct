@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
  * region, etc. Alternative future uses may be envisioned
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

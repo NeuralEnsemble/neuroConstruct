@@ -16,7 +16,7 @@ package ucl.physiol.neuroconstruct.project;
  * Exception thrown when the parsing of a project file goes bad
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 @SuppressWarnings("serial")

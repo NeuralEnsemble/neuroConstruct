@@ -18,7 +18,7 @@ package ucl.physiol.neuroconstruct.project;
  * Class for extra info on single connection
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public class ConnSpecificProps

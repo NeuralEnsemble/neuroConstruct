@@ -18,7 +18,7 @@ package ucl.physiol.neuroconstruct.gui;
  * Used to build generic input requests
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

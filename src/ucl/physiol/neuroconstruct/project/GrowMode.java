@@ -17,7 +17,7 @@ package ucl.physiol.neuroconstruct.project;
  * to meet the dendrite, vice versa or neither
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

@@ -23,7 +23,7 @@ import ucl.physiol.neuroconstruct.project.InternalStringFloatParameter;
  * will be chosen, e.g. for stimulation
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public class AllCells extends CellChooser

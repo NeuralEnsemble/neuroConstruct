@@ -22,7 +22,7 @@ import ucl.physiol.neuroconstruct.simulation.SimEnvHelper;
  * Cell Mechs representing a simple exponential synapse
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  * @deprecated Use ChannelML instead...
  *
  */

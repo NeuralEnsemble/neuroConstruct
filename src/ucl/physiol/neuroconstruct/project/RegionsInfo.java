@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Extension of AbstractTableModel to store the info on the regions
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 @SuppressWarnings("serial")

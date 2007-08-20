@@ -23,7 +23,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Frame for showing 2D view of Cell Group(s) during simulation rerun
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

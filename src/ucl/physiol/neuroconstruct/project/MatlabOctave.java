@@ -29,7 +29,7 @@ import ucl.physiol.neuroconstruct.simulation.SimulationData;
  * or Octave (freely available at http://www.octave.org)
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public class MatlabOctave

@@ -20,7 +20,7 @@ import ucl.physiol.neuroconstruct.cell.*;
  * A lot of the maths taken from http://mathworld.wolfram.com/ConicalFrustum.html
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 public class SimpleCompartment
 {

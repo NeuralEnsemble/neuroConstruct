@@ -19,7 +19,7 @@ package ucl.physiol.neuroconstruct.utils.xml;
  * with general XML files
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

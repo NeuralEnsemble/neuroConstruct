@@ -21,7 +21,7 @@ import ucl.physiol.neuroconstruct.gui.*;
  * Support for sending jobs to Condor platform
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

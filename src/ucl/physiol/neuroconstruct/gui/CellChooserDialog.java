@@ -27,7 +27,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Dialog to specify Cell Chooser parameters
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

@@ -27,7 +27,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * which can be used by the rest of the application
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  *
  */
 

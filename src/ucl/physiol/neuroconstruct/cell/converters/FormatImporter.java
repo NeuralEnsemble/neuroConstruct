@@ -22,7 +22,7 @@ import ucl.physiol.neuroconstruct.cell.*;
  * See SWCMorphReader for a simple example of an implementation
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  *
  */
 

@@ -23,7 +23,7 @@ import ucl.physiol.neuroconstruct.simulation.SimEnvHelper;
  * Cell Mech representing a double exponential synapse
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  * @deprecated Use ChannelML instead...
  *
  */

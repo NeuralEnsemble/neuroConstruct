@@ -19,7 +19,7 @@ import java.util.*;
  * Stores info on volume/arbourisation based connections
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public class ArbourConnectionsInfo extends AbstractTableModel

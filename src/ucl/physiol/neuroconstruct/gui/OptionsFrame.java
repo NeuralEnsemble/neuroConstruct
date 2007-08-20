@@ -26,7 +26,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * General options and preferences dialog
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

@@ -42,7 +42,7 @@ import ucl.physiol.neuroconstruct.utils.equation.*;
  * Dialog for creating and editing ChannelML based Cell Mechanism
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public class ChannelMLEditor extends JFrame implements HyperlinkListener

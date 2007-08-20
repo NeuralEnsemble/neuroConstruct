@@ -17,7 +17,7 @@ package ucl.physiol.neuroconstruct.project.stimulation;
  * Base class for electrical input
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

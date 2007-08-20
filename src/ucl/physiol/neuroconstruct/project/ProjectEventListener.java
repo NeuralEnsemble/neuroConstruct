@@ -19,7 +19,7 @@ import java.util.EventListener;
  * the info of the project
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public interface ProjectEventListener extends EventListener

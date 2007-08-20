@@ -28,7 +28,7 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
  * and so will have the same biophysical characteristics (e.g. common synaptic types allowed)
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  *
  */
 

@@ -16,7 +16,7 @@ package ucl.physiol.neuroconstruct.gui.plotter;
  * Class to store info on options for analysing the spiking patterns of plots
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public class SpikeAnalysisOptions

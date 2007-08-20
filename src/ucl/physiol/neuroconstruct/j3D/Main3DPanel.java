@@ -44,7 +44,7 @@ import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
  * Panel for displaying the network of cells in 3D
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 @SuppressWarnings("serial")

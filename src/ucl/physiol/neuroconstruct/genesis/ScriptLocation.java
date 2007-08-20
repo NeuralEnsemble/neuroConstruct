@@ -18,7 +18,7 @@ import java.util.*;
  * Class specifying a location in the generated GENESIS script.
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public class ScriptLocation

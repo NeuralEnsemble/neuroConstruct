@@ -32,7 +32,7 @@ import ucl.physiol.neuroconstruct.simulation.SimulationData.DataStore;
  * Frame for rerunning simulations recorded in neuron
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

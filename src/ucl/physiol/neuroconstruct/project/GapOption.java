@@ -17,7 +17,7 @@ package ucl.physiol.neuroconstruct.project;
  * Options for what to do with gap between pre & post synaptic connection point
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public abstract class GapOption

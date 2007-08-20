@@ -16,7 +16,7 @@ package ucl.physiol.neuroconstruct.genesis;
  * General exception when dealing with/generating GENESIS files
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 @SuppressWarnings("serial")

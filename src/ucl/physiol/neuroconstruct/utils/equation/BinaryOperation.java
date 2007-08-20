@@ -20,7 +20,7 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
  * Helper class for parsing equations
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public class BinaryOperation extends EquationUnit

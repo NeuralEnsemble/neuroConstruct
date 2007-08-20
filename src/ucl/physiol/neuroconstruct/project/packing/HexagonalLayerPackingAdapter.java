@@ -24,7 +24,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * with Golgi cells in the cerebellum)
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public class HexagonalLayerPackingAdapter extends CellPackingAdapter

@@ -24,7 +24,7 @@ import java.awt.event.*;
  * Dialog for the properties of the synaptic connection between cell groups
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

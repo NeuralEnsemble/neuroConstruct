@@ -18,7 +18,7 @@ package ucl.physiol.neuroconstruct.project;
  * network connection, etc. is finished
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public interface GenerationReport

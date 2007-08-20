@@ -23,7 +23,7 @@ import org.w3c.dom.*;
  * Utilities for dealing with XML files
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

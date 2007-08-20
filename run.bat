@@ -10,4 +10,4 @@ REM   graphics card, or adding -Dsun.java2d.noddraw=true to the command below.
 REM 
 
 @echo on
-java -Xmx700M  -cp neuroConstruct_1.0.4.jar ucl.physiol.neuroconstruct.gui.MainApplication %1 %2 %3 %4 %5
+java -Xmx700M  -cp neuroConstruct_1.0.6.jar ucl.physiol.neuroconstruct.gui.MainApplication %1 %2 %3 %4 %5

@@ -20,7 +20,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * generation of the code for each numerical method.
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public class NumericalMethod

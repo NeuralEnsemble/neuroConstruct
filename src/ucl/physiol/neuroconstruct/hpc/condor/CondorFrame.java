@@ -24,7 +24,7 @@ import ucl.physiol.neuroconstruct.hpc.utils.*;
  * Support for sending jobs to Condor platform
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

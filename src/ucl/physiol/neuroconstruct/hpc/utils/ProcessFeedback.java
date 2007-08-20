@@ -17,7 +17,7 @@ package ucl.physiol.neuroconstruct.hpc.utils;
  * Simple interface for giving feedback from processes
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public interface ProcessFeedback

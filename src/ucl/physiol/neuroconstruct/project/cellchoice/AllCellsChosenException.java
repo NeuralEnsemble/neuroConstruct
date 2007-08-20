@@ -17,7 +17,7 @@ package ucl.physiol.neuroconstruct.project.cellchoice;
  * Will be thrown by CellChooser subclass when all cells are chosen
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

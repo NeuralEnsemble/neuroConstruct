@@ -19,7 +19,7 @@ import ucl.physiol.neuroconstruct.cell.Cell;
  * Morphological projection/compartmentalisations which simply returns the detailed morphology fed in to it
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  *
  */
 

@@ -22,7 +22,7 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
  * Simple cell packing adapter. Places fixed number of cells in 1 dimension inside region
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

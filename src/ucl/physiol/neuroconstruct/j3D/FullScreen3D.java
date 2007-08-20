@@ -23,7 +23,7 @@ import java.awt.event.*;
  * Frame for displaying the 3D model at maximum size
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 @SuppressWarnings("serial")

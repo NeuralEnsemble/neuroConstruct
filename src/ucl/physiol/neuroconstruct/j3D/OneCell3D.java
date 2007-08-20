@@ -33,7 +33,7 @@ import ucl.physiol.neuroconstruct.utils.compartment.*;
  * of cells (as in Main3DPanel)
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public class OneCell3D

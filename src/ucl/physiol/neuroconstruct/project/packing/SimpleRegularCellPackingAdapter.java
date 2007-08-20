@@ -23,7 +23,7 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
  * Very simple cell packing adapter. Just places cells in cubic 3D grid
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

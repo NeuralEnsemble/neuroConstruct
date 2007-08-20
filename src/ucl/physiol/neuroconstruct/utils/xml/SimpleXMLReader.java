@@ -29,7 +29,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * with general XML files
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public class SimpleXMLReader extends XMLFilterImpl implements LexicalHandler

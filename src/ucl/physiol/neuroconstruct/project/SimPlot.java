@@ -22,7 +22,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
  * Info on something to plot **and/or save** during a simulation
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public class SimPlot

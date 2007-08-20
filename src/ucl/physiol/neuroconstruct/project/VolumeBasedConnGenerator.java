@@ -26,7 +26,7 @@ import ucl.physiol.neuroconstruct.utils.equation.*;
  * Thread to handle generation of volume based connections/axonal arbourisations
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

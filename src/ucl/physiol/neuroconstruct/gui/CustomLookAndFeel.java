@@ -26,7 +26,7 @@ import javax.swing.plaf.metal.*;
  * (Tabs didn't look great with the default settings)
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

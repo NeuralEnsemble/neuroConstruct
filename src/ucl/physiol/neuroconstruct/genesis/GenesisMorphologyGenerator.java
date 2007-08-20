@@ -31,7 +31,7 @@ import ucl.physiol.neuroconstruct.utils.xml.*;
  * A single GENESIS morphology file from a Cell object
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public class GenesisMorphologyGenerator

@@ -17,7 +17,7 @@
   * Location of a synaptic endpoint on a dendritic section
   *
   * @author Padraig Gleeson
-  * @version 1.0.4
+  * @version 1.0.6
   *
   */
 

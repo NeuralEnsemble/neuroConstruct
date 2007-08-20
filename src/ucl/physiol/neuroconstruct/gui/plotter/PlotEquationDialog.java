@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.utils.equation.*;
  * Dialog to allow any equation to be placed on the PlotterFrame
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 @SuppressWarnings("serial")

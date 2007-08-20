@@ -23,7 +23,7 @@ import ucl.physiol.neuroconstruct.cell.Segment;
  * Thread to handle generation of what to plot/save during simulation run
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 

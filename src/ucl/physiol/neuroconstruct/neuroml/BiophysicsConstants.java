@@ -18,7 +18,7 @@ package ucl.physiol.neuroconstruct.neuroml;
  * Biophysics file format. Defines tags needed in Biophysics files...
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 public class BiophysicsConstants

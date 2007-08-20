@@ -17,7 +17,7 @@ package ucl.physiol.neuroconstruct.project;
  * a valid project is loaded
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 @SuppressWarnings("serial")

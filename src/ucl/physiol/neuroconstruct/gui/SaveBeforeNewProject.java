@@ -18,7 +18,7 @@ import java.awt.Frame;
  *  Dialog for checking to save before opening a new project
  *
  * @author Padraig Gleeson
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 @SuppressWarnings("serial")
