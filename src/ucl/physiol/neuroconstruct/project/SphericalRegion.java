@@ -122,8 +122,8 @@ public class SphericalRegion extends Region
         else
             logger.logComment("Only cell centre (" + firstSeg.getStartPointPosition() + ") needs to be inside");
 
-        int factor = 0;
-        if (completelyInside) factor = 1;
+        //int factor = 0;
+        //if (completelyInside) factor = 1;
 
         Point3f actualStartOfSoma = new Point3f(point.x + firstSeg.getSection().getStartPointPositionX(),
                                                 point.y + firstSeg.getSection().getStartPointPositionY(),

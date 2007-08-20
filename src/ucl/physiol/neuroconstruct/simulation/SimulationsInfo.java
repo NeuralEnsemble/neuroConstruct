@@ -234,7 +234,7 @@ public class SimulationsInfo extends AbstractTableModel
     }
 
 
-    public Vector getAllShownColumns()
+    public Vector<String> getAllShownColumns()
     {
         return columnsShown;
     }
@@ -673,6 +673,7 @@ public class SimulationsInfo extends AbstractTableModel
         if (html)
         {
             val = GeneralUtils.replaceAllTokens(val, "\n", "<br></br>");
+            val = GeneralUtils.replaceAllTokens(val, "  ", "&nbsp;&nbsp;");
             return "<tr><td>" + name + "</td><td><b>" + val + "</b></td></tr>\n";
         }
         else

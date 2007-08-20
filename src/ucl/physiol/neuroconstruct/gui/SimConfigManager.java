@@ -35,6 +35,7 @@ import ucl.physiol.neuroconstruct.simulation.*;
  * @version 1.0.6
  */
 
+@SuppressWarnings("serial")
 
 public class SimConfigManager extends JFrame implements ListSelectionListener, ItemListener, DocumentListener
 {
@@ -234,8 +235,8 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         }
         jPanelCheckBoxes.add(jPanelCellGroupsCB);
 
-        Vector netConns = project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames();
-        Vector aaNetConns = project.volBasedConnsInfo.getAllAAConnNames();
+        Vector<String> netConns = project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames();
+        Vector<String> aaNetConns = project.volBasedConnsInfo.getAllAAConnNames();
         netConns.addAll(aaNetConns);
 
         JPanel jPanelNetConns = new JPanel();

@@ -443,14 +443,14 @@ public class SimPlotDialog extends JDialog
         jTextFieldCellNumber.setText(simPlot.getCellNumber());
         jTextFieldSegmentId.setText(simPlot.getSegmentId());
 
-        boolean valueFound = false;
+        //boolean valueFound = false;
         for (int i = 0; i < jComboBoxKnownValues.getItemCount(); i++)
         {
                 String nextItem = (String)jComboBoxKnownValues.getItemAt(i);
                 if (nextItem.equals(simPlot.getValuePlotted()))
                 {
                     jComboBoxKnownValues.setSelectedIndex(i);
-                    valueFound = true;
+                    //valueFound = true;
                 }
         }
         jTextFieldValuePlotted.setText(simPlot.getValuePlotted());
@@ -509,7 +509,7 @@ public class SimPlotDialog extends JDialog
 
             dlg.setSimPlot(s);
 
-            Dimension dlgSize = dlg.getPreferredSize();
+            //Dimension dlgSize = dlg.getPreferredSize();
             dlg.setModal(true);
             dlg.pack();
             dlg.setVisible(true);
@@ -527,7 +527,7 @@ public class SimPlotDialog extends JDialog
 
     void jComboBoxKnownValues_itemStateChanged(ItemEvent e)
     {
-        if (e.getStateChange()==e.SELECTED)
+        if (e.getStateChange()==ItemEvent.SELECTED)
         {
             jTextFieldValuePlotted.setText((String)jComboBoxKnownValues.getSelectedItem());
         }

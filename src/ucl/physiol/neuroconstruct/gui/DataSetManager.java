@@ -19,7 +19,6 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
 
-import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
 import ucl.physiol.neuroconstruct.dataset.*;
@@ -35,6 +34,8 @@ import ucl.physiol.neuroconstruct.project.*;
  * @author Padraig Gleeson
  * @version 1.0.6
  */
+
+@SuppressWarnings("serial")
 
 public class DataSetManager extends JFrame implements ListSelectionListener
 
@@ -280,7 +281,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
         logger.logComment("Finished initialising...");
         //if ()
 
-        ToolTipHelper toolTips = ToolTipHelper.getInstance();
+        //ToolTipHelper toolTips = ToolTipHelper.getInstance();
         //jButtonRefresh.setToolTipText(toolTips.getToolTip("Reload Simulation List"));
     }
 
@@ -555,9 +556,9 @@ public class DataSetManager extends JFrame implements ListSelectionListener
 
     public static void saveDataSet(DataSet dataSet)
     {
-        int dataSetCount = 0;
-        String suggestedName = DATA_SET_PREFIX + dataSetCount +
-            ProjectStructure.getDataSetExtension();
+        //int dataSetCount = 0;
+        //String suggestedName = DATA_SET_PREFIX + dataSetCount +
+         //   ProjectStructure.getDataSetExtension();
 
 
         File suggestedFile =  dataSet.getDataSetFile();
@@ -689,7 +690,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
 
             //File simDir = new File("examples/MaexDeSchutter/simulations");
 
-            File dataDir = new File("projects/temp/dataSets");
+            //File dataDir = new File("projects/temp/dataSets");
 
             //DataSetManager frame = new DataSetManager(dataDir, true);
             //frame.pack();

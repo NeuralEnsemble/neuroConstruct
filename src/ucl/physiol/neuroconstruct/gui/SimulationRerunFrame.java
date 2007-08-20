@@ -35,6 +35,7 @@ import ucl.physiol.neuroconstruct.simulation.SimulationData.DataStore;
  * @version 1.0.6
  */
 
+@SuppressWarnings("serial")
 
 public class SimulationRerunFrame extends JFrame
 {
@@ -45,7 +46,7 @@ public class SimulationRerunFrame extends JFrame
 
     private File mySimulationDir = null;
 
-    private Hashtable activityMonitors = new Hashtable();
+    private Hashtable<String, ActivityMonitor> activityMonitors = new Hashtable<String, ActivityMonitor>();
 
     private ArrayList<ViewVoltage2D> view2Ds = new ArrayList<ViewVoltage2D>();
 
@@ -173,7 +174,7 @@ public class SimulationRerunFrame extends JFrame
             enableEvents(AWTEvent.WINDOW_EVENT_MASK);
             jbInit();
 
-            addGradedScale(this.VOLTAGE_SHADING);
+            addGradedScale(VOLTAGE_SHADING);
             extraInit();
         }
         catch(Exception e)
@@ -443,7 +444,7 @@ public class SimulationRerunFrame extends JFrame
         flowLayout3.setHgap(0);
         flowLayout3.setVgap(0);
 
-        float spikingThreshold = Float.parseFloat(jTextFieldSpikeThreshold.getText());
+        //float spikingThreshold = Float.parseFloat(jTextFieldSpikeThreshold.getText());
 
         jLabelHigh.setText("Spiking cells");
         jLabelHigh.setHorizontalAlignment(JLabel.CENTER);
@@ -529,7 +530,7 @@ public class SimulationRerunFrame extends JFrame
         double high = 100;
         String units = null;
 
-        if (shadingOption == this.VOLTAGE_SHADING)
+        if (shadingOption == VOLTAGE_SHADING)
         {
             units = "mV";
             jLabelHigh.setText(" High: " + mostPosValue + units);
@@ -537,11 +538,11 @@ public class SimulationRerunFrame extends JFrame
             low = mostNegValue;
             high = mostPosValue;
         }
-        else if (shadingOption == this.FREQ_SHADING)
+        else if (shadingOption == FREQ_SHADING)
         {
             units = "Hz";
-            jLabelHigh.setText(" High: " + this.largestFreq + units);
-            jLabelLow.setText("Low: " + this.smallestFreq + units+" ");
+            jLabelHigh.setText(" High: " + largestFreq + units);
+            jLabelLow.setText("Low: " + smallestFreq + units+" ");
             low = smallestFreq;
             high = largestFreq;
 
@@ -634,17 +635,17 @@ public class SimulationRerunFrame extends JFrame
 
     private Color getShadingColour(int shadingOption, float value)
     {
-        if (shadingOption == this.VOLTAGE_SHADING)
+        if (shadingOption == VOLTAGE_SHADING)
         {
-            return this.getColorBasedOnValue(value);
+            return getColorBasedOnValue(value);
         }
-        else if (shadingOption == this.ISI_SHADING)
+        else if (shadingOption == ISI_SHADING)
         {
-            return this.getColorBasedOnISI(value);
+            return getColorBasedOnISI(value);
         }
-        else if (shadingOption == this.FREQ_SHADING)
+        else if (shadingOption == FREQ_SHADING)
         {
-            return this.getColorBasedOnFreq(value);
+            return getColorBasedOnFreq(value);
         }
         else
          return Color.black;
@@ -920,8 +921,8 @@ public class SimulationRerunFrame extends JFrame
             else if (this.jRadioButtonISIShading.isSelected())
             {
                 String units = "Hz";
-                jLabelHigh.setText(" High: " + this.largestFreq + units);
-                jLabelLow.setText("Low: " + this.smallestFreq + units + " ");
+                jLabelHigh.setText(" High: " + largestFreq + units);
+                jLabelLow.setText("Low: " + smallestFreq + units + " ");
 
 
             }
@@ -943,7 +944,7 @@ public class SimulationRerunFrame extends JFrame
             int currentTimeStep = jRunSlider.getValue();
             int count = 0;
 
-            String selectedValue = (String)jComboBoxVars.getSelectedItem();
+            //String selectedValue = (String)jComboBoxVars.getSelectedItem();
 
             public void actionPerformed(ActionEvent evt)
             {
@@ -1247,7 +1248,7 @@ public class SimulationRerunFrame extends JFrame
 
         /** @todo Improve collection handling here... */
 
-        Vector allActMonCellNames  = new Vector();
+        Vector<String> allActMonCellNames  = new Vector<String>();
         allActMonCellNames.addAll(activityMonitors.keySet());
 
         int[] countActive = new int[activityMonitors.keySet().size()];
@@ -1299,12 +1300,12 @@ public class SimulationRerunFrame extends JFrame
                 else
                 {
                     //newColour = this.getColorBasedOnISI(isiState.runningISIAverage);
-                    newColour = this.getColorBasedOnFreq(1000/isiState.runningISIAverage);
+                    newColour = getColorBasedOnFreq(1000/isiState.runningISIAverage);
                 }
             }
             else if (this.jRadioButtonContinuous.isSelected())
             {
-                newColour = this.getColorBasedOnValue(value);
+                newColour = getColorBasedOnValue(value);
             }
 
             logger.logComment("Decided on a colour: "+ newColour.toString());
@@ -1556,7 +1557,7 @@ public class SimulationRerunFrame extends JFrame
         remove2DViews();
 
         activityMonitors = null;
-        activityMonitors = new Hashtable();
+        activityMonitors = new Hashtable<String, ActivityMonitor>();
         isiInfo = null;
 
         GeneralProperties.saveToSettingsFile();
@@ -1585,7 +1586,7 @@ public class SimulationRerunFrame extends JFrame
 
         ArrayList<String> everyCellGroup = project.cellGroupsInfo.getAllCellGroupNames();
 
-        Vector allNonEmptyCellGroups = new Vector();
+        Vector<String> allNonEmptyCellGroups = new Vector<String>();
 
         for (int i = 0; i < everyCellGroup.size(); i++)
         {
@@ -1665,12 +1666,12 @@ public class SimulationRerunFrame extends JFrame
         else if (jRadioButtonContinuous.isSelected())
         {
             this.jTextFieldSpikeThreshold.setEnabled(false);
-            this.addGradedScale(this.VOLTAGE_SHADING);
+            this.addGradedScale(VOLTAGE_SHADING);
         }
         else if (jRadioButtonISIShading.isSelected())
         {
             this.jTextFieldSpikeThreshold.setEnabled(true);
-            this.addGradedScale(this.FREQ_SHADING);
+            this.addGradedScale(FREQ_SHADING);
         }
 
 

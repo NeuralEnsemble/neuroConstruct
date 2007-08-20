@@ -14,6 +14,8 @@ import java.awt.event.*;
  */
 
 
+@SuppressWarnings("serial")
+
 public class NumberGeneratorDialog extends JDialog
 {
     ClassLogger logger = new ClassLogger("NumberGeneratorDialog");
