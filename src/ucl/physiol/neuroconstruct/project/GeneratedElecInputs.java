@@ -12,12 +12,9 @@
 
 package ucl.physiol.neuroconstruct.project;
 
-import ucl.physiol.neuroconstruct.project.*;
-import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.io.*;
 import java.util.*;
-import ucl.physiol.neuroconstruct.project.stimulation.*;
 
 /**
  * Storage for the locations and settings of electrical inputs generated when the Generate
@@ -31,11 +28,11 @@ public class GeneratedElecInputs
 {
     ClassLogger logger = new ClassLogger("GeneratedElecInputs");
 
-    Hashtable<String, ArrayList> myElecInputs = null;
+    Hashtable<String, ArrayList<SingleElectricalInput>> myElecInputs = null;
 
     public GeneratedElecInputs()
     {
-        myElecInputs = new Hashtable<String, ArrayList>();
+        myElecInputs = new Hashtable<String, ArrayList<SingleElectricalInput>>();
 
     }
 
@@ -69,10 +66,10 @@ public class GeneratedElecInputs
     {
         if (!myElecInputs.containsKey(inputReference))
         {
-            ArrayList newInputArrayList = new ArrayList();
+            ArrayList<SingleElectricalInput> newInputArrayList = new ArrayList<SingleElectricalInput>();
             myElecInputs.put(inputReference, newInputArrayList);
         }
-        ArrayList<SingleElectricalInput> inputVector = (ArrayList) myElecInputs.get(inputReference);
+        ArrayList<SingleElectricalInput> inputVector = myElecInputs.get(inputReference);
 
         inputVector.add(new SingleElectricalInput(inputType,
                                                   cellGroup,
@@ -88,10 +85,10 @@ public class GeneratedElecInputs
     {
         if (!myElecInputs.containsKey(inputReference))
         {
-            ArrayList newInputArrayList = new ArrayList();
+            ArrayList<SingleElectricalInput> newInputArrayList = new ArrayList<SingleElectricalInput>();
             myElecInputs.put(inputReference, newInputArrayList);
         }
-        ArrayList<SingleElectricalInput> inputVector = (ArrayList) myElecInputs.get(inputReference);
+        ArrayList<SingleElectricalInput> inputVector = myElecInputs.get(inputReference);
 
         inputVector.add(oneInput);
     }
@@ -351,7 +348,7 @@ public class GeneratedElecInputs
 
             System.out.println("Internal info: \n"+ gei.toString());
 
-            IClamp ic = new IClamp(2,3,4, true);
+            //IClamp ic = new IClamp(2,3,4, true);
 
             gei.addSingleInput("Input_0", "IClamp", "cg1", 3, 3, 3);
             gei.addSingleInput("Input_0", "IClamp", "cg1", 38, 3, 3);

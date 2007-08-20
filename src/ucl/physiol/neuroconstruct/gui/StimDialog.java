@@ -37,6 +37,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
 
 
 @SuppressWarnings("serial")
+
 public class StimDialog extends JDialog
 {
     ClassLogger logger = new ClassLogger("StimDialog");

@@ -278,6 +278,6 @@ public class MatlabOctave
 
     public static void main(String[] args)
     {
-        MatlabOctave matlaboctave = new MatlabOctave();
+        new MatlabOctave();
     }
 }

@@ -22,6 +22,7 @@ import java.text.*;
  * @version 1.0.6
  */
 
+@SuppressWarnings("serial")
 
 public class DoubleInputField extends JFormattedTextField
 {

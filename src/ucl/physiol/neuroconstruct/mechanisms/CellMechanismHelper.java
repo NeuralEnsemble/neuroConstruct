@@ -50,12 +50,7 @@ public  class CellMechanismHelper
     {
         /** @todo automatically look these up... */
         availableCellMechs.add(new PassiveMembraneMechanism());
-        availableCellMechs.add(new HHMembraneMechanism());
-        availableCellMechs.add(new TabHHMechanism());
-        availableCellMechs.add(new ExpSynMechanism());
         availableCellMechs.add(new Exp2SynMechanism());
-        availableCellMechs.add(new NaChannelMechanism());
-        availableCellMechs.add(new KChannelMechanism());
     }
 
     public static Vector getCellMechanisms()

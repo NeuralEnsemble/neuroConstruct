@@ -29,6 +29,8 @@ import ucl.physiol.neuroconstruct.utils.*;
  */
 
 
+@SuppressWarnings("serial")
+
 public class MainFrame_AboutBox extends JDialog implements ActionListener
 {
 
@@ -128,7 +130,7 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener
 
                 try
                 {
-                    Process currentProcess = rt.exec(command);
+                    rt.exec(command);
                 }
                 catch (IOException ex)
                 {

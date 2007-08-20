@@ -13,7 +13,7 @@
 package ucl.physiol.neuroconstruct.project;
 
 import java.util.*;
-import ucl.physiol.neuroconstruct.project.*;
+
 import ucl.physiol.neuroconstruct.utils.*;
 
 /**
@@ -27,7 +27,7 @@ public class RegionTypeHelper
 {
     private static ClassLogger logger = new ClassLogger("RegionTypeHelper");
 
-    private static Vector regionTypes = new Vector();
+    private static Vector<Region> regionTypes = new Vector<Region>();
 
     static
     {

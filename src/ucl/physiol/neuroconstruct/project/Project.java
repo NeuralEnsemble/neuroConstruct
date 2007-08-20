@@ -523,7 +523,7 @@ public class Project implements TableModelListener
 
                                     if (internalPropsFile.length() > 4000) // very hack like way to distinguish a pass mech from a big hh mech file
                                     {
-                                        acm = new HHMembraneMechanism();
+                                        //acm = new HHMembraneMechanism();
                                     }
                                     else
                                     {

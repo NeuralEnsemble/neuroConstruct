@@ -25,6 +25,8 @@ import ucl.physiol.neuroconstruct.utils.*;
  */
 
 
+@SuppressWarnings("serial")
+
 public class NeuronImportDialog extends JDialog
 {
     ClassLogger logger = new ClassLogger("NeuronImportDialog");

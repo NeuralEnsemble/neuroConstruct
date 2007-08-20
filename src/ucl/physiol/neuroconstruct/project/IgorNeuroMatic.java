@@ -217,7 +217,7 @@ public class IgorNeuroMatic
 
     public static void main(String[] args)
     {
-        IgorNeuroMatic inm = new IgorNeuroMatic();
+        new IgorNeuroMatic();
 
 
         String path = "C:\\neuroConstruct\\projects\\Project_1iii\\igorNeuroMatic\\Tester2.ipf";

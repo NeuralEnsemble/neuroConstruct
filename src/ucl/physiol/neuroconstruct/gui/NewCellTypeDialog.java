@@ -33,6 +33,8 @@ import ucl.physiol.neuroconstruct.project.*;
  */
 
 
+@SuppressWarnings("serial")
+
 public class NewCellTypeDialog extends JDialog
 {
     ClassLogger logger = new ClassLogger("NewCellTypeDialog");

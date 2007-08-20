@@ -31,6 +31,8 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
  * @version 1.0.6
  */
 
+@SuppressWarnings("serial")
+
 public class EditGroupSynapseAssociations extends JDialog implements ListSelectionListener
 {
     ClassLogger logger = new ClassLogger("EditGroupSynapseAssociations");
@@ -364,7 +366,7 @@ public class EditGroupSynapseAssociations extends JDialog implements ListSelecti
 
         cell.associateGroupWithSynapse("all", "syno");
 
-        Vector list = new Vector();
+        Vector<String> list = new Vector<String>();
         list.add("gg");
         list.add("hh");
         list.add("jj");

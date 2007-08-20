@@ -20,6 +20,8 @@ package ucl.physiol.neuroconstruct.mechanisms;
  * @version 1.0.6
  */
 
+@SuppressWarnings("serial")
+
 public class ChannelMLException extends CellMechanismException
 {
     public ChannelMLException(String e)

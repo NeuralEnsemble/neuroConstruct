@@ -127,8 +127,9 @@ public class SimConfigInfo
                 simConfig.setSimDuration(project.simulationParameters.getDuration());
             }
 
-            ArrayList<String> cellGroups = new ArrayList(simConfig.getCellGroups()); // create copy
-            ArrayList<String> addedCellGroups = new ArrayList(); // to eliminate doubles...
+            ArrayList<String> cellGroups = new ArrayList<String>(); // create copy
+            cellGroups.addAll(simConfig.getCellGroups());
+            ArrayList<String> addedCellGroups = new ArrayList<String>(); // to eliminate doubles...
 
             for (int k = 0; k < cellGroups.size(); k++)
             {
@@ -138,7 +139,7 @@ public class SimConfigInfo
 
                 addedCellGroups.add(cellGroups.get(k));
             }
-            ArrayList<String> netConns = new ArrayList(simConfig.getNetConns()); // create copy
+            ArrayList<String> netConns = new ArrayList<String>(simConfig.getNetConns()); // create copy
             for (int k = 0; k < netConns.size(); k++)
             {
                 if (!project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().contains(netConns.get(k))
@@ -147,14 +148,14 @@ public class SimConfigInfo
                     simConfig.getNetConns().remove(netConns.get(k));
             }
 
-            ArrayList<String> inputs = new ArrayList(simConfig.getInputs()); // create copy
+            ArrayList<String> inputs = new ArrayList<String>(simConfig.getInputs()); // create copy
             for (int k = 0; k < inputs.size(); k++)
             {
                 if (!project.elecInputInfo.getAllStimRefs().contains(inputs.get(k)))
                     simConfig.getInputs().remove(inputs.get(k));
             }
 
-            ArrayList<String> plots = new ArrayList(simConfig.getPlots()); // create copy
+            ArrayList<String> plots = new ArrayList<String>(simConfig.getPlots()); // create copy
             for (int k = 0; k < plots.size(); k++)
             {
                 if (!project.simPlotInfo.getAllSimPlotRefs().contains(plots.get(k)))
@@ -177,7 +178,7 @@ public class SimConfigInfo
     /**
      * Has to be here for XML Encoder...
      */
-    public void setAllSimConfigs(ArrayList simConfigs)
+    public void setAllSimConfigs(ArrayList<SimConfig> simConfigs)
     {
         this.simConfigs = simConfigs;
         checkForDefaultSimConfig();
@@ -189,7 +190,7 @@ public class SimConfigInfo
     public ArrayList<String> getAllSimConfigNames()
     {
         checkForDefaultSimConfig();
-        ArrayList<String> names = new ArrayList();
+        ArrayList<String> names = new ArrayList<String>();
         for (int i = 0; i < simConfigs.size(); i++)
         {
             SimConfig next = simConfigs.get(i);

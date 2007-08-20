@@ -12,7 +12,7 @@
 
 package ucl.physiol.neuroconstruct.project;
 
-import ucl.physiol.neuroconstruct.simulation.*;
+
 import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
 import ucl.physiol.neuroconstruct.cell.*;
