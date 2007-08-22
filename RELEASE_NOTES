@@ -3,10 +3,12 @@ Release notes/change log for neuroConstruct
 See also the README file
 
 
---- Version 1.0.6 (XXXXXXXXXXX 07)
+--- Version 1.0.4.1 (Aug 07)
 
 
-- Uses NeuroML v1.7
+- Only significant update is a bug fix for running NEURON from nC on a Mac (v1.0.4 ran fine on 
+  Mac, but couldn't run the generated NEURON scripts). More warnings about installing Developer tools
+  (XCode) after installing NEURON on the Mac are included too.
 
 
 
