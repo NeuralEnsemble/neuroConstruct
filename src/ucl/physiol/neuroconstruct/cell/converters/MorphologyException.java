@@ -15,7 +15,7 @@ package ucl.physiol.neuroconstruct.cell.converters;
 /**
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  *
  */
 

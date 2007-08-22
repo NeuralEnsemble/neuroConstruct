@@ -19,7 +19,7 @@ import java.util.*;
  * Stores info on volume/arbourisation based connections
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class ArbourConnectionsInfo extends AbstractTableModel
@@ -416,13 +416,13 @@ public class ArbourConnectionsInfo extends AbstractTableModel
      */
     public void setInternalData(Hashtable allInfo)
     {
-        Vector vectorNamesTemp = (Vector)allInfo.get(columnNames[COL_NUM_COMP_CONN_NAME]);
+        Vector<String>  vectorNamesTemp = (Vector)allInfo.get(columnNames[COL_NUM_COMP_CONN_NAME]);
         if (vectorNamesTemp!=null) vectorNames = vectorNamesTemp;
 
-        Vector vectorSourceTemp = (Vector)allInfo.get(columnNames[COL_NUM_SOURCE]);
+        Vector<String>  vectorSourceTemp = (Vector<String>)allInfo.get(columnNames[COL_NUM_SOURCE]);
         if (vectorSourceTemp!=null) vectorSource = vectorSourceTemp;
 
-        Vector vectorTargetTemp = (Vector)allInfo.get(columnNames[COL_NUM_TARGET]);
+        Vector<String> vectorTargetTemp = (Vector<String>)allInfo.get(columnNames[COL_NUM_TARGET]);
         if (vectorTargetTemp!=null) vectorTarget = vectorTargetTemp;
 
         Vector vectorSynapsePropertiesTemp = (Vector)allInfo.get(columnNames[COL_NUM_SYNAPSE_LIST]);

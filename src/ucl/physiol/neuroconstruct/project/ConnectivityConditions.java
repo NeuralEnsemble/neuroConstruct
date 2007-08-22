@@ -19,7 +19,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * can be connected to by source cells, and vice versa
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 
@@ -126,7 +126,7 @@ public class ConnectivityConditions
     {
         ConnectivityConditions cc = new ConnectivityConditions();
         System.out.println("cc old: "+ cc.toString());
-        cc.generationDirection = cc.TARGET_TO_SOURCE;
+        cc.generationDirection = TARGET_TO_SOURCE;
         //cc.onlyConnectToUniqueCells = true;
         cc.numConnsInitiatingCellGroup = new NumberGenerator(777);
 

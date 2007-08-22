@@ -22,7 +22,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Frame for showing 2D view of synchrony of a cell rel to a cell group
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

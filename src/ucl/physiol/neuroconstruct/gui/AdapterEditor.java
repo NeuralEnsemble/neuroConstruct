@@ -24,7 +24,7 @@ import ucl.physiol.neuroconstruct.project.packing.*;
  * Implementation of AbstractCellEditor for CellPacking adapter column
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class AdapterEditor extends AbstractCellEditor implements TableCellEditor, ActionListener

@@ -20,7 +20,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Storage for what variables in the cells to save/plot
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class GeneratedPlotSaves

@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Extenion of Canvas for plotting the graphs
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 @SuppressWarnings("serial")

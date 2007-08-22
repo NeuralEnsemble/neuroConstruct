@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.utils.xml.*;
  * is pressed
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class GeneratedCellPositions
@@ -87,7 +87,7 @@ public class GeneratedCellPositions
 
         if (!myCellGroupPosns.containsKey(cellGroupName))
         {
-            ArrayList newCellGroupArrayList = new ArrayList();
+            ArrayList<PositionRecord> newCellGroupArrayList = new ArrayList<PositionRecord>();
             myCellGroupPosns.put(cellGroupName, newCellGroupArrayList);
         }
         ArrayList<PositionRecord> cellGroupVector = (ArrayList<PositionRecord>)myCellGroupPosns.get(cellGroupName);
@@ -100,9 +100,9 @@ public class GeneratedCellPositions
     {
         if (!myCellGroupPosns.containsKey(cellGroupName))
         {
-            return new ArrayList();
+            return new ArrayList<PositionRecord>();
         }
-        ArrayList cellGroupArrayList = (ArrayList)myCellGroupPosns.get(cellGroupName);
+        ArrayList<PositionRecord> cellGroupArrayList = (ArrayList<PositionRecord>)myCellGroupPosns.get(cellGroupName);
 
         return cellGroupArrayList;
     }

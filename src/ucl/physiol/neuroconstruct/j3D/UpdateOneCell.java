@@ -17,7 +17,7 @@ package ucl.physiol.neuroconstruct.j3D;
  * Interface to update the OneCell representation when changing groups
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public interface UpdateOneCell

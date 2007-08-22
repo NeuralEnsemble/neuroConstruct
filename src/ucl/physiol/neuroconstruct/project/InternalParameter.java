@@ -17,7 +17,7 @@ package ucl.physiol.neuroconstruct.project;
  * Parameter used for storing internal variables
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

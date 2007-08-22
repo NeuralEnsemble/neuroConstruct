@@ -17,7 +17,7 @@ package ucl.physiol.neuroconstruct.utils.units;
  * scheme for dealing with units
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class Prefix

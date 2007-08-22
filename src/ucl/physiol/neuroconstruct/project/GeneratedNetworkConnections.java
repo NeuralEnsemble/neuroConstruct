@@ -30,7 +30,7 @@ import javax.vecmath.*;
  * Morph based and volume based connections
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class GeneratedNetworkConnections

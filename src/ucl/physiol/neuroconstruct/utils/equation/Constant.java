@@ -22,7 +22,7 @@ import ucl.physiol.neuroconstruct.dataset.DataSet;
  * Helper class for parsing equations
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class Constant extends EquationUnit

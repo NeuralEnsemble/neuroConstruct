@@ -24,7 +24,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Implementation of AbstractCellEditor for cell colour column
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

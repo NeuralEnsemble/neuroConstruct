@@ -26,7 +26,7 @@ import java.util.*;
  * Some handy utilities for adding/printing 3D stuff
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

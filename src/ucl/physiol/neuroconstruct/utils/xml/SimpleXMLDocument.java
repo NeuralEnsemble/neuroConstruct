@@ -23,7 +23,7 @@ import java.io.*;
  * with general XML files
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

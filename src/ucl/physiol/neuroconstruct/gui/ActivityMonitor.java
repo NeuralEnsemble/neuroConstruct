@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Frame for showing activity in cell groups
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

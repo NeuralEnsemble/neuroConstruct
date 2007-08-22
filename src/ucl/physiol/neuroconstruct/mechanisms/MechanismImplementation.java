@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.simulation.SimEnvHelper;
  * for NEURON
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class MechanismImplementation

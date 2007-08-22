@@ -19,7 +19,7 @@ import java.awt.*;
  * can be changed)
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

@@ -21,7 +21,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * with general XML files
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

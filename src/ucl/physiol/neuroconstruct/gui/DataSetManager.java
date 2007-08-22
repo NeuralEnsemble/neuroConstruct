@@ -32,7 +32,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * Dialog for managing saved data sets
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 @SuppressWarnings("serial")

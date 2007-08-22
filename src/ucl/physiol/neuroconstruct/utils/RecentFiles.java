@@ -22,7 +22,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * various files were opened.
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

@@ -21,7 +21,7 @@ package ucl.physiol.neuroconstruct.cell.compartmentalisation;
  * e.g. seg of len 20, 0 to 0.5
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  * @see     SegmentLocMapper
  *
  */

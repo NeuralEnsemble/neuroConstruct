@@ -27,7 +27,7 @@ import ucl.physiol.neuroconstruct.utils.compartment.*;
  * i.e. GENESIS, but not NEURON
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  *
  */
 

@@ -26,7 +26,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
  *                **Strongly advised to use ChannelML instead**
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  *
  */
 

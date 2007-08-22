@@ -19,7 +19,7 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
  * scheme for dealing with units
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class Unit

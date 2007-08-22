@@ -19,7 +19,7 @@ import java.awt.*;
  * Simple colour utilities
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class ColourUtils

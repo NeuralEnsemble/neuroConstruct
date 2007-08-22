@@ -24,7 +24,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Frame for editing simple strings in an editor pane
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

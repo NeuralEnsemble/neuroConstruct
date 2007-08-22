@@ -23,7 +23,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * Extension of AbstractTableModel for storing Cell Mechanism info
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class CellMechanismInfo extends AbstractTableModel

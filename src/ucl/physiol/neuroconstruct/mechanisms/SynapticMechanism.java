@@ -18,7 +18,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Base class of Cell Mechanism which represent synaptic Mechanisms
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  *
  * @deprecated Use ChannelML instead...
  *

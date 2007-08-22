@@ -17,7 +17,7 @@ package ucl.physiol.neuroconstruct.hpc.mpi;
  * Support for interacting with MPI platform
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class MpiHost

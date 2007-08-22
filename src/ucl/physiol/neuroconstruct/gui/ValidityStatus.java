@@ -18,7 +18,7 @@ import java.awt.Color;
 /**
  * A class summarising the validity status of cells, etc.
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

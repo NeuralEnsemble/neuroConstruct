@@ -52,7 +52,7 @@ public class Expand
 
     public static void main(String[] args)
     {
-        Expand expand = new Expand();
+        new Expand();
         
         try
         {

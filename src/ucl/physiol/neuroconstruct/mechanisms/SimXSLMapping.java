@@ -23,7 +23,7 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
  * Mapping of ChannelML File via XSL file to simulation environment
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class SimXSLMapping

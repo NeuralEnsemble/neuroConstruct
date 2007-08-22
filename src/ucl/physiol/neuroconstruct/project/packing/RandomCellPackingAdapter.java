@@ -26,7 +26,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * the specified region
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

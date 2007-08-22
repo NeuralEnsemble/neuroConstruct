@@ -20,7 +20,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * FileFilter for project files.
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

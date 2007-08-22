@@ -32,7 +32,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
  * Dialog to specify electrophysiological stimulations to add to the network
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

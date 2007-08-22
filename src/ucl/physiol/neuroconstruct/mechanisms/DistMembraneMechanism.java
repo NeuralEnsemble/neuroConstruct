@@ -20,7 +20,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
  * a certain maximum conductance density distributed across the membrane
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  *
  */
 

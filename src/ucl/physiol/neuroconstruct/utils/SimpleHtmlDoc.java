@@ -21,7 +21,7 @@ import java.io.*;
  * which can also be outputted as plain text.
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class SimpleHtmlDoc

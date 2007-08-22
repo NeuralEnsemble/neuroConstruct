@@ -17,7 +17,7 @@
   * cell its on
   *
   * @author Padraig Gleeson
-  * @version 1.0.6
+  *  
   */
 
 public class SynapticConnectionEndPoint

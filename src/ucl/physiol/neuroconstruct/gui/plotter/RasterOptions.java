@@ -16,7 +16,7 @@ package ucl.physiol.neuroconstruct.gui.plotter;
  * Class to store info on options for showing a raster plot
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class RasterOptions

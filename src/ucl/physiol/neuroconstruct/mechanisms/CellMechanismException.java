@@ -16,7 +16,7 @@ package ucl.physiol.neuroconstruct.mechanisms;
  * Class for specifying a Cell Mechanism related Exception
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class CellMechanismException extends Exception

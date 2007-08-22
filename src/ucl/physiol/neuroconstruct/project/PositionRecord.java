@@ -20,7 +20,7 @@ import javax.vecmath.*;
  * Single position record
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

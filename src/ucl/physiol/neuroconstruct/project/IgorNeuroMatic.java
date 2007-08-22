@@ -29,7 +29,7 @@ import ucl.physiol.neuroconstruct.simulation.SimulationData;
  * (potentially with the free NeuroMatic set of functions from http://www.neuromatic.thinkrandom.com)
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class IgorNeuroMatic

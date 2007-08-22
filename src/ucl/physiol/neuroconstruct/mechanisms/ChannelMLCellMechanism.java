@@ -31,7 +31,7 @@ import ucl.physiol.neuroconstruct.utils.xml.*;
  * containing the contents of the xml (once initialised) and a number of SimXSLMapping to NEURON, etc.
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class ChannelMLCellMechanism extends CellMechanism

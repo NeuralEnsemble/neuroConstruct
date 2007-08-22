@@ -21,7 +21,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Parameters for a stimulation to add to the simulation
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public abstract class StimulationSettings

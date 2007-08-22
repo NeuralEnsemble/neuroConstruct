@@ -18,7 +18,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * The general parameters needed for running a simulation
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 public class SimulationParameters
 {

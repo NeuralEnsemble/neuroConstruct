@@ -22,7 +22,7 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
  * Class defining, and if necessary creating, project directories, etc.
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class ProjectStructure

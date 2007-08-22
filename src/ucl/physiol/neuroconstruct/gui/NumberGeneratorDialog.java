@@ -10,7 +10,7 @@ import java.awt.event.*;
  * Dialog for specifying a type of number generator, and the main parameters
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

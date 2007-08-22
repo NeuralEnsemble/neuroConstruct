@@ -21,7 +21,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Helper class for ChannelML Cell Mechanisms
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public  class ChannelMLHelper

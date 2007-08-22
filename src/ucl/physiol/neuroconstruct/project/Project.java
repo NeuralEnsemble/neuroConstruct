@@ -35,7 +35,7 @@ import javax.swing.*;
  * Main class holding references to the important data objects of the project
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class Project implements TableModelListener

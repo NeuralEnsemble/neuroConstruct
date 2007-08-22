@@ -19,7 +19,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * nmodlEditor application software
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class ProcessOutputWatcher extends Thread

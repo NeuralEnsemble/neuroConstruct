@@ -17,7 +17,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Dialog for entry of synaptic connection properties: type, delay threshold, etc.
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

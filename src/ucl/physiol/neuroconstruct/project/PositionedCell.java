@@ -18,7 +18,7 @@ import javax.vecmath.*;
  * Class for holding the position of a cell, and its cell group
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class PositionedCell

@@ -21,7 +21,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
   *  sections
   *
   * @author Padraig Gleeson
-  * @version 1.0.6
+  *  
   *
   */
 

@@ -18,7 +18,7 @@ import java.util.*;
  * Helper class for getting list of packing patterns
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class CellPackingHelper

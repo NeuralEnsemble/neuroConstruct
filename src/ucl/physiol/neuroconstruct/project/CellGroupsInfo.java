@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Extension of AbstractTableModel used for storing the Cell Group info
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 @SuppressWarnings("serial")

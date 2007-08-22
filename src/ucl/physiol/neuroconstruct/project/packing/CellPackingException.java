@@ -16,7 +16,7 @@ package ucl.physiol.neuroconstruct.project.packing;
  * General Exception when trying to pack the cells
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class CellPackingException extends Exception

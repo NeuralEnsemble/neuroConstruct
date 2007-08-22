@@ -20,7 +20,7 @@ import ucl.physiol.neuroconstruct.utils.NumberGenerator;
  * of duration etc.
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

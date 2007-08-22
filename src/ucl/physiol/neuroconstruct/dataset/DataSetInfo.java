@@ -27,7 +27,7 @@ import ucl.physiol.neuroconstruct.utils.GuiUtils;
  * Extension of AbstractTableModel to store the info on saved DataSets
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 @SuppressWarnings("serial")

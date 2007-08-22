@@ -18,7 +18,7 @@ package ucl.physiol.neuroconstruct.neuroml;
  * NetworkML file format. Defines tags needed in NetworkML files...
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class NetworkMLConstants

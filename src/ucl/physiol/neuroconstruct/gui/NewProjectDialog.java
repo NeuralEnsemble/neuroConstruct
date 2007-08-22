@@ -23,7 +23,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * Dialog for starting new project
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

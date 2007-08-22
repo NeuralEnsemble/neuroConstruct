@@ -18,7 +18,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Class for converting between the different units used in neuroConstruct/simulators
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class UnitConverter

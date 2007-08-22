@@ -24,7 +24,7 @@ import ucl.physiol.neuroconstruct.utils.*;
   * provided there is a dendrite allowing it
   *
   * @author Padraig Gleeson
-  * @version 1.0.6
+  *  
   *
   */
 

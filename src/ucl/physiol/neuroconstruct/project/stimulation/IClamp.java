@@ -19,7 +19,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Settings specifically for single IClamp stimulation
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class IClamp extends ElectricalInput

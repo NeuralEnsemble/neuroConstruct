@@ -27,7 +27,7 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
  * Extension of Regions in 3D
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class RectangularBox extends Region

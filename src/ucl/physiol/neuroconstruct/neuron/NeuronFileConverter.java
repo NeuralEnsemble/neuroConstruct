@@ -31,7 +31,7 @@ import ucl.physiol.neuroconstruct.utils.equation.*;
  * to actually create a Cell object with the file
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  *
  */
 

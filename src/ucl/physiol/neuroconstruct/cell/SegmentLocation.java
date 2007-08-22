@@ -18,7 +18,7 @@
  * The location along a specified segment, e.g. a (pre or post) synaptic end point
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 @SuppressWarnings("serial")

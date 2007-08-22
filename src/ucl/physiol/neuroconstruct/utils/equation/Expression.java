@@ -22,7 +22,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Helper class for parsing equations
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class Expression

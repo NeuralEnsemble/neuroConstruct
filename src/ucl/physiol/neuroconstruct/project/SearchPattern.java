@@ -17,7 +17,7 @@ package ucl.physiol.neuroconstruct.project;
  * connection points on axons with dendritic connection points)
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

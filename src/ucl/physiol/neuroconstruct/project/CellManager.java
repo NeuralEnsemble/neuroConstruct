@@ -21,7 +21,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Class for storing types of cells in project
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class CellManager

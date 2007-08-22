@@ -30,7 +30,7 @@ import javax.vecmath.*;
  * Canvas for painting 2D view on
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 @SuppressWarnings("serial")

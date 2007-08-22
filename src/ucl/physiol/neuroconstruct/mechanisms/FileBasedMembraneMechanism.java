@@ -23,7 +23,7 @@ import ucl.physiol.neuroconstruct.simulation.SimEnvHelper;
 *  which is present in a specified file
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class FileBasedMembraneMechanism extends AbstractedCellMechanism

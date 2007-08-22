@@ -29,7 +29,7 @@ import ucl.physiol.neuroconstruct.project.*;
  * Dialog for New Cell Type
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

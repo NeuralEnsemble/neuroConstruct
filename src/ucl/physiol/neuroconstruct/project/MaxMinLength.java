@@ -16,7 +16,7 @@ package ucl.physiol.neuroconstruct.project;
  * Helper class for specifying maximum and minimum lengths for synaptic connections
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

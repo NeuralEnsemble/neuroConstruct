@@ -20,7 +20,7 @@ import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLElement;
  * Metadata constants. Defines tags needed in many NeuroML files...
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class MetadataConstants

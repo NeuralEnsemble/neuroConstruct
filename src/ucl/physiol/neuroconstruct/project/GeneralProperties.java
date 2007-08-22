@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.hpc.mpi.*;
  * Storing of general properties associated with the application
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 
@@ -42,7 +42,7 @@ public class GeneralProperties
 
 
     /** This is changed automatically by Ant. Look in build.xml...*/
-    private static final String versionNumber = "1.0.6";
+    private static final String versionNumber = "1.0.4.1";
 
     private static final String neuroMLVersionNumberShort = "1.6";
     private static final String neuroMLVersionNumberLong = "1.6";
@@ -98,7 +98,7 @@ public class GeneralProperties
         //System.out.println("Neuron home: "+userSettings.getNeuronHome());
         
         
-        if (userSettings.getNeuronHome()==null)
+        if (userSettings.getNeuronHome()==null || userSettings.getNeuronHome().trim().length()==0)
         {
         	if (GeneralUtils.isWindowsBasedPlatform())
         	{
@@ -121,6 +121,13 @@ public class GeneralProperties
         		else if ((new File("/Applications/NEURON-5.9/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.9/nrn/powerpc"));
         		else if ((new File("/Applications/NEURON-5.8/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.8/nrn/powerpc"));
         		else if ((new File("/Applications/NEURON-5.7/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.7/nrn/powerpc"));
+
+                else if ((new File("/Applications/NEURON-6.1/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.1/nrn/i386"));
+                else if ((new File("/Applications/NEURON-6.0/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.0/nrn/i386"));
+                else if ((new File("/Applications/NEURON-5.9/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.9/nrn/i386"));
+                else if ((new File("/Applications/NEURON-5.8/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.8/nrn/i386"));
+                
+                
         		else  userSettings.setNeuronHome(new String("/Applications/NEURON-6.0/nrn/powerpc"));
 
 

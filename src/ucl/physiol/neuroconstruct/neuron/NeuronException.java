@@ -26,7 +26,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * An exception for badly formatted NEURON files
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  *
  */
 

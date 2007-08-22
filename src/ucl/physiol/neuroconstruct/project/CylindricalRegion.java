@@ -19,7 +19,7 @@ import ucl.physiol.neuroconstruct.utils.*;
 import javax.media.j3d.*;
 import ucl.physiol.neuroconstruct.j3D.*;
 import ucl.physiol.neuroconstruct.cell.*;
-import ucl.physiol.neuroconstruct.cell.examples.*;
+
 import java.util.*;
 import java.awt.*;
 
@@ -27,7 +27,7 @@ import java.awt.*;
  * Extension of Regions in 3D
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class CylindricalRegion extends Region
@@ -380,7 +380,7 @@ public class CylindricalRegion extends Region
         Appearance app = Utils3D.getGeneralObjectAppearance(Color.red);
 
 
-        SimpleCell cell = new SimpleCell("fff");
+        //SimpleCell cell = new SimpleCell("fff");
 
         System.out.println("Is point: " + p + " in region: " + c.isPointInRegion(p));
 

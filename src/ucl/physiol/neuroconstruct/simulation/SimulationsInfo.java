@@ -30,7 +30,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
  * Extension of AbstractTableModel to store the info on multiple simulations
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 @SuppressWarnings("serial")

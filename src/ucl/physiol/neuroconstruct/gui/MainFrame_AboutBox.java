@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * About box for project
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

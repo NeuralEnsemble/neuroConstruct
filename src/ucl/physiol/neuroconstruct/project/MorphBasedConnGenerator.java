@@ -23,7 +23,7 @@ import javax.vecmath.*;
  * based on the project settings
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

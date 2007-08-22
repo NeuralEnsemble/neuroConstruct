@@ -18,7 +18,7 @@ import java.util.*;
  * Class holding info on single plot relevant to a Cell Mechanism
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class CellMechanismPlot

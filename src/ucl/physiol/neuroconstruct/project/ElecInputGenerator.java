@@ -22,7 +22,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Thread to handle generation of the electrical inputs based on the project settings
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

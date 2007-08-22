@@ -19,7 +19,7 @@ import ucl.physiol.neuroconstruct.cell.Cell;
  * Base class for instances of morphological projections/compartmentalisations
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  *
  */
 

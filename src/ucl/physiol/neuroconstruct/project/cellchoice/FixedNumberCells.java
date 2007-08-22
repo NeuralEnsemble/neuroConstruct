@@ -24,7 +24,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * Cell Group, only the number in it will be returned
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class FixedNumberCells extends CellChooser

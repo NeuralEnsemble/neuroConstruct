@@ -21,7 +21,7 @@ import ucl.physiol.neuroconstruct.neuron.*;
  * nmodlEditor application software
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class ProcessManager
@@ -243,7 +243,11 @@ public class ProcessManager
             }
             else if (GeneralUtils.isMacBasedPlatform())
             {
-                GuiUtils.showInfoMessage(logger, "Probable success", "The conditions for successful compilation of the files on a Mac haven't fully been determined, so assuming successful compilation...",
+                GuiUtils.showInfoMessage(logger, "Probable success", 
+                        "The conditions for successful compilation of the files on a Mac haven't fully been determined,"
+                        +" so assuming successful compilation.\n\n"
+                        +"Note: it is essential that you can compile NEURON mod files on your system (via nrnivmodl) before running NEURON from neuroConstruct.\n"
+                        +"This will involve installing the Developer Tools (XCode) in addition to the NEURON *.dmg",
                                            null);
 
                   return true;
@@ -268,8 +272,10 @@ public class ProcessManager
         {
             logger.logError("Error running the command: " + commandToExecute);
             throw new NeuronException("Error testing: " +
-                                       myFile.getAbsolutePath()+".\nIs NEURON correctly installed?\nNEURON home dir: "+GeneralProperties.getNeuronHomeDir()
-                                       +"\nThis should be set to the correct location at Settings -> General Properties & Project Defaults", ex);
+                                       myFile.getAbsolutePath()+".\nIs NEURON correctly installed?\n"
+                                       +"NEURON home dir being used: "+GeneralProperties.getNeuronHomeDir()
+                                       +"\nThis should be set to the correct location at Settings -> General Properties & Project Defaults\n\n"
+                                       +"Note: leave that field blank in that options window and restart and neuroConstruct will search for a possible location of NEURON\n\n", ex);
         }
 
     }

@@ -21,7 +21,7 @@ import java.io.*;
  * Parameter used for storing internal variables containing physical quantities
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 

@@ -38,7 +38,7 @@ import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
  * Main file for generating the GENESIS files
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class GenesisFileManager

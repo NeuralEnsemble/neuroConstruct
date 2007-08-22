@@ -127,29 +127,29 @@ public class ComplexConnectionsInfo extends AbstractTableModel
                 this.vectorNames.setElementAt((String)value , row);
                 break;
             case COL_NUM_SYNAPSE_LIST:
-                this.vectorSynapseList.setElementAt(value , row);
+                vectorSynapseList.setElementAt(value , row);
                 break;
             case COL_NUM_SYN_TARGET:
-                this.vectorSynTargetOption.setElementAt(value , row);
+                vectorSynTargetOption.setElementAt(value , row);
                 break;
             case COL_NUM_SOURCE:
-                this.vectorSource.setElementAt((String)value , row);
+                vectorSource.setElementAt((String)value , row);
                 break;
             case COL_NUM_TARGET:
                 this.vectorTarget.setElementAt((String)value , row);
                 break;
             case COL_NUM_SEARCH_PATTERN:
-                this.vectorSearchPattern.setElementAt((SearchPattern)value , row);
+                vectorSearchPattern.setElementAt((SearchPattern)value , row);
                 break;
             case COL_NUM_CONN_CONDS:
-                this.vectorConnConds.setElementAt((ConnectivityConditions)value , row);
+                vectorConnConds.setElementAt((ConnectivityConditions)value , row);
                 break;
             case COL_NUM_GROW_MODE:
-                this.vectorGrowMode.setElementAt((GrowMode)value , row);
+                vectorGrowMode.setElementAt((GrowMode)value , row);
                 break;
 
             case COL_NUM_MAX_MIN:
-                this.vectorMaxMin.setElementAt((MaxMinLength)value , row);
+                vectorMaxMin.setElementAt((MaxMinLength)value , row);
                 break;
 
 
@@ -234,7 +234,7 @@ public class ComplexConnectionsInfo extends AbstractTableModel
     public void setSynapseProperties(String complexConnName, Vector synPropList)
     {
         int index = vectorNames.indexOf(complexConnName);
-        this.setValueAt(synPropList, index, this.COL_NUM_SYNAPSE_LIST);
+        this.setValueAt(synPropList, index, COL_NUM_SYNAPSE_LIST);
     }
 
 
@@ -249,7 +249,7 @@ public class ComplexConnectionsInfo extends AbstractTableModel
     public void setSourceCellGroup(String complexConnName, String source)
     {
         int index = vectorNames.indexOf(complexConnName);
-        this.setValueAt(source, index, this.COL_NUM_SOURCE);
+        this.setValueAt(source, index, COL_NUM_SOURCE);
     }
 
 
@@ -265,7 +265,7 @@ public class ComplexConnectionsInfo extends AbstractTableModel
     public void setTargetCellGroup(String complexConnName, String target)
     {
         int index = vectorNames.indexOf(complexConnName);
-        this.setValueAt(target, index, this.COL_NUM_TARGET);
+        this.setValueAt(target, index, COL_NUM_TARGET);
     }
 
 
@@ -279,7 +279,7 @@ public class ComplexConnectionsInfo extends AbstractTableModel
     public void setSearchPattern(String complexConnName, SearchPattern sp)
     {
         int index = vectorNames.indexOf(complexConnName);
-        this.setValueAt(sp, index, this.COL_NUM_SEARCH_PATTERN);
+        this.setValueAt(sp, index, COL_NUM_SEARCH_PATTERN);
     }
 
 
@@ -293,7 +293,7 @@ public class ComplexConnectionsInfo extends AbstractTableModel
     public void setGrowMode(String complexConnName, GrowMode gm)
     {
         int index = vectorNames.indexOf(complexConnName);
-        this.setValueAt(gm, index, this.COL_NUM_GROW_MODE);
+        this.setValueAt(gm, index, COL_NUM_GROW_MODE);
     }
 
 
@@ -307,7 +307,7 @@ public class ComplexConnectionsInfo extends AbstractTableModel
     public void setSynTargetOption(String complexConnName, int i)
     {
         int index = vectorNames.indexOf(complexConnName);
-        this.setValueAt(new Integer(i), index, this.COL_NUM_SYN_TARGET);
+        this.setValueAt(new Integer(i), index, COL_NUM_SYN_TARGET);
     }
 
 
@@ -321,7 +321,7 @@ public class ComplexConnectionsInfo extends AbstractTableModel
     public void setMaxMinLength(String complexConnName, MaxMinLength mm)
     {
         int index = vectorNames.indexOf(complexConnName);
-        this.setValueAt(mm, index, this.COL_NUM_MAX_MIN);
+        this.setValueAt(mm, index, COL_NUM_MAX_MIN);
     }
 
 
@@ -336,7 +336,7 @@ public class ComplexConnectionsInfo extends AbstractTableModel
     public void setConnectivityConditions(String complexConnName, ConnectivityConditions cc)
     {
         int index = vectorNames.indexOf(complexConnName);
-        this.setValueAt(cc, index, this.COL_NUM_CONN_CONDS);
+        this.setValueAt(cc, index, COL_NUM_CONN_CONDS);
     }
 
 

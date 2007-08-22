@@ -23,7 +23,7 @@ import javax.swing.*;
  * Assorted handy utilities
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 
@@ -62,6 +62,7 @@ public class GeneralUtils
 
     public static boolean isLinuxBasedPlatform()
     {
+        ///if (true) return false;
         /** @todo See if this is general enough */
         return System.getProperty("os.name").toLowerCase().indexOf("nix") >= 0 ||
             System.getProperty("os.name").toLowerCase().indexOf("linux") >= 0;
@@ -70,6 +71,7 @@ public class GeneralUtils
 
     public static boolean isMacBasedPlatform()
     {
+        ///if (true) return true;
         /** @todo See if this is general enough */
         if (isWindowsBasedPlatform()) return false;
         if (isLinuxBasedPlatform()) return false;

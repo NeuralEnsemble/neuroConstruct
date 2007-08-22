@@ -26,7 +26,7 @@ import javax.swing.JOptionPane;
  * Helper class for managing multiple runs
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class MultiRunManager

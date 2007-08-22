@@ -19,7 +19,7 @@ import java.text.*;
  * Extension of JFormattedTextField for simplified input of double values in TextFields
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 @SuppressWarnings("serial")

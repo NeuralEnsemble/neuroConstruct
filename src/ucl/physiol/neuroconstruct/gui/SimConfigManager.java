@@ -32,7 +32,7 @@ import ucl.physiol.neuroconstruct.simulation.*;
  * GUI for editing simulation configurations
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 @SuppressWarnings("serial")

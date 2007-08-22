@@ -24,7 +24,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * e.g. class named CellProcess changed to CellMechanism
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  */
 
 public class ProjectFileUpdate

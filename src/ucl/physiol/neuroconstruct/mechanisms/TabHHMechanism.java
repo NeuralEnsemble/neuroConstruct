@@ -23,7 +23,7 @@ import ucl.physiol.neuroconstruct.simulation.SimEnvHelper;
 * tabchannel in GENESIS
  *
  * @author Padraig Gleeson
- * @version 1.0.6
+ *  
  *
  * @deprecated Use ChannelML instead...
  *
