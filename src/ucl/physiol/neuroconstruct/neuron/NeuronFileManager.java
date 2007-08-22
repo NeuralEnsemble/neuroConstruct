@@ -3880,7 +3880,9 @@ public class NeuronFileManager
 
                     String title = "NEURON_simulation" + "__"+ project.simulationParameters.getReference();
 
-                    File dirToRunIn = dirForDataFiles;
+                    File dirToRunInFile = dirForDataFiles;
+                    
+                    String dirToRunInPath = dirToRunInFile.getAbsolutePath();
 
 
                     String basicCommLine = GeneralProperties.getExecutableCommandLine();
@@ -3913,6 +3915,9 @@ public class NeuronFileManager
 
                     }
 
+                    File scriptFile = new File(ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory()),
+                                               "runsim.sh");
+                    
                     if (GeneralUtils.isLinuxBasedPlatform())
                     {
                         logger.logComment("Is linux platform...");
@@ -3951,6 +3956,12 @@ public class NeuronFileManager
 
                             executable = basicCommLine.trim();
                         }
+
+                        commandToExe = new String[]{executable, 
+                                titleOpt, title,
+                                workdirOpt, dirToRunInPath,
+                                extraArgs,
+                                scriptFile.getAbsolutePath()};
                     }
                     else if (GeneralUtils.isMacBasedPlatform())
                     {
@@ -3965,18 +3976,22 @@ public class NeuronFileManager
 
                             postArgs = "";
 
-                            dirToRunIn = ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory());
+                            dirToRunInFile = ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory());
+                            dirToRunInPath = "";
+                            title = "";
+                            
+
+                            commandToExe = new String[]{executable, 
+                                    scriptFile.getAbsolutePath()};
                     }
 
-                    String scriptText = "cd '" + dirToRunIn.getAbsolutePath() + "'\n" 
+                    String scriptText = "cd '" + dirToRunInFile.getAbsolutePath() + "'\n" 
                         + preCommand
                         + neuronExecutable
                         + " "
                         + mainHocFile.getName()
                         + postArgs;
 
-                    File scriptFile = new File(ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory()),
-                                               "runsim.sh");
                     
                     FileWriter fw = new FileWriter(scriptFile);
                     //scriptFile.se
@@ -3996,11 +4011,6 @@ public class NeuronFileManager
                         ex.printStackTrace();
                     }
 
-                    commandToExe = new String[]{executable, 
-                            titleOpt, title,
-                            workdirOpt, dirToRunIn.getAbsolutePath(),
-                            extraArgs,
-                            scriptFile.getAbsolutePath()};
 
                     fullCommand = "";
                     for (int i=0;i<commandToExe.length;i++)
