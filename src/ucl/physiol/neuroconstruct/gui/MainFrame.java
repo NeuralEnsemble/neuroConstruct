@@ -4595,7 +4595,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                         ProjectStructure.getExamplesDirectory().getAbsolutePath()))
         {
             boolean goOn = GuiUtils.showYesNoMessage(logger, "Note: the project: "+projManager.getCurrentProject().getProjectFile()
-                                      +"\nis one of the included example project in neuroConstruct. These are referenced in the documentation and paper.\n"
+                                      +"\nis one of the included example projects in neuroConstruct. These are referenced in the documentation and paper.\n"
                                       +"Are you sure you want to save over it?\n\nSelect No to save the project in a different location.", null);
 
             if (!goOn)
