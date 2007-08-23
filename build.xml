@@ -19,7 +19,7 @@
   <target name="init">
     <tstamp/>
     <property name="name" value="neuroConstruct"/>
-    <property name="version" value="1.0.4.1"/>
+    <property name="version" value="1.0.7"/>
     <property name="version.impl" value="${version}"/>
     <property name="year" value="2007"/>
 
@@ -283,109 +283,6 @@
 
 
   <!-- =================================================================== -->
-  <!-- Creates a zip file with source and directory structure              -->
-  <!-- ===================================================================
-
-  No longer needed...?
-
-  <target name="zip" depends="clean,website,helpdocs" description="Creates a zip file with source and directory structure">
-
-      <property name="temp.dir" value="./temp"/>
-      <property name="temp_ver.dir" value="${temp.dir}/${name}_${version}"/>
-
-      <mkdir dir="${temp_ver.dir}"/>
-
-      <mkdir dir="${temp_ver.dir}/projects"/>
-
-      <copy file="./projects/README" todir="${temp_ver.dir}/projects" />
-
-      <mkdir dir="${temp_ver.dir}/logs"/>
-      <copy file="./logs/README" todir="${temp_ver.dir}/logs" />
-
-      <mkdir dir="${temp_ver.dir}/examples"/>
-
-      <copy todir="${temp_ver.dir}/examples">
-
-          <fileset dir="${examples.dir}">
-          <include name="*/*.*"/>
-          <include name="*/cellProcesses/**/*"/>
-              <include name="*/cellMechanisms/**/*"/>
-              <include name="*/morphologies/*"/>
-              <include name="*/importedMorphologies/*"/>
-              <include name="*/generatedGENESIS/*"/>
-              <include name="*/generatedNEURON/*"/>
-              <include name="*/generatedNeuroML/*"/>
-
-          </fileset>
-
-      </copy>
-
-
-      <mkdir dir="${temp_ver.dir}/models"/>
-
-      <copy todir="${temp_ver.dir}/models">
-
-          <fileset dir="${models.dir}">
-              <include name="*/*.*"/>
-          <include name="*/cellProcesses/**/*"/>
-              <include name="*/cellMechanisms/**/*"/>
-              <include name="*/morphologies/*"/>
-              <include name="*/importedMorphologies/*"/>
-              <include name="*/generatedGENESIS/*"/>
-              <include name="*/generatedNEURON/*"/>
-              <include name="*/generatedNeuroML/*"/>
-
-          </fileset>
-
-      </copy>
-
-      <mkdir dir="${temp_ver.dir}/docs/XML"/>
-
-      <copy todir="${temp_ver.dir}/docs/XML">
-          <fileset dir="${docs.dir}" >
-              <include name="**/*.*"/>
-          </fileset>
-      </copy>
-
-
-
-
-      <mkdir dir="${temp_ver.dir}/src"/>
-      <copy todir="${temp_ver.dir}/src">
-          <fileset dir="${src.dir}">
-              <include name="**/*.java"/>
-              <include name="**/*.png"/>
-              <include name="**/*.PNG"/>
-              <include name="**/*.gif"/>
-              <include name="**/*.GIF"/>
-          </fileset>
-      </copy>
-
-      <mkdir dir="${temp_ver.dir}/templates"/>
-      <copy todir="${temp_ver.dir}/templates">
-        <fileset dir="${templates.dir}">
-          <include name="**/*"/>
-          <include name="README"/>
-        </fileset>
-      </copy>
-
-      <copy file="build.xml" todir="${temp_ver.dir}"/>
-      <copy file="run.bat" todir="${temp_ver.dir}"/>
-      <copy file="run.sh" todir="${temp_ver.dir}"/>
-      <copy file="README" todir="${temp_ver.dir}"/>
-      <copy file="licence.txt" todir="${temp_ver.dir}"/>
-
-      <zip destfile="./${name}_${version}.zip"
-            basedir="${temp.dir}/"
-            whenempty="create"/>
-
-      <delete dir="${temp.dir}"/>
-  </target>-->
-
-
-
-
-  <!-- =================================================================== -->
   <!-- Creates a dist dir and a zip file with directory structure,         -->
   <!--  jar but no source                                                  -->
   <!-- =================================================================== -->
@@ -501,18 +398,6 @@
   <!-- =================================================================== -->
 
   <target name="replaceversion" depends="init" description="Replaces version info in *.java">
-
-    <!-- Looks for the line " * @version 2.3.1" in the header and replaces with version number above -->
-
-      <replaceregexp
-          match="@version \d+\.\d+.\d+"
-          replace=" "
-          byline="true">
-          <fileset dir="${src.dir}">
-              <filename name="**/*.java"/>
-          </fileset>
-      </replaceregexp>
-
 
      <!-- Looks for the line specifying the version in GeneralProperties and replaces it -->
 
