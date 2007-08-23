@@ -246,6 +246,7 @@ public class ProjectStructure
             // passed all the tests...
 
             if (appVerNums.length < projVerNums.length) return -1; // i.e. app = 1.2 proj = 1.2.1
+            if (appVerNums.length > projVerNums.length) return 1; // i.e. app = 1.2.1 proj = 1.2
         }
         catch (Exception ex)
         {
