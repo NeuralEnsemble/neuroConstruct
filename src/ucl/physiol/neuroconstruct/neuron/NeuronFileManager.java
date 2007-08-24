@@ -346,7 +346,6 @@ public class NeuronFileManager
 
         logger.logComment("Cleaned up to: "+ text);
 
-
         if (text == null || text.trim().length() == 0)
         {
             return "";
@@ -2168,7 +2167,7 @@ public class NeuronFileManager
     public String generateCellGroups(int runMode) throws NeuronException
     {
         StringBuffer response = new StringBuffer();
-        response.append("\n");
+        //response.append("\n");
 
         ArrayList<String> cellGroupNames = project.cellGroupsInfo.getAllCellGroupNames();
         logger.logComment("Looking at " + cellGroupNames.size() + " cell groups");
@@ -2594,7 +2593,6 @@ public class NeuronFileManager
 
         addMajorComment(response, "Adding Network Connections");
 
-
         Iterator allNetConnNames = project.generatedNetworkConnections.getNamesNetConns();
 
         if (!allNetConnNames.hasNext())
@@ -2603,56 +2601,8 @@ public class NeuronFileManager
             return "";
         }
 
-            GeneralUtils.timeCheck("Starting gen of syn conns");
-            
+        GeneralUtils.timeCheck("Starting gen of syn conns");
 
-
-        // this section calculates the number of ADDITIONAL dendritic/axonal
-        // sections on each cell.
-        //logger.logComment("------------    Generating extra dends etc...");
-
-        //Hashtable cellnameVsNumExtraDends = new Hashtable();
-        //Hashtable cellnameVsNumExtraAxons = new Hashtable();
-
-        while (allNetConnNames.hasNext())
-        {
-            String netConnName = (String) allNetConnNames.next();
-            /*
-            String sourceCellGroup = null;
-            String targetCellGroup = null;
-
-            if (project.morphNetworkConnectionsInfo.isValidSimpleNetConn(netConnName))
-            {
-                sourceCellGroup = project.morphNetworkConnectionsInfo.getSourceCellGroup(netConnName);
-                targetCellGroup = project.morphNetworkConnectionsInfo.getTargetCellGroup(netConnName);
-                //growMode = project.simpleNetworkConnectionsInfo.getGrowMode(netConnName);
-            }
-            else if (project.volBasedConnsInfo.isValidAAConn(netConnName))
-            {
-                sourceCellGroup = project.volBasedConnsInfo.getSourceCellGroup(netConnName);
-                targetCellGroup = project.volBasedConnsInfo.getTargetCellGroup(netConnName);
-            }
-            ArrayList<SingleSynapticConnection> allSynapses = project.generatedNetworkConnections.getSynapticConnections(netConnName);
-*/
-            /*
-            for (int i = 0; i < allSynapses.size(); i++)
-            {
-                GeneratedNetworkConnections.SingleSynapticConnection syn = allSynapses.get(i);
-
-                String targetCellName = "a_"
-                    + targetCellGroup
-                    + "["
-                    + syn.targetEndPoint.cellNumber
-                    + "]";
-
-                String sourceCellName = "a_"
-                    + sourceCellGroup
-                    + "["
-                    + syn.sourceEndPoint.cellNumber
-                    + "]";
-
-            }*/
-        }
 
 
         // refresh iterator...
@@ -2741,6 +2691,7 @@ public class NeuronFileManager
             {
                 
                 GeneratedNetworkConnections.SingleSynapticConnection synConn = allSynapses.get(singleConnIndex);
+                //System.out.println("synConn: "+synConn);
 
                 for (int synPropIndex = 0; synPropIndex < synPropList.size(); synPropIndex++)
                 {
@@ -2783,7 +2734,7 @@ public class NeuronFileManager
                                                                      synConn.targetEndPoint.location.getFractAlong());
 
                     Segment sourceSegment = null;
-                    float fractionAlongSegment = -1;
+                    float fractionAlongSrcSeg = -1;
                     
                     int origId = synConn.sourceEndPoint.location.getSegmentId();
 
@@ -2793,8 +2744,8 @@ public class NeuronFileManager
                         !substituteConnPoints.containsKey(origId)) // none on this segment
                     {
                         sourceSegment = sourceCell.getSegmentWithId(origId);
-                        fractionAlongSegment = synConn.sourceEndPoint.location.getFractAlong();
-                        if (sourceSegment.isSpherical()) fractionAlongSegment = 1; // as it doesn't really matter
+                        fractionAlongSrcSeg = synConn.sourceEndPoint.location.getFractAlong();
+                        ///if (sourceSegment.isSpherical()) fractionAlongSrcSeg = 1; // as it doesn't really matter
                     }
                     else
                     {
@@ -2803,7 +2754,7 @@ public class NeuronFileManager
                         SegmentLocation subsSynConLoc = substituteConnPoints.get(new Integer(origId));
 
                         sourceSegment = sourceCell.getSegmentWithId(subsSynConLoc.getSegmentId());
-                        fractionAlongSegment = subsSynConLoc.getFractAlong();
+                        fractionAlongSrcSeg = subsSynConLoc.getFractAlong();
 
                         apSegmentPropDelay = CellTopologyHelper.getTimeToFirstExpModParent(sourceCell,
                                                                                     realSource,
@@ -2812,7 +2763,7 @@ public class NeuronFileManager
                         addComment(response,
                                    "Instead of point " + synConn.sourceEndPoint.location.getFractAlong() + " along seg: "
                                    + realSource.toShortString() + " connecting to point " +
-                                   fractionAlongSegment + " along seg: "
+                                   fractionAlongSrcSeg + " along seg: "
                                    + sourceSegment.toShortString() + "");
 
                     }
@@ -2822,7 +2773,10 @@ public class NeuronFileManager
                     float fractAlongSourceSection
                         = CellTopologyHelper.getFractionAlongSection(sourceCell,
                                                                      sourceSegment,
-                                                                     fractionAlongSegment);
+                                                                     fractionAlongSrcSeg);
+                    
+
+                    logger.logComment("fractAlongSourceSection: " + fractAlongSourceSection, true);
 
                     float synInternalDelay = -1;
                     float weight = -1;
@@ -2848,10 +2802,16 @@ public class NeuronFileManager
                     addComment(response, "Connection from src cell "+synConn.sourceEndPoint.cellNumber
                                +" to tgt cell "+synConn.targetEndPoint.cellNumber+". Fract along source section: "
                                + fractAlongSourceSection+", weight of syn: " + weight , false);
+                    
                     addComment(response,
-                               "Delay due to AP propagation along segments: " + apSegmentPropDelay
-                               + ", delay due to AP jump pre -> post location "+ apSpaceDelay
-                               + ", internal synapse delay (from Synaptic Props): " + synInternalDelay);
+                            "Delay due to AP propagation along segments: " + apSegmentPropDelay
+                            + ", delay due to AP jump pre -> post location "+ apSpaceDelay , false);
+                    
+                    float totalDelay = synInternalDelay + apSegmentPropDelay + apSpaceDelay;
+                    
+                    addComment(response,
+                            "Internal synapse delay (from Synaptic Props): " + synInternalDelay
+                            +", total delay at synapse: "+totalDelay);
 
 
                     response.append("objectvar " + objectVarName + "\n\n");
@@ -2886,7 +2846,7 @@ public class NeuronFileManager
                                         ", "
                                         + threshold
                                         + ", "
-                                        + (synInternalDelay + apSegmentPropDelay + apSpaceDelay)
+                                        + totalDelay
                                         + ", "
                                         + weight
                                         + "))" /** @todo make this variable... */
