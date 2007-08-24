@@ -628,6 +628,8 @@ public class GeneratedNetworkConnections
 
                 for(SingleSynapticConnection synConn: synConns)
                 {
+                    //System.out.println("synConn: "+synConn);
+                    
                     SimpleXMLElement connElement = new SimpleXMLElement(NetworkMLConstants.CONNECTION_ELEMENT);
 
                     connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.CONNECTION_ID_ATTR, id+""));
@@ -663,17 +665,21 @@ public class GeneratedNetworkConnections
                     SimpleXMLElement preElement = new SimpleXMLElement(NetworkMLConstants.PRE_CONN_ELEMENT);
                     preElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.CELL_ID_ATTR, synConn.sourceEndPoint.cellNumber+""));
                     preElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.SEGMENT_ID_ATTR, synConn.sourceEndPoint.location.getSegmentId()+""));
-                    preElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.FRACT_ALONG_ATTR, synConn.sourceEndPoint.location.getFractAlong()+""));
-
+           
+                    if (synConn.sourceEndPoint.location.getFractAlong()!=SegmentLocation.DEFAULT_FRACT_CONN)
+                    {
+                        preElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.FRACT_ALONG_ATTR, 
+                                                                        synConn.sourceEndPoint.location.getFractAlong()+""));
+                    }
+                    
                     SimpleXMLElement postElement = new SimpleXMLElement(NetworkMLConstants.POST_CONN_ELEMENT);
                     postElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.CELL_ID_ATTR, synConn.targetEndPoint.cellNumber+""));
                     postElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.SEGMENT_ID_ATTR, synConn.targetEndPoint.location.getSegmentId()+""));
 
-                    if (synConn.targetEndPoint.location.getFractAlong()!=0.5)
+                    if (synConn.targetEndPoint.location.getFractAlong()!=SegmentLocation.DEFAULT_FRACT_CONN)
                     {
                         postElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.FRACT_ALONG_ATTR,
-                                                                        synConn.targetEndPoint.location.getFractAlong() +
-                                                                        ""));
+                                                                        synConn.targetEndPoint.location.getFractAlong() + ""));
                     }
 
                     connElement.addContent("\n                ");
