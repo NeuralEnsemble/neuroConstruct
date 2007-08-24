@@ -30,7 +30,7 @@ public class MpiSettings
 
     private String version = MPI_V1;
 
-    public static int favouredConfig = 1;
+    public static int favouredConfig = 0;
 
 
     private ArrayList<MpiConfiguration> configurations = new ArrayList<MpiConfiguration>();
@@ -40,13 +40,6 @@ public class MpiSettings
         String localConfig = "Local machine, single processor";
         String multiConfig = "Multihost";
 
-        if (getMpiConfiguration(localConfig)==null)
-        {
-            MpiConfiguration def = new MpiConfiguration(localConfig);
-            def.getHostList().add(new MpiHost("localhost", 1, 1));
-            configurations.add(def);
-        }
-
         if (getMpiConfiguration(multiConfig)==null)
         {
             MpiConfiguration p = new MpiConfiguration(multiConfig);
@@ -55,6 +48,13 @@ public class MpiSettings
             //p.getHostList().add(new MpiHost("localhost", 4, 1));
             p.getHostList().add(new MpiHost("bernal", 4, 1));
             configurations.add(p);
+        }
+
+        if (getMpiConfiguration(localConfig)==null)
+        {
+            MpiConfiguration def = new MpiConfiguration(localConfig);
+            def.getHostList().add(new MpiHost("localhost", 1, 1));
+            configurations.add(def);
         }
 
     }

@@ -69,10 +69,7 @@ public class MpiConfiguration
             num+=host.getNumProcessors();
         }
         return num;
-
     }
-
-
 
 
     public String toString()
