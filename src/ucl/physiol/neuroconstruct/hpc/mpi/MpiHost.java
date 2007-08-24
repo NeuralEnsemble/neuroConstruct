@@ -75,6 +75,6 @@ public class MpiHost
 
     public String toString()
     {
-        return "Host: "+hostname+" num procs: "+numProcessors+", weight: "+weight;
+        return "Host: "+hostname+", num of processors: "+numProcessors+", weight: "+weight;
     }
 }

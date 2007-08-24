@@ -55,6 +55,8 @@ public class ProjectManager
     public MorphBasedConnGenerator netConnGenerator = null;
 
     public VolumeBasedConnGenerator arbourConnectionGenerator = null;
+    
+    public CompNodeGenerator compNodeGenerator = null;
     public ElecInputGenerator elecInputGenerator = null;
     public PlotSaveGenerator plotSaveGenerator = null;
 
@@ -198,6 +200,7 @@ public class ProjectManager
         netConnGenerator = null;
 
         arbourConnectionGenerator = null;
+        compNodeGenerator = null;
         elecInputGenerator = null;
         plotSaveGenerator = null;
 

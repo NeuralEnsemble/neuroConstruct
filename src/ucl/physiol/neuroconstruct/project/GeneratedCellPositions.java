@@ -355,6 +355,12 @@ public class GeneratedCellPositions
                     SimpleXMLElement instanceElement = new SimpleXMLElement(NetworkMLConstants.INSTANCE_ELEMENT);
 
                     instanceElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INSTANCE_ID_ATTR, i+""));
+                    
+                    if (posRec.nodeId!=PositionRecord.NO_NODE_ID)
+                    {
+                        instanceElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NODE_ID_ATTR, posRec.nodeId+""));
+                    }
+                    
 
                     SimpleXMLElement locationElement = new SimpleXMLElement(NetworkMLConstants.LOCATION_ELEMENT);
 

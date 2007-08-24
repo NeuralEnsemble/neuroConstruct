@@ -6206,7 +6206,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             if (report.indexOf("Generation interrupted")>0)
             {
-                logger.logComment("It seems the generation of cell positions was interrupted...");
+                logger.logComment("It seems the generation of connections was interrupted...");
                 return;
             }
 
@@ -6220,7 +6220,30 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         }
 
-        else if (generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
+        else if (includeParallelFunc() && generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
+        {
+            String currentReport = jEditorPaneGenerateInfo.getText();
+
+            String update = new String(currentReport.substring(0,currentReport.lastIndexOf("</body>")) // as the jEditorPane returns html...
+                                       +report);
+            
+            jEditorPaneGenerateInfo.setText(update);
+
+            if (report.indexOf("Generation interrupted")>0)
+            {
+                logger.logComment("It seems the generation of connections was interrupted...");
+                return;
+            }
+
+            projManager.compNodeGenerator = new CompNodeGenerator(projManager.getCurrentProject(), this);
+
+            projManager.compNodeGenerator.setSimConfig(simConfig);
+
+            projManager.compNodeGenerator.start();
+        }
+
+        else if ((!includeParallelFunc() && generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
+                || generatorType.equals(CompNodeGenerator.myGeneratorType))
         {
             String currentReport = jEditorPaneGenerateInfo.getText();
 
@@ -6233,7 +6256,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             if (report.indexOf("Generation interrupted")>0)
             {
-                logger.logComment("It seems the generation of cell positions was interrupted...");
+                logger.logComment("It seems the generation of compute nodes was interrupted...");
                 return;
             }
 
@@ -9888,6 +9911,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         int totalSteps = simConfig.getCellGroups().size()
             + simConfig.getNetConns().size()
             + simConfig.getInputs().size();
+        
+        if (includeParallelFunc()) totalSteps = totalSteps + simConfig.getCellGroups().size(); // for the compute node gen...
 
         jProgressBarGenerate.setMaximum(totalSteps * 100);
         jProgressBarGenerate.setValue(0);

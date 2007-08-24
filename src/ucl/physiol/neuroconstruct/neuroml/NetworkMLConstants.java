@@ -48,6 +48,7 @@ public class NetworkMLConstants
     public static String INSTANCES_ELEMENT = "instances";
     public static String INSTANCE_ELEMENT = "instance";
     public static String INSTANCE_ID_ATTR = "id";
+    public static String NODE_ID_ATTR = "node_id";
 
     public static String LOCATION_ELEMENT = "location";
     public static String LOC_X_ATTR = "x";

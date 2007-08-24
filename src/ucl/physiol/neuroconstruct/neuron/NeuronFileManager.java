@@ -642,8 +642,13 @@ public class NeuronFileManager
         ArrayList<String> cellGroupNames = simConfig.getCellGroups();
 
         logger.logComment("Looking at " + cellGroupNames.size() + " cell groups");
+        
+        MpiConfiguration mpiConfig = GeneralProperties.getMpiSettings().getMpiConfigurations().get(MpiSettings.favouredConfig);
 
-        int totalProcs = GeneralProperties.getMpiSettings().getMpiConfigurations().get(MpiSettings.favouredConfig).getTotalNumProcessors();
+        int totalProcs = mpiConfig.getTotalNumProcessors();
+        
+
+        addComment(response, "MPI Configuration: "+ mpiConfig);
 
 
         response.append("func getGid() {\n\n");
@@ -3504,6 +3509,9 @@ public class NeuronFileManager
     public static void addComment(StringBuffer responseBuffer, String comment)
     {
         if (!addComments) return;
+
+        comment = GeneralUtils.replaceAllTokens(comment, "\n", "\n//  ");
+        
         addComment(responseBuffer, comment, "", true);
     }
     public static void addComment(StringBuffer responseBuffer, String comment, boolean inclReturn)

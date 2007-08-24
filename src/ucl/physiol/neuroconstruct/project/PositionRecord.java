@@ -30,6 +30,13 @@ public class PositionRecord
     public float x_pos;
     public float y_pos;
     public float z_pos;
+    
+    /*
+     * Used to signal which computational node the cell should execute on
+     */
+    public static final int NO_NODE_ID = -1;
+    
+    public int nodeId = NO_NODE_ID;
 
     public PositionRecord(int cellNumber, float x_pos, float y_pos, float z_pos)
     {
@@ -46,9 +53,14 @@ public class PositionRecord
 
     public String toString()
     {
-        return "Cell: [" + cellNumber + "] (" + x_pos + ", " + y_pos + ", " + z_pos + ")";
+        if (nodeId == NO_NODE_ID) return "Cell: [" + cellNumber + "] (" + x_pos + ", " + y_pos + ", " + z_pos + ")";
+        return "Cell: [" + cellNumber + "] (" + x_pos + ", " + y_pos + ", " + z_pos + "), node id: "+nodeId;
     }
 
+    /*
+     * Note: no node id when reading in string form as this form is to support pre NetworkML storage of
+     * locations
+     */
     public PositionRecord(String stringForm)
     {
         int indexFirstSquareBracket = stringForm.indexOf("[");
