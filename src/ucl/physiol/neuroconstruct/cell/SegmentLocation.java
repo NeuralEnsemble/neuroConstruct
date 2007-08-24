@@ -24,6 +24,8 @@
 @SuppressWarnings("serial")
 public class SegmentLocation implements Serializable
 {
+    public static float DEFAULT_FRACT_CONN = 0.5f;
+    
     private int segmentId;
 
     /**
