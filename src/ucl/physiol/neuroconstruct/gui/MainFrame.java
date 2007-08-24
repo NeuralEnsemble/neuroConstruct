@@ -700,7 +700,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JTextField jTextFieldSimUnitsTemp = new JTextField();
     JTextField jTextFieldElecLenMaxUnits = new JTextField();
     JTextField jTextFieldElecLenMinUnits = new JTextField();
-    JMenuItem jMenuItemHelp = new JMenuItem();
+    JMenuItem jMenuItemHelpMain = new JMenuItem();
+    JMenuItem jMenuItemHelpRelNotes = new JMenuItem();
     JCheckBox jCheckBoxNeuronComments = new JCheckBox();
     JButton jButtonCellTypeBioPhys = new JButton();
     JButton jButtonCellTypeEditDesc = new JButton();
@@ -1584,14 +1585,25 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTextFieldElecLenMinUnits.setText(UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol());
         jTextFieldElecLenMinUnits.setColumns(7);
 
-        jMenuItemHelp.setText("Help");
-        jMenuItemHelp.addActionListener(new java.awt.event.ActionListener()
+        jMenuItemHelpMain.setText("Help");
+        jMenuItemHelpMain.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
                 jMenuItemHelp_actionPerformed(e);
             }
         });
+        
+        jMenuItemHelpRelNotes.setText("Release Notes");
+        jMenuItemHelpRelNotes.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jMenuItemHelpRelNotes_actionPerformed(e);
+            }
+        });
+        
+        
         jCheckBoxNeuronComments.setEnabled(false);
         jCheckBoxNeuronComments.setText("Generate comments");
         jButtonCellTypeBioPhys.setEnabled(false);
@@ -2626,8 +2638,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jMenuFile.addSeparator();
         jMenuFile.add(jMenuFileExit);
 
-        jMenuHelp.add(jMenuItemHelp);
+        jMenuHelp.add(jMenuItemHelpMain);
         jMenuHelp.add(jMenuItemGlossary);
+        //////////////jMenuHelp.add(jMenuItemHelpRelNotes);
         jMenuHelp.add(jMenuItemUnits);
         jMenuHelp.add(jMenuItemJava);
         jMenuHelp.add(jMenuHelpAbout);
@@ -12325,6 +12338,27 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
         
     }
+    
+    void jMenuItemHelpRelNotes_actionPerformed(ActionEvent e)
+    {
+
+        logger.logComment("Going to show help menu...");
+
+        File f = new File(ProjectStructure.getMainHelpFile());
+        
+        try
+        {
+            HelpFrame.showFrame(f.toURL(), "neuroConstruct Help documentation", false);
+        }
+        catch (MalformedURLException m)
+        {
+            
+        }
+        
+    }
+    
+    
+    
     
 
 

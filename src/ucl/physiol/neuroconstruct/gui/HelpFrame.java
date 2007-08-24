@@ -232,18 +232,10 @@ public class HelpFrame extends JFrame implements HyperlinkListener
             
             HelpFrame simpleViewer = HelpFrame.showFrame(internalURL, f.getAbsolutePath(), false);
 
-            simpleViewer.setFrameSize(800, 600);
+            //simpleViewer.setFrameSize(800, 600);
 
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            Dimension frameSize = simpleViewer.getSize();
 
-            if (frameSize.height > screenSize.height)
-                frameSize.height = screenSize.height;
-            if (frameSize.width > screenSize.width)
-                frameSize.width = screenSize.width;
-
-            simpleViewer.setLocation( (screenSize.width - frameSize.width) / 2,
-                                     (screenSize.height - frameSize.height) / 2);
+            GuiUtils.centreWindow(theHelpFrame, .85f);
 
             simpleViewer.setVisible(true);
 
