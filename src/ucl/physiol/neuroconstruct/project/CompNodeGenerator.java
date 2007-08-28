@@ -14,12 +14,9 @@ package ucl.physiol.neuroconstruct.project;
 
 import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
-import ucl.physiol.neuroconstruct.project.packing.*;
-import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.hpc.mpi.MpiConfiguration;
 import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings;
 
-import javax.vecmath.*;
 
 /**
  * Thread to handle generation of node ids of the generated cells, possibly based on cell position and 

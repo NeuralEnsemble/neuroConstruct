@@ -54,7 +54,7 @@ public class PositionRecord
     public String toString()
     {
         if (nodeId == NO_NODE_ID) return "Cell: [" + cellNumber + "] (" + x_pos + ", " + y_pos + ", " + z_pos + ")";
-        return "Cell: [" + cellNumber + "] (" + x_pos + ", " + y_pos + ", " + z_pos + "), node id: "+nodeId;
+        return "Cell: [" + cellNumber + "] (" + x_pos + ", " + y_pos + ", " + z_pos + ") Node id: "+nodeId;
     }
 
     /*
