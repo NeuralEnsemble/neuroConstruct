@@ -6200,7 +6200,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             String update = new String(currentReport.substring(0,currentReport.lastIndexOf("</body>")) // as the jEditorPane returns html...
                                        +report);
-            jEditorPaneGenerateInfo.setText(update);
+            
+            jEditorPaneGenerateInfo.setText(update+"  ");
 
 
 
@@ -7573,7 +7574,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                   //int colIndex = columnAtPoint(p);
                   
                   //int realColumnIndex = convertColumnIndexToModel(colIndex);
-
 
                   //if (realColumnIndex==CellMechanismInfo.COL_NUM_DESC)
                   {
