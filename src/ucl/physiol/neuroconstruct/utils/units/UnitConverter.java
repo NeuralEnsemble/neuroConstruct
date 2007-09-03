@@ -279,6 +279,7 @@ public class UnitConverter
                            , new Unit[]
                            {new Unit(Prefix.NONE, Units.MOLE, 1),
                            new Unit(Prefix.MICRO, Units.METER, -3)}),
+                           
                 new Units("NEURON_concentration"
                           , new Unit[]
                           {new Unit(Prefix.MILLI, Units.MOLE, 1),
@@ -292,6 +293,7 @@ public class UnitConverter
                           , new Unit[]
                           {new Unit(Prefix.NONE, Units.MOLE, 1),
                           new Unit(Prefix.NONE, Units.METER, -3)}),
+                          
                 new Units("GENESIS_PHY_concentration"
                           , new Unit[]
                           {new Unit(Prefix.NONE, Units.MOLE, 1),
