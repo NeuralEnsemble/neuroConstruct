@@ -17,7 +17,7 @@
 <script type="text/javascript" src="skin/tigris.js"></script>
 <script src="skin/menu.js" language="javascript" type="text/javascript"></script>
 
-<title>neuroConstruct: Software for developing biologically realistic 3D neural networks</title>
+<title>Download neuroConstruct</title>
 
 <meta content="text/css" http-equiv="Content-style-type">
 
@@ -115,34 +115,47 @@ if (isset($_REQUEST['reference']))
 			echo "<h2>Downloading neuroConstruct</h2>";
 
 
-			//echo "<h3>Please select one of the links below to download the application.</h3>";
+			echo "<h3>Bookmark this page for a direct link to the download list</h3>";
 
 
 
-			echo "<p><a href ='../neuroConstruct/docs/install.html'>Installation instructions</a></p>";
+			echo "<p>&nbsp;&nbsp;<a href ='../neuroConstruct/docs/install.html'>Installation instructions</a></p>";
 
-						echo "<h3><span style='color:#FF0000;'>The current version of the application is v1.0.4</h3></h3>";
-
-
-
-			echo "<p><a href ='RELEASE_NOTES'>Release Notes for v1.0.4</a></p>";
+			$verDots = "1.0.4.1";
+			$verDashs = "1_0_4_1";
 
 
-
-			echo "<h4>Installer for Windows</h4>";
-			echo "<p><a href='form.php?reference=".$ref."&dl=neuroConstruct_windows_1_0_4.exe'>neuroConstruct_windows_1_0_4.exe</a></p>";
-
-			echo "<h4>Installer for Linux</h4>";
-			echo "<p><a href='form.php?reference=".$ref."&dl=neuroConstruct_unix_1_0_4.sh'>neuroConstruct_unix_1_0_4.sh</a></p>";
-
-			echo "<h4>Installer for Mac</h4>";
-			echo "<p><a href='form.php?reference=".$ref."&dl=neuroConstruct_macos_1_0_4.dmg'>neuroConstruct_macos_1_0_4.dmg</a></p>";
-
-			echo "<h4>Zip file for manual install</h4>";
-			echo "<p><a href='form.php?reference=".$ref."&dl=neuroConstruct_1.0.4.zip'>neuroConstruct_1.0.4.zip</a></p>";
+			echo "<h3><span style='color:#FF0000;'>The current version of the application is v".$verDots."</h3></h3>";
 
 
+
+			echo "<p>&nbsp;&nbsp;<a href ='RELEASE_NOTES'>Release notes for v".$verDots."</a></p>";
+
+
+			echo "<h4>Installer for Windows:</h4>";
+			echo "<p>&nbsp;&nbsp;<a href='form.php?reference=".$ref."&dl=neuroConstruct_windows_".$verDashs.".exe'>neuroConstruct_windows_".$verDashs.".exe</a></p>";
+
+			echo "<h4>Installer for Linux:</h4>";
+			echo "<p>&nbsp;&nbsp;<a href='form.php?reference=".$ref."&dl=neuroConstruct_unix_".$verDashs.".sh'>neuroConstruct_unix_".$verDashs.".sh</a></p>";
+
+			echo "<h4>Installer for Mac:</h4>";
+			echo "<p>&nbsp;&nbsp;<a href='form.php?reference=".$ref."&dl=neuroConstruct_macos_".$verDashs.".dmg'>neuroConstruct_macos_".$verDashs.".dmg</a></p>";
+
+			echo "<h4>Zip file for manual install:</h4>";
+			echo "<p>&nbsp;&nbsp;<a href='form.php?reference=".$ref."&dl=neuroConstruct_".$verDots.".zip'>neuroConstruct_".$verDots.".zip</a></p>";
+
+
+			echo "<br/><br/>";
 			echo "<h3>Older versions...</h3>";
+
+
+			echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_windows_1_0_4.exe'>neuroConstruct_windows_1_0_4.exe</a></p>";
+
+			echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_unix_1_0_4.sh'>neuroConstruct_unix_1_0_4.sh</a></p>";
+
+			echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_macos_1_0_4.dmg'>neuroConstruct_macos_1_0_4.dmg</a></p>";
+
+			echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_1.0.4.zip'>neuroConstruct_1.0.4.zip</a></p>";
 
 
 			echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_windows_1_0_1.exe'>neuroConstruct_windows_1_0_1.exe</a></p>";
