@@ -115,6 +115,11 @@ public class GuiUtils
                                       JOptionPane.ERROR_MESSAGE);
 
     }
+    
+    private static void showMessageDialog(Component parent, String message, String title, int type)
+    {
+    	// todo: make this default message showing dialog...
+    }
 
     /**
      * Show info message to user
@@ -277,7 +282,7 @@ public class GuiUtils
    {
 
     ClassLogger logger = new ClassLogger("Dummy");
-       GuiUtils.showErrorMessage(logger, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOPPPPPPTTTTTTTTTTTTTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOPPPPPPTTTTTTTTTTTTTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOPPPPPPPPPPPPPPPPPPPPPPPPPPPPP", null, null);
+       GuiUtils.showErrorMessage(logger, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTOOPPPPPPPPPPPPPPPPPPPPPPPPPP", null, null);
 
    }
 
