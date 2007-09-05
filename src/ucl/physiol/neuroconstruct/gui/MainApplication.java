@@ -126,7 +126,7 @@ public class MainApplication
 
     private void createHoc()
     {
-        frame.doCreateHoc(NeuronFileManager.RUN_LOCALLY);
+        frame.doCreateHoc(NeuronFileManager.RUN_HOC);
     }
 
     private void reloadLastProject()

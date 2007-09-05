@@ -75,7 +75,7 @@ public class CompNodeGenerator extends Thread
         ArrayList<String> cellGroupNamesUnordered = simConfig.getCellGroups();
         LinkedList<String> cellGroupNames = new LinkedList<String>();
         
-        MpiConfiguration mpiConfig = GeneralProperties.getMpiSettings().getMpiConfigurations().get(MpiSettings.favouredConfig);
+        MpiConfiguration mpiConfig = simConfig.getMpiConf();
 
         int totalProcs = mpiConfig.getTotalNumProcessors();
         
@@ -127,10 +127,15 @@ public class CompNodeGenerator extends Thread
         logger.logComment("New order: "+ cellGroupNames);
         
         Random r = ProjectManager.getRandomGenerator();
+        
+        Hashtable<String, ArrayList<Integer>> hostsVsNumOnProcs = new Hashtable<String, ArrayList<Integer>>();
+        
+        int cellCount = 0;
 
 
         for (int l = 0; l < cellGroupNames.size(); l++)
         {
+            
             if (continueGeneration)
             {
                 String nextCellGroup = cellGroupNames.get(l);
@@ -143,8 +148,30 @@ public class CompNodeGenerator extends Thread
                 
                 for(PositionRecord pos: posRecs)
                 {
-                    int nodeID = r.nextInt(totalProcs);
+                    cellCount++;
+                    
+                    //int nodeID = r.nextInt(totalProcs);
+                    int nodeID = ((cellCount-1)%totalProcs);
+                    
+                    logger.logComment("cellCount: "+cellCount+", nodeID: "+nodeID,true);
+                    
+                    
                     pos.nodeId = nodeID;
+                    String host = mpiConfig.getHostForGlobalId(nodeID);
+                    int procNum = mpiConfig.getProcForGlobalId(nodeID);
+                    
+                    if (hostsVsNumOnProcs.get(host)==null)
+                    {
+                        ArrayList<Integer> numOnProcs = new ArrayList<Integer>();
+                        for(int i=0;i<mpiConfig.getNumProcessorsOnHost(host);i++)
+                        {
+                            numOnProcs.add(0);
+                        }
+                        hostsVsNumOnProcs.put(host, numOnProcs);
+                    }
+                    ArrayList<Integer> numOnProcs = hostsVsNumOnProcs.get(host);
+                    numOnProcs.set(procNum, numOnProcs.get(procNum)+1);
+                    
                 }
                 
 
@@ -173,7 +200,28 @@ public class CompNodeGenerator extends Thread
         generationReport.append("Time taken to generate compute nodes: " + secondsPosns + " seconds.<br>");
         
 
-        generationReport.append("Compute nodes generated for:<br><b>"+info+"</b><br><br>");
+        generationReport.append("Compute nodes generated for:<br><b>"+info+"</b>");
+        
+        Enumeration<String> hosts = hostsVsNumOnProcs.keys();
+        while(hosts.hasMoreElements())
+        {
+            String host = hosts.nextElement();
+            
+            generationReport.append("Host: <b>"+host+"</b>: ");
+
+            ArrayList<Integer> numOnProcs = hostsVsNumOnProcs.get(host);
+            
+            for(int i=0;i<numOnProcs.size();i++)
+            {
+                generationReport.append("proc: "+i+" has <b>"+numOnProcs.get(i)+"</b> cells");
+                if(i<numOnProcs.size()-1) 
+                    generationReport.append(", ");
+                else
+                    generationReport.append("<br><br>");
+                    
+            }
+        }
+        generationReport.append("<br>");
 
 
         if (myReportInterface!=null)

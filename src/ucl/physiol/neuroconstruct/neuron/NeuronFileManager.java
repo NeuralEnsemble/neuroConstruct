@@ -49,10 +49,10 @@ public class NeuronFileManager
     /**
      * Various options for running the generated code
      */
-    public static final int RUN_LOCALLY = 0;
+    public static final int RUN_HOC = 0;
     public static final int RUN_VIA_CONDOR = 1;
-    public static final int RUN_PARALLEL = 2;
-
+    //public static final int RUN_PARALLEL_HOC = 2;
+    public static final int RUN_PYTHON = 2;
 
     /**
      * The random seed placed into the generated NEURON code
@@ -132,6 +132,7 @@ public class NeuronFileManager
         genTime = -1;
 
     }
+    
 
     public void generateTheNeuronFiles(SimConfig simConfig,
                                        MultiRunManager multiRunManager,
@@ -178,11 +179,11 @@ public class NeuronFileManager
 
             fw.write(getHostname());
 
-            if (runMode == RUN_PARALLEL) fw.write(initialiseParallel());
+            if (simConfig.getMpiConf().isParallel()) fw.write(initialiseParallel());
 
             fw.write(generateNeuronCodeBlock(NativeCodeLocation.BEFORE_CELL_CREATION));
 
-            if (runMode == RUN_PARALLEL) fw.write(associateCellsWithNodes());
+            if (simConfig.getMpiConf().isParallel()) fw.write(associateCellsWithNodes());
 
             fw.write(generateCellGroups(runMode));
 
@@ -198,7 +199,7 @@ public class NeuronFileManager
 
             //fw.write(generateAfterCreationText());
 
-            if (runMode != RUN_VIA_CONDOR && runMode != RUN_PARALLEL) // No gui if it's condor or parallel...
+            if (runMode != RUN_VIA_CONDOR && !simConfig.getMpiConf().isParallel()) // No gui if it's condor or parallel...
             {
                 if (project.neuronSettings.isGraphicsMode())
                 {
@@ -217,24 +218,22 @@ public class NeuronFileManager
 
             fw.write(generateRunSettings(runMode));
             fw.write(generateNeuronSimulationRecording(runMode));
+            
 
             // Finishing up...
-
-            if (runMode == RUN_LOCALLY)
-            {
+            
+            if (!simConfig.getMpiConf().isParallel())
                 fw.write(generateGUIForRerunning());
-                fw.write(generateNeuronCodeBlock(NativeCodeLocation.AFTER_SIMULATION));
-            }
-            else if (runMode == RUN_PARALLEL)
-            {
-                fw.write(generateNeuronCodeBlock(NativeCodeLocation.AFTER_SIMULATION));
-                fw.write(this.finishParallel());
-            }
-            else
-            {
-                fw.write(generateNeuronCodeBlock(NativeCodeLocation.AFTER_SIMULATION));
+           
+            fw.write(generateNeuronCodeBlock(NativeCodeLocation.AFTER_SIMULATION));
+            
+            if (simConfig.getMpiConf().isParallel())
+                fw.write(finishParallel());
+            
+            if (runMode == RUN_VIA_CONDOR)
                 fw.write(generateQuit());
-            }
+
+       
 
             fw.flush();
             fw.close();
@@ -459,13 +458,14 @@ public class NeuronFileManager
                         addComment(response,
                                    "Giving cell " + posRecord.cellNumber + " an initial potential of: " + initVolt+" based on: "+ cell.getInitialPotential().toString());
 
-                        if (runMode==RUN_PARALLEL) response.append("  if(pnm.gid_exists(getGid(\""+cellGroupName+"\", "
+                        if (simConfig.getMpiConf().isParallel()) response.append("  if(pnm.gid_exists(getGid(\""+cellGroupName+"\", "
                                                                         + posRecord.cellNumber + "))) {\n");
 
                         response.append("    forsec " + nameOfArrayOfTheseCells + "[" + posRecord.cellNumber + "].all {\n");
                         response.append("        v = " + initVolt + "\n");
                         response.append("    }\n\n");
-                        if (runMode==RUN_PARALLEL) response.append("  }\n\n");
+                        
+                        if (simConfig.getMpiConf().isParallel()) response.append("  }\n\n");
                     }
 
                     //Point3f point = new Point3f(posRecord.x_pos, posRecord.y_pos, posRecord.z_pos);
@@ -485,7 +485,7 @@ public class NeuronFileManager
                     response.append("    for i = 0, " + nameOfNumberOfTheseCells + "-1 {" + "\n");
                     response.append("        ");
 
-                        if (runMode==RUN_PARALLEL) response.append("if(pnm.gid_exists(getGid(\""+cellGroupName
+                        if (simConfig.getMpiConf().isParallel()) response.append("if(pnm.gid_exists(getGid(\""+cellGroupName
                                                                         +"\", i))) ");
 
                         response.append("forsec " + nameOfArrayOfTheseCells + "[i].all "
@@ -511,7 +511,7 @@ public class NeuronFileManager
         StringBuffer response = new StringBuffer();
         response.append("\n");
 
-        if (runMode == RUN_PARALLEL)
+        if (simConfig.getMpiConf().isParallel())
         {
             response.append("test_gid = 0\n");
             response.append("while (test_gid < ncell) {\n");
@@ -643,7 +643,7 @@ public class NeuronFileManager
 
         logger.logComment("Looking at " + cellGroupNames.size() + " cell groups");
         
-        MpiConfiguration mpiConfig = GeneralProperties.getMpiSettings().getMpiConfigurations().get(MpiSettings.favouredConfig);
+        MpiConfiguration mpiConfig = simConfig.getMpiConf();
 
         int totalProcs = mpiConfig.getTotalNumProcessors();
         
@@ -847,7 +847,7 @@ public class NeuronFileManager
         //response.append("steps_per_ms = " + Math.round(1d / (double) project.simulationParameters.getDt()) + "\n");
         response.append("steps_per_ms = " + 1d / (double) project.simulationParameters.getDt() + "\n");
 
-        if (runMode == RUN_PARALLEL)
+        if (simConfig.getMpiConf().isParallel())
         {
             response.append("pnm.set_maxstep(5)\n\n");
             return response.toString();
@@ -960,7 +960,7 @@ public class NeuronFileManager
                         String prefix = "";
                         String post = "";
 
-                        if (runMode==RUN_PARALLEL)
+                        if (simConfig.getMpiConf().isParallel())
                         {
                             prefix = "    ";
                             post = "}" + "\n";
@@ -1036,7 +1036,7 @@ public class NeuronFileManager
                         String prefix = "";
                         String post = "";
 
-                        if (runMode==RUN_PARALLEL)
+                        if (simConfig.getMpiConf().isParallel())
                         {
                             prefix = "    ";
                             post = "}" + "\n";
@@ -1158,7 +1158,7 @@ public class NeuronFileManager
                         String prefix = "";
                         String post = "";
 
-                        if (runMode==RUN_PARALLEL)
+                        if (simConfig.getMpiConf().isParallel())
                         {
                             prefix = "    ";
                             post = "}" + "\n";
@@ -1232,303 +1232,6 @@ public class NeuronFileManager
             }
         }
 
-        /*
-                response.append("\n");
-
-                //Vector allStims = project.elecInputInfo.getAllStims();
-
-
-                ArrayList<String> allStims = simConfig.getInputs();
-
-                addMajorHocFileComment(response, "Adding " + allStims.size() + " stimulation(s)");
-
-                for (int i = 0; i < allStims.size(); i++)
-                {
-                    StimulationSettings nextStim = project.elecInputInfo.getStim(allStims.get(i));
-
-                    if (!project.cellGroupsInfo.getAllCellGroupNames().contains(nextStim.cellGroup))
-                    {
-         throw new NeuronException("The Cell Group specified for the Stimulation: "+ nextStim.getReference()+
-                                                   " does not exist!");
-                    }
-
-
-                    String stimCellType = project.cellGroupsInfo.getCellType(nextStim.cellGroup);
-                    Cell stimCell = project.cellManager.getCell(stimCellType);
-                    //Section somaSection = (Section) stimCell.getAllSections().elementAt(0);
-
-                    //Vector segments = stimCell.getAllSegments();
-                    Segment segToStim = stimCell.getSegmentWithId(nextStim.segmentID);
-
-         ArrayList cellGroupPositions =  project.generatedCellPositions.getPositionRecords(nextStim.cellGroup);
-
-                    if (cellGroupPositions.size() == 0)
-                    {
-                        GuiUtils.showErrorMessage(logger,
-                                                  "The Cell Group which is to be stimulated: " + nextStim.cellGroup +
-                                                  " has no cells!!\n"
-         + "Ensure the Cell Type specified can be packed into the associated region.", null, null);
-                        //return "";
-                    }
-                    else
-                    {
-
-                        float fractionAlongSegment = nextStim.getFractionAlong();
-
-                        float fractionAlongSection
-                            = CellTopologyHelper.getFractionAlongSection(stimCell,
-                                                                         segToStim,
-         fractionAlongSegment); // assume centre of segment...
-
-                        addHocFileComment(response, "Note: the stimulation was specified as being at a point "
-                                          + fractionAlongSegment + " along segment: " + segToStim.getSegmentName());
-                        addHocFileComment(response, "in section: " + getHocSectionName(segToStim.getSection().getSectionName() +
-                                          ". For NEURON, this translates to a point " + fractionAlongSection +
-                                          " along section: " +
-                                          getHocSectionName(segToStim.getSection().getSectionName());
-
-                        int singleCellToStim = -1;
-                        float percentage = -1;
-
-                        try
-                        {
-                            if (nextStim.getCellNumberString().equals("*"))
-                            {
-                                percentage = 100;
-                            }
-                            else if (nextStim.getCellNumberString().endsWith("%"))
-                            {
-                                percentage
-                                    = Float.parseFloat(nextStim.getCellNumberString().substring(0,
-                                    nextStim.getCellNumberString().length() - 1));
-                            }
-                            else
-                            {
-
-                                singleCellToStim = Integer.parseInt(nextStim.getCellNumberString());
-
-                            }
-                        }
-                        catch (NumberFormatException ex)
-                        {
-                            GuiUtils.showErrorMessage(logger,
-                                                      "Unable to determine cell number to stimulate: " +
-                                                      nextStim.getCellNumberString(),
-                                                      ex, null);
-                            return "";
-                        }
-
-                        int numInCellGroup = project.generatedCellPositions.getNumberInCellGroup(nextStim.cellGroup);
-
-                        if (nextStim instanceof IClampSettings)
-                        {
-
-                            IClampSettings icStim = (IClampSettings) nextStim;
-
-                            if (singleCellToStim >= 0)
-                            {
-                                String stimName = "stim_" + nextStim.getReference();
-
-                                response.append("objectvar " + stimName + "\n\n");
-                                response.append("a_" + icStim.cellGroup
-                                                + "[" + singleCellToStim + "]"
-                                                + "." + segToStim.getSection().getSectionName() + " {\n");
-
-                                response.append(stimName + " = new IClamp(" + fractionAlongSection + ")\n");
-                                response.append(stimName + ".del = " + icStim.getDelay() + "\n");
-                                response.append(stimName + ".dur = " + icStim.getDuration() + "\n");
-                                response.append(stimName + ".amp = " + icStim.getAmplitude() + "\n");
-                                response.append("}" + "\n\n");
-                            }
-                            else
-                            {
-
-                                if (percentage > 0)
-                                {
-                                    if (percentage > 100) percentage = 100;
-         int numToStimulate = (int) Math.floor( ( ( (float) numInCellGroup * percentage) / 100) +
-                                                                          0.5);
-                                    if (numToStimulate == 0) numToStimulate = 1;
-
-         logger.logComment("Going to add stim to " + numToStimulate + " out of " + numInCellGroup +
-                                                      " cells");
-
-                                    String stimName = "stim_" + nextStim.getReference();
-
-                                    response.append("objectvar " + stimName + "[" + numToStimulate + "]\n\n");
-
-                                    Vector usedCellNums = new Vector();
-
-                                    int numAlreadyUsed = 0;
-                                    while (numAlreadyUsed < numToStimulate)
-                                    {
-                                        int nextCellNum = ProjectManager.getRandomGenerator().nextInt(numInCellGroup);
-                                        if (!usedCellNums.contains(new Integer(nextCellNum)))
-                                        {
-                                            logger.logComment("Adding stim to cell " + nextCellNum);
-                                            response.append("a_" + icStim.cellGroup
-                                                            + "[" + nextCellNum + "]"
-                                                            + "." + getHocSectionName(segToStim.getSection().getSectionName() + " {\n");
-                                            response.append(stimName + "[" + numAlreadyUsed + "] = new IClamp(" +
-                                                            fractionAlongSection +
-                                                            ")\n");
-         response.append(stimName + "[" + numAlreadyUsed + "].del = " + icStim.getDelay() + "\n");
-         response.append(stimName + "[" + numAlreadyUsed + "].dur = " + icStim.getDuration() +
-                                                            "\n");
-         response.append(stimName + "[" + numAlreadyUsed + "].amp = " + icStim.getAmplitude() +
-                                                            "\n");
-                                            response.append("}" + "\n\n");
-
-                                            usedCellNums.add(new Integer(nextCellNum));
-                                            numAlreadyUsed++;
-                                        }
-                                    }
-                                }
-
-                            }
-                        }
-                        else if (nextStim instanceof RandomSpikeTrainSettings)
-                        {
-                            // to make the NetStim more randomish...
-                            int increaseFactor = 100;
-                            float noise = 1f;
-
-                            RandomSpikeTrainSettings randStim = (RandomSpikeTrainSettings) nextStim;
-
-                            if (singleCellToStim >= 0)
-                            {
-                                response.append("access a_" + randStim.cellGroup + "[" + singleCellToStim +
-                                                "]." + getHocSectionName(segToStim.getSection().getSectionName() + " \n");
-
-                                String stimName = "spikesource_" + nextStim.getReference();
-                                String synapseName = "synapse_" + nextStim.getReference();
-                                String connectionName = "connection_" + nextStim.getReference();
-
-                                response.append("objref " + stimName + "\n");
-                                response.append(stimName + " = new NetStim(" + fractionAlongSection + ")\n");
-
-                                addHocFileComment(response,
-         "NOTE: this is just a very rough way to get an average rate of randStim.rate!!!");
-
-                                float expectedNumber = getSimDuration()
-         * randStim.getRate()
-         * increaseFactor; // no units...
-
-                                double interval = UnitConverter.getTime(1f / randStim.getRate(),
-                                                                        UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                                        UnitConverter.NEURON_UNITS);
-
-                                response.append(stimName + ".number = " + expectedNumber + "\n");
-                                response.append(stimName + ".interval = " + interval + "\n");
-
-                                response.append(stimName + ".noise = " + noise + " \n");
-                                response.append(stimName + ".start = 0 \n");
-
-                                response.append("objref " + synapseName + "\n");
-
-                                response.append(synapseName + " = new " + randStim.getSynapseType() + "(" +
-                                                fractionAlongSection +
-                                                ") ");
-
-                                addHocFileComment(response, "Inserts new synapse 0.5 of way down\n");
-
-                                response.append("objref " + connectionName + "\n");
-                                response.append("thresh = -20\n");
-                                response.append("delay = 0\n");
-                                response.append("weight = 1\n");
-                                response.append(
-                                    connectionName + " = new NetCon(" + stimName + ", " + synapseName +
-                                    ", thresh, delay, weight)\n");
-                                response.append("\n\n");
-                            }
-                            else
-                            {
-                                if (percentage > 0)
-                                {
-                                    if (percentage > 100) percentage = 100;
-         int numToStimulate = (int) Math.floor( ( ( (float) numInCellGroup * percentage) / 100) +
-                                                                          0.5);
-                                    if (numToStimulate == 0) numToStimulate = 1;
-
-         logger.logComment("Going to add stim to " + numToStimulate + " out of " + numInCellGroup +
-                                                      " cells");
-
-                                    String stimName = "spikesource_" + nextStim.getReference();
-                                    String synapseName = "synapse_" + nextStim.getReference();
-                                    String connectionName = "connection_" + nextStim.getReference();
-
-                                    response.append("objref " + stimName + "[" + numToStimulate + "]\n\n");
-                                    response.append("objref " + synapseName + "[" + numToStimulate + "]\n");
-                                    response.append("objref " + connectionName + "[" + numToStimulate + "]\n");
-                                    response.append("thresh = -20\n");
-                                    response.append("delay = 0\n");
-                                    response.append("weight = 1\n\n");
-
-                                    Vector usedCellNums = new Vector();
-
-                                    int numAlreadyUsed = 0;
-                                    while (numAlreadyUsed < numToStimulate)
-                                    {
-                                        int nextCellNum = ProjectManager.getRandomGenerator().nextInt(numInCellGroup);
-                                        if (!usedCellNums.contains(new Integer(nextCellNum)))
-                                        {
-                                            logger.logComment("Adding stim to cell " + nextCellNum);
-
-                                            response.append("access a_"
-                                                            + randStim.cellGroup
-                                                            + "["
-                                                            + nextCellNum
-                                                            + "]." + getHocSectionName(segToStim.getSection().getSectionName() + " \n");
-
-                                            response.append(stimName + "[" + numAlreadyUsed + "] = new NetStim(" +
-                                                            fractionAlongSection + ")\n");
-
-                                            addHocFileComment(response,
-         "NOTE: this is just a very rough way to get an average rate of randStim.rate!!!");
-
-                                            float expectedNumber = getSimDuration()
-         * randStim.getRate()
-         * increaseFactor; // no units...
-
-                                            double interval = UnitConverter.getTime(1f / randStim.getRate(),
-                                                UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                UnitConverter.NEURON_UNITS);
-
-         response.append(stimName + "[" + numAlreadyUsed + "].number = " + expectedNumber +
-                                                            "\n");
-         response.append(stimName + "[" + numAlreadyUsed + "].interval = " + interval + "\n");
-
-         response.append(stimName + "[" + numAlreadyUsed + "].noise = " + noise + " \n");
-                                            response.append(stimName + "[" + numAlreadyUsed + "].start = 0 \n");
-
-                                            response.append(synapseName + "[" + numAlreadyUsed + "] = new " +
-                                                            randStim.getSynapseType() +
-                                                            "(" + fractionAlongSection +
-                                                            ") ");
-
-                                            addHocFileComment(response, " Inserts synapse 0.5 of way down\n");
-
-                                            response.append(connectionName + "["
-                                                            + numAlreadyUsed
-                                                            + "] = new NetCon("
-                                                            + stimName + "["
-                                                            + numAlreadyUsed +
-                                                            "], " + synapseName + "["
-                                                            + numAlreadyUsed +
-                                                            "], thresh, delay, weight)\n");
-
-                                            response.append("\n\n");
-
-                                            usedCellNums.add(new Integer(nextCellNum));
-                                            numAlreadyUsed++;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    }
-         */
         return response.toString();
     }
 
@@ -1657,7 +1360,7 @@ public class NeuronFileManager
             String prefix = "";
             String post = "";
 
-            if (runMode == RUN_PARALLEL)
+            if (simConfig.getMpiConf().isParallel())
             {
                 prefix = "    ";
                 post = "}" + "\n";
@@ -1727,7 +1430,7 @@ public class NeuronFileManager
                         String prefix = "";
                         String post = "";
 
-                        if (runMode==RUN_PARALLEL)
+                        if (simConfig.getMpiConf().isParallel())
                         {
                             prefix = "    ";
                             post = "    }" + "\n";
@@ -1804,7 +1507,7 @@ public class NeuronFileManager
                                     String prefix = "";
                                     String post = "";
 
-                                    if (runMode == RUN_PARALLEL)
+                                    if (simConfig.getMpiConf().isParallel())
                                     {
                                         prefix = "    ";
                                         post = "}" + "\n";
@@ -1843,7 +1546,7 @@ public class NeuronFileManager
                                 String prefix = "";
                                 String post = "";
 
-                                if (runMode == RUN_PARALLEL)
+                                if (simConfig.getMpiConf().isParallel())
                                 {
                                     prefix = "    ";
                                     post = "}" + "\n";
@@ -1929,7 +1632,7 @@ public class NeuronFileManager
             String prefix = "";
             String post = "";
 
-            if (runMode == RUN_PARALLEL)
+            if (simConfig.getMpiConf().isParallel())
             {
                 prefix = "    ";
                 post = "}" + "\n";
@@ -1982,7 +1685,7 @@ public class NeuronFileManager
                             prefix = "";
                             post = "";
 
-                            if (runMode == RUN_PARALLEL)
+                            if (simConfig.getMpiConf().isParallel())
                             {
                                 prefix = "    ";
                                 post = "    }" + "\n";
@@ -2037,7 +1740,7 @@ public class NeuronFileManager
                                         prefix = "";
                                         post = "";
 
-                                        if (runMode == RUN_PARALLEL)
+                                        if (simConfig.getMpiConf().isParallel())
                                         {
                                             prefix = "    ";
                                             post = "}" + "\n";
@@ -2078,7 +1781,7 @@ public class NeuronFileManager
                                     prefix = "";
                                     post = "";
 
-                                    if (runMode == RUN_PARALLEL)
+                                    if (simConfig.getMpiConf().isParallel())
                                     {
                                         prefix = "    ";
                                         post = "}" + "\n";
@@ -2108,7 +1811,7 @@ public class NeuronFileManager
             prefix = "";
             post = "";
 
-            if (runMode == RUN_PARALLEL)
+            if (simConfig.getMpiConf().isParallel())
             {
                 prefix = "    ";
                 post = "}" + "\n";
@@ -2441,7 +2144,7 @@ public class NeuronFileManager
                     response.append("objectvar " + nameOfArrayOfTheseCells + "[" + nameOfNumberOfTheseCells + "]" +
                                     "\n\n");
 
-                    if (runMode != RUN_PARALLEL)
+                    if (!simConfig.getMpiConf().isParallel())
                     {
                         response.append("proc addCell_" + cellGroupName + "() {\n");
 
@@ -2523,7 +2226,7 @@ public class NeuronFileManager
                         }
 
                         String parallelCheck = "";
-                        if (runMode == RUN_PARALLEL)
+                        if (simConfig.getMpiConf().isParallel())
                             parallelCheck = "if (pnm.gid_exists(getGid(\""+cellGroupName+"\", "+posRecord.cellNumber+"))) ";
 
                         response.append(parallelCheck+nameOfArrayOfTheseCells + "[" + posRecord.cellNumber + "].position("
@@ -2823,7 +2526,7 @@ public class NeuronFileManager
 
 
 
-                    if (runMode != RUN_PARALLEL)
+                    if (!simConfig.getMpiConf().isParallel())
                     {
                         // put synaptic start point on source axon
                         response.append("a_" + targetCellGroup
@@ -3398,7 +3101,7 @@ public class NeuronFileManager
 
         String dateCommand = "date +%x,%X:%N";
 
-        if (runMode == RUN_PARALLEL)
+        if (simConfig.getMpiConf().isParallel())
         {
             response.append("pnm.want_all_spikes()\n");
 
@@ -3770,7 +3473,7 @@ public class NeuronFileManager
         
         String fullCommand = "";
 
-        if(runMode==RUN_LOCALLY || runMode==RUN_PARALLEL)
+        if (runMode!=RUN_VIA_CONDOR)
         {
             try
             {
@@ -3838,7 +3541,8 @@ public class NeuronFileManager
                     
                     
                     String mainExecutable = "nrngui";
-                    if (runMode==RUN_PARALLEL) mainExecutable = "nrniv";
+                    
+                    if (simConfig.getMpiConf().isParallel()) mainExecutable = "nrniv";
 
                     neuronExecutable = locationOfNeuron
                         + System.getProperty("file.separator")
@@ -3863,7 +3567,7 @@ public class NeuronFileManager
 
                     StringBuffer preCommand = new StringBuffer("");
 
-                    if (runMode==RUN_PARALLEL)
+                    if (simConfig.getMpiConf().isParallel())
                     {
                         ArrayList<MpiConfiguration> configs = GeneralProperties.getMpiSettings().getMpiConfigurations();
 
@@ -4001,7 +3705,7 @@ public class NeuronFileManager
                 throw new NeuronException("Error executing the hoc file: " + mainHocFile+"\n"+ex.getMessage(), ex);
             }
         }
-        else if (runMode==RUN_VIA_CONDOR)
+        else
         {
             logger.logComment("Creating the extra files for running the code through Condor...");
             FileWriter condorBatchFileWriter = null;
@@ -4271,7 +3975,7 @@ public class NeuronFileManager
         try
         {
 
-            int runMode  = NeuronFileManager.RUN_PARALLEL;
+            int runMode  = RUN_HOC;
 
 
             MainFrame frame = new MainFrame();

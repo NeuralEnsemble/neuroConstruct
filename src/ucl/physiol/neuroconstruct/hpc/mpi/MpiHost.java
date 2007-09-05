@@ -26,7 +26,8 @@ public class MpiHost
     private int numProcessors = 1;
     private float weight = 1;
 
-    private MpiHost(){};
+    // needed for XML Encoder...
+    public MpiHost(){};
 
     public MpiHost(String hostname)
     {
@@ -37,6 +38,24 @@ public class MpiHost
         this.hostname = hostname;
         this.numProcessors = numProcessors;
         this.weight = weight;
+    }
+    
+    public Object clone()
+    {
+        return new MpiHost(new String(hostname), numProcessors, weight);
+    }
+
+    
+    public boolean equals(Object other)
+    {
+        if (!(other instanceof MpiHost)) return false;
+        
+        MpiHost mhOther = (MpiHost)other;
+        if (! mhOther.getHostname().equals(this.getHostname())) return false;
+        if (mhOther.getWeight() != this.getWeight()) return false;
+        if (mhOther.getNumProcessors() !=this.getNumProcessors()) return false;
+        
+        return true;
     }
 
     public String getHostname()

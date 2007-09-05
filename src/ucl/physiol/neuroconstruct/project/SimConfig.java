@@ -14,6 +14,7 @@ package ucl.physiol.neuroconstruct.project;
 
 import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.utils.ClassLogger;
+import ucl.physiol.neuroconstruct.hpc.mpi.*;
 
 /**
  * Class containing info on a simulation configuration. One of these needs to be
@@ -28,9 +29,11 @@ public class SimConfig
 {
     ClassLogger logger = new ClassLogger("SimConfig");
 
+    public static final String MAIN_CATEGORY = "Main";
+    public static final String TEST_CATEGORY = "Test";
+
     private String name = null;
     private String description = null;
-
 
     private ArrayList<String> cellGroups = new ArrayList<String>();
     private ArrayList<String> netConns = new ArrayList<String>();
@@ -38,6 +41,11 @@ public class SimConfig
     private ArrayList<String> plots = new ArrayList<String>();
 
     private float simDuration = 0; // will be reset to the project default sim duration...
+
+    private float simDt = 0; // will be reset to the project default sim dt...
+    private String category = MAIN_CATEGORY; 
+    
+    private MpiConfiguration mpiConf = null;
 
     /**
      * Default constructor needed for XMLEncoder
@@ -52,6 +60,38 @@ public class SimConfig
         this.description = description;
     }
 
+
+    public String getCategory()
+    {
+        return category;
+    }
+    
+    public void setCategory(String category)
+    {
+        this.category = category;
+    }
+
+
+    public MpiConfiguration getMpiConf()
+    {
+        logger.logComment("mpiConf being asked: "+ mpiConf, true);
+        
+        if (mpiConf == null) mpiConf = GeneralProperties.getMpiSettings().getMpiConfigurations().get(MpiSettings.favouredConfig);
+        logger.logComment("mpiConf now: "+ mpiConf, true);
+        
+        return (MpiConfiguration)mpiConf.clone();
+    }
+    
+    public void setMpiConf(MpiConfiguration mc)
+    {
+        
+        this.mpiConf = (MpiConfiguration)mc.clone();
+        
+
+        logger.logComment("mpiConf being set: "+ this.mpiConf, true);
+    }
+    
+    
 
     public String getName()
     {
@@ -105,6 +145,17 @@ public class SimConfig
     public void setSimDuration(float simDuration)
     {
         this.simDuration = simDuration;
+    }
+
+
+    public float getSimDt()
+    {
+        return this.simDt;
+    }
+
+    public void setSimDt(float simDt)
+    {
+        this.simDt = simDt;
     }
 
 

@@ -24,8 +24,10 @@ import javax.swing.event.*;
 
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.project.*;
+
 import java.io.*;
 import ucl.physiol.neuroconstruct.project.packing.*;
+import ucl.physiol.neuroconstruct.hpc.mpi.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 
 /**
@@ -77,6 +79,10 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
     JLabel jLabelSimDur = new JLabel();
     JTextField jTextFieldSimDur = new JTextField();
     JLabel jLabelMs = new JLabel();
+    JLabel jLabelMpiConf = new JLabel();
+    
+    JComboBox jComboBoxMpiConfs = new JComboBox();
+    
 
     public SimConfigManager(SimConfigInfo simConfigInfo, Frame owner, Project project)
     {
@@ -160,7 +166,8 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
 
         jTextFieldSimDur.getDocument().addDocumentListener(this);
 
-        this.getContentPane().add(jPanelDescription, java.awt.BorderLayout.CENTER); jPanelButtons.add(jButtonAdd);
+        this.getContentPane().add(jPanelDescription, java.awt.BorderLayout.CENTER); 
+        jPanelButtons.add(jButtonAdd);
         jPanelButtons.add(jButtonEditDesc);
 
 
@@ -170,11 +177,23 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         jPanelButtons.add(jButtonDelete); jPanelButtons.add(jButtonOK); jPanelButtons.add(jButtonHelp);
         this.getContentPane().add(jPanelButtons,java.awt.BorderLayout.SOUTH);
         this.getContentPane().add(jPanelList,java.awt.BorderLayout.NORTH);
-        jPanelList.add(jScrollPane1, java.awt.BorderLayout.CENTER); jScrollPane2.getViewport().add(jTextAreaDescription);
-        jScrollPane1.getViewport().add(jListNames); jPanelDescription.add(jScrollPane2, java.awt.BorderLayout.SOUTH);
-            jPanelDescription.add(jPanelCheckBoxes, java.awt.BorderLayout.CENTER); jPanelDescription.add(jPanelSimDur,
-            java.awt.BorderLayout.NORTH); jPanelSimDur.add(jLabelSimDur); jPanelSimDur.add(jTextFieldSimDur);
-            jPanelSimDur.add(jLabelMs); jListNames.addListSelectionListener(this);
+        jPanelList.add(jScrollPane1, java.awt.BorderLayout.CENTER); 
+        jScrollPane2.getViewport().add(jTextAreaDescription);
+        jScrollPane1.getViewport().add(jListNames); 
+        jPanelDescription.add(jScrollPane2, java.awt.BorderLayout.SOUTH);
+        jPanelDescription.add(jPanelCheckBoxes, java.awt.BorderLayout.CENTER); 
+        jPanelDescription.add(jPanelSimDur, java.awt.BorderLayout.NORTH); 
+        jPanelSimDur.add(jLabelSimDur); jPanelSimDur.add(jTextFieldSimDur);
+            
+        jPanelSimDur.add(jLabelMs); 
+        
+        if (GeneralUtils.includeParallelFunc()) jLabelMs.setText("Parallel configuration: ");
+        
+        if (GeneralUtils.includeParallelFunc()) jPanelSimDur.add(jLabelMpiConf);
+        
+        jPanelSimDur.add(jComboBoxMpiConfs);
+        
+        jListNames.addListSelectionListener(this);
     }
 
     private void refresh()
@@ -195,6 +214,23 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
 
         this.jPanelCheckBoxes.removeAll();
         jPanelCheckBoxes.setLayout(new GridLayout(4,1));
+        
+        
+        
+        
+        jComboBoxMpiConfs.removeAll();
+        ArrayList<MpiConfiguration> mcs = GeneralProperties.getMpiSettings().getMpiConfigurations();
+        
+        for(MpiConfiguration mc: mcs)
+        {
+            jComboBoxMpiConfs.addItem(mc);
+            logger.logComment("Adding: "+ mc, true);
+        }
+
+        jComboBoxMpiConfs.addItemListener(this);
+        
+        
+        
 
         logger.logComment("Selecting cell groups");
 
@@ -427,6 +463,13 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
                     return;
                 }
             }
+
+            logger.logComment("Before: "+simConfig.getMpiConf());
+            
+            simConfig.setMpiConf((MpiConfiguration)jComboBoxMpiConfs.getSelectedItem());
+
+            logger.logComment("After: "+simConfig.getMpiConf());
+            
             simConfig.getCellGroups();
             simConfig.getNetConns();
             simConfig.getInputs();
@@ -567,7 +610,13 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
                 simConfig.setSimDuration(project.simulationParameters.getDuration());
             }
             this.jTextFieldSimDur.setText(simConfig.getSimDuration()+"");
-
+            
+            logger.logComment("Before selected: "+jComboBoxMpiConfs.getSelectedItem(), true);
+            
+            jComboBoxMpiConfs.setSelectedItem(simConfig.getMpiConf());
+            
+            logger.logComment("After selected: "+jComboBoxMpiConfs.getSelectedItem(), true);
+            
 
             ArrayList<String> incCellGroups = simConfig.getCellGroups();
             Enumeration<String> allCellGroups = this.cellGroupCheckBoxes.keys();
@@ -744,7 +793,7 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
     {
         try
         {
-            Project proj = Project.loadProject(new File("models/MDeSXML/MDeSXML.neuro.xml"), null);
+            Project proj = Project.loadProject(new File("examples/Ex5-Networks/Ex5-Networks.neuro.xml"), null);
 
             SimConfigManager frame = new SimConfigManager(proj.simConfigInfo, null, proj);
 

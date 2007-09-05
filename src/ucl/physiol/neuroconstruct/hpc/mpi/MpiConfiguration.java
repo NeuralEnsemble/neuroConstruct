@@ -24,12 +24,10 @@ import java.util.*;
 public class MpiConfiguration
 {
     private String name = null;
+    
     private ArrayList<MpiHost> hostList = new ArrayList<MpiHost>();
+    
 
-    public static void main(String[] args)
-    {
-        new MpiConfiguration();
-    }
 
     private MpiConfiguration()
     {
@@ -70,15 +68,112 @@ public class MpiConfiguration
         }
         return num;
     }
+    
+    public boolean isParallel()
+    {
+        return getTotalNumProcessors()>1;
+        
+    }
+
+    public int getNumProcessorsOnHost(String hostname)
+    {
+        for (MpiHost host: hostList)
+        {
+            if (host.getHostname().equals(hostname)) return host.getNumProcessors();
+        }
+        return -1;
+    }
+
+    public String getHostForGlobalId(int globId)
+    {
+        int traversed = 0;
+        
+        for (MpiHost host: hostList)
+        {
+            if (traversed + host.getNumProcessors()>globId) return host.getHostname();//globId-traversed;
+            
+            traversed+=host.getNumProcessors();
+        }
+        
+        return null;
+    }
+    public int getProcForGlobalId(int globId)
+    {
+        int traversed = 0;
+        
+        for (MpiHost host: hostList)
+        {
+            if (traversed + host.getNumProcessors()>globId) return globId-traversed;
+            
+            traversed+=host.getNumProcessors();
+        }
+        
+        return -1;
+    }
+    
+    public boolean equals(Object other)
+    {
+        if (!(other instanceof MpiConfiguration)) return false;
+        
+        MpiConfiguration mcOther = (MpiConfiguration)other;
+        
+        if (!mcOther.getName().equals(getName())) return false;
+        
+        if (mcOther.getHostList().size()!=this.getHostList().size()) return false;
+
+        for (int i=0;i<getHostList().size();i++)
+        {
+            if (!mcOther.getHostList().get(i).equals(getHostList().get(i))) return false;
+        }
+        
+        return true;
+    }
+    
+    
+    public Object clone()
+    {
+        MpiConfiguration mc2 = new MpiConfiguration(new String(name));
+        ArrayList<MpiHost> mh2 = new ArrayList<MpiHost>();
+        for(MpiHost mh: this.hostList)
+        {
+            mh2.add((MpiHost)mh.clone());
+        }
+        mc2.setHostList(mh2);
+        
+        return mc2;
+    }
 
 
     public String toString()
     {
-        StringBuffer info = new StringBuffer("MpiConfiguration: "+ name+"\n");
+        int totHosts = 0;
+        int totProcs = 0;
         for (MpiHost host: hostList)
         {
-            info.append("   "+host.toString());
+            //info.append("   "+host.toString());
+            totHosts++;
+            totProcs+=host.getNumProcessors();
         }
+        String hosts = totHosts+" hosts, ";
+        String procs = totProcs+" processors";
+        if (totHosts==1) hosts = "1 host, ";
+        if (totProcs==1) procs = "1 processor";
+
+        StringBuffer info = new StringBuffer(name+" with "+hosts+procs+"\n");
         return info.toString();
+    }
+    
+
+    public static void main(String[] args)
+    {
+        MpiConfiguration mc = new MpiConfiguration("Tester");
+        mc.getHostList().add(new MpiHost("host3", 3, 1));
+        mc.getHostList().add(new MpiHost("host4", 4, 1));
+        mc.getHostList().add(new MpiHost("host5", 5, 1));
+
+        for(int num=0;num<15;num++)
+        {
+        System.out.println("Glob id: "+ num+" is on "+mc.getHostForGlobalId(num) +", "+ mc.getProcForGlobalId(num));
+        }
     }
 }

@@ -313,6 +313,10 @@ public class SimulationsInfo extends AbstractTableModel
         }
 
         props.setProperty("Sim Config", simConfigInfo.toString());
+        
+
+        props.setProperty("Parallel configuration", simConfig.getMpiConf().toString());
+
 
         ArrayList<String> cellGroupNames = project.cellGroupsInfo.getAllCellGroupNames();
         StringBuffer pops = new StringBuffer();
@@ -422,14 +426,13 @@ public class SimulationsInfo extends AbstractTableModel
             props.setProperty("Script generation time",
                     project.neuronFileManager.getCurrentGenTime()+"");
 
-            if (project.neuronFileManager.getCurrentRunMode()==NeuronFileManager.RUN_LOCALLY)
+            if (project.neuronFileManager.getCurrentRunMode()==NeuronFileManager.RUN_HOC)
             {
-                props.setProperty("Run mode", "Run on local machine");
+                props.setProperty("Script language", "Hoc");
             }
-            else if (project.neuronFileManager.getCurrentRunMode()==NeuronFileManager.RUN_PARALLEL)
+            else if (project.neuronFileManager.getCurrentRunMode()==NeuronFileManager.RUN_PYTHON)
             {
-                props.setProperty("Run mode",
-                                  "Parallel: "+GeneralProperties.getMpiSettings().getMpiConfigurations().get(MpiSettings.favouredConfig).getHostList().toString());
+                props.setProperty("Script language", "Python");
                 
             }  
             else if (project.neuronFileManager.getCurrentRunMode()==NeuronFileManager.RUN_VIA_CONDOR)
@@ -438,7 +441,6 @@ public class SimulationsInfo extends AbstractTableModel
                                   "Run via Condor");
                 
             }   
-
 
 
 

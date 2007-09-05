@@ -148,7 +148,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     String defaultNeuronFilesText = "-- Select NEURON file to view --";
     String defaultGenesisFilesText = "-- Select GENESIS file to view --";
 
-    private int neuronRunMode = NeuronFileManager.RUN_LOCALLY;
+    private int neuronRunMode = NeuronFileManager.RUN_HOC;
 
 
     private String welcomeText =
@@ -559,7 +559,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JCheckBox jCheckBoxSpecifySimRef = new JCheckBox();
     JCheckBox jCheckBoxNeuronSaveHoc = new JCheckBox();
     JButton jButtonNeuronCreateCondor = new JButton();
-    JButton jButtonNeuronCreateMPI = new JButton();
+    /////////////JButton jButtonNeuronCreateMPIHoc = new JButton();
+    JButton jButtonNeuronCreateMPIPython = new JButton();
     JComboBox jComboBoxGenesisFiles = new JComboBox();
     JPanel jPanelSimGeneral = new JPanel();
     JPanel jPanelInputOutput = new JPanel();
@@ -1256,14 +1257,25 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
         });
 
-
-        jButtonNeuronCreateMPI.setEnabled(false);
-        jButtonNeuronCreateMPI.setText("Create files for MPI based execution");
-        jButtonNeuronCreateMPI.addActionListener(new java.awt.event.ActionListener()
+/*
+        jButtonNeuronCreateMPIHoc.setEnabled(false);
+        jButtonNeuronCreateMPIHoc.setText("Create hoc for MPI based execution");
+        jButtonNeuronCreateMPIHoc.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
                 jButtonNeuronCreateMPI_actionPerformed(e);
+            }
+        });*/
+
+
+        jButtonNeuronCreateMPIPython.setEnabled(false);
+        jButtonNeuronCreateMPIPython.setText("Create Python");
+        jButtonNeuronCreateMPIPython.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonNeuronCreatePython_actionPerformed(e);
             }
         });
 
@@ -2846,7 +2858,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         //jPanelHocFileButtons.add(jButto nNeuronCreateCondor, null);
 
-        if (includeParallelFunc()) jPanelHocFile1Buttons.add(jButtonNeuronCreateMPI, null);
+        /////if (GeneralUtils.includeParallelFunc()) jPanelHocFile1Buttons.add(jButtonNeuronCreateMPIHoc, null);
+        if (GeneralUtils.includeParallelFunc()) jPanelHocFile1Buttons.add(jButtonNeuronCreateMPIPython, null);
 
         jPanelHocFile2Buttons.add(jButtonNeuronView, null);
         jPanelHocFile2Buttons.add(jComboBoxNeuronFileList, null);
@@ -3515,13 +3528,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     }
 
 
-    /**
-     * A simple check on wether to incl parallel functionality...
-     */
-    private boolean includeParallelFunc()
-    {
-        return new File("parallel").exists(); // A file of that name in the neuroConstruct main dir...
-    }
 
 
     private void addToolTips()
@@ -6221,7 +6227,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         }
 
-        else if (includeParallelFunc() && generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
+        else if (GeneralUtils.includeParallelFunc() && generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
         {
             String currentReport = jEditorPaneGenerateInfo.getText();
 
@@ -6243,7 +6249,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             projManager.compNodeGenerator.start();
         }
 
-        else if ((!includeParallelFunc() && generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
+        else if ((!GeneralUtils.includeParallelFunc() && generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
                 || generatorType.equals(CompNodeGenerator.myGeneratorType))
         {
             String currentReport = jEditorPaneGenerateInfo.getText();
@@ -8253,7 +8259,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             this.jButtonNeuronCreateLocal.setEnabled(false);
             jButtonNeuronCreateCondor.setEnabled(false);
-            jButtonNeuronCreateMPI.setEnabled(false);
+            ///////////////jButtonNeuronCreateMPIHoc.setEnabled(false);
+            jButtonNeuronCreateMPIPython.setEnabled(false);
             this.jButtonNeuronView.setEnabled(false);
             this.jButtonNeuronRun.setEnabled(false);
 
@@ -8339,7 +8346,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             /////////////////////////////////////////////////jButtonNeuronCreatePVM.setEnabled(true);
 
 
-            if (includeParallelFunc()) jButtonNeuronCreateMPI.setEnabled(true);
+            //////////jButtonNeuronCreateMPIHoc.setEnabled(true);
+            jButtonNeuronCreateMPIPython.setEnabled(true);
 
 
             this.jCheckBoxNeuronShowShapePlot.setEnabled(true);
@@ -9244,7 +9252,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     {
         logger.logComment("Create hoc file button pressed...");
 
-        doCreateHoc(NeuronFileManager.RUN_LOCALLY);
+        doCreateHoc(NeuronFileManager.RUN_HOC);
 
     }
 
@@ -9912,7 +9920,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             + simConfig.getNetConns().size()
             + simConfig.getInputs().size();
         
-        if (includeParallelFunc()) totalSteps = totalSteps + simConfig.getCellGroups().size(); // for the compute node gen...
+        if (GeneralUtils.includeParallelFunc()) totalSteps = totalSteps + simConfig.getCellGroups().size(); // for the compute node gen...
 
         jProgressBarGenerate.setMaximum(totalSteps * 100);
         jProgressBarGenerate.setValue(0);
@@ -10873,11 +10881,17 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         logger.logComment("Creating Condor ready hoc");
         doCreateHoc(NeuronFileManager.RUN_VIA_CONDOR);
     }
-
+/*
     void jButtonNeuronCreateMPI_actionPerformed(ActionEvent e)
     {
         logger.logComment("Creating Parallel ready hoc");
-        doCreateHoc(NeuronFileManager.RUN_PARALLEL);
+        doCreateHoc(NeuronFileManager.RUN_PARALLEL_HOC);
+    }*/
+
+    void jButtonNeuronCreatePython_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("Creating Parallel ready Python");
+        doCreateHoc(NeuronFileManager.RUN_PYTHON);
     }
 
 
@@ -12902,7 +12916,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTabbedPaneExportFormats.setSelectedIndex(jTabbedPaneExportFormats.indexOfTab(this.NEURON_SIMULATOR_TAB));
         jTabbedPaneNeuron.setSelectedIndex(jTabbedPaneNeuron.indexOfTab(this.NEURON_TAB_GENERATE));
 
-        doCreateHoc(NeuronFileManager.RUN_LOCALLY);
+        doCreateHoc(NeuronFileManager.RUN_HOC);
 
     }
 

@@ -57,6 +57,15 @@ public class GeneralUtils
     {
         return isVersionControlDir(dir.getName());
     }
+    
+
+    /**
+     * A simple check on whether to incl parallel functionality...
+     */
+    public static boolean includeParallelFunc()
+    {
+        return new File("parallel").exists(); // A file of that name in the neuroConstruct main dir...
+    }
 
 
 
