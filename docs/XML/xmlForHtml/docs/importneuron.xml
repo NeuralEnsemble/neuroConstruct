@@ -3,7 +3,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Importing NEURON models into neuroConstruct</title>
+    <title>Importing existing NEURON/GENESIS models into neuroConstruct</title>
   </header>
   <body>
 
@@ -12,7 +12,8 @@
 At the moment it can be a complicated process but the advantages of doing it are:</p>
 <ul>
 <li>It is easier to incorporate single cell models into networks of arbitrary size and complexity once they are in neuroConstruct</li>
-<li>It simplifies making the model available for multiple simulators (e.g. <a href="Glossary_gen.html#GENESIS">GENESIS</a> too)</li>
+<li>It simplifies making the model available for multiple simulators (e.g. <a href="Glossary_gen.html#GENESIS">GENESIS</a> too). Once in neuroConstruct/NeuroML format,
+the cell model will be available for any other simulator supported by these in the future (e.g. GENESIS 3), provided the cell mechanisms can be implemented in that simulator.</li>
 <li>All of the inbuilt functionality for storing, browsing and analysing simulations neuroConstruct is available</li>
 <li>A neuroConstruct <a href="Glossary_gen.html#Project">project</a> including the model description, results of the simulation, plots of the figures in
 published papers, etc. can be distributed in a single zipped file</li>
@@ -97,8 +98,22 @@ Again the default values should be a good starting point.</li>
 <li>Hopefully all of this will be successful and you can go to tab <strong>Export</strong> and generate the NEURON code. </li>
 
 <li>This description only concerns placing one cell in 3D. Once each cell works as expected, networks can be built. See the
-description of <a href="netconns.html">Network Connections</a> for more information </li>
+description of <a href="netconns.html">Network Connections</a> for more information.</li>
 </ol>
+
+
+Process for converting mod/GENESIS script channels into ChannelML
+
+<ol>
+<li>Single compartment, e.g. soma</li>
+Get passive props working properly
+convert simple channel, e.g. non ca dependent K chanel
+not jus voltage, also internal variable, mhn
+don't worry if not init properly
+Comparison depends on k value in akd, accurate 1/k
+For complete accuracy, use table impl prefs
+
+Careful to use temp & ek, ena of prev models!!
 
 
 <p>&nbsp;</p>
