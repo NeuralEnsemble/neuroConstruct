@@ -269,7 +269,7 @@ public class Project implements TableModelListener
 
         boolean newCellMechDirPresent = (dirForCellMechs != null && dirForCellMechs.exists());
 
-        ComplexConnectionsInfo tempComplexConnectionsInfo = null;
+        //ComplexConnectionsInfo tempComplexConnectionsInfo = null;
 
         try
         {
@@ -356,13 +356,13 @@ public class Project implements TableModelListener
                     proj.morphNetworkConnectionsInfo.addTableModelListener(proj);
                 }
 
-                /* --  Reading Complex Conn Info -- */
+                /* --  Reading Complex Conn Info -
                 if (nextReadObject instanceof ComplexConnectionsInfo)
                 {
                     logger.logComment("Found ComplexConnectionsInfo object in project file...");
                     tempComplexConnectionsInfo = (ComplexConnectionsInfo) nextReadObject;
                     //tempComplexConnectionsInfo.addTableModelListener(proj);
-                }
+                }-- */
 
                 /* --  Reading Complex Conn Info -- */
                 if (nextReadObject instanceof ArbourConnectionsInfo)
@@ -447,11 +447,11 @@ public class Project implements TableModelListener
         }
 
 
-        // As the complexConnectionsInfo is deprecated...
+        /* As the complexConnectionsInfo is deprecated...
         if (tempComplexConnectionsInfo != null)
         {
             proj.morphNetworkConnectionsInfo.stealComplexConns(tempComplexConnectionsInfo);
-        }
+        }*/
 
         if (!oldCellProcObjectFound && newCellMechDirPresent)
         {

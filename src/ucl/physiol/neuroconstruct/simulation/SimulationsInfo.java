@@ -21,7 +21,7 @@ import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.neuron.*;
 import ucl.physiol.neuroconstruct.genesis.*;
-import ucl.physiol.neuroconstruct.hpc.mpi.*;
+//import ucl.physiol.neuroconstruct.hpc.mpi.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.*;

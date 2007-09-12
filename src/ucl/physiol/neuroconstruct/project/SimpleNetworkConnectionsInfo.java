@@ -26,6 +26,8 @@ import ucl.physiol.neuroconstruct.utils.*;
  *  
  */
 
+@SuppressWarnings("serial")
+
 public class SimpleNetworkConnectionsInfo extends AbstractTableModel
 {
     ClassLogger logger = new ClassLogger("NetworkConnectionsInfo");
@@ -152,7 +154,7 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
                 this.vectorNames.setElementAt((String)value , row);
                 break;
             case COL_NUM_SYNAPSE_LIST:
-                this.vectorSynapseList.setElementAt((Vector)value , row);
+                this.vectorSynapseList.setElementAt(value , row);
                 break;
             case COL_NUM_SOURCE:
                 this.vectorSource.setElementAt((String)value , row);
@@ -211,7 +213,7 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
     /**
      * As the ComplexConnectionsInfo is deprecated and any of it's extra functionality implemented here,
      * we take any old ComplexConns and add them here...
-     */
+     
     protected void stealComplexConns(ComplexConnectionsInfo compConns)
     {
         Vector<String> names = compConns.getAllComplexConnNames();
@@ -243,7 +245,7 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
                 }
             }
         }
-    }
+    }*/
 
 
 
@@ -409,14 +411,14 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
     public float getAPSpeed(String netConnName)
     {
         int index = this.vectorNames.indexOf(netConnName);
-        return (Float)this.getValueAt(index, this.COL_NUM_AP_SPEED);
+        return (Float)this.getValueAt(index, COL_NUM_AP_SPEED);
     }
 
 
     public void setAPSpeed(String netConnName, float aps)
     {
         int index = vectorNames.indexOf(netConnName);
-        this.setValueAt(new Float(aps), index, this.COL_NUM_AP_SPEED);
+        this.setValueAt(new Float(aps), index, COL_NUM_AP_SPEED);
     }
 
 
@@ -432,7 +434,7 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
     public void setConnectivityConditions(String netConnName, ConnectivityConditions cc)
     {
         int index = vectorNames.indexOf(netConnName);
-        this.setValueAt(cc, index, this.COL_NUM_CONN_CONDS);
+        this.setValueAt(cc, index, COL_NUM_CONN_CONDS);
     }
 
 
@@ -485,7 +487,7 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
     public Hashtable getInternalData()
     {
         //System.out.println("getInternalData...");
-        Hashtable allInfo = new Hashtable();
+        Hashtable<String, Vector> allInfo = new Hashtable<String, Vector>();
         allInfo.put(columnNames[COL_NUM_NETCONN_NAME], vectorNames);
         allInfo.put(columnNames[COL_NUM_SOURCE], vectorSource);
         allInfo.put(columnNames[COL_NUM_TARGET], vectorTarget);
