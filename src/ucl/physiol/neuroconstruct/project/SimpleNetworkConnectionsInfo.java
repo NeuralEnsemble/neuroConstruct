@@ -295,7 +295,7 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
 
     public Vector<String> getAllSimpleNetConnNames()
     {
-        return new Vector(vectorNames);
+        return new Vector<String>(vectorNames);
     }
 /*
     public SynapticProperties getSynapseProperties(String netConnName)
@@ -318,7 +318,7 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
     public Vector<SynapticProperties> getSynapseList(String complexConnName)
     {
         int index = vectorNames.indexOf(complexConnName);
-        Vector<SynapticProperties> synPropList = (Vector<SynapticProperties>) getValueAt(index, this.COL_NUM_SYNAPSE_LIST);
+        Vector<SynapticProperties> synPropList = (Vector<SynapticProperties>) getValueAt(index, COL_NUM_SYNAPSE_LIST);
         return synPropList;
     }
 
@@ -326,7 +326,7 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
     public void setSynapseList(String complexConnName, Vector<SynapticProperties> synPropList)
     {
         int index = vectorNames.indexOf(complexConnName);
-        this.setValueAt(synPropList, index, this.COL_NUM_SYNAPSE_LIST);
+        this.setValueAt(synPropList, index, COL_NUM_SYNAPSE_LIST);
     }
 
 
@@ -342,7 +342,7 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
     public void setSourceCellGroup(String netConnName, String source)
     {
         int index = vectorNames.indexOf(netConnName);
-        this.setValueAt(source, index, this.COL_NUM_SOURCE);
+        this.setValueAt(source, index, COL_NUM_SOURCE);
     }
 
 
@@ -358,7 +358,7 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
     public void setTargetCellGroup(String netConnName, String target)
     {
         int index = vectorNames.indexOf(netConnName);
-        this.setValueAt(target, index, this.COL_NUM_TARGET);
+        this.setValueAt(target, index, COL_NUM_TARGET);
     }
 
 
@@ -372,7 +372,7 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
     public void setSearchPattern(String netConnName, SearchPattern sp)
     {
         int index = vectorNames.indexOf(netConnName);
-        this.setValueAt(sp, index, this.COL_NUM_SEARCH_PATTERN);
+        this.setValueAt(sp, index, COL_NUM_SEARCH_PATTERN);
     }
 
 
@@ -402,7 +402,7 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
     public void setMaxMinLength(String netConnName, MaxMinLength mm)
     {
         int index = vectorNames.indexOf(netConnName);
-        this.setValueAt(mm, index, this.COL_NUM_MAX_MIN);
+        this.setValueAt(mm, index, COL_NUM_MAX_MIN);
     }
 
 

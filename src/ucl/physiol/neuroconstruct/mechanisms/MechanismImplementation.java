@@ -267,7 +267,7 @@ public class MechanismImplementation
             valueStrings = new Hashtable<Float, String>();
             paramValueSubstitutes.put(paramName, valueStrings);
         }
-        valueStrings = (Hashtable)paramValueSubstitutes.get(paramName);
+        valueStrings = (Hashtable<Float, String>)paramValueSubstitutes.get(paramName);
 
         valueStrings.put(new Float(value), subsString);
     }

@@ -12590,7 +12590,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 jComboBoxCellTypes.setSelectedItem(importedCell);
 
-                ArrayList cellMechs = importedCell.getAllChannelMechanisms(true);
+                ArrayList<Object> cellMechs = new ArrayList<Object>();
+                cellMechs.addAll(importedCell.getAllChannelMechanisms(true));
                 
                 ArrayList<String> synapses = importedCell.getAllAllowedSynapseTypes();
 
@@ -12678,7 +12679,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                 if (next.getName().equals(oldName)) next.setName(newName);
                             }
 
-                            Hashtable synapsesVsGroups = importedCell.getSynapsesVsGroups();
+                            Hashtable<String, Vector<String>> synapsesVsGroups = importedCell.getSynapsesVsGroups();
                             enumeration = synapsesVsGroups.keys();
                             while (enumeration.hasMoreElements())
                             {
