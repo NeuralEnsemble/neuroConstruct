@@ -37,7 +37,7 @@ public abstract class CellPackingAdapter
     protected Cell myCell = null;
 
     protected String description = null;
-    private Vector positionsAlreadyTaken = new Vector();
+    private Vector<Point3f> positionsAlreadyTaken = new Vector<Point3f>();
 
     protected InternalParameter[] parameterList = null;
 
@@ -150,8 +150,8 @@ public abstract class CellPackingAdapter
 
             logger.logComment("Checking one of my cells at: " + Utils3D.getShortStringDesc(locationMyCell));
 
-            Vector volumeSegmentsMyCell = new Vector();
-            Vector mySegments = myCell.getAllSegments();
+            Vector<Segment> volumeSegmentsMyCell = new Vector<Segment>();
+            Vector<Segment> mySegments = myCell.getAllSegments();
 
             for (int i = 0; i < mySegments.size(); i++)
             {
@@ -160,8 +160,8 @@ public abstract class CellPackingAdapter
                     volumeSegmentsMyCell.add(segment);
             }
 
-            Vector volumeSegmentsNewCell = new Vector();
-            Vector newSegments = newCell.getAllSegments();
+            Vector<Segment> volumeSegmentsNewCell = new Vector<Segment>();
+            Vector<Segment> newSegments = newCell.getAllSegments();
 
             for (int i = 0; i < newSegments.size(); i++)
             {

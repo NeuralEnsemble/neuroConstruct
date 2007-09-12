@@ -19,6 +19,7 @@ package ucl.physiol.neuroconstruct.project;
  *  
  */
 
+@SuppressWarnings("serial")
 public class CellCreationException extends Exception
 {
 

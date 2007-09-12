@@ -27,6 +27,7 @@ import java.util.*;
  *  
  */
 
+@SuppressWarnings("serial")
 
 public class DropDownObjectCellEditor extends AbstractCellEditor implements TableCellEditor
 {
@@ -34,7 +35,7 @@ public class DropDownObjectCellEditor extends AbstractCellEditor implements Tabl
 
     JComboBox comboBox;
 
-    Vector allObjects = new Vector();
+    Vector<Object> allObjects = new Vector<Object>();
 
     public DropDownObjectCellEditor()
     {

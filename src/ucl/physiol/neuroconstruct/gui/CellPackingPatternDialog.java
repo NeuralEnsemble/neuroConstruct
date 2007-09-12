@@ -30,11 +30,13 @@ import ucl.physiol.neuroconstruct.project.*;
  */
 
 
+@SuppressWarnings("serial")
+
 public class CellPackingPatternDialog extends JDialog
 {
     ClassLogger logger = new ClassLogger("CellPackingPatternDialog");
 
-    Hashtable paramInfo = new Hashtable();
+    Hashtable<String, JTextField> paramInfo = new Hashtable<String, JTextField>();
 
     boolean cancelled = false;
     JPanel jPanelButtons = new JPanel();
@@ -232,7 +234,7 @@ public class CellPackingPatternDialog extends JDialog
         {
             jbInit();
 
-            paramInfo = new Hashtable();
+            paramInfo = new Hashtable<String, JTextField>();
         }
         catch(Exception e)
         {
@@ -328,7 +330,7 @@ public class CellPackingPatternDialog extends JDialog
 
         InternalParameter[] paramList = adapter.getParameterList();
 
-        paramInfo = new Hashtable(); // to remove previous items
+        paramInfo = new Hashtable<String, JTextField>(); // to remove previous items
         jPanelParameters.removeAll();
 
         for (int i = 0; i < paramList.length; i++)
@@ -345,7 +347,7 @@ public class CellPackingPatternDialog extends JDialog
     private void addPatternParameter(InternalParameter param)
     {
         JPanel jPanelNew = new JPanel();
-        BorderLayout borderLayoutNew = new BorderLayout();
+        //BorderLayout borderLayoutNew = new BorderLayout();
         //jPanelNew.setLayout(borderLayoutNew);
 
         JLabel jLabelName = new JLabel(param.parameterName+": ");

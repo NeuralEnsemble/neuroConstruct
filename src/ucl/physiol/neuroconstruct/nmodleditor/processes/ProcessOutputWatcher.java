@@ -47,7 +47,7 @@ public class ProcessOutputWatcher extends Thread
     {
         try
         {
-            int numberOfBytesRead;
+            //int numberOfBytesRead;
 
             BufferedReader br = new BufferedReader(inputStrReader);
             String line=null;

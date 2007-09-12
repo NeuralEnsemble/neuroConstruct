@@ -39,7 +39,7 @@ public class CellMechanismPlotInfo
     ClassLogger logger = new ClassLogger("CellMechanismPlotInfo");
 
     Document plotInfoDoc = null;
-    Vector parsedCellMechanismPlots = new Vector();
+    Vector<CellMechanismPlot> parsedCellMechanismPlots = new Vector<CellMechanismPlot>();
 
     Project project = null;
 
@@ -99,7 +99,7 @@ public class CellMechanismPlotInfo
 
         NodeList nl = mainNode.getChildNodes();
 
-        Hashtable allParameters = new Hashtable();
+        Hashtable<String, String> allParameters = new Hashtable<String, String>();
         for (int topNodeIndex = 0; topNodeIndex < nl.getLength(); topNodeIndex++)
         {
             Node node = nl.item(topNodeIndex);
@@ -288,7 +288,7 @@ public class CellMechanismPlotInfo
             });
 
             File d2plots = new File("templates/xmlTemplates/DoubExpSynPlots.xml");
-            CellMechanismPlotInfo cppi = new CellMechanismPlotInfo(testProj, d2plots);
+            new CellMechanismPlotInfo(testProj, d2plots);
 
         }
         catch (Exception e)
@@ -298,8 +298,6 @@ public class CellMechanismPlotInfo
 
     }
 
-    private void jbInit() throws Exception
-    {
-    }
+ 
 
 }

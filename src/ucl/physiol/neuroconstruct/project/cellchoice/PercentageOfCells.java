@@ -114,7 +114,7 @@ public class PercentageOfCells extends CellChooser
 
     public static void main(String[] args)
     {
-        ArrayList<PositionRecord> cellPositions = new ArrayList();
+        ArrayList<PositionRecord> cellPositions = new ArrayList<PositionRecord>();
         cellPositions.add(new PositionRecord(0,0,0,0));
         cellPositions.add(new PositionRecord(1,110,0,0));
         cellPositions.add(new PositionRecord(2,220,0,0));

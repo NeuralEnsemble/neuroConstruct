@@ -13,7 +13,7 @@
 package ucl.physiol.neuroconstruct.project.packing;
 
 import javax.vecmath.*;
-import ucl.physiol.neuroconstruct.cell.*;
+//import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
 import ucl.physiol.neuroconstruct.cell.examples.*;
@@ -33,7 +33,7 @@ public class HexagonalLayerPackingAdapter extends CellPackingAdapter
 
     // this will be like positionsAlreadyTaken, but will include ALL the points
     // attempted, including ones removed with cancelPosition(Point3d point)
-    Vector positionsAlreadyAttempted = new Vector();
+    Vector<Point3f> positionsAlreadyAttempted = new Vector<Point3f>();
 
     int zLayerNumber = 0;
 
@@ -185,6 +185,7 @@ public class HexagonalLayerPackingAdapter extends CellPackingAdapter
                               + " entries, compared to "
                               + getNumPosAlreadyTaken()
                               + " successful ones so far...");
+            
             positionsAlreadyAttempted.add(proposedPoint);
 
             return proposedPoint;

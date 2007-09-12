@@ -20,6 +20,7 @@ package ucl.physiol.neuroconstruct.project.cellchoice;
  *  
  */
 
+@SuppressWarnings("serial")
 
 public class CellChooserException extends Exception
 {

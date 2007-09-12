@@ -172,7 +172,7 @@ public class RandomCellPackingAdapter extends CellPackingAdapter
             else
                 throw new CellPackingException("Invalid Parameter value");
         }
-        else if (parameterName.equals(this.OTHER_OVERLAP_POLICY))
+        else if (parameterName.equals(OTHER_OVERLAP_POLICY))
         {
             if (parameterValue == 0 || parameterValue == 1)
                 parameterList[3].value = parameterValue;

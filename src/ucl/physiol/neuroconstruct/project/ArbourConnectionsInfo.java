@@ -323,7 +323,7 @@ public class ArbourConnectionsInfo extends AbstractTableModel
     public void setInhomogenousExp(String netConnName, String exp)
     {
         int index = vectorNames.indexOf(netConnName);
-        this.setValueAt(exp, index, this.COL_NUM_INHOMO_EXP);
+        this.setValueAt(exp, index, COL_NUM_INHOMO_EXP);
     }
 
 
@@ -428,7 +428,7 @@ public class ArbourConnectionsInfo extends AbstractTableModel
         Vector vectorSynapsePropertiesTemp = (Vector)allInfo.get(columnNames[COL_NUM_SYNAPSE_LIST]);
         if (vectorSynapsePropertiesTemp!=null) vectorSynapseList = vectorSynapsePropertiesTemp;
 
-        Vector vectorConnCondsTemp = (Vector)allInfo.get(columnNames[COL_NUM_CONN_CONDS]);
+        Vector<ConnectivityConditions> vectorConnCondsTemp = (Vector)allInfo.get(columnNames[COL_NUM_CONN_CONDS]);
         if (vectorConnCondsTemp!=null) vectorConnConds = vectorConnCondsTemp;
 
         Vector vectorAPSpeedTemp = (Vector)allInfo.get(columnNames[COL_NUM_AP_SPEED]);

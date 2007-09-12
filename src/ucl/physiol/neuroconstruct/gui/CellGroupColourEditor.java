@@ -25,7 +25,7 @@ import javax.swing.table.*;
  *  
  */
 
-
+@SuppressWarnings("serial")
 
 public class CellGroupColourEditor extends AbstractCellEditor implements TableCellEditor, ActionListener
 {

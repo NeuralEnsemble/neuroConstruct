@@ -28,7 +28,7 @@ public  class ChannelMLHelper
 {
     static ClassLogger logger = new ClassLogger("ChannelMLHelper");
 
-    private static ArrayList<File> availableCMLCellMechanisms = new ArrayList();
+    private static ArrayList<File> availableCMLCellMechanisms = new ArrayList<File>();
 
     static
     {

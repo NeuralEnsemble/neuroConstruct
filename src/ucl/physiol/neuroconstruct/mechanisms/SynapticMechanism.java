@@ -33,7 +33,7 @@ public class SynapticMechanism extends AbstractedCellMechanism
     public SynapticMechanism()
     {
         super.setDescription("A synaptic mechanism");
-        super.setMechanismType(super.SYNAPTIC_MECHANISM);
+        super.setMechanismType(SYNAPTIC_MECHANISM);
         super.setDefaultInstanceName("SynMechanism");
 /*
 

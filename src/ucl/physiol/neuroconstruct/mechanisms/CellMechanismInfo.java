@@ -26,6 +26,8 @@ import ucl.physiol.neuroconstruct.project.*;
  *  
  */
 
+@SuppressWarnings("serial")
+
 public class CellMechanismInfo extends AbstractTableModel
 {
     ClassLogger logger = new ClassLogger("CellMechanismInfo");
@@ -38,7 +40,7 @@ public class CellMechanismInfo extends AbstractTableModel
 
     final String[] columnNames = new String[5];
 
-    Vector allCellMechanisms = new Vector();
+    Vector<CellMechanism> allCellMechanisms = new Vector<CellMechanism>();
 
 
     public CellMechanismInfo()
@@ -170,7 +172,7 @@ public class CellMechanismInfo extends AbstractTableModel
 
     public Vector<String> getAllCellMechanismNames()
     {
-        Vector<String> allNames = new Vector();
+        Vector<String> allNames = new Vector<String>();
         for (int i = 0; i < getRowCount(); i++)
         {
                allNames.add((String)getValueAt(i, COL_NUM_INSTANCE_NAME));
@@ -181,9 +183,9 @@ public class CellMechanismInfo extends AbstractTableModel
 
 
 
-    public Vector getAllChannelMechanismNames()
+    public Vector<String> getAllChannelMechanismNames()
     {
-        Vector allNames = new Vector();
+        Vector<String> allNames = new Vector<String>();
         for (int i = 0; i < getRowCount(); i++)
         {
                 CellMechanism nextCellMech = (CellMechanism)getCellMechanismAt(i);
@@ -195,9 +197,9 @@ public class CellMechanismInfo extends AbstractTableModel
         return allNames;
     }
 
-    public Vector getChanMechsAndIonConcs()
+    public Vector<String> getChanMechsAndIonConcs()
     {
-        Vector allNames = new Vector();
+        Vector<String> allNames = new Vector<String>();
         for (int i = 0; i < getRowCount(); i++)
         {
                 CellMechanism nextCellMech = (CellMechanism)getCellMechanismAt(i);
@@ -211,9 +213,9 @@ public class CellMechanismInfo extends AbstractTableModel
     }
 
 
-    public Vector getAllSynMechNames()
+    public Vector<String> getAllSynMechNames()
     {
-        Vector allNames = new Vector();
+        Vector<String> allNames = new Vector<String>();
         for (int i = 0; i < getRowCount(); i++)
         {
             CellMechanism nextCellMech = (CellMechanism) getCellMechanismAt(i);
@@ -288,7 +290,7 @@ public class CellMechanismInfo extends AbstractTableModel
     /**
      * Added to allow storing of data by XMLEncoder. Should not normally be called!!!
      */
-    public void setAllCellMechanisms(Vector allCellMechs)
+    public void setAllCellMechanisms(Vector<CellMechanism> allCellMechs)
     {
         this.allCellMechanisms = allCellMechs;
     }

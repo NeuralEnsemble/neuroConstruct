@@ -136,7 +136,9 @@ public class Section implements Serializable
         newSection.setStartPointPositionX(startPointPosition.x);
         newSection.setStartPointPositionY(startPointPosition.y);
         newSection.setStartPointPositionZ(startPointPosition.z);
-        newSection.setGroups((Vector<String>)groups.clone());
+        Vector<String> newGroups = new Vector<String>();
+        newGroups.addAll(groups);
+        newSection.setGroups(newGroups);
         newSection.setNumberInternalDivisions(numberInternalDivisions);
         newSection.setComment(comment);
 
@@ -163,6 +165,7 @@ public class Section implements Serializable
         //this.edited = true;
         this.comment = comment;
     }
+    
 
     // These funcs are needed as Point3f etc. aren't too compatible with
     // XMLEncoder, there aren't get/sets for x,y,z...

@@ -101,11 +101,13 @@ public class NetworkMLReader extends XMLFilterImpl
                 && getAncestorElement(1).equals(NetworkMLConstants.PROJECTION_ELEMENT))
             {
                 currentSource = contents;
+                logger.logComment("currentSource: "+currentSource);
             }
             else if (getCurrentElement().equals(NetworkMLConstants.TARGET_ELEMENT)
                 && getAncestorElement(1).equals(NetworkMLConstants.PROJECTION_ELEMENT))
             {
                 currentTarget = contents;
+                logger.logComment("currentTarget: "+currentTarget);
             }
             else if (getCurrentElement().equals(NetworkMLConstants.SYN_TYPE_ELEMENT)
                 && getAncestorElement(1).equals(NetworkMLConstants.SYN_PROPS_ELEMENT))
@@ -262,6 +264,7 @@ public class NetworkMLReader extends XMLFilterImpl
          else if (getCurrentElement().equals(NetworkMLConstants.PROJECTIONS_ELEMENT))
          {
              this.unitsUsed = attributes.getValue(NetworkMLConstants.UNITS_ATTR);
+             logger.logComment("unitsUsed: "+unitsUsed);
          }
          else if (getCurrentElement().equals(NetworkMLConstants.PROJECTION_ELEMENT))
          {

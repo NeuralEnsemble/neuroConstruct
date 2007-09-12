@@ -19,6 +19,8 @@ package ucl.physiol.neuroconstruct.cell.converters;
  *
  */
 
+@SuppressWarnings("serial")
+
 public class MorphologyException extends Exception
 {
     private MorphologyException()

@@ -19,6 +19,8 @@ package ucl.physiol.neuroconstruct.project.packing;
  *  
  */
 
+@SuppressWarnings("serial")
+
 public class CellPackingException extends Exception
 {
 

@@ -15,7 +15,7 @@ package ucl.physiol.neuroconstruct.project.cellchoice;
 import java.util.*;
 
 import ucl.physiol.neuroconstruct.project.*;
-import ucl.physiol.neuroconstruct.utils.*;
+//import ucl.physiol.neuroconstruct.utils.*;
 
 
 /**
@@ -28,7 +28,7 @@ import ucl.physiol.neuroconstruct.utils.*;
 
 public class RegionAssociatedCells extends CellChooser
 {
-    private static ClassLogger logger = new ClassLogger("RegionAssociatedCells");
+    //private static ClassLogger logger = new ClassLogger("RegionAssociatedCells");
 
 
     public static final String REGION_NAME = "RegionName";
@@ -67,11 +67,11 @@ public class RegionAssociatedCells extends CellChooser
     {
         if (parameterList[1].getValue() == 0)
         {
-            return "Cells inside region: " + getParameterStringValue(this.REGION_NAME);
+            return "Cells inside region: " + getParameterStringValue(REGION_NAME);
         }
         else if (parameterList[1].getValue() == 1)
         {
-            return "Cells outside region: " + getParameterStringValue(this.REGION_NAME);
+            return "Cells outside region: " + getParameterStringValue(REGION_NAME);
         }
         else
             return "Error with Cell chooser";
@@ -127,7 +127,7 @@ public class RegionAssociatedCells extends CellChooser
             if (nextIndexToCheck >=  cellPositions.size())
                 throw new AllCellsChosenException();
 
-            Region region = project.regionsInfo.getRegionObject(this.getParameterStringValue(this.REGION_NAME));
+            Region region = project.regionsInfo.getRegionObject(this.getParameterStringValue(REGION_NAME));
 
             PositionRecord nextPosRecord = this.cellPositions.get(nextIndexToCheck);
 

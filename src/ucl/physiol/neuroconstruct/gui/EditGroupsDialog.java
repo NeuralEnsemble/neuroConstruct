@@ -31,6 +31,8 @@ import ucl.physiol.neuroconstruct.cell.examples.*;
  *  
  */
 
+@SuppressWarnings("serial")
+
 public class EditGroupsDialog
     extends JDialog
     implements ListSelectionListener

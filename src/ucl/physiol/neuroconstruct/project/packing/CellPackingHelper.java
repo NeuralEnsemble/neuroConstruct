@@ -23,7 +23,7 @@ import java.util.*;
 
 public class CellPackingHelper
 {
-    private static Vector cellPackingPatterns = new Vector();
+    private static Vector<String> cellPackingPatterns = new Vector<String>();
 
     static
     {

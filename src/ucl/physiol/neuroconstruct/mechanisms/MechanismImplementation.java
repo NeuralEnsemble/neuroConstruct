@@ -44,7 +44,7 @@ public class MechanismImplementation
 
     private static final String nameToken = "Name";
 
-    private Hashtable paramValueSubstitutes = new Hashtable();
+    private Hashtable<String, Hashtable> paramValueSubstitutes = new Hashtable<String, Hashtable>();
 
 
     public MechanismImplementation()
@@ -261,10 +261,10 @@ public class MechanismImplementation
      */
     public void addParamValueSubstitute(String paramName, float value, String subsString)
     {
-        Hashtable valueStrings = null;
+        Hashtable<Float, String> valueStrings = null;
         if (!paramValueSubstitutes.containsKey(paramName))
         {
-            valueStrings = new Hashtable();
+            valueStrings = new Hashtable<Float, String>();
             paramValueSubstitutes.put(paramName, valueStrings);
         }
         valueStrings = (Hashtable)paramValueSubstitutes.get(paramName);
@@ -381,7 +381,7 @@ public class MechanismImplementation
 
         mech.setParameter(PassiveMembraneMechanism.REV_POTENTIAL, 666);
 
-        File newFile = new File("c:\\temp\\proc.p");
+        //File newFile = new File("c:\\temp\\proc.p");
 
 
 
@@ -390,7 +390,7 @@ public class MechanismImplementation
     {
         return paramValueSubstitutes;
     }
-    public void setParamValueSubstitutes(Hashtable paramValueSubstitutes)
+    public void setParamValueSubstitutes(Hashtable<String, Hashtable> paramValueSubstitutes)
     {
         this.paramValueSubstitutes = paramValueSubstitutes;
     }

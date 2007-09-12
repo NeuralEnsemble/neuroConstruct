@@ -37,7 +37,7 @@ public class CellTypeHelper
     private static Vector<Object> morphFileCellTypes = new Vector<Object>();
 
     private static Hashtable extensionsVsMorphCellTypes = new Hashtable();
-    private static Hashtable descriptionsVsCellTypes = new Hashtable();
+    private static Hashtable<String, String> descriptionsVsCellTypes = new Hashtable<String, String>();
 
     static
     {
@@ -60,7 +60,7 @@ public class CellTypeHelper
 
 
 
-        Vector allCellTypes = new Vector(ordinaryCellTypes);
+        Vector<Object> allCellTypes = new Vector<Object>(ordinaryCellTypes);
         allCellTypes.addAll(morphFileCellTypes);
         logger.logComment("All cell types: "+ allCellTypes);
 
@@ -234,7 +234,7 @@ public class CellTypeHelper
 
     public static Enumeration getAllCellTypeNames()
     {
-        Vector allCellTypes = new Vector(ordinaryCellTypes);
+        Vector<Object> allCellTypes = new Vector<Object>(ordinaryCellTypes);
         allCellTypes.addAll(morphFileCellTypes);
         return allCellTypes.elements();
     }

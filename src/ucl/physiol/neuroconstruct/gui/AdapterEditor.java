@@ -27,6 +27,8 @@ import ucl.physiol.neuroconstruct.project.packing.*;
  *  
  */
 
+@SuppressWarnings("serial")
+
 public class AdapterEditor extends AbstractCellEditor implements TableCellEditor, ActionListener
 {
     ClassLogger logger = new ClassLogger("AdapterEditor");

@@ -19,6 +19,8 @@ package ucl.physiol.neuroconstruct.mechanisms;
  *  
  */
 
+@SuppressWarnings("serial")
+
 public class CellMechanismException extends Exception
 {
     public CellMechanismException(String e)

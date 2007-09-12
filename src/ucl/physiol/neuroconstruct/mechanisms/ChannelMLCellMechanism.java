@@ -633,7 +633,7 @@ public class ChannelMLCellMechanism extends CellMechanism
                                 }
                             }
 
-                            String unitsXPath = ChannelMLConstants.getUnitsXPath();
+                            //String unitsXPath = ChannelMLConstants.getUnitsXPath();
 
                             if (unitsSystem == UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS)
                             {
@@ -757,7 +757,7 @@ public class ChannelMLCellMechanism extends CellMechanism
     }
 
 
-    public void setSimMappings(ArrayList simMappings)
+    public void setSimMappings(ArrayList<SimXSLMapping> simMappings)
     {
         this.simMappings = simMappings;
     }

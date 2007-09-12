@@ -15,7 +15,6 @@ package ucl.physiol.neuroconstruct.project.cellchoice;
 import ucl.physiol.neuroconstruct.project.PositionRecord;
 import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.utils.ClassLogger;
-import ucl.physiol.neuroconstruct.project.ProjectManager;
 import ucl.physiol.neuroconstruct.project.InternalStringFloatParameter;
 
 
@@ -72,7 +71,7 @@ public class IndividualCells extends CellChooser
     {
         //logger.logComment("Setting string parameter with the name: "+parameterName+" found in "+this.getClass().getName(), true);
 
-        if (!parameterName.equals(this.LIST_OF_CELLS))
+        if (!parameterName.equals(LIST_OF_CELLS))
         {
             throw new CellChooserException("No parameter with the name: "+parameterName+" found in "+this.getClass().getName());
         }
@@ -107,7 +106,7 @@ public class IndividualCells extends CellChooser
 
     private void generateCellNumbersToReturn() throws CellChooserException
     {
-        String[] numbers = this.getParameterStringValue(this.LIST_OF_CELLS).split(",");
+        String[] numbers = this.getParameterStringValue(LIST_OF_CELLS).split(",");
 
         allCellNumbersToReturn  = new int[numbers.length];
 
@@ -123,7 +122,7 @@ public class IndividualCells extends CellChooser
         }
         catch (Exception ex)
         {
-            throw new CellChooserException("Error parsing comma separated cell number list: " + getParameterStringValue(this.LIST_OF_CELLS),ex);
+            throw new CellChooserException("Error parsing comma separated cell number list: " + getParameterStringValue(LIST_OF_CELLS),ex);
         }
 
     }
@@ -183,7 +182,7 @@ public class IndividualCells extends CellChooser
 
     public static void main(String[] args)
     {
-        ArrayList<PositionRecord> cellPositions = new ArrayList();
+        ArrayList<PositionRecord> cellPositions = new ArrayList<PositionRecord>();
         cellPositions.add(new PositionRecord(0,0,0,0));
         cellPositions.add(new PositionRecord(1,110,0,0));
         cellPositions.add(new PositionRecord(2,220,0,0));

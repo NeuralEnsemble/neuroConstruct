@@ -26,6 +26,8 @@ import java.awt.event.ActionEvent;
  */
 
 
+@SuppressWarnings("serial")
+
 public class InputRequest extends JDialog
 {
     //ArrayList<InputRequestElement> inputs = null;

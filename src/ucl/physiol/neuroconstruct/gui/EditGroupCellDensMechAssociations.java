@@ -36,6 +36,8 @@ import ucl.physiol.neuroconstruct.utils.units.*;
  *  
  */
 
+@SuppressWarnings("serial")
+
 public class EditGroupCellDensMechAssociations extends JDialog implements ListSelectionListener
 {
     ClassLogger logger = new ClassLogger("EditGroupCellDensMechAssociations");
@@ -118,7 +120,10 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         ArrayList<ChannelMechanism> mechs = cell.getAllChannelMechanisms(false);
 
         // create copy...
-        Vector processList = new Vector(project.cellMechanismInfo.getAllCellMechanismNames());
+        
+        Vector<String> processListTemp = project.cellMechanismInfo.getAllCellMechanismNames();
+        Vector<String> processList = new Vector<String>();
+        processList.addAll(processListTemp);
 
         for (int i = 0; i < mechs.size(); i++)
         {
@@ -802,7 +807,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
             float condDens = -1;
             try
             {
-                String inputValue = null;
+                //String inputValue = null;
                 String suggestedValue = null;
                 if (cellProcess instanceof AbstractedCellMechanism)
                 {

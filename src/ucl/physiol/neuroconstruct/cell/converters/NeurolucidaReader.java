@@ -596,11 +596,11 @@ public class NeurolucidaReader extends FormatImporter
 
                                     if (ascInfo.getSubClass() != null)
                                     {
-                                        if (ascInfo.getSubClass().equals(ascInfo.DENDRITE))
+                                        if (ascInfo.getSubClass().equals(ASCInfo.DENDRITE))
                                         {
                                             // Not interesting subclass...
                                         }
-                                        else if (ascInfo.getSubClass().equals(ascInfo.AXON))
+                                        else if (ascInfo.getSubClass().equals(ASCInfo.AXON))
                                         {
                                             connectingSeg.getSection().addToGroup(Section.AXONAL_GROUP);
                                         }
@@ -670,12 +670,12 @@ public class NeurolucidaReader extends FormatImporter
 
                                     if (ascInfo.getSubClass() != null)
                                     {
-                                        if (ascInfo.getSubClass().equals(ascInfo.DENDRITE))
+                                        if (ascInfo.getSubClass().equals(ASCInfo.DENDRITE))
                                         {
                                             logger.logComment("It's a dendrite...");
                                             // Not interesting subclass...
                                         }
-                                        else if (ascInfo.getSubClass().equals(ascInfo.AXON))
+                                        else if (ascInfo.getSubClass().equals(ASCInfo.AXON))
                                         {
                                             logger.logComment("It's an axon...");
                                             newSeg.getSection().addToGroup(Section.AXONAL_GROUP);
@@ -723,7 +723,7 @@ public class NeurolucidaReader extends FormatImporter
 
                                     //newSeg.setComment("normal...");
 
-                                    if (ascInfo.getSubClass() != null && ascInfo.getSubClass().equals(ascInfo.AXON))
+                                    if (ascInfo.getSubClass() != null && ascInfo.getSubClass().equals(ASCInfo.AXON))
                                     {
                                         logger.logComment("It's an axon...");
                                         newSeg.getSection().addToGroup(Section.AXONAL_GROUP);

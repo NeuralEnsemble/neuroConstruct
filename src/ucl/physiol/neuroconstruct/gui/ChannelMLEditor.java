@@ -45,6 +45,8 @@ import ucl.physiol.neuroconstruct.utils.equation.*;
  *  
  */
 
+@SuppressWarnings("serial")
+
 public class ChannelMLEditor extends JFrame implements HyperlinkListener
 {
 
@@ -176,7 +178,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
             this.jLabelFileName.setText("Editing ChannelML file: " + cmlFileUsed.getAbsolutePath());
 
-            jLabelFileName.setHorizontalAlignment(jLabelFileName.CENTER);
+            jLabelFileName.setHorizontalAlignment(JLabel.CENTER);
             jLabelFileName.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
             refresh();
@@ -828,7 +830,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
             GuiUtils.showInfoMessage(logger, "Confirm","Please note that any changes made in an external application to the file will not be\n"+
                                                         "registered here until you press <b>Reload ChannelML file</b>", this);
 
-            Process currentProcess = rt.exec(command);
+            rt.exec(command);
         }
         catch (IOException ex)
         {
@@ -851,8 +853,8 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         float minV = -100;
         float maxV = 60;
 
-        float minT = 0;
-        float maxT = 20;
+        //float minT = 0;
+        //float maxT = 20;
 
 
         Variable v = new Variable("v");
@@ -1268,7 +1270,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
             try
             {
-                Process currentProcess = rt.exec(command);
+                rt.exec(command);
 
                 logger.logComment("Have successfully executed command: " + command);
 

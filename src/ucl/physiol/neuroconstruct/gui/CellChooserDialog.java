@@ -30,12 +30,13 @@ import ucl.physiol.neuroconstruct.utils.*;
  *  
  */
 
+@SuppressWarnings("serial")
 
 public class CellChooserDialog extends JDialog
 {
     private static ClassLogger logger = new ClassLogger("CellChooserDialog");
 
-    Hashtable paramInfo = new Hashtable();
+    Hashtable<String, JTextField> paramInfo = new Hashtable<String, JTextField>();
 
     boolean cancelled = false;
 
@@ -261,7 +262,7 @@ public class CellChooserDialog extends JDialog
         {
             jbInit();
 
-            paramInfo = new Hashtable();
+            paramInfo = new Hashtable<String, JTextField>();
         }
         catch(Exception e)
         {
@@ -359,7 +360,7 @@ public class CellChooserDialog extends JDialog
 
         InternalStringFloatParameter[] paramList = chooser.getParameterList();
 
-        paramInfo = new Hashtable(); // to remove previous items
+        paramInfo = new Hashtable<String, JTextField>(); // to remove previous items
         jPanelParameters.removeAll();
 
         for (int i = 0; i < paramList.length; i++)
@@ -434,7 +435,7 @@ public class CellChooserDialog extends JDialog
 
             logger.logComment("Choosen one: " + cc.toString());
 
-            ArrayList<PositionRecord> cellPositions = new ArrayList();
+            ArrayList<PositionRecord> cellPositions = new ArrayList<PositionRecord>();
             cellPositions.add(new PositionRecord(0, 0, 0, 0));
             cellPositions.add(new PositionRecord(1, 110, 0, 0));
             cellPositions.add(new PositionRecord(2, 220, 0, 0));

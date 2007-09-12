@@ -19,6 +19,8 @@ package ucl.physiol.neuroconstruct.neuroml;
  *
  */
 
+@SuppressWarnings("serial")
+
 public class NeuroMLException extends Exception
 {
     private NeuroMLException()

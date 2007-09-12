@@ -13,7 +13,6 @@
 package ucl.physiol.neuroconstruct.project.packing;
 
 import javax.vecmath.*;
-import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.cell.examples.*;
 import ucl.physiol.neuroconstruct.project.*;

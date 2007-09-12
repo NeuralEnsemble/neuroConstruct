@@ -29,6 +29,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  *  
  */
 
+@SuppressWarnings("serial")
 
 public class CellGroupDialog extends JDialog
 {

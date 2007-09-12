@@ -36,7 +36,7 @@ public abstract class DistMembraneMechanism extends AbstractedCellMechanism
     public DistMembraneMechanism()
     {
         super.setDescription("A voltage dependent conductance on the cell membrane");
-        super.setMechanismType(super.CHANNEL_MECHANISM);
+        super.setMechanismType(CHANNEL_MECHANISM);
         super.setDefaultInstanceName("MembraneMechanism");
 
 

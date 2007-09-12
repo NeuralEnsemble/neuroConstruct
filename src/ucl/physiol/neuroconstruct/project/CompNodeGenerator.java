@@ -15,7 +15,7 @@ package ucl.physiol.neuroconstruct.project;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
 import ucl.physiol.neuroconstruct.hpc.mpi.MpiConfiguration;
-import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings;
+//import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings;
 
 
 /**
@@ -126,7 +126,7 @@ public class CompNodeGenerator extends Thread
         logger.logComment("Old order: "+ cellGroupNamesUnordered);
         logger.logComment("New order: "+ cellGroupNames);
         
-        Random r = ProjectManager.getRandomGenerator();
+        //Random r = ProjectManager.getRandomGenerator();
         
         Hashtable<String, ArrayList<Integer>> hostsVsNumOnProcs = new Hashtable<String, ArrayList<Integer>>();
         

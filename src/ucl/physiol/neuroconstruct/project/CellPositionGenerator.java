@@ -138,7 +138,7 @@ public class CellPositionGenerator extends Thread
                 String cellType = project.cellGroupsInfo.getCellType(nextCellGroup);
                 String regionName = project.cellGroupsInfo.getRegionName(nextCellGroup);
 
-                Vector adaptersToCheckForCollisions = new Vector();
+                Vector<CellPackingAdapter> adaptersToCheckForCollisions = new Vector<CellPackingAdapter>();
 
                 for (int m = 0; m < l; m++) // look through previous cell groups...
                 {
