@@ -175,11 +175,11 @@ public class NeuronFileManager
 
             fw.write(generateIncludes());
 
-            fw.write(generateRandomise());
-
             fw.write(getHostname());
 
             if (simConfig.getMpiConf().isParallel()) fw.write(initialiseParallel());
+            
+            fw.write(generateRandomise());
 
             fw.write(generateNeuronCodeBlock(NativeCodeLocation.BEFORE_CELL_CREATION));
 
@@ -572,8 +572,20 @@ public class NeuronFileManager
         StringBuffer response = new StringBuffer();
 
         addComment(response, "Initializes random-number generator");
-        response.append("use_mcell_ran4(1)\n");
-        response.append("mcell_ran4_init(" + this.randomSeed + ")\n");
+        response.append("use_mcell_ran4(1)\n\n");
+        if (!simConfig.getMpiConf().isParallel())
+        {
+            response.append("mcell_ran4_init(" + this.randomSeed + ")\n");
+        }
+        else
+        {
+            addComment(response, "As the simulation is being run in parallel, initialising differently on each host.\n"
+                                +"Adding the hostid to the rand seed allows reproducability of the sim, as long as the\n"
+                                +"same network distribution is used.");
+            
+            response.append("mcell_ran4_init(" + this.randomSeed + " + hostid)\n");
+        }
+        
         return response.toString();
 
     }
@@ -1923,7 +1935,8 @@ public class NeuronFileManager
 
                 logger.logComment("Dir for NeuronFiles: " + dirForNeuronFiles);
 
-                ArrayList cellMechanisms = cell.getAllChannelMechanisms(true);
+                ArrayList<Object> cellMechanisms = new ArrayList<Object>();
+                cellMechanisms.addAll(cell.getAllChannelMechanisms(true));
 
                 //Vector allSyns = cell.getAllAllowedSynapseTypes();
 
@@ -2484,7 +2497,7 @@ public class NeuronFileManager
                                                                      fractionAlongSrcSeg);
                     
 
-                    logger.logComment("fractAlongSourceSection: " + fractAlongSourceSection, true);
+                    logger.logComment("fractAlongSourceSection: " + fractAlongSourceSection);
 
                     float synInternalDelay = -1;
                     float weight = -1;
@@ -3569,11 +3582,9 @@ public class NeuronFileManager
 
                     if (simConfig.getMpiConf().isParallel())
                     {
-                        ArrayList<MpiConfiguration> configs = GeneralProperties.getMpiSettings().getMpiConfigurations();
-
                         preCommand.append("mpirun -map ");
 
-                        ArrayList<MpiHost> hosts = configs.get(MpiSettings.favouredConfig).getHostList();
+                        ArrayList<MpiHost> hosts = simConfig.getMpiConf().getHostList();
 
                         for (int i = 0; i < hosts.size(); i++)
                         {
