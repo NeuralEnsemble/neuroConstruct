@@ -153,7 +153,7 @@ public class CompNodeGenerator extends Thread
                     //int nodeID = r.nextInt(totalProcs);
                     int nodeID = ((cellCount-1)%totalProcs);
                     
-                    logger.logComment("cellCount: "+cellCount+", nodeID: "+nodeID,true);
+                    logger.logComment("cellCount: "+cellCount+", nodeID: "+nodeID);
                     
                     
                     pos.nodeId = nodeID;

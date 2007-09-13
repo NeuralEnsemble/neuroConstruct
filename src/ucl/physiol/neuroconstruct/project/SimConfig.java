@@ -74,10 +74,11 @@ public class SimConfig
 
     public MpiConfiguration getMpiConf()
     {
-        logger.logComment("mpiConf being asked: "+ mpiConf, true);
+        logger.logComment("mpiConf being asked: "+ mpiConf);
         
-        if (mpiConf == null) mpiConf = GeneralProperties.getMpiSettings().getMpiConfigurations().get(MpiSettings.favouredConfig);
-        logger.logComment("mpiConf now: "+ mpiConf, true);
+        if (mpiConf == null) mpiConf 
+            = GeneralProperties.getMpiSettings().getMpiConfigurations().get(MpiSettings.prefConfig);
+        logger.logComment("mpiConf now: "+ mpiConf);
         
         return (MpiConfiguration)mpiConf.clone();
     }
@@ -88,7 +89,7 @@ public class SimConfig
         this.mpiConf = (MpiConfiguration)mc.clone();
         
 
-        logger.logComment("mpiConf being set: "+ this.mpiConf, true);
+        logger.logComment("mpiConf being set: "+ this.mpiConf);
     }
     
     

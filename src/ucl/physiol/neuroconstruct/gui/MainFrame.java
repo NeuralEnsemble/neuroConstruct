@@ -384,7 +384,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JPanel jPanelNeuronRandomGen =  new JPanel();
     JLabel jLabelNeuronRandomGenDesc = new JLabel("Random seed for NEURON:");
     JTextField jTextFieldNeuronRandomGen = new JTextField();
-    JCheckBox jCheckBoxNeuronRandomGen = new JCheckBox("Recalculate before creating hoc files");
+    JCheckBox jCheckBoxNeuronRandomGen = new JCheckBox("Recalculate before creating script files");
 
     JPanel jPanelGenesisRandomGen =  new JPanel();
     JPanel jPanelGenesisComps =  new JPanel();
@@ -487,9 +487,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     GridLayout gridLayout5 = new GridLayout();
     JPanel jPanelNeuroML = new JPanel();
 
-    JButton jButtonNeuroMLExportLevel1 = new JButton();
-    JButton jButtonNeuroMLExportLevel2 = new JButton();
-    JButton jButtonNeuroMLExportCellLevel3 = new JButton();
+    JButton jButtonNeuroMLExport = new JButton();
+    JRadioButton jRadioButtonNeuroMLLevel1 = new JRadioButton();
+    JRadioButton jRadioButtonNeuroMLLevel2 = new JRadioButton();
+    JRadioButton jRadioButtonNeuroMLLevel3 = new JRadioButton();
+    ButtonGroup buttonGroupNeuroML = new ButtonGroup();
+    
+    //JButton jButtonNeuroMLExportLevel2 = new JButton();
+    //JButton jButtonNeuroMLExportCellLevel3 = new JButton();
     //JButton jButtonNeuroMLExportNetLevel3 = new JButton();
 
     JLabel jLabelNeuroMLMain = new JLabel();
@@ -1011,17 +1016,32 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         jTabbedPaneNeuron.setPreferredSize(new Dimension(478, 615));
 
-        jButtonNeuroMLExportLevel1.setEnabled(false);
-        jButtonNeuroMLExportLevel1.setText("Export all Cell Types to Level 1 NeuroML files (just anatomy)");
+        jRadioButtonNeuroMLLevel1.setText("Level 1 (Anatomy only)");
+        jRadioButtonNeuroMLLevel2.setText("Level 2 (L1 & cell biophysics)");
+        jRadioButtonNeuroMLLevel3.setText("Level 3 (L2 & network aspects)");
 
-        jButtonNeuroMLExportLevel1.addActionListener(new java.awt.event.ActionListener()
+        buttonGroupNeuroML.add(jRadioButtonNeuroMLLevel1);
+        buttonGroupNeuroML.add(jRadioButtonNeuroMLLevel2);
+        buttonGroupNeuroML.add(jRadioButtonNeuroMLLevel3);
+
+        jButtonNeuroMLExport.setEnabled(false);
+        jButtonNeuroMLExport.setText("Export all Cell Types");
+
+        jButtonNeuroMLExport.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
-                jButtonNeuroMLExport_actionPerformed(e, NeuroMLConstants.NEUROML_LEVEL_1);
+                if (jRadioButtonNeuroMLLevel1.isSelected())
+                    jButtonNeuroMLExport_actionPerformed(e, NeuroMLConstants.NEUROML_LEVEL_1);
+                else if (jRadioButtonNeuroMLLevel2.isSelected())
+                    jButtonNeuroMLExport_actionPerformed(e, NeuroMLConstants.NEUROML_LEVEL_2);
+                else if (jRadioButtonNeuroMLLevel3.isSelected())
+                    jButtonNeuroMLExport_actionPerformed(e, NeuroMLConstants.NEUROML_LEVEL_3);
             }
         });
-
+        
+        
+/*
         jButtonNeuroMLExportLevel2.setEnabled(false);
         jButtonNeuroMLExportLevel2.setText("Export all Cell Types to Level 2 NeuroML files "
                                            +"(anatomy & Cell Mechanism placement)");
@@ -1044,7 +1064,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             {
                 jButtonNeuroMLExport_actionPerformed(e, NeuroMLConstants.NEUROML_LEVEL_3);
             }
-        });
+        });*/
 
 
         /*
@@ -1069,7 +1089,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelNeuroMLHeader.setLayout(gridLayout6);
         jPanelSimSettings.setEnabled(true);
         jPanelSimSettings.setDoubleBuffered(true);
-        jLabelNeuroMLGeneratedFiles.setText("Generated files:");
+        jLabelNeuroMLGeneratedFiles.setText("Generated NeuroML files:");
 
         jButtonNeuroMLViewPlain.setEnabled(false);
         jButtonNeuroMLViewPlain.setText("View selected file");
@@ -1701,70 +1721,120 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jMenuItemDataSets_actionPerformed(e);
             }
         });
+        
+        JPanel jPanelNeuroMLExpButtons = new JPanel();
 
+        jPanelNeuroMLExpButtons.add(jButtonNeuroMLExport);
+        jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLLevel1);
+        jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLLevel2);
+        jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLLevel3);
+        jRadioButtonNeuroMLLevel1.setSelected(true);
+        
 
-
-        jPanelNeuroMLView.add(jLabelNeuroMLGeneratedFiles,
+        jPanelNeuroMLView.add(jPanelNeuroMLExpButtons,
                               new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
                                                      GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(6, 0, 12, 0), 0, 0));
 
+        JPanel jPanelNeuroMLComp = new JPanel();
+
+        jPanelNeuroMLComp.add(new JLabel("Compartmentalisation to use: "));
+        jPanelNeuroMLComp.add(jComboBoxNeuroMLComps);
+        
+
+        jPanelNeuroMLView.add(jPanelNeuroMLComp,
+                              new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+                                                     GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(6, 0, 6, 0), 0, 0));
+        
+
+        jPanelNeuroMLView.add(jTextAreaNeuroMLCompsDesc,
+                              new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
+                                                     GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(6, 0, 12, 0), 0, 0));
+        
+
+        JPanel jPanelNeuroMLGenFiles = new JPanel();
+
+        jPanelNeuroMLGenFiles.add(new JLabel("Generated files:"));
+        jPanelNeuroMLGenFiles.add(jComboBoxNeuroML);
+
+        jPanelNeuroMLView.add(jPanelNeuroMLGenFiles,
+                              new GridBagConstraints(0, 4, 1, 1, 1.0, 0.0,
+                                                     GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(6, 0, 12, 0), 0, 0));
+        
+
+        JPanel jPanelNeuroMLViewFiles = new JPanel();
+        jPanelNeuroMLViewFiles.add(jButtonNeuroMLViewPlain);      
+        jPanelNeuroMLViewFiles.add(jButtonNeuroMLViewFormatted);        
+
+        jPanelNeuroMLView.add(jPanelNeuroMLViewFiles,
+                              new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
+                                                     GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(6, 0, 12, 0), 0, 0));
+/*
+
+        jPanelNeuroMLView.add(jLabelNeuroMLGeneratedFiles,
+                              new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0,
+                                                     GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(6, 0, 12, 0), 0, 0));
+
         jPanelNeuroMLView.add(jComboBoxNeuroML,
-                              new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0,
+                              new GridBagConstraints(0, 2, 2, 1, 1.0, 0.0,
                                                      GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(6, 0, 12, 0), 0, 0));
 
         jPanelNeuroMLView.add(jButtonNeuroMLViewPlain,
                               new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
-                                                     GridBagConstraints.CENTER,
+                                                     GridBagConstraints.EAST,
                                                      GridBagConstraints.NONE,
                                                      new Insets(6, 0, 12, 0), 0, 0));
 
         jPanelNeuroMLView.add(jButtonNeuroMLViewFormatted,
-                              new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
-                                                     GridBagConstraints.CENTER,
+                              new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0,
+                                                     GridBagConstraints.WEST,
                                                      GridBagConstraints.NONE,
                                                      new Insets(6, 0, 12, 0), 0, 0));
 
         jPanelNeuroMLView.add(jComboBoxNeuroMLComps,
-                              new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
+                              new GridBagConstraints(0, 4, 2, 1, 0.0, 0.0,
                                                      GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(6, 0, 12, 0), 0, 0));
 
         jPanelNeuroMLView.add(jTextAreaNeuroMLCompsDesc,
-                              new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0,
+                              new GridBagConstraints(0, 5, 2, 1, 0.0, 0.0,
                                                      GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(6, 0, 12, 0), 0, 0));
 
 
         jPanelNeuroMLView.add(jButtonNeuroMLExportLevel1,
-                              new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0,
+                              new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0,
                                                      GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(6, 0, 12, 0), 0, 0));
 
         jPanelNeuroMLView.add(jButtonNeuroMLExportLevel2,
-                              new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0,
+                              new GridBagConstraints(0, 7, 2, 1, 0.0, 0.0,
                                                      GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(6, 0, 12, 0), 0, 0));
 
         jPanelNeuroMLView.add(jButtonNeuroMLExportCellLevel3,
-                              new GridBagConstraints(0, 9, 1, 1, 0.0, 0.0,
+                              new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0,
                                                      GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(6, 0, 12, 0), 0, 0));
-
-/*
-        jPanelNeuroMLView.add(jButtonNeuroMLExportNetLevel3,
-                              new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0,
-                                                     GridBagConstraints.CENTER,
-                                                     GridBagConstraints.NONE,
-                                                     new Insets(6, 0, 150, 0), 0, 0));*/
+*/
 
 
 
@@ -2092,7 +2162,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelCellGroupDetails.setDebugGraphicsOptions(0);
         jPanelCellGroupDetails.setLayout(borderLayout6);
         jButtonNeuronRun.setEnabled(false);
-        jButtonNeuronRun.setText("Run NEURON Simulation");
+        jButtonNeuronRun.setText("Run NEURON simulation");
         jButtonNeuronRun.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -2101,7 +2171,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
         });
         jButtonNeuronCreateLocal.setEnabled(false);
-        jButtonNeuronCreateLocal.setText("Create files for local execution");
+        jButtonNeuronCreateLocal.setText("Create hoc based simulation");
         jButtonNeuronCreateLocal.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -6227,7 +6297,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         }
 
-        else if (GeneralUtils.includeParallelFunc() && generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
+        else if (simConfig.getMpiConf().isParallel() 
+                   && generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
         {
             String currentReport = jEditorPaneGenerateInfo.getText();
 
@@ -6249,8 +6320,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             projManager.compNodeGenerator.start();
         }
 
-        else if ((!GeneralUtils.includeParallelFunc() && generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
-                || generatorType.equals(CompNodeGenerator.myGeneratorType))
+        else if ((!(simConfig.getMpiConf().isParallel())
+                && (generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
+                || generatorType.equals(CompNodeGenerator.myGeneratorType)))
         {
             String currentReport = jEditorPaneGenerateInfo.getText();
 
@@ -8028,9 +8100,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         if (projManager.getCurrentProject() == null ||
            projManager.getCurrentProject().getProjectStatus() == Project.PROJECT_NOT_INITIALISED)
        {
-           jButtonNeuroMLExportLevel1.setEnabled(false);
-           jButtonNeuroMLExportLevel2.setEnabled(false);
-           jButtonNeuroMLExportCellLevel3.setEnabled(false);
+           jButtonNeuroMLExport.setEnabled(false);
+           //jButtonNeuroMLExportLevel2.setEnabled(false);
+           //jButtonNeuroMLExportCellLevel3.setEnabled(false);
            //jButtonNeuroMLExportNetLevel3.setEnabled(false);
            jButtonNeuroMLViewPlain.setEnabled(false);
            jButtonNeuroMLViewFormatted.setEnabled(false);
@@ -8040,9 +8112,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
        }
        else
        {
-           jButtonNeuroMLExportLevel1.setEnabled(true);
-           jButtonNeuroMLExportLevel2.setEnabled(true);
-           jButtonNeuroMLExportCellLevel3.setEnabled(true);
+           jButtonNeuroMLExport.setEnabled(true);
+           //jButtonNeuroMLExportLevel2.setEnabled(true);
+           //jButtonNeuroMLExportCellLevel3.setEnabled(true);
          //  jButtonNeuroMLExportNetLevel3.setEnabled(true);
            jComboBoxNeuroML.setEnabled(true);
 
@@ -9585,6 +9657,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         final JTextArea summary = new JTextArea(12,40);
         summary.setMargin(new Insets(5,5,5,5));
         summary.setEditable(false);
+        //JPanel addedPanel = new 
         JScrollPane jScrollPane = new JScrollPane(summary);
         //jScrollPane.setBorder(BorderFactory.createEtchedBorder());
 
@@ -9920,7 +9993,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             + simConfig.getNetConns().size()
             + simConfig.getInputs().size();
         
-        if (GeneralUtils.includeParallelFunc()) totalSteps = totalSteps + simConfig.getCellGroups().size(); // for the compute node gen...
+        if (GeneralUtils.includeParallelFunc() && simConfig.getMpiConf().isParallel()) 
+            totalSteps = totalSteps + simConfig.getCellGroups().size(); // for the compute node gen...
 
         jProgressBarGenerate.setMaximum(totalSteps * 100);
         jProgressBarGenerate.setValue(0);

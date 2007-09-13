@@ -34,7 +34,7 @@ public class MpiSettings
 
     private String version = MPI_V1;
 
-    public static int favouredConfig = 0;
+    public static int prefConfig = 0;
 
 
     private ArrayList<MpiConfiguration> configurations = new ArrayList<MpiConfiguration>();
@@ -67,7 +67,7 @@ public class MpiSettings
         if (getMpiConfiguration(testConfig)==null)
         {
             MpiConfiguration p = new MpiConfiguration(testConfig);
-            p.getHostList().add(new MpiHost("localhost",3, 1));
+            p.getHostList().add(new MpiHost("localhost",4, 1));
             configurations.add(p);
         }
 
