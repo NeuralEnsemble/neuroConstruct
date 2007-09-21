@@ -737,23 +737,23 @@ public class UnitConverter
 
 
         int fromUnits = NEUROCONSTRUCT_UNITS;
-        PhysicalQuantity conc = new PhysicalQuantity(1, concentrationUnits[fromUnits]);
+        PhysicalQuantity concn = new PhysicalQuantity(1, concentrationUnits[fromUnits]);
 
-        System.out.println("Concentration: "+ conc);
+        System.out.println("Concentration: "+ concn);
 
-        System.out.println("Concentration GENESIS_SI_UNITS: " + UnitConverter.getConcentration(conc.getMagnitude(),
+        System.out.println("Concentration GENESIS_SI_UNITS: " + UnitConverter.getConcentration(concn.getMagnitude(),
             fromUnits,
             UnitConverter.GENESIS_SI_UNITS) + concentrationUnits[GENESIS_SI_UNITS].getSymbol());
 
-        System.out.println("Concentration GENESIS_PHYSIOLOGICAL_UNITS: " + UnitConverter.getConcentration(conc.getMagnitude(),
+        System.out.println("Concentration GENESIS_PHYSIOLOGICAL_UNITS: " + UnitConverter.getConcentration(concn.getMagnitude(),
             fromUnits,
             UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + concentrationUnits[GENESIS_PHYSIOLOGICAL_UNITS].getSymbol());
 
-        System.out.println("Concentration NEURON: " + UnitConverter.getConcentration(conc.getMagnitude(),
+        System.out.println("Concentration NEURON: " + UnitConverter.getConcentration(concn.getMagnitude(),
             fromUnits,
             UnitConverter.NEURON_UNITS) + concentrationUnits[NEURON_UNITS].getSymbol());
 
-        System.out.println("Concentration nC: " + UnitConverter.getConcentration(conc.getMagnitude(),
+        System.out.println("Concentration nC: " + UnitConverter.getConcentration(concn.getMagnitude(),
             fromUnits,
             UnitConverter.NEUROCONSTRUCT_UNITS) + concentrationUnits[NEUROCONSTRUCT_UNITS].getSymbol());
 
@@ -766,6 +766,24 @@ public class UnitConverter
         System.out.println("Concentration NEURON: " + UnitConverter.getDimensionless(dimLess.getMagnitude(),
             fromUnits,
             UnitConverter.NEURON_UNITS) + dimensionlessUnits[NEURON_UNITS].getSymbol());
+        
+        
+        fromUnits = GENESIS_PHYSIOLOGICAL_UNITS;
+        PhysicalQuantity condDens = new PhysicalQuantity(1, conductanceDensityUnits[fromUnits]);
+
+        System.out.println("condDens: "+ condDens.getMagnitude()+ " "+condDens.getUnits().getSafeSymbol());
+
+        System.out.println("condDens GENESIS_SI_UNITS: " + UnitConverter.getConductanceDensity(condDens.getMagnitude(),
+            fromUnits,
+            UnitConverter.GENESIS_SI_UNITS) + conductanceDensityUnits[GENESIS_SI_UNITS].getSafeSymbol());
+
+        System.out.println("condDens GENESIS_PHYSIOLOGICAL_UNITS: " + UnitConverter.getConductanceDensity(condDens.getMagnitude(),
+            fromUnits,
+            UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + conductanceDensityUnits[GENESIS_PHYSIOLOGICAL_UNITS].getSafeSymbol());
+
+        System.out.println("condDens NEURON: " + UnitConverter.getConductanceDensity(condDens.getMagnitude(),
+            fromUnits,
+            UnitConverter.NEURON_UNITS) + conductanceDensityUnits[NEURON_UNITS].getSafeSymbol());
 
 
 /*
