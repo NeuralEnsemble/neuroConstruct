@@ -2170,8 +2170,10 @@ public class CellTopologyHelper
         }
         else
         {
-            Vector cellProcNames = project.cellMechanismInfo.getAllCellMechanismNames();
-            Vector<String> missingCellProcs = new Vector<String>();
+            Vector cellMechNames = project.cellMechanismInfo.getAllCellMechanismNames();
+            Vector<String> missingCellMechs = new Vector<String>();
+            
+            //cellMechNames.addAll(c)
 
             ArrayList<Section> allSections = cell.getAllSections();
 
@@ -2215,17 +2217,30 @@ public class CellTopologyHelper
                 logger.logComment("mechs here: "+ mechs);
 
                 int numPassiveChans = 0;
+                
+                ArrayList<String> syns = cell.getAllAllowedSynapseTypes();
+                
+                for(String synName: syns)
+                {
+                    if (!cellMechNames.contains(synName) && !missingCellMechs.contains(synName))
+                    {
+                        warningReport.append("Warning: Project does not contain the synaptic mechanism: " + synName +
+                                           " referred to in this cell\n");
+
+                        missingCellMechs.add(synName);
+                    }
+                }
 
                 for (int k = 0; k < mechs.size(); k++)
                 {
                     ChannelMechanism cm = mechs.get(k);
 
-                    if (!cellProcNames.contains(cm.getName()) && !missingCellProcs.contains(cm.getName()))
+                    if (!cellMechNames.contains(cm.getName()) && !missingCellMechs.contains(cm.getName()))
                     {
                         errorReport.append("Error: Project does not contain the cell mechanism: " + cm.getName() +
                                            " referred to in this cell\n");
 
-                        missingCellProcs.add(cm.getName());
+                        missingCellMechs.add(cm.getName());
                     }
                     if (passChans.contains(cm)) numPassiveChans++;
                 }

@@ -109,6 +109,12 @@ public class Project implements TableModelListener
      */
     public NeuronFileManager neuronFileManager = null;
     public GenesisFileManager genesisFileManager = null;
+    
+
+    /**
+     * Generators of the scripts for the demo Python/NeuroML simulation
+     */
+    public NeuroMLPythonFileManager neuromlPythonFileManager = null;
 
     /**
      * Private, so initialisation methods will have to be used...
@@ -832,6 +838,7 @@ public class Project implements TableModelListener
 
         neuronFileManager = new NeuronFileManager(this);
         genesisFileManager = new GenesisFileManager(this);
+        neuromlPythonFileManager = new NeuroMLPythonFileManager(this);
 
         proj3Dproperties = new Display3DProperties();
         proj3Dproperties.initialiseDefaultValues();
@@ -913,13 +920,43 @@ public class Project implements TableModelListener
      * Might be a better place for this...
      */
     public void saveNetworkStructure(File neuroMLFile,
-                                     String comment,
                                      boolean zipped,
                                      boolean extraComments,
                                      String simConfig) throws NeuroMLException
     {
         try
         {
+            
+            StringBuffer notes = new StringBuffer("\nNetwork structure for project: "
+                                +getProjectName() + " saved with neuroConstruct v"+
+                                GeneralProperties.getVersionNumber()+" on: "+ GeneralUtils.getCurrentTimeAsNiceString() +", "
+            + GeneralUtils.getCurrentDateAsNiceString()+"\n\n");
+            
+            
+            Iterator<String> cellGroups = generatedCellPositions.getNamesGeneratedCellGroups();
+            
+            while (cellGroups.hasNext())
+            {
+            String cg = cellGroups.next();
+            int numHere = generatedCellPositions.getNumberInCellGroup(cg);
+            if (numHere>0)
+            notes.append("Cell Group: "+cg+" contains "+numHere+" cells\n");
+            
+            }
+            notes.append("\n");
+            
+            Iterator<String> netConns = generatedNetworkConnections.getNamesNetConns();
+            
+            while (netConns.hasNext())
+            {
+            String mc = netConns.next();
+            int numHere = generatedNetworkConnections.getSynapticConnections(mc).size();
+            if (numHere>0)
+            notes.append("Network connection: "+mc+" contains "+numHere+" individual synaptic connections\n");
+            
+            }
+            notes.append("\n");
+            
             logger.logComment("Going to save network in NeuroML format in " + neuroMLFile.getAbsolutePath());
 
             SimpleXMLDocument doc = new SimpleXMLDocument();
@@ -950,7 +987,7 @@ public class Project implements TableModelListener
             rootElement.addContent("\n\n");
 
             rootElement.addChildElement(new SimpleXMLElement(MetadataConstants.PREFIX + ":" +
-                                                             MetadataConstants.NOTES_ELEMENT, "\n" + comment));
+                                                             MetadataConstants.NOTES_ELEMENT, "\n" + notes.toString()));
 
             SimpleXMLElement props = new SimpleXMLElement(MetadataConstants.PREFIX + ":" +
                                                           MorphMLConstants.PROPS_ELEMENT);
@@ -994,7 +1031,7 @@ public class Project implements TableModelListener
             {
                 File zipFile = new File(neuroMLFile.getAbsolutePath() +
                                         ProjectStructure.getNeuroMLCompressedFileExtension());
-                ZipUtils.zipStringAsFile(stringForm, zipFile, neuroMLFile.getName(), comment);
+                ZipUtils.zipStringAsFile(stringForm, zipFile, neuroMLFile.getName(), notes.toString());
             }
         }
         catch (Exception ex)

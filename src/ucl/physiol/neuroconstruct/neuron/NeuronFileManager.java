@@ -37,11 +37,6 @@ import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
  *  
  */
 
-
-/**
- * @author padraig
- *
- */
 public class NeuronFileManager
 {
     private static ClassLogger logger = new ClassLogger("NeuronFileManager");
@@ -51,7 +46,6 @@ public class NeuronFileManager
      */
     public static final int RUN_HOC = 0;
     public static final int RUN_VIA_CONDOR = 1;
-    //public static final int RUN_PARALLEL_HOC = 2;
     public static final int RUN_PYTHON = 2;
 
     /**

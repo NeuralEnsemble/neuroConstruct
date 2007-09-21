@@ -44,7 +44,7 @@ public class MpiSettings
         String localConfig = "Local machine, serial mode";
         String multiConfig = "MultiHostConf";
         String testConfig = "TestConf";
-        String testConfig22 = "TestConf22";
+        String testConfig22 = "TestConfMore";
 
 
         if (getMpiConfiguration(localConfig)==null)
@@ -74,7 +74,7 @@ public class MpiSettings
         if (getMpiConfiguration(testConfig22)==null)
         {
             MpiConfiguration p22 = new MpiConfiguration(testConfig22);
-            p22.getHostList().add(new MpiHost("localhost",22, 1));
+            p22.getHostList().add(new MpiHost("localhost",3, 1));
             configurations.add(p22);
         }
 

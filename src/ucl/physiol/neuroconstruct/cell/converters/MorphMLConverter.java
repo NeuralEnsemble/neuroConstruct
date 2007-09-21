@@ -15,11 +15,13 @@ package ucl.physiol.neuroconstruct.cell.converters;
 import java.beans.*;
 import java.io.*;
 import java.util.*;
+
 import javax.vecmath.*;
 import javax.xml.parsers.*;
 
 import org.xml.sax.*;
 import ucl.physiol.neuroconstruct.cell.*;
+import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.project.*;
@@ -308,7 +310,6 @@ public class MorphMLConverter extends FormatImporter
             throw new MorphologyException(javaObjFile.getAbsolutePath(), "Problem saving Java ObjectOutputStream file", ex);
         }
         return success;
-
     }
 
 
@@ -714,9 +715,12 @@ public class MorphMLConverter extends FormatImporter
 
                    String netPrefix = NetworkMLConstants.PREFIX + ":";
 
-                   logger.logComment("Adding network aspects ");
+
 
                    ArrayList<String> allSyns = cell.getAllAllowedSynapseTypes();
+                   
+                   if (allSyns.size()>0) 
+                       bioElement.addComment(new SimpleXMLComment("Adding the network aspects"));
 
                    for (String synType: allSyns)
                    {
@@ -833,6 +837,83 @@ public class MorphMLConverter extends FormatImporter
         pointElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.POINT_DIAM_ATTR, (float)(radius * 2) + ""));
 
         return pointElement;
+    }
+    
+    
+    
+    public static ArrayList<Cell> saveAllCellsInNeuroML(Project project, 
+                                               MorphCompartmentalisation mc, 
+                                               String level,
+                                               SimConfig simConfig,
+                                               File destDir) throws MorphologyException
+    {
+
+        logger.logComment("Saving the cell morphologies in NeuroML form...");
+        
+        Vector<Cell> cells = new Vector<Cell>();
+        
+        if (simConfig==null)
+        {
+            cells = project.cellManager.getAllCells();
+        }
+        else
+        {
+            Vector<String> cellsInc = new Vector<String>();
+            for(String cg: simConfig.getCellGroups())
+            {
+                String thisCGCelltype = project.cellGroupsInfo.getCellType(cg);
+                if (!cellsInc.contains(thisCGCelltype))
+                {
+                    Cell cell = project.cellManager.getCell(thisCGCelltype);
+                    cells.add(cell);
+                    cellsInc.add(thisCGCelltype);
+                }
+            }
+        }
+        
+        ArrayList<Cell> generatedCells = new ArrayList<Cell>();
+        
+        for (Cell origCell : cells)
+        {
+            Cell mappedCell = mc.getCompartmentalisation(origCell);
+
+            File cellFile = null;
+
+            /*   if (!CellTopologyHelper.checkSimplyConnected(cell))
+               {
+                   GuiUtils.showErrorMessage(logger, "The cell: "+ cell.getInstanceName()
+                                             + " is not Simply Connected.\n"
+                                             + "This is a currently a requirement for conversion to MorphML format.\n"
+             + "Try making a copy of the cell and making it Simply Connected at the Cell Type tab", null, this);
+               }
+               else
+               {*/
+        
+                logger.logComment("Cell is of type: " + mappedCell.getClass().getName());
+                Cell tempCell = new Cell();
+                if (! (mappedCell.getClass().equals(tempCell.getClass())))
+                {
+                    // This is done because of problems generating MorphML for PurkinjeCell, etc.
+                    // These inherit from Cell, but have all their state in the standard constructor.
+                    // Saving them in JavaML format would only save the name, and not the segment positions etc.
+                    mappedCell = (Cell) mappedCell.clone(); // this produced a copy which is an instance of Cell
+                }
+
+                logger.logComment("Saving cell: " + mappedCell.getInstanceName()
+                                  + " in " + ProjectStructure.getMorphMLFileExtension()
+                                  + " format");
+
+                cellFile = new File(destDir,
+                                    mappedCell.getInstanceName()
+                                    + ProjectStructure.getMorphMLFileExtension());
+
+                MorphMLConverter.saveCellInMorphMLFormat(mappedCell, cellFile, level);
+                
+                generatedCells.add(mappedCell);
+         
+            //}
+        }
+        return generatedCells;
     }
 
 

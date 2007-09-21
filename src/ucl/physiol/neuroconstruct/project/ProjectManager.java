@@ -235,7 +235,7 @@ public class ProjectManager
 
         logger.logComment("Going to save thee  networkmlFile: "+networkmlFile);
         
-        
+        /*
         StringBuffer notes = new StringBuffer("\nNetwork structure for project: "
                                               + getCurrentProject().getProjectName() +
                                               " saved with neuroConstruct v" +
@@ -265,11 +265,10 @@ public class ProjectManager
                 notes.append("Network connection: " + mc + " contains " + numHere + " individual synaptic connections\n");
 
         }
-        notes.append("\n");
+        notes.append("\n");*/
 
 
         getCurrentProject().saveNetworkStructure(networkmlFile,
-                                                 notes.toString(),
                                                  zip,
                                                  extraComments,
                                                  simConfig);
