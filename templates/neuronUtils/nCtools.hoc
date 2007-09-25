@@ -124,6 +124,22 @@ proc allsyns() {
 
 }
 
+
+
+/*
+ * Prints info on all cells
+ */
+proc allcells() {
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+    for i=0,allCells.count()-1 {
+        allCells.o[i].toString()
+    }
+
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+}
+
 /*
  * Provides information on the current section similar to that produced
  * with "showfield *" in GENESIS
