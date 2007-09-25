@@ -200,19 +200,19 @@ public class RandomCellPackingAdapter extends CellPackingAdapter
         StringBuffer sb = new StringBuffer();
         String nameOfClass = this.getClass().getName();
 
-        sb.append(nameOfClass.substring(nameOfClass.lastIndexOf(".")+1)+ "[");
+        sb.append("Random: ");
 
-        sb.append("CellNumber: "+ getMaxNumberInCell()+"; ");
+        sb.append("num: "+ getMaxNumberInCell()+", ");
 
-        sb.append("EdgePolicy: ");
-        if (mustBeCompletelyInsideRegion()) sb.append("1; ");
-        else sb.append("0; ");
+        sb.append("edge: ");
+        if (mustBeCompletelyInsideRegion()) sb.append("1, ");
+        else sb.append("0, ");
 
-        sb.append("OverlapPolicy: ");
-        if (overlappingAllowed()) sb.append("1; ");
-        else sb.append("0; ");
+        sb.append("overlap: ");
+        if (overlappingAllowed()) sb.append("1, ");
+        else sb.append("0, ");
 
-        sb.append(OTHER_OVERLAP_POLICY+": "+parameterList[3].value+"]");
+        sb.append("other overlap"+": "+(int)parameterList[3].value+"");
 
 
 

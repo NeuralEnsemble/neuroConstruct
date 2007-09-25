@@ -123,15 +123,15 @@ public class SinglePositionedCellPackingAdapter extends CellPackingAdapter
         StringBuffer sb = new StringBuffer();
         String nameOfClass = this.getClass().getName();
 
-        sb.append(nameOfClass.substring(nameOfClass.lastIndexOf(".")+1)+ "[");
+        sb.append("Single cell: ");
 
-       sb.append("Point: ("
+       sb.append("("
                  + parameterList[0].value
                  + ", "
                  + parameterList[1].value
                  + ", "
                  + parameterList[2].value
-                 + ")]");
+                 + ")");
 
 
         return (sb.toString());

@@ -484,7 +484,10 @@ public class GeneralUtils
 
 
 
-    public static boolean copyDirIntoDir(File originalDir, File dirToCopyTo, boolean includeSubDirs, boolean ignoreCVS) throws IOException
+    public static boolean copyDirIntoDir(File originalDir, 
+                                           File dirToCopyTo, 
+                                           boolean includeSubDirs, 
+                                           boolean ignoreCVS) throws IOException
     {
         /** @todo Get a better/quicker way of doing this. */
         logger.logComment("Copying contents of dir: "+ originalDir.getAbsolutePath()

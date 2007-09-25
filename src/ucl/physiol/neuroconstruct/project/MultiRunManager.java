@@ -295,7 +295,7 @@ public class MultiRunManager
     {
 
         if (simEnv.equals(SimEnvHelper.NEURON))
-            NeuronFileManager.addComment(response, comment);
+            NeuronFileManager.addHocComment(response, comment);
 
         else if (simEnv.equals(SimEnvHelper.GENESIS))
             GenesisFileManager.addComment(response, comment);

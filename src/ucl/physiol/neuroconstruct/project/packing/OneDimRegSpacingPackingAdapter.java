@@ -278,23 +278,23 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
         StringBuffer sb = new StringBuffer();
         String nameOfClass = this.getClass().getName();
 
-        sb.append(nameOfClass.substring(nameOfClass.lastIndexOf(".")+1)+ "[");
+        sb.append("One dim: ");
 
-        sb.append("CellNumber: ");
+        sb.append("num: ");
         sb.append(parameterList[NUMBER_PARAM].value+ ", ");
 
-        sb.append("Dimension: ");
+        sb.append("dim: ");
         if (parameterList[DIMENSION_PARAM].value == 0) sb.append("x, ");
         else if (parameterList[DIMENSION_PARAM].value == 1) sb.append("y, ");
         else if (parameterList[DIMENSION_PARAM].value == 2) sb.append("z, ");
 
 
-        sb.append("EdgePolicy: ");
+        sb.append("edge: ");
         if (mustBeCompletelyInsideRegion()) sb.append("1, ");
         else sb.append("0, ");
 
 
-        sb.append(OTHER_OVERLAP_POLICY+": "+parameterList[OTHER_OVERLAP_PARAM].value+"]");
+        sb.append("other overlap"+": "+(int)parameterList[OTHER_OVERLAP_PARAM].value+"");
 
 
 

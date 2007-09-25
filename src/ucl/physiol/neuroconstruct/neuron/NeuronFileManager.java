@@ -20,12 +20,14 @@ import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.gui.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
+import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.packing.*;
 import ucl.physiol.neuroconstruct.project.stimulation.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
+import ucl.physiol.neuroconstruct.utils.python.*;
 import ucl.physiol.neuroconstruct.project.GeneratedPlotSaves.PlotSaveDetails;
 import ucl.physiol.neuroconstruct.hpc.mpi.*;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
@@ -66,6 +68,8 @@ public class NeuronFileManager
     private Project project = null;
 
     private File mainHocFile = null;
+    
+    private File mainPythonFile = null;
 
     private boolean hocFileGenerated = false;
 
@@ -83,9 +87,14 @@ public class NeuronFileManager
      * A list of the NEURON template files which will be needed by the cells in the simulation
      */
     private Vector<String> cellTemplatesGenAndIncluded = new Vector<String>();
-
+    
+    /**
+     * To manage multiple runs, as specified through the GUI. Will prob be removed in favour of easier 
+     * Python script based project opening/generation/simulation running.
+     */
     private MultiRunManager multiRunManager = null;
-
+    
+    
     private int nextColour = 1;
 
     private Vector<String> graphsCreated = new Vector<String>();
@@ -94,7 +103,6 @@ public class NeuronFileManager
 
     private SimConfig simConfig = null;
 
-    //ArrayList<String> multiRunLoops = new ArrayList<String>();
 
     private NeuronFileManager()
     {
@@ -117,9 +125,11 @@ public class NeuronFileManager
     {
         cellTemplatesGenAndIncluded = new Vector<String>();
         cellMechFilesGenAndIncl = new Vector<String>();
-        this.stimModFilesRequired =  new Vector<String>();
-        nextColour = 1; // reset it...
+        stimModFilesRequired =  new Vector<String>();
         graphsCreated = new Vector<String>();
+        
+        nextColour = 1; // reset it...
+        
         addComments = project.neuronSettings.isGenerateComments();
         
         genRunMode = -1;
@@ -150,46 +160,126 @@ public class NeuronFileManager
 
         this.randomSeed = randomSeed;
 
-        FileWriter fw = null;
-
+        FileWriter hocWriter = null;
+        FileWriter pythonWriter = null;
+ 
         try
         {
             File dirForNeuronFiles = ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory());
+            
+            if (runMode == RUN_PYTHON)
+            {
+                File pyNmlUtils = ProjectStructure.getPythonNeuroMLUtilsDir(project.getProjectMainDirectory());
+
+                File pyNeuUtils = ProjectStructure.getPythonNeuronUtilsDir(project.getProjectMainDirectory());
+                
+                File toDir1 = new File(dirForNeuronFiles, pyNmlUtils.getName());
+
+                GeneralUtils.copyDirIntoDir(pyNmlUtils, toDir1, true, true);
+                
+                File toDir2 = new File(dirForNeuronFiles, pyNeuUtils.getName());
+                GeneralUtils.copyDirIntoDir(pyNeuUtils, toDir2, true, true);
+                
+                
+
+                File networkFile = new File(dirForNeuronFiles, NetworkMLConstants.DEFAULT_NETWORKML_FILENAME);
+                
+                try
+                {
+    
+                    project.saveNetworkStructure(networkFile,
+                                                 false,
+                                                 false,
+                                                 simConfig.getName());
+                }
+                catch (NeuroMLException ex1)
+                {
+                    GuiUtils.showErrorMessage(logger, "Problem saving network in NeuroML", ex1, null);
+                }
+
+
+                mainPythonFile = new File(dirForNeuronFiles, project.getProjectName() + ".py");
+                
+                pythonWriter = new FileWriter(mainPythonFile);
+                
+                pythonWriter.write(PythonUtils.getFileHeader());
+                
+                pythonWriter.write(generatePythonIncludes());
+                
+                StringBuffer mainScript = new StringBuffer();
+                
+                //mainScript.append(generateWelcomeComments());
+                
+                mainScript.append(initialPythonSetup());
+
+                mainScript.append(initialisePythonLogging());
+
+                mainScript.append(generateCellGroups());
+                
+                mainScript.append(loadNetworkMLStructure());
+                
+                
+                pythonWriter.write(PythonUtils.addMethodDef("loadNetwork", "",
+                        mainScript.toString(), "This is the main function which will be called by the hoc file.\nSubject to change..."));
+
+
+            }
 
             mainHocFile = new File(dirForNeuronFiles, project.getProjectName() + ".hoc");
 
-            fw = new FileWriter(mainHocFile);
+            hocWriter = new FileWriter(mainHocFile);
 
-            fw.write(getHocFileHeader());
+            hocWriter.write(getHocFileHeader());
 
-            if (runMode != RUN_VIA_CONDOR || GeneralUtils.isWindowsBasedPlatform())
-                fw.write(generateGUIInclude());
 
-            fw.write(generateWelcomeComments());
-
-            fw.write(generateIncludes());
-
-            fw.write(getHostname());
-
-            if (simConfig.getMpiConf().isParallel()) fw.write(initialiseParallel());
+            //if (!simConfig.getMpiConf().isParallel())
+                
+            hocWriter.write(generateGUIInclude());
             
-            fw.write(generateRandomise());
+            hocWriter.write(generateWelcomeComments());
 
-            fw.write(generateNeuronCodeBlock(NativeCodeLocation.BEFORE_CELL_CREATION));
+            hocWriter.write(generateHocIncludes());
 
-            if (simConfig.getMpiConf().isParallel()) fw.write(associateCellsWithNodes());
+            hocWriter.write(getHostname());
 
-            fw.write(generateCellGroups(runMode));
+            hocWriter.write(initialiseParallel());
+            
+            hocWriter.write(generateRandomise());
 
-            fw.write(generateInitialParameters(runMode));
-            fw.flush();
+            hocWriter.write(generateNeuronCodeBlock(NativeCodeLocation.BEFORE_CELL_CREATION));
+            
+            if (runMode == RUN_PYTHON)
+            {
+                
+                hocWriter.write(getHocPythonStartup(project));
+                
+                hocWriter.write(generateInitialParameters());
+                ///////hocWriter.write(generateNetworkConnections());
 
-            fw.write(generateNetworkConnections(runMode));
-            fw.flush();
+            }
+            
+    
+            
+            
+            
+            if (runMode != RUN_PYTHON)
+            {
 
-            fw.write(generateStimulations(runMode));
+    
+                if (simConfig.getMpiConf().isParallel()) hocWriter.write(associateCellsWithNodes());
+    
+                hocWriter.write(generateCellGroups());
 
-            fw.write(generateAccess(runMode));
+                hocWriter.write(generateInitialParameters());
+                hocWriter.flush();
+    
+                hocWriter.write(generateNetworkConnections());
+                hocWriter.flush();
+            }
+    
+            hocWriter.write(generateStimulations());
+
+            hocWriter.write(generateAccess());
 
             //fw.write(generateAfterCreationText());
 
@@ -197,40 +287,46 @@ public class NeuronFileManager
             {
                 if (project.neuronSettings.isGraphicsMode())
                 {
-                    fw.write(generatePlots());
+                    hocWriter.write(generatePlots());
 
                     if (project.neuronSettings.isShowShapePlot())
                     {
-                        fw.write(generateShapePlot());
+                        hocWriter.write(generateShapePlot());
                     }
 
                 }
 
             }
 
-            fw.write(generateInitHandlers());
+            hocWriter.write(generateInitHandlers());
 
-            fw.write(generateRunSettings(runMode));
-            fw.write(generateNeuronSimulationRecording(runMode));
+            hocWriter.write(generateRunSettings());
+            hocWriter.write(generateNeuronSimulationRecording());
             
-
             // Finishing up...
             
             if (!simConfig.getMpiConf().isParallel())
-                fw.write(generateGUIForRerunning());
+                hocWriter.write(generateGUIForRerunning());
            
-            fw.write(generateNeuronCodeBlock(NativeCodeLocation.AFTER_SIMULATION));
+            hocWriter.write(generateNeuronCodeBlock(NativeCodeLocation.AFTER_SIMULATION));
             
             if (simConfig.getMpiConf().isParallel())
-                fw.write(finishParallel());
+                hocWriter.write(finishParallel());
             
             if (runMode == RUN_VIA_CONDOR)
-                fw.write(generateQuit());
+                hocWriter.write(generateQuit());
+        
 
-       
+            
 
-            fw.flush();
-            fw.close();
+            hocWriter.flush();
+            hocWriter.close();
+            
+            if (runMode == RUN_PYTHON)
+            {
+                pythonWriter.flush();
+                pythonWriter.close();
+            }
 
             File utilsFile = new File(ProjectStructure.getNeuronUtilsFile());
 
@@ -242,7 +338,7 @@ public class NeuronFileManager
 
             try
             {
-                fw.close();
+                hocWriter.close();
             }
             catch (IOException ex1)
             {
@@ -269,6 +365,40 @@ public class NeuronFileManager
         return;
 
     }
+    
+    private static String getHocPythonStartup(Project project)
+    {
+        StringBuffer response = new StringBuffer();    
+
+        addMajorHocComment(response,"Setting up Python to allow loading in of NetworkML ");
+        
+        response.append("nrnpython(\"import sys\")\n");
+        response.append("nrnpython(\"import os\")\n\n");
+        
+        addHocComment(response, "Adding current path to Python path");
+
+        response.append("nrnpython(\"if sys.path.count(os.getcwd())==0: sys.path.append(os.getcwd())\")\n");
+        
+
+        response.append("nrnpython(\"import hoc\")\n");
+        response.append("nrnpython(\"import nrn\")\n\n");
+
+
+        response.append("objref py\n");
+        
+        response.append("py = new PythonObject()\n\n");
+
+        response.append("nrnpython(\"h = hoc.HocObject()\")\n\n");
+
+        addHocComment(response, "Importing main Python file: "+project.getProjectName());
+        
+        response.append("nrnpython(\"import "+project.getProjectName()+"\")\n\n");
+        response.append("nrnpython(\""+project.getProjectName()+".loadNetwork()\")\n\n");
+
+        response.append("\n");
+        return response.toString();
+    }
+    
 
 
     /** @todo Put option on NEURON frame for this... */
@@ -345,9 +475,9 @@ public class NeuronFileManager
         }
         else
         {
-            addComment(response, "Hoc commands to run at location: " + ncl.toString());
+            addHocComment(response, "Hoc commands to run at location: " + ncl.toString());
             response.append(text + "\n");
-            addComment(response, "End of hoc commands to run at location: " + ncl.toString());
+            addHocComment(response, "End of hoc commands to run at location: " + ncl.toString());
 
             return response.toString();
         }
@@ -379,7 +509,7 @@ public class NeuronFileManager
                 int ref = neuronFInitNcls[i].getPositionReference();
                 String objName = "fih_" + ref;
                 String procName = "callfi" + ref;
-                addComment(nativeBlocks, "Hoc commands to run at location: " + neuronFInitNcls[i].toString());
+                addHocComment(nativeBlocks, "Hoc commands to run at location: " + neuronFInitNcls[i].toString());
                 nativeBlocks.append("objref " + objName + "\n");
                 nativeBlocks.append(objName + " = new FInitializeHandler(" + neuronFInitNcls[i].getPositionReference() +
                                 ", \"" +
@@ -388,7 +518,7 @@ public class NeuronFileManager
                 nativeBlocks.append(text + "\n");
                 nativeBlocks.append("}" + "\n");
 
-                addComment(nativeBlocks, "End of hoc commands to run at location: " + neuronFInitNcls[i].toString());
+                addHocComment(nativeBlocks, "End of hoc commands to run at location: " + neuronFInitNcls[i].toString());
 
             }
 
@@ -396,7 +526,7 @@ public class NeuronFileManager
 
         if (nativeBlocks.length()>0)
         {
-            addMajorComment(response, "Adding blocks of native NEURON code");
+            addMajorHocComment(response, "Adding blocks of native NEURON code");
             response.append(nativeBlocks.toString());
         }
 
@@ -405,11 +535,11 @@ public class NeuronFileManager
     }
 
 
-    private String generateInitialParameters(int runMode)
+    private String generateInitialParameters()
     {
         StringBuffer response = new StringBuffer();
 
-        addMajorComment(response, "Setting initial parameters");
+        addMajorHocComment(response, "Setting initial parameters");
 
         response.append("strdef simConfig\n");
         response.append("simConfig = \""+this.simConfig.getName()+"\"\n");
@@ -436,7 +566,7 @@ public class NeuronFileManager
 
                 ArrayList cellGroupPositions = project.generatedCellPositions.getPositionRecords(cellGroupName);
 
-                addComment(response, "Setting initial vals in cell group: " + cellGroupName
+                addHocComment(response, "Setting initial vals in cell group: " + cellGroupName
                            + " which has " + cellGroupPositions.size() + " cells");
 
                 for (int cellIndex = 0; cellIndex < cellGroupPositions.size(); cellIndex++)
@@ -449,7 +579,7 @@ public class NeuronFileManager
                         double initVolt = UnitConverter.getVoltage(cell.getInitialPotential().getNextNumber(),
                                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                    UnitConverter.NEURON_UNITS);
-                        addComment(response,
+                        addHocComment(response,
                                    "Giving cell " + posRecord.cellNumber + " an initial potential of: " + initVolt+" based on: "+ cell.getInitialPotential().toString());
 
                         if (simConfig.getMpiConf().isParallel()) response.append("  if(pnm.gid_exists(getGid(\""+cellGroupName+"\", "
@@ -474,7 +604,7 @@ public class NeuronFileManager
                                                                UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                UnitConverter.NEURON_UNITS);
 
-                    addComment(response, "Giving all cells an initial potential of: " + initVolt);
+                    addHocComment(response, "Giving all cells an initial potential of: " + initVolt);
 
                     response.append("    for i = 0, " + nameOfNumberOfTheseCells + "-1 {" + "\n");
                     response.append("        ");
@@ -500,7 +630,7 @@ public class NeuronFileManager
         return response.toString();
     }
 
-    private String generateAccess(int runMode)
+    private String generateAccess()
     {
         StringBuffer response = new StringBuffer();
         response.append("\n");
@@ -565,7 +695,7 @@ public class NeuronFileManager
     {
         StringBuffer response = new StringBuffer();
 
-        addComment(response, "Initializes random-number generator");
+        addHocComment(response, "Initializes random-number generator");
         response.append("use_mcell_ran4(1)\n\n");
         if (!simConfig.getMpiConf().isParallel())
         {
@@ -573,7 +703,7 @@ public class NeuronFileManager
         }
         else
         {
-            addComment(response, "As the simulation is being run in parallel, initialising differently on each host.\n"
+            addHocComment(response, "As the simulation is being run in parallel, initialising differently on each host.\n"
                                 +"Adding the hostid to the rand seed allows reproducability of the sim, as long as the\n"
                                 +"same network distribution is used.");
             
@@ -590,7 +720,7 @@ public class NeuronFileManager
 
         if (this.savingHostname()) // temporarily disabled for win, will it ever be needed?
         {
-            addComment(response, "Getting hostname");
+            addHocComment(response, "Getting hostname");
     
             response.append("objref strFuncs\n");
             response.append("strFuncs = new StringFunctions()\n");
@@ -613,26 +743,34 @@ public class NeuronFileManager
     private String initialiseParallel()
     {
         StringBuffer response = new StringBuffer();
-
-        addMajorComment(response, "Initialising parallelization");
-
-
-        response.append("ncell = " + project.generatedCellPositions.getNumberInAllCellGroups() + "\n\n");
-
-        addComment(response, "Parallel NEURON setup");
-
-        response.append("load_file(\"netparmpi.hoc\")\n");
-        response.append("objref pnm\n");
-        response.append("pnm = new ParallelNetManager(ncell)\n\n");
-
-        response.append("hostid = pnm.pc.id\n\n");
-
-        if (addComments) response.append("print \"Set up ParallelNetManager managing \",ncell,\" cells in total on: \", host, \" with id: \", hostid\n");
-
-
-        //response.append("pnm.round_robin()\n");
-
-        response.append("\n");
+        
+        if (simConfig.getMpiConf().isParallel())
+        {
+            addMajorHocComment(response, "Initialising parallelization");
+    
+    
+            response.append("ncell = " + project.generatedCellPositions.getNumberInAllCellGroups() + "\n\n");
+    
+            addHocComment(response, "Parallel NEURON setup");
+    
+            response.append("load_file(\"netparmpi.hoc\")\n");
+            response.append("objref pnm\n");
+            response.append("pnm = new ParallelNetManager(ncell)\n\n");
+    
+            response.append("hostid = pnm.pc.id\n\n");
+    
+            if (addComments) response.append("print \"Set up ParallelNetManager managing \",ncell,\" cells in total on: \", host, \" with id: \", hostid\n");
+    
+    
+            //response.append("pnm.round_robin()\n");
+    
+            response.append("\n");
+        }
+        else
+        {
+            addHocComment(response, "Simulation running in serial mode, setting default host id");
+            response.append("hostid = 0\n\n");
+        }
 
         return response.toString();
 
@@ -643,7 +781,7 @@ public class NeuronFileManager
     {
         StringBuffer response = new StringBuffer();
 
-        addMajorComment(response, "Associating cells with nodes");
+        addMajorHocComment(response, "Associating cells with nodes");
 
         ArrayList<String> cellGroupNames = simConfig.getCellGroups();
 
@@ -654,7 +792,7 @@ public class NeuronFileManager
         int totalProcs = mpiConfig.getTotalNumProcessors();
         
 
-        addComment(response, "MPI Configuration: "+ mpiConfig);
+        addHocComment(response, "MPI Configuration: "+ mpiConfig);
 
 
         response.append("func getGid() {\n\n");
@@ -666,7 +804,7 @@ public class NeuronFileManager
             String cellGroupName = cellGroupNames.get(cellGroupIndex);
             response.append("    if (strcmp($s1,\""+cellGroupName+"\")==0) {\n");
 
-            addComment(response, "There are " + project.generatedCellPositions.getNumberInCellGroup(cellGroupName)
+            addHocComment(response, "There are " + project.generatedCellPositions.getNumberInCellGroup(cellGroupName)
                             + " cells in this Cell Group", "        ", false);
 
             response.append("        gid = "+currentGid+" + $2\n");
@@ -767,7 +905,7 @@ public class NeuronFileManager
     {
         StringBuffer response = new StringBuffer();
 
-        addComment(response, "Shutting down parallelisation");
+        addHocComment(response, "Shutting down parallelisation");
 
         ///response.append("forall psection()\n");
         response.append("\n");
@@ -804,11 +942,13 @@ public class NeuronFileManager
         StringBuffer response = new StringBuffer();
         if (!project.neuronSettings.isGenerateComments()) return "";
 
+        String indent = "    ";
+
         response.append("print \"\"\n");
         response.append("print \"*****************************************************\"\n");
         response.append("print \"\"\n");
-        response.append("print \"    neuroConstruct generated NEURON simulation \"\n");
-        response.append("print \"    for project: " + project.getProjectFile().getAbsolutePath() + " \"\n");
+        response.append("print \""+indent+"neuroConstruct generated NEURON simulation \"\n");
+        response.append("print \""+indent+"for project: " + project.getProjectFile().getAbsolutePath() + " \"\n");
 
         response.append("print \"\"\n");
 
@@ -817,34 +957,184 @@ public class NeuronFileManager
         String desc = new String();
 
         if (project.getProjectDescription() != null) desc = project.getProjectDescription();
-
-        desc = GeneralUtils.replaceAllTokens(desc, "\n", " ");
+        
         desc = GeneralUtils.replaceAllTokens(desc, "\"", "");
+        desc = GeneralUtils.replaceAllTokens(desc, "\n", "\"\nprint \""+indent);
+        
+        
 
-        response.append("print \"    Description: " + desc + "\"\n");
+        response.append("print \""+indent+"Description: " + desc + "\"\n");
 
         response.append("print \" \"\n");
         response.append("print  \"*****************************************************\"\n\n");
         return response.toString();
     };
 
-    private String generateIncludes()
+    private String generateHocIncludes()
     {
         StringBuffer response = new StringBuffer();
 
         response.append("objectvar allCells\n");
         response.append("allCells = new List()\n\n");
 
-        addComment(response, "Including neuroConstruct utilities file ");
+        addHocComment(response, "Including neuroConstruct utilities file ");
         response.append("load_file(\"nCtools.hoc\")\n");
 
         return response.toString();
     }
+    
 
-    private String generateRunSettings(int runMode)
+
+    private String generatePythonIncludes()
     {
         StringBuffer response = new StringBuffer();
-        addMajorComment(response, "Settings for running the demo");
+
+
+        PythonUtils.addComment(response, "Including some standard Python modules ", addComments);
+        
+        response.append("import sys\n");
+        response.append("import os\n\n");
+        
+        response.append("import xml.sax\n");
+        response.append("import time\n\n");
+
+        response.append("import logging\n\n");
+
+
+        PythonUtils.addComment(response, "Adding working dir to Python path", addComments);
+        
+        response.append("if sys.path.count(os.getcwd())==0: sys.path.append(os.getcwd())\n\n");
+
+        PythonUtils.addComment(response, "Including NEURON specifics", addComments);
+        
+        
+        response.append("import hoc\n");
+        response.append("import nrn\n\n");
+        
+
+        response.append("sys.path.append(\"NeuroMLUtils\")\n");
+        response.append("sys.path.append(\"NEURONUtils\")\n\n");
+
+        response.append("import NetworkMLSaxHandler\n");
+        response.append("import NEURONSimUtils\n\n");
+
+
+
+        //response.append("from NetworkMLSaxHandler import NetworkMLSaxHandler\n");
+        //response.append("from NetworkHandler import NetworkHandler\n\n");
+
+        return response.toString();
+    }
+
+    
+    private String initialisePythonLogging()
+    {
+        StringBuffer response = new StringBuffer();
+        
+        String logLevel = "WARN";
+        if (addComments) logLevel ="INFO";
+
+        response.append("logformat = \"%(name)-19s %(levelname)-5s -\"+str(int(h.hostid))+\"- %(message)s\"\n");
+
+        response.append("logging.basicConfig(level=logging."+logLevel+", format=logformat)\n");
+        
+        response.append("log = logging.getLogger(\""+project.getProjectName()+"\")\n\n");
+        
+        return response.toString();
+    }
+    
+
+    private String initialPythonSetup()
+    {
+        StringBuffer response = new StringBuffer();
+        
+        response.append("h = hoc.HocObject()\n\n");
+        
+        /*
+        if (simConfig.getMpiConf().isParallel())
+        {
+            response.append("h.load_file(\"netparmpi.hoc\")\n");
+            
+            response.append("h(\"objref pnm\")\n");
+            response.append("h(\"pnm = new ParallelNetManager(20)\")\n");
+            
+            response.append("h(\"hostid = pnm.pc.id\")\n");
+
+            response.append("print \"My host id: %d\" % (h.hostid)\n\n");
+        }
+        else
+        {
+            response.append("h(\"hostid = 0\")\n");
+        }*/
+        
+        return response.toString();
+    }
+    
+    
+    /*
+     * Only used when Python is script...
+     * 
+     */
+    private String loadNetworkMLStructure()
+    {
+        StringBuffer response = new StringBuffer();
+        
+        String nmlFile = NetworkMLConstants.DEFAULT_NETWORKML_FILENAME;
+        
+        PythonUtils.addPrintedComment(response, 
+                "Loading cell positions and connections from: "+ nmlFile, 
+                PythonUtils.LOG_LEVEL_INFO,
+                true);
+
+        response.append("file_name = '"+nmlFile+"'\n\n");
+
+        response.append("beforeLoad = time.time()\n");
+        response.append("parser = xml.sax.make_parser()\n");   
+        
+        response.append("nmlHandler = NEURONSimUtils.NetManagerNEURON()\n");
+        
+        //response.append("nmlHandler.setCellList(h.allCells)\n");
+        
+        
+        response.append("curHandler = NetworkMLSaxHandler.NetworkMLSaxHandler(nmlHandler)\n");
+
+        response.append("curHandler.setNodeId(h.hostid)\n");
+        
+        response.append("parser.setContentHandler(curHandler)\n");
+        
+        response.append("parser.parse(open(file_name)) \n");
+        
+
+        response.append("afterLoad = time.time()\n");
+
+        //response.append("comment = time.time()\n");
+              
+        
+        PythonUtils.addPrintedComment(response,
+                "\"Loaded file in \"+ str(afterLoad-beforeLoad)+ \" seconds on host: %d\" % (int(h.hostid))", 
+                PythonUtils.LOG_LEVEL_INFO, false);
+        
+        
+        return response.toString();
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    private String generateRunSettings()
+    {
+        StringBuffer response = new StringBuffer();
+        addMajorHocComment(response, "Settings for running the demo");
         response.append("\n");
         response.append("tstop = " + getSimDuration() + "\n");
 
@@ -883,7 +1173,7 @@ public class NeuronFileManager
         return "n_stim_" + stimRef;
     }
 
-    private String generateStimulations(int runMode) throws NeuronException
+    private String generateStimulations() throws NeuronException
     {
         int totalStims = project.generatedElecInputs.getNumberSingleInputs();
 
@@ -891,7 +1181,7 @@ public class NeuronFileManager
 
         ArrayList<String> allStims = this.simConfig.getInputs();
 
-        addMajorComment(response, "Adding " + allStims.size() + " stimulation(s)");
+        addMajorHocComment(response, "Adding " + allStims.size() + " stimulation(s)");
 
         for (int k = 0; k < allStims.size(); k++)
         {
@@ -975,9 +1265,9 @@ public class NeuronFileManager
                                             + nextInput.getCellNumber() + "))) {\n");
                         }
 
-                        addComment(response, "Note: the stimulation was specified as being at a point "
+                        addHocComment(response, "Note: the stimulation was specified as being at a point "
                                           + fractionAlongSegment + " along segment: " + segToStim.getSegmentName(),prefix, false);
-                        addComment(response, "in section: " + getHocSectionName(segToStim.getSection().getSectionName()) +
+                        addHocComment(response, "in section: " + getHocSectionName(segToStim.getSection().getSectionName()) +
                                           ". For NEURON, this translates to a point " + fractionAlongSection +
                                           " along section: " +
                                           getHocSectionName(segToStim.getSection().getSectionName()),prefix,true);
@@ -1063,7 +1353,7 @@ public class NeuronFileManager
                         /** @todo This is wrong!!! */
                         float expectedRate = rndTrain.getRate().getNextNumber();
 
-                        addComment(response,
+                        addHocComment(response,
                                           "NOTE: This is a very rough way to get an average rate of " + expectedRate +
                                           " kHz!!!", prefix, false);
 
@@ -1087,7 +1377,7 @@ public class NeuronFileManager
                                         "(" + fractionAlongSection +
                                         ") \n");
 
-                        addComment(response, " Inserts synapse 0.5 of way down",prefix, true);
+                        addHocComment(response, " Inserts synapse 0.5 of way down",prefix, true);
 
                         response.append(prefix+connectionName + "["
                                         + j
@@ -1185,7 +1475,7 @@ public class NeuronFileManager
                         /** @todo This is wrong!!! */
                         float expectedRate = rndTrainExt.getRate().getNextNumber();
 
-                        addComment(response,
+                        addHocComment(response,
                                           "NOTE: This is a very rough way to get an average rate of " + expectedRate +
                                           " kHz!!!", prefix, false);
 
@@ -1214,7 +1504,7 @@ public class NeuronFileManager
                                         "(" + fractionAlongSection +
                                         ") \n");
 
-                        addComment(response, " Inserts synapse 0.5 of way down",prefix, true);
+                        addHocComment(response, " Inserts synapse 0.5 of way down",prefix, true);
 
                         response.append(prefix+connectionName + "["
                                         + j
@@ -1234,7 +1524,7 @@ public class NeuronFileManager
             }
             else
             {
-                addComment(response, "No electrical inputs generated for: " + allStims.get(k));
+                addHocComment(response, "No electrical inputs generated for: " + allStims.get(k));
             }
         }
 
@@ -1338,7 +1628,7 @@ public class NeuronFileManager
      * @param runMode int The run mode
      * @return String for hoc file
      */
-    private String generateNeuronSimulationRecording(int runMode)
+    private String generateNeuronSimulationRecording()
     {
         StringBuffer response = new StringBuffer();
 
@@ -1346,13 +1636,13 @@ public class NeuronFileManager
 
         int numStepsTotal = (int) Math.round(getSimDuration() / project.simulationParameters.getDt()) + 1;
 
-        addMajorComment(response,
+        addMajorHocComment(response,
                         "This will run a full simulation of " + numStepsTotal +
                         " steps when the hoc file is executed");
 
         ArrayList<PlotSaveDetails> recordings = project.generatedPlotSaves.getSavedPlotSaves();
 
-        addComment(response, "Recording " + recordings.size() + " variable(s)");
+        addHocComment(response, "Recording " + recordings.size() + " variable(s)");
 
         boolean recordingSomething = !recordings.isEmpty();
 
@@ -1403,7 +1693,7 @@ public class NeuronFileManager
 
             if (numInCellGroup > 0)
             {
-                addComment(response, record.getDescription(true));
+                addHocComment(response, record.getDescription(true));
 
                 for (Integer segId : record.segIdsToPlot)
                 {
@@ -1416,7 +1706,7 @@ public class NeuronFileManager
 
                     if (record.allCellsInGroup && !record.simPlot.isSynapticMechanism())
                     {
-                        addComment(response,
+                        addHocComment(response,
                                    "Creating vector for segment: " + segToRecord.getSegmentName() + "(ID: " +
                                    segToRecord.getSegmentId() + ")");
 
@@ -1535,7 +1825,7 @@ public class NeuronFileManager
                             else
                             {
 
-                                addComment(response,
+                                addHocComment(response,
                                            "Creating vector for segment: " + segToRecord.getSegmentName() +
                                            "(ID: " + segToRecord.getSegmentId() + ") in cell number: " + cellNum);
 
@@ -1628,7 +1918,7 @@ public class NeuronFileManager
 
         response.append(generateMultiRunPreScript());
 
-        response.append(generateRunMechanism(runMode));
+        response.append(generateRunMechanism());
 
         if (recordingSomething)
         {
@@ -1667,7 +1957,7 @@ public class NeuronFileManager
 
                 if (numInCellGroup > 0)
                 {
-                    addComment(response, record.getDescription(true));
+                    addHocComment(response, record.getDescription(true));
 
                     for (Integer segId : record.segIdsToPlot)
                     {
@@ -1676,7 +1966,7 @@ public class NeuronFileManager
                         if (record.allCellsInGroup && !record.simPlot.isSynapticMechanism())
                         {
 
-                            addComment(response, "Saving vector for segment: "
+                            addHocComment(response, "Saving vector for segment: "
                                        + segToRecord.getSegmentName() + "(ID: " + segToRecord.getSegmentId() + ")");
 
                             String objName = this.getObjectName(record, -1, getHocSegmentName(segToRecord.getSegmentName()));
@@ -1772,7 +2062,7 @@ public class NeuronFileManager
                                 else
                                 {
 
-                                    addComment(response,
+                                    addHocComment(response,
                                                "Saving vector for segment: " + segToRecord.getSegmentName() +
                                                "(ID: " + segToRecord.getSegmentId() + ") in cell number: " +
                                                cellNum);
@@ -1878,12 +2168,13 @@ public class NeuronFileManager
 
 
 
-    public String generateCellGroups(int runMode) throws NeuronException
+    public String generateCellGroups() throws NeuronException
     {
         StringBuffer response = new StringBuffer();
         //response.append("\n");
 
         ArrayList<String> cellGroupNames = project.cellGroupsInfo.getAllCellGroupNames();
+        
         logger.logComment("Looking at " + cellGroupNames.size() + " cell groups");
 
         if (cellGroupNames.size() == 0)
@@ -1896,6 +2187,9 @@ public class NeuronFileManager
 
 
         GeneralUtils.timeCheck("Starting gen of cell groups");
+        
+        String prefix = "";
+        if (genRunMode==RUN_PYTHON) prefix = "h.";
 
 
         for (int ii = 0; ii < cellGroupNames.size(); ii++)
@@ -2101,7 +2395,9 @@ public class NeuronFileManager
 
                 if (cellTemplatesGenAndIncluded.contains(filenameToBeGenerated))
                 {
-                    logger.logComment("It's already been generated!");
+                    
+                    addComment(response, "Cell template file: "+cellTemplateGen.getHocShortFilename()
+                            +" for cell group "+cellGroupName+" has already been included");
                 }
                 else
                 {
@@ -2111,6 +2407,18 @@ public class NeuronFileManager
                         cellTemplateGen.generateFile();
 
                         cellTemplatesGenAndIncluded.add(filenameToBeGenerated);
+                        
+                        logger.logComment("Adding include for the file to the main hoc file...");
+
+                        StringBuffer fileNameBuffer = new StringBuffer(filenameToBeGenerated);
+
+                        for (int j = 0; j < fileNameBuffer.length(); j++)
+                        {
+                            char c = fileNameBuffer.charAt(j);
+                            if (c == '\\')
+                                fileNameBuffer.replace(j, j + 1, "/");
+                        }
+                        response.append(prefix+"load_file(\"" + cellTemplateGen.hocFile.getName() + "\")\n\n");
                     }
                     catch (NeuronException ex)
                     {
@@ -2119,111 +2427,103 @@ public class NeuronFileManager
                     }
                 }
 
-                logger.logComment("Adding include for the file to the main hoc file...");
-
-                StringBuffer fileNameBuffer = new StringBuffer(filenameToBeGenerated);
-
-                for (int j = 0; j < fileNameBuffer.length(); j++)
-                {
-                    char c = fileNameBuffer.charAt(j);
-                    if (c == '\\')
-                        fileNameBuffer.replace(j, j + 1, "/");
-                }
-                //response.append("load_file(\"" + fileNameBuffer.toString() + "\")\n");
-                response.append("load_file(\"" + cellTemplateGen.hocFile.getName() + "\")\n\n");
+                
+                
                 // now we've got the includes
-
-                String currentRegionName = project.cellGroupsInfo.getRegionName(cellGroupName);
-
-                ArrayList cellGroupPositions = project.generatedCellPositions.getPositionRecords(cellGroupName);
-
-                addComment(response, "Adding " + cellGroupPositions.size()
-                                  + " cells of type " + cellTypeName
-                                  + " in region " + currentRegionName);
-
-                String nameOfNumberOfTheseCells = "n_" + cellGroupName;
-                String nameOfArrayOfTheseCells = "a_" + cellGroupName;
-
-                if (cellGroupPositions.size() > 0)
+                
+                if (genRunMode!=RUN_PYTHON)
                 {
-                    response.append(nameOfNumberOfTheseCells + " = " + cellGroupPositions.size() + "\n\n");
-
-                    response.append("objectvar " + nameOfArrayOfTheseCells + "[" + nameOfNumberOfTheseCells + "]" +
-                                    "\n\n");
-
-                    if (!simConfig.getMpiConf().isParallel())
+                    String currentRegionName = project.cellGroupsInfo.getRegionName(cellGroupName);
+    
+                    ArrayList cellGroupPositions = project.generatedCellPositions.getPositionRecords(cellGroupName);
+    
+                    addHocComment(response, "Adding " + cellGroupPositions.size()
+                                      + " cells of type " + cellTypeName
+                                      + " in region " + currentRegionName);
+    
+                    String nameOfNumberOfTheseCells = "n_" + cellGroupName;
+                    String nameOfArrayOfTheseCells = "a_" + cellGroupName;
+    
+                    if (cellGroupPositions.size() > 0)
                     {
-                        response.append("proc addCell_" + cellGroupName + "() {\n");
-
-                        response.append("    strdef reference\n");
-                        response.append("    sprint(reference, \"" + cellGroupName + "_%d\", $1)\n");
-
-                        String desc = GeneralUtils.replaceAllTokens(cell.getCellDescription(), "\n", " ");
-                        response.append("    " + nameOfArrayOfTheseCells + "[$1] = new " + cellTypeName +
-                                        "(reference, \""
-                                        + cellTypeName + "\", \"" + desc + "\")" + "\n");
-
-                        response.append("    allCells.append(" + nameOfArrayOfTheseCells + "[$1])\n");
-
-                        response.append("}" + "\n\n");
-
-                        response.append("for i = 0, " + nameOfNumberOfTheseCells + "-1 {" + "\n");
-
-                        response.append("    addCell_" + cellGroupName + "(i)" + "\n\n");
-
-                        response.append("}" + "\n\n");
+                        response.append(nameOfNumberOfTheseCells + " = " + cellGroupPositions.size() + "\n\n");
+    
+                        response.append("objectvar " + nameOfArrayOfTheseCells + "[" + nameOfNumberOfTheseCells + "]" +
+                                        "\n\n");
+    
+                        if (!simConfig.getMpiConf().isParallel())
+                        {
+                            response.append("proc addCell_" + cellGroupName + "() {\n");
+    
+                            response.append("    strdef reference\n");
+                            response.append("    sprint(reference, \"" + cellGroupName + "_%d\", $1)\n");
+    
+                            String desc = GeneralUtils.replaceAllTokens(cell.getCellDescription(), "\n", " ");
+                            response.append("    " + nameOfArrayOfTheseCells + "[$1] = new " + cellTypeName +
+                                            "(reference, \""
+                                            + cellTypeName + "\", \"" + desc + "\")" + "\n");
+    
+                            response.append("    allCells.append(" + nameOfArrayOfTheseCells + "[$1])\n");
+    
+                            response.append("}" + "\n\n");
+    
+                            response.append("for i = 0, " + nameOfNumberOfTheseCells + "-1 {" + "\n");
+    
+                            response.append("    addCell_" + cellGroupName + "(i)" + "\n\n");
+    
+                            response.append("}" + "\n\n");
+                        }
+                        else
+                        {
+    
+                            response.append("for i = 0, " + nameOfNumberOfTheseCells + "-1 {" + "\n");
+    
+                            //response.append("addCell_" + cellGroupName + "(i)" + "\n\n");
+    
+                            response.append("    if(pnm.gid_exists(getGid(\""+cellGroupName+"\", i))) {\n");
+    
+                            response.append("        strdef reference\n");
+                            response.append("        sprint(reference, \"" + cellGroupName + "_%d\", i)\n");
+                            response.append("        strdef type\n");
+                            response.append("        sprint(type, \"" + cellTypeName + "\")\n");
+                            response.append("        strdef description\n");
+                            response.append("        sprint(description, \"" + GeneralUtils.replaceAllTokens(cell.getCellDescription(), "\n", " ") + "\")\n");
+    
+                            //response.append("        strdef command\n");
+                            //response.append("        sprint(command, \"new " + cellTypeName + "(reference, type, description)\")\n");
+    
+                            response.append(
+                                "        print \"Going to create cell: \", reference, \" on host \", host, \", id: \", hostid\n");
+    
+                            //response.append("    pnm.create_cell(i, command)\n");
+                            response.append( "        a_"+cellGroupName+"[i] = new "+cellTypeName+"(reference, type, description)\n");
+    
+    
+                            response.append( "        pnm.register_cell(getGid(\""+cellGroupName+"\", i), a_"+cellGroupName+"[i])\n");
+    
+                            response.append("    }\n");
+    
+                            response.append("}" + "\n\n");
+                        }
                     }
-                    else
-                    {
-
-                        response.append("for i = 0, " + nameOfNumberOfTheseCells + "-1 {" + "\n");
-
-                        //response.append("addCell_" + cellGroupName + "(i)" + "\n\n");
-
-                        response.append("    if(pnm.gid_exists(getGid(\""+cellGroupName+"\", i))) {\n");
-
-                        response.append("        strdef reference\n");
-                        response.append("        sprint(reference, \"" + cellGroupName + "_%d\", i)\n");
-                        response.append("        strdef type\n");
-                        response.append("        sprint(type, \"" + cellTypeName + "\")\n");
-                        response.append("        strdef description\n");
-                        response.append("        sprint(description, \"" + GeneralUtils.replaceAllTokens(cell.getCellDescription(), "\n", " ") + "\")\n");
-
-                        //response.append("        strdef command\n");
-                        //response.append("        sprint(command, \"new " + cellTypeName + "(reference, type, description)\")\n");
-
-                        response.append(
-                            "        print \"Going to create cell: \", reference, \" on host \", host, \", id: \", hostid\n");
-
-                        //response.append("    pnm.create_cell(i, command)\n");
-                        response.append( "        a_"+cellGroupName+"[i] = new "+cellTypeName+"(reference, type, description)\n");
-
-
-                        response.append( "        pnm.register_cell(getGid(\""+cellGroupName+"\", i), a_"+cellGroupName+"[i])\n");
-
-                        response.append("    }\n");
-
-                        response.append("}" + "\n\n");
-                    }
-                }
-
-
-
+    
+    
+    
                     Region regionInfo = project.regionsInfo.getRegionObject(currentRegionName);
                     CellPackingAdapter packer = project.cellGroupsInfo.getCellPackingAdapter(cellGroupName);
-
+    
                     //     float yDisplacementOfThisRegion = project.regionsInfo.getYDisplacementOfRegion(currentRegionName);
-
-                    addComment(response, "Placing these cells in a region described by: " + regionInfo);
-                    addComment(response, "Packing has been generated by: " + packer.toString());
-
+    
+                    addHocComment(response, "Placing these cells in a region described by: " + regionInfo);
+                    addHocComment(response, "Packing has been generated by: " + packer.toString());
+    
                     for (int j = 0; j < cellGroupPositions.size(); j++)
                     {
                         PositionRecord posRecord
                             = (PositionRecord) cellGroupPositions.get(j);
-
+    
                         logger.logComment("Moving cell number: " + j + " into place");
-
+    
                         if (j != posRecord.cellNumber)
                         {
                             // not really a problem, but best to highlight it...
@@ -2231,15 +2531,16 @@ public class NeuronFileManager
                                               " doesn't match cell number: " + posRecord);
                             // continue...
                         }
-
+    
                         String parallelCheck = "";
                         if (simConfig.getMpiConf().isParallel())
                             parallelCheck = "if (pnm.gid_exists(getGid(\""+cellGroupName+"\", "+posRecord.cellNumber+"))) ";
-
+    
                         response.append(parallelCheck+nameOfArrayOfTheseCells + "[" + posRecord.cellNumber + "].position("
                                         + posRecord.x_pos + "," + posRecord.y_pos + "," + posRecord.z_pos + ")\n");
-
+    
                     }
+                }
 
 
                 logger.logComment("***  Finished looking at cell group number " + ii + ", called: " + cellGroupName);
@@ -2250,7 +2551,7 @@ public class NeuronFileManager
 
         }
 
-            GeneralUtils.timeCheck("Finished gen of cell groups");
+        GeneralUtils.timeCheck("Finished gen of cell groups");
 
         return response.toString();
 
@@ -2295,7 +2596,7 @@ public class NeuronFileManager
 
     }
 
-    private String generateNetworkConnections(int runMode)
+    private String generateNetworkConnections()
     {
 
         logger.logComment("Starting generation of the net conns");
@@ -2306,7 +2607,7 @@ public class NeuronFileManager
 
         response.append("\n");
 
-        addMajorComment(response, "Adding Network Connections");
+        addMajorHocComment(response, "Adding Network Connections");
 
         Iterator allNetConnNames = project.generatedNetworkConnections.getNamesNetConns();
 
@@ -2390,7 +2691,7 @@ public class NeuronFileManager
             }
 
             response.append("\n");
-            addComment(response, "Adding Network Connection: "
+            addHocComment(response, "Adding Network Connection: "
                               + netConnName
                               + " from Cell Group: "
                               + sourceCellGroup
@@ -2475,7 +2776,7 @@ public class NeuronFileManager
                                                                                     realSource,
                                                                                     synConn.sourceEndPoint.location.getFractAlong());
 
-                        addComment(response,
+                        addHocComment(response,
                                    "Instead of point " + synConn.sourceEndPoint.location.getFractAlong() + " along seg: "
                                    + realSource.toShortString() + " connecting to point " +
                                    fractionAlongSrcSeg + " along seg: "
@@ -2514,17 +2815,17 @@ public class NeuronFileManager
 
                     float apSpaceDelay = synConn.apPropDelay;
 
-                    addComment(response, "Connection from src cell "+synConn.sourceEndPoint.cellNumber
+                    addHocComment(response, "Connection from src cell "+synConn.sourceEndPoint.cellNumber
                                +" to tgt cell "+synConn.targetEndPoint.cellNumber+". Fract along source section: "
                                + fractAlongSourceSection+", weight of syn: " + weight , false);
                     
-                    addComment(response,
+                    addHocComment(response,
                             "Delay due to AP propagation along segments: " + apSegmentPropDelay
                             + ", delay due to AP jump pre -> post location "+ apSpaceDelay , false);
                     
                     float totalDelay = synInternalDelay + apSegmentPropDelay + apSpaceDelay;
                     
-                    addComment(response,
+                    addHocComment(response,
                             "Internal synapse delay (from Synaptic Props): " + synInternalDelay
                             +", total delay at synapse: "+totalDelay);
 
@@ -2588,8 +2889,8 @@ public class NeuronFileManager
 
                                     posAbsSyn.add(synRelToCell);
 
-                                    addComment(response, "Synapse location on cell: " + synRelToCell);
-                                    addComment(response, "Synapse absolute location: " + posAbsSyn);
+                                    addHocComment(response, "Synapse location on cell: " + synRelToCell);
+                                    addHocComment(response, "Synapse absolute location: " + posAbsSyn);
 
                                     response.append(objectVarName+".x = "+posAbsSyn.x+"\n");
                                     response.append(objectVarName+".y = "+posAbsSyn.y+"\n");
@@ -2652,7 +2953,7 @@ public class NeuronFileManager
                                         + "\n\n");
 
                         /** @todo threshold */
-                        addComment(response, "What about threshold???");
+                        addHocComment(response, "What about threshold???");
 
                     }
 
@@ -2677,7 +2978,7 @@ public class NeuronFileManager
 
         ArrayList<PlotSaveDetails> plots = project.generatedPlotSaves.getPlottedPlotSaves();
 
-        addMajorComment(response, "Adding " + plots.size() + " plot(s)");
+        addMajorHocComment(response, "Adding " + plots.size() + " plot(s)");
 
         for (PlotSaveDetails plot : plots)
         {
@@ -3025,7 +3326,7 @@ public class NeuronFileManager
     {
         StringBuffer response = new StringBuffer();
 
-        addComment(response,
+        addHocComment(response,
                           " This code pops up a plot of " + varReference +"\n");
 
         if (!graphsCreated.contains(graphWindow))
@@ -3081,7 +3382,7 @@ public class NeuronFileManager
     {
         StringBuffer response = new StringBuffer();
 
-        addComment(response, " This code pops up a Shape plot of the cells\n");
+        addHocComment(response, " This code pops up a Shape plot of the cells\n");
 
         response.append("objref plotShape\n");
         response.append("plotShape = new PlotShape()\n");
@@ -3102,7 +3403,7 @@ public class NeuronFileManager
         return colour;
     }
 
-    public String generateRunMechanism(int runMode)
+    public String generateRunMechanism()
     {
         StringBuffer response = new StringBuffer();
 
@@ -3146,13 +3447,13 @@ public class NeuronFileManager
 
         if (!project.neuronSettings.isVarTimeStep())
         {
-            addMajorComment(response, "Main run statement");
+            addMajorHocComment(response, "Main run statement");
             response.append("run()\n\n");
         }
         else
         {
-            addMajorComment(response, "Main run statement");
-            addComment(response, "Setting basic variable time step active");
+            addMajorHocComment(response, "Main run statement");
+            addHocComment(response, "Setting basic variable time step active");
 
             response.append("cvode.active(1)\n");
             response.append("run()\n\n");
@@ -3182,7 +3483,7 @@ public class NeuronFileManager
     {
         StringBuffer response = new StringBuffer();
 
-        addComment(response, " This code pops up a simple Run Control\n");
+        addHocComment(response, " This code pops up a simple Run Control\n");
 
         response.append("{\n");
         response.append("xpanel(\"RunControl\", 0)\n");
@@ -3206,7 +3507,7 @@ public class NeuronFileManager
     {
         StringBuffer response = new StringBuffer();
 
-        addComment(response,
+        addHocComment(response,
                           " As it is intended to run the file under Condor, the hoc will quit after finishing\n");
 
         response.append("\nquit()\n");
@@ -3215,31 +3516,49 @@ public class NeuronFileManager
     }
 
 
+    public void addComment(StringBuffer responseBuffer, String comment)
+    {
+        if (genRunMode!=RUN_PYTHON) 
+            addHocComment(responseBuffer, comment);
+        else
+            PythonUtils.addComment(responseBuffer, comment, addComments);
+    }
 
-    public static void addComment(StringBuffer responseBuffer, String comment)
+    public static void addHocComment(StringBuffer responseBuffer, String comment)
     {
         if (!addComments) return;
 
         comment = GeneralUtils.replaceAllTokens(comment, "\n", "\n//  ");
         
-        addComment(responseBuffer, comment, "", true);
+        addHocComment(responseBuffer, comment, "", true);
     }
-    public static void addComment(StringBuffer responseBuffer, String comment, boolean inclReturn)
+    
+    public static void addHocComment(StringBuffer responseBuffer, String comment, boolean inclReturn)
     {
         if (!addComments) return;
-        addComment(responseBuffer, comment, "", inclReturn);
+        addHocComment(responseBuffer, comment, "", inclReturn);
     }
 
 
-    public static void addComment(StringBuffer responseBuffer, String comment, String preSlashes, boolean inclReturn)
+    public static void addHocComment(StringBuffer responseBuffer, String comment, String preSlashes, boolean inclReturn)
     {
         if (!addComments) return;
         if (!responseBuffer.toString().endsWith("\n")) responseBuffer.append("\n");
         responseBuffer.append(preSlashes+"//  " + comment + "\n");
         if (inclReturn) responseBuffer.append("\n");
     }
+    
+    public void addMajorComment(StringBuffer responseBuffer, String comment)
+    {
+        if (!addComments)return;
+        
+        if (genRunMode!=RUN_PYTHON) 
+            addMajorHocComment(responseBuffer, comment);
+        else
+            PythonUtils.addMajorComment(responseBuffer, comment);
+    }
 
-    public static void addMajorComment(StringBuffer responseBuffer, String comment)
+    public static void addMajorHocComment(StringBuffer responseBuffer, String comment)
     {
         if (!addComments)return;
         if (!responseBuffer.toString().endsWith("\n")) responseBuffer.append("\n");
@@ -3450,7 +3769,7 @@ public class NeuronFileManager
     }
 
 
-    public void runNeuronFile(File mainHocFile, int runMode) throws NeuronException
+    public void runNeuronFile(File mainHocFile) throws NeuronException
     {
         logger.logComment("Trying to run the hoc file: "+ mainHocFile);
 
@@ -3466,8 +3785,6 @@ public class NeuronFileManager
         File dirForDataFiles = mainHocFile.getParentFile();
         
 
-
-
         File[] filesInDir = dirForDataFiles.listFiles();
 
         logger.logComment("Files in dir: "+ dirForDataFiles.getAbsolutePath());
@@ -3480,7 +3797,7 @@ public class NeuronFileManager
         
         String fullCommand = "";
 
-        if (runMode!=RUN_VIA_CONDOR)
+        if (genRunMode!=RUN_VIA_CONDOR)
         {
             try
             {
@@ -3490,8 +3807,8 @@ public class NeuronFileManager
 
                 if (GeneralUtils.isWindowsBasedPlatform())
                 {
-                    
                     logger.logComment("Assuming Windows environment...");
+                    
                     neuronExecutable = locationOfNeuron
                         + System.getProperty("file.separator")
                         + "bin"
@@ -4008,8 +4325,7 @@ public class NeuronFileManager
             System.exit(0);
 
             frame.projManager.getCurrentProject().neuronFileManager.runNeuronFile(
-                frame.projManager.getCurrentProject().neuronFileManager.getMainHocFile(),
-                runMode);
+                frame.projManager.getCurrentProject().neuronFileManager.getMainHocFile());
 
         }
         catch(Exception e)

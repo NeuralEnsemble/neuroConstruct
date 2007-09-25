@@ -718,7 +718,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JMenuItem jMenuItemJava = new JMenuItem();
     JMenu jMenuProject = new JMenu();
     JMenuItem jMenuItemGenNetwork = new JMenuItem();
-    JMenuItem jMenuItemGenNeuron = new JMenuItem();
+    JMenuItem jMenuItemGenNeuronHoc = new JMenuItem();
+    JMenuItem jMenuItemGenNeuronPython = new JMenuItem();
     JMenuItem jMenuItemGenGenesis = new JMenuItem();
     JMenuItem jMenuItemPrevSims = new JMenuItem();
     JMenuItem jMenuItemDataSets = new JMenuItem();
@@ -1704,12 +1705,20 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jMenuItemGenNetwork_actionPerformed(e);
             }
         });
-        jMenuItemGenNeuron.setText("Generate NEURON");
-        jMenuItemGenNeuron.addActionListener(new java.awt.event.ActionListener()
+        jMenuItemGenNeuronHoc.setText("Generate NEURON (hoc)");
+        jMenuItemGenNeuronHoc.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
-                jMenuItemGenNeuron_actionPerformed(e);
+                jMenuItemGenNeuronHoc_actionPerformed(e);
+            }
+        });
+        jMenuItemGenNeuronPython.setText("Generate NEURON (Python)");
+        jMenuItemGenNeuronPython.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jMenuItemGenNeuronPython_actionPerformed(e);
             }
         });
 
@@ -3465,7 +3474,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
         jMenuProject.add(jMenuItemGenNetwork);
-        jMenuProject.add(jMenuItemGenNeuron);
+        jMenuProject.add(jMenuItemGenNeuronHoc);
+        jMenuProject.add(jMenuItemGenNeuronPython);
         jMenuProject.add(jMenuItemGenGenesis);
         jMenuProject.addSeparator();
         jMenuProject.add(jMenuItemPrevSims);
@@ -5569,7 +5579,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         setNeuronRunEnabled(true);
         jComboBoxNeuronFileList.removeAllItems();
 
-        String[] types = new String[]{".hoc", ".mod", ".nrn"};
+        String[] types = new String[]{".hoc", ".mod", ".nrn", ".py"};
         SimpleFileFilter filter = new SimpleFileFilter(types, "Any NEURON file");
 
 
@@ -5737,9 +5747,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
      * Runs the *.hoc file for the project
      *
      */
-    protected void doRunHoc()
+    protected void doRunNeuron()
     {
-        logger.logComment("Running hoc code...");
+        logger.logComment("Running NEURON code...");
+        
         if (projManager.getCurrentProject() == null)
         {
             logger.logError("No project loaded...");
@@ -5749,29 +5760,32 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         File genNeuronDir = ProjectStructure.getNeuronCodeDir(projManager.getCurrentProject().
                                                                         getProjectMainDirectory());
 
+        File networkMLFile = new File(genNeuronDir, NetworkMLConstants.DEFAULT_NETWORKML_FILENAME);
 
         /**
-         * Will be the only sim dir if a single run, will be the dir for the actually run neuron code when multiple sims are run
+         * Will be the only sim dir if a single run, will be the dir for the actually run 
+         * neuron code when multiple sims are run
          */
         String primarySimDirName = projManager.getCurrentProject().simulationParameters.getReference();
-
-        //File primarySimDir = ProjectStructure.getDirForSimFiles(primarySimDirName, projManager.getCurrentProject());
 
 
         File positionsFile = new File(genNeuronDir, SimulationData.POSITION_DATA_FILE);
         File netConnsFile = new File(genNeuronDir, SimulationData.NETCONN_DATA_FILE);
         File elecInputFile = new File(genNeuronDir, SimulationData.ELEC_INPUT_DATA_FILE);
 
-        try
+        if (!networkMLFile.exists())
         {
-            projManager.getCurrentProject().generatedCellPositions.saveToFile(positionsFile);
-            projManager.getCurrentProject().generatedNetworkConnections.saveToFile(netConnsFile);
-            projManager.getCurrentProject().generatedElecInputs.saveToFile(elecInputFile);
-        }
-        catch (IOException ex)
-        {
-            GuiUtils.showErrorMessage(logger, "Problem saving generated positions in file: "+ positionsFile.getAbsolutePath(), ex, null);
-            return;
+            try
+            {
+                projManager.getCurrentProject().generatedCellPositions.saveToFile(positionsFile);
+                projManager.getCurrentProject().generatedNetworkConnections.saveToFile(netConnsFile);
+                projManager.getCurrentProject().generatedElecInputs.saveToFile(elecInputFile);
+            }
+            catch (IOException ex)
+            {
+                GuiUtils.showErrorMessage(logger, "Problem saving generated positions in file: "+ positionsFile.getAbsolutePath(), ex, null);
+                return;
+            }
         }
 
         // Saving summary of the simulation params
@@ -5822,7 +5836,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             {
                 if (generatedNeuronFiles[i].getName().endsWith(".hoc") ||
                     generatedNeuronFiles[i].getName().endsWith(".mod") ||
+                    generatedNeuronFiles[i].getName().endsWith(".py") ||
                     generatedNeuronFiles[i].getName().endsWith(".dll")||
+                    generatedNeuronFiles[i].getName().endsWith(".xml")||
                     generatedNeuronFiles[i].getName().endsWith(".dat")||
                     generatedNeuronFiles[i].getName().endsWith(".props"))
                 {
@@ -5862,9 +5878,28 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                   + " to dir: " + dirForSimFiles, ex1, this);
 
                         return;
-
                     }
+                }
+                else if (generatedNeuronFiles[i].isDirectory() && 
+                         (generatedNeuronFiles[i].getName().equals(ProjectStructure.neuroMLPyUtilsDir) ||
+                          generatedNeuronFiles[i].getName().equals(ProjectStructure.neuronPyUtilsDir)))
+                {
+                    File toDir = new File(dirForSimFiles, generatedNeuronFiles[i].getName());
+                    toDir.mkdir();
 
+                    try
+                    {
+                        GeneralUtils.copyDirIntoDir(generatedNeuronFiles[i], toDir, true, true);
+                    }
+                    catch (IOException ex1)
+                    {
+                        GuiUtils.showErrorMessage(logger,
+                                                  "Error while copying file: " +
+                                                  generatedNeuronFiles[i]
+                                                  + " to dir: " + dirForSimFiles, ex1, this);
+
+                        return;
+                    }
                 }
 
             }
@@ -5888,7 +5923,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             logger.logComment("Going to run file: "+ newMainHocFile);
 
-            projManager.getCurrentProject().neuronFileManager.runNeuronFile(newMainHocFile, neuronRunMode);
+            projManager.getCurrentProject().neuronFileManager.runNeuronFile(newMainHocFile);
         }
         catch (NeuronException ex)
         {
@@ -9361,7 +9396,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     {
         logger.logComment("Run hoc file button pressed...");
 
-        doRunHoc();
+        doRunNeuron();
 
     }
 
@@ -12989,7 +13024,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     }
 
 
-    void jMenuItemGenNeuron_actionPerformed(ActionEvent e)
+    void jMenuItemGenNeuronHoc_actionPerformed(ActionEvent e)
     {
         if (!projManager.projectLoaded()) return;
 
@@ -12998,6 +13033,18 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTabbedPaneNeuron.setSelectedIndex(jTabbedPaneNeuron.indexOfTab(this.NEURON_TAB_GENERATE));
 
         doCreateHoc(NeuronFileManager.RUN_HOC);
+
+    }
+
+    void jMenuItemGenNeuronPython_actionPerformed(ActionEvent e)
+    {
+        if (!projManager.projectLoaded()) return;
+
+        jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(this.EXPORT_TAB));
+        jTabbedPaneExportFormats.setSelectedIndex(jTabbedPaneExportFormats.indexOfTab(this.NEURON_SIMULATOR_TAB));
+        jTabbedPaneNeuron.setSelectedIndex(jTabbedPaneNeuron.indexOfTab(this.NEURON_TAB_GENERATE));
+
+        doCreateHoc(NeuronFileManager.RUN_PYTHON);
 
     }
 

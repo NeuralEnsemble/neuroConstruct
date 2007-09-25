@@ -348,6 +348,8 @@ public class GeneratedCellPositions
 
                 SimpleXMLElement instancesElement = new SimpleXMLElement(NetworkMLConstants.INSTANCES_ELEMENT);
 
+                instancesElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INSTANCES_SIZE_ATTR, cellsHere.size()+""));
+
                 for (int i = 0; i < cellsHere.size(); i++)
                 {
                     PositionRecord posRec = cellsHere.get(i);

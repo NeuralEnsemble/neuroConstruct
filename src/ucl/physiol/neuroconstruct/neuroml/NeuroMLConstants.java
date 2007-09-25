@@ -36,7 +36,6 @@ public class NeuroMLConstants
     public static String DEFAULT_SCHEMA_FILENAME = "NeuroML.xsd";
 
 
-
     /**
      * General constants used in NeuroML/MorphML
      */

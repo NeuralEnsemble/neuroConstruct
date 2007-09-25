@@ -87,6 +87,11 @@ public class NeuronTemplateGenerator
         return this.hocFile.getAbsolutePath();
     }
 
+    public String getHocShortFilename()
+    {
+        return this.hocFile.getName();
+    }
+
 
 
     public String generateFile() throws NeuronException
@@ -165,17 +170,17 @@ public class NeuronTemplateGenerator
 
         response.append("public init, topol, basic_shape, subsets, geom, memb\n");
         response.append("public synlist, x, y, z, position, connect2target\n\n");
-        NeuronFileManager.addComment(response, "Some fields for referencing the cells");
+        NeuronFileManager.addHocComment(response, "Some fields for referencing the cells");
         response.append("public reference, type, description, name\n");
         response.append("strdef reference, type, description, name\n\n");
-        NeuronFileManager.addComment(response, "Some methods for referencing the cells");
+        NeuronFileManager.addHocComment(response, "Some methods for referencing the cells");
         response.append("public toString, netInfo\n\n");
 
 
 
         if (addGrowthFunctions)
         {
-            NeuronFileManager.addComment(response, " Needed for variable morphology\n");
+            NeuronFileManager.addHocComment(response, " Needed for variable morphology\n");
             response.append("public add_dendritic_section, add_axonal_section\n");
             response.append("public additional_dends, additional_axons\n\n");
             response.append("public specify_num_extra_dends, specify_num_extra_axons\n\n");
@@ -256,11 +261,11 @@ public class NeuronTemplateGenerator
         logger.logComment("calling getProcInfo");
         StringBuffer response = new StringBuffer();
 
-        NeuronFileManager.addComment(response, "This function is useful in parallel networks when trying to locate cells...");
+        NeuronFileManager.addHocComment(response, "This function is useful in parallel networks when trying to locate cells...");
         response.append("proc toString() {\n");
         response.append("    strdef info\n");
 
-        response.append("    sprint(info, \"Cell reference: %s (%s)\", reference, name)\n");
+        response.append("    sprint(info, \"Cell reference: %s (%s), at: (%d, %d, %d)\", reference, name, x, y, z)\n");
 
         response.append("    print info\n");
 
@@ -269,7 +274,7 @@ public class NeuronTemplateGenerator
         response.append("\n");
 
 
-        NeuronFileManager.addComment(response, "This function is useful when checking network connections");
+        NeuronFileManager.addHocComment(response, "This function is useful when checking network connections");
         response.append("proc netInfo() {\n");
 
 
@@ -775,7 +780,7 @@ public class NeuronTemplateGenerator
 
         response.append("proc subsets() { local i\n");
 
-        NeuronFileManager.addComment(response, "The group all is assumed never to change...\n");
+        NeuronFileManager.addHocComment(response, "The group all is assumed never to change...\n");
 
         response.append("    "+"all = new SectionList()\n");
 
@@ -1168,7 +1173,7 @@ public class NeuronTemplateGenerator
 
                     response.append("    forsec " + nextGroup + " { ");
 
-                    NeuronFileManager.addComment(response,
+                    NeuronFileManager.addHocComment(response,
                                                  "    Assuming parameters other than max cond dens are set in the mod file...");
                     response.append("        insert " + nextChanMech.getName() + "");
 
@@ -1218,7 +1223,7 @@ public class NeuronTemplateGenerator
                                 SimpleXMLElement ion = (SimpleXMLElement) ions[i];
                                 logger.logComment("Got ion: " + ion.getXMLString("", false));
 
-                                NeuronFileManager.addComment(response, "    Ion "
+                                NeuronFileManager.addHocComment(response, "    Ion "
                                                              + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR)
                                                              + " is used in this process...");
 
@@ -1260,7 +1265,7 @@ public class NeuronTemplateGenerator
                                     }
                                     else
                                     {
-                                        NeuronFileManager.addComment(response,
+                                        NeuronFileManager.addHocComment(response,
                                                                      "Note: there is no reversal potential present for ion: "
                                                                      + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR));
                                     }
@@ -1279,7 +1284,7 @@ public class NeuronTemplateGenerator
 
                     if (requiresXYZ)
                     {
-                        NeuronFileManager.addComment(response, "Need to add x,y,z coords for this mechanism...");
+                        NeuronFileManager.addHocComment(response, "Need to add x,y,z coords for this mechanism...");
 
                         ArrayList<Section> secs = cell.getSectionsInGroup(nextGroup);
                         for (Section sec: secs)
@@ -1321,7 +1326,7 @@ public class NeuronTemplateGenerator
         response.append("            pt3dchange(i, $1+x3d(i), $2+y3d(i), $3+z3d(i), diam3d(i))\n");
         response.append("        }\n");        
         response.append("    }\n");
-        response.append("    //x = $1  y = $2  z = $3\n");
+        response.append("    x = $1  y = $2  z = $3\n");
         response.append("}\n");
 
         response.append("\n");
@@ -1337,7 +1342,7 @@ public class NeuronTemplateGenerator
         StringBuffer response = new StringBuffer();
         response.append("proc connect2target() {   //$o1 target point process, $o2 returned NetCon\n\n");
 
-         NeuronFileManager.addComment(response, "Using standard NetBuilder form. (Overly) simple assumption that first soma seg is trigger for AP.../n");
+         NeuronFileManager.addHocComment(response, "Using standard NetBuilder form. (Overly) simple assumption that first soma seg is trigger for AP.../n");
 
         response.append("    "+NeuronFileManager.getHocSectionName(cell.getFirstSomaSegment().getSection().getSectionName())
                 +" $o2 = new NetCon(&v(1), $o1)\n");

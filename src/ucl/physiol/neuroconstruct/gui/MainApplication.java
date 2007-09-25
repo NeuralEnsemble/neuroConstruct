@@ -137,7 +137,7 @@ public class MainApplication
 
     private void runHoc()
     {
-        frame.doRunHoc();
+        frame.doRunNeuron();
     }
 
 
