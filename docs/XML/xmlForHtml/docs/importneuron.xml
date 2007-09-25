@@ -102,18 +102,19 @@ description of <a href="netconns.html">Network Connections</a> for more informat
 </ol>
 
 
-Process for converting mod/GENESIS script channels into ChannelML
+Process for converting mod/GENESIS script channels into ChannelML (more detail needed...)
 
 <ol>
-<li>Single compartment, e.g. soma</li>
-Get passive props working properly
-convert simple channel, e.g. non ca dependent K chanel
-not jus voltage, also internal variable, mhn
-don't worry if not init properly
-Comparison depends on k value in akd, accurate 1/k
-For complete accuracy, use table impl prefs
+<li>Start with a single compartment, e.g. the soma of the cell to be converted.</li>
+<li>Get passive props working properly.</li>
+<li>Convert a simple channel, e.g. non ca dependent K chanel to ChannelML, add to passive soma. Create another soma with one channel based on original mod file </li>
+<li>Compare not just voltage, also internal variables, m, h or n</li>
+<li>Don't worry if not init properly</li>
+<li>Comparison depends on k value in akd, accurate 1/k</li>
+<li>For complete accuracy, use table impl prefs taken from original mod file</li>
 
-Careful to use temp & ek, ena of prev models!!
+<li>Careful to use temp + ek, ena of prev models!!</li>
+</ol>
 
 
 <p>&nbsp;</p>
