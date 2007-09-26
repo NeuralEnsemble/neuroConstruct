@@ -5773,8 +5773,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         File netConnsFile = new File(genNeuronDir, SimulationData.NETCONN_DATA_FILE);
         File elecInputFile = new File(genNeuronDir, SimulationData.ELEC_INPUT_DATA_FILE);
 
-        if (!networkMLFile.exists())
-        {
+       ///////////// if (!networkMLFile.exists())
+       /////////// {
             try
             {
                 projManager.getCurrentProject().generatedCellPositions.saveToFile(positionsFile);
@@ -5786,7 +5786,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 GuiUtils.showErrorMessage(logger, "Problem saving generated positions in file: "+ positionsFile.getAbsolutePath(), ex, null);
                 return;
             }
-        }
+       //////////////// }
 
         // Saving summary of the simulation params
         try

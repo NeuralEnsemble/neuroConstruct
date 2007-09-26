@@ -248,6 +248,10 @@ public class NeuronFileManager
 
             hocWriter.write(generateNeuronCodeBlock(NativeCodeLocation.BEFORE_CELL_CREATION));
             
+            if (runMode != RUN_PYTHON)
+                if (simConfig.getMpiConf().isParallel()) hocWriter.write(associateCellsWithNodes());
+            
+            
             if (runMode == RUN_PYTHON)
             {
                 
@@ -266,8 +270,7 @@ public class NeuronFileManager
             {
 
     
-                if (simConfig.getMpiConf().isParallel()) hocWriter.write(associateCellsWithNodes());
-    
+   
                 hocWriter.write(generateCellGroups());
 
                 hocWriter.write(generateInitialParameters());
@@ -276,32 +279,39 @@ public class NeuronFileManager
                 hocWriter.write(generateNetworkConnections());
                 hocWriter.flush();
             }
-    
-            hocWriter.write(generateStimulations());
-
-            hocWriter.write(generateAccess());
-
-            //fw.write(generateAfterCreationText());
-
-            if (runMode != RUN_VIA_CONDOR && !simConfig.getMpiConf().isParallel()) // No gui if it's condor or parallel...
+            
+            if (!(runMode == RUN_PYTHON && simConfig.getMpiConf().isParallel()))
             {
-                if (project.neuronSettings.isGraphicsMode())
+    
+                hocWriter.write(generateStimulations());
+    
+                hocWriter.write(generateAccess());
+    
+                //fw.write(generateAfterCreationText());
+    
+                if (runMode != RUN_VIA_CONDOR && !simConfig.getMpiConf().isParallel()) // No gui if it's condor or parallel...
                 {
-                    hocWriter.write(generatePlots());
-
-                    if (project.neuronSettings.isShowShapePlot())
+                    if (project.neuronSettings.isGraphicsMode())
                     {
-                        hocWriter.write(generateShapePlot());
+                        hocWriter.write(generatePlots());
+    
+                        if (project.neuronSettings.isShowShapePlot())
+                        {
+                            hocWriter.write(generateShapePlot());
+                        }
+    
                     }
-
+    
                 }
+    
+                hocWriter.write(generateInitHandlers());
+    
+                hocWriter.write(generateRunSettings());
+                hocWriter.write(generateNeuronSimulationRecording());
+                
 
+        
             }
-
-            hocWriter.write(generateInitHandlers());
-
-            hocWriter.write(generateRunSettings());
-            hocWriter.write(generateNeuronSimulationRecording());
             
             // Finishing up...
             
@@ -315,8 +325,6 @@ public class NeuronFileManager
             
             if (runMode == RUN_VIA_CONDOR)
                 hocWriter.write(generateQuit());
-        
-
             
 
             hocWriter.flush();
