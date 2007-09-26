@@ -35,13 +35,16 @@ the faster the machine, and the more RAM and graphics memory, the better; 1GB RA
 
 
 
-<li>The simplest way to install is to use the automatic installers for Windows, Linux and Mac. 
-	The Windows installer puts the code into
-	<strong>C:\Program Files\neuroConstruct_1.x.x</strong> (where 1.x.x represents the current version number) or a location of your choice, and the application can be launched
+<li>The simplest way to install is to use the automatic installers for Windows, Linux and Mac. Save the appropriate installer file 
+    to your hard drive and run it (Windows: double click on the neuroConstruct_1.x.x.exe file (where 1.x.x represents the current version number); Linux: change the permission of the neuroConstruct_1.x.x.sh file 
+    (<strong>chmod u+x neuroConstruct_1.x.x.sh</strong>) and run it in a terminal (<strong>./neuroConstruct_1.x.x.sh</strong>); Mac install the *.dmg file in the usual way). 
+	Select the install location. <strong>NOTE: it's best not to use a directory with a space in the name</strong> (though Program Files on Windows is fine). By default the Windows installer puts the code into
+	<strong>C:\Program Files\neuroConstruct_1.x.x</strong> or a location 
+    of your choice, and the application can be launched
 	via the desktop icon, or via <strong>Start -> Programs -> neuroConstruct_1.x.x</strong>. There is also a link to the 
 	documentation in this menu, or the HTML files are available at: 
 	<strong>C:\Program Files\neuroConstruct_1.x.x\docs\website\docs</strong>. 
-	The Linux installer puts the code into a directory of your choosing, 
+	With the Linux installer you should choose an appropriate directory, 
 	e.g. <strong>/home/myuser/neuroConstruct_1.x.x</strong>. A desktop link should be automatically created, but this may vary 
     depending on the Linux distribution. In any case there will be an executable: <strong>/home/myuser/neuroConstruct_1.x.x/neuroConstruct</strong>
 	which can be run in a console to start the application.
