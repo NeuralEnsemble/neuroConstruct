@@ -148,7 +148,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     String defaultNeuronFilesText = "-- Select NEURON file to view --";
     String defaultGenesisFilesText = "-- Select GENESIS file to view --";
 
-    private int neuronRunMode = NeuronFileManager.RUN_HOC;
+    //private int neuronRunMode = NeuronFileManager.RUN_HOC;
 
 
     private String welcomeText =
@@ -478,7 +478,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     FlowLayout flowLayout3 = new FlowLayout();
     JLabel jLabelMainLastModified = new JLabel();
     JTextField jTextFieldMainLastModified = new JTextField();
-    JMenuItem jMenuItemGlossary = new JMenuItem();
+    JMenuItem jMenuItemGlossaryShow = new JMenuItem();
+    JMenuItem jMenuItemReleaseNotes = new JMenuItem();
+    JMenuItem jMenuItemCheckUpdates = new JMenuItem();
     JPanel jPanelExportHeader = new JPanel();
     JLabel jLabelExportMain = new JLabel();
     //JPanel jPanelExportMorphML = new JPanel();
@@ -995,14 +997,33 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jLabelMainLastModified.setText("Last modified:");
         //jTextFieldMainLastModified.setEnabled(false);
         jTextFieldMainLastModified.setEditable(false);
-        jMenuItemGlossary.setText("Glossary");
-        jMenuItemGlossary.addActionListener(new java.awt.event.ActionListener()
+        jMenuItemGlossaryShow.setText("Glossary");
+        jMenuItemGlossaryShow.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
                 jMenuItemGlossary_actionPerformed(e);
             }
         });
+        jMenuItemReleaseNotes.setText("Release notes");
+        jMenuItemReleaseNotes.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jMenuItemRelNotes_actionPerformed(e);
+            }
+        });
+        
+        jMenuItemCheckUpdates.setText("Check for updates");
+        jMenuItemCheckUpdates.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jMenuItemCheckUpdates_actionPerformed(e);
+            }
+        });
+        
+        
         jLabelExportMain.setText("Set the main simulation parameters and select the format in which " + "to generate the network");
         jPanelExportHeader.setMinimumSize(new Dimension(625, 35));
         jPanelExportHeader.setPreferredSize(new Dimension(625, 35));
@@ -1309,7 +1330,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
         jButtonNeuronCreateMPIPython.setEnabled(false);
-        jButtonNeuronCreateMPIPython.setText("Create Python");
+        jButtonNeuronCreateMPIPython.setText("Create Python/NeuroML based scripts");
         jButtonNeuronCreateMPIPython.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -2755,11 +2776,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jMenuFile.add(jMenuFileExit);
 
         jMenuHelp.add(jMenuItemHelpMain);
-        jMenuHelp.add(jMenuItemGlossary);
+        jMenuHelp.add(jMenuItemGlossaryShow);
+        jMenuHelp.add(jMenuItemReleaseNotes);
         //////////////jMenuHelp.add(jMenuItemHelpRelNotes);
         jMenuHelp.add(jMenuItemUnits);
         jMenuHelp.add(jMenuItemJava);
         jMenuHelp.add(jMenuHelpAbout);
+        
+        jMenuHelp.addSeparator();
+        jMenuHelp.add(jMenuItemCheckUpdates);
 
         jMenuBar1.add(jMenuFile);
         jMenuBar1.add(jMenuProject);
@@ -3679,7 +3704,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jMenuItemNmodlEditor.setToolTipText(toolTipText.getToolTip("nmodlEditor menu item"));
         jMenuItemViewProjSource.setToolTipText(toolTipText.getToolTip("Project file source"));
         jMenuItemCondorMonitor.setToolTipText(toolTipText.getToolTip("Condor monitor"));
-        jMenuItemGlossary.setToolTipText(toolTipText.getToolTip("Glossary menu item"));
+        jMenuItemGlossaryShow.setToolTipText(toolTipText.getToolTip("Glossary menu item"));
         jMenuItemUnits.setToolTipText(toolTipText.getToolTip("Units menu item"));
 
 
@@ -5432,7 +5457,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
      */
     public void doCreateHoc(int runMode)
     {
-        neuronRunMode = runMode;
+        //neuronRunMode = runMode;
 
 
         if (projManager.getCurrentProject() == null)
@@ -5760,7 +5785,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         File genNeuronDir = ProjectStructure.getNeuronCodeDir(projManager.getCurrentProject().
                                                                         getProjectMainDirectory());
 
-        File networkMLFile = new File(genNeuronDir, NetworkMLConstants.DEFAULT_NETWORKML_FILENAME);
+        //File networkMLFile = new File(genNeuronDir, NetworkMLConstants.DEFAULT_NETWORKML_FILENAME);
 
         /**
          * Will be the only sim dir if a single run, will be the dir for the actually run 
@@ -10470,6 +10495,48 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         HelpFrame.showGlossaryItem("");
 
     }
+    void jMenuItemRelNotes_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("Going to show rel notes...");
+
+
+        File f = new File(ProjectStructure.getRelNotesFile());
+        
+        try
+        {
+            HelpFrame.showFrame(f.toURL(), "neuroConstruct Release notes", false);
+        }
+        catch (MalformedURLException m)
+        {
+            
+        }
+
+    }
+    
+    void jMenuItemCheckUpdates_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("Check for updates...");
+        
+        String browserPath = GeneralProperties.getBrowserPath(true);
+        Runtime rt = Runtime.getRuntime();
+
+        String command = browserPath + " " + ProjectStructure.getUpdateCheckUrl()+GeneralProperties.getVersionNumber();
+
+        logger.logComment("Going to execute command: " + command);
+
+        try
+        {
+            rt.exec(command);
+        }
+        catch (IOException ex)
+        {
+            logger.logError("Error running " + command);
+        }
+
+        logger.logComment("Have successfully executed command: " + command);
+    }
+    
+
 
 
     void jButtonCellTypeViewInfo_actionPerformed(ActionEvent e)

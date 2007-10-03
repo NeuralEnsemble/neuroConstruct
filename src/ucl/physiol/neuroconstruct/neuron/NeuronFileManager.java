@@ -463,6 +463,8 @@ public class NeuronFileManager
     {
         StringBuffer response = new StringBuffer();
         response.append("load_file(\"nrngui.hoc\")" + "\n\n");
+        addHocComment(response, "Initialising stopwatch for timing setup");
+        response.append("startsw()\n\n");
         return response.toString();
     }
 
@@ -1921,6 +1923,8 @@ public class NeuronFileManager
         response.append("strdef simReference\n");
         response.append("simReference = \"" + project.simulationParameters.getReference() + "\"\n\n");
 
+        addHocComment(response, "Note: to change location of the generated simulation files, just change value of targetDir\ne.g. targetDir=\"\" or targetDir=\"aSubDir/\"");
+        
         response.append("strdef targetDir\n");
         response.append("sprint(targetDir, \"%s%s/\", simsDir, simReference)\n\n");
 
@@ -2133,8 +2137,9 @@ public class NeuronFileManager
 
 
             if (this.savingHostname()) response.append(prefix+"propsFile.printf(\"Host=%s\\n\", host)\n");
-            
+
             response.append(prefix+"propsFile.printf(\"RealSimulationTime=%g\\n\", realtime)\n");
+            response.append(prefix+"propsFile.printf(\"SimulationSetupTime=%g\\n\", setuptime)\n");
 
             response.append(generateMultiRunPostScript());
             response.append(prefix+"propsFile.close()\n");
@@ -2389,12 +2394,16 @@ public class NeuronFileManager
                 }
 
                 logger.logComment("------    needsGrowthFunctionality: " + needsGrowthFunctionality(cellGroupName));
+                
+                boolean addSegIdFunctions = false;
+                if (genRunMode==RUN_PYTHON) addSegIdFunctions = true;
 
                 NeuronTemplateGenerator cellTemplateGen
                     = new NeuronTemplateGenerator(project,
                                                   cell,
                                                   dirForNeuronFiles,
-                                                  needsGrowthFunctionality(cellGroupName));
+                                                  needsGrowthFunctionality(cellGroupName),
+                                                  addSegIdFunctions);
 
                 String filenameToBeGenerated = cellTemplateGen.getHocFilename();
 
@@ -3447,6 +3456,8 @@ public class NeuronFileManager
             response.append("system(\"" + dateCommand + "\", date)\n");
             dateInfo = " at time: \", date, \"";
         }
+        response.append("setuptime = stopsw()\n\n");
+        response.append("print \"Setup time for simulation: \",setuptime,\" seconds\"\n\n");
 
         response.append("print \"Starting simulation of duration "+simConfig.getSimDuration()+" ms, reference: " + project.simulationParameters.getReference() +
                 dateInfo+"\"\n\n");

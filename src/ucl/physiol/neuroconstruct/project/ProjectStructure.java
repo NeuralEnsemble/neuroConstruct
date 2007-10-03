@@ -34,6 +34,8 @@ public class ProjectStructure
     {
         logger.setThisClassSilent(true);
     }
+    
+    private static final String updateCheckUrl = "http://www.physiol.ucl.ac.uk/research/silver_a/nCinfo/form.php?myversion=";
 
     private static final String projectFileExtension = new String(".neuro.xml");
 
@@ -201,6 +203,9 @@ public class ProjectStructure
     private static String importDocFile = helpFileDir + "import.html";
 
     private static String glossaryHtmlFile = helpFileDir + "Glossary_gen.html";
+    
+    private static String relNotesFile = helpFileDir + "RELEASE_NOTES";
+    
 
    // private static String neuronModSourcesDir = "src"
     //    + System.getProperty("file.separator")
@@ -243,8 +248,6 @@ public class ProjectStructure
         {
             for (int i = 0; i < Math.min(appVerNums.length, projVerNums.length); i++)
             {
-                //System.out.println("appVerNums[i]: " + appVerNums[i]);
-                //System.out.println("projVerNums[i]: " + projVerNums[i]);
                 if (Integer.parseInt(appVerNums[i]) > Integer.parseInt(projVerNums[i])) return 1;
                 if (Integer.parseInt(appVerNums[i]) < Integer.parseInt(projVerNums[i])) return -1;
 
@@ -334,11 +337,22 @@ public class ProjectStructure
     {
         return glossaryHtmlFile;
     }
+    
+    public static String getUpdateCheckUrl()
+    {
+        return updateCheckUrl;
+    }
 
 
     public static String getMainHelpFile()
     {
         return mainHelpFile;
+    }
+
+
+    public static String getRelNotesFile()
+    {
+        return relNotesFile;
     }
 
 

@@ -2111,7 +2111,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                                                      false,
                                                      true);
 
-        simpleViewer.setFrameSize(600, 500);
+        simpleViewer.setFrameSize(800, 700);
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension frameSize = simpleViewer.getSize();

@@ -48,6 +48,7 @@ public class NeuronTemplateGenerator
     int numSegments = 1;
 
     boolean addGrowthFunctions = true;
+    boolean addSegIdFunctions = true;
 
     //Hashtable arrayNamesVsSections = new Hashtable();
 
@@ -62,7 +63,10 @@ public class NeuronTemplateGenerator
      * @param addGrowthFunctions true if the extra functions, variables need to
      *        be added to allow growth of dends, etc.
      */
-    public NeuronTemplateGenerator(Project project, Cell cell, File dirForHocFile, boolean addGrowthFunctions)
+    public NeuronTemplateGenerator(Project project, 
+                                    Cell cell, File dirForHocFile, 
+                                    boolean addGrowthFunctions,
+                                    boolean addSegIdFunctions)
     {
         logger.logComment("HocTemplateGenerator created for: "+ CellTopologyHelper.printShortDetails(cell));
         this.cell = cell;
@@ -78,6 +82,7 @@ public class NeuronTemplateGenerator
         hocFile = new File(dirForHocFile,  spaceLessName + ".hoc");
 
         this.addGrowthFunctions = addGrowthFunctions;
+        this.addSegIdFunctions = addSegIdFunctions;
 
     }
 
@@ -119,6 +124,13 @@ public class NeuronTemplateGenerator
             fw.write(this.getProcGeomNseg());
             fw.write(this.getProcBiophys());
             fw.write(this.getProcPosition());
+
+            if (addSegIdFunctions)
+            {
+                fw.write(this.getSegIdFunctions());
+            }
+            
+            
             fw.write(this.getProcConnect2target());
             ///////////fw.write(this.getProcSynapses());
             fw.write(this.getProcInfo());
@@ -184,6 +196,14 @@ public class NeuronTemplateGenerator
             response.append("public add_dendritic_section, add_axonal_section\n");
             response.append("public additional_dends, additional_axons\n\n");
             response.append("public specify_num_extra_dends, specify_num_extra_axons\n\n");
+        }
+        
+        if (addSegIdFunctions)
+        {
+            NeuronFileManager.addHocComment(response, " Needed to match segment id to NEURON sections");
+            
+            response.append("public accessSectionForSegId\n\n");
+            
         }
 
         response.append("public all\n\n");
@@ -261,11 +281,11 @@ public class NeuronTemplateGenerator
         logger.logComment("calling getProcInfo");
         StringBuffer response = new StringBuffer();
 
-        NeuronFileManager.addHocComment(response, "This function is useful in parallel networks when trying to locate cells...");
+        NeuronFileManager.addHocComment(response, "This function is useful when checking what cells (aot sections) have been created. Run allcells() from nCtools.hoc...");
         response.append("proc toString() {\n");
         response.append("    strdef info\n");
 
-        response.append("    sprint(info, \"Cell reference: %s (%s), at: (%d, %d, %d)\", reference, name, x, y, z)\n");
+        response.append("    sprint(info, \"Cell ref: %s (%s), at: (%d, %d, %d)\", reference, name, x, y, z)\n");
 
         response.append("    print info\n");
 
@@ -1342,10 +1362,43 @@ public class NeuronTemplateGenerator
         StringBuffer response = new StringBuffer();
         response.append("proc connect2target() {   //$o1 target point process, $o2 returned NetCon\n\n");
 
-         NeuronFileManager.addHocComment(response, "Using standard NetBuilder form. (Overly) simple assumption that first soma seg is trigger for AP.../n");
+         NeuronFileManager.addHocComment(response, "Using standard NetBuilder form. (Overly) simple assumption that first soma seg is trigger for AP...\nNote: neuroConstruct does not use this func for creating connections, but it can be useful when using generated files in NEURON's NetBuilder");
 
         response.append("    "+NeuronFileManager.getHocSectionName(cell.getFirstSomaSegment().getSection().getSectionName())
                 +" $o2 = new NetCon(&v(1), $o1)\n");
+
+        response.append("}\n");
+        response.append("\n");
+        return response.toString(); 
+    }
+    
+    
+
+
+    private String getSegIdFunctions()
+    {
+        logger.logComment("calling accessSectionForSegId");
+        StringBuffer response = new StringBuffer();
+        response.append("proc accessSectionForSegId() {   \n\n");
+
+        //NeuronFileManager.addHocComment(response, "Returning the section which corresponds to the given segment id");
+
+         //cell.getSegmentWithId(id)
+         //response.append("    return NULLobject\n");
+        
+
+        //response.append("    theSection = new List()\n");
+
+        response.append("    id = $1\n");
+         
+        Vector<Segment> segs = cell.getAllSegments();
+        
+        for(Segment seg: segs)
+        {
+            //response.append("    if (id == "+seg.getSegmentId()+") "+seg.getSection().getSectionName()+" theSection.append()\n");
+            response.append("    if (id == "+seg.getSegmentId()+")  { access "+seg.getSection().getSectionName()+" }\n");
+        }
+        //response.append("    return theSection\n");
 
         response.append("}\n");
         response.append("\n");
@@ -1397,7 +1450,7 @@ public class NeuronTemplateGenerator
             File f = new File("../temp");
 
             NeuronTemplateGenerator cellTemplateGenerator1 = new NeuronTemplateGenerator(testProj, cell,
-                f, false);
+                f, false, false);
 
             System.out.println("Generated: " + cellTemplateGenerator1.generateFile());
             System.out.println(CellTopologyHelper.printDetails(cell, null));
