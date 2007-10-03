@@ -55,6 +55,9 @@ class NetManagerNEURON(NetworkHandler):
     h = hoc.HocObject()
     
         
+    #
+    #  Overridden from NetworkHandler
+    #    
     def handlePopulation(self, cellGroup, cellType, size):
       
         if (size>=0):
@@ -71,6 +74,9 @@ class NetManagerNEURON(NetworkHandler):
             self.log.error("Population: "+cellGroup+", cell type: "+cellType+" specifies no size. Will lead to errors!")
         
   
+    #
+    #  Overridden from NetworkHandler
+    #    
     def handleLocation(self, id, cellGroup, cellType, x, y, z):
         self.printLocationInformation(id, cellGroup, cellType, x, y, z)
                 
@@ -94,8 +100,72 @@ class NetManagerNEURON(NetworkHandler):
         self.h.allCells.append(newCell)
         
         
+    #
+    #  Overridden from NetworkHandler
+    #    
+    def handleConnection(self, projName, id, source, target, synapseType, \
+                                                    preCellId, \
+                                                    postCellId, \
+                                                    preSegId = 0, \
+                                                    preFract = 0.5, \
+                                                    postSegId = 0, \
+                                                    postFract = 0.5, \
+                                                    localInternalDelay = 0, \
+                                                    localPreDelay = 0, \
+                                                    localPostDelay = 0, \
+                                                    localPropDelay = 0, \
+                                                    localWeight = 1, \
+                                                    localThreshold = 0):
         
+        self.printConnectionInformation(projName, id, source, target, synapseType, preCellId, postCellId)
           
+        
+        self.log.info("Going to create a connection of type " +projName+", id: "+id+", synapse type: "+synapseType)
+        self.log.info("From: "+source+", id: "+str(preCellId)+", segment: "+str(preSegId)+", fraction: "+str(preFract))
+        self.log.info("To  : "+target+", id: "+str(postCellId)+", segment: "+str(postSegId)+", fraction: "+str(postFract))
+        
+        
+        
+        synObjName = projName+"_"+synapseType+"_"+id
+        
+        objRefCommand = "objref "+synObjName
+        
+        self.log.info("objRefCommand: "+objRefCommand)
+        
+        self.h(objRefCommand)
+        
+        
+        
+        accessPostCommand = "a_"+target+"["+str(postCellId)+"].accessSectionForSegId("+postSegId+")"
+        
+        self.log.info("accessPostCommand: "+accessPostCommand)
+        
+        self.h(accessPostCommand)
+        
+        
+        
+        createCommand = synObjName+" = new "+synapseType+"(0.499)"
+        
+        self.log.info("createCommand: "+createCommand)
+        
+        self.h(createCommand)
+        
+        
+        
+        accessPreCommand = "a_"+source+"["+str(preCellId)+"].accessSectionForSegId("+preSegId+")"
+        
+        self.log.info("accessPreCommand: "+accessPreCommand)
+        
+        self.h(accessPreCommand)
+        
+        
+        delayTotal = float(localInternalDelay) + float(localPreDelay) + float(localPostDelay) + float(localPropDelay)
+        
+        connectCommand = "a_"+source+"["+str(preCellId)+"].synlist.append(new NetCon(&v(0.499), "+synObjName+", "+localThreshold+", "+str(delayTotal)+", "+localWeight+"))"
+               
+        self.log.info("connectCommand: "+connectCommand)
+        
+        self.h(connectCommand)
         
         
         

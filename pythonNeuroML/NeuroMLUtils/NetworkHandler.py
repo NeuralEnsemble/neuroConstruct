@@ -37,7 +37,7 @@ class NetworkHandler:
         
 
     #
-    #  Should be overridden
+    #  Should be overridden to create cell group/population array
     #  
     def handlePopulation(self, cellGroup, cellType, size):
       
@@ -49,14 +49,14 @@ class NetworkHandler:
         
         
     #
-    #  Should be overridden
+    #  Should be overridden to create specific cell instance
     #    
     def handleLocation(self, id, cellGroup, cellType, x, y, z):
         self.printLocationInformation(id, cellGroup, cellType, x, y, z)
         
             
     #
-    #  Should be overridden
+    #  Should be overridden to handle network connection
     #  
     def handleConnection(self, projName, id, source, target, synapseType, \
                                                     preCellId, \

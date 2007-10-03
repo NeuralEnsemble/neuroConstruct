@@ -47,18 +47,18 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
   currentSynapseType = ""
   
   globalInternalDelay = 0   # default from NetworkML.xsd
-  globalPreDelay = 0   # default from NetworkML.xsd
-  globalPostDelay = 0   # default from NetworkML.xsd
-  globalPropDelay = 0   # default from NetworkML.xsd
+  globalPreDelay = 0        # default from NetworkML.xsd
+  globalPostDelay = 0       # default from NetworkML.xsd
+  globalPropDelay = 0       # default from NetworkML.xsd
   globalWeight = 1          # default from NetworkML.xsd
   globalThreshold = 0       # default from NetworkML.xsd
   
-  localInternalDelay = 0   # default from NetworkML.xsd
-  localPreDelay = 0   # default from NetworkML.xsd
-  localPostDelay = 0   # default from NetworkML.xsd
-  localPropDelay = 0   # default from NetworkML.xsd
-  localWeight = 1          # default from NetworkML.xsd
-  localThreshold = 0       # default from NetworkML.xsd
+  localInternalDelay = 0    # default from NetworkML.xsd
+  localPreDelay = 0         # default from NetworkML.xsd
+  localPostDelay = 0        # default from NetworkML.xsd
+  localPropDelay = 0        # default from NetworkML.xsd
+  localWeight = 1           # default from NetworkML.xsd
+  localThreshold = 0        # default from NetworkML.xsd
   
     
   def __init__ (self, netHandler): 
@@ -249,9 +249,9 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
     elif name == 'projection':
       self.currentProjectionName = ""
       self.globalInternalDelay = 0   # default from NetworkML.xsd
-      self.globalPreDelay = 0   # default from NetworkML.xsd
-      self.globalPostDelay = 0   # default from NetworkML.xsd
-      self.globalPropDelay = 0   # default from NetworkML.xsd
+      self.globalPreDelay = 0        # default from NetworkML.xsd
+      self.globalPostDelay = 0       # default from NetworkML.xsd
+      self.globalPropDelay = 0       # default from NetworkML.xsd
       self.globalWeight = 1          # default from NetworkML.xsd
       self.globalThreshold = 0       # default from NetworkML.xsd
       
@@ -283,9 +283,9 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
         
       self.currentConnId = -1
       self.localInternalDelay = 0   # default from NetworkML.xsd
-      self.localPreDelay = 0   # default from NetworkML.xsd
-      self.localPostDelay = 0   # default from NetworkML.xsd
-      self.localPropDelay = 0   # default from NetworkML.xsd
+      self.localPreDelay = 0        # default from NetworkML.xsd
+      self.localPostDelay = 0       # default from NetworkML.xsd
+      self.localPropDelay = 0       # default from NetworkML.xsd
       self.localWeight = 1          # default from NetworkML.xsd
       self.localThreshold = 0       # default from NetworkML.xsd
       
