@@ -233,8 +233,13 @@
   <target name="website" depends="glossary"
           description="Generates the main website using Forrest (http://forrest.apache.org)">
 
+    <!--<copy file="./README" todir="${website.dir}/docs" />
+    <copy file="./RELEASE_NOTES" todir="${website.dir}/docs" /> -->
+    
     <ant antfile="${forrest.antfile}" dir="${forrest.settings.dir}" target="site"/>
-     <echo>Generated the website...</echo>
+     
+    <echo>Generated the website...</echo>
+     
 
   </target>
 
@@ -260,6 +265,10 @@
 
 
      <echo>Generated the helpdocs...</echo>
+     
+     
+    <copy file="./README" todir="${helpdocs.dir}" />
+    <copy file="./RELEASE_NOTES" todir="${helpdocs.dir}" />
 
   </target>
 
