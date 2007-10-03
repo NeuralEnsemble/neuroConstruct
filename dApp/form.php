@@ -43,7 +43,40 @@ include("ute.php");
 $mailServer= "smtp-server.ucl.ac.uk";
 
 
-if (isset($_REQUEST['reference']))
+$verDots = "1.0.4.1";
+$verDashs = "1_0_4_1";
+
+
+if (isset($_REQUEST['myversion']))
+{
+    $theirver = $_REQUEST['myversion'];
+
+    nastiesPresent($ref);
+
+    echo "<h2>Comparing versions...</h2>";
+
+    echo "<h3>Your version of neuroConstruct: <span style='color:#FF0000;'>v".$theirver."</span></h3>";
+    echo "<h3>Currently available version of neuroConstruct: <span style='color:#FF0000;'>v".$verDots."</span></h3>";
+    
+    if ($theirver == $verDots)
+    {
+        echo "<p>It looks like you've got the latest version of neuroConstruct. Congratulations!</p>";
+    }
+    else
+    {
+        
+        echo "<p><a href='form.php'>Download version v".$verDots."</a></p>";
+
+        //$theirsplit = split('.', $theirver);
+        //$oursplit = split('.', $verDots);
+
+ 
+    }
+
+
+}
+
+else if (isset($_REQUEST['reference']))
 {
 	$ref = $_REQUEST['reference'];
 
@@ -115,17 +148,12 @@ if (isset($_REQUEST['reference']))
 			echo "<h2>Downloading neuroConstruct</h2>";
 
 
-			echo "<h3>Bookmark this page for a direct link to the download list</h3>";
+			echo "<h3><span style='color:#FF0000;'>Bookmark THIS PAGE for a direct link to the download list</span></h3>";
 
 
+            echo "<h4>The current version of the application is <span style='color:#0000FF;'>v".$verDots."</span></h4>";
 
 			echo "<p>&nbsp;&nbsp;<a href ='../neuroConstruct/docs/install.html'>Installation instructions</a></p>";
-
-			$verDots = "1.0.4.1";
-			$verDashs = "1_0_4_1";
-
-
-			echo "<h3><span style='color:#FF0000;'>The current version of the application is v".$verDots."</h3></h3>";
 
 
 
@@ -508,8 +536,10 @@ else if (!isset($_REQUEST['email']) || $_REQUEST['email'] == "")
 				<select name='researchTopic'>
 					<option value='Unspecified'>Please select...</option>
 					<option value='Basic research'>Basic research</option>
-					<option value='Clinical research'>Clinical research</option>
-					<option value='Commercially focused research'>Commercially focused research</option>
+                    <option value='Clinical research'>Clinical research</option>
+                    <option value='Education'>Education</option>
+                    <option value='Commercially focused research'>Commercially focused research</option>
+                    <option value='Just curious'>Just curious</option>
 				</select>
 			</td>
 			<td>*</td>
