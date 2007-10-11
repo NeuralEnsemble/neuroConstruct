@@ -201,8 +201,9 @@ public class NeuronTemplateGenerator
         if (addSegIdFunctions)
         {
             NeuronFileManager.addHocComment(response, " Needed to match segment id to NEURON sections");
-            
-            response.append("public accessSectionForSegId\n\n");
+
+            response.append("public accessSectionForSegId\n");
+            response.append("public getFractAlongSection\n\n");
             
         }
 
@@ -1379,15 +1380,10 @@ public class NeuronTemplateGenerator
     {
         logger.logComment("calling accessSectionForSegId");
         StringBuffer response = new StringBuffer();
+
+        NeuronFileManager.addHocComment(response, "Accessing the section which corresponds to the given segment id");
+
         response.append("proc accessSectionForSegId() {   \n\n");
-
-        //NeuronFileManager.addHocComment(response, "Returning the section which corresponds to the given segment id");
-
-         //cell.getSegmentWithId(id)
-         //response.append("    return NULLobject\n");
-        
-
-        //response.append("    theSection = new List()\n");
 
         response.append("    id = $1\n");
          
@@ -1395,13 +1391,51 @@ public class NeuronTemplateGenerator
         
         for(Segment seg: segs)
         {
-            //response.append("    if (id == "+seg.getSegmentId()+") "+seg.getSection().getSectionName()+" theSection.append()\n");
             response.append("    if (id == "+seg.getSegmentId()+")  { access "+seg.getSection().getSectionName()+" }\n");
         }
-        //response.append("    return theSection\n");
 
         response.append("}\n");
         response.append("\n");
+        
+        
+        
+        logger.logComment("calling getFractAlongSection");
+
+        NeuronFileManager.addHocComment(response, "For getting the fraction along the NEURON section, given the fraction\n"
+                +"along the segment who's id is given\nNOTE:This function will produce incorrect results if the morphology of the cell is altered after initialisation\n"
+                +"TODO: alter to use pt3d info direct from section, getting lengths from those... (may be slower)");
+
+        response.append("func getFractAlongSection() {   \n\n");
+
+        response.append("    fractionAlongSegment = $1\n");
+        response.append("    id = $2\n");
+         
+        ArrayList<Section> secs = cell.getAllSections();
+        
+        for(Section sec: secs)
+        {
+            LinkedList<Segment> mySegs = cell.getAllSegmentsInSection(sec);
+            response.append("    // Section "+sec.getSectionName()+" has "+mySegs.size()+" segment(s)\n");
+            
+            float secLength = CellTopologyHelper.getSectionLength(cell, sec);
+            float traversed = 0;
+            
+            if (mySegs.size()>1)
+            {
+                for(Segment mySeg: mySegs)
+                {
+                    response.append("    if (id == "+mySeg.getSegmentId()+")  { return (("+traversed+" + (fractionAlongSegment*"+mySeg.getSegmentLength()+"))/"+secLength+") }\n");
+                    traversed = traversed+ mySeg.getSegmentLength();
+                }
+               
+            }
+        }
+        response.append("\n    return fractionAlongSegment // assumes id not found, i.e. a one segment section...\n");
+
+        response.append("}\n");
+        response.append("\n");
+        
+        
         return response.toString();
     }
 

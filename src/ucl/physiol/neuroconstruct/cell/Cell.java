@@ -122,12 +122,18 @@ public class Cell implements Serializable
     }
 
 
+    /**
+     * Note: used by XMLEncoder 
+     */
     public Vector<Segment> getAllSegments()
     {
         return allSegments;
     }
 
 
+    /**
+     * Note: used by XMLEncoder 
+     */
     public Vector<AxonalConnRegion> getAxonalArbours()
     {
         return this.axonalArbours;
@@ -548,7 +554,14 @@ public class Cell implements Serializable
     }
 
 
-
+    /* 
+     * This function starts from the last added segment and works backwards to find the first seg in 
+     * that section. This should be the tip of the section. It then works back along via the parent seg
+     * until it comes to a segment outside the section. Under all but very abnormal conditions, this will 
+     * return the segments ordered from the 0 point of the section to the 1 point
+     * 
+     * TODO:  check if this is possible target for optimisation
+     */
     public LinkedList<Segment> getAllSegmentsInSection(Section section)
     {
         LinkedList<Segment> onlySegmentsInSection = new LinkedList<Segment>();
@@ -559,7 +572,7 @@ public class Cell implements Serializable
         {
             Segment nextSeg = (Segment) allSegments.elementAt(segIndex);
 
-            //logger.logComment("segIndex: "+segIndex+", nextSeg: " + nextSeg);
+            //logger.logComment("segIndex: "+segIndex+", nextSeg: " + nextSeg, true);
 
             if (nextSeg.getSection().getSectionName().equals(section.getSectionName()))
             {
@@ -1592,10 +1605,33 @@ public class Cell implements Serializable
     {
         try
         {
+            SimpleCell cell = new SimpleCell("Testcell");
+            Segment a1 = cell.getSegmentWithId(5);
+            System.out.println(a1);
 
+            Segment a2 = cell.addAxonalSegment(1, "axseg2", new Point3f(-60,0,0), a1, 
+                    1, a1.getSection().getSectionName());
+            
+
+            a2.setSegmentId(1000);
+            
+            
+            Segment a3 = cell.addAxonalSegment(1, "axseg3", new Point3f(-80,0,0), a2, 
+                    1, a2.getSection().getSectionName());
+            
+
+            
+            System.out.println(CellTopologyHelper.printDetails(cell, null));
+            
+            LinkedList<Segment> segs = cell.getAllSegmentsInSection(a1.getSection());
+            
+            System.out.println(segs);
+            
+            
+            if (true) return; // chop off here
+            
            ChannelMechanism chMech = new ChannelMechanism( "ggg", 22);
 
-           SimpleCell cell = new SimpleCell("Sim");
            cell.associateGroupWithChanMech("dendrite_group", chMech);
 
            cell.associateGroupWithSpecCap("dendrite_group", 1234);

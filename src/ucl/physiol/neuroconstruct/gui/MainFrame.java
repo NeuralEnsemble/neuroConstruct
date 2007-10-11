@@ -5604,8 +5604,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         setNeuronRunEnabled(true);
         jComboBoxNeuronFileList.removeAllItems();
 
-        String[] types = new String[]{".hoc", ".mod", ".nrn", ".py"};
-        SimpleFileFilter filter = new SimpleFileFilter(types, "Any NEURON file");
+        String[] types = new String[]{".hoc", ".mod", ".nrn", ".py", ".xml"};
+        SimpleFileFilter filter = new SimpleFileFilter(types, "Any NEURON/Python/XML file");
 
 
         File[] genFiles = ProjectStructure.getNeuronCodeDir(projManager.getCurrentProject().getProjectMainDirectory()).listFiles(filter);
@@ -9746,9 +9746,36 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         final JTextArea summary = new JTextArea(12,40);
         summary.setMargin(new Insets(5,5,5,5));
         summary.setEditable(false);
-        //JPanel addedPanel = new 
+        JPanel addedPanel = new JPanel();
+        addedPanel.setLayout(new BorderLayout());
+        
         JScrollPane jScrollPane = new JScrollPane(summary);
         //jScrollPane.setBorder(BorderFactory.createEtchedBorder());
+        addedPanel.add(jScrollPane, BorderLayout.NORTH);
+
+        JPanel viewPanel = new JPanel();
+        final JLabel sizeInfo = new JLabel("");
+        final JButton openButton = new JButton("View file");
+
+        viewPanel.add(sizeInfo);
+        viewPanel.add(openButton);
+        openButton.setEnabled(false);
+        addedPanel.add(viewPanel, BorderLayout.SOUTH);
+        
+        openButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                File newFile = chooser.getSelectedFile();
+                if (newFile!=null)
+                {
+                    //System.out.println("Opening file: "+newFile);
+                    SimpleViewer.showFile(newFile.getAbsolutePath(), 12, false, false, false);
+                }
+                
+            }
+        });
+
 
         chooser.addPropertyChangeListener(new PropertyChangeListener(){
 
@@ -9756,6 +9783,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             {
                 logger.logComment("propertyChange: " + e);
                 logger.logComment("getPropertyName: " + e.getPropertyName());
+                
                 if (e.getPropertyName().equals("SelectedFileChangedProperty"))
                 {
                     File newFile = chooser.getSelectedFile();
@@ -9764,6 +9792,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     {
                         if (newFile.getName().endsWith(ProjectStructure.getNeuroMLCompressedFileExtension()))
                         {
+                            openButton.setEnabled(false);
+                            
                             ZipInputStream zf = new ZipInputStream(new FileInputStream( newFile));
                             ZipEntry ze = null;
 
@@ -9779,6 +9809,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                         }
                         else
                         {
+                            openButton.setEnabled(true);
+                            
+                            
 
                             FileReader fr = null;
 
@@ -9801,6 +9834,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                             fr.close();
                             summary.setText(sb.toString());
                             summary.setCaretPosition(0);
+                            
+                            sizeInfo.setText("Size: "+ newFile.length()+" bytes");
 
                         }
                     }
@@ -9814,7 +9849,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             });
 
-        chooser.setAccessory(jScrollPane);
+        chooser.setAccessory(addedPanel);
 
         int retval = chooser.showDialog(this, "Choose network");
 

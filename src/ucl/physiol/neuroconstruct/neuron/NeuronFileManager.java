@@ -3477,7 +3477,6 @@ public class NeuronFileManager
             response.append("cvode.active(1)\n");
             response.append("run()\n\n");
 
-
         }
         dateInfo = "";
         

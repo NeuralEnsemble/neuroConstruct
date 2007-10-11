@@ -392,6 +392,9 @@ public class SimulationsInfo extends AbstractTableModel
             }
             
 
+            props.setProperty("Script language", "GENESIS Script");
+            
+
             props.setProperty("Script generation time",
                     project.genesisFileManager.getCurrentGenTime()+"");
 
