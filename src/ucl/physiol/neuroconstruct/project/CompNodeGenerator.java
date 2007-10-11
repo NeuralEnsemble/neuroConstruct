@@ -153,7 +153,8 @@ public class CompNodeGenerator extends Thread
                     //int nodeID = r.nextInt(totalProcs);
                     int nodeID = ((cellCount-1)%totalProcs);
                     
-                    logger.logComment("cellCount: "+cellCount+", nodeID: "+nodeID);
+                    logger.logComment("cellCount: "+cellCount+", nextCellGroup: "
+                            +nextCellGroup+", nodeID: "+nodeID);
                     
                     
                     pos.nodeId = nodeID;
@@ -203,6 +204,7 @@ public class CompNodeGenerator extends Thread
         generationReport.append("Compute nodes generated for:<br><b>"+info+"</b>");
         
         Enumeration<String> hosts = hostsVsNumOnProcs.keys();
+        
         while(hosts.hasMoreElements())
         {
             String host = hosts.nextElement();

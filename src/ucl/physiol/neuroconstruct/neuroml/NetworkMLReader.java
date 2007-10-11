@@ -42,6 +42,7 @@ public class NetworkMLReader extends XMLFilterImpl
     private String currentPopulation = null;
     private String currentCellType = null;
     private int currentInstanceId = -1;
+    private int currentNodeId = -1;
 
 
     private String currentProjection = null;
@@ -242,6 +243,12 @@ public class NetworkMLReader extends XMLFilterImpl
              logger.logComment(">>  Found a pop id: "+ id);
 
              currentInstanceId = Integer.parseInt(id);
+             
+             String nodeId = attributes.getValue(NetworkMLConstants.NODE_ID_ATTR);
+             if (nodeId!=null)
+             {
+                 currentNodeId = Integer.parseInt(nodeId);
+             }
 
          }
 
@@ -253,12 +260,19 @@ public class NetworkMLReader extends XMLFilterImpl
              String z = attributes.getValue(NetworkMLConstants.LOC_Z_ATTR);
              logger.logComment(">>  Found a location");
 
-             //currentInstanceId = Integer.parseInt(id);
-             this.cellPos.addPosition(currentPopulation,
-                                      currentInstanceId,
-                                      Float.parseFloat(x),
-                                      Float.parseFloat(y),
-                                      Float.parseFloat(z));
+
+             PositionRecord posRec = new PositionRecord(currentInstanceId,
+                                             Float.parseFloat(x),
+                                             Float.parseFloat(y),
+                                             Float.parseFloat(z));
+
+             if (currentNodeId>=0)
+             {
+                 posRec.nodeId = currentNodeId;
+             }
+             
+             this.cellPos.addPosition(currentPopulation, posRec);
+             
 
          }
          else if (getCurrentElement().equals(NetworkMLConstants.PROJECTIONS_ELEMENT))
@@ -357,6 +371,7 @@ public class NetworkMLReader extends XMLFilterImpl
         else if (getCurrentElement().equals(NetworkMLConstants.INSTANCE_ELEMENT))
         {
             this.currentInstanceId = -1;
+            this.currentNodeId = -1;
         }
         else if (getCurrentElement().equals(NetworkMLConstants.CONNECTION_ELEMENT))
         {
