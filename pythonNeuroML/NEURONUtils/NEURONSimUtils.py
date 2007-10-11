@@ -144,7 +144,15 @@ class NetManagerNEURON(NetworkHandler):
         
         
         
-        createCommand = synObjName+" = new "+synapseType+"(0.499)"
+        fractPostCommand = "fractSecPost = a_"+target+"["+str(postCellId)+"].getFractAlongSection("+str(postFract)+", "+str(postSegId)+")"
+        
+        self.log.info("fractPostCommand: "+fractPostCommand)
+        
+        self.h(fractPostCommand)
+        self.log.info("Synapse object at: "+str(h.fractSecPost) +" on sec: "+h.secname()+", or: "+str(postFract)+" on seg id: "+ str(postSegId))
+        
+        
+        createCommand = synObjName+" = new "+synapseType+"(fractSecPost)"
         
         self.log.info("createCommand: "+createCommand)
         
@@ -159,9 +167,20 @@ class NetManagerNEURON(NetworkHandler):
         self.h(accessPreCommand)
         
         
+        
+        fractPreCommand = "fractSecPre = a_"+source+"["+str(preCellId)+"].getFractAlongSection("+str(preFract)+", "+str(preSegId)+")"
+        
+        self.log.info("fractPreCommand: "+fractPreCommand)
+        
+        self.h(fractPreCommand)
+        self.log.info("NetCon object at: "+str(h.fractSecPre) +" on sec: "+h.secname()+", or: "+str(preFract)+" on seg id: "+ str(preSegId))
+        
+        
+        
+        
         delayTotal = float(localInternalDelay) + float(localPreDelay) + float(localPostDelay) + float(localPropDelay)
         
-        connectCommand = "a_"+source+"["+str(preCellId)+"].synlist.append(new NetCon(&v(0.499), "+synObjName+", "+localThreshold+", "+str(delayTotal)+", "+localWeight+"))"
+        connectCommand = "a_"+source+"["+str(preCellId)+"].synlist.append(new NetCon(&v(fractSecPre), "+synObjName+", "+localThreshold+", "+str(delayTotal)+", "+localWeight+"))"
                
         self.log.info("connectCommand: "+connectCommand)
         

@@ -31,7 +31,7 @@ class NetworkHandler:
     #  Internal info method
     #        
     def printConnectionInformation(self,  projName, id, source, target, synapseType, preCellId, postCellId):
-        self.log.debug("Connection "+str(id)+" of in net conn: "+projName+": cell "+preCellId+" in "+source \
+        self.log.info("Connection "+str(id)+" of in net conn: "+projName+": cell "+preCellId+" in "+source \
                               +" to cell "+postCellId+" in "+target+", syn: "+ synapseType)
         
         
