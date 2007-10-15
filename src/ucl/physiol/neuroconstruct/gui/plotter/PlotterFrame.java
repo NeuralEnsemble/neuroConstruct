@@ -3021,13 +3021,23 @@ public class PlotterFrame extends JFrame
     void jMenuAddManual_actionPerformed(ActionEvent e)
     {
 
-        int numPoints = 100;
+        int numPoints = 101;
         if (plotCanvas.dataSets.length>0)
             numPoints = plotCanvas.dataSets[0].getNumberPoints();
+        
+
+        float min = 0;
+        float max = 10;
+
+        if (plotCanvas.getDataSets().length>0)
+        {
+	        min = (float)plotCanvas.getMinXval();
+	        max = (float)plotCanvas.getMaxXval();
+        }
 
         this.addDataSet(addManualPlot(numPoints,
-                        (float)plotCanvas.getMinXval(),
-                        (float)plotCanvas.getMaxXval(),
+                        min,
+                        max,
                         this));
     }
 

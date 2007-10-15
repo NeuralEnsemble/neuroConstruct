@@ -475,7 +475,13 @@ public class DataSet
             System.out.println("nextPoint: ("+ nextPoint[0]+", "+ nextPoint[1]+"]");
         }
 
-        System.out.println("Time taken to parse data set: "+(System.currentTimeMillis()-start)); ;
+        System.out.println("Time taken to parse data set: "+(System.currentTimeMillis()-start)); 
+        
+        PlotterFrame plotFrame = PlotManager.getPlotterFrame("Test Plotter Frame");
+        
+        //plotFrame.addDataSet(data1);
+        
+        //plotFrame
     }
 
 
