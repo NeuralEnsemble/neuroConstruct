@@ -41,25 +41,14 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
   postSegId = -1
   postFract = -1
   
-  ###############################  Note: multiple syn types per connection need to be supported!!!!!
   
   isSynapseTypeElement = 0
-  currentSynapseType = ""
   
-  globalInternalDelay = 0   # default from NetworkML.xsd
-  globalPreDelay = 0        # default from NetworkML.xsd
-  globalPostDelay = 0       # default from NetworkML.xsd
-  globalPropDelay = 0       # default from NetworkML.xsd
-  globalWeight = 1          # default from NetworkML.xsd
-  globalThreshold = 0       # default from NetworkML.xsd
+  globalSynapseProps = {}
+  localSynapseProps = {}
   
-  localInternalDelay = 0    # default from NetworkML.xsd
-  localPreDelay = 0         # default from NetworkML.xsd
-  localPostDelay = 0        # default from NetworkML.xsd
-  localPropDelay = 0        # default from NetworkML.xsd
-  localWeight = 1           # default from NetworkML.xsd
-  localThreshold = 0        # default from NetworkML.xsd
-  
+  latestSynapseType = ""
+    
     
   def __init__ (self, netHandler): 
     self.netHandler = netHandler
@@ -76,24 +65,25 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
       self.log.debug("Found main networkml element")
       self.log.debug("lengthUnits: "+ attrs.get('lengthUnits',""))
       
+      
     elif name == 'notes':
       self.log.debug("Found notes element")
+      
       
     elif name == 'population':
       self.currentCellGroup = attrs.get('name',"")
       self.log.debug("Found population/cellGroup element: "+ self.currentCellGroup)
       
+      
     elif name == 'instances':
       size = -1
-      
       if attrs.get('size',"") != "":
           size = int(attrs.get('size',""))
-          
       self.netHandler.handlePopulation(self.currentCellGroup, self.currentCellType, size)
+      
       
     elif name == 'instance':
       include = 0
-      
       if attrs.get('node_id',"") != "":
         self.log.debug("Found node_id: "+ attrs.get('node_id',""))
         if int(attrs.get('node_id',"")) == self.myNodeId:
@@ -110,8 +100,10 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
         self.currentInstanceId = attrs.get('id',"")
         self.log.debug("Found instance element: "+ self.currentInstanceId)
       
+      
     elif name == 'cell_type':
       self.isCellTypeElement = 1
+      
       
     elif name == 'location':
       if self.currentInstanceId != -1:
@@ -127,29 +119,33 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
                                     attrs.get('y',""), \
                                     attrs.get('z',""))
     
+    
     elif name == 'projection':
       self.currentProjectionName = attrs.get('name',"")   
       self.log.debug("Found projection element: "+ self.currentProjectionName)        
+      
       
     elif name == 'source':
       if self.currentProjectionName != "":
           self.isSourceElement = 1
            
+           
     elif name == 'target':
       if self.currentProjectionName != "":    
           self.isTargetElement = 1  
+          
           
     elif name == 'connection':
       if self.currentProjectionName != "":
         self.currentConnId = attrs.get('id',"")   
         self.log.debug("Found connection element: "+ self.currentConnId)  
+        
+        self.localSynapseProps.clear()
+        synTypes = self.globalSynapseProps.keys()
+        for synType in synTypes:
+            self.localSynapseProps[synType] = self.globalSynapseProps[synType].copy()
+        
           
-        self.localInternalDelay = self.globalInternalDelay
-        self.localPreDelay      = self.globalPreDelay
-        self.localPostDelay     = self.globalPostDelay
-        self.localPropDelay     = self.globalPropDelay
-        self.localWeight        = self.globalWeight
-        self.localThreshold     = self.globalThreshold     
           
     elif name == 'pre':
       if self.currentProjectionName != "":
@@ -164,6 +160,7 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
             self.preFract = 0.5
         self.log.debug("Found pre: "+ self.preCellId)         
         
+        
     elif name == 'post':
       if self.currentProjectionName != "":
         self.postCellId = attrs.get('cell_id',"")   
@@ -177,41 +174,63 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
             self.postFract = 0.5
         self.log.debug("Found pre: "+ self.postCellId)          
            
+           
     elif name == 'synapse_type':
       if self.currentProjectionName != "":    
           self.isSynapseTypeElement = 1         
           
+          
     elif name == 'default_values':
       if self.currentProjectionName != "":  
+        newSynapseProps = SynapseProperties()
+        
         if attrs.has_key('internal_delay'):
-            self.globalInternalDelay = attrs.get('internal_delay',"")    
+            newSynapseProps.internalDelay = attrs.get('internal_delay',"")    
         if attrs.has_key('pre_delay'):
-            self.globalPreDelay = attrs.get('pre_delay',"")    
+            newSynapseProps.preDelay = attrs.get('pre_delay',"")    
         if attrs.has_key('post_delay'):
-            self.globalPostDelay = attrs.get('post_delay',"")    
+            newSynapseProps.postDelay = attrs.get('post_delay',"")    
         if attrs.has_key('prop_delay'):
-            self.globalPropDelay = attrs.get('prop_delay',"")    
+            newSynapseProps.propDelay = attrs.get('prop_delay',"")    
         if attrs.has_key('weight'):
-            self.globalWeight = attrs.get('weight',"")    
+            newSynapseProps.weight = attrs.get('weight',"")    
         if attrs.has_key('threshold'):
-            self.globalThreshold = attrs.get('threshold',"")    
+            newSynapseProps.threshold = attrs.get('threshold',"")
+                
+        self.globalSynapseProps[self.latestSynapseType] = newSynapseProps
+            
+        for synProp in self.globalSynapseProps.keys():
+            self.log.debug("globalSynapseProp "+synProp+": "+ str(self.globalSynapseProps[synProp]))      
             
             
     elif name == 'properties':
       if self.currentProjectionName != "":  
-        if attrs.has_key('internal_delay'):
-            self.localInternalDelay = attrs.get('internal_delay',"")    
-        if attrs.has_key('pre_delay'):
-            self.localPreDelay = attrs.get('pre_delay',"")    
-        if attrs.has_key('post_delay'):
-            self.localPostDelay = attrs.get('post_delay',"")    
-        if attrs.has_key('prop_delay'):
-            self.localPropDelay = attrs.get('prop_delay',"")    
-        if attrs.has_key('weight'):
-            self.localWeight = attrs.get('weight',"")    
-        if attrs.has_key('threshold'):
-            self.localThreshold = attrs.get('threshold',"")    
-                                   
+        
+        synapse_type = ""
+        
+        if attrs.has_key('synapse_type'):
+            synapse_type = attrs.get('synapse_type',"")  
+        elif len(self.localSynapseProps) == 1:
+            synapse_type = self.localSynapseProps.keys()[0]
+            
+        if synapse_type != "":
+            synProps = self.localSynapseProps[synapse_type]
+            self.log.debug("Changing values of local syn props of: "+ synapse_type+", was: "+ str(synProps))          
+        
+            if attrs.has_key('internal_delay'):
+                synProps.internalDelay = attrs.get('internal_delay',"")    
+            if attrs.has_key('pre_delay'):
+                synProps.preDelay = attrs.get('pre_delay',"")    
+            if attrs.has_key('post_delay'):
+                synProps.postDelay = attrs.get('post_delay',"")    
+            if attrs.has_key('prop_delay'):
+                synProps.propDelay = attrs.get('prop_delay',"")    
+            if attrs.has_key('weight'):
+                synProps.weight = attrs.get('weight',"")    
+            if attrs.has_key('threshold'):
+                synProps.threshold = attrs.get('threshold',"")    
+                      
+            self.log.info("......................   Changed values of local syn props: "+ synapse_type+": "+ str(synProps))                         
     
     return
     
@@ -229,70 +248,107 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
      self.log.debug("Projection: "+ self.currentProjectionName+" is from: "+ self.currentProjectionSource +" to: "+ self.currentProjectionTarget)        
      
    if self.isSynapseTypeElement== 1:
-     self.currentSynapseType = ch
+     self.latestSynapseType = ch
      
          
          
-  def endElement(self, name): 
+  def endElement(self, name):
+      
     if name == 'instance':
       self.currentInstanceId = -1
+      
       
     elif name == 'cell_type':
       self.isCellTypeElement = 0    
       
+      
     elif name == 'population':
       self.currentCellGroup = ""
+      
       
     elif name == 'instances':
       self.log.info("Dealt with %d location instances"% (self.totalInstances))
       
+      
     elif name == 'projection':
       self.currentProjectionName = ""
-      self.globalInternalDelay = 0   # default from NetworkML.xsd
-      self.globalPreDelay = 0        # default from NetworkML.xsd
-      self.globalPostDelay = 0       # default from NetworkML.xsd
-      self.globalPropDelay = 0       # default from NetworkML.xsd
-      self.globalWeight = 1          # default from NetworkML.xsd
-      self.globalThreshold = 0       # default from NetworkML.xsd
+      self.globalSynapseProps.clear()
+      
       
     elif name == 'source':
       self.isSourceElement = 0
       
+      
     elif name == 'target':
       self.isTargetElement = 0
       
-    if name == 'connection':
       
-      self.netHandler.handleConnection(self.currentProjectionName, \
-                                       self.currentConnId, \
-                                       self.currentProjectionSource, \
-                                       self.currentProjectionTarget, \
-                                       self.currentSynapseType, \
-                                       self.preCellId, \
-                                       self.postCellId, \
-                                       self.preSegId, \
-                                       self.preFract, \
-                                       self.postSegId, \
-                                       self.postFract, \
-                                       self.localInternalDelay, \
-                                       self.localPreDelay, \
-                                       self.localPostDelay, \
-                                       self.localPropDelay, \
-                                       self.localWeight, \
-                                       self.localThreshold)
+    elif name == 'connection':
+      
+      for synType in self.localSynapseProps.keys():
+      
+        synProps = self.localSynapseProps[synType]
+        
+        self.netHandler.handleConnection(self.currentProjectionName, \
+                                        self.currentConnId, \
+                                        self.currentProjectionSource, \
+                                        self.currentProjectionTarget, \
+                                        synType, \
+                                        self.preCellId, \
+                                        self.postCellId, \
+                                        self.preSegId, \
+                                        self.preFract, \
+                                        self.postSegId, \
+                                        self.postFract, \
+                                        synProps.internalDelay, \
+                                        synProps.preDelay, \
+                                        synProps.postDelay, \
+                                        synProps.propDelay, \
+                                        synProps.weight, \
+                                        synProps.threshold)
         
       self.currentConnId = -1
-      self.localInternalDelay = 0   # default from NetworkML.xsd
-      self.localPreDelay = 0        # default from NetworkML.xsd
-      self.localPostDelay = 0       # default from NetworkML.xsd
-      self.localPropDelay = 0       # default from NetworkML.xsd
-      self.localWeight = 1          # default from NetworkML.xsd
-      self.localThreshold = 0       # default from NetworkML.xsd
+      self.localSynapseProps.clear()
+      
       
     elif name == 'synapse_type':
       self.isSynapseTypeElement = 0    
-      self.log.debug("Found synapse_type: "+ self.currentSynapseType)       
+      self.log.debug("Found end of synapse_type: "+ self.latestSynapseType)       
       
            
-            
+          
+class SynapseProperties():
+
+    internalDelay = 0   # default from NetworkML.xsd
+    preDelay = 0        # default from NetworkML.xsd
+    postDelay = 0       # default from NetworkML.xsd
+    propDelay = 0       # default from NetworkML.xsd
+    weight = 1          # default from NetworkML.xsd
+    threshold = 0       # default from NetworkML.xsd
+    
+    def __str__(self):
+        return ("SynapseProperties: internalDelay: %s, preDelay: %s, postDelay: %s, propDelay: %s, weight: %s, threshold: %s" \
+                    % (self.internalDelay, self.preDelay, self.postDelay, self.propDelay, self.weight, self.threshold))
+                    
+    def copy(self):
+        sp = SynapseProperties()
+        sp.internalDelay = self.internalDelay
+        sp.preDelay = self.preDelay
+        sp.postDelay = self.postDelay
+        sp.propDelay = self.propDelay
+        sp.weight = self.weight
+        sp.threshold = self.threshold
+        
+        return sp
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
     

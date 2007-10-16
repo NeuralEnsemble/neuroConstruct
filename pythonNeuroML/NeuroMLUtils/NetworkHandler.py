@@ -1,7 +1,14 @@
 #
 #
 #   A class to handle events from the NeuroMLSaxHandler, etc.
-#   This should be overridden by simulator specific implementations
+#   This should be overridden by simulator specific implementations.
+#   Parsing classes, e.g. NetworkMLSaxHandler should call the appropriate
+#   function here when a cell location, connection, etc. is encountered.
+#
+#   Use of this handler class should mean that the network setup is 
+#   independent of the source of the network info (XML or HDF5 based NeuroML
+#   files for example) and the instantiator of the network objects (NetManagerNEURON
+#   or PyNN based setup class)
 #
 #   Author: Padraig Gleeson
 #
@@ -30,9 +37,9 @@ class NetworkHandler:
     #
     #  Internal info method
     #        
-    def printConnectionInformation(self,  projName, id, source, target, synapseType, preCellId, postCellId):
+    def printConnectionInformation(self,  projName, id, source, target, synapseType, preCellId, postCellId, weight):
         self.log.info("Connection "+str(id)+" of in net conn: "+projName+": cell "+preCellId+" in "+source \
-                              +" to cell "+postCellId+" in "+target+", syn: "+ synapseType)
+                              +" to cell "+postCellId+" in "+target+", syn: "+ synapseType+", weight: "+weight)
         
         
 
@@ -72,5 +79,5 @@ class NetworkHandler:
                                                     localWeight = 1, \
                                                     localThreshold = 0):
         
-        self.printConnectionInformation(projName, id, source, target, synapseType, preCellId, postCellId)
+        self.printConnectionInformation(projName, id, source, target, synapseType, preCellId, postCellId, localWeight)
         

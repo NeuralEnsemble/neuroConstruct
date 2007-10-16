@@ -25,7 +25,6 @@ sys.path.append("../NeuroMLUtils")
 from NetworkHandler import NetworkHandler
 
     
-    
 h = hoc.HocObject()
 
 
@@ -47,6 +46,13 @@ def psection():
   h('psection()')
 
    
+#
+#
+#   NEURON version of the NetworkHandler for handling network events,
+#   e.g. cell locations, connections, etc. These events can come from
+#   a SAX parsed NetworkML file, or a parsed HDF5 file, etc.
+#
+#
 
 class NetManagerNEURON(NetworkHandler):
     
@@ -117,7 +123,7 @@ class NetManagerNEURON(NetworkHandler):
                                                     localWeight = 1, \
                                                     localThreshold = 0):
         
-        self.printConnectionInformation(projName, id, source, target, synapseType, preCellId, postCellId)
+        self.printConnectionInformation(projName, id, source, target, synapseType, preCellId, postCellId, localWeight)
           
         
         self.log.info("Going to create a connection of type " +projName+", id: "+id+", synapse type: "+synapseType)
