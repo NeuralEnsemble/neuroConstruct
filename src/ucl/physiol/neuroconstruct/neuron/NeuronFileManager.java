@@ -14,6 +14,7 @@ package ucl.physiol.neuroconstruct.neuron;
 
 import java.io.*;
 import java.util.*;
+
 import javax.vecmath.*;
 
 import ucl.physiol.neuroconstruct.cell.*;
@@ -2412,7 +2413,6 @@ public class NeuronFileManager
 
                 if (cellTemplatesGenAndIncluded.contains(filenameToBeGenerated))
                 {
-                    
                     addComment(response, "Cell template file: "+cellTemplateGen.getHocShortFilename()
                             +" for cell group "+cellGroupName+" has already been included");
                 }
@@ -2566,6 +2566,76 @@ public class NeuronFileManager
 
             response.append("\n");
 
+        }
+        
+        boolean genAllModFiles = true;
+        
+        if (genAllModFiles)
+        {
+        	Vector<String> allAvailableMods = project.cellMechanismInfo.getAllCellMechanismNames();
+        	
+        	for(String cellMech:  allAvailableMods)
+        	{
+	        	if (!cellMechFilesGenAndIncl.contains(cellMech))
+	            {
+	        		CellMechanism cellMechanism = project.cellMechanismInfo.getCellMechanism(cellMech);
+	        		File dirForNeuronFiles = ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory());
+	        		
+	                boolean success = false;
+	                if (cellMechanism instanceof AbstractedCellMechanism)
+	                {
+	                    File newMechFile = new File(dirForNeuronFiles,
+	                                                cellMechanism.getInstanceName() + ".mod");
+	
+	                    success = ( (AbstractedCellMechanism) cellMechanism).createImplementationFile(SimEnvHelper.
+	                        NEURON,
+	                        UnitConverter.NEURON_UNITS,
+	                        newMechFile,
+	                        project,
+	                        true,
+	                        addComments);
+	                }
+	                else if (cellMechanism instanceof ChannelMLCellMechanism)
+	                {
+	                    ChannelMLCellMechanism cmlMechanism = (ChannelMLCellMechanism) cellMechanism;
+	                    File newMechFile = null;
+	
+	                    logger.logComment("Sim map: " + cmlMechanism.getSimMapping(SimEnvHelper.NEURON));
+	
+	                    if (cmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation())
+	                    {
+	                        newMechFile = new File(dirForNeuronFiles,
+	                                               cellMechanism.getInstanceName() + ".mod");
+	                    }
+	                    else
+	                    {
+	                        newMechFile = new File(dirForNeuronFiles,
+	                                               cellMechanism.getInstanceName() + ".hoc");
+	
+	                        response.append("load_file(\"" + cellMechanism.getInstanceName() + ".hoc\")\n");
+	
+	                    }
+	                    success = cmlMechanism.createImplementationFile(SimEnvHelper.
+	                        NEURON,
+	                        UnitConverter.NEURON_UNITS,
+	                        newMechFile,
+	                        project,
+	                        cmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation(),
+	                        addComments);
+	                }
+	
+	                if (!success)
+	                {
+	                    throw new NeuronException("Problem generating file for cell process: "
+	                                              + cellMechanism
+	                                              +
+	                                              "\nPlease ensure there is an implementation for that process in NEURON");
+	
+	                }
+	
+	                cellMechFilesGenAndIncl.add(cellMechanism.getInstanceName());
+	            }
+        	}
         }
 
         GeneralUtils.timeCheck("Finished gen of cell groups");
