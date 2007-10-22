@@ -86,6 +86,7 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
       include = 0
       if attrs.get('node_id',"") != "":
         self.log.debug("Found node_id: "+ attrs.get('node_id',""))
+        if self.netHandler.isParallel!=1: self.netHandler.setParallelStatus(1)
         if int(attrs.get('node_id',"")) == self.myNodeId:
             self.log.debug("Including...")
             include = 1

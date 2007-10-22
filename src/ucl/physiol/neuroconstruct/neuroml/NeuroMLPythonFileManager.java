@@ -21,7 +21,6 @@ import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.cell.converters.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
-import ucl.physiol.neuroconstruct.utils.units.*;
 
 
 /**
@@ -89,7 +88,7 @@ public class NeuroMLPythonFileManager
     {
         logger.logComment("Starting generation of the files...");
 
-        long generationTimeStart = System.currentTimeMillis();
+        //long generationTimeStart = System.currentTimeMillis();
         
         this.simConfig = simConfig;
 
@@ -666,7 +665,7 @@ public class NeuroMLPythonFileManager
 
 
 
-
+/*
     private File getDirectoryForSimulationFiles()
     {
         File dirForSims = ProjectStructure.getSimulationsDir(project.getProjectMainDirectory());
@@ -706,7 +705,7 @@ public class NeuroMLPythonFileManager
                                      UnitConverter.NEUROCONSTRUCT_UNITS,
                                      project.genesisSettings.getUnitSystemToUse());
 
-    }
+    }*/
 
 
     /**
@@ -993,11 +992,11 @@ public class NeuroMLPythonFileManager
 
             pm.doGenerate(SimConfigInfo.DEFAULT_SIM_CONFIG_NAME, 123);
             
-            NeuroMLPythonFileManager npfm = new NeuroMLPythonFileManager(p);
+            //NeuroMLPythonFileManager npfm = new NeuroMLPythonFileManager(p);
 
 
 
-            OriginalCompartmentalisation oc = new OriginalCompartmentalisation();
+            //OriginalCompartmentalisation oc = new OriginalCompartmentalisation();
 
 
 

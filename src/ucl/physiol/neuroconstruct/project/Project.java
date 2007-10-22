@@ -945,7 +945,7 @@ public class Project implements TableModelListener
             }
             notes.append("\n");
             
-            Iterator<String> netConns = generatedNetworkConnections.getNamesNetConns();
+            Iterator<String> netConns = generatedNetworkConnections.getNamesNetConnsIter();
             
             while (netConns.hasNext())
             {

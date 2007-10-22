@@ -126,7 +126,7 @@ public class GeneratedNetworkConnections
 
     public ArrayList<SingleSynapticConnection> getSynapticConnections(String netConnectionName)
     {
-        logger.logComment("SynapticConnections sought for: " + this.hashCode() + " out of my " +
+        logger.logComment("SynapticConnections sought for: #" + this.hashCode() + " out of my " +
                           getNumberSynapticConnections(ANY_NETWORK_CONNECTION)
                           + " net conns from " + mySynapticConnectionVectors.keySet());
 
@@ -147,7 +147,7 @@ public class GeneratedNetworkConnections
     }
 
 
-    public Iterator<String> getNamesNetConns()
+    public Iterator<String> getNamesNetConnsIter()
     {
         return mySynapticConnectionVectors.keySet().iterator();
     }
@@ -577,14 +577,14 @@ public class GeneratedNetworkConnections
                 String sourceCellGroup = null;
                 String targetCellGroup = null;
 
-                Vector<SynapticProperties>  synPropList = null;
+                Vector<SynapticProperties>  globalSynPropList = null;
 
                 if (project.morphNetworkConnectionsInfo.isValidSimpleNetConn(netConnName))
                 {
                     logger.logComment("isValidSimpleNetConn..");
                     sourceCellGroup = project.morphNetworkConnectionsInfo.getSourceCellGroup(netConnName);
                     targetCellGroup = project.morphNetworkConnectionsInfo.getTargetCellGroup(netConnName);
-                    synPropList = project.morphNetworkConnectionsInfo.getSynapseList(netConnName);
+                    globalSynPropList = project.morphNetworkConnectionsInfo.getSynapseList(netConnName);
                 }
 
                 else if (project.volBasedConnsInfo.isValidAAConn(netConnName))
@@ -592,7 +592,7 @@ public class GeneratedNetworkConnections
                     logger.logComment("isValidAAConn..");
                     sourceCellGroup = project.volBasedConnsInfo.getSourceCellGroup(netConnName);
                     targetCellGroup = project.volBasedConnsInfo.getTargetCellGroup(netConnName);
-                    synPropList = project.volBasedConnsInfo.getSynapseList(netConnName);
+                    globalSynPropList = project.volBasedConnsInfo.getSynapseList(netConnName);
                 }
 
 
@@ -604,7 +604,7 @@ public class GeneratedNetworkConnections
                 projectionElement.addChildElement(new SimpleXMLElement(NetworkMLConstants.SOURCE_ELEMENT, sourceCellGroup));
                 projectionElement.addChildElement(new SimpleXMLElement(NetworkMLConstants.TARGET_ELEMENT, targetCellGroup));
 
-                for (SynapticProperties synProps:  synPropList)
+                for (SynapticProperties synProps:  globalSynPropList)
                 {
                     SimpleXMLElement synPropsElement = new SimpleXMLElement(NetworkMLConstants.SYN_PROPS_ELEMENT);
                     synPropsElement.addChildElement(new SimpleXMLElement(NetworkMLConstants.SYN_TYPE_ELEMENT, synProps.getSynapseType()));
@@ -696,14 +696,14 @@ public class GeneratedNetworkConnections
                             connElement.addContent("\n                ");
                             connElement.addChildElement(propElement);
 
-                            propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.PROP_DELAY_ATTR, synConn.apPropDelay + ""));
-
-                            if (synConn.props.size()>1)
+                            if (globalSynPropList.size()>1)
                             {
                                 /** @todo Clean up... */
                                 propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.SYN_TYPE_ELEMENT, prop.synapseType));
 
                             }
+                            propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.PROP_DELAY_ATTR, synConn.apPropDelay + ""));
+
                             propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INTERNAL_DELAY_ATTR, prop.internalDelay+""));
                             propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.WEIGHT_ATTR, prop.weight+""));
                         }

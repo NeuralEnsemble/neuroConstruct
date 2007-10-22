@@ -15,6 +15,7 @@ package ucl.physiol.neuroconstruct.gui;
 
 import java.io.*;
 import java.util.*;
+
 import javax.xml.parsers.*;
 
 import java.awt.*;
@@ -851,7 +852,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         this.refresh();
 
         float minV = -100;
-        float maxV = 60;
+        float maxV = 80;
 
         //float minT = 0;
         //float maxT = 20;
@@ -859,16 +860,20 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
         Variable v = new Variable("v");
         Variable temp = new Variable("celsius");
+        
+        Variable[] mainVars = new Variable[]{v, temp};
 
-        float numPoints = 161;
+        float numPoints = maxV - minV +1;
 
         if (cmlMechanism.isChannelMechanism())
         {
             if (cmlMechanism.getUnitsUsedInFile().equals(ChannelMLConstants.SI_UNITS))
             {
-                minV = -0.1f;
-                maxV = 0.1f;
+                minV = minV/1000;
+                maxV = maxV/1000;
             };
+            
+            
 
             try
             {
@@ -953,7 +958,13 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                                         String expression = null;
 
-                                        EquationUnit func = null;
+                                        EquationUnit mainFunc = null;
+                                        EquationUnit condPreFunc = null;
+                                        EquationUnit condPostFunc = null;
+                                        EquationUnit trueFunc = null;
+                                        EquationUnit falseFunc = null;
+                                        
+                                        RelationalOperator relationship = null;
 
 
                                         SimpleXMLEntity[] paramHHPlots = rate.getXMLEntities(ChannelMLConstants.PARAMETERISED_HH_ELEMENT);
@@ -1022,7 +1033,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
 
 
-                                                func = Expression.parseExpression(expression, new Variable[]{v});
+                                                mainFunc = Expression.parseExpression(expression, new Variable[]{v});
 
 
                                             }
@@ -1042,28 +1053,63 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                                                 String expr = genericPlot.getAttributeValue(ChannelMLConstants.GENERIC_HH_EXPR_ATTR);
                                                 System.out.println(" - - Found expr: " + expr);
+                                                
+                                                expression = expr;
+                                                
+                                                
+                                                if (expr.indexOf("?")<0 && expr.indexOf(":")<0)
+                                                {
+                                                    mainFunc = Expression.parseExpression(expr, mainVars);
+                                                }
+                                                else
+                                                {
+                                                    String condFull = expr.substring(0, expr.indexOf("?")).trim();
+                                                    String trueExpr = expr.substring(expr.indexOf("?")+1, expr.indexOf(":")).trim();
+                                                    String falseExpr = expr.substring(expr.indexOf(":")+1).trim();
+                                                    
 
-                                                func = Expression.parseExpression(expr, new Variable[]{v, temp});
+                                                    trueFunc = Expression.parseExpression(trueExpr, mainVars);
+                                                    falseFunc = Expression.parseExpression(falseExpr, mainVars);
+
+                                                    condFull = GeneralUtils.replaceAllTokens(condFull, "&lt;", "<");
+                                                    condFull = GeneralUtils.replaceAllTokens(condFull, "&gt;", ">");
+                                                    
+
+                                                    ArrayList<RelationalOperator> allROs = RelationalOperator.allROs;
+                                                    
+                                                    for(RelationalOperator ro: allROs)
+                                                    {
+                                                        if (condFull.indexOf(ro.operator)>0)
+                                                        {
+                                                            relationship = ro;
+                                                            String condExpr = condFull.substring(0, condFull.indexOf(ro.operator)).trim();
+                                                            String evalExpr = condFull.substring(condFull.indexOf(ro.operator)+ro.operator.length()).trim();
+                                                            condPreFunc = Expression.parseExpression(condExpr, mainVars);
+                                                            condPostFunc = Expression.parseExpression(evalExpr, mainVars);
+                                                        }
+                                                    }
+                                                    
+                                                }
                                             }
                                         }
 
-                                        if (func!=null)
+                                        String graphRef = "Plots for state "
+                                            + gateState + " in Cell Mechanism " + cmlMechanism.getInstanceName();
+
+                                        String dsRef = "Plot of rate: " + rate.getName() + " in state "
+                                            + gateState + " in Cell Mechanism " + cmlMechanism.getInstanceName();
+
+                                        String desc = dsRef;
+                                        
+                                        
+                                        if (mainFunc!=null)
                                         {
 
-                                            String graphRef = "Plots for state "
-                                                + gateState + " in Cell Mechanism " + cmlMechanism.getInstanceName();
-
-                                            String dsRef = "Plot of rate: " + rate.getName() + " in state "
-                                                + gateState + " in Cell Mechanism " + cmlMechanism.getInstanceName();
-
-                                            String desc = dsRef;
-
                                             desc = desc + "\n\n Expression for graph: " + expression;
-                                            desc = desc + "\nwhich has been parsed as: " + func.getNiceString();
+                                            desc = desc + "\nwhich has been parsed as: " + mainFunc.getNiceString();
+                                            
 
                                             DataSet ds = new DataSet(dsRef, desc, "mV", "", "Membrane Potential", gateState);
-
-
 
                                             for (int i = 0; i < numPoints; i++)
                                             {
@@ -1073,9 +1119,50 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                                     {new Argument(v.getName(), nextVval),
                                                     new Argument(temp.getName(), project.simulationParameters.getTemperature())};
 
-                                                ds.addPoint(nextVval, func.evaluateAt(a0));
+                                                ds.addPoint(nextVval, mainFunc.evaluateAt(a0));
                                             }
 
+                                            PlotterFrame pf = PlotManager.getPlotterFrame(graphRef);
+
+                                            pf.addDataSet(ds);
+
+                                            rateData.put(rate.getName(), ds);
+                                        }
+                                        else if (relationship!=null)
+                                        {
+                                            String parsed = "IF ("+condPreFunc.getNiceString()+") "+ relationship.operator 
+                                            +"("+condPostFunc.getNiceString()+") THEN ("+trueFunc.getNiceString()+") ELSE ("+
+                                            falseFunc.getNiceString()+")";
+
+                                            desc = desc + "\n\n Expression for graph: " + expression;
+                                            desc = desc + "\nwhich has been parsed as: " + parsed;
+                                            
+
+                                            DataSet ds = new DataSet(dsRef, desc, "mV", "", "Membrane Potential", gateState);
+                                            
+
+                                            for (int i = 0; i < numPoints; i++)
+                                            {
+                                                float nextVval = minV + ( (maxV - minV) * i / (numPoints));
+
+                                                Argument[] a0 = new Argument[]
+                                                    {new Argument(v.getName(), nextVval),
+                                                    new Argument(temp.getName(), project.simulationParameters.getTemperature())};
+
+                                                double condPreEval = condPreFunc.evaluateAt(a0);
+                                                double condPostEval = condPostFunc.evaluateAt(a0);
+                                                
+                                                if (relationship.evaluate(condPreEval, condPostEval))
+                                                {
+                                                    ds.addPoint(nextVval, trueFunc.evaluateAt(a0));
+                                                }
+                                                else
+                                                {
+                                                    ds.addPoint(nextVval, falseFunc.evaluateAt(a0));
+                                                }
+
+                                            }
+                                            
                                             PlotterFrame pf = PlotManager.getPlotterFrame(graphRef);
 
                                             pf.addDataSet(ds);
@@ -1093,8 +1180,6 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                                     String graphRef = "Plots for tau/inf in state "
                                         + gateState+" in Cell Mechanism "+ cmlMechanism.getInstanceName();
-
-
 
                                     if (!rateData.containsKey("tau"))
                                     {

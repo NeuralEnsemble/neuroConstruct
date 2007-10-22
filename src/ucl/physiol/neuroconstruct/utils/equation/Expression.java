@@ -531,18 +531,21 @@ public class Expression
         //String expression = "2x + 4x * 8 + 4x / 2";
         //String expression = "(2e-2* x / 4x)";
 
-        String tau = "6.66e-2";
+        //String tau = "6.66e-2";
 
-        String expression = "2e-2 * 3 *exp   (t/"+tau+")";
+        //String expression = "2e-2 * 3 *exp   (t/"+tau+")";
+       //v &lt; -60 ? 0.005 : 0.005 * (exp (-0.05 * (v - (-60))))
+        
+        String expression = "v &lt; -60 ? 0.005 :0.005 * (exp (-0.05 * (v - (-60))))";
 
         try
         {
-            Variable x = new Variable("x");
+            Variable v = new Variable("v");
             Variable t = new Variable("t");
             Variable t1 = new Variable("t1");
             Variable t2 = new Variable("t2");
 
-            Variable[] vars = new Variable[]{x, t, t1, t2};
+            Variable[] vars = new Variable[]{v, t, t1, t2};
 
             EquationUnit eqn = Expression.parseExpression(expression, vars);
 

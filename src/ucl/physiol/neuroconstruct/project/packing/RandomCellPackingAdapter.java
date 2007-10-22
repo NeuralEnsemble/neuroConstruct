@@ -198,7 +198,7 @@ public class RandomCellPackingAdapter extends CellPackingAdapter
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
-        String nameOfClass = this.getClass().getName();
+        //String nameOfClass = this.getClass().getName();
 
         sb.append("Random: ");
 

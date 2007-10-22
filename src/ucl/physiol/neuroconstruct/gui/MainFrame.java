@@ -5346,7 +5346,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 }
             }
 
-            Iterator netConns = projManager.getCurrentProject().generatedNetworkConnections.getNamesNetConns();
+            Iterator netConns = projManager.getCurrentProject().generatedNetworkConnections.getNamesNetConnsIter();
 
             while (netConns.hasNext())
             {
@@ -7955,7 +7955,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jComboBoxAnalyseNetConn.removeAllItems();
                 jComboBoxAnalyseNetConn.addItem(defaultAnalyseNetConnString);
 
-                Iterator names = projManager.getCurrentProject().generatedNetworkConnections.getNamesNetConns();
+                Iterator names = projManager.getCurrentProject().generatedNetworkConnections.getNamesNetConnsIter();
 
                 while (names.hasNext())
                 {
@@ -9769,6 +9769,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 File newFile = chooser.getSelectedFile();
                 if (newFile!=null)
                 {
+                    chooser.cancelSelection();
                     //System.out.println("Opening file: "+newFile);
                     SimpleViewer.showFile(newFile.getAbsolutePath(), 12, false, false, false);
                 }

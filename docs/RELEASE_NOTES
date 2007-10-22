@@ -1,0 +1,78 @@
+Release notes/change log for neuroConstruct
+
+See also the README file
+
+
+--- Version XXXX (XXX 07)
+
+- Added more options under Help menu item, including link to check for updates.
+
+
+
+--- Version 1.0.4.1 (Aug 07)
+
+
+- Only significant update is a bug fix for running NEURON from nC on a Mac (v1.0.4 ran fine on 
+  Mac, but couldn't run the generated NEURON scripts). More warnings about installing Developer tools
+  (XCode) after installing NEURON on the Mac are included too.
+
+
+
+--- Version 1.0.4 (Aug 07)
+
+
+- Uses NeuroML v1.6. Changes to that are listed at http://www.morphml.org:8080/NeuroMLValidator/NeuroMLFiles/Schemata/v1.6/RELEASE_NOTES. 
+  Main change is addition of <status> element in ChannelML, which is picked up in nC when validating proj with non stable 
+  ChannelML elements
+  
+- Allows user to change default location of new projects, from <user home dir>/nC_projects to wherever (note: no space allowed in dir name)
+
+- Added phase plane plots (dV/dt versus V), for analysis of regular spiking cells, via Plot Info -> Spike Analysis
+
+- Update to options for stimulations (tab Input and Output): pulses can be repeated. Required new version of IClamp.mod (CurrentClampExt)
+
+- Updated import of SWC files. Fixed error of giving segments numbers as names (added suffix Comp_), added a number of options on import and
+  now group compartments in unbranched dendrites into Sections with multiple Segments. Note: this will lead to fewer sections when run on NEURON
+  but the nseg value will have to be increased in long dendrites (see next point).
+
+- Added changable values for max and min electrotonic length at tab Export Network-> Common Simulation Settings. Added possibility to remesh morphology
+  to ensure correct number of internal simulation points/divisions in sections (nseg). Visualise the cell in 3D, showing All Solids, click on any 
+  section, then Edit... and select Remesh option in drop down function selector.
+
+- Added more information in network generation summary on total synaptic conductance for post synaptic cells
+
+- Updated import of NeuroML morphologies, to ease NEURON ModelView exported files. 
+  See http://neuroml.svn.sourceforge.net/viewvc/neuroml/nrn2NeuroML/ to export cells from NEURON in Level 1 & 2 NeuroML.
+
+- Some extra tool tips added, along with warnings/advice, e.g. info on getting extra memory in run.bat/run.sh. Updated Glossary and added a number of
+  new entries.
+
+- Fixed minor bug where project file modified date is changed on loading of project; now reflects when proj last saved
+
+- Caught most (but not all) sources of problems for NEURON/cygwin GENESIS when spaces are present in a
+  Windows file/directory name, e.g. C:\Documents and Settings\Padraig Gleeson\nC_projects. Will give specific warnings 
+  when spaces are present in a directory name: this can cause errors when file names are handed to the process running NEURON, 
+  for example. If an error is thrown, the project should be copied (Save as..) in a dir without spaces in the name.
+  
+- Added dialog box choice when a previous simulation has been reloaded and generate NEURON/GENESIS is requested.
+  Had been a problem that no plots were generated in that case, as no info on plots is stored with simulation structure.
+  
+- Made generated GENESIS more portable between directories: one variable targetDir specifies where all sim data will be stroed
+
+- Removed use of the NEURON system() calls in generated scripts when running under Windows, to deal with some instability there. 
+  Was mainly used for recording of hostname, date, etc.
+
+
+
+---- Version 1.0.1 (Apr 07)
+
+
+Basically the same as v0.9.8, but with examples outlined in paper included.
+
+
+
+---- Version 0.9.8 (Mar 07)
+
+
+The first full public release, just before publication of the paper. Uses NeuroML v1.5
+

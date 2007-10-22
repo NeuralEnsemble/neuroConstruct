@@ -79,7 +79,6 @@ public class ChannelMLConstants
 
 
 
-
     public static String NOTES_ELEMENT = "notes";
 
     public static String DEFAULT_COND_DENSITY_ATTR = "default_gmax";

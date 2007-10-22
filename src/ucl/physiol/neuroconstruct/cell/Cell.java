@@ -1616,7 +1616,7 @@ public class Cell implements Serializable
             a2.setSegmentId(1000);
             
             
-            Segment a3 = cell.addAxonalSegment(1, "axseg3", new Point3f(-80,0,0), a2, 
+            cell.addAxonalSegment(1, "axseg3", new Point3f(-80,0,0), a2, 
                     1, a2.getSection().getSectionName());
             
 

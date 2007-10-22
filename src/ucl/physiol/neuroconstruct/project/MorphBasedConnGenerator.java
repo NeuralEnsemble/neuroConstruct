@@ -245,9 +245,12 @@ public class MorphBasedConnGenerator extends Thread
                                 = CellTopologyHelper.getPossiblePreSynapticTerminal(generationStartCellInstance,
                                 synTypeNames);
 
-                            genFinishCellsAlreadyConnected = project.generatedNetworkConnections.getTargetCellIndices(
-                                netConnName,
-                                genStartCellNumber, true);
+                            if (connConds.isOnlyConnectToUniqueCells())
+                            {
+                                genFinishCellsAlreadyConnected = project.generatedNetworkConnections.getTargetCellIndices(
+                                    netConnName,
+                                    genStartCellNumber, true);
+                            }
                         }
                         else
                         {
@@ -255,9 +258,12 @@ public class MorphBasedConnGenerator extends Thread
                                 = CellTopologyHelper.getPossiblePostSynapticTerminal(generationStartCellInstance,
                                 synTypeNames);
 
-                            genFinishCellsAlreadyConnected = project.generatedNetworkConnections.getSourceCellIndices(
-                                netConnName,
-                                genStartCellNumber, true);
+                            if (connConds.isOnlyConnectToUniqueCells())
+                            {
+                                genFinishCellsAlreadyConnected = project.generatedNetworkConnections.getSourceCellIndices(
+                                    netConnName,
+                                    genStartCellNumber, true);
+                            }
                         }
 
 

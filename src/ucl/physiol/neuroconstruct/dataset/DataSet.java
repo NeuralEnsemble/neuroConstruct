@@ -477,7 +477,7 @@ public class DataSet
 
         System.out.println("Time taken to parse data set: "+(System.currentTimeMillis()-start)); 
         
-        PlotterFrame plotFrame = PlotManager.getPlotterFrame("Test Plotter Frame");
+        PlotManager.getPlotterFrame("Test Plotter Frame");
         
         //plotFrame.addDataSet(data1);
         

@@ -42,9 +42,10 @@ public class MpiSettings
     public MpiSettings()
     {
         String localConfig = "Local machine, serial mode";
-        String multiConfig = "MultiHostConf";
-        String testConfig = "TestConf";
-        String testConfig22 = "TestConfMore";
+        String local2Config = "Local machine (2p)";
+        String local4Config = "Local machine (4p)";
+        //String testConfig = "TestConf";
+        //String testConfig22 = "TestConfMore";
 
 
         if (getMpiConfiguration(localConfig)==null)
@@ -54,29 +55,29 @@ public class MpiSettings
             configurations.add(def);
         }
 
-
+/*
         if (getMpiConfiguration(multiConfig)==null)
         {
             MpiConfiguration p = new MpiConfiguration(multiConfig);
             //p.getHostList().add(new MpiHost("padraigneuro", 1, 1));
             p.getHostList().add(new MpiHost("avicenna",1, 1));
             p.getHostList().add(new MpiHost("bernal", 4, 1));
+            //configurations.add(p);
+        }*/
+
+        if (getMpiConfiguration(local2Config)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(local2Config);
+            p.getHostList().add(new MpiHost("localhost",2, 1));
             configurations.add(p);
         }
-
-        if (getMpiConfiguration(testConfig)==null)
+        if (getMpiConfiguration(local4Config)==null)
         {
-            MpiConfiguration p = new MpiConfiguration(testConfig);
+            MpiConfiguration p = new MpiConfiguration(local4Config);
             p.getHostList().add(new MpiHost("localhost",4, 1));
             configurations.add(p);
         }
 
-        if (getMpiConfiguration(testConfig22)==null)
-        {
-            MpiConfiguration p22 = new MpiConfiguration(testConfig22);
-            p22.getHostList().add(new MpiHost("localhost",3, 1));
-            configurations.add(p22);
-        }
 
     }
 

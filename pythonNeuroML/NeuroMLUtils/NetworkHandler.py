@@ -25,6 +25,8 @@ import logging
 class NetworkHandler:
         
     log = logging.getLogger("NetworkHandler")
+    
+    isParallel = 0
 
     #
     #  Internal info method
@@ -38,8 +40,8 @@ class NetworkHandler:
     #  Internal info method
     #        
     def printConnectionInformation(self,  projName, id, source, target, synapseType, preCellId, postCellId, weight):
-        self.log.info("Connection "+str(id)+" of in net conn: "+projName+": cell "+preCellId+" in "+source \
-                              +" to cell "+postCellId+" in "+target+", syn: "+ synapseType+", weight: "+weight)
+        self.log.info("Connection "+str(id)+" of: "+projName+": cell "+preCellId+" in "+source \
+                              +" -> cell "+postCellId+" in "+target+", syn: "+ synapseType+", weight: "+weight)
         
         
 
@@ -80,4 +82,13 @@ class NetworkHandler:
                                                     localThreshold = 0):
         
         self.printConnectionInformation(projName, id, source, target, synapseType, preCellId, postCellId, localWeight)
+        
+
+    #
+    #  To signify network is distributed over parallel nodes
+    #    
+    def setParallelStatus(self, val):
+        
+        self.log.info("Parallel status (0=serial mode, 1=parallel distributed): "+str(val))
+        self.isParallel = val
         

@@ -398,7 +398,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         float sphereRadius = 1.6f;
 
         //Vector netConns = project.simpleNetworkConnectionsInfo.getAllSimpleNetConnNames();
-        Iterator allNetConns = project.generatedNetworkConnections.getNamesNetConns();
+        Iterator allNetConns = project.generatedNetworkConnections.getNamesNetConnsIter();
 
         while (allNetConns.hasNext())
         {
@@ -1432,7 +1432,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                         oneCell3D.setTempWholeCellAppearance(Utils3D.getGeneralObjectAppearance(selectedCellColour));
                     }
 
-                    Iterator netConnNames = project.generatedNetworkConnections.getNamesNetConns();
+                    Iterator netConnNames = project.generatedNetworkConnections.getNamesNetConnsIter();
 
                     while (netConnNames.hasNext())
                     {

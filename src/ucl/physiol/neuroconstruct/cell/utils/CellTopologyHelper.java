@@ -193,10 +193,21 @@ public class CellTopologyHelper
 
     public static PreSynapticTerminalLocation getPossiblePreSynapticTerminal(Cell cell, String[] synapseTypes)
     {
-        Vector allSegments = cell.getAllSegments();
+        Vector<Segment> allSegments = cell.getAllSegments();
+        
+        /*if (allSegments.size()==1)
+        {
+            boolean goodToGo = false;
+            
+            for(int i=0;i<synapseTypes.length;i++)
+            {
+                cell.getGroupsWithSynapse(synapseTypes[i])
+                if ()
+            }
+        }*/
 
 
-        Vector groupsWithSynapse = cell.getGroupsWithSynapse(synapseTypes[0]); // get first lot
+        Vector<String> groupsWithSynapse = cell.getGroupsWithSynapse(synapseTypes[0]); // get first lot
 
         if (synapseTypes.length>1)
         {
@@ -220,20 +231,35 @@ public class CellTopologyHelper
         logger.logComment("groupsWithSynapse: "+ groupsWithSynapse);
 
         Vector<Integer> idsOfPossibleSegments = new Vector<Integer>();
-
-        for (int i = 0; i < allSegments.size(); i++)
+        
+        if (allSegments.size()==1 && 
+            (groupsWithSynapse.contains(Section.ALL) || (allSegments.get(0).isSomaSegment() && groupsWithSynapse.contains(Section.SOMA_GROUP))))
         {
-            Segment axon = (Segment) allSegments.elementAt(i);
-            Vector groups = axon.getGroups();
-            if (groups.contains(Section.AXONAL_GROUP) || groups.contains(Section.SOMA_GROUP))
+            //idsOfPossibleSegments.add(allSegments.get(0).getSegmentId());
+            
+            float fract = ProjectManager.getRandomGenerator().nextFloat();
+
+            PreSynapticTerminalLocation preSynTerm = new PreSynapticTerminalLocation(allSegments.get(0).getSegmentId(),
+                    fract);
+
+            return preSynTerm;
+        }
+        else
+        {
+            for (int i = 0; i < allSegments.size(); i++)
             {
-                for (int j = 0; j < groups.size(); j++)
+                Segment axon = allSegments.elementAt(i);
+                Vector groups = axon.getGroups();
+                if (groups.contains(Section.AXONAL_GROUP) || groups.contains(Section.SOMA_GROUP))
                 {
-                    if (groupsWithSynapse.contains( (String) groups.elementAt(j)))
+                    for (int j = 0; j < groups.size(); j++)
                     {
-                        if (!idsOfPossibleSegments.contains(axon.getSegmentId()))
+                        if (groupsWithSynapse.contains( (String) groups.elementAt(j)))
                         {
-                            idsOfPossibleSegments.add(axon.getSegmentId());
+                            if (!idsOfPossibleSegments.contains(axon.getSegmentId()))
+                            {
+                                idsOfPossibleSegments.add(axon.getSegmentId());
+                            }
                         }
                     }
                 }

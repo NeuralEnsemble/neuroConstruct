@@ -59,7 +59,9 @@ class NetManagerNEURON(NetworkHandler):
     log = logging.getLogger("NetManagerNEURON")
   
     h = hoc.HocObject()
-    
+        
+    globalPreSynId = 100000
+        
         
     #
     #  Overridden from NetworkHandler
@@ -71,10 +73,9 @@ class NetManagerNEURON(NetworkHandler):
             
             self.log.info("Population: "+cellGroup+", cell type: "+cellType+sizeInfo)
             
-            self.h("n_"+cellGroup+" = "+ str(size))
-            self.h("objectvar a_"+cellGroup+"[n_"+cellGroup+"]")
+            self.executeHoc("n_"+cellGroup+" = "+ str(size))
+            self.executeHoc("objectvar a_"+cellGroup+"[n_"+cellGroup+"]")
 
-            #objectvar a_sm1[n_sm1]
         else:
                 
             self.log.error("Population: "+cellGroup+", cell type: "+cellType+" specifies no size. Will lead to errors!")
@@ -96,14 +97,21 @@ class NetManagerNEURON(NetworkHandler):
         
         setupCreate = "obfunc newCell() { {"+cellInArray+" = "+createCall+"} return "+cellInArray+" }"
         
-        self.h(setupCreate)
+        self.executeHoc(setupCreate)
+        
+        
+        
         newCell = self.h.newCell()
         
         newCell.position(float(x), float(y), float(z))
         
-        print newCell.toString()
         
         self.h.allCells.append(newCell)
+        
+        self.log.debug("Have just created cell: "+ newCell.reference)
+        
+        if self.isParallel == 1:
+            self.executeHoc("pnm.register_cell(getCellGlobalId(\""+cellGroup+"\", "+id+"), "+cellInArray+")")
         
         
     #
@@ -126,71 +134,85 @@ class NetManagerNEURON(NetworkHandler):
         self.printConnectionInformation(projName, id, source, target, synapseType, preCellId, postCellId, localWeight)
           
         
-        self.log.info("Going to create a connection of type " +projName+", id: "+id+", synapse type: "+synapseType)
-        self.log.info("From: "+source+", id: "+str(preCellId)+", segment: "+str(preSegId)+", fraction: "+str(preFract))
-        self.log.info("To  : "+target+", id: "+str(postCellId)+", segment: "+str(postSegId)+", fraction: "+str(postFract))
+        self.log.debug("Going to create a connection of type " +projName+", id: "+id+", synapse type: "+synapseType)
+        self.log.debug("From: "+source+", id: "+str(preCellId)+", segment: "+str(preSegId)+", fraction: "+str(preFract))
+        self.log.debug("To  : "+target+", id: "+str(postCellId)+", segment: "+str(postSegId)+", fraction: "+str(postFract))
         
         
-        
-        synObjName = projName+"_"+synapseType+"_"+id
-        
-        objRefCommand = "objref "+synObjName
-        
-        self.log.info("objRefCommand: "+objRefCommand)
-        
-        self.h(objRefCommand)
+        targetCell = "a_"+target+"["+str(postCellId)+"]"
+        sourceCell = "a_"+source+"["+str(preCellId)+"]"
         
         
+        if self.isParallel == 1:
+            self.executeHoc("localSynapseId = -2")
+            self.executeHoc("globalPreSynId = "+str(self.globalPreSynId))
+            
+        if self.h.isCellOnNode(str(target), int(postCellId)) == 1:
+            self.log.debug("++++++++++++ PostCell: "+targetCell+" is on this host...")
         
-        accessPostCommand = "a_"+target+"["+str(postCellId)+"].accessSectionForSegId("+postSegId+")"
-        
-        self.log.info("accessPostCommand: "+accessPostCommand)
-        
-        self.h(accessPostCommand)
-        
-        
-        
-        fractPostCommand = "fractSecPost = a_"+target+"["+str(postCellId)+"].getFractAlongSection("+str(postFract)+", "+str(postSegId)+")"
-        
-        self.log.info("fractPostCommand: "+fractPostCommand)
-        
-        self.h(fractPostCommand)
-        self.log.info("Synapse object at: "+str(h.fractSecPost) +" on sec: "+h.secname()+", or: "+str(postFract)+" on seg id: "+ str(postSegId))
-        
-        
-        createCommand = synObjName+" = new "+synapseType+"(fractSecPost)"
-        
-        self.log.info("createCommand: "+createCommand)
-        
-        self.h(createCommand)
-        
-        
-        
-        accessPreCommand = "a_"+source+"["+str(preCellId)+"].accessSectionForSegId("+preSegId+")"
-        
-        self.log.info("accessPreCommand: "+accessPreCommand)
-        
-        self.h(accessPreCommand)
-        
-        
-        
-        fractPreCommand = "fractSecPre = a_"+source+"["+str(preCellId)+"].getFractAlongSection("+str(preFract)+", "+str(preSegId)+")"
-        
-        self.log.info("fractPreCommand: "+fractPreCommand)
-        
-        self.h(fractPreCommand)
-        self.log.info("NetCon object at: "+str(h.fractSecPre) +" on sec: "+h.secname()+", or: "+str(preFract)+" on seg id: "+ str(preSegId))
-        
-        
-        
-        
+            synObjName = projName+"_"+synapseType+"_"+id
+            
+            self.executeHoc("objref "+synObjName)
+                
+            self.executeHoc(targetCell+".accessSectionForSegId("+postSegId+")")
+                
+            self.executeHoc("fractSecPost = "+targetCell+".getFractAlongSection(" \
+                        +str(postFract)+", "+str(postSegId)+")")
+            
+            self.log.debug("Synapse object at: "+str(h.fractSecPost) +" on sec: "+h.secname()+", or: "+str(postFract)+" on seg id: "+ str(postSegId))
+            
+            self.executeHoc(synObjName+" = new "+synapseType+"(fractSecPost)")
+            
+            self.executeHoc(targetCell+".synlist.append("+synObjName+")")
+            
+            
+            self.executeHoc("localSynapseId = "+targetCell+".synlist.count()-1")
+            
+        else:
+            self.log.debug("------------ PostCell: "+targetCell+" is not on this host...")
+            
+            
         delayTotal = float(localInternalDelay) + float(localPreDelay) + float(localPostDelay) + float(localPropDelay)
         
-        connectCommand = "a_"+source+"["+str(preCellId)+"].synlist.append(new NetCon(&v(fractSecPre), "+synObjName+", "+localThreshold+", "+str(delayTotal)+", "+localWeight+"))"
-               
-        self.log.info("connectCommand: "+connectCommand)
         
-        self.h(connectCommand)
+        if self.isParallel == 0:
+        
+            self.executeHoc(sourceCell+".accessSectionForSegId("+preSegId+")")
+        
+            self.executeHoc("fractSecPre = "+sourceCell+".getFractAlongSection("+str(preFract)+", "+str(preSegId)+")")
+        
+            self.log.debug("NetCon object at: "+str(h.fractSecPre) +" on sec: "+h.secname()+", or: "+str(preFract)+" on seg id: "+ str(preSegId))
+        
+        
+            self.executeHoc(sourceCell+".synlist.append(new NetCon(&v(fractSecPre), " \
+                      +synObjName+", "+localThreshold+", "+str(delayTotal)+", "+localWeight+"))")
+        
+       
+        else:
+            if self.h.isCellOnNode(str(source), int(preCellId)) == 1: 
+                self.log.debug("++++++++++++ PreCell: "+sourceCell+" with globalPreSynId: "+str(self.globalPreSynId)+" is here!!")
+                self.executeHoc("pnm.register_cell(globalPreSynId, "+sourceCell+")")
+            else: 
+                self.log.debug("------------ PreCell: "+sourceCell+" not on this host...")
+                
+            
+            self.executeHoc("pnm.nc_append(globalPreSynId, getCellGlobalId(\""+target+"\", "+postCellId+"), "\
+                        +"localSynapseId, "+localWeight+", "+str(delayTotal)+")")
+            
+        self.globalPreSynId+=1
+        
+        
+#
+#   Helper function for printing hoc before executing it
+#
+    def executeHoc(self, command):
+    
+        cmdPrefix = ">>>>>>: "
+        
+        self.log.debug(cmdPrefix+command)
+        
+        self.h(command)
+        
         
         
         

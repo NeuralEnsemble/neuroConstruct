@@ -493,7 +493,7 @@ public class GenesisFileManager
         StringBuffer response = new StringBuffer();
         response.append("\n");
 
-        Iterator allNetConnNames = project.generatedNetworkConnections.getNamesNetConns();
+        Iterator allNetConnNames = project.generatedNetworkConnections.getNamesNetConnsIter();
 
         if (!allNetConnNames.hasNext())
         {
@@ -961,7 +961,7 @@ public class GenesisFileManager
 
             Vector<String> synNames = new Vector<String>();
 
-            Iterator allNetConns = project.generatedNetworkConnections.getNamesNetConns();
+            Iterator allNetConns = project.generatedNetworkConnections.getNamesNetConnsIter();
 
             while (allNetConns.hasNext())
             {
