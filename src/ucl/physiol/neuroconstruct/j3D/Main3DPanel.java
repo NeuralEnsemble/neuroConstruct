@@ -2280,17 +2280,18 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         for (int cellNumber: selNums)
         {
 
-            logger.logComment("Going to print network info on cell num: " + cellNumber + " in group: " + cellGroupSelected);
+            logger.logComment("Going to print network info on cell num: " + cellNumber 
+                    + " in group: " + cellGroupSelected);
 
             StringBuffer info = new StringBuffer();
 
             Cell cell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(cellGroupSelected));
 
-            info.append("Info for cell num: " + cellNumber + " in group: " + cellGroupSelected + " (type: " + cell.toString() +
-                        ")\n\n");
+            info.append("Info for cell num: <b>" + cellNumber + "</b> in group: <b>" + cellGroupSelected + "</b> (type: <b>" + cell.toString() +
+                        "</b>)<br><br>");
 
             Point3f posn = project.generatedCellPositions.getOneCellPosition(cellGroupSelected, cellNumber);
-            info.append("Position: " + posn + "\n\n");
+            info.append("Position: <b>" + posn + "</b><br><br>\n");
 
             Vector<String> allNetConns = project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames();
             Vector<String> allAAConns = project.volBasedConnsInfo.getAllAAConnNames();
@@ -2313,8 +2314,8 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                     if (cellGroupSelected.equals(project.volBasedConnsInfo.getSourceCellGroup(nextNetConn)))
                     {
-                        info.append("Cell Group " + cellGroupSelected
-                                    + " is the source of " + connType + ": " + nextNetConn + "\n");
+                        info.append("Cell Group <b>" + cellGroupSelected
+                                    + "</b> is the source of " + connType + ": <b>" + nextNetConn + "</b><br>\n");
 
                         conns = project.generatedNetworkConnections.getConnsFromSource(nextNetConn, cellNumber);
 
@@ -2322,15 +2323,15 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                         otherType = "target";
                         for (SynapticProperties prop : synProps)
                         {
-                            info.append("    " + prop.toNiceString() + "\n");
+                            info.append("&nbsp;&nbsp;" + prop.toNiceString() + "<br>\n");
 
                         }
 
                     }
                     else if (cellGroupSelected.equals(project.volBasedConnsInfo.getTargetCellGroup(nextNetConn)))
                     {
-                        info.append("Cell Group " + cellGroupSelected
-                                    + " is the target of " + connType + ": " + nextNetConn + "\n");
+                        info.append("Cell Group <b>" + cellGroupSelected
+                                    + "</b> is the target of " + connType + ": <b>" + nextNetConn + "</b><br>\n");
 
                         conns = project.generatedNetworkConnections.getConnsToTarget(nextNetConn, cellNumber);
 
@@ -2338,7 +2339,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                         otherType = "source";
                         for (SynapticProperties prop : synProps)
                         {
-                            info.append("    " + prop.toNiceString() + "\n");
+                            info.append("&nbsp;&nbsp;" + prop.toNiceString() + "<br>\n");
 
                         }
 
@@ -2352,8 +2353,8 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                     if (cellGroupSelected.equals(project.morphNetworkConnectionsInfo.getSourceCellGroup(nextNetConn)))
                     {
-                        info.append("Cell Group " + cellGroupSelected
-                                    + " is the source of " + connType + ": " + nextNetConn + "\n");
+                        info.append("Cell Group <b>" + cellGroupSelected
+                                    + "</b> is the source of " + connType + ": <b>" + nextNetConn + "</b><br>\n");
 
                         conns = project.generatedNetworkConnections.getConnsFromSource(nextNetConn, cellNumber);
 
@@ -2361,15 +2362,15 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                         otherType = "target";
                         for (SynapticProperties prop : synProps)
                         {
-                            info.append("    " + prop.toNiceString() + "\n");
+                            info.append("&nbsp;&nbsp;" + prop.toNiceString() + "<br>\n");
 
                         }
 
                     }
                     else if (cellGroupSelected.equals(project.morphNetworkConnectionsInfo.getTargetCellGroup(nextNetConn)))
                     {
-                        info.append("Cell Group " + cellGroupSelected
-                                    + " is the target of " + connType + ": " + nextNetConn + "\n");
+                        info.append("Cell Group <b>" + cellGroupSelected
+                                    + "</b> is the target of " + connType + ": <b>" + nextNetConn + "</b><br>\n");
 
                         conns = project.generatedNetworkConnections.getConnsToTarget(nextNetConn, cellNumber);
 
@@ -2377,19 +2378,19 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                         otherType = "source";
                         for (SynapticProperties prop : synProps)
                         {
-                            info.append("    " + prop.toNiceString() + "\n");
+                            info.append("&nbsp;&nbsp;" + prop.toNiceString() + "<br>\n");
 
                         }
 
                     }
-
                 }
+                info.append("<br>\n");
 
                 if (conns != null)
                 {
 
-                    info.append("Cell num " + cellNumber + " makes " + conns.size() + " connections to " + otherType +
-                                " cells:\n");
+                    info.append("Cell num <b>" + cellNumber + "</b> makes <b>" + conns.size() + "</b> connections to " + otherType +
+                                " cells:<br>\n");
 
                     ArrayList<Integer> unique = new ArrayList<Integer> (conns.size());
 
@@ -2399,16 +2400,16 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                         Integer nextNum = conns.get(otherNum).targetEndPoint.cellNumber;
                         if (otherType.equals("source")) nextNum = conns.get(otherNum).sourceEndPoint.cellNumber;
 
-                        info.append("    Cell num " + nextNum
-                                    + " in "
-                                    + otherGroup);
+                        info.append("&nbsp;&nbsp;Cell num <b>" + nextNum
+                                    + "</b> in <b>"
+                                    + otherGroup+"</b>");
 
                         Point3f posnOther = project.generatedCellPositions.getOneCellPosition(otherGroup, nextNum.intValue());
 
-                        info.append(" (position: " + posnOther + ")");
-                        info.append(" is connected to this cell" + "\n");
+                        info.append(" (position: <b>" + posnOther + "</b>)");
+                        info.append(" is connected to this cell" + "<br>\n");
 
-                        info.append("        Delay due to AP propagation: " + conns.get(otherNum).apPropDelay + " ms. ");
+                        //info.append("        Delay due to AP propagation: " + conns.get(otherNum).apPropDelay + " ms. ");
 
                         ArrayList<ConnSpecificProps> props = conns.get(otherNum).props;
 
@@ -2416,21 +2417,21 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                         {
                             for (ConnSpecificProps prop : props)
                             {
-                                info.append(prop.toNiceString() + "\n");
+                                info.append("&nbsp;&nbsp;"+prop.toNiceString() + "<br>\n");
 
                             }
                         }
                         else
                         {
-                            info.append("\n");
+                            info.append("<br>\n");
                         }
 
                         if (!unique.contains(nextNum)) unique.add(nextNum);
                     }
                     if (conns.size() > 1)
-                        info.append("   (" + unique.size() + " individual cell(s), so average of "
-                                    + (float) conns.size() / (float) unique.size() + " connection(s) to each)\n");
-                    info.append("\n");
+                        info.append("   (<b>" + unique.size() + "</b> individual cell(s), so average of <b>"
+                                    + (float) conns.size() / (float) unique.size() + "</b> connection(s) to each)<br>\n");
+                    info.append("<br>\n");
                 }
 
             }
@@ -2442,8 +2443,8 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                 if (nextStim.getCellGroup().equals(cellGroupSelected))
                 {
-                    info.append("Cell Group " + cellGroupSelected + " receives input from stimulation: " + nextStim.toString() +
-                                "\n");
+                    info.append("Cell Group <b>" + cellGroupSelected + "</b> receives input from stimulation: <b>" + nextStim.toString() +
+                                "</b><br>\n");
 
                     ArrayList<SingleElectricalInput>
                         theseInputs = project.generatedElecInputs.getInputLocations(nextStim.getReference());
@@ -2453,14 +2454,14 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                     {
                         if (theseInputs.get(j).getCellNumber() == cellNumber)
                         {
-                            info.append("   Cell num: " + cellNumber + " receives this input on segment: " +
-                                        theseInputs.get(j).getSegmentId() + ", fraction along: " +
-                                        theseInputs.get(j).getFractionAlong() + "\n\n");
+                            info.append("   Cell num: <b>" + cellNumber + "</b> receives this input on segment: <b>" +
+                                        theseInputs.get(j).getSegmentId() + "</b>, fraction along: <b>" +
+                                        theseInputs.get(j).getFractionAlong() + "</b><br><br>\n\n");
                             cellGetsStim = true;
                         }
                     }
-                    if (!cellGetsStim) info.append("Cell num: " + cellNumber +
-                                                   " in this Cell Group does not receive one of these inputs" + "\n\n");
+                    if (!cellGetsStim) info.append("Cell num: <b>" + cellNumber +
+                                                   "</b> in this Cell Group does not receive one of these inputs" + "<br><br>\n\n");
 
                 }
             }
@@ -2470,7 +2471,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                                                          + " in group: " + cellGroupSelected,
                                                          12,
                                                          false,
-                                                         false);
+                                                         true);
 
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             simpleViewer.setFrameSize( (int) (screenSize.getWidth() * 0.7d), (int) (screenSize.getHeight() * 0.7d));

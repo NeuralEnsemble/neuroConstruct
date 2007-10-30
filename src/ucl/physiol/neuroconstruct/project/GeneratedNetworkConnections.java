@@ -830,7 +830,7 @@ public class GeneratedNetworkConnections
                                       targetCellNumber,
                                       targetCellSegmentIndex,
                                       targetCellDistanceAlong,
-                                      1234,
+                                      0,
                                       null);
 
             }

@@ -2937,7 +2937,7 @@ public class NeuronFileManager
                     }
                     else
                     {
-                        logger.logComment("Generating weight from: "+ synConn.props, true);
+                        logger.logComment("Generating weight from: "+ synConn.props);
                         for (ConnSpecificProps prop:synConn.props)
                         {
                             boolean found = false;
@@ -2949,7 +2949,7 @@ public class NeuronFileManager
                             }
                             if (!found)
                             {
-                                logger.logComment("Generating weight from: "+ synProps.getWeightsGenerator(), true);
+                                logger.logComment("Generating weight from: "+ synProps.getWeightsGenerator());
                                 
                                 synInternalDelay = synProps.getDelayGenerator().getNominalNumber();
                                 weight = synProps.getWeightsGenerator().getNominalNumber();
