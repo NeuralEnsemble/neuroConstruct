@@ -61,6 +61,7 @@ class NetManagerNEURON(NetworkHandler):
     h = hoc.HocObject()
         
     globalPreSynId = 100000
+    
         
         
     #
@@ -108,7 +109,7 @@ class NetManagerNEURON(NetworkHandler):
         
         self.h.allCells.append(newCell)
         
-        self.log.debug("Have just created cell: "+ newCell.reference)
+        self.log.info("Have just created cell: "+ newCell.reference)
         
         if self.isParallel == 1:
             self.executeHoc("pnm.register_cell(getCellGlobalId(\""+cellGroup+"\", "+id+"), "+cellInArray+")")
@@ -134,9 +135,9 @@ class NetManagerNEURON(NetworkHandler):
         self.printConnectionInformation(projName, id, source, target, synapseType, preCellId, postCellId, localWeight)
           
         
-        self.log.debug("Going to create a connection of type " +projName+", id: "+id+", synapse type: "+synapseType)
-        self.log.debug("From: "+source+", id: "+str(preCellId)+", segment: "+str(preSegId)+", fraction: "+str(preFract))
-        self.log.debug("To  : "+target+", id: "+str(postCellId)+", segment: "+str(postSegId)+", fraction: "+str(postFract))
+        self.log.info("Going to create a connection of type " +projName+", id: "+id+", synapse type: "+synapseType)
+        self.log.info("From: "+source+", id: "+str(preCellId)+", segment: "+str(preSegId)+", fraction: "+str(preFract))
+        self.log.info("To  : "+target+", id: "+str(postCellId)+", segment: "+str(postSegId)+", fraction: "+str(postFract))
         
         
         targetCell = "a_"+target+"["+str(postCellId)+"]"
@@ -148,7 +149,7 @@ class NetManagerNEURON(NetworkHandler):
             self.executeHoc("globalPreSynId = "+str(self.globalPreSynId))
             
         if self.h.isCellOnNode(str(target), int(postCellId)) == 1:
-            self.log.debug("++++++++++++ PostCell: "+targetCell+" is on this host...")
+            self.log.info("++++++++++++ PostCell: "+targetCell+" is on this host...")
         
             synObjName = projName+"_"+synapseType+"_"+id
             
@@ -159,7 +160,7 @@ class NetManagerNEURON(NetworkHandler):
             self.executeHoc("fractSecPost = "+targetCell+".getFractAlongSection(" \
                         +str(postFract)+", "+str(postSegId)+")")
             
-            self.log.debug("Synapse object at: "+str(h.fractSecPost) +" on sec: "+h.secname()+", or: "+str(postFract)+" on seg id: "+ str(postSegId))
+            self.log.info("Synapse object at: "+str(h.fractSecPost) +" on sec: "+h.secname()+", or: "+str(postFract)+" on seg id: "+ str(postSegId))
             
             self.executeHoc(synObjName+" = new "+synapseType+"(fractSecPost)")
             
@@ -169,7 +170,7 @@ class NetManagerNEURON(NetworkHandler):
             self.executeHoc("localSynapseId = "+targetCell+".synlist.count()-1")
             
         else:
-            self.log.debug("------------ PostCell: "+targetCell+" is not on this host...")
+            self.log.info("------------ PostCell: "+targetCell+" is not on this host...")
             
             
         delayTotal = float(localInternalDelay) + float(localPreDelay) + float(localPostDelay) + float(localPropDelay)
@@ -181,7 +182,7 @@ class NetManagerNEURON(NetworkHandler):
         
             self.executeHoc("fractSecPre = "+sourceCell+".getFractAlongSection("+str(preFract)+", "+str(preSegId)+")")
         
-            self.log.debug("NetCon object at: "+str(h.fractSecPre) +" on sec: "+h.secname()+", or: "+str(preFract)+" on seg id: "+ str(preSegId))
+            self.log.info("NetCon object at: "+str(h.fractSecPre) +" on sec: "+h.secname()+", or: "+str(preFract)+" on seg id: "+ str(preSegId))
         
         
             self.executeHoc(sourceCell+".synlist.append(new NetCon(&v(fractSecPre), " \
@@ -190,10 +191,10 @@ class NetManagerNEURON(NetworkHandler):
        
         else:
             if self.h.isCellOnNode(str(source), int(preCellId)) == 1: 
-                self.log.debug("++++++++++++ PreCell: "+sourceCell+" with globalPreSynId: "+str(self.globalPreSynId)+" is here!!")
+                self.log.info("++++++++++++ PreCell: "+sourceCell+" with globalPreSynId: "+str(self.globalPreSynId)+" is here!!")
                 self.executeHoc("pnm.register_cell(globalPreSynId, "+sourceCell+")")
             else: 
-                self.log.debug("------------ PreCell: "+sourceCell+" not on this host...")
+                self.log.info("------------ PreCell: "+sourceCell+" not on this host...")
                 
             
             self.executeHoc("pnm.nc_append(globalPreSynId, getCellGlobalId(\""+target+"\", "+postCellId+"), "\
@@ -209,7 +210,7 @@ class NetManagerNEURON(NetworkHandler):
     
         cmdPrefix = ">>>>>>: "
         
-        self.log.debug(cmdPrefix+command)
+        self.log.info(cmdPrefix+command)
         
         self.h(command)
         

@@ -108,7 +108,7 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
       
     elif name == 'location':
       if self.currentInstanceId != -1:
-        self.log.debug("Found location: "+ attrs.get('x',""))
+        self.log.debug("Found location: ("+ attrs.get('x',"")+", "+ attrs.get('y',"")+", "+ attrs.get('z',""), ")")
         self.totalInstances+=1
         nodeInfo = ""
         if self.myNodeId >= 0:
