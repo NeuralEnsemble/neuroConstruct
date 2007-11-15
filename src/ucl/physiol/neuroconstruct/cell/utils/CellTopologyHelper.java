@@ -1724,17 +1724,21 @@ public class CellTopologyHelper
 
     public static String printDetails(Cell cell, Project project)
     {
-        return printDetails(cell, project,false, true);
+        return printDetails(cell, project,false, true, false);
     }
 
 
     public static String printDetails(Cell cell, Project project, boolean html)
     {
-        return printDetails(cell, project,html, true);
+        return printDetails(cell, project,html, true, false);
     }
 
 
-    public static String printDetails(Cell cell, Project project, boolean html, boolean longFormat)
+    public static String printDetails(Cell cell, 
+    		                          Project project, 
+    		                          boolean html, 
+    		                          boolean longFormat, 
+    		                          boolean expandedHtml)
     {
 
         logger.logComment("Printing cell details...");
@@ -1750,9 +1754,13 @@ public class CellTopologyHelper
         String desc = cell.getCellDescription();
         if (html) desc = GeneralUtils.replaceAllTokens(desc, "\n", "<br>\n");
 
-        sb.append("    Description                   : " + GeneralUtils.getTabbedString(desc, "b", html) + GeneralUtils.getEndLine(html));
+        sb.append("    " + GeneralUtils.getTabbedString(desc, "b", html) + GeneralUtils.getEndLine(html));
 
         sb.append("  "+GeneralUtils.getEndLine(html));
+        
+        boolean useFullSymbol = !(!html || expandedHtml);
+        String capSymb = useFullSymbol ? UnitConverter.specificCapacitanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol() :
+        	UnitConverter.specificCapacitanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSafeSymbol();
 
         String initPot = null;
         if (cell.getInitialPotential()!=null)
@@ -1770,13 +1778,17 @@ public class CellTopologyHelper
             Vector groups = cell.getGroupsWithSpecCap(sc);
 
             sb.append("    Specific Capacitance          : " +
-                      GeneralUtils.getTabbedString(sc + " " +
-                                                   UnitConverter.specificCapacitanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol(),
+                      GeneralUtils.getTabbedString(sc + " " +capSymb
+                                                   ,
                                                    "b", html) +
                       " on " + GeneralUtils.getTabbedString(groups.toString(), "b", html) +
                       GeneralUtils.getEndLine(html));
 
         }
+
+        String sarSymb = useFullSymbol ? UnitConverter.specificAxialResistanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol() :
+        	UnitConverter.specificAxialResistanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSafeSymbol();
+
 
         ArrayList<Float> specAxReses = cell.getDefinedSpecAxResistances();
         for (Float sar: specAxReses)
@@ -1784,8 +1796,7 @@ public class CellTopologyHelper
             Vector groups = cell.getGroupsWithSpecAxRes(sar);
 
             sb.append("    Specific Axial Resistance     : " +
-                      GeneralUtils.getTabbedString(sar + " " +
-                                                   UnitConverter.specificAxialResistanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol(),
+                      GeneralUtils.getTabbedString(sar + " " +sarSymb,
                                                    "b", html) +
                       " on " + GeneralUtils.getTabbedString(groups.toString(), "b", html) +
                       GeneralUtils.getEndLine(html));
@@ -1793,6 +1804,8 @@ public class CellTopologyHelper
         }
 
 
+        String condDensSymb = useFullSymbol ? UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol() :
+        	UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSafeSymbol();
 
 
         sb.append("  "+GeneralUtils.getEndLine(html));
@@ -1803,8 +1816,21 @@ public class CellTopologyHelper
         {
             ChannelMechanism chanMech = allChanMechs.get(i);
             Vector groups = cell.getGroupsWithChanMech(chanMech);
+            
+            String descCm = chanMech.getName() + " ("+ chanMech.getDensity() + " "+ condDensSymb+")";
+            if (html)
+            {
+            	if (true)
+            	{
+            		descCm = "<a href=\"../"+Expand.getCellMechPage(chanMech.getName())+"\">"+chanMech.getName() + "</a> ("+ chanMech.getDensity() + " "+ condDensSymb+")";
+            	}
+            	else
+            	{
+                	descCm = chanMech.getName() + " ("+ chanMech.getDensity() + " "+ condDensSymb+")";
+            	}
+            }
 
-            sb.append("    Channel Mechanism: "+GeneralUtils.getTabbedString(chanMech.toString(), "b", html)
+            sb.append("    Channel Mechanism: "+GeneralUtils.getTabbedString(descCm, "b", html)
                       +" is present on: "+GeneralUtils.getTabbedString(groups.toString(), "b", html)+GeneralUtils.getEndLine(html));
         }
         if (allChanMechs.size()>0) sb.append("  "+GeneralUtils.getEndLine(html));
@@ -1891,13 +1917,19 @@ public class CellTopologyHelper
         }
 
         sb.append(" " + GeneralUtils.getEndLine(html)+ GeneralUtils.getEndLine(html));
+        
 
-        sb.append("Total surface area of all segments: " + GeneralUtils.getTabbedString(totalSurfaceArea + " "
-                  + UnitConverter.areaUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol(), "b", html)
+        String areaSymb = useFullSymbol ? UnitConverter.areaUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol() :
+        	UnitConverter.areaUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSafeSymbol();
+        
+        String lenSymb = useFullSymbol ? UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol() :
+        	UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSafeSymbol();
+
+
+        sb.append("Total surface area of all segments: " + GeneralUtils.getTabbedString(totalSurfaceArea + " "+areaSymb, "b", html)
                   + GeneralUtils.getEndLine(html));
 
-        sb.append("Total length of all segments: " + GeneralUtils.getTabbedString(totalLength + " "
-                  + UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol(), "b", html)
+        sb.append("Total length of all segments: " + GeneralUtils.getTabbedString(totalLength + " "+lenSymb, "b", html)
                   + GeneralUtils.getEndLine(html));
 
         if (longFormat) sb.append("Sum of axial resistance in all segments: " + GeneralUtils.getTabbedString(totalAxResistance + " "
@@ -1911,18 +1943,15 @@ public class CellTopologyHelper
         if (longFormat)
         {
             sb.append("Length in X direction: "
-                      + GeneralUtils.getTabbedString(CellTopologyHelper.getXExtentOfCell(cell, false, false) + " " +
-                                                     UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol(), "b", html)
+                      + GeneralUtils.getTabbedString(CellTopologyHelper.getXExtentOfCell(cell, false, false) + " " +lenSymb, "b", html)
                       + GeneralUtils.getEndLine(html));
 
             sb.append("Length in Y direction: "
-                      + GeneralUtils.getTabbedString(CellTopologyHelper.getYExtentOfCell(cell, false, false) + " " +
-                                                     UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol(), "b", html)
+                      + GeneralUtils.getTabbedString(CellTopologyHelper.getYExtentOfCell(cell, false, false) + " " +lenSymb, "b", html)
                       + GeneralUtils.getEndLine(html));
 
             sb.append("Length in Z direction: "
-                      + GeneralUtils.getTabbedString(CellTopologyHelper.getZExtentOfCell(cell, false, false) + " " +
-                                                     UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol(), "b", html)
+                      + GeneralUtils.getTabbedString(CellTopologyHelper.getZExtentOfCell(cell, false, false) + " " +lenSymb, "b", html)
                       + GeneralUtils.getEndLine(html));
 
             sb.append("   " + GeneralUtils.getEndLine(html));
@@ -2101,7 +2130,7 @@ public class CellTopologyHelper
 
     public static String printShortDetails(Cell cell)
     {
-        return printDetails(cell, null, false, false);
+        return printDetails(cell, null, false, false, false);
         /*
         StringBuffer sb = new StringBuffer();
 

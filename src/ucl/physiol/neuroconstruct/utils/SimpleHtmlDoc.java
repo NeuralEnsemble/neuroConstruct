@@ -50,6 +50,11 @@ public class SimpleHtmlDoc
     }
 
 
+    public void addRawHtml(String html)
+    {
+        contents.add(new RawHtml(html));
+    }
+
 
 
     public void addBreak()
@@ -102,14 +107,11 @@ public class SimpleHtmlDoc
             this.contents = contents;
             tabs.add(tab);
         }
-
         public TabbedElement(String contents, ArrayList<String> tabs)
         {
             this.contents = contents;
             this.tabs = tabs;
         }
-
-
 
         public String toHtmlString()
         {
@@ -139,7 +141,25 @@ public class SimpleHtmlDoc
         {
             return "\n";
         };
+    }
 
+    private class RawHtml extends SimpleHtmlElement
+    {
+        public String contents = null;
+
+        public RawHtml(String contents)
+        {
+            this.contents = contents;
+        }
+        public String toHtmlString()
+        {
+            return contents;
+        };
+        public String toString()
+        {
+        	
+            return "???";
+        };
     }
 
     private abstract class SimpleHtmlElement
@@ -152,12 +172,17 @@ public class SimpleHtmlDoc
 
     public void saveAsFile(File file)
     {
-
         try
         {
+        	if (!file.getParentFile().exists())
+        	{
+        		file.getParentFile().mkdir();
+        	}
             FileWriter fw = new FileWriter(file);
             fw.write(this.toHtmlString());
             fw.close();
+
+            logger.logComment("Created doc at: "+ file.getCanonicalPath());
         }
         catch (IOException ex)
         {

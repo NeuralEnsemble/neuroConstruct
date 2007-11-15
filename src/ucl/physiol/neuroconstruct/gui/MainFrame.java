@@ -9391,7 +9391,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 */
 
-            jEditorPaneCellTypeInfo.setText(CellTopologyHelper.printDetails(cell, this.projManager.getCurrentProject(), true, false));
+            jEditorPaneCellTypeInfo.setText(CellTopologyHelper.printDetails(cell, this.projManager.getCurrentProject(), true, false, false));
 
 
             jEditorPaneCellTypeInfo.setCaretPosition(0);
