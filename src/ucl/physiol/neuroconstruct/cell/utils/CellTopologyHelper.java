@@ -1820,7 +1820,7 @@ public class CellTopologyHelper
             String descCm = chanMech.getName() + " ("+ chanMech.getDensity() + " "+ condDensSymb+")";
             if (html)
             {
-            	if (true)
+            	if (false)
             	{
             		descCm = "<a href=\"../"+Expand.getCellMechPage(chanMech.getName())+"\">"+chanMech.getName() + "</a> ("+ chanMech.getDensity() + " "+ condDensSymb+")";
             	}

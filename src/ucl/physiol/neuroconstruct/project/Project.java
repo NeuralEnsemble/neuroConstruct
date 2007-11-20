@@ -919,7 +919,7 @@ public class Project implements TableModelListener
     /**
      * Might be a better place for this...
      */
-    public void saveNetworkStructure(File neuroMLFile,
+    public File saveNetworkStructure(File neuroMLFile,
                                      boolean zipped,
                                      boolean extraComments,
                                      String simConfig) throws NeuroMLException
@@ -1026,12 +1026,16 @@ public class Project implements TableModelListener
                 FileWriter fw = new FileWriter(neuroMLFile);
                 fw.write(stringForm);
                 fw.close();
+                
+                return neuroMLFile;
             }
             else
             {
                 File zipFile = new File(neuroMLFile.getAbsolutePath() +
                                         ProjectStructure.getNeuroMLCompressedFileExtension());
                 ZipUtils.zipStringAsFile(stringForm, zipFile, neuroMLFile.getName(), notes.toString());
+                
+                return zipFile;
             }
         }
         catch (Exception ex)

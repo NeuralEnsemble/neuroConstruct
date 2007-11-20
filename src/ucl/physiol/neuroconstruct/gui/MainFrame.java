@@ -9971,8 +9971,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         String fileName = "Net_" +timeInfo;
 
-        fileName = JOptionPane.showInputDialog("Please enter the name of the NetworkML file (without "
-                                               +ProjectStructure.getNeuroMLFileExtension()+" extension)",fileName);
+        fileName = JOptionPane.showInputDialog("Please enter the name of the NetworkML file (without extension)",fileName);
 
         if (fileName == null) return;
 
@@ -9994,10 +9993,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             }
         }
+        long start = System.currentTimeMillis();
+        File fileSaved = null;
         try
         {
 
-            projManager.getCurrentProject().saveNetworkStructure(networkFile,
+            fileSaved = projManager.getCurrentProject().saveNetworkStructure(networkFile,
                                                                  this.jCheckBoxGenerateZip.isSelected(),
                                                                  this.jCheckBoxGenerateExtraNetComments.isSelected(),
                                                                  getSelectedSimConfig().getName());
@@ -10006,6 +10007,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             GuiUtils.showErrorMessage(logger, "Problem saving network in NeuroML", ex1, this);
         }
+        long end = System.currentTimeMillis();
+        
+        float secs = (end-start)/1000f;
 
 
 
@@ -10014,6 +10018,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
         refreshTabGenerate();
+        
+        GuiUtils.showInfoMessage(logger, "NetworkML file saved",
+            "The structure of the network has been saved in:\n"+fileSaved.getAbsolutePath()
+            +" ("+fileSaved.length()+" bytes)\nin "+secs+" seconds", this);
 
         return;
 

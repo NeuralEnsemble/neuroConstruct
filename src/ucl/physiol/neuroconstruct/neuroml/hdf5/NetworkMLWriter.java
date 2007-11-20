@@ -233,12 +233,17 @@ attr.setValue(attrValue); // set the attribute value
         File h5File = new File("../temp/net.h5");
         try
         {
+            System.setProperty("java.library.path", System.getProperty("java.library.path")+":/home/padraig/neuroConstruct");
+            
+            logger.logComment("Sys prop: "+System.getProperty("java.library.path"), true);
+            
             Project testProj = Project.loadProject(new File("examples/Ex9-GranCellLayer/Ex9-GranCellLayer.neuro.xml"),
                                                    null);
 
             //File nmlFile = new File("examples/Ex9-GranCellLayer/savedNetworks/600.nml");
             //File nmlFile = new File("examples/Ex9-GranCellLayer/savedNetworks/75.nml");
-            File nmlFile = new File("../copynCmodels/Parallel/savedNetworks/50000.nml");
+            File nmlFile = new File("../temp/test.nml");
+            //File nmlFile = new File("../copynCmodels/Parallel/savedNetworks/50000.nml");
 
             logger.logComment("Loading netml cell from " + nmlFile.getAbsolutePath(), true);
 
