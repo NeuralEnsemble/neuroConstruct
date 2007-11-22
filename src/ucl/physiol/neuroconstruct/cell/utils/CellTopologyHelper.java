@@ -238,6 +238,7 @@ public class CellTopologyHelper
             //idsOfPossibleSegments.add(allSegments.get(0).getSegmentId());
             
             float fract = ProjectManager.getRandomGenerator().nextFloat();
+            if (allSegments.get(0).isSpherical()) fract = 0.5f;
 
             PreSynapticTerminalLocation preSynTerm = new PreSynapticTerminalLocation(allSegments.get(0).getSegmentId(),
                     fract);

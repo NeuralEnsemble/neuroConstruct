@@ -8,6 +8,7 @@
  *
  */
 
+objectvar nil
 
 /*
  * Provides information on the morphology of the current accessed section
@@ -235,3 +236,38 @@ proc secinfo() {
     print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
 }
+
+
+objectvar listNcSyn
+objectvar listNcPre
+
+/*
+ * Helper functions for getting more info on NetConn objects
+ */
+proc netConInfo() {
+    print "-- ",hostid,"-- NetConn: ", $o1
+    if ($o1!=nil) {
+        print "-- ",hostid,"-- Pre: ",$o1.precell(), ", Syn: ",$o1.syn, "(",$o1.postcell, ")", ", Active: ",$o1.active(), ", Valid: ",$o1.valid()
+        print "-- ",hostid,"-- Weight: ",$o1.weight, ", Delay: ",$o1.delay, ", Thresh: ",$o1.threshold
+
+        listNcSyn = $o1.synlist()
+
+        for i=0,listNcSyn.count()-1 {
+            print "-- ",hostid,"-- NetConns sharing syn: ", listNcSyn.o(i)
+        }      
+  
+        listNcPre = $o1.precelllist()
+
+        for i=0,listNcPre.count()-1 {
+            print "-- ",hostid,"-- NetConns sharing pre cell: ", listNcPre.o(i)
+        }
+    }
+}
+
+proc netConInfoParallel() {
+    netConInfo($o1)
+    if ($o1!=nil) {
+        print "-- ",hostid,"-- Src gid: ", $o1.srcgid
+    }
+}
+

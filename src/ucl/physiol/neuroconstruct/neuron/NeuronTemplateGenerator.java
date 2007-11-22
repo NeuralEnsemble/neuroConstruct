@@ -64,7 +64,8 @@ public class NeuronTemplateGenerator
      *        be added to allow growth of dends, etc.
      */
     public NeuronTemplateGenerator(Project project, 
-                                    Cell cell, File dirForHocFile, 
+                                    Cell cell, 
+                                    File dirForHocFile, 
                                     boolean addGrowthFunctions,
                                     boolean addSegIdFunctions)
     {
@@ -1370,6 +1371,8 @@ public class NeuronTemplateGenerator
          //response.append("    print \"connect2target() being called on cell: \", reference, \", post obj:\", $o1\n");
         response.append("    "+NeuronFileManager.getHocSectionName(cell.getFirstSomaSegment().getSection().getSectionName())
                 +" $o2 = new NetCon(&v(1), $o1)\n");
+        
+        if (NeuronFileManager.addComments()) response.append("    print \"connect2target called on \", name\n");
 
         response.append("}\n");
         response.append("\n");

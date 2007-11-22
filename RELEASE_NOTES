@@ -7,7 +7,7 @@ See also the README file
 
 - Added more options under Help menu item, including link to check for updates.
 
-
+- For single compartment, spherical cells, the fract along is now always 0.5 in generated network connections
 
 --- Version 1.0.4.1 (Aug 07)
 

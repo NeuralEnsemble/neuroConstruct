@@ -21,6 +21,8 @@ package ucl.physiol.neuroconstruct.neuroml.hdf5;
  *
  */
 
+@SuppressWarnings("serial")
+
 public class Hdf5Exception extends Exception
 {
     private Hdf5Exception()

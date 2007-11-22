@@ -268,7 +268,7 @@ attr.setValue(attrValue); // set the attribute value
             xmlReader.parse(is);
 
             logger.logComment("Cells: " + gcp.getNumberInAllCellGroups(), true);
-            logger.logComment("Net conn num: " + gnc.getNumberSynapticConnections(gnc.ANY_NETWORK_CONNECTION), true);
+            logger.logComment("Net conn num: " + gnc.getNumberSynapticConnections(GeneratedNetworkConnections.ANY_NETWORK_CONNECTION), true);
 
             NetworkMLWriter.createNetworkMLH5file(h5File, gcp, gnc);
 
