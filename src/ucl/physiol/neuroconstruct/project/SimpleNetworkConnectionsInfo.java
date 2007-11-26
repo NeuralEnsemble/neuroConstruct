@@ -314,6 +314,22 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
 
  */
 
+    public String getSummary(String netConnName)
+    {
+        if (!vectorNames.contains(netConnName)) return "No Net Conn of name: "+netConnName;
+        StringBuffer sb = new StringBuffer(""+netConnName+": " );
+        sb.append(getSourceCellGroup(netConnName) +" -> "+getTargetCellGroup(netConnName)+" (");
+        
+        for(SynapticProperties sp:getSynapseList(netConnName))
+        {
+                    if (!sb.toString().endsWith("(")) sb.append(", "+ sp.toString());
+                    else sb.append(sp.toString());
+        }
+        sb.append("), "+getSearchPattern(netConnName)+", "+ getConnectivityConditions(netConnName));
+        sb.append(", "+getMaxMinLength(netConnName)+", APSpeed: "+getAPSpeed(netConnName));
+        return sb.toString();
+    }
+    
 
     public Vector<SynapticProperties> getSynapseList(String complexConnName)
     {

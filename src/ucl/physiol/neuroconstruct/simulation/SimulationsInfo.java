@@ -308,8 +308,7 @@ public class SimulationsInfo extends AbstractTableModel
 
         if (mc != null && !mc.getName().equals(OriginalCompartmentalisation.ORIG_COMP))
         {
-        props.setProperty("Compartmentalisation", mc.getName());
-
+            props.setProperty("Compartmentalisation", mc.getName());
         }
 
         props.setProperty("Sim Config", simConfigInfo.toString());
@@ -494,9 +493,7 @@ public class SimulationsInfo extends AbstractTableModel
            String next = (String)simpNetCons.elementAt(i);
           if (simConfig.getNetConns().contains(next))
           {
-              props.setProperty("Net Conn: " + i, next
-                                +" from "+ project.morphNetworkConnectionsInfo.getSourceCellGroup(next)
-                                +" to "+ project.morphNetworkConnectionsInfo.getTargetCellGroup(next));
+              props.setProperty("Net Conn: " + i, project.morphNetworkConnectionsInfo.getSummary(next));
           }
        }
 
