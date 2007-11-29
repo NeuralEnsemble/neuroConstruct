@@ -242,8 +242,11 @@ attr.setValue(attrValue); // set the attribute value
 
             //File nmlFile = new File("examples/Ex9-GranCellLayer/savedNetworks/600.nml");
             //File nmlFile = new File("examples/Ex9-GranCellLayer/savedNetworks/75.nml");
+            //File nmlFile = new File("../copynCmodels/Parallel/savedNetworks/50000.nml");
+            //File nmlFile = new File("../copynCmodels/NewGranCellLayer/savedNetworks/87000Rand.nml");
             File nmlFile = new File("../temp/test.nml");
             //File nmlFile = new File("../copynCmodels/Parallel/savedNetworks/50000.nml");
+
 
             logger.logComment("Loading netml cell from " + nmlFile.getAbsolutePath(), true);
 
