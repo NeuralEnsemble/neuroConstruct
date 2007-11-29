@@ -3,5 +3,9 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="neuroConstruct_1.0.7.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/neuroConstruct/lib/hdf5/jhdf5.jar"/>
+	<classpathentry kind="lib" path="C:/neuroConstruct/lib/hdf5/jhdf5obj.jar"/>
+	<classpathentry kind="lib" path="C:/neuroConstruct/lib/hdf5/jhdf.jar"/>
+	<classpathentry kind="lib" path="C:/neuroConstruct/lib/hdf5/jhdfobj.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
