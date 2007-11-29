@@ -28,7 +28,7 @@ print("Going to create a NetworkML file...")
 myFile = NetworkMLFile()
 
 newPop = myFile.addPopulation("SampleCellGroup", "SampleCell")
-popSize = 20 
+popSize = 10 
 
 newProj = myFile.addProjection("NetConn_1", "SampleCellGroup", "SampleCellGroup")
 newProj.addSynapse("DoubExpSyn", 1, -20, 5)
@@ -47,4 +47,4 @@ for i in range(popSize):
 myFile.writeToFile("../../../temp/test.nml")
 
 
-print("Done!")
+print("All done!")
