@@ -39,6 +39,10 @@
     <property name="dist.dir" value="./dist"/>
 
     <property name="packages" value="ucl.physiol.neuroconstruct.*"/>
+    
+    
+    <property name="hdf5.libs" value="lib/hdf5"/>
+    
 
     <property name="build.dir" value="./"/>
     <property name="build.dest" value="./classes"/>
@@ -77,12 +81,16 @@
 
     <!-- Compilation class path -->
     <path id="compile.class.path">
+        <fileset dir="${hdf5.libs}">
+          <include name="*.jar"/>
+      </fileset>
 
     </path>
 
     <path id="run.class.path">
       <path refid="compile.class.path"/>
       <pathelement location="${neuroconstruct-core}"/>
+      
     </path>
 
   </target>
@@ -111,6 +119,7 @@
            optimize="${optimize}">
       <classpath refid="compile.class.path"/>
     </javac>
+    
     <copy todir="${build.dest}/${main.gui.dir}">
         <fileset dir="${src.dir}/${main.gui.dir}">
             <include name="*.png"/>
@@ -131,9 +140,9 @@
   <target name="makejar" depends="compile" description="Creates the jar file">
 
     <jar jarfile="${build.dir}/${name}_${version}.jar" basedir="${build.dest}">
-    <manifest>
-        <attribute name="Main-Class" value="${main.app.class}"/>
-    </manifest>
+        <manifest>
+            <attribute name="Main-Class" value="${main.app.class}"/>
+        </manifest>
     </jar>
   </target>
 
