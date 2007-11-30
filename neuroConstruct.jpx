@@ -29,7 +29,7 @@
   <property category="runtime.0" name="RunnableType" value="com.borland.jbuilder.runtime.ApplicationRunner"/>
   <property category="runtime.0" name="application.class" value="ucl.physiol.neuroconstruct.gui.MainApplication"/>
   <property category="runtime.0" name="application.parameters" value="-lastproj "/>
-  <property category="runtime.0" name="application.vmparameters" value="-Xmx800M -Xms400M"/>
+  <property category="runtime.0" name="application.vmparameters" value="-Xmx800M -Xms400M -Djava.library.path=lib/hdf5/win"/>
   <property category="runtime.1" name="BuildTargetOnRun" value="com.borland.jbuilder.build.ProjectBuilder$ProjectBuildAction;make"/>
   <property category="runtime.1" name="ConfigurationName" value="RunToo"/>
   <property category="runtime.1" name="RunnableType" value="com.borland.jbuilder.runtime.ApplicationRunner"/>
@@ -55,7 +55,7 @@
   <property category="sys" name="JbxEventListener0" value="ucl.physiol.neuroconstruct.project.ProjectEventListener"/>
   <property category="sys" name="JvmVersion" value="1.5"/>
   <property category="sys" name="LastTag" value="0"/>
-  <property category="sys" name="Libraries" value="JUnit;../Program Files/ncsa/hdfview2.3/lib/jhdf5.jar;../Program Files/ncsa/hdfview2.3/lib/jhdf5obj.jar;../Program Files/ncsa/hdfview2.3/lib/jhdf.jar;../Program Files/ncsa/hdfview2.3/lib/jhdfobj.jar"/>
+  <property category="sys" name="Libraries" value="JUnit;lib/hdf5/jhdf4obj.jar;lib/hdf5/jhdf5.jar;lib/hdf5/jhdf5obj.jar;lib/hdf5/jhdf.jar;lib/hdf5/jhdfobj.jar"/>
   <property category="sys" name="MakeStable" value="0"/>
   <property category="sys" name="OutPath" value="classes"/>
   <property category="sys" name="SourcePath" value="src;test"/>

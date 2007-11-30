@@ -9,6 +9,8 @@ See also the README file
 
 - For single compartment, spherical cells, the fract along is now always 0.5 in generated network connections
 
+- GENESIS double_endpoint...
+
 --- Version 1.0.4.1 (Aug 07)
 
 
