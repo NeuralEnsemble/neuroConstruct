@@ -27,7 +27,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  * which can be used by the rest of the application
  *
  * @author Padraig Gleeson
- *  
+ *
  *
  */
 
@@ -52,6 +52,7 @@ public class GenesisMorphReader extends FormatImporter
         try
         {
             boolean inRelativeCoordMode = true;
+            boolean doubleEndpoint = false;
 
             Reader in = new FileReader(morphologyFile);
             BufferedReader lineReader = new BufferedReader(in);
@@ -65,7 +66,7 @@ public class GenesisMorphReader extends FormatImporter
 
             String nextLine = null;
 
-            String currentCompartment = null;
+            String currentComptGroup = null;
 
             int lineCount = 0;
 
@@ -82,7 +83,7 @@ public class GenesisMorphReader extends FormatImporter
             {
                 lineCount++;
                 nextLine = nextLine.trim();
-                logger.logComment("Looking at line num " + lineCount + ": " + nextLine);
+                logger.logComment("----  Looking at line num " + lineCount + ": " + nextLine);
 
                 StringBuffer noComments = new StringBuffer();
                 for (int i = 0; i <= nextLine.length(); i++)
@@ -128,15 +129,28 @@ public class GenesisMorphReader extends FormatImporter
                         logger.logComment("Changing coord mode to absolute...");
                         inRelativeCoordMode = false;
                     }
+                    else if (nextLine.equals("*double_endpoint"))
+                    {
+                        logger.logComment("Setting double_endpoint on...");
+                        doubleEndpoint = true;
+                    }
+                    else if (nextLine.equals("*double_endpoint_off"))
+                    {
+                        logger.logComment("Setting double_endpoint off...");
+                        doubleEndpoint = false;
+                    }
+
+
+
 
                     else if (nextLine.startsWith("*compt "))
                     {
                         String compartment = nextLine.substring("*compt ".length()).trim();
                         logger.logComment("Changing current compartment to: " + compartment);
-                        currentCompartment = compartment.replace('/', '_');
-                        if (currentCompartment.startsWith("_"))
+                        currentComptGroup = compartment.replace('/', '_');
+                        if (currentComptGroup.startsWith("_"))
                         {
-                            currentCompartment = currentCompartment.substring(1);
+                            currentComptGroup = currentComptGroup.substring(1);
                         }
                     }
 
@@ -181,20 +195,38 @@ public class GenesisMorphReader extends FormatImporter
                         {
                             String segmentName = items[0];
                             String parentName = items[1];
-                            float xCoord = Float.parseFloat(items[2]);
-                            float yCoord = Float.parseFloat(items[3]);
-                            float zCoord = Float.parseFloat(items[4]);
+                            Point3f start = null;
+
+                            Point3f end = new Point3f(Float.parseFloat(items[2]),
+                                                        Float.parseFloat(items[3]),
+                                                        Float.parseFloat(items[4]));
+
                             float radius = Float.parseFloat(items[5]) / 2f;
+
+                            if (doubleEndpoint && items.length == 9)
+                            {
+                                start = new Point3f(end);
+
+                                end = new Point3f(Float.parseFloat(items[5]),
+                                                          Float.parseFloat(items[6]),
+                                                          Float.parseFloat(items[7]));
+
+                                radius = Float.parseFloat(items[8]) / 2f;
+                                logger.logComment("Found endpoint for comp: "+segmentName+": ("
+                                                  +end.x+", "+end.y+", "+end.z+")");
+                            }
 
                             if (parentName.equals("."))
                             {
                                 parentName = previousSegmentName;
                             }
+
                             previousSegmentName = segmentName;
+
                             logger.logComment("      ");
                             logger.logComment("        ------");
                             logger.logComment("SegmentName: " + segmentName + ", parent: " + parentName + ", radius: " +
-                                              radius);
+                                              radius+ ", end: "+ end );
 
                             Segment newSegment = null;
 
@@ -204,32 +236,41 @@ public class GenesisMorphReader extends FormatImporter
                                 logger.logComment("Creating the Soma, called: " + somaNameInFile);
 
                                 somaRadius = radius;
-                                if (currentShape == Segment.CYLINDRICAL_SHAPE)
+
+                                if (doubleEndpoint)
                                 {
                                     newSegment = cell.addFirstSomaSegment(somaRadius,
                                                              somaRadius,
                                                         somaNameInFile,
-                                                        new Point3f(),
-                                                        new Point3f(xCoord,
-                                                                    yCoord,
-                                                                    zCoord),
+                                                        start,
+                                                        end,
                                                         new Section(somaNameInFile));
                                 }
                                 else
                                 {
-                                    newSegment = cell.addFirstSomaSegment(somaRadius,
-                                                             somaRadius,
-                                                        somaNameInFile,
-                                                        null,
-                                                        null,
-                                                        new Section(somaNameInFile));
-
+                                    if (currentShape == Segment.CYLINDRICAL_SHAPE)
+                                    {
+                                        newSegment = cell.addFirstSomaSegment(somaRadius,
+                                            somaRadius,
+                                            somaNameInFile,
+                                            new Point3f(0, 0, 0),
+                                            end,
+                                            new Section(somaNameInFile));
+                                    }
+                                    else
+                                    {
+                                        newSegment = cell.addFirstSomaSegment(somaRadius,
+                                            somaRadius,
+                                            somaNameInFile,
+                                            end,
+                                            end,
+                                            new Section(somaNameInFile));
+                                    }
                                 }
-
-                                if (currentCompartment != null)
+                                if (currentComptGroup != null)
                                 {
-                                    logger.logComment("Adding soma to group: " + currentCompartment);
-                                    newSegment.getSection().addToGroup(currentCompartment);
+                                    logger.logComment("Adding soma to group: " + currentComptGroup);
+                                    newSegment.getSection().addToGroup(currentComptGroup);
                                 }
                                 namesVsSegments.put(parentName, newSegment);
 
@@ -237,9 +278,7 @@ public class GenesisMorphReader extends FormatImporter
                             else
                             {
                                 if (inRelativeCoordMode &&
-                                    xCoord == 0 &&
-                                    yCoord == 0 &&
-                                    zCoord == 0)
+                                    (!doubleEndpoint && end.distance(new Point3f())==0))
                                 {
                                     String error = new String("Zero length segment at line " + lineCount + ": " +
                                                               nextLine);
@@ -264,28 +303,32 @@ public class GenesisMorphReader extends FormatImporter
 
                                     logger.logComment("Adding it as a dendritic tree to \"top\" of soma");
                                     Point3f posnEndPoint = null;
+                                    Point3f posnStartPoint = null;
+
+
                                     if (inRelativeCoordMode)
                                     {
-                                        posnEndPoint = new Point3f(xCoord,
-                                                                   yCoord,
-                                                                   zCoord);
+                                        posnEndPoint = new Point3f(end);
+                                        if (start!=null) posnStartPoint = new Point3f(start);
 
                                         if (cell.getFirstSomaSegment().getSegmentShape()
                                                == Segment.CYLINDRICAL_SHAPE)
                                         {
                                             posnEndPoint.add(cell.getFirstSomaSegment().getEndPointPosition());
+                                            if (start!=null) posnStartPoint.add(cell.getFirstSomaSegment().getEndPointPosition());
                                         }
                                     }
                                     else
                                     {
-                                        posnEndPoint = new Point3f(xCoord,
-                                                                   yCoord,
-                                                                   zCoord);
+                                        posnEndPoint = new Point3f(end);
+                                        if (start!=null) posnStartPoint = new Point3f(start);
                                     }
-                                    
+
                                     Segment parent = cell.getFirstSomaSegment();
-                                    
-                                    
+
+
+
+
                                     newSegment
                                         = cell.addDendriticSegment(radius,
                                                                    segmentName,
@@ -297,42 +340,55 @@ public class GenesisMorphReader extends FormatImporter
 
                                     newSegment.getSection().setStartRadius(radius);
 
+                                    if (doubleEndpoint)
+                                    {
+                                        newSegment.getSection().setStartPointPositionX(posnStartPoint.x);
+                                        newSegment.getSection().setStartPointPositionY(posnStartPoint.y);
+                                        newSegment.getSection().setStartPointPositionZ(posnStartPoint.z);
+                                    }
+
 
                                     namesVsSegments.put(segmentName, newSegment);
 
-                                    if (currentCompartment != null)
+                                    if (currentComptGroup != null)
                                     {
 
-                                        logger.logComment("Adding newSegment to group: " + currentCompartment);
-                                        newSegment.getSection().addToGroup(currentCompartment);
+                                        logger.logComment("Adding newSegment to group: " + currentComptGroup);
+                                        newSegment.getSection().addToGroup(currentComptGroup);
                                     }
                                 }
                                 else
                                 {
                                     Segment parentSeg = (Segment)namesVsSegments.get(parentName);
                                     logger.logComment("Parent seg: "+ parentSeg);
-                                    Point3f positionParent = parentSeg.getEndPointPosition();
+                                    Point3f posParent = parentSeg.getEndPointPosition();
 
-                                    Point3f posnNewEndPoint = null;
+                                    Point3f posnEndPoint = null;
+                                    Point3f posnStartPoint = null;
+
                                     if (inRelativeCoordMode)
                                     {
-                                        posnNewEndPoint = new Point3f(positionParent.x + xCoord,
-                                                                      positionParent.y + yCoord,
-                                                                      positionParent.z + zCoord);
+                                        posnEndPoint = new Point3f(end);
+                                        posnEndPoint.add(posParent);
+
+                                        if (start!=null)
+                                        {
+                                            posnStartPoint = new Point3f(start);
+                                            posnStartPoint.add(posParent);
+                                        }
                                     }
                                     else
                                     {
-                                        posnNewEndPoint = new Point3f(xCoord,
-                                                                      yCoord,
-                                                                      zCoord);
+                                        posnEndPoint = new Point3f(end);
+                                        if (start!=null) posnStartPoint = new Point3f(start);
 
                                     }
-                                    logger.logComment("End point: " + Utils3D.getShortStringDesc(posnNewEndPoint));
+                                    logger.logComment("End point: " + Utils3D.getShortStringDesc(posnEndPoint));
 
 
                                     newSegment = cell.addDendriticSegment(radius,
                                                              segmentName,
-                                                             posnNewEndPoint,
+                                                             posnEndPoint,
                                                              parentSeg,
                                                              1,
                                                              segmentName,
@@ -340,14 +396,20 @@ public class GenesisMorphReader extends FormatImporter
 
                                     newSegment.getSection().setStartRadius(radius);
 
+                                    if (doubleEndpoint)
+                                    {
+                                        newSegment.getSection().setStartPointPositionX(posnStartPoint.x);
+                                        newSegment.getSection().setStartPointPositionY(posnStartPoint.y);
+                                        newSegment.getSection().setStartPointPositionZ(posnStartPoint.z);
+                                    }
 
                                     namesVsSegments.put(segmentName, newSegment);
 
-                                    if (currentCompartment != null)
+                                    if (currentComptGroup != null)
                                     {
 
-                                        logger.logComment("Adding newSegment to group: " + currentCompartment);
-                                        newSegment.getSection().addToGroup(currentCompartment);
+                                        logger.logComment("Adding newSegment to group: " + currentComptGroup);
+                                        newSegment.getSection().addToGroup(currentComptGroup);
                                     }
 
                                 }
@@ -375,7 +437,6 @@ public class GenesisMorphReader extends FormatImporter
             return null;
         }
         logger.logComment("Completed parsing of file: " + morphologyFile);
-        //logger.logComment("Cell info: " + CellTopologyHelper.printDetails(cell));
 
         return cell;
     }
@@ -383,7 +444,8 @@ public class GenesisMorphReader extends FormatImporter
     public static void main(String[] args)
     {
         //File f = new File("C:\\nrn54\\Morphology\\Purk2M0.p");
-        File f = new File("/home/padraig/genesis/Scripts/pattraub/CA1.p");
+        //File f = new File("/home/padraig/genesis/Scripts/pattraub/CA1.p");
+        File f = new File("Y:\\Padraig\\Datas\\WvG\\NewPC.p");
 
         try
         {
