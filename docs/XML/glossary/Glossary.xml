@@ -859,6 +859,14 @@ Set to MAX if no restriction applies.</defined>
     <defined>Select this to use the basic variable time step in NEURON. Note that dt will be ignored in this case.</defined>
 </term>
 
+<term hidden="true">
+    <name>NeuronGenAllMod</name>
+    <defined>Select this to generate and compile all of the mod files that can be generated from the entries at 
+             the Cell Mechanisms tab. If unselected, only the mod files needed in this Simulation Configuration 
+             will be generated. Selecting this option is useful if you wish to add extra mechanisms in the 
+             'Extra hoc code' blocks, which aren't present in the cell specification.</defined>
+</term>
+
 
 
 <!--  nmodlEditor Tips -->
