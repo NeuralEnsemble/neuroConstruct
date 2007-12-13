@@ -13,18 +13,7 @@
 
 
 
-import logging
-
-
-logformat = "%(name)-19s %(levelname)-5s- %(message)s"
-logging.basicConfig(level=logging.INFO, format=logformat)
-    
-log = logging.getLogger("NetworkMLUtils")
-    
-
-
-
-class NetworkMLFile():
+class NetworkMLFile:
     
     currNeuroMLVersion = 1.7
     
@@ -35,7 +24,7 @@ class NetworkMLFile():
     
     def __init__(self):
         
-        log.info("NetworkMLFile object created")
+        print("NetworkMLFile object created")
         self.populations = []
         self.projections = []
         
@@ -60,7 +49,7 @@ class NetworkMLFile():
         
     def writeToFile(self, filename):
         
-        log.info("NetworkMLFile going to be written to: "+ str(filename))
+        print("NetworkMLFile going to be written to: "+ str(filename))
         
         out_file = open(filename, "w")
         
@@ -98,7 +87,7 @@ class NetworkMLFile():
         
         
         
-class Population():
+class Population:
     
     def __init__(self, populationName, cellType):
         self.popName = populationName
@@ -127,7 +116,7 @@ class Population():
         
         
         
-class Instance():
+class Instance:
     
     def __init__(self, id, x, y, z, node_id=-1):
         self.id = id
@@ -150,7 +139,7 @@ class Instance():
         
 
         
-class Projection():
+class Projection:
     
     def __init__(self, projectionName, source, target):
         self.projName = projectionName
@@ -188,7 +177,7 @@ class Projection():
         
         
         
-class SynapseProps():
+class SynapseProps:
     
     def __init__(self, synapseType, weight, threshold, internalDelay=0, preDelay=0, postDelay=0, propDelay=0):
         self.synapseType = synapseType
@@ -224,7 +213,7 @@ class SynapseProps():
         out_file.write(indent+"</synapse_props>\n")
         
         
-class Connection():
+class Connection:
     
     def __init__(self, id, preCellId, postCellId):
         self.id = id

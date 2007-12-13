@@ -15,8 +15,8 @@
 # Standard imports
 import sys
 import os
-import logging
 import math
+import xml
  
 # Import functionality from NeuroMLUtils
 sys.path.append("../NeuroMLUtils")
@@ -28,7 +28,7 @@ print("Going to create a NetworkML file...")
 myFile = NetworkMLFile()
 
 newPop = myFile.addPopulation("SampleCellGroup", "SampleCell")
-popSize = 10 
+popSize = 15 
 
 newProj = myFile.addProjection("NetConn_1", "SampleCellGroup", "SampleCellGroup")
 newProj.addSynapse("DoubExpSyn", 1, -20, 5)
