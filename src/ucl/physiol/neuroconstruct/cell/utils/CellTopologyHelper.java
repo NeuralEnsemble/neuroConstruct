@@ -982,10 +982,11 @@ public class CellTopologyHelper
         for (int i = 0; i < allSegments.size(); i++)
         {
             Segment seg = (Segment)allSegments.elementAt(i);
-            logger.logComment("Segment: "+ seg);
+            logger.logComment("Segment: "+ seg+", --- "+(seg.getEndPointPositionY())+" = "+(translation.y) +" = "+(seg.getEndPointPositionY()+translation.y));
             seg.setEndPointPositionX(seg.getEndPointPositionX()+translation.x);
             seg.setEndPointPositionY(seg.getEndPointPositionY()+translation.y);
             seg.setEndPointPositionZ(seg.getEndPointPositionZ()+translation.z);
+            logger.logComment("Segment: "+ seg);
 
             if (seg.isFirstSectionSegment())
             {
@@ -2372,7 +2373,8 @@ public class CellTopologyHelper
                             errorReport.append("Error: Section: " + nextSec.getSectionName() +
                                                " (int divs: "+nextSec.getNumberInternalDivisions()+") has too long an electrotonic length: " 
                                                + totalElecLen +" " + per+"> "+maxELen+"\n"
-                                               +"This can be rectified by viewing the cell in 3D, and setting a larger number of internal divisions in the section.\n");
+                                               +"This can be rectified by viewing the cell in 3D, and setting a larger number of internal divisions in the section.\n"
+                                               +"This can also be done automatically, see Electronic length in the Glossary.\n");
                         }
                         
                         if (!isSpherical && totalElecLen/(float)nextSec.getNumberInternalDivisions() < minELen)
@@ -3092,7 +3094,7 @@ public class CellTopologyHelper
 
         if(segmentsDisconnected.size()>0)
         {
-            warningReport.append("NOTE: Some segments found where start point is with incompatible with connection point on parent!!\n");
+            warningReport.append("NOTE: Some segments found where start point is incompatible with connection point on parent!!\n");
             for (int i = 0; i < segmentsDisconnected.size(); i++)
             {
                 warningReport.append(" - "+ segmentsDisconnected.elementAt(i)+"\n");

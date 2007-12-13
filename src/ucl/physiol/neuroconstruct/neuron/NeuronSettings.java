@@ -39,6 +39,8 @@ public class NeuronSettings
     private boolean generateComments = true;
 
     private boolean useVarTimeStep = false;
+    
+    private boolean genAllModFiles = false;
 
     //private subsApPropVel
 
@@ -175,6 +177,16 @@ public class NeuronSettings
     public void setVarTimeStep(boolean useVarTimeStep)
     {
         this.useVarTimeStep = useVarTimeStep;
+    }
+
+
+    public boolean isGenAllModFiles()
+    {
+        return genAllModFiles;
+    }
+    public void setGenAllModFiles(boolean genAllModFiles)
+    {
+        this.genAllModFiles = genAllModFiles;
     }
 
 

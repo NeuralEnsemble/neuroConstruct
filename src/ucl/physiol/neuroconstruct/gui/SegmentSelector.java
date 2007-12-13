@@ -1103,7 +1103,7 @@ public class SegmentSelector extends JFrame
         updateCellWithEnteredInfo();
 
         String cellValidity = CellTopologyHelper.getValidityStatus(myCell).getValidity();
-        GuiUtils.showInfoMessage(logger, "Cell validity status", cellValidity, this);
+        GuiUtils.showInfoMessage(logger, "Cell morphological validity status", "Morphological validity status: "+cellValidity, this);
     }
 
     void addInNewSec_actionPerformed(ActionEvent e)

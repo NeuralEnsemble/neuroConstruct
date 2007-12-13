@@ -245,5 +245,10 @@ public class CellTypeHelper
         if (morphFileCellTypes.contains(cellTypeName)) return true;
         else return false;
     }
+    
+    public static void main(String[] args)
+    {
+        System.out.println((float)(35.7788d - (18.7788d)));
+    }
 
 }

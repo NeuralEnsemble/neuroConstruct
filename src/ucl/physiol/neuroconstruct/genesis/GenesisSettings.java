@@ -144,6 +144,16 @@ public class GenesisSettings
     {
         return unitSystemToUse;
     }
+
+    public boolean isSIUnits()
+    {
+        return unitSystemToUse == UnitConverter.GENESIS_SI_UNITS;
+    }
+    public boolean isPhysiologicalUnits()
+    {
+        return unitSystemToUse == UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS;
+    }
+    
     public boolean isShowShapePlot()
     {
         return showShapePlot;

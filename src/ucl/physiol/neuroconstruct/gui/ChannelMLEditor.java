@@ -718,11 +718,11 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
             };
 
 
-            Project testProj = Project.loadProject(new File("examples\\Ex4-NEURONGENESIS\\Ex4-NEURONGENESIS.neuro.xml"),
+            Project testProj = Project.loadProject(new File("/bernal/models/Layer2_3PyramidalCell/Layer2_3PyramidalCell.neuro.xml"),
                                                    pel);
 
             //ChannelMLCellMechanism cmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("NaConductance_CML");
-            ChannelMLCellMechanism cmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("DoubExpSyn");
+            ChannelMLCellMechanism cmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("Kc");
 
             ChannelMLEditor frame = new ChannelMLEditor(cmlMechanism, testProj, pel);
 
@@ -843,7 +843,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
     }
 
     /**
-     * Preliminary rate equation plotter...
+     * Rate equation plotter. Not all cases covered yet...
      */
     public void jButtonPlot_actionPerformed(ActionEvent e)
     {
@@ -873,8 +873,6 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                 maxV = maxV/1000;
             };
             
-            
-
             try
             {
                 SimpleXMLEntity[] gates = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getHHGateXPath());
@@ -933,27 +931,56 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                         System.out.println("Found gate with state: " + gateState);
 
-                        SimpleXMLEntity[] voltageGateElements = gate.getXMLEntities(ChannelMLConstants.TRANSITION_ELEMENT + "/"
+                        SimpleXMLEntity[] gateElements = gate.getXMLEntities(ChannelMLConstants.TRANSITION_ELEMENT + "/"
                             + ChannelMLConstants.VOLTAGE_GATE_ELEMENT);
-
-                        for (int vgIndex = 0; vgIndex < voltageGateElements.length; vgIndex++)
+                        
+                        boolean voltConcGate = false;
+                        
+                        if (gateElements.length==0)
                         {
-                            if (voltageGateElements[vgIndex] instanceof SimpleXMLElement)
+                            gateElements = gate.getXMLEntities(ChannelMLConstants.TRANSITION_ELEMENT + "/"
+                                + ChannelMLConstants.VOLTAGE_CONC_GATE_ELEMENT);
+                            voltConcGate = true;
+                        }
+                        
+                        if (gateElements.length==0)
+                        {
+                            GuiUtils.showErrorMessage(logger, "Did not find any relevant voltage/conc dependent transitions in state: "+gateState, null, this);
+                        }
+                     
+
+                        for (int vgIndex = 0; vgIndex < gateElements.length; vgIndex++)
+                        {
+                            if (gateElements[vgIndex] instanceof SimpleXMLElement)
                             {
                                 Hashtable<String, DataSet> rateData = new Hashtable<String,DataSet>();
 
-                                SimpleXMLElement vg = (SimpleXMLElement)voltageGateElements[vgIndex];
+                                SimpleXMLElement vg = (SimpleXMLElement)gateElements[vgIndex];
 
                                 ArrayList<SimpleXMLEntity> rates = vg.getContents();
+                                
+                                String concVarName = null;
+                                float concVarVal = -1;
+                                float concMin = -1;
+                                float concMax = -1;
 
                                 for (SimpleXMLEntity child: rates)
                                 {
 
                                     if (child instanceof SimpleXMLElement)
                                     {
+                                        //Enumeration<String> prevRate = rateData.keys();
+                                        
                                         SimpleXMLElement rate = (SimpleXMLElement)child;
 
                                         System.out.println("Found: " + rate);
+                                        
+                                        if (rate.getName().equals(ChannelMLConstants.CONC_DEP_ELEMENT))
+                                        {
+                                            concVarName = rate.getAttributeValue(ChannelMLConstants.CONC_DEP_VAR_NAME_ATTR);
+                                            concMin = Float.parseFloat(rate.getAttributeValue(ChannelMLConstants.CONC_DEP_MIN_CONC_ATTR));
+                                            concMax = Float.parseFloat(rate.getAttributeValue(ChannelMLConstants.CONC_DEP_MAX_CONC_ATTR));
+                                        }
 
 
                                         String expression = null;
@@ -1056,6 +1083,21 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                                 
                                                 expression = expr;
                                                 
+                                                if (voltConcGate && expr.indexOf(concVarName)>0)
+                                                {
+                                                    String val = JOptionPane.showInputDialog(this, "A concentration dependent expression for the gating variable has been found:\n"
+                                                            +expr+"\nPlease enter the value for "+concVarName+" to use in the graph. Max val: "+concMax+", min val: "+concMin, concMin + (concMax-concMin)/2);
+                                                    
+                                                    concVarVal = Float.parseFloat(val);
+                                                    
+                                                    Variable newRateVar = new Variable(concVarName);
+                                                    
+                                                    Variable[] tempMainVars = new Variable[mainVars.length+1];
+                                                    for(int i=0; i<mainVars.length;i++) tempMainVars[i] = mainVars[i];
+                                                    tempMainVars[mainVars.length] = newRateVar;
+                                                    mainVars = tempMainVars;
+                                                }
+                                                
                                                 
                                                 if (expr.indexOf("?")<0 && expr.indexOf(":")<0)
                                                 {
@@ -1141,13 +1183,13 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                             DataSet ds = new DataSet(dsRef, desc, "mV", "", "Membrane Potential", gateState);
                                             
 
-                                            for (int i = 0; i < numPoints; i++)
+                                            for (int j = 0; j < numPoints; j++)
                                             {
-                                                float nextVval = minV + ( (maxV - minV) * i / (numPoints));
+                                                float nextVval = minV + ( (maxV - minV) * j / (numPoints));
 
-                                                Argument[] a0 = new Argument[]
-                                                    {new Argument(v.getName(), nextVval),
-                                                    new Argument(temp.getName(), project.simulationParameters.getTemperature())};
+                                                Argument[] a0 = getArgsList(nextVval,
+                                                        v, temp, rateData, 
+                                                        concVarName, concVarVal, parsed, project, logger);
 
                                                 double condPreEval = condPreFunc.evaluateAt(a0);
                                                 double condPostEval = condPostFunc.evaluateAt(a0);
@@ -1169,7 +1211,17 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                                             rateData.put(rate.getName(), ds);
                                         }
+                                        
+
+                                        Variable newRateVar = new Variable(rate.getName());
+                                        
+                                        Variable[] tempMainVars = new Variable[mainVars.length+1];
+                                        for(int i=0; i<mainVars.length;i++) tempMainVars[i] = mainVars[i];
+                                        tempMainVars[mainVars.length] = newRateVar;
+                                        mainVars = tempMainVars;
                                     }
+                                    
+                                    
 
                                 }
 
@@ -1330,6 +1382,50 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         }
 
     }
+    
+    
+    private  Argument[] getArgsList(float nextVval,
+            Variable v, Variable temp, Hashtable<String, DataSet> rateData, 
+            String concVarName, float concVarVal, String parsed, Project project, ClassLogger logger)
+    {
+        int numMain = 2;
+        Argument concVar = null;
+        
+        if (concVarName!=null)
+        {
+            concVar = new Argument(concVarName, concVarVal);
+            numMain = 3;
+        }
+        
+        Argument[] a0 = new Argument[numMain + rateData.size()];
+        
+        a0[0] = new Argument(v.getName(), nextVval);
+        a0[1] = new Argument(temp.getName(), project.simulationParameters.getTemperature());
+
+        if (concVarName!=null)
+            a0[2] = concVar;
+        
+        Vector<String> prevRates = new Vector<String>(rateData.keySet());
+        
+        for(int k =0;k<prevRates.size();k++)
+        {
+            String argName = prevRates.get(k);
+            DataSet argDs = rateData.get(argName);
+            
+            try
+            {
+                a0[numMain+k] = new Argument(argName, argDs.getYvalue(nextVval));
+            }
+            catch (ValueNotPresentException e1)
+            {
+                GuiUtils.showErrorMessage(logger, 
+                        "Unable to determine value of variable: "+argName+" in DataSet:\n"+ argDs.getRefrence()
+                        +"\nto evaluate: "+ parsed, e1, this);
+                return null;
+            }
+        }
+        return a0;
+    }
 
     public void hyperlinkUpdate(HyperlinkEvent e)
     {
@@ -1483,6 +1579,8 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
         return in;
     }
+    
+    
 
 
 

@@ -606,7 +606,7 @@ public class NeuroMLPythonFileManager
 
         File nmlFileDir = ProjectStructure.getNeuroMLDir(project.getProjectMainDirectory());
 
-        GeneralUtils.removeAllFiles(nmlFileDir, false, true);
+        GeneralUtils.removeAllFiles(nmlFileDir, false, true, true);
 
 
     }

@@ -23,6 +23,7 @@ import org.xml.sax.*;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
+import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
@@ -320,7 +321,7 @@ public class MorphMLConverter extends FormatImporter
      * @param level The level (currently 1 for "pure" MorphML, or 2 to include channel distributions, level 3 for net aspects)
      * as defined in NeuroMLConstants
      */
-    public static void saveCellInMorphMLFormat(Cell cell, File morphMLFile, String level) throws MorphologyException
+    public static void saveCellInMorphMLFormat(Cell cell, Project project, File morphMLFile, String level) throws MorphologyException
     {
         try
         {
@@ -606,6 +607,8 @@ public class MorphMLConverter extends FormatImporter
 
                     mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_TYPE_ATTR,
                                                                     BiophysicsConstants.MECHANISM_TYPE_CHAN_MECH));
+                    
+
 
                     SimpleXMLElement paramElement = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
@@ -618,6 +621,54 @@ public class MorphMLConverter extends FormatImporter
                         UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + ""));
 
                     mechElement.addChildElement(paramElement);
+                    
+                    
+                    CellMechanism cm = project.cellMechanismInfo.getCellMechanism(chanMech.getName());
+                    
+                    if (cm instanceof ChannelMLCellMechanism)
+                    {
+                        ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism)cm;
+                        
+                        if (cmlCm.isPassiveNonSpecificCond())
+                        {
+                            mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_PASS_COND_ATTR,
+                                    "true"));
+
+                            SimpleXMLElement revPotParamElement = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
+
+                            revPotParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
+                                                                             BiophysicsConstants.PARAMETER_REV_POT));
+                            
+                            String xpath = ChannelMLConstants.getIonsXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
+                            String val = cmlCm.getXMLDoc().getValueByXPath(xpath);
+
+                            logger.logComment("Trying to get: "+ xpath+": "+ val);
+                            
+
+                            logger.logComment("Trying to get: "+ cmlCm.getXMLDoc().getXPathLocations(true), true);
+                            
+                            float revPot = Float.parseFloat(val);
+
+                            revPotParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
+                                                                             UnitConverter.getVoltage(revPot,
+                                UnitConverter.NEUROCONSTRUCT_UNITS,
+                                UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + ""));
+                            
+
+                            mechElement.addChildElement(revPotParamElement);
+                            
+                            Vector<String> groups = cell.getGroupsWithChanMech(chanMech);
+
+                            for (int k = 0; k < groups.size(); k++)
+                            {
+                                SimpleXMLElement groupElement = new SimpleXMLElement(prefix + BiophysicsConstants.GROUP_ELEMENT);
+                                revPotParamElement.addChildElement(groupElement);
+                                groupElement.addContent(groups.get(k));
+
+                            }
+                        }
+                    }
+
 
                     Vector<String> groups = cell.getGroupsWithChanMech(chanMech);
 
@@ -907,7 +958,7 @@ public class MorphMLConverter extends FormatImporter
                                     mappedCell.getInstanceName()
                                     + ProjectStructure.getMorphMLFileExtension());
 
-                MorphMLConverter.saveCellInMorphMLFormat(mappedCell, cellFile, level);
+                MorphMLConverter.saveCellInMorphMLFormat(mappedCell,project, cellFile, level);
                 
                 generatedCells.add(mappedCell);
          

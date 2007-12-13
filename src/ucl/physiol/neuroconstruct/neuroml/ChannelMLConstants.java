@@ -69,6 +69,7 @@ public class ChannelMLConstants
     public static String ION_ROLE_ATTR = "role";
 
     public static String ION_ROLE_PERMEATED = "PermeatedSubstance";
+    public static String ION_ROLE_PERMEATED_FIXED_REV_POT = "PermeatedSubstanceFixedRevPot";
     public static String ION_ROLE_MODULATING = "ModulatingSubstance";
     public static String ION_ROLE_SIGNALLING = "SignallingSubstance";
 
@@ -99,6 +100,11 @@ public class ChannelMLConstants
 
 
     public static String ION_CONC_ELEMENT = "ion_concentration";
+    
+
+    public static String ION_CONC_DEC_POOL_ELEMENT = "decaying_pool_model";
+    public static String ION_CONC_FIXED_POOL_ELEMENT = "fixed_pool_info";
+    public static String ION_CONC_FIXED_POOL_PHI_ELEMENT = "phi";
 
     public static String CURR_VOLT_REL_ELEMENT = "current_voltage_relation";
 
@@ -132,6 +138,14 @@ public class ChannelMLConstants
 
     public static String TRANSITION_ELEMENT = "transition";
     public static String VOLTAGE_GATE_ELEMENT = "voltage_gate";
+    public static String VOLTAGE_CONC_GATE_ELEMENT = "voltage_conc_gate";
+
+    public static String CONC_DEP_ELEMENT = "conc_dependence";
+    public static String CONC_DEP_NAME_ATTR = "name";
+    public static String CONC_DEP_ION_ATTR = "ion";
+    public static String CONC_DEP_VAR_NAME_ATTR = "variable_name";
+    public static String CONC_DEP_MIN_CONC_ATTR = "min_conc";
+    public static String CONC_DEP_MAX_CONC_ATTR = "max_conc";
 
     public static String ALPHA_ELEMENT = "alpha";
     public static String BETA_ELEMENT = "beta";
@@ -173,6 +187,22 @@ public class ChannelMLConstants
     public static String getIonConcTypeXPath()
     {
         return ChannelMLConstants.ROOT_ELEMENT + "/" + ION_CONC_ELEMENT;
+    }
+    
+    public static String getIonConcDecPoolXPath()
+    {
+        return getIonConcTypeXPath() + "/" + ION_CONC_DEC_POOL_ELEMENT;
+    }
+    
+    public static String getIonConcFixedPoolXPath()
+    {
+        return getIonConcDecPoolXPath() + "/" + ION_CONC_FIXED_POOL_ELEMENT;
+    }
+
+    
+    public static String getIonConcFixedPoolPhiXPath()
+    {
+        return getIonConcFixedPoolXPath() + "/" + ION_CONC_FIXED_POOL_PHI_ELEMENT;
     }
 
 

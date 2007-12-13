@@ -428,7 +428,7 @@ public class SimulationBrowser extends JDialog
         {
             SimulationData simData = allSims.getSimulationData(selectedSims[i]);
             File dirToDelete = simData.getSimulationDirectory();
-            GeneralUtils.removeAllFiles(dirToDelete, true, true);
+            GeneralUtils.removeAllFiles(dirToDelete, true, true, true);
 
         }
         refresh();

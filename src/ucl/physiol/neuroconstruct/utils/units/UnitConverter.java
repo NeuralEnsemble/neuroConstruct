@@ -582,6 +582,13 @@ public class UnitConverter
         return convert(value, oldUnits, newUnits).getMagnitude();
     }
 
+    public static double getArea(double value, int fromUnits, int toUnits)
+    {
+        Units oldUnits = areaUnits[fromUnits];
+        Units newUnits = areaUnits[toUnits];
+        return convert(value, oldUnits, newUnits).getMagnitude();
+    }
+
     public static double getLength(double value, int fromUnits, int toUnits)
     {
         Units oldUnits = lengthUnits[fromUnits];

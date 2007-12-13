@@ -450,17 +450,59 @@ public class GenesisMorphologyGenerator
                 {
 
                     try
-                    {
+                    {                      
+                        double genDens =  UnitConverter.getConductanceDensity(
+                                nextChanMech.getDensity(),
+                                UnitConverter.NEUROCONSTRUCT_UNITS,
+                                project.genesisSettings.getUnitSystemToUse());
+                        
                         logger.logComment("Adding chan mech: "+cellMech.getInstanceName()
                                           +", dens: "+nextChanMech.getDensity());
+                        
+                        if (cellMech.getMechanismType().equals(CellMechanism.ION_CONCENTRATION) &&
+                                cellMech instanceof ChannelMLCellMechanism)
+                        {
+                            ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism)cellMech;
+                            
+                            if (cmlMech.getValue(ChannelMLConstants.getIonConcFixedPoolXPath())!=null)
+                            {
+                                double phi = Float.parseFloat( cmlMech.getValue(ChannelMLConstants.getIonConcFixedPoolPhiXPath().trim()));
+                                
+                                phi = phi / UnitConverter.getCurrentDensity(1, 
+                                                                            UnitConverter.NEURON_UNITS, 
+                                                                            project.genesisSettings.getUnitSystemToUse());
+                                 
+                                SimpleCompartment comp = new SimpleCompartment(segment);
+                                
+                                double area = comp.getCurvedSurfaceArea();
+                                
+                                area =  area * ((UnitConverter.getArea(1, UnitConverter.NEURON_UNITS, 
+                                        project.genesisSettings.getUnitSystemToUse())));
+                                
+                                if (segment.isSpherical())  area = 4 * Math.PI * segment.getRadius()*segment.getRadius();
+                                
+                                double B = phi / area;
 
-                        channelCondString.append(cellMech.getInstanceName()
-                                                 + " "
-                                                 + UnitConverter.getConductanceDensity(
-                                                     nextChanMech.getDensity(),
-                                                     UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                     project.genesisSettings.getUnitSystemToUse())
-                                                 + " ");
+                                /** @todo Fix this for correct units of ConcFixedPool!!! ... */
+                                float factor = 1;
+                                if (project.genesisSettings.isPhysiologicalUnits()) factor = 100;
+                                if (project.genesisSettings.isSIUnits()) factor = 1e15f;
+                                
+                                B = -1 * B *factor; //-1 so readcell will use absolute value (see http://www.genesis-sim.org/GENESIS/Hyperdoc/Manual-25.html#ss25.131)
+                                
+                                logger.logComment("phi: "+ phi+", comp: "+comp.toString()+", area: "+ area+", B: "+B+", seg: "+segment.getRadius());
+
+                                channelCondString.append(cellMech.getInstanceName()+ " "+ B+ " ");
+                            }
+                            else
+                            {
+                                channelCondString.append(cellMech.getInstanceName()+ " "+ genDens+ " ");
+                            }
+                        }
+                        else
+                        {
+                            channelCondString.append(cellMech.getInstanceName()+ " "+ genDens+ " ");
+                        }
                     }
                     catch (Exception ex1)
                     {

@@ -661,7 +661,7 @@ public class GeneralUtils
     }
 
 
-    public static void removeAllFiles(File directory, boolean warn, boolean removeDirToo)
+    public static void removeAllFiles(File directory, boolean warn, boolean removeDirToo, boolean removeVC)
     {
 
         File[] allFiles = directory.listFiles();
@@ -685,7 +685,10 @@ public class GeneralUtils
             {
                 if (allFiles[i].isDirectory())
                 {
-                    removeAllFiles(allFiles[i], false, true);
+                    if (!(isVersionControlDir(allFiles[i].getName()) && !removeVC) )
+                    {
+                        removeAllFiles(allFiles[i], false, true, true);
+                    }
                 }
                 else
                 {

@@ -937,11 +937,11 @@ public class Project implements TableModelListener
             
             while (cellGroups.hasNext())
             {
-            String cg = cellGroups.next();
-            int numHere = generatedCellPositions.getNumberInCellGroup(cg);
-            if (numHere>0)
-            notes.append("Cell Group: "+cg+" contains "+numHere+" cells\n");
-            
+                String cg = cellGroups.next();
+                int numHere = generatedCellPositions.getNumberInCellGroup(cg);
+                if (numHere>0)
+                notes.append("Cell Group: "+cg+" contains "+numHere+" cells\n");
+                
             }
             notes.append("\n");
             

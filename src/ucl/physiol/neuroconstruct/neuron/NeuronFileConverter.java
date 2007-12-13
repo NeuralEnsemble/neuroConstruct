@@ -420,7 +420,7 @@ public class NeuronFileConverter
         for (int currLineNum = 0; currLineNum < lines.length; currLineNum++)
         {
             String originalLine = new String(lines[currLineNum]);
-            logger.logComment("  Looking at line: "+ originalLine);
+            logger.logComment("  - Looking at line: "+ originalLine);
 
 
             if (lines[currLineNum].trim().startsWith("{") &&
@@ -458,12 +458,22 @@ public class NeuronFileConverter
 
                 //sb.append(evaluateProcedureCall(lines[currLineNum], allProcedures) + "\n");
             }
-            else if (lines[currLineNum].indexOf("proc ") >= 0)
+            else if (lines[currLineNum].indexOf("proc ") >= 0 || 
+                      lines[currLineNum].indexOf("obfunc ") >= 0)   // For the time being, treating objfunc as a proc, will normally not be called inside the template...
             {
                 logger.logComment("Proc header: " + lines[currLineNum]);
 
-                String procName = lines[currLineNum].substring("proc ".length(), lines[currLineNum].indexOf('(')).
-                    trim();
+                
+                String procName = null;
+                
+                if (lines[currLineNum].indexOf("proc ") >= 0)
+                {
+                    procName = lines[currLineNum].substring("proc ".length(), lines[currLineNum].indexOf('(')).trim();
+                }
+                else if (lines[currLineNum].indexOf("obfunc ") >= 0)
+                {
+                    procName = lines[currLineNum].substring("obfunc ".length(), lines[currLineNum].indexOf('(')).trim();
+                }
 
                 int bracketCount = 1;
                 StringBuffer procedureLines = new StringBuffer();

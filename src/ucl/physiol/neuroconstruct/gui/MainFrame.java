@@ -380,6 +380,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     JPanel jPanelNeuronNumInt =  new JPanel();
     JCheckBox jCheckBoxNeuronNumInt = new JCheckBox("Use variable time step");
+    JCheckBox jCheckBoxNeuronGenAllMod = new JCheckBox("Generate all mod files");
 
     JPanel jPanelNeuronRandomGen =  new JPanel();
     JLabel jLabelNeuronRandomGenDesc = new JLabel("Random seed for NEURON:");
@@ -2882,6 +2883,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelRandomGen.add(jCheckBoxRandomGen);
 
         jPanelNeuronNumInt.add(this.jCheckBoxNeuronNumInt);
+        jPanelNeuronNumInt.add(this.jCheckBoxNeuronGenAllMod);
 
 
         jPanelNeuronRandomGen.add(jLabelNeuronRandomGenDesc, BorderLayout.WEST);
@@ -3633,6 +3635,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxSpecifySimRef);
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronSaveHoc);
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronNumInt);
+        addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronGenAllMod);
 
         addNamedDocumentListner(NEURON_SIMULATOR_TAB, jTextAreaNeuronBlock);
         ////addNamedDocumentListner(NEURON_SIMULATOR_TAB, jTextAreaNeuronAfter);
@@ -3800,6 +3803,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         this.jCheckBoxNeuronShowShapePlot.setToolTipText(toolTipText.getToolTip("NEURON 3D"));
 
         jCheckBoxNeuronNumInt.setToolTipText(toolTipText.getToolTip("NeuronNumInt"));
+        jCheckBoxNeuronGenAllMod.setToolTipText(toolTipText.getToolTip("NeuronGenAllMod"));
 
 
         jLabelSimDefDur.setToolTipText(toolTipText.getToolTip("Simulation def duration"));
@@ -4017,6 +4021,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 }
 
                 projManager.getCurrentProject().neuronSettings.setVarTimeStep(this.jCheckBoxNeuronNumInt.isSelected());
+
+
+                projManager.getCurrentProject().neuronSettings.setGenAllModFiles(this.jCheckBoxNeuronGenAllMod.isSelected());
 
 
                 try
@@ -5551,7 +5558,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         Vector allModFiles = projManager.getCurrentProject().neuronFileManager.getModFilesToCompile();
 
 
-        logger.logComment("--- Neuron mod files generated: "+allModFiles);
+        logger.logComment("--- Neuron mod files to compile: "+allModFiles);
 
 
         GeneralUtils.timeCheck("Neuron files all generated...");
@@ -8430,6 +8437,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jCheckBoxNeuronComments.setEnabled(false);
 
             this.jCheckBoxNeuronNumInt.setEnabled(false);
+            this.jCheckBoxNeuronGenAllMod.setEnabled(false);
 
             this.jComboBoxNeuronFileList.setEnabled(false);
             this.jCheckBoxNeuronLineNums.setEnabled(false);
@@ -8515,12 +8523,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jCheckBoxNeuronNoGraphicsMode.setEnabled(true);
             this.jCheckBoxNeuronComments.setEnabled(true);
             this.jCheckBoxNeuronNumInt.setEnabled(true);
+            this.jCheckBoxNeuronGenAllMod.setEnabled(true);
 
 
             this.jCheckBoxNeuronShowShapePlot.setSelected(projManager.getCurrentProject().neuronSettings.isShowShapePlot());
             this.jCheckBoxNeuronNoGraphicsMode.setSelected(!projManager.getCurrentProject().neuronSettings.isGraphicsMode());
             this.jCheckBoxNeuronComments.setSelected(projManager.getCurrentProject().neuronSettings.isGenerateComments());
             this.jCheckBoxNeuronNumInt.setSelected(projManager.getCurrentProject().neuronSettings.isVarTimeStep());
+
+            this.jCheckBoxNeuronGenAllMod.setSelected(projManager.getCurrentProject().neuronSettings.isGenAllModFiles());
 
             jComboBoxNeuronExtraBlocks.setEnabled(true);
 
@@ -9856,8 +9867,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         if (retval == JOptionPane.OK_OPTION)
         {
+            long start = System.currentTimeMillis();
             try
             {
+                
                 projManager.getCurrentProject().resetGenerated();
 
                 logger.logComment("Removing 3D network, as it's no longer relevant...");
@@ -9907,6 +9920,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 xmlReader.parse(is);
 
+
                 String prevSimConfig = nmlBuilder.getSimConfig();
                 long randomSeed = nmlBuilder.getRandomSeed();
 
@@ -9920,6 +9934,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 {
                     this.jComboBoxSimConfig.setSelectedItem(prevSimConfig);
                 }
+                
 
             }
             catch (Exception ex)
@@ -9927,10 +9942,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 GuiUtils.showErrorMessage(logger, "Error loading network info from: "+chooser.getSelectedFile(), ex, this);
                 return;
             }
+            long end = System.currentTimeMillis();
 
             SimConfig simConfig = getSelectedSimConfig();
 
-            jEditorPaneGenerateInfo.setText("Cell positions and network connections loaded from: <b>"+chooser.getSelectedFile()+"</b><br><br>"
+            jEditorPaneGenerateInfo.setText("Cell positions and network connections loaded from: <b>"+chooser.getSelectedFile()+"</b> in "+((end-start)/1000.0)+" seconds<br><br>"
                                             +"<center><b>Cell Groups:</b></center>"
                                             +projManager.getCurrentProject().generatedCellPositions.getHtmlReport()
                                             +"<center><b>Network Connections:</b></center>"
@@ -10819,9 +10835,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         Point3f oldStartPos = cellTypeToMove.getFirstSomaSegment().getStartPointPosition();
 
         CellTopologyHelper.translateAllPositions(cellTypeToMove,
-                                                 new Vector3f(oldStartPos.x*-1,
-                                                              oldStartPos.y*-1,
-                                                              oldStartPos.z*-1));
+                                                 new Vector3f(oldStartPos.x*-1f,
+                                                              oldStartPos.y*-1f,
+                                                              oldStartPos.z*-1f));
+        
         projManager.getCurrentProject().markProjectAsEdited();
 
         refreshTabCellTypes();
@@ -10884,7 +10901,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         File neuroMLDir = ProjectStructure.getNeuroMLDir(projManager.getCurrentProject().getProjectMainDirectory());
 
-        GeneralUtils.removeAllFiles(neuroMLDir, false, false);
+        GeneralUtils.removeAllFiles(neuroMLDir, false, false, false);
 
         MorphCompartmentalisation mc = (MorphCompartmentalisation)jComboBoxNeuroMLComps.getSelectedItem();
 
@@ -11393,7 +11410,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
         File dirForFiles = ProjectStructure.getDirForCellMechFiles(projManager.getCurrentProject(), cellMech.getInstanceName());
-        GeneralUtils.removeAllFiles(dirForFiles, true, true);
+        GeneralUtils.removeAllFiles(dirForFiles, true, true, true);
 
 
         projManager.getCurrentProject().cellMechanismInfo.deleteCellMechanism(cellMech);

@@ -14,7 +14,16 @@ package ucl.physiol.neuroconstruct.neuroml.hdf5;
 
 import ncsa.hdf.object.*;
 import ncsa.hdf.object.h5.*;
-import java.io.File;
+import java.io.*;
+import java.util.*;
+
+import javax.xml.parsers.*;
+
+import org.xml.sax.*;
+
+import ucl.physiol.neuroconstruct.neuroml.*;
+import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.utils.*;
 
 
 /**
@@ -26,6 +35,8 @@ import java.io.File;
 
 public class Hdf5Utils
 {
+    private static ClassLogger logger = new ClassLogger("Hdf5Utils");
+    
     public Hdf5Utils()
     {
         super();
@@ -102,6 +113,84 @@ public class Hdf5Utils
 
     public static void main(String[] args)
     {
-        Hdf5Utils hdf5utils = new Hdf5Utils();
+        String name = "TenMillionSyn";
+        File h5File = new File("../temp/"+name+".h5");
+        File newNMLFile = new File("../temp/"+name+".nml");
+        try
+        {
+            System.setProperty("java.library.path", System.getProperty("java.library.path")+":/home/padraig/neuroConstruct");
+            
+            logger.logComment("Sys prop: "+System.getProperty("java.library.path"), true);
+            
+            Project testProj = Project.loadProject(new File("examples/Ex9-GranCellLayer/Ex9-GranCellLayer.neuro.xml"),
+                                                   null);
+
+
+
+            GeneratedCellPositions gcp = testProj.generatedCellPositions;
+            GeneratedNetworkConnections gnc = testProj.generatedNetworkConnections;
+
+            int sizeCells = 10000;
+            int sizeConns = 10000000;
+            String preGrp = "Mossies";
+            String postGrp = "Grans";
+            
+            Random r = new Random();
+            
+            for(int i=0;i<sizeCells;i++)
+            {
+                gcp.addPosition(preGrp, new PositionRecord(i, 
+                                                       r.nextFloat()*1000, 
+                                                       r.nextFloat()*1000, 
+                                                       r.nextFloat()*1000));
+                
+                gcp.addPosition(postGrp, new PositionRecord(i, 
+                                                            r.nextFloat()*1000, 
+                                                            r.nextFloat()*1000, 
+                                                            r.nextFloat()*1000));
+            }
+
+            for(int i=0;i<sizeConns;i++)
+            {
+                int pre = r.nextInt(sizeCells);
+                int post = r.nextInt(sizeCells);
+                gnc.addSynapticConnection("NetConn_"+preGrp+"_"+postGrp, 
+                                        GeneratedNetworkConnections.MORPH_NETWORK_CONNECTION, 
+                                        pre, 
+                                          0, 
+                                          0.5f, 
+                                          post, 
+                                          0, 
+                                          0.5f, 
+                                          0, 
+                                          null);
+            }
+
+            logger.logComment("Cells: " + gcp.getNumberInAllCellGroups(), true);
+            logger.logComment("Net conn num: " + gnc.getNumberSynapticConnections(GeneratedNetworkConnections.ANY_NETWORK_CONNECTION), true);
+
+            NetworkMLWriter.createNetworkMLH5file(h5File, gcp, gnc);
+            
+            if (true) System.exit(0);
+            
+            File fileSaved = null;
+          
+
+            fileSaved = testProj.saveNetworkStructure(newNMLFile,
+                                                      false,
+                                                      false,
+                                                      testProj.simConfigInfo.getDefaultSimConfig().getName());
+     
+
+            logger.logComment("File saved: " + fileSaved.getCanonicalPath(), true);
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+
     }
 }

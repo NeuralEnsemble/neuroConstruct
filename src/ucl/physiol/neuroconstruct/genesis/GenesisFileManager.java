@@ -748,7 +748,7 @@ public class GenesisFileManager
 
         File genesisFileDir = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory());
 
-        GeneralUtils.removeAllFiles(genesisFileDir, false, true);
+        GeneralUtils.removeAllFiles(genesisFileDir, false, true, true);
 
 
     }
@@ -2302,18 +2302,19 @@ public class GenesisFileManager
             Hashtable<String, ArrayList<String>> ionCurrentSources = new Hashtable<String,ArrayList<String>>();
             Hashtable<String, ArrayList<String>> ionRateDependence = new Hashtable<String,ArrayList<String>>();
             Hashtable<String, ArrayList<String>> ionConcentration = new Hashtable<String,ArrayList<String>>();
+            Hashtable<String, ArrayList<String>> ionCurrFixedRevPot = new Hashtable<String,ArrayList<String>>();
 
             for (int j = 0; j < chanMechs.size(); j++)
             {
                 logger.logComment(j+"   -    Looking at Chan mech...: "+chanMechs.get(j));
 
                 String nextChanMech = chanMechs.get(j).getName();
-                CellMechanism cellProc = project.cellMechanismInfo.getCellMechanism(nextChanMech);
+                CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech);
 
 
-                if (cellProc instanceof ChannelMLCellMechanism)
+                if (cellMech instanceof ChannelMLCellMechanism)
                 {
-                    ChannelMLCellMechanism cmlp = (ChannelMLCellMechanism)cellProc;
+                    ChannelMLCellMechanism cmlp = (ChannelMLCellMechanism)cellMech;
 
                     String xpath = ChannelMLConstants.getIonsXPath();
                     logger.logComment("Checking xpath: " + xpath);
@@ -2343,7 +2344,7 @@ public class GenesisFileManager
                                         cellProcsDepOnIonConc = new ArrayList<String> ();
                                         ionRateDependence.put(name, cellProcsDepOnIonConc);
                                     }
-                                    cellProcsDepOnIonConc.add(cellProc.getInstanceName());
+                                    cellProcsDepOnIonConc.add(cellMech.getInstanceName());
 
                                 }
                                 else if (role!=null && (role.equals(ChannelMLConstants.ION_ROLE_SIGNALLING) ||
@@ -2355,12 +2356,24 @@ public class GenesisFileManager
                                         cellProcsInfluencingConc = new ArrayList<String> ();
                                         ionConcentration.put(name, cellProcsInfluencingConc);
                                     }
-                                    cellProcsInfluencingConc.add(cellProc.getInstanceName());
+                                    cellProcsInfluencingConc.add(cellMech.getInstanceName());
+
+                                }
+                                else if (role!=null && (role.equals(ChannelMLConstants.ION_ROLE_PERMEATED_FIXED_REV_POT)))
+                                {
+                                    ArrayList<String> cellMechsFixedRevPot = ionCurrFixedRevPot.get(name);
+                                    
+                                    if (cellMechsFixedRevPot==null)
+                                    {
+                                        cellMechsFixedRevPot = new ArrayList<String> ();
+                                        ionCurrFixedRevPot.put(name, cellMechsFixedRevPot);
+                                    }
+                                    cellMechsFixedRevPot.add(cellMech.getInstanceName());
 
                                 }
                                 else
                                 {
-                                    logger.logComment("Ignoring Transmitted, wait to see if they're explicitly mentioned in a channel...");
+                                    logger.logComment("Wait to see if others are explicitly mentioned in a channel...");
                                 }
 
                             }
@@ -2383,7 +2396,7 @@ public class GenesisFileManager
                                 cellProcsTransmittingIon = new ArrayList<String> ();
                                 ionCurrentSources.put(ion_name, cellProcsTransmittingIon);
                             }
-                            cellProcsTransmittingIon.add(cellProc.getInstanceName());
+                            cellProcsTransmittingIon.add(cellMech.getInstanceName());
 
                         }
                         else
@@ -2392,9 +2405,6 @@ public class GenesisFileManager
                         }
 
 
-                        logger.logComment("ionConcentration: "+ ionConcentration);
-                        logger.logComment("ionRateDependence: "+ ionRateDependence);
-                        logger.logComment("ionCurrentSources: "+ ionCurrentSources);
 
                     }
                     catch(ChannelMLException ex)
@@ -2405,9 +2415,15 @@ public class GenesisFileManager
                 }
                 else
                 {
-                    logger.logComment("Note: "+ nextChanMech +", cell proc: "+ cellProc +" will not be used when linking ion sources and sinks...");
+                    logger.logComment("Note: "+ nextChanMech +", cell proc: "+ cellMech +" will not be used when linking ion sources and sinks...");
                 }
             }
+            
+
+            logger.logComment("ionConcentration: "+ ionConcentration);
+            logger.logComment("ionRateDependence: "+ ionRateDependence);
+            logger.logComment("ionCurrentSources: "+ ionCurrentSources);
+            logger.logComment("ionCurrFixedRevPot: "+ ionCurrFixedRevPot);
 
             Enumeration<String> ionsAffectingRates = ionRateDependence.keys();
 
@@ -2424,8 +2440,8 @@ public class GenesisFileManager
                     nameDefined = true;
                 }
 
-                addComment(response,
-                                       "The concentration of: " + ion + " has an effect on rate of " + cellProcsAffected);
+                addComment(response,"The concentration of: " + ion + " has an effect on rate of " 
+                        + cellProcsAffected);
 
                 response.append("foreach tempCompName ({el "+getCellGroupElementName(cellGroupName)+"/#/#})\n");
 

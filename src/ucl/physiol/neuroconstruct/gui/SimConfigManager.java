@@ -224,7 +224,7 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         for(MpiConfiguration mc: mcs)
         {
             jComboBoxMpiConfs.addItem(mc);
-            logger.logComment("Adding: "+ mc, true);
+            logger.logComment("Adding: "+ mc);
         }
 
         jComboBoxMpiConfs.addItemListener(this);
@@ -611,11 +611,11 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
             }
             this.jTextFieldSimDur.setText(simConfig.getSimDuration()+"");
             
-            logger.logComment("Before selected: "+jComboBoxMpiConfs.getSelectedItem(), true);
+            logger.logComment("Before selected: "+jComboBoxMpiConfs.getSelectedItem());
             
             jComboBoxMpiConfs.setSelectedItem(simConfig.getMpiConf());
             
-            logger.logComment("After selected: "+jComboBoxMpiConfs.getSelectedItem(), true);
+            logger.logComment("After selected: "+jComboBoxMpiConfs.getSelectedItem());
             
 
             ArrayList<String> incCellGroups = simConfig.getCellGroups();

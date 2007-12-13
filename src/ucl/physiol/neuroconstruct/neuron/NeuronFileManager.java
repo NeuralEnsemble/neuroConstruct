@@ -410,7 +410,7 @@ public class NeuronFileManager
 
         File hocFileDir = ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory());
 
-        GeneralUtils.removeAllFiles(hocFileDir, false, true);
+        GeneralUtils.removeAllFiles(hocFileDir, false, true, true);
 
     }
 
@@ -2347,7 +2347,7 @@ public class NeuronFileManager
                     }
                 }
 
-                logger.logComment("------------    All cell mechs: " + cellMechanisms);
+                logger.logComment("------------    All cell mechs: " + cellMechanisms, true);
 
                 for (int i = 0; i < cellMechanisms.size(); i++)
                 {
@@ -2377,7 +2377,6 @@ public class NeuronFileManager
 
                     if (!cellMechFilesGenAndIncl.contains(cellMechanism.getInstanceName()))
                     {
-
                         boolean success = false;
                         if (cellMechanism instanceof AbstractedCellMechanism)
                         {
@@ -2613,8 +2612,7 @@ public class NeuronFileManager
 
         }
         
-        // @todo: put this option in GUI
-        boolean genAllModFiles = true; 
+        boolean genAllModFiles = project.neuronSettings.isGenAllModFiles(); 
         
         
         if (genAllModFiles)
@@ -4525,7 +4523,9 @@ public class NeuronFileManager
     public Vector<String> getModFilesToCompile()
     {
         Vector<String> allMods = new Vector<String>(this.stimModFilesRequired);
+        
         allMods.addAll(cellMechFilesGenAndIncl);
+        
 
         return allMods;
     }

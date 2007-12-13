@@ -457,8 +457,17 @@ public class NeuronMorphReader extends FormatImporter
                else if (nextLine.startsWith("nseg "))
                {
                    String val = nextLine.substring(nextLine.indexOf("=")+1).trim();
-                   if (accessedSection!=null)
-                       accessedSection.setNumberInternalDivisions(Integer.parseInt(val));
+                   //if (val.index)
+                   try
+                   {
+                       if (accessedSection!=null)
+                           accessedSection.setNumberInternalDivisions(Integer.parseInt(val));
+                   }
+                   catch (NumberFormatException nfe)
+                   {
+                       GuiUtils.showWarningMessage(logger, "Unable to parse expression for nseg: "+ val, null);
+                       
+                   }
 
                    logger.logComment("Section accessed: " + accessedSection);
                }
@@ -534,6 +543,13 @@ public class NeuronMorphReader extends FormatImporter
         if (seg != null) return true;
 
         String alternateName = sectionName + "[0]";
+
+        logger.logComment("Searching for "+alternateName+" in segs: " + this.createdFirstSegments.keySet());
+
+        // try...
+        if (createdFirstSegments.get(alternateName)!=null) return true;
+
+        alternateName = sectionName + "_0";
 
         logger.logComment("Searching for "+alternateName+" in segs: " + this.createdFirstSegments.keySet());
 

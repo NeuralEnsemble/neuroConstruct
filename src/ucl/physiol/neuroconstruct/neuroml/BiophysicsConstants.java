@@ -46,10 +46,12 @@ public class BiophysicsConstants
 
 
     public static String PARAMETER_GMAX = "gmax";
+    public static String PARAMETER_REV_POT = "e";
 
 
     public static String MECHANISM_NAME_ATTR = "name";
     public static String MECHANISM_TYPE_ATTR = "type";
+    public static String MECHANISM_PASS_COND_ATTR = "passiveConductance";
 
     //public static String MECHANISM_TYPE_MEMB_COND = "Membrane Conductance";
     public static String MECHANISM_TYPE_CHAN_MECH = "Channel Mechanism";
