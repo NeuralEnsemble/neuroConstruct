@@ -213,6 +213,21 @@
     </java>
   </target>
 
+  <!-- =================================================================== -->
+  <!-- Run main application, opening last project                                                -->
+  <!-- =================================================================== -->
+
+  <target name="runlast" depends="makejar"
+          description="Runs the main application, opening last project">
+    <java classname="${main.app.class}"
+          fork="true">
+        <jvmarg value="-Xmx2000M" />
+        <jvmarg value="-Xms1000M" />
+        <arg value="-lastproj"/>
+        <classpath refid="run.class.path"/>
+    </java>
+  </target>
+
 
 
   <!-- =================================================================== -->
