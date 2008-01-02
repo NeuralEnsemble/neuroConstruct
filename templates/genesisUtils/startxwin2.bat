@@ -2,12 +2,14 @@
 @echo off
 
 
+REM  
 REM
-REM
-REM   This is a modified form of startxwin.bat used to launch genesis 
-REM   simulations from neuroConstruct. It assumes cygwin installed at
-REM   C:\cygwin and genesis installed at /usr/local/genesis i.e.
-REM   C:\cygwin\usr\local\genesis
+REM  PG:  This is a modified form of startxwin.bat used to launch genesis 
+REM  PG:  simulations from neuroConstruct. It assumes cygwin is installed at
+REM  PG:  C:\cygwin (get it from http://www.cygwin.com) and genesis is installed 
+REM  PG:  at /usr/local/genesis i.e. C:\cygwin\usr\local\genesis (see
+REM  PG:  http://www.genesis-sim.org/GENESIS/genesis-cygwin. 
+REM  PG:  You'll need to have the xwin/xterm packages installed via cygwin.
 REM
 REM
 
@@ -164,7 +166,7 @@ REM Startup an xterm, using bash as the shell.
 
 
 
-REM    ****  Only change to the original startxwin.bat ****
+REM PG:    ****  Only change to the original startxwin.bat ****
 
 
 %RUN% xterm -e /usr/bin/bash -l -c '/usr/local/genesis/genesis.exe %1'
