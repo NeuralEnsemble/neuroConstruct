@@ -1288,8 +1288,6 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
             {
                 GuiUtils.showErrorMessage(logger, "Error calculating plots for ChannelML process: "+ cmlMechanism, ex, this);
             }
-
-
         }
         else if (cmlMechanism.isSynapticMechanism())
         {
@@ -1316,15 +1314,27 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                 float taur = Float.parseFloat(des.getAttributeValue(ChannelMLConstants.DES_RISE_TIME_ATTR));
                                 float taud = Float.parseFloat(des.getAttributeValue(ChannelMLConstants.DES_DECAY_TIME_ATTR));
 
+                                Variable t = new Variable("t");
+                                
                                 double tp = ( (taur * taud) / (taud - taur)) * Math.log(taud / taur);
                                 double factor = 1 / (Math.exp( -tp / taud) - Math.exp( -tp / taur));
 
+                                String expression = maxCond + " * "+factor + " * (exp(-1* t / "+taud+") - exp(-1* t / "+taur+"))";
+                                
                                 float startTime = 0;
                                 float endTime = taud*5;
+                                
+                                if (taur==0)
+                                {
+                                    expression =  maxCond + " * (exp(-1* t / "+taud+"))";
+                                }
+                                 
+                                if (taur==taud)
+                                {
+                                    expression =  maxCond + " * ( t / "+taud+") * (exp(1 - t / "+taud+"))";
+                                }
 
-                                Variable t = new Variable("t");
 
-                                 String expression = maxCond + " * "+factor + " * (exp(-1* t / "+taud+") - exp(-1* t / "+taur+"))";
 
                                  EquationUnit func = Expression.parseExpression(expression, new Variable[]{t});
 

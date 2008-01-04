@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir=".." name="neuroConstruct-IDE">
+    <property name="project.dir" value=".."/>
+    <property name="ant.script" value="${project.dir}/build.xml"/>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/41/freeform-config.html#runsingle) -->
+    <target name="run-selected-file-in-src">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        <ant antfile="${ant.script}" inheritall="false" target="makejar"/>
+        <java classname="${run.class}" failonerror="true" fork="true">
+            <classpath>
+                <pathelement path="${project.dir}/lib/hdf5/jhdf.jar;${project.dir}/lib/hdf5/jhdf4obj.jar;${project.dir}/lib/hdf5/jhdf5.jar;${project.dir}/lib/hdf5/jhdf5obj.jar;${project.dir}/lib/hdf5/jhdfobj.jar"/>
+            </classpath>
+        </java>
+    </target>
+</project>

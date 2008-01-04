@@ -198,7 +198,7 @@ public class SimPlotInfo extends AbstractTableModel
     /**
      * Added to allow storing of data by XMLEncoder. Should not normally be called!!!
      */
-    public Vector getAllSimPlots()
+    public Vector<SimPlot> getAllSimPlots()
     {
         return allPlots;
     }

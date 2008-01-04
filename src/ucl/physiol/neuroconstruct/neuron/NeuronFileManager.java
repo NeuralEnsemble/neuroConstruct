@@ -1769,6 +1769,9 @@ public class NeuronFileManager
                         String vectorObj = "v_" + objName;
                         String fileObj = "f_" + objName;
                         String apCountObj = "apc_" + objName;
+                        
+                        vectorObj = GeneralUtils.replaceAllTokens(vectorObj, ".", "_");
+                        fileObj = GeneralUtils.replaceAllTokens(fileObj, ".", "_");
 
                         response.append("objref " + vectorObj + "[" + numInCellGroup + "]\n");
                         if (isSpikeRecording) response.append("objref " + apCountObj + "[" + numInCellGroup + "]\n");
@@ -1849,6 +1852,8 @@ public class NeuronFileManager
 
                                     String vectorObj = "v_" + synObjName+"_"+neuronVar;
                                     String fileObj = "f_" + synObjName+"_"+neuronVar;
+                                    vectorObj = GeneralUtils.replaceAllTokens(vectorObj, ".", "_");
+                                    fileObj = GeneralUtils.replaceAllTokens(fileObj, ".", "_");
 
                                     response.append("objref " + vectorObj + "\n");
 
@@ -1887,6 +1892,10 @@ public class NeuronFileManager
 
                                 String vectorObj = "v_" + objName;
                                 String fileObj = "f_" + objName;
+
+                                vectorObj = GeneralUtils.replaceAllTokens(vectorObj, ".", "_");
+                                fileObj = GeneralUtils.replaceAllTokens(fileObj, ".", "_");
+                                    
                                 String apCountObj = "apc_" + objName;
 
                                 response.append("objref " + vectorObj + "\n");
@@ -2029,6 +2038,9 @@ public class NeuronFileManager
 
                             String vectObj = "v_" + objName;
                             String fileObj = "f_" + objName;
+                            
+                            vectObj = GeneralUtils.replaceAllTokens(vectObj, ".", "_");
+                            fileObj = GeneralUtils.replaceAllTokens(fileObj, ".", "_");
 
                             response.append("for i=0, " + (numInCellGroup - 1) + " {\n");
 
@@ -2086,6 +2098,9 @@ public class NeuronFileManager
 
                                         String vectorObj = "v_" + synObjName + "_" + neuronVar;
                                         String fileObj = "f_" + synObjName + "_" + neuronVar;
+                                        
+                                        vectorObj = GeneralUtils.replaceAllTokens(vectorObj, ".", "_");
+                                        fileObj = GeneralUtils.replaceAllTokens(fileObj, ".", "_");;
 
                                         prefix = "";
                                         post = "";
@@ -2127,6 +2142,10 @@ public class NeuronFileManager
 
                                     String vectObj = "v_" + objName;
                                     String fileObj = "f_" + objName;
+                                    
+                             
+                                vectObj = GeneralUtils.replaceAllTokens(vectObj, ".", "_");
+                                fileObj = GeneralUtils.replaceAllTokens(fileObj, ".", "_");
 
                                     prefix = "";
                                     post = "";
@@ -3799,9 +3818,6 @@ public class NeuronFileManager
                                                         UnitConverter.NEUROCONSTRUCT_UNITS,
                                                         UnitConverter.NEURON_UNITS);
         }
-
-
-
         return val;
     }
 

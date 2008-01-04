@@ -717,6 +717,23 @@ public class ProjectManager
 
             }
         }
+        
+        report.addTaggedElement("Validating Plot Settings...", "p");
+
+        Vector<SimPlot> plots = this.activeProject.simPlotInfo.getAllSimPlots();
+
+        for (SimPlot plot: plots)
+        {
+            if (!activeProject.cellGroupsInfo.getAllCellGroupNames().contains(plot.getCellGroup()))
+            {
+                report.addTaggedElement("Error, Plot: " + plot.getPlotReference() + " specifies Cell Group: " + plot.getCellGroup() +
+                                        ", but there isn't any Cell Group by that name in the project!",
+                                        "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
+                report.addBreak();
+
+                overallValidity = ValidityStatus.VALIDATION_ERROR;
+            }
+        }
 
 
         report.addTaggedElement("Validating simulation settings...", "p");
