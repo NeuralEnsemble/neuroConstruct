@@ -18,7 +18,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
 
 
  /**
-  * A class representing the propagation velocity of an action potential along a segment
+  * A class representing the propagation velocity of an action potential along a segment.
   * This can be used to calculate the time between the AP reaching the final fully simulated section of a cell
   * (where bio realistic ion channels are included) to the pre synaptic point. This therefore gives a pause between, say
   * the soma firing and a point on an axonal arborisation reaching threshold. Any additional delay specified for the synapse
