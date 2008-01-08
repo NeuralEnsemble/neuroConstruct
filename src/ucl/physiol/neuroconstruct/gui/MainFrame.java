@@ -11683,7 +11683,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                         "Is there a mapping (*.xsl) of this Cell Mechanism to "+ simEnvs[i] +
                                                         "?\n\n"
                                                         +"Note that the latest XSL mappings for NEURON and GENESIS "
-                                                        +"can be found in:\n" +ProjectStructure.getCMLTemplatesDir().getAbsolutePath() +"",
+                                                        +"can be found in:\n" +ProjectStructure.getCMLSchemasDir().getAbsolutePath() +"",
                                                         "Mapping to "+ simEnvs[i]+"?",
                                                         JOptionPane.YES_NO_OPTION);
 
@@ -11695,9 +11695,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 JFileChooser chooser = new JFileChooser();
                 chooser.setDialogType(JFileChooser.OPEN_DIALOG);
 
-                String lastCellMappingDir = ProjectStructure.getCMLSchemasDir().getAbsolutePath();
+                //String lastCellMappingDir = ProjectStructure.getCMLSchemasDir().getAbsolutePath();
 
-                defaultDir = new File(lastCellMappingDir);
+                defaultDir = ProjectStructure.getCMLSchemasDir();
 
                 chooser.setCurrentDirectory(defaultDir);
                 logger.logComment("Set Dialog dir to: " + defaultDir.getAbsolutePath());
