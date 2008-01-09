@@ -1,9 +1,0 @@
-#This file provides some additional information to help the import of the ChannelML files into neuroConstruct
-#Fri Jul 22 15:25:02 BST 2005
-DefaultName=KConductance
-Description=Simple HH K channel mapped to a Channel Builder file (NEURON) and a hh_channel (GENESIS)
-ChannelMLFile=../../Examples/ChannelML/KChannel.xml
-MappingNEURON=../../Schemata/v1.1/Level2/ChannelML_v1.1_NEURONChanBuild.xsl
-MappingGENESIS=../../Schemata/v1.1/Level2/ChannelML_v1.1_GENESIShhchan.xsl
-NEURONNeedsCompilation=false
-CellProcessType=Channel mechanism
