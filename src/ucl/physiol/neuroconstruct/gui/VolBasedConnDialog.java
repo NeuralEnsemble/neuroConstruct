@@ -200,7 +200,7 @@ public class VolBasedConnDialog extends JDialog
 
         connConds = new ConnectivityConditions();
 
-        Vector synapticTypes =  project.cellMechanismInfo.getAllSynMechNames();
+        Vector synapticTypes =  project.cellMechanismInfo.getAllChemElecSynMechNames();
 
         chosenSynapticPropList = new Vector<SynapticProperties>();
         chosenSynapticPropList.add(new SynapticProperties((String)synapticTypes.firstElement()));
@@ -1080,7 +1080,7 @@ c       */
     void jButtonSynPropsAdd_actionPerformed(ActionEvent e)
     {
 
-        Vector synapticTypes =  project.cellMechanismInfo.getAllSynMechNames();
+        Vector synapticTypes =  project.cellMechanismInfo.getAllChemElecSynMechNames();
         SynapticProperties newSynProps = new SynapticProperties((String)synapticTypes.firstElement());
 
         SynapticPropertiesDialog dlg = new SynapticPropertiesDialog(this, newSynProps,

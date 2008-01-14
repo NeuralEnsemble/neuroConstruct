@@ -204,7 +204,7 @@ public class SynapticPropertiesDialog extends JDialog
     {
         //ModFile[] inbuiltSynapses = ModFileHelper.getSynapseModFilesInDir(new File(GeneralProperties.getModTemplateDirectory()));
 
-        Vector synapticTypes =  project.cellMechanismInfo.getAllSynMechNames();
+        Vector synapticTypes =  project.cellMechanismInfo.getAllChemElecSynMechNames();
 
         for (int i = 0; i < synapticTypes.size(); i++)
         {

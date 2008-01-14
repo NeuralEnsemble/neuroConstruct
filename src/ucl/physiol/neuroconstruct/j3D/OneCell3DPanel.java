@@ -1389,7 +1389,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
     void jButtonEditSynapses_actionPerformed(ActionEvent e)
     {
-        Vector synapticTypes =  project.cellMechanismInfo.getAllSynMechNames();
+        Vector<String> synapticTypes =  project.cellMechanismInfo.getAllChemElecSynMechNames();
 
         EditGroupSynapseAssociations dlg = new EditGroupSynapseAssociations(displayedCell, myParent, "Synaptic process", synapticTypes);
         Dimension dlgSize = dlg.getPreferredSize();

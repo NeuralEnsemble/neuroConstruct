@@ -45,7 +45,7 @@ public class EditGroupSynapseAssociations extends JDialog implements ListSelecti
 
     Frame myParent = null;
 
-    Vector processOptions = null;
+    Vector<String> mechOptions = null;
 
     String processType = null;
 
@@ -95,11 +95,11 @@ public class EditGroupSynapseAssociations extends JDialog implements ListSelecti
     public EditGroupSynapseAssociations(Cell cell,
                                         Frame owner,
                                         String processType,
-                                        Vector processList) throws HeadlessException
+                                        Vector<String> mechList) throws HeadlessException
     {
         super(owner, "Edit Group to "+processType + " associations", true);
 
-        processOptions = processList;
+        mechOptions = mechList;
 
         //updateInterface = update;
         this.processType = processType;
@@ -107,11 +107,13 @@ public class EditGroupSynapseAssociations extends JDialog implements ListSelecti
         myCell = cell;
 
 
-        ArrayList<String> processes = cell.getAllAllowedSynapseTypes();
-        for (int i = 0; i < processes.size(); i++)
+        ArrayList<String> mechs = cell.getAllAllowedSynapseTypes();
+        
+        for (int i = 0; i < mechs.size(); i++)
         {
-            String nextProcess = processes.get(i);
-            if (!processList.contains(nextProcess))
+            String nextProcess = mechs.get(i);
+            
+            if (!mechList.contains(nextProcess))
             {
                 int result = JOptionPane.showConfirmDialog(this, "The synapse type " +
                                                            nextProcess +
@@ -293,9 +295,9 @@ public class EditGroupSynapseAssociations extends JDialog implements ListSelecti
         jComboBoxProcessNames.addItem(defaultProcessSelection);
 
 
-        for (int i = 0; i < processOptions.size(); i++)
+        for (int i = 0; i < mechOptions.size(); i++)
         {
-            jComboBoxProcessNames.addItem(processOptions.elementAt(i));
+            jComboBoxProcessNames.addItem(mechOptions.get(i));
         }
 
         logger.logComment("Finished initialising...");
@@ -367,6 +369,7 @@ public class EditGroupSynapseAssociations extends JDialog implements ListSelecti
         cell.associateGroupWithSynapse("all", "syno");
 
         Vector<String> list = new Vector<String>();
+        
         list.add("gg");
         list.add("hh");
         list.add("jj");

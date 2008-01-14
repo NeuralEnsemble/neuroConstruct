@@ -194,7 +194,7 @@ public class NetworkConnectionDialog extends JDialog
 
         enableEvents(AWTEvent.WINDOW_EVENT_MASK);
 
-        Vector synapticTypes =  project.cellMechanismInfo.getAllSynMechNames();
+        Vector synapticTypes =  project.cellMechanismInfo.getAllChemElecSynMechNames();
 
         initiallySuggestedName = proposedName;
 
@@ -990,7 +990,7 @@ public class NetworkConnectionDialog extends JDialog
     void jButtonSynPropsAdd_actionPerformed(ActionEvent e)
     {
 
-        Vector synapticTypes =  project.cellMechanismInfo.getAllSynMechNames();
+        Vector synapticTypes =  project.cellMechanismInfo.getAllChemElecSynMechNames();
         SynapticProperties newSynProps = new SynapticProperties((String)synapticTypes.firstElement());
 
         SynapticPropertiesDialog dlg = new SynapticPropertiesDialog(this, newSynProps,

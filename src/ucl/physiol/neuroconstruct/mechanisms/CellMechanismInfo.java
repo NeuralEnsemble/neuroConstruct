@@ -213,7 +213,7 @@ public class CellMechanismInfo extends AbstractTableModel
     }
 
 
-    public Vector<String> getAllSynMechNames()
+    public Vector<String> getAllChemSynMechNames()
     {
         Vector<String> allNames = new Vector<String>();
         for (int i = 0; i < getRowCount(); i++)
@@ -221,6 +221,34 @@ public class CellMechanismInfo extends AbstractTableModel
             CellMechanism nextCellMech = (CellMechanism) getCellMechanismAt(i);
             logger.logComment("-------     Checking cell mechanism: " + nextCellMech);
             if (nextCellMech.getMechanismType().equals(CellMechanism.SYNAPTIC_MECHANISM))
+                allNames.add(nextCellMech.getInstanceName());
+        }
+        return allNames;
+    }
+
+
+    public Vector<String> getAllChemElecSynMechNames()
+    {
+        Vector<String> allNames = new Vector<String>();
+        for (int i = 0; i < getRowCount(); i++)
+        {
+            CellMechanism nextCellMech = (CellMechanism) getCellMechanismAt(i);
+            logger.logComment("-------     Checking cell mechanism: " + nextCellMech);
+            if (nextCellMech.getMechanismType().equals(CellMechanism.SYNAPTIC_MECHANISM) ||
+                nextCellMech.getMechanismType().equals(CellMechanism.GAP_JUNCTION))
+                allNames.add(nextCellMech.getInstanceName());
+        }
+        return allNames;
+    }
+
+    public Vector<String> getAllElecSynMechNames()
+    {
+        Vector<String> allNames = new Vector<String>();
+        for (int i = 0; i < getRowCount(); i++)
+        {
+            CellMechanism nextCellMech = (CellMechanism) getCellMechanismAt(i);
+            logger.logComment("-------     Checking cell mechanism: " + nextCellMech);
+            if (nextCellMech.getMechanismType().equals(CellMechanism.GAP_JUNCTION))
                 allNames.add(nextCellMech.getInstanceName());
         }
         return allNames;

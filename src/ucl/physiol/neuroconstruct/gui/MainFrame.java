@@ -5023,7 +5023,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         num++;
         String newName = "AAConn_" + num;
 
-        Vector synapticTypes =  projManager.getCurrentProject().cellMechanismInfo.getAllSynMechNames();
+        Vector synapticTypes =  projManager.getCurrentProject().cellMechanismInfo.getAllChemElecSynMechNames();
 
         if (synapticTypes.size() == 0)
         {
@@ -5109,7 +5109,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         num++;
         String newName = "NetConn_" + num;
 
-        Vector synapticTypes =  projManager.getCurrentProject().cellMechanismInfo.getAllSynMechNames();
+        Vector synapticTypes =  projManager.getCurrentProject().cellMechanismInfo.getAllChemElecSynMechNames();
 
         if (synapticTypes.size() == 0)
         {
@@ -11464,7 +11464,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         Object[] options = {AbstractedCellMechanism.CHANNEL_MECHANISM,
             AbstractedCellMechanism.SYNAPTIC_MECHANISM,
-            AbstractedCellMechanism.ION_CONCENTRATION};
+            AbstractedCellMechanism.ION_CONCENTRATION,
+            AbstractedCellMechanism.POINT_PROCESS,
+            AbstractedCellMechanism.GAP_JUNCTION};
 
         JOptionPane option = new JOptionPane("Please select the type of Cell Mechanism",
                                              JOptionPane.DEFAULT_OPTION,
@@ -11602,7 +11604,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
         Object[] options = {CellMechanism.CHANNEL_MECHANISM,
-                            CellMechanism.SYNAPTIC_MECHANISM};
+                            CellMechanism.SYNAPTIC_MECHANISM,
+                            CellMechanism.ION_CONCENTRATION,
+                            CellMechanism.POINT_PROCESS,
+                            CellMechanism.GAP_JUNCTION};
 
         JOptionPane option = new JOptionPane("Please select the type of Cell Mechanism",
                                              JOptionPane.DEFAULT_OPTION,
@@ -11928,7 +11933,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             Object[] options =
                 {CellMechanism.CHANNEL_MECHANISM,
-                CellMechanism.SYNAPTIC_MECHANISM};
+                CellMechanism.SYNAPTIC_MECHANISM,
+                CellMechanism.ION_CONCENTRATION,
+                CellMechanism.POINT_PROCESS,
+                CellMechanism.GAP_JUNCTION};
 
             JOptionPane option = new JOptionPane("Please select the type of Cell Mechanism",
                                                  JOptionPane.DEFAULT_OPTION,

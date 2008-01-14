@@ -806,7 +806,7 @@ public class NeuronFileManager
 
         ArrayList<String> cellGroupNames = simConfig.getCellGroups();
 
-        logger.logComment("Looking at " + cellGroupNames.size() + " cell groups",true);
+        logger.logComment("Looking at " + cellGroupNames.size() + " cell groups");
         
         MpiConfiguration mpiConfig = simConfig.getMpiConf();
 
@@ -2366,7 +2366,7 @@ public class NeuronFileManager
                     }
                 }
 
-                logger.logComment("------------    All cell mechs: " + cellMechanisms, true);
+                logger.logComment("------------    All cell mechs: " + cellMechanisms);
 
                 for (int i = 0; i < cellMechanisms.size(); i++)
                 {
@@ -2839,6 +2839,15 @@ public class NeuronFileManager
                     }
                 }
             }
+            
+            boolean isGapJunction = false;
+            
+            if (synPropList.size()==1)
+            {
+                CellMechanism cm = project.cellMechanismInfo.getCellMechanism(synPropList.get(0).getSynapseType());
+                if (cm.getMechanismType().equals(CellMechanism.GAP_JUNCTION))
+                    isGapJunction = true;
+            }
 
             ArrayList<SingleSynapticConnection> allSynapses = project.generatedNetworkConnections.getSynapticConnections(netConnName);
             
@@ -2872,6 +2881,7 @@ public class NeuronFileManager
 
 
                     String objectVarName = getSynObjName(synObj);
+                    if (isGapJunction) objectVarName = "elec"+objectVarName;
 
                     /** @todo Remove the need for this... Revise how inbuilt synapses are stored/checked.. */
 
@@ -2895,7 +2905,7 @@ public class NeuronFileManager
 
                     logger.logComment("Target segment: " + targetSegment);
 
-                    float lengthAlongTargetSection
+                    float fractionAlongTargetSection
                         = CellTopologyHelper.getFractionAlongSection(targetCell,
                                                                      targetSegment,
                                                                      synConn.targetEndPoint.location.getFractAlong());
@@ -3000,155 +3010,190 @@ public class NeuronFileManager
                             +", TOTAL delay: "+totalDelay);
 
 
-                    response.append("objectvar " + objectVarName + "\n\n");
 
-
-
-                    if (!simConfig.getMpiConf().isParallel())
+                    
+                    if (!isGapJunction)
                     {
-                        // put synaptic start point on source axon
-                        response.append(tgtSecNameFull
-                                        + " "
-                                        + objectVarName
-                                        + " = new "
-                                        + synapseType
-                                        + "(" + lengthAlongTargetSection + ")\n");
 
-                        response.append(srcSecNameFull
-                                        + " "
-                                        + tgtCellName
-                                        + ".synlist.append(new NetCon(&v("+ fractAlongSourceSection + "), "
-                                        + objectVarName
-                                        + ", "
-                                        + threshold
-                                        + ", "
-                                        + totalDelay
-                                        + ", "
-                                        + weight
-                                        + "))" 
-                                        + "\n\n");
-
-                        CellMechanism cm = project.cellMechanismInfo.getCellMechanism(synProps.getSynapseType());
-
-                        if (cm instanceof AbstractedCellMechanism)
+                        response.append("objectvar " + objectVarName + "\n\n");
+                        
+                        if (!simConfig.getMpiConf().isParallel())
                         {
-                            AbstractedCellMechanism acm = (AbstractedCellMechanism)cm;
+                            // put synaptic start point on source axon
+                            response.append(tgtSecNameFull
+                                            + " "
+                                            + objectVarName
+                                            + " = new "
+                                            + synapseType
+                                            + "(" + fractionAlongTargetSection + ")\n");
 
-                            try
+                            response.append(srcSecNameFull
+                                            + " "
+                                            + tgtCellName
+                                            + ".synlist.append(new NetCon(&v("+ fractAlongSourceSection + "), "
+                                            + objectVarName
+                                            + ", "
+                                            + threshold
+                                            + ", "
+                                            + totalDelay
+                                            + ", "
+                                            + weight
+                                            + "))" 
+                                            + "\n\n");
+
+                            CellMechanism cm = project.cellMechanismInfo.getCellMechanism(synProps.getSynapseType());
+
+                            if (cm instanceof AbstractedCellMechanism)
                             {
-                                if (acm.getParameter("RequiresXYZ") == 1)
+                                AbstractedCellMechanism acm = (AbstractedCellMechanism)cm;
+
+                                try
                                 {
-                                    Point3f synRelToCell
-                                        = CellTopologyHelper.convertSegmentDisplacement(targetCell,
-                                        targetSegment.getSegmentId(),
-                                        synConn.targetEndPoint.location.getFractAlong());
+                                    if (acm.getParameter("RequiresXYZ") == 1)
+                                    {
+                                        Point3f synRelToCell = CellTopologyHelper.convertSegmentDisplacement(targetCell,
+                                            targetSegment.getSegmentId(),
+                                            synConn.targetEndPoint.location.getFractAlong());
 
-                                    Point3f posAbsSyn
-                                        = project.generatedCellPositions.getOneCellPosition(targetCellGroup,
-                                        synConn.targetEndPoint.cellNumber);
+                                        Point3f posAbsSyn  = project.generatedCellPositions.getOneCellPosition(targetCellGroup,
+                                            synConn.targetEndPoint.cellNumber);
 
-                                    posAbsSyn.add(synRelToCell);
+                                        posAbsSyn.add(synRelToCell);
 
-                                    addHocComment(response, "Synapse location on cell: " + synRelToCell);
-                                    addHocComment(response, "Synapse absolute location: " + posAbsSyn);
+                                        addHocComment(response, "Synapse location on cell: " + synRelToCell);
+                                        addHocComment(response, "Synapse absolute location: " + posAbsSyn);
 
-                                    response.append(objectVarName+".x = "+posAbsSyn.x+"\n");
-                                    response.append(objectVarName+".y = "+posAbsSyn.y+"\n");
-                                    response.append(objectVarName+".z = "+posAbsSyn.z+"\n\n");
+                                        response.append(objectVarName+".x = "+posAbsSyn.x+"\n");
+                                        response.append(objectVarName+".y = "+posAbsSyn.y+"\n");
+                                        response.append(objectVarName+".z = "+posAbsSyn.z+"\n\n");
+                                    }
+                                }
+                                catch (CellMechanismException ex)
+                                {
+                                    logger.logComment("No xyz parameter: "+ex);
                                 }
                             }
-                            catch (CellMechanismException ex)
-                            {
-                                logger.logComment("No xyz parameter: "+ex);
-                            }
                         }
-                    }
+                        else
+                        {
+                            if (!sourceSegment.getSection().isSomaSection())
+                            {
+                                response.append("print \"WARNING: source of synapse is not soma, not supported yet!! Assuming connection to soma!!\"\n");
+                            }
+                            response.append("localSynapseId = -2\n");
+                            response.append("globalPreSynId = "+globalPreSynId+"\n");
+
+                            String netConRef = "NetCon_"+globalPreSynId;
+
+                            response.append("objectvar " + netConRef + "\n\n");
+                            String ncTemp = netConRef + "_temp";
+                            response.append("objectvar " + ncTemp+"\n\n");
+
+                            String targetExists = "isCellOnNode(\""+ targetCellGroup + "\", "+ synConn.targetEndPoint.cellNumber + ")";
+                            String sourceExists = "isCellOnNode(\""+ sourceCellGroup + "\", " + synConn.sourceEndPoint.cellNumber + ")";
+
+                            if (addComments) response.append("print \"> Doing post syn setup for "+netConRef+", "+srcCellName+" -> "+tgtCellName+"\"\n\n");
+
+                            response.append("if ("+targetExists+") {\n");
+
+                            response.append("    "+tgtSecNameFull+" " + objectVarName
+                                            + " = new " + synapseType + "(" + fractionAlongTargetSection + ")\n");
+
+
+                            response.append("    "+tgtCellName+".synlist.append( "+ objectVarName + " )\n");
+
+                            response.append("    localSynapseId = "+tgtCellName+".synlist.count()-1\n");
+
+                            if (addComments) response.append("    print \"Created: \", "+objectVarName+",\" on "+tgtCellName+" on host \", hostid\n\n");
+
+                            response.append("} else {\n");
+                            if (addComments) response.append("    print \"Target not on host: \", hostid\n\n");
+                            response.append("}\n");
+
+                            if (addComments) response.append("print \"Doing pre syn setup for "+netConRef+"\"\n\n");
+
+                            response.append("if ("+sourceExists+") {\n"
+
+                                            +"    //pnm.register_cell(globalPreSynId, a_"+sourceCellGroup+"["+synConn.sourceEndPoint.cellNumber+"])\n"
+
+
+                                            +"    pnm.pc.set_gid2node(globalPreSynId, hostid)\n"
+                                            +"    "+srcSecNameFull+" "+netConRef+" = new NetCon(&v(1), nil)\n"
+
+                                            +"    pnm.pc.cell(globalPreSynId, "+netConRef+")\n");
+
+                            if (addComments) response.append("    print \"Created: \", "+netConRef+",\" on "+srcSecNameFull+" on host \", hostid\n\n");
+
+                            response.append("} else {\n");
+                            if (addComments) response.append("    print \"Source not on host: \", hostid\n\n");
+                            response.append("}\n");
+
+                            response.append("netConInfoParallel("+netConRef+")\n\n");
+
+
+                            response.append("//pnm.nc_append(globalPreSynId"
+                                            +", getCellGlobalId(\""+targetCellGroup+"\", "+synConn.targetEndPoint.cellNumber + ")"
+                                            +", localSynapseId, "+ weight + ", "
+                                            + (synInternalDelay + apSegmentPropDelay + apSpaceDelay)+ ")"
+                                            + "\n\n");
+
+                            if (addComments) response.append("print \"Doing pre to post attach for "+netConRef+"\"\n\n");
+
+                            response.append("if ("+targetExists+") {\n");
+
+
+                            response.append("    "+ncTemp+" = pnm.pc.gid_connect(globalPreSynId, a_" + targetCellGroup
+                                            + "[" + synConn.targetEndPoint.cellNumber + "]"
+                                            + ".synlist.object(localSynapseId))\n\n");
+
+                            response.append("    "+ncTemp+".delay = "+(synInternalDelay + apSegmentPropDelay + apSpaceDelay)+"\n");
+                            response.append("    "+ncTemp+".weight = "+weight+"\n\n");
+                            response.append("    "+ncTemp+".threshold = "+synProps.getThreshold()+"\n\n");
+
+                            response.append("    netConInfoParallel("+ncTemp+")\n\n");
+                            response.append("} else {\n");
+                            if (addComments) response.append("    print \"Target not on host: \", hostid\n\n");
+                            response.append("}\n");
+
+                            response.append("print \"< Done setup for "+netConRef+"\"\n\n");
+
+
+                        }
+                        globalPreSynId++;
+                    }                       // if (!isGapJunction)
                     else
                     {
-                        if (!sourceSegment.getSection().isSomaSection())
-                        {
-                            response.append("print \"WARNING: source of synapse is not soma, not supported yet!! Assuming connection to soma!!\"\n");
-                        }
-                        response.append("localSynapseId = -2\n");
-                        response.append("globalPreSynId = "+globalPreSynId+"\n");
+                        String gjListenA = objectVarName + "_A";
+                        String gjListenB = objectVarName + "_B";
                         
-                        String netConRef = "NetCon_"+globalPreSynId;
-
-                        response.append("objectvar " + netConRef + "\n\n");
-                        String ncTemp = netConRef + "_temp";
-                        response.append("objectvar " + ncTemp+"\n\n");
-
-                        String targetExists = "isCellOnNode(\""+ targetCellGroup + "\", "+ synConn.targetEndPoint.cellNumber + ")";
-                        String sourceExists = "isCellOnNode(\""+ sourceCellGroup + "\", " + synConn.sourceEndPoint.cellNumber + ")";
-
-                        if (addComments) response.append("print \"> Doing post syn setup for "+netConRef+", "+srcCellName+" -> "+tgtCellName+"\"\n\n");
-
-                        response.append("if ("+targetExists+") {\n");
-
-                        response.append("    "+tgtSecNameFull+" " + objectVarName
-                                        + " = new " + synapseType + "(" + lengthAlongTargetSection + ")\n");
-
-
-                        response.append("    "+tgtCellName+".synlist.append( "+ objectVarName + " )\n");
-
-                        response.append("    localSynapseId = "+tgtCellName+".synlist.count()-1\n");
-                        
-                        if (addComments) response.append("    print \"Created: \", "+objectVarName+",\" on "+tgtCellName+" on host \", hostid\n\n");
-                   
-                        response.append("} else {\n");
-                        if (addComments) response.append("    print \"Target not on host: \", hostid\n\n");
-                        response.append("}\n");
-
-                        if (addComments) response.append("print \"Doing pre syn setup for "+netConRef+"\"\n\n");
-                        
-                        response.append("if ("+sourceExists+") {\n"
-                                
-                                        +"    //pnm.register_cell(globalPreSynId, a_"+sourceCellGroup+"["+synConn.sourceEndPoint.cellNumber+"])\n"
-                                        
-                                        
-                                        +"    pnm.pc.set_gid2node(globalPreSynId, hostid)\n"
-                                        +"    "+srcSecNameFull+" "+netConRef+" = new NetCon(&v(1), nil)\n"
-                                        
-                                        +"    pnm.pc.cell(globalPreSynId, "+netConRef+")\n");
-
-                        if (addComments) response.append("    print \"Created: \", "+netConRef+",\" on "+srcSecNameFull+" on host \", hostid\n\n");
-
-                        response.append("} else {\n");
-                        if (addComments) response.append("    print \"Source not on host: \", hostid\n\n");
-                        response.append("}\n");
-
-                        response.append("netConInfoParallel("+netConRef+")\n\n");
-
-
-                        response.append("//pnm.nc_append(globalPreSynId"
-                                        +", getCellGlobalId(\""+targetCellGroup+"\", "+synConn.targetEndPoint.cellNumber + ")"
-                                        +", localSynapseId, "+ weight + ", "
-                                        + (synInternalDelay + apSegmentPropDelay + apSpaceDelay)+ ")"
-                                        + "\n\n");
-
-                        if (addComments) response.append("print \"Doing pre to post attach for "+netConRef+"\"\n\n");
-                        
-                        response.append("if ("+targetExists+") {\n");
+                        response.append("objectvar " + gjListenA+"\n\n");
+                        response.append("objectvar " + gjListenB+"\n\n");
                         
                         
-                        response.append("    "+ncTemp+" = pnm.pc.gid_connect(globalPreSynId, a_" + targetCellGroup
-                                        + "[" + synConn.targetEndPoint.cellNumber + "]"
-                                        + ".synlist.object(localSynapseId))\n\n");
+                        response.append(tgtSecNameFull + " { "
+                                        + gjListenA + " = new "
+                                        + synapseType + "(" + fractionAlongTargetSection + ") }\n");
+                        
+                        response.append(gjListenA + ".weight = "+weight+"\n");
 
-                        response.append("    "+ncTemp+".delay = "+(synInternalDelay + apSegmentPropDelay + apSpaceDelay)+"\n");
-                        response.append("    "+ncTemp+".weight = "+weight+"\n\n");
-                        response.append("    "+ncTemp+".threshold = "+synProps.getThreshold()+"\n\n");
+                        response.append("setpointer "+ gjListenA  + ".vgap, "
+                                        + srcSecNameFull + ".v("+ fractAlongSourceSection + ")" + "\n\n");
+                        
+                        
+                        response.append(srcSecNameFull + " { "
+                                        + gjListenB + " = new "
+                                        + synapseType + "(" + fractAlongSourceSection + ") }\n");
 
-                        response.append("    netConInfoParallel("+ncTemp+")\n\n");
-                        response.append("} else {\n");
-                        if (addComments) response.append("    print \"Target not on host: \", hostid\n\n");
-                        response.append("}\n");
-
-                        response.append("print \"< Done setup for "+netConRef+"\"\n\n");
+                        response.append(gjListenB + ".weight = "+weight+"\n");
+                        
+                        response.append("setpointer "+ gjListenB  + ".vgap, "
+                                        + tgtSecNameFull + ".v("+ fractionAlongTargetSection + ")" + "\n\n");
                         
 
+//a_CG1[0].Soma { gap1 = new GapJunc(0.5) }
+
+//setpointer gap1.vgap, a_CG1[1].Soma.v(0.5)
                     }
-                    globalPreSynId++;
 
 
                 }

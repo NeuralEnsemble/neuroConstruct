@@ -33,6 +33,8 @@ public abstract class CellMechanism
     public static final String CHANNEL_MECHANISM = "Channel mechanism";
     public static final String SYNAPTIC_MECHANISM = "Synaptic mechanism";
     public static final String ION_CONCENTRATION = "Ion concentration";
+    public static final String POINT_PROCESS = "Point process";
+    public static final String GAP_JUNCTION = "Gap junction";
 
     /**
      * Implementation methods

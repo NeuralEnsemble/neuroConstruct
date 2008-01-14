@@ -1292,7 +1292,7 @@ public class Project implements TableModelListener
                                          "   The filenames for the mappings are relative to the cellMechanism/(cellMechInstanceName) directory\n" +
                                          "   Mechanism Type should only have values: " +
                                          CellMechanism.CHANNEL_MECHANISM + ", " + CellMechanism.SYNAPTIC_MECHANISM
-                                         + ", " + CellMechanism.ION_CONCENTRATION + "\n\n");
+                                         + ", " + CellMechanism.ION_CONCENTRATION + ", " + CellMechanism.POINT_PROCESS + ", " + CellMechanism.GAP_JUNCTION + "\n\n");
                 fos2.close();
 
             }

@@ -148,7 +148,7 @@ public class StimDialog extends JDialog
         {
             this.project = project;
 
-            Vector synapticTypes =  project.cellMechanismInfo.getAllSynMechNames();
+            Vector synapticTypes =  project.cellMechanismInfo.getAllChemSynMechNames();
 
             if (synapticTypes.size()>0)
             {
@@ -627,7 +627,7 @@ public class StimDialog extends JDialog
                 return;
             }
 
-            Vector synapticTypes =  project.cellMechanismInfo.getAllSynMechNames();
+            Vector synapticTypes =  project.cellMechanismInfo.getAllChemSynMechNames();
 
             if (synapticTypes.size()==0)
             {
@@ -669,7 +669,7 @@ public class StimDialog extends JDialog
                 return;
             }
 
-            Vector synapticTypes =  project.cellMechanismInfo.getAllSynMechNames();
+            Vector synapticTypes =  project.cellMechanismInfo.getAllChemSynMechNames();
 
             if (synapticTypes.size()==0)
             {
