@@ -3,7 +3,23 @@ Release notes/change log for neuroConstruct
 See also the README file
 
 
---- Version XXXX (XXX 08)
+--------- Version XXXX (XXX 08) ---------
+
+
+- Added option of saving morphologies in smaller, more efficient format. See "Morphology save format" in Glossary.
+
+- Changed handling of mod file generation...
+
+- NeuroML export..
+
+- NeuroML version 1.7.1... Synapses
+
+- Cleaned up electrotonic length handling & updated docs
+
+- Solved bug when Input is placed on, e.g. seg id 0, but no seg id 0 is present in cell. Also resolved problem
+  when new Input is added but there's no synaptic mechanism present to use for Random stim.
+
+- Made generation of Matlab and IgorPro extra files for each simulation optional (via Settings. Default: don't generate)
 
 - Added more options under Help menu item, including link to check for updates.
 
@@ -11,10 +27,14 @@ See also the README file
 
 - GENESIS double_endpoint...
 
+- Gap junctions & point processes (integrate & fire)
+
 - Minor additions to project validation: checks if Cell Groups referred to in Elec Inputs and Plots are present in project
 
+-
 
---- Version 1.0.4.1 (Aug 07)
+
+--------- Version 1.0.4.1 (Aug 07) ---------
 
 
 - Only significant update is a bug fix for running NEURON from nC on a Mac (v1.0.4 ran fine on 
@@ -23,7 +43,7 @@ See also the README file
 
 
 
---- Version 1.0.4 (Aug 07)
+--------- Version 1.0.4 (Aug 07) ---------
 
 
 - Uses NeuroML v1.6. Changes to that are listed at http://www.morphml.org:8080/NeuroMLValidator/NeuroMLFiles/Schemata/v1.6/RELEASE_NOTES. 
@@ -69,14 +89,14 @@ See also the README file
 
 
 
----- Version 1.0.1 (Apr 07)
+--------- Version 1.0.1 (Apr 07) ---------
 
 
 Basically the same as v0.9.8, but with examples outlined in paper included.
 
 
 
----- Version 0.9.8 (Mar 07)
+--------- Version 0.9.8 (Mar 07) ---------
 
 
 The first full public release, just before publication of the paper. Uses NeuroML v1.5
