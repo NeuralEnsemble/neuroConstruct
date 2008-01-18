@@ -92,6 +92,11 @@
                     <ide-action name="javadoc"/>
                     <ide-action name="run"/>
                     <ide-action name="debug"/>
+                    <action>
+                        <script>${ant.script}</script>
+                        <label>run no load</label>
+                        <target>run</target>
+                    </action>
                 </context-menu>
             </view>
             <subprojects/>
