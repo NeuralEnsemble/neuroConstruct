@@ -108,6 +108,9 @@ public class ChannelMLConstants
 
     public static String CURR_VOLT_REL_ELEMENT = "current_voltage_relation";
 
+    
+    public static String I_AND_F_ELEMENT = "integrate_and_fire";
+
     public static String OHMIC_ELEMENT = "ohmic";
 
     public static String OHMIC_ION_ATTR = "ion";
@@ -332,6 +335,11 @@ public class ChannelMLConstants
     public static String getOhmicXPath()
     {
         return getCurrVoltRelXPath() + "/" + OHMIC_ELEMENT;
+    }
+
+    public static String getIandFXPath()
+    {
+        return getCurrVoltRelXPath() + "/" + I_AND_F_ELEMENT;
     }
 
     public static String getConductanceXPath()

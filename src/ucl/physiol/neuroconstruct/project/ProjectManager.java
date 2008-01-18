@@ -281,6 +281,11 @@ public class ProjectManager
     {
         return activeProject.proj3Dproperties;
     }
+    
+    public ProjectProperties getProjectProps()
+    {
+        return activeProject.projProperties;
+    }
 
     public static Random getRandomGenerator()
     {
@@ -820,6 +825,9 @@ public class ProjectManager
      */
     public void doGenerate(String simConfigName, long randomSeed)
     {
+        
+        logger.logComment("-----  Project Manager generating network...");
+        
         if (activeProject == null)
         {
             logger.logError("No project loaded...");

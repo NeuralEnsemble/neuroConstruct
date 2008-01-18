@@ -131,6 +131,7 @@ public class ProcessManager
         {
             String directoryToExecuteIn = myFile.getParent();
             File fileToBeCreated = null;
+            File backupFileToBeCreated = null; // for now...
 
             logger.logComment("Parent dir: "+ directoryToExecuteIn);
 
@@ -168,9 +169,25 @@ public class ProcessManager
             {
                 logger.logComment("Assuming *nix environment...");
 
+                String myArch = GeneralUtils.getArchSpecificDir();
+                
+                String backupArch = GeneralUtils.ARCH_64BIT;
+                if (myArch.equals(GeneralUtils.ARCH_64BIT))
+                    backupArch = GeneralUtils.ARCH_I686;
+                
+                
                 String filename = directoryToExecuteIn
                     + System.getProperty("file.separator")
-                    + NeuronFileManager.getArchSpecificDir()
+                    + myArch
+                    + System.getProperty("file.separator")
+                    + ".libs"
+                    + System.getProperty("file.separator")
+                    + "libnrnmech.so";
+                
+                // In case, e.g. a 32 bit JDK is used on a 64 bit system
+                String backupFilename = directoryToExecuteIn
+                    + System.getProperty("file.separator")
+                    + backupArch
                     + System.getProperty("file.separator")
                     + ".libs"
                     + System.getProperty("file.separator")
@@ -184,6 +201,10 @@ public class ProcessManager
                         filename = directoryToExecuteIn
                             + System.getProperty("file.separator")
                             + "powerpc";
+                        
+                        backupFilename = directoryToExecuteIn
+                            + System.getProperty("file.separator")
+                            + GeneralUtils.ARCH_I686;
                     }
                     else
                     {
@@ -198,6 +219,7 @@ public class ProcessManager
                 logger.logComment("Name of file to be created: " + filename);
 
                 fileToBeCreated = new File(filename);
+                backupFileToBeCreated = new File(backupFilename);
 
                 logger.logComment("Trying to delete any previous: " + fileToBeCreated.getAbsolutePath());
 
@@ -233,10 +255,15 @@ public class ProcessManager
             GeneralUtils.timeCheck("Exit value for compilation: "+currentProcess.exitValue());
 
 
-            if(fileToBeCreated.exists())
+            if(fileToBeCreated.exists() || backupFileToBeCreated.exists())
             {
+                // In case, e.g. a 32 bit JDK is used on a 64 bit system
+                File createdFile  = fileToBeCreated;
+                if (!createdFile.exists())
+                    createdFile = backupFileToBeCreated;
+                
                 logger.logComment("Successful compilation");
-                GuiUtils.showInfoMessage(logger, "Success", "Have successfully compiled the mods file into: "+ fileToBeCreated.getAbsolutePath(),
+                GuiUtils.showInfoMessage(logger, "Success", "Have successfully compiled the mods file into: "+ createdFile.getAbsolutePath(),
                                            null);
 
                   return true;
@@ -257,9 +284,11 @@ public class ProcessManager
 
             else
             {
-                logger.logComment("Unsuccessful compilation");
+                logger.logComment("Unsuccessful compilation. File doesn't exist: "+ fileToBeCreated.getAbsolutePath()
+                    +" (and neither does "+backupFileToBeCreated.getAbsolutePath()+")");
 
-                GuiUtils.showErrorMessage(logger, "Problem with the compilation. Please note that Neuron checks every *.mod file"
+                GuiUtils.showErrorMessage(logger, "Problem with the compilation. File doesn't exist: "+ fileToBeCreated.getAbsolutePath()
+                    +" (and neither does "+backupFileToBeCreated.getAbsolutePath()+")\nPlease note that Neuron checks every *.mod file"
                                           +" in this file's home directory\n("+myFile.getParent()+").\nFor more information when this error occurs, enable logging at Settings -> General Properties & Project Defaults -> Logging",
                                           null, null);
                 return false;
@@ -280,7 +309,8 @@ public class ProcessManager
 
     }
 
-
+/* No longer used...
+ 
     public void runAsHocFile() throws NeuronException
     {
 
@@ -317,7 +347,7 @@ public class ProcessManager
                                + "nrngui -dll "
                                + directoryToExecuteIn
                                + System.getProperty("file.separator")
-                               + NeuronFileManager.getArchSpecificDir()
+                               + GeneralUtils.getArchSpecificDir()
                                + System.getProperty("file.separator")
                                + ".libs"
                                + System.getProperty("file.separator")
@@ -340,7 +370,7 @@ public class ProcessManager
         {
             throw new NeuronException("Error running the command: "+ commandToExecute);
         }
-    }
+    }*/
 
 
 

@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.project.Project;
 
 public abstract class CellMechanism
 {
-    ClassLogger logger = new ClassLogger("CellMechanism");
+    protected static ClassLogger logger = new ClassLogger("CellMechanism");
 
     /**
      *  Mechanism types
@@ -90,6 +90,29 @@ public abstract class CellMechanism
    {
        return mechanismType;
    }
+   
+   
+    public boolean isChannelMechanism()
+    {
+        return getMechanismType().equals(CellMechanism.CHANNEL_MECHANISM);
+    }
+
+    public boolean isPointProcess()
+    {
+        return getMechanismType().equals(CellMechanism.POINT_PROCESS);
+    }
+
+
+
+    public boolean isSynapticMechanism()
+    {
+        return getMechanismType().equals(CellMechanism.SYNAPTIC_MECHANISM);
+    }
+
+    public boolean isIonConcMechanism()
+    {
+        return getMechanismType().equals(CellMechanism.ION_CONCENTRATION);
+    }
 
 
    public void setMechanismModel(String mechanismModel)

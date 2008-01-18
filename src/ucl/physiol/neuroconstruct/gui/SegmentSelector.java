@@ -1452,10 +1452,10 @@ public class SegmentSelector extends JFrame
             +"a sufficiently small electrotonic length per division. That number of divisions is analogous to\n"+
             "nseg in NEURON (and used exactly as such in that simulator). With GENESIS, assuming the GENESIS\n"+
             "Compartmentalisation option is used, this value will be used to determine the number of GENESIS\n"+
-            "compartments to use to represent the complex 3D Section with multiple Segments. See Electrotonic Length\n"+
-            "and Compartmentalisation in the Glossary\n\n"
+            "compartments to use to represent the complex 3D Section with multiple Segments. See Electrotonic\n"+
+            "Length and Compartmentalisation in the Glossary.\n\n"
             +"The cell will be remeshed to get the electronic length per internal division as close as possible to:\n "
-            +""+ project.simulationParameters.getMaxElectroLen()+" microns (set via Common Simulation Settings)\n\nProceed?";
+            +""+ project.simulationParameters.getMaxElectroLen()+" (dimensionless units; set via Common Simulation Settings tab)\n\nProceed?";
         
         boolean proceed = GuiUtils.showYesNoMessage(logger, note, this);
         
@@ -1676,7 +1676,7 @@ public class SegmentSelector extends JFrame
 
 
         if (selected !=null && /* Might be null on delete...*/
-                selected != FUNCTION_INSTR)
+                selected.equals(FUNCTION_INSTR))
         {
             logger.logComment("Selected: "+ selected);
 

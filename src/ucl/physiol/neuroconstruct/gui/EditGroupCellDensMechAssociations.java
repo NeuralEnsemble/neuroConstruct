@@ -46,18 +46,19 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
     private DefaultListModel listModelGroupsIn = new DefaultListModel();
     private DefaultListModel listModelGroupsOut = new DefaultListModel();
 
-    String defaultProcessSelection = "-- Channel Mechanisms: --";
+    String defaultMechSelection = "-- Channel Mechanisms: --";
+    String pointProcessSelection = "-- Point processes: --";
     String passivePropsSelection = "-- Passive properties: --";
     String specCapSelection = "Specific Capacitance";
     String specAxResSelection = "Specific Axial Resistance";
-    String extraProcessSelection = "-- Other mechanisms: --";
+    String extraMechSelection = "-- Other mechanisms: --";
     String apPropVelSelection = "Action Potential propagation speed";
 
     Frame myParent = null;
 
     Project project = null;
 
-    String processType = null;
+    String mechType = null;
 
     //UpdateOneCell updateInterface = null;
 
@@ -65,10 +66,10 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
     JPanel jPanelMain = new JPanel();
     JPanel jPanelButtons = new JPanel();
-    JPanel jPanelSelectProcess = new JPanel();
+    JPanel jPanelSelectMech = new JPanel();
     JPanel jPanelLists = new JPanel();
     JLabel jLabelSelect = new JLabel();
-    JComboBox jComboBoxProcessNames = new JComboBox();
+    JComboBox jComboBoxMechNames = new JComboBox();
     JList jListGroupsOut = new JList(listModelGroupsOut);
     JList jListGroupsIn = new JList(listModelGroupsIn);
 
@@ -106,14 +107,14 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
     public EditGroupCellDensMechAssociations(Cell cell,
                                          Frame owner,
-                                         String processType,
+                                         String mechType,
                                          Project project) throws HeadlessException
     {
-        super(owner, "Edit Group to "+processType + " associations", true);
+        super(owner, "Edit Group to "+mechType+ " associations", true);
 
         this.project = project;
 
-        this.processType = processType;
+        this.mechType = mechType;
 
         myCell = cell;
 
@@ -121,37 +122,37 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
         // create copy...
         
-        Vector<String> processListTemp = project.cellMechanismInfo.getAllCellMechanismNames();
-        Vector<String> processList = new Vector<String>();
-        processList.addAll(processListTemp);
+        Vector<String> mechListTemp = project.cellMechanismInfo.getAllCellMechanismNames();
+        Vector<String> mechList = new Vector<String>();
+        mechList.addAll(mechListTemp);
 
         for (int i = 0; i < mechs.size(); i++)
         {
-            ChannelMechanism nextProcess = mechs.get(i);
+            ChannelMechanism nextMech = mechs.get(i);
 
-            if (!processList.contains(nextProcess.getName()))
+            if (!mechList.contains(nextMech.getName()))
             {
                 logger.logComment("Latest chan mechs: "+ cell.getAllChannelMechanisms(false));
 
                 int result = JOptionPane.showConfirmDialog(this, "The channel mechanism " +
-                                                           nextProcess +
+                                                           nextMech +
                                                            " is present on this cell, but there is no corresponding "
                                                            +
-                                                           "\nCell Process in the project. Delete the channel mechanism from the cell?",
+                                                           "\nCell Mech in the project. Delete the channel mechanism from the cell?",
                                                            "Warning",
                                                            JOptionPane.YES_NO_OPTION);
 
                 if (result==JOptionPane.YES_OPTION)
                 {
 
-                    Vector groups = cell.getGroupsWithChanMech(nextProcess);
+                    Vector groups = cell.getGroupsWithChanMech(nextMech);
 
-                    logger.logComment("Deleting "+nextProcess + " from: "+ groups);
+                    logger.logComment("Deleting "+nextMech + " from: "+ groups);
 
                     for (int k = 0; k < groups.size(); k++)
                     {
                         String nextGroup = (String)groups.elementAt(k);
-                        cell.disassociateGroupFromChanMech(nextGroup, nextProcess);
+                        cell.disassociateGroupFromChanMech(nextGroup, nextMech);
 
                     }
 
@@ -179,7 +180,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
     public void setSelected(String chanMech)
     {
-        this.jComboBoxProcessNames.setSelectedItem(chanMech);
+        this.jComboBoxMechNames.setSelectedItem(chanMech);
     }
 
     private void jbInit() throws Exception
@@ -227,19 +228,19 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         });
         jPanelSwitch.setLayout(gridBagLayout1);
         jLabelGroupsOut.setHorizontalAlignment(SwingConstants.CENTER);
-        jLabelGroupsOut.setText("Groups without " + processType);
+        jLabelGroupsOut.setText("Groups without " + mechType);
         jListGroupsOut.setBorder(border1);
         jLabelGroupsIn.setHorizontalAlignment(SwingConstants.CENTER);
-        jLabelGroupsIn.setText("Groups with " + processType);
+        jLabelGroupsIn.setText("Groups with " + mechType);
         jListGroupsIn.setBorder(border3);
         //viewportSectionsOut.setScrollMode(1);
         scrollPaneSectionsOut.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPaneSectionsIn.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        jComboBoxProcessNames.addItemListener(new java.awt.event.ItemListener()
+        jComboBoxMechNames.addItemListener(new java.awt.event.ItemListener()
         {
             public void itemStateChanged(ItemEvent e)
             {
-                jComboBoxProcessNames_itemStateChanged(e);
+                jComboBoxMechNames_itemStateChanged(e);
             }
         });
 
@@ -272,15 +273,8 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         jPanelMain.setMinimumSize(mainDim);
         jPanelMain.setPreferredSize(mainDim);
 
-        //jPanelLists.setMaximumSize(new Dimension(530, 300));
-        //jPanelLists.setMinimumSize(new Dimension(530, 300));
-        //jPanelLists.setPreferredSize(new Dimension(530, 300));
-
-        //jPanelSelectProcess.setMaximumSize(new Dimension(330, 40));
-        //jPanelSelectProcess.setMinimumSize(new Dimension(330, 40));
-        //jPanelSelectProcess.setPreferredSize(new Dimension(330, 40));
         this.getContentPane().add(jPanelMain, BorderLayout.CENTER);
-        jPanelMain.add(jPanelSelectProcess,  new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0
+        jPanelMain.add(jPanelSelectMech,  new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 300, 0));
         jPanelMain.add(jPanelLists, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
                                                            , GridBagConstraints.CENTER, GridBagConstraints.NONE,
@@ -309,8 +303,8 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         jButtonEditValue.setText("Edit value");
 
         jButtonEditValue.setEnabled(false);
-        jPanelSelectProcess.add(jLabelSelect, null);
-        jPanelSelectProcess.add(jComboBoxProcessNames, null);
+        jPanelSelectMech.add(jLabelSelect, null);
+        jPanelSelectMech.add(jComboBoxMechNames, null);
 
         jPanelSwitch.add(jButtonRemove, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
                                                                , GridBagConstraints.CENTER, GridBagConstraints.NONE,
@@ -331,21 +325,32 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
     private void extraInit()
     {
-        jComboBoxProcessNames.addItem(defaultProcessSelection);
+        jComboBoxMechNames.addItem(defaultMechSelection);
 
 
-        Vector processList = project.cellMechanismInfo.getChanMechsAndIonConcs();
+        Vector mechList = project.cellMechanismInfo.getChanMechsAndIonConcs();
 
-        for (int i = 0; i < processList.size(); i++)
+        for (int i = 0; i < mechList.size(); i++)
         {
-            jComboBoxProcessNames.addItem(processList.elementAt(i));
+            jComboBoxMechNames.addItem(mechList.elementAt(i));
         }
+        Vector<String> pps = project.cellMechanismInfo.getPointProcessess();
+        
+        if (pps.size()>0)
+        {
+            jComboBoxMechNames.addItem(pointProcessSelection);
+            for(String pp: pps)
+            {
+                jComboBoxMechNames.addItem(pp);
+            }
+        }
+        
 
-        jComboBoxProcessNames.addItem(this.passivePropsSelection);
-        jComboBoxProcessNames.addItem(this.specCapSelection);
-        jComboBoxProcessNames.addItem(this.specAxResSelection);
-        jComboBoxProcessNames.addItem(this.extraProcessSelection);
-        jComboBoxProcessNames.addItem(this.apPropVelSelection);
+        jComboBoxMechNames.addItem(this.passivePropsSelection);
+        jComboBoxMechNames.addItem(this.specCapSelection);
+        jComboBoxMechNames.addItem(this.specAxResSelection);
+        jComboBoxMechNames.addItem(this.extraMechSelection);
+        jComboBoxMechNames.addItem(this.apPropVelSelection);
 
 
         logger.logComment("Finished initialising...");
@@ -410,10 +415,10 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
     void jButtonEditValue_actionPerformed(ActionEvent e)
     {
-        String selectedMechanism = (String) jComboBoxProcessNames.getSelectedItem();
+        String selectedMechanism = (String) jComboBoxMechNames.getSelectedItem();
 
-        if (selectedMechanism.equals(defaultProcessSelection) ||
-            selectedMechanism.equals(this.extraProcessSelection)) return;
+        if (selectedMechanism.equals(defaultMechSelection) ||
+            selectedMechanism.equals(this.extraMechSelection)) return;
 
         logger.logComment("Edit value button pressed");
 
@@ -470,18 +475,16 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
                 chanMech.setDensity(newVal);
 
-                //ChannelMechanism selChanMech = new ChannelMechanism(selectedProcess, condDens);
-
                 myCell.associateGroupWithChanMech(groupName, chanMech);
             }
         }
 
-        this.jComboBoxProcessNames.setSelectedIndex(0);
-        this.jComboBoxProcessNames.setSelectedItem(selectedMechanism); // refreshes lists
+        this.jComboBoxMechNames.setSelectedIndex(0);
+        this.jComboBoxMechNames.setSelectedItem(selectedMechanism); // refreshes lists
     }
 
 
-    void jComboBoxProcessNames_itemStateChanged(ItemEvent e)
+    void jComboBoxMechNames_itemStateChanged(ItemEvent e)
     {
         logger.logComment("" + e);
 
@@ -492,18 +495,17 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
             listModelGroupsIn.clear();
             listModelGroupsOut.clear();
 
-            String selectedMechanism = (String) jComboBoxProcessNames.getSelectedItem();
+            String selectedMechanism = (String) jComboBoxMechNames.getSelectedItem();
 
-            if (selectedMechanism.equals(defaultProcessSelection) ||
-                selectedMechanism.equals(this.extraProcessSelection))
+            if (selectedMechanism.equals(defaultMechSelection) ||
+                selectedMechanism.equals(this.extraMechSelection))
             {
                 return;
             }
 
 
-            //ChannelMechanism selChanMech = new ChannelMechanism(selectedProcess);
 
-            logger.logComment("\n ----  Setting the selected process to: " + selectedMechanism);
+            logger.logComment("\n ----  Setting the selected Mech to: " + selectedMechanism);
 
             Vector allGroups = myCell.getAllGroupNames();
 
@@ -728,12 +730,12 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
     void jButtonAdd_actionPerformed(ActionEvent e)
     {
-        String selectedProcess = (String) jComboBoxProcessNames.getSelectedItem();
+        String selectedMech = (String) jComboBoxMechNames.getSelectedItem();
 
-        if (selectedProcess.equals(defaultProcessSelection) ||
-            selectedProcess.equals(this.extraProcessSelection)) return;
+        if (selectedMech.equals(defaultMechSelection) ||
+            selectedMech.equals(this.extraMechSelection)) return;
 
-        if (selectedProcess.equals(this.apPropVelSelection))
+        if (selectedMech.equals(this.apPropVelSelection))
         {
             //float vel = this.getApPropVelForGroup(123);
             float vel = this.getApPropSpeedForGroup(GeneralProperties.getDefaultApPropagationVelocity());
@@ -764,7 +766,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                 }
             }
         }
-        else if(selectedProcess.equals(this.specAxResSelection))
+        else if(selectedMech.equals(this.specAxResSelection))
         {
             int[] selected = jListGroupsOut.getSelectedIndices();
 
@@ -781,7 +783,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                 myCell.associateGroupWithSpecAxRes(group, specAxRes);
             }
         }
-        else if(selectedProcess.equals(this.specCapSelection))
+        else if(selectedMech.equals(this.specCapSelection))
         {
             float defaultVal = project.simulationParameters.getGlobalCm();
             int[] selected = jListGroupsOut.getSelectedIndices();
@@ -802,62 +804,73 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         else
         {
 
-            CellMechanism cellProcess = project.cellMechanismInfo.getCellMechanism(selectedProcess);
+            CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(selectedMech);
 
             float condDens = -1;
-            try
+            
+            if (cellMech.isPointProcess())
             {
-                //String inputValue = null;
-                String suggestedValue = null;
-                if (cellProcess instanceof AbstractedCellMechanism)
-                {
-                    suggestedValue = ( (AbstractedCellMechanism) cellProcess).getParameter(DistMembraneMechanism.
-                        COND_DENSITY)
-                        + "";
-                }
-                else if (cellProcess instanceof ChannelMLCellMechanism)
-                {
-                    ChannelMLCellMechanism cmlCellProcess = (ChannelMLCellMechanism) cellProcess;
-                    cmlCellProcess.initialise(project, false);
-
-                    suggestedValue = cmlCellProcess.getValue("//@" + ChannelMLConstants.DEFAULT_COND_DENSITY_ATTR);
-
-                    if (suggestedValue == null || suggestedValue.length() == 0) suggestedValue = "1";
-
-                    String unitsUsed = cmlCellProcess.getValue(ChannelMLConstants.getUnitsXPath());
-
-                    logger.logComment("Units used = " + unitsUsed);
-
-                    if (unitsUsed != null)
-                    {
-                        double suggValDouble = Double.parseDouble(suggestedValue);
-
-                        if (unitsUsed.equals(ChannelMLConstants.SI_UNITS))
-                        {
-                            suggValDouble = UnitConverter.getConductanceDensity(suggValDouble,
-                                UnitConverter.GENESIS_SI_UNITS,
-                                UnitConverter.NEUROCONSTRUCT_UNITS);
-                        }
-                        else if (unitsUsed.equals(ChannelMLConstants.PHYSIOLOGICAL_UNITS))
-                        {
-                            suggValDouble = UnitConverter.getConductanceDensity(suggValDouble,
-                                UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS,
-                                UnitConverter.NEUROCONSTRUCT_UNITS);
-                        }
-                        suggestedValue = suggValDouble + "";
-
-                    }
-                }
-
-                condDens = getDensForGroup(selectedProcess, Float.parseFloat(suggestedValue), "the selected groups");
+                GuiUtils.showInfoMessage(logger, "Point processes added", 
+                    "Note that the mechanism: "+selectedMech+" is a point process and will be added once to the 0.5 point of each of the selected sections.\n"
+                    +"The max conductance density value will be ignored", this);
+                condDens = 0;
             }
-            catch (Exception ex)
+            else
             {
-                GuiUtils.showErrorMessage(logger,
-                                          "Error getting default value for conductance density on process: " +
-                                          selectedProcess,
-                                          ex, null);
-                return;
+                try
+                {
+                    //String inputValue = null;
+                    String suggestedValue = null;
+                    if (cellMech instanceof AbstractedCellMechanism)
+                    {
+                        suggestedValue = ( (AbstractedCellMechanism) cellMech).getParameter(DistMembraneMechanism.
+                            COND_DENSITY)
+                            + "";
+                    }
+                    else if (cellMech instanceof ChannelMLCellMechanism)
+                    {
+                        ChannelMLCellMechanism cmlCellMech = (ChannelMLCellMechanism) cellMech;
+                        cmlCellMech.initialise(project, false);
+
+                        suggestedValue = cmlCellMech.getValue("//@" + ChannelMLConstants.DEFAULT_COND_DENSITY_ATTR);
+
+                        if (suggestedValue == null || suggestedValue.length() == 0) suggestedValue = "1";
+
+                        String unitsUsed = cmlCellMech.getValue(ChannelMLConstants.getUnitsXPath());
+
+                        logger.logComment("Units used = " + unitsUsed);
+
+                        if (unitsUsed != null)
+                        {
+                            double suggValDouble = Double.parseDouble(suggestedValue);
+
+                            if (unitsUsed.equals(ChannelMLConstants.SI_UNITS))
+                            {
+                                suggValDouble = UnitConverter.getConductanceDensity(suggValDouble,
+                                    UnitConverter.GENESIS_SI_UNITS,
+                                    UnitConverter.NEUROCONSTRUCT_UNITS);
+                            }
+                            else if (unitsUsed.equals(ChannelMLConstants.PHYSIOLOGICAL_UNITS))
+                            {
+                                suggValDouble = UnitConverter.getConductanceDensity(suggValDouble,
+                                    UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS,
+                                    UnitConverter.NEUROCONSTRUCT_UNITS);
+                            }
+                            suggestedValue = suggValDouble + "";
+
+                        }
+                    }
+
+                    condDens = getDensForGroup(selectedMech, Float.parseFloat(suggestedValue), "the selected groups");
+                }
+                catch (Exception ex)
+                {
+                    GuiUtils.showErrorMessage(logger,
+                                              "Error getting default value for conductance density on mech: " +
+                                              selectedMech,
+                                              ex, null);
+                    return;
+                }
             }
 
             int[] selected = jListGroupsOut.getSelectedIndices();
@@ -867,27 +880,26 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                 String group = (String) listModelGroupsOut.elementAt(selected[i]);
                 logger.logComment("Item: " + selected[i] + " (" + group + ") is selected...");
 
-                ChannelMechanism selChanMech = new ChannelMechanism(selectedProcess, condDens);
+                ChannelMechanism selChanMech = new ChannelMechanism(selectedMech, condDens);
 
                 myCell.associateGroupWithChanMech(group, selChanMech);
 
             }
         }
         // simple update...
-        this.jComboBoxProcessNames.setSelectedItem(defaultProcessSelection);
-        this.jComboBoxProcessNames.setSelectedItem(selectedProcess);
+        this.jComboBoxMechNames.setSelectedItem(defaultMechSelection);
+        this.jComboBoxMechNames.setSelectedItem(selectedMech);
     }
 
 
     void jButtonRemove_actionPerformed(ActionEvent e)
     {
-        String selectedProcess = (String) jComboBoxProcessNames.getSelectedItem();
+        String selectedMech = (String) jComboBoxMechNames.getSelectedItem();
 
-        if (selectedProcess.equals(defaultProcessSelection) ||
-            selectedProcess.equals(this.extraProcessSelection)) return;
+        if (selectedMech.equals(defaultMechSelection) ||
+            selectedMech.equals(this.extraMechSelection)) return;
 
 
-        //ChannelMechanism selChanMech = new ChannelMechanism(selectedProcess);
 
         int[] selected = jListGroupsIn.getSelectedIndices();
 
@@ -901,15 +913,15 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
             logger.logComment("Item: " + selected[i] + " ("+groupAndDens
                               +") is selected, so group: " + groupName);
 
-            if (selectedProcess.equals(this.apPropVelSelection))
+            if (selectedMech.equals(this.apPropVelSelection))
             {
                 myCell.disassociateGroupFromApPropSpeeds(groupName);
             }
-            else if (selectedProcess.equals(this.specCapSelection))
+            else if (selectedMech.equals(this.specCapSelection))
             {
                 myCell.disassociateGroupFromSpecCap(groupName);
             }
-            else if (selectedProcess.equals(this.specAxResSelection))
+            else if (selectedMech.equals(this.specAxResSelection))
             {
                 myCell.disassociateGroupFromSpecAxRes(groupName);
             }
@@ -917,13 +929,13 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
             else
             {
-                myCell.disassociateGroupFromChanMech(groupName, selectedProcess);
+                myCell.disassociateGroupFromChanMech(groupName, selectedMech);
             }
         }
 
         // simple update...
-        this.jComboBoxProcessNames.setSelectedItem(defaultProcessSelection);
-        this.jComboBoxProcessNames.setSelectedItem(selectedProcess);
+        this.jComboBoxMechNames.setSelectedItem(defaultMechSelection);
+        this.jComboBoxMechNames.setSelectedItem(selectedMech);
 
     }
 

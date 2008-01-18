@@ -20,6 +20,7 @@ import java.io.File;
 import ucl.physiol.neuroconstruct.utils.*;
 
 import java.util.*;
+import javax.swing.border.*;
 import ucl.physiol.neuroconstruct.project.*;
 
 /**
@@ -38,7 +39,7 @@ public class OptionsFrame extends JFrame
 
     private static boolean beingDisplayed = false;
 
-    MainFrame myMainFrame = null;
+    MainFrame mainFrame = null;
 
     public static final int PROJECT_PROPERTIES_MODE = 0;
     public static final int GENERAL_PROPERTIES_MODE = 1;
@@ -53,9 +54,11 @@ public class OptionsFrame extends JFrame
     JPanel panelMain = new JPanel();
     BorderLayout borderLayout1 = new BorderLayout();
     JTabbedPane jTabbedPane1 = new JTabbedPane();
-    JPanel jPanel3D = new JPanel();
+    JPanel jPanelProjProps = new JPanel();
     JPanel jPanelLogging = new JPanel();
     JPanel jPanelSaveCancel = new JPanel();
+    JPanel jPanelSave = new JPanel();
+    
     JButton jButtonSave = new JButton();
     JButton jButtonCancel = new JButton();
     JLabel jLabelLogFileDir = new JLabel();
@@ -65,7 +68,7 @@ public class OptionsFrame extends JFrame
     GridBagLayout gridBagLayout1 = new GridBagLayout();
 
     public final static String GENERAL_PREFERENCES = new String("General Settings");
-    public final static String THREE_D_PREFERENCES = new String("3D Settings");
+    public final static String PROJ_PREFERENCES = new String("Project Settings");
     public final static String LOGGING_PREFERENCES = new String("Logging");
 
     JLabel jLabelBackgroundColour = new JLabel();
@@ -110,9 +113,12 @@ public class OptionsFrame extends JFrame
     JTextPane jTextPaneExplaination = new JTextPane();
 
     JCheckBox jCheckBoxToolTips = new JCheckBox();
+    JCheckBox jCheckBoxGenMatlab = new JCheckBox();
+    JCheckBox jCheckBoxGenIgor = new JCheckBox();
+    
 
     JLabel jLabelSaveInfo = new JLabel();
-    JRadioButton jRadioButtonSaveMorphML = new JRadioButton();
+    JRadioButton jRadioButtonSaveSer = new JRadioButton();
     JRadioButton jRadioButtonJavaXML = new JRadioButton();
     GridBagLayout gridBagLayout4 = new GridBagLayout();
     ButtonGroup buttonGroupSaveOptions = new ButtonGroup();
@@ -132,7 +138,7 @@ public class OptionsFrame extends JFrame
     {
         super(title);
         enableEvents(AWTEvent.WINDOW_EVENT_MASK);
-        myMainFrame = parentFrame;
+        mainFrame = parentFrame;
         myStartupMode = mode;
         try
         {
@@ -160,6 +166,9 @@ public class OptionsFrame extends JFrame
        this.jButtonCellColour.setToolTipText(toolTipText.getToolTip("3D Settings cell colour"));
        this.jLabelRes3DElements.setToolTipText(toolTipText.getToolTip("3D Resolution"));
        this.jTextFieldRes3DElements.setToolTipText(toolTipText.getToolTip("3D Resolution"));
+       
+       
+        jPanelSave.setToolTipText(toolTipText.getToolTip("Morphology save format"));
 
     }
 
@@ -168,7 +177,7 @@ public class OptionsFrame extends JFrame
     {
         panelMain.setLayout(borderLayout1);
 
-        Dimension dim = new Dimension(400, 450);
+        Dimension dim = new Dimension(420, 500);
 
         panelMain.setMaximumSize(dim);
         panelMain.setMinimumSize(dim);
@@ -254,8 +263,8 @@ public class OptionsFrame extends JFrame
                 jButtonApply_actionPerformed(e);
             }
         });
-        jPanel3D.setDebugGraphicsOptions(0);
-        jPanel3D.setLayout(gridBagLayout3);
+        jPanelProjProps.setDebugGraphicsOptions(0);
+        jPanelProjProps.setLayout(gridBagLayout3);
         jLabelShow.setText("Display:");
         jCheckBoxShowRegions.setText("Regions");
         jCheckBoxShowInputs.setText("Inputs");
@@ -284,9 +293,21 @@ public class OptionsFrame extends JFrame
                 jCheckBoxToolTips_itemStateChanged(e);
             }
         });
+        
+        
+        jCheckBoxGenIgor.setText("Generate Igor files");
+        jCheckBoxGenIgor.setToolTipText("Select this so that a number of helper files will be generated with every simulation, \n"
+            +"to enable easy loading of traces into IgorPro/Neuromatic (Windows/Mac only). \nLook for *.ipf files.");
+        
+        
+        jCheckBoxGenMatlab.setText("Generate Matlab files");
+        jCheckBoxGenMatlab.setToolTipText("Select this so that a number of helper files will be generated with every simulation, \n"
+            +"to enable easy loading of traces into Matlab/Octave. \nLook for *.m files.");
+        
+        
         jCheckBoxShowSynEndPoints.setText("Synaptic endpoints");
         jLabelSaveInfo.setText("Format to save morphology files in:");
-        jRadioButtonSaveMorphML.setText("MorphML");
+        jRadioButtonSaveSer.setText("Serialised");
         jRadioButtonJavaXML.setText("Java XML");
         //jPanelSave.setLayout(gridBagLayout4);
         //jPanelSave.setAlignmentX((float) 0.5);
@@ -315,10 +336,12 @@ public class OptionsFrame extends JFrame
                 jButtonCellColour_actionPerformed(e);
             }
         });
-        //jPanelSave.add(jRadioButtonSaveMorphML,         new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
-        //    ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 30, 150, 0), 0, 0));
-        //jPanelSave.add(jRadioButtonJavaXML,      new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
-        //    ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 30, 6, 0), 0, 0));
+        
+        jPanelSave.add(new JLabel("Morphology save format:"));
+        jPanelSave.add(jRadioButtonSaveSer);
+        jPanelSave.add(jRadioButtonJavaXML);
+        
+        
         jLabelDisplayOptoin.setText("Display: ");
 
         getContentPane().add(panelMain);
@@ -328,12 +351,9 @@ public class OptionsFrame extends JFrame
 
 
 
-
-
-
         //jTabbedPane1.add(jPanelSave, SAVE_PREFERENCES);
 
-        jTabbedPane1.add(jPanel3D,    THREE_D_PREFERENCES);
+        jTabbedPane1.add(jPanelProjProps,    PROJ_PREFERENCES);
         jTabbedPane1.add(jPanelLogging,  LOGGING_PREFERENCES);
 
         jPanelLogging.add(jLabelLogFileDir,   new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
@@ -352,41 +372,63 @@ public class OptionsFrame extends JFrame
 
 
 
-
-        jPanel3D.add(jLabelBackgroundColour,
-                     new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0
+        
+        jPanelProjProps.add(jPanelSave,
+                     new GridBagConstraints(0, 0, 5, 1, 0.0, 0.0
                                             , GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 12, 6, 0), 0,
                                             0));
+        
 
-        jPanel3D.add(jButtonBackgroundColour, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0
+        
+
+        jPanelProjProps.add(jLabelBackgroundColour,
+                     new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0
+                                            , GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 12, 6, 0), 0,0));
+
+        jPanelProjProps.add(jButtonBackgroundColour, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0
+                                            , GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(6, 0, 6, 0), 0, 0));
+
+        
+        
+
+        jPanelProjProps.add(jLabelCellColour, new GridBagConstraints(0, 2, 3, 1, 0.0, 0.0
+                                         , GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 12, 6, 0), 0, 0));
+        
+        jPanelProjProps.add(jButtonCellColour, new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0
+                                         , GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(6, 12, 6, 0), 0, 0));
+        
+        
+
+        jPanelProjProps.add(jCheckBoxShowAxes, new GridBagConstraints(0, 3, 5, 1, 0.0, 0.0, 
+                                  GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(6, 0, 6, 0), 0, 0));
+
+
+        
+
+        jPanelProjProps.add(jComboBoxDisplayOptions, new GridBagConstraints(1, 4, 3, 1, 0.0, 0.0
                                                                      , GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                                                     new Insets(6, 0, 6, 0), 0, 0));
+                                                                     new Insets(7, 0, 5, 0), 0, 0));
 
+        jPanelProjProps.add(jLabelDisplayOptoin, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
+                                                                 , GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                                                                 new Insets(6, 12, 6, 0), 0, 0));
 
-        jPanel3D.add(jLabelCellColour, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0
-                                                              , GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                                              new Insets(6, 12, 6, 0), 0, 0));
+        
 
-        jPanel3D.add(jCheckBoxShowAxes, new GridBagConstraints(0, 2, 5, 1, 0.0, 0.0
-                                                               , GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                                               new Insets(6, 0, 6, 0), 0, 0));
-
-
-
-        jPanel3D.add(jLabelRes3DElements, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0
+        jPanelProjProps.add(jLabelRes3DElements, new GridBagConstraints(0, 5, 3, 1, 0.0, 0.0
                                                                  , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                                  new Insets(6, 12, 6, 0), 0, 0));
 
-        jPanel3D.add(jTextFieldRes3DElements, new GridBagConstraints(3, 4, 1, 1, 0.0, 0.0
+        jPanelProjProps.add(jTextFieldRes3DElements, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0
                                                                      , GridBagConstraints.CENTER, GridBagConstraints.NONE,
                                                                      new Insets(6, 0, 6, 0), 0, 0));
 
 
-        jPanel3D.add(this.jLabelTrans, new GridBagConstraints(0, 5, 3, 1, 0.0, 0.0
+        jPanelProjProps.add(this.jLabelTrans, new GridBagConstraints(0, 6, 3, 1, 0.0, 0.0
                                                                  , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                                  new Insets(6, 12, 6, 0), 0, 0));
 
-        jPanel3D.add(jTextFieldTrans, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0
+        jPanelProjProps.add(jTextFieldTrans, new GridBagConstraints(3, 6, 1, 1, 0.0, 0.0
                                                                      , GridBagConstraints.CENTER, GridBagConstraints.NONE,
                                                                      new Insets(6, 0, 6, 0), 0, 0));
 
@@ -395,50 +437,42 @@ public class OptionsFrame extends JFrame
 
 
 
-        jPanel3D.add(jLabelShow, new GridBagConstraints(0, 6, 3, 1, 0.0, 0.0
-                                                        , GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                                        new Insets(6, 12, 6, 0), 0, 0));
+        jPanelProjProps.add(jLabelShow, new GridBagConstraints(0, 7, 3, 1, 0.0, 0.0, 
+                                GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 12, 6, 0), 0, 0));
 
-        jPanel3D.add(jCheckBoxShowRegions, new GridBagConstraints(3, 6, 1, 1, 0.0, 0.0
-                                                                  , GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                                                  new Insets(6, 6, 0, 0), 0, 0));
+        jPanelProjProps.add(jCheckBoxShowRegions, new GridBagConstraints(3, 7, 1, 1, 0.0, 0.0, 
+                                GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 6, 0, 0), 0, 0));
+        
+        
+        
 
-        jPanel3D.add(jCheckBoxShowInputs, new GridBagConstraints(3, 7, 1, 1, 0.0, 0.0
-                                                                 , GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                                                 new Insets(0, 6, 0, 0), 0, 0));
+        jPanelProjProps.add(jCheckBoxShowInputs, new GridBagConstraints(3, 8, 1, 1, 0.0, 0.0, 
+                                GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 0), 0, 0));
+        
+        
 
-        jPanel3D.add(jCheckBoxShowAxonalArbours, new GridBagConstraints(3, 8, 1, 1, 0.0, 0.0
-                                                                 , GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                                                 new Insets(0, 6, 0, 0), 0, 0));
+        jPanelProjProps.add(jCheckBoxShowAxonalArbours, new GridBagConstraints(3, 9, 1, 1, 0.0, 0.0, 
+                                GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 0), 0, 0));
+        
+        
 
-        jPanel3D.add(jCheckBoxShowSynapseConns, new GridBagConstraints(3, 9, 1, 1, 0.0, 0.0
-                                                                       , GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                                                       new Insets(0, 6, 0, 0), 0, 0));
+        jPanelProjProps.add(jCheckBoxShowSynapseConns, new GridBagConstraints(3, 10, 1, 1, 0.0, 0.0, 
+                                GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 0), 0, 0));
+        
+        
 
-        jPanel3D.add(jCheckBoxShowSynEndPoints, new GridBagConstraints(3, 10, 1, 1, 0.0, 0.0
-                                                                       , GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                                                       new Insets(0, 6, 0, 0), 0, 0));
+        jPanelProjProps.add(jCheckBoxShowSynEndPoints, new GridBagConstraints(3, 11, 1, 1, 0.0, 0.0, 
+                                GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 0), 0, 0));
+        
+        
 
 
-        jPanel3D.add(jButtonApply, new GridBagConstraints(0, 11, 5, 1, 0.0, 0.0
+        jPanelProjProps.add(jButtonApply, new GridBagConstraints(0, 12, 5, 1, 0.0, 0.0
                                                           , GridBagConstraints.CENTER, GridBagConstraints.NONE,
                                                           new Insets(6, 0, 12, 0), 0, 0));
 
 
 
-
-        jPanel3D.add(jButtonCellColour, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0
-                                                               , GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                                               new Insets(6, 12, 6, 0), 0, 0));
-
-
-        jPanel3D.add(jComboBoxDisplayOptions, new GridBagConstraints(1, 3, 3, 1, 0.0, 0.0
-                                                                     , GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                                                     new Insets(7, 0, 5, 0), 0, 0));
-
-        jPanel3D.add(jLabelDisplayOptoin, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
-                                                                 , GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                                                 new Insets(6, 12, 6, 0), 0, 0));
 
 
 
@@ -523,11 +557,31 @@ public class OptionsFrame extends JFrame
                                                  , GridBagConstraints.WEST, 
                                                  GridBagConstraints.HORIZONTAL,
                                                  new Insets(6, 20, 6, 20), 0, 0));
+/*
+        jPanelGeneral.add(jPanelSave,
+                          new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0
+                                                 , GridBagConstraints.WEST, 
+                                                 GridBagConstraints.HORIZONTAL,
+                                                 new Insets(6, 20, 6, 20), 0, 0));*/
 
+        
+        
         jPanelGeneral.add(jCheckBoxToolTips,
                           new GridBagConstraints(0, 7, 2, 1, 0.0, 0.0
-                                                 , GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                                 new Insets(12, 12, 12, 12), 0, 0));
+                                                 , GridBagConstraints.WEST, GridBagConstraints.NONE,
+                                                 new Insets(6, 20, 6, 12), 0, 0));
+
+
+        
+        jPanelGeneral.add(jCheckBoxGenMatlab,
+                          new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0
+                                                 , GridBagConstraints.WEST, GridBagConstraints.NONE,
+                                                 new Insets(6, 20, 6, 12), 0, 0));
+
+        jPanelGeneral.add(jCheckBoxGenIgor,
+                          new GridBagConstraints(0, 9, 2, 1, 0.0, 0.0
+                                                 , GridBagConstraints.WEST, GridBagConstraints.NONE,
+                                                 new Insets(6, 20, 12, 12), 0, 0));
 
 
         
@@ -537,7 +591,7 @@ public class OptionsFrame extends JFrame
         
 
         buttonGroupSaveOptions.add(jRadioButtonJavaXML);
-        buttonGroupSaveOptions.add(jRadioButtonSaveMorphML);
+        buttonGroupSaveOptions.add(jRadioButtonSaveSer);
 
 
     }
@@ -553,7 +607,24 @@ public class OptionsFrame extends JFrame
             this.jTabbedPane1.setEnabledAt(jTabbedPane1.indexOfTab(GENERAL_PREFERENCES),false);
             this.jTabbedPane1.setEnabledAt(jTabbedPane1.indexOfTab(LOGGING_PREFERENCES),false);
 
-            Display3DProperties props3D = myMainFrame.projManager.getProjectDispProps();
+            Display3DProperties props3D = mainFrame.projManager.getProjectDispProps();
+            
+            
+            ProjectProperties pp = mainFrame.projManager.getProjectProps();
+            
+            
+            String saveOpt = pp.getPreferredSaveFormat();
+            
+
+            if (saveOpt.equals(ProjectStructure.JAVA_XML_FORMAT))
+            {
+                jRadioButtonJavaXML.setSelected(true);
+            }
+            else if (saveOpt.equals(ProjectStructure.JAVA_OBJ_FORMAT))
+            {
+                jRadioButtonSaveSer.setSelected(true);
+            }
+
 
             jButtonBackgroundColour.setBackground(props3D.getBackgroundColour3D());
             jButtonCellColour.setBackground(props3D.getCellColour3D());
@@ -586,17 +657,6 @@ public class OptionsFrame extends JFrame
 
 
         }
-        /*
-        else if (this.myStartupMode==NMODL_PROPERTIES_MODE)
-        {
-            jTextFieldNeuronLocation.setText(GeneralProperties.getNeuronHomeDir());
-            jTextFieldCommandLine.setText(GeneralProperties.getExecutableCommandLine());
-
-            this.jTabbedPane1.setEnabledAt(jTabbedPane1.indexOfTab(THREE_D_PREFERENCES),false);
-            this.jTabbedPane1.setEnabledAt(jTabbedPane1.indexOfTab(LOGGING_PREFERENCES),false);
-
-
-        }*/
 
         else if (this.myStartupMode==GENERAL_PROPERTIES_MODE)
         {
@@ -638,18 +698,27 @@ public class OptionsFrame extends JFrame
                 jComboBoxDisplayOptions.addItem(displayOptions.elementAt(i));
             }
             jComboBoxDisplayOptions.setSelectedItem(dendDispOpt);
+            
+            jCheckBoxGenMatlab.setSelected(GeneralProperties.getGenerateMatlab());
+            jCheckBoxGenIgor.setSelected(GeneralProperties.getGenerateIgor());
 
- /*
-            String saveOpt = GeneralProperties.getMorphologySaveFormat();
 
-            if (saveOpt.equals(UserSettings.JAVAXML_FORMAT))
+            String saveOpt = GeneralProperties.getDefaultPreferredSaveFormat();
+
+            if (saveOpt.equals(ProjectStructure.JAVA_XML_FORMAT))
             {
                 jRadioButtonJavaXML.setSelected(true);
             }
-            else if (saveOpt.equals(UserSettings.MORPHML_FORMAT))
+            else if (saveOpt.equals(ProjectStructure.JAVA_OBJ_FORMAT))
             {
-                jRadioButtonSaveMorphML.setSelected(true);
-            }*/
+                jRadioButtonSaveSer.setSelected(true);
+            }
+            
+            
+            Border b0 = BorderFactory.createLineBorder(Color.gray, 2);
+            Border b = BorderFactory.createTitledBorder(b0, "DEFAULT Project Properties");
+            
+            jPanelProjProps.setBorder(b);
 
         }
 
@@ -694,10 +763,9 @@ public class OptionsFrame extends JFrame
     private boolean saveToGeneralProperties()
     {
 
-        if (this.myStartupMode==GENERAL_PROPERTIES_MODE
-            /*|| this.myStartupMode==NMODL_PROPERTIES_MODE*/)
+        if (this.myStartupMode==GENERAL_PROPERTIES_MODE)
         {
-        	File propDir = new File(jTextFieldPrefProjDir.getText());
+            File propDir = new File(jTextFieldPrefProjDir.getText());
             
             if (propDir.getAbsolutePath().indexOf(" ")>=0)
             {
@@ -728,6 +796,12 @@ public class OptionsFrame extends JFrame
             GeneralProperties.setBrowserPath(jTextFieldBrowser.getText());
             GeneralProperties.setEditorPath(jTextFieldEditor.getText());
             GeneralProperties.setExecutableCommandLine(jTextFieldCommandLine.getText());
+            
+            
+            GeneralProperties.setGenerateMatlab(jCheckBoxGenMatlab.isSelected());
+            GeneralProperties.setGenerateIgor(jCheckBoxGenIgor.isSelected());
+            
+
         
         }
 
@@ -735,6 +809,15 @@ public class OptionsFrame extends JFrame
         if (this.myStartupMode==GENERAL_PROPERTIES_MODE)
         {
             logger.logComment("Chucking preferences into GeneralProperties...");
+            
+            
+            if (jRadioButtonJavaXML.isSelected())
+                GeneralProperties.setDefaultPreferredSaveFormat(ProjectStructure.JAVA_XML_FORMAT);
+            
+            else if (jRadioButtonSaveSer.isSelected())
+                GeneralProperties.setDefaultPreferredSaveFormat(ProjectStructure.JAVA_OBJ_FORMAT);
+            
+        
 
             GeneralProperties.setLogFilePrintToScreenPolicy(jCheckBoxConsole.isSelected());
             GeneralProperties.setLogFileSaveToFilePolicy(jCheckBoxFileOutput.isSelected());
@@ -744,7 +827,7 @@ public class OptionsFrame extends JFrame
             GeneralProperties.setDefaultCellColor3D(jButtonCellColour.getBackground());
 
             GeneralProperties.setDefault3DAxesOption(jCheckBoxShowAxes.isSelected());
-            //GeneralProperties.setDefaultShowDendAxons(JRadioButtonShowDendAxons.isSelected());
+            
             GeneralProperties.setDefaultDisplayOption((String)jComboBoxDisplayOptions.getSelectedItem());
             GeneralProperties.setDefaultShowRegions(jCheckBoxShowRegions.isSelected());
             GeneralProperties.setDefaultShowInputs(jCheckBoxShowInputs.isSelected());
@@ -758,28 +841,25 @@ public class OptionsFrame extends JFrame
             GeneralProperties.setDefaultTransparency(Float.parseFloat(jTextFieldRes3DElements.getText()));
 
 
-/*
-            if (jRadioButtonJavaXML.isSelected())
-            {
-                GeneralProperties.setMorphologySaveFormat(UserSettings.JAVAXML_FORMAT);
-            }
-            else if (jRadioButtonSaveMorphML.isSelected())
-            {
-                GeneralProperties.setMorphologySaveFormat(UserSettings.MORPHML_FORMAT);
-            }
-*/
         }
         else if (this.myStartupMode==PROJECT_PROPERTIES_MODE)
         {
-            logger.logComment("Chucking preferences into Project3DProperties...");
+            logger.logComment("Chucking preferences into ProjectProperties...");
+            
+            if (jRadioButtonJavaXML.isSelected())
+                mainFrame.projManager.getProjectProps().setPreferredSaveFormat(ProjectStructure.JAVA_XML_FORMAT);
+            
+            else if (jRadioButtonSaveSer.isSelected())
+                mainFrame.projManager.getProjectProps().setPreferredSaveFormat(ProjectStructure.JAVA_OBJ_FORMAT);
+            
 
-            Display3DProperties props3D = myMainFrame.projManager.getProjectDispProps();
+            Display3DProperties props3D = mainFrame.projManager.getProjectDispProps();
 
             props3D.setBackgroundColour3D(jButtonBackgroundColour.getBackground());
             props3D.setCellColour3D(jButtonCellColour.getBackground());
 
             props3D.setShow3DAxes(jCheckBoxShowAxes.isSelected());
-            //props3D.setShowDendAxons(JRadioButtonShowDendAxons.isSelected());
+            
             props3D.setDisplayOption((String)jComboBoxDisplayOptions.getSelectedItem());
             props3D.setShowRegions(jCheckBoxShowRegions.isSelected());
             props3D.setShowInputs(jCheckBoxShowInputs.isSelected());
@@ -802,12 +882,12 @@ public class OptionsFrame extends JFrame
     {
         logger.logComment("Save button pressed...");
         boolean cont = this.saveToGeneralProperties();
-        if (somethingAlteredInProject) myMainFrame.applyNew3DSettings();
+        if (somethingAlteredInProject) mainFrame.applyNew3DSettings();
         if (cont) this.dispose();
 
 
-       myMainFrame.alertChangeToolTipsState();
-       myMainFrame.updateConsoleOutState();
+       mainFrame.alertChangeToolTipsState();
+       mainFrame.updateConsoleOutState();
 
     }
 
@@ -835,7 +915,7 @@ public class OptionsFrame extends JFrame
     void jButtonApply_actionPerformed(ActionEvent e)
     {
         this.saveToGeneralProperties();
-        myMainFrame.applyNew3DSettings();
+        mainFrame.applyNew3DSettings();
 
     }
 

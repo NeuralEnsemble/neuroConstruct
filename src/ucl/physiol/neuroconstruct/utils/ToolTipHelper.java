@@ -52,6 +52,9 @@ public class ToolTipHelper
     private ToolTipHelper()
     {
         String helpFilename = ProjectStructure.getToolTipFile();
+        
+        logger.logComment("file: "+helpFilename);
+        
         File myFile = new File(helpFilename);
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -282,6 +285,23 @@ public class ToolTipHelper
         }
 
     }
+    
+  
+    public String getToolTip(String name, boolean html)
+    {
+        String ttHtml = getToolTip(name);
+        
+        if (html) return ttHtml;
+        
+        ttHtml = GeneralUtils.replaceAllTokens(ttHtml, "<html>", "");
+        ttHtml = GeneralUtils.replaceAllTokens(ttHtml, "</html>", "");
+        ttHtml = GeneralUtils.replaceAllTokens(ttHtml, "<b>", "");
+        ttHtml = GeneralUtils.replaceAllTokens(ttHtml, "</b>", "");
+        ttHtml = GeneralUtils.replaceAllTokens(ttHtml, "<br>", "\n");
+        
+        return ttHtml;
+    }
+    
 
 
     public void printContents()

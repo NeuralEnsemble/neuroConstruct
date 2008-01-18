@@ -40,18 +40,23 @@ public class UserSettings
 
     private boolean logFilePrintToScreenPolicy = false;
     private boolean logFileSaveToFilePolicy = false;
+    
+    private boolean generateMatlab = false;
+    private boolean generateIgor = false;
+    
+    //private String preferredSaveFormat = null;
 
 
     public UserSettings()
     {
+        // @todo solve initialisation error when line below used
+        //preferredSaveFormat = ProjectStructure.JAVA_XML_FORMAT;
+        //preferredSaveFormat = "Java XML Format";
     }
 
-
-
-
-
-	public String getNCProjectsDir()
-	{
+    
+    public String getNCProjectsDir()
+    {
     	if (nCProjectsDir == null)
     	{
     		nCProjectsDir = ProjectStructure.getDefaultnCProjectsDir().getAbsolutePath();
@@ -65,7 +70,25 @@ public class UserSettings
     }
 
 
+    public void setGenerateMatlab(boolean gen)
+    {
+        this.generateMatlab = gen;
+    }
 
+    public void setGenerateIgor(boolean gen)
+    {
+        this.generateIgor = gen;
+    }
+
+    public boolean getGenerateMatlab()
+    {
+        return generateMatlab;
+    }
+
+    public boolean getGenerateIgor()
+    {
+        return generateIgor;
+    }
 
 
     public String getExecutableCommandLine()
@@ -116,6 +139,7 @@ public class UserSettings
     {
         this.browserExecutable = browserExecutable;
     }
+    
     public String getEditorPath()
     {
         return this.editorExecutable;
@@ -124,6 +148,6 @@ public class UserSettings
     {
         this.editorExecutable = editorExecutable;
     }
-
+  
 
 }

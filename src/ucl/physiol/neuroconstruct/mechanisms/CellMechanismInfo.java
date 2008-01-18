@@ -61,6 +61,8 @@ public class CellMechanismInfo extends AbstractTableModel
     {
         return columnNames.length;
     }
+    
+    @Override
     public String getColumnName(int col) {
         return columnNames[col];
     }
@@ -206,6 +208,20 @@ public class CellMechanismInfo extends AbstractTableModel
                 logger.logComment("-------     Checking cell mechanism: " + nextCellMech);
                 if (nextCellMech.getMechanismType().equals(CellMechanism.CHANNEL_MECHANISM) ||
                     nextCellMech.getMechanismType().equals(CellMechanism.ION_CONCENTRATION))
+                    allNames.add(nextCellMech.getInstanceName());
+
+        }
+        return allNames;
+    }
+
+    public Vector<String> getPointProcessess()
+    {
+        Vector<String> allNames = new Vector<String>();
+        for (int i = 0; i < getRowCount(); i++)
+        {
+                CellMechanism nextCellMech = (CellMechanism)getCellMechanismAt(i);
+                
+                if (nextCellMech.getMechanismType().equals(CellMechanism.POINT_PROCESS))
                     allNames.add(nextCellMech.getInstanceName());
 
         }

@@ -381,6 +381,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JPanel jPanelNeuronNumInt =  new JPanel();
     JCheckBox jCheckBoxNeuronNumInt = new JCheckBox("Use variable time step");
     JCheckBox jCheckBoxNeuronGenAllMod = new JCheckBox("Generate all mod files");
+    JCheckBox jCheckBoxNeuronCopySimFiles = new JCheckBox("Copy sim files to results dir");
 
     JPanel jPanelNeuronRandomGen =  new JPanel();
     JLabel jLabelNeuronRandomGenDesc = new JLabel("Random seed for NEURON:");
@@ -1651,11 +1652,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTextFieldSimUnitsTemp.setColumns(7);
 
         jTextFieldElecLenMaxUnits.setEditable(false);
-        jTextFieldElecLenMaxUnits.setText(UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol());
+        jTextFieldElecLenMaxUnits.setText("");
         jTextFieldElecLenMaxUnits.setColumns(7);
         
         jTextFieldElecLenMinUnits.setEditable(false);
-        jTextFieldElecLenMinUnits.setText(UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol());
+        jTextFieldElecLenMinUnits.setText("");
         jTextFieldElecLenMinUnits.setColumns(7);
 
         jMenuItemHelpMain.setText("Help");
@@ -2115,7 +2116,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         jMenuSettings.setText("Settings");
         jMenuItemProjProperties.setEnabled(false);
-        jMenuItemProjProperties.setText("Project properties");
+        jMenuItemProjProperties.setText("Project Properties");
         jMenuItemProjProperties.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -2336,6 +2337,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTextFieldSimDefDur.setHorizontalAlignment(SwingConstants.RIGHT);
         jTextFieldSimDefDur.addKeyListener(new java.awt.event.KeyAdapter()
         {
+            @Override
             public void keyReleased(KeyEvent e)
             {
                //////////// jTextFieldDuration_keyReleased(e);
@@ -2884,6 +2886,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         jPanelNeuronNumInt.add(this.jCheckBoxNeuronNumInt);
         jPanelNeuronNumInt.add(this.jCheckBoxNeuronGenAllMod);
+        jPanelNeuronNumInt.add(this.jCheckBoxNeuronCopySimFiles);
 
 
         jPanelNeuronRandomGen.add(jLabelNeuronRandomGenDesc, BorderLayout.WEST);
@@ -3636,6 +3639,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronSaveHoc);
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronNumInt);
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronGenAllMod);
+        addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronCopySimFiles);
 
         addNamedDocumentListner(NEURON_SIMULATOR_TAB, jTextAreaNeuronBlock);
         ////addNamedDocumentListner(NEURON_SIMULATOR_TAB, jTextAreaNeuronAfter);
@@ -3804,6 +3808,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         jCheckBoxNeuronNumInt.setToolTipText(toolTipText.getToolTip("NeuronNumInt"));
         jCheckBoxNeuronGenAllMod.setToolTipText(toolTipText.getToolTip("NeuronGenAllMod"));
+        jCheckBoxNeuronCopySimFiles.setToolTipText(toolTipText.getToolTip("NeuronCopySimFiles"));
 
 
         jLabelSimDefDur.setToolTipText(toolTipText.getToolTip("Simulation def duration"));
@@ -4024,6 +4029,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
                 projManager.getCurrentProject().neuronSettings.setGenAllModFiles(this.jCheckBoxNeuronGenAllMod.isSelected());
+
+
+                projManager.getCurrentProject().neuronSettings.setCopySimFiles(this.jCheckBoxNeuronCopySimFiles.isSelected());
 
 
                 try
@@ -5564,6 +5572,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         GeneralUtils.timeCheck("Neuron files all generated...");
 
         boolean compileSuccess = true;
+        
         if (allModFiles.size()>0)
         {
             try
@@ -5592,16 +5601,18 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             logger.logComment("Compiled hoc file...");
 
         }
+        else
+        {
+            logger.logComment("No mod files to compile...");
+            
+        }
 
         if (!compileSuccess)
         {
             logger.logComment("Problem compiling...");
 
             setNeuronRunEnabled(false);
-
-
             return;
-
         }
 
         //logger.logComment("Created the hoc code in " +(System.currentTimeMillis() - startTime)+" ms", true);
@@ -5620,7 +5631,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         for (int i = 0; i < genFiles.length; i++)
         {
-            logger.logComment("----    Checking file: "+ genFiles[i]);
+            logger.logComment("----    Checking file to add to file viewing list: "+ genFiles[i]);
+            
             if (!genFiles[i].isDirectory() && !genFiles[i].getName().equals("README"))
             {
                 jComboBoxNeuronFileList.addItem(genFiles[i].getName());
@@ -5631,6 +5643,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         //this.refreshAll();
         this.refreshTabNeuron();
 
+        logger.logComment("Finished compiling all of the mod files in: "+ genFiles[0].getParentFile());
     }
 
     private void setNeuronRunEnabled(boolean enabled)
@@ -5863,93 +5876,109 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 return;
             }
 
-
-            for (int i = 0; i < generatedNeuronFiles.length; i++)
-            {
-                if (generatedNeuronFiles[i].getName().endsWith(".hoc") ||
-                    generatedNeuronFiles[i].getName().endsWith(".mod") ||
-                    generatedNeuronFiles[i].getName().endsWith(".py") ||
-                    generatedNeuronFiles[i].getName().endsWith(".dll")||
-                    generatedNeuronFiles[i].getName().endsWith(".xml")||
-                    generatedNeuronFiles[i].getName().endsWith(".dat")||
-                    generatedNeuronFiles[i].getName().endsWith(".props"))
+        
+                
+                for (int i = 0; i < generatedNeuronFiles.length; i++)
                 {
-                    try
+                    String fn = generatedNeuronFiles[i].getName();
+                    
+                    if (fn.endsWith(".dat")||
+                        fn.endsWith(".props") ||
+                            fn.endsWith(".py")||
+                            fn.endsWith(".xml") ||
+                        (projManager.getCurrentProject().neuronSettings.isCopySimFiles() &&
+                            (fn.endsWith(".hoc") ||
+                            fn.endsWith(".mod") ||
+                            fn.endsWith(".dll"))))
                     {
-                        //System.out.println("Saving a copy of file: " + generatedNeuronFiles[i]
-                        //                  + " to dir: " +
-                        //                  dirForSimFiles);
+                        try
+                        {
+                            //System.out.println("Saving a copy of file: " + generatedNeuronFiles[i]
+                            //                  + " to dir: " +
+                            //                  dirForSimFiles);
 
-                        GeneralUtils.copyFileIntoDir(generatedNeuronFiles[i],
-                                                     dirForSimFiles);
+                            GeneralUtils.copyFileIntoDir(generatedNeuronFiles[i],
+                                                         dirForSimFiles);
+                        }
+                        catch (IOException ex)
+                        {
+                            GuiUtils.showErrorMessage(logger, "Error copying file: " + ex.getMessage(), ex, this);
+                            return;
+                        }
                     }
-                    catch (IOException ex)
+                    else if (projManager.getCurrentProject().neuronSettings.isCopySimFiles() &&
+                             (generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_I686) || 
+                             generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_64BIT)))
                     {
-                        GuiUtils.showErrorMessage(logger, "Error copying file: " + ex.getMessage(), ex, this);
-                        return;
-                    }
-                }
-                else if (generatedNeuronFiles[i].getName().equals("i686") || generatedNeuronFiles[i].getName().equals("x86_64"))
-                {
-                    File toDir = new File(dirForSimFiles, generatedNeuronFiles[i].getName());
-                    toDir.mkdir();
-                    logger.logComment("Saving the linux libs from the compiled mods from  of file: " +
-                                      generatedNeuronFiles[i]
-                                      + " to dir: " +
-                                      toDir);
+                        File toDir = new File(dirForSimFiles, generatedNeuronFiles[i].getName());
+                        toDir.mkdir();
+                        logger.logComment("Saving the linux libs from the compiled mods of file: " +
+                                          generatedNeuronFiles[i]
+                                          + " to dir: " +
+                                          toDir);
 
-                    try
-                    {
-                        GeneralUtils.copyDirIntoDir(generatedNeuronFiles[i], toDir, true, true);
-                    }
-                    catch (IOException ex1)
-                    {
-                        GuiUtils.showErrorMessage(logger,
-                                                  "Error while saving the linux libs from the compiled mods from  of file: " +
-                                                  generatedNeuronFiles[i]
-                                                  + " to dir: " + dirForSimFiles, ex1, this);
+                        try
+                        {
+                            GeneralUtils.copyDirIntoDir(generatedNeuronFiles[i], toDir, true, true);
+                        }
+                        catch (IOException ex1)
+                        {
+                            GuiUtils.showErrorMessage(logger,
+                                                      "Error while saving the linux libs from the compiled mods from  of file: " +
+                                                      generatedNeuronFiles[i]
+                                                      + " to dir: " + dirForSimFiles, ex1, this);
 
-                        return;
+                            return;
+                        }
                     }
-                }
-                else if (generatedNeuronFiles[i].isDirectory() && 
-                         (generatedNeuronFiles[i].getName().equals(ProjectStructure.neuroMLPyUtilsDir) ||
-                          generatedNeuronFiles[i].getName().equals(ProjectStructure.neuronPyUtilsDir)))
-                {
-                    File toDir = new File(dirForSimFiles, generatedNeuronFiles[i].getName());
-                    toDir.mkdir();
-
-                    try
+                    else if (projManager.getCurrentProject().neuronSettings.isCopySimFiles() && 
+                             generatedNeuronFiles[i].isDirectory() && 
+                             (generatedNeuronFiles[i].getName().equals(ProjectStructure.neuroMLPyUtilsDir) ||
+                              generatedNeuronFiles[i].getName().equals(ProjectStructure.neuronPyUtilsDir)))
                     {
-                        GeneralUtils.copyDirIntoDir(generatedNeuronFiles[i], toDir, true, true);
-                    }
-                    catch (IOException ex1)
-                    {
-                        GuiUtils.showErrorMessage(logger,
-                                                  "Error while copying file: " +
-                                                  generatedNeuronFiles[i]
-                                                  + " to dir: " + dirForSimFiles, ex1, this);
+                        File toDir = new File(dirForSimFiles, generatedNeuronFiles[i].getName());
+                        toDir.mkdir();
 
-                        return;
+                        try
+                        {
+                            GeneralUtils.copyDirIntoDir(generatedNeuronFiles[i], toDir, true, true);
+                        }
+                        catch (IOException ex1)
+                        {
+                            GuiUtils.showErrorMessage(logger,
+                                                      "Error while copying file: " +
+                                                      generatedNeuronFiles[i]
+                                                      + " to dir: " + dirForSimFiles, ex1, this);
+
+                            return;
+                        }
                     }
-                }
 
             }
 
-            MatlabOctave.createSimulationLoader(projManager.getCurrentProject(), getSelectedSimConfig(), simRef);
+            if (GeneralProperties.getGenerateMatlab())
+            {
+                MatlabOctave.createSimulationLoader(projManager.getCurrentProject(), getSelectedSimConfig(), simRef);
+            }
 
-            if (GeneralUtils.isWindowsBasedPlatform() || GeneralUtils.isMacBasedPlatform())
+            if ((GeneralUtils.isWindowsBasedPlatform() || GeneralUtils.isMacBasedPlatform()) 
+                && GeneralProperties.getGenerateIgor())
             {
                 IgorNeuroMatic.createSimulationLoader(projManager.getCurrentProject(), getSelectedSimConfig(), simRef);
             }
         }
 
-        File simulationDir = ProjectStructure.getDirForSimFiles(projManager.getCurrentProject().simulationParameters.getReference(),
+        File simRunDir = ProjectStructure.getDirForSimFiles(projManager.getCurrentProject().simulationParameters.getReference(),
                                                                 projManager.getCurrentProject());
+        
+        if (!projManager.getCurrentProject().neuronSettings.isCopySimFiles())
+        {
+            simRunDir = new File(genNeuronDir.getAbsolutePath());
+        }
 
         try
         {
-            File newMainHocFile = new File(simulationDir,
+            File newMainHocFile = new File(simRunDir,
                                projManager.getCurrentProject().neuronFileManager.getMainHocFile().getName());
 
 
@@ -5984,10 +6013,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         try
         {
+            if (GeneralProperties.getGenerateMatlab())
+            {
+                MatlabOctave.createSimulationLoader(projManager.getCurrentProject(), getSelectedSimConfig(), this.jTextFieldSimRef.getText());
+            }
 
-            MatlabOctave.createSimulationLoader(projManager.getCurrentProject(), getSelectedSimConfig(), this.jTextFieldSimRef.getText());
-
-            if (GeneralUtils.isWindowsBasedPlatform() || GeneralUtils.isMacBasedPlatform())
+            if ((GeneralUtils.isWindowsBasedPlatform() || GeneralUtils.isMacBasedPlatform())
+                && GeneralProperties.getGenerateIgor())
             {
                 IgorNeuroMatic.createSimulationLoader(projManager.getCurrentProject(), getSelectedSimConfig(),
                                                       this.jTextFieldSimRef.getText());
@@ -7740,6 +7772,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             jTableMechanisms = new JTable(projManager.getCurrentProject().cellMechanismInfo)
             {
+                @Override
                 public String getToolTipText(MouseEvent e) {
                   String tip = null;
                   java.awt.Point p = e.getPoint();
@@ -8532,6 +8565,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jCheckBoxNeuronNumInt.setSelected(projManager.getCurrentProject().neuronSettings.isVarTimeStep());
 
             this.jCheckBoxNeuronGenAllMod.setSelected(projManager.getCurrentProject().neuronSettings.isGenAllModFiles());
+            this.jCheckBoxNeuronCopySimFiles.setSelected(projManager.getCurrentProject().neuronSettings.isCopySimFiles());
 
             jComboBoxNeuronExtraBlocks.setEnabled(true);
 
@@ -8655,7 +8689,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             String ref = projManager.getCurrentProject().simulationParameters.getReference();
             //String newRef = null;
 
-            File simDir = ProjectStructure.getSimulationsDir(projManager.getCurrentProject().getProjectMainDirectory());;
+            File simDir = ProjectStructure.getSimulationsDir(projManager.getCurrentProject().getProjectMainDirectory());
 
             logger.logComment("Sim dir: "+ simDir);
 
@@ -9073,6 +9107,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     }
 
     //Overridden so we can exit when window is closed
+    @Override
     protected void processWindowEvent(WindowEvent e)
     {
         //super.processWindowEvent(e);
@@ -9490,7 +9525,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     void jButtonPreferences_actionPerformed(ActionEvent e)
     {
         logger.logComment("Preferences button pressed...");
-        doOptionsPane(OptionsFrame.THREE_D_PREFERENCES, OptionsFrame.PROJECT_PROPERTIES_MODE);
+        doOptionsPane(OptionsFrame.PROJ_PREFERENCES, OptionsFrame.PROJECT_PROPERTIES_MODE);
     }
 
 
@@ -9580,7 +9615,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     void jMenuItemProjProperties_actionPerformed(ActionEvent e)
     {
         logger.logComment("Project Preferences menu item selected...");
-        doOptionsPane(OptionsFrame.THREE_D_PREFERENCES, OptionsFrame.PROJECT_PROPERTIES_MODE);
+        doOptionsPane(OptionsFrame.PROJ_PREFERENCES, OptionsFrame.PROJECT_PROPERTIES_MODE);
     }
 /*
     void jTextFieldDuration_keyReleased(KeyEvent e)
@@ -9630,7 +9665,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     void jButton3DSettings_actionPerformed(ActionEvent e)
     {
         logger.logComment("Setting 3D options...");
-        this.doOptionsPane(OptionsFrame.THREE_D_PREFERENCES, OptionsFrame.PROJECT_PROPERTIES_MODE);
+        this.doOptionsPane(OptionsFrame.PROJ_PREFERENCES, OptionsFrame.PROJECT_PROPERTIES_MODE);
 
     }
     
@@ -10085,6 +10120,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     private void doGenerate()
     {
         logger.logComment("Going to generate network...");
+        
         if (!projManager.projectLoaded()) return;
 
 
@@ -10153,6 +10189,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         // need this to update list of 3d position files...
         refreshTab3D();
+        
+        logger.logComment("Finished generating network!");
+        logger.logComment("Num cells generated: "+ projManager.getCurrentProject().generatedCellPositions.getNumberInAllCellGroups());
+        
 
     }
 

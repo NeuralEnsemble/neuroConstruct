@@ -60,9 +60,6 @@ public class Project implements TableModelListener
     // Interface to let the project know if something has been altered...
     ProjectEventListener projectEventListner;
 
-    private String preferredSaveFormat = ProjectStructure.JAVA_XML_FORMAT;
-   // private String preferredSaveFormat = ProjectStructure.JAVA_OBJ_FORMAT;
-
     /**
      * These hold the main info of the project. They will be written to/read from
      * file when saving/loading
@@ -81,6 +78,8 @@ public class Project implements TableModelListener
     public NeuronSettings neuronSettings = null;
     public GenesisSettings genesisSettings = null;
 
+    public ProjectProperties projProperties = null;
+    
     public Display3DProperties proj3Dproperties = null;
 
     public CellMechanismInfo cellMechanismInfo = null;
@@ -134,6 +133,9 @@ public class Project implements TableModelListener
         proj.currentProjectFile = new File(projectDir, projectName + ProjectStructure.getProjectFileExtension());
 
         proj.initialiseInternalObjects();
+        
+        
+        proj.projProperties.setPreferredSaveFormat(GeneralProperties.getDefaultPreferredSaveFormat());
 
         proj.projectEventListner = projectEventListner;
 
@@ -318,6 +320,13 @@ public class Project implements TableModelListener
                     logger.logComment("Found Project3DProperties object in project file...");
                     proj.proj3Dproperties = (Display3DProperties) nextReadObject;
                 }
+                
+                /* --  Reading 3D Info -- */
+                if (nextReadObject instanceof ProjectProperties)
+                {
+                    logger.logComment("Found ProjectProperties object in project file...");
+                    proj.projProperties = (ProjectProperties) nextReadObject;
+                }
 
                 /* --  Reading NEURON Info --*/
                 if (nextReadObject instanceof NeuronSettings)
@@ -480,6 +489,9 @@ public class Project implements TableModelListener
                     {
                         cellMechProps.loadFromXML(new FileInputStream(propsFile));
                         String implMethod = cellMechProps.getProperty(CellMechanismHelper.PROP_IMPL_METHOD);
+                        
+                        logger.logComment("Channel mech: "+ cellMechProps.getProperty(CellMechanismHelper.PROP_CELL_MECH_NAME)
+                            +", type: "+ cellMechProps.getProperty(CellMechanismHelper.PROP_CELL_MECH_TYPE));
 
                         if (implMethod.equals(CellMechanism.CHANNELML_BASED_CELL_MECHANISM))
                         {
@@ -490,6 +502,8 @@ public class Project implements TableModelListener
                             try
                             {
                                 cmlcm.initialise(proj, false);
+                                
+                               logger.logComment("CML Channel mech: "+ cmlcm.toString());
                             }
                             catch (ChannelMLException ex1)
                             {
@@ -759,7 +773,7 @@ public class Project implements TableModelListener
                 if (contents[i].getName().endsWith(ProjectStructure.getJavaObjFileExtension()) ||
                     contents[i].getName().endsWith(".obj")) /** @todo remove... */
                 {
-                    System.out.println("----Reading Cell Type info from: " + contents[i]);
+                    //System.out.println("----Reading Cell Type info from: " + contents[i]);
 
                     Cell cellGenerated = null;
                     try
@@ -843,6 +857,8 @@ public class Project implements TableModelListener
         proj3Dproperties = new Display3DProperties();
         proj3Dproperties.initialiseDefaultValues();
 
+        projProperties = new ProjectProperties();
+        
         ///synapticProcessInfo = new SynapticProcessInfo();
         ///channelMechanismInfo = new ChannelMechanismInfo();
 
@@ -1066,7 +1082,7 @@ public class Project implements TableModelListener
             return;
         }
 
-        GeneralProperties.saveToSettingsFile(); // why not?
+        GeneralProperties.saveToSettingsFile(); // sure why not?
 
         basicProjectInfo.setProjectFileVersion("neuroConstruct v"
                                                + GeneralProperties.getVersionNumber());
@@ -1113,6 +1129,9 @@ public class Project implements TableModelListener
 
         /* -- Writing Simulation plot info -- */
         xmlEncoder.writeObject(simPlotInfo);
+
+        /* -- Writing proj props info -- */
+        xmlEncoder.writeObject(projProperties);
 
         /* -- Writing 3D info -- */
         xmlEncoder.writeObject(proj3Dproperties);
@@ -1364,9 +1383,9 @@ public class Project implements TableModelListener
             {
 
                 logger.logComment("Saving cell: " + cell.getInstanceName()
-                                  + " in " + this.preferredSaveFormat);
+                                  + " in " + projProperties.getPreferredSaveFormat());
 
-                if (preferredSaveFormat.equals(ProjectStructure.JAVA_OBJ_FORMAT))
+                if (projProperties.getPreferredSaveFormat().equals(ProjectStructure.JAVA_OBJ_FORMAT))
                 {
                     File objFile = new File(dirForProjectMorphologies,
                                             cell.getInstanceName()
@@ -1376,7 +1395,7 @@ public class Project implements TableModelListener
                     filesSaved.add(objFile.getName());
 
                 }
-                else if (preferredSaveFormat.equals(ProjectStructure.JAVA_XML_FORMAT))
+                else if (projProperties.getPreferredSaveFormat().equals(ProjectStructure.JAVA_XML_FORMAT))
                 {
                     File xmlFile = new File(dirForProjectMorphologies,
                                             cell.getInstanceName()

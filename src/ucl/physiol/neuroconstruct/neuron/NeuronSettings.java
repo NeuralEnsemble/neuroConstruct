@@ -41,6 +41,8 @@ public class NeuronSettings
     private boolean useVarTimeStep = false;
     
     private boolean genAllModFiles = false;
+    
+    private boolean copySimFiles = false;
 
     //private subsApPropVel
 
@@ -187,6 +189,17 @@ public class NeuronSettings
     public void setGenAllModFiles(boolean genAllModFiles)
     {
         this.genAllModFiles = genAllModFiles;
+    }
+
+
+
+    public boolean isCopySimFiles()
+    {
+        return copySimFiles;
+    }
+    public void setCopySimFiles(boolean copySimFiles)
+    {
+        this.copySimFiles = copySimFiles;
     }
 
 

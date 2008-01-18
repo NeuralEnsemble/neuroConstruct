@@ -144,7 +144,7 @@ public class NeuronFileManager
                                        int runMode,
                                        long randomSeed) throws NeuronException, IOException
     {
-        logger.logComment("Starting generation of the hoc files...");
+        logger.logComment("****  Starting generation of the hoc files...  ****");
 
         long generationTimeStart = System.currentTimeMillis();
         
@@ -359,8 +359,8 @@ public class NeuronFileManager
         long generationTimeEnd = System.currentTimeMillis();
         genTime = (float) (generationTimeEnd - generationTimeStart) / 1000f;
 
-        logger.logComment("... Created Main hoc file: " + mainHocFile+" in "
-                +genTime+" seconds. ");
+        logger.logComment("****  Created Main hoc file: " + mainHocFile+" in "
+                +genTime+" seconds. **** \n");
         
         return;
 
@@ -654,7 +654,7 @@ public class NeuronFileManager
             response.append("}\n");
 
             return response.toString();
-        };
+        }
 
 
         ArrayList<String> cellGroupNames = project.cellGroupsInfo.getAllCellGroupNames();
@@ -1014,6 +1014,15 @@ public class NeuronFileManager
 
         response.append("print \" \"\n");
         response.append("print  \"*****************************************************\"\n\n");
+        
+        if (GeneralUtils.isLinuxBasedPlatform() || GeneralUtils.isMacBasedPlatform())
+        {
+            response.append("strdef pwd\n");
+    
+            response.append("system(\"pwd\", pwd)\n");
+            
+            response.append("print \"Current working dir: \", pwd\n\n");
+        }
         
         /*if (simConfig.getMpiConf().isParallel())
         {
@@ -2100,7 +2109,7 @@ public class NeuronFileManager
                                         String fileObj = "f_" + synObjName + "_" + neuronVar;
                                         
                                         vectorObj = GeneralUtils.replaceAllTokens(vectorObj, ".", "_");
-                                        fileObj = GeneralUtils.replaceAllTokens(fileObj, ".", "_");;
+                                        fileObj = GeneralUtils.replaceAllTokens(fileObj, ".", "_");
 
                                         prefix = "";
                                         post = "";
@@ -4399,18 +4408,18 @@ public class NeuronFileManager
                         }
                     }
 
-                    File libsDir = new File(dirForSimFiles, getArchSpecificDir());
+                    File libsDir = new File(dirForSimFiles, GeneralUtils.getArchSpecificDir());
 
                     // Messy roundabout way to do it...
                     File tempDir = new File(dirForSimFiles, "temp");
                     tempDir.mkdir();
-                    File tempLibsDir = new File(tempDir, getArchSpecificDir());
+                    File tempLibsDir = new File(tempDir, GeneralUtils.getArchSpecificDir());
                     tempLibsDir.mkdir();
 
 
                     GeneralUtils.copyDirIntoDir(libsDir, tempLibsDir, true, true);
 
-                    String zippedLibsFilename = getArchSpecificDir() + ".zip";
+                    String zippedLibsFilename = GeneralUtils.getArchSpecificDir() + ".zip";
 
                     File zipFile = new File(dirForSimFiles, zippedLibsFilename);
 
@@ -4448,7 +4457,7 @@ public class NeuronFileManager
                    //condorBatchFileWriter.write("mkdir i686\n");
                    //condorBatchFileWriter.write("mv \n");
                    condorBatchFileWriter.write("unzip "+zippedLibsFilename+"\n");
-                   condorBatchFileWriter.write("chmod -R a+x "+getArchSpecificDir()+"\n");
+                   condorBatchFileWriter.write("chmod -R a+x "+GeneralUtils.getArchSpecificDir()+"\n");
 
 
                    // for testing...
@@ -4461,7 +4470,7 @@ public class NeuronFileManager
                    condorBatchFileWriter.write("echo\n");
                    condorBatchFileWriter.write("echo Starting NEURON...\n");
 
-                   condorBatchFileWriter.write("/usr/local/nrn/"+getArchSpecificDir()+"/bin/nrngui "+mainHocFile.getName()+"\n");
+                   condorBatchFileWriter.write("/usr/local/nrn/"+GeneralUtils.getArchSpecificDir()+"/bin/nrngui "+mainHocFile.getName()+"\n");
 
 
 
@@ -4518,23 +4527,6 @@ public class NeuronFileManager
 
         return this.mainHocFile;
 
-    }
-
-
-    /**
-     * @return i686 for most, x86_64 if "64" present in system properties os.arch, e.g. amd64. Will need updating as Neuron tested on more platforms...
-     *
-     */
-    public static String getArchSpecificDir()
-    {
-        if (System.getProperty("os.arch").indexOf("64")>=0)
-        {
-            return "x86_64";
-        }
-        else
-        {
-            return "i686";
-        }
     }
 
 

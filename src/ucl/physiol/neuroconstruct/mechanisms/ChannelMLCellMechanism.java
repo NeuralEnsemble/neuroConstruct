@@ -36,8 +36,6 @@ import ucl.physiol.neuroconstruct.utils.xml.*;
 
 public class ChannelMLCellMechanism extends CellMechanism
 {
-    private static ClassLogger logger = new ClassLogger("ChannelMLCellMechanism");
-
     private String channelMLFile = null;
     private SimpleXMLDocument xmlDoc = null;
 
@@ -47,6 +45,7 @@ public class ChannelMLCellMechanism extends CellMechanism
 
     public ChannelMLCellMechanism()
     {
+        logger = new ClassLogger("ChannelMLCellMechanism");
         logger.setThisClassSilent(true);
     }
 
@@ -197,6 +196,8 @@ public class ChannelMLCellMechanism extends CellMechanism
 
     }
 
+    
+    @Override
     public String toString()
     {
         return "ChannelMLCell Mechanism [InstanceName: "+this.getInstanceName()+", channelMLFile: "+channelMLFile+"]";
@@ -241,6 +242,7 @@ public class ChannelMLCellMechanism extends CellMechanism
         this.channelMLFile = channelMLFile;
     }
 
+    @Override
     public String getDescription()
     {
         String desc = null;
@@ -257,6 +259,7 @@ public class ChannelMLCellMechanism extends CellMechanism
         return (desc!=null ? desc : "");
     }
 
+    @Override
     public void setDescription(String description)
     {
         this.description = description;
@@ -268,6 +271,7 @@ public class ChannelMLCellMechanism extends CellMechanism
 
     }
 
+    @Override
     public String getInstanceName()
     {
         if (xmlDoc == null)
@@ -283,6 +287,10 @@ public class ChannelMLCellMechanism extends CellMechanism
     private String getNameXPath()
     {
         if (this.isChannelMechanism())
+        {
+            return ChannelMLConstants.getChannelNameXPath();
+        }
+        else if (this.isPointProcess())
         {
             return ChannelMLConstants.getChannelNameXPath();
         }
@@ -305,6 +313,10 @@ public class ChannelMLCellMechanism extends CellMechanism
         {
             return ChannelMLConstants.getFirstChannelNotesXPath();
         }
+        else if (this.isPointProcess())
+        {
+            return ChannelMLConstants.getFirstChannelNotesXPath();
+        }
         else if (this.isSynapticMechanism())
         {
             return ChannelMLConstants.getFirstSynapseNotesXPath();
@@ -320,31 +332,20 @@ public class ChannelMLCellMechanism extends CellMechanism
 
 
 
-    public boolean isChannelMechanism()
-    {
-        return getMechanismType().equals(CellMechanism.CHANNEL_MECHANISM);
-    }
 
 
-
-    public boolean isSynapticMechanism()
-    {
-        return getMechanismType().equals(CellMechanism.SYNAPTIC_MECHANISM);
-    }
-
-    public boolean isIonConcMechanism()
-    {
-        return getMechanismType().equals(CellMechanism.ION_CONCENTRATION);
-    }
-
-
-
+    @Override
     public String getMechanismType()
     {
         // check internal cml setting first..
         if (xmlDoc!=null)
         {
-            if (xmlDoc.getValueByXPath(ChannelMLConstants.getChannelTypeXPath()) != null)
+            if (xmlDoc.getValueByXPath(ChannelMLConstants.getIandFXPath()) != null)
+            {
+                mechanismType = CellMechanism.POINT_PROCESS;
+                return mechanismType;
+            }
+            else if (xmlDoc.getValueByXPath(ChannelMLConstants.getChannelTypeXPath()) != null)
             {
                 mechanismType = CellMechanism.CHANNEL_MECHANISM;
                 return mechanismType;
@@ -365,7 +366,7 @@ public class ChannelMLCellMechanism extends CellMechanism
 
 
 
-
+    @Override
     public void setInstanceName(String instanceName)
     {
         this.instanceName = instanceName;

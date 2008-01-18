@@ -30,6 +30,15 @@ import javax.swing.*;
 public class GeneralUtils
 {
     private static ClassLogger logger = new ClassLogger("GeneralUtils");
+    
+    public static final String ARCH_I686 = "i686";
+    public static final String ARCH_64BIT = "amd64";
+    public static final String ARCH_POWERPC = "ppc";
+    
+    public static final String DIR_I686 = "i686";
+    public static final String DIR_64BIT = "x86_64";
+    public static final String DIR_POWERPC = "powerpc";
+    
 
     private static long lastMeasuredMemory = 0;
     private static long lastTimeMemoryMeasured = 0;
@@ -41,7 +50,29 @@ public class GeneralUtils
     public GeneralUtils()
     {
     }
-
+    
+    
+    /**
+     * @return i686 for most, x86_64 if "64" present in system properties os.arch, 
+     * e.g. amd64. Will need updating as Neuron tested on more platforms...
+     *
+     */
+    public static String getArchSpecificDir()
+    {
+        if (System.getProperty("os.arch").equals(ARCH_64BIT) ||
+            System.getProperty("os.arch").indexOf("64")>=0)
+        {
+            return DIR_64BIT;
+        }
+        else if (isMacBasedPlatform() && System.getProperty("os.arch").indexOf(ARCH_POWERPC)>=0)
+        {
+            return DIR_POWERPC;
+        }
+        else
+        {
+            return DIR_I686;
+        }
+    }
 
     public static boolean isWindowsBasedPlatform()
     {
@@ -107,7 +138,7 @@ public class GeneralUtils
         if (forcePrint) System.out.println(summary);
         else logger.logComment(summary);
 
-         long currTime = System.currentTimeMillis();;
+         long currTime = System.currentTimeMillis();
 
          if (lastTimeMemoryMeasured>0)
          {

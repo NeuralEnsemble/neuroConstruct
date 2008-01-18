@@ -1868,6 +1868,9 @@ public class CellTopologyHelper
         if (aas.size()>0) sb.append("  "+GeneralUtils.getEndLine(html));
 
         ArrayList<Section> sections = cell.getAllSections();
+        int totIntDivs = 0;
+        for (Section sec: sections)
+            totIntDivs = totIntDivs + sec.getNumberInternalDivisions();
 
 
         sb.append("    Number of segments            : " 
@@ -1877,6 +1880,8 @@ public class CellTopologyHelper
                   + ", axonal: "+cell.getOnlyAxonalSegments().size() +")"
                   + GeneralUtils.getEndLine(html));
         sb.append("    Number of sections            : " + GeneralUtils.getTabbedString(sections.size()+"", "b", html)
+                  + GeneralUtils.getEndLine(html));
+        sb.append("    Total internal divisions      : " + GeneralUtils.getTabbedString(totIntDivs+"", "b", html)
                   + GeneralUtils.getEndLine(html));
 
         float totalSurfaceArea = 0;
@@ -3140,29 +3145,29 @@ public class CellTopologyHelper
         {
             ChannelMechanism next = allChanMechs.get(i);
 
-            CellMechanism cellProc = project.cellMechanismInfo.getCellMechanism(next.getName());
+            CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(next.getName());
             //try
             //{
-            if (cellProc instanceof PassiveMembraneMechanism)
+            if (cellMech instanceof PassiveMembraneMechanism)
             {
                 passiveChans.add(next);
             }
-            else if (cellProc instanceof ChannelMLCellMechanism)
+            else if (cellMech instanceof ChannelMLCellMechanism)
             {
-                ChannelMLCellMechanism cmlProc = (ChannelMLCellMechanism)cellProc;
+                ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism)cellMech;
 
                 boolean isCMLPassive = false;
 
                 try
                 {
-                    isCMLPassive = ( (ChannelMLCellMechanism) cmlProc).isPassiveNonSpecificCond();
+                    isCMLPassive = ( (ChannelMLCellMechanism) cmlMech).isPassiveNonSpecificCond();
                 }
                 catch (CMLMechNotInitException e)
                 {
                     try
                     {
-                        cmlProc.initialise(project, false);
-                        isCMLPassive = cmlProc.isPassiveNonSpecificCond();
+                        cmlMech.initialise(project, false);
+                        isCMLPassive = cmlMech.isPassiveNonSpecificCond();
                     }
                     catch (CMLMechNotInitException cmle)
                     {
@@ -3170,7 +3175,7 @@ public class CellTopologyHelper
                     }
                     catch (ChannelMLException ex2)
                     {
-                        logger.logError("Error initialising Cell mech: "+ cmlProc.getInstanceName(), ex2);
+                        logger.logError("Error initialising Cell mech: "+ cmlMech.getInstanceName(), ex2);
                         //return null;
                     }
 
@@ -3286,38 +3291,35 @@ public class CellTopologyHelper
         {
             ChannelMechanism next = allChanMechs.get(i);
 
-            CellMechanism cellProc = project.cellMechanismInfo.getCellMechanism(next.getName());
+            CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(next.getName());
             try
             {
-                if (cellProc instanceof DistMembraneMechanism || cellProc instanceof ChannelMLCellMechanism)
+                if (cellMech instanceof DistMembraneMechanism || cellMech instanceof ChannelMLCellMechanism)
                 {
-                    //DistMembraneProcess distProc = (DistMembraneProcess) cellProc;
-
-                    //float membCondDens = distProc.getParameter(PassiveMembraneProcess.COND_DENSITY);
                     float membCondDens = next.getDensity();
 
-                    detailedInfo.append(getAllUnitDesc("Conductance density for Cell Process: " +
-                                                       cellProc.getInstanceName(),
+                    detailedInfo.append(getAllUnitDesc("Conductance density for Cell Mechanism: <b>" +
+                                                       cellMech.getInstanceName()+"</b>",
                                                        membCondDens,
                                                        UnitConverter.conductanceDensityUnits,
                                                        html) + GeneralUtils.getEndLine(html));
 
-                    info.append(getMainUnitDesc("Conductance density for Cell Process: " + cellProc.getInstanceName(),
+                    info.append(getMainUnitDesc("Conductance density for Cell Mechanism: <b>" + cellMech.getInstanceName()+"</b>",
                                                 membCondDens,
                                                 UnitConverter.conductanceDensityUnits,
                                                 html) + GeneralUtils.getEndLine(html));
 
-                    detailedInfo.append(getAllUnitDesc("Total Conductance on Segment due to: " +
-                                                       cellProc.getInstanceName(),
+                    detailedInfo.append(getAllUnitDesc("Total Conductance on Segment due to: <b>" +
+                                                       cellMech.getInstanceName()+"</b>",
                                                        membCondDens * segment.getSegmentSurfaceArea(),
                                                        UnitConverter.conductanceUnits,
                                                        html) + GeneralUtils.getEndLine(html));
 
-                    boolean membLeak = (cellProc instanceof PassiveMembraneMechanism);
+                    boolean membLeak = (cellMech instanceof PassiveMembraneMechanism);
 
-                    if (cellProc instanceof ChannelMLCellMechanism)
+                    if (cellMech instanceof ChannelMLCellMechanism)
                     {
-                        ChannelMLCellMechanism cpml = (ChannelMLCellMechanism)cellProc;
+                        ChannelMLCellMechanism cpml = (ChannelMLCellMechanism)cellMech;
                         cpml.initialise(project, false);
                         membLeak = membLeak || cpml.isPassiveNonSpecificCond();
                         //System.out.println("cpml: "+ cpml+", pas? "+cpml.isPassiveNonSpecificCond());
@@ -3325,17 +3327,16 @@ public class CellTopologyHelper
 
                     if (membLeak)
                     {
-                        //PassiveMembraneProcess pass = (PassiveMembraneProcess) cellProc;
 
                         specMembRes = 1f / membCondDens;
 
-                        detailedInfo.append(getAllUnitDesc("Specific Membrane resistance for passive process: " +
-                                                   cellProc.getInstanceName(),
+                        detailedInfo.append(getAllUnitDesc("Specific Membrane resistance for passive mechanism: <b>" +
+                                                   cellMech.getInstanceName()+"</b>",
                                                    (1f / membCondDens),
                                                    UnitConverter.specificMembraneResistanceUnits,
                                                    html) + GeneralUtils.getEndLine(html));
 
-                        detailedInfo.append(getAllUnitDesc("Membrane resistance on Segment due to: " + cellProc.getInstanceName(),
+                        detailedInfo.append(getAllUnitDesc("Membrane resistance on Segment due to: <b>" + cellMech.getInstanceName()+"</b>",
                                                    (1f / (membCondDens * segment.getSegmentSurfaceArea())),
                                                    UnitConverter.resistanceUnits,
                                                    html) + GeneralUtils.getEndLine(html));
@@ -3347,7 +3348,7 @@ public class CellTopologyHelper
             }
             catch (Exception ex)
             {
-                String errorString = "Problem getting info on Cell Process: " + cellProc;
+                String errorString = "Problem getting info on Cell Mechanism: " + cellMech;
                 GuiUtils.showErrorMessage(logger,
                                           errorString,
                                           ex,
@@ -3368,7 +3369,7 @@ public class CellTopologyHelper
             float lambda = getSpaceConstant(segment, specMembRes, specAxRes);
             float el = getElectrotonicLength(segment, specMembRes, specAxRes);
 
-           info.append("Space constant lambda: <b>"+ lambda + " um</b>" +GeneralUtils.getEndLine(html));
+           info.append("Space constant lambda: <b>"+ lambda + " "+UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+"</b>" +GeneralUtils.getEndLine(html));
            info.append("Electrotonic length: <b>"+ el + "</b>" + GeneralUtils.getEndLine(html));
 
         }
@@ -3431,7 +3432,7 @@ public class CellTopologyHelper
 
 
         info.append(GeneralUtils.getEndLine(html)+GeneralUtils.getEndLine(html));
-        info.append(GeneralUtils.getTabbedString("---- Detailed biophysical info ----", "h3", html));
+        info.append(GeneralUtils.getTabbedString("---- Detailed biophysical info on Segment ----", "h3", html));
 
         info.append(detailedInfo.toString());
 
@@ -3457,11 +3458,11 @@ public class CellTopologyHelper
 
             ChannelMechanism next = allChanMechs.get(i);
 
-            CellMechanism cellProc = project.cellMechanismInfo.getCellMechanism(next.getName());
+            CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(next.getName());
 
-            if (cellProc instanceof ChannelMLCellMechanism)
+            if (cellMech instanceof ChannelMLCellMechanism)
             {
-                ChannelMLCellMechanism cmlcp = (ChannelMLCellMechanism)cellProc;
+                ChannelMLCellMechanism cmlcp = (ChannelMLCellMechanism)cellMech;
                 if (cmlcp.isPassiveNonSpecificCond())
                 {
                     float condDens = next.getDensity();
@@ -3469,7 +3470,7 @@ public class CellTopologyHelper
                     return specMembRes;
                 }
             }
-            if (cellProc instanceof PassiveMembraneMechanism)
+            if (cellMech instanceof PassiveMembraneMechanism)
             {
                 float condDens = next.getDensity();
                 specMembRes = 1/condDens;

@@ -14,7 +14,7 @@ package ucl.physiol.neuroconstruct.project;
 
 import java.io.File;
 import java.io.*;
-import ucl.physiol.neuroconstruct.utils.ClassLogger;
+import ucl.physiol.neuroconstruct.utils.*;
 
 
 
@@ -34,6 +34,7 @@ public class ProjectStructure
     {
         logger.setThisClassSilent(true);
     }
+    
     
     private static final String updateCheckUrl = "http://www.physiol.ucl.ac.uk/research/silver_a/nCinfo/form.php?myversion=";
 
@@ -659,16 +660,11 @@ public class ProjectStructure
         {
             oldProjMorphDir.renameTo(morphDir);
         }
+        
+        String details = ToolTipHelper.getInstance().getToolTip("Morphology save format", false);
 
         morphDir = getDirectoryInProject(projectDir, morphologiesDir,
-                                         "This is the directory for the cell morphology files associated with the project.\n"
-                                         + "The following types of files are found here: \n\n"
-                                         + "   *" + ProjectStructure.getJavaXMLFileExtension() +
-                                         ": morphologies (based on the ucl.physiol.neuroconstruct.cell.Cell Java class) saved in Java XML serialized form (note: not part of NeuroML).\n"
-                                         + "   *" + ProjectStructure.getJavaObjFileExtension() +
-                                         ": morphologies saved in Java binary serialized object form (smaller files & quicker to load)\n\n"
-                                         + "   *.bak files backup the previously stored morphology before a new one is saved (if a problem occurs saving a morphology, remove the .bak and use that file to load into the project).\n\n"
-            + "Note that the cells aren't currently stored here in NeuroML/MorphML format, as new functionality is added to the neuroConstruct Cell class before it is supported in the standards.");
+                                         details);
 
         return morphDir;
     }

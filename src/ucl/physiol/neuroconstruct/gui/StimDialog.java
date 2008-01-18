@@ -114,7 +114,7 @@ public class StimDialog extends JDialog
     JLabel jLabelFraction = new JLabel();
     JTextField jTextFieldFractionAlong = new JTextField();
 
-
+/*
     public StimDialog(Dialog owner, String suggestedRef, Project project)
     {
         super(owner, "Choose a stimulation to apply to the network", false);
@@ -135,7 +135,7 @@ public class StimDialog extends JDialog
             logger.logComment("Exception starting GUI: "+ ex);
         }
 
-    }
+    }*/
 
 
     public StimDialog(Frame owner, String suggestedRef, Project project)
@@ -157,14 +157,107 @@ public class StimDialog extends JDialog
             }
             else
             {
-
-                Exp2SynMechanism exp2 = new Exp2SynMechanism();
+                //Exp2SynMechanism exp2 = new Exp2SynMechanism();
                 
-                exp2.setInstanceName("SynForRndSpike");
-                project.cellMechanismInfo.addCellMechanism(exp2);
+                    
+                File cmlTemplateDir = ProjectStructure.getCMLTemplatesDir();
+                
+                File fromDir = new File(cmlTemplateDir, "DoubleExpSyn");
+                Properties props = new Properties();
 
-                tempRandSpike.setSynapseType(exp2.getInstanceName());
-                tempRandSpikeExt.setSynapseType(exp2.getInstanceName());
+                try
+                {
+                    props.load(new FileInputStream(new File(fromDir, "properties")));
+                }
+                catch (IOException ex)
+                {
+                    logger.logError("Problem getting properties", ex);
+                    //ignore...
+                }
+                
+                String name = "SynForRndSpike";
+                String desc = "Default Synaptic mechanism added automatically when a new Input was created (needed for Random stim option in input)";
+                
+                
+                File dirForCMLFiles = ProjectStructure.getDirForCellMechFiles(project, name);
+
+                dirForCMLFiles.mkdir();
+
+                ChannelMLCellMechanism cmlMech = new ChannelMLCellMechanism();
+
+                cmlMech.setInstanceName(name);
+                cmlMech.setDescription(desc);
+                
+                logger.logComment("Info so far: "+cmlMech.toString(), true);
+                
+                cmlMech.setMechanismType(props.getProperty("CellProcessType"));
+                
+                cmlMech.setMechanismModel("Template based ChannelML file");
+                
+                if (props.getProperty("ChannelMLFile")!=null)
+                {
+                    String relativeFile = props.getProperty("ChannelMLFile");
+
+                    File absFile = new File(fromDir, relativeFile);
+                    absFile = absFile.getCanonicalFile();
+
+                    logger.logComment("ChannelML file found in props to be: "+ absFile);
+
+                    File newFile = GeneralUtils.copyFileIntoDir(absFile, dirForCMLFiles);
+                    cmlMech.setChannelMLFile(newFile.getName());
+                }
+                if (props.getProperty("MappingNEURON")!=null)
+                {
+                    String relativeFile = props.getProperty("MappingNEURON");
+
+                    File absFile = new File(fromDir, relativeFile);
+                    absFile = absFile.getCanonicalFile();
+
+                    logger.logComment("MappingNEURON file found in props to be: "+ absFile);
+
+                    File newFile = GeneralUtils.copyFileIntoDir(absFile, dirForCMLFiles);
+
+                    SimXSLMapping mapping = new SimXSLMapping(newFile.getName(),
+                                                              SimEnvHelper.NEURON, true); // can be reset later
+
+                    cmlMech.addSimMapping(mapping);
+
+                }
+
+                if (props.getProperty("MappingGENESIS")!=null)
+                {
+                    String relativeFile = props.getProperty("MappingGENESIS");
+
+                    File absFile = new File(fromDir, relativeFile);
+                    absFile = absFile.getCanonicalFile();
+
+                    logger.logComment("MappingGENESIS file found in props to be: "+ absFile);
+
+                    File newFile = GeneralUtils.copyFileIntoDir(absFile, dirForCMLFiles);
+
+                    SimXSLMapping mapping = new SimXSLMapping(newFile.getName(),
+                                                              SimEnvHelper.GENESIS, false);
+
+                    cmlMech.addSimMapping(mapping);
+
+                }
+                logger.logComment("Info so far: "+cmlMech.toString(), true);
+                
+                
+                if (props.getProperty("NEURONNeedsCompilation") != null)
+                {
+                    Boolean b = Boolean.parseBoolean(props.getProperty("NEURONNeedsCompilation"));
+                    cmlMech.getSimMapping(SimEnvHelper.NEURON).setRequiresCompilation(b.booleanValue());
+                }
+
+                project.cellMechanismInfo.addCellMechanism(cmlMech);
+                
+                cmlMech.initialise(project, true);
+                
+                logger.logComment("Info so far: "+cmlMech, true);
+
+                tempRandSpike.setSynapseType(cmlMech.getInstanceName());
+                tempRandSpikeExt.setSynapseType(cmlMech.getInstanceName());
             }
             jbInit();
             extraInit();
@@ -201,11 +294,7 @@ public class StimDialog extends JDialog
 
         Segment segToStim = cellForSelectedGroup.getSegmentWithId(chosenSegmentId);
 
-
-        jTextFieldSegmentId.setText(segToStim.getSegmentName()
-                            + " (ID: "
-                            + segToStim.getSegmentId()
-                            + ")");
+        setSegInfo(segToStim);
 
 
     }
@@ -234,6 +323,10 @@ public class StimDialog extends JDialog
     void jButtonOK_actionPerformed(ActionEvent e)
     {
 
+        // Check seg id is in cell...
+        checkSegId();
+        
+        
         logger.logComment("OK pressed...");
 
         this.dispose();
@@ -761,6 +854,14 @@ public class StimDialog extends JDialog
 
     }
 
+    private void setSegInfo(Segment segToStim)
+    {
+        jTextFieldSegmentId.setText(segToStim.getSegmentName()
+                                    + " (ID: "
+                                    + segToStim.getSegmentId()
+                                    + ")");
+
+    }
 
 
     public void setStim(StimulationSettings stim)
@@ -780,14 +881,7 @@ public class StimDialog extends JDialog
         Cell cellForSelectedGroup = project.cellManager.getCell(cellType);
 
 
-        //Vector segments = cellForSelectedGroup.getAllSegments();
-        Segment segToStim = cellForSelectedGroup.getSegmentWithId(stim.getSegmentID());
-
-        jTextFieldSegmentId.setText(segToStim.getSegmentName()
-                                    + " (ID: "
-                                    + segToStim.getSegmentId()
-                                    + ")");
-
+        
         if (stim instanceof IClampSettings)
         {
             jRadioButtonIClamp.setSelected(true);
@@ -806,9 +900,34 @@ public class StimDialog extends JDialog
             tempRandSpikeExt = (RandomSpikeTrainExtSettings)stim;
         }
 
-
         jTextFieldInfo.setText(stim.toString());
+        
+        
+        this.chosenSegmentId = stim.getSegmentID();
+        
+        Segment segToStim = checkSegId();
+        
+        setSegInfo(segToStim);
 
+    }
+    
+    Segment checkSegId()
+    {
+        
+        String cellType = project.cellGroupsInfo.getCellType((String)jComboBoxCellGroup.getSelectedItem());
+        Cell cellForSelectedGroup = project.cellManager.getCell(cellType);
+        
+        Segment segToStim = null;
+            
+        while ((segToStim = cellForSelectedGroup.getSegmentWithId(chosenSegmentId)) == null)
+        {
+            GuiUtils.showErrorMessage(logger, "Error: stimulation: "+jTextFieldReference.getText()+" specified as placed on segment ID: "+chosenSegmentId+
+                ", but there is no such segment in cell "+ cellForSelectedGroup.getInstanceName(), null, this);
+            
+            this.jButtonSegment_actionPerformed(null);
+            
+        }
+        return segToStim;
     }
 
     void jButtonSegment_actionPerformed(ActionEvent e)
@@ -818,20 +937,42 @@ public class StimDialog extends JDialog
         String cellType = project.cellGroupsInfo.getCellType(cellGroupToStim);
         Cell cellForSelectedGroup = project.cellManager.getCell(cellType);
 
-        String message = "Please specify which segment to stimulate (0 to "
-            + ((Segment)cellForSelectedGroup.getAllSegments().lastElement()).getSegmentId()+")";
+        String message = "Please specify which segment to stimulate";
 
-        String answer = JOptionPane.showInputDialog(message, this.chosenSegmentId+"");
+        //String answer = JOptionPane.showInputDialog(message, this.chosenSegmentId+"");
+        
+        Vector<Segment> segs = cellForSelectedGroup.getAllSegments();
+        String[] opts = new String[segs.size()];
+        String pref = null;
+        
+        for (int i=0;i<segs.size();i++)
+        {
+            Segment seg = segs.get(i);
+            opts[i] = seg.getSegmentId()+": "+seg.getSegmentName();
+            
+            if (chosenSegmentId == seg.getSegmentId())
+            {
+                logger.logComment("Pref is: "+opts[i], true);
+                pref = opts[i];
+            }
+        }
+        if (pref == null) pref = opts[0];
+        
+        String answer = (String)JOptionPane.showInputDialog(this, message, "Select segment to stimulate", 
+            JOptionPane.QUESTION_MESSAGE, null, opts, pref);
+        
+        if (answer == null) return;
+        
+        answer = answer.substring(0,answer.indexOf(":"));
 
         try
         {
             chosenSegmentId = Integer.parseInt(answer);
 
-
-            jTextFieldSegmentId.setText(cellForSelectedGroup.getSegmentWithId(chosenSegmentId).getSegmentName()
-                                        + " (ID: "
-                                        + chosenSegmentId
-                                        + ")");
+            Segment segToStim = cellForSelectedGroup.getSegmentWithId(chosenSegmentId);
+            
+            
+            setSegInfo(segToStim);
 
         }
         catch (NumberFormatException ex)
@@ -851,42 +992,6 @@ public class StimDialog extends JDialog
 
 
 
-
-/*
-        SegmentSelector dlg = new SegmentSelector((Frame)this.getOwner(), project,
-                                                  cellForSelectedGroup, false);
-
-        //Vector segments = cellForSelectedGroup.getAllSegments();
-        Segment segToStim = cellForSelectedGroup.getSegmentWithId(chosenSegmentId);
-
-        dlg.setSelectedSegment(segToStim);
-
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension frameSize = dlg.getSize();
-        if (frameSize.height > screenSize.height)
-        {
-            frameSize.height = screenSize.height;
-        }
-        if (frameSize.width > screenSize.width)
-        {
-            frameSize.width = screenSize.width;
-        }
-        dlg.setLocation( (screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
-        dlg.setVisible(true);
-
-
-        if (dlg.cancelled) return;
-
-        if (dlg.getSelectedSegment() == null) return;
-
-
-        chosenSegmentId =  dlg.getSelectedSegment().getSegmentId();
-
-        jTextFieldSegmentId.setText(dlg.getSelectedSegment().getSegmentName()
-                                    + " (ID: "
-                                    + dlg.getSelectedSegment().getSegmentId()
-                                    + ")");
-*/
     }
 
 

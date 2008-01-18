@@ -89,11 +89,13 @@ public class GeneralProperties
                                   0.85f);
 
 
-
+    private static ProjectProperties defaultProjectProperties = new ProjectProperties();     
 
 
     static
     {
+        defaultProjectProperties.setPreferredSaveFormat(ProjectStructure.JAVA_OBJ_FORMAT);
+        
         GeneralProperties.loadFromSettingsFile();
         //System.out.println("Neuron home: "+userSettings.getNeuronHome());
         
@@ -218,6 +220,9 @@ public class GeneralProperties
         xmlEncoder.writeObject(mpiSettings);
 
 
+        /* -- Writing proj info -- */
+        xmlEncoder.writeObject(defaultProjectProperties);
+        
         /* -- Writing 3D info -- */
         xmlEncoder.writeObject(defaultDisplay3DProps);
 
@@ -283,6 +288,11 @@ public class GeneralProperties
                    replaySettings = (ReplaySettings) nextReadObject;
 
                    //System.out.println("replaySettings" + replaySettings);
+                }
+                /* -- Reading proj info -- */
+                if (nextReadObject instanceof ProjectProperties)
+                {
+                    defaultProjectProperties = (ProjectProperties) nextReadObject;
                 }
                 /* -- Reading 3D info -- */
                 if (nextReadObject instanceof Display3DProperties)
@@ -506,6 +516,38 @@ public class GeneralProperties
     public static void setLogFilePrintToScreenPolicy(boolean policy)
     {
         userSettings.setLogFilePrintToScreenPolicy(policy);
+    }
+    
+    
+    public static String getDefaultPreferredSaveFormat()
+    {
+        return defaultProjectProperties.getPreferredSaveFormat();
+    }
+    public static void setDefaultPreferredSaveFormat(String preferredSaveFormat)
+    {
+        defaultProjectProperties.setPreferredSaveFormat(preferredSaveFormat);
+    }
+
+    
+    
+
+    public static boolean getGenerateMatlab()
+    {
+        return userSettings.getGenerateMatlab();
+    }
+
+    public static void setGenerateMatlab(boolean policy)
+    {
+        userSettings.setGenerateMatlab(policy);
+    }
+    public static boolean getGenerateIgor()
+    {
+        return userSettings.getGenerateIgor();
+    }
+
+    public static void setGenerateIgor(boolean policy)
+    {
+        userSettings.setGenerateIgor(policy);
     }
 
 
