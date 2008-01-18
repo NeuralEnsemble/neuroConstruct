@@ -25,8 +25,9 @@
     <download label="Download code" href="#" description="Download the code"/>
   </download>
 
-  <links label="Links"  href="links/index.html" tab="Links"  >
-    <links label="Useful links" href="#" description="Useful neuroConstruct links "/>
+  <links label="Links"  tab="Links"  >
+    <links label="Useful links" href="links/index.html" description="Useful neuroConstruct links "/>
+    <links label="Publications" href="links/publications.html" description="Useful neuroConstruct "/>
   </links>
 
   <contact label="Contact"  href="contact/index.html" tab="Contact"  >

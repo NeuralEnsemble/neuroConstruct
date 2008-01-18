@@ -9,7 +9,7 @@
 </header>
 <body>
 <anchor id="top"></anchor>
-<a name="top"></a><a href="#3D View of Cells">3D View of Cells</a> - <a href="#Abstract Cell">Abstract Cell</a> - <a href="#Abstracted Cell Mechanisms">Abstracted Cell Mechanisms</a> - <a href="#Action Potential Propagation Speed">Action Potential Propagation Speed</a> - <a href="#Arborization Defined Connection">Arborization Defined Connection</a> - <a href="#ASC">ASC</a> - <a href="#Axes in 3D">Axes in 3D</a> - <a href="#Biophysical validity">Biophysical validity</a> - <a href="#Cell density mechanism">Cell density mechanism</a> - <a href="#Cell Group">Cell Group</a> - <a href="#Cell Group Priority">Cell Group Priority</a> - <a href="#Cell Mechanism">Cell Mechanism</a> - <a href="#Cell Type">Cell Type</a> - <a href="#Channel Mechanism">Channel Mechanism</a> - <a href="#ChannelML">ChannelML</a> - <a href="#Compartmentalisation">Compartmentalisation</a> - <a href="#Cvapp">Cvapp</a> - <a href="#Data Set">Data Set</a> - <a href="#Data Set Manager">Data Set Manager</a> - <a href="#Electrotonic length">Electrotonic length</a> - <a href="#File based Cell Mechanisms">File based Cell Mechanisms</a> - <a href="#Finite volume Segment">Finite volume Segment</a> - <a href="#GENESIS">GENESIS</a> - <a href="#GENESIS Compartmentalisation">GENESIS Compartmentalisation</a> - <a href="#Glomerulus">Glomerulus</a> - <a href="#Graph">Graph</a> - <a href="#Internal number of divisions">Internal number of divisions</a> - <a href="#Ion Concentration">Ion Concentration</a> - <a href="#MorphML">MorphML</a> - <a href="#Morphological validity">Morphological validity</a> - <a href="#Morphology Based Connection">Morphology Based Connection</a> - <a href="#Network Connection">Network Connection</a> - <a href="#NetworkML">NetworkML</a> - <a href="#Neurolucida">Neurolucida</a> - <a href="#NeuroML">NeuroML</a> - <a href="#NEURON">NEURON</a> - <a href="#NMODL">NMODL</a> - <a href="#nseg">nseg</a> - <a href="#Packing Pattern">Packing Pattern</a> - <a href="#Plot/Graph">Plot/Graph</a> - <a href="#Plot Frame">Plot Frame</a> - <a href="#Project">Project</a> - <a href="#Project validity">Project validity</a> - <a href="#Region">Region</a> - <a href="#Section">Section</a> - <a href="#Section Group">Section Group</a> - <a href="#Segment">Segment</a> - <a href="#Simply Connected cell">Simply Connected cell</a> - <a href="#Simulation Configuration">Simulation Configuration</a> - <a href="#SWC">SWC</a> - <a href="#Synaptic Connection Location">Synaptic Connection Location</a> - <a href="#Synaptic Mechanism">Synaptic Mechanism</a> - <a href="#Tool Tips">Tool Tips</a> - <a href="#Validity checks">Validity checks</a> - <a href="#Variables to plot/save">Variables to plot/save</a> - <a href="#Volume Based Connection">Volume Based Connection</a> - <a href="#XML">XML</a> - <a href="#Zipped Project">Zipped Project</a> - <a name="3D View of Cells">
+<a name="top"></a><a href="#3D View of Cells">3D View of Cells</a> - <a href="#Abstract Cell">Abstract Cell</a> - <a href="#Abstracted Cell Mechanisms">Abstracted Cell Mechanisms</a> - <a href="#Action Potential Propagation Speed">Action Potential Propagation Speed</a> - <a href="#Arborization Defined Connection">Arborization Defined Connection</a> - <a href="#ASC">ASC</a> - <a href="#Axes in 3D">Axes in 3D</a> - <a href="#Biophysical validity">Biophysical validity</a> - <a href="#Cell density mechanism">Cell density mechanism</a> - <a href="#Cell Group">Cell Group</a> - <a href="#Cell Group Priority">Cell Group Priority</a> - <a href="#Cell Mechanism">Cell Mechanism</a> - <a href="#Cell Type">Cell Type</a> - <a href="#Channel Mechanism">Channel Mechanism</a> - <a href="#ChannelML">ChannelML</a> - <a href="#Compartmentalisation">Compartmentalisation</a> - <a href="#Cvapp">Cvapp</a> - <a href="#Data Set">Data Set</a> - <a href="#Data Set Manager">Data Set Manager</a> - <a href="#Electrotonic length">Electrotonic length</a> - <a href="#File based Cell Mechanisms">File based Cell Mechanisms</a> - <a href="#Finite volume Segment">Finite volume Segment</a> - <a href="#GENESIS">GENESIS</a> - <a href="#GENESIS Compartmentalisation">GENESIS Compartmentalisation</a> - <a href="#Glomerulus">Glomerulus</a> - <a href="#Graph">Graph</a> - <a href="#Internal number of divisions">Internal number of divisions</a> - <a href="#Ion Concentration">Ion Concentration</a> - <a href="#MorphML">MorphML</a> - <a href="#Morphological validity">Morphological validity</a> - <a href="#Morphology Based Connection">Morphology Based Connection</a> - <a href="#Morphology save format">Morphology save format</a> - <a href="#Network Connection">Network Connection</a> - <a href="#NetworkML">NetworkML</a> - <a href="#Neurolucida">Neurolucida</a> - <a href="#NeuroML">NeuroML</a> - <a href="#NEURON">NEURON</a> - <a href="#NMODL">NMODL</a> - <a href="#nseg">nseg</a> - <a href="#Packing Pattern">Packing Pattern</a> - <a href="#Plot/Graph">Plot/Graph</a> - <a href="#Plot Frame">Plot Frame</a> - <a href="#Project">Project</a> - <a href="#Project validity">Project validity</a> - <a href="#Region">Region</a> - <a href="#Section">Section</a> - <a href="#Section Group">Section Group</a> - <a href="#Segment">Segment</a> - <a href="#Simply Connected cell">Simply Connected cell</a> - <a href="#Simulation Configuration">Simulation Configuration</a> - <a href="#SWC">SWC</a> - <a href="#Synaptic Connection Location">Synaptic Connection Location</a> - <a href="#Synaptic Mechanism">Synaptic Mechanism</a> - <a href="#Tool Tips">Tool Tips</a> - <a href="#Validity checks">Validity checks</a> - <a href="#Variables to plot/save">Variables to plot/save</a> - <a href="#Volume Based Connection">Volume Based Connection</a> - <a href="#XML">XML</a> - <a href="#Zipped Project">Zipped Project</a> - <a name="3D View of Cells">
 <p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
 <b>3D View of Cells</b>
 </p>
@@ -365,12 +365,14 @@
 <p>This measure of the length of dendrites, etc. as "seen" by electrical charge is dependent on the shape, axial
                  and membrane resistance of the section. See the NEURON or GENESIS books for more details. It is important when
                  simulating neurons with realistic morphologies that individually simulated points are not too far apart in terms
-                 of electrotonic distance (a max of 0.1 microns is fine), i.e. a sufficiently fine-graned spatial discretisation
-                 should be used. Too small an electrotonic length can sometimes lead to problems in numerical integration, and 
-                 neuroConstruct will perform validity checks for both of these. To correct the number of internal divisions in a
-                 <a href="#Section">Section</a> to stay below a maximum electrotonic length, e.g. on an imported morphology, visualise the cell in 3D, 
-                 showing all solids, click on any section, then <strong>Edit...</strong> and select the Remesh option in the drop down function
-                 selector. See also the note about <a href="#Compartmentalisations">Compartmentalisations</a>.</p>
+                 of electrotonic length (a max of 0.1 is usually fine), i.e. a sufficiently fine-graned spatial discretisation
+                 should be used. Too short an electrotonic length can sometimes lead to problems in numerical integration, and 
+                 neuroConstruct will perform validity checks for both of these (too long and too short). To correct the 
+                 <a href="#internal number of divisions">internal number of divisions</a> in a <a href="#Section">Section</a> to stay below a maximum electrotonic length,
+                 e.g. on an imported morphology, visualise the cell in 3D, showing all solids, click on any section,
+                 then <strong>Edit...</strong> and select the Remesh option in the drop down function selector. See also the note 
+                 about <a href="#Compartmentalisations">Compartmentalisations</a>. Note that electrotonic length is dimensionless, and the term space constant
+                 is used for this measure in microns (see GENESIS book, or Rall's chapter in Koch and Segev 1989).</p>
 </span>
 <p style="font-size: 11">
 <a href="#top">index</a>
@@ -458,13 +460,17 @@
 <b>Internal number of divisions</b>
 </p>
 </a><span>
-<p>A <a href="#Section">Section</a> can consist of a long list of 3D point/diameters (<a href="#Segment">Segment</a>s). Not all of this 3D information is relevant for 
-             all Sections, sometimes just the surface area/axial resistance at a point is sufficient for modelling the dendrite. This is the approach <a href="#NEURON">NEURON</a>
-             takes modelling cables/sections. For long sections, it is possible to specify a number of internal divisions of the dendrite, and the membrane potential at each
-             time step is calculated at the centre of each of these divisions (this is also known as setting the spatial discretisation of the morphology). The term 
-             <a href="#nseg">nseg</a> is used for this number in NEURON. It is also possible to set this parameter for Sections in neuroConstruct. View the cell in 3D (All solid),
-             click on a segment, click Edit..., and in the second drop down box, select Section details. The number of internal divisions can 
-             be chosen automatically too (especially convenient for imported detailed morphologies), see <a href="#electrotonic length">electrotonic length</a>. See information too on 
+<p>A <a href="#Section">Section</a> (in neuroConstruct) can consist of a long list of 3D point/diameters (<a href="#Segment">Segment</a>s). 
+               Not all of this 3D information is relevant when modelling the Sections, sometimes just the surface area/axial resistance at a point 
+               is sufficient for modelling the dendrite. This is the approach <a href="#NEURON">NEURON</a>
+             takes modelling cables/sections. For long sections, it is possible to specify a number of internal divisions, 
+             and the membrane potential at each
+             time step is calculated at the centre of each of these divisions (this is also known as setting the spatial discretisation of the 
+             morphology). The term <a href="#nseg">nseg</a> is used for this number in NEURON (see details in the NEURON book). It is also possible 
+             to set this parameter for Sections in neuroConstruct. View the cell in 3D (All solid),
+             click on a segment, click Edit..., and in the second drop down box, select Section details. 
+             The number of internal divisions can be chosen automatically too (especially convenient for imported detailed morphologies, after 
+             the passive electrical properties are set), see <a href="#electrotonic length">electrotonic length</a>. See information too on 
          <a href="#Compartmentalisations">Compartmentalisations</a>.
      </p>
 </span>
@@ -556,6 +562,28 @@
             can be specified. For single compartment cell models this type of Network Connection is most appropriate, <a href="#Section Group">Section Group</a> <strong>all</strong> can be used for 
             each synapse.
         </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Morphology save format">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Morphology save format</b>
+</p>
+</a><span>
+<p>There are two possible ways to save morphologies in neuroConstruct projects, both based on a mapping from the 
+set of Java classes describing the cell internally in neuroConstruct:
+- XML based Java serialisation (*.java.xml files):  a mapping to an XML file of the classes. Note: not any part of NeuroML.
+- Serialised Java object form (*.java.ser files):   a serialised representation of the Java classes.
+The second of these is quicker to load and save and the files are smaller. The first however can be opened (and edited!)
+with a text editor. Change which format to use via <strong>Settings -&gt; General Properties &amp; Project Defaults/Project properties</strong>.
+
+Cell morphologies are stored in the <strong>morphologies</strong> directory of the project home directory. *.bak files in that dir backup 
+the previously stored morphology before a new one is saved (if a problem occurs saving a morphology, remove the .bak
+and use that file to load into the project).
+
+Note that the cells aren't currently stored in neuroConstruct projects in NeuroML/MorphML format, since new functionality 
+is usually added to the neuroConstruct Cell class before it is supported in the standards.</p>
 </span>
 <p style="font-size: 11">
 <a href="#top">index</a>
@@ -800,7 +828,8 @@
              start radius, and each of the Segments has an end point and radius corresponding to the 3D points along the Section
              (these are similar to the pt3d points used to specify sections in <a href="#NEURON">NEURON</a>). Sections which have similar
              properties can be assigned to a <a href="#Section Group">Section Group</a>. All of the Segments in a Section are also in the same 
-             Section Groups.</p>
+             Section Groups. Note that a Section is referred to as a cable in <a href="#MorphML">MorphML</a>
+</p>
 </span>
 <p style="font-size: 11">
 <a href="#top">index</a>
