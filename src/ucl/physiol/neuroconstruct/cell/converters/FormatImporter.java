@@ -68,6 +68,12 @@ public abstract class FormatImporter
     {
         return name + " ("+desc+")";
     }
+    
+    
+    public String getWarnings()
+    {
+        return "";
+    }
 
 
 }

@@ -2403,61 +2403,64 @@ public class NeuronFileManager
 
                     logger.logComment("Looking at cell process: " + cellMechanism.getInstanceName());
 
-                    if (!cellMechFilesGenAndIncl.contains(cellMechanism.getInstanceName()))
+                    if (!testForInbuiltModFile(cellMechanism.getInstanceName(), dirForNeuronFiles))
                     {
-                        boolean success = false;
-                        if (cellMechanism instanceof AbstractedCellMechanism)
+                        if (!cellMechFilesGenAndIncl.contains(cellMechanism.getInstanceName()))
                         {
-                            File newMechFile = new File(dirForNeuronFiles,
-                                                        cellMechanism.getInstanceName() + ".mod");
-
-                            success = ( (AbstractedCellMechanism) cellMechanism).createImplementationFile(SimEnvHelper.
-                                NEURON,
-                                UnitConverter.NEURON_UNITS,
-                                newMechFile,
-                                project,
-                                true,
-                                addComments);
-                        }
-                        else if (cellMechanism instanceof ChannelMLCellMechanism)
-                        {
-                            ChannelMLCellMechanism cmlMechanism = (ChannelMLCellMechanism) cellMechanism;
-                            File newMechFile = null;
-
-                            logger.logComment("Sim map: " + cmlMechanism.getSimMapping(SimEnvHelper.NEURON));
-
-                            if (cmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation())
+                            boolean success = false;
+                            if (cellMechanism instanceof AbstractedCellMechanism)
                             {
-                                newMechFile = new File(dirForNeuronFiles,
-                                                       cellMechanism.getInstanceName() + ".mod");
+                                File newMechFile = new File(dirForNeuronFiles,
+                                                            cellMechanism.getInstanceName() + ".mod");
+
+                                success = ( (AbstractedCellMechanism) cellMechanism).createImplementationFile(SimEnvHelper.
+                                    NEURON,
+                                    UnitConverter.NEURON_UNITS,
+                                    newMechFile,
+                                    project,
+                                    true,
+                                    addComments);
                             }
-                            else
+                            else if (cellMechanism instanceof ChannelMLCellMechanism)
                             {
-                                newMechFile = new File(dirForNeuronFiles,
-                                                       cellMechanism.getInstanceName() + ".hoc");
+                                ChannelMLCellMechanism cmlMechanism = (ChannelMLCellMechanism) cellMechanism;
+                                File newMechFile = null;
 
-                                response.append("load_file(\"" + cellMechanism.getInstanceName() + ".hoc\")\n");
+                                logger.logComment("Sim map: " + cmlMechanism.getSimMapping(SimEnvHelper.NEURON));
+
+                                if (cmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation())
+                                {
+                                    newMechFile = new File(dirForNeuronFiles,
+                                                           cellMechanism.getInstanceName() + ".mod");
+                                }
+                                else
+                                {
+                                    newMechFile = new File(dirForNeuronFiles,
+                                                           cellMechanism.getInstanceName() + ".hoc");
+
+                                    response.append("load_file(\"" + cellMechanism.getInstanceName() + ".hoc\")\n");
+
+                                }
+                                success = cmlMechanism.createImplementationFile(SimEnvHelper.
+                                    NEURON,
+                                    UnitConverter.NEURON_UNITS,
+                                    newMechFile,
+                                    project,
+                                    cmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation(),
+                                    addComments);
+                            }
+
+                            if (!success)
+                            {
+                                throw new NeuronException("Problem generating file for cell process: "
+                                                          + cellMechanisms.get(i)
+                                                          +
+                                                          "\nPlease ensure there is an implementation for that process in NEURON");
 
                             }
-                            success = cmlMechanism.createImplementationFile(SimEnvHelper.
-                                NEURON,
-                                UnitConverter.NEURON_UNITS,
-                                newMechFile,
-                                project,
-                                cmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation(),
-                                addComments);
+
+                            cellMechFilesGenAndIncl.add(cellMechanism.getInstanceName());
                         }
-
-                        if (!success)
-                        {
-                            throw new NeuronException("Problem generating file for cell process: "
-                                                      + cellMechanisms.get(i)
-                                                      +
-                                                      "\nPlease ensure there is an implementation for that process in NEURON");
-
-                        }
-
-                        cellMechFilesGenAndIncl.add(cellMechanism.getInstanceName());
                     }
 
                 }
@@ -2645,69 +2648,73 @@ public class NeuronFileManager
         
         if (genAllModFiles)
         {
+            
+                File dirForNeuronFiles = ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory());
         	Vector<String> allAvailableMods = project.cellMechanismInfo.getAllCellMechanismNames();
         	
         	for(String cellMech:  allAvailableMods)
         	{
-	        	if (!cellMechFilesGenAndIncl.contains(cellMech))
-	            {
-	        		CellMechanism cellMechanism = project.cellMechanismInfo.getCellMechanism(cellMech);
-	        		File dirForNeuronFiles = ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory());
-	        		
-	                boolean success = false;
-	                if (cellMechanism instanceof AbstractedCellMechanism)
-	                {
-	                    File newMechFile = new File(dirForNeuronFiles,
-	                                                cellMechanism.getInstanceName() + ".mod");
-	
-	                    success = ( (AbstractedCellMechanism) cellMechanism).createImplementationFile(SimEnvHelper.
-	                        NEURON,
-	                        UnitConverter.NEURON_UNITS,
-	                        newMechFile,
-	                        project,
-	                        true,
-	                        addComments);
-	                }
-	                else if (cellMechanism instanceof ChannelMLCellMechanism)
-	                {
-	                    ChannelMLCellMechanism cmlMechanism = (ChannelMLCellMechanism) cellMechanism;
-	                    File newMechFile = null;
-	
-	                    logger.logComment("Sim map: " + cmlMechanism.getSimMapping(SimEnvHelper.NEURON));
-	
-	                    if (cmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation())
-	                    {
-	                        newMechFile = new File(dirForNeuronFiles,
-	                                               cellMechanism.getInstanceName() + ".mod");
-	                    }
-	                    else
-	                    {
-	                        newMechFile = new File(dirForNeuronFiles,
-	                                               cellMechanism.getInstanceName() + ".hoc");
-	
-	                        response.append("load_file(\"" + cellMechanism.getInstanceName() + ".hoc\")\n");
-	
-	                    }
-	                    success = cmlMechanism.createImplementationFile(SimEnvHelper.
-	                        NEURON,
-	                        UnitConverter.NEURON_UNITS,
-	                        newMechFile,
-	                        project,
-	                        cmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation(),
-	                        addComments);
-	                }
-	
-	                if (!success)
-	                {
-	                    throw new NeuronException("Problem generating file for cell process: "
-	                                              + cellMechanism
-	                                              +
-	                                              "\nPlease ensure there is an implementation for that process in NEURON");
-	
-	                }
-	
-	                cellMechFilesGenAndIncl.add(cellMechanism.getInstanceName());
-	            }
+                    if (!testForInbuiltModFile(cellMech, dirForNeuronFiles))
+                    {
+                        if (!cellMechFilesGenAndIncl.contains(cellMech))
+                        {
+                            CellMechanism cellMechanism = project.cellMechanismInfo.getCellMechanism(cellMech);
+
+                            boolean success = false;
+                            if (cellMechanism instanceof AbstractedCellMechanism)
+                            {
+                                File newMechFile = new File(dirForNeuronFiles,
+                                                            cellMechanism.getInstanceName() + ".mod");
+
+                                success = ( (AbstractedCellMechanism) cellMechanism).createImplementationFile(SimEnvHelper.
+                                    NEURON,
+                                    UnitConverter.NEURON_UNITS,
+                                    newMechFile,
+                                    project,
+                                    true,
+                                    addComments);
+                            }
+                            else if (cellMechanism instanceof ChannelMLCellMechanism)
+                            {
+                                ChannelMLCellMechanism cmlMechanism = (ChannelMLCellMechanism) cellMechanism;
+                                File newMechFile = null;
+
+                                logger.logComment("Sim map: " + cmlMechanism.getSimMapping(SimEnvHelper.NEURON));
+
+                                if (cmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation())
+                                {
+                                    newMechFile = new File(dirForNeuronFiles,
+                                                           cellMechanism.getInstanceName() + ".mod");
+                                }
+                                else
+                                {
+                                    newMechFile = new File(dirForNeuronFiles,
+                                                           cellMechanism.getInstanceName() + ".hoc");
+
+                                    response.append("load_file(\"" + cellMechanism.getInstanceName() + ".hoc\")\n");
+
+                                }
+                                success = cmlMechanism.createImplementationFile(SimEnvHelper.
+                                    NEURON,
+                                    UnitConverter.NEURON_UNITS,
+                                    newMechFile,
+                                    project,
+                                    cmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation(),
+                                    addComments);
+                            }
+
+                            if (!success)
+                            {
+                                throw new NeuronException("Problem generating file for cell process: "
+                                                          + cellMechanism
+                                                          +
+                                                          "\nPlease ensure there is an implementation for that process in NEURON");
+
+                            }
+
+                            cellMechFilesGenAndIncl.add(cellMechanism.getInstanceName());
+                        }
+                    }
         	}
         }
 
@@ -2715,6 +2722,41 @@ public class NeuronFileManager
 
         return response.toString();
 
+    }
+    
+    private boolean testForInbuiltModFile(String mechName, File targetDir)
+    {
+        ArrayList<String> inbuiltMechs = new ArrayList<String>();
+        
+        //@todo There are more to add...
+        
+        inbuiltMechs.add("pas");
+        inbuiltMechs.add("hh");
+        inbuiltMechs.add("extracellular");
+        inbuiltMechs.add("fastpas");
+        
+        if (inbuiltMechs.contains(mechName))
+        {
+            File warnFile = new File(targetDir, mechName+".mod.WARNING");
+            
+            if (!warnFile.exists())
+            {
+                try
+                {
+                    FileWriter fwReadme = new FileWriter(warnFile);
+                    fwReadme.write("Warning: there is a mechanism "+mechName+" in the neuroConstruct project, which uses the same name as\n"
+                        +"a built in mechanism in NEURON. This is possibly due to export of a Level 2 morphology from NEURON.\n"+
+                        "Using the NEURON mechanism instead of that from neuroConstruct!! Hopefully the functionality is the same!!");
+                    fwReadme.close();
+                }
+                catch (IOException ex)
+                {
+                    logger.logError("Exception creating "+warnFile+"...");
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     private boolean needsGrowthFunctionality(String cellGroup)

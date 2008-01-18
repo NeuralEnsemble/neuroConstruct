@@ -1143,8 +1143,13 @@ public class Cell implements Serializable
                           + group
                           + " with channel mechanism: "
                           + chanMech);
-
-        if (!getAllGroupNames().contains(group)) return false;
+        
+        Vector<String> grps = getAllGroupNames();
+        if (!grps.contains(group))
+        {
+            logger.logError("The group: "+group+" is not present in the set of all groups: "+ grps);
+            return false;
+        }
 
 
         Enumeration<ChannelMechanism> chanMechs = chanMechsVsGroups.keys();
@@ -1202,9 +1207,12 @@ public class Cell implements Serializable
         logger.logComment("Cell being told to associate group: "
                           + group + " with specCap: " + specCap);
 
-        if (!getAllGroupNames().contains(group)) return false;
-
-
+        Vector<String> grps = getAllGroupNames();
+        if (!grps.contains(group))
+        {
+            logger.logError("The group: "+group+" is not present in the set of all groups: "+ grps);
+            return false;
+        }
         Enumeration<Float> cms =  specCapVsGroups.keys();
         while (cms.hasMoreElements())
         {
@@ -1251,7 +1259,12 @@ public class Cell implements Serializable
                           + " with specAxRes: "
                           + specAxRes);
 
-        if (!getAllGroupNames().contains(group)) return false;
+        Vector<String> grps = getAllGroupNames();
+        if (!grps.contains(group))
+        {
+            logger.logError("The group: "+group+" is not present in the set of all groups: "+ grps);
+            return false;
+        }
 
         Enumeration<Float> sars =  specAxResVsGroups.keys();
         while (sars.hasMoreElements())
@@ -1296,7 +1309,13 @@ public class Cell implements Serializable
                           + " with AP propagation speed: "
                           + apPropSpeed);
 
-        if (!getAllGroupNames().contains(group)) return false;
+        Vector<String> grps = getAllGroupNames();
+        if (!grps.contains(group))
+        {
+            logger.logError("The group: "+group+" is not present in the set of all groups: "+ grps);
+            return false;
+        }
+        
         Vector<String> groups = null;
 
         if (!this.apPropSpeedsVsGroups.containsKey(apPropSpeed))
@@ -1331,7 +1350,13 @@ public class Cell implements Serializable
 
         logger.logComment("apPropSpeedsVsGroups: "+apPropSpeedsVsGroups);
 
-        if (!getAllGroupNames().contains(group)) return false;
+        Vector<String> grps = getAllGroupNames();
+        if (!grps.contains(group))
+        {
+            logger.logError("The group: "+group+" is not present in the set of all groups: "+ grps);
+            return false;
+        }
+        
         boolean success = false;
 
         Enumeration allAppvs = this.apPropSpeedsVsGroups.keys();
@@ -1365,7 +1390,13 @@ public class Cell implements Serializable
                           + ". My groups: "
                           + getAllGroupNames());
 
-        if (!getAllGroupNames().contains(group)) return false;
+        Vector<String> grps = getAllGroupNames();
+        if (!grps.contains(group))
+        {
+            logger.logError("The group: "+group+" is not present in the set of all groups: "+ grps);
+            return false;
+        }
+        
         Vector<String> groups = null;
         boolean success = false;
 
@@ -1392,7 +1423,13 @@ public class Cell implements Serializable
         logger.logComment("Being told to disassociate group: "
                           + group + ". My groups: " + getAllGroupNames());
 
-        if (!getAllGroupNames().contains(group)) return false;
+        Vector<String> grps = getAllGroupNames();
+        if (!grps.contains(group))
+        {
+            logger.logError("The group: "+group+" is not present in the set of all groups: "+ grps);
+            return false;
+        }
+        
         Vector<String> groups = null;
         boolean success = false;
 
@@ -1421,7 +1458,13 @@ public class Cell implements Serializable
         logger.logComment("Being told to disassociate group: "
                           + group + ". My groups: " + getAllGroupNames());
 
-        if (!getAllGroupNames().contains(group)) return false;
+        Vector<String> grps = getAllGroupNames();
+        if (!grps.contains(group))
+        {
+            logger.logError("The group: "+group+" is not present in the set of all groups: "+ grps);
+            return false;
+        }
+        
         Vector<String> groups = null;
         boolean success = false;
 
@@ -1447,7 +1490,13 @@ public class Cell implements Serializable
                           + " from synapse type: "
                           + chanMech);
 
-        if (!getAllGroupNames().contains(group)) return false;
+        Vector<String> grps = getAllGroupNames();
+        if (!grps.contains(group))
+        {
+            logger.logError("The group: "+group+" is not present in the set of all groups: "+ grps);
+            return false;
+        }
+        
         Vector<String> groups = null;
         boolean success = false;
         if (chanMechsVsGroups.containsKey(chanMech))
@@ -1470,7 +1519,13 @@ public class Cell implements Serializable
                           + " from synapse type: "
                           + chanMechName);
 
-        if (!getAllGroupNames().contains(group)) return false;
+        Vector<String> grps = getAllGroupNames();
+        if (!grps.contains(group))
+        {
+            logger.logError("The group: "+group+" is not present in the set of all groups: "+ grps);
+            return false;
+        }
+        
         //Vector<String> groups = null;
         boolean success = false;
 

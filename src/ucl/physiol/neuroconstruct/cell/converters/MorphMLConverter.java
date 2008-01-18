@@ -47,6 +47,8 @@ public class MorphMLConverter extends FormatImporter
 
     //public static String MML_ROOT = "cells";
     //public static String MML_CELLS = "cells";
+    
+    String warning = "";
 
     public MorphMLConverter()
     {
@@ -73,6 +75,12 @@ public class MorphMLConverter extends FormatImporter
         {
             throw new MorphologyException("Problem converting the morphology file: "+ javaXMLFile, e);
         }
+    }
+    
+    @Override
+    public String getWarnings()
+    {
+        return this.warning;
     }
 
 
@@ -182,6 +190,9 @@ public class MorphMLConverter extends FormatImporter
             logger.logComment(CellTopologyHelper.printShortDetails(cell));
 
             logger.logComment("-----   Finished decoding...");
+            
+            this.warning = mmlBuilder.getWarnings();
+            
             return cell;
         }
         catch (Exception e)

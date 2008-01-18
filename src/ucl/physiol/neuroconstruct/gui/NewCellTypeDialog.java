@@ -314,6 +314,12 @@ public class NewCellTypeDialog extends JDialog
 
                 cellChosen = importer.loadFromMorphologyFile(fileInProject,
                                                              jTextFieldNewCellName.getText());
+                
+                String warning = importer.getWarnings();
+                if (warning!=null && warning.length()>0)
+                {
+                    GuiUtils.showWarningMessage(logger, warning, this);
+                }
             }
             catch (Exception ex1)
             {

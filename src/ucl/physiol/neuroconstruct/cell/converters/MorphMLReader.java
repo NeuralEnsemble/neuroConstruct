@@ -38,6 +38,7 @@ public class MorphMLReader extends XMLFilterImpl
     // If getAncestorElement is called for non existent ancestors...
     private static String NULL_ELEMENT = "--- Null Element ---";
 
+    private StringBuffer warnings = new StringBuffer();
 
     private String importationComment = "Importation comment: ";
 
@@ -70,14 +71,16 @@ public class MorphMLReader extends XMLFilterImpl
 
 
     private String currentMechType = null;
+    private String currentParamName = null;
+    private float currentParamValueNconUnits = -1;
 
-    private ChannelMechanism currentChanMech = null;
+    //private ChannelMechanism currentChanMech = null;
 
     private String currentPropertyTag = null;
 
     String metadataPrefix = MetadataConstants.PREFIX + ":";
 
-
+    @Override
     public void characters(char[] ch, int start, int length) throws SAXException
     {
         String contents = new String(ch, start, length);
@@ -189,15 +192,29 @@ public class MorphMLReader extends XMLFilterImpl
                      this.getAncestorElement(1).equals(BiophysicsConstants.PARAMETER_ELEMENT) &&
                      this.getAncestorElement(2).equals(BiophysicsConstants.MECHANISM_ELEMENT))
             {
-                logger.logComment("Found a group: "+contents+" for the biophysics mech");
+                String group = contents;
+                logger.logComment("Found a group: "+group+" for the biophysics mech");
 
                 if (this.currentMechType.equals(BiophysicsConstants.MECHANISM_TYPE_SYN_LOC))
                 {
-                    cell.associateGroupWithSynapse(contents, this.currentMechName);
+                    cell.associateGroupWithSynapse(group, this.currentMechName);
                 }
                 else if (this.currentMechType.equals(BiophysicsConstants.MECHANISM_TYPE_CHAN_MECH))
                 {
-                    cell.associateGroupWithChanMech(contents, this.currentChanMech);
+                    if (this.currentParamName.equals(BiophysicsConstants.PARAMETER_GMAX))
+                    {
+                        ChannelMechanism cm = new ChannelMechanism(currentMechName, this.currentParamValueNconUnits);
+                        logger.logComment("Setting value: "+ currentParamValueNconUnits
+                            +" for parameter: "+ currentParamName+ " on mechanism: "+ currentMechName+", in group: "+group+"\n");
+                        
+                        cell.associateGroupWithChanMech(group, cm);
+                    }
+                    else
+                    {
+                        warnings.append("Unable to set value: "+ currentParamValueNconUnits
+                            +" for parameter: "+ currentParamName+ " on mechanism: "+ currentMechName+", in group: "+group+"\n");
+                    }
+                    //cell.associateGroupWithChanMech(contents, this.currentChanMech);
                 }
             }
             else if (getCurrentElement().equals(BiophysicsConstants.GROUP_ELEMENT) &&
@@ -226,6 +243,12 @@ public class MorphMLReader extends XMLFilterImpl
         return cell;
     }
 
+    public String getWarnings()
+    {
+        return warnings.toString();
+    }
+
+    @Override
     public void startDocument()
     {
         logger.logComment("startDocument...");
@@ -233,6 +256,7 @@ public class MorphMLReader extends XMLFilterImpl
         cell = new Cell();
     }
 
+    @Override
     public void endDocument()
     {
         CellTopologyHelper.zeroFirstSomaSegId(cell);
@@ -277,6 +301,7 @@ public class MorphMLReader extends XMLFilterImpl
      }
 
 
+    @Override
     public void startElement(String namespaceURI, String localName,
                              String qName, Attributes attributes)
     throws SAXException
@@ -533,29 +558,38 @@ public class MorphMLReader extends XMLFilterImpl
 
              if (getAncestorElement(1).equals(BiophysicsConstants.MECHANISM_ELEMENT) &&
                  currentMechType != null && paramName != null &&
-                 currentMechType.equals(BiophysicsConstants.MECHANISM_TYPE_CHAN_MECH) &&
-                 paramName.equals(BiophysicsConstants.PARAMETER_GMAX))
+                 currentMechType.equals(BiophysicsConstants.MECHANISM_TYPE_CHAN_MECH))
              {
-                 double nmlUnitsCondDens = Float.parseFloat(paramVal);
-                 float neuroConUnitsCondDens = -1;
+                 float nmlUnits = Float.parseFloat(paramVal);
+                 float neuroConUnits = -1;
 
-                 if (this.unitsUsed.equals(BiophysicsConstants.UNITS_SI))
+                 if (paramName.equals(BiophysicsConstants.PARAMETER_GMAX))
                  {
-                     neuroConUnitsCondDens
-                         = (float) UnitConverter.getConductanceDensity(nmlUnitsCondDens,
-                                                                       UnitConverter.GENESIS_SI_UNITS,
-                                                                       UnitConverter.NEUROCONSTRUCT_UNITS);
+                     if (this.unitsUsed.equals(BiophysicsConstants.UNITS_SI))
+                     {
+                         neuroConUnits
+                             = (float) UnitConverter.getConductanceDensity(nmlUnits,
+                                                                           UnitConverter.GENESIS_SI_UNITS,
+                                                                           UnitConverter.NEUROCONSTRUCT_UNITS);
 
+                     }
+                     if (this.unitsUsed.equals(BiophysicsConstants.UNITS_PHYSIOLOGICAL))
+                     {
+                         neuroConUnits
+                             = (float) UnitConverter.getConductanceDensity(nmlUnits,
+                                                                           UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS,
+                                                                           UnitConverter.NEUROCONSTRUCT_UNITS);
+                     }
                  }
-                 if (this.unitsUsed.equals(BiophysicsConstants.UNITS_PHYSIOLOGICAL))
+                 else
                  {
-                     neuroConUnitsCondDens
-                         = (float) UnitConverter.getConductanceDensity(nmlUnitsCondDens,
-                                                                       UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS,
-                                                                       UnitConverter.NEUROCONSTRUCT_UNITS);
+                     neuroConUnits = nmlUnits;
                  }
 
-                 this.currentChanMech = new ChannelMechanism(currentMechName, neuroConUnitsCondDens);
+                 this.currentParamName = paramName;
+                 this.currentParamValueNconUnits = neuroConUnits;
+                 
+                 //this.currentChanMech = new ChannelMechanism(currentMechName, neuroConUnitsCondDens);
              }
 
              if (getAncestorElement(1).equals(BiophysicsConstants.SPEC_CAP_ELEMENT))
@@ -642,6 +676,7 @@ public class MorphMLReader extends XMLFilterImpl
     }
 
 
+    @Override
     public void endElement(String namespaceURI, String localName, String qName)
     {
         //if (currentElement.)
@@ -661,7 +696,8 @@ public class MorphMLReader extends XMLFilterImpl
                   grps.contains(Section.DENDRITIC_GROUP) ||
                   grps.contains(Section.AXONAL_GROUP)))
             {
-                if (!foundSomaSection && currentSection.getSectionName().toLowerCase().indexOf("soma") >= 0)
+                if (!foundSomaSection && 
+                    (currentSection.getSectionName().toLowerCase().indexOf("soma") >= 0))
                 {
                     logger.logComment("Making soma section: " + currentSection);
                     foundSomaSection = true;
@@ -689,6 +725,30 @@ public class MorphMLReader extends XMLFilterImpl
         else if (getCurrentElement().equals(MorphMLConstants.SEGMENT_ELEMENT))
         {
             logger.logComment("<<<<      End of segment: " + this.currentSegment);
+
+        }
+
+        else if (getCurrentElement().equals(MorphMLConstants.SECTIONS_ELEMENT))
+        {
+            logger.logComment("<<<<      End of sections");
+            if (foundSomaSection==false)
+            {
+                logger.logComment("Not yet found soma!");
+                
+                Vector<Segment> segs = cell.getAllSegments();
+                for(Segment seg: segs)
+                {
+                    if (!foundSomaSection)
+                    {
+                        if (seg.getParentSegment()==null)
+                        {
+                            logger.logComment("Making soma section: " + seg.getSection());
+                            foundSomaSection = true;
+                            seg.getSection().addToGroup(Section.SOMA_GROUP);
+                        }
+                    }
+                }
+            }
 
 
         }
@@ -768,7 +828,8 @@ public class MorphMLReader extends XMLFilterImpl
 
             //File f = new File("models/DentateGyrus/generatedMorphML/MossyCell.morph.xml");
 
-            File f = new File("/home/padraig/models/L23Traub/test.xml");
+            File f = new File("/bernal/b4d.xml");
+           // File f = new File("/bernal/a4d.xml");
 
             logger.logComment("Loading mml cell from "+ f.getAbsolutePath());
 
@@ -793,6 +854,8 @@ public class MorphMLReader extends XMLFilterImpl
 
             logger.logComment("Cell which has been built: ");
             logger.logComment(CellTopologyHelper.printDetails(builtCell, null));
+            
+            logger.logComment(mmlBuilder.getWarnings());
 
             //logger.logComment("Segments: "+ builtCell.getAllSegments());
 

@@ -1228,8 +1228,16 @@ public class NeuronTemplateGenerator
 
                         if (cellMech.getMechanismType().equals(CellMechanism.CHANNEL_MECHANISM))
                         {
-
-                            response.append("  { gmax_" + nextChanMech.getName() + " = " + condDens + " }  ");
+                            if (nextChanMech.getName().equals("pas"))
+                            {
+                                response.append("  { g_" + nextChanMech.getName() + " = " + condDens + " }  ");
+                                NeuronFileManager.addHocComment(response,
+                                                     "    pas is name of mechanism, so using inbuilt mechanism, and better use g for conductance density...");
+                            }
+                            else
+                            {
+                                response.append("  { gmax_" + nextChanMech.getName() + " = " + condDens + " }  ");
+                            }
                         }
 
                         if (cellMech instanceof ChannelMLCellMechanism)
