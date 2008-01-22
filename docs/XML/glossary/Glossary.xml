@@ -1370,6 +1370,11 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
 </term>
 
 
+<term hidden="true">
+    <name>Update ChannelML Mechanism</name>
+    <defined>Updates the mapping files (*.xsl) for each of the simulators to the latest supported NeuroML version for the selected Mechanism</defined>
+</term>
+
 
 <!--  For Generate TAB -->
 
