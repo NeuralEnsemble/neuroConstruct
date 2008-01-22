@@ -33,10 +33,10 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
  */
 
 
-@SuppressWarnings("serial")
-
 public class Segment implements Serializable
 {
+    static final long serialVersionUID = 6877533563271791697L;
+    
     private transient ClassLogger logger = new ClassLogger("Segment");
 
     /**

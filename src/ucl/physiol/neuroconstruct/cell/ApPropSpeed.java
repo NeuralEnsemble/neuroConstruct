@@ -32,11 +32,12 @@ import ucl.physiol.neuroconstruct.utils.units.*;
   */
 
 
-@SuppressWarnings("serial")
 
 public class ApPropSpeed implements Serializable
 {
-     public static final String MECHANISM_NAME = "AP propagation speed";
+    static final long serialVersionUID = -1837538506739L;
+    
+    public static final String MECHANISM_NAME = "AP propagation speed";
 
     //public String name = null;  // needed?
     private float speed;

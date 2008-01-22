@@ -33,9 +33,9 @@ import ucl.physiol.neuroconstruct.utils.*;
 
 public class Cell implements Serializable
 {
-	private static final long serialVersionUID = -1542517048619766744L;
+    private static final long serialVersionUID = -1542517048619766744L;
 
-	private static transient ClassLogger logger = new ClassLogger("Cell");
+    private static transient ClassLogger logger = new ClassLogger("Cell");
 
     /**
      * A short description of the cell type...

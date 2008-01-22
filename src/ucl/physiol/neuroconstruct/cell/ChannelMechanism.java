@@ -29,6 +29,8 @@ import ucl.physiol.neuroconstruct.utils.units.*;
 
 public class ChannelMechanism implements Serializable
 {
+    static final long serialVersionUID = -1884757566565532L;
+    
     public String name = null;
     public float density;
 

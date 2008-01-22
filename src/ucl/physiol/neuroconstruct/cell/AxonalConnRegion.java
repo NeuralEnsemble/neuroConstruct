@@ -28,12 +28,14 @@ import ucl.physiol.neuroconstruct.utils.*;
   *
   */
 
-@SuppressWarnings("serial")
 
 public class AxonalConnRegion implements Serializable
 {
-     private String name = null;
-     private Region region = null;
+    
+    static final long serialVersionUID = -1837545937744L;
+    
+    private String name = null;
+    private Region region = null;
 
      //private String connectivityProbability = null;
 

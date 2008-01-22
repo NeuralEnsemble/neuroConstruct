@@ -48,6 +48,26 @@ public class RandomSpikeTrainExtSettings extends StimulationSettings
         super(reference, cellGroup, cellChooser, segmentID);
         randomSpikeTrainExt = new RandomSpikeTrainExt(rate, noise, synapseType);
     }
+    
+    
+    
+    public Object clone()
+    {
+        RandomSpikeTrainExt rstOrig = (RandomSpikeTrainExt)this.getElectricalInput();
+        
+        RandomSpikeTrainExt rstClone = (RandomSpikeTrainExt)rstOrig.clone();
+        
+        RandomSpikeTrainExtSettings rsts = new RandomSpikeTrainExtSettings(this.reference,
+                                 this.cellGroup,
+                                 (CellChooser)this.cellChooser.clone(),
+                                 this.segmentID,
+                                 rstClone.getRate(),
+                                 rstClone.getNoise(),
+                                 rstClone.getSynapseType());
+        
+        return rsts;
+                                 
+    }
 
 
 

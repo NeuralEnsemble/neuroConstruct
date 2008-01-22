@@ -91,14 +91,14 @@ public class GeneralUtils
     
 
     /**
-     * A simple check on whether to incl parallel functionality...
+     * A simple check on whether to incl parallel/Python functionality.
+     * This is turned off in the released version as the parallel func is buggy
      */
     public static boolean includeParallelFunc()
     {
         return new File("parallel").exists(); // A file of that name in the neuroConstruct main dir...
     }
-
-
+    
 
     public static boolean isLinuxBasedPlatform()
     {

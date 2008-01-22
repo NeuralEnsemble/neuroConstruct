@@ -50,6 +50,12 @@ public class SequenceGenerator
         this.end = end;
         this.interval = interval;
     }
+    
+    public Object clone()
+    {
+        SequenceGenerator sg = new SequenceGenerator(this.start,this.end,this.interval);
+        return sg;
+    }
 
     public float getInterval()
     {

@@ -45,12 +45,27 @@ public class PositionRecord
         this.y_pos = y_pos;
         this.z_pos = z_pos;
     }
+    
+    @Override
+    public Object clone()
+    {
+        
+        PositionRecord pr = new PositionRecord(this.cellNumber,
+                                               this.x_pos,
+                                               this.y_pos,
+                                               this.z_pos);
+        pr.nodeId = this.nodeId;
+        
+        return pr;
+    }
+    
 
     public Point3f getPoint()
     {
         return new Point3f(x_pos, y_pos, z_pos);
     }
 
+    @Override
     public String toString()
     {
         if (nodeId == NO_NODE_ID) return "Cell: [" + cellNumber + "] (" + x_pos + ", " + y_pos + ", " + z_pos + ")";
@@ -75,6 +90,20 @@ public class PositionRecord
         y_pos = Float.parseFloat(stringForm.substring(indexFirstComma + 1, indexSecondComma));
         z_pos = Float.parseFloat(stringForm.substring(indexSecondComma + 1, indexRightBracket));
 
+    }
+    
+    public static void main(String[] args)
+    {
+        PositionRecord pr = new PositionRecord(2,1.1f,2.2f,3.3f);
+        
+        System.out.println("pr: "+pr);
+        PositionRecord pr2 = (PositionRecord)pr.clone();
+        
+        pr2.x_pos = 99;
+        
+        System.out.println("pr: "+pr);
+        System.out.println("pr2: "+pr2);
+        
     }
 }
 

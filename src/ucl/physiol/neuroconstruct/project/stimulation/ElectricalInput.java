@@ -34,5 +34,7 @@ public abstract class ElectricalInput
     {
         this.type = type;
     }
+    
+    public abstract Object clone();
 
 }

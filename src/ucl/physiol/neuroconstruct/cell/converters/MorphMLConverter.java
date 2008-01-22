@@ -92,7 +92,16 @@ public class MorphMLConverter extends FormatImporter
             FileInputStream fi = new FileInputStream(objFile);
             ObjectInputStream si = new ObjectInputStream(fi);
 
-            Cell cell = (Cell) si.readObject();
+            Cell cell = null;
+            try
+            {
+                cell = (Cell) si.readObject();
+            }
+            catch (InvalidClassException e)
+            {
+                logger.logComment("Cell details: "+ CellTopologyHelper.printDetails(cell, null), true);
+                GuiUtils.showErrorMessage(logger, "Problem converting the morphology file: "+ objFile, e, null);
+            }
             si.close();
             //GeneralUtils.timeCheck("-----   Finished decoding java obj morph...");
             return cell;

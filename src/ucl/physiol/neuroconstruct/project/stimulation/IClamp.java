@@ -62,6 +62,16 @@ public class IClamp extends ElectricalInput
         this.amplitude = amplitude;
         this.repeat = repeat;
     }
+    
+    
+    public Object clone()
+    {
+        IClamp ic = new IClamp((SequenceGenerator)this.delay.clone(),
+                               (SequenceGenerator)this.duration.clone(),
+                               (SequenceGenerator)this.amplitude.clone(),
+                                this.repeat);
+        return ic;
+    };
 
 
 

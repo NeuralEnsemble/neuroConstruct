@@ -60,6 +60,16 @@ public class RandomSpikeTrainExt extends ElectricalInput
         this.noise = noise;
         this.synapseType = synapseType;
     }
+    
+    
+    public Object clone()
+    {
+        NumberGenerator rateClone = (NumberGenerator)rate.clone();
+        
+        RandomSpikeTrainExt rste = new RandomSpikeTrainExt(rateClone,this.noise, new String(synapseType));
+        
+        return rste;
+    }
 
     public NumberGenerator getRate()
     {

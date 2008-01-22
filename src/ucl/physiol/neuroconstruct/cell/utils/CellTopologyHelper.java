@@ -1744,6 +1744,8 @@ public class CellTopologyHelper
     {
 
         logger.logComment("Printing cell details...");
+        if (cell==null) return "**** Error: cell is null ****";
+        
         StringBuilder sb = new StringBuilder();
 
 

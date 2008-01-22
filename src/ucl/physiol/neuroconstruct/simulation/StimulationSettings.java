@@ -54,8 +54,14 @@ public abstract class StimulationSettings
         this.cellChooser = cellChooser;
         this.segmentID = segmentID;
     }
+    
+    @Override
+    public abstract Object clone();
 
+    @Override
     public abstract String toString();
+    
+    
 
     public abstract ElectricalInput getElectricalInput();
 

@@ -53,7 +53,6 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener
     BorderLayout borderLayout2 = new BorderLayout();
     FlowLayout flowLayout1 = new FlowLayout();
 
-    //String copyright = "Copyright (c) 2007 UCL";
     String comments
         = "Java application for creating 3D networks of biologically realistic\n"
          +"neurons for the NEURON and GENESIS simulators. "
@@ -98,7 +97,7 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener
         insetsPanel2.setBorder(border3);
         label1.setHorizontalAlignment(SwingConstants.LEFT);
         label1.setText("neuroConstruct v"+ GeneralProperties.getVersionNumber());
-        label3.setText("Copyright (c) 2007 Dept of Physiology, UCL");
+        label3.setText("Copyright (c) 2008 Dept of Physiology, UCL");
         label4.setText("Contact Padraig Gleeson (p.gleeson@ucl.ac.uk) for more information");
 
         label4.setToolTipText("This work is dedicated to the memory of Nancy Gleeson");

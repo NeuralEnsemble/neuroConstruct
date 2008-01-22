@@ -50,6 +50,42 @@ public class IClampSettings extends StimulationSettings
 
         iclamp = new IClamp(delay,duration,amplitude, repeat);
     }
+    
+
+    public IClampSettings(String reference,
+                          String cellGroup,
+                          CellChooser cellChooser,
+                          int segmentID,
+                          SequenceGenerator delay,
+                          SequenceGenerator duration,
+                          SequenceGenerator amplitude,
+                          boolean repeat)
+    {
+        super(reference, cellGroup, cellChooser, segmentID);
+
+        iclamp = new IClamp(delay,duration,amplitude, repeat);
+    }
+    
+    
+    
+    public Object clone()
+    {
+        IClamp iclampOrig = (IClamp)this.getElectricalInput();
+        
+        IClamp iclampClone = (IClamp)iclampOrig.clone();
+        
+        IClampSettings ics = new IClampSettings(this.reference,
+                                 this.cellGroup,
+                                 (CellChooser)this.cellChooser.clone(),
+                                 this.segmentID,
+                                 iclampClone.getDelay(),
+                                 iclampClone.getDuration(),
+                                 iclampClone.getAmplitude(),
+                                 iclampClone.isRepeat());
+        
+        return ics;
+                                 
+    }
 
     public ElectricalInput getElectricalInput()
     {

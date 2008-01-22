@@ -48,6 +48,23 @@ public abstract class CellChooser
     {
         this.description = description;
     }
+    
+    //@Override
+    public Object clone(){return null;};
+    
+    protected ArrayList<PositionRecord> getCopyCellPositions()
+    {
+        ArrayList<PositionRecord> cpClone = new ArrayList<PositionRecord>();
+        
+        for(PositionRecord pr: this.cellPositions)
+        {
+            cpClone.add((PositionRecord)pr.clone());
+        }
+        
+        return cpClone;
+        
+    }
+    
 
     public String getDescription()
     {

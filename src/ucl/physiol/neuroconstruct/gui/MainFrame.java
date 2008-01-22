@@ -646,6 +646,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JButton jButtonMechanismDelete = new JButton();
     JButton jButtonMechanismCopy = new JButton();
     JButton jButtonMechanismEditIt = new JButton();
+    JButton jButtonMechanismUpdateMaps = new JButton();
     
     JButton jButtonMechanismAbstract = new JButton();
     JButton jButtonMechanismTemplateCML = new JButton();
@@ -702,6 +703,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JButton jButtonSimStimAdd = new JButton();
     JButton jButtonSimStimDelete = new JButton();
     JButton jButtonSimStimEdit = new JButton();
+    JButton jButtonSimStimCopy = new JButton();
+    
+    
     GridBagLayout gridBagLayout5 = new GridBagLayout();
     JTextField jTextFieldSimUnitInitVm = new JTextField();
     JTextField jTextFieldSimUnitVLeak = new JTextField();
@@ -798,7 +802,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     "networks");
         jLabelSynapseTitle.setHorizontalAlignment(SwingConstants.CENTER);
         jLabelSynapseTitle.setBorder(border2);
-        jMenuItemZipUp.setText("Zip this project...");
+        jMenuItemZipUp.setText("Zip this Project...");
         jMenuItemZipUp.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -813,7 +817,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jLabelProjFileVersion.setText("Project File Version:");
         jTextFieldProjFileVersion.setEditable(false);
         jTextFieldProjFileVersion.setText("");
-        jMenuItemUnzipProject.setText("Import zipped project...");
+        jMenuItemUnzipProject.setText("Import Zipped Project...");
 
         jMenuItemUnzipProject.addActionListener(new java.awt.event.ActionListener()
         {
@@ -901,7 +905,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jButtonNetAAEdit_actionPerformed(e);
             }
         });
-        jMenuItemViewProjSource.setText("View project file source");
+        jMenuItemViewProjSource.setText("View Project File Source");
         jMenuItemViewProjSource.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -1007,7 +1011,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jMenuItemGlossary_actionPerformed(e);
             }
         });
-        jMenuItemReleaseNotes.setText("Release notes");
+        jMenuItemReleaseNotes.setText("Release Notes");
         jMenuItemReleaseNotes.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -1016,7 +1020,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
         });
         
-        jMenuItemCheckUpdates.setText("Check for updates");
+        jMenuItemCheckUpdates.setText("Check for Updates");
         jMenuItemCheckUpdates.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -1247,7 +1251,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jComboBoxNeuronFileList.setEnabled(false);
         this.jCheckBoxNeuronLineNums.setEnabled(false);
 
-        jMenuItemPlotEquation.setText("Create plot from expression");
+        jMenuItemPlotEquation.setText("Create Plot from Expression");
         jMenuItemPlotEquation.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -1256,7 +1260,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
         });
 
-        jMenuItemPlotImport.setText("Import data for plot");
+        jMenuItemPlotImport.setText("Import Data for Plot");
         jMenuItemPlotImport.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -1467,6 +1471,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
       }
     });
     
+    jButtonMechanismUpdateMaps.setText("Update ChannelML mappings");
+    
+    jButtonMechanismUpdateMaps.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        jButtonMechanismUpdateMaps_actionPerformed(e);
+      }
+    });
+    
     jButtonMechanismCopy.setText("Create copy of selected Cell Mechanism");
     
     jButtonMechanismCopy.addActionListener(new java.awt.event.ActionListener() {
@@ -1489,7 +1501,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
         });
         jPanelMechanismLabel.setLayout(borderLayout37);
-        jMenuItemUnits.setText("Units used");
+        jMenuItemUnits.setText("Units Used");
         jPanelGenesisChoices.setLayout(borderLayout38);
         jButtonMechanismFileBased.setText("Create File Based Mechanism");
         jButtonMechanismNewCML.setText("Create ChannelML Mechanism");
@@ -1552,7 +1564,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jButtonGenesisNumMethod_actionPerformed(e);
             }
         });
-        jMenuItemCopyProject.setText("Copy project (Save As)...");
+        jMenuItemCopyProject.setText("Copy Project (Save As)...");
         jMenuItemCopyProject.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -1628,6 +1640,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             public void actionPerformed(ActionEvent e)
             {
                 jButtonSimStimEdit_actionPerformed(e);
+            }
+        });
+        jButtonSimStimCopy.setText("Copy selected input");
+        jButtonSimStimCopy.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonSimStimCopy_actionPerformed(e);
             }
         });
         jTextFieldSimUnitGlobRa.setEditable(false);
@@ -1711,7 +1731,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jButtonCellTypeOtherProject_actionPerformed(e);
             }
         });
-        jMenuItemJava.setText("Java properties");
+        jMenuItemJava.setText("Java Properties");
         jMenuItemJava.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -2294,19 +2314,20 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTextFieldProjName.setText("");
         jTextFieldProjName.setColumns(35);
         jPanelMainInfo.setLayout(gridBagLayout2);
-
         jPanelMainInfo.setBorder(BorderFactory.createEtchedBorder());
         
         //jPanelMainInfo.setMaximumSize(new Dimension(850, 470));
-        jPanelMainInfo.setMinimumSize(new Dimension(850, 470));
-        jPanelMainInfo.setPreferredSize(new Dimension(850, 470));
+        jPanelMainInfo.setMinimumSize(new Dimension(900, 490));
+        jPanelMainInfo.setPreferredSize(new Dimension(900, 490));
         
         
         //jScrollPaneProjDesc.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-        jScrollPaneProjDesc.setMaximumSize(new Dimension(100, 100));
-        jScrollPaneProjDesc.setMinimumSize(new Dimension(100, 100));
-        jScrollPaneProjDesc.setPreferredSize(new Dimension(100, 100));
+        Dimension dimScroll = new Dimension(100, 100);
+        jScrollPaneProjDesc.setMaximumSize(dimScroll);
+        jScrollPaneProjDesc.setMinimumSize(dimScroll);
+        jScrollPaneProjDesc.setPreferredSize(dimScroll);
+        
         jLabelSimConfigs.setEnabled(false);
         jLabelSimConfigs.setText("Simulation Configurations:");
 
@@ -2353,6 +2374,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTextFieldSimDT.setHorizontalAlignment(SwingConstants.RIGHT);
         jTextFieldSimDT.addKeyListener(new java.awt.event.KeyAdapter()
         {
+            @Override
             public void keyReleased(KeyEvent e)
             {
                 jTextFieldDT_keyReleased(e);
@@ -2568,9 +2590,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         scrollerGenerate.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-        scrollerGenerate.setMaximumSize(new Dimension(700, 260));
-        scrollerGenerate.setMinimumSize(new Dimension(700, 260));
-        scrollerGenerate.setPreferredSize(new Dimension(700, 260));
+        Dimension scrollGenDim = new Dimension(700, 290);
+        scrollerGenerate.setMaximumSize(scrollGenDim);
+        scrollerGenerate.setMinimumSize(scrollGenDim);
+        scrollerGenerate.setPreferredSize(scrollGenDim);
+        
         jPanelGenerateLoadSave.setBorder(BorderFactory.createEtchedBorder());
         jPanelGenerateButtonsDesc.setBorder(BorderFactory.createEtchedBorder());
         jPanelGenerateMain.setBorder(BorderFactory.createEtchedBorder());
@@ -2593,7 +2617,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jButtonCellGroupDelete_actionPerformed(e);
             }
         });
-        //jPanelNetSetTable.setLayout(borderLayout15);
+        
         jButtonNetConnDelete.setEnabled(false);
         jButtonNetConnDelete.setText("Delete selected Morph Conn");
         jButtonNetConnDelete.addActionListener(new java.awt.event.ActionListener()
@@ -2992,7 +3016,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         //jPanelHocFileButtons.add(jButto nNeuronCreateCondor, null);
 
-        /////if (GeneralUtils.includeParallelFunc()) jPanelHocFile1Buttons.add(jButtonNeuronCreateMPIHoc, null);
         if (GeneralUtils.includeParallelFunc()) jPanelHocFile1Buttons.add(jButtonNeuronCreateMPIPython, null);
 
         jPanelHocFile2Buttons.add(jButtonNeuronView, null);
@@ -3001,6 +3024,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         jPanelHocFile1Buttons.add(jButtonNeuronRun, null);
 
+        
         jPanelNeuronMainSettings.add(jLabelNeuronMainLabel,  new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 673, 20));
 
@@ -3053,7 +3077,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         jPanelProjInfo.add(jLabelTitle, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, 
         		GridBagConstraints.CENTER, GridBagConstraints.NONE, 
-        		new Insets(25, 0, 0, 0), 0, 0));
+        		new Insets(20, 0, 0, 0), 0, 0));
 
         jPanelProjInfo.add(jPanelMainInfo,    new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0,
         		GridBagConstraints.CENTER, GridBagConstraints.NONE, 
@@ -3073,7 +3097,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 20, 0, 0), 0, 0));
 
         jPanelMainInfo.add(jScrollPaneProjDesc,              new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 0, 6, 0), 550,80));
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 0, 6, 0), 580,130));
 
 
 
@@ -3114,10 +3138,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         
         jPanelMainInfo.add(jLabelMainLastModified,  new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 20, 0, 0), 0, 0));
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 20, 6, 0), 0, 0));
         
         jPanelMainInfo.add(jTextFieldMainLastModified,   new GridBagConstraints(2, 6, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 0, 20), 0, 0));
+            ,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 6, 20), 0, 0));
 
 
 
@@ -3476,6 +3500,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
         jPanelProcessButtonsBottom.add(jButtonMechanismEditIt, null);
+        jPanelProcessButtonsBottom.add(jButtonMechanismUpdateMaps, null);
+        
         //// not enough time to finish this..//// jPanelProcessButtonsBottom.add(jButtonMechanismCopy, null);
         jPanelProcessButtonsBottom.add(jButtonMechanismDelete, null);
 
@@ -3499,6 +3525,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelStims.add(jScrollPaneSimStims, BorderLayout.CENTER);
         jPanelSimStimButtons.add(jButtonSimStimAdd, null);
         jPanelSimStimButtons.add(jButtonSimStimEdit, null);
+        ///////////////jPanelSimStimButtons.add(jButtonSimStimCopy, null);
         jPanelSimStimButtons.add(jButtonSimStimDelete, null);
 
 
@@ -3786,6 +3813,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         this.jButtonMechanismNewCML.setToolTipText(toolTipText.getToolTip("File Based ChannelML"));
         this.jButtonMechanismTemplateCML.setToolTipText(toolTipText.getToolTip("Template Based ChannelML"));
+        this.jButtonMechanismUpdateMaps.setToolTipText(toolTipText.getToolTip("Update ChannelML Mechanism"));
 
 
         jLabelSimulationInitVm.setToolTipText(toolTipText.getToolTip("Initial Membrane Potential"));
@@ -3856,6 +3884,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         DefaultTableCellRenderer regionColourRenderer = new DefaultTableCellRenderer()
         {
+            @Override
             public void setValue(Object value)
             {
                 if (value instanceof Color)
@@ -7746,6 +7775,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             this.jButtonMechanismAbstract.setEnabled(false);
             this.jButtonMechanismEditIt.setEnabled(false);
+            this.jButtonMechanismUpdateMaps.setEnabled(false);
             this.jButtonMechanismCopy.setEnabled(false);
             this.jButtonMechanismDelete.setEnabled(false);
             jButtonMechanismFileBased.setEnabled(false);
@@ -7763,6 +7793,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             this.jButtonMechanismAbstract.setEnabled(true);
             this.jButtonMechanismEditIt.setEnabled(true);
+            this.jButtonMechanismUpdateMaps.setEnabled(true);
             this.jButtonMechanismCopy.setEnabled(true);
             this.jButtonMechanismDelete.setEnabled(true);
             jButtonMechanismFileBased.setEnabled(true);
@@ -8056,6 +8087,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
            this.jButtonSimStimAdd.setEnabled(false);
            this.jButtonSimStimDelete.setEnabled(false);
            this.jButtonSimStimEdit.setEnabled(false);
+           this.jButtonSimStimCopy.setEnabled(false);
 
 
        }
@@ -8080,6 +8112,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
            this.jButtonSimStimAdd.setEnabled(true);
            this.jButtonSimStimDelete.setEnabled(true);
            this.jButtonSimStimEdit.setEnabled(true);
+           this.jButtonSimStimCopy.setEnabled(true);
 
        }
 
@@ -11378,6 +11411,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
     }
     
+    void jButtonMechanismUpdateMaps_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("----------------------------         Updating a cell mechanism...");
+        
+        
+    }
+
+    
 
     void jButtonMechanismEdit_actionPerformed(ActionEvent e)
     {
@@ -12609,6 +12650,50 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     }
 
+
+    void jButtonSimStimCopy_actionPerformed(ActionEvent e)
+    {
+        int selectedRow = jTableStims.getSelectedRow();
+
+        if (selectedRow < 0)
+        {
+            logger.logComment("No row selected...");
+            return;
+        }
+
+
+        StimulationSettings selectedStim = projManager.getCurrentProject().elecInputInfo.getStim(selectedRow);
+
+        StimDialog dlg
+            = new StimDialog(this,selectedStim.getReference(),
+                                    projManager.getCurrentProject());
+
+
+        dlg.setStim(selectedStim);
+
+        Dimension dlgSize = dlg.getPreferredSize();
+        Dimension frmSize = getSize();
+        Point loc = getLocation();
+        dlg.setLocation( (frmSize.width - dlgSize.width) / 2 + loc.x,
+                        (frmSize.height - dlgSize.height) / 2 + loc.y);
+        dlg.setModal(true);
+        dlg.pack();
+        dlg.setVisible(true);
+
+        if (dlg.cancelled)
+        {
+            logger.logComment("They've changed their mind...");
+            return;
+        }
+        
+        projManager.getCurrentProject().markProjectAsEdited();
+        projManager.getCurrentProject().elecInputInfo.updateStim(dlg.getFinalStim());
+        refreshTabInputOutput();
+
+    }
+    
+    
+    
 
     void jButtonSimStimEdit_actionPerformed(ActionEvent e)
     {

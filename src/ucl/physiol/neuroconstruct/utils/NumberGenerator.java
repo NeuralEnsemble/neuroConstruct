@@ -25,10 +25,11 @@ import ucl.physiol.neuroconstruct.project.*;
  *  
  */
 
-@SuppressWarnings("serial")
 
 public class NumberGenerator implements Serializable
 {
+    static final long serialVersionUID = -2523254286734506739L;
+    
     private transient ClassLogger logger = new ClassLogger("NumberGenerator");
 
     public static final int FIXED_NUM = 0;
@@ -61,6 +62,7 @@ public class NumberGenerator implements Serializable
         return this.distributionType == FIXED_NUM;
     }
 
+    @Override
     public boolean equals(Object otherObj)
     {
         if (otherObj instanceof NumberGenerator)
@@ -81,6 +83,20 @@ public class NumberGenerator implements Serializable
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 11 * hash + this.distributionType;
+        hash = 11 * hash + this.numberType;
+        hash = 11 * hash + Float.floatToIntBits(this.fixedNum);
+        hash = 11 * hash + Float.floatToIntBits(this.max);
+        hash = 11 * hash + Float.floatToIntBits(this.min);
+        hash = 11 * hash + Float.floatToIntBits(this.mean);
+        hash = 11 * hash + Float.floatToIntBits(this.stdDev);
+        return hash;
+    }
+
+    @Override
     public Object clone()
     {
         NumberGenerator ng = new NumberGenerator();
@@ -290,6 +306,7 @@ public class NumberGenerator implements Serializable
         return this.mean;
     }
 
+    @Override
     public String toString()
     {
         if (this.numberType==FLOAT_GENERATOR)

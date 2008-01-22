@@ -1454,7 +1454,7 @@ public class SegmentSelector extends JFrame
             "Compartmentalisation option is used, this value will be used to determine the number of GENESIS\n"+
             "compartments to use to represent the complex 3D Section with multiple Segments. See Electrotonic\n"+
             "Length and Compartmentalisation in the Glossary.\n\n"
-            +"The cell will be remeshed to get the electronic length per internal division as close as possible to:\n "
+            +"The cell will be remeshed to get the electronic length per internal division as close as possible to:\n"
             +""+ project.simulationParameters.getMaxElectroLen()+" (dimensionless units; set via Common Simulation Settings tab)\n\nProceed?";
         
         boolean proceed = GuiUtils.showYesNoMessage(logger, note, this);
@@ -1676,7 +1676,7 @@ public class SegmentSelector extends JFrame
 
 
         if (selected !=null && /* Might be null on delete...*/
-                selected.equals(FUNCTION_INSTR))
+                !selected.equals(FUNCTION_INSTR))
         {
             logger.logComment("Selected: "+ selected);
 

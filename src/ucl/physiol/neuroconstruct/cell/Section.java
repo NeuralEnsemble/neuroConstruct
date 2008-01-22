@@ -32,10 +32,12 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
  *
  */
 
-@SuppressWarnings("serial")
 
 public class Section implements Serializable
 {
+    static final long serialVersionUID = 3982459846602131261L;
+    
+    
     public static final String ALL = "all";
     public static final String SOMA_GROUP = "soma_group";
     public static final String DENDRITIC_GROUP = "dendrite_group";
@@ -97,6 +99,7 @@ public class Section implements Serializable
      * Returns a string with the internal info on the section
      * @return String representation of section
      */
+    @Override
     public String toString()
     {
         String info = "Section: " + sectionName
@@ -128,7 +131,7 @@ public class Section implements Serializable
             return info;
     }
 
-
+    @Override
     public Object clone()
     {
         Section newSection = new Section(sectionName);
@@ -202,7 +205,7 @@ public class Section implements Serializable
         return this.startPointPosition.z;
     }
 
-
+    @Override
     public boolean equals(Object obj)
     {
         if (obj instanceof Section)
