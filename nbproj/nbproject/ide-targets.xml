@@ -15,6 +15,7 @@
             <classpath refid="run.class.path"/>
             <jvmarg value="-Xdebug"/>
             <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+                <jvmarg value="-Djava.library.path=lib/hdf5/linux"/>
         </java>
     </target>
 </project>

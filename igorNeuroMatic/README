@@ -1,1 +1,3 @@
-Files found in this directory will be automatically included in the Igor/NeuroMatic file generated when a simulation is run.
+Files found in this directory can be automatically included in the Igor/NeuroMatic file generated when a simulation is run.
+
+Enable automatic generation of files for Igor/NeuroMatic via Settings -> General Properties and Project Defaults
