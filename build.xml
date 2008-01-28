@@ -263,8 +263,8 @@
   <target name="website" depends="glossary"
           description="Generates the main website using Forrest (http://forrest.apache.org)">
 
-    <!--<copy file="./README" todir="${website.dir}/docs" />
-    <copy file="./RELEASE_NOTES" todir="${website.dir}/docs" /> -->
+    <copy file="./README" todir="${website.dir}/docs" />
+    <copy file="./RELEASE_NOTES" todir="${website.dir}/docs" /> 
     
     <ant antfile="${forrest.antfile}" dir="${forrest.settings.dir}" target="site"/>
      

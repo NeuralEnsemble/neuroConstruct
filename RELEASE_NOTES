@@ -6,13 +6,17 @@ See also the README file
 --------- Version XXXX (XXX 08) ---------
 
 
-- Added option of saving morphologies in smaller, more efficient format. See "Morphology save format" in Glossary.
+- Added option of saving morphologies in smaller, more efficient format. Existing projects still use old method, 
+  new ones use the smaller format by default. See "Morphology save format" in Glossary.
 
-- Changed handling of mod file generation...
+- Changed handling of mod file generation. Option "Copy sim files to results dir" to either use mod files/compiled libraries
+  in the location they're generated (generateNEURON dir, this is default now), or copy the files to simulations/Sim_xx
+  and use them there. This second option was the previous way of using accessign the mods, and may have been the cause of some 
+  problems. 
 
-- NeuroML export..
+- NeuroML export tab is slightly updated.
 
-- NeuroML version 1.7.1... Synapses
+- NeuroML version 1.7.1 is used. At the moment the main changes are *unstable* new synaptic mechanism features.
 
 - Cleaned up electrotonic length handling & updated docs
 
@@ -25,13 +29,12 @@ See also the README file
 
 - For single compartment, spherical cells, the fract along is now always 0.5 in generated network connections
 
-- GENESIS double_endpoint...
+- Can now import GENESIS morphologies which use double_endpoint.
 
-- Gap junctions & point processes (integrate & fire)
+- Gap junctions & point processes (for integrate & fire mechanism) added as possible mechanism types (incomplete)
 
 - Minor additions to project validation: checks if Cell Groups referred to in Elec Inputs and Plots are present in project
 
--
 
 
 --------- Version 1.0.4.1 (Aug 07) ---------
