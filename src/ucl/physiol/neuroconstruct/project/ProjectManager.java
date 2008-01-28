@@ -691,7 +691,8 @@ public class ProjectManager
             if (!(allCellGroupsWithStims.contains(cellGroup)||allPostSynCellGroups.contains(cellGroup)))
             {
                 report.addTaggedElement("Warning, Cell Group: " + cellGroup + " has neither an electrical stimulation nor is "
-                                        +"postsynaptically connected to another Cell Group. Unless the cells are spontaneously active, nothing much will happen there in a simulation.",
+                                        +"postsynaptically connected to another Cell Group. Unless the cells are spontaneously active,"
+                                        +" nothing much will happen to those cells during a simulation.",
                                         "font color=\"" + ValidityStatus.VALIDATION_COLOUR_WARN + "\"");
 
                 report.addBreak();

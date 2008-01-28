@@ -3861,6 +3861,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     {
         DefaultTableCellRenderer colorRenderer = new DefaultTableCellRenderer()
         {
+            @Override
             public void setValue(Object value)
             {
                 if (value instanceof Color)

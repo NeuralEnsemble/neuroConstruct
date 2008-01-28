@@ -200,10 +200,10 @@ public class DataSet
 
             if (!inc)
             {
-                logger.logComment("xValues["+numberValidPoints+"] <= " + "xValues["+(numberValidPoints-1)+"]");
-                logger.logComment(xValues[numberValidPoints] +" <= " + xValues[(numberValidPoints-1)]);
-                logger.logComment("val: "+(xValues[numberValidPoints] > xValues[numberValidPoints - 1]));
-                logger.logComment("xValsStrictlyInc: " + xValsStrictlyInc);
+                //logger.logComment("xValues["+numberValidPoints+"] <= " + "xValues["+(numberValidPoints-1)+"]");
+                //logger.logComment(xValues[numberValidPoints] +" <= " + xValues[(numberValidPoints-1)]);
+                //logger.logComment("val: "+(xValues[numberValidPoints] > xValues[numberValidPoints - 1]));
+                //logger.logComment("xValsStrictlyInc: " + xValsStrictlyInc);
             }
 
         }
@@ -325,6 +325,7 @@ public class DataSet
      * returns String containing bracketed points, e.g.
      * [(0, 0), (1, 1), ...]
      */
+    @Override
     public String toString()
     {
         StringBuffer sb = new StringBuffer("DataSet: "+this.getRefrence()+"[");
@@ -453,7 +454,7 @@ public class DataSet
 
 
 
-        System.out.println("Time taken to build data set: "+(System.currentTimeMillis()-start)); ;
+        System.out.println("Time taken to build data set: "+(System.currentTimeMillis()-start));
 
         System.out.println("First point: "+ data1.getPoint(0)[0]+", "+ data1.getPoint(0)[1]);
         System.out.println("Second point: "+ data1.getPoint(1)[0]+", "+ data1.getPoint(1)[1]);

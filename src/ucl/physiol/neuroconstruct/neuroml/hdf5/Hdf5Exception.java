@@ -12,6 +12,11 @@
 
 package ucl.physiol.neuroconstruct.neuroml.hdf5;
 
+import java.io.File;
+import java.io.IOException;
+import ncsa.hdf.object.*;
+import ncsa.hdf.object.h5.*;
+
 
 
 /**
@@ -38,6 +43,57 @@ public class Hdf5Exception extends Exception
     {
         super(comment, t);
     }
+    
+    public static void main(String[] args) throws IOException
+    {
+        try 
+        {
+            File f = new File("../../temp/net.h5");
+            System.out.println("Reading a HDF5 file: " + f.getCanonicalPath());
+
+            H5File h5file = Hdf5Utils.openH5file(f);
+            
+            Hdf5Utils.open(h5file);
+            
+            System.out.println("h5file: "+h5file.getRootNode());
+            
+            Group g = Hdf5Utils.getRootGroup(h5file);
+            
+            
+               //printGroup(g, "--"); 
+                
+        } 
+        catch (Exception ex) 
+        {
+            ex.printStackTrace();
+        }
+
+    }
+    
+    /*
+        private static void printGroup(Group g, String indent) throws Exception
+    {
+        if (g == null)
+            return;
+
+        java.util.List members = g.getMemberList();
+
+        int n = members.size();
+        indent += "    ";
+        HObject obj = null;
+        for (int i=0; i<n; i++)
+        {
+            obj = (HObject)members.get(i);
+            System.out.println(indent+obj);
+            if (obj instanceof Group)
+            {
+                printGroup((Group)obj, indent);
+            }
+        }
+    }*/
+
+        
+        
 
 
 }

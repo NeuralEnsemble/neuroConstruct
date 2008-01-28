@@ -69,6 +69,33 @@ public class Hdf5Utils
         }
     }
 
+    public static H5File openH5file(File file) throws Hdf5Exception
+    {
+
+        FileFormat fileFormat = FileFormat.getFileFormat(FileFormat.FILE_TYPE_HDF5);
+
+        if (fileFormat == null)
+        {
+            throw new Hdf5Exception("Cannot find HDF5 FileFormat.");
+        }
+
+        try
+        {
+            H5File h5File = (H5File)fileFormat.open(file.getAbsolutePath(), FileFormat.READ);
+
+            if (h5File == null)
+            {
+                throw new Hdf5Exception("Failed to open file:"+file);
+            }
+
+            return h5File;
+        }
+        catch (Exception ex)
+        {
+            throw new Hdf5Exception("Error creating file: " + file + ".", ex);
+        }
+    }
+
     public static void open(H5File h5File) throws Hdf5Exception
     {
         try
@@ -108,6 +135,8 @@ public class Hdf5Utils
 
         return root;
     }
+    
+    
 
 
 

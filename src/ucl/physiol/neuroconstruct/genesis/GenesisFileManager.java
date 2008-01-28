@@ -98,6 +98,16 @@ public class GenesisFileManager
     {
         this.project = project;
     }
+    
+    
+    public static boolean mooseCompatMode()
+    {
+        File testFile = new File("moosecompat");
+        
+        System.out.println(testFile.getAbsolutePath());
+        
+        return testFile.exists();
+    }
 
 
     public void reset()
@@ -176,31 +186,37 @@ public class GenesisFileManager
             fw.write(generateScriptBlock(ScriptLocation.BEFORE_CELL_CREATION));
 
             fw.write(generateCellGroups());
+            
 
             fw.write(generateNetworkConnections());
 
-            fw.write(generateStimulations());
+            if (!mooseCompatMode()) fw.write(generateStimulations());
 
             //fw.write(generateAfterCreationText());
 
-            fw.write(generateNumIntegMethod());
+            if (!mooseCompatMode()) fw.write(generateNumIntegMethod());
 
             fw.write(generateRunSettings());
 
-            fw.write(generatePlots());
+            if (!mooseCompatMode()) fw.write(generatePlots());
 
-            fw.write(generate3Dplot());
+            
+            if (!mooseCompatMode()) fw.write(generate3Dplot());
 
 
-            fw.write(generateRunControls());
+            if (!mooseCompatMode()) fw.write(generateRunControls());
 
             //fw.write(generateCellParamControl());
+            
 
             fw.write(generateGenesisSimulationRecording());
 
 
             fw.write(generateScriptBlock(ScriptLocation.AFTER_SIMULATION));
 
+            if(mooseCompatMode()) fw.write("\n/*\n");
+            if(mooseCompatMode()) fw.write("\n*/\n");
+            
             fw.flush();
             fw.close();
 
@@ -769,31 +785,35 @@ public class GenesisFileManager
 
     private String generateIncludes()
     {
-        String dir = ""; // needed under windows...
-        if (GeneralUtils.isWindowsBasedPlatform())
-        {
-            dir = this.mainGenesisFile.getParentFile().getAbsolutePath()+ System.getProperty("file.separator");
-
-            //if (!(new File(dir)))
-            dir = GeneralUtils.convertToCygwinPath(dir);
-        }
         StringBuffer response = new StringBuffer();
-        addComment(response, "Including neuroConstruct utilities file");
-        response.append("include "+ getFriendlyDirName(dir)+"nCtools \n\n");
+        
+        if (!mooseCompatMode())
+        {
+            String dir = ""; // needed under windows...
+            if (GeneralUtils.isWindowsBasedPlatform())
+            {
+                dir = this.mainGenesisFile.getParentFile().getAbsolutePath()+ System.getProperty("file.separator");
 
-        addComment(response, "Including external files");
-        response.append("include compartments \n\n");
+                //if (!(new File(dir)))
+                dir = GeneralUtils.convertToCygwinPath(dir);
+            }
+            addComment(response, "Including neuroConstruct utilities file");
+            response.append("include "+ getFriendlyDirName(dir)+"nCtools \n\n");
+
+            addComment(response, "Including external files");
+            response.append("include compartments \n\n");
 
 
-        addComment(response, "Creating element for channel prototypes");
-        response.append("create neutral /library\n");
-        response.append("disable /library\n");
+            addComment(response, "Creating element for channel prototypes");
+            response.append("create neutral /library\n");
+            response.append("disable /library\n");
 
-        response.append("pushe /library\n");
-        response.append("make_cylind_compartment\n");
+            response.append("pushe /library\n");
+            response.append("make_cylind_compartment\n");
 
-        response.append("make_cylind_symcompartment\n");
-        response.append("pope\n\n");
+            response.append("make_cylind_symcompartment\n");
+            response.append("pope\n\n");
+        }
 
         return response.toString();
     }
@@ -814,7 +834,7 @@ public class GenesisFileManager
     {
         StringBuffer response = new StringBuffer();
 
-        if(addComments)
+        if(addComments && !mooseCompatMode())
         {
             response.append("env // prints details on some global variables\n\n\n");
         }
@@ -2653,8 +2673,15 @@ public class GenesisFileManager
                 logger.logComment("Assuming *nix environment...");
 
                 genesisExecutable = "genesis";
-
                 String title = "GENESIS_simulation" + "___" + project.simulationParameters.getReference();
+
+                
+                if (GenesisFileManager.mooseCompatMode())
+                {
+                    genesisExecutable = "~/moose/moose";
+                    title = "MOOSE_simulation" + "___" + project.simulationParameters.getReference();
+
+                }
 
 
 
