@@ -19,9 +19,9 @@
   <target name="init">
     <tstamp/>
     <property name="name" value="neuroConstruct"/>
-    <property name="version" value="1.0.7"/>
+    <property name="version" value="1.0.9"/>
     <property name="version.impl" value="${version}"/>
-    <property name="year" value="2007"/>
+    <property name="year" value="2008"/>
 
     <echo message="----------- ${name} v${version} ------------"/>
 
@@ -431,58 +431,14 @@
 
 
 
-
-  <!-- =================================================================== -->
-  <!-- Replaces the version in the source files, with the one here         -->
-  <!-- =================================================================== -->
-
-  <target name="replaceversion" depends="init" description="Replaces version info in *.java">
-
-     <!-- Looks for the line specifying the version in GeneralProperties and replaces it -->
-
-      <replaceregexp
-          match="private static final String versionNumber = .\d+\.\d+.\d+."
-          replace="private static final String versionNumber = &quot;${version}&quot;"
-          byline="true">
-          <fileset dir="${src.dir}">
-              <filename name="**/GeneralProperties.java"/>
-          </fileset>
-      </replaceregexp>
-
-     <!-- Looks for the version number in the run.bat and run.sh utilities -->
-
-      <replaceregexp
-          match="java -Xmx.*$"
-          replace="java -Xmx700M  -cp neuroConstruct_${version}.jar ucl.physiol.neuroconstruct.gui.MainApplication %1 %2 %3 %4 %5"
-          byline="true">
-          <fileset dir=".">
-              <filename name="run.bat"/>
-          </fileset>
-      </replaceregexp>
-
-      <replaceregexp
-          match="java -Xmx.*$"
-          replace="java -Xmx700M -cp neuroConstruct_${version}.jar ucl.physiol.neuroconstruct.gui.MainApplication $1 $2 $3 $4 $5"
-          byline="true">
-          <fileset dir=".">
-              <filename name="run.sh"/>
-          </fileset>
-      </replaceregexp>
-
-
-    </target>
-
-
-
-
   <!-- =================================================================== -->
   <!-- Replaces the copyright line in the source files, with the one here  -->
   <!-- =================================================================== -->
 
     <target name="replacecopyright" depends="init" description="Replaces copyright line in *.java">
       <replaceregexp
-          match="2006 Padraig Gleeson"
-          replace="2007 Padraig Gleeson"
+          match="2007 Padraig Gleeson"
+          replace="2008 Padraig Gleeson"
           byline="true">
           <fileset dir="${src.dir}">
               <filename name="**/*.java"/>

@@ -11,4 +11,4 @@ REM   flickering of the Swing components when showing 3D on some Windows systems
 REM 
 
 @echo on
-java -Xmx700M  -Dsun.java2d.noddraw=true -cp neuroConstruct_1.0.7.jar ucl.physiol.neuroconstruct.gui.MainApplication %1 %2 %3 %4 %5
+java -Xmx700M  -Dsun.java2d.noddraw=true -cp neuroConstruct_1.0.9.jar ucl.physiol.neuroconstruct.gui.MainApplication %1 %2 %3 %4 %5
