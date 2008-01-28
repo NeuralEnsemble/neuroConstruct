@@ -44,6 +44,7 @@ public class ChannelMechanism implements Serializable
         this.density = density;
     }
 
+    @Override
     public boolean equals(Object otherObj)
     {
         if (otherObj instanceof ChannelMechanism)
@@ -89,7 +90,7 @@ public class ChannelMechanism implements Serializable
     }     */
 
 
-
+    @Override
     public String toString()
     {
         return name + " (density: " + density+" "+UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+")";
