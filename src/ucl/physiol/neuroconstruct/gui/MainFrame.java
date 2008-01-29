@@ -5582,14 +5582,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             GuiUtils.showErrorMessage(logger, "Problem generating the NEURON files",
                                       ex, this);
 
-            setNeuronRunEnabled(false);
+            setNeuronRunEnabled(false, false);
             return;
         }
 
         if (projManager.getCurrentProject().neuronFileManager.getGeneratedFilenames().size()==0)
         {
             logger.logError("No files generated...");
-            setNeuronRunEnabled(false);
+            setNeuronRunEnabled(false, false);
             return;
         }
 
@@ -5624,7 +5624,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             catch (Exception ex)
             {
                 GuiUtils.showErrorMessage(logger, "Problem compiling the mod files\n"+ex.getMessage(), ex, this);
-                setNeuronRunEnabled(false);
+                setNeuronRunEnabled(false, true);
                 return;
             }
 
@@ -5641,7 +5641,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             logger.logComment("Problem compiling...");
 
-            setNeuronRunEnabled(false);
+            setNeuronRunEnabled(false, true);
             return;
         }
 
@@ -5649,7 +5649,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
 
-        setNeuronRunEnabled(true);
+        setNeuronRunEnabled(true, true);
         jComboBoxNeuronFileList.removeAllItems();
 
         String[] types = new String[]{".hoc", ".mod", ".nrn", ".py", ".xml"};
@@ -5676,13 +5676,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         logger.logComment("Finished compiling all of the mod files in: "+ genFiles[0].getParentFile());
     }
 
-    private void setNeuronRunEnabled(boolean enabled)
+    private void setNeuronRunEnabled(boolean runEnabled, boolean viewEnabled)
     {
 
-        this.jButtonNeuronRun.setEnabled(enabled);
-        this.jButtonNeuronView.setEnabled(enabled);
-        this.jComboBoxNeuronFileList.setEnabled(enabled);
-        this.jCheckBoxNeuronLineNums.setEnabled(enabled);
+        this.jButtonNeuronRun.setEnabled(runEnabled);
+        this.jButtonNeuronView.setEnabled(viewEnabled);
+        this.jComboBoxNeuronFileList.setEnabled(viewEnabled);
+        this.jCheckBoxNeuronLineNums.setEnabled(viewEnabled);
 
     }
 
