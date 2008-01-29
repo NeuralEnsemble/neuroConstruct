@@ -5603,6 +5603,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         boolean compileSuccess = true;
         
+        
+        updateNeuronFileList();
+        
         if (allModFiles.size()>0)
         {
             try
@@ -5648,8 +5651,18 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         //logger.logComment("Created the hoc code in " +(System.currentTimeMillis() - startTime)+" ms", true);
 
 
-
         setNeuronRunEnabled(true, true);
+        
+
+        // need this to update list of 3d position files..?
+        //this.refreshAll();
+        this.refreshTabNeuron();
+
+        logger.logComment("Finished compiling all of the mod files in: "+ ProjectStructure.getNeuronCodeDir(projManager.getCurrentProject().getProjectMainDirectory()));
+    }
+    
+    private void updateNeuronFileList()
+    {
         jComboBoxNeuronFileList.removeAllItems();
 
         String[] types = new String[]{".hoc", ".mod", ".nrn", ".py", ".xml"};
@@ -5668,12 +5681,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jComboBoxNeuronFileList.addItem(genFiles[i].getName());
             }
         }
-
-        // need this to update list of 3d position files..?
-        //this.refreshAll();
-        this.refreshTabNeuron();
-
-        logger.logComment("Finished compiling all of the mod files in: "+ genFiles[0].getParentFile());
     }
 
     private void setNeuronRunEnabled(boolean runEnabled, boolean viewEnabled)
