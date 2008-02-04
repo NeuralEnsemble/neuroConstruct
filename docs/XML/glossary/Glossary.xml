@@ -875,9 +875,9 @@ Set to MAX if no restriction applies.</defined>
 
 <term hidden="true">
     <name>NeuronCopySimFiles</name>
-    <defined>Select to use mod files/compiled libraries in the location they're generated (generateNEURON dir in project, this is default now),
-    or copy the files to simulations/Sim_XX and use them there. This second option was the previous way of using accessign the mods, 
-    and may have been the cause of some problems in earlier versions. </defined>
+    <defined>Select this to run simulations in the directory the hoc/mod files/compiled libraries are generated in (generateNEURON 
+    dir in the project, this is default now), or unselect to copy the files to simulations/Sim_XX and use them there. This second 
+    option was the previous way of using accessing the mods, and may have been the cause of some problems in earlier versions. </defined>
 </term>
 
 
