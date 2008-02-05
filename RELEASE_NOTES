@@ -11,14 +11,19 @@ See also the README file
 
 - Changed handling of mod file generation. Option "Copy sim files to results dir" to either use mod files/compiled libraries
   in the location they're generated (generateNEURON dir, this is default now), or copy the files to simulations/Sim_xx
-  and use them there. This second option was the previous way of using accessign the mods, and may have been the cause of some 
+  and use them there. This second option was the previous way of using accessing the mods, and may have been the cause of some 
   problems. 
 
 - NeuroML export tab is slightly updated.
 
 - NeuroML version 1.7.1 is used. At the moment the main changes are *unstable* new synaptic mechanism features.
 
-- Cleaned up electrotonic length handling & updated docs
+- Cleaned up electrotonic length handling & updated docs.
+
+- HDF5 plots...
+
+- Corrected bug in equation parser (used for plotting generic expressions for rate variables in ChannelML files). Expressions like
+  exp ((-v - 40)/ 10) were being parsed as: exp ((-1 * (v - 40))/ 10)
 
 - Solved bug when Input is placed on, e.g. seg id 0, but no seg id 0 is present in cell. Also resolved problem
   when new Input is added but there's no synaptic mechanism present to use for Random stim.
