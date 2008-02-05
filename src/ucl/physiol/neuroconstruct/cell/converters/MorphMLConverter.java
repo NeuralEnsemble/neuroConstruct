@@ -307,6 +307,9 @@ public class MorphMLConverter extends FormatImporter
         if (javaObjFile.exists())
         {
             File backupFile = new File(javaObjFile.getAbsolutePath()+".bak");
+            //success = javaObjFile.renameTo(backupFile);
+            logger.logComment("Backup file: " + backupFile+" exists: "+ backupFile.exists());
+            backupFile.delete();
             success = javaObjFile.renameTo(backupFile);
 
             if (!success)
