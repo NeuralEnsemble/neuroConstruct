@@ -14,6 +14,10 @@ package ucl.physiol.neuroconstruct.cell;
  
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import ucl.physiol.neuroconstruct.cell.examples.*;
+import ucl.physiol.neuroconstruct.cell.utils.*;
+import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
 
  /**
@@ -31,15 +35,21 @@ public class ChannelMechanism implements Serializable
 {
     static final long serialVersionUID = -1884757566565532L;
     
-    public String name = null;
-    public float density;
+    private static transient ClassLogger logger = new ClassLogger("ChannelMechanism");
+    
+    private String name = null;
+    private float density;
+    
+    private ArrayList<MechParameter> extraParameters = null;
 
     public ChannelMechanism()
     {
+        extraParameters = new ArrayList<MechParameter>();
     }
 
     public ChannelMechanism(String name, float density)
     {
+        extraParameters = new ArrayList<MechParameter>();
         this.name = name;
         this.density = density;
     }
@@ -51,9 +61,17 @@ public class ChannelMechanism implements Serializable
         {
             ChannelMechanism other = (ChannelMechanism) otherObj;
 
-            if ((float)density == (float)other.density &&
-                name.equals(other.name))
+            if (density == other.density && name.equals(other.name))
             {
+                ArrayList<MechParameter> otherParams = other.getExtraParameters();
+                if (otherParams.size()!=extraParameters.size()) 
+                    return false;
+                
+                for (int i=0;i<extraParameters.size();i++)
+                {
+                    if (!otherParams.get(i).equals(extraParameters.get(i))) 
+                         return false;
+                }
                 return true;
             }
         }
@@ -93,19 +111,70 @@ public class ChannelMechanism implements Serializable
     @Override
     public String toString()
     {
-        return name + " (density: " + density+" "+UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+")";
+        return name + " (density: " + density+" "
+            +UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+
+            getExtraParamsDesc()+")";
+        
+            
+    }
+    
+    public String getExtraParamsDesc()
+    {
+        StringBuffer info = new StringBuffer();
+            
+        for (MechParameter mp: extraParameters)
+        {
+            info.append(", "+ mp.toString());
+        }
+        return info.toString();
+    }
+    
+    public void setExtraParam(String name, float value)
+    {        
+        for (MechParameter mp: extraParameters)
+        {
+            if (mp.getName().equals(name))
+            {
+                logger.logComment("Updating current param: " + mp);
+                mp.setValue(value);
+                return;
+            }
+        } 
+        // if not found
+        MechParameter mp = new MechParameter(name, value);
+        logger.logComment("Adding new param: " + mp);
+        this.extraParameters.add(mp);
     }
 
     public static void main(String[] args) throws CloneNotSupportedException
     {
-        //Cell cell = new SimpleCell("hh");
+        Cell cell = new SimpleCell("hh");
 
-        //Cell c2 = (Cell)cell.clone();
 
-        ChannelMechanism cm = new ChannelMechanism("na", 1200);
-        //ChannelMechanism cm3 = new ChannelMechanism("na", 1200.0f);
+        ChannelMechanism cm = new ChannelMechanism("na", 0);
+        ChannelMechanism cm2 = new ChannelMechanism("na", 0);
 
         System.out.println("ChannelMechanism: "+ cm);
+        
+        MechParameter mp1 = new MechParameter("shift", -2.5f);
+        MechParameter mp2 = new MechParameter("aaa", 111);
+        cm.getExtraParameters().add(mp1);
+        cm2.getExtraParameters().add(mp2);
+        
+        
+        System.out.println("ChannelMechanism: "+ cm);
+        
+        //cell.associateGroupWithChanMech("all", cm);
+        cell.associateGroupWithChanMech("soma_group", cm);
+        //cell.associateGroupWithChanMech("dendrite_group", cm2);
+        cell.associateGroupWithChanMech("all", cm2);
+        
+        
+       // System.out.println(CellTopologyHelper.printDetails(cell, null));
+        
+        System.out.println("Cell chans: "+ cell.getChanMechsVsGroups());
+        
+        
 /*
         ChannelMechanism cm2 = new ChannelMechanism(cm.toString());
 
@@ -138,6 +207,16 @@ public class ChannelMechanism implements Serializable
     public void setName(String name)
     {
         this.name = name;
+    }
+    
+    public ArrayList<MechParameter> getExtraParameters()
+    {
+        return this.extraParameters;
+    }
+    
+    public void setExtraParameters(ArrayList<MechParameter> params)
+    {
+        this.extraParameters = params;
     }
 
 

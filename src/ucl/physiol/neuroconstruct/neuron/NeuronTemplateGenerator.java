@@ -1215,28 +1215,43 @@ public class NeuronTemplateGenerator
 
                         response.append("    forsec " + nextGroup + " { ");
 
-
-                        NeuronFileManager.addHocComment(response,
+                        ArrayList<MechParameter> mps = nextChanMech.getExtraParameters();
+                        
+                        if (mps.size()==0)
+                        {
+                            NeuronFileManager.addHocComment(response,
                                                      "    Assuming parameters other than max cond dens are set in the mod file...");
+                        }
+                        
                         response.append("        insert " + nextChanMech.getName() + "");
 
                         double condDens = UnitConverter.getConductanceDensity(nextChanMech.getDensity(),
                                                                               UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                               UnitConverter.NEURON_UNITS);
-
+                                                                              
+                        StringBuffer moreParams = new StringBuffer();
+                        
+                        for (MechParameter mp: mps)
+                        {
+                            moreParams.append("\n    "+mp.getName()+"_"+nextChanMech.getName()+" = "+ mp.getValue());
+                        }
 
 
                         if (cellMech.getMechanismType().equals(CellMechanism.CHANNEL_MECHANISM))
                         {
                             if (nextChanMech.getName().equals("pas"))
                             {
-                                response.append("  { g_" + nextChanMech.getName() + " = " + condDens + " }  ");
+                                
+                                response.append("  { g_" + nextChanMech.getName() + " = " + condDens + moreParams.toString()+ " }  ");
                                 NeuronFileManager.addHocComment(response,
                                                      "    pas is name of mechanism, so using inbuilt mechanism, and better use g for conductance density...");
                             }
                             else
                             {
-                                response.append("  { gmax_" + nextChanMech.getName() + " = " + condDens + " }  ");
+                                String condString = "gmax_" + nextChanMech.getName() + " = " + condDens;
+                                if (condDens<0) condString = "\n    // Ignoring gmax ("+ condDens+") for this channel mechanism\n";
+                                
+                                response.append("  { "+condString + moreParams.toString() +" }  ");
                             }
                         }
 
@@ -1275,58 +1290,62 @@ public class NeuronTemplateGenerator
                                     SimpleXMLElement ion = (SimpleXMLElement) ions[i];
                                     logger.logComment("Got ion: " + ion.getXMLString("", false));
 
-                                    NeuronFileManager.addHocComment(response, "    Ion "
-                                                                 + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR)
-                                                                 + " is used in this process...");
+                                    NeuronFileManager.addHocComment(response, "    Ion " + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR) + " is used in this process...");
 
-                                    if (! (ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR)
-                                           .equals(ChannelMLConstants.NON_SPECIFIC_ION_NAME)))
+
+                                    String erev = ion.getAttributeValue(ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR);
+
+                                    logger.logComment("Setting erev: " + erev);
+                                    if (erev != null)
                                     {
-                                        String erev = ion.getAttributeValue(ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR);
 
-                                        logger.logComment("Setting erev: " + erev);
-                                        if (erev != null)
+                                        String unitsUsed = cmlMech.getUnitsUsedInFile();
+
+                                        logger.logComment("Units used = " + unitsUsed);
+
+                                        if (unitsUsed != null)
                                         {
+                                            double suggValDouble = Double.parseDouble(erev);
 
-                                            String unitsUsed = cmlMech.getUnitsUsedInFile();
-
-                                            logger.logComment("Units used = " + unitsUsed);
-
-                                            if (unitsUsed != null)
+                                            if (unitsUsed.equals(ChannelMLConstants.SI_UNITS))
                                             {
-                                                double suggValDouble = Double.parseDouble(erev);
-
-                                                if (unitsUsed.equals(ChannelMLConstants.SI_UNITS))
-                                                {
-                                                    suggValDouble = UnitConverter.getVoltage(suggValDouble,
-                                                        UnitConverter.GENESIS_SI_UNITS,
-                                                        UnitConverter.NEUROCONSTRUCT_UNITS);
-                                                }
-                                                else if (unitsUsed.equals(ChannelMLConstants.PHYSIOLOGICAL_UNITS))
-                                                {
-                                                    suggValDouble = UnitConverter.getVoltage(suggValDouble,
-                                                        UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS,
-                                                        UnitConverter.NEUROCONSTRUCT_UNITS);
-                                                }
-
-                                                erev = suggValDouble + "";
+                                                suggValDouble = UnitConverter.getVoltage(suggValDouble,
+                                                                                         UnitConverter.GENESIS_SI_UNITS,
+                                                                                         UnitConverter.NEUROCONSTRUCT_UNITS);
+                                            }
+                                            else if (unitsUsed.equals(ChannelMLConstants.PHYSIOLOGICAL_UNITS))
+                                            {
+                                                suggValDouble = UnitConverter.getVoltage(suggValDouble,
+                                                                                         UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS,
+                                                                                         UnitConverter.NEUROCONSTRUCT_UNITS);
                                             }
 
-                                            response.append("        e" + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR)
-                                                            + " = " + erev + "\n");
+                                            erev = suggValDouble + "";
+                                        }
+                                        if (!(ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR).equals(ChannelMLConstants.NON_SPECIFIC_ION_NAME)))
+                                        {
+
+                                            response.append("        e" + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR) + " = " + erev + "\n");
                                         }
                                         else
                                         {
-                                            NeuronFileManager.addHocComment(response,
-                                                                         "Note: there is no reversal potential present for ion: "
-                                                                         + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR));
+                                            logger.logComment("That's a non specific process...");
+                                            if (nextChanMech.getName().equals("pas"))
+                                            {
+
+                                                response.append("  e_" + nextChanMech.getName() + " = " + erev + "\n");
+                                            }
                                         }
+
                                     }
                                     else
                                     {
-                                        logger.logComment("That's a non specific process...");
+                                        NeuronFileManager.addHocComment(response,
+                                                                        "Note: there is no reversal potential present for ion: " + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR));
                                     }
                                 }
+
+                            
                             }
 
                         }

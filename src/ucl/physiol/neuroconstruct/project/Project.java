@@ -1065,7 +1065,8 @@ public class Project implements TableModelListener
 
     public void saveProject() throws NoProjectLoadedException
     {
-        logger.logComment(">>>>>  Saving the project...");
+        logger.logComment(">>>>>  Saving the project...", true);
+        
         if (this.myStatus == Project.PROJECT_NOT_INITIALISED)
         {
             logger.logError("Project not yet initialised");
@@ -1441,7 +1442,7 @@ public class Project implements TableModelListener
         }
         this.myStatus = Project.PROJECT_SAVED;
 
-        logger.logComment("<<<<<  Finished saving the project...");
+        logger.logComment("<<<<<  Finished saving the project to: "+currentProjectFile.getAbsolutePath()+"...", true);
     }
 
     public int getProjectStatus()

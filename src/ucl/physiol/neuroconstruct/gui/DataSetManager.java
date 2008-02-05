@@ -424,7 +424,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                     && !(reachedDataPoints && partial))  // so ignores points if partial is true
             {
                 lineNumber++;
-                logger.logComment("Next line: " + nextLine);
+                //logger.logComment("Next line: " + nextLine);
                 nextLine = nextLine.trim();
 
                 if (nextLine.startsWith(DATA_SET_COMMENT))
@@ -476,7 +476,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                 }
                 else
                 {
-                    logger.logComment("Numbers line: " + nextLine);
+                    //logger.logComment("Numbers line: " + nextLine);
                     String xVal = null;
                     String yVal = null;
                     String comment = null;

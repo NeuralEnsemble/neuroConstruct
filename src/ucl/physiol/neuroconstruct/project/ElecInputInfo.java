@@ -59,13 +59,15 @@ public class ElecInputInfo extends AbstractTableModel
     {
         return columnNames.length;
     }
+    
+    @Override
     public String getColumnName(int col) {
         return columnNames[col];
     }
 
     public Object getValueAt(int rowIndex, int columnIndex)
     {
-        StimulationSettings stim = (StimulationSettings)allStims.elementAt(rowIndex);
+        StimulationSettings stim = allStims.elementAt(rowIndex);
 
         if (stim==null) return null;
 
@@ -100,7 +102,7 @@ public class ElecInputInfo extends AbstractTableModel
     {
         for (int i = 0; i < allStims.size(); i++)
         {
-            StimulationSettings nextStim = (StimulationSettings)allStims.elementAt(i);
+            StimulationSettings nextStim = allStims.elementAt(i);
 
             if (nextStim.getReference().equals(stimRef))
             {
@@ -116,14 +118,14 @@ public class ElecInputInfo extends AbstractTableModel
 
     public StimulationSettings getStim(int index)
     {
-        return (StimulationSettings)allStims.elementAt(index);
+        return allStims.elementAt(index);
     }
 
     public void updateStim(StimulationSettings stim)
     {
         for (int i = 0; i < allStims.size(); i++)
         {
-            StimulationSettings nextStim = (StimulationSettings)allStims.elementAt(i);
+            StimulationSettings nextStim = allStims.elementAt(i);
 
             if (stim.getReference().equals(nextStim.getReference()))
             {
@@ -165,7 +167,7 @@ public class ElecInputInfo extends AbstractTableModel
         Vector<String> allNames = new Vector<String>();
         for (int i = 0; i < allStims.size(); i++)
         {
-            StimulationSettings nextStim = (StimulationSettings)allStims.elementAt(i);
+            StimulationSettings nextStim = allStims.elementAt(i);
             allNames.add(nextStim.getReference());
         }
         return allNames;

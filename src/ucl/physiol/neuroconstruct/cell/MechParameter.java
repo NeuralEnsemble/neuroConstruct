@@ -24,6 +24,89 @@ import ucl.physiol.neuroconstruct.utils.units.*;
   *
   */
 
-public class MechParameter {
+public class MechParameter implements Serializable
+{
+    static final long serialVersionUID = -6656553218847575L;
+
+    public String name = null;
+    public float value = Float.NaN;
+    
+    
+    public MechParameter()
+    {
+        
+    }
+    
+    public MechParameter(MechParameter mp)
+    {
+        this.name = new String (mp.getName());
+        this.value = mp.getValue();
+    }
+    
+    public MechParameter(String name, float value)
+    {
+        this.name = name;
+        this.value = value;
+    }
+    
+    
+    public String getName()
+    {
+        return name;
+    }
+    public float getValue()
+    {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MechParameter other = (MechParameter) obj;
+        if (this.name != other.name && (this.name == null || !this.name.equals(other.name))) {
+            return false;
+        }
+        if (this.value != other.value) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 67 * hash + Float.floatToIntBits(this.value);
+        return hash;
+    }
+    
+    
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+    public void setValue(float value)
+    {
+        this.value = value;
+    }
+    @Override
+    public String toString()
+    {
+        return name +" = "+value;
+    }
+    
+    public static void main(String[] args) 
+    {
+        MechParameter mp1 = new MechParameter("mp1", 1234);
+        MechParameter mp2 = new MechParameter("mp1",1234);
+        
+        System.out.println("mp1 == mp2: "+ mp1.equals(mp2));
+        
+    }
 
 }

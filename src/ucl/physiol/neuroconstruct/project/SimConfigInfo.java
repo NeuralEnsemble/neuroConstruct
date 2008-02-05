@@ -101,14 +101,17 @@ public class SimConfigInfo
 
     public SimConfig getSimConfig(String simConfigName)
     {
+        logger.logComment("Being asked for sim config: "+ simConfigName);
         for (int i = 0; i < simConfigs.size(); i++)
         {
             if (simConfigs.get(i).getName().equals(simConfigName))
             {
+                logger.logComment("Found it: "+ simConfigs.get(i));
                 return simConfigs.get(i);
             }
 
         }
+        logger.logError("Not found!!");
         return null;
     }
 

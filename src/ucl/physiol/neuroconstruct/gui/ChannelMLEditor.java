@@ -722,7 +722,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                                    pel);
 
             //ChannelMLCellMechanism cmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("NaConductance_CML");
-            ChannelMLCellMechanism cmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("Kc");
+            ChannelMLCellMechanism cmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("Kahp");
 
             ChannelMLEditor frame = new ChannelMLEditor(cmlMechanism, testProj, pel);
 
@@ -871,7 +871,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
             {
                 minV = minV/1000;
                 maxV = maxV/1000;
-            };
+            }
             
             try
             {
@@ -929,7 +929,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                         String gateState = gate.getAttributeValue(ChannelMLConstants.HH_GATE_STATE_ATTR);
 
-                        System.out.println("Found gate with state: " + gateState);
+                        logger.logComment("Found gate with state: " + gateState);
 
                         SimpleXMLEntity[] gateElements = gate.getXMLEntities(ChannelMLConstants.TRANSITION_ELEMENT + "/"
                             + ChannelMLConstants.VOLTAGE_GATE_ELEMENT);
@@ -940,6 +940,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                         {
                             gateElements = gate.getXMLEntities(ChannelMLConstants.TRANSITION_ELEMENT + "/"
                                 + ChannelMLConstants.VOLTAGE_CONC_GATE_ELEMENT);
+                            
                             voltConcGate = true;
                         }
                         
@@ -973,13 +974,15 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                         
                                         SimpleXMLElement rate = (SimpleXMLElement)child;
 
-                                        System.out.println("Found: " + rate);
+                                        logger.logComment("Found: " + rate);
                                         
                                         if (rate.getName().equals(ChannelMLConstants.CONC_DEP_ELEMENT))
                                         {
                                             concVarName = rate.getAttributeValue(ChannelMLConstants.CONC_DEP_VAR_NAME_ATTR);
                                             concMin = Float.parseFloat(rate.getAttributeValue(ChannelMLConstants.CONC_DEP_MIN_CONC_ATTR));
                                             concMax = Float.parseFloat(rate.getAttributeValue(ChannelMLConstants.CONC_DEP_MAX_CONC_ATTR));
+                                            
+                                            logger.logComment("It's a volt conc el: " + concVarName+" ("+concMin+" -> "+ concMax+")");
                                         }
 
 
@@ -999,7 +1002,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                                         for (int paramPlotIndex = 0; paramPlotIndex < paramHHPlots.length; paramPlotIndex++)
                                         {
-                                            System.out.println(" - - Found: "+ paramHHPlots[paramPlotIndex]);
+                                            logger.logComment(" - - Found: "+ paramHHPlots[paramPlotIndex]);
 
                                             if (paramHHPlots[paramPlotIndex] instanceof SimpleXMLElement)
                                             {
@@ -1072,20 +1075,21 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                                         for (int genericIndex = 0; genericIndex < generic.length; genericIndex++)
                                         {
-                                            System.out.println(" - - Found: " + generic[genericIndex]);
+                                            logger.logComment(" - - Found: " + generic[genericIndex]);
 
                                             if (generic[genericIndex] instanceof SimpleXMLElement)
                                             {
                                                 SimpleXMLElement genericPlot = (SimpleXMLElement) generic[genericIndex];
 
                                                 String expr = genericPlot.getAttributeValue(ChannelMLConstants.GENERIC_HH_EXPR_ATTR);
-                                                System.out.println(" - - Found expr: " + expr);
+                                                logger.logComment(" -+- Found expr: " + expr+", voltConcGate: "+voltConcGate);
                                                 
                                                 expression = expr;
                                                 
-                                                if (voltConcGate && expr.indexOf(concVarName)>0)
+                                                if (voltConcGate && expr.indexOf(concVarName)>=0)
                                                 {
-                                                    String val = JOptionPane.showInputDialog(this, "A concentration dependent expression for the gating variable has been found:\n"
+                                                    String val = JOptionPane.showInputDialog(this, "A concentration dependent expression for rate: "+rate.getName() + " in state "
+                                            + gateState+" has been found:\n"
                                                             +expr+"\nPlease enter the value for "+concVarName+" to use in the graph. Max val: "+concMax+", min val: "+concMin, concMin + (concMax-concMin)/2);
                                                     
                                                     concVarVal = Float.parseFloat(val);
@@ -1157,9 +1161,13 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                             {
                                                 float nextVval = minV + ( (maxV - minV) * i / (numPoints));
 
-                                                Argument[] a0 = new Argument[]
-                                                    {new Argument(v.getName(), nextVval),
-                                                    new Argument(temp.getName(), project.simulationParameters.getTemperature())};
+                                               // Argument[] a0 = new Argument[]
+                                               //     {new Argument(v.getName(), nextVval),
+                                               //     new Argument(temp.getName(), project.simulationParameters.getTemperature())};
+                                                
+                                                Argument[] a0 = getArgsList(nextVval,
+                                                        v, temp, rateData, 
+                                                        concVarName, concVarVal, mainFunc.getNiceString(), project, logger);
 
                                                 ds.addPoint(nextVval, mainFunc.evaluateAt(a0));
                                             }
@@ -1511,8 +1519,6 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         try
         {
             SimpleXMLDocument xmlDoc = cmlMechanism.getXMLDoc();
-
-            ;
 
             logger.logComment("Setting: "+ selected+" to: "+ text+", result: "+xmlDoc.setValueByXPath(selected, text));
         }

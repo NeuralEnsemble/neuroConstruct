@@ -565,6 +565,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     JMenuItem jMenuItemPlotEquation = new JMenuItem();
     JMenuItem jMenuItemPlotImport = new JMenuItem();
+    JMenuItem jMenuItemPlotImportHDF5 = new JMenuItem();
 
     JMenuItem jMenuItemMPIMonitor = new JMenuItem();
     JCheckBox jCheckBoxSpecifySimRef = new JCheckBox();
@@ -1260,12 +1261,21 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
         });
 
-        jMenuItemPlotImport.setText("Import Data for Plot");
+        jMenuItemPlotImport.setText("Import Data for Plot (Text File)");
         jMenuItemPlotImport.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
                 jMenuItemPlotImport_actionPerformed(e);
+            }
+        });
+        jMenuItemPlotImportHDF5.setText("Import Data for Plot (HDF5 File)");
+        
+        jMenuItemPlotImportHDF5.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jMenuItemPlotImportHDF5_actionPerformed(e);
             }
         });
 
@@ -2834,6 +2844,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jMenuTools.add(jMenuItemMPIMonitor);
         jMenuTools.addSeparator();
         jMenuTools.add(jMenuItemPlotImport);
+        jMenuTools.add(jMenuItemPlotImportHDF5);
         jMenuTools.add(jMenuItemPlotEquation);
 
 
@@ -6725,7 +6736,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             for (int i = 0; i < netConnsUsingIt.size(); i++)
             {
-                String nextNetConn = (String)netConnsUsingIt.elementAt(i);
+                String nextNetConn = netConnsUsingIt.elementAt(i);
                 logger.logComment("Deleting: "+ nextNetConn);
                 boolean res = projManager.getCurrentProject().morphNetworkConnectionsInfo.deleteNetConn(nextNetConn);
                 if (!res) projManager.getCurrentProject().volBasedConnsInfo.deleteConn(nextNetConn);
@@ -9087,7 +9098,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         float numStepsPerMS = (float) (1d / (double)simDT);
 
-        int numStepsTotal = (int) Math.round(simDuration / simDT) + 1;
+        int numStepsTotal = Math.round(simDuration / simDT) + 1;
 
         StringBuffer comm = new StringBuffer("There will be " + Utils3D.trimDouble(numStepsPerMS, 6) +
                                              " steps per millisecond. The whole simulation will have "
@@ -11175,14 +11186,28 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         File defaultDir = new File(lastDir);
 
         DataSet ds = PlotterFrame.addNewDataSet(defaultDir, this);
-
-        PlotterFrame frame = PlotManager.getPlotterFrame("Imported Data Set plot", false, false);
+        
 
         if (ds != null)
         {
+            PlotterFrame frame = PlotManager.getPlotterFrame("Imported Data Set plot", false, false);
             frame.addDataSet(ds);
             frame.setVisible(true);
         }
+    }
+    
+    void jMenuItemPlotImportHDF5_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("jMenuItemPlotImportHDF5_actionPerformed...");
+
+        String lastDir = recentFiles.getMyLastExportPointsDir();
+
+        if (lastDir == null) lastDir
+            = projManager.getCurrentProject().getProjectMainDirectory().getAbsolutePath();
+
+        File defaultDir = new File(lastDir);
+        
+        PlotterFrame.addHDF5DataSets(defaultDir, this);
     }
 
 

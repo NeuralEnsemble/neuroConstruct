@@ -165,7 +165,7 @@ public class DataSet
             return null;
         }
         if (!pointHasComment[pointNum])return null;
-        return (String) comments.get(new Integer(pointNum));
+        return comments.get(new Integer(pointNum));
     }
 
     public int getNumberPoints()
@@ -181,7 +181,7 @@ public class DataSet
         if (numberValidPoints == xValues.length)
         {
             int newCapacity = (int) (xValues.length * (1 + capacityGrowthFactor));
-            logger.logComment("Increasing capacity to: " + newCapacity);
+            //logger.logComment("Increasing capacity to: " + newCapacity);
             double[] tempXValues = new double[newCapacity];
             double[] tempYValues = new double[newCapacity];
 
@@ -329,7 +329,7 @@ public class DataSet
     public String toString()
     {
         StringBuffer sb = new StringBuffer("DataSet: "+this.getRefrence()+"[");
-        for (int i = 0; i < Math.min(2, numberValidPoints); i++)
+        for (int i = 0; i < Math.min(3, numberValidPoints); i++)
         {
             sb.append(pointToString(i));
 
@@ -339,6 +339,7 @@ public class DataSet
         sb.append("]\n");
         return sb.toString();
     }
+    
 
     public String pointToString(int i)
     {
@@ -447,7 +448,7 @@ public class DataSet
 
         for (int i = 0; i < numPoints; i++)
         {
-            double x = minX + (maxX-minX)*((double)i/(int)(numPoints-1));
+            double x = minX + (maxX-minX)*((double)i/(numPoints-1));
             double y1 = 3*Math.sin(x*33);
             data1.addPoint(x,y1);
         }

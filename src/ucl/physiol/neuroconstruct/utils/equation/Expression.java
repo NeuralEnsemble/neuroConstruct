@@ -60,7 +60,14 @@ public class Expression
         line = tidyBasicFunctions(line);
 
         logger.logComment(" ");
-        logger.logComment("+++++  Parsing line: ["+line+ "]");
+        String info = "+++++  Parsing line: ["+line+ "] with variables: [";
+        for(Variable v: variables)
+        {
+            info = info + v.toString();
+        }
+        info = info + "]";
+        
+        logger.logComment(info);
 
 
         while (line.startsWith("(") && getIndexClosingBracket(line, 0)==line.length()-1 )
@@ -325,14 +332,18 @@ public class Expression
         }
         else if (line.startsWith("-") && !isValidNum)
         {
-            logger.logComment(commentIndent +"Found a minus sign...");
+            logger.logComment(commentIndent +"Found a minus sign in: "+ line);
 
 
             Constant con = new Constant(-1);
 
-            equationSoFar = new BinaryOperation(con,
-                                                parseCleansedExpression(line.substring(1), variables),
-                                                BinaryOperation.PRODUCT);
+            //equationSoFar = new BinaryOperation(con,
+             //                                   parseExpression(line.substring(1), variables),
+           //                                     BinaryOperation.PRODUCT);
+            
+            
+            equationSoFar = parseExpression("-1 * "+line.substring(1), variables);
+
 
         }
 
@@ -536,7 +547,9 @@ public class Expression
         //String expression = "2e-2 * 3 *exp   (t/"+tau+")";
        //v &lt; -60 ? 0.005 : 0.005 * (exp (-0.05 * (v - (-60))))
         
-        String expression = "v &lt; -60 ? 0.005 :0.005 * (exp (-0.05 * (v - (-60))))";
+        //String expression = "v &lt; -60 ? 0.005 :0.005 * (exp (-0.05 * (v - (-60))))";
+        //String expression = "exp ((-v - 40)/ 10)";
+        String expression = "((-v - 40)/ 10)";
 
         try
         {

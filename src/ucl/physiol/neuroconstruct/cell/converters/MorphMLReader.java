@@ -25,7 +25,8 @@ import ucl.physiol.neuroconstruct.utils.units.*;
 import javax.xml.parsers.SAXParserFactory;
 
 /**
- * MorphML file Reader. Importer of MorphML files to neuroConstruct format using SAX
+ * MorphML file Reader. Importer of MorphML/NeuroML Level1/2/3 files to 
+ * neuroConstruct format using SAX
  *
  * @author Padraig Gleeson
  *  
@@ -211,8 +212,20 @@ public class MorphMLReader extends XMLFilterImpl
                     }
                     else
                     {
-                        warnings.append("Unable to set value: "+ currentParamValueNconUnits
+                        //warnings.append("Unable to set value: "+ currentParamValueNconUnits
+                        //    +" for parameter: "+ currentParamName+ " on mechanism: "+ currentMechName+", in group: "+group+"\n");
+                        
+                        ChannelMechanism cm = new ChannelMechanism(currentMechName, -1);
+                        
+                        logger.logComment("Setting value: "+ currentParamValueNconUnits
                             +" for parameter: "+ currentParamName+ " on mechanism: "+ currentMechName+", in group: "+group+"\n");
+                        
+                        MechParameter mp = new MechParameter(currentParamName, currentParamValueNconUnits);
+                        
+                        cm.getExtraParameters().add(mp);
+                        
+                        cell.associateGroupWithChanMech(group, cm);
+                        
                     }
                     //cell.associateGroupWithChanMech(contents, this.currentChanMech);
                 }

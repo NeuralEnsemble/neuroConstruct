@@ -201,7 +201,7 @@ public class SimConfig
         this.inputs = inputs;
     }
 
-
+    @Override
     public String toString()
     {
         return "SimConfig: "+ name;

@@ -20,9 +20,12 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import ncsa.hdf.object.h5.*;
+import ncsa.hdf.object.*;
 import ucl.physiol.neuroconstruct.dataset.*;
 import ucl.physiol.neuroconstruct.gui.*;
 import ucl.physiol.neuroconstruct.j3D.*;
+import ucl.physiol.neuroconstruct.neuroml.hdf5.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
@@ -2872,10 +2875,113 @@ public class PlotterFrame extends JFrame
 
         if (ds!=null) this.addDataSet(ds);
     }
+    
+    
+    
+    public static void addHDF5DataSets(File dirToLookIn, Component parent)
+    {
+        final JFileChooser chooser = new JFileChooser();
+        
+        chooser.setDialogType(JFileChooser.OPEN_DIALOG);
+
+
+        chooser.setCurrentDirectory(dirToLookIn);
+        logger.logComment("Set Dialog dir to: " + dirToLookIn.getAbsolutePath());
+
+        chooser.setDialogTitle("Choose a HDF5 file seperated data points");
+
+        JButton helpButton = new JButton("Data file format info");
+        JPanel helpPanel = new JPanel();
+        helpButton.addActionListener(
+        new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+            GuiUtils.showInfoMessage(logger,
+                                     "Data file import format",
+                "The HDF5 file will be parsed for Datasets/arrays of values and these can be plotted....\n"
+                +"Note: after the data points are imported the x axis values (or y axis values) can be corrected (e.g. scaled by 1000)\n"
+                +"by selecting "+PlotterFrame.generateNew+" in the Data Set's menu", chooser);}});
+                
+        helpPanel.add(helpButton);
+
+        chooser.setAccessory(helpPanel);
+
+
+        int retval = chooser.showDialog(parent, "Choose HDF5 file");
+
+
+        if (retval == JOptionPane.OK_OPTION)
+        {
+            File file = chooser.getSelectedFile();
+            try
+            {
+                String ref = file.getName();
+                if (ref.lastIndexOf(".") > 0)
+                {
+                    ref = ref.substring(0, ref.lastIndexOf("."));
+                }
+
+                RecentFiles.getRecentFilesInstance(ProjectStructure.getNeuConRecentFilesFilename()).setMyLastExportPointsDir(file.getAbsolutePath());
+
+                H5File h5 = Hdf5Utils.openH5file(file);
+                
+                Group g = Hdf5Utils.getRootGroup(h5);
+                
+                boolean plotToo = true;
+                
+                ArrayList<DataSet> dataSets = Hdf5Utils.parseGroupForDatasets(g, plotToo);
+                
+                StringBuffer summary = new StringBuffer("Number of DataSets found in file: "+ file.getAbsolutePath()+": "+dataSets.size()+"\n\n");
+                for(DataSet ds: dataSets)
+                {
+                    summary.append(ds.toString()+"\n"+ds.getDescription()+"\n\n");
+                }
+                
+                if (!plotToo)
+                {
+                    SimpleViewer.showString(summary.toString(), "Info found", 12, false, false);
+                }
+                else
+                {
+                    PlotterFrame frame = PlotManager.getPlotterFrame("Data from file: " + file.getAbsolutePath(), false, false);
+                    for (DataSet ds : dataSets)
+                    {
+                        frame.addDataSet(ds);
+                    }
+                    frame.setVisible(true);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                GuiUtils.showErrorMessage(logger, "Problem opening HDF5 file: "+ file, ex, null);
+            }
+
+
+        }
+
+
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     public static DataSet addNewDataSet(File dirToLookIn, Component parent)
     {
         final JFileChooser chooser = new JFileChooser();
+        
         chooser.setDialogType(JFileChooser.OPEN_DIALOG);
 
 /*
@@ -2919,6 +3025,9 @@ public class PlotterFrame extends JFrame
             {
                 ref = ref.substring(0, ref.lastIndexOf("."));
             }
+            
+            RecentFiles.getRecentFilesInstance(ProjectStructure.getNeuConRecentFilesFilename()).setMyLastExportPointsDir(file.getAbsolutePath());
+            
             DataSet ds = new DataSet(ref, "Data loaded from file: "+ file.getAbsolutePath(),"","","","");
 
             try

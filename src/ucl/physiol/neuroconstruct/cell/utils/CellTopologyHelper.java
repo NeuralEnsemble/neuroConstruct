@@ -1821,16 +1821,19 @@ public class CellTopologyHelper
             ChannelMechanism chanMech = allChanMechs.get(i);
             Vector groups = cell.getGroupsWithChanMech(chanMech);
             
-            String descCm = chanMech.getName() + " ("+ chanMech.getDensity() + " "+ condDensSymb+")";
+            String moreInfo = chanMech.getDensity() + " "+ condDensSymb+chanMech.getExtraParamsDesc();
+            
+            
+            String descCm = chanMech.getName() + " ("+moreInfo +")";
             if (html)
             {
             	if (false)
             	{
-            		descCm = "<a href=\"../"+Expand.getCellMechPage(chanMech.getName())+"\">"+chanMech.getName() + "</a> ("+ chanMech.getDensity() + " "+ condDensSymb+")";
+            		descCm = "<a href=\"../"+Expand.getCellMechPage(chanMech.getName())+"\">"+chanMech.getName() + "</a> ("+ moreInfo+")";
             	}
             	else
             	{
-                	descCm = chanMech.getName() + " ("+ chanMech.getDensity() + " "+ condDensSymb+")";
+                	descCm = chanMech.getName() + " ("+ moreInfo+")";
             	}
             }
 

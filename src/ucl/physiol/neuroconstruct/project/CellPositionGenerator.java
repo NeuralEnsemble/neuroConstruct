@@ -52,9 +52,14 @@ public class CellPositionGenerator extends Thread
         logger.logComment("New CellPositionGenerator created");
         this.project = project;
 
-        myReportInterface = reportInterface;
+        if (reportInterface!=null)
+        {
+            myReportInterface = reportInterface;
+        }
 
     }
+    
+
 
     public void setSimConfig(SimConfig simConfig)
     {
@@ -67,7 +72,9 @@ public class CellPositionGenerator extends Thread
         logger.logComment("CellPositionGenerator being told to stop...");
         continueGeneration = false;
     }
-
+    
+ 
+    @Override
     public void run()
     {
         logger.logComment("Running CellPositionGenerator thread...");
@@ -186,8 +193,7 @@ public class CellPositionGenerator extends Thread
                             //System.out.println("Checking...");
                             for (int k = 0; k < adaptersToCheckForCollisions.size(); k++)
                             {
-                                CellPackingAdapter otherAdapter = (CellPackingAdapter)
-                                    adaptersToCheckForCollisions.elementAt(k);
+                                CellPackingAdapter otherAdapter = adaptersToCheckForCollisions.elementAt(k);
 
                                 boolean collision
                                     = otherAdapter.doesCellCollideWithExistingCells(nextPosn, cell);

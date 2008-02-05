@@ -183,9 +183,10 @@ public class Expand
         
         try
         {
+            //File projFile = new File("examples/Ex6-Cerebellum/Ex6-Cerebellum.neuro.xml");
+            File projFile = new File("/bernal/models/Layer23_names/Layer23_names.neuro.xml");
             
-            Project testProj = Project.loadProject((new File("examples/Ex6-Cerebellum/Ex6-Cerebellum.neuro.xml")), 
-                    new ProjectEventListener()
+            Project testProj = Project.loadProject(projFile, new ProjectEventListener()
                 {
                     public void tableDataModelUpdated(String tableModelName)
                     {};

@@ -171,9 +171,10 @@ public class ProcessManager
 
                 String myArch = GeneralUtils.getArchSpecificDir();
                 
-                String backupArch = GeneralUtils.ARCH_64BIT;
+                String backupArchDir = GeneralUtils.DIR_64BIT;
+                
                 if (myArch.equals(GeneralUtils.ARCH_64BIT))
-                    backupArch = GeneralUtils.ARCH_I686;
+                    backupArchDir = GeneralUtils.DIR_I686;
                 
                 
                 String filename = directoryToExecuteIn
@@ -187,7 +188,7 @@ public class ProcessManager
                 // In case, e.g. a 32 bit JDK is used on a 64 bit system
                 String backupFilename = directoryToExecuteIn
                     + System.getProperty("file.separator")
-                    + backupArch
+                    + backupArchDir
                     + System.getProperty("file.separator")
                     + ".libs"
                     + System.getProperty("file.separator")
@@ -204,7 +205,7 @@ public class ProcessManager
                         
                         backupFilename = directoryToExecuteIn
                             + System.getProperty("file.separator")
-                            + GeneralUtils.ARCH_I686;
+                            + GeneralUtils.DIR_64BIT;
                     }
                     else
                     {

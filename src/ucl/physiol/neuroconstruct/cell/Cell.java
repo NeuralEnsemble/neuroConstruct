@@ -193,7 +193,7 @@ public class Cell implements Serializable
 
         for (int i = 0; i < allSegments.size(); i++)
         {
-            Segment next =(Segment)allSegments.get(i);
+            Segment next =allSegments.get(i);
 
             if (!allSegments.contains(next.getSection().getSectionName()))
             {
@@ -218,7 +218,7 @@ public class Cell implements Serializable
 
         for (int i = 0; i < allSegments.size(); i++)
         {
-            Vector groups = ((Segment)allSegments.elementAt(i)).getGroups();
+            Vector groups = (allSegments.elementAt(i)).getGroups();
              if (groups.contains(Section.SOMA_GROUP))
                  onlySomaSegments.add(allSegments.get(i));
         }
@@ -232,7 +232,7 @@ public class Cell implements Serializable
 
         for (int i = 0; i < allSegments.size(); i++)
         {
-            Vector groups = ((Segment)allSegments.elementAt(i)).getGroups();
+            Vector groups = (allSegments.elementAt(i)).getGroups();
              if (groups.contains(Section.AXONAL_GROUP))
                  onlyAxonalSegments.add(allSegments.elementAt(i));
         }
@@ -246,7 +246,7 @@ public class Cell implements Serializable
 
         for (int i = 0; i < allSegments.size(); i++)
         {
-            Vector groups = ((Segment)allSegments.elementAt(i)).getGroups();
+            Vector groups = (allSegments.elementAt(i)).getGroups();
              if (groups.contains(Section.DENDRITIC_GROUP))
                  onlyDendriticSegments.add(allSegments.elementAt(i));
         }
@@ -570,7 +570,7 @@ public class Cell implements Serializable
 
         while (onlySegmentsInSection.size()==0)
         {
-            Segment nextSeg = (Segment) allSegments.elementAt(segIndex);
+            Segment nextSeg = allSegments.elementAt(segIndex);
 
             //logger.logComment("segIndex: "+segIndex+", nextSeg: " + nextSeg, true);
 
@@ -622,7 +622,7 @@ public class Cell implements Serializable
 
         for (int i = 0; i < allSegments.size(); i++)
         {
-            Segment seg = (Segment) allSegments.elementAt(i);
+            Segment seg = allSegments.elementAt(i);
             Section nextSection = seg.getSection();
 
             if (!sections.contains(nextSection))
@@ -639,7 +639,7 @@ public class Cell implements Serializable
 
         for (int i = 0; i < allSegments.size(); i++)
         {
-            Segment seg = (Segment) allSegments.elementAt(i);
+            Segment seg = allSegments.elementAt(i);
             Section nextSection = seg.getSection();
 
             if (nextSection.getGroups().contains(group) && !sections.contains(nextSection))
@@ -657,7 +657,7 @@ public class Cell implements Serializable
     {
         for (int i = 0; i < allSegments.size(); i++)
         {
-            Segment seg = (Segment) allSegments.elementAt(i);
+            Segment seg = allSegments.elementAt(i);
 
             // will normally be at index 0...
 
@@ -696,7 +696,7 @@ public class Cell implements Serializable
     {
         for (int i = 0; i < allSegments.size(); i++)
         {
-            Segment seg = (Segment) allSegments.elementAt(i);
+            Segment seg = allSegments.elementAt(i);
 
             if (allowSimFriendlyName)
             {
@@ -721,7 +721,7 @@ public class Cell implements Serializable
 
         for (int i = 0; i < allSegments.size(); i++)
         {
-            Segment seg = (Segment) allSegments.elementAt(i);
+            Segment seg = allSegments.elementAt(i);
 
             if (seg.getSegmentId()>=nextId) nextId = seg.getSegmentId()+1;
         }
@@ -837,7 +837,7 @@ public class Cell implements Serializable
 
 
 
-
+    @Override
     public String toString()
     {
         String cellName = this.getClass().getName();
@@ -851,7 +851,7 @@ public class Cell implements Serializable
     {
         if (!synapsesVsGroups.containsKey(synapseType)) return new Vector<String>();
         
-        return (Vector<String>)synapsesVsGroups.get(synapseType);
+        return synapsesVsGroups.get(synapseType);
     }
 
 
@@ -859,7 +859,7 @@ public class Cell implements Serializable
     {
         checkSpecAxRes();
         if (!this.specAxResVsGroups.containsKey(specAxRes)) return new Vector<String>();
-        return (Vector<String>)specAxResVsGroups.get(specAxRes);
+        return specAxResVsGroups.get(specAxRes);
     }
 
 
@@ -867,7 +867,7 @@ public class Cell implements Serializable
     {
         this.checkSpecCap();
         if (!this.specCapVsGroups.containsKey(specCap)) return new Vector<String>();
-        return (Vector<String>)specCapVsGroups.get(specCap);
+        return specCapVsGroups.get(specCap);
     }
 
 
@@ -1105,17 +1105,15 @@ public class Cell implements Serializable
     }
 
 
-
-
     public boolean associateGroupWithSynapse(String group, String synapseType)
     {
-        logger.logComment(this.hashCode()+", being told to associate group: "
-                          + group
-                          + " with synapse type: "
-                          + synapseType);
+        logger.logComment(this.hashCode() + ", being told to associate group: " + group + " with synapse type: " + synapseType);
 
 
-        if (!getAllGroupNames().contains(group)) return false;
+        if (!getAllGroupNames().contains(group))
+        {
+            return false;
+        }
         Vector<String> groups = null;
 
         if (!synapsesVsGroups.containsKey(synapseType))
@@ -1124,13 +1122,16 @@ public class Cell implements Serializable
         }
         else
         {
-            groups = (Vector<String>)synapsesVsGroups.get(synapseType);
+            groups = synapsesVsGroups.get(synapseType);
         }
-        if (!groups.contains(group)) groups.add(group);
+        if (!groups.contains(group))
+        {
+            groups.add(group);
+        }
         synapsesVsGroups.put(synapseType, groups);
 
-        logger.logComment("Synapses: "+ synapsesVsGroups);
-        logger.logComment("Groups: "+ getAllGroupNames());
+        logger.logComment("Synapses: " + synapsesVsGroups);
+        logger.logComment("Groups: " + getAllGroupNames());
 
 
         return true;
@@ -1139,20 +1140,19 @@ public class Cell implements Serializable
 
     public boolean associateGroupWithChanMech(String group, ChannelMechanism chanMech)
     {
-        logger.logComment("Cell being told to associate group: "
-                          + group
-                          + " with channel mechanism: "
-                          + chanMech);
-        
+        logger.logComment("Cell being told to associate group: " + group
+                          + " with channel mechanism: " + chanMech, true);
+           
         Vector<String> grps = getAllGroupNames();
+        
         if (!grps.contains(group))
         {
             logger.logError("The group: "+group+" is not present in the set of all groups: "+ grps);
             return false;
         }
 
-
         Enumeration<ChannelMechanism> chanMechs = chanMechsVsGroups.keys();
+        
         while (chanMechs.hasMoreElements())
         {
             ChannelMechanism otherChanMech = chanMechs.nextElement();
@@ -1162,21 +1162,37 @@ public class Cell implements Serializable
                 logger.logComment("otherChanMech: " +otherChanMech+", chanMech: " +chanMech );
                 Vector<String> groups = chanMechsVsGroups.get(otherChanMech);
 
-                    logger.logComment("groups: " + groups);
+                logger.logComment("groups: " + groups);
+                
                 if (groups.contains(group))
                 {
                     logger.logComment("group: " + group+" is there");
                     groups.remove(group);
+                    
+                    if (otherChanMech.getDensity()==chanMech.getDensity())
+                    {
+                        logger.logComment("otherChanMech: " +otherChanMech+" and chanMech: " +chanMech +" have the same group/name/density. ");
+                        logger.logComment("Amalgamating extra params. Mainly needed for importing of parameters from NEURON exported NeuroML");
+                        
+                        for (MechParameter mp: otherChanMech.getExtraParameters())
+                        {
+                            logger.logComment("Adding mech param: " + mp);
+                            chanMech.setExtraParam(mp.getName(), mp.getValue());
+                        } 
+                        logger.logComment("Current chanMech: " +chanMech);
+                    }
+                    
                     if (groups.size() > 0)
                         chanMechsVsGroups.put(otherChanMech, groups);
                     else
                         chanMechsVsGroups.remove(otherChanMech);
                 }
+                else
+                {
                     logger.logComment("group: " + group+" is NOT there");
+                }
             }
         }
-
-
 
         Vector<String> groups = null;
 
@@ -1188,12 +1204,18 @@ public class Cell implements Serializable
         else
         {
             logger.logComment("Not Making new group" );
-            groups = (Vector<String>)chanMechsVsGroups.get(chanMech);
+            groups = chanMechsVsGroups.get(chanMech);
         }
-        if (!groups.contains(group)) groups.add(group);
+                    
+        logger.logComment("Groups which currently have chan mech: " + chanMech+": "+ groups);
+        
+        if (!groups.contains(group)) 
+            groups.add(group);
 
 
         chanMechsVsGroups.put(chanMech, groups);
+        
+        logger.logComment("Now: " + chanMechsVsGroups.get(chanMech));
 
         logger.logComment("");
 
@@ -1243,7 +1265,7 @@ public class Cell implements Serializable
         }
         else
         {
-            groups = (Vector<String>)specCapVsGroups.get(specCap);
+            groups = specCapVsGroups.get(specCap);
         }
         if (!groups.contains(group)) groups.add(group);
         specCapVsGroups.put(specCap, groups);
@@ -1292,7 +1314,7 @@ public class Cell implements Serializable
         }
         else
         {
-            groups = (Vector<String>)specAxResVsGroups.get(specAxRes);
+            groups = specAxResVsGroups.get(specAxRes);
         }
         if (!groups.contains(group)) groups.add(group);
         specAxResVsGroups.put(specAxRes, groups);
@@ -1324,7 +1346,7 @@ public class Cell implements Serializable
         }
         else
         {
-            groups = (Vector<String>)apPropSpeedsVsGroups.get(apPropSpeed);
+            groups = apPropSpeedsVsGroups.get(apPropSpeed);
         }
 
         if (!groups.contains(group)) groups.add(group);
@@ -1473,7 +1495,7 @@ public class Cell implements Serializable
         while (specAxReses.hasMoreElements())
         {
             Float spAxRes  = specAxReses.nextElement();
-            groups = (Vector<String>)specAxResVsGroups.get(spAxRes);
+            groups = specAxResVsGroups.get(spAxRes);
             success = groups.remove(group);
             if (groups.size()>0) specAxResVsGroups.put(spAxRes, groups);
             else specAxResVsGroups.remove(spAxRes);
@@ -1501,7 +1523,7 @@ public class Cell implements Serializable
         boolean success = false;
         if (chanMechsVsGroups.containsKey(chanMech))
         {
-            groups = (Vector<String>)chanMechsVsGroups.get(chanMech);
+            groups = chanMechsVsGroups.get(chanMech);
             success = groups.remove(group);
             if (groups.size()>0) chanMechsVsGroups.put(chanMech, groups);
             else chanMechsVsGroups.remove(chanMech);
@@ -1547,6 +1569,7 @@ public class Cell implements Serializable
      * Makes an exact copy of the Cell, with new Segments (as opposed to references)
      * to the old Segments, containing the same morphological data as this Cell
      */
+    @Override
     public Object clone()
     {
         logger.logComment(">>>>>>>>>>>>    Cloning cell: "+ getInstanceName());
@@ -1564,7 +1587,7 @@ public class Cell implements Serializable
 
         for (int i = 0; i < allSegments.size(); i++)
         {
-            Segment oldSegment = (Segment)allSegments.elementAt(i);
+            Segment oldSegment = allSegments.elementAt(i);
             Segment newSegment = (Segment)oldSegment.clone();
 
             logger.logComment("Old segment: "+ oldSegment);
@@ -1579,13 +1602,13 @@ public class Cell implements Serializable
             }
             else
             {
-                newSegment.setSection( (Section) newSectionsVsOldSections.get(oldSegment.getSection()));
+                newSegment.setSection(newSectionsVsOldSections.get(oldSegment.getSection()));
             }
 
 
             if (oldSegment.getParentSegment()!=null)
             {
-                Segment newParentSegment = (Segment)newSegmentsVsOldSegments.get(oldSegment.getParentSegment());
+                Segment newParentSegment = newSegmentsVsOldSegments.get(oldSegment.getParentSegment());
                 newSegment.setParentSegment(newParentSegment);
             }
             newSegments.add(newSegment);

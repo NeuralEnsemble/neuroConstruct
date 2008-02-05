@@ -45,7 +45,7 @@ import ucl.physiol.neuroconstruct.neuroml.*;
  *  
  */
 
-public class ProjectManager
+public class ProjectManager implements GenerationReport
 {
     private static ClassLogger logger = new ClassLogger("ProjectManager");
 
@@ -65,13 +65,22 @@ public class ProjectManager
 
     private static Random randomGenerator = new Random();
     private static long currentSeed = 1;
+    
+    private boolean currentlyGenerating = false;
 
 
 
-    public ProjectManager(GenerationReport reportInterface,
+    public ProjectManager(GenerationReport ri,
                           ProjectEventListener projEventListener)
     {
-        this.reportInterface = reportInterface;
+        if(ri!=null)
+        {
+            this.reportInterface = ri;
+        }
+        else
+        {
+            reportInterface = this;
+        }
         this.projEventListener = projEventListener;
     }
 
@@ -734,10 +743,10 @@ public class ProjectManager
             {
                 report.addTaggedElement("Error, Plot: " + plot.getPlotReference() + " specifies Cell Group: " + plot.getCellGroup() +
                                         ", but there isn't any Cell Group by that name in the project!",
-                                        "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
+                                        "font color=\"" + ValidityStatus.VALIDATION_COLOUR_WARN + "\"");
                 report.addBreak();
 
-                overallValidity = ValidityStatus.VALIDATION_ERROR;
+                overallValidity = ValidityStatus.combineValidities(overallValidity, ValidityStatus.VALIDATION_WARN);
             }
         }
 
@@ -847,8 +856,15 @@ public class ProjectManager
 
         activeProject.generatedCellPositions.setRandomSeed(currentSeed);
 
+        currentlyGenerating = true;
+        
         cellPosnGenerator.start();
 
+    }
+    
+    public boolean isGenerating()
+    {
+        return currentlyGenerating;
     }
 
 
@@ -857,7 +873,183 @@ public class ProjectManager
     {
         activeProject = Project.loadProject(projFile, projEventListener);
     }
+    
 
+    public void giveGenerationReport(String report, String generatorType, SimConfig simConfig)
+    {
+        logger.logComment(">>> "+ generatorType+ " giving report: "+ report);
+
+        if (generatorType.equals(CellPositionGenerator.myGeneratorType))
+        {
+            if (activeProject.generatedCellPositions.getNumberPositionRecords() == 0)
+            {
+                logger.logComment("No cell positions generated. Please ensure the cell bodies will fit in the selected regions.");
+                
+                currentlyGenerating = false;
+                return;
+            }
+
+            if (report.indexOf("Generation interrupted")>0)
+            {
+                logger.logComment("It seems the generation of cell positions was interrupted...");
+                currentlyGenerating = false;
+                return;
+            }
+            
+            netConnGenerator = new MorphBasedConnGenerator(activeProject, this);
+
+            netConnGenerator.setSimConfig(simConfig);
+
+            netConnGenerator.start();
+
+        }
+        else if (generatorType.equals(MorphBasedConnGenerator.myGeneratorType))
+        {
+
+            //String currentReport = jEditorPaneGenerateInfo.getText();
+
+            //String update = new String(currentReport.substring(0,currentReport.lastIndexOf("</body>")) // as the jEditorPane returns html...
+            //                           +report);
+            
+            //jEditorPaneGenerateInfo.setText(update+"  ");
+
+
+
+            if (report.indexOf("Generation interrupted")>0)
+            {
+                logger.logComment("It seems the generation of connections was interrupted...");
+                currentlyGenerating = false;
+                return;
+            }
+
+            arbourConnectionGenerator = new VolumeBasedConnGenerator(activeProject, this);
+
+            arbourConnectionGenerator.setSimConfig(simConfig);
+
+            arbourConnectionGenerator.start();
+
+
+
+        }
+
+        else if (simConfig.getMpiConf().isParallel() 
+                   && generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
+        {
+            //String currentReport = jEditorPaneGenerateInfo.getText();
+
+            //String update = new String(currentReport.substring(0,currentReport.lastIndexOf("</body>")) // as the jEditorPane returns html...
+            //                           +report);
+            
+            //jEditorPaneGenerateInfo.setText(update);
+
+            if (report.indexOf("Generation interrupted")>0)
+            {
+                logger.logComment("It seems the generation of connections was interrupted...");
+                currentlyGenerating = false;
+                return;
+            }
+
+            compNodeGenerator = new CompNodeGenerator(activeProject, this);
+
+            compNodeGenerator.setSimConfig(simConfig);
+
+            compNodeGenerator.start();
+        }
+
+        else if ((!(simConfig.getMpiConf().isParallel())
+                && (generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
+                || generatorType.equals(CompNodeGenerator.myGeneratorType)))
+        {
+            //String currentReport = jEditorPaneGenerateInfo.getText();
+
+            //String update = new String(currentReport.substring(0,currentReport.lastIndexOf("</body>")) // as the jEditorPane returns html...
+            //                           +report);
+
+            //jEditorPaneGenerateInfo.setText(update);
+
+
+
+            if (report.indexOf("Generation interrupted")>0)
+            {
+                logger.logComment("It seems the generation of compute nodes was interrupted...");
+                currentlyGenerating = false;
+                return;
+            }
+
+
+            elecInputGenerator = new ElecInputGenerator(activeProject, this);
+
+            elecInputGenerator.setSimConfig(simConfig);
+
+            elecInputGenerator.start();
+
+        }
+
+
+        else if (generatorType.equals(ElecInputGenerator.myGeneratorType))
+        {
+            //String currentReport = jEditorPaneGenerateInfo.getText();
+
+            //String update = new String(currentReport.substring(0, currentReport.lastIndexOf("</body>")) // as the jEditorPane returns html...
+            //                           + report);
+            //jEditorPaneGenerateInfo.setText(update);
+
+            if (report.indexOf("Generation interrupted") > 0)
+            {
+                logger.logComment("It seems the generation of cell positions was interrupted...");
+                currentlyGenerating = false;
+                return;
+            }
+
+
+            plotSaveGenerator = new PlotSaveGenerator(activeProject, this);
+
+            plotSaveGenerator.setSimConfig(simConfig);
+
+            plotSaveGenerator.start();
+
+
+        }
+
+        else if (generatorType.equals(PlotSaveGenerator.myGeneratorType))
+        {
+
+            //String currentReport = jEditorPaneGenerateInfo.getText();
+
+            //String update = new String(currentReport.substring(0, currentReport.lastIndexOf("</body>")) // as the jEditorPane returns html...
+            //                           + report);
+
+            //jEditorPaneGenerateInfo.setText(update);
+
+            //this.jButtonGenerateStop.setEnabled(false);
+
+            //refreshTabGenerate();
+            
+            currentlyGenerating = false;
+        }
+        else
+        {
+            logger.logComment("Don't know the type of that generation report!!: " + generatorType);
+            
+            currentlyGenerating = false;
+        }
+
+        currentlyGenerating = false;
+
+
+    }
+    
+    
+    public void majorStepComplete()
+    {
+            logger.logComment(">>> -----------------");
+    };
+    
+
+    public void giveUpdate(String update)
+    {
+            logger.logComment(">>> "+ update);
+    };
 
 
 }

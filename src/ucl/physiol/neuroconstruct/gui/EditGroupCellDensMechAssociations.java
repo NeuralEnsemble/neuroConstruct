@@ -17,6 +17,7 @@ import java.util.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
@@ -96,6 +97,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
     GridBagLayout gridBagLayout2 = new GridBagLayout();
 
     JButton jButtonEditValue = new JButton();
+    JButton jButtonEditExtraValue = new JButton();
 
     JButton jButtonOK = new JButton();
     GridBagLayout gridBagLayout3 = new GridBagLayout();
@@ -260,6 +262,14 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
             }
         });
 
+        jButtonEditExtraValue.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonEditExtraValue_actionPerformed(e);
+            }
+        });
+
 
 
 
@@ -298,9 +308,12 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                                                              , GridBagConstraints.CENTER, GridBagConstraints.NONE,
                                                              new Insets(0, 0, 1, 0), 100, 0));
         jPanelButtons.add(jButtonEditValue, null);
+        jPanelButtons.add(jButtonEditExtraValue, null);
+        
         jPanelButtons.add(jButtonOK, null);
         jButtonOK.setText("OK");
         jButtonEditValue.setText("Edit value");
+        jButtonEditExtraValue.setText("Edit extra parameters");
 
         jButtonEditValue.setEnabled(false);
         jPanelSelectMech.add(jLabelSelect, null);
@@ -365,6 +378,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
             if (this.jListGroupsIn.getSelectedValues().length>0)
             {
                 jButtonEditValue.setEnabled(true);
+                jButtonEditExtraValue.setEnabled(true);
             }
             logger.logComment("GroupsIn change: " + e.getFirstIndex());
 
@@ -383,6 +397,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         {
 
             jButtonEditValue.setEnabled(false);
+                jButtonEditExtraValue.setEnabled(false);
 
             logger.logComment("SectionsOut change: " + e.getFirstIndex());
             this.jButtonRemove.setEnabled(false);
@@ -411,6 +426,134 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         logger.logComment("OK button pressed");
 
         this.dispose();
+    }
+    
+    
+    void jButtonEditExtraValue_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("Edit extra value button pressed");
+        
+        String selectedMechanism = (String) jComboBoxMechNames.getSelectedItem();
+
+        if (selectedMechanism.equals(defaultMechSelection) ||
+            selectedMechanism.equals(this.extraMechSelection)) return;
+        
+        
+        Object[] selected = this.jListGroupsIn.getSelectedValues();
+        
+        if (selected.length>1)
+            GuiUtils.showErrorMessage(logger, "Please select a single mechanism/group association" , null, this);
+        
+        if (selectedMechanism.equals(this.apPropVelSelection) ||
+            selectedMechanism.equals(this.specAxResSelection) ||
+            selectedMechanism.equals(this.specCapSelection))
+        {
+            GuiUtils.showErrorMessage(logger, "No extra params can be added for that mechanism" , null, this);
+            return;
+        }
+        
+        ChannelMechanism chanMech = null;
+        String sel = (String)selected[0];
+        
+        String groupName = sel.substring(0, sel.indexOf(" ")).trim();
+        
+        ArrayList<ChannelMechanism> allChans = myCell.getChanMechsForGroup(groupName);
+        
+        for (int k = 0; k < allChans.size(); k++)
+        {
+            if (allChans.get(k).getName().equals(selectedMechanism))
+                chanMech = allChans.get(k);
+        }
+
+        
+        ArrayList<MechParameter> oldMps = chanMech.getExtraParameters();
+        
+        ArrayList<MechParameter> newMps = new ArrayList<MechParameter>();
+        
+        for (MechParameter mp: oldMps)
+        {
+            String message0 = "There is a parameter: "+mp.getName()+" present, value: "+mp.getValue();
+            
+            
+            Object[] options = new Object[]
+                    {"Keep parameter with this value", "Change value" , "Delete parameter"};
+                
+            
+            int opt = JOptionPane.showOptionDialog(this, message0, "Edit parameters", 
+                                                   JOptionPane.OK_CANCEL_OPTION,
+                                                   JOptionPane.QUESTION_MESSAGE,
+                                                   null,
+                                                   options,
+                                                   options[0]);
+            
+            if (opt == 0)
+            {
+                newMps.add(new MechParameter(mp));
+            }
+            else if (opt == 2)
+            {
+                logger.logComment("Removing MechParameter: "+ mp);
+            }
+            else
+            {
+        
+                String message2 = "Please enter the new default value of parameter: "+ mp.getName();
+                
+                String valString = JOptionPane.showInputDialog(this, message2, mp.getValue()+"");
+
+                float value = 0;
+
+                try
+                {
+                    value = Float.parseFloat(valString);
+                }
+                catch (NumberFormatException ex)
+                {
+                    GuiUtils.showErrorMessage(logger, "Could not parse value: "+valString+" for parameter: "+mp.getName() , ex, this);
+                    return;
+                }
+                newMps.add(new MechParameter(mp.getName(), value));
+                
+            }
+        }
+        
+        
+        String message1 = "Please enter the name of a new parameter, or press Cancel to keep current set";
+        
+
+        String paramName = JOptionPane.showInputDialog(this, message1, "");
+        
+        if (paramName!=null && paramName.length()>0)
+        {
+            float value = 0;
+
+            String message2 = "Please enter the default value of parameter: "+ paramName;
+
+            String valString = JOptionPane.showInputDialog(this, message2, value+"");
+
+            try
+            {
+                value = Float.parseFloat(valString);
+            }
+            catch (NumberFormatException ex)
+            {
+                GuiUtils.showErrorMessage(logger, "Could not parse value: "+valString+" for parameter: "+paramName , ex, this);
+                return;
+            }
+
+
+            newMps.add(new MechParameter(paramName, value));
+        }
+        
+        chanMech.setExtraParameters(newMps);
+        
+
+        myCell.associateGroupWithChanMech(groupName, chanMech);
+        
+        
+        this.jComboBoxMechNames.setSelectedIndex(0);
+        this.jComboBoxMechNames.setSelectedItem(selectedMechanism); // refreshes lists
+        
     }
 
     void jButtonEditValue_actionPerformed(ActionEvent e)
@@ -473,9 +616,12 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
                 float newVal = this.getDensForGroup(selectedMechanism, chanMech.getDensity(), "(" + groupName + ")");
 
-                chanMech.setDensity(newVal);
+                if (newVal >=0)
+                {
+                    chanMech.setDensity(newVal);
+                    myCell.associateGroupWithChanMech(groupName, chanMech);
+                }
 
-                myCell.associateGroupWithChanMech(groupName, chanMech);
             }
         }
 
@@ -489,6 +635,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         logger.logComment("" + e);
 
         this.jButtonEditValue.setEnabled(false);
+        this.jButtonEditExtraValue.setEnabled(false);
 
         if (e.getStateChange() == ItemEvent.SELECTED)
         {
@@ -595,7 +742,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                                           " to the in list...");
                         listModelGroupsIn.addElement(nextGroup
                                                      + " (density: "
-                                                     + foundChanMech.getDensity() + ")");
+                                                     + foundChanMech.getDensity()+foundChanMech.getExtraParamsDesc() + ")");
                     }
                     else
                     {
@@ -626,6 +773,8 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                 = JOptionPane.showInputDialog(this,
                                               request,
                                               suggestedValue + "");
+            
+            if (inputValue==null || inputValue.length()==0) return -1;
             try
             {
                 dens = Float.parseFloat(inputValue);
@@ -873,17 +1022,20 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                 }
             }
 
-            int[] selected = jListGroupsOut.getSelectedIndices();
-
-            for (int i = 0; i < selected.length; i++)
+            if (condDens>=0)
             {
-                String group = (String) listModelGroupsOut.elementAt(selected[i]);
-                logger.logComment("Item: " + selected[i] + " (" + group + ") is selected...");
+                int[] selected = jListGroupsOut.getSelectedIndices();
 
-                ChannelMechanism selChanMech = new ChannelMechanism(selectedMech, condDens);
+                for (int i = 0; i < selected.length; i++)
+                {
+                    String group = (String) listModelGroupsOut.elementAt(selected[i]);
+                    logger.logComment("Item: " + selected[i] + " (" + group + ") is selected...");
 
-                myCell.associateGroupWithChanMech(group, selChanMech);
+                    ChannelMechanism selChanMech = new ChannelMechanism(selectedMech, condDens);
 
+                    myCell.associateGroupWithChanMech(group, selChanMech);
+
+                }
             }
         }
         // simple update...
@@ -980,7 +1132,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         list.add(chanMechName1);
         list.add(chanMechName2);
 */
-        Project testProj = Project.loadProject(new File("projects/MMv/MMv.neuro.xml"),
+        Project testProj = Project.loadProject(new File("examples/Ex4-NEURONGENESIS/Ex4-NEURONGENESIS.neuro.xml"),
                                                new ProjectEventListener()
         {
             public void tableDataModelUpdated(String tableModelName)
@@ -994,7 +1146,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
         });
 
-        Cell cell = (Cell)testProj.cellManager.getCell("SampleCell");
+        Cell cell = (Cell)testProj.cellManager.getCell("TestCell_ChannelML");
 
         //Cell cell = (Cell)testProj.cellManager.getCell("GranuleCellExp");
 /*
