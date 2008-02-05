@@ -64,13 +64,25 @@ public class ChannelMechanism implements Serializable
             if (density == other.density && name.equals(other.name))
             {
                 ArrayList<MechParameter> otherParams = other.getExtraParameters();
-                if (otherParams.size()!=extraParameters.size()) 
-                    return false;
-                
-                for (int i=0;i<extraParameters.size();i++)
+                if (extraParameters!=null)
                 {
-                    if (!otherParams.get(i).equals(extraParameters.get(i))) 
-                         return false;
+                    if (otherParams==null) 
+                        return false;
+                        
+                        
+                    if (otherParams.size()!=extraParameters.size()) 
+                        return false;
+
+                    for (int i=0;i<extraParameters.size();i++)
+                    {
+                        if (!otherParams.get(i).equals(extraParameters.get(i))) 
+                             return false;
+                    }
+                }
+                else // extraParameters==null
+                {
+                    if (otherParams!=null) 
+                        return false;
                 }
                 return true;
             }
@@ -121,16 +133,22 @@ public class ChannelMechanism implements Serializable
     public String getExtraParamsDesc()
     {
         StringBuffer info = new StringBuffer();
-            
-        for (MechParameter mp: extraParameters)
+           
+        if (extraParameters!=null)
         {
-            info.append(", "+ mp.toString());
+            for (MechParameter mp: extraParameters)
+            {
+                info.append(", "+ mp.toString());
+            }
         }
         return info.toString();
     }
     
     public void setExtraParam(String name, float value)
-    {        
+    {       
+        if (extraParameters==null)
+            extraParameters = new ArrayList<MechParameter>();
+        
         for (MechParameter mp: extraParameters)
         {
             if (mp.getName().equals(name))
