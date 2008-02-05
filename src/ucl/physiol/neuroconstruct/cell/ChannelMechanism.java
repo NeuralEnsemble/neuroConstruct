@@ -229,6 +229,8 @@ public class ChannelMechanism implements Serializable
     
     public ArrayList<MechParameter> getExtraParameters()
     {
+        if (extraParameters==null)
+            extraParameters = new ArrayList<MechParameter>();
         return this.extraParameters;
     }
     
