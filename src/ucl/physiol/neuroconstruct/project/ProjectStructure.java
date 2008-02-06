@@ -161,9 +161,7 @@ public class ProjectStructure
     private static String cmlExamplesDir = xmlExamplesDir
         + System.getProperty("file.separator")
         +"ChannelML";
-
-
-
+    
 
 
     private static String cmlTemplatesDir = xmlTemplatesDir

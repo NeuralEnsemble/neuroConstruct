@@ -99,12 +99,10 @@ public class GenesisFileManager
         this.project = project;
     }
     
-    
+    // temporary!!!
     public static boolean mooseCompatMode()
     {
         File testFile = new File("moosecompat");
-        
-        System.out.println(testFile.getAbsolutePath());
         
         return testFile.exists();
     }
@@ -3336,62 +3334,64 @@ public class GenesisFileManager
         //String startTimeFile = friendlyDirName+"starttime";
         //String stopTimeFile = friendlyDirName+"stoptime";
 
-        response.append("str startTimeFile\n");
-        response.append("str stopTimeFile\n");
+        if (!GeneralUtils.isWindowsBasedPlatform())  // Functions need further testing on windows
+        {
+            response.append("str startTimeFile\n");
+            response.append("str stopTimeFile\n");
 
+            response.append("startTimeFile = {strcat {targetDir} {\"starttime\"}}\n");
 
-        response.append("startTimeFile = {strcat {targetDir} {\"starttime\"}}\n");
-
-        response.append("stopTimeFile = {strcat {targetDir} {\"stoptime\"}}\n");
+            response.append("stopTimeFile = {strcat {targetDir} {\"stoptime\"}}\n");
+            response.append("sh {strcat {\"date +%s.%N > \"} {startTimeFile}}\n\n");
+        }
         
 
         response.append("echo \"Starting simulation reference: "+project.simulationParameters.getReference()+" at: \" {getdate}\n");
-        response.append("sh {strcat {\"date +%s.%N > \"} {startTimeFile}}\n\n");
 
         response.append("step "+((int)Math.round(getSimDuration()/project.simulationParameters.getDt()))+"\n\n"); // +1 to include 0 and last timestep
 
         response.append("echo \"Finished simulation reference: "+project.simulationParameters.getReference()+" at: \" {getdate}\n");
 
-        response.append("sh {strcat {\"date +%s.%N > \"} {stopTimeFile}}\n\n"); // if you know a better way to get output of a system command from a sh call, let me know...
-
         if (addComments) response.append("echo Data stored in directory: {targetDir}\n\n");
+        
+        if (!GeneralUtils.isWindowsBasedPlatform())  //  Functions need further testing on windows
+        {
+            response.append("sh {strcat {\"date +%s.%N > \"} {stopTimeFile}}\n\n"); // if you know a better way to get output of a system command from a sh call, let me know...
+
+            response.append("openfile {startTimeFile} r\n");
+            response.append("openfile {stopTimeFile} r\n");
 
 
-        response.append("openfile {startTimeFile} r\n");
-        response.append("openfile {stopTimeFile} r\n");
+            response.append("float starttime = {readfile {startTimeFile}}  \n");
+            response.append("float stoptime =  {readfile {stopTimeFile}}  \n");
+            response.append("float runTime = {stoptime - starttime}  \n");
+
+            response.append("echo Simulation took : {runTime} seconds  \n");
 
 
-        response.append("float starttime = {readfile {startTimeFile}}  \n");
-        response.append("float stoptime =  {readfile {stopTimeFile}}  \n");
-        response.append("float runTime = {stoptime - starttime}  \n");
-
-        response.append("echo Simulation took : {runTime} seconds  \n");
-
-
-        response.append("closefile {startTimeFile} \n");
-        response.append("closefile {stopTimeFile} \n\n\n");
+            response.append("closefile {startTimeFile} \n");
+            response.append("closefile {stopTimeFile} \n\n\n");
+     
         
 
-        response.append("str hostnameFile\n");
-        response.append("hostnameFile = {strcat {targetDir} {\"hostname\"}}\n");
+            response.append("str hostnameFile\n");
+            response.append("hostnameFile = {strcat {targetDir} {\"hostname\"}}\n");
 
-        response.append("sh {strcat {\"hostname > \"} {hostnameFile}}\n");
-        response.append("openfile {hostnameFile} r\n");
-        response.append("str hostnamestr = {readfile {hostnameFile}}\n");
-        response.append("closefile {hostnameFile}\n\n");
+            response.append("sh {strcat {\"hostname > \"} {hostnameFile}}\n");
+            response.append("openfile {hostnameFile} r\n");
+            response.append("str hostnamestr = {readfile {hostnameFile}}\n");
+            response.append("closefile {hostnameFile}\n\n");
+    
 
+            response.append("str simPropsFile\n");
+            response.append("simPropsFile = {strcat {targetDir} {\""+SimulationsInfo.simulatorPropsFileName+"\"}}\n");
 
-        response.append("str simPropsFile\n");
-        response.append("simPropsFile = {strcat {targetDir} {\""+SimulationsInfo.simulatorPropsFileName+"\"}}\n");
-        
-        response.append("openfile {simPropsFile} w\n");
+            response.append("openfile {simPropsFile} w\n");
 
-        response.append("writefile {simPropsFile} \"RealSimulationTime=\"{runTime}\n");
-        response.append("writefile {simPropsFile} \"Host=\"{hostnamestr}\n");
-        response.append("closefile {simPropsFile} \n");
-
-
-
+            response.append("writefile {simPropsFile} \"RealSimulationTime=\"{runTime}\n");
+            response.append("writefile {simPropsFile} \"Host=\"{hostnamestr}\n");
+            response.append("closefile {simPropsFile} \n");
+    }
 
 
 

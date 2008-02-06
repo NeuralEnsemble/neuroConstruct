@@ -55,7 +55,8 @@ public class Hdf5Exception extends Exception
         try 
         {
             //File f = new File("../../temp/net.h5");
-            File f = new File("/angus_server/Padraig/Datas/HDF5/ep0601aa.hdf5");
+            //File f = new File("/angus_server/Padraig/Datas/HDF5/ep0601aa.hdf5");
+            File f = new File("Y:/Padraig/Datas/HDF5/ep0601aa.hdf5");
             //File f = new File("/angus_server/Padraig/temp/voltageOutput.h5");
             System.out.println("Reading a HDF5 file: " + f.getCanonicalPath());
 

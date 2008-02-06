@@ -1141,7 +1141,7 @@ public class Cell implements Serializable
     public boolean associateGroupWithChanMech(String group, ChannelMechanism chanMech)
     {
         logger.logComment("Cell being told to associate group: " + group
-                          + " with channel mechanism: " + chanMech, true);
+                          + " with channel mechanism: " + chanMech);
            
         Vector<String> grps = getAllGroupNames();
         

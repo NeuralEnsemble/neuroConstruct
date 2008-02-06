@@ -10,7 +10,7 @@
         <fail unless="run.class">Must set property 'run.class'</fail>
         <ant antfile="${ant.script}" inheritall="false" target="makejar"/>
         <java classname="${run.class}" failonerror="true" dir="${project.dir}" fork="true">
-            <jvmarg value="-Djava.library.path=${curr.dir}/lib/hdf5/linux"/>
+            <jvmarg value="-Djava.library.path=${curr.dir}/lib/hdf5/linux;${curr.dir}/lib/hdf5/win"/>
             <classpath>
                 <pathelement path="${project.dir}/lib/hdf5/jhdf.jar;${project.dir}/lib/hdf5/jhdf4obj.jar;${project.dir}/lib/hdf5/jhdf5.jar;${project.dir}/lib/hdf5/jhdf5obj.jar;${project.dir}/lib/hdf5/jhdfobj.jar;${project.dir}/classes"/>
             </classpath>

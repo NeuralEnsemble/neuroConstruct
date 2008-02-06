@@ -17,6 +17,7 @@ import java.io.*;
 import java.net.*;
 import java.text.*;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.zip.*;
 import javax.media.j3d.*;
 import javax.vecmath.*;
@@ -33,6 +34,7 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
+import javax.swing.text.Document;
 import org.xml.sax.*;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
@@ -119,6 +121,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     String defaultAnalyseCellGroupString = "-- Please select a Cell Group --";
     String defaultAnalyseNetConnString = "-- Please select a Network Connection --";
+    
+    String generatePleaseWait = "Generating cell positions and network connections. Please wait...";
 
 
     // For figuring out whether the positions were generated anew, or were from prev simulations
@@ -3243,8 +3247,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         JViewport vpGenerate = scrollerGenerate.getViewport();
 
-        vpGenerate.add(
-            jEditorPaneGenerateInfo);
+        vpGenerate.add(jEditorPaneGenerateInfo);
 
         jPanelGenerateMain.add(jPanelGenerateAnalyse,
                                new GridBagConstraints(0, 2, 1, 1,
@@ -6416,6 +6419,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jProgressBarGenerate.setString(update);
 
     }
+    
+    
 
 
     public void giveGenerationReport(String report, String generatorType, SimConfig simConfig)
@@ -6425,6 +6430,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         if (generatorType.equals(CellPositionGenerator.myGeneratorType))
         {
             jEditorPaneGenerateInfo.setText(report);
+            //Document doc = jEditorPaneGenerateInfo.getEditorKit().createDefaultDocument();
+            //doc.insertString(0, report, null);
+            
             if (projManager.getCurrentProject().generatedCellPositions.getNumberPositionRecords() == 0)
             {
                 GuiUtils.showErrorMessage(logger,
@@ -6446,18 +6454,29 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
         else if (generatorType.equals(MorphBasedConnGenerator.myGeneratorType))
         {
-
-            String currentReport = jEditorPaneGenerateInfo.getText();
-
-            String update = new String(currentReport.substring(0,currentReport.lastIndexOf("</body>")) // as the jEditorPane returns html...
-                                       +report);
             
-            jEditorPaneGenerateInfo.setText(update+"  ");
-
-
-
-            if (report.indexOf("Generation interrupted")>0)
+            String currentReport = jEditorPaneGenerateInfo.getText();
+            
+            if (currentReport.length()==0 || currentReport.equals(generatePleaseWait))
             {
+                try 
+                {
+                    Thread.sleep(1500);
+                    currentReport = jEditorPaneGenerateInfo.getText();
+                } 
+                catch (InterruptedException ex) {
+                    // go on...
+                }
+            }
+
+
+            String update = new String(currentReport.substring(0, currentReport.lastIndexOf("</body>")) + report);
+
+            jEditorPaneGenerateInfo.setText(update + "  ");
+
+
+
+            if (report.indexOf("Generation interrupted") > 0) {
                 logger.logComment("It seems the generation of connections was interrupted...");
                 return;
             }
@@ -10233,7 +10252,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         this.jButton3DView.setEnabled(true);
         this.jButton3DPrevSims.setEnabled(true);
-        jEditorPaneGenerateInfo.setText("Generating cell positions and network connections. Please wait...");
+        jEditorPaneGenerateInfo.setText(generatePleaseWait);
 
         sourceOfCellPosnsInMemory = GENERATED_POSITIONS;
 
@@ -11448,6 +11467,65 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     {
         logger.logComment("----------------------------         Updating a cell mechanism...");
         
+        String info = "Use this button to update the selected ChannelML based cell mechanism to use the current version of the NEURON/GENESIS\n"
+                     +"mapping XSL files (for NeuroML version "+GeneralProperties.getNeuroMLVersionNumber()+"). Note, ChannelML files with older XSL mappings may work perfectly well,\n"
+                     +"but the latest XSL mappings will always be the most well tested and should be considered for any valid ChannelML file.";
+        
+        int selectedRow = jTableMechanisms.getSelectedRow();
+
+        if (selectedRow < 0)
+        {
+            logger.logComment("No row selected...");
+            GuiUtils.showErrorMessage(logger,info, null, this);
+            return;
+        }
+        CellMechanism cellMech = projManager.getCurrentProject().cellMechanismInfo.getCellMechanismAt(selectedRow);
+
+        if (!(cellMech instanceof ChannelMLCellMechanism))
+        {
+            GuiUtils.showErrorMessage(logger,info, null, this);
+        }
+        else
+        {
+            File xslDir = ProjectStructure.getCMLSchemasDir();
+            ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism) cellMech;
+            File implFile = cmlMech.getChannelMLFile(projManager.getCurrentProject());
+            
+            for (SimXSLMapping map: cmlMech.getSimMappings())
+            {
+                String simEnv = map.getSimEnv();
+                File oldXsl = new File (implFile.getParent(), map.getXslFile());
+                File newXsl = null;
+                
+                if (simEnv.equals(SimEnvHelper.NEURON))
+                {
+                    newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_NEURONmod.xsl");
+                }
+                else if (simEnv.equals(SimEnvHelper.GENESIS))
+                {
+                    newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_GENESIStab.xsl");
+                }
+                
+                int ans = JOptionPane.showConfirmDialog(this, "Would you like to replace mapping file: \n\n"+oldXsl.getAbsolutePath()+"\n\nfor environment "+simEnv+", cell mech: " +cmlMech.getInstanceName()
+                        + " with a copy of file:\n\n"+ newXsl.getAbsolutePath()+"?" , "Replace mapping?", JOptionPane.YES_NO_CANCEL_OPTION);
+                
+                if (ans==JOptionPane.CANCEL_OPTION)
+                    return;
+                if (ans==JOptionPane.YES_OPTION)
+                {
+                    try 
+                    {
+                        GeneralUtils.copyFileIntoDir(newXsl, implFile.getParentFile());
+                        map.setXslFile(newXsl.getName());
+                        projManager.getCurrentProject().markProjectAsEdited();
+                    } 
+                    catch (IOException ex) 
+                    {
+                        GuiUtils.showErrorMessage(logger,"Problem copying that file into the project", ex, this);
+                    }
+                }
+            }
+        }
         
     }
 
