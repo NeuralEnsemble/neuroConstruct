@@ -81,7 +81,7 @@ public class GeneralUtils
 
     public static boolean isVersionControlDir(String dirname)
     {
-        return dirname.equals("CVS") ||  dirname.equals(".svn");
+        return dirname.equals("CVS") ||  dirname.equals(".svn") ||  dirname.equals("_svn");
     }
 
     public static boolean isVersionControlDir(File dir)
