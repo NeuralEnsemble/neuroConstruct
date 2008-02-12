@@ -11,15 +11,17 @@
 #
 #
 
+genForVer2compat = 1  # Incorporates changes in v1.7.1 to clean up for v2.0
 
 
 class NetworkMLFile:
     
-    currNeuroMLVersion = 1.7
+    currNeuroMLVersion = "1.7.1"
     
     projUnits="Physiological Units"
     
     notes = "A NetworkML file generated from a simple Python interface"
+    
     
     
     def __init__(self):
@@ -101,8 +103,12 @@ class Population:
         
     def generateXML(self, out_file, indent):
         
-        out_file.write(indent+"<population name=\""+self.popName+"\">\n")
-        out_file.write(indent+"    <cell_type>"+self.cellType+"</cell_type>\n")
+        if genForVer2compat:
+            out_file.write(indent+"<population name=\""+self.popName+"\" cell_type=\""+self.cellType+"\">\n")
+        else:
+            out_file.write(indent+"<population name=\""+self.popName+"\">\n")
+            out_file.write(indent+"    <cell_type>"+self.cellType+"</cell_type>\n")
+        
         
         out_file.write(indent+"    <instances>\n")
         
@@ -159,9 +165,13 @@ class Projection:
         
     def generateXML(self, out_file, indent):
         
-        out_file.write(indent+"<projection name=\""+self.projName+"\">\n")
-        out_file.write(indent+"    <source>"+self.source+"</source>\n")
-        out_file.write(indent+"    <target>"+self.target+"</target>\n")
+        
+        if genForVer2compat:
+            out_file.write(indent+"<projection name=\""+self.projName+"\" source=\""+self.source+"\" target=\""+self.target+"\">\n")
+        else:
+            out_file.write(indent+"<projection name=\""+self.projName+"\">\n")
+            out_file.write(indent+"    <source>"+self.source+"</source>\n")
+            out_file.write(indent+"    <target>"+self.target+"</target>\n")
         
         for synapse in self.synapses:
             synapse.generateDefaultXML(out_file, indent+"    ")
@@ -169,7 +179,7 @@ class Projection:
         out_file.write(indent+"    <connections>\n")
         
         for connection in self.connections:
-            connection.generateXML(out_file, indent+"    ")
+            connection.generateXML(out_file, indent+"        ")
             
         out_file.write(indent+"    </connections>\n")
             
@@ -207,10 +217,13 @@ class SynapseProps:
        
     def generateDefaultXML(self, out_file, indent): 
         
-        out_file.write(indent+"<synapse_props>\n")
-        out_file.write(indent+"    <synapse_type>"+self.synapseType+"</synapse_type>\n")
-        out_file.write(indent+"    <default_values"+self.getValuesString()+"/>\n")
-        out_file.write(indent+"</synapse_props>\n")
+        if genForVer2compat:
+            out_file.write(indent+"<synapse_props synapse_type=\""+self.synapseType+"\""+self.getValuesString()+"/>\n")
+        else:
+            out_file.write(indent+"<synapse_props>\n")
+            out_file.write(indent+"    <synapse_type>"+self.synapseType+"</synapse_type>\n")
+            out_file.write(indent+"    <default_values"+self.getValuesString()+"/>\n")
+            out_file.write(indent+"</synapse_props>\n")
         
         
 class Connection:
@@ -223,10 +236,13 @@ class Connection:
        
     def generateXML(self, out_file, indent): 
         
-        out_file.write(indent+"<connection id=\""+str(self.id)+"\">\n")
-        out_file.write(indent+"    <pre cell_id=\""+str(self.preCellId)+"\"/>\n")
-        out_file.write(indent+"    <post cell_id=\""+str(self.postCellId)+"\"/>\n")
-        out_file.write(indent+"</connection>\n")
+        if genForVer2compat:
+            out_file.write(indent+"<connection id=\""+str(self.id)+"\" pre_cell_id=\""+str(self.preCellId)+"\" post_cell_id=\""+str(self.postCellId)+"\"/>\n")
+        else:
+            out_file.write(indent+"<connection id=\""+str(self.id)+"\">\n")
+            out_file.write(indent+"    <pre cell_id=\""+str(self.preCellId)+"\"/>\n")
+            out_file.write(indent+"    <post cell_id=\""+str(self.postCellId)+"\"/>\n")
+            out_file.write(indent+"</connection>\n")
         
                 
                 
