@@ -42,6 +42,8 @@ public class NeuronSettings
     
     private boolean genAllModFiles = false;
     
+    private boolean forceModFileRegeneration = false;
+    
     private boolean copySimFiles = false;
 
     //private subsApPropVel
@@ -189,6 +191,16 @@ public class NeuronSettings
     public void setGenAllModFiles(boolean genAllModFiles)
     {
         this.genAllModFiles = genAllModFiles;
+    }
+
+
+    public boolean isForceModFileRegeneration()
+    {
+        return forceModFileRegeneration;
+    }
+    public void setForceModFileRegeneration(boolean forceModFileRegeneration)
+    {
+        this.forceModFileRegeneration = forceModFileRegeneration;
     }
 
 

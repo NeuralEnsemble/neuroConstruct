@@ -3604,11 +3604,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         ttm.setDismissDelay(12000);
         ttm.setReshowDelay(100);
 
-        /** @todo Put these in gen props... */
         jTextFieldIClampAmplitude.setText("0.4");
         jTextFieldIClampDuration.setText("100");
 
-        /** @todo Put these in gen props... */
         jTextFieldNetStimNumber.setText("10");
         jTextFieldNetStimNoise.setText("0.7");
 
@@ -5568,7 +5566,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         refreshSimulationName();
 
 
-        projManager.getCurrentProject().neuronFileManager.reset();
+        //projManager.getCurrentProject().neuronFileManager.reset();
 
         try
         {
@@ -5635,7 +5633,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                     logger.logComment("Trying to compile the files in dir: " + modFiles[0].getParentFile());
 
-                    compileSuccess = compileProcess.compileFileWithNeuron();
+                    compileSuccess = compileProcess.compileFileWithNeuron(projManager.getCurrentProject().neuronSettings.isForceModFileRegeneration());
                 }
             }
             catch (Exception ex)
@@ -5852,16 +5850,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             logger.logError("No project loaded...");
             return;
         }
-
+        projManager.doRunNeuron(getSelectedSimConfig()); 
+/*
         File genNeuronDir = ProjectStructure.getNeuronCodeDir(projManager.getCurrentProject().
                                                                         getProjectMainDirectory());
 
         //File networkMLFile = new File(genNeuronDir, NetworkMLConstants.DEFAULT_NETWORKML_FILENAME);
 
-        /**
-         * Will be the only sim dir if a single run, will be the dir for the actually run 
-         * neuron code when multiple sims are run
-         */
         String primarySimDirName = projManager.getCurrentProject().simulationParameters.getReference();
 
 
@@ -6042,7 +6037,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             GuiUtils.showErrorMessage(logger, ex.getMessage(), ex, this);
             return;
         }
-
+*/
 
         refreshTabNeuron();
         refreshTab3D();
@@ -8328,7 +8323,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                File[] contents = morphMLDir.listFiles();
                for (int i = 0; i < contents.length; i++)
                {
-                   if (!contents[i].getName().equals("README"))
+                   if (!contents[i].getName().equals("README") && !contents[i].isDirectory())
                        jComboBoxNeuroML.addItem(contents[i].getAbsolutePath()
                                                 + " ("
                                                 + contents[i].length()

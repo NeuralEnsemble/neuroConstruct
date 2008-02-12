@@ -162,7 +162,7 @@ public class GeneratedNetworkConnections
 
         while(keys.hasMoreElements())
         {
-            ArrayList<SingleSynapticConnection> synConns = (ArrayList<SingleSynapticConnection>)mySynapticConnectionVectors.get((String)keys.nextElement());
+            ArrayList<SingleSynapticConnection> synConns = mySynapticConnectionVectors.get((String)keys.nextElement());
             if (connType == ANY_NETWORK_CONNECTION ||
                 (connType == MORPH_NETWORK_CONNECTION && (synConns.get(0).connectionType == connType)) ||
                  (connType == VOL_NETWORK_CONNECTION && (synConns.get(0).connectionType == connType)))
@@ -288,6 +288,7 @@ public class GeneratedNetworkConnections
 
 
 
+    @Override
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
@@ -305,6 +306,28 @@ public class GeneratedNetworkConnections
             for (int i = 0; i < synConns.size(); i++)
             {
                 sb.append(synConns.get(i)+"\n");
+            }
+        }
+        return sb.toString();
+    }
+    
+    public String toNiceString()
+    {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("GeneratedNetworkConnections with " 
+                + getNumberSynapticConnections(ANY_NETWORK_CONNECTION) +
+                  " positions in total\n");
+
+        Enumeration keys = mySynapticConnectionVectors.keys();
+
+        while (keys.hasMoreElements())
+        {
+            String netConnName = (String) keys.nextElement();
+            ArrayList<SingleSynapticConnection> synConns = mySynapticConnectionVectors.get(netConnName);
+            for (int i = 0; i < synConns.size(); i++)
+            {
+                sb.append(synConns.get(i).toNiceString()+"\n");
             }
         }
         return sb.toString();
@@ -601,23 +624,31 @@ public class GeneratedNetworkConnections
 
                 projectionElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.PROJ_NAME_ATTR, netConnName));
 
-                projectionElement.addChildElement(new SimpleXMLElement(NetworkMLConstants.SOURCE_ELEMENT, sourceCellGroup));
-                projectionElement.addChildElement(new SimpleXMLElement(NetworkMLConstants.TARGET_ELEMENT, targetCellGroup));
+                ////Pre v1.7.1 specification
+                ////projectionElement.addChildElement(new SimpleXMLElement(NetworkMLConstants.SOURCE_ELEMENT, sourceCellGroup));
+                ////projectionElement.addChildElement(new SimpleXMLElement(NetworkMLConstants.TARGET_ELEMENT, targetCellGroup));
+                ////Post v1.7.1 specification
+                projectionElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.SOURCE_ATTR, sourceCellGroup));
+                projectionElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.TARGET_ATTR, targetCellGroup));
 
                 for (SynapticProperties synProps:  globalSynPropList)
                 {
                     SimpleXMLElement synPropsElement = new SimpleXMLElement(NetworkMLConstants.SYN_PROPS_ELEMENT);
-                    synPropsElement.addChildElement(new SimpleXMLElement(NetworkMLConstants.SYN_TYPE_ELEMENT, synProps.getSynapseType()));
+                    
+                    synPropsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.SYN_TYPE_ATTR, synProps.getSynapseType()));
+                    
+                    
+                    //synPropsElement.addChildElement(new SimpleXMLElement(NetworkMLConstants.SYN_TYPE_ELEMENT, synProps.getSynapseType()));
 
 
-                    SimpleXMLElement defValsElement = new SimpleXMLElement(NetworkMLConstants.DEFAULT_VAL_ELEMENT);
-                    synPropsElement.addChildElement(defValsElement);
+                    //SimpleXMLElement defValsElement = new SimpleXMLElement(NetworkMLConstants.DEFAULT_VAL_ELEMENT);
+                    //synPropsElement.addChildElement(defValsElement);
 
                     synPropsElement.addContent("\n        ");
 
-                    defValsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INTERNAL_DELAY_ATTR, synProps.getDelayGenerator().getNominalNumber()+""));
-                    defValsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.WEIGHT_ATTR, synProps.getWeightsGenerator().getNominalNumber()+""));
-                    defValsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.THRESHOLD_ATTR, synProps.getThreshold()+""));
+                    synPropsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INTERNAL_DELAY_ATTR, synProps.getDelayGenerator().getNominalNumber()+""));
+                    synPropsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.WEIGHT_ATTR, synProps.getWeightsGenerator().getNominalNumber()+""));
+                    synPropsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.THRESHOLD_ATTR, synProps.getThreshold()+""));
 
                     projectionElement.addChildElement(synPropsElement);
                 }
@@ -661,31 +692,62 @@ public class GeneratedNetworkConnections
 
                     }
 
-
-                    SimpleXMLElement preElement = new SimpleXMLElement(NetworkMLConstants.PRE_CONN_ELEMENT);
-                    preElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.CELL_ID_ATTR, synConn.sourceEndPoint.cellNumber+""));
-                    preElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.SEGMENT_ID_ATTR, synConn.sourceEndPoint.location.getSegmentId()+""));
-           
-                    if (synConn.sourceEndPoint.location.getFractAlong()!=SegmentLocation.DEFAULT_FRACT_CONN)
+                    //boolean prev171format = false; // Not fully supported for all changes...
+                    if (false)//prev171format)
                     {
-                        preElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.FRACT_ALONG_ATTR, 
-                                                                        synConn.sourceEndPoint.location.getFractAlong()+""));
-                    }
-                    
-                    SimpleXMLElement postElement = new SimpleXMLElement(NetworkMLConstants.POST_CONN_ELEMENT);
-                    postElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.CELL_ID_ATTR, synConn.targetEndPoint.cellNumber+""));
-                    postElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.SEGMENT_ID_ATTR, synConn.targetEndPoint.location.getSegmentId()+""));
+                        SimpleXMLElement preElement = new SimpleXMLElement(NetworkMLConstants.PRE_CONN_ELEMENT);
+                        preElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.CELL_ID_ATTR, synConn.sourceEndPoint.cellNumber+""));
+                        preElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.SEGMENT_ID_ATTR, synConn.sourceEndPoint.location.getSegmentId()+""));
 
-                    if (synConn.targetEndPoint.location.getFractAlong()!=SegmentLocation.DEFAULT_FRACT_CONN)
+                        if (synConn.sourceEndPoint.location.getFractAlong()!=SegmentLocation.DEFAULT_FRACT_CONN)
+                        {
+                            preElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.FRACT_ALONG_ATTR, 
+                                                                            synConn.sourceEndPoint.location.getFractAlong()+""));
+                        }
+
+                        SimpleXMLElement postElement = new SimpleXMLElement(NetworkMLConstants.POST_CONN_ELEMENT);
+                        postElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.CELL_ID_ATTR, synConn.targetEndPoint.cellNumber+""));
+                        postElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.SEGMENT_ID_ATTR, synConn.targetEndPoint.location.getSegmentId()+""));
+
+                        if (synConn.targetEndPoint.location.getFractAlong()!=SegmentLocation.DEFAULT_FRACT_CONN)
+                        {
+                            postElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.FRACT_ALONG_ATTR,
+                                                                            synConn.targetEndPoint.location.getFractAlong() + ""));
+                        }
+
+                        connElement.addContent("\n                ");
+                        connElement.addChildElement(preElement);
+                        connElement.addContent("\n                ");
+                        connElement.addChildElement(postElement);
+                    }
+                    else
                     {
-                        postElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.FRACT_ALONG_ATTR,
-                                                                        synConn.targetEndPoint.location.getFractAlong() + ""));
+                        connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.PRE_CELL_ID_ATTR, synConn.sourceEndPoint.cellNumber+""));
+                        
+                        if (synConn.sourceEndPoint.location.getSegmentId()!=0)
+                        {
+                            connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.PRE_SEGMENT_ID_ATTR, synConn.sourceEndPoint.location.getSegmentId()+""));
+                        }
+                        
+                        if (synConn.sourceEndPoint.location.getFractAlong()!=SegmentLocation.DEFAULT_FRACT_CONN)
+                        {
+                            connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.PRE_FRACT_ALONG_ATTR, 
+                                                                            synConn.sourceEndPoint.location.getFractAlong()+""));
+                        }
+                        
+                        connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.POST_CELL_ID_ATTR, synConn.targetEndPoint.cellNumber+""));
+                        
+                        if (synConn.targetEndPoint.location.getSegmentId()!=0)
+                        {
+                            connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.POST_SEGMENT_ID_ATTR, synConn.targetEndPoint.location.getSegmentId()+""));
+                        }
+                        
+                        if (synConn.targetEndPoint.location.getFractAlong()!=SegmentLocation.DEFAULT_FRACT_CONN)
+                        {
+                            connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.POST_FRACT_ALONG_ATTR,
+                                                                            synConn.targetEndPoint.location.getFractAlong() + ""));
+                        }
                     }
-
-                    connElement.addContent("\n                ");
-                    connElement.addChildElement(preElement);
-                    connElement.addContent("\n                ");
-                    connElement.addChildElement(postElement);
 
 
                     if (synConn.props!=null && synConn.props.size()>0)
@@ -699,7 +761,7 @@ public class GeneratedNetworkConnections
                             if (globalSynPropList.size()>1)
                             {
                                 /** @todo Clean up... */
-                                propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.SYN_TYPE_ELEMENT, prop.synapseType));
+                                propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.SYN_TYPE_ATTR, prop.synapseType));
 
                             }
                             propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.PROP_DELAY_ATTR, synConn.apPropDelay + ""));
@@ -889,6 +951,7 @@ public class GeneratedNetworkConnections
                         targetCellNumber);
         }
 
+        @Override
         public String toString()
         {
             StringBuilder sb = new StringBuilder();
@@ -906,6 +969,29 @@ public class GeneratedNetworkConnections
              for (ConnSpecificProps prop:props)
              {
                  sb.append(": "+ prop);
+             }
+            }
+            return sb.toString();
+        }
+        
+        public String toNiceString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Single Syn Conn: (cell: "
+                      + sourceEndPoint.cellNumber + ", seg: "
+                      + sourceEndPoint.location.getSegmentId() + ", fract: "
+                      + sourceEndPoint.location.getFractAlong() + ") -> (cell: "
+                      + targetEndPoint.cellNumber + ", seg: "
+                      + targetEndPoint.location.getSegmentId() + ", fract: "
+                      + targetEndPoint.location.getFractAlong() + ") prop delay: "
+                      + apPropDelay + ", conn type: "
+                      + connectionType);
+
+            if (props!=null)
+            {
+             for (ConnSpecificProps prop:props)
+             {
+                 sb.append(", "+ prop.toNiceString());
              }
             }
             return sb.toString();
@@ -970,7 +1056,7 @@ public class GeneratedNetworkConnections
                                       999,
                                       props);
 
-            System.out.println("Internal info: \n" + gnc.toString()); ;
+            System.out.println("Internal info: \n" + gnc.toString()); 
             String home = System.getProperty("user.home");
 
             SimpleXMLElement projs = gnc.getNetworkMLElement(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, true);
@@ -978,6 +1064,7 @@ public class GeneratedNetworkConnections
             System.out.println("projs: "+projs.getXMLString("", false));
 
 if (true) return;
+            
             File f = new File(home + System.getProperty("file.separator") + "tempp.txt");
             if (!f.exists()) System.out.println("File doesn't exist yet...");
             else System.out.println("File exists...");
@@ -986,7 +1073,7 @@ if (true) return;
             GeneratedNetworkConnections cpr2 = new GeneratedNetworkConnections(testProj);
 
             cpr2.loadFromFile(f);
-            System.out.println("New internal info: \n" + cpr2.toString()); ;
+            System.out.println("New internal info: \n" + cpr2.toString()); 
 
 
 

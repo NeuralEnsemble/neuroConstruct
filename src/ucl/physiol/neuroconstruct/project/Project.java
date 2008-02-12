@@ -1031,7 +1031,7 @@ public class Project implements TableModelListener
             rootElement.addChildElement(this.generatedNetworkConnections.getNetworkMLElement(UnitConverter.
                 GENESIS_PHYSIOLOGICAL_UNITS, extraComments));
 
-            rootElement.addContent("\n");
+            rootElement.addContent("\n\n");
 
             String stringForm = doc.getXMLString("", false);
 

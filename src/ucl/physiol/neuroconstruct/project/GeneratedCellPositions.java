@@ -343,8 +343,10 @@ public class GeneratedCellPositions
 
                 populationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.POP_NAME_ATTR, cellGroup));
 
-                populationElement.addChildElement(new SimpleXMLElement(NetworkMLConstants.CELLTYPE_ELEMENT, type));
+                ////Pre v1.7.1 specification
+                //////populationElement.addChildElement(new SimpleXMLElement(NetworkMLConstants.CELLTYPE_ELEMENT, type));
 
+                populationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.CELLTYPE_ATTR, type));
 
                 SimpleXMLElement instancesElement = new SimpleXMLElement(NetworkMLConstants.INSTANCES_ELEMENT);
 

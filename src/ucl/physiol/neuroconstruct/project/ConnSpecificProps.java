@@ -37,7 +37,15 @@ public class ConnSpecificProps
     {
         this.synapseType = synapseType;
     }
+    public ConnSpecificProps(ConnSpecificProps props)
+    {
+        this.synapseType = props.synapseType;
+        this.weight = props.weight;
+        this.internalDelay = props.internalDelay;
+    }
+    
 
+    @Override
     public String toString()
     {
         return "ConnSpecificProps [synapseType: "+synapseType
@@ -47,7 +55,7 @@ public class ConnSpecificProps
     public String toNiceString()
     {
         return "Props for "+synapseType
-            +": internal delay: "+internalDelay+" ms, weight: "+weight+"";
+            +": int del: "+internalDelay+" ms, weight: "+weight+"";
     }
 
 

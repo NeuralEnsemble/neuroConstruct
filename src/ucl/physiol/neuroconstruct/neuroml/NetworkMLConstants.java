@@ -30,7 +30,8 @@ public class NetworkMLConstants
 
     public static String NAMESPACE_URI = "http://morphml.org/networkml/schema";
 
-    public static String DEFAULT_SCHEMA_FILENAME = "http://www.morphml.org:8080/NeuroMLValidator/NeuroMLFiles/Schemata/v1.4/Level3/NetworkML_v1.4.xsd";
+    //public static String DEFAULT_SCHEMA_FILENAME = "http://www.morphml.org:8080/NeuroMLValidator/NeuroMLFiles/Schemata/v1.7/Level3/NetworkML_v1.7.xsd";
+    public static String DEFAULT_SCHEMA_FILENAME = "http://localhost:8084/NeuroMLValidator/NeuroMLFiles/Schemata/v1.7.1/Level3/NetworkML_v1.7.1.xsd";
 
     public static String PREFIX = "net";
 
@@ -46,7 +47,11 @@ public class NetworkMLConstants
 
     public static String POP_NAME_ATTR = "name";
 
+    ////Pre v1.7.1 specification
     public static String CELLTYPE_ELEMENT = "cell_type";
+    ////Post v1.7.1 specification
+    public static String CELLTYPE_ATTR = "cell_type";
+    
     public static String INSTANCES_ELEMENT = "instances";
 
     public static String INSTANCES_SIZE_ATTR = "size";
@@ -67,17 +72,28 @@ public class NetworkMLConstants
 
     public static String PROJ_NAME_ATTR = "name";
 
-
+    ////Pre v1.7.1 specification
     public static String SOURCE_ELEMENT = "source";
     public static String TARGET_ELEMENT = "target";
+    
+    ////Post v1.7.1 specification
+    public static String SOURCE_ATTR = "source";
+    public static String TARGET_ATTR = "target";
 
     public static String SYN_PROPS_ELEMENT = "synapse_props";
+    
+    ////Pre v1.7.1 specification
     public static String SYN_TYPE_ELEMENT = "synapse_type";
-
-
     public static String DEFAULT_VAL_ELEMENT = "default_values";
+    
+    ////Post v1.7.1 specification
+    public static String SYN_TYPE_ATTR = "synapse_type";
+
+
 
     public static String INTERNAL_DELAY_ATTR = "internal_delay";
+    public static String PRE_DELAY_ATTR = "pre_delay";
+    public static String POST_DELAY_ATTR = "post_delay";
     public static String PROP_DELAY_ATTR = "prop_delay";
 
     public static String WEIGHT_ATTR = "weight";
@@ -92,12 +108,24 @@ public class NetworkMLConstants
 
     public static String PRE_CONN_ELEMENT = "pre";
     public static String POST_CONN_ELEMENT = "post";
-    public static String CONN_PROP_ELEMENT = "properties";
 
     public static String CELL_ID_ATTR = "cell_id";
     public static String SEGMENT_ID_ATTR = "segment_id";
     public static String FRACT_ALONG_ATTR = "fraction_along";
+    
+    
+    public static String PRE_CELL_ID_ATTR = "pre_cell_id";
+    public static String PRE_SEGMENT_ID_ATTR = "pre_segment_id";
+    public static String PRE_FRACT_ALONG_ATTR = "pre_fraction_along";
+    
+    public static String POST_CELL_ID_ATTR = "post_cell_id";
+    public static String POST_SEGMENT_ID_ATTR = "post_segment_id";
+    public static String POST_FRACT_ALONG_ATTR = "post_fraction_along";
+    
 
+    public static String CONN_PROP_ELEMENT = "properties";
+    
+    
     public static String GROUP_ELEMENT = "group";
 
 

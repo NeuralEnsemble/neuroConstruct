@@ -34,6 +34,7 @@ import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
+import ucl.physiol.neuroconstruct.neuron.NeuronException;
 
 /**
  * A class for handling interaction with the project
@@ -96,7 +97,188 @@ public class ProjectManager implements GenerationReport
         PlotManager.setCurrentProject(project);
     }
 
+    public boolean doRunNeuron(SimConfig simConfig)
+    {
+                
+        File genNeuronDir = ProjectStructure.getNeuronCodeDir(activeProject.getProjectMainDirectory());
 
+
+        /**
+         * Will be the only sim dir if a single run, will be the dir for the actually run 
+         * neuron code when multiple sims are run
+         */
+        String primarySimDirName = activeProject.simulationParameters.getReference();
+
+
+        File positionsFile = new File(genNeuronDir, SimulationData.POSITION_DATA_FILE);
+        File netConnsFile = new File(genNeuronDir, SimulationData.NETCONN_DATA_FILE);
+        File elecInputFile = new File(genNeuronDir, SimulationData.ELEC_INPUT_DATA_FILE);
+
+     
+        try
+        {
+            activeProject.generatedCellPositions.saveToFile(positionsFile);
+            activeProject.generatedNetworkConnections.saveToFile(netConnsFile);
+            activeProject.generatedElecInputs.saveToFile(elecInputFile);
+        }
+        catch (IOException ex)
+        {
+            GuiUtils.showErrorMessage(logger, "Problem saving generated positions in file: "+ positionsFile.getAbsolutePath(), ex, null);
+            return false;
+        }
+
+        // Saving summary of the simulation params
+        try
+        {
+            SimulationsInfo.recordSimulationSummary(activeProject, simConfig, genNeuronDir, "NEURON", null);
+        }
+        catch (IOException ex2)
+        {
+            GuiUtils.showErrorMessage(logger, "Error when trying to save a summary of the simulation settings in dir: "+ genNeuronDir +
+                                      "\nThere will be less info on this simulation in the previous simulation browser dialog", ex2, null);
+        }
+
+
+        File[] generatedNeuronFiles = genNeuronDir.listFiles();
+
+
+        ArrayList<String> simDirsToCreate = activeProject.neuronFileManager.getGeneratedSimReferences();
+
+        simDirsToCreate.add(primarySimDirName);
+
+        for (String simRef : simDirsToCreate)
+        {
+            File dirForSimFiles = ProjectStructure.getDirForSimFiles(simRef, activeProject);
+
+            if (dirForSimFiles.exists())
+            {
+                SimpleFileFilter sff = new SimpleFileFilter(new String[]
+                                                            {".dat"}, null);
+                File[] files = dirForSimFiles.listFiles(sff);
+                for (int i = 0; i < files.length; i++)
+                {
+                    files[i].delete();
+                }
+                logger.logComment("Directory " + dirForSimFiles + " being cleansed");
+            }
+            else
+            {
+                GuiUtils.showErrorMessage(logger, "Directory " + dirForSimFiles + " doesn't exist...", null, null);
+                return false;
+            }
+
+            for (int i = 0; i < generatedNeuronFiles.length; i++)
+            {
+                String fn = generatedNeuronFiles[i].getName();
+
+                if (fn.endsWith(".dat")||
+                    fn.endsWith(".props") ||
+                        fn.endsWith(".py")||
+                        fn.endsWith(".xml") ||
+                    (activeProject.neuronSettings.isCopySimFiles() &&
+                        (fn.endsWith(".hoc") ||
+                        fn.endsWith(".mod") ||
+                        fn.endsWith(".dll"))))
+                {
+                    try
+                    {
+                        //System.out.println("Saving a copy of file: " + generatedNeuronFiles[i]
+                        //                  + " to dir: " +
+                        //                  dirForSimFiles);
+
+                        GeneralUtils.copyFileIntoDir(generatedNeuronFiles[i],
+                                                     dirForSimFiles);
+                    }
+                    catch (IOException ex)
+                    {
+                        GuiUtils.showErrorMessage(logger, "Error copying file: " + ex.getMessage(), ex, null);
+                        return false;
+                    }
+                }
+                else if (activeProject.neuronSettings.isCopySimFiles() &&
+                         (generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_I686) || 
+                         generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_64BIT)))
+                {
+                    File toDir = new File(dirForSimFiles, generatedNeuronFiles[i].getName());
+                    toDir.mkdir();
+                    logger.logComment("Saving the linux libs from the compiled mods of file: " +
+                                      generatedNeuronFiles[i] + " to dir: " + toDir);
+
+                    try
+                    {
+                        GeneralUtils.copyDirIntoDir(generatedNeuronFiles[i], toDir, true, true);
+                    }
+                    catch (IOException ex1)
+                    {
+                        GuiUtils.showErrorMessage(logger,
+                                                  "Error while saving the linux libs from the compiled mods from  of file: " +
+                                                  generatedNeuronFiles[i]
+                                                  + " to dir: " + dirForSimFiles, ex1, null);
+
+                        return false;
+                    }
+                }
+                else if (activeProject.neuronSettings.isCopySimFiles() && 
+                         generatedNeuronFiles[i].isDirectory() && 
+                         (generatedNeuronFiles[i].getName().equals(ProjectStructure.neuroMLPyUtilsDir) ||
+                          generatedNeuronFiles[i].getName().equals(ProjectStructure.neuronPyUtilsDir)))
+                {
+                    File toDir = new File(dirForSimFiles, generatedNeuronFiles[i].getName());
+                    toDir.mkdir();
+
+                    try
+                    {
+                        GeneralUtils.copyDirIntoDir(generatedNeuronFiles[i], toDir, true, true);
+                    }
+                    catch (IOException ex1)
+                    {
+                        GuiUtils.showErrorMessage(logger,
+                                                  "Error while copying file: " +
+                                                  generatedNeuronFiles[i]
+                                                  + " to dir: " + dirForSimFiles, ex1, null);
+
+                        return false;
+                    }
+                }
+
+            }
+
+            if (GeneralProperties.getGenerateMatlab())
+            {
+                MatlabOctave.createSimulationLoader(activeProject, simConfig, simRef);
+            }
+
+            if ((GeneralUtils.isWindowsBasedPlatform() || GeneralUtils.isMacBasedPlatform()) 
+                && GeneralProperties.getGenerateIgor())
+            {
+                IgorNeuroMatic.createSimulationLoader(activeProject, simConfig, simRef);
+            }
+        }
+
+        File simRunDir = ProjectStructure.getDirForSimFiles(activeProject.simulationParameters.getReference(),
+                                                                activeProject);
+        
+        if (!activeProject.neuronSettings.isCopySimFiles())
+        {
+            simRunDir = new File(genNeuronDir.getAbsolutePath());
+        }
+
+        try
+        {
+            File newMainHocFile = new File(simRunDir, activeProject.neuronFileManager.getMainHocFile().getName());
+
+
+            logger.logComment("Going to run file: "+ newMainHocFile);
+
+            activeProject.neuronFileManager.runNeuronFile(newMainHocFile);
+        }
+        catch (NeuronException ex)
+        {
+            GuiUtils.showErrorMessage(logger, ex.getMessage(), ex, null);
+            return false;
+        }
+        return true;
+    }
 
 
     //public

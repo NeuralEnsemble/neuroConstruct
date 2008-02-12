@@ -14,6 +14,7 @@ package ucl.physiol.neuroconstruct.neuroml;
 
 import java.io.*;
 import java.util.*;
+import java.util.ArrayList;
 import javax.xml.parsers.*;
 
 import org.xml.sax.*;
@@ -40,14 +41,14 @@ public class NetworkMLReader extends XMLFilterImpl
     private String unitsUsed = null;
 
     private String currentPopulation = null;
-    private String currentCellType = null;
+    //private String currentCellType = null;
     private int currentInstanceId = -1;
     private int currentNodeId = -1;
 
 
     private String currentProjection = null;
-    private String currentSource = null;
-    private String currentTarget = null;
+    //private String currentSource = null;
+    //private String currentTarget = null;
 
 
     private String currentSynType = null;
@@ -60,7 +61,6 @@ public class NetworkMLReader extends XMLFilterImpl
     private int currentTargetCellSegmentIndex = -1;
     private float currentTargetCellDisplacement = -1;
 
-    private float currentAPSpeed = -1;
 
 
     private String currentPropertyName = null;
@@ -68,7 +68,11 @@ public class NetworkMLReader extends XMLFilterImpl
     private long foundRandomSeed = Long.MIN_VALUE;
     private String foundSimConfig = null;
 
-    private ArrayList<ConnSpecificProps> props = null;
+    private ArrayList<ConnSpecificProps> globConnProps = new ArrayList<ConnSpecificProps>();
+    private ArrayList<ConnSpecificProps> localConnProps = new ArrayList<ConnSpecificProps>();
+    
+    private float globAPDelay = 0;
+    private float localAPDelay = 0;
 
     //private String metadataPrefix = MetadataConstants.PREFIX + ":";
 
@@ -83,6 +87,7 @@ public class NetworkMLReader extends XMLFilterImpl
 
     }
 
+    @Override
     public void characters(char[] ch, int start, int length) throws SAXException
     {
         String contents = new String(ch, start, length);
@@ -95,21 +100,22 @@ public class NetworkMLReader extends XMLFilterImpl
             if (getCurrentElement().equals(NetworkMLConstants.CELLTYPE_ELEMENT)
                 && getAncestorElement(1).equals(NetworkMLConstants.POPULATION_ELEMENT))
             {
-                currentCellType = contents;
-                logger.logComment(">> currentCellType: "+currentCellType+", currentPopulation: "+currentPopulation);
+                //currentCellType = contents;
+                logger.logComment(">> currentCellType: "+contents+", currentPopulation: "+currentPopulation);
             }
             else if (getCurrentElement().equals(NetworkMLConstants.SOURCE_ELEMENT)
                 && getAncestorElement(1).equals(NetworkMLConstants.PROJECTION_ELEMENT))
             {
-                currentSource = contents;
-                logger.logComment("currentSource: "+currentSource);
+                //currentSource = contents;
+                logger.logComment("currentSource: "+contents);
             }
             else if (getCurrentElement().equals(NetworkMLConstants.TARGET_ELEMENT)
                 && getAncestorElement(1).equals(NetworkMLConstants.PROJECTION_ELEMENT))
             {
-                currentTarget = contents;
-                logger.logComment("currentTarget: "+currentTarget);
+                //currentTarget = contents;
+                logger.logComment("currentTarget: "+contents);
             }
+            // Pre v1.7.1 style
             else if (getCurrentElement().equals(NetworkMLConstants.SYN_TYPE_ELEMENT)
                 && getAncestorElement(1).equals(NetworkMLConstants.SYN_PROPS_ELEMENT))
             {
@@ -132,12 +138,7 @@ public class NetworkMLReader extends XMLFilterImpl
                 {
                     this.foundSimConfig = contents;
                 }
-
-
             }
-
-
-
         }
     }
 
@@ -154,6 +155,7 @@ public class NetworkMLReader extends XMLFilterImpl
 
 
 
+    @Override
     public void startDocument()
     {
         logger.logComment("startDocument...");
@@ -161,6 +163,7 @@ public class NetworkMLReader extends XMLFilterImpl
         //cell = new Cell();
     }
 
+    @Override
     public void endDocument()
     {
 
@@ -204,25 +207,24 @@ public class NetworkMLReader extends XMLFilterImpl
      }
 
 
+    @Override
     public void startElement(String namespaceURI, String localName,
                              String qName, Attributes attributes)
     throws SAXException
     {
-        logger.logComment("\n          -----   Start element: namespaceURI: " + namespaceURI
-                           + ", localName: " + localName
-                           + ", qName: " + qName);
+        logger.logComment("\n\n          -----   Start element: " + qName + "        (namespaceURI: " + namespaceURI
+                           + ", localName: " + localName + ")");
 
 
-         int attrsLength = attributes.getLength();
-         for (int i = 0; i < attrsLength; i++)
-         {
-             String name = attributes.getLocalName(i);
-             String val = attributes.getValue(i);
+        int attrsLength = attributes.getLength();
+        for (int i = 0; i < attrsLength; i++)
+        {
+         String name = attributes.getLocalName(i);
+         String val = attributes.getValue(i);
 
-             logger.logComment("Attr name: " + name+ ", val: " + val+ ", qname: "
-                               + attributes.getQName(i)+ ", uri: " + attributes.getURI(i));
-
-         }
+         logger.logComment("Attr:  " + name+ " = " + val+ "         (qname: "
+                           + attributes.getQName(i)+ ", uri: " + attributes.getURI(i)+")");
+        }
 
          setCurrentElement(localName);
 
@@ -234,7 +236,6 @@ public class NetworkMLReader extends XMLFilterImpl
              logger.logComment(">>  Found a population of name: "+ name);
 
              currentPopulation = name;
-
          }
 
          else if (getCurrentElement().equals(NetworkMLConstants.INSTANCE_ELEMENT))
@@ -249,7 +250,6 @@ public class NetworkMLReader extends XMLFilterImpl
              {
                  currentNodeId = Integer.parseInt(nodeId);
              }
-
          }
 
 
@@ -302,6 +302,91 @@ public class NetworkMLReader extends XMLFilterImpl
                  currentSourceCellDisplacement = Float.parseFloat(attributes.getValue(NetworkMLConstants.FRACT_ALONG_ATTR));
              }
          }
+         else if (getCurrentElement().equals(NetworkMLConstants.CONNECTION_ELEMENT))
+         {
+             int connId = Integer.parseInt(attributes.getValue(NetworkMLConstants.CONNECTION_ID_ATTR));
+             
+             logger.logComment("Looking at conn: "+ connId);
+             
+             if (attributes.getValue(NetworkMLConstants.PRE_CELL_ID_ATTR)!=null)
+             {
+                 currentSourceCellNumber = Integer.parseInt(attributes.getValue(NetworkMLConstants.PRE_CELL_ID_ATTR));
+             }
+             currentSourceCellSegmentIndex =  0;
+             if (attributes.getValue(NetworkMLConstants.PRE_SEGMENT_ID_ATTR)!=null)
+             {
+                 currentSourceCellSegmentIndex = Integer.parseInt(attributes.getValue(NetworkMLConstants.PRE_SEGMENT_ID_ATTR));
+             }
+             currentSourceCellDisplacement = 0.5f;
+             if (attributes.getValue(NetworkMLConstants.PRE_FRACT_ALONG_ATTR)!=null)
+             {
+                 currentSourceCellDisplacement = Float.parseFloat(attributes.getValue(NetworkMLConstants.PRE_FRACT_ALONG_ATTR));
+             }
+             
+             if (attributes.getValue(NetworkMLConstants.POST_CELL_ID_ATTR)!=null)
+             {
+                 currentTargetCellNumber = Integer.parseInt(attributes.getValue(NetworkMLConstants.POST_CELL_ID_ATTR));
+             }
+             currentTargetCellSegmentIndex =  0;
+             if (attributes.getValue(NetworkMLConstants.POST_SEGMENT_ID_ATTR)!=null)
+             {
+                 currentTargetCellSegmentIndex = Integer.parseInt(attributes.getValue(NetworkMLConstants.POST_SEGMENT_ID_ATTR));
+             }
+             currentTargetCellDisplacement = 0.5f;
+             if (attributes.getValue(NetworkMLConstants.POST_FRACT_ALONG_ATTR)!=null)
+             {
+                 currentTargetCellDisplacement = Float.parseFloat(attributes.getValue(NetworkMLConstants.POST_FRACT_ALONG_ATTR));
+             }
+         }
+         
+         
+         // Post v1.7.1 style
+         else if (getCurrentElement().equals(NetworkMLConstants.SYN_PROPS_ELEMENT)
+             && getAncestorElement(1).equals(NetworkMLConstants.PROJECTION_ELEMENT))
+         {
+             ConnSpecificProps connProps = null;
+             if (attributes.getValue(NetworkMLConstants.SYN_TYPE_ATTR)!=null)
+             {
+                 this.currentSynType = attributes.getValue(NetworkMLConstants.SYN_TYPE_ATTR);
+                 logger.logComment("currentSynType: " + currentSynType);
+             }
+             if (attributes.getValue(NetworkMLConstants.INTERNAL_DELAY_ATTR)!=null)
+             {
+                 connProps = new ConnSpecificProps(currentSynType);
+                 connProps.internalDelay = Float.parseFloat(attributes.getValue(NetworkMLConstants.INTERNAL_DELAY_ATTR));
+             }
+             if (attributes.getValue(NetworkMLConstants.PRE_DELAY_ATTR)!=null)
+             {
+                 if (connProps==null) 
+                     connProps = new ConnSpecificProps(currentSynType);
+                 
+                 connProps.internalDelay = connProps.internalDelay + Float.parseFloat(attributes.getValue(NetworkMLConstants.PRE_DELAY_ATTR));
+             }
+             if (attributes.getValue(NetworkMLConstants.POST_DELAY_ATTR)!=null)
+             {
+                 if (connProps==null) 
+                     connProps = new ConnSpecificProps(currentSynType);
+                 
+                 connProps.internalDelay = connProps.internalDelay + Float.parseFloat(attributes.getValue(NetworkMLConstants.POST_DELAY_ATTR));
+             }
+             if (attributes.getValue(NetworkMLConstants.PROP_DELAY_ATTR)!=null)
+             {                 
+                 this.globAPDelay = Float.parseFloat(attributes.getValue(NetworkMLConstants.PROP_DELAY_ATTR));
+             }
+             if (attributes.getValue(NetworkMLConstants.WEIGHT_ATTR)!=null)
+             {
+                 if (connProps==null) 
+                     connProps = new ConnSpecificProps(currentSynType);
+                 
+                 connProps.weight = Float.parseFloat(attributes.getValue(NetworkMLConstants.WEIGHT_ATTR));
+             }
+             if (attributes.getValue(NetworkMLConstants.THRESHOLD_ATTR)!=null)
+             {
+                 logger.logComment("Note: connection specific thresholds not implemented!!");
+             }
+             
+             if (connProps!=null) this.globConnProps.add(connProps);
+         }
 
          else if (getCurrentElement().equals(NetworkMLConstants.POST_CONN_ELEMENT)
              && getAncestorElement(1).equals(NetworkMLConstants.CONNECTION_ELEMENT))
@@ -318,14 +403,13 @@ public class NetworkMLReader extends XMLFilterImpl
              currentTargetCellDisplacement = 0.5f;
              if (attributes.getValue(NetworkMLConstants.FRACT_ALONG_ATTR)!=null)
              {
-                 currentTargetCellDisplacement = Float.parseFloat(attributes.getValue(NetworkMLConstants.
-                     FRACT_ALONG_ATTR));
+                 currentTargetCellDisplacement = Float.parseFloat(attributes.getValue(NetworkMLConstants.FRACT_ALONG_ATTR));
              }
 
          }
 
          else if (getCurrentElement().equals(NetworkMLConstants.CONN_PROP_ELEMENT)
-             && getAncestorElement(1).equals(NetworkMLConstants.CONNECTION_ELEMENT))
+                  && getAncestorElement(1).equals(NetworkMLConstants.CONNECTION_ELEMENT))
          {
              String synType = currentSynType;
              String inclSynType = attributes.getValue(NetworkMLConstants.SYN_TYPE_ELEMENT);
@@ -333,31 +417,57 @@ public class NetworkMLReader extends XMLFilterImpl
              if (inclSynType != null && inclSynType.length() > 0)
                  synType = inclSynType;
 
-             ConnSpecificProps props = new ConnSpecificProps(synType);
+             ConnSpecificProps localProps = null;
+             
              if (attributes.getValue(NetworkMLConstants.INTERNAL_DELAY_ATTR) != null)
              {
-                 props.internalDelay = Float.parseFloat(attributes.getValue(NetworkMLConstants.INTERNAL_DELAY_ATTR));
+                 if (localProps==null) localProps = getGlobalSynProps(synType);
+                 localProps.internalDelay = Float.parseFloat(attributes.getValue(NetworkMLConstants.INTERNAL_DELAY_ATTR));
+             }
+             if (attributes.getValue(NetworkMLConstants.PRE_DELAY_ATTR) != null)
+             {
+                 if (localProps==null) localProps = getGlobalSynProps(synType);
+                 localProps.internalDelay = localProps.internalDelay + Float.parseFloat(attributes.getValue(NetworkMLConstants.PRE_DELAY_ATTR));
+             }
+             if (attributes.getValue(NetworkMLConstants.POST_DELAY_ATTR) != null)
+             {
+                 if (localProps==null) localProps = getGlobalSynProps(synType);
+                 localProps.internalDelay = localProps.internalDelay + Float.parseFloat(attributes.getValue(NetworkMLConstants.POST_DELAY_ATTR));
              }
              if (attributes.getValue(NetworkMLConstants.WEIGHT_ATTR) != null)
              {
-                 props.weight = Float.parseFloat(attributes.getValue(NetworkMLConstants.WEIGHT_ATTR));
+                 if (localProps==null) localProps = getGlobalSynProps(synType);
+                 localProps.weight = Float.parseFloat(attributes.getValue(NetworkMLConstants.WEIGHT_ATTR));
+             }
+             if (attributes.getValue(NetworkMLConstants.THRESHOLD_ATTR) != null)
+             {
+                 if (localProps==null) localProps = getGlobalSynProps(synType);
+                 logger.logComment("Note: conn specific threshold not implemented!!");
              }
 
-             if (this.props == null)this.props = new ArrayList<ConnSpecificProps> ();
-             this.props.add(props);
+             if (this.localConnProps == null) this.localConnProps = new ArrayList<ConnSpecificProps> ();
+             if (localProps!=null)  localConnProps.add(localProps);
 
              if (attributes.getValue(NetworkMLConstants.PROP_DELAY_ATTR)!=null)
              {
-                 this.currentAPSpeed = Float.parseFloat(attributes.getValue(NetworkMLConstants.PROP_DELAY_ATTR));
+                 this.localAPDelay = Float.parseFloat(attributes.getValue(NetworkMLConstants.PROP_DELAY_ATTR));
              }
          }
 
-
-
-
     }
+    
+    ConnSpecificProps getGlobalSynProps(String synType)
+    {
+        for(ConnSpecificProps props: globConnProps)
+        {
+            if (props.synapseType.equals(synType))
+                return new ConnSpecificProps(props);
+        }
+        return new ConnSpecificProps(synType);
+    }
+    
 
-
+    @Override
     public void endElement(String namespaceURI, String localName, String qName)
     {
 
@@ -366,16 +476,39 @@ public class NetworkMLReader extends XMLFilterImpl
         if (getCurrentElement().equals(NetworkMLConstants.POPULATION_ELEMENT))
         {
             currentPopulation = null;
-            this.currentCellType = null;
+            //this.currentCellType = null;
         }
         else if (getCurrentElement().equals(NetworkMLConstants.INSTANCE_ELEMENT))
         {
             this.currentInstanceId = -1;
             this.currentNodeId = -1;
         }
+        else if (getCurrentElement().equals(NetworkMLConstants.PROJECTION_ELEMENT))
+        {
+            globAPDelay = 0;
+            globConnProps = new ArrayList<ConnSpecificProps>();
+        }
         else if (getCurrentElement().equals(NetworkMLConstants.CONNECTION_ELEMENT))
         {
 
+            float propDelay = globAPDelay;
+            if (localAPDelay>0) propDelay = this.localAPDelay;
+            
+            ArrayList<ConnSpecificProps> connProps = new ArrayList<ConnSpecificProps>();
+            connProps.addAll(globConnProps);
+            
+            for(ConnSpecificProps props: localConnProps)
+            {
+                for(ConnSpecificProps globProps: globConnProps)
+                {
+                    if (globProps.synapseType.equals(props.synapseType))
+                    {
+                        connProps.remove(globProps);
+                    }
+                }
+                connProps.add(props);
+            }
+            
             this.netConns.addSynapticConnection(this.currentProjection,
                     GeneratedNetworkConnections.MORPH_NETWORK_CONNECTION,
                                                 currentSourceCellNumber,
@@ -384,13 +517,15 @@ public class NetworkMLReader extends XMLFilterImpl
                                                 currentTargetCellNumber,
                                                 currentTargetCellSegmentIndex,
                                                 currentTargetCellDisplacement,
-                                                currentAPSpeed,
-                                                props);
+                                                propDelay,
+                                                connProps);
 
-            props = null;
+            this.localConnProps = new ArrayList<ConnSpecificProps>();
+            localAPDelay = 0;
 
 
         }
+        
 
 
 
@@ -405,12 +540,12 @@ public class NetworkMLReader extends XMLFilterImpl
 
         try
         {
-            Project testProj = Project.loadProject(new File("projects/Parall/Parall.neuro.xml"),
-                                                   null);
+            //Project testProj = Project.loadProject(new File("projects/Parall/Parall.neuro.xml"),null);
+            Project testProj = Project.loadProject(new File("examples\\Ex4-NEURONGENESIS\\Ex4-NEURONGENESIS.neuro.xml"),null);
 
-            File f = new File("projects/Parall/savedNetworks/Net_21-Dec-06_18-02-49.nml");
+            File f = new File("examples\\Ex4-NEURONGENESIS\\savedNetworks\\nnn.nml");
 
-            logger.logComment("Loading netml cell from "+ f.getAbsolutePath());
+            logger.logComment("Loading netml cell from "+ f.getAbsolutePath(), true);
 
             GeneratedCellPositions gcp = new GeneratedCellPositions(testProj);
             GeneratedNetworkConnections gnc = new GeneratedNetworkConnections(testProj);
@@ -433,7 +568,7 @@ public class NetworkMLReader extends XMLFilterImpl
             xmlReader.parse(is);
 
             logger.logComment("Contents: "+gcp.toString());
-            logger.logComment("Net conns: "+gnc.toString());
+            logger.logComment("Net conns: "+gnc.toNiceString());
 
 
 

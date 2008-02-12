@@ -9,16 +9,21 @@ See also the README file
 - Added option of saving morphologies in smaller, more efficient format. Existing projects still use old method, 
   new ones use the smaller format by default. See "Morphology save format" in Glossary.
 
-- Changed handling of mod file generation. Option "Copy sim files to results dir" to either use mod files/compiled libraries
-  in the location they're generated (generateNEURON dir, this is default now), or copy the files to simulations/Sim_xx
-  and use them there. This second option was the previous way of using accessing the mods, and may have been the cause of some 
-  problems. 
+- Changed handling of mod file generation. Biggest practical change is now mod files are only compiled once (the first time 
+  NEURON scripts are generated), unless any of the XML/XSL files are altered. An option "Copy sim files to results dir" is added,
+  to either use mod files/compiled libraries in the location they're generated (generateNEURON dir, this is default now), or copy 
+  the files to simulations/Sim_xx and use them there. This second option was the previous way of using accessing the mods, and 
+  may have been the cause of some problems in the past. Another option "Generate all mod files" has been added, to compile all 
+  mod files in project, even if the cell mechanism isn't used in this simulation configuration.
+
+- NeuroML version 1.7.1 is used. Some of the proposed changes to NetworkML for v2.0 are now included as options, and the old format
+  will be disabled in v2.0, see http://www.morphml.org:8080/NeuroMLValidator/ReqVersion2.jsp. The new format is used in the export of 
+  NetworkML, but both formats can eb loaded back in. Other changes in NeuroML v1.7.1 are **unstable & subject to change** new synaptic
+  mechanism features (e.g. STP).
 
 - NeuroML export tab is slightly updated.
 
-- NeuroML version 1.7.1 is used. At the moment the main changes are *unstable* new synaptic mechanism features.
-
-- Cleaned up electrotonic length handling & updated docs.
+- Cleaned up electrotonic length handling & updated docs/glossary.
 
 - HDF5 plots...
 

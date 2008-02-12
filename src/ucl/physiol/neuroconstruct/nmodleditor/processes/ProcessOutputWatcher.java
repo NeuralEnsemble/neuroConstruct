@@ -42,7 +42,8 @@ public class ProcessOutputWatcher extends Thread
     {
         return log.toString();
     }
-
+    
+    @Override
     public void run()
     {
         try

@@ -13,6 +13,9 @@
 package ucl.physiol.neuroconstruct.nmodleditor.processes;
 
 import java.io.*;
+import java.text.*;
+import java.util.Date;
+import ucl.physiol.neuroconstruct.gui.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.neuron.*;
@@ -119,7 +122,7 @@ public class ProcessManager
 
     }
 
-    public boolean compileFileWithNeuron() throws NeuronException
+    public boolean compileFileWithNeuron(boolean forceRecompile) throws NeuronException
     {
         logger.logComment("Going to compile the file: "+ myFile.getAbsolutePath());
 
@@ -143,18 +146,11 @@ public class ProcessManager
                 String filename = directoryToExecuteIn
                                   + System.getProperty("file.separator")
                                   + "nrnmech.dll";
-
-                logger.logComment("Name of file to be created: " + filename);
-
+                
+                
                 fileToBeCreated = new File(filename);
 
-                logger.logComment("Trying to delete any previous: " + fileToBeCreated.getAbsolutePath());
-
-                if (fileToBeCreated.exists())
-                {
-                    fileToBeCreated.delete();
-                    logger.logComment("Deleted.");
-                }
+                logger.logComment("Name of file to be created: " + fileToBeCreated.getAbsolutePath());
 
                 commandToExecute = neuronHome
                                    + "\\bin\\rxvt.exe -e "
@@ -164,6 +160,8 @@ public class ProcessManager
                                    + "/lib/mknrndll.sh "
                                    + neuronHome
                                    + " ";
+                
+                logger.logComment("commandToExecute: " + commandToExecute);
             }
             else
             {
@@ -221,15 +219,8 @@ public class ProcessManager
 
                 fileToBeCreated = new File(filename);
                 backupFileToBeCreated = new File(backupFilename);
-
-                logger.logComment("Trying to delete any previous: " + fileToBeCreated.getAbsolutePath());
-
-                if (fileToBeCreated.exists())
-                {
-                    fileToBeCreated.delete();
-
-                    logger.logComment("Deleted.");
-                }
+                
+                
 
                 commandToExecute = neuronHome
                                    + System.getProperty("file.separator")
@@ -240,7 +231,66 @@ public class ProcessManager
                 logger.logComment("commandToExecute: " + commandToExecute);
 
             }
+            
+            if (!forceRecompile)
+            {
+                File fileToCheck = null;
+
+                if (fileToBeCreated.exists()) 
+                    fileToCheck = fileToBeCreated;
+
+                if (backupFileToBeCreated!=null && backupFileToBeCreated.exists()) 
+                    fileToCheck = backupFileToBeCreated;
+
+                logger.logComment("Going to check if mods in "+myFile.getParentFile()+"" +
+                            " are newer than "+ fileToCheck, true);
+
+                if (fileToCheck!=null)
+                {
+                    DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG);
+                    
+                    boolean newerModExists = false;
+                    File[] allMods = myFile.getParentFile().listFiles(new SimpleFileFilter(new String[]{".mod"}, ""));
+                    for(File f: allMods)
+                    {
+                        if (f.lastModified() > fileToCheck.lastModified())
+                        {
+                            newerModExists = true;
+                            logger.logComment("File "+f+" ("+df.format(new Date(f.lastModified()))+") was modified later than "+ fileToCheck +" ("+df.format(new Date(fileToCheck.lastModified()))+")");
+                        }
+                    }
+                    if (!newerModExists) 
+                    {
+                        logger.logComment("Not being asked to recompile, and no mod files exist in "+myFile.getParentFile()+"" +
+                            " which are newer than "+ fileToCheck);
+                        return true;
+                    }
+                    else
+                    {
+                        logger.logComment("Newer mod files exist!");
+                    }
+                }
+
+            }
+            else
+            {
+                logger.logComment("Forcing recompile...");
+            }
+
+            logger.logComment("Trying to delete any previous: " + fileToBeCreated.getAbsolutePath());
+
+            if (fileToBeCreated.exists())
+            {
+                fileToBeCreated.delete();
+
+                logger.logComment("Deleted.");
+            }
+            
+            
+            
+            
             logger.logComment("directoryToExecuteIn: " + directoryToExecuteIn);
+            
 
             Process currentProcess = rt.exec(commandToExecute, null, new File(directoryToExecuteIn));
             ProcessOutputWatcher procOutputMain = new ProcessOutputWatcher(currentProcess.getInputStream(), "Compile");
@@ -380,7 +430,7 @@ public class ProcessManager
     public static void main(String args[])
     {
         //File f = new File("/home/padraig/temp/mod/leak.mod");
-        File f = new File("c:\\temp\\mod\\leak.mod");
+        File f = new File("D:\\nC_projects\\Project_1hjkfjhk\\generatedNEURON\\CurrentClampExt.mod");
 
         System.out.println("Neuron home: "+ GeneralProperties.getNeuronHomeDir());
 
@@ -388,10 +438,10 @@ public class ProcessManager
         try
         {
             ProcessManager pm = new ProcessManager(f);
-            System.out.println("Trying test neuron...");
-            pm.testFileWithNeuron();
+            //System.out.println("Trying test neuron...");
+            //pm.testFileWithNeuron();
             System.out.println("Trying complie...");
-            pm.compileFileWithNeuron();
+            pm.compileFileWithNeuron(false);
             System.out.println("Done!");
 
             System.exit(0);

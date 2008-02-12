@@ -97,7 +97,7 @@ public class SimulationParameters
         minElectroLen = PREF_MIN_ELECT_LEN;
     }
 
-
+    @Override
     public String toString()
     {
         return "SimulationParameters [Reference: " + reference

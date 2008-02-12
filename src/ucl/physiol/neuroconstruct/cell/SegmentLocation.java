@@ -25,7 +25,6 @@ public class SegmentLocation implements Serializable
 {
     static final long serialVersionUID = 376736284031155L;
     
-    
     public static float DEFAULT_FRACT_CONN = 0.5f;
     
     private int segmentId;
