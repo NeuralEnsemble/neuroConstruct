@@ -1046,7 +1046,7 @@ public class NeuronFileManager
         response.append("print \"\"\n");
         response.append("print \""+indent+"neuroConstruct generated NEURON simulation \"\n");
         response.append("print \""+indent+"for project: " + project.getProjectFile().getAbsolutePath() + " \"\n");
-
+      
         response.append("print \"\"\n");
 
 
@@ -1061,6 +1061,15 @@ public class NeuronFileManager
         
 
         response.append("print \""+indent+"Description: " + desc + "\"\n");
+        
+          response.append("print \"\"\n");
+        response.append("print \""+indent+"Simulation Configuration: " + simConfig + " \"\n");
+        if (simConfig.getDescription().trim().length()>0)
+        {
+            desc = simConfig.getDescription();
+            
+            response.append("print \""+indent + desc + " \"\n");
+        }
 
         response.append("print \" \"\n");
         response.append("print  \"*****************************************************\"\n\n");
@@ -1322,6 +1331,8 @@ public class NeuronFileManager
                     Cell stimCell = project.cellManager.getCell(stimCellType);
 
                     Segment segToStim = stimCell.getSegmentWithId(nextInput.getSegmentId());
+                    
+                    logger.logComment("Going to add stim to seg " + nextInput.getSegmentId() + ": "+ segToStim);
 
                     float fractionAlongSegment = nextInput.getFractionAlong();
 

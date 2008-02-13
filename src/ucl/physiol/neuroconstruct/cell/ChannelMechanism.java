@@ -143,6 +143,21 @@ public class ChannelMechanism implements Serializable
         }
         return info.toString();
     }
+    public String getExtraParamsBracket()
+    {
+        StringBuffer info = new StringBuffer("(");
+           
+        if (extraParameters!=null)
+        {
+            for (int i=0;i<extraParameters.size();i++)
+            {
+                if (i!=0) info.append(", ");
+                info.append(extraParameters.get(i).toString());
+            }
+        }
+        info.append(")");
+        return info.toString();
+    }
     
     public void setExtraParam(String name, float value)
     {       

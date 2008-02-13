@@ -1140,8 +1140,7 @@ public class Cell implements Serializable
 
     public boolean associateGroupWithChanMech(String group, ChannelMechanism chanMech)
     {
-        logger.logComment("Cell being told to associate group: " + group
-                          + " with channel mechanism: " + chanMech);
+        logger.logComment("Cell being told to associate group: " + group + " with channel mechanism: " + chanMech);
            
         Vector<String> grps = getAllGroupNames();
         
@@ -1159,7 +1158,7 @@ public class Cell implements Serializable
 
             if (otherChanMech.getName().equals(chanMech.getName()))
             {
-                logger.logComment("otherChanMech: " +otherChanMech+", chanMech: " +chanMech );
+                logger.logComment("otherChanMech: " +otherChanMech+", new chanMech: " +chanMech );
                 Vector<String> groups = chanMechsVsGroups.get(otherChanMech);
 
                 logger.logComment("groups: " + groups);
@@ -1172,6 +1171,21 @@ public class Cell implements Serializable
                     if (otherChanMech.getDensity()==chanMech.getDensity())
                     {
                         logger.logComment("otherChanMech: " +otherChanMech+" and chanMech: " +chanMech +" have the same group/name/density. ");
+                        logger.logComment("Amalgamating extra params. Mainly needed for importing of parameters from NEURON exported NeuroML");
+                        
+                        for (MechParameter mp: otherChanMech.getExtraParameters())
+                        {
+                            logger.logComment("Adding mech param: " + mp);
+                            chanMech.setExtraParam(mp.getName(), mp.getValue());
+                        } 
+                        logger.logComment("Current chanMech: " +chanMech);
+                    }
+                    else if (chanMech.getDensity()==-1)
+                    {
+                        logger.logComment("otherChanMech: has density: "+ chanMech.getDensity()+", so using older density");
+                        
+                        chanMech.setDensity(otherChanMech.getDensity());
+                        
                         logger.logComment("Amalgamating extra params. Mainly needed for importing of parameters from NEURON exported NeuroML");
                         
                         for (MechParameter mp: otherChanMech.getExtraParameters())
@@ -1207,7 +1221,7 @@ public class Cell implements Serializable
             groups = chanMechsVsGroups.get(chanMech);
         }
                     
-        logger.logComment("Groups which currently have chan mech: " + chanMech+": "+ groups);
+        logger.logComment("Groups which had chan mech: " + chanMech+": "+ groups);
         
         if (!groups.contains(group)) 
             groups.add(group);

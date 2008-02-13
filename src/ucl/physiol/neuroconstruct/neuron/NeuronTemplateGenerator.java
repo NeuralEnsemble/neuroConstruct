@@ -1058,15 +1058,20 @@ public class NeuronTemplateGenerator
 
         Vector allSegments = cell.getExplicitlyModelledSegments();
         
+        if (NeuronFileManager.addComments())
+            nsegLines.add("    // All sections not mentioned here have nseg = 1\n");
+        
         for (int i = 0; i < allSegments.size(); i++)
         {
             Segment segment = (Segment) allSegments.elementAt(i);
             if (segment.isFirstSectionSegment())
             {
-
+                if (segment.getSection().getNumberInternalDivisions()!=1)
+                {
                     nsegLines.add("    "+NeuronFileManager.getHocSectionName(segment.getSection().getSectionName())
                                     + " nseg = "
                                     + segment.getSection().getNumberInternalDivisions());
+                }
 
             }
         }
@@ -1176,10 +1181,8 @@ public class NeuronTemplateGenerator
 
             if (allChanMechs.size()>0)
             {
-
                 for (int j = 0; j < allChanMechs.size(); j++)
                 {
-
                     ChannelMechanism nextChanMech = allChanMechs.get(j);
 
                     CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
@@ -1222,6 +1225,11 @@ public class NeuronTemplateGenerator
                             NeuronFileManager.addHocComment(response,
                                                      "    Assuming parameters other than max cond dens are set in the mod file...");
                         }
+                        else
+                        {
+                            NeuronFileManager.addHocComment(response,
+                                                     "    Using parameters: "+mps);
+                        }
                         
                         response.append("        insert " + nextChanMech.getName() + "");
 
@@ -1253,6 +1261,12 @@ public class NeuronTemplateGenerator
                                 
                                 response.append("  { "+condString + moreParams.toString() +" }  ");
                             }
+                        }
+                        else if (cellMech.getMechanismType().equals(CellMechanism.ION_CONCENTRATION))
+                        {
+                            
+                                response.append("  { "+moreParams.toString() +" }  ");
+                            
                         }
 
                         if (cellMech instanceof ChannelMLCellMechanism)

@@ -60,6 +60,8 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
     private Color segmentHighlightMain = new Color(250,80,40);
     private Color segmentHighlightSecondary = new Color(250,250,40);
+    
+    private Color segmentHighlightNoGmax = Color.BLUE.brighter().brighter();
 
     private Canvas3D canvas3D = null;
 
@@ -298,6 +300,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
      * An attempt to clean up and free as much memory as possible when the 3D view is closed. Note: quick and dirty,
      * Java 3D specialist needed to clean up properly...
      */
+    @Override
     public void destroy3D()
     {
         System.out.println("------------     Clearing memory...");
@@ -503,6 +506,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             this.parent = parent;
             this.exitOnClose = exitOnClose;
         }
+        @Override
         public void windowClosing(WindowEvent e)
         {
             parent.dispose();
@@ -670,7 +674,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         while (radioButtonNames.hasMoreElements())
         {
-            JRadioButton nextRadioButton = (JRadioButton) synLocRadioButtons.get(radioButtonNames.nextElement());
+            JRadioButton nextRadioButton = synLocRadioButtons.get(radioButtonNames.nextElement());
             jPanelColourControls.add(nextRadioButton);
             if (nextRadioButton.getText().equals(selectedSynType))
             {
@@ -740,7 +744,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         }
         while (radioButtonNames.hasMoreElements())
         {
-            JRadioButton nextRadioButton = (JRadioButton) groupRadioButtons.get(radioButtonNames.nextElement());
+            JRadioButton nextRadioButton = groupRadioButtons.get(radioButtonNames.nextElement());
             jPanelColourControls.add(nextRadioButton);
             if (nextRadioButton.getText().equals(selectedGroup))
             {
@@ -839,7 +843,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         while (radioButtonNames.hasMoreElements())
         {
-            JRadioButton nextRadioButton = (JRadioButton) densMechRadioButtons.get(radioButtonNames.nextElement());
+            JRadioButton nextRadioButton = densMechRadioButtons.get(radioButtonNames.nextElement());
             jPanelColourControls.add(nextRadioButton);
             if (nextRadioButton.getText().equals(selectedDensMechName))
             {
@@ -863,6 +867,9 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         float maxVal = -1*Float.MAX_VALUE;
         float minVal = Float.MAX_VALUE;
+        float noGmaxVal = -1;
+        
+        JLabel jLabelNoGmax = null;
 
         for (int k = 0; k < groups.size(); k++)
         {
@@ -890,11 +897,14 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
                     if (nextChanMech.getName().equals(selectedDensMechName))
                     {
-                        if (maxVal < nextChanMech.getDensity())
-                            maxVal = nextChanMech.getDensity();
+                        if (nextChanMech.getDensity()!= noGmaxVal)
+                        {
+                            if (maxVal < nextChanMech.getDensity())
+                                maxVal = nextChanMech.getDensity();
 
-                        if (minVal > nextChanMech.getDensity())
-                            minVal = nextChanMech.getDensity();
+                            if (minVal > nextChanMech.getDensity())
+                                minVal = nextChanMech.getDensity();
+                        }
                     }
                 }
             }
@@ -931,13 +941,25 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                     if (nextChanMech.getName().equals(selectedDensMechName))
                     {
                         float fraction = 1;
-                        if (maxVal != minVal)
+                        if (nextChanMech.getDensity()!= noGmaxVal)
                         {
-                            fraction = (nextChanMech.getDensity() - minVal) / (maxVal - minVal);
+                            if (maxVal != minVal)
+                            {
+                                fraction = (nextChanMech.getDensity() - minVal) / (maxVal - minVal);
+                            }
+                            highlightSingleGroup(group, GeneralUtils.getFractionalColour(segmentHighlightSecondary,
+                                segmentHighlightMain,
+                                fraction));
                         }
-                        highlightSingleGroup(group, GeneralUtils.getFractionalColour(segmentHighlightSecondary,
-                            segmentHighlightMain,
-                            fraction));
+                        else
+                        {
+                            highlightSingleGroup(group, segmentHighlightNoGmax);
+                            jLabelNoGmax = new JLabel("No Gmax set");
+                            jLabelNoGmax.setOpaque(true);
+                            jLabelNoGmax.setBackground(segmentHighlightNoGmax);
+                        }
+                        
+                        
                     }
                 }
             }
@@ -974,6 +996,10 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
             }
         }
+        if (jLabelNoGmax!=null)
+        {
+                maxMinPanel.add(jLabelNoGmax);
+        }
         jPanelControls.setPreferredSize(new Dimension(400, 150));
         jPanelColourControls.setPreferredSize(new Dimension(400, 80));
 
@@ -998,6 +1024,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
     /**
      * Called by SectionPicker to inform the panel a primitive has been selected
      */
+    @Override
     public void markPrimitiveAsSelected(Primitive selectedPrim)
     {
         logger.logComment("Marking prim as selected...");
@@ -1027,7 +1054,12 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             {
                 ChannelMechanism nextChanMech = chans.get(i);
 
-                chanInfo.append(nextChanMech.getName() + " "+nextChanMech.getDensity()+ " ");
+                chanInfo.append(nextChanMech.getName() + ": "+nextChanMech.getDensity());
+                if (nextChanMech.getExtraParameters()!=null && nextChanMech.getExtraParameters().size()>0)
+                {
+                    chanInfo.append(" "+nextChanMech.getExtraParamsBracket());
+                }
+                if (i < chans.size()-1) chanInfo.append(", ");
             }
 
             ApPropSpeed appv = displayedCell.getApPropSpeedForSegment(latestSelectedSegment);
@@ -1186,17 +1218,17 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         Enumeration buttonNames = sectionTypeButtons.keys();
         while (buttonNames.hasMoreElements())
         {
-            jPanelColourControls.add( (JButton) sectionTypeButtons.get(buttonNames.nextElement()));
+            jPanelColourControls.add(sectionTypeButtons.get(buttonNames.nextElement()));
         }
         jPanelColourControls.repaint();
 
         Vector sections = displayedCell.getAllSegments();
 
-        Color dendColour  = ((JButton)sectionTypeButtons.get("Dendrites")).getBackground();
-        Color axonColour  = ((JButton)sectionTypeButtons.get("Axons")).getBackground();
+        Color dendColour  = (sectionTypeButtons.get("Dendrites")).getBackground();
+        Color axonColour  = (sectionTypeButtons.get("Axons")).getBackground();
 
-        Color dendFinVolColour  = ((JButton)sectionTypeButtons.get("Dendrites with finite volume")).getBackground();
-        Color axonFinVolColour  = ((JButton)sectionTypeButtons.get("Axons with finite volume")).getBackground();
+        Color dendFinVolColour  = (sectionTypeButtons.get("Dendrites with finite volume")).getBackground();
+        Color axonFinVolColour  = (sectionTypeButtons.get("Axons with finite volume")).getBackground();
 
         for (int i = 0; i < sections.size(); i++)
         {
@@ -1526,7 +1558,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         while (radioButtonNames.hasMoreElements())
         {
-            JRadioButton nextRadioButton = (JRadioButton) groupRadioButtons.get(radioButtonNames.nextElement());
+            JRadioButton nextRadioButton = groupRadioButtons.get(radioButtonNames.nextElement());
 
             if (nextRadioButton.getText().equals(groupName))
             {
@@ -1538,12 +1570,14 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
     };
 
+    @Override
     public void refresh3D()
     {
         /** @todo ... (Needed?) */
     }
 
 
+    @Override
     public void setLastViewingTransform3D(Transform3D lastViewingTransform3D)
     {
         if (lastViewingTransform3D != null)
@@ -1564,6 +1598,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
     }
 
 
+    @Override
     public Transform3D getLastViewingTransform3D()
     {
         Transform3D t3d = new Transform3D();
@@ -1632,7 +1667,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
             });
 
-            if (cell == null) cell = (Cell)testProj.cellManager.getAllCells().firstElement();
+            if (cell == null) cell = testProj.cellManager.getAllCells().firstElement();
 
             OneCell3DPanel viewer = new OneCell3DPanel(cell, testProj, null);
 
@@ -1641,7 +1676,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
             frame.addWindowListener(new WindowAdapter()
             {
-
+                @Override
                 public void windowClosing(WindowEvent e)
                 {
                     System.exit(0);
