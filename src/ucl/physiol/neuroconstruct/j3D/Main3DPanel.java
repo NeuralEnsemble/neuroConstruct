@@ -320,12 +320,16 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         for (int cellGroupIndex = 0; cellGroupIndex < allCellGroups.size(); cellGroupIndex++)
         {
             String nextCellGroup = allCellGroups.get(cellGroupIndex);
-            Cell cell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(nextCellGroup));
+            
+            if (project.generatedCellPositions.getNumberInCellGroup(nextCellGroup)>0)
+            {                
+                Cell cell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(nextCellGroup));
 
-            //logger.logComment("cell: "+ cell, true);
-            largestExtent = Math.max(largestExtent, CellTopologyHelper.getXExtentOfCell(cell, false, true));
-            largestExtent = Math.max(largestExtent, CellTopologyHelper.getYExtentOfCell(cell, false, true));
-            largestExtent = Math.max(largestExtent, CellTopologyHelper.getZExtentOfCell(cell, false, true));
+                //logger.logComment("cell: "+ cell, true);
+                largestExtent = Math.max(largestExtent, CellTopologyHelper.getXExtentOfCell(cell, false, true));
+                largestExtent = Math.max(largestExtent, CellTopologyHelper.getYExtentOfCell(cell, false, true));
+                largestExtent = Math.max(largestExtent, CellTopologyHelper.getZExtentOfCell(cell, false, true));
+            }
         }
         logger.logComment("Largest extent for cells too: "+ largestExtent);
 
@@ -2160,28 +2164,31 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
             String nextCellGroup = allCellGroups.get(cellGroupIndex);
             Cell cell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(nextCellGroup));
 
-            float lowestXOnCell = CellTopologyHelper.getMinXExtent(cell, false, true);
-            float lowestYOnCell = CellTopologyHelper.getMinYExtent(cell, false, true);
-            float lowestZOnCell = CellTopologyHelper.getMinZExtent(cell, false, true);
+            if (project.generatedCellPositions.getNumberInCellGroup(nextCellGroup)>0)
+            {    
+                float lowestXOnCell = CellTopologyHelper.getMinXExtent(cell, false, true);
+                float lowestYOnCell = CellTopologyHelper.getMinYExtent(cell, false, true);
+                float lowestZOnCell = CellTopologyHelper.getMinZExtent(cell, false, true);
 
-            float highestXOnCell = CellTopologyHelper.getMaxXExtent(cell, false, true);
-            float highestYOnCell = CellTopologyHelper.getMaxYExtent(cell, false, true);
-            float highestZOnCell = CellTopologyHelper.getMaxZExtent(cell, false, true);
+                float highestXOnCell = CellTopologyHelper.getMaxXExtent(cell, false, true);
+                float highestYOnCell = CellTopologyHelper.getMaxYExtent(cell, false, true);
+                float highestZOnCell = CellTopologyHelper.getMaxZExtent(cell, false, true);
 
 
-            int numInGroup = project.generatedCellPositions.getNumberInCellGroup(nextCellGroup);
+                int numInGroup = project.generatedCellPositions.getNumberInCellGroup(nextCellGroup);
 
-            for (int cellNumber = 0; cellNumber < numInGroup; cellNumber++)
-            {
-                Point3f nextPosition = project.generatedCellPositions.getOneCellPosition(nextCellGroup, cellNumber);
-                lowestXToShow =  Math.min(lowestXToShow, nextPosition.x + lowestXOnCell);
-                lowestYToShow =  Math.min(lowestYToShow, nextPosition.y + lowestYOnCell);
-                lowestZToShow =  Math.min(lowestZToShow, nextPosition.z + lowestZOnCell);
+                for (int cellNumber = 0; cellNumber < numInGroup; cellNumber++)
+                {
+                    Point3f nextPosition = project.generatedCellPositions.getOneCellPosition(nextCellGroup, cellNumber);
+                    lowestXToShow =  Math.min(lowestXToShow, nextPosition.x + lowestXOnCell);
+                    lowestYToShow =  Math.min(lowestYToShow, nextPosition.y + lowestYOnCell);
+                    lowestZToShow =  Math.min(lowestZToShow, nextPosition.z + lowestZOnCell);
 
-                highestXToShow =  Math.max(highestXToShow, nextPosition.x + highestXOnCell);
-                highestYToShow =  Math.max(highestYToShow, nextPosition.y + highestYOnCell);
-                highestZToShow =  Math.max(highestZToShow, nextPosition.z + highestZOnCell);
+                    highestXToShow =  Math.max(highestXToShow, nextPosition.x + highestXOnCell);
+                    highestYToShow =  Math.max(highestYToShow, nextPosition.y + highestYOnCell);
+                    highestZToShow =  Math.max(highestZToShow, nextPosition.z + highestZOnCell);
 
+                }
             }
         }
 

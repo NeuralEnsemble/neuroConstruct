@@ -972,9 +972,15 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                     String suggestedValue = null;
                     if (cellMech instanceof AbstractedCellMechanism)
                     {
-                        suggestedValue = ( (AbstractedCellMechanism) cellMech).getParameter(DistMembraneMechanism.
-                            COND_DENSITY)
-                            + "";
+                        try
+                        {
+                            suggestedValue = ( (AbstractedCellMechanism) cellMech).getParameter(DistMembraneMechanism.COND_DENSITY)+ "";
+                        }
+                        catch (CellMechanismException ex)
+                        {
+                            logger.logComment("Problem getting default value, using 0");
+                            suggestedValue = "0";
+                        }
                     }
                     else if (cellMech instanceof ChannelMLCellMechanism)
                     {

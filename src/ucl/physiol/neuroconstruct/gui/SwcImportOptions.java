@@ -92,7 +92,7 @@ public class SwcImportOptions extends JDialog
         
         
         jTextAreaInfo.setText("Some options when importing the SWC format morphology.\n\n"
-                +"Note: As Cvapp is mainly concerned with dendritic reconstructions, there can be varying levels of information present about the soma in such files."
+                +"Note: As Cvapp is mainly concerned with dendritic reconstructions, there may be a limited amount of information present about the soma in such files."
                 +"The second entry on each line of the *.swc file indicates what type of compartment it is. 1 usually indicates soma, 2 axons, 3 dendrites, etc.\n\n"
                 +"Close examination of the original file is advised to correctly import the morphology."
                 +"");
@@ -110,7 +110,8 @@ public class SwcImportOptions extends JDialog
         jPanelFeatures.setPreferredSize(new Dimension(350, 40));
 
         jTextAreaFeatures.setText("If extra anatomical detail is present in the file (e.g. from Neurolucida extra features) include if this box is ticked. "
-                +"Note: lines with compartment type 10 or greater (second value in 7 entry SWC line) will be considered anatomical features.");
+                +"Note: lines with compartment type 10 or greater (second value in 7 entry SWC line) will be considered anatomical features. These will be included as sections, " +
+                "and should be removed if the cells are to be used for simulations.");
 
         jTextAreaFeatures.setColumns(26);
         jTextAreaFeatures.setLineWrap(true);

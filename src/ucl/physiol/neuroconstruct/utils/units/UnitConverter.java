@@ -285,10 +285,6 @@ public class UnitConverter
                           {new Unit(Prefix.MILLI, Units.MOLE, 1),
                           new Unit(Prefix.DECI, Units.METER, -3)}), // NEURON uses mM i.e. milli moles per liter
 
-               /* new Units("NEURON_concentration"
-                          , new Unit[]
-                          {new Unit(Prefix.MILLI, Units.MOLE, 1),
-                          new Unit(Prefix.DECI, Units.METER, -3)}),*/
                 new Units("GENESIS_SI_concentration"
                           , new Unit[]
                           {new Unit(Prefix.NONE, Units.MOLE, 1),
@@ -743,8 +739,8 @@ public class UnitConverter
                                                                       UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + "\n");
 
 
-        int fromUnits = NEUROCONSTRUCT_UNITS;
-        PhysicalQuantity concn = new PhysicalQuantity(1, concentrationUnits[fromUnits]);
+        int fromUnits = GENESIS_SI_UNITS;
+        PhysicalQuantity concn = new PhysicalQuantity(0.002, concentrationUnits[fromUnits]);
 
         System.out.println("Concentration: "+ concn);
 
