@@ -31,7 +31,8 @@ public class NetworkMLConstants
     public static String NAMESPACE_URI = "http://morphml.org/networkml/schema";
 
     //public static String DEFAULT_SCHEMA_FILENAME = "http://www.morphml.org:8080/NeuroMLValidator/NeuroMLFiles/Schemata/v1.7/Level3/NetworkML_v1.7.xsd";
-    public static String DEFAULT_SCHEMA_FILENAME = "http://localhost:8084/NeuroMLValidator/NeuroMLFiles/Schemata/v1.7.1/Level3/NetworkML_v1.7.1.xsd";
+    public static String DEFAULT_SCHEMA_FILENAME = "NetworkML_v1.7.xsd";
+    //public static String DEFAULT_SCHEMA_FILENAME = "http://localhost:8084/NeuroMLValidator/NeuroMLFiles/Schemata/v1.7.1/Level3/NetworkML_v1.7.1.xsd";
 
     public static String PREFIX = "net";
 
