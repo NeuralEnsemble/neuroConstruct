@@ -328,7 +328,7 @@
   <!--  jar but no source                                                  -->
   <!-- =================================================================== -->
 
-  <target name="dist" depends="clean,website,helpdocs" description="Creates a zip file with directory structure, jar but no source">
+  <target name="dist" depends="clean" description="Creates a zip file with directory structure, jar but no source">
 
       <property name="temp_ver.dir" value="${dist.dir}/${name}_${version}"/>
 
@@ -340,23 +340,16 @@
       <copy file="./logs/README" todir="${temp_ver.dir}/logs" />
 
       <mkdir dir="${temp_ver.dir}/examples"/>
-
-
       <copy todir="${temp_ver.dir}/examples">
-
           <fileset dir="${examples.dir}">
               <include name="*/*.*"/>
               <include name="*/cellMechanisms/**/*"/>
               <include name="*/morphologies/*"/>
               <include name="*/importedMorphologies/*"/>
-
           </fileset>
-
       </copy>
 
       <mkdir dir="${temp_ver.dir}/docs"/>
-
-
       <copy todir="${temp_ver.dir}/docs">
           <fileset dir="${docs.dir}" >
               <include name="glossary/**/*.*"/>
@@ -366,6 +359,13 @@
           </fileset>
       </copy>
 
+
+      <mkdir dir="${temp_ver.dir}/lib"/>
+      <copy todir="${temp_ver.dir}/lib">
+        <fileset dir="lib">
+              <include name="**/*"/>
+        </fileset>
+      </copy>
 
       <mkdir dir="${temp_ver.dir}/igorNeuroMatic"/>
       <copy todir="${temp_ver.dir}/igorNeuroMatic">
