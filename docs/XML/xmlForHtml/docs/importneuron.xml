@@ -13,29 +13,33 @@ At the moment it can be a complicated process but the advantages of doing it are
 <ul>
 <li>It is easier to incorporate single cell models into networks of arbitrary size and complexity once they are in neuroConstruct</li>
 <li>It simplifies making the model available for multiple simulators (e.g. <a href="Glossary_gen.html#GENESIS">GENESIS</a> too). Once in neuroConstruct/NeuroML format,
-the cell model will be available for any other simulator supported by these in the future (e.g. GENESIS 3), provided the cell mechanisms can be implemented in that simulator.</li>
+the cell model will be available for any other simulator supported by these in the future (e.g. GENESIS 3/MOOSE/Parallel NEURON), provided the cell mechanisms can be implemented in that simulator.</li>
 <li>All of the inbuilt functionality for storing, browsing and analysing simulations neuroConstruct is available</li>
 <li>A neuroConstruct <a href="Glossary_gen.html#Project">project</a> including the model description, results of the simulation, plots of the figures in
 published papers, etc. can be distributed in a single zipped file</li>
 <li>The model can be easily rerun and model parameters changed by those without knowledge of the native scripting environment</li>
 </ul>
 <p>Note that the importation process will become a lot less complicated in future when cell morphologies and channel mechanisms can be exported in XML format
-from the simulators themselves. (Note: the alpha version of NEURON 6.0 contains an almost complete export of cell morphologies in NeuroML format from ModelView)</p>
+from the simulators themselves. (Note: there is a version of this in NEURON 6.1 which contains an almost complete export of cell morphologies/channel densities in NeuroML format from ModelView. See 
+<a href="http://neuroml.svn.sourceforge.net/viewvc/neuroml/nrn2NeuroML">here</a> for the latest version)</p>
 
+<p>Overview of process</p>
 
 <ol>
 <li>With a fully tested NEURON model, ensure the hoc code is split between separate files containing a) the
 morphologies of the cells, b) the mod files containing the cell mechanisms (including default values for all parameters,
 e.g. max conductance densities) c) the main hoc file which creates the cells, places the channels on the cells, adds the
 stimulations, etc. and runs the main simulation and d) a file which creates any GUI elements for plotting data,
-(re)running the simulation and changing parameters. This is the standard way to split functionality between files, and if
+(re)running the simulation and changing parameters. This is the standard way to split functionality between files (generally used for the models in 
+<a href="http://senselab.med.yale.edu/modeldb">ModelDB</a>), and if
 a model is published with everything in a single large file, there is little chance of reusing much in neuroConstruct.</li>
 
 <li>In general neuroConstruct should be able to import files a) above and include b) as the NEURON implementation of <a href="Glossary_gen.html#Cell Mechanism">Cell Mechanisms</a>.
 The simulation parameters in c) will be set through the neuroConstruct GUI by hand, and any plots of data can also be specified
 through the interface.</li>
 
-<li>Select <strong>File->New Project</strong>, and enter the name and location of your new project. To import the morphology
+<li>Select <strong>File->New Project</strong>, and enter the name and location of your new project.</li>
+<li>To import a NEURON *.hoc/*.nrn morphology
 file Go to <strong>Cell Types -> Add New Cell Type</strong> and select <strong>NeuronMorphReader</strong> in the first drop down box.
 Select the morphology file by entering the path into the text field or pressing the <strong>...</strong> button and
 selecting the file manually. Note that the biggest problem in importing files is that there is no prescribed way to write
@@ -50,10 +54,17 @@ a small number of sections (&lt;10), you can add a Simple Cell (via tab <strong>
 rename it, press <strong>View this cell in 3D</strong>, click on a section, press <strong>Edit...</strong> and add/delete
 sections as appropriate, building your morphology as you go. </li>
 
+<li>As an alternative to the above, the cell could be loaded into NEURON 6.1 (with the updated files from <a href="http://neuroml.svn.sourceforge.net/viewvc/neuroml/nrn2NeuroML">here</a>)
+using the original hoc/mod files
+and exported from ModelView (Tools -> ModelView -> File -> Export to NeuroML). This works best if there is just one cell loaded in NEURON. The function define_shape() should be run 
+before export to ensure all NEURON sections have full 3D info. Level 1 exports will have just the cell morphology, Level 2 will include info on channel densities. The NeuroML file
+exported can then be imported into neuroConstruct similar to the manner above, via <strong>Cell Types -> Add New Cell Type</strong> and selecting the <strong>NeuroMLConverter</strong> option.
+If a Level 2 export is used, there should already be channel mechanisms in the neuroConstruct project with the same names as those in the NEURON model (see below).</li>
 
 
-<li>To include a new <a href="Glossary_gen.html#Channel Mechanism">Channel Mechanism</a> (e.g. a voltage dependent ion channel) or
-a <a href="Glossary_gen.html#Synaptic Mechanism">Synaptic Mechanism</a> go to tab <strong>Cell Mechanisms</strong>,
+
+<li>To include a <a href="Glossary_gen.html#Channel Mechanism">Channel Mechanism</a> (e.g. a voltage dependent ion channel) or
+a <a href="Glossary_gen.html#Synaptic Mechanism">Synaptic Mechanism</a> based on an existing mod file go to tab <strong>Cell Mechanisms</strong>,
 select <strong>Create File Based Mechanism</strong>. Enter the name of the Cell Mechanism. If the mod file is a density mechanism,
 choose "Channel Mechanism". If it represents the end point of a synaptic connection, choose "Synaptic Mechanism". Select the
 *.mod file which implements the Channel Mechanism/Synapse when prompted. Existing Channel Mechanisms implemented in NMODL
@@ -82,7 +93,7 @@ name so it can access it from the hoc. To get a better idea of what's going on,
 open (via <strong>Edit selected Cell Mechanism</strong>) any of the File Based Cell Mechanisms included in examples/Ex8-DentateGyrus,
 paying attention to the NEURON template code. More information is available <a  href="cellmechanism.html">here</a></li>
 
-<li>To put the channel mechanisms on to the cell you have imported, go to <strong>Visualisation</strong>, select the cell
+<li>To put the channel mechanisms on to the cell you have imported (if you haven't used a NeuroML import detailing channel placement), go to <strong>Visualisation</strong>, select the cell
 name in the drop down box and press <strong>View</strong>. Select <strong>Groups</strong> in the bottom right drop down box.
 There are some basic groups defined, but to add others, click <strong>Edit Groups</strong>. In this way
 <a href="Glossary_gen.html#Section Group">Section Groups</a> (corresponding to SectionLists as used in NEURON)
@@ -105,15 +116,19 @@ description of <a href="netconns.html">Network Connections</a> for more informat
 <p>Process for converting mod/GENESIS script channels into ChannelML (more details needed...)</p>
 
 <ol>
-<li>Start with a single compartment, e.g. the soma of the cell to be converted. Use imported morphology, delete all other sections.</li>
-<li>Get passive properties working properly.</li>
-<li>Convert a simple channel, e.g. non ca dependent K chanel to ChannelML, add to passive soma. Create another soma with one channel based on original mod file </li>
-<li>Compare not just voltage, also internal variables, m, h, n, etc.</li>
-<li>Don't worry if not init properly</li>
-<li>Comparison depends on k value in akd, accurate 1/k</li>
-<li>For complete accuracy, use table impl prefs taken from original mod file</li>
+<li>Start with a single section, e.g. the soma of the cell to be converted. Use an imported morphology, delete all other sections, just leaving the soma section.</li>
+<li>Create a cell group with a single instance of the soma section</li>
+<li>Get the passive properties working properly. Use psection() on the corresponding section in your original NEURON model to get values for cm, Ra etc. and 
+update the values of these on your neuroConstruct version. Generate the network and check the section's basic parameters using psection().</li>
+<li>Convert a simple channel first, e.g. non Ca2+ dependent K channel to ChannelML (use Add ChannelML from Template, using KChannel and edit the values in the XML 
+to match the equations in the mod file), add to passive soma. Create another soma with one channel based on original mod file (as outlined above).</li>
+<li>Compare not just voltage, also internal variables, m, h, n, etc. Plots of these can be added in Input and Output (see Ex4-NEURONGENESIS)</li>
+<li>Comparison can depend on the accuracy k value in akd, make sure there is an accurate value for this in case 1/k is used in the original file.</li>
+<li>For complete accuracy, use table impl prefs taken from original mod file, i.e. from TABLE minf, mexp DEPEND dt, celsius FROM -100 TO 100 WITH 200. Note: if comparing values of v > 100mV use a bigger table (since values for v past the end of the table will use earlier alpha value, etc.)</li>
 
-<li>Careful to use temp + ek, ena of prev models!!</li>
+
+<li>Be careful to use the temperature, ek, ena of the previous models!!</li>
+<li>more...</li>
 </ol>
 
 

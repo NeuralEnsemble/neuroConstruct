@@ -862,7 +862,10 @@ Set to MAX if no restriction applies.</defined>
 
 <term hidden="true">
     <name>NeuronNumInt</name>
-    <defined>Select this to use the basic variable time step in NEURON. Note that dt will be ignored in this case.</defined>
+    <defined>Select this to use the basic variable time step in NEURON. dt will be ignored in this case.<br/>
+             Note that this variable time step option is normally only useful for single (large) cell simulations. <br/>
+             If there are multiple independently spiking cells, a small timestep will be needed almost always, and it's<br/>
+             probably better to just use a small fixed time step.</defined>
 </term>
 
 <term hidden="true">

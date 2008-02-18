@@ -12,7 +12,7 @@
 
 <p>Most neuroConstruct <a href="Glossary_gen.html#Project">Projects</a> will illustrate not just a single aspect of a cell
     or network, but will seek to show how the cells react under different inputs, or how a network behaves
-    with different <a href="Glossary_gen.html#Cell Group">Cell Groups</a>s/cell populations present, etc. A particular Simulation
+    with different <a href="Glossary_gen.html#Cell Group">Cell Groups</a>/cell populations present, etc. A particular Simulation
                  Configuration has a number of Cell Groups, Network Connections, Electrical Inputs, and Plots 
                  associated with it, along with a simulation duration. </p>
 
