@@ -1,0 +1,1 @@
+NOTE: these dlls have been created for a 32bit JDK. The HDF5 functionality in neuroConstruct can be used on a 64bit windows machine, but a 32bit JDK should be used.
