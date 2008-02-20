@@ -44,7 +44,7 @@
                 </action>
                 <action name="run">
                     <script>${ant.script}</script>
-                    <target>runlast</target>
+                    <target>runbiglast</target>
                 </action>
                 <action name="rebuild">
                     <script>${ant.script}</script>
