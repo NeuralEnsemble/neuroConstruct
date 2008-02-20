@@ -314,7 +314,7 @@ public class NeuronTemplateGenerator
         response.append("    for i=0,synlist.count()-1 {\n");
         response.append("        print \"        Connection from \", synlist.o[i].precell, \" to: \", synlist.o[i].postcell\n");
         response.append("        print \"        Pre:   Weight: \", synlist.o[i].weight, \", delay: \", synlist.o[i].delay, \", threshold: \", synlist.o[i].threshold \n");
-        response.append("        print \"        Post:  \", synlist.o[i].syn(), \", gmax: \", synlist.o[i].syn().gmax , \", e: \", synlist.o[i].syn().e , \", rise time: \", synlist.o[i].syn().tau1 , \", decay time: \", synlist.o[i].syn().tau2 \n");
+        response.append("        print \"        Post:  \", synlist.o[i].syn(), \", gmax: \", synlist.o[i].syn().gmax , \", e: \", synlist.o[i].syn().e , \", rise time: \", synlist.o[i].syn().tau_rise , \", decay time: \", synlist.o[i].syn().tau_decay \n");
 
         response.append("    print \" \"\n");
         response.append("    }\n");

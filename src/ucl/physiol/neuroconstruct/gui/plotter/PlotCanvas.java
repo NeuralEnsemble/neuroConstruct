@@ -123,12 +123,14 @@ public class PlotCanvas extends Canvas
 
         this.addMouseMotionListener(new java.awt.event.MouseMotionAdapter()
         {
+            @Override
             public void mouseMoved(MouseEvent e)
             {
                 //logger.logComment("Event: "+e);
                 this_mouseMoved(e);
             }
 
+            @Override
             public void mouseDragged(MouseEvent e)
             {
                 this_mouseMoved(e);
@@ -402,6 +404,7 @@ public class PlotCanvas extends Canvas
     }
 
 
+    @Override
     public void repaint()
     {
         logger.logComment("Repainting...");
@@ -638,7 +641,8 @@ public class PlotCanvas extends Canvas
 
 
         logger.logComment("tickSpacingX: "+tickSpacingX);
-        logger.logComment("tickSpacingY: "+tickSpacingY);
+        logger.logComment("tickSpacingY: "+tickSpacingY+", idealNumTicksY: "+idealNumTicksY+", lengthY: "+ lengthY+", perfectTickSpacingY: "+perfectTickSpacingY
+            +", maxYScaleValue: "+maxYScaleValue+", minYScaleValue: "+minYScaleValue, true);
 
 
         int optimalTickLength = 5;
@@ -686,11 +690,21 @@ public class PlotCanvas extends Canvas
                 logger.logComment("tickSpacingY: " + tickSpacingY);
 
                 double nextYTickLocation = 0;
+                if (minYScaleValue<0)
+                {
+                    int numFullTicksNeg = (int)Math.floor(-1* minYScaleValue/tickSpacingY);
+                    nextYTickLocation = -1 * numFullTicksNeg * tickSpacingY;
+                }
+                else
+                {
+                    int numFullTicksPos = (int)Math.floor(minYScaleValue/tickSpacingY);
+                    nextYTickLocation = numFullTicksPos * tickSpacingY;
+                }
 
                 while ( (nextYTickLocation = nextYTickLocation + tickSpacingY) < maxYScaleValue)
                 {
                     logger.logComment("checking plotting, nextYTickLocation: " + nextYTickLocation
-                                      + ",tickSpacingY " + tickSpacingY);
+                                      + ",tickSpacingY " + tickSpacingY+", maxYScaleValue: "+ maxYScaleValue);
 
                     if (showAxisTicks)
                     {
@@ -894,7 +908,7 @@ public class PlotCanvas extends Canvas
                 minYScaleValue = Math.min(dataSets[i].getMinY()[1], minYScaleValue);
 
                 // add on a bit for the width of the bars
-                if (dataSets[i].getGraphFormat() == USE_BARCHART_FOR_PLOT)
+                if (dataSets[i].getGraphFormat().equals(USE_BARCHART_FOR_PLOT))
                 {
                     double xSpacing = dataSets[i].getXSpacing();
                     if (xSpacing > 0)
@@ -967,7 +981,7 @@ public class PlotCanvas extends Canvas
 
 
 
-
+    @Override
     public void paint(Graphics g)
     {
         long startTime = System.currentTimeMillis();

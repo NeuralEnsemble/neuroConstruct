@@ -146,6 +146,7 @@ public class NeuronFileManager
         cellTemplatesGenAndIncluded = new Vector<String>();
         cellMechFilesGenAndIncl = new Vector<String>();
         stimModFilesRequired =  new Vector<String>();
+        
         graphsCreated = new Vector<String>();
         
         nextColour = 1; // reset it...

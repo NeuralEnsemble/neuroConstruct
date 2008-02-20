@@ -1992,18 +1992,16 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                 varName = " " + dsToPlot.getVariable();
 
 
-
-
-                if (!dsToPlot.isSegmentSpecified())
-                {
-                    graphTitle = simRerunFrame.getSimReference() + " " + simulatorRef + ": " + cellGroupSelected + " - " +
-                        cellNumber + varName;
-                }
-                else
-                {
-                    graphTitle = simRerunFrame.getSimReference() + " " + simulatorRef + ": " + cellGroupSelected + " - " +
-                        cellNumber + " (" + dsToPlot.getAssumedSegmentId() + ")" + varName;
-                }
+            if (!dsToPlot.isSegmentSpecified())
+            {
+                graphTitle = simRerunFrame.getSimReference() + " " + simulatorRef + ": " + cellGroupSelected + " - " +
+                    cellNumber + varName;
+            }
+            else
+            {
+                graphTitle = simRerunFrame.getSimReference() + " " + simulatorRef + ": " + cellGroupSelected + " - " +
+                    cellNumber + " (" + dsToPlot.getAssumedSegmentId() + ")" + varName;
+            }
 
             DataSet data = new DataSet(graphTitle,
                                        mainInfo,

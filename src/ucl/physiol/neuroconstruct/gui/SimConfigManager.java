@@ -283,7 +283,7 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
 
         for (int i = 0; i < netConns.size(); i++)
         {
-            String name = (String)netConns.elementAt(i);
+            String name = netConns.elementAt(i);
             JCheckBox newCB = new JCheckBox(name);
             jPanelNetConns.add(newCB);
             netConnCheckBoxes.put(name, newCB);
@@ -389,9 +389,7 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         }
         jPanelCheckBoxes.add(jPanelPlots);
 
-;
-
-        this.pack();
+        this.expandToScreen();
 
         logger.logComment(">>> Done refreshing view on SimConfigManager");
 
@@ -701,7 +699,7 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
                 this.refresh();
 
                 this.jListNames.setSelectedIndex(selIndex>0 ? selIndex-1 : 0);
-            };
+            }
         }
 
         project.markProjectAsEdited();
@@ -786,6 +784,19 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
     {
         this.jListNames.setSelectedValue(simConfigName, true);
     }
+    
+    
+    public void expandToScreen()
+    {
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            //Dimension frameSize = frame.getSize();
+            
+            float fraction = 0.9f;
+            
+            this.setSize((int)(screenSize.width * fraction), (int)(screenSize.height * fraction));
+            
+            this.setLocation( (screenSize.width - this.getWidth()) / 2, (screenSize.height - this.getHeight()) / 2);
+    }
 
 
 
@@ -801,8 +812,8 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
 
             UIManager.setLookAndFeel(favouredLookAndFeel);
 
-            frame.pack();
-
+            frame.expandToScreen();
+/*
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             Dimension frameSize = frame.getSize();
 
@@ -812,7 +823,7 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
             if (frameSize.width > screenSize.width)
                 frameSize.width = screenSize.width;
 
-            frame.setLocation( (screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+            frame.setLocation( (screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);*/
 
             frame.setVisible(true);
         }

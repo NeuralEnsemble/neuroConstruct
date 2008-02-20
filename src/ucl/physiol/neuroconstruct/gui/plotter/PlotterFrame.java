@@ -381,7 +381,8 @@ public class PlotterFrame extends JFrame
         jMenuBarMainMenu.add(jMenuTools);
 
     }
-
+    
+    @Override
     public void dispose()
     {
         PlotManager.plotFrameClosing(plotFrameReference);
@@ -2597,7 +2598,7 @@ public class PlotterFrame extends JFrame
 
         for (int i = 0; i < numPoints; i++)
         {
-            double x = minX + (maxX-minX)*((double)i/(int)(numPoints-1));
+            double x = minX + (maxX-minX)*((double)i/(numPoints-1));
 
             double minonezeroone = (rand.nextDouble()*2) -1;
 
@@ -2616,12 +2617,12 @@ public class PlotterFrame extends JFrame
 
 
         }
-        data3.addPoint(3,3);
-        data3.addPoint(0,-2);
-        data3.addPoint(1,2);
+        data3.addPoint(0,3);
+        data3.addPoint(1,3);
+        data3.addPoint(2,3);
 
-        addDataSet(data1);
-        addDataSet(data2);
+        //addDataSet(data1);
+        //addDataSet(data2);
         addDataSet(data3);
 
     }
@@ -2635,6 +2636,7 @@ public class PlotterFrame extends JFrame
     //Help | About action performed
 
     //Overridden so we can exit when window is closed
+    @Override
     protected void processWindowEvent(WindowEvent e)
     {
         super.processWindowEvent(e);

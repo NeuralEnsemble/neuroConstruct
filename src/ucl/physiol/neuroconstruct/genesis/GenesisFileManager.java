@@ -690,6 +690,8 @@ public class GenesisFileManager
                     response.append("if (!({exists " + spikeElement + "}))\n");
                     response.append("    create spikegen " + spikeElement + "\n");
 
+                    float absRefractVal = 10;
+                    ////addComment(response, "Setting high abs_refract to ensure same behaviour as NEURON ");
                     /** @todo Change handling of abs_refract */
                     response.append("    setfield " + spikeElement + "  thresh "
                                     + UnitConverter.getVoltage(synProps.getThreshold(),
@@ -697,7 +699,7 @@ public class GenesisFileManager
                                                                project.genesisSettings.getUnitSystemToUse())
 
                                     + "  abs_refract "
-                                    + UnitConverter.getTime(10,
+                                    + UnitConverter.getTime(absRefractVal,
                                                             UnitConverter.NEUROCONSTRUCT_UNITS,
                                                             project.genesisSettings.getUnitSystemToUse())
                                     + " output_amp 1\n");
@@ -969,7 +971,7 @@ public class GenesisFileManager
 
         for (int ii = 0; ii < cellGroupNames.size(); ii++)
         {
-            String cellGroupName = (String) cellGroupNames.get(ii);
+            String cellGroupName = cellGroupNames.get(ii);
 
             logger.logComment("***  Looking at cell group number " + ii + ", called: " +
                               cellGroupName);
@@ -1023,7 +1025,7 @@ public class GenesisFileManager
 
             for (int j = 0; j < synNames.size(); j++)
             {
-                String nextSynMechName = (String)synNames.elementAt(j);
+                String nextSynMechName = synNames.elementAt(j);
                 logger.logComment("Cell in group "+cellGroupName+" has synapse: "+ nextSynMechName);
 
                 if (!includedSynapses.contains(nextSynMechName))
@@ -2189,7 +2191,7 @@ public class GenesisFileManager
 
             Cell mappedCell = this.mappedCells.get(cellTypeName);
 
-            File dirForGenFiles = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory());;
+            File dirForGenFiles = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory());
 
             logger.logComment("Dir: " + dirForGenFiles);
 
@@ -3348,7 +3350,7 @@ public class GenesisFileManager
 
         response.append("echo \"Starting simulation reference: "+project.simulationParameters.getReference()+" at: \" {getdate}\n");
 
-        response.append("step "+((int)Math.round(getSimDuration()/project.simulationParameters.getDt()))+"\n\n"); // +1 to include 0 and last timestep
+        response.append("step "+(Math.round(getSimDuration()/project.simulationParameters.getDt()))+"\n\n"); // +1 to include 0 and last timestep
 
         response.append("echo \"Finished simulation reference: "+project.simulationParameters.getReference()+" at: \" {getdate}\n");
 

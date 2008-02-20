@@ -10153,7 +10153,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                    this,
                                    projManager.getCurrentProject());
 
-        dlg.pack();
+        dlg.expandToScreen();
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension frameSize = dlg.getSize();
