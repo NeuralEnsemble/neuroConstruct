@@ -207,8 +207,7 @@
 
   <target name="run" depends="makejar"
           description="Runs the main application. Use an altered value with -Xmx in the line below to run the application with extra memory. Choosing a max java heap size of about half your total physical memory is best, errors have been thrown (when 3D view is shown) when the application is run with more than this. Note: the -Dsun.java2d.noddraw=true has been added to solve problems with excessive flickering of the Swing components when showing 3D on some Windows systems">
-    <java classname="${main.app.class}"
-          fork="true">
+    <java classname="${main.app.class}" fork="true">
         <jvmarg value="-Xmx700M" />
         <jvmarg value="-Xms600M" />
         <jvmarg value="-Djava.library.path=./lib/hdf5/linux"/>
@@ -225,10 +224,26 @@
 
   <target name="runlast" depends="makejar"
           description="Runs the main application, opening last project">
-    <java classname="${main.app.class}"
-          fork="true">
+    <java classname="${main.app.class}" fork="true">
         <jvmarg value="-Xmx700M" />
         <jvmarg value="-Xms600M" />
+        <jvmarg value="-Djava.library.path=./lib/hdf5/linux"/>
+        <jvmarg value="-Dsun.java2d.noddraw=true" />
+        <arg value="-lastproj"/>
+        <classpath refid="run.class.path"/>
+    </java>
+  </target>
+  
+
+  <!-- =================================================================== -->
+  <!-- Run main application with lots of memory, opening last project      -->
+  <!-- =================================================================== -->
+
+  <target name="runbiglast" depends="makejar"
+          description="Runs the main application with lots of memory, opening last project">
+    <java classname="${main.app.class}" fork="true">
+        <jvmarg value="-Xmx4000M" />
+        <jvmarg value="-Xms2000M" />
         <jvmarg value="-Djava.library.path=./lib/hdf5/linux"/>
         <jvmarg value="-Dsun.java2d.noddraw=true" />
         <arg value="-lastproj"/>
