@@ -784,7 +784,7 @@ public class PlotterFrame extends JFrame
             inputs.add(xTrans);
 
             InputRequestElement yTrans
-                = new InputRequestElement("yTrans", "Enter the expression for the new y values as a function of the original x and y", null, "2 * y", "");
+                = new InputRequestElement("yTrans", "Enter the expression for the new y values as a function of the original x and y", null, "y * 10", "");
 
             inputs.add(yTrans);
 
