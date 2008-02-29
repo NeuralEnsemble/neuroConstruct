@@ -242,9 +242,9 @@
   <target name="runbiglast" depends="makejar"
           description="Runs the main application with lots of memory, opening last project">
     <java classname="${main.app.class}" fork="true">
-        <jvmarg value="-Xmx4000M" />
-        <jvmarg value="-Xms2000M" />
-        <jvmarg value="-Djava.library.path=./lib/hdf5/linux"/>
+        <jvmarg value="-Xmx1000M" />
+        <jvmarg value="-Xms800M" />
+        <jvmarg value="-Djava.library.path=./lib/hdf5/linux;./lib/hdf5/win"/>
         <jvmarg value="-Dsun.java2d.noddraw=true" />
         <arg value="-lastproj"/>
         <classpath refid="run.class.path"/>
