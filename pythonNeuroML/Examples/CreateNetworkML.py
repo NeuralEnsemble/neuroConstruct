@@ -23,12 +23,12 @@ from NetworkMLUtils import NetworkMLFile
 
 print("Going to create a NetworkML file...")
 
-myFile = NetworkMLFile()
+nmlFile = NetworkMLFile()
 
-newPop = myFile.addPopulation("SampleCellGroup", "SampleCell")
+newPop = nmlFile.addPopulation("SampleCellGroup", "SampleCell")
 popSize = 50 
 
-newProj = myFile.addProjection("NetConn_1", "SampleCellGroup", "SampleCellGroup")
+newProj = nmlFile.addProjection("NetConn_1", "SampleCellGroup", "SampleCellGroup")
 newProj.addSynapse("DoubExpSyn", 1, -20, 5)
 
 
@@ -43,7 +43,8 @@ for i in range(popSize):
         newProj.addConnection(i-1, i)
     
 
-myFile.writeToFile("../../../temp/test.nml")
+filename = "../../../temp/test.nml"
+nmlFile.writeToFile(filename)
 
 
-print("All done!")
+print("All done! File saved to: "+ filename)
