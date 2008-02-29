@@ -37,7 +37,7 @@ public class SimulationData
     private ArrayList<String> allCellRefsCached = null;
     private ArrayList<String> allVoltCellRefsCached = null;
 
-    private float[] times = null;
+    private double[] times = null;
 
     public static final String TIME_DATA_FILE = "time."+SimPlot.CONTINUOUS_DATA_EXT;
     public static final String POSITION_DATA_FILE = "CellPositions."+SimPlot.CONTINUOUS_DATA_EXT;
@@ -109,13 +109,13 @@ public class SimulationData
 
         Properties props = SimulationsInfo.getSimulationProperties(dataDirectory);
 
-        float timeConversionFactor = 1;
+        double timeConversionFactor = 1;
 
         String unitSystemDesc = props.getProperty("Unit system");
 
         int unitSystem = UnitConverter.getUnitSystemIndex(unitSystemDesc);
 
-        timeConversionFactor = (float)UnitConverter.getTime(timeConversionFactor,
+        timeConversionFactor = UnitConverter.getTime(timeConversionFactor,
                                                      unitSystem,
                                                      UnitConverter.NEUROCONSTRUCT_UNITS);
 
@@ -157,14 +157,12 @@ public class SimulationData
 
             if (cellDataFiles[fileIndex].getName().indexOf("."+SimPlot.CONTINUOUS_DATA_EXT)>0)
             {
-                dataSourceName = cellDataFiles[fileIndex].getName().substring(0,
-                                                                      (int) cellDataFiles[fileIndex].getName().length()
+                dataSourceName = cellDataFiles[fileIndex].getName().substring(0, cellDataFiles[fileIndex].getName().length()
                                                                       - ("." + SimPlot.CONTINUOUS_DATA_EXT).length());
             }
             else if (cellDataFiles[fileIndex].getName().indexOf("."+SimPlot.SPIKE_EXT)>0)
             {
-                dataSourceName = cellDataFiles[fileIndex].getName().substring(0,
-                                                                      (int) cellDataFiles[fileIndex].getName().length()
+                dataSourceName = cellDataFiles[fileIndex].getName().substring(0, cellDataFiles[fileIndex].getName().length()
                                                                       - ("." + SimPlot.SPIKE_EXT).length());
             }
 
@@ -202,7 +200,7 @@ public class SimulationData
             {
                 onlySomaValues = false;
             }
-            float conversionFactor = 1;
+            double conversionFactor = 1;
 
 
             String xUnit = "";
@@ -211,7 +209,7 @@ public class SimulationData
 
             if (variable.equals(SimPlot.VOLTAGE) || variable.equals(SimPlot.REV_POT))
             {
-                conversionFactor = (float) UnitConverter.getVoltage(conversionFactor,
+                conversionFactor = UnitConverter.getVoltage(conversionFactor,
                                                                     unitSystem,
                                                                     UnitConverter.NEUROCONSTRUCT_UNITS);
 
@@ -223,7 +221,7 @@ public class SimulationData
             }
             else if (variable.indexOf(SimPlot.CURRENT) >= 0)
             {
-                conversionFactor = (float) UnitConverter.getCurrentDensity(conversionFactor,
+                conversionFactor = UnitConverter.getCurrentDensity(conversionFactor,
                                                                            unitSystem,
                                                                            UnitConverter.NEUROCONSTRUCT_UNITS);
 
@@ -231,7 +229,7 @@ public class SimulationData
             }
             else if (variable.indexOf(SimPlot.CONCENTRATION) >= 0)
             {
-                conversionFactor = (float) UnitConverter.getConcentration(conversionFactor,
+                conversionFactor = UnitConverter.getConcentration(conversionFactor,
                                                                           unitSystem,
                                                                           UnitConverter.NEUROCONSTRUCT_UNITS);
                 System.out.println("Conc conv factor: "+ conversionFactor);
@@ -240,7 +238,7 @@ public class SimulationData
             }
             else if (variable.indexOf(SimPlot.COND_DENS) >= 0)
             {
-                conversionFactor = (float) UnitConverter.getConductanceDensity(conversionFactor,
+                conversionFactor = UnitConverter.getConductanceDensity(conversionFactor,
                                                                                unitSystem,
                                                                                UnitConverter.NEUROCONSTRUCT_UNITS);
 
@@ -248,7 +246,7 @@ public class SimulationData
             }
             else if (variable.indexOf(SimPlot.SYN_COND) >= 0)
             {
-                conversionFactor = (float) UnitConverter.getConductance(conversionFactor,
+                conversionFactor = UnitConverter.getConductance(conversionFactor,
                                                                                unitSystem,
                                                                                UnitConverter.NEUROCONSTRUCT_UNITS);
 
@@ -265,7 +263,7 @@ public class SimulationData
 
             if (variable.indexOf(SimPlot.SPIKE)<0)
             {
-                float[] dataArray = readDataFileToArray(cellDataFiles[fileIndex], conversionFactor);
+                double[] dataArray = readDataFileToArray(cellDataFiles[fileIndex], conversionFactor);
                 DataStore ds = new DataStore(dataArray, cellGroup, cellNum, segId, variable, xUnit, yUnit, pso);
 
                 dataSources.add(ds);
@@ -273,7 +271,7 @@ public class SimulationData
             }
             else
             {
-                float[] spikeArray = readSpikesToArray(cellDataFiles[fileIndex], times, timeConversionFactor);
+                double[] spikeArray = readSpikesToArray(cellDataFiles[fileIndex], times, timeConversionFactor);
                 DataStore ds = new DataStore(spikeArray, cellGroup, cellNum, segId, variable, xUnit, yUnit, pso);
 
                 dataSources.add(ds);
@@ -313,20 +311,20 @@ public class SimulationData
     }*/
 
 
-    public float getStartTime()  throws SimulationDataException
+    public double getStartTime()  throws SimulationDataException
     {
         if (!dataLoaded) throw new SimulationDataException("Data not yet loaded from files!");
         return times[0];
     }
 
 
-    public float getEndTime()  throws SimulationDataException
+    public double getEndTime()  throws SimulationDataException
     {
         if (!dataLoaded) throw new SimulationDataException("Data not yet loaded from files!");
         return times[times.length-1];
     }
 
-    public float getSimulationTime(int timeStep)  throws SimulationDataException
+    public double getSimulationTime(int timeStep)  throws SimulationDataException
     {
         if (!dataLoaded) throw new SimulationDataException("Data not yet loaded from files!");
         return times[timeStep];
@@ -379,30 +377,8 @@ public class SimulationData
     }
 
 
-/*
-    private float getVoltageAtTimeStep(int timeStep, String cellSegRef)  throws SimulationDataException
-    {
-        if (!dataLoaded) throw new SimulationDataException("Data not yet loaded from files!");
 
-        float[] volts = getVoltageAtAllTimes(cellSegRef);
-        return volts[timeStep];
-    }
-
-
-
-    public float getValueAtTimeStep(int timeStep, String cellSegRef, String var) throws SimulationDataException
-    {
-        if (!dataLoaded)throw new SimulationDataException("Data not yet loaded from files!");
-
-        if (var.equals(SimPlot.VOLTAGE) || var.indexOf(SimPlot.SPIKE) >= 0)
-            return getVoltageAtTimeStep(timeStep, cellSegRef);
-
-        float[] values = getDataAtAllTimes(cellSegRef, var).getDataPoints();
-        return values[timeStep];
-    }
-
-*/
-    public float[] getVoltageAtAllTimes(String cellSegRef)  throws SimulationDataException
+    public double[] getVoltageAtAllTimes(String cellSegRef)  throws SimulationDataException
     {
         if (!dataLoaded) throw new SimulationDataException("Data not yet loaded from files!");
 
@@ -462,7 +438,7 @@ public class SimulationData
     }
 
 
-    public float[] getAllTimes()  throws SimulationDataException
+    public double[] getAllTimes()  throws SimulationDataException
     {
         if (!dataLoaded) throw new SimulationDataException("Data not yet loaded from files!");
         return times;
@@ -470,10 +446,10 @@ public class SimulationData
 
 
 
-    private float[] readDataFileToArray(File dataFile, float scaleFactor) throws SimulationDataException
+    private double[] readDataFileToArray(File dataFile, double scaleFactor) throws SimulationDataException
     {
         String nextLine = null;
-        float[] data = null;
+        double[] data = null;
         try
         {
             Reader in = new FileReader(dataFile);
@@ -481,13 +457,13 @@ public class SimulationData
 
             /** @todo check if there's a quicker way to do this */
 
-            ArrayList<Float> tempList = new ArrayList<Float>(suggestedInitCapData);
+            ArrayList<Double> tempList = new ArrayList<Double>(suggestedInitCapData);
 
             while ( (nextLine = reader.readLine()) != null && nextLine.length()>0)
             {
                 if (!nextLine.startsWith("//") && nextLine.trim().length()>0)
                 {
-                    float nextEntry = Float.parseFloat(nextLine);
+                    double nextEntry = Double.parseDouble(nextLine);
                     tempList.add(scaleFactor * nextEntry);
                 }
             }
@@ -495,7 +471,7 @@ public class SimulationData
             if (tempList.size() > suggestedInitCapData) suggestedInitCapData = tempList.size();
 
             in.close();
-            data = new float[tempList.size()];
+            data = new double[tempList.size()];
 
             for (int i = 0; i < tempList.size(); i++)
             {
@@ -517,16 +493,16 @@ public class SimulationData
 
 
 
-    private float[] readSpikesToArray(File spikeFile, float[] times, float timeConversionFactor) throws SimulationDataException
+    private double[] readSpikesToArray(File spikeFile, double[] times, double timeConversionFactor) throws SimulationDataException
     {
         logger.logComment("Reading spikes from file: "+ spikeFile);
 
-        float nonSpikingVal = -100;
-        float spikingVal = 100;
+        double nonSpikingVal = -100;
+        double spikingVal = 100;
 
 
         String nextLine = null;
-        float[] data = null;
+        double[] data = null;
         try
         {
 
@@ -534,13 +510,13 @@ public class SimulationData
             LineNumberReader reader = new LineNumberReader(in);
 
 
-            ArrayList<Float> spikeTimes = new ArrayList<Float>(suggestedInitCapSpikes);
+            ArrayList<Double> spikeTimes = new ArrayList<Double>(suggestedInitCapSpikes);
 
             while ( (nextLine = reader.readLine()) != null && nextLine.length()>0)
             {
                 if (!nextLine.startsWith("//") && nextLine.trim().length()>0)
                 {
-                    float nextEntry = Float.parseFloat(nextLine);
+                    double nextEntry = Double.parseDouble(nextLine);
                     //logger.logComment("Found line: "+ nextEntry);
                     spikeTimes.add(nextEntry);
                 }
@@ -550,14 +526,14 @@ public class SimulationData
 
             if (suggestedInitCapSpikes< spikeTimes.size()) suggestedInitCapSpikes = spikeTimes.size();
 
-            data = new float[times.length];
+            data = new double[times.length];
             int spikeCount = 0;
 
             boolean insideSpike = false;
 
             for (int timeStep = 0; timeStep < times.length; timeStep++)
             {
-                float time = times[timeStep];
+                double time = times[timeStep];
 
                 if (spikeCount < spikeTimes.size() && time >= (spikeTimes.get(spikeCount) * timeConversionFactor))
                 {
@@ -610,7 +586,7 @@ public class SimulationData
 
     }
 
-
+    @Override
     public String toString()
     {
         return getSimulationName() + ": recorded at "+ getDateModified();
@@ -1051,7 +1027,7 @@ public class SimulationData
      */
     public class DataStore
     {
-        private float[] dataPoints;
+        private double[] dataPoints;
 
         private String cellGroupName = null;
         private int cellNumber = -1;
@@ -1061,8 +1037,8 @@ public class SimulationData
         private String xUnit = "";
         private String yUnit = "";
 
-        private float maxVal = -1* Float.MAX_VALUE;
-        private float minVal = Float.MAX_VALUE;
+        private double maxVal = -1* Double.MAX_VALUE;
+        private double minVal = Double.MAX_VALUE;
 
         /**
          * Duplication of data here...
@@ -1071,7 +1047,7 @@ public class SimulationData
 
 
 
-        public DataStore(float[] dataPoints,
+        public DataStore(double[] dataPoints,
                          String cellGroupName,
                          int cellNumber,
                          int segId,
@@ -1134,7 +1110,7 @@ public class SimulationData
             return this.cellNumber;
         }
 
-        public float[] getDataPoints()
+        public double[] getDataPoints()
         {
             return dataPoints;
         }
@@ -1147,12 +1123,12 @@ public class SimulationData
         }
 
 
-        public float getMaxVal()
+        public double getMaxVal()
         {
             return this.maxVal;
         }
 
-        public float getMinVal()
+        public double getMinVal()
         {
             return this.minVal;
         }
@@ -1177,7 +1153,7 @@ public class SimulationData
             return this.yUnit;
         }
 
-
+        @Override
         public String toString()
         {
             String synInfo = "";

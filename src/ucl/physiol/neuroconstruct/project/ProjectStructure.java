@@ -43,6 +43,8 @@ public class ProjectStructure
     private static final String morphFileExtension = new String(".morph.xml");
 
     private static final String neuromlExtension = new String(".nml");
+    
+    private static final String hdf5Extension = new String(".h5");
 
     private static final String neuromlCompExtension = new String(".zip");
 
@@ -137,6 +139,12 @@ public class ProjectStructure
         + "neuronUtils"
         + System.getProperty("file.separator")
         + "nCtools.hoc";
+    
+    private static String neuronCellCheckFile = "templates"
+        + System.getProperty("file.separator")
+        + "neuronUtils"
+        + System.getProperty("file.separator")
+        + "cellCheck.hoc";
 
     private static String xmlTemplatesDir = "templates"
         + System.getProperty("file.separator")
@@ -371,6 +379,12 @@ public class ProjectStructure
     public static String getNeuronUtilsFile()
     {
         return neuronUtilsFile;
+    }
+
+
+    public static String getNeuronCellCheckFile()
+    {
+        return neuronCellCheckFile;
     }
 
 
@@ -798,6 +812,14 @@ public class ProjectStructure
     public static String getNeuroMLFileExtension()
     {
         return neuromlExtension;
+    }
+    
+    /**
+     * @return The extension of HDF5 files as stored by the application
+     */
+    public static String getHDF5FileExtension()
+    {
+        return hdf5Extension;
     }
 
     /**

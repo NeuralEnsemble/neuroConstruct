@@ -2923,6 +2923,15 @@ public class PlotterFrame extends JFrame
                 }
 
                 RecentFiles.getRecentFilesInstance(ProjectStructure.getNeuConRecentFilesFilename()).setMyLastExportPointsDir(file.getAbsolutePath());
+                
+                
+                HDF5ChooserDialog dialog = new HDF5ChooserDialog(new javax.swing.JFrame(), false, file);
+                
+                GuiUtils.centreWindow(dialog);
+                
+                dialog.setVisible(true);
+                
+                /*
 
                 H5File h5 = Hdf5Utils.openH5file(file);
                 
@@ -2951,6 +2960,7 @@ public class PlotterFrame extends JFrame
                     }
                     frame.setVisible(true);
                 }
+                 */
                 
             }
             catch (Exception ex)

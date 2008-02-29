@@ -124,6 +124,15 @@ public class ChannelMechanism implements Serializable
     public String toString()
     {
         return name + " (density: " + density+" "
+            +UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSafeSymbol()+
+            getExtraParamsDesc()+")";
+        
+            
+    }
+    
+    public String toNiceString()
+    {
+        return name + " (density: " + density+" "
             +UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+
             getExtraParamsDesc()+")";
         
@@ -241,6 +250,22 @@ public class ChannelMechanism implements Serializable
     {
         this.name = name;
     }
+    
+    public MechParameter getExtraParameter(String paramName)
+    {
+        if (extraParameters==null || extraParameters.size()==0)
+            return null;
+        
+        for (MechParameter mp: extraParameters)
+        {
+            if (mp.getName().equals(paramName))
+            {
+                return mp;
+            }
+        }
+        return null;
+    }
+        
     
     public ArrayList<MechParameter> getExtraParameters()
     {

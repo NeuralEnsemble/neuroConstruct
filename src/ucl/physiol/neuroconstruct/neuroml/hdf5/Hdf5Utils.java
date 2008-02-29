@@ -43,6 +43,20 @@ public class Hdf5Utils
     {
         super();
     }
+    
+    public static Attribute getSimpleAttr(String name, String value, H5File h5File) throws Exception
+    {
+        Datatype dtype = h5File.createDatatype(Datatype.CLASS_STRING, value.length()+1, Datatype.NATIVE, Datatype.NATIVE);
+
+        long[] attrDims = {1}; 
+
+        Attribute attr = new Attribute(name, dtype, attrDims);
+        String[] info = new String[]{value };
+
+        attr.setValue(info); 
+        
+        return attr;
+    }
 
     public static H5File createH5file(File file) throws Hdf5Exception
     {
@@ -202,7 +216,7 @@ public class Hdf5Utils
         
         if (g == null) return dataSets;
         
-        logger.logComment("Searching group "+g.getFullName()+" for Datasets");
+        logger.logComment("Searching group "+g.getFullName()+" for Datasets", true);
 
         java.util.List members = g.getMemberList();
              
@@ -246,6 +260,8 @@ public class Hdf5Utils
                     if (d.getDims()[0]>1)
                     {
                         DataSet ds = Hdf5Utils.parseDataset(d, includePoints, p);
+                        ds.setRefrence(g.getFullName()+"/"+ds.getRefrence());
+                        
                         logger.logComment(ds.toString());
                         String desc = ds.getDescription();
                         Enumeration propNames = p.propertyNames();
@@ -293,13 +309,13 @@ public class Hdf5Utils
             xLegend = "Time";
         }
         
-        float xSampling = 1;
-        float yOffset = 0;
-        float yScale = 1;
+        double xSampling = 1;
+        double yOffset = 0;
+        double yScale = 1;
         
         if (p.containsKey(Hdf5Constants.NEUROSAGE_TRACE_SAMPLING_RATE))
         {
-            xSampling = Float.parseFloat(p.getProperty(Hdf5Constants.NEUROSAGE_TRACE_SAMPLING_RATE));
+            xSampling = Double.parseDouble(p.getProperty(Hdf5Constants.NEUROSAGE_TRACE_SAMPLING_RATE));
         }
         
         if (p.containsKey(Hdf5Constants.NEUROSAGE_TRACE_DATA_AXIS))
@@ -315,8 +331,8 @@ public class Hdf5Utils
         if (p.containsKey(Hdf5Constants.NEUROSAGE_TRACE_TRANSFORM_TYPE) &&
             p.getProperty(Hdf5Constants.NEUROSAGE_TRACE_TRANSFORM_TYPE).equals(Hdf5Constants.NEUROSAGE_TRACE_TRANSFORM_TYPE_LINEAR))
         {
-            yOffset = Float.parseFloat(p.getProperty(Hdf5Constants.NEUROSAGE_TRACE_TRANSFORM_OFFSET));
-            yScale = Float.parseFloat(p.getProperty(Hdf5Constants.NEUROSAGE_TRACE_TRANSFORM_SCALE));
+            yOffset = Double.parseDouble(p.getProperty(Hdf5Constants.NEUROSAGE_TRACE_TRANSFORM_OFFSET));
+            yScale = Double.parseDouble(p.getProperty(Hdf5Constants.NEUROSAGE_TRACE_TRANSFORM_SCALE));
         }
         
         
@@ -449,7 +465,7 @@ public class Hdf5Utils
             logger.logComment("Cells: " + gcp.getNumberInAllCellGroups(), true);
             logger.logComment("Net conn num: " + gnc.getNumberSynapticConnections(GeneratedNetworkConnections.ANY_NETWORK_CONNECTION), true);
 
-            NetworkMLWriter.createNetworkMLH5file(h5File, gcp, gnc);
+            NetworkMLWriter.createNetworkMLH5file(h5File, testProj);
             
             if (true) System.exit(0);
             

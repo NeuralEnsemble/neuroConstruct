@@ -1047,9 +1047,13 @@ public class Project implements TableModelListener
             }
             else
             {
-                File zipFile = new File(neuroMLFile.getAbsolutePath() +
+                File zipFile = neuroMLFile;
+                
+                if (!neuroMLFile.getName().endsWith(ProjectStructure.getNeuroMLCompressedFileExtension()))
+                    zipFile = new File(neuroMLFile.getAbsolutePath() +
                                         ProjectStructure.getNeuroMLCompressedFileExtension());
-                ZipUtils.zipStringAsFile(stringForm, zipFile, neuroMLFile.getName(), notes.toString());
+                
+                ZipUtils.zipStringAsFile(stringForm, zipFile, zipFile.getName(), notes.toString());
                 
                 return zipFile;
             }

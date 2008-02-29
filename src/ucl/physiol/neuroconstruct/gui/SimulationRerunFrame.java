@@ -75,7 +75,7 @@ public class SimulationRerunFrame extends JFrame
 
     private Hashtable<String, ISIStateInfo> isiInfo = null;
 
-    private float[][] rerunValues = null;
+    private double[][] rerunValues = null;
 
     /**
      * CellItem is a CellSegRef or SynapseRef...
@@ -254,6 +254,7 @@ public class SimulationRerunFrame extends JFrame
         jRunSlider.setValue(0);
         jRunSlider.addMouseListener(new java.awt.event.MouseAdapter()
         {
+            @Override
             public void mouseReleased(MouseEvent e)
             {
                 jSlider1_mouseReleased(e);
@@ -710,12 +711,12 @@ public class SimulationRerunFrame extends JFrame
 
     private void refreshRerunVals(String var)
     {
-        float mostNeg = Float.MAX_VALUE;
-        float mostPos = -1*Float.MAX_VALUE;
+        double mostNeg = Double.MAX_VALUE;
+        double mostPos = -1*Double.MAX_VALUE;
         try
         {
             this.rerunCellItemRefs = new String[currentCellItemRefs.size()];
-            this.rerunValues = new float[currentCellItemRefs.size()][myCurrSimData.getNumberTimeSteps()];
+            this.rerunValues = new double[currentCellItemRefs.size()][myCurrSimData.getNumberTimeSteps()];
 
             for (int i=0;i<currentCellItemRefs.size();i++)
             {
@@ -725,7 +726,7 @@ public class SimulationRerunFrame extends JFrame
                 if (ds.getPostSynapticObject()==null)
                 {
                     rerunCellItemRefs[i] = cellSegRef;
-                    float[] vals = ds.getDataPoints();
+                    double[] vals = ds.getDataPoints();
                     rerunValues[i] = vals;
                     mostNeg = Math.min(mostNeg, ds.getMinVal());
                     mostPos = Math.max(mostPos, ds.getMaxVal());
@@ -733,7 +734,7 @@ public class SimulationRerunFrame extends JFrame
                 else
                 {
                     rerunCellItemRefs[i] = cellSegRef+"."+ds.getPostSynapticObject().getSynRef();
-                    float[] vals = ds.getDataPoints();
+                    double[] vals = ds.getDataPoints();
                     rerunValues[i] = vals;
                     mostNeg = Math.min(mostNeg, ds.getMinVal());
                     mostPos = Math.max(mostPos, ds.getMaxVal());
@@ -795,7 +796,7 @@ public class SimulationRerunFrame extends JFrame
         //System.out.println("Better: " + better);
         int power = (int)Math.floor(Math.log10(better)) -2 ;
         //System.out.println("power: " + power);
-        double factor = (double)Math.pow(10, power);
+        double factor = Math.pow(10, power);
         //System.out.println("factor: " + factor);
         better = (factor * (float)Math.floor(better/factor));
 
@@ -823,7 +824,7 @@ public class SimulationRerunFrame extends JFrame
         //System.out.println("Better: " + better);
         int power = (int)Math.floor(Math.log10(better)) -2 ;
         //System.out.println("power: " + power);
-        double factor = (double)Math.pow(10, power);
+        double factor = Math.pow(10, power);
         //System.out.println("factor: " + factor);
         better = (factor * Math.ceil(better/factor));
 
@@ -1062,8 +1063,7 @@ public class SimulationRerunFrame extends JFrame
             String cellGroupName = SimulationData.getCellGroup(cellOnlyReference);
             int cellNumber = SimulationData.getCellNum(cellOnlyReference);
 
-            //float value = myCurrSimData.getValueAtTimeStep(timeStep, ref, variable);
-            float value = this.rerunValues[cellSegIndex][ timeStep];
+            double value = this.rerunValues[cellSegIndex][ timeStep];
 
             //logger.logComment("Showing " + voltage + " mV for " + cellSegReferences[j] + " at time: " +
             //                  myCurrSimData.getSimulationTime(timeStep));
@@ -1085,7 +1085,7 @@ public class SimulationRerunFrame extends JFrame
                 if (isiState.timeLastSpike < 0)
                 {
                     logger.logComment("First spike...");
-                    isiState.timeLastSpike = myCurrSimData.getSimulationTime(timeStep);
+                    isiState.timeLastSpike = (float)myCurrSimData.getSimulationTime(timeStep);
                     isiState.runningISIAverage = 0;
                     isiState.numberISIs = 0;
                 }
@@ -1093,7 +1093,7 @@ public class SimulationRerunFrame extends JFrame
                 {
                     logger.logComment(cellGroupName+", "+cellNumber+": spiking: There have been " + isiState.numberISIs + " spikes already...");
 
-                    float newestISI = myCurrSimData.getSimulationTime(timeStep) - isiState.timeLastSpike;
+                    float newestISI = (float)myCurrSimData.getSimulationTime(timeStep) - isiState.timeLastSpike;
 
                     isiState.runningISIAverage
                         = ( (isiState.runningISIAverage * isiState.numberISIs) + newestISI) /
@@ -1101,7 +1101,7 @@ public class SimulationRerunFrame extends JFrame
 
                     isiState.numberISIs++;
 
-                    isiState.timeLastSpike = myCurrSimData.getSimulationTime(timeStep);
+                    isiState.timeLastSpike = (float)myCurrSimData.getSimulationTime(timeStep);
 
                 }
 
@@ -1264,7 +1264,7 @@ public class SimulationRerunFrame extends JFrame
             int cellNumber = SimulationData.getCellNum(cellOnlyReference);
 
             //float value = myCurrSimData.getValueAtTimeStep(timeStep, ref, var);
-            float value = this.rerunValues[cellSegIndex][ timeStep];
+            double value = this.rerunValues[cellSegIndex][ timeStep];
 
             logger.logComment("Showing val "+value+" for "+ref+" at time: "+
                 myCurrSimData.getSimulationTime( timeStep));
@@ -1276,9 +1276,9 @@ public class SimulationRerunFrame extends JFrame
             if (this.jRadioButtonSpikesOnly.isSelected())
             {
                 if (value<thresholdForRun)
-                    newColour = getColorBasedOnValue((float)mostNegValue);
+                    newColour = getColorBasedOnValue(mostNegValue);
                 else
-                    newColour = getColorBasedOnValue((float)mostPosValue);
+                    newColour = getColorBasedOnValue(mostPosValue);
 
             }
             else if (this.jRadioButtonISIShading.isSelected())
@@ -1305,7 +1305,7 @@ public class SimulationRerunFrame extends JFrame
             }
             else if (this.jRadioButtonContinuous.isSelected())
             {
-                newColour = getColorBasedOnValue(value);
+                newColour = getColorBasedOnValue((float)value);
             }
 
             logger.logComment("Decided on a colour: "+ newColour.toString());
@@ -1324,7 +1324,7 @@ public class SimulationRerunFrame extends JFrame
                //     ", voltage is from cellGroup: "+ cellGroupName);
                 if (view2Ds.get(i).getCellGroup().equals(cellGroupName))
                 {
-                    view2Ds.get(i).updateVoltage(value,
+                    view2Ds.get(i).updateVoltage((float)value,
                                                  cellGroupName,
                                                  cellNumber,
                                                  (cellNumber == 0)); // i.e. Refresh only when the first cell
@@ -1342,8 +1342,8 @@ public class SimulationRerunFrame extends JFrame
 
             for (int i = 0; i < allActMonCellNames.size(); i++)
             {
-                 String cellGroupName = (String)   allActMonCellNames.elementAt(i);
-                 ActivityMonitor am = (ActivityMonitor) activityMonitors.get(cellGroupName);
+                 String cellGroupName = allActMonCellNames.elementAt(i);
+                 ActivityMonitor am = activityMonitors.get(cellGroupName);
                  if (am!=null) am.setValue(countActive[i]);
             }
            //
@@ -1435,6 +1435,7 @@ public class SimulationRerunFrame extends JFrame
 
 
     //Overridden so we can exit when window is closed
+    @Override
     protected void processWindowEvent(WindowEvent e)
     {
         //super.processWindowEvent(e);
@@ -1512,12 +1513,12 @@ public class SimulationRerunFrame extends JFrame
     }
 
 
-    public float[] getVoltageAtAllTimes(String cellSegRef)  throws SimulationDataException
+    public double[] getVoltageAtAllTimes(String cellSegRef)  throws SimulationDataException
     {
         return myCurrSimData.getVoltageAtAllTimes(cellSegRef);
     }
 
-    public float[] getAllTimes()  throws SimulationDataException
+    public double[] getAllTimes()  throws SimulationDataException
     {
         return myCurrSimData.getAllTimes();
     }
@@ -1541,6 +1542,7 @@ public class SimulationRerunFrame extends JFrame
 
 
 
+    @Override
     public void dispose()
     {
         if (simulationTimer!=null) simulationTimer.stop();
@@ -1748,6 +1750,7 @@ public class SimulationRerunFrame extends JFrame
         float runningISIAverage = 0;
         int numberISIs = 0;
 
+        @Override
         public String toString()
         {
             return ("ISIStateInfo [spiking: "+spiking+", timeLastSpike: "+timeLastSpike

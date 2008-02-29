@@ -17,7 +17,6 @@ import java.io.*;
 import java.net.*;
 import java.text.*;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.zip.*;
 import javax.media.j3d.*;
 import javax.vecmath.*;
@@ -34,7 +33,6 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
-import javax.swing.text.Document;
 import org.xml.sax.*;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
@@ -49,6 +47,8 @@ import ucl.physiol.neuroconstruct.hpc.mpi.*;
 import ucl.physiol.neuroconstruct.j3D.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
+import ucl.physiol.neuroconstruct.neuroml.hdf5.Hdf5Exception;
+import ucl.physiol.neuroconstruct.neuroml.hdf5.NetworkMLWriter;
 import ucl.physiol.neuroconstruct.neuron.*;
 
 import ucl.physiol.neuroconstruct.nmodleditor.processes.*;
@@ -330,7 +330,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     JButton jButtonGenerateSave = new JButton();
     JButton jButtonGenerateLoad = new JButton();
-    JCheckBox jCheckBoxGenerateZip = new JCheckBox();
+    //JCheckBox jCheckBoxGenerateZip = new JCheckBox();
+    JRadioButton jRadioButtonNMLSavePlainText = new JRadioButton("XML");
+    JRadioButton jRadioButtonNMLSaveZipped = new JRadioButton("Zipped XML");
+    JRadioButton jRadioButtonNMLSaveHDF5 = new JRadioButton("HDF5 (beta)");
+    ButtonGroup buttonGroupNMLSave = new ButtonGroup();
+    
     JCheckBox jCheckBoxGenerateExtraNetComments = new JCheckBox();
 
 
@@ -2555,14 +2560,23 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jButtonSimConfigEdit.setEnabled(false);
         jButtonGenerateSave.setEnabled(false);
         jButtonGenerateLoad.setEnabled(false);
-        jCheckBoxGenerateZip.setEnabled(false);
+        jRadioButtonNMLSaveHDF5.setEnabled(false);
+        jRadioButtonNMLSavePlainText.setEnabled(false);
+        jRadioButtonNMLSaveZipped.setEnabled(false);
+        
+        jRadioButtonNMLSavePlainText.setSelected(true);
+        
+        buttonGroupNMLSave.add(jRadioButtonNMLSaveHDF5);
+        buttonGroupNMLSave.add(jRadioButtonNMLSavePlainText);
+        buttonGroupNMLSave.add(jRadioButtonNMLSaveZipped);
+        
         jCheckBoxGenerateExtraNetComments.setEnabled(false);
         jButtonGenerate.setEnabled(false);
         jButtonGenerate.setText("Generate Cell Positions and Connections");
         jButtonGenerateSave.setText("Save NetworkML");
         jButtonGenerateLoad.setText("Load NetworkML");
 
-        jCheckBoxGenerateZip.setText("Compress");
+        //jCheckBoxGenerateZip.setText("Compress");
         jCheckBoxGenerateExtraNetComments.setText("Extra comments");
 
         jButtonGenerateSave.addActionListener(new java.awt.event.ActionListener()
@@ -2893,7 +2907,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelGenerateButtons.add(jComboBoxSimConfig, null);
 
         jPanelGenerateLoadSave.add(jButtonGenerateSave);
-        jPanelGenerateLoadSave.add(jCheckBoxGenerateZip);
+        jPanelGenerateLoadSave.add(jRadioButtonNMLSavePlainText);
+        jPanelGenerateLoadSave.add(jRadioButtonNMLSaveZipped);
+        jPanelGenerateLoadSave.add(jRadioButtonNMLSaveHDF5);
         jPanelGenerateLoadSave.add(this.jCheckBoxGenerateExtraNetComments);
         jPanelGenerateLoadSave.add(jButtonGenerateLoad);
 
@@ -3860,7 +3876,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         this.jButtonGenerateSave.setToolTipText(toolTipText.getToolTip("Save NetworkML"));
         this.jButtonGenerateLoad.setToolTipText(toolTipText.getToolTip("Load NetworkML"));
-        this.jCheckBoxGenerateZip.setToolTipText(toolTipText.getToolTip("Compress NetworkML"));
+        
+        this.jRadioButtonNMLSaveZipped.setToolTipText(toolTipText.getToolTip("Compress NetworkML"));
+        
         this.jCheckBoxGenerateExtraNetComments.setToolTipText(toolTipText.getToolTip("Extra comments NetworkML"));
 
         this.jLabelGenesisCompsDesc.setToolTipText(toolTipText.getToolTip("Compartmentalisation"));
@@ -7983,7 +8001,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jButtonSimConfigEdit.setEnabled(false);
             this.jButtonGenerateSave.setEnabled(false);
             jButtonGenerateLoad.setEnabled(false);
-            jCheckBoxGenerateZip.setEnabled(false);
+            jRadioButtonNMLSaveHDF5.setEnabled(false);
+            jRadioButtonNMLSavePlainText.setEnabled(false);
+            jRadioButtonNMLSaveZipped.setEnabled(false);
+        
             this.jCheckBoxGenerateExtraNetComments.setEnabled(false);
             this.jEditorPaneGenerateInfo.setText("");
             this.jComboBoxAnalyseCellGroup.setEnabled(false);
@@ -8004,7 +8025,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             this.jButtonGenerateSave.setEnabled(true);
             jButtonGenerateLoad.setEnabled(true);
-            jCheckBoxGenerateZip.setEnabled(true);
+        jRadioButtonNMLSaveHDF5.setEnabled(true);
+        jRadioButtonNMLSavePlainText.setEnabled(true);
+        jRadioButtonNMLSaveZipped.setEnabled(true);
+        
             jCheckBoxGenerateExtraNetComments.setEnabled(true);
             ArrayList<String> cellGroupNames = projManager.getCurrentProject().cellGroupsInfo.getAllCellGroupNames();
             Vector<String> netConnNames = projManager.getCurrentProject().morphNetworkConnectionsInfo.getAllSimpleNetConnNames();
@@ -10092,8 +10116,16 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         if (fileName == null) return;
 
+        String fullName = fileName;
+        
+        if (jRadioButtonNMLSavePlainText.isSelected())
+            fullName = fileName+ ProjectStructure.getNeuroMLFileExtension();
+        if (jRadioButtonNMLSaveZipped.isSelected())
+            fullName = fileName+ ProjectStructure.getNeuroMLCompressedFileExtension();
+        else if(jRadioButtonNMLSaveHDF5.isSelected())
+            fullName = fileName+ ProjectStructure.getHDF5FileExtension();
 
-        File networkFile = new File(savedNetsDir, fileName+ ProjectStructure.getNeuroMLFileExtension());
+        File networkFile = new File(savedNetsDir, fullName);
 
         if (networkFile.exists())
         {
@@ -10114,15 +10146,35 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         File fileSaved = null;
         try
         {
-
-            fileSaved = projManager.getCurrentProject().saveNetworkStructure(networkFile,
-                                                                 this.jCheckBoxGenerateZip.isSelected(),
+            if (jRadioButtonNMLSavePlainText.isSelected())
+            {
+                fileSaved = projManager.getCurrentProject().saveNetworkStructure(networkFile,
+                                                                 false,
                                                                  this.jCheckBoxGenerateExtraNetComments.isSelected(),
                                                                  getSelectedSimConfig().getName());
+            }
+            else if (jRadioButtonNMLSaveZipped.isSelected())
+            {
+                fileSaved = projManager.getCurrentProject().saveNetworkStructure(networkFile,
+                                                                 true,
+                                                                 this.jCheckBoxGenerateExtraNetComments.isSelected(),
+                                                                 getSelectedSimConfig().getName());
+            }
+            else if(jRadioButtonNMLSaveHDF5.isSelected())
+            {
+                fileSaved = NetworkMLWriter.createNetworkMLH5file(networkFile, projManager.getCurrentProject());
+            }
         }
         catch (NeuroMLException ex1)
         {
-            GuiUtils.showErrorMessage(logger, "Problem saving network in NeuroML", ex1, this);
+            GuiUtils.showErrorMessage(logger, "Problem saving network in NetworkML", ex1, this);
+        }
+        catch (Hdf5Exception ex1)
+        {
+            GuiUtils.showErrorMessage(logger, "Problem saving network in HDF5 form of NetworkML\n" +
+                "Note that the jar files for HDF5 (jhdf.jar etc.) should be in the java classpath and the location of the libraries (libjhdf5.so etc. for Linux, jhdf5.dll etc. for Win)\n" +
+                "should be specified in the java.library.path variable.\n" +
+                "Note also that on a 64 bit Windows system, a 32 bit JVM should be used, as the dlls are 32bit.", ex1, this);
         }
         long end = System.currentTimeMillis();
         
@@ -10670,7 +10722,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         try
         {
-            HelpFrame.showFrame(f.toURL(), "neuroConstruct Release notes", false);
+            HelpFrame.showFrame(f.toURI().toURL(), "neuroConstruct Release notes", false);
         }
         catch (MalformedURLException m)
         {
@@ -11501,8 +11553,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_GENESIStab.xsl");
                 }
                 
-                int ans = JOptionPane.showConfirmDialog(this, "Would you like to replace mapping file: \n\n"+oldXsl.getAbsolutePath()+"\n\nfor environment "+simEnv+", cell mech: " +cmlMech.getInstanceName()
-                        + " with a copy of file:\n\n"+ newXsl.getAbsolutePath()+"?" , "Replace mapping?", JOptionPane.YES_NO_CANCEL_OPTION);
+                SimpleDateFormat formatter = new SimpleDateFormat("H:mm:ss, EEEE MMMM d, yyyy");
+                
+                java.util.Date modifiedOld = new java.util.Date(oldXsl.lastModified());
+                java.util.Date modifiedNew = new java.util.Date(newXsl.lastModified());
+            
+                
+                int ans = JOptionPane.showConfirmDialog(this, "Would you like to replace mapping file: \n\n"+oldXsl.getAbsolutePath() + " ("+formatter.format(modifiedOld)+")"
+                    +"\n\nfor environment "+simEnv+", cell mech: " +cmlMech.getInstanceName()
+                        + " with a copy of file:\n\n"+ newXsl.getAbsolutePath()+ " ("+formatter.format(modifiedNew)+")"+"?" , "Replace mapping?", JOptionPane.YES_NO_CANCEL_OPTION);
                 
                 if (ans==JOptionPane.CANCEL_OPTION)
                     return;
@@ -12851,7 +12910,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         try
         {
-            HelpFrame.showFrame(f.toURL(), "neuroConstruct Help documentation", false);
+            HelpFrame.showFrame(f.toURI().toURL(), "neuroConstruct Help documentation", false);
         }
         catch (MalformedURLException m)
         {
@@ -12869,7 +12928,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         try
         {
-            HelpFrame.showFrame(f.toURL(), "neuroConstruct Help documentation", false);
+            HelpFrame.showFrame(f.toURI().toURL(), "neuroConstruct Help documentation", false);
         }
         catch (MalformedURLException m)
         {

@@ -1241,7 +1241,10 @@ public class NeuronTemplateGenerator
                         
                         for (MechParameter mp: mps)
                         {
-                            moreParams.append("\n    "+mp.getName()+"_"+nextChanMech.getName()+" = "+ mp.getValue());
+                            if(!mp.getName().equals("erev")) // will be checked for later...
+                            {
+                                moreParams.append("\n    "+mp.getName()+"_"+nextChanMech.getName()+" = "+ mp.getValue());
+                            }
                         }
 
 
@@ -1306,14 +1309,34 @@ public class NeuronTemplateGenerator
 
                                     NeuronFileManager.addHocComment(response, "    Ion " + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR) + " is used in this process...");
 
+                                    String unitsUsed = cmlMech.getUnitsUsedInFile();
 
                                     String erev = ion.getAttributeValue(ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR);
+                                    
+                                    MechParameter mpErev = nextChanMech.getExtraParameter("erev");
+                                    if (mpErev!=null)
+                                    {
+                                        
+                                            if (unitsUsed.equals(ChannelMLConstants.SI_UNITS))
+                                            {
+                                                erev = ""+UnitConverter.getVoltage( mpErev.getValue(),
+                                                                                         UnitConverter.GENESIS_SI_UNITS,
+                                                                                         UnitConverter.NEUROCONSTRUCT_UNITS);
+                                            }
+                                            else if (unitsUsed.equals(ChannelMLConstants.PHYSIOLOGICAL_UNITS))
+                                            {
+                                                erev = ""+UnitConverter.getVoltage( mpErev.getValue(),
+                                                                                         UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS,
+                                                                                         UnitConverter.NEUROCONSTRUCT_UNITS);
+                                            }
+                                    }
 
                                     logger.logComment("Setting erev: " + erev);
+                                    
+                                    
                                     if (erev != null)
                                     {
 
-                                        String unitsUsed = cmlMech.getUnitsUsedInFile();
 
                                         logger.logComment("Units used = " + unitsUsed);
 
@@ -1336,17 +1359,56 @@ public class NeuronTemplateGenerator
 
                                             erev = suggValDouble + "";
                                         }
+                                        
+                                        boolean revPotSetElsewhere = false;
+                                            
+                                        Hashtable<ChannelMechanism, Vector<String>> cmVsGroups = cell.getChanMechsVsGroups();
+                                            
+                                        Enumeration<ChannelMechanism> cms = cmVsGroups.keys();
+
+                                        while (cms.hasMoreElements())
+                                        {
+                                            ChannelMechanism cm = cms.nextElement();
+                                            if (cm.getName().equals(nextChanMech.getName()))
+                                            {
+                                                Vector<String> groups = cmVsGroups.get(cm);
+                                                for(String grp: groups)
+                                                {
+                                                    if (!grp.equals(nextGroup) || nextChanMech.getName().equals("pas"))
+                                                    {
+                                                        NeuronFileManager.addHocComment(response, "    Group " + grp +" also has "+ nextChanMech.getName()+" ("+cm+")", false);
+
+                                                        if (CellTopologyHelper.isGroupASubset(nextGroup, grp, cell))
+                                                        {
+                                                            MechParameter mpe1 = cm.getExtraParameter("e");
+                                                            MechParameter mpe2 = cm.getExtraParameter("erev");
+
+                                                            if (mpe1!=null || mpe2!=null)
+                                                            {
+                                                                revPotSetElsewhere = true;
+
+                                                                NeuronFileManager.addHocComment(response, "    Reverse potential for ion set by " 
+                                                                    + cm.toString()+" which is on superset group: "+ grp);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        
                                         if (!(ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR).equals(ChannelMLConstants.NON_SPECIFIC_ION_NAME)))
                                         {
-
-                                            response.append("        e" + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR) + " = " + erev + "\n");
+                                            if (!revPotSetElsewhere)
+                                            {
+                                                response.append("        e" + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR) + " = " + erev + "\n");
+                                            }
                                         }
                                         else
                                         {
                                             logger.logComment("That's a non specific process...");
-                                            if (nextChanMech.getName().equals("pas"))
+                                            
+                                            if (!revPotSetElsewhere && nextChanMech.getName().equals("pas"))
                                             {
-
                                                 response.append("  e_" + nextChanMech.getName() + " = " + erev + "\n");
                                             }
                                         }

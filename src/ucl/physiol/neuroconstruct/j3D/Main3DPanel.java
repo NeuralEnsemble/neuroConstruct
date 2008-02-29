@@ -1295,6 +1295,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
     }
 
 
+    @Override
     public void markPrimitiveAsSelected(Primitive prim)
     {
         logger.logComment("Being told " + prim + " has been selected...");
@@ -1533,6 +1534,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
     }
 
 
+    @Override
     public Transform3D getLastViewingTransform3D()
     {
         MultiTransformGroup mtg = simpleU.getViewingPlatform().getMultiTransformGroup();
@@ -1542,6 +1544,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
     }
 
 
+    @Override
     public void setLastViewingTransform3D(Transform3D lastViewingTransform3D)
     {
         if (lastViewingTransform3D != null)
@@ -1556,6 +1559,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
     }
 
 
+    @Override
     public void refresh3D()
     {
         if (simRerunFrame == null)
@@ -1914,7 +1918,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                 dsToPlot = dsForCellRef.get(0);
             }
 
-            float[] times = null;
+            double[] times = null;
 
             try
             {
@@ -2012,7 +2016,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
             data.setUnits(dsToPlot.getXUnit(), dsToPlot.getYUnit());
 
-            float[] points = dsToPlot.getDataPoints();
+            double[] points = dsToPlot.getDataPoints();
 
             for (int i = 0; i < times.length; i++)
             {
@@ -2235,6 +2239,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
             this.exitOnClose = exitOnClose;
         }
 
+        @Override
         public void windowClosing(WindowEvent e)
         {
             parent.dispose();
@@ -2592,7 +2597,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
     {
         logger.logComment("---- Analysing cell group spiking...");
 
-        float[] times = simRerunFrame.getAllTimes();
+        double[] times = simRerunFrame.getAllTimes();
 
         //String[] allCellGroups = project.cellGroupsInfo.getAllCellGroupNamesArray();
 
@@ -2703,7 +2708,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         spikeOptions.setStartTime(startTime);*/
 
         req = "Please enter the finish time from which to analyse the spiking";
-        float suggestedEnd = times[times.length-1];
+        double suggestedEnd = times[times.length-1];
         if (preferredSpikeValsEntered) suggestedEnd = spikeOptions.getStopTime();
 
         InputRequestElement stopInput = new InputRequestElement("stop", req, null, suggestedEnd+"", "ms");
@@ -2784,7 +2789,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         for (int cellNum = 0; cellNum < total; cellNum++)
         {
-            float[] voltages = null;
+            double[] voltages = null;
 
 
             String cellRef = SimulationData.getCellSegRef(cellGroup, cellNum, 0, simRerunFrame.isOnlySomaValues());
@@ -2843,7 +2848,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
     {
         ArrayList<InputRequestElement> inputs = new ArrayList<InputRequestElement>();
 
-        float[] times = simRerunFrame.getAllTimes();
+        double[] times = simRerunFrame.getAllTimes();
 
 
         ArrayList<String> everyCellGroup = project.cellGroupsInfo.getAllCellGroupNames();
@@ -2952,7 +2957,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
 
         req = "Start time from which to analyse the spiking";
-        float suggestedStart = 0;
+        double suggestedStart = 0;
         if (preferredSpikeValsEntered) suggestedStart = spikeOptions.getStartTime();
 
         InputRequestElement startInput = new InputRequestElement("start", req, null, suggestedStart+"", "ms");
@@ -2960,7 +2965,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
 
         req = "Finish time from which to analyse the spiking";
-        float suggestedEnd = times[times.length - 1];
+        double suggestedEnd = times[times.length - 1];
         if (preferredSpikeValsEntered) suggestedEnd = spikeOptions.getStopTime();
 
 
@@ -2969,7 +2974,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
 
         req = "Please enter the bin size for the histogram";
-        float suggestedBinSize = Math.min(1, (suggestedEnd -suggestedStart)/100f);
+        double suggestedBinSize = Math.min(1, (suggestedEnd -suggestedStart)/100f);
 
 
         InputRequestElement binSizeInput = new InputRequestElement("binsize", req, null, suggestedBinSize+"", "ms");
@@ -3106,7 +3111,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         for(Integer next: orderedCellNums)
         {
             int cellNum = next;
-            float[] voltages = null;
+            double[] voltages = null;
 
 
             String cellRef = SimulationData.getCellSegRef(cellGroup, cellNum, 0, simRerunFrame.isOnlySomaValues());
@@ -3158,7 +3163,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
     private void populationRasterplot() throws SimulationDataException
     {
-        float[] times = simRerunFrame.getAllTimes();
+        double[] times = simRerunFrame.getAllTimes();
 
         logger.logComment("Times (" + times.length + "): " + times[0] + ", " + times[1] + ", ... , " +
                           times[times.length - 1]);
@@ -3279,7 +3284,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         for (int j = orderedCellNums.size()-1; j >= 0; j--)
         {
             int cellNum = orderedCellNums.get(j);
-            float[] voltages = null;
+            double[] voltages = null;
 
             String cellRef = SimulationData.getCellSegRef(chosenCellGroup, cellNum, 0, simRerunFrame.isOnlySomaValues());
 
@@ -3441,9 +3446,9 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
             return;
         }
 
-        float[] selectedVoltages = simRerunFrame.getVoltageAtAllTimes(cellRef);
+        double[] selectedVoltages = simRerunFrame.getVoltageAtAllTimes(cellRef);
 
-        float[] times = simRerunFrame.getAllTimes();
+        double[] times = simRerunFrame.getAllTimes();
 
         logger.logComment("Changing colour of : " + positions.size()+" cells");
 
@@ -3476,7 +3481,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                     if (dsForCellRef.size() != 0)
                     {
 
-                        float[] voltages = simRerunFrame.getVoltageAtAllTimes(cellRef);
+                        double[] voltages = simRerunFrame.getVoltageAtAllTimes(cellRef);
 
                         DataSet ds = new DataSet(cellRef, cellRef, "ms", "", "Offset", "Cross correlation");
 
@@ -3527,7 +3532,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
     private void populationISIHisto()   throws SimulationDataException
     {
-        float[] times = simRerunFrame.getAllTimes();
+        double[] times = simRerunFrame.getAllTimes();
 
         logger.logComment("Times ("+times.length+"): "+ times[0]+", "+ times[1]+", ... , "+ times[times.length-1]);
 
@@ -3625,7 +3630,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         spikeOptions.setStartTime(startTime);
 
         req = "Please enter the finish time from which to analyse the ISIs";
-        float suggestedEnd = times[times.length-1];
+        double suggestedEnd = times[times.length-1];
         if (preferredSpikeValsEntered) suggestedEnd = spikeOptions.getStopTime();
 
         String stop = JOptionPane.showInputDialog(this, req, "" + suggestedEnd);
@@ -3719,7 +3724,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         for (int cellNum = 0; cellNum < total; cellNum++)
         {
-            float[] voltages = null;
+            double[] voltages = null;
 
 
             String cellRef = SimulationData.getCellSegRef(cellGroup, cellNum, 0, simRerunFrame.isOnlySomaValues());

@@ -167,8 +167,8 @@ public class SpikeAnalyser
                          if (spikeTimes.size()>1)
                          {
                              interSpikeIntervals.add(new Double(
-                                    ((Double)spikeTimes.elementAt(spikeTimes.size()-1)).doubleValue() -
-                                    ((Double)spikeTimes.elementAt(spikeTimes.size()-2)).doubleValue()));
+                                    (spikeTimes.elementAt(spikeTimes.size()-1)).doubleValue() -
+                                    (spikeTimes.elementAt(spikeTimes.size()-2)).doubleValue()));
                          }
                      }
                  }
@@ -339,6 +339,25 @@ public class SpikeAnalyser
         return correl;
     }
 
+    
+    public static float[] crossCorrelation(double[] traceA,
+                                           double[] traceB,
+                                           double[] time,
+                                           float threshold,
+                                           float binSize,
+                                           int binNum,
+                                           float window,
+                                           float pauseMin)
+    {
+        double[] spikesA = getSpikeTimes(traceA, time, threshold, (float)time[0], (float)time[time.length - 1]);
+        
+        double[] spikesB = getSpikeTimes(traceB, time, threshold, (float)time[0], (float)time[time.length - 1]);
+
+
+        return crossCorrelation(spikesA, spikesB,
+                                binSize,
+                                window, pauseMin);
+    }
 
 
     public static float[] crossCorrelation(float[] traceA,

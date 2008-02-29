@@ -129,7 +129,7 @@ public class CellTopologyHelper
 
         for (int o = 0; o < idsOfPossibleSegments.size(); o++)
         {
-            int nextId = ( (Integer) idsOfPossibleSegments.elementAt(o)).intValue();
+            int nextId = ( idsOfPossibleSegments.elementAt(o)).intValue();
             Segment segment = cell.getSegmentWithId(nextId);
             float length = segment.getSegmentLength();
 
@@ -151,16 +151,16 @@ public class CellTopologyHelper
         if (totalLengthOfValidSegments == 0)
         {
             logger.logComment("Probably synaptic connection on soma...");
-            nextIdToCheck = ( (Integer) idsOfPossibleSegments.elementAt(numSegmentsChecked)).intValue();
+            nextIdToCheck = ( idsOfPossibleSegments.elementAt(numSegmentsChecked)).intValue();
             fractionAlongChosenSegment = 0.5f;
         }
         else
         {
             while (!pointFound && numSegmentsChecked <= idsOfPossibleSegments.size())
             {
-                nextIdToCheck = ( (Integer) idsOfPossibleSegments.elementAt(numSegmentsChecked)).intValue();
+                nextIdToCheck = ( idsOfPossibleSegments.elementAt(numSegmentsChecked)).intValue();
 
-                Segment segment = (Segment) cell.getSegmentWithId(nextIdToCheck);
+                Segment segment = cell.getSegmentWithId(nextIdToCheck);
                 float length = segment.getSegmentLength();
                 if ( (distChecked + length) > chosenDistAlongAll)
                 {
@@ -217,7 +217,7 @@ public class CellTopologyHelper
 
                 for (int includedGroups = 0; includedGroups < groupsWithSynapse.size(); includedGroups++)
                 {
-                        String includedGroup = (String)groupsWithSynapse.elementAt(includedGroups);
+                        String includedGroup = groupsWithSynapse.elementAt(includedGroups);
                         if (!remainingSynGroups.contains(includedGroup))
                             groupsWithSynapse.remove(includedGroup);
                 }
@@ -279,7 +279,7 @@ public class CellTopologyHelper
 
         for (int o = 0; o < idsOfPossibleSegments.size(); o++)
         {
-            int nextId = ( (Integer) idsOfPossibleSegments.elementAt(o)).intValue();
+            int nextId = ( idsOfPossibleSegments.elementAt(o)).intValue();
             Segment segment = cell.getSegmentWithId(nextId);
             float length = segment.getSegmentLength();
 
@@ -301,15 +301,15 @@ public class CellTopologyHelper
         if (totalLengthOfValidSegments == 0)
         {
             logger.logComment("Probably synaptic connection on soma...");
-            nextIdToCheck = ( (Integer) idsOfPossibleSegments.elementAt(numSegmentsChecked)).intValue();
+            nextIdToCheck = ( idsOfPossibleSegments.elementAt(numSegmentsChecked)).intValue();
             fractionAlongChosenSegment = 0.5f;
         }
         else
         {
             while (!pointFound && numSegmentsChecked <= idsOfPossibleSegments.size())
             {
-                nextIdToCheck = ( (Integer) idsOfPossibleSegments.elementAt(numSegmentsChecked)).intValue();
-                Segment segment = (Segment) cell.getSegmentWithId(nextIdToCheck);
+                nextIdToCheck = ( idsOfPossibleSegments.elementAt(numSegmentsChecked)).intValue();
+                Segment segment = cell.getSegmentWithId(nextIdToCheck);
                 float length = segment.getSegmentLength();
                 if ( (distChecked + length) > chosenDistAlongAll)
                 {
@@ -413,6 +413,26 @@ public class CellTopologyHelper
         }
         return secSegments;
     }
+    
+    /*
+     * Checks whether all sections of groupA are in groupB for cell
+     */
+    public static boolean isGroupASubset(String groupA, String groupB, Cell cell)
+    {
+       ArrayList<Section> setA = cell.getSectionsInGroup(groupA);
+       ArrayList<Section> setB = cell.getSectionsInGroup(groupB);
+       
+       if (setA.size()>setB.size())
+           return false;
+       
+       for(Section sec: setA)
+       {
+           if (!setB.contains(sec)) return false;
+       }
+       return true;
+    }
+        
+        
 
 
     /**
@@ -636,7 +656,7 @@ public class CellTopologyHelper
 
         for (int o = 0; o < idsOfPossibleSegments.size(); o++)
         {
-            int nextId = ( (Integer) idsOfPossibleSegments.elementAt(o)).intValue();
+            int nextId = idsOfPossibleSegments.elementAt(o).intValue();
             logger.logComment("Checking nextId: " + nextId);
             Segment segment = cell.getSegmentWithId(nextId);
 
@@ -753,7 +773,7 @@ public class CellTopologyHelper
 
         for (int o = 0; o < idsOfPossibleSegments.size(); o++)
         {
-            int nextId = ( (Integer) idsOfPossibleSegments.elementAt(o)).intValue();
+            int nextId = idsOfPossibleSegments.elementAt(o).intValue();
             Segment segment = cell.getSegmentWithId(nextId);
 
             logger.logComment("Checking segment: " + segment);
@@ -1066,7 +1086,7 @@ public class CellTopologyHelper
 
                 }
                 Vector3f translationForSegment
-                        = (Vector3f)sectionMovements.get(seg.getSection().getSectionName());
+                        = sectionMovements.get(seg.getSection().getSectionName());
 
                 logger.logComment("translationForSegment: "+ translationForSegment);
 
@@ -1259,7 +1279,7 @@ public class CellTopologyHelper
 
         for (int i = 0; i < allSegments.size(); i++)
         {
-            Segment nextSeg = (Segment)allSegments.elementAt(i);
+            Segment nextSeg = allSegments.elementAt(i);
             if (nextSeg.getParentSegment()!=null && nextSeg.getParentSegment().equals(segment))
             {
                 logger.logComment("A kid is: "+ nextSeg);
@@ -1911,7 +1931,7 @@ public class CellTopologyHelper
                 {
                     try
                     {
-                        Segment segment = (Segment) segments.get(i);
+                        Segment segment = segments.get(i);
                         if (longFormat) sb.append(" "+indent+indent + i + ":  " + segment.toHTMLString(html) + GeneralUtils.getEndLine(html));
 
                         totalSurfaceArea = totalSurfaceArea + segment.getSegmentSurfaceArea();
@@ -2194,7 +2214,7 @@ public class CellTopologyHelper
     {
         for (int i = 0; i < cell.getAllSegments().size(); i++)
         {
-            Segment segment = (Segment) cell.getAllSegments().elementAt(i);
+            Segment segment = cell.getAllSegments().elementAt(i);
 
             if (segment.getParentSegment() != null)
             {
@@ -3165,7 +3185,7 @@ public class CellTopologyHelper
 
                 try
                 {
-                    isCMLPassive = ( (ChannelMLCellMechanism) cmlMech).isPassiveNonSpecificCond();
+                    isCMLPassive = cmlMech.isPassiveNonSpecificCond();
                 }
                 catch (CMLMechNotInitException e)
                 {
@@ -3266,7 +3286,7 @@ public class CellTopologyHelper
 
 
         detailedInfo.append(getAllUnitDesc("Total Axial Resistance",
-                                           (float) getTotalAxialResistance(segment, specAxRes),
+                                           getTotalAxialResistance(segment, specAxRes),
                                            UnitConverter.resistanceUnits,
                                            html) + GeneralUtils.getEndLine(html));
 
@@ -3735,6 +3755,9 @@ public class CellTopologyHelper
 
             System.out.println("Comp: " +CellTopologyHelper.compare(cell,genCell) );
 
+            
+            System.out.println("Subset: " +CellTopologyHelper.isGroupASubset("dendrite_group", "all", cell) );
+            System.out.println("Subset: " +CellTopologyHelper.isGroupASubset("dendrite_group", "soma_group", cell) );
 
         }
         catch (Exception ex)

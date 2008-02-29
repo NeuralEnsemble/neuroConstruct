@@ -116,6 +116,8 @@ public class NeuronFileManager
 
     File utilsFile = new File(ProjectStructure.getNeuronUtilsFile());
     
+    File cellCheckFile = new File(ProjectStructure.getNeuronCellCheckFile());
+    
     
     public static final String EXT_CURR_CLAMP_MOD = "CurrentClampExt.mod";
     
@@ -346,6 +348,15 @@ public class NeuronFileManager
             if (utilsFile.getAbsoluteFile().exists())
             {
                 GeneralUtils.copyFileIntoDir(utilsFile.getAbsoluteFile(), dirForNeuronFiles);
+            }
+            else
+            {
+                logger.logComment("File doesn't exist: "+ utilsFile.getAbsolutePath(), true);
+            }
+            
+            if (cellCheckFile.getAbsoluteFile().exists())
+            {
+                GeneralUtils.copyFileIntoDir(cellCheckFile.getAbsoluteFile(), dirForNeuronFiles);
             }
             else
             {
@@ -1099,7 +1110,9 @@ public class NeuronFileManager
         response.append("allCells = new List()\n\n");
 
         addHocComment(response, "Including neuroConstruct utilities file ");
-        response.append("load_file(\"nCtools.hoc\")\n");
+        response.append("load_file(\""+utilsFile.getName()+"\")\n");
+        addHocComment(response, "Including neuroConstruct cell check file ");
+        response.append("load_file(\""+cellCheckFile.getName()+"\")\n");
 
         return response.toString();
     }

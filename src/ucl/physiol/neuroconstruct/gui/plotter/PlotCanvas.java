@@ -642,7 +642,7 @@ public class PlotCanvas extends Canvas
 
         logger.logComment("tickSpacingX: "+tickSpacingX);
         logger.logComment("tickSpacingY: "+tickSpacingY+", idealNumTicksY: "+idealNumTicksY+", lengthY: "+ lengthY+", perfectTickSpacingY: "+perfectTickSpacingY
-            +", maxYScaleValue: "+maxYScaleValue+", minYScaleValue: "+minYScaleValue, true);
+            +", maxYScaleValue: "+maxYScaleValue+", minYScaleValue: "+minYScaleValue);
 
 
         int optimalTickLength = 5;

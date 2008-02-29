@@ -424,39 +424,7 @@ public class ProjectManager implements GenerationReport
                                 String simConfig) throws NeuroMLException
     {
 
-        logger.logComment("Going to save thee  networkmlFile: "+networkmlFile);
-        
-        /*
-        StringBuffer notes = new StringBuffer("\nNetwork structure for project: "
-                                              + getCurrentProject().getProjectName() +
-                                              " saved with neuroConstruct v" +
-                                              GeneralProperties.getVersionNumber() + " on: " +
-                                              GeneralUtils.getCurrentTimeAsNiceString() + ", "
-                                              + GeneralUtils.getCurrentDateAsNiceString() + "\n\n");
-
-        Iterator<String> cellGroups = getCurrentProject().generatedCellPositions.getNamesGeneratedCellGroups();
-
-        while (cellGroups.hasNext())
-        {
-            String cg = cellGroups.next();
-            int numHere = getCurrentProject().generatedCellPositions.getNumberInCellGroup(cg);
-            if (numHere > 0)
-                notes.append("Cell Group: " + cg + " contains " + numHere + " cells\n");
-
-        }
-        notes.append("\n");
-
-        Iterator<String> netConns = getCurrentProject().generatedNetworkConnections.getNamesNetConns();
-
-        while (netConns.hasNext())
-        {
-            String mc = netConns.next();
-            int numHere = getCurrentProject().generatedNetworkConnections.getSynapticConnections(mc).size();
-            if (numHere > 0)
-                notes.append("Network connection: " + mc + " contains " + numHere + " individual synaptic connections\n");
-
-        }
-        notes.append("\n");*/
+        logger.logComment("Going to save the networkmlFile: "+networkmlFile);
 
 
         getCurrentProject().saveNetworkStructure(networkmlFile,
@@ -509,6 +477,7 @@ public class ProjectManager implements GenerationReport
             ArrayList<String> ignoreExtn = new ArrayList<String> ();
             ignore.add("i686");
             ignore.add("x86_64");
+            ignore.add(".svn");
 
             zipFile = ZipUtils.zipUp(dirToZip, nameOfZippedFile, ignore, ignoreExtn);
 
