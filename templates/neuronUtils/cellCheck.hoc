@@ -1,0 +1,59 @@
+/*
+ *
+ * A neuroConstruct helper file to printout details of a single cell's overall state
+ *
+ */
+
+objref mt
+mt = new MechanismType(0)
+
+proc cellInfo() {
+
+// load_file("../../neuroConstruct/templates/neuronUtils/cellCheck.hoc")
+
+    totalDiam = 0 
+    totalNseg = 0 
+    totalL = 0 
+    
+    totalRa = 0
+    totalCm = 0
+    i = 0 
+    
+    forall {
+    
+        totalDiam = totalDiam + diam
+        totalNseg = totalNseg + nseg
+        totalRa = totalRa + Ra
+        
+                totalCm = totalCm + cm
+        
+        totalL = totalL + L
+        i=i+1
+    }
+    
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    
+    print "+    Number of sections: ", i
+    print "+    Total diam:         ", totalDiam
+    print "+    Total length        ", totalL
+    print "+    Total nseg:         ", totalNseg
+    print "+    Total Ra:           ", totalRa
+    print "+    Total cm:           ", totalCm
+    
+    strdef mname
+     for i=0, mt.count()-1 {
+         mt.select(i)
+         mt.selected(mname)
+         numPresent = 0
+         forall { if (ismembrane(mname)) {numPresent = numPresent + 1}}
+         
+         if (numPresent>0) {print "+        Mechanism: ", mname, " present on: ", numPresent, " sections"}
+    }
+    
+    
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+
+}
+
+
