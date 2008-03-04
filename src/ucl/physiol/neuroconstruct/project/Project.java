@@ -1212,6 +1212,7 @@ public class Project implements TableModelListener
                 try
                 {
                     XMLEncoder e = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(internalPropsFile)));
+                    
 
                     InternalPhysicalParameter[] params = acm.getPhysicalParameterList();
                     for (int i = 0; i < params.length; i++)

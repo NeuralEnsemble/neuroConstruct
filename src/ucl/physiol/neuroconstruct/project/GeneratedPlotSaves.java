@@ -14,6 +14,7 @@ package ucl.physiol.neuroconstruct.project;
 
 import java.util.*;
 
+import ucl.physiol.neuroconstruct.gui.ClickProjectHelper;
 import ucl.physiol.neuroconstruct.utils.*;
 
 /**
@@ -124,7 +125,7 @@ public class GeneratedPlotSaves
     }
 
 
-
+    @Override
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
@@ -218,7 +219,7 @@ public class GeneratedPlotSaves
 
                 }
             }
-            sb.append(simPlot.getCellGroup());
+            sb.append(ClickProjectHelper.getCellGroupLink(simPlot.getCellGroup()));
 
 
             return sb.toString();

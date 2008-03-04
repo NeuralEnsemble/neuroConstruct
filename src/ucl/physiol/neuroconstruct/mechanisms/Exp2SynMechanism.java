@@ -112,7 +112,7 @@ public class Exp2SynMechanism extends SynapticMechanism
                                    new File("../temp/Exp.mod"),
                                    null,
                                    true,
-                true);
+                true,false);
     }
 
 

@@ -14,6 +14,7 @@ package ucl.physiol.neuroconstruct.project;
 
 import java.util.*;
 
+import ucl.physiol.neuroconstruct.gui.ClickProjectHelper;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
@@ -209,8 +210,8 @@ public class ElecInputGenerator extends Thread
             String elecInputName = elecInputsInSimConfig.get(i);
             StimulationSettings s = project.elecInputInfo.getStim(elecInputName);
 
-            generationReport.append("<b>" + elecInputName + "</b> ("+s.getElectricalInput()+" on: "
-                                    + s.getCellGroup()+")<br>");
+            generationReport.append("<b>" + ClickProjectHelper.getElecInputLink(elecInputName) + "</b> ("+s.getElectricalInput().toLinkedString()+" on "+s.getCellChooser().toNiceString()+" of "
+                                    + ClickProjectHelper.getCellGroupLink(s.getCellGroup())+", seg: "+s.getSegmentID()+")<br>");
 
             generationReport.append("Number of individual inputs: <b>"
                                     +

@@ -134,6 +134,7 @@ public abstract class CellMechanism
                                            File fileToGenerate,
                                            Project project,
                                            boolean requiresCompilation,
-                                           boolean includeComments);
+                                           boolean includeComments,
+                                            boolean forceCorrectInit);
 
 }

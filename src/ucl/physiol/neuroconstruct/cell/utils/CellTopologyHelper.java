@@ -14,6 +14,7 @@ package ucl.physiol.neuroconstruct.cell.utils;
 
 import java.io.*;
 import java.util.*;
+import java.util.ArrayList;
 import javax.vecmath.*;
 
 import ucl.physiol.neuroconstruct.cell.*;
@@ -2303,7 +2304,8 @@ public class CellTopologyHelper
 
                 logger.logComment("mechs here: "+ mechs);
 
-                int numPassiveChans = 0;
+                //int numPassiveChans = 0;
+                ArrayList<ChannelMechanism> passChansHere = new ArrayList<ChannelMechanism>();
                 
                 ArrayList<String> syns = cell.getAllAllowedSynapseTypes();
                 
@@ -2329,10 +2331,19 @@ public class CellTopologyHelper
 
                         missingCellMechs.add(cm.getName());
                     }
-                    if (passChans.contains(cm)) numPassiveChans++;
+                    if (passChans.contains(cm)) passChansHere.add(cm); //numPassiveChans++;
                 }
 
-                if (numPassiveChans == 0)
+
+                int validPassiveConds = 0;
+                
+                for (ChannelMechanism cmHere: passChansHere)
+                {
+                    if (cmHere.getDensity()>=0) 
+                        validPassiveConds ++;
+                }
+                        
+                if (validPassiveConds == 0)
                 {
                     if (appv==null) // no error if there is a prop vel
                     {
@@ -2349,7 +2360,7 @@ public class CellTopologyHelper
                         }
                     }
                 }
-                else if (numPassiveChans > 1)
+                else if (validPassiveConds > 1)
                 {
                     numManyPassWarn++;
                     if (numManyPassWarn<5)
@@ -3163,7 +3174,7 @@ public class CellTopologyHelper
     public static ArrayList<ChannelMechanism> getPassiveChannels(Cell cell, Project project)
     {
         ArrayList<ChannelMechanism> passiveChans = new ArrayList<ChannelMechanism>();
-         ArrayList<ChannelMechanism> allChanMechs = cell.getAllChannelMechanisms(true);
+        ArrayList<ChannelMechanism> allChanMechs = cell.getAllChannelMechanisms(true);
 
 
         for (int i = 0; i < allChanMechs.size(); i++)
@@ -3480,14 +3491,14 @@ public class CellTopologyHelper
 
         for (int i = 0; i < allChanMechs.size(); i++)
         {
-
             ChannelMechanism next = allChanMechs.get(i);
 
             CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(next.getName());
 
-            if (cellMech instanceof ChannelMLCellMechanism)
+            if (cellMech instanceof ChannelMLCellMechanism && next.getDensity()>=0)
             {
                 ChannelMLCellMechanism cmlcp = (ChannelMLCellMechanism)cellMech;
+                
                 if (cmlcp.isPassiveNonSpecificCond())
                 {
                     float condDens = next.getDensity();

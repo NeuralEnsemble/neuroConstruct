@@ -35,6 +35,12 @@ public abstract class ElectricalInput
         this.type = type;
     }
     
+    @Override
+    public abstract String toString();
+    
+    public abstract String toLinkedString();
+    
+    @Override
     public abstract Object clone();
 
 }

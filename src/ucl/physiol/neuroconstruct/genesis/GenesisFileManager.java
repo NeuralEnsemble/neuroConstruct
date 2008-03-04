@@ -123,7 +123,7 @@ public class GenesisFileManager
     public void generateTheGenesisFiles(SimConfig simConfig,
                                        MultiRunManager multiRunManager,
                                         MorphCompartmentalisation mc,
-                                        int seed) throws GenesisException
+                                        int seed) throws GenesisException, IOException
     {
         logger.logComment("Starting generation of the files...");
 
@@ -230,11 +230,13 @@ public class GenesisFileManager
             {
                 fw.close();
             }
-            catch (IOException ex1)
+            catch (Exception ex1)
             {
+                throw new GenesisException("Error creating file: " + mainGenesisFile.getAbsolutePath()
+                                          + "\n"+ ex.getMessage()+ "\nEnsure the GENESIS files you are trying to generate are not currently being used", ex1);
             }
             throw new GenesisException("Error creating file: " + mainGenesisFile.getAbsolutePath()
-                                      + "\n"+ ex.getMessage());
+                                      + "\n"+ ex.getMessage()+ "\nEnsure the GENESIS files you are trying to generate are not currently being used", ex);
 
         }
 
@@ -912,7 +914,8 @@ public class GenesisFileManager
                                     newProcessFile,
                                     project,
                                     false,
-                                    addComments);
+                                    addComments,
+                                    false);
                             }
                             else if (cellProcess instanceof ChannelMLCellMechanism)
                             {
@@ -922,7 +925,8 @@ public class GenesisFileManager
                                     newProcessFile,
                                     project,
                                     false,
-                                    addComments);
+                                    addComments,
+                                    false);
                             }
 
                             if (!success)
@@ -1053,7 +1057,8 @@ public class GenesisFileManager
                                                                                               newMechFile,
                                                                                               project,
                                                                                               false,
-                                                                                              addComments);
+                                                                                              addComments,
+                                                                                              false);
                     }
                     else if(cellMech instanceof ChannelMLCellMechanism)
                     {
@@ -1063,7 +1068,8 @@ public class GenesisFileManager
                                                                                               newMechFile,
                                                                                               project,
                                                                                               false,
-                                                                                              addComments);
+                                                                                              addComments,
+                                                                                              false);
 
 
                     }
@@ -1126,7 +1132,8 @@ public class GenesisFileManager
                             newMechFile,
                             project,
                             false,
-                            addComments);
+                            addComments,
+                            false);
                     }
                     else if (cellMech instanceof ChannelMLCellMechanism)
                     {
@@ -1135,7 +1142,8 @@ public class GenesisFileManager
                             newMechFile,
                             project,
                             false,
-                            addComments);
+                            addComments,
+                            false);
                     }
 
 
@@ -1631,8 +1639,7 @@ public class GenesisFileManager
 
                                 surfArea = comp.getCurvedSurfaceArea();
                             }
-                            double unit = UnitConverter.getLength(1,
-                                                                  UnitConverter.NEUROCONSTRUCT_UNITS,
+                            double unit = UnitConverter.getLength(1, UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                   project.genesisSettings.getUnitSystemToUse());
 
                             surfArea = surfArea * unit * unit;
@@ -1818,9 +1825,7 @@ public class GenesisFileManager
                                                               plot.simPlot.getValuePlotted(),
                                                               project.genesisSettings.getUnitSystemToUse());
 
-                    //Cell nextCell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(plot.simPlot.getCellGroup()));
                     String cellType = project.cellGroupsInfo.getCellType(plot.simPlot.getCellGroup());
-                    //Cell nextCell = this.mappedCells.get(cellType);
 
                     for (Integer cellNum : cellNumsToPlot)
                     {

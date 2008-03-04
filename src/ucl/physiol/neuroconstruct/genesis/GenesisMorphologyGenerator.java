@@ -3,7 +3,7 @@
  *
  * Software for developing large scale 3D networks of biologically realistic neurons
  * Copyright (c) 2008 Padraig Gleeson
- * UCL Department of Physiology
+ * UCL Department of Physiology 
  *
  * Development of this software was made possible with funding from the
  * Medical Research Council
@@ -246,7 +246,7 @@ public class GenesisMorphologyGenerator
 
         for (int ii = 0; ii < segments.size(); ii++)
         {
-            Segment segment = (Segment) segments.elementAt(ii);
+            Segment segment = segments.elementAt(ii);
 
             logger.logComment("Looking at segment number " + ii + ": " + segment);
 
@@ -268,6 +268,11 @@ public class GenesisMorphologyGenerator
             }
             if (specCap!= lastSpecCap)
             {
+                if (specCap == 0)
+                {
+                    response.append("// Spec cap is zero, causes problems, so using v small CM \n");
+                    specCap = 1e-18f;
+                }
                 response.append("*set_compt_param CM " + UnitConverter.getSpecificCapacitance(specCap,
                     UnitConverter.NEUROCONSTRUCT_UNITS,
                     project.genesisSettings.getUnitSystemToUse()) + "\n");
@@ -344,7 +349,8 @@ public class GenesisMorphologyGenerator
 
 
                         if ((firstPassiveCellProc==null) &&
-                            (cellMech instanceof PassiveMembraneMechanism || isCMLPassive))
+                            (cellMech instanceof PassiveMembraneMechanism || isCMLPassive)
+                            && nextChanMech.getDensity() >=0 )
                         {
                             logger.logComment("First passive?");
                             try
@@ -432,6 +438,15 @@ public class GenesisMorphologyGenerator
                 }
 
             }
+            
+            if (firstPassiveCellProc==null)
+            {
+                response.append("\n// No passive conductance found!!\n*set_compt_param     RM "
+                                    +
+                                    UnitConverter.getResistance(1e12,
+                                    UnitConverter.NEUROCONSTRUCT_UNITS,
+                                    project.genesisSettings.getUnitSystemToUse())+"\n");
+            }
 
             StringBuffer channelCondString = new StringBuffer();
 
@@ -440,7 +455,7 @@ public class GenesisMorphologyGenerator
             for (int ll = 0; ll < chanMechs.size(); ll++)
             {
 
-                ChannelMechanism nextChanMech = (ChannelMechanism) chanMechs.elementAt(ll);
+                ChannelMechanism nextChanMech = chanMechs.elementAt(ll);
                 logger.logComment("--  nextChanMech: " + nextChanMech);
                 CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
 
@@ -448,7 +463,6 @@ public class GenesisMorphologyGenerator
 
                 if(!cellMech.getInstanceName().equals(firstPassiveCellProc))
                 {
-
                     try
                     {                      
                         double genDens =  UnitConverter.getConductanceDensity(
@@ -476,17 +490,18 @@ public class GenesisMorphologyGenerator
                                 
                                 double area = comp.getCurvedSurfaceArea();
                                 
+                                if (segment.isSpherical())  area = 4 * Math.PI * segment.getRadius()*segment.getRadius();
+                                
+                                
                                 area =  area * ((UnitConverter.getArea(1, UnitConverter.NEURON_UNITS, 
                                         project.genesisSettings.getUnitSystemToUse())));
-                                
-                                if (segment.isSpherical())  area = 4 * Math.PI * segment.getRadius()*segment.getRadius();
                                 
                                 double B = phi / area;
 
                                 /** @todo Fix this for correct units of ConcFixedPool!!! ... */
                                 float factor = 1;
-                                if (project.genesisSettings.isPhysiologicalUnits()) factor = 100;
-                                if (project.genesisSettings.isSIUnits()) factor = 1e15f;
+                                if (project.genesisSettings.isPhysiologicalUnits()) factor = 1e-6f;
+                                if (project.genesisSettings.isSIUnits()) factor = 1e3f;
                                 
                                 B = -1 * B *factor; //-1 so readcell will use absolute value (see http://www.genesis-sim.org/GENESIS/Hyperdoc/Manual-25.html#ss25.131)
                                 
@@ -541,9 +556,6 @@ public class GenesisMorphologyGenerator
                 {
                     if (!segment.getParentSegment().getEndPointPosition().equals(segment.getStartPointPosition()))
                     {
-                        //System.out.println(segment.getParentSegment().getEndPointPosition() + " not equal to: "+
-                         //   segment.getStartPointPosition());
-
                         specifyStartPoint = true;
                     }
                 }
@@ -553,25 +565,17 @@ public class GenesisMorphologyGenerator
                 {
                     // i.e. root segment
                     response.append("*double_endpoint\n");
-                    response.append(segName
-                                    + " "
-                                    + parentName
-                                    + " "
-                                    + convertToMorphDataLength(segment.getStartPointPosition().x)
-                                    + " "
-                                    + convertToMorphDataLength(segment.getStartPointPosition().y)
-                                    + " "
-                                    + convertToMorphDataLength(segment.getStartPointPosition().z)
-                                    + " "
-                                    + convertToMorphDataLength(segment.getEndPointPositionX())
-                                    + " "
-                                    + convertToMorphDataLength(segment.getEndPointPositionY())
-                                    + " "
-                                    + convertToMorphDataLength(segment.getEndPointPositionZ())
-                                    + " "
-                                    + convertToMorphDataLength(equivalentRadius * 2d)
-
-                                    + " " + channelCondString + "\n");
+                    response.append(segName + " "
+                                    + parentName + " "
+                                    + convertToMorphDataLength(segment.getStartPointPosition().x) + " "
+                                    + convertToMorphDataLength(segment.getStartPointPosition().y) + " "
+                                    + convertToMorphDataLength(segment.getStartPointPosition().z) + " "
+                                    + convertToMorphDataLength(segment.getEndPointPositionX()) + " "
+                                    + convertToMorphDataLength(segment.getEndPointPositionY()) + " "
+                                    + convertToMorphDataLength(segment.getEndPointPositionZ()) + " "
+                                    + convertToMorphDataLength(equivalentRadius * 2d) + " " 
+                                    + channelCondString + "\n");
+                    
                     response.append("*double_endpoint_off\n");
 
                 }
@@ -579,19 +583,13 @@ public class GenesisMorphologyGenerator
                 {
                     // ordinary cylindrical segment..
 
-                    response.append(segName
-                                    + " "
-                                    + parentName
-                                    + " "
-                                    + convertToMorphDataLength(segment.getEndPointPositionX())
-                                    + " "
-                                    + convertToMorphDataLength(segment.getEndPointPositionY())
-                                    + " "
-                                    + convertToMorphDataLength(segment.getEndPointPositionZ())
-                                    + " "
-                                    + convertToMorphDataLength(equivalentRadius * 2d)
-
-                                    + " " + channelCondString + "\n");
+                    response.append(segName + " "
+                                    + parentName + " "
+                                    + convertToMorphDataLength(segment.getEndPointPositionX()) + " "
+                                    + convertToMorphDataLength(segment.getEndPointPositionY()) + " "
+                                    + convertToMorphDataLength(segment.getEndPointPositionZ()) + " "
+                                    + convertToMorphDataLength(equivalentRadius * 2d) + " " 
+                                    + channelCondString + "\n");
                 }
             }
             else
@@ -599,19 +597,13 @@ public class GenesisMorphologyGenerator
 
                 response.append("*spherical \n\n");
 
-                response.append(segName
-                                + " "
-                                + parentName
-                                + " "
-                                + convertToMorphDataLength(segment.getEndPointPositionX()) // = startPoint
-                                + " "
-                                + convertToMorphDataLength(segment.getEndPointPositionY()) // = startPoint
-                                + " "
-                                + convertToMorphDataLength(segment.getEndPointPositionZ()) // = startPoint
-                                + " "
-                                + convertToMorphDataLength( (segment.getRadius() * 2d))
-                                + " "
-                                + channelCondString + "\n");
+                response.append(segName + " "
+                                + parentName + " "
+                                + convertToMorphDataLength(segment.getEndPointPositionX()) // = startPoint 
+                                + " " + convertToMorphDataLength(segment.getEndPointPositionY()) // = startPoint
+                                + " " + convertToMorphDataLength(segment.getEndPointPositionZ()) // = startPoint
+                                + " " + convertToMorphDataLength( (segment.getRadius() * 2d)) 
+                                + " " + channelCondString + "\n");
 
                 if (segments.size() > 1)
                     response.append("\n*cylindrical \n");

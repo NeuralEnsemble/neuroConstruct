@@ -2546,7 +2546,8 @@ public class NeuronFileManager
                                         newMechFile,
                                         project,
                                         true,
-                                        addComments);
+                                        addComments,
+                                        project.neuronSettings.isForceCorrectInit());
                                 }
                                 else if (cellMechanism instanceof ChannelMLCellMechanism)
                                 {
@@ -2574,7 +2575,8 @@ public class NeuronFileManager
                                         newMechFile,
                                         project,
                                         cmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation(),
-                                        addComments);
+                                        addComments,
+                                        project.neuronSettings.isForceCorrectInit());
                                 }
                             }
 
@@ -2798,7 +2800,8 @@ public class NeuronFileManager
                                     newMechFile,
                                     project,
                                     true,
-                                    addComments);
+                                    addComments,
+                                    project.neuronSettings.isForceCorrectInit());
                             }
                             else if (cellMechanism instanceof ChannelMLCellMechanism)
                             {
@@ -2826,7 +2829,8 @@ public class NeuronFileManager
                                     newMechFile,
                                     project,
                                     cmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation(),
-                                    addComments);
+                                    addComments,
+                                    project.neuronSettings.isForceCorrectInit());
                             }
 
                             if (!success)

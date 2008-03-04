@@ -45,6 +45,8 @@ public class NeuronSettings
     private boolean forceModFileRegeneration = false;
     
     private boolean copySimFiles = false;
+    
+    private boolean forceCorrectInit = true;
 
     //private subsApPropVel
 
@@ -212,6 +214,17 @@ public class NeuronSettings
     public void setCopySimFiles(boolean copySimFiles)
     {
         this.copySimFiles = copySimFiles;
+    }
+
+
+
+    public boolean isForceCorrectInit()
+    {
+        return forceCorrectInit;
+    }
+    public void setForceCorrectInit(boolean forceCorrectInit)
+    {
+        this.forceCorrectInit = forceCorrectInit;
     }
 
 

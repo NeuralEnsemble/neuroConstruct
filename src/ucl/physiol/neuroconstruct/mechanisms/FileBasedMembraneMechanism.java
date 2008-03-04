@@ -105,7 +105,7 @@ public class FileBasedMembraneMechanism extends AbstractedCellMechanism
                                         UnitConverter.GENESIS_SI_UNITS,
                                         new File("../temp/test.mod"),
                                         null, false,
-                true);
+                true,false);
         }
         catch (Exception ex)
         {

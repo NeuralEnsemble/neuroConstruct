@@ -71,7 +71,7 @@ import ucl.physiol.neuroconstruct.utils.xml.*;
 
 @SuppressWarnings("serial")
 
-public class MainFrame extends JFrame implements ProjectEventListener, GenerationReport
+public class MainFrame extends JFrame implements ProjectEventListener, GenerationReport, HyperlinkListener
 {
     ClassLogger logger = new ClassLogger("MainFrame");
 
@@ -391,6 +391,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JCheckBox jCheckBoxNeuronNumInt = new JCheckBox("Use variable time step");
     JCheckBox jCheckBoxNeuronGenAllMod = new JCheckBox("Generate all mod files");
     JCheckBox jCheckBoxNeuronCopySimFiles = new JCheckBox("Copy sim files to results dir");
+    
+    
+    JCheckBox jCheckBoxNeuronForceCorrInit = new JCheckBox("Force correct ChannelML init");
 
     JPanel jPanelNeuronRandomGen =  new JPanel();
     JLabel jLabelNeuronRandomGenDesc = new JLabel("Random seed for NEURON:");
@@ -2942,7 +2945,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelNeuronNumInt.add(this.jCheckBoxNeuronNumInt);
         jPanelNeuronNumInt.add(this.jCheckBoxNeuronGenAllMod);
         jPanelNeuronNumInt.add(this.jCheckBoxNeuronCopySimFiles);
+        jPanelNeuronNumInt.add(jCheckBoxNeuronForceCorrInit);
 
+        jCheckBoxNeuronForceCorrInit.setSelected(true);
 
         jPanelNeuronRandomGen.add(jLabelNeuronRandomGenDesc, BorderLayout.WEST);
         //jPanelNeuronRandomGen.setPreferredSize(new Dimension(700,62));
@@ -3264,6 +3269,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         JViewport vpGenerate = scrollerGenerate.getViewport();
 
         vpGenerate.add(jEditorPaneGenerateInfo);
+        
+        jEditorPaneGenerateInfo.addHyperlinkListener(this);
 
         jPanelGenerateMain.add(jPanelGenerateAnalyse,
                                new GridBagConstraints(0, 2, 1, 1,
@@ -3603,6 +3610,78 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
     }
+    
+    
+    public void hyperlinkUpdate(HyperlinkEvent e)
+    {
+        logger.logComment("HyperlinkEvent: "+ e.getDescription());
+        
+        if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
+        {
+            String part = e.getDescription().substring(e.getDescription().indexOf("//")+2);
+            String type = part.substring(0, part.indexOf("="));
+            String instance = part.substring( part.indexOf("=")+1);
+
+
+            logger.logComment("Going to: "+ instance+", which is a "+ type, true);
+
+            if (type.equals(ClickProjectHelper.CELL_GROUP))
+            {
+                jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(CELL_GROUPS_TAB));
+
+                int index = projManager.getCurrentProject().cellGroupsInfo.getAllCellGroupNames().indexOf(instance);
+                jTableCellGroups.setRowSelectionInterval(index, index);
+            }
+            if (type.equals(ClickProjectHelper.CELL_TYPE))
+            {
+                jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(CELL_TYPES_TAB));
+
+                int index = projManager.getCurrentProject().cellManager.getAllCellTypeNames().indexOf(instance);
+                //jTable.setRowSelectionInterval(index, index);
+                jComboBoxCellTypes.setSelectedIndex(index);
+            }
+            if (type.equals(ClickProjectHelper.NET_CONNECTION))
+            {
+                jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(NETWORK_TAB));
+                
+                int index =  -1;
+                
+                if (projManager.getCurrentProject().morphNetworkConnectionsInfo.isValidSimpleNetConn(instance))
+                {
+                    index = projManager.getCurrentProject().morphNetworkConnectionsInfo.getAllSimpleNetConnNames().indexOf(instance);
+                    jTableNetConns.setRowSelectionInterval(index, index);
+                }
+                    
+                if (projManager.getCurrentProject().volBasedConnsInfo.isValidAAConn(instance))
+                {
+                    index = projManager.getCurrentProject().volBasedConnsInfo.getAllAAConnNames().indexOf(instance);
+                    jTableAAConns.setRowSelectionInterval(index, index);
+                }
+            }
+            if (type.equals(ClickProjectHelper.CELL_MECHANISM))
+            {
+                jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(CELL_MECHANISM_TAB));
+
+                int index = projManager.getCurrentProject().cellMechanismInfo.getAllCellMechanismNames().indexOf(instance);
+                jTableMechanisms.setRowSelectionInterval(index, index);
+            }
+            if (type.equals(ClickProjectHelper.ELEC_INPUT))
+            {
+                jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(INPUT_OUTPUT_TAB));
+
+                int index = projManager.getCurrentProject().elecInputInfo.getAllStimRefs().indexOf(instance);
+                jTableStims.setRowSelectionInterval(index, index);
+            }
+            if (type.equals(ClickProjectHelper.PLOT_SAVE))
+            {
+                jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(INPUT_OUTPUT_TAB));
+
+                int index = projManager.getCurrentProject().simPlotInfo.getAllSimPlotRefs().indexOf(instance);
+                jTableSimPlot.setRowSelectionInterval(index, index);
+            }
+        }
+        
+    }
 
 
     /**
@@ -3693,6 +3772,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxSpecifySimRef);
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronSaveHoc);
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronNumInt);
+        addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronForceCorrInit);
+       
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronGenAllMod);
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronCopySimFiles);
 
@@ -3865,6 +3946,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jCheckBoxNeuronNumInt.setToolTipText(toolTipText.getToolTip("NeuronNumInt"));
         jCheckBoxNeuronGenAllMod.setToolTipText(toolTipText.getToolTip("NeuronGenAllMod"));
         jCheckBoxNeuronCopySimFiles.setToolTipText(toolTipText.getToolTip("NeuronCopySimFiles"));
+        jCheckBoxNeuronForceCorrInit.setToolTipText(toolTipText.getToolTip("NeuronForceCorrInit"));
+        
 
 
         jLabelSimDefDur.setToolTipText(toolTipText.getToolTip("Simulation def duration"));
@@ -4092,6 +4175,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
                 projManager.getCurrentProject().neuronSettings.setCopySimFiles(this.jCheckBoxNeuronCopySimFiles.isSelected());
+                
+                projManager.getCurrentProject().neuronSettings.setForceCorrectInit(this.jCheckBoxNeuronForceCorrInit.isSelected());
 
 
                 try
@@ -5793,7 +5878,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             projManager.getCurrentProject().genesisFileManager.generateTheGenesisFiles(this.getSelectedSimConfig(), multiRunManager, mc, seed);
         }
-        catch (GenesisException ex)
+        catch (Exception ex)
         {
             GuiUtils.showErrorMessage(logger, "Error when generating the files: " + ex.getMessage(), ex, this);
 
@@ -8656,6 +8741,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             this.jCheckBoxNeuronGenAllMod.setSelected(projManager.getCurrentProject().neuronSettings.isGenAllModFiles());
             this.jCheckBoxNeuronCopySimFiles.setSelected(projManager.getCurrentProject().neuronSettings.isCopySimFiles());
+            this.jCheckBoxNeuronForceCorrInit.setSelected(projManager.getCurrentProject().neuronSettings.isForceCorrectInit());
 
             jComboBoxNeuronExtraBlocks.setEnabled(true);
 

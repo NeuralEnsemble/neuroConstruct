@@ -215,6 +215,7 @@ public class GeneratedElecInputs
     }
 
 
+    @Override
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
@@ -354,7 +355,7 @@ public class GeneratedElecInputs
             gei.addSingleInput("Input_0", "IClamp", "cg1", 38, 3, 3);
             gei.addSingleInput("Input_2", "IClamp", "cg3", 3, 38, 39);
 
-            System.out.println("Internal info: \n"+ gei.toString()); ;
+            System.out.println("Internal info: \n"+ gei.toString()); 
 
             File f = new File("../temp/tempp.txt");
 
@@ -364,7 +365,7 @@ public class GeneratedElecInputs
             GeneratedElecInputs cpr2 = new GeneratedElecInputs();
 
             cpr2.loadFromFile(f);
-            System.out.println("New internal info: \n"+ cpr2.toString()); ;
+            System.out.println("New internal info: \n"+ cpr2.toString()); 
 
         }
         catch (Exception ex)

@@ -360,7 +360,7 @@ public class NetworkMLWriter
                 
                 for(int i=0;i<columnsNeeded.size();i++)
                 {
-                    Attribute attr = Hdf5Utils.getSimpleAttr("column_"+i, columnsNeeded.get(i), h5File);
+                    Attribute attr = Hdf5Utils.getSimpleAttr("error_column_"+i, columnsNeeded.get(i), h5File);
                     projDataset.writeMetadata(attr);
                 }
                 

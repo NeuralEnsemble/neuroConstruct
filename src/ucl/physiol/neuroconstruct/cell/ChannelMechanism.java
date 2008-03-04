@@ -68,8 +68,7 @@ public class ChannelMechanism implements Serializable
                 {
                     if (otherParams==null) 
                         return false;
-                        
-                        
+                    
                     if (otherParams.size()!=extraParameters.size()) 
                         return false;
 

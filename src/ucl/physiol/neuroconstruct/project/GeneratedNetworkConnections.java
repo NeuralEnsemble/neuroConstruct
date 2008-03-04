@@ -23,6 +23,7 @@ import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import javax.vecmath.*;
+import ucl.physiol.neuroconstruct.gui.ClickProjectHelper;
 
 /**
  * Storage for network connection info generated when "Generate cell positions
@@ -518,7 +519,7 @@ public class GeneratedNetworkConnections
                                 String symbol = UnitConverter.conductanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
                                 
                                 
-                                synReport.append("Syn "+synType+" av max cond: <b>"+avMaxCond+" "+symbol+"</b> ("+tgtAvg+" x "+weight+" (weight) x "+maxCond+" "
+                                synReport.append("Syn "+ClickProjectHelper.getCellMechLink(synType)+" av max cond: <b>"+avMaxCond+" "+symbol+"</b> ("+tgtAvg+" x "+weight+" (weight) x "+maxCond+" "
                                         +symbol+")<br>");
                             }
 
@@ -530,18 +531,19 @@ public class GeneratedNetworkConnections
                         
                     }
                     
-                    synNames.append(synType);
+                    synNames.append(ClickProjectHelper.getCellMechLink(synType));
                     if (k < syns.size() - 1) synNames.append(", ");
                     else synNames.append("]");
                     
                 }
                 
                 
+                
 
-                generationReport.append("<b>" + netConnName + "</b> (<font color=\"green\">"
-                                        + src
+                generationReport.append("<b>" + ClickProjectHelper.getNetConnLink(netConnName) + "</b> (<font color=\"green\">"
+                                        + ClickProjectHelper.getCellGroupLink(src)
                                         + "</font> -> <font color=\"red\">"
-                                        + tgt +
+                                        + ClickProjectHelper.getCellGroupLink(tgt) +
                                         "</font>, " + synNames.toString() + ")<br>");
 
                 generationReport.append("No. of conns: <b>"

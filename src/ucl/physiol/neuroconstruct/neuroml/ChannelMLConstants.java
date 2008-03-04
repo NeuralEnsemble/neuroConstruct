@@ -58,6 +58,13 @@ public class ChannelMLConstants
 
     public static String XSL_TARGET_UNITS_ELEMENT = XSL_ROOT + "/variable[3]";
 
+    public static String FORCE_INIT_ELEMENT = XSL_ROOT + "/variable";
+    
+    
+    public static String VARIABLE_NAME_ATTR = "name";
+    
+    public static String FORCE_INIT_ATTR_VAL = "forceCorrectInit";
+
     public static String XSL_TARGET_UNITS_ATTR = "targetUnitSystem";
 
     public static String NON_SPECIFIC_ION_NAME = "non_specific";

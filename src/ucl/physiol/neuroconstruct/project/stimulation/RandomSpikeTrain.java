@@ -12,6 +12,8 @@
 
 package ucl.physiol.neuroconstruct.project.stimulation;
 
+import ucl.physiol.neuroconstruct.gui.ClickLink;
+import ucl.physiol.neuroconstruct.gui.ClickProjectHelper;
 import ucl.physiol.neuroconstruct.utils.NumberGenerator;
 
 
@@ -95,11 +97,19 @@ public class RandomSpikeTrain extends ElectricalInput
     {
         this.noise = noise;
     }
-
+    
+    @Override
     public String toString()
     {
         return this.getType()+": [rate: "
             +rate.toShortString()+", synaptic input: "+synapseType+"]";
+    }
+    
+    
+    public String toLinkedString()
+    {
+        return this.getType()+": [rate: "
+            +rate.toShortString()+", synaptic input: "+ ClickProjectHelper.getCellMechLink(synapseType)+"]";
     }
 
     public String getDescription()

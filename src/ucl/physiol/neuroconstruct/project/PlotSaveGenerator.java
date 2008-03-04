@@ -18,6 +18,7 @@ import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.project.GeneratedPlotSaves.PlotSaveDetails;
 import ucl.physiol.neuroconstruct.cell.Cell;
 import ucl.physiol.neuroconstruct.cell.Segment;
+import ucl.physiol.neuroconstruct.gui.ClickProjectHelper;
 
 /**
  * Thread to handle generation of what to plot/save during simulation run
@@ -67,7 +68,7 @@ public class PlotSaveGenerator extends Thread
     }
 
 
-
+    @Override
     public void run()
     {
         logger.logComment("Running PlotSaveGenerator thread...");
@@ -223,7 +224,7 @@ public class PlotSaveGenerator extends Thread
         for (PlotSaveDetails plotSave: plotSaves)
         {
 
-            generationReport.append("<b>" + plotSave.simPlot.getPlotReference() + "</b><br>");
+            generationReport.append("<b>" + ClickProjectHelper.getPlotSaveLink(plotSave.simPlot.getPlotReference()) + "</b><br>");
 
             generationReport.append(plotSave.getDescription(false)+" "
 

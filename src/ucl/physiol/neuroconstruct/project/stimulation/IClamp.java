@@ -135,9 +135,13 @@ public class IClamp extends ElectricalInput
         this.delay = delay;
     }
 
+    public String toLinkedString()
+    {
+        return toString();
+    }
 
 
-
+    @Override
     public String toString()
     {
         return this.getType()+": [del: "+ delay

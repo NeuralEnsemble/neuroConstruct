@@ -16,6 +16,7 @@ import java.io.*;
 import java.util.*;
 import javax.vecmath.*;
 
+import ucl.physiol.neuroconstruct.gui.ClickProjectHelper;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.xml.*;
@@ -192,7 +193,7 @@ public class GeneratedCellPositions
         {
             String cellGroup = names.next();
             String cellType = project.cellGroupsInfo.getCellType(cellGroup);
-            generationReport.append("<b>" + cellGroup + "</b> (Cell type: " + cellType + ")<br>");
+            generationReport.append("<b>" + ClickProjectHelper.getCellGroupLink(cellGroup) + "</b> (Cell type: " + ClickProjectHelper.getCellTypeLink(cellType) + ")<br>");
             generationReport.append("Number in cell group: <b>"
                       + project.generatedCellPositions.getNumberInCellGroup(cellGroup)
                       + "</b><br><br>");
