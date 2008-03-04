@@ -883,6 +883,13 @@ Set to MAX if no restriction applies.</defined>
     option was the previous way of using accessing the mods, and may have been the cause of some problems in earlier versions. </defined>
 </term>
 
+<term hidden="true">
+    <name>NeuronForceCorrInit</name>
+    <defined>If this is selected, &amp;lt;initialisation&amp;gt; elements in ChannelML &amp;lt;voltage_gate&amp;gt; elements will be ignored, and the state variables <br/>
+            will be initialised correctly (e.g. m=minf for v at t=0) as opposed to using this value. The &amp;lt;initialisation&amp;gt; element was introduced to  <br/>
+            test agreement of ChannelML files with incorrectly initialised original mod files.</defined>
+</term>
+
 
 
 <!--  nmodlEditor Tips -->
