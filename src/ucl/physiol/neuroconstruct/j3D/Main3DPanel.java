@@ -212,7 +212,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         }
         else
         {
-            OneCell3D oneCell3D = (OneCell3D) all3DCells.get(cellReference);
+            OneCell3D oneCell3D = all3DCells.get(cellReference);
             this.cached_lastCellRef = cellReference;
             this.cached_lastOneCell3D = oneCell3D;
 
@@ -271,6 +271,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
      * An attempt to clean up and free as much memory as possible when the 3D view is closed. Note: quick and dirty,
      * Java 3D specialist needed to clean up properly...
      */
+    @Override
     public void destroy3D()
     {
         System.out.println("------------     Clearing memory...");
@@ -1465,7 +1466,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                             /** @todo Make swifter... */
                             for (int i = 0; i < targetCells.size(); i++)
                             {
-                                Integer index = (Integer) targetCells.get(i);
+                                Integer index = targetCells.get(i);
                                 String targetCellReference = SimulationData.getCellRef(targetCellGroup, index.intValue());
                                 OneCell3D targetCell3D = this.getOneCell3D(targetCellReference);
                                 Color defaultColour = targetCell3D.getDefaultSegmentColour();
@@ -1483,7 +1484,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                             /** @todo Make swifter... */
                             for (int i = 0; i < sourceCells.size(); i++)
                             {
-                                Integer index = (Integer) sourceCells.get(i);
+                                Integer index = sourceCells.get(i);
                                 String sourceCellReference = SimulationData.getCellRef(sourceCellGroup, index.intValue());
                                 OneCell3D sourceCell3D = this.getOneCell3D(sourceCellReference);
                                 Color defaultColour = sourceCell3D.getDefaultSegmentColour();
@@ -2310,7 +2311,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
             for (int netConnNum = 0; netConnNum < allNetConns.size(); netConnNum++)
             {
-                String nextNetConn = (String) allNetConns.elementAt(netConnNum);
+                String nextNetConn = allNetConns.elementAt(netConnNum);
                 ArrayList<GeneratedNetworkConnections.SingleSynapticConnection> conns = null;
                 String otherGroup = null;
                 String otherType = null;
@@ -2823,7 +2824,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
             }
             int numSpikes = spikeTimes.size();
             //double interspikeInterval = simDuration / (double) spikeTimes.size();
-            double freq = ( (double) spikeTimes.size() / (double) simDuration) * 1000;
+            double freq = ( spikeTimes.size() / simDuration) * 1000;
 
             desc.append("Cell num " + cellNum + ": Total num of spikes: " + numSpikes
                         + ", Average frequency: " + freq + " KHz \n");
@@ -3760,7 +3761,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
             for (int j = 0; j < allInterSpikeIntervals.size(); j++)
             {
-                    double isi = ((Double)allInterSpikeIntervals.elementAt(j)).doubleValue();
+                    double isi = (allInterSpikeIntervals.elementAt(j)).doubleValue();
 
                     if (isi>=startISI && isi<endISI)
                     {

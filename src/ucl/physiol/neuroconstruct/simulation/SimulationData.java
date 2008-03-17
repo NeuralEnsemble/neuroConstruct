@@ -16,6 +16,7 @@ import java.io.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
 import java.text.*;
+import ucl.physiol.neuroconstruct.dataset.DataSet;
 import ucl.physiol.neuroconstruct.utils.units.*;
 import ucl.physiol.neuroconstruct.project.SimPlot;
 import ucl.physiol.neuroconstruct.project.PostSynapticObject;
@@ -419,11 +420,6 @@ public class SimulationData
 
         for (DataStore ds : dataSources)
         {
-           // logger.logComment("Checking getDataAtAllTimes: "+ds+" against "+ cellItemRef
-                 //             +", var: "+variable+", cellSegRef: "+cellSegRef);
-          //
-
-
             if ( (ds.variable.equals(variable) ||
                   (incSpikeOrVoltage &&
                    (variable.indexOf(SimPlot.SPIKE) >= 0 || variable.equals(SimPlot.VOLTAGE)) &&
@@ -434,7 +430,38 @@ public class SimulationData
             }
         }
 
-        throw new SimulationDataException("Problem loading data for "+variable+" in "+cellItemRef+"");
+        
+        throw new SimulationDataException("Problem loading data for "+variable+" in "+cellItemRef+". Data stores: "+ getCellSegRefs(false));
+    }
+    
+    
+    public DataSet getDataSet(String cellItemRef,
+                              String variable,
+                              boolean incSpikeOrVoltage)  throws SimulationDataException
+    {
+        if (!dataLoaded) throw new SimulationDataException("Data not yet loaded from files!");
+
+        
+        DataStore dataStore = getDataAtAllTimes(cellItemRef, variable, incSpikeOrVoltage);
+        
+        String ref = "Plot of "+ variable+" in "+ cellItemRef;
+        String desc = ref;
+        DataSet dataSet = new DataSet(ref, desc, 
+                                       "ms", 
+                                       SimPlot.getUnits(variable),
+                                       "Time",
+                                       SimPlot.getLegend(variable));
+        
+        double[] points = dataStore.getDataPoints();
+
+        for (int i = 0; i < times.length; i++)
+        {
+            dataSet.addPoint(times[i], points[i]);
+            System.currentTimeMillis();
+        }
+        
+        return dataSet;
+        
     }
 
 

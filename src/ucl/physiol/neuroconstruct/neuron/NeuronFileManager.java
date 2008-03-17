@@ -125,6 +125,9 @@ public class NeuronFileManager
      * Will recompile mods at least once  
      */
     private boolean firstRecompileComplete = false;
+    
+    
+    private boolean quitAfterRun = false;
             
     private NeuronFileManager()
     {
@@ -332,7 +335,7 @@ public class NeuronFileManager
             if (simConfig.getMpiConf().isParallel())
                 hocWriter.write(finishParallel());
             
-            if (runMode == RUN_VIA_CONDOR)
+            if (runMode == RUN_VIA_CONDOR || quitAfterRun)
                 hocWriter.write(generateQuit());
             
 
@@ -427,6 +430,12 @@ public class NeuronFileManager
 
         response.append("\n");
         return response.toString();
+    }
+    
+    
+    public void setQuitAfterRun(boolean quit)
+    {
+        this.quitAfterRun = quit;
     }
     
 
