@@ -105,7 +105,7 @@ public class NeuronFileManager
     private MultiRunManager multiRunManager = null;
     
     
-    private int nextColour = 1;
+    private Hashtable<String, Integer> nextColour = new Hashtable<String, Integer>();
 
     private Vector<String> graphsCreated = new Vector<String>();
 
@@ -154,7 +154,7 @@ public class NeuronFileManager
         
         graphsCreated = new Vector<String>();
         
-        nextColour = 1; // reset it...
+        nextColour = new Hashtable<String, Integer>(); // reset it...
         
         addComments = project.neuronSettings.isGenerateComments();
         
@@ -3441,6 +3441,7 @@ public class NeuronFileManager
                     if (plot.simPlot.isSynapticMechanism())
                     {
                         String netConn = SimPlot.getNetConnName(plot.simPlot.getValuePlotted());
+                        
                         String synType = SimPlot.getSynapseType(plot.simPlot.getValuePlotted());
 
                         ArrayList<PostSynapticObject> synObjs = project.generatedNetworkConnections.getSynObjsPresent(netConn,
@@ -3461,7 +3462,7 @@ public class NeuronFileManager
                                                                minVal,
                                                                maxVal,
                                                                varRefIncFract,
-                                                           getNextColour()));
+                                                               getNextColour(plot.simPlot.getGraphWindow())));
                         }
 
                     }
@@ -3474,7 +3475,7 @@ public class NeuronFileManager
                                                            minVal,
                                                            maxVal,
                                                            varRefIncFract,
-                                                           getNextColour()));
+                                                           getNextColour(plot.simPlot.getGraphWindow())));
                     }
                 }
             }
@@ -3823,11 +3824,20 @@ public class NeuronFileManager
         return response.toString();
     }
 
-    public String getNextColour()
+    public String getNextColour(String plotFrame)
     {
-        String colour = nextColour + "";
-        nextColour++;
-        if (nextColour >= 10) nextColour = 1;
+        if (!nextColour.containsKey(plotFrame))
+        {
+            nextColour.put(plotFrame, 1);
+        }
+        int colNum = nextColour.get(plotFrame);
+        
+        String colour = colNum + "";
+        int newColour = colNum +1;
+        if (newColour >= 10) newColour = 1;
+        
+        nextColour.put(plotFrame, newColour);
+        
         return colour;
     }
 
@@ -4060,8 +4070,8 @@ public class NeuronFileManager
 
     public String convertToNeuronVarName(String simIndepVarName)
     {
-
         String neuronVar = null;
+        String origIndepName = new String(simIndepVarName);
 
         if (simIndepVarName.equals(SimPlot.VOLTAGE))
         {
@@ -4074,10 +4084,12 @@ public class NeuronFileManager
         }
         else if (simIndepVarName.indexOf(SimPlot.PLOTTED_VALUE_SEPARATOR) > 0)
         {
+            boolean isSyn = false;
             if (simIndepVarName.indexOf(SimPlot.SYNAPSES)>=0)
             {
                 simIndepVarName = simIndepVarName.substring(SimPlot.SYNAPSES.length()+
                                                             SimPlot.PLOTTED_VALUE_SEPARATOR.length());
+                isSyn = true;
             }
 
             String mechanismName = simIndepVarName.substring(0,
@@ -4088,8 +4100,8 @@ public class NeuronFileManager
             String variable = simIndepVarName.substring(
                 simIndepVarName.indexOf(SimPlot.PLOTTED_VALUE_SEPARATOR) + 1);
 
-            logger.logComment("--------------     Looking to plot " + variable +
-                              " on cell mechanism: " + mechanismName);
+            logger.logComment("--------------   Original: "+origIndepName+", so looking to plot " 
+                + variable +" on cell mechanism: " + mechanismName+", simIndepVarName: "+simIndepVarName, true);
 
             if (variable.startsWith(SimPlot.COND_DENS))
             {
@@ -4098,22 +4110,17 @@ public class NeuronFileManager
                 neuronVar = variable + "_" + mechanismName;
 
             }
-
             else if (variable.indexOf(SimPlot.SYN_COND)>=0)
             {
                 neuronVar = "g";
 
-                //neuronVar = mechanismName+"[]."+variable;
-
             }
-
-            else if (simIndepVarName.indexOf(SimPlot.SYNAPSES)>=0)
+            else if (isSyn)
             {
                 neuronVar = simIndepVarName.substring(simIndepVarName.lastIndexOf(SimPlot.
                                                                          PLOTTED_VALUE_SEPARATOR)+1);
-
-
-
+                
+                logger.logComment("neuronVar: "+neuronVar, true);
             }
             else
             {

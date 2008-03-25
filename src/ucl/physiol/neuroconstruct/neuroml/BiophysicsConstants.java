@@ -51,7 +51,8 @@ public class BiophysicsConstants
 
     public static String MECHANISM_NAME_ATTR = "name";
     public static String MECHANISM_TYPE_ATTR = "type";
-    public static String MECHANISM_PASS_COND_ATTR = "passiveConductance";
+    public static String MECHANISM_PASSIVE_COND_ATTR_pre_v1_7_1 = "passiveConductance";
+    public static String MECHANISM_PASSIVE_COND_ATTR = "passive_conductance";
 
     //public static String MECHANISM_TYPE_MEMB_COND = "Membrane Conductance";
     public static String MECHANISM_TYPE_CHAN_MECH = "Channel Mechanism";
@@ -66,9 +67,14 @@ public class BiophysicsConstants
     public static String SPEC_CAP_NAME = "cm";
     public static String INIT_POT_NAME = "initV";
 
-    public static String SPEC_CAP_ELEMENT = "specificCapacitance";
-    public static String SPEC_AX_RES_ELEMENT = "specificAxialResistance";
-    public static String INIT_POT_ELEMENT = "initialMembPotential";
+    public static String SPECIFIC_CAP_ELEMENT_pre_v1_7_1 = "specificCapacitance";
+    public static String SPECIFIC_CAP_ELEMENT = "spec_capacitance";
+    
+    public static String SPECIFIC_AX_RES_ELEMENT_pre_v1_7_1 = "specificAxialResistance";
+    public static String SPECIFIC_AX_RES_ELEMENT = "spec_axial_resistance";
+    
+    public static String INITIAL_POT_ELEMENT_pre_v1_7_1 = "initialMembPotential";
+    public static String INITIAL_POT_ELEMENT = "init_memb_potential";
 
 
 
@@ -76,56 +82,10 @@ public class BiophysicsConstants
 
     public static String GROUP_ELEMENT = "group";
 
+    private BiophysicsConstants()
+    {
+    }
 
 
-/*
-    public static String LENGTH_UNITS = "lengthUnits";
-
-
-    public static String CELLS_ELEMENT = "cells";
-    public static String CELL_ELEMENT = "cell";
-
-    public static String CELL_NAME_ATTR = "name";
-    public static String NOTES_ELEMENT = "notes";
-
-    public static String PROPS_ELEMENT = "properties";
-    public static String PROP_ELEMENT = "property";
-    public static String PROP_TAG_ELEMENT = "tag";
-    public static String PROP_VALUE_ELEMENT = "value";
-
-    public static String SEGMENTS_ELEMENT = "segments";
-    public static String SEGMENT_ELEMENT = "segment";
-
-    public static String SEGMENT_ID_ATTR = "id";
-    public static String SEGMENT_NAME_ATTR = "name";
-    public static String SEGMENT_SEC_ID_ATTR = "cable";
-    public static String SEGMENT_PARENT_ATTR = "parent";
-
-    public static String SEGMENT_PROXIMAL_ELEMENT = "proximal";
-    public static String SEGMENT_DISTAL_ELEMENT = "distal";
-
-
-    public static String POINT_X_ATTR = "x";
-    public static String POINT_Y_ATTR = "y";
-    public static String POINT_Z_ATTR = "z";
-    public static String POINT_DIAM_ATTR = "diameter";
-
-    public static String SECTIONS_ELEMENT = "cables";
-    public static String SECTION_ELEMENT = "cable";
-
-    public static String SECTION_ID_ATTR = "id";
-    public static String SECTION_NAME_ATTR = "name";
-    public static String SECTION_GROUP_ELEMENT = "group";
-
-
-
-
-
-
-    public static String INIT_POT_TAG = "initialPotential";
-    public static String SPEC_AX_RES_TAG = "specificAxialResistance";
-    public static String SPEC_CAP_TAG = "specificCapacitance";
-
-*/
 
 }

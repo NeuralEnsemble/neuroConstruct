@@ -155,7 +155,8 @@ public class MorphMLReader extends XMLFilterImpl
                         }
                         currentSegment.setComment(contents);
                     }
-                    else if (currentPropertyTag.equals(MorphMLConstants.FRACT_ALONG_PROP))
+                    else if (currentPropertyTag.equals(MorphMLConstants.FRACT_ALONG_PARENT_ATTR) || 
+                        currentPropertyTag.equals(MorphMLConstants.FRACT_ALONG_PARENT_ATTR_pre_v1_7_1))
                     {
                         currentSegment.setFractionAlongParent(Float.parseFloat(contents));
                     }
@@ -170,7 +171,7 @@ public class MorphMLReader extends XMLFilterImpl
             }
 
             else if (getCurrentElement().equals(NetworkMLConstants.SYN_TYPE_ELEMENT) &&
-                     this.getAncestorElement(1).equals(NetworkMLConstants.POTENTIAL_SYN_LOC_ELEMENT))
+                     this.getAncestorElement(1).equals(NetworkMLConstants.POT_SYN_LOC_ELEMENT_preV1_7_1))
             {
                 logger.logComment("Found a syn type el: " + contents);
 
@@ -179,11 +180,10 @@ public class MorphMLReader extends XMLFilterImpl
             }
 
             else if (getCurrentElement().equals(NetworkMLConstants.GROUP_ELEMENT) &&
-                     this.getAncestorElement(1).equals(NetworkMLConstants.POTENTIAL_SYN_LOC_ELEMENT))
+                     (this.getAncestorElement(1).equals(NetworkMLConstants.POT_SYN_LOC_ELEMENT_preV1_7_1)||
+                      this.getAncestorElement(1).equals(NetworkMLConstants.POT_SYN_LOC_ELEMENT)))
             {
                 logger.logComment("Found a syn group: " + contents);
-
-                //currentSynType = contents;
 
                 cell.associateGroupWithSynapse(contents, currentSynType);
 
@@ -232,7 +232,8 @@ public class MorphMLReader extends XMLFilterImpl
             }
             else if (getCurrentElement().equals(BiophysicsConstants.GROUP_ELEMENT) &&
                      this.getAncestorElement(1).equals(BiophysicsConstants.PARAMETER_ELEMENT) &&
-                     this.getAncestorElement(2).equals(BiophysicsConstants.SPEC_AX_RES_ELEMENT))
+                     (this.getAncestorElement(2).equals(BiophysicsConstants.SPECIFIC_AX_RES_ELEMENT) ||
+                     this.getAncestorElement(2).equals(BiophysicsConstants.SPECIFIC_AX_RES_ELEMENT_pre_v1_7_1)))
             {
                 logger.logComment("Found a group: " + contents + " for spec ax res");
 
@@ -240,7 +241,8 @@ public class MorphMLReader extends XMLFilterImpl
             }
             else if (getCurrentElement().equals(BiophysicsConstants.GROUP_ELEMENT) &&
                      this.getAncestorElement(1).equals(BiophysicsConstants.PARAMETER_ELEMENT) &&
-                     this.getAncestorElement(2).equals(BiophysicsConstants.SPEC_CAP_ELEMENT))
+                     (this.getAncestorElement(2).equals(BiophysicsConstants.SPECIFIC_CAP_ELEMENT) ||
+                     this.getAncestorElement(2).equals(BiophysicsConstants.SPECIFIC_CAP_ELEMENT_pre_v1_7_1)))
             {
                 logger.logComment("Found a group: " + contents + " for spec cap");
 
@@ -458,7 +460,11 @@ public class MorphMLReader extends XMLFilterImpl
 
              currentSection = section;
 
-             String fractAttr = attributes.getValue(MorphMLConstants.FRACT_ALONG_PROP);
+             String fractAttr = attributes.getValue(MorphMLConstants.FRACT_ALONG_PARENT_ATTR);
+             
+             if (fractAttr==null)
+                 fractAttr = attributes.getValue(MorphMLConstants.FRACT_ALONG_PARENT_ATTR_pre_v1_7_1);
+             
              if(fractAttr!=null)
              {
                  float fractAlongSec = Float.parseFloat(fractAttr);
@@ -532,9 +538,19 @@ public class MorphMLReader extends XMLFilterImpl
              logger.logComment("Found new mechanism: "+ currentMechName+", type: "+ currentMechType);
 
          }
-         else if (getCurrentElement().equals(NetworkMLConstants.POTENTIAL_SYN_LOC_ELEMENT))
+         else if (getCurrentElement().equals(NetworkMLConstants.POT_SYN_LOC_ELEMENT_preV1_7_1))
          {
-             logger.logComment("Found pot syn loc element...");
+             logger.logComment("Found pre v1.7.1 pot syn loc element...");
+
+         }
+         else if (getCurrentElement().equals(NetworkMLConstants.POT_SYN_LOC_ELEMENT))
+         {
+             logger.logComment("Found v2.0 compliant pot syn loc element...");
+
+             currentSynType = attributes.getValue(NetworkMLConstants.SYN_TYPE_ATTR);
+
+            logger.logComment("Found a syn type el: " + currentSynType);
+             
 
          }
          else if (getCurrentElement().equals(NetworkMLConstants.SYN_TYPE_ELEMENT))
@@ -542,19 +558,22 @@ public class MorphMLReader extends XMLFilterImpl
              logger.logComment("Found syn type element...");
 
          }
-         else if (getCurrentElement().equals(BiophysicsConstants.SPEC_CAP_ELEMENT))
+         else if (getCurrentElement().equals(BiophysicsConstants.SPECIFIC_CAP_ELEMENT) ||
+                    getCurrentElement().equals(BiophysicsConstants.SPECIFIC_CAP_ELEMENT_pre_v1_7_1))
          {
              logger.logComment("Found spec cap element...");
              cell.getSpecCapVsGroups().clear();   // to remove default global cm
 
          }
-         else if (getCurrentElement().equals(BiophysicsConstants.SPEC_AX_RES_ELEMENT))
+         else if (getCurrentElement().equals(BiophysicsConstants.SPECIFIC_AX_RES_ELEMENT) ||
+             getCurrentElement().equals(BiophysicsConstants.SPECIFIC_AX_RES_ELEMENT_pre_v1_7_1))
          {
              logger.logComment("Found spec ax res element...");
              cell.getSpecAxResVsGroups().clear();   // to remove default global ra
 
          }
-         else if (getCurrentElement().equals(BiophysicsConstants.INIT_POT_ELEMENT))
+         else if (getCurrentElement().equals(BiophysicsConstants.INITIAL_POT_ELEMENT) ||
+             getCurrentElement().equals(BiophysicsConstants.INITIAL_POT_ELEMENT_pre_v1_7_1))
          {
              logger.logComment("Found initial membrane potential element...");
 
@@ -605,7 +624,8 @@ public class MorphMLReader extends XMLFilterImpl
                  //this.currentChanMech = new ChannelMechanism(currentMechName, neuroConUnitsCondDens);
              }
 
-             if (getAncestorElement(1).equals(BiophysicsConstants.SPEC_CAP_ELEMENT))
+             if (getAncestorElement(1).equals(BiophysicsConstants.SPECIFIC_CAP_ELEMENT) ||
+                 getAncestorElement(1).equals(BiophysicsConstants.SPECIFIC_CAP_ELEMENT_pre_v1_7_1))
              {
                  logger.logComment("Found param for spec cap");
                  double nmlUnitsSpecCap = Float.parseFloat(paramVal);
@@ -629,7 +649,8 @@ public class MorphMLReader extends XMLFilterImpl
                  this.currentSpecCap = neuroConUnitsSpecCap;
              }
 
-             if (getAncestorElement(1).equals(BiophysicsConstants.SPEC_AX_RES_ELEMENT))
+             if (getAncestorElement(1).equals(BiophysicsConstants.SPECIFIC_AX_RES_ELEMENT) ||
+                 getAncestorElement(1).equals(BiophysicsConstants.SPECIFIC_AX_RES_ELEMENT_pre_v1_7_1))
              {
                  logger.logComment("Found param for spec ax res");
                  double nmlUnitsSpecAxRes = Float.parseFloat(paramVal);
@@ -654,7 +675,8 @@ public class MorphMLReader extends XMLFilterImpl
              }
 
 
-             if (getAncestorElement(1).equals(BiophysicsConstants.INIT_POT_ELEMENT))
+             if (getAncestorElement(1).equals(BiophysicsConstants.INITIAL_POT_ELEMENT) ||
+                 getAncestorElement(1).equals(BiophysicsConstants.INITIAL_POT_ELEMENT_pre_v1_7_1))
              {
                  logger.logComment("Found param for init memb pot");
                  double nmlUnitsInitPot = Float.parseFloat(paramVal);

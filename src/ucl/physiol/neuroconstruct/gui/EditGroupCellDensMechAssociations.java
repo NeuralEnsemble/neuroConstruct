@@ -23,6 +23,7 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 
 import ucl.physiol.neuroconstruct.cell.*;
+import ucl.physiol.neuroconstruct.cell.ParameterisedGroup.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
@@ -48,10 +49,14 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
     private DefaultListModel listModelGroupsOut = new DefaultListModel();
 
     String defaultMechSelection = "-- Channel Mechanisms: --";
+    String spacing = " ";
     String pointProcessSelection = "-- Point processes: --";
     String passivePropsSelection = "-- Passive properties: --";
     String specCapSelection = "Specific Capacitance";
     String specAxResSelection = "Specific Axial Resistance";
+    
+    String varMechs = "-- Variable mechanism parameters --";
+    
     String extraMechSelection = "-- Other mechanisms: --";
     String apPropVelSelection = "Action Potential propagation speed";
 
@@ -170,7 +175,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         try
         {
             jbInit();
-            extraInit();
+            initialiseOptions();
             pack();
         }
         catch (Exception ex)
@@ -336,12 +341,15 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
     }
 
-    private void extraInit()
+    private void initialiseOptions()
     {
+        
+        jComboBoxMechNames.removeAllItems();
+        
         jComboBoxMechNames.addItem(defaultMechSelection);
 
 
-        Vector mechList = project.cellMechanismInfo.getChanMechsAndIonConcs();
+        Vector<String> mechList = project.cellMechanismInfo.getChanMechsAndIonConcs();
 
         for (int i = 0; i < mechList.size(); i++)
         {
@@ -357,11 +365,42 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                 jComboBoxMechNames.addItem(pp);
             }
         }
-        
 
+        jComboBoxMechNames.addItem(spacing);
         jComboBoxMechNames.addItem(this.passivePropsSelection);
         jComboBoxMechNames.addItem(this.specCapSelection);
         jComboBoxMechNames.addItem(this.specAxResSelection);
+        jComboBoxMechNames.addItem(spacing);
+        
+        if (myCell.getParameterisedGroups().size()>0)
+        {
+            jComboBoxMechNames.addItem(varMechs);
+            Hashtable<ChannelMechanism, Vector<String>> cmVsGrp = myCell.getChanMechsVsGroups();
+            Enumeration<ChannelMechanism> cms = cmVsGrp.keys();
+            
+            
+            while(cms.hasMoreElements())                
+            {
+                ChannelMechanism chanMech = cms.nextElement();
+                 //jComboBoxMechNames.addItem(mechList.elementAt(i));
+                //
+                Vector<String> groups = cmVsGrp.get(chanMech);
+                
+                CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(chanMech.getName());
+                
+                for(String group:groups)
+                {
+                    if (cellMech.isChannelMechanism())
+                    {
+                        jComboBoxMechNames.addItem("gmax of: "+chanMech.getName()+" on group: "+group);
+                    }
+                }
+            }
+        
+            jComboBoxMechNames.addItem(spacing);
+        }
+        
+        
         jComboBoxMechNames.addItem(this.extraMechSelection);
         jComboBoxMechNames.addItem(this.apPropVelSelection);
 
@@ -435,8 +474,9 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         
         String selectedMechanism = (String) jComboBoxMechNames.getSelectedItem();
 
-        if (selectedMechanism.equals(defaultMechSelection) ||
-            selectedMechanism.equals(this.extraMechSelection)) return;
+         if (selectedMechanism.equals(defaultMechSelection) ||
+            selectedMechanism.equals(this.extraMechSelection)||
+            selectedMechanism.equals(spacing)) return;
         
         
         Object[] selected = this.jListGroupsIn.getSelectedValues();
@@ -561,7 +601,8 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         String selectedMechanism = (String) jComboBoxMechNames.getSelectedItem();
 
         if (selectedMechanism.equals(defaultMechSelection) ||
-            selectedMechanism.equals(this.extraMechSelection)) return;
+            selectedMechanism.equals(this.extraMechSelection)||
+            selectedMechanism.equals(spacing)) return;
 
         logger.logComment("Edit value button pressed");
 
@@ -645,7 +686,8 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
             String selectedMechanism = (String) jComboBoxMechNames.getSelectedItem();
 
             if (selectedMechanism.equals(defaultMechSelection) ||
-                selectedMechanism.equals(this.extraMechSelection))
+                selectedMechanism.equals(this.extraMechSelection) ||
+                selectedMechanism.equals(this.spacing))
             {
                 return;
             }
@@ -882,7 +924,8 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         String selectedMech = (String) jComboBoxMechNames.getSelectedItem();
 
         if (selectedMech.equals(defaultMechSelection) ||
-            selectedMech.equals(this.extraMechSelection)) return;
+            selectedMech.equals(this.extraMechSelection)||
+            selectedMech.equals(spacing)) return;
 
         if (selectedMech.equals(this.apPropVelSelection))
         {
@@ -1111,33 +1154,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         {
 
         }
-   /*     SimpleCell cell = new SimpleCell("");
-
-        String chanMechName1 = "ggg";
-        String chanMechName2 = "ghfg";
-
-        ChannelMechanism chMech1 = new ChannelMechanism( chanMechName1, 22);
-        ChannelMechanism chMech2 = new ChannelMechanism( chanMechName1, 227);
-        ChannelMechanism chMech3 = new ChannelMechanism( chanMechName2, 224);
-        ChannelMechanism chMech4 = new ChannelMechanism( chanMechName2, 2246);
-
-        cell.getFirstSomaSegment().getSection().addToGroup("ppp");
-        cell.getFirstSomaSegment().getSection().addToGroup("ppp2");
-
-
-        cell.associateGroupWithChanMech("all", chMech1);
-        cell.associateGroupWithChanMech("soma_group", chMech2);
-        cell.associateGroupWithChanMech("soma_group", chMech4);
-        cell.associateGroupWithChanMech("dendrite_group", chMech3);
-
-        System.out.println(CellTopologyHelper.printDetails(cell));
-
-
-
-        Vector list = new Vector();
-        list.add(chanMechName1);
-        list.add(chanMechName2);
-*/
+   
         Project testProj = Project.loadProject(new File("examples/Ex4-NEURONGENESIS/Ex4-NEURONGENESIS.neuro.xml"),
                                                new ProjectEventListener()
         {
@@ -1152,18 +1169,16 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
         });
 
-        Cell cell = (Cell)testProj.cellManager.getCell("TestCell_ChannelML");
-
-        //Cell cell = (Cell)testProj.cellManager.getCell("GranuleCellExp");
-/*
-        ApPropSpeed appv = new ApPropSpeed(123);
-        ApPropSpeed appv2 = new ApPropSpeed(222);
+        Cell cell = testProj.cellManager.getCell("TestCell_ChannelML");
 
 
-        cell.associateGroupWithApPropSpeed("axon_group", appv);
-        cell.associateGroupWithApPropSpeed("dendrite_group", appv2);
-*/
-
+        ParameterisedGroup pg3 = new ParameterisedGroup("PathLengthOverDendrites", 
+                                                       Section.DENDRITIC_GROUP, 
+                                                       Metric.PATH_LENGTH_FROM_ROOT, 
+                                                       ProximalPref.NO_TRANSLATION, 
+                                                       DistalPref.NO_NORMALISATION);
+        
+        cell.addParameterisedGroup(pg3);
 
         System.out.println(CellTopologyHelper.printDetails(cell, testProj));
 

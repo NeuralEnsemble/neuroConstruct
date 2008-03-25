@@ -26,7 +26,7 @@ import ucl.physiol.neuroconstruct.gui.plotter.*;
 
 public class Equation
 {
-    public Equation()
+    private Equation()
     {
     }
 

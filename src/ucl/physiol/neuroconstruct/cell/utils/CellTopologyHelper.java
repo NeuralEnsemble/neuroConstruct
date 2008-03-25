@@ -1265,6 +1265,70 @@ public class CellTopologyHelper
         segment.setSegmentId(index);
     }
 */
+    
+    public static float getLengthFromRoot(Cell cell, SegmentLocation location)
+    {
+        Segment seg = cell.getSegmentWithId(location.getSegmentId());
+        
+        if (seg==null) return -1;
+        
+        float totLen = seg.getSegmentLength() * location.getFractAlong();
+        
+        Segment parent = null;
+        
+        while ((parent = seg.getParentSegment()) != null)
+        {
+            totLen = totLen + (parent.getSegmentLength() * seg.getFractionAlongParent());
+            
+            seg = parent;
+        }
+        logger.logComment("Length at: "+location+" on cell: "+ cell+" is "+totLen, true);
+        return totLen;
+            
+    }
+    
+    
+    public static float getMinLengthFromRoot(Cell cell, String group)
+    { 
+        float minLen = Float.MAX_VALUE;
+        
+        for(Segment seg: cell.getSegmentsInGroup(group))
+        {
+            float newLen = getLengthFromRoot(cell, new SegmentLocation(seg.getSegmentId(), 0));
+            if (newLen==0) return 0;
+            
+            if (newLen<minLen) minLen = newLen;
+        }
+        
+        return minLen;
+            
+    }
+    
+    public static float getMaxLengthFromRoot(Cell cell, String group)
+    { 
+        float maxLen = 0;
+        
+        for(Segment seg: cell.getSegmentsInGroup(group))
+        {
+            float newLen = getLengthFromRoot(cell, new SegmentLocation(seg.getSegmentId(), 1));
+            if (newLen>maxLen) maxLen = newLen;
+        }
+        
+        return maxLen;
+            
+    }
+    
+    
+        
+    /*
+    public static LinkedList<Segment> getBranchInGroup(Cell cell, Segment seg, String group)
+    {
+        if (!seg.getSection().getGroups().contains(group)) return null;
+        
+        LinkedList<Segment> list = new LinkedList<Segment>();
+        
+        
+    }*/
 
 
     /**
@@ -1756,12 +1820,13 @@ public class CellTopologyHelper
         return printDetails(cell, project,html, true, false);
     }
 
+    //private getCellMechRe
 
     public static String printDetails(Cell cell, 
     		                          Project project, 
     		                          boolean html, 
     		                          boolean longFormat, 
-    		                          boolean expandedHtml)
+    		                          boolean projHtml)
     {
 
         logger.logComment("Printing cell details...");
@@ -1783,7 +1848,8 @@ public class CellTopologyHelper
 
         sb.append("  "+GeneralUtils.getEndLine(html));
         
-        boolean useFullSymbol = !(!html || expandedHtml);
+        boolean useFullSymbol = !(!html || projHtml);
+        
         String capSymb = useFullSymbol ? UnitConverter.specificCapacitanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol() :
         	UnitConverter.specificCapacitanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSafeSymbol();
 
@@ -1862,6 +1928,24 @@ public class CellTopologyHelper
                       +" is present on: "+GeneralUtils.getTabbedString(groups.toString(), "b", html)+GeneralUtils.getEndLine(html));
         }
         if (allChanMechs.size()>0) sb.append("  "+GeneralUtils.getEndLine(html));
+        
+        
+        
+        Hashtable<VariableMechanism, ParameterisedGroup> varMechsVsParaGroups = cell.getVarMechsVsParaGroups();
+        Enumeration<VariableMechanism> varMechs = varMechsVsParaGroups.keys();
+        
+        while (varMechs.hasMoreElements())
+        {
+            VariableMechanism vm = varMechs.nextElement();
+            ParameterisedGroup pg = varMechsVsParaGroups.get(vm);
+            
+            
+            sb.append("    Variable Mechanism: "+GeneralUtils.getTabbedString(vm.toString(), "b", html)
+                      +" is present on: "+GeneralUtils.getTabbedString(pg.toString(), "b", html)+GeneralUtils.getEndLine(html));
+            
+        }
+        if (varMechsVsParaGroups.size()>0) sb.append("  "+GeneralUtils.getEndLine(html));
+        
 
         ArrayList<String> allSynapses = cell.getAllAllowedSynapseTypes();
         for (int i = 0; i < allSynapses.size(); i++)
@@ -2771,7 +2855,8 @@ public class CellTopologyHelper
         Vector<String> segmentsDisconnected = new Vector<String>();
 
         Vector<String> badlyConnectedSegments = new Vector<String>();
-
+        
+        Vector<String> notAxDendSomaSections =  new Vector<String>();
 
         Vector<String> sphericalSegments = new Vector<String>();
         Vector<String> sphericalErrors = new Vector<String>();
@@ -2879,15 +2964,19 @@ public class CellTopologyHelper
                                           + segment.getSection().getSectionName()
                                           + " has zero start radius");
 
-            }
-            if (segment.getSection().getStartRadius()<0)
-            {
-                segmentsWithNegRadius.add("Section: "
-                                      + segment.getSection().getSectionName()
-                                      + " has negative start radius");
+                }
+                if (segment.getSection().getStartRadius()<0)
+                {
+                    segmentsWithNegRadius.add("Section: "
+                                          + segment.getSection().getSectionName()
+                                          + " has negative start radius");
 
-            }
-
+                }
+                if (!( segment.isAxonalSegment() || segment.isDendriticSegment() || segment.isSomaSegment()))
+                {
+                    notAxDendSomaSections.add("Section: "+ segment.getSection().getSectionName()
+                                          + " is not a soma, axon or dendrite (not in any of groups: soma_group, dendrite_group or axon_group)");
+                }
 
             }
             //segmentsWithNegRadius
@@ -2980,8 +3069,6 @@ public class CellTopologyHelper
             // Check for simply connected
 
             // ...
-
-
         }
 
 
@@ -3139,6 +3226,15 @@ public class CellTopologyHelper
             for (int i = 0; i < segmentsDisconnected.size(); i++)
             {
                 warningReport.append(" - "+ segmentsDisconnected.elementAt(i)+"\n");
+            }
+        }
+        
+        if (notAxDendSomaSections.size()>0)
+        {
+            warningReport.append("NOTE: Some sections are not specified as soma, axon or dendrite! This will lead to problems when making network connections.\n");
+            for (int i = 0; i < notAxDendSomaSections.size(); i++)
+            {
+                warningReport.append(" - "+ notAxDendSomaSections.elementAt(i)+"\n");
             }
         }
 

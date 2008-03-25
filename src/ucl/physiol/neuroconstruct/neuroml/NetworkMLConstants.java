@@ -130,7 +130,10 @@ public class NetworkMLConstants
     public static String GROUP_ELEMENT = "group";
 
 
-    public static String POTENTIAL_SYN_LOC_ELEMENT = "potentialSynapticLocation";
+    public static String CONNECTIVITY_ELEMENT = "connectivity";
+    public static String POT_SYN_LOC_ELEMENT_preV1_7_1 = "potentialSynapticLocation";
+    public static String POT_SYN_LOC_ELEMENT = "potential_syn_loc";
+    
     public static String SYN_DIR_ELEMENT = "synapse_direction";
     public static String SYN_DIR_PRE = "pre";
     public static String SYN_DIR_POST = "post";
@@ -141,6 +144,10 @@ public class NetworkMLConstants
 
     public static String NC_NETWORK_GEN_RAND_SEED = "neuroConstruct_random_seed";
     public static String NC_SIM_CONFIG = "neuroConstruct_sim_config";
+
+    private NetworkMLConstants()
+    {
+    }
 
 
 

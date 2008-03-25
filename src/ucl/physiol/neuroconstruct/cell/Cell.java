@@ -26,13 +26,16 @@ import ucl.physiol.neuroconstruct.utils.*;
   * extra information describing the cell, including biophysical information.
   *
   * @author Padraig Gleeson
-  *  
   *
   */
 
 
 public class Cell implements Serializable
 {
+    /*
+     * A unique id to assist serialisation of the cell class. Don't change this or saved morphologies 
+     * won't reload!
+     */
     private static final long serialVersionUID = -1542517048619766744L;
 
     private static transient ClassLogger logger = new ClassLogger("Cell");
@@ -62,6 +65,10 @@ public class Cell implements Serializable
      */
     private Hashtable<ChannelMechanism, Vector<String>> chanMechsVsGroups = new Hashtable<ChannelMechanism, Vector<String>>();
 
+    /**
+     * For the recording of ChannelMechanisms types
+     */
+    private Hashtable<VariableMechanism, ParameterisedGroup> varMechsVsParaGroups = new Hashtable<VariableMechanism, ParameterisedGroup>();
 
     /**
      * For the recording of AP propagation delays. Note: unlike the chanMechsVsGroups and synapsesVsGroups
@@ -83,6 +90,7 @@ public class Cell implements Serializable
      */
     private NumberGenerator initialPotential = new NumberGenerator(defaultInitPot); 
 
+    private Vector<ParameterisedGroup> parameterisedGroups = new Vector<ParameterisedGroup>();
 
 
     /**
@@ -177,6 +185,57 @@ public class Cell implements Serializable
     }
 
 
+    /**
+     * Note: used by XMLEncoder 
+     */
+    public Vector<ParameterisedGroup> getParameterisedGroups()
+    {
+        if (parameterisedGroups==null)
+            parameterisedGroups = new Vector<ParameterisedGroup>();
+        return this.parameterisedGroups;
+    }
+
+    public void deleteParameterisedGroup(String name)
+    {
+       for (ParameterisedGroup pg: parameterisedGroups)
+       {
+           if (pg.getName().equals(name))
+           {
+               parameterisedGroups.remove(pg);
+           }
+       }
+    }
+
+
+    public void setParameterisedGroups(Vector<ParameterisedGroup> pgs)
+    {
+        this.parameterisedGroups = pgs;
+    }
+
+
+    public void addParameterisedGroup(ParameterisedGroup pg)
+    {
+        if (parameterisedGroups==null)
+            parameterisedGroups = new Vector<ParameterisedGroup>();
+        
+        this.parameterisedGroups.add(pg);
+    }
+
+    public void updateParameterisedGroup(ParameterisedGroup pg)
+    {
+        for (int i = 0; i < parameterisedGroups.size(); i++)
+        {
+            if (parameterisedGroups.get(i).getName().equals(pg.getName()))
+            {
+                parameterisedGroups.setElementAt(pg, i);
+                return;
+            }
+        }
+
+        this.parameterisedGroups.add(pg);
+    }
+    
+    
 
     /**
      * Returns the segments whose sections don't have an ApPropSpeed mechanism specified
@@ -648,6 +707,22 @@ public class Cell implements Serializable
         return sections;
     }
 
+
+
+    /** @todo Check not replicated elsewhere... */
+    public ArrayList<Segment> getSegmentsInGroup(String group)
+    {
+        ArrayList<Segment> segments = new ArrayList<Segment>();
+
+        for (int i = 0; i < allSegments.size(); i++)
+        {
+            Segment seg = allSegments.elementAt(i);
+
+            if (seg.getSection().getGroups().contains(group))
+                segments.add(seg);
+        }
+        return segments;
+    }
 
 
 
@@ -1137,6 +1212,22 @@ public class Cell implements Serializable
         return true;
     }
 
+    
+    public boolean associateParamGroupWithVarMech(ParameterisedGroup paraGrp, VariableMechanism varMech)
+    {
+        logger.logComment("Cell being told to associate param group: " + paraGrp + " with var mechanism: " + varMech);
+           
+        if (!parameterisedGroups.contains(paraGrp))
+        {
+            logger.logError("The param group: "+paraGrp+" is not present in the set of all groups: "+ parameterisedGroups);
+            return false;
+        }
+        
+        varMechsVsParaGroups.put(varMech, paraGrp);
+        
+        return true;
+        
+    }
 
     public boolean associateGroupWithChanMech(String group, ChannelMechanism chanMech)
     {
@@ -1776,14 +1867,11 @@ public class Cell implements Serializable
           cellB.associateGroupWithChanMech("soma_group", chMech);
 
 
-           System.out.println("Chan mechs B: " + cellB.getChanMechsVsGroups());
+          System.out.println("Chan mechs B: " + cellB.getChanMechsVsGroups());
 
-           System.out.println("getDefinedSpecCaps: " + cell.getDefinedSpecCaps());
+          System.out.println("getDefinedSpecCaps: " + cell.getDefinedSpecCaps());
 
           System.out.println("\n\n\nCompare: "+ CellTopologyHelper.compare(cell, cellB));
-
-
-
 
 
         }
@@ -1827,6 +1915,19 @@ public class Cell implements Serializable
     public Hashtable<ChannelMechanism, Vector<String>> getChanMechsVsGroups()
     {
         return chanMechsVsGroups;
+    }
+
+    public void setVarMechsVsParaGroups(Hashtable<VariableMechanism, ParameterisedGroup> varMechsVsParaGroups)
+    {
+        this.varMechsVsParaGroups = varMechsVsParaGroups;
+    }
+
+    public Hashtable<VariableMechanism, ParameterisedGroup> getVarMechsVsParaGroups()
+    {
+        if (varMechsVsParaGroups == null)
+            varMechsVsParaGroups = new Hashtable<VariableMechanism, ParameterisedGroup>();
+        
+        return varMechsVsParaGroups;
     }
 
     public Hashtable<Float, Vector<String>> getSpecCapVsGroups()

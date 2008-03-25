@@ -884,5 +884,9 @@ public class ProjectStructure
         return zippedDataSetExtension;
     }
 
+    private ProjectStructure()
+    {
+    }
+
 
 }

@@ -62,7 +62,7 @@ public class GenesisFileManager
 
     boolean newRecordingToBeMade = false;
 
-    int nextColour = 1;
+    private Hashtable<String, Integer> nextColour = new Hashtable<String, Integer>();
 
     private static boolean addComments = true;
 
@@ -112,7 +112,7 @@ public class GenesisFileManager
     {
         cellTemplatesGenAndIncl = new ArrayList<String>();
         graphsCreated = new ArrayList<String>();
-        nextColour = 1; // reset it...
+        nextColour = new Hashtable<String, Integer>(); // reset it...
 
         addComments = project.genesisSettings.isGenerateComments();
     }
@@ -144,7 +144,7 @@ public class GenesisFileManager
         addComments = project.genesisSettings.isGenerateComments();
 
         FileWriter fw = null;
-        nextColour = 1; // reset it...
+        nextColour = new Hashtable<String, Integer>(); // reset it...
 
         if (!(project.genesisSettings.getUnitSystemToUse()==UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS
               || project.genesisSettings.getUnitSystemToUse()==UnitConverter.GENESIS_SI_UNITS))
@@ -1860,14 +1860,13 @@ public class GenesisFileManager
                             response.append(createSinglePlot(plotFrameName,
                                                              dataSetName,
                                                              "Values of " + plotted + " in " +
-                                                             getCellElementName(plot.simPlot.getCellGroup(),
-                                cellNum),
+                                                             getCellElementName(plot.simPlot.getCellGroup(), cellNum),
                                                              var.getCompParentElementName(),
                                                              var.getCompTopElementName(),
                                                              var.getVariableName(),
                                                              maxVal,
                                                              minVal,
-                                                             getNextColour(),
+                                                             getNextColour(plotFrameName),
                                                              var.getExtraLines()));
 
                         }
@@ -2571,7 +2570,7 @@ public class GenesisFileManager
     {
         logger.logComment("Trying to run the mainGenesisFile...");
 
-        nextColour = 1; // reset it...
+        nextColour = new Hashtable<String, Integer>(); // reset it...
         if (!this.mainFileGenerated)
         {
             logger.logError("Trying to run without generating first");
@@ -2780,14 +2779,20 @@ public class GenesisFileManager
         }
     }
 
-    public String getNextColour()
+    public String getNextColour(String plotFrame)
     {
-        String colour = null;
+        if (!nextColour.containsKey(plotFrame))
+        {
+            nextColour.put(plotFrame, 1);
+        }
+        int colNum = nextColour.get(plotFrame);
+        
+        String colour = ColourUtils.getColourName(colNum).toLowerCase();
+        int newColour = colNum +1;
+        if (newColour >= 10) newColour = 1;
 
-        colour = ColourUtils.getColourName(nextColour).toLowerCase();
-
-        nextColour++;
-        if (nextColour >= 10) nextColour = 1;
+        nextColour.put(plotFrame, newColour);
+        
         return colour;
     }
 

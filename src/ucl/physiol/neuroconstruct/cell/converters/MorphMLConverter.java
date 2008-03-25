@@ -49,6 +49,11 @@ public class MorphMLConverter extends FormatImporter
     //public static String MML_CELLS = "cells";
     
     String warning = "";
+    
+    /*
+     * If true use the elements with pre 1.7.1 naming conventions, e.g. passiveConductance not 
+     */
+    private static boolean usePreV1_7_1Format = false;
 
     public MorphMLConverter()
     {
@@ -597,7 +602,11 @@ public class MorphMLConverter extends FormatImporter
                 {
                     float fractAlongParentSec = CellTopologyHelper.getFractionAlongSection(cell, firstSeg.getParentSegment(), firstSeg.getFractionAlongParent());
 
-                    cableElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.FRACT_ALONG_PROP, fractAlongParentSec+""));
+                    if (usePreV1_7_1Format)
+                        cableElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.FRACT_ALONG_PARENT_ATTR_pre_v1_7_1, fractAlongParentSec+""));
+                    else
+                        cableElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.FRACT_ALONG_PARENT_ATTR, fractAlongParentSec+""));
+                        
                 }
 
 
@@ -654,8 +663,14 @@ public class MorphMLConverter extends FormatImporter
                         
                         if (cmlCm.isPassiveNonSpecificCond())
                         {
-                            mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_PASS_COND_ATTR,
-                                    "true"));
+                            if (!usePreV1_7_1Format)
+                            {
+                                mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_PASSIVE_COND_ATTR,"true"));
+                            }
+                            else
+                            {
+                                mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_PASSIVE_COND_ATTR_pre_v1_7_1,"true"));
+                            }
 
                             SimpleXMLElement revPotParamElement = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
@@ -704,7 +719,10 @@ public class MorphMLConverter extends FormatImporter
                     }
                 }
 
-                SimpleXMLElement specCapElement = new SimpleXMLElement(prefix + BiophysicsConstants.SPEC_CAP_ELEMENT);
+                SimpleXMLElement specCapElement = new SimpleXMLElement(prefix + BiophysicsConstants.SPECIFIC_CAP_ELEMENT);
+                
+                if (usePreV1_7_1Format) 
+                    specCapElement = new SimpleXMLElement(prefix + BiophysicsConstants.SPECIFIC_CAP_ELEMENT_pre_v1_7_1);
 
                 bioElement.addChildElement(specCapElement);
 
@@ -734,7 +752,10 @@ public class MorphMLConverter extends FormatImporter
 
                 }
 
-                SimpleXMLElement specAxResElement = new SimpleXMLElement(prefix + BiophysicsConstants.SPEC_AX_RES_ELEMENT);
+                SimpleXMLElement specAxResElement = new SimpleXMLElement(prefix + BiophysicsConstants.SPECIFIC_AX_RES_ELEMENT);
+                
+                if (usePreV1_7_1Format)
+                    specAxResElement = new SimpleXMLElement(prefix + BiophysicsConstants.SPECIFIC_AX_RES_ELEMENT_pre_v1_7_1);
 
                 bioElement.addChildElement(specAxResElement);
 
@@ -763,7 +784,10 @@ public class MorphMLConverter extends FormatImporter
                 }
 
 
-                SimpleXMLElement initPotElement = new SimpleXMLElement(prefix+BiophysicsConstants.INIT_POT_ELEMENT);
+                SimpleXMLElement initPotElement = new SimpleXMLElement(prefix+BiophysicsConstants.INITIAL_POT_ELEMENT);
+                
+                if (usePreV1_7_1Format)
+                    initPotElement = new SimpleXMLElement(prefix+BiophysicsConstants.INITIAL_POT_ELEMENT_pre_v1_7_1);
 
                 bioElement.addChildElement(initPotElement);
 
@@ -789,60 +813,92 @@ public class MorphMLConverter extends FormatImporter
 
                    String netPrefix = NetworkMLConstants.PREFIX + ":";
 
-
-
                    ArrayList<String> allSyns = cell.getAllAllowedSynapseTypes();
                    
-                   if (allSyns.size()>0) 
-                       bioElement.addComment(new SimpleXMLComment("Adding the network aspects"));
+                   
+                   
+                   SimpleXMLElement connectEl = new SimpleXMLElement(NetworkMLConstants.CONNECTIVITY_ELEMENT);
 
                    for (String synType: allSyns)
                    {
                        Vector<String> groups = cell.getGroupsWithSynapse(synType);
 
-                       SimpleXMLElement potSynLocEl = new SimpleXMLElement(netPrefix+NetworkMLConstants.POTENTIAL_SYN_LOC_ELEMENT);
-
-                       SimpleXMLElement synTypeEl = new SimpleXMLElement(netPrefix+NetworkMLConstants.SYN_TYPE_ELEMENT);
-
-                       synTypeEl.addContent(synType);
-
-                       potSynLocEl.addChildElement(synTypeEl);
-
-                       if (groups.size()==1)
+                       if (usePreV1_7_1Format)
                        {
-                           if (groups.firstElement().equals(Section.AXONAL_GROUP))
+                           SimpleXMLElement potSynLocEl = new SimpleXMLElement(netPrefix+NetworkMLConstants.POT_SYN_LOC_ELEMENT_preV1_7_1);
+                           SimpleXMLElement synTypeEl = new SimpleXMLElement(netPrefix+NetworkMLConstants.SYN_TYPE_ELEMENT);
+                           synTypeEl.addContent(synType);
+                           potSynLocEl.addChildElement(synTypeEl);
+
+                           if (groups.size()==1)
                            {
-                               SimpleXMLElement dirEl = new SimpleXMLElement(netPrefix+NetworkMLConstants.SYN_DIR_ELEMENT);
-                               dirEl.addContent(NetworkMLConstants.SYN_DIR_PRE);
-                               potSynLocEl.addChildElement(dirEl);
+                               if (groups.firstElement().equals(Section.AXONAL_GROUP))
+                               {
+                                   SimpleXMLElement dirEl = new SimpleXMLElement(netPrefix+NetworkMLConstants.SYN_DIR_ELEMENT);
+                                   dirEl.addContent(NetworkMLConstants.SYN_DIR_PRE);
+                                   potSynLocEl.addChildElement(dirEl);
+                               }
+                               else if (groups.firstElement().equals(Section.DENDRITIC_GROUP))
+                               {
+                                   SimpleXMLElement dirEl = new SimpleXMLElement(netPrefix+NetworkMLConstants.SYN_DIR_ELEMENT);
+                                   dirEl.addContent(NetworkMLConstants.SYN_DIR_POST);
+                                   potSynLocEl.addChildElement(dirEl);
+                               }
+                               else if (groups.firstElement().equals(Section.SOMA_GROUP))
+                               {
+                                   SimpleXMLElement dirEl = new SimpleXMLElement(netPrefix+NetworkMLConstants.SYN_DIR_ELEMENT);
+                                   dirEl.addContent(NetworkMLConstants.SYN_DIR_PRE_ANDOR_POST);
+                                   potSynLocEl.addChildElement(dirEl);
+                               }
                            }
-                           else if (groups.firstElement().equals(Section.DENDRITIC_GROUP))
+                           for (String group: groups)
                            {
-                               SimpleXMLElement dirEl = new SimpleXMLElement(netPrefix+NetworkMLConstants.SYN_DIR_ELEMENT);
-                               dirEl.addContent(NetworkMLConstants.SYN_DIR_POST);
-                               potSynLocEl.addChildElement(dirEl);
+                               SimpleXMLElement grpEl = new SimpleXMLElement(netPrefix+NetworkMLConstants.GROUP_ELEMENT);
+                               grpEl.addContent(group);
+                               potSynLocEl.addChildElement(grpEl);
                            }
-                           else if (groups.firstElement().equals(Section.SOMA_GROUP))
+                           bioElement.addChildElement(potSynLocEl);
+                       }
+                       else
+                       {
+                           
+                           SimpleXMLElement potSynLocEl = new SimpleXMLElement(netPrefix+NetworkMLConstants.POT_SYN_LOC_ELEMENT);
+                           
+                           connectEl.addChildElement(potSynLocEl);
+                           
+                           SimpleXMLAttribute synTypeAttr = new SimpleXMLAttribute(NetworkMLConstants.SYN_TYPE_ATTR, synType);
+                           
+                           potSynLocEl.addAttribute(synTypeAttr);
+
+                           if (groups.size()==1)
                            {
-                               SimpleXMLElement dirEl = new SimpleXMLElement(netPrefix+NetworkMLConstants.SYN_DIR_ELEMENT);
-                               dirEl.addContent(NetworkMLConstants.SYN_DIR_PRE_ANDOR_POST);
-                               potSynLocEl.addChildElement(dirEl);
+                               if (groups.firstElement().equals(Section.AXONAL_GROUP))
+                               {
+                                   SimpleXMLAttribute dirAttr = new SimpleXMLAttribute(NetworkMLConstants.SYN_DIR_ELEMENT,NetworkMLConstants.SYN_DIR_PRE);
+                                   potSynLocEl.addAttribute(dirAttr);
+                               }
+                               else if (groups.firstElement().equals(Section.DENDRITIC_GROUP))
+                               {
+                                   SimpleXMLAttribute dirAttr = new SimpleXMLAttribute(NetworkMLConstants.SYN_DIR_ELEMENT, NetworkMLConstants.SYN_DIR_POST);
+                                   potSynLocEl.addAttribute(dirAttr);
+                               }
+                               else if (groups.firstElement().equals(Section.SOMA_GROUP))
+                               {
+                                   SimpleXMLAttribute dirAttr = new SimpleXMLAttribute(NetworkMLConstants.SYN_DIR_ELEMENT,NetworkMLConstants.SYN_DIR_PRE_ANDOR_POST);
+                                   potSynLocEl.addAttribute(dirAttr);
+                               }
+                           }
+                           for (String group: groups)
+                           {
+                               SimpleXMLElement grpEl = new SimpleXMLElement(netPrefix+NetworkMLConstants.GROUP_ELEMENT);
+                               grpEl.addContent(group);
+                               potSynLocEl.addChildElement(grpEl);
                            }
                        }
 
-
-
-                       for (String group: groups)
-                       {
-                           SimpleXMLElement grpEl = new SimpleXMLElement(netPrefix+NetworkMLConstants.GROUP_ELEMENT);
-                           grpEl.addContent(group);
-                           potSynLocEl.addChildElement(grpEl);
-                       }
-
-
-
-                       bioElement.addChildElement(potSynLocEl);
                    }
+                   
+                   if (!usePreV1_7_1Format) cellElement.addChildElement(connectEl);
 
                    Hashtable<ApPropSpeed, Vector<String>> appTable = cell.getApPropSpeedsVsGroups();
 
@@ -1022,11 +1078,11 @@ public class MorphMLConverter extends FormatImporter
 
            });
 
-           Cell cell = (Cell) testProj.cellManager.getAllCells().firstElement();
+           Cell cell = testProj.cellManager.getAllCells().firstElement();
 
            cell.getFirstSomaSegment().setComment("This is the cell root...");
 
-           ((Segment)cell.getAllSegments().elementAt(4)).setFractionAlongParent(0.5f);
+           cell.getAllSegments().elementAt(4).setFractionAlongParent(0.5f);
 
            File oosFile = new File("../temp/cell.oos");
            File xmlFile = new File("../temp/cell.morph.xml");

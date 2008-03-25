@@ -333,7 +333,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     //JCheckBox jCheckBoxGenerateZip = new JCheckBox();
     JRadioButton jRadioButtonNMLSavePlainText = new JRadioButton("XML");
     JRadioButton jRadioButtonNMLSaveZipped = new JRadioButton("Zipped XML");
-    JRadioButton jRadioButtonNMLSaveHDF5 = new JRadioButton("HDF5 (beta)");
+    JRadioButton jRadioButtonNMLSaveHDF5 = new JRadioButton("HDF5 (alpha impl!)");
     ButtonGroup buttonGroupNMLSave = new ButtonGroup();
     
     JCheckBox jCheckBoxGenerateExtraNetComments = new JCheckBox();
@@ -660,6 +660,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JButton jButtonMechanismCopy = new JButton();
     JButton jButtonMechanismEditIt = new JButton();
     JButton jButtonMechanismUpdateMaps = new JButton();
+    JButton jButtonMechanismReloadFile = new JButton();
     
     JButton jButtonMechanismAbstract = new JButton();
     JButton jButtonMechanismTemplateCML = new JButton();
@@ -1498,6 +1499,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     jButtonMechanismUpdateMaps.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         jButtonMechanismUpdateMaps_actionPerformed(e);
+      }
+    });
+    
+    jButtonMechanismReloadFile.setText("Reload ChannelML file");
+    
+    jButtonMechanismReloadFile.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        jButtonMechanismReloadFile_actionPerformed(e);
       }
     });
     
@@ -3537,6 +3546,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
         jPanelProcessButtonsBottom.add(jButtonMechanismEditIt, null);
+        jPanelProcessButtonsBottom.add(jButtonMechanismReloadFile, null);
         jPanelProcessButtonsBottom.add(jButtonMechanismUpdateMaps, null);
         
         //// not enough time to finish this..//// jPanelProcessButtonsBottom.add(jButtonMechanismCopy, null);
@@ -3923,6 +3933,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         this.jButtonMechanismNewCML.setToolTipText(toolTipText.getToolTip("File Based ChannelML"));
         this.jButtonMechanismTemplateCML.setToolTipText(toolTipText.getToolTip("Template Based ChannelML"));
         this.jButtonMechanismUpdateMaps.setToolTipText(toolTipText.getToolTip("Update ChannelML Mechanism"));
+        this.jButtonMechanismReloadFile.setToolTipText(toolTipText.getToolTip("Reload Cell Mechanism file"));
 
 
         jLabelSimulationInitVm.setToolTipText(toolTipText.getToolTip("Initial Membrane Potential"));
@@ -3960,7 +3971,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         this.jButtonGenerateSave.setToolTipText(toolTipText.getToolTip("Save NetworkML"));
         this.jButtonGenerateLoad.setToolTipText(toolTipText.getToolTip("Load NetworkML"));
         
+        this.jRadioButtonNMLSavePlainText.setToolTipText(toolTipText.getToolTip("Plaintext NetworkML"));
         this.jRadioButtonNMLSaveZipped.setToolTipText(toolTipText.getToolTip("Compress NetworkML"));
+        this.jRadioButtonNMLSaveHDF5.setToolTipText(toolTipText.getToolTip("HDF5 NetworkML"));
         
         this.jCheckBoxGenerateExtraNetComments.setToolTipText(toolTipText.getToolTip("Extra comments NetworkML"));
 
@@ -7912,6 +7925,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jButtonMechanismAbstract.setEnabled(false);
             this.jButtonMechanismEditIt.setEnabled(false);
             this.jButtonMechanismUpdateMaps.setEnabled(false);
+            this.jButtonMechanismReloadFile.setEnabled(false);
             this.jButtonMechanismCopy.setEnabled(false);
             this.jButtonMechanismDelete.setEnabled(false);
             jButtonMechanismFileBased.setEnabled(false);
@@ -7930,6 +7944,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jButtonMechanismAbstract.setEnabled(true);
             this.jButtonMechanismEditIt.setEnabled(true);
             this.jButtonMechanismUpdateMaps.setEnabled(true);
+            this.jButtonMechanismReloadFile.setEnabled(true);
             this.jButtonMechanismCopy.setEnabled(true);
             this.jButtonMechanismDelete.setEnabled(true);
             jButtonMechanismFileBased.setEnabled(true);
@@ -11595,6 +11610,55 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         //CellMechanism cmPost = new CellMechanism();
         
     }
+    
+    void jButtonMechanismReloadFile_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("----------------------------         Reloading cell mechanism file...");
+        
+        int selectedRow = jTableMechanisms.getSelectedRow();
+
+        if (selectedRow < 0)
+        {
+            logger.logComment("No row selected...");
+            GuiUtils.showErrorMessage(logger,"Please select one of the ChannelML based cell mechanisms to reload the XML file.", null, this);
+            return;
+        }
+        CellMechanism cellMech = projManager.getCurrentProject().cellMechanismInfo.getCellMechanismAt(selectedRow);
+        
+        if (cellMech instanceof ChannelMLCellMechanism)
+        {
+            ChannelMLCellMechanism cmlMechanism = (ChannelMLCellMechanism)cellMech;
+            
+            try
+            {
+                cmlMechanism.reset(projManager.getCurrentProject(), false);
+                
+                SimpleDateFormat formatter = new SimpleDateFormat("H:mm:ss, EEEE MMMM d, yyyy");
+                
+                File implFile = cmlMechanism.getChannelMLFile(projManager.getCurrentProject());
+                java.util.Date modified = new java.util.Date(implFile.lastModified());
+            
+                
+                
+                GuiUtils.showInfoMessage(logger,"Success","Reloaded cell mechanism: "+ cmlMechanism.getInstanceName()
+                    +" from file: "+implFile.getAbsolutePath() +" (modified "+formatter.format(modified)+")", this);
+            }
+            catch (ChannelMLException ex1)
+            {
+                GuiUtils.showErrorMessage(logger,
+                                          "Error initialising Cell Mechanism: " +cmlMechanism.getInstanceName(),
+                                          ex1,
+                                          null);
+
+            }
+        }
+        else
+        {
+            GuiUtils.showErrorMessage(logger,"Unable to reload the implementing ChannelML file of: "+ cellMech, null, this);
+        }
+        
+    }
+        
     
     void jButtonMechanismUpdateMaps_actionPerformed(ActionEvent e)
     {

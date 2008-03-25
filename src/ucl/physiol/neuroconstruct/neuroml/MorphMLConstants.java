@@ -77,11 +77,16 @@ public class MorphMLConstants
 
     public static String COMMENT_PROP = "comment";
 
-    public static String FRACT_ALONG_PROP = "fractAlongParent";
+    public static String FRACT_ALONG_PARENT_ATTR = "fract_along_parent";
+    public static String FRACT_ALONG_PARENT_ATTR_pre_v1_7_1 = "fractAlongParent";
 
     public static String NUMBER_INTERNAL_DIVS_PROP = "numberInternalDivisions";
 
     public static String FINITE_VOL_PROP = "finiteVolume";
+
+    private MorphMLConstants()
+    {
+    }
 
 
 

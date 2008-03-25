@@ -10,24 +10,23 @@
  *
  */
 
+package ucl.physiol.neuroconstruct.cell;
+ 
 
-package ucl.physiol.neuroconstruct.utils.equation;
 
-
-/**
- * Helper class for parsing equations
- *
- * @author Padraig Gleeson
- *  
- */
-
+ /**
+  * A class representing an exception when dealing with parameterised expressions, e.g. for variable mechanism densities
+  *
+  * @author Padraig Gleeson
+  *  
+  *
+  */
 @SuppressWarnings("serial")
-
-public class EquationException extends Exception
+public class ParameterException extends Exception
 {
-    public EquationException(String exception)
+
+    public ParameterException(String exception)
     {
         super(exception);
     }
-
 }

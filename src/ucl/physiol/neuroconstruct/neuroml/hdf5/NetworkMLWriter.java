@@ -248,6 +248,7 @@ public class NetworkMLWriter
                 }
                 
                 ArrayList<String> columnsNeeded = new ArrayList<String>();
+                
                 columnsNeeded.add(NetworkMLConstants.CONNECTION_ID_ATTR);
                 columnsNeeded.add(NetworkMLConstants.PRE_CELL_ID_ATTR);
                 columnsNeeded.add(NetworkMLConstants.POST_CELL_ID_ATTR);
@@ -302,6 +303,9 @@ public class NetworkMLWriter
                     projArray[i * columnsNeeded.size() + row] = conn.sourceEndPoint.cellNumber;
                     row++;
                     
+                    projArray[i * columnsNeeded.size() + row] = conn.targetEndPoint.cellNumber;
+                    row++;
+                    
                     if (columnsNeeded.contains(NetworkMLConstants.PRE_SEGMENT_ID_ATTR))
                     {
                         projArray[i * columnsNeeded.size() + row] = conn.sourceEndPoint.location.getSegmentId();
@@ -314,8 +318,6 @@ public class NetworkMLWriter
                         row++;
                     }
 
-                    projArray[i * columnsNeeded.size() + row] = conn.targetEndPoint.cellNumber;
-                    row++;
                     
                     if (columnsNeeded.contains(NetworkMLConstants.POST_SEGMENT_ID_ATTR))
                     {
@@ -360,7 +362,7 @@ public class NetworkMLWriter
                 
                 for(int i=0;i<columnsNeeded.size();i++)
                 {
-                    Attribute attr = Hdf5Utils.getSimpleAttr("error_column_"+i, columnsNeeded.get(i), h5File);
+                    Attribute attr = Hdf5Utils.getSimpleAttr("column_"+i, columnsNeeded.get(i), h5File);
                     projDataset.writeMetadata(attr);
                 }
                 

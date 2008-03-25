@@ -38,6 +38,7 @@ public abstract class EquationUnit
 
     public abstract String getNiceString();
 
+    @Override
     public abstract String toString();
 
 

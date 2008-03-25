@@ -26,6 +26,7 @@ import com.sun.j3d.utils.behaviors.vp.*;
 import com.sun.j3d.utils.geometry.*;
 import com.sun.j3d.utils.universe.*;
 import ucl.physiol.neuroconstruct.cell.*;
+import ucl.physiol.neuroconstruct.cell.ParameterisedGroup.*;
 import ucl.physiol.neuroconstruct.cell.converters.*;
 import ucl.physiol.neuroconstruct.cell.examples.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
@@ -54,6 +55,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
     public static String highlightSecSegs = "Pick Sections/Segments";
     public static String highlightGroups = "Groups";
+    public static String highlightParamGroups = "Parameterised Groups";
     public static String highlightSynapseLocations = "Synaptic Conn Locations";
     public static String highlightSectionTypes = "Section Types";
     public static String highlightDensMechs = "Cell density mechanisms";
@@ -80,6 +82,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
     private ButtonGroup densMechButtonGroup = new ButtonGroup();
     private Hashtable<String, JRadioButton> groupRadioButtons = new Hashtable<String, JRadioButton>();
     private ButtonGroup groupButtonGroup = new ButtonGroup();
+    private ButtonGroup paramGroupButtonGroup = new ButtonGroup();
 
 
     private JPanel jPanelControls = new JPanel();
@@ -203,6 +206,10 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
     {
         jComboBoxHighlight.addItem(highlightSecSegs);
         jComboBoxHighlight.addItem(highlightGroups);
+        if (ParameterisedGroup.allowInhomogenousMechanisms) // can disable func while testing
+        {
+            jComboBoxHighlight.addItem(highlightParamGroups);
+        }
         jComboBoxHighlight.addItem(highlightSectionTypes);
         jComboBoxHighlight.addItem(highlightSynapseLocations);
         jComboBoxHighlight.addItem(highlightDensMechs);
@@ -662,7 +669,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             {
                 String nextSynapseType = allAllowedTypes.get(i);
                 if (selectedSynType==null) selectedSynType = nextSynapseType;
-                JRadioButton next = createRadioButton(nextSynapseType, synLocButtonGroup);
+                JRadioButton next = createGroupRadioButton(nextSynapseType, synLocButtonGroup);
                 synLocRadioButtons.put(next.getText(), next);
             }
         }
@@ -700,6 +707,101 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         }
 
     }
+    
+    
+    void highlightParamGroups(Component cause)
+    {
+        logger.logComment("Highlighting param groups...");
+        resetColours();
+        
+        String selectedParamGroup = null;
+
+        try
+        {
+            JRadioButton selectedRadioButton = (JRadioButton) cause;
+            selectedParamGroup = selectedRadioButton.getText();
+        }
+        catch (ClassCastException ex)
+        {
+            // ignore, probably update due to change in combo box...
+        }
+        
+        //Hashtable<VariableMechanism, ParameterisedGroup> vmpg = this.displayedCell.getVarMechsVsParaGroups();
+        Vector<ParameterisedGroup> pgs = displayedCell.getParameterisedGroups();
+        
+        if (pgs.size()==0)
+        {
+            JButton jButtonAddDefaultParamGroups = new JButton("Add example parameterised groups");
+            
+            jPanelColourControls.add(jButtonAddDefaultParamGroups, null);
+            
+            final Component compCause = cause;
+            
+            jButtonAddDefaultParamGroups.addActionListener(new java.awt.event.ActionListener()
+            {
+                public void actionPerformed(ActionEvent e)
+                {
+                    
+                    ParameterisedGroup pg1 = new ParameterisedGroup("ZeroToOneOverCell", 
+                                                                   Section.ALL, 
+                                                                   Metric.PATH_LENGTH_FROM_ROOT, 
+                                                                   ProximalPref.MOST_PROX_AT_0, 
+                                                                   DistalPref.MOST_DIST_AT_1);
+                    
+                    displayedCell.addParameterisedGroup(pg1);
+                    
+                    ParameterisedGroup pg2 = new ParameterisedGroup("PathLengthOverCell", 
+                                                                   Section.ALL, 
+                                                                   Metric.PATH_LENGTH_FROM_ROOT, 
+                                                                   ProximalPref.NO_TRANSLATION, 
+                                                                   DistalPref.NO_NORMALISATION);
+                    
+                    displayedCell.addParameterisedGroup(pg2);
+                    
+                    ParameterisedGroup pg3 = new ParameterisedGroup("PathLengthOverDendrites", 
+                                                                   Section.DENDRITIC_GROUP, 
+                                                                   Metric.PATH_LENGTH_FROM_ROOT, 
+                                                                   ProximalPref.NO_TRANSLATION, 
+                                                                   DistalPref.NO_NORMALISATION);
+                    
+                    displayedCell.addParameterisedGroup(pg3);
+                    
+                    logger.logComment("Param grpos:"+ displayedCell.getParameterisedGroups(), true);
+                    
+                    
+                    highlightParamGroups(compCause);
+                    
+                    project.markProjectAsEdited();
+                }
+            });
+        }
+        else
+        {
+            ParameterisedGroup selParamGroup = null;
+            
+            for(ParameterisedGroup pg: pgs)
+            {
+                logger.logComment("Adding button for: "+pg);
+                
+                JRadioButton button = createGroupRadioButton(pg.getName(), paramGroupButtonGroup);
+                jPanelColourControls.add(button);
+                
+                if (selectedParamGroup!=null && selectedParamGroup.equals(pg.getName()))
+                {
+                    logger.logComment("Selected seems to have been: "+pg);
+                    button.setSelected(true);
+                    selParamGroup = pg;
+                }
+            }
+            if (selParamGroup==null) selParamGroup = pgs.firstElement();
+            
+            jPanelColourControls.repaint();
+
+            highlightParamGroup(selParamGroup);
+        }
+        
+        
+    }
 
 
     void highlightGroups(Component cause)
@@ -729,7 +831,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                 String nextGroup = (String) allGroups.elementAt(i);
 
                 JRadioButton next
-                    = createRadioButton(nextGroup,
+                    = createGroupRadioButton(nextGroup,
                                         groupButtonGroup);
 
                 if (selectedGroup == null) selectedGroup = nextGroup;
@@ -763,6 +865,53 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         highlightSingleGroup(selectedGroup, c);
     }
 
+
+
+    void highlightParamGroup(ParameterisedGroup pg)
+    {
+        try
+        {
+            logger.logComment("Highlighting param group: " + pg);
+            if (pg == null)
+            {
+                return;
+            }
+            ArrayList<Segment> segments = this.displayedCell.getSegmentsInGroup(pg.getGroup());
+
+            double min = pg.getMinValue(this.displayedCell);
+            double max = pg.getMaxValue(this.displayedCell);
+
+            for (int i = 0; i < segments.size(); i++)
+            {
+                Segment nextSegment = segments.get(i);
+
+                double val = pg.evaluateAt(displayedCell, new SegmentLocation(nextSegment.getSegmentId(), 0.5f));
+
+                double fract = (val - min) / (max - min);
+
+                Color c = GeneralUtils.getFractionalColour(segmentHighlightMain, segmentHighlightSecondary, fract);
+                Appearance app = Utils3D.getGeneralObjectAppearance(c);
+                
+                myOneCell3D.setSegmentAppearance(app, nextSegment.getSegmentId());
+                
+            }
+            
+            JLabel valMin = new JLabel(" " + min + " ");
+            valMin.setOpaque(true);
+            valMin.setBackground(segmentHighlightMain);
+            jPanelColourControls.add(valMin);
+            
+            JLabel valMax = new JLabel(" " + max + " ");
+            valMax.setOpaque(true);
+            valMax.setBackground(segmentHighlightSecondary);
+            jPanelColourControls.add(valMax);
+            
+        }
+        catch (ParameterException ex)
+        {
+            GuiUtils.showErrorMessage(logger, "Unable to evaluate values for: "+ pg+" on cell: "+displayedCell, ex, myParent);
+        }
+    }
 
 
     void highlightSingleGroup(String group, Color c)
@@ -818,7 +967,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                 ChannelMechanism nextChanMech = allAllowedChanMechs.get(i);
 
                 JRadioButton next
-                    = createRadioButton(nextChanMech.getName(), densMechButtonGroup);
+                    = createGroupRadioButton(nextChanMech.getName(), densMechButtonGroup);
 
                 if (selectedDensMechName==null) selectedDensMechName = nextChanMech.getName();
 
@@ -828,7 +977,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             if (displayedCell.getAllApPropSpeeds().size()>0)
             {
                 JRadioButton next
-                    = createRadioButton(ApPropSpeed.MECHANISM_NAME, densMechButtonGroup);
+                    = createGroupRadioButton(ApPropSpeed.MECHANISM_NAME, densMechButtonGroup);
 
                 densMechRadioButtons.put(next.getText(), next);
             }
@@ -1283,7 +1432,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
     }
 
 
-    JRadioButton createRadioButton(String name, ButtonGroup group)
+    JRadioButton createGroupRadioButton(String name, ButtonGroup group)
     {
         JRadioButton newRadioButton = new JRadioButton(name);
         //newRadioButton.setg
@@ -1299,6 +1448,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         jPanelColourControls.validate();
         return newRadioButton;
     }
+
 
 
     void jComboBoxHighlight_itemStateChanged(ItemEvent e)
@@ -1352,6 +1502,13 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             jComboBoxHighlight.setToolTipText(toolTipText.getToolTip("Highlight groups"));
             jPanelExtraButton.add(jButtonEditGroups, null);
             highlightGroups(cause);
+        }
+
+        else if (selString.equals(highlightParamGroups))
+        {
+            jComboBoxHighlight.setToolTipText(toolTipText.getToolTip("Highlight param groups"));
+            //jPanelExtraButton.add(jButtonEditParamGroups, null);
+            highlightParamGroups(cause);
         }
 
 

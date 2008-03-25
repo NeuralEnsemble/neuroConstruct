@@ -34,13 +34,9 @@ public class SimPlot
     public static String COND_DENS = "COND_DENS";
     public static String CURRENT = "CURR_DENS";
     public static String REV_POT = "REV_POT";
-
-
     public static String SYNAPSES = "SYN";
 
     public static String SYN_COND = "COND";
-
-
 
     // whether to just plot or plot and save...
     public static String PLOT_ONLY = "Plot only";
@@ -316,6 +312,7 @@ public class SimPlot
         this.segmentId = segmentId;
     }
 
+    @Override
     public String toString()
     {
         return "Plot/save of "+ this.getValuePlotted()+" in "+ this.getCellGroup();

@@ -553,7 +553,7 @@ public class OneCell3D
             for (int currSegIndex = 0; currSegIndex < allSegsInSec.size(); currSegIndex++)
             {
 
-                Segment currSegment = ( (Segment) allSegsInSec.get(currSegIndex));
+                Segment currSegment = allSegsInSec.get(currSegIndex);
 
                 logger.logComment("");
                 logger.logComment("****************    Looking at segment id " + currSegment.getSegmentId()
@@ -818,7 +818,7 @@ public class OneCell3D
             Vector3f parallelVector = new Vector3f(endPosition);
             parallelVector.sub(startPosition);
 
-            float length = (float) parallelVector.length();
+            float length = parallelVector.length();
 
             Vector3f halfMove = new Vector3f(parallelVector);
             halfMove.scale(0.5f);
@@ -849,7 +849,7 @@ public class OneCell3D
             }*/
 
 
-            ConicalFrustrum somaPrimitive = new ConicalFrustrum(startRadius, endRadius, (float) length,
+            ConicalFrustrum somaPrimitive = new ConicalFrustrum(startRadius, endRadius, length,
                                                          ConicalFrustrum.GENERATE_NORMALS |
                                                          ConicalFrustrum.GENERATE_TEXTURE_COORDS |
                                                          ConicalFrustrum.ENABLE_APPEARANCE_MODIFY,
@@ -1087,7 +1087,7 @@ public class OneCell3D
 
                 newPrim = new ConicalFrustrum(equivCylinderRadius,
                                               equivCylinderRadius,
-                                              (float) length,
+                                              length,
                                               ConicalFrustrum.GENERATE_NORMALS |
                                               ConicalFrustrum.GENERATE_TEXTURE_COORDS |
                                               ConicalFrustrum.ENABLE_APPEARANCE_MODIFY,
@@ -1106,7 +1106,7 @@ public class OneCell3D
                 ConicalFrustrum conFru
                     = new ConicalFrustrum(startRadius,
                                           endRadius,
-                                          (float) length,
+                                          length,
                                           ConicalFrustrum.GENERATE_NORMALS |
                                           ConicalFrustrum.GENERATE_TEXTURE_COORDS |
                                           ConicalFrustrum.ENABLE_APPEARANCE_MODIFY,
@@ -1299,7 +1299,7 @@ public class OneCell3D
             app.getMaterial().getDiffuseColor(color);
 
             int stickStartIndex =
-                ((Integer)segmentGeomCoords.get(segId)).intValue();
+                (segmentGeomCoords.get(segId)).intValue();
 
             stickSegmentGeom.setColor(stickStartIndex, color);
             stickSegmentGeom.setColor(stickStartIndex + 1, color);
@@ -1548,7 +1548,7 @@ public class OneCell3D
 
                 if (segmentPrimitives.get(id).equals(prim))
 
-                return (Segment) this.myCell.getSegmentWithId(id);
+                return this.myCell.getSegmentWithId(id);
 
             }
 
@@ -1582,7 +1582,7 @@ public class OneCell3D
                         LinkedList<Segment> allSegs = this.myCell.getAllSegmentsInSection(nextSec);
                         for (int k = 0; k < allSegs.size(); k++)
                         {
-                            Segment seg = (Segment) allSegs.get(k);
+                            Segment seg = allSegs.get(k);
                             this.setSegmentAppearance(Utils3D.getGeneralObjectAppearance(c), seg.getSegmentId());
                         }
                     }
@@ -1614,7 +1614,7 @@ public class OneCell3D
         Segment selectedSegment = null;
 
         // Note if segmentId<0 just reset the cell...
-        if (segmentID >= 0) selectedSegment = (Segment) this.myCell.getSegmentWithId(segmentID);
+        if (segmentID >= 0) selectedSegment = this.myCell.getSegmentWithId(segmentID);
 
         for (int i = 0; i < this.myCell.getAllSegments().size(); i++)
         {
