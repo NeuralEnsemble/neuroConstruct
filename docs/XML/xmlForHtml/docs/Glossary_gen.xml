@@ -545,6 +545,9 @@
 <li>  Cell is a <a href="#Simply Connected cell">Simply Connected cell</a>
 </li>
                  
+<li>  Each section is part of one of: <strong>soma_group</strong>, <strong>axon_group</strong>, <strong>dendrite_group</strong>
+</li>
+                 
 </ul>
         
 </p>

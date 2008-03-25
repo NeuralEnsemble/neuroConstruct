@@ -502,6 +502,7 @@
                  <li>  First soma segment is at origin</li>
                  <li>  Start point matches point at specified fraction along parent</li>
                  <li>  Cell is a <intref>Simply Connected cell</intref></li>
+                 <li>  Each section is part of one of: <b>soma_group</b>, <b>axon_group</b>, <b>dendrite_group</b></li>
                  </ul>
         </defined>
 </term>
@@ -1038,8 +1039,8 @@ The second of these is quicker to load and save and the files are smaller. The f
 with a text editor. Change which format to use via <b>Settings -&gt; General Properties &amp; Project Defaults/Project properties</b>.<br/>
 <br/>
 Cell morphologies are stored in the <b>morphologies</b> directory of the project home directory. *.bak files in that dir backup <br/>
-the previously stored morphology before a new one is saved (if a problem occurs saving a morphology, remove the .bak<br/>
-and use that file to load into the project).<br/>
+the previously stored morphology before a new one is saved (if a problem occurs saving a morphology, close the application, remove<br/>
+the .bak from the name of the morphology file to use the previous structure of the cell when reloading the project).<br/>
 <br/>
 Note that the cells aren't currently stored in neuroConstruct projects in NeuroML/MorphML format, since new functionality <br/>
 is usually added to the neuroConstruct Cell class before it is supported in the standards.</defined>
@@ -1340,6 +1341,13 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
              and so all segments in one section are assumed to have the same biophysical properties</defined>
 </term>
 
+<term hidden="true">
+    <name>Highlight param groups</name>
+    <defined>Shows the groups which have associated parameter values (e.g. length from soma) which change according to position along sections.<br/>
+             Used as basis for describing how parameters vary with position for channel mechanisms (e.g. max conductance density varies along dendrites).<br/>
+             Implementation based on Parameterized Domain Specification in Cell Builder in NEURON.</defined>
+</term>
+
 
 <term hidden="true">
     <name>Highlight syn conn location</name>
@@ -1393,6 +1401,12 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
 </term>
 
 
+<term hidden="true">
+    <name>Reload Cell Mechanism file</name>
+    <defined>Reloads ChannelML file implementing cell mechanism. Useful if file has been externally edited.</defined>
+</term>
+
+
 <!--  For Generate TAB -->
 
 <term hidden="true">
@@ -1408,12 +1422,24 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
 </term>
 
 <term hidden="true">
+    <name>Plaintext NetworkML</name>
+    <defined>The saved NetworkML file will be a plaintext XML file (can be opened in any text editor).</defined>
+</term>
+
+<term hidden="true">
     <name>Extra comments NetworkML</name>
     <defined>Some extra information is added as comments in the NetworkML file if this is selected. This information could<br/>
              be calculated from the info in the file (e.g. synaptic locations worked out from cell morphology and cell placement)<br/>
              but can also be included here for convenience.</defined>
 </term>
 
+<term hidden="true">
+    <name>HDF5 NetworkML</name>
+    <defined>The saved NetworkML file will be in HDF5 format, structured similarly to the XML version.<br/>
+             Note 1: ALPHA implementation!! Subject to change!!
+             Note 2: No loader for this format of NetworkML yet.
+             Note 3: File size should reduce when compression is used when saving the HDF5 file.</defined>
+</term>
 
 <term hidden="true">
     <name>Load NetworkML</name>
