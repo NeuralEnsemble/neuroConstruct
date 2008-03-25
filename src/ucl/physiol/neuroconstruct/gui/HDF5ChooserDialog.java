@@ -34,6 +34,10 @@ public class HDF5ChooserDialog extends javax.swing.JDialog
     
     String SELECT_INFO="-- Please select from list below --";
     
+    final String defaultPlotLocation = "New frame";
+    
+    File myFile = null;
+    
     
     /** Creates new form HDF5ChooserDialog */
     public HDF5ChooserDialog(java.awt.Frame parent, boolean modal, File hdf5File) {
@@ -41,6 +45,8 @@ public class HDF5ChooserDialog extends javax.swing.JDialog
         initComponents();
         
         this.setTitle("Datasets present in HDF5 file: "+ hdf5File.getAbsolutePath());
+        
+        myFile = hdf5File;
         
         try
         {
@@ -52,7 +58,7 @@ public class HDF5ChooserDialog extends javax.swing.JDialog
 
             ArrayList<DataSet> dataSets = Hdf5Utils.parseGroupForDatasets(g, plotToo);
 
-            StringBuffer summary = new StringBuffer("Number of DataSets found in file: "+ hdf5File.getAbsolutePath()+": "+dataSets.size()+"\n\n");
+            StringBuffer summary = new StringBuffer("\n  Number of DataSets found in file: "+ hdf5File.getAbsolutePath()+": "+dataSets.size()+"\n\n  Select which to plot below.");
             
             this.jTextAreaMain.setText(summary.toString());
             
@@ -64,6 +70,8 @@ public class HDF5ChooserDialog extends javax.swing.JDialog
                 this.jComboBox1.addItem(dsh);
                 //summary.append(ds.toString()+"\n"+ds.getDescription()+"\n\n");
             }
+            
+            this.refresh();
         }
         catch(Exception e)
         {
@@ -74,6 +82,24 @@ public class HDF5ChooserDialog extends javax.swing.JDialog
         
         
     }
+    
+    
+    private void refresh()
+    {
+
+        jComboBoxPlotFrames.removeAllItems();
+
+        jComboBoxPlotFrames.addItem(defaultPlotLocation);
+
+        Vector allPlots = PlotManager.getPlotterFrameReferences();
+        for (int i = 0; i < allPlots.size(); i++)
+        {
+            String next = (String) allPlots.elementAt(i);
+            jComboBoxPlotFrames.addItem(next);
+        }
+
+    } 
+    
     
     private class DataSetHolder
     {
@@ -108,7 +134,10 @@ public class HDF5ChooserDialog extends javax.swing.JDialog
         jPanel3 = new javax.swing.JPanel();
         jComboBox1 = new javax.swing.JComboBox();
         jPanel1 = new javax.swing.JPanel();
+        jButtonPlotAll = new javax.swing.JButton();
         jButtonPlot = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jComboBoxPlotFrames = new javax.swing.JComboBox();
         jButtonCancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -139,13 +168,33 @@ public class HDF5ChooserDialog extends javax.swing.JDialog
 
         jPanel1.setMaximumSize(new java.awt.Dimension(200, 200));
 
-        jButtonPlot.setText("Plot");
+        jButtonPlotAll.setText("Plot all");
+        jButtonPlotAll.setActionCommand("Plot_all");
+        jButtonPlotAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPlotAllActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButtonPlotAll);
+
+        jButtonPlot.setText("Plot selected");
         jButtonPlot.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPlotActionPerformed(evt);
             }
         });
         jPanel1.add(jButtonPlot);
+
+        jLabel1.setText(" in:");
+        jPanel1.add(jLabel1);
+
+        jComboBoxPlotFrames.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxPlotFrames.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxPlotFramesActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jComboBoxPlotFrames);
 
         jButtonCancel.setText("Cancel");
         jButtonCancel.addActionListener(new java.awt.event.ActionListener() {
@@ -178,13 +227,23 @@ public class HDF5ChooserDialog extends javax.swing.JDialog
         if (jComboBox1.getSelectedItem() instanceof DataSetHolder)
         {
             DataSetHolder dsh = (DataSetHolder)jComboBox1.getSelectedItem();
+            
+            String targetFrame = (String)jComboBoxPlotFrames.getSelectedItem();
+            
+            String plotFrame = "Data from: " + dsh.ds.getRefrence();
+            if (!targetFrame.equals(defaultPlotLocation))
+            {
+                plotFrame = targetFrame;
+            }
+                
 
-            PlotterFrame frame = PlotManager.getPlotterFrame("Data from: " + dsh.ds.getRefrence(), false, false);
+            PlotterFrame frame = PlotManager.getPlotterFrame(plotFrame, false, false);
             
             frame.addDataSet(dsh.ds);
 
             frame.setVisible(true);
         }
+        this.refresh();
         
 }//GEN-LAST:event_jButtonPlotActionPerformed
 
@@ -204,6 +263,40 @@ public class HDF5ChooserDialog extends javax.swing.JDialog
         }
        
     }//GEN-LAST:event_jComboBox1ItemStateChanged
+
+    private void jButtonPlotAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPlotAllActionPerformed
+        // TODO add your handling code here:
+        
+            
+        String targetFrame = (String)jComboBoxPlotFrames.getSelectedItem();
+
+        String plotFrame = "Plot of all 1D data arrays in "+myFile.getAbsolutePath();
+        
+        if (!targetFrame.equals(defaultPlotLocation))
+        {
+            plotFrame = targetFrame;
+        }
+        
+        PlotterFrame frame = PlotManager.getPlotterFrame(plotFrame, false, false);
+
+        for( int i=0; i<jComboBox1.getItemCount();i++)
+        {
+            if (jComboBox1.getItemAt(i) instanceof DataSetHolder)
+            {
+                DataSetHolder dsh = (DataSetHolder)jComboBox1.getItemAt(i);
+                frame.addDataSet(dsh.ds);
+            }
+            
+        }
+
+        frame.setVisible(true);
+
+        
+}//GEN-LAST:event_jButtonPlotAllActionPerformed
+
+    private void jComboBoxPlotFramesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxPlotFramesActionPerformed
+        // TODO add your handling code here:
+}//GEN-LAST:event_jComboBoxPlotFramesActionPerformed
     
     /**
      * @param args the command line arguments
@@ -232,7 +325,10 @@ public class HDF5ChooserDialog extends javax.swing.JDialog
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCancel;
     private javax.swing.JButton jButtonPlot;
+    private javax.swing.JButton jButtonPlotAll;
     private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JComboBox jComboBoxPlotFrames;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
