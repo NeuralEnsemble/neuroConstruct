@@ -16,7 +16,7 @@ import java.io.*;
 import java.util.*;
 import javax.vecmath.*;
 
-import ucl.physiol.neuroconstruct.gui.ClickProjectHelper;
+import ucl.physiol.neuroconstruct.gui.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.xml.*;
@@ -416,7 +416,7 @@ public class GeneratedCellPositions
 
             GeneratedCellPositions cpr = new GeneratedCellPositions(testProj);
 
-            System.out.println("Internal info: \n"+ cpr.toString()); ;
+            System.out.println("Internal info: \n"+ cpr.toString()); 
 
             cpr.addPosition("CGone", 3, 2.2f,3.3f,4.4f);
             cpr.addPosition("CGone", 4, 2.77f,37.3f,47.4f);
@@ -424,7 +424,7 @@ public class GeneratedCellPositions
             cpr.addPosition("CGtwo", 6, 2.2f,3.3f,4.4f);
             cpr.addPosition("CGtwo", 7, 2.2f,3.3f,4.4f);
 
-            System.out.println("Internal info: \n"+ cpr.toString()); ;
+            System.out.println("Internal info: \n"+ cpr.toString()); 
 
             File f = new File("c:\\temp\\try2\\tempp.txt");
 
@@ -434,7 +434,7 @@ public class GeneratedCellPositions
             GeneratedCellPositions cpr2 = new GeneratedCellPositions(testProj);
 
             cpr2.loadFromFile(f);
-            System.out.println("New internal info: \n"+ cpr2.toString()); ;
+            System.out.println("New internal info: \n"+ cpr2.toString()); 
 
             SimpleXMLElement pops = cpr2.getNetworkMLElement();
 

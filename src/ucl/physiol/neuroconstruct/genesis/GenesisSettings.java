@@ -46,6 +46,8 @@ public class GenesisSettings
     int unitSystemToUse = UnitConverter.GENESIS_SI_UNITS;
 
     NumericalMethod numMethod = new NumericalMethod();
+    
+    private boolean copySimFiles = true;
 
     public GenesisSettings()
     {
@@ -198,5 +200,15 @@ public class GenesisSettings
     {
         this.graphicsMode = graphicsMode;
     }
+
+    public boolean isCopySimFiles()
+    {
+        return copySimFiles;
+    }
+    public void setCopySimFiles(boolean copySimFiles)
+    {
+        this.copySimFiles = copySimFiles;
+    }
+
 
 }

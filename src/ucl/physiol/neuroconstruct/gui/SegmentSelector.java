@@ -19,8 +19,10 @@ import javax.vecmath.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import javax.media.j3d.Transform3D;
 import javax.swing.*;
 
+import javax.swing.event.*;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.j3D.*;
@@ -29,7 +31,7 @@ import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
 
 /**
- * Dialog for selecting and viewing properties of segments
+ * Dialog for selecting and viewing properties of segments, as viewed in a OneCell3DPanel
  *
  * @author Padraig Gleeson
  *  
@@ -38,7 +40,7 @@ import ucl.physiol.neuroconstruct.utils.*;
 
 @SuppressWarnings("serial")
 
-public class SegmentSelector extends JFrame
+public class SegmentSelector extends JFrame implements DocumentListener
 {
     ClassLogger logger = new ClassLogger("SegmentSelector");
     Project project = null;
@@ -46,11 +48,19 @@ public class SegmentSelector extends JFrame
     boolean editable = false;
 
     boolean cancelled = false;
+    
+    
+    Color okColourBG = Color.white;
+    Color okColourFG = Color.black;
+    Color warningColour = Color.red;
+    Color alteredColour = Color.yellow;
 
     //when the 3D view is updated and this must respond to changes there
     boolean updatingFrom3DView = false;
 
     boolean initialising = false;
+    
+    ToolTipHelper toolTipText = ToolTipHelper.getInstance();
 
     Cell myCell = null;
     String mainLabel = "Selection of segments in cell type: ";
@@ -104,6 +114,11 @@ public class SegmentSelector extends JFrame
     JTextField jTextFieldStartPoint = new JTextField();
     JLabel jLabelStartPoint = new JLabel();
     JLabel jLabelParent = new JLabel();
+    
+    
+    JLabel jLabelSegLength = new JLabel();
+    JTextField jTextFieldSegLength = new JTextField();
+    
     JTextField jTextFieldEndPoint = new JTextField();
     JTextField jTextFieldParent = new JTextField();
     GridBagLayout gridBagLayout2 = new GridBagLayout();
@@ -120,6 +135,8 @@ public class SegmentSelector extends JFrame
     JButton jButtonUpdate = new JButton("Update");
     JButton jButtonDelete = new JButton("Delete");
     JPanel jPanelOptions = new JPanel();
+    JPanel jPanelMainOptions = new JPanel();
+    JPanel jPanelUpdateOptions = new JPanel();
     JPanel jPanelOkCancel = new JPanel();
     BorderLayout borderLayout1 = new BorderLayout();
     JButton jButtonCheckValid = new JButton("Cell Validity");
@@ -134,36 +151,16 @@ public class SegmentSelector extends JFrame
     JTextField jTextFieldStartSecRadius = new JTextField();
     JButton jButtonBiophys = new JButton("Biophys");
     JComboBox jComboBoxFunctions = new JComboBox();
-    /*
-    public SegmentSelector(Dialog dlg,
-                           Project project,
-                           Cell cell,
-                           boolean editable,
-                           boolean modal)
-    {
-        super(dlg, "Segment Selector", modal);
+    
+    JLabel jLabelSegChildren = new JLabel();
+    JRadioButton jRadioButtonNoMove = new JRadioButton();
+    JRadioButton jRadioButtonTransChildren = new JRadioButton();
+    JRadioButton jRadioButtonRotTransChildren = new JRadioButton();
+    
+    ButtonGroup buttonGrpChildern = new ButtonGroup();
+    
 
-        myCell = cell;
-        this.editable = editable;
-
-        this.project = project;
-
-        try
-        {
-            initialising = true;
-            jbInit();
-            extraInit();
-            pack();
-
-            initialising = false;
-        }
-        catch(Exception ex)
-        {
-            ex.printStackTrace();
-        }
-
-    }
-*/
+    
     public SegmentSelector(Frame frame,
                            Project project,
                            Cell cell,
@@ -171,7 +168,6 @@ public class SegmentSelector extends JFrame
     {
         super("Segment Selector");
 
-        //this.set
 
         myCell = cell;
         this.editable = editable;
@@ -183,6 +179,7 @@ public class SegmentSelector extends JFrame
             extraInit();
             pack();
             refresh();
+            registerPointFieldChange();
         }
         catch(Exception ex)
         {
@@ -199,13 +196,12 @@ public class SegmentSelector extends JFrame
     public void setSelectedSegment(Segment segment)
     {
         updatingFrom3DView = true;
+        
         logger.logComment("----   Setting selected segment: "+segment);
         if (!myCell.getAllSegments().contains(segment)) return;
 
         jComboBoxSection.setSelectedItem(segment.getSection().getSectionName());
         jComboBoxSegment.setSelectedItem(segment.getSegmentName());
-
-
 
         updatingFrom3DView = false;
 
@@ -222,12 +218,9 @@ public class SegmentSelector extends JFrame
 
         jTextFieldSegmentsName.setEditable(fieldsEditable);
         jTextFieldEndPoint.setEditable(fieldsEditable);
-
         jTextFieldStartRadius.setEditable(fieldsEditable);
         jTextFieldEndRadius.setEditable(fieldsEditable);
-
         jTextFieldFractAlong.setEditable(fieldsEditable);
-
         jComboBoxFiniteVolume.setEnabled(fieldsEditable);
 
         // Note: only first soma segment can be spherical, so don't allow
@@ -291,13 +284,13 @@ public class SegmentSelector extends JFrame
             jTextFieldEndRadius.setText(currentlyAddressedSegment.getRadius()+"");
             jTextFieldStartRadius.setText(currentlyAddressedSegment.getSegmentStartRadius()+"");
             jTextFieldFractAlong.setText(currentlyAddressedSegment.getFractionAlongParent()+"");
+            
+            jTextFieldSegLength.setText(currentlyAddressedSegment.getSegmentLength()+"");
 
             if (currentlyAddressedSegment.isFiniteVolume())
                jComboBoxFiniteVolume.setSelectedItem(finiteVolYes);
             else
                 jComboBoxFiniteVolume.setSelectedItem(finiteVolNo);
-
-
 
 
             if (currentlyAddressedSegment.getParentSegment()==null)
@@ -330,9 +323,10 @@ public class SegmentSelector extends JFrame
 
     private void jbInit() throws Exception
     {
-        Dimension dim = new Dimension(410,600);
+        /*
+        Dimension dim = new Dimension(480,700);
         this.setPreferredSize(dim);
-        this.setMinimumSize(dim);
+        this.setMinimumSize(dim);*/
 
         jButtonOK.setText("OK");
         jButtonOK.addActionListener(new java.awt.event.ActionListener()
@@ -383,6 +377,12 @@ public class SegmentSelector extends JFrame
         jTextFieldStartPoint.setText("...");
         jLabelStartPoint.setText("Start point:");
         jLabelParent.setText("Parent segment/section:");
+        
+        jLabelSegLength.setText("Segment length:");
+        jTextFieldSegLength.setText("...");
+        jTextFieldSegLength.setEditable(false);
+        
+        
         jTextFieldEndPoint.setText("...");
         jTextFieldParent.setText("...");
 
@@ -408,14 +408,16 @@ public class SegmentSelector extends JFrame
                 jButtonUpdate_actionPerformed(e);
             }
         });
-        jButtonDelete.setText("Delete");
+        jButtonDelete.setText("Delete segment");
         jButtonDelete.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
                 jButtonDelete_actionPerformed(e);
             }
-        }); jButtonCheckValid.setToolTipText("");
+        }); 
+        
+        jButtonCheckValid.setToolTipText("");
         jButtonCheckValid.setText("Cell validity");
         jButtonCheckValid.addActionListener(new java.awt.event.ActionListener()
         {
@@ -423,7 +425,9 @@ public class SegmentSelector extends JFrame
             {
                 jButtonCheckValid_actionPerformed(e);
             }
-        }); jLabelSectionName.setText("Section name:");
+        }); 
+        
+        jLabelSectionName.setText("Section name:");
         jTextFieldSectionsName.setEditable(false);
         jTextFieldSectionsName.setText("");
         jTextFieldSectionsName.setColumns(12);
@@ -439,14 +443,17 @@ public class SegmentSelector extends JFrame
         jLabelStartSecRadius.setText("Start radius:");
         jTextFieldStartSecRadius.setEditable(false);
         jTextFieldStartSecRadius.setText("");
-        jTextFieldStartSecRadius.setColumns(12); jButtonBiophys.setText("Biophys"); jButtonBiophys.addActionListener(new
-            ActionListener()
+        jTextFieldStartSecRadius.setColumns(12); 
+        
+        jButtonBiophys.setText("Biophys"); 
+        jButtonBiophys.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
                 jButtonBiophys_actionPerformed(e);
             }
-        }); jComboBoxFunctions.addActionListener(new ActionListener()
+        }); 
+        jComboBoxFunctions.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
@@ -458,28 +465,79 @@ public class SegmentSelector extends JFrame
         jPanelOkCancel.add(jButtonCancel, null);
         jPanelinfo.add(jLabelMain,       new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(6, 0, 6, 0), 0, 9));
+        
         this.getContentPane().add(jPanelParameters, BorderLayout.CENTER);
         this.getContentPane().add(panelButtons,  BorderLayout.SOUTH);
         panelButtons.add(jPanelOptions, BorderLayout.CENTER);
-        jPanelOptions.add(jButtonDelete, null);
-        jPanelOptions.add(jButtonUpdate, null); jPanelOptions.add(jButtonBiophys);
-        jPanelOptions.add(jButtonCheckValid, null);
-        panelButtons.add(jPanelFunctions, BorderLayout.NORTH); jPanelFunctions.add(jComboBoxFunctions); this.getContentPane().add(jPanelinfo, BorderLayout.NORTH);
+        
+        
+        jPanelMainOptions.add(jButtonDelete, null);
+        jPanelMainOptions.add(jButtonBiophys);
+        jPanelMainOptions.add(jButtonCheckValid, null);
+        
+        jPanelOptions.setLayout(new BorderLayout());
+        
+        jPanelOptions.add(jPanelMainOptions, BorderLayout.CENTER);
+        jPanelOptions.add(jPanelUpdateOptions, BorderLayout.SOUTH);
+        
+        jLabelSegChildren.setText("Child segments:");
+        jPanelUpdateOptions.add(jButtonUpdate, null); 
+        jPanelUpdateOptions.add(jLabelSegChildren, null); 
+        jPanelUpdateOptions.add(jRadioButtonNoMove, null); 
+        jPanelUpdateOptions.add(jRadioButtonTransChildren, null); 
+        jPanelUpdateOptions.add(jRadioButtonRotTransChildren, null); 
+        
+        jRadioButtonNoMove.setText("Don't move");
+        jRadioButtonTransChildren.setText("Translate");
+        jRadioButtonRotTransChildren.setText("Rotate & translate");
+        
+        buttonGrpChildern.add(jRadioButtonNoMove);
+        buttonGrpChildern.add(jRadioButtonTransChildren);
+        buttonGrpChildern.add(jRadioButtonRotTransChildren);
+        
+        jRadioButtonNoMove.setSelected(true);
+        
+        
+        panelButtons.add(jPanelFunctions, BorderLayout.NORTH); 
+        
+        jPanelFunctions.add(jComboBoxFunctions); 
+        this.getContentPane().add(jPanelinfo, BorderLayout.NORTH);
+        
         jPanelinfo.add(jComboBoxSection,    new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(6, 0, 6, 0), 0, 0));
+        
         jPanelinfo.add(jComboBoxSegment,  new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0
-            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(6, 0, 6, 0), 0, 0)); jComboBoxSection.addItem(defaultSectionItem);
+            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(6, 0, 6, 0), 0, 0)); 
+        
+        jComboBoxSection.addItem(defaultSectionItem);
         jComboBoxSegment.addItem(defaultSegmentItem);
 
         jComboBoxFiniteVolume.addItem(finiteVolYes);
         jComboBoxFiniteVolume.addItem(finiteVolNo);
+        
+        
+        String info = "To alter the start point of the section, select the first segment in the section, and change its start point";
+        jLabelStartSecPoint.setToolTipText(info);
+        jTextFieldStartSecPOoint.setToolTipText(info);
+        
+        jLabelNumberIntDivisions.setToolTipText(toolTipText.getToolTip("Internal number of divisions"));
+        jTextFieldNumIntDivisions.setToolTipText(toolTipText.getToolTip("Internal number of divisions"));
+        
+        jTextFieldEndPoint.getDocument().addDocumentListener(this);
+        jTextFieldStartPoint.getDocument().addDocumentListener(this);
+        jTextFieldSegmentsName.getDocument().addDocumentListener(this);
+        jTextFieldStartRadius.getDocument().addDocumentListener(this);
+        jTextFieldEndRadius.getDocument().addDocumentListener(this);
+        jTextFieldFractAlong.getDocument().addDocumentListener(this);
 
-        //////jComboBoxShape.addItem(sphericalShape);
-      /////////  jComboBoxShape.addItem(cylindricalShape);
 
         addSectionFields();
         //addSegementFields();
     }
+    
+
+    
+    
 
     private void extraInit()
     {
@@ -516,7 +574,9 @@ public class SegmentSelector extends JFrame
 
     }
 
-
+    /*
+     * Details on a segment are being shown, so add fields for specifying a segment
+     */
     private void addSegementFields()
     {
         shownFields = SEGMENTS_SHOWN;
@@ -532,6 +592,7 @@ public class SegmentSelector extends JFrame
                                                                     , GridBagConstraints.WEST,
                                                                     GridBagConstraints.HORIZONTAL,
                                                                     new Insets(6, 0, 6, 14), 0, 0));
+        
         jPanelParameters.add(jLabelID, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
                                                               , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                               new Insets(6, 14, 6, 0), 0, 0));
@@ -539,6 +600,9 @@ public class SegmentSelector extends JFrame
                                                                   , GridBagConstraints.EAST,
                                                                   GridBagConstraints.HORIZONTAL, new Insets(6, 0, 6, 14),
                                                                   130, 0));
+        
+        
+        
         jPanelParameters.add(jLabelSection, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
                                                                    , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                                    new Insets(6, 14, 6, 0), 0, 0));
@@ -546,6 +610,9 @@ public class SegmentSelector extends JFrame
                                                                        , GridBagConstraints.WEST,
                                                                        GridBagConstraints.HORIZONTAL,
                                                                        new Insets(6, 0, 6, 14), 184, 0));
+        
+        
+        
         jPanelParameters.add(jLabelStartPoint, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
                                                                       , GridBagConstraints.WEST,
                                                                       GridBagConstraints.NONE, new Insets(6, 14, 6, 0),
@@ -554,21 +621,9 @@ public class SegmentSelector extends JFrame
                                                                           , GridBagConstraints.WEST,
                                                                           GridBagConstraints.HORIZONTAL,
                                                                           new Insets(6, 0, 6, 14), 0, 0));
-        jPanelParameters.add(jLabelEndPoint, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0
-                                                                    , GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                                                    new Insets(6, 14, 6, 0), 0, 0));
-        jPanelParameters.add(jTextFieldEndPoint, new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0
-                                                                        , GridBagConstraints.WEST,
-                                                                        GridBagConstraints.HORIZONTAL,
-                                                                        new Insets(6, 0, 6, 14), 0, 0));
-        jPanelParameters.add(jTextFieldParent, new GridBagConstraints(1, 7, 1, 1, 1.0, 0.0
-                                                                      , GridBagConstraints.WEST,
-                                                                      GridBagConstraints.HORIZONTAL,
-                                                                      new Insets(6, 0, 6, 14), 0, 0));
-        jPanelParameters.add(jLabelFractAlong, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0
-                                                                      , GridBagConstraints.WEST,
-                                                                      GridBagConstraints.NONE, new Insets(6, 14, 0, 0),
-                                                                      0, 0));
+        
+        
+        
         jPanelParameters.add(jLabelStartRadius, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
                                                                        , GridBagConstraints.WEST,
                                                                        GridBagConstraints.NONE, new Insets(6, 14, 6, 0),
@@ -577,6 +632,18 @@ public class SegmentSelector extends JFrame
                                                                            , GridBagConstraints.WEST,
                                                                            GridBagConstraints.HORIZONTAL,
                                                                            new Insets(6, 0, 6, 14), 0, 0));
+        
+        
+        
+        jPanelParameters.add(jLabelEndPoint, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0
+                                                                    , GridBagConstraints.WEST, GridBagConstraints.NONE,
+                                                                    new Insets(6, 14, 6, 0), 0, 0));
+        jPanelParameters.add(jTextFieldEndPoint, new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0
+                                                                        , GridBagConstraints.WEST,
+                                                                        GridBagConstraints.HORIZONTAL,
+                                                                        new Insets(6, 0, 6, 14), 0, 0));
+        
+        
         jPanelParameters.add(jLabelEndRadius, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0
                                                                      , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                                      new Insets(6, 14, 6, 0), 0, 0));
@@ -584,27 +651,54 @@ public class SegmentSelector extends JFrame
                                                                          , GridBagConstraints.WEST,
                                                                          GridBagConstraints.HORIZONTAL,
                                                                          new Insets(6, 0, 6, 14), 0, 0));
-        jPanelParameters.add(jLabelParent, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0
+        
+        
+        
+        
+        jPanelParameters.add(jLabelSegLength, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0
                                                                   , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                                   new Insets(6, 14, 6, 0), 0, 0));
-  /*      jPanelParameters.add(jLabelShape, new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0
-                                                                 , GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                                                 new Insets(6, 14, 6, 0), 0, 0));*/
-        jPanelParameters.add(jTextFieldFractAlong, new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0
+        jPanelParameters.add(jTextFieldSegLength, new GridBagConstraints(1, 7, 1, 1, 1.0, 0.0
+                                                                      , GridBagConstraints.WEST,
+                                                                      GridBagConstraints.HORIZONTAL,
+                                                                      new Insets(6, 0, 6, 14), 0, 0));
+        
+        
+        
+        jPanelParameters.add(jLabelParent, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0
+                                                                  , GridBagConstraints.WEST, GridBagConstraints.NONE,
+                                                                  new Insets(6, 14, 6, 0), 0, 0));
+        jPanelParameters.add(jTextFieldParent, new GridBagConstraints(1, 8, 1, 1, 1.0, 0.0
+                                                                      , GridBagConstraints.WEST,
+                                                                      GridBagConstraints.HORIZONTAL,
+                                                                      new Insets(6, 0, 6, 14), 0, 0));
+        
+        
+        
+        jPanelParameters.add(jLabelFractAlong, new GridBagConstraints(0, 9, 1, 1, 0.0, 0.0
+                                                                      , GridBagConstraints.WEST,
+                                                                      GridBagConstraints.NONE, new Insets(6, 14, 0, 0),
+                                                                      0, 0));
+        jPanelParameters.add(jTextFieldFractAlong, new GridBagConstraints(1, 9, 1, 1, 0.0, 0.0
                                                                           , GridBagConstraints.WEST,
                                                                           GridBagConstraints.HORIZONTAL,
                                                                           new Insets(6, 0, 6, 14), 0, 0));
-        jPanelParameters.add(jLabelFiniteVol, new GridBagConstraints(0, 9, 1, 1, 0.0, 0.0
+        
+        
+        
+        
+        
+        jPanelParameters.add(jLabelFiniteVol, new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0
                                                                      , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                                      new Insets(6, 14, 6, 0), 0, 0));
-        jPanelParameters.add(jComboBoxFiniteVolume, new GridBagConstraints(1, 9, 1, 1, 0.0, 0.0
+        
+        
+        jPanelParameters.add(jComboBoxFiniteVolume, new GridBagConstraints(1, 10, 1, 1, 0.0, 0.0
                                                                            , GridBagConstraints.CENTER,
                                                                            GridBagConstraints.HORIZONTAL,
                                                                            new Insets(6, 0, 6, 14), 0, 0));
-       // jPanelParameters.add(jComboBoxShape, new GridBagConstraints(1, 10, 1, 1, 0.0, 0.0
-       //                                                             , GridBagConstraints.WEST,
-       //                                                             GridBagConstraints.HORIZONTAL,
-       //                                                             new Insets(6, 0, 6, 14), 0, 0));
+        
+       
 
         jPanelParameters.repaint();
 
@@ -612,6 +706,9 @@ public class SegmentSelector extends JFrame
     }
 
 
+    /*
+     * Details on a section are being shown, so add fields for specifying a section
+     */
     private void addSectionFields()
     {
         shownFields = SECTIONS_SHOWN;
@@ -630,8 +727,12 @@ public class SegmentSelector extends JFrame
             ,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(6, 0, 6, 14), 0, 0));
         jPanelParameters.add(jTextFieldStartSecPOoint,     new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(6, 0, 6, 14), 0, 0));
+        
+        
         jPanelParameters.add(jLabelStartSecPoint,       new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
             ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 14, 6, 0), 0, 0));
+        
+        
         jPanelParameters.add(jLabelNumberIntDivisions,    new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
             ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 14, 6, 20), 0, 0));
         jPanelParameters.add(jLabelStartSecRadius,   new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
@@ -646,16 +747,16 @@ public class SegmentSelector extends JFrame
     }
 
 
-
-    //public void
-
+    
     void updateCellWithEnteredInfo()
     {
-        if (initialising) return;
+        if (initialising) return; // ignore any updates triggered during initialisation
 
         if (editable && currentlyAddressedSegment!=null && shownFields==SEGMENTS_SHOWN)
         {
             logger.logComment(">>>>>>>>>>>>  Updating the segment info...");
+            
+            Point3f oldEndPoint = new Point3f(currentlyAddressedSegment.getEndPointPosition());
             Point3f newEndPoint = null;
             try
             {
@@ -666,11 +767,9 @@ public class SegmentSelector extends JFrame
                 GuiUtils.showErrorMessage(logger, "Problem reading the end point info...", e, null);
                 return;
             }
-            currentlyAddressedSegment.setEndPointPositionX(newEndPoint.x);
-            currentlyAddressedSegment.setEndPointPositionY(newEndPoint.y);
-            currentlyAddressedSegment.setEndPointPositionZ(newEndPoint.z);
 
 
+            Point3f oldStartPoint = new Point3f(currentlyAddressedSegment.getStartPointPosition());
             Point3f newStartPoint = null;
             try
             {
@@ -681,6 +780,13 @@ public class SegmentSelector extends JFrame
                 GuiUtils.showErrorMessage(logger, "Problem reading the start point info...", e, null);
                 return;
             }
+            
+            
+            currentlyAddressedSegment.setEndPointPositionX(newEndPoint.x);
+            currentlyAddressedSegment.setEndPointPositionY(newEndPoint.y);
+            currentlyAddressedSegment.setEndPointPositionZ(newEndPoint.z);
+            
+            
             if (currentlyAddressedSegment.isFirstSectionSegment())
             {
                 logger.logComment("Setting start point of section to: " + newStartPoint);
@@ -694,9 +800,7 @@ public class SegmentSelector extends JFrame
                 currentlyAddressedSegment.getParentSegment().setEndPointPositionX(newStartPoint.x);
                 currentlyAddressedSegment.getParentSegment().setEndPointPositionY(newStartPoint.y);
                 currentlyAddressedSegment.getParentSegment().setEndPointPositionZ(newStartPoint.z);
-
             }
-
 
             try
             {
@@ -711,9 +815,7 @@ public class SegmentSelector extends JFrame
                 {
                     logger.logComment("Setting start radius of parent segment to: "+ startRadius);
                     currentlyAddressedSegment.getParentSegment().setRadius(startRadius);
-
                 }
-                //currentlyAddressedSegment.setstRadius(Float.parseFloat(jTextFieldEndRadius.getText()));
             }
             catch (Exception e)
             {
@@ -738,13 +840,105 @@ public class SegmentSelector extends JFrame
 
 
             currentlyAddressedSegment.setFiniteVolume(jComboBoxFiniteVolume.getSelectedItem().equals(finiteVolYes));
-            /*
-            if (jComboBoxShape.getSelectedItem().equals(sphericalShape))
-                currentlyAddressedSegment.setShape(Segment.SPHERICAL_SHAPE);
-            else if (jComboBoxShape.getSelectedItem().equals(cylindricalShape))
-                currentlyAddressedSegment.setShape(Segment.CYLINDRICAL_SHAPE);
-             */
+           
             currentlyAddressedSegment.setSegmentName(jTextFieldSegmentsName.getText());
+            
+            if (jRadioButtonRotTransChildren.isSelected())
+            {
+                logger.logComment("oldEndPoint: "+oldEndPoint);
+                logger.logComment("newEndPoint: "+newEndPoint);
+                
+                Vector3f vecToOldEnd = new Vector3f(oldEndPoint);
+                vecToOldEnd.sub(oldStartPoint);
+                Vector3f vecToOldEndNorm = new Vector3f(vecToOldEnd);
+                vecToOldEndNorm.normalize();
+                
+                logger.logComment("vecToOldEnd: "+vecToOldEnd);
+                
+                Vector3f vecToNewEnd = new Vector3f(newEndPoint);
+                vecToNewEnd.sub(newStartPoint);
+                Vector3f vecToNewEndNorm = new Vector3f(vecToNewEnd);
+                vecToNewEndNorm.normalize();
+                
+                logger.logComment("vecToNewEnd: "+vecToNewEnd);
+                
+                if (!vecToNewEnd.equals(vecToOldEnd))
+                {
+                    Vector<Segment> allChildren = CellTopologyHelper.getAllChildSegsToBranchEnd(myCell, currentlyAddressedSegment);
+                    
+                    AxisAngle4f angle4 = Utils3D.getAxisAngle(vecToOldEndNorm, vecToNewEndNorm);
+                    
+                    logger.logComment("angle4: "+angle4);
+                    
+                    Transform3D transform = new Transform3D();
+                    transform.set(angle4);
+                    
+                    logger.logComment("transform: "+transform);
+                    
+                    for(Segment seg: allChildren)
+                    {
+                        logger.logComment("Child seg: "+seg);
+                        
+                        if (seg.isFirstSectionSegment())
+                        {
+                            Section sec = seg.getSection();
+                            
+                            Vector3f vecToSecStart = new Vector3f(sec.getStartPointPosition());
+                            vecToSecStart.sub(vecToOldEnd);
+
+                            logger.logComment("vecToSecStart: "+vecToSecStart);
+
+                            transform.transform(vecToSecStart);
+                        
+                            logger.logComment("vecToSecStart after rot: "+vecToSecStart);
+                        
+                            sec.setStartPointPositionX(vecToSecStart.x + vecToOldEnd.x);
+                            sec.setStartPointPositionY(vecToSecStart.y + vecToOldEnd.y);
+                            sec.setStartPointPositionZ(vecToSecStart.z + vecToOldEnd.z);
+                            
+                        }
+                        Vector3f vecToSegEnd = new Vector3f(seg.getEndPointPosition());
+                        vecToSegEnd.sub(vecToOldEnd);
+                        
+                        logger.logComment("vecToSegEnd: "+vecToSegEnd);
+                    
+                        transform.transform(vecToSegEnd);
+                        
+                        logger.logComment("vecToSegEnd after rot: "+vecToSegEnd);
+                        
+                        seg.setEndPointPositionX(vecToSegEnd.x + vecToOldEnd.x);
+                        seg.setEndPointPositionY(vecToSegEnd.y + vecToOldEnd.y);
+                        seg.setEndPointPositionZ(vecToSegEnd.z + vecToOldEnd.z);
+                    }
+                    
+                }
+                
+                
+                
+            }
+            
+            if (jRadioButtonTransChildren.isSelected() || jRadioButtonRotTransChildren.isSelected())
+            {
+                Point3f translation = new Point3f(newEndPoint);
+                translation.sub(oldEndPoint);
+                
+                Vector<Segment> allChildren = CellTopologyHelper.getAllChildSegsToBranchEnd(myCell, currentlyAddressedSegment);
+                for(Segment seg: allChildren)
+                {
+                    if (seg.isFirstSectionSegment())
+                    {
+                        Section sec = seg.getSection();
+                        sec.setStartPointPositionX(sec.getStartPointPositionX() + translation.x);
+                        sec.setStartPointPositionY(sec.getStartPointPositionY() + translation.y);
+                        sec.setStartPointPositionZ(sec.getStartPointPositionZ() + translation.z);
+                    }
+                    seg.setEndPointPositionX(seg.getEndPointPositionX() + translation.x);
+                    seg.setEndPointPositionY(seg.getEndPointPositionY() + translation.y);
+                    seg.setEndPointPositionZ(seg.getEndPointPositionZ() + translation.z);
+                }
+            }
+            
+            this.registerPointFieldChange();
 
         }
         if (editable && shownFields==SECTIONS_SHOWN && getSelectedSection()!=null)
@@ -764,9 +958,9 @@ public class SegmentSelector extends JFrame
             }
 
         }
-
-
         if (oneCell3DPanel!=null) oneCell3DPanel.markCellAsEdited();
+        
+        jButtonUpdate.setForeground(okColourFG);
     }
 
     private Point3f parsePoint(String pointString) throws NumberFormatException, StringIndexOutOfBoundsException
@@ -900,7 +1094,7 @@ public class SegmentSelector extends JFrame
 
                 for (int i = 0; i < allSegmentHere.size(); i++)
                 {
-                    jComboBoxSegment.addItem(((Segment)allSegmentHere.get(i)).getSegmentName());
+                    jComboBoxSegment.addItem((allSegmentHere.get(i)).getSegmentName());
                 }
                 logger.logComment("Setting segment details item selected");
                 jComboBoxSegment.setSelectedItem(sectionDetails);
@@ -1056,7 +1250,7 @@ public class SegmentSelector extends JFrame
         for (int i = 0; i < segmentsForDeletion.size(); i++)
         {
 
-            Segment nextSeg = (Segment) segmentsForDeletion.elementAt(i);
+            Segment nextSeg = segmentsForDeletion.elementAt(i);
             logger.logComment("Looking to delete: "+ nextSeg);
 
             if (allSegments.contains(nextSeg))
@@ -1097,6 +1291,223 @@ public class SegmentSelector extends JFrame
                 markSegmentForDeletion(nextSeg);
         }
     }
+    
+    
+    public void changedUpdate(DocumentEvent e)
+    {
+        registerPointFieldChange();
+    }
+
+    public void insertUpdate(DocumentEvent e)
+    {
+        registerPointFieldChange();
+    }
+
+    public void removeUpdate(DocumentEvent e)
+    {
+        registerPointFieldChange();
+    }
+    
+    
+    void registerPointFieldChange()
+    {           
+        Point3f startPoint = null;
+        Point3f endPoint = null;
+        boolean altered = false;
+        
+        // Check start point field
+        
+        Color startPointColour = okColourBG;
+        try
+        {
+            startPoint = parsePoint(jTextFieldStartPoint.getText());
+            
+            if (startPoint==null) 
+            {
+                startPointColour = warningColour;
+            }
+            else if (currentlyAddressedSegment!=null && 
+                    !currentlyAddressedSegment.getStartPointPosition().equals(startPoint))
+            {
+                startPointColour = alteredColour;
+                altered = true;
+            }
+        }
+        catch (Exception e)
+        {
+            startPointColour = warningColour;
+        }
+        this.jTextFieldStartPoint.setBackground(startPointColour);
+        
+        
+        // Check end point field
+
+        Color endPointColour = okColourBG;
+        try
+        {
+            endPoint = parsePoint(jTextFieldEndPoint.getText());
+                
+            if (endPoint==null) 
+                endPointColour = warningColour;
+            else if (currentlyAddressedSegment!=null && 
+                    !currentlyAddressedSegment.getEndPointPosition().equals(endPoint))
+            {
+                endPointColour = alteredColour;
+                altered = true;
+            }
+        }
+        catch (Exception e)
+        {
+            endPointColour = warningColour;
+        }
+        this.jTextFieldEndPoint.setBackground(endPointColour);
+        
+        
+        // Update the segment length
+        
+        float len = -1;
+        if (endPoint!=null && startPoint!=null)
+        {
+            len = endPoint.distance(startPoint);
+            jTextFieldSegLength.setText(len+"");
+
+            if (currentlyAddressedSegment!=null && 
+                currentlyAddressedSegment.getSegmentLength()!=len)
+            {
+                jTextFieldSegLength.setBackground(alteredColour);
+                altered = true;
+            }
+            else
+            {
+                jTextFieldSegLength.setBackground(jTextFieldID.getBackground()); // id field always disabled
+            }
+        }
+        else
+        {
+            jTextFieldSegLength.setText("Cannot be calculated");
+            jTextFieldSegLength.setBackground(warningColour);
+        }
+        
+        
+        
+        // Check segment name field
+        
+        
+        if (jTextFieldSegmentsName.getText().indexOf(" ")>=0)
+        {
+            jTextFieldSegmentsName.setBackground(warningColour);
+        }
+        else
+        {
+            if (currentlyAddressedSegment!=null && 
+                !jTextFieldSegmentsName.getText().equals(currentlyAddressedSegment.getSegmentName()))
+            {
+                jTextFieldSegmentsName.setBackground(alteredColour);
+                altered = true;
+            }
+            else
+            {
+                jTextFieldSegmentsName.setBackground(okColourBG);
+            }
+        }
+        
+        
+        
+        // Check start radius field
+        
+        
+        try
+        {
+            if (Float.parseFloat(jTextFieldStartRadius.getText())>=0) 
+            {
+                if (currentlyAddressedSegment!=null && 
+                    Float.parseFloat(jTextFieldStartRadius.getText()) != currentlyAddressedSegment.getSegmentStartRadius())
+                {
+                    jTextFieldStartRadius.setBackground(alteredColour);
+                    altered = true;
+                }
+                else
+                {
+                    jTextFieldStartRadius.setBackground(okColourBG);
+                }
+            }
+            else
+            {
+                jTextFieldStartRadius.setBackground(warningColour);
+            }
+        }
+        catch (Exception e)
+        {
+            jTextFieldStartRadius.setBackground(warningColour);
+        }
+        
+        
+        
+        // Check end radius field
+        
+        try
+        {
+            if (Float.parseFloat(jTextFieldEndRadius.getText())>=0) 
+            {
+                if (currentlyAddressedSegment!=null && 
+                    Float.parseFloat(jTextFieldEndRadius.getText()) != currentlyAddressedSegment.getRadius())
+                {
+                    jTextFieldEndRadius.setBackground(alteredColour);
+                    altered = true;
+                }
+                else
+                {
+                    jTextFieldEndRadius.setBackground(okColourBG);
+                }
+            }
+            else
+            {
+                jTextFieldEndRadius.setBackground(warningColour);
+            }
+                
+        }
+        catch (Exception e)
+        {
+            jTextFieldEndRadius.setBackground(warningColour);
+        }
+        
+        
+        // Check fract along
+        
+        try
+        {
+            if (Float.parseFloat(jTextFieldFractAlong.getText())>=0 &&
+                Float.parseFloat(jTextFieldFractAlong.getText())<=1 ) 
+            {
+                if (currentlyAddressedSegment!=null && 
+                    Float.parseFloat(jTextFieldFractAlong.getText()) != currentlyAddressedSegment.getFractionAlongParent())
+                {
+                    jTextFieldFractAlong.setBackground(alteredColour);
+                    altered = true;
+                }
+                else
+                {
+                    jTextFieldFractAlong.setBackground(okColourBG);
+                }
+            }
+            else
+            {
+                jTextFieldFractAlong.setBackground(warningColour);
+            }
+                
+        }
+        catch (Exception e)
+        {
+            jTextFieldFractAlong.setBackground(warningColour);
+        }
+            
+        if (altered)
+            jButtonUpdate.setForeground(alteredColour.darker().darker());
+        else
+            jButtonUpdate.setForeground(okColourFG);
+    }
+    
+    
 
     void jButtonCheckValid_actionPerformed(ActionEvent e)
     {
@@ -1637,36 +2048,6 @@ public class SegmentSelector extends JFrame
             }
         }
 
-/*
-        Segment first = myCell.getFirstSomaSegment();
-
-
-        RegionsInfoDialog dlg = new RegionsInfoDialog(this,
-                                                      suggestedRegion,
-                                                      suggestedName);
-        Dimension dlgSize = dlg.getPreferredSize();
-        Dimension frmSize = getSize();
-        Point loc = getLocation();
-        dlg.setLocation( (frmSize.width - dlgSize.width) / 2 + loc.x,
-                        (frmSize.height - dlgSize.height) / 2 + loc.y);
-        dlg.setModal(true);
-        dlg.pack();
-        dlg.setVisible(true);
-
-        String regionName = dlg.getRegionName();
-        Region newRegion = dlg.getFinalRegion();
-
-        if (dlg.cancelled)
-        {
-            logger.logComment("The action was cancelled...");
-            return;
-        }
-        AxonalConnRegion acr = new AxonalConnRegion();
-        acr.setName(regionName);
-        acr.setRegion(newRegion);
-
-        myCell.addAxonalArbour(acr);
- */
 
     }
 

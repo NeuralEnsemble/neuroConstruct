@@ -25,6 +25,7 @@ public class ClickProjectHelper
     
     public static final String PROTOCOL = "nCproj";
     public static final String CELL_GROUP = "cellGroup";
+    public static final String SECTION_GROUP = "sectionGroup";
     public static final String CELL_TYPE = "cellType";
     public static final String NET_CONNECTION = "netConn";
     public static final String CELL_MECHANISM = "cellMechanism";
@@ -40,6 +41,12 @@ public class ClickProjectHelper
     public static String getCellTypeLink(String name)
     {
         return "<a href=\""+PROTOCOL+"://"+CELL_TYPE+"="+name+"\" "+styleInfo+">"+name+"</a>";
+    }
+    
+    
+    public static String getCellSectionGroupLink(String cellType, String secGroup)
+    {
+        return "<a href=\""+PROTOCOL+"://"+CELL_TYPE+"="+cellType+"&"+SECTION_GROUP+"="+secGroup+"\" "+styleInfo+">"+secGroup+"</a>";
     }
 
     public static String getNetConnLink(String name)
@@ -57,6 +64,10 @@ public class ClickProjectHelper
     public static String getPlotSaveLink(String name)
     {
         return "<a href=\""+PROTOCOL+"://"+PLOT_SAVE+"="+name+"\" "+styleInfo+">"+name+"</a>";
+    }
+
+    private ClickProjectHelper()
+    {
     }
 
 }

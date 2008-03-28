@@ -390,7 +390,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JPanel jPanelNeuronNumInt =  new JPanel();
     JCheckBox jCheckBoxNeuronNumInt = new JCheckBox("Use variable time step");
     JCheckBox jCheckBoxNeuronGenAllMod = new JCheckBox("Generate all mod files");
-    JCheckBox jCheckBoxNeuronCopySimFiles = new JCheckBox("Copy sim files to results dir");
+    JCheckBox jCheckBoxNeuronCopySimFiles = new JCheckBox("Copy files to simulations dir");
+    JCheckBox jCheckBoxGenesisCopySimFiles = new JCheckBox("Copy files to simulations dir");
     
     
     JCheckBox jCheckBoxNeuronForceCorrInit = new JCheckBox("Force correct ChannelML init");
@@ -2345,11 +2346,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTextFieldProjName.setText("");
         jTextFieldProjName.setColumns(35);
         jPanelMainInfo.setLayout(gridBagLayout2);
-        jPanelMainInfo.setBorder(BorderFactory.createEtchedBorder());
+        Border bordEtched = BorderFactory.createEtchedBorder();
+        Border bordPad = BorderFactory.createEmptyBorder(5, 5,5,5);
+        //bord.
+        jPanelMainInfo.setBorder(BorderFactory.createCompoundBorder(bordEtched, bordPad));
         
         //jPanelMainInfo.setMaximumSize(new Dimension(850, 470));
-        jPanelMainInfo.setMinimumSize(new Dimension(900, 490));
-        jPanelMainInfo.setPreferredSize(new Dimension(900, 490));
+        //jPanelMainInfo.setMinimumSize(new Dimension(900, 490));
+        //jPanelMainInfo.setPreferredSize(new Dimension(900, 490));
         
         
         //jScrollPaneProjDesc.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -2956,6 +2960,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelNeuronNumInt.add(this.jCheckBoxNeuronCopySimFiles);
         jPanelNeuronNumInt.add(jCheckBoxNeuronForceCorrInit);
 
+        
         jCheckBoxNeuronForceCorrInit.setSelected(true);
 
         jPanelNeuronRandomGen.add(jLabelNeuronRandomGenDesc, BorderLayout.WEST);
@@ -3280,6 +3285,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         vpGenerate.add(jEditorPaneGenerateInfo);
         
         jEditorPaneGenerateInfo.addHyperlinkListener(this);
+        jEditorPaneCellTypeInfo.addHyperlinkListener(this);
 
         jPanelGenerateMain.add(jPanelGenerateAnalyse,
                                new GridBagConstraints(0, 2, 1, 1,
@@ -3564,6 +3570,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelGenesisCheckBoxes.add(jCheckBoxGenesisSymmetric, null);
         jPanelGenesisCheckBoxes.add(jCheckBoxGenesisComments, null);
         jPanelGenesisCheckBoxes.add(jCheckBoxGenesisNoGraphicsMode, null);
+        
+        jPanelGenesisCheckBoxes.add(this.jCheckBoxGenesisCopySimFiles);
 
         jPanelGenesisNumMethod.add(jLabelGenesisNumMethod, null);
         jPanelGenesisNumMethod.add(jButtonGenesisNumMethod, null);
@@ -3802,6 +3810,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         //addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisVoltPlot);
         addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisShapePlot);
         addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisNoGraphicsMode);
+        addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisCopySimFiles);
 
         addRadioButtonListner(GENESIS_SIMULATOR_TAB, jRadioButtonGenesisPhy);
         addRadioButtonListner(GENESIS_SIMULATOR_TAB, jRadioButtonGenesisSI);
@@ -3960,6 +3969,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jCheckBoxNeuronForceCorrInit.setToolTipText(toolTipText.getToolTip("NeuronForceCorrInit"));
         
 
+        jCheckBoxGenesisCopySimFiles.setToolTipText(toolTipText.getToolTip("GenesisCopySimFiles"));
 
         jLabelSimDefDur.setToolTipText(toolTipText.getToolTip("Simulation def duration"));
         this.jTextFieldSimDefDur.setToolTipText(toolTipText.getToolTip("Simulation def duration"));
@@ -4146,7 +4156,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 projManager.getCurrentProject().genesisSettings.setSymmetricCompartments(jCheckBoxGenesisSymmetric.isSelected());
                 projManager.getCurrentProject().genesisSettings.setGenerateComments(jCheckBoxGenesisComments.isSelected());
                 projManager.getCurrentProject().genesisSettings.setShowShapePlot(jCheckBoxGenesisShapePlot.isSelected());
-                ////////projManager.getCurrentProject().genesisSettings.setShowVoltPlot(jCheckBoxGenesisVoltPlot.isSelected());
+                
+                projManager.getCurrentProject().genesisSettings.setCopySimFiles(this.jCheckBoxGenesisCopySimFiles.isSelected());
 
                 if (jRadioButtonGenesisPhy.isSelected())
                     projManager.getCurrentProject().genesisSettings.setUnitSystemToUse(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS);
@@ -6186,8 +6197,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 IgorNeuroMatic.createSimulationLoader(projManager.getCurrentProject(), getSelectedSimConfig(),
                                                       this.jTextFieldSimRef.getText());
             }
-
-            projManager.getCurrentProject().genesisFileManager.runGenesisFile();
+            
+            projManager.getCurrentProject().genesisFileManager.runGenesisFile(jCheckBoxGenesisCopySimFiles.isSelected());
         }
         catch (GenesisException ex)
         {
@@ -7546,7 +7557,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
             jPanelSimConfigClicks.removeAll();
-            int leftToDo = 8;
+            int leftToDo = 6;
             
             for (SimConfig simConfig: projManager.getCurrentProject().simConfigInfo.getAllSimConfigs())
             {
@@ -8388,6 +8399,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                jCheckBoxGenesisNoGraphicsMode.setSelected(!projManager.getCurrentProject().genesisSettings.isGraphicsMode());
                //////////jCheckBoxGenesisVoltPlot.setSelected(projManager.getCurrentProject().genesisSettings.isShowVoltPlot());
                jCheckBoxGenesisShapePlot.setSelected(projManager.getCurrentProject().genesisSettings.isShowShapePlot());
+               
+               
+               jCheckBoxGenesisCopySimFiles.setSelected(projManager.getCurrentProject().genesisSettings.isCopySimFiles());
 
                if (projManager.getCurrentProject().genesisSettings.getUnitSystemToUse() == UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS)
                    jRadioButtonGenesisPhy.setSelected(true);
@@ -9628,7 +9642,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 */
 
-            jEditorPaneCellTypeInfo.setText(CellTopologyHelper.printDetails(cell, this.projManager.getCurrentProject(), true, false, false));
+            jEditorPaneCellTypeInfo.setText(CellTopologyHelper.printDetails(cell, this.projManager.getCurrentProject(), true, false, true));
 
 
             jEditorPaneCellTypeInfo.setCaretPosition(0);

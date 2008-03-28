@@ -1330,10 +1330,43 @@ public class CellTopologyHelper
         
     }*/
 
+    
+    /**
+     * Gets the child segments of the specified segment in the cell all the way to the branch tip, i.e.
+     * all segments whose parent, or whose parent's parent, etc. is the specified segment
+     */
+    public static Vector<Segment> getAllChildSegsToBranchEnd(Cell cell, Segment segment)
+    {
+        Vector<Segment> allSegments = cell.getAllSegments();
+        Vector<Segment> allChildren = new Vector<Segment>();
+
+        for (int i = 0; i < allSegments.size(); i++)
+        {
+            Segment nextSeg = allSegments.elementAt(i);
+            Segment parentSeg = nextSeg.getParentSegment();
+            boolean inBranch = false;
+            
+            while (!inBranch && parentSeg!=null)
+            {
+                if (parentSeg.equals(segment))
+                {
+                    inBranch = true;
+                }                 
+                
+                parentSeg = parentSeg.getParentSegment();
+            }
+            if (inBranch) allChildren.add(nextSeg);
+        }
+
+        return allChildren;
+    }
+    
+    
+    
 
     /**
-     * Gets the child segments of the specified segment in the cell. If onlySameSection is true,
-     * only returns the segments in the same section
+     * Gets the child segments of the specified segment in the cell, i.e. only segments which have the specified
+     * segment as a parent. If onlySameSection is true, only returns the segments in the same section
      */
     public static Vector<Segment> getAllChildSegments(Cell cell, Segment segment, boolean onlySameSection)
     {
@@ -1820,7 +1853,6 @@ public class CellTopologyHelper
         return printDetails(cell, project,html, true, false);
     }
 
-    //private getCellMechRe
 
     public static String printDetails(Cell cell, 
     		                          Project project, 
@@ -1906,17 +1938,34 @@ public class CellTopologyHelper
         for (int i = 0; i < allChanMechs.size(); i++)
         {
             ChannelMechanism chanMech = allChanMechs.get(i);
-            Vector groups = cell.getGroupsWithChanMech(chanMech);
+            Vector<String> groups = cell.getGroupsWithChanMech(chanMech);
             
             String moreInfo = chanMech.getDensity() + " "+ condDensSymb+chanMech.getExtraParamsDesc();
             
             
             String descCm = chanMech.getName() + " ("+moreInfo +")";
+            String grpInfo = GeneralUtils.getTabbedString(groups.toString(), "b", html);
+            
             if (html)
             {
             	if (false)
             	{
             		descCm = "<a href=\"../"+Expand.getCellMechPage(chanMech.getName())+"\">"+chanMech.getName() + "</a> ("+ moreInfo+")";
+            	}
+                else if (projHtml)
+            	{
+            		descCm = ClickProjectHelper.getCellMechLink(chanMech.getName())+ " ("+ moreInfo+")";
+                    if (false) // nearly there...
+                    {
+                    String grpString = new String();
+                    for(int j=0;j<groups.size();j++)
+                    {
+                        grpString = grpString + ClickProjectHelper.getCellSectionGroupLink(cell.getInstanceName(), groups.get(j));
+                        if (j<groups.size()-1)
+                            grpString = grpString + " ,";
+                    }
+                    grpInfo = "<b>["+grpString+"]</b>";
+                    }
             	}
             	else
             	{
@@ -1925,7 +1974,7 @@ public class CellTopologyHelper
             }
 
             sb.append("    Channel Mechanism: "+GeneralUtils.getTabbedString(descCm, "b", html)
-                      +" is present on: "+GeneralUtils.getTabbedString(groups.toString(), "b", html)+GeneralUtils.getEndLine(html));
+                      +" is present on: "+grpInfo+GeneralUtils.getEndLine(html));
         }
         if (allChanMechs.size()>0) sb.append("  "+GeneralUtils.getEndLine(html));
         

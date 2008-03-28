@@ -2566,7 +2566,7 @@ public class GenesisFileManager
 
 
 
-    public void runGenesisFile() throws GenesisException
+    public void runGenesisFile(boolean copyToSimDataDir) throws GenesisException
     {
         logger.logComment("Trying to run the mainGenesisFile...");
 
@@ -2601,17 +2601,39 @@ public class GenesisFileManager
             }
         }
 
-        File dirForDataFiles = getDirectoryForSimulationFiles();
-
-        File positionsFile = new File(dirForDataFiles, SimulationData.POSITION_DATA_FILE);
-        File netConnsFile = new File(dirForDataFiles, SimulationData.NETCONN_DATA_FILE);
-        File elecInputFile = new File(dirForDataFiles, SimulationData.ELEC_INPUT_DATA_FILE);
+        File dirForSimDataFiles = getDirectoryForSimulationFiles();
+        File dirToRunFrom = null;
+        File genGenesisDir = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory());
         
-
-        
-        if (dirForDataFiles.getAbsolutePath().indexOf(" ")>=0)
+        if (copyToSimDataDir)
         {
-            throw new GenesisException("GENESIS files cannot be run in a directory like: "+ dirForDataFiles
+            dirToRunFrom = dirForSimDataFiles;
+            
+            try
+            {
+                GeneralUtils.copyDirIntoDir(genGenesisDir, dirForSimDataFiles, false, true);
+            }
+            catch (Exception e)
+            {
+                throw new GenesisException("Problem copying the GENESIS files from "+genGenesisDir+" to "+ dirForSimDataFiles, e);
+                
+            }
+        }
+        else
+        {
+            dirToRunFrom = genGenesisDir; 
+        }
+        
+
+        File positionsFile = new File(dirForSimDataFiles, SimulationData.POSITION_DATA_FILE);
+        File netConnsFile = new File(dirForSimDataFiles, SimulationData.NETCONN_DATA_FILE);
+        File elecInputFile = new File(dirForSimDataFiles, SimulationData.ELEC_INPUT_DATA_FILE);
+        
+
+        
+        if (dirToRunFrom.getAbsolutePath().indexOf(" ")>=0)
+        {
+            throw new GenesisException("GENESIS files cannot be run in a directory like: "+ dirToRunFrom
                     + " containing spaces.\nThis is due to the way neuroConstruct starts the external processes (e.g. konsole) to run GENESIS.\nArguments need to be given to this executable and spaces in filenames cause problems.\n"
                     +"Try saving the project in a directory without spaces.");
         }
@@ -2634,15 +2656,14 @@ public class GenesisFileManager
         // Saving summary of the simulation params
         try
         {
-            SimulationsInfo.recordSimulationSummary(project, simConfig, dirForDataFiles, "GENESIS", morphComp);
+            SimulationsInfo.recordSimulationSummary(project, simConfig, dirForSimDataFiles, "GENESIS", morphComp);
         }
         catch (IOException ex2)
         {
             GuiUtils.showErrorMessage(logger, "Error when trying to save a summary of the simulation settings in dir: "
-                                      + dirForDataFiles+"\nThere will be less info on this simulation in the previous simulation browser dialog", ex2, null);
+                                      + dirForSimDataFiles+"\nThere will be less info on this simulation in the previous simulation browser dialog", ex2, null);
         }
-
-
+        
         Runtime rt = Runtime.getRuntime();
         String commandToExecute = null;
 
@@ -2655,10 +2676,10 @@ public class GenesisFileManager
                 logger.logComment("Assuming Windows environment...");
 
                 genesisExecutable = "templates\\genesisUtils\\startxwin2.bat";
+                
+                File fullFileToRun = new File(dirToRunFrom, mainGenesisFile.getName());
 
-                String args = GeneralUtils.convertToCygwinPath(mainGenesisFile.getAbsolutePath()+"");
-
-                //args = this.getFriendlyDirName(args);
+                String args = GeneralUtils.convertToCygwinPath(fullFileToRun.getAbsolutePath());
 
                 String title = "GENESIS_simulation" + "___" + project.simulationParameters.getReference();
 
@@ -2669,7 +2690,6 @@ public class GenesisFileManager
                 rt.exec(commandToExecute);
 
                 logger.logComment("Have executed command: " + commandToExecute);
-
 
             }
             else
@@ -2687,9 +2707,7 @@ public class GenesisFileManager
 
                 }
 
-
-
-                File dirToRunIn = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory());
+                //File dirToRunIn = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory());
 
                 String basicCommLine = GeneralProperties.getExecutableCommandLine();
 
@@ -2702,7 +2720,7 @@ public class GenesisFileManager
                 {
                     logger.logComment("Assume we're using KDE");
                     titleOption = " -T="+title;
-                    workdirOption = " --workdir="+ dirToRunIn.getAbsolutePath();
+                    workdirOption = " --workdir="+ dirToRunFrom.getAbsolutePath();
                     extraArgs = "-e ";
                     executable = basicCommLine.trim();
                 }
@@ -2710,7 +2728,7 @@ public class GenesisFileManager
                 {
                     logger.logComment("Assume we're using Gnome");
                     titleOption = " --title="+title;
-                    workdirOption = " --working-directory="+ dirToRunIn.getAbsolutePath();
+                    workdirOption = " --working-directory="+ dirToRunFrom.getAbsolutePath();
 
                     if (basicCommLine.trim().indexOf(" ")>0) // case where basicCommLine is gnome-terminal -x
                     {
@@ -2730,7 +2748,7 @@ public class GenesisFileManager
                     executable = basicCommLine.trim();
                 }
 
-                String scriptText = "cd " + dirToRunIn.getAbsolutePath() + "\n" + genesisExecutable
+                String scriptText = "cd " + dirToRunFrom.getAbsolutePath() + "\n" + genesisExecutable
                     + " "
                     + mainGenesisFile.getName();
 
