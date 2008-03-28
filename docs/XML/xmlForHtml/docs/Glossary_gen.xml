@@ -582,8 +582,8 @@ The second of these is quicker to load and save and the files are smaller. The f
 with a text editor. Change which format to use via <strong>Settings -&gt; General Properties &amp; Project Defaults/Project properties</strong>.
 
 Cell morphologies are stored in the <strong>morphologies</strong> directory of the project home directory. *.bak files in that dir backup 
-the previously stored morphology before a new one is saved (if a problem occurs saving a morphology, remove the .bak
-and use that file to load into the project).
+the previously stored morphology before a new one is saved (if a problem occurs saving a morphology, close the application, remove
+the .bak from the name of the morphology file to use the previous structure of the cell when reloading the project).
 
 Note that the cells aren't currently stored in neuroConstruct projects in NeuroML/MorphML format, since new functionality 
 is usually added to the neuroConstruct Cell class before it is supported in the standards.</p>
