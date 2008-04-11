@@ -843,81 +843,105 @@ public class SegmentSelector extends JFrame implements DocumentListener
            
             currentlyAddressedSegment.setSegmentName(jTextFieldSegmentsName.getText());
             
+            boolean applyExtraTranslation = false;
+            
             if (jRadioButtonRotTransChildren.isSelected())
             {
-                logger.logComment("oldEndPoint: "+oldEndPoint);
-                logger.logComment("newEndPoint: "+newEndPoint);
+              //applyExtraTranslation = currentlyAddressedSegment.isFirstSectionSegment();
+                
+                logger.logComment("rotate oldEndPoint: "+oldEndPoint,true);
+                logger.logComment("rotate oldStartPoint: "+oldStartPoint,true);
+                logger.logComment("rotate newEndPoint: "+newEndPoint,true);
                 
                 Vector3f vecToOldEnd = new Vector3f(oldEndPoint);
-                vecToOldEnd.sub(oldStartPoint);
-                Vector3f vecToOldEndNorm = new Vector3f(vecToOldEnd);
-                vecToOldEndNorm.normalize();
+                vecToOldEnd.sub(oldStartPoint);                       // Subtract the oldStartPoint from the oldEndPoint to get the vector from the old start point
+                Vector3f vecToOldEndNorm = new Vector3f(vecToOldEnd); // vector to old end of currently address segment, i.e. the one that has been edited
+                vecToOldEndNorm.normalize();                          // normalise it so you can work out the rotation that has been applied by the entered data
                 
-                logger.logComment("vecToOldEnd: "+vecToOldEnd);
+                logger.logComment("rotate vecToOldEnd: "+vecToOldEnd,true);
                 
                 Vector3f vecToNewEnd = new Vector3f(newEndPoint);
-                vecToNewEnd.sub(newStartPoint);
-                Vector3f vecToNewEndNorm = new Vector3f(vecToNewEnd);
+              //vecToNewEnd.sub(newStartPoint);
+                vecToNewEnd.sub(oldStartPoint);                       // New start point should be the same as the old ??can this change??
+                Vector3f vecToNewEndNorm = new Vector3f(vecToNewEnd); // Vector to newEndPoint to allow the rotation angle to be calculated
                 vecToNewEndNorm.normalize();
                 
                 logger.logComment("vecToNewEnd: "+vecToNewEnd);
                 
-                if (!vecToNewEnd.equals(vecToOldEnd))
+                if (!vecToNewEnd.equals(vecToOldEnd))                 // if there has been no rotation made then no need to adjust the child segments
                 {
-                    Vector<Segment> allChildren = CellTopologyHelper.getAllChildSegsToBranchEnd(myCell, currentlyAddressedSegment);
+                    Vector<Segment> allChildren = CellTopologyHelper.getAllChildSegsToBranchEnd(myCell, currentlyAddressedSegment); // Get all the children of the segment being edited 
                     
-                    AxisAngle4f angle4 = Utils3D.getAxisAngle(vecToOldEndNorm, vecToNewEndNorm);
+                    AxisAngle4f angle4 = Utils3D.getAxisAngle(vecToOldEndNorm, vecToNewEndNorm); // works out the angle through which the newdendpoint has been rotated in relation to old endpoint
                     
-                    logger.logComment("angle4: "+angle4);
+                    logger.logComment("rotate angle4: "+angle4,true);
                     
-                    Transform3D transform = new Transform3D();
+                    Transform3D transform = new Transform3D();        // creates a matrix that will apply a rotation about a point for any vector from that point, in this case the endpoint of the edited segment, or the start point of the first child segment
                     transform.set(angle4);
                     
-                    logger.logComment("transform: "+transform);
+                    logger.logComment("rotate transform: "+transform,true);
                     
-                    for(Segment seg: allChildren)
+                    for(Segment seg: allChildren)                     // apply rotate all the child segments, get child and assign it as current seg 
                     {
-                        logger.logComment("Child seg: "+seg);
+                        logger.logComment("Rotate Child seg: "+seg, true);
                         
-                        if (seg.isFirstSectionSegment())
+                        if (seg.isFirstSectionSegment())              // Sections require that the start points to be defined at a section level
                         {
-                            Section sec = seg.getSection();
+                            Section sec = seg.getSection();           // allocate the current segmenst section as sec
                             
-                            Vector3f vecToSecStart = new Vector3f(sec.getStartPointPosition());
-                            vecToSecStart.sub(vecToOldEnd);
+                            Vector3f vecToSecStart = new Vector3f(sec.getStartPointPosition()); // get the start point of the current section
+                         // vecToSecStart.sub(vecToOldEnd);                                     // ?? the vector to the start position is zero in the first child??
+                            vecToSecStart.sub(oldEndPoint);
+                            logger.logComment("Rotate First Seg vecToSecStart: "+vecToSecStart, true);
 
-                            logger.logComment("vecToSecStart: "+vecToSecStart);
-
-                            transform.transform(vecToSecStart);
+                            transform.transform(vecToSecStart);                                 // apply rotation to startpoint, should be zero for first child
                         
-                            logger.logComment("vecToSecStart after rot: "+vecToSecStart);
+                            logger.logComment("Rotate First Seg vecToSecStart after rot: "+vecToSecStart, true);
                         
-                            sec.setStartPointPositionX(vecToSecStart.x + vecToOldEnd.x);
-                            sec.setStartPointPositionY(vecToSecStart.y + vecToOldEnd.y);
-                            sec.setStartPointPositionZ(vecToSecStart.z + vecToOldEnd.z);
-                            
+                         // sec.setStartPointPositionX(vecToSecStart.x + vecToOldEnd.x);        // it should rotate about oldendpoint
+                         // sec.setStartPointPositionY(vecToSecStart.y + vecToOldEnd.y);
+                         // sec.setStartPointPositionZ(vecToSecStart.z + vecToOldEnd.z);
+                            sec.setStartPointPositionX(vecToSecStart.x + newEndPoint.x);        // it should rotate about oldendpoint - just the new endpoint for the fist child
+                            sec.setStartPointPositionY(vecToSecStart.y + newEndPoint.y);
+                            sec.setStartPointPositionZ(vecToSecStart.z + newEndPoint.z);                            
+                        } 
+                        else
+                        {
+                            logger.logComment("Not FirstSectionSegment");
                         }
+                        // work out the endpoint for the current child segment
+                        logger.logComment("Child seg now: "+seg, true);
+                        logger.logComment("Child seg endPointPosition now: "+seg.getEndPointPosition(), true);
+                        logger.logComment("Child seg vecToOldEnd now: "+vecToOldEnd, true);
+                                                        
                         Vector3f vecToSegEnd = new Vector3f(seg.getEndPointPosition());
-                        vecToSegEnd.sub(vecToOldEnd);
+                     // vecToSegEnd.sub(vecToOldEnd);
+                        vecToSegEnd.sub(oldEndPoint);                                           // old endpoint of parent segment
+                     // vecToSegEnd.sub(oldStartPoint);
                         
-                        logger.logComment("vecToSegEnd: "+vecToSegEnd);
+                        logger.logComment("Rotate vecToSegEnd: "+vecToSegEnd, true);
                     
-                        transform.transform(vecToSegEnd);
+                        transform.transform(vecToSegEnd);                                       // apply rotation to vector from oldend (parent seg) to endpoint of current child seg
+
+                        logger.logComment("Rotate vecToSegEnd after rot: "+vecToSegEnd, true);
                         
-                        logger.logComment("vecToSegEnd after rot: "+vecToSegEnd);
+                     // seg.setEndPointPositionX(vecToSegEnd.x + vecToOldEnd.x);                // absolute poition is point plus vector not vector plus vector
+                     // seg.setEndPointPositionY(vecToSegEnd.y + vecToOldEnd.y);
+                     // seg.setEndPointPositionZ(vecToSegEnd.z + vecToOldEnd.z);
+                        seg.setEndPointPositionX(vecToSegEnd.x + newEndPoint.x);                // add vector to new endpoint of parent segment.
+                        seg.setEndPointPositionY(vecToSegEnd.y + newEndPoint.y);
+                        seg.setEndPointPositionZ(vecToSegEnd.z + newEndPoint.z);
                         
-                        seg.setEndPointPositionX(vecToSegEnd.x + vecToOldEnd.x);
-                        seg.setEndPointPositionY(vecToSegEnd.y + vecToOldEnd.y);
-                        seg.setEndPointPositionZ(vecToSegEnd.z + vecToOldEnd.z);
+                        logger.logComment("Child seg finally: "+seg, true);
                     }
-                    
+                     // should the apply extra translation be here - only first child segment needs the translation applied
                 }
                 
                 
                 
             }
             
-            if (jRadioButtonTransChildren.isSelected() || jRadioButtonRotTransChildren.isSelected())
+            if (jRadioButtonTransChildren.isSelected() || (applyExtraTranslation))
             {
                 Point3f translation = new Point3f(newEndPoint);
                 translation.sub(oldEndPoint);
@@ -925,6 +949,9 @@ public class SegmentSelector extends JFrame implements DocumentListener
                 Vector<Segment> allChildren = CellTopologyHelper.getAllChildSegsToBranchEnd(myCell, currentlyAddressedSegment);
                 for(Segment seg: allChildren)
                 {
+                    
+                        logger.logComment("Child seg to translate: "+seg);
+                        
                     if (seg.isFirstSectionSegment())
                     {
                         Section sec = seg.getSection();
@@ -935,6 +962,8 @@ public class SegmentSelector extends JFrame implements DocumentListener
                     seg.setEndPointPositionX(seg.getEndPointPositionX() + translation.x);
                     seg.setEndPointPositionY(seg.getEndPointPositionY() + translation.y);
                     seg.setEndPointPositionZ(seg.getEndPointPositionZ() + translation.z);
+                    
+                    logger.logComment("Child seg translated: "+seg);
                 }
             }
             

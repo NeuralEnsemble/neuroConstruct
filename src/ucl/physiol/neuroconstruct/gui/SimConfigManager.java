@@ -667,7 +667,7 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
             updatingGUI = false;
         }
     }
-
+    
 
     public void jButtonOK_actionPerformed(ActionEvent e)
     {
@@ -746,18 +746,42 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
     public void jButtonAdd_actionPerformed(ActionEvent e)
     {
         String newName = null;
+        Boolean NOT_SELECTED = true;
+        Boolean INST_SET = false;
         ArrayList currentNames = simConfigInfo.getAllSimConfigNames();
 
         String inst = "Please enter the name of the new Simulation configuration";
-        while(newName == null)
+     // while(newName == null)
+     // {
+     //     newName = JOptionPane.showInputDialog(this, inst, "NewSimConfig");
+     //     if (currentNames.contains(newName))
+     //     {
+     //         newName = null;
+     //         inst = "That simulation configuration name is already used.\n"+inst;
+     //     }
+     // }
+        while (NOT_SELECTED)
         {
             newName = JOptionPane.showInputDialog(this, inst, "NewSimConfig");
+            if (newName == null)
+            {
+                return;
+            }
             if (currentNames.contains(newName))
             {
                 newName = null;
-                inst = "That simulation configuration name is already used.\n"+inst;
+                if (!INST_SET)
+                {
+                    inst = "That simulation configuration name is already used.\n"+inst;
+                    INST_SET = true;
+                }
+            }    
+            else
+            {
+                NOT_SELECTED = false;
             }
         }
+
         inst = "Please enter the description of the Simulation configuration: "+ newName;
         String newDesc = JOptionPane.showInputDialog(this, inst, "");
         SimConfig newSimConfig = new SimConfig(newName, newDesc);
