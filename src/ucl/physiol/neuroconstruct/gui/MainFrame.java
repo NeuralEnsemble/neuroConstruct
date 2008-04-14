@@ -2962,6 +2962,23 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         
         jCheckBoxNeuronForceCorrInit.setSelected(true);
+        
+        
+        jCheckBoxNeuronForceCorrInit.addItemListener(new java.awt.event.ItemListener()
+        {
+            public void itemStateChanged(ItemEvent e)
+            {
+                flagModsToBeRegenerated(e);
+            }
+        });
+        
+        jCheckBoxNeuronGenAllMod.addItemListener(new java.awt.event.ItemListener()
+        {
+            public void itemStateChanged(ItemEvent e)
+            {
+                flagModsToBeRegenerated(e);
+            }
+        });
 
         jPanelNeuronRandomGen.add(jLabelNeuronRandomGenDesc, BorderLayout.WEST);
         //jPanelNeuronRandomGen.setPreferredSize(new Dimension(700,62));
@@ -5759,6 +5776,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     ProcessManager compileProcess = new ProcessManager(modFiles[0]);
 
                     logger.logComment("Trying to compile the files in dir: " + modFiles[0].getParentFile());
+                    
 
                     compileSuccess = compileProcess.compileFileWithNeuron(projManager.getCurrentProject().neuronSettings.isForceModFileRegeneration());
                 }
@@ -9404,6 +9422,26 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     }
 
+    void flagModsToBeRegenerated(ItemEvent e)
+    {
+        logger.logComment("jCheckBoxNeuronForceCorrInit or jCheckBoxNeuronGenAllMod changed, will need to re compile mods...");
+        
+        File modsDir = ProjectStructure.getNeuronCodeDir(projManager.getCurrentProject().getProjectMainDirectory());
+        File forceRegenerateFile = new File(modsDir, NeuronFileManager.FORCE_REGENERATE_MODS_FILENAME);
+        
+        try
+        {
+            FileWriter fw = new FileWriter(forceRegenerateFile);
+            fw.write("A file to flag to neuroConstruct that these mod files should be regenerated when a new simulation is generated.\n" +
+                "May be due to option being changed in GUI making these mods out of date.");
+            fw.close();
+        }
+        catch (IOException ex)
+        {
+            logger.logError("Exception creating file: "+forceRegenerateFile+"...");
+        }
+
+    }
 
     void jComboBoxSimConfig_itemStateChanged(ItemEvent e)
     {

@@ -1880,7 +1880,7 @@ public class CellTopologyHelper
 
         sb.append("  "+GeneralUtils.getEndLine(html));
         
-        boolean useFullSymbol = !(!html || projHtml);
+        boolean useFullSymbol = html || projHtml;
         
         String capSymb = useFullSymbol ? UnitConverter.specificCapacitanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol() :
         	UnitConverter.specificCapacitanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSafeSymbol();
@@ -1972,8 +1972,15 @@ public class CellTopologyHelper
                 	descCm = chanMech.getName() + " ("+ moreInfo+")";
             	}
             }
+            
+            String type = "Channel mechanism: ";
+            if (project!=null)
+            {
+                CellMechanism cm = project.cellMechanismInfo.getCellMechanism(chanMech.getName());
+                type = cm.getMechanismType();
+            }
 
-            sb.append("    Channel Mechanism: "+GeneralUtils.getTabbedString(descCm, "b", html)
+            sb.append("    "+type+": "+GeneralUtils.getTabbedString(descCm, "b", html)
                       +" is present on: "+grpInfo+GeneralUtils.getEndLine(html));
         }
         if (allChanMechs.size()>0) sb.append("  "+GeneralUtils.getEndLine(html));

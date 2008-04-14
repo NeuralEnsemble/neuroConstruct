@@ -164,7 +164,7 @@ public class CellMechanismInfo extends AbstractTableModel
         logger.logComment("reinitialiseCMLMechs...");
         for (int i = 0; i < getRowCount(); i++)
         {
-            CellMechanism nextCellMech = (CellMechanism) getCellMechanismAt(i);
+            CellMechanism nextCellMech = getCellMechanismAt(i);
             if (nextCellMech instanceof ChannelMLCellMechanism)
             {
                 ((ChannelMLCellMechanism)nextCellMech).initialise(project, false);
@@ -190,7 +190,7 @@ public class CellMechanismInfo extends AbstractTableModel
         Vector<String> allNames = new Vector<String>();
         for (int i = 0; i < getRowCount(); i++)
         {
-                CellMechanism nextCellMech = (CellMechanism)getCellMechanismAt(i);
+                CellMechanism nextCellMech = getCellMechanismAt(i);
                 logger.logComment("-------     Checking cell mechanism: " + nextCellMech);
                 if (nextCellMech.getMechanismType().equals(CellMechanism.CHANNEL_MECHANISM))
                     allNames.add(nextCellMech.getInstanceName());
@@ -204,7 +204,7 @@ public class CellMechanismInfo extends AbstractTableModel
         Vector<String> allNames = new Vector<String>();
         for (int i = 0; i < getRowCount(); i++)
         {
-                CellMechanism nextCellMech = (CellMechanism)getCellMechanismAt(i);
+                CellMechanism nextCellMech = getCellMechanismAt(i);
                 logger.logComment("-------     Checking cell mechanism: " + nextCellMech);
                 if (nextCellMech.getMechanismType().equals(CellMechanism.CHANNEL_MECHANISM) ||
                     nextCellMech.getMechanismType().equals(CellMechanism.ION_CONCENTRATION))
@@ -219,7 +219,7 @@ public class CellMechanismInfo extends AbstractTableModel
         Vector<String> allNames = new Vector<String>();
         for (int i = 0; i < getRowCount(); i++)
         {
-                CellMechanism nextCellMech = (CellMechanism)getCellMechanismAt(i);
+                CellMechanism nextCellMech = getCellMechanismAt(i);
                 
                 if (nextCellMech.getMechanismType().equals(CellMechanism.POINT_PROCESS))
                     allNames.add(nextCellMech.getInstanceName());
@@ -234,7 +234,7 @@ public class CellMechanismInfo extends AbstractTableModel
         Vector<String> allNames = new Vector<String>();
         for (int i = 0; i < getRowCount(); i++)
         {
-            CellMechanism nextCellMech = (CellMechanism) getCellMechanismAt(i);
+            CellMechanism nextCellMech = getCellMechanismAt(i);
             logger.logComment("-------     Checking cell mechanism: " + nextCellMech);
             if (nextCellMech.getMechanismType().equals(CellMechanism.SYNAPTIC_MECHANISM))
                 allNames.add(nextCellMech.getInstanceName());
@@ -248,7 +248,7 @@ public class CellMechanismInfo extends AbstractTableModel
         Vector<String> allNames = new Vector<String>();
         for (int i = 0; i < getRowCount(); i++)
         {
-            CellMechanism nextCellMech = (CellMechanism) getCellMechanismAt(i);
+            CellMechanism nextCellMech = getCellMechanismAt(i);
             logger.logComment("-------     Checking cell mechanism: " + nextCellMech);
             if (nextCellMech.getMechanismType().equals(CellMechanism.SYNAPTIC_MECHANISM) ||
                 nextCellMech.getMechanismType().equals(CellMechanism.GAP_JUNCTION))
@@ -262,7 +262,7 @@ public class CellMechanismInfo extends AbstractTableModel
         Vector<String> allNames = new Vector<String>();
         for (int i = 0; i < getRowCount(); i++)
         {
-            CellMechanism nextCellMech = (CellMechanism) getCellMechanismAt(i);
+            CellMechanism nextCellMech = getCellMechanismAt(i);
             logger.logComment("-------     Checking cell mechanism: " + nextCellMech);
             if (nextCellMech.getMechanismType().equals(CellMechanism.GAP_JUNCTION))
                 allNames.add(nextCellMech.getInstanceName());
@@ -274,7 +274,7 @@ public class CellMechanismInfo extends AbstractTableModel
 
     public CellMechanism getCellMechanismAt(int index)
     {
-        return (CellMechanism)allCellMechanisms.elementAt(index);
+        return allCellMechanisms.elementAt(index);
     }
 
 
@@ -282,7 +282,7 @@ public class CellMechanismInfo extends AbstractTableModel
     {
         for (int i = 0; i < getRowCount(); i++)
         {
-            CellMechanism nextCellMech = (CellMechanism)getCellMechanismAt(i);
+            CellMechanism nextCellMech = getCellMechanismAt(i);
             if (nextCellMech.getInstanceName().equals(instanceName))
                 return nextCellMech;
         }
@@ -295,7 +295,7 @@ public class CellMechanismInfo extends AbstractTableModel
     {
         for (int i = 0; i < allCellMechanisms.size(); i++)
         {
-            CellMechanism nextCellMech = (CellMechanism)allCellMechanisms.elementAt(i);
+            CellMechanism nextCellMech = allCellMechanisms.elementAt(i);
 
             if (nextCellMech!=null &&
             cellMechUpdated.getInstanceName()!=null &&
