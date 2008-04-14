@@ -4,7 +4,7 @@
  * morphologies of cells loaded into NEURON
  *
  * Some of these functions provide GENESIS like output, for comparing models in each simulator
- * Some need a little more tweaking
+ * Some functions need a little more tweaking
  *
  */
 
