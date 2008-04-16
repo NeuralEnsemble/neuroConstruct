@@ -72,7 +72,7 @@
             <export>
                 <type>folder</type>
                 <location>${project.dir}/classes</location>
-                <script>${ant.script}</script>
+                <script>nbproject/nbjdk.xml</script>
                 <build-target>compile</build-target>
             </export>
             <view>
