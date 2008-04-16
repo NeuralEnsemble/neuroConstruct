@@ -890,39 +890,39 @@ public class GenesisFileManager
                     if (!includedChanMechNames.contains(nextChanMech.getName()) &&
                         project.generatedCellPositions.getNumberInCellGroup(cellGroupName) > 0)
                     {
-                        CellMechanism cellProcess = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
+                        CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
 
-                        if (cellProcess == null)
+                        if (cellMech == null)
                         {
-                            throw new GenesisException("Problem including cell process: " + nextChanMech);
+                            throw new GenesisException("Problem including cell mech: " + nextChanMech);
 
                         }
 
-                        if ( (cellProcess.getMechanismType().equals(DistMembraneMechanism.CHANNEL_MECHANISM) ||
-                              cellProcess.getMechanismType().equals(DistMembraneMechanism.ION_CONCENTRATION)) &&
-                            ! (cellProcess instanceof PassiveMembraneMechanism))
+                        if ( (cellMech.getMechanismType().equals(DistMembraneMechanism.CHANNEL_MECHANISM) ||
+                              cellMech.getMechanismType().equals(DistMembraneMechanism.ION_CONCENTRATION)) &&
+                            ! (cellMech instanceof PassiveMembraneMechanism))
                         {
-                            File newProcessFile = new File(ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory()),
-                                                           cellProcess.getInstanceName() + ".g");
+                            File newMechFile = new File(ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory()),
+                                                           cellMech.getInstanceName() + ".g");
 
                             boolean success = false;
 
-                            if (cellProcess instanceof AbstractedCellMechanism)
+                            if (cellMech instanceof AbstractedCellMechanism)
                             {
-                                success = ( (AbstractedCellMechanism) cellProcess).createImplementationFile(SimEnvHelper.GENESIS,
+                                success = ( (AbstractedCellMechanism) cellMech).createImplementationFile(SimEnvHelper.GENESIS,
                                     project.genesisSettings.getUnitSystemToUse(),
-                                    newProcessFile,
+                                    newMechFile,
                                     project,
                                     false,
                                     addComments,
                                     false);
                             }
-                            else if (cellProcess instanceof ChannelMLCellMechanism)
+                            else if (cellMech instanceof ChannelMLCellMechanism)
                             {
-                                success = ( (ChannelMLCellMechanism) cellProcess).createImplementationFile(SimEnvHelper.
+                                success = ( (ChannelMLCellMechanism) cellMech).createImplementationFile(SimEnvHelper.
                                     GENESIS,
                                     project.genesisSettings.getUnitSystemToUse(),
-                                    newProcessFile,
+                                    newMechFile,
                                     project,
                                     false,
                                     addComments,
@@ -931,15 +931,15 @@ public class GenesisFileManager
 
                             if (!success)
                             {
-                                throw new GenesisException("Problem generating file for cell process: "
+                                throw new GenesisException("Problem generating file for cell mech: "
                                                            + nextChanMech
                                                            +
-                                                           "\nPlease ensure there is an implementation for that process in GENESIS");
+                                                           "\nPlease ensure there is an implementation for that mechanism in GENESIS");
 
                             }
 
-                            response.append("include " + getFriendlyDirName(dir) + cellProcess.getInstanceName() + "\n");
-                            response.append("make_" + cellProcess.getInstanceName() + "\n\n");
+                            response.append("include " + getFriendlyDirName(dir) + cellMech.getInstanceName() + "\n");
+                            response.append("make_" + cellMech.getInstanceName() + "\n\n");
 
                             includedChanMechNames.add(nextChanMech.getName());
                         }
@@ -1041,7 +1041,7 @@ public class GenesisFileManager
                     if (cellMech==null)
                     {
                         throw new GenesisException("Problem including cell mech: " + nextSynMechName  +
-                                                   "\nPlease ensure there is an implementation for that process in GENESIS");
+                                                   "\nPlease ensure there is an implementation for that cell mechanism in GENESIS");
 
                     }
 
@@ -1224,16 +1224,11 @@ public class GenesisFileManager
 
 
 
-        StringBuffer desc = new StringBuffer();
-        if (project.getProjectDescription() != null) desc.append(project.getProjectDescription());
-        for (int i = 0; i < desc.length(); i++)
-        {
-            if (desc.charAt(i) == '\n')
-            {
-                desc.replace(i, i + 1, " ");
-            }
-        }
-        response.append("echo \"    Description: " + desc.toString() + "\"\n");
+        String desc = project.getProjectDescription();
+        String pre = "echo \"    ";
+        desc = GeneralUtils.replaceAllTokens(desc, "\n", "\"\n"+pre);
+        
+        response.append(pre+"Description: " + desc + "\"\n");
 
         response.append("echo \" \"\n");
         response.append("echo  \"*****************************************************\"\n\n\n");
@@ -2096,14 +2091,16 @@ public class GenesisFileManager
         if (!addComments) return;
 
         if (!responseBuffer.toString().endsWith("\n")) responseBuffer.append("\n");
-        responseBuffer.append("//   " + comment + "\n");
+        String pre = "//   ";
+        String safeComment = GeneralUtils.replaceAllTokens(comment, "\n", "\n"+pre);
+        responseBuffer.append(pre + safeComment + "\n");
         responseBuffer.append("\n");
     }
 
     /**
      * Adds a line commented out by //, but with no empty line after the comment
      */
-    public static void addQuickGenesisComment(StringBuffer responseBuffer, String comment)
+    public static void addQuickComment(StringBuffer responseBuffer, String comment)
     {
         logger.logComment("Adding GENESIS comment: "+ comment);
         if (!addComments) return;
@@ -2121,7 +2118,9 @@ public class GenesisFileManager
 
         if (!responseBuffer.toString().endsWith("\n")) responseBuffer.append("\n");
         responseBuffer.append("//////////////////////////////////////////////////////////////////////\n");
-        responseBuffer.append("//   " + comment + "\n");
+        String pre = "//   ";
+        String safeComment = GeneralUtils.replaceAllTokens(comment, "\n", "\n"+pre);
+        responseBuffer.append(pre + safeComment + "\n");
         responseBuffer.append("//////////////////////////////////////////////////////////////////////\n");
         responseBuffer.append("\n");
     }
@@ -2277,6 +2276,89 @@ public class GenesisFileManager
                                     + " "
                                     + newElementName
                                     + "\n");
+                    
+                    if (CellTopologyHelper.hasExtraCellMechParams(mappedCell))
+                    {
+                        GenesisFileManager.addComment(response, "Some of the channel mechanisms in this cell have some of their internal\n" +
+                                "parameters changed after initialisation. This is not possible to specify\n" +
+                                "in the *.p file, so changing the params here.");
+                        
+                        response.append("str tempChanName\n\n");
+                        
+                        ArrayList<ChannelMechanism> passChans =  CellTopologyHelper.getPassiveChannels(mappedCell, project);
+                        
+                        Hashtable<ChannelMechanism, Vector<String>> chanMechVsGroups = mappedCell.getChanMechsVsGroups();
+                        
+                        Enumeration<ChannelMechanism> keys =  chanMechVsGroups.keys();
+                        while(keys.hasMoreElements())
+                        {
+                            ChannelMechanism cm = keys.nextElement();
+                            CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(cm.getName());
+                            
+                            for(String group: chanMechVsGroups.get(cm))
+                            {
+                                ArrayList<Segment> segs = mappedCell.getSegmentsInGroup(group);
+                                
+                                for(MechParameter mp: cm.getExtraParameters())
+                                {
+                                    GenesisFileManager.addQuickComment(response, "Mechanism "+cm.getName()+" has parameter "+mp.getName()+" = "+mp.getValue()+" on group: "+group);
+                                    
+                                    if (group.equals(Section.ALL))
+                                    {
+                                        String chanElement = newElementName+"/#/"+cm.getName();
+                                        String paramName = mp.getName();
+                                        double paramVal = mp.getValue();
+                                        String initCmd = "    init_"+cm.getName()+" {tempChanName}\n";
+                                        
+                                        if (cm.getName().equals(passChans.get(0).getName()) && mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT))
+                                        {
+                                            GenesisFileManager.addQuickComment(response, "That is the passive channel reversal potential");
+                                            chanElement = newElementName+"/#";
+                                            paramName = "Em";
+                                            paramVal = UnitConverter.getVoltage(mp.getValue(),
+                                                                UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                project.genesisSettings.getUnitSystemToUse());
+                                            initCmd="";
+                                        }
+                                        response.append("foreach tempChanName ({el "+chanElement+"})\n");
+                                        response.append("    setfield {tempChanName} "+paramName+" "+paramVal+"\n");
+                                        response.append(initCmd);
+                                        response.append("end\n");
+                                        
+                                    }
+                                    else
+                                    {
+                                        for(Segment seg: segs)
+                                        {
+                                            String chanElement = newElementName+"/"+SimEnvHelper.getSimulatorFriendlyName(seg.getSegmentName())+"/"+cm.getName();
+                                            String paramName = mp.getName();
+                                            double paramVal = mp.getValue();
+                                            String initCmd = "init_"+cm.getName()+" \""+chanElement+"\"\n";
+                                            
+                                            if (cm.getName().equals(passChans.get(0).getName()) && mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT))
+                                            {
+                                                GenesisFileManager.addQuickComment(response, "That is the passive channel reversal potential");
+                                                chanElement = newElementName+"/"+SimEnvHelper.getSimulatorFriendlyName(seg.getSegmentName());
+                                                paramName = "Em";
+                                                paramVal = UnitConverter.getVoltage(mp.getValue(),
+                                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                    project.genesisSettings.getUnitSystemToUse());
+                                                initCmd="";
+                                            }
+                                            
+                                            response.append("setfield "+chanElement+" "+paramName+" "+paramVal+"\n");
+                                            response.append(initCmd);
+                                        }
+                                    }
+                                   
+                                        
+                                }
+                                
+                            }
+                        }
+                        response.append("\n");
+                    }
+                                    
                 }
                 else
                 {
@@ -2433,7 +2515,7 @@ public class GenesisFileManager
                     }
                     catch(ChannelMLException ex)
                     {
-                        logger.logError( "Problem extracting ion info from Cell Process: "+ cmlp+", file: "+cmlp.getChannelMLFile(), ex);
+                        logger.logError( "Problem extracting ion info from Cell Mechanism: "+ cmlp+", file: "+cmlp.getChannelMLFile(), ex);
 
                     }
                 }
@@ -2474,21 +2556,24 @@ public class GenesisFileManager
                 String concVariable = "C"; // futureproofing. I beleve this is used in concenpool as Ca is used in Ca_concen
                 if (ion.equals("ca")) concVariable = "Ca";
 
-                for (int concIndex = 0; concIndex < cellProcsConcs.size(); concIndex++)
+                if (cellProcsConcs!=null)
                 {
-                    String ionConcCellProc = cellProcsConcs.get(concIndex);
-                    response.append("    if ({exists  {tempCompName}/" + ionConcCellProc + "})\n");
-
-                    for (int rateDepIndex = 0; rateDepIndex < cellProcsAffected.size(); rateDepIndex++)
+                    for (int concIndex = 0; concIndex < cellProcsConcs.size(); concIndex++)
                     {
-                        response.append("        if ({exists  {tempCompName}/" + cellProcsAffected.get(rateDepIndex) + "})\n");
-                        response.append("            addmsg {tempCompName}/" + ionConcCellProc + " {tempCompName}/" +
-                                        cellProcsAffected.get(rateDepIndex) + " CONCEN " + concVariable + "\n");
-                        response.append("        end\n");
+                        String ionConcCellProc = cellProcsConcs.get(concIndex);
+                        response.append("    if ({exists  {tempCompName}/" + ionConcCellProc + "})\n");
 
+                        for (int rateDepIndex = 0; rateDepIndex < cellProcsAffected.size(); rateDepIndex++)
+                        {
+                            response.append("        if ({exists  {tempCompName}/" + cellProcsAffected.get(rateDepIndex) + "})\n");
+                            response.append("            addmsg {tempCompName}/" + ionConcCellProc + " {tempCompName}/" +
+                                            cellProcsAffected.get(rateDepIndex) + " CONCEN " + concVariable + "\n");
+                            response.append("        end\n");
+
+                        }
+
+                        response.append("    end\n");
                     }
-
-                    response.append("    end\n");
                 }
 
                 response.append("end\n\n");
@@ -2506,7 +2591,7 @@ public class GenesisFileManager
 
                 ArrayList<String> cellProcsConcs = ionConcentration.get(ion);
 
-                logger.logComment("Ion "+ion+" has conc cell processes: "+cellProcsConcs);
+                logger.logComment("Ion "+ion+" has conc cell mechs: "+cellProcsConcs);
 
                 if (cellProcsConcs!=null)
                 {
@@ -2516,7 +2601,7 @@ public class GenesisFileManager
                         nameDefined = true;
                     }
                     addComment(response, "Ion "+ion+" is transmitted by "+ cellProcsTransmittingIon
-                                    +" affecting conc cell processes: "+cellProcsConcs);
+                                    +" affecting conc cell mechs: "+cellProcsConcs);
 
 
                     response.append("foreach tempCompName ({el "+getCellGroupElementName(cellGroupName)+"/#/#})\n");

@@ -432,6 +432,21 @@ public class CellTopologyHelper
        }
        return true;
     }
+    
+    
+    /*
+     * Tests to see if any of the cell mechanisms in this cell have extra params, e.g.
+     * cell mech specification on cell changes internal channelml parameters
+     */
+    public static boolean hasExtraCellMechParams(Cell cell)
+    {
+        ArrayList<ChannelMechanism> chanMechs = cell.getAllChannelMechanisms(true);
+        for(ChannelMechanism cm: chanMechs)
+        {
+            if (cm.getExtraParameters().size()>0) return true;
+        }
+        return false;
+    }
         
         
 

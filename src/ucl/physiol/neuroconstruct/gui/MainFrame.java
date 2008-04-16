@@ -3658,7 +3658,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             String instance = part.substring( part.indexOf("=")+1);
 
 
-            logger.logComment("Going to: "+ instance+", which is a "+ type, true);
+            logger.logComment("Going to: "+ instance+", which is a "+ type);
 
             if (type.equals(ClickProjectHelper.CELL_GROUP))
             {
@@ -4774,35 +4774,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         String regionName = null;
         Region newRegion = null;
 
-/*float thickness;
-        if (jTextFieldWidth.getText().equals(""))
-        {
-            jTextFieldWidth.setText(GeneralProperties.getDefaultRegionWidth() + "");
-        }
 
-        if (jTextFieldDepth.getText().equals(""))
-        {
-            jTextFieldDepth.setText(GeneralProperties.getDefaultRegionDepth() + "");
-        }
-
-        try
-        {
-            this.projManager.getCurrentProject().regionsInfo.setRegionWidth(Float.parseFloat(this.jTextFieldWidth.
-                getText()));
-            this.projManager.getCurrentProject().regionsInfo.setRegionDepth(Float.parseFloat(this.jTextFieldDepth.
-                getText()));
-        }
-        catch (NumberFormatException ex)
-        {
-            GuiUtils.showErrorMessage(logger,
-                                      "Please enter valid numbers into the width and depth fields",
-                                      ex, this);
-            return;
-        }
-*/
         int currentNumberRegions = projManager.getCurrentProject().regionsInfo.getRowCount();
 
-        RectangularBox rect = projManager.getCurrentProject().regionsInfo.getRegionEnclosingAllRegions();
+        RectangularBox rect = projManager.getCurrentProject().regionsInfo.getRegionEnclosingAllRegions(null, null);
 
         if (rect.getLowestXValue() == rect.getHighestXValue())
         {
@@ -5596,12 +5571,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         if (sourceOfCellPosnsInMemory == GENERATED_POSITIONS || sourceOfCellPosnsInMemory == NETWORKML_POSITIONS )
         {
+            SimConfig simConfig = getSelectedSimConfig();
             // viewing the generated positions
-            base3DPanel = new Main3DPanel(this.projManager.getCurrentProject(), null);
+            base3DPanel = new Main3DPanel(this.projManager.getCurrentProject(), null, simConfig);
         }
         else if (sourceOfCellPosnsInMemory == RELOADED_POSITIONS)
         {
-            base3DPanel = new Main3DPanel(this.projManager.getCurrentProject(), simData.getSimulationDirectory());
+            base3DPanel = new Main3DPanel(this.projManager.getCurrentProject(), simData.getSimulationDirectory(), null);
         }
         panel.add("Center", base3DPanel);
         jPanel3DMain.add("Center", panel);

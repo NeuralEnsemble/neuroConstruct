@@ -766,7 +766,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                     
                     displayedCell.addParameterisedGroup(pg3);
                     
-                    logger.logComment("Param grpos:"+ displayedCell.getParameterisedGroups(), true);
+                    logger.logComment("Param grpos:"+ displayedCell.getParameterisedGroups());
                     
                     
                     highlightParamGroups(compCause);

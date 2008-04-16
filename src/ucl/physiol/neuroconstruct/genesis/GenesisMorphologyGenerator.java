@@ -96,6 +96,8 @@ public class GenesisMorphologyGenerator
 
             fw.write("\n");
             fw.write(GenesisFileManager.getGenesisFileHeader());
+            
+            fw.write(checkExtraParams());
 
             fw.write(this.getCommonHeader());
             fw.write(this.getMainMorphology());
@@ -121,14 +123,27 @@ public class GenesisMorphologyGenerator
         return morphFile.getAbsolutePath();
     }
 
+    private String checkExtraParams()
+    {
+        logger.logComment("calling checkExtraParams");
+        StringBuffer response = new StringBuffer();
+        if (CellTopologyHelper.hasExtraCellMechParams(cell))
+        {
+            GenesisFileManager.addMajorComment(response, "          ****  NOTE  ****\n" +
+                    "Some of the channel mechanisms in this cell have some of their internal\n" +
+                    "parameters changed after initialisation. This is not possible to specify\n" +
+                    "in a *.p file, and so this file should not be used on its own for this cell,\n" +
+                    "but in conjunction with the parameter changes in the main file after the readcell command.");
+        }
+  
+        return response.toString();
+    }      
 
-
-
+    
     private String getCommonHeader()
     {
-        logger.logComment("calling getCommonHeader");
-        StringBuffer response = new StringBuffer();
 
+        StringBuffer response = new StringBuffer();
         response.append("*absolute\n");
         response.append("*cartesian\n");
 

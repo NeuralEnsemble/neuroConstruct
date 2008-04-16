@@ -1463,7 +1463,7 @@ public class SimulationRerunFrame extends JFrame
         }
 
         File simFile = new File(pf.getParentFile(),"simulations/Sim_1" );
-        Main3DPanel m = new Main3DPanel(p, simFile);
+        Main3DPanel m = new Main3DPanel(p, simFile, null);
 
         SimulationRerunFrame simRerun = new SimulationRerunFrame(p, simFile, m);
         simRerun.pack();

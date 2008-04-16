@@ -645,7 +645,7 @@ public class ChannelMLCellMechanism extends CellMechanism
                         }
                         else if (targetEnv.equals(SimEnvHelper.NEURON))
                         {
-                            logger.logComment("   -----   xslFile: "+xslFile.getAbsolutePath(), true);
+                            logger.logComment("   -----   xslFile: "+xslFile.getAbsolutePath());
 
                             SimpleXMLDocument xslDoc = SimpleXMLReader.getSimpleXMLDoc(xslFile);
 
@@ -655,24 +655,24 @@ public class ChannelMLCellMechanism extends CellMechanism
 
                             for (int j = 0; j < variables.length; j++)
                             {
-                                logger.logComment("Checking variable: ("+ variables[j].getXMLString("", false)+")", true);
+                                logger.logComment("Checking variable: ("+ variables[j].getXMLString("", false)+")");
 
                                 if (variables[j] instanceof SimpleXMLElement)
                                 {
                                     SimpleXMLElement var = (SimpleXMLElement) variables[j];
                                     
-                                    logger.logComment("Name of variable: "+ var.getAttributeValue(ChannelMLConstants.VARIABLE_NAME_ATTR), true);
+                                    logger.logComment("Name of variable: "+ var.getAttributeValue(ChannelMLConstants.VARIABLE_NAME_ATTR));
                                     
                                     
                                     if (var.getAttributeValue(ChannelMLConstants.VARIABLE_NAME_ATTR).equals(ChannelMLConstants.FORCE_INIT_ATTR_VAL))
                                     {
 
-                                        logger.logComment("..Found the element: ("+ var+") in xslFile: "+xslFile.getAbsolutePath(), true);
+                                        logger.logComment("..Found the element: ("+ var+") in xslFile: "+xslFile.getAbsolutePath());
                                         
                                         
                                         for (int l = 0; l < var.getContents().size(); l++)
                                         {
-                                            logger.logComment("Checking content "+l+": ("+var.getContents().get(l)+")", true);
+                                            logger.logComment("Checking content "+l+": ("+var.getContents().get(l)+")");
 
                                             if (var.getContents().get(l) instanceof SimpleXMLContent)
                                             {
@@ -687,7 +687,7 @@ public class ChannelMLCellMechanism extends CellMechanism
                                     }
                                 }
                                 
-                                logger.logComment("NOW variable: ("+ xslDoc.getXMLEntities(ChannelMLConstants.FORCE_INIT_ELEMENT)[j].getXMLString("", false)+")", true);
+                                logger.logComment("NOW variable: ("+ xslDoc.getXMLEntities(ChannelMLConstants.FORCE_INIT_ELEMENT)[j].getXMLString("", false)+")");
                             }
                             
                             transformed = XMLUtils.transform(cmlFile, xslDoc.getXMLString("", false));

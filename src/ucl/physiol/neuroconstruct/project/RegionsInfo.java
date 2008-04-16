@@ -208,10 +208,38 @@ public class RegionsInfo extends AbstractTableModel
 
 
 
-    public RectangularBox getRegionEnclosingAllRegions()
+    public RectangularBox getRegionEnclosingAllRegions(Project project, SimConfig simConfig)
     {
         if (vectorRegionObjects.size()==0)
             return new RectangularBox(0,0,0,0,0,0);
+        
+        Vector<Region> regions = new Vector<Region>();
+        
+        if (project==null && simConfig==null)
+        {
+            regions = vectorRegionObjects;
+        }
+        else if (simConfig==null)
+        {
+            Iterator<String> cgs = project.generatedCellPositions.getNamesGeneratedCellGroups();
+            while (cgs.hasNext())
+            {
+                String cellGroup = cgs.next();
+                if (project.generatedCellPositions.getNumberInCellGroup(cellGroup)>0)
+                {
+                    Region nextRegion = getRegionObject(project.cellGroupsInfo.getRegionName(cellGroup));
+                    regions.add(nextRegion);
+                }
+            }
+        }
+        else
+        {
+            for (String cellGroup: simConfig.getCellGroups())
+            {
+                Region nextRegion = getRegionObject(project.cellGroupsInfo.getRegionName(cellGroup));
+                regions.add(nextRegion);
+            }
+        }
 
         float maxX = -1*Float.MAX_VALUE;
         float maxY = -1*Float.MAX_VALUE;
@@ -220,9 +248,10 @@ public class RegionsInfo extends AbstractTableModel
         float minY = Float.MAX_VALUE;
         float minZ = Float.MAX_VALUE;
 
-        for (int i = 0; i < vectorRegionObjects.size(); i++)
+        for (int i = 0; i < regions.size(); i++)
         {
-             Region nextRegion =   (Region)vectorRegionObjects.elementAt(i);
+             Region nextRegion =   regions.get(i);
+             
              if(nextRegion.getLowestXValue()<minX) minX = nextRegion.getLowestXValue();
              if(nextRegion.getLowestYValue()<minY) minY = nextRegion.getLowestYValue();
              if(nextRegion.getLowestZValue()<minZ) minZ = nextRegion.getLowestZValue();

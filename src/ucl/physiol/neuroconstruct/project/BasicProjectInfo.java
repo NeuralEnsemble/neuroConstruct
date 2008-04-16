@@ -31,6 +31,7 @@ public class BasicProjectInfo
 
     public String getProjectDescription()
     {
+        if (projectDescription==null) return "";
         return projectDescription;
     }
 

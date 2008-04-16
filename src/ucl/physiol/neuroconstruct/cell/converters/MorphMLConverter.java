@@ -641,18 +641,41 @@ public class MorphMLConverter extends FormatImporter
                                                                     BiophysicsConstants.MECHANISM_TYPE_CHAN_MECH));
                     
 
+                    ArrayList<SimpleXMLElement> allParamGrps = new ArrayList<SimpleXMLElement>();                                         
 
-                    SimpleXMLElement paramElement = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
+                    SimpleXMLElement gmaxParamElement = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
-                    paramElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
+                    gmaxParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
                                                                      BiophysicsConstants.PARAMETER_GMAX));
 
-                    paramElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
+                    gmaxParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
                                                                      UnitConverter.getConductanceDensity(chanMech.getDensity(),
                         UnitConverter.NEUROCONSTRUCT_UNITS,
                         UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + ""));
 
-                    mechElement.addChildElement(paramElement);
+                    //mechElement.addChildElement(paramElement);
+                    allParamGrps.add(gmaxParamElement);
+                    
+                    ArrayList<MechParameter> mps = chanMech.getExtraParameters();
+                    
+                    for(MechParameter mp: mps)
+                    {                            
+
+                        SimpleXMLElement pe = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
+
+                        pe.addComment(new SimpleXMLComment("Note: Units of extra parameters are not known!!"));
+                        
+                        pe.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
+                                                                         mp.getName()));
+
+                        pe.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
+                                                                         mp.getValue()+""));
+                        
+                        
+                        allParamGrps.add(pe);
+
+                    }
+                        
                     
                     
                     CellMechanism cm = project.cellMechanismInfo.getCellMechanism(chanMech.getName());
@@ -686,6 +709,26 @@ public class MorphMLConverter extends FormatImporter
                             logger.logComment("Trying to get: "+ cmlCm.getXMLDoc().getXPathLocations(true), true);
                             
                             float revPot = Float.parseFloat(val);
+                            
+                            for(MechParameter mp:chanMech.getExtraParameters())
+                            {
+                                if (mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT))
+                                {
+                                    logger.logComment("The reversal potential has ben set as one of the extra params");
+                                    
+                                    revPot=mp.getValue(); 
+                                    // remove from param list, as units dealt with here
+                                    SimpleXMLElement toRemove = null;
+                                    for(SimpleXMLElement paramElement: allParamGrps)
+                                    {
+                                        if (paramElement.getAttributeValue(BiophysicsConstants.PARAMETER_NAME_ATTR).equals(BiophysicsConstants.PARAMETER_REV_POT))
+                                        {
+                                            toRemove = paramElement;
+                                        }       
+                                    }
+                                    if (toRemove!=null) allParamGrps.remove(toRemove);
+                                }
+                            }
 
                             revPotParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
                                                                              UnitConverter.getVoltage(revPot,
@@ -710,12 +753,17 @@ public class MorphMLConverter extends FormatImporter
 
                     Vector<String> groups = cell.getGroupsWithChanMech(chanMech);
 
-                    for (int k = 0; k < groups.size(); k++)
+                    for(SimpleXMLElement paramElement: allParamGrps)
                     {
-                        SimpleXMLElement groupElement = new SimpleXMLElement(prefix + BiophysicsConstants.GROUP_ELEMENT);
-                        paramElement.addChildElement(groupElement);
-                        groupElement.addContent(groups.get(k));
+                        mechElement.addChildElement(paramElement);
+                        
+                        for (int k = 0; k < groups.size(); k++)
+                        {
+                            SimpleXMLElement groupElement = new SimpleXMLElement(prefix + BiophysicsConstants.GROUP_ELEMENT);
+                            paramElement.addChildElement(groupElement);
+                            groupElement.addContent(groups.get(k));
 
+                        }
                     }
                 }
 

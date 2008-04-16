@@ -113,6 +113,8 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
 
     private Container containerFor3D = this;
+    
+    private SimConfig simConfig = null;
 
 
     JPanel jPanelControls = new JPanel();
@@ -142,10 +144,11 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
     JComboBox jComboBoxAnalyse = new JComboBox();
     JLabel jLabelAnalyse = new JLabel();
 
-    public Main3DPanel(Project project, File simulationDirectory)
+    public Main3DPanel(Project project, File simulationDirectory, SimConfig simConfig)
     {
         //logger.setThisClassVerbose(true);
         this.project = project;
+        this.simConfig = simConfig;
         setLayout(new BorderLayout());
         jbInit();
         extraInit();
@@ -300,7 +303,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         // Create the root of the branch graph
         BranchGroup objRoot = new BranchGroup();
         Transform3D t3d = new Transform3D();
-        RectangularBox allRegions = project.regionsInfo.getRegionEnclosingAllRegions();
+        RectangularBox allRegions = project.regionsInfo.getRegionEnclosingAllRegions(project, simConfig);
 
         if (project.proj3Dproperties.isCompartmentalisationDisplay())
         {
@@ -2147,7 +2150,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         logger.logComment("Finding best view of all regions and cells, looking down z axis. optimalScale: "+ optimalScale);
 
-        RectangularBox allRegions = project.regionsInfo.getRegionEnclosingAllRegions();
+        RectangularBox allRegions = project.regionsInfo.getRegionEnclosingAllRegions(project, simConfig);
 
                 //float scaleDueToSize = 0.4f / (allRegions.getHighestYValue() - allRegions.getLowestXValue());
 

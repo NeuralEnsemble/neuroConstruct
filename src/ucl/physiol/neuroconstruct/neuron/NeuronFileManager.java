@@ -356,7 +356,7 @@ public class NeuronFileManager
             }
             else
             {
-                logger.logComment("File doesn't exist: "+ utilsFile.getAbsolutePath(), true);
+                logger.logComment("File doesn't exist: "+ utilsFile.getAbsolutePath());
             }
             
             if (cellCheckFile.getAbsoluteFile().exists())
@@ -365,7 +365,7 @@ public class NeuronFileManager
             }
             else
             {
-                logger.logComment("File doesn't exist: "+ utilsFile.getAbsolutePath(), true);
+                logger.logComment("File doesn't exist: "+ utilsFile.getAbsolutePath());
             }
 
         }
@@ -2480,7 +2480,7 @@ public class NeuronFileManager
                     }
                 }
 
-                logger.logComment("------------    All cell mechs for "+cellGroupName+": " + cellMechanisms, true);
+                logger.logComment("------------    All cell mechs for "+cellGroupName+": " + cellMechanisms);
 
                 for (int i = 0; i < cellMechanisms.size(); i++)
                 {
@@ -2504,13 +2504,13 @@ public class NeuronFileManager
                         
                     }
 
-                    logger.logComment("Looking at cell mechanism: " + cellMechanism.getInstanceName(), true);
+                    logger.logComment("Looking at cell mechanism: " + cellMechanism.getInstanceName());
 
                     if (!testForInbuiltModFile(cellMechanism.getInstanceName(), dirForNeuronFiles))
                     {
                         if (!cellMechFilesGenAndIncl.contains(cellMechanism.getInstanceName()))
                         {
-                            logger.logComment("Cell mechanism: " + cellMechanism.getInstanceName()+" was not handled already", true);
+                            logger.logComment("Cell mechanism: " + cellMechanism.getInstanceName()+" was not handled already");
                             boolean success = true;
                             boolean regenerate = project.neuronSettings.isForceModFileRegeneration();
                             
@@ -2538,7 +2538,7 @@ public class NeuronFileManager
                                             {
                                                 foundTarget = true;
                                                 boolean sourceNewer = sourceFile.lastModified() > targetFile.lastModified();
-                                                logger.logComment("Is "+sourceFile+" newer than "+ targetFile+"? "+sourceNewer , true);
+                                                logger.logComment("Is "+sourceFile+" newer than "+ targetFile+"? "+sourceNewer );
                                                 if (sourceNewer) 
                                                     regenerate = true;
                                             }
@@ -2551,7 +2551,7 @@ public class NeuronFileManager
                             if (regenerate || !firstRecompileComplete)
                             {
                                 firstRecompileComplete = true;
-                                logger.logComment("Regenerating..." , true);
+                                logger.logComment("Regenerating..." );
                                 if (cellMechanism instanceof AbstractedCellMechanism)
                                 {
                                     File newMechFile = new File(dirForNeuronFiles,
@@ -2958,6 +2958,21 @@ public class NeuronFileManager
 
         addMajorHocComment(response, "Adding Network Connections");
         
+        if (simConfig.getMpiConf().isParallel())
+        {
+            response.append("objectvar allCurrentNetConns\n");
+            response.append("allCurrentNetConns = new List()\n\n");
+        }
+        
+        if (addComments && simConfig.getMpiConf().isParallel())
+        {
+            //response.append("for i=0, (20000000 *hostid)  { rr = i*i }\n"); 
+            response.append("print \" -----------------------   Starting generation of net conns on host: \", hostid\n\n"); 
+
+        }
+        
+        Hashtable<String, Integer> preSectionsVsGids = new Hashtable<String, Integer>();
+        
 
         //response.append("objectvar nil\n\n");
 
@@ -3058,6 +3073,11 @@ public class NeuronFileManager
                               + targetCellGroup+" with "+allSynapses.size()+" connections\neach with syn(s): "+synPropList);
 
             response.append("\n");
+            
+            if (simConfig.getMpiConf().isParallel())
+            {
+                //////////response.append("allCurrentNetConns.remove_all()   // Empty list \n");
+            }
 
 
             GeneralUtils.timeCheck("Have all info for net conn: "+ netConnName);
@@ -3274,12 +3294,12 @@ public class NeuronFileManager
                         }
                         else
                         {
-                            if (!sourceSegment.getSection().isSomaSection())
+                            /*if (!sourceSegment.getSection().isSomaSection())
                             {
-                                response.append("print \"WARNING: source of synapse is not soma, not supported yet!! Assuming connection to soma!!\"\n");
-                            }
+                                response.append("print \"                                          WARNING: source of synapse is not soma, not supported yet!! Assuming connection to soma!!\"\n");
+                            }*/
                             response.append("localSynapseId = -2\n");
-                            response.append("globalPreSynId = "+globalPreSynId+"\n");
+                            response.append("globalPreSynId = "+globalPreSynId+" // provisional gid for NetCon\n");
 
                             String netConRef = "NetCon_"+globalPreSynId;
 
@@ -3290,9 +3310,15 @@ public class NeuronFileManager
                             String targetExists = "isCellOnNode(\""+ targetCellGroup + "\", "+ synConn.targetEndPoint.cellNumber + ")";
                             String sourceExists = "isCellOnNode(\""+ sourceCellGroup + "\", " + synConn.sourceEndPoint.cellNumber + ")";
 
+                            
+                            
+                                    // Post synaptic setup
+                            
+                            
                             if (addComments) response.append("print \"> Doing post syn setup for "+netConRef+", "+srcCellName+" -> "+tgtCellName+"\"\n\n");
 
                             response.append("if ("+targetExists+") {\n");
+                            if (addComments) response.append("    print \"Target IS on host: \", hostid\n\n");
 
                             response.append("    "+tgtSecNameFull+" " + objectVarName
                                             + " = new " + synapseType + "(" + fractionAlongTargetSection + ")\n");
@@ -3305,52 +3331,105 @@ public class NeuronFileManager
                             if (addComments) response.append("    print \"Created: \", "+objectVarName+",\" on "+tgtCellName+" on host \", hostid\n\n");
 
                             response.append("} else {\n");
-                            if (addComments) response.append("    print \"Target not on host: \", hostid\n\n");
+                            if (addComments) response.append("    print \"Target NOT on host: \", hostid\n\n");
                             response.append("}\n");
 
                             if (addComments) response.append("print \"Doing pre syn setup for "+netConRef+"\"\n\n");
 
-                            response.append("if ("+sourceExists+") {\n"
+                            
+                            
+                            
+                                    // Pre synaptic setup
+                            
+                            
+                            response.append("if ("+sourceExists+") {\n");
+                            
+                            if (addComments) response.append("    print \"Source IS on host: \", hostid\n\n");
+                            
+                            int gidOfSource = globalPreSynId;
 
-                                            +"    //pnm.register_cell(globalPreSynId, a_"+sourceCellGroup+"["+synConn.sourceEndPoint.cellNumber+"])\n"
+                            if (!preSectionsVsGids.containsKey(srcSecNameFull))
+                            {
+                                
+                                if (addComments) response.append("    print \"No NetCon exists yet for section: "+srcSecNameFull+" on host \", hostid\n\n");
+                                //response.append("    //pnm.register_cell(globalPreSynId, a_"+sourceCellGroup+"["+synConn.sourceEndPoint.cellNumber+"])\n");
 
 
-                                            +"    pnm.pc.set_gid2node(globalPreSynId, hostid)\n"
-                                            +"    "+srcSecNameFull+" "+netConRef+" = new NetCon(&v(1), nil)\n"
+                                /*response.append("    alternateGid = -1\n");
 
-                                            +"    pnm.pc.cell(globalPreSynId, "+netConRef+")\n");
 
-                            if (addComments) response.append("    print \"Created: \", "+netConRef+",\" on "+srcSecNameFull+" on host \", hostid\n\n");
+                                response.append("   for c = 0,allCurrentNetConns.count()-1 {\n");
+                                response.append("       print \"Checking existing NetCon on \", c,\": \", allCurrentNetConns.o(c).precell(), \", gid: \",allCurrentNetConns.o(c).srcgid()   \n");
+                                response.append("       if (strcmp(allCurrentNetConns.o(c).precell().name, \""+srcCellName+"\")==0) {\n");
+                                response.append("           print \"Same source cell!!\"\n");
+                                response.append("           alternateGid = allCurrentNetConns.o(c).srcgid()\n");
+                                response.append("       } else {\n");
+                                response.append("           print \"Different source cell!!\"\n");
+                                response.append("       }\n");
+                                response.append("   }\n");*/
+
+                                ////////response.append("    if (alternateGid == -1) {\n");
+                                response.append("    pnm.pc.set_gid2node(globalPreSynId, hostid)\n");
+
+                                response.append("    "+srcSecNameFull+" "+netConRef+" = new NetCon(&v("+synConn.sourceEndPoint.location.getFractAlong()+"), nil)\n");
+
+                                response.append("    pnm.pc.cell(globalPreSynId, "+netConRef+")\n");
+
+                                response.append("    allCurrentNetConns.append("+netConRef+")\n");
+
+                                if (addComments) response.append("    print \"Created: \", "+netConRef+",\" on "+srcSecNameFull+" on host \", hostid\n\n");
+
+                                /////////response.append("   } else {\n");
+                                ////////response.append("       globalPreSynId  = alternateGid\n");
+                                ////////response.append("   }\n");
+
+                                preSectionsVsGids.put(srcSecNameFull, globalPreSynId);
+                            }
+                            else
+                            {
+                                gidOfSource = preSectionsVsGids.get(srcSecNameFull);
+                                if (addComments) response.append("    print \"NetCon for "+srcSecNameFull+" on host \", hostid, \" was already created with gid "
+                                        +gidOfSource+"\"\n\n");
+                            }
 
                             response.append("} else {\n");
-                            if (addComments) response.append("    print \"Source not on host: \", hostid\n\n");
+                            if (addComments) response.append("    print \"Source NOT on host: \", hostid\n\n");
                             response.append("}\n");
+                            
 
                             response.append("netConInfoParallel("+netConRef+")\n\n");
 
 
-                            response.append("//pnm.nc_append(globalPreSynId"
+                            /*response.append("//pnm.nc_append(globalPreSynId"
                                             +", getCellGlobalId(\""+targetCellGroup+"\", "+synConn.targetEndPoint.cellNumber + ")"
                                             +", localSynapseId, "+ weight + ", "
                                             + (synInternalDelay + apSegmentPropDelay + apSpaceDelay)+ ")"
-                                            + "\n\n");
+                                            + "\n\n");*/
+                            
+                            
+                            
+                            
+                                    // Connecting post to pre
+                            
 
                             if (addComments) response.append("print \"Doing pre to post attach for "+netConRef+"\"\n\n");
 
                             response.append("if ("+targetExists+") {\n");
+                            if (addComments) response.append("    print \"Target IS on host: \", hostid, \" using gid: \", globalPreSynId\n\n");
 
+                            response.append("    gidOfSource = "+gidOfSource+"\n\n");
 
-                            response.append("    "+ncTemp+" = pnm.pc.gid_connect(globalPreSynId, a_" + targetCellGroup
+                            response.append("    "+ncTemp+" = pnm.pc.gid_connect("+gidOfSource+", a_" + targetCellGroup
                                             + "[" + synConn.targetEndPoint.cellNumber + "]"
-                                            + ".synlist.object(localSynapseId))\n\n");
+                                            + ".synlist.object(localSynapseId))\n");
 
                             response.append("    "+ncTemp+".delay = "+(synInternalDelay + apSegmentPropDelay + apSpaceDelay)+"\n");
-                            response.append("    "+ncTemp+".weight = "+weight+"\n\n");
+                            response.append("    "+ncTemp+".weight = "+weight+"\n");
                             response.append("    "+ncTemp+".threshold = "+synProps.getThreshold()+"\n\n");
 
                             response.append("    netConInfoParallel("+ncTemp+")\n\n");
                             response.append("} else {\n");
-                            if (addComments) response.append("    print \"Target not on host: \", hostid\n\n");
+                            if (addComments) response.append("    print \"Target NOT on host: \", hostid\n\n");
                             response.append("}\n");
 
                             response.append("print \"< Done setup for "+netConRef+"\"\n\n");
@@ -3396,11 +3475,35 @@ public class NeuronFileManager
 
                 }
             }
+            
+            if (simConfig.getMpiConf().isParallel() && addComments)
+            {
+                response.append("print \"++++++++++++\"\n");
+                response.append("print \"Created netcons: \", allCurrentNetConns.count(), \" on host \", hostid\n");
+                response.append("for c = 0,allCurrentNetConns.count()-1 {\n");
+                response.append("   print \"Source of \", c,\": \", allCurrentNetConns.o(c).precell(), \", gid: \",allCurrentNetConns.o(c).srcgid()   \n");
+                response.append("}\n");
+                response.append("print \"++++++++++++\"\n");
+            }
         }
 
 
         //GeneralUtils.timeCheck("Finsihed gen of syn conns, totNetConns: "+totNetConns+", response len: "+response.length()+ ", ratio: "+ (float)response.length()/totNetConns);
         GeneralUtils.timeCheck("Finsihed gen of syn conns");
+        
+        
+        if (addComments && simConfig.getMpiConf().isParallel())
+        {
+            response.append("print \" -----------------------   Finished generation of net conns on host: \", hostid\n"); 
+           // response.append("waittime = pnm.pc.barrier()\n"); 
+           // response.append("print \"  Host: \", hostid, \" was waiting: \", waittime\n"); 
+            /*response.append("netConInfoParallel(NetCon_10000000)\n"); 
+            response.append("netConInfoParallel(NetCon_10000000_temp)\n"); 
+            response.append("netConInfoParallel(NetCon_10000001)\n"); 
+            response.append("netConInfoParallel(NetCon_10000001_temp)\n"); */
+            response.append("print \""+preSectionsVsGids+"\"\n"); 
+            response.append("print \"\"\n"); 
+        }
 
 
         logger.logComment("Finsihed generation of the net conns");
@@ -4109,7 +4212,7 @@ public class NeuronFileManager
                 simIndepVarName.indexOf(SimPlot.PLOTTED_VALUE_SEPARATOR) + 1);
 
             logger.logComment("--------------   Original: "+origIndepName+", so looking to plot " 
-                + variable +" on cell mechanism: " + mechanismName+", simIndepVarName: "+simIndepVarName, true);
+                + variable +" on cell mechanism: " + mechanismName+", simIndepVarName: "+simIndepVarName);
 
             if (variable.startsWith(SimPlot.COND_DENS))
             {
@@ -4128,7 +4231,7 @@ public class NeuronFileManager
                 neuronVar = simIndepVarName.substring(simIndepVarName.lastIndexOf(SimPlot.
                                                                          PLOTTED_VALUE_SEPARATOR)+1);
                 
-                logger.logComment("neuronVar: "+neuronVar, true);
+                logger.logComment("neuronVar: "+neuronVar);
             }
             else
             {
@@ -4736,14 +4839,15 @@ public class NeuronFileManager
 
             MainFrame frame = new MainFrame();
 
-            File pf = new File("/bernal/models/Parallel/Parallel.neuro.xml");
+           // File pf = new File("/bernal/models/Parallel/Parallel.neuro.xml");
+            File pf = new File("/home/padraig/nC_projects/Project_1ppp/Project_1ppp.neuro.xml");
 
             //File pf = new File("models/PVMExample/PVMExample.neuro.xml");
 
             frame.doLoadProject(pf.getAbsolutePath());
 
             System.out.println("doGenerate...");
-            frame.projManager.doGenerate("SmallNetwork", 1234);
+            frame.projManager.doGenerate("Default Simulation Configuration", 1234);
 
             System.out.println("Snoozing...");
 
@@ -4756,10 +4860,10 @@ public class NeuronFileManager
             System.out.println("done create");
 
 
-            System.exit(0);
-
             frame.projManager.getCurrentProject().neuronFileManager.runNeuronFile(
                 frame.projManager.getCurrentProject().neuronFileManager.getMainHocFile());
+
+            System.exit(0);
 
         }
         catch(Exception e)
