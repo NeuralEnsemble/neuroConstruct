@@ -108,7 +108,9 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
       
     elif name == 'location':
       if self.currentInstanceId != -1:
-        self.log.debug("Found location: ("+ attrs.get('x',"")+", "+ attrs.get('y',"")+", "+ attrs.get('z',""), ")")
+	 
+        #self.log.debug('Found location: ('+ str(attrs.get('x',''))+', '+ str(attrs.get('y',''))+', '+ str(attrs.get('z','')), ')')
+
         self.totalInstances+=1
         nodeInfo = ""
         if self.myNodeId >= 0:
@@ -123,7 +125,15 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
     
     elif name == 'projection':
       self.currentProjectionName = attrs.get('name',"")   
-      self.log.debug("Found projection element: "+ self.currentProjectionName)        
+      self.log.debug("Found projection element: "+ self.currentProjectionName)   
+
+      if attrs.has_key('source'):
+          self.currentProjectionSource = attrs.get('source',"") 
+
+
+      if attrs.has_key('target'):
+          self.currentProjectionTarget = attrs.get('target',"") 
+          self.log.debug("Projection: "+ self.currentProjectionName+" is from: "+ self.currentProjectionSource +" to: "+ self.currentProjectionTarget)           
       
       
     elif name == 'source':
@@ -140,6 +150,25 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
       if self.currentProjectionName != "":
         self.currentConnId = attrs.get('id',"")   
         self.log.debug("Found connection element: "+ self.currentConnId)  
+
+        if attrs.has_key('pre_cell_id'):
+            self.preCellId = attrs.get('pre_cell_id',"") 
+        if attrs.has_key('pre_segment_id'):
+            self.preSegId = attrs.get('pre_segment_id',"") 
+        if attrs.has_key('pre_fraction_along'):
+            self.preFract = attrs.get('pre_fraction_along',"")  
+        else:
+            self.preFract = 0.5
+
+
+        if attrs.has_key('post_cell_id'):
+            self.postCellId = attrs.get('post_cell_id',"") 
+        if attrs.has_key('post_segment_id'):
+            self.postSegId = attrs.get('post_segment_id',"") 
+        if attrs.has_key('post_fraction_along'):
+            self.postFract = attrs.get('post_fraction_along',"")  
+        else:
+            self.postFract = 0.5
         
         self.localSynapseProps.clear()
         synTypes = self.globalSynapseProps.keys()
@@ -173,8 +202,37 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
             self.postFract = attrs.get('fraction_along',"")  
         else:
             self.postFract = 0.5
-        self.log.debug("Found pre: "+ self.postCellId)          
+        self.log.debug("Found post: "+ self.postCellId)          
            
+	   
+          
+    elif name == 'synapse_props':
+      if self.currentProjectionName != "":  
+        newSynapseProps = SynapseProperties()
+	
+        if attrs.has_key('synapse_type'):
+            self.latestSynapseType = attrs.get('synapse_type')
+
+            self.log.debug("synapse_type is: "+self.latestSynapseType)
+
+            if attrs.has_key('internal_delay'):
+                newSynapseProps.internalDelay = attrs.get('internal_delay',"")    
+            if attrs.has_key('pre_delay'):
+                newSynapseProps.preDelay = attrs.get('pre_delay',"")    
+            if attrs.has_key('post_delay'):
+                newSynapseProps.postDelay = attrs.get('post_delay',"")    
+            if attrs.has_key('prop_delay'):
+                newSynapseProps.propDelay = attrs.get('prop_delay',"")    
+            if attrs.has_key('weight'):
+                newSynapseProps.weight = attrs.get('weight',"")    
+            if attrs.has_key('threshold'):
+                newSynapseProps.threshold = attrs.get('threshold',"")
+
+            self.globalSynapseProps[self.latestSynapseType] = newSynapseProps
+
+            for synProp in self.globalSynapseProps.keys():
+                self.log.debug("globalSynapseProp "+synProp+": "+ str(self.globalSynapseProps[synProp]))      
+            
            
     elif name == 'synapse_type':
       if self.currentProjectionName != "":    
@@ -231,7 +289,11 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
             if attrs.has_key('threshold'):
                 synProps.threshold = attrs.get('threshold',"")    
                       
-            self.log.info("......................   Changed values of local syn props: "+ synapse_type+": "+ str(synProps))                         
+            self.log.info("......................   Changed values of local syn props: "+ synapse_type+": "+ str(synProps))      
+	                       
+			       
+    else:
+    	print 'Unhandled element: '+ name
     
     return
     
@@ -285,6 +347,8 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
       
       
     elif name == 'connection':
+	    
+      self.log.info("Gathered all details of connection: " + self.currentConnId)
       
       for synType in self.localSynapseProps.keys():
       
