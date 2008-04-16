@@ -144,22 +144,34 @@ str compName
 str chanName
 foreach compName ({el {cellsRoot}/##[][TYPE=compartment],{cellsRoot}/##[][TYPE=symcompartment]})
 
-    echo "--  Checking compartment: " {compName}
+    echo "---------  Checking compartment: " {compName} 
 
+	float radius = {getfield {compName} dia}/2
+	float length = {getfield {compName} len}
+	float area = -1
+
+	if (length==0)
+		area = 4 * 3.14159265 * radius * radius
+	else
+		area = 3.14159265 * 2 * radius * length
+	end
+
+    showfield {compName} Em Rm
+    echo "Surf area: " {area} ", leak cond dens: " {1 / {{getfield {compName} Rm} * area}}
 
     foreach chanName ({el {compName}/##[][TYPE=hh_channel]})
-
         showfield {chanName} Ik Gk Ek Gbar surface
+		echo "Cond dens: " {{getfield {chanName} Gbar} / {getfield {chanName} surface}}
     end
 
     foreach chanName ({el {compName}/##[][TYPE=tabchannel]})
-
         showfield {chanName} Ik Gk Ek Gbar X Y Z surface
+		echo "Cond dens: " {{getfield {chanName} Gbar} / {getfield {chanName} surface}}
     end
 
     foreach chanName ({el {compName}/##[][TYPE=tab2Dchannel]})
-
         showfield {chanName} Ik Gk Ek Gbar X Y Z surface
+		echo "Cond dens: " {{getfield {chanName} Gbar} / {getfield {chanName} surface}}
     end
 
     foreach chanName ({el {compName}/##[][TYPE=Ca_concen]})
@@ -172,7 +184,8 @@ foreach compName ({el {cellsRoot}/##[][TYPE=compartment],{cellsRoot}/##[][TYPE=s
         showfield {chanName} *
     end
 
-    echo "-----"
+    echo "-------------------------------------------------"
+    echo ""
 end
 
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++"
