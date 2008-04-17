@@ -1404,6 +1404,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
                 currentlyAddressedSegment.getSegmentLength()!=len)
             {
                 jTextFieldSegLength.setBackground(alteredColour);
+                jTextFieldSegLength.setText(len+" (\u0394 = "+(len-currentlyAddressedSegment.getSegmentLength())+")");
                 altered = true;
             }
             else
