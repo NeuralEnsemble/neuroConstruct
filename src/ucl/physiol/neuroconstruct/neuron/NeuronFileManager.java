@@ -3334,13 +3334,13 @@ public class NeuronFileManager
                             if (addComments) response.append("    print \"Target NOT on host: \", hostid\n\n");
                             response.append("}\n");
 
-                            if (addComments) response.append("print \"Doing pre syn setup for "+netConRef+"\"\n\n");
 
                             
                             
                             
                                     // Pre synaptic setup
                             
+                            if (addComments) response.append("\nprint \"Doing pre syn setup for "+netConRef+"\"\n\n");
                             
                             response.append("if ("+sourceExists+") {\n");
                             
@@ -3355,23 +3355,13 @@ public class NeuronFileManager
                                 //response.append("    //pnm.register_cell(globalPreSynId, a_"+sourceCellGroup+"["+synConn.sourceEndPoint.cellNumber+"])\n");
 
 
-                                /*response.append("    alternateGid = -1\n");
-
-
-                                response.append("   for c = 0,allCurrentNetConns.count()-1 {\n");
-                                response.append("       print \"Checking existing NetCon on \", c,\": \", allCurrentNetConns.o(c).precell(), \", gid: \",allCurrentNetConns.o(c).srcgid()   \n");
-                                response.append("       if (strcmp(allCurrentNetConns.o(c).precell().name, \""+srcCellName+"\")==0) {\n");
-                                response.append("           print \"Same source cell!!\"\n");
-                                response.append("           alternateGid = allCurrentNetConns.o(c).srcgid()\n");
-                                response.append("       } else {\n");
-                                response.append("           print \"Different source cell!!\"\n");
-                                response.append("       }\n");
-                                response.append("   }\n");*/
-
-                                ////////response.append("    if (alternateGid == -1) {\n");
                                 response.append("    pnm.pc.set_gid2node(globalPreSynId, hostid)\n");
 
                                 response.append("    "+srcSecNameFull+" "+netConRef+" = new NetCon(&v("+synConn.sourceEndPoint.location.getFractAlong()+"), nil)\n");
+                                
+                                response.append("    "+netConRef+".delay = "+(synInternalDelay + apSegmentPropDelay + apSpaceDelay)+"\n");
+                                response.append("    "+netConRef+".weight = "+weight+" // not really needed on the pre side\n");
+                                response.append("    "+netConRef+".threshold = "+synProps.getThreshold()+"\n\n");
 
                                 response.append("    pnm.pc.cell(globalPreSynId, "+netConRef+")\n");
 
@@ -3379,9 +3369,6 @@ public class NeuronFileManager
 
                                 if (addComments) response.append("    print \"Created: \", "+netConRef+",\" on "+srcSecNameFull+" on host \", hostid\n\n");
 
-                                /////////response.append("   } else {\n");
-                                ////////response.append("       globalPreSynId  = alternateGid\n");
-                                ////////response.append("   }\n");
 
                                 preSectionsVsGids.put(srcSecNameFull, globalPreSynId);
                             }
@@ -3412,14 +3399,14 @@ public class NeuronFileManager
                                     // Connecting post to pre
                             
 
-                            if (addComments) response.append("print \"Doing pre to post attach for "+netConRef+"\"\n\n");
+                            if (addComments) response.append("\nprint \"Doing pre to post attach for "+netConRef+"\"\n\n");
 
                             response.append("if ("+targetExists+") {\n");
                             if (addComments) response.append("    print \"Target IS on host: \", hostid, \" using gid: \", globalPreSynId\n\n");
 
                             response.append("    gidOfSource = "+gidOfSource+"\n\n");
 
-                            response.append("    "+ncTemp+" = pnm.pc.gid_connect("+gidOfSource+", a_" + targetCellGroup
+                            response.append("    "+ncTemp+" = pnm.pc.gid_connect(gidOfSource, a_" + targetCellGroup
                                             + "[" + synConn.targetEndPoint.cellNumber + "]"
                                             + ".synlist.object(localSynapseId))\n");
 
@@ -4442,12 +4429,25 @@ public class NeuronFileManager
                     String titleOpt = "";
                     String workdirOpt = "";
                     String postArgs = "";
+                    
+                    String mpiFlags = "";
 
                     StringBuffer preCommand = new StringBuffer("");
 
                     if (simConfig.getMpiConf().isParallel())
                     {
-                        preCommand.append("mpirun -map ");
+                        MpiSettings mpiSets = new MpiSettings();
+                        
+                        String hostFlag = "-map";
+                        String hostSeperator = ":";
+                        
+                        if (mpiSets.getVersion().equals(MpiSettings.MPI_V2))
+                        {
+                            hostFlag = "-host";
+                            hostSeperator = ",";
+                            mpiFlags = "-mpi ";
+                        }
+                        preCommand.append("mpirun "+hostFlag+" ");
 
                         ArrayList<MpiHost> hosts = simConfig.getMpiConf().getHostList();
 
@@ -4455,7 +4455,7 @@ public class NeuronFileManager
                         {
                             for (int j = 0; j < hosts.get(i).getNumProcessors(); j++)
                             {
-                                if (!(i==0 && j==0)) preCommand.append(":");
+                                if (!(i==0 && j==0)) preCommand.append(hostSeperator);
                                 preCommand.append(hosts.get(i).getHostname());
                             }
                         }
@@ -4537,6 +4537,7 @@ public class NeuronFileManager
                         + preCommand
                         + neuronExecutable
                         + " "
+                        + mpiFlags
                         + mainHocFile.getName()
                         + postArgs;
 

@@ -134,7 +134,7 @@ public class ProcessManager
         {
             String directoryToExecuteIn = myFile.getParent();
             File fileToBeCreated = null;
-            File backupFileToBeCreated = null; // for now...
+            File otherCheckFileToBeCreated = null; // for now...
 
             logger.logComment("Parent dir: "+ directoryToExecuteIn);
 
@@ -178,47 +178,42 @@ public class ProcessManager
                 String filename = directoryToExecuteIn
                     + System.getProperty("file.separator")
                     + myArch
+                    /*+ System.getProperty("file.separator")
+                    + ".libs"*/
                     + System.getProperty("file.separator")
-                    + ".libs"
-                    + System.getProperty("file.separator")
-                    + "libnrnmech.so";
+                    + "libnrnmech.la";
                 
                 // In case, e.g. a 32 bit JDK is used on a 64 bit system
                 String backupFilename = directoryToExecuteIn
                     + System.getProperty("file.separator")
                     + backupArchDir
+                    /*+ System.getProperty("file.separator")
+                    + ".libs"*/
                     + System.getProperty("file.separator")
-                    + ".libs"
-                    + System.getProperty("file.separator")
-                    + "libnrnmech.so";
+                    + "libnrnmech.la";
 
                 /** @todo Needs checking on Mac/powerpc/i686 */
                 if (GeneralUtils.isMacBasedPlatform())
                 {
-                    if (System.getProperty("os.arch").equalsIgnoreCase("ppc"))
-                    {
-                        filename = directoryToExecuteIn
-                            + System.getProperty("file.separator")
-                            + "powerpc";
-                        
-                        backupFilename = directoryToExecuteIn
-                            + System.getProperty("file.separator")
-                            + GeneralUtils.DIR_64BIT;
-                    }
-                    else
-                    {
-                        // hope for the best...
-                        filename = directoryToExecuteIn
-                            + System.getProperty("file.separator")
-                            + System.getProperty("os.arch");
+                    filename = directoryToExecuteIn
+                        + System.getProperty("file.separator")
+                        + GeneralUtils.getArchSpecificDir()
+                        + System.getProperty("file.separator")
+                        + "libnrnmech.la";
 
-                    }
+                    backupFilename = directoryToExecuteIn
+                        + System.getProperty("file.separator")
+                        + "umac"
+                        + System.getProperty("file.separator")
+                        + "libnrnmech.la";
+                  
                 }
 
                 logger.logComment("Name of file to be created: " + filename);
+                logger.logComment("Backup file to check for success: " + backupFilename);
 
                 fileToBeCreated = new File(filename);
-                backupFileToBeCreated = new File(backupFilename);
+                otherCheckFileToBeCreated = new File(backupFilename);
                 
                 
 
@@ -239,8 +234,8 @@ public class ProcessManager
                 if (fileToBeCreated.exists()) 
                     fileToCheck = fileToBeCreated;
 
-                if (backupFileToBeCreated!=null && backupFileToBeCreated.exists()) 
-                    fileToCheck = backupFileToBeCreated;
+                if (otherCheckFileToBeCreated!=null && otherCheckFileToBeCreated.exists()) 
+                    fileToCheck = otherCheckFileToBeCreated;
 
                 logger.logComment("Going to check if mods in "+myFile.getParentFile()+"" +
                             " are newer than "+ fileToCheck, true);
@@ -306,12 +301,12 @@ public class ProcessManager
             GeneralUtils.timeCheck("Exit value for compilation: "+currentProcess.exitValue());
 
 
-            if(fileToBeCreated.exists() || backupFileToBeCreated.exists())
+            if(fileToBeCreated.exists() || otherCheckFileToBeCreated.exists())
             {
                 // In case, e.g. a 32 bit JDK is used on a 64 bit system
                 File createdFile  = fileToBeCreated;
                 if (!createdFile.exists())
-                    createdFile = backupFileToBeCreated;
+                    createdFile = otherCheckFileToBeCreated;
                 
                 logger.logComment("Successful compilation");
                 GuiUtils.showInfoMessage(logger, "Success", "Have successfully compiled the mods file into: "+ createdFile.getAbsolutePath(),
@@ -321,7 +316,7 @@ public class ProcessManager
             }
             else if (GeneralUtils.isMacBasedPlatform())
             {
-                GuiUtils.showInfoMessage(logger, "Probable success", 
+                GuiUtils.showInfoMessage(logger, "Success", 
                         "The conditions for successful compilation of the files on a Mac haven't fully been determined,"
                         +" so assuming successful compilation.\n\n"
                         +"Note: it is essential that you can compile NEURON mod files on your system (via nrnivmodl) before running NEURON from neuroConstruct.\n"
@@ -336,10 +331,10 @@ public class ProcessManager
             else
             {
                 logger.logComment("Unsuccessful compilation. File doesn't exist: "+ fileToBeCreated.getAbsolutePath()
-                    +" (and neither does "+backupFileToBeCreated.getAbsolutePath()+")");
+                    +" (and neither does "+otherCheckFileToBeCreated.getAbsolutePath()+")");
 
                 GuiUtils.showErrorMessage(logger, "Problem with the compilation. File doesn't exist: "+ fileToBeCreated.getAbsolutePath()
-                    +" (and neither does "+backupFileToBeCreated.getAbsolutePath()+")\nPlease note that Neuron checks every *.mod file"
+                    +" (and neither does "+otherCheckFileToBeCreated.getAbsolutePath()+")\nPlease note that Neuron checks every *.mod file"
                                           +" in this file's home directory\n("+myFile.getParent()+").\nFor more information when this error occurs, enable logging at Settings -> General Properties & Project Defaults -> Logging",
                                           null, null);
                 return false;

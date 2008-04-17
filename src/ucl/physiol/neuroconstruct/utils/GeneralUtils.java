@@ -32,6 +32,7 @@ public class GeneralUtils
     private static ClassLogger logger = new ClassLogger("GeneralUtils");
     
     public static final String ARCH_I686 = "i686";
+    public static final String ARCH_I386 = "i386";
     public static final String ARCH_64BIT = "amd64";
     public static final String ARCH_POWERPC = "ppc";
     
@@ -67,6 +68,10 @@ public class GeneralUtils
         else if (isMacBasedPlatform() && System.getProperty("os.arch").indexOf(ARCH_POWERPC)>=0)
         {
             return DIR_POWERPC;
+        }
+        else if (isMacBasedPlatform() && System.getProperty("os.arch").indexOf(ARCH_I386)>=0)
+        {
+            return DIR_I686;
         }
         else
         {

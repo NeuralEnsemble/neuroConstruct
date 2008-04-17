@@ -12,6 +12,7 @@
 
 package ucl.physiol.neuroconstruct.hpc.mpi;
 
+import java.io.File;
 import java.util.*;
 
 import ucl.physiol.neuroconstruct.utils.ClassLogger;
@@ -103,6 +104,11 @@ public class MpiSettings
 
     public String getVersion()
     {
+        File mpiV1flag = new File("MPI1");
+        File mpiV2flag = new File("MPI2");
+        if (mpiV1flag.exists()) return MPI_V1;
+        if (mpiV2flag.exists()) return MPI_V2;
+        
         return this.version;
     }
 
