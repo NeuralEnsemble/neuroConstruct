@@ -405,7 +405,6 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         float sphereRadius = 1.6f;
 
-        //Vector netConns = project.simpleNetworkConnectionsInfo.getAllSimpleNetConnNames();
         Iterator allNetConns = project.generatedNetworkConnections.getNamesNetConnsIter();
 
         while (allNetConns.hasNext())
@@ -415,9 +414,6 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                               netConnName);
 
             ArrayList<SingleSynapticConnection> connections = project.generatedNetworkConnections.getSynapticConnections(netConnName);
-            //Iterator allConnections = project.
-
-
 
             if (connections != null)
             {
@@ -427,20 +423,17 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                 String sourceCellGroup = null;
                 String targetCellGroup = null;
-                //GrowMode growMode = null;
 
                 if (project.morphNetworkConnectionsInfo.isValidSimpleNetConn(netConnName))
                 {
                     sourceCellGroup = project.morphNetworkConnectionsInfo.getSourceCellGroup(netConnName);
                     targetCellGroup = project.morphNetworkConnectionsInfo.getTargetCellGroup(netConnName);
-                    //growMode = project.simpleNetworkConnectionsInfo.getGrowMode(netConnName);
                 }
 
                 else if (project.volBasedConnsInfo.isValidAAConn(netConnName))
                 {
                     sourceCellGroup = project.volBasedConnsInfo.getSourceCellGroup(netConnName);
                     targetCellGroup = project.volBasedConnsInfo.getTargetCellGroup(netConnName);
-                    //growMode = project.complexConnectionsInfo.getGrowMode(netConnName);
                 }
 
                 String sourceCellType = project.cellGroupsInfo.getCellType(sourceCellGroup);
@@ -493,7 +486,6 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                     Point3f relativePointTargetSyn
                         = CellTopologyHelper.convertSegmentDisplacement(
                         targetCell,
-                        //PositionedSection.DENDRITIC_SECTION,
                         conn.targetEndPoint.location.getSegmentId(),
                         conn.targetEndPoint.location.getFractAlong());
 
@@ -521,12 +513,11 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                         if (project.proj3Dproperties.getShowSynapseEndpoints())
                         {
-                            //Primitive srcPrim
-                            //    = addPositionedSphere(mainTG, sourceSynAbsolutePosition, Color.green, sphereRadius, false);
+                            Primitive srcPrim
+                                = addPositionedSphere(mainTG, sourceSynAbsolutePosition, Color.green, sphereRadius, false);
 
                             Primitive tgtPrim
                                 = addPositionedSphere(mainTG, targetSynAbsolutePosition, Color.red, sphereRadius, true);
-
 
                             String tgtCellRef = SimulationData.getCellRef(targetCellGroup, conn.targetEndPoint.cellNumber);
 

@@ -854,8 +854,8 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         float minV = -100;
         float maxV = 80;
 
-        //float minT = 0;
-        //float maxT = 20;
+        String yUnits = "mV";
+        String timeUnits = "ms";
 
 
         Variable v = new Variable("v");
@@ -871,6 +871,8 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
             {
                 minV = minV/1000;
                 maxV = maxV/1000;
+                yUnits = "V";
+                timeUnits = "s";
             }
             
             try
@@ -1155,7 +1157,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                             desc = desc + "\nwhich has been parsed as: " + mainFunc.getNiceString();
                                             
 
-                                            DataSet ds = new DataSet(dsRef, desc, "mV", "", "Membrane Potential", gateState);
+                                            DataSet ds = new DataSet(dsRef, desc, yUnits, "", "Membrane Potential", gateState);
 
                                             for (int i = 0; i < numPoints; i++)
                                             {
@@ -1188,7 +1190,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                             desc = desc + "\nwhich has been parsed as: " + parsed;
                                             
 
-                                            DataSet ds = new DataSet(dsRef, desc, "mV", "", "Membrane Potential", gateState);
+                                            DataSet ds = new DataSet(dsRef, desc, yUnits, "", "Membrane Potential", gateState);
                                             
 
                                             for (int j = 0; j < numPoints; j++)
@@ -1246,7 +1248,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                         String dsRef = "Plot of tau (1/(alpha+beta)) in state "
                                         + gateState+" in Cell Mechanism "+ cmlMechanism.getInstanceName();
 
-                                        DataSet tau = new DataSet(dsRef, dsRef, "mV", "ms", "Membrane Potential", "tau");
+                                        DataSet tau = new DataSet(dsRef, dsRef, yUnits,timeUnits, "Membrane Potential", "tau");
 
                                         for (int i = 0; i < numPoints; i++)
                                         {
@@ -1265,7 +1267,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                         String dsRef = "Plot of inf (alpha/(alpha+beta)) in state "
                                         + gateState+" in Cell Mechanism "+ cmlMechanism.getInstanceName();
 
-                                        DataSet inf = new DataSet(dsRef, dsRef, "mV", "","Membrane Potential", "inf");
+                                        DataSet inf = new DataSet(dsRef, dsRef, yUnits, "","Membrane Potential", "inf");
 
                                         for (int i = 0; i < numPoints; i++)
                                         {
@@ -1457,6 +1459,12 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
             logger.logComment("Loading: " + url);
 
             String browserPath = GeneralProperties.getBrowserPath(true);
+            if (browserPath==null)
+            {
+                GuiUtils.showErrorMessage(logger, "Could not start a browser!", null, this);
+                return;
+            }
+            
             Runtime rt = Runtime.getRuntime();
 
             String command = browserPath + " \"" + url+"\"";

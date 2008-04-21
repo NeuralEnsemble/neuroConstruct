@@ -97,7 +97,6 @@ public class GeneralProperties
         defaultProjectProperties.setPreferredSaveFormat(ProjectStructure.JAVA_OBJ_FORMAT);
         
         GeneralProperties.loadFromSettingsFile();
-        //System.out.println("Neuron home: "+userSettings.getNeuronHome());
         
         
         if (userSettings.getNeuronHome()==null || userSettings.getNeuronHome().trim().length()==0)
@@ -110,7 +109,7 @@ public class GeneralProperties
         		else if ((new File("C:\\nrn59")).exists()) userSettings.setNeuronHome(new String("C:\\nrn59"));
         		else if ((new File("C:\\nrn58")).exists()) userSettings.setNeuronHome(new String("C:\\nrn58"));
         		else if ((new File("C:\\nrn57")).exists()) userSettings.setNeuronHome(new String("C:\\nrn57"));
-        		else userSettings.setNeuronHome(new String("C:\\nrn60"));
+        		else userSettings.setNeuronHome(new String("C:\\nrn61"));
 
         		//System.out.println("Neuron home: "+userSettings.getNeuronHome());
 
@@ -435,6 +434,18 @@ public class GeneralProperties
                      if (GeneralUtils.isWindowsBasedPlatform())
                      {
                          suggExec = "c:\\Program Files\\Mozilla Firefox\\firefox.exe";
+                         if (GeneralUtils.is64bitPlatform())
+                         {
+                            suggExec = "c:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe";
+                         }
+                         if (!(new File(suggExec)).exists())
+                         {
+                             suggExec = "c:\\Program Files\\Internet Explorer\\iexplore.exe";
+                             if (GeneralUtils.is64bitPlatform())
+                             {
+                                suggExec = "c:\\Program Files (x86)\\Internet Explorer\\iexplore.exe";
+                             } 
+                         }
                      }
                      else
                      {
@@ -448,7 +459,7 @@ public class GeneralProperties
 
                      if (path == null) // cancelled
                      {
-                         path =  "";
+                         return null;
                      }
                      File execFile = new File(path);
                      if (execFile.exists())
@@ -862,6 +873,10 @@ public class GeneralProperties
     public static void setMpiSettings(MpiSettings ms)
     {
         mpiSettings = ms;
+    }
+
+    private GeneralProperties()
+    {
     }
 
 

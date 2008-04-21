@@ -79,6 +79,10 @@ public class GeneralUtils
         }
     }
 
+    public static boolean is64bitPlatform()
+    {
+        return System.getProperty("os.arch").indexOf("64")>=0; // should be enough in most cases
+    }
     public static boolean isWindowsBasedPlatform()
     {
         return System.getProperty("os.name").toLowerCase().indexOf("indows") > 0;

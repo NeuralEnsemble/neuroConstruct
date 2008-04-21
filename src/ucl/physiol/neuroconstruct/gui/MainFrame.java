@@ -10865,6 +10865,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         logger.logComment("Check for updates...");
         
         String browserPath = GeneralProperties.getBrowserPath(true);
+        if (browserPath==null)
+        {
+            GuiUtils.showErrorMessage(logger, "Could not start a browser!", null, this);
+            return;
+        }
+            
+        
         Runtime rt = Runtime.getRuntime();
 
         String command = browserPath + " " + ProjectStructure.getUpdateCheckUrl()+GeneralProperties.getVersionNumber();

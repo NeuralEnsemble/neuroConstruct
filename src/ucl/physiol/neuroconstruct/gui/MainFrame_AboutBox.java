@@ -121,6 +121,12 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener
             public void mouseClicked(MouseEvent mouseEvent)
             {
                 String browserPath = GeneralProperties.getBrowserPath(true);
+                if (browserPath==null)
+                {
+                    GuiUtils.showErrorMessage(logger, "Could not start a browser!", null, null);
+                    return;
+                }
+
                 Runtime rt = Runtime.getRuntime();
 
                 String command = browserPath + " " + jLabelWeb.getText();

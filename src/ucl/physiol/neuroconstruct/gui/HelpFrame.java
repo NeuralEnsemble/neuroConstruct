@@ -424,6 +424,12 @@ public class HelpFrame extends JFrame implements HyperlinkListener
             {
                 logger.logComment("External link: " + url);
                 String browserPath = GeneralProperties.getBrowserPath(true);
+                if (browserPath==null)
+                {
+                    GuiUtils.showErrorMessage(logger, "Could not start a browser!", null, this);
+                    return;
+                }
+            
 
                 Runtime rt = Runtime.getRuntime();
 

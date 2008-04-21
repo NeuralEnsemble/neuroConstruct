@@ -351,7 +351,7 @@ public class NeuronTemplateGenerator
 
             for (int i = 0; i < sections.size(); i++)
             {
-                Section next = (Section)sections.get(i);
+                Section next = sections.get(i);
 
                 if (cell.getApPropSpeedForSection(next)==null)
                 {
@@ -361,7 +361,7 @@ public class NeuronTemplateGenerator
                     if (name.indexOf("[") > 0)
                     {
                         String arrayName = name.substring(0, name.indexOf("["));
-                        Integer greatestIndexSoFar = (Integer) arraySectionsVsSize.get(arrayName);
+                        Integer greatestIndexSoFar = arraySectionsVsSize.get(arrayName);
                         int thisIndex
                             = Integer.parseInt(name.substring(name.indexOf("[") + 1,
                                                               name.indexOf("]")));
@@ -385,7 +385,7 @@ public class NeuronTemplateGenerator
             {
                 String arr = (String)arrays.nextElement();
                 logger.logComment("Looking at array: "+arr);
-                Integer maxIndex = (Integer)arraySectionsVsSize.get(arr);
+                Integer maxIndex = arraySectionsVsSize.get(arr);
                 response.append("create " + arr +"["+(maxIndex.intValue()+1)+"]"+ "\n");
                 response.append("public " + arr + "\n");
 
@@ -478,7 +478,7 @@ public class NeuronTemplateGenerator
 
             logger.logComment("Looking at segment number "+i+": "+segment);
 
-            Segment parent = (Segment)segment.getParentSegment();
+            Segment parent = segment.getParentSegment();
 
             logger.logComment("Parent of this is: "+parent);
 
@@ -644,7 +644,7 @@ public class NeuronTemplateGenerator
         for (int i = 0; i < segments.size(); i++)
         {
             Segment segment = (Segment) segments.elementAt(i);
-            Segment parent = (Segment)segment.getParentSegment();
+            Segment parent = segment.getParentSegment();
 
             if (NeuronFileManager.addComments()) shapeLines.add("\n//  Looking at segment number " + i + ": "+ segment);
 
@@ -822,7 +822,7 @@ public class NeuronTemplateGenerator
                               " lines of subset info, putting them in one function");
             for (int i = 0; i < subsetLines.size(); i++)
             {
-                String nextLine = (String) subsetLines.elementAt(i);
+                String nextLine = subsetLines.elementAt(i);
                 response.append(nextLine+"\n");
             }
             response.append("}\n");
@@ -849,7 +849,7 @@ public class NeuronTemplateGenerator
                     try
                     {
                         int index = (i * maxNumLinesInProc) + j;
-                        String nextLine = (String) subsetLines.elementAt(index);
+                        String nextLine = subsetLines.elementAt(index);
                         response.append(nextLine + "\n");
                     }
                     catch (Exception ex)
@@ -1084,7 +1084,7 @@ public class NeuronTemplateGenerator
 
             for (int i = 0; i < nsegLines.size(); i++)
             {
-                String nextLine = (String) nsegLines.elementAt(i);
+                String nextLine = nsegLines.elementAt(i);
                 response.append(nextLine + "\n");
             }
             response.append("}\n");
@@ -1112,7 +1112,7 @@ public class NeuronTemplateGenerator
                     try
                     {
                         int index = (i * maxNumLinesInProc) + j;
-                        String nextLine = (String) nsegLines.elementAt(index);
+                        String nextLine = nsegLines.elementAt(index);
                         response.append(nextLine + "\n");
                     }
                     catch (Exception ex)
@@ -1274,9 +1274,6 @@ public class NeuronTemplateGenerator
 
                         if (cellMech instanceof ChannelMLCellMechanism)
                         {
-                            //float revPotential = Float.NaN;
-                            //NeuronFileManager.addHocFileComment(response, "This Cell Process is based on a ChannelML file");
-
                             ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism) cellMech;
 
                             String xpath = ChannelMLConstants.getIonsXPath();
@@ -1286,7 +1283,6 @@ public class NeuronTemplateGenerator
                             SimpleXMLEntity[] ions = null;
                             try
                             {
-
                                 cmlMech.initialise(project, false); // just in case...
 
                                 ions = cmlMech.getXMLDoc().getXMLEntities(xpath);
@@ -1336,8 +1332,6 @@ public class NeuronTemplateGenerator
                                     
                                     if (erev != null)
                                     {
-
-
                                         logger.logComment("Units used = " + unitsUsed);
 
                                         if (unitsUsed != null)
@@ -1442,16 +1436,9 @@ public class NeuronTemplateGenerator
                                 response.append("    "+NeuronFileManager.getHocSectionName(sec.getSectionName())+".z_"+nextChanMech.getName()+" = "+midpoint.z+"\n\n");
                             }
                         }
-                    
                     }
-
-
-                    //}
                 }
             }
-
-
-
 
         }
 

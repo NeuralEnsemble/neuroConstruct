@@ -1972,14 +1972,14 @@ public class CellTopologyHelper
             		descCm = ClickProjectHelper.getCellMechLink(chanMech.getName())+ " ("+ moreInfo+")";
                     if (false) // nearly there...
                     {
-                    String grpString = new String();
-                    for(int j=0;j<groups.size();j++)
-                    {
-                        grpString = grpString + ClickProjectHelper.getCellSectionGroupLink(cell.getInstanceName(), groups.get(j));
-                        if (j<groups.size()-1)
-                            grpString = grpString + " ,";
-                    }
-                    grpInfo = "<b>["+grpString+"]</b>";
+                        String grpString = new String();
+                        for(int j=0;j<groups.size();j++)
+                        {
+                            grpString = grpString + ClickProjectHelper.getCellSectionGroupLink(cell.getInstanceName(), groups.get(j));
+                            if (j<groups.size()-1)
+                                grpString = grpString + " ,";
+                        }
+                        grpInfo = "<b>["+grpString+"]</b>";
                     }
             	}
             	else
@@ -2023,7 +2023,12 @@ public class CellTopologyHelper
         {
             String syn = allSynapses.get(i);
             Vector groups = cell.getGroupsWithSynapse(syn);
-            sb.append("    Synapse: "+GeneralUtils.getTabbedString(syn.toString(), "b", html)
+            String synString = syn.toString();
+            if (projHtml)
+            {
+                synString = ClickProjectHelper.getCellMechLink(syn);
+            }
+            sb.append("    Synapse: "+GeneralUtils.getTabbedString(synString, "b", html)
                       +" is allowed on: "+GeneralUtils.getTabbedString(groups.toString(), "b", html)+GeneralUtils.getEndLine(html));
         }
         if (allSynapses.size()>0) sb.append("  "+GeneralUtils.getEndLine(html));
