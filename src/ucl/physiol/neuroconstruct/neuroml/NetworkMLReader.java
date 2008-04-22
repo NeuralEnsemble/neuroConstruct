@@ -29,7 +29,7 @@ import ucl.physiol.neuroconstruct.utils.*;
  *  
  */
 
-public class NetworkMLReader extends XMLFilterImpl
+public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
 {
     private static ClassLogger logger = new ClassLogger("NetworkMLReader");
 
@@ -268,7 +268,7 @@ public class NetworkMLReader extends XMLFilterImpl
 
              if (currentNodeId>=0)
              {
-                 posRec.nodeId = currentNodeId;
+                 posRec.setNodeId(currentNodeId);
              }
              
              this.cellPos.addPosition(currentPopulation, posRec);

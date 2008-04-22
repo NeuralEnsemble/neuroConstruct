@@ -120,7 +120,8 @@ public class GeneratedNetworkConnections
 
         cellGroupSyns.add(conn);
         logger.logComment("Adding new net conn: "+netConnectionName+", type: "+connectionType);
-        logger.logComment("From src " + sourceCellNumber +" to "+targetCellNumber+", props: "+props);
+        logger.logComment("From src " + sourceCellNumber +"("+sourceCellSegmentIndex+"("+sourceCellDisplacement+")) to "
+                +targetCellNumber+"("+targetCellSgmentIndex+"("+targetCellDisplacement+")), props: "+props);
         //logger.logComment("Current num syn conns: "+ getNumberSynapticConnections());
     }
 

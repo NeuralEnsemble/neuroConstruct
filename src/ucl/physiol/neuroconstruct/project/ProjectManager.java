@@ -17,9 +17,13 @@ import java.util.*;
 
 import java.awt.*;
 
+import java.util.logging.Level;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.xml.sax.*;
 
 import javax.xml.*;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 import javax.xml.validation.*;
@@ -34,6 +38,7 @@ import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
+import ucl.physiol.neuroconstruct.neuroml.hdf5.*;
 import ucl.physiol.neuroconstruct.neuron.NeuronException;
 
 /**
@@ -410,7 +415,90 @@ public class ProjectManager implements GenerationReport
         if (activeProject!=null) return true;
         return false;
     }
+    
+    public NetworkMLnCInfo doLoadNetworkML(File networkmlFile) throws NeuroMLException
+    {
+        if (networkmlFile.getName().endsWith(ProjectStructure.getHDF5FileExtension()))
+        {
+            try 
+            {
+                ucl.physiol.neuroconstruct.neuroml.hdf5.NetworkMLReader nmlReader 
+                        = new ucl.physiol.neuroconstruct.neuroml.hdf5.NetworkMLReader(getCurrentProject());
 
+                nmlReader.parse(networkmlFile);
+                
+                return nmlReader;
+            } 
+            catch (Hdf5Exception ex) 
+            {
+                throw new NeuroMLException("Problem parsing HDF5 NetworkML file", ex);
+            }
+        }
+        else
+        {
+            InputSource is = null;
+
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            spf.setNamespaceAware(true);
+
+            XMLReader xmlReader = null;
+
+            try
+            {
+                xmlReader = spf.newSAXParser().getXMLReader();
+
+                ucl.physiol.neuroconstruct.neuroml.NetworkMLReader nmlBuilder
+                    = new ucl.physiol.neuroconstruct.neuroml.NetworkMLReader(getCurrentProject().generatedCellPositions,
+                                          getCurrentProject().generatedNetworkConnections);
+
+                xmlReader.setContentHandler(nmlBuilder);
+
+                if (networkmlFile.getName().endsWith(ProjectStructure.getNeuroMLCompressedFileExtension()))
+                {
+                    FileInputStream instream = new FileInputStream(networkmlFile);
+
+                    ZipInputStream zis = new ZipInputStream(new BufferedInputStream(instream));
+
+                    ZipEntry entry = zis.getNextEntry();
+
+                    logger.logComment("Reading contents of zip: " + entry);
+
+                    is = new InputSource(zis);
+                }
+                else
+                {
+                   FileInputStream instream = new FileInputStream(networkmlFile);
+                   is = new InputSource(instream);
+                }
+
+                xmlReader.parse(is);
+            
+                return nmlBuilder;
+            }
+            catch (Exception e)
+            {
+                throw new NeuroMLException("Problem parsing XML based NetworkML file", e);
+            }
+            
+        }
+
+/*
+            String prevSimConfig = nmlBuilder.getSimConfig();
+            long randomSeed = nmlBuilder.getRandomSeed();
+
+            if (randomSeed!=Long.MIN_VALUE)
+            {
+                this.jTextFieldRandomGen.setText(randomSeed+"");
+                ProjectManager.setRandomGeneratorSeed(randomSeed);
+                ProjectManager.reinitialiseRandomGenerator();
+            }
+            if (prevSimConfig!=null)
+            {
+                this.jComboBoxSimConfig.setSelectedItem(prevSimConfig);
+            }
+        }*/
+        
+    }
 
     public void doSaveNetworkML(File networkmlFile) throws NeuroMLException
     {

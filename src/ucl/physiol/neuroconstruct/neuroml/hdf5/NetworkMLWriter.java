@@ -48,7 +48,6 @@ public class NetworkMLWriter
 {
     private static ClassLogger logger = new ClassLogger("NetworkMLWriter");
 
-    public static int POP_COLUMN_NUM = 4;
 
 
     public NetworkMLWriter()
@@ -143,21 +142,30 @@ public class NetworkMLWriter
                 popGroup.writeMetadata(cellTypeAttr);
 
                 Datatype dtype = getPopDatatype(h5File);
+                
+                int numColumns = 4; // cellNum, x, y, z
+                
+                if (posRecs.get(0).getNodeId()!=PositionRecord.NO_NODE_ID)
+                {
+                    numColumns = 5; // cellNum, x, y, z
+                }
 
-                long[] dims2D = {posRecs.size(), POP_COLUMN_NUM};
+                long[] dims2D = {posRecs.size(), numColumns};
 
-                float[] posArray = new float[posRecs.size() * POP_COLUMN_NUM];
+                float[] posArray = new float[posRecs.size() * numColumns];
 
 
                 for (int i=0; i<posRecs.size(); i++)
                 {
                     PositionRecord p = posRecs.get(i);
 
-                    posArray[i * POP_COLUMN_NUM + 0] = p.cellNumber;
-
-                    posArray[i * POP_COLUMN_NUM + 1] = p.x_pos;
-                    posArray[i * POP_COLUMN_NUM + 2] = p.y_pos;
-                    posArray[i * POP_COLUMN_NUM + 3] = p.z_pos;
+                    posArray[i * numColumns + 0] = p.cellNumber;
+                    posArray[i * numColumns + 1] = p.x_pos;
+                    posArray[i * numColumns + 2] = p.y_pos;
+                    posArray[i * numColumns + 3] = p.z_pos;
+                    if (numColumns>4)
+                        posArray[i * numColumns + 4] = p.getNodeId();
+                        
 
                 }
 
@@ -165,14 +173,20 @@ public class NetworkMLWriter
                 Dataset dataset = h5File.createScalarDS
                     (cg, popGroup, dtype, dims2D, null, null, 0, posArray);
 
-                Attribute attr0 = Hdf5Utils.getSimpleAttr("column_0", "instance_id", h5File);
+                Attribute attr0 = Hdf5Utils.getSimpleAttr("column_0", NetworkMLConstants.INSTANCE_ID_ATTR, h5File);
                 dataset.writeMetadata(attr0);
-                Attribute attr1 = Hdf5Utils.getSimpleAttr("column_1", "x", h5File);
+                Attribute attr1 = Hdf5Utils.getSimpleAttr("column_1", NetworkMLConstants.LOC_X_ATTR, h5File);
                 dataset.writeMetadata(attr1);
-                Attribute attr2 = Hdf5Utils.getSimpleAttr("column_2", "y", h5File);
+                Attribute attr2 = Hdf5Utils.getSimpleAttr("column_2", NetworkMLConstants.LOC_Y_ATTR, h5File);
                 dataset.writeMetadata(attr2);
-                Attribute attr3 = Hdf5Utils.getSimpleAttr("column_3", "z", h5File);
+                Attribute attr3 = Hdf5Utils.getSimpleAttr("column_3", NetworkMLConstants.LOC_Z_ATTR, h5File);
                 dataset.writeMetadata(attr3);
+                
+                if (numColumns>4)
+                {
+                    Attribute attr4 = Hdf5Utils.getSimpleAttr("column_4", NetworkMLConstants.NODE_ID_ATTR, h5File);
+                    dataset.writeMetadata(attr4);
+                }
 
 
             }

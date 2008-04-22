@@ -204,6 +204,34 @@ public class Hdf5Utils
         return attrs;
     }
 
+    
+    public static ArrayList<Attribute> parseDatasetForAttributes(Dataset d) throws Hdf5Exception
+    {
+        ArrayList<Attribute> attrs = new ArrayList<Attribute>();
+        
+        try
+        {
+            List attrList =  d.getMetadata();
+            for(Object obj: attrList)
+            {
+                try
+                {
+                    Attribute a = (Attribute)obj;
+                    attrs.add(a);
+                }
+                catch (ClassCastException ex)
+                {
+                    // Not an attribute...
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Hdf5Exception("Failed to parse Dataset for Attributes", ex);
+        }
+        return attrs;
+    }
+
 
 
     public static Group getRootGroup(H5File h5File) throws Hdf5Exception

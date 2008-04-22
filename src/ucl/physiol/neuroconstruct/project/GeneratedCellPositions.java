@@ -108,6 +108,19 @@ public class GeneratedCellPositions
         return cellGroupArrayList;
     }
 
+    public ArrayList<PositionRecord> getAllPositionRecords()
+    {
+        
+        ArrayList<PositionRecord> all = new ArrayList<PositionRecord>();
+        
+        Enumeration<ArrayList<PositionRecord>> posLists =  myCellGroupPosns.elements();
+        while (posLists.hasMoreElements())
+        {
+            all.addAll(posLists.nextElement());
+        }
+        return all;
+    }
+
     public Iterator<String> getNamesGeneratedCellGroups()
     {
         return myCellGroupPosns.keySet().iterator();
@@ -361,9 +374,9 @@ public class GeneratedCellPositions
 
                     instanceElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INSTANCE_ID_ATTR, i+""));
                     
-                    if (posRec.nodeId!=PositionRecord.NO_NODE_ID)
+                    if (posRec.getNodeId()!=PositionRecord.NO_NODE_ID)
                     {
-                        instanceElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NODE_ID_ATTR, posRec.nodeId+""));
+                        instanceElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NODE_ID_ATTR, posRec.getNodeId()+""));
                     }
                     
 

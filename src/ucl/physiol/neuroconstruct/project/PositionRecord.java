@@ -36,7 +36,7 @@ public class PositionRecord
      */
     public static final int NO_NODE_ID = -1;
     
-    public int nodeId = NO_NODE_ID;
+    private int nodeId = NO_NODE_ID;
 
     public PositionRecord(int cellNumber, float x_pos, float y_pos, float z_pos)
     {
@@ -90,6 +90,16 @@ public class PositionRecord
         y_pos = Float.parseFloat(stringForm.substring(indexFirstComma + 1, indexSecondComma));
         z_pos = Float.parseFloat(stringForm.substring(indexSecondComma + 1, indexRightBracket));
 
+    }
+    
+    public int getNodeId()
+    {
+        return nodeId;
+    }
+    
+    public void setNodeId(int nodeId)
+    {
+        this.nodeId = nodeId;
     }
     
     public static void main(String[] args)

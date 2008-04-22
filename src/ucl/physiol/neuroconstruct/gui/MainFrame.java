@@ -10002,11 +10002,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         chooser.setCurrentDirectory(ProjectStructure.getSavedNetworksDir(projManager.getCurrentProject().getProjectMainDirectory()));
 
         chooser.setFileFilter(new SimpleFileFilter(new String[]{ProjectStructure.getNeuroMLFileExtension(),
-                                                   ProjectStructure.getNeuroMLCompressedFileExtension()}, "(Compressed) NetworkML files", true));
+                                                   ProjectStructure.getNeuroMLCompressedFileExtension(),
+                                                   ProjectStructure.getHDF5FileExtension()}, "(Plaintext, compressed or HDF5) NetworkML files", true));
 
         logger.logComment("chooser.getCurrentDirectory(): "+chooser.getCurrentDirectory());
 
-        chooser.setDialogTitle("Choose (zipped) NetworkML file to load");
+        chooser.setDialogTitle("Choose (text/zipped/HDF5) NetworkML file to load");
 
         final JTextArea summary = new JTextArea(12,40);
         summary.setMargin(new Insets(5,5,5,5));
@@ -10136,8 +10137,23 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     this.jTextFieldRandomGen.setText(tempRandom.nextInt() + "");
                 }
 
-                /** @todo Put most of this is in ProjectManager... */
+                NetworkMLnCInfo extraInfo = projManager.doLoadNetworkML(chooser.getSelectedFile());
+                
+                String prevSimConfig = extraInfo.getSimConfig();
+                long randomSeed = extraInfo.getRandomSeed();
 
+                if (randomSeed!=Long.MIN_VALUE)
+                {
+                    this.jTextFieldRandomGen.setText(randomSeed+"");
+                    ProjectManager.setRandomGeneratorSeed(randomSeed);
+                    ProjectManager.reinitialiseRandomGenerator();
+                }
+                if (prevSimConfig!=null)
+                {
+                    this.jComboBoxSimConfig.setSelectedItem(prevSimConfig);
+                }
+
+                        /*
 
                 InputSource is = null;
 
@@ -10173,7 +10189,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 }
 
                 xmlReader.parse(is);
-
+                
 
                 String prevSimConfig = nmlBuilder.getSimConfig();
                 long randomSeed = nmlBuilder.getRandomSeed();
@@ -10189,6 +10205,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     this.jComboBoxSimConfig.setSelectedItem(prevSimConfig);
                 }
                 
+                 */
+                
+                
 
             }
             catch (Exception ex)
@@ -10199,13 +10218,23 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             long end = System.currentTimeMillis();
 
             SimConfig simConfig = getSelectedSimConfig();
+            
+            
+            Hashtable<String, ArrayList<Integer>> hostsVsProcs = CompNodeGenerator.getHostsVsNumOnProcs(projManager.getCurrentProject(), simConfig);
+            
+            String compNodesReport = CompNodeGenerator.generateCompNodesReport(hostsVsProcs, simConfig.getMpiConf(), -1);
+            
+            
 
             jEditorPaneGenerateInfo.setText("Cell positions and network connections loaded from: <b>"+chooser.getSelectedFile()+"</b> in "+((end-start)/1000.0)+" seconds<br><br>"
                                             +"<center><b>Cell Groups:</b></center>"
                                             +projManager.getCurrentProject().generatedCellPositions.getHtmlReport()
                                             +"<center><b>Network Connections:</b></center>"
                 +projManager.getCurrentProject().generatedNetworkConnections.getHtmlReport(
-                                        GeneratedNetworkConnections.ANY_NETWORK_CONNECTION,simConfig));
+                                        GeneratedNetworkConnections.ANY_NETWORK_CONNECTION,simConfig)
+                                        + compNodesReport);
+            
+            
 
 
 

@@ -259,6 +259,20 @@ public class RegionsInfo extends AbstractTableModel
              if(nextRegion.getHighestYValue()>maxY) maxY = nextRegion.getHighestYValue();
              if(nextRegion.getHighestZValue()>maxZ) maxZ = nextRegion.getHighestZValue();
         }
+        
+        ArrayList<PositionRecord> allPositions = project.generatedCellPositions.getAllPositionRecords();
+        
+        for(PositionRecord pos: allPositions)
+        {
+             if(pos.x_pos<minX) minX = pos.x_pos;
+             if(pos.y_pos<minY) minY = pos.y_pos;
+             if(pos.z_pos<minZ) minZ = pos.z_pos;
+             if(pos.x_pos>maxX) maxX = pos.x_pos;
+             if(pos.y_pos>maxY) maxY = pos.y_pos;
+             if(pos.z_pos>maxZ) maxZ = pos.z_pos;
+        }
+        
+        
         return new RectangularBox(minX, minY, minZ,
                                   (maxX-minX),
                                   (maxY-minY),

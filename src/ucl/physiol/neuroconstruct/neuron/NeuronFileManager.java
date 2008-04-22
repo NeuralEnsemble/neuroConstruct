@@ -930,7 +930,7 @@ public class NeuronFileManager
             {
 
                 gidToNodeInfo.append("pnm.set_gid2node(getCellGlobalId(\"" + cellGroupName 
-                        + "\", " + pr.cellNumber + "), " + pr.nodeId + ")\n");
+                        + "\", " + pr.cellNumber + "), " + pr.getNodeId() + ")\n");
                 
 
                 ///////////response.append("        if ($2 == "+pr.cellNumber+") return (hostid == " + pr.nodeId + ")\n");

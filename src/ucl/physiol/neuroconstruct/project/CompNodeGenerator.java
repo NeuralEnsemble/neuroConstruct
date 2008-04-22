@@ -157,7 +157,7 @@ public class CompNodeGenerator extends Thread
                             +nextCellGroup+", nodeID: "+nodeID);
                     
                     
-                    pos.nodeId = nodeID;
+                    pos.setNodeId(nodeID);
                     String host = mpiConfig.getHostForGlobalId(nodeID);
                     int procNum = mpiConfig.getProcForGlobalId(nodeID);
                     
@@ -181,10 +181,11 @@ public class CompNodeGenerator extends Thread
         }
 
         long positionsGeneratedTime = System.currentTimeMillis();
-        float secondsPosns = (float) (positionsGeneratedTime - startGenerationTime) / 1000f;
+        float seconds = (float) (positionsGeneratedTime - startGenerationTime) / 1000f;
 
         logger.logComment("Generating the report to send...");
 
+        /*
         StringBuffer generationReport = new StringBuffer();
         
         String info = mpiConfig.toString();
@@ -223,8 +224,12 @@ public class CompNodeGenerator extends Thread
                     
             }
         }
-        generationReport.append("<br>");
-
+        generationReport.append("<br>");*/
+        
+        StringBuffer generationReport = new StringBuffer(generateCompNodesReport(hostsVsNumOnProcs, mpiConfig, seconds));
+        
+        if (!continueGeneration)
+            generationReport.append("<center><b>NOTE: Generation interrupted</b></center><br>");
 
         if (myReportInterface!=null)
         {
@@ -232,6 +237,96 @@ public class CompNodeGenerator extends Thread
                                                    myGeneratorType,
                                                    simConfig);
         }
+    }
+    
+    public static Hashtable<String, ArrayList<Integer>> getHostsVsNumOnProcs(Project project, SimConfig simConfig)
+    {
+        Hashtable<String, ArrayList<Integer>> hostsVsNumOnProcs = new Hashtable<String, ArrayList<Integer>>();
+        
+        Iterator<String> cellGroupNames = project.generatedCellPositions.getNamesGeneratedCellGroups();
+        
+        if (!simConfig.getMpiConf().isParallel())
+        {
+            ArrayList<Integer> allLocal = new ArrayList<Integer>();
+            allLocal.add(project.generatedCellPositions.getNumberInAllCellGroups());
+            hostsVsNumOnProcs.put("localhost", allLocal);
+            return hostsVsNumOnProcs;
+        }
+
+        while (cellGroupNames.hasNext())
+        {
+            String nextCellGroup = cellGroupNames.next();
+
+            ArrayList<PositionRecord> posRecs = project.generatedCellPositions.getPositionRecords(nextCellGroup);
+
+            for(PositionRecord pos: posRecs)
+            {
+                String host = simConfig.getMpiConf().getHostForGlobalId(pos.getNodeId());
+                int procNum = simConfig.getMpiConf().getProcForGlobalId(pos.getNodeId());
+
+                if (hostsVsNumOnProcs.get(host)==null)
+                {
+                    ArrayList<Integer> numOnProcs = new ArrayList<Integer>();
+                    for(int i=0;i<simConfig.getMpiConf().getNumProcessorsOnHost(host);i++)
+                    {
+                        numOnProcs.add(0);
+                    }
+                    hostsVsNumOnProcs.put(host, numOnProcs);
+                }
+                ArrayList<Integer> numOnProcs = hostsVsNumOnProcs.get(host);
+                numOnProcs.set(procNum, numOnProcs.get(procNum)+1);
+
+            }
+                
+
+        }
+        return hostsVsNumOnProcs;
+    }
+    
+    
+    public static String generateCompNodesReport(Hashtable<String, ArrayList<Integer>> hostsVsNumOnProcs, MpiConfiguration mpiConfig, float seconds)
+    {
+        StringBuffer generationReport = new StringBuffer();
+        
+        String info = mpiConfig.toString();
+        info = GeneralUtils.replaceAllTokens(info, "\n", "<br>");
+        
+
+        generationReport.append("<center><b>Compute nodes:</b></center>");
+
+        if (seconds>=0)
+        {
+            generationReport.append("Time taken to generate compute nodes: " + seconds + " seconds.<br>");
+            generationReport.append("Compute nodes generated for:<br><b>"+info+"</b>");
+        }
+        else
+        {
+            generationReport.append("Compute nodes reloaded using:<br><b>"+info+"</b>");
+        }
+        
+        Enumeration<String> hosts = hostsVsNumOnProcs.keys();
+        
+        while(hosts.hasMoreElements())
+        {
+            String host = hosts.nextElement();
+            
+            generationReport.append("Host: <b>"+host+"</b>: ");
+
+            ArrayList<Integer> numOnProcs = hostsVsNumOnProcs.get(host);
+            
+            for(int i=0;i<numOnProcs.size();i++)
+            {
+                generationReport.append("proc: "+i+" has <b>"+numOnProcs.get(i)+"</b> cells");
+                if(i<numOnProcs.size()-1) 
+                    generationReport.append(", ");
+                else
+                    generationReport.append("<br><br>");
+                    
+            }
+        }
+        generationReport.append("<br>");
+        
+        return generationReport.toString();
     }
 
 }
