@@ -10,7 +10,6 @@
 #   This work has been funded by the Medical Research Council
 #
 #
-
  
 # Standard imports
 import sys
@@ -19,35 +18,30 @@ import math
 import random
 import xml
  
-# Import functionality from NeuroMLUtils
 sys.path.append("../NeuroMLUtils")
-from NetworkMLUtils import NetworkMLFile
-
+from NetworkMLUtils import NetworkMLFile  # Import functionality from NeuroMLUtils
 
 print("Going to create a NetworkML file...")
 
 myFile = NetworkMLFile()
 
 newPop = myFile.addPopulation("SampleCellGroup", "SampleCell")
-popSize = 100000
+popSize = 1000
 
 newProj = myFile.addProjection("NetConn_1", "SampleCellGroup", "SampleCellGroup")
 newProj.addSynapse("DoubExpSyn", 1, -20, 5)
-
 
 for i in range(popSize):
 
     x = random.gauss(0,200)
     y = random.gauss(0,50)
-    z = random.gauss(0,20)
+    z = random.gauss(0,200)
     
     newPop.addInstance(x,y,z)
     
     if i>0:
         newProj.addConnection(i-1, i)
     
-
-myFile.writeToFile("../../../temp/test.nml")
-
+myFile.writeXML("../../../temp/test.nml")
 
 print("All done!")

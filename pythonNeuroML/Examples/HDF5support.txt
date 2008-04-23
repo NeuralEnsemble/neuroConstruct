@@ -1,0 +1,10 @@
+
+
+    Checklist for HDF5 NetworkML support
+
+
+
+    Code                        Saving                          Reading      
+
+    nC generated nets           pos+nodeid+conns+segids         pos+nodeid
+    Python scripts              pos+nodeid+conns                pos+nodeid

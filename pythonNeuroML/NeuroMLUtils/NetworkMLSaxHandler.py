@@ -2,7 +2,9 @@
 #
 #   A class to handle SAX events, specifically for a NetworkML file.
 #   Calls the appropriate methods in NetworkHandler when cell locations,
-#   network connections are found
+#   network connections are found. The NetworkHandler can either print 
+#   information, or if it's a class overriding NetworkHandler can create
+#   the appropriate network in a simulator dependent fashion
 #
 #   Author: Padraig Gleeson
 #
@@ -18,11 +20,11 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
     
   log = logging.getLogger("NetworkMLSaxHandler")
   
-  myNodeId = -1
+  myNodeId = -1    # If myNodeId <0, ignore node_id attribute and handle all cells, otherwise handle only cells with myNodeId = node_id
   
   isCellTypeElement = 0
   currentInstanceId = -1
-  currentCellGroup = ""
+  currPopulation = ""
   currentCellType = ""
   totalInstances = 0
   
@@ -66,43 +68,52 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
       self.log.debug("lengthUnits: "+ attrs.get('lengthUnits',""))
       
       
-    elif name == 'notes':
+    elif name == 'notes' or name == 'meta:notes':
       self.log.debug("Found notes element")
       
       
     elif name == 'population':
-      self.currentCellGroup = attrs.get('name',"")
-      self.log.debug("Found population/cellGroup element: "+ self.currentCellGroup)
+      self.currPopulation = attrs.get('name',"")
+      self.log.debug("Found population/cellGroup element: "+ self.currPopulation)
+      if attrs.get('cell_type',"") != "":
+          self.currentCellType = attrs.get('cell_type',"")     # post NeuroML v1.7.1 form
       
       
     elif name == 'instances':
       size = -1
       if attrs.get('size',"") != "":
           size = int(attrs.get('size',""))
-      self.netHandler.handlePopulation(self.currentCellGroup, self.currentCellType, size)
+      self.netHandler.handlePopulation(self.currPopulation, self.currentCellType, size)
       
       
     elif name == 'instance':
-      include = 0
-      if attrs.get('node_id',"") != "":
+      includeInstance = 0
+	  
+      if self.myNodeId == -1:
+		self.log.debug("Ignoring nodeIds, handling all cells...")
+		includeInstance = 1
+		self.netHandler.setParallelStatus(0)
+		
+      elif attrs.get('node_id',"") != "":
         self.log.debug("Found node_id: "+ attrs.get('node_id',""))
         if self.netHandler.isParallel!=1: self.netHandler.setParallelStatus(1)
         if int(attrs.get('node_id',"")) == self.myNodeId:
             self.log.debug("Including...")
-            include = 1
+            includeInstance = 1
         else:
             self.log.debug("Excluding from host id:  %d..."%self.myNodeId)
-            include = 0
+            includeInstance = 0
+			
       else:
         self.log.debug("Found no node_id...")
-        include = 1
+        includeInstance = 1
         
-      if include == 1:
+      if includeInstance == 1:
         self.currentInstanceId = attrs.get('id',"")
         self.log.debug("Found instance element: "+ self.currentInstanceId)
       
       
-    elif name == 'cell_type':
+    elif name == 'cell_type':   		# pre NeuroML v1.7.1 form
       self.isCellTypeElement = 1
       
       
@@ -116,9 +127,9 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
         if self.myNodeId >= 0:
             nodeInfo = " on node id: %d"%self.myNodeId 
         
-        self.log.info('Adding instance: ' +self.currentInstanceId+" of group: "+self.currentCellGroup+nodeInfo)
+        self.log.info('Adding instance: ' +self.currentInstanceId+" of group: "+self.currPopulation+nodeInfo)
         
-        self.netHandler.handleLocation(self.currentInstanceId, self.currentCellGroup, self.currentCellType, attrs.get('x',""),\
+        self.netHandler.handleLocation(self.currentInstanceId, self.currPopulation, self.currentCellType, attrs.get('x',""),\
                                     attrs.get('y',""), \
                                     attrs.get('z',""))
     
@@ -155,6 +166,7 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
             self.preCellId = attrs.get('pre_cell_id',"") 
         if attrs.has_key('pre_segment_id'):
             self.preSegId = attrs.get('pre_segment_id',"") 
+            
         if attrs.has_key('pre_fraction_along'):
             self.preFract = attrs.get('pre_fraction_along',"")  
         else:
@@ -165,6 +177,7 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
             self.postCellId = attrs.get('post_cell_id',"") 
         if attrs.has_key('post_segment_id'):
             self.postSegId = attrs.get('post_segment_id',"") 
+            
         if attrs.has_key('post_fraction_along'):
             self.postFract = attrs.get('post_fraction_along',"")  
         else:
@@ -300,7 +313,7 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
     
     
   def characters (self, ch):
-   if self.isCellTypeElement== 1:
+   if self.isCellTypeElement== 1:    # pre NeuroML v1.7.1 form
      self.currentCellType = ch
      
    if self.isSourceElement== 1:
@@ -326,7 +339,8 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
       
       
     elif name == 'population':
-      self.currentCellGroup = ""
+      self.currPopulation = ""
+      self.currentCellType = ""
       
       
     elif name == 'instances':

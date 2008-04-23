@@ -2,7 +2,7 @@
 #
 #   A class to allow easy generation of NetworkML files from Python.
 # 
-#   Should move to a more PyNN like interface over time...
+#   Should move this to a more PyNN friendly interface over time...
 # 
 #   Author: Padraig Gleeson
 #
@@ -11,6 +11,7 @@
 #
 #
 
+    
 genForVer2compat = 1  # Incorporates changes in v1.7.1 to clean up for v2.0
 
 
@@ -21,7 +22,6 @@ class NetworkMLFile:
     projUnits="Physiological Units"
     
     notes = "A NetworkML file generated from a simple Python interface"
-    
     
     
     def __init__(self):
@@ -49,9 +49,9 @@ class NetworkMLFile:
         return newProj
     
         
-    def writeToFile(self, filename):
+    def writeXML(self, filename):
         
-        print("NetworkMLFile going to be written to: "+ str(filename))
+        print("NetworkMLFile going to be written to XML file: "+ str(filename))
         
         out_file = open(filename, "w")
         
@@ -89,6 +89,35 @@ class NetworkMLFile:
         
         
         
+    def writeHDF5(self, filename):
+        
+        print("NetworkMLFile going to be written to HDF5 file: "+ str(filename))
+        
+        import tables
+        
+        h5file = tables.openFile(filename, mode = "w", title = "Test file")
+        
+        rootGroup = h5file.createGroup("/", 'networkml', 'Root NetworkML group')
+        
+        rootGroup._f_setAttr("notes", self.notes)
+        
+        popsGroup = h5file.createGroup(rootGroup, 'populations', 'Populations group')
+        
+        for population in self.populations:
+            population.generateHDF5(h5file, popsGroup)
+        
+        
+        projsGroup = h5file.createGroup(rootGroup, 'projections', 'Projections group')
+        projsGroup._f_setAttr("units", self.projUnits)
+        
+        for projection in self.projections:
+            projection.generateHDF5(h5file, projsGroup)
+            
+        
+        h5file.close()  # Close (and flush) the file
+        
+        
+        
 class Population:
     
     def __init__(self, populationName, cellType):
@@ -120,6 +149,38 @@ class Population:
         out_file.write(indent+"</population>\n")
         
         
+    def generateHDF5(self, h5file, popsGroup):
+        
+        import numpy
+        
+        popGroup = h5file.createGroup(popsGroup, 'population_'+self.popName)
+        popGroup._f_setAttr("name", self.popName)
+        popGroup._f_setAttr("cell_type", self.cellType)
+        
+        includeNodeIds = 0 
+        
+        for instance in self.instances:
+          if instance.node_id >= 0:
+            includeNodeIds = 1
+            
+        colCount = 4
+        if includeNodeIds == 1:
+          colCount = 5
+        
+        a = numpy.ones([len(self.instances), colCount], numpy.float32)
+        
+        count=0
+        for instance in self.instances:
+          a[count,0] = instance.id
+          a[count,1] = instance.x
+          a[count,2] = instance.y
+          a[count,3] = instance.z
+          if includeNodeIds == 1:
+            a[count,4] = instance.node_id
+          
+          count=count+1
+        
+        h5file.createArray(popGroup, self.popName, a, "Locations of cells in "+ self.popName)
         
         
 class Instance:
@@ -136,7 +197,7 @@ class Instance:
         
         nodeString = ""
         if self.node_id >= 0:
-            nodeString = " node_id=\""+self.node_id+"\""
+            nodeString = " node_id=\""+str(self.node_id)+"\""
             
         out_file.write(indent+"<instance id=\""+str(self.id)+"\""+nodeString+">\n")
         out_file.write(indent+"    <location x=\""+str(self.x)+"\" y=\""+str(self.y)+"\" z=\""+str(self.z)+"\"/>\n")
@@ -186,6 +247,35 @@ class Projection:
         out_file.write(indent+"</projection>\n")
         
         
+    def generateHDF5(self, h5file, projsGroup):
+        
+        import numpy
+        
+        projGroup = h5file.createGroup(projsGroup, 'projection_'+self.projName)
+        projGroup._f_setAttr("name", self.projName)
+        projGroup._f_setAttr("source", self.source)
+        projGroup._f_setAttr("target", self.target)
+        
+        
+        for synapse in self.synapses:
+            synapse.generateDefaultHDF5(h5file, projGroup)
+        
+        colCount = 3
+        
+        a = numpy.ones([len(self.connections), colCount], numpy.float32)
+        
+        count=0
+        for connection in self.connections:
+          a[count,0] = connection.id
+          a[count,1] = connection.preCellId
+          a[count,2] = connection.postCellId          
+          count=count+1
+        
+        array = h5file.createArray(projGroup, self.projName, a, "Connections of cells in "+ self.projName)
+        array._f_setAttr("column_0", "id")
+        array._f_setAttr("column_1", "pre_cell_id")
+        array._f_setAttr("column_2", "post_cell_id")
+        
         
 class SynapseProps:
     
@@ -224,9 +314,27 @@ class SynapseProps:
             out_file.write(indent+"    <synapse_type>"+self.synapseType+"</synapse_type>\n")
             out_file.write(indent+"    <default_values"+self.getValuesString()+"/>\n")
             out_file.write(indent+"</synapse_props>\n")
+            
+    def generateDefaultHDF5(self, h5file, projGroup):
+        
+        synPropsGroup = h5file.createGroup(projGroup, 'synapse_props_'+self.synapseType)
+        synPropsGroup._f_setAttr("synapse_type", self.synapseType)
+        synPropsGroup._f_setAttr("internal_delay", self.internalDelay)
+        synPropsGroup._f_setAttr("weight", self.weight)
+        synPropsGroup._f_setAttr("threshold", self.threshold)
+        
+        if self.preDelay!=0:
+          synPropsGroup._f_setAttr("pre_delay", self.preDelay)
+        if self.postDelay!=0:
+          synPropsGroup._f_setAttr("post_delay", self.postDelay)
+        if self.propDelay!=0:
+          synPropsGroup._f_setAttr("prop_delay", self.propDelay)
+        
         
         
 class Connection:
+  
+    # NOTE: no pre_segment_id etc. yet!!!
     
     def __init__(self, id, preCellId, postCellId):
         self.id = id

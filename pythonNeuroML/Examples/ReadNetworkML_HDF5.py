@@ -1,6 +1,7 @@
 #
 #
-#   A simple example of reading in and printing the contents of a NetworkML file, saved in HDF5 format
+#   A simple example of reading in and printing the contents of a NetworkML file
+#   saved in HDF5 format, not fully there yet...
 #
 #
 #   Author: Padraig Gleeson
@@ -22,32 +23,23 @@ import logging
 sys.path.append("../NeuroMLUtils")
 
 from NetworkHandler import NetworkHandler
+from NetworkMLHDF5Handler import NetworkMLHDF5Handler
 
-file_name = 'small.h5'
+#file_name = 'small.h5'
+file_name = 'test.h5'
 
 logging.basicConfig(level=logging.DEBUG, format="%(name)-19s %(levelname)-5s - %(message)s")
 
 
-print("Going to read contents of a NetworkML file: "+str(file_name))
-
-import tables
-from tables.nodes import filenode
-
-h5file=tables.openFile(file_name)
-
-print h5file.root.networkml.projections.projection_NetConn_1.NetConn_1.attrs.error_column_0
+print("Going to read contents of a HDF5 NetworkML file: "+str(file_name))
 
 
-fnode = filenode.openNode(h5file.root.networkml, 'a+')
+nmlHandler = NetworkHandler()   # The base NetworkHandler class just prints out details of the network
 
+curHandler = NetworkMLHDF5Handler(nmlHandler) # The HDF5 handler knows of the structure of NetworkML and calls appropriate functions in NetworkHandler
 
-print "Nodes in file:"
-for node in h5file:
-    print node
-print
+curHandler.setNodeId(-1)    # Flags to handle cell info for all nodes, as opposed to only cells with a single nodeId >=0
 
-h5file.close()
-
-
+curHandler.parse(file_name)
 
 

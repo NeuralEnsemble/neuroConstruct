@@ -29,7 +29,7 @@ class NetworkHandler:
     isParallel = 0
 
     #
-    #  Internal info method
+    #  Internal info method, can be reused in overriding classes for debugging
     #
     def printLocationInformation(self, id, cellGroup, cellType, x, y, z):
         position = "(%s, %s, %s)" % (x, y, z)
@@ -37,7 +37,7 @@ class NetworkHandler:
         
 
     #
-    #  Internal info method
+    #  Internal info method, can be reused in overriding classes for debugging
     #        
     def printConnectionInformation(self,  projName, id, source, target, synapseType, preCellId, postCellId, weight):
         self.log.info("Connection "+str(id)+" of: "+projName+": cell "+str(preCellId)+" in "+source \
@@ -52,7 +52,7 @@ class NetworkHandler:
       
         sizeInfo = " as yet unspecified size"
         if (size>=0):
-            sizeInfo = " size "+ str(size)+ " cells"
+            sizeInfo = " size: "+ str(size)+ " cells"
             
         self.log.info("Population: "+cellGroup+", cell type: "+cellType+sizeInfo)
         

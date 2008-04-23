@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<networkml xmlns="http://morphml.org/networkml/schema" xmlns:meta="http://morphml.org/metadata/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://morphml.org/networkml/schema  NetworkML_v1.7.xsd" lengthUnits="micron">
+
+<meta:notes>
+
+Network structure for project: NewGranCellLayer saved with neuroConstruct v1.0.9 on: 14:07:57, 22-Apr-08
+
+Cell Group: LargeGranCells contains 3 cells
+Cell Group: LargeMF contains 3 cells
+
+Network connection: NetConnLargeMFGrC contains 3 individual synaptic connections
+
+</meta:notes>
+
+<meta:properties>
+    <meta:property>
+        <meta:tag>neuroConstruct_random_seed</meta:tag>
+        <meta:value>-668957924</meta:value>    
+    </meta:property>
+    <meta:property>
+        <meta:tag>neuroConstruct_sim_config</meta:tag>
+        <meta:value>LargeNetwork</meta:value>    
+    </meta:property>
+</meta:properties>
+
+<populations>
+    <population name="LargeGranCells" cell_type="Granule_98">
+        <instances size="3">
+            <instance id="0" node_id="0">
+                <location x="12.175047" y="24.67475" z="42.81618"/>
+            </instance>
+            <instance id="1" node_id="1">
+                <location x="32.95397" y="24.873947" z="67.57293"/>
+            </instance>
+            <instance id="2" node_id="2">
+                <location x="66.66395" y="88.0889" z="38.37398"/>
+            </instance>
+        </instances>
+    </population>
+    <population name="LargeMF" cell_type="MossyFiber">
+        <instances size="3">
+            <instance id="0" node_id="3">
+                <location x="43.980293" y="6.0147104" z="2.3251653"/>
+            </instance>
+            <instance id="1" node_id="0">
+                <location x="51.507248" y="44.408886" z="67.51696"/>
+            </instance>
+            <instance id="2" node_id="1">
+                <location x="71.42178" y="33.324604" z="16.896135"/>
+            </instance>
+        </instances>
+    </population>
+</populations>
+
+<projections units="Physiological Units">
+    <projection name="NetConnLargeMFGrC" source="LargeMF" target="LargeGranCells">
+        <synapse_props synapse_type="NMDA" internal_delay="2.0" weight="4.0" threshold="-20.0">
+        </synapse_props>
+        <synapse_props synapse_type="MF_AMPA" internal_delay="2.0" weight="6.0" threshold="-20.0">
+        </synapse_props>
+        <connections>
+            <connection id="0" pre_cell_id="1" post_cell_id="0">
+                <properties synapse_type="NMDA" prop_delay="0.0" internal_delay="2.0" weight="4.291729"/>
+                <properties synapse_type="MF_AMPA" prop_delay="0.0" internal_delay="2.0" weight="5.623608"/>
+            </connection>
+            <connection id="1" pre_cell_id="1" post_cell_id="1">
+                <properties synapse_type="NMDA" prop_delay="0.0" internal_delay="2.0" weight="3.4831412"/>
+                <properties synapse_type="MF_AMPA" prop_delay="0.0" internal_delay="2.0" weight="5.4657583"/>
+            </connection>
+            <connection id="2" pre_cell_id="1" post_cell_id="2">
+                <properties synapse_type="NMDA" prop_delay="0.0" internal_delay="2.0" weight="3.8452735"/>
+                <properties synapse_type="MF_AMPA" prop_delay="0.0" internal_delay="2.0" weight="5.2920012"/>
+            </connection>
+        </connections>
+    </projection>
+</projections>
+
+</networkml>

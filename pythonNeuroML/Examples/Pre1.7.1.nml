@@ -1,27 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <networkml xmlns="http://morphml.org/networkml/schema" xmlns:meta="http://morphml.org/metadata/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://morphml.org/networkml/schema  http://www.morphml.org:8080/NeuroMLValidator/NeuroMLFiles/Schemata/v1.4/Level3/NetworkML_v1.4.xsd" lengthUnits="micron">
 
-<meta:notes>
 
-Network structure for project: Parallel saved with neuroConstruct v1.0.7 on: 11:48:47, 16-Oct-07
 
-Cell Group: sm2 contains 4 cells
-Cell Group: sm1 contains 4 cells
+<meta:notes>A NetworkML file with an older (pre v1.7.1) format for some elements/attributes</meta:notes>
 
-Network connection: NetConn_sm1_sm2 contains 8 individual synaptic connections
 
-</meta:notes>
-
-<meta:properties>
-    <meta:property>
-        <meta:tag>neuroConstruct_random_seed</meta:tag>
-        <meta:value>491270758</meta:value>    
-    </meta:property>
-    <meta:property>
-        <meta:tag>neuroConstruct_sim_config</meta:tag>
-        <meta:value>SmallNetwork</meta:value>    
-    </meta:property>
-</meta:properties>
 
 <populations>
     <population name="sm2">
