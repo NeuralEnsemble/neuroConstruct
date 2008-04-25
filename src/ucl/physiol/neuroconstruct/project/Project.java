@@ -935,7 +935,7 @@ public class Project implements TableModelListener
     /**
      * Might be a better place for this...
      */
-    public File saveNetworkStructure(File neuroMLFile,
+    public File saveNetworkStructureXML(File neuroMLFile,
                                      boolean zipped,
                                      boolean extraComments,
                                      String simConfig) throws NeuroMLException
@@ -1070,6 +1070,10 @@ public class Project implements TableModelListener
                     + neuroMLFile.getAbsolutePath(), ex);
         }
     }
+    
+    
+    
+    
 
     public void saveProject() throws NoProjectLoadedException
     {

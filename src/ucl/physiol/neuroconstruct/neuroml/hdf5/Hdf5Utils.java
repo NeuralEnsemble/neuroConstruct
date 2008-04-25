@@ -639,7 +639,7 @@ public class Hdf5Utils
             File fileSaved = null;
           
 
-            fileSaved = testProj.saveNetworkStructure(newNMLFile,
+            fileSaved = testProj.saveNetworkStructureXML(newNMLFile,
                                                       false,
                                                       false,
                                                       testProj.simConfigInfo.getDefaultSimConfig().getName());

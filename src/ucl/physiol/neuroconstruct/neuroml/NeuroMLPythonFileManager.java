@@ -177,12 +177,12 @@ public class NeuroMLPythonFileManager
         }
         
 
-        File networkFile = new File(neuroMLDir, "Generated"+".network.xml");
+        File networkFile = new File(neuroMLDir, NetworkMLConstants.DEFAULT_NETWORKML_FILENAME_XML);
         
         try
         {
 
-            project.saveNetworkStructure(networkFile,
+            project.saveNetworkStructureXML(networkFile,
                                          false,
                                          false,
                                          simConfig.getName());

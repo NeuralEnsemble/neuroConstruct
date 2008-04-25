@@ -192,6 +192,7 @@ public class SimulationsInfo extends AbstractTableModel
         return simDataObjs.size();
     }
 
+    @Override
     public String getColumnName(int col) {
         return (String)columnsShown.elementAt(col);
     }
@@ -228,6 +229,7 @@ public class SimulationsInfo extends AbstractTableModel
     }
 
 
+    @Override
     public boolean isCellEditable(int row, int col)
     {
         return false;
@@ -391,7 +393,7 @@ public class SimulationsInfo extends AbstractTableModel
             }
             
 
-            props.setProperty("Script language", "GENESIS Script");
+            props.setProperty("Script format", "GENESIS Script");
             
 
             props.setProperty("Script generation time",
@@ -430,11 +432,16 @@ public class SimulationsInfo extends AbstractTableModel
 
             if (project.neuronFileManager.getCurrentRunMode()==NeuronFileManager.RUN_HOC)
             {
-                props.setProperty("Script language", "Hoc");
+                props.setProperty("Script format", "Hoc");
             }
-            else if (project.neuronFileManager.getCurrentRunMode()==NeuronFileManager.RUN_PYTHON)
+            else if (project.neuronFileManager.getCurrentRunMode()==NeuronFileManager.RUN_PYTHON_XML)
             {
-                props.setProperty("Script language", "Python");
+                props.setProperty("Script format", "Python/XML");
+                
+            }  
+            else if (project.neuronFileManager.getCurrentRunMode()==NeuronFileManager.RUN_PYTHON_HDF5)
+            {
+                props.setProperty("Script format", "Python/HDF5");
                 
             }  
             else if (project.neuronFileManager.getCurrentRunMode()==NeuronFileManager.RUN_VIA_CONDOR)

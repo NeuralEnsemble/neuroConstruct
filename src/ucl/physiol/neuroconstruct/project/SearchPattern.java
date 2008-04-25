@@ -69,6 +69,7 @@ public class SearchPattern
      * Return a simple string representation...
      * @return A string summarising the state
      */
+    @Override
     public String toString()
     {
         switch (type)

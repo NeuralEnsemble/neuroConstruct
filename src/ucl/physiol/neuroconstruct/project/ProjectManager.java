@@ -500,7 +500,7 @@ public class ProjectManager implements GenerationReport
         
     }
 
-    public void doSaveNetworkML(File networkmlFile) throws NeuroMLException
+    /*public void doSaveNetworkML(File networkmlFile) throws NeuroMLException
     {
         doSaveNetworkML(networkmlFile, false, false, SimConfigInfo.DEFAULT_SIM_CONFIG_NAME);
     }
@@ -521,7 +521,7 @@ public class ProjectManager implements GenerationReport
                                                  simConfig);
 
 
-    }
+    }*/
 
 
     public Display3DProperties getProjectDispProps()

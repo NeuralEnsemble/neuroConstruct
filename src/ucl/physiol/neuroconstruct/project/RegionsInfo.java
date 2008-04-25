@@ -73,6 +73,7 @@ public class RegionsInfo extends AbstractTableModel
         return vectorNames.size();
     }
 
+    @Override
     public String getColumnName(int col) {
         return columnNames[col];
     }
@@ -107,12 +108,14 @@ public class RegionsInfo extends AbstractTableModel
     }
 
 
+    @Override
     public boolean isCellEditable(int row, int col)
     {
         if (col==COL_NUM_COLOUR) return true;
         return false;
     }
 
+    @Override
     public void setValueAt(Object value, int row, int col)
     {
         logger.logComment("Setting row: "+row+", col: "+col);
@@ -260,16 +263,19 @@ public class RegionsInfo extends AbstractTableModel
              if(nextRegion.getHighestZValue()>maxZ) maxZ = nextRegion.getHighestZValue();
         }
         
-        ArrayList<PositionRecord> allPositions = project.generatedCellPositions.getAllPositionRecords();
-        
-        for(PositionRecord pos: allPositions)
+        if (project!=null)
         {
-             if(pos.x_pos<minX) minX = pos.x_pos;
-             if(pos.y_pos<minY) minY = pos.y_pos;
-             if(pos.z_pos<minZ) minZ = pos.z_pos;
-             if(pos.x_pos>maxX) maxX = pos.x_pos;
-             if(pos.y_pos>maxY) maxY = pos.y_pos;
-             if(pos.z_pos>maxZ) maxZ = pos.z_pos;
+            ArrayList<PositionRecord> allPositions = project.generatedCellPositions.getAllPositionRecords();
+
+            for(PositionRecord pos: allPositions)
+            {
+                 if(pos.x_pos<minX) minX = pos.x_pos;
+                 if(pos.y_pos<minY) minY = pos.y_pos;
+                 if(pos.z_pos<minZ) minZ = pos.z_pos;
+                 if(pos.x_pos>maxX) maxX = pos.x_pos;
+                 if(pos.y_pos>maxY) maxY = pos.y_pos;
+                 if(pos.z_pos>maxZ) maxZ = pos.z_pos;
+            }
         }
         
         

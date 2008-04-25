@@ -24,7 +24,8 @@ package ucl.physiol.neuroconstruct.neuroml;
 public class NetworkMLConstants
 {
 
-    public static String DEFAULT_NETWORKML_FILENAME = "Generated.net.xml";
+    public static String DEFAULT_NETWORKML_FILENAME_XML = "Generated.net.xml";
+    public static String DEFAULT_NETWORKML_FILENAME_HDF5 = "Generated.net.h5";
     
     public static String ROOT_ELEMENT = "networkml";
 

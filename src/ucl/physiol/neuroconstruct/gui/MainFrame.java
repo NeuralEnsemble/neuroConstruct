@@ -585,7 +585,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JCheckBox jCheckBoxNeuronSaveHoc = new JCheckBox();
     JButton jButtonNeuronCreateCondor = new JButton();
     /////////////JButton jButtonNeuronCreateMPIHoc = new JButton();
-    JButton jButtonNeuronCreateMPIPython = new JButton();
+    JButton jButtonNeuronCreatePythonXML = new JButton();
+    JButton jButtonNeuronCreatePyHDF5 = new JButton();
+    
     JComboBox jComboBoxGenesisFiles = new JComboBox();
     JPanel jPanelSimGeneral = new JPanel();
     JPanel jPanelInputOutput = new JPanel();
@@ -742,7 +744,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JMenu jMenuProject = new JMenu();
     JMenuItem jMenuItemGenNetwork = new JMenuItem();
     JMenuItem jMenuItemGenNeuronHoc = new JMenuItem();
-    JMenuItem jMenuItemGenNeuronPython = new JMenuItem();
+    JMenuItem jMenuItemGenNeuronPyXML = new JMenuItem();
+    JMenuItem jMenuItemGenNeuronPyHDF5 = new JMenuItem();
     JMenuItem jMenuItemGenGenesis = new JMenuItem();
     JMenuItem jMenuItemPrevSims = new JMenuItem();
     JMenuItem jMenuItemDataSets = new JMenuItem();
@@ -1238,8 +1241,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
         //jTextAreaNeuronBlockDesc.setHorizontalAlignment(SwingConstants.CENTER);
-        jTextAreaNeuronBlockDesc.setText("This code will be included before creation of the cell " +
-    "groups");
+        jTextAreaNeuronBlockDesc.setText("This code will be included before creation of the cell groups");
 
 
         jTextAreaNeuronBlock.setEnabled(false);
@@ -1359,13 +1361,23 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         });*/
 
 
-        jButtonNeuronCreateMPIPython.setEnabled(false);
-        jButtonNeuronCreateMPIPython.setText("Create Python/NeuroML based scripts");
-        jButtonNeuronCreateMPIPython.addActionListener(new java.awt.event.ActionListener()
+        jButtonNeuronCreatePythonXML.setEnabled(false);
+        jButtonNeuronCreatePythonXML.setText("Create Python/XML simulation");
+        jButtonNeuronCreatePythonXML.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
-                jButtonNeuronCreatePython_actionPerformed(e);
+                jButtonNeuronCreatePythonXML_actionPerformed(e);
+            }
+        });
+
+        jButtonNeuronCreatePyHDF5.setEnabled(false);
+        jButtonNeuronCreatePyHDF5.setText("Create Python/HDF5 simulation");
+        jButtonNeuronCreatePyHDF5.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonNeuronCreatePyHDF5_actionPerformed(e);
             }
         });
 
@@ -1788,12 +1800,20 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jMenuItemGenNeuronHoc_actionPerformed(e);
             }
         });
-        jMenuItemGenNeuronPython.setText("Generate NEURON (Python)");
-        jMenuItemGenNeuronPython.addActionListener(new java.awt.event.ActionListener()
+        jMenuItemGenNeuronPyXML.setText("Generate NEURON (Python/XML)");
+        jMenuItemGenNeuronPyXML.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
-                jMenuItemGenNeuronPython_actionPerformed(e);
+                jMenuItemGenNeuronPyXML_actionPerformed(e);
+            }
+        });
+        jMenuItemGenNeuronPyHDF5.setText("Generate NEURON (Python/HDF5)");
+        jMenuItemGenNeuronPyHDF5.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jMenuItemGenNeuronPyHDF5_actionPerformed(e);
             }
         });
 
@@ -2271,7 +2291,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelCellGroupDetails.setDebugGraphicsOptions(0);
         jPanelCellGroupDetails.setLayout(borderLayout6);
         jButtonNeuronRun.setEnabled(false);
-        jButtonNeuronRun.setText("Run NEURON simulation");
+        jButtonNeuronRun.setText("Run simulation");
         jButtonNeuronRun.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -2280,7 +2300,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
         });
         jButtonNeuronCreateLocal.setEnabled(false);
-        jButtonNeuronCreateLocal.setText("Create hoc based simulation");
+        jButtonNeuronCreateLocal.setText("Create hoc simulation");
         jButtonNeuronCreateLocal.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -3083,7 +3103,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         //jPanelHocFileButtons.add(jButto nNeuronCreateCondor, null);
 
-        if (GeneralUtils.includeParallelFunc()) jPanelHocFile1Buttons.add(jButtonNeuronCreateMPIPython, null);
+        if (GeneralUtils.includeParallelFunc())
+        {
+            jPanelHocFile1Buttons.add(jButtonNeuronCreatePythonXML, null);
+            jPanelHocFile1Buttons.add(jButtonNeuronCreatePyHDF5, null);
+            
+        }
 
         jPanelHocFile2Buttons.add(jButtonNeuronView, null);
         jPanelHocFile2Buttons.add(jComboBoxNeuronFileList, null);
@@ -3604,7 +3629,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         jMenuProject.add(jMenuItemGenNetwork);
         jMenuProject.add(jMenuItemGenNeuronHoc);
-        jMenuProject.add(jMenuItemGenNeuronPython);
+        
+        if (GeneralUtils.includeParallelFunc())
+        {
+            jMenuProject.add(jMenuItemGenNeuronPyXML);
+            jMenuProject.add(jMenuItemGenNeuronPyHDF5);
+        }
+        
         jMenuProject.add(jMenuItemGenGenesis);
         jMenuProject.addSeparator();
         jMenuProject.add(jMenuItemPrevSims);
@@ -5798,7 +5829,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     {
         jComboBoxNeuronFileList.removeAllItems();
 
-        String[] types = new String[]{".hoc", ".mod", ".nrn", ".py", ".xml"};
+        String[] types = new String[]{".hoc", ".mod", ".nrn", ".py", ".xml", ".sh"};
         SimpleFileFilter filter = new SimpleFileFilter(types, "Any NEURON/Python/XML file");
 
 
@@ -8659,7 +8690,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jButtonNeuronCreateLocal.setEnabled(false);
             jButtonNeuronCreateCondor.setEnabled(false);
             ///////////////jButtonNeuronCreateMPIHoc.setEnabled(false);
-            jButtonNeuronCreateMPIPython.setEnabled(false);
+            jButtonNeuronCreatePythonXML.setEnabled(false);
+            jButtonNeuronCreatePyHDF5.setEnabled(false);
             this.jButtonNeuronView.setEnabled(false);
             this.jButtonNeuronRun.setEnabled(false);
 
@@ -8747,7 +8779,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
             //////////jButtonNeuronCreateMPIHoc.setEnabled(true);
-            jButtonNeuronCreateMPIPython.setEnabled(true);
+            jButtonNeuronCreatePythonXML.setEnabled(true);
+            jButtonNeuronCreatePyHDF5.setEnabled(true);
 
 
             this.jCheckBoxNeuronShowShapePlot.setEnabled(true);
@@ -10306,14 +10339,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             if (jRadioButtonNMLSavePlainText.isSelected())
             {
-                fileSaved = projManager.getCurrentProject().saveNetworkStructure(networkFile,
+                fileSaved = projManager.getCurrentProject().saveNetworkStructureXML(networkFile,
                                                                  false,
                                                                  this.jCheckBoxGenerateExtraNetComments.isSelected(),
                                                                  getSelectedSimConfig().getName());
             }
             else if (jRadioButtonNMLSaveZipped.isSelected())
             {
-                fileSaved = projManager.getCurrentProject().saveNetworkStructure(networkFile,
+                fileSaved = projManager.getCurrentProject().saveNetworkStructureXML(networkFile,
                                                                  true,
                                                                  this.jCheckBoxGenerateExtraNetComments.isSelected(),
                                                                  getSelectedSimConfig().getName());
@@ -11468,12 +11501,18 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         doCreateHoc(NeuronFileManager.RUN_PARALLEL_HOC);
     }*/
 
-    void jButtonNeuronCreatePython_actionPerformed(ActionEvent e)
+    void jButtonNeuronCreatePythonXML_actionPerformed(ActionEvent e)
     {
-        logger.logComment("Creating Parallel ready Python");
-        doCreateHoc(NeuronFileManager.RUN_PYTHON);
+        logger.logComment("Creating Python/XML scripts");
+        doCreateHoc(NeuronFileManager.RUN_PYTHON_XML);
     }
 
+    
+    void jButtonNeuronCreatePyHDF5_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("Creating Python/HDF5 scripts");
+        doCreateHoc(NeuronFileManager.RUN_PYTHON_HDF5);
+    }
 
 
 
@@ -13676,7 +13715,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     }
 
-    void jMenuItemGenNeuronPython_actionPerformed(ActionEvent e)
+    void jMenuItemGenNeuronPyXML_actionPerformed(ActionEvent e)
     {
         if (!projManager.projectLoaded()) return;
 
@@ -13684,7 +13723,18 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTabbedPaneExportFormats.setSelectedIndex(jTabbedPaneExportFormats.indexOfTab(this.NEURON_SIMULATOR_TAB));
         jTabbedPaneNeuron.setSelectedIndex(jTabbedPaneNeuron.indexOfTab(this.NEURON_TAB_GENERATE));
 
-        doCreateHoc(NeuronFileManager.RUN_PYTHON);
+        doCreateHoc(NeuronFileManager.RUN_PYTHON_XML);
+
+    }
+    void jMenuItemGenNeuronPyHDF5_actionPerformed(ActionEvent e)
+    {
+        if (!projManager.projectLoaded()) return;
+
+        jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(this.EXPORT_TAB));
+        jTabbedPaneExportFormats.setSelectedIndex(jTabbedPaneExportFormats.indexOfTab(this.NEURON_SIMULATOR_TAB));
+        jTabbedPaneNeuron.setSelectedIndex(jTabbedPaneNeuron.indexOfTab(this.NEURON_TAB_GENERATE));
+
+        doCreateHoc(NeuronFileManager.RUN_PYTHON_HDF5);
 
     }
 
