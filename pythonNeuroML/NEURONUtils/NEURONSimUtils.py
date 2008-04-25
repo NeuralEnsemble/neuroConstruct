@@ -14,7 +14,8 @@ import sys
 import os
 import logging
 
-import hoc
+import neuron
+from neuron import hoc
 
 
 if sys.path.count(os.getcwd())==0:
@@ -60,9 +61,9 @@ class NetManagerNEURON(NetworkHandler):
   
     h = hoc.HocObject()
         
-    globalPreSynId = 100000
+    globalPreSynId = 10000000
     
-        
+    preSectionsVsGids = dict()
         
     #
     #  Overridden from NetworkHandler
@@ -72,7 +73,7 @@ class NetManagerNEURON(NetworkHandler):
         if (size>=0):
             sizeInfo = ", size "+ str(size)+ " cells"
             
-            self.log.info("Population: "+cellGroup+", cell type: "+cellType+sizeInfo)
+            self.log.info("Creating population: "+cellGroup+", cell type: "+cellType+sizeInfo)
             
             self.executeHoc("n_"+cellGroup+" = "+ str(size))
             self.executeHoc("objectvar a_"+cellGroup+"[n_"+cellGroup+"]")
@@ -88,28 +89,23 @@ class NetManagerNEURON(NetworkHandler):
     def handleLocation(self, id, cellGroup, cellType, x, y, z):
         self.printLocationInformation(id, cellGroup, cellType, x, y, z)
                 
-        
-        newCellName = cellGroup+"_"+id
-        
+        newCellName = cellGroup+"_"+str(id)
         
         createCall = "new "+cellType+"(\""+newCellName+"\", \"" +cellType+"\", \"New Cell: "+newCellName+" of type: "+cellType+"\")"
         
-        cellInArray = "a_"+cellGroup+"["+id+"]"
+        cellInArray = "a_"+cellGroup+"["+str(id)+"]"
         
         setupCreate = "obfunc newCell() { {"+cellInArray+" = "+createCall+"} return "+cellInArray+" }"
         
         self.executeHoc(setupCreate)
         
-        
-        
         newCell = self.h.newCell()
         
         newCell.position(float(x), float(y), float(z))
         
-        
         self.h.allCells.append(newCell)
         
-        self.log.info("Have just created cell: "+ newCell.reference)
+        self.log.info("Have just created cell: "+ newCell.reference+" at ("+str(x)+", "+str(y)+", "+str(z)+")")
         
         if self.isParallel == 1:
             self.executeHoc("pnm.register_cell(getCellGlobalId(\""+cellGroup+"\", "+id+"), "+cellInArray+")")
@@ -139,6 +135,11 @@ class NetManagerNEURON(NetworkHandler):
         self.log.info("From: "+source+", id: "+str(preCellId)+", segment: "+str(preSegId)+", fraction: "+str(preFract))
         self.log.info("To  : "+target+", id: "+str(postCellId)+", segment: "+str(postSegId)+", fraction: "+str(postFract))
         
+            
+        delayTotal = float(localInternalDelay) + float(localPreDelay) + float(localPostDelay) + float(localPropDelay)
+        
+        
+        self.log.info("Delay: "+str(delayTotal)+", weight: "+ str(localWeight)+", threshold: "+ str(localThreshold))
         
         targetCell = "a_"+target+"["+str(postCellId)+"]"
         sourceCell = "a_"+source+"["+str(preCellId)+"]"
@@ -146,7 +147,10 @@ class NetManagerNEURON(NetworkHandler):
         
         if self.isParallel == 1:
             self.executeHoc("localSynapseId = -2")
-            self.executeHoc("globalPreSynId = "+str(self.globalPreSynId))
+            self.executeHoc("globalPreSynId = "+str(self.globalPreSynId))  # provisional gid for NetCon
+            
+            
+        # Create post syn object    
             
         if self.h.isCellOnNode(str(target), int(postCellId)) == 1:
             self.log.info("++++++++++++ PostCell: "+targetCell+" is on this host...")
@@ -154,11 +158,9 @@ class NetManagerNEURON(NetworkHandler):
             synObjName = projName+"_"+synapseType+"_"+id
             
             self.executeHoc("objref "+synObjName)
+            self.executeHoc(targetCell+".accessSectionForSegId("+str(postSegId)+")")
                 
-            self.executeHoc(targetCell+".accessSectionForSegId("+postSegId+")")
-                
-            self.executeHoc("fractSecPost = "+targetCell+".getFractAlongSection(" \
-                        +str(postFract)+", "+str(postSegId)+")")
+            self.executeHoc("fractSecPost = "+targetCell+".getFractAlongSection("+str(postFract)+", "+str(postSegId)+")")
             
             self.log.info("Synapse object at: "+str(h.fractSecPost) +" on sec: "+h.secname()+", or: "+str(postFract)+" on seg id: "+ str(postSegId))
             
@@ -166,41 +168,83 @@ class NetManagerNEURON(NetworkHandler):
             
             self.executeHoc(targetCell+".synlist.append("+synObjName+")")
             
-            
             self.executeHoc("localSynapseId = "+targetCell+".synlist.count()-1")
             
         else:
             self.log.info("------------ PostCell: "+targetCell+" is not on this host...")
             
-            
-        delayTotal = float(localInternalDelay) + float(localPreDelay) + float(localPostDelay) + float(localPropDelay)
         
+        # Create pre syn object  
         
         if self.isParallel == 0:
         
-            self.executeHoc(sourceCell+".accessSectionForSegId("+preSegId+")")
-        
+            self.executeHoc(sourceCell+".accessSectionForSegId("+str(preSegId)+")")
             self.executeHoc("fractSecPre = "+sourceCell+".getFractAlongSection("+str(preFract)+", "+str(preSegId)+")")
         
             self.log.info("NetCon object at: "+str(h.fractSecPre) +" on sec: "+h.secname()+", or: "+str(preFract)+" on seg id: "+ str(preSegId))
         
-        
             self.executeHoc(sourceCell+".synlist.append(new NetCon(&v(fractSecPre), " \
                       +synObjName+", "+localThreshold+", "+str(delayTotal)+", "+localWeight+"))")
         
-       
         else:
+          
+            netConRef = "NetCon_"+str(self.globalPreSynId)
+            netConRefTemp = netConRef+"_temp"
+            
+            self.executeHoc("objref "+netConRef)
+            self.executeHoc("objref "+netConRefTemp)
+            
+            preCellSegRef = str(sourceCell+"_"+str(preSegId))
+            
+            gidToUse = self.globalPreSynId
+            
+            if  preCellSegRef in self.preSectionsVsGids:
+                gidToUse = self.preSectionsVsGids[preCellSegRef]
+                self.log.info("Using *existing* NetCon with gid for pre syn: "+str(gidToUse)+"")
+            else:
+                self.log.info("Using new gid for pre syn: "+str(gidToUse)+"")
+                self.preSectionsVsGids[preCellSegRef] = self.globalPreSynId
+                
+                
             if self.h.isCellOnNode(str(source), int(preCellId)) == 1: 
-                self.log.info("++++++++++++ PreCell: "+sourceCell+" with globalPreSynId: "+str(self.globalPreSynId)+" is here!!")
-                self.executeHoc("pnm.register_cell(globalPreSynId, "+sourceCell+")")
+                self.log.info("++++++++++++ PreCell: "+sourceCell+" is here!!")
+           
+                if  gidToUse == self.globalPreSynId:  # First time use of gid so create NetCon
+                    
+                    self.executeHoc(sourceCell+".accessSectionForSegId("+str(preSegId)+")")
+                    
+                    self.executeHoc("pnm.pc.set_gid2node("+str(gidToUse)+", hostid)")
+                    self.executeHoc(netConRef+" = new NetCon(&v("+str(preFract) +"), nil)")
+                    
+                    self.executeHoc(netConRef+".delay = "+str(delayTotal))
+                    self.executeHoc(netConRef+".weight = "+str(localWeight))
+                    self.executeHoc(netConRef+".threshold = "+str(localThreshold))
+                    
+                    self.executeHoc("pnm.pc.cell("+str(gidToUse)+", "+netConRef+")")
+                    
+          
+                
             else: 
                 self.log.info("------------ PreCell: "+sourceCell+" not on this host...")
                 
             
-            self.executeHoc("pnm.nc_append(globalPreSynId, getCellGlobalId(\""+target+"\", "+postCellId+"), "\
-                        +"localSynapseId, "+localWeight+", "+str(delayTotal)+")")
+            # Connect pre to post  
             
+            
+            if self.isParallel == 1 and self.h.isCellOnNode(str(target), int(postCellId)) == 1:
+                self.executeHoc(netConRefTemp+" = pnm.pc.gid_connect("+str(gidToUse)+","+targetCell+".synlist.object(localSynapseId))")
+           
+                self.executeHoc(netConRefTemp+".delay = "+str(delayTotal))
+                self.executeHoc(netConRefTemp+".weight = "+str(localWeight))
+                self.executeHoc(netConRefTemp+".threshold = "+str(localThreshold))
+                
+            
+            self.executeHoc("netConInfoParallel("+netConRef+")")
+            self.executeHoc("netConInfoParallel("+netConRefTemp+")")    
+                
         self.globalPreSynId+=1
+        
+        print "............ "+ str(h.hostid)+"  "+ str(self.preSectionsVsGids)
         
         
 #
@@ -208,11 +252,11 @@ class NetManagerNEURON(NetworkHandler):
 #
     def executeHoc(self, command):
     
-        cmdPrefix = ">>>>>>: "
+        cmdPrefix = "hoc >>>>>>>>>>: "
         
-        self.log.info(cmdPrefix+command)
-        
-        self.h(command)
+        if (len(command)>0):
+            self.log.info(cmdPrefix+command)
+            self.h(command)
         
         
         
