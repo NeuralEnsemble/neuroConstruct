@@ -463,7 +463,7 @@ public class Section implements Serializable
 
           System.out.println("Created: " + CellTopologyHelper.printDetails(reloaded, null));
 
-          System.out.println("Compare: " + CellTopologyHelper.compare(reloaded, orig));
+          System.out.println("Compare: " + CellTopologyHelper.compare(reloaded, orig, false));
 
           System.out.println("Equal: " + orig.equals(reloaded));
 

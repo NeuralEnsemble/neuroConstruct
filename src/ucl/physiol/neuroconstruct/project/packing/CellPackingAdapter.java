@@ -63,7 +63,7 @@ public abstract class CellPackingAdapter
 
     protected Point3f getLastPosTaken()
     {
-        return (Point3f) positionsAlreadyTaken.lastElement();
+        return positionsAlreadyTaken.lastElement();
     }
 
 
@@ -155,7 +155,7 @@ public abstract class CellPackingAdapter
 
             for (int i = 0; i < mySegments.size(); i++)
             {
-                Segment segment = (Segment) mySegments.elementAt(i);
+                Segment segment = mySegments.elementAt(i);
                 if (segment.isFiniteVolume())
                     volumeSegmentsMyCell.add(segment);
             }
@@ -165,19 +165,19 @@ public abstract class CellPackingAdapter
 
             for (int i = 0; i < newSegments.size(); i++)
             {
-                Segment segment = (Segment) newSegments.elementAt(i);
+                Segment segment = newSegments.elementAt(i);
                 if (segment.isFiniteVolume())
                     volumeSegmentsNewCell.add(segment);
             }
 
             for (int newSecs = 0; newSecs < volumeSegmentsNewCell.size(); newSecs++)
             {
-                Segment segmentNewCell = (Segment) volumeSegmentsNewCell.elementAt(newSecs);
+                Segment segmentNewCell = volumeSegmentsNewCell.elementAt(newSecs);
 
 
                 for (int mySecs = 0; mySecs < volumeSegmentsMyCell.size(); mySecs++)
                 {
-                    Segment segmentMyCell = (Segment) volumeSegmentsMyCell.elementAt(mySecs);
+                    Segment segmentMyCell = volumeSegmentsMyCell.elementAt(mySecs);
 
                     /** @todo Redo this for all eventualities... */
 
@@ -302,6 +302,7 @@ public abstract class CellPackingAdapter
      *
      * @return A string rep of internal state
      */
+    @Override
     public abstract String toString();
 
 

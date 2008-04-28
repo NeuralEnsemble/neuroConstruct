@@ -11008,9 +11008,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         Cell otherCell = projManager.getCurrentProject().cellManager.getCell(selection);
 
-        String comp = CellTopologyHelper.compare(cellTypeToComp, otherCell);
+        String comp = CellTopologyHelper.compare(cellTypeToComp, otherCell, true);
 
-        SimpleViewer.showString(comp, "Comparison of "+cellTypeToComp+" with "+ otherCell, 12, false, false);
+        SimpleViewer.showString(comp, "Comparison of "+cellTypeToComp+" with "+ otherCell, 12, false, true);
 
     }
 

@@ -1871,7 +1871,7 @@ public class Cell implements Serializable
 
           System.out.println("getDefinedSpecCaps: " + cell.getDefinedSpecCaps());
 
-          System.out.println("\n\n\nCompare: "+ CellTopologyHelper.compare(cell, cellB));
+          System.out.println("\n\n\nCompare: "+ CellTopologyHelper.compare(cell, cellB, false));
 
 
         }

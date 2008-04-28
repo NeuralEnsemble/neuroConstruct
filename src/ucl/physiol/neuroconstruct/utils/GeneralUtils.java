@@ -400,6 +400,19 @@ public class GeneralUtils
 
         return "<" + tabName + ">" + text + "</" + closingTab + ">";
     }
+    /**
+     * Quick way to get either a string in plaintext, or a html coloured string depending on a boolean value
+     */
+    public static String getColouredString(String text, String colour, boolean tabIt)
+    {
+        if (!tabIt) return text;
+        if (colour.trim().length()==0) return text;
+
+        String closingTab = "font";
+
+
+        return "<font color=\""+colour+"\">" + text + "</" + closingTab + ">";
+    }
 
 
     public static String getEndLine(boolean html)
