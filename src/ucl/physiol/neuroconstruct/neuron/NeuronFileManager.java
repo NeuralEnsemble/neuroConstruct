@@ -4286,6 +4286,7 @@ public class NeuronFileManager
                             }
                             else
                             {
+                                executable = basicCommLine;
                                 extraArgs = "-x";
                             }
 
