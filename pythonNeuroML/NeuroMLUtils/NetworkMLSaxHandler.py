@@ -16,6 +16,8 @@
 import xml.sax
 import logging
 
+from SynapseProperties import SynapseProperties
+
 class NetworkMLSaxHandler(xml.sax.ContentHandler):
     
   log = logging.getLogger("NetworkMLSaxHandler")
@@ -37,10 +39,10 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
   currentConnId = -1
   
   preCellId = -1
-  preSegId = -1
+  preSegId = 0
   preFract = -1
   postCellId = -1
-  postSegId = -1
+  postSegId = 0
   postFract = -1
   
   
@@ -144,7 +146,7 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
 
       if attrs.has_key('target'):
           self.currentProjectionTarget = attrs.get('target',"") 
-          self.log.debug("Projection: "+ self.currentProjectionName+" is from: "+ self.currentProjectionSource +" to: "+ self.currentProjectionTarget)           
+          self.log.info("Projection: "+ self.currentProjectionName+" is from: "+ self.currentProjectionSource +" to: "+ self.currentProjectionTarget)           
       
       
     elif name == 'source':
@@ -166,6 +168,8 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
             self.preCellId = attrs.get('pre_cell_id',"") 
         if attrs.has_key('pre_segment_id'):
             self.preSegId = attrs.get('pre_segment_id',"") 
+        else:
+            self.preSegId = 0
             
         if attrs.has_key('pre_fraction_along'):
             self.preFract = attrs.get('pre_fraction_along',"")  
@@ -177,6 +181,8 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
             self.postCellId = attrs.get('post_cell_id',"") 
         if attrs.has_key('post_segment_id'):
             self.postSegId = attrs.get('post_segment_id',"") 
+        else:
+            self.postSegId = 0
             
         if attrs.has_key('post_fraction_along'):
             self.postFract = attrs.get('post_fraction_along',"")  
@@ -302,7 +308,7 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
             if attrs.has_key('threshold'):
                 synProps.threshold = attrs.get('threshold',"")    
                       
-            self.log.info("......................   Changed values of local syn props: "+ synapse_type+": "+ str(synProps))      
+            self.log.info("Changed vals of local syn props: "+ synapse_type+": "+ str(synProps))      
 	                       
 			       
     else:
@@ -395,31 +401,7 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
       self.log.debug("Found end of synapse_type: "+ self.latestSynapseType)       
       
            
-          
-class SynapseProperties():
 
-    internalDelay = 0   # default from NetworkML.xsd
-    preDelay = 0        # default from NetworkML.xsd
-    postDelay = 0       # default from NetworkML.xsd
-    propDelay = 0       # default from NetworkML.xsd
-    weight = 1          # default from NetworkML.xsd
-    threshold = 0       # default from NetworkML.xsd
-    
-    def __str__(self):
-        return ("SynapseProperties: internalDelay: %s, preDelay: %s, postDelay: %s, propDelay: %s, weight: %s, threshold: %s" \
-                    % (self.internalDelay, self.preDelay, self.postDelay, self.propDelay, self.weight, self.threshold))
-                    
-    def copy(self):
-        sp = SynapseProperties()
-        sp.internalDelay = self.internalDelay
-        sp.preDelay = self.preDelay
-        sp.postDelay = self.postDelay
-        sp.propDelay = self.propDelay
-        sp.weight = self.weight
-        sp.threshold = self.threshold
-        
-        return sp
-        
         
         
         

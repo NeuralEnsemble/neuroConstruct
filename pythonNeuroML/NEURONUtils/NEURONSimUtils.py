@@ -131,7 +131,7 @@ class NetManagerNEURON(NetworkHandler):
         self.printConnectionInformation(projName, id, source, target, synapseType, preCellId, postCellId, localWeight)
           
         
-        self.log.info("Going to create a connection of type " +projName+", id: "+id+", synapse type: "+synapseType)
+        self.log.info("Going to create a connection of type " +projName+", id: "+str(id)+", synapse type: "+synapseType)
         self.log.info("From: "+source+", id: "+str(preCellId)+", segment: "+str(preSegId)+", fraction: "+str(preFract))
         self.log.info("To  : "+target+", id: "+str(postCellId)+", segment: "+str(postSegId)+", fraction: "+str(postFract))
         
@@ -155,7 +155,7 @@ class NetManagerNEURON(NetworkHandler):
         if self.h.isCellOnNode(str(target), int(postCellId)) == 1:
             self.log.info("++++++++++++ PostCell: "+targetCell+" is on this host...")
         
-            synObjName = projName+"_"+synapseType+"_"+id
+            synObjName = projName+"_"+synapseType+"_"+str(id)
             
             self.executeHoc("objref "+synObjName)
             self.executeHoc(targetCell+".accessSectionForSegId("+str(postSegId)+")")
@@ -184,7 +184,7 @@ class NetManagerNEURON(NetworkHandler):
             self.log.info("NetCon object at: "+str(h.fractSecPre) +" on sec: "+h.secname()+", or: "+str(preFract)+" on seg id: "+ str(preSegId))
         
             self.executeHoc(sourceCell+".synlist.append(new NetCon(&v(fractSecPre), " \
-                      +synObjName+", "+localThreshold+", "+str(delayTotal)+", "+localWeight+"))")
+                      +synObjName+", "+str(localThreshold)+", "+str(delayTotal)+", "+str(localWeight)+"))")
         
         else:
           

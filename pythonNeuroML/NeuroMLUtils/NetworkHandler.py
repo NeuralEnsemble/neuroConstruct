@@ -48,7 +48,7 @@ class NetworkHandler:
     #
     #  Should be overridden to create cell group/population array
     #  
-    def handlePopulation(self, cellGroup, cellType, size):
+    def handlePopulation(self, cellGroup, cellType, size=-1):
       
         sizeInfo = " as yet unspecified size"
         if (size>=0):
@@ -82,6 +82,9 @@ class NetworkHandler:
                                                     localThreshold = 0):
         
         self.printConnectionInformation(projName, id, source, target, synapseType, preCellId, postCellId, localWeight)
+        if preSegId != 0 or postSegId!=0 or preFract != 0.5 or postFract != 0.5:
+            self.log.debug("Src cell: %d, seg: %f, fract: %f -> Tgt cell %d, seg: %f, fract: %f" % (preCellId,preSegId,preFract,postCellId,postSegId,postFract))
+        
         
 
     #

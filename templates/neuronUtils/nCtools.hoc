@@ -245,9 +245,14 @@ objectvar listNcPre
  * Helper functions for getting more info on NetConn objects
  */
 proc netConInfo() {
+
+    
+    print "-- ",hostid,"---------------------------------------------------------"
     print "-- ",hostid,"-- NetConn: ", $o1
     if ($o1!=nil) {
-        print "-- ",hostid,"-- Pre: ",$o1.precell(), ", Syn: ",$o1.syn, "(",$o1.postcell, ")", ", Active: ",$o1.active(), ", Valid: ",$o1.valid()
+        print "-- ",hostid,"-- Pre: ",$o1.precell(),", Syn: ",$o1.syn,"(",$o1.postcell, ")", ", Active: ",$o1.active(),", Valid: ",$o1.valid()
+        if ($o1.precell()!=nil) { print "-- ",hostid,"-- From: ", $o1.precell().toString() }
+        if ($o1.postcell()!=nil) { print "-- ",hostid,"-- To: ", $o1.postcell().toString() }
         print "-- ",hostid,"-- Weight: ",$o1.weight, ", Delay: ",$o1.delay, ", Thresh: ",$o1.threshold
 
         listNcSyn = $o1.synlist()
@@ -262,12 +267,15 @@ proc netConInfo() {
             print "-- ",hostid,"-- NetConns sharing pre cell: ", listNcPre.o(i)
         }
     }
+
+    print "-- ",hostid,"---------------------------------------------------------"
 }
 
 proc netConInfoParallel() {
     netConInfo($o1)
     if ($o1!=nil) {
-        print "-- ",hostid,"-- Src gid: ", $o1.srcgid
+        print "-- ",hostid,"----------------------- Src gid: ", $o1.srcgid
     }
+    print " "
 }
 

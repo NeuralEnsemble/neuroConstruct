@@ -26,7 +26,8 @@ from NetworkHandler import NetworkHandler
 from NetworkMLHDF5Handler import NetworkMLHDF5Handler
 
 #file_name = 'small.h5'
-file_name = 'test.h5'
+#file_name = 'test.h5'
+file_name = 'hhh.h5'
 
 logging.basicConfig(level=logging.DEBUG, format="%(name)-19s %(levelname)-5s - %(message)s")
 

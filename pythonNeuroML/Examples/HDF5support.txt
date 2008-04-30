@@ -1,10 +1,13 @@
 
 
-    Checklist for HDF5 NetworkML support
+    Checklist for XML/HDF5 NetworkML support
 
 
 
-    Code                        Saving                          Reading      
+    Code                        Saving                                  Reading      
 
-    nC generated nets           pos+nodeid+conns+segids         pos+nodeid
-    Python scripts              pos+nodeid+conns                pos+nodeid
+    nC generated XML            pos+node+conns+synprops+del+segids      pos+nodeid+conns+synprops+del+segids
+
+    nC generated HDF5           pos+node+conns+synprops+segids          pos+nodeid
+
+    Python scripts              pos+nodeid+conns                        pos+nodeid

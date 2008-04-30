@@ -16,7 +16,9 @@
 import xml.sax
 import logging
 
-import tables
+from SynapseProperties import SynapseProperties
+
+import tables   # pytables for HDF5 support
 
 class NetworkMLHDF5Handler():
     
@@ -35,7 +37,6 @@ class NetworkMLHDF5Handler():
   isSynapseTypeElement = 0
   
   globalSynapseProps = {}
-  localSynapseProps = {}
   
   latestSynapseType = ""
     
@@ -61,40 +62,166 @@ class NetworkMLHDF5Handler():
     
   def parseGroup(self, g):
     self.log.debug("Parsing group: "+ str(g))
+    
     self.startGroup(g)
+    
+    # Note this ensures groups are parsed before datasets. Important for synapse props
     
     for node in g:
         self.log.debug("Sub node: "+ str(node)+ ", class: "+ node._c_classId)
       
         if node._c_classId == 'GROUP':
           self.parseGroup(node)
+          
+    for node in g:
+        self.log.debug("Sub node: "+ str(node)+ ", class: "+ node._c_classId)
+      
         if node._c_classId == 'ARRAY':
           self.parseDataset(node)
+          
     self.endGroup(g)
     
     
   def parseDataset(self, d):
     self.log.debug("Parsing dataset/array: "+ str(d))
+    
     if self.currPopulation!="":
         self.log.debug("Using data for population: "+ self.currPopulation)
         self.log.debug("Size is: "+str(d.shape[0])+" rows of: "+ str(d.shape[1])+ " entries")
         
         for i in range(0, d.shape[0]):
             if self.myNodeId == -1 or (d.shape[1] > 4 and self.myNodeId == d[i,4]):
-                self.netHandler.handleLocation( d[i,0],                      \
+                self.netHandler.handleLocation( int(d[i,0]),                      \
                                             self.currPopulation,     \
                                             self.currentCellType,    \
-                                            d[i,1],       \
-                                            d[i,2],       \
-                                            d[i,3])       \
+                                            float(d[i,1]),       \
+                                            float(d[i,2]),       \
+                                            float(d[i,3]))       \
             
       
-    
+    elif self.currentProjectionName!="":
+        self.log.debug("Using data for proj: "+ self.currentProjectionName)
+        self.log.debug("Size is: "+str(d.shape[0])+" rows of: "+ str(d.shape[1])+ " entries")
+        
+
+        indexId = -1
+        indexPreCellId = -1
+        indexPreSegId = -1
+        indexPreFractAlong= -1
+        indexPostCellId = -1
+        indexPostSegId = -1
+        indexPostFractAlong= -1
+        
+        id = -1
+        preCellId = -1
+        preSegId = 0
+        preFractAlong= 0.5
+        postCellId = -1
+        postSegId = 0
+        postFractAlong= 0.5
+        
+        extraParamIndices = {}
+        
+        
+        for attrName in d.attrs._v_attrnames:
+            val = d.attrs._g_getAttr(attrName)
+            
+            self.log.debug("Val of attribute: "+ attrName + " is "+ str(val))
+            
+            if val == 'id' or val[0] == 'id':
+                indexId = int(attrName[len('column_'):])
+            elif val == 'pre_cell_id' or val[0] == 'pre_cell_id':
+                indexPreCellId = int(attrName[len('column_'):])
+            elif val == 'pre_segment_id' or val[0] == 'pre_segment_id':
+                indexPreSegId = int(attrName[len('column_'):])
+            elif val == 'pre_fraction_along' or val[0] == 'pre_fraction_along':
+                indexPreFractAlong = int(attrName[len('column_'):])
+            elif val == 'post_cell_id' or val[0] == 'post_cell_id':
+                indexPostCellId = int(attrName[len('column_'):])
+            elif val == 'post_segment_id' or val[0] == 'post_segment_id':
+                indexPostSegId = int(attrName[len('column_'):])
+            elif val == 'post_fraction_along' or val[0] == 'post_fraction_along':
+                indexPostFractAlong = int(attrName[len('column_'):])
+            
+            for synType in self.globalSynapseProps.keys():
+                if str(val).count(synType) >0:
+                    extraParamIndices[str(val)] = int(attrName[len('column_'):])
+                
+        
+        self.log.debug("Cols: Id: %d precell: %d, postcell: %d, pre fract: %d, post fract: %d" % (indexId, indexPreCellId, indexPostCellId, indexPreFractAlong, indexPostFractAlong))
+        
+        self.log.debug("Extra cols: "+str(extraParamIndices) )
+        
+        
+        for i in range(0, d.shape[0]):
+          
+            localSynapseProps = {}
+            synTypes = self.globalSynapseProps.keys()
+            for synType in synTypes:
+                localSynapseProps[synType] = self.globalSynapseProps[synType].copy()
+            
+            id =  int(d[i,indexId])
+            
+            preCellId =  d[i,indexPreCellId]
+            
+            if indexPreSegId >= 0:
+              preSegId = int(d[i,indexPreSegId])
+            if indexPreFractAlong >= 0:
+              preFractAlong = d[i,indexPreFractAlong]
+            
+            postCellId =  d[i,indexPostCellId]
+            
+            if indexPostSegId >= 0:
+              postSegId = int(d[i,indexPostSegId])
+            if indexPostFractAlong >= 0:
+              postFractAlong = d[i,indexPostFractAlong]
+              
+            for synType in localSynapseProps:
+               for paramName in extraParamIndices.keys():
+                 if paramName.count(synType)>0:
+                   self.log.debug(paramName +"->"+synType)
+                   if paramName.count('weight')>0:
+                      localSynapseProps[synType].weight = d[i,extraParamIndices[paramName]]
+                   if paramName.count('internal_delay')>0:
+                      localSynapseProps[synType].internalDelay = d[i,extraParamIndices[paramName]]
+                   if paramName.count('pre_delay')>0:
+                      localSynapseProps[synType].preDelay = d[i,extraParamIndices[paramName]]
+                   if paramName.count('post_delay')>0:
+                      localSynapseProps[synType].postDelay = d[i,extraParamIndices[paramName]]
+                   if paramName.count('prop_delay')>0:
+                      localSynapseProps[synType].propDelay = d[i,extraParamIndices[paramName]]
+                   if paramName.count('threshold')>0:
+                      localSynapseProps[synType].threshold = d[i,extraParamIndices[paramName]]
+               
+            
+            
+            self.log.debug("Connection %d from %f to %f" % (id, preCellId, postCellId))
+        
+            for synType in localSynapseProps.keys():
+              
+                synProps = localSynapseProps[synType]
+                
+                self.netHandler.handleConnection(self.currentProjectionName, \
+                                                id, \
+                                                self.currentProjectionSource, \
+                                                self.currentProjectionTarget, \
+                                                synType, \
+                                                preCellId, \
+                                                postCellId, \
+                                                preSegId, \
+                                                preFractAlong, \
+                                                postSegId, \
+                                                postFractAlong,
+                                                synProps.internalDelay, \
+                                                synProps.preDelay, \
+                                                synProps.postDelay, \
+                                                synProps.propDelay, \
+                                                synProps.weight, \
+                                                synProps.threshold)
     
     
   def startGroup(self, g):
     self.log.debug("Going into a group: "+ g._v_hdf5name)
-    
     
     if g._v_hdf5name.count('population_')>=1:
         # TODO: a better check to see if the attribute is a str or numpy.ndarray
@@ -105,8 +232,53 @@ class NetworkMLHDF5Handler():
         if (len(self.currentCellType)==1):
           self.currentCellType = g._v_attrs.cell_type
         
-        self.log.info("Found a population: "+ self.currPopulation+", cell type: "+self.currentCellType)  
+        size = -1
+        # Peek ahead for size...
+        for node in g:
+            if node._c_classId == 'ARRAY' and node.name == self.currPopulation:
+              size = node.shape[0]
+              
+        self.log.info("Found a population: "+ self.currPopulation+", cell type: "+self.currentCellType+", size: "+ str(size))  
+        
+        self.netHandler.handlePopulation(self.currPopulation, self.currentCellType, size)
+        
+    if g._v_hdf5name.count('projection_')>=1:
       
+        self.currentProjectionName = g._v_attrs.name[0]
+        self.currentProjectionSource = g._v_attrs.source[0]
+        self.currentProjectionTarget = g._v_attrs.target[0]
+          
+        self.log.info("------    Found a projection: "+ self.currentProjectionName+ ", from "+ self.currentProjectionSource+" to "+ self.currentProjectionTarget)  
+    
+    if g._v_hdf5name.count('synapse_props_')>=1:
+      
+        newSynapseProps = SynapseProperties()
+        name = g._v_hdf5name[len('synapse_props_'):]
+        
+        #print dir(g._v_attrs) 
+        for attrName in g._v_attrs._v_attrnames:
+            val = g._v_attrs._g_getAttr(attrName)
+            self.log.debug("Val of attribute: "+ attrName + " is "+ str(val))
+            
+            if attrName == "internal_delay":
+               newSynapseProps.internalDelay = val[0]
+            if attrName == "pre_delay":
+               newSynapseProps.preDelay = val[0]
+            if attrName == "post_delay":
+               newSynapseProps.postDelay = val[0]
+            if attrName == "prop_delay":
+               newSynapseProps.propDelay = val[0]
+            if attrName == "weight":
+               newSynapseProps.weight = val[0]
+            if attrName == "threshold":
+               newSynapseProps.threshold = val[0]
+               
+        self.log.info(str(newSynapseProps) ) 
+        
+        self.globalSynapseProps[name] = newSynapseProps
+          
+        self.log.info("Global syn props: "+ str(self.globalSynapseProps) ) 
+    
     
   def endGroup(self, g):
     self.log.debug("Coming out of a group: "+ str(g))
@@ -116,6 +288,10 @@ class NetworkMLHDF5Handler():
         self.currPopulation =""
         self.currentCellType = ""
     
+    if g._v_hdf5name.count('projection_')>=1:
+        self.currentProjectionName = ""
+        self.currentProjectionSource = ""
+        self.currentProjectionTarget = ""
     
     
           
