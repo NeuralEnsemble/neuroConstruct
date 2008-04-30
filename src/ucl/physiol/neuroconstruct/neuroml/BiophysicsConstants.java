@@ -47,6 +47,7 @@ public class BiophysicsConstants
 
     public static String PARAMETER_GMAX = "gmax";
     public static String PARAMETER_REV_POT = "e";
+    public static String PARAMETER_REV_POT_2 = "erev";  // Sometimes used...
 
 
     public static String MECHANISM_NAME_ATTR = "name";
