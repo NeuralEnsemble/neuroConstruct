@@ -507,7 +507,7 @@ public class NeuronFileManager
                     allFiles[i].getName().equals(GeneralUtils.DIR_I686) ||
                     allFiles[i].getName().equals(GeneralUtils.DIR_POWERPC)))
                 {
-                    logger.logComment("Leaving in place file: "+ allFiles[i], true);
+                    logger.logComment("Leaving in place file: "+ allFiles[i]);
                 }
                 else
                 {

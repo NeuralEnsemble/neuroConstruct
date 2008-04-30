@@ -849,16 +849,16 @@ public class SegmentSelector extends JFrame implements DocumentListener
             {
               //applyExtraTranslation = currentlyAddressedSegment.isFirstSectionSegment();
                 
-                logger.logComment("rotate oldEndPoint: "+oldEndPoint,true);
-                logger.logComment("rotate oldStartPoint: "+oldStartPoint,true);
-                logger.logComment("rotate newEndPoint: "+newEndPoint,true);
+                logger.logComment("rotate oldEndPoint: "+oldEndPoint);
+                logger.logComment("rotate oldStartPoint: "+oldStartPoint);
+                logger.logComment("rotate newEndPoint: "+newEndPoint);
                 
                 Vector3f vecToOldEnd = new Vector3f(oldEndPoint);
                 vecToOldEnd.sub(oldStartPoint);                       // Subtract the oldStartPoint from the oldEndPoint to get the vector from the old start point
                 Vector3f vecToOldEndNorm = new Vector3f(vecToOldEnd); // vector to old end of currently address segment, i.e. the one that has been edited
                 vecToOldEndNorm.normalize();                          // normalise it so you can work out the rotation that has been applied by the entered data
                 
-                logger.logComment("rotate vecToOldEnd: "+vecToOldEnd,true);
+                logger.logComment("rotate vecToOldEnd: "+vecToOldEnd);
                 
                 Vector3f vecToNewEnd = new Vector3f(newEndPoint);
               //vecToNewEnd.sub(newStartPoint);
@@ -874,16 +874,16 @@ public class SegmentSelector extends JFrame implements DocumentListener
                     
                     AxisAngle4f angle4 = Utils3D.getAxisAngle(vecToOldEndNorm, vecToNewEndNorm); // works out the angle through which the newdendpoint has been rotated in relation to old endpoint
                     
-                    logger.logComment("rotate angle4: "+angle4,true);
+                    logger.logComment("rotate angle4: "+angle4);
                     
                     Transform3D transform = new Transform3D();        // creates a matrix that will apply a rotation about a point for any vector from that point, in this case the endpoint of the edited segment, or the start point of the first child segment
                     transform.set(angle4);
                     
-                    logger.logComment("rotate transform: "+transform,true);
+                    logger.logComment("rotate transform: "+transform);
                     
                     for(Segment seg: allChildren)                     // apply rotate all the child segments, get child and assign it as current seg 
                     {
-                        logger.logComment("Rotate Child seg: "+seg, true);
+                        logger.logComment("Rotate Child seg: "+seg);
                         
                         if (seg.isFirstSectionSegment())              // Sections require that the start points to be defined at a section level
                         {
@@ -892,11 +892,11 @@ public class SegmentSelector extends JFrame implements DocumentListener
                             Vector3f vecToSecStart = new Vector3f(sec.getStartPointPosition()); // get the start point of the current section
                          // vecToSecStart.sub(vecToOldEnd);                                     // ?? the vector to the start position is zero in the first child??
                             vecToSecStart.sub(oldEndPoint);
-                            logger.logComment("Rotate First Seg vecToSecStart: "+vecToSecStart, true);
+                            logger.logComment("Rotate First Seg vecToSecStart: "+vecToSecStart);
 
                             transform.transform(vecToSecStart);                                 // apply rotation to startpoint, should be zero for first child
                         
-                            logger.logComment("Rotate First Seg vecToSecStart after rot: "+vecToSecStart, true);
+                            logger.logComment("Rotate First Seg vecToSecStart after rot: "+vecToSecStart);
                         
                          // sec.setStartPointPositionX(vecToSecStart.x + vecToOldEnd.x);        // it should rotate about oldendpoint
                          // sec.setStartPointPositionY(vecToSecStart.y + vecToOldEnd.y);
@@ -910,20 +910,20 @@ public class SegmentSelector extends JFrame implements DocumentListener
                             logger.logComment("Not FirstSectionSegment");
                         }
                         // work out the endpoint for the current child segment
-                        logger.logComment("Child seg now: "+seg, true);
-                        logger.logComment("Child seg endPointPosition now: "+seg.getEndPointPosition(), true);
-                        logger.logComment("Child seg vecToOldEnd now: "+vecToOldEnd, true);
+                        logger.logComment("Child seg now: "+seg);
+                        logger.logComment("Child seg endPointPosition now: "+seg.getEndPointPosition());
+                        logger.logComment("Child seg vecToOldEnd now: "+vecToOldEnd);
                                                         
                         Vector3f vecToSegEnd = new Vector3f(seg.getEndPointPosition());
                      // vecToSegEnd.sub(vecToOldEnd);
                         vecToSegEnd.sub(oldEndPoint);                                           // old endpoint of parent segment
                      // vecToSegEnd.sub(oldStartPoint);
                         
-                        logger.logComment("Rotate vecToSegEnd: "+vecToSegEnd, true);
+                        logger.logComment("Rotate vecToSegEnd: "+vecToSegEnd);
                     
                         transform.transform(vecToSegEnd);                                       // apply rotation to vector from oldend (parent seg) to endpoint of current child seg
 
-                        logger.logComment("Rotate vecToSegEnd after rot: "+vecToSegEnd, true);
+                        logger.logComment("Rotate vecToSegEnd after rot: "+vecToSegEnd);
                         
                      // seg.setEndPointPositionX(vecToSegEnd.x + vecToOldEnd.x);                // absolute poition is point plus vector not vector plus vector
                      // seg.setEndPointPositionY(vecToSegEnd.y + vecToOldEnd.y);
@@ -932,7 +932,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
                         seg.setEndPointPositionY(vecToSegEnd.y + newEndPoint.y);
                         seg.setEndPointPositionZ(vecToSegEnd.z + newEndPoint.z);
                         
-                        logger.logComment("Child seg finally: "+seg, true);
+                        logger.logComment("Child seg finally: "+seg);
                     }
                      // should the apply extra translation be here - only first child segment needs the translation applied
                 }

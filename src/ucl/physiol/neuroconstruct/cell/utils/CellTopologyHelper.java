@@ -1297,7 +1297,7 @@ public class CellTopologyHelper
             
             seg = parent;
         }
-        logger.logComment("Length at: "+location+" on cell: "+ cell+" is "+totLen, true);
+        logger.logComment("Length at: "+location+" on cell: "+ cell+" is "+totLen);
         return totLen;
             
     }

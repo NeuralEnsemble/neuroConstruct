@@ -130,7 +130,7 @@ public class NeuroMLPythonFileManager
             
             cellMechs.addAll(syns);
             
-            logger.logComment("cellMechs: "+cellMechs, true);
+            logger.logComment("cellMechs: "+cellMechs);
             
             for(String cellMech: cellMechs)
             {

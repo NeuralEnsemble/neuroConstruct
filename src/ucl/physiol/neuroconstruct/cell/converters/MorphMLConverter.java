@@ -104,7 +104,7 @@ public class MorphMLConverter extends FormatImporter
             }
             catch (InvalidClassException e)
             {
-                logger.logComment("Cell details: "+ CellTopologyHelper.printDetails(cell, null), true);
+                logger.logComment("Cell details: "+ CellTopologyHelper.printDetails(cell, null));
                 GuiUtils.showErrorMessage(logger, "Problem converting the morphology file: "+ objFile, e, null);
             }
             si.close();
@@ -706,7 +706,7 @@ public class MorphMLConverter extends FormatImporter
                             logger.logComment("Trying to get: "+ xpath+": "+ val);
                             
 
-                            logger.logComment("Trying to get: "+ cmlCm.getXMLDoc().getXPathLocations(true), true);
+                            logger.logComment("Trying to get: "+ cmlCm.getXMLDoc().getXPathLocations(true));
                             
                             float revPot = Float.parseFloat(val);
                             

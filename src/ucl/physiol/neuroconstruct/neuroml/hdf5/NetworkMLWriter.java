@@ -283,8 +283,17 @@ public class NetworkMLWriter
                     if (conn.targetEndPoint.location.getFractAlong()!=SegmentLocation.DEFAULT_FRACT_CONN && !columnsNeeded.contains(NetworkMLConstants.POST_FRACT_ALONG_ATTR))
                         columnsNeeded.add(NetworkMLConstants.POST_FRACT_ALONG_ATTR);
                     
-                    if (conn.apPropDelay!=0 && !columnsNeeded.contains(NetworkMLConstants.PROP_DELAY_ATTR))
-                        columnsNeeded.add(NetworkMLConstants.PROP_DELAY_ATTR);
+                    if (conn.apPropDelay!=0)
+                    {
+                        for(SynapticProperties sp:  globalSynPropList)
+                        {
+                            String colName = NetworkMLConstants.PROP_DELAY_ATTR +"_"+sp.getSynapseType();
+                            if (!columnsNeeded.contains(colName))
+                            {
+                                columnsNeeded.add(colName);
+                            }
+                        }
+                    }
                     
                     if (conn.props!=null)
                     {
@@ -344,11 +353,21 @@ public class NetworkMLWriter
                         projArray[i * columnsNeeded.size() + row] = conn.targetEndPoint.location.getFractAlong();
                         row++;
                     }
-                    
+                    /*
                     if (columnsNeeded.contains(NetworkMLConstants.PROP_DELAY_ATTR))
                     {
                         projArray[i * columnsNeeded.size() + row] = conn.apPropDelay;
                         row++;
+                    }*/
+                    
+                    for(SynapticProperties sp:  globalSynPropList)
+                    {
+                        String colName = NetworkMLConstants.PROP_DELAY_ATTR +"_"+sp.getSynapseType();
+                        if (columnsNeeded.contains(colName))
+                        {
+                            projArray[i * columnsNeeded.size() + row] = conn.apPropDelay;
+                            row++;
+                        }
                     }
                     
                     

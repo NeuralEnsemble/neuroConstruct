@@ -274,7 +274,7 @@ public class OptionsFrame extends JFrame
         jLabelCommandLine.setText("Command line:");
 
         jTextPaneExplaination.setText("The command line needed to run processes in a new terminal window. "+
-                                      "Usually would be: cmd /K start /wait for Windows, gnome-terminal for Gnome desktop Linux "+
+                                      "Usually would be: cmd /K start /wait for Windows, gnome-terminal -x for Gnome desktop Linux "+
                                       "or konsole for KDE on Linux");
         //jTextAreaExplaination.setLineWrap(true);
        // jTextAreaExplaination.setWrapStyleWord(true);

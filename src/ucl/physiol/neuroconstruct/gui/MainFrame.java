@@ -333,7 +333,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     //JCheckBox jCheckBoxGenerateZip = new JCheckBox();
     JRadioButton jRadioButtonNMLSavePlainText = new JRadioButton("XML");
     JRadioButton jRadioButtonNMLSaveZipped = new JRadioButton("Zipped XML");
-    JRadioButton jRadioButtonNMLSaveHDF5 = new JRadioButton("HDF5 (alpha impl!)");
+    JRadioButton jRadioButtonNMLSaveHDF5 = new JRadioButton("HDF5 (beta impl)");
     ButtonGroup buttonGroupNMLSave = new ButtonGroup();
     
     JCheckBox jCheckBoxGenerateExtraNetComments = new JCheckBox();

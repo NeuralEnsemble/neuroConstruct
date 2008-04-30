@@ -471,7 +471,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
     public void endElement(String namespaceURI, String localName, String qName)
     {
 
-        logger.logComment("-----   End element: " + localName);
+        logger.logComment("-----   End element: " + localName, true);
 
         if (getCurrentElement().equals(NetworkMLConstants.POPULATION_ELEMENT))
         {
@@ -492,7 +492,10 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
         {
 
             float propDelay = globAPDelay;
+            
             if (localAPDelay>0) propDelay = this.localAPDelay;
+            
+            
             
             ArrayList<ConnSpecificProps> connProps = new ArrayList<ConnSpecificProps>();
             connProps.addAll(globConnProps);
@@ -522,8 +525,6 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
 
             this.localConnProps = new ArrayList<ConnSpecificProps>();
             localAPDelay = 0;
-
-
         }
         
 
@@ -545,7 +546,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
 
             File f = new File("examples\\Ex4-NEURONGENESIS\\savedNetworks\\nnn.nml");
 
-            logger.logComment("Loading netml cell from "+ f.getAbsolutePath(), true);
+            logger.logComment("Loading netml cell from "+ f.getAbsolutePath());
 
             GeneratedCellPositions gcp = new GeneratedCellPositions(testProj);
             GeneratedNetworkConnections gnc = new GeneratedNetworkConnections(testProj);

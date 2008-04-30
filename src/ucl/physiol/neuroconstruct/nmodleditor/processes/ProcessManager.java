@@ -238,7 +238,7 @@ public class ProcessManager
                     fileToCheck = otherCheckFileToBeCreated;
 
                 logger.logComment("Going to check if mods in "+myFile.getParentFile()+"" +
-                            " are newer than "+ fileToCheck, true);
+                            " are newer than "+ fileToCheck);
 
                 if (fileToCheck!=null)
                 {

@@ -240,7 +240,6 @@ public class NetworkMLReader  implements NetworkMLnCInfo
             int post_fraction_along_col = -1;
             
             
-            
             for (Attribute attribute : attrs) 
             {
                 if (Hdf5Utils.getFirstStringValAttr(attrs, attribute.getName()).equals(NetworkMLConstants.CONNECTION_ID_ATTR))

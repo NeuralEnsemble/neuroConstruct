@@ -2823,6 +2823,7 @@ public class GenesisFileManager
                     }
                     else
                     {
+                        executable = basicCommLine;
                         extraArgs = "-x";
                     }
 

@@ -2281,6 +2281,8 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
             return;
         }
         ArrayList<Integer> selNums = this.getSelectedCellNums();
+        
+        String TAB = "&nbsp;&nbsp;&nbsp;";
 
         for (int cellNumber: selNums)
         {
@@ -2328,7 +2330,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                         otherType = "target";
                         for (SynapticProperties prop : synProps)
                         {
-                            info.append("&nbsp;&nbsp;" + prop.toNiceString() + "<br>\n");
+                            info.append(TAB +"Global props: "+ prop.toNiceString() + "<br>\n");
 
                         }
 
@@ -2344,7 +2346,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                         otherType = "source";
                         for (SynapticProperties prop : synProps)
                         {
-                            info.append("&nbsp;&nbsp;" + prop.toNiceString() + "<br>\n");
+                            info.append(TAB +"Global syn props: " + prop.toNiceString() + "<br>\n");
 
                         }
 
@@ -2367,7 +2369,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                         otherType = "target";
                         for (SynapticProperties prop : synProps)
                         {
-                            info.append("&nbsp;&nbsp;" + prop.toNiceString() + "<br>\n");
+                            info.append(TAB +"Global syn props: " + prop.toNiceString() + "<br>\n");
 
                         }
 
@@ -2383,18 +2385,17 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                         otherType = "source";
                         for (SynapticProperties prop : synProps)
                         {
-                            info.append("&nbsp;&nbsp;" + prop.toNiceString() + "<br>\n");
+                            info.append(TAB +"Global syn props: "+ prop.toNiceString() + "<br>\n");
 
                         }
-
                     }
+                    info.append("<br>\n");
                 }
-                info.append("<br>\n");
 
                 if (conns != null)
                 {
 
-                    info.append("Cell num <b>" + cellNumber + "</b> makes <b>" + conns.size() + "</b> connections to " + otherType +
+                    info.append(TAB+"Cell num <b>" + cellNumber + "</b> makes <b>" + conns.size() + "</b> connections to " + otherType +
                                 " cells:<br>\n");
 
                     ArrayList<Integer> unique = new ArrayList<Integer> (conns.size());
@@ -2402,27 +2403,29 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                     /** @todo Make swifter */
                     for (int otherNum = 0; otherNum < conns.size(); otherNum++)
                     {
-                        Integer nextNum = conns.get(otherNum).targetEndPoint.cellNumber;
+                        GeneratedNetworkConnections.SingleSynapticConnection conn = conns.get(otherNum);
+                        
+                        Integer nextNum = conn.targetEndPoint.cellNumber;
+                        
                         if (otherType.equals("source")) nextNum = conns.get(otherNum).sourceEndPoint.cellNumber;
 
-                        info.append("&nbsp;&nbsp;Cell num <b>" + nextNum
-                                    + "</b> in <b>"
-                                    + otherGroup+"</b>");
+                        info.append(TAB+TAB+"Cell num <b>" + nextNum + "</b> in <b>" + otherGroup+"</b>");
 
                         Point3f posnOther = project.generatedCellPositions.getOneCellPosition(otherGroup, nextNum.intValue());
 
                         info.append(" (position: <b>" + posnOther + "</b>)");
                         info.append(" is connected to this cell" + "<br>\n");
 
-                        //info.append("        Delay due to AP propagation: " + conns.get(otherNum).apPropDelay + " ms. ");
+                        if (conn.apPropDelay>0) 
+                            info.append(TAB+TAB+TAB+"Delay due to AP propagation: " + conn.apPropDelay + " ms. "+ "<br>\n");
 
-                        ArrayList<ConnSpecificProps> props = conns.get(otherNum).props;
+                        ArrayList<ConnSpecificProps> props = conn.props;
 
                         if (props != null)
                         {
                             for (ConnSpecificProps prop : props)
                             {
-                                info.append("&nbsp;&nbsp;"+prop.toNiceString() + "<br>\n");
+                                info.append(TAB+TAB+TAB+prop.toNiceString() + "<br>\n");
 
                             }
                         }
@@ -2434,7 +2437,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                         if (!unique.contains(nextNum)) unique.add(nextNum);
                     }
                     if (conns.size() > 1)
-                        info.append("   (<b>" + unique.size() + "</b> individual cell(s), so average of <b>"
+                        info.append(TAB+TAB+TAB+"(<b>" + unique.size() + "</b> individual cell(s), so average of <b>"
                                     + (float) conns.size() / (float) unique.size() + "</b> connection(s) to each)<br>\n");
                     info.append("<br>\n");
                 }
@@ -2459,13 +2462,13 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                     {
                         if (theseInputs.get(j).getCellNumber() == cellNumber)
                         {
-                            info.append("   Cell num: <b>" + cellNumber + "</b> receives this input on segment: <b>" +
+                            info.append(TAB+"Cell num: <b>" + cellNumber + "</b> receives this input on segment: <b>" +
                                         theseInputs.get(j).getSegmentId() + "</b>, fraction along: <b>" +
                                         theseInputs.get(j).getFractionAlong() + "</b><br><br>\n\n");
                             cellGetsStim = true;
                         }
                     }
-                    if (!cellGetsStim) info.append("Cell num: <b>" + cellNumber +
+                    if (!cellGetsStim) info.append(TAB+"Cell num: <b>" + cellNumber +
                                                    "</b> in this Cell Group does not receive one of these inputs" + "<br><br>\n\n");
 
                 }

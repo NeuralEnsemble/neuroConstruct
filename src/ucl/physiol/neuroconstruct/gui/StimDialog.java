@@ -188,7 +188,7 @@ public class StimDialog extends JDialog
                 cmlMech.setInstanceName(name);
                 cmlMech.setDescription(desc);
                 
-                logger.logComment("Info so far: "+cmlMech.toString(), true);
+                logger.logComment("Info so far: "+cmlMech.toString());
                 
                 cmlMech.setMechanismType(props.getProperty("CellProcessType"));
                 
@@ -241,7 +241,7 @@ public class StimDialog extends JDialog
                     cmlMech.addSimMapping(mapping);
 
                 }
-                logger.logComment("Info so far: "+cmlMech.toString(), true);
+                logger.logComment("Info so far: "+cmlMech.toString());
                 
                 
                 if (props.getProperty("NEURONNeedsCompilation") != null)
@@ -254,7 +254,7 @@ public class StimDialog extends JDialog
                 
                 cmlMech.initialise(project, true);
                 
-                logger.logComment("Info so far: "+cmlMech, true);
+                logger.logComment("Info so far: "+cmlMech);
 
                 tempRandSpike.setSynapseType(cmlMech.getInstanceName());
                 tempRandSpikeExt.setSynapseType(cmlMech.getInstanceName());
@@ -952,7 +952,7 @@ public class StimDialog extends JDialog
             
             if (chosenSegmentId == seg.getSegmentId())
             {
-                logger.logComment("Pref is: "+opts[i], true);
+                logger.logComment("Pref is: "+opts[i]);
                 pref = opts[i];
             }
         }
