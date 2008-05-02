@@ -1362,7 +1362,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
         jButtonNeuronCreatePythonXML.setEnabled(false);
-        jButtonNeuronCreatePythonXML.setText("Create Python/XML simulation");
+        jButtonNeuronCreatePythonXML.setText("Create Python/XML sim (beta)");
         jButtonNeuronCreatePythonXML.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -1372,7 +1372,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         });
 
         jButtonNeuronCreatePyHDF5.setEnabled(false);
-        jButtonNeuronCreatePyHDF5.setText("Create Python/HDF5 simulation");
+        jButtonNeuronCreatePyHDF5.setText("Create Python/HDF5 sim (beta)");
         jButtonNeuronCreatePyHDF5.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -3103,12 +3103,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         //jPanelHocFileButtons.add(jButto nNeuronCreateCondor, null);
 
-        if (GeneralUtils.includeParallelFunc())
-        {
+        //if (GeneralUtils.includeParallelFunc())
+        //{
             jPanelHocFile1Buttons.add(jButtonNeuronCreatePythonXML, null);
             jPanelHocFile1Buttons.add(jButtonNeuronCreatePyHDF5, null);
             
-        }
+        //}
 
         jPanelHocFile2Buttons.add(jButtonNeuronView, null);
         jPanelHocFile2Buttons.add(jComboBoxNeuronFileList, null);

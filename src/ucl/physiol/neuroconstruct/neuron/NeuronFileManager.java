@@ -253,8 +253,8 @@ public class NeuronFileManager
                     
 
 
-                mainPythonFile = new File(dirForNeuronFiles, project.getProjectName() + ".py");
-                runPythonFile = new File(dirForNeuronFiles, "run_"+project.getProjectName() + ".py");
+                mainPythonFile = new File(dirForNeuronFiles, makePythonFriendly(project.getProjectName() + ".py"));
+                runPythonFile = new File(dirForNeuronFiles, makePythonFriendly("run_"+project.getProjectName() + ".py"));
                 
                 pythonWriter = new FileWriter(mainPythonFile);
                 pythonRunWriter = new FileWriter(runPythonFile);
@@ -437,6 +437,11 @@ public class NeuronFileManager
 
     }
     
+    public static String makePythonFriendly(String name)
+    {
+        return GeneralUtils.replaceAllTokens(name, "-", "_"); 
+    }
+    
     private static String getHocPythonStartup(Project project)
     {
         StringBuffer response = new StringBuffer();    
@@ -464,8 +469,9 @@ public class NeuronFileManager
 
         addHocComment(response, "Importing main Python file: "+project.getProjectName());
         
-        response.append("nrnpython(\"import "+project.getProjectName()+"\")\n\n");
-        response.append("nrnpython(\""+project.getProjectName()+".loadNetwork()\")\n\n");
+        String mainPackage = makePythonFriendly(project.getProjectName());
+        response.append("nrnpython(\"import "+mainPackage+"\")\n\n");
+        response.append("nrnpython(\""+mainPackage+".loadNetwork()\")\n\n");
 
         response.append("\n");
         return response.toString();

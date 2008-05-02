@@ -191,7 +191,8 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         
         if (GeneralUtils.includeParallelFunc()) jPanelSimDur.add(jLabelMpiConf);
         
-        jPanelSimDur.add(jComboBoxMpiConfs);
+        if(GeneralUtils.includeParallelFunc())
+            jPanelSimDur.add(jComboBoxMpiConfs);
         
         jListNames.addListSelectionListener(this);
     }
