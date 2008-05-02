@@ -3,7 +3,7 @@ Release notes/change log for neuroConstruct
 See also the README file
 
 
---------- Version XXXX (XXX 08) ---------
+--------- Version 1.0.9beta (May 08) ---------
 
 
 - Added option of saving morphologies in smaller, more efficient format. Existing projects still use old method, 
@@ -25,7 +25,8 @@ See also the README file
 
 - Cleaned up electrotonic length handling & updated docs/glossary.
 
-- HDF5 plots...
+- HDF5 support is added for importing plots/generic traces as 1D datasets in HDF5 files. Also saving and loading of NetworkML
+  structure in HDF5 (note: provisional structure & subject to change!)
 
 - Corrected bug in equation parser (used for plotting generic expressions for rate variables in ChannelML files). Expressions like
   exp ((-v - 40)/ 10) were being parsed as: exp ((-1 * (v - 40))/ 10)
