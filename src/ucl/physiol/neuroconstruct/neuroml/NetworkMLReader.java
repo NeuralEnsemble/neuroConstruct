@@ -471,7 +471,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
     public void endElement(String namespaceURI, String localName, String qName)
     {
 
-        logger.logComment("-----   End element: " + localName, true);
+        logger.logComment("-----   End element: " + localName);
 
         if (getCurrentElement().equals(NetworkMLConstants.POPULATION_ELEMENT))
         {

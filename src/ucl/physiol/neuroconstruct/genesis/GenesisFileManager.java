@@ -2389,7 +2389,8 @@ public class GenesisFileManager
 
                 }
 
-
+                if (!mooseCompatMode()) 
+                {
                 response.append("position "+ newElementName +" "
                    +UnitConverter.getLength(posRecord.x_pos,
                                             UnitConverter.NEUROCONSTRUCT_UNITS,
@@ -2401,6 +2402,7 @@ public class GenesisFileManager
                                                 UnitConverter.NEUROCONSTRUCT_UNITS,
                                                 project.genesisSettings.getUnitSystemToUse())
                    +"\n\n");
+                }
 
                    if (mappedCell.getInitialPotential().getDistributionType()!=NumberGenerator.FIXED_NUM)
                    {
@@ -2806,7 +2808,7 @@ public class GenesisFileManager
                 
                 if (GenesisFileManager.mooseCompatMode())
                 {
-                    genesisExecutable = "~/moose/moose";
+                    genesisExecutable = "~/moosebeta/moose";
                     title = "MOOSE_simulation" + "___" + project.simulationParameters.getReference();
 
                 }

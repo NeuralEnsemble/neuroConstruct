@@ -168,9 +168,19 @@ public class Hdf5Utils
         {
             if (attribute.getName().equals(attrName))
             {
-                Object[] vals = (Object[])attribute.getValue();
-            
-                return vals[0].toString();
+                if (attribute.getValue() instanceof Object[])
+                {
+                    Object[] vals = (Object[])attribute.getValue();
+
+                    return vals[0].toString();
+                }
+                if (attribute.getValue() instanceof Object)
+                {
+                    System.out.println("--- "+attribute.getValue().toString()+" for "+ attrName);
+                    //Object[] gg = (Object[])attribute.getValue();
+                    
+                    return attribute.getValue().toString();
+                }
             }
 
         }
@@ -306,7 +316,7 @@ public class Hdf5Utils
         
         if (g == null) return dataSets;
         
-        logger.logComment("Searching group "+g.getFullName()+" for Datasets", true);
+        logger.logComment("Searching group "+g.getFullName()+" for Datasets");
 
         java.util.List members = g.getMemberList();
              

@@ -76,6 +76,8 @@ public class NetworkMLReader  implements NetworkMLnCInfo
         Group root = Hdf5Utils.getRootGroup(h5File);
         
         parseGroup(root);
+        
+        Hdf5Utils.close(h5File);
     }
         
     
@@ -369,14 +371,16 @@ public class NetworkMLReader  implements NetworkMLnCInfo
             logger.logComment("Sys prop: "+System.getProperty("java.library.path"), true);
             
             //File projFile = new File("../copyNcModels/NewGranCellLayer/NewGranCellLayer.neuro.xml");
-            File projFile = new File("../nC_projects/Project_1fghf/Project_1fghf.neuro.xml");
+            
+            File projFile = new File("../nC_projects/Bignet/Bignet.neuro.xml");
             
             //Project testProj = Project.loadProject(new File("projects/Parall/Parall.neuro.xml"),null);
             //Project testProj = Project.loadProject(new File("examples/Ex5-Networks/Ex5-Networks.neuro.xml"),null);
             Project testProj = Project.loadProject(projFile,null);
 
-            //File h5File = new File(projFile.getParentFile().getAbsolutePath()+ "/savedNetworks/hhhh.h5");
-            File h5File = new File(projFile.getParentFile().getAbsolutePath()+ "/savedNetworks/nnnn.h5");
+            //File h5File = new File(projFile.getParentFile().getAbsolutePath()+ "/savedNetworks/hhh.h5");
+            //File h5File = new File(projFile.getParentFile().getAbsolutePath()+ "/savedNetworks/nnnn.h5");
+            File h5File = new File("../temp/test.h5");
 
             logger.logComment("Loading netml cell from "+ h5File.getAbsolutePath(), true);
 
