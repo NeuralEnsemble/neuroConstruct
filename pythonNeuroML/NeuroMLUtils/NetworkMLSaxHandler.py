@@ -368,7 +368,7 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
       
     elif name == 'connection':
 	    
-      self.log.info("Gathered all details of connection: " + self.currentConnId)
+      self.log.info("                                                               Gathered all details of connection: " + self.currentConnId)
       
       for synType in self.localSynapseProps.keys():
       

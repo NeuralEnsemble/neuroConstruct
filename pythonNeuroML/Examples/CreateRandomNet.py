@@ -19,7 +19,8 @@ print("Going to create a NetworkML file...")
 nmlFile = NetworkMLFile()
 
 newPop = nmlFile.addPopulation("SampleCellGroup", "SampleCell") # Names chosen for easy import into neuroConstruct...
-popSize = 100000
+popSize = 10000
+projSize = 10000
 compNodes = 4 # Number of processors to generate for
 
 newProj = nmlFile.addProjection("NetConn_1", "SampleCellGroup", "SampleCellGroup")
@@ -28,19 +29,21 @@ newProj.addSynapse("DoubExpSyn", 1, -20, 5)
 
 for i in range(popSize):
 
-    x = 200 * math.sin(i/4.0)
-    y = i*2
-    z = 100 * math.cos(i/4.0)
+    x = 1000.0 * random.random()
+    y = 1000.0 * random.random()
+    z = 1000.0 * random.random()
     
     newPop.addInstance(x,y,z, random.randint(0, compNodes-1))
-    if i>0:
-        newProj.addConnection(i-1, i)
+    
+
+for i in range(projSize):
+        newProj.addConnection(random.randint(0, popSize-1), random.randint(0, popSize-1))
     
   
-filenameX = "../../../temp/test.nml"
-##nmlFile.writeXML(filenameX)     # Create XML based NetworkML file
+#filenameX = "../../../temp/test.nml"
+#nmlFile.writeXML(filenameX)     # Create XML based NetworkML file
 
 filenameH = "../../../temp/test.h5"
 nmlFile.writeHDF5(filenameH)     # Create HDF5 based NetworkML file
 
-print("All done! File with "+str(popSize)+" cells saved to: "+ filenameX+ " and to "+ filenameH)
+print("All done! File with "+str(popSize)+" cells, "+str(projSize)+" conns saved to: "+ filenameH)

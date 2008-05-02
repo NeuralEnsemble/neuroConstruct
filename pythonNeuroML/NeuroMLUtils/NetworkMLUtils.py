@@ -139,7 +139,7 @@ class Population:
             out_file.write(indent+"    <cell_type>"+self.cellType+"</cell_type>\n")
         
         
-        out_file.write(indent+"    <instances>\n")
+        out_file.write(indent+"    <instances size=\""+str(len(self.instances))+"\">\n")
         
         for instance in self.instances:
             instance.generateXML(out_file, indent+"        ")
@@ -319,9 +319,9 @@ class SynapseProps:
         
         synPropsGroup = h5file.createGroup(projGroup, 'synapse_props_'+self.synapseType)
         synPropsGroup._f_setAttr("synapse_type", self.synapseType)
-        synPropsGroup._f_setAttr("internal_delay", self.internalDelay)
-        synPropsGroup._f_setAttr("weight", self.weight)
-        synPropsGroup._f_setAttr("threshold", self.threshold)
+        synPropsGroup._f_setAttr("internal_delay", str(self.internalDelay))
+        synPropsGroup._f_setAttr("weight", str(self.weight))
+        synPropsGroup._f_setAttr("threshold", str(self.threshold))
         
         if self.preDelay!=0:
           synPropsGroup._f_setAttr("pre_delay", self.preDelay)

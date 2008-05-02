@@ -239,12 +239,11 @@ class NetManagerNEURON(NetworkHandler):
                 self.executeHoc(netConRefTemp+".threshold = "+str(localThreshold))
                 
             
-            self.executeHoc("netConInfoParallel("+netConRef+")")
-            self.executeHoc("netConInfoParallel("+netConRefTemp+")")    
+            #self.executeHoc("netConInfoParallel("+netConRef+")")
+            #self.executeHoc("netConInfoParallel("+netConRefTemp+")")    
                 
         self.globalPreSynId+=1
         
-        print "............ "+ str(h.hostid)+"  "+ str(self.preSectionsVsGids)
         
         
 #
