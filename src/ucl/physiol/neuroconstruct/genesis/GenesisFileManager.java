@@ -789,36 +789,43 @@ public class GenesisFileManager
     {
         StringBuffer response = new StringBuffer();
         
-        if (!mooseCompatMode())
+        
+        String dir = ""; // needed under windows...
+        if (GeneralUtils.isWindowsBasedPlatform())
         {
-            String dir = ""; // needed under windows...
-            if (GeneralUtils.isWindowsBasedPlatform())
-            {
-                dir = this.mainGenesisFile.getParentFile().getAbsolutePath()+ System.getProperty("file.separator");
+            dir = this.mainGenesisFile.getParentFile().getAbsolutePath()+ System.getProperty("file.separator");
 
-                //if (!(new File(dir)))
-                dir = GeneralUtils.convertToCygwinPath(dir);
-            }
-            if (!mooseCompatMode()) 
-            {
-                addComment(response, "Including neuroConstruct utilities file");
-                response.append("include "+ getFriendlyDirName(dir)+"nCtools \n\n");
-            }
-
-            addComment(response, "Including external files");
-            response.append("include compartments \n\n");
-
-
-            addComment(response, "Creating element for channel prototypes");
-            response.append("create neutral /library\n");
-            response.append("disable /library\n");
-
-            response.append("pushe /library\n");
-            response.append("make_cylind_compartment\n");
-
-            response.append("make_cylind_symcompartment\n");
-            response.append("pope\n\n");
+            //if (!(new File(dir)))
+            dir = GeneralUtils.convertToCygwinPath(dir);
         }
+        if (!mooseCompatMode()) 
+        {
+            addComment(response, "Including neuroConstruct utilities file");
+            response.append("include "+ getFriendlyDirName(dir)+"nCtools \n\n");
+        }
+
+        addComment(response, "Including external files");
+
+        if (!mooseCompatMode()) 
+        {
+            response.append("include compartments \n\n");
+        }
+        else
+        {
+            response.append("include /usr/local/genesis-2.3/genesis/Scripts/neurokit/prototypes/compartments \n\n");
+        }
+
+
+        addComment(response, "Creating element for channel prototypes");
+        response.append("create neutral /library\n");
+        response.append("disable /library\n");
+
+        response.append("pushe /library\n");
+        response.append("make_cylind_compartment\n");
+
+        response.append("make_cylind_symcompartment\n");
+        response.append("pope\n\n");
+        
 
         return response.toString();
     }
@@ -3003,7 +3010,10 @@ public class GenesisFileManager
 
         if (addComments) response.append("echo Checking and resetting...\n\n");
 
-        response.append("maxwarnings 400\n\n");
+        if (!mooseCompatMode()) 
+        {
+            response.append("maxwarnings 400\n\n");
+        }
 
 
         ArrayList<PlotSaveDetails> recordings = project.generatedPlotSaves.getSavedPlotSaves();
