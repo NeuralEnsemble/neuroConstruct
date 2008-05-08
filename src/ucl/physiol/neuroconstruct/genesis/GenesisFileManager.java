@@ -175,7 +175,7 @@ public class GenesisFileManager
 
             fw.write(generateIncludes());
 
-            fw.write(printEnv());
+            if (!mooseCompatMode()) fw.write(printEnv());
 
             fw.write(generateChanMechIncludes());
 
@@ -799,8 +799,11 @@ public class GenesisFileManager
                 //if (!(new File(dir)))
                 dir = GeneralUtils.convertToCygwinPath(dir);
             }
-            addComment(response, "Including neuroConstruct utilities file");
-            response.append("include "+ getFriendlyDirName(dir)+"nCtools \n\n");
+            if (!mooseCompatMode()) 
+            {
+                addComment(response, "Including neuroConstruct utilities file");
+                response.append("include "+ getFriendlyDirName(dir)+"nCtools \n\n");
+            }
 
             addComment(response, "Including external files");
             response.append("include compartments \n\n");
@@ -2808,7 +2811,7 @@ public class GenesisFileManager
                 
                 if (GenesisFileManager.mooseCompatMode())
                 {
-                    genesisExecutable = "~/moosebeta/moose";
+                    genesisExecutable = "~/moose/moose";
                     title = "MOOSE_simulation" + "___" + project.simulationParameters.getReference();
 
                 }

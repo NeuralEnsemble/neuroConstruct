@@ -779,12 +779,12 @@ public class PlotterFrame extends JFrame
             ArrayList<InputRequestElement> inputs = new ArrayList<InputRequestElement>();
 
             InputRequestElement xTrans
-                = new InputRequestElement("xTrans", "Enter the expression for the new x values as a function of the original x", null, "x", "");
+                = new InputRequestElement("xTrans", "Enter the expression for the new x values as a function of the original x, y and i (point number)", null, "x", "");
 
             inputs.add(xTrans);
 
             InputRequestElement yTrans
-                = new InputRequestElement("yTrans", "Enter the expression for the new y values as a function of the original x and y", null, "y * 10", "");
+                = new InputRequestElement("yTrans", "Enter the expression for the new y values as a function of the original x, y and i", null, "y * 10", "");
 
             inputs.add(yTrans);
 
@@ -800,6 +800,7 @@ public class PlotterFrame extends JFrame
             if (dlg.cancelled())return;
 
 
+            Variable i = new Variable("i");
             Variable x = new Variable("x");
             Variable y = new Variable("y");
 
@@ -814,20 +815,20 @@ public class PlotterFrame extends JFrame
             {
                 xFunc = Expression.parseExpression(xExpression,
                                                                 new Variable[]
-                                                                {x});
+                                                                {x, y, i});
 
-                xName = "X expression: xNew = f(x) = " + xFunc.getNiceString();
+                xName = "X expression: xNew = f(x, y, i) = " + xFunc.getNiceString();
 
                 yFunc = Expression.parseExpression(yExpression,
                                                                 new Variable[]
-                                                                {x, y});
+                                                                {x, y, i});
 
-                yName = "Y expression: yNew = f(x, y) = " + yFunc.getNiceString();
+                yName = "Y expression: yNew = f(x, y, i) = " + yFunc.getNiceString();
             }
             catch (EquationException ex)
             {
-                GuiUtils.showErrorMessage(logger, "Unable to evaluate expressions:\nxNew = f(x) = "
-                                          + xExpression + "\nyNew = f(x, y) = " + yExpression + "\n", ex, null);
+                GuiUtils.showErrorMessage(logger, "Unable to evaluate expressions:\nxNew = f(x, y, i) = "
+                                          + xExpression + "\nyNew = f(x, y, i) = " + yExpression + "\n", ex, null);
                 return;
             }
 
@@ -840,16 +841,19 @@ public class PlotterFrame extends JFrame
                                                    "Transformation of "+dataSet.getXLegend(),
                                                    "Transformation of "+dataSet.getYLegend());
 
-            for (int i = 0; i < dataSet.getNumberPoints(); i++)
+            for (int j = 0; j < dataSet.getNumberPoints(); j++)
             {
-                double[] point = dataSet.getPoint(i);
+                double[] point = dataSet.getPoint(j);
 
                 Argument[] x0 = new Argument[]
-                    {new Argument(x.getName(), point[0])};
+                    {new Argument(x.getName(), point[0]),
+                    new Argument(y.getName(), point[1]),
+                    new Argument(i.getName(), j)};
 
                 Argument[] y0 = new Argument[]
                     {new Argument(x.getName(), point[0]),
-                    new Argument(y.getName(), point[1])};
+                    new Argument(y.getName(), point[1]),
+                    new Argument(i.getName(), j)};
 
 
 
