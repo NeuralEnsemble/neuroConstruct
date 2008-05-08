@@ -48,6 +48,14 @@ class NetworkMLFile:
         self.projections.append(newProj)
         return newProj
     
+    def __str__(self):
+        info =  "NetworkMLFile:"
+        
+        for population in self.populations:
+          info = info + "\n    Population: "+ population.popName
+          
+        return info
+    
         
     def writeXML(self, filename):
         

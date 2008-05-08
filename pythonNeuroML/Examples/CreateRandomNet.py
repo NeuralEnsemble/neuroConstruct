@@ -19,8 +19,8 @@ print("Going to create a NetworkML file...")
 nmlFile = NetworkMLFile()
 
 newPop = nmlFile.addPopulation("SampleCellGroup", "SampleCell") # Names chosen for easy import into neuroConstruct...
-popSize = 10000
-projSize = 10000
+popSize = 10
+projSize = 10
 compNodes = 4 # Number of processors to generate for
 
 newProj = nmlFile.addProjection("NetConn_1", "SampleCellGroup", "SampleCellGroup")
