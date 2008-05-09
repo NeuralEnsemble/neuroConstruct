@@ -17,9 +17,7 @@ import java.util.*;
 
 import java.awt.*;
 
-import java.util.logging.Level;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.zip.*;
 import org.xml.sax.*;
 
 import javax.xml.*;
@@ -415,6 +413,31 @@ public class ProjectManager implements GenerationReport
         if (activeProject!=null) return true;
         return false;
     }
+    
+    public boolean doLoadNetworkMLAndGenerate(File networkmlFile) throws NeuroMLException
+    {
+        NetworkMLnCInfo extraInfo = doLoadNetworkML(networkmlFile);
+                
+        String prevSimConfig = extraInfo.getSimConfig();
+        long randomSeed = extraInfo.getRandomSeed();
+        
+        setRandomGeneratorSeed(randomSeed);
+        
+        elecInputGenerator = new ElecInputGenerator(getCurrentProject(), this);
+
+        elecInputGenerator.setSimConfig(getCurrentProject().simConfigInfo.getSimConfig(prevSimConfig));
+        
+        
+        currentlyGenerating = true;
+
+        elecInputGenerator.start();
+
+
+
+        return false;
+    }
+    
+    
     
     public NetworkMLnCInfo doLoadNetworkML(File networkmlFile) throws NeuroMLException
     {

@@ -49,7 +49,7 @@ public abstract class CellChooser
         this.description = description;
     }
     
-    //@Override
+    @Override
     public Object clone(){return null;};
     
     protected ArrayList<PositionRecord> getCopyCellPositions()
@@ -271,7 +271,7 @@ public abstract class CellChooser
 //
     //  }
 
-
+    @Override
     public String toString()
     {
         /*

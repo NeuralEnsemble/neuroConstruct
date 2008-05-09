@@ -542,12 +542,30 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
         try
         {
             //Project testProj = Project.loadProject(new File("projects/Parall/Parall.neuro.xml"),null);
-            Project testProj = Project.loadProject(new File("examples\\Ex4-NEURONGENESIS\\Ex4-NEURONGENESIS.neuro.xml"),null);
+            Project testProj = Project.loadProject(new File("examples/Ex4-NEURONGENESIS/Ex4-NEURONGENESIS.neuro.xml"),null);
 
-            File f = new File("examples\\Ex4-NEURONGENESIS\\savedNetworks\\nnn.nml");
+            File f = new File("examples/Ex4-NEURONGENESIS/savedNetworks/nnn.nml");
 
-            logger.logComment("Loading netml cell from "+ f.getAbsolutePath());
+            logger.logComment("Loading netml cell from "+ f.getAbsolutePath()+" for proj: "+ testProj);
+            
+            ProjectManager pm = new ProjectManager(null, null);
+            
+            pm.setCurrentProject(testProj);
+            
+            pm.doLoadNetworkMLAndGenerate(f);
+            
+            
+            while (pm.isGenerating())
+            {
+                Thread.sleep(2);
+                System.out.println("Waiting...");
+            }
+            
+            
+            System.out.println(testProj.generatedElecInputs.toString());
+            
 
+            /*
             GeneratedCellPositions gcp = new GeneratedCellPositions(testProj);
             GeneratedNetworkConnections gnc = new GeneratedNetworkConnections(testProj);
 
@@ -569,7 +587,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
             xmlReader.parse(is);
 
             logger.logComment("Contents: "+gcp.toString());
-            logger.logComment("Net conns: "+gnc.toNiceString());
+            logger.logComment("Net conns: "+gnc.toNiceString());*/
 
 
 
