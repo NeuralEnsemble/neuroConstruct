@@ -5785,7 +5785,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     logger.logComment("Trying to compile the files in dir: " + modFiles[0].getParentFile());
                     
 
-                    compileSuccess = compileProcess.compileFileWithNeuron(projManager.getCurrentProject().neuronSettings.isForceModFileRegeneration());
+                    compileSuccess = compileProcess.compileFileWithNeuron(projManager.getCurrentProject().neuronSettings.isForceModFileRegeneration(), true);
                 }
             }
             catch (Exception ex)

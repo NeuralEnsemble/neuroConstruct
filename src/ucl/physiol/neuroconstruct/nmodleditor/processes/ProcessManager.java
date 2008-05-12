@@ -121,8 +121,16 @@ public class ProcessManager
         }
 
     }
-
+    
     public boolean compileFileWithNeuron(boolean forceRecompile) throws NeuronException
+    {
+        return compileFileWithNeuron(forceRecompile, true);
+    }
+
+    /*
+     * Compliles all of the mod files at the specified location using NEURON's nrnivmodl/mknrndll.sh
+     */
+    public boolean compileFileWithNeuron(boolean forceRecompile, boolean showDialog) throws NeuronException
     {
         logger.logComment("Going to compile the file: "+ myFile.getAbsolutePath());
 
@@ -309,19 +317,26 @@ public class ProcessManager
                     createdFile = otherCheckFileToBeCreated;
                 
                 logger.logComment("Successful compilation");
-                GuiUtils.showInfoMessage(logger, "Success", "Have successfully compiled the mods file into: "+ createdFile.getAbsolutePath(),
-                                           null);
+                if (showDialog)
+                {
+                    GuiUtils.showInfoMessage(logger, "Success", "Have successfully compiled the mods file into: "+ createdFile.getAbsolutePath(),
+                                               null);
+                }
 
                   return true;
             }
             else if (GeneralUtils.isMacBasedPlatform())
             {
-                GuiUtils.showInfoMessage(logger, "Success", 
-                        "The conditions for successful compilation of the files on a Mac haven't fully been determined,"
-                        +" so assuming successful compilation.\n\n"
-                        +"Note: it is essential that you can compile NEURON mod files on your system (via nrnivmodl) before running NEURON from neuroConstruct.\n"
-                        +"This will involve installing the Developer Tools (XCode) in addition to the NEURON *.dmg",
-                                           null);
+                if (showDialog)
+                {
+                    GuiUtils.showInfoMessage(logger, "Success", 
+                            "The conditions for successful compilation of the files on a Mac haven't fully been determined,"
+                            +" so assuming successful compilation.\n\n"
+                            +"Note: it is essential that you can compile NEURON mod files on your system (via nrnivmodl) before running NEURON from neuroConstruct.\n"
+                            +"This will involve installing the Developer Tools (XCode) in addition to the NEURON *.dmg",
+                                               null);
+                }
+                
 
                   return true;
 
@@ -436,7 +451,7 @@ public class ProcessManager
             //System.out.println("Trying test neuron...");
             //pm.testFileWithNeuron();
             System.out.println("Trying complie...");
-            pm.compileFileWithNeuron(false);
+            pm.compileFileWithNeuron(false, true);
             System.out.println("Done!");
 
             System.exit(0);
