@@ -847,7 +847,7 @@ public class Project implements TableModelListener
 
         generatedCellPositions = new GeneratedCellPositions(this);
         generatedNetworkConnections = new GeneratedNetworkConnections(this);
-        generatedElecInputs = new GeneratedElecInputs();
+        generatedElecInputs = new GeneratedElecInputs(this);
         generatedPlotSaves = new GeneratedPlotSaves();
 
         neuronFileManager = new NeuronFileManager(this);
@@ -942,7 +942,8 @@ public class Project implements TableModelListener
     {
         try
         {
-            
+            Integer preferedUnits = (UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS);
+                    
             StringBuffer notes = new StringBuffer("\nNetwork structure for project: "
                                 +getProjectName() + " saved with neuroConstruct v"+
                                 GeneralProperties.getVersionNumber()+" on: "+ GeneralUtils.getCurrentTimeAsNiceString() +", "
@@ -1028,11 +1029,14 @@ public class Project implements TableModelListener
 
             rootElement.addContent("\n\n");
 
-            rootElement.addChildElement(this.generatedNetworkConnections.getNetworkMLElement(UnitConverter.
-                GENESIS_PHYSIOLOGICAL_UNITS, extraComments));
+            rootElement.addChildElement(this.generatedNetworkConnections.getNetworkMLElement(preferedUnits, extraComments));
 
             rootElement.addContent("\n\n");
-
+            
+            rootElement.addChildElement(this.generatedElecInputs.getNetworkMLElement(preferedUnits));
+            
+            rootElement.addContent("\n\n");
+            
             String stringForm = doc.getXMLString("", false);
 
             logger.logComment(stringForm);

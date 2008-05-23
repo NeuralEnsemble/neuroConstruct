@@ -12,9 +12,16 @@
 
 package ucl.physiol.neuroconstruct.project;
 
-import ucl.physiol.neuroconstruct.utils.*;
 import java.io.*;
 import java.util.*;
+
+//import ucl.physiol.neuroconstruct.gui.*;
+import ucl.physiol.neuroconstruct.neuroml.*;
+import ucl.physiol.neuroconstruct.project.stimulation.*;
+import ucl.physiol.neuroconstruct.simulation.*;
+import ucl.physiol.neuroconstruct.utils.*;
+import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
+import ucl.physiol.neuroconstruct.utils.xml.*;
 
 /**
  * Storage for the locations and settings of electrical inputs generated when the Generate
@@ -30,8 +37,11 @@ public class GeneratedElecInputs
 
     Hashtable<String, ArrayList<SingleElectricalInput>> myElecInputs = null;
 
-    public GeneratedElecInputs()
+    private Project project = null;
+    
+    public GeneratedElecInputs(Project project)
     {
+        this.project = project;
         myElecInputs = new Hashtable<String, ArrayList<SingleElectricalInput>>();
 
     }
@@ -238,7 +248,7 @@ public class GeneratedElecInputs
         }
         return sb.toString();
     }
-
+    
 /*
     public class SingleElectricalInput
     {
@@ -341,11 +351,118 @@ public class GeneratedElecInputs
         }
     }*/
 
+        public SimpleXMLElement getNetworkMLElement(int unitSystem) throws NeuroMLException
+    {
+
+        SimpleXMLElement inputsElement = null;
+        try
+        {
+            logger.logComment("Going to save file in NeuroML format: " + this.getNumberSingleInputs() +
+                              " inputs in total");
+            
+            inputsElement = new SimpleXMLElement(NetworkMLConstants.INPUTS_ELEMENT);
+
+            Enumeration keys = myElecInputs.keys();
+
+            while (keys.hasMoreElements())
+            {
+                String inputReference = (String) keys.nextElement();
+                ArrayList<SingleElectricalInput> inputsHere = getInputLocations(inputReference);
+                
+                logger.logComment("Adding " + inputsHere.size() + " inputs");
+                
+                StimulationSettings nextStim = project.elecInputInfo.getStim(inputReference);
+                
+                ElectricalInput myElectricalInput = nextStim.getElectricalInput();
+                
+                // Input units here!!!
+
+                if (unitSystem == UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS)
+                    inputsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.UNITS_ATTR, "Physiological Units"));
+                else if (unitSystem == UnitConverter.GENESIS_SI_UNITS)
+                    inputsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.UNITS_ATTR, "SI Units"));
+                
+                SimpleXMLElement inputElement = new SimpleXMLElement(NetworkMLConstants.INPUT_ELEMENT);
+                             
+                inputElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_NAME_ATTR, inputReference));
+                
+                if (myElectricalInput instanceof IClamp)
+                {
+                    IClamp ic = (IClamp)myElectricalInput;
+                    
+                    float delay = ic.getDelay().getNumber();
+                    float duration = ic.getDuration().getNumber();      
+                    float amp = ic.getAmplitude().getNumber();
+                            
+                    SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.PULSEINPUT_ELEMENT);
+
+                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DELAY_ATTR, delay+""));
+                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DUR_ATTR, duration+""));
+                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_AMP_ATTR, amp+""));
+                    //inputTypeElement.addContent("\n        ");
+                    inputElement.addChildElement(inputTypeElement);
+                }
+                else if (myElectricalInput instanceof RandomSpikeTrain)
+                {
+                    RandomSpikeTrain rst = (RandomSpikeTrain)myElectricalInput;
+                    
+                    float stimFreq = rst.getRate().getFixedNum();
+                    String stimMech = rst.getSynapseType();
+                   
+                    SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.RANDOMSTIM_ELEMENT);
+                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_FREQ_ATTR, stimFreq+""));
+                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_MECH_ATTR, stimMech));
+                    //inputTypeElement.addContent("\n        ");
+                    inputElement.addChildElement(inputTypeElement);
+                }
+                
+                SimpleXMLElement inputTargetElement = new SimpleXMLElement(NetworkMLConstants.INPUT_TARGET_ELEMENT);
+                
+                inputTargetElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR, nextStim.getCellGroup()));
+
+                inputElement.addChildElement(inputTargetElement);
+                
+                SimpleXMLElement inputTargetSitesElement = new SimpleXMLElement(NetworkMLConstants.INPUT_TARGET_SITES_ELEMENT);                                
+
+                inputTargetElement.addChildElement(inputTargetSitesElement);                
+               
+                // Iterate around the list of sites
+                for (int i=0; i < inputsHere.size() ; i++)
+                {
+                        
+                SimpleXMLElement inputTargetSiteElement = new SimpleXMLElement(NetworkMLConstants.INPUT_TARGET_SITE_ELEMENT);
+                
+                inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_CELLID_ATTR, inputsHere.get(i).getCellNumber()+""));
+                inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_SEGID_ATTR, inputsHere.get(i).getSegmentId()+""));
+                inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_FRAC_ATTR, inputsHere.get(i).getFractionAlong()+""));                
+
+                inputTargetSitesElement.addChildElement(inputTargetSiteElement);
+               
+                //inputTargetSiteElement.addContent("\n                ");
+                
+                // Next Site
+                }
+                
+                inputsElement.addChildElement(inputElement); 
+              
+            }
+            logger.logComment("Finished saving data to inputs element");
+
+        }
+
+        catch (Exception ex)
+        {
+            throw new NeuroMLException("Problem creating inputs element file", ex);
+        }
+        return inputsElement;
+
+    }
+    
     public static void main(String[] args)
     {
         try
         {
-            GeneratedElecInputs gei = new GeneratedElecInputs();
+            GeneratedElecInputs gei = new GeneratedElecInputs(null);
 
             System.out.println("Internal info: \n"+ gei.toString());
 
@@ -362,7 +479,7 @@ public class GeneratedElecInputs
             gei.saveToFile(f);
 
 
-            GeneratedElecInputs cpr2 = new GeneratedElecInputs();
+            GeneratedElecInputs cpr2 = new GeneratedElecInputs(null);
 
             cpr2.loadFromFile(f);
             System.out.println("New internal info: \n"+ cpr2.toString()); 

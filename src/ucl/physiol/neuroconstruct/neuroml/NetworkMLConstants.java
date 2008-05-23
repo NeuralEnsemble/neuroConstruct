@@ -140,7 +140,32 @@ public class NetworkMLConstants
     public static String SYN_DIR_POST = "post";
     public static String SYN_DIR_PRE_ANDOR_POST = "preAndOrPost";
 
+    
+    public static String INPUTS_ELEMENT = "inputs";
+    public static String INPUT_ELEMENT = "input";
 
+    public static String INPUT_NAME_ATTR = "name";
+
+    public static String INPUT_TARGET_ELEMENT = "target";
+    public static String INPUT_TARGET_SITES_ELEMENT = "sites";
+    public static String INPUT_TARGET_SITE_ELEMENT = "site";
+    public static String INPUT_TARGET_CELLGROUP_ATTR = "cell_group";
+    
+    public static String PULSEINPUT_ELEMENT = "pulse_input";
+
+    public static String INPUT_DELAY_ATTR = "delay";
+    public static String INPUT_DUR_ATTR = "duration";
+    public static String INPUT_AMP_ATTR = "amplitude";  
+
+    public static String RANDOMSTIM_ELEMENT = "random_stim";    
+
+    public static String RND_STIM_FREQ_ATTR = "frequency";    
+    public static String RND_STIM_MECH_ATTR = "synaptic_mechanism";
+
+    public static String INPUT_SITE_CELLID_ATTR = "cell_id";
+    public static String INPUT_SITE_SEGID_ATTR = "segment_id";
+    public static String INPUT_SITE_FRAC_ATTR = "fraction_along";
+    
     //////  neuroConstruct only constants
 
     public static String NC_NETWORK_GEN_RAND_SEED = "neuroConstruct_random_seed";
