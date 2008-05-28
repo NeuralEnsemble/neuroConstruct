@@ -471,8 +471,7 @@ public class ProjectManager implements GenerationReport
                 xmlReader = spf.newSAXParser().getXMLReader();
 
                 ucl.physiol.neuroconstruct.neuroml.NetworkMLReader nmlBuilder
-                    = new ucl.physiol.neuroconstruct.neuroml.NetworkMLReader(getCurrentProject().generatedCellPositions,
-                                          getCurrentProject().generatedNetworkConnections);
+                    = new ucl.physiol.neuroconstruct.neuroml.NetworkMLReader(getCurrentProject());
 
                 xmlReader.setContentHandler(nmlBuilder);
 

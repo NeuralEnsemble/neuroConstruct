@@ -32,6 +32,7 @@ import ucl.physiol.neuroconstruct.cell.SegmentLocation;
 import ucl.physiol.neuroconstruct.neuroml.NetworkMLConstants;
 import ucl.physiol.neuroconstruct.project.ConnSpecificProps;
 import ucl.physiol.neuroconstruct.project.GeneralProperties;
+import ucl.physiol.neuroconstruct.project.GeneratedElecInputs;
 import ucl.physiol.neuroconstruct.project.PositionRecord;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.SingleSynapticConnection;
 import ucl.physiol.neuroconstruct.project.SynapticProperties;
@@ -476,6 +477,7 @@ public class NetworkMLWriter
 
             GeneratedCellPositions gcp = testProj.generatedCellPositions;
             GeneratedNetworkConnections gnc = testProj.generatedNetworkConnections;
+            GeneratedElecInputs gei = testProj.generatedElecInputs;
 
             FileInputStream instream = null;
             InputSource is = null;
@@ -485,7 +487,7 @@ public class NetworkMLWriter
 
             XMLReader xmlReader = spf.newSAXParser().getXMLReader();
 
-            NetworkMLReader nmlBuilder = new NetworkMLReader(gcp, gnc);
+            NetworkMLReader nmlBuilder = new NetworkMLReader(testProj);
             xmlReader.setContentHandler(nmlBuilder);
 
             instream = new FileInputStream(nmlFile);
@@ -496,6 +498,7 @@ public class NetworkMLWriter
 
             logger.logComment("Cells: " + gcp.getNumberInAllCellGroups(), true);
             logger.logComment("Net conn num: " + gnc.getNumberSynapticConnections(GeneratedNetworkConnections.ANY_NETWORK_CONNECTION), true);
+            logger.logComment("Stimulations num: " + gei.getNumberSingleInputs(), true);
 
             NetworkMLWriter.createNetworkMLH5file(h5File, testProj);
 

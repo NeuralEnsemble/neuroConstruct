@@ -361,6 +361,17 @@ public class GeneratedElecInputs
                               " inputs in total");
             
             inputsElement = new SimpleXMLElement(NetworkMLConstants.INPUTS_ELEMENT);
+                            
+            // Input units here!!!
+
+            if (unitSystem == UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS)
+            {
+                inputsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.UNITS_ATTR, "Physiological Units"));
+            }
+            else if (unitSystem == UnitConverter.GENESIS_SI_UNITS)
+            {
+                inputsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.UNITS_ATTR, "SI Units"));
+            }
 
             Enumeration keys = myElecInputs.keys();
 
@@ -374,13 +385,6 @@ public class GeneratedElecInputs
                 StimulationSettings nextStim = project.elecInputInfo.getStim(inputReference);
                 
                 ElectricalInput myElectricalInput = nextStim.getElectricalInput();
-                
-                // Input units here!!!
-
-                if (unitSystem == UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS)
-                    inputsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.UNITS_ATTR, "Physiological Units"));
-                else if (unitSystem == UnitConverter.GENESIS_SI_UNITS)
-                    inputsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.UNITS_ATTR, "SI Units"));
                 
                 SimpleXMLElement inputElement = new SimpleXMLElement(NetworkMLConstants.INPUT_ELEMENT);
                              
@@ -399,7 +403,7 @@ public class GeneratedElecInputs
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DELAY_ATTR, delay+""));
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DUR_ATTR, duration+""));
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_AMP_ATTR, amp+""));
-                    //inputTypeElement.addContent("\n        ");
+                    inputTypeElement.addContent("\n        ");
                     inputElement.addChildElement(inputTypeElement);
                 }
                 else if (myElectricalInput instanceof RandomSpikeTrain)
@@ -412,7 +416,7 @@ public class GeneratedElecInputs
                     SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.RANDOMSTIM_ELEMENT);
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_FREQ_ATTR, stimFreq+""));
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_MECH_ATTR, stimMech));
-                    //inputTypeElement.addContent("\n        ");
+                    inputTypeElement.addContent("\n        ");
                     inputElement.addChildElement(inputTypeElement);
                 }
                 
@@ -436,9 +440,11 @@ public class GeneratedElecInputs
                 inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_SEGID_ATTR, inputsHere.get(i).getSegmentId()+""));
                 inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_FRAC_ATTR, inputsHere.get(i).getFractionAlong()+""));                
 
+                inputTargetSiteElement.addContent("\n                ");
+                
                 inputTargetSitesElement.addChildElement(inputTargetSiteElement);
                
-                //inputTargetSiteElement.addContent("\n                ");
+
                 
                 // Next Site
                 }

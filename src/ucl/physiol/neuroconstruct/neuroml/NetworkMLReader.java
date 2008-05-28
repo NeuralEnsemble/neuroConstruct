@@ -20,6 +20,9 @@ import javax.xml.parsers.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.simulation.IClampSettings;
+import ucl.physiol.neuroconstruct.simulation.RandomSpikeTrainSettings;
+import ucl.physiol.neuroconstruct.simulation.StimulationSettings;
 import ucl.physiol.neuroconstruct.utils.*;
 
 /**
@@ -64,7 +67,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
 
 
     private String currentPropertyName = null;
-
+    
     private long foundRandomSeed = Long.MIN_VALUE;
     private String foundSimConfig = null;
 
@@ -74,17 +77,27 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
     private float globAPDelay = 0;
     private float localAPDelay = 0;
 
+    private String currentElecInput = null;
+    private String currentInputType = null;
+    private String currentCellGroup = null;
+    private String currentInputName = null;
+        
     //private String metadataPrefix = MetadataConstants.PREFIX + ":";
 
     private GeneratedCellPositions cellPos = null;
 
     private GeneratedNetworkConnections netConns = null;
+    
+    private GeneratedElecInputs elecInputs = null;    
+    
+    private Project project = null;
 
-    public NetworkMLReader(GeneratedCellPositions cellPos, GeneratedNetworkConnections netConns)
+    public NetworkMLReader(Project project)
     {
-        this.cellPos = cellPos;
-        this.netConns = netConns;
-
+        this.cellPos = project.generatedCellPositions;
+        this.netConns = project.generatedNetworkConnections;
+        this.elecInputs = project.generatedElecInputs;
+        this.project = project;
     }
 
     @Override
@@ -122,6 +135,12 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                 this.currentSynType = contents;
                 logger.logComment("currentSynType: " + currentSynType);
             }
+            else if (getCurrentElement().equals(NetworkMLConstants.INPUT_ELEMENT)
+                    && getAncestorElement(1).equals(NetworkMLConstants.INPUTS_ELEMENT))
+            {
+                this.currentElecInput = contents;
+                logger.logComment("currentElecInput: " + currentElecInput);                
+            } 
             else if (getCurrentElement().equals(MetadataConstants.PROP_TAG_ELEMENT)
                      && getAncestorElement(1).equals(MetadataConstants.PROP_ELEMENT))
             {
@@ -453,7 +472,134 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                  this.localAPDelay = Float.parseFloat(attributes.getValue(NetworkMLConstants.PROP_DELAY_ATTR));
              }
          }
+         else if (getCurrentElement().equals(NetworkMLConstants.INPUT_ELEMENT)
+                 && getAncestorElement(1).equals(NetworkMLConstants.INPUTS_ELEMENT))
+         {    
+         
+             String inputName = attributes.getValue(NetworkMLConstants.INPUT_NAME_ATTR);
 
+             logger.logComment(">>  Found a input of name: "+ inputName);
+
+             currentInputName = inputName;
+             //currentElecInput = inputName;
+             
+/*             StimulationSettings ss = project.elecInputInfo.getStim(currentInputName);
+             if (ss==null) 
+             {
+                 GuiUtils.showWarningMessage(logger, "Error, stimulation reference "+inputName+" not found in project", null);
+                 currentInputName = null;
+             }
+*/             
+         }
+         
+         else if (getCurrentElement().equals(NetworkMLConstants.INPUT_TARGET_ELEMENT))
+         {
+             currentCellGroup = attributes.getValue(NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR);
+                        
+             if (!project.cellGroupsInfo.isValidCellGroup(currentCellGroup))
+             {
+                 GuiUtils.showWarningMessage(logger, "Error, target cell group "+currentCellGroup+" not found in project", null);
+                 currentCellGroup = null;
+             }
+         }
+         // If pulse input get pulse input attributes
+         else if (getCurrentElement().equals(NetworkMLConstants.PULSEINPUT_ELEMENT))
+         {
+             currentInputType = "IClamp";
+             
+             StimulationSettings ss = project.elecInputInfo.getStim(currentInputName);
+             
+             if (!(ss instanceof IClampSettings))
+             {
+                  GuiUtils.showWarningMessage(logger, "Error, IClamp "+currentInputName+" not found in project", null);
+                  currentInputName = null;                
+             }
+             else
+             {
+                 // get input delay for pulsed input and convert to float so it can be added to IClamp
+                 Float currentPulseDelay = Float.parseFloat(attributes.getValue(NetworkMLConstants.INPUT_DELAY_ATTR));
+                 // get input delay for pulsed input and convert to float so it can be added to IClamp
+                 Float currentPulseDur = Float.parseFloat (attributes.getValue(NetworkMLConstants.INPUT_DUR_ATTR));
+                 // get input delay for pulsed input and convert to float so it can be added to IClamp
+                 Float currentPulseAmp = Float.parseFloat(attributes.getValue(NetworkMLConstants.INPUT_AMP_ATTR));
+                 
+                 IClampSettings currentIClampSettings = (IClampSettings)ss;
+                 
+                 if (currentIClampSettings.getDelay().getStart() != currentPulseDelay)
+                 {
+                   GuiUtils.showWarningMessage(logger, "Error, imported delay ("+currentPulseDelay+") for IClamp "+currentInputName+" is different from that currently in the project", null);                
+                 }                 
+                                  
+                 if (currentIClampSettings.getDuration().getStart() != currentPulseDur)
+                 {
+                   GuiUtils.showWarningMessage(logger, "Error, imported duration ("+currentPulseDur+") for IClamp "+currentInputName+" is different from that currently in the project", null);                
+                 }
+                 
+                 if (currentIClampSettings.getAmplitude().getStart() != currentPulseAmp)
+                 {
+                   GuiUtils.showWarningMessage(logger, "Error, imported amplitude ("+currentPulseAmp+") for IClamp "+currentInputName+" is different from that currently in the project", null);                
+                 }
+             }
+         }             
+             
+         // If random input get random input attributes
+         else if (getCurrentElement().equals(NetworkMLConstants.RANDOMSTIM_ELEMENT))
+         {
+             currentInputType = "RandomStim";
+             
+             StimulationSettings ss = project.elecInputInfo.getStim(currentInputName);
+             
+             if (!(ss instanceof RandomSpikeTrainSettings))
+             {
+                  GuiUtils.showWarningMessage(logger, "Error, RandomSpikeTrain "+currentInputName+" not found in project", null);
+                  currentInputName = null;                
+             }
+             else
+             {
+                 // get stim frequency for random input and convert to float so it can be added to RandomSpikeStrain
+                 Float currentRate = Float.parseFloat(attributes.getValue(NetworkMLConstants.RND_STIM_FREQ_ATTR));
+                 
+                 // noise is not currently in v1.7 so it is set to a standard value of 10
+                 // get current noise from inported file
+                 //Float currentNoise = Float.parseFloat(attributes.getValue(NetworkMLConstants.RND_STIM_NOISE_ATTR));
+                 //Float currentNoise = new Float(10.0);
+
+                 // get stim mechanism for random input and convert to float so it can be added to RandomSpikeStrain
+                 String currentSynapseType = attributes.getValue(NetworkMLConstants.RND_STIM_MECH_ATTR);
+                 
+                 RandomSpikeTrainSettings currentRandomSpikeTrainSettings = (RandomSpikeTrainSettings)ss;
+                 
+                 if (currentRandomSpikeTrainSettings.getRate().getFixedNum() != currentRate)
+                 //if (currentRandomSpikeTrainSettings.getRate() != currentRate)
+                 {
+                   GuiUtils.showWarningMessage(logger, "Error, imported rate ("+currentRate+") for RandomSpikeTrain "+currentInputName+" is different from that currently in the project", null);                
+                 }                 
+                                  
+/*                 if (currentRandomSpikeTrainSettings.getNoise() != currentNoise)
+                 {
+                   GuiUtils.showWarningMessage(logger, "Error, imported noise ("+currentNoise+") for RandomSpikeTrain "+currentInputName+" is different from that currently in the project", null);                
+                 }
+*/                 
+                 if (!currentRandomSpikeTrainSettings.getSynapseType().equals(currentSynapseType))
+                 {
+                   GuiUtils.showWarningMessage(logger, "Error, imported synapse type ("+currentSynapseType+") for RandomSpikeTrain "+currentInputName+" is different from that currently in the project", null);                
+                 }
+             }
+         }             
+             
+         // if site element get cellID segmentID and fraction along
+         else if (getCurrentElement().equals(NetworkMLConstants.INPUT_TARGET_SITE_ELEMENT))
+         {
+             // get cell ID target cell convert to int so it can be added to SingleElectricalInput in GeneratedInputs
+             Integer currentCellID = (Integer.parseInt(attributes.getValue(NetworkMLConstants.INPUT_SITE_CELLID_ATTR)));
+             // get segment ID of target cell and convert to int so it can be added to SingleElectricalInput in GeneratedInputs
+             Integer currentSegID = (Integer.parseInt(attributes.getValue(NetworkMLConstants.INPUT_SITE_SEGID_ATTR)));
+             // get fraction along segment of target segment and convert to float so it can be added to SingleElectricalInput in GeneratedInputs
+             Float currentFrac = (Float.parseFloat(attributes.getValue(NetworkMLConstants.INPUT_SITE_FRAC_ATTR)));
+             
+             SingleElectricalInput currentInput = new SingleElectricalInput(currentInputType, currentCellGroup, currentCellID, currentSegID, currentFrac);
+             elecInputs.addSingleInput(currentInputName, currentInput);
+          }         
     }
     
     ConnSpecificProps getGlobalSynProps(String synType)
@@ -526,8 +672,15 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
             this.localConnProps = new ArrayList<ConnSpecificProps>();
             localAPDelay = 0;
         }
-        
+/*        else if (getCurrentElement().equals(NetworkMLConstants.INPUTS_ELEMENT))
+        {
+            //elecInputs.addSingleInput(name, );
+            currentElecInput = null;
+            //this.currentCellType = null;
+        }
+*/
 
+        
 
 
 
