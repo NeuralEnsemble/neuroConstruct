@@ -10356,16 +10356,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 fileSaved = NetworkMLWriter.createNetworkMLH5file(networkFile, projManager.getCurrentProject());
             }
         }
-        catch (NeuroMLException ex1)
-        {
-            GuiUtils.showErrorMessage(logger, "Problem saving network in NetworkML", ex1, this);
-        }
-        catch (Hdf5Exception ex1)
+        catch (Exception ex1)
         {
             GuiUtils.showErrorMessage(logger, "Problem saving network in HDF5 form of NetworkML\n" +
-                "Note that the jar files for HDF5 (jhdf.jar etc.) should be in the java classpath and the location of the libraries (libjhdf5.so etc. for Linux, jhdf5.dll etc. for Win)\n" +
-                "should be specified in the java.library.path variable.\n" +
-                "Note also that on a 64 bit Windows system, a 32 bit JVM should be used, as the dlls are 32bit.", ex1, this);
+                "Note that the jar files for HDF5 (jhdf.jar etc.) should be in the java classpath:\n    "+System.getProperty("java.class.path")
+                +"\n and the location of the libraries (libjhdf5.so etc. for Linux, jhdf5.dll etc. for Win)\n" +
+                "should be specified in the java.library.path:\n    " +System.getProperty("java.library.path")+
+                "\nvariable. \n\nNote also that on a 64 bit Windows system, a 32 bit JVM should be used when using any HDF5 functionality, as the HDF5 dlls are 32bit.", ex1, this);
         }
         long end = System.currentTimeMillis();
         

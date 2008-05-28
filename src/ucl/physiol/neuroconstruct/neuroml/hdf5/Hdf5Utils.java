@@ -46,6 +46,22 @@ public class Hdf5Utils
         super();
     }
     
+    /*
+     * Helper function to throw error if no H5 classes found
+     */
+    private static void testH5classes() throws Hdf5Exception
+    {
+        try
+        {
+            ClassLoader cl  = ClassLoader.getSystemClassLoader();
+            cl.loadClass("ncsa.hdf.object.FileFormat");
+        }
+        catch(Exception ex)
+        {
+            throw new Hdf5Exception("Problem finding HDF5 classes in classpath. Please ensure jars and libraries are installed correctly.\n", ex);
+        }
+    }
+    
     public static Attribute getSimpleAttr(String name, String value, H5File h5File) throws Exception
     {
         Datatype dtype = h5File.createDatatype(Datatype.CLASS_STRING, value.length()+1, Datatype.NATIVE, Datatype.NATIVE);
@@ -62,7 +78,8 @@ public class Hdf5Utils
 
     public static H5File createH5file(File file) throws Hdf5Exception
     {
-
+        testH5classes();
+        
         FileFormat fileFormat = FileFormat.getFileFormat(FileFormat.FILE_TYPE_HDF5);
 
         if (fileFormat == null)
@@ -89,7 +106,8 @@ public class Hdf5Utils
 
     public static H5File openH5file(File file) throws Hdf5Exception
     {
-
+        testH5classes();
+        
         FileFormat fileFormat = FileFormat.getFileFormat(FileFormat.FILE_TYPE_HDF5);
 
         if (fileFormat == null)
@@ -120,6 +138,7 @@ public class Hdf5Utils
 
     public static void open(H5File h5File) throws Hdf5Exception
     {
+        testH5classes();
         try
         {
             h5File.open();

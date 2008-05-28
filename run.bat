@@ -10,5 +10,8 @@ REM   Note: the -Dsun.java2d.noddraw=true has been added to solve problems with 
 REM   flickering of the Swing components when showing 3D on some Windows systems
 REM 
 
+set CLASSPATH=neuroConstruct_1.0.9.jar;lib/hdf5/jhdf.jar;lib/hdf5/jhdf4obj.jar;lib/hdf5/jhdf5.jar;lib/hdf5/jhdf5obj.jar;lib/hdf5/jhdfobj.jar
+set JAVA_LIBRARY_PATH=lib/hdf5/win
+
 @echo on
-java -Xmx700M  -Dsun.java2d.noddraw=true -cp neuroConstruct_1.0.9.jar ucl.physiol.neuroconstruct.gui.MainApplication %1 %2 %3 %4 %5
+java -Xmx700M  -Dsun.java2d.noddraw=true -cp %CLASSPATH% -Djava.library.path=%JAVA_LIBRARY_PATH% ucl.physiol.neuroconstruct.gui.MainApplication %1 %2 %3 %4 %5
