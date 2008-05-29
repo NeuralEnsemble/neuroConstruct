@@ -566,7 +566,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
         this.jComboBoxFunctions.addItem(FUNCTION_INSTR);
         this.jComboBoxFunctions.addItem(ADD_SEG_IN_NEW_SEC);
         this.jComboBoxFunctions.addItem(ADD_SEG_IN_THIS_SEC);
-        /////////////this.jComboBoxFunctions.addItem(this.SPLIT_SEC);
+        this.jComboBoxFunctions.addItem(SPLIT_SEC);
         this.jComboBoxFunctions.addItem(SPECIFY_AXONAL_ARBOUR);
         this.jComboBoxFunctions.addItem(REMESH_CELL);
         this.jComboBoxFunctions.addItem(COMMENT);
@@ -1815,12 +1815,11 @@ public class SegmentSelector extends JFrame implements DocumentListener
 
 
         String requestSeg = "Please enter the name of the new Section which will be created after the split.\n"
-                           +"All child Segments after the currently accessed Segment will be part of the new Section";
+                           +"This Segment and all child Segments (in the current Section) will be part of the new Section";
 
         String newName = JOptionPane.showInputDialog(this, requestSeg, suggestedNewName);
 
         if (newName == null) return;
-
 
 
         if (oneCell3DPanel!=null) oneCell3DPanel.markCellAsEdited();
@@ -1834,6 +1833,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
         newSection.setStartRadius(currentlyAddressedSegment.getSegmentStartRadius());
 
         Vector groups = currentlyAddressedSegment.getSection().getGroups();
+        
         for (int i = 0; i < groups.size(); i++)
         {
             newSection.addToGroup((String)groups.elementAt(i));
@@ -1854,7 +1854,6 @@ public class SegmentSelector extends JFrame implements DocumentListener
             Segment nextSeg = (Segment)allChildren.elementAt(i);
             if (onlySameSection)
             {
-
                 if (nextSeg.getSection().equals(segment.getSection()))
                 {
                     this.setSecForSegAndChildren(nextSeg, section, onlySameSection);
