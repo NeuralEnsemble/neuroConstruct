@@ -575,16 +575,23 @@ public class GeneratedNetworkConnections
 
 
 
-    public SimpleXMLElement getNetworkMLElement(int unitSystem,
+    public SimpleXMLEntity getNetworkMLElement(int unitSystem,
                                                 boolean extraComments) throws NeuroMLException
     {
+        int numConns = this.getNumberSynapticConnections(ANY_NETWORK_CONNECTION);
+        
+        logger.logComment("Going to save file in NeuroML format: " + numConns +
+                          " connections in total");
+        if (numConns==0)
+        {
+            return new SimpleXMLComment("There are no synaptic connections present in the network");
+        }
+       
         SimpleXMLElement projectionsElement = null;
 
         String metadataPrefix = MetadataConstants.PREFIX + ":";
         try
         {
-            logger.logComment("Going to save file in NeuroML format: " + this.getNumberSynapticConnections(ANY_NETWORK_CONNECTION) +
-                              " connections in total");
 
             projectionsElement = new SimpleXMLElement(NetworkMLConstants.PROJECTIONS_ELEMENT);
 
@@ -1062,7 +1069,7 @@ public class GeneratedNetworkConnections
             System.out.println("Internal info: \n" + gnc.toString()); 
             String home = System.getProperty("user.home");
 
-            SimpleXMLElement projs = gnc.getNetworkMLElement(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, true);
+            SimpleXMLEntity projs = gnc.getNetworkMLElement(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, true);
 
             System.out.println("projs: "+projs.getXMLString("", false));
 

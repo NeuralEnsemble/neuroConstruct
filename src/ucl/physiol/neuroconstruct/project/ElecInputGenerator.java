@@ -200,6 +200,8 @@ public class ElecInputGenerator extends Thread
         if (interrupted)
             generationReport.append("<center><b>NOTE: Generation interrupted</b></center><br>");
 
+        generationReport.append(project.generatedElecInputs.getHtmlReport());
+        /*
         if (elecInputsInSimConfig.size() == 0)
         {
             generationReport.append("No Electrical Inputs generated<br><br>");
@@ -217,7 +219,7 @@ public class ElecInputGenerator extends Thread
                                     +
                                     project.generatedElecInputs.getNumberSingleInputs(elecInputName)
                                     + "</b><br><br>");
-        }
+        }*/
 
         if (myReportInterface!=null)
         {

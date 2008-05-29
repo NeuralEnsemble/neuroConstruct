@@ -10172,6 +10172,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 NetworkMLnCInfo extraInfo = projManager.doLoadNetworkML(chooser.getSelectedFile());
                 
+                logger.logComment("Elec inputs read: "+ projManager.getCurrentProject().generatedElecInputs);
+                
                 String prevSimConfig = extraInfo.getSimConfig();
                 long randomSeed = extraInfo.getRandomSeed();
 
@@ -10184,62 +10186,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 if (prevSimConfig!=null)
                 {
                     this.jComboBoxSimConfig.setSelectedItem(prevSimConfig);
-                }
-
-                        /*
-
-                InputSource is = null;
-
-                SAXParserFactory spf = SAXParserFactory.newInstance();
-                spf.setNamespaceAware(true);
-
-                XMLReader xmlReader = null;
-
-                xmlReader = spf.newSAXParser().getXMLReader();
-
-                NetworkMLReader nmlBuilder
-                    = new NetworkMLReader(projManager.getCurrentProject().generatedCellPositions,
-                                          projManager.getCurrentProject().generatedNetworkConnections);
-
-                xmlReader.setContentHandler(nmlBuilder);
-
-                if (chooser.getSelectedFile().getName().endsWith(ProjectStructure.getNeuroMLCompressedFileExtension()))
-                {
-                    FileInputStream instream = new FileInputStream(chooser.getSelectedFile());
-
-                    ZipInputStream zis = new ZipInputStream(new BufferedInputStream(instream));
-
-                    ZipEntry entry = zis.getNextEntry();
-
-                    logger.logComment("Reading contents of zip: " + entry);
-
-                    is = new InputSource(zis);
-                }
-                else
-                {
-                   FileInputStream instream = new FileInputStream(chooser.getSelectedFile());
-                   is = new InputSource(instream);
-                }
-
-                xmlReader.parse(is);
-                
-
-                String prevSimConfig = nmlBuilder.getSimConfig();
-                long randomSeed = nmlBuilder.getRandomSeed();
-
-                if (randomSeed!=Long.MIN_VALUE)
-                {
-                    this.jTextFieldRandomGen.setText(randomSeed+"");
-                    ProjectManager.setRandomGeneratorSeed(randomSeed);
-                    ProjectManager.reinitialiseRandomGenerator();
-                }
-                if (prevSimConfig!=null)
-                {
-                    this.jComboBoxSimConfig.setSelectedItem(prevSimConfig);
-                }
-                
-                 */
-                
+                }               
                 
 
             }
@@ -10258,6 +10205,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             String compNodesReport = CompNodeGenerator.generateCompNodesReport(hostsVsProcs, simConfig.getMpiConf(), -1);
             
             
+            boolean elecInputsReadFromFile = projManager.getCurrentProject().generatedElecInputs.getNumberSingleInputs()>0;
+            
+            String inputReport = "";
+            if (elecInputsReadFromFile)
+            {
+                inputReport = projManager.getCurrentProject().generatedElecInputs.getHtmlReport();
+            }
+            String note = "<center><b>NOTE: The following elements have been generated based on Simulation Configuration: "+simConfig.getName()+"</b></center><br>";
 
             jEditorPaneGenerateInfo.setText("Cell positions and network connections loaded from: <b>"+chooser.getSelectedFile()+"</b> in "+((end-start)/1000.0)+" seconds<br><br>"
                                             +"<center><b>Cell Groups:</b></center>"
@@ -10265,17 +10220,22 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                             +"<center><b>Network Connections:</b></center>"
                 +projManager.getCurrentProject().generatedNetworkConnections.getHtmlReport(
                                         GeneratedNetworkConnections.ANY_NETWORK_CONNECTION,simConfig)
-                                        + compNodesReport);
+                                        + compNodesReport+inputReport+"<br>"+note);
             
             
 
-
-
-            projManager.elecInputGenerator = new ElecInputGenerator(projManager.getCurrentProject(), this);
-
-            projManager.elecInputGenerator.setSimConfig(simConfig);
-
-            projManager.elecInputGenerator.start();
+            if (elecInputsReadFromFile)
+            {
+                projManager.plotSaveGenerator = new PlotSaveGenerator(projManager.getCurrentProject(), this);
+                projManager.plotSaveGenerator.setSimConfig(simConfig);
+                projManager.plotSaveGenerator.start();
+            }
+            else
+            {
+                projManager.elecInputGenerator = new ElecInputGenerator(projManager.getCurrentProject(), this);
+                projManager.elecInputGenerator.setSimConfig(simConfig);
+                projManager.elecInputGenerator.start();
+            }
 
             sourceOfCellPosnsInMemory = NETWORKML_POSITIONS;
 

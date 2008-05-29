@@ -16,6 +16,7 @@ import java.io.*;
 import java.util.*;
 
 //import ucl.physiol.neuroconstruct.gui.*;
+import ucl.physiol.neuroconstruct.gui.ClickProjectHelper;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.project.stimulation.*;
 import ucl.physiol.neuroconstruct.simulation.*;
@@ -403,8 +404,8 @@ public class GeneratedElecInputs
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DELAY_ATTR, delay+""));
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DUR_ATTR, duration+""));
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_AMP_ATTR, amp+""));
-                    inputTypeElement.addContent("\n        ");
                     inputElement.addChildElement(inputTypeElement);
+                    inputElement.addContent("\n        ");
                 }
                 else if (myElectricalInput instanceof RandomSpikeTrain)
                 {
@@ -416,8 +417,8 @@ public class GeneratedElecInputs
                     SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.RANDOMSTIM_ELEMENT);
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_FREQ_ATTR, stimFreq+""));
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_MECH_ATTR, stimMech));
-                    inputTypeElement.addContent("\n        ");
                     inputElement.addChildElement(inputTypeElement);
+                    inputElement.addContent("\n        ");
                 }
                 
                 SimpleXMLElement inputTargetElement = new SimpleXMLElement(NetworkMLConstants.INPUT_TARGET_ELEMENT);
@@ -425,6 +426,7 @@ public class GeneratedElecInputs
                 inputTargetElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR, nextStim.getCellGroup()));
 
                 inputElement.addChildElement(inputTargetElement);
+                inputTargetElement.addContent("\n            ");
                 
                 SimpleXMLElement inputTargetSitesElement = new SimpleXMLElement(NetworkMLConstants.INPUT_TARGET_SITES_ELEMENT);                                
 
@@ -434,22 +436,24 @@ public class GeneratedElecInputs
                 for (int i=0; i < inputsHere.size() ; i++)
                 {
                         
-                SimpleXMLElement inputTargetSiteElement = new SimpleXMLElement(NetworkMLConstants.INPUT_TARGET_SITE_ELEMENT);
-                
-                inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_CELLID_ATTR, inputsHere.get(i).getCellNumber()+""));
-                inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_SEGID_ATTR, inputsHere.get(i).getSegmentId()+""));
-                inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_FRAC_ATTR, inputsHere.get(i).getFractionAlong()+""));                
+                    inputTargetSitesElement.addContent("\n                ");
+                    
+                    SimpleXMLElement inputTargetSiteElement = new SimpleXMLElement(NetworkMLConstants.INPUT_TARGET_SITE_ELEMENT);
 
-                inputTargetSiteElement.addContent("\n                ");
-                
-                inputTargetSitesElement.addChildElement(inputTargetSiteElement);
-               
+                    inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_CELLID_ATTR, inputsHere.get(i).getCellNumber()+""));
+                    inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_SEGID_ATTR, inputsHere.get(i).getSegmentId()+""));
+                    inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_FRAC_ATTR, inputsHere.get(i).getFractionAlong()+""));                               
+                    inputTargetSitesElement.addChildElement(inputTargetSiteElement);
 
-                
+                    if (i == inputsHere.size()-1) 
+                        inputTargetSitesElement.addContent("\n            ");
+                        
                 // Next Site
-                }
+                }                
+                inputTargetElement.addContent("\n        ");      
                 
                 inputsElement.addChildElement(inputElement); 
+                inputElement.addContent("\n    ");    
               
             }
             logger.logComment("Finished saving data to inputs element");
@@ -461,6 +465,39 @@ public class GeneratedElecInputs
             throw new NeuroMLException("Problem creating inputs element file", ex);
         }
         return inputsElement;
+
+    }
+        
+        
+    public String getHtmlReport()
+    {    
+        StringBuffer generationReport = new StringBuffer();
+        
+        Enumeration<String> e = myElecInputs.keys();
+        
+        while (e.hasMoreElements())
+        {
+            String elecInputName = e.nextElement();
+            
+            StimulationSettings s = project.elecInputInfo.getStim(elecInputName);
+
+            generationReport.append("<b>" + ClickProjectHelper.getElecInputLink(elecInputName) + "</b> ("+s.getElectricalInput().toLinkedString()
+                                    +" on "+s.getCellChooser().toNiceString()+" of "
+                                    + ClickProjectHelper.getCellGroupLink(s.getCellGroup())
+                                    +", seg: "+s.getSegmentID()+")<br>");
+
+            generationReport.append("Number of individual inputs: <b>"+
+                                    project.generatedElecInputs.getNumberSingleInputs(elecInputName)
+                                    + "</b><br><br>");
+        }
+        
+        if (generationReport.toString().length() == 0)
+        {
+            generationReport.append("No Electrical Inputs generated<br><br>");
+
+        }
+
+        return generationReport.toString();
 
     }
     

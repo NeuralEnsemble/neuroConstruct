@@ -1029,7 +1029,16 @@ public class Project implements TableModelListener
 
             rootElement.addContent("\n\n");
 
-            rootElement.addChildElement(this.generatedNetworkConnections.getNetworkMLElement(preferedUnits, extraComments));
+            SimpleXMLEntity netEntity = this.generatedNetworkConnections.getNetworkMLElement(preferedUnits, extraComments);
+            
+            if (netEntity instanceof SimpleXMLElement)
+            {
+                rootElement.addChildElement((SimpleXMLElement)netEntity);
+            }
+            else if (netEntity instanceof SimpleXMLComment)
+            {
+                rootElement.addComment((SimpleXMLComment)netEntity);
+            }
 
             rootElement.addContent("\n\n");
             
