@@ -1372,7 +1372,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         });
 
         jButtonNeuronCreatePyHDF5.setEnabled(false);
-        jButtonNeuronCreatePyHDF5.setText("Create Python/HDF5 sim (beta)");
+        jButtonNeuronCreatePyHDF5.setText("Create Python/HDF5 sim (alpha)");
         jButtonNeuronCreatePyHDF5.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)

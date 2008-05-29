@@ -19,7 +19,7 @@
   <target name="init">
     <tstamp/>
     <property name="name" value="neuroConstruct"/>
-    <property name="version" value="1.0.9"/>
+    <property name="version" value="1.1.0"/>
     <property name="version.impl" value="${version}"/>
     <property name="year" value="2008"/>
 
@@ -423,6 +423,7 @@
       <copy file="run.sh" todir="${temp_ver.dir}"/>
       <copy file="README" todir="${temp_ver.dir}"/>
       <copy file="RELEASE_NOTES" todir="${temp_ver.dir}"/>
+      <copy file="RELEASE_NOTES" todir="${temp_ver.dir}/docs/helpdocs"/>
       <copy file="licence.txt" todir="${temp_ver.dir}"/>
 
 

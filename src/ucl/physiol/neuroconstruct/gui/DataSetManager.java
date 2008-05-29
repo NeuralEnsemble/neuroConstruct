@@ -265,6 +265,8 @@ public class DataSetManager extends JFrame implements ListSelectionListener
             java.awt.BorderLayout.NORTH); jPanelMain.add(jPanelDesc, java.awt.BorderLayout.CENTER);
 
         jScrollPane1.getViewport().add(jEditorPane1);
+        
+        
 
         jPanelDesc.add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }
@@ -291,6 +293,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
     {
         allDataSets.refresh();
 
+        jEditorPane1.setText("");
 
         int numColumns = allDataSets.getColumnCount();
         for (int i = 0; i < numColumns; i++)
@@ -326,7 +329,11 @@ public class DataSetManager extends JFrame implements ListSelectionListener
             jComboBoxPlotFrames.addItem(next);
         }
 
-
+        if (allDataSets.getRowCount()==0)
+        {
+            jEditorPane1.setText("There are no Data Sets in this project. When voltage traces, etc. are plotted, they can be saved as Data Sets in the\nproject for easy replotting.\n\n"
+                +"In the Plot Frame of the trace, go to Plot Info -> <name of plot> -> Save plot -> Save Data Set in project");
+        }
 
 
     }
@@ -354,7 +361,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
             {
                // DataSet ds = allDataSets.getDataSet(selectedDataSet);
                 jTextFieldSelected.setText( allDataSets.getDataSetReference(selectedDataSet) );
-            jEditorPane1.setText( allDataSets.getDataSetDescription(selectedDataSet));
+                jEditorPane1.setText( allDataSets.getDataSetDescription(selectedDataSet));
 
             }
             catch(DataSetException dse)
@@ -366,6 +373,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
 
 
     //Overridden so we can exit when window is closed
+    @Override
     protected void processWindowEvent(WindowEvent e)
     {
         //super.processWindowEvent(e);
@@ -445,7 +453,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                         {
                             String desc = GeneralUtils.replaceAllTokens(paramVal, "\\n", " - ");
                             dataSet.setDescription(desc);
-                        };
+                        }
 
                         if (paramName.equals(DATA_SET_GRAPH_FORMAT_PARAM)) dataSet.setGraphFormat(paramVal);
 

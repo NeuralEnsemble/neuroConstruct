@@ -3,7 +3,7 @@ Release notes/change log for neuroConstruct
 See also the README file
 
 
---------- Version 1.0.9beta (May 08) ---------
+--------- Version 1.1.0 (based on 1.0.9beta) (May 08) ---------
 
 
 - Added option of saving morphologies in smaller, more efficient format. Existing projects still use old method, 
@@ -11,22 +11,33 @@ See also the README file
 
 - Changed handling of mod file generation. Biggest practical change is now mod files are only compiled once (the first time 
   NEURON scripts are generated), unless any of the XML/XSL files are altered. An option "Copy sim files to results dir" is added,
-  to either use mod files/compiled libraries in the location they're generated (generateNEURON dir, this is default now), or copy 
-  the files to simulations/Sim_xx and use them there. This second option was the previous way of using accessing the mods, and 
-  may have been the cause of some problems in the past. Another option "Generate all mod files" has been added, to compile all 
-  mod files in project, even if the cell mechanism isn't used in this simulation configuration.
+  to either: (unselected) use mod files/compiled libraries in the location they're generated (generateNEURON dir, this is default now), 
+  or (selected) copy the files to simulations/Sim_xx and use them there. This second option was the previous way of using accessing 
+  the mods, and may have been the cause of some problems on Linux in the past. Another option "Generate all mod files" has been added, 
+  to compile all mod files in project, even if the cell mechanism isn't used in this simulation configuration.
 
 - NeuroML version 1.7.1 is used. Some of the proposed changes to NetworkML for v2.0 are now included as options, and the old format
   will be disabled in v2.0, see http://www.morphml.org:8080/NeuroMLValidator/ReqVersion2.jsp. The new format is used in the export of 
-  NetworkML, but both formats can eb loaded back in. Other changes in NeuroML v1.7.1 are **unstable & subject to change** new synaptic
-  mechanism features (e.g. STP).
+  NetworkML, but both formats can be loaded back in. 
 
 - NeuroML export tab is slightly updated.
 
+- Ability to translate & rotate child segments when the 3D endpoints of a segment are altered (allows you to rotate a cell to align it to the y axis,
+  for example). View single cell in 3D (All solid), click on a segment -> Edit... Also added is function to split a long Section (e.g. 20 Segments)
+  into multiple Sections (option in drop down box in Segment Selector dialog).
+
+- Clickable links in panels giving cell info and network generation summary, i.e. cell group names can be clicked on to go to tab Cell Group, selecting that item.
+
 - Cleaned up electrotonic length handling & updated docs/glossary.
 
-- HDF5 support is added for importing plots/generic traces as 1D datasets in HDF5 files. Also saving and loading of NetworkML
-  structure in HDF5 (note: provisional structure & subject to change!)
+- HDF5 support is added for importing plots/generic traces as 1D datasets in HDF5 files (Tools -> Import data for plot (HDF5 File)). 
+  Also saving and loading of NetworkML structure in HDF5 (note: provisional structure, no electrical inputs saved, subject to change!)
+
+- NetworkML import/export in XML format includes locations of electrical inputs
+
+- Preliminary version of Python classes for generating network structure & saving in NetworkML (XML or HDF5 format) for loading into 
+  neuroConstruct. This will allow network topologies of any given complexity to be built in Python, and saved in NetworkML for
+  visualisation & use in nC projects. Will move to a PyNN friendly format over time.
 
 - Corrected bug in equation parser (used for plotting generic expressions for rate variables in ChannelML files). Expressions like
   exp ((-v - 40)/ 10) were being parsed as: exp ((-1 * (v - 40))/ 10)
@@ -34,7 +45,7 @@ See also the README file
 - Solved bug when Input is placed on, e.g. seg id 0, but no seg id 0 is present in cell. Also resolved problem
   when new Input is added but there's no synaptic mechanism present to use for Random stim.
 
-- Made generation of Matlab and IgorPro extra files for each simulation optional (via Settings. Default: don't generate)
+- Made generation of Matlab and IgorPro extra files for each simulation optional (via Settings. Default: don't generate these extra files)
 
 - Added more options under Help menu item, including link to check for updates.
 
