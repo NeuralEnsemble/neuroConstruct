@@ -43,8 +43,8 @@ include("ute.php");
 $mailServer= "smtp-server.ucl.ac.uk";
 
 
-$verDots = "1.0.4.1";
-$verDashs = "1_0_4_1";
+$verDots = "1.0.9";
+$verDashs = "1_0_9";
 
 
 if (isset($_REQUEST['myversion']))
@@ -74,6 +74,58 @@ if (isset($_REQUEST['myversion']))
     }
 
 
+}
+
+else if (isset($_REQUEST['existingemail']))
+{
+    $existingemail = $_REQUEST['existingemail'];
+
+    nastiesPresent($existingemail);
+
+    echo "<p>Checking for email: ".$existingemail."...</p>";
+
+    $conn = getConnection();
+
+    $sql="select * from DownloadRequests
+            where email = '$existingemail' ";
+
+    $result = mysql_query($sql,$conn);
+        
+    if (!$result)
+    {
+        die('<p>Error: ' . mysql_error() . "</p>");
+    }
+    else if (mysql_num_rows($result)== 0 )
+    {
+        die('<p>Error: Could not find record of download for that email address!' . "</p>");
+    }
+    else
+    {
+        $row = mysql_fetch_array($result);
+
+        $name = $row['name'];
+        $email = $row['email'];
+        $reference = $row['reference'];
+
+        echo "<p>Found you...</p>";
+
+        $myURL = "http://www.physiol.ucl.ac.uk/research/silver_a/nCinfo/form.php?reference=$reference";
+
+        $to = "p.gleeson@ucl.ac.uk";
+
+        $subject = "$email has downloaded the code, again...";
+        $message = "$email ($name) has downloaded the code, again...";
+    
+        $from = "info@neuroconstruct.org";
+
+        $headers = "From: $from " . "\r\n" . "Reply-To: $from";
+
+        $extraArgs = "-f$from -pSMTP:smtp-server.ucl.ac.uk";
+
+        mail($to,$subject,$message,$headers, $extraArgs);
+
+        echo "<p>Please <a href='$myURL'>click here</a> to continue</p>";
+    }
 }
 
 else if (isset($_REQUEST['reference']))
@@ -151,7 +203,7 @@ else if (isset($_REQUEST['reference']))
 			echo "<h3><span style='color:#FF0000;'>Bookmark THIS PAGE for a direct link to the download list</span></h3>";
 
 
-            echo "<h4>The current version of the application is <span style='color:#0000FF;'>v".$verDots."</span></h4>";
+            echo "<h4>The current version of the application is <span style='color:#0000FF;'>v".$verDots." (beta)</span></h4>";
 
 			echo "<p>&nbsp;&nbsp;<a href ='../neuroConstruct/docs/install.html'>Installation instructions</a></p>";
 
@@ -175,6 +227,17 @@ else if (isset($_REQUEST['reference']))
 
 			echo "<br/><br/>";
 			echo "<h3>Older versions...</h3>";
+
+
+
+            echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_windows_1_0_4_1.exe'>neuroConstruct_windows_1_0_4_1.exe</a></p>";
+
+            echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_unix_1_0_4_1.sh'>neuroConstruct_unix_1_0_4_1.sh</a></p>";
+
+            echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_macos_1_0_4_1.dmg'>neuroConstruct_macos_1_0_4_1.dmg</a></p>";
+
+            echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_1.0.4.1.zip'>neuroConstruct_1.0.4.1.zip</a></p>";
+
 
 
 			echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_windows_1_0_4.exe'>neuroConstruct_windows_1_0_4.exe</a></p>";
@@ -221,20 +284,43 @@ else if (!isset($_REQUEST['email']) || $_REQUEST['email'] == "")
 	//echo "Sendmail: " . sendmail_path;
 
   echo "<div class='h3'>
-		<h3><em>Downloading neuroConstruct</em></h3>
+		<h3><em>Downloading neuroConstruct (current version: <span style='color:#0000FF;'>v".$verDots.")</span></em></h3>
 		</div>
 
-		<p>Please enter your details below:</p>
 
+        <h3>Downloaded neuroConstruct before?</h3>
+<p>&nbsp;</p>
+  <form action='form.php' method='post'>
+    <table>
+        <tr>
+            <td width='30'>&nbsp;</td>
+            <td>Email: </td>
+            <td><input type='text' name='existingemail'  size='50'/>
+            </td>
+            <td>*</td></td>
+        </tr>
+
+        <tr>
+            <td width='30'>&nbsp;</td>
+            <td><input type='submit' value='Submit'/></td>
+        </tr>
+    </table>
+
+
+        <h3>   -    or   - </h3>
+        <h3>Please enter your details below:</h3>
+<p>&nbsp;</p>
   <form action='form.php' method='post'>
   	<table>
   		<tr>
+            <td width='30'>&nbsp;</td>
 			<td>Name: </td>
 			<td><input type='text' name='name' size='50'/>
 			</td>
 			<td>*</td></td>
   		</tr>
   		<tr>
+            <td width='30'>&nbsp;</td>
    			<td>Email: </td>
 		    <td><input type='text' name='email'  size='50'/>
 			</td>
@@ -242,6 +328,7 @@ else if (!isset($_REQUEST['email']) || $_REQUEST['email'] == "")
   		</tr>
   		<tr>
   		<tr>
+            <td width='30'>&nbsp;</td>
    			<td>Institution: </td>
 		    <td><input type='text' name='institution' size='50' />
 			</td>
@@ -249,6 +336,7 @@ else if (!isset($_REQUEST['email']) || $_REQUEST['email'] == "")
   		</tr>
   		<tr>
   		<tr>
+            <td width='30'>&nbsp;</td>
    			<td>Country: </td>
 		    <td>
 				<select name='country' >
@@ -505,6 +593,7 @@ else if (!isset($_REQUEST['email']) || $_REQUEST['email'] == "")
   		</tr>
 
   		<tr>
+            <td width='30'>&nbsp;</td>
    			<td>Neural system of interest:  </td>
 		    <td><select name='brainRegionSel'>
 
@@ -531,6 +620,7 @@ else if (!isset($_REQUEST['email']) || $_REQUEST['email'] == "")
   		</tr>
 
   		<tr>
+            <td width='30'>&nbsp;</td>
    			<td>Research focus: </td>
 		    <td>
 				<select name='researchTopic'>
@@ -546,28 +636,33 @@ else if (!isset($_REQUEST['email']) || $_REQUEST['email'] == "")
   		</tr>
 
   		<tr>
+            <td width='30'>&nbsp;</td>
    			<td>Research aims: </td>
 			<td><textarea name ='descriptionResearch' rows='5' cols='42'></textarea></td>
   		</tr>
 
   		<tr>
+            <td width='30'>&nbsp;</td>
    			<td>Any other comment: </td>
 			<td><textarea name ='comment' rows='5' cols='42'></textarea></td>
   		</tr>
 
 
   		<tr>
+            <td width='30'>&nbsp;</td>
     		<td><input type='submit' value='Submit'/></td>
       	</tr>
 
 
 
 		<tr>
+            <td width='30'>&nbsp;</td>
     		<td colspan='2'>* = required field</td>
       	</tr>
 
 
 		<tr>
+            <td width='30'>&nbsp;</td>
 			<td colspan='3' width='500' >We ask for an email address and other details as numbers of downloads, geographical spread of users etc. is very interesting
 			to funding bodies, and will help ensure that neuroConstruct stays in development and remains free to the community.
 			 We won't give names or email addresses out to any 3rd party.
@@ -584,7 +679,7 @@ else if (!isset($_REQUEST['email']) || $_REQUEST['email'] == "")
 
 else
 {
-  $mailcheck = emailOk($_REQUEST['email']);
+    $mailcheck = emailOk($_REQUEST['email']);
 
     $name = scanForNasties($_POST["name"]);
     $comment = scanForNasties($_POST["comment"]);
