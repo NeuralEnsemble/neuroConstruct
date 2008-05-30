@@ -11,22 +11,33 @@
 
 	<tr>
 		<td>
-			The main neuroConstruct paper. An introduction to all of the key functionality, including some 
-                        network examples.
-		</td>
-		<td>
 			<p><strong>Padraig Gleeson, Volker Steuber, R. Angus Silver</strong></p>
 			<p><em>neuroConstruct: A Tool for Modeling Networks of Neurons in 3D Space, Neuron, 
             Volume 54, Issue 2, 19 April 2007, Pages 219-235.</em></p>
 		<p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/17442244">PubMed</a>
                         <a href="http://www.neuron.org/content/article/abstract?uid=PIIS0896627307002486">Open access download</a></p>
 		</td>
+		<td><p>&nbsp;</p>
+			The main neuroConstruct paper. An introduction to all of the key functionality, including some 
+                        network examples.
+		</td>
 	</tr>
+        
 	<tr>
 		<td>
-			The introductory paper to MorphML. Compares morphological representations from 
-                        NEURON, GENESIS, Neurolucida and neuroConstruct to MorphML.
+			<p><strong>Padraig Gleeson, Volker Steuber, R. Angus Silver</strong></p>
+			<p><em>Using neuroConstruct to Develop and Modify Biologically Detailed 3D Neuronal Network Models in Health and Disease. In Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, eds. (Elsevier).
+</em></p>
+		<p><a href="http://www.elsevier.com/wps/find/bookdescription.cws_home/713686/description">Elsevier</a></p>
 		</td>
+		<td><p>&nbsp;</p>
+			A chapter in a book outlining the various modelling approached being used in epilepsy research. Attractive image on the cover...
+                       
+		</td>
+	</tr>
+        
+        
+	<tr>
 		<td>
 			<p><strong>
                     Sharon Crook, Padraig Gleeson, Fred Howell, Joe Svitak, R. Angus Silver</strong></p>
@@ -34,9 +45,40 @@
                         Neuroinformatics 2007, Volume 5; Number 2, Pages 96-104</em></p>
 		<p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/17873371">PubMed</a></p>
                 </td>
+		<td><p>&nbsp;</p>
+			The introductory paper to MorphML. Compares morphological representations from 
+                        NEURON, GENESIS, Neurolucida and neuroConstruct to MorphML.
+		</td>
 	</tr>
+	<tr>
+		<td>
+			<p><strong>Nigel Goddard, Michael Hucka, Fred Howell, Hugo Cornelis, Kavita Shankar, David Beeman</strong></p>
+			<p><em>Towards NeuroML: Model Description Methods for Collaborative Modelling in Neuroscience. Philos Trans R Soc Lond B Biol Sci 356, 1209-1228.</em></p>
+		<p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/11545699">PubMed</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			The original NeuroML introductory paper. Although the actual standards themselves have evolved since this paper
+                        (with a focus now on key elements which need to be transferred between neuroinformatics applications, as represented by
+                        MorphML, ChannelML and NeuroML) and are available <a  href="http://www.morphml.org:8080/NeuroMLValidator/">here</a>, the goals of clarity, portability and modularity described in this paper remain the same.
+                        
+		</td>
+	</tr>
+        
+        
+	<tr>
+		<td>
+			<p><strong>Robert C. Cannon, Marc-Oliver Gewaltig, Padraig Gleeson, Upinder S. Bhalla, Hugo Cornelis, Michael L. Hines, 
+                        Fredrick W. Howell, Eilif Muller, Joel R. Stiles, Stefan Wils, Erik De Schutter</strong></p>
+			<p><em>Interoperability of Neuroscience Modeling Software: Current Status and Future Directions. Neuroinformatics 5, 127-138.</em></p>
+		<p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/17873374">PubMed</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			A review of the current state of interoperability for modelling applications, resulting from a workshop at CNS 2006.
+                        
+		</td>
+	</tr>
+        
 
-	
 
 </table>
 

@@ -23,6 +23,9 @@
   for use in a neuronal model. Bear in mind that whoever created the file may have had different goals from creation
   of a single cell model (as with Neurolucida files), or may have created it specifically for a particular simulator, with the
   eccentricities of that platform in mind.</p>
+  
+  <p>To import a morphology file: Open a new or existing project, go to tab <strong>Cell Types</strong>, click on <strong>Add New Cell Type...</strong> and select one of the 
+  format specific readers, e.g. <strong>GENESISMorphReader</strong>.</p>
 
     <section>
       <title>GENESIS</title>

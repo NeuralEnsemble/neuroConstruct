@@ -7,26 +7,30 @@
   </header>
   <body>
 
-  <figure src="images/GranLayerSmall.png" alt="Network model of granule cell layer of cerebellum"/>
+  <figure src="images/CA1-spike.PNG" alt="CA1 pyramidal cell"/>
 
     <section>
       <title>Introduction</title>
       <p>neuroConstruct has been developed in the <a href="http://www.physiol.ucl.ac.uk/research/silver_a/">Silver Lab</a> in the Department of Physiology at
           <a href="http://www.ucl.ac.uk">UCL</a>. neuroConstruct has been designed to simplify development of complex networks
           of biologically realistic neurons, i.e. models incorporating dendritic morphologies and realistic cell membrane conductances.
-	  It is implemented in Java and generates script files for the <a  href="http://www.neuron.yale.edu/neuron/">NEURON</a> and
-	  <a  href="http://www.genesis-sim.org/GENESIS">GENESIS</a> simulators. It uses the latest <a href="http://www.neuroml.org">NeuroML</a> specifications,
-	  including <a href="http://www.neuroml.org/standards.html">MorphML</a>, <a href="http://www.neuroml.org/standards.html">ChannelML</a> and <a href="http://www.neuroml.org/standards.html">NetworkML</a>.</p>
+	  It is implemented in Java and generates script files for the <a  href="docs/Glossary_gen.html#NEURON">NEURON</a> and
+	  <a  href="docs/Glossary_gen.html#GENESIS">GENESIS</a> simulators. It uses the latest <a href="docs/Glossary_gen.html#NeuroML">NeuroML</a> specifications,
+	  including <a href="docs/Glossary_gen.html#MorphML">MorphML</a>, <a href="docs/Glossary_gen.html#ChannelML">ChannelML</a> and <a href="docs/Glossary_gen.html#NetworkML">NetworkML</a>.</p>
     </section>
 	
 	
 	<section>
 		<title>** Latest News **</title>
-		<p>The latest version of neuroConstruct (<strong>v1.0.4</strong>) is available for download <a href="download/index.html">here</a>.</p> 
+		<p>The latest version of neuroConstruct (<strong>v1.1.0</strong>) is available for download <a href="download/index.html">here</a>.</p> 
         <p>The paper describing the application has been published: <em>
             P. Gleeson, V. Steuber and R. A. Silver, neuroConstruct: A Tool for Modeling Networks of Neurons in 3D Space, Neuron, 
             Volume 54, Issue 2, 19 April 2007, Pages 219-235.</em>
             It is available via Open Access <a href="http://www.neuron.org/content/article/abstract?uid=PIIS0896627307002486">here</a>.</p>
+            
+            <p>A list of <strong>publications</strong> dealing with neuroConstruct and NeuroML can be found <a href="links/publications.html">here</a>.</p>
+            
+            
 		<p>There is a <strong>mailing list</strong> for neuroConstruct related news. Sign up <a href="http://www.mailinglists.ucl.ac.uk/mailman/listinfo/neuroconstruct">here</a>. </p> 
   	</section>	
 
@@ -34,11 +38,11 @@
       <title>What is neuroConstruct?</title>
       <p>Some of the key features of neuroConstruct are:</p>
 <ul>
-	<li>neuroConstruct can <a href="examples/index.html#morph">import</a> morphology files in GENESIS, NEURON, Neurolucida, SWC and MorphML format for inclusion in network models</li>
-      <li>Creation of networks of conductance based neurons, <a href="examples/index.html#packing">positioned in 3D</a></li>
-<li>Complex <a href="examples/index.html#conn">connectivity patterns</a> between cell groups can be specified for the networks</li>
+	<li>neuroConstruct can <a href="examples/index.html#morph">import</a> morphology files in GENESIS, NEURON, Neurolucida, SWC and MorphML format for inclusion in single cell or network models, or more abstract cells can also be built manually.</li>
+      <li>Creation of networks of conductance based neurons <a href="examples/index.html#packing">positioned in 3D</a></li>
+<li>Complex <a href="examples/index.html#conn">connectivity patterns</a> between cell groups can be specified for the networks </li>
 <li>Simulations can be run on the <a href="examples/index.html#neuorgen">NEURON or GENESIS</a> platforms</li>
-<li>Electrophysiological cellular mechanisms (synapses/channel mechanisms) can be imported from native script files (*.mod or *.g) or created from templates using <a href="examples/index.html#channelml">ChannelML</a></li>
+<li>Biophysically realistic cellular mechanisms (synapses/channel mechanisms) can be imported from native script files (*.mod or *.g) or created from templates using <a href="examples/index.html#channelml">ChannelML</a></li>
 <li>Automatic generation of code to record simulation data and <a href="examples/index.html#analysis">
     visualisation/analysis</a> of data in neuroConstruct</li>
 

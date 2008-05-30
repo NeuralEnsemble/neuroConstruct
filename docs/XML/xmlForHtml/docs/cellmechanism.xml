@@ -14,7 +14,8 @@
       <p>A Cell Mechanism (previously referred to as Cell Process), as used in neuroConstruct is an abstraction of an electrophysiological mechanism present on a cell.</p>
 
 <p>The three main types are <a href="Glossary_gen.html#Channel Mechanism">Channel Mechanism</a>,
-    <a href="Glossary_gen.html#Synaptic Mechanism">Synaptic Mechanism</a> and <a href="Glossary_gen.html#Ion Concentration">Ion Concentration</a>. 
+    <a href="Glossary_gen.html#Synaptic Mechanism">Synaptic Mechanism</a> and <a href="Glossary_gen.html#Ion Concentration">Ion Concentration</a> 
+    (although 2 more: Point process and Gap junction are being added). 
     The Cell Mechanisms available in a neuroConstruct <a href="Glossary_gen.html#Project">project</a> are
     listed under tab <strong>Cell Mechanism</strong>. New Cell Mechanisms can be added, and the existing ones edited/deleted here.</p>
 

@@ -8,7 +8,7 @@
   <body>
 
 
-<p>Outlined here is the process for taking an existing cell model in NEURON and reimplementing it in neuroConstruct (a very similar process is used for importing GENESIS models).
+<p>Outlined here is the process for taking an existing cell model in NEURON (hoc and mod files) and reimplementing it in neuroConstruct (a very similar process is used for importing GENESIS models).
 At the moment it can be a complicated process but the advantages of doing it are:</p>
 <ul>
 <li>It is easier to incorporate single cell models into networks of arbitrary size and complexity once they are in neuroConstruct</li>
@@ -19,11 +19,14 @@ the cell model will be available for any other simulator supported by these in t
 published papers, etc. can be distributed in a single zipped file</li>
 <li>The model can be easily rerun and model parameters changed by those without knowledge of the native scripting environment</li>
 </ul>
-<p>Note that the importation process will become a lot less complicated in future when cell morphologies and channel mechanisms can be exported in XML format
-from the simulators themselves. (Note: there is a version of this in NEURON 6.1 which contains an almost complete export of cell morphologies/channel densities in NeuroML format from ModelView. See 
-<a href="http://neuroml.svn.sourceforge.net/viewvc/neuroml/nrn2NeuroML">here</a> for the latest version)</p>
+<p>Note: Exporting NeuroML from simulators will facilitate this process. NEURON 6.1 allows export of cell morphologies together with channel densities in NeuroML format from ModelView. See 
+<a href="http://neuroml.svn.sourceforge.net/viewvc/neuroml/nrn2NeuroML">here</a> for the latest version.</p>
 
-<p>Overview of process</p>
+
+
+
+<section>
+  <title>Bringing NEURON models into neuroConstruct</title>
 
 <ol>
 <li>With a fully tested NEURON model, ensure the hoc code is split between separate files containing a) the
@@ -56,7 +59,7 @@ sections as appropriate, building your morphology as you go. </li>
 
 <li>As an alternative to the above, the cell could be loaded into NEURON 6.1 (with the updated files from <a href="http://neuroml.svn.sourceforge.net/viewvc/neuroml/nrn2NeuroML">here</a>)
 using the original hoc/mod files
-and exported from ModelView (Tools -> ModelView -> File -> Export to NeuroML). This works best if there is just one cell loaded in NEURON. The function define_shape() should be run 
+and exported from ModelView (<strong>Tools -> ModelView -> File -> Export to NeuroML</strong>). This works best if there is just one cell loaded in NEURON. The function <strong>define_shape()</strong> should be run 
 before export to ensure all NEURON sections have full 3D info. Level 1 exports will have just the cell morphology, Level 2 will include info on channel densities. The NeuroML file
 exported can then be imported into neuroConstruct similar to the manner above, via <strong>Cell Types -> Add New Cell Type</strong> and selecting the <strong>NeuroMLConverter</strong> option.
 If a Level 2 export is used, there should already be channel mechanisms in the neuroConstruct project with the same names as those in the NEURON model (see below).</li>
@@ -112,26 +115,57 @@ Again the default values should be a good starting point.</li>
 description of <a href="netconns.html">Network Connections</a> for more information.</li>
 </ol>
 
+</section>
 
-<p>Process for converting mod/GENESIS script channels into ChannelML (more details needed...)</p>
+<section>
+  <title>Converting mod file/GENESIS script channels into ChannelML</title>
+
 
 <ol>
-<li>Start with a single section, e.g. the soma of the cell to be converted. Use an imported morphology, delete all other sections, just leaving the soma section.</li>
-<li>Create a cell group with a single instance of the soma section</li>
+<li>The goal of this is to create a ChannelML file with the same mechanism as one present in an existing mod file/GENESIS script. Look at the included example Ex10-MainenEtAl which contains a
+<a href="Glossary_gen.html#Simulation Configuration">Simulation Configuration</a> SimpleCells which shows an example of this procedure.</li>
+<li>Instead of trying to match the channels using the full cell morphology, start with a single section (ideally just one segment), e.g. the soma of the cell to be converted. 
+You can use the imported morphology (e.g. Cell1), create a copy of it (Cell1_original) and delete all sections, just leaving the soma section.</li>
+<li>Create a cell group with a single instance of the soma section (CG_original).</li>
 <li>Get the passive properties working properly. Use psection() on the corresponding section in your original NEURON model to get values for cm, Ra etc. and 
-update the values of these on your neuroConstruct version. Generate the network and check the section's basic parameters using psection().</li>
-<li>Convert a simple channel first, e.g. non Ca2+ dependent K channel to ChannelML (use Add ChannelML from Template, using KChannel and edit the values in the XML 
-to match the equations in the mod file), add to passive soma. Create another soma with one channel based on original mod file (as outlined above).</li>
-<li>Compare not just voltage, also internal variables, m, h, n, etc. Plots of these can be added in Input and Output (see Ex4-NEURONGENESIS)</li>
-<li>Comparison can depend on the accuracy k value in akd, make sure there is an accurate value for this in case 1/k is used in the original file.</li>
+update the values of these on your neuroConstruct version (use the LeakConductance built in ChannelML mechanism for the passive conductance, as in the examples). 
+Add a small current pulse to the section and add a plot for the voltage. Generate the network and check the section's basic parameters using psection().</li>
+<li>Make a copy of the cell (Cell1_CML) and a new cell group with that cell (CG_CML). Add a current pulse and a plot of the voltage and generate the 
+network again to ensure the 2 plots overlap (the Graph Window property of the plot can be altered in neuroConstruct to get the 2 traces in the same window in NEURON).</li>
+
+
+<li>Convert a simple channel first, e.g. non-Ca2+ dependent K channel. Use the original mod file for a <strong>File based Cell Mechanism</strong> as outlined above and <a  href="cellmechanism.html">here</a></li>
+<li>Add this mechanism to Cell1_original (View cell in 3D, select <strong>Cell density mechanisms</strong> in drop down box, then <strong>Edit Density Mechanisms</strong>). 
+Use the cell density on your original soma section. See menu item <strong>Help -> Units</strong> for units in neuroConstruct and NEURON, or (after placing the mechanism on the section)
+select <strong>Pick Sections/Segments</strong> in the drop down box, click on the section, click on <strong>Biophysics</strong>, which will show a list of the biophsical quantities associated with the section.</li>
+
+<li>Add a plot of the internal state variables of the channel, e.g. KChannel:n. See Ex4-NEURONGENESIS or Ex10-MainenEtAl for examples. Run the network again and you should see a difference between the cell with the active channel and
+that with only a passive conductance.</li>
+
+<li>Add an initial version of the channel as a <strong>ChannelML based Cell Mechanism</strong>. Select <strong>Add ChannelML from Template</strong>, selecting KConductance, and give the channel an appropriate name. Add a plot of its internal variable (see Ex10-MainenEtAl) and put this in the same graph as the prevous channel's.</li>
+
+
+<li>Now edit the values in the XML to match the equations in the mod file (preferably in an external text editor). With a simple channel it should just be a case of altering the parameters for the linoid, sigmoid etc. descriptions of the rate equations, the reversal potential and the gate powers.
+Don't forget to add lots of comments and metadata!
+For more complicated channels, see the examples in Ex7-GranuleCell and <a href="http://www.morphml.org:8080/NeuroMLValidator/Samples.jsp">online</a>.</li>
+
+<li>Make sure to reload the ChannelML into neuroConstruct after you've edited the XML externally. Add this channel to Cell1_CML and rerun the simulation with this new channel. Looking at the mod file generated from the XML will help in debugging.</li>
+
+<li>Getting good agreement can depend on the accuracy k value in Akd, make sure there is an accurate value for this in case 1/k is used in the original file.</li>
+
 <li>For complete accuracy, use table impl prefs taken from original mod file, i.e. from TABLE minf, mexp DEPEND dt, celsius FROM -100 TO 100 WITH 200. Note: if comparing values of v > 100mV use a bigger table (since values for v past the end of the table will use earlier alpha value, etc.)</li>
 
 
-<li>Be careful to use the temperature, ek, ena of the previous models!!</li>
-<li>more...</li>
+<li>Make sure the units are set correctly in the ChannelML file.</li>
+
+<li>Be careful to use the temperature, ek, ena of the previous models!</li>
+
+<li>Once you have agreement on NEURON to the original mod, create another Simulation Configuration with only the ChannelML based cell (and the plots, etc.) and try running it on GENESIS.</li>
+
+<li>If you've gotten this far, congratulations. If you have specific problems or think something is outside the scope of the NeuroML specifications, please <a  href="contact.html" >get in touch</a></li>
 </ol>
 
-
+</section>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 

@@ -65,6 +65,17 @@
 			<a  href="http://www.genesis-sim.org/GENESIS">http://www.genesis-sim.org/GENESIS</a>
 		</td>
 	</tr>
+        
+        <tr>
+		<td>
+			MOOSE Simulator (reimplementation of GENESIS core)
+		</td>
+		<td>
+			<a  href="http://moose.sourceforge.net">http://moose.sourceforge.net</a>
+		</td>
+	</tr>
+        
+        
 	<tr>
 		<td>
 			NEURON Simulator

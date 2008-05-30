@@ -10,35 +10,40 @@
 
     <section>
 		<title>Installation</title>
-<ol>
+
     
-<li>neuroConstruct has been tested on on WinXP/NT, Red Hat Linux and SUSE and Mac OS. Details of the interaction with NEURON/GENESIS in 
-    each of these environments is available <a href="interact.html#Mac">here</a>. The application can be run successfully on Vista too,
-but there is more interaction from the operating system...</li>
+<p>neuroConstruct has been tested on on WinXP/NT, Red Hat Linux and SUSE and Mac OS. Details of the interaction with NEURON/GENESIS in 
+    each of these environments is available <a href="interact.html#Mac">here</a>. The application will run successfully on Vista too,
+but there is more interaction from the operating system security features. </p>
 
-<li>neuroConstruct will run on most machines with a video card which can run Java and Java3D. For networks/cells with >5000 total segments,
-the faster the machine, and the more RAM and graphics memory, the better; 1GB RAM and 128MB graphics is usually fine, higher is better. See <a href="Glossary_gen.html#3D View of Cells">here</a> for tips on improving graphics performance on slower machines.</li>
+<p>neuroConstruct will run on most machines with a video card and which can run Java and Java3D. For networks/cells with >5000 total segments,
+you'll need a fairly recent machine, and the more RAM and graphics memory, the better; 1GB RAM and 128MB graphics is usually fine, higher is better. 
+See <a href="Glossary_gen.html#3D View of Cells">here</a> for tips on improving graphics performance on slower machines.<br/></p>
 
 
-<li>Install Java J2SE 5.0 or higher. Available <a href="http://java.sun.com/j2se/1.5.0/download.jsp">here</a> (Note: Java and Java3D are
+<p>Install Java J2SE 5.0 or higher. Available <a href="http://java.sun.com/javase/downloads/index.jsp">here</a> (Note: Java and Java3D are
     normally installed by default on Macs, but the latest version may need to be downloaded). It's better to download the <strong>JDK 
         (Java Development Kit)</strong>, which includes command line tools for Java. If there are any problems with the preinstalled 
-    version of Java on Linux, install a local copy in your home directory and change the PATH variable as appropriate.</li>
+    version of Java on Linux, install a local copy in your home directory and change the PATH variable as appropriate.</p>
 
 
-<li>You'll need to install Java 3D. Downloads available for
+<p>You'll need to install Java 3D. Downloads available for
 	<a  href="https://java3d.dev.java.net/binary-builds.html">Windows</a>,
 	<a href="https://java3d.dev.java.net/binary-builds.html">Linux</a>,
-	and <a  href="http://www.apple.com/downloads/macosx/apple/java3dandjavaadvancedimagingupdate.html">Mac.</a>
+	and <a  href="http://www.apple.com/support/downloads/java3dandjavaadvancedimagingupdate.html">Mac.</a>
 	Note: even if you’ve installed Java 3D in the past, Java may have automatically updated itself with a newer version (e.g. in 
-    C:\Program Files\Java). In this case run the Java 3D installer from the link above and it will find the correct version.</li>
+    C:\Program Files\Java). In this case run the Java 3D installer from the link above and it will find the correct version.</p>
 
 
 
-<li>The simplest way to install is to use the automatic installers for Windows, Linux and Mac. Save the appropriate installer file 
-    to your hard drive and run it (Windows: double click on the neuroConstruct_1.x.x.exe file (where 1.x.x represents the current version number); Linux: change the permission of the neuroConstruct_1.x.x.sh file 
-    (<strong>chmod u+x neuroConstruct_1.x.x.sh</strong>) and run it in a terminal (<strong>./neuroConstruct_1.x.x.sh</strong>); Mac install the *.dmg file in the usual way). 
-	Select the install location. <strong>NOTE: it's best not to use a directory with a space in the name</strong> (though Program Files on Windows is fine). By default the Windows installer puts the code into
+<p>The simplest way to install is to use the automatic installers for Windows, Linux and Mac. Save the appropriate installer file 
+    to your hard drive and run it.</p>
+    <p>&nbsp;&nbsp;Windows: double click on the neuroConstruct_1.x.x.exe file (where 1.x.x represents the current version number)</p>
+    <p>&nbsp;&nbsp;Linux: change the permission of the neuroConstruct_1.x.x.sh file (<strong>chmod u+x neuroConstruct_1.x.x.sh</strong>) and run it in a terminal (<strong>./neuroConstruct_1.x.x.sh</strong>)</p>
+    <p>&nbsp;&nbsp;Mac: install the *.dmg file in the usual way. </p>
+    
+	<p>Select the install location. <strong>NOTE: it's best not to use a directory with a space in the name</strong> (though Program Files on Windows is fine). 
+        By default the Windows installer puts the code into
 	<strong>C:\Program Files\neuroConstruct_1.x.x</strong> or a location 
     of your choice, and the application can be launched
 	via the desktop icon, or via <strong>Start -> Programs -> neuroConstruct_1.x.x</strong>. There is also a link to the 
@@ -52,25 +57,25 @@ Clicking on the Mac installer will extract an executable which when run puts
 the application in <strong>/Applications/neuroConstruct_1.x.x</strong>. A desktop link will be created but the best way to run 
 		it is to open a Terminal, go to <strong>/Applications/neuroConstruct_1.x.x</strong> and execute <strong>./neuroConstruct</strong>.
 
-</li>
+</p>
 
-<li>If a manual install is preferred, there is a neuroConstruct zip file available for download with a directory 
+<p>If a manual install is preferred, there is a neuroConstruct zip file available for download with a directory 
 	tree from <strong>neuroConstruct_1.x.x</strong>, containing the main jar file and directories with the examples, documentation, etc. 
     Unzip this to a convenient location e.g. to <strong>C:\neuroConstruct_1.x.x</strong> (Windows), 
-    <strong>/home/myuser/neuroConstruct_1.x.x</strong> (Linux), <strong>/Applications/neuroConstruct_1.x.x</strong> (Mac) </li>
+    <strong>/home/myuser/neuroConstruct_1.x.x</strong> (Linux), <strong>/Applications/neuroConstruct_1.x.x</strong> (Mac) </p>
 
 
-<li>Install NEURON (available <a  href="http://www.neuron.yale.edu/neuron/">here</a>) if you'll be running simulations in this environment. 
+<p>Install NEURON (available <a  href="http://www.neuron.yale.edu/neuron/">here</a>) if you'll be running simulations in this environment. 
     Note: for Mac users, you'll need to install the Developer Tools (XCode) in addition to the NEURON *.dmg.
 For Linux, make sure you have the packages gcc, ncurses and ncurses-devel installed. More tips on interaction with NEURON 
-<a href="interact.html">here</a></li>
+<a href="interact.html">here</a></p>
 
-<li>Install GENESIS (available <a  href="http://www.genesis-sim.org/GENESIS/">here</a>)  if you'll be running simulations in this 
-    environment. More tips on interaction with GENESIS <a href="interact.html">here</a></li>
+<p>Install GENESIS (available <a  href="http://www.genesis-sim.org/GENESIS/">here</a>)  if you'll be running simulations in this 
+    environment. More tips on interaction with GENESIS <a href="interact.html">here</a></p>
 
 
 
-</ol>
+
 </section>
 
     <section>
