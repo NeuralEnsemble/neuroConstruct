@@ -26,7 +26,7 @@ print("Going to create a NetworkML file...")
 myFile = NetworkMLFile()
 
 newPop = myFile.addPopulation("SampleCellGroup", "SampleCell")
-popSize = 1000
+popSize = 10000
 
 newProj = myFile.addProjection("NetConn_1", "SampleCellGroup", "SampleCellGroup")
 newProj.addSynapse("DoubExpSyn", 1, -20, 5)
