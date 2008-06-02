@@ -47,7 +47,6 @@ import ucl.physiol.neuroconstruct.hpc.mpi.*;
 import ucl.physiol.neuroconstruct.j3D.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
-import ucl.physiol.neuroconstruct.neuroml.hdf5.Hdf5Exception;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.NetworkMLWriter;
 import ucl.physiol.neuroconstruct.neuron.*;
 
@@ -2906,9 +2905,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         if (!GeneralUtils.isWindowsBasedPlatform())
         {
             jMenuTools.add(jMenuItemMPIMonitor);
+            jMenuTools.addSeparator();
         }
             
-        jMenuTools.addSeparator();
         jMenuTools.add(jMenuItemPlotImport);
         jMenuTools.add(jMenuItemPlotImportHDF5);
         jMenuTools.add(jMenuItemPlotEquation);
