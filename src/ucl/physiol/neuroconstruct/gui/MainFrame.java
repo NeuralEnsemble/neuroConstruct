@@ -1360,9 +1360,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
         });*/
 
+        String warnPyH5 = "<html>These are EXPERIMENTAL features for generating NEURON code using Python (and HDF5) to load the network<br>" +
+                "structure from NetworkML. Only tested on Linux so far. Works fine, if NEURON, Python & HDF5 installed correctly,<br>" +
+                "but no documentation so far...</html>";
 
         jButtonNeuronCreatePythonXML.setEnabled(false);
         jButtonNeuronCreatePythonXML.setText("Create Python/XML sim (beta)");
+        jButtonNeuronCreatePythonXML.setToolTipText(warnPyH5);
+        
         jButtonNeuronCreatePythonXML.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -1373,6 +1378,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         jButtonNeuronCreatePyHDF5.setEnabled(false);
         jButtonNeuronCreatePyHDF5.setText("Create Python/HDF5 sim (alpha)");
+        jButtonNeuronCreatePyHDF5.setToolTipText(warnPyH5);
+        
+        
         jButtonNeuronCreatePyHDF5.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -2894,8 +2902,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         //jMenuTools.add(jMenuItemNmodlEditor);
         jMenuTools.add(jMenuItemViewProjSource);
         jMenuTools.addSeparator();
-        jMenuTools.add(jMenuItemCondorMonitor);
-        jMenuTools.add(jMenuItemMPIMonitor);
+        //jMenuTools.add(jMenuItemCondorMonitor);
+        if (!GeneralUtils.isWindowsBasedPlatform())
+        {
+            jMenuTools.add(jMenuItemMPIMonitor);
+        }
+            
         jMenuTools.addSeparator();
         jMenuTools.add(jMenuItemPlotImport);
         jMenuTools.add(jMenuItemPlotImportHDF5);
@@ -10322,7 +10334,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 "Note that the jar files for HDF5 (jhdf.jar etc.) should be in the java classpath:\n    "+System.getProperty("java.class.path")
                 +"\n and the location of the libraries (libjhdf5.so etc. for Linux, jhdf5.dll etc. for Win)\n" +
                 "should be specified in the java.library.path:\n    " +System.getProperty("java.library.path")+
-                "\nvariable. \n\nNote also that on a 64 bit Windows system, a 32 bit JVM should be used when using any HDF5 functionality, as the HDF5 dlls are 32bit.", ex1, this);
+                "\nvariable. \n\nNote also that on a 64 bit Windows system, a 32 bit JVM should be used when using any HDF5 functionality, as the HDF5 dlls are 32bit." +
+                "\n\nIt might be best to alter and use the run.bat/run.sh files in the install directory.", ex1, this);
         }
         long end = System.currentTimeMillis();
         
