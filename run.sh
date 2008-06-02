@@ -4,13 +4,13 @@
 
 
 export CLASSPATH=neuroConstruct_1.1.0.jar:lib/hdf5/jhdf.jar:lib/hdf5/jhdf4obj.jar:lib/hdf5/jhdf5.jar:lib/hdf5/jhdf5obj.jar:lib/hdf5/jhdfobj.jar
-export JAVA_LIBRARY_PATH=lib/hdf5/linux32
 
-machine=`uname -m|grep 64`
-if [ "$machine" -eq 0 ]; then
-	echo "32bit"
+machine=`uname -m | grep 64`
+
+if [ $? -eq 0 ]; then
+	export JAVA_LIBRARY_PATH=lib/hdf5/linux32
 else
-	echo "64bit"
+	export JAVA_LIBRARY_PATH=lib/hdf5/linux
 fi
 
 java -Xmx700M  -classpath $CLASSPATH -Djava.library.path=$JAVA_LIBRARY_PATH  ucl.physiol.neuroconstruct.gui.MainApplication $1 $2 $3 $4 $5
