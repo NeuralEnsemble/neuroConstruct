@@ -43,8 +43,8 @@ include("ute.php");
 $mailServer= "smtp-server.ucl.ac.uk";
 
 
-$verDots = "1.0.9";
-$verDashs = "1_0_9";
+$verDots = "1.1.0";
+$verDashs = "1_1_0";
 
 
 if (isset($_REQUEST['myversion']))
