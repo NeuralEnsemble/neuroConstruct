@@ -1,0 +1,5 @@
+This directory contains the jar files needed for HDF5 support. Obtained from http://hdf.ncsa.uiuc.edu/hdf-java-html/hdfview/index.html.
+
+The win, linux and linux32 contain the library files for windows and 64bit/32bit linux/mac.
+
+Note: HDF5 functionality not yet tested on Mac. Mail PG if you'd like to use this functionality on that platform.
