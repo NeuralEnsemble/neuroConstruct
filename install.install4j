@@ -29,7 +29,7 @@
   <launchers>
     <launcher name="neuroConstruct" id="18" external="false" excludeFromMenu="false" menuName="${compiler:sys.fullName}" icnsFile="" pngIcon16File="Y:/Padraig/images/logo16.png" pngIcon32File="Y:/Padraig/images/logo32.png" macServiceDependencies="" swtApp="false" fileset="">
       <executable name="${compiler:sys.shortName}_${compiler:sys.version}" type="1" iconSet="true" iconFile="" executableDir="." redirectStderr="false" stderrFile="error.log" redirectStdout="false" stdoutFile="output.log" failOnStderrOutput="true" executableMode="2" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker">
-        <versionInfo include="true" fileVersion="${compiler:sys.version}.0" fileDescription="${compiler:sys.fullName} launcher" legalCopyright="${compiler:sys.fullName}, Copyright UCL 2007" internalName="${compiler:sys.fullName}" />
+        <versionInfo include="true" fileVersion="${compiler:sys.version}.0" fileDescription="${compiler:sys.fullName} launcher" legalCopyright="${compiler:sys.fullName}, Copyright UCL 2008" internalName="${compiler:sys.fullName}" />
       </executable>
       <splashScreen show="true" autoOff="true" alwaysOnTop="true" width="393" height="100" bitmapFile="Y:/Padraig/images/logo.png" java6SplashScreen="false">
         <text>

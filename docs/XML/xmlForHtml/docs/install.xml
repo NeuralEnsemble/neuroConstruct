@@ -14,7 +14,7 @@
     
 <p>neuroConstruct has been tested on on WinXP/NT, Red Hat Linux and SUSE and Mac OS. Details of the interaction with NEURON/GENESIS in 
     each of these environments is available <a href="interact.html#Mac">here</a>. The application will run successfully on Vista too,
-but there is more interaction from the operating system security features. </p>
+but there is more interaction from the operating system security features (see note below). </p>
 
 <p>neuroConstruct will run on most machines with a video card and which can run Java and Java3D. For networks/cells with >5000 total segments,
 you'll need a fairly recent machine, and the more RAM and graphics memory, the better; 1GB RAM and 128MB graphics is usually fine, higher is better. 
@@ -38,9 +38,9 @@ See <a href="Glossary_gen.html#3D View of Cells">here</a> for tips on improving 
 
 <p>The simplest way to install is to use the automatic installers for Windows, Linux and Mac. Save the appropriate installer file 
     to your hard drive and run it.</p>
-    <p>&nbsp;&nbsp;Windows: double click on the neuroConstruct_1.x.x.exe file (where 1.x.x represents the current version number)</p>
-    <p>&nbsp;&nbsp;Linux: change the permission of the neuroConstruct_1.x.x.sh file (<strong>chmod u+x neuroConstruct_1.x.x.sh</strong>) and run it in a terminal (<strong>./neuroConstruct_1.x.x.sh</strong>)</p>
-    <p>&nbsp;&nbsp;Mac: install the *.dmg file in the usual way. </p>
+    <p>&nbsp;&nbsp;<strong>Windows</strong>: double click on the neuroConstruct_1.x.x.exe file (where 1.x.x represents the current version number)</p>
+    <p>&nbsp;&nbsp;<strong>Linux</strong>: change the permission of the neuroConstruct_1.x.x.sh file (<strong>chmod u+x neuroConstruct_1.x.x.sh</strong>) and run it in a terminal (<strong>./neuroConstruct_1.x.x.sh</strong>)</p>
+    <p>&nbsp;&nbsp;<strong>Mac</strong>: install the *.dmg file in the usual way. </p>
     
 	<p>Select the install location. <strong>NOTE: it's best not to use a directory with a space in the name</strong> (though Program Files on Windows is fine). 
         By default the Windows installer puts the code into
@@ -64,6 +64,10 @@ the application in <strong>/Applications/neuroConstruct_1.x.x</strong>. A deskto
     Unzip this to a convenient location e.g. to <strong>C:\neuroConstruct_1.x.x</strong> (Windows), 
     <strong>/home/myuser/neuroConstruct_1.x.x</strong> (Linux), <strong>/Applications/neuroConstruct_1.x.x</strong> (Mac) </p>
 
+    <p>On <strong>Vista</strong>, the installed files under <strong>C:\Program Files\neuroConstruct_1.x.x</strong> have read/write permissions designed 
+    to make modification of installed files difficult. This has an
+    impact on the examples which are under this directory. These problems can be solved by browsing to the folder, and recursively setting 
+    Full access control for the current user to all files in that directory via <strong>right click -> Properties -> Security -> Edit...</strong>.</p>
 
 <p>Install NEURON (available <a  href="http://www.neuron.yale.edu/neuron/">here</a>) if you'll be running simulations in this environment. 
     Note: for Mac users, you'll need to install the Developer Tools (XCode) in addition to the NEURON *.dmg.

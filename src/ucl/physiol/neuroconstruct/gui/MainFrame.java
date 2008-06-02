@@ -158,7 +158,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         "\nNo neuroConstruct project loaded.\n\n"+
         "To create a new project select: File -> New Project... in the main menu.\n\n"
         +"To open an existing project select: File -> Open Project... or choose one of the projects listed at the bottom of that menu.\n\n"+
-        "For tutorials on neuroConstruct select menu: Help -> Help and follow the link for the tutorials.\n\n";
+        "For tutorials on neuroConstruct select menu: Help -> Help and follow the link for the tutorials.\n\n"+
+        "Note to Vista users: to view the included examples, you may need to give extra permissions to the files" +
+        " in the examples folder at C:\\Program Files\\neuroConstruct_xxx. Browse to the folder with My Computer/Explorer, right click on the folder, change settings via Properties -> Security.\n\n";
 
     // JBuilder added stuff...
 
