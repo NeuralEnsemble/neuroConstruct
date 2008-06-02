@@ -1485,9 +1485,8 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
 <term hidden="true">
     <name>HDF5 NetworkML</name>
     <defined>The saved NetworkML file will be in HDF5 format, structured similarly to the XML version.<br/>
-             Note 1: ALPHA implementation!! Subject to change!!
-             Note 2: No loader for this format of NetworkML yet.
-             Note 3: File size should reduce when compression is used when saving the HDF5 file.</defined>
+             Note 1: BETA implementation!! Subject to change!!
+             Note 2: File size should reduce when compression is used when saving the HDF5 file.</defined>
 </term>
 
 <term hidden="true">
