@@ -203,7 +203,7 @@ else if (isset($_REQUEST['reference']))
 			echo "<h3><span style='color:#FF0000;'>Bookmark THIS PAGE for a direct link to the download list</span></h3>";
 
 
-            echo "<h4>The current version of the application is <span style='color:#0000FF;'>v".$verDots." (beta)</span></h4>";
+            echo "<h4>The current version of the application is <span style='color:#0000FF;'>v".$verDots."</span></h4>";
 
 			echo "<p>&nbsp;&nbsp;<a href ='../neuroConstruct/docs/install.html'>Installation instructions</a></p>";
 
@@ -305,7 +305,7 @@ else if (!isset($_REQUEST['email']) || $_REQUEST['email'] == "")
             <td><input type='submit' value='Submit'/></td>
         </tr>
     </table>
-
+</form>
 
         <h3>   -    or   - </h3>
         <h3>Please enter your details below:</h3>
@@ -671,7 +671,7 @@ else if (!isset($_REQUEST['email']) || $_REQUEST['email'] == "")
 
 
  </table>
-    </form>";
+</form>";
 
 }
 
