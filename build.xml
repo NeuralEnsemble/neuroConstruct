@@ -42,6 +42,7 @@
 
 
     <property name="hdf5.libs" value="lib/hdf5"/>
+    <property name="jython.libs" value="lib/jython"/>
 
 
     <property name="build.dir" value="./"/>
@@ -83,7 +84,10 @@
     <path id="compile.class.path">
         <fileset dir="${hdf5.libs}">
           <include name="*.jar"/>
-      </fileset>
+        </fileset>
+        <fileset dir="${jython.libs}">
+          <include name="*.jar"/>
+        </fileset>
 
     </path>
 
@@ -246,7 +250,8 @@
         <jvmarg value="-Xms800M" />
         <jvmarg value="-Djava.library.path=./lib/hdf5/linux;./lib/hdf5/win"/>
         <jvmarg value="-Dsun.java2d.noddraw=true" />
-        <arg value="-lastproj"/>
+        <arg value="-python"/>
+        <arg value="test.py"/>
         <classpath refid="run.class.path"/>
     </java>
   </target>

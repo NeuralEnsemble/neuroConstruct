@@ -7,6 +7,9 @@
     <target depends="-jdk-init" name="compile">
         <ant antfile="../build.xml" inheritall="false" target="compile"/>
     </target>
+    <target depends="-jdk-init" name="makejar">
+        <ant antfile="../build.xml" inheritall="false" target="makejar"/>
+    </target>
     <target depends="-jdk-init" name="clean">
         <ant antfile="../build.xml" inheritall="false" target="clean"/>
     </target>
