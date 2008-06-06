@@ -3,7 +3,7 @@
 # 
 
 
-export CLASSPATH=neuroConstruct_1.1.0.jar:lib/hdf5/jhdf.jar:lib/hdf5/jhdf4obj.jar:lib/hdf5/jhdf5.jar:lib/hdf5/jhdf5obj.jar:lib/hdf5/jhdfobj.jar
+export CLASSPATH=neuroConstruct_1.1.0.jar:lib/hdf5/jhdf.jar:lib/hdf5/jhdf4obj.jar:lib/hdf5/jhdf5.jar:lib/hdf5/jhdf5obj.jar:lib/hdf5/jhdfobj.jar:lib/jython/jython.jar
 
 machine=`uname -a | grep 64`
 
