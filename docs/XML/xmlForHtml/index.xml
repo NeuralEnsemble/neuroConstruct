@@ -22,7 +22,7 @@
 	
 	<section>
 		<title>** Latest News **</title>
-		<p>The latest version of neuroConstruct (<strong>v1.1.0</strong>) is available for download <a href="download/index.html">here</a>.</p> 
+		<p>The latest version of neuroConstruct (<strong>v1.1.0</strong>) is available for download <a href="download/index.html">here</a> (<a href="../nCinfo/RELEASE_NOTES">Release notes</a>).</p> 
         <p>The paper describing the application has been published: <em>
             P. Gleeson, V. Steuber and R. A. Silver, neuroConstruct: A Tool for Modeling Networks of Neurons in 3D Space, Neuron, 
             Volume 54, Issue 2, 19 April 2007, Pages 219-235.</em>

@@ -59,7 +59,7 @@
 		<td><p>&nbsp;</p>
 			The original NeuroML introductory paper. Although the actual standards themselves have evolved since this paper
                         (with a focus now on key elements which need to be transferred between neuroinformatics applications, as represented by
-                        MorphML, ChannelML and NeuroML) and are available <a  href="http://www.morphml.org:8080/NeuroMLValidator/">here</a>, the goals of clarity, portability and modularity described in this paper remain the same.
+                        MorphML, ChannelML and NeuroML, the latest version of which are available <a  href="http://www.morphml.org:8080/NeuroMLValidator/">here</a>) the key aims of NeuroML as outlined in this paper, including clarity, portability and modularity of neuronal model descriptions, remain the same.
                         
 		</td>
 	</tr>

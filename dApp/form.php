@@ -212,7 +212,7 @@ else if (isset($_REQUEST['reference']))
 			echo "<p>&nbsp;&nbsp;<a href ='RELEASE_NOTES'>Release notes for v".$verDots."</a></p>";
 
 
-			echo "<h4>Installer for Windows:</h4>";
+			echo "<h4>Installer for Windows (for Vista or 64bit, use zip file below):</h4>";
 			echo "<p>&nbsp;&nbsp;<a href='form.php?reference=".$ref."&dl=neuroConstruct_windows_".$verDashs.".exe'>neuroConstruct_windows_".$verDashs.".exe</a></p>";
 
 			echo "<h4>Installer for Linux:</h4>";
