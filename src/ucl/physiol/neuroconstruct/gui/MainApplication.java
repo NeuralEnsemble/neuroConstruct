@@ -324,17 +324,10 @@ public class MainApplication
                 
                 for(String arg: pyArgs)
                 {
-                    System.out.println("Arg for jython: "+arg);
+                    //System.out.println("Arg for jython: "+arg);
                 }
-                jython.main(pyArgs);
+                jython.main(pyArgs); // it's as easy as that!
                 
-                //PythonInterpreter interp = new PythonInterpreter();
-        
-                //interp.exec("print 'Hello from Jython!!'");
-                
-                
-                
-                //CommandLineOptions opts = new CommandLineOptions();
             }
         }
         catch (Exception e)
