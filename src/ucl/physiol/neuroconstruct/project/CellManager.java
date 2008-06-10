@@ -63,7 +63,7 @@ public class CellManager
 
         for (int i = 0; i < allCells.size(); i++)
         {
-            Cell cell = (Cell)allCells.elementAt(i);
+            Cell cell = allCells.elementAt(i);
             cellTypeNames.add(cell.getInstanceName());
         }
 
@@ -79,7 +79,7 @@ public class CellManager
 
         for (int i = 0; i < allCells.size(); i++)
         {
-            Cell cell = (Cell)allCells.elementAt(i);
+            Cell cell = allCells.elementAt(i);
             if (cell.getInstanceName().equals(cellType))
             {
                 foundCellType = cell;
@@ -93,7 +93,7 @@ public class CellManager
     {
         for (int i = 0; i < allCells.size(); i++)
         {
-            Cell cell = (Cell)allCells.elementAt(i);
+            Cell cell = allCells.elementAt(i);
             if (cell.getInstanceName().equals(newCell.getInstanceName()))
             {
                 throw new NamingException("The cell name: "
