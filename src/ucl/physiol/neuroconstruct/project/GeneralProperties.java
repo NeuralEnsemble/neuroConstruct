@@ -42,7 +42,7 @@ public class GeneralProperties
 
 
     /** This is changed automatically by Ant. Look in build.xml...*/
-    private static final String versionNumber = "1.1.0";
+    private static final String versionNumber = "1.1.1";
 
     private static final String neuroMLVersionNumberShort = "1.7.1";
     private static final String neuroMLVersionNumberLong = "1.7.1";

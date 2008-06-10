@@ -75,8 +75,8 @@ public class Logger
 
         if (!GeneralProperties.getLogFilePrintToScreenPolicy())
         {
-            System.out.println("*** Logging turned off!! ***");
-            System.out.println("Setting can be changed in neuroConstruct main interface");
+            //System.out.println("*** Logging turned off!! ***");
+            //System.out.println("Setting can be changed in neuroConstruct main interface");
         }
         //System.out.println("Created Logger");
     }

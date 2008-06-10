@@ -20,7 +20,6 @@ import ucl.physiol.neuroconstruct.neuron.*;
 import javax.swing.UIManager.*;
 import java.util.Locale;
 import ucl.physiol.neuroconstruct.project.*;
-import org.python.core.*;
 import org.python.util.*;
 
 /**
@@ -150,10 +149,10 @@ public class MainApplication
         System.out.println("-? -help      print this help message");
         System.out.println("-version      print version information");
         System.out.println("-lastproj     reloads the last opened project");
-      /*  System.out.println("-nogui        run without main Graphical User Interface");*/
+      /*  System.out.println("-nogui        run without main Graphical User Interface");
         System.out.println("-generate     generate the cell positions/connections from the settings stored in the file");
         System.out.println("-createhoc    generates the positions etc. and creates the hoc files");
-        System.out.println("-runhoc       generates the positions, creates the hoc files, and runs the main file in NEURON");
+        System.out.println("-runhoc       generates the positions, creates the hoc files, and runs the main file in NEURON");*/
         System.exit(0);
 
     }
@@ -246,14 +245,14 @@ public class MainApplication
                 {
                     generate = true;
                 }
-                else if (args[i].equalsIgnoreCase("-createhoc"))
+               /* else if (args[i].equalsIgnoreCase("-createhoc"))
                 {
                     createHoc = true;
                 }
                 else if (args[i].equalsIgnoreCase("-runhoc"))
                 {
                     runHoc = true;
-                }
+                }*/
                 else if  (args[i].equalsIgnoreCase("-python"))
                 {
                     runPython = true;
@@ -320,7 +319,7 @@ public class MainApplication
             else
             {
                 System.out.println("\nneuroConstruct "+GeneralProperties.getVersionNumber()
-                        +" starting in Python scripting mode...");
+                        +" starting in Jython scripting mode...\n");
                 
                 for(String arg: pyArgs)
                 {

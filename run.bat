@@ -13,11 +13,12 @@ REM
 
 REM Change this line to your install location
 set NC_HOME=C:\neuroConstruct
+set NC_VERSION=1.1.1
 
 set H5_JAR_DIR=%NC_HOME%/lib/hdf5
 set H5_JARS=%H5_JAR_DIR%/jhdf.jar;%H5_JAR_DIR%/jhdf4obj.jar;%H5_JAR_DIR%/jhdf5.jar;%H5_JAR_DIR%/jhdf5obj.jar;%H5_JAR_DIR%/jhdfobj.jar
 
-set CLASSPATH=%NC_HOME%/neuroConstruct_1.1.0.jar;%H5_JARS%;%NC_HOME%/lib/jython/jython.jar
+set CLASSPATH=%NC_HOME%/neuroConstruct_%NC_VERSION%.jar;%H5_JARS%;%NC_HOME%/lib/jython/jython.jar
 set JAVA_LIBRARY_PATH=%H5_JAR_DIR%/win
 
 @echo on
