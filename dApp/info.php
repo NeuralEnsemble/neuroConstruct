@@ -32,6 +32,7 @@ include("ute.php");
 
 $pwParam="into";
 $referenceParam="reference";
+$clientParam="client";
 $countryParam="country";
 $regionParam="brainRegion";
 
@@ -55,7 +56,7 @@ else
 
 	if (!$con)
 	{
-	die('Could not connect: ' . mysql_error());
+		die('Could not connect: ' . mysql_error());
 	}
 
 
@@ -72,6 +73,18 @@ else
 		$dLWhereQualifier = $dLWhereQualifier . " AND `reference` = $ref";
 
 		echo "<div class='h3'><h3><i>Showing detail for request $ref!</em></i></div>";
+
+		echo "<a href='$mainUrl'><b>Show all</b></a>";
+	}
+
+	if (isset($_REQUEST[$clientParam]))
+	{
+		$cli = scanForNasties($_REQUEST[$clientParam]);
+
+		$whereQualifier = $whereQualifier . " AND `clientserver` like '$cli'";
+		$dLWhereQualifier = $dLWhereQualifier . " AND `clientserver` like '$cli'";
+
+		echo "<div class='h3'><h3><i>Showing detail for client: $cli</em></i></div>";
 
 		echo "<a href='$mainUrl'><b>Show all</b></a>";
 	}
@@ -248,13 +261,14 @@ else
 	while($row = mysql_fetch_array($result))
 	{
 		$thisRef = $row['reference'];
+		$thisCli = $row['clientserver'];
 
 		$numDownloadedResult = mysql_query("SELECT COUNT(*) FROM Downloads WHERE reference='$thisRef'");
 		$numDownloaded =  mysql_fetch_array($numDownloadedResult);
 
 		echo "<tr>";
 
-		echo "<td><b>"
+		echo "<td><binfo.php>"
 			. $row['name'] . "</b><br/>" . $row['email'] . "<br/>" . $row['institution'] ."<br/>"
 			. "<b>".$row['country'] . "</b></td><td>"
 
@@ -265,7 +279,7 @@ else
 			. "<b>Comment:</b> ". $row['comment'] . "</td><td>"
 
 			. date("l dS \of F Y H:i:s", $row['requestDate']) . "<br/>"
-			. "<b>Host:</b> " . $row['clientserver'] . "<br/>"
+			. "<b>Host:</b> <a href='$mainUrl&$clientParam=$thisCli'>" . $thisCli . "</a><br/>"
 			. "<b>Ref: <a href='$mainUrl&$referenceParam=$thisRef'></b>" . $thisRef . "</a></td><td>"
 
 
@@ -301,13 +315,17 @@ else
 
 		while($row = mysql_fetch_array($result))
 		{
-		echo "<tr>";
-		echo "<td>" . $row['ID'] . "</td><td>"
-			. date("l dS \of F Y H:i:s", $row['downloadDate']) . "</td><td>"
-			. $row['clientserver'] . "</td><td>"
-			. $row['reference'] . "</td><td>"
-			. $row['filename'] . "</td>";
-		echo "</tr>";
+	
+			$thisRef = $row['reference'];
+			$thisCli = $row['clientserver'];
+
+			echo "<tr>";
+			echo "<td>" . $row['ID'] . "</td><td>"
+				. date("l dS \of F Y H:i:s", $row['downloadDate']) . "</td><td><a href='$mainUrl&$clientParam=$thisCli'>"
+				. $row['clientserver'] . "</a></td><td><a href='$mainUrl&$referenceParam=$thisRef'>"
+				. $row['reference'] . "</a></td><td>"
+				. $row['filename'] . "</td>";
+			echo "</tr>";
 		}
 
 		echo "</table>";
