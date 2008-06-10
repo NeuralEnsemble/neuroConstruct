@@ -72,6 +72,7 @@ public class CellGroupsInfo extends AbstractTableModel
         return vectorCellGroupNames.size();
     }
 
+    @Override
     public String getColumnName(int col) {
         return columnNames[col];
     }
@@ -83,7 +84,7 @@ public class CellGroupsInfo extends AbstractTableModel
         if (indexCellGroup < 0)
             return null;
 
-        CellPackingAdapter adapter = (CellPackingAdapter) vectorPackingAdapter.elementAt(indexCellGroup);
+        CellPackingAdapter adapter = vectorPackingAdapter.elementAt(indexCellGroup);
         return adapter;
     }
 
@@ -94,7 +95,7 @@ public class CellGroupsInfo extends AbstractTableModel
 
         if (indexCellGroup<0) return null;
 
-        Color groupColour = (Color)vectorColours.elementAt(indexCellGroup);
+        Color groupColour = vectorColours.elementAt(indexCellGroup);
         return groupColour;
     }
 
@@ -104,7 +105,7 @@ public class CellGroupsInfo extends AbstractTableModel
 
         if (indexCellGroup<0) return null;
 
-        String regionName = (String)vectorRegionNames.elementAt(indexCellGroup);
+        String regionName = vectorRegionNames.elementAt(indexCellGroup);
 
 
         return regionName;
@@ -117,19 +118,19 @@ public class CellGroupsInfo extends AbstractTableModel
         switch (col)
         {
             case COL_NUM_CELLGROUPNAME:
-                return (String)this.vectorCellGroupNames.elementAt(row);
+                return this.vectorCellGroupNames.elementAt(row);
 
             case COL_NUM_CELLTYPE:
-                return (String)this.vectorCellTypes.elementAt(row);
+                return this.vectorCellTypes.elementAt(row);
 
             case COL_NUM_REGIONNAME:
-                return (String)this.vectorRegionNames.elementAt(row);
+                return this.vectorRegionNames.elementAt(row);
 
             case COL_NUM_COLOUR:
-                return (Color)this.vectorColours.elementAt(row);
+                return this.vectorColours.elementAt(row);
 
             case COL_NUM_PACKING_ADAPTER:
-                return (CellPackingAdapter)this.vectorPackingAdapter.elementAt(row);
+                return this.vectorPackingAdapter.elementAt(row);
 
             case COL_NUM_PRIORITY:
                 if (vectorPriority.size()<vectorCellGroupNames.size())
@@ -166,13 +167,14 @@ public class CellGroupsInfo extends AbstractTableModel
         return vectorCellGroupNames.size();
     }
 
-
+    @Override
     public boolean isCellEditable(int row, int col)
     {
         if (col == COL_NUM_COLOUR || col == COL_NUM_PACKING_ADAPTER/* || col == COL_NUM_ENABLED*/) return true;
         else return false;
     }
 
+    @Override
     public void setValueAt(Object value, int row, int col)
     {
         logger.logComment("Setting row: "+row+", col: "+col + ", to: "+ value);
@@ -268,7 +270,7 @@ public class CellGroupsInfo extends AbstractTableModel
         logger.logComment("Request for Cell Type in group: "+ cellGroupName);
         int index = vectorCellGroupNames.indexOf(cellGroupName);
         if (index < 0) return null;
-        String cellType = (String)vectorCellTypes.elementAt(index);
+        String cellType = vectorCellTypes.elementAt(index);
         return cellType;
     }
 
@@ -297,7 +299,7 @@ public class CellGroupsInfo extends AbstractTableModel
 
     public String getCellGroupNameAt(int index)
     {
-        String name = (String) vectorCellGroupNames.elementAt(index);
+        String name = vectorCellGroupNames.elementAt(index);
         return name;
     }
 
@@ -356,9 +358,9 @@ public class CellGroupsInfo extends AbstractTableModel
 
         for (int i = 0; i < vectorRegionNames.size(); i++)
         {
-            if ( ( (String) vectorRegionNames.elementAt(i)).equals(regionName))
+            if ( ( vectorRegionNames.elementAt(i)).equals(regionName))
             {
-                String cellGroupName = (String) vectorCellGroupNames.elementAt(i);
+                String cellGroupName = vectorCellGroupNames.elementAt(i);
                 if (!cellGroups.contains(cellGroupName))
                     cellGroups.add(cellGroupName);
             }
@@ -377,7 +379,7 @@ public class CellGroupsInfo extends AbstractTableModel
 
         for (int i = 0; i < vectorCellTypes.size(); i++)
         {
-            if ( ( (String) vectorCellTypes.elementAt(i)).equals(cellType))
+            if ( ( vectorCellTypes.elementAt(i)).equals(cellType))
             {
                 String cellGroupName = vectorCellGroupNames.elementAt(i);
                 if (!cellGroups.contains(cellGroupName))
@@ -411,22 +413,35 @@ public class CellGroupsInfo extends AbstractTableModel
      */
     public void setInternalData(Hashtable<String, Vector> allInfo)
     {
-        Vector<String> vectorCellGroupNamesTemp = (Vector<String>)allInfo.get(columnNames[COL_NUM_CELLGROUPNAME]);
+        Vector<String> vectorCellGroupNamesTemp = new Vector<String>();
+        for(Object o: allInfo.get(columnNames[COL_NUM_CELLGROUPNAME])) 
+            vectorCellGroupNamesTemp.add((String)o);
         if (vectorCellGroupNamesTemp != null) vectorCellGroupNames = vectorCellGroupNamesTemp;
 
-        Vector vectorCellTypesTemp = (Vector) allInfo.get(columnNames[COL_NUM_CELLTYPE]);
+        
+        Vector<String> vectorCellTypesTemp = new Vector<String>();
+        for(Object o: allInfo.get(columnNames[COL_NUM_CELLTYPE])) 
+            vectorCellTypesTemp.add((String)o);
         if (vectorCellTypesTemp != null) vectorCellTypes = vectorCellTypesTemp;
 
-        Vector vectorRegionNamesTemp = (Vector) allInfo.get(columnNames[COL_NUM_REGIONNAME]);
+        Vector<String> vectorRegionNamesTemp = new Vector<String>();
+        for(Object o: allInfo.get(columnNames[COL_NUM_REGIONNAME])) 
+            vectorRegionNamesTemp.add((String)o);
         if (vectorRegionNamesTemp != null) vectorRegionNames = vectorRegionNamesTemp;
 
-        Vector vectorColoursTemp = (Vector) allInfo.get(columnNames[COL_NUM_COLOUR]);
+        Vector<Color> vectorColoursTemp = new Vector<Color>();
+        for(Object o: allInfo.get(columnNames[COL_NUM_COLOUR])) 
+            vectorColoursTemp.add((Color)o);
         if (vectorColoursTemp != null) vectorColours = vectorColoursTemp;
 
-        Vector vectorPackingAdapterTemp = (Vector) allInfo.get(columnNames[COL_NUM_PACKING_ADAPTER]);
+        Vector<CellPackingAdapter> vectorPackingAdapterTemp = new Vector<CellPackingAdapter>();
+        for(Object o: allInfo.get(columnNames[COL_NUM_PACKING_ADAPTER])) 
+            vectorPackingAdapterTemp.add((CellPackingAdapter)o);
         if (vectorPackingAdapterTemp != null) vectorPackingAdapter = vectorPackingAdapterTemp;
 
-        Vector vectorPriorityTemp = (Vector) allInfo.get(columnNames[COL_NUM_PRIORITY]);
+        Vector<Integer> vectorPriorityTemp = new Vector<Integer>();
+        for(Object o: allInfo.get(columnNames[COL_NUM_PRIORITY])) 
+            vectorPriorityTemp.add((Integer)o);
         if (vectorPriorityTemp != null) vectorPriority = vectorPriorityTemp;
 
 
