@@ -72,6 +72,8 @@
 
     <property name="main.gui.dir" value="ucl/physiol/neuroconstruct/gui"/>
     <property name="nmodl.gui.dir" value="ucl/physiol/neuroconstruct/nmodleditor/gui"/>
+    
+    <property name="jar.file" value="${build.dir}/${name}_${version}.jar"/>
 
     <filter token="year" value="${year}"/>
     <filter token="version" value="${version}"/>
@@ -145,7 +147,7 @@
 
   <target name="makejar" depends="compile" description="Creates the jar file">
 
-    <jar jarfile="${build.dir}/${name}_${version}.jar" basedir="${build.dest}">
+    <jar jarfile="${jar.file}" basedir="${build.dest}">
         <manifest>
             <attribute name="Main-Class" value="${main.app.class}"/>
         </manifest>
@@ -179,7 +181,6 @@
         <link href="http://java.sun.com/j2se/1.4/docs/api"/>
         <link href="http://java.sun.com/products/java-media/3D/forDevelopers/J3D_1_2_API/j3dapi"/>
 
-
     </javadoc>
   </target>
 
@@ -191,6 +192,7 @@
   <!-- =================================================================== -->
   <target name="clean" depends="init"
           description="Removes built files">
+    <delete file="${jar.file}"/>
     <delete dir="${build.dest}"/>
     <mkdir dir="${build.dest}"/>
     <delete dir="${apidocs.dir}"/>
@@ -246,8 +248,8 @@
   <target name="runbiglast" depends="makejar"
           description="Runs the main application with lots of memory, opening last project">
     <java classname="${main.app.class}" fork="true">
-        <jvmarg value="-Xmx1000M" />
-        <jvmarg value="-Xms800M" />
+        <jvmarg value="-Xmx4000M" />
+        <jvmarg value="-Xms2000M" />
         <jvmarg value="-Djava.library.path=./lib/hdf5/linux;./lib/hdf5/win"/>
         <jvmarg value="-Dsun.java2d.noddraw=true" />
         <arg value="-lastproj"/>

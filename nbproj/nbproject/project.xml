@@ -49,7 +49,7 @@
                 <action name="rebuild">
                     <script>nbproject/nbjdk.xml</script>
                     <target>clean</target>
-                    <target>compile</target>
+                    <target>makejar</target>
                 </action>
                 <action name="run.single">
                     <script>nbproject/nbjdk.xml</script>
