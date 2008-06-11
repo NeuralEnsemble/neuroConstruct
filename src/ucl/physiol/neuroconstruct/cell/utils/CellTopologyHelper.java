@@ -1992,7 +1992,14 @@ public class CellTopologyHelper
             if (project!=null)
             {
                 CellMechanism cm = project.cellMechanismInfo.getCellMechanism(chanMech.getName());
-                type = cm.getMechanismType();
+                if (cm!=null)
+                {
+                    type = cm.getMechanismType();
+                }
+                else
+                {
+                    type = "-- Unknown type! --";
+                }
             }
 
             sb.append("    "+type+": "+GeneralUtils.getTabbedString(descCm, "b", html)
@@ -2816,10 +2823,43 @@ public class CellTopologyHelper
 
         if (chanMechMismatch.length()>0)
         {
+            String condDensSymb = UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
+        
+            StringBuffer infoB = new StringBuffer();
+            ArrayList<ChannelMechanism> allChanMechsB = cellB.getAllChannelMechanisms(true);
+            GeneralUtils.reorderAlphabetically(allChanMechsB, true);
+            for (int i = 0; i < allChanMechsB.size(); i++)
+            {
+                ChannelMechanism chanMech = allChanMechsB.get(i);
+                Vector<String> groupsB = cellB.getGroupsWithChanMech(chanMech);
+            
+                String moreInfo = chanMech.getDensity() + " "+ condDensSymb+chanMech.getExtraParamsDesc();
+            
+                String descCm = chanMech.getName() + " ("+moreInfo +")";
+                String grpInfo = groupsB.toString();
+                infoB.append("> " +descCm +" is present on "+grpInfo+EOL);
+            }
+            
+            StringBuffer infoA = new StringBuffer();
+            ArrayList<ChannelMechanism> allChanMechsA = cellA.getAllChannelMechanisms(true);
+            GeneralUtils.reorderAlphabetically(allChanMechsA, true);
+            for (int i = 0; i < allChanMechsA.size(); i++)
+            {
+                ChannelMechanism chanMech = allChanMechsA.get(i);
+                Vector<String> groupsA = cellA.getGroupsWithChanMech(chanMech);
+            
+                String moreInfo = chanMech.getDensity() + " "+ condDensSymb+chanMech.getExtraParamsDesc();
+            
+                String descCm = chanMech.getName() + " ("+moreInfo +")";
+                String grpInfo = groupsA.toString();
+                infoA.append(LT+" " +descCm +" is present on "+grpInfo+EOL);
+            }
+            
             identical = false;
+            
             info.append(GeneralUtils.getColouredString(chanMechMismatch+EOL
-                +LT+" " + cellA.getChanMechsVsGroups() + ""+EOL
-                +"> " + cellB.getChanMechsVsGroups() + EOL + EOL, "red", html));
+                + infoA + ""+EOL
+                + infoB + EOL + EOL, "red", html));
 
             info.append("\n\n");
         }
@@ -2844,7 +2884,7 @@ public class CellTopologyHelper
         }
         else
         {
-            info.append(GeneralUtils.getColouredString("The potential synaptic mechnaism locations are identical", "green", html)+EOL+EOL);
+            info.append(GeneralUtils.getColouredString("The potential synaptic mechanism locations are identical", "green", html)+EOL+EOL);
         }
 
 
@@ -3616,6 +3656,7 @@ public class CellTopologyHelper
         }
 
         info.append("Number of segments in section: <b>"+ segs.size()+"</b>"+ ", internal divisions: <b>"+ section.getNumberInternalDivisions()+"</b>"+ GeneralUtils.getEndLine(html));
+        info.append("Groups of section: <b>"+ section.getGroups()+"</b>"+ GeneralUtils.getEndLine(html));
         info.append("Start point: <b>" + section.getStartPointPosition() +
                     "</b>, start radius: <b>" + section.getStartRadius() + " "
                     + UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()

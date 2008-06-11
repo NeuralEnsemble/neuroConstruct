@@ -650,51 +650,46 @@ public class NeuronTemplateGenerator
 
             if (segment.isSomaSegment() && segment.isFirstSectionSegment())
             {
-
                 if (segment.getSegmentShape() == Segment.CYLINDRICAL_SHAPE)
                 {
                     Point3f startPoint = segment.getSection().getStartPointPosition();
                     Point3f endPoint = segment.getEndPointPosition();
 
-
                     shapeLines.add("    "+NeuronFileManager.getHocSectionName(segment.getSection().getSectionName()) +" {pt3dclear() pt3dadd("
-                                    + startPoint.x + ", "
-                                    + startPoint.y + ", "
-                                    + startPoint.z + ", "
+                                    + startPoint.x + ", " + startPoint.y + ", " + startPoint.z + ", "
                                     + (segment.getSection().getStartRadius() * 2)
                                     + ") pt3dadd("
-                                    + endPoint.x + ", "
-                                    + endPoint.y + ", "
-                                    + endPoint.z + ", "
+                                    + endPoint.x + ", " + endPoint.y + ", " + endPoint.z + ", "
                                     + (segment.getRadius() * 2) + ")}");
                 }
                 else if (segment.getSegmentShape() == Segment.SPHERICAL_SHAPE)
                 {
+                    Point3f centrePoint = segment.getEndPointPosition();
+                    
                     Point3f startPoint = getSphericalSegmentStartPoint(segment, cell);
+                    startPoint.add(centrePoint);
+                    
                     Point3f endPoint = getSphericalSegmentEndPoint(segment, cell);
+                    endPoint.add(centrePoint);
 
                     shapeLines.add("    "+NeuronFileManager.getHocSectionName(segment.getSection().getSectionName())
                                    + " {pt3dclear() pt3dadd("
-                                   + startPoint.x + ", "
-                                   + startPoint.y + ", "
-                                   + startPoint.z + ", "
+                                   + startPoint.x + ", " + startPoint.y + ", " + startPoint.z + ", "
                                    + (segment.getRadius() * 2)
                                    + ") pt3dadd("
-                                   + endPoint.x + ", "
-                                   + endPoint.y + ", "
-                                   + endPoint.z + ", "
+                                   + endPoint.x + ", " + endPoint.y + ", " + endPoint.z + ", "
                                    + (segment.getRadius() * 2) + ")}");
                 }
             }
             else
             {
-                if (parent.isSomaSegment()  &&
+              /*  if (parent.isSomaSegment()  &&
                     parent.isFirstSectionSegment() &&
                     parent.getSegmentShape() == Segment.SPHERICAL_SHAPE &&
                     !segment.isSomaSegment())
                 {
-
-                    shapeLines.add("    "+NeuronFileManager.getHocSectionName(segment.getSection().getSectionName()) + " {pt3dclear() pt3dadd(0,0,0,"
+                    shapeLines.add("hh    "+NeuronFileManager.getHocSectionName(segment.getSection().getSectionName()) 
+                                   + " {pt3dclear() pt3dadd(0,0,0,"
                                    + (segment.getRadius() * 2) + ") "
                                    + "pt3dadd("
                                    + segment.getEndPointPositionX() + ","
@@ -703,42 +698,42 @@ public class NeuronTemplateGenerator
                                    + (segment.getRadius() * 2) + ")}");
                 }
                 else
+                {*/
+                Point3f startPoint = segment.getStartPointPosition();
+                float startRadius = segment.getSegmentStartRadius();
+/*
+                if (segment.isFirstSectionSegment())
                 {
-                    Point3f startPoint = null;
-                    float startRadius = 0;
-
-                    if (segment.isFirstSectionSegment())
-                    {
-                        startPoint = segment.getSection().getStartPointPosition();
-                        startRadius = segment.getSection().getStartRadius();
-                    }
-                    else
-                    {
-                        startPoint = segment.getParentSegment().getEndPointPosition();
-                        startRadius = segment.getParentSegment().getRadius();
-                    }
-
-                    StringBuffer lineToAdd = new StringBuffer("    "+NeuronFileManager.getHocSectionName(segment.getSection().getSectionName()) + " {");
-
-                    if (segment.isFirstSectionSegment())
-                    {
-                        lineToAdd.append("pt3dclear() ");
-
-                        lineToAdd.append("pt3dadd(" + startPoint.x + ","
-                                         + startPoint.y + ","
-                                         + startPoint.z + ", "
-                                         + (startRadius * 2) + ") ");
-                    }
-
-                    lineToAdd.append("pt3dadd("
-                                   + segment.getEndPointPositionX() + ","
-                                   + segment.getEndPointPositionY() + ","
-                                   + segment.getEndPointPositionZ() + ", "
-                                   + (segment.getRadius() * 2) + ")}");
-
-
-                    shapeLines.add(lineToAdd.toString());
+                    startPoint = segment.getSection().getStartPointPosition();
+                    startRadius = segment.getSection().getStartRadius();
                 }
+                else
+                {
+                    startPoint = segment.getParentSegment().getEndPointPosition();
+                    startRadius = segment.getParentSegment().getRadius();
+                }*/
+
+                StringBuffer lineToAdd = new StringBuffer("    "+NeuronFileManager.getHocSectionName(segment.getSection().getSectionName()) + " {");
+
+                if (segment.isFirstSectionSegment())
+                {
+                    lineToAdd.append("pt3dclear() ");
+
+                    lineToAdd.append("pt3dadd(" + startPoint.x + ", "
+                                     + startPoint.y + ", "
+                                     + startPoint.z + ", "
+                                     + (startRadius * 2) + ") ");
+                }
+
+                lineToAdd.append("pt3dadd("
+                               + segment.getEndPointPositionX() + ", "
+                               + segment.getEndPointPositionY() + ", "
+                               + segment.getEndPointPositionZ() + ", "
+                               + (segment.getRadius() * 2) + ")}");
+
+                 
+                shapeLines.add(lineToAdd.toString());
+               // }
             }
 
         }
@@ -914,137 +909,9 @@ public class NeuronTemplateGenerator
         return response.toString();
     }
 
-    /*
-    private String getProcCreateDummyAxons()
-    {
-        logger.logComment("calling getProcCreateDummyAxons");
-        StringBuffer response = new StringBuffer();
-        response.append("proc create_dummy_axons() {\n");
-        NeuronFileManager.addComment(response, " This procedure is needed as we have to define additional_axons[] etc\n");
-        NeuronFileManager.addComment(response, "as an array (of one element), and we don't want the default section values\n");
-
-        response.append("additional_axons[0] {pt3dclear() pt3dadd(0, 0, 0, 0.1) pt3dadd(0, 0, 0.1, 0.1)}\n");
-        response.append("additional_axons[0] { nseg = 1 }\n");
-        response.append("}\n");
-        response.append("\n");
-        return response.toString();
-    }
-
-    private String getProcCreateDummyDends()
-    {
-        logger.logComment("calling getProcCreateDummyDends");
-        StringBuffer response = new StringBuffer();
-        response.append("proc create_dummy_dends() {\n");
-        NeuronFileManager.addComment(response, " This procedure is needed as we have to define additional_dends[] etc\n");
-        NeuronFileManager.addComment(response, "as an array (of one element), and we don't want the default section values\n");
-
-        response.append("additional_dends[0] {pt3dclear() pt3dadd(0, 0, 0, 0.1) pt3dadd(0, 0, 0.1, 0.1)}\n");
-        response.append("additional_dends[0] { nseg = 1 }\n");
-        response.append("}\n");
-        response.append("\n");
-        return response.toString();
-    }
-
-
-    private String getProcSpecifyNumExtraDends()
-    {
-        logger.logComment("calling getProcSpecifyNumExtraDends");
-        StringBuffer response = new StringBuffer();
-        response.append("proc specify_num_extra_dends() {\n");
-        response.append("num = $1\n");
-        response.append("nMaxAdditionalDendrites = num\n");
-        response.append("print \"Number of extra dendritic sections set at \", num\n");
-        response.append("create additional_dends[num]\n");
-        response.append("}\n");
-        response.append("\n");
-        return response.toString();
-}
-
-    private String getProcSpecifyNumExtraAxons()
-    {
-        logger.logComment("calling getProcSpecifyNumExtraAxons");
-        StringBuffer response = new StringBuffer();
-        response.append("proc specify_num_extra_axons() {\n");
-        response.append("num = $1\n");
-        response.append("nMaxAdditionalAxons = num\n");
-     //   response.append("print \"Number of extra axonal sections set at \", num\n");
-        response.append("create additional_axons[num]\n");
-        response.append("}\n");
-        response.append("\n");
-        return response.toString();
-    }
 
 
 
-        private String getFuncAddDendSection()
-        {
-            logger.logComment("calling getFuncAddDendSection");
-            StringBuffer response = new StringBuffer();
-            response.append("func add_dendritic_section() {\n");
-            response.append(" \n");
-
-   //////         response.append("print \"Adding another dendritic section...\"\n");
-
-            response.append("parentSection = $1\n");
-            response.append("whereToAdd = $2\n");
-            response.append("x_endpoint = $3\n");
-            response.append("y_endpoint = $4\n");
-            response.append("z_endpoint = $5\n");
-
-
-           // response.append("print \"Going to append new section to dendrite number \", parentSection, \", at distance along: \", whereToAdd\n");
-    ////        response.append("print \"End point will be at: (\", x_endpoint, \", \", y_endpoint, \", \", z_endpoint, \")\"\n");
-    ////        response.append("print \"There are already \", nAdditionalDendrites, \" additional sections here, of a max: \", nMaxAdditionalDendrites\n");
-            response.append("additional_dends[nAdditionalDendrites] insert pas\n");
-            response.append("connect additional_dends[nAdditionalDendrites](0), dend[parentSection](whereToAdd)\n");
-            response.append("additional_dends[nAdditionalDendrites] {pt3dclear() pt3dadd(0, 0, 0, dend[parentSection].diam) pt3dadd(x_endpoint,y_endpoint,z_endpoint, dend[parentSection].diam)}\n");
-            response.append("additional_dends[nAdditionalDendrites] all.append()\n\n");
-
-            response.append("nAdditionalDendrites = nAdditionalDendrites +1\n");
-
-            response.append("return nAdditionalDendrites\n");
-
-            response.append("}\n");
-            response.append("\n");
-            return response.toString();
-        }
-
-
-
-
-        private String getFuncAddAxonSection()
-        {
-            logger.logComment("calling getFuncAddAxonSection");
-            StringBuffer response = new StringBuffer();
-            response.append("func add_axonal_section() {\n");
-            response.append(" \n");
-
-      ///      response.append("print \"Adding another axonal section...\"\n");
-
-            response.append("parentSection = $1\n");
-            response.append("whereToAdd = $2\n");
-            response.append("x_endpoint = $3\n");
-            response.append("y_endpoint = $4\n");
-            response.append("z_endpoint = $5\n");
-
-
-       //     response.append("print \"Going to append new section to axon number \", parentSection, \", at distance along: \", whereToAdd\n");
-        ///    response.append("print \"End point will be at: (\", x_endpoint, \", \", y_endpoint, \", \", z_endpoint, \")\"\n");
-        ///    response.append("print \"There are already \", nAdditionalAxons, \" additional sections here, of a max: \", nMaxAdditionalAxons\n");
-            response.append("additional_axons[nAdditionalAxons] insert pas\n");
-            response.append("connect additional_axons[nAdditionalAxons](0), axon[parentSection](whereToAdd)\n");
-            response.append("additional_axons[nAdditionalAxons] {pt3dclear() pt3dadd(0, 0, 0, axon[parentSection].diam) pt3dadd(x_endpoint,y_endpoint,z_endpoint, axon[parentSection].diam)}\n");
-            response.append("additional_axons[nAdditionalAxons] all.append()\n\n");
-
-            response.append("nAdditionalAxons = nAdditionalAxons +1\n");
-
-            response.append("return nAdditionalAxons\n");
-
-            response.append("}\n");
-            response.append("\n");
-            return response.toString();
-        }
-*/
 
 
     private String getProcGeomNseg()

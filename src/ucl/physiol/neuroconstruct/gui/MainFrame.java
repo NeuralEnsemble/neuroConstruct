@@ -21,7 +21,6 @@ import java.util.zip.*;
 import javax.media.j3d.*;
 import javax.vecmath.*;
 import javax.xml.*;
-import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 import javax.xml.validation.*;
@@ -33,7 +32,7 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
-import org.xml.sax.*;
+
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.cell.converters.*;
@@ -11001,7 +11000,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         Object[] options1 = {"Continue", "Cancel"};
 
-        JOptionPane option1 = new JOptionPane("Warning, if you delete this Cell Type, recorded simulations which use this Cell Type will not work anymore!",
+        JOptionPane option1 = new JOptionPane("Warning, if you delete this Cell Type:\n"+cellTypeToDelete+",\nrecorded simulations which use this Cell Type will not work anymore!",
                                              JOptionPane.DEFAULT_OPTION,
                                              JOptionPane.WARNING_MESSAGE,
                                              null,

@@ -208,6 +208,9 @@ public class Section implements Serializable
     @Override
     public boolean equals(Object obj)
     {
+        if (obj == this)
+            return true;
+        
         if (obj instanceof Section)
         {
             Section otherSection = (Section)obj;
@@ -235,6 +238,22 @@ public class Section implements Serializable
         }
         return false;
     }
+
+    // NetBeans automatically generated hashCode
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 67 * hash + (this.sectionName != null ? this.sectionName.hashCode() : 0);
+        hash = 67 * hash + (this.startPointPosition != null ? this.startPointPosition.hashCode() : 0);
+        hash = 67 * hash + Float.floatToIntBits(this.startRadius);
+        hash = 67 * hash + (this.groups != null ? this.groups.hashCode() : 0);
+        hash = 67 * hash + this.numberInternalDivisions;
+        hash = 67 * hash + (this.comment != null ? this.comment.hashCode() : 0);
+        return hash;
+    }
+    
+    
 
 
     /**
@@ -301,7 +320,7 @@ public class Section implements Serializable
         // to ensure it's not in 2 or more of SOMA_GROUP, DENDRITIC_GROUP, AXONAL_GROUP
         for (int i = 0; i < groups.size(); i++)
         {
-           addToGroup((String)groups.elementAt(i));
+           addToGroup(groups.get(i));
         }
     }
 

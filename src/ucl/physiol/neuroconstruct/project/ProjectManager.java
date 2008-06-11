@@ -981,7 +981,10 @@ public class ProjectManager implements GenerationReport
 
         for (StimulationSettings stim: inputs)
         {
-            if (!activeProject.cellGroupsInfo.getAllCellGroupNames().contains(stim.getCellGroup()))
+            String cellType = activeProject.cellGroupsInfo.getCellType(stim.getCellGroup());
+            Cell cell = activeProject.cellManager.getCell(cellType);
+            
+            if (cellType==null || cell==null)
             {
                 report.addTaggedElement("Error, Input: " + stim.getReference() + " specifies Cell Group: " + stim.getCellGroup() +
                                         ", but there isn't any Cell Group by that name in the project!",
@@ -989,8 +992,20 @@ public class ProjectManager implements GenerationReport
                 report.addBreak();
 
                 overallValidity = ValidityStatus.VALIDATION_ERROR;
+            }
+            else
+            {
+                if (cell.getSegmentWithId(stim.getSegmentID())==null)
+                {
+                    report.addTaggedElement("Error, Input: " + stim.getReference() + " specifies segment ID: "+stim.getSegmentID()
+                        +" on cells of type " + cellType +
+                                        ", but there isn't any segment with that ID on such cells!",
+                                        "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
+                    
+                    report.addBreak();
 
-
+                    overallValidity = ValidityStatus.VALIDATION_ERROR;
+                }
             }
         }
         

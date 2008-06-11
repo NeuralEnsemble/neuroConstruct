@@ -1811,7 +1811,7 @@ public class Cell implements Serializable
             System.out.println(segs);
             
             
-            if (true) return; // chop off here
+            //if (true) return; // chop off here
             
            ChannelMechanism chMech = new ChannelMechanism( "ggg", 22);
 
@@ -1842,7 +1842,7 @@ public class Cell implements Serializable
 
            System.out.println("Chan mechs vs groups: " + cell.getChanMechsVsGroups());
 
-           if (true) return;
+           //if (true) return;
 
 
            System.out.println("\n\ngetSpecCapVsGroups: " + cell.getSpecCapVsGroups());
@@ -1864,14 +1864,20 @@ public class Cell implements Serializable
           Cell cellB = (Cell)cell.clone();
 
 
-          cellB.associateGroupWithChanMech("soma_group", chMech);
+          //cellB.associateGroupWithChanMech("soma_group", chMech);
 
 
-          System.out.println("Chan mechs B: " + cellB.getChanMechsVsGroups());
+          //System.out.println("Chan mechs B: " + cellB.getChanMechsVsGroups());
 
-          System.out.println("getDefinedSpecCaps: " + cell.getDefinedSpecCaps());
+          //System.out.println("getDefinedSpecCaps: " + cell.getDefinedSpecCaps());
 
           System.out.println("\n\n\nCompare: "+ CellTopologyHelper.compare(cell, cellB, false));
+          
+          System.out.println("\n\n\nHashcode A: "+ cell.hashCode());
+          System.out.println("\nHashcode B: "+ cellB.hashCode());
+          
+          System.out.println("\n\n\nHashcode sec A: "+ cell.getAllSections().hashCode());
+          System.out.println("\nHashcode sec B: "+ cellB.getAllSections().hashCode());
 
 
         }
