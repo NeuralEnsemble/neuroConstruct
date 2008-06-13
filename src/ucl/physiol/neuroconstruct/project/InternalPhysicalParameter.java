@@ -43,6 +43,7 @@ public class InternalPhysicalParameter extends InternalParameter
 
     public Units units = null;
 
+    @Override
     public String toString()
     {
         return "Internal Physical Parameter: " + parameterName
@@ -62,25 +63,46 @@ public class InternalPhysicalParameter extends InternalParameter
     {
         this.units = units;
     }
+    
+    
+    @Override
+    public boolean equals(Object otherObj)
+    {
+        if (otherObj instanceof InternalPhysicalParameter)
+        {
+            InternalPhysicalParameter other = (InternalPhysicalParameter) otherObj;
+
+            if (parameterName.equals(other.parameterName) &&
+                parameterDescription.equals(other.parameterDescription) &&
+                units.equals(other.units) &&
+                defaultValue == other.defaultValue &&
+                value == other.value)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
     public static void main(String[] args)
 {
     try
     {
-        File f = new File("/home/padraig/temp/unit.xml");
+        File f = new File("../temp/unit.xml");
         FileOutputStream fos = new FileOutputStream(f);
         BufferedOutputStream bos = new BufferedOutputStream(fos);
         XMLEncoder xmlEncoder = new XMLEncoder(bos);
 
-        //Units units2 = UnitConverter.specificAxialResistanceUnits[0];
-        Units units = new Units("area" , new Unit[]{new Unit(Prefix.CENTI, Units.METER, 2)});
+        Units units = UnitConverter.specificAxialResistanceUnits[0];
+        //Units units = new Units("area" , new Unit[]{new Unit(Prefix.CENTI, Units.METER, 2)});
+        
 
-        System.out.println("units: " + units.toLongString());
+        System.out.println("Old units: "+units.getSafeSymbol()+", details: " + units.toLongString());
 
        // InternalPhysicalParameter ipp = new InternalPhysicalParameter("Jim", "fake param", 33, units);
 
-       System.out.println("writeObject...");
+        System.out.println("writeObject...");
         xmlEncoder.writeObject(units);
 
         xmlEncoder.flush();
@@ -93,8 +115,9 @@ public class InternalPhysicalParameter extends InternalParameter
         System.out.println("readObject...");
         Object obj = xmlDecoder.readObject();
 
-        System.out.println("Obj: " + obj);
-        System.out.println("Units: " + ((Units)obj).toLongString());
+        System.out.println("Obj: "+obj);
+        
+        System.out.println("New Units: "+((Units)obj).getSafeSymbol()+", details: " + ((Units)obj).toLongString());
 
     }
     catch (Exception ex)
