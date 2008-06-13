@@ -48,7 +48,43 @@ public class Argument
     }
 
 
+    @Override
+    public int hashCode()
+    {
+        int hash = 5;
+        hash = 37 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 37 * hash + (int) (Double.doubleToLongBits(this.value) ^ (Double.doubleToLongBits(this.value) >>> 32));
+        return hash;
+    }
 
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        final Argument other = (Argument) obj;
+        if (this.name != other.name && (this.name == null || !this.name.equals(other.name)))
+        {
+            return false;
+        }
+        if (this.value != other.value)
+        {
+            return false;
+        }
+        return true;
+    }
+    
+    
+
+
+
+    @Override
     public String toString()
     {
         return "Argument[name: "+name+", value: "+value+"]";
