@@ -32,8 +32,9 @@ public class Units
     private String baseSymbol = null;
     private Unit[] subUnitList = null;
     private boolean siUnit = false;
-
     private boolean baseUnit = false;
+    
+    
 
     public static Units AMPERE = new Units("ampere", "A", true);
     public static Units FARAD = new Units("farad", "F", false);
@@ -123,6 +124,7 @@ public class Units
     }
 
 
+    @Override
     public boolean equals(Object otherObject)
     {
         if (!(otherObject instanceof Units)) return false;
@@ -252,6 +254,7 @@ public class Units
 
 
 
+    @Override
     public String toString()
     {
         return "Units["+ name + ", symbol: "+ getSymbol()+"]";
@@ -295,7 +298,7 @@ public class Units
     /**
      * Here to support saving of Units via XMLEncoder
      */
-    protected Unit[] getSubUnitList()
+    public Unit[] getSubUnitList()
     {
         //logger.logComment("getSubUnitList called on " + subUnitList[0].toLongString()+ ", etc.");
         return subUnitList;
@@ -305,7 +308,7 @@ public class Units
     /**
      * Here to support saving of Units via XMLEncoder
      */
-    protected void setSubUnitList(Unit[] subUnitList)
+    public void setSubUnitList(Unit[] subUnitList)
     {
         //logger.logComment("setSubUnitList called with " + subUnitList[0].toLongString()+ ", etc.");
         this.subUnitList = subUnitList;

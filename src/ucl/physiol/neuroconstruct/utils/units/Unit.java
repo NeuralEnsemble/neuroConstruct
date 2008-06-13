@@ -81,6 +81,7 @@ public class Unit
 
 
 
+    @Override
     public boolean equals(Object otherObject)
     {
         if (!(otherObject instanceof Unit)) return false;
@@ -90,6 +91,16 @@ public class Unit
         if (exponent != otherUnit.exponent) return false;
 
         return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 5;
+        hash = 13 * hash + (this.prefix != null ? this.prefix.hashCode() : 0);
+        hash = 13 * hash + (this.units != null ? this.units.hashCode() : 0);
+        hash = 13 * hash + this.exponent;
+        return hash;
     }
 
     protected String toLongString()
@@ -120,16 +131,20 @@ public class Unit
 
     protected Units getUnits()
     {
+        //System.out.println("Unit.getUnits called: "+units+"..");
         return units;
     }
     public void setUnits(Units units)
     {
+        //System.out.println("Unit.setunits called: "+units+"...");
         this.units = units;
     }
+    
     public void setPrefix(Prefix prefix)
     {
         this.prefix = prefix;
     }
+    
     public void setExponent(int exponent)
     {
         this.exponent = exponent;
