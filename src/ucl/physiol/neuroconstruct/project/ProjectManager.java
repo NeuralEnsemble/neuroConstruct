@@ -984,10 +984,19 @@ public class ProjectManager implements GenerationReport
             String cellType = activeProject.cellGroupsInfo.getCellType(stim.getCellGroup());
             Cell cell = activeProject.cellManager.getCell(cellType);
             
-            if (cellType==null || cell==null)
+            if (cellType==null)
             {
                 report.addTaggedElement("Error, Input: " + stim.getReference() + " specifies Cell Group: " + stim.getCellGroup() +
                                         ", but there isn't any Cell Group by that name in the project!",
+                                        "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
+                report.addBreak();
+
+                overallValidity = ValidityStatus.VALIDATION_ERROR;
+            }
+            else if (cell==null)
+            {
+                report.addTaggedElement("Error, Input: " + stim.getReference() + " specifies Cell Group: " + stim.getCellGroup() +
+                                        ", cell type: "+cellType+", but there isn't any Cell of that type in the project!",
                                         "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
                 report.addBreak();
 
