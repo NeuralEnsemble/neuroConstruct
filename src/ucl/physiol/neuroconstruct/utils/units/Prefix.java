@@ -53,6 +53,14 @@ public class Prefix
     public static Prefix YECTO = new Prefix("yocto", "y", 1E-24);
 
 
+    /**
+     * Here to support saving of Units via XMLEncoder
+     */
+    public Prefix()
+    {
+        //System.out.println("Prefix() called...");
+    }
+    
     private Prefix(String name, String symbol, double multiplier)
     {
         this.name = name;
@@ -61,11 +69,13 @@ public class Prefix
 
     }
 
+    @Override
     public String toString()
     {
         return "Prefix: "+ name+ ", symbol: "+ symbol+ ", multiplier: "+ multiplier;
     }
 
+    @Override
     public boolean equals(Object otherObject)
     {
         if (! (otherObject instanceof Prefix)) return false;
@@ -74,6 +84,16 @@ public class Prefix
         if (!symbol.equals(otherPrefix.symbol)) return false;
         if (multiplier != otherPrefix.multiplier) return false;
         return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 67 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 67 * hash + (this.symbol != null ? this.symbol.hashCode() : 0);
+        hash = 67 * hash + (int) (Double.doubleToLongBits(this.multiplier) ^ (Double.doubleToLongBits(this.multiplier) >>> 32));
+        return hash;
     }
 
     public static void main(String[] args)
@@ -92,10 +112,20 @@ public class Prefix
     {
         return multiplier;
     }
+    public void setMultiplier(double m)
+    {
+        //System.out.println("Prefix.setMultiplier called...");
+        multiplier = m;
+    }
 
     public String getSymbol()
     {
         return symbol;
+    }
+    
+    public void setSymbol(String s)
+    {
+        symbol = s;
     }
 
     public String getSafeSymbol()
@@ -109,6 +139,11 @@ public class Prefix
     public String getName()
     {
         return name;
+    }
+    
+    public void setName(String n)
+    {
+        name = n;
     }
 
 }
