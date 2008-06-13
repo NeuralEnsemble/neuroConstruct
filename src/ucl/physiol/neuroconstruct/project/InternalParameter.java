@@ -42,6 +42,7 @@ public class InternalParameter
         this.value = defaultValue;
     }
 
+    @Override
     public boolean equals(Object otherObj)
     {
         if (otherObj instanceof InternalParameter)
@@ -59,7 +60,19 @@ public class InternalParameter
         return false;
     }
 
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 13 * hash + (this.parameterName != null ? this.parameterName.hashCode() : 0);
+        hash = 13 * hash + (this.parameterDescription != null ? this.parameterDescription.hashCode() : 0);
+        hash = 13 * hash + Float.floatToIntBits(this.defaultValue);
+        hash = 13 * hash + Float.floatToIntBits(this.value);
+        return hash;
+    }
 
+
+    @Override
     public String toString()
     {
         return "Internal Parameter: " + parameterName
