@@ -86,6 +86,8 @@ public class MainApplication
 
     public MainApplication()
     {
+        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionInfo());
+        
         frame = new MainFrame();
 
         if (!noGuiMode)
