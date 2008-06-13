@@ -86,9 +86,19 @@ public class MainApplication
 
     public MainApplication()
     {
-        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionInfo());
+        //Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionInfo(Thread.currentThread().getName()));
         
         frame = new MainFrame();
+        
+        int active = Thread.activeCount();
+        System.out.println("Currently active threads: " + active);
+        Thread all[] = new Thread[active];
+        Thread.enumerate(all);
+        for (int i = 0; i < active; i++) 
+        {
+            //System.out.println(i + ": " + all[i]);
+            all[i].setDefaultUncaughtExceptionHandler(new UncaughtExceptionInfo());
+        }
 
         if (!noGuiMode)
         {

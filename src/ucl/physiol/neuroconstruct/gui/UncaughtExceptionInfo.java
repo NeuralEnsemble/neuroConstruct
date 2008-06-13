@@ -27,9 +27,14 @@ import ucl.physiol.neuroconstruct.utils.*;
 public class UncaughtExceptionInfo implements UncaughtExceptionHandler 
 {
     private static ClassLogger logger = new ClassLogger("UncaughtExceptionInfo");
+    private boolean shownMemError = false;
     
-   public void uncaughtException(Thread t, Throwable e) 
-   {
+    public UncaughtExceptionInfo()
+    {
+    }
+    
+    public void uncaughtException(Thread t, Throwable e) 
+    {
        String error = "Java error: "+ e.getMessage();
        
        if (e instanceof OutOfMemoryError)
@@ -41,12 +46,20 @@ public class UncaughtExceptionInfo implements UncaughtExceptionHandler
                "-Xmx flag in the command line call to start a Java application. The neuroConstruct installers set this to 250MB\n" +
                "of RAM by default. If you'd like to use more, use an altered version of "+run+" in the install directory, and run\n" +
                "this from a shell/command line console.";
+            
+            shownMemError = true;
+            
+            
+            System.out.println("Exception on thread: "+ t.getName()+", id: "+t.getId()+"\n"+error);
            
-            GuiUtils.showErrorMessage(logger, error, e, null);
+            if (!shownMemError)
+                GuiUtils.showErrorMessage(logger, error, e, null);
+            
+            
        }
        else
        {
-           logger.logError("Uncaught exception", e, true);
+           logger.logError("Uncaught exception, no GUI warning...\n", e, true);
        }
       
     }
