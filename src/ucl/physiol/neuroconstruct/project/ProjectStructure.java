@@ -52,6 +52,9 @@ public class ProjectStructure
     public static final String JAVA_XML_FORMAT = new String("Java XML Format");
     public static final String JAVA_OBJ_FORMAT = new String("Java Serialized Object Format");
 
+    public static final String PROJ_QUICK_SAVE = new String("Quick Save");
+    public static final String PROJ_SVN_SAVE = new String("SVN friendly save");
+
 
     private static final String javaXMLFileExtension = new String(".java.xml");
 

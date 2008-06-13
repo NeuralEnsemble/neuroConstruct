@@ -20,9 +20,12 @@ package ucl.physiol.neuroconstruct.project;
  *  
  */
 
-public class ProjectProperties {
+public class ProjectProperties 
+{
     
     private String preferredSaveFormat = ProjectStructure.JAVA_XML_FORMAT;
+    
+    private String saveOption = ProjectStructure.PROJ_SVN_SAVE;
         
     
     public ProjectProperties()
@@ -37,6 +40,15 @@ public class ProjectProperties {
     public void setPreferredSaveFormat(String prefSaveFormat)
     {
         this.preferredSaveFormat = prefSaveFormat;
+    }
+    
+    public String getSaveOption()
+    {
+        return saveOption;
+    }
+    public void setSaveOption(String saveOption)
+    {
+        this.saveOption = saveOption;
     }
 
 

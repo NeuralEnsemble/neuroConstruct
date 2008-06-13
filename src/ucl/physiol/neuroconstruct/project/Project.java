@@ -1229,25 +1229,78 @@ public class Project implements TableModelListener
                     cellMechProps.setProperty(CellMechanismHelper.PROP_PLOT_INFO_FILE, acm.getPlotInfoFile());
                 }
                 File internalPropsFile = new File(cellMechDir, CellMechanismHelper.INTERNAL_PROPS_FILENAME);
-
-                try
+                
+                boolean saveProps = projProperties.getSaveOption().equals(ProjectStructure.PROJ_QUICK_SAVE); // false if svn save
+                
+                logger.logComment("Saving int props: "+ saveProps);
+                
+                if (internalPropsFile.exists() && projProperties.getSaveOption().equals(ProjectStructure.PROJ_SVN_SAVE))
                 {
-                    XMLEncoder e = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(internalPropsFile)));
-                    
-
-                    InternalPhysicalParameter[] params = acm.getPhysicalParameterList();
-                    for (int i = 0; i < params.length; i++)
+                    try
                     {
-                        e.writeObject(params[i]);
+                        InternalPhysicalParameter[] currParams = acm.getPhysicalParameterList();
+                        XMLDecoder d = new XMLDecoder(new BufferedInputStream(new FileInputStream(
+                                        internalPropsFile)));
+
+                        Object nextParams = null;
+                        int count = 0;
+                        try
+                        {
+                            while ( (nextParams = d.readObject()) != null)
+                            {
+                                InternalPhysicalParameter ipp = (InternalPhysicalParameter) nextParams;
+
+                                if (ipp.parameterName.equals(currParams[count].parameterName) &&
+                                    ipp.value == currParams[count].value )
+                                {
+                                    logger.logComment("Are equal: "+ ipp.parameterName+" = "+ currParams[count]);
+                                }
+                                else
+                                {
+                                    logger.logComment("Are not equal: "+ ipp.parameterName+" = "+ currParams[count]);
+                                    saveProps = true;
+                                }
+                                count++;
+                            }
+                        }
+                        catch (ArrayIndexOutOfBoundsException ex5)
+                        {
+                            logger.logComment("End of objects...");
+                        }
+                        if (currParams.length!= count)
+                        {
+                            logger.logComment("Length not equal: "+ count+" != "+ currParams.length);
+                            saveProps = true;
+                        }
                     }
-
-                    e.close();
+                    catch (Exception ex5)
+                    {
+                        logger.logError("Error comparing param set to old: "+ex5, ex5);
+                        saveProps = true;
+                    }
                 }
-                catch (IOException ex3)
-                {
-                    GuiUtils.showErrorMessage(logger, "Error creating cell mechanism info file: " + internalPropsFile,
-                                              ex3, null);
+                
+                logger.logComment("Saving int props: "+ saveProps);
 
+                if (saveProps)
+                {
+                    try
+                    {
+                        XMLEncoder e = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(internalPropsFile)));
+
+                        InternalPhysicalParameter[] params = acm.getPhysicalParameterList();
+                        for (int i = 0; i < params.length; i++)
+                        {
+                            e.writeObject(params[i]);
+                        }
+
+                        e.close();
+                    }
+                    catch (IOException ex3)
+                    {
+                        GuiUtils.showErrorMessage(logger, "Error creating cell mechanism info file: " + internalPropsFile,
+                                                  ex3, null);
+                    }
                 }
 
                 MechanismImplementation[] mechsImpls = acm.getMechanismImpls();
@@ -1325,27 +1378,52 @@ public class Project implements TableModelListener
                 cellMechDir.mkdir();
             }
             File propsFile = new File(cellMechDir, CellMechanismHelper.PROPERTIES_FILENAME);
-
-            FileOutputStream fos2 = null;
-            try
+            
+            boolean saveProps = true;
+            
+            
+            if (projProperties.getSaveOption().equals(ProjectStructure.PROJ_SVN_SAVE) && propsFile.exists())
             {
-                fos2 = new FileOutputStream(propsFile);
-                cellMechProps.storeToXML(fos2,
-                    "\nProperties associated with the Cell Mechanism which allow it to be loaded into neuroConstruct.\n\n"
-                                         + "Note the following: \n" +
-                                         "   The Cell Mechanism name should not contain spaces and should match the name of the directory it's in\n" +
-                                         "   The name and description here will be replaced by the corresponding values in a ChannelML file if found\n" +
-                                         "   The filenames for the mappings are relative to the cellMechanism/(cellMechInstanceName) directory\n" +
-                                         "   Mechanism Type should only have values: " +
-                                         CellMechanism.CHANNEL_MECHANISM + ", " + CellMechanism.SYNAPTIC_MECHANISM
-                                         + ", " + CellMechanism.ION_CONCENTRATION + ", " + CellMechanism.POINT_PROCESS + ", " + CellMechanism.GAP_JUNCTION + "\n\n");
-                fos2.close();
+                Properties oldCellMechProps = new Properties();
+                try
+                {
+                    oldCellMechProps.loadFromXML(new FileInputStream(propsFile));
+                    if (oldCellMechProps.equals(cellMechProps))
+                    {
+                        saveProps = false;
+                    }
+                }
+                catch (Exception ex2)
+                {
+                    // just save...
 
+                }
             }
-            catch (Exception ex2)
+            //logger.logComment("Should save props: "+ saveProps, true);
+            
+            if (saveProps)
             {
-                GuiUtils.showErrorMessage(logger, "Error storing information on Cell Mechanism: " + nextCellMech, ex2, null);
+                FileOutputStream fos2 = null;
+                try
+                {
+                    fos2 = new FileOutputStream(propsFile);
+                    cellMechProps.storeToXML(fos2,
+                        "\nProperties associated with the Cell Mechanism which allow it to be loaded into neuroConstruct.\n\n"
+                                             + "Note the following: \n" +
+                                             "   The Cell Mechanism name should not contain spaces and should match the name of the directory it's in\n" +
+                                             "   The name and description here will be replaced by the corresponding values in a ChannelML file if found\n" +
+                                             "   The filenames for the mappings are relative to the cellMechanism/(cellMechInstanceName) directory\n" +
+                                             "   Mechanism Type should only have values: " +
+                                             CellMechanism.CHANNEL_MECHANISM + ", " + CellMechanism.SYNAPTIC_MECHANISM
+                                             + ", " + CellMechanism.ION_CONCENTRATION + ", " + CellMechanism.POINT_PROCESS + ", " + CellMechanism.GAP_JUNCTION + "\n\n");
+                    fos2.close();
 
+                }
+                catch (Exception ex2)
+                {
+                    GuiUtils.showErrorMessage(logger, "Error storing information on Cell Mechanism: " + nextCellMech, ex2, null);
+
+                }
             }
 
             File oldDirForCellProcs = ProjectStructure.getCellProcessesDir(this.getProjectMainDirectory(), false);
@@ -1401,14 +1479,14 @@ public class Project implements TableModelListener
 
         boolean problemSaving = false;
 
-        ArrayList<String> filesSaved = new ArrayList<String> ();
+        ArrayList<String> filesDone = new ArrayList<String> ();
+        
+        //MorphMLConverter morphMLConverter = new MorphMLConverter();
 
         for (Cell cell : cells)
         {
-
             try
             {
-
                 logger.logComment("Saving cell: " + cell.getInstanceName()
                                   + " in " + projProperties.getPreferredSaveFormat());
 
@@ -1417,9 +1495,25 @@ public class Project implements TableModelListener
                     File objFile = new File(dirForProjectMorphologies,
                                             cell.getInstanceName()
                                             + ProjectStructure.getJavaObjFileExtension());
-
-                    problemSaving = ! (MorphMLConverter.saveCellInJavaObjFormat(cell, objFile) && !problemSaving);
-                    filesSaved.add(objFile.getName());
+                    
+                    boolean doSave = true;
+                    
+                    if (projProperties.getSaveOption().equals(ProjectStructure.PROJ_SVN_SAVE))
+                    {
+                        Cell prevCell = MorphMLConverter.loadFromJavaObjFile(objFile);
+                        boolean cellsSame = prevCell.equals(cell);
+                        logger.logComment("Is "+ prevCell+" = "+ cell+": "+ cellsSame, true);
+                        if (!cellsSame)
+                        {
+                            logger.logComment(CellTopologyHelper.compare(cell, prevCell, false));
+                        }
+                        if (cellsSame) doSave = false;
+                    }
+                    if (doSave)
+                    {
+                        problemSaving = ! (MorphMLConverter.saveCellInJavaObjFormat(cell, objFile) && !problemSaving);
+                    }
+                    filesDone.add(objFile.getName());
 
                 }
                 else if (projProperties.getPreferredSaveFormat().equals(ProjectStructure.JAVA_XML_FORMAT))
@@ -1430,7 +1524,7 @@ public class Project implements TableModelListener
 
                     problemSaving = ! (MorphMLConverter.saveCellInJavaXMLFormat(cell, xmlFile) && !problemSaving);
 
-                    filesSaved.add(xmlFile.getName());
+                    filesDone.add(xmlFile.getName());
 
                 }
 
@@ -1455,7 +1549,7 @@ public class Project implements TableModelListener
                        currFiles[i].getName().endsWith(".zip") || // in case cells achived due to MorphologyFileUpdate
                        currFiles[i].getName().endsWith(".tmp") ||
                        currFiles[i].getName().endsWith(".bak") ||
-                       filesSaved.contains(currFiles[i].getName())))
+                       filesDone.contains(currFiles[i].getName())))
                 {
                     currFiles[i].delete();
                 }
