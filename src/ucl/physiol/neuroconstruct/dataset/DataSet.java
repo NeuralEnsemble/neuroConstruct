@@ -19,7 +19,7 @@ import java.io.*;
 
 /**
  * Storage for the set of points to be plotted. Basically a wrapper for 2
- * double arrays for the x and y values. Also contained here is som metadata for
+ * double arrays for the x and y values. Also contained here is some metadata for
  * the preferred graph format/colour, some comments associated with the points and
  * a reference to the file to store the data in.
  *
@@ -54,7 +54,7 @@ public class DataSet
 
 
     /**
-     * means each subsequent x val GREATER then previous
+     * means each subsequent x val GREATER than previous
      */
     private boolean xValsStrictlyInc = true;
 
