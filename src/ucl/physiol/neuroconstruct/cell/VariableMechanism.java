@@ -13,14 +13,10 @@
 package ucl.physiol.neuroconstruct.cell;
  
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import ucl.physiol.neuroconstruct.cell.examples.*;
-import ucl.physiol.neuroconstruct.cell.utils.*;
+import java.io.*;
+import java.util.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.equation.*;
-import ucl.physiol.neuroconstruct.utils.units.*;
 
  /**
   * A class representing a channel mechanism which can be added to
