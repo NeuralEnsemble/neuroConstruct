@@ -81,10 +81,6 @@ public class Segment implements Serializable
      */
     private String comment = null;
 
-    public static int UNDETERMINED_SHAPE = -1;
-    public static int SPHERICAL_SHAPE = 0;
-    public static int CYLINDRICAL_SHAPE = 1;
-
 
     // This is set so, to ensure some values (especially 0) are put into the xml
     // representation of endPointPosition. If new Point3f() was used, XMLEncoder
@@ -103,8 +99,12 @@ public class Segment implements Serializable
      * Flag to say the segment/cell has been altered after loading. When project is saved only edited cells will
      * have their morphologies re saved. Note this is not foolproof as the
      */
-    private boolean edited = false;
+    //private boolean edited = false;
 
+    
+    public static int UNDETERMINED_SHAPE = -1;
+    public static int SPHERICAL_SHAPE = 0;
+    public static int CYLINDRICAL_SHAPE = 1;
 
     /**
      * This needs to be public for XMLEncoder. DON'T USE IT ON ITS OWN!
@@ -157,6 +157,7 @@ public class Segment implements Serializable
      * Cell but as part of cloning the whole cell!!
      * @see Cell#clone()
      */
+    @Override
     public Object clone()
     {
         Segment newSegment = new Segment();
@@ -254,20 +255,17 @@ public class Segment implements Serializable
         return (float)comp.getCurvedSurfaceArea();
     }
 
-
+/*
     public boolean isEdited()
     {
         return this.edited;
     }
 
-    /**
-     * Can be used after loading cell
-     */
     public void setAsUnedited()
     {
         this.edited = false;
     }
-
+*/
 
     public float getSegmentLength()
     {
@@ -347,6 +345,7 @@ public class Segment implements Serializable
         return segmentName +" (ID: "+segmentId+")";
     }
 
+    @Override
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
@@ -532,7 +531,7 @@ public class Segment implements Serializable
 
     public void setFiniteVolume(boolean finiteVolume)
     {
-        this.edited = true;
+        //this.edited = true;
         this.finiteVolume = finiteVolume;
     }
 
@@ -540,14 +539,14 @@ public class Segment implements Serializable
 
     public void setSegmentName(String segmentName)
     {
-        this.edited = true;
+        //this.edited = true;
         if (segmentName != null && segmentName.trim().length() > 0)
             this.segmentName = segmentName;
     }
 
     public void setComment(String comment)
     {
-        this.edited = true;
+        //this.edited = true;
         this.comment = comment;
     }
 
@@ -560,19 +559,19 @@ public class Segment implements Serializable
      */
     public void setEndPointPositionX(float val)
     {
-        this.edited = true;
+        //this.edited = true;
         this.endPointPosition.x = val;
     }
 
     public void setEndPointPositionY(float val)
     {
-        this.edited = true;
+        //this.edited = true;
         this.endPointPosition.y = val;
     }
 
     public void setEndPointPositionZ(float val)
     {
-        this.edited = true;
+        //this.edited = true;
         this.endPointPosition.z = val;
     }
 
@@ -602,7 +601,7 @@ public class Segment implements Serializable
     }
     public void setSegmentId(int segmentId)
     {
-        this.edited = true;
+        //this.edited = true;
         this.segmentId = segmentId;
     }
 
@@ -652,6 +651,7 @@ public class Segment implements Serializable
     * parent segment and section aren't set. therefore the check on identity of parents isn't made here!
     *
     */
+    @Override
     public boolean equals(Object obj)
     {
         if (obj instanceof Segment)
@@ -703,6 +703,21 @@ public class Segment implements Serializable
         return false;
     }
 
+    // NetBeans generated hashCode
+    @Override
+    public int hashCode()
+    {
+        int hash = 3;
+        hash = 59 * hash + (this.segmentName != null ? this.segmentName.hashCode() : 0);
+        hash = 59 * hash + this.segmentId;
+        hash = 59 * hash + Float.floatToIntBits(this.fractionAlongParent);
+        hash = 59 * hash + (this.finiteVolume ? 1 : 0);
+        hash = 59 * hash + (this.comment != null ? this.comment.hashCode() : 0);
+        hash = 59 * hash + (this.endPointPosition != null ? this.endPointPosition.hashCode() : 0);
+        hash = 59 * hash + Float.floatToIntBits(this.radius);
+        return hash;
+    }
+
 
     public int getSegmentShape()
     {
@@ -728,7 +743,7 @@ public class Segment implements Serializable
     }
     public void setSection(Section section)
     {
-        this.edited = true;
+        //this.edited = true;
         this.section = section;
     }
     public float getFractionAlongParent()
@@ -737,7 +752,7 @@ public class Segment implements Serializable
     }
     public void setFractionAlongParent(float fractionAlongParent)
     {
-        this.edited = true;
+        //this.edited = true;
         this.fractionAlongParent = fractionAlongParent;
     }
 
