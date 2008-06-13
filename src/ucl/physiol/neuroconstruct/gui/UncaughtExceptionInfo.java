@@ -47,13 +47,12 @@ public class UncaughtExceptionInfo implements UncaughtExceptionHandler
                "of RAM by default. If you'd like to use more, use an altered version of "+run+" in the install directory, and run\n" +
                "this from a shell/command line console.";
             
-            shownMemError = true;
-            
-            
             System.out.println("Exception on thread: "+ t.getName()+", id: "+t.getId()+"\n"+error);
            
             if (!shownMemError)
                 GuiUtils.showErrorMessage(logger, error, e, null);
+            
+            shownMemError = true;
             
             
        }

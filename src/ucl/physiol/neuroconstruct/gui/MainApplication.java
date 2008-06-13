@@ -91,7 +91,6 @@ public class MainApplication
         frame = new MainFrame();
         
         int active = Thread.activeCount();
-        System.out.println("Currently active threads: " + active);
         Thread all[] = new Thread[active];
         Thread.enumerate(all);
         for (int i = 0; i < active; i++) 
@@ -307,7 +306,7 @@ public class MainApplication
 
                 String script = GeneralUtils.isWindowsBasedPlatform()?"run.bat":"run.sh";
 
-                System.out.println("\nneuroConstruct "+GeneralProperties.getVersionNumber()
+                System.out.println("\nneuroConstruct v"+GeneralProperties.getVersionNumber()
                         +" starting...\nTo start application with extra memory, see "+script+" in the neuroConstruct home directory.\n");
 
 
