@@ -224,8 +224,13 @@ public class GeneratedElecInputs
 
         return inputArrayList.size();
     }
-
-
+    
+    
+    public Iterator<String> getElecInputsItr()
+    {
+        return myElecInputs.keySet().iterator();
+    }    
+    
     @Override
     public String toString()
     {

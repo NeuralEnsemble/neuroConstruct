@@ -38,6 +38,7 @@ import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.*;
 import ucl.physiol.neuroconstruct.neuron.NeuronException;
+import ucl.physiol.neuroconstruct.utils.SequenceGenerator.EndOfSequenceException;
 
 /**
  * A class for handling interaction with the project
@@ -414,7 +415,7 @@ public class ProjectManager implements GenerationReport
         return false;
     }
     
-    public boolean doLoadNetworkMLAndGenerate(File networkmlFile) throws NeuroMLException
+    public boolean doLoadNetworkMLAndGenerate(File networkmlFile) throws NeuroMLException, Hdf5Exception, EndOfSequenceException
     {
         NetworkMLnCInfo extraInfo = doLoadNetworkML(networkmlFile);
                 
@@ -439,7 +440,7 @@ public class ProjectManager implements GenerationReport
     
     
     
-    public NetworkMLnCInfo doLoadNetworkML(File networkmlFile) throws NeuroMLException
+    public NetworkMLnCInfo doLoadNetworkML(File networkmlFile) throws NeuroMLException, Hdf5Exception, EndOfSequenceException
     {
         if (networkmlFile.getName().endsWith(ProjectStructure.getHDF5FileExtension()))
         {

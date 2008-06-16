@@ -35,8 +35,12 @@ import ucl.physiol.neuroconstruct.project.GeneralProperties;
 import ucl.physiol.neuroconstruct.project.GeneratedElecInputs;
 import ucl.physiol.neuroconstruct.project.PositionRecord;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.SingleSynapticConnection;
+import ucl.physiol.neuroconstruct.project.SingleElectricalInput;
 import ucl.physiol.neuroconstruct.project.SynapticProperties;
+import ucl.physiol.neuroconstruct.project.stimulation.*;
+import ucl.physiol.neuroconstruct.simulation.StimulationSettings;
 import ucl.physiol.neuroconstruct.utils.GeneralUtils;
+import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
 
 /**
  * Utilities file for generating NetworkML HDF5 files
@@ -72,6 +76,7 @@ public class NetworkMLWriter
         
         GeneratedCellPositions gcp = project.generatedCellPositions;
         GeneratedNetworkConnections gnc = project.generatedNetworkConnections;
+        GeneratedElecInputs gei = project.generatedElecInputs;
         
         
         StringBuffer notes = new StringBuffer("\nNetwork structure saved with neuroConstruct v"+
@@ -102,16 +107,26 @@ public class NetworkMLWriter
 
         }
 
+        Iterator<String> elecInputs = gei.getElecInputsItr();
+
+        while (elecInputs.hasNext())
+        {
+        String ei = elecInputs.next();
+        int numHere = gei.getNumberSingleInputs(ei);
+        if (numHere>0)
+        notes.append("Electrical Input: "+ei+" contains "+numHere+" individual stimulations\n");
+
+        }               
+        
         try
         {
             netmlGroup = h5File.createGroup(NetworkMLConstants.ROOT_ELEMENT, root);
             popsGroup = h5File.createGroup(NetworkMLConstants.POPULATIONS_ELEMENT, netmlGroup);
             projsGroup = h5File.createGroup(NetworkMLConstants.PROJECTIONS_ELEMENT, netmlGroup);
+            inputsGroup = h5File.createGroup(NetworkMLConstants.INPUTS_ELEMENT, netmlGroup);
             
             Attribute unitsAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.UNITS_ATTR, NetworkMLConstants.UNITS_PHYSIOLOGICAL, h5File);
             projsGroup.writeMetadata(unitsAttr);
-                
-            inputsGroup = h5File.createGroup("inputs", netmlGroup);
 
             Attribute attr = Hdf5Utils.getSimpleAttr("notes", notes.toString(), h5File);
             
@@ -409,7 +424,145 @@ public class NetworkMLWriter
                 throw new Hdf5Exception("Failed to create group in HDF5 file: " + h5File.getFilePath(), ex);
             }
         }
+         
+        // Start of writing the Electrical Inputs into Hdf5 format
+        
+        // Create Record Inputs
+        //                 - Input either IClamp or Random Spike
+        //                      - IClamp Type add attributes Delay, Duration, Amplitude)
+        //                      - Random Spike add attributes Frequency, Mechanism) 
+        //                              - Sites Group Table of 4 Columns (Cell Group ID, Cell ID, Segment ID, Fraction Along)
+        
+        // Create an iterator to navigate through all the input names
+        
+        Iterator<String> nEi = gei.getElecInputsItr(); 
+        try
+            { 
+            // Add units for the Inputs
+            if (project.genesisSettings.getUnitSystemToUse()== UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS)
+            {
+                //inputsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.UNITS_ATTR, ));
+                Attribute unitsAttr = Hdf5Utils.getSimpleAttr("units", "Physiological Units", h5File);
+                inputsGroup.writeMetadata(unitsAttr);
+            }
+            else if (project.genesisSettings.getUnitSystemToUse()== UnitConverter.GENESIS_SI_UNITS)
+            {
+                //inputsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.UNITS_ATTR, "SI Units"));
+                Attribute unitsAttr = Hdf5Utils.getSimpleAttr("units", "SI Units", h5File);
+                inputsGroup.writeMetadata(unitsAttr);
+            }
+            
+            // loop around all the inputs
+            while(nEi.hasNext())        
+            {
 
+                String ei = nEi.next();
+
+                // Get the stimulation settings for the input referenc
+                StimulationSettings nextStim = project.elecInputInfo.getStim(ei);
+
+                // Get the electrical input for the stim settings
+                ElectricalInput myElectricalInput = nextStim.getElectricalInput();
+
+                // Get Input Locations
+
+                ArrayList<SingleElectricalInput> inputsHere =  project.generatedElecInputs.getInputLocations(ei);
+
+
+                    Group inputGroup = h5File.createGroup(NetworkMLConstants.INPUT_ELEMENT+"_"+ei, inputsGroup);
+
+
+                    // Build Site Table for both IClamp and RandomSpikeTrain Inputs
+
+                    int inputsNumCols = 4; // Cell Group, Cell ID, Segment ID, Fraction Along Segment
+
+                    int inputNumber = inputsHere.size();
+
+                    long[] dims2D = {inputNumber, inputsNumCols};
+
+                    float[] sitesArray = new float[inputNumber * inputsNumCols];
+
+                    Datatype dtype = getInputDatatype(h5File);
+
+                    // Build array of sites as stim setting
+
+                    for (int i=0; i<inputNumber; i++)
+                    {
+                        sitesArray[i * inputsNumCols + 0] = inputsHere.get(i).getCellNumber();
+                        sitesArray[i * inputsNumCols + 1] = inputsHere.get(i).getSegmentId();
+                        sitesArray[i * inputsNumCols + 2] = inputsHere.get(i).getFractionAlong();
+                    }               
+
+                    Dataset sitesDataset = h5File.createScalarDS (ei+"_"+"input_sites", inputGroup, dtype, dims2D, null, null, 0, sitesArray);
+
+                    Attribute attr0 = Hdf5Utils.getSimpleAttr("column_0", NetworkMLConstants.INPUT_SITE_CELLID_ATTR, h5File);
+                    sitesDataset.writeMetadata(attr0);
+                    Attribute attr1 = Hdf5Utils.getSimpleAttr("column_1", NetworkMLConstants.INPUT_SITE_SEGID_ATTR, h5File);
+                    sitesDataset.writeMetadata(attr1);
+                    Attribute attr2 = Hdf5Utils.getSimpleAttr("column_2", NetworkMLConstants.INPUT_SITE_FRAC_ATTR, h5File);
+                    sitesDataset.writeMetadata(attr2);
+
+                    String cellGroup = nextStim.getCellGroup();
+
+                    if (myElectricalInput instanceof IClamp)
+                    {
+                        IClamp ic = (IClamp)myElectricalInput;
+
+                        Group inputTypeGroup = h5File.createGroup(myElectricalInput.getType()+"_"+"properties", inputGroup);
+
+                        // Get Details of the IClamp attributes
+
+                        String delay = String.valueOf(ic.getDelay().getNumber());
+                        String duration = String.valueOf(ic.getDuration().getNumber());      
+                        String amp = String.valueOf(ic.getAmplitude().getNumber());
+
+                        //Assign them to the attibutes of the group
+
+                        Attribute cellGroupAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR, cellGroup, h5File);                   
+                        Attribute delayAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_DELAY_ATTR, delay, h5File);                    
+                        Attribute durationAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_DUR_ATTR, duration, h5File);                    
+                        Attribute ampAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_AMP_ATTR, amp, h5File);
+
+                        // add them as attributes to the group
+
+                        inputTypeGroup.writeMetadata(cellGroupAttr);
+                        inputTypeGroup.writeMetadata(delayAttr);                    
+                        inputTypeGroup.writeMetadata(durationAttr);
+                        inputTypeGroup.writeMetadata(ampAttr);                    
+                    }
+                    else if (myElectricalInput instanceof RandomSpikeTrain)
+                    {
+                        RandomSpikeTrain rst = (RandomSpikeTrain)myElectricalInput;
+
+                        Group inputTypeGroup = h5File.createGroup(myElectricalInput.getType()+"_"+"properties", inputGroup);
+
+                        // Get details of Random Spike Train Attributes
+
+                        String stimFreq = String.valueOf(rst.getRate().getFixedNum());
+                        String stimMech = rst.getSynapseType();
+
+                        //Assign them to the attibutes of the group
+
+                        Attribute cellGroupAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR, cellGroup, h5File);
+                        Attribute stimFreqAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.RND_STIM_FREQ_ATTR, stimFreq, h5File);                    
+                        Attribute stimMechAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.RND_STIM_MECH_ATTR, stimMech, h5File);                    
+
+                        // add them as attributes to the group
+
+                        inputTypeGroup.writeMetadata(cellGroupAttr);                    
+                        inputTypeGroup.writeMetadata(stimFreqAttr);                    
+                        inputTypeGroup.writeMetadata(stimMechAttr);
+
+                        }
+               }
+            }
+            catch (Exception ex)
+            {
+                throw new Hdf5Exception("Failed to create group in HDF5 file: " + h5File.getFilePath(), ex);
+            }
+        
+        
+        
         //h5File.
 
         Hdf5Utils.close(h5File);
@@ -445,13 +598,24 @@ public class NetworkMLWriter
         }
         catch (Exception ex)
         {
-            throw new Hdf5Exception("Failed to get projection datatype in HDF5 file: " + h5File.getFilePath());
+            throw new Hdf5Exception("Failed to get projection datatype in HDF5 file: " + h5File.getFilePath(),ex);
 
         }
 
     }
 
-
+    public static Datatype getInputDatatype(H5File h5File) throws Hdf5Exception
+    {
+        try
+        {
+            Datatype projDataType = h5File.createDatatype(Datatype.CLASS_FLOAT, 4, Datatype.NATIVE, -1);
+            return projDataType;
+        }
+        catch (Exception ex)
+        {
+            throw new Hdf5Exception("Failed to get input datatype in HDF5 file: " + h5File.getFilePath(),ex);
+        }
+    }
 
     public static void main(String[] args)
     {

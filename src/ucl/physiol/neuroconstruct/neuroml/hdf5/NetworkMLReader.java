@@ -20,6 +20,11 @@ import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.project.stimulation.ElectricalInput;
+import ucl.physiol.neuroconstruct.project.stimulation.IClamp;
+import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrain;
+import ucl.physiol.neuroconstruct.simulation.StimulationSettings;
+import ucl.physiol.neuroconstruct.utils.SequenceGenerator.EndOfSequenceException;
 
 /**
  * Utilities file for reading NetworkML HDF5 files
@@ -41,9 +46,12 @@ public class NetworkMLReader  implements NetworkMLnCInfo
     
     boolean inPopulations = false;
     boolean inProjections = false;
+    boolean inInputs = false;
+    //boolean inInput = false;
     
     String currentCellGroup = null;
     String currentNetConn = null;
+    String currentInput = null;
     
     private ArrayList<ConnSpecificProps> globConnProps = new ArrayList<ConnSpecificProps>();
     
@@ -69,7 +77,7 @@ public class NetworkMLReader  implements NetworkMLnCInfo
     }
     
     
-    public void parse(File hdf5File) throws Hdf5Exception
+    public void parse(File hdf5File) throws Hdf5Exception, EndOfSequenceException
     {
         H5File h5File = Hdf5Utils.openForRead(hdf5File);
         
@@ -82,7 +90,7 @@ public class NetworkMLReader  implements NetworkMLnCInfo
         
     
         
-    public void startGroup(Group g) throws Hdf5Exception
+    public void startGroup(Group g) throws Hdf5Exception, EndOfSequenceException
     {
         logger.logComment("-----   Going into a group: "+g.getFullName());
         
@@ -158,6 +166,87 @@ public class NetworkMLReader  implements NetworkMLnCInfo
             
             globConnProps.add(cp);
         }
+        else if (g.getName().equals(NetworkMLConstants.INPUTS_ELEMENT))
+        {
+            logger.logComment("Found the Inputs group");
+            inInputs = true;
+            String units = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.UNITS_ATTR);
+            
+            if (project.genesisSettings.isSIUnits() && !units.contains("SI Units"))
+            {
+                throw new Hdf5Exception("Error: the project units are SI Units whereas the units in the file are not");
+            }
+            else if (project.genesisSettings.isPhysiologicalUnits() && !units.contains("Physiological"))
+            {
+                throw new Hdf5Exception("Error: the project units are Physiological Units whereas the units in the file are not");
+            }
+        }
+        else if (g.getName().startsWith(NetworkMLConstants.INPUT_ELEMENT) && inInputs)
+        {
+            // The table of input sites is within the input group so get sites from here
+            
+            String inputName = g.getName().substring(6);
+            
+            //String inputName = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.INPUT_ELEMENT);
+            
+            logger.logComment("Found an Input: "+ inputName);
+            //inInput = true;
+            
+            if (project.elecInputInfo.getStim(inputName) == null)
+            {
+                throw new Hdf5Exception("Error: there is an electrical input with name: "+ inputName+" specified in " +
+                        "that file, but no such electrical input exists in the project. Add one to allow import of this file");
+            }
+            // Get the atributes of the Input and compare them with the attributes within the project
+            // Test to find out what type of input this is
+
+        }
+        else if (g.getName().startsWith("IClamp") && inInputs)
+        {
+            String inputName = g.getParent().getName().substring(6);
+            // Get the input sites from the table
+            String cellGroup = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR);
+            String delay = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.INPUT_DELAY_ATTR);
+            String duration = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.INPUT_DUR_ATTR);
+            String amp = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.INPUT_AMP_ATTR);
+            
+            StimulationSettings nextStim = project.elecInputInfo.getStim(inputName);
+            ElectricalInput myElectricalInput = nextStim.getElectricalInput();
+            IClamp ic = (IClamp)myElectricalInput;
+            
+            logger.logComment("Found an IClamp Input");            
+            
+            if ((!project.elecInputInfo.getStim(inputName).getCellGroup().equals(cellGroup))
+                   ||(Float.valueOf(delay.trim()).floatValue()!= ic.getDelay().getNumber())
+                   ||(Float.valueOf(duration.trim()).floatValue() != ic.getDuration().getNumber())
+                   ||(Float.valueOf(amp.trim()).floatValue() != ic.getAmplitude().getNumber()))                    
+            {
+                throw new Hdf5Exception("Error: the input properties of the file do not match those in the project for input "+ inputName);
+            }
+            currentInput = inputName;
+        }
+        else if (g.getName().startsWith("RandomSpikeTrain") && inInputs)
+        {
+            String inputName = g.getParent().getName().substring(6);
+            // Get the input sites from the table
+            String cellGroup = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR);
+            String frequency = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.RND_STIM_FREQ_ATTR);
+            String mechanism = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.RND_STIM_MECH_ATTR);
+            
+            StimulationSettings nextStim = project.elecInputInfo.getStim(inputName);
+            ElectricalInput myElectricalInput = nextStim.getElectricalInput();
+            RandomSpikeTrain rs = (RandomSpikeTrain)myElectricalInput;
+            
+            logger.logComment("Found an Random Spike Train Input");
+            
+            if ((!project.elecInputInfo.getStim(inputName).getCellGroup().equals(cellGroup))||
+                    Float.valueOf(frequency.trim()).floatValue() != rs.getRate().getFixedNum()||
+                    !rs.getSynapseType().equals(mechanism))                    
+            {
+                throw new Hdf5Exception("Error: the input properties of the file do not match those in the project for input "+ inputName);
+            }
+            currentInput = inputName;
+        }        
         
     }
     
@@ -175,8 +264,15 @@ public class NetworkMLReader  implements NetworkMLnCInfo
         else if (g.getName().equals(NetworkMLConstants.PROJECTIONS_ELEMENT))
         {
             inProjections = false;
-
         }
+        else if (g.getName().equals(NetworkMLConstants.INPUTS_ELEMENT))
+        {
+            inInputs = false;
+        }
+        else if (g.getName().equals(NetworkMLConstants.INPUT_ELEMENT) && inInputs)
+        {
+            currentInput = null;
+        }        
         else if (g.getName().startsWith(NetworkMLConstants.POPULATION_ELEMENT) && inPopulations)
         {
             currentCellGroup = null;
@@ -314,12 +410,36 @@ public class NetworkMLReader  implements NetworkMLnCInfo
             }
             
         }
+        if (inInputs && currentInput !=null)
+        {
+            //String inputName = g.getParent().getName().substring(6);
+            String fileInputName = d.getName();
+            int endIndex = fileInputName.indexOf("_");
+            String inputName = fileInputName.substring(0, endIndex);
+            StimulationSettings nextStim = project.elecInputInfo.getStim(inputName);
+            ElectricalInput myElectricalInput = nextStim.getElectricalInput();
+            String electricalInputType = myElectricalInput.getType();
+            String cellGroup = nextStim.getCellGroup();
+                    
+            for(int i = 0;i<data.length;i++)
+            {
+                Float fileCellId = data[i][0];
+                Float fileSegmentId = data[i][1];
+                Float fractionAlong = data[i][2];
+                int cellId = fileCellId.intValue();
+                int segmentId = fileSegmentId.intValue();                
+                
+                SingleElectricalInput singleElectricalInputFromFile = new SingleElectricalInput(electricalInputType,cellGroup,cellId,segmentId,fractionAlong);
+               
+                this.project.generatedElecInputs.addSingleInput(inputName,singleElectricalInputFromFile);
+            }
+        }
         
         
     }
         
         
-    public void parseGroup(Group g) throws Hdf5Exception
+    public void parseGroup(Group g) throws Hdf5Exception, EndOfSequenceException
     {
         startGroup(g);
                 
