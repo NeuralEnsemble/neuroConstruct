@@ -1498,7 +1498,7 @@ public class Project implements TableModelListener
                     
                     boolean doSave = true;
                     
-                    if (projProperties.getSaveOption().equals(ProjectStructure.PROJ_SVN_SAVE))
+                    if (projProperties.getSaveOption().equals(ProjectStructure.PROJ_SVN_SAVE) && objFile.exists() && objFile.length()>0)
                     {
                         Cell prevCell = MorphMLConverter.loadFromJavaObjFile(objFile);
                         boolean cellsSame = prevCell.equals(cell);
