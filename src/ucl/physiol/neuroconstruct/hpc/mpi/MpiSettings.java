@@ -48,7 +48,7 @@ public class MpiSettings
         String local8Config = "Local machine (8p)";
         String local32Config = "Local machine (32p)";
         String local128Config = "Local machine (128p)";
-        //String testConfig = "TestConf";
+        String multiConfig = "TestConf";
         //String testConfig22 = "TestConfMore";
 
 
@@ -59,15 +59,15 @@ public class MpiSettings
             configurations.add(def);
         }
 
-/*
+
         if (getMpiConfiguration(multiConfig)==null)
         {
             MpiConfiguration p = new MpiConfiguration(multiConfig);
             //p.getHostList().add(new MpiHost("padraigneuro", 1, 1));
-            p.getHostList().add(new MpiHost("avicenna",1, 1));
-            p.getHostList().add(new MpiHost("bernal", 4, 1));
-            //configurations.add(p);
-        }*/
+            p.getHostList().add(new MpiHost("eriugena",1, 1));
+            p.getHostList().add(new MpiHost("bernal", 1, 1));
+            configurations.add(p);
+        }
 
         if (getMpiConfiguration(local2Config)==null)
         {
