@@ -64,8 +64,8 @@ public class MpiSettings
         {
             MpiConfiguration p = new MpiConfiguration(multiConfig);
             //p.getHostList().add(new MpiHost("padraigneuro", 1, 1));
-            p.getHostList().add(new MpiHost("eriugena",1, 1));
-            p.getHostList().add(new MpiHost("bernal", 1, 1));
+            p.getHostList().add(new MpiHost("eriugena",4, 1));
+            p.getHostList().add(new MpiHost("bernal", 4, 1));
             configurations.add(p);
         }
 
