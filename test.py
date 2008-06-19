@@ -12,4 +12,12 @@ file = File("models/Auditory/Auditory.neuro.xml")
 
 print 'Loading project file: ', file
 
-myProject = Project.loadProject(file,  Project.getDummyProjectEventListener())
+
+pm = ProjectManager()
+
+myProject = pm.loadProject(file)
+
+
+print pm.status()
+
+print ProjectStructure.getnCHome().getAbsolutePath()
