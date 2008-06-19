@@ -17,6 +17,7 @@ import java.util.*;
 
 import java.awt.*;
 
+import java.util.logging.Level;
 import java.util.zip.*;
 import org.xml.sax.*;
 
@@ -74,6 +75,11 @@ public class ProjectManager implements GenerationReport
     private boolean currentlyGenerating = false;
 
 
+    // Only for Python based startup
+    public ProjectManager()
+    {
+        reportInterface = this;
+    }    
 
     public ProjectManager(GenerationReport ri,
                           ProjectEventListener projEventListener)
@@ -87,6 +93,36 @@ public class ProjectManager implements GenerationReport
             reportInterface = this;
         }
         this.projEventListener = projEventListener;
+    }
+    
+    public String status()
+    {
+        StringBuffer info = new StringBuffer();
+        
+        info.append("neuroConstruct v"+GeneralProperties.getVersionNumber()+"\n");
+            
+        if (activeProject==null)
+        {
+            info.append("No project loaded"+"\n");
+        }
+        else
+        {
+            try 
+            {
+                info.append("Project:             " + activeProject.getProjectName() + "\n");
+                info.append("Project file:        " + activeProject.getProjectFullFileName() + "\n");
+                info.append("No. Cell Types:      " + activeProject.cellManager.getNumberCellTypes() + "\n");
+                info.append("No. Cell Groups:     " + activeProject.cellGroupsInfo.getNumberCellGroups() + "\n");
+                info.append("No. Morph Net Conns: " + activeProject.morphNetworkConnectionsInfo.getNumSimpleNetConns() + "\n");
+                info.append("No. Vol Net Conns:   " + activeProject.volBasedConnsInfo.getNumConns() + "\n");
+            } 
+            catch (NoProjectLoadedException ex) 
+            {
+                info.append("No project loaded!"+"/n");
+            }
+        }
+        
+        return info.toString();
     }
 
     public Project getCurrentProject()
@@ -1155,9 +1191,10 @@ public class ProjectManager implements GenerationReport
 
 
 
-    public void doLoadProject(File projFile) throws ProjectFileParsingException
+    public Project loadProject(File projFile) throws ProjectFileParsingException
     {
         activeProject = Project.loadProject(projFile, projEventListener);
+        return activeProject;
     }
     
 

@@ -1618,5 +1618,14 @@ public class Project implements TableModelListener
         basicProjectInfo.setProjectDescription(projectDescription);
         this.markProjectAsEdited();
     }
+    
+    
+    public static void main(String[] args)
+    {
+        System.out.println("Trying...");
+        
+        System.out.println("nC home proj: "+ProjectStructure.getnCHome().getAbsolutePath());
+    }
+
 
 }

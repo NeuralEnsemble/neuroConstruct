@@ -5086,7 +5086,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             {
                 logger.logComment(">>>>>>>>  Loading project: "+ chooser.getSelectedFile());
                 //projManager.getCurrentProject() = Project.loadProject(chooser.getSelectedFile(), this);
-                projManager.doLoadProject(chooser.getSelectedFile());
+                projManager.loadProject(chooser.getSelectedFile());
                 logger.logComment("<<<<<<<<  Loaded project: "+ projManager.getCurrentProject().getProjectFileName());
             }
             catch (ProjectFileParsingException ex2)
