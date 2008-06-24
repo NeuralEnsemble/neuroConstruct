@@ -326,7 +326,7 @@ public class GenesisFileManager
         SegmentLocMapper slm = mappedSegments.get(mappedCellType);
         SegmentLocation segLoc = slm.mapSegmentLocation(oldSl);
 
-        logger.logComment(CellTopologyHelper.printDetails(mappedCell, project));
+        //logger.logComment(CellTopologyHelper.printDetails(mappedCell, project));
         logger.logComment("SegmentLocMapper: " + slm);
 
         Segment seg =mappedCell.getSegmentWithId(segLoc.getSegmentId());

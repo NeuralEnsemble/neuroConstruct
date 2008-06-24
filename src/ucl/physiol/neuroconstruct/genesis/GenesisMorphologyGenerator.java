@@ -326,8 +326,7 @@ public class GenesisMorphologyGenerator
                         CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
 
                         if (project.genesisSettings.isGenerateComments())
-                            response.append("// Cell mechanism: " + cellMech + ", density: "+nextChanMech.getDensity()+" "
-                                            + UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSafeSymbol() + "\n");
+                            response.append("// Cell mechanism: " +nextChanMech.toString() + "\n");
 
 
                         boolean isCMLPassive = false;
@@ -504,7 +503,7 @@ public class GenesisMorphologyGenerator
             {
 
                 ChannelMechanism nextChanMech = consolChanMechs.elementAt(ll);
-                logger.logComment("--  nextChanMech: " + nextChanMech, true);
+                logger.logComment("--  nextChanMech: " + nextChanMech);
                 CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
 
                 logger.logComment("--  checking mech : " + cellMech.getInstanceName());
