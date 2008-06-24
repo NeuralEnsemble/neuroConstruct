@@ -57,6 +57,12 @@ public class ConnectivityConditions
      *
      */
     private int maxNumInitPerFinishCell = Integer.MAX_VALUE;
+    
+    /*
+     * When source & target cell groups are the same, this indicates whether synapses from
+     * a cell to itself are allowed
+     */ 
+    private boolean allowAutapses = true;
 
 
 
@@ -70,6 +76,7 @@ public class ConnectivityConditions
      * Return a simple string representation...
      * @return A string summarising the state
      */
+    @Override
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
@@ -171,6 +178,18 @@ public class ConnectivityConditions
 
     }
 
+
+    public boolean isAllowAutapses()
+    {
+        return allowAutapses;
+    }
+
+
+    public void setAllowAutapses(boolean aa)
+    {
+        this.allowAutapses = aa;
+
+    }
 
 
 }

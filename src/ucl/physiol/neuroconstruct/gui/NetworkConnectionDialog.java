@@ -15,6 +15,7 @@ import java.util.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -166,10 +167,16 @@ public class NetworkConnectionDialog extends JDialog
 
 
     JPanel jPanelConnCondsMaxTarget = new JPanel();
+    
+    JPanel jPanelConnCondsAutapses = new JPanel();
 
 
     JLabel jLabelConnCondsMaxTarget = new JLabel();
     JTextField jTextFieldConnCondsMaxTarget = new JTextField();
+    
+    
+    JLabel jLabelConnCondsAutapses = new JLabel();
+    JCheckBox jCheckBoxAutapses = new JCheckBox();
 
 
     GridBagLayout gridBagLayout2 = new GridBagLayout();
@@ -317,6 +324,9 @@ public class NetworkConnectionDialog extends JDialog
                 jRadioButtonTrgtToSrc.setSelected(true);
 
             jCheckBoxConnCondsUnique.setSelected(connConds.isOnlyConnectToUniqueCells());
+            
+            jCheckBoxAutapses.setSelected(connConds.isAllowAutapses());
+            
             this.jTextFieldConnCondsMaxTarget.setText(connConds.getMaxNumInitPerFinishCellString());
 
             jTextFieldConnCondsMaxTarget.setColumns(8);
@@ -359,15 +369,17 @@ public class NetworkConnectionDialog extends JDialog
 
         jPanelMain.setLayout(borderLayout1);
         jPanelSourceInfo.setBorder(titledBorder1);
-        jPanelSourceInfo.setMaximumSize(new Dimension(350, 200));
-        jPanelSourceInfo.setMinimumSize(new Dimension(350, 200));
-        jPanelSourceInfo.setPreferredSize(new Dimension(350, 200));
+        Dimension d = new Dimension(350, 160);
+        
+        jPanelSourceInfo.setMaximumSize(d);
+        jPanelSourceInfo.setMinimumSize(d);
+        jPanelSourceInfo.setPreferredSize(d);
         jPanelSourceInfo.setLayout(gridBagLayoutSrc);
         jPanelTargetInfo.setLayout(gridBagLayoutTrgt);
         jPanelTargetInfo.setBorder(titledBorder2);
-        jPanelTargetInfo.setMaximumSize(new Dimension(350, 200));
-        jPanelTargetInfo.setMinimumSize(new Dimension(350, 200));
-        jPanelTargetInfo.setPreferredSize(new Dimension(350, 200));
+        jPanelTargetInfo.setMaximumSize(d);
+        jPanelTargetInfo.setMinimumSize(d);
+        jPanelTargetInfo.setPreferredSize(d);
         jComboBoxTarget.setEnabled(false);
         jComboBoxTarget.addItemListener(new java.awt.event.ItemListener()
         {
@@ -408,9 +420,6 @@ public class NetworkConnectionDialog extends JDialog
 
         jRadioButtonCompRandom.setSelected(true);
         jRadioButtonCompRandom.setText("Completely random");
-        //jPanelType.setMaximumSize(new Dimension(450, 35));
-        //jPanelType.setMinimumSize(new Dimension(450, 35));
-        //jPanelType.setPreferredSize(new Dimension(450, 35));
         jLabelName.setText("Name of new network connection:");
         jLabelSynapseProperties.setText("Synaptic Properties: ");
         jTextFieldName.setText("...");
@@ -418,22 +427,7 @@ public class NetworkConnectionDialog extends JDialog
         jPanelName.setMaximumSize(new Dimension(700, 50));
         jPanelName.setMinimumSize(new Dimension(700, 50));
         jPanelName.setPreferredSize(new Dimension(700, 50));
-        /*
-        jRadioButtonGrowModeJump.setSelected(true);
-        jRadioButtonGrowModeJump.setText("Synapses jump across empty space");
-        jRadioButtonGrowModeDendGrow.setEnabled(false);
-        jRadioButtonGrowModeDendGrow.setText("Dendritic sections grow");
-        jRadioButtonGrowModeGrowAxon.setEnabled(false);
-        jRadioButtonGrowModeGrowAxon.setText("Axonal sections grow");*/
-    /*
-        jButtonSynProps.setText("...");
-        jButtonSynProps.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                jButtonSynProps_actionPerformed(e);
-            }
-        });*/
+ 
         jPanelExtraParams.setLayout(gridBagLayout1);
         //jPanelGrowth.setLayout(borderLayout2);
         //jPanelGrowth.setBorder(titledBorder4);
@@ -482,8 +476,6 @@ public class NetworkConnectionDialog extends JDialog
         jLabelAttempts.setText("Number of attempts:");
         jTextFieldAttempts.setText("100");
         jTextFieldAttempts.setColumns(5);
-        jPanelConnConds.setBorder(titledBorder7);
-        jPanelConnConds.setLayout(gridBagLayout2);
 
         jPanelAP.setBorder(titledBorder8);
 
@@ -517,34 +509,52 @@ public class NetworkConnectionDialog extends JDialog
         //
 
 
-        jPanelConnCondsMaxTarget.add(jLabelConnCondsMaxTarget);
-        jPanelConnCondsMaxTarget.add(jTextFieldConnCondsMaxTarget);
 
         jTextFieldConnCondsMaxTarget.setText("MAX     ");
 
         jTextFieldConnCondsMaxTarget.setMinimumSize(new Dimension(100, 32));
 
-        jPanelConnConds.add(jPanelConnCondsMaxTarget,   new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
-                                                                      ,GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                                                      new Insets(11, 79, 6, 0), 0, 0));
-
-
-    jPanelConnConds.add(jCheckBoxConnCondsUnique,   new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(11, 79, 6, 0), 0, 0));
-
-
-        jPanelConnConds.add(jPanelConnCondsNum,   new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
-            ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-        jPanelConnCondsNum.add(jLabelConnCondsNum, null);
+        
+        
+        jPanelConnConds.setBorder(titledBorder7);
+        jPanelConnConds.setLayout(gridBagLayout2);
+        
+        
         jPanelConnConds.add(jPanelConnCondRadios,    new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0
-
-
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 93, 0, 94), 0, 0));
+        
         jPanelConnCondRadios.add(jRadioButtonSrcToTrgt, null);
         jPanelConnCondRadios.add(jRadioButtonTrgtToSrc, null);
-        //jPanelExtraParams.add(jPanelGrowth,    new GridBagConstraints(0, 3, 1, 1, 1.0, 1.0
-        //    ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 200, 0));
-      //  jPanelGrowth.add(jPanelGrowMode,  BorderLayout.CENTER);
+        
+        
+        jPanelConnConds.add(jPanelConnCondsNum,   new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        
+        jPanelConnCondsNum.add(jLabelConnCondsNum, null);
+        
+        
+        jPanelConnConds.add(jPanelConnCondsMaxTarget,   
+                new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
+                    ,GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                    new Insets(11, 79, 6, 0), 0, 0));
+        
+        jPanelConnCondsMaxTarget.add(jLabelConnCondsMaxTarget);
+        jPanelConnCondsMaxTarget.add(jTextFieldConnCondsMaxTarget);
+        
+
+        jPanelConnConds.add(jCheckBoxConnCondsUnique,   new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(11, 79, 6, 0), 0, 0));
+
+        
+        //jLabelConnCondsAutapses.setText("Allow autapses (when source group = target)");
+        jCheckBoxAutapses.setText("Allow autapses (when source Cell Group = target)");
+        jPanelConnCondsAutapses.add(jCheckBoxAutapses);
+        
+        
+        jPanelConnConds.add(jPanelConnCondsAutapses,   new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0, 0), 0, 0));
+        
+        
         this.getContentPane().add(jPanelMain, BorderLayout.CENTER);
 
 
@@ -774,6 +784,7 @@ public class NetworkConnectionDialog extends JDialog
     }
 
     //Overridden so we can exit when window is closed
+    @Override
     protected void processWindowEvent(WindowEvent e)
     {
         if (e.getID() == WindowEvent.WINDOW_CLOSING)
@@ -866,7 +877,10 @@ public class NetworkConnectionDialog extends JDialog
         {
             connConds.setGenerationDirection(ConnectivityConditions.TARGET_TO_SOURCE);
         }
+        
         connConds.setOnlyConnectToUniqueCells(jCheckBoxConnCondsUnique.isSelected());
+        
+        connConds.setAllowAutapses(jCheckBoxAutapses.isSelected());
 
 
 
@@ -1271,6 +1285,33 @@ public class NetworkConnectionDialog extends JDialog
         dlg.setVisible(true);
 
     }
+    
+    
+    public static void main(String[] args)
+    {
+        File pf = new File("examples/Ex5-Networks/Ex5-Networks.neuro.xml");
+
+        Project p = null;
+        try
+        {
+            p = Project.loadProject(pf, null);
+            System.out.println("Opened: "+ p.getProjectFullFileName());
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        
+        NetworkConnectionDialog ncd = new NetworkConnectionDialog(null, p, "Netkon");
+        
+        
+        ncd.pack();
+        GuiUtils.centreWindow(ncd);
+        
+        ncd.setVisible(true);
+        
+    }
+    
 
 
 }

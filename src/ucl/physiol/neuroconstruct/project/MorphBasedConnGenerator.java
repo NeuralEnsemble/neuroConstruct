@@ -322,7 +322,6 @@ public class MorphBasedConnGenerator extends Thread
                                 int numToTry = maxMin.getNumberAttempts();
 
 
-
                                 int availableCellsToConnectTo = numberInGenFinishCellGroup;
 
                                 while (!foundOne
@@ -368,7 +367,7 @@ public class MorphBasedConnGenerator extends Thread
                                         {
                                             genFinishCellNumber = ProjectManager.getRandomGenerator().nextInt(numberInGenFinishCellGroup);
 
-                                            logger.logComment("Testing if cell num: " + genFinishCellNumber +
+                                            logger.logComment("--------------------------Testing if cell num: " + genFinishCellNumber +
                                                               " is appropriate for cell number: "
                                                           + genStartCellNumber);
 
@@ -436,30 +435,43 @@ public class MorphBasedConnGenerator extends Thread
 
                                         if (satisfiesMaxNumPerFinCell && satisfiesUniqueness)
                                         {
-                                            float distanceApart = CellTopologyHelper.getSynapticEndpointsDistance(
-                                                project,
-                                                generationStartCellGroup,
-                                                new SynapticConnectionEndPoint(genStartConnPoint,
-                                                                               genStartCellNumber),
-                                                generationFinishCellGroup,
-                                                new SynapticConnectionEndPoint(genFinishConnPoint,
-                                                                               genFinishCellNumber),
-                                                maxMin.getDimension()
-                                                );
-
-                                            if (distanceApart >= maxMin.getMinLength()
-                                                && distanceApart <= maxMin.getMaxLength())
+                                            if (sourceCellGroup.equals(targetCellGroup) && 
+                                                !connConds.isAllowAutapses() &&
+                                                genStartCellNumber == genFinishCellNumber)
                                             {
-                                                foundOne = true;
-                                                connectionDistance = distanceApart;
+                                                logger.logComment("That would be an autapse, which isn't allowed!");
                                             }
                                             else
                                             {
-                                                logger.logComment("The length: " + distanceApart + " isn't between " +
-                                                                  maxMin.getMinLength() + " and " + maxMin.getMaxLength());
-                                                numFaliedAttemptsMaxMin++;
-                                                genFinishConnPoint = null;
-                                                genFinishCellNumber = -1;
+                                                
+                                               // logger.logComment("Not an autapse."+sourceCellGroup.equals(targetCellGroup) +" "+!connConds.isAllowAutapses()+" "+
+                                               // (genStartCellNumber == genFinishCellNumber), true);
+                                                
+                                                float distanceApart = CellTopologyHelper.getSynapticEndpointsDistance(
+                                                    project,
+                                                    generationStartCellGroup,
+                                                    new SynapticConnectionEndPoint(genStartConnPoint,
+                                                                                   genStartCellNumber),
+                                                    generationFinishCellGroup,
+                                                    new SynapticConnectionEndPoint(genFinishConnPoint,
+                                                                                   genFinishCellNumber),
+                                                    maxMin.getDimension()
+                                                    );
+
+                                                if (distanceApart >= maxMin.getMinLength()
+                                                    && distanceApart <= maxMin.getMaxLength())
+                                                {
+                                                    foundOne = true;
+                                                    connectionDistance = distanceApart;
+                                                }
+                                                else
+                                                {
+                                                    logger.logComment("The length: " + distanceApart + " isn't between " +
+                                                                      maxMin.getMinLength() + " and " + maxMin.getMaxLength());
+                                                    numFaliedAttemptsMaxMin++;
+                                                    genFinishConnPoint = null;
+                                                    genFinishCellNumber = -1;
+                                                }
                                             }
                                         }
                                     }
@@ -589,42 +601,55 @@ public class MorphBasedConnGenerator extends Thread
 
                                     if(satisfiesMaxNumPerFinCell && satisfiesUniqueness)
                                     {
-                                        SynapticConnectionEndPoint tempGenFinishEndpoint =
-                                            new SynapticConnectionEndPoint(tempGenFinishConnPoint, tempGenFinishCellNumber);
-
-                                        float distToThisPoint
-                                            = CellTopologyHelper.getSynapticEndpointsDistance(
-                                                project,
-                                                generationStartCellGroup,
-                                                new SynapticConnectionEndPoint(genStartConnPoint,
-                                                                               genStartCellNumber),
-                                                generationFinishCellGroup,
-                                                tempGenFinishEndpoint,
-                                                maxMin.getDimension()
-                                            );
-
-                                        if (distToThisPoint >= maxMin.getMinLength()
-                                            && distToThisPoint <= maxMin.getMaxLength())
+                                        if (sourceCellGroup.equals(targetCellGroup) && 
+                                                !connConds.isAllowAutapses() &&
+                                                genStartCellNumber == tempGenFinishCellNumber)
                                         {
-                                            logger.logComment("This point falls inside the max/min range...");
-
-                                            if (distToThisPoint < bestDistanceSoFar)
-                                            {
-                                                bestDistanceSoFar = distToThisPoint;
-                                                genFinishConnPoint = tempGenFinishConnPoint;
-                                                genFinishCellNumber = tempGenFinishCellNumber;
-                                                logger.logComment("It's the best distance so far...");
-
-                                                connectionDistance = bestDistanceSoFar;
-                                            }
-                                            else
-                                            {
-                                                logger.logComment("Not good enough, genFinishCellNumber: "+ genFinishCellNumber);
-                                            }
+                                            logger.logComment("That would be an autapse, which isn't allowed!");
                                         }
                                         else
                                         {
-                                            logger.logComment("It's outside the max/min range. Ignoring...");
+
+                                                    logger.logComment("Not an autapse? "+sourceCellGroup.equals(targetCellGroup) +" "+!connConds.isAllowAutapses()+" "+
+                                                    (genStartCellNumber == tempGenFinishCellNumber));
+
+                                            SynapticConnectionEndPoint tempGenFinishEndpoint =
+                                                new SynapticConnectionEndPoint(tempGenFinishConnPoint, tempGenFinishCellNumber);
+
+                                            float distToThisPoint
+                                                = CellTopologyHelper.getSynapticEndpointsDistance(
+                                                    project,
+                                                    generationStartCellGroup,
+                                                    new SynapticConnectionEndPoint(genStartConnPoint,
+                                                                                   genStartCellNumber),
+                                                    generationFinishCellGroup,
+                                                    tempGenFinishEndpoint,
+                                                    maxMin.getDimension()
+                                                );
+
+                                            if (distToThisPoint >= maxMin.getMinLength()
+                                                && distToThisPoint <= maxMin.getMaxLength())
+                                            {
+                                                logger.logComment("This point falls inside the max/min range...");
+
+                                                if (distToThisPoint < bestDistanceSoFar)
+                                                {
+                                                    bestDistanceSoFar = distToThisPoint;
+                                                    genFinishConnPoint = tempGenFinishConnPoint;
+                                                    genFinishCellNumber = tempGenFinishCellNumber;
+                                                    logger.logComment("It's the best distance so far...");
+
+                                                    connectionDistance = bestDistanceSoFar;
+                                                }
+                                                else
+                                                {
+                                                    logger.logComment("Not good enough, genFinishCellNumber: "+ genFinishCellNumber);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                logger.logComment("It's outside the max/min range. Ignoring...");
+                                            }
                                         }
                                     }
                                     else
@@ -664,13 +689,13 @@ public class MorphBasedConnGenerator extends Thread
 
                                 RectangularBox surroundingBox = CellTopologyHelper.getSurroundingBox(generationFinishCellInstance, false, false);
 
-                                for (int l = 0; l < numberInGenFinishCellGroup; l++)
+                                for (int nextGenFinishCellNum = 0; nextGenFinishCellNum < numberInGenFinishCellGroup; nextGenFinishCellNum++)
                                 {
-                                    logger.logComment("Checking cell number: " + l + " in cell group: " +
+                                    logger.logComment("Checking cell number: " + nextGenFinishCellNum + " in cell group: " +
                                                       generationFinishCellGroup);
 
                                     if (connConds.isOnlyConnectToUniqueCells() &&
-                                        genFinishCellsAlreadyConnected.contains(new Integer(l)))
+                                        genFinishCellsAlreadyConnected.contains(new Integer(nextGenFinishCellNum)))
                                     {
                                         logger.logComment(
                                             "Ignoring this cell, as it's already connected to the start cell, and uniqueness is specified");
@@ -686,13 +711,13 @@ public class MorphBasedConnGenerator extends Thread
                                         {
                                             numConnsOnFinishCell = project.generatedNetworkConnections.
                                                 getSourceCellIndices(netConnName,
-                                                                     l, false).size();
+                                                                     nextGenFinishCellNum, false).size();
                                         }
                                         else
                                         {
                                             numConnsOnFinishCell = project.generatedNetworkConnections.
                                                 getTargetCellIndices(netConnName,
-                                                                     l, false).size();
+                                                                     nextGenFinishCellNum, false).size();
 
                                         }
 
@@ -702,7 +727,7 @@ public class MorphBasedConnGenerator extends Thread
                                         {
                                             logger.logComment("There are not more than: " +
                                                               connConds.getMaxNumInitPerFinishCell()
-                                                              + " src conns on finish cell " + l);
+                                                              + " src conns on finish cell " + nextGenFinishCellNum);
 
                                                 satisfiesMaxNumPerFinCell = true;
 
@@ -712,10 +737,10 @@ public class MorphBasedConnGenerator extends Thread
                                         else
                                         {
                                             logger.logComment("There are already: " + numConnsOnFinishCell +
-                                                              " src conns on tgt cell " + l);
+                                                              " src conns on tgt cell " + nextGenFinishCellNum);
 
-                                            if (!finCellsMaxedOut.contains(l))
-                                                finCellsMaxedOut.add(l);
+                                            if (!finCellsMaxedOut.contains(nextGenFinishCellNum))
+                                                finCellsMaxedOut.add(nextGenFinishCellNum);
 
                                             satisfiesMaxNumPerFinCell = false;
                                         }
@@ -723,77 +748,86 @@ public class MorphBasedConnGenerator extends Thread
 
                                         if(satisfiesMaxNumPerFinCell)
                                         {
-                                            Point3f absoluteGenFinishCellPosition
-                                                = project.generatedCellPositions.getOneCellPosition(
-                                                    generationFinishCellGroup,
-                                                    l);
-
-                                            Point3f posnStartSynapseRelToFinishCell = new Point3f(absGenStartSynPosition);
-                                            posnStartSynapseRelToFinishCell.sub(absoluteGenFinishCellPosition);
-
-                                            SegmentLocation bestPointOnGenFinishCell = null;
-
-                                            RectangularBox absSurroundingBox = (RectangularBox) surroundingBox.getTranslatedRegion(new Vector3f(
-                                                absoluteGenFinishCellPosition));
-                                            SphericalRegion enclosingSphere = RectangularBox.getEnclosingSphere(absSurroundingBox);
-
-                                            if (absGenStartSynPosition.distance(enclosingSphere.getCentre()) - enclosingSphere.getRadius() <= bestDistanceSoFar)
+                                            if (sourceCellGroup.equals(targetCellGroup) && 
+                                                !connConds.isAllowAutapses() &&
+                                                genStartCellNumber == nextGenFinishCellNum)
                                             {
-
-                                                if (connConds.getGenerationDirection() == ConnectivityConditions.SOURCE_TO_TARGET)
-                                                {
-                                                    bestPointOnGenFinishCell
-                                                        = CellTopologyHelper.getClosestPostSynapticTerminalLocation(
-                                                            generationFinishCellInstance,
-                                                            synTypeNames,
-                                                            posnStartSynapseRelToFinishCell);
-                                                }
-                                                else
-                                                {
-                                                    bestPointOnGenFinishCell
-                                                        = CellTopologyHelper.getClosestPreSynapticTerminalLocation(
-                                                            generationFinishCellInstance,
-                                                            synTypeNames,
-                                                            posnStartSynapseRelToFinishCell);
-
-                                                }
-
-                                                if (bestPointOnGenFinishCell == null)
-                                                {
-                                                    GuiUtils.showErrorMessage(logger,
-                                                                              "Error getting synaptic location on cell of type " +
-                                                                              generationFinishCellInstance.toString(), null, null);
-                                                    return;
-                                                }
-
-                                                SynapticConnectionEndPoint tempGenFinishEndpoint =
-                                                    new SynapticConnectionEndPoint(bestPointOnGenFinishCell, l);
-
-                                                float distToThisPoint
-                                                    = CellTopologyHelper.getSynapticEndpointsDistance(
-                                                        project,
-                                                        generationStartCellGroup,
-                                                        new SynapticConnectionEndPoint(genStartConnPoint,
-                                                                                       genStartCellNumber),
+                                                logger.logComment("That would be an autapse, which isn't allowed!");
+                                            }
+                                            else
+                                            {
+                                                Point3f absoluteGenFinishCellPosition
+                                                    = project.generatedCellPositions.getOneCellPosition(
                                                         generationFinishCellGroup,
-                                                        tempGenFinishEndpoint,
-                                                        maxMin.getDimension()
-                                                    );
+                                                        nextGenFinishCellNum);
 
-                                                logger.logComment("Distance to that point: " + distToThisPoint);
+                                                Point3f posnStartSynapseRelToFinishCell = new Point3f(absGenStartSynPosition);
+                                                posnStartSynapseRelToFinishCell.sub(absoluteGenFinishCellPosition);
 
-                                                if (distToThisPoint < bestDistanceSoFar)
+                                                SegmentLocation bestPointOnGenFinishCell = null;
+
+                                                RectangularBox absSurroundingBox = (RectangularBox) surroundingBox.getTranslatedRegion(new Vector3f(
+                                                    absoluteGenFinishCellPosition));
+                                                SphericalRegion enclosingSphere = RectangularBox.getEnclosingSphere(absSurroundingBox);
+
+                                                if (absGenStartSynPosition.distance(enclosingSphere.getCentre()) - enclosingSphere.getRadius() <= bestDistanceSoFar)
                                                 {
-                                                    genFinishConnPoint = bestPointOnGenFinishCell;
-                                                    genFinishCellNumber = l;
-                                                    logger.logComment("Best so far...");
 
-                                                    bestDistanceSoFar = distToThisPoint;
+                                                    if (connConds.getGenerationDirection() == ConnectivityConditions.SOURCE_TO_TARGET)
+                                                    {
+                                                        bestPointOnGenFinishCell
+                                                            = CellTopologyHelper.getClosestPostSynapticTerminalLocation(
+                                                                generationFinishCellInstance,
+                                                                synTypeNames,
+                                                                posnStartSynapseRelToFinishCell);
+                                                    }
+                                                    else
+                                                    {
+                                                        bestPointOnGenFinishCell
+                                                            = CellTopologyHelper.getClosestPreSynapticTerminalLocation(
+                                                                generationFinishCellInstance,
+                                                                synTypeNames,
+                                                                posnStartSynapseRelToFinishCell);
+
+                                                    }
+
+                                                    if (bestPointOnGenFinishCell == null)
+                                                    {
+                                                        GuiUtils.showErrorMessage(logger,
+                                                                                  "Error getting synaptic location on cell of type " +
+                                                                                  generationFinishCellInstance.toString(), null, null);
+                                                        return;
+                                                    }
+
+                                                    SynapticConnectionEndPoint tempGenFinishEndpoint =
+                                                        new SynapticConnectionEndPoint(bestPointOnGenFinishCell, nextGenFinishCellNum);
+
+                                                    float distToThisPoint
+                                                        = CellTopologyHelper.getSynapticEndpointsDistance(
+                                                            project,
+                                                            generationStartCellGroup,
+                                                            new SynapticConnectionEndPoint(genStartConnPoint,
+                                                                                           genStartCellNumber),
+                                                            generationFinishCellGroup,
+                                                            tempGenFinishEndpoint,
+                                                            maxMin.getDimension()
+                                                        );
+
+                                                    logger.logComment("Distance to that point: " + distToThisPoint);
+
+                                                    if (distToThisPoint < bestDistanceSoFar)
+                                                    {
+                                                        genFinishConnPoint = bestPointOnGenFinishCell;
+                                                        genFinishCellNumber = nextGenFinishCellNum;
+                                                        logger.logComment("Best so far...");
+
+                                                        bestDistanceSoFar = distToThisPoint;
 
 
-                                                    connectionDistance = bestDistanceSoFar;
+                                                        connectionDistance = bestDistanceSoFar;
+                                                    }
+                                                    else logger.logComment("Close but no cigar...");
                                                 }
-                                                else logger.logComment("Close but no cigar...");
                                             }
                                         }
                                     }

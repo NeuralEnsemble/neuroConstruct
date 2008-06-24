@@ -105,7 +105,7 @@ public class GenesisCompartmentalisation extends MorphCompartmentalisation
             {
                 logger.logComment("ApPropSpeed defined for section, so leaving it as is...");
             }
-            else if (segsHere.getFirst().isSomaSegment())
+           /* else if (segsHere.getFirst().isSomaSegment())
             {
                 String excuse = "Not splitting soma, as electrotonic length is unlikely to be an issue, and all 3D detail is usually needed as dends, stims connection location might have big impact on stimulation";
 
@@ -113,7 +113,7 @@ public class GenesisCompartmentalisation extends MorphCompartmentalisation
 
                 segsHere.getFirst().setComment("Recompartmentalisation comment: "+excuse);
 
-            }
+            }*/
             else
             {
                 SimpleCompartment[] multi = new SimpleCompartment[segsHere.size()];
