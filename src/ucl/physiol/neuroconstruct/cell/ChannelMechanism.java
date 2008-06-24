@@ -53,6 +53,19 @@ public class ChannelMechanism implements Serializable
         this.name = name;
         this.density = density;
     }
+    
+    @Override
+    public Object clone()
+    {
+        ChannelMechanism cm2 = new ChannelMechanism();
+        cm2.setName(new String(name));
+        cm2.setDensity(density);
+        for (MechParameter mp: extraParameters)
+        {
+            cm2.getExtraParameters().add((MechParameter)mp.clone());
+        }
+        return cm2;
+    }
 
     @Override
     public boolean equals(Object otherObj)
@@ -107,6 +120,28 @@ public class ChannelMechanism implements Serializable
             getExtraParamsDesc()+")";
         
             
+    }
+    
+    
+    public String getUniqueName()
+    {
+        StringBuffer info = new StringBuffer(name);
+           
+        if (extraParameters!=null)
+        {
+            for (MechParameter mp: extraParameters)
+            {
+                String val = mp.getValue()+"";
+                if ((int)mp.getValue() == mp.getValue())
+                    val = (int)mp.getValue()+"";
+                
+                val = GeneralUtils.replaceAllTokens(val+"", "-", "-"); // - allowed in genesis element name?
+                val = GeneralUtils.replaceAllTokens(val, ".", "p");
+                
+                info.append("__"+ mp.getName()+"_"+ val);
+            }
+        }
+        return info.toString();
     }
     
     public String getExtraParamsDesc()

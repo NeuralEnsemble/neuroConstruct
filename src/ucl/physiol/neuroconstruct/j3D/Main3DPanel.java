@@ -1770,7 +1770,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
             String cellReference = SimulationData.getCellRef(cellGroupSelected, cellNumber);
 
-            String cellSegRefToUse = null;
+            ArrayList<String>  cellSegRefsToUse = new ArrayList<String>();
 
             ArrayList<String> allCellSegRefs = simRerunFrame.getCellSegRefsForCellRef(cellReference);
 
@@ -1778,7 +1778,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
             if (allCellSegRefs.size() == 1)
             {
-                cellSegRefToUse = allCellSegRefs.get(0);
+                cellSegRefsToUse.add(allCellSegRefs.get(0));
             }
             else
             {
@@ -1800,228 +1800,251 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                 if (allCellSegRefs.contains(tempCellRef))
                 {
-                    cellSegRefToUse = tempCellRef;
+                    cellSegRefsToUse.add(tempCellRef);
                 }
                 else if (id == 0 && allCellSegRefs.contains(SimulationData.getCellRef(cellGroupSelected, cellNumber)))
                 {
-                    cellSegRefToUse = SimulationData.getCellRef(cellGroupSelected, cellNumber);
+                    cellSegRefsToUse.add(SimulationData.getCellRef(cellGroupSelected, cellNumber));
                 }
 
                 else
                 {
-                    Object[] poss = new Object[allCellSegRefs.size()];
+                    Object[] poss = new Object[allCellSegRefs.size()+1];
 
-                    for (int i = 0; i < poss.length; i++)
+                    for (int i = 0; i < allCellSegRefs.size(); i++)
                     {
                         poss[i] = allCellSegRefs.get(i);
                     }
+                    String all =  "All of the above";
+                    poss[allCellSegRefs.size()] =all;
+                            
                     if (poss.length == 0)
                     {
-
                         GuiUtils.showErrorMessage(logger,
                                                   "There is no saved data to plot for segment: " + jTextFieldSegment.getText() +
                                                   " on cell number " +
                                                   cellNumber + " in group " + cellGroupSelected, null, this);
-
                         return;
-
                     }
-                    cellSegRefToUse = (String) JOptionPane.showInputDialog(
+                    
+                    String ans = (String) JOptionPane.showInputDialog(
                         this,
                         "There is no info for cell " + cellNumber + " in " + cellGroupSelected + ", segment id: " + id +
-                        ". Please select one of the following to plot:",
+                        ". Please select one (or all) of the following to plot:",
                         "Select segment to plot",
                         JOptionPane.PLAIN_MESSAGE,
                         null,
                         poss,
                         poss[0]);
-                }
-            }
-
-            ArrayList<DataStore> dsForCellRef = simRerunFrame.getDataForCellSegRef(cellSegRefToUse, true);
-
-            logger.logComment("dsForCellRef: " + dsForCellRef + ", cellSegRefToUse: " + cellSegRefToUse);
-
-            DataStore dsToPlot = null;
-
-            if (dsForCellRef.size() == 0)
-            {
-                GuiUtils.showErrorMessage(logger, "There is no saved data to plot for segment: "
-                                          + jTextFieldSegment.getText() + " on cell number " +
-                                          cellNumber + " in group " + cellGroupSelected, null, this);
-                return;
-            }
-            if (dsForCellRef.size() > 1)
-            {
-                Object[] vars = new Object[dsForCellRef.size()];
-                for (int i = 0; i < dsForCellRef.size(); i++)
-                {
-                    vars[i] = dsForCellRef.get(i).getVariable();
-
-                    if (dsForCellRef.get(i).isSynapticMechData())
+                    
+                    if (ans.equals(all))
                     {
-                        vars[i] = vars[i] + " (" + dsForCellRef.get(i).getPostSynapticObject().getSynRef() + ")";
-                    }
-                }
-
-                int sel = JOptionPane.showOptionDialog(this,
-                                                       "Please select one for the following variables to plot for cell "
-                                                       + cellNumber + " in " + cellGroupSelected,
-                                                       "Select variable to plot",
-                                                       JOptionPane.OK_OPTION,
-                                                       JOptionPane.QUESTION_MESSAGE,
-                                                       null,
-                                                       vars,
-                                                       vars[0]);
-
-                if (sel == JOptionPane.CLOSED_OPTION)
-                {
-                    return;
-                }
-                String choice = (String) vars[sel];
-                String synRef = null;
-
-                if (choice.indexOf("(") > 0)
-                {
-                    synRef = choice.substring(choice.lastIndexOf("(")+1, choice.lastIndexOf(")")).trim();
-                    choice = choice.substring(0, choice.lastIndexOf("(")).trim();
-                }
-                logger.logComment("Selection: " + choice);
-
-                for (DataStore ds : dsForCellRef)
-                {
-                    if (!ds.isSynapticMechData())
-                    {
-                        if (ds.getVariable().equals(choice))
-                            dsToPlot = ds;
+                        for (int i = 0; i < allCellSegRefs.size(); i++)
+                        {
+                            cellSegRefsToUse.add(allCellSegRefs.get(i));
+                        }
                     }
                     else
                     {
-                        logger.logComment("Checking: " + ds + " against var: "+ choice+", syn ref "+ synRef);
-                        if (ds.getVariable().equals(choice) &&
-                            ds.getPostSynapticObject().getSynRef().equals(synRef))
-                        {
-                            logger.logComment("Got it...");
-                            dsToPlot = ds;
-                        }
+                        cellSegRefsToUse.add(ans);
                     }
+                         
+                    
                 }
-
             }
-            else
-            {
-                dsToPlot = dsForCellRef.get(0);
-            }
-
-            double[] times = null;
-
-            try
-            {
-                //ds = simRerunFrame.getDataAtAllTimes(cellRef, varToPlot, true);
-
-                times = simRerunFrame.getAllTimes();
-            }
-            catch (SimulationDataException ex)
-            {
-                GuiUtils.showErrorMessage(logger, "Problem loading data for " + dsToPlot + " in " + cellSegRefToUse, ex, this);
-                return;
-            }
-
-            logger.logComment("Going to plot " + times.length + " values...");
-
-            String whereToPlot = (String) jComboBoxWherePlot.getSelectedItem();
 
             PlotterFrame frame = null;
-            String plotFramePrefix = "Sim: " + simRerunFrame.getSimReference() + " Plot_";
-            int suggestedNum = 0;
-
-            Vector allPlotFrameNames = PlotManager.getPlotterFrameReferences();
-            //+allPlotFrameNames.
-
-
-            while (allPlotFrameNames.contains(plotFramePrefix + suggestedNum))
+                
+            for (String cellSegRefToUse: cellSegRefsToUse)
             {
-                suggestedNum++;
-            }
+                ArrayList<DataStore> dsForCellRef = simRerunFrame.getDataForCellSegRef(cellSegRefToUse, true);
 
+                logger.logComment("dsForCellRef: " + dsForCellRef + ", cellSegRefToUse: " + cellSegRefToUse);
 
+                DataStore dsToPlot = null;
 
-            if (whereToPlot.equals(defaultPlotLocation))
-            {
-
-                String frameTitle = plotFramePrefix + suggestedNum;
-
-                if (selNums.size() > 1)
+                if (dsForCellRef.size() == 0)
                 {
-                    CellChooser choice = (CellChooser)this.jComboBoxCellNum.getSelectedItem();
+                    GuiUtils.showErrorMessage(logger, "There is no saved data to plot for segment: "
+                                              + jTextFieldSegment.getText() + " on cell number " +
+                                              cellNumber + " in group " + cellGroupSelected, null, this);
+                    return;
+                }
+                if (dsForCellRef.size() > 1)
+                {
+                    Object[] vars = new Object[dsForCellRef.size()];
+                    for (int i = 0; i < dsForCellRef.size(); i++)
+                    {
+                        vars[i] = dsForCellRef.get(i).getVariable();
 
-                    frameTitle = "Plots of: " + choice.toNiceString() + " in cell group " + cellGroupSelected;
+                        if (dsForCellRef.get(i).isSynapticMechData())
+                        {
+                            vars[i] = vars[i] + " (" + dsForCellRef.get(i).getPostSynapticObject().getSynRef() + ")";
+                        }
+                    }
+
+                    int sel = JOptionPane.showOptionDialog(this,
+                                                           "Please select one for the following variables to plot for cell "
+                                                           + cellNumber + " in " + cellGroupSelected,
+                                                           "Select variable to plot",
+                                                           JOptionPane.OK_OPTION,
+                                                           JOptionPane.QUESTION_MESSAGE,
+                                                           null,
+                                                           vars,
+                                                           vars[0]);
+
+                    if (sel == JOptionPane.CLOSED_OPTION)
+                    {
+                        return;
+                    }
+                    String choice = (String) vars[sel];
+                    String synRef = null;
+
+                    if (choice.indexOf("(") > 0)
+                    {
+                        synRef = choice.substring(choice.lastIndexOf("(")+1, choice.lastIndexOf(")")).trim();
+                        choice = choice.substring(0, choice.lastIndexOf("(")).trim();
+                    }
+                    logger.logComment("Selection: " + choice);
+
+                    for (DataStore ds : dsForCellRef)
+                    {
+                        if (!ds.isSynapticMechData())
+                        {
+                            if (ds.getVariable().equals(choice))
+                                dsToPlot = ds;
+                        }
+                        else
+                        {
+                            logger.logComment("Checking: " + ds + " against var: "+ choice+", syn ref "+ synRef);
+                            if (ds.getVariable().equals(choice) &&
+                                ds.getPostSynapticObject().getSynRef().equals(synRef))
+                            {
+                                logger.logComment("Got it...");
+                                dsToPlot = ds;
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+                    dsToPlot = dsForCellRef.get(0);
                 }
 
-                frame = PlotManager.getPlotterFrame(frameTitle);
+                double[] times = null;
 
-                updatePlotList();
+                try
+                {
+                    //ds = simRerunFrame.getDataAtAllTimes(cellRef, varToPlot, true);
+
+                    times = simRerunFrame.getAllTimes();
+                }
+                catch (SimulationDataException ex)
+                {
+                    GuiUtils.showErrorMessage(logger, "Problem loading data for " + dsToPlot + " in " + cellSegRefToUse, ex, this);
+                    return;
+                }
+
+                logger.logComment("Going to plot " + times.length + " values...");
+
+                String whereToPlot = (String) jComboBoxWherePlot.getSelectedItem();
+
+                String plotFramePrefix = "Sim: " + simRerunFrame.getSimReference() + " Plot_";
+                int suggestedNum = 0;
+
+                Vector allPlotFrameNames = PlotManager.getPlotterFrameReferences();
+                //+allPlotFrameNames.
+
+
+                while (allPlotFrameNames.contains(plotFramePrefix + suggestedNum))
+                {
+                    suggestedNum++;
+                }
+
+
+
+                if (whereToPlot.equals(defaultPlotLocation))
+                {
+                    String frameTitle = plotFramePrefix + suggestedNum;
+
+                    if (selNums.size() > 1)
+                    {
+                        CellChooser choice = (CellChooser)this.jComboBoxCellNum.getSelectedItem();
+
+                        frameTitle = "Plots of: " + choice.toNiceString() + " in cell group " + cellGroupSelected;
+                    }
+                    else if (cellSegRefsToUse.size() > 1)
+                    {
+                        frameTitle = "Plots of "+cellSegRefsToUse.size()+" locations in cell group " + cellGroupSelected;
+                    }
+                        
+
+                    frame = PlotManager.getPlotterFrame(frameTitle);
+
+                    updatePlotList();
+                }
+                else
+                {
+                    frame = PlotManager.getPlotterFrame(whereToPlot);
+                }
+
+                String synInfo = "";
+                if (dsToPlot.isSynapticMechData()) synInfo = " (synapse: " + dsToPlot.getPostSynapticObject().getSynRef() + ")";
+
+                String mainInfo = "Simulation: "
+                    + simRerunFrame.getSimReference() +
+                    ". Plot of " + dsToPlot.getVariable() + " in seg: " + dsToPlot.getAssumedSegmentId() + synInfo +
+                    ", cell num: " + dsToPlot.getCellNumber()
+                    + " in: " + dsToPlot.getCellGroupName()
+                    + " (type: " + project.cellGroupsInfo.getCellType(cellGroupSelected)
+                    + ") ";
+
+                mainInfo = mainInfo + "\n\n" + SimulationsInfo.getSimProps(simRerunFrame.getSimulationDirectory(), false);
+
+                Properties props = SimulationsInfo.getSimulationProperties(simRerunFrame.getSimulationDirectory());
+
+                String graphTitle = null;
+                String simulatorRef = "(" + props.getProperty("Simulator").charAt(0) + ")";
+
+                String varName = "";
+
+                if (!dsToPlot.getVariable().equals(SimPlot.VOLTAGE))
+                    varName = " " + dsToPlot.getVariable();
+
+
+                if (!dsToPlot.isSegmentSpecified())
+                {
+                    graphTitle = simRerunFrame.getSimReference() + " " + simulatorRef + ": " + cellGroupSelected + " - " +
+                        cellNumber + varName;
+                }
+                else
+                {
+                    graphTitle = simRerunFrame.getSimReference() + " " + simulatorRef + ": " + cellGroupSelected + " - " +
+                        cellNumber + " (" + dsToPlot.getAssumedSegmentId() + ")" + varName;
+                }
+
+                DataSet data = new DataSet(graphTitle,
+                                           mainInfo,
+                                           "ms",
+                                           SimPlot.getUnits(dsToPlot.getVariable()),
+                                           "Time",
+                                           SimPlot.getLegend(dsToPlot.getVariable()));
+
+                data.setUnits(dsToPlot.getXUnit(), dsToPlot.getYUnit());
+
+                double[] points = dsToPlot.getDataPoints();
+
+                for (int i = 0; i < times.length; i++)
+                {
+                    data.addPoint(times[i], points[i]);
+                }
+                logger.logComment("Finished data retrieval...");
+
+                frame.addDataSet(data);
+                frame.setVisible(true);
+                frame.repaint();
             }
-            else
-            {
-                frame = PlotManager.getPlotterFrame(whereToPlot);
-            }
-
-            String synInfo = "";
-            if (dsToPlot.isSynapticMechData()) synInfo = " (synapse: " + dsToPlot.getPostSynapticObject().getSynRef() + ")";
-
-            String mainInfo = "Simulation: "
-                + simRerunFrame.getSimReference() +
-                ". Plot of " + dsToPlot.getVariable() + " in seg: " + dsToPlot.getAssumedSegmentId() + synInfo +
-                ", cell num: " + dsToPlot.getCellNumber()
-                + " in: " + dsToPlot.getCellGroupName()
-                + " (type: " + project.cellGroupsInfo.getCellType(cellGroupSelected)
-                + ") ";
-
-            mainInfo = mainInfo + "\n\n" + SimulationsInfo.getSimProps(simRerunFrame.getSimulationDirectory(), false);
-
-            Properties props = SimulationsInfo.getSimulationProperties(simRerunFrame.getSimulationDirectory());
-
-            String graphTitle = null;
-            String simulatorRef = "(" + props.getProperty("Simulator").charAt(0) + ")";
-
-            String varName = "";
-
-            if (!dsToPlot.getVariable().equals(SimPlot.VOLTAGE))
-                varName = " " + dsToPlot.getVariable();
-
-
-            if (!dsToPlot.isSegmentSpecified())
-            {
-                graphTitle = simRerunFrame.getSimReference() + " " + simulatorRef + ": " + cellGroupSelected + " - " +
-                    cellNumber + varName;
-            }
-            else
-            {
-                graphTitle = simRerunFrame.getSimReference() + " " + simulatorRef + ": " + cellGroupSelected + " - " +
-                    cellNumber + " (" + dsToPlot.getAssumedSegmentId() + ")" + varName;
-            }
-
-            DataSet data = new DataSet(graphTitle,
-                                       mainInfo,
-                                       "ms",
-                                       SimPlot.getUnits(dsToPlot.getVariable()),
-                                       "Time",
-                                       SimPlot.getLegend(dsToPlot.getVariable()));
-
-            data.setUnits(dsToPlot.getXUnit(), dsToPlot.getYUnit());
-
-            double[] points = dsToPlot.getDataPoints();
-
-            for (int i = 0; i < times.length; i++)
-            {
-                data.addPoint(times[i], points[i]);
-            }
-            logger.logComment("Finished data retrieval...");
-
-            frame.addDataSet(data);
-            frame.setVisible(true);
-            frame.repaint();
         }
     }
 

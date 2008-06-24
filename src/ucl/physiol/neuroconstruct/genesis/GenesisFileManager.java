@@ -883,9 +883,7 @@ public class GenesisFileManager
 
             if(project.generatedCellPositions.getNumberInCellGroup(cellGroupName)>0)
             {
-
                 String cellTypeName = project.cellGroupsInfo.getCellType(cellGroupName);
-                //Cell cell = project.cellManager.getCell(cellTypeName);
                 Cell cell = this.mappedCells.get(cellTypeName);
 
                 ArrayList<ChannelMechanism> chanMechNames = cell.getAllChannelMechanisms(false);
@@ -896,8 +894,10 @@ public class GenesisFileManager
                 {
                     ChannelMechanism nextChanMech = chanMechNames.get(j);
                     logger.logComment("Cell in group " + cellGroupName + " needs channel mech: " + nextChanMech);
-
-                    if (!includedChanMechNames.contains(nextChanMech.getName()) &&
+                    
+                    String chanMechNameToUse = nextChanMech.getName();
+                    
+                    if (!includedChanMechNames.contains(chanMechNameToUse) &&
                         project.generatedCellPositions.getNumberInCellGroup(cellGroupName) > 0)
                     {
                         CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
@@ -951,8 +951,66 @@ public class GenesisFileManager
                             response.append("include " + getFriendlyDirName(dir) + cellMech.getInstanceName() + "\n");
                             response.append("make_" + cellMech.getInstanceName() + "\n\n");
 
-                            includedChanMechNames.add(nextChanMech.getName());
+                            includedChanMechNames.add(chanMechNameToUse);
                         }
+                    }
+                    
+                    if (nextChanMech.getExtraParameters().size()>0)
+                    {
+                        String uniq = nextChanMech.getUniqueName();
+                        
+                        addComment(response, "Adding unique channel: "+ uniq + " for: "+ nextChanMech.toString());
+                        
+                        String oldChan = "/library/"+nextChanMech.getName();
+                        String newChan = "/library/"+ uniq;
+                        
+                        response.append("copy "+oldChan +" "+ newChan + "\n");
+                        
+                        String initCall = "";
+                        boolean onlyPassive = false;
+                        
+                        for(MechParameter mp: nextChanMech.getExtraParameters())
+                        {
+                            if (!mp.getName().equals(ChannelMLConstants.ION_CONC_FIXED_POOL_PHI_ELEMENT))
+                            {
+                                GenesisFileManager.addQuickComment(response, "Mechanism "+nextChanMech.getName()+" has parameter "+mp.getName()+" = "+mp.getValue());
+                                
+                                String paramName = mp.getName();
+                                float paramVal = mp.getValue();
+                                
+                                if (mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT) || 
+                                    mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT_2))
+                                {
+
+                                    paramVal = (float)UnitConverter.getVoltage(mp.getValue(),
+                                                        UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                        project.genesisSettings.getUnitSystemToUse()); 
+                                    paramName = "Ek";
+                                    
+                                    if (nextChanMech.getExtraParameters().size()==1)
+                                        onlyPassive = true;
+                                }
+
+                                response.append("setfield "+newChan+" "+paramName+" "+paramVal+"\n");
+                                initCall = "init_"+nextChanMech.getName()+" "+newChan+"\n\n";
+                            }
+                            else
+                            {
+                                GenesisFileManager.addQuickComment(response, "Ignoring parameter "+mp.getName()+" on mechanism "+nextChanMech.getName()+" which has val  = "+mp.getValue()+"");
+                            }
+                        }
+                        
+                        if (!onlyPassive && initCall.length()>0)
+                        {
+                            GenesisFileManager.addQuickComment(response, "Reinitialising tables in channel with new params");
+                            response.append(initCall);
+                        }
+                        else
+                        {
+                            response.append("\n");
+                        }
+                        
+                        
                     }
                 }
             }
@@ -964,6 +1022,9 @@ public class GenesisFileManager
         }
         return response.toString();
     }
+    
+    
+    
 
 
     private String generateSynMechIncludes() throws GenesisException
@@ -2285,13 +2346,11 @@ public class GenesisFileManager
                                     + filenameToBeGenerated
                                     + " "
                                     + newElementName
-                                    + "\n");
+                                    + "\n\n");
                     
                     if (CellTopologyHelper.hasExtraCellMechParams(mappedCell))
                     {
-                        GenesisFileManager.addComment(response, "Some of the channel mechanisms in this cell have some of their internal\n" +
-                                "parameters changed after initialisation. This is not possible to specify\n" +
-                                "in the *.p file, so changing the params here.");
+                        GenesisFileManager.addComment(response, "Some of the channel mechanisms in this cell have some of their internal params changed after initialisation");
                         
                         response.append("str tempChanName\n\n");
                         
@@ -2300,88 +2359,124 @@ public class GenesisFileManager
                         Hashtable<ChannelMechanism, Vector<String>> chanMechVsGroups = mappedCell.getChanMechsVsGroups();
                         
                         Enumeration<ChannelMechanism> keys =  chanMechVsGroups.keys();
+                        
                         while(keys.hasMoreElements())
                         {
                             ChannelMechanism cm = keys.nextElement();
-                            CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(cm.getName());
                             
                             for(String group: chanMechVsGroups.get(cm))
                             {
                                 ArrayList<Segment> segs = mappedCell.getSegmentsInGroup(group);
                                 
-                                //if (!cellMech.isIonConcMechanism())//TEMP!!!
-                                //{
+                                StringBuffer moveCommand = new StringBuffer();
+                                
                                 for(MechParameter mp: cm.getExtraParameters())
                                 {
-                                    GenesisFileManager.addQuickComment(response, "Mechanism "+cm.getName()+" has parameter "+mp.getName()+" = "+mp.getValue()+" on group: "+group);
-                                    
-                                    if (group.equals(Section.ALL))
+                                    if (!mp.getName().equals(ChannelMLConstants.ION_CONC_FIXED_POOL_PHI_ELEMENT))
                                     {
-                                        String chanElement = newElementName+"/#/"+cm.getName();
-                                        String paramName = mp.getName();
-                                        float paramVal = mp.getValue();
-                                        String initCmd = "    init_"+cm.getName()+" {tempChanName}\n";
-                                        
-                                        if (paramName.equals(BiophysicsConstants.PARAMETER_REV_POT) || paramName.equals(BiophysicsConstants.PARAMETER_REV_POT_2))
+                                        GenesisFileManager.addQuickComment(response, "Mechanism "+cm.getName()+" has parameter "+mp.getName()+" = "+mp.getValue()+" on group: "+group);
+
+                                        if (group.equals(Section.ALL))
                                         {
-                                            paramVal = (float)UnitConverter.getVoltage(mp.getValue(),
-                                                                UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                                project.genesisSettings.getUnitSystemToUse()); 
-                                                
-                                            if (cm.getName().equals(passChans.get(0).getName()))
-                                            {
-                                                GenesisFileManager.addQuickComment(response, "That is the passive channel reversal potential");
-                                                chanElement = newElementName+"/#";
-                                                paramName = "Em";
-                                                initCmd="";
-                                            }
-                                            else
-                                            {
-                                                paramName = "Ek";
-                                            }
-                                        }
-                                        response.append("foreach tempChanName ({el "+chanElement+"})\n");
-                                        response.append("    setfield {tempChanName} "+paramName+" "+paramVal+"\n");
-                                        response.append(initCmd);
-                                        response.append("end\n");
-                                        
-                                    }
-                                    else
-                                    {
-                                        for(Segment seg: segs)
-                                        {
-                                            String chanElement = newElementName+"/"+SimEnvHelper.getSimulatorFriendlyName(seg.getSegmentName())+"/"+cm.getName();
+                                            String chanElement = newElementName+"/#/"+cm.getName();
                                             String paramName = mp.getName();
                                             float paramVal = mp.getValue();
-                                            String initCmd = "init_"+cm.getName()+" \""+chanElement+"\"\n";
-                                            
-                                            if (paramName.equals(BiophysicsConstants.PARAMETER_REV_POT) || paramName.equals(BiophysicsConstants.PARAMETER_REV_POT_2))
+                                            String initCmd = "    init_"+cm.getName()+" {tempChanName}\n";
+
+                                            if ((paramName.equals(BiophysicsConstants.PARAMETER_REV_POT) || 
+                                                paramName.equals(BiophysicsConstants.PARAMETER_REV_POT_2)) &&
+                                                cm.getName().equals(passChans.get(0).getName()))
                                             {
                                                 paramVal = (float)UnitConverter.getVoltage(mp.getValue(),
                                                                     UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                                    project.genesisSettings.getUnitSystemToUse());
-                                                    
-                                                if (cm.getName().equals(passChans.get(0).getName()))
+                                                                    project.genesisSettings.getUnitSystemToUse()); 
+
+                                                //if (cm.getName().equals(passChans.get(0).getName()))
+                                                //{
+                                                    GenesisFileManager.addQuickComment(response, "That is the passive channel reversal potential");
+                                                    chanElement = newElementName+"/#";
+                                                    paramName = "Em";
+                                                    initCmd="";
+                                                //}
+                                                //else
+                                                //{
+                                                //    paramName = "Ek";
+                                                //}
+                                                response.append("foreach tempChanName ({el "+chanElement+"})\n");
+                                                response.append("    echo Resetting param "+paramName+" to "+paramVal+" on {tempChanName} \n");
+                                                response.append("    setfield {tempChanName} "+paramName+" "+paramVal+"\n");
+                                                response.append(initCmd);
+                                                response.append("end\n\n");
+                                            }
+                                            else
+                                            {
+                                                String uniq = cm.getUniqueName();
+                                                
+                                                String oldChanElement = newElementName+"/#/"+uniq;
+                                                //String newChanElement = newElementName+"/#/"+uniq;
+                                                
+                                                if (moveCommand.length()==0)
                                                 {
+                                                    GenesisFileManager.addQuickComment(moveCommand, "Channel was set to "+uniq+" in *.p file, and correct params set there. Moving back to original name.");
+
+                                                    moveCommand.append("foreach tempChanName ({el "+oldChanElement+"})\n");
+                                                    moveCommand.append("    move {tempChanName} {getpath {tempChanName} -head}"+cm.getName()+"\n");
+                                                    moveCommand.append("end\n\n");
+                                                }
+                                                
+                                            }
+                                                    
+
+                                        }
+                                        else
+                                        {
+                                            for(Segment seg: segs)
+                                            {
+                                                String chanElement = newElementName+"/"+SimEnvHelper.getSimulatorFriendlyName(seg.getSegmentName())+"/"+cm.getName();
+                                                String paramName = mp.getName();
+                                                float paramVal = mp.getValue();
+                                                String initCmd = "init_"+cm.getName()+" \""+chanElement+"\"\n";
+
+                                                if ((paramName.equals(BiophysicsConstants.PARAMETER_REV_POT) || 
+                                                    paramName.equals(BiophysicsConstants.PARAMETER_REV_POT_2))&&
+                                                    cm.getName().equals(passChans.get(0).getName()))
+                                                {
+                                                    paramVal = (float)UnitConverter.getVoltage(mp.getValue(),
+                                                                        UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                        project.genesisSettings.getUnitSystemToUse());
+
+                                                    
                                                     GenesisFileManager.addQuickComment(response, "That is the passive channel reversal potential");
                                                     chanElement = newElementName+"/"+SimEnvHelper.getSimulatorFriendlyName(seg.getSegmentName());
                                                     paramName = "Em";
                                                     initCmd="";
+                                                   
+                                                    response.append("setfield "+chanElement+" "+paramName+" "+paramVal+"\n");
+                                                    response.append(initCmd);
                                                 }
                                                 else
                                                 {
-                                                    paramName = "Ek";
+                                                    String uniq = cm.getUniqueName();
+                                                    String oldChanElement = newElementName+"/"+SimEnvHelper.getSimulatorFriendlyName(seg.getSegmentName())+"/"+uniq;
+
+                                                    if (moveCommand.length()==0)
+                                                    {
+                                                        GenesisFileManager.addQuickComment(moveCommand, "Channel was set to "+uniq+" in *.p file, and correct params set there. Moving back to original name.");
+
+                                                        moveCommand.append("move "+oldChanElement+" "+chanElement+"\n\n");
+                                                    }
                                                 }
+
                                             }
-                                            
-                                            response.append("setfield "+chanElement+" "+paramName+" "+paramVal+"\n");
-                                            response.append(initCmd);
                                         }
                                     }
-                                   
-                                        
+                                    else
+                                    {
+                                        GenesisFileManager.addQuickComment(response, "Ignoring mechanism "+cm.getName()+" which has parameter "+mp.getName()+" = "+mp.getValue()+". This will be set in the *.p file... ");
+                                    }
                                 }
-                                //}
+                                
+                                response.append(moveCommand.toString());
                                 
                             }
                         }

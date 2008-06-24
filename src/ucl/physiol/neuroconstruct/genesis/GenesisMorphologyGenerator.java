@@ -305,7 +305,7 @@ public class GenesisMorphologyGenerator
             }
 
             Vector groups = segment.getGroups();
-            Vector<ChannelMechanism> chanMechs = new Vector<ChannelMechanism>();
+            Vector<ChannelMechanism> longChanMechs = new Vector<ChannelMechanism>();
 
             String firstPassiveCellProc = null; // first passive cond will be use to set Rm
 
@@ -321,7 +321,7 @@ public class GenesisMorphologyGenerator
 
                     logger.logComment("Looking at: "+ nextChanMech);
 
-                    if (!chanMechs.contains(nextChanMech))
+                    if (!longChanMechs.contains(nextChanMech))
                     {
                         CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
 
@@ -449,7 +449,7 @@ public class GenesisMorphologyGenerator
                         logger.logComment("Already added that chan mech...");
                     }
 
-                    chanMechs.add(nextChanMech);
+                    longChanMechs.add(nextChanMech);
                 }
 
             }
@@ -465,13 +465,46 @@ public class GenesisMorphologyGenerator
 
             StringBuffer channelCondString = new StringBuffer();
 
-            //boolean ignored firs
+            
+            
+            // Consolidating chan mechs for this segment, ie. joining... 
+            //  nextChanMech: naf2 (density: -1.0 mS um^-2, fastNa_shift = -2.5)
+            //  nextChanMech: naf2 (density: 6.0E-7 mS um^-2)
+            
+            Vector<ChannelMechanism> consolChanMechs = new Vector<ChannelMechanism>();
+            
+            for (int ll = 0; ll < longChanMechs.size(); ll++)
+            {
+                ChannelMechanism nextChanMech = longChanMechs.elementAt(ll);
+                boolean dealtWith = false;
+                
+                for (int pre = 0; pre < consolChanMechs.size(); pre++)
+                {
+                    ChannelMechanism preChanMech = consolChanMechs.elementAt(pre);
+                    
+                    if (preChanMech.getName().equals(nextChanMech.getName()))
+                    {
+                        if (preChanMech.getDensity()<0 && nextChanMech.getDensity()>=0)
+                            preChanMech.setDensity(nextChanMech.getDensity());
+                        
+                        for (MechParameter mp: nextChanMech.getExtraParameters())
+                        {
+                            preChanMech.getExtraParameters().add((MechParameter)mp.clone());
+                        }
+                            
+                        dealtWith = true;
+                    }
+                }
+                if (!dealtWith)
+                    consolChanMechs.add((ChannelMechanism)nextChanMech.clone());
 
-            for (int ll = 0; ll < chanMechs.size(); ll++)
+            }
+
+            for (int ll = 0; ll < consolChanMechs.size(); ll++)
             {
 
-                ChannelMechanism nextChanMech = chanMechs.elementAt(ll);
-                logger.logComment("--  nextChanMech: " + nextChanMech);
+                ChannelMechanism nextChanMech = consolChanMechs.elementAt(ll);
+                logger.logComment("--  nextChanMech: " + nextChanMech, true);
                 CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
 
                 logger.logComment("--  checking mech : " + cellMech.getInstanceName());
@@ -495,7 +528,13 @@ public class GenesisMorphologyGenerator
                             
                             if (cmlMech.getValue(ChannelMLConstants.getIonConcFixedPoolXPath())!=null)
                             {
+                                
                                 double phi = Float.parseFloat( cmlMech.getValue(ChannelMLConstants.getIonConcFixedPoolPhiXPath().trim()));
+                                
+                                if (nextChanMech.getExtraParameter(ChannelMLConstants.ION_CONC_FIXED_POOL_PHI_ELEMENT)!=null)
+                                {
+                                    phi = nextChanMech.getExtraParameter(ChannelMLConstants.ION_CONC_FIXED_POOL_PHI_ELEMENT).getValue();
+                                }
                                 
                                 phi = phi / UnitConverter.getCurrentDensity(1, 
                                                                             UnitConverter.NEURON_UNITS, 
@@ -522,16 +561,23 @@ public class GenesisMorphologyGenerator
                                 
                                 logger.logComment("phi: "+ phi+", comp: "+comp.toString()+", area: "+ area+", B: "+B+", seg: "+segment.getRadius());
 
-                                channelCondString.append(cellMech.getInstanceName()+ " "+ B+ " ");
+                                channelCondString.append(nextChanMech.getUniqueName()+ " "+ B+ " ");
                             }
                             else
                             {
-                                channelCondString.append(cellMech.getInstanceName()+ " "+ genDens+ " ");
+                                channelCondString.append(nextChanMech.getUniqueName()+ " "+ genDens+ " ");
                             }
                         }
                         else
                         {
-                            channelCondString.append(cellMech.getInstanceName()+ " "+ genDens+ " ");
+                            if (genDens>=0)
+                            {
+                                channelCondString.append(nextChanMech.getUniqueName()+ " "+ genDens+ "  ");
+                            }
+                            else
+                            {
+                                logger.logComment("Ignoring density of "+ genDens+ " on "+cellMech.getInstanceName()+ " as it is negative...");
+                            }
                         }
                     }
                     catch (Exception ex1)

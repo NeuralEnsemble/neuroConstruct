@@ -49,6 +49,15 @@ public class MechParameter implements Serializable
         this.value = value;
     }
     
+    @Override
+    public Object clone()
+    {
+        MechParameter mp2 = new MechParameter();
+        mp2.setName(new String(name));
+        mp2.setValue(value);
+        return mp2;
+    }
+    
     
     public String getName()
     {
