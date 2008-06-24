@@ -511,9 +511,13 @@ public class NetworkMLWriter
                         Group inputTypeGroup = h5File.createGroup(myElectricalInput.getType()+"_"+"properties", inputGroup);
 
                         // Get Details of the IClamp attributes
-
+                        
+                        /*todo: remove this when Seq Generators removed!*/
+                        ic.getDelay().reset();
                         String delay = String.valueOf(ic.getDelay().getNumber());
-                        String duration = String.valueOf(ic.getDuration().getNumber());      
+                        ic.getDuration().reset();
+                        String duration = String.valueOf(ic.getDuration().getNumber());   
+                        ic.getAmplitude().reset();   
                         String amp = String.valueOf(ic.getAmplitude().getNumber());
 
                         //Assign them to the attibutes of the group

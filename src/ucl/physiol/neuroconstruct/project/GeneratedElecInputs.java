@@ -357,7 +357,7 @@ public class GeneratedElecInputs
         }
     }*/
 
-        public SimpleXMLElement getNetworkMLElement(int unitSystem) throws NeuroMLException
+    public SimpleXMLElement getNetworkMLElement(int unitSystem) throws NeuroMLException
     {
 
         SimpleXMLElement inputsElement = null;
@@ -400,8 +400,12 @@ public class GeneratedElecInputs
                 {
                     IClamp ic = (IClamp)myElectricalInput;
                     
+                    /*todo: remove this when Seq Generators removed!*/
+                    ic.getDelay().reset();
                     float delay = ic.getDelay().getNumber();
+                    ic.getDuration().reset();
                     float duration = ic.getDuration().getNumber();      
+                    ic.getAmplitude().reset();
                     float amp = ic.getAmplitude().getNumber();
                             
                     SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.PULSEINPUT_ELEMENT);
