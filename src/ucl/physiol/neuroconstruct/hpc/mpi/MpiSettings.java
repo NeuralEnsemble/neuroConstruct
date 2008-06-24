@@ -60,15 +60,6 @@ public class MpiSettings
         }
 
 
-        if (getMpiConfiguration(multiConfig)==null)
-        {
-            MpiConfiguration p = new MpiConfiguration(multiConfig);
-            //p.getHostList().add(new MpiHost("padraigneuro", 1, 1));
-            p.getHostList().add(new MpiHost("eriugena",4, 1));
-            p.getHostList().add(new MpiHost("bernal", 4, 1));
-            configurations.add(p);
-        }
-
         if (getMpiConfiguration(local2Config)==null)
         {
             MpiConfiguration p = new MpiConfiguration(local2Config);
@@ -97,6 +88,15 @@ public class MpiSettings
         {
             MpiConfiguration p = new MpiConfiguration(local128Config);
             p.getHostList().add(new MpiHost("localhost",128, 1));
+            configurations.add(p);
+        }
+
+        if (getMpiConfiguration(multiConfig)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(multiConfig);
+            //p.getHostList().add(new MpiHost("padraigneuro", 1, 1));
+            //p.getHostList().add(new MpiHost("eriugena",4, 1));
+            p.getHostList().add(new MpiHost("bernal", 4, 1));
             configurations.add(p);
         }
 
