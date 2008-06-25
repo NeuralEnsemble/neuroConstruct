@@ -174,16 +174,24 @@ public class EditGroupSynapseAssociations extends JDialog implements ListSelecti
 
         jLabelSelect.setText("Please select a synapse type:");
         jPanelLists.setLayout(gridBagLayout2);
+        
+        Dimension groupsDim = new Dimension(160, 200);
+
+        
         jPanelGroupsOut.setBorder(border2);
-        jPanelGroupsOut.setMaximumSize(new Dimension(160, 129));
-        jPanelGroupsOut.setMinimumSize(new Dimension(160, 129));
-        jPanelGroupsOut.setPreferredSize(new Dimension(160, 129));
+        jPanelGroupsOut.setMaximumSize(groupsDim);
+        jPanelGroupsOut.setMinimumSize(groupsDim);
+        jPanelGroupsOut.setPreferredSize(groupsDim);
         jPanelGroupsOut.setLayout(borderLayout2);
+        
+        
         jPanelGroupsIn.setBorder(border4);
-        jPanelGroupsIn.setMaximumSize(new Dimension(160, 129));
-        jPanelGroupsIn.setMinimumSize(new Dimension(160, 129));
-        jPanelGroupsIn.setPreferredSize(new Dimension(160, 129));
+        jPanelGroupsIn.setMaximumSize(groupsDim);
+        jPanelGroupsIn.setMinimumSize(groupsDim);
+        jPanelGroupsIn.setPreferredSize(groupsDim);
         jPanelGroupsIn.setLayout(borderLayout3);
+        
+        
         jButtonAdd.setText(">");
         jButtonAdd.addActionListener(new java.awt.event.ActionListener()
         {
@@ -203,22 +211,27 @@ public class EditGroupSynapseAssociations extends JDialog implements ListSelecti
         jPanelSwitch.setLayout(gridBagLayout1);
         jLabelGroupsOut.setHorizontalAlignment(SwingConstants.CENTER);
         jLabelGroupsOut.setText("Groups without "+ processType);
+        
         jListGroupsOut.setBorder(border1);
-        jListGroupsOut.setMaximumSize(new Dimension(100, 100));
-        jListGroupsOut.setMinimumSize(new Dimension(100, 100));
-        jListGroupsOut.setPreferredSize(new Dimension(100, 100));
+        //jListGroupsOut.setMaximumSize(new Dimension(100, 100));
+        //jListGroupsOut.setMinimumSize(new Dimension(100, 100));
+        //jListGroupsOut.setPreferredSize(new Dimension(100, 100));
+        
         jLabelGroupsIn.setHorizontalAlignment(SwingConstants.CENTER);
         jLabelGroupsIn.setText("Groups with "+ processType);
         jListGroupsIn.setBorder(border3);
 
-        scrollPaneSectionsOut.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPaneSectionsOut.setMaximumSize(new Dimension(200, 30));
-        scrollPaneSectionsOut.setMinimumSize(new Dimension(200, 30));
-        scrollPaneSectionsOut.setPreferredSize(new Dimension(200, 30));
-        scrollPaneSectionsIn.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPaneSectionsIn.setMaximumSize(new Dimension(200, 100));
-        scrollPaneSectionsIn.setMinimumSize(new Dimension(200, 100));
-        scrollPaneSectionsIn.setPreferredSize(new Dimension(200, 100));
+        scrollPaneSectionsOut.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        //scrollPaneSectionsOut.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        //scrollPaneSectionsOut.setMaximumSize(new Dimension(200, 30));
+        //scrollPaneSectionsOut.setMinimumSize(new Dimension(200, 30));
+        //scrollPaneSectionsOut.setPreferredSize(new Dimension(200, 30));
+        
+        
+        scrollPaneSectionsIn.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        //scrollPaneSectionsIn.setMaximumSize(new Dimension(200, 100));
+        //scrollPaneSectionsIn.setMinimumSize(new Dimension(200, 100));
+        //scrollPaneSectionsIn.setPreferredSize(new Dimension(200, 100));
         jComboBoxProcessNames.addItemListener(new java.awt.event.ItemListener()
         {
             public void itemStateChanged(ItemEvent e)

@@ -212,11 +212,15 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         jPanelGroupsOut.setMinimumSize(groupsDim);
         jPanelGroupsOut.setPreferredSize(groupsDim);
         jPanelGroupsOut.setLayout(borderLayout2);
+        
+        
         jPanelGroupsIn.setBorder(border4);
         jPanelGroupsIn.setMaximumSize(groupsDim);
         jPanelGroupsIn.setMinimumSize(groupsDim);
         jPanelGroupsIn.setPreferredSize(groupsDim);
         jPanelGroupsIn.setLayout(borderLayout3);
+        
+        
         jButtonAdd.setText(">");
         jButtonAdd.addActionListener(new java.awt.event.ActionListener()
         {
@@ -241,8 +245,10 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         jLabelGroupsIn.setText("Groups with " + mechType);
         jListGroupsIn.setBorder(border3);
         //viewportSectionsOut.setScrollMode(1);
+        
         scrollPaneSectionsOut.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPaneSectionsIn.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        
         jComboBoxMechNames.addItemListener(new java.awt.event.ItemListener()
         {
             public void itemStateChanged(ItemEvent e)
@@ -305,10 +311,12 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         jPanelSwitch.add(jButtonAdd, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
                                                             , GridBagConstraints.CENTER, GridBagConstraints.NONE,
                                                             new Insets(0, 0, 12, 0), 0, 0));
+        
         jPanelLists.add(jPanelGroupsIn, new GridBagConstraints(2, 0, 1, 1, 1.0, 1.0
                                                                  , GridBagConstraints.CENTER,
                                                                  GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 1),
                                                                  70, 0));
+        
         jPanelMain.add(jPanelButtons, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0
                                                              , GridBagConstraints.CENTER, GridBagConstraints.NONE,
                                                              new Insets(0, 0, 1, 0), 100, 0));
