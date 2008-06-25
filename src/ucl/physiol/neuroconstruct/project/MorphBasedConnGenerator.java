@@ -84,6 +84,7 @@ public class MorphBasedConnGenerator extends Thread
 
     }
 
+    @Override
     public void run()
     {
         logger.logComment("Running MorphBasedConnGenerator thread...");
@@ -243,7 +244,8 @@ public class MorphBasedConnGenerator extends Thread
                         {
                             genStartConnPoint
                                 = CellTopologyHelper.getPossiblePreSynapticTerminal(generationStartCellInstance,
-                                synTypeNames);
+                                                                                    synTypeNames,
+                                                                                    connConds.getPrePostAllowedLoc());
 
                             if (connConds.isOnlyConnectToUniqueCells())
                             {
@@ -256,7 +258,8 @@ public class MorphBasedConnGenerator extends Thread
                         {
                             genStartConnPoint
                                 = CellTopologyHelper.getPossiblePostSynapticTerminal(generationStartCellInstance,
-                                synTypeNames);
+                                                                                     synTypeNames,
+                                                                                     connConds.getPrePostAllowedLoc());
 
                             if (connConds.isOnlyConnectToUniqueCells())
                             {
@@ -290,7 +293,8 @@ public class MorphBasedConnGenerator extends Thread
                             GuiUtils.showErrorMessage(logger, "Error getting synaptic location for: "+synPropList+" on cell of type " +
                                                       generationStartCellInstance.toString()+".\n"+
                                                       "Please ensure there is a Synaptic Mechanism of that name at tab Cell Mechanisms and that the locations where synaptic connections \n"
-                                                      +"of that type are allowed on the cell are specified via Visualisation -> (View cell type) -> Synaptic Conn Locations.", null, null);
+                                                      +"of that type are allowed on the cell are specified via Visualisation -> (View cell type) -> Synaptic Conn Locations.\n" +
+                                                      "Note also the conditions in the Net Conn on which of soma, axon, dendrite are allowed pre/post synaptically", null, null);
                             continueGeneration = false;
                         }
 
@@ -335,14 +339,16 @@ public class MorphBasedConnGenerator extends Thread
                                     if (connConds.getGenerationDirection() == ConnectivityConditions.SOURCE_TO_TARGET)
                                     {
                                         genFinishConnPoint = CellTopologyHelper.getPossiblePostSynapticTerminal(
-                                            generationFinishCellInstance,
-                                            synTypeNames);
+                                                                        generationFinishCellInstance,
+                                                                        synTypeNames,
+                                                                        connConds.getPrePostAllowedLoc());
                                     }
                                     else
                                     {
                                         genFinishConnPoint = CellTopologyHelper.getPossiblePreSynapticTerminal(
                                             generationFinishCellInstance,
-                                            synTypeNames);
+                                            synTypeNames,
+                                            connConds.getPrePostAllowedLoc());
 
                                     }
 
@@ -497,15 +503,17 @@ public class MorphBasedConnGenerator extends Thread
 
                                     if (connConds.getGenerationDirection() == ConnectivityConditions.SOURCE_TO_TARGET)
                                     {
-                                        tempGenFinishConnPoint = CellTopologyHelper.
-                                            getPossiblePostSynapticTerminal(generationFinishCellInstance,
-                                            synTypeNames);
+                                        tempGenFinishConnPoint = CellTopologyHelper.getPossiblePostSynapticTerminal(
+                                                                        generationFinishCellInstance,
+                                                                        synTypeNames,
+                                                                        connConds.getPrePostAllowedLoc());
                                     }
                                     else
                                     {
                                         tempGenFinishConnPoint = CellTopologyHelper.
                                             getPossiblePreSynapticTerminal(generationFinishCellInstance,
-                                                                           synTypeNames);
+                                                                           synTypeNames,
+                                                                            connConds.getPrePostAllowedLoc());
                                     }
 
                                     logger.logComment("tempGenFinishConnPoint: " + tempGenFinishConnPoint);

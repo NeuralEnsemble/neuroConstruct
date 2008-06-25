@@ -64,6 +64,7 @@ public class ConnectivityConditions
      */ 
     private boolean allowAutapses = true;
 
+    private PrePostAllowedLocs prePostAllowedLoc = new PrePostAllowedLocs();
 
 
     public ConnectivityConditions()
@@ -190,6 +191,18 @@ public class ConnectivityConditions
         this.allowAutapses = aa;
 
     }
+
+    public PrePostAllowedLocs getPrePostAllowedLoc()
+    {
+        return prePostAllowedLoc;
+    }
+
+    public void setPrePostAllowedLoc(PrePostAllowedLocs prePostAllowedLoc)
+    {
+        this.prePostAllowedLoc = prePostAllowedLoc;
+    }
+    
+    
 
 
 }

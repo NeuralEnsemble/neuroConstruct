@@ -209,6 +209,20 @@ public class GeneratedNetworkConnections
         }
         return allIndices;
     }
+    
+    public boolean areConnected(String netConnectionName, 
+                               int sourceCellIndex, 
+                               int targetCellIndex)
+    {
+        for (SingleSynapticConnection synConn: getSynapticConnections(netConnectionName))
+        {
+            if (synConn.sourceEndPoint.cellNumber==sourceCellIndex &&
+                synConn.targetEndPoint.cellNumber==targetCellIndex)
+                return true;
+        }
+        return false;
+        
+    }
 
     public ArrayList<SingleSynapticConnection> getConnsFromSource(String netConnectionName,
                                                                   int sourceCellIndex)

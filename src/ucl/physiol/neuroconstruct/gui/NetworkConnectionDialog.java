@@ -177,6 +177,20 @@ public class NetworkConnectionDialog extends JDialog
     
     JLabel jLabelConnCondsAutapses = new JLabel();
     JCheckBox jCheckBoxAutapses = new JCheckBox();
+    
+    
+    JPanel jPanelConnCondsPrePost = new JPanel();
+    JCheckBox jCheckBoxSomaPre = new JCheckBox();
+    JCheckBox jCheckBoxDendPre = new JCheckBox();
+    JCheckBox jCheckBoxAxonPre = new JCheckBox();
+    
+    JLabel jLabelConnCondsPre = new JLabel();
+    JCheckBox jCheckBoxSomaPost = new JCheckBox();
+    JCheckBox jCheckBoxDendPost = new JCheckBox();
+    JCheckBox jCheckBoxAxonPost = new JCheckBox();
+    
+    
+    JLabel jLabelConnCondsPost = new JLabel();
 
 
     GridBagLayout gridBagLayout2 = new GridBagLayout();
@@ -326,6 +340,15 @@ public class NetworkConnectionDialog extends JDialog
             jCheckBoxConnCondsUnique.setSelected(connConds.isOnlyConnectToUniqueCells());
             
             jCheckBoxAutapses.setSelected(connConds.isAllowAutapses());
+            
+            jCheckBoxSomaPre.setSelected(connConds.getPrePostAllowedLoc().isSomaAllowedPre());
+            jCheckBoxAxonPre.setSelected(connConds.getPrePostAllowedLoc().isAxonsAllowedPre());
+            jCheckBoxDendPre.setSelected(connConds.getPrePostAllowedLoc().isDendritesAllowedPre());
+            
+            
+            jCheckBoxSomaPost.setSelected(connConds.getPrePostAllowedLoc().isSomaAllowedPost());
+            jCheckBoxAxonPost.setSelected(connConds.getPrePostAllowedLoc().isAxonsAllowedPost());
+            jCheckBoxDendPost.setSelected(connConds.getPrePostAllowedLoc().isDendritesAllowedPost());
             
             this.jTextFieldConnCondsMaxTarget.setText(connConds.getMaxNumInitPerFinishCellString());
 
@@ -521,7 +544,7 @@ public class NetworkConnectionDialog extends JDialog
         
         
         jPanelConnConds.add(jPanelConnCondRadios,    new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0
-            ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 93, 0, 94), 0, 0));
+            ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0, 0), 0, 0));
         
         jPanelConnCondRadios.add(jRadioButtonSrcToTrgt, null);
         jPanelConnCondRadios.add(jRadioButtonTrgtToSrc, null);
@@ -536,14 +559,14 @@ public class NetworkConnectionDialog extends JDialog
         jPanelConnConds.add(jPanelConnCondsMaxTarget,   
                 new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
                     ,GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                    new Insets(11, 79, 6, 0), 0, 0));
+                    new Insets(0,0,0, 0), 0, 0));
         
         jPanelConnCondsMaxTarget.add(jLabelConnCondsMaxTarget);
         jPanelConnCondsMaxTarget.add(jTextFieldConnCondsMaxTarget);
         
 
         jPanelConnConds.add(jCheckBoxConnCondsUnique,   new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(11, 79, 6, 0), 0, 0));
+            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0, 0), 0, 0));
 
         
         //jLabelConnCondsAutapses.setText("Allow autapses (when source group = target)");
@@ -554,6 +577,38 @@ public class NetworkConnectionDialog extends JDialog
         jPanelConnConds.add(jPanelConnCondsAutapses,   new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0, 0), 0, 0));
         
+        
+        jLabelConnCondsPre.setText("Allowed presynaptically:");
+        
+        jLabelConnCondsPost.setText("Allowed postsynaptically:");
+        jPanelConnCondsPrePost.add(jLabelConnCondsPre);
+        jCheckBoxSomaPre.setText("Soma");
+        jCheckBoxSomaPre.setSelected(true);
+        jPanelConnCondsPrePost.add(jCheckBoxSomaPre);
+        jCheckBoxAxonPre.setText("Axons");
+        jCheckBoxAxonPre.setSelected(true);
+        
+        jPanelConnCondsPrePost.add(jCheckBoxAxonPre);
+        jCheckBoxDendPre.setText("Dendrites");
+        
+        jCheckBoxDendPre.setSelected(false);
+        
+        jPanelConnCondsPrePost.add(jCheckBoxDendPre);
+        jPanelConnCondsPrePost.add(jLabelConnCondsPost);
+        jPanelConnCondsPrePost.add(jCheckBoxSomaPost);
+        jCheckBoxSomaPost.setText("Soma");
+        jCheckBoxSomaPost.setSelected(true);
+        
+        jPanelConnCondsPrePost.add(jCheckBoxAxonPost);
+        jCheckBoxAxonPost.setText("Axons");
+        jCheckBoxAxonPost.setSelected(false);
+        
+        jPanelConnCondsPrePost.add(jCheckBoxDendPost);
+        jCheckBoxDendPost.setText("Dendrites");
+        jCheckBoxDendPost.setSelected(true);
+        
+        jPanelConnConds.add(jPanelConnCondsPrePost,   new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0, 0), 0, 0));
         
         this.getContentPane().add(jPanelMain, BorderLayout.CENTER);
 
@@ -881,6 +936,18 @@ public class NetworkConnectionDialog extends JDialog
         connConds.setOnlyConnectToUniqueCells(jCheckBoxConnCondsUnique.isSelected());
         
         connConds.setAllowAutapses(jCheckBoxAutapses.isSelected());
+        
+        PrePostAllowedLocs pp = new PrePostAllowedLocs();
+        
+        pp.setSomaAllowedPre(jCheckBoxSomaPre.isSelected());
+        pp.setDendritesAllowedPre(jCheckBoxDendPre.isSelected());
+        pp.setAxonsAllowedPre(jCheckBoxAxonPre.isSelected());
+        
+        pp.setSomaAllowedPost(jCheckBoxSomaPost.isSelected());
+        pp.setDendritesAllowedPost(jCheckBoxDendPost.isSelected());
+        pp.setAxonsAllowedPost(jCheckBoxAxonPost.isSelected());
+        
+        connConds.setPrePostAllowedLoc(pp);
 
 
 

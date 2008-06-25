@@ -262,7 +262,8 @@ public class VolumeBasedConnGenerator extends Thread
                     {
                         genStartConnPoint
                             = CellTopologyHelper.getPossiblePreSynapticTerminal(generationStartCellInstance,
-                                                                                synPropList);
+                                                                                synPropList,
+                                                                                     connConds.getPrePostAllowedLoc());
 
                         genFinCellsConnToThis = project.generatedNetworkConnections.getTargetCellIndices(volConnName,
                             genStartCellNumber, true);
@@ -271,7 +272,8 @@ public class VolumeBasedConnGenerator extends Thread
                     {
                         genStartConnPoint
                             = CellTopologyHelper.getPossiblePostSynapticTerminal(generationStartCellInstance,
-                                                                                 synPropList);
+                                                                                 synPropList,
+                                                                                     connConds.getPrePostAllowedLoc());
 
                         genFinCellsConnToThis = project.generatedNetworkConnections.getSourceCellIndices(volConnName,
                             genStartCellNumber, true);
@@ -330,12 +332,14 @@ public class VolumeBasedConnGenerator extends Thread
                             if (connConds.getGenerationDirection() == ConnectivityConditions.SOURCE_TO_TARGET)
                             {
                                 genFinishConnPoint = CellTopologyHelper.getPossiblePostSynapticTerminal(
-                                    generationFinishCellInstance, synPropList);
+                                    generationFinishCellInstance, synPropList,
+                                                                                     connConds.getPrePostAllowedLoc());
                             }
                             else
                             {
                                 genFinishConnPoint = CellTopologyHelper.getPossiblePreSynapticTerminal(
-                                    generationFinishCellInstance, synPropList);
+                                    generationFinishCellInstance, synPropList,
+                                                                                     connConds.getPrePostAllowedLoc());
 
                             }
 

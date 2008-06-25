@@ -12,8 +12,8 @@
 
 package ucl.physiol.neuroconstruct.project;
 
-import java.io.File;
 import java.io.*;
+import org.junit.Test;
 import ucl.physiol.neuroconstruct.utils.*;
 
 
@@ -27,14 +27,26 @@ import ucl.physiol.neuroconstruct.utils.*;
 
 public class ProjectStructure
 {
-    private static ClassLogger logger = new ClassLogger("ProjectStructure");
+    
+    //private static ClassLogger logger = new ClassLogger("ProjectStructure");
 
 
     static
     {
-        logger.setThisClassSilent(true);
+        System.out.println("ProjectStructure......");
+        //logger.setThisClassSilent(true);
+    }
+   
+    public ProjectStructure()
+    {
+        System.out.println("ProjectStructure()......");
     }
     
+    
+    @Test
+    public void testDummy() {
+        System.out.println("Dummy test....");
+    }
     
     private static final String updateCheckUrl = "http://www.physiol.ucl.ac.uk/research/silver_a/nCinfo/form.php?myversion=";
 
@@ -338,7 +350,8 @@ public class ProjectStructure
             }
             catch (IOException ex)
             {
-                logger.logError("Exception creating readme file...");
+                //logger.logError("Exception creating readme file...");
+                // Proceed without readme...
             }
         }
 
@@ -349,6 +362,7 @@ public class ProjectStructure
 
     public static String getGeneralSettingsFilename()
     {
+        System.out.println("getGeneralSettingsFilename: "+ generalSettingsFilename);
         return generalSettingsFilename;
     }
 
@@ -448,8 +462,6 @@ public class ProjectStructure
                                    "This is the default directory for a user's new neuroConstruct projects. The default location to use can be changed through the GUI\n",
                                    true);
         
-
-        logger.logComment("Just defined nCprojectsDir: "+ dir);
 
         return dir;
 
@@ -553,7 +565,6 @@ public class ProjectStructure
 
     public static File getFileBasedCellProcessesDir(File projectDir, boolean createIfNotFound)
     {
-        logger.logComment("Getting FileBasedCellProcessesDir");
 
         // Update from older dir structure...
         File oldImportedCellProcessDir = new File(projectDir, "importedCellProcesses");
@@ -563,7 +574,6 @@ public class ProjectStructure
 
         File fileBasedCPDir = new File(cellProcDir, fileBasedCellProcessesDir);
 
-        logger.logComment("Updating "+oldImportedCellProcessDir +" to "+ fileBasedCPDir);
 
         if (oldImportedCellProcessDir.exists())
         {
@@ -574,7 +584,6 @@ public class ProjectStructure
                                                     "This is the directory where Cell Processes which have implementations in a single native environment files (e.g. *.mod for NEURON) are placed\n",
                                                     createIfNotFound);
 
-        logger.logComment("Returning FileBasedCellProcessesDir: "+ fileBasedCPDir);
         return fileBasedCPDir;
     }
 
@@ -591,7 +600,6 @@ public class ProjectStructure
 
     public static File getCellProcessesDir(File projectDir, boolean createIfNotFound)
     {
-        logger.logComment("---- getCellProcessesDir, createIfNotFound: "+ createIfNotFound);
 
 
         File cellProcDir = getDirandReadme(projectDir,
@@ -601,7 +609,6 @@ public class ProjectStructure
                                            + "\n\nNow, a restructured cellMechanism directory will be used.\n",
                                            createIfNotFound);
 
-        logger.logComment("Returning CellProcessesDir: "+ cellProcDir);
         return cellProcDir;
     }
 
@@ -662,7 +669,6 @@ public class ProjectStructure
 
     public static File getCellMechanismDir(File projectDir, boolean createIfNotFound)
     {
-        logger.logComment("Getting CellMechanismDir");
 
 
         File cellMechDir = getDirandReadme(projectDir, cellMechanismDir,
@@ -670,9 +676,6 @@ public class ProjectStructure
                "Unlike the older cellProcesses dir, simply cutting and pasting these cell mech directories into another neuroConstruct project is sufficient for copying the cell mech to that project.\n",
         createIfNotFound);
 
-
-
-        logger.logComment("Returning CellMechanismDir: "+ cellMechDir);
         return cellMechDir;
     }
 
@@ -684,7 +687,6 @@ public class ProjectStructure
         File oldProjMorphDir = new File(projectDir, "projectMorphologies");
 
 
-        logger.logComment("Updating "+oldProjMorphDir +" to "+ morphDir);
 
         if (oldProjMorphDir.exists())
         {
@@ -902,9 +904,6 @@ public class ProjectStructure
         return zippedDataSetExtension;
     }
 
-    private ProjectStructure()
-    {
-    }
     
 
 }

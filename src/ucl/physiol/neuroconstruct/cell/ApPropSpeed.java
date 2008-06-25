@@ -46,6 +46,14 @@ public class ApPropSpeed implements Serializable
     {
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + Float.floatToIntBits(this.speed);
+        return hash;
+    }
+
+    @Override
     public boolean equals(Object otherObj)
     {
         if (otherObj instanceof ApPropSpeed)
@@ -66,6 +74,7 @@ public class ApPropSpeed implements Serializable
         this.speed = speed;
     }
 
+    @Override
     public String toString()
     {
         return "AP propagation speed: " + speed+" "
@@ -75,9 +84,9 @@ public class ApPropSpeed implements Serializable
 
     public static void main(String[] args) throws CloneNotSupportedException
     {
-        ApPropSpeed appv = new ApPropSpeed(1200);
+        ApPropSpeed appv = new ApPropSpeed(0);
 
-        System.out.println("New: "+ appv);
+        System.out.println("New: "+ appv+", h: "+appv.hashCode());
 
     }
 
