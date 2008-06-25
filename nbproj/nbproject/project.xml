@@ -23,9 +23,19 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>tests</label>
+                    <location>${project.dir}/tests</location>
+                </source-folder>
+                <source-folder>
                     <label>src</label>
                     <type>java</type>
                     <location>${project.dir}/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>tests</label>
+                    <type>java</type>
+                    <location>${project.dir}/tests</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
@@ -68,7 +78,17 @@
                     <script>nbproject/nbjdk.xml</script>
                     <target>debug-nb</target>
                 </action>
+                <action name="test">
+                    <script>${ant.script}</script>
+                    <target>test</target>
+                </action>
             </ide-actions>
+            <export>
+                <type>folder</type>
+                <location>${project.dir}/classes</location>
+                <script>nbproject/nbjdk.xml</script>
+                <build-target>makejar</build-target>
+            </export>
             <export>
                 <type>folder</type>
                 <location>${project.dir}/classes</location>
@@ -81,6 +101,10 @@
                         <label>src</label>
                         <location>${project.dir}/src</location>
                     </source-folder>
+                    <source-folder style="packages">
+                        <label>tests</label>
+                        <location>${project.dir}/tests</location>
+                    </source-folder>
                     <source-file>
                         <location>${ant.script}</location>
                     </source-file>
@@ -91,6 +115,7 @@
                     <ide-action name="clean"/>
                     <ide-action name="javadoc"/>
                     <ide-action name="run"/>
+                    <ide-action name="test"/>
                     <ide-action name="debug"/>
                     <action>
                         <script>${ant.script}</script>
@@ -101,10 +126,17 @@
             </view>
             <subprojects/>
         </general-data>
-        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
+        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>${project.dir}/src</package-root>
-                <classpath mode="compile">${project.dir}/lib/hdf5/jhdf.jar;${project.dir}/lib/hdf5/jhdf4obj.jar;${project.dir}/lib/hdf5/jhdf5.jar;${project.dir}/lib/hdf5/jhdf5obj.jar;${project.dir}/lib/hdf5/jhdfobj.jar;${project.dir}/lib/jython/jython.jar</classpath>
+                <classpath mode="compile">${project.dir}/lib/hdf5/jhdf.jar:${project.dir}/lib/hdf5/jhdf4obj.jar:${project.dir}/lib/hdf5/jhdf5.jar:${project.dir}/lib/hdf5/jhdf5obj.jar:${project.dir}/lib/hdf5/jhdfobj.jar:${project.dir}/lib/jython/jython.jar:${project.dir}/lib/junit/junit-4.4.jar</classpath>
+                <built-to>${project.dir}/classes</built-to>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>${project.dir}/tests</package-root>
+                <unit-tests/>
+                <classpath mode="compile">${project.dir}/lib/junit/junit-4.4.jar:${project.dir}/lib/jython/jython.jar:${project.dir}/lib/hdf5/jhdf.jar:${project.dir}/lib/hdf5/jhdf4obj.jar:${project.dir}/lib/hdf5/jhdf5.jar:${project.dir}/lib/hdf5/jhdf5obj.jar:${project.dir}/lib/hdf5/jhdfobj.jar:${project.dir}/src</classpath>
                 <built-to>${project.dir}/classes</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
