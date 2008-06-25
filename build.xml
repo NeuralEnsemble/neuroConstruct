@@ -43,6 +43,7 @@
 
     <property name="hdf5.libs" value="lib/hdf5"/>
     <property name="jython.libs" value="lib/jython"/>
+    <property name="junit.libs" value="lib/junit"/>
 
 
     <property name="build.dir" value="./"/>
@@ -73,6 +74,12 @@
     <property name="main.gui.dir" value="ucl/physiol/neuroconstruct/gui"/>
     <property name="nmodl.gui.dir" value="ucl/physiol/neuroconstruct/nmodleditor/gui"/>
     
+    
+    <property name="test.dir" value="./tests"/>
+    <property name="main.test.class" value="test.MainTest"/>
+    
+    
+    
     <property name="jar.file" value="${build.dir}/${name}_${version}.jar"/>
 
     <filter token="year" value="${year}"/>
@@ -88,6 +95,9 @@
           <include name="*.jar"/>
         </fileset>
         <fileset dir="${jython.libs}">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${junit.libs}">
           <include name="*.jar"/>
         </fileset>
 
@@ -140,12 +150,31 @@
   </target>
 
 
+  <!-- =================================================================== -->
+  <!-- Compiles the tests directory                                       -->
+  <!-- =================================================================== -->
+
+  <target name="compiletests" depends="prepare, compile" description="Compiles the test code">
+
+    <javac srcdir="${test.dir}"
+           destdir="${build.dest}"
+           debug="${debug}"
+           optimize="${optimize}"
+           compiler="modern">
+      <classpath refid="compile.class.path"/>
+      <compilerarg value="-Xlint:serial"/> <!-- As cells can be stored as Java serialised objs, essential to have this check-->
+    </javac>
+
+
+  </target>
+
+
 
   <!-- =================================================================== -->
   <!-- Creates the jar file                                                -->
   <!-- =================================================================== -->
 
-  <target name="makejar" depends="compile" description="Creates the jar file">
+  <target name="makejar" depends="compile, compiletests" description="Creates the jar file">
 
     <jar jarfile="${jar.file}" basedir="${build.dest}">
         <manifest>
@@ -205,6 +234,23 @@
     <mkdir dir="${dist.dir}"/>
   </target>
 
+
+
+
+  <!-- =================================================================== -->
+  <!-- Run tests                                               -->
+  <!-- =================================================================== -->
+
+  <target name="test" depends="compiletests"
+          description="Runs the core neuroConstruct unit tests">
+    <java classname="${main.test.class}" fork="true">
+        <jvmarg value="-Xmx700M" />
+        <jvmarg value="-Xms600M" />
+        <jvmarg value="-Djava.library.path=./lib/hdf5/linux;./lib/hdf5/win"/>
+        <jvmarg value="-Dsun.java2d.noddraw=true" />
+        <classpath refid="run.class.path"/>
+    </java>
+  </target>
 
 
   <!-- =================================================================== -->
