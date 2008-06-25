@@ -12,3 +12,11 @@ Note: HDF5 functionality not yet tested on Mac. Mail PG if you'd like to use thi
 
 Jython
 From http://www.jython.org/Project
+Used for the jython based scripting interface (in development)
+
+
+JUnit
+From http://www.junit.org
+Used for unit testing in development
+
+
