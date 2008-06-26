@@ -934,7 +934,7 @@ public class Project implements TableModelListener
 
     /**
      * Might be a better place for this...
-     */
+     
     public File saveNetworkStructureXML(File neuroMLFile,
                                      boolean zipped,
                                      boolean extraComments,
@@ -1018,10 +1018,13 @@ public class Project implements TableModelListener
                                           this.generatedCellPositions.getRandomSeed() + "",
                                           "    ");
 
-            MetadataConstants.addProperty(props,
-                                          NetworkMLConstants.NC_SIM_CONFIG,
-                                          simConfig,
-                                          "    ");
+            if (simConfig!=null)
+            {
+                MetadataConstants.addProperty(props,
+                                              NetworkMLConstants.NC_SIM_CONFIG,
+                                              simConfig,
+                                              "    ");
+            }
 
             rootElement.addContent("\n\n");
 
@@ -1085,7 +1088,7 @@ public class Project implements TableModelListener
     }
     
     
-    
+    */
     
 
     public void saveProject() throws NoProjectLoadedException

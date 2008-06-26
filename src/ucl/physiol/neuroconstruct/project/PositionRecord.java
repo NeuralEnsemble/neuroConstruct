@@ -13,6 +13,7 @@
 package ucl.physiol.neuroconstruct.project;
 
 import javax.vecmath.*;
+import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
 
 
@@ -70,6 +71,13 @@ public class PositionRecord
     {
         if (nodeId == NO_NODE_ID) return "Cell: [" + cellNumber + "] (" + x_pos + ", " + y_pos + ", " + z_pos + ")";
         return "Cell: [" + cellNumber + "] (" + x_pos + ", " + y_pos + ", " + z_pos + ") Node id: "+nodeId;
+    }
+    
+    
+    public String toHtmlString()
+    {
+        if (nodeId == NO_NODE_ID) return "Cell " + cellNumber + ": "+GeneralUtils.getBold("(" + x_pos + ", " + y_pos + ", " + z_pos + ")", true);
+        return "Cell: [" + cellNumber + "] "+GeneralUtils.getBold("(" + x_pos + ", " + y_pos + ", " + z_pos + ")", true)+" Node id: "+GeneralUtils.getBold(nodeId, true) ;
     }
 
     /*

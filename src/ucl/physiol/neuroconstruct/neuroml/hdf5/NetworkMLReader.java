@@ -13,6 +13,7 @@
 package ucl.physiol.neuroconstruct.neuroml.hdf5;
 
 
+import java.util.logging.Level;
 import ncsa.hdf.object.*;
 import ncsa.hdf.object.h5.*;
 import java.io.*;
@@ -25,6 +26,7 @@ import ucl.physiol.neuroconstruct.project.stimulation.IClamp;
 import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrain;
 import ucl.physiol.neuroconstruct.simulation.StimulationSettings;
 import ucl.physiol.neuroconstruct.utils.SequenceGenerator.EndOfSequenceException;
+import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
 
 /**
  * Utilities file for reading NetworkML HDF5 files
@@ -37,31 +39,32 @@ public class NetworkMLReader  implements NetworkMLnCInfo
     private static ClassLogger logger = new ClassLogger("NetworkMLReader");
         
     
-    //private GeneratedCellPositions cellPos = null;
-
-    //private GeneratedNetworkConnections netConns = null;
-    
     private Project project = null;
     
     
     boolean inPopulations = false;
     boolean inProjections = false;
     boolean inInputs = false;
-    //boolean inInput = false;
     
     String currentCellGroup = null;
     String currentNetConn = null;
     String currentInput = null;
     
     private ArrayList<ConnSpecificProps> globConnProps = new ArrayList<ConnSpecificProps>();
+    private ArrayList<ConnSpecificProps> localConnProps = new ArrayList<ConnSpecificProps>();
+    
+    private float globAPDelay = 0;
+    private float localAPDelay = 0;
     
     private long foundRandomSeed = Long.MIN_VALUE;
     private String foundSimConfig = null;
+    
+    private int projUnitSystem = -1;
+    private int inputUnitSystem = -1;
 
     public NetworkMLReader(Project project)
-    {
-        //this.cellPos = project.generatedCellPositions;
-        //this.netConns = project.generatedNetworkConnections;
+    {        
+        //logger.setThisClassVerbose(true);
         this.project = project;
 
     }
@@ -90,7 +93,7 @@ public class NetworkMLReader  implements NetworkMLnCInfo
         
     
         
-    public void startGroup(Group g) throws Hdf5Exception, EndOfSequenceException
+    public void startGroup(Group g) throws Hdf5Exception
     {
         logger.logComment("-----   Going into a group: "+g.getFullName());
         
@@ -125,6 +128,10 @@ public class NetworkMLReader  implements NetworkMLnCInfo
         {
             logger.logComment("Found the projections group");
             inProjections = true;
+            
+            String units = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.UNITS_ATTR);
+            
+            projUnitSystem = UnitConverter.getUnitSystemIndex(units);
 
         }
         else if (g.getName().startsWith(NetworkMLConstants.PROJECTION_ELEMENT) && inProjections)
@@ -158,9 +165,27 @@ public class NetworkMLReader  implements NetworkMLnCInfo
             
             ConnSpecificProps cp = new ConnSpecificProps(name);
             
-            cp.internalDelay = Float.parseFloat(Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.INTERNAL_DELAY_ATTR));
+            
+            String internalDelay = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.INTERNAL_DELAY_ATTR);
+            if (internalDelay!=null)
+                cp.internalDelay = (float)UnitConverter.getTime(Float.parseFloat(internalDelay), projUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+            
+            
+            // Lump them in to the internal delay...
+            String preDelay = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.PRE_DELAY_ATTR);
+            if (preDelay!=null)
+                cp.internalDelay = cp.internalDelay + (float)UnitConverter.getTime(Float.parseFloat(preDelay), projUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+            
+            String postDelay = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.POST_DELAY_ATTR);
+            if (postDelay!=null)
+                cp.internalDelay = cp.internalDelay + (float)UnitConverter.getTime(Float.parseFloat(postDelay), projUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+            
+            
             cp.weight = Float.parseFloat(Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.WEIGHT_ATTR));
             
+            String propDelay = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.PROP_DELAY_ATTR);
+            if (propDelay!=null)
+                globAPDelay = (float)UnitConverter.getTime(Float.parseFloat(propDelay), projUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
             
             logger.logComment("Found: "+ cp);
             
@@ -170,16 +195,10 @@ public class NetworkMLReader  implements NetworkMLnCInfo
         {
             logger.logComment("Found the Inputs group");
             inInputs = true;
+            
             String units = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.UNITS_ATTR);
             
-            if (project.genesisSettings.isSIUnits() && !units.contains("SI Units"))
-            {
-                throw new Hdf5Exception("Error: the project units are SI Units whereas the units in the file are not");
-            }
-            else if (project.genesisSettings.isPhysiologicalUnits() && !units.contains("Physiological"))
-            {
-                throw new Hdf5Exception("Error: the project units are Physiological Units whereas the units in the file are not");
-            }
+            inputUnitSystem = UnitConverter.getUnitSystemIndex(units);
         }
         else if (g.getName().startsWith(NetworkMLConstants.INPUT_ELEMENT) && inInputs)
         {
@@ -206,20 +225,38 @@ public class NetworkMLReader  implements NetworkMLnCInfo
             String inputName = g.getParent().getName().substring(6);
             // Get the input sites from the table
             String cellGroup = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR);
-            String delay = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.INPUT_DELAY_ATTR);
-            String duration = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.INPUT_DUR_ATTR);
-            String amp = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.INPUT_AMP_ATTR);
+            float readDelay = (float)UnitConverter.getTime(Float.parseFloat(Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.INPUT_DELAY_ATTR)), inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+            float readDuration = (float)UnitConverter.getTime(Float.parseFloat(Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.INPUT_DUR_ATTR)), inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+            float readAmp = (float)UnitConverter.getCurrent(Float.parseFloat(Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.INPUT_AMP_ATTR)), inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
             
             StimulationSettings nextStim = project.elecInputInfo.getStim(inputName);
             ElectricalInput myElectricalInput = nextStim.getElectricalInput();
             IClamp ic = (IClamp)myElectricalInput;
             
-            logger.logComment("Found an IClamp Input");            
+            logger.logComment("Found an IClamp Input"); 
+            
+            float currDelay=-1, currDur=-1, currAmp=-1;
+            
+           
+            try
+            { 
+                ic.getDelay().reset();
+                currDelay = ic.getDelay().getNumber();
+                ic.getDuration().reset();
+                currDur = ic.getDuration().getNumber();
+                ic.getAmplitude().reset();
+                currAmp = ic.getAmplitude().getNumber();
+            } 
+            catch (EndOfSequenceException ex)
+            {
+                logger.logError("Legacy error getting iclamp params!!");
+            }
+            
             
             if ((!project.elecInputInfo.getStim(inputName).getCellGroup().equals(cellGroup))
-                   ||(Float.valueOf(delay.trim()).floatValue()!= ic.getDelay().getNumber())
-                   ||(Float.valueOf(duration.trim()).floatValue() != ic.getDuration().getNumber())
-                   ||(Float.valueOf(amp.trim()).floatValue() != ic.getAmplitude().getNumber()))                    
+                   ||(readDelay!= currDelay)
+                   ||(readDuration != currDur)
+                   ||(readAmp != currAmp))                    
             {
                 throw new Hdf5Exception("Error: the input properties of the file do not match those in the project for input "+ inputName);
             }
@@ -230,7 +267,7 @@ public class NetworkMLReader  implements NetworkMLnCInfo
             String inputName = g.getParent().getName().substring(6);
             // Get the input sites from the table
             String cellGroup = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR);
-            String frequency = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.RND_STIM_FREQ_ATTR);
+            float frequency = (float)UnitConverter.getRate(Float.parseFloat(Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.RND_STIM_FREQ_ATTR)), inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
             String mechanism = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.RND_STIM_MECH_ATTR);
             
             StimulationSettings nextStim = project.elecInputInfo.getStim(inputName);
@@ -240,7 +277,7 @@ public class NetworkMLReader  implements NetworkMLnCInfo
             logger.logComment("Found an Random Spike Train Input");
             
             if ((!project.elecInputInfo.getStim(inputName).getCellGroup().equals(cellGroup))||
-                    Float.valueOf(frequency.trim()).floatValue() != rs.getRate().getFixedNum()||
+                    frequency != rs.getRate().getFixedNum()||
                     !rs.getSynapseType().equals(mechanism))                    
             {
                 throw new Hdf5Exception("Error: the input properties of the file do not match those in the project for input "+ inputName);
@@ -282,7 +319,23 @@ public class NetworkMLReader  implements NetworkMLnCInfo
             currentNetConn = null;
             globConnProps = new ArrayList<ConnSpecificProps>();
         }
+        else if (g.getName().startsWith(NetworkMLConstants.CONNECTION_ELEMENT))
+        {
+            localConnProps = new ArrayList<ConnSpecificProps>();
+            localAPDelay = 0;
+        }
         
+    }
+    
+    private ArrayList<String> getConnectionSynTypes()
+    {
+        ArrayList<String> a = new ArrayList<String>();
+        
+        for(ConnSpecificProps c: globConnProps)
+        {
+            a.add(c.synapseType);
+        }
+        return a;
     }
     
     
@@ -337,41 +390,84 @@ public class NetworkMLReader  implements NetworkMLnCInfo
             int post_segment_id_col = -1;
             int post_fraction_along_col = -1;
             
+            int prop_delay_col = -1;
+            
+            
             
             for (Attribute attribute : attrs) 
             {
-                if (Hdf5Utils.getFirstStringValAttr(attrs, attribute.getName()).equals(NetworkMLConstants.CONNECTION_ID_ATTR))
+                String storedInColumn = Hdf5Utils.getFirstStringValAttr(attrs, attribute.getName());
+                
+                if (storedInColumn.equals(NetworkMLConstants.CONNECTION_ID_ATTR))
                 {
                     id_col = Integer.parseInt(attribute.getName().substring("column_".length()));
                     logger.logComment("id col: "+id_col);
                 }
-                else if (Hdf5Utils.getFirstStringValAttr(attrs, attribute.getName()).equals(NetworkMLConstants.PRE_CELL_ID_ATTR))
+                else if (storedInColumn.equals(NetworkMLConstants.PRE_CELL_ID_ATTR))
                 {
                     pre_cell_id_col = Integer.parseInt(attribute.getName().substring("column_".length()));
                 }
-                else if (Hdf5Utils.getFirstStringValAttr(attrs, attribute.getName()).equals(NetworkMLConstants.PRE_SEGMENT_ID_ATTR))
+                else if (storedInColumn.equals(NetworkMLConstants.PRE_SEGMENT_ID_ATTR))
                 {
                     pre_segment_id_col = Integer.parseInt(attribute.getName().substring("column_".length()));
                     logger.logComment("pre_segment_id_col: "+pre_segment_id_col);
                 }
-                else if (Hdf5Utils.getFirstStringValAttr(attrs, attribute.getName()).equals(NetworkMLConstants.PRE_FRACT_ALONG_ATTR))
+                else if (storedInColumn.equals(NetworkMLConstants.PRE_FRACT_ALONG_ATTR))
                 {
                     pre_fraction_along_col = Integer.parseInt(attribute.getName().substring("column_".length()));
                     logger.logComment("pre_fraction_along_col: "+pre_fraction_along_col);
                 }
                 
                 
-                else if (Hdf5Utils.getFirstStringValAttr(attrs, attribute.getName()).equals(NetworkMLConstants.POST_CELL_ID_ATTR))
+                else if (storedInColumn.equals(NetworkMLConstants.POST_CELL_ID_ATTR))
                 {
                     post_cell_id_col = Integer.parseInt(attribute.getName().substring("column_".length()));
                 }
-                else if (Hdf5Utils.getFirstStringValAttr(attrs, attribute.getName()).equals(NetworkMLConstants.POST_SEGMENT_ID_ATTR))
+                else if (storedInColumn.equals(NetworkMLConstants.POST_SEGMENT_ID_ATTR))
                 {
                     post_segment_id_col = Integer.parseInt(attribute.getName().substring("column_".length()));
                 }
-                else if (Hdf5Utils.getFirstStringValAttr(attrs, attribute.getName()).equals(NetworkMLConstants.POST_FRACT_ALONG_ATTR))
+                else if (storedInColumn.equals(NetworkMLConstants.POST_FRACT_ALONG_ATTR))
                 {
                     post_fraction_along_col = Integer.parseInt(attribute.getName().substring("column_".length()));
+                }
+                
+                
+                else if (storedInColumn.startsWith(NetworkMLConstants.PROP_DELAY_ATTR))
+                {
+                    prop_delay_col = Integer.parseInt(attribute.getName().substring("column_".length()));
+                }
+                
+                
+                
+                for(String synType: getConnectionSynTypes())
+                {
+                    if (storedInColumn.endsWith(synType))
+                    {
+                        ConnSpecificProps cp = null;
+                        
+                        for(ConnSpecificProps currCp:localConnProps)
+                        {
+                            if (currCp.synapseType.equals(synType))
+                                cp = currCp;
+                        }
+                        if (cp==null)
+                        {
+                            cp = new ConnSpecificProps(synType);
+                            cp.internalDelay = -1;
+                            cp.weight = -1;
+                            localConnProps.add(cp);
+                        }
+                        
+                        if (storedInColumn.startsWith(NetworkMLConstants.INTERNAL_DELAY_ATTR))
+                        {
+                            cp.internalDelay = Integer.parseInt(attribute.getName().substring("column_".length())); // store the col num temporarily..
+                        }
+                        if (storedInColumn.startsWith(NetworkMLConstants.WEIGHT_ATTR))
+                        {
+                            cp.weight = Integer.parseInt(attribute.getName().substring("column_".length())); // store the col num temporarily..
+                        }
+                    }
                 }
 
             }
@@ -387,6 +483,8 @@ public class NetworkMLReader  implements NetworkMLnCInfo
                 int pre_cell_id = (int)data[i][pre_cell_id_col];
                 int post_cell_id = (int)data[i][post_cell_id_col];
                 
+                float prop_delay = 0;
+                
                 if (pre_segment_id_col>=0) 
                     pre_seg_id = (int)data[i][pre_segment_id_col];
                 if (pre_fraction_along_col>=0) 
@@ -397,26 +495,49 @@ public class NetworkMLReader  implements NetworkMLnCInfo
                     post_fract_along = (float)data[i][post_fraction_along_col];
                 
                 
+                    //(float)UnitConverter.getTime(XXXXXXXXX, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+"";
+                if (prop_delay_col>=0) 
+                    prop_delay = (float)UnitConverter.getTime((float)data[i][prop_delay_col], projUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+                
+                
+                
+                ArrayList<ConnSpecificProps> props = new ArrayList<ConnSpecificProps>();
+                
+                if (localConnProps.size()>0)
+                {
+                    for(ConnSpecificProps currCp:localConnProps)
+                    {
+                        logger.logComment("Pre cp: "+currCp);
+                        ConnSpecificProps cp2 = new ConnSpecificProps(currCp.synapseType);
+                        
+                        if (currCp.internalDelay>0) // index was stored in this val...
+                            cp2.internalDelay = (float)UnitConverter.getTime((float)data[i][(int)currCp.internalDelay], projUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+                        if (currCp.weight>0) // index was stored in this val...
+                            cp2.weight = (float)data[i][(int)currCp.weight];
+                        
+                        logger.logComment("Filled cp: "+cp2);
+                        
+                        props.add(cp2);
+                    }
+                }
+                
                 this.project.generatedNetworkConnections.addSynapticConnection(currentNetConn,
-                                                                               GeneratedNetworkConnections.ANY_NETWORK_CONNECTION,
+                                                                               GeneratedNetworkConnections.MORPH_NETWORK_CONNECTION,
                                                                                pre_cell_id, 
                                                                                pre_seg_id,
                                                                                pre_fract_along,
                                                                                post_cell_id,
                                                                                post_seg_id,
                                                                                post_fract_along,
-                                                                               0,
-                                                                               null);
+                                                                               prop_delay,
+                                                                               props);
             }
             
         }
         if (inInputs && currentInput !=null)
         {
-            //String inputName = g.getParent().getName().substring(6);
-            String fileInputName = d.getName();
-            int endIndex = fileInputName.indexOf("_");
-            String inputName = fileInputName.substring(0, endIndex);
-            StimulationSettings nextStim = project.elecInputInfo.getStim(inputName);
+            logger.logComment("Adding info for: "+ currentInput);
+            StimulationSettings nextStim = project.elecInputInfo.getStim(currentInput);
             ElectricalInput myElectricalInput = nextStim.getElectricalInput();
             String electricalInputType = myElectricalInput.getType();
             String cellGroup = nextStim.getCellGroup();
@@ -431,7 +552,7 @@ public class NetworkMLReader  implements NetworkMLnCInfo
                 
                 SingleElectricalInput singleElectricalInputFromFile = new SingleElectricalInput(electricalInputType,cellGroup,cellId,segmentId,fractionAlong);
                
-                this.project.generatedElecInputs.addSingleInput(inputName,singleElectricalInputFromFile);
+                this.project.generatedElecInputs.addSingleInput(currentInput,singleElectricalInputFromFile);
             }
         }
         
@@ -492,7 +613,8 @@ public class NetworkMLReader  implements NetworkMLnCInfo
             
             //File projFile = new File("../copyNcModels/NewGranCellLayer/NewGranCellLayer.neuro.xml");
             
-            File projFile = new File("../nC_projects/Bignet/Bignet.neuro.xml");
+            //File projFile = new File("../nC_projects/Bignet/Bignet.neuro.xml");
+            File projFile = new File("testProjects/TestNetworkML/TestNetworkML.neuro.xml");
             
             //Project testProj = Project.loadProject(new File("projects/Parall/Parall.neuro.xml"),null);
             //Project testProj = Project.loadProject(new File("examples/Ex5-Networks/Ex5-Networks.neuro.xml"),null);
@@ -500,7 +622,8 @@ public class NetworkMLReader  implements NetworkMLnCInfo
 
             //File h5File = new File(projFile.getParentFile().getAbsolutePath()+ "/savedNetworks/hhh.h5");
             //File h5File = new File(projFile.getParentFile().getAbsolutePath()+ "/savedNetworks/nnnn.h5");
-            File h5File = new File("../temp/test.h5");
+            
+            File h5File = new File("testProjects/TestNetworkML/savedNetworks/small.h5");
 
             logger.logComment("Loading netml cell from "+ h5File.getAbsolutePath(), true);
 
@@ -512,6 +635,7 @@ public class NetworkMLReader  implements NetworkMLnCInfo
 
             logger.logComment("Contents: "+testProj.generatedCellPositions);
             logger.logComment("Net conns: "+testProj.generatedNetworkConnections);
+            logger.logComment("Inputs: "+testProj.generatedElecInputs.details(false));
 
 
 

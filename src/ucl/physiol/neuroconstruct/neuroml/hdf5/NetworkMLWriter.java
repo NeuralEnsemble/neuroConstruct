@@ -61,9 +61,12 @@ public class NetworkMLWriter
     }
 
     public static File createNetworkMLH5file(File file,
-                                             Project project) throws Hdf5Exception
+                                             Project project,
+                                             String units) throws Hdf5Exception
     {
 
+        int unitSystem = UnitConverter.getUnitSystemIndex(units);
+        
         H5File h5File = Hdf5Utils.createH5file(file);
 
         Hdf5Utils.open(h5File);
@@ -125,7 +128,8 @@ public class NetworkMLWriter
             projsGroup = h5File.createGroup(NetworkMLConstants.PROJECTIONS_ELEMENT, netmlGroup);
             inputsGroup = h5File.createGroup(NetworkMLConstants.INPUTS_ELEMENT, netmlGroup);
             
-            Attribute unitsAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.UNITS_ATTR, NetworkMLConstants.UNITS_PHYSIOLOGICAL, h5File);
+            Attribute unitsAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.UNITS_ATTR, units, h5File);
+            
             projsGroup.writeMetadata(unitsAttr);
 
             Attribute attr = Hdf5Utils.getSimpleAttr("notes", notes.toString(), h5File);
@@ -265,7 +269,7 @@ public class NetworkMLWriter
                     Attribute synTypeAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.SYN_TYPE_ATTR, sp.getSynapseType(), h5File);
                     synPropGroup.writeMetadata(synTypeAttr);
                     
-                    globDelay = sp.getDelayGenerator().getNominalNumber();
+                    globDelay = (float)UnitConverter.getTime(sp.getDelayGenerator().getNominalNumber(), UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem);
                     Attribute synTypeDelay = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INTERNAL_DELAY_ATTR, globDelay+"", h5File);
                     synPropGroup.writeMetadata(synTypeDelay);
                     
@@ -273,7 +277,9 @@ public class NetworkMLWriter
                     Attribute synTypeWeight = Hdf5Utils.getSimpleAttr(NetworkMLConstants.WEIGHT_ATTR, globWeight+"", h5File);
                     synPropGroup.writeMetadata(synTypeWeight);
                     
-                    Attribute synTypeThreshold = Hdf5Utils.getSimpleAttr(NetworkMLConstants.THRESHOLD_ATTR, sp.getThreshold()+"", h5File);
+                    Attribute synTypeThreshold = Hdf5Utils.getSimpleAttr(NetworkMLConstants.THRESHOLD_ATTR, 
+                            (float)UnitConverter.getVoltage(sp.getThreshold(), UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+"", h5File);
+                    
                     synPropGroup.writeMetadata(synTypeThreshold);
                 }
                 
@@ -290,13 +296,15 @@ public class NetworkMLWriter
                     if (conn.sourceEndPoint.location.getSegmentId()!=0 && !columnsNeeded.contains(NetworkMLConstants.PRE_SEGMENT_ID_ATTR))
                         columnsNeeded.add(NetworkMLConstants.PRE_SEGMENT_ID_ATTR);
                     
-                    if (conn.sourceEndPoint.location.getFractAlong()!=SegmentLocation.DEFAULT_FRACT_CONN && !columnsNeeded.contains(NetworkMLConstants.PRE_FRACT_ALONG_ATTR))
+                    if (conn.sourceEndPoint.location.getFractAlong()!=SegmentLocation.DEFAULT_FRACT_CONN && 
+                            !columnsNeeded.contains(NetworkMLConstants.PRE_FRACT_ALONG_ATTR))
                         columnsNeeded.add(NetworkMLConstants.PRE_FRACT_ALONG_ATTR);
                     
                     if (conn.targetEndPoint.location.getSegmentId()!=0 && !columnsNeeded.contains(NetworkMLConstants.POST_SEGMENT_ID_ATTR))
                         columnsNeeded.add(NetworkMLConstants.POST_SEGMENT_ID_ATTR);
                     
-                    if (conn.targetEndPoint.location.getFractAlong()!=SegmentLocation.DEFAULT_FRACT_CONN && !columnsNeeded.contains(NetworkMLConstants.POST_FRACT_ALONG_ATTR))
+                    if (conn.targetEndPoint.location.getFractAlong()!=SegmentLocation.DEFAULT_FRACT_CONN && 
+                            !columnsNeeded.contains(NetworkMLConstants.POST_FRACT_ALONG_ATTR))
                         columnsNeeded.add(NetworkMLConstants.POST_FRACT_ALONG_ATTR);
                     
                     if (conn.apPropDelay!=0)
@@ -381,7 +389,8 @@ public class NetworkMLWriter
                         String colName = NetworkMLConstants.PROP_DELAY_ATTR +"_"+sp.getSynapseType();
                         if (columnsNeeded.contains(colName))
                         {
-                            projArray[i * columnsNeeded.size() + row] = conn.apPropDelay;
+                            projArray[i * columnsNeeded.size() + row] = 
+                                    (float)UnitConverter.getTime(conn.apPropDelay, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem);
                             row++;
                         }
                     }
@@ -398,7 +407,8 @@ public class NetworkMLWriter
                             }
                             if(columnsNeeded.contains(NetworkMLConstants.INTERNAL_DELAY_ATTR+"_"+prop.synapseType))
                             {
-                                projArray[i * columnsNeeded.size() + row] = prop.internalDelay;
+                                projArray[i * columnsNeeded.size() + row] = 
+                                        (float)UnitConverter.getTime(prop.internalDelay, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem);
                                 row++;
                             }
                             
@@ -437,20 +447,12 @@ public class NetworkMLWriter
         
         Iterator<String> nEi = gei.getElecInputsItr(); 
         try
-            { 
+        { 
             // Add units for the Inputs
-            if (project.genesisSettings.getUnitSystemToUse()== UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS)
-            {
-                //inputsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.UNITS_ATTR, ));
-                Attribute unitsAttr = Hdf5Utils.getSimpleAttr("units", "Physiological Units", h5File);
+            
+                Attribute unitsAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.UNITS_ATTR, units, h5File);
                 inputsGroup.writeMetadata(unitsAttr);
-            }
-            else if (project.genesisSettings.getUnitSystemToUse()== UnitConverter.GENESIS_SI_UNITS)
-            {
-                //inputsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.UNITS_ATTR, "SI Units"));
-                Attribute unitsAttr = Hdf5Utils.getSimpleAttr("units", "SI Units", h5File);
-                inputsGroup.writeMetadata(unitsAttr);
-            }
+           
             
             // loop around all the inputs
             while(nEi.hasNext())        
@@ -474,7 +476,7 @@ public class NetworkMLWriter
 
                     // Build Site Table for both IClamp and RandomSpikeTrain Inputs
 
-                    int inputsNumCols = 4; // Cell Group, Cell ID, Segment ID, Fraction Along Segment
+                    int inputsNumCols = 3; // Cell ID, Segment ID, Fraction Along Segment
 
                     int inputNumber = inputsHere.size();
 
@@ -514,11 +516,11 @@ public class NetworkMLWriter
                         
                         /*todo: remove this when Seq Generators removed!*/
                         ic.getDelay().reset();
-                        String delay = String.valueOf(ic.getDelay().getNumber());
+                        String delay = (float)UnitConverter.getTime(ic.getDelay().getNumber(), UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+"";
                         ic.getDuration().reset();
-                        String duration = String.valueOf(ic.getDuration().getNumber());   
+                        String duration = (float)UnitConverter.getTime(ic.getDuration().getNumber(), UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+"";
                         ic.getAmplitude().reset();   
-                        String amp = String.valueOf(ic.getAmplitude().getNumber());
+                        String amp = (float)UnitConverter.getCurrent(ic.getAmplitude().getNumber(), UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+"";
 
                         //Assign them to the attibutes of the group
 
@@ -542,7 +544,7 @@ public class NetworkMLWriter
 
                         // Get details of Random Spike Train Attributes
 
-                        String stimFreq = String.valueOf(rst.getRate().getFixedNum());
+                        String stimFreq = (float)UnitConverter.getRate(rst.getRate().getFixedNum(), UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+"";
                         String stimMech = rst.getSynapseType();
 
                         //Assign them to the attibutes of the group
@@ -668,7 +670,9 @@ public class NetworkMLWriter
             logger.logComment("Net conn num: " + gnc.getNumberSynapticConnections(GeneratedNetworkConnections.ANY_NETWORK_CONNECTION), true);
             logger.logComment("Stimulations num: " + gei.getNumberSingleInputs(), true);
 
-            NetworkMLWriter.createNetworkMLH5file(h5File, testProj);
+            NetworkMLWriter.createNetworkMLH5file(h5File, 
+                                                  testProj,
+                                                  NetworkMLConstants.UNITS_PHYSIOLOGICAL);
 
         }
         catch (Exception e)

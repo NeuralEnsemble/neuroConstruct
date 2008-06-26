@@ -182,10 +182,12 @@ public class NeuroMLPythonFileManager
         try
         {
 
-            project.saveNetworkStructureXML(networkFile,
+            ProjectManager.saveNetworkStructureXML(project,
+                                         networkFile,
                                          false,
                                          false,
-                                         simConfig.getName());
+                                         simConfig.getName(),
+                                         NetworkMLConstants.UNITS_PHYSIOLOGICAL);
         }
         catch (NeuroMLException ex1)
         {

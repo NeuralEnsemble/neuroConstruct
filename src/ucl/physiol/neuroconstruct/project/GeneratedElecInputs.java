@@ -255,6 +255,31 @@ public class GeneratedElecInputs
         return sb.toString();
     }
     
+    
+    public String details(boolean html)
+    {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("Network contains " + GeneralUtils.getBold(this.getNumberSingleInputs(), html) + " inputs in total"+GeneralUtils.getEndLine(html)+GeneralUtils.getEndLine(html));
+
+        Enumeration keys = this.myElecInputs.keys();
+
+        while (keys.hasMoreElements())
+        {
+            String input = (String) keys.nextElement();
+            ArrayList<SingleElectricalInput> singleInputList = myElecInputs.get(input);
+            sb.append("Input: "+GeneralUtils.getBold(input, html) + " has " + GeneralUtils.getBold(singleInputList.size(), html)
+                      + " entries"+GeneralUtils.getEndLine(html));
+            for (int i = 0; (i < singleInputList.size() && i < 9); i++)
+            {
+                sb.append("   Input "+i+": "+singleInputList.get(i).details(html)+GeneralUtils.getEndLine(html));
+            }
+            sb.append(GeneralUtils.getEndLine(html));
+
+        }
+        return sb.toString();
+    }
+    
 /*
     public class SingleElectricalInput
     {
@@ -357,7 +382,7 @@ public class GeneratedElecInputs
         }
     }*/
 
-    public SimpleXMLElement getNetworkMLElement(int unitSystem) throws NeuroMLException
+    public SimpleXMLEntity getNetworkMLElement(int unitSystem) throws NeuroMLException
     {
 
         SimpleXMLElement inputsElement = null;
@@ -366,18 +391,23 @@ public class GeneratedElecInputs
             logger.logComment("Going to save file in NeuroML format: " + this.getNumberSingleInputs() +
                               " inputs in total");
             
+            if (getNumberSingleInputs()==0)
+            {
+                return new SimpleXMLComment("There are no electrical inputs present in the network");
+            }
+            
             inputsElement = new SimpleXMLElement(NetworkMLConstants.INPUTS_ELEMENT);
                             
-            // Input units here!!!
-
+            
             if (unitSystem == UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS)
             {
-                inputsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.UNITS_ATTR, "Physiological Units"));
+                inputsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.UNITS_ATTR, NetworkMLConstants.UNITS_PHYSIOLOGICAL));
             }
             else if (unitSystem == UnitConverter.GENESIS_SI_UNITS)
             {
-                inputsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.UNITS_ATTR, "SI Units"));
+                inputsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.UNITS_ATTR, NetworkMLConstants.UNITS_SI));
             }
+            
 
             Enumeration keys = myElecInputs.keys();
 
@@ -410,9 +440,15 @@ public class GeneratedElecInputs
                             
                     SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.PULSEINPUT_ELEMENT);
 
-                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DELAY_ATTR, delay+""));
-                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DUR_ATTR, duration+""));
-                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_AMP_ATTR, amp+""));
+                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DELAY_ATTR, 
+                            UnitConverter.getTime(delay, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+                    
+                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DUR_ATTR, 
+                            UnitConverter.getTime(duration, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+                    
+                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_AMP_ATTR, 
+                            UnitConverter.getCurrent(amp, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+                    
                     inputElement.addChildElement(inputTypeElement);
                     inputElement.addContent("\n        ");
                 }
@@ -424,7 +460,9 @@ public class GeneratedElecInputs
                     String stimMech = rst.getSynapseType();
                    
                     SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.RANDOMSTIM_ELEMENT);
-                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_FREQ_ATTR, stimFreq+""));
+                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_FREQ_ATTR, 
+                            UnitConverter.getRate(stimFreq, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+                    
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_MECH_ATTR, stimMech));
                     inputElement.addChildElement(inputTypeElement);
                     inputElement.addContent("\n        ");

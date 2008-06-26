@@ -15,15 +15,18 @@ package ucl.physiol.neuroconstruct.neuroml;
 import java.io.*;
 import java.util.*;
 import java.util.ArrayList;
-import javax.xml.parsers.*;
 
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.project.stimulation.IClamp;
+import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrain;
 import ucl.physiol.neuroconstruct.simulation.IClampSettings;
 import ucl.physiol.neuroconstruct.simulation.RandomSpikeTrainSettings;
 import ucl.physiol.neuroconstruct.simulation.StimulationSettings;
 import ucl.physiol.neuroconstruct.utils.*;
+import ucl.physiol.neuroconstruct.utils.SequenceGenerator.EndOfSequenceException;
+import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
 
 /**
  * NetworkML file Reader. Importer of NetworkML files to neuroConstruct format using SAX
@@ -41,18 +44,15 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
 
     private Stack<String> elementStack = new Stack<String>();
 
-    private String unitsUsed = null;
+    private int projUnitSystem = -1;
+    private int inputUnitSystem = -1;
 
     private String currentPopulation = null;
-    //private String currentCellType = null;
     private int currentInstanceId = -1;
     private int currentNodeId = -1;
 
 
     private String currentProjection = null;
-    //private String currentSource = null;
-    //private String currentTarget = null;
-
 
     private String currentSynType = null;
 
@@ -63,9 +63,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
     private int currentTargetCellNumber = -1;
     private int currentTargetCellSegmentIndex = -1;
     private float currentTargetCellDisplacement = -1;
-
-
-
+    
     private String currentPropertyName = null;
     
     private long foundRandomSeed = Long.MIN_VALUE;
@@ -296,12 +294,22 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
          }
          else if (getCurrentElement().equals(NetworkMLConstants.PROJECTIONS_ELEMENT))
          {
-             this.unitsUsed = attributes.getValue(NetworkMLConstants.UNITS_ATTR);
+             String unitsUsed = attributes.getValue(NetworkMLConstants.UNITS_ATTR);
              logger.logComment("unitsUsed: "+unitsUsed);
+             projUnitSystem = UnitConverter.getUnitSystemIndex(unitsUsed);
+             
+         }
+         else if (getCurrentElement().equals(NetworkMLConstants.INPUTS_ELEMENT))
+         {
+             String unitsUsed = attributes.getValue(NetworkMLConstants.UNITS_ATTR);
+             logger.logComment("unitsUsed: "+unitsUsed);
+             inputUnitSystem = UnitConverter.getUnitSystemIndex(unitsUsed);
+             
          }
          else if (getCurrentElement().equals(NetworkMLConstants.PROJECTION_ELEMENT))
          {
              this.currentProjection = attributes.getValue(NetworkMLConstants.PROJ_NAME_ATTR);
+             //project.
          }
          else if (getCurrentElement().equals(NetworkMLConstants.PRE_CONN_ELEMENT)
              && getAncestorElement(1).equals(NetworkMLConstants.CONNECTION_ELEMENT))
@@ -372,25 +380,27 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              if (attributes.getValue(NetworkMLConstants.INTERNAL_DELAY_ATTR)!=null)
              {
                  connProps = new ConnSpecificProps(currentSynType);
-                 connProps.internalDelay = Float.parseFloat(attributes.getValue(NetworkMLConstants.INTERNAL_DELAY_ATTR));
+                 connProps.internalDelay = (float)UnitConverter.getTime(Float.parseFloat(attributes.getValue(NetworkMLConstants.INTERNAL_DELAY_ATTR)), projUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
              }
              if (attributes.getValue(NetworkMLConstants.PRE_DELAY_ATTR)!=null)
              {
                  if (connProps==null) 
                      connProps = new ConnSpecificProps(currentSynType);
                  
-                 connProps.internalDelay = connProps.internalDelay + Float.parseFloat(attributes.getValue(NetworkMLConstants.PRE_DELAY_ATTR));
+                 connProps.internalDelay = connProps.internalDelay + 
+                         (float)UnitConverter.getTime(Float.parseFloat(attributes.getValue(NetworkMLConstants.PRE_DELAY_ATTR)), projUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
              }
              if (attributes.getValue(NetworkMLConstants.POST_DELAY_ATTR)!=null)
              {
                  if (connProps==null) 
                      connProps = new ConnSpecificProps(currentSynType);
                  
-                 connProps.internalDelay = connProps.internalDelay + Float.parseFloat(attributes.getValue(NetworkMLConstants.POST_DELAY_ATTR));
+                 connProps.internalDelay = connProps.internalDelay + 
+                         (float)UnitConverter.getTime(Float.parseFloat(attributes.getValue(NetworkMLConstants.POST_DELAY_ATTR)), projUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
              }
              if (attributes.getValue(NetworkMLConstants.PROP_DELAY_ATTR)!=null)
              {                 
-                 this.globAPDelay = Float.parseFloat(attributes.getValue(NetworkMLConstants.PROP_DELAY_ATTR));
+                 this.globAPDelay = (float)UnitConverter.getTime(Float.parseFloat(attributes.getValue(NetworkMLConstants.PROP_DELAY_ATTR)), projUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
              }
              if (attributes.getValue(NetworkMLConstants.WEIGHT_ATTR)!=null)
              {
@@ -438,20 +448,23 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
 
              ConnSpecificProps localProps = null;
              
+             
              if (attributes.getValue(NetworkMLConstants.INTERNAL_DELAY_ATTR) != null)
              {
                  if (localProps==null) localProps = getGlobalSynProps(synType);
-                 localProps.internalDelay = Float.parseFloat(attributes.getValue(NetworkMLConstants.INTERNAL_DELAY_ATTR));
+                 localProps.internalDelay = (float)UnitConverter.getTime(Float.parseFloat(attributes.getValue(NetworkMLConstants.INTERNAL_DELAY_ATTR)), projUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
              }
              if (attributes.getValue(NetworkMLConstants.PRE_DELAY_ATTR) != null)
              {
                  if (localProps==null) localProps = getGlobalSynProps(synType);
-                 localProps.internalDelay = localProps.internalDelay + Float.parseFloat(attributes.getValue(NetworkMLConstants.PRE_DELAY_ATTR));
+                 localProps.internalDelay = localProps.internalDelay + 
+                         (float)UnitConverter.getTime(Float.parseFloat(attributes.getValue(NetworkMLConstants.PRE_DELAY_ATTR)), projUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
              }
              if (attributes.getValue(NetworkMLConstants.POST_DELAY_ATTR) != null)
              {
                  if (localProps==null) localProps = getGlobalSynProps(synType);
-                 localProps.internalDelay = localProps.internalDelay + Float.parseFloat(attributes.getValue(NetworkMLConstants.POST_DELAY_ATTR));
+                 localProps.internalDelay = localProps.internalDelay + 
+                         (float)UnitConverter.getTime(Float.parseFloat(attributes.getValue(NetworkMLConstants.POST_DELAY_ATTR)), projUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
              }
              if (attributes.getValue(NetworkMLConstants.WEIGHT_ATTR) != null)
              {
@@ -469,7 +482,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
 
              if (attributes.getValue(NetworkMLConstants.PROP_DELAY_ATTR)!=null)
              {
-                 this.localAPDelay = Float.parseFloat(attributes.getValue(NetworkMLConstants.PROP_DELAY_ATTR));
+                 this.localAPDelay = (float)UnitConverter.getTime(Float.parseFloat(attributes.getValue(NetworkMLConstants.PROP_DELAY_ATTR)), projUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
              }
          }
          else if (getCurrentElement().equals(NetworkMLConstants.INPUT_ELEMENT)
@@ -505,7 +518,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
          // If pulse input get pulse input attributes
          else if (getCurrentElement().equals(NetworkMLConstants.PULSEINPUT_ELEMENT))
          {
-             currentInputType = "IClamp";
+             currentInputType = IClamp.TYPE;
              
              StimulationSettings ss = project.elecInputInfo.getStim(currentInputName);
              
@@ -516,36 +529,51 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              }
              else
              {
-                 // get input delay for pulsed input and convert to float so it can be added to IClamp
-                 Float currentPulseDelay = Float.parseFloat(attributes.getValue(NetworkMLConstants.INPUT_DELAY_ATTR));
-                 // get input delay for pulsed input and convert to float so it can be added to IClamp
-                 Float currentPulseDur = Float.parseFloat (attributes.getValue(NetworkMLConstants.INPUT_DUR_ATTR));
-                 // get input delay for pulsed input and convert to float so it can be added to IClamp
-                 Float currentPulseAmp = Float.parseFloat(attributes.getValue(NetworkMLConstants.INPUT_AMP_ATTR));
+                 
+                 Float currentPulseDelay = 
+                         (float)UnitConverter.getTime(Float.parseFloat(attributes.getValue(NetworkMLConstants.INPUT_DELAY_ATTR)), inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+                 Float currentPulseDur = 
+                         (float)UnitConverter.getTime(Float.parseFloat (attributes.getValue(NetworkMLConstants.INPUT_DUR_ATTR)), inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+                 Float currentPulseAmp = 
+                         (float)UnitConverter.getCurrent(Float.parseFloat(attributes.getValue(NetworkMLConstants.INPUT_AMP_ATTR)), inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
                  
                  IClampSettings currentIClampSettings = (IClampSettings)ss;
                  
-                 if (currentIClampSettings.getDelay().getStart() != currentPulseDelay)
+                 try
                  {
-                   GuiUtils.showWarningMessage(logger, "Error, imported delay ("+currentPulseDelay+") for IClamp "+currentInputName+" is different from that currently in the project", null);                
-                 }                 
-                                  
-                 if (currentIClampSettings.getDuration().getStart() != currentPulseDur)
-                 {
-                   GuiUtils.showWarningMessage(logger, "Error, imported duration ("+currentPulseDur+") for IClamp "+currentInputName+" is different from that currently in the project", null);                
-                 }
-                 
-                 if (currentIClampSettings.getAmplitude().getStart() != currentPulseAmp)
-                 {
-                   GuiUtils.showWarningMessage(logger, "Error, imported amplitude ("+currentPulseAmp+") for IClamp "+currentInputName+" is different from that currently in the project", null);                
-                 }
+                     currentIClampSettings.getDelay().reset();
+                     float currDelay = currentIClampSettings.getDelay().getNumber();
+                     if (currDelay != currentPulseDelay)
+                     {
+                       GuiUtils.showWarningMessage(logger, "Error, imported delay ("+currentPulseDelay+") for IClamp "+currentInputName+" is different from that currently in the project: "+ ss, null);                
+                     }                 
+
+                     currentIClampSettings.getDuration().reset();
+                     float currDur = currentIClampSettings.getDuration().getNumber();
+                     if (currDur != currentPulseDur)
+                     {
+                       GuiUtils.showWarningMessage(logger, "Error, imported duration ("+currentPulseDur+") for IClamp "+currentInputName+" is different from that currently in the project: "+currDur, null);                
+                     }
+
+                     currentIClampSettings.getAmplitude().reset();
+                     float currAmp = currentIClampSettings.getAmplitude().getNumber();
+
+                     if (currAmp != currentPulseAmp)
+                     {
+                       GuiUtils.showWarningMessage(logger, "Error, the imported amplitude ("+currentPulseAmp+") for IClamp "+currentInputName+" is different from that currently in the project: "+ currAmp, null);                
+                     }
+                } 
+                catch (EndOfSequenceException ex)
+                {
+                    logger.logError("Legacy error getting iclamp params!!");
+                }
              }
          }             
              
          // If random input get random input attributes
          else if (getCurrentElement().equals(NetworkMLConstants.RANDOMSTIM_ELEMENT))
          {
-             currentInputType = "RandomStim";
+             currentInputType = RandomSpikeTrain.TYPE;
              
              StimulationSettings ss = project.elecInputInfo.getStim(currentInputName);
              
@@ -557,7 +585,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              else
              {
                  // get stim frequency for random input and convert to float so it can be added to RandomSpikeStrain
-                 Float currentRate = Float.parseFloat(attributes.getValue(NetworkMLConstants.RND_STIM_FREQ_ATTR));
+                 float currentRate = (float)UnitConverter.getRate(Float.parseFloat(attributes.getValue(NetworkMLConstants.RND_STIM_FREQ_ATTR)), inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);;
                  
                  // noise is not currently in v1.7 so it is set to a standard value of 10
                  // get current noise from inported file

@@ -661,17 +661,20 @@ public class Hdf5Utils
             logger.logComment("Cells: " + gcp.getNumberInAllCellGroups(), true);
             logger.logComment("Net conn num: " + gnc.getNumberSynapticConnections(GeneratedNetworkConnections.ANY_NETWORK_CONNECTION), true);
 
-            NetworkMLWriter.createNetworkMLH5file(h5File, testProj);
+            NetworkMLWriter.createNetworkMLH5file(h5File, 
+                                                  testProj,
+                                                  NetworkMLConstants.UNITS_PHYSIOLOGICAL);
             
             if (true) System.exit(0);
             
             File fileSaved = null;
           
 
-            fileSaved = testProj.saveNetworkStructureXML(newNMLFile,
+            fileSaved = ProjectManager.saveNetworkStructureXML(testProj, newNMLFile,
                                                       false,
                                                       false,
-                                                      testProj.simConfigInfo.getDefaultSimConfig().getName());
+                                                      testProj.simConfigInfo.getDefaultSimConfig().getName(),
+                                                               NetworkMLConstants.UNITS_PHYSIOLOGICAL);
      
 
             logger.logComment("File saved: " + fileSaved.getCanonicalPath(), true);

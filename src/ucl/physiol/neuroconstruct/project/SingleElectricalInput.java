@@ -12,6 +12,8 @@
 
 package ucl.physiol.neuroconstruct.project;
 
+import ucl.physiol.neuroconstruct.utils.GeneralUtils;
+
 
 /**
  * Spec of a single electrical input
@@ -88,6 +90,7 @@ public class SingleElectricalInput
 
 
 
+    @Override
     public String toString()
     {
         return "SingleElectricalInput: [Input: "
@@ -101,6 +104,12 @@ public class SingleElectricalInput
             + ", fractionAlong: "
             + fractionAlong
             + "]";
+    }
+    
+    
+    public String details(boolean html)
+    {
+        return "Cell "+ GeneralUtils.getBold(cellNumber, html)+", seg: "+ GeneralUtils.getBold(segmentId, html)+", fraction: "+ GeneralUtils.getBold(fractionAlong, html);
     }
 
     public SingleElectricalInput(String stringForm)

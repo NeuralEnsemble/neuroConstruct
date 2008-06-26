@@ -227,10 +227,12 @@ public class NeuronFileManager
                     try
                     {
 
-                        project.saveNetworkStructureXML(networkFile,
-                                                     false,
-                                                     false,
-                                                     simConfig.getName());
+                        ProjectManager.saveNetworkStructureXML(project, 
+                                                               networkFile,
+                                                               false,
+                                                               false,
+                                                               simConfig.getName(),
+                                                               NetworkMLConstants.UNITS_PHYSIOLOGICAL);
                     }
                     catch (NeuroMLException ex1)
                     {
@@ -243,7 +245,9 @@ public class NeuronFileManager
                     File networkFile = new File(dirForNeuronFiles, NetworkMLConstants.DEFAULT_NETWORKML_FILENAME_HDF5);
                     try
                     {
-                        NetworkMLWriter.createNetworkMLH5file(networkFile, project);
+                        NetworkMLWriter.createNetworkMLH5file(networkFile, 
+                                                              project,
+                                                              NetworkMLConstants.UNITS_PHYSIOLOGICAL);
                     }
                     catch (Hdf5Exception ex1)
                     {

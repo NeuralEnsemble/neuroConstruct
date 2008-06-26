@@ -236,6 +236,37 @@ public class GeneratedCellPositions
         }
         return sb.toString();
     }
+    
+    
+    public String toLongString(boolean html)
+    {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("Network contains "+ GeneralUtils.getBold(getNumberPositionRecords()+"", html) +" positions in total"+GeneralUtils.getEndLine(html)+GeneralUtils.getEndLine(html));
+
+        Enumeration keys = myCellGroupPosns.keys();
+
+        while(keys.hasMoreElements())
+        {
+            String cellGroupName = (String)keys.nextElement();
+            ArrayList<PositionRecord> cellGroupArrayList = myCellGroupPosns.get(cellGroupName);
+            
+            sb.append("Cell Group: "+ GeneralUtils.getBold(cellGroupName, html)+" has "+GeneralUtils.getBold(cellGroupArrayList.size()+"", html)
+                      + " cells"+GeneralUtils.getEndLine(html));
+            
+            for (int i = 0; i < cellGroupArrayList.size(); i++)
+            {
+                PositionRecord posRec = cellGroupArrayList.get(i);
+                if (html)
+                    sb.append(posRec.toHtmlString()+GeneralUtils.getEndLine(html));
+                else
+                    sb.append(posRec+GeneralUtils.getEndLine(html));
+
+            }
+            sb.append(GeneralUtils.getEndLine(html));
+        }
+        return sb.toString();
+    }
 
 
     public void saveToFile(File positionFile) throws java.io.IOException

@@ -327,25 +327,33 @@ public class GeneratedNetworkConnections
         return sb.toString();
     }
     
-    public String toNiceString()
+    public String details(boolean html)
     {
         StringBuffer sb = new StringBuffer();
 
-        sb.append("GeneratedNetworkConnections with " 
-                + getNumberSynapticConnections(ANY_NETWORK_CONNECTION) +
-                  " positions in total\n");
+        sb.append("Network has " 
+                + GeneralUtils.getTabbedString(getNumberSynapticConnections(ANY_NETWORK_CONNECTION)+"", "b", html) +
+                  " connections in total"+GeneralUtils.getEndLine(html)+GeneralUtils.getEndLine(html));
 
         Enumeration keys = mySynapticConnectionVectors.keys();
 
         while (keys.hasMoreElements())
         {
             String netConnName = (String) keys.nextElement();
+            
             ArrayList<SingleSynapticConnection> synConns = mySynapticConnectionVectors.get(netConnName);
+            
+            sb.append("Network Connection: "+ GeneralUtils.getBold(netConnName, html) + " has "+
+                    GeneralUtils.getBold(synConns.size()+"", html) +" individual synaptic connections"+GeneralUtils.getEndLine(html));
+            
             for (int i = 0; i < synConns.size(); i++)
             {
-                sb.append(synConns.get(i).toNiceString()+"\n");
+                sb.append("Connection "+i+": "+ synConns.get(i).details(html));
             }
         }
+            
+        sb.append(GeneralUtils.getEndLine(html));
+            
         return sb.toString();
     }
 
@@ -661,18 +669,18 @@ public class GeneratedNetworkConnections
                     
                     synPropsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.SYN_TYPE_ATTR, synProps.getSynapseType()));
                     
-                    
                     //synPropsElement.addChildElement(new SimpleXMLElement(NetworkMLConstants.SYN_TYPE_ELEMENT, synProps.getSynapseType()));
-
 
                     //SimpleXMLElement defValsElement = new SimpleXMLElement(NetworkMLConstants.DEFAULT_VAL_ELEMENT);
                     //synPropsElement.addChildElement(defValsElement);
 
                     synPropsElement.addContent("\n        ");
 
-                    synPropsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INTERNAL_DELAY_ATTR, synProps.getDelayGenerator().getNominalNumber()+""));
+                    synPropsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INTERNAL_DELAY_ATTR, 
+                            (float)UnitConverter.getTime(synProps.getDelayGenerator().getNominalNumber(), UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem) +""));
                     synPropsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.WEIGHT_ATTR, synProps.getWeightsGenerator().getNominalNumber()+""));
-                    synPropsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.THRESHOLD_ATTR, synProps.getThreshold()+""));
+                    synPropsElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.THRESHOLD_ATTR, 
+                            (float)UnitConverter.getVoltage(synProps.getThreshold(), UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem)+""));
 
                     projectionElement.addChildElement(synPropsElement);
                 }
@@ -773,6 +781,7 @@ public class GeneratedNetworkConnections
                         }
                     }
 
+                    //UnitConverter.getTime(XXX, UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem)
 
                     if (synConn.props!=null && synConn.props.size()>0)
                     {
@@ -788,9 +797,15 @@ public class GeneratedNetworkConnections
                                 propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.SYN_TYPE_ATTR, prop.synapseType));
 
                             }
-                            propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.PROP_DELAY_ATTR, synConn.apPropDelay + ""));
+                            propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.PROP_DELAY_ATTR, 
+                                    (float)UnitConverter.getTime(synConn.apPropDelay, UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem) + ""));
 
-                            propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INTERNAL_DELAY_ATTR, prop.internalDelay+""));
+                            System.out.println("..."+prop.internalDelay);
+                            System.out.println("..."+(float)UnitConverter.getTime(prop.internalDelay, UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem));
+                                    
+                            propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INTERNAL_DELAY_ATTR, 
+                                    (float)UnitConverter.getTime(prop.internalDelay, UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem)+""));
+                            
                             propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.WEIGHT_ATTR, prop.weight+""));
                         }
                     }
@@ -803,7 +818,7 @@ public class GeneratedNetworkConnections
                             connElement.addChildElement(propElement);
 
                             propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.PROP_DELAY_ATTR,
-                                synConn.apPropDelay + ""));
+                                (float)UnitConverter.getTime(synConn.apPropDelay, UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem) + ""));
                         }
                     }
 
@@ -997,6 +1012,34 @@ public class GeneratedNetworkConnections
             }
             return sb.toString();
         }
+        
+        public String details(boolean html)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            String indent = "    ";
+            if (html) indent = "&nbsp;&nbsp;&nbsp;&nbsp;";
+        
+            sb.append("Cell: "
+                      + GeneralUtils.getBold( sourceEndPoint.cellNumber, html) + ", seg: "
+                      + GeneralUtils.getBold( sourceEndPoint.location.getSegmentId(), html) + ", fract: "
+                      + GeneralUtils.getBold( sourceEndPoint.location.getFractAlong(), html) + " -> Cell: "
+                      + GeneralUtils.getBold( targetEndPoint.cellNumber, html) + ", seg: "
+                      + GeneralUtils.getBold( targetEndPoint.location.getSegmentId(), html) + ", fract: "
+                      + GeneralUtils.getBold( targetEndPoint.location.getFractAlong(), html) + ", prop delay: "
+                      + GeneralUtils.getBold( apPropDelay, html) + ", conn type: "
+                      + GeneralUtils.getBold( connectionType, html)+GeneralUtils.getEndLine(html));
+
+            if (props!=null)
+            {
+             for (ConnSpecificProps prop:props)
+             {
+                 sb.append(indent+prop.details(html)+GeneralUtils.getEndLine(html));
+             }
+            }
+            return sb.toString();
+        }
+        
         
         public String toNiceString()
         {
