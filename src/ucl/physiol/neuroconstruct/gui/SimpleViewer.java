@@ -18,6 +18,7 @@ import java.io.*;
 import java.net.*;
 import java.awt.event.*;
 import javax.swing.border.*;
+import javax.swing.event.HyperlinkListener;
 import ucl.physiol.neuroconstruct.utils.*;
 
 /**
@@ -315,7 +316,7 @@ public class SimpleViewer extends JDialog
 
         this.setTitle("");
         jEditorPaneMain.setBorder(border1);
-        jEditorPaneMain.setEditable(false);
+        ///////////jEditorPaneMain.setEditable(false);
         jEditorPaneMain.setText("Text...\nText...\nText...\nText...\nText...\nText...\nText...\n");
         borderLayout2.setHgap(10);
         borderLayout2.setVgap(10);
@@ -351,16 +352,16 @@ public class SimpleViewer extends JDialog
     }
 
 
-    public static void showFile(String filename,
+    public static SimpleViewer showFile(String filename,
                                 int fontSize,
                                 boolean standalone,
                                 boolean html,
                                 boolean lineNumbers)
     {
-        showFile(filename, fontSize, standalone, html, (JFrame)null, false,lineNumbers, null, null);
+        return showFile(filename, fontSize, standalone, html, (JFrame)null, false,lineNumbers, null, null);
     }
 
-    public static void showFile(String filename,
+    public static SimpleViewer showFile(String filename,
                                 int fontSize,
                                 boolean standalone,
                                 boolean html,
@@ -388,9 +389,11 @@ public class SimpleViewer extends JDialog
 
         simpleViewer.setLocation( (screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
         simpleViewer.setVisible(true);
+        
+        return simpleViewer;
     }
 
-    public static void showFile(String filename,
+    public static SimpleViewer showFile(String filename,
                                 int fontSize,
                                 boolean standalone,
                                 boolean html,
@@ -417,8 +420,17 @@ public class SimpleViewer extends JDialog
 
         simpleViewer.setLocation( (screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
         simpleViewer.setVisible(true);
+        
+        return simpleViewer;
+        
     }
 
+    
+
+    protected void addHyperlinkListener(HyperlinkListener h)
+    {
+        jEditorPaneMain.addHyperlinkListener(h);
+    }
 
     protected void setContentType(String contentType)
     {
