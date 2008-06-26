@@ -413,6 +413,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JButton jButtonNetConnEdit = new JButton();
     JButton jButtonAnalyseConnLengths = new JButton();
     JButton jButtonAnalyseNumConns = new JButton();
+    
+    
+    JButton jButtonNetworkFullInfo = new JButton();
 
     JButton jButtonAnalyseCellDensities = new JButton();
 
@@ -2021,6 +2024,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelGenerateAnalyseButtons.add(jButtonAnalyseCellDensities, null);
         jPanelGenerateAnalyseButtons.add(jButtonAnalyseNumConns, null);
         jPanelGenerateAnalyseButtons.add(jButtonAnalyseConnLengths, null);
+        jPanelGenerateAnalyseButtons.add(jButtonNetworkFullInfo, null);
 
 
         imageNewProject = new ImageIcon(ucl.physiol.neuroconstruct.gui.MainFrame.class.getResource(
@@ -2770,6 +2774,17 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jButtonAnalyseConns_actionPerformed(e);
             }
         });
+        jButtonNetworkFullInfo.setEnabled(false);
+        jButtonNetworkFullInfo.setText("Full net info");
+        jButtonNetworkFullInfo.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonNetworkFullInfo_actionPerformed(e);
+            }
+        });
+        
+        
         jComboBoxAnalyseNetConn.setEnabled(false);
 
 
@@ -8158,6 +8173,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jComboBoxAnalyseCellGroup.setEnabled(false);
             this.jComboBoxAnalyseNetConn.setEnabled(false);
             this.jButtonAnalyseConnLengths.setEnabled(false);
+            this.jButtonNetworkFullInfo.setEnabled(false);
             this.jButtonAnalyseNumConns.setEnabled(false);
             this.jButtonAnalyseCellDensities.setEnabled(false);
 
@@ -8173,9 +8189,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             this.jButtonGenerateSave.setEnabled(true);
             jButtonGenerateLoad.setEnabled(true);
-        jRadioButtonNMLSaveHDF5.setEnabled(true);
-        jRadioButtonNMLSavePlainText.setEnabled(true);
-        jRadioButtonNMLSaveZipped.setEnabled(true);
+            jRadioButtonNMLSaveHDF5.setEnabled(true);
+            jRadioButtonNMLSavePlainText.setEnabled(true);
+            jRadioButtonNMLSaveZipped.setEnabled(true);
         
             jCheckBoxGenerateExtraNetComments.setEnabled(true);
             ArrayList<String> cellGroupNames = projManager.getCurrentProject().cellGroupsInfo.getAllCellGroupNames();
@@ -8205,6 +8221,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             {
                 this.jComboBoxAnalyseCellGroup.setEnabled(true);
                 this.jButtonAnalyseCellDensities.setEnabled(true);
+                this.jButtonNetworkFullInfo.setEnabled(true);
 
                 if (jComboBoxAnalyseCellGroup.getItemCount()>1 &&
                     jComboBoxAnalyseCellGroup.getSelectedIndex()==0)
@@ -8226,6 +8243,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             {
                 this.jComboBoxAnalyseNetConn.setEnabled(true);
                 this.jButtonAnalyseConnLengths.setEnabled(true);
+                this.jButtonNetworkFullInfo.setEnabled(true);
                 this.jButtonAnalyseNumConns.setEnabled(true);
 
                 jComboBoxAnalyseNetConn.removeAllItems();
@@ -10067,10 +10085,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         JPanel viewPanel = new JPanel();
         final JLabel sizeInfo = new JLabel("");
         final JButton openButton = new JButton("View file");
+        final JButton editButton = new JButton("Edit externally");
 
         viewPanel.add(sizeInfo);
         viewPanel.add(openButton);
+        viewPanel.add(editButton);
         openButton.setEnabled(false);
+        editButton.setEnabled(false);
         addedPanel.add(viewPanel, BorderLayout.SOUTH);
         
         openButton.addActionListener(new java.awt.event.ActionListener()
@@ -10083,6 +10104,44 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     chooser.cancelSelection();
                     //System.out.println("Opening file: "+newFile);
                     SimpleViewer.showFile(newFile.getAbsolutePath(), 12, false, false, false);
+                }
+                
+            }
+        });
+        editButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                File newFile = chooser.getSelectedFile();
+                if (newFile!=null)
+                {
+                    chooser.cancelSelection();
+                    
+                    String editorPath = GeneralProperties.getEditorPath(true);
+
+                    Runtime rt = Runtime.getRuntime();
+
+                    String command = editorPath + " " + newFile.getAbsolutePath()+"";
+
+                    if (GeneralUtils.isWindowsBasedPlatform() && newFile.getAbsolutePath().indexOf(" " )>=0)
+                    {
+                        command = editorPath + " \"" + newFile.getAbsolutePath()+"\"";
+                    }
+
+
+                    logger.logComment("Going to execute command: " + command);
+
+                    try
+                    {
+
+                        rt.exec(command);
+                    }
+                    catch (IOException ex)
+                    {
+                        logger.logError("Error running "+command);
+                    }
+
+                    logger.logComment("Have successfully executed command: " + command);
                 }
                 
             }
@@ -10122,8 +10181,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                         else
                         {
                             openButton.setEnabled(true);
-                            
-                            
+                            editButton.setEnabled(true);
 
                             FileReader fr = null;
 
@@ -10311,21 +10369,27 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             if (jRadioButtonNMLSavePlainText.isSelected())
             {
-                fileSaved = projManager.getCurrentProject().saveNetworkStructureXML(networkFile,
+                fileSaved = ProjectManager.saveNetworkStructureXML(projManager.getCurrentProject(),
+                                                                 networkFile,
                                                                  false,
                                                                  this.jCheckBoxGenerateExtraNetComments.isSelected(),
-                                                                 getSelectedSimConfig().getName());
+                                                                 getSelectedSimConfig().getName(),
+                                                                 NetworkMLConstants.UNITS_PHYSIOLOGICAL);
             }
             else if (jRadioButtonNMLSaveZipped.isSelected())
             {
-                fileSaved = projManager.getCurrentProject().saveNetworkStructureXML(networkFile,
+                fileSaved = ProjectManager.saveNetworkStructureXML(projManager.getCurrentProject(),
+                                                                 networkFile,
                                                                  true,
                                                                  this.jCheckBoxGenerateExtraNetComments.isSelected(),
-                                                                 getSelectedSimConfig().getName());
+                                                                 getSelectedSimConfig().getName(),
+                                                                 NetworkMLConstants.UNITS_PHYSIOLOGICAL);
             }
             else if(jRadioButtonNMLSaveHDF5.isSelected())
             {
-                fileSaved = NetworkMLWriter.createNetworkMLH5file(networkFile, projManager.getCurrentProject());
+                fileSaved = NetworkMLWriter.createNetworkMLH5file(networkFile, 
+                                                                  projManager.getCurrentProject(),
+                                                                  NetworkMLConstants.UNITS_PHYSIOLOGICAL);
             }
         }
         catch (Exception ex1)
@@ -10724,6 +10788,29 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
 
         projManager.doAnalyseLengths(selectedItem);
+    }
+    
+    
+    void jButtonNetworkFullInfo_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("jButtonNetworkFullInfo pressed...");
+        
+        StringBuffer netInfo = new StringBuffer();
+        
+        netInfo.append(projManager.getCurrentProject().generatedCellPositions.toLongString(true));
+        netInfo.append(projManager.getCurrentProject().generatedNetworkConnections.details(true));
+        netInfo.append(projManager.getCurrentProject().generatedElecInputs.details(true));
+        
+        SimpleViewer sv = SimpleViewer.showString(netInfo.toString(),
+                                "Current network info for project: "+ projManager.getCurrentProject().getProjectFileName(),
+                                      12,
+                                      false,
+                                      true);
+        
+        sv.addHyperlinkListener(this);
+        
+        sv.repaint();
+        
     }
 
     void jButtonAnalyseNumConns_actionPerformed(ActionEvent e)
