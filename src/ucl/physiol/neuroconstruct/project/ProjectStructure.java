@@ -13,7 +13,6 @@
 package ucl.physiol.neuroconstruct.project;
 
 import java.io.*;
-import org.junit.Test;
 import ucl.physiol.neuroconstruct.utils.*;
 
 
@@ -27,26 +26,16 @@ import ucl.physiol.neuroconstruct.utils.*;
 
 public class ProjectStructure
 {
-    
-    //private static ClassLogger logger = new ClassLogger("ProjectStructure");
 
 
     static
     {
-        System.out.println("ProjectStructure......");
-        //logger.setThisClassSilent(true);
     }
    
     public ProjectStructure()
     {
-        System.out.println("ProjectStructure()......");
     }
     
-    
-    @Test
-    public void testDummy() {
-        System.out.println("Dummy test....");
-    }
     
     private static final String updateCheckUrl = "http://www.physiol.ucl.ac.uk/research/silver_a/nCinfo/form.php?myversion=";
 
@@ -362,7 +351,6 @@ public class ProjectStructure
 
     public static String getGeneralSettingsFilename()
     {
-        System.out.println("getGeneralSettingsFilename: "+ generalSettingsFilename);
         return generalSettingsFilename;
     }
 
