@@ -400,6 +400,32 @@ public class GeneralUtils
 
         return "<" + tabName + ">" + text + "</" + closingTab + ">";
     }
+    
+    public static String getBold(String text, boolean tabIt)
+    {
+        if (!tabIt) return text;
+
+
+        return "<b>" + text + "</b>";
+    }
+    
+    public static String getBold(int num, boolean tabIt)
+    {
+        if (!tabIt) return num+"";
+
+
+        return "<b>" + num + "</b>";
+    }
+    
+    public static String getBold(float num, boolean tabIt)
+    {
+        if (!tabIt) return num+"";
+
+
+        return "<b>" + num + "</b>";
+    }
+    
+    
     /**
      * Quick way to get either a string in plaintext, or a html coloured string depending on a boolean value
      */
