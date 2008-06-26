@@ -519,6 +519,13 @@ public class UnitConverter
 
     public static double getTime(double value, int fromUnits, int toUnits)
     {
+        // Quick check..
+        if (fromUnits == NEUROCONSTRUCT_UNITS && toUnits == GENESIS_PHYSIOLOGICAL_UNITS)
+            return value;
+        
+        if (toUnits == NEUROCONSTRUCT_UNITS && fromUnits == GENESIS_PHYSIOLOGICAL_UNITS)
+            return value;
+        
         Units oldUnits = timeUnits[fromUnits];
         Units newUnits = timeUnits[toUnits];
         return convert(value, oldUnits, newUnits).getMagnitude();
@@ -527,6 +534,13 @@ public class UnitConverter
 
     public static double getRate(double value, int fromUnits, int toUnits)
     {
+        // Quick check..
+        if (fromUnits == NEUROCONSTRUCT_UNITS && toUnits == GENESIS_PHYSIOLOGICAL_UNITS)
+            return value;
+        
+        if (toUnits == NEUROCONSTRUCT_UNITS && fromUnits == GENESIS_PHYSIOLOGICAL_UNITS)
+            return value;
+        
         Units oldUnits = rateUnits[fromUnits];
         Units newUnits = rateUnits[toUnits];
         return convert(value, oldUnits, newUnits).getMagnitude();
@@ -535,6 +549,13 @@ public class UnitConverter
 
     public static double getVoltage(double value, int fromUnits, int toUnits)
     {
+        // Quick check..
+        if (fromUnits == NEUROCONSTRUCT_UNITS && toUnits == GENESIS_PHYSIOLOGICAL_UNITS)
+            return value;
+        
+        if (toUnits == NEUROCONSTRUCT_UNITS && fromUnits == GENESIS_PHYSIOLOGICAL_UNITS)
+            return value;
+        
         Units oldUnits = voltageUnits[fromUnits];
         Units newUnits = voltageUnits[toUnits];
         return convert(value, oldUnits, newUnits).getMagnitude();
@@ -543,9 +564,7 @@ public class UnitConverter
 
     public static double getDimensionless(double value, int fromUnits, int toUnits)
     {
-        Units oldUnits = dimensionlessUnits[fromUnits];
-        Units newUnits = dimensionlessUnits[toUnits];
-        return convert(value, oldUnits, newUnits).getMagnitude();
+        return value;
     }
 
 
@@ -663,8 +682,6 @@ public class UnitConverter
     private static PhysicalQuantity convert(double value, Units oldUnits, Units newUnits)
     {
         PhysicalQuantity oldPQ = new PhysicalQuantity(value, oldUnits);
-
-
 
         PhysicalQuantity newPQ = null;
 
@@ -798,6 +815,17 @@ public class UnitConverter
         System.out.println("currDens NEURON_UNITS: " + UnitConverter.getCurrentDensity(currDens.getMagnitude(),
             UnitConverter.NEUROCONSTRUCT_UNITS,
             UnitConverter.NEURON_UNITS));*/
+        
+        float curr = 0.2f;
+        System.out.println("curr: "+curr);
+        
+        float curr3 = (float)UnitConverter.getCurrent(curr, UnitConverter.NEUROCONSTRUCT_UNITS, UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS);
+        System.out.println("curr3: "+curr3);
+        
+        float curr2 = (float)UnitConverter.getCurrent(curr3, UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, UnitConverter.NEUROCONSTRUCT_UNITS);
+        System.out.println("curr2: "+curr2);
+        
+        
 
 
     }
