@@ -26,11 +26,11 @@ public class MainTest {
                 ucl.physiol.neuroconstruct.neuroml.NetworkMLReaderTest.class,*/
                 ucl.physiol.neuroconstruct.utils.NumberGeneratorTest.class,
                 ucl.physiol.neuroconstruct.project.ElecInputGeneratorTest.class/*,
-                ucl.physiol.neuroconstruct.neuroml.hdf5.NetworkMLReaderTest.class,
+                ucl.physiol.neuroconstruct.neuroml.hdf5.NetworkMLReaderTest.class*/,
                 ucl.physiol.neuroconstruct.project.ConnSpecificPropsTest.class,
                 ucl.physiol.neuroconstruct.project.ProjectStructureTest.class,
                 ucl.physiol.neuroconstruct.project.ProjectTest.class,
-                ucl.physiol.neuroconstruct.project.MorphBasedConnGeneratorTest.class*/); 
+                ucl.physiol.neuroconstruct.project.MorphBasedConnGeneratorTest.class); 
         
         
         System.out.println("Finished the main nC tests. Was successful: "+r.wasSuccessful());
