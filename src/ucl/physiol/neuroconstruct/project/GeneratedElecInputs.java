@@ -15,7 +15,7 @@ package ucl.physiol.neuroconstruct.project;
 import java.io.*;
 import java.util.*;
 
-//import ucl.physiol.neuroconstruct.gui.*;
+
 import ucl.physiol.neuroconstruct.gui.ClickProjectHelper;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.project.stimulation.*;
@@ -431,25 +431,25 @@ public class GeneratedElecInputs
                     IClamp ic = (IClamp)myElectricalInput;
                     
                     /*todo: remove this when Seq Generators removed!*/
-                    ic.getDelay().reset();
-                    float delay = ic.getDelay().getNumber();
-                    ic.getDuration().reset();
-                    float duration = ic.getDuration().getNumber();      
-                    ic.getAmplitude().reset();
-                    float amp = ic.getAmplitude().getNumber();
+//////                    ic.getDelay().reset();
+//////                    float delay = ic.getDelay().getNumber();
+//////                    ic.getDuration().reset();
+//////                    float duration = ic.getDuration().getNumber();      
+//////                    ic.getAmplitude().reset();
+//////                    float amp = ic.getAmplitude().getNumber();
                             
-                    SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.PULSEINPUT_ELEMENT);
-
-                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DELAY_ATTR, 
-                            UnitConverter.getTime(delay, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
-                    
-                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DUR_ATTR, 
-                            UnitConverter.getTime(duration, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
-                    
-                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_AMP_ATTR, 
-                            UnitConverter.getCurrent(amp, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
-                    
-                    inputElement.addChildElement(inputTypeElement);
+//////                    SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.PULSEINPUT_ELEMENT);
+//////
+//////                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DELAY_ATTR, 
+//////                            UnitConverter.getTime(delay, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+//////                    
+//////                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DUR_ATTR, 
+//////                            UnitConverter.getTime(duration, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+//////                    
+//////                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_AMP_ATTR, 
+//////                            UnitConverter.getCurrent(amp, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+//////                    
+//////                    inputElement.addChildElement(inputTypeElement);
                     inputElement.addContent("\n        ");
                 }
                 else if (myElectricalInput instanceof RandomSpikeTrain)

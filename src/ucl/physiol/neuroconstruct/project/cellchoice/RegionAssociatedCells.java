@@ -53,7 +53,24 @@ public class RegionAssociatedCells extends CellChooser
 
         parameterList[0] = new InternalStringFloatParameter(REGION_NAME,
                                                             REGION_NAME_DESC,
-                                                            "Region_1");
+                                                            "SampleRegion");
+
+        parameterList[1] = new InternalStringFloatParameter(INSIDE_OR_OUT,
+                                                            INSIDE_OR_OUT_DESC,
+                                                            0);
+
+        parameterList[1].setAcceptableParameterValues(new Object[]{new Float(0),new Float(1)});
+
+    }
+    public RegionAssociatedCells(String region)
+    {
+        super("Cell Chooser which picks all cells inside (or outside) a specific 3D region");
+
+        parameterList = new InternalStringFloatParameter[2];
+
+        parameterList[0] = new InternalStringFloatParameter(REGION_NAME,
+                                                            REGION_NAME_DESC,
+                                                            region);
 
         parameterList[1] = new InternalStringFloatParameter(INSIDE_OR_OUT,
                                                             INSIDE_OR_OUT_DESC,

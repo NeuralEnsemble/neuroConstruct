@@ -385,7 +385,7 @@ public class GenesisFileManager
 
                     IClampSettings iClamp = (IClampSettings) project.elecInputInfo.getStim(allStims.get(k));
 
-                    double current = UnitConverter.getCurrent(iClamp.getAmplitude().getStart(),
+                    double current = UnitConverter.getCurrent(iClamp.getAmp().getNextNumber(),
                                                               UnitConverter.NEUROCONSTRUCT_UNITS,
                                                               project.genesisSettings.getUnitSystemToUse());
 
@@ -403,9 +403,9 @@ public class GenesisFileManager
                     response.append("setfield ^ level1 "
                                     + current
                                     + " width1 "
-                                    + convertNeuroConstructTime(iClamp.getDuration().getStart())
+                                    + convertNeuroConstructTime(iClamp.getDur().getNextNumber())
                                     + " delay1 "
-                                    + convertNeuroConstructTime(iClamp.getDelay().getStart() - project.simulationParameters.getDt())
+                                    + convertNeuroConstructTime(iClamp.getDel().getNextNumber() - project.simulationParameters.getDt())
                                     + " delay2 "
                                     + convertNeuroConstructTime(recurDelay)
                                     + "  \n");

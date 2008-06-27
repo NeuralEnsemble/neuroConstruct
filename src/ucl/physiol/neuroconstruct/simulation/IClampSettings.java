@@ -14,6 +14,7 @@ package ucl.physiol.neuroconstruct.simulation;
 
 import ucl.physiol.neuroconstruct.project.stimulation.*;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
+import ucl.physiol.neuroconstruct.utils.NumberGenerator;
 import ucl.physiol.neuroconstruct.utils.SequenceGenerator;
 
 
@@ -56,9 +57,9 @@ public class IClampSettings extends StimulationSettings
                           String cellGroup,
                           CellChooser cellChooser,
                           int segmentID,
-                          SequenceGenerator delay,
-                          SequenceGenerator duration,
-                          SequenceGenerator amplitude,
+                          NumberGenerator delay,
+                          NumberGenerator duration,
+                          NumberGenerator amplitude,
                           boolean repeat)
     {
         super(reference, cellGroup, cellChooser, segmentID);
@@ -78,9 +79,9 @@ public class IClampSettings extends StimulationSettings
                                  this.cellGroup,
                                  (CellChooser)this.cellChooser.clone(),
                                  this.segmentID,
-                                 iclampClone.getDelay(),
-                                 iclampClone.getDuration(),
-                                 iclampClone.getAmplitude(),
+                                 iclampClone.getDel(),
+                                 iclampClone.getDur(),
+                                 iclampClone.getAmp(),
                                  iclampClone.isRepeat());
         
         return ics;
@@ -92,11 +93,8 @@ public class IClampSettings extends StimulationSettings
         return iclamp;
     };
 
-    public SequenceGenerator getAmplitude()
-    {
-        return iclamp.getAmplitude();
-    }
 
+    /*
     public void setAmplitude(SequenceGenerator amplitude)
     {
         iclamp.setAmplitude(amplitude);
@@ -110,8 +108,40 @@ public class IClampSettings extends StimulationSettings
     public void setDelay(SequenceGenerator del)
     {
         iclamp.setDelay(del);
+    }*/
+    
+    public void setAmp(NumberGenerator amplitude)
+    {
+        iclamp.setAmp(amplitude);
     }
 
+    public void setDur(NumberGenerator dur)
+    {
+        iclamp.setDur(dur);
+    }
+
+    public void setDel(NumberGenerator del)
+    {
+        iclamp.setDel(del);
+    }
+
+    
+    
+    public NumberGenerator getDur()
+    {
+        return iclamp.getDur();
+    }
+    public NumberGenerator getDel()
+    {
+        return iclamp.getDel();
+    }
+    public NumberGenerator getAmp()
+    {
+        return iclamp.getAmp();
+    }
+    
+    
+    
 
     public boolean isRepeat()
     {
@@ -125,11 +155,22 @@ public class IClampSettings extends StimulationSettings
 
 
 
-
+    /// Needed for legacy projects...
     public SequenceGenerator getDuration()
     {
         return iclamp.getDuration();
     }
+    public SequenceGenerator getDelay()
+    {
+        return iclamp.getDelay();
+    }
+    public SequenceGenerator getAmplitude()
+    {
+        return iclamp.getAmplitude();
+    }
+    
+    
+    /*
     public void setAmplitude(float amplitude)
     {
         iclamp.setAmplitude(amplitude);
@@ -138,16 +179,12 @@ public class IClampSettings extends StimulationSettings
     {
         iclamp.setDuration(duration);
     }
-
-
-    public SequenceGenerator getDelay()
-    {
-        return iclamp.getDelay();
-    }
     public void setDelay(float delay)
     {
         iclamp.setDelay(delay);
-    }
+    }*/
+
+
 
 
 

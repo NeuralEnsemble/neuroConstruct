@@ -1536,9 +1536,9 @@ public class NeuronFileManager
                                         fractionAlongSection +
                                         ")\n");
 
-                        response.append(prefix+"    "+stimName + "[" + j + "].del = " + iClamp.getDelay().getStart() + "\n");
-                        response.append(prefix+"    "+stimName + "[" + j + "].dur = " + iClamp.getDuration().getStart() + "\n");
-                        response.append(prefix+"    "+stimName + "[" + j + "].amp = " + iClamp.getAmplitude().getStart() + "\n");
+                        response.append(prefix+"    "+stimName + "[" + j + "].del = " + iClamp.getDel().getNextNumber() + "\n");
+                        response.append(prefix+"    "+stimName + "[" + j + "].dur = " + iClamp.getDur().getNextNumber() + "\n");
+                        response.append(prefix+"    "+stimName + "[" + j + "].amp = " + iClamp.getAmp().getNextNumber() + "\n");
 
                         int repeat = iClamp.isRepeat() ? 1:0;
 

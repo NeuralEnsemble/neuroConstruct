@@ -51,6 +51,17 @@ public class IndividualCells extends CellChooser
                                                             "0");
 
     }
+    
+    public IndividualCells(String list)
+    {
+        super("Cell Chooser which picks a specified comma separated list of cells from the selected Cell Group, e.g. 0 or 0, 2, 3");
+        parameterList = new InternalStringFloatParameter[1];
+
+        parameterList[0] = new InternalStringFloatParameter(LIST_OF_CELLS,
+                                                            LIST_OF_CELLS_DESC,
+                                                            list);
+
+    }
 
 
 

@@ -29,10 +29,6 @@ import ucl.physiol.neuroconstruct.project.InternalStringFloatParameter;
 
 public class PercentageOfCells extends CellChooser
 {
-    private static ClassLogger logger = new ClassLogger("PercentageOfCells");
-
-    //float myPercentage = 110;
-
 
 
     public static final String PERCENTAGE_CELLS = "PercentageCells";
@@ -51,7 +47,21 @@ public class PercentageOfCells extends CellChooser
         parameterList[0] = new InternalStringFloatParameter(PERCENTAGE_CELLS,
                                                             PERCENTAGE_CELLS_DESC,
                                                             50);
+    }
+    
+    public PercentageOfCells(float percentage)
+    {
+        super("Cell Chooser which picks a certain percentage of cells at random from the selected Cell Group");
+        parameterList = new InternalStringFloatParameter[1];
+        
+        if (percentage>100) 
+            percentage = 100;
+        if (percentage<0) 
+            percentage = 0;
 
+        parameterList[0] = new InternalStringFloatParameter(PERCENTAGE_CELLS,
+                                                            PERCENTAGE_CELLS_DESC,
+                                                            percentage);
     }
 
     public String toNiceString()
@@ -134,7 +144,7 @@ public class PercentageOfCells extends CellChooser
 
             for (Integer next: ordered )
             {
-                logger.logComment("next: " + next);
+                 System.out.println("next: " + next);
             }
         }
 

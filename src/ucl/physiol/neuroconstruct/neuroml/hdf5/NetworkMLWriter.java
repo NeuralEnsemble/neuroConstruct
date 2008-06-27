@@ -515,26 +515,26 @@ public class NetworkMLWriter
                         // Get Details of the IClamp attributes
                         
                         /*todo: remove this when Seq Generators removed!*/
-                        ic.getDelay().reset();
-                        String delay = (float)UnitConverter.getTime(ic.getDelay().getNumber(), UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+"";
-                        ic.getDuration().reset();
-                        String duration = (float)UnitConverter.getTime(ic.getDuration().getNumber(), UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+"";
-                        ic.getAmplitude().reset();   
-                        String amp = (float)UnitConverter.getCurrent(ic.getAmplitude().getNumber(), UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+"";
+//////////                        ic.getDelay().reset();
+//////////                        String delay = (float)UnitConverter.getTime(ic.getDelay().getNumber(), UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+"";
+//////////                        ic.getDuration().reset();
+//////////                        String duration = (float)UnitConverter.getTime(ic.getDuration().getNumber(), UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+"";
+//////////                        ic.getAmplitude().reset();   
+//////////                        String amp = (float)UnitConverter.getCurrent(ic.getAmplitude().getNumber(), UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+"";
 
                         //Assign them to the attibutes of the group
 
-                        Attribute cellGroupAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR, cellGroup, h5File);                   
-                        Attribute delayAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_DELAY_ATTR, delay, h5File);                    
-                        Attribute durationAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_DUR_ATTR, duration, h5File);                    
-                        Attribute ampAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_AMP_ATTR, amp, h5File);
+//////                        Attribute cellGroupAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR, cellGroup, h5File);                   
+//////                        Attribute delayAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_DELAY_ATTR, delay, h5File);                    
+//////                        Attribute durationAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_DUR_ATTR, duration, h5File);                    
+//////                        Attribute ampAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_AMP_ATTR, amp, h5File);
 
                         // add them as attributes to the group
 
-                        inputTypeGroup.writeMetadata(cellGroupAttr);
-                        inputTypeGroup.writeMetadata(delayAttr);                    
-                        inputTypeGroup.writeMetadata(durationAttr);
-                        inputTypeGroup.writeMetadata(ampAttr);                    
+//////                        inputTypeGroup.writeMetadata(cellGroupAttr);
+//////                        inputTypeGroup.writeMetadata(delayAttr);                    
+//////                        inputTypeGroup.writeMetadata(durationAttr);
+//////                        inputTypeGroup.writeMetadata(ampAttr);                    
                     }
                     else if (myElectricalInput instanceof RandomSpikeTrain)
                     {

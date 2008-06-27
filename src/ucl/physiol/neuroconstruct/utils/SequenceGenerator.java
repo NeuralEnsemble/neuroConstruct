@@ -51,11 +51,52 @@ public class SequenceGenerator
         this.interval = interval;
     }
     
+    @Override
     public Object clone()
     {
         SequenceGenerator sg = new SequenceGenerator(this.start,this.end,this.interval);
         return sg;
     }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        final SequenceGenerator other = (SequenceGenerator) obj;
+        if (this.start != other.start)
+        {
+            return false;
+        }
+        if (this.end != other.end)
+        {
+            return false;
+        }
+        if (this.interval != other.interval)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 97 * hash + Float.floatToIntBits(this.start);
+        hash = 97 * hash + Float.floatToIntBits(this.end);
+        hash = 97 * hash + Float.floatToIntBits(this.interval);
+        return hash;
+    }
+    
+    
+    
 
     public float getInterval()
     {
@@ -89,6 +130,7 @@ public class SequenceGenerator
 
 
 
+    @Override
     public String toString()
     {
         int num = getNumInSequence();

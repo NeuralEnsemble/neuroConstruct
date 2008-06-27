@@ -541,29 +541,29 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                  
                  try
                  {
-                     currentIClampSettings.getDelay().reset();
-                     float currDelay = currentIClampSettings.getDelay().getNumber();
-                     if (currDelay != currentPulseDelay)
-                     {
-                       GuiUtils.showWarningMessage(logger, "Error, imported delay ("+currentPulseDelay+") for IClamp "+currentInputName+" is different from that currently in the project: "+ ss, null);                
-                     }                 
-
-                     currentIClampSettings.getDuration().reset();
-                     float currDur = currentIClampSettings.getDuration().getNumber();
-                     if (currDur != currentPulseDur)
-                     {
-                       GuiUtils.showWarningMessage(logger, "Error, imported duration ("+currentPulseDur+") for IClamp "+currentInputName+" is different from that currently in the project: "+currDur, null);                
-                     }
-
-                     currentIClampSettings.getAmplitude().reset();
-                     float currAmp = currentIClampSettings.getAmplitude().getNumber();
-
-                     if (currAmp != currentPulseAmp)
-                     {
-                       GuiUtils.showWarningMessage(logger, "Error, the imported amplitude ("+currentPulseAmp+") for IClamp "+currentInputName+" is different from that currently in the project: "+ currAmp, null);                
-                     }
+//////////                     currentIClampSettings.getDelay().reset();
+//////////                     float currDelay = currentIClampSettings.getDelay().getNumber();
+//////////                     if (currDelay != currentPulseDelay)
+//////////                     {
+//////////                       GuiUtils.showWarningMessage(logger, "Error, imported delay ("+currentPulseDelay+") for IClamp "+currentInputName+" is different from that currently in the project: "+ ss, null);                
+//////////                     }                 
+//////////
+//////////                     currentIClampSettings.getDuration().reset();
+//////////                     float currDur = currentIClampSettings.getDuration().getNumber();
+//////////                     if (currDur != currentPulseDur)
+//////////                     {
+//////////                       GuiUtils.showWarningMessage(logger, "Error, imported duration ("+currentPulseDur+") for IClamp "+currentInputName+" is different from that currently in the project: "+currDur, null);                
+//////////                     }
+//////////
+//////////                     currentIClampSettings.getAmplitude().reset();
+//////////                     float currAmp = currentIClampSettings.getAmplitude().getNumber();
+//////////
+//////////                     if (currAmp != currentPulseAmp)
+//////////                     {
+//////////                       GuiUtils.showWarningMessage(logger, "Error, the imported amplitude ("+currentPulseAmp+") for IClamp "+currentInputName+" is different from that currently in the project: "+ currAmp, null);                
+//////////                     }
                 } 
-                catch (EndOfSequenceException ex)
+                catch (Exception ex)
                 {
                     logger.logError("Legacy error getting iclamp params!!");
                 }

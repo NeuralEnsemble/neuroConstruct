@@ -296,6 +296,7 @@ public class RegionsInfo extends AbstractTableModel
     public Region getRegionObject(String regionName)
     {
         int index = vectorNames.indexOf(regionName);
+        if (index<0) return null;
         return vectorRegionObjects.elementAt(index);
     }
 

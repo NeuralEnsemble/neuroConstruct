@@ -47,6 +47,17 @@ public class FixedNumberCells extends CellChooser
                                                             3);
 
     }
+    
+    public FixedNumberCells(int num)
+    {
+        super("Cell Chooser which picks cells at random up to a fixed number in the selected Cell Group");
+        parameterList = new InternalStringFloatParameter[1];
+
+        parameterList[0] = new InternalStringFloatParameter(MAX_NUM_CELLS,
+                                                            MAX_NUM_CELLS_DESC,
+                                                            num);
+
+    }
 
     protected void reinitialise()
     {

@@ -642,7 +642,36 @@ public class StimDialog extends JDialog
     {
         if (jRadioButtonIClamp.isSelected())
         {
-            SequenceGenerator sg1 = tempIClamp.getDelay();
+            
+            NumberGenerator oldNumGenDel = tempIClamp.getDel();
+
+            NumberGenerator newNumGenDel = NumberGeneratorDialog.showDialog(this,
+                                                                         "Delay",
+                                                                         "Please enter the delay before the pulse (ms)", oldNumGenDel);
+            tempIClamp.setDel(newNumGenDel);
+            
+            
+            NumberGenerator oldNumGenDur = tempIClamp.getDur();
+
+            NumberGenerator newNumGenDur = NumberGeneratorDialog.showDialog(this,
+                                                                         "Duration",
+                                                                         "Please enter the duration of the pulse (ms)", oldNumGenDur);
+            tempIClamp.setDur(newNumGenDur);
+            
+            
+            
+            NumberGenerator oldNumGenAmp = tempIClamp.getAmp();
+
+            NumberGenerator newNumGenAmp = NumberGeneratorDialog.showDialog(this,
+                                                                         "Amplitude",
+                                                                         "Please enter the amplitude of the pulse ("+
+                                                     UnitConverter.currentUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+")", oldNumGenAmp);
+            tempIClamp.setAmp(newNumGenAmp);
+            
+            
+            
+            
+ /*           SequenceGenerator sg1 = tempIClamp.getDelay();
 
             SequenceGenerator newSg1 = SequenceGeneratorDialog.showDialog(this,
                                                                           "Please enter the delay before the pulse (ms)",
@@ -673,7 +702,7 @@ public class StimDialog extends JDialog
 
             tempIClamp.setAmplitude(newSg3);
 
-
+*/
 
             Object[] opts = new Object[]{"Pulse once", "Repeat pulse"};
 

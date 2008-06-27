@@ -240,14 +240,14 @@ public class NetworkMLReader  implements NetworkMLnCInfo
            
             try
             { 
-                ic.getDelay().reset();
-                currDelay = ic.getDelay().getNumber();
-                ic.getDuration().reset();
-                currDur = ic.getDuration().getNumber();
-                ic.getAmplitude().reset();
-                currAmp = ic.getAmplitude().getNumber();
+//////////                ic.getDelay().reset();
+//////////                currDelay = ic.getDelay().getNumber();
+//////////                ic.getDuration().reset();
+//////////                currDur = ic.getDuration().getNumber();
+//////////                ic.getAmplitude().reset();
+//////////                currAmp = ic.getAmplitude().getNumber();
             } 
-            catch (EndOfSequenceException ex)
+            catch (Exception ex)
             {
                 logger.logError("Legacy error getting iclamp params!!");
             }

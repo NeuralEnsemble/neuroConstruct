@@ -14,7 +14,6 @@ package ucl.physiol.neuroconstruct.simulation;
 
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
 import ucl.physiol.neuroconstruct.project.stimulation.*;
-import ucl.physiol.neuroconstruct.utils.ClassLogger;
 import ucl.physiol.neuroconstruct.utils.*;
 
 /**

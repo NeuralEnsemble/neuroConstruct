@@ -14,7 +14,6 @@ package ucl.physiol.neuroconstruct.project;
 
 import java.util.*;
 
-import ucl.physiol.neuroconstruct.gui.ClickProjectHelper;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
@@ -86,6 +85,7 @@ public class ElecInputGenerator extends Thread
     }
 
 
+    @Override
     public void run()
     {
         logger.logComment("Running ElecInputGenerator thread...");
@@ -120,9 +120,9 @@ public class ElecInputGenerator extends Thread
             {
                 GuiUtils.showErrorMessage(logger, "The Cell Group specified for the Stimulation: " + nextStim.getReference() +
                                            " does not exist!", null, null);
+                sendGenerationReport(true);
+                return;
 
-
-                 sendGenerationReport(true);
             }
 
             CellChooser cellChooser = nextStim.getCellChooser();
@@ -134,6 +134,15 @@ public class ElecInputGenerator extends Thread
             if (cellChooser instanceof RegionAssociatedCells)
             {
                 RegionAssociatedCells rac = (RegionAssociatedCells)cellChooser;
+                
+                String region = rac.getParameterStringValue(RegionAssociatedCells.REGION_NAME);
+                
+                if (project.regionsInfo.getRegionObject(region)==null)
+                {
+                    GuiUtils.showErrorMessage(logger, "Error. Region: "+region+" specified for electrical input: "+elecInputRef+
+                            " does not exist", null, null);
+                    
+                }
 
                 rac.setProject(project);  // to give info on regions...
             }
