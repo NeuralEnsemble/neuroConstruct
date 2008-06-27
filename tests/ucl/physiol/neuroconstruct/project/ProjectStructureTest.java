@@ -22,19 +22,11 @@ public class ProjectStructureTest {
     public ProjectStructureTest() {
     }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception 
-    {
-        System.out.println("ProjectStructure setUpClass......done");
-    }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
 
     @Before
     public void setUp() {
-        System.out.println("ProjectStructure setUp......");
+        System.out.println("----------------  ProjectStructure setUp......");
     }
 
     @After
@@ -44,7 +36,7 @@ public class ProjectStructureTest {
     
     @Test
     public void testSomeDirs() {
-        System.out.println("testSomeDirs");
+        System.out.println("---  testSomeDirs");
         File cmDir = ProjectStructure.getCMLExamplesDir();
         assertTrue(cmDir.exists());
         

@@ -156,9 +156,6 @@ public class MorphBasedConnGeneratorTest
         
         generate(proj.simConfigInfo.getSimConfig("TestPrePost"));        
         
-        
-        int numInSrc = proj.generatedCellPositions.getNumberInCellGroup(src);
-        
         ConnectivityConditions cc = proj.morphNetworkConnectionsInfo.getConnectivityConditions(nc2);
         
         PrePostAllowedLocs pp = new PrePostAllowedLocs();
@@ -170,10 +167,7 @@ public class MorphBasedConnGeneratorTest
         pp.setAxonsAllowedPost(false);
         pp.setDendritesAllowedPost(false);
         
-        cc.setPrePostAllowedLoc(pp);
-        
-        //proj.morphNetworkConnectionsInfo.setConnectivityConditions(nc2, cc)
-        
+        cc.setPrePostAllowedLoc(pp);        
         
         generate(proj.simConfigInfo.getSimConfig("TestPrePost"));
         

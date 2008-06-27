@@ -22,22 +22,31 @@ public class MainTest {
     {
         System.out.println("Running the main nC tests...");
         
-        Result r = org.junit.runner.JUnitCore.runClasses(/*ucl.physiol.neuroconstruct.cell.CellSuite.class, */
+        Result r = org.junit.runner.JUnitCore.runClasses(/*ucl.physiol.neuroconstruct.cell.CellSuite.class, 
+                ucl.physiol.neuroconstruct.neuroml.NetworkMLReaderTest.class,*/
+                ucl.physiol.neuroconstruct.utils.NumberGeneratorTest.class,
+                ucl.physiol.neuroconstruct.project.ElecInputGeneratorTest.class/*,
+                ucl.physiol.neuroconstruct.neuroml.hdf5.NetworkMLReaderTest.class,
+                ucl.physiol.neuroconstruct.project.ConnSpecificPropsTest.class,
                 ucl.physiol.neuroconstruct.project.ProjectStructureTest.class,
                 ucl.physiol.neuroconstruct.project.ProjectTest.class,
-                ucl.physiol.neuroconstruct.project.MorphBasedConnGeneratorTest.class); 
+                ucl.physiol.neuroconstruct.project.MorphBasedConnGeneratorTest.class*/); 
         
         
         System.out.println("Finished the main nC tests. Was successful: "+r.wasSuccessful());
-       // System.out.println("Failures: "+r.getFailures());
         
-        for (Failure f: r.getFailures())
+        if (!r.wasSuccessful())
         {
-            System.out.println("Failure: "+f.getDescription());
-            System.out.println("Exception: "+f.getMessage());
-            System.out.println("Trace: "+f.getTrace());
+            System.out.println("Number of failures: "+r.getFailures().size());
+
+            for (Failure f: r.getFailures())
+            {
+                System.out.println("Failure: "+f.getDescription());
+                System.out.println("Exception: "+f.getMessage());
+                System.out.println("Trace: "+f.getTrace());
+            }
+
+            if (!r.wasSuccessful()) System.exit(-1);
         }
-        
-        if (!r.wasSuccessful()) System.exit(-1);
     }
 }
