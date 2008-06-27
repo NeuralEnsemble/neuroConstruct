@@ -350,6 +350,7 @@ public class GeneratedNetworkConnections
             {
                 sb.append("Connection "+i+": "+ synConns.get(i).details(html));
             }
+            sb.append(GeneralUtils.getEndLine(html));
         }
             
         sb.append(GeneralUtils.getEndLine(html));
@@ -424,7 +425,7 @@ public class GeneratedNetworkConnections
                     src = project.morphNetworkConnectionsInfo.getSourceCellGroup(netConnName);
                     tgt = project.morphNetworkConnectionsInfo.getTargetCellGroup(netConnName);
                 }
-                else if (project.volBasedConnsInfo.isValidAAConn(netConnName))
+                else if (project.volBasedConnsInfo.isValidVolBasedConn(netConnName))
                 {
                     syns = project.volBasedConnsInfo.getSynapseList(netConnName);
                     src = project.volBasedConnsInfo.getSourceCellGroup(netConnName);
@@ -642,7 +643,7 @@ public class GeneratedNetworkConnections
                     globalSynPropList = project.morphNetworkConnectionsInfo.getSynapseList(netConnName);
                 }
 
-                else if (project.volBasedConnsInfo.isValidAAConn(netConnName))
+                else if (project.volBasedConnsInfo.isValidVolBasedConn(netConnName))
                 {
                     logger.logComment("isValidAAConn..");
                     sourceCellGroup = project.volBasedConnsInfo.getSourceCellGroup(netConnName);

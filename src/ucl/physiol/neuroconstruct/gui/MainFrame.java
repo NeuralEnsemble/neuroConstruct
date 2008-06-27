@@ -2803,7 +2803,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                     if (projManager.getCurrentProject() != null)
                     {
-                        if (projManager.getCurrentProject().volBasedConnsInfo.isValidAAConn(sel))
+                        if (projManager.getCurrentProject().volBasedConnsInfo.isValidVolBasedConn(sel))
                         {
                             jComboBoxAnalyseCellGroup.addItem(projManager.getCurrentProject().volBasedConnsInfo.
                                                               getSourceCellGroup(sel));
@@ -3745,7 +3745,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     jTableNetConns.setRowSelectionInterval(index, index);
                 }
                     
-                if (projManager.getCurrentProject().volBasedConnsInfo.isValidAAConn(instance))
+                if (projManager.getCurrentProject().volBasedConnsInfo.isValidVolBasedConn(instance))
                 {
                     index = projManager.getCurrentProject().volBasedConnsInfo.getAllAAConnNames().indexOf(instance);
                     jTableAAConns.setRowSelectionInterval(index, index);
@@ -5586,7 +5586,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             {
                 String nextNetConn = (String) netConns.next();
                 boolean isNetConn = projManager.getCurrentProject().morphNetworkConnectionsInfo.isValidSimpleNetConn(nextNetConn);
-                boolean isAAConn = projManager.getCurrentProject().volBasedConnsInfo.isValidAAConn(nextNetConn);
+                boolean isAAConn = projManager.getCurrentProject().volBasedConnsInfo.isValidVolBasedConn(nextNetConn);
 
                 if (!(isNetConn||isAAConn))
                 {
@@ -7262,7 +7262,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
              if (isSourceCellGroup) theOtherCellGroup = tgt;
              else theOtherCellGroup = src;
         }
-        else if (projManager.getCurrentProject().volBasedConnsInfo.isValidAAConn(selectedNetConn))
+        else if (projManager.getCurrentProject().volBasedConnsInfo.isValidVolBasedConn(selectedNetConn))
         {
             String src = projManager.getCurrentProject().volBasedConnsInfo.getSourceCellGroup(selectedNetConn);
             String tgt = projManager.getCurrentProject().volBasedConnsInfo.getTargetCellGroup(selectedNetConn);

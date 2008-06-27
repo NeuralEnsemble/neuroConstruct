@@ -25,7 +25,7 @@ import ucl.physiol.neuroconstruct.simulation.IClampSettings;
 import ucl.physiol.neuroconstruct.simulation.RandomSpikeTrainSettings;
 import ucl.physiol.neuroconstruct.simulation.StimulationSettings;
 import ucl.physiol.neuroconstruct.utils.*;
-import ucl.physiol.neuroconstruct.utils.SequenceGenerator.EndOfSequenceException;
+
 import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
 
 /**
@@ -69,6 +69,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
     private long foundRandomSeed = Long.MIN_VALUE;
     private String foundSimConfig = null;
 
+    private ArrayList<ConnSpecificProps> projectConnProps = new ArrayList<ConnSpecificProps>();
     private ArrayList<ConnSpecificProps> globConnProps = new ArrayList<ConnSpecificProps>();
     private ArrayList<ConnSpecificProps> localConnProps = new ArrayList<ConnSpecificProps>();
     
@@ -309,7 +310,30 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
          else if (getCurrentElement().equals(NetworkMLConstants.PROJECTION_ELEMENT))
          {
              this.currentProjection = attributes.getValue(NetworkMLConstants.PROJ_NAME_ATTR);
-             //project.
+             
+             Vector<SynapticProperties> sps = null;
+             
+             if (project.morphNetworkConnectionsInfo.isValidSimpleNetConn(currentProjection))
+                sps = project.morphNetworkConnectionsInfo.getSynapseList(currentProjection);
+             else if (project.volBasedConnsInfo.isValidVolBasedConn(currentProjection))
+                sps = project.volBasedConnsInfo.getSynapseList(currentProjection);
+             
+             for(SynapticProperties sp:sps)
+             {
+                 ConnSpecificProps csp = new ConnSpecificProps(sp.getSynapseType());
+                 if (sp.getDelayGenerator().isTypeFixedNum())
+                     csp.internalDelay = sp.getDelayGenerator().getNextNumber();   
+                 else
+                     csp.internalDelay = Float.NaN;
+                 
+                 if (sp.getWeightsGenerator().isTypeFixedNum())
+                     csp.weight = sp.getWeightsGenerator().getNextNumber();   
+                 else
+                     csp.weight = Float.NaN;
+                 
+                 projectConnProps.add(csp);
+             }
+             
          }
          else if (getCurrentElement().equals(NetworkMLConstants.PRE_CONN_ELEMENT)
              && getAncestorElement(1).equals(NetworkMLConstants.CONNECTION_ELEMENT))
@@ -585,7 +609,8 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              else
              {
                  // get stim frequency for random input and convert to float so it can be added to RandomSpikeStrain
-                 float currentRate = (float)UnitConverter.getRate(Float.parseFloat(attributes.getValue(NetworkMLConstants.RND_STIM_FREQ_ATTR)), inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);;
+                 float currentRate = (float)UnitConverter.getRate(Float.parseFloat(attributes.getValue(NetworkMLConstants.RND_STIM_FREQ_ATTR)), 
+                         inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
                  
                  // noise is not currently in v1.7 so it is set to a standard value of 10
                  // get current noise from inported file
@@ -625,14 +650,23 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              // get fraction along segment of target segment and convert to float so it can be added to SingleElectricalInput in GeneratedInputs
              Float currentFrac = (Float.parseFloat(attributes.getValue(NetworkMLConstants.INPUT_SITE_FRAC_ATTR)));
              
-             SingleElectricalInput currentInput = new SingleElectricalInput(currentInputType, currentCellGroup, currentCellID, currentSegID, currentFrac);
+             SingleElectricalInput currentInput = new SingleElectricalInput(currentInputType, currentCellGroup, currentCellID, currentSegID, currentFrac, null);
              elecInputs.addSingleInput(currentInputName, currentInput);
           }         
     }
     
-    ConnSpecificProps getGlobalSynProps(String synType)
+    private ConnSpecificProps getGlobalSynProps(String synType)
     {
         for(ConnSpecificProps props: globConnProps)
+        {
+            if (props.synapseType.equals(synType))
+                return new ConnSpecificProps(props);
+        }
+        return new ConnSpecificProps(synType);
+    }
+    private ConnSpecificProps getProjSynProps(String synType)
+    {
+        for(ConnSpecificProps props: projectConnProps)
         {
             if (props.synapseType.equals(synType))
                 return new ConnSpecificProps(props);
@@ -686,6 +720,13 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                 connProps.add(props);
             }
             
+            ArrayList<ConnSpecificProps> connPropsToUse = new ArrayList<ConnSpecificProps>();
+            for(ConnSpecificProps cp: connProps)
+            {
+                if (!getProjSynProps(cp.synapseType).equals(cp))
+                    connPropsToUse.add(cp);
+            }
+            
             this.netConns.addSynapticConnection(this.currentProjection,
                     GeneratedNetworkConnections.MORPH_NETWORK_CONNECTION,
                                                 currentSourceCellNumber,
@@ -695,7 +736,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                                                 currentTargetCellSegmentIndex,
                                                 currentTargetCellDisplacement,
                                                 propDelay,
-                                                connProps);
+                                                connPropsToUse);
 
             this.localConnProps = new ArrayList<ConnSpecificProps>();
             localAPDelay = 0;

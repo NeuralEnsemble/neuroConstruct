@@ -14,7 +14,9 @@ package ucl.physiol.neuroconstruct.project;
 
 import java.util.*;
 
+
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
+import ucl.physiol.neuroconstruct.project.stimulation.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 
@@ -156,14 +158,35 @@ public class ElecInputGenerator extends Thread
 
                     logger.logComment("Adding stim to cell number: "+ nextCellNumber);
 
+                    InputInstanceProps ip = null;
+                    
+                    if (nextStim.getElectricalInput() instanceof IClamp)
+                    {
+                        IClamp ic = (IClamp)nextStim.getElectricalInput();
+                        
+                        if (!ic.getDel().isTypeFixedNum() || 
+                            !ic.getDur().isTypeFixedNum() ||
+                            !ic.getAmp().isTypeFixedNum())
+                        {
+                            IClampInstanceProps icip = new IClampInstanceProps();
+                            icip.setDelay(ic.getDel().getNextNumber());
+                            icip.setDuration(ic.getDur().getNextNumber());
+                            icip.setAmplitude(ic.getAmp().getNextNumber());
+                            ip = icip;
+                        }
+                        
+                        
+                    }
 
                     project.generatedElecInputs.addSingleInput(nextStim.getReference(),
                                                                nextStim.getElectricalInput().getType(),
                                                                nextStim.getCellGroup(),
                                                                nextCellNumber,
                                                                nextStim.getSegmentID(),
-                                                               nextStim.getFractionAlong());
-
+                                                               nextStim.getFractionAlong(),
+                                                               ip);
+                    
+                    
 
                 }
             }

@@ -12,6 +12,8 @@
 
 package ucl.physiol.neuroconstruct.project;
 
+
+import ucl.physiol.neuroconstruct.project.stimulation.InputInstanceProps;
 import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
 
@@ -30,6 +32,8 @@ public class SingleElectricalInput
     private int cellNumber = -1;
     private int segmentId = -1;
     private float fractionAlong = 0.5f;
+    
+    private InputInstanceProps instanceProps = null;
 
     private SingleElectricalInput()
     {
@@ -44,7 +48,8 @@ public class SingleElectricalInput
              cellGroup,
              cellNumber,
              0,
-             0.5f);
+             0.5f,
+             null);
 
     }
 
@@ -53,13 +58,15 @@ public class SingleElectricalInput
                                  String cellGroup,
                                  int cellNumber,
                                  int segmentId,
-                                 float fractionAlong)
+                                 float fractionAlong,
+                                 InputInstanceProps instanceProps)
     {
         this.electricalInputType = electricalInputType;
         this.cellGroup = cellGroup;
         this.cellNumber = cellNumber;
         this.segmentId = segmentId;
         this.fractionAlong = fractionAlong;
+        this.instanceProps = instanceProps;
     }
 
     public String getCellGroup()
@@ -80,6 +87,16 @@ public class SingleElectricalInput
     public float getFractionAlong()
     {
         return this.fractionAlong;
+    }
+
+    public InputInstanceProps getInstanceProps()
+    {
+        return instanceProps;
+    }
+
+    public void setInstanceProps(InputInstanceProps instanceProps)
+    {
+        this.instanceProps = instanceProps;
     }
 
     public String getElectricalInputType()
@@ -129,4 +146,11 @@ public class SingleElectricalInput
         fractionAlong = Float.parseFloat(stringForm.substring(stringForm.indexOf(", fractionAlong: ") + 17,
                                                               stringForm.indexOf("]")));
     }
-    }
+    
+    
+    
+    
+    
+}
+
+

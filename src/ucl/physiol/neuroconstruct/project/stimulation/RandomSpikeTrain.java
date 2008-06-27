@@ -36,9 +36,8 @@ public class RandomSpikeTrain extends ElectricalInput
      * they can all have a fixed rate, or a random/gaussian set of rates, etc.
      */
     public NumberGenerator rate = null;
-
-
     public float noise;
+    
     public String synapseType = null;
 
     public RandomSpikeTrain()

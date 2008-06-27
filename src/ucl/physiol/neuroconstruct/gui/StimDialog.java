@@ -291,11 +291,9 @@ public class StimDialog extends JDialog
         String cellType = project.cellGroupsInfo.getCellType(cellGroupToStim);
         Cell cellForSelectedGroup = project.cellManager.getCell(cellType);
 
-
         Segment segToStim = cellForSelectedGroup.getSegmentWithId(chosenSegmentId);
 
         setSegInfo(segToStim);
-
 
     }
 

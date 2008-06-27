@@ -1535,10 +1535,25 @@ public class NeuronFileManager
                         response.append(prefix+"    "+stimName + "[" + j + "] = new "+stimObjectName+"(" +
                                         fractionAlongSection +
                                         ")\n");
+                        
+                        float del = -1, dur = -1, amp = -1;
+                        if (nextInput.getInstanceProps()!=null)
+                        {
+                            IClampInstanceProps icip = (IClampInstanceProps)nextInput.getInstanceProps();
+                            del = icip.getDelay();
+                            dur = icip.getDuration();
+                            amp = icip.getAmplitude();
+                        }
+                        else
+                        {
+                            del = iClamp.getDel().getNominalNumber(); //should be a fixed num generator anyway...
+                            dur = iClamp.getDur().getNominalNumber(); //should be a fixed num generator anyway...
+                            amp = iClamp.getAmp().getNominalNumber(); //should be a fixed num generator anyway...
+                        }
 
-                        response.append(prefix+"    "+stimName + "[" + j + "].del = " + iClamp.getDel().getNextNumber() + "\n");
-                        response.append(prefix+"    "+stimName + "[" + j + "].dur = " + iClamp.getDur().getNextNumber() + "\n");
-                        response.append(prefix+"    "+stimName + "[" + j + "].amp = " + iClamp.getAmp().getNextNumber() + "\n");
+                        response.append(prefix+"    "+stimName + "[" + j + "].del = " + del + "\n");
+                        response.append(prefix+"    "+stimName + "[" + j + "].dur = " + dur + "\n");
+                        response.append(prefix+"    "+stimName + "[" + j + "].amp = " + amp + "\n");
 
                         int repeat = iClamp.isRepeat() ? 1:0;
 
@@ -3106,7 +3121,7 @@ public class NeuronFileManager
                 synPropList = project.morphNetworkConnectionsInfo.getSynapseList(netConnName);
             }
 
-            else if (project.volBasedConnsInfo.isValidAAConn(netConnName))
+            else if (project.volBasedConnsInfo.isValidVolBasedConn(netConnName))
             {
                 sourceCellGroup = project.volBasedConnsInfo.getSourceCellGroup(netConnName);
                 targetCellGroup = project.volBasedConnsInfo.getTargetCellGroup(netConnName);

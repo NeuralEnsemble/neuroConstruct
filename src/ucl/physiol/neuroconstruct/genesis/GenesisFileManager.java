@@ -382,10 +382,27 @@ public class GenesisFileManager
                         cellNum)));
 
                     response.append("create pulsegen " + stimElement + "\n");
-
+                    
                     IClampSettings iClamp = (IClampSettings) project.elecInputInfo.getStim(allStims.get(k));
+                    
+                    float del = -1, dur = -1, amp = -1;
+                    
+                    if (input.getInstanceProps()!=null)
+                    {
+                        IClampInstanceProps icip = (IClampInstanceProps)input.getInstanceProps();
+                        del = icip.getDelay();
+                        dur = icip.getDuration();
+                        amp = icip.getAmplitude();
+                    }
+                    else
+                    {
+                        del = iClamp.getDel().getNominalNumber(); //should be a fixed num generator anyway...
+                        dur = iClamp.getDur().getNominalNumber(); //should be a fixed num generator anyway...
+                        amp = iClamp.getAmp().getNominalNumber(); //should be a fixed num generator anyway...
+                    }
 
-                    double current = UnitConverter.getCurrent(iClamp.getAmp().getNextNumber(),
+
+                    double current = UnitConverter.getCurrent(amp,
                                                               UnitConverter.NEUROCONSTRUCT_UNITS,
                                                               project.genesisSettings.getUnitSystemToUse());
 
@@ -403,9 +420,9 @@ public class GenesisFileManager
                     response.append("setfield ^ level1 "
                                     + current
                                     + " width1 "
-                                    + convertNeuroConstructTime(iClamp.getDur().getNextNumber())
+                                    + convertNeuroConstructTime(dur)
                                     + " delay1 "
-                                    + convertNeuroConstructTime(iClamp.getDel().getNextNumber() - project.simulationParameters.getDt())
+                                    + convertNeuroConstructTime(del - project.simulationParameters.getDt())
                                     + " delay2 "
                                     + convertNeuroConstructTime(recurDelay)
                                     + "  \n");
@@ -535,7 +552,7 @@ public class GenesisFileManager
                 targetCellGroup = project.morphNetworkConnectionsInfo.getTargetCellGroup(netConnName);
                 synPropList = project.morphNetworkConnectionsInfo.getSynapseList(netConnName);
             }
-            else if (project.volBasedConnsInfo.isValidAAConn(netConnName))
+            else if (project.volBasedConnsInfo.isValidVolBasedConn(netConnName))
             {
                 sourceCellGroup = project.volBasedConnsInfo.getSourceCellGroup(netConnName);
                 targetCellGroup = project.volBasedConnsInfo.getTargetCellGroup(netConnName);
@@ -1079,7 +1096,7 @@ public class GenesisFileManager
                             }
                         }
                     }
-                    else if (project.volBasedConnsInfo.isValidAAConn(netConnName))
+                    else if (project.volBasedConnsInfo.isValidVolBasedConn(netConnName))
                     {
                         if (project.volBasedConnsInfo.getTargetCellGroup(netConnName) != null
                             && cellGroupName.equals(project.volBasedConnsInfo.getTargetCellGroup(netConnName)))

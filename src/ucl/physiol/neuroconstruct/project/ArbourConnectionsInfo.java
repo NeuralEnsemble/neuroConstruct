@@ -385,7 +385,7 @@ public class ArbourConnectionsInfo extends AbstractTableModel
     }
 
 
-    public boolean isValidAAConn(String aaConnName)
+    public boolean isValidVolBasedConn(String aaConnName)
     {
         return vectorNames.contains(aaConnName);
     }

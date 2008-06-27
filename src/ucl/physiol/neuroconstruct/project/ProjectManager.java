@@ -343,7 +343,7 @@ public class ProjectManager implements GenerationReport
                 + activeProject.morphNetworkConnectionsInfo.getTargetCellGroup(selectedNetConn) +
                 " conn lengths";
         }
-        else if (activeProject.volBasedConnsInfo.isValidAAConn(selectedNetConn))
+        else if (activeProject.volBasedConnsInfo.isValidVolBasedConn(selectedNetConn))
         {
             plotRef = activeProject.volBasedConnsInfo.getSourceCellGroup(selectedNetConn)+ " to "
                 + activeProject.volBasedConnsInfo.getTargetCellGroup(selectedNetConn) +
@@ -376,7 +376,7 @@ public class ProjectManager implements GenerationReport
 
             }
 
-            else if (activeProject.volBasedConnsInfo.isValidAAConn(selectedNetConn))
+            else if (activeProject.volBasedConnsInfo.isValidVolBasedConn(selectedNetConn))
             {
                 length = CellTopologyHelper.getSynapticEndpointsDistance(
                     activeProject,

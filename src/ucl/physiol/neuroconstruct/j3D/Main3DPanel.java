@@ -430,7 +430,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                     targetCellGroup = project.morphNetworkConnectionsInfo.getTargetCellGroup(netConnName);
                 }
 
-                else if (project.volBasedConnsInfo.isValidAAConn(netConnName))
+                else if (project.volBasedConnsInfo.isValidVolBasedConn(netConnName))
                 {
                     sourceCellGroup = project.volBasedConnsInfo.getSourceCellGroup(netConnName);
                     targetCellGroup = project.volBasedConnsInfo.getTargetCellGroup(netConnName);
@@ -1446,7 +1446,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                             sourceCellGroup = project.morphNetworkConnectionsInfo.getSourceCellGroup(netConnName);
                             targetCellGroup = project.morphNetworkConnectionsInfo.getTargetCellGroup(netConnName);
                         }
-                        else if (project.volBasedConnsInfo.isValidAAConn(netConnName))
+                        else if (project.volBasedConnsInfo.isValidVolBasedConn(netConnName))
                         {
                             sourceCellGroup = project.volBasedConnsInfo.getSourceCellGroup(netConnName);
                             targetCellGroup = project.volBasedConnsInfo.getTargetCellGroup(netConnName);

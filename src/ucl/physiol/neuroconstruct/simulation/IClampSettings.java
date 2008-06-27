@@ -156,14 +156,17 @@ public class IClampSettings extends StimulationSettings
 
 
     /// Needed for legacy projects...
+    @Deprecated
     public SequenceGenerator getDuration()
     {
         return iclamp.getDuration();
     }
+    @Deprecated
     public SequenceGenerator getDelay()
     {
         return iclamp.getDelay();
     }
+    @Deprecated
     public SequenceGenerator getAmplitude()
     {
         return iclamp.getAmplitude();

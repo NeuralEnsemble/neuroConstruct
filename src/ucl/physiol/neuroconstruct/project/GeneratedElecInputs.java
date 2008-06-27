@@ -73,7 +73,8 @@ public class GeneratedElecInputs
                                String cellGroup,
                                int cellNumber,
                                int segmentId,
-                               float fractionAlong)
+                               float fractionAlong,
+                               InputInstanceProps ip)
     {
         if (!myElecInputs.containsKey(inputReference))
         {
@@ -86,7 +87,8 @@ public class GeneratedElecInputs
                                                   cellGroup,
                                                   cellNumber,
                                                   segmentId,
-                                                  fractionAlong));
+                                                  fractionAlong,
+                                                  ip));
     }
 
 
@@ -264,123 +266,30 @@ public class GeneratedElecInputs
 
         Enumeration keys = this.myElecInputs.keys();
 
+        String indent = "    ";
+        if (html) indent = "&nbsp;&nbsp;&nbsp;&nbsp;";
+
         while (keys.hasMoreElements())
         {
             String input = (String) keys.nextElement();
             ArrayList<SingleElectricalInput> singleInputList = myElecInputs.get(input);
             sb.append("Input: "+GeneralUtils.getBold(input, html) + " has " + GeneralUtils.getBold(singleInputList.size(), html)
                       + " entries"+GeneralUtils.getEndLine(html));
-            for (int i = 0; (i < singleInputList.size() && i < 9); i++)
+            for (int i = 0; (i < singleInputList.size()); i++)
             {
-                sb.append("   Input "+i+": "+singleInputList.get(i).details(html)+GeneralUtils.getEndLine(html));
+                sb.append("Input "+i+": "+singleInputList.get(i).details(html)+GeneralUtils.getEndLine(html));
+                if (singleInputList.get(i).getInstanceProps()!=null)
+                {
+                    sb.append(indent+"Input specific properties: "+singleInputList.get(i).getInstanceProps().details(html)+GeneralUtils.getEndLine(html));
+                }
             }
             sb.append(GeneralUtils.getEndLine(html));
 
         }
         return sb.toString();
     }
+
     
-/*
-    public class SingleElectricalInput
-    {
-        private String electricalInputType = null;
-        private String cellGroup = null;
-        private int cellNumber = -1;
-        private int segmentId = -1;
-        private float fractionAlong = 0.5f;
-
-        private SingleElectricalInput()
-        {
-
-        }
-
-        public SingleElectricalInput(String electricalInputType,
-                                     String cellGroup,
-                                     int cellNumber)
-        {
-            this(electricalInputType,
-                 cellGroup,
-                 cellNumber,
-                 0,
-                 0.5f);
-
-        }
-
-
-        public SingleElectricalInput(String electricalInputType,
-                                     String cellGroup,
-                                     int cellNumber,
-                                     int segmentId,
-                                     float fractionAlong)
-        {
-            this.electricalInputType = electricalInputType;
-            this.cellGroup = cellGroup;
-            this.cellNumber = cellNumber;
-            this.segmentId = segmentId;
-            this.fractionAlong = fractionAlong;
-        }
-
-        public String getCellGroup()
-        {
-            return this.cellGroup;
-        }
-
-        public int getCellNumber()
-        {
-            return this.cellNumber;
-        }
-
-        public int getSegmentId()
-        {
-            return this.segmentId;
-        }
-
-        public float getFractionAlong()
-        {
-            return this.fractionAlong;
-        }
-
-        public String getElectricalInputType()
-        {
-            return this.electricalInputType;
-        }
-
-
-
-
-        public String toString()
-        {
-            return "SingleElectricalInput: [Input: "
-                + electricalInputType
-                + ", cellGroup: "
-                + cellGroup
-                + ", cellNumber: "
-                + cellNumber
-                + ", segmentId: "
-                + segmentId
-                + ", fractionAlong: "
-                + fractionAlong
-                + "]";
-        }
-
-        public SingleElectricalInput(String stringForm)
-        {
-            electricalInputType = stringForm.substring(stringForm.indexOf("[Input: ") + 8,
-                                                       stringForm.indexOf(","));
-
-            cellGroup = stringForm.substring(stringForm.indexOf(", cellGroup: ") + 13,
-                                             stringForm.indexOf(", cellNumber: "));
-
-            cellNumber = Integer.parseInt(stringForm.substring(stringForm.indexOf(", cellNumber: ") + 14,
-                                                               stringForm.indexOf(", segmentId: ")));
-
-            segmentId = Integer.parseInt(stringForm.substring(stringForm.indexOf(", segmentId: ") + 13,
-                                                              stringForm.indexOf(", fractionAlong: ")));
-
-            fractionAlong = Float.parseFloat(stringForm.substring(stringForm.indexOf(", fractionAlong: ") + 17,
-                                                                  stringForm.indexOf("]")));
-        }
-    }*/
 
     public SimpleXMLEntity getNetworkMLElement(int unitSystem) throws NeuroMLException
     {
@@ -430,33 +339,30 @@ public class GeneratedElecInputs
                 {
                     IClamp ic = (IClamp)myElectricalInput;
                     
-                    /*todo: remove this when Seq Generators removed!*/
-//////                    ic.getDelay().reset();
-//////                    float delay = ic.getDelay().getNumber();
-//////                    ic.getDuration().reset();
-//////                    float duration = ic.getDuration().getNumber();      
-//////                    ic.getAmplitude().reset();
-//////                    float amp = ic.getAmplitude().getNumber();
+                    float delay = ic.getDel().getNominalNumber();
+                    float duration = ic.getDur().getNominalNumber();     
+                    float amp = ic.getAmp().getNominalNumber();
                             
-//////                    SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.PULSEINPUT_ELEMENT);
-//////
-//////                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DELAY_ATTR, 
-//////                            UnitConverter.getTime(delay, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
-//////                    
-//////                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DUR_ATTR, 
-//////                            UnitConverter.getTime(duration, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
-//////                    
-//////                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_AMP_ATTR, 
-//////                            UnitConverter.getCurrent(amp, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
-//////                    
-//////                    inputElement.addChildElement(inputTypeElement);
+                    SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.PULSEINPUT_ELEMENT);
+
+                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DELAY_ATTR, 
+                            UnitConverter.getTime(delay, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+                    
+                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DUR_ATTR, 
+                            UnitConverter.getTime(duration, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+                    
+                    inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_AMP_ATTR, 
+                            UnitConverter.getCurrent(amp, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+                    
+                    inputElement.addChildElement(inputTypeElement);
+                    
                     inputElement.addContent("\n        ");
                 }
                 else if (myElectricalInput instanceof RandomSpikeTrain)
                 {
                     RandomSpikeTrain rst = (RandomSpikeTrain)myElectricalInput;
                     
-                    float stimFreq = rst.getRate().getFixedNum();
+                    float stimFreq = rst.getRate().getNominalNumber();
                     String stimMech = rst.getSynapseType();
                    
                     SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.RANDOMSTIM_ELEMENT);
@@ -558,9 +464,9 @@ public class GeneratedElecInputs
 
             //IClamp ic = new IClamp(2,3,4, true);
 
-            gei.addSingleInput("Input_0", "IClamp", "cg1", 3, 3, 3);
-            gei.addSingleInput("Input_0", "IClamp", "cg1", 38, 3, 3);
-            gei.addSingleInput("Input_2", "IClamp", "cg3", 3, 38, 39);
+            gei.addSingleInput("Input_0", "IClamp", "cg1", 3, 3, 3, null);
+            gei.addSingleInput("Input_0", "IClamp", "cg1", 38, 3, 3, null);
+            gei.addSingleInput("Input_2", "IClamp", "cg3", 3, 38, 39, null);
 
             System.out.println("Internal info: \n"+ gei.toString()); 
 

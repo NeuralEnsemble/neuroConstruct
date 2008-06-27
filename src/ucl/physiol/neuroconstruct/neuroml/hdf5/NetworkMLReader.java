@@ -143,7 +143,7 @@ public class NetworkMLReader  implements NetworkMLnCInfo
             logger.logComment("Found a projection: "+ name+" from "+ source+" to "+ target);
             
             if (!project.morphNetworkConnectionsInfo.isValidSimpleNetConn(name) &&
-                !project.volBasedConnsInfo.isValidAAConn(name))
+                !project.volBasedConnsInfo.isValidVolBasedConn(name))
             {
                 throw new Hdf5Exception("Error: there is a network connection with name: "+ name+" specified in " +
                         "that file, but no such NetConn exists in the project. Add one to allow import of this file");
@@ -237,20 +237,25 @@ public class NetworkMLReader  implements NetworkMLnCInfo
             
             float currDelay=-1, currDur=-1, currAmp=-1;
             
-           
+           /*
             try
             { 
-//////////                ic.getDelay().reset();
-//////////                currDelay = ic.getDelay().getNumber();
-//////////                ic.getDuration().reset();
-//////////                currDur = ic.getDuration().getNumber();
-//////////                ic.getAmplitude().reset();
-//////////                currAmp = ic.getAmplitude().getNumber();
+                ic.getDelay().reset();
+                currDelay = ic.getDelay().getNumber();
+                ic.getDuration().reset();
+                currDur = ic.getDuration().getNumber();
+                ic.getAmplitude().reset();
+                currAmp = ic.getAmplitude().getNumber();
             } 
             catch (Exception ex)
             {
                 logger.logError("Legacy error getting iclamp params!!");
-            }
+            }*/
+            
+            
+            currDelay = ic.getDel().getNominalNumber();
+            currDur = ic.getDur().getNominalNumber();     
+            currAmp = ic.getAmp().getNominalNumber();
             
             
             if ((!project.elecInputInfo.getStim(inputName).getCellGroup().equals(cellGroup))
@@ -258,7 +263,10 @@ public class NetworkMLReader  implements NetworkMLnCInfo
                    ||(readDuration != currDur)
                    ||(readAmp != currAmp))                    
             {
-                throw new Hdf5Exception("Error: the input properties of the file do not match those in the project for input "+ inputName);
+                throw new Hdf5Exception("Error: the input properties of the file do not match those in the project for input "+ inputName+"" +
+                        "\nreadDelay: "+readDelay+", currDelay: "+currDelay+
+                        "\nreadDuration: "+readDuration+", currDur: "+currDur+
+                        "\nreadAmp: "+readAmp+", currAmp: "+currAmp+", str: "+Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.INPUT_AMP_ATTR));
             }
             currentInput = inputName;
         }
@@ -550,7 +558,13 @@ public class NetworkMLReader  implements NetworkMLnCInfo
                 int cellId = fileCellId.intValue();
                 int segmentId = fileSegmentId.intValue();                
                 
-                SingleElectricalInput singleElectricalInputFromFile = new SingleElectricalInput(electricalInputType,cellGroup,cellId,segmentId,fractionAlong);
+                SingleElectricalInput singleElectricalInputFromFile 
+                        = new SingleElectricalInput(electricalInputType,
+                                                    cellGroup,
+                                                    cellId,
+                                                    segmentId,
+                                                    fractionAlong,
+                                                    null);
                
                 this.project.generatedElecInputs.addSingleInput(currentInput,singleElectricalInputFromFile);
             }
