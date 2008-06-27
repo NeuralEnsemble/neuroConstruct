@@ -22,11 +22,11 @@ public class MainTest {
     {
         System.out.println("Running the main nC tests...");
         
-        Result r = org.junit.runner.JUnitCore.runClasses(/*ucl.physiol.neuroconstruct.cell.CellSuite.class, 
-                ucl.physiol.neuroconstruct.neuroml.NetworkMLReaderTest.class,*/
+        Result r = org.junit.runner.JUnitCore.runClasses(/*ucl.physiol.neuroconstruct.cell.CellSuite.class, */
+                ucl.physiol.neuroconstruct.neuroml.NetworkMLReaderTest.class,
                 ucl.physiol.neuroconstruct.utils.NumberGeneratorTest.class,
-                ucl.physiol.neuroconstruct.project.ElecInputGeneratorTest.class/*,
-                ucl.physiol.neuroconstruct.neuroml.hdf5.NetworkMLReaderTest.class*/,
+                ucl.physiol.neuroconstruct.project.ElecInputGeneratorTest.class,
+                ucl.physiol.neuroconstruct.neuroml.hdf5.NetworkMLReaderTest.class,
                 ucl.physiol.neuroconstruct.project.ConnSpecificPropsTest.class,
                 ucl.physiol.neuroconstruct.project.ProjectStructureTest.class,
                 ucl.physiol.neuroconstruct.project.ProjectTest.class,
