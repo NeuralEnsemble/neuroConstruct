@@ -188,23 +188,17 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export Net
   <void property="allStims"> 
    <void method="add"> 
     <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings"> 
-     <void property="amplitude"> 
-      <void property="end"> 
-       <float>0.2</float> 
-      </void> 
-      <void property="start"> 
+     <void property="amp"> 
+      <void property="fixedNum"> 
        <float>0.2</float> 
       </void> 
      </void> 
      <void property="cellGroup"> 
       <string>SampleCellGroup</string> 
      </void> 
-     <void property="duration"> 
-      <void property="end"> 
-       <float>60.0</float> 
-      </void> 
-      <void property="start"> 
-       <float>60.0</float> 
+     <void property="dur"> 
+      <void property="numberType"> 
+       <int>11</int> 
       </void> 
      </void> 
      <void property="reference"> 
@@ -214,11 +208,8 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export Net
    </void> 
    <void method="add"> 
     <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings"> 
-     <void property="amplitude"> 
-      <void property="end"> 
-       <float>0.2</float> 
-      </void> 
-      <void property="start"> 
+     <void property="amp"> 
+      <void property="fixedNum"> 
        <float>0.2</float> 
       </void> 
      </void> 
@@ -228,12 +219,9 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export Net
      <void property="cellGroup"> 
       <string>SampleCellGroup</string> 
      </void> 
-     <void property="duration"> 
-      <void property="end"> 
-       <float>60.0</float> 
-      </void> 
-      <void property="start"> 
-       <float>60.0</float> 
+     <void property="dur"> 
+      <void property="numberType"> 
+       <int>11</int> 
       </void> 
      </void> 
      <void property="reference"> 
@@ -243,11 +231,8 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export Net
    </void> 
    <void method="add"> 
     <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings"> 
-     <void property="amplitude"> 
-      <void property="end"> 
-       <float>0.2</float> 
-      </void> 
-      <void property="start"> 
+     <void property="amp"> 
+      <void property="fixedNum"> 
        <float>0.2</float> 
       </void> 
      </void> 
@@ -257,12 +242,9 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export Net
      <void property="cellGroup"> 
       <string>SampleCellGroup</string> 
      </void> 
-     <void property="duration"> 
-      <void property="end"> 
-       <float>60.0</float> 
-      </void> 
-      <void property="start"> 
-       <float>60.0</float> 
+     <void property="dur"> 
+      <void property="numberType"> 
+       <int>11</int> 
       </void> 
      </void> 
      <void property="reference"> 
@@ -272,11 +254,8 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export Net
    </void> 
    <void method="add"> 
     <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings"> 
-     <void property="amplitude"> 
-      <void property="end"> 
-       <float>0.2</float> 
-      </void> 
-      <void property="start"> 
+     <void property="amp"> 
+      <void property="fixedNum"> 
        <float>0.2</float> 
       </void> 
      </void> 
@@ -294,12 +273,9 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export Net
      <void property="cellGroup"> 
       <string>SampleCellGroup</string> 
      </void> 
-     <void property="duration"> 
-      <void property="end"> 
-       <float>60.0</float> 
-      </void> 
-      <void property="start"> 
-       <float>60.0</float> 
+     <void property="dur"> 
+      <void property="numberType"> 
+       <int>11</int> 
       </void> 
      </void> 
      <void property="reference"> 
@@ -309,11 +285,8 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export Net
    </void> 
    <void method="add"> 
     <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings"> 
-     <void property="amplitude"> 
-      <void property="end"> 
-       <float>0.2</float> 
-      </void> 
-      <void property="start"> 
+     <void property="amp"> 
+      <void property="fixedNum"> 
        <float>0.2</float> 
       </void> 
      </void> 
@@ -323,9 +296,6 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export Net
         <void id="InternalStringFloatParameter0" index="0"> 
          <void property="defaultValue"> 
           <float>NaN</float> 
-         </void> 
-         <void property="stringValue"> 
-          <string>SampleRegion</string> 
          </void> 
          <void property="value"> 
           <float>NaN</float> 
@@ -340,12 +310,9 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export Net
      <void property="cellGroup"> 
       <string>SampleCellGroup</string> 
      </void> 
-     <void property="duration"> 
-      <void property="end"> 
-       <float>60.0</float> 
-      </void> 
-      <void property="start"> 
-       <float>60.0</float> 
+     <void property="dur"> 
+      <void property="numberType"> 
+       <int>11</int> 
       </void> 
      </void> 
      <void property="reference"> 
