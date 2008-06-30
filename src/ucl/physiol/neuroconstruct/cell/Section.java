@@ -189,6 +189,33 @@ public class Section implements Serializable
     {
         this.startPointPosition.z = val;
     }
+    
+    
+    
+    public void setStartPointPositionX(float val, boolean round)
+    {
+        if (round) 
+            val = Segment.round(val);
+        this.startPointPosition.x = val;
+    }
+
+    public void setStartPointPositionY(float val, boolean round)
+    {
+        if (round) 
+            val = Segment.round(val);
+        this.startPointPosition.y = val;
+    }
+
+    public void setStartPointPositionZ(float val, boolean round)
+    {
+        if (round) 
+            val = Segment.round(val);
+        this.startPointPosition.z = val;
+    }
+    
+    
+    
+    
 
     public float getStartPointPositionX()
     {

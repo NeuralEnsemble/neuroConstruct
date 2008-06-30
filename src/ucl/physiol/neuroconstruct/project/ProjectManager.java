@@ -1293,7 +1293,7 @@ public class ProjectManager implements GenerationReport
         
         if (activeProject == null)
         {
-            logger.logError("No project loaded...");
+            logger.logError("No project loaded...", true);
             return;
         }
         currentSeed = randomSeed;

@@ -72,9 +72,10 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
     private final String defaultAnalyse = "-- Select: --";
     private final String analyseSpiking =  "Pop Spiking Rate";
     private final String popSpikingHisto = "Pop Spiking histogram";
-    private final String popRaster = "Population rasterplot";
+    private final String popRaster =      "Population rasterplot";
     private final String popISIHisto = "Pop ISI histogram";
     private final String crossCorrel = "Selected cell synchrony";
+    private final String vSimpFieldPot = "Very simple field potential";
 
     private Canvas3D myCanvas3D = null;
 
@@ -1113,6 +1114,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         jComboBoxAnalyse.addItem(popRaster);
         jComboBoxAnalyse.addItem(popISIHisto);
         jComboBoxAnalyse.addItem(crossCorrel);
+        jComboBoxAnalyse.addItem(vSimpFieldPot);
 
 
         jComboBoxAnalyse.setSelectedItem(defaultAnalyse);
@@ -2598,9 +2600,15 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
             }
             catch (SimulationDataException ex)
             {
-                GuiUtils.showErrorMessage(logger, "Problem analysing the cell synchrony of taht cell", ex, this);
+                GuiUtils.showErrorMessage(logger, "Problem analysing the cell synchrony of that cell", ex, this);
                 return;
             }
+            jComboBoxAnalyse.setSelectedItem(defaultAnalyse);
+        }
+        else if (selected.equals(vSimpFieldPot))
+        {
+            this.doVerySimpFieldPot();
+          
             jComboBoxAnalyse.setSelectedItem(defaultAnalyse);
         }
 
@@ -3370,6 +3378,13 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
     }
 
+    private void doVerySimpFieldPot()
+    {
+        FieldPotentialFrame fpf = new FieldPotentialFrame(project, simRerunFrame.getSimulationData(), false);
+
+        GuiUtils.centreWindow(fpf);
+        fpf.setVisible(true);
+    }
 
 
     private void doCrossCorrel()   throws SimulationDataException

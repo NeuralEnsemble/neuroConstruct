@@ -1650,6 +1650,11 @@ public class SimulationRerunFrame extends JFrame
         return myCurrSimData.getSimulationDirectory();
     }
 
+    public SimulationData getSimulationData()
+    {
+        return this.myCurrSimData;
+    }
+
 
     public String getDateModified()
     {

@@ -51,12 +51,12 @@ public class GuiUtils
         if (logger!=null)
         {
             logger.logError("User being informed of error");
-            logger.logError(errorMessage, t);
+            logger.logError(errorMessage, t, true);
         }
 
         Throwable nextThrowable = t;
         int numLines = 0;
-        int maxLines = 10;
+        int maxLines = 18;
 
         while (nextThrowable !=null)
         {

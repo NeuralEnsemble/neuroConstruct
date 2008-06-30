@@ -7616,7 +7616,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 String linkText = simConfig.getName();
                 String tip = simConfig.getDescription();
                 
-                final String seeAll = "(See all Sim Configs...)";
+                final String seeAll = "(See all "+projManager.getCurrentProject().simConfigInfo.getNumSimConfigs()+" Sim Configs...)";
                 
                 if (leftToDo == 0)
                 {
@@ -7674,7 +7674,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             	
             	if (leftToDo == 0)
             	{
-            		linkText = "(See all Cells...)";
+            		linkText = "(See all "+projManager.getCurrentProject().cellManager.getNumberCellTypes()+" Cells...)";
             		tip = "Click to view list of all Cells";
             	}
             	
@@ -7734,7 +7734,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             	
             	if (leftToDo == 0)
             	{
-            		linkText = "(See all Cell Groups...)";
+            		linkText = "(See all "+projManager.getCurrentProject().cellGroupsInfo.getNumberCellGroups()+" Cell Groups...)";
             		tip = "Click to view list of Cell Groups";
             	}
             	

@@ -751,6 +751,9 @@ public class SegmentSelector extends JFrame implements DocumentListener
     void updateCellWithEnteredInfo()
     {
         if (initialising) return; // ignore any updates triggered during initialisation
+        
+        
+        boolean round = true;
 
         if (editable && currentlyAddressedSegment!=null && shownFields==SEGMENTS_SHOWN)
         {
@@ -898,12 +901,10 @@ public class SegmentSelector extends JFrame implements DocumentListener
                         
                             logger.logComment("Rotate First Seg vecToSecStart after rot: "+vecToSecStart);
                         
-                         // sec.setStartPointPositionX(vecToSecStart.x + vecToOldEnd.x);        // it should rotate about oldendpoint
-                         // sec.setStartPointPositionY(vecToSecStart.y + vecToOldEnd.y);
-                         // sec.setStartPointPositionZ(vecToSecStart.z + vecToOldEnd.z);
-                            sec.setStartPointPositionX(vecToSecStart.x + newEndPoint.x);        // it should rotate about oldendpoint - just the new endpoint for the fist child
-                            sec.setStartPointPositionY(vecToSecStart.y + newEndPoint.y);
-                            sec.setStartPointPositionZ(vecToSecStart.z + newEndPoint.z);                            
+              
+                            sec.setStartPointPositionX(vecToSecStart.x + newEndPoint.x, round);        // it should rotate about oldendpoint - just the new endpoint for the fist child
+                            sec.setStartPointPositionY(vecToSecStart.y + newEndPoint.y, round);
+                            sec.setStartPointPositionZ(vecToSecStart.z + newEndPoint.z, round);                            
                         } 
                         else
                         {
@@ -915,9 +916,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
                         logger.logComment("Child seg vecToOldEnd now: "+vecToOldEnd);
                                                         
                         Vector3f vecToSegEnd = new Vector3f(seg.getEndPointPosition());
-                     // vecToSegEnd.sub(vecToOldEnd);
-                        vecToSegEnd.sub(oldEndPoint);                                           // old endpoint of parent segment
-                     // vecToSegEnd.sub(oldStartPoint);
+                        vecToSegEnd.sub(oldEndPoint);        
                         
                         logger.logComment("Rotate vecToSegEnd: "+vecToSegEnd);
                     
@@ -925,12 +924,10 @@ public class SegmentSelector extends JFrame implements DocumentListener
 
                         logger.logComment("Rotate vecToSegEnd after rot: "+vecToSegEnd);
                         
-                     // seg.setEndPointPositionX(vecToSegEnd.x + vecToOldEnd.x);                // absolute poition is point plus vector not vector plus vector
-                     // seg.setEndPointPositionY(vecToSegEnd.y + vecToOldEnd.y);
-                     // seg.setEndPointPositionZ(vecToSegEnd.z + vecToOldEnd.z);
-                        seg.setEndPointPositionX(vecToSegEnd.x + newEndPoint.x);                // add vector to new endpoint of parent segment.
-                        seg.setEndPointPositionY(vecToSegEnd.y + newEndPoint.y);
-                        seg.setEndPointPositionZ(vecToSegEnd.z + newEndPoint.z);
+          
+                        seg.setEndPointPositionX(vecToSegEnd.x + newEndPoint.x, round);                // add vector to new endpoint of parent segment.
+                        seg.setEndPointPositionY(vecToSegEnd.y + newEndPoint.y, round);
+                        seg.setEndPointPositionZ(vecToSegEnd.z + newEndPoint.z, round);
                         
                         logger.logComment("Child seg finally: "+seg);
                     }

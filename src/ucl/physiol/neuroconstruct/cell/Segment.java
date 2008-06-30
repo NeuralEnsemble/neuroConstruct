@@ -38,7 +38,7 @@ public class Segment implements Serializable
     static final long serialVersionUID = 6877533563271791697L;
     
     private transient ClassLogger logger = new ClassLogger("Segment");
-
+    
     /**
      * Name given to Segment, unique within a cell
      */
@@ -106,6 +106,10 @@ public class Segment implements Serializable
     public static int SPHERICAL_SHAPE = 0;
     public static int CYLINDRICAL_SHAPE = 1;
 
+    
+    // Used during rotations etc. to prevent x = 10.00001 etc.
+    private static final float roundingError = 8e-4f;
+    
     /**
      * This needs to be public for XMLEncoder. DON'T USE IT ON ITS OWN!
      */
@@ -503,6 +507,13 @@ public class Segment implements Serializable
             System.out.println("New seg :" + aSeg);
 
             System.out.println("Equals: " + aSeg.fullEquals(cSeg));
+            
+            aSeg.setEndPointPositionX(9.9999999f, true);
+            
+            System.out.println("New seg :" + aSeg);
+            
+            
+            
         }
         catch (Exception ex)
         {
@@ -574,6 +585,44 @@ public class Segment implements Serializable
         //this.edited = true;
         this.endPointPosition.z = val;
     }
+    
+    protected static float round(float val)
+    {
+
+        if (val - Math.floor(val) >= 0 && val - Math.floor(val) < roundingError)
+        {
+            return (float)Math.floor(val);
+        }
+        else if (Math.ceil(val) - val >=0 && Math.ceil(val) - val < roundingError)
+        {
+            return (float)Math.ceil(val);
+        }
+        return val;            
+        
+    }
+    
+    public void setEndPointPositionX(float val, boolean round)
+    {
+        if (round) 
+            val = round(val);
+        this.endPointPosition.x = val;
+    }
+
+    public void setEndPointPositionY(float val, boolean round)
+    {
+        if (round) 
+            val = round(val);
+        this.endPointPosition.y = val;
+    }
+
+    public void setEndPointPositionZ(float val, boolean round)
+    {
+        if (round) 
+            val = round(val);
+        this.endPointPosition.z = val;
+    }
+    
+    
 
     public float getEndPointPositionX()
     {
