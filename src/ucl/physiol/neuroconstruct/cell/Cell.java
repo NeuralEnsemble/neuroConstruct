@@ -126,7 +126,7 @@ public class Cell implements Serializable
      */
     public Cell()
     {
-        
+        //logger.setThisClassVerbose(true);
     }
 
 

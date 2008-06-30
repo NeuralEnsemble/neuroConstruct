@@ -37,7 +37,9 @@ public class UncaughtExceptionInfo implements UncaughtExceptionHandler
     {
        String error = "Java error: "+ e.getMessage();
        
-       if (e instanceof OutOfMemoryError)
+       //if (e.get)
+           
+           if (e instanceof OutOfMemoryError)
        {
             String run = GeneralUtils.isWindowsBasedPlatform()?"run.bat":"run.sh";
            
@@ -58,7 +60,7 @@ public class UncaughtExceptionInfo implements UncaughtExceptionHandler
        }
        else
        {
-           logger.logError("Uncaught exception, no GUI warning...\n", e, true);
+           logger.logError("Uncaught exception, no GUI warning...\n"+e.getMessage(), e, true);
        }
       
     }

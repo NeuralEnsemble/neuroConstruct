@@ -46,6 +46,8 @@ public class CellTopologyHelper
 
     public static final String CELL_IS_BIO_VALID = "Cell biophysical parameters are valid.";
 
+    public static final String CELLS_ARE_IDENTICAL = "** Cells are identical **";
+
     static
     {
         // lots of output here, so let's keep it quiet in general
@@ -2744,25 +2746,40 @@ public class CellTopologyHelper
         
         if (segmentsB.size()==segmentsA.size())
         {
-            info.append(GeneralUtils.getColouredString("The numbers of segments in the cells are IDENTICAL", "green", html)+EOL+EOL);
+            info.append(GeneralUtils.getColouredString("The numbers of segments in the cells are IDENTICAL", "green", html)+EOL);
         }
         else
         {
             identical = false;
-            info.append(GeneralUtils.getColouredString("The numbers of segments in the cells are DIFFERENT", "red", html)+ EOL + EOL);
+            info.append(GeneralUtils.getColouredString("The numbers of segments in the cells are DIFFERENT", "red", html)+ EOL );
+            info.append(GeneralUtils.getColouredString(LT+" " + segmentsA.size() + ""+EOL
+                +"> " + segmentsB.size() + EOL + EOL, "red", html));
         }
 
         int minSize = Math.min(segmentsA.size(), segmentsB.size());
+        
+        StringBuilder segCompare = new StringBuilder();
+        
         for (int i = 0; i < minSize; i++)
         {
             if (!segmentsA.get(i).fullEquals(segmentsB.get(i)))
             {
                 identical = false;
-                info.append(GeneralUtils.getColouredString("A segment does not match:"+EOL
+                segCompare.append(GeneralUtils.getColouredString("A segment does not match:"+EOL
                 +LT+" " + segmentsA.get(i) + ""+EOL
                 +"> " + segmentsB.get(i) + EOL + EOL, "red", html));
             }
         }
+        if(segCompare.length()==0)
+        {
+            info.append(GeneralUtils.getColouredString("Compared "+minSize+" segments which were equal in both cells", "green", html)+EOL+EOL);
+        }
+        else
+        {
+            info.append(segCompare.toString());
+        }
+        
+        
         if (segmentsA.size() > minSize)
         {
             info.append(GeneralUtils.getColouredString("There are " + (segmentsA.size() - minSize) + " extra segment(s) in " +
@@ -2770,10 +2787,10 @@ public class CellTopologyHelper
             
             for (int j = minSize; j < segmentsA.size(); j++)
             {
-                info.append(LT+" " + segmentsA.get(j) + EOL);
+                info.append(GeneralUtils.getColouredString(LT+" " + segmentsA.get(j) + EOL, "red", html));
             }
 
-            info.append("\n\n");
+            info.append(EOL);
         }
         if (segmentsB.size() > minSize)
         {
@@ -2782,11 +2799,79 @@ public class CellTopologyHelper
 
             for (int j = minSize; j < segmentsB.size(); j++)
             {
-                info.append(LT+" " + segmentsB.get(j) + EOL);
+                info.append(GeneralUtils.getColouredString("> " +" " + segmentsB.get(j) + EOL, "red", html));
             }
 
             info.append(EOL);
         }
+        
+        
+        ArrayList<Section> secsA = cellA.getAllSections();
+        ArrayList<Section> secsB = cellB.getAllSections();
+        
+        if (secsB.size()==secsA.size())
+        {
+            info.append(GeneralUtils.getColouredString("The numbers of sections in the cells are IDENTICAL ", "green", html)+EOL);
+        }
+        else
+        {
+            identical = false;
+            info.append(GeneralUtils.getColouredString("The numbers of sections in the cells are DIFFERENT", "red", html)+ EOL );
+            info.append(GeneralUtils.getColouredString(LT+" " + secsA.size() + ""+EOL
+                +"> " + secsB.size() + EOL + EOL, "red", html));
+        }
+        
+        minSize = Math.min(secsA.size(), secsB.size());
+        
+        StringBuilder secCompare = new StringBuilder();
+        
+        for (int i = 0; i < minSize; i++)
+        {
+            if (!secsA.get(i).equals(secsB.get(i)))
+            {
+                identical = false;
+                secCompare.append(GeneralUtils.getColouredString("A section does not match:"+EOL
+                +LT+" " + secsA.get(i) + ""+EOL
+                +"> " + secsB.get(i) + EOL + EOL, "red", html));
+            }
+        }
+        if(secCompare.length()==0)
+        {
+            info.append(GeneralUtils.getColouredString("Compared "+minSize+" sections which were equal in both cells", "green", html)+EOL+EOL);
+        }
+        else
+        {
+            info.append(secCompare.toString());
+        }
+        
+        
+        
+        if (secsA.size() > minSize)
+        {
+            info.append(GeneralUtils.getColouredString("There are " + (secsA.size() - minSize) + " extra section(s) in " +
+                        cellA.getInstanceName() + EOL + EOL, "red", html));
+            
+            for (int j = minSize; j < secsA.size(); j++)
+            {
+                info.append(GeneralUtils.getColouredString(LT+" " + secsA.get(j) + EOL, "red", html));
+            }
+
+            info.append(EOL);
+        }
+        if (secsB.size() > minSize)
+        {
+            info.append(GeneralUtils.getColouredString("There are " + (secsB.size() - minSize) + " extra section(s) in " +
+                        cellB.getInstanceName() + EOL + EOL, "red", html));
+
+            for (int j = minSize; j < secsB.size(); j++)
+            {
+                info.append(GeneralUtils.getColouredString("> " +" " + secsB.get(j) + EOL, "red", html));
+            }
+
+            info.append(EOL);
+        }
+        
+        
 
         if (!cellA.getApPropSpeedsVsGroups().equals(cellB.getApPropSpeedsVsGroups()))
         {
@@ -2847,9 +2932,11 @@ public class CellTopologyHelper
         {
             String condDensSymb = UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
         
-            StringBuffer infoB = new StringBuffer();
+            ArrayList<String> infoB = new ArrayList<String>();
+            
             ArrayList<ChannelMechanism> allChanMechsB = cellB.getAllChannelMechanisms(true);
             GeneralUtils.reorderAlphabetically(allChanMechsB, true);
+            
             for (int i = 0; i < allChanMechsB.size(); i++)
             {
                 ChannelMechanism chanMech = allChanMechsB.get(i);
@@ -2859,10 +2946,12 @@ public class CellTopologyHelper
             
                 String descCm = chanMech.getName() + " ("+moreInfo +")";
                 String grpInfo = groupsB.toString();
-                infoB.append("> " +descCm +" is present on "+grpInfo+EOL);
+                //infoB.append("> " +descCm +" is present on "+grpInfo+EOL);
+                infoB.add(descCm +" is present on "+grpInfo);
             }
             
-            StringBuffer infoA = new StringBuffer();
+            ArrayList<String> infoA = new ArrayList<String>();
+            
             ArrayList<ChannelMechanism> allChanMechsA = cellA.getAllChannelMechanisms(true);
             GeneralUtils.reorderAlphabetically(allChanMechsA, true);
             for (int i = 0; i < allChanMechsA.size(); i++)
@@ -2874,21 +2963,39 @@ public class CellTopologyHelper
             
                 String descCm = chanMech.getName() + " ("+moreInfo +")";
                 String grpInfo = groupsA.toString();
-                infoA.append(LT+" " +descCm +" is present on "+grpInfo+EOL);
+                //infoA.append(LT+" " +descCm +" is present on "+grpInfo+EOL);
+                infoA.add(descCm +" is present on "+grpInfo);
             }
             
             identical = false;
+            StringBuffer chanInfo = new StringBuffer();
             
-            info.append(GeneralUtils.getColouredString(chanMechMismatch+EOL
-                + infoA + ""+EOL
-                + infoB + EOL + EOL, "red", html));
+            for(String line: infoA)
+            {
+                if (!infoB.contains(line))
+                    chanInfo.append(GeneralUtils.getColouredString(LT+" "+line+"  ***"+EOL, "red", html));
+                else
+                    chanInfo.append(LT+" "+line+EOL);
+            }
+            chanInfo.append(EOL);
+            
+            for(String line: infoB)
+            {
+                if (!infoA.contains(line))
+                    chanInfo.append(GeneralUtils.getColouredString("> "+line+"  ***"+EOL, "red", html));
+                else
+                    chanInfo.append("> "+line+EOL);                
+            }
+            
+            info.append(GeneralUtils.getColouredString(chanMechMismatch.toString(), "red", html)+EOL
+                + chanInfo + EOL+ EOL);
 
-            info.append("\n\n");
+            
         }
         else
         {
             
-            info.append(GeneralUtils.getColouredString("The numbers of and densities of channel mechanisms are identical", "green", html)+EOL+EOL);
+            info.append(GeneralUtils.getColouredString("The numbers of and densities of channel mechanisms are IDENTICAL", "green", html)+EOL+EOL);
         }
             
 
@@ -2906,7 +3013,7 @@ public class CellTopologyHelper
         }
         else
         {
-            info.append(GeneralUtils.getColouredString("The potential synaptic mechanism locations are identical", "green", html)+EOL+EOL);
+            info.append(GeneralUtils.getColouredString("The potential synaptic mechanism locations are IDENTICAL", "green", html)+EOL+EOL);
         }
 
 
@@ -2971,7 +3078,7 @@ public class CellTopologyHelper
 
         if (identical)
         {
-            info.append(GeneralUtils.getColouredString("Cells are identical", "green", html));
+            info.append(GeneralUtils.getColouredString(CELLS_ARE_IDENTICAL, "green", html));
         }
 
         return info.toString();
