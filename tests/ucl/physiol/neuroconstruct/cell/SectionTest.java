@@ -24,18 +24,16 @@ public class SectionTest {
     }
 
     @Before
-    public void setUp() {
-        System.out.println("Setting up the SectionTest...");
+    public void setUp() 
+    {
+        System.out.println("---------------   setUp() SectionTest");
     }
 
-    @After
-    public void tearDown() {
-        System.out.println("Setting down the SectionTest...");
-    }
     
     
     @Test public void testCloneAndEquals() 
     {
+        System.out.println("---  testCloneAndEquals...");
         Section s = new Section("TestSection");
         s.setComment("bfghdfg");
         s.setNumberInternalDivisions(2);
@@ -48,16 +46,24 @@ public class SectionTest {
         s.addToGroup("fhjghj");
         
         Section s2 = (Section)s.clone();
+        Section s3 = (Section)s.clone();
         
         assertTrue(s.equals(s2));
         assertTrue(s.toString().equals(s2.toString()));
         
         
         assertTrue(s.hashCode() == s2.hashCode());
+        
+        
         s2.setNumberInternalDivisions(s2.getNumberInternalDivisions()*2);
         
         assertFalse(s.hashCode() == s2.hashCode());
-        System.out.println("Done testCloneAndEquals...");
+        
+        s3.addToGroup("BadGroup");
+        
+        assertFalse(s.equals(s3));
+        
+        
         
     }
 
