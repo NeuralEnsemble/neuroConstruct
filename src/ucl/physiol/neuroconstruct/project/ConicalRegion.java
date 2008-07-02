@@ -32,12 +32,13 @@ import java.awt.*;
 
 public class ConicalRegion extends Region
 {
-    ClassLogger logger = new ClassLogger("ConicalRegion");
+    static final long serialVersionUID = -45357457456L;
 
 
     public ConicalRegion()
     {
         this(0,0,0,0,100,0, 50);
+        logger = new ClassLogger("SphericalRegion");
     }
 
     public ConicalRegion(float startx, float starty, float startz, float endx, float endy, float endz, float baseRadius)

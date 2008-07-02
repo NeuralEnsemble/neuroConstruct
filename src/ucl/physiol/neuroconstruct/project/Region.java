@@ -15,6 +15,7 @@ package ucl.physiol.neuroconstruct.project;
 import javax.vecmath.*;
 
 import com.sun.j3d.utils.geometry.*;
+import java.io.Serializable;
 import ucl.physiol.neuroconstruct.utils.*;
 import javax.media.j3d.*;
 import ucl.physiol.neuroconstruct.cell.*;
@@ -28,9 +29,9 @@ import ucl.physiol.neuroconstruct.cell.*;
  *  
  */
 
-public abstract class Region
+public abstract class Region implements Serializable
 {
-    ClassLogger logger = new ClassLogger("Region");
+    static ClassLogger logger = new ClassLogger("Region");
 
     String description = null;
 
@@ -44,6 +45,7 @@ public abstract class Region
         this.description = description;
     }
 
+    @Override
     public abstract boolean equals(Object obj);
 
     protected boolean parametersEqual(Region region)
@@ -104,6 +106,7 @@ public abstract class Region
      *
      * @return A string rep of internal state
      */
+    @Override
     public abstract String toString();
 
 
@@ -128,6 +131,7 @@ public abstract class Region
      * constructor and copying the internal params
      * but that can't be done here since the class is abstract
      */
+    @Override
     public abstract Object clone();
 
 

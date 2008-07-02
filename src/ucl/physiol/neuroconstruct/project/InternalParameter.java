@@ -12,6 +12,8 @@
 
 package ucl.physiol.neuroconstruct.project;
 
+import java.io.Serializable;
+
 
 /**
  * Parameter used for storing internal variables
@@ -21,8 +23,10 @@ package ucl.physiol.neuroconstruct.project;
  */
 
 
-public class InternalParameter
+public class InternalParameter implements Serializable
 {
+    static final long serialVersionUID = -6949393265L;
+    
     public String parameterName;
     public String parameterDescription;
     public float defaultValue;

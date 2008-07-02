@@ -34,6 +34,9 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
 
 public class RectangularBox extends Region
 {
+    
+    static final long serialVersionUID = -2656949393L;
+    
     public static final String X_PARAM = "X";
     public static final String Y_PARAM = "Y";
     public static final String Z_PARAM = "Z";

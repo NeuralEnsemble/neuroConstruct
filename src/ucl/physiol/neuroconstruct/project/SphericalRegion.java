@@ -31,11 +31,14 @@ import java.util.*;
 
 public class SphericalRegion extends Region
 {
-    ClassLogger logger = new ClassLogger("SphericalRegion");
+    static final long serialVersionUID = -5457949393L;
+    
 
     public SphericalRegion(float x, float y, float z, float radius)
     {
         super.setDescription("Sphere");
+        
+        logger = new ClassLogger("SphericalRegion");
 
         parameterList = new InternalParameter[4];
         parameterList[0] = new InternalParameter("X",

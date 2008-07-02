@@ -32,12 +32,13 @@ import java.awt.*;
 
 public class CylindricalRegion extends Region
 {
-    ClassLogger logger = new ClassLogger("CylindricalRegion");
+    static final long serialVersionUID = -646745486L;
 
 
     public CylindricalRegion()
     {
         this(0,0,0,0,100,0, 50);
+        logger = new ClassLogger("CylindricalRegion");
     }
 
     public CylindricalRegion(float startx, float starty, float startz, float endx, float endy, float endz, float radius)

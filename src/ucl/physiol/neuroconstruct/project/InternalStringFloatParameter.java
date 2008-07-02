@@ -20,9 +20,11 @@ package ucl.physiol.neuroconstruct.project;
  *  
  */
 
+@SuppressWarnings("serial")
 
 public class InternalStringFloatParameter extends InternalParameter
 {
+    
     String stringValue = null;
 
     String defaultStringValue = null;

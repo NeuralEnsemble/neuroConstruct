@@ -25,6 +25,8 @@ import java.io.*;
  */
 
 
+@SuppressWarnings("serial")
+
 public class InternalPhysicalParameter extends InternalParameter
 {
     public InternalPhysicalParameter()
