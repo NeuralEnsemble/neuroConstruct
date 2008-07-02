@@ -40,6 +40,8 @@ public interface SimulationInterface
     public void validSimulationLoaded();
 
     public void noSimulationLoaded();
+    
+    public void refreshAll3D();
 
     //public Hashtable getAllCellGroupPopulations();
 

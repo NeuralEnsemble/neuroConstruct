@@ -164,7 +164,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         this.project = project;
 
-        myOneCell3D = new OneCell3D(displayedCell, project);
+        myOneCell3D = new OneCell3D(displayedCell, 0, project);
 
         logger.logComment("Created OneCell3D...");
 
@@ -554,7 +554,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             displayedCell = this.origCell;
         }
 
-        myOneCell3D = new OneCell3D(displayedCell, project);
+        myOneCell3D = new OneCell3D(displayedCell, 0, project);
 
 
 
@@ -930,7 +930,8 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
             for (int j = 0; j < groups.size(); j++)
             {
-                if (groups.elementAt(j).equals(group)) myOneCell3D.setSegmentAppearance(app, nextSegment.getSegmentId());
+                if (groups.elementAt(j).equals(group)) 
+                    myOneCell3D.setSegmentAppearance(app, nextSegment.getSegmentId());
             }
         }
     }

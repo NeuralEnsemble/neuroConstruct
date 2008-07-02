@@ -355,7 +355,6 @@ public class Utils3D
         Appearance app = new Appearance();
 
         app.setCapability(Appearance.ALLOW_MATERIAL_READ);
-        Color3f black = new Color3f(0.1f, 0.1f, 0.1f);
         Color3f objColor = new Color3f(c);
         TransparencyAttributes ta = new TransparencyAttributes();
         ta.setTransparencyMode(TransparencyAttributes.BLENDED);
@@ -370,6 +369,19 @@ public class Utils3D
         app.setMaterial(mat);
 
         return app;
+    }
+    
+    /*
+     * Check if the given appearance is transparent.
+     * TODO: get a quicker way of doing this..
+     */
+    public static boolean isTransparent(Appearance app)
+    {
+        TransparencyAttributes ta = app.getTransparencyAttributes();
+        if (ta.getTransparencyMode()==TransparencyAttributes.BLENDED)
+            return true;
+        else
+            return false;
     }
 
 

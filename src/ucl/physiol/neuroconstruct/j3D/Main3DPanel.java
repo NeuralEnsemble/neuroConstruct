@@ -304,6 +304,9 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         System.gc();
         System.gc();
+        
+        if (slicerFrame!=null)
+            slicerFrame.dispose();
 
         System.out.println("------------     Memory hopefully cleared...");
     }
@@ -893,7 +896,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                     int cellNumber = posRecord.cellNumber;
 
-                    OneCell3D cell3D = new OneCell3D(cell, project);
+                    OneCell3D cell3D = new OneCell3D(cell, i, project);
 
                     String newCellReference = SimulationData.getCellRef(cellGroupName, cellNumber);
 
@@ -1008,7 +1011,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                 jButtonSimInfo_actionPerformed(e);
             }
         });
-        Insets ins = new Insets(2,2,2,2);
+        Insets ins = new Insets(4,4,4,4);
         jButtonFind.setText("0");
         jButtonFind.setMargin(ins);
         jButtonFind.addActionListener(new java.awt.event.ActionListener()
@@ -1581,6 +1584,8 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         }
 
     }
+    
+    
 
 
     @Override
@@ -2228,7 +2233,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
     }
 
-    void refreshAll3D()
+    public void refreshAll3D()
     {
         logger.logComment("Refreshing all 3D: ");
 

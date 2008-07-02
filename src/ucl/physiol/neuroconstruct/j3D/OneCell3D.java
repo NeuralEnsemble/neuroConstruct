@@ -44,6 +44,9 @@ public class OneCell3D
      * The cell to visualise
      */
     private Cell myCell = null;
+    
+    // To help in debugging multiple OneCell3D instances
+    private int myIndex = -1;
 
     /**
      * The main TG relative to which all the segments are placed
@@ -68,8 +71,10 @@ public class OneCell3D
     /**
      * To allow temporary change in Appearance
      */
-    private boolean hasTempAppearance = false;
-    private Appearance cellAppearanceBeforeTempSwitch = null;
+    private Appearance cellAppBeforeTempSwitch = null;
+    private Appearance cellAppDuringTempSwitch = null;
+    
+    float stickScalingToVanish = 0.0001f;
 
     /**
      * Reference to the project, for 3d settings etc
@@ -131,10 +136,11 @@ public class OneCell3D
      * @param cell The Cell to show in 3D
      * @param project the project, containing among other things the 3D settings
      */
-    public OneCell3D(Cell cell, Project project)
+    public OneCell3D(Cell cell, int index, Project project)
     {
         //logger.setThisClassVerbose(true);
         this.myCell = cell;
+        this.myIndex = index;
 
         this.project = project;
 
@@ -527,6 +533,7 @@ public class OneCell3D
 
             stickSegmentGeom.setCapability(LineArray.ALLOW_COLOR_WRITE);
             stickSegmentGeom.setCapability(LineArray.ALLOW_COORDINATE_READ);
+            stickSegmentGeom.setCapability(LineArray.ALLOW_COORDINATE_WRITE);
             stickSegmentGeom.setCapability(LineArray.ALLOW_COUNT_READ);
         }
 
@@ -1141,28 +1148,11 @@ public class OneCell3D
 
 
 
-    ////////Pppppp///
-    /*
-
-        if (segment instanceof GrownSegment)
-        {
-            grownSegmentPrimitives.add(conFru);
-        }
-        else if (segment instanceof Segment)
-        {
-            segmentPrimitives.put(new Integer(segment.getSegmentId()), conFru);
-        }
-*/
 
 
         mainCellTG.addChild(newElementTG);
 
-    //    if(segment.getSegmentLength()> segment.getRadius())
-     //   {
-     //       Utils3D.addSphereAtLocation(endRadius, new Vector3f(segment.getEndPointPosition()), mainCellTG, Color.white);
-     //   }
 
-        // move up to "top" of cylinder
         newElementT3D.mul(shift);
 
         endPointTG = new TransformGroup(newElementT3D);
@@ -1308,12 +1298,14 @@ public class OneCell3D
 
             if (segmentPrimitives.get(segId) != null)
             {
-                //  logger.logComment("Setting the color of the finite vol cylinder of segment: "+index);
+                logger.logComment("Setting the color of the finite vol cylinder of segment: "+segId, true);
                 Primitive segmentShape
                     = segmentPrimitives.get(segId);
+                
                 if (!segmentShape.getAppearance().equals(app))
                 {
-                    segmentShape.setAppearance(app);
+                    Appearance tempApp = Utils3D.getGeneralObjectAppearance(Color.green);
+                    segmentShape.setAppearance(tempApp);
                 }
 
             }
@@ -1336,29 +1328,7 @@ public class OneCell3D
 
     }
 
-/*
-    public void setGrownSegmentAppearance(Appearance app, int index)
-    {
-        logger.logComment("Setting app of grown segment: "+ index);
-        if (showSticks())
-        {
-            Color3f color = new Color3f();
-            app.getMaterial().getDiffuseColor(color);
-            stickGrownSegmentGeom.setColor(index * 2, color);
-            stickGrownSegmentGeom.setColor( (index * 2) + 1, color);
-        }
-        else if (showSomaDiam() || showNeuriteDiam())
-        {
-            Primitive segmentShape = (Primitive) grownSegmentPrimitives.elementAt(index);
-            segmentShape.setAppearance(app);
-        }
 
-        if (wholeCellAppearance != null && !wholeCellAppearance.equals(app))
-        {
-            wholeCellAppearance = null; // since the some is changing
-        }
-    }
-*/
 
     public void setDefaultCellAppearance(Color color)
     {
@@ -1366,84 +1336,20 @@ public class OneCell3D
         currentDefaultSegmentColour = new Color(color.getRed(),color.getGreen(), color.getBlue());
 
         setWholeCellAppearance(getDefaultSegmentApp());
-        cellAppearanceBeforeTempSwitch = null;
+        cellAppBeforeTempSwitch = null;
     }
 
 
     public boolean hasTempAppearance()
     {
-        return hasTempAppearance;
+        return cellAppDuringTempSwitch!=null;
     }
 
 
-    public void resetCellAppearance()
-    {
-        logger.logComment("-------------                Resetting cell app   ");
 
-        if (cellAppearanceBeforeTempSwitch == null || hasTempAppearance == false)
-        {
-            logger.logComment("There wasn't any temp colour, resetting to default: " + currentDefaultSegmentColour);
-            setWholeCellAppearance(getDefaultSegmentApp());
-
-            hasTempAppearance = false;
-
-        }
-        else
-        {
-            logger.logComment("Resetting to colour before temp...: " + cellAppearanceBeforeTempSwitch);
-            setWholeCellAppearance(cellAppearanceBeforeTempSwitch);
-            hasTempAppearance = false;
-        }
-    }
-
-    /**
-     * Quick way to compare appearances, encompassing all the internal colours, etc. used in neuroConstruct
-
-    private boolean approxEqualApps(Appearance a1, Appearance a2)
-    {
-        int tolerance = 2;
-        Color3f c31 = new Color3f();
-        a1.getMaterial().getDiffuseColor(c31);
-        Color3f c32 = new Color3f();
-        a2.getMaterial().getDiffuseColor(c32);
-        Color  c1 = c31.get();
-        Color c2 = c32.get();
-
-
-        if (!(Math.abs(c1.getRed() - c2.getRed())<tolerance &&
-              Math.abs(c1.getGreen() - c2.getGreen())<tolerance &&
-               Math.abs(c1.getBlue() - c2.getBlue())<tolerance)) return false;
-
-        if (a1.getCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_READ) && a1.getTransparencyAttributes()!=null)
-        {
-            if (a2.getCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_READ) &&  a2.getTransparencyAttributes()!=null)
-            {
-                if (a1.getTransparencyAttributes().getTransparency() !=
-                    a2.getTransparencyAttributes().getTransparency())
-                    return false;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        return true;
-
-    }    */
 
     public void setWholeCellAppearance(Appearance app)
     {
-        /*
-        if (wholeCellAppearance != null && approxEqualApps(app, wholeCellAppearance))
-        {
-            //System.out.println("Saving on viz...: ");
-            return; // quicker this way, eh?
-        }
-        else
-        {
-            //System.out.println("NOT Saving on viz...: ");
-        }*/
 
         logger.logComment("Setting appearance of cell with " + segmentPrimitives.size() + " segments: "+ app.hashCode());
 
@@ -1479,15 +1385,75 @@ public class OneCell3D
         wholeCellAppearance = app;
     }
 
-
+    /*
+     * Set a temporary appearance to all segments. Useful for e.g. setting cell transparent
+     */
     public void setTempWholeCellAppearance(Appearance app)
     {
-        hasTempAppearance = true;
+        cellAppDuringTempSwitch = app;
+        
         Primitive primarySomaPrimitive = segmentPrimitives.elements().nextElement();
 
-        cellAppearanceBeforeTempSwitch = primarySomaPrimitive.getAppearance();
+        cellAppBeforeTempSwitch = primarySomaPrimitive.getAppearance();
 
         setWholeCellAppearance(app);
+        
+        if (showSticks() && Utils3D.isTransparent(app))
+        {
+            logger.logComment("Vanishing sticks for "+ myIndex, true);
+            
+            if (stickSegmentGeom!=null)
+            {
+                int numVerts = stickSegmentGeom.getValidVertexCount();
+                for (int i = 0; i < numVerts; i++)
+                {
+                    //TODO: Get a better way to temproarily get rid of the sticks
+                    Point3f p = new Point3f();
+                    stickSegmentGeom.getCoordinate(i, p);
+                    p.scale(stickScalingToVanish);
+                    stickSegmentGeom.setCoordinate(i, p);
+                }
+            }
+        }
+    }
+    
+        public void resetCellAppearance()
+    {
+        logger.logComment("-------------                Resetting cell app   ");
+
+        if (cellAppBeforeTempSwitch == null || cellAppDuringTempSwitch == null)
+        {
+            logger.logComment("There wasn't any temp colour, resetting to default: " + currentDefaultSegmentColour);
+            setWholeCellAppearance(getDefaultSegmentApp());
+
+        }
+        else
+        {
+            logger.logComment("Resetting to colour before temp...: " + cellAppBeforeTempSwitch);
+            setWholeCellAppearance(cellAppBeforeTempSwitch);
+            
+                    
+            if (showSticks() && Utils3D.isTransparent(cellAppDuringTempSwitch))
+            {
+                logger.logComment("Reconstructing sticks for "+ myIndex, true);
+
+                if (stickSegmentGeom!=null)
+                {
+                    int numVerts = stickSegmentGeom.getValidVertexCount();
+                    for (int i = 0; i < numVerts; i++)
+                    {
+                        //TODO: Get a better way to temproarily get rid of the sticks
+                        Point3f p = new Point3f();
+                        stickSegmentGeom.getCoordinate(i, p);
+                        p.scale(1/stickScalingToVanish);
+                        stickSegmentGeom.setCoordinate(i, p);
+                    }
+                }
+            }
+        }
+        
+        cellAppBeforeTempSwitch = null;
+        cellAppDuringTempSwitch = null;
     }
 
 

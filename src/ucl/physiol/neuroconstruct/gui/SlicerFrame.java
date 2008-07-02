@@ -24,6 +24,7 @@ import javax.media.j3d.Appearance;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import javax.swing.event.ChangeEvent;
 import ucl.physiol.neuroconstruct.j3D.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
@@ -55,7 +56,15 @@ public class SlicerFrame extends JFrame
     JPanel jPanelSliderY = new JPanel();
     JPanel jPanelSliderZ = new JPanel();
     
+    JPanel jPanelMoreOptions = new JPanel();
+    JSpinner jSpin = new JSpinner();
+    SpinnerNumberModel spinMod = new SpinnerNumberModel(0.9, 0, 1, 0.005);
+    
+    JLabel jLabelSpin = new JLabel("Transparency");
+    
     JButton jButtonClose = new JButton("Close");
+    JButton jButtonReset = new JButton("Reset");
+    
     JPanel jPanelMain = new JPanel();
     
     JSlider jSliderX1 = new JSlider(0, 100, 100); // inverted...
@@ -87,7 +96,7 @@ public class SlicerFrame extends JFrame
     
     boolean standalone = false;
     
-    Appearance transparent = Utils3D.getTransparentObjectAppearance(Color.white, 0.9f);
+    Appearance transparency = Utils3D.getTransparentObjectAppearance(Color.white, 0.9f);
 
 
     public SlicerFrame(Project project,
@@ -100,6 +109,8 @@ public class SlicerFrame extends JFrame
         logger.setThisClassVerbose(true);
 
         logger.logComment("SlicerFrame created...");
+        
+        this.setTitle("Region slicer");
         
         enclosingBox = project.regionsInfo.getRegionEnclosingAllRegions(project, simConfig); 
         
@@ -152,6 +163,16 @@ public class SlicerFrame extends JFrame
             }
         });
         
+        jPanelButtons.add(jButtonReset);
+        
+        jButtonReset.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                reset();
+            }
+        });
+        
         
         
         jSliderX1.setInverted(true);
@@ -179,7 +200,7 @@ public class SlicerFrame extends JFrame
                 jSlider_mouseReleased(e);
             }
         });
-        jPanelSlider.setLayout(new GridLayout(3,1));
+        jPanelSlider.setLayout(new GridLayout(4,1));
         jPanelSlider.add(jPanelSliderX);
         
         
@@ -244,6 +265,20 @@ public class SlicerFrame extends JFrame
         });
         
         jPanelSlider.add(jPanelSliderZ);
+        
+        jPanelSlider.add(jPanelMoreOptions);
+        jPanelMoreOptions.add(jSpin);
+        jSpin.setModel(spinMod);
+        jSpin.setPreferredSize(new Dimension(56, 30));
+        
+        
+        jSpin.addChangeListener((new javax.swing.event.ChangeListener()
+        {
+            public void stateChanged(ChangeEvent e)
+            {
+                transparency = Utils3D.getTransparentObjectAppearance(Color.white, ((Double)jSpin.getValue()).floatValue());
+            }
+        }));
    
     }
     
@@ -263,8 +298,7 @@ public class SlicerFrame extends JFrame
             int x2 = jSliderX2.getValue();
             fractEndX = fractStartX + ((1-fractStartX) * x2 /100f);
         }
-        
-        if (relSlider.equals(Y1))
+        else if (relSlider.equals(Y1))
         {
             int y1 = 100 - jSliderY1.getValue();
             fractStartY = (fractEndY) * y1 /100f;
@@ -274,8 +308,7 @@ public class SlicerFrame extends JFrame
             int y2 = jSliderY2.getValue();
             fractEndY = fractStartY + ((1-fractStartY) * y2 /100f);
         }
-        
-        if (relSlider.equals(Z1))
+        else if (relSlider.equals(Z1))
         {
             int z1 = 100 - jSliderZ1.getValue();
             fractStartZ = (fractEndZ) * z1 /100f;
@@ -313,7 +346,7 @@ public class SlicerFrame extends JFrame
                      (pos.y_pos<minY || pos.y_pos>maxY) ||
                      (pos.z_pos<minZ || pos.z_pos>maxZ) )
                 {
-                    controlledPanel.setTempAppearance(SimulationData.getCellRef(cg, pos.cellNumber), transparent);
+                    controlledPanel.setTempAppearance(SimulationData.getCellRef(cg, pos.cellNumber), transparency);
                 }
                 else
                 {
@@ -335,6 +368,17 @@ public class SlicerFrame extends JFrame
         else
             dispose();
                 
+    }
+    
+    private void reset()
+    {
+        jSliderX1.setValue(100);
+        jSliderX2.setValue(100);
+        jSliderY1.setValue(100);
+        jSliderY2.setValue(100);
+        jSliderZ1.setValue(100);
+        jSliderZ2.setValue(100);
+        controlledPanel.refreshAll3D();
     }
     
 
@@ -372,7 +416,7 @@ public class SlicerFrame extends JFrame
         }
 
         File simFile = new File(pf.getParentFile(),"simulations/Sim_1" );
-        Main3DPanel m = new Main3DPanel(p, simFile, null);
+        Main3DPanel m = new Main3DPanel(p, simFile, p.simConfigInfo.getDefaultSimConfig());
 
         SlicerFrame simRerun = new SlicerFrame(p, m, p.simConfigInfo.getDefaultSimConfig());
         simRerun.standalone = true;
