@@ -18,6 +18,8 @@ import java.util.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -26,6 +28,8 @@ import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.gui.view2d.*;
+import ucl.physiol.neuroconstruct.project.cellchoice.AllCells;
+import ucl.physiol.neuroconstruct.project.cellchoice.CellChooser;
 import ucl.physiol.neuroconstruct.simulation.SimulationData.DataStore;
 
 /**
@@ -53,8 +57,8 @@ public class SimulationRerunFrame extends JFrame
 
     private Project project = null;
 
-    private String startSimString = "Start Simulation";
-    private String restartSimString = "Restart Simulation";
+    private String startSimString = "Replay Simulation";
+    private String restartSimString = "Restart";
 
 
     private int numTimeSteps = 10;
@@ -64,6 +68,7 @@ public class SimulationRerunFrame extends JFrame
     public static float mostNegValue = -90;
     public static float mostPosValue = 30;
 
+    private long startSim = -1;
 
     public static double smallestFreq = 10;  // 100ms ISI
     public static double largestFreq = 100; // 10ms ISI
@@ -71,7 +76,11 @@ public class SimulationRerunFrame extends JFrame
     private static int VOLTAGE_SHADING = 0;
     private static int ISI_SHADING = 1;
     private static int FREQ_SHADING = 2;
-
+    
+    ArrayList<JCheckBox> cellGroupsCheckBoxes = new ArrayList<JCheckBox>();
+    //ArrayList<CellChooser> cellChooser = new ArrayList<CellChooser>();
+    Hashtable<String, CellChooser> cellGroupsToUse = new Hashtable<String, CellChooser>();
+    
 
     private Hashtable<String, ISIStateInfo> isiInfo = null;
 
@@ -83,12 +92,15 @@ public class SimulationRerunFrame extends JFrame
     private String[] rerunCellItemRefs = null;
 
     ArrayList<String> currentCellItemRefs = null;
+    
+    boolean standalone = false;
 
 
     private SimulationData myCurrSimData = null;
 
     float thresholdForRun = Float.MAX_VALUE;
 
+    private boolean moreShown = false;
 
     JLabel jLabelVars = new JLabel();
     JComboBox jComboBoxVars = new JComboBox();
@@ -152,6 +164,19 @@ public class SimulationRerunFrame extends JFrame
     JLabel jLabelSpikingThresh = new JLabel();
     JCheckBox jCheckBoxActivityMonitors = new JCheckBox();
     JPanel jPanelNumbers = new JPanel();
+    JPanel jPanelExtras = new JPanel();
+    JPanel jPanelMainOptions = new JPanel();
+    JPanel jPanelCellsToUpdate = new JPanel();
+    JPanel jPanelListCellGroups = new JPanel();
+    JPanel jPanelOtherCells = new JPanel();
+    JPanel jPanelShowMore = new JPanel();
+    JButton jButtonShowMore = new JButton(">>");
+    
+    
+    ButtonGroup bgOtherCells = new ButtonGroup();
+    JRadioButton jRadioButtonBlacken = new JRadioButton();
+    JRadioButton jRadioButtonTransp = new JRadioButton();
+    
     JLabel jLabelFramesToSkip = new JLabel();
     JFormattedTextField jTextFieldFramesToSkip = new JFormattedTextField();
 
@@ -161,9 +186,7 @@ public class SimulationRerunFrame extends JFrame
                                 File simulationDir,
                                 SimulationInterface simInf)
     {
-        ///logger.setThisClassSilent(true);
         controlledPanel = simInf;
-
         mySimulationDir = simulationDir;
 
         this.project = project;
@@ -220,14 +243,13 @@ public class SimulationRerunFrame extends JFrame
         border1 = BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(Color.white,new Color(134, 134, 134)),BorderFactory.createEmptyBorder(5,5,5,5));
 
         border2 = BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(Color.white,new Color(134, 134, 134)),BorderFactory.createEmptyBorder(5,5,5,5));
+        
         //////////this.setResizable(false);
         //this.setTitle("Rerun Simulation");
         jPanelMain.setBorder(border1);
-        jPanelMain.setMaximumSize(new Dimension(330, 310));
-        jPanelMain.setMinimumSize(new Dimension(330, 310));
-        jPanelMain.setPreferredSize(new Dimension(330, 310));
+        
         jPanelMain.setRequestFocusEnabled(true);
-        jPanelMain.setLayout(flowLayout2);
+        
         jLabelTimeStep.setRequestFocusEnabled(true);
         jLabelTimeStep.setText("Delay (ms):");
 
@@ -246,11 +268,13 @@ public class SimulationRerunFrame extends JFrame
         jTextFieldSimulationTime.setText("0");
         jTextFieldSimulationTime.setColumns(6);
         jTextFieldSimulationTime.setHorizontalAlignment(SwingConstants.RIGHT);
+        
         jRunSlider.setMajorTickSpacing(20);
 
-        jRunSlider.setMaximumSize(new Dimension(200, 40));
-        jRunSlider.setMinimumSize(new Dimension(200, 40));
-        jRunSlider.setPreferredSize(new Dimension(200, 40));
+        Dimension sd = new Dimension(200, 28);
+        jRunSlider.setMaximumSize(sd);
+        jRunSlider.setMinimumSize(sd);
+        jRunSlider.setPreferredSize(sd);
         jRunSlider.setValue(0);
         jRunSlider.addMouseListener(new java.awt.event.MouseAdapter()
         {
@@ -274,13 +298,14 @@ public class SimulationRerunFrame extends JFrame
 
 
         jPanelRun.setBorder(BorderFactory.createEtchedBorder());
-        jPanelRun.setMaximumSize(new Dimension(300, 90));
-        jPanelRun.setMinimumSize(new Dimension(300, 90));
+        Dimension runDim = new Dimension(300, 76);
+        jPanelRun.setMaximumSize(runDim);
+        jPanelRun.setMinimumSize(runDim);
+        jPanelRun.setPreferredSize(runDim);
         jPanelRun.setOpaque(true);
-        jPanelRun.setPreferredSize(new Dimension(300, 90));
         jPanelRun.setLayout(flowLayout1);
         jButtonStop.setEnabled(false);
-        jButtonStop.setText("Stop Simulation");
+        jButtonStop.setText("Stop");
         jButtonStop.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -312,8 +337,7 @@ public class SimulationRerunFrame extends JFrame
         buttonGroup.add(jRadioButtonISIShading);
 
 
-        //jCheckBoxSpikesOnly.setMaximumSize(new Dimension(130, 28));
-        //jCheckBoxSpikesOnly.setMinimumSize(new Dimension(130, 28));
+        
         this.jRadioButtonContinuous.setText("Continuous shading");
         this.jRadioButtonISIShading.setText("ISI shading");
         this.jRadioButtonSpikesOnly.setText("Spikes Only Threshold:");
@@ -353,11 +377,11 @@ public class SimulationRerunFrame extends JFrame
             this.jTextFieldSpikeThreshold.setEnabled(false);
         jLabelMv.setText("mV");
         jPanelScale.setLayout(borderLayout1);
-        jPanelVars.setMinimumSize(new Dimension(280, 30));
-        jPanelVars.setPreferredSize(new Dimension(280, 30));
-        //jLabelSpikingThresh.setText("Spiking threshold:");
-        //jPanelSpikingInfo.setMinimumSize(new Dimension(137, 28));
-        //jPanelSpikingInfo.setPreferredSize(new Dimension(181, 28));
+        Dimension vd = new Dimension(280, 30);
+        jPanelVars.setMaximumSize(vd);
+        jPanelVars.setMinimumSize(vd);
+        jPanelVars.setPreferredSize(vd);
+        
         flowLayout2.setHgap(2);
         flowLayout2.setVgap(2);
 
@@ -378,19 +402,15 @@ public class SimulationRerunFrame extends JFrame
         jPanelRun.add(jTextFieldSimulationTime, null);
         jPanelRun.add(jButtonStart, null);
         jPanelRun.add(jButtonStop, null);
-        jPanelMain.add(jPanelScale, null);
-
-        jPanelMain.add(jPanelNumbers, null);
-
-
-
-        jPanelMain.add(jPanelVars, null);
-
-        jPanelMain.add(jPanelOptions, null);
+        
+        
         jPanelNumbers.add(jLabelTimeStep, null);
         jPanelNumbers.add(jTextFieldDelay, null);
-        jPanelMain.add(jPanelRun, null);
-        this.getContentPane().add(jPanelMain, BorderLayout.CENTER);
+        
+        
+        
+        
+        
 
 
         //jPanelOptions.add(jPanel2, null);
@@ -416,9 +436,149 @@ public class SimulationRerunFrame extends JFrame
         jPanelNumbers.add(jLabelFramesToSkip, null);
         jPanelNumbers.add(jTextFieldFramesToSkip, null);
 
-
         jPanelScale.setBorder(border2);
+        
+        
+        
+        //jPanelShowMore.setBackground(Color.red);
+        jPanelShowMore.add(jButtonShowMore);
+        Dimension d = new Dimension(24, 24);
+        jButtonShowMore.setPreferredSize(d);
+        jButtonShowMore.setMargin(new Insets(1, 1, 1, 1));
+        jButtonShowMore.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                toggleShowMore();
+            }
+        });
+        
+        
+        this.getContentPane().add(jPanelMain, BorderLayout.CENTER);
+        
+        
+        jPanelMain.setLayout(new BorderLayout(4, 4));
+        
+        jPanelMain.add(jPanelRun, BorderLayout.NORTH);
+        jPanelMain.add(jPanelScale, BorderLayout.CENTER);
+        jPanelMain.add(jPanelShowMore, BorderLayout.EAST);
+        
+        jPanelExtras.setLayout(new BorderLayout());
+        jPanelMainOptions.setLayout(new BorderLayout());
+        
+        jPanelMainOptions.add(jPanelNumbers, BorderLayout.NORTH);
+        jPanelMainOptions.add(jPanelVars, BorderLayout.CENTER);
+        jPanelMainOptions.add(jPanelOptions, BorderLayout.SOUTH);
+        
+        jPanelExtras.add(jPanelMainOptions, BorderLayout.CENTER);
+        
+        
+        ArrayList<String> cgs = project.generatedCellPositions.getNonEmptyCellGroups();
+        jPanelListCellGroups.setLayout(new GridLayout( cgs.size(), 1));
+        
+        for(String cellGroup: cgs)
+        {
+            JPanel jPanelNew = new JPanel();
+            JCheckBox cb = new JCheckBox(cellGroup);
+            cb.setSelected(true);
+            jPanelNew.add(cb);
+            CellChooser cc = new AllCells();
+            JButton choose = new JButton(cc.toShortString());
+            choose.setToolTipText(cellGroup); // for a clue to which cell group...
+            
+            //JTextField choice = new JTextField(cc.toNiceString());
+            //choice.setColumns(12);
+            //choice.setEnabled(false);
+            
+            //jPanelNew.add(choice);
+            jPanelNew.add(choose);
+            
+            cb.addActionListener(new java.awt.event.ActionListener()
+            {
+                public void actionPerformed(ActionEvent e)
+                {
+                    updateCellForRerun();
+                }
+            });
+            
+            choose.addActionListener(new java.awt.event.ActionListener()
+            {
+                public void actionPerformed(ActionEvent e)
+                {
+                    updateCellChoice(e);
+                }
+            });
+                    
+            cellGroupsCheckBoxes.add(cb);
+            cellGroupsToUse.put(cellGroup, cc);
+            jPanelListCellGroups.add(jPanelNew);
+        }
+        jPanelCellsToUpdate.setLayout(new BorderLayout());
+        jPanelCellsToUpdate.add(jPanelListCellGroups, BorderLayout.CENTER);
+        jPanelCellsToUpdate.add(jPanelOtherCells, BorderLayout.SOUTH);
+        
+        jRadioButtonBlacken.setText("Black");
+        jRadioButtonTransp.setText("Transparent");
+        bgOtherCells.add(jRadioButtonBlacken);
+        bgOtherCells.add(jRadioButtonTransp);
+        jRadioButtonTransp.setSelected(true);
+        jPanelOtherCells.add(new JLabel("Other cells:"));
+        jPanelOtherCells.add(jRadioButtonBlacken);
+        jPanelOtherCells.add(jRadioButtonTransp);
+            
+        jPanelCellsToUpdate.setBorder(BorderFactory.createEtchedBorder());
+        jPanelExtras.add(jPanelCellsToUpdate, BorderLayout.SOUTH);
+
+        
+        if (moreShown)
+        {
+            jPanelMain.add(jPanelExtras, BorderLayout.SOUTH);
+        }
+        
+        
+        
+        
     }
+    
+    private void updateCellChoice(ActionEvent e)
+    {
+        String cellGroup = ((JButton)e.getSource()).getToolTipText();
+        logger.logComment("Cell choice change for: "+ cellGroup, true);
+        
+        for(String cg: cellGroupsToUse.keySet())
+        {
+            if (cg.equals(cellGroup))
+            {
+                CellChooser cc = cellGroupsToUse.get(cg);
+                CellChooserDialog ccd = new CellChooserDialog(this, "Choose which cells in "+cg+" to replay", cc);
+                GuiUtils.centreWindow(ccd);
+                ccd.setVisible(true);
+                
+                CellChooser chosen = ccd.getFinalCellChooser();
+
+                logger.logComment("Choosen one: " + chosen);
+                
+                ((JButton)e.getSource()).setText(chosen.toShortString());
+                cellGroupsToUse.put(cg, chosen);
+            }
+        }
+        
+        
+        
+    }
+    
+    private void updateCellForRerun()
+    {
+        if (jRadioButtonBlacken.isSelected())
+            blackenAllCells();
+        else if (jRadioButtonTransp.isSelected())
+            transparentAllCells();
+        
+        refreshRerunVals((String)jComboBoxVars.getSelectedItem());
+        
+        refreshVoltagesCurrTimeStep();
+    }
+    
 
     /** @todo Put these in glossary? */
     private void addToolTips()
@@ -432,6 +592,21 @@ public class SimulationRerunFrame extends JFrame
         this.jLabelTimeStep.setToolTipText(delay);
         this.jLabelFramesToSkip.setToolTipText(skip);
         this.jTextFieldFramesToSkip.setToolTipText(skip);
+    }
+    
+    private void toggleShowMore()
+    {
+        logger.logComment("Toggling extra buttons...", true);
+        moreShown = !moreShown;
+        if (moreShown) {
+            jButtonShowMore.setText("<<");
+            jPanelMain.add(jPanelExtras, BorderLayout.SOUTH);
+        } else {
+            jButtonShowMore.setText(">>");
+            jPanelMain.remove(jPanelExtras);
+        }
+        pack();
+        
     }
 
 
@@ -697,7 +872,8 @@ public class SimulationRerunFrame extends JFrame
                 jComboBoxVars.addItem(var);
             }
         }
-        if (vars.contains(SimPlot.VOLTAGE)) jComboBoxVars.setSelectedItem(SimPlot.VOLTAGE);
+        if (vars.contains(SimPlot.VOLTAGE)) 
+            jComboBoxVars.setSelectedItem(SimPlot.VOLTAGE);
 
 
     }
@@ -854,11 +1030,43 @@ public class SimulationRerunFrame extends JFrame
             logger.logComment("simulationTimer!=null && simulationTimer.isRunning()...");
             return;
         }
-
+        Hashtable<String, ArrayList<Integer>> cellGroupsEnabled = new Hashtable<String, ArrayList<Integer>>();
+        
+        startSim = System.currentTimeMillis();
+        
+        for(JCheckBox cb: cellGroupsCheckBoxes)
+        {
+            if (cb.isSelected())
+            {
+                String cg = cb.getText();
+                CellChooser cc = cellGroupsToUse.get(cg);
+                try
+                {
+                    ArrayList<Integer> cellList = null;
+                    if (!cc.isInitialised())
+                    {
+                        cc.initialise(project.generatedCellPositions.getAllPositionRecords());
+                        cellList = cc.getOrderedCellList();
+                    }
+                    else
+                    {
+                        cellList = cc.getCachedCellList();
+                    }
+                    
+                    cellGroupsEnabled.put(cg, cellList);
+                }
+                catch (Exception ex)
+                {
+                    GuiUtils.showErrorMessage(logger, "Unable to generate a cell list fom cell chooser: "+ cc+" for cell group: "+ cg, ex, this);
+                    return;
+                }
+            }
+                
+        }
 
         String selVariable = (String)jComboBoxVars.getSelectedItem();
 
-        currentCellItemRefs  =  myCurrSimData.getCellItemRefsForVar(selVariable, true);
+        currentCellItemRefs  =  myCurrSimData.getCellItemRefsForVar(selVariable, true, cellGroupsEnabled);
 
 
         try
@@ -879,6 +1087,10 @@ public class SimulationRerunFrame extends JFrame
 
         jRadioButtonSpikesOnly.setEnabled(false);
         jCheckBoxActivityMonitors.setEnabled(false);
+        
+        
+        jButtonStop.setEnabled(true);
+        jButtonStart.setEnabled(false);
 
         if (myCurrSimData == null)
         {
@@ -955,11 +1167,16 @@ public class SimulationRerunFrame extends JFrame
                     //GeneralUtils.timeCheck("Stopped simulation");
                     jButtonStart.setText(restartSimString);
 
+                    jButtonStop.setEnabled(false);
+                    jButtonStart.setEnabled(true);
+
                     jRadioButtonSpikesOnly.setEnabled(true);
                     jCheckBoxActivityMonitors.setEnabled(true);
                     //return;
 
                     currentTimeStep = numTimeSteps-1; // to display final value...
+                    
+                    logger.logComment("Wall time simce start pressed: "+ (System.currentTimeMillis()-startSim)/1000f, true);
                 }
 
                 //System.out.println("At time: " + currentTimeStep);
@@ -1010,7 +1227,7 @@ public class SimulationRerunFrame extends JFrame
         //GeneralUtils.timeCheck("Starting simulation");
 
 
-        this.blackenAllCells();
+        this.updateCellForRerun();
 
         simulationTimer.start();
     }
@@ -1121,121 +1338,20 @@ public class SimulationRerunFrame extends JFrame
         ArrayList<String> cellSegRefs =  myCurrSimData.getCellSegRefs(false);
         for (String ref: cellSegRefs)
         {
-            controlledPanel.setColour(Color.black, ref);
+            controlledPanel.setColour(ref, Color.black);
+        }
+    }
+    
+    private void transparentAllCells()
+    {
+        ArrayList<String> cellSegRefs =  myCurrSimData.getCellSegRefs(false);
+        for (String ref: cellSegRefs)
+        {
+            controlledPanel.setTransparent(ref);
         }
     }
 
-    /**
-     * Updates everything which needs updating at the particular time step
-     * @param timeStep The time step
-     * @param cellSegRefs This is calculated before running the sim, to save calc time
-
-    private void showValuesAtTimeStep(int timeStep, ArrayList<String> cellSegRefs, String var) throws SimulationDataException
-    {
-        //System.out.println("timeStep: "+timeStep+", cellSegRefs: "+cellSegRefs);
-        jTextFieldSimulationTime.setText(myCurrSimData.getSimulationTime(timeStep)+"");
-
-
-        Vector allActMonCellNames  = new Vector();
-        allActMonCellNames.addAll(activityMonitors.keySet());
-
-        int[] countActive = new int[activityMonitors.keySet().size()];
-
-        for (String ref: cellSegRefs)
-        {
-            String cellOnlyReference = SimulationData.getCellOnlyReference(ref);
-
-            String cellGroupName = SimulationData.getCellGroup(cellOnlyReference);
-
-            int cellNumber = SimulationData.getCellNum(cellOnlyReference);
-
-            float value = myCurrSimData.getValueAtTimeStep(timeStep, ref, var);
-
-            logger.logComment("Showing val "+value+" for "+ref+" at time: "+
-                myCurrSimData.getSimulationTime(timeStep));
-
-
-            Color newColour = null;
-
-
-            if (this.jRadioButtonSpikesOnly.isSelected())
-            {
-                if (value<thresholdForRun)
-                    newColour = getColorBasedOnVoltage((float)mostNegValue);
-                else
-                    newColour = getColorBasedOnVoltage((float)mostPosValue);
-
-            }
-            else if (this.jRadioButtonISIShading.isSelected())
-            {
-                if (isiInfo.get(ref)==null)
-                {
-                    ISIStateInfo isiState = new ISIStateInfo();
-                    isiInfo.put(ref, isiState);
-                }
-
-                ISIStateInfo isiState = this.isiInfo.get(ref);
-
-                logger.logComment("Current isi info for "+cellGroupName+", "+cellNumber+": "+ isiState);
-
-                if (isiState.runningISIAverage<=0 || isiState.numberISIs<=0)
-                {
-                    newColour  = Color.black;
-                }
-                else
-                {
-                    //newColour = this.getColorBasedOnISI(isiState.runningISIAverage);
-                    newColour = this.getColorBasedOnFreq(1000/isiState.runningISIAverage);
-                }
-            }
-            else if (this.jRadioButtonContinuous.isSelected())
-            {
-                newColour = this.getColorBasedOnVoltage(value);
-            }
-
-            logger.logComment("Decided on a colour: "+ newColour.toString());
-
-            controlledPanel.setColour(newColour, ref);
-
-            if(jCheckBoxActivityMonitors.isSelected() && value > thresholdForRun)
-            {
-                int cellGroupIndex = allActMonCellNames.indexOf(cellGroupName);
-                countActive[cellGroupIndex]++;
-            }
-
-            for (int i = 0; i < view2Ds.size(); i++)
-            {
-                //System.out.println("Checking if to update view "+view2Ds.get(i).getCellGroup()+
-               //     ", voltage is from cellGroup: "+ cellGroupName);
-                if (view2Ds.get(i).getCellGroup().equals(cellGroupName))
-                {
-                    view2Ds.get(i).updateVoltage(value,
-                                                 cellGroupName,
-                                                 cellNumber,
-                                                 (cellNumber == 0)); // i.e. Refresh only when the first cell
-                                                                     // in that cell group is being referred to. Ensures
-                                                                     // that once per time step the group view is updated...
-                }
-            }
-            //ArrayList<> velList = listeners.get(cellGroupName);
-
-
-        }
-
-        if (jCheckBoxActivityMonitors.isSelected())
-        {
-
-            for (int i = 0; i < allActMonCellNames.size(); i++)
-            {
-                 String cellGroupName = (String)   allActMonCellNames.elementAt(i);
-                 ActivityMonitor am = (ActivityMonitor) activityMonitors.get(cellGroupName);
-                 if (am!=null) am.setValue(countActive[i]);
-            }
-           //
-            //am.setv
-        }
-
-    }     */
+           
 
 
     /**
@@ -1244,7 +1360,7 @@ public class SimulationRerunFrame extends JFrame
      */
     private void showValuesAtTimeStep(int timeStep) throws SimulationDataException
     {
-        jTextFieldSimulationTime.setText(myCurrSimData.getSimulationTime(timeStep)+"");
+        jTextFieldSimulationTime.setText((float)myCurrSimData.getSimulationTime(timeStep)+"");
 
         /** @todo Improve collection handling here... */
 
@@ -1268,7 +1384,6 @@ public class SimulationRerunFrame extends JFrame
 
             logger.logComment("Showing val "+value+" for "+ref+" at time: "+
                 myCurrSimData.getSimulationTime( timeStep));
-
 
             Color newColour = null;
 
@@ -1310,7 +1425,7 @@ public class SimulationRerunFrame extends JFrame
 
             logger.logComment("Decided on a colour: "+ newColour.toString());
 
-            controlledPanel.setColour(newColour, ref);
+            controlledPanel.setColour(ref, newColour);
 
             if(jCheckBoxActivityMonitors.isSelected() && value > thresholdForRun)
             {
@@ -1402,7 +1517,7 @@ public class SimulationRerunFrame extends JFrame
     private void enableSimControls()
     {
         jButtonStart.setEnabled(true);
-        jButtonStop.setEnabled(true);
+        jButtonStop.setEnabled(false);
         jRunSlider.setEnabled(true);
         jTextFieldSimulationTime.setEnabled(true);
 
@@ -1439,7 +1554,12 @@ public class SimulationRerunFrame extends JFrame
     protected void processWindowEvent(WindowEvent e)
     {
         //super.processWindowEvent(e);
-        if (e.getID() == WindowEvent.WINDOW_CLOSING) dispose();
+        if (e.getID() == WindowEvent.WINDOW_CLOSING)
+        {
+            dispose();
+            if (standalone)
+                System.exit(0);
+        }
     }
 
 
@@ -1466,6 +1586,7 @@ public class SimulationRerunFrame extends JFrame
         Main3DPanel m = new Main3DPanel(p, simFile, null);
 
         SimulationRerunFrame simRerun = new SimulationRerunFrame(p, simFile, m);
+        simRerun.standalone = true;
         simRerun.pack();
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -1538,6 +1659,9 @@ public class SimulationRerunFrame extends JFrame
 
         jRadioButtonSpikesOnly.setEnabled(true);
         jCheckBoxActivityMonitors.setEnabled(true);
+        
+        jButtonStop.setEnabled(false);
+        jButtonStart.setEnabled(true);
     }
 
 

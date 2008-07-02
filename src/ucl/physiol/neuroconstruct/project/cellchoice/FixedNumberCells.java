@@ -83,6 +83,12 @@ public class FixedNumberCells extends CellChooser
     {
         return (int)getParameterValue(MAX_NUM_CELLS) + " random cells";
     }
+    
+    
+    public String toShortString()
+    {
+        return (int)getParameterValue(MAX_NUM_CELLS) + " rand cells";
+    }
 
     protected int generateNextCellIndex() throws AllCellsChosenException
     {

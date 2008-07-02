@@ -80,6 +80,8 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
     private Canvas3D myCanvas3D = null;
 
     private ArrayList<Integer> selectedCells = null;
+    
+    private SlicerFrame slicerFrame = null;
 
     /**
      * To improve performance, the segments are cached against SegmentName, for quick retrieval...
@@ -116,6 +118,8 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
     private Container containerFor3D = this;
     
     private SimConfig simConfig = null;
+    
+    private boolean showFrame = false;
 
 
     JPanel jPanelControls = new JPanel();
@@ -132,6 +136,10 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
     JButton jButtonSimInfo = new JButton();
     JButton jButtonFind = new JButton();
     JButton jButtonDetach = new JButton();
+    
+    JButton jButtonSlice = new JButton();
+    
+    
     JButton jButtonNetInfo = new JButton();
     JPanel jPanelSimulation = new JPanel();
     FlowLayout flowLayout1 = new FlowLayout();
@@ -247,6 +255,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         simpleU.getViewingPlatform().setViewPlatformBehavior(orbit);
 
         BranchGroup scene = createSceneGraph();
+        
 
 
         PlatformGeometry pg = new PlatformGeometry();
@@ -379,6 +388,11 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         addPositionedCells(scaleTG);
 
         addSynapses(scaleTG);
+        
+        if (showFrame)
+        {
+            allRegions.addLinesAroundRegion(scaleTG);
+        }
 
 
         SectionPicker pickingBehav = new SectionPicker(objRoot, simpleU.getCanvas(), bounds, this);
@@ -994,7 +1008,9 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                 jButtonSimInfo_actionPerformed(e);
             }
         });
+        Insets ins = new Insets(2,2,2,2);
         jButtonFind.setText("0");
+        jButtonFind.setMargin(ins);
         jButtonFind.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -1002,7 +1018,17 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                 jButtonFind_actionPerformed(e);
             }
         });
+        jButtonSlice.setText("|");
+        jButtonSlice.setMargin(ins);
+        jButtonSlice.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonSlice_actionPerformed(e);
+            }
+        });
         jButtonDetach.setText("^");
+        jButtonDetach.setMargin(ins);
 
         jButtonDetach.setToolTipText("Display 3D in separate window");
 
@@ -1068,6 +1094,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         jPanelViewOptions.add(jCheckBoxTransparent, null);
         jPanelViewOptions.add(jButtonFind, null);
         jPanelViewOptions.add(jButtonDetach, null);
+        jPanelViewOptions.add(jButtonSlice, null);
         jPanelViewOptions.add(jLabelZoom, null);
         jPanelViewOptions.add(jSliderViewDistance, null);
         jPanelSelection.add(jComboBoxCellGroup, null);
@@ -1606,12 +1633,114 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
 
     /**
+     * Sets transparent the segment, synapse or whole cell.
+     * cellSegReference will be of form
+     * SingleGranuleCell_0.gcdend1_2_seg (when individual segs are recorded) or
+     * SingleGranuleCell_0 for only soma recorded
+     */
+    public void setTransparent(String cellItemReference)
+    {
+        String cellOnlyReference = SimulationData.getCellOnlyReference(cellItemReference);
+
+        logger.logComment("cellItemReference: "+cellItemReference+", cellOnlyReference: "+cellOnlyReference);
+
+        int id = SimulationData.getSegmentId(cellItemReference);
+
+        OneCell3D oneCell = this.getOneCell3D(cellOnlyReference);
+
+        PostSynapticObject pso = SimulationData.getPostSynapticObject(cellItemReference);
+
+        if (pso==null)
+        {
+            if (id < 0)
+            {
+                // old way of storing, e.g. CellGroup_0_0.Soma.dat  ...
+                String segName = SimulationData.getSegmentName(cellItemReference);
+
+                if (segName != null)
+                {
+                    Segment seg = oneCell.getDisplayedCell().getSegmentWithName(segName, true);
+                    id = seg.getSegmentId();
+
+                    if (oneCell != null)
+                    {
+                        oneCell.setSegmentAppearance(Utils3D.getTransparentObjectAppearance(Color.white, project.proj3Dproperties.getTransparency()),id);
+                        return;
+                    }
+                }
+
+                oneCell.setWholeCellAppearance(Utils3D.getTransparentObjectAppearance(Color.white, project.proj3Dproperties.getTransparency()));
+            }
+            else
+            {
+                if (oneCell != null)
+                {
+                    oneCell.setSegmentAppearance(Utils3D.getTransparentObjectAppearance(Color.white, project.proj3Dproperties.getTransparency()),
+                                                 id);
+                }
+            }
+        }
+        else
+        {
+            String synRef = getSynPrimRef(pso.getNetConnName(), pso.getSynapseIndex());
+
+            if (oneCell != null)
+            {
+                oneCell.setSynapseAppearance(Utils3D.getTransparentObjectAppearance(Color.white, project.proj3Dproperties.getTransparency()),
+                                             synRef);
+            }
+
+        }
+    }
+
+    
+    
+    
+
+    /**
+     * Sets to app the appearance of the whole cell temporarily.
+     * cellSegReference will be of form
+     * SingleGranuleCell_0 
+     */
+    public void setTempAppearance(String cellOnlyReference, Appearance app)
+    {
+        logger.logComment("cellOnlyReference: "+cellOnlyReference);
+
+        OneCell3D oneCell = this.getOneCell3D(cellOnlyReference);
+
+        if (oneCell != null)
+        {
+            oneCell.setTempWholeCellAppearance(app);
+        }
+      
+    }
+
+    /**
+     * Removes the temp appearance of the whole cell.
+     * cellSegReference will be of form
+     * SingleGranuleCell_0 
+     */
+    public void removeTempAppearance(String cellOnlyReference)
+    {
+        logger.logComment("cellOnlyReference: "+cellOnlyReference);
+
+        OneCell3D oneCell = this.getOneCell3D(cellOnlyReference);
+
+        if (oneCell != null)
+        {
+            oneCell.resetCellAppearance();
+        }
+      
+    }
+
+
+    /**
      * Sets to colour of the segment, synapse or whole cell.
      * cellSegReference will be of form
      * SingleGranuleCell_0.gcdend1_2_seg (when individual segs are recorded) or
      * SingleGranuleCell_0 for only soma recorded
      */
-    public void setColour(Color colour, String cellItemReference)
+    public void setColour(String cellItemReference, Color colour)
     {
         //System.out.println("Receiving.."+colour.getRGB());
 
@@ -2158,6 +2287,23 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
     void jButtonFind_actionPerformed(ActionEvent e)
     {
         findRegions();
+    }
+    
+    void jButtonSlice_actionPerformed(ActionEvent e)
+    {
+        showFrame = !showFrame;
+        if (showFrame)
+        {
+            slicerFrame = new SlicerFrame(project, this, simConfig);
+            GuiUtils.centreWindow(slicerFrame);
+            
+            slicerFrame.pack();
+            
+            slicerFrame.setVisible(true);
+        }
+        
+        this.refreshAll3D();
+        
     }
 
 

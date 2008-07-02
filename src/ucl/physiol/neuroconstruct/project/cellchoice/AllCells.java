@@ -28,13 +28,14 @@ import ucl.physiol.neuroconstruct.project.InternalStringFloatParameter;
 
 public class AllCells extends CellChooser
 {
-    private static ClassLogger logger = new ClassLogger("AllCells");
 
     int chosenCellIndex = 0;
 
     public AllCells()
     {
         super("Cell Chooser which picks all cells in the Cell Group");
+        
+        logger = new ClassLogger("AllCells");
         parameterList = new InternalStringFloatParameter[0];
     }
 
@@ -60,8 +61,14 @@ public class AllCells extends CellChooser
     {
         return "All cells";
     }
+    
+    public String toShortString()
+    {
+        return "All cells";
+    }
 
 
+    @Override
     public String toString()
     {
         return "All cells";

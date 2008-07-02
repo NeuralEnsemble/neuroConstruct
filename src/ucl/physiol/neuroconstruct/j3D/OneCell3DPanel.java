@@ -279,7 +279,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         {
             Utils3D.addAxes(scaleTG, 0.005); // gives axes of 100 units length
         }
-
+        
         BoundingSphere bounds = new BoundingSphere(new Point3d(0.0,0.0,0.0), 10000000);
 
         Color backgroundColour = project.proj3Dproperties.getBackgroundColour3D();
@@ -1805,7 +1805,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             frame.setLayout(new BorderLayout());
             System.out.println("Creating cell");
 
-            GeneralProperties.setDefault3DAxesOption(false);
+            GeneralProperties.setDefault3DAxesOption(true);
 
             System.out.println("Creating 3D representation of cell: " + cell);
 

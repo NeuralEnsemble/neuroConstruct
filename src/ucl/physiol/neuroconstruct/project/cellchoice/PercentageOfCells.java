@@ -68,6 +68,10 @@ public class PercentageOfCells extends CellChooser
     {
         return getParameterValue(PERCENTAGE_CELLS) + "% of cells at random";
     }
+    public String toShortString()
+    {
+        return "Rand "+getParameterValue(PERCENTAGE_CELLS) + "% of cells";
+    }
 
     protected void reinitialise()
     {

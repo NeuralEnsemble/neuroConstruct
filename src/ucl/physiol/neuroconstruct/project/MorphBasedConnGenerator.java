@@ -787,7 +787,8 @@ public class MorphBasedConnGenerator extends Thread
                                                             = CellTopologyHelper.getClosestPostSynapticTerminalLocation(
                                                                 generationFinishCellInstance,
                                                                 synTypeNames,
-                                                                posnStartSynapseRelToFinishCell);
+                                                                posnStartSynapseRelToFinishCell,
+                                                                connConds.getPrePostAllowedLoc());
                                                     }
                                                     else
                                                     {
@@ -795,7 +796,8 @@ public class MorphBasedConnGenerator extends Thread
                                                             = CellTopologyHelper.getClosestPreSynapticTerminalLocation(
                                                                 generationFinishCellInstance,
                                                                 synTypeNames,
-                                                                posnStartSynapseRelToFinishCell);
+                                                                posnStartSynapseRelToFinishCell,
+                                                                connConds.getPrePostAllowedLoc());
 
                                                     }
 

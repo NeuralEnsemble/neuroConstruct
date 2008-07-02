@@ -94,6 +94,20 @@ public class RegionAssociatedCells extends CellChooser
             return "Error with Cell chooser";
 
     }
+    public String toShortString()
+    {
+        if (parameterList[1].getValue() == 0)
+        {
+            return "Cells in: " + getParameterStringValue(REGION_NAME);
+        }
+        else if (parameterList[1].getValue() == 1)
+        {
+            return "Cells not in: " + getParameterStringValue(REGION_NAME);
+        }
+        else
+            return "Error with Cell chooser";
+
+    }
 
     /**
      * As the regions info will be needed...

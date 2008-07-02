@@ -16,11 +16,13 @@ import javax.media.j3d.*;
 import javax.vecmath.*;
 
 import com.sun.j3d.utils.geometry.*;
+import java.awt.Color;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.examples.*;
 import ucl.physiol.neuroconstruct.j3D.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
+import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 
 /**
@@ -32,8 +34,6 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
 
 public class RectangularBox extends Region
 {
-    ClassLogger logger = new ClassLogger("RectangularBox");
-
     public static final String X_PARAM = "X";
     public static final String Y_PARAM = "Y";
     public static final String Z_PARAM = "Z";
@@ -44,6 +44,7 @@ public class RectangularBox extends Region
     public RectangularBox()
     {
         super.setDescription("Rectangular Box");
+        logger = new ClassLogger("RectangularBox");
 
         parameterList = new InternalParameter[6];
 
@@ -259,6 +260,7 @@ public class RectangularBox extends Region
 
         }*/
 
+        
         return Utils3D.addBoxAtLocation(parameterList[3].value,
                                         parameterList[4].value,
                                         parameterList[5].value,
@@ -267,6 +269,91 @@ public class RectangularBox extends Region
                                                      parameterList[2].value),
                                         tg,
                                         app);
+    }
+    
+    
+    public void addLinesAroundRegion(TransformGroup tg)
+    {
+        Color3f x = new Color3f(Color.green.brighter().brighter());
+        Color3f y = new Color3f(Color.yellow.brighter().brighter());
+        Color3f z = new Color3f(Color.red.brighter().brighter());
+        
+        LineArray wireframe = new LineArray(12*2,
+                                               GeometryArray.COORDINATES
+                                               | GeometryArray.COLOR_3);
+        
+        wireframe.setCapability(LineArray.ALLOW_COLOR_WRITE);
+        wireframe.setCapability(LineArray.ALLOW_COORDINATE_READ);
+        wireframe.setCapability(LineArray.ALLOW_COUNT_READ);
+        ArrayList<Point3f> vx = getVertices();
+
+        // Add lines parallel to x
+        wireframe.setCoordinate(0, vx.get(0));
+        wireframe.setCoordinate(1, vx.get(2));
+        wireframe.setCoordinate(2, vx.get(1));
+        wireframe.setCoordinate(3, vx.get(3));
+        
+        wireframe.setCoordinate(4, vx.get(4));
+        wireframe.setCoordinate(5, vx.get(6));
+        wireframe.setCoordinate(6, vx.get(5));
+        wireframe.setCoordinate(7, vx.get(7));
+        
+        for(int i=0;i<8;i++)
+            wireframe.setColor(i, x);
+        
+        
+        // Add lines parallel to y
+        wireframe.setCoordinate(8, vx.get(0));
+        wireframe.setCoordinate(9, vx.get(4));
+        wireframe.setCoordinate(10, vx.get(1));
+        wireframe.setCoordinate(11, vx.get(5));
+        
+        wireframe.setCoordinate(12, vx.get(2));
+        wireframe.setCoordinate(13, vx.get(6));
+        wireframe.setCoordinate(14, vx.get(3));
+        wireframe.setCoordinate(15, vx.get(7));
+        
+        
+        for(int i=8;i<16;i++)
+            wireframe.setColor(i, y);
+        
+        // Add lines parallel to z
+        wireframe.setCoordinate(16, vx.get(0));
+        wireframe.setCoordinate(17, vx.get(1));
+        wireframe.setCoordinate(18, vx.get(2));
+        wireframe.setCoordinate(19, vx.get(3));
+        wireframe.setCoordinate(20, vx.get(4));
+        wireframe.setCoordinate(21, vx.get(5));
+        wireframe.setCoordinate(22, vx.get(6));
+        wireframe.setCoordinate(23, vx.get(7));
+        
+        
+        for(int i=16;i<24;i++)
+            wireframe.setColor(i, z);
+        
+        Shape3D shape = new Shape3D(wireframe);
+        tg.addChild(shape);
+        
+       
+        
+
+    }
+    
+    public ArrayList<Point3f> getVertices()
+    {
+        ArrayList<Point3f> v = new ArrayList<Point3f>();
+        v.add(new Point3f(getLowestXValue(), getLowestYValue(), getLowestZValue()));
+        v.add(new Point3f(getLowestXValue(), getLowestYValue(), getHighestZValue()));
+        v.add(new Point3f(getHighestXValue(), getLowestYValue(), getLowestZValue()));
+        v.add(new Point3f(getHighestXValue(), getLowestYValue(), getHighestZValue()));
+        
+        v.add(new Point3f(getLowestXValue(), getHighestYValue(), getLowestZValue()));
+        v.add(new Point3f(getLowestXValue(), getHighestYValue(), getHighestZValue()));
+        v.add(new Point3f(getHighestXValue(), getHighestYValue(), getLowestZValue()));
+        v.add(new Point3f(getHighestXValue(), getHighestYValue(), getHighestZValue()));
+        
+        return v;
+        
     }
 
 
@@ -288,6 +375,19 @@ public class RectangularBox extends Region
         return Math.min(parameterList[2].value, parameterList[2].value + parameterList[5].value);
     };
 
+    
+    public float getXDim()
+    {
+        return getHighestXValue()-getLowestXValue();
+    }
+    public float getYDim()
+    {
+        return getHighestYValue()-getLowestYValue();
+    }
+    public float getZDim()
+    {
+        return getHighestZValue()-getLowestZValue();
+    }
 
     public float getHighestXValue()
     {

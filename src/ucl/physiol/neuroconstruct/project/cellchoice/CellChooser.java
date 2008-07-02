@@ -31,13 +31,16 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
 
 public abstract class CellChooser
 {
-    ClassLogger logger = new ClassLogger("CellChooser");
+    static ClassLogger logger = new ClassLogger("CellChooser");
 
     ArrayList<PositionRecord> cellPositions = null;
 
     String description = null;
 
     InternalStringFloatParameter[] parameterList = null;
+    
+    ArrayList<Integer> cachedCellList = null;
+    
 
     private CellChooser()
     {
@@ -112,8 +115,14 @@ public abstract class CellChooser
                 }
             }
         }
-
+        cachedCellList = allCells;
         return  allCells;
+    }
+    
+    public ArrayList<Integer> getCachedCellList() throws CellChooserException
+    {
+        if (cellPositions == null) throw new CellChooserException("CellChooser not yet initialised");
+        return cachedCellList;
     }
 
     /**
@@ -121,10 +130,15 @@ public abstract class CellChooser
      */
     public int getNextCellIndex() throws AllCellsChosenException, CellChooserException
     {
-        if (cellPositions == null)throw new CellChooserException("CellChooser not yet initialised");
+        if (cellPositions == null) throw new CellChooserException("CellChooser not yet initialised");
 
         return generateNextCellIndex();
     };
+    
+    public boolean isInitialised()
+    {
+        return (cellPositions != null);
+    }
 
     protected abstract int generateNextCellIndex() throws AllCellsChosenException, CellChooserException;
 
@@ -301,6 +315,8 @@ public abstract class CellChooser
 
 
     public abstract String toNiceString();
+
+    public abstract String toShortString();
 
 
 

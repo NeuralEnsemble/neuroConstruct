@@ -13,6 +13,7 @@
 package ucl.physiol.neuroconstruct.j3D;
 
 import java.awt.*;
+import javax.media.j3d.Appearance;
 
 /**
  * Interface for panel on which simulation data can be run (i.e cell colours
@@ -28,8 +29,13 @@ public interface SimulationInterface
     /**
      * Set the colour of a segment, synapse or whole cell. See implementation for specifics
      */
-    public void setColour(Color colour, String cellItemRef);
-
+    public void setColour(String cellItemRef, Color colour);
+    
+    public void setTransparent(String cellItemRef);
+    
+    public void setTempAppearance(String cellOnlyRef, Appearance app);
+    
+    public void removeTempAppearance(String cellOnlyRef);
 
     public void validSimulationLoaded();
 

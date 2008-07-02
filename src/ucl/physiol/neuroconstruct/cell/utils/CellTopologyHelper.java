@@ -634,7 +634,9 @@ public class CellTopologyHelper
 
      */
     public static PostSynapticTerminalLocation getClosestPostSynapticTerminalLocation(Cell cell,
-        String[] synapseTypes, Point3f extPoint)
+                                                                                      String[] synapseTypes, 
+                                                                                      Point3f extPoint,
+                                                                                      PrePostAllowedLocs pp)
     {
         Vector allSegments = cell.getAllSegments();
         Vector groupsWithSynapse = cell.getGroupsWithSynapse(synapseTypes[0]); // get first lot
@@ -667,7 +669,9 @@ public class CellTopologyHelper
         {
             Segment dend = (Segment) allSegments.elementAt(i);
             Vector groups = dend.getGroups();
-            if (groups.contains(Section.DENDRITIC_GROUP) || groups.contains(Section.SOMA_GROUP))
+            if ((pp.isAxonsAllowedPost() && groups.contains(Section.AXONAL_GROUP)) || 
+                (pp.isSomaAllowedPost() && groups.contains(Section.SOMA_GROUP)) ||
+                (pp.isDendritesAllowedPost() && groups.contains(Section.DENDRITIC_GROUP)))
             {
                 for (int j = 0; j < groups.size(); j++)
                 {
@@ -750,7 +754,9 @@ public class CellTopologyHelper
 
      */
     public static PreSynapticTerminalLocation getClosestPreSynapticTerminalLocation(Cell cell,
-        String[] synapseTypes, Point3f extPoint)
+                                                                                    String[] synapseTypes, 
+                                                                                    Point3f extPoint,
+                                                                                    PrePostAllowedLocs pp)
     {
         Vector allSegments = cell.getAllSegments();
 
@@ -784,7 +790,9 @@ public class CellTopologyHelper
         {
             Segment axon = (Segment) allSegments.elementAt(i);
             Vector groups = axon.getGroups();
-            if (groups.contains(Section.AXONAL_GROUP) || groups.contains(Section.SOMA_GROUP))
+            if ((pp.isAxonsAllowedPre() && groups.contains(Section.AXONAL_GROUP)) || 
+                (pp.isSomaAllowedPre() && groups.contains(Section.SOMA_GROUP)) ||
+                (pp.isDendritesAllowedPre() && groups.contains(Section.DENDRITIC_GROUP)))
             {
                 for (int j = 0; j < groups.size(); j++)
                 {

@@ -237,37 +237,6 @@ public class CellTopologyHelperTest {
         fail("The test case is a prototype.");
     }
 
-    /**
-     * Test of getClosestPostSynapticTerminalLocation method, of class CellTopologyHelper.
-     */
-    @Test
-    public void testGetClosestPostSynapticTerminalLocation() {
-        System.out.println("getClosestPostSynapticTerminalLocation");
-        Cell cell = null;
-        String[] synapseTypes = null;
-        Point3f extPoint = null;
-        PostSynapticTerminalLocation expResult = null;
-        PostSynapticTerminalLocation result = CellTopologyHelper.getClosestPostSynapticTerminalLocation(cell, synapseTypes, extPoint);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getClosestPreSynapticTerminalLocation method, of class CellTopologyHelper.
-     */
-    @Test
-    public void testGetClosestPreSynapticTerminalLocation() {
-        System.out.println("getClosestPreSynapticTerminalLocation");
-        Cell cell = null;
-        String[] synapseTypes = null;
-        Point3f extPoint = null;
-        PreSynapticTerminalLocation expResult = null;
-        PreSynapticTerminalLocation result = CellTopologyHelper.getClosestPreSynapticTerminalLocation(cell, synapseTypes, extPoint);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
 
     /**
      * Test of getAbsolutePosSegLoc method, of class CellTopologyHelper.

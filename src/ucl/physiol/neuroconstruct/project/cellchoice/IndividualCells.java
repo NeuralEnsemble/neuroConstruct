@@ -158,6 +158,26 @@ public class IndividualCells extends CellChooser
         }
     }
 
+    public String toShortString()
+    {
+        try
+        {
+            generateCellNumbersToReturn();
+            String message = "Cells: ";
+
+            for (int i = 0; i < allCellNumbersToReturn.length; i++)
+            {
+                message+=allCellNumbersToReturn[i];
+                if (i<allCellNumbersToReturn.length-1) message+= ", ";
+            }
+            return message;
+        }
+        catch (CellChooserException ex)
+        {
+            return ex.getMessage();
+        }
+    }
+
 
     public void setParameter(String parameterName,
                              float parameterValue) throws CellChooserException

@@ -20,6 +20,7 @@ import ucl.physiol.neuroconstruct.dataset.DataSet;
 import ucl.physiol.neuroconstruct.utils.units.*;
 import ucl.physiol.neuroconstruct.project.SimPlot;
 import ucl.physiol.neuroconstruct.project.PostSynapticObject;
+import ucl.physiol.neuroconstruct.project.cellchoice.CellChooser;
 
 /**
  * Class which stores all the data from a simulation, including references to data files
@@ -736,30 +737,37 @@ public class SimulationData
 
 
 
-    public ArrayList<String> getCellItemRefsForVar(String variable, boolean incSpikeOrVoltage)
+    public ArrayList<String> getCellItemRefsForVar(String variable, boolean incSpikeOrVoltage, Hashtable<String, ArrayList<Integer>> cellsToUse)
     {
         if (!dataLoaded) return null;
 
         ArrayList<String> cellItemRefs = new ArrayList<String> ();
+        Set<String> cgsToUse = cellsToUse.keySet();
 
         for (DataStore ds : dataSources)
         {
-            logger.logComment("Checking getCellItemRefsForVar: " + ds + " against " + variable);
+            String cg = ds.getCellGroupName();
+            logger.logComment("Checking getCellItemRefsForVar: " + ds + " against " + variable+" for: "+ cg, true);
 
-            if (ds.getVariable().equals(variable) ||
-                (incSpikeOrVoltage &&
+            if (cgsToUse.contains(cg) &&
+                    (ds.getVariable().equals(variable) ||
+                    (incSpikeOrVoltage &&
                  (variable.indexOf(SimPlot.SPIKE)>=0 || variable.equals(SimPlot.VOLTAGE))&&
-                 (ds.getVariable().indexOf(SimPlot.SPIKE)>=0 || ds.getVariable().equals(SimPlot.VOLTAGE))))
+                 (ds.getVariable().indexOf(SimPlot.SPIKE)>=0 || ds.getVariable().equals(SimPlot.VOLTAGE)))))
             {
                 String ref = ds.getCellSegRef();
-
-                if (ds.pso!=null)
+                ArrayList<Integer> cells = cellsToUse.get(cg);
+                
+                if(cells.contains(ds.getCellNumber()))
                 {
-                    ref = ref +"."+ ds.pso.getSynRef();
-                }
+                    if (ds.pso!=null)
+                    {
+                        ref = ref +"."+ ds.pso.getSynRef();
+                    }
 
-                if (!cellItemRefs.contains(ref))
-                    cellItemRefs.add(ref);
+                    if (!cellItemRefs.contains(ref))
+                        cellItemRefs.add(ref);
+                }
             }
         }
         logger.logComment("cellItemRefs: "+cellItemRefs);

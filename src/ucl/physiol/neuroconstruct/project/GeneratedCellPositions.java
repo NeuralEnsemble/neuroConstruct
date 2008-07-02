@@ -14,6 +14,7 @@ package ucl.physiol.neuroconstruct.project;
 
 import java.io.*;
 import java.util.*;
+import java.util.ArrayList;
 import javax.vecmath.*;
 
 import ucl.physiol.neuroconstruct.gui.*;
@@ -125,6 +126,17 @@ public class GeneratedCellPositions
     {
         return myCellGroupPosns.keySet().iterator();
     }
+    
+    public ArrayList<String> getNonEmptyCellGroups()
+    {
+        ArrayList<String> cgs = new ArrayList<String>();
+        for (String cg: myCellGroupPosns.keySet())
+        {
+            if (myCellGroupPosns.get(cg).size()>0)
+                cgs.add(cg);
+        }
+        return cgs;
+    }
 
 
 
@@ -148,7 +160,7 @@ public class GeneratedCellPositions
         {
             return 0;
         }
-        ArrayList cellGroupVector = (ArrayList)myCellGroupPosns.get(cellGroupName);
+        ArrayList cellGroupVector = myCellGroupPosns.get(cellGroupName);
 
         return cellGroupVector.size();
     }

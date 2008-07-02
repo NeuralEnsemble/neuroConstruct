@@ -2533,11 +2533,13 @@ public class PlotterFrame extends JFrame
 
             for (int j = 0; j < xVals.length; j++)
             {
-                sb.append(xVals[j]);
-                if ( (xVals[j] + "").length() < 22)
+                String xVal = (float)xVals[j]+"";
+                sb.append(xVal);   // cast to float to prevent rounding issues
+                
+                if ( xVal.length() < 22)
                 {
                     //sb.append("("+(xVals[j]+"").length()+")");
-                    for (int k = 0; k < 22 - ( (xVals[j] + "").length()); k++)
+                    for (int k = 0; k < 22 - ( xVal.length()); k++)
                     {
                         sb.append(" ");
                     }
@@ -2548,7 +2550,7 @@ public class PlotterFrame extends JFrame
                 if (comment==null) comment = "";
                 else comment = DataSetManager.DATA_SET_COMMENT + " " + comment;
 
-                 sb.append("  " + yVals[j] +"     "+ comment + "\n");
+                 sb.append("  " + (float)yVals[j] +"     "+ comment + "\n");// cast to float to prevent rounding issues
 
             }
 
