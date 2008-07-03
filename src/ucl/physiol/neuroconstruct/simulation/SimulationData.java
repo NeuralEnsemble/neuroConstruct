@@ -49,7 +49,7 @@ public class SimulationData
     private boolean dataLoaded = false;
 
     private File dataDirectory = null;
-    private File timesDataFile = null;
+    //private File timesDataFile = null;
 
     private int suggestedInitCapData = 1000;
     private int suggestedInitCapSpikes = 50;
@@ -65,7 +65,7 @@ public class SimulationData
     }
 
 
-    public SimulationData(File dataDirectory) throws SimulationDataException
+    public SimulationData(File dataDirectory, boolean checkTimesFile) throws SimulationDataException
     {
         //logger.setThisClassVerbose(true);
 
@@ -76,15 +76,19 @@ public class SimulationData
 
         this.dataDirectory = dataDirectory;
 
-        timesDataFile = new File(dataDirectory.getAbsolutePath()
+
+
+        if (checkTimesFile && !getTimesFile().exists())
+            throw new SimulationDataException(getTimesFile().getAbsolutePath()+ " (time data) not found");
+
+
+    }
+    
+    public File getTimesFile()
+    {
+        return new File(dataDirectory.getAbsolutePath()
                                       + System.getProperty("file.separator")
                                       + TIME_DATA_FILE);
-
-
-        if (!timesDataFile.exists())
-            throw new SimulationDataException(timesDataFile.getAbsolutePath()+ " (time data) not found");
-
-
     }
 
     public void reset()
@@ -122,7 +126,7 @@ public class SimulationData
                                                      UnitConverter.NEUROCONSTRUCT_UNITS);
 
 
-        times = readDataFileToArray(timesDataFile, timeConversionFactor);
+        times = readDataFileToArray(getTimesFile(), timeConversionFactor);
 
         //GeneralUtils.timeCheck("Starting reading voltages");
 
@@ -604,7 +608,7 @@ public class SimulationData
 
     public String getDateModified()
     {
-        long timeModified = timesDataFile.lastModified();
+        long timeModified = getTimesFile().lastModified();
 
         SimpleDateFormat formatter = new SimpleDateFormat("H:mm:ss (MMM d, yy)");
         java.util.Date modified = new java.util.Date(timeModified);
@@ -1038,7 +1042,7 @@ public class SimulationData
         {
 
             //System.out.println("Info: "+ SimulationsInfo.getSimProps(f, false));
-            simulationData1 = new SimulationData(f);
+            simulationData1 = new SimulationData(f, true);
             simulationData1.initialise();
 
             //System.out.println("dataOnlyForSoma: "+simulationData1.dataOnlyForSoma());

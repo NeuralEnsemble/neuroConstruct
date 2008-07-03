@@ -692,6 +692,9 @@ public class OneCell3D
                 if (showSomaDiam() &&
                     (currSegment.isSomaSegment() && currSegment.isFirstSectionSegment()))
                 {
+                    
+                    logger.logComment("Adding a solid segment 0: "+ currSegment);
+                            
                     addedSegmentTG = addFirstSomaSeg(currSegment);
 
 
@@ -724,12 +727,10 @@ public class OneCell3D
                         (showSomaDiam() && currSegment.isSomaSegment()))
                     {
                         // Only add Segment if it's not already added as FIRST soma segment
-                        if (! (currSegment.isFirstSectionSegment() &&
-                               currSegment.isSomaSegment()))
+                        if (! (currSegment.isFirstSectionSegment() && currSegment.isSomaSegment()))
                         {
-                            logger.logComment("Adding a segment...");
-                            addedSegmentTG = addPositionedSegment(currSegment,
-                                                                  tgOfParent);
+                            logger.logComment("Adding a solid segment 1: "+ currSegment);
+                            addedSegmentTG = addPositionedSegment(currSegment, tgOfParent);
 
                             if (cancelled) return null;
 
@@ -744,18 +745,25 @@ public class OneCell3D
                         nextStickNumber = addPositionedStick(currSegment,
                                                              stickSegmentGeom,
                                                              nextStickNumber);
-
+/*
                         // adding the remaining soma segments as solid if we are only showing soma solid
                         if (currSegment.isSomaSegment()
                             && !currSegment.isFirstSectionSegment()
                             && showSomaDiam())
                         {
-                            addPositionedSegment(currSegment,
-                                                 tgOfParent);
+                            if (!segmentTGs.contains(currSegment.getSegmentId()))
+                            {
+                                logger.logComment("Adding a solid segment 2: "+ currSegment, true);
 
-                            if (cancelled) return null;
 
-                        }
+                                addedSegmentTG = addPositionedSegment(currSegment, tgOfParent);
+
+                                if (cancelled) return null;
+
+                                segmentTGs.put(currSegment.getSegmentId(), addedSegmentTG);
+                            }
+
+                        }*/
                     }
                 }
             }
@@ -1298,14 +1306,14 @@ public class OneCell3D
 
             if (segmentPrimitives.get(segId) != null)
             {
-                logger.logComment("Setting the color of the finite vol cylinder of segment: "+segId, true);
-                Primitive segmentShape
-                    = segmentPrimitives.get(segId);
+                
+                Primitive segmentShape = segmentPrimitives.get(segId);
                 
                 if (!segmentShape.getAppearance().equals(app))
                 {
-                    Appearance tempApp = Utils3D.getGeneralObjectAppearance(Color.green);
-                    segmentShape.setAppearance(tempApp);
+                    logger.logComment("Setting the color of the finite vol cylinder of segment: "+segId);
+                    //Appearance tempApp = Utils3D.getGeneralObjectAppearance(Color.green);
+                    segmentShape.setAppearance(app);
                 }
 
             }
@@ -1400,7 +1408,7 @@ public class OneCell3D
         
         if (showSticks() && Utils3D.isTransparent(app))
         {
-            logger.logComment("Vanishing sticks for "+ myIndex, true);
+            logger.logComment("Vanishing sticks for "+ myIndex);
             
             if (stickSegmentGeom!=null)
             {
@@ -1435,7 +1443,7 @@ public class OneCell3D
                     
             if (showSticks() && Utils3D.isTransparent(cellAppDuringTempSwitch))
             {
-                logger.logComment("Reconstructing sticks for "+ myIndex, true);
+                logger.logComment("Reconstructing sticks for "+ myIndex);
 
                 if (stickSegmentGeom!=null)
                 {

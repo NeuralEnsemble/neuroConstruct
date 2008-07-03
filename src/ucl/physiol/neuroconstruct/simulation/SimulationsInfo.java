@@ -119,7 +119,7 @@ public class SimulationsInfo extends AbstractTableModel
                 SimulationData simData = null;
                 try
                 {
-                    simData = new SimulationData(childrenDirs[i].getAbsoluteFile());
+                    simData = new SimulationData(childrenDirs[i].getAbsoluteFile(), true);
 
                     simDataObjs.add(simData);
 

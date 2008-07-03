@@ -842,7 +842,7 @@ public class SimulationRerunFrame extends JFrame
         try
         {
             GeneralUtils.timeCheck("Loading sim data...");
-            myCurrSimData = new SimulationData(mySimulationDir);
+            myCurrSimData = new SimulationData(mySimulationDir, true);
             myCurrSimData.initialise();
 
             GeneralUtils.timeCheck("Loaded sim data...");

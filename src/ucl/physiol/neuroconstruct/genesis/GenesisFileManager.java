@@ -88,6 +88,9 @@ public class GenesisFileManager
 
     Hashtable<String, Cell> mappedCells = new Hashtable<String, Cell>();
     Hashtable<String, SegmentLocMapper> mappedSegments = new Hashtable<String, SegmentLocMapper>();
+    
+    
+    private boolean quitAfterRun = false;
 
     private GenesisFileManager()
     {
@@ -98,6 +101,8 @@ public class GenesisFileManager
     {
         this.project = project;
     }
+    
+    
     
     // temporary!!!
     public static boolean mooseCompatMode()
@@ -215,6 +220,10 @@ public class GenesisFileManager
             if(mooseCompatMode()) fw.write("\n/*\n");
             if(mooseCompatMode()) fw.write("\n*/\n");
             
+            
+            if (quitAfterRun)
+                fw.write(generateQuit());
+            
             fw.flush();
             fw.close();
 
@@ -261,6 +270,25 @@ public class GenesisFileManager
     {
         return this.genTime;
     }
+    
+    public void setQuitAfterRun(boolean quit)
+    {
+        this.quitAfterRun = quit;
+    }
+    
+    
+    private String generateQuit()
+    {
+        StringBuffer response = new StringBuffer();
+
+        addComment(response,
+                          " The script will quit after finishing...\n");
+
+        response.append("\nexit\n");
+
+        return response.toString();
+    }
+    
 
 
     private String getCellElementName(String cellGroupName, int cellNumber)

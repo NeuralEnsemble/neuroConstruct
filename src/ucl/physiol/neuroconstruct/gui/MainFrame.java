@@ -5497,7 +5497,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             try
             {
-                simData = new SimulationData(simDataFile);
+                simData = new SimulationData(simDataFile, true);
             }
             catch (SimulationDataException ex1)
             {
@@ -9046,6 +9046,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     Main3DPanel main3Dpanel = (Main3DPanel) base3DPanel;
 
                     SimulationRerunFrame simFrame = main3Dpanel.getSimulationFrame();
+                    SlicerFrame sliFrame = main3Dpanel.getSlicerFrame();
 
                     boolean transparency = main3Dpanel.getTransparencySelected();
                     String cellGroup = main3Dpanel.getSelectedCellGroup();
@@ -9063,6 +9064,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     main3Dpanel = (Main3DPanel) base3DPanel;// as its a new object
 
                     if (simFrame != null) main3Dpanel.setSimulationFrame(simFrame);
+                    if (sliFrame != null) main3Dpanel.setSlicerFrame(sliFrame);
 
                     base3DPanel.refresh3D();
 

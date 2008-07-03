@@ -13,7 +13,6 @@
 package ucl.physiol.neuroconstruct.gui;
 
 import java.io.*;
-import java.text.*;
 import java.util.*;
 
 import java.awt.*;
@@ -22,14 +21,12 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import javax.media.j3d.Appearance;
 import javax.swing.*;
-import javax.swing.border.*;
 
 import javax.swing.event.ChangeEvent;
 import ucl.physiol.neuroconstruct.j3D.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.project.*;
-import ucl.physiol.neuroconstruct.gui.view2d.*;
 
 /**
  * Frame for viewing slices of the 3D network
@@ -267,6 +264,7 @@ public class SlicerFrame extends JFrame
         jPanelSlider.add(jPanelSliderZ);
         
         jPanelSlider.add(jPanelMoreOptions);
+        jPanelMoreOptions.add(new JLabel("Transparency (~0.8 -> 1):"));
         jPanelMoreOptions.add(jSpin);
         jSpin.setModel(spinMod);
         jSpin.setPreferredSize(new Dimension(56, 30));
@@ -281,6 +279,7 @@ public class SlicerFrame extends JFrame
         }));
    
     }
+    
     
     
     void jSlider_mouseReleased(MouseEvent e)

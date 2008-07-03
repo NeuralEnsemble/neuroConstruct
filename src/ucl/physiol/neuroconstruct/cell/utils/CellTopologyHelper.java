@@ -2924,8 +2924,8 @@ public class CellTopologyHelper
                 }
                 else
                 {
-                    System.out.println("groupsA:" + groupsA);
-                    System.out.println("groupsB: " + groupsB);
+                    //System.out.println("groupsA:" + groupsA);
+                    //System.out.println("groupsB: " + groupsB);
                     if (groupsA.size()!=groupsB.size() ||
                         !(groupsA.containsAll(groupsB) && groupsB.containsAll(groupsA)))
                     {

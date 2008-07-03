@@ -273,7 +273,7 @@ public class FieldPotentialFrame extends JFrame
             
             File simsDir = ProjectStructure.getSimulationsDir(proj.getProjectMainDirectory());
             
-            SimulationData sd = new SimulationData(new File(simsDir, "Sim_39"));
+            SimulationData sd = new SimulationData(new File(simsDir, "Sim_39"), true);
             
             sd.initialise();
             

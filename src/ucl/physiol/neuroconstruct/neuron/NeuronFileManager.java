@@ -3853,7 +3853,7 @@ public class NeuronFileManager
         StringBuffer response = new StringBuffer();
 
         addHocComment(response,
-                          " As it is intended to run the file under Condor, the hoc will quit after finishing\n");
+                          " The hoc will quit after finishing...\n");
 
         response.append("\nquit()\n");
 

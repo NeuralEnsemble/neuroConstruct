@@ -672,6 +672,31 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         return simRerunFrame;
     }
 
+    // for before the 3d panel is reset...
+    public SlicerFrame getSlicerFrame()
+    {
+        if (slicerFrame == null)
+        {
+            logger.logComment("getSlicerFrame called but its null");
+        }
+        return slicerFrame;
+    }
+
+    
+    // for after the 3d panel is reset...
+    public void setSlicerFrame(SlicerFrame frame)
+    {
+        boolean currentlyShown = frame.isVisible();
+
+        if(currentlyShown)
+        {
+            frame.dispose();
+        }
+        slicerFrame = frame;
+        
+        slicerFrame.setSimInterface(this);
+        frame.setVisible(true);
+    }
 
 
     // for after the 3d panel is reset...
