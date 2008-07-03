@@ -44,8 +44,8 @@ public class GeneralProperties
     /** This is changed automatically by Ant. Look in build.xml...*/
     private static final String versionNumber = "1.1.1";
 
-    private static final String neuroMLVersionNumberShort = "1.7.1";
-    private static final String neuroMLVersionNumberLong = "1.7.1";
+    //private static final String latestNeuroMLVersionShort = "1.7.1";
+    private static final String latestNeuroMLVersionNumber = "1.7.1";
 
     private static final String minimumVersionJava = "J2SE 5.0";
 
@@ -592,9 +592,44 @@ public class GeneralProperties
      *
      * @return The version number
      */
+    public static String getLatestNeuroMLVersionNumber()
+    {
+        return latestNeuroMLVersionNumber;
+    }
+    
+    public static String getLatestNeuroMLVersionString()
+    {
+        return "v"+latestNeuroMLVersionNumber;
+    }
+    
+    
     public static String getNeuroMLVersionNumber()
     {
-        return neuroMLVersionNumberLong;
+        String ver = userSettings.getPrefNeuroMLVersionString();
+        if (ver==null) return null;
+        if (ver.startsWith("v"))
+            return ver.substring(1);
+        return ver;
+    }
+    
+    
+    public static String getNeuroMLVersionString()
+    {
+        String ver = userSettings.getPrefNeuroMLVersionString();    
+        if (ver==null)
+        {
+            userSettings.setPrefNeuroMLVersionString(getLatestNeuroMLVersionString());
+            ver = userSettings.getPrefNeuroMLVersionString();
+        }
+        if (!ver.startsWith("v"))
+            return "v"+ver;
+        return ver;
+    }
+    
+    
+    public static void setNeuroMLVersionString(String ver)
+    {
+        userSettings.setPrefNeuroMLVersionString(ver);
     }
 
 
@@ -604,7 +639,8 @@ public class GeneralProperties
      */
     public static File getChannelMLSchemaFile()
     {
-        return new File("templates/xmlTemplates/Schemata/v"+neuroMLVersionNumberLong+"/Level2/ChannelML_v"+neuroMLVersionNumberShort+".xsd");
+        return new File("templates/xmlTemplates/Schemata/"+userSettings.getPrefNeuroMLVersionString()
+                +"/Level2/ChannelML_"+userSettings.getPrefNeuroMLVersionString()+".xsd");
     }
 
     /**
@@ -613,7 +649,8 @@ public class GeneralProperties
      */
     public static File getNeuroMLSchemaFile()
     {
-        return new File("templates/xmlTemplates/Schemata/v"+neuroMLVersionNumberLong+"/Level3/NeuroML_Level3_v"+neuroMLVersionNumberShort+".xsd");
+        return new File("templates/xmlTemplates/Schemata/"+userSettings.getPrefNeuroMLVersionString()
+                +"/Level3/NeuroML_Level3_"+userSettings.getPrefNeuroMLVersionString()+".xsd");
     }
 
 
@@ -624,7 +661,8 @@ public class GeneralProperties
      */
     public static File getChannelMLReadableXSL()
     {
-        return new File("templates/xmlTemplates/Schemata/v"+neuroMLVersionNumberLong+"/Level2/ChannelML_v"+neuroMLVersionNumberShort+"_HTML.xsl");
+        return new File("templates/xmlTemplates/Schemata/"+userSettings.getPrefNeuroMLVersionString()
+                +"/Level2/ChannelML_"+userSettings.getPrefNeuroMLVersionString()+"_HTML.xsl");
     }
 
 

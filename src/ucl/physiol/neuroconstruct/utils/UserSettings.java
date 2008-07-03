@@ -31,20 +31,19 @@ public class UserSettings
     private String neuronHome = null;
     private String executableCommandLine = null;
 
-
     private String browserExecutable = null;
     private String editorExecutable = null;
-
 
     private String locationLogFiles = "logs";
 
     private boolean logFilePrintToScreenPolicy = false;
+
     private boolean logFileSaveToFilePolicy = false;
     
     private boolean generateMatlab = false;
     private boolean generateIgor = false;
     
-    //private String preferredSaveFormat = null;
+    private String prefNeuroMLVersionString = null;
 
 
     public UserSettings()
@@ -149,5 +148,14 @@ public class UserSettings
         this.editorExecutable = editorExecutable;
     }
   
+    public String getPrefNeuroMLVersionString()
+    {
+        return prefNeuroMLVersionString;
+    }
+
+    public void setPrefNeuroMLVersionString(String preferredNeuroMLVersion)
+    {
+        this.prefNeuroMLVersionString = preferredNeuroMLVersion;
+    }
 
 }

@@ -158,26 +158,12 @@ public class ProjectStructure
         + System.getProperty("file.separator")
         + "xmlTemplates";
 
-    private static String xmlSchemasDir = xmlTemplatesDir
-        + System.getProperty("file.separator")
-        + "Schemata";
-
-    private static String xmlExamplesDir = xmlTemplatesDir
-        + System.getProperty("file.separator")
-        + "Examples";
 
 
-    private static String cmlSchemasDir = xmlSchemasDir
-        + System.getProperty("file.separator")
-        + "v"+GeneralProperties.getNeuroMLVersionNumber()
-        + System.getProperty("file.separator")
-        +"Level2";
 
-
-    private static String cmlExamplesDir = xmlExamplesDir
-        + System.getProperty("file.separator")
-        +"ChannelML";
     
+
+
 
 
     private static String cmlTemplatesDir = xmlTemplatesDir
@@ -752,6 +738,11 @@ public class ProjectStructure
     {
         return new File(xmlTemplatesDir);
     }
+    /*
+    public static File getNeuroMLSchemataDir()
+    {
+        return new File(getXMLTemplatesDir(), "Schemata");
+    }*/
 
     public static File getCMLTemplatesDir()
     {
@@ -761,14 +752,14 @@ public class ProjectStructure
 
     public static File getCMLSchemasDir()
     {
-        return new File(cmlSchemasDir);
+        return new File(xmlTemplatesDir, "Schemata");
     }
 
 
 
     public static File getCMLExamplesDir()
     {
-        return new File(cmlExamplesDir);
+        return new File(xmlTemplatesDir, "Examples");
     }
 
 
