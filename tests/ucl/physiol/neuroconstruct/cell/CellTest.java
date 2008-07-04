@@ -26,7 +26,7 @@ public class CellTest {
     @Before
     public void setUp() 
     {
-        System.out.println("---------------   setUp() SectionTest");
+        System.out.println("---------------   setUp() CellTest");
     }
 
     @After
@@ -35,7 +35,7 @@ public class CellTest {
     
     // Get a cell with (almost) all features non null
     
-    private Cell getDetailedCell()
+    public static Cell getDetailedCell()
     {
         Cell cell = new Cell();
         
@@ -84,10 +84,6 @@ public class CellTest {
         Cell cell1 = getDetailedCell();
         
         Cell cell2 = (Cell)cell1.clone();
-        //System.out.println("Cell 1: "+CellTopologyHelper.printDetails(cell1, null));
-        //System.out.println("Cell 2: "+CellTopologyHelper.printDetails(cell2, null));
-        
-        //cell2.associateGroupWithSpecCap("all", 2222);
         
         String compare = CellTopologyHelper.compare(cell1, cell2, false);
         
