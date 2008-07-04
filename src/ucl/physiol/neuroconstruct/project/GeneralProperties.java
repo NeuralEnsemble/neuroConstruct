@@ -639,8 +639,8 @@ public class GeneralProperties
      */
     public static File getChannelMLSchemaFile()
     {
-        return new File("templates/xmlTemplates/Schemata/"+userSettings.getPrefNeuroMLVersionString()
-                +"/Level2/ChannelML_"+userSettings.getPrefNeuroMLVersionString()+".xsd");
+        return new File("templates/xmlTemplates/Schemata/"+getNeuroMLVersionString()
+                +"/Level2/ChannelML_"+getNeuroMLVersionString()+".xsd");
     }
 
     /**
@@ -649,8 +649,8 @@ public class GeneralProperties
      */
     public static File getNeuroMLSchemaFile()
     {
-        return new File("templates/xmlTemplates/Schemata/"+userSettings.getPrefNeuroMLVersionString()
-                +"/Level3/NeuroML_Level3_"+userSettings.getPrefNeuroMLVersionString()+".xsd");
+        return new File("templates/xmlTemplates/Schemata/"+getNeuroMLVersionString()
+                +"/Level3/NeuroML_Level3_"+getNeuroMLVersionString()+".xsd");
     }
 
 
@@ -661,8 +661,8 @@ public class GeneralProperties
      */
     public static File getChannelMLReadableXSL()
     {
-        return new File("templates/xmlTemplates/Schemata/"+userSettings.getPrefNeuroMLVersionString()
-                +"/Level2/ChannelML_"+userSettings.getPrefNeuroMLVersionString()+"_HTML.xsl");
+        return new File("templates/xmlTemplates/Schemata/"+getNeuroMLVersionString()
+                +"/Level2/ChannelML_"+getNeuroMLVersionString()+"_HTML.xsl");
     }
 
 
