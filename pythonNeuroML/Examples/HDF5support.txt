@@ -8,6 +8,6 @@
 
     nC generated XML            pos+node+conns+synprops+del+segids      pos+nodeid+conns+synprops+del+segids
 
-    nC generated HDF5           pos+node+conns+synprops+segids          pos+nodeid
+    nC generated HDF5           pos+node+conns+synprops+segids          pos+nodeid+conns+synprops
 
     Python scripts              pos+nodeid+conns                        pos+nodeid

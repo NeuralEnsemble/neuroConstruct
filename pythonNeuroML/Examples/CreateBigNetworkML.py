@@ -28,7 +28,7 @@ myFile = NetworkMLFile()
 newPop = myFile.addPopulation("SampleCellGroup", "SampleCell")
 popSize = 10000
 
-newProj = myFile.addProjection("NetConn_1", "SampleCellGroup", "SampleCellGroup")
+newProj = myFile.addProjection("NetConn_SampleCellGroup_SampleCellGroup", "SampleCellGroup", "SampleCellGroup")
 newProj.addSynapse("DoubExpSyn", 1, -20, 5)
 
 for i in range(popSize):
@@ -45,3 +45,9 @@ for i in range(popSize):
 myFile.writeXML("../../../temp/test.nml")
 
 print("All done!")
+print("")
+
+print("To load this generated network into neuroConstruct, create a new project and accept the kind offer to add")
+print("some sample elements. Add a network connection with source and target being the project's only cell group.")
+print("Go to tab Generate, press Load NetworkML and locate the generated file. You will need a pretty high spec")
+print("video card to view this size of network, so try reducing the population size above")

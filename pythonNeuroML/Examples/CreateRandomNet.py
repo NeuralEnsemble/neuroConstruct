@@ -26,7 +26,7 @@ popSize = 100
 projSize = 10000
 compNodes = 4 # Number of processors to generate for
 
-newProj = nmlFile.addProjection("NetConn_1", "SampleCellGroup", "SampleCellGroup")
+newProj = nmlFile.addProjection("NetConn_SampleCellGroup_SampleCellGroup", "SampleCellGroup", "SampleCellGroup")
 newProj.addSynapse("DoubExpSyn", 1, -20, 5)
 
 
@@ -47,11 +47,11 @@ mid = time.time()
 
 print("                                                 Created Python obj containg net in " +str(mid-start)+" seconds")
   
-#filenameX = "../../../temp/test.nml"
-#nmlFile.writeXML(filenameX)     # Create XML based NetworkML file
+filenameX = "../../../temp/test.nml"
+nmlFile.writeXML(filenameX)     # Create XML based NetworkML file
 
-filenameH = "../../../temp/test.h5"
-nmlFile.writeHDF5(filenameH)     # Create HDF5 based NetworkML file
+#filenameH = "../../../temp/test.h5"
+#nmlFile.writeHDF5(filenameH)     # Create HDF5 based NetworkML file
 
 end = time.time()
 
