@@ -637,10 +637,18 @@ public class GeneralProperties
      * Gets the current ChannelML schema
      *
      */
-    public static File getChannelMLSchemaFile()
+    public static File getChannelMLSchemataDir()
     {
         return new File("templates/xmlTemplates/Schemata/"+getNeuroMLVersionString()
-                +"/Level2/ChannelML_"+getNeuroMLVersionString()+".xsd");
+                +"/Level2");
+    }
+    /**
+     * Gets the current ChannelML schema
+     *
+     */
+    public static File getChannelMLSchemaFile()
+    {
+        return new File(getChannelMLSchemataDir(), "ChannelML_"+getNeuroMLVersionString()+".xsd");
     }
 
     /**

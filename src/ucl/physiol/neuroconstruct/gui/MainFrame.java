@@ -11777,46 +11777,49 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     {
         logger.logComment("----------------------------         Reloading cell mechanism file...");
         
-        int selectedRow = jTableMechanisms.getSelectedRow();
+        int[] selectedRows = jTableMechanisms.getSelectedRows();
 
-        if (selectedRow < 0)
+        if (selectedRows.length < 0)
         {
-            logger.logComment("No row selected...");
+            logger.logComment("No rows selected...");
             GuiUtils.showErrorMessage(logger,"Please select one of the ChannelML based cell mechanisms to reload the XML file.", null, this);
             return;
         }
-        CellMechanism cellMech = projManager.getCurrentProject().cellMechanismInfo.getCellMechanismAt(selectedRow);
-        
-        if (cellMech instanceof ChannelMLCellMechanism)
+        for(int row: selectedRows)
         {
-            ChannelMLCellMechanism cmlMechanism = (ChannelMLCellMechanism)cellMech;
-            
-            try
-            {
-                cmlMechanism.reset(projManager.getCurrentProject(), false);
-                
-                SimpleDateFormat formatter = new SimpleDateFormat("H:mm:ss, EEEE MMMM d, yyyy");
-                
-                File implFile = cmlMechanism.getChannelMLFile(projManager.getCurrentProject());
-                java.util.Date modified = new java.util.Date(implFile.lastModified());
-            
-                
-                
-                GuiUtils.showInfoMessage(logger,"Success","Reloaded cell mechanism: "+ cmlMechanism.getInstanceName()
-                    +" from file: "+implFile.getAbsolutePath() +" (modified "+formatter.format(modified)+")", this);
-            }
-            catch (ChannelMLException ex1)
-            {
-                GuiUtils.showErrorMessage(logger,
-                                          "Error initialising Cell Mechanism: " +cmlMechanism.getInstanceName(),
-                                          ex1,
-                                          null);
+            CellMechanism cellMech = projManager.getCurrentProject().cellMechanismInfo.getCellMechanismAt(row);
 
+            if (cellMech instanceof ChannelMLCellMechanism)
+            {
+                ChannelMLCellMechanism cmlMechanism = (ChannelMLCellMechanism)cellMech;
+
+                try
+                {
+                    cmlMechanism.reset(projManager.getCurrentProject(), false);
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("H:mm:ss, EEEE MMMM d, yyyy");
+
+                    File implFile = cmlMechanism.getChannelMLFile(projManager.getCurrentProject());
+                    java.util.Date modified = new java.util.Date(implFile.lastModified());
+
+
+
+                    GuiUtils.showInfoMessage(logger,"Success","Reloaded cell mechanism: "+ cmlMechanism.getInstanceName()
+                        +" from file: "+implFile.getAbsolutePath() +" (modified "+formatter.format(modified)+")", this);
+                }
+                catch (ChannelMLException ex1)
+                {
+                    GuiUtils.showErrorMessage(logger,
+                                              "Error initialising Cell Mechanism: " +cmlMechanism.getInstanceName(),
+                                              ex1,
+                                              null);
+
+                }
             }
-        }
-        else
-        {
-            GuiUtils.showErrorMessage(logger,"Unable to reload the implementing ChannelML file of: "+ cellMech, null, this);
+            else
+            {
+                GuiUtils.showErrorMessage(logger,"Unable to reload the implementing ChannelML file of: "+ cellMech, null, this);
+            }
         }
         
     }
@@ -11830,64 +11833,68 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                      +"mapping XSL files (for NeuroML version "+GeneralProperties.getNeuroMLVersionNumber()+"). Note, ChannelML files with older XSL mappings may work perfectly well,\n"
                      +"but the latest XSL mappings will always be the most well tested and should be considered for any valid ChannelML file.";
         
-        int selectedRow = jTableMechanisms.getSelectedRow();
+        int[] selectedRows = jTableMechanisms.getSelectedRows();
 
-        if (selectedRow < 0)
+        if (selectedRows.length < 0)
         {
             logger.logComment("No row selected...");
             GuiUtils.showErrorMessage(logger,info, null, this);
             return;
         }
-        CellMechanism cellMech = projManager.getCurrentProject().cellMechanismInfo.getCellMechanismAt(selectedRow);
+        
+        for (int row: selectedRows)
+        {
+            CellMechanism cellMech = projManager.getCurrentProject().cellMechanismInfo.getCellMechanismAt(row);
 
-        if (!(cellMech instanceof ChannelMLCellMechanism))
-        {
-            GuiUtils.showErrorMessage(logger,info, null, this);
-        }
-        else
-        {
-            File xslDir = ProjectStructure.getCMLSchemasDir();
-            ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism) cellMech;
-            File implFile = cmlMech.getChannelMLFile(projManager.getCurrentProject());
-            
-            for (SimXSLMapping map: cmlMech.getSimMappings())
+            if (!(cellMech instanceof ChannelMLCellMechanism))
             {
-                String simEnv = map.getSimEnv();
-                File oldXsl = new File (implFile.getParent(), map.getXslFile());
-                File newXsl = null;
-                
-                if (simEnv.equals(SimEnvHelper.NEURON))
+                GuiUtils.showErrorMessage(logger,info, null, this);
+            }
+            else
+            {
+                File xslDir = GeneralProperties.getChannelMLSchemataDir();
+                ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism) cellMech;
+                File implFile = cmlMech.getChannelMLFile(projManager.getCurrentProject());
+
+                for (SimXSLMapping map: cmlMech.getSimMappings())
                 {
-                    newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_NEURONmod.xsl");
-                }
-                else if (simEnv.equals(SimEnvHelper.GENESIS))
-                {
-                    newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_GENESIStab.xsl");
-                }
-                
-                SimpleDateFormat formatter = new SimpleDateFormat("H:mm:ss, EEEE MMMM d, yyyy");
-                
-                java.util.Date modifiedOld = new java.util.Date(oldXsl.lastModified());
-                java.util.Date modifiedNew = new java.util.Date(newXsl.lastModified());
-            
-                
-                int ans = JOptionPane.showConfirmDialog(this, "Would you like to replace mapping file: \n\n"+oldXsl.getAbsolutePath() + " ("+formatter.format(modifiedOld)+")"
-                    +"\n\nfor environment "+simEnv+", cell mech: " +cmlMech.getInstanceName()
-                        + " with a copy of file:\n\n"+ newXsl.getAbsolutePath()+ " ("+formatter.format(modifiedNew)+")"+"?" , "Replace mapping?", JOptionPane.YES_NO_CANCEL_OPTION);
-                
-                if (ans==JOptionPane.CANCEL_OPTION)
-                    return;
-                if (ans==JOptionPane.YES_OPTION)
-                {
-                    try 
+                    String simEnv = map.getSimEnv();
+                    File oldXsl = new File (implFile.getParent(), map.getXslFile());
+                    File newXsl = null;
+
+                    if (simEnv.equals(SimEnvHelper.NEURON))
                     {
-                        GeneralUtils.copyFileIntoDir(newXsl, implFile.getParentFile());
-                        map.setXslFile(newXsl.getName());
-                        projManager.getCurrentProject().markProjectAsEdited();
-                    } 
-                    catch (IOException ex) 
+                        newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_NEURONmod.xsl");
+                    }
+                    else if (simEnv.equals(SimEnvHelper.GENESIS))
                     {
-                        GuiUtils.showErrorMessage(logger,"Problem copying that file into the project", ex, this);
+                        newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_GENESIStab.xsl");
+                    }
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("H:mm:ss, EEEE MMMM d, yyyy");
+
+                    java.util.Date modifiedOld = new java.util.Date(oldXsl.lastModified());
+                    java.util.Date modifiedNew = new java.util.Date(newXsl.lastModified());
+
+
+                    int ans = JOptionPane.showConfirmDialog(this, "Would you like to replace mapping file: \n\n"+oldXsl.getAbsolutePath() + " ("+formatter.format(modifiedOld)+")"
+                        +"\n\nfor environment "+simEnv+", cell mech: " +cmlMech.getInstanceName()
+                            + " with a copy of file:\n\n"+ newXsl.getAbsolutePath()+ " ("+formatter.format(modifiedNew)+")"+"?" , "Replace mapping?", JOptionPane.YES_NO_CANCEL_OPTION);
+
+                    if (ans==JOptionPane.CANCEL_OPTION)
+                        return;
+                    if (ans==JOptionPane.YES_OPTION)
+                    {
+                        try 
+                        {
+                            GeneralUtils.copyFileIntoDir(newXsl, implFile.getParentFile());
+                            map.setXslFile(newXsl.getName());
+                            projManager.getCurrentProject().markProjectAsEdited();
+                        } 
+                        catch (IOException ex) 
+                        {
+                            GuiUtils.showErrorMessage(logger,"Problem copying that file into the project", ex, this);
+                        }
                     }
                 }
             }
@@ -12246,7 +12253,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                         "Is there a mapping (*.xsl) of this Cell Mechanism to "+ simEnvs[i] +
                                                         "?\n\n"
                                                         +"Note that the latest XSL mappings for NEURON and GENESIS "
-                                                        +"can be found in:\n" +ProjectStructure.getCMLSchemasDir().getAbsolutePath() +"",
+                                                        +"can be found in:\n" +GeneralProperties.getChannelMLSchemataDir().getAbsolutePath() +"",
                                                         "Mapping to "+ simEnvs[i]+"?",
                                                         JOptionPane.YES_NO_OPTION);
 
@@ -12260,7 +12267,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 //String lastCellMappingDir = ProjectStructure.getCMLSchemasDir().getAbsolutePath();
 
-                defaultDir = ProjectStructure.getCMLSchemasDir();
+                defaultDir = GeneralProperties.getChannelMLSchemataDir();
 
                 chooser.setCurrentDirectory(defaultDir);
                 logger.logComment("Set Dialog dir to: " + defaultDir.getAbsolutePath());

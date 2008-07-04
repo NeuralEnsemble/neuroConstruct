@@ -734,9 +734,9 @@ public class OptionsFrame extends JFrame
             jPanelProjProps.setBorder(b);
             
             
-            File schemata = ProjectStructure.getCMLSchemasDir();
+            File schemataDir = ProjectStructure.getNeuroMLSchemataDir();
             
-            File[] contents = schemata.listFiles();
+            File[] contents = schemataDir.listFiles();
             
             contents = GeneralUtils.reorderAlphabetically(contents, true);
             for(File f: contents)
@@ -746,8 +746,8 @@ public class OptionsFrame extends JFrame
                     jComboBoxNeuroML.addItem(f.getName());
                 }
             }
-            String tip = "Version of NeuroML specs to use for verification of ChannelML files, etc. \n" +
-                    "Generated from directories at "+ ProjectStructure.getCMLSchemasDir();
+            String tip = "Version of NeuroML specs to use for validation of ChannelML files, etc. \n" +
+                    "List generated from directories at "+ schemataDir;
             
             jComboBoxNeuroML.setToolTipText(tip);
             

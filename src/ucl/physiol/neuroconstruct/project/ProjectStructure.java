@@ -750,7 +750,7 @@ public class ProjectStructure
     }
 
 
-    public static File getCMLSchemasDir()
+    public static File getNeuroMLSchemataDir()
     {
         return new File(xmlTemplatesDir, "Schemata");
     }

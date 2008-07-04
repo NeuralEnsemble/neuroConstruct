@@ -70,6 +70,7 @@ public class MorphMLReader extends XMLFilterImpl
 
     private String currentSectionGroup = null;
 
+    private StringBuffer notesContents = new StringBuffer();
 
     private String currentMechType = null;
     private String currentParamName = null;
@@ -95,7 +96,8 @@ public class MorphMLReader extends XMLFilterImpl
             if (getParentElement().equals(MorphMLConstants.CELL_ELEMENT) &&
                 getCurrentElement().equals(MetadataConstants.NOTES_ELEMENT))
             {
-                cell.setCellDescription(contents);
+                //cell.setCellDescription(contents);
+                notesContents.append(contents);
             }
 
             else if (getCurrentElement().equals(MetadataConstants.GROUP_ELEMENT) &&
@@ -718,8 +720,14 @@ public class MorphMLReader extends XMLFilterImpl
        // currentElement = currentElement.getParent();
         logger.logComment("-----   End element: " + localName);
 
-        if (getCurrentElement().equals(MorphMLConstants.SECTION_ELEMENT)
-                 && getAncestorElement(1).equals(MorphMLConstants.SECTIONS_ELEMENT))
+        if (getAncestorElement(1).equals(MorphMLConstants.CELL_ELEMENT) &&
+                getCurrentElement().equals(MetadataConstants.NOTES_ELEMENT))
+        {
+                cell.setCellDescription(notesContents.toString());
+                notesContents = new StringBuffer();
+        }
+        else if (getCurrentElement().equals(MorphMLConstants.SECTION_ELEMENT)
+            && getAncestorElement(1).equals(MorphMLConstants.SECTIONS_ELEMENT))
         {
             Vector<String> grps = currentSection.getGroups();
 
