@@ -80,7 +80,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
     JButton jButtonCancel = new JButton("Close");
 
     JButton jButtonReload = new JButton("Reload ChannelML file");
-    JButton jButtonPlot = new JButton("Generate relevant plots");
+    JButton jButtonPlot = new JButton("Generate associated plots");
     JButton jButtonEditExt = new JButton("Edit ChannelML file externally");
 
     JButton jButtonEditProps = new JButton("Cell Mechanism properties file");
@@ -1591,7 +1591,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         }
 
         GuiUtils.showInfoMessage(logger, "Success", "ChannelML file is well formed and valid, according to schema:\n"
-                                 + schemaFile, this);
+                                 + schemaFile.getAbsolutePath(), this);
 
     }
 

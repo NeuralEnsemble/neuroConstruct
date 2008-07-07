@@ -1153,7 +1153,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         });
         
         jButtonNeuroMLGenSim.setEnabled(false);
-        jButtonNeuroMLGenSim.setText("Generate NeuroML/Python scripts");
+        jButtonNeuroMLGenSim.setText("Generate all NeuroML scripts");
         jButtonNeuroMLGenSim.setToolTipText("Work in progress...");
         
         jButtonNeuroMLGenSim.addActionListener(new java.awt.event.ActionListener()
@@ -1271,7 +1271,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jComboBoxNeuronFileList.setEnabled(false);
         this.jCheckBoxNeuronLineNums.setEnabled(false);
 
-        jMenuItemPlotEquation.setText("Create Plot from Expression");
+        jMenuItemPlotEquation.setText("Create Data Set from Expression");
         jMenuItemPlotEquation.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -3724,6 +3724,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 int index = projManager.getCurrentProject().cellGroupsInfo.getAllCellGroupNames().indexOf(instance);
                 jTableCellGroups.setRowSelectionInterval(index, index);
+            }
+            if (type.equals(ClickProjectHelper.REGION))
+            {
+                jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(REGIONS_TAB));
+
+                int index = projManager.getCurrentProject().regionsInfo.getRegionIndex(instance);
+                jTable3DRegions.setRowSelectionInterval(index, index);
             }
             if (type.equals(ClickProjectHelper.CELL_TYPE))
             {

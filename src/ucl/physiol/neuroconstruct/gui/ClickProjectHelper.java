@@ -25,6 +25,7 @@ public class ClickProjectHelper
     
     public static final String PROTOCOL = "nCproj";
     public static final String CELL_GROUP = "cellGroup";
+    public static final String REGION = "region";
     public static final String SECTION_GROUP = "sectionGroup";
     public static final String CELL_TYPE = "cellType";
     public static final String NET_CONNECTION = "netConn";
@@ -37,6 +38,10 @@ public class ClickProjectHelper
     public static String getCellGroupLink(String name)
     {
         return "<a href=\""+PROTOCOL+"://"+CELL_GROUP+"="+name+"\" "+styleInfo+">"+name+"</a>";
+    }
+    public static String getRegionLink(String name)
+    {
+        return "<a href=\""+PROTOCOL+"://"+REGION+"="+name+"\" "+styleInfo+">"+name+"</a>";
     }
     public static String getCellTypeLink(String name)
     {

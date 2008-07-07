@@ -20,12 +20,9 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
-import ncsa.hdf.object.h5.*;
-import ncsa.hdf.object.*;
 import ucl.physiol.neuroconstruct.dataset.*;
 import ucl.physiol.neuroconstruct.gui.*;
 import ucl.physiol.neuroconstruct.j3D.*;
-import ucl.physiol.neuroconstruct.neuroml.hdf5.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
@@ -206,7 +203,7 @@ public class PlotterFrame extends JFrame
         jMenuTools.setText("Tools");
         jMenuDifference.setText("Difference");
         jMenuAverage.setText("Average");
-        jMenuAddManual.setText("Add new graph...");
+        jMenuAddManual.setText("Add Data Set from Expression...");
         jMenuImportData.setText("Import data...");
         jMenuTools.add(jMenuDifference);
         jMenuTools.add(jMenuAverage);
@@ -261,7 +258,7 @@ public class PlotterFrame extends JFrame
         jLabelStatusBar.setText("...");
         //jMenuAboutInternalMenu.setText("About");
         //jMenuItemSubMenuItem.setText("thiss");
-        jMenuPlotInfo.setText("Plot info");
+        jMenuPlotInfo.setText("Data Set info");
         jPanelMain.setBorder(border1);
         jPanelCanvasHolder.setMinimumSize(new Dimension(501, 401));
         jPanelCanvasHolder.setPreferredSize(new Dimension(501, 401));
@@ -601,7 +598,7 @@ public class PlotterFrame extends JFrame
 
             JMenu saveMenuItem = new JMenu();
             newMenu.add(saveMenuItem);
-            saveMenuItem.setText("Save plot");
+            saveMenuItem.setText("Save Data Set");
             saveMenuItem.setToolTipText("Save this data set in this project. Can be reloaded via Project -> Data Set Manager");
 
 
@@ -679,7 +676,7 @@ public class PlotterFrame extends JFrame
 
 
             JMenuItem removeMenuItem = new JMenuItem();
-            removeMenuItem.setText("Remove data plot from frame");
+            removeMenuItem.setText("Remove Data Set from Plot Frame");
             removeMenuItem.setToolTipText("Remove only this set of data points");
             newMenu.add(removeMenuItem);
 
@@ -715,7 +712,7 @@ public class PlotterFrame extends JFrame
         {
             StringBuffer sb = new StringBuffer();
 
-            sb.append("Information on graph: " + dataSet.getRefrence() + "\n\n");
+            sb.append("Information on Data Set: " + dataSet.getRefrence() + "\n\n");
 
 
             if (dataSet.getXLegend().length() > 0 && dataSet.getYLegend().length() > 0)
@@ -744,14 +741,14 @@ public class PlotterFrame extends JFrame
             if (sb.length()<400)
             {
 
-                GuiUtils.showInfoMessage(null, "Info on graph: " + dataSet.getRefrence(),
+                GuiUtils.showInfoMessage(null, "Info on Data Set: " + dataSet.getRefrence(),
                                          sb.toString(), null);
 
             }
             else
             {
                 SimpleViewer.showString(sb.toString(),
-                                        "Info on graph: " + dataSet.getRefrence(),
+                                        "Info on Data Set: " + dataSet.getRefrence(),
                     12, false, false);
             }
 
@@ -889,7 +886,7 @@ public class PlotterFrame extends JFrame
         {
             StringBuffer sb = new StringBuffer();
 
-            sb.append("Quick stats on y axis of graph: " + dataSet.getRefrence() + "\n\n");
+            sb.append("Quick stats on y axis of Data Set: " + dataSet.getRefrence() + "\n\n");
 
             double total = 0;
 
@@ -927,7 +924,7 @@ public class PlotterFrame extends JFrame
 
 
 
-            GuiUtils.showInfoMessage(null, "Info on graph: " + dataSet.getRefrence(),
+            GuiUtils.showInfoMessage(null, "Info on Data Set: " + dataSet.getRefrence(),
                                      sb.toString(), null);
 
         };
@@ -1122,7 +1119,7 @@ public class PlotterFrame extends JFrame
             StringBuffer sb = new StringBuffer();
 
             //sb.append("<span style=\"color:#0000FF;\">");
-            sb.append("<h2>Simple spiking info on graph: " + dataSet.getRefrence() + "</h2>");
+            sb.append("<h2>Simple spiking info on Data Set: " + dataSet.getRefrence() + "</h2>");
 
             sb.append("Spiking threshold: " + plotCanvas.getSpikeOptions().getThreshold()+ "<br>");
             sb.append("Total number of spikes: " + spikeTimes.length+ "<br>");
@@ -1183,7 +1180,7 @@ public class PlotterFrame extends JFrame
            // GuiUtils.showInfoMessage(null, "Spike info on graph: " + dataSet.getRefrence(),
             //                         sb.toString(), null);
             SimpleViewer simpleViewer = new SimpleViewer(sb.toString(),
-                                                         "Spike info on graph: "
+                                                         "Spike info on Data Set: "
                                                          + dataSet.getRefrence(),
                                                          12,
                                                          false,
@@ -2238,7 +2235,7 @@ public class PlotterFrame extends JFrame
             sb.append(zeros.toString());
 
             SimpleViewer simpleViewer = new SimpleViewer(sb.toString(),
-                                                         "Zeros of graph: "
+                                                         "Zeros of Data Set: "
                                                          + dataSet.getRefrence(),
                                                          12,
                                                          false,
@@ -2281,7 +2278,7 @@ public class PlotterFrame extends JFrame
             StringBuffer sb = new StringBuffer();
 
 
-            sb.append("Simple area under graph     : " + dataSet.getRefrence() + "\n");
+            sb.append("Simple area under Data Set     : " + dataSet.getRefrence() + "\n");
 
 
             double[] xVals = dataSet.getXValues();
@@ -2305,10 +2302,10 @@ public class PlotterFrame extends JFrame
 
             }
 
-            sb.append("The area under the graph is: "+totalarea);
+            sb.append("The area under the Data Set is: "+totalarea);
             //sb.append(zeros.toString())
 
-            showSmallInfoBox("Area under graph: "
+            showSmallInfoBox("Area under Data Set: "
                                + dataSet.getRefrence(), sb.toString()     );
 
         };
@@ -2335,7 +2332,7 @@ public class PlotterFrame extends JFrame
             StringBuffer sb = new StringBuffer();
 
 
-            sb.append("Absolute area under graph     : " + dataSet.getRefrence() + "\n");
+            sb.append("Absolute area under Data Set     : " + dataSet.getRefrence() + "\n");
 
 
             double[] xVals = dataSet.getXValues();
@@ -2381,10 +2378,10 @@ public class PlotterFrame extends JFrame
 
             }
 
-            sb.append("The absolute area under the graph is: "+totalarea);
+            sb.append("The absolute area under the Data Set is: "+totalarea);
             //sb.append(zeros.toString())
 
-            showSmallInfoBox("Area under graph: "
+            showSmallInfoBox("Area under Data Set: "
                              + dataSet.getRefrence(), sb.toString());
 
 
@@ -2518,9 +2515,9 @@ public class PlotterFrame extends JFrame
             StringBuffer sb = new StringBuffer();
 
 
-                sb.append("// Graph     : " + dataSet.getRefrence() + "\n");
+            sb.append("// Data Set        : " + dataSet.getRefrence() + "\n");
             if (dataSet.getDescription() != null)
-                sb.append("// Description     : " + dataSet.getDescription() + "\n");
+                sb.append("// Description : " + dataSet.getDescription() + "\n");
 
             sb.append("// Number of points: " + dataSet.getNumberPoints() + "\n");
             sb.append("// Max X: " + dataSet.getMaxX()[0] + " (y value: "+dataSet.getMaxX()[1]+") \n");
@@ -2555,7 +2552,7 @@ public class PlotterFrame extends JFrame
             }
 
             SimpleViewer simpleViewer = new SimpleViewer(sb.toString(),
-                                                         "Values present in graph: "
+                                                         "Values present in Data Set: "
                                                          + dataSet.getRefrence(),
                                                          12,
                                                          false,
@@ -2774,7 +2771,7 @@ public class PlotterFrame extends JFrame
     {
         logger.logComment("----   Getting difference between "+plotCanvas.getDataSets().length+" data sets...");
 
-        PlotterFrame frame = PlotManager.getPlotterFrame("Difference between graphs in "+ this.getTitle(), false, true);
+        PlotterFrame frame = PlotManager.getPlotterFrame("Difference between Data Sets in "+ this.getTitle(), false, true);
 
         for (int firstDataSetIndex = 0; firstDataSetIndex < plotCanvas.dataSets.length; firstDataSetIndex++)
         {
@@ -2789,7 +2786,7 @@ public class PlotterFrame extends JFrame
 
                 String name = data0.getRefrence() + " minus " + data1.getRefrence();
 
-                String desc = "  *** Graph with description: ***\n" + data0.getDescription() +
+                String desc = "  *** Data Set with description: ***\n" + data0.getDescription() +
                     "\n  ***has had the following subtracted from it: ***\n" + data1.getDescription();
 
                 DataSet dataSet = new DataSet(name, desc, "", "", "", "");
@@ -2824,7 +2821,7 @@ public class PlotterFrame extends JFrame
 
         logger.logComment("----   Getting average of " + plotCanvas.getDataSets().length + " data sets...");
 
-        String name = "Average of " + plotCanvas.getDataSets().length + " graphs in " + this.getTitle();
+        String name = "Average of " + plotCanvas.getDataSets().length + " Data Sets in " + this.getTitle();
 
         DataSet ds0 = plotCanvas.dataSets[0];
 
@@ -2838,7 +2835,7 @@ public class PlotterFrame extends JFrame
             if (!Arrays.equals(nextXVals, xVals))
             {
                 GuiUtils.showErrorMessage(logger,
-                    "Error, all data sets in the plot frame must have the same X values to get an average of the graphs", null, this);
+                    "Error, all Data Sets in the Plot Frame must have the same X values to get an average of the Data Sets", null, this);
                 return;
             }
             double[] nextYVals = nextDs.getYValues();
@@ -3173,7 +3170,7 @@ public class PlotterFrame extends JFrame
 
         PlotEquationDialog dlg
             = new PlotEquationDialog(parent,
-                                     "Please enter details on a plot to add to this frame",
+                                     "Please enter details to generate a new Data Set",
                                      true,
                                      minVal,
                                      maxVal,

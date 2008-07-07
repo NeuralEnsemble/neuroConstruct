@@ -198,9 +198,21 @@ public class RegionsInfo extends AbstractTableModel
 
         for (int i = 0; i < vectorNames.size(); i++)
         {
-            regionNames[i] = (String)vectorNames.elementAt(i);
+            regionNames[i] = vectorNames.elementAt(i);
         }
         return regionNames;
+    }
+    
+    public int getRegionIndex(String regionName)
+    {
+        for (int i = 0; i < vectorNames.size(); i++)
+        {
+            if (regionName.equals(vectorNames.elementAt(i)))
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public int getNumberRegions()

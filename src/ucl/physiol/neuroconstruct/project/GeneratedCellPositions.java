@@ -218,7 +218,11 @@ public class GeneratedCellPositions
         {
             String cellGroup = names.next();
             String cellType = project.cellGroupsInfo.getCellType(cellGroup);
-            generationReport.append("<b>" + ClickProjectHelper.getCellGroupLink(cellGroup) + "</b> (Cell type: " + ClickProjectHelper.getCellTypeLink(cellType) + ")<br>");
+            String region = project.cellGroupsInfo.getRegionName(cellGroup);
+            generationReport.append("<b>" + ClickProjectHelper.getCellGroupLink(cellGroup) 
+                + "</b> (" + ClickProjectHelper.getCellTypeLink(cellType) 
+                + " in "+ClickProjectHelper.getRegionLink(region)+")<br>");
+            
             generationReport.append("Number in cell group: <b>"
                       + project.generatedCellPositions.getNumberInCellGroup(cellGroup)
                       + "</b><br><br>");

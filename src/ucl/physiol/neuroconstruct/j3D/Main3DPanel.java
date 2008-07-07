@@ -1048,6 +1048,8 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         });
         jButtonSlice.setText("|");
         jButtonSlice.setMargin(ins);
+        jButtonSlice.setToolTipText("Option to selectively make transparent portion of network to facilitate viewing of structure");
+        
         jButtonSlice.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
