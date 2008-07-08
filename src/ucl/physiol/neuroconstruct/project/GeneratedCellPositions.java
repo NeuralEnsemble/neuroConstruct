@@ -239,7 +239,7 @@ public class GeneratedCellPositions
     {
         StringBuffer sb = new StringBuffer();
 
-        sb.append("GeneratedCellPositions with "+getNumberPositionRecords() +" positions in total\n");
+        sb.append("GeneratedCellPositions with "+getNumberPositionRecords() +" cell positions in total\n");
 
         Enumeration keys = myCellGroupPosns.keys();
 
@@ -258,7 +258,7 @@ public class GeneratedCellPositions
     {
         StringBuffer sb = new StringBuffer();
 
-        sb.append("Network contains "+ GeneralUtils.getBold(getNumberPositionRecords()+"", html) +" positions in total"+GeneralUtils.getEndLine(html)+GeneralUtils.getEndLine(html));
+        sb.append("Network contains "+ GeneralUtils.getBold(getNumberPositionRecords()+"", html) +" cells in total"+GeneralUtils.getEndLine(html)+GeneralUtils.getEndLine(html));
 
         Enumeration keys = myCellGroupPosns.keys();
 
@@ -267,8 +267,10 @@ public class GeneratedCellPositions
             String cellGroupName = (String)keys.nextElement();
             ArrayList<PositionRecord> cellGroupArrayList = myCellGroupPosns.get(cellGroupName);
             
+            String cell_s = cellGroupArrayList.size()>1 ? "cells": "cell";
+            
             sb.append("Cell Group: "+ GeneralUtils.getBold(cellGroupName, html)+" has "+GeneralUtils.getBold(cellGroupArrayList.size()+"", html)
-                      + " cells"+GeneralUtils.getEndLine(html));
+                      + " "+cell_s+GeneralUtils.getEndLine(html));
             
             for (int i = 0; i < cellGroupArrayList.size(); i++)
             {

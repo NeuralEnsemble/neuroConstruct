@@ -542,6 +542,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     GridBagLayout gridBagLayout3 = new GridBagLayout();
     GridBagLayout gridBagLayout33 = new GridBagLayout();
     JPanel jPanelGenesisButtons = new JPanel();
+    JPanel jPanelGenesisView = new JPanel();
     JPanel jPanelGenesisSettings = new JPanel();
     JButton jButtonGenesisGenerate = new JButton();
     JButton jButtonGenesisRun = new JButton();
@@ -574,6 +575,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     FlowLayout flowLayout5 = new FlowLayout();
     JComboBox jComboBoxNeuronFileList = new JComboBox();
     JCheckBox jCheckBoxNeuronLineNums = new JCheckBox("Show line numbers");
+    JCheckBox jCheckBoxGenesisLineNums = new JCheckBox("Show line numbers");
     Border border5;
     Border border6;
     JMenuItem jMenuItemCondorMonitor = new JMenuItem();
@@ -718,6 +720,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     JButton jButtonSimPlotDelete = new JButton();
     JButton jButtonSimPlotEdit = new JButton();
+    JButton jButtonSimPlotCopy = new JButton();
     JPanel jPanelSimStimButtons = new JPanel();
     JScrollPane jScrollPaneSimStims = new JScrollPane();
     JButton jButtonSimStimAdd = new JButton();
@@ -1270,6 +1273,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         ////jScrollPaneNeuronAfter.setPreferredSize(new Dimension(440, 450));
         jComboBoxNeuronFileList.setEnabled(false);
         this.jCheckBoxNeuronLineNums.setEnabled(false);
+        this.jCheckBoxGenesisLineNums.setEnabled(false);
 
         jMenuItemPlotEquation.setText("Create Data Set from Expression");
         jMenuItemPlotEquation.addActionListener(new java.awt.event.ActionListener()
@@ -1663,14 +1667,22 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jButtonSimPlotDelete_actionPerformed(e);
             }
         });
-        jButtonSimPlotEdit.setToolTipText("");
-        jButtonSimPlotEdit.setActionCommand("jButtonSimPlotEdit");
+        //jButtonSimPlotEdit.setToolTipText("");
+        //jButtonSimPlotEdit.setActionCommand("jButtonSimPlotEdit");
         jButtonSimPlotEdit.setText("Edit selected plot");
         jButtonSimPlotEdit.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
                 jButtonSimPlotEdit_actionPerformed(e);
+            }
+        });
+        jButtonSimPlotCopy.setText("Copy selected plot");
+        jButtonSimPlotCopy.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonSimPlotCopy_actionPerformed(e);
             }
         });
         jButtonSimStimAdd.setText("Add electrophysiological input");
@@ -3081,6 +3093,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelSimPlot.add(jPanelSimPlotButtons, BorderLayout.NORTH);
         jPanelSimPlotButtons.add(jButtonSimPlotAdd, null);
         jPanelSimPlotButtons.add(jButtonSimPlotEdit, null);
+        jPanelSimPlotButtons.add(jButtonSimPlotCopy, null);
 
         jPanelInputOutput.add(jPanelStims, BorderLayout.CENTER);
 
@@ -3117,11 +3130,17 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                               new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
                                                      , GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
-                                                     new Insets(0, 0, 200, 0), 0, 0));
+                                                     new Insets(0, 0, 0, 0), 0, 0));
+        
+        jPanelGenesisMain.add(jPanelGenesisView,
+                              new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
+                                                     , GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(0, 0, 170, 0), 0, 0));
 
 
 
-        //jTabbedPaneExportFormats.addTab(NEOSIM_SIMULATOR_TAB, null, jPanelExportNeosim, toolTipText.getToolTip("NEOSIM"));
+        
 
         jPanelExportNeuron.setLayout(gridLayout5);
 
@@ -3422,9 +3441,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelCellTypeManageNumbers.add(jButtonCellTypeCopy, null);
         
         jPanelGenesisButtons.add(jButtonGenesisGenerate, null);
-        jPanelGenesisButtons.add(jButtonGenesisView, null);
-        jPanelGenesisButtons.add(jComboBoxGenesisFiles, null);
         jPanelGenesisButtons.add(jButtonGenesisRun, null);
+        
+        jPanelGenesisView.add(jButtonGenesisView, null);
+        jPanelGenesisView.add(jComboBoxGenesisFiles, null);
+        jPanelGenesisView.add(jCheckBoxGenesisLineNums, null);
+        
+        
+        
         jPanelExportGenesis.add(jTabbedPaneGenesis,  BorderLayout.CENTER);
         jTabbedPaneGenesis.add(jPanelGenesisMain,   "Generate code");
         jPanelNeuronExtraHoc.add(jPanelNeuronExtraHocBlock, null);
@@ -5956,6 +5980,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             return;
         }
 
+        setGenesisRunEnabled(false);
 
         try
         {
@@ -5965,16 +5990,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             GuiUtils.showErrorMessage(logger, "Error when generating the files: " + ex.getMessage(), ex, this);
 
-            this.jButtonGenesisRun.setEnabled(false);
-            this.jButtonGenesisView.setEnabled(false);
-            this.jComboBoxGenesisFiles.setEnabled(false);
-
             return;
         }
 
-        this.jButtonGenesisRun.setEnabled(true);
-        this.jButtonGenesisView.setEnabled(true);
-        this.jComboBoxGenesisFiles.setEnabled(true);
+        setGenesisRunEnabled(true);
 
         File[] genFiles = ProjectStructure.getGenesisCodeDir(projManager.getCurrentProject().getProjectMainDirectory()).listFiles();
 
@@ -5991,6 +6010,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         // need this to update list of 3d position files...
         refreshAll();
 
+    }
+    
+    private void setGenesisRunEnabled(boolean enabled)
+    {
+        this.jButtonGenesisRun.setEnabled(enabled);
+        this.jButtonGenesisView.setEnabled(enabled);
+        this.jComboBoxGenesisFiles.setEnabled(enabled);
+        this.jCheckBoxGenesisLineNums.setEnabled(enabled);
     }
 
     private void doDestroy3D()
@@ -8312,6 +8339,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
            this.jButtonSimPlotAdd.setEnabled(false);
            this.jButtonSimPlotDelete.setEnabled(false);
            this.jButtonSimPlotEdit.setEnabled(false);
+           this.jButtonSimPlotCopy.setEnabled(false);
            
 
            this.jButtonSimStimAdd.setEnabled(false);
@@ -8337,6 +8365,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
            this.jButtonSimPlotAdd.setEnabled(true);
            this.jButtonSimPlotDelete.setEnabled(true);
            this.jButtonSimPlotEdit.setEnabled(true);
+           this.jButtonSimPlotCopy.setEnabled(true);
            
 
            this.jButtonSimStimAdd.setEnabled(true);
@@ -8410,6 +8439,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jLabelGenesisRandomGenDesc.setEnabled(false);
             this.jTextFieldGenesisRandomGen.setEnabled(false);
             this.jCheckBoxGenesisRandomGen.setEnabled(false);
+            this.jCheckBoxGenesisLineNums.setEnabled(false);
        }
        else
        {
@@ -8422,7 +8452,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
            jCheckBoxGenesisNoGraphicsMode.setEnabled(true);
            this.jTextAreaSimConfigDesc.setEnabled(true);
 
-           /////////jCheckBoxGenesisVoltPlot.setEnabled(true);
+           
            jCheckBoxGenesisShapePlot.setEnabled(true);
 
            jButtonGenesisNumMethod.setEnabled(true);
@@ -11460,15 +11490,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             return;
         }
 
+        String selected = (String)jComboBoxGenesisFiles.getSelectedItem();
 
-            String selected = (String)jComboBoxGenesisFiles.getSelectedItem();
+        File selectedFile = new File(ProjectStructure.getGenesisCodeDir(projManager.getCurrentProject().getProjectMainDirectory()),
+                                 selected);
 
-            File selectedFile = new File(ProjectStructure.getGenesisCodeDir(projManager.getCurrentProject().getProjectMainDirectory()),
-                                     selected);
+        logger.logComment("Viewing genesis file: "+selectedFile);
 
-            logger.logComment("Viewing genesis file: "+selectedFile);
-
-            SimpleViewer.showFile(selectedFile.getAbsolutePath(), 12, false, false, true);
+        SimpleViewer.showFile(selectedFile.getAbsolutePath(), 12, false, false, jCheckBoxGenesisLineNums.isSelected());
 
 
     }
@@ -13023,6 +13052,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         refreshTabInputOutput();
 
     }
+    
+    
     void jButtonSimPlotEdit_actionPerformed(ActionEvent e)
     {
         int selectedRow = jTableSimPlot.getSelectedRow();
@@ -13058,9 +13089,70 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         projManager.getCurrentProject().markProjectAsEdited();
         projManager.getCurrentProject().simPlotInfo.updateSimPlot(dlg.getFinalSimPlot());
         refreshTabInputOutput();
-
-
     }
+    
+    
+    void jButtonSimPlotCopy_actionPerformed(ActionEvent e)
+    {
+        int selectedRow = jTableSimPlot.getSelectedRow();
+
+        if (selectedRow < 0)
+        {
+            logger.logComment("No row selected...");
+            return;
+        }
+
+        SimPlot selSimPlot = projManager.getCurrentProject().simPlotInfo.getSimPlot(selectedRow);
+        
+        SimPlot newSimPlot = (SimPlot)selSimPlot.clone();
+        
+        String newName = GeneralUtils.incrementName(selSimPlot.getPlotReference());
+        
+        while (projManager.getCurrentProject().simPlotInfo.getSimPlot(newName)!=null)
+        {
+            newName = GeneralUtils.incrementName(selSimPlot.getPlotReference());
+        }
+        
+        newSimPlot.setPlotReference(newName);
+
+        SimPlotDialog dlg
+            = new SimPlotDialog(this, newSimPlot.getPlotReference(),
+                                projManager.getCurrentProject());
+
+        dlg.setSimPlot(newSimPlot);
+
+        Dimension dlgSize = dlg.getPreferredSize();
+        Dimension frmSize = getSize();
+        Point loc = getLocation();
+        dlg.setLocation( (frmSize.width - dlgSize.width) / 2 + loc.x,
+                        (frmSize.height - dlgSize.height) / 2 + loc.y);
+        dlg.setModal(true);
+        dlg.pack();
+        dlg.setVisible(true);
+
+        if (dlg.cancelled)
+        {
+            logger.logComment("They've changed their mind...");
+            return;
+        }
+        projManager.getCurrentProject().markProjectAsEdited();
+        projManager.getCurrentProject().simPlotInfo.addSimPlot(dlg.getFinalSimPlot());
+        refreshTabInputOutput();
+        
+        if (this.projManager.getCurrentProject().simConfigInfo.getNumSimConfigs()==1)
+        {
+            projManager.getCurrentProject().simConfigInfo.getDefaultSimConfig().addPlot(dlg.getFinalSimPlot().getPlotReference());
+            logger.logComment("Now plots in default SimConfig: "+ projManager.getCurrentProject().simConfigInfo.getDefaultSimConfig().getPlots());
+        }
+        else
+        {
+            GuiUtils.showInfoMessage(logger, "Added variable to plot/save", "There is more than one Simulation Configuration. To include this variable to plot/save in one of them, go to tab Generate.", this);
+        }
+    }
+    
+    
+    
+    
 
     void jButtonSimStimAdd_actionPerformed(ActionEvent e)
     {

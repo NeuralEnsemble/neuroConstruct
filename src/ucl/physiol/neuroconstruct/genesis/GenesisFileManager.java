@@ -400,7 +400,7 @@ public class GenesisFileManager
 
                 String stimCellType = project.cellGroupsInfo.getCellType(cellGroup);
 
-                Segment segToStim = this.getMappedSegment(stimCellType, input.getSegmentId(), 0.5f);
+                Segment segToStim = this.getMappedSegment(stimCellType, input.getSegmentId(), input.getFractionAlong());
 
                 if (input.getElectricalInputType().equals(IClamp.TYPE))
                 {
@@ -2413,7 +2413,9 @@ public class GenesisFileManager
                             {
                                 ArrayList<Segment> segs = mappedCell.getSegmentsInGroup(group);
                                 
-                                StringBuffer moveCommand = new StringBuffer();
+                                
+                                
+                                ArrayList<String> moveCommands = new ArrayList<String>();
                                 
                                 for(MechParameter mp: cm.getExtraParameters())
                                 {
@@ -2460,13 +2462,22 @@ public class GenesisFileManager
                                                 String oldChanElement = newElementName+"/#/"+uniq;
                                                 //String newChanElement = newElementName+"/#/"+uniq;
                                                 
-                                                if (moveCommand.length()==0)
+                                                String command = "foreach tempChanName ({el "+oldChanElement+"})\n"
+                                                        +"    move {tempChanName} {getpath {tempChanName} -head}"+cm.getName()+"\n"
+                                                        +"end\n\n";
+                                                
+                                                if (!moveCommands.contains(command))
                                                 {
-                                                    GenesisFileManager.addQuickComment(moveCommand, "Channel was set to "+uniq+" in *.p file, and correct params set there. Moving back to original name.");
+                                                    if (addComments)
+                                                        moveCommands.add("//   " +"Channel was set to "+uniq+" in *.p file, and correct params set there. Moving back to original name.\n");
+                                                    
+                                                    moveCommands.add(command);
+                                                    
+                                                    //GenesisFileManager.addQuickComment(moveCommand, "Channel was set to "+uniq+" in *.p file, and correct params set there. Moving back to original name.");
 
-                                                    moveCommand.append("foreach tempChanName ({el "+oldChanElement+"})\n");
-                                                    moveCommand.append("    move {tempChanName} {getpath {tempChanName} -head}"+cm.getName()+"\n");
-                                                    moveCommand.append("end\n\n");
+                                                    //moveCommand.append("foreach tempChanName ({el "+oldChanElement+"})\n");
+                                                    //moveCommand.append("    move {tempChanName} {getpath {tempChanName} -head}"+cm.getName()+"\n");
+                                                    //moveCommand.append("end\n\n");
                                                 }
                                                 
                                             }
@@ -2504,12 +2515,21 @@ public class GenesisFileManager
                                                     String uniq = cm.getUniqueName();
                                                     String oldChanElement = newElementName+"/"+SimEnvHelper.getSimulatorFriendlyName(seg.getSegmentName())+"/"+uniq;
 
-                                                    if (moveCommand.length()==0)
+                                                    String command = "move "+oldChanElement+" "+chanElement+"\n\n";
+                                                    
+                                                    //if (moveCommand.length()==0)
+                                                    //{
+                                                    if (!moveCommands.contains(command))
                                                     {
-                                                        GenesisFileManager.addQuickComment(moveCommand, "Channel was set to "+uniq+" in *.p file, and correct params set there. Moving back to original name.");
+                                                        if (addComments)
+                                                            moveCommands.add("//   " +"Channel was set to "+uniq+" in *.p file, and correct params set there. Moving back to original name.\n");
 
-                                                        moveCommand.append("move "+oldChanElement+" "+chanElement+"\n\n");
+                                                        moveCommands.add(command);
                                                     }
+                                                        //GenesisFileManager.addQuickComment(moveCommand, "Channel was set to "+uniq+" in *.p file, and correct params set there. Moving back to original name.");
+
+                                                        //moveCommand.append("move "+oldChanElement+" "+chanElement+"\n\n");
+                                                    //}
                                                 }
 
                                             }
@@ -2520,8 +2540,10 @@ public class GenesisFileManager
                                         GenesisFileManager.addQuickComment(response, "Ignoring mechanism "+cm.getName()+" which has parameter "+mp.getName()+" = "+mp.getValue()+". This will be set in the *.p file... ");
                                     }
                                 }
-                                
-                                response.append(moveCommand.toString());
+                                for(String command: moveCommands)
+                                {
+                                    response.append(command);
+                                }
                                 
                             }
                         }
@@ -2633,7 +2655,8 @@ public class GenesisFileManager
                                         cellProcsInfluencingConc = new ArrayList<String> ();
                                         ionConcentration.put(name, cellProcsInfluencingConc);
                                     }
-                                    cellProcsInfluencingConc.add(cellMech.getInstanceName());
+                                    if (!cellProcsInfluencingConc.contains(cellMech.getInstanceName()))
+                                        cellProcsInfluencingConc.add(cellMech.getInstanceName());
 
                                 }
                                 else if (role!=null && (role.equals(ChannelMLConstants.ION_ROLE_PERMEATED_FIXED_REV_POT)))
@@ -2673,7 +2696,8 @@ public class GenesisFileManager
                                 cellProcsTransmittingIon = new ArrayList<String> ();
                                 ionCurrentSources.put(ion_name, cellProcsTransmittingIon);
                             }
-                            cellProcsTransmittingIon.add(cellMech.getInstanceName());
+                            if (!cellProcsTransmittingIon.contains(cellMech.getInstanceName()))
+                                cellProcsTransmittingIon.add(cellMech.getInstanceName());
 
                         }
                         else

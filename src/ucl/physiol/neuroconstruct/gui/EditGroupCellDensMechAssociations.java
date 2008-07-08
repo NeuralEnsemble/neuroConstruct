@@ -810,11 +810,11 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
     private float getDensForGroup(String cellMech, float suggestedValue, String groupRef)
     {
-        float dens = -1;
+        float dens = Float.MIN_VALUE;
 
-        while (dens<0)
+        while (dens==Float.MIN_VALUE)
         {
-            String request = "Please enter the value for the max conductance density for the channel:\n"
+            String request = "Please enter a value for the max conductance density for the channel:\n"
                 + cellMech + " placed on sections in " + groupRef + " (Units: "
                 + UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()
                 + ")";
@@ -825,6 +825,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                                               suggestedValue + "");
             
             if (inputValue==null || inputValue.length()==0) return -1;
+            
             try
             {
                 dens = Float.parseFloat(inputValue);
@@ -832,6 +833,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
             catch (NumberFormatException ex)
             {
                 GuiUtils.showErrorMessage(logger, "Please enter a valid float value", ex, this);
+                dens = Float.MIN_VALUE;
             }
         }
         return dens;

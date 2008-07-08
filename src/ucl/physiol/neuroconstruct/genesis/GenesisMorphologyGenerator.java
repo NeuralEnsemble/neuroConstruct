@@ -41,9 +41,9 @@ public class GenesisMorphologyGenerator
     Cell cell = null;
 
     File morphFile = null;
-
-
+    
     Project project = null;
+    
 
     private GenesisMorphologyGenerator()
     {
@@ -512,7 +512,7 @@ public class GenesisMorphologyGenerator
                 {
                     try
                     {                      
-                        double genDens =  UnitConverter.getConductanceDensity(
+                        float genDens =  (float)UnitConverter.getConductanceDensity(
                                 nextChanMech.getDensity(),
                                 UnitConverter.NEUROCONSTRUCT_UNITS,
                                 project.genesisSettings.getUnitSystemToUse());
@@ -549,7 +549,7 @@ public class GenesisMorphologyGenerator
                                 area =  area * ((UnitConverter.getArea(1, UnitConverter.NEURON_UNITS, 
                                         project.genesisSettings.getUnitSystemToUse())));
                                 
-                                double B = phi / area;
+                                float B = (float)( phi / area);
 
                                 /** @todo Fix this for correct units of ConcFixedPool!!! ... */
                                 float factor = 1;
@@ -573,6 +573,11 @@ public class GenesisMorphologyGenerator
                             {
                                 channelCondString.append(nextChanMech.getUniqueName()+ " "+ genDens+ "  ");
                             }
+                            //if (genDens==0)
+                            //{
+                            //    logger.logComment("Ignoring density of "+ genDens+ " on "+cellMech.getInstanceName()+ " as it is zero...");
+                           //    // channelCondString.append(nextChanMech.getUniqueName()+ " "+ genDens+ "  ");
+                           // }
                             else
                             {
                                 logger.logComment("Ignoring density of "+ genDens+ " on "+cellMech.getInstanceName()+ " as it is negative...");
@@ -686,13 +691,13 @@ public class GenesisMorphologyGenerator
      * @param length The length in "normal" units
      * @return The length which will be used in the main morphology lines
      */
-    private double convertToMorphDataLength(double length)
+    private float convertToMorphDataLength(double length)
     {
         logger.logComment("Converting double: "+ length);
         double conversionFactor = 1000000;
-        return conversionFactor * UnitConverter.getLength(length,
+        return (float)(conversionFactor * UnitConverter.getLength(length,
                                        UnitConverter.NEUROCONSTRUCT_UNITS,
-                                       project.genesisSettings.getUnitSystemToUse());
+                                       project.genesisSettings.getUnitSystemToUse()));
     }
 
 

@@ -93,6 +93,23 @@ public class SimPlot
     public SimPlot()
     {
     }
+    
+    
+    @Override
+    public Object clone()
+    {
+        SimPlot sp = new SimPlot(new String(plotReference),
+                   new String(graphWindow),
+                   new String(cellGroup),
+                   new String(cellNumber),
+                   new String(segmentId),
+                   new String(valuePlotted),
+                   this.minValue,
+                   this.maxValue,
+                   new String(plotAndOrSave));
+        
+        return sp;
+    }
 
     /**
      * Gets the units if the quantity plotted can be determine from valuePlotted
