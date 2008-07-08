@@ -25,7 +25,7 @@ public class MainTest {
         Result r = org.junit.runner.JUnitCore.runClasses(/*ucl.physiol.neuroconstruct.cell.CellSuite.class, */
                 
                 ucl.physiol.neuroconstruct.cell.CellTest.class,
-                ucl.physiol.neuroconstruct.cell.converters.MorphMLReaderTest.class/*,
+                ucl.physiol.neuroconstruct.cell.converters.MorphMLReaderTest.class,
                 
                 ucl.physiol.neuroconstruct.genesis.GenesisFileManagerTest.class,
                 ucl.physiol.neuroconstruct.neuron.NeuronFileManagerTest.class,
@@ -38,7 +38,7 @@ public class MainTest {
                 ucl.physiol.neuroconstruct.project.ConnSpecificPropsTest.class,
                 ucl.physiol.neuroconstruct.project.ProjectStructureTest.class,
                 ucl.physiol.neuroconstruct.project.ProjectTest.class,
-                ucl.physiol.neuroconstruct.project.MorphBasedConnGeneratorTest.class*/); 
+                ucl.physiol.neuroconstruct.project.MorphBasedConnGeneratorTest.class/**/); 
         
         
         System.out.println("Finished the main nC tests. Was successful: "+r.wasSuccessful());

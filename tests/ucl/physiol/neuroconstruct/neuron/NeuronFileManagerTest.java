@@ -14,6 +14,7 @@ import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.simulation.SimulationData;
 import static org.junit.Assert.*;
 import ucl.physiol.neuroconstruct.simulation.SimulationDataException;
+import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
 /**
  *
@@ -52,9 +53,13 @@ public class NeuronFileManagerTest {
                 
         pm.doGenerate(sc.getName(), 1234);
         
+        int wait = 2000;
+        if (GeneralUtils.isWindowsBasedPlatform())
+            wait = 4000;
+        
         while(pm.isGenerating())
         {
-            Thread.sleep(2000);
+            Thread.sleep(wait);
         }
         
         int numGen = proj.generatedCellPositions.getNumberInAllCellGroups();
@@ -104,7 +109,8 @@ public class NeuronFileManagerTest {
         
         File timesFile = simData.getTimesFile();
         
-        Thread.sleep(2000); // Shouldn't take longer than this
+        
+        Thread.sleep(wait); // Shouldn't take longer than this
         
         assertTrue(timesFile.exists());
         
