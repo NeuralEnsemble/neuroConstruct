@@ -17,6 +17,7 @@ import java.text.*;
 import java.util.*;
 
 import java.awt.*;
+import java.util.ArrayList;
 import javax.swing.*;
 
 /**
@@ -315,6 +316,48 @@ public class GeneralUtils
             }
         }
         return list;
+    }
+
+
+
+
+    public static ArrayList getOrderedList(Enumeration en, boolean ascending)
+    {
+        ArrayList a = new ArrayList();
+        while(en.hasMoreElements())
+            a.add(en.nextElement());
+        
+        if (a.size() > 1)
+        {
+            for (int j = 1; j < a.size(); j++)
+            {
+
+                for (int k = 0; k < j; k++)
+                {
+                    if (ascending)
+                    {
+                        if (a.get(j).toString().compareToIgnoreCase(a.get(k).toString()) < 0)
+                        {
+                            Object earlier = a.get(j);
+                            Object later = a.get(k);
+                            a.set(j, later);
+                            a.set(k, earlier);
+                        }
+                    }
+                    else
+                    {
+                        if (a.get(j).toString().compareToIgnoreCase(a.get(k).toString()) > 0)
+                        {
+                            Object earlier = a.get(j);
+                            Object later = a.get(k);
+                            a.set(j, later);
+                            a.set(k, earlier);
+                        }
+                    }
+                }
+            }
+        }
+        return a;
     }
 
 

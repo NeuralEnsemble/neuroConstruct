@@ -18,6 +18,7 @@ import java.net.*;
 import java.text.*;
 import java.util.*;
 import java.util.zip.*;
+import java.lang.management.*;
 import javax.media.j3d.*;
 import javax.vecmath.*;
 import javax.xml.*;
@@ -13826,6 +13827,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     {
         Properties props = System.getProperties();
         Enumeration names = props.propertyNames();
+        ArrayList ordered = GeneralUtils.getOrderedList(names, true);
 
         int idealPropNameWidth = 30;
         int idealTotalWidth = 120;
@@ -13834,9 +13836,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         sb.append("Java system properties:\n\n");
 
-        while (names.hasMoreElements())
+        for(Object next: ordered)
         {
-            String propName = (String) names.nextElement();
+            String propName = (String) next;
             String val = props.getProperty(propName);
             propName = propName+": ";
             if (propName.length()<=idealPropNameWidth)
@@ -13850,6 +13852,22 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             sb.append(GeneralUtils.wrapLine(propName + val, "\n", idealTotalWidth) + "\n");
         }
 
+        //sb.append("\nMemory usage:\n\n");
+        
+        MemoryMXBean mxbean = ManagementFactory.getMemoryMXBean();
+        MemoryUsage muh = mxbean.getHeapMemoryUsage();
+        sb.append("\n\nHeap Memory usage: "+muh+"\n\n");
+        
+        
+        RuntimeMXBean rbean = ManagementFactory.getRuntimeMXBean();
+        
+        
+        sb.append("Further system information:\n\n");
+        
+        sb.append("Number available processors: "+ManagementFactory.getOperatingSystemMXBean().getAvailableProcessors()+"\n\n");
+        sb.append("JVM name: "+rbean.getName()+"\n\n");
+        sb.append("Boot classpath: "+rbean.getBootClassPath()+"\n\n");
+        sb.append("Args to JVM: "+rbean.getInputArguments()+"\n\n");
 
         boolean useHtml = false;
 

@@ -731,7 +731,7 @@ public class MorphMLConverter extends FormatImporter
                             }
 
                             revPotParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
-                                                                             UnitConverter.getVoltage(revPot,
+                                                                             (float)UnitConverter.getVoltage(revPot,
                                 UnitConverter.NEUROCONSTRUCT_UNITS,
                                 UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + ""));
                             

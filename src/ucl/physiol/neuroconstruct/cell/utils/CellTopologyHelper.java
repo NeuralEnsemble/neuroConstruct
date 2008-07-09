@@ -3699,11 +3699,13 @@ public class CellTopologyHelper
                                                        membCondDens,
                                                        UnitConverter.conductanceDensityUnits,
                                                        html) + GeneralUtils.getEndLine(html));
+                    
+                    String params = next.getExtraParamsDesc();
 
                     info.append(getMainUnitDesc("Conductance density for Cell Mechanism: <b>" + cellMech.getInstanceName()+"</b>",
                                                 membCondDens,
                                                 UnitConverter.conductanceDensityUnits,
-                                                html) + GeneralUtils.getEndLine(html));
+                                                html)+"<b>"+params+ "</b>"+GeneralUtils.getEndLine(html));
 
                     detailedInfo.append(getAllUnitDesc("Total Conductance on Segment due to: <b>" +
                                                        cellMech.getInstanceName()+"</b>",
