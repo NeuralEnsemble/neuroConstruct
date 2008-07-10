@@ -18,6 +18,7 @@ import java.io.*;
 
 import ucl.physiol.neuroconstruct.cell.examples.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
+import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
 /**
  *
@@ -111,6 +112,42 @@ public class Section implements Serializable
 
         return info;
 
+    }
+    
+    
+    public String compareTo(Section other)
+    {
+        StringBuffer sb = new StringBuffer();
+        String col = "black";
+        col = sectionName.equals(other.getSectionName())?"black":"red";
+        sb.append(GeneralUtils.getColouredString(sectionName, col, true));
+        
+        col = (other.startRadius == startRadius)?"black":"red";
+        sb.append(","+GeneralUtils.getColouredString(" init radius: " + startRadius, col,true));
+        
+        col = (other.getStartPointPosition().equals(getStartPointPosition()))?"black":"red";
+        sb.append(","+GeneralUtils.getColouredString(" start: " + getStartPointPosition(), col,true));
+        
+        
+        col = (other.numberInternalDivisions == numberInternalDivisions)?"black":"red";
+        sb.append(","+GeneralUtils.getColouredString(" internal divs: " + numberInternalDivisions, col,true));
+        col = "black";
+        if (other.getGroups().size()==groups.size())
+        {
+            for(String g: groups)
+            {
+                if (!other.getGroups().contains(g))
+                    col = "red";
+            }
+        }
+        else
+        {
+            col = "red";
+        }
+        sb.append(","+GeneralUtils.getColouredString(" groups: " + groups, col,true));
+        
+        
+        return sb.toString();
     }
 
     /**

@@ -60,6 +60,8 @@ public class SegmentSelector extends JFrame implements DocumentListener
 
     boolean initialising = false;
     
+    SimpleViewer endPointViewer = null;
+    
     ToolTipHelper toolTipText = ToolTipHelper.getInstance();
 
     Cell myCell = null;
@@ -114,6 +116,9 @@ public class SegmentSelector extends JFrame implements DocumentListener
     JTextField jTextFieldStartPoint = new JTextField();
     JLabel jLabelStartPoint = new JLabel();
     JLabel jLabelParent = new JLabel();
+    
+    
+    JButton jButtonCoords = new JButton("...");
     
     
     JLabel jLabelSegLength = new JLabel();
@@ -195,6 +200,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
 
     public void setSelectedSegment(Segment segment)
     {
+      
         updatingFrom3DView = true;
         
         logger.logComment("----   Setting selected segment: "+segment);
@@ -210,6 +216,12 @@ public class SegmentSelector extends JFrame implements DocumentListener
     private void refresh()
     {
         boolean segmentAddressed = true;
+        
+        if ( endPointViewer!=null)
+        {
+             endPointViewer.dispose();
+              endPointViewer  = null;
+        }
 
         if (currentlyAddressedSegment==null)
             segmentAddressed = false;
@@ -453,6 +465,23 @@ public class SegmentSelector extends JFrame implements DocumentListener
                 jButtonBiophys_actionPerformed(e);
             }
         }); 
+        Dimension d = new Dimension(24, 24);
+        
+        jButtonCoords.setPreferredSize(d);
+        jButtonCoords.setMaximumSize(d);
+        jButtonCoords.setMargin(new Insets(2, 2,2,2));
+        jButtonCoords.setToolTipText("This offers a number of suggestions for end points at a given length when the start x, y, z are integer values");
+        
+        
+        jButtonCoords.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonCoords_actionPerformed(e);
+            }
+        }); 
+        
+        
         jComboBoxFunctions.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -495,7 +524,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
         buttonGrpChildern.add(jRadioButtonTransChildren);
         buttonGrpChildern.add(jRadioButtonRotTransChildren);
         
-        jRadioButtonNoMove.setSelected(true);
+        jRadioButtonRotTransChildren.setSelected(true);
         
         
         panelButtons.add(jPanelFunctions, BorderLayout.NORTH); 
@@ -585,18 +614,25 @@ public class SegmentSelector extends JFrame implements DocumentListener
         jPanelParameters.removeAll();
 
         jPanelParameters.setLayout(gridBagLayout2);
+        
+        
+        
         jPanelParameters.add(jLabelName, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
                                                                 , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                                 new Insets(6, 14, 6, 60), 0, 0));
-        jPanelParameters.add(jTextFieldSegmentsName, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0
+        
+        jPanelParameters.add(jTextFieldSegmentsName, new GridBagConstraints(1, 0, 2, 1, 1.0, 0.0
                                                                     , GridBagConstraints.WEST,
                                                                     GridBagConstraints.HORIZONTAL,
                                                                     new Insets(6, 0, 6, 14), 0, 0));
         
+        
+        
         jPanelParameters.add(jLabelID, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
                                                               , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                               new Insets(6, 14, 6, 0), 0, 0));
-        jPanelParameters.add(jTextFieldID, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0
+        
+        jPanelParameters.add(jTextFieldID, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0
                                                                   , GridBagConstraints.EAST,
                                                                   GridBagConstraints.HORIZONTAL, new Insets(6, 0, 6, 14),
                                                                   130, 0));
@@ -606,7 +642,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
         jPanelParameters.add(jLabelSection, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
                                                                    , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                                    new Insets(6, 14, 6, 0), 0, 0));
-        jPanelParameters.add(jTextFieldNameSecInSegView, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0
+        jPanelParameters.add(jTextFieldNameSecInSegView, new GridBagConstraints(1, 2, 2, 1, 1.0, 0.0
                                                                        , GridBagConstraints.WEST,
                                                                        GridBagConstraints.HORIZONTAL,
                                                                        new Insets(6, 0, 6, 14), 184, 0));
@@ -617,7 +653,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
                                                                       , GridBagConstraints.WEST,
                                                                       GridBagConstraints.NONE, new Insets(6, 14, 6, 0),
                                                                       0, 0));
-        jPanelParameters.add(jTextFieldStartPoint, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0
+        jPanelParameters.add(jTextFieldStartPoint, new GridBagConstraints(1, 3, 2, 1, 1.0, 0.0
                                                                           , GridBagConstraints.WEST,
                                                                           GridBagConstraints.HORIZONTAL,
                                                                           new Insets(6, 0, 6, 14), 0, 0));
@@ -628,7 +664,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
                                                                        , GridBagConstraints.WEST,
                                                                        GridBagConstraints.NONE, new Insets(6, 14, 6, 0),
                                                                        0, 0));
-        jPanelParameters.add(jTextFieldStartRadius, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0
+        jPanelParameters.add(jTextFieldStartRadius, new GridBagConstraints(1, 4, 2, 1, 0.0, 0.0
                                                                            , GridBagConstraints.WEST,
                                                                            GridBagConstraints.HORIZONTAL,
                                                                            new Insets(6, 0, 6, 14), 0, 0));
@@ -638,16 +674,23 @@ public class SegmentSelector extends JFrame implements DocumentListener
         jPanelParameters.add(jLabelEndPoint, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0
                                                                     , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                                     new Insets(6, 14, 6, 0), 0, 0));
+        
         jPanelParameters.add(jTextFieldEndPoint, new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0
                                                                         , GridBagConstraints.WEST,
                                                                         GridBagConstraints.HORIZONTAL,
+                                                                        new Insets(6, 0, 6, 0), 0, 0));
+        
+        jPanelParameters.add(jButtonCoords, new GridBagConstraints(2, 5, 1, 1, 1.0, 0.0
+                                                                        , GridBagConstraints.CENTER,
+                                                                        GridBagConstraints.NONE,
                                                                         new Insets(6, 0, 6, 14), 0, 0));
+        
         
         
         jPanelParameters.add(jLabelEndRadius, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0
                                                                      , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                                      new Insets(6, 14, 6, 0), 0, 0));
-        jPanelParameters.add(jTextFieldEndRadius, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0
+        jPanelParameters.add(jTextFieldEndRadius, new GridBagConstraints(1, 6, 2, 1, 0.0, 0.0
                                                                          , GridBagConstraints.WEST,
                                                                          GridBagConstraints.HORIZONTAL,
                                                                          new Insets(6, 0, 6, 14), 0, 0));
@@ -658,7 +701,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
         jPanelParameters.add(jLabelSegLength, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0
                                                                   , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                                   new Insets(6, 14, 6, 0), 0, 0));
-        jPanelParameters.add(jTextFieldSegLength, new GridBagConstraints(1, 7, 1, 1, 1.0, 0.0
+        jPanelParameters.add(jTextFieldSegLength, new GridBagConstraints(1, 7, 2, 1, 1.0, 0.0
                                                                       , GridBagConstraints.WEST,
                                                                       GridBagConstraints.HORIZONTAL,
                                                                       new Insets(6, 0, 6, 14), 0, 0));
@@ -668,7 +711,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
         jPanelParameters.add(jLabelParent, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0
                                                                   , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                                   new Insets(6, 14, 6, 0), 0, 0));
-        jPanelParameters.add(jTextFieldParent, new GridBagConstraints(1, 8, 1, 1, 1.0, 0.0
+        jPanelParameters.add(jTextFieldParent, new GridBagConstraints(1, 8, 2, 1, 1.0, 0.0
                                                                       , GridBagConstraints.WEST,
                                                                       GridBagConstraints.HORIZONTAL,
                                                                       new Insets(6, 0, 6, 14), 0, 0));
@@ -679,7 +722,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
                                                                       , GridBagConstraints.WEST,
                                                                       GridBagConstraints.NONE, new Insets(6, 14, 0, 0),
                                                                       0, 0));
-        jPanelParameters.add(jTextFieldFractAlong, new GridBagConstraints(1, 9, 1, 1, 0.0, 0.0
+        jPanelParameters.add(jTextFieldFractAlong, new GridBagConstraints(1, 9, 2, 1, 0.0, 0.0
                                                                           , GridBagConstraints.WEST,
                                                                           GridBagConstraints.HORIZONTAL,
                                                                           new Insets(6, 0, 6, 14), 0, 0));
@@ -693,7 +736,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
                                                                      new Insets(6, 14, 6, 0), 0, 0));
         
         
-        jPanelParameters.add(jComboBoxFiniteVolume, new GridBagConstraints(1, 10, 1, 1, 0.0, 0.0
+        jPanelParameters.add(jComboBoxFiniteVolume, new GridBagConstraints(1, 10, 2, 1, 0.0, 0.0
                                                                            , GridBagConstraints.CENTER,
                                                                            GridBagConstraints.HORIZONTAL,
                                                                            new Insets(6, 0, 6, 14), 0, 0));
@@ -1784,6 +1827,58 @@ public class SegmentSelector extends JFrame implements DocumentListener
         jComboBoxSection.setSelectedItem(newSegment.getSection().getSectionName());
         jComboBoxSegment.setSelectedItem(newSegment.getSegmentName());
     }
+    
+    public void jButtonCoords_actionPerformed(ActionEvent e)
+    {
+        if (currentlyAddressedSegment==null) return;
+        
+        Point3f startPoint = parsePoint(jTextFieldStartPoint.getText()); 
+        //int x = Integer.
+        if (!(startPoint.x==(int)startPoint.x &&
+              startPoint.y==(int)startPoint.y &&
+              startPoint.z==(int)startPoint.z))
+        {
+            GuiUtils.showErrorMessage(logger, "Error, this function can only be used when the start point "+startPoint+" has all integer values.", null, this);
+            
+            return;
+        }
+        int len = 25;
+        try
+        {
+            len = (int)(Float.parseFloat(jTextFieldSegLength.getText())+0.5);
+        }
+        catch(NumberFormatException ex)
+        {
+            len = (int)(currentlyAddressedSegment.getSegmentLength()+0.5);
+        }
+        
+        String lenString = JOptionPane.showInputDialog("Please enter an integer value of the preferred length of the segment", len+"");
+        if (lenString==null)
+            return;
+        
+        try
+        {
+           len = Integer.parseInt(lenString);
+        }
+        catch(NumberFormatException ex)
+        {
+            jButtonCoords_actionPerformed(e); // back to start...
+        }
+        
+        ArrayList<Point3f>  points = CoordCalculator.getCoords((int)startPoint.x, (int)startPoint.y, (int)startPoint.z, len);
+        StringBuffer info = new StringBuffer("The following points are a distance of "+len +" from point "+startPoint+"\n" +
+                "Copy and paste the chosen point into the end point field in the Segment Selector.\n" +
+                "Thanks to Michele Mattioni for the end point generation code.\n\n");
+        for(Point3f p : points)
+            info.append(p+"\n");
+        
+        endPointViewer = SimpleViewer.showString(info.toString(), "Possible end points", 12, false, 
+                false, .35f,.80f);
+        //endPointViewer.pack();
+        
+        
+    }
+    
 
     public void jButtonBiophys_actionPerformed(ActionEvent e)
     {

@@ -477,10 +477,7 @@ public class GeneralUtils
         if (!tabIt) return text;
         if (colour.trim().length()==0) return text;
 
-        String closingTab = "font";
-
-
-        return "<font color=\""+colour+"\">" + text + "</" + closingTab + ">";
+        return "<font color=\""+colour+"\">" + text + "</font>";
     }
 
 

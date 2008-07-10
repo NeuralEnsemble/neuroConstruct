@@ -88,7 +88,7 @@ public class ChannelMechanism implements Serializable
 
                     for (int i=0;i<extraParameters.size();i++)
                     {
-                        if (!otherParams.get(i).equals(extraParameters.get(i))) 
+                        if (!otherParams.contains(extraParameters.get(i))) 
                              return false;
                     }
                 }
@@ -148,10 +148,13 @@ public class ChannelMechanism implements Serializable
     public String getExtraParamsDesc()
     {
         StringBuffer info = new StringBuffer();
+        
            
         if (extraParameters!=null)
         {
-            for (MechParameter mp: extraParameters)
+            ArrayList<MechParameter> mpa = (ArrayList<MechParameter>)GeneralUtils.reorderAlphabetically(extraParameters, true);
+            
+            for (MechParameter mp: mpa)
             {
                 info.append(", "+ mp.toString());
             }

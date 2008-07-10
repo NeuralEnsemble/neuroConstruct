@@ -20,6 +20,7 @@ import ucl.physiol.neuroconstruct.cell.examples.*;
 import ucl.physiol.neuroconstruct.j3D.*;
 import ucl.physiol.neuroconstruct.utils.compartment.*;
 import ucl.physiol.neuroconstruct.utils.ClassLogger;
+import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
 /**
  *
@@ -387,11 +388,122 @@ public class Segment implements Serializable
 
         sb.append(" -> "+ getEndPointPosition());
 
-        if (getSegmentShape()!=SPHERICAL_SHAPE) sb.append(", len: "+ Utils3D.trimDouble(this.getSegmentLength(), 5));
+        if (getSegmentShape()!=SPHERICAL_SHAPE) sb.append(", len: "+ Utils3D.trimDouble(this.getSegmentLength(), 6));
 
         if (isFiniteVolume()) sb.append(" (FINITE VOLUME)");
 
         if (comment!=null)  sb.append(" // "+comment);
+
+        return sb.toString();
+
+    }
+    
+    
+    
+    public String compareTo(Segment other)
+    {
+        StringBuffer sb = new StringBuffer();
+        String col = "black";
+        col = segmentName.equals(other.getSegmentName())?"black":"red";
+        sb.append(GeneralUtils.getColouredString(segmentName, col, true));
+
+        if (section == null)
+        {
+            col = other.getSection()==null?"black":"red";
+            sb.append(GeneralUtils.getColouredString(", -- No section specified --", col,true));
+        }
+        else
+        {
+            col = other.getSection().getSectionName().equals(section.getSectionName())?"black":"red";
+            sb.append(GeneralUtils.getColouredString(", section: " + section.getSectionName(), col,true));
+        }
+
+        if (getSegmentShape()==SPHERICAL_SHAPE)
+        {
+            col = other.getSegmentShape()==SPHERICAL_SHAPE?"black":"red";
+            sb.append(GeneralUtils.getColouredString(", SPHERICAL", col,true));
+        }
+        
+        if (getSegmentShape()==UNDETERMINED_SHAPE)
+        {
+            col = other.getSegmentShape()==UNDETERMINED_SHAPE?"black":"red";
+            sb.append(GeneralUtils.getColouredString(", **UNDETERMINED SHAPE**", col,true));
+        }
+        
+        col = segmentId == other.getSegmentId()?"black":"red";
+        sb.append(GeneralUtils.getColouredString(", ID: " + segmentId, col,true) );
+
+        if(this.isFirstSectionSegment() && parentSegment == null)
+        {
+            col = (other.isFirstSectionSegment() && other.getParentSegment() == null)?"black":"red";
+            sb.append(GeneralUtils.getColouredString(", ROOT SEGMENT", col,true));
+        }
+        else
+        {
+            if (parentSegment == null)
+            {
+                col = (other.getParentSegment() == null)?"black":"red";
+                sb.append(GeneralUtils.getColouredString(", -- NO PARENT --", col,true));
+            }
+            else
+            {
+                col = (other.getParentSegment().getSegmentName().equals(parentSegment.getSegmentName()))?"black":"red";
+                
+                sb.append(GeneralUtils.getColouredString(", parent: " + parentSegment.getSegmentName(), col,true));
+                
+                col = (other.getParentSegment().getSegmentId() == parentSegment.getSegmentId())?"black":"red";
+                
+                sb.append(GeneralUtils.getColouredString(" ("+parentSegment.getSegmentId()+")", col,true));
+                
+                if (fractionAlongParent!=1)
+                {
+                    col = (other.getFractionAlongParent() == fractionAlongParent)?"black":"red";
+                    sb.append(GeneralUtils.getColouredString(", FRACT ALONG: " + fractionAlongParent, col,true));
+                }
+
+            }
+        }
+
+        col = (other.getRadius() == radius)?"black":"red";
+        
+        sb.append(GeneralUtils.getColouredString(", rad: " + radius, col,true));
+
+        if (getStartPointPosition() == null)
+        {
+            col = (other.getStartPointPosition()==null)?"black":"red";
+            sb.append(GeneralUtils.getColouredString(", (-- NO PARENT --)", col,true));
+        }
+        else
+        {
+            col = (other.getStartPointPosition().equals(getStartPointPosition()))?"black":"red";
+            sb.append(GeneralUtils.getColouredString(", " + getStartPointPosition(), col,true));
+        }
+        
+
+        col = (other.getEndPointPosition().equals(getEndPointPosition()))?"black":"red";
+        sb.append(GeneralUtils.getColouredString(" -> "+ getEndPointPosition(), col,true));
+
+        String trimThis = Utils3D.trimDouble(this.getSegmentLength(), 6);
+        String trimOther = Utils3D.trimDouble(other.getSegmentLength(), 6);
+        
+        if (getSegmentShape()!=SPHERICAL_SHAPE)
+        {
+            col = (trimThis.equals(trimOther))?"black":"red";
+        
+            sb.append(GeneralUtils.getColouredString(", len: "+ trimThis, col,true));
+        }
+
+        if (isFiniteVolume())
+        {
+            col = other.isFiniteVolume()?"black":"red";
+            sb.append(GeneralUtils.getColouredString(" (FINITE VOLUME)", col,true));
+        }
+
+        if (comment!=null)
+        {
+            col = (other.getComment().equals(comment))?"black":"red";
+            sb.append(GeneralUtils.getColouredString(" // "+comment, col,true));
+        }
 
         return sb.toString();
 
@@ -751,6 +863,9 @@ public class Segment implements Serializable
         }
         return false;
     }
+    
+    
+    
 
     // NetBeans generated hashCode
     @Override

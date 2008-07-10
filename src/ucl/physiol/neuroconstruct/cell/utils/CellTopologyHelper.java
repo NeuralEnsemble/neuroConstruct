@@ -2773,9 +2773,9 @@ public class CellTopologyHelper
             if (!segmentsA.get(i).fullEquals(segmentsB.get(i)))
             {
                 identical = false;
-                segCompare.append(GeneralUtils.getColouredString("A segment does not match:"+EOL
-                +LT+" " + segmentsA.get(i) + ""+EOL
-                +"> " + segmentsB.get(i) + EOL + EOL, "red", html));
+                segCompare.append(GeneralUtils.getColouredString("A segment does not match:", "red", html)+EOL
+                +LT+" " + segmentsA.get(i).compareTo(segmentsB.get(i)) + ""+EOL
+                +"> " + segmentsB.get(i).compareTo(segmentsA.get(i)) + EOL + EOL);
             }
         }
         if(segCompare.length()==0)
@@ -2838,9 +2838,9 @@ public class CellTopologyHelper
             if (!secsA.get(i).equals(secsB.get(i)))
             {
                 identical = false;
-                secCompare.append(GeneralUtils.getColouredString("A section does not match:"+EOL
-                +LT+" " + secsA.get(i) + ""+EOL
-                +"> " + secsB.get(i) + EOL + EOL, "red", html));
+                secCompare.append(GeneralUtils.getColouredString("A section does not match:", "red", html)+EOL
+                +LT+" " + secsA.get(i).compareTo(secsB.get(i)) + ""+EOL
+                +"> " + secsB.get(i).compareTo(secsA.get(i)) + EOL + EOL);
             }
         }
         if(secCompare.length()==0)
