@@ -401,6 +401,11 @@ public class PlotterFrame extends JFrame
         plotCanvas.removeDataSet(dataSet);
         updateMenus();
     }
+    
+    public int getNumDataSets()
+    {
+        return plotCanvas.getDataSets().length;
+    }
 
 
     protected void flagProblemDueToBarSpacing()
@@ -674,6 +679,14 @@ public class PlotterFrame extends JFrame
 
             transformMenuItem.addActionListener(new DataSetTransformListener(nextDataSet, this));
 
+
+            JMenuItem moveMenuItem = new JMenuItem();
+            moveMenuItem.setText("Move Data Set to another Plot Frame...");
+            moveMenuItem.setToolTipText("Removes this Data Set from this Plot Frame and move it to another open one");
+            newMenu.add(moveMenuItem);
+
+            moveMenuItem.addActionListener(new DataSetMoveMenuListener(nextDataSet, this));
+            
 
             JMenuItem removeMenuItem = new JMenuItem();
             removeMenuItem.setText("Remove Data Set from Plot Frame");
@@ -1894,6 +1907,40 @@ public class PlotterFrame extends JFrame
         public void actionPerformed(ActionEvent e)
         {
             plotFrame.removeDataSet(dataSet);
+        };
+    }
+
+
+    public class DataSetMoveMenuListener implements ActionListener
+    {
+        DataSet dataSet = null;
+        PlotterFrame plotFrame = null;
+
+        public DataSetMoveMenuListener(DataSet dataSet, PlotterFrame plotFrame)
+        {
+            this.dataSet = dataSet;
+            this.plotFrame = plotFrame;
+        }
+
+        public void actionPerformed(ActionEvent e)
+        {
+            Vector<String> r = PlotManager.getPlotterFrameReferences();
+            String[] refs = new String[r.size()];
+            r.copyInto(refs);
+            
+            String option = (String)JOptionPane.showInputDialog(plotFrame, "Please select Plot Frame to move Data Set to", "Move Data Set", JOptionPane.OK_CANCEL_OPTION, null, refs, refs[0]);
+            
+            if (option == null)
+                return;
+            
+            PlotterFrame frame = PlotManager.getPlotterFrame(option);
+            
+            frame.addDataSet(dataSet);
+            
+            plotFrame.removeDataSet(dataSet);
+            
+            if (plotFrame.getNumDataSets()==0)
+                plotFrame.dispose();
         };
     }
 

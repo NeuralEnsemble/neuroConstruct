@@ -623,7 +623,7 @@ public class NetworkMLReader  implements NetworkMLnCInfo
         try
         {
             
-            logger.logComment("Sys prop: "+System.getProperty("java.library.path"), true);
+            //logger.logComment("Sys prop: "+System.getProperty("java.library.path"), true);
             
             //File projFile = new File("../copyNcModels/NewGranCellLayer/NewGranCellLayer.neuro.xml");
             
@@ -639,7 +639,7 @@ public class NetworkMLReader  implements NetworkMLnCInfo
             
             File h5File = new File("testProjects/TestNetworkML/savedNetworks/small.h5");
 
-            logger.logComment("Loading netml cell from "+ h5File.getAbsolutePath(), true);
+            //logger.logComment("Loading netml cell from "+ h5File.getAbsolutePath(), true);
 
 
           

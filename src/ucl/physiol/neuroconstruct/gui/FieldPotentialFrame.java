@@ -138,7 +138,7 @@ public class FieldPotentialFrame extends JFrame
         {
             String cellGroup = i.next();
             
-            logger.logComment("Adding check box for: "+ cellGroup, true);
+            logger.logComment("Adding check box for: "+ cellGroup);
             
             JCheckBox cb = new JCheckBox(cellGroup);
             cb.setSelected(true);
@@ -166,7 +166,7 @@ public class FieldPotentialFrame extends JFrame
     
     private void cancelled()
     {
-        logger.logComment("Cancelled...", true);
+        logger.logComment("Cancelled...");
         
         if (standalone)
             System.exit(0);
@@ -178,13 +178,13 @@ public class FieldPotentialFrame extends JFrame
     
     private void create()
     {
-        logger.logComment("Creating the field potential plot", true);
+        logger.logComment("Creating the field potential plot");
             
         ArrayList<String> cellGroupsToAdd = new ArrayList<String>();
         
         for (JCheckBox cb : allCellGroupCBs)
         {
-            logger.logComment("Next check box: "+ cb, true);
+            logger.logComment("Next check box: "+ cb);
             if (cb.isSelected())
                     cellGroupsToAdd.add(cb.getText());
         }
@@ -205,7 +205,7 @@ public class FieldPotentialFrame extends JFrame
 
             for(String cellGroup: cellGroupsToAdd)
             {
-                logger.logComment("Adding all soma traces for cell group: "+ cellGroup, true);
+                logger.logComment("Adding all soma traces for cell group: "+ cellGroup);
                 int numInCG = project.generatedCellPositions.getNumberInCellGroup(cellGroup);
 
                 for (int i=0;i<numInCG;i++)

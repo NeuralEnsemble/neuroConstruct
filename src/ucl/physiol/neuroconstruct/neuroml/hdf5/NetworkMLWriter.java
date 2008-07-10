@@ -426,7 +426,7 @@ public class NetworkMLWriter
                 }
                 
                 
-                logger.logComment("Dataset compression: " + projDataset.getCompression(), true);
+                logger.logComment("Dataset compression: " + projDataset.getCompression());
 
             }
             catch (Exception ex)
@@ -578,8 +578,8 @@ public class NetworkMLWriter
 
         Hdf5Utils.close(h5File);
 
-        logger.logComment("Created file: " + file, true);
-        logger.logComment("Size: " + file.length()+" bytes", true);
+        logger.logComment("Created file: " + file);
+        logger.logComment("Size: " + file.length()+" bytes");
         
         return file;
     }
@@ -635,7 +635,7 @@ public class NetworkMLWriter
         {
             System.setProperty("java.library.path", System.getProperty("java.library.path")+":/home/padraig/neuroConstruct");
             
-            logger.logComment("Sys prop: "+System.getProperty("java.library.path"), true);
+            //logger.logComment("Sys prop: "+System.getProperty("java.library.path"), true);
             
             Project testProj = Project.loadProject(new File("examples/Ex9-GranCellLayer/Ex9-GranCellLayer.neuro.xml"),
                                                    null);
@@ -648,7 +648,7 @@ public class NetworkMLWriter
             //File nmlFile = new File("../copynCmodels/Parallel/savedNetworks/50000.nml");
 
 
-            logger.logComment("Loading netml cell from " + nmlFile.getAbsolutePath(), true);
+            //logger.logComment("Loading netml cell from " + nmlFile.getAbsolutePath(), true);
 
             GeneratedCellPositions gcp = testProj.generatedCellPositions;
             GeneratedNetworkConnections gnc = testProj.generatedNetworkConnections;
@@ -671,9 +671,9 @@ public class NetworkMLWriter
 
             xmlReader.parse(is);
 
-            logger.logComment("Cells: " + gcp.getNumberInAllCellGroups(), true);
-            logger.logComment("Net conn num: " + gnc.getNumberSynapticConnections(GeneratedNetworkConnections.ANY_NETWORK_CONNECTION), true);
-            logger.logComment("Stimulations num: " + gei.getNumberSingleInputs(), true);
+            //logger.logComment("Cells: " + gcp.getNumberInAllCellGroups(), true);
+            //logger.logComment("Net conn num: " + gnc.getNumberSynapticConnections(GeneratedNetworkConnections.ANY_NETWORK_CONNECTION), true);
+            //logger.logComment("Stimulations num: " + gei.getNumberSingleInputs(), true);
 
             NetworkMLWriter.createNetworkMLH5file(h5File, 
                                                   testProj,

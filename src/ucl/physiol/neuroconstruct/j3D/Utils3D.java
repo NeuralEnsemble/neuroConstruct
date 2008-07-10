@@ -377,7 +377,10 @@ public class Utils3D
      */
     public static boolean isTransparent(Appearance app)
     {
+        if (app==null) return false;
+        
         TransparencyAttributes ta = app.getTransparencyAttributes();
+        if (ta==null) return false;
         if (ta.getTransparencyMode()==TransparencyAttributes.BLENDED)
             return true;
         else

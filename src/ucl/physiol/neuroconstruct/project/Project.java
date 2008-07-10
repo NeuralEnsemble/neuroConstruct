@@ -1505,7 +1505,7 @@ public class Project implements TableModelListener
                     {
                         Cell prevCell = MorphMLConverter.loadFromJavaObjFile(objFile);
                         boolean cellsSame = prevCell.equals(cell);
-                        logger.logComment("Is "+ prevCell+" = "+ cell+": "+ cellsSame, true);
+                        logger.logComment("Is "+ prevCell+" = "+ cell+": "+ cellsSame);
                         if (!cellsSame)
                         {
                             logger.logComment(CellTopologyHelper.compare(cell, prevCell, false));

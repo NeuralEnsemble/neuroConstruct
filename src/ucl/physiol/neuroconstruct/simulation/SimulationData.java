@@ -751,7 +751,7 @@ public class SimulationData
         for (DataStore ds : dataSources)
         {
             String cg = ds.getCellGroupName();
-            logger.logComment("Checking getCellItemRefsForVar: " + ds + " against " + variable+" for: "+ cg, true);
+            logger.logComment("Checking getCellItemRefsForVar: " + ds + " against " + variable+" for: "+ cg);
 
             if (cgsToUse.contains(cg) &&
                     (ds.getVariable().equals(variable) ||

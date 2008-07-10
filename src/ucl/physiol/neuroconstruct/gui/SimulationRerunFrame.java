@@ -30,6 +30,7 @@ import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.gui.view2d.*;
 import ucl.physiol.neuroconstruct.project.cellchoice.AllCells;
 import ucl.physiol.neuroconstruct.project.cellchoice.CellChooser;
+import ucl.physiol.neuroconstruct.project.cellchoice.RegionAssociatedCells;
 import ucl.physiol.neuroconstruct.simulation.SimulationData.DataStore;
 
 /**
@@ -543,7 +544,7 @@ public class SimulationRerunFrame extends JFrame
     private void updateCellChoice(ActionEvent e)
     {
         String cellGroup = ((JButton)e.getSource()).getToolTipText();
-        logger.logComment("Cell choice change for: "+ cellGroup, true);
+        logger.logComment("Cell choice change for: "+ cellGroup);
         
         for(String cg: cellGroupsToUse.keySet())
         {
@@ -596,7 +597,7 @@ public class SimulationRerunFrame extends JFrame
     
     private void toggleShowMore()
     {
-        logger.logComment("Toggling extra buttons...", true);
+        logger.logComment("Toggling extra buttons...");
         moreShown = !moreShown;
         if (moreShown) {
             jButtonShowMore.setText("<<");
@@ -1046,6 +1047,13 @@ public class SimulationRerunFrame extends JFrame
                     if (!cc.isInitialised())
                     {
                         cc.initialise(project.generatedCellPositions.getAllPositionRecords());
+                        
+                        if (cc instanceof RegionAssociatedCells)
+                        {
+                            RegionAssociatedCells rac = (RegionAssociatedCells) cc;
+
+                            rac.setProject(project); // to give info on regions...
+                        }
                         cellList = cc.getOrderedCellList();
                     }
                     else
@@ -1176,7 +1184,7 @@ public class SimulationRerunFrame extends JFrame
 
                     currentTimeStep = numTimeSteps-1; // to display final value...
                     
-                    logger.logComment("Wall time simce start pressed: "+ (System.currentTimeMillis()-startSim)/1000f, true);
+                    logger.logComment("Wall time simce start pressed: "+ (System.currentTimeMillis()-startSim)/1000f);
                 }
 
                 //System.out.println("At time: " + currentTimeStep);
