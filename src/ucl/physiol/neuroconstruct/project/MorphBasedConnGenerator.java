@@ -92,6 +92,8 @@ public class MorphBasedConnGenerator extends Thread
         startGenerationTime = System.currentTimeMillis();
 
         ArrayList<String> simpNetConnsInSimConfig = getRelevantNetConns();
+        
+        CellTopologyHelper cth = new CellTopologyHelper(); // so that synapse locations can be cached...
 
         for (int j = 0; j < simpNetConnsInSimConfig.size(); j++)
         {
@@ -116,7 +118,7 @@ public class MorphBasedConnGenerator extends Thread
             String[] synTypeNames = new String[synPropList.size()];
             for (int i = 0; i < synPropList.size(); i++)
             {
-                synTypeNames[i] = ((SynapticProperties)synPropList.elementAt(i)).getSynapseType();
+                synTypeNames[i] = synPropList.elementAt(i).getSynapseType();
             }
 
             String sourceCellGroup = project.morphNetworkConnectionsInfo.getSourceCellGroup(netConnName);
@@ -243,7 +245,7 @@ public class MorphBasedConnGenerator extends Thread
                         if (connConds.getGenerationDirection() == ConnectivityConditions.SOURCE_TO_TARGET)
                         {
                             genStartConnPoint
-                                = CellTopologyHelper.getPossiblePreSynapticTerminal(generationStartCellInstance,
+                                = cth.getPossiblePreSynapticTerminal(generationStartCellInstance,
                                                                                     synTypeNames,
                                                                                     connConds.getPrePostAllowedLoc());
 
@@ -257,7 +259,7 @@ public class MorphBasedConnGenerator extends Thread
                         else
                         {
                             genStartConnPoint
-                                = CellTopologyHelper.getPossiblePostSynapticTerminal(generationStartCellInstance,
+                                = cth.getPossiblePostSynapticTerminal(generationStartCellInstance,
                                                                                      synTypeNames,
                                                                                      connConds.getPrePostAllowedLoc());
 
@@ -338,14 +340,14 @@ public class MorphBasedConnGenerator extends Thread
 
                                     if (connConds.getGenerationDirection() == ConnectivityConditions.SOURCE_TO_TARGET)
                                     {
-                                        genFinishConnPoint = CellTopologyHelper.getPossiblePostSynapticTerminal(
+                                        genFinishConnPoint = cth.getPossiblePostSynapticTerminal(
                                                                         generationFinishCellInstance,
                                                                         synTypeNames,
                                                                         connConds.getPrePostAllowedLoc());
                                     }
                                     else
                                     {
-                                        genFinishConnPoint = CellTopologyHelper.getPossiblePreSynapticTerminal(
+                                        genFinishConnPoint = cth.getPossiblePreSynapticTerminal(
                                             generationFinishCellInstance,
                                             synTypeNames,
                                             connConds.getPrePostAllowedLoc());
@@ -503,15 +505,14 @@ public class MorphBasedConnGenerator extends Thread
 
                                     if (connConds.getGenerationDirection() == ConnectivityConditions.SOURCE_TO_TARGET)
                                     {
-                                        tempGenFinishConnPoint = CellTopologyHelper.getPossiblePostSynapticTerminal(
+                                        tempGenFinishConnPoint = cth.getPossiblePostSynapticTerminal(
                                                                         generationFinishCellInstance,
                                                                         synTypeNames,
                                                                         connConds.getPrePostAllowedLoc());
                                     }
                                     else
                                     {
-                                        tempGenFinishConnPoint = CellTopologyHelper.
-                                            getPossiblePreSynapticTerminal(generationFinishCellInstance,
+                                        tempGenFinishConnPoint = cth.getPossiblePreSynapticTerminal(generationFinishCellInstance,
                                                                            synTypeNames,
                                                                             connConds.getPrePostAllowedLoc());
                                     }

@@ -384,6 +384,11 @@ public class PlotterFrame extends JFrame
     {
         PlotManager.plotFrameClosing(plotFrameReference);
     }
+    
+    public String getPlotFrameReference()
+    {
+        return plotFrameReference;
+    }
 
 
     public void addDataSet(DataSet dataSet)
@@ -709,7 +714,8 @@ public class PlotterFrame extends JFrame
         }
 
         logger.logComment("Done updating menus, repainting");
-        plotCanvas.repaint();
+        if (this.isVisible())
+            plotCanvas.repaint();
     }
 
     public class DataSetInfoMenuListener implements ActionListener
@@ -1925,6 +1931,7 @@ public class PlotterFrame extends JFrame
         public void actionPerformed(ActionEvent e)
         {
             Vector<String> r = PlotManager.getPlotterFrameReferences();
+            r.remove(plotFrame.getPlotFrameReference());
             String[] refs = new String[r.size()];
             r.copyInto(refs);
             
@@ -1936,11 +1943,15 @@ public class PlotterFrame extends JFrame
             PlotterFrame frame = PlotManager.getPlotterFrame(option);
             
             frame.addDataSet(dataSet);
+            int numCurently = plotFrame.getNumDataSets();
             
             plotFrame.removeDataSet(dataSet);
             
-            if (plotFrame.getNumDataSets()==0)
+            if (numCurently==1)
+            {
+                plotFrame.setVisible(false);
                 plotFrame.dispose();
+            }
         };
     }
 

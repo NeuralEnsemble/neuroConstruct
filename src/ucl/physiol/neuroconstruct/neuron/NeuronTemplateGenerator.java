@@ -1005,9 +1005,9 @@ public class NeuronTemplateGenerator
         StringBuffer pointProcessCreates = new StringBuffer();
                         
         response.append("proc biophys() {\n");
-
-
         Vector<String> groupNames = cell.getAllGroupNames();
+        
+        Hashtable<String, Boolean> revPotSetElsewhereHash = new Hashtable<String, Boolean>();
 
         for (String nextGroup: groupNames)
         {
@@ -1017,8 +1017,7 @@ public class NeuronTemplateGenerator
                 response.append("    forsec " + nextGroup + " cm = "
                                 + UnitConverter.getSpecificCapacitance(specCap,
                                                                        UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                                       UnitConverter.NEURON_UNITS)
-                                + "\n");
+                                                                       UnitConverter.NEURON_UNITS)+ "\n");
             }
             float specAxRes = cell.getSpecAxResForGroup(nextGroup);
             if (!Float.isNaN(specAxRes))
@@ -1026,8 +1025,7 @@ public class NeuronTemplateGenerator
                 response.append("    forsec " + nextGroup + " Ra = " +
                                 UnitConverter.getSpecificAxialResistance(specAxRes,
                                                                          UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                                         UnitConverter.NEURON_UNITS)
-                                + "\n");
+                                                                         UnitConverter.NEURON_UNITS)+ "\n");
             }
         }
         response.append("\n");
@@ -1035,7 +1033,6 @@ public class NeuronTemplateGenerator
 
         if (cell.getChanMechsVsGroups().size()>100)
         {
-
             response.append("    addChanMechs()\n");
             response.append("}\n\n");
             response.append("proc addChanMechs() {\n\n");
@@ -1043,9 +1040,10 @@ public class NeuronTemplateGenerator
 
         for (String nextGroup: groupNames)
         {
+            logger.logComment("nextGroup: "+nextGroup+"--------------------------------");
             ArrayList<ChannelMechanism> allChanMechs = cell.getChanMechsForGroup(nextGroup);
             
-
+            
             if (allChanMechs.size()>0)
             {
                 for (int j = 0; j < allChanMechs.size(); j++)
@@ -1068,7 +1066,6 @@ public class NeuronTemplateGenerator
                     }
                     else
                     {
-                        
                         boolean requiresXYZ = false;
 
                         try
@@ -1177,6 +1174,7 @@ public class NeuronTemplateGenerator
                                     String erev = ion.getAttributeValue(ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR);
                                     
                                     MechParameter mpErev = nextChanMech.getExtraParameter("erev");
+                                    
                                     if (mpErev!=null)
                                     {
                                         
@@ -1221,41 +1219,54 @@ public class NeuronTemplateGenerator
                                             erev = suggValDouble + "";
                                         }
                                         
-                                        boolean revPotSetElsewhere = false;
-                                            
-                                        Hashtable<ChannelMechanism, Vector<String>> cmVsGroups = cell.getChanMechsVsGroups();
-                                            
-                                        Enumeration<ChannelMechanism> cms = cmVsGroups.keys();
-
-                                        while (cms.hasMoreElements())
+                                        if (!revPotSetElsewhereHash.containsKey(nextChanMech.getName()))
                                         {
-                                            ChannelMechanism cm = cms.nextElement();
-                                            if (cm.getName().equals(nextChanMech.getName()))
+                                            logger.logComment("Recheking revPotSetElsewhere for "+ nextChanMech.getName());
+                                            boolean revPotSetElsewhere = false;
+                                            
+                                            Hashtable<ChannelMechanism, Vector<String>> cmVsGroups = cell.getChanMechsVsGroups();
+
+                                            Enumeration<ChannelMechanism> cms = cmVsGroups.keys();
+
+                                            while (cms.hasMoreElements())
                                             {
-                                                Vector<String> groups = cmVsGroups.get(cm);
-                                                for(String grp: groups)
+                                                ChannelMechanism cm = cms.nextElement();
+                                                if (cm.getName().equals(nextChanMech.getName()))
                                                 {
-                                                    if (!grp.equals(nextGroup) || nextChanMech.getName().equals("pas"))
+                                                    Vector<String> groups = cmVsGroups.get(cm);
+                                                    for(String grp: groups)
                                                     {
-                                                        NeuronFileManager.addHocComment(response, "    Group " + grp +" also has "+ nextChanMech.getName()+" ("+cm+")", false);
-
-                                                        if (CellTopologyHelper.isGroupASubset(nextGroup, grp, cell))
+                                                        if (!grp.equals(nextGroup) || nextChanMech.getName().equals("pas"))
                                                         {
-                                                            MechParameter mpe1 = cm.getExtraParameter("e");
-                                                            MechParameter mpe2 = cm.getExtraParameter("erev");
+                                                            NeuronFileManager.addHocComment(response, "    Group " + grp +" also has "+ nextChanMech.getName()+" ("+cm+")", false);
 
-                                                            if (mpe1!=null || mpe2!=null)
+                                                            if (CellTopologyHelper.isGroupASubset(nextGroup, grp, cell))
                                                             {
-                                                                revPotSetElsewhere = true;
+                                                                MechParameter mpe1 = cm.getExtraParameter("e");
+                                                                MechParameter mpe2 = cm.getExtraParameter("erev");
 
-                                                                NeuronFileManager.addHocComment(response, "    Reverse potential for ion set by " 
-                                                                    + cm.toString()+" which is on superset group: "+ grp);
+                                                                if (mpe1!=null || mpe2!=null)
+                                                                {
+                                                                    revPotSetElsewhere = true;
+
+                                                                    NeuronFileManager.addHocComment(response, "    Reverse potential for ion set by " 
+                                                                        + cm.toString()+" which is on superset group: "+ grp);
+                                                                }
                                                             }
                                                         }
                                                     }
                                                 }
                                             }
+                                            revPotSetElsewhereHash.put(nextChanMech.getName(), revPotSetElsewhere);
                                         }
+                                        else
+                                        {
+                                            logger.logComment("Reusing revPotSetElsewhere for "+ nextChanMech.getName());
+                                        }
+                                        
+                                        boolean revPotSetElsewhere = revPotSetElsewhereHash.get(nextChanMech.getName());
+                                        
+                                        logger.logComment("revPotSetElsewhere for "+ revPotSetElsewhere);
                                         
                                         if (!(ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR).equals(ChannelMLConstants.NON_SPECIFIC_ION_NAME)))
                                         {

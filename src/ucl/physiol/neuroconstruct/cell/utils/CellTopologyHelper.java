@@ -47,6 +47,9 @@ public class CellTopologyHelper
     public static final String CELL_IS_BIO_VALID = "Cell biophysical parameters are valid.";
 
     public static final String CELLS_ARE_IDENTICAL = "** Cells are identical **";
+    
+    CachedSynLocInfo cachedPostSynLocInfo = null;
+    CachedSynLocInfo cachedPreSynLocInfo = null;
 
     static
     {
@@ -62,107 +65,126 @@ public class CellTopologyHelper
      * @param synapseType String with synapse type name
      * @return The location of the synapse or null if not supported
      */
-    public static PostSynapticTerminalLocation getPossiblePostSynapticTerminal(Cell cell, 
+    public PostSynapticTerminalLocation getPossiblePostSynapticTerminal(Cell cell, 
                                                                                String[] synapseType,
                                                                                PrePostAllowedLocs pp)
     {
-        Vector<Segment> allSegments = cell.getAllSegments();
-
-
-        Vector<String> groupsWithSynapse = cell.getGroupsWithSynapse(synapseType[0]); // get first lot
-
-        if (synapseType.length>1)
-        {
-            for (int remainingSynIndex = 0; remainingSynIndex < synapseType.length; remainingSynIndex++)
-            {
-                Vector remainingSynGroups = cell.getGroupsWithSynapse(synapseType[remainingSynIndex]);
-
-                for (int includedGroups = 0; includedGroups < groupsWithSynapse.size(); includedGroups++)
-                {
-                        String includedGroup = (String)groupsWithSynapse.elementAt(includedGroups);
-                        if (!remainingSynGroups.contains(includedGroup))
-                            groupsWithSynapse.remove(includedGroup);
-                }
-            }
-        }
-
-
-        logger.logComment(cell.getInstanceName() + " being asked for pre-synaptic point of type " + synapseType +
-                          " among my segments");
-
-        logger.logComment("groupsWithSynapse: "+ groupsWithSynapse);
-
+        float totalLengthOfValidSegments = 0;
+        Vector<Integer> idsOfPossibleSegments = new Vector<Integer>();
+        Vector<Float> lensOfPossibleSegments = new Vector<Float>();
+        
         PostSynapticTerminalLocation postSynTerm = null;
-
-        logger.logComment(cell.getInstanceName() + " being asked for post-synaptic point of type " + synapseType +
-                          " among my segments");
-        
-        if (allSegments.size() == 0)
+                       
+        if (!(cachedPostSynLocInfo!=null && cachedPostSynLocInfo.isApplicable(cell.getInstanceName(), synapseType))) 
         {
-            return null;
-        }
-        
-        // Quick return if just a 1 seg cell 
-        if (allSegments.size()==1 && 
-            allSegments.get(0).isSomaSegment() &&
-            pp.isSomaAllowedPost() &&
-            (groupsWithSynapse.contains(Section.ALL) ||
-             groupsWithSynapse.contains(Section.SOMA_GROUP)))
-        {
+            cachedPostSynLocInfo=null;
+            Vector<Segment> allSegments = cell.getAllSegments();
 
-            float fract = ProjectManager.getRandomGenerator().nextFloat();
-            if (allSegments.get(0).isSpherical()) fract = 0.5f;
+            Vector<String> groupsWithSynapse = cell.getGroupsWithSynapse(synapseType[0]); // get first lot
 
-            postSynTerm = new PostSynapticTerminalLocation(allSegments.get(0).getSegmentId(), fract);
-
-            return postSynTerm;
-        }
-        else
-        {
-
-            Vector<Integer> idsOfPossibleSegments = new Vector<Integer>();
-
-            for (int i = 0; i < allSegments.size(); i++)
+            if (synapseType.length>1)
             {
-                Segment dend = (Segment) allSegments.elementAt(i);
-                Vector groups = dend.getGroups();
-                if ((pp.isAxonsAllowedPost() && groups.contains(Section.AXONAL_GROUP)) || 
-                    (pp.isSomaAllowedPost() && groups.contains(Section.SOMA_GROUP)) ||
-                    (pp.isDendritesAllowedPost() && groups.contains(Section.DENDRITIC_GROUP)))
+                for (int remainingSynIndex = 0; remainingSynIndex < synapseType.length; remainingSynIndex++)
                 {
-                    for (int j = 0; j < groups.size(); j++)
+                    Vector remainingSynGroups = cell.getGroupsWithSynapse(synapseType[remainingSynIndex]);
+
+                    for (int includedGroups = 0; includedGroups < groupsWithSynapse.size(); includedGroups++)
                     {
-                        if (groupsWithSynapse.contains( (String) groups.elementAt(j)))
-                        {
-                            if (!idsOfPossibleSegments.contains(new Integer(dend.getSegmentId())))
-                            {
-                                idsOfPossibleSegments.add(dend.getSegmentId());
-                            }
-                        }
+                            String includedGroup = groupsWithSynapse.elementAt(includedGroups);
+                            if (!remainingSynGroups.contains(includedGroup))
+                                groupsWithSynapse.remove(includedGroup);
                     }
                 }
             }
 
-            logger.logComment("Have found " + idsOfPossibleSegments.size() + " possible segments: " +
-                              idsOfPossibleSegments);
 
-            if (idsOfPossibleSegments.size() == 0)
+            logger.logComment(cell.getInstanceName() + " being asked for pre-synaptic point of type " + synapseType +
+                              " among my segments");
+
+            logger.logComment("groupsWithSynapse: "+ groupsWithSynapse);
+
+
+            logger.logComment(cell.getInstanceName() + " being asked for post-synaptic point of type " + synapseType +
+                              " among my segments");
+
+            if (allSegments.size() == 0)
             {
                 return null;
             }
 
-            float totalLengthOfValidSegments = 0;
-
-            for (int o = 0; o < idsOfPossibleSegments.size(); o++)
+            // Quick return if just a 1 seg cell 
+            if (allSegments.size()==1 && 
+                allSegments.get(0).isSomaSegment() &&
+                pp.isSomaAllowedPost() &&
+                (groupsWithSynapse.contains(Section.ALL) ||
+                 groupsWithSynapse.contains(Section.SOMA_GROUP)))
             {
-                int nextId = ( idsOfPossibleSegments.elementAt(o)).intValue();
-                Segment segment = cell.getSegmentWithId(nextId);
-                float length = segment.getSegmentLength();
 
-                logger.logComment("Looking at segment: " + segment + ", id: " + nextId + ", length: " + length);
-                totalLengthOfValidSegments += length;
+                float fract = ProjectManager.getRandomGenerator().nextFloat();
+                if (allSegments.get(0).isSpherical()) fract = 0.5f;
+
+                postSynTerm = new PostSynapticTerminalLocation(allSegments.get(0).getSegmentId(), fract);
+
+                return postSynTerm;
             }
 
+
+                //Vector<Integer> idsOfPossibleSegments = new Vector<Integer>();
+
+                for (int i = 0; i < allSegments.size(); i++)
+                {
+                    Segment dend = allSegments.elementAt(i);
+                    Vector groups = dend.getGroups();
+                    if ((pp.isAxonsAllowedPost() && groups.contains(Section.AXONAL_GROUP)) || 
+                        (pp.isSomaAllowedPost() && groups.contains(Section.SOMA_GROUP)) ||
+                        (pp.isDendritesAllowedPost() && groups.contains(Section.DENDRITIC_GROUP)))
+                    {
+                        for (int j = 0; j < groups.size(); j++)
+                        {
+                            if (groupsWithSynapse.contains( (String) groups.elementAt(j)))
+                            {
+                                if (!idsOfPossibleSegments.contains(new Integer(dend.getSegmentId())))
+                                {
+                                    idsOfPossibleSegments.add(dend.getSegmentId());
+                                }
+                            }
+                        }
+                    }
+                }
+
+                logger.logComment("Have found " + idsOfPossibleSegments.size() + " possible segments: " +
+                                  idsOfPossibleSegments);
+
+                if (idsOfPossibleSegments.size() == 0)
+                {
+                    return null;
+                }
+                lensOfPossibleSegments.setSize(idsOfPossibleSegments.size());
+
+                for (int o = 0; o < idsOfPossibleSegments.size(); o++)
+                {
+                    int nextId = ( idsOfPossibleSegments.elementAt(o)).intValue();
+                    Segment segment = cell.getSegmentWithId(nextId);
+                    float length = segment.getSegmentLength();
+                    lensOfPossibleSegments.setElementAt(length, o);
+
+                    logger.logComment("Looking at segment: " + segment + ", id: " + nextId + ", length: " + length);
+                    totalLengthOfValidSegments += length;
+                }
+                
+                cachedPostSynLocInfo = new CachedSynLocInfo(cell.getInstanceName(), synapseType, idsOfPossibleSegments, lensOfPossibleSegments, totalLengthOfValidSegments);
+                logger.logComment("Regenerated cachedPostSynLocInfo..");
+            }
+            else
+            {
+                totalLengthOfValidSegments = cachedPostSynLocInfo.totalLengthOfValidSegments;
+                idsOfPossibleSegments = cachedPostSynLocInfo.idsOfPossibleSegments;
+                lensOfPossibleSegments = cachedPostSynLocInfo.lensOfPossibleSegments;
+                cachedPostSynLocInfo.stillValid();
+                logger.logComment("Reusing post details..");
+            }
+        
+        
             float chosenDistAlongAll = totalLengthOfValidSegments * (ProjectManager.getRandomGenerator().nextFloat());
 
             logger.logComment("Total length: " + totalLengthOfValidSegments +
@@ -186,8 +208,8 @@ public class CellTopologyHelper
                 {
                     nextIdToCheck = ( idsOfPossibleSegments.elementAt(numSegmentsChecked)).intValue();
 
-                    Segment segment = cell.getSegmentWithId(nextIdToCheck);
-                    float length = segment.getSegmentLength();
+                    //Segment segment = cell.getSegmentWithId(nextIdToCheck);
+                    float length = lensOfPossibleSegments.get(numSegmentsChecked);
                     if ( (distChecked + length) > chosenDistAlongAll)
                     {
                         pointFound = true;
@@ -205,8 +227,58 @@ public class CellTopologyHelper
                                                    fractionAlongChosenSegment);
 
             return postSynTerm;
-        }
+        
 
+    }
+    
+    public class CachedSynLocInfo
+    {
+        Vector<Integer> idsOfPossibleSegments = new Vector<Integer>();
+        Vector<Float> lensOfPossibleSegments = new Vector<Float>();
+        float totalLengthOfValidSegments = 0;
+        long timeCached = -1;
+        String myCellName = null;
+        String[] mySynapseType = null;
+        
+        public boolean isApplicable(String cellName, String[] synapseType)
+        {
+            if (!myCellName.equals(cellName))
+                return false;
+            if (System.currentTimeMillis()-timeCached >600) // wear out quickly...
+                return false;
+            if (mySynapseType.length!=synapseType.length)
+                return false;
+            for(int i=0;i<mySynapseType.length;i++)
+            {
+                if (!mySynapseType[i].equals(synapseType[i]))
+                    return false;
+            }
+            
+            return true;
+        }
+        
+        private CachedSynLocInfo(){};
+        
+        public void stillValid()
+        {
+            timeCached = System.currentTimeMillis();
+        }
+        
+        public CachedSynLocInfo(String cellName, 
+                                String[] synapseType, 
+                                Vector<Integer> idsOfPossibleSegments, 
+                                Vector<Float> lensOfPossibleSegments,
+                                float totalLengthOfValidSegments)
+        {
+            this.myCellName = cellName;
+            this.mySynapseType = synapseType;
+            this.idsOfPossibleSegments = idsOfPossibleSegments;
+            this.lensOfPossibleSegments = lensOfPossibleSegments;
+            this.totalLengthOfValidSegments = totalLengthOfValidSegments;
+            timeCached = System.currentTimeMillis();
+                
+        }
+            
     }
 
     /**
@@ -218,98 +290,116 @@ public class CellTopologyHelper
      * @return The location of the synapse or null if not supported
      */
 
-    public static PreSynapticTerminalLocation getPossiblePreSynapticTerminal(Cell cell, 
+    public PreSynapticTerminalLocation getPossiblePreSynapticTerminal(Cell cell, 
                                                                              String[] synapseTypes,
                                                                              PrePostAllowedLocs pp)
     {
-        Vector<Segment> allSegments = cell.getAllSegments();
-
-
-        Vector<String> groupsWithSynapse = cell.getGroupsWithSynapse(synapseTypes[0]); // get first lot
-
-        if (synapseTypes.length>1)
+        
+        float totalLengthOfValidSegments = 0;
+        Vector<Integer> idsOfPossibleSegments = new Vector<Integer>();
+        Vector<Float> lensOfPossibleSegments = new Vector<Float>();
+            
+        if (!(cachedPreSynLocInfo!=null && cachedPreSynLocInfo.isApplicable(cell.getInstanceName(), synapseTypes))) 
         {
-            for (int remainingSynIndex = 0; remainingSynIndex < synapseTypes.length; remainingSynIndex++)
-            {
-                Vector remainingSynGroups = cell.getGroupsWithSynapse(synapseTypes[remainingSynIndex]);
+            cachedPreSynLocInfo =null;
+            Vector<Segment> allSegments = cell.getAllSegments();
 
-                for (int includedGroups = 0; includedGroups < groupsWithSynapse.size(); includedGroups++)
+            Vector<String> groupsWithSynapse = cell.getGroupsWithSynapse(synapseTypes[0]); // get first lot
+
+            if (synapseTypes.length>1)
+            {
+                for (int remainingSynIndex = 0; remainingSynIndex < synapseTypes.length; remainingSynIndex++)
                 {
-                        String includedGroup = groupsWithSynapse.elementAt(includedGroups);
-                        if (!remainingSynGroups.contains(includedGroup))
-                            groupsWithSynapse.remove(includedGroup);
+                    Vector remainingSynGroups = cell.getGroupsWithSynapse(synapseTypes[remainingSynIndex]);
+
+                    for (int includedGroups = 0; includedGroups < groupsWithSynapse.size(); includedGroups++)
+                    {
+                            String includedGroup = groupsWithSynapse.elementAt(includedGroups);
+                            if (!remainingSynGroups.contains(includedGroup))
+                                groupsWithSynapse.remove(includedGroup);
+                    }
                 }
             }
-        }
 
 
-        logger.logComment(cell.getInstanceName() + " being asked for pre-synaptic point of type " + synapseTypes +
-                          " among my segments");
+            logger.logComment(cell.getInstanceName() + " being asked for pre-synaptic point of type " + synapseTypes +
+                              " among my segments");
 
-        logger.logComment("groupsWithSynapse: "+ groupsWithSynapse);
+            logger.logComment("groupsWithSynapse: "+ groupsWithSynapse);
 
-        Vector<Integer> idsOfPossibleSegments = new Vector<Integer>();
-        
-        // Quick return if just a 1 seg cell 
-        if (allSegments.size()==1 && 
-            allSegments.get(0).isSomaSegment() &&
-            pp.isSomaAllowedPre() &&
-            (groupsWithSynapse.contains(Section.ALL) ||
-             groupsWithSynapse.contains(Section.SOMA_GROUP)))
-        {
-            //idsOfPossibleSegments.add(allSegments.get(0).getSegmentId());
-            
-            float fract = ProjectManager.getRandomGenerator().nextFloat();
-            if (allSegments.get(0).isSpherical()) fract = 0.5f;
 
-            PreSynapticTerminalLocation preSynTerm = new PreSynapticTerminalLocation(allSegments.get(0).getSegmentId(),
-                    fract);
-
-            return preSynTerm;
-        }
-        else
-        {
-            for (int i = 0; i < allSegments.size(); i++)
+            // Quick return if just a 1 seg cell 
+            if (allSegments.size()==1 && 
+                allSegments.get(0).isSomaSegment() &&
+                pp.isSomaAllowedPre() &&
+                (groupsWithSynapse.contains(Section.ALL) ||
+                 groupsWithSynapse.contains(Section.SOMA_GROUP)))
             {
-                Segment possSeg = allSegments.elementAt(i);
-                Vector groups = possSeg.getGroups();
-                
-                if ((pp.isAxonsAllowedPre() && groups.contains(Section.AXONAL_GROUP)) || 
-                    (pp.isSomaAllowedPre() && groups.contains(Section.SOMA_GROUP)) ||
-                    (pp.isDendritesAllowedPre() && groups.contains(Section.DENDRITIC_GROUP)))
+                //idsOfPossibleSegments.add(allSegments.get(0).getSegmentId());
+
+                float fract = ProjectManager.getRandomGenerator().nextFloat();
+                if (allSegments.get(0).isSpherical()) fract = 0.5f;
+
+                PreSynapticTerminalLocation preSynTerm = new PreSynapticTerminalLocation(allSegments.get(0).getSegmentId(),
+                        fract);
+
+                return preSynTerm;
+            }
+            else
+            {
+                for (int i = 0; i < allSegments.size(); i++)
                 {
-                    for (int j = 0; j < groups.size(); j++)
+                    Segment possSeg = allSegments.elementAt(i);
+                    Vector groups = possSeg.getGroups();
+
+                    if ((pp.isAxonsAllowedPre() && groups.contains(Section.AXONAL_GROUP)) || 
+                        (pp.isSomaAllowedPre() && groups.contains(Section.SOMA_GROUP)) ||
+                        (pp.isDendritesAllowedPre() && groups.contains(Section.DENDRITIC_GROUP)))
                     {
-                        if (groupsWithSynapse.contains( (String) groups.elementAt(j)))
+                        for (int j = 0; j < groups.size(); j++)
                         {
-                            if (!idsOfPossibleSegments.contains(possSeg.getSegmentId()))
+                            if (groupsWithSynapse.contains( (String) groups.elementAt(j)))
                             {
-                                idsOfPossibleSegments.add(possSeg.getSegmentId());
+                                if (!idsOfPossibleSegments.contains(possSeg.getSegmentId()))
+                                {
+                                    idsOfPossibleSegments.add(possSeg.getSegmentId());
+                                }
                             }
                         }
                     }
                 }
             }
+
+            logger.logComment("Have found " + idsOfPossibleSegments.size() + " possible segments: " +
+                              idsOfPossibleSegments);
+
+            if (idsOfPossibleSegments.size() == 0)
+            {
+                return null;
+            }
+            lensOfPossibleSegments.setSize(idsOfPossibleSegments.size());
+            
+            for (int o = 0; o < idsOfPossibleSegments.size(); o++)
+            {
+                int nextId = ( idsOfPossibleSegments.elementAt(o)).intValue();
+                Segment segment = cell.getSegmentWithId(nextId);
+                float length = segment.getSegmentLength();
+                lensOfPossibleSegments.setElementAt(length, o);
+                
+                logger.logComment("Looking at segment: " + segment + ", id: " + nextId + ", length: " + length);
+                totalLengthOfValidSegments += length;
+            }
+        
+            cachedPreSynLocInfo = new CachedSynLocInfo(cell.getInstanceName(), synapseTypes, idsOfPossibleSegments, lensOfPossibleSegments, totalLengthOfValidSegments);
+            logger.logComment("Regenerated cachedPreSynLocInfo..");
         }
-
-        logger.logComment("Have found " + idsOfPossibleSegments.size() + " possible segments: " +
-                          idsOfPossibleSegments);
-
-        if (idsOfPossibleSegments.size() == 0)
+        else
         {
-            return null;
-        }
-
-        float totalLengthOfValidSegments = 0;
-
-        for (int o = 0; o < idsOfPossibleSegments.size(); o++)
-        {
-            int nextId = ( idsOfPossibleSegments.elementAt(o)).intValue();
-            Segment segment = cell.getSegmentWithId(nextId);
-            float length = segment.getSegmentLength();
-
-            logger.logComment("Looking at segment: " + segment + ", id: " + nextId + ", length: " + length);
-            totalLengthOfValidSegments += length;
+            totalLengthOfValidSegments = cachedPreSynLocInfo.totalLengthOfValidSegments;
+            idsOfPossibleSegments = cachedPreSynLocInfo.idsOfPossibleSegments;
+            lensOfPossibleSegments = cachedPreSynLocInfo.lensOfPossibleSegments;
+            cachedPreSynLocInfo.stillValid();
+            logger.logComment("Reusing details..");
         }
 
         float chosenDistAlongAll = totalLengthOfValidSegments * (ProjectManager.getRandomGenerator().nextFloat());
@@ -334,8 +424,8 @@ public class CellTopologyHelper
             while (!pointFound && numSegmentsChecked <= idsOfPossibleSegments.size())
             {
                 nextIdToCheck = ( idsOfPossibleSegments.elementAt(numSegmentsChecked)).intValue();
-                Segment segment = cell.getSegmentWithId(nextIdToCheck);
-                float length = segment.getSegmentLength();
+                //Segment segment = cell.getSegmentWithId(nextIdToCheck);
+                float length = lensOfPossibleSegments.get(numSegmentsChecked);
                 if ( (distChecked + length) > chosenDistAlongAll)
                 {
                     pointFound = true;

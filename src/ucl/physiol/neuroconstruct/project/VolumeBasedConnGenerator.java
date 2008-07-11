@@ -17,9 +17,6 @@ import java.util.*;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import javax.vecmath.*;
-import ucl.physiol.neuroconstruct.utils.equation.Variable;
-import ucl.physiol.neuroconstruct.utils.equation.Expression;
-import ucl.physiol.neuroconstruct.utils.equation.EquationException;
 import ucl.physiol.neuroconstruct.utils.equation.*;
 
 /**
@@ -108,6 +105,7 @@ public class VolumeBasedConnGenerator extends Thread
 
 
 
+    @Override
     public void run()
     {
         logger.logComment("Running VolumeBasedConnGenerator thread...");
@@ -115,6 +113,8 @@ public class VolumeBasedConnGenerator extends Thread
         startGenerationTime = System.currentTimeMillis();
 
         ArrayList<String> volNetConnsInSimConfig = getRelevantNetConns();
+        
+        CellTopologyHelper cth = new CellTopologyHelper(); // so that synapse locations can be cached...
 
         for (int j = 0; j < volNetConnsInSimConfig.size(); j++)
         {
@@ -141,7 +141,7 @@ public class VolumeBasedConnGenerator extends Thread
             String[] synPropList = new String[synapticPropList.size()];
             for (int i = 0; i < synapticPropList.size(); i++)
             {
-                synPropList[i] = ( (SynapticProperties) synapticPropList.elementAt(i)).getSynapseType();
+                synPropList[i] = synapticPropList.elementAt(i).getSynapseType();
             }
 
 
@@ -261,7 +261,7 @@ public class VolumeBasedConnGenerator extends Thread
                     if (connConds.getGenerationDirection() == ConnectivityConditions.SOURCE_TO_TARGET)
                     {
                         genStartConnPoint
-                            = CellTopologyHelper.getPossiblePreSynapticTerminal(generationStartCellInstance,
+                            = cth.getPossiblePreSynapticTerminal(generationStartCellInstance,
                                                                                 synPropList,
                                                                                      connConds.getPrePostAllowedLoc());
 
@@ -271,7 +271,7 @@ public class VolumeBasedConnGenerator extends Thread
                     else
                     {
                         genStartConnPoint
-                            = CellTopologyHelper.getPossiblePostSynapticTerminal(generationStartCellInstance,
+                            = cth.getPossiblePostSynapticTerminal(generationStartCellInstance,
                                                                                  synPropList,
                                                                                      connConds.getPrePostAllowedLoc());
 
@@ -331,13 +331,13 @@ public class VolumeBasedConnGenerator extends Thread
 
                             if (connConds.getGenerationDirection() == ConnectivityConditions.SOURCE_TO_TARGET)
                             {
-                                genFinishConnPoint = CellTopologyHelper.getPossiblePostSynapticTerminal(
+                                genFinishConnPoint = cth.getPossiblePostSynapticTerminal(
                                     generationFinishCellInstance, synPropList,
                                                                                      connConds.getPrePostAllowedLoc());
                             }
                             else
                             {
-                                genFinishConnPoint = CellTopologyHelper.getPossiblePreSynapticTerminal(
+                                genFinishConnPoint = cth.getPossiblePreSynapticTerminal(
                                     generationFinishCellInstance, synPropList,
                                                                                      connConds.getPrePostAllowedLoc());
 

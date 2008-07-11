@@ -839,14 +839,23 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                 groupRadioButtons.put(next.getText(), next);
             }
         }
-        Enumeration radioButtonNames = groupRadioButtons.keys();
-        if (!radioButtonNames.hasMoreElements())
+        if (groupRadioButtons.size()>12)
+        {
+            int height = (int)(groupRadioButtons.size()/7f) * 32;
+            jPanelControls.setPreferredSize(new Dimension(400, height+70));
+            jPanelColourControls.setPreferredSize(new Dimension(400, height));
+        }
+        
+        Enumeration radButtonNames = groupRadioButtons.keys();
+        ArrayList<String> names = GeneralUtils.getOrderedList(radButtonNames, true);
+        
+        if (names.size()==0)
         {
             jPanelColourControls.add(new JLabel("No groups found in this cell", JLabel.CENTER));
         }
-        while (radioButtonNames.hasMoreElements())
+        for(String name: names)
         {
-            JRadioButton nextRadioButton = groupRadioButtons.get(radioButtonNames.nextElement());
+            JRadioButton nextRadioButton = groupRadioButtons.get(name);
             jPanelColourControls.add(nextRadioButton);
             if (nextRadioButton.getText().equals(selectedGroup))
             {

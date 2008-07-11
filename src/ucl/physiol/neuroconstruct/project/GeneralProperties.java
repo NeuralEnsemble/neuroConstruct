@@ -45,7 +45,7 @@ public class GeneralProperties
     private static final String versionNumber = "1.1.1";
 
     //private static final String latestNeuroMLVersionShort = "1.7.1";
-    private static final String latestNeuroMLVersionNumber = "1.7.1";
+    private static final String latestNeuroMLVersionNumber = "1.7.2";
 
     private static final String minimumVersionJava = "J2SE 5.0";
 
