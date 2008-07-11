@@ -22,12 +22,12 @@ public class MainTest {
     {
         System.out.println("Running the main nC tests...");
         
-        Result r = org.junit.runner.JUnitCore.runClasses(/*ucl.physiol.neuroconstruct.cell.CellSuite.class, */
-                
+        Result r = org.junit.runner.JUnitCore.runClasses(/*ucl.physiol.neuroconstruct.cell.CellSuite.class,
+                /*   */
                 ucl.physiol.neuroconstruct.cell.CellTest.class,
                 ucl.physiol.neuroconstruct.cell.converters.MorphMLReaderTest.class,
-                
-                ucl.physiol.neuroconstruct.genesis.GenesisFileManagerTest.class,
+            
+                ucl.physiol.neuroconstruct.genesis.GenesisFileManagerTest.class, 
                 ucl.physiol.neuroconstruct.neuron.NeuronFileManagerTest.class,
                 
                 ucl.physiol.neuroconstruct.cell.SectionTest.class,
@@ -38,10 +38,10 @@ public class MainTest {
                 ucl.physiol.neuroconstruct.project.ConnSpecificPropsTest.class,
                 ucl.physiol.neuroconstruct.project.ProjectStructureTest.class,
                 ucl.physiol.neuroconstruct.project.ProjectTest.class,
-                ucl.physiol.neuroconstruct.project.MorphBasedConnGeneratorTest.class/**/); 
+                ucl.physiol.neuroconstruct.project.MorphBasedConnGeneratorTest.class); 
         
         
-        System.out.println("Finished the main nC tests. Was successful: "+r.wasSuccessful());
+        System.out.println("Finished the main nC tests.");
         
         if (!r.wasSuccessful())
         {
@@ -55,6 +55,13 @@ public class MainTest {
             }
 
             if (!r.wasSuccessful()) System.exit(-1);
+        }
+        else
+        {
+            System.out.println("");
+            System.out.println("*******************************");
+            System.out.println("*****      Success!!!     *****");
+            System.out.println("*******************************");
         }
     }
 }

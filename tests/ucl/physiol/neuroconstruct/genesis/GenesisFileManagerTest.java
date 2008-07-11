@@ -14,6 +14,7 @@ import org.junit.Test;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.GenesisCompartmentalisation;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.simulation.*;
+import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 import static org.junit.Assert.*;
 
 /**
@@ -48,16 +49,22 @@ public class GenesisFileManagerTest {
     {
         System.out.println("---  testGenerateGenScripts...");
         
-        ProjectManager pm = loadProject("examples/Ex5-Networks/Ex5-Networks.neuro.xml");
+        //if (gene)
+        
+        ProjectManager pm = loadProject("testProjects/TestGenNetworks/TestGenNetworks.neuro.xml");
         
         Project proj = pm.getCurrentProject();
         SimConfig sc = proj.simConfigInfo.getDefaultSimConfig();
                 
         pm.doGenerate(sc.getName(), 1234);
         
+        int wait = 2000;
+        if (GeneralUtils.isWindowsBasedPlatform())
+            wait = 6000;
+        
         while(pm.isGenerating())
         {
-            Thread.sleep(2000);
+            Thread.sleep(wait);
         }
         
         int numGen = proj.generatedCellPositions.getNumberInAllCellGroups();
@@ -75,7 +82,6 @@ public class GenesisFileManagerTest {
             simDir.delete();
         
         proj.genesisSettings.setGraphicsMode(false);
-        
         
         proj.genesisFileManager.setQuitAfterRun(true);
    
@@ -101,7 +107,7 @@ public class GenesisFileManagerTest {
         
         File timesFile = simData.getTimesFile();
         
-        Thread.sleep(2000); // Shouldn't take longer than this
+        Thread.sleep(wait); // Shouldn't take longer than this
         
         assertTrue(timesFile.exists());
         

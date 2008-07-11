@@ -66,6 +66,8 @@ public class NetworkMLReaderTest
     {
         System.out.println("---  testSavingLoadingNetworkMLHDF5");
         
+       // if (gener)
+        
         Project proj = pm.getCurrentProject();
         
         SimConfig sc = proj.simConfigInfo.getDefaultSimConfig();

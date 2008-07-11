@@ -46,7 +46,7 @@ public class NeuronFileManagerTest {
     {
         System.out.println("---  testGenerateHoc...");
         
-        ProjectManager pm = loadProject("examples/Ex5-Networks/Ex5-Networks.neuro.xml");
+        ProjectManager pm = loadProject("testProjects/TestGenNetworks/TestGenNetworks.neuro.xml");
         
         Project proj = pm.getCurrentProject();
         SimConfig sc = proj.simConfigInfo.getDefaultSimConfig();
