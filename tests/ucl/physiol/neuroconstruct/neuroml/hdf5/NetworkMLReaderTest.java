@@ -12,6 +12,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 import ucl.physiol.neuroconstruct.utils.SequenceGenerator.EndOfSequenceException;
 
 /**
@@ -66,7 +67,15 @@ public class NetworkMLReaderTest
     {
         System.out.println("---  testSavingLoadingNetworkMLHDF5");
         
-       // if (gener)
+        if (GeneralUtils.is64bitPlatform() && GeneralUtils.isWindowsBasedPlatform())
+        {
+            if (System.getProperty("os.arch").contains("64"))
+            {
+                System.out.println("****  Not testing NetworkML HDF5 functionality.  ****");
+                System.out.println("****  64bit JDK on 64bit Windows machine: No dlls!!  ****");
+                return;
+            }
+        }
         
         Project proj = pm.getCurrentProject();
         
