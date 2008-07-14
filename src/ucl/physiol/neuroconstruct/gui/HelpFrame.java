@@ -196,7 +196,7 @@ public class HelpFrame extends JFrame implements HyperlinkListener
         {
             try
             {
-                url = (new File(ProjectStructure.getGlossaryHtmlFile())).toURL();
+                url = ProjectStructure.getGlossaryHtmlFile().toURL();
             }
             catch (MalformedURLException m)
             {
@@ -222,7 +222,7 @@ public class HelpFrame extends JFrame implements HyperlinkListener
 
     public static HelpFrame showGlossaryItem(String item)
     {
-        File f = new File(ProjectStructure.getGlossaryHtmlFile());
+        File f = ProjectStructure.getGlossaryHtmlFile();
         try
         {
             String extra = "";
@@ -345,7 +345,7 @@ public class HelpFrame extends JFrame implements HyperlinkListener
 
     private void extraInit()
     {
-        File menuPage = new File(ProjectStructure.getHelpMenuFile());
+        File menuPage = ProjectStructure.getHelpMenuFile();
         try
         {
 

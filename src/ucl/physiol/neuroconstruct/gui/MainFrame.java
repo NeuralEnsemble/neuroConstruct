@@ -1711,13 +1711,17 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
         });
         jButtonSimStimCopy.setText("Copy selected input");
+        
         jButtonSimStimCopy.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
+            
+                logger.logComment("jButtonSimStimCopy_actionPerformed0...", true);
                 jButtonSimStimCopy_actionPerformed(e);
             }
         });
+        
         jTextFieldSimUnitGlobRa.setEditable(false);
         jTextFieldSimUnitGlobRa.setText("");
         jTextFieldSimUnitGlobRa.setColumns(7);
@@ -8348,7 +8352,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
            this.jButtonSimStimEdit.setEnabled(false);
            this.jButtonSimStimCopy.setEnabled(false);
 
-
        }
        else
        {
@@ -11006,7 +11009,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         logger.logComment("Going to show rel notes...");
 
 
-        File f = new File(ProjectStructure.getRelNotesFile());
+        File f = ProjectStructure.getRelNotesFile();
         
         try
         {
@@ -13111,7 +13114,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         while (projManager.getCurrentProject().simPlotInfo.getSimPlot(newName)!=null)
         {
-            newName = GeneralUtils.incrementName(selSimPlot.getPlotReference());
+            newName = GeneralUtils.incrementName(newName);
+            logger.logComment("Testing name: "+ newName, true);
         }
         
         newSimPlot.setPlotReference(newName);
@@ -13237,6 +13241,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     void jButtonSimStimCopy_actionPerformed(ActionEvent e)
     {
+            logger.logComment("jButtonSimStimCopy_actionPerformed...", true);
         int selectedRow = jTableStims.getSelectedRow();
 
         if (selectedRow < 0)
@@ -13244,8 +13249,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             logger.logComment("No row selected...");
             return;
         }
+            logger.logComment("jButtonSimStimCopy_actionPerformed...", true);
+            
+        //boolean proceed = GuiUtils.showYesNoMessage(logger, "Warning, have you saved the project recently??", this);
 
-
+        
+        //if (!proceed) return;
+        
         StimulationSettings selectedStim = projManager.getCurrentProject().elecInputInfo.getStim(selectedRow);
 
         StimDialog dlg
@@ -13325,7 +13335,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         logger.logComment("Going to show help menu...");
 
-        File f = new File(ProjectStructure.getMainHelpFile());
+        File f = ProjectStructure.getMainHelpFile();
         
         try
         {
@@ -13343,7 +13353,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         logger.logComment("Going to show help menu...");
 
-        File f = new File(ProjectStructure.getMainHelpFile());
+        File f = ProjectStructure.getMainHelpFile();
         
         try
         {

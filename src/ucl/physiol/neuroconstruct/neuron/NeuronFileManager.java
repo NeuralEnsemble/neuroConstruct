@@ -122,9 +122,9 @@ public class NeuronFileManager
     private SimConfig simConfig = null;
 
 
-    File utilsFile = new File(ProjectStructure.getNeuronUtilsFile());
+    File utilsFile = ProjectStructure.getNeuronUtilsFile();
     
-    File cellCheckFile = new File(ProjectStructure.getNeuronCellCheckFile());
+    File cellCheckFile = ProjectStructure.getNeuronCellCheckFile();
     
     
     public static final String EXT_CURR_CLAMP_MOD = "CurrentClampExt.mod";

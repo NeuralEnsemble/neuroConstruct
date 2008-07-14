@@ -51,11 +51,10 @@ public class ToolTipHelper
 
     private ToolTipHelper()
     {
-        String helpFilename = ProjectStructure.getToolTipFile();
+        File helpFile = ProjectStructure.getToolTipFile();
         
-        logger.logComment("file: "+helpFilename);
+        logger.logComment("file: "+helpFile);
         
-        File myFile = new File(helpFilename);
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
@@ -66,23 +65,23 @@ public class ToolTipHelper
         }
         catch (ParserConfigurationException pce)
         {
-            logger.logError("Error parsing tool tips file: "+myFile, pce);
+            logger.logError("Error parsing tool tips file: "+helpFile, pce);
             return;
         }
 
         Document doc = null;
         try
         {
-            doc = db.parse(myFile);
+            doc = db.parse(helpFile);
         }
         catch (SAXException se)
         {
-            logger.logError("Error parsing tool tips file: "+myFile, se);
+            logger.logError("Error parsing tool tips file: "+helpFile, se);
             return;
         }
         catch (IOException ioe)
         {
-            logger.logError("Error parsing tool tips file: "+myFile, ioe);
+            logger.logError("Error parsing tool tips file: "+helpFile, ioe);
             return;
         }
 

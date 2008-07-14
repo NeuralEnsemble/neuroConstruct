@@ -228,7 +228,7 @@ public class GenesisFileManager
             fw.close();
 
 
-            File utilsFile = new File(ProjectStructure.getGenesisUtilsFile());
+            File utilsFile = ProjectStructure.getGenesisUtilsFile();
             GeneralUtils.copyFileIntoDir(utilsFile, dirForGenesisFiles);
 
         }

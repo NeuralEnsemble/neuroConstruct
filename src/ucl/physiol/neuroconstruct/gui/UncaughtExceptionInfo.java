@@ -37,9 +37,15 @@ public class UncaughtExceptionInfo implements UncaughtExceptionHandler
     {
        String error = "Java error: "+ e.getMessage();
        
-       //if (e.get)
-           
-           if (e instanceof OutOfMemoryError)
+       StackTraceElement[] ste = e.getStackTrace();
+       //ste[0].
+       
+       if (ste.length>0 && ste[0].toString().contains("WrappedPlainView$WrappedLine.paint"))
+       {
+           // Annoying error in GUI startup, ignoring...
+               
+       }
+       else if (e instanceof OutOfMemoryError)
        {
             String run = GeneralUtils.isWindowsBasedPlatform()?"run.bat":"run.sh";
            

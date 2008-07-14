@@ -26,8 +26,6 @@ import ucl.physiol.neuroconstruct.utils.*;
 
 public class ProjectStructure
 {
-
-
     static
     {
     }
@@ -35,7 +33,6 @@ public class ProjectStructure
     public ProjectStructure()
     {
     }
-    
     
     private static final String updateCheckUrl = "http://www.physiol.ucl.ac.uk/research/silver_a/nCinfo/form.php?myversion=";
 
@@ -92,7 +89,6 @@ public class ProjectStructure
         + "nmodlEditor.recent";
 
 
-    private static String examplesDir = "examples";
 
     private static String nCprojectsDir = "nC_projects";
 
@@ -115,58 +111,56 @@ public class ProjectStructure
     private static String neosimCodeDir = "generatedNEOSIM";
 
     private static String neuroMLDir = "generatedNeuroML";
+    
+    private static String savedNetworksDir = "savedNetworks";
+
+    private static String dataSetsDir = "dataSets";
+    
+    
+    
+    private static String examplesDirInInstall = "examples";
 
     private static String pythonNeuroMLDir = "pythonNeuroML";
-
+    
     public static String neuroMLPyUtilsDir = "NeuroMLUtils";
     
     public static String neuronPyUtilsDir = "NEURONUtils";
     
 
-    private static String savedNetworksDir = "savedNetworks";
 
-
-    private static String dataSetsDir = "dataSets";
-
-    private static String modTemplatesDir = "templates"
+    private static String modTemplatesDirInInstall = "templates"
         + System.getProperty("file.separator")
         + "modFileTemplates";
 
-    private static String genesisTemplatesDir = "templates"
+    private static String genesisTemplatesDirInInstall = "templates"
         + System.getProperty("file.separator")
         + "genesisTemplates";
 
-    private static String genesisUtilsFile = "templates"
+    private static String genesisUtilsFileInInstall = "templates"
         + System.getProperty("file.separator")
         + "genesisUtils"
         + System.getProperty("file.separator")
         + "nCtools.g";
 
-    private static String neuronUtilsFile = "templates"
+    private static String neuronUtilsFileInInstall = "templates"
         + System.getProperty("file.separator")
         + "neuronUtils"
         + System.getProperty("file.separator")
         + "nCtools.hoc";
     
-    private static String neuronCellCheckFile = "templates"
+    private static String neuronCellCheckFileInInstall = "templates"
         + System.getProperty("file.separator")
         + "neuronUtils"
         + System.getProperty("file.separator")
         + "cellCheck.hoc";
 
-    private static String xmlTemplatesDir = "templates"
+    private static String xmlTemplatesDirInInstall = "templates"
         + System.getProperty("file.separator")
         + "xmlTemplates";
 
 
 
-
-    
-
-
-
-
-    private static String cmlTemplatesDir = xmlTemplatesDir
+    private static String cmlTemplatesDirInInstall = xmlTemplatesDirInInstall
         + System.getProperty("file.separator")
         + "ChannelMLPrototypes";
 
@@ -174,16 +168,16 @@ public class ProjectStructure
 
     private static String matlabOctaveDir = "matlabOctave";
 
-    private static String globalMatlabOctaveDir = matlabOctaveDir;
+    private static String matlabOctaveDirInInstall = matlabOctaveDir;
 
     private static String igorNeuroMaticDir = "igorNeuroMatic";
 
-    private static String globalIgorNeuroMaticDir = igorNeuroMaticDir;
+    private static String igorNeuroMaticDirInInstall = igorNeuroMaticDir;
 
 
 
 
-    private static String toolTipFile = "docs"
+    private static String toolTipFileInInstall = "docs"
         + System.getProperty("file.separator")
         + "XML"
         + System.getProperty("file.separator")
@@ -191,34 +185,34 @@ public class ProjectStructure
         + System.getProperty("file.separator")
         + "Glossary.xml";
 
-    private static String helpFileDir = "docs"
+    private static String helpFileDirInInstall = "docs"
         + System.getProperty("file.separator")
         + "helpdocs"
         + System.getProperty("file.separator");
 
-    private static String mainHelpFile = helpFileDir
+    private static String mainHelpFileInInstall = helpFileDirInInstall
         + "index.html";
 
-    private static String helpMenuFile = helpFileDir + "docMenu.html";
+    private static String helpMenuFileInInstall = helpFileDirInInstall + "docMenu.html";
 
-    private static String importDocFile = helpFileDir + "import.html";
+    private static String importDocFileInInstall = helpFileDirInInstall + "import.html";
 
-    private static String glossaryHtmlFile = helpFileDir + "Glossary_gen.html";
+    private static String glossaryHtmlFileInInstall = helpFileDirInInstall + "Glossary_gen.html";
     
-    private static String relNotesFile = helpFileDir + "RELEASE_NOTES";
+    private static String relNotesFileInInstall = helpFileDirInInstall + "RELEASE_NOTES";
     
 
    // private static String neuronModSourcesDir = "src"
     //    + System.getProperty("file.separator")
      //   + "nrnoc";
 
-    private static File javaXMLToMorphMLFile = new File("morphml"
-                                                        + System.getProperty("file.separator")
-                                                        + "JavaXMLToMorphML.xsl");
+    //private static File javaXMLToMorphMLFile = new File("morphml"
+    //                                                    + System.getProperty("file.separator")
+    //                                                    + "JavaXMLToMorphML.xsl");
 
-    private static File morphMLToJavaXMLFile = new File("morphml"
-                                                        + System.getProperty("file.separator")
-                                                        + "MorphMLToJavaXML.xsl");
+    //private static File morphMLToJavaXMLFile = new File("morphml"
+    //                                                    + System.getProperty("file.separator")
+    //                                                    + "MorphMLToJavaXML.xsl");
 
     /**
      * Gets a File for the directory dirName, and if it's not there already, creates it
@@ -242,7 +236,15 @@ public class ProjectStructure
         {
             return new File(nChome);
         }
-        return new File("???");
+        return new File("").getAbsoluteFile(); // Use working directory
+    }
+    
+    
+    
+    public static void main(String[] args)
+    {
+        System.out.println("nc Home: "+ getnCHome().getAbsolutePath());
+        System.out.println("Gen temps: "+ getGenesisTemplatesDir());
     }
 
     /**
@@ -340,15 +342,15 @@ public class ProjectStructure
         return generalSettingsFilename;
     }
 
-    public static String getToolTipFile()
+    public static File getToolTipFile()
     {
-        return toolTipFile;
+        return new File(getnCHome(), toolTipFileInInstall);
     }
 
 
-    public static String getGlossaryHtmlFile()
+    public static File getGlossaryHtmlFile()
     {
-        return glossaryHtmlFile;
+        return new File(getnCHome(),glossaryHtmlFileInInstall);
     }
     
     public static String getUpdateCheckUrl()
@@ -357,64 +359,64 @@ public class ProjectStructure
     }
 
 
-    public static String getMainHelpFile()
+    public static File getMainHelpFile()
     {
-        return mainHelpFile;
+        return new File(getnCHome(), mainHelpFileInInstall);
     }
 
 
-    public static String getRelNotesFile()
+    public static File getRelNotesFile()
     {
-        return relNotesFile;
+        return new File(getnCHome(),relNotesFileInInstall);
     }
 
 
-    public static String getHelpMenuFile()
+    public static File getHelpMenuFile()
     {
-        return helpMenuFile;
+        return new File(getnCHome(),helpMenuFileInInstall);
     }
     
     
-    public static String getHelpImportFile()
+    public static File getHelpImportFile()
     {
-        return importDocFile;
+        return new File(getnCHome(),importDocFileInInstall);
     }
 
 
 
-    public static String getNeuronUtilsFile()
+    public static File getNeuronUtilsFile()
     {
-        return neuronUtilsFile;
+        return new File(getnCHome(), neuronUtilsFileInInstall);
     }
 
 
-    public static String getNeuronCellCheckFile()
+    public static File getNeuronCellCheckFile()
     {
-        return neuronCellCheckFile;
+        return new File(getnCHome(), neuronCellCheckFileInInstall);
     }
 
 
-    public static String getGenesisUtilsFile()
+    public static File getGenesisUtilsFile()
     {
-        return genesisUtilsFile;
+        return new File(getnCHome(), genesisUtilsFileInInstall);
     }
 
-    public static File getJavaXMLToMorphMLFile()
-    {
-        return javaXMLToMorphMLFile;
-    }
+    //public static File getJavaXMLToMorphMLFile()
+    //{
+    //    return new File(getnCHome(), javaXMLToMorphMLFile);
+    //}
 
 
-    public static File getMorphMLToJavaXMLFile()
-    {
-        return morphMLToJavaXMLFile;
-    }
+    //public static File getMorphMLToJavaXMLFile()
+    //{
+   //     return morphMLToJavaXMLFile;
+    //}
 
 
 
     public static File getExamplesDirectory()
     {
-        File examplesDirectory = new File(examplesDir); // create relative to working dir, which should be c:\neuroConstruct
+        File examplesDirectory = new File(getnCHome(), examplesDirInInstall);
 
         if (!examplesDirectory.exists())
         {
@@ -613,10 +615,9 @@ public class ProjectStructure
 
     public static File getGlobalMatlabOctaveDir()
     {
-        File pwd = (new File("")).getAbsoluteFile();
 
-        File dir = getDirandReadme(pwd,
-                                   globalMatlabOctaveDir,
+        File dir = getDirandReadme(getnCHome(),
+                                   matlabOctaveDirInInstall,
                                    "Any *.m files found in this directory will be automatically included in the Matlab/Octave file generated when a simulation is run.\n",
                                    true);
 
@@ -627,10 +628,9 @@ public class ProjectStructure
 
     public static File getGlobalIgorNeuroMaticDir()
     {
-        File pwd = (new File("")).getAbsoluteFile();
 
-        File dir = getDirandReadme(pwd,
-                                   globalIgorNeuroMaticDir,
+        File dir = getDirandReadme(getnCHome(),
+                                   igorNeuroMaticDirInInstall,
                                    "Files found in this directory will be automatically included in the Igor/NeuroMatic file generated when a simulation is run.\n",
                                    true);
 
@@ -731,12 +731,12 @@ public class ProjectStructure
 
     public static File getModTemplatesDir()
     {
-        return new File(modTemplatesDir);
+        return new File(getnCHome(), modTemplatesDirInInstall);
     }
 
     public static File getXMLTemplatesDir()
     {
-        return new File(xmlTemplatesDir);
+        return new File(getnCHome(), xmlTemplatesDirInInstall);
     }
     /*
     public static File getNeuroMLSchemataDir()
@@ -746,20 +746,20 @@ public class ProjectStructure
 
     public static File getCMLTemplatesDir()
     {
-        return new File(cmlTemplatesDir);
+        return new File(getnCHome(), cmlTemplatesDirInInstall);
     }
 
 
     public static File getNeuroMLSchemataDir()
     {
-        return new File(xmlTemplatesDir, "Schemata");
+        return new File(getXMLTemplatesDir(), "Schemata");
     }
 
 
 
     public static File getCMLExamplesDir()
     {
-        return new File(xmlTemplatesDir, "Examples");
+        return new File(getXMLTemplatesDir(), "Examples");
     }
 
 
@@ -768,7 +768,7 @@ public class ProjectStructure
 
     public static File getGenesisTemplatesDir()
     {
-        return new File(genesisTemplatesDir);
+        return new File(getnCHome(),genesisTemplatesDirInInstall);
     }
 
 

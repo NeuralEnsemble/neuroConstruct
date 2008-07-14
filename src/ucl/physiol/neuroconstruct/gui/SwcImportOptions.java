@@ -226,7 +226,7 @@ public class SwcImportOptions extends JDialog
         cancelled = true;
         this.dispose();
 
-        File f = new File(ProjectStructure.getHelpImportFile());
+        File f = ProjectStructure.getHelpImportFile();
         
         try 
         {

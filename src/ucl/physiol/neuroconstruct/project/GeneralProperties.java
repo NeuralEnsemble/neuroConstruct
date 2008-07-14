@@ -41,8 +41,7 @@ public class GeneralProperties
     //private static float maxElectrotonicLength = 0.1f;
 
 
-    /** This is changed automatically by Ant. Look in build.xml...*/
-    private static final String versionNumber = "1.1.1";
+    private static final String versionNumber = "1.1.2";
 
     //private static final String latestNeuroMLVersionShort = "1.7.1";
     private static final String latestNeuroMLVersionNumber = "1.7.2";
@@ -497,6 +496,7 @@ public class GeneralProperties
      public static File getLogFileDir()
      {
          File logFileDir = new File(userSettings.getLocationLogFiles());
+         
          if (!logFileDir.exists()) logFileDir.mkdir();
          return logFileDir;
      }
