@@ -193,7 +193,7 @@ public class GenesisFileManager
 
             fw.write(generateNetworkConnections());
 
-            if (!mooseCompatMode()) fw.write(generateStimulations());
+            fw.write(generateStimulations());
 
             //fw.write(generateAfterCreationText());
 
@@ -2936,7 +2936,14 @@ public class GenesisFileManager
         // Saving summary of the simulation params
         try
         {
-            SimulationsInfo.recordSimulationSummary(project, simConfig, dirForSimDataFiles, "GENESIS", morphComp);
+            if (!GenesisFileManager.mooseCompatMode())
+            {
+                SimulationsInfo.recordSimulationSummary(project, simConfig, dirForSimDataFiles, "GENESIS", morphComp);
+            }
+            else
+            {
+                SimulationsInfo.recordSimulationSummary(project, simConfig, dirForSimDataFiles, "MOOSE", morphComp);
+            }
         }
         catch (IOException ex2)
         {
@@ -3187,7 +3194,7 @@ public class GenesisFileManager
             addMajorComment(response, "Recording " + recordings.size() + " variable(s)");
             newRecordingToBeMade = true;
         }
-
+   
 
 
         /// ********************
@@ -3205,19 +3212,28 @@ public class GenesisFileManager
         //String friendlyDataDirName = getFriendlyDirName(dataFileDirName);
 
 
+        File dirForSims = ProjectStructure.getSimulationsDir(project.getProjectMainDirectory());
+
+        response.append("str simsDir\n");
+        response.append("simsDir = \"" + dirForSims.getAbsolutePath() + "/\"\n\n");
+
+        response.append("str simReference\n");
+        response.append("simReference = \"" + project.simulationParameters.getReference() + "\"\n\n");
+
+        response.append("str targetDir\n");
+        response.append("targetDir =  {strcat {simsDir} {simReference}}\n");
+        response.append("targetDir =  {strcat {targetDir} {\"/\"}}\n\n");
+        
+        
+        String timeFileElement = FILE_ELEMENT_ROOT + "/timefile";
+
+        int steps = ( (int) (getSimDuration() /
+                             project.simulationParameters.getDt()));
+            
+        boolean useTablesToSave = true; // to test pre asc_file impl in moose
+            
         if (newRecordingToBeMade)
         {
-            File dirForSims = ProjectStructure.getSimulationsDir(project.getProjectMainDirectory());
-
-            response.append("str simsDir\n");
-            response.append("simsDir = \"" + dirForSims.getAbsolutePath() + "/\"\n\n");
-
-            response.append("str simReference\n");
-            response.append("simReference = \"" + project.simulationParameters.getReference() + "\"\n\n");
-
-            response.append("str targetDir\n");
-            response.append("targetDir =  {strcat {simsDir} {simReference}}\n");
-            response.append("targetDir =  {strcat {targetDir} {\"/\"}}\n\n");
 
             if (addComments)
             {
@@ -3235,34 +3251,48 @@ public class GenesisFileManager
 
             logger.logComment("Creating the simulation code");
 
-            /** @todo There is certainly an easier way to do this... */
-            String timeFileElement = FILE_ELEMENT_ROOT + "/timefile";
 
 
             addComment(response, "Saving file containing time details");
 
-            response.append("create neutral " + FILE_ELEMENT_ROOT + "\n");
-            response.append("create asc_file " + timeFileElement + "\n");
-            response.append("setfield " + timeFileElement + "    flush 1    leave_open 1    append 1  notime 1\n");
-            //response.append("str targetDir\n");
-            
-            response.append("setfield " + timeFileElement + " filename {strcat {targetDir} {\"" + SimulationData.TIME_DATA_FILE +  "\"}}\n");
-            response.append("call " + timeFileElement + " OUT_OPEN\n");
-            //response.append("call " + timeFileElement +
-            //                " OUT_WRITE \"//This is a file containing the time values of the simulation\"\n");
             response.append("float i, timeAtStep\n");
 
-            int steps = ( (int) (getSimDuration() /
-                                 project.simulationParameters.getDt()));
+            
+            
+            if (!useTablesToSave)
+            {
+                response.append("create neutral " + FILE_ELEMENT_ROOT + "\n");
+                response.append("create asc_file " + timeFileElement + "\n");
+                response.append("setfield " + timeFileElement + "    flush 1    leave_open 1    append 1  notime 1\n");
+
+                response.append("setfield " + timeFileElement + " filename {strcat {targetDir} {\"" + SimulationData.TIME_DATA_FILE +  "\"}}\n");
+                response.append("call " + timeFileElement + " OUT_OPEN\n");
+            }
+            else
+            {
+                response.append("create neutral " + FILE_ELEMENT_ROOT + "\n");
+                response.append("create table " + timeFileElement + "\n");
+                response.append("call " + timeFileElement + " TABCREATE "+steps+" 0 "+getSimDuration()+"\n");
+            }
+
             response.append("for (i = 0; i <= "
                             + steps
                             + "; i = i + 1"
                             + ")\n");
 
-            response.append("timeAtStep = " + convertNeuroConstructTime(project.simulationParameters.getDt()) + " * i\n");
-            response.append("call " + timeFileElement + " OUT_WRITE {timeAtStep} \n");
+            response.append("    timeAtStep = " + convertNeuroConstructTime(project.simulationParameters.getDt()) + " * i\n");
+            if (!useTablesToSave)
+            {
+                response.append("    call " + timeFileElement + " OUT_WRITE {timeAtStep} \n");
+            }
+            else
+            {
+                response.append("setfield " + timeFileElement + " table->table[{i}] {timeAtStep}\n");
+            }
 
             response.append("end\n\n\n");
+            
+            
 
             response.append("str cellName\n");
             response.append("str compName\n");
@@ -3270,6 +3300,7 @@ public class GenesisFileManager
             response.append("create neutral " + getRootCellFileElementName() + "\n");
             if (addComments) response.append("echo Created: " + getRootCellFileElementName() + "\n\n\n");
 
+            
             for (PlotSaveDetails record: recordings)
             {
                 if (record.simPlot.isSynapticMechanism())
@@ -3633,8 +3664,9 @@ public class GenesisFileManager
                         }
                     }
                 }
-                }
+            
             }
+        }
 
         addMajorComment(response, "This will run a full simulation when the file is executed");
 
@@ -3648,7 +3680,7 @@ public class GenesisFileManager
         //String startTimeFile = friendlyDirName+"starttime";
         //String stopTimeFile = friendlyDirName+"stoptime";
 
-        if (!GeneralUtils.isWindowsBasedPlatform())  // Functions need further testing on windows
+        if (!GeneralUtils.isWindowsBasedPlatform() && !mooseCompatMode())  // Functions need further testing on windows
         {
             response.append("str startTimeFile\n");
             response.append("str stopTimeFile\n");
@@ -3659,16 +3691,25 @@ public class GenesisFileManager
             response.append("sh {strcat {\"date +%s.%N > \"} {startTimeFile}}\n\n");
         }
         
-
-        response.append("echo \"Starting simulation reference: "+project.simulationParameters.getReference()+" at: \" {getdate}\n");
+        String dateInfo = "";
+        if (!mooseCompatMode())
+            dateInfo = " at: \" {getdate}";
+        
+        response.append("echo \"Starting simulation reference: "+project.simulationParameters.getReference()+dateInfo+"\n");
 
         response.append("step "+(Math.round(getSimDuration()/project.simulationParameters.getDt()))+"\n\n"); // +1 to include 0 and last timestep
 
-        response.append("echo \"Finished simulation reference: "+project.simulationParameters.getReference()+" at: \" {getdate}\n");
+
+        response.append("echo \"Finished simulation reference: "+project.simulationParameters.getReference()+dateInfo+"\n");
 
         if (addComments) response.append("echo Data stored in directory: {targetDir}\n\n");
         
-        if (!GeneralUtils.isWindowsBasedPlatform())  //  Functions need further testing on windows
+        if (useTablesToSave)
+        {
+            response.append("tab2file "+SimulationData.TIME_DATA_FILE+" "+timeFileElement+" table -nentries "+steps+" -overwrite\n");
+        }
+        
+        if (!GeneralUtils.isWindowsBasedPlatform() && !mooseCompatMode())  //  Functions need further testing on windows
         {
             response.append("sh {strcat {\"date +%s.%N > \"} {stopTimeFile}}\n\n"); // if you know a better way to get output of a system command from a sh call, let me know...
 

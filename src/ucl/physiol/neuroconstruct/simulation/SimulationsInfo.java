@@ -371,12 +371,12 @@ public class SimulationsInfo extends AbstractTableModel
 
         props.setProperty("Simulation temp", project.simulationParameters.getTemperature()+"");
 
-        if (simulator.equals("GENESIS"))
+        if (simulator.equals("GENESIS") || simulator.equals("MOOSE"))
         {
             props.setProperty("Num integration method", project.genesisSettings.getNumMethod().toString());
             props.setProperty("Unit system", UnitConverter.getUnitSystemDescription(project.genesisSettings.getUnitSystemToUse()));
             props.setProperty("Symmetric compartments", project.genesisSettings.isSymmetricCompartments()+"");
-            props.setProperty("GENESIS random seed", project.genesisFileManager.getCurrentRandomSeed()+"");
+            props.setProperty(simulator+" random seed", project.genesisFileManager.getCurrentRandomSeed()+"");
             props.setProperty("No GUI Mode", !project.genesisSettings.isGraphicsMode()+"");
 
             
@@ -387,13 +387,13 @@ public class SimulationsInfo extends AbstractTableModel
                 if (text.trim().length()>0)
                 {
                     text = GeneralUtils.replaceAllTokens(text, "\n", " \n"); //to make reading it in the table easier...
-                    props.setProperty("GENESIS extra script, Type "+sl.getPositionReference() ,
+                    props.setProperty(simulator+" extra script, Type "+sl.getPositionReference() ,
                             text);
                 }
             }
             
 
-            props.setProperty("Script format", "GENESIS Script");
+            props.setProperty("Script format", simulator+" Script");
             
 
             props.setProperty("Script generation time",
@@ -453,32 +453,6 @@ public class SimulationsInfo extends AbstractTableModel
 
 
 
-/*
-            Hashtable<Integer, String> nativeBlocks = project.neuronSettings.getNativeBlocks();
-
-            Enumeration<NativeCodeLocation> locsUsed = nativeBlocks.keys();
-
-            while (locsUsed.hasMoreElements())
-            {
-                NativeCodeLocation nextLoc = locsUsed.nextElement();
-                String text = nativeBlocks.get(nextLoc);
-
-                props.setProperty("NEURON extra text type: "+ nextLoc.getPositionReference(),
-                                  text);
-            }*/
-
-/*
-            if (project.neuronSettings.getTextBeforeCellCreation()!=null &&
-                project.neuronSettings.getTextBeforeCellCreation().trim().length()>0)
-            {
-                props.setProperty("NEURON Extra text 1", project.neuronSettings.getTextBeforeCellCreation());
-            }
-            if (project.neuronSettings.getTextAfterCellCreation()!=null &&
-                project.neuronSettings.getTextAfterCellCreation().trim().length()>0)
-            {
-                props.setProperty("NEURON Extra text 2", project.neuronSettings.getTextAfterCellCreation());
-            }
-*/
         }
 
         Vector stims = project.elecInputInfo.getAllStims();

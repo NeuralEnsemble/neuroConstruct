@@ -1981,7 +1981,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                     String all =  "All of the above";
                     poss[allCellSegRefs.size()] =all;
                             
-                    if (poss.length == 0)
+                    if (poss.length == 1)
                     {
                         GuiUtils.showErrorMessage(logger,
                                                   "There is no saved data to plot for segment: " + jTextFieldSegment.getText() +
