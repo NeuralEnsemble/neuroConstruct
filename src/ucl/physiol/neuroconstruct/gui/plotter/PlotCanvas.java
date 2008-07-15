@@ -111,7 +111,7 @@ public class PlotCanvas extends Canvas
     {
         logger.logComment("Created new PlotCanvas");
 
-        this.logger.setThisClassSilent(true);
+        //this.logger.setThisClassSilent(true);
 
         this.plotFrame = plotFrame;
 
@@ -464,9 +464,13 @@ public class PlotCanvas extends Canvas
                         dataSet.setGraphColour(next);
                 }
             }
+            logger.logComment("Date Set at "+i+": "+ tempNew[i]);
         }
 
         tempNew[dataSets.length] = dataSet;
+            
+        logger.logComment("Date Set at "+dataSets.length+": "+ tempNew[dataSets.length]);
+        
         dataSets = tempNew;
     }
 
@@ -688,7 +692,9 @@ public class PlotCanvas extends Canvas
         if(yAxisInView)
             {
                 logger.logComment("tickSpacingY: " + tickSpacingY);
-
+                int maxTicks = 100;
+                int tickCount = 0;
+                
                 double nextYTickLocation = 0;
                 if (minYScaleValue<0)
                 {
@@ -701,7 +707,7 @@ public class PlotCanvas extends Canvas
                     nextYTickLocation = numFullTicksPos * tickSpacingY;
                 }
 
-                while ( (nextYTickLocation = nextYTickLocation + tickSpacingY) < maxYScaleValue)
+                while (tickCount<maxTicks && (nextYTickLocation = nextYTickLocation + tickSpacingY) < maxYScaleValue)
                 {
                     logger.logComment("checking plotting, nextYTickLocation: " + nextYTickLocation
                                       + ",tickSpacingY " + tickSpacingY+", maxYScaleValue: "+ maxYScaleValue);
@@ -720,12 +726,14 @@ public class PlotCanvas extends Canvas
                                      getScreenPosnValForX(0) - (6 * tag.length()), // move the numbe rover a few places so it's to the left of the axis
                                      getScreenPosnValForY(nextYTickLocation, totalNumAreas, numThisArea));
                     }
+                    tickCount++;
 
                 }
                 nextYTickLocation = 0;
-                while ( (nextYTickLocation = nextYTickLocation - tickSpacingY) > minYScaleValue)
+                tickCount = 0;
+                while (tickCount<maxTicks &&  (nextYTickLocation = nextYTickLocation - tickSpacingY) > minYScaleValue)
                 {
-                    logger.logComment("checking plotting..4");
+                    logger.logComment("checking plotting..4, "+ (nextYTickLocation)+", "+tickSpacingY+", "+minYScaleValue);
                     if (showAxisTicks)
                         g.drawLine(getScreenPosnValForX(0),
                                    getScreenPosnValForY(nextYTickLocation, totalNumAreas, numThisArea),
@@ -739,6 +747,7 @@ public class PlotCanvas extends Canvas
                                      getScreenPosnValForX(0) - (6 * tag.length()), // move the numbe rover a few places so it's to the left of the axis
                                      getScreenPosnValForY(nextYTickLocation, totalNumAreas, numThisArea));
                     }
+                    tickCount++;
 
                 }
             }

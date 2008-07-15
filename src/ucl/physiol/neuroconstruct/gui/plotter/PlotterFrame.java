@@ -393,7 +393,8 @@ public class PlotterFrame extends JFrame
 
     public void addDataSet(DataSet dataSet)
     {
-        logger.logComment("Adding data set: "+dataSet.getRefrence());
+        if (dataSet!=null) 
+            logger.logComment("Adding data set: "+dataSet.getRefrence());
         plotCanvas.addDataSet(dataSet);
 
         updateMenus();
@@ -1931,6 +1932,13 @@ public class PlotterFrame extends JFrame
         public void actionPerformed(ActionEvent e)
         {
             Vector<String> r = PlotManager.getPlotterFrameReferences();
+            
+            if (r.size()==1)
+            {
+                GuiUtils.showErrorMessage(logger, "Sorry, there seems to be only one Plot Frame currently open", null, null);
+                return;
+            }
+                
             r.remove(plotFrame.getPlotFrameReference());
             String[] refs = new String[r.size()];
             r.copyInto(refs);
