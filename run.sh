@@ -1,5 +1,6 @@
 #    
-#   Use an altered value with -Xmx in the line below to run the application with extra memory; type java -X for more...
+#   Use an altered value with -Xmx in the commandline below to run the application with extra 
+#   memory; type java -X for more...
 # 
 
 
