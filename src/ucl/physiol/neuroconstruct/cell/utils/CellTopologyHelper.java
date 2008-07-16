@@ -1924,7 +1924,7 @@ public class CellTopologyHelper
      */
     public static void updateChannelMechanisms(Cell cell, Project project)
     {
-         ArrayList allChanMechs = cell.getAllChannelMechanisms(true);
+        ArrayList allChanMechs = cell.getAllChannelMechanisms(true);
         boolean usingOldMethod = false;
 
         for (int i = 0; i < allChanMechs.size(); i++)

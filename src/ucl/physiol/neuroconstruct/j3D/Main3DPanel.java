@@ -2614,15 +2614,24 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                         GeneratedNetworkConnections.SingleSynapticConnection conn = conns.get(otherNum);
                         
                         Integer nextNum = conn.targetEndPoint.cellNumber;
+                        SegmentLocation nextThisLoc = conn.sourceEndPoint.location;
+                        SegmentLocation nextOtherLoc = conn.targetEndPoint.location;
                         
-                        if (otherType.equals("source")) nextNum = conns.get(otherNum).sourceEndPoint.cellNumber;
+                        if (otherType.equals("source")) 
+                        {
+                            nextNum = conns.get(otherNum).sourceEndPoint.cellNumber;
+                            nextThisLoc = conn.targetEndPoint.location;
+                            nextOtherLoc = conn.sourceEndPoint.location;
+                        }
 
-                        info.append(TAB+TAB+"Cell num <b>" + nextNum + "</b> in <b>" + otherGroup+"</b>");
+                        info.append(TAB+TAB+"Cell num <b>" + nextNum + "</b>, seg: <b>" + nextOtherLoc.getSegmentId() + "</b>, fract: <b>" 
+                            + nextOtherLoc.getFractAlong() + "</b> in <b>" + otherGroup+"</b>");
 
                         Point3f posnOther = project.generatedCellPositions.getOneCellPosition(otherGroup, nextNum.intValue());
 
-                        info.append(" (position: <b>" + posnOther + "</b>)");
-                        info.append(" is connected to this cell" + "<br>\n");
+                        info.append(" (cell position: <b>" + posnOther + "</b>)");
+                        info.append(" is connected to this cell, seg: <b>" + nextThisLoc.getSegmentId() + "</b>, fract: <b>" 
+                            + nextThisLoc.getFractAlong() + "</b><br>\n");
 
                         if (conn.apPropDelay>0) 
                             info.append(TAB+TAB+TAB+"Delay due to AP propagation: " + conn.apPropDelay + " ms. "+ "<br>\n");
@@ -2639,7 +2648,6 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                         }
                         else
                         {
-                            info.append("<br>\n");
                         }
 
                         if (!unique.contains(nextNum)) unique.add(nextNum);

@@ -48,6 +48,7 @@ public class SynapticProperties
     /**
      * Return a simple string representation...
      */
+    @Override
     public String toString()
     {
         return synapseType

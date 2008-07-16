@@ -212,16 +212,16 @@ public class SpikeAnalyser
 
         for (int i = 0; i < data.length; i++)
         {
-            System.out.println("data["+i+"]: " + data[i]);
+            //System.out.println("data["+i+"]: " + data[i]);
 
             // to prevent round of exclusions
             float loc = (float)(data[i] - startDataVal) / (float)binSize;
 
-            System.out.println("loc: " + loc);
+            //System.out.println("loc: " + loc);
 
             int binNum = (int) Math.floor(loc);
 
-            System.out.println("binNum: " + binNum);
+            //System.out.println("binNum: " + binNum);
 
             if (loc == numBins )
             {

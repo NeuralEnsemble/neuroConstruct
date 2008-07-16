@@ -226,7 +226,7 @@ public class CellTypeHelper
 
     public static String getDescForCellType(String cellType)
     {
-        String desc = (String)descriptionsVsCellTypes.get(cellType);
+        String desc = descriptionsVsCellTypes.get(cellType);
         return desc;
     }
 
