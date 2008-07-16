@@ -2,6 +2,6 @@
 DefaultName=KConductanceKS
 Description=Simple HH K channel mapped to a KS channel file (NEURON)
 ChannelMLFile=../../Examples/ChannelML/KChannel.xml
-MappingNEURON=../../Schemata/v1.7.1/Level2/ChannelML_v1.7.1_NEURONChanBuild.xsl
+MappingNEURON=../../Schemata/v1.7.2/Level2/ChannelML_v1.7.2_NEURONChanBuild.xsl
 NEURONNeedsCompilation=false
 CellProcessType=Channel mechanism

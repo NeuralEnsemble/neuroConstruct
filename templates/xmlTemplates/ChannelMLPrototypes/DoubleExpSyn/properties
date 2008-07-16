@@ -2,7 +2,7 @@
 DefaultName=DoubExpSyn
 Description=Simple Double Exponential Synapse mapped to a Exp2Syn based mod file (NEURON) or a synchan object (GENESIS)
 ChannelMLFile=../../Examples/ChannelMLSyns/DoubExpSyn.xml
-MappingNEURON=../../Schemata/v1.7.1/Level2/ChannelML_v1.7.1_NEURONmod.xsl
-MappingGENESIS=../../Schemata/v1.7.1/Level2/ChannelML_v1.7.1_GENESIStab.xsl
+MappingNEURON=../../Schemata/v1.7.2/Level2/ChannelML_v1.7.2_NEURONmod.xsl
+MappingGENESIS=../../Schemata/v1.7.2/Level2/ChannelML_v1.7.2_GENESIStab.xsl
 NEURONNeedsCompilation=true
 CellProcessType=Synaptic mechanism
