@@ -1803,7 +1803,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jButtonCellTypeOtherProject_actionPerformed(e);
             }
         });
-        jMenuItemJava.setText("Java Properties");
+        jMenuItemJava.setText("Java & System Properties");
         jMenuItemJava.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -13861,6 +13861,26 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
             sb.append(GeneralUtils.wrapLine(propName + val, "\n", idealTotalWidth) + "\n");
         }
+        
+        
+        sb.append("System properties:\n\n");
+        
+        Map envProps = System.getenv();
+        for(Object prop: envProps.keySet())
+        {
+            Object val = envProps.get(prop);
+            String propName = prop.toString();
+            if (propName.length()<=idealPropNameWidth)
+            {
+
+                for (int i = propName.length(); i <= idealPropNameWidth ; i++)
+                {
+                        propName = propName + " ";
+                }
+            }
+            sb.append(GeneralUtils.wrapLine(propName + val, "\n", idealTotalWidth) + "\n");
+        }
+        
 
         //sb.append("\nMemory usage:\n\n");
         
