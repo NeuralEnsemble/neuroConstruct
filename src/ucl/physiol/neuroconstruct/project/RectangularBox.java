@@ -445,7 +445,7 @@ public class RectangularBox extends Region
         System.out.println("Moved: "+ rb.getTranslatedRegion(new Vector3f(p)));
         System.out.println("Sphere around: "+ RectangularBox.getEnclosingSphere(rb));
 
-        ComplexCell cell = new ComplexCell("fff");
+        SimpleCell cell = new SimpleCell("fff");
         Vector3f origLoc = new Vector3f(cell.getFirstSomaSegment().getStartPointPosition());
         origLoc.scale(-1);
         CellTopologyHelper.translateAllPositions(cell, origLoc);

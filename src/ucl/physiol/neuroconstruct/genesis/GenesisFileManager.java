@@ -1677,7 +1677,8 @@ public class GenesisFileManager
                                             "    end\n" +
                                             "\n" +
                                             "\n" +
-                                            "end\n");
+                                            "end\n" +
+                                            "update_" + convName + "\n\n");
 
                 }
                 else
@@ -2914,8 +2915,9 @@ public class GenesisFileManager
         if (dirToRunFrom.getAbsolutePath().indexOf(" ")>=0)
         {
             throw new GenesisException("GENESIS files cannot be run in a directory like: "+ dirToRunFrom
-                    + " containing spaces.\nThis is due to the way neuroConstruct starts the external processes (e.g. konsole) to run GENESIS.\nArguments need to be given to this executable and spaces in filenames cause problems.\n"
-                    +"Try saving the project in a directory without spaces.");
+                    + " containing spaces.\nThis is due to the way neuroConstruct starts the external processes (e.g. konsole) to run GENESIS.\n" +
+                    "Arguments need to be given to this executable and spaces in filenames cause problems.\n\n"
+                    +"Try saving the project (File -> Copy Project (Save As)...) in a directory without spaces.");
         }
 
         try
@@ -3230,7 +3232,7 @@ public class GenesisFileManager
         int steps = ( (int) (getSimDuration() /
                              project.simulationParameters.getDt()));
             
-        boolean useTablesToSave = true; // to test pre asc_file impl in moose
+        boolean useTablesToSave = mooseCompatMode(); // to test pre asc_file impl in moose
             
         if (newRecordingToBeMade)
         {

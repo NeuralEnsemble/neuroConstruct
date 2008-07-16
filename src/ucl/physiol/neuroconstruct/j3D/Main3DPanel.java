@@ -2345,6 +2345,9 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         logger.logComment("Finding best view of all regions and cells, looking down z axis. optimalScale: "+ optimalScale);
 
         RectangularBox allRegions = project.regionsInfo.getRegionEnclosingAllRegions(project, simConfig);
+        
+        logger.logComment("getRegionEnclosingAllRegions: "+ allRegions);
+        
 
                 //float scaleDueToSize = 0.4f / (allRegions.getHighestYValue() - allRegions.getLowestXValue());
 
@@ -2402,9 +2405,11 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         float zCoordAfterScale = (largestXYExtent * 2.2f) + highestZToShow;
 
         Transform3D t3d = new Transform3D();
+        
         Vector3d viewPoint = new Vector3d(xCoordAfterScale,
                                           yCoordAfterScale,
                                           zCoordAfterScale);
+        
         logger.logComment("Hi x: "+ highestXToShow+ ", lo x: "+ lowestXToShow);
         logger.logComment("Hi y: "+ highestYToShow+ ", lo y: "+ lowestYToShow);
         logger.logComment("Hi z: "+ highestZToShow+ ", lo z: "+ lowestZToShow);

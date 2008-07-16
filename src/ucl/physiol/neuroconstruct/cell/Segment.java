@@ -410,46 +410,46 @@ public class Segment implements Serializable
         if (section == null)
         {
             col = other.getSection()==null?"black":"red";
-            sb.append(GeneralUtils.getColouredString(", -- No section specified --", col,true));
+            sb.append(","+GeneralUtils.getColouredString(" -- No section specified --", col,true));
         }
         else
         {
             col = other.getSection().getSectionName().equals(section.getSectionName())?"black":"red";
-            sb.append(GeneralUtils.getColouredString(", section: " + section.getSectionName(), col,true));
+            sb.append(","+GeneralUtils.getColouredString(" section: " + section.getSectionName(), col,true));
         }
 
         if (getSegmentShape()==SPHERICAL_SHAPE)
         {
             col = other.getSegmentShape()==SPHERICAL_SHAPE?"black":"red";
-            sb.append(GeneralUtils.getColouredString(", SPHERICAL", col,true));
+            sb.append(","+GeneralUtils.getColouredString(" SPHERICAL", col,true));
         }
         
         if (getSegmentShape()==UNDETERMINED_SHAPE)
         {
             col = other.getSegmentShape()==UNDETERMINED_SHAPE?"black":"red";
-            sb.append(GeneralUtils.getColouredString(", **UNDETERMINED SHAPE**", col,true));
+            sb.append(","+GeneralUtils.getColouredString(" **UNDETERMINED SHAPE**", col,true));
         }
         
         col = segmentId == other.getSegmentId()?"black":"red";
-        sb.append(GeneralUtils.getColouredString(", ID: " + segmentId, col,true) );
+        sb.append(","+GeneralUtils.getColouredString(" ID: " + segmentId, col,true) );
 
         if(this.isFirstSectionSegment() && parentSegment == null)
         {
             col = (other.isFirstSectionSegment() && other.getParentSegment() == null)?"black":"red";
-            sb.append(GeneralUtils.getColouredString(", ROOT SEGMENT", col,true));
+            sb.append(","+GeneralUtils.getColouredString(" ROOT SEGMENT", col,true));
         }
         else
         {
             if (parentSegment == null)
             {
                 col = (other.getParentSegment() == null)?"black":"red";
-                sb.append(GeneralUtils.getColouredString(", -- NO PARENT --", col,true));
+                sb.append(","+GeneralUtils.getColouredString(" -- NO PARENT --", col,true));
             }
             else
             {
                 col = (other.getParentSegment().getSegmentName().equals(parentSegment.getSegmentName()))?"black":"red";
                 
-                sb.append(GeneralUtils.getColouredString(", parent: " + parentSegment.getSegmentName(), col,true));
+                sb.append(","+GeneralUtils.getColouredString(" parent: " + parentSegment.getSegmentName(), col,true));
                 
                 col = (other.getParentSegment().getSegmentId() == parentSegment.getSegmentId())?"black":"red";
                 
@@ -458,7 +458,7 @@ public class Segment implements Serializable
                 if (fractionAlongParent!=1)
                 {
                     col = (other.getFractionAlongParent() == fractionAlongParent)?"black":"red";
-                    sb.append(GeneralUtils.getColouredString(", FRACT ALONG: " + fractionAlongParent, col,true));
+                    sb.append(","+GeneralUtils.getColouredString(" FRACT ALONG: " + fractionAlongParent, col,true));
                 }
 
             }
@@ -466,17 +466,17 @@ public class Segment implements Serializable
 
         col = (other.getRadius() == radius)?"black":"red";
         
-        sb.append(GeneralUtils.getColouredString(", rad: " + radius, col,true));
+        sb.append(","+GeneralUtils.getColouredString(" rad: " + radius, col,true));
 
         if (getStartPointPosition() == null)
         {
             col = (other.getStartPointPosition()==null)?"black":"red";
-            sb.append(GeneralUtils.getColouredString(", (-- NO PARENT --)", col,true));
+            sb.append(","+GeneralUtils.getColouredString(" (-- NO PARENT --)", col,true));
         }
         else
         {
             col = (other.getStartPointPosition().equals(getStartPointPosition()))?"black":"red";
-            sb.append(GeneralUtils.getColouredString(", " + getStartPointPosition(), col,true));
+            sb.append(","+GeneralUtils.getColouredString(" " + getStartPointPosition(), col,true));
         }
         
 
@@ -490,7 +490,7 @@ public class Segment implements Serializable
         {
             col = (trimThis.equals(trimOther))?"black":"red";
         
-            sb.append(GeneralUtils.getColouredString(", len: "+ trimThis, col,true));
+            sb.append(","+GeneralUtils.getColouredString(" len: "+ trimThis, col,true));
         }
 
         if (isFiniteVolume())
@@ -501,7 +501,7 @@ public class Segment implements Serializable
 
         if (comment!=null)
         {
-            col = (other.getComment().equals(comment))?"black":"red";
+            col = (other.getComment()!=null && other.getComment().equals(comment))?"black":"red";
             sb.append(GeneralUtils.getColouredString(" // "+comment, col,true));
         }
 
@@ -598,7 +598,7 @@ public class Segment implements Serializable
         }
         try
         {
-            Cell cell = new ComplexCell("Copm");
+            Cell cell = new SimpleCell("Copm");
 
             System.out.println("Cell: " + cell);
 
@@ -852,6 +852,7 @@ public class Segment implements Serializable
             }
             else
             {
+                if (other.getComment()==null)  return false;
                 if (!other.getComment().equals(comment))  return false;
             }
 

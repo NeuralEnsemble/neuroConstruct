@@ -1906,7 +1906,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         //PurkinjeCell pCell = new PurkinjeCell("PurkinjeCell");
         //Cell cell = new SimpleCell("SimpleCell");
-        Cell cell = new ComplexCell("CompCell");
+        Cell cell = new SimpleCell("CompCell");
 
         Section axSec = cell.getAllSections().get(1);
 

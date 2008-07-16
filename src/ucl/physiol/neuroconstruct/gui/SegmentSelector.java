@@ -1079,8 +1079,6 @@ public class SegmentSelector extends JFrame implements DocumentListener
         {
             UIManager.setLookAndFeel(favouredLookAndFeel);
 
-            //ComplexCell p = new ComplexCell("comp");
-            //MossyFiber p = new MossyFiber("MossyFiber");
 
             Project testProj = Project.loadProject(new File("projects/Simple/Simple.neuro.xml"),
                                                    new ProjectEventListener()
@@ -1866,14 +1864,14 @@ public class SegmentSelector extends JFrame implements DocumentListener
         }
         
         ArrayList<Point3f>  points = CoordCalculator.getCoords((int)startPoint.x, (int)startPoint.y, (int)startPoint.z, len);
-        StringBuffer info = new StringBuffer("The following points are a distance of "+len +" from point "+startPoint+"\n" +
+        StringBuffer info = new StringBuffer("The following points are a distance of "+len +" from point "+startPoint+"\n\n" +
                 "Copy and paste the chosen point into the end point field in the Segment Selector.\n" +
                 "Thanks to Michele Mattioni for the end point generation code.\n\n");
         for(Point3f p : points)
             info.append(p+"\n");
         
         endPointViewer = SimpleViewer.showString(info.toString(), "Possible end points", 12, false, 
-                false, .35f,.80f);
+                false, .40f,.80f);
         //endPointViewer.pack();
         
         

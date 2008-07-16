@@ -45,18 +45,18 @@ public class CellTypeHelper
 
         addNewOrdinaryCellType("OneSegment", "Hard coded Test cell");
         addNewOrdinaryCellType("SimpleCell", "Hard coded Test cell");
-        addNewOrdinaryCellType("ComplexCell", "Hard coded Test cell");
+        //addNewOrdinaryCellType("ComplexCell", "Hard coded Test cell");
         addNewOrdinaryCellType("PurkinjeCell", "Hard coded Test cell");
         addNewOrdinaryCellType("GranuleCell", "Hard coded Test cell");
-        addNewOrdinaryCellType("MossyFiber", "Hard coded Test cell");
+        //addNewOrdinaryCellType("MossyFiber", "Hard coded Test cell");
         addNewOrdinaryCellType("GolgiCell", "Hard coded Test cell");
 
 
-        addNewMorphCellType("ucl.physiol.neuroconstruct.cell.converters.SWCMorphReader");
+        addNewMorphCellType("ucl.physiol.neuroconstruct.cell.converters.MorphMLConverter");
         addNewMorphCellType("ucl.physiol.neuroconstruct.cell.converters.NeurolucidaReader");
         addNewMorphCellType("ucl.physiol.neuroconstruct.cell.converters.GenesisMorphReader");
-        addNewMorphCellType("ucl.physiol.neuroconstruct.cell.converters.MorphMLConverter");
         addNewMorphCellType("ucl.physiol.neuroconstruct.cell.converters.NeuronMorphReader");
+        addNewMorphCellType("ucl.physiol.neuroconstruct.cell.converters.SWCMorphReader");
 
 
 
@@ -70,10 +70,10 @@ public class CellTypeHelper
     {
         if (cellType.equals("OneSegment")) return new OneSegment(cellName);
         if (cellType.equals("SimpleCell")) return new SimpleCell(cellName);
-        if (cellType.equals("ComplexCell")) return new ComplexCell(cellName);
+        //if (cellType.equals("ComplexCell")) return new ComplexCell(cellName);
         if (cellType.equals("PurkinjeCell")) return new PurkinjeCell(cellName);
         if (cellType.equals("GranuleCell")) return new GranuleCell(cellName);
-        if (cellType.equals("MossyFiber")) return new MossyFiber(cellName);
+        //if (cellType.equals("MossyFiber")) return new MossyFiber(cellName);
         if (cellType.equals("GolgiCell")) return new GolgiCell(cellName);
 
 

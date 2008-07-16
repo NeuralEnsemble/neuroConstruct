@@ -45,10 +45,10 @@ public class MpiSettings
         String localConfig = "Local machine, serial mode";
         String local2Config = "Local machine (2p)";
         String local4Config = "Local machine (4p)";
-        String local8Config = "Local machine (8p)";
-        String local32Config = "Local machine (32p)";
-        String local128Config = "Local machine (128p)";
-        String multiConfig = "TestConf";
+        //String local8Config = "Local machine (8p)";
+        //String local32Config = "Local machine (32p)";
+        //String local128Config = "Local machine (128p)";
+        //String multiConfig = "TestConf";
         //String testConfig22 = "TestConfMore";
 
 
@@ -71,13 +71,14 @@ public class MpiSettings
             MpiConfiguration p = new MpiConfiguration(local4Config);
             p.getHostList().add(new MpiHost("localhost",4, 1));
             configurations.add(p);
-        }
+        } /*
         if (getMpiConfiguration(local8Config)==null)
         {
             MpiConfiguration p = new MpiConfiguration(local8Config);
             p.getHostList().add(new MpiHost("localhost",8, 1));
             configurations.add(p);
         }
+       
         if (getMpiConfiguration(local32Config)==null)
         {
             MpiConfiguration p = new MpiConfiguration(local32Config);
@@ -98,7 +99,7 @@ public class MpiSettings
             //p.getHostList().add(new MpiHost("eriugena",4, 1));
             p.getHostList().add(new MpiHost("bernal", 4, 1));
             configurations.add(p);
-        }
+        }*/
 
 
     }
