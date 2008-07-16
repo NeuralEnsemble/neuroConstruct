@@ -2,6 +2,61 @@ Release notes/change log for neuroConstruct
 
 See also the README file
 
+--------- Version 1.1.2 (July 08) ---------
+
+
+-  Morphology based network connection now allows specification of which of the soma/axon/dendrites are allowed for the pre and 
+   post synaptic points. This allows the possibility of axo-axonic and dendro-dendritic connections. Previously presynaptic 
+   connections were on axons & soma, post were on soma & dendrites. Note though that the actual allowed locations are the 
+   intersection of the groups set at Visualisation - View: <Cell> -> Synaptic Conn Locations and the selection of which of 
+   soma/axon/dendrites are allowed for pre/post.
+
+-  Updated to NeuroML version 1.7.2. Added drop down box at Setting -> General Properties where the version of NeuroML to use for
+   validation, etc. can be set. If one (or all) of the Cell Mechanisms are selected at tab Cell Mechanims, and the Update
+   ChannelML Mappings button is pressed, the XSL files for generating mod files/GENESIS scripts will be updated to the 
+   mappings from this version of NeuroML. Note that there was a bug in the NeuroML v1.7.1 XSL mappings included with 
+   neuroConstruct v1.1.0 which would lead to an error being thrown if used for synaptic mechanisms in GENESIS. Fixed in current
+   specifications.
+
+-  Optimisation of generation of network connections in cells with large morphologies. Also faster generation of NEURON code 
+   for larger cells (e.g. Ex10-MainenEtAl).
+
+-  Fixed bug when saving channel conductances in GENESIS. Included plotting/saving of Na & K conductances in Ex4-NEURONGENESIS.
+
+-  Removed option for generating sequences of simulations with different pulse length/amplitude etc. at Input and Output.
+   This fnctionality will be obsolete with the new Python scripting interface. Replaced with option to generate a range of 
+   random/gaussian dist values of pulse amp etc. to allow variable input trains to cells in a cell group. These random values
+   for the pulse amplitude/duration/delay will be the same in the generated NEURON and GENESIS simulations.
+
+-  Added option in Segment Selector when modifiying the 3D end points of segments. A list of end points can be generated 
+   which give a number of (x,y,z) integer value options for keeping a specified integer length of segment. Useful for quickly
+   converting a cell to a more realistic 3D shape and keeping segment length constant. Thanks to Michele Mattioni (EBI) for
+   the suggestion/code.
+
+-  Added option in Plot Frame to move Data Set to another open Plot Frame.
+
+-  Updated run.bat & run.sh to set env variable NC_HOME, which is used to find location of directories for templates, etc. 
+   as included with standard neuroConstruct distribution. Useful when starting neuroConstruct from commandline in dir other
+   than install directory.
+
+-  Added Full Net Info button to Generate panel, for a view of all of the generated network info (contains the information
+   which would go in a NetworkML file)
+
+-  Fixed bug in NEURON template generation. Was only applicable when: soma is spherical AND (soma is not at origin OR first 
+   child segs of soma are not cylindrical).
+
+-  Added new 3D viewing functions. Added network 'slicer' button (button "|" beside buttons "0" and "^" in 3D network view).
+   This renders transparent cells outside planes perpendicular to X, Y, Z directions. Useful for visulaising sections of dense
+   networks. Another feature is in the rearranged Simulation Replay panel. When this panel is extended to full (press ">>") 
+   a subset of cell groups (or parts thereof) can be specified as the ones to colour during the simulation replay (all other 
+   cells black or transparent). Both these features are a bit flaky, but (with patience) can be used for generating interesting 
+   screenshots/movies.
+
+-  Initial version of Python scripting interface. To use type 'run.bat -python' or './run.sh -python'. No documentation at 
+   the moment, but see test.py in the main directory
+
+-  Added JUnit testing framework & a number of tests on cell structure & NeuroML compatibility. Cleared up minor bugs in 
+   saving & loading NetworkML & MorphML
 
 --------- Version 1.1.0 (based on 1.0.9beta) (May 08) ---------
 

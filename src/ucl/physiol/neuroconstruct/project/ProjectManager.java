@@ -96,11 +96,14 @@ public class ProjectManager implements GenerationReport
         this.projEventListener = projEventListener;
     }
     
+    /*
+     * Print out status of application including details of currently loaded project
+     */
     public String status()
     {
         StringBuffer info = new StringBuffer();
         
-        info.append("neuroConstruct v"+GeneralProperties.getVersionNumber()+"\n");
+        info.append("\n  neuroConstruct v"+GeneralProperties.getVersionNumber()+"\n\n");
             
         if (activeProject==null)
         {
@@ -116,6 +119,7 @@ public class ProjectManager implements GenerationReport
                 info.append("No. Cell Groups:     " + activeProject.cellGroupsInfo.getNumberCellGroups() + "\n");
                 info.append("No. Morph Net Conns: " + activeProject.morphNetworkConnectionsInfo.getNumSimpleNetConns() + "\n");
                 info.append("No. Vol Net Conns:   " + activeProject.volBasedConnsInfo.getNumConns() + "\n");
+                info.append("No. Inputs:          " + activeProject.elecInputInfo.getAllStims().size() + "\n");
             } 
             catch (NoProjectLoadedException ex) 
             {
@@ -123,6 +127,7 @@ public class ProjectManager implements GenerationReport
             }
         }
         
+        info.append("\n");
         return info.toString();
     }
 
