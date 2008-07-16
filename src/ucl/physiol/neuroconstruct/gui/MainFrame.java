@@ -28,6 +28,7 @@ import javax.xml.validation.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
@@ -13844,7 +13845,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         StringBuffer sb= new StringBuffer();
 
-        sb.append("Java system properties:\n\n");
+        sb.append("    Java properties:\n\n");
 
         for(Object next: ordered)
         {
@@ -13863,10 +13864,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
         
         
-        sb.append("System properties:\n\n");
+        sb.append("\n\n    System properties:\n\n");
         
         Map envProps = System.getenv();
-        for(Object prop: envProps.keySet())
+        Set set = envProps.keySet();
+        AbstractList allEnv = new ArrayList(set);
+        allEnv = GeneralUtils.reorderAlphabetically(allEnv, true);
+        
+        for(Object prop: allEnv)
         {
             Object val = envProps.get(prop);
             String propName = prop.toString();
@@ -13884,24 +13889,25 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         //sb.append("\nMemory usage:\n\n");
         
+        sb.append("\n\n    Further system information:\n\n");
+        
         MemoryMXBean mxbean = ManagementFactory.getMemoryMXBean();
         MemoryUsage muh = mxbean.getHeapMemoryUsage();
-        sb.append("\n\nHeap Memory usage: "+muh+"\n\n");
+        sb.append("Heap Memory usage: "+muh+"\n");
         
         
         RuntimeMXBean rbean = ManagementFactory.getRuntimeMXBean();
         
         
-        sb.append("Further system information:\n\n");
         
-        sb.append("Number available processors: "+ManagementFactory.getOperatingSystemMXBean().getAvailableProcessors()+"\n\n");
-        sb.append("JVM name: "+rbean.getName()+"\n\n");
-        sb.append("Boot classpath: "+rbean.getBootClassPath()+"\n\n");
-        sb.append("Args to JVM: "+rbean.getInputArguments()+"\n\n");
+        sb.append("Number available processors: "+ManagementFactory.getOperatingSystemMXBean().getAvailableProcessors()+"\n");
+        sb.append("JVM name: "+rbean.getName()+"\n");
+        //sb.append("Boot classpath: "+rbean.getBootClassPath()+"\n\n");
+        sb.append("Args to JVM: "+rbean.getInputArguments()+"\n");
 
         boolean useHtml = false;
 
-        SimpleViewer.showString(sb.toString(), "Java system properties", 11, false, useHtml);
+        SimpleViewer.showString(sb.toString(), "Java system properties", 12, false, useHtml);
 
     }
 
