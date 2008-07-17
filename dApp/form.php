@@ -43,8 +43,8 @@ include("ute.php");
 $mailServer= "smtp-server.ucl.ac.uk";
 
 
-$verDots = "1.1.0";
-$verDashs = "1_1_0";
+$verDots = "1.1.2";
+$verDashs = "1_1_2";
 
 
 if (isset($_REQUEST['myversion']))
@@ -212,7 +212,7 @@ else if (isset($_REQUEST['reference']))
 			echo "<p>&nbsp;&nbsp;<a href ='RELEASE_NOTES'>Release notes for v".$verDots."</a></p>";
 
 
-			echo "<h4>Installer for Windows (for Vista or 64bit, use zip file below):</h4>";
+			echo "<h4>Installer for Windows (for Vista or 64bit, use **zip file** below, not exe):</h4>";
 			echo "<p>&nbsp;&nbsp;<a href='form.php?reference=".$ref."&dl=neuroConstruct_windows_".$verDashs.".exe'>neuroConstruct_windows_".$verDashs.".exe</a></p>";
 
 			echo "<h4>Installer for Linux:</h4>";
@@ -221,12 +221,23 @@ else if (isset($_REQUEST['reference']))
 			echo "<h4>Installer for Mac:</h4>";
 			echo "<p>&nbsp;&nbsp;<a href='form.php?reference=".$ref."&dl=neuroConstruct_macos_".$verDashs.".dmg'>neuroConstruct_macos_".$verDashs.".dmg</a></p>";
 
-			echo "<h4>Zip file for manual install:</h4>";
+			echo "<h4>Zip file for manual install (Windows, Linux, Mac):</h4>";
 			echo "<p>&nbsp;&nbsp;<a href='form.php?reference=".$ref."&dl=neuroConstruct_".$verDots.".zip'>neuroConstruct_".$verDots.".zip</a></p>";
 
 
 			echo "<br/><br/>";
 			echo "<h3>Older versions...</h3>";
+
+
+
+            echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_windows_1_1_0.exe'>neuroConstruct_windows_1_1_0.exe</a></p>";
+
+            echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_unix_1_1_0.sh'>neuroConstruct_unix_1_1_0.sh</a></p>";
+
+            echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_macos_1_1_0.dmg'>neuroConstruct_macos_1_1_0.dmg</a></p>";
+
+            echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_1.1.0.zip'>neuroConstruct_1.1.0.zip</a></p>";
+
 
 
 
