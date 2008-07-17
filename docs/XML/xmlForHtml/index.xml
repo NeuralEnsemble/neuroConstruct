@@ -6,9 +6,13 @@
     <title>neuroConstruct: Software for developing biologically realistic 3D neural networks</title>
   </header>
   <body>
+      <p>&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.elsevier.com/wps/find/bookdescription.cws_home/713686/description" 
+title="Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, eds. (Elsevier)">
+  <img src="images/EpilepsyBookCover.PNG" 
+        alt="Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, eds. (Elsevier)"/></a></p>
 
-  <figure src="images/CA1-spike.PNG" alt="CA1 pyramidal cell"/>
-
+      <p>&nbsp;</p>
     <section>
       <title>Introduction</title>
       <p>neuroConstruct has been developed in the <a href="http://www.physiol.ucl.ac.uk/research/silver_a/">Silver Lab</a> in the Department of Physiology at
@@ -22,16 +26,16 @@
 
     <section>
         <title>** Latest News **</title>
-        <p>The latest version of neuroConstruct (<strong>v1.1.1</strong>) is available for download <a href="download/index.html">here</a>.</p>
+        <p>The latest version of neuroConstruct (<strong>v1.1.2</strong>) is available for download <a href="download/index.html">here</a>.</p>
         <p>The paper describing the application has been published: <em>
             P. Gleeson, V. Steuber and R. A. Silver, neuroConstruct: A Tool for Modeling Networks of Neurons in 3D Space, Neuron,
             Volume 54, Issue 2, 19 April 2007, Pages 219-235.</em>
             It is available via Open Access <a href="http://www.neuron.org/content/article/abstract?uid=PIIS0896627307002486">here</a>.</p>
 
-            <p>A list of <strong>publications</strong> dealing with neuroConstruct and NeuroML can be found <a href="links/publications.html">here</a>.</p>
+            <p>A more complete list of <strong>publications</strong> dealing with neuroConstruct and NeuroML can be found <a href="links/publications.html">here</a>.</p>
 
 
-        <p>There is a <strong>mailing list</strong> for neuroConstruct related news. Sign up <a href="http://www.mailinglists.ucl.ac.uk/mailman/listinfo/neuroconstruct">here</a>. </p>
+        <p>There is a <strong>mailing list</strong> for neuroConstruct related news (<strong>neuroconstruct@ucl.ac.uk</strong>). Sign up <a href="http://www.mailinglists.ucl.ac.uk/mailman/listinfo/neuroconstruct">here</a>. </p>
     </section>
 
     <section>

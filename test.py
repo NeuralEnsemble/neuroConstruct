@@ -2,9 +2,9 @@
 #
 #  A simple example of loading a neuroConstruct project using the Jython scripting interface
 #
-#  To use type 'run.bat -python' or './run.sh -python'.
+#  To use type 'run.bat -python test.py' or './run.sh -python test.py'.
 #  
-#  Get in contact directly with PG for latest status...
+#  Get in contact directly with PG for more info and the latest status...
 #
 #
 

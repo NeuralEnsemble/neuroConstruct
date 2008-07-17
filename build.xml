@@ -73,13 +73,13 @@
 
     <property name="main.gui.dir" value="ucl/physiol/neuroconstruct/gui"/>
     <property name="nmodl.gui.dir" value="ucl/physiol/neuroconstruct/nmodleditor/gui"/>
-    
-    
+
+
     <property name="test.dir" value="./tests"/>
     <property name="main.test.class" value="test.MainTest"/>
-    
-    
-    
+
+
+
     <property name="jar.file" value="${build.dir}/${name}_${version}.jar"/>
 
     <filter token="year" value="${year}"/>
@@ -302,9 +302,9 @@
         <classpath refid="run.class.path"/>
     </java>
   </target>
-  
-  
-  
+
+
+
   <!-- =================================================================== -->
   <!-- Only used inside NetBeans...                                        -->
   <!-- =================================================================== -->
@@ -328,8 +328,8 @@
         </java>
   </target>
 
-  
-  
+
+
 
 
   <!-- =================================================================== -->
@@ -499,6 +499,7 @@
 
       <copy file="build.xml" todir="${temp_ver.dir}"/>
       <copy file="run.bat" todir="${temp_ver.dir}"/>
+      <copy file="test.py" todir="${temp_ver.dir}"/>
       <copy file="run.sh" todir="${temp_ver.dir}"/>
       <copy file="README" todir="${temp_ver.dir}"/>
       <copy file="RELEASE_NOTES" todir="${temp_ver.dir}"/>
