@@ -2,6 +2,15 @@ Release notes/change log for neuroConstruct
 
 See also the README file
 
+--------- Version 1.1.4 (XXXX 08) ---------
+
+
+-  Added option to create distribution histogram over either X or Y values in a plotted Data Set (previously only Y). X distribution
+   useful e.g. for plotting number of timesteps used per ms in NEURON variable time step simulation.
+
+
+
+
 --------- Version 1.1.2 (July 08) ---------
 
 
