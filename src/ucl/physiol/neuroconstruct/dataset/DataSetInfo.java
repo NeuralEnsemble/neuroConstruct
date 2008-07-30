@@ -164,8 +164,9 @@ public class DataSetInfo extends AbstractTableModel
         return dataSetObjs.size();
     }
 
+    @Override
     public String getColumnName(int col) {
-        return (String)allColumns.elementAt(col);
+        return allColumns.elementAt(col);
     }
 
     public Vector<String> getAllDataSetRefs()
@@ -182,14 +183,14 @@ public class DataSetInfo extends AbstractTableModel
 
     public DataSet getDataSet(int row) throws DataSetException
     {
-        DataSet ds = (DataSet)dataSetObjs.elementAt(row);
+        DataSet ds = dataSetObjs.elementAt(row);
 
         return DataSetManager.loadFromDataSetFile(ds.getDataSetFile(), false);
     }
 
     public String getDataSetReference(int row) throws DataSetException
     {
-        DataSet ds = (DataSet)dataSetObjs.elementAt(row);
+        DataSet ds = dataSetObjs.elementAt(row);
 
         return ds.getRefrence();
     }
@@ -197,7 +198,7 @@ public class DataSetInfo extends AbstractTableModel
 
     public String getDataSetDescription(int row) throws DataSetException
     {
-        DataSet ds = (DataSet)dataSetObjs.elementAt(row);
+        DataSet ds = dataSetObjs.elementAt(row);
 
         return ds.getDescription();
     }
@@ -206,7 +207,7 @@ public class DataSetInfo extends AbstractTableModel
 
     public File getDataSetFile(int row) throws DataSetException
     {
-        DataSet ds = (DataSet)dataSetObjs.elementAt(row);
+        DataSet ds = dataSetObjs.elementAt(row);
         //File
         return ds.getDataSetFile();
     }
@@ -215,7 +216,7 @@ public class DataSetInfo extends AbstractTableModel
     public Object getValueAt(int row, int col)
     {
 
-        DataSet dataSet = (DataSet)dataSetObjs.elementAt(row);
+        DataSet dataSet = dataSetObjs.elementAt(row);
 
         switch (col)
         {
@@ -278,6 +279,7 @@ public class DataSetInfo extends AbstractTableModel
     }
 */
 
+    @Override
     public boolean isCellEditable(int row, int col)
     {
         return false;

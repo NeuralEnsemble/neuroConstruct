@@ -15,7 +15,7 @@ REM
 
 REM Change this line to your install location
 set NC_HOME=C:\neuroConstruct
-set NC_VERSION=1.1.2
+set NC_VERSION=1.1.4
 
 
 set H5_JAR_DIR=%NC_HOME%/lib/hdf5

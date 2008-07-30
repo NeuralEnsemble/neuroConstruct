@@ -51,6 +51,10 @@ public class DataSet
     private String yLegend = "";
     private String xUnit = "";
     private String yUnit = "";
+    
+    public static int xDim = 0;
+    public static int yDim = 1;
+    
 
 
     /**

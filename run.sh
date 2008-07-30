@@ -6,7 +6,7 @@
 
 # Change this line to your install location
 export NC_HOME=$HOME/neuroConstruct
-export NC_VERSION=1.1.2
+export NC_VERSION=1.1.4
 
 
 export H5_JAR_DIR=$NC_HOME/lib/hdf5

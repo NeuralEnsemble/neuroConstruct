@@ -846,11 +846,8 @@ public class ProjectManager implements GenerationReport
      */
     public void doValidate(boolean html)
     {
-        //StringBuffer info = new StringBuffer();
-
         boolean verbose = false;
         
-
         File schemaFile = GeneralProperties.getNeuroMLSchemaFile();
 
         SimpleHtmlDoc report = new SimpleHtmlDoc();
@@ -915,7 +912,7 @@ public class ProjectManager implements GenerationReport
         report.addBreak();
         report.addBreak();
 
-        report.addTaggedElement("Validating Cell Mechanisms", "p");
+        report.addTaggedElement("Validating Cell Mechanisms (using NeuroML version "+GeneralProperties.getNeuroMLVersionNumber()+")", "p");
 
         Vector<String> cellMechNames = this.activeProject.cellMechanismInfo.getAllCellMechanismNames();
 

@@ -182,6 +182,63 @@ public class SpikeAnalyser
         return interSpikeIntervals;
 
     }
+    
+    public static DataSet getDistHist(DataSet ds, 
+                               int dimension, 
+                               float start,
+                               float binLength,
+                               int numBins)
+    {
+        double[] data = null;
+        
+        String newXval = null;
+        String desc = "";
+        String unit = "";
+        
+        if (dimension==DataSet.xDim)
+        {
+            data = ds.getXValues();
+            newXval = "X values";
+            unit = ds.getXUnit();
+            desc = "Distribution of X values of: "+ ds.getRefrence();
+            if (ds.getXLegend().length() > 0)
+            {
+                newXval = ds.getXLegend();
+            }
+        }
+        else if (dimension==DataSet.yDim)
+        {
+            data = ds.getYValues();
+            newXval = "Y values";
+            unit = ds.getYUnit();
+            desc = "Distribution of Y values of: "+ ds.getRefrence();
+            if (ds.getYLegend().length() > 0)
+            {
+                newXval = ds.getYLegend();
+            }
+        }
+        
+        int[] numInEach = SpikeAnalyser.getBinnedValues(data,
+                                                        start,
+                                                        binLength,
+                                                        numBins);
+        
+        
+
+        DataSet dsNew = new DataSet(desc,
+                                 desc,
+                                 unit, "", newXval, "Number per bin");
+
+        for (int i = 0; i < numBins; i++)
+        {
+            double yVal = start + binLength * (i + 0.5);
+            dsNew.addPoint(yVal, numInEach[i]);
+        }
+
+        dsNew.setGraphFormat(PlotCanvas.USE_BARCHART_FOR_PLOT);
+        
+        return dsNew;
+    }
 
 
     public static int[] getBinnedValues(float[] data,

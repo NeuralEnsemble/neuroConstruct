@@ -155,6 +155,8 @@ public class PlotterFrame extends JFrame
             e.printStackTrace();
         }
     }
+    
+    
 
 
     private void extraInit()
@@ -383,6 +385,9 @@ public class PlotterFrame extends JFrame
     public void dispose()
     {
         PlotManager.plotFrameClosing(plotFrameReference);
+        logger.logComment("dispose()...");
+        if (standAlone) 
+            System.exit(0);
     }
     
     public String getPlotFrameReference()
@@ -510,13 +515,21 @@ public class PlotterFrame extends JFrame
             //transformItem.addActionListener(new DataSetDistHistMenuListener(nextDataSet));
 
 
-            JMenuItem distHistItem = new JMenuItem();
-            distHistItem.setText("Distribution Histogram");
-            distHistItem.setToolTipText("Distribution Histogram of y values of the data set");
-            transformItem.add(distHistItem);
+            JMenuItem distHistItemY = new JMenuItem();
+            distHistItemY.setText("Distribution Histogram (y values)");
+            distHistItemY.setToolTipText("Distribution Histogram of Y values of the data set");
+            transformItem.add(distHistItemY);
 
-            distHistItem.addActionListener(new DataSetDistHistMenuListener(nextDataSet));
+            distHistItemY.addActionListener(new DataSetDistHistMenuListener(nextDataSet, DataSet.yDim));
+            
+            JMenuItem distHistItemX = new JMenuItem();
+            distHistItemX.setText("Distribution Histogram (x values)");
+            distHistItemX.setToolTipText("Distribution Histogram of X values of the data set");
+            transformItem.add(distHistItemX);
 
+            distHistItemX.addActionListener(new DataSetDistHistMenuListener(nextDataSet, DataSet.xDim));
+
+            
             JMenuItem simpDerivItem = new JMenuItem();
             simpDerivItem.setText("Simple Derivative");
             simpDerivItem.setToolTipText("Simple derivative based on slope between adjacent points");
@@ -1932,14 +1945,21 @@ public class PlotterFrame extends JFrame
         public void actionPerformed(ActionEvent e)
         {
             Vector<String> r = PlotManager.getPlotterFrameReferences();
+            int numCurently = plotFrame.getNumDataSets();
             
-            if (r.size()==1)
+            if (r.size()==1 && numCurently==1)
             {
-                GuiUtils.showErrorMessage(logger, "Sorry, there seems to be only one Plot Frame currently open", null, null);
+                GuiUtils.showErrorMessage(logger, "Sorry, there seems to be only one Plot Frame with a single Data Set currently open", null, null);
                 return;
             }
+            
+            String newPlotFrame = "-- New Empty Plot Frame --";
                 
             r.remove(plotFrame.getPlotFrameReference());
+            if (numCurently>1)
+            {
+                r.add(newPlotFrame);
+            }
             String[] refs = new String[r.size()];
             r.copyInto(refs);
             
@@ -1948,10 +1968,20 @@ public class PlotterFrame extends JFrame
             if (option == null)
                 return;
             
-            PlotterFrame frame = PlotManager.getPlotterFrame(option);
+            String newPlotFrameRef = option;
+            
+            if (newPlotFrameRef.equals(newPlotFrame))
+            { 
+                newPlotFrameRef = dataSet.getRefrence();
+                
+                while (r.contains(newPlotFrameRef))
+                    newPlotFrameRef = "New Plot Frame: "+newPlotFrameRef;
+                
+            }
+            
+            PlotterFrame frame = PlotManager.getPlotterFrame(newPlotFrameRef);
             
             frame.addDataSet(dataSet);
-            int numCurently = plotFrame.getNumDataSets();
             
             plotFrame.removeDataSet(dataSet);
             
@@ -1967,26 +1997,54 @@ public class PlotterFrame extends JFrame
     public class DataSetDistHistMenuListener implements ActionListener
     {
         DataSet dataSet = null;
+        int dimension = -1;
         //PlotterFrame plotFrame = null;
 
-        public DataSetDistHistMenuListener(DataSet dataSet)
+        public DataSetDistHistMenuListener(DataSet dataSet, int dim)
         {
             this.dataSet = dataSet;
+            this.dimension = dim;
             //this.plotFrame = plotFrame;
         }
 
         public void actionPerformed(ActionEvent e)
         {
+            String info = "";
+            String startInfo = "";
+            String stopInfo = "";
+            float start = Float.NaN;
+            float stop = Float.NaN;
+            
+            if (dimension==DataSet.xDim)
+            {
+                info = "Plotting the distribution of the X values of the Data Set: " + dataSet.getRefrence() + "\n"
+                + "Max X: " + dataSet.getMaxX()[0] + ", min X: " + dataSet.getMinX()[0] + "\n"
+                + "Please enter the number of bins to use:";
+            
+                startInfo = "Please enter start X value from which to generate distribution";
+                start = (float)dataSet.getMinX()[0];
 
-            String req = "Plotting the distribution of the y values of the Data Set: " + dataSet.getRefrence() + "\n"
+                stopInfo = "Please enter final X value from which to generate distribution";
+                stop = (float)dataSet.getMaxX()[0];
+            }
+            else
+            {
+                info = "Plotting the distribution of the y values of the Data Set: " + dataSet.getRefrence() + "\n"
                 + "Max y: " + dataSet.getMaxY()[1] + ", min y: " + dataSet.getMinY()[1] + "\n"
                 + "Please enter the number of bins to use:";
+            
+                startInfo = "Please enter start Y value from which to generate distribution";
+                start = (float)dataSet.getMinY()[1];
+
+                stopInfo = "Please enter final Y value from which to generate distribution";
+                stop = (float)dataSet.getMaxY()[1];
+            }
 
             //float bin = (float)(dataSet.getMaxYvalue() - dataSet.getMinYvalue()) / 20;
 
             int numBins = 20;
 
-            String binNumString = JOptionPane.showInputDialog(req, "" + numBins);
+            String binNumString = JOptionPane.showInputDialog(info, "" + numBins);
 
             try
             {
@@ -1998,10 +2056,8 @@ public class PlotterFrame extends JFrame
                 return;
             }
 
-            req = "Please enter start Y value from which to generate distribution";
-            float start = (float)dataSet.getMinY()[1];
 
-            String startString = JOptionPane.showInputDialog(req, "" + start);
+            String startString = JOptionPane.showInputDialog(startInfo, "" + start);
 
             try
             {
@@ -2014,10 +2070,8 @@ public class PlotterFrame extends JFrame
             }
 
 
-            req = "Please enter final Y value from which to generate distribution";
-            float stop = (float)dataSet.getMaxY()[1];
 
-            String stopString = JOptionPane.showInputDialog(req, "" + stop);
+            String stopString = JOptionPane.showInputDialog(stopInfo, "" + stop);
 
             try
             {
@@ -2030,32 +2084,17 @@ public class PlotterFrame extends JFrame
             }
 
 
-
-
-
-            //int numBins = (int) ((dataSet.getMaxYvalue() - dataSet.getMinYvalue()) / bin)+1;
-
-            double binLength = ( (stop - start) / (numBins));
-
+            float binLength = ( (stop - start) / (numBins));
+            
+            DataSet ds = SpikeAnalyser.getDistHist(dataSet, dimension, start, binLength, numBins);
+/*
             logger.logComment("binLength: " + binLength);
 
             int[] numInEach = SpikeAnalyser.getBinnedValues(dataSet.getYValues(),
                                                             start,
                                                             binLength,
                                                             numBins);
-            /*
-                         int[] numInEach = new int[numBins];
 
-                         for (int i = 0; i < dataSet.getNumberPoints(); i++)
-                         {
-                double loc = (dataSet.getPoint(i)[1] - dataSet.getMinYvalue())/binLength;
-
-                int binNum =  (int)Math.floor(loc);
-                if (loc == numBins) binNum = numBins -1;
-
-                //System.out.println("Point: "+ dataSet.pointToString(i) +", Loc: "+loc+", bin num: "+ binNum);
-                numInEach[binNum]++;
-                         }*/
 
             String desc = "";
             String newXval = "Y values";
@@ -2079,7 +2118,7 @@ public class PlotterFrame extends JFrame
                 ds.addPoint(yVal, numInEach[i]);
             }
 
-            ds.setGraphFormat(PlotCanvas.USE_BARCHART_FOR_PLOT);
+            ds.setGraphFormat(PlotCanvas.USE_BARCHART_FOR_PLOT);*/
 
             //ds.set
 
@@ -2713,8 +2752,16 @@ public class PlotterFrame extends JFrame
         if (e.getID() == WindowEvent.WINDOW_CLOSING)
         {
             PlotManager.plotFrameClosing(plotFrameReference);
-            if (standAlone) System.exit(0);
+            
+            logger.logComment("WINDOW_CLOSING...");
+            if (standAlone) 
+                System.exit(0);
         }
+    }
+    
+    public void setStandAlone(boolean st)
+    {
+        standAlone = st;
     }
 
     protected void setStatus(String message)
@@ -2768,6 +2815,7 @@ public class PlotterFrame extends JFrame
     {
         //System.out.println("clo...");
         this.setVisible(false);
+        this.dispose();
     }
 
     void jMenuItemCustomView_actionPerformed(ActionEvent e)
