@@ -191,7 +191,7 @@ public class FieldPotentialFrame extends JFrame
         
         String desc = "Warning!! Still in development!!";
         
-        String name = "Very simple field potential";
+        String name = "Very simple field potential of "+cellGroupsToAdd+" in "+simData.getSimulationName();
         
         DataSet ds = new DataSet(name, desc, 
                 "ms", "", "Time", "Arbitrary units");

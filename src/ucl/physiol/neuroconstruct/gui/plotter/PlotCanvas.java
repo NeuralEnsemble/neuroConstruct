@@ -111,7 +111,7 @@ public class PlotCanvas extends Canvas
     {
         logger.logComment("Created new PlotCanvas");
 
-        //this.logger.setThisClassSilent(true);
+        //this.logger.setThisClassVerbose(true);
 
         this.plotFrame = plotFrame;
 

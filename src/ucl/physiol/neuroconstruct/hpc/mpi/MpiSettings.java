@@ -30,21 +30,23 @@ public class MpiSettings
 {
     ClassLogger logger = new ClassLogger("MpiSettings");
     
-    public static String MPI_V1 = "MPI v1.*";
-    public static String MPI_V2 = "MPI v2.*";
+    public static final String MPI_V1 = "MPI v1.*";
+    public static final String MPI_V2 = "MPI v2.*";
 
     private String version = MPI_V1;
 
     public static int prefConfig = 0;
+    
+    
+    public static final String LOCAL_SERIAL = "Local machine, serial mode";
+    public static final String LOCAL_2PROC = "Local machine (2p)";
+    public static final String LOCAL_4PROC = "Local machine (4p)";
 
 
     private ArrayList<MpiConfiguration> configurations = new ArrayList<MpiConfiguration>();
 
     public MpiSettings()
     {
-        String localConfig = "Local machine, serial mode";
-        String local2Config = "Local machine (2p)";
-        String local4Config = "Local machine (4p)";
         //String local8Config = "Local machine (8p)";
         //String local32Config = "Local machine (32p)";
         //String local128Config = "Local machine (128p)";
@@ -52,23 +54,23 @@ public class MpiSettings
         //String testConfig22 = "TestConfMore";
 
 
-        if (getMpiConfiguration(localConfig)==null)
+        if (getMpiConfiguration(LOCAL_SERIAL)==null)
         {
-            MpiConfiguration def = new MpiConfiguration(localConfig);
+            MpiConfiguration def = new MpiConfiguration(LOCAL_SERIAL);
             def.getHostList().add(new MpiHost("localhost", 1, 1));
             configurations.add(def);
         }
 
 
-        if (getMpiConfiguration(local2Config)==null)
+        if (getMpiConfiguration(LOCAL_2PROC)==null)
         {
-            MpiConfiguration p = new MpiConfiguration(local2Config);
+            MpiConfiguration p = new MpiConfiguration(LOCAL_2PROC);
             p.getHostList().add(new MpiHost("localhost",2, 1));
             configurations.add(p);
         }
-        if (getMpiConfiguration(local4Config)==null)
+        if (getMpiConfiguration(LOCAL_4PROC)==null)
         {
-            MpiConfiguration p = new MpiConfiguration(local4Config);
+            MpiConfiguration p = new MpiConfiguration(LOCAL_4PROC);
             p.getHostList().add(new MpiHost("localhost",4, 1));
             configurations.add(p);
         } /*

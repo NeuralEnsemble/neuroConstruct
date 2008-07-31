@@ -206,7 +206,7 @@ public class PlotterFrame extends JFrame
         jMenuDifference.setText("Difference");
         jMenuAverage.setText("Average");
         jMenuAddManual.setText("Add Data Set from Expression...");
-        jMenuImportData.setText("Import data...");
+        jMenuImportData.setText("Import data from file...");
         jMenuTools.add(jMenuDifference);
         jMenuTools.add(jMenuAverage);
         jMenuTools.add(jMenuAddManual);
@@ -3156,7 +3156,18 @@ public class PlotterFrame extends JFrame
             }
             
             RecentFiles.getRecentFilesInstance(ProjectStructure.getNeuConRecentFilesFilename()).setMyLastExportPointsDir(file.getAbsolutePath());
+            DataSet ds = null;
+            try
+            {
+                ds = DataSetManager.loadFromDataSetFile(file, false);
+            }
+            catch(Exception ex)
+            {
+                GuiUtils.showErrorMessage(logger, "Error loading data from file: "+file, ex, null);
+                ds.setDescription(ds.getDescription()+"\n\nError loading data from file: "+file+"\n"+ex.getMessage());
+            }
             
+            /*
             DataSet ds = new DataSet(ref, "Data loaded from file: "+ file.getAbsolutePath(),"","","","");
 
             try
@@ -3242,10 +3253,10 @@ public class PlotterFrame extends JFrame
             {
                 GuiUtils.showErrorMessage(logger, "Error loading data from file: "+file, ex, null);
                 ds.setDescription(ds.getDescription()+"\n\nError loading data from file: "+file+"\n"+ex.getMessage());
-            }
+            }*/
 
 
-        return ds;
+            return ds;
 
 
         }

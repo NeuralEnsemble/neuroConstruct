@@ -13,14 +13,18 @@
 package ucl.physiol.neuroconstruct.gui;
 
 import java.awt.*;
+import java.io.File;
 import javax.swing.*;
 import javax.swing.plaf.metal.*;
+import ucl.physiol.neuroconstruct.gui.plotter.PlotterFrame;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.neuron.*;
 import javax.swing.UIManager.*;
 import java.util.Locale;
 import ucl.physiol.neuroconstruct.project.*;
 import org.python.util.*;
+import ucl.physiol.neuroconstruct.dataset.*;
+import ucl.physiol.neuroconstruct.gui.plotter.PlotManager;
 
 /**
  * Starts the main neuroConstruct application
@@ -34,7 +38,7 @@ public class MainApplication
 {
     private MainFrame frame = null;
 
-    private static boolean noGuiMode = false;
+    private static boolean plotOnlyMode = false;
 
     private static String favouredLookAndFeel = null;
 
@@ -99,23 +103,22 @@ public class MainApplication
             all[i].setDefaultUncaughtExceptionHandler(new UncaughtExceptionInfo());
         }
 
-        if (!noGuiMode)
-        {
-            frame.validate();
+        
+        frame.validate();
 
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            Dimension frameSize = frame.getSize();
-            if (frameSize.height > screenSize.height)
-            {
-                frameSize.height = screenSize.height;
-            }
-            if (frameSize.width > screenSize.width)
-            {
-                frameSize.width = screenSize.width;
-            }
-            frame.setLocation( (screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
-            frame.setVisible(true);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension frameSize = frame.getSize();
+        if (frameSize.height > screenSize.height)
+        {
+            frameSize.height = screenSize.height;
         }
+        if (frameSize.width > screenSize.width)
+        {
+            frameSize.width = screenSize.width;
+        }
+        frame.setLocation( (screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+        frame.setVisible(true);
+
 
         GuiUtils.setMainFrame(frame);
 
@@ -152,14 +155,24 @@ public class MainApplication
 
     private static void printUsageAndQuit()
     {
+        String run = GeneralUtils.isWindowsBasedPlatform()?"run.bat":"./run.sh";
+        
         System.out.println(
-            "Usage: java ucl.physiol.neuroconstruct.gui.MainApplication [-options] [projectfilename]");
-        System.out.println("\nwhere projectfilename is a *.neuro.xml project file");
-        System.out.println("and where options include: \n");
+            "Usage: \n" +
+            "    "+run+" [-options] [projectfilename]\n" +
+            "or\n" +
+            "    "+run+" -plot datafilename\n");
+        
+        System.out.println("\nwhere projectfilename is a *.neuro.xml project file,\n" +
+                            "datafilename is a file containing a single column of data (or a *.ds file as used in Data Set Manager)");
+        System.out.println("and where options can include: \n");
 
-        System.out.println("-? -help      print this help message");
-        System.out.println("-version      print version information");
-        System.out.println("-lastproj     reloads the last opened project");
+        System.out.println("-? -help          print this help message");
+        System.out.println("-version          print version information");
+        System.out.println("-lastproj         reloads the last opened project");
+        System.out.println("-python           use PRELIMINARY Jython based scripting interface");
+        System.out.println("");
+        
       /*  System.out.println("-nogui        run without main Graphical User Interface");
         System.out.println("-generate     generate the cell positions/connections from the settings stored in the file");
         System.out.println("-createhoc    generates the positions etc. and creates the hoc files");
@@ -226,6 +239,8 @@ public class MainApplication
             boolean runPython = false;
             String[] pyArgs = null;
             
+            //boolean foundPlot
+            
             for(String arg: args)
             {
                 //System.out.println("Arg for java: "+arg);
@@ -243,9 +258,28 @@ public class MainApplication
                     printVersionDetails();
                     System.exit(0);
                 }
-                else if (args[i].equalsIgnoreCase("-nogui"))
+               
+                else if (args[i].equalsIgnoreCase("-plot"))
                 {
-                    noGuiMode = true;
+                    plotOnlyMode = true;
+                    if (args.length<i+2)
+                    {
+                        printUsageAndQuit();
+                    }
+                    File dataFile = new File(args[i+1]);
+                    
+                    DataSet dataSet = DataSetManager.loadFromDataSetFile(dataFile, false);
+                    
+                    String plotFrameRef = "Plot of "+dataSet.getRefrence();
+
+
+                    PlotterFrame frame = PlotManager.getPlotterFrame(plotFrameRef);
+
+                    frame.addDataSet(dataSet);
+                    
+
+                    frame.setVisible(true);
+                     
                 }
 
                 else if (args[i].equalsIgnoreCase("-lastproj"))
@@ -256,14 +290,7 @@ public class MainApplication
                 {
                     generate = true;
                 }
-               /* else if (args[i].equalsIgnoreCase("-createhoc"))
-                {
-                    createHoc = true;
-                }
-                else if (args[i].equalsIgnoreCase("-runhoc"))
-                {
-                    runHoc = true;
-                }*/
+         
                 else if  (args[i].equalsIgnoreCase("-python"))
                 {
                     runPython = true;
@@ -300,7 +327,7 @@ public class MainApplication
                 System.exit(0);
             }
             
-            if (!runPython)
+            if (!runPython && !plotOnlyMode)
             {
                 MainApplication app = new MainApplication();
 
@@ -327,7 +354,7 @@ public class MainApplication
                     app.runHoc();
                 }
             }
-            else
+            else if (runPython)
             {
                 System.out.println("\nneuroConstruct "+GeneralProperties.getVersionNumber()
                         +" starting in Jython scripting mode...\n");

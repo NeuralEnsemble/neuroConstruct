@@ -1171,7 +1171,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         jComboBoxAnalyse.addItem(popRaster);
         jComboBoxAnalyse.addItem(popISIHisto);
         jComboBoxAnalyse.addItem(crossCorrel);
-        ////////jComboBoxAnalyse.addItem(vSimpFieldPot);
+        jComboBoxAnalyse.addItem(vSimpFieldPot);
 
 
         jComboBoxAnalyse.setSelectedItem(defaultAnalyse);

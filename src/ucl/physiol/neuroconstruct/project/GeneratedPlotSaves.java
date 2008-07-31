@@ -159,7 +159,7 @@ public class GeneratedPlotSaves
         }
 
 
-        public String getDescription(boolean saveDetailsOnly)
+        public String getDescription(boolean saveDetailsOnly, boolean html)
         {
             StringBuffer sb = new StringBuffer();
 
@@ -219,7 +219,10 @@ public class GeneratedPlotSaves
 
                 }
             }
-            sb.append(ClickProjectHelper.getCellGroupLink(simPlot.getCellGroup()));
+            if (html)
+                sb.append(ClickProjectHelper.getCellGroupLink(simPlot.getCellGroup()));
+            else
+                sb.append(simPlot.getCellGroup());
 
 
             return sb.toString();

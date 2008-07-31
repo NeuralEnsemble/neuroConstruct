@@ -226,7 +226,7 @@ public class PlotSaveGenerator extends Thread
 
             generationReport.append("<b>" + ClickProjectHelper.getPlotSaveLink(plotSave.simPlot.getPlotReference()) + "</b><br>");
 
-            generationReport.append(plotSave.getDescription(false)+" "
+            generationReport.append(plotSave.getDescription(false, true)+" "
 
                                     + "<br>");
         }

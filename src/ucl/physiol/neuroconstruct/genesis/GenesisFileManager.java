@@ -3315,7 +3315,7 @@ public class GenesisFileManager
                 else
                 {
 
-                    addComment(response, record.getDescription(true));
+                    addComment(response, record.getDescription(true, false));
                     String cellGroupName = record.simPlot.getCellGroup();
                     int numInCellGroup = project.generatedCellPositions.getNumberInCellGroup(cellGroupName);
 
