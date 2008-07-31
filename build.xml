@@ -44,6 +44,11 @@
     <property name="hdf5.libs" value="lib/hdf5"/>
     <property name="jython.libs" value="lib/jython"/>
     <property name="junit.libs" value="lib/junit"/>
+    
+    <condition property="java.library.path.touse" value="./lib/hdf5/win" else="./lib/hdf5/linux">
+        <os name="windows"/>
+    </condition>
+    
 
 
     <property name="build.dir" value="./"/>
@@ -246,7 +251,7 @@
     <java classname="${main.test.class}" fork="true">
         <jvmarg value="-Xmx700M" />
         <jvmarg value="-Xms600M" />
-        <jvmarg value="-Djava.library.path=./lib/hdf5/linux;./lib/hdf5/win"/>
+        <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
         <jvmarg value="-Dsun.java2d.noddraw=true" />
         <classpath refid="run.class.path"/>
     </java>
@@ -262,7 +267,7 @@
     <java classname="${main.app.class}" fork="true">
         <jvmarg value="-Xmx700M" />
         <jvmarg value="-Xms600M" />
-        <jvmarg value="-Djava.library.path=./lib/hdf5/linux;./lib/hdf5/win"/>
+        <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
         <jvmarg value="-Dsun.java2d.noddraw=true" />
         <classpath refid="run.class.path"/>
     </java>
@@ -279,7 +284,7 @@
     <java classname="${main.app.class}" fork="true">
         <jvmarg value="-Xmx700M" />
         <jvmarg value="-Xms600M" />
-        <jvmarg value="-Djava.library.path=./lib/hdf5/linux;./lib/hdf5/win"/>
+        <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
         <jvmarg value="-Dsun.java2d.noddraw=true" />
         <arg value="-lastproj"/>
         <classpath refid="run.class.path"/>
@@ -296,7 +301,7 @@
     <java classname="${main.app.class}" fork="true">
         <jvmarg value="-Xmx4000M" />
         <jvmarg value="-Xms2000M" />
-        <jvmarg value="-Djava.library.path=./lib/hdf5/linux;./lib/hdf5/win"/>
+        <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
         <jvmarg value="-Dsun.java2d.noddraw=true" />
         <arg value="-lastproj"/>
         <classpath refid="run.class.path"/>
@@ -321,7 +326,7 @@
             <jvmarg value="${profiler.info.jvmargs.agent}"/>
             <jvmarg value="-Xmx900M" />
             <jvmarg value="-Xms700M" />
-            <jvmarg value="-Djava.library.path=./lib/hdf5/linux;./lib/hdf5/win"/>
+            <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
             <jvmarg value="-Dsun.java2d.noddraw=true" />
             <arg value="-lastproj"/>
             <classpath refid="run.class.path"/>
