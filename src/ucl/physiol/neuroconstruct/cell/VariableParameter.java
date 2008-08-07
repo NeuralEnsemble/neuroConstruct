@@ -15,11 +15,7 @@ package ucl.physiol.neuroconstruct.cell;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import ucl.physiol.neuroconstruct.cell.examples.*;
-import ucl.physiol.neuroconstruct.cell.utils.*;
-import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.equation.*;
-import ucl.physiol.neuroconstruct.utils.units.*;
 
  /**
   * A class representing a variable parameter within a channel mechanism 
@@ -35,8 +31,8 @@ public class VariableParameter implements Serializable
 {
     static final long serialVersionUID = -1345234188475532L;
     
-    
     private String name = null;
+    
     private EquationUnit expression = null;
     
     private ArrayList<Argument> expressionArgs =  new ArrayList<Argument>();
@@ -96,7 +92,10 @@ public class VariableParameter implements Serializable
         
         for(int i=0;i<expressionArgs.size();i++)
         {
-            vars =  vars + ", "+ expressionArgs.get(i).getName() + "(="+expressionArgs.get(i).getValue()+")";
+            String val = expressionArgs.get(i).getValue()+"";
+            if (expressionArgs.get(i).getValue()==(int)expressionArgs.get(i).getValue())
+                val = (int)expressionArgs.get(i).getValue()+"";
+            vars =  vars + ", "+ expressionArgs.get(i).getName() + " (="+val+")";
         }
         return name + " = f("+parameterisation+vars+") = "+ expression.getNiceString();
         

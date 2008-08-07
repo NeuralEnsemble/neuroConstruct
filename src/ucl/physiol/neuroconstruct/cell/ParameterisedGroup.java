@@ -12,39 +12,49 @@
 
 package ucl.physiol.neuroconstruct.cell;
 
+
+import java.io.Serializable;
 import java.util.*;
-import java.io.*;
-import javax.vecmath.*;
 
 import ucl.physiol.neuroconstruct.cell.examples.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
-import ucl.physiol.neuroconstruct.simulation.*;
-import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.equation.*;
 
  /**
-  * A parameterisation of a group of sections, akin to the Parameterized 
+  * A parameterisation of a group of sections, based on the Parameterized 
   * Domain specification in NEURON
   *
   * @author Padraig Gleeson
   *  
   *
   */
-public class ParameterisedGroup 
+public class ParameterisedGroup implements Serializable
 {
-    public static boolean allowInhomogenousMechanisms = false;
+    static final long serialVersionUID = -378992774734322L;
     
-    public enum Metric { 
+    public static boolean allowInhomogenousMechanisms = true;
+    
+    public enum Metric implements Serializable { 
         
         PATH_LENGTH_FROM_ROOT("Path length from root")/*,
-        THREE_D_RADIAL_POSITION,
+        THREE_D_RADIAL_POSITION("3D radial distance from origin"),
         THREE_D_PROJ_ONTO_LINE*/;
     
-        private String info;
+        private String info = null;
+        
+        Metric()
+        {
+            
+        }
         
         Metric(String info)
         {
             this.info = info;
+        }
+        
+        public String info()
+        {
+            return info;
         }
         
         @Override
@@ -52,6 +62,7 @@ public class ParameterisedGroup
         {
             return info;
         }
+        
     }
     
     
@@ -73,8 +84,10 @@ public class ParameterisedGroup
 
     private DistalPref distalPref = null;
 
-
-    private ParameterisedGroup()
+    /* 
+     * Needed for Serializable, shouldn't be used!...
+     */
+    public ParameterisedGroup()
     {
     }    
     
@@ -104,11 +117,12 @@ public class ParameterisedGroup
         
         ArrayList<Segment> segs = cell.getSegmentsInGroup(this.group);
         
-        float segLen = CellTopologyHelper.getLengthFromRoot(cell, location);
         
         
         if (metric.equals(Metric.PATH_LENGTH_FROM_ROOT))
         {
+            float segLen = CellTopologyHelper.getLengthFromRoot(cell, location);
+            
             if (proximalPref.equals(ProximalPref.NO_TRANSLATION))
             {
                 if (distalPref.equals(DistalPref.NO_NORMALISATION))
@@ -140,12 +154,47 @@ public class ParameterisedGroup
                 
             }
         }
+        /*if (metric.equals(Metric.THREE_D_RADIAL_POSITION))
+        {
+            CellTopologyHelper.getAbsolutePosSegLoc(project, group, cellNum, location);
+            
+            if (proximalPref.equals(ProximalPref.NO_TRANSLATION))
+            {
+                if (distalPref.equals(DistalPref.NO_NORMALISATION))
+                {
+                    //logger.
+                    return segLen;
+                }
+                float maxLen = CellTopologyHelper.getMaxLengthFromRoot(cell, group);
+                
+                if(distalPref.equals(DistalPref.MOST_DIST_AT_1))
+                {
+                    return segLen/maxLen;
+                }
+            }
+            else if (proximalPref.equals(ProximalPref.MOST_PROX_AT_0))
+            {
+                float minLen = CellTopologyHelper.getMinLengthFromRoot(cell, group);
+                
+                if (distalPref.equals(DistalPref.NO_NORMALISATION))
+                {
+                    return segLen - minLen;
+                }
+                float maxLen = CellTopologyHelper.getMaxLengthFromRoot(cell, group);
+                
+                if(distalPref.equals(DistalPref.MOST_DIST_AT_1))
+                {
+                    return (segLen - minLen)/(maxLen - minLen);
+                }
+                
+            }
+        }*/
         
         
         
         //CellTopologyHelper.getOrderedSegmentsInSection(cell, section);
         
-        return -1;
+        return Double.NaN;
     }
     
     
@@ -243,6 +292,55 @@ public class ParameterisedGroup
         return "ParameterisedGroup: "+name + " on: "+group+" with metric: "+ metric;
         
     }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        final ParameterisedGroup other = (ParameterisedGroup) obj;
+        if (this.name != other.name && (this.name == null || !this.name.equals(other.name)))
+        {
+            return false;
+        }
+        if (this.group != other.group && (this.group == null || !this.group.equals(other.group)))
+        {
+            return false;
+        }
+        if (this.metric != other.metric)
+        {
+            return false;
+        }
+        if (this.proximalPref != other.proximalPref)
+        {
+            return false;
+        }
+        if (this.distalPref != other.distalPref)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 53 * hash + (this.group != null ? this.group.hashCode() : 0);
+        hash = 53 * hash + (this.metric != null ? this.metric.hashCode() : 0);
+        hash = 53 * hash + (this.proximalPref != null ? this.proximalPref.hashCode() : 0);
+        hash = 53 * hash + (this.distalPref != null ? this.distalPref.hashCode() : 0);
+        return hash;
+    }
+    
+    
     
     
     public static void main(String[] args) throws CloneNotSupportedException

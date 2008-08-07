@@ -1961,8 +1961,6 @@ public class CellTopologyHelper
                                   .getParameter(DistMembraneMechanism.COND_DENSITY);
                     }
 
-
-
                 }
                 catch (CellMechanismException ex)
                 {
@@ -2132,6 +2130,7 @@ public class CellTopologyHelper
         
         
         Hashtable<VariableMechanism, ParameterisedGroup> varMechsVsParaGroups = cell.getVarMechsVsParaGroups();
+        
         Enumeration<VariableMechanism> varMechs = varMechsVsParaGroups.keys();
         
         while (varMechs.hasMoreElements())

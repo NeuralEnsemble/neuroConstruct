@@ -226,6 +226,27 @@ public class Segment implements Serializable
         return startPoint;
 
     }
+    
+    
+    public Point3f getPointAlong(float fract)
+    {
+        if (this.isSpherical()) return new Point3f(endPointPosition);
+        
+        if (fract==1) return new Point3f(endPointPosition);
+        if (fract==0) return new Point3f(getStartPointPosition());
+        
+        Point3f midPoint = new Point3f();
+        
+        midPoint.x = ( (1f - fract) * getStartPointPosition().x)
+            + (fract * endPointPosition.x);
+        midPoint.y = ( (1f - fract) * getStartPointPosition().y)
+            + (fract * endPointPosition.y);
+        midPoint.z = ( (1f - fract) * getStartPointPosition().z)
+            + (fract * endPointPosition.z);
+
+        return midPoint;
+        
+    }
 
 
     public float getSegmentStartRadius()

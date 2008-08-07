@@ -15,7 +15,6 @@ package ucl.physiol.neuroconstruct.cell;
 
 import java.io.*;
 import java.util.*;
-import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.equation.*;
 
  /**
@@ -33,8 +32,6 @@ public class VariableMechanism implements Serializable
 {
     static final long serialVersionUID = -7566565188475532L;
     
-    private static transient ClassLogger logger = new ClassLogger("VariableMechanism");
-    
     private String name = null;
     
     private ArrayList<VariableParameter> params = new ArrayList<VariableParameter>();
@@ -48,7 +45,6 @@ public class VariableMechanism implements Serializable
         this.name = name;
     }
     
-    
     public ArrayList<VariableParameter> getParams()
     {
         return params;
@@ -57,6 +53,17 @@ public class VariableMechanism implements Serializable
     public void setParams(ArrayList<VariableParameter> params)
     {
         this.params = params;
+    }
+    
+    public double evaluateAt(String paramName, double varParamValue) throws ParameterException, EquationException
+    {
+        for(VariableParameter vp: params)
+        {
+            if (vp.getName().equals(paramName)){
+                return vp.evaluateAt(varParamValue);
+            }
+        }
+        throw new ParameterException("Parameter "+paramName+"cannot be evaluated at "+ varParamValue+" in variable mechanism "+ this.toString());
     }
     
 
@@ -89,7 +96,7 @@ public class VariableMechanism implements Serializable
 
             VariableMechanism cm = new VariableMechanism("cm");
 
-            System.out.println("ChannelMechanism: " + cm);
+            System.out.println("Variable Mechanism: " + cm);
 
             String expression1 = "A + B*(p+C)";
             String expression2 = "1";
@@ -102,6 +109,7 @@ public class VariableMechanism implements Serializable
 
             ArrayList<Argument> expressionArgs1 =  new ArrayList<Argument>();
             ArrayList<Argument> expressionArgs2 =  new ArrayList<Argument>();
+            
             expressionArgs1.add(a);
             expressionArgs1.add(b);
             expressionArgs1.add(c);
