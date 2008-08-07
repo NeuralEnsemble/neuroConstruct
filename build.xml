@@ -42,10 +42,11 @@
 
 
     <property name="hdf5.libs" value="lib/hdf5"/>
+    <property name="j3d.libs" value="lib/j3d"/>
     <property name="jython.libs" value="lib/jython"/>
     <property name="junit.libs" value="lib/junit"/>
     
-    <condition property="java.library.path.touse" value="./lib/hdf5/win" else="./lib/hdf5/linux">
+    <condition property="java.library.path.touse" value="./lib/hdf5/win" else="./lib/hdf5/linux:./lib/j3d/linux64">
         <os name="windows"/>
     </condition>
     
@@ -97,6 +98,9 @@
     <!-- Compilation class path -->
     <path id="compile.class.path">
         <fileset dir="${hdf5.libs}">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${j3d.libs}">
           <include name="*.jar"/>
         </fileset>
         <fileset dir="${jython.libs}">
