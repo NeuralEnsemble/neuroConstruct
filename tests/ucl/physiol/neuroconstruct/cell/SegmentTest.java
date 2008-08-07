@@ -47,6 +47,25 @@ public class SegmentTest {
         
         
     }
+    
+    
+    @Test public void testGetPointAlong() 
+    {
+        System.out.println("---  testGetPointAlong...");
+        Section sec = new Section("TestSec");
+        
+        sec.setStartPointPositionX(10);
+        sec.setStartPointPositionY(0);
+        sec.setStartPointPositionZ(10);
+        
+        Segment seg1 = new Segment("Segname", 1.1f, new Point3f(10,20,10), 1, null, 0.6f, sec);
+        
+        System.out.println("Segment: "+ seg1);
+        
+        assertEquals(new Point3f(10,0,10), seg1.getPointAlong(0));
+        assertEquals(new Point3f(10,6,10), seg1.getPointAlong(0.3f));
+        assertEquals(new Point3f(10,20,10), seg1.getPointAlong(1));
+    }
 
     @Test public void testRound() 
     {

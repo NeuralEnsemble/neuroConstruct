@@ -5,120 +5,61 @@
 
 package ucl.physiol.neuroconstruct.cell;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import java.util.ArrayList;
+import org.junit.*;
+import ucl.physiol.neuroconstruct.utils.equation.*;
 import static org.junit.Assert.*;
-import ucl.physiol.neuroconstruct.utils.equation.EquationUnit;
 
 /**
  *
  * @author padraig
  */
-public class VariableParameterTest {
-
-    public VariableParameterTest() {
+public class VariableParameterTest 
+{
+    VariableParameter vp1 = null;
+    
+    public VariableParameterTest() 
+    {
     }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
 
     @Before
-    public void setUp() {
+    public void setUp() throws EquationException
+    {
+        System.out.println("---------------   setUp() VariableParameterTest");
+        String expression1 = "A + B*(p+C)";
+
+
+        Variable p = new Variable("p");
+        Argument a = new Argument("A", 2);
+        Argument b = new Argument("B", 4);
+        Argument c = new Argument("C", -1);
+
+        ArrayList<Argument> expressionArgs1 =  new ArrayList<Argument>();
+
+        expressionArgs1.add(a);
+        expressionArgs1.add(b);
+        expressionArgs1.add(c);
+
+        vp1 = new VariableParameter("cap", expression1, p, expressionArgs1);
+            
+        System.out.println("Var param: "+ vp1); 
     }
 
-    @After
-    public void tearDown() {
-    }
 
-    /**
-     * Test of evaluateAt method, of class VariableParameter.
-     */
     @Test
-    public void testEvaluateAt() throws Exception {
-        System.out.println("evaluateAt");
-        double paramVal = 0.0;
-        VariableParameter instance = null;
-        double expResult = 0.0;
-        double result = instance.evaluateAt(paramVal);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testEvaluateAt() throws Exception 
+    {
+        System.out.println("---  testEvaluateAt...");
+        
+        double val1 = vp1.evaluateAt(0);
+        
+        assertEquals(val1, -2, 0);
+        
+        double val2 = vp1.evaluateAt(1);
+        
+        assertEquals(val2, 2, 0);
     }
 
-    /**
-     * Test of toString method, of class VariableParameter.
-     */
-    @Test
-    public void testToString() {
-        System.out.println("toString");
-        VariableParameter instance = null;
-        String expResult = "";
-        String result = instance.toString();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getName method, of class VariableParameter.
-     */
-    @Test
-    public void testGetName() {
-        System.out.println("getName");
-        VariableParameter instance = null;
-        String expResult = "";
-        String result = instance.getName();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of setName method, of class VariableParameter.
-     */
-    @Test
-    public void testSetName() {
-        System.out.println("setName");
-        String name = "";
-        VariableParameter instance = null;
-        instance.setName(name);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getExpression method, of class VariableParameter.
-     */
-    @Test
-    public void testGetExpression() {
-        System.out.println("getExpression");
-        VariableParameter instance = null;
-        EquationUnit expResult = null;
-        EquationUnit result = instance.getExpression();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of setExpression method, of class VariableParameter.
-     */
-    @Test
-    public void testSetExpression() {
-        System.out.println("setExpression");
-        EquationUnit expression = null;
-        VariableParameter instance = null;
-        instance.setExpression(expression);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
 
 }

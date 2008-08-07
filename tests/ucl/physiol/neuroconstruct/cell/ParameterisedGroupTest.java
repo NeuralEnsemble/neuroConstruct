@@ -5,246 +5,175 @@
 
 package ucl.physiol.neuroconstruct.cell;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import java.beans.*;
+import java.io.*;
+import javax.vecmath.Point3f;
+import org.junit.*;
 import static org.junit.Assert.*;
-import ucl.physiol.neuroconstruct.cell.ParameterisedGroup.DistalPref;
-import ucl.physiol.neuroconstruct.cell.ParameterisedGroup.Metric;
-import ucl.physiol.neuroconstruct.cell.ParameterisedGroup.ProximalPref;
+import ucl.physiol.neuroconstruct.cell.ParameterisedGroup.*;
+import ucl.physiol.neuroconstruct.cell.examples.OneSegment;
 
 /**
  *
  * @author padraig
  */
-public class ParameterisedGroupTest {
+public class ParameterisedGroupTest 
+{
 
-    public ParameterisedGroupTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
+    ParameterisedGroup pg1 = null;
+    ParameterisedGroup pg2 = null;
+    ParameterisedGroup pg3 = null;
+    ParameterisedGroup pg4 = null;
+    //ParameterisedGroup pg5 = null;
+    
+    Cell cell = null;
+    Segment d1 = null;
+    Segment d2 = null;
+    Segment d3 = null;
+    
+    String tipSection = "tipSection";
 
     @Before
-    public void setUp() {
+    public void setUp() 
+    {
+        System.out.println("---------------   setUp() ParameterisedGroupTest");
+        
+        cell = new OneSegment("Simple");
+        
+        
+        d1 = cell.addDendriticSegment(1, "d1", new Point3f(10,0,0), cell.getFirstSomaSegment(), 1, "Sec1", false);
+        d2 = cell.addDendriticSegment(1, "d2", new Point3f(20,0,0), d1, 1, "Sec2", false);
+        d3 = cell.addDendriticSegment(1, "d3", new Point3f(20,10,0), d2, 1, "Sec3", false);
+        
+        d3.getSection().addToGroup(tipSection);
+        
+        
+        
+        pg1 = new ParameterisedGroup("ZeroToOne", 
+                                   Section.DENDRITIC_GROUP, 
+                                   Metric.PATH_LENGTH_FROM_ROOT, 
+                                   ProximalPref.MOST_PROX_AT_0, 
+                                   DistalPref.MOST_DIST_AT_1);
+        
+        pg2 = new ParameterisedGroup("StartToEnd", 
+                                   Section.DENDRITIC_GROUP, 
+                                   Metric.PATH_LENGTH_FROM_ROOT, 
+                                   ProximalPref.NO_TRANSLATION, 
+                                   DistalPref.NO_NORMALISATION);
+        
+        pg3 = new ParameterisedGroup("TipZeroToOne", 
+                                   tipSection, 
+                                   Metric.PATH_LENGTH_FROM_ROOT, 
+                                   ProximalPref.MOST_PROX_AT_0, 
+                                   DistalPref.MOST_DIST_AT_1);
+        
+        pg4 = new ParameterisedGroup("TipToEnd", 
+                                   tipSection, 
+                                   Metric.PATH_LENGTH_FROM_ROOT, 
+                                   ProximalPref.MOST_PROX_AT_0, 
+                                   DistalPref.NO_NORMALISATION);
+        
+        /*
+        pg5 = new ParameterisedGroup("3DDistZeroToOne", 
+                                   Section.ALL, 
+                                   Metric.THREE_D_RADIAL_POSITION, 
+                                   ProximalPref.MOST_PROX_AT_0, 
+                                   DistalPref.MOST_DIST_AT_1);*/
+        
     }
 
-    @After
-    public void tearDown() {
-    }
 
     /**
      * Test of evaluateAt method, of class ParameterisedGroup.
      */
     @Test
-    public void testEvaluateAt() throws Exception {
-        System.out.println("evaluateAt");
-        Cell cell = null;
-        SegmentLocation location = null;
-        ParameterisedGroup instance = null;
-        double expResult = 0.0;
-        double result = instance.evaluateAt(cell, location);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testEvaluateAt() throws ParameterException 
+    {
+        System.out.println("---  testEvaluateAt...");
+        
+        SegmentLocation loc1 = new PostSynapticTerminalLocation(d2.getSegmentId(), 0.5f);
+        
+        assertEquals(0.5, pg1.evaluateAt(cell, loc1), 0);
+        assertEquals(15, pg2.evaluateAt(cell, loc1), 0);
+        
+        ////////assertEquals(15, pg5.evaluateAt(cell, loc1), 0);
+        
+        SegmentLocation loc2 = new PostSynapticTerminalLocation(d3.getSegmentId(), 0.5f);
+        
+        assertEquals(5d/6d, pg1.evaluateAt(cell, loc2), 1e-7);
+        assertEquals(25, pg2.evaluateAt(cell, loc2), 0);
+        
+        assertEquals(0.5, pg3.evaluateAt(cell, loc2), 0);
+        assertEquals(5, pg4.evaluateAt(cell, loc2), 0);
+        
     }
 
     /**
      * Test of getMinValue method, of class ParameterisedGroup.
      */
     @Test
-    public void testGetMinValue() throws Exception {
-        System.out.println("getMinValue");
-        Cell cell = null;
-        ParameterisedGroup instance = null;
-        double expResult = 0.0;
-        double result = instance.getMinValue(cell);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testGetMinValue() throws ParameterException
+    {
+        System.out.println("---  testGetMinValue...");
+        
+        
+        assertEquals(0, pg1.getMinValue(cell), 0);
+        assertEquals(0, pg2.getMinValue(cell), 0);
     }
 
     /**
      * Test of getMaxValue method, of class ParameterisedGroup.
      */
     @Test
-    public void testGetMaxValue() throws Exception {
-        System.out.println("getMaxValue");
-        Cell cell = null;
-        ParameterisedGroup instance = null;
-        double expResult = 0.0;
-        double result = instance.getMaxValue(cell);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testGetMaxValue()  throws ParameterException
+    {
+        System.out.println("---  testGetMaxValue...");
+        
+        assertEquals(1, pg1.getMaxValue(cell), 0);
+        assertEquals(30, pg2.getMaxValue(cell), 0);
+    }
+    
+    @Test
+    public void testSaveLoad()  throws FileNotFoundException
+    {
+        XMLEncoder xmlEncoder = null;
+        FileOutputStream fos = null;
+        BufferedOutputStream bos = null;
+        
+        File f = new File("../temp/Test.ser");
+
+        
+        fos = new FileOutputStream(f);
+        bos = new BufferedOutputStream(fos);
+        xmlEncoder = new XMLEncoder(bos);
+        
+        //Metric m = Metric.PATH_LENGTH_FROM_ROOT;
+        Object o1 = pg1;
+        
+        System.out.println("Pre: "+ o1);
+        
+        //ProximalPref p = ProximalPref.MOST_PROX_AT_0;
+        
+        xmlEncoder.writeObject(o1);
+        xmlEncoder.close();
+        
+        FileInputStream fis = new FileInputStream(f);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+        XMLDecoder xd = new XMLDecoder(bis);
+        
+        Object o2 = xd.readObject();
+        
+        System.out.println("Post: "+ o2);
+        
+        
+        assertEquals(o2, o1);
+        
+        
+        
+     
     }
 
-    /**
-     * Test of getName method, of class ParameterisedGroup.
-     */
-    @Test
-    public void testGetName() {
-        System.out.println("getName");
-        ParameterisedGroup instance = null;
-        String expResult = "";
-        String result = instance.getName();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
 
-    /**
-     * Test of setName method, of class ParameterisedGroup.
-     */
-    @Test
-    public void testSetName() {
-        System.out.println("setName");
-        String name = "";
-        ParameterisedGroup instance = null;
-        instance.setName(name);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
 
-    /**
-     * Test of getGroup method, of class ParameterisedGroup.
-     */
-    @Test
-    public void testGetGroup() {
-        System.out.println("getGroup");
-        ParameterisedGroup instance = null;
-        String expResult = "";
-        String result = instance.getGroup();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of setGroup method, of class ParameterisedGroup.
-     */
-    @Test
-    public void testSetGroup() {
-        System.out.println("setGroup");
-        String group = "";
-        ParameterisedGroup instance = null;
-        instance.setGroup(group);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getMetric method, of class ParameterisedGroup.
-     */
-    @Test
-    public void testGetMetric() {
-        System.out.println("getMetric");
-        ParameterisedGroup instance = null;
-        Metric expResult = null;
-        Metric result = instance.getMetric();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of setMetric method, of class ParameterisedGroup.
-     */
-    @Test
-    public void testSetMetric() {
-        System.out.println("setMetric");
-        Metric metric = null;
-        ParameterisedGroup instance = null;
-        instance.setMetric(metric);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getDistalPref method, of class ParameterisedGroup.
-     */
-    @Test
-    public void testGetDistalPref() {
-        System.out.println("getDistalPref");
-        ParameterisedGroup instance = null;
-        DistalPref expResult = null;
-        DistalPref result = instance.getDistalPref();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of setDistalPref method, of class ParameterisedGroup.
-     */
-    @Test
-    public void testSetDistalPref() {
-        System.out.println("setDistalPref");
-        DistalPref distalPref = null;
-        ParameterisedGroup instance = null;
-        instance.setDistalPref(distalPref);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getProximalPref method, of class ParameterisedGroup.
-     */
-    @Test
-    public void testGetProximalPref() {
-        System.out.println("getProximalPref");
-        ParameterisedGroup instance = null;
-        ProximalPref expResult = null;
-        ProximalPref result = instance.getProximalPref();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of setProximalPref method, of class ParameterisedGroup.
-     */
-    @Test
-    public void testSetProximalPref() {
-        System.out.println("setProximalPref");
-        ProximalPref proximalPref = null;
-        ParameterisedGroup instance = null;
-        instance.setProximalPref(proximalPref);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of toString method, of class ParameterisedGroup.
-     */
-    @Test
-    public void testToString() {
-        System.out.println("toString");
-        ParameterisedGroup instance = null;
-        String expResult = "";
-        String result = instance.toString();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of main method, of class ParameterisedGroup.
-     */
-    @Test
-    public void testMain() throws Exception {
-        System.out.println("main");
-        String[] args = null;
-        ParameterisedGroup.main(args);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
 
 }

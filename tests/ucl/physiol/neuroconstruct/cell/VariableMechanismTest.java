@@ -6,29 +6,58 @@
 package ucl.physiol.neuroconstruct.cell;
 
 import java.util.ArrayList;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
+import ucl.physiol.neuroconstruct.utils.equation.*;
 import static org.junit.Assert.*;
 
 /**
  *
  * @author padraig
  */
-public class VariableMechanismTest {
+public class VariableMechanismTest 
+{
+    VariableParameter vp1 = null;
+    VariableParameter vp2 = null;
+    
+    Variable p = null;
+    
+    VariableMechanism cm = null;
 
-    public VariableMechanismTest() {
+    public VariableMechanismTest() throws EquationException 
+    {
+        System.out.println("---------------   setUp() VariableMechanismTest");
+        String expression1 = "A + B*(p+C)";
+        String expression2 = "p*p";
+
+
+        p = new Variable("p");
+        Argument a = new Argument("A", 2);
+        Argument b = new Argument("B", 4);
+        Argument c = new Argument("C", 1);
+
+        ArrayList<Argument> expressionArgs1 =  new ArrayList<Argument>();
+        ArrayList<Argument> expressionArgs2 =  new ArrayList<Argument>();
+
+        expressionArgs1.add(a);
+        expressionArgs1.add(b);
+        expressionArgs1.add(c);
+
+        vp1 = new VariableParameter("cap", expression1, p, expressionArgs1);
+            
+        System.out.println("Var param 1: "+ vp1); 
+        
+        vp2 = new VariableParameter("Rm", expression2, p, expressionArgs2);
+
+        System.out.println("Var param 2: "+ vp2); 
+        
+
+        cm = new VariableMechanism("cm");
+        
+        cm.getParams().add(vp1);
+
+        System.out.println("ChannelMechanism: " + cm);
     }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
 
     @Before
     public void setUp() {
@@ -38,84 +67,19 @@ public class VariableMechanismTest {
     public void tearDown() {
     }
 
-    /**
-     * Test of getParams method, of class VariableMechanism.
-     */
+    
     @Test
-    public void testGetParams() {
-        System.out.println("getParams");
-        VariableMechanism instance = new VariableMechanism();
-        ArrayList<VariableParameter> expResult = null;
-        ArrayList<VariableParameter> result = instance.getParams();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testEvaluateAt() throws Exception 
+    {
+        System.out.println("---  testEvaluateAt...");
+
+        double val1 = cm.evaluateAt("cap", 0);
+        double val2 = cm.evaluateAt("cap", 10);
+        
+        assertEquals(val1, 6, 0);
+        assertEquals(val2, 46, 0);
+        
     }
 
-    /**
-     * Test of setParams method, of class VariableMechanism.
-     */
-    @Test
-    public void testSetParams() {
-        System.out.println("setParams");
-        ArrayList<VariableParameter> params = null;
-        VariableMechanism instance = new VariableMechanism();
-        instance.setParams(params);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of toString method, of class VariableMechanism.
-     */
-    @Test
-    public void testToString() {
-        System.out.println("toString");
-        VariableMechanism instance = new VariableMechanism();
-        String expResult = "";
-        String result = instance.toString();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getName method, of class VariableMechanism.
-     */
-    @Test
-    public void testGetName() {
-        System.out.println("getName");
-        VariableMechanism instance = new VariableMechanism();
-        String expResult = "";
-        String result = instance.getName();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of setName method, of class VariableMechanism.
-     */
-    @Test
-    public void testSetName() {
-        System.out.println("setName");
-        String name = "";
-        VariableMechanism instance = new VariableMechanism();
-        instance.setName(name);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of main method, of class VariableMechanism.
-     */
-    @Test
-    public void testMain() throws Exception {
-        System.out.println("main");
-        String[] args = null;
-        VariableMechanism.main(args);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
 
 }
