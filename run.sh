@@ -4,15 +4,17 @@
 
 
 ########################################################################################
+
 # Change this line to your install location
 export NC_HOME=$HOME/neuroConstruct
 
-#   Use an altered value below to run the application with extra memory; 
-#   type java -X for more info
+#   Use an altered value below to run the application with extra memory
+#   Type java -X for more info
 export NC_MAX_MEMORY=450M 
-#
-# The rest of the settings below shouldn't have to change
+
 ########################################################################################
+
+# The rest of the settings below shouldn't have to change
 
 
 
@@ -33,7 +35,7 @@ J3D_JARS=$J3D_DIR/j3dcore.jar:$J3D_DIR/j3dutils.jar:$J3D_DIR/vecmath.jar
 export CLASSPATH=$NC_HOME/neuroConstruct_$NC_VERSION.jar:$H5_JARS:$J3D_JARS:$NC_HOME/lib/jython/jython.jar
 
 
-# Determine 32bit or 64bit
+# Determine 32bit or 64bit architecture for JDK
 machine=`uname -a | grep 64`
 
 if [ $? -eq 0 ]; then

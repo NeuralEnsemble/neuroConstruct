@@ -46,8 +46,13 @@
     <property name="jython.libs" value="lib/jython"/>
     <property name="junit.libs" value="lib/junit"/>
     
-    <condition property="java.library.path.touse" value="./lib/hdf5/win" else="./lib/hdf5/linux:./lib/j3d/linux64">
-        <os name="windows"/>
+    
+    <condition property="arch.suffix" value="64" else="32">
+        <os arch="amd64"/>
+    </condition>
+    
+    <condition property="java.library.path.touse" value="./lib/hdf5/win${arch.suffix};./lib/j3d/win${arch.suffix}" else="./lib/hdf5/linux${arch.suffix}:./lib/j3d/linux${arch.suffix}">
+        <os family="windows"/>
     </condition>
     
 
