@@ -42,7 +42,7 @@ public class NeuronFileManagerTest {
         
         return pm;
     }
-    /*
+    
     @Test public void testGenerateHoc() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException 
     {
         System.out.println("---  testGenerateHoc...");
@@ -130,7 +130,7 @@ public class NeuronFileManagerTest {
         
         
     }
-    */
+    
     
     
     @Test public void testGenerateParallelHoc() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException 
