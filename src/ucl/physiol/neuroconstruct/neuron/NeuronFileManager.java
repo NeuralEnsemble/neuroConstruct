@@ -4332,35 +4332,73 @@ public class NeuronFileManager
                     String postArgs = "";
                     
                     String mpiFlags = "";
-
+                    
                     StringBuffer preCommand = new StringBuffer("");
+
+                    /*TODO: Move to hpc/mpi package...*/
 
                     if (simConfig.getMpiConf().isParallel())
                     {
                         MpiSettings mpiSets = new MpiSettings();
                         
-                        String hostFlag = "-map";
-                        String hostSeperator = ":";
+                        StringBuffer hostList = new StringBuffer("-map ");
                         
-                        if (mpiSets.getVersion().equals(MpiSettings.MPI_V2))
+                        String hostSeperator = ":";
+                        String mainCmd = "mpirun";
+                        
+                        if (mpiSets.getVersion().equals(MpiSettings.OPENMPI_V2))
                         {
-                            hostFlag = "-host";
+                            hostList = new StringBuffer("-host ");
                             hostSeperator = ",";
                             mpiFlags = "-mpi ";
                         }
-                        preCommand.append("mpirun "+hostFlag+" ");
+                        else if (mpiSets.getVersion().equals(MpiSettings.MPICH_V2))
+                        {
+                            hostSeperator = ",";
+                            mpiFlags = "-mpi ";
+                            mainCmd = "mpiexec";
+                        }
 
                         ArrayList<MpiHost> hosts = simConfig.getMpiConf().getHostList();
-
+                        
+                        StringBuffer machineFileString = new StringBuffer("# An automatically generated machine file for MPI configuration: "+ simConfig.getMpiConf()+"\n");
+                        
                         for (int i = 0; i < hosts.size(); i++)
                         {
                             for (int j = 0; j < hosts.get(i).getNumProcessors(); j++)
                             {
-                                if (!(i==0 && j==0)) preCommand.append(hostSeperator);
-                                preCommand.append(hosts.get(i).getHostname());
+                                if (!(i==0 && j==0)) hostList.append(hostSeperator);
+
+                                hostList.append(hosts.get(i).getHostname());
                             }
+                            String host = hosts.get(i).getHostname();
+                            if (host.equals(MpiSettings.LOCALHOST))
+                                host = GeneralUtils.getLocalHostname(); // try to get a better name...
+                            
+                            machineFileString.append(host+":"+hosts.get(i).getNumProcessors()+"\n");
                         }
-                        preCommand.append("  ");
+                        
+                        
+                        if (mpiSets.getVersion().equals(MpiSettings.MPICH_V2))
+                        {
+                            
+                        
+                            File machineFile = new File(ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory()),
+                                               MpiSettings.MACHINE_FILE);
+                            FileWriter fw = new FileWriter(machineFile);
+                            fw.write(machineFileString.toString());
+                            fw.close();
+                            
+                            preCommand.append(mainCmd+" -machinefile "+ machineFile.getAbsolutePath()+" -np "+ simConfig.getMpiConf().getTotalNumProcessors() +" ");
+                        }
+                        else
+                        {
+                            
+                            preCommand.append(mainCmd+" "+hostList+" ");
+
+                        }
+                        
+                        
 
                     }
 

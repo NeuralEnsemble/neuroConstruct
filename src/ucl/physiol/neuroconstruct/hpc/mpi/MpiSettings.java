@@ -30,10 +30,11 @@ public class MpiSettings
 {
     ClassLogger logger = new ClassLogger("MpiSettings");
     
-    public static final String MPI_V1 = "MPI v1.*";
-    public static final String MPI_V2 = "MPI v2.*";
+    public static final String MPICH_V1 = "MPICH v1.*";
+    public static final String MPICH_V2 = "MPICH v2.*";
+    public static final String OPENMPI_V2 = "OPENMPI v2.*";
 
-    private String version = MPI_V1;
+    private String version = MPICH_V1;
 
     public static int prefConfig = 0;
     
@@ -41,6 +42,13 @@ public class MpiSettings
     public static final String LOCAL_SERIAL = "Local machine, serial mode";
     public static final String LOCAL_2PROC = "Local machine (2p)";
     public static final String LOCAL_4PROC = "Local machine (4p)";
+    
+    public static final String MACHINE_FILE = "machinesToUse";
+    
+    public static final String LOCALHOST = "localhost";
+    
+    
+    
 
 
     private ArrayList<MpiConfiguration> configurations = new ArrayList<MpiConfiguration>();
@@ -50,14 +58,14 @@ public class MpiSettings
         //String local8Config = "Local machine (8p)";
         //String local32Config = "Local machine (32p)";
         //String local128Config = "Local machine (128p)";
-        //String multiConfig = "TestConf";
+        String multiConfig = "TestConf";
         //String testConfig22 = "TestConfMore";
 
 
         if (getMpiConfiguration(LOCAL_SERIAL)==null)
         {
             MpiConfiguration def = new MpiConfiguration(LOCAL_SERIAL);
-            def.getHostList().add(new MpiHost("localhost", 1, 1));
+            def.getHostList().add(new MpiHost(LOCALHOST, 1, 1));
             configurations.add(def);
         }
 
@@ -65,13 +73,13 @@ public class MpiSettings
         if (getMpiConfiguration(LOCAL_2PROC)==null)
         {
             MpiConfiguration p = new MpiConfiguration(LOCAL_2PROC);
-            p.getHostList().add(new MpiHost("localhost",2, 1));
+            p.getHostList().add(new MpiHost(LOCALHOST,2, 1));
             configurations.add(p);
         }
         if (getMpiConfiguration(LOCAL_4PROC)==null)
         {
             MpiConfiguration p = new MpiConfiguration(LOCAL_4PROC);
-            p.getHostList().add(new MpiHost("localhost",4, 1));
+            p.getHostList().add(new MpiHost(LOCALHOST,4, 1));
             configurations.add(p);
         } /*
         if (getMpiConfiguration(local8Config)==null)
@@ -93,15 +101,15 @@ public class MpiSettings
             p.getHostList().add(new MpiHost("localhost",128, 1));
             configurations.add(p);
         }
-
+*/
         if (getMpiConfiguration(multiConfig)==null)
         {
             MpiConfiguration p = new MpiConfiguration(multiConfig);
             //p.getHostList().add(new MpiHost("padraigneuro", 1, 1));
-            //p.getHostList().add(new MpiHost("eriugena",4, 1));
-            p.getHostList().add(new MpiHost("bernal", 4, 1));
+            p.getHostList().add(new MpiHost("eriugena",4, 1));
+            //p.getHostList().add(new MpiHost("bernal", 4, 1));
             configurations.add(p);
-        }*/
+        }
 
 
     }
@@ -114,10 +122,12 @@ public class MpiSettings
 
     public String getVersion()
     {
-        File mpiV1flag = new File("MPI1");
-        File mpiV2flag = new File("MPI2");
-        if (mpiV1flag.exists()) return MPI_V1;
-        if (mpiV2flag.exists()) return MPI_V2;
+        File mpichV1flag = new File("MPICH1");
+        File mpichV2flag = new File("MPICH2");
+        File openmpiV2flag = new File("MPI2");
+        if (mpichV1flag.exists()) return MPICH_V1;
+        if (mpichV2flag.exists()) return MPICH_V2;
+        if (openmpiV2flag.exists()) return OPENMPI_V2;
         
         return this.version;
     }

@@ -17,8 +17,10 @@ import java.text.*;
 import java.util.*;
 
 import java.awt.*;
+import java.net.*;
 import java.util.ArrayList;
 import javax.swing.*;
+import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings;
 
 /**
  * Assorted handy utilities
@@ -127,6 +129,22 @@ public class GeneralUtils
         if (isLinuxBasedPlatform()) return false;
 
         return System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0;
+    }
+    
+    public static String getLocalHostname()
+    {
+        try 
+        {
+            InetAddress addr = InetAddress.getLocalHost();
+
+            String hostname = addr.getHostName();
+            
+            return hostname;
+        } 
+        catch (UnknownHostException e) 
+        {
+            return MpiSettings.LOCALHOST;
+        }
     }
 
 
