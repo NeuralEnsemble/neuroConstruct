@@ -2843,7 +2843,7 @@ public class CellTopologyHelper
         
         if (segmentsB.size()==segmentsA.size())
         {
-            info.append(GeneralUtils.getColouredString("The numbers of segments in the cells are IDENTICAL", "green", html)+EOL);
+            info.append(GeneralUtils.getColouredString("The numbers of segments in the cells are IDENTICAL: "+segmentsB.size(), "green", html)+EOL);
         }
         else
         {
@@ -2908,7 +2908,7 @@ public class CellTopologyHelper
         
         if (secsB.size()==secsA.size())
         {
-            info.append(GeneralUtils.getColouredString("The numbers of sections in the cells are IDENTICAL ", "green", html)+EOL);
+            info.append(GeneralUtils.getColouredString("The numbers of sections in the cells are IDENTICAL: "+secsA.size(), "green", html)+EOL);
         }
         else
         {

@@ -1865,10 +1865,15 @@ public class SegmentSelector extends JFrame implements DocumentListener
         
         ArrayList<Point3f>  points = CoordCalculator.getCoords((int)startPoint.x, (int)startPoint.y, (int)startPoint.z, len);
         StringBuffer info = new StringBuffer("The following points are a distance of "+len +" from point "+startPoint+"\n\n" +
-                "Copy and paste the chosen point into the end point field in the Segment Selector.\n" +
+                "Copy and paste the chosen point in the left column into the end point field in the Segment Selector.\n" +
                 "Thanks to Michele Mattioni for the end point generation code.\n\n");
         for(Point3f p : points)
-            info.append(p+"\n");
+        {
+            Point3f del = new Point3f(p);
+            del.sub(startPoint);
+           
+            info.append(GeneralUtils.getMinLenLine(p.toString(),30)+" \u0394 from start = "+del+"\n");
+        }
         
         endPointViewer = SimpleViewer.showString(info.toString(), "Possible end points", 12, false, 
                 false, .40f,.80f);

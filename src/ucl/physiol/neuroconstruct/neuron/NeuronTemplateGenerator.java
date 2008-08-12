@@ -1061,7 +1061,7 @@ public class NeuronTemplateGenerator
                             pointProcessCreates.append("public "+name+"\n");
                             pointProcessCreates.append("objref "+name+"\n\n");
                             
-                        response.append("    "+sec.getSectionName()+" "+name+" = new " + cellMech.getInstanceName() + "(0.5) \n");
+                            response.append("    "+sec.getSectionName()+" "+name+" = new " + cellMech.getInstanceName() + "(0.5) \n");
                         }
                     }
                     else
@@ -1219,8 +1219,8 @@ public class NeuronTemplateGenerator
                                             erev = suggValDouble + "";
                                         }
                                         
-                                        if (!revPotSetElsewhereHash.containsKey(nextChanMech.getName()))
-                                        {
+                                        //if (!revPotSetElsewhereHash.containsKey(nextChanMech.getName()))
+                                        //{
                                             logger.logComment("Recheking revPotSetElsewhere for "+ nextChanMech.getName());
                                             boolean revPotSetElsewhere = false;
                                             
@@ -1258,13 +1258,13 @@ public class NeuronTemplateGenerator
                                                 }
                                             }
                                             revPotSetElsewhereHash.put(nextChanMech.getName(), revPotSetElsewhere);
-                                        }
-                                        else
-                                        {
-                                            logger.logComment("Reusing revPotSetElsewhere for "+ nextChanMech.getName());
-                                        }
+                                        //}
+                                        //else
+                                        //{
+                                        //    logger.logComment("Reusing revPotSetElsewhere for "+ nextChanMech.getName());
+                                        //}
                                         
-                                        boolean revPotSetElsewhere = revPotSetElsewhereHash.get(nextChanMech.getName());
+                                        revPotSetElsewhere = revPotSetElsewhereHash.get(nextChanMech.getName());
                                         
                                         logger.logComment("revPotSetElsewhere for "+ revPotSetElsewhere);
                                         

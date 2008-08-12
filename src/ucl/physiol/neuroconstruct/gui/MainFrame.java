@@ -10577,6 +10577,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         // need this to update list of 3d position files...
         refreshTab3D();
         
+        jComboBoxSimConfig.setSelectedItem(simConfig.getName());
+        jComboBoxSimConfig.repaint();
+        
         logger.logComment("Finished generating network!");
         logger.logComment("Num cells generated: "+ projManager.getCurrentProject().generatedCellPositions.getNumberInAllCellGroups());
         
