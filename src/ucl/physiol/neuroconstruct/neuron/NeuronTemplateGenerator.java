@@ -1116,8 +1116,10 @@ public class NeuronTemplateGenerator
                         {
                             if (nextChanMech.getName().equals("pas"))
                             {
+                                String condString = "g_" + nextChanMech.getName() + " = " + condDens + moreParams.toString();
+                                if (condDens<0) condString = "    // Ignoring gmax ("+ condDens+") for this channel mechanism\n";
                                 
-                                response.append("  { g_" + nextChanMech.getName() + " = " + condDens + moreParams.toString()+ " }  ");
+                                response.append("  { "+condString+ " }  ");
                                 NeuronFileManager.addHocComment(response,
                                                      "    pas is name of mechanism, so using inbuilt mechanism, and better use g for conductance density...");
                             }
@@ -1173,7 +1175,9 @@ public class NeuronTemplateGenerator
 
                                     String erev = ion.getAttributeValue(ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR);
                                     
-                                    MechParameter mpErev = nextChanMech.getExtraParameter("erev");
+                                    MechParameter mpErev = nextChanMech.getExtraParameter("e");
+                                    if (mpErev==null)
+                                        mpErev = nextChanMech.getExtraParameter("erev");
                                     
                                     if (mpErev!=null)
                                     {
@@ -1192,7 +1196,7 @@ public class NeuronTemplateGenerator
                                             }
                                     }
 
-                                    logger.logComment("Setting erev: " + erev);
+                                    logger.logComment("Setting erev: " + erev+" for "+nextChanMech, true);
                                     
                                     
                                     if (erev != null)
@@ -1234,9 +1238,10 @@ public class NeuronTemplateGenerator
                                                 if (cm.getName().equals(nextChanMech.getName()))
                                                 {
                                                     Vector<String> groups = cmVsGroups.get(cm);
+                                                    
                                                     for(String grp: groups)
                                                     {
-                                                        if (!grp.equals(nextGroup) || nextChanMech.getName().equals("pas"))
+                                                        if (!grp.equals(nextGroup) /*|| nextChanMech.getName().equals("pas")*/)
                                                         {
                                                             NeuronFileManager.addHocComment(response, "    Group " + grp +" also has "+ nextChanMech.getName()+" ("+cm+")", false);
 
