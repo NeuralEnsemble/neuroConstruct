@@ -89,8 +89,14 @@ public class GenesisFileManager
     Hashtable<String, Cell> mappedCells = new Hashtable<String, Cell>();
     Hashtable<String, SegmentLocMapper> mappedSegments = new Hashtable<String, SegmentLocMapper>();
     
-    
+        
     private boolean quitAfterRun = false;
+        
+    static
+    {
+        logger.setThisClassVerbose(false);
+    }
+
 
     private GenesisFileManager()
     {
@@ -572,7 +578,7 @@ public class GenesisFileManager
             String sourceCellGroup = null;
             String targetCellGroup = null;
 
-            Vector synPropList = null;
+            Vector<SynapticProperties> synPropList = null;
 
             if (project.morphNetworkConnectionsInfo.isValidSimpleNetConn(netConnName))
             {
@@ -625,6 +631,15 @@ public class GenesisFileManager
                         }
                     }
                 }
+            }
+            
+            boolean isGapJunction = false;
+            
+            if (synPropList.size()==1)
+            {
+                CellMechanism cm = project.cellMechanismInfo.getCellMechanism(synPropList.get(0).getSynapseType());
+                if (cm.getMechanismType().equals(CellMechanism.GAP_JUNCTION))
+                    isGapJunction = true;
             }
 
 
@@ -729,72 +744,81 @@ public class GenesisFileManager
                         }
                     }
 
+                    if(!isGapJunction)
+                    {
+                        // put synaptic start point on source axon
 
-                    // put synaptic start point on source axon
+                        String spikeElement = triggeringElement + "/spike";
 
-                    String spikeElement = triggeringElement + "/spike";
+                        response.append("if (!({exists " + spikeElement + "}))\n");
+                        response.append("    create spikegen " + spikeElement + "\n");
 
-                    response.append("if (!({exists " + spikeElement + "}))\n");
-                    response.append("    create spikegen " + spikeElement + "\n");
+                        float absRefractVal = 10;
+                        ////addComment(response, "Setting high abs_refract to ensure same behaviour as NEURON ");
+                        /** @todo Change handling of abs_refract */
+                        response.append("    setfield " + spikeElement + "  thresh "
+                                        + UnitConverter.getVoltage(synProps.getThreshold(),
+                                                                   UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                   project.genesisSettings.getUnitSystemToUse())
 
-                    float absRefractVal = 10;
-                    ////addComment(response, "Setting high abs_refract to ensure same behaviour as NEURON ");
-                    /** @todo Change handling of abs_refract */
-                    response.append("    setfield " + spikeElement + "  thresh "
-                                    + UnitConverter.getVoltage(synProps.getThreshold(),
-                                                               UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                               project.genesisSettings.getUnitSystemToUse())
+                                        + "  abs_refract "
+                                        + UnitConverter.getTime(absRefractVal,
+                                                                UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                project.genesisSettings.getUnitSystemToUse())
+                                        + " output_amp 1\n");
 
-                                    + "  abs_refract "
-                                    + UnitConverter.getTime(absRefractVal,
-                                                            UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                            project.genesisSettings.getUnitSystemToUse())
-                                    + " output_amp 1\n");
+                        response.append("    addmsg  " + triggeringElement
+                                        + "  " + spikeElement + "  INPUT Vm\n");
 
-                    response.append("    addmsg  " + triggeringElement
-                                    + "  " + spikeElement + "  INPUT Vm\n");
+                        response.append("end\n\n");
 
-                    response.append("end\n\n");
-
-                    String newSynapseName = null;
-
-
-                    newSynapseName = synProps.getSynapseType()
-                        + "_" + netConnName;
-
-                    response.append("makechannel_" + synProps.getSynapseType()
-                                    + " " + receivingElement
-                                    + " " + newSynapseName + "\n\n");
-
-                    // link source and target...
-
-                    response.append("addmsg " + spikeElement + " "
-                                    + receivingElement + "/"
-                                    + newSynapseName + " SPIKE\n");
-
-                    response.append("int msgnum\n");
-                    response.append("msgnum = {getfield " + receivingElement + "/" + newSynapseName
-                                    + " nsynapses} - 1\n\n");
+                        String newSynapseName = null;
 
 
+                        newSynapseName = synProps.getSynapseType()
+                            + "_" + netConnName;
 
-                    float apSpaceDelay = syn.apPropDelay;
+                        response.append("makechannel_" + synProps.getSynapseType()
+                                        + " " + receivingElement
+                                        + " " + newSynapseName + "\n\n");
+
+                        // link source and target...
+
+                        response.append("addmsg " + spikeElement + " "
+                                        + receivingElement + "/"
+                                        + newSynapseName + " SPIKE\n");
+
+                        response.append("int msgnum\n");
+                        response.append("msgnum = {getfield " + receivingElement + "/" + newSynapseName
+                                        + " nsynapses} - 1\n\n");
 
 
-                    addComment(response, "Weight of syn: " + weight);
-                    addComment(response,
-                               "Delay due to AP propagation along segments: " + apSegmentPropDelay
-                               + ", delay due to AP jump pre -> post location "+ apSpaceDelay
-                               + ", internal synapse delay (from Synaptic Props): " + synInternalDelay);
 
-                    response.append("setfield " + receivingElement + "/" + newSynapseName
-                                    + " synapse[{msgnum}].weight "
-                                    + weight
-                                    + " synapse[{msgnum}].delay "
-                                    + UnitConverter.getTime(  (synInternalDelay + apSegmentPropDelay + apSpaceDelay),
-                                                            UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                            project.genesisSettings.getUnitSystemToUse())
-                                    + "\n\n");
+                        float apSpaceDelay = syn.apPropDelay;
+
+
+                        addComment(response, "Weight of syn: " + weight);
+                        addComment(response,
+                                   "Delay due to AP propagation along segments: " + apSegmentPropDelay
+                                   + ", delay due to AP jump pre -> post location "+ apSpaceDelay
+                                   + ", internal synapse delay (from Synaptic Props): " + synInternalDelay);
+
+                        response.append("setfield " + receivingElement + "/" + newSynapseName
+                                        + " synapse[{msgnum}].weight "
+                                        + weight
+                                        + " synapse[{msgnum}].delay "
+                                        + UnitConverter.getTime(  (synInternalDelay + apSegmentPropDelay + apSpaceDelay),
+                                                                UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                project.genesisSettings.getUnitSystemToUse())
+                                        + "\n\n");
+                    }
+                    else  /// isGapJunction
+                    {
+                        
+                        response.append("makechannel_" + synProps.getSynapseType()
+                                        + " " + receivingElement
+                                        + " " + triggeringElement + "\n\n");
+                    }
 
                 }
 
