@@ -1196,7 +1196,7 @@ public class NeuronTemplateGenerator
                                             }
                                     }
 
-                                    logger.logComment("Setting erev: " + erev+" for "+nextChanMech, true);
+                                    logger.logComment("Setting erev: " + erev+" for "+nextChanMech);
                                     
                                     
                                     if (erev != null)
