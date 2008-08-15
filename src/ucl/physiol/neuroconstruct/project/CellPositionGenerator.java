@@ -163,6 +163,14 @@ public class CellPositionGenerator extends Thread
                 adapter.reset();
 
                 Cell cell = project.cellManager.getCell(cellType);
+                
+                if (cell==null)
+                {
+                    GuiUtils.showErrorMessage(logger, "Error finding cell for type: "+ cellType+".\n" +
+                            "Make sure there is a cell of that type in the project.\n" +
+                            "Try pressing Validate for more information", null, null);
+                    return;
+                }
 
                 logger.logComment("Adapter for this cell group: " + adapter);
 

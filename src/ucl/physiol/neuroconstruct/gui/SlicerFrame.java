@@ -103,7 +103,7 @@ public class SlicerFrame extends JFrame
         this.project = project;
         controlledPanel = simInf;
         
-        logger.setThisClassVerbose(true);
+        //logger.setThisClassVerbose(true);
 
         logger.logComment("SlicerFrame created...");
         

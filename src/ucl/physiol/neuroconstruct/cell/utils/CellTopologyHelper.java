@@ -54,7 +54,7 @@ public class CellTopologyHelper
     static
     {
         // lots of output here, so let's keep it quiet in general
-        logger.setThisClassSilent(true);
+        /////////logger.setThisClassSilent(true);
     }
 
     /**
@@ -291,8 +291,8 @@ public class CellTopologyHelper
      */
 
     public PreSynapticTerminalLocation getPossiblePreSynapticTerminal(Cell cell, 
-                                                                             String[] synapseTypes,
-                                                                             PrePostAllowedLocs pp)
+                                                                      String[] synapseTypes,
+                                                                      PrePostAllowedLocs pp)
     {
         
         float totalLengthOfValidSegments = 0;
@@ -305,11 +305,14 @@ public class CellTopologyHelper
             Vector<Segment> allSegments = cell.getAllSegments();
 
             Vector<String> groupsWithSynapse = cell.getGroupsWithSynapse(synapseTypes[0]); // get first lot
+            String typesInfo = "";
 
             if (synapseTypes.length>1)
             {
                 for (int remainingSynIndex = 0; remainingSynIndex < synapseTypes.length; remainingSynIndex++)
                 {
+                    
+                    typesInfo = typesInfo+" "+synapseTypes[remainingSynIndex];
                     Vector remainingSynGroups = cell.getGroupsWithSynapse(synapseTypes[remainingSynIndex]);
 
                     for (int includedGroups = 0; includedGroups < groupsWithSynapse.size(); includedGroups++)
@@ -320,9 +323,13 @@ public class CellTopologyHelper
                     }
                 }
             }
+            else
+            {
+                typesInfo = synapseTypes[0];
+            }
 
 
-            logger.logComment(cell.getInstanceName() + " being asked for pre-synaptic point of type " + synapseTypes +
+            logger.logComment(cell.getInstanceName() + " being asked for pre-synaptic point of type " + typesInfo +
                               " among my segments");
 
             logger.logComment("groupsWithSynapse: "+ groupsWithSynapse);
@@ -360,12 +367,17 @@ public class CellTopologyHelper
                         {
                             if (groupsWithSynapse.contains( (String) groups.elementAt(j)))
                             {
+                                logger.logComment("seg is candidate: "+ possSeg);
                                 if (!idsOfPossibleSegments.contains(possSeg.getSegmentId()))
                                 {
                                     idsOfPossibleSegments.add(possSeg.getSegmentId());
                                 }
                             }
                         }
+                    }
+                    else
+                    {
+                       logger.logComment("seg is not candidate: "+ possSeg);
                     }
                 }
             }

@@ -1233,9 +1233,9 @@ public class Project implements TableModelListener
                 }
                 File internalPropsFile = new File(cellMechDir, CellMechanismHelper.INTERNAL_PROPS_FILENAME);
                 
-                boolean saveProps = projProperties.getSaveOption().equals(ProjectStructure.PROJ_QUICK_SAVE); // false if svn save
+                boolean saveProps = !internalPropsFile.exists() || projProperties.getSaveOption().equals(ProjectStructure.PROJ_QUICK_SAVE); // false if svn save
                 
-                logger.logComment("Saving int props: "+ saveProps);
+                logger.logComment("Saving int props in "+internalPropsFile.getAbsolutePath()+": "+ saveProps, true);
                 
                 if (internalPropsFile.exists() && projProperties.getSaveOption().equals(ProjectStructure.PROJ_SVN_SAVE))
                 {

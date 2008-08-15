@@ -2,7 +2,6 @@
 package ucl.physiol.neuroconstruct.utils;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import javax.vecmath.*;
 
 /**
@@ -31,7 +30,7 @@ public class CoordCalculator
     	
     public static void main(String[] args) 
     {
-        logger.setThisClassVerbose(true);
+        //logger.setThisClassVerbose(true);
         
         if (args.length != 4 )
         {
