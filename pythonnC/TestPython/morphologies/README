@@ -1,0 +1,9 @@
+This is the directory for the cell morphology files associated with the project.
+The following types of files are found here: 
+
+   *.java.xml: morphologies (based on the ucl.physiol.neuroconstruct.cell.Cell Java class) saved in Java XML serialized form (note: not part of NeuroML).
+   *.java.ser: morphologies saved in Java binary serialized object form (smaller files & quicker to load)
+
+   *.bak files backup the previously stored morphology before a new one is saved (if a problem occurs saving a morphology, remove the .bak and use that file to load into the project).
+
+Note that the cells aren't currently stored here in NeuroML/MorphML format, as new functionality is added to the neuroConstruct Cell class before it is supported in the standards.

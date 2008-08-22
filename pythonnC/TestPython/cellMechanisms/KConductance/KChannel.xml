@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Example of HH K conductance specified in ChannelML.
+    Based on Michael Hines's initial proposal.
+-->
+
+<channelml xmlns="http://morphml.org/channelml/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:meta="http://morphml.org/metadata/schema" xsi:schemaLocation="http://morphml.org/channelml/schema  ../../Schemata/v1.6/Level2/ChannelML_v1.6.xsd" units="Physiological Units">
+
+    <meta:notes>ChannelML file containing a single Channel description</meta:notes>
+
+    <ion name="k" default_erev="-77.0" charge="1"/>      <!-- phys units: mV -->
+
+
+    <channel_type name="KConductance" density="yes">
+        
+        <status value="stable">
+            <meta:comment>Equations adapted from paper for modern convention of external potential being zero</meta:comment>
+            <meta:contributor>
+                <meta:name>Padraig Gleeson</meta:name>
+            </meta:contributor>
+        </status>
+
+        <meta:notes>Simple example of K conductance in squid giant axon. Based on channel from Hodgkin and Huxley 1952</meta:notes>
+
+
+        <meta:publication>
+            <meta:fullTitle>A. L. Hodgkin and A. F. Huxley, A quantitative description of membrane current and its application
+            to conduction and excitation in nerve, J. Physiol., vol. 117, pp. 500-544, 1952.</meta:fullTitle>
+            <meta:pubmedRef>http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=pubmed&amp;dopt=Abstract&amp;list_uids=12991237</meta:pubmedRef>
+        </meta:publication>
+
+        <meta:neuronDBref>
+            <meta:modelName>K channels</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/senselab/NeuronDB/channelGene2.htm#table3</meta:uri>
+        </meta:neuronDBref>
+
+        
+        <current_voltage_relation>
+            <ohmic ion="k">
+                <conductance default_gmax="36">      <!-- phys units: mS/cm2-->
+
+                    <gate power="4">
+                        <state name="n" fraction="1"/>
+                    </gate>  
+                </conductance>
+            </ohmic>
+        </current_voltage_relation>
+        
+        
+        <hh_gate state="n">
+            <transition>
+                <voltage_gate>
+                    <alpha>
+                            <!-- Note: type attr determines how A,k,d are used in parameterised_hh, expr is just for completeness-->
+
+                        <parameterised_hh type="linoid" expr="A*(k*(v-d))/(1 - exp(-(k*(v-d))))"> 
+                            <parameter name="A" value="0.1"/>
+                            <parameter name="k" value="0.1"/>
+                            <parameter name="d" value="-55"/>
+                        </parameterised_hh>
+                    </alpha>
+                    <beta>
+                        <parameterised_hh type="exponential" expr="A*exp(k*(v-d))">
+                            <parameter name="A" value="0.125"/>
+                            <parameter name="k" value="-0.0125"/>
+                            <parameter name="d" value="-65"/>
+                        </parameterised_hh>
+                    </beta>
+                </voltage_gate>
+            </transition>
+        </hh_gate>
+        
+        
+        <impl_prefs>
+            <table_settings max_v="100" min_v="-100" table_divisions="400"/>
+        </impl_prefs>
+        
+        
+    </channel_type>
+</channelml>
