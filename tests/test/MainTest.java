@@ -21,10 +21,13 @@ public class MainTest
     {
         System.out.println("Running the main nC tests...");
         
-        Result r = org.junit.runner.JUnitCore.runClasses(/*ucl.physiol.neuroconstruct.cell.CellSuite.class,*/
+        Result r = null;
+        
+        r = org.junit.runner.JUnitCore.runClasses(/*ucl.physiol.neuroconstruct.cell.CellSuite.class,*/
                  
                 ucl.physiol.neuroconstruct.cell.VariableParameterTest.class,
                 ucl.physiol.neuroconstruct.cell.VariableMechanismTest.class,
+                ucl.physiol.neuroconstruct.utils.equation.ExpressionTest.class,
                 ucl.physiol.neuroconstruct.cell.SegmentTest.class,
                 ucl.physiol.neuroconstruct.cell.ParameterisedGroupTest.class,
                 ucl.physiol.neuroconstruct.cell.CellTest.class,
@@ -43,6 +46,12 @@ public class MainTest
         
         System.out.println("Finished the main nC tests.");
         
+        checkResults(r);
+
+    }
+    
+    public static void checkResults(Result r)
+    {
         if (!r.wasSuccessful())
         {
             System.out.println("");

@@ -122,7 +122,7 @@ public class MorphMLConverterTest {
     }
 
     /**
-     * Test of saveCellInMorphMLFormat method, of class MorphMLConverter.
+     * Test of saveCellInNeuroMLFormat method, of class MorphMLConverter.
      */
     @Test
     public void testSaveCellInMorphMLFormat() throws Exception {
@@ -131,7 +131,7 @@ public class MorphMLConverterTest {
         Project project = null;
         File morphMLFile = null;
         String level = "";
-        MorphMLConverter.saveCellInMorphMLFormat(cell, project, morphMLFile, level);
+        MorphMLConverter.saveCellInNeuroMLFormat(cell, project, morphMLFile, level);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

@@ -7,8 +7,12 @@ package ucl.physiol.neuroconstruct.cell;
 
 import java.util.ArrayList;
 import org.junit.*;
+import org.junit.runner.Result;
+import test.MainTest;
 import ucl.physiol.neuroconstruct.utils.equation.*;
 import static org.junit.Assert.*;
+import java.beans.*;
+import java.io.*;
 
 /**
  *
@@ -16,19 +20,21 @@ import static org.junit.Assert.*;
  */
 public class VariableMechanismTest 
 {
-    VariableParameter vp1 = null;
-    VariableParameter vp2 = null;
+    //VariableParameter vp1 = null;
+    //VariableParameter vp2 = null;
     
-    Variable p = null;
+    //Variable p = null;
     
-    VariableMechanism cm = null;
 
-    public VariableMechanismTest() throws EquationException 
+    public static VariableMechanism getVariableMechanism() throws EquationException 
     {
-        System.out.println("---------------   setUp() VariableMechanismTest");
-        String expression1 = "A + B*(p+C)";
-        String expression2 = "p*p";
-
+        String expression1 = "A + B*(p+C) + sin(p * 0)";
+        
+        VariableParameter vp1 = null;
+        VariableMechanism vm = null;
+        //VariableParameter vp2 = null;
+    
+        Variable p = null;
 
         p = new Variable("p");
         Argument a = new Argument("A", 2);
@@ -36,7 +42,6 @@ public class VariableMechanismTest
         Argument c = new Argument("C", 1);
 
         ArrayList<Argument> expressionArgs1 =  new ArrayList<Argument>();
-        ArrayList<Argument> expressionArgs2 =  new ArrayList<Argument>();
 
         expressionArgs1.add(a);
         expressionArgs1.add(b);
@@ -46,16 +51,15 @@ public class VariableMechanismTest
             
         System.out.println("Var param 1: "+ vp1); 
         
-        vp2 = new VariableParameter("Rm", expression2, p, expressionArgs2);
-
-        System.out.println("Var param 2: "+ vp2); 
         
 
-        cm = new VariableMechanism("cm");
+        vm = new VariableMechanism("cm", vp1);
         
-        cm.getParams().add(vp1);
 
-        System.out.println("ChannelMechanism: " + cm);
+        System.out.println("VariableMechanism: " + vm);
+        
+        return vm;
+        
     }
 
 
@@ -66,6 +70,28 @@ public class VariableMechanismTest
     @After
     public void tearDown() {
     }
+    
+    
+    @Test
+    public void testCloneAndEquals() throws EquationException
+    {
+        System.out.println("---  testCloneAndEquals...");
+        
+        VariableMechanism vm1 = getVariableMechanism();
+        
+        VariableMechanism vm2 = (VariableMechanism)vm1.clone();
+        
+        System.out.println("Testing equality of: "+ vm1);
+        
+        System.out.println("with:                "+ vm2);
+        
+        assertEquals(vm1, vm2);
+        
+        vm2.setName("xgjchgj");
+        
+        assertNotSame(vm1, vm2);
+        
+    }
 
     
     @Test
@@ -73,13 +99,70 @@ public class VariableMechanismTest
     {
         System.out.println("---  testEvaluateAt...");
 
-        double val1 = cm.evaluateAt("cap", 0);
-        double val2 = cm.evaluateAt("cap", 10);
+        VariableMechanism vm = getVariableMechanism();
+        
+        double val1 = vm.evaluateAt(0);
+        double val2 = vm.evaluateAt(10);
         
         assertEquals(val1, 6, 0);
         assertEquals(val2, 46, 0);
         
     }
+    
+    @Test
+    public void testSaveLoad()  throws FileNotFoundException, IOException, EquationException
+    {
+        System.out.println("---  testSaveLoad...");
+        
+        VariableMechanism vm = getVariableMechanism();
+        
+        XMLEncoder xmlEncoder = null;
+        FileOutputStream fos = null;
+        BufferedOutputStream bos = null;
+        
+        File f = new File("../temp/TestVM.ser");
+
+        System.out.println("Saving to: "+f.getCanonicalPath());
+        
+        fos = new FileOutputStream(f);
+        bos = new BufferedOutputStream(fos);
+        xmlEncoder = new XMLEncoder(bos);
+        
+        Object o1 = vm;
+        
+        System.out.println("Pre:  "+ o1);
+        
+        xmlEncoder.writeObject(o1);
+        xmlEncoder.close();
+        
+        FileInputStream fis = new FileInputStream(f);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+        XMLDecoder xd = new XMLDecoder(bis);
+        
+        Object o2 = xd.readObject();
+        
+        System.out.println("Post: "+ o2);
+        
+        
+        assertEquals(o2, o1);
+        
+        ///VariableMechanism vm = getVariableMechanism();
+        
+        
+        ///assertEquals(val2, 46, 0);
+        
+     
+    }
+
+ 
+    public static void main(String[] args) throws EquationException
+    {
+        VariableMechanismTest ct = new VariableMechanismTest();
+        Result r = org.junit.runner.JUnitCore.runClasses(ct.getClass());
+        MainTest.checkResults(r);
+        
+    }
+
 
 
 }

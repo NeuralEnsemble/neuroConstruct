@@ -9,6 +9,8 @@ import java.beans.*;
 import java.io.*;
 import javax.vecmath.Point3f;
 import org.junit.*;
+import org.junit.runner.Result;
+import test.MainTest;
 import static org.junit.Assert.*;
 import ucl.physiol.neuroconstruct.cell.ParameterisedGroup.*;
 import ucl.physiol.neuroconstruct.cell.examples.OneSegment;
@@ -107,6 +109,9 @@ public class ParameterisedGroupTest
         assertEquals(5, pg4.evaluateAt(cell, loc2), 0);
         
     }
+    
+    
+    
 
     /**
      * Test of getMinValue method, of class ParameterisedGroup.
@@ -134,14 +139,38 @@ public class ParameterisedGroupTest
     }
     
     @Test
-    public void testSaveLoad()  throws FileNotFoundException
+    public void testCloneEquals() 
     {
+        System.out.println("---  testCloneEquals...");
+        
+        ParameterisedGroup pg1a = (ParameterisedGroup)pg1.clone();
+        
+        System.out.println("Checking: "+ pg1a);
+        System.out.println("equals: "+ pg1a);
+        
+        assertEquals(pg1a, pg1);
+        
+        pg1.setProximalPref(ProximalPref.NO_TRANSLATION);
+        
+        
+        System.out.println("Checking: "+ pg1a);
+        System.out.println("NOT equals: "+ pg1a);
+        
+        assertNotSame(pg1, pg1a);
+        
+    }
+    
+    @Test
+    public void testSaveLoad()  throws FileNotFoundException, IOException
+    {
+        System.out.println("---  testSaveLoad...");
         XMLEncoder xmlEncoder = null;
         FileOutputStream fos = null;
         BufferedOutputStream bos = null;
         
         File f = new File("../temp/Test.ser");
 
+        System.out.println("Saving to: "+f.getCanonicalPath());
         
         fos = new FileOutputStream(f);
         bos = new BufferedOutputStream(fos);
@@ -168,12 +197,17 @@ public class ParameterisedGroupTest
         
         assertEquals(o2, o1);
         
-        
-        
      
     }
 
 
+    public static void main(String[] args)
+    {
+        ParameterisedGroupTest ct = new ParameterisedGroupTest();
+        Result r = org.junit.runner.JUnitCore.runClasses(ct.getClass());
+        MainTest.checkResults(r);
+        
+    }
 
 
 }

@@ -67,7 +67,7 @@ public class MorphMLReaderTest {
         File savedNeuroMLDir = ProjectStructure.getNeuroMLDir(projDir);
         File morphFile = new File(savedNeuroMLDir, "test.mml");
         
-        MorphMLConverter.saveCellInMorphMLFormat(cell1, pm.getCurrentProject(), morphFile, NeuroMLConstants.NEUROML_LEVEL_3);
+        MorphMLConverter.saveCellInNeuroMLFormat(cell1, pm.getCurrentProject(), morphFile, NeuroMLConstants.NEUROML_LEVEL_3);
         
         assertTrue(morphFile.exists());
         

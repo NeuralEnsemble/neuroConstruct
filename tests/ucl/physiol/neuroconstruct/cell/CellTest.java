@@ -9,8 +9,12 @@ import javax.vecmath.Point3f;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.Result;
+import test.MainTest;
+import ucl.physiol.neuroconstruct.cell.ParameterisedGroup.*;
 import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import ucl.physiol.neuroconstruct.utils.NumberGenerator;
+import ucl.physiol.neuroconstruct.utils.equation.EquationException;
 import static org.junit.Assert.*;
 
 /**
@@ -18,6 +22,8 @@ import static org.junit.Assert.*;
  * @author padraig
  */
 public class CellTest {
+    
+    static String testGroup = "TestGroup";
 
     public CellTest() {
     }
@@ -35,7 +41,7 @@ public class CellTest {
     
     // Get a cell with (almost) all features non null
     
-    public static Cell getDetailedCell()
+    public static Cell getDetailedCell() throws EquationException
     {
         Cell cell = new Cell();
         
@@ -56,28 +62,39 @@ public class CellTest {
         
         sec1.addToGroup(Section.SOMA_GROUP);
         
-        String group = "TestGroup";
         
         
         Segment somaSeg = cell.addFirstSomaSegment(2, 3, "SomaSeg", new Point3f(1,2,3), new Point3f(4,2,3), sec1);
         
         Segment dendSeg = cell.addDendriticSegment(2, "DendSeg", new Point3f(1,2,3), somaSeg, 0.5f, "BasalDends", true);
-        dendSeg.getSection().addToGroup(group);
+        dendSeg.getSection().addToGroup(testGroup);
         
         Segment axSeg = cell.addAxonalSegment(2, "AxonSeg", new Point3f(-1,-2,-3), somaSeg, 0f, "InitialSeg");
-        axSeg.getSection().addToGroup(group);
+        axSeg.getSection().addToGroup(testGroup);
         
         cell.associateGroupWithSpecAxRes("all", 111);
         cell.associateGroupWithSpecCap("all", 222);
         
-        cell.associateGroupWithChanMech(group, new ChannelMechanism("pas", 123));
+        cell.associateGroupWithChanMech(testGroup, new ChannelMechanism("pas", 123));
         
+        ParameterisedGroup pg = new ParameterisedGroup("OneToEnd", 
+                                               Section.ALL, 
+                                               Metric.PATH_LENGTH_FROM_ROOT, 
+                                               ProximalPref.MOST_PROX_AT_0, 
+                                               DistalPref.MOST_DIST_AT_1);
+        
+        cell.getParameterisedGroups().add(pg);
+        
+        VariableMechanism vm = VariableMechanismTest.getVariableMechanism();
+        
+        cell.associateParamGroupWithVarMech(pg, vm);
         
         return cell;
     }
     
     
-    @Test public void testCloneAndEquals() 
+    @Test 
+    public void testCloneAndEquals()  throws EquationException
     {
         System.out.println("---  testCloneAndEquals...");
         
@@ -100,6 +117,28 @@ public class CellTest {
         
         
         assertFalse(compare.indexOf(CellTopologyHelper.CELLS_ARE_IDENTICAL)>=0);
+    }
+    
+    @Test 
+    public void testIsGroup()  throws EquationException
+    {
+        System.out.println("---  testIsGroup...");
+        
+        Cell cell1 = getDetailedCell();
+        
+        assertTrue(cell1.isGroup(testGroup));
+        assertTrue(cell1.isGroup(Section.ALL));
+        assertTrue(cell1.isGroup(Section.SOMA_GROUP));
+        assertFalse(cell1.isGroup("zhxfghdfg"));
+        
+    }
+    
+    public static void main(String[] args)
+    {
+        CellTest ct = new CellTest();
+        Result r = org.junit.runner.JUnitCore.runClasses(ct.getClass());
+        MainTest.checkResults(r);
+        
     }
 
 
