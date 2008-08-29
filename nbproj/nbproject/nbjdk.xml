@@ -22,6 +22,9 @@
     <target depends="-jdk-init" name="run-selected-file-in-src">
         <ant antfile="nbproject/ide-file-targets.xml" inheritall="false" target="run-selected-file-in-src"/>
     </target>
+    <target depends="-jdk-init" name="test-selected-file-in-src">
+        <ant antfile="nbproject/ide-file-targets.xml" inheritall="false" target="test-selected-file-in-src"/>
+    </target>
     <target depends="-jdk-init,-jdk-presetdef-nbjpdastart" name="debug-nb">
         <ant antfile="nbproject/ide-targets.xml" inheritall="false" target="debug-nb"/>
     </target>

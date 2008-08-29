@@ -74,6 +74,19 @@
                         </arity>
                     </context>
                 </action>
+                <action name="test.single">
+                    <script>nbproject/nbjdk.xml</script>
+                    <target>test-selected-file-in-src</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>${project.dir}/src</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
                 <action name="debug">
                     <script>nbproject/nbjdk.xml</script>
                     <target>debug-nb</target>
@@ -81,6 +94,19 @@
                 <action name="test">
                     <script>${ant.script}</script>
                     <target>test</target>
+                </action>
+                <action name="run.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>run-selected-file-in-tests</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>${project.dir}/tests</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
                 </action>
             </ide-actions>
             <export>
@@ -129,14 +155,14 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>${project.dir}/src</package-root>
-                <classpath mode="compile">${project.dir}/lib/hdf5/jhdf.jar:${project.dir}/lib/hdf5/jhdf4obj.jar:${project.dir}/lib/hdf5/jhdf5.jar:${project.dir}/lib/hdf5/jhdf5obj.jar:${project.dir}/lib/hdf5/jhdfobj.jar:${project.dir}/lib/jython/jython.jar:${project.dir}/lib/junit/junit-4.4.jar:${project.dir}/lib/j3d/j3dcore.jar:${project.dir}/lib/j3d/j3dutils.jar:${project.dir}/lib/j3d/vecmath.jar</classpath>
+                <classpath mode="compile">${project.dir}/lib/hdf5/jhdf.jar;${project.dir}/lib/hdf5/jhdf4obj.jar;${project.dir}/lib/hdf5/jhdf5.jar;${project.dir}/lib/hdf5/jhdf5obj.jar;${project.dir}/lib/hdf5/jhdfobj.jar;${project.dir}/lib/jython/jython.jar;${project.dir}/lib/junit/junit-4.4.jar;${project.dir}/lib/j3d/j3dcore.jar;${project.dir}/lib/j3d/j3dutils.jar;${project.dir}/lib/j3d/vecmath.jar</classpath>
                 <built-to>${project.dir}/classes</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>${project.dir}/tests</package-root>
                 <unit-tests/>
-                <classpath mode="compile">${project.dir}/lib/junit/junit-4.4.jar:${project.dir}/lib/jython/jython.jar:${project.dir}/lib/hdf5/jhdf.jar:${project.dir}/lib/hdf5/jhdf4obj.jar:${project.dir}/lib/hdf5/jhdf5.jar:${project.dir}/lib/hdf5/jhdf5obj.jar:${project.dir}/lib/hdf5/jhdfobj.jar:${project.dir}/src:${project.dir}/lib/j3d/j3dcore.jar:${project.dir}/lib/j3d/j3dutils.jar:${project.dir}/lib/j3d/vecmath.jar</classpath>
+                <classpath mode="compile">${project.dir}/lib/junit/junit-4.4.jar;${project.dir}/lib/jython/jython.jar;${project.dir}/lib/hdf5/jhdf.jar;${project.dir}/lib/hdf5/jhdf4obj.jar;${project.dir}/lib/hdf5/jhdf5.jar;${project.dir}/lib/hdf5/jhdf5obj.jar;${project.dir}/lib/hdf5/jhdfobj.jar;${project.dir}/src;${project.dir}/lib/j3d/j3dcore.jar;${project.dir}/lib/j3d/j3dutils.jar;${project.dir}/lib/j3d/vecmath.jar</classpath>
                 <built-to>${project.dir}/classes</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
