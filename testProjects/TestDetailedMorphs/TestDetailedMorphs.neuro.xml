@@ -164,30 +164,16 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export Net
   <void property="nativeBlocks"> 
    <void method="put"> 
     <int>10</int> 
-    <string>numPassed = 0
-numFailed = 0
-
-print &quot;------------------------------------------------------------------------------&quot;
-
+    <string>
 print &quot;    Finished simulation run, carying out some tests...&quot;
 
-proc testEquals() {
-
-	if ($1 != $2) { 
-		print &quot;Test failed: &quot;, $1, &quot;  != &quot;, &quot;$2&quot;
-		numFailed = numFailed + 1
-	} else {
-		numPassed = numPassed + 1
-	}
-
-}
+// Using testing functions from nCtools.hoc
 
 
 ////////////////////////    The tests   ////////////////////////////////////////////////
 
 SampleCell[0].Soma {
 	testEquals(gmax_LeakConductance , 0.0003)
-
 	testEquals(e_LeakConductance, -79)
 }
 
@@ -205,25 +191,10 @@ SampleCell[0].mainDendSec {
 ////////////////////////    End of tests   ///////////////////////////////////////////
 
 
-
-print &quot;    Finished tests. Number of passed tests: &quot;, numPassed, &quot;, number of failed tests: &quot;, numFailed
-
-objref resultFile
-{resultFile = new File()}
-
-if(numFailed &gt; 0) {
-	resultFile.wopen(&quot;passed&quot;)
-} else {
-	resultFile.wopen(&quot;failed&quot;)
-}
-
-{resultFile.printf(&quot;numPassed=%g\n&quot;, numPassed)}
-{resultFile.printf(&quot;numFailed=%g\n&quot;, numFailed)}
-
-{resultFile.close()}
+createTestReport()
 
 
-print &quot;------------------------------------------------------------------------------&quot;
+
 
 </string> 
    </void> 
@@ -238,7 +209,7 @@ print &quot;--------------------------------------------------------------------
    <float>100.0</float> 
   </void> 
   <void property="reference"> 
-   <string>Sim_25</string> 
+   <string>Sim_26</string> 
   </void> 
   <void property="saveCopyGenSimFiles"> 
    <boolean>true</boolean> 

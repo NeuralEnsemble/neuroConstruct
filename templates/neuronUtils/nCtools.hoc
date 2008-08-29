@@ -298,25 +298,26 @@ proc testEquals() {
 }
 
 
+objref testResultFile
+
 proc createTestReport() {
 
     print "------------------------------------------------------------------------------"
 
     print "    Finished tests. Number of passed tests: ", numTestsPassed, ", number of failed tests: ", numTestsFailed
 
-    objref resultFile
-    {resultFile = new File()}
+    {testResultFile = new File()}
 
-    if(numFailed > 0) {
-        resultFile.wopen("passed")
+    if(numTestsFailed > 0) {
+        testResultFile.wopen("passed")
     } else {
-        resultFile.wopen("failed")
+        testResultFile.wopen("failed")
     }
 
-    {resultFile.printf("numPassed=%g\n", numTestsPassed)}
-    {resultFile.printf("numFailed=%g\n", numTestsFailed)}
+    {testResultFile.printf("numPassed=%g\n", numTestsPassed)}
+    {testResultFile.printf("numFailed=%g\n", numTestsFailed)}
 
-    {resultFile.close()}
+    {testResultFile.close()}
 
 
     print "------------------------------------------------------------------------------"

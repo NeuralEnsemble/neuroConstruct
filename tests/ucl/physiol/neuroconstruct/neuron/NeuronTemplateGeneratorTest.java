@@ -127,6 +127,8 @@ public class NeuronTemplateGeneratorTest {
         
         assertTrue(passFile.exists());
         
+        System.out.println("File exists so all tests passed!!!");
+        
         
         /*
         int numRecordings = simData.getCellSegRefs(false).size();
