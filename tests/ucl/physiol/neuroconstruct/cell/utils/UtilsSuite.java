@@ -13,7 +13,7 @@ import org.junit.runners.Suite;
  * @author padraig
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelperTest.class,ucl.physiol.neuroconstruct.cell.utils.CellTypeHelperTest.class})
+@Suite.SuiteClasses({ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelperTest.class})
 public class UtilsSuite {
 
 }

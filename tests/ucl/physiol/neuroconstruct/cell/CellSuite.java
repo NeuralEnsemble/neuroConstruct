@@ -13,8 +13,7 @@ import org.junit.runners.Suite;
  * @author padraig
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ucl.physiol.neuroconstruct.cell.ApPropSpeedTest.class,
-                     ucl.physiol.neuroconstruct.cell.SectionTest.class/*,
+@Suite.SuiteClasses({ucl.physiol.neuroconstruct.cell.SectionTest.class/*,
                      ucl.physiol.neuroconstruct.cell.SegmentTest.class,
                       ucl.physiol.neuroconstruct.cell.MechParameterTest.class,
                      ucl.physiol.neuroconstruct.cell.SynapticConnectionEndPointTest.class,

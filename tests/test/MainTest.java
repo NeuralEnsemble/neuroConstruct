@@ -27,21 +27,22 @@ public class MainTest
                  
                 ucl.physiol.neuroconstruct.cell.VariableParameterTest.class,
                 ucl.physiol.neuroconstruct.cell.VariableMechanismTest.class,
-                ucl.physiol.neuroconstruct.utils.equation.ExpressionTest.class,
-                ucl.physiol.neuroconstruct.cell.SegmentTest.class,
+                ucl.physiol.neuroconstruct.cell.SectionTest.class,
                 ucl.physiol.neuroconstruct.cell.ParameterisedGroupTest.class,
                 ucl.physiol.neuroconstruct.cell.CellTest.class,
+                ucl.physiol.neuroconstruct.cell.SegmentTest.class,
                 ucl.physiol.neuroconstruct.cell.converters.MorphMLReaderTest.class,
                 ucl.physiol.neuroconstruct.genesis.GenesisFileManagerTest.class, 
                 ucl.physiol.neuroconstruct.neuron.NeuronFileManagerTest.class,
-                ucl.physiol.neuroconstruct.cell.SectionTest.class,
-                ucl.physiol.neuroconstruct.utils.NumberGeneratorTest.class,
-                ucl.physiol.neuroconstruct.project.ElecInputGeneratorTest.class,
+                ucl.physiol.neuroconstruct.neuroml.NetworkMLReaderTest.class,
                 ucl.physiol.neuroconstruct.neuroml.hdf5.NetworkMLReaderTest.class,
+                ucl.physiol.neuroconstruct.project.ElecInputGeneratorTest.class,
                 ucl.physiol.neuroconstruct.project.ConnSpecificPropsTest.class,
                 ucl.physiol.neuroconstruct.project.ProjectStructureTest.class,
                 ucl.physiol.neuroconstruct.project.ProjectTest.class,
-                ucl.physiol.neuroconstruct.project.MorphBasedConnGeneratorTest.class/**/); 
+                ucl.physiol.neuroconstruct.project.MorphBasedConnGeneratorTest.class,
+                ucl.physiol.neuroconstruct.utils.NumberGeneratorTest.class,
+                ucl.physiol.neuroconstruct.utils.equation.ExpressionTest.class/**/); 
         
         
         System.out.println("Finished the main nC tests.");
