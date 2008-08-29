@@ -23,7 +23,7 @@ package ucl.physiol.neuroconstruct.utils.equation;
 
 public class Variable extends EquationUnit
 {
-
+    static final long serialVersionUID = -47164166L;
 
     public Variable(String name)
     {
@@ -56,4 +56,45 @@ public class Variable extends EquationUnit
     {
         return getName();
     }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if(obj instanceof Variable)
+        {
+            Variable v = (Variable)obj;
+            if (v.getName().equals(getName())) return true;
+        }
+        return false;
+    }
+    
+    @Override
+    public Object clone()
+    {
+        Variable v2 = new Variable(new String(getName()));
+        return v2;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 53 * hash + (getName() != null ? getName().hashCode() : 0);
+        return hash;
+    }
+    
+
+    /**
+     * Default constructor is needed for XMLEncoder.
+     */
+    public Variable()
+    {
+    }
+    
+    @Override
+    public void setName(String name)
+    {
+        super.setName(name);
+    }
+    
 }

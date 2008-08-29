@@ -34,6 +34,16 @@ public class ParameterisedGroup implements Serializable
     
     public static boolean allowInhomogenousMechanisms = true;
     
+    private String name = null;
+
+    private String group = null;
+    
+    private Metric metric = null;
+    
+    private ProximalPref proximalPref = null;
+
+    private DistalPref distalPref = null;
+    
     public enum Metric implements Serializable { 
         
         PATH_LENGTH_FROM_ROOT("Path length from root")/*,
@@ -46,6 +56,7 @@ public class ParameterisedGroup implements Serializable
         {
             
         }
+        //static ArrayList<Metric> getAllMet
         
         Metric(String info)
         {
@@ -56,6 +67,7 @@ public class ParameterisedGroup implements Serializable
         {
             return info;
         }
+        
         
         @Override
         public String toString()
@@ -74,15 +86,6 @@ public class ParameterisedGroup implements Serializable
                                MOST_DIST_AT_1/*,
                                ALL_DIST_ENDS_AT_1*/}
     
-    private String name = null;
-
-    private String group = null;
-    
-    private Metric metric = null;
-    
-    private ProximalPref proximalPref = null;
-
-    private DistalPref distalPref = null;
 
     /* 
      * Needed for Serializable, shouldn't be used!...
@@ -104,6 +107,31 @@ public class ParameterisedGroup implements Serializable
         this.distalPref = distalPref;
     }
     
+    /*
+     * Returns the appropriate NEURON object (SubsetDomainIterator) with a constructor relevant for 
+     * this instance's settings
+     */
+    public String getNeuronObject()
+    {
+        int metricRef = -1;
+        if (metric.equals(Metric.PATH_LENGTH_FROM_ROOT)) 
+            metricRef = 0;
+        
+        int proxRef = -1;
+        if (proximalPref.equals(ProximalPref.NO_TRANSLATION))
+            proxRef = 0;
+        else if (proximalPref.equals(ProximalPref.MOST_PROX_AT_0))
+            proxRef = 1;
+        
+        int distRef = -1;
+        if (distalPref.equals(DistalPref.NO_NORMALISATION))
+            distRef = 0;
+        else if (distalPref.equals(DistalPref.MOST_DIST_AT_1))
+            distRef = 1;
+        
+        return "SubsetDomainIterator("+group+", "+metricRef+", "+proxRef+", "+distRef+")";
+    }
+    
     
     public double evaluateAt(Cell cell, SegmentLocation location) throws ParameterException
     {
@@ -114,9 +142,7 @@ public class ParameterisedGroup implements Serializable
         
         if (!seg.getSection().getGroups().contains(this.group))
             throw new ParameterException("The point: "+location+" on the cell: "+ cell +" is not a part of group of "+ this);
-        
-        ArrayList<Segment> segs = cell.getSegmentsInGroup(this.group);
-        
+               
         
         
         if (metric.equals(Metric.PATH_LENGTH_FROM_ROOT))
@@ -289,9 +315,27 @@ public class ParameterisedGroup implements Serializable
     @Override
     public String toString()
     {
-        return "ParameterisedGroup: "+name + " on: "+group+" with metric: "+ metric;
+        return "ParameterisedGroup: "+name + " on: "+group+" with metric: "+ metric+" ("+proximalPref+", "+distalPref+")";
         
     }
+    
+    public String toShortString()
+    {
+        return name + " ("+group+")";
+        
+    }
+    
+    @Override
+    public Object clone()
+    {
+        ParameterisedGroup pg2 = new ParameterisedGroup(new String(name),new String(group), metric, 
+            proximalPref, distalPref);
+        
+        
+        
+        return pg2;
+    }
+    
 
     @Override
     public boolean equals(Object obj)
@@ -367,7 +411,6 @@ public class ParameterisedGroup implements Serializable
             System.out.println("Param group: " + pg);
             
 
-            VariableMechanism cm = new VariableMechanism("cm");
             
             String expression1 = "A + B*(p)";
 
@@ -385,7 +428,9 @@ public class ParameterisedGroup implements Serializable
 
             System.out.println("Var param: " + vp1+", at 0.5: "+ vp1.evaluateAt(0.5));
             
-            cm.getParams().add(vp1);
+            
+            VariableMechanism cm = new VariableMechanism("cm", vp1);
+            
             
             System.out.println("Var mech: " + cm);
             

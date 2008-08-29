@@ -955,25 +955,28 @@ public class GenesisFileManager
                 String cellTypeName = project.cellGroupsInfo.getCellType(cellGroupName);
                 Cell cell = this.mappedCells.get(cellTypeName);
 
-                ArrayList<ChannelMechanism> chanMechNames = cell.getAllChannelMechanisms(false);
+                ArrayList<ChannelMechanism> chanMechsFixed = cell.getAllFixedChannelMechanisms(false);
+                ArrayList<String> chanMechsAll = cell.getAllChanMechNames(false);
 
                 //boolean foundFirstPassi
 
-                for (int j = 0; j < chanMechNames.size(); j++)
+                for (int j = 0; j < chanMechsAll.size(); j++)
                 {
-                    ChannelMechanism nextChanMech = chanMechNames.get(j);
-                    logger.logComment("Cell in group " + cellGroupName + " needs channel mech: " + nextChanMech);
+                    //ChannelMechanism nextChanMech = chanMechNames.get(j);
+                    String nextChanMechName = chanMechsAll.get(j);
                     
-                    String chanMechNameToUse = nextChanMech.getName();
+                    logger.logComment("Cell in group " + cellGroupName + " needs channel mech: " + nextChanMechName);
                     
-                    if (!includedChanMechNames.contains(chanMechNameToUse) &&
+                    //String chanMechNameToUse = nextChanMech.getName();
+                    
+                    if (!includedChanMechNames.contains(nextChanMechName) &&
                         project.generatedCellPositions.getNumberInCellGroup(cellGroupName) > 0)
                     {
-                        CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
+                        CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMechName);
 
                         if (cellMech == null)
                         {
-                            throw new GenesisException("Problem including cell mech: " + nextChanMech);
+                            throw new GenesisException("Problem including cell mech: " + nextChanMechName);
 
                         }
 
@@ -1011,7 +1014,7 @@ public class GenesisFileManager
                             if (!success)
                             {
                                 throw new GenesisException("Problem generating file for cell mech: "
-                                                           + nextChanMech
+                                                           + nextChanMechName
                                                            +
                                                            "\nPlease ensure there is an implementation for that mechanism in GENESIS");
 
@@ -1020,9 +1023,72 @@ public class GenesisFileManager
                             response.append("include " + getFriendlyDirName(dir) + cellMech.getInstanceName() + "\n");
                             response.append("make_" + cellMech.getInstanceName() + "\n\n");
 
-                            includedChanMechNames.add(chanMechNameToUse);
+                            includedChanMechNames.add(nextChanMechName);
                         }
                     }
+                    /*
+                    if (nextChanMech.getExtraParameters().size()>0)
+                    {
+                        String uniq = nextChanMech.getUniqueName();
+                        
+                        addComment(response, "Adding unique channel: "+ uniq + " for: "+ nextChanMech.toString());
+                        
+                        String oldChan = "/library/"+nextChanMech.getName();
+                        String newChan = "/library/"+ uniq;
+                        
+                        response.append("copy "+oldChan +" "+ newChan + "\n");
+                        
+                        String initCall = "";
+                        boolean onlyPassive = false;
+                        
+                        for(MechParameter mp: nextChanMech.getExtraParameters())
+                        {
+                            if (!mp.getName().equals(ChannelMLConstants.ION_CONC_FIXED_POOL_PHI_ELEMENT))
+                            {
+                                GenesisFileManager.addQuickComment(response, "Mechanism "+nextChanMech.getName()+" has parameter "+mp.getName()+" = "+mp.getValue());
+                                
+                                String paramName = mp.getName();
+                                float paramVal = mp.getValue();
+                                
+                                if (mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT) || 
+                                    mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT_2))
+                                {
+
+                                    paramVal = (float)UnitConverter.getVoltage(mp.getValue(),
+                                                        UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                        project.genesisSettings.getUnitSystemToUse()); 
+                                    paramName = "Ek";
+                                    
+                                    if (nextChanMech.getExtraParameters().size()==1)
+                                        onlyPassive = true;
+                                }
+
+                                response.append("setfield "+newChan+" "+paramName+" "+paramVal+"\n");
+                                initCall = "init_"+nextChanMech.getName()+" "+newChan+"\n\n";
+                            }
+                            else
+                            {
+                                GenesisFileManager.addQuickComment(response, "Ignoring parameter "+mp.getName()+" on mechanism "+nextChanMech.getName()+" which has val  = "+mp.getValue()+"");
+                            }
+                        }
+                        
+                        if (!onlyPassive && initCall.length()>0)
+                        {
+                            GenesisFileManager.addQuickComment(response, "Reinitialising tables in channel with new params");
+                            response.append(initCall);
+                        }
+                        else
+                        {
+                            response.append("\n");
+                        }
+                        
+                        
+                    }*/
+                }
+                
+                for(int j = 0; j < chanMechsFixed.size(); j++)
+                {
+                    ChannelMechanism nextChanMech = chanMechsFixed.get(j);
                     
                     if (nextChanMech.getExtraParameters().size()>0)
                     {
@@ -1082,6 +1148,8 @@ public class GenesisFileManager
                         
                     }
                 }
+                
+                
             }
             else
             {
@@ -2424,7 +2492,7 @@ public class GenesisFileManager
                         
                         response.append("str tempChanName\n\n");
                         
-                        ArrayList<ChannelMechanism> passChans =  CellTopologyHelper.getPassiveChannels(mappedCell, project);
+                        ArrayList<String> passChanNames =  CellTopologyHelper.getPassiveChannels(mappedCell, project);
                         
                         Hashtable<ChannelMechanism, Vector<String>> chanMechVsGroups = mappedCell.getChanMechsVsGroups();
                         
@@ -2457,7 +2525,7 @@ public class GenesisFileManager
 
                                             if ((paramName.equals(BiophysicsConstants.PARAMETER_REV_POT) || 
                                                 paramName.equals(BiophysicsConstants.PARAMETER_REV_POT_2)) &&
-                                                cm.getName().equals(passChans.get(0).getName()))
+                                                cm.getName().equals(passChanNames.get(0)))
                                             {
                                                 paramVal = (float)UnitConverter.getVoltage(mp.getValue(),
                                                                     UnitConverter.NEUROCONSTRUCT_UNITS,
@@ -2520,7 +2588,7 @@ public class GenesisFileManager
 
                                                 if ((paramName.equals(BiophysicsConstants.PARAMETER_REV_POT) || 
                                                     paramName.equals(BiophysicsConstants.PARAMETER_REV_POT_2))&&
-                                                    cm.getName().equals(passChans.get(0).getName()))
+                                                    cm.getName().equals(passChanNames.get(0)))
                                                 {
                                                     paramVal = (float)UnitConverter.getVoltage(mp.getValue(),
                                                                         UnitConverter.NEUROCONSTRUCT_UNITS,
@@ -2620,19 +2688,19 @@ public class GenesisFileManager
 
             logger.logComment("\n              ++++++++    Calculating ion exchange, conc dep, etc for: "+mappedCell.getInstanceName()+"...");
 
-            ArrayList<ChannelMechanism> chanMechs = mappedCell.getAllChannelMechanisms(false);
-            logger.logComment("Chan mechs: "+ chanMechs);
+            ArrayList<String> chanMechNames = mappedCell.getAllChanMechNames(false);
+            logger.logComment("Chan mechs: "+ chanMechNames);
 
             Hashtable<String, ArrayList<String>> ionCurrentSources = new Hashtable<String,ArrayList<String>>();
             Hashtable<String, ArrayList<String>> ionRateDependence = new Hashtable<String,ArrayList<String>>();
             Hashtable<String, ArrayList<String>> ionConcentration = new Hashtable<String,ArrayList<String>>();
             Hashtable<String, ArrayList<String>> ionCurrFixedRevPot = new Hashtable<String,ArrayList<String>>();
 
-            for (int j = 0; j < chanMechs.size(); j++)
+            for (int j = 0; j < chanMechNames.size(); j++)
             {
-                logger.logComment(j+"   -    Looking at Chan mech...: "+chanMechs.get(j));
+                logger.logComment(j+"   -    Looking at Chan mech...: "+chanMechNames.get(j));
 
-                String nextChanMech = chanMechs.get(j).getName();
+                String nextChanMech = chanMechNames.get(j);
                 CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech);
 
 

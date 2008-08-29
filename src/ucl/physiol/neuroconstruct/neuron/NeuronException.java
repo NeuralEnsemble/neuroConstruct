@@ -310,7 +310,7 @@ public class NeuronException extends Exception
 
                       System.out.println("New sec "+ sec);
 
-                      System.out.println("New chans: "+ cell.getChanMechsForSection(sec));
+                      System.out.println("New chans: "+ cell.getFixedChanMechsForSection(sec));
                      // System.out.println("----------------------------------");
 
                   }

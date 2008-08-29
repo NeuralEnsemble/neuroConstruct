@@ -13,6 +13,8 @@
 
 package ucl.physiol.neuroconstruct.utils.equation;
 
+import java.io.Serializable;
+
 
 /**
  * Helper class for parsing equations
@@ -21,8 +23,10 @@ package ucl.physiol.neuroconstruct.utils.equation;
  *  
  */
 
-public class Argument
+public class Argument implements Serializable
 {
+    static final long serialVersionUID = -7167676767444L;
+    
     String name = null;
     double value = 0;
 
@@ -31,6 +35,19 @@ public class Argument
         this.name = name;
         this.value = value;
     }
+
+    public Argument()
+    {
+    }
+    
+    
+    @Override
+    public Object clone()
+    {
+        Argument a2 = new Argument(new String(name), value);
+        return a2;
+    }
+    
 
     public String getName()
     {
@@ -45,6 +62,11 @@ public class Argument
     public void setValue(double value)
     {
         this.value = value;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
     }
 
 

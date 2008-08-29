@@ -15,6 +15,8 @@ package ucl.physiol.neuroconstruct.cell;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import ucl.physiol.neuroconstruct.utils.equation.*;
 
  /**
@@ -39,7 +41,7 @@ public class VariableParameter implements Serializable
     
     private Variable parameterisation =  null;
 
-    private VariableParameter()
+    public VariableParameter()
     {
     }
 
@@ -55,6 +57,30 @@ public class VariableParameter implements Serializable
         
         this.expression = Expression.parseExpression(expr, getAllVariables());
         
+    }
+    
+    @Override
+    public Object clone()
+    {
+        ArrayList<Argument> expressionArgs2 = new ArrayList<Argument>();
+        for(Argument a: expressionArgs)
+            expressionArgs2.add((Argument)a.clone());
+            
+        VariableParameter vp2 = new VariableParameter();
+        vp2.setName(new String(name));
+        vp2.setParameterisation((Variable)parameterisation.clone());
+        vp2.setExpressionArgs(expressionArgs2);
+        try
+        {
+            vp2.setExpression(Expression.parseExpression(expression.toString(), vp2.getAllVariables()));
+        }
+        catch (EquationException ex)
+        {
+            return null;
+        }
+        
+        
+        return vp2;
     }
     
     private Variable[] getAllVariables()
@@ -83,6 +109,52 @@ public class VariableParameter implements Serializable
         return expression.evaluateAt(evalArgs);
         
     }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        final VariableParameter other = (VariableParameter) obj;
+        
+        if (this.name != other.name && (this.name == null || !this.name.equals(other.name)))
+        {
+            return false;
+        }
+        if (this.expression != other.expression && (this.expression == null || !this.expression.equals(other.expression)))
+        {
+            return false;
+        }
+        if (this.expressionArgs != other.expressionArgs && (this.expressionArgs == null || !this.expressionArgs.equals(other.expressionArgs)))
+        {
+            return false;
+        }
+        if (this.parameterisation != other.parameterisation && (this.parameterisation == null || !this.parameterisation.equals(other.parameterisation)))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 79 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 79 * hash + (this.expression != null ? this.expression.hashCode() : 0);
+        hash = 79 * hash + (this.expressionArgs != null ? this.expressionArgs.hashCode() : 0);
+        hash = 79 * hash + (this.parameterisation != null ? this.parameterisation.hashCode() : 0);
+        return hash;
+    }
+    
+    
+    
     
 
     @Override
@@ -120,6 +192,25 @@ public class VariableParameter implements Serializable
     public void setExpression(EquationUnit expression)
     {
         this.expression = expression;
+    }
+        public ArrayList<Argument> getExpressionArgs()
+    {
+        return expressionArgs;
+    }
+
+    public void setExpressionArgs(ArrayList<Argument> expressionArgs)
+    {
+        this.expressionArgs = expressionArgs;
+    }
+
+    public Variable getParameterisation()
+    {
+        return parameterisation;
+    }
+
+    public void setParameterisation(Variable parameterisation)
+    {
+        this.parameterisation = parameterisation;
     }
     
     

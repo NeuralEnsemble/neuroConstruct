@@ -14,6 +14,7 @@ package ucl.physiol.neuroconstruct.j3D;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
 import javax.media.j3d.*;
 import javax.vecmath.*;
 
@@ -34,6 +35,7 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.gui.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
+import ucl.physiol.neuroconstruct.utils.equation.EquationException;
 import ucl.physiol.neuroconstruct.utils.units.*;
 
 /**
@@ -49,9 +51,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
 
 public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 {
-
     private ClassLogger logger = new ClassLogger("OneCell3DPanel");
-
 
     public static String highlightSecSegs = "Pick Sections/Segments";
     public static String highlightGroups = "Groups";
@@ -721,12 +721,11 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             JRadioButton selectedRadioButton = (JRadioButton) cause;
             selectedParamGroup = selectedRadioButton.getText();
         }
-        catch (ClassCastException ex)
+        catch (Exception ex)
         {
             // ignore, probably update due to change in combo box...
         }
         
-        //Hashtable<VariableMechanism, ParameterisedGroup> vmpg = this.displayedCell.getVarMechsVsParaGroups();
         Vector<ParameterisedGroup> pgs = displayedCell.getParameterisedGroups();
         
         if (pgs.size()==0)
@@ -761,7 +760,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                     ParameterisedGroup pg3 = new ParameterisedGroup("PathLengthOverDendrites", 
                                                                    Section.DENDRITIC_GROUP, 
                                                                    Metric.PATH_LENGTH_FROM_ROOT, 
-                                                                   ProximalPref.NO_TRANSLATION, 
+                                                                   ProximalPref.MOST_PROX_AT_0, 
                                                                    DistalPref.NO_NORMALISATION);
                     
                     displayedCell.addParameterisedGroup(pg3);
@@ -778,6 +777,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         else
         {
             ParameterisedGroup selParamGroup = null;
+            JRadioButton selButton = null;
             
             for(ParameterisedGroup pg: pgs)
             {
@@ -793,11 +793,79 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                     selParamGroup = pg;
                 }
             }
-            if (selParamGroup==null) selParamGroup = pgs.firstElement();
+            if (selParamGroup==null)
+            {
+                //selParamGroup = pgs.firstElement();
+                ((JRadioButton)jPanelColourControls.getComponent(0)).setSelected(true);
+                selParamGroup = pgs.firstElement();
+            }
+            
+            highlightParamGroup(selParamGroup);
+            //JButton edit = new JButton("Edit");
+            
+            JButton add = new JButton("Add");
+            jPanelColourControls.add(add);
+            //jPanelColourControls.add(edit);
+            
+            add.addActionListener(new java.awt.event.ActionListener()
+            {
+                public void actionPerformed(ActionEvent e)
+                {
+                    logger.logComment("Adding a ParamGroup", true);
+                    
+                    Vector<String> groups = displayedCell.getAllGroupNames();
+                    
+                    String group = (String)JOptionPane.showInputDialog(null, 
+                                   "Please select the group to parameterise over",
+                                   "Select group", 
+                                   JOptionPane.QUESTION_MESSAGE , 
+                                   null,
+                                   groups.toArray(), 
+                                   Section.ALL);
+                    
+                    if (group==null || group.length()==0) return;
+                    
+                    String name = JOptionPane.showInputDialog(null, 
+                                   "Please enter the name of the new Parameterised Group",
+                                   "ParamGroup_"+group);
+                    
+                    if (name==null || name.length()==0) return;
+                    
+                    Metric metric = (Metric)JOptionPane.showInputDialog(null, 
+                                   "Please select the metric for the parameterisation",
+                                   "Select metric", 
+                                   JOptionPane.QUESTION_MESSAGE , 
+                                   null,
+                                   Metric.values(), 
+                                   Metric.values()[0]);
+                    
+                    
+                    ProximalPref pp = (ProximalPref)JOptionPane.showInputDialog(null, 
+                                   "Please select the preference for the proximal point of the parameterisation",
+                                   "Select proximal", 
+                                   JOptionPane.QUESTION_MESSAGE , 
+                                   null,
+                                   ProximalPref.values(), 
+                                   ProximalPref.values()[0]);
+                    
+                    DistalPref dp = (DistalPref)JOptionPane.showInputDialog(null, 
+                                   "Please select the preference for the distal point of the parameterisation",
+                                   "Select distal", 
+                                   JOptionPane.QUESTION_MESSAGE , 
+                                   null,
+                                   DistalPref.values(), 
+                                   DistalPref.values()[0]);
+                    
+                    ParameterisedGroup pg = new ParameterisedGroup(name, group, metric, pp, dp);
+                    
+                    displayedCell.getParameterisedGroups().add(pg);
+                    
+                    highlightParamGroups(null);
+                }
+            });
             
             jPanelColourControls.repaint();
 
-            highlightParamGroup(selParamGroup);
         }
         
         
@@ -898,7 +966,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
                 double fract = (val - min) / (max - min);
 
-                Color c = GeneralUtils.getFractionalColour(segmentHighlightMain, segmentHighlightSecondary, fract);
+                Color c = GeneralUtils.getFractionalColour(segmentHighlightSecondary, segmentHighlightMain, fract);
                 Appearance app = Utils3D.getGeneralObjectAppearance(c);
                 
                 myOneCell3D.setSegmentAppearance(app, nextSegment.getSegmentId());
@@ -907,12 +975,12 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             
             JLabel valMin = new JLabel(" " + min + " ");
             valMin.setOpaque(true);
-            valMin.setBackground(segmentHighlightMain);
+            valMin.setBackground(segmentHighlightSecondary);
             jPanelColourControls.add(valMin);
             
             JLabel valMax = new JLabel(" " + max + " ");
             valMax.setOpaque(true);
-            valMax.setBackground(segmentHighlightSecondary);
+            valMax.setBackground(segmentHighlightMain);
             jPanelColourControls.add(valMax);
             
         }
@@ -970,16 +1038,15 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         if (densMechRadioButtons.size() == 0)
         {
-            ArrayList<ChannelMechanism> allAllowedChanMechs = this.displayedCell.getAllChannelMechanisms(true);
+            ArrayList<String> allAllowedChanMechNames = this.displayedCell.getAllChanMechNames(true);
 
-            for (int i = 0; i < allAllowedChanMechs.size(); i++)
+            for (int i = 0; i < allAllowedChanMechNames.size(); i++)
             {
-                ChannelMechanism nextChanMech = allAllowedChanMechs.get(i);
+                String nextChanMechName = allAllowedChanMechNames.get(i);
 
-                JRadioButton next
-                    = createGroupRadioButton(nextChanMech.getName(), densMechButtonGroup);
+                JRadioButton next = createGroupRadioButton(nextChanMechName, densMechButtonGroup);
 
-                if (selectedDensMechName==null) selectedDensMechName = nextChanMech.getName();
+                if (selectedDensMechName==null) selectedDensMechName = nextChanMechName;
 
                 densMechRadioButtons.put(next.getText(), next);
             }
@@ -1039,13 +1106,9 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
                 if (groupChanMechs!=null)
                 {
-                    if (maxVal < groupChanMechs.getSpeed())
-                        maxVal = groupChanMechs.getSpeed();
-
-                    if (minVal > groupChanMechs.getSpeed())
-                        minVal = groupChanMechs.getSpeed();
+                    if (maxVal < groupChanMechs.getSpeed()) maxVal = groupChanMechs.getSpeed();
+                    if (minVal > groupChanMechs.getSpeed()) minVal = groupChanMechs.getSpeed();
                 }
-
             }
             else
             {
@@ -1058,16 +1121,52 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                     {
                         if (nextChanMech.getDensity()!= noGmaxVal)
                         {
-                            if (maxVal < nextChanMech.getDensity())
-                                maxVal = nextChanMech.getDensity();
-
-                            if (minVal > nextChanMech.getDensity())
-                                minVal = nextChanMech.getDensity();
+                            if (maxVal < nextChanMech.getDensity()) maxVal = nextChanMech.getDensity();
+                            if (minVal > nextChanMech.getDensity()) minVal = nextChanMech.getDensity();
                         }
                     }
                 }
             }
         }
+        Enumeration<VariableMechanism> varMechs = this.displayedCell.getVarMechsVsParaGroups().keys();
+        
+        while (varMechs.hasMoreElements())
+        {
+            VariableMechanism vm = varMechs.nextElement();
+            if(vm.getName().equals(selectedDensMechName))
+            {
+                ParameterisedGroup pg = this.displayedCell.getVarMechsVsParaGroups().get(vm);
+                try
+                {
+
+                    double minPGVal = pg.getMinValue(displayedCell);
+                    double maxPGVal = pg.getMaxValue(displayedCell);
+                    
+                    double discretisation = 0.1;
+                    for(double i=0;i<=1;i=i+discretisation)
+                    {
+                        double midPGval = minPGVal + i*(maxPGVal -minPGVal);
+                        float midMechVal = (float)vm.evaluateAt(midPGval); 
+                        logger.logComment("i: "+i+", midPGval: "+midPGval+", midMechVal: "+midMechVal, true);
+                        
+                        if (maxVal < midMechVal) maxVal = midMechVal;
+                        if (minVal > midMechVal) minVal = midMechVal;
+                    }
+                        
+                }
+                catch (ParameterException ex)
+                {
+                    GuiUtils.showErrorMessage(logger, "Unable to evaluate values for: "+ pg+" on cell: "+displayedCell, ex, myParent);
+                    return;
+                }
+                catch (EquationException ex)
+                {
+                    GuiUtils.showErrorMessage(logger, "Unable to evaluate values for: "+ vm+" on cell: "+displayedCell, ex, myParent);
+                    return;
+                }
+            }
+        }
+        logger.logComment("Max: "+ maxVal+", min: "+minVal);
 
         for (int k = 0; k < groups.size(); k++)
         {
@@ -1107,8 +1206,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                                 fraction = (nextChanMech.getDensity() - minVal) / (maxVal - minVal);
                             }
                             highlightSingleGroup(group, GeneralUtils.getFractionalColour(segmentHighlightSecondary,
-                                segmentHighlightMain,
-                                fraction));
+                                segmentHighlightMain, fraction));
                         }
                         else
                         {
@@ -1117,12 +1215,54 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                             jLabelNoGmax.setOpaque(true);
                             jLabelNoGmax.setBackground(segmentHighlightNoGmax);
                         }
-                        
-                        
                     }
                 }
             }
         }
+        
+        varMechs = this.displayedCell.getVarMechsVsParaGroups().keys();
+        
+        while (varMechs.hasMoreElements())
+        {
+            VariableMechanism vm = varMechs.nextElement();
+            if(vm.getName().equals(selectedDensMechName))
+            {
+                ParameterisedGroup pg = this.displayedCell.getVarMechsVsParaGroups().get(vm);
+                try
+                {
+                    ArrayList<Segment> segs = displayedCell.getSegmentsInGroup(pg.getGroup());
+                    for(Segment seg:  segs)
+                    {
+                        double pgVal = pg.evaluateAt(displayedCell, new SegmentLocation(seg.getSegmentId(), 0.5f));
+                        float vmVal = (float)vm.evaluateAt(pgVal);
+                        float fraction = -1;
+                        if (maxVal != minVal)
+                        {
+                            fraction = (vmVal - minVal) / (maxVal - minVal);
+                        }
+                        
+                        Color c = GeneralUtils.getFractionalColour(segmentHighlightSecondary, segmentHighlightMain, fraction);
+                        Appearance app = Utils3D.getGeneralObjectAppearance(c);
+
+                        myOneCell3D.setSegmentAppearance(app, seg.getSegmentId());
+                    }
+                    //pg.
+                }
+                catch (ParameterException ex)
+                {
+                    GuiUtils.showErrorMessage(logger, "Unable to evaluate values for: "+ pg+" on cell: "+displayedCell, ex, myParent);
+                    return;
+                }
+                catch (EquationException ex)
+                {
+                    GuiUtils.showErrorMessage(logger, "Unable to evaluate values for: "+ vm+" on cell: "+displayedCell, ex, myParent);
+                    return;
+                }
+            }
+        }
+        
+        
+        
         JPanel maxMinPanel = new JPanel();
 
         if (maxVal != -1*Float.MAX_VALUE && minVal != Float.MAX_VALUE)
@@ -1144,13 +1284,9 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
             if (maxVal != minVal)
             {
-
                 JLabel densMin = new JLabel(prefix + minVal + suffix);
-
-                //condDensMin.setFont(condDensMin.getFont().deriveFont(12f));
                 densMin.setOpaque(true);
                 densMin.setBackground(segmentHighlightSecondary);
-
                 maxMinPanel.add(densMin);
 
             }
@@ -1207,7 +1343,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             StringBuffer chanInfo = new StringBuffer("(Seg: "+ latestSelectedSegment.getSegmentName()
                                                      +", Sec: "+ latestSelectedSegment.getSection().getSectionName()+") ");
 
-            ArrayList<ChannelMechanism> chans = this.displayedCell.getChanMechsForSegment(latestSelectedSegment);
+            ArrayList<ChannelMechanism> chans = this.displayedCell.getFixedChanMechsForSegment(latestSelectedSegment);
 
             for (int i = 0; i < chans.size(); i++)
             {
@@ -1219,6 +1355,31 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                     chanInfo.append(" "+nextChanMech.getExtraParamsBracket());
                 }
                 if (i < chans.size()-1) chanInfo.append(", ");
+            }
+            ArrayList<VariableMechanism> vms = displayedCell.getVarChanMechsForSegment(latestSelectedSegment);
+            
+            for(VariableMechanism vm: vms)
+            {
+                ParameterisedGroup pg = displayedCell.getVarMechsVsParaGroups().get(vm);
+                
+                double pgVal;
+                try
+                {
+                    pgVal = pg.evaluateAt(displayedCell, new SegmentLocation(latestSelectedSegment.getSegmentId(), 0.5f));
+                    float dens = (float)vm.evaluateAt(pgVal);
+                    chanInfo.append(" "+vm.getName() + ": "+dens);
+                }
+                catch (ParameterException ex)
+                {
+                    GuiUtils.showErrorMessage(logger, "Unable to evaluate values for: "+ pg+" on cell: "+displayedCell, ex, myParent);
+                    return;
+                }
+                catch (EquationException ex)
+                {
+                    GuiUtils.showErrorMessage(logger, "Unable to evaluate values for: "+ vm+" on cell: "+displayedCell, ex, myParent);
+                    return;
+                }
+                
             }
 
             ApPropSpeed appv = displayedCell.getApPropSpeedForSegment(latestSelectedSegment);
@@ -1287,7 +1448,6 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                     jButtonSegInfo_actionPerformed(e);
                 }
             });
-
 
             this.removeAllActionListeners(jButtonBiophysInfo);
 

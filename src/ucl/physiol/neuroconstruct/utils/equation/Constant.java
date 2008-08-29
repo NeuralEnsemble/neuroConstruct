@@ -27,6 +27,8 @@ import ucl.physiol.neuroconstruct.dataset.DataSet;
 
 public class Constant extends EquationUnit
 {
+    static final long serialVersionUID = -8761786276L;
+    
     private double value = 0;
 
     public Constant(double value)
@@ -34,6 +36,12 @@ public class Constant extends EquationUnit
         super("Constant = "+value);
         this.value = value;
     }
+
+    public Constant()
+    {
+    }
+    
+    
 
     public double evaluateAt(Argument[] args) throws EquationException
     {
@@ -57,6 +65,37 @@ public class Constant extends EquationUnit
     public String toString()
     {
         return getNiceString();
+    }
+    
+    
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+        if(obj instanceof Constant)
+        {
+            Constant c = (Constant)obj;
+            if (c.value == value) return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 53 * hash + (int)Double.doubleToLongBits(value);
+        return hash;
+    }
+
+    public double getValue()
+    {
+        return value;
+    }
+
+    public void setValue(double value)
+    {
+        this.value = value;
     }
 
 

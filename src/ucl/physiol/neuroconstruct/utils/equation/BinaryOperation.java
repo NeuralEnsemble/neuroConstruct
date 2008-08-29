@@ -25,16 +25,16 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
 
 public class BinaryOperation extends EquationUnit
 {
-    ClassLogger logger = new ClassLogger("BinaryOperation");
+
+    static final long serialVersionUID = -612672676548L;
+    
+    private static final ClassLogger logger = new ClassLogger("BinaryOperation");
 
     protected EquationUnit first = null;
     protected EquationUnit second = null;
 
     private char operation = '0';
-
-
-
-
+    
     public static final char PLUS = '+';
     public static final char MINUS = '-';
     public static final char PRODUCT = '*';
@@ -79,9 +79,6 @@ public class BinaryOperation extends EquationUnit
             return first.evaluateAt(args) / second.evaluateAt(args);
         }
 
-
-
-
         else
         {
             throw new EquationException("Unknown operation: "+ operation);
@@ -101,10 +98,74 @@ public class BinaryOperation extends EquationUnit
         return niceFirst+ " " + operation + " "+ niceSecond;
     }
 
+    /**
+     * Default constructor is needed for XMLEncoder.
+     */
+    public BinaryOperation()
+    {
+    }
+    
+       @Override
+    public boolean equals(Object obj)
+    {
+        if(obj instanceof BinaryOperation)
+        {
+            BinaryOperation bo = (BinaryOperation)obj;
+            if (bo.operation != operation) return false;
+            if (!bo.first.equals(first)) return false;
+            if (!bo.second.equals(second)) return false;
+            
+            return true;
+        }
+        logger.logError("Not a BinaryOperation");
+        return false;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 53 * hash + (int)operation;
+        hash = 53 * hash + first.hashCode();
+        hash = 53 * hash + second.hashCode();
+        return hash;
+    }
+
 
     public String toString()
     {
         return getNiceString();
+    }
+    
+    
+    public EquationUnit getFirst()
+    {
+        return first;
+    }
+
+    public void setFirst(EquationUnit first)
+    {
+        this.first = first;
+    }
+
+    public char getOperation()
+    {
+        return operation;
+    }
+
+    public void setOperation(char operation)
+    {
+        this.operation = operation;
+    }
+
+    public EquationUnit getSecond()
+    {
+        return second;
+    }
+
+    public void setSecond(EquationUnit second)
+    {
+        this.second = second;
     }
 
 

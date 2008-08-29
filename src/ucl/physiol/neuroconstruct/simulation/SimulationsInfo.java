@@ -337,7 +337,7 @@ public class SimulationsInfo extends AbstractTableModel
                 StringBuffer info = new StringBuffer("[");
                 Cell cell = project.cellManager.getCell(cellType);
 
-                ArrayList<ChannelMechanism> allChanMechs = cell.getAllChannelMechanisms(true);
+                ArrayList<ChannelMechanism> allChanMechs = cell.getAllFixedChannelMechanisms(true);
 
                 for (int j = 0; j < allChanMechs.size(); j++)
                 {
@@ -346,6 +346,14 @@ public class SimulationsInfo extends AbstractTableModel
 
                     info.append(chanMech.getName() + " (" + chanMech.getDensity() + ")" +
                                 " on: " + groups + ", ");
+                }
+                Iterator<VariableMechanism> vMechs = cell.getVarMechsVsParaGroups().keySet().iterator();
+                while(vMechs.hasNext())
+                {
+                    VariableMechanism vm = vMechs.next();
+                    ParameterisedGroup pg = cell.getVarMechsVsParaGroups().get(vm);
+                    
+                    info.append(vm + " present on: " + pg + ", ");
                 }
 
                 ArrayList<String> allSynapses = cell.getAllAllowedSynapseTypes();

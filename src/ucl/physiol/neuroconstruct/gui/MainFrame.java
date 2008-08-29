@@ -13564,12 +13564,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 jComboBoxCellTypes.setSelectedItem(importedCell);
 
-                ArrayList<Object> cellMechs = new ArrayList<Object>();
-                cellMechs.addAll(importedCell.getAllChannelMechanisms(true));
+                ArrayList<Object> cellMechNames = new ArrayList<Object>();
+                cellMechNames.addAll(importedCell.getAllChanMechNames(true));
                 
                 ArrayList<String> synapses = importedCell.getAllAllowedSynapseTypes();
 
-                cellMechs.addAll(synapses);
+                cellMechNames.addAll(synapses);
 
                 Vector allStims = otherProj.elecInputInfo.getAllStims();
                 for (int i = 0; i < allStims.size(); i++)
@@ -13584,23 +13584,23 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                         next instanceof RandomSpikeTrainSettings)
                     {
                         String spikeCPName = ((RandomSpikeTrainSettings)next).getSynapseType();
-                        cellMechs.add(spikeCPName);
+                        cellMechNames.add(spikeCPName);
                     }
                 }
 
-                logger.logComment("Cell mechs on imported cell: "+ cellMechs);
+                logger.logComment("Cell mechs on imported cell: "+ cellMechNames);
 
-                for (int i = 0; i < cellMechs.size(); i++)
+                for (int i = 0; i < cellMechNames.size(); i++)
                 {
                     String cellMechName = null;
-                    if (cellMechs.get(i) instanceof ChannelMechanism)
+                    if (cellMechNames.get(i) instanceof ChannelMechanism)
                     {
-                        ChannelMechanism nextChanMech = (ChannelMechanism)cellMechs.get(i);
+                        ChannelMechanism nextChanMech = (ChannelMechanism)cellMechNames.get(i);
                         cellMechName = nextChanMech.getName();
                     }
                     else
                     {
-                        cellMechName = (String)cellMechs.get(i);
+                        cellMechName = (String)cellMechNames.get(i);
                     }
 
 

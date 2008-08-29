@@ -2511,7 +2511,7 @@ public class NeuronFileManager
                 logger.logComment("Dir for NeuronFiles: " + dirForNeuronFiles);
 
                 ArrayList<Object> cellMechanisms = new ArrayList<Object>();
-                cellMechanisms.addAll(cell.getAllChannelMechanisms(true));
+                cellMechanisms.addAll(cell.getAllChanMechNames(true));
 
                 //Vector allSyns = cell.getAllAllowedSynapseTypes();
 

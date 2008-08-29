@@ -566,7 +566,7 @@ public class CellTopologyHelper
      */
     public static boolean hasExtraCellMechParams(Cell cell)
     {
-        ArrayList<ChannelMechanism> chanMechs = cell.getAllChannelMechanisms(true);
+        ArrayList<ChannelMechanism> chanMechs = cell.getAllFixedChannelMechanisms(true);
         for(ChannelMechanism cm: chanMechs)
         {
             if (cm.getExtraParameters().size()>0) return true;
@@ -1936,7 +1936,7 @@ public class CellTopologyHelper
      */
     public static void updateChannelMechanisms(Cell cell, Project project)
     {
-        ArrayList allChanMechs = cell.getAllChannelMechanisms(true);
+        ArrayList allChanMechs = cell.getAllFixedChannelMechanisms(true);
         boolean usingOldMethod = false;
 
         for (int i = 0; i < allChanMechs.size(); i++)
@@ -2080,7 +2080,7 @@ public class CellTopologyHelper
 
         sb.append("  "+GeneralUtils.getEndLine(html));
 
-        ArrayList<ChannelMechanism> allChanMechs = cell.getAllChannelMechanisms(true);
+        ArrayList<ChannelMechanism> allChanMechs = cell.getAllFixedChannelMechanisms(true);
         GeneralUtils.reorderAlphabetically(allChanMechs, true);
         for (int i = 0; i < allChanMechs.size(); i++)
         {
@@ -2149,10 +2149,16 @@ public class CellTopologyHelper
         {
             VariableMechanism vm = varMechs.nextElement();
             ParameterisedGroup pg = varMechsVsParaGroups.get(vm);
+            String mechString = vm.getName();
+            if (projHtml)
+            {
+                mechString = ClickProjectHelper.getCellMechLink(mechString);
+            }
             
             
-            sb.append("    Variable Mechanism: "+GeneralUtils.getTabbedString(vm.toString(), "b", html)
-                      +" is present on: "+GeneralUtils.getTabbedString(pg.toString(), "b", html)+GeneralUtils.getEndLine(html));
+            sb.append("    Variable Mechanism: "+GeneralUtils.getTabbedString(mechString, "b", html)
+                +" with param: "+GeneralUtils.getTabbedString(vm.getParam().toString(), "b", html)
+                      +" is present on: "+GeneralUtils.getTabbedString(pg.getName(), "b", html)+GeneralUtils.getEndLine(html));
             
         }
         if (varMechsVsParaGroups.size()>0) sb.append("  "+GeneralUtils.getEndLine(html));
@@ -2208,7 +2214,14 @@ public class CellTopologyHelper
         sb.append("    Number of sections            : " + GeneralUtils.getTabbedString(sections.size()+"", "b", html)
                   + GeneralUtils.getEndLine(html));
         sb.append("    Total internal divisions      : " + GeneralUtils.getTabbedString(totIntDivs+"", "b", html)
-                  + GeneralUtils.getEndLine(html));
+                  + GeneralUtils.getEndLine(html)+ GeneralUtils.getEndLine(html));
+        
+        for(ParameterisedGroup pg: cell.getParameterisedGroups())
+        {
+            sb.append("    ParameterisedGroup: "+GeneralUtils.getBold(pg.getName(), html) 
+                + " on: "+GeneralUtils.getBold(pg.getGroup(), html)+" with metric: "
+                + GeneralUtils.getBold(pg.getMetric()+"", html)+ GeneralUtils.getEndLine(html));
+        }
 
         float totalSurfaceArea = 0;
         float totalLength = 0;
@@ -2552,7 +2565,7 @@ public class CellTopologyHelper
 
         //ArrayList<ChannelMechanism> cellMechs = cell.getAllChannelMechanisms();
 
-        if (cell.getAllChannelMechanisms(true).size() == 0)
+        if (cell.getAllChanMechNames(true).size() == 0)
         {
             errorReport.append("Error: Cell does not contain any membrane mechanisms");
         }
@@ -2565,9 +2578,9 @@ public class CellTopologyHelper
 
             ArrayList<Section> allSections = cell.getAllSections();
 
-            ArrayList<ChannelMechanism> passChans = getPassiveChannels(cell, project);
+            ArrayList<String> passChanNames = getPassiveChannels(cell, project);
 
-            logger.logComment("Passive chans: "+ passChans);
+            logger.logComment("Passive chans: "+ passChanNames);
 
             int numNoPassError = 0;
             int numManyPassWarn = 0;
@@ -2575,7 +2588,9 @@ public class CellTopologyHelper
             for (int j = 0; j < allSections.size(); j++)
             {
                 Section nextSec = allSections.get(j);
-                ArrayList<ChannelMechanism> mechs = cell.getChanMechsForSection(nextSec);
+                ArrayList<ChannelMechanism> fixedMechs = cell.getFixedChanMechsForSection(nextSec);
+                ArrayList<VariableMechanism> varMechs = cell.getVarChanMechsForSection(nextSec);
+                
                 ApPropSpeed appv = cell.getApPropSpeedForSection(nextSec);
 
                 float specCap = cell.getSpecCapForSection(nextSec);
@@ -2595,14 +2610,14 @@ public class CellTopologyHelper
                     {
                         errorReport.append("Error: "+appv+" is not a sensible value for action potential propagation velocity\n");
                     }
-                    if (mechs.size()>0)
+                    if (fixedMechs.size()+varMechs.size()>0)
                     {
                         warningReport.append("Warning: Section " + nextSec.getSectionName() +
-                                               " has an action potential propagation velocity specified, and so any channel mechanisms placed on it "+mechs+" will not be simulated\n");
+                                               " has an action potential propagation velocity specified, and so any channel mechanisms placed on it: "+fixedMechs+", "+varMechs+" will not be simulated\n");
                     }
                 }
 
-                logger.logComment("mechs here: "+ mechs);
+                logger.logComment("mechs here: "+fixedMechs+", "+varMechs);
 
                 //int numPassiveChans = 0;
                 ArrayList<ChannelMechanism> passChansHere = new ArrayList<ChannelMechanism>();
@@ -2620,9 +2635,9 @@ public class CellTopologyHelper
                     }
                 }
 
-                for (int k = 0; k < mechs.size(); k++)
+                for (int k = 0; k < fixedMechs.size(); k++)
                 {
-                    ChannelMechanism cm = mechs.get(k);
+                    ChannelMechanism cm = fixedMechs.get(k);
 
                     if (!cellMechNames.contains(cm.getName()) && !missingCellMechs.contains(cm.getName()))
                     {
@@ -2631,7 +2646,20 @@ public class CellTopologyHelper
 
                         missingCellMechs.add(cm.getName());
                     }
-                    if (passChans.contains(cm)) passChansHere.add(cm); //numPassiveChans++;
+                    if (passChanNames.contains(cm.getName())) passChansHere.add(cm); //numPassiveChans++;
+                }
+                for(VariableMechanism vm: varMechs)
+                {
+                    
+                    if (!cellMechNames.contains(vm.getName()) && !missingCellMechs.contains(vm.getName()))
+                    {
+                        errorReport.append("Error: Project does not contain the cell mechanism: " + vm.getName() +
+                                           " referred to in this cell\n");
+
+                        missingCellMechs.add(vm.getName());
+                    }
+                    //TODO: Check if pass chan is variable
+                    //////////if (passChanNames.contains(vm.getName())) passChansHere.add(cm); //numPassiveChans++;
                 }
 
 
@@ -2981,7 +3009,7 @@ public class CellTopologyHelper
         }
         
         
-
+        /* TODO: Should really check the numbers match and that each in A is present in B */
         if (!cellA.getApPropSpeedsVsGroups().equals(cellB.getApPropSpeedsVsGroups()))
         {
             identical = false;
@@ -2990,6 +3018,39 @@ public class CellTopologyHelper
                 +"> " + cellB.getApPropSpeedsVsGroups() + EOL + EOL, "red", html));
 
             info.append("\n\n");
+        }
+        
+
+        /* TODO: Should really check the numbers match and that each in A is present in B */
+        if (!cellA.getParameterisedGroups().equals(cellB.getParameterisedGroups()))
+        {
+            identical = false;
+            info.append(GeneralUtils.getColouredString("Parameterised groups do not match"+EOL
+                +LT+" " + cellA.getParameterisedGroups() + ""+EOL
+                +"> " + cellB.getParameterisedGroups() + EOL + EOL, "red", html));
+
+            info.append("\n\n");
+        }
+        else
+        {
+            if (cellA.getParameterisedGroups().size()>0)
+                info.append(GeneralUtils.getColouredString("Compared "+minSize+" parameterised groups which were equal in both cells", "green", html)+EOL+EOL);
+        }
+
+        /* TODO: Should really check the numbers match and that each in A is present in B */
+        if (!cellA.getVarMechsVsParaGroups().equals(cellB.getVarMechsVsParaGroups()))
+        {
+            identical = false;
+            info.append(GeneralUtils.getColouredString("Variable mechanisms vs parameterised groups do not match"+EOL
+                +LT+" " + cellA.getVarMechsVsParaGroups() + ""+EOL
+                +"> " + cellB.getVarMechsVsParaGroups() + EOL + EOL, "red", html));
+
+            info.append("\n\n");
+        }
+        else
+        {
+            if (cellA.getVarMechsVsParaGroups().size()>0)
+                info.append(GeneralUtils.getColouredString("Compared variable mechanisms vs parameterised groups which were equal in both cells", "green", html)+EOL+EOL);
         }
 
 
@@ -3043,7 +3104,7 @@ public class CellTopologyHelper
         
             ArrayList<String> infoB = new ArrayList<String>();
             
-            ArrayList<ChannelMechanism> allChanMechsB = cellB.getAllChannelMechanisms(true);
+            ArrayList<ChannelMechanism> allChanMechsB = cellB.getAllFixedChannelMechanisms(true);
             GeneralUtils.reorderAlphabetically(allChanMechsB, true);
             
             for (int i = 0; i < allChanMechsB.size(); i++)
@@ -3061,7 +3122,7 @@ public class CellTopologyHelper
             
             ArrayList<String> infoA = new ArrayList<String>();
             
-            ArrayList<ChannelMechanism> allChanMechsA = cellA.getAllChannelMechanisms(true);
+            ArrayList<ChannelMechanism> allChanMechsA = cellA.getAllFixedChannelMechanisms(true);
             GeneralUtils.reorderAlphabetically(allChanMechsA, true);
             for (int i = 0; i < allChanMechsA.size(); i++)
             {
@@ -3632,22 +3693,22 @@ public class CellTopologyHelper
     }
 
 
-    public static ArrayList<ChannelMechanism> getPassiveChannels(Cell cell, Project project)
+    public static ArrayList<String> getPassiveChannels(Cell cell, Project project)
     {
-        ArrayList<ChannelMechanism> passiveChans = new ArrayList<ChannelMechanism>();
-        ArrayList<ChannelMechanism> allChanMechs = cell.getAllChannelMechanisms(true);
+        ArrayList<String> passiveChans = new ArrayList<String>();
+        ArrayList<String> allChanMechs = cell.getAllChanMechNames(true);
 
 
         for (int i = 0; i < allChanMechs.size(); i++)
         {
-            ChannelMechanism next = allChanMechs.get(i);
+            //ChannelMechanism next = allChanMechs.get(i);
 
-            CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(next.getName());
+            CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(allChanMechs.get(i));
             //try
             //{
             if (cellMech instanceof PassiveMembraneMechanism)
             {
-                passiveChans.add(next);
+                passiveChans.add(allChanMechs.get(i));
             }
             else if (cellMech instanceof ChannelMLCellMechanism)
             {
@@ -3682,7 +3743,7 @@ public class CellTopologyHelper
                 if (isCMLPassive)
                 {
                 //System.out.println("---");
-                    passiveChans.add(next);
+                    passiveChans.add(allChanMechs.get(i));
                 }
             }
         }
@@ -3780,13 +3841,14 @@ public class CellTopologyHelper
                                            html) + GeneralUtils.getEndLine(html));
 
 
-        ArrayList<ChannelMechanism>  allChanMechs = cell.getChanMechsForSegment(segment);
+        ArrayList<ChannelMechanism>  allFixedChanMechs = cell.getFixedChanMechsForSegment(segment);
 
         float specMembRes = -1;
 
-        for (int i = 0; i < allChanMechs.size(); i++)
+        //TODO: check variable chan mechs!!
+        for (int i = 0; i < allFixedChanMechs.size(); i++)
         {
-            ChannelMechanism next = allChanMechs.get(i);
+            ChannelMechanism next = allFixedChanMechs.get(i);
 
             CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(next.getName());
             try
@@ -3949,13 +4011,14 @@ public class CellTopologyHelper
      */
     public static float getSpecMembResistance(Cell cell, Project project, Section section) throws CellMechanismException
     {
-        ArrayList<ChannelMechanism>  allChanMechs = cell.getChanMechsForSection(section);
+        //TODO: check variable chan mechs!!
+        ArrayList<ChannelMechanism>  allFixedChanMechs = cell.getFixedChanMechsForSection(section);
 
         float specMembRes = -1;
 
-        for (int i = 0; i < allChanMechs.size(); i++)
+        for (int i = 0; i < allFixedChanMechs.size(); i++)
         {
-            ChannelMechanism next = allChanMechs.get(i);
+            ChannelMechanism next = allFixedChanMechs.get(i);
 
             CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(next.getName());
 

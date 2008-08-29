@@ -23,7 +23,8 @@ package ucl.physiol.neuroconstruct.utils.equation;
 
 public abstract class FunctionUnit extends EquationUnit
 {
-
+    static final long serialVersionUID = -97991769713623L;
+                     
     protected EquationUnit internalEqn = null;
 
     public FunctionUnit(String name, EquationUnit internalEqn)
@@ -32,7 +33,36 @@ public abstract class FunctionUnit extends EquationUnit
         this.internalEqn = internalEqn;
     }
 
+    public FunctionUnit()
+    {
+    }
+    
+
     public abstract double evaluateAt(Argument[] args) throws EquationException;
+    
+    
+   @Override
+    public boolean equals(Object obj)
+    {
+        if(obj instanceof FunctionUnit)
+        {
+            FunctionUnit fu = (FunctionUnit)obj;
+            
+            if (!fu.getName().equals(getName())) return false;
+            if (!fu.internalEqn.equals(internalEqn)) return false;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 53 * hash + getName().hashCode();
+        hash = 53 * hash + internalEqn.hashCode();
+        return hash;
+    }
 
 
     public String getNiceString()
@@ -43,6 +73,22 @@ public abstract class FunctionUnit extends EquationUnit
     public String toString()
     {
         return getNiceString();
+    }
+
+    public EquationUnit getInternalEqn()
+    {
+        return internalEqn;
+    }
+
+    public void setInternalEqn(EquationUnit internalEqn)
+    {
+        this.internalEqn = internalEqn;
+    }
+    
+    @Override
+    public void setName(String name)
+    {
+        super.setName(name);
     }
 
 

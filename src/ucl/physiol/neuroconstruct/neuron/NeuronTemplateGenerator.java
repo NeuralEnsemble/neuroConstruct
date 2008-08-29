@@ -49,6 +49,8 @@ public class NeuronTemplateGenerator
 
     boolean addGrowthFunctions = true;
     boolean addSegIdFunctions = true;
+    
+    private static boolean warnedOfParamGrpSpherSegs = false;
 
     //Hashtable arrayNamesVsSections = new Hashtable();
 
@@ -111,6 +113,10 @@ public class NeuronTemplateGenerator
 
             fw.write("\n");
             fw.write(getHocFileHeader());
+            if (cell.getParameterisedGroups().size()>0)
+            {
+                fw.write("\nload_file(\"subiter.hoc\")\n");
+            }
             fw.write("\nbegintemplate "+ cell.getInstanceName()+"\n\n");
             fw.write(this.getCommonHeader());
             fw.write(this.getHeaderForGroups());
@@ -122,8 +128,30 @@ public class NeuronTemplateGenerator
             fw.write(this.getProcBasicShape());
             fw.write(this.getProcSubsets());
             fw.write(this.getProcGeom());
-            fw.write(this.getProcGeomNseg());
+            
             fw.write(this.getProcBiophys());
+            fw.write(this.getProcGeomNseg());
+            
+            if (cell.getParameterisedGroups().size()>0)
+            {
+                fw.write(this.getProcBiophysInhomo());
+                if (cell.getVarMechsVsParaGroups().size()>0)
+                {
+                    for(Segment seg: cell.getAllSegments())
+                    {
+                        if (!warnedOfParamGrpSpherSegs && seg.isSpherical())
+                        {
+                            warnedOfParamGrpSpherSegs = true;
+                            GuiUtils.showWarningMessage(logger, "Warning, using parameterised groups in a cell with a spherical segment: "+seg+"\n" +
+                                "This can lead to inconsistencies, as spherical segments are mapped to cylinders (length >0) in NEURON\n" +
+                                "with child segments attached at the 0.5 point, and so the 'distance from the soma' etc. will include this\n" +
+                                "extra part of that segment. \n\n" +
+                                "Try to manually convert the spherical segment to an explicit cylinder in neuroConstruct for consistency.", null);
+                        }
+                    }
+                }
+            }
+            
             fw.write(this.getProcPosition());
 
             if (addSegIdFunctions)
@@ -243,6 +271,12 @@ public class NeuronTemplateGenerator
         response.append("    geom()\n");
         response.append("    biophys()\n");
         response.append("    geom_nseg()\n");
+        
+        if (cell.getParameterisedGroups().size()>0)
+        {
+            response.append("    biophys_inhomo()\n");
+        }
+        
         response.append("    synlist = new List()\n");
         /////////////response.append("    synapses()\n");
         response.append("    x = y = z = 0\n");
@@ -1324,6 +1358,25 @@ public class NeuronTemplateGenerator
             }
 
         }
+        
+        
+        Enumeration<VariableMechanism> varMechs = cell.getVarMechsVsParaGroups().keys();
+        
+        while (varMechs.hasMoreElements())
+        {
+            VariableMechanism vm = varMechs.nextElement();
+            ParameterisedGroup pg = cell.getVarMechsVsParaGroups().get(vm);
+            
+            response.append("    forsec " + pg.getGroup() + " { \n");
+            
+            NeuronFileManager.addHocComment(response, "    Variable mechanism: "+ vm,false);
+            NeuronFileManager.addHocComment(response, "    On parameter group: "+ pg,false);
+            NeuronFileManager.addHocComment(response, "    Note, gmax, etc. will be set in biophys_inhomo()",false);
+            response.append("        insert "+vm.getName()+" { "+vm.getParam().getName()+"_"+vm.getName()+" = 0 }\n");
+            
+            response.append("    }\n");
+        }
+        
 
         response.append("}\n");
         response.append("\n");
@@ -1335,7 +1388,56 @@ public class NeuronTemplateGenerator
         
         return response.toString();
     }
+    
+    
 
+    private String getProcBiophysInhomo()
+    {
+        logger.logComment("calling getProcBiophys");
+        StringBuffer response = new StringBuffer();
+        for(ParameterisedGroup pg: cell.getParameterisedGroups())
+        {
+            response.append("objref "+pg.getName()+" \n");
+        }
+        StringBuffer postProcs = new StringBuffer();
+        
+        float convFactor = (float)UnitConverter.convertFromNeuroConstruct(1, UnitConverter.currentDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS], UnitConverter.NEURON_UNITS).getMagnitude();
+         
+        response.append("proc biophys_inhomo() { \n");
+        
+        for(ParameterisedGroup pg: cell.getParameterisedGroups())
+        {
+            response.append("    "+pg.getName()+" = new "+pg.getNeuronObject()+" \n");
+        }
+            response.append("     \n");
+                
+        Enumeration<VariableMechanism> varMechs = cell.getVarMechsVsParaGroups().keys();
+        
+        while (varMechs.hasMoreElements())
+        {
+            VariableMechanism vm = varMechs.nextElement();
+            ParameterisedGroup pg = cell.getVarMechsVsParaGroups().get(vm);
+            String procName=vm.getParam().getName()+"_"+vm.getName()+"_"+pg.getGroup()+"()";
+            response.append("    "+procName+"\n");
+            
+            postProcs.append("proc "+procName+" { local x, p, p0, p1"+"\n");
+            postProcs.append("    "+pg.getName()+".update()\n");
+            postProcs.append("    p0 = "+pg.getName()+".p0  p1 = "+pg.getName()+".p1\n");
+            postProcs.append("    for "+pg.getName()+".loop() {\n");
+            postProcs.append("        x = "+pg.getName()+".x  p = "+pg.getName()+".p\n");
+            postProcs.append("        "+vm.getParam().getName()+"_"+vm.getName()+"(x) = "+convFactor+" * "+vm.getParam().getExpression()+" // "+convFactor+" to convert from nc to NEURON units\n");
+            postProcs.append("    }\n");
+  
+            postProcs.append("}\n\n");
+        }
+        
+        response.append("}\n");
+        response.append("\n");
+        
+        response.append(postProcs.toString());
+ 
+        return response.toString();
+    }
 
     private String getProcPosition()
     {

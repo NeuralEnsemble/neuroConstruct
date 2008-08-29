@@ -343,17 +343,17 @@ public class MorphMLConverter extends FormatImporter
 
 
     /**
-     * Creates MorphML representations of the cell in the specified file
+     * Creates NeuroML representations of the cell in the specified file. Note: may be better in the neuroml package...
      * @param cell The Cell object to export
-     * @param morphMLFile The file to put the MorphML in
+     * @param neuroMLFile The file to put the NeuroML in
      * @param level The level (currently 1 for "pure" MorphML, or 2 to include channel distributions, level 3 for net aspects)
      * as defined in NeuroMLConstants
      */
-    public static void saveCellInMorphMLFormat(Cell cell, Project project, File morphMLFile, String level) throws MorphologyException
+    public static void saveCellInNeuroMLFormat(Cell cell, Project project, File neuroMLFile, String level) throws MorphologyException
     {
         try
         {
-            logger.logComment("Going to save file in MorphML format: " + morphMLFile);
+            logger.logComment("Going to save file in NeuroML format: " + neuroMLFile);
 
             SimpleXMLDocument doc = new SimpleXMLDocument();
 
@@ -364,7 +364,6 @@ public class MorphMLConverter extends FormatImporter
                 rootElement = new SimpleXMLElement(MorphMLConstants.ROOT_ELEMENT);
 
                 rootElement.addNamespace(new SimpleXMLNamespace("", MorphMLConstants.NAMESPACE_URI));
-
 
                 rootElement.addNamespace(new SimpleXMLNamespace(MetadataConstants.PREFIX,
                                                                 MetadataConstants.NAMESPACE_URI));
@@ -431,15 +430,9 @@ public class MorphMLConverter extends FormatImporter
             rootElement.addChildElement(descElement);
             rootElement.addContent("\n"); // to make it more readable...
 
-            
-            //rootElement.addContent("\n"); // to make it more readable...
-
-            //logger.logComment("root element: " + doc.getRootElement().getXMLString("", false));
-
-
-
             SimpleXMLElement cellsElement = new SimpleXMLElement(MorphMLConstants.CELLS_ELEMENT);
             rootElement.addChildElement(cellsElement);
+            
             SimpleXMLElement cellElement = new SimpleXMLElement(MorphMLConstants.CELL_ELEMENT);
             cellsElement.addChildElement(cellElement);
 
@@ -625,7 +618,7 @@ public class MorphMLConverter extends FormatImporter
 
                 String prefix = BiophysicsConstants.PREFIX + ":";
 
-                ArrayList<ChannelMechanism> allChanMechs = cell.getAllChannelMechanisms(true);
+                ArrayList<ChannelMechanism> allChanMechs = cell.getAllFixedChannelMechanisms(true);
 
                 for (int j = 0; j < allChanMechs.size(); j++)
                 {
@@ -653,7 +646,6 @@ public class MorphMLConverter extends FormatImporter
                         UnitConverter.NEUROCONSTRUCT_UNITS,
                         UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + ""));
 
-                    //mechElement.addChildElement(paramElement);
                     allParamGrps.add(gmaxParamElement);
                     
                     ArrayList<MechParameter> mps = chanMech.getExtraParameters();
@@ -671,12 +663,10 @@ public class MorphMLConverter extends FormatImporter
                         pe.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
                                                                          mp.getValue()+""));
                         
-                        
                         allParamGrps.add(pe);
 
                     }
                         
-                    
                     
                     CellMechanism cm = project.cellMechanismInfo.getCellMechanism(chanMech.getName());
                     
@@ -986,7 +976,7 @@ public class MorphMLConverter extends FormatImporter
             }
 
 
-            FileWriter fw = new FileWriter(morphMLFile);
+            FileWriter fw = new FileWriter(neuroMLFile);
 
             logger.logComment("    ****    Full XML:  ****");
             logger.logComment("  ");
@@ -999,7 +989,7 @@ public class MorphMLConverter extends FormatImporter
         }
         catch (Exception ex)
         {
-            throw new MorphologyException(morphMLFile.getAbsolutePath(), "Problem creating MorphML file", ex);
+            throw new MorphologyException(neuroMLFile.getAbsolutePath(), "Problem creating MorphML file", ex);
         }
     }
 
@@ -1085,7 +1075,7 @@ public class MorphMLConverter extends FormatImporter
                                     mappedCell.getInstanceName()
                                     + ProjectStructure.getMorphMLFileExtension());
 
-                MorphMLConverter.saveCellInMorphMLFormat(mappedCell,project, cellFile, level);
+                MorphMLConverter.saveCellInNeuroMLFormat(mappedCell,project, cellFile, level);
                 
                 generatedCells.add(mappedCell);
          
@@ -1103,9 +1093,9 @@ public class MorphMLConverter extends FormatImporter
         //File f = new File("");
 
         //C:\neuroConstruct\projects\Simple\generatedMorphML\CellType_25.morph.xml
-        //File morphMLFile = new File("C:\\neuroConstruct\\morphml\\JavaXMLToMorphML\\XmlMorphReader.morphml.xml");
+        //File neuroMLFile = new File("C:\\neuroConstruct\\morphml\\JavaXMLToMorphML\\XmlMorphReader.morphml.xml");
 
-        //File morphMLFile = new File("C:\\neuroConstruct\\projects\\DentateGyrus_copy\\generatedMorphML\\GranuleCell.morph.xml");
+        //File neuroMLFile = new File("C:\\neuroConstruct\\projects\\DentateGyrus_copy\\generatedMorphML\\GranuleCell.morph.xml");
         //File javaXMLFile = new File("C:\\neuroConstruct\\projects\\Project_1\\CellType_1.java.xml");
 
 
@@ -1139,9 +1129,9 @@ public class MorphMLConverter extends FormatImporter
 
            System.out.println("Cell details: " + CellTopologyHelper.printDetails(cell, null));
 
-           logger.logComment("Saving the file as: " + morphMLFile.getAbsolutePath());
+           logger.logComment("Saving the file as: " + neuroMLFile.getAbsolutePath());
 
-           MorphMLConverter.saveCellInMorphMLFormat(cell, morphMLFile, NeuroMLConstants.NEUROML_LEVEL_2);
+           MorphMLConverter.saveCellInNeuroMLFormat(cell, neuroMLFile, NeuroMLConstants.NEUROML_LEVEL_2);
            */
 
           MorphMLConverter.saveCellInJavaObjFormat(cell, oosFile);

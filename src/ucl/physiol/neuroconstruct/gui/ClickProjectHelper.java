@@ -12,6 +12,7 @@
 
 package ucl.physiol.neuroconstruct.gui;
 import java.awt.*;
+import ucl.physiol.neuroconstruct.cell.ParameterisedGroup;
 
 /**
  * GUI element to allow easy linking between neuroConstruct tabs
@@ -27,6 +28,7 @@ public class ClickProjectHelper
     public static final String CELL_GROUP = "cellGroup";
     public static final String REGION = "region";
     public static final String SECTION_GROUP = "sectionGroup";
+    public static final String PARAMETERISED_GROUP = "parameterisedGroup";
     public static final String CELL_TYPE = "cellType";
     public static final String NET_CONNECTION = "netConn";
     public static final String CELL_MECHANISM = "cellMechanism";
@@ -52,6 +54,11 @@ public class ClickProjectHelper
     public static String getCellSectionGroupLink(String cellType, String secGroup)
     {
         return "<a href=\""+PROTOCOL+"://"+CELL_TYPE+"="+cellType+"&"+SECTION_GROUP+"="+secGroup+"\" "+styleInfo+">"+secGroup+"</a>";
+    }
+    
+    public static String getParamGroupLink(String cellType, ParameterisedGroup pg)
+    {
+        return "<a href=\""+PROTOCOL+"://"+CELL_TYPE+"="+cellType+"&"+PARAMETERISED_GROUP+"="+pg.getName()+"\" "+styleInfo+">"+pg.getName()+"</a>";
     }
 
     public static String getNetConnLink(String name)

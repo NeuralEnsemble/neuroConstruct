@@ -13,6 +13,8 @@
 
 package ucl.physiol.neuroconstruct.utils.equation;
 
+import java.io.Serializable;
+
 
 /**
  * Helper class for parsing equations
@@ -21,10 +23,20 @@ package ucl.physiol.neuroconstruct.utils.equation;
  *  
  */
 
-public abstract class EquationUnit
+public abstract class EquationUnit implements Serializable
 {
+    
     private String name = null;
 
+    public EquationUnit()
+    {
+    }
+
+    protected void setName(String name)
+    {
+        this.name = name;
+    }
+    
     public EquationUnit(String name)
     {
         this.name = name;
@@ -40,7 +52,22 @@ public abstract class EquationUnit
 
     @Override
     public abstract String toString();
+    
+    
+    @Override
+    public abstract boolean equals(Object obj);
+    
+    @Override
+    public abstract int hashCode();
+    
 
 
     public abstract double evaluateAt(Argument[] args) throws EquationException;
 }
+
+
+
+
+
+
+

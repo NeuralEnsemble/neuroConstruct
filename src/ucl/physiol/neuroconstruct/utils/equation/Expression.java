@@ -13,7 +13,6 @@
 
 package ucl.physiol.neuroconstruct.utils.equation;
 
-import ucl.physiol.neuroconstruct.utils.ClassLogger;
 import java.util.*;
 import ucl.physiol.neuroconstruct.utils.*;
 

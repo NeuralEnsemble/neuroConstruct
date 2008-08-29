@@ -15,6 +15,7 @@ package ucl.physiol.neuroconstruct.cell;
 
 import java.io.*;
 import java.util.*;
+import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.utils.equation.*;
 
  /**
@@ -30,21 +31,41 @@ import ucl.physiol.neuroconstruct.utils.equation.*;
 
 public class VariableMechanism implements Serializable
 {
-    static final long serialVersionUID = -7566565188475532L;
+    private static final long serialVersionUID = -7566565188475532L;
     
     private String name = null;
     
-    private ArrayList<VariableParameter> params = new ArrayList<VariableParameter>();
-
+    //private ArrayList<VariableParameter> params = new ArrayList<VariableParameter>();
+    VariableParameter param = null;
+    
     public VariableMechanism()
     {
     }
 
-    public VariableMechanism(String name)
+    public VariableMechanism(String name, VariableParameter param)
     {
         this.name = name;
+        this.param = param;
+    }
+
+    public VariableParameter getParam()
+    {
+        return param;
+    }
+
+    public void setParam(VariableParameter param)
+    {
+        this.param = param;
     }
     
+    @Override
+    public Object clone()
+    {
+        VariableMechanism vm2 = new VariableMechanism(new String(name), (VariableParameter)param.clone());
+        return vm2;
+    }
+    
+    /*
     public ArrayList<VariableParameter> getParams()
     {
         return params;
@@ -64,15 +85,18 @@ public class VariableMechanism implements Serializable
             }
         }
         throw new ParameterException("Parameter "+paramName+"cannot be evaluated at "+ varParamValue+" in variable mechanism "+ this.toString());
-    }
+    }*/
     
-
+    public double evaluateAt(double varParamValue) throws ParameterException, EquationException
+    {
+        return param.evaluateAt(varParamValue);
+    }
 
     @Override
     public String toString()
     {
         
-        return name + " with params: "+params;
+        return name + " with param: "+param;
         
     }
     
@@ -86,6 +110,40 @@ public class VariableMechanism implements Serializable
     {
         this.name = name;
     }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        final VariableMechanism other = (VariableMechanism) obj;
+        if (this.name != other.name && (this.name == null || !this.name.equals(other.name)))
+        {
+            return false;
+        }
+        if (this.param != other.param && (this.param == null || !this.param.equals(other.param)))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 31 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 31 * hash + (this.param != null ? this.param.hashCode() : 0);
+        return hash;
+    }
+    
+    
     
     
      
@@ -94,9 +152,6 @@ public class VariableMechanism implements Serializable
         try
         {
 
-            VariableMechanism cm = new VariableMechanism("cm");
-
-            System.out.println("Variable Mechanism: " + cm);
 
             String expression1 = "A + B*(p+C)";
             String expression2 = "1";
@@ -117,20 +172,27 @@ public class VariableMechanism implements Serializable
 
             VariableParameter vp1 = new VariableParameter("cap", expression1, p, expressionArgs1);
             
-            System.out.println("Var param: "+ vp1); 
+            System.out.println("Var param 1: "+ vp1); 
             
             VariableParameter vp2 = new VariableParameter("Rm", expression2, p, expressionArgs2);
             
-            System.out.println("Var param: "+ vp2); 
+            System.out.println("Var param 2: "+ vp2); 
             
             Argument[] a0 = new Argument[]{new Argument(p.getName(), 1)};
             
             for(double i=0;i<=1;i=i+0.2)
             {
                 System.out.println("Value 1: "+ vp1.evaluateAt(i)); 
-                System.out.println("Value 2: "+ vp2.evaluateAt(i)); 
+                System.out.println("                  Value 2: "+ vp2.evaluateAt(i)); 
             }
             
+            
+            VariableMechanism cm = new VariableMechanism("cm", vp1);
+
+            System.out.println("Variable Mechanism: " + cm);
+            float val = 1;
+            
+            System.out.println("Variable Mechanism eval at "+val+": " + cm.evaluateAt(val));
             
             
         }

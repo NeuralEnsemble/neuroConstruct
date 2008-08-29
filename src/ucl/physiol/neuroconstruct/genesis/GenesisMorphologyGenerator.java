@@ -23,6 +23,7 @@ import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.compartment.*;
+import ucl.physiol.neuroconstruct.utils.equation.EquationException;
 import ucl.physiol.neuroconstruct.utils.units.*;
 import ucl.physiol.neuroconstruct.utils.xml.*;
 
@@ -463,8 +464,6 @@ public class GenesisMorphologyGenerator
             }
 
             StringBuffer channelCondString = new StringBuffer();
-
-            
             
             // Consolidating chan mechs for this segment, ie. joining... 
             //  nextChanMech: naf2 (density: -1.0 mS um^-2, fastNa_shift = -2.5)
@@ -496,12 +495,10 @@ public class GenesisMorphologyGenerator
                 }
                 if (!dealtWith)
                     consolChanMechs.add((ChannelMechanism)nextChanMech.clone());
-
             }
 
             for (int ll = 0; ll < consolChanMechs.size(); ll++)
             {
-
                 ChannelMechanism nextChanMech = consolChanMechs.elementAt(ll);
                 logger.logComment("--  nextChanMech: " + nextChanMech);
                 CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
@@ -588,7 +585,7 @@ public class GenesisMorphologyGenerator
                     {
                         GuiUtils.showErrorMessage(logger, "Problem including cell mech: "
                                                   + nextChanMech
-                                                  + " in morphology file for cell: " + cell, null, null);
+                                                  + " in morphology file for cell: " + cell, ex1, null);
 
                         //return "";
 
@@ -602,6 +599,40 @@ public class GenesisMorphologyGenerator
 
                 logger.logComment("channelCondString: "+channelCondString);
             }
+            
+            ArrayList<VariableMechanism> varMechs = cell.getVarChanMechsForSegment(segment);
+            for(VariableMechanism vm: varMechs)
+            {
+                ParameterisedGroup pg = cell.getVarMechsVsParaGroups().get(vm);
+                try
+                {
+                    double pgVal = pg.evaluateAt(cell, new SegmentLocation(segment.getSegmentId(), 0.5f));
+
+                    float dens = (float)vm.evaluateAt(pgVal);
+                    
+                    float genDens =  (float)UnitConverter.getConductanceDensity(
+                            dens,
+                            UnitConverter.NEUROCONSTRUCT_UNITS,
+                            project.genesisSettings.getUnitSystemToUse());
+                    
+                    channelCondString.append(vm.getName()+ " "+ genDens+ " ");
+                    
+                    
+                }
+                catch (ParameterException ex)
+                {
+                    String error = "Unable to evaluate values for: "+ pg+" on cell: "+cell;
+                    GuiUtils.showErrorMessage(logger, error, ex, null);
+                    return error;
+                }
+                catch (EquationException ex)
+                {
+                    String error = "Unable to evaluate values for: "+ vm+" on cell: "+cell;
+                    GuiUtils.showErrorMessage(logger, error, ex, null);
+                    return error;
+                }
+            }
+                
 
             // Note: the use of a GenesisCompartmentalisation will make much of this redundant.
             // All generated sections will be single segment and cylindrical.

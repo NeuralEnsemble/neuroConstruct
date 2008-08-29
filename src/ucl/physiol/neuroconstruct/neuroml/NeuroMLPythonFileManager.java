@@ -121,10 +121,11 @@ public class NeuroMLPythonFileManager
         for(Cell nextCell: generatedCells)
         {
             ArrayList<String> cellMechs = new ArrayList<String>();
-            ArrayList<ChannelMechanism> chanMechs = nextCell.getAllChannelMechanisms(true);
-            for(ChannelMechanism cm: chanMechs)
+            ArrayList<String> chanMechNames = nextCell.getAllChanMechNames(true);
+            
+            for(String cm: chanMechNames)
             {
-                cellMechs.add(cm.getName());
+                cellMechs.add(cm);
             }
             ArrayList<String> syns = nextCell.getAllAllowedSynapseTypes();
             

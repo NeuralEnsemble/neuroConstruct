@@ -90,6 +90,7 @@ public class Cell implements Serializable
      */
     private NumberGenerator initialPotential = new NumberGenerator(defaultInitPot); 
 
+    
     private Vector<ParameterisedGroup> parameterisedGroups = new Vector<ParameterisedGroup>();
 
 
@@ -826,7 +827,7 @@ public class Cell implements Serializable
         return allTypes;
     }
 
-    public ArrayList<ChannelMechanism> getAllChannelMechanisms(boolean removeRepeats)
+    public ArrayList<ChannelMechanism> getAllFixedChannelMechanisms(boolean removeRepeats)
     {
         ArrayList<ChannelMechanism> allChanMechs = new ArrayList<ChannelMechanism>();
         Iterator<ChannelMechanism> chanMechs = chanMechsVsGroups.keySet().iterator();
@@ -837,6 +838,40 @@ public class Cell implements Serializable
 
             if (!removeRepeats || !allChanMechs.contains(next))
                 allChanMechs.add(next);
+        }
+        /*
+        Iterator<VariableMechanism> vMechs = varMechsVsParaGroups.keySet().iterator();
+        while(vMechs.hasNext())
+        {
+            String nextMech = vMechs.next().getName();
+            
+            if (!removeRepeats || !allChanMechs.contains(nextMech))
+                allChanMechs.add(nextMech);
+        }*/
+
+        return allChanMechs;
+    }
+    
+    public ArrayList<String> getAllChanMechNames(boolean removeRepeats)
+    {
+        ArrayList<String> allChanMechs = new ArrayList<String>();
+        Iterator<ChannelMechanism> chanMechs = chanMechsVsGroups.keySet().iterator();
+
+        while(chanMechs.hasNext())
+        {
+            ChannelMechanism next = chanMechs.next();
+
+            if (!removeRepeats || !allChanMechs.contains(next))
+                allChanMechs.add(next.getName());
+        }
+        
+        Iterator<VariableMechanism> vMechs = varMechsVsParaGroups.keySet().iterator();
+        while(vMechs.hasNext())
+        {
+            String nextMech = vMechs.next().getName();
+            
+            if (!removeRepeats || !allChanMechs.contains(nextMech))
+                allChanMechs.add(nextMech);
         }
 
         return allChanMechs;
@@ -908,6 +943,24 @@ public class Cell implements Serializable
             }
         }
         return allGroups;
+    }
+    
+    /*
+     * Returns true if group name is present for one of the sections
+     */
+    public boolean isGroup(String group)
+    {
+        String lastSec = null;
+        for(Segment seg: allSegments)
+        {
+            if (!seg.getSection().getSectionName().equals(lastSec))
+            {
+                lastSec = seg.getSection().getSectionName();
+                if (seg.getSection().getGroups().contains(group))
+                    return true;
+            }
+        }
+        return false;
     }
 
 
@@ -1138,12 +1191,12 @@ public class Cell implements Serializable
 
 
 
-    public ArrayList<ChannelMechanism> getChanMechsForSegment(Segment segment)
+    public ArrayList<ChannelMechanism> getFixedChanMechsForSegment(Segment segment)
     {
-        return getChanMechsForSection(segment.getSection());
+        return getFixedChanMechsForSection(segment.getSection());
     }
 
-    public ArrayList<ChannelMechanism> getChanMechsForSection(Section section)
+    public ArrayList<ChannelMechanism> getFixedChanMechsForSection(Section section)
     {
         ArrayList<ChannelMechanism> chanMechs = new ArrayList<ChannelMechanism>();
 
@@ -1153,6 +1206,32 @@ public class Cell implements Serializable
             String nextGroup = (String) groups.elementAt(i);
             chanMechs.addAll(getChanMechsForGroup(nextGroup));
         }
+        return chanMechs;
+    }
+    
+    
+    public ArrayList<VariableMechanism> getVarChanMechsForSegment(Segment segment)
+    {
+        return getVarChanMechsForSection(segment.getSection());
+    }
+    
+    
+    public ArrayList<VariableMechanism> getVarChanMechsForSection(Section section)
+    {
+        ArrayList<VariableMechanism> chanMechs = new ArrayList<VariableMechanism>();
+
+        Iterator<VariableMechanism> vMechs = getVarMechsVsParaGroups().keySet().iterator();
+
+        while(vMechs.hasNext())
+        {
+            VariableMechanism nextVMech = vMechs.next();
+            ParameterisedGroup pg = getVarMechsVsParaGroups().get(nextVMech);
+            if(section.getGroups().contains(pg.getGroup()))
+            {
+                chanMechs.add(nextVMech);
+            }
+        }
+        
         return chanMechs;
     }
 
@@ -1226,6 +1305,39 @@ public class Cell implements Serializable
         varMechsVsParaGroups.put(varMech, paraGrp);
         
         return true;
+        
+    }
+    
+    public boolean dissociateParamGroupFromVarMech(ParameterisedGroup paraGrp, VariableMechanism varMech)
+    {
+        logger.logComment("Cell being told to dissociate param group: " + paraGrp + " from var mechanism: " + varMech);
+           
+        if (!parameterisedGroups.contains(paraGrp))
+        {
+            logger.logError("The param group: "+paraGrp+" is not present in the set of all groups: "+ parameterisedGroups);
+            return false;
+        }
+        
+        Iterator<VariableMechanism> vMechs = varMechsVsParaGroups.keySet().iterator();
+        
+        VariableMechanism vmToRemove = null;
+        while(vMechs.hasNext())
+        {
+            VariableMechanism nextVMech = vMechs.next();
+            
+            if(nextVMech.equals(varMech))
+            {
+                vmToRemove = varMech;
+                //varMechsVsParaGroups.remove(varMech);
+            }
+        }
+        if (vmToRemove!=null)
+        {
+            varMechsVsParaGroups.remove(vmToRemove);
+            return true;
+        }
+        
+        return false;
         
     }
 
@@ -1736,7 +1848,6 @@ public class Cell implements Serializable
 
         for (String nextGroup: groups)
         {
-
             ArrayList<ChannelMechanism> allChanMechs = getChanMechsForGroup(nextGroup);
 
             for (int k = 0; k < allChanMechs.size(); k++)
@@ -1779,6 +1890,25 @@ public class Cell implements Serializable
             copy.add((AxonalConnRegion)(axonalArbours.get(i).clone()));
         }
         clonedCell.setAxonalArbours(copy);
+
+        Vector<ParameterisedGroup> pgCopy = new Vector<ParameterisedGroup>(parameterisedGroups.size());
+
+        for (int i = 0; i < this.parameterisedGroups.size(); i++)
+        {
+            pgCopy.add((ParameterisedGroup)(parameterisedGroups.get(i).clone()));
+        }
+        clonedCell.setParameterisedGroups(pgCopy);
+
+        for (VariableMechanism vm1: varMechsVsParaGroups.keySet())
+        {
+            ParameterisedGroup pg1 = varMechsVsParaGroups.get(vm1);
+            VariableMechanism vm2 = (VariableMechanism)vm1.clone();
+            ParameterisedGroup pg2 = (ParameterisedGroup)pg1.clone();
+            
+            clonedCell.getVarMechsVsParaGroups().put(vm2, pg2);
+        }
+
+        
 
         return clonedCell;
     }
@@ -1828,7 +1958,7 @@ public class Cell implements Serializable
            System.out.println("Loaded cell: " + cell);
            System.out.println("Groups: " + cell.getAllGroupNames());
 
-           System.out.println("Chan mechs: " + cell.getAllChannelMechanisms(false));
+           System.out.println("Chan mechs: " + cell.getAllFixedChannelMechanisms(false));
 
            ChannelMechanism cm2 = new ChannelMechanism( "ggg", 22);
            ChannelMechanism cm3 = new ChannelMechanism( "ggg", 33);
