@@ -100,10 +100,10 @@ For Linux, make sure you have the packages gcc, ncurses and ncurses-devel instal
 <p>Type the command:
     <strong>java -Xmx500M -jar neuroConstruct_1.x.x.jar</strong> to run neuroConstruct. </p>
 <p>Note: the supplied
-<strong>run.bat</strong> (Windows) or <strong>run.sh</strong> (Linux/Mac) may prove useful. For Windows, you can also double click 
-on <strong>run.bat</strong> in the file explorer. 
+<strong>nC.bat</strong> (Windows) or <strong>nC.sh</strong> (Linux/Mac) may prove useful. For Windows, you can also double click 
+on <strong>nC.bat</strong> in the file explorer. 
 
-Under Linux and Mac you might need to run <strong>chmod u+x run.sh</strong> before you can run the file by typing <strong>./run.sh</strong></p>
+Under Linux and Mac you might need to run <strong>chmod u+x nC.sh</strong> before you can run the file by typing <strong>./nC.sh</strong></p>
 
 <p>The <strong>-Xmx500M</strong> (request to the JVM to have 500MB as the max Java heap size) is there to ensure enough memory
     for the graphics. Alter according to your machine's capabilities (approx 50% of max memory available).
