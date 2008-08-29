@@ -279,3 +279,47 @@ proc netConInfoParallel() {
     print " "
 }
 
+
+// Some utilities for automating testing of generated NEURON
+
+numTestsPassed = 0
+numTestsFailed = 0
+
+
+proc testEquals() {
+
+	if ($1 != $2) { 
+		print "Test failed: ", $1, "  != ", "$2"
+		numTestsFailed = numTestsFailed + 1
+	} else {
+		numTestsPassed = numTestsPassed + 1
+	}
+
+}
+
+
+proc createTestReport() {
+
+    print "------------------------------------------------------------------------------"
+
+    print "    Finished tests. Number of passed tests: ", numTestsPassed, ", number of failed tests: ", numTestsFailed
+
+    objref resultFile
+    {resultFile = new File()}
+
+    if(numFailed > 0) {
+        resultFile.wopen("passed")
+    } else {
+        resultFile.wopen("failed")
+    }
+
+    {resultFile.printf("numPassed=%g\n", numTestsPassed)}
+    {resultFile.printf("numFailed=%g\n", numTestsFailed)}
+
+    {resultFile.close()}
+
+
+    print "------------------------------------------------------------------------------"
+
+}
+
