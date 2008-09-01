@@ -59,8 +59,9 @@ public class GenesisFileManagerTest {
         pm.doGenerate(sc.getName(), 1234);
         
         int wait = 2000;
-        if (GeneralUtils.isWindowsBasedPlatform())
-            wait = 6000;
+        
+        //if (GeneralUtils.isWindowsBasedPlatform())
+        //    wait = 8000;
         
         while(pm.isGenerating())
         {
@@ -108,6 +109,9 @@ public class GenesisFileManagerTest {
         File timesFile = simData.getTimesFile();
         
         Thread.sleep(wait); // Shouldn't take longer than this
+        
+        if(!timesFile.exists())
+            Thread.sleep(4000); // One more try...
         
         assertTrue(timesFile.exists());
         

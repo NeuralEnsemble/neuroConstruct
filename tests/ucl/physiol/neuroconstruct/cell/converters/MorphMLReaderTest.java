@@ -6,13 +6,12 @@
 package ucl.physiol.neuroconstruct.cell.converters;
 
 import java.io.File;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.Result;
 import static org.junit.Assert.*;
-import org.xml.sax.Attributes;
+import test.MainTest;
 import ucl.physiol.neuroconstruct.cell.Cell;
-import ucl.physiol.neuroconstruct.cell.CellTest;
 import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants;
 import ucl.physiol.neuroconstruct.project.*;
@@ -74,10 +73,6 @@ public class MorphMLReaderTest {
         System.out.println("Saved cell in NeuroML Level 3 file: "+ morphFile.getAbsolutePath());
         
         Cell cell2 = mmlC.loadFromMorphologyFile(morphFile, cell1.getInstanceName());
-        
-        //System.out.println("cell1: "+ CellTopologyHelper.printDetails(cell1, pm.getCurrentProject()));
-        //System.out.println("cell2: "+ CellTopologyHelper.printDetails(cell2, pm.getCurrentProject()));
-        
         String compare = CellTopologyHelper.compare(cell1, cell2, false);
         
         System.out.println("Comparison 1: "+ compare);
@@ -85,6 +80,15 @@ public class MorphMLReaderTest {
         assertTrue(compare.indexOf(CellTopologyHelper.CELLS_ARE_IDENTICAL)>=0);
         
         System.out.println("Reloaded file and cells are identical");
+        
+    }
+    
+    
+    public static void main(String[] args)
+    {
+        MorphMLReaderTest ct = new MorphMLReaderTest();
+        Result r = org.junit.runner.JUnitCore.runClasses(ct.getClass());
+        MainTest.checkResults(r);
         
     }
 

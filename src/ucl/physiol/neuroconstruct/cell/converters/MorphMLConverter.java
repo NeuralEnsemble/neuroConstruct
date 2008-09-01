@@ -474,7 +474,7 @@ public class MorphMLConverter extends FormatImporter
 
                 int sectionId = allSections.indexOf(nextSegment.getSection());
 
-                segmentElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.SEGMENT_SEC_ID_ATTR,
+                segmentElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.SEGMENT_CABLE_ID_ATTR,
                                                                    sectionId + ""));
 
                 if (nextSegment.isFirstSectionSegment())
@@ -484,7 +484,7 @@ public class MorphMLConverter extends FormatImporter
                                                                    mmlPrefix+
                                                                    MorphMLConstants.SEGMENT_PROXIMAL_ELEMENT));
 
-                    segmentElement.addContent("\n                    "); // to make it more readable...
+                    segmentElement.addContent("\n                "); // to make it more readable...
                 }
                 segmentElement.addChildElement(getPointElement(nextSegment.getEndPointPosition(),
                                                                nextSegment.getRadius(),
@@ -492,7 +492,7 @@ public class MorphMLConverter extends FormatImporter
                                                                MorphMLConstants.SEGMENT_DISTAL_ELEMENT));
 
 
-                segmentElement.addContent("\n                "); // to make it more readable...
+                segmentElement.addContent("\n            "); // to make it more readable...
 
                 SimpleXMLElement props = null;
 
@@ -501,15 +501,18 @@ public class MorphMLConverter extends FormatImporter
                 {
                     if (props == null)
                     {
-                        props = new SimpleXMLElement(/*metadataPrefix + */mmlPrefix+MorphMLConstants.PROPS_ELEMENT);
+                        props = new SimpleXMLElement(mmlPrefix+MorphMLConstants.PROPS_ELEMENT);
                         segmentElement.addContent("    "); // to make it more readable...
                         segmentElement.addChildElement(props);
-                        props.addContent("\n                        "); // to make it more readable...
+                        segmentElement.addContent("\n            "); // to make it more readable...
+                        props.addContent("\n                    "); // to make it more readable...
                     }
 
                     MetadataConstants.addProperty(props,
                                                  MorphMLConstants.COMMENT_PROP,
-                                                 nextSegment.getComment(), "                        ");
+                                                 nextSegment.getComment(), "                    ");
+                    
+                    props.addContent("\n                "); // to make it more readable...
 
                 }
 
@@ -532,22 +535,26 @@ public class MorphMLConverter extends FormatImporter
 
             }
 
-            SimpleXMLElement cablesElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.SECTIONS_ELEMENT);
+            SimpleXMLElement cablesElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.CABLES_ELEMENT);
             cellElement.addChildElement(cablesElement);
+            
+            boolean useCableGroup  = false;
+            
+            if (cell.getParameterisedGroups().size()>0)
+                useCableGroup  = true;
 
             for (int i = 0; i < allSections.size(); i++)
             {
                 Section nextSection =  allSections.get(i);
 
-                SimpleXMLElement cableElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.SECTION_ELEMENT);
+                SimpleXMLElement cableElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.CABLE_ELEMENT);
 
                 cablesElement.addChildElement(cableElement);
 
-                cableElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.SECTION_ID_ATTR, i + ""));
-                cableElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.SECTION_NAME_ATTR, nextSection.getSectionName()));
+                cableElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.CABLE_ID_ATTR, i + ""));
+                cableElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.CABLE_NAME_ATTR, nextSection.getSectionName()));
 
-
-                    SimpleXMLElement props = new SimpleXMLElement(MetadataConstants.PREFIX + ":" + MorphMLConstants.PROPS_ELEMENT);
+                SimpleXMLElement props = new SimpleXMLElement(MetadataConstants.PREFIX + ":" + MorphMLConstants.PROPS_ELEMENT);
 
                 if (nextSection.getNumberInternalDivisions()!=1)
                 {
@@ -578,15 +585,24 @@ public class MorphMLConverter extends FormatImporter
 
                 }
 
-
-                Vector groups = nextSection.getGroups();
-                for (int j = 0; j < groups.size(); j++)
+                if (!useCableGroup)
                 {
-                    SimpleXMLElement grpElement = new SimpleXMLElement(metadataPrefix+ MetadataConstants.GROUP_ELEMENT);
+                    Vector groups = nextSection.getGroups();
+                    for (int j = 0; j < groups.size(); j++)
+                    {
+                        SimpleXMLElement grpElement = new SimpleXMLElement(metadataPrefix+ MetadataConstants.GROUP_ELEMENT);
 
-                    grpElement.addContent( (String) groups.elementAt(j));
-                    cableElement.addChildElement(grpElement);
-
+                        grpElement.addContent( (String) groups.elementAt(j));
+                        cableElement.addChildElement(grpElement);
+                    }
+                }
+                else
+                {
+                    if (i < allSections.size()-1)
+                        cablesElement.addContent("\n            "); // to make it more readable...
+                    else
+                        cablesElement.addContent("\n        "); // to make it more readable...
+                        
                 }
 
                 Segment firstSeg = cell.getAllSegmentsInSection(nextSection).getFirst();
@@ -601,8 +617,39 @@ public class MorphMLConverter extends FormatImporter
                         cableElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.FRACT_ALONG_PARENT_ATTR, fractAlongParentSec+""));
                         
                 }
-
-
+            }
+            if (useCableGroup)
+            {
+                
+                cablesElement.addContent("\n            "); // to make it more readable...
+                //TODO: Check there isn't a more efficient way to do this...
+                Vector<String> groups = cell.getAllGroupNames();
+                
+                for(String group: groups)
+                {
+                    ArrayList<Section> secs = cell.getSectionsInGroup(group);
+                    
+                    SimpleXMLElement cableGroupElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.CABLE_GROUP_ELEMENT);
+                    cableGroupElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.CABLE_GROUP_NAME, group));
+                    
+                    cablesElement.addChildElement(cableGroupElement);
+                    for(Section sec: secs)
+                    {
+                        SimpleXMLElement cableElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.CABLE_ELEMENT);
+                        
+                        int sectionId = allSections.indexOf(sec);
+                        cableElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.CABLE_ID_ATTR, sectionId+""));
+                        
+                        cableGroupElement.addContent("\n                "); // to make it more readable...
+                        cableGroupElement.addChildElement(cableElement);
+                
+                    }
+                    
+                    cableGroupElement.addContent("\n            "); // to make it more readable...
+                    cablesElement.addContent("\n            "); // to make it more readable...
+                    
+                }
+                
             }
 
             if (!level.equals(NeuroMLConstants.NEUROML_LEVEL_1) )
@@ -1123,7 +1170,8 @@ public class MorphMLConverter extends FormatImporter
            cell.getAllSegments().elementAt(4).setFractionAlongParent(0.5f);
 
            File oosFile = new File("../temp/cell.oos");
-           File xmlFile = new File("../temp/cell.morph.xml");
+           File jXmlFile = new File("../temp/cell.xml");
+           File mmlFile = new File("../temp/cell.mml");
 
            /*
 
@@ -1135,10 +1183,11 @@ public class MorphMLConverter extends FormatImporter
            */
 
           MorphMLConverter.saveCellInJavaObjFormat(cell, oosFile);
-          MorphMLConverter.saveCellInJavaXMLFormat(cell, xmlFile);
+          MorphMLConverter.saveCellInJavaXMLFormat(cell, jXmlFile);
+          MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  mmlFile, NeuroMLConstants.NEUROML_LEVEL_2);
 
 
-
+          System.out.println("Saved MML file as: " + mmlFile.getCanonicalPath());
 
         }
         catch (Exception ex)

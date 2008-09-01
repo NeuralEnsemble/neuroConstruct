@@ -46,7 +46,7 @@ public class MorphMLConstants
 
     public static String SEGMENT_ID_ATTR = "id";
     public static String SEGMENT_NAME_ATTR = "name";
-    public static String SEGMENT_SEC_ID_ATTR = "cable";
+    public static String SEGMENT_CABLE_ID_ATTR = "cable";
     public static String SEGMENT_PARENT_ATTR = "parent";
 
     public static String SEGMENT_PROXIMAL_ELEMENT = "proximal";
@@ -58,20 +58,18 @@ public class MorphMLConstants
     public static String POINT_Z_ATTR = "z";
     public static String POINT_DIAM_ATTR = "diameter";
 
-    public static String SECTIONS_ELEMENT = "cables";
-    public static String SECTION_ELEMENT = "cable";
-    public static String SECTION_GROUP_ELEMENT = "cablegroup";
-    public static String SECTION_GROUP_ENTRY_ELEMENT = "cable";
+    public static String CABLES_ELEMENT = "cables";
+    public static String CABLE_ELEMENT = "cable";
+    public static String CABLE_GROUP_ELEMENT = "cablegroup";
+    public static String CABLE_GROUP_NAME = "name";
+    public static String CABLE_GROUP_ENTRY_ELEMENT = "cable";
 
-    public static String SECTION_ID_ATTR = "id";
-    public static String SECTION_NAME_ATTR = "name";
+    public static String CABLE_ID_ATTR = "id";
+    public static String CABLE_NAME_ATTR = "name";
 
-
-    //public static String SECTION_GROUP = "group";
-
-    public static String SOMA_SECTION_GROUP = "soma_group";
-    public static String AXON_SECTION_GROUP = "axon_group";
-    public static String DENDRITE_SECTION_GROUP = "dendrite_group";
+    public static String SOMA_CABLE_GROUP = "soma_group";
+    public static String AXON_CABLE_GROUP = "axon_group";
+    public static String DENDRITE_CABLE_GROUP = "dendrite_group";
 
     public static String PROPS_ELEMENT = "properties";
 

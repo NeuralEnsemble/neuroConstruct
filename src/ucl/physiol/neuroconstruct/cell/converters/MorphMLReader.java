@@ -101,13 +101,13 @@ public class MorphMLReader extends XMLFilterImpl
             }
 
             else if (getCurrentElement().equals(MetadataConstants.GROUP_ELEMENT) &&
-                     this.getAncestorElement(1).equals(MorphMLConstants.SECTION_ELEMENT))
+                     this.getAncestorElement(1).equals(MorphMLConstants.CABLE_ELEMENT))
             {
 
                 this.currentSection.addToGroup(contents);
 
                 // Ensure soma segs are finite vol unless something already specified for it
-                if (contents.equals(MorphMLConstants.SOMA_SECTION_GROUP))
+                if (contents.equals(MorphMLConstants.SOMA_CABLE_GROUP))
                 {
                     for (Segment seg: cell.getAllSegmentsInSection(currentSection))
                     {
@@ -119,7 +119,7 @@ public class MorphMLReader extends XMLFilterImpl
                 }
             }
 
-            else if (getAncestorElement(3).equals(MorphMLConstants.SECTION_ELEMENT) &&
+            else if (getAncestorElement(3).equals(MorphMLConstants.CABLE_ELEMENT) &&
                      getAncestorElement(2).equals(MorphMLConstants.PROPS_ELEMENT) &&
                      getAncestorElement(1).equals(MetadataConstants.PROP_ELEMENT))
             {
@@ -356,7 +356,7 @@ public class MorphMLReader extends XMLFilterImpl
 
              String id = attributes.getValue(MorphMLConstants.SEGMENT_ID_ATTR);
              String name = attributes.getValue(MorphMLConstants.SEGMENT_NAME_ATTR);
-             String sectionId = attributes.getValue(MorphMLConstants.SEGMENT_SEC_ID_ATTR);
+             String sectionId = attributes.getValue(MorphMLConstants.SEGMENT_CABLE_ID_ATTR);
 
              logger.logComment("ID: "+id+", name: "+ name);
 
@@ -437,13 +437,13 @@ public class MorphMLReader extends XMLFilterImpl
 
 
 
-         else if (getCurrentElement().equals(MorphMLConstants.SECTION_ELEMENT)
-                  &&getAncestorElement(1).equals(MorphMLConstants.SECTIONS_ELEMENT))
+         else if (getCurrentElement().equals(MorphMLConstants.CABLE_ELEMENT)
+                  &&getAncestorElement(1).equals(MorphMLConstants.CABLES_ELEMENT))
          {
 
              logger.logComment("\n                           +++++    New Cable/Section!!  +++++");
-             String id = attributes.getValue(MorphMLConstants.SECTION_ID_ATTR);
-             String name = attributes.getValue(MorphMLConstants.SECTION_NAME_ATTR);
+             String id = attributes.getValue(MorphMLConstants.CABLE_ID_ATTR);
+             String name = attributes.getValue(MorphMLConstants.CABLE_NAME_ATTR);
 
              logger.logComment("     Have found a cable id: " + id);
 
@@ -488,20 +488,20 @@ public class MorphMLReader extends XMLFilterImpl
              }
 
          }
-         else if (getCurrentElement().equals(MorphMLConstants.SECTION_GROUP_ELEMENT)
-                  && getAncestorElement(1).equals(MorphMLConstants.SECTIONS_ELEMENT))
+         else if (getCurrentElement().equals(MorphMLConstants.CABLE_GROUP_ELEMENT)
+                  && getAncestorElement(1).equals(MorphMLConstants.CABLES_ELEMENT))
          {
-             String name = attributes.getValue(MorphMLConstants.SECTION_NAME_ATTR);
+             String name = attributes.getValue(MorphMLConstants.CABLE_NAME_ATTR);
 
              logger.logComment("     Have found a cable/section group: " + name);
              currentSectionGroup = name;
 
 
          }
-         else if (getCurrentElement().equals(MorphMLConstants.SECTION_GROUP_ENTRY_ELEMENT)
-                  && getAncestorElement(1).equals(MorphMLConstants.SECTION_GROUP_ELEMENT))
+         else if (getCurrentElement().equals(MorphMLConstants.CABLE_GROUP_ENTRY_ELEMENT)
+                  && getAncestorElement(1).equals(MorphMLConstants.CABLE_GROUP_ELEMENT))
          {
-             String id = attributes.getValue(MorphMLConstants.SECTION_ID_ATTR);
+             String id = attributes.getValue(MorphMLConstants.CABLE_ID_ATTR);
 
              logger.logComment("     Have found a cable id inside a cable group: " + id);
              logger.logComment("sections: " + sections);
@@ -510,6 +510,20 @@ public class MorphMLReader extends XMLFilterImpl
              if (sec.getComment()!=null && sec.getComment().indexOf(importationComment)>=0)
                  sec.setComment(null);
              logger.logComment("Section now: " + sec);
+             
+             
+            // Ensure soma segs are finite vol unless something already specified for it
+            if (currentSectionGroup.equals(MorphMLConstants.SOMA_CABLE_GROUP))
+            {
+                for (Segment seg: cell.getAllSegmentsInSection(sec))
+                {
+                    if (!this.finiteVolFound.contains(seg.getSegmentId()))
+                        seg.setFiniteVolume(true);
+                }
+
+                this.foundSomaSection = true;
+            }
+             
 
          }
 
@@ -726,8 +740,8 @@ public class MorphMLReader extends XMLFilterImpl
                 cell.setCellDescription(notesContents.toString());
                 notesContents = new StringBuffer();
         }
-        else if (getCurrentElement().equals(MorphMLConstants.SECTION_ELEMENT)
-            && getAncestorElement(1).equals(MorphMLConstants.SECTIONS_ELEMENT))
+        else if (getCurrentElement().equals(MorphMLConstants.CABLE_ELEMENT)
+            && getAncestorElement(1).equals(MorphMLConstants.CABLES_ELEMENT))
         {
             Vector<String> grps = currentSection.getGroups();
 
@@ -756,8 +770,8 @@ public class MorphMLReader extends XMLFilterImpl
             }
         }
 
-        else if (getCurrentElement().equals(MorphMLConstants.SECTION_GROUP_ELEMENT)
-                 && getAncestorElement(1).equals(MorphMLConstants.SECTIONS_ELEMENT))
+        else if (getCurrentElement().equals(MorphMLConstants.CABLE_GROUP_ELEMENT)
+                 && getAncestorElement(1).equals(MorphMLConstants.CABLES_ELEMENT))
         {
             currentSectionGroup = null;
             logger.logComment("currentSectionGroup: " + currentSectionGroup);
@@ -771,7 +785,7 @@ public class MorphMLReader extends XMLFilterImpl
 
         }
 
-        else if (getCurrentElement().equals(MorphMLConstants.SECTIONS_ELEMENT))
+        else if (getCurrentElement().equals(MorphMLConstants.CABLES_ELEMENT))
         {
             logger.logComment("<<<<      End of sections");
             if (foundSomaSection==false)

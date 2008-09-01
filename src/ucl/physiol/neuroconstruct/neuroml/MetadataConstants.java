@@ -11,9 +11,7 @@
  */
 
 package ucl.physiol.neuroconstruct.neuroml;
-
 import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLElement;
-
 
 
 /**
@@ -36,14 +34,11 @@ public class MetadataConstants
 
     public static String DEFAULT_SCHEMA_FILENAME = "Metadata."+DEFAULT_SCHEMA_EXTENSION;
 
-
     public static String PREFIX = "meta";
 
     public static String LENGTH_UNITS = "lengthUnits";
 
-
     public static String NOTES_ELEMENT = "notes";
-
 
     public static String PROPS_ELEMENT = "properties";
     public static String PROP_ELEMENT = "property";

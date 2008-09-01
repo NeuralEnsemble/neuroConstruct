@@ -115,22 +115,22 @@ public class Section implements Serializable
     }
     
     
-    public String compareTo(Section other)
+    public String compareTo(Section other, boolean html)
     {
         StringBuffer sb = new StringBuffer();
         String col = "black";
         col = sectionName.equals(other.getSectionName())?"black":"red";
-        sb.append(GeneralUtils.getColouredString(sectionName, col, true));
+        sb.append(GeneralUtils.getColouredString(sectionName, col, html));
         
         col = (other.startRadius == startRadius)?"black":"red";
-        sb.append(","+GeneralUtils.getColouredString(" init radius: " + startRadius, col,true));
+        sb.append(","+GeneralUtils.getColouredString(" init radius: " + startRadius, col,html));
         
         col = (other.getStartPointPosition().equals(getStartPointPosition()))?"black":"red";
-        sb.append(","+GeneralUtils.getColouredString(" start: " + getStartPointPosition(), col,true));
+        sb.append(","+GeneralUtils.getColouredString(" start: " + getStartPointPosition(), col,html));
         
         
         col = (other.numberInternalDivisions == numberInternalDivisions)?"black":"red";
-        sb.append(","+GeneralUtils.getColouredString(" internal divs: " + numberInternalDivisions, col,true));
+        sb.append(","+GeneralUtils.getColouredString(" internal divs: " + numberInternalDivisions, col,html));
         col = "black";
         if (other.getGroups().size()==groups.size())
         {
@@ -144,7 +144,7 @@ public class Section implements Serializable
         {
             col = "red";
         }
-        sb.append(","+GeneralUtils.getColouredString(" groups: " + groups, col,true));
+        sb.append(","+GeneralUtils.getColouredString(" groups: " + groups, col,html));
         
         
         return sb.toString();

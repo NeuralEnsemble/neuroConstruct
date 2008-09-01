@@ -490,9 +490,9 @@ public class GeneralUtils
     /**
      * Quick way to get either a string in plaintext, or a html coloured string depending on a boolean value
      */
-    public static String getColouredString(String text, String colour, boolean tabIt)
+    public static String getColouredString(String text, String colour, boolean html)
     {
-        if (!tabIt) return text;
+        if (!html) return text;
         if (colour.trim().length()==0) return text;
 
         return "<font color=\""+colour+"\">" + text + "</font>";
