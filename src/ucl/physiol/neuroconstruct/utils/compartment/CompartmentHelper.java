@@ -684,7 +684,7 @@ public class CompartmentHelper
         float c = 200;
         float d = -1000;*/
 
-System.out.println("\n-----------------------------------------\n");
+        System.out.println("\n-----------------------------------------\n");
 
         float[] roots = getRoots(a,b,c,d);
 

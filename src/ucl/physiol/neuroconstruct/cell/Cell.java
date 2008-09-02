@@ -1891,21 +1891,27 @@ public class Cell implements Serializable
         }
         clonedCell.setAxonalArbours(copy);
 
-        Vector<ParameterisedGroup> pgCopy = new Vector<ParameterisedGroup>(parameterisedGroups.size());
-
-        for (int i = 0; i < this.parameterisedGroups.size(); i++)
+        if(parameterisedGroups!=null)
         {
-            pgCopy.add((ParameterisedGroup)(parameterisedGroups.get(i).clone()));
+            Vector<ParameterisedGroup> pgCopy = new Vector<ParameterisedGroup>(parameterisedGroups.size());
+
+            for (int i = 0; i < this.parameterisedGroups.size(); i++)
+            {
+                pgCopy.add((ParameterisedGroup)(parameterisedGroups.get(i).clone()));
+            }
+            clonedCell.setParameterisedGroups(pgCopy);
         }
-        clonedCell.setParameterisedGroups(pgCopy);
 
-        for (VariableMechanism vm1: varMechsVsParaGroups.keySet())
+        if(varMechsVsParaGroups!=null)
         {
-            ParameterisedGroup pg1 = varMechsVsParaGroups.get(vm1);
-            VariableMechanism vm2 = (VariableMechanism)vm1.clone();
-            ParameterisedGroup pg2 = (ParameterisedGroup)pg1.clone();
-            
-            clonedCell.getVarMechsVsParaGroups().put(vm2, pg2);
+            for (VariableMechanism vm1: varMechsVsParaGroups.keySet())
+            {
+                ParameterisedGroup pg1 = varMechsVsParaGroups.get(vm1);
+                VariableMechanism vm2 = (VariableMechanism)vm1.clone();
+                ParameterisedGroup pg2 = (ParameterisedGroup)pg1.clone();
+
+                clonedCell.getVarMechsVsParaGroups().put(vm2, pg2);
+            }
         }
 
         

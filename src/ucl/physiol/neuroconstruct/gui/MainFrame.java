@@ -16,7 +16,6 @@ import java.beans.*;
 import java.io.*;
 import java.net.*;
 import java.text.*;
-import java.util.*;
 import java.util.zip.*;
 import java.lang.management.*;
 import javax.media.j3d.*;
@@ -28,7 +27,7 @@ import javax.xml.validation.*;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
@@ -7049,7 +7048,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         projManager.getCurrentProject().markProjectAsEdited();
 
-        this.refreshAll();
+        this.refreshTabCellGroupInfo();
 
 
     }
@@ -7864,6 +7863,29 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             else
             {
                 this.jButtonRegionNew.setEnabled(true);
+                //jTable3DRegions = new JTable();
+                
+                /*
+                 * projManager.getCurrentProject().cellMechanismInfo)
+            {
+                @Override
+                public String getToolTipText(MouseEvent e) {
+                  String tip = null;
+                  java.awt.Point p = e.getPoint();
+                  int rowIndex = rowAtPoint(p);
+                  //int colIndex = columnAtPoint(p);
+                  
+                  //int realColumnIndex = convertColumnIndexToModel(colIndex);
+
+                  //if (realColumnIndex==CellMechanismInfo.COL_NUM_DESC)
+                  {
+                      String desc = projManager.getCurrentProject().cellMechanismInfo.getCellMechanismAt(rowIndex).getDescription();
+                      tip = "<html><b>"+GeneralUtils.replaceAllTokens(desc, "  ", " ")+"</b></html>";
+                  }
+                  return tip;
+                }
+            };
+                 */
 
                 jTable3DRegions.setModel(projManager.getCurrentProject().regionsInfo);
 
@@ -7877,6 +7899,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     jButtonRegionRemove.setEnabled(false);
                     this.jButtonRegionsEdit.setEnabled(false);
                 }
+                //ArrayList<String> usedRegions = projManager.getCurrentProject().cellGroupsInfo.getUsedRegionNames();
+                //for(String nextRegion: projManager.getCurrentProject().regionsInfo.getAllRegionNames())
+                //{
+                    //jTable3DRegions.set
+                //}
+                
                 /*
                 if (jTextFieldWidth.getText().equals(""))
                 {

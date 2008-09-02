@@ -111,6 +111,19 @@ public class CellGroupsInfo extends AbstractTableModel
         return regionName;
     }
 
+    public ArrayList<String> getUsedRegionNames()
+    {
+        ArrayList<String> usedRegs = new ArrayList<String>();
+
+        for (String reg: vectorRegionNames)
+        {
+            if (!usedRegs.contains(reg))
+                usedRegs.add(reg);
+        }
+
+        return usedRegs;
+    }
+
 
 
     public Object getValueAt(int row, int col)

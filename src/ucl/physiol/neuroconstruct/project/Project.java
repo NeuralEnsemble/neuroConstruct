@@ -27,8 +27,6 @@ import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
-import ucl.physiol.neuroconstruct.utils.xml.*;
-import ucl.physiol.neuroconstruct.utils.units.*;
 import javax.swing.*;
 
 /**
