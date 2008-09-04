@@ -534,8 +534,20 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                             Primitive srcPrim
                                 = addPositionedSphere(mainTG, sourceSynAbsolutePosition, Color.green, sphereRadius, false);
 
+                            float rad = sphereRadius;
+                            
+                            Color c = Color.red;
+                            
+                            /*
+                            float rad = sphereRadius*2;
+                            if (sourceCellGroup.equals("InhCells")) 
+                            {
+                                c = Color.GREEN;
+                                rad = sphereRadius*3;
+                            }*/
+                            
                             Primitive tgtPrim
-                                = addPositionedSphere(mainTG, targetSynAbsolutePosition, Color.red, sphereRadius, true);
+                                = addPositionedSphere(mainTG, targetSynAbsolutePosition, c,rad , true);
 
                             String tgtCellRef = SimulationData.getCellRef(targetCellGroup, conn.targetEndPoint.cellNumber);
 
@@ -945,6 +957,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                     TransformGroup tgPosn = new TransformGroup(position3D);
 
                     tgPosn.addChild(cellTG);
+                    //////////if (cellGroupName.equals("SampleCellGroup")) 
                     mainTG.addChild(tgPosn);
                 }
             }
