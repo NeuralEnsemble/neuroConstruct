@@ -374,7 +374,62 @@ echo "+++++++++++++++++++++++++++++++++++++++++++++++++"
 end
 
 
+// Some utilities for automating testing of generated GENESIS
 
+float numTestsPassed = 0
+float numTestsFailed = 0
+
+
+
+function testEquals(a, b) 
+        float a, b
+
+
+	if (a == b)  
+		numTestsPassed = numTestsPassed + 1
+	else 
+                float absDiff = {abs {a - b}}
+                if (a!=0 && {abs {absDiff/a}} <0.00001)
+                    numTestsPassed = numTestsPassed + 1
+                elif (b!=0 && {abs {absDiff/b}} <0.00001)
+                    numTestsPassed = numTestsPassed + 1
+                else
+                    echo "Test failed: " {a} "  != " {b}
+                    numTestsFailed = numTestsFailed + 1
+                end
+	end
+
+end
+
+
+function createTestReport
+
+    echo "------------------------------------------------------------------------------"
+
+    echo "    Finished tests. Number of passed tests: " {numTestsPassed} ", number of failed tests: " {numTestsFailed}
+
+    str testResultFile
+
+    if (numTestsFailed > 0)
+        testResultFile = "failed"
+    else
+        testResultFile = "passed"
+    end
+
+    openfile {testResultFile} w
+
+    writefile {testResultFile} "numPassed=" {numTestsPassed}
+    writefile {testResultFile} "numFailed=" {numTestsFailed}
+
+
+    closefile {testResultFile} 
+
+
+
+
+    echo "------------------------------------------------------------------------------"
+
+end
 
 
 
