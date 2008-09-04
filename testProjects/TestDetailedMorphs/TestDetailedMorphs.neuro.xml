@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<java version="1.6.0_03" class="java.beans.XMLDecoder"> 
+<java version="1.6.0_07" class="java.beans.XMLDecoder"> 
 
 <!-- This is a neuroConstruct project file. It's best to open this
 file with neuroConstruct, as opposed to editing it directly. 
@@ -200,7 +200,52 @@ createTestReport()
    </void> 
   </void> 
  </object> 
- <object class="ucl.physiol.neuroconstruct.genesis.GenesisSettings"/> 
+ <object class="ucl.physiol.neuroconstruct.genesis.GenesisSettings"> 
+  <void property="nativeBlocks"> 
+   <void method="put"> 
+    <int>15</int> 
+    <string>
+
+////////////////////////    The tests   ////////////////////////////////////////////////
+
+ce /cells/SampleCellGroup/SampleCellGroup_0/Soma
+
+float nextVal = {getfield Em} 
+testEquals  {nextVal} -0.079
+
+
+ce /cells/SampleCellGroup/SampleCellGroup_0/mainAxon
+
+float nextVal = {getfield Em} 
+testEquals  {nextVal} -0.07
+
+
+ce /cells/SampleCellGroup/SampleCellGroup_0/mainDend
+
+float nextVal = {getfield Em} 
+testEquals  {nextVal} -0.069
+
+
+/*
+
+
+SampleCell[0].mainAxonSec {
+	testEquals(gmax_LeakConductance , 0.0001)
+	testEquals(e_LeakConductance, -70) 
+}
+
+SampleCell[0].mainDendSec {
+	testEquals(gmax_LeakConductance , 0.0002)
+	testEquals(e_LeakConductance , -69) 
+}*/
+
+
+////////////////////////    End of tests   ///////////////////////////////////////////
+
+createTestReport</string> 
+   </void> 
+  </void> 
+ </object> 
  <object class="ucl.physiol.neuroconstruct.simulation.SimulationParameters"> 
   <void property="dt"> 
    <float>0.02</float> 
@@ -209,7 +254,7 @@ createTestReport()
    <float>100.0</float> 
   </void> 
   <void property="reference"> 
-   <string>Sim_26</string> 
+   <string>Sim_54</string> 
   </void> 
   <void property="saveCopyGenSimFiles"> 
    <boolean>true</boolean> 
