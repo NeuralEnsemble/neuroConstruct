@@ -311,12 +311,18 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
          {
              this.currentProjection = attributes.getValue(NetworkMLConstants.PROJ_NAME_ATTR);
              
+             //if ()
+             
              Vector<SynapticProperties> sps = null;
              
              if (project.morphNetworkConnectionsInfo.isValidSimpleNetConn(currentProjection))
                 sps = project.morphNetworkConnectionsInfo.getSynapseList(currentProjection);
              else if (project.volBasedConnsInfo.isValidVolBasedConn(currentProjection))
                 sps = project.volBasedConnsInfo.getSynapseList(currentProjection);
+             else
+                 throw new SAXException("Error when parsing NetworkML file. Network Connection: "+ currentProjection
+                         +" not found in project: "+ project.getProjectName()+".\n" +
+                         "Add a network connection with this name to the project to allow this NetworkML file to be used with this project. ");
              
              for(SynapticProperties sp:sps)
              {

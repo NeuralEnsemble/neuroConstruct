@@ -542,7 +542,7 @@ public class ProjectManager implements GenerationReport
             }
             catch (Exception e)
             {
-                throw new NeuroMLException("Problem parsing XML based NetworkML file", e);
+                throw new NeuroMLException("Problem parsing XML based NetworkML file: \n\n"+e.getMessage()+"\n", e);
             }
             
         }

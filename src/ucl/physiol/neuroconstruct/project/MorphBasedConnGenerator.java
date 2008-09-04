@@ -191,6 +191,8 @@ public class MorphBasedConnGenerator extends Thread
 
 
             ArrayList<Integer> finCellsMaxedOut = new ArrayList<Integer>(numberInGenFinishCellGroup);
+            
+            long startGen = System.currentTimeMillis();
 
             if (numberInGenStartCellGroup==0)
             {
@@ -208,6 +210,44 @@ public class MorphBasedConnGenerator extends Thread
                 {
                     float numConnFloat = connConds.getNumConnsInitiatingCellGroup().getNextNumber();
                     int numberConnections = (int) numConnFloat;
+                    
+                    if (numberInGenStartCellGroup>1000)
+                    {
+                        int part1percent = (int)(numberInGenStartCellGroup/100);
+                        int part5percent = (int)(numberInGenStartCellGroup/20);
+                        int part10percent = (int)(numberInGenStartCellGroup/10);
+                        int part20percent = (int)(numberInGenStartCellGroup/5);
+                        int part30percent = (int)(numberInGenStartCellGroup*0.3f);
+                        int part50percent = (int)(numberInGenStartCellGroup/2);
+                        int part75percent = (int)(numberInGenStartCellGroup*7.5f);
+                        int part90percent = (int)(numberInGenStartCellGroup*0.9);
+                        
+                            float time = ( System.currentTimeMillis() - startGen)/1000f;
+                        
+                        if (genStartCellNumber == part1percent ||
+                            genStartCellNumber == part5percent ||
+                            genStartCellNumber == part10percent ||
+                            genStartCellNumber == part20percent ||
+                            genStartCellNumber == part30percent ||
+                            genStartCellNumber == part50percent ||
+                            genStartCellNumber == part90percent )
+                        {
+                            float fract = genStartCellNumber / (float)numberInGenStartCellGroup;
+                            logger.logComment("Generated conns for "
+                                              + genStartCellNumber
+                                              + " cells out of "
+                                              + numberInGenStartCellGroup+" ("+(100 * fract)+"%) in "+ netConnName+" in "+time+" sec", true);
+                            
+                            logger.logComment("Estimated time left: "+(time / (fract * 60f) )+" mins", true);
+                            
+                        }
+                        else if(genStartCellNumber== numberInGenStartCellGroup-1)
+                        {
+                            logger.logComment("Generated conns for all cells in "+ netConnName+" in "+time+" sec", true);
+                        }
+                                
+                        
+                    }
 
                     if (numConnFloat != numberConnections)
                     {

@@ -2406,11 +2406,13 @@ public class GenesisFileManager
             File dirForGenFiles = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory());
 
             logger.logComment("Dir: " + dirForGenFiles);
+            
 
             GenesisMorphologyGenerator cellMorphGen
                 = new GenesisMorphologyGenerator(mappedCell,
                                                  project,
                                                  dirForGenFiles);
+            
 
             String filenameToBeGenerated = cellMorphGen.getFilename();
 
@@ -2436,6 +2438,7 @@ public class GenesisFileManager
                     throw ex;
                 }
             }
+            
 
             ArrayList cellGroupPositions =  project.generatedCellPositions.getPositionRecords(cellGroupName);
 
@@ -3551,7 +3554,7 @@ public class GenesisFileManager
 
                                 String realVariableToSave = var.getVariableName();
 
-                                response.append("    " + var.getExtraLines());
+                                response.append("    " + var.getExtraLines()+"\n");
 
                                 if (project.genesisSettings.getNumMethod().isHsolve() &&
                                     project.genesisSettings.getNumMethod().getChanMode() >= 2)
