@@ -1,5 +1,7 @@
 #
-#   A simple example of reading in and printing the contents of a NetworkML file
+#   A simple example of reading in and instantiating Python objects for a NetworkML file
+#
+#   Beta version!!
 #
 #   Author: Padraig Gleeson
 #
@@ -20,12 +22,13 @@ import logging
 sys.path.append("../NeuroMLUtils")
 
 from NetworkHandler import NetworkHandler
+from NetworkHolder import NetworkHolder
 from NetworkMLSaxHandler import NetworkMLSaxHandler
 
 file_name = 'small.nml'
 #file_name = 'Pre1.7.1.nml'
 
-logging.basicConfig(level=logging.DEBUG, format="%(name)-19s %(levelname)-5s - %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(name)-19s %(levelname)-5s - %(message)s")
 
 
 print("Going to read contents of a NetworkML file: "+str(file_name))
@@ -33,7 +36,7 @@ print("Going to read contents of a NetworkML file: "+str(file_name))
 
 parser = xml.sax.make_parser()   # A parser for any XML file
 
-nmlHandler = NetworkHandler()	# The base NetworkHandler class just prints out details of the network
+nmlHandler = NetworkHolder()	# ...
 
 curHandler = NetworkMLSaxHandler(nmlHandler) # The SAX handler knows of the structure of NetworkML and calls appropriate functions in NetworkHandler
 
@@ -44,7 +47,18 @@ parser.setContentHandler(curHandler) # Tells the parser to invoke the NetworkMLS
 parser.parse(open(file_name)) # The parser opens the file and ultimately the appropriate functions in NetworkHandler get called
 
 
+print("Have read in contents of file: "+str(file_name))
 
+print (str(nmlHandler.nmlFile))
+
+
+# not yet working...
+
+# new_file_name = 'new_'+file_name
+
+# nmlHandler.nmlFile.writeXML(new_file_name)
+
+# print("Have saved the contents in new file: "+str(new_file_name))
 
 
 

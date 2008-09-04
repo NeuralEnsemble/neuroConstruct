@@ -2,6 +2,8 @@
 
     Checklist for XML/HDF5 NetworkML support
 
+    In progress, may be out of date...
+
 
 
     Code                        Saving                                  Reading      

@@ -11,17 +11,12 @@
 #
 #
 
-from numpy import *
-import logging
-
     
 genForVer2compat = 1  # Incorporates changes in v1.7.1 to clean up for v2.0
 
-# Experimental class using numpy array to store net structure...
-class NetworkMLStruct:
+
+class NetworkMLFile:
     
-    log = logging.getLogger("NetworkMLStruct")
-  
     currNeuroMLVersion = "1.7.1"
     
     projUnits="Physiological Units"
@@ -31,14 +26,14 @@ class NetworkMLStruct:
     
     def __init__(self):
         
-        self.log.debug("NetworkMLStruct object created")
+        print("NetworkMLFile object created")
         self.populations = []
         self.projections = []
         
         
-    def addPopulation(self, populationName, cellType, popSize=0):
+    def addPopulation(self, populationName, cellType):
         
-        newPop = Population(populationName, cellType, popSize)
+        newPop = Population(populationName, cellType)
         self.populations.append(newPop)
         return newPop
     
@@ -54,17 +49,17 @@ class NetworkMLStruct:
         return newProj
     
     def __str__(self):
-        info =  "NetworkMLStruct:"
+        info =  "NetworkMLFile:"
         
         for population in self.populations:
-          info = info + "\n    Population: "+ population.popName
+          info = info + "\n    Population: "+ population.popName +" with "+ str(len(population.instances)) +" cells"
           
         return info
     
         
     def writeXML(self, filename):
         
-        self.log.debug("NetworkMLStruct going to be written to XML file: "+ str(filename))
+        print("NetworkMLFile going to be written to XML file: "+ str(filename))
         
         out_file = open(filename, "w")
         
@@ -104,7 +99,7 @@ class NetworkMLStruct:
         
     def writeHDF5(self, filename):
         
-        self.log.debug("NetworkMLStruct going to be written to HDF5 file: "+ str(filename))
+        print("NetworkMLFile going to be written to HDF5 file: "+ str(filename))
         
         import tables
         
@@ -133,34 +128,14 @@ class NetworkMLStruct:
         
 class Population:
     
-    log = logging.getLogger("Population")
-    x_col = 0
-    y_col = 1
-    z_col = 2
-    node_id_col = 3
-    colNum = 4
-    
-    def __init__(self, populationName, cellType, popSize):
-      
+    def __init__(self, populationName, cellType):
         self.popName = populationName
         self.cellType = cellType
+        self.instances = []
         
-        self.instances = zeros((popSize,self.colNum), dtype=float)
-        self.count = 0
         
     def addInstance(self, x, y, z, node_id=-1):
-        #self.instances.append(Instance(len(self.instances), x, y, z, node_id))
-        #self.log.debug("Size: "+ str(self.instances.shape[0]))
-        
-        if self.count+1>self.instances.shape[0]:
-          self.instances.resize(self.count+1,self.colNum)
-        
-        self.instances[self.count,self.x_col] = x
-        self.instances[self.count,self.y_col] = y
-        self.instances[self.count,self.z_col] = z
-        self.instances[self.count,self.node_id_col] = node_id
-          
-        self.count+=1
+        self.instances.append(Instance(len(self.instances), x, y, z, node_id))
         
         
     def generateXML(self, out_file, indent):
@@ -172,22 +147,10 @@ class Population:
             out_file.write(indent+"    <cell_type>"+self.cellType+"</cell_type>\n")
         
         
-        out_file.write(indent+"    <instances size=\"%s\">\n"%(self.instances.shape[0]))
+        out_file.write(indent+"    <instances size=\""+str(len(self.instances))+"\">\n")
         
-        #for instance in self.instances:
-        #    instance.generateXML(out_file, indent+"        ")
-        
-        for i in range(0, self.instances.shape[0]):
-          
-            nodeString = ""
-            if self.instances[i,self.node_id_col] >= 0:
-                nodeString = " node_id=\"%i\"" % (self.instances[i,self.node_id_col])
-            
-            out_file.write(indent+"        "+"<instance id=\"%i\"%s>\n" % (i, nodeString))
-            out_file.write(indent+"        "+"    <location x=\"%f\" y=\"%f\" z=\"%f\"/>\n" % (self.instances[i,self.x_col], self.instances[i,self.y_col], self.instances[i,self.z_col]))
-            
-            out_file.write(indent+"        "+"</instance>\n")
-            
+        for instance in self.instances:
+            instance.generateXML(out_file, indent+"        ")
                     
         out_file.write(indent+"    </instances>\n")
         
@@ -202,9 +165,6 @@ class Population:
         popGroup._f_setAttr("name", self.popName)
         popGroup._f_setAttr("cell_type", self.cellType)
         
-        h5file.createArray(popGroup, self.popName, self.instances, "Locations of cells in "+ self.popName)
-        
-        '''
         includeNodeIds = 0 
         
         for instance in self.instances:
@@ -218,7 +178,6 @@ class Population:
         a = numpy.ones([len(self.instances), colCount], numpy.float32)
         
         count=0
-        
         for instance in self.instances:
           a[count,0] = instance.id
           a[count,1] = instance.x
@@ -229,9 +188,9 @@ class Population:
           
           count=count+1
         
-        h5file.createArray(popGroup, self.popName, a, "Locations of cells in "+ self.popName)'''
+        h5file.createArray(popGroup, self.popName, a, "Locations of cells in "+ self.popName)
         
-'''        
+        
 class Instance:
     
     def __init__(self, id, x, y, z, node_id=-1):
@@ -251,7 +210,7 @@ class Instance:
         out_file.write(indent+"<instance id=\""+str(self.id)+"\""+nodeString+">\n")
         out_file.write(indent+"    <location x=\""+str(self.x)+"\" y=\""+str(self.y)+"\" z=\""+str(self.z)+"\"/>\n")
         out_file.write(indent+"</instance>\n")
-   '''     
+        
         
 
         

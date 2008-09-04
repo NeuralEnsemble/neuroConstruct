@@ -14,10 +14,10 @@ import os
 import logging
 
 
-from NetworkHandler import NetworkHandler
-
 sys.path.append("../NeuroMLUtils")
-from NetworkMLUtils import NetworkMLFile
+
+from NetworkHandler import NetworkHandler
+from NetworkMLFile import NetworkMLFile
     
 
 
@@ -50,6 +50,8 @@ class NetworkHolder(NetworkHandler):
     #    
     def handleLocation(self, id, cellGroup, cellType, x, y, z):
         self.printLocationInformation(id, cellGroup, cellType, x, y, z)
+
+        self.nmlFile.population.
                 
         
     #

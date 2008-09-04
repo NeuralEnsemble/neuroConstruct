@@ -26,7 +26,7 @@ from NetworkMLSaxHandler import NetworkMLSaxHandler
 file_name = 'small.nml'
 #file_name = 'Pre1.7.1.nml'
 
-logging.basicConfig(level=logging.INFO, format="%(name)-19s %(levelname)-5s - %(message)s")
+logging.basicConfig(level=logging.WARN, format="%(name)-19s %(levelname)-5s - %(message)s")
 
 
 print("Going to read contents of a NetworkML file: "+str(file_name))
@@ -49,6 +49,14 @@ print("Have read in contents of file: "+str(file_name))
 
 print (str(nmlHandler.nmlFile))
 
+
+// not yet working...
+
+//new_file_name = 'new_'+file_name
+
+///nmlHandler.nmlFile.writeXML(new_file_name)
+
+///print("Have saved the contents in new file: "+str(new_file_name))
 
 
 

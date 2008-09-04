@@ -15,7 +15,7 @@
 import sys, os, math, random, xml
  
 sys.path.append("../NeuroMLUtils")
-from NetworkMLUtils import NetworkMLFile
+from NetworkMLFile import NetworkMLFile
 
 print("Going to create a NetworkML file...")
 
@@ -42,19 +42,25 @@ for i in range(popSize):
         newProj.addConnection(i-1, i)
     
   
-filenameX = "../../../temp/test.nml"
+filenameX = "random.nml"
 nmlFile.writeXML(filenameX)     # Create XML based NetworkML file
 
 
-###############  Comment out these 2 lines for XML only saving...
-filenameH = "../../../temp/test.h5"
+###############  Put back in these lines for HDF5 saving. Note pytables should be installed and tested before this!
+#filenameH = "random.h5"
 #nmlFile.writeHDF5(filenameH)     # Create HDF5 based NetworkML file
+#print("All done! File with "+str(popSize)+" cells saved to: "+ filenameH)
 ###############
 
-print("All done! File with "+str(popSize)+" cells saved to: "+ filenameX+ " and to "+ filenameH)
+print("All done! File with "+str(popSize)+" cells saved to: "+ filenameX)
 print("")
 
 print("To load this generated network into neuroConstruct, create a new project and accept the kind offer to add")
 print("some sample elements. Add a network connection with source and target being the project's only cell group.")
-print("Go to tab Generate, press Load NetworkML and locate the generated file. You will need a pretty high spec")
-print("video card to view this size of network, so try reducing the population size above")
+print("Go to tab Generate, press Load NetworkML and locate the generated file. ")
+print(" ")
+print("Try changing the shape and population size above. You will need a pretty high spec video card to view ")
+print("large networks, though.")
+
+
+
