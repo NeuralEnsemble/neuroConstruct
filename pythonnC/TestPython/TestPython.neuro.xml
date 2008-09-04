@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<java version="1.6.0_03" class="java.beans.XMLDecoder"> 
+<java version="1.6.0_07" class="java.beans.XMLDecoder"> 
 
 <!-- This is a neuroConstruct project file. It's best to open this
 file with neuroConstruct, as opposed to editing it directly. 
@@ -233,7 +233,7 @@ part of NeuroML or any standardised XML specification. -->
     <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings"> 
      <void property="amp"> 
       <void property="fixedNum"> 
-       <float>0.18929817</float> 
+       <float>0.032446023</float> 
       </void> 
      </void> 
      <void property="cellChooser"> 
@@ -350,7 +350,7 @@ part of NeuroML or any standardised XML specification. -->
       </void> 
      </void> 
      <void property="simDuration"> 
-      <float>1000.0</float> 
+      <float>10000.0</float> 
      </void> 
     </object> 
    </void> 
