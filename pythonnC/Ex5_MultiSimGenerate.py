@@ -26,6 +26,7 @@ import time
 
 
 neuroConstructSeed = 1234
+
 simulatorSeed = 4321
 
 # Load an existing neuroConstruct project
@@ -51,6 +52,24 @@ numGenerated = myProject.generatedCellPositions.getNumberInAllCellGroups()
 
 print "Number of cells generated: " + str(numGenerated)
 
+simsRunning = []
+
+
+
+def updateSimsRunning():
+
+    simsFinished = []
+
+    for sim in simsRunning:
+        timeFile = File(myProject.getProjectMainDirectory(), "simulations/"+sim+"/time.dat")
+        #print "Checking file: "+timeFile.getAbsolutePath() +", exists: "+ str(timeFile.exists())
+        if (timeFile.exists()):
+            simsFinished.append(sim)
+
+    if(len(simsFinished)>0):
+        for sim in simsFinished:
+            simsRunning.remove(sim)
+
 
 if numGenerated > 0:
 
@@ -60,11 +79,25 @@ if numGenerated > 0:
     
     myProject.neuronSettings.setCopySimFiles(1) # 1 copies hoc/mod files to PySim_0 etc. and will allow multiple sims to run at once
     
-    numToRun = 6
+
+    # Note same network structure will be used for each!
+    numSimulationsToRun = 22
+
+    maxNumSimultaneousSims = 4
     
-    for i in range(0, numToRun):
+    for i in range(0, numSimulationsToRun):
+
+
+        while (len(simsRunning)>=maxNumSimultaneousSims):
+            print "Sims currently running: "+str(simsRunning)
+            print "Waiting..."
+            time.sleep(2) # wait a while...
+            updateSimsRunning()
+
     
         simRef = "PySim_"+str(i)
+
+        print "Going to run simulation: "+simRef
         
         stim = myProject.elecInputInfo.getStim("Input_0")
         
@@ -79,21 +112,29 @@ if numGenerated > 0:
         myProject.simulationParameters.setReference(simRef)
     
         myProject.neuronFileManager.generateTheNeuronFiles(simConfig, None, NeuronFileManager.RUN_HOC, simulatorSeed)
+
+        print "Generated NEURON files for: "+simRef
     
         compileProcess = ProcessManager(myProject.neuronFileManager.getMainHocFile())
     
         compileSuccess = compileProcess.compileFileWithNeuron(0)
+
+        print "Compiled NEURON files for: "+simRef
     
         if compileSuccess:
             pm.doRunNeuron(simConfig)
+            print "Set running simulation: "+simRef
+            simsRunning.append(simRef)
             
-            time.sleep(2) # wait a while between simulations...
-            
-            print "Finished running simulation: "+simRef
+        time.sleep(1) # Wait for sim to be kicked off
     
     print
-    print "Finished running "+str(numToRun)+" simulations for project "+ projFile.getAbsolutePath()
+    print "Finished running "+str(numSimulationsToRun)+" simulations for project "+ projFile.getAbsolutePath()
     print "These can be loaded and replayed in the previous simulation browser in the GUI"
     print
 
 System.exit(0)
+
+
+
+

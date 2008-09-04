@@ -8,8 +8,8 @@ The interaction is achieved using Jython.
 
 The scripts can be run using the nC script files, e.g. type:
 
-..\nC.bat -python TestSimple.py         (Windows)
-../nC.sh -python TestSimple.py          (Linux/Mac)
+..\nC.bat -python Ex1_Simple.py         (Windows)
+../nC.sh -python Ex1_Simple.py          (Linux/Mac)
 
 All of the required libraries for Jython should be included with the standard neuroConstruct distribution.
 
