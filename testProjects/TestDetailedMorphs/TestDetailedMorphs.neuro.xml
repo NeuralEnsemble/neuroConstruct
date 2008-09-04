@@ -10,7 +10,7 @@ part of NeuroML or any standardised XML specification. -->
  <object class="ucl.physiol.neuroconstruct.project.BasicProjectInfo"> 
   <void property="projectDescription"> 
    <string>This is a simple project with a single cell placed randomly in a 3D rectangular box.
-
+ 
 Go to tab Generate, press Generate Cell Positions and Connections, and then to visualise the results, go to tab Visualisation and press View, with Latest Generated Positions selected in the drop down box.
 
 If NEURON or GENESIS are installed, the cell can be simulated via tab Export Network.</string> 
@@ -254,7 +254,7 @@ createTestReport</string>
    <float>100.0</float> 
   </void> 
   <void property="reference"> 
-   <string>Sim_54</string> 
+   <string>Sim_55</string> 
   </void> 
   <void property="saveCopyGenSimFiles"> 
    <boolean>true</boolean> 
