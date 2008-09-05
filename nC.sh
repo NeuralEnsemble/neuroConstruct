@@ -45,7 +45,7 @@ else
 fi
 
 
-echo "Classpath is" $CLASSPATH
-echo "java.library.path is" $JAVA_LIBRARY_PATH
+#echo "Classpath is" $CLASSPATH
+#echo "java.library.path is" $JAVA_LIBRARY_PATH
 
 java -Xmx$NC_MAX_MEMORY  -classpath $CLASSPATH -Djava.library.path=$JAVA_LIBRARY_PATH  ucl.physiol.neuroconstruct.gui.MainApplication $1 $2 $3 $4 $5
