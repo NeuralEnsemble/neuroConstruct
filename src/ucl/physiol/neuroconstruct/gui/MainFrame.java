@@ -10519,7 +10519,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         dlg.setSelectedSimConfig(getSelectedSimConfig().getName());
 
-        this.refreshAll();
+        //this.refreshAll();
 
     }
 
