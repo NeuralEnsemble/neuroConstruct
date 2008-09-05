@@ -2634,6 +2634,9 @@ public class CellTopologyHelper
                         missingCellMechs.add(synName);
                     }
                 }
+                
+                ArrayList<String> posCondDensChans = new ArrayList<String>();
+                ArrayList<ChannelMechanism> extraParamsOnlyChans = new ArrayList<ChannelMechanism>();
 
                 for (int k = 0; k < fixedMechs.size(); k++)
                 {
@@ -2647,6 +2650,19 @@ public class CellTopologyHelper
                         missingCellMechs.add(cm.getName());
                     }
                     if (passChanNames.contains(cm.getName())) passChansHere.add(cm); //numPassiveChans++;
+                    if (cm.getDensity()>=0)
+                    {
+                        if (posCondDensChans.contains(cm.getName()))
+                        {
+                            errorReport.append("Error: Section "+nextSec.getSectionName()+" has 2 seperate values for the conductance density of: "+cm.getName()+"\n");
+                            errorReport.append("Channels on this section: "+fixedMechs+"\n");
+                        }
+                        posCondDensChans.add(cm.getName());
+                    }
+                    else
+                    {
+                        extraParamsOnlyChans.add(cm);
+                    }
                 }
                 for(VariableMechanism vm: varMechs)
                 {
@@ -2660,6 +2676,15 @@ public class CellTopologyHelper
                     }
                     //TODO: Check if pass chan is variable
                     //////////if (passChanNames.contains(vm.getName())) passChansHere.add(cm); //numPassiveChans++;
+                }
+                
+                for(ChannelMechanism cm: extraParamsOnlyChans)
+                {
+                    if (!posCondDensChans.contains(cm.getName()) && !project.cellMechanismInfo.getCellMechanism(cm.getName()).isIonConcMechanism())
+                    {
+                        errorReport.append("Error: This channel mechanism is specified for section "+nextSec.getSectionName()+": "+cm+"\n");
+                        errorReport.append("However, there is no corresponding channel mechanism specified with gmax >=0!\n");
+                    }
                 }
 
 
