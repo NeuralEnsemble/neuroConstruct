@@ -35,6 +35,10 @@
             <meta:modelName>Na channels</meta:modelName>
             <meta:uri>http://senselab.med.yale.edu/senselab/NeuronDB/channelGene2.htm#table2</meta:uri>
         </meta:neuronDBref>
+        
+        <parameters>
+          <parameter name = "extraParam" value = "66"/>  
+        </parameters>
 
 
         <current_voltage_relation>
