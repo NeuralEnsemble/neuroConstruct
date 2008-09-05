@@ -331,26 +331,28 @@ float totallength = 0
   foreach name ({el {cellsRoot}/##[][TYPE=compartment],{cellsRoot}/##[][TYPE=symcompartment]})
 
     totalnum = totalnum +1
+    float length = {getfield {name} len}
 
     //echo len: {getfield {name} len}
 
-    if ({getfield {name} len} == 0)
+    if (length == 0)
 
         area = {PI}*{getfield {name} dia}*{getfield {name} dia}
 
     else
         area = {PI}*{getfield {name} dia}*{getfield {name} len}
-        totallength = totallength + {getfield {name} len}
+        totallength = totallength + length
     end
 
-        totalarea = totalarea + area
-        echo "Compartment: " {name} ", area: " {area} ", length: " {getfield {name} len}
+    totalarea = totalarea + area
+    echo "Compartment: " {name} ", area: " {area} ", length: " {length}", diam: " {getfield {name} dia}
+
   end
 
 
-    echo "+    Number of compartments:"  {totalnum}
-    echo "+    Total area all sections: ", {totalarea}
-    echo "+    Total length all sections: ", {totallength}
+  echo "+    Number of compartments:"  {totalnum}
+  echo "+    Total area all sections: ", {totalarea}
+  echo "+    Total length all sections: ", {totallength}
 
 
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++"
