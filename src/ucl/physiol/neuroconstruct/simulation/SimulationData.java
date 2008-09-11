@@ -20,7 +20,6 @@ import ucl.physiol.neuroconstruct.dataset.DataSet;
 import ucl.physiol.neuroconstruct.utils.units.*;
 import ucl.physiol.neuroconstruct.project.SimPlot;
 import ucl.physiol.neuroconstruct.project.PostSynapticObject;
-import ucl.physiol.neuroconstruct.project.cellchoice.CellChooser;
 
 /**
  * Class which stores all the data from a simulation, including references to data files
@@ -238,7 +237,7 @@ public class SimulationData
                 conversionFactor = UnitConverter.getConcentration(conversionFactor,
                                                                           unitSystem,
                                                                           UnitConverter.NEUROCONSTRUCT_UNITS);
-                System.out.println("Conc conv factor: "+ conversionFactor);
+                //System.out.println("Conc conv factor: "+ conversionFactor);
 
                 yUnit = UnitConverter.concentrationUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
             }
