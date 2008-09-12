@@ -292,6 +292,9 @@ public class NeuronFileManagerTest {
         
         Thread.sleep(wait); // Shouldn't take longer than this
         
+        if (!timesFile.exists())
+            Thread.sleep(wait);
+        
         assertTrue(timesFile.exists());
         
         simDataParallel.initialise();

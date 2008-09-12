@@ -9,6 +9,8 @@ import java.io.File;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.Result;
+import test.MainTest;
 import static org.junit.Assert.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.project.*;
@@ -36,6 +38,8 @@ public class NetworkMLReaderTest
     public void setUp() 
     {
         System.out.println("---------------   setUp() hdf5.NetworkMLReaderTest");
+        
+        System.out.println("Sys prop: "+System.getProperty("java.library.path"));
         
         File projFile = new File(projDir, projName+ProjectStructure.getProjectFileExtension());
         
@@ -134,6 +138,17 @@ public class NetworkMLReaderTest
         assertEquals(stateString1.toString(), stateString2.toString());
         
     }
+    
+    
+    
+    public static void main(String[] args)
+    {
+        NetworkMLReaderTest ct = new NetworkMLReaderTest();
+        Result r = org.junit.runner.JUnitCore.runClasses(ct.getClass());
+        MainTest.checkResults(r);
+        
+    }
+    
 
 
 }
