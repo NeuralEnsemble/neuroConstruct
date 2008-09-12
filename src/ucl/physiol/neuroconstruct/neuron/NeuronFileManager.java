@@ -319,6 +319,8 @@ public class NeuronFileManager
             hocWriter.write(associateCellsWithNodes());
             
             
+            hocWriter.flush();
+            
             if (isRunModePythonBased(runMode))
             {
                 hocWriter.write(getHocPythonStartup(project));
@@ -330,6 +332,8 @@ public class NeuronFileManager
             {
 
                 hocWriter.write(generateCellGroups());
+                
+                hocWriter.flush();
 
                 hocWriter.write(generateInitialParameters());
                 hocWriter.flush();
@@ -339,6 +343,8 @@ public class NeuronFileManager
             }
 
             hocWriter.write(generateStimulations());
+                
+            hocWriter.flush();
 
             hocWriter.write(generateAccess());
             

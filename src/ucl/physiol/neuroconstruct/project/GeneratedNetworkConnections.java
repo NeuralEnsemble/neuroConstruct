@@ -198,12 +198,12 @@ public class GeneratedNetworkConnections
             {
                 if (uniqueValues)
                 {
-                    if (!allIndices.contains(new Integer(conn.targetEndPoint.cellNumber)))
-                        allIndices.add(new Integer(conn.targetEndPoint.cellNumber));
+                    if (!allIndices.contains(conn.targetEndPoint.cellNumber))
+                        allIndices.add(conn.targetEndPoint.cellNumber);
                 }
                 else
                 {
-                    allIndices.add(new Integer(conn.targetEndPoint.cellNumber));
+                    allIndices.add(conn.targetEndPoint.cellNumber);
                 }
             }
         }
@@ -1011,6 +1011,18 @@ public class GeneratedNetworkConnections
                  sb.append(": "+ prop);
              }
             }
+            return sb.toString();
+        }
+        
+        
+        public String toShortString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Conn:"
+                      + sourceEndPoint.cellNumber + " ->"
+                      + targetEndPoint.cellNumber);
+
+        
             return sb.toString();
         }
         

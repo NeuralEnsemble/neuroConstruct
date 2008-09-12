@@ -211,6 +211,9 @@ public class MorphBasedConnGenerator extends Thread
                     float numConnFloat = connConds.getNumConnsInitiatingCellGroup().getNextNumber();
                     int numberConnections = (int) numConnFloat;
                     
+                    // If false, ignore checks for maximum number of connections to finish cells, e.g. max connections to each target cell
+                    boolean checkMaxingOutFinCells = (connConds.getMaxNumInitPerFinishCell() != Integer.MAX_VALUE);
+                    
                     if (numberInGenStartCellGroup>1000)
                     {
                         int part1percent = (int)(numberInGenStartCellGroup/100);
@@ -218,32 +221,39 @@ public class MorphBasedConnGenerator extends Thread
                         int part10percent = (int)(numberInGenStartCellGroup/10);
                         int part20percent = (int)(numberInGenStartCellGroup/5);
                         int part30percent = (int)(numberInGenStartCellGroup*0.3f);
-                        int part50percent = (int)(numberInGenStartCellGroup/2);
-                        int part75percent = (int)(numberInGenStartCellGroup*7.5f);
+                        int part40percent = (int)(numberInGenStartCellGroup*0.4f);
+                        int part50percent = (int)(numberInGenStartCellGroup*0.5f);
+                        int part60percent = (int)(numberInGenStartCellGroup*0.6f);
+                        int part70percent = (int)(numberInGenStartCellGroup*0.7f);
+                        int part80percent = (int)(numberInGenStartCellGroup*0.8f);
                         int part90percent = (int)(numberInGenStartCellGroup*0.9);
                         
-                            float time = ( System.currentTimeMillis() - startGen)/1000f;
+                        float time = ( System.currentTimeMillis() - startGen)/1000f;
                         
                         if (genStartCellNumber == part1percent ||
                             genStartCellNumber == part5percent ||
                             genStartCellNumber == part10percent ||
                             genStartCellNumber == part20percent ||
                             genStartCellNumber == part30percent ||
+                            genStartCellNumber == part40percent ||
                             genStartCellNumber == part50percent ||
+                            genStartCellNumber == part60percent ||
+                            genStartCellNumber == part70percent ||
+                            genStartCellNumber == part80percent ||
                             genStartCellNumber == part90percent )
                         {
                             float fract = genStartCellNumber / (float)numberInGenStartCellGroup;
                             logger.logComment("Generated conns for "
                                               + genStartCellNumber
                                               + " cells out of "
-                                              + numberInGenStartCellGroup+" ("+(100 * fract)+"%) in "+ netConnName+" in "+time+" sec", true);
+                                              + numberInGenStartCellGroup+" ("+(100 * fract)+"%) in "+ netConnName+" in "+time+" sec"+", "+time/60f+" min", true);
                             
-                            logger.logComment("Estimated time left: "+(time / (fract * 60f) )+" mins", true);
+                            logger.logComment("Estimated time left: "+( (1-fract) * time / ( 60f) )+" mins", true);
                             
                         }
                         else if(genStartCellNumber== numberInGenStartCellGroup-1)
                         {
-                            logger.logComment("Generated conns for all cells in "+ netConnName+" in "+time+" sec", true);
+                            logger.logComment("Generated conns for all cells in "+ netConnName+" in "+time+" sec"+", "+time/60f+" min", true);
                         }
                                 
                         
@@ -359,23 +369,25 @@ public class MorphBasedConnGenerator extends Thread
 
                             if (searchPattern.type == SearchPattern.COMPLETELY_RANDOM)
                             {
+                                
+                                boolean foundOne = false;
+                                
                                 logger.logComment("Linking will be done in completely random manner...");
                                 logger.logComment("Asking cell of type: " + generationFinishCellInstance.toString() +
                                                   " for a synaptic location");
 
-                                int numFaliedAttemptsMaxMin = 0;
-                                boolean foundOne = false;
-                                int numToTry = maxMin.getNumberAttempts();
+                                int numFailedAttemptsMaxMin = 0;
+                                int numToTryMaxMin = maxMin.getNumberAttempts();
 
 
                                 int availableCellsToConnectTo = numberInGenFinishCellGroup;
 
                                 while (!foundOne
-                                       && numFaliedAttemptsMaxMin < numToTry
+                                       && numFailedAttemptsMaxMin < numToTryMaxMin
                                        && continueGeneration
                                        && finCellsMaxedOut.size()<availableCellsToConnectTo)
                                 {
-                                    logger.logComment("numFaliedAttemptsMaxMin: " + numFaliedAttemptsMaxMin);
+                                    logger.logComment("numFaliedAttemptsMaxMin: " + numFailedAttemptsMaxMin);
                                     logger.logComment("finCellsMaxedOut.size(): " + finCellsMaxedOut.size());
 
                                     if (connConds.getGenerationDirection() == ConnectivityConditions.SOURCE_TO_TARGET)
@@ -417,29 +429,34 @@ public class MorphBasedConnGenerator extends Thread
 
                                             logger.logComment("--------------------------Testing if cell num: " + genFinishCellNumber +
                                                               " is appropriate for cell number: "
-                                                          + genStartCellNumber);
+                                                               + genStartCellNumber);
 
                                             logger.logComment("finCellsMaxedOut: " + finCellsMaxedOut);
                                             logger.logComment("availableCellsToConnectTo: " + availableCellsToConnectTo);
+                                            //logger.logComment("checkMaxingOutFinCells: " + checkMaxingOutFinCells, true);
+                                            
 
                                             ArrayList<Integer> connsOnFinishCell = null;
 
-                                            if (connConds.getGenerationDirection() == ConnectivityConditions.SOURCE_TO_TARGET)
+                                            if(checkMaxingOutFinCells)
                                             {
-                                                connsOnFinishCell = project.generatedNetworkConnections.getSourceCellIndices(netConnName,
-                                                    genFinishCellNumber, false);
-                                            }
-                                            else
-                                            {
-                                                connsOnFinishCell = project.generatedNetworkConnections.getTargetCellIndices(netConnName,
-                                                    genFinishCellNumber, false);
+                                                if (connConds.getGenerationDirection() == ConnectivityConditions.SOURCE_TO_TARGET)
+                                                {
+                                                    connsOnFinishCell = project.generatedNetworkConnections.getSourceCellIndices(netConnName,
+                                                        genFinishCellNumber, false);
+                                                }
+                                                else
+                                                {
+                                                    connsOnFinishCell = project.generatedNetworkConnections.getTargetCellIndices(netConnName,
+                                                        genFinishCellNumber, false);
 
+                                                }
                                             }
 
                                             logger.logComment("connsOnFinishCell: " + connsOnFinishCell);
 
 
-                                            if ((connsOnFinishCell.size()+1) <= connConds.getMaxNumInitPerFinishCell())
+                                            if ( !checkMaxingOutFinCells || ((connsOnFinishCell.size()+1) <= connConds.getMaxNumInitPerFinishCell()) )
                                             {
                                                 logger.logComment("There are not more than: " + connConds.getMaxNumInitPerFinishCell()
                                                                   + " src conns on finish cell "+genFinishCellNumber);
@@ -516,7 +533,7 @@ public class MorphBasedConnGenerator extends Thread
                                                 {
                                                     logger.logComment("The length: " + distanceApart + " isn't between " +
                                                                       maxMin.getMinLength() + " and " + maxMin.getMaxLength());
-                                                    numFaliedAttemptsMaxMin++;
+                                                    numFailedAttemptsMaxMin++;
                                                     genFinishConnPoint = null;
                                                     genFinishCellNumber = -1;
                                                 }

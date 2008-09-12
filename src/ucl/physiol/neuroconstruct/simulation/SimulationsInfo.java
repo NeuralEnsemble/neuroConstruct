@@ -331,7 +331,7 @@ public class SimulationsInfo extends AbstractTableModel
             {
                 String cellType = project.cellGroupsInfo.getCellType(cellGroupName);
                 int num = project.generatedCellPositions.getNumberInCellGroup(cellGroupName);
-                pops.append(cellGroupName + " (" + cellType + "): " + num);
+                pops.append(cellGroupName + ": " + num);
                 if (i < cellGroupNames.size() - 1) pops.append("; ");
 
                 StringBuffer info = new StringBuffer("[");

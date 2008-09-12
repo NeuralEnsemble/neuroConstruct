@@ -1361,16 +1361,6 @@ public class ProjectManager implements GenerationReport
         }
         else if (generatorType.equals(MorphBasedConnGenerator.myGeneratorType))
         {
-
-            //String currentReport = jEditorPaneGenerateInfo.getText();
-
-            //String update = new String(currentReport.substring(0,currentReport.lastIndexOf("</body>")) // as the jEditorPane returns html...
-            //                           +report);
-            
-            //jEditorPaneGenerateInfo.setText(update+"  ");
-
-
-
             if (report.indexOf("Generation interrupted")>0)
             {
                 logger.logComment("It seems the generation of connections was interrupted...");
@@ -1391,12 +1381,6 @@ public class ProjectManager implements GenerationReport
         else if (simConfig.getMpiConf().isParallel() 
                    && generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
         {
-            //String currentReport = jEditorPaneGenerateInfo.getText();
-
-            //String update = new String(currentReport.substring(0,currentReport.lastIndexOf("</body>")) // as the jEditorPane returns html...
-            //                           +report);
-            
-            //jEditorPaneGenerateInfo.setText(update);
 
             if (report.indexOf("Generation interrupted")>0)
             {
@@ -1416,14 +1400,6 @@ public class ProjectManager implements GenerationReport
                 && (generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
                 || generatorType.equals(CompNodeGenerator.myGeneratorType)))
         {
-            //String currentReport = jEditorPaneGenerateInfo.getText();
-
-            //String update = new String(currentReport.substring(0,currentReport.lastIndexOf("</body>")) // as the jEditorPane returns html...
-            //                           +report);
-
-            //jEditorPaneGenerateInfo.setText(update);
-
-
 
             if (report.indexOf("Generation interrupted")>0)
             {
@@ -1444,11 +1420,6 @@ public class ProjectManager implements GenerationReport
 
         else if (generatorType.equals(ElecInputGenerator.myGeneratorType))
         {
-            //String currentReport = jEditorPaneGenerateInfo.getText();
-
-            //String update = new String(currentReport.substring(0, currentReport.lastIndexOf("</body>")) // as the jEditorPane returns html...
-            //                           + report);
-            //jEditorPaneGenerateInfo.setText(update);
 
             if (report.indexOf("Generation interrupted") > 0)
             {
@@ -1470,16 +1441,6 @@ public class ProjectManager implements GenerationReport
         else if (generatorType.equals(PlotSaveGenerator.myGeneratorType))
         {
 
-            //String currentReport = jEditorPaneGenerateInfo.getText();
-
-            //String update = new String(currentReport.substring(0, currentReport.lastIndexOf("</body>")) // as the jEditorPane returns html...
-            //                           + report);
-
-            //jEditorPaneGenerateInfo.setText(update);
-
-            //this.jButtonGenerateStop.setEnabled(false);
-
-            //refreshTabGenerate();
             
             currentlyGenerating = false;
         }
@@ -1487,10 +1448,10 @@ public class ProjectManager implements GenerationReport
         {
             logger.logComment("Don't know the type of that generation report!!: " + generatorType);
             
-            currentlyGenerating = false;
+            //////////////currentlyGenerating = false;
         }
 
-        currentlyGenerating = false;
+        //////////////currentlyGenerating = false;
 
 
     }
