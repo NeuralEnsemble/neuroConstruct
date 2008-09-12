@@ -1,8 +1,8 @@
 #
 #
-#   A class to handle events from the NeuroMLSaxHandler, etc.
+#   A class to handle events from the NeuroMLSaxHandler, NetworkMLHDF5Handler, etc.
 #   This should be overridden by simulator specific implementations.
-#   Parsing classes, e.g. NetworkMLSaxHandler should call the appropriate
+#   File parsing classes, e.g. NetworkMLSaxHandler should call the appropriate
 #   function here when a cell location, connection, etc. is encountered.
 #
 #   Use of this handler class should mean that the network setup is 

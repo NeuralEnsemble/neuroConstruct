@@ -24,6 +24,9 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
   
   myNodeId = -1    # If myNodeId <0, ignore node_id attribute and handle all cells, otherwise handle only cells with myNodeId = node_id
   
+  currentElementList = []
+  
+  
   isCellTypeElement = 0
   currentInstanceId = -1
   currPopulation = ""
@@ -65,6 +68,11 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
     
   def startElement(self, name, attrs):
 
+    self.currentElementList.append(name)
+    
+    #for el in self.currentElementList:
+    #    print "<"+el+">"
+    
     if name == 'networkml':     
       self.log.debug("Found main networkml element")
       self.log.debug("lengthUnits: "+ attrs.get('lengthUnits',""))
@@ -336,6 +344,8 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
          
   def endElement(self, name):
       
+    self.currentElementList.pop()
+    
     if name == 'instance':
       self.currentInstanceId = -1
       
