@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<java version="1.5.0_15" class="java.beans.XMLDecoder"> 
+<java version="1.6.0_07" class="java.beans.XMLDecoder"> 
 
 <!-- This is a neuroConstruct project file. It's best to open this
 file with neuroConstruct, as opposed to editing it directly. 
@@ -9,7 +9,7 @@ part of NeuroML or any standardised XML specification. -->
 
  <object class="ucl.physiol.neuroconstruct.project.BasicProjectInfo"> 
   <void property="projectFileVersion"> 
-   <string>neuroConstruct v1.1.1</string> 
+   <string>neuroConstruct v1.1.4</string> 
   </void> 
   <void property="projectName"> 
    <string>TestNetworkConns</string> 
@@ -69,7 +69,7 @@ part of NeuroML or any standardised XML specification. -->
       <void property="parameterList"> 
        <void index="2"> 
         <void property="value"> 
-         <float>4.0</float> 
+         <float>20.0</float> 
         </void> 
        </void> 
       </void> 
@@ -80,7 +80,7 @@ part of NeuroML or any standardised XML specification. -->
       <void property="parameterList"> 
        <void index="2"> 
         <void property="value"> 
-         <float>4.0</float> 
+         <float>20.0</float> 
         </void> 
        </void> 
       </void> 
@@ -308,6 +308,40 @@ part of NeuroML or any standardised XML specification. -->
      </void> 
     </object> 
    </void> 
+   <void method="add"> 
+    <object class="ucl.physiol.neuroconstruct.project.SimConfig"> 
+     <void property="cellGroups"> 
+      <void method="add"> 
+       <string>CG1</string> 
+      </void> 
+      <void method="add"> 
+       <string>CG2</string> 
+      </void> 
+     </void> 
+     <void property="description"> 
+      <string></string> 
+     </void> 
+     <void property="name"> 
+      <string>TwoCG</string> 
+     </void> 
+     <void property="netConns"> 
+      <void method="add"> 
+       <string>NetConn_CG1_CG2_1</string> 
+      </void> 
+     </void> 
+     <void property="plots"> 
+      <void method="add"> 
+       <string>CG2_v</string> 
+      </void> 
+      <void method="add"> 
+       <string>CG1_v</string> 
+      </void> 
+     </void> 
+     <void property="simDuration"> 
+      <float>100.0</float> 
+     </void> 
+    </object> 
+   </void> 
   </void> 
  </object> 
  <object class="ucl.physiol.neuroconstruct.project.SimpleNetworkConnectionsInfo"> 
@@ -320,9 +354,15 @@ part of NeuroML or any standardised XML specification. -->
     <void method="add"> 
      <string>NetConn_CG1_CG2</string> 
     </void> 
+    <void method="add"> 
+     <string>NetConn_CG1_CG2_1</string> 
+    </void> 
    </void> 
    <void method="get"> 
     <string>AP speed</string> 
+    <void method="add"> 
+     <float>3.4028235E38</float> 
+    </void> 
     <void method="add"> 
      <float>3.4028235E38</float> 
     </void> 
@@ -394,9 +434,43 @@ part of NeuroML or any standardised XML specification. -->
       </void> 
      </object> 
     </void> 
+    <void method="add"> 
+     <object class="java.util.Vector"> 
+      <void method="add"> 
+       <object class="ucl.physiol.neuroconstruct.project.SynapticProperties"> 
+        <void property="delayGenerator"> 
+         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator"> 
+          <void property="fixedNum"> 
+           <float>5.0</float> 
+          </void> 
+          <void property="numberType"> 
+           <int>11</int> 
+          </void> 
+         </object> 
+        </void> 
+        <void property="synapseType"> 
+         <string>DoubExpSyn</string> 
+        </void> 
+        <void property="threshold"> 
+         <double>-20.0</double> 
+        </void> 
+        <void property="weightsGenerator"> 
+         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator"> 
+          <void property="numberType"> 
+           <int>11</int> 
+          </void> 
+         </object> 
+        </void> 
+       </object> 
+      </void> 
+     </object> 
+    </void> 
    </void> 
    <void method="get"> 
     <string>Max/min</string> 
+    <void method="add"> 
+     <object class="ucl.physiol.neuroconstruct.project.MaxMinLength"/> 
+    </void> 
     <void method="add"> 
      <object class="ucl.physiol.neuroconstruct.project.MaxMinLength"/> 
     </void> 
@@ -420,6 +494,13 @@ part of NeuroML or any standardised XML specification. -->
       </void> 
      </object> 
     </void> 
+    <void method="add"> 
+     <object class="ucl.physiol.neuroconstruct.project.SearchPattern"> 
+      <void property="type"> 
+       <int>0</int> 
+      </void> 
+     </object> 
+    </void> 
    </void> 
    <void method="get"> 
     <string>Source</string> 
@@ -428,6 +509,9 @@ part of NeuroML or any standardised XML specification. -->
     </void> 
     <void method="add"> 
      <string>CG2</string> 
+    </void> 
+    <void method="add"> 
+     <string>CG1</string> 
     </void> 
    </void> 
    <void method="get"> 
@@ -462,11 +546,41 @@ part of NeuroML or any standardised XML specification. -->
       </void> 
      </object> 
     </void> 
+    <void method="add"> 
+     <object class="ucl.physiol.neuroconstruct.project.ConnectivityConditions"> 
+      <void property="allowAutapses"> 
+       <boolean>false</boolean> 
+      </void> 
+      <void property="maxNumInitPerFinishCell"> 
+       <int>10</int> 
+      </void> 
+      <void property="numConnsInitiatingCellGroup"> 
+       <void property="distributionType"> 
+        <int>2</int> 
+       </void> 
+       <void property="max"> 
+        <float>10.0</float> 
+       </void> 
+       <void property="mean"> 
+        <float>7.0</float> 
+       </void> 
+       <void property="min"> 
+        <float>3.0</float> 
+       </void> 
+      </void> 
+      <void property="onlyConnectToUniqueCells"> 
+       <boolean>true</boolean> 
+      </void> 
+     </object> 
+    </void> 
    </void> 
    <void method="get"> 
     <string>Target</string> 
     <void method="add"> 
      <string>CG1</string> 
+    </void> 
+    <void method="add"> 
+     <string>CG2</string> 
     </void> 
     <void method="add"> 
      <string>CG2</string> 
