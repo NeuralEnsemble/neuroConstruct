@@ -35,6 +35,7 @@ import ucl.physiol.neuroconstruct.project.GeneralProperties;
 import ucl.physiol.neuroconstruct.project.GeneratedElecInputs;
 import ucl.physiol.neuroconstruct.project.PositionRecord;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.SingleSynapticConnection;
+import ucl.physiol.neuroconstruct.project.SimConfig;
 import ucl.physiol.neuroconstruct.project.SingleElectricalInput;
 import ucl.physiol.neuroconstruct.project.SynapticProperties;
 import ucl.physiol.neuroconstruct.project.stimulation.*;
@@ -62,6 +63,7 @@ public class NetworkMLWriter
 
     public static File createNetworkMLH5file(File file,
                                              Project project,
+                                             SimConfig simConfig,
                                              String units) throws Hdf5Exception
     {
 
@@ -103,10 +105,10 @@ public class NetworkMLWriter
 
         while (netConns.hasNext())
         {
-        String mc = netConns.next();
-        int numHere = gnc.getSynapticConnections(mc).size();
-        if (numHere>0)
-        notes.append("Network connection: "+mc+" contains "+numHere+" individual synaptic connections\n");
+            String mc = netConns.next();
+            int numHere = gnc.getSynapticConnections(mc).size();
+            if (numHere>0)
+            notes.append("Network connection: "+mc+" contains "+numHere+" individual synaptic connections\n");
 
         }
 
@@ -114,10 +116,10 @@ public class NetworkMLWriter
 
         while (elecInputs.hasNext())
         {
-        String ei = elecInputs.next();
-        int numHere = gei.getNumberSingleInputs(ei);
-        if (numHere>0)
-        notes.append("Electrical Input: "+ei+" contains "+numHere+" individual stimulations\n");
+            String ei = elecInputs.next();
+            int numHere = gei.getNumberSingleInputs(ei);
+            if (numHere>0)
+            notes.append("Electrical Input: "+ei+" contains "+numHere+" individual stimulations\n");
 
         }               
         
@@ -135,6 +137,14 @@ public class NetworkMLWriter
             Attribute attr = Hdf5Utils.getSimpleAttr("notes", notes.toString(), h5File);
             
             netmlGroup.writeMetadata(attr);
+
+            Attribute attrSimConf = Hdf5Utils.getSimpleAttr(NetworkMLConstants.NC_SIM_CONFIG, simConfig.getName(), h5File);
+            
+            netmlGroup.writeMetadata(attrSimConf);
+
+            Attribute attrSeed = Hdf5Utils.getSimpleAttr(NetworkMLConstants.NC_NETWORK_GEN_RAND_SEED, project.generatedCellPositions.getRandomSeed()+"", h5File);
+            
+            netmlGroup.writeMetadata(attrSeed);
         }
         catch (Exception ex)
         {
@@ -677,6 +687,7 @@ public class NetworkMLWriter
 
             NetworkMLWriter.createNetworkMLH5file(h5File, 
                                                   testProj,
+                                                  testProj.simConfigInfo.getDefaultSimConfig(),
                                                   NetworkMLConstants.UNITS_PHYSIOLOGICAL);
 
         }

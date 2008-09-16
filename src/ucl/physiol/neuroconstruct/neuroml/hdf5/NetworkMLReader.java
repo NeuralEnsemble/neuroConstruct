@@ -108,6 +108,18 @@ public class NetworkMLReader  implements NetworkMLnCInfo
         if (g.getName().equals(NetworkMLConstants.ROOT_ELEMENT))
         {
             logger.logComment("Found the main group");
+            
+            String simConfigName = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.NC_SIM_CONFIG);
+            
+            if (simConfigName!=null)
+                this.foundSimConfig = simConfigName;
+            
+            String randomSeed = Hdf5Utils.getFirstStringValAttr(attrs, NetworkMLConstants.NC_NETWORK_GEN_RAND_SEED);
+            
+            if (randomSeed!=null)
+                this.foundRandomSeed = Long.parseLong(randomSeed);
+            
+            
 
         }
         else if (g.getName().equals(NetworkMLConstants.POPULATIONS_ELEMENT))

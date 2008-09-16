@@ -10461,6 +10461,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             {
                 fileSaved = NetworkMLWriter.createNetworkMLH5file(networkFile, 
                                                                   projManager.getCurrentProject(),
+                                                                  getSelectedSimConfig(),
                                                                   NetworkMLConstants.UNITS_PHYSIOLOGICAL);
             }
         }

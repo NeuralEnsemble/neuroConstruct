@@ -38,7 +38,7 @@ public class GeneratedNetworkConnections
 {
     ClassLogger logger = new ClassLogger("GeneratedNetworkConnections");
 
-    Hashtable<String, ArrayList<SingleSynapticConnection>> mySynapticConnectionVectors
+    private Hashtable<String, ArrayList<SingleSynapticConnection>> mySynapticConnectionVectors
         = new Hashtable<String, ArrayList<SingleSynapticConnection>>();
 
     public static final int MORPH_NETWORK_CONNECTION = 0;

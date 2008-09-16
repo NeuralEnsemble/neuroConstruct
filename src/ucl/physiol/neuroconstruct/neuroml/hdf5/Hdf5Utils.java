@@ -663,6 +663,7 @@ public class Hdf5Utils
 
             NetworkMLWriter.createNetworkMLH5file(h5File, 
                                                   testProj,
+                                                  testProj.simConfigInfo.getDefaultSimConfig(),
                                                   NetworkMLConstants.UNITS_PHYSIOLOGICAL);
             
             if (true) System.exit(0);

@@ -243,12 +243,13 @@ public class MorphBasedConnGenerator extends Thread
                             genStartCellNumber == part90percent )
                         {
                             float fract = genStartCellNumber / (float)numberInGenStartCellGroup;
+                            
                             logger.logComment("Generated conns for "
                                               + genStartCellNumber
                                               + " cells out of "
                                               + numberInGenStartCellGroup+" ("+(100 * fract)+"%) in "+ netConnName+" in "+time+" sec"+", "+time/60f+" min", true);
                             
-                            logger.logComment("Estimated time left: "+( (1-fract) * time / ( 60f) )+" mins", true);
+                            logger.logComment("Estimated time left: "+( (1-fract) * time / ( 60f * fract) )+" mins, est total time: "+( time / ( 60f * fract) )+" mins", true);
                             
                         }
                         else if(genStartCellNumber== numberInGenStartCellGroup-1)
@@ -512,20 +513,28 @@ public class MorphBasedConnGenerator extends Thread
                                                // logger.logComment("Not an autapse."+sourceCellGroup.equals(targetCellGroup) +" "+!connConds.isAllowAutapses()+" "+
                                                // (genStartCellNumber == genFinishCellNumber), true);
                                                 
-                                                float distanceApart = CellTopologyHelper.getSynapticEndpointsDistance(
-                                                    project,
-                                                    generationStartCellGroup,
-                                                    new SynapticConnectionEndPoint(genStartConnPoint,
-                                                                                   genStartCellNumber),
-                                                    generationFinishCellGroup,
-                                                    new SynapticConnectionEndPoint(genFinishConnPoint,
-                                                                                   genFinishCellNumber),
-                                                    maxMin.getDimension()
-                                                    );
-
-                                                if (distanceApart >= maxMin.getMinLength()
-                                                    && distanceApart <= maxMin.getMaxLength())
+                                                boolean ignoreDistance = (maxMin.getMinLength()==0) && (maxMin.getMaxLength()==Float.MAX_VALUE);
+                                                
+                                                float distanceApart = 0;
+                                                
+                                                if(!ignoreDistance)
                                                 {
+                                                    distanceApart = CellTopologyHelper.getSynapticEndpointsDistance(
+                                                        project,
+                                                        generationStartCellGroup,
+                                                        new SynapticConnectionEndPoint(genStartConnPoint,
+                                                                                       genStartCellNumber),
+                                                        generationFinishCellGroup,
+                                                        new SynapticConnectionEndPoint(genFinishConnPoint,
+                                                                                       genFinishCellNumber),
+                                                        maxMin.getDimension()
+                                                        );
+                                                }
+
+                                                if (ignoreDistance || (distanceApart >= maxMin.getMinLength()
+                                                    && distanceApart <= maxMin.getMaxLength()))
+                                                {
+                                                    logger.logComment("Distance condition satisfied, ignored dist: "+ ignoreDistance);
                                                     foundOne = true;
                                                     connectionDistance = distanceApart;
                                                 }
@@ -931,6 +940,21 @@ public class MorphBasedConnGenerator extends Thread
                                     }
                                 }
                                 if (props.size()==0) props = null;
+                                
+                                
+                                if (connectionDistance<0)
+                                {
+                                    connectionDistance = CellTopologyHelper.getSynapticEndpointsDistance(
+                                                        project,
+                                                        generationStartCellGroup,
+                                                        new SynapticConnectionEndPoint(genStartConnPoint,
+                                                                                       genStartCellNumber),
+                                                        generationFinishCellGroup,
+                                                        new SynapticConnectionEndPoint(genFinishConnPoint,
+                                                                                       genFinishCellNumber),
+                                                        maxMin.getDimension()
+                                                        );
+                                }
 
                                 Float propDelay = connectionDistance/project.morphNetworkConnectionsInfo.getAPSpeed(netConnName) ;
 

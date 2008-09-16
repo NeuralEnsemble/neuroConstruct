@@ -54,6 +54,9 @@ public class GeneratedCellPositions
     {
         this.myCellGroupPosns.clear();
         logger.logComment("Reset called. Info: "+ this.toString());
+        cachedCellPosition1 = null;
+        cachedCellPosition2 = null;
+        cachedCellPosition3 = null;
     }
 
     public void setRandomSeed(long rs)
@@ -80,6 +83,9 @@ public class GeneratedCellPositions
                                                    zPos);
 
         addPosition(cellGroupName, posRec);
+        cachedCellPosition1 = null;
+        cachedCellPosition2 = null;
+        cachedCellPosition3 = null;
     }
 
 
@@ -95,6 +101,9 @@ public class GeneratedCellPositions
         ArrayList<PositionRecord> cellGroupVector = (ArrayList<PositionRecord>)myCellGroupPosns.get(cellGroupName);
 
         cellGroupVector.add(posRecord);
+        cachedCellPosition1 = null;
+        cachedCellPosition2 = null;
+        cachedCellPosition3 = null;
     }
 
 
@@ -164,23 +173,50 @@ public class GeneratedCellPositions
 
         return cellGroupVector.size();
     }
+    
+    // As there is often multiple requests for the same cells, e.g. srcCell1 -> tgtCell1,  srcCell1 -> tgtCell2...
+    private CachedCellPosition cachedCellPosition1 = null;
+    private CachedCellPosition cachedCellPosition2 = null;
+    private CachedCellPosition cachedCellPosition3 = null;
+    
+    public class CachedCellPosition
+    {
+        String cellGroupName;
+        int index;
+        Point3f point;
+    }
 
 
     public Point3f getOneCellPosition(String cellGroupName, int index)
     {
+        if (cachedCellPosition1!=null && cachedCellPosition1.index == index && cachedCellPosition1.cellGroupName.equals(cellGroupName))
+            return cachedCellPosition1.point;
+        if (cachedCellPosition2!=null && cachedCellPosition2.index == index && cachedCellPosition2.cellGroupName.equals(cellGroupName))
+            return cachedCellPosition2.point;
+        if (cachedCellPosition3!=null && cachedCellPosition3.index == index && cachedCellPosition3.cellGroupName.equals(cellGroupName))
+            return cachedCellPosition3.point;
+        
         //logger.logComment("Being requested for posn of cell num: "+ index+ " in group: "+ cellGroupName);
         if (!myCellGroupPosns.containsKey(cellGroupName))
         {
             return null;
         }
-        ArrayList cellGroupArrayList = (ArrayList)myCellGroupPosns.get(cellGroupName);
+        ArrayList<PositionRecord> cellGroupArrayList = myCellGroupPosns.get(cellGroupName);
 
         for (int i = 0; i < cellGroupArrayList.size(); i++)
         {
-            PositionRecord posRec = (PositionRecord)cellGroupArrayList.get(i);
+            PositionRecord posRec = cellGroupArrayList.get(i);
             if (posRec.cellNumber==index)
             {
-                return new Point3f(posRec.x_pos,posRec.y_pos,posRec.z_pos);
+                Point3f p = new Point3f(posRec.x_pos,posRec.y_pos,posRec.z_pos);
+                CachedCellPosition cp = new CachedCellPosition();
+                cp.index = index;
+                cp.cellGroupName = cellGroupName;
+                cp.point = p;
+                cachedCellPosition3 = cachedCellPosition2;
+                cachedCellPosition2 = cachedCellPosition1;
+                cachedCellPosition1 = cp;
+                return p;
             }
         }
         logger.logComment("No record of cell with index: "+ index);

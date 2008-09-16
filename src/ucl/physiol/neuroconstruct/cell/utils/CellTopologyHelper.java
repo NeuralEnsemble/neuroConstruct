@@ -181,6 +181,19 @@ public class CellTopologyHelper
                 idsOfPossibleSegments = cachedPostSynLocInfo.idsOfPossibleSegments;
                 lensOfPossibleSegments = cachedPostSynLocInfo.lensOfPossibleSegments;
                 cachedPostSynLocInfo.stillValid();
+                
+                if (idsOfPossibleSegments.size()==1 && lensOfPossibleSegments.size()==1)
+                {
+                    float fract = -1;
+                    if (lensOfPossibleSegments.get(0)==0) 
+                        fract = 0.5f;
+                    else
+                        fract = ProjectManager.getRandomGenerator().nextFloat();
+
+                    postSynTerm = new PostSynapticTerminalLocation(idsOfPossibleSegments.get(0), fract);
+
+                    return postSynTerm;
+                }
                 logger.logComment("Reusing post details..");
             }
         
@@ -411,6 +424,21 @@ public class CellTopologyHelper
             idsOfPossibleSegments = cachedPreSynLocInfo.idsOfPossibleSegments;
             lensOfPossibleSegments = cachedPreSynLocInfo.lensOfPossibleSegments;
             cachedPreSynLocInfo.stillValid();
+            
+
+            if (idsOfPossibleSegments.size()==1 && lensOfPossibleSegments.size()==1)
+            {
+                float fract = -1;
+                if (lensOfPossibleSegments.get(0)==0) 
+                    fract = 0.5f;
+                else
+                    fract = ProjectManager.getRandomGenerator().nextFloat();
+
+                PreSynapticTerminalLocation preSynTerm = new PreSynapticTerminalLocation(idsOfPossibleSegments.get(0), fract);
+
+                return preSynTerm;
+            }
+            
             logger.logComment("Reusing details..");
         }
 
@@ -470,12 +498,13 @@ public class CellTopologyHelper
                                                      int segmentId,
                                                      float displacementAlong)
     {
+        /*
         logger.logComment("Going to convert point on "
                           + cell.getInstanceName()
                           + ", segment id: "
                           + segmentId
                           + " distAlong: "
-                          + displacementAlong);
+                          + displacementAlong);*/
 
         Segment segment = cell.getSegmentWithId(segmentId);
 
@@ -489,6 +518,7 @@ public class CellTopologyHelper
                                         startPoint.z +
                                         (displacementAlong * (endPoint.z - startPoint.z)));
 
+        /*
         logger.logComment("*************************    Returning info on segment " + segmentId +
                           ": "
                           + segment.getSegmentName()
@@ -500,7 +530,7 @@ public class CellTopologyHelper
                           + ", returning point : "
                           + displacementAlong
                           + " along: "
-                          + Utils3D.getShortStringDesc(convPoint));
+                          + Utils3D.getShortStringDesc(convPoint));*/
 
         return convPoint;
     }
@@ -1066,6 +1096,89 @@ public class CellTopologyHelper
             pointOnLine.scale(projectionExtPoint);
             pointOnLine.add(startPoint);
             return new Point3f(pointOnLine);
+        }
+
+    }
+    
+    /**
+     * Gets the absolute distance between the endpoints on a source and
+     * target cell
+     */
+    public static boolean checkDistanceApart(Project project,
+                                             String sourceCellGroup,
+                                             Cell sourceCell,           // superfluous, given prev arg, but better performing on multiple calls
+                                             SynapticConnectionEndPoint sourceEndPoint,
+                                             String targetCellGroup,
+                                             Cell targetCell,           // superfluous, given prev arg, but better performing on multiple calls
+                                             SynapticConnectionEndPoint targetEndPoint,
+                                             float minDistance,
+                                             float maxDistance,
+                                             String dimension)
+    {
+        Point3f relativePointSource
+            = CellTopologyHelper.convertSegmentDisplacement(
+            sourceCell,
+            sourceEndPoint.location.getSegmentId(),
+            sourceEndPoint.location.getFractAlong());
+
+        Point3f sourceCellPosition
+            = project.generatedCellPositions.getOneCellPosition(
+            sourceCellGroup,
+            sourceEndPoint.cellNumber);
+
+        Point3f sourceSynapsePosition = new Point3f(sourceCellPosition);
+        sourceSynapsePosition.add(relativePointSource);
+
+
+        Point3f relativePointTarget
+            = CellTopologyHelper.convertSegmentDisplacement(
+            targetCell,
+            targetEndPoint.location.getSegmentId(),
+            targetEndPoint.location.getFractAlong());
+
+        Point3f targetCellPosition
+            = project.generatedCellPositions.getOneCellPosition(
+            targetCellGroup,
+            targetEndPoint.cellNumber);
+
+        Point3f targetSynapsePosition = new Point3f(targetCellPosition);
+        targetSynapsePosition.add(relativePointTarget);
+        
+        float dist = 0;
+
+        if (dimension.equals(MaxMinLength.X_DIR)) 
+        {
+            dist = Math.abs(targetSynapsePosition.x - sourceSynapsePosition.x);
+            return (dist>=minDistance && dist<=maxDistance);
+        }
+        else if (dimension.equals(MaxMinLength.Y_DIR)) 
+        {
+            dist = Math.abs(targetSynapsePosition.y - sourceSynapsePosition.y);
+            return (dist>=minDistance && dist<=maxDistance);
+        }
+        else if (dimension.equals(MaxMinLength.Z_DIR)) 
+        {
+            dist = Math.abs(targetSynapsePosition.z - sourceSynapsePosition.z);
+            return (dist>=minDistance && dist<=maxDistance);
+        }
+        else
+        {
+            // Quick check x, y, z dims...
+            float xDist = Math.abs(targetSynapsePosition.x - sourceSynapsePosition.x);
+            if (xDist<minDistance || xDist>maxDistance) 
+                return false;
+            
+            float yDist = Math.abs(targetSynapsePosition.y - sourceSynapsePosition.y);
+            if (yDist<minDistance || yDist>maxDistance) 
+                return false;
+            
+            float zDist = Math.abs(targetSynapsePosition.z - sourceSynapsePosition.z);
+            if (zDist<minDistance || zDist>maxDistance) 
+                return false;
+            
+            dist = targetSynapsePosition.distance(sourceSynapsePosition);
+            return (dist>=minDistance && dist<=maxDistance);
+            
         }
 
     }
