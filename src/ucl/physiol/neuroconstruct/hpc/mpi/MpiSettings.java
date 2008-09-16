@@ -43,6 +43,12 @@ public class MpiSettings
     public static final String LOCAL_2PROC = "Local machine (2p)";
     public static final String LOCAL_4PROC = "Local machine (4p)";
     
+    public static final String CLUSTER_8PROC = "Cluster (2 x 4p)";
+    public static final String CLUSTER_12PROC = "Cluster (3 x 4p)";
+    public static final String CLUSTER_24PROC = "Cluster (6 x 4p)";
+    public static final String CLUSTER_48PROC = "Cluster (12 x 4p)";
+    public static final String CLUSTER_80PROC = "Cluster (20 x 4p)";
+    
     public static final String MACHINE_FILE = "machinesToUse";
     
     public static final String LOCALHOST = "localhost";
@@ -110,6 +116,49 @@ public class MpiSettings
             p.getHostList().add(new MpiHost("bernal", 4, 1));
             configurations.add(p);
         }
+        
+        if (getMpiConfiguration(CLUSTER_8PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(CLUSTER_8PROC);
+            for(int i=0;i<2;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+            configurations.add(p);
+        }
+        
+        if (getMpiConfiguration(CLUSTER_12PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(CLUSTER_12PROC);
+            for(int i=0;i<3;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+            configurations.add(p);
+        }
+        
+        if (getMpiConfiguration(CLUSTER_24PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(CLUSTER_24PROC);
+            for(int i=0;i<6;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+            configurations.add(p);
+        }
+        
+        if (getMpiConfiguration(CLUSTER_48PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(CLUSTER_48PROC);
+            for(int i=0;i<12;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+            configurations.add(p);
+        }
+        
+        
+        if (getMpiConfiguration(CLUSTER_80PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(CLUSTER_80PROC);
+            for(int i=0;i<20;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+            configurations.add(p);
+        }
+        
+        
 
 
     }
