@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.Result;
 import test.MainTest;
 import ucl.physiol.neuroconstruct.cell.Cell;
+import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.SingleSynapticConnection;
 import ucl.physiol.neuroconstruct.project.packing.CellPackingException;
 import ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter;
@@ -115,6 +116,9 @@ public class MorphBasedConnGeneratorTest
         
         int maxPost = 9;
         
+        float minLength = 10;
+        float maxLength = 50;
+        
         NumberGenerator nb = new NumberGenerator();
         nb.initialiseAsGaussianIntGenerator(maxPre, minPre, meanPre, stdPre);
         
@@ -123,6 +127,9 @@ public class MorphBasedConnGeneratorTest
         proj.morphNetworkConnectionsInfo.getConnectivityConditions(nc1).setOnlyConnectToUniqueCells(true);
         
         proj.morphNetworkConnectionsInfo.getConnectivityConditions(nc1).setMaxNumInitPerFinishCell(maxPost);
+        
+        proj.morphNetworkConnectionsInfo.getMaxMinLength(nc1).setMaxLength(maxLength);
+        proj.morphNetworkConnectionsInfo.getMaxMinLength(nc1).setMinLength(minLength);
         
         generate(proj, sc);
         
@@ -146,12 +153,20 @@ public class MorphBasedConnGeneratorTest
         
         for(int i=0;i<numPost;i++)
         {
-            System.out.println("Checking conns for: "+ tgt+", "+i);
+            //System.out.println("Checking conns for: "+ tgt+", "+i);
             ArrayList<SingleSynapticConnection> conns = proj.generatedNetworkConnections.getConnsToTarget(nc1, i);
-            System.out.println(conns.size()+": "+ conns);
+            //System.out.println(conns.size()+": "+ conns);
             int num = conns.size();
             assertTrue(num<=maxPost);
+        }
+        
+        ArrayList<SingleSynapticConnection> allConns = proj.generatedNetworkConnections.getSynapticConnections(nc1);
+        for(SingleSynapticConnection conn: allConns)
+        {
+            float dist = CellTopologyHelper.getSynapticEndpointsDistance(proj, src, conn.sourceEndPoint, tgt, conn.targetEndPoint, MaxMinLength.RADIAL);
             
+            assertTrue(dist<=maxLength);
+            assertTrue(dist>=minLength);
         }
         
         

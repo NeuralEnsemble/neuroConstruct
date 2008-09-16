@@ -111,6 +111,7 @@ public class NetworkMLReaderTest
         
         nmlFile = NetworkMLWriter.createNetworkMLH5file(nmlFile, 
                                                         proj,
+                                                        sc,
                                                         NetworkMLConstants.UNITS_PHYSIOLOGICAL);
         
         assertTrue(nmlFile.exists());
