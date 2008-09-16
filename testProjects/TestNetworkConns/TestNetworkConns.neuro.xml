@@ -229,6 +229,9 @@ part of NeuroML or any standardised XML specification. -->
   <void property="displayOption"> 
    <string>Soma solid, neurite lines</string> 
   </void> 
+  <void property="show3DAxes"> 
+   <boolean>true</boolean> 
+  </void> 
  </object> 
  <object class="ucl.physiol.neuroconstruct.neuron.NeuronSettings"/> 
  <object class="ucl.physiol.neuroconstruct.genesis.GenesisSettings"/> 
@@ -475,7 +478,11 @@ part of NeuroML or any standardised XML specification. -->
      <object class="ucl.physiol.neuroconstruct.project.MaxMinLength"/> 
     </void> 
     <void method="add"> 
-     <object class="ucl.physiol.neuroconstruct.project.MaxMinLength"/> 
+     <object class="ucl.physiol.neuroconstruct.project.MaxMinLength"> 
+      <void property="maxLength"> 
+       <float>50.0</float> 
+      </void> 
+     </object> 
     </void> 
    </void> 
    <void method="get"> 
