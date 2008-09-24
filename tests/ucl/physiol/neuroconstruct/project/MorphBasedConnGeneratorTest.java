@@ -85,59 +85,104 @@ public class MorphBasedConnGeneratorTest
         generate(proj, sc);
     }
     
+    int numPre = 20;
+    int numPost = 20;
+
+    int minPre = 3;
+    int maxPre = 10;
+    int meanPre = 7;
+    int stdPre = 1;
+
+    int maxPost = 9;
+
+    float minLength = 10;
+    float maxLength = 50;
+
+    float weightMin = 0.5f;
+    float weightMax = 0.8f;
+    
     
     @Test
     public void testRandom() throws InterruptedException, CellPackingException 
     {
         System.out.println("---  testRandom()");
         
-        
         Project proj = pm.getCurrentProject();
         
         String nc1 = proj.morphNetworkConnectionsInfo.getNetConnNameAt(2);
-        
         String src = proj.morphNetworkConnectionsInfo.getSourceCellGroup(nc1);
-        
         String tgt = proj.morphNetworkConnectionsInfo.getTargetCellGroup(nc1);
         
-        int numPre = 20;
-        int numPost = 20;
         
         SimConfig sc = proj.simConfigInfo.getSimConfig("TwoCG");
-        
         
         ((RandomCellPackingAdapter)proj.cellGroupsInfo.getCellPackingAdapter(src)).setParameter(RandomCellPackingAdapter.CELL_NUMBER_POLICY, numPre);
         ((RandomCellPackingAdapter)proj.cellGroupsInfo.getCellPackingAdapter(tgt)).setParameter(RandomCellPackingAdapter.CELL_NUMBER_POLICY, numPost);
         
-        int minPre = 3;
-        int maxPre = 10;
-        int meanPre = 7;
-        int stdPre = 1;
+  
         
-        int maxPost = 9;
+        NumberGenerator ngNum = new NumberGenerator();
+        ngNum.initialiseAsGaussianIntGenerator(maxPre, minPre, meanPre, stdPre);
         
-        float minLength = 10;
-        float maxLength = 50;
-        
-        NumberGenerator nb = new NumberGenerator();
-        nb.initialiseAsGaussianIntGenerator(maxPre, minPre, meanPre, stdPre);
-        
-        proj.morphNetworkConnectionsInfo.getConnectivityConditions(nc1).setNumConnsInitiatingCellGroup(nb);
+        proj.morphNetworkConnectionsInfo.getConnectivityConditions(nc1).setNumConnsInitiatingCellGroup(ngNum);
         
         proj.morphNetworkConnectionsInfo.getConnectivityConditions(nc1).setOnlyConnectToUniqueCells(true);
-        
         proj.morphNetworkConnectionsInfo.getConnectivityConditions(nc1).setMaxNumInitPerFinishCell(maxPost);
         
         proj.morphNetworkConnectionsInfo.getMaxMinLength(nc1).setMaxLength(maxLength);
         proj.morphNetworkConnectionsInfo.getMaxMinLength(nc1).setMinLength(minLength);
         
+        NumberGenerator ngWeight = new NumberGenerator();
+        ngWeight.initialiseAsRandomFloatGenerator(weightMax, weightMin);
+        proj.morphNetworkConnectionsInfo.getSynapseList(nc1).get(0).setWeightsGenerator(ngWeight);
+        
+            
+        System.out.println("Generating network with random connectivity");
+        
         generate(proj, sc);
+        
+        testTheNet(proj, true);
+        
+        
+        
+        System.out.println("Generating network with random/close connectivity");
+        
+        SearchPattern spRandClose = SearchPattern.getRandomCloseSearchPattern(numPost); // use all possible post cells as potential targets
+        
+        proj.morphNetworkConnectionsInfo.setSearchPattern(nc1, spRandClose);
+        
+        generate(proj, sc);
+        
+        testTheNet(proj, true);
+        
+        
+        
+        
+        System.out.println("Generating network with closest connectivity");
+        
+        SearchPattern spClosest = SearchPattern.getClosestSearchPattern();
+        
+        proj.morphNetworkConnectionsInfo.setSearchPattern(nc1, spClosest);
+        
+        generate(proj, sc);
+        
+        testTheNet(proj, false); // max/min length ignored for closest option
+        
+    }
+    
+    
+    private void testTheNet(Project proj, boolean testLength)
+    {
+        String nc1 = proj.morphNetworkConnectionsInfo.getNetConnNameAt(2);
+        String src = proj.morphNetworkConnectionsInfo.getSourceCellGroup(nc1);
+        String tgt = proj.morphNetworkConnectionsInfo.getTargetCellGroup(nc1);
+        
+        float speed = proj.morphNetworkConnectionsInfo.getAPSpeed(nc1);
         
         for(int i=0;i<numPre;i++)
         {
-            System.out.println("Checking conns for: "+ src+", "+i);
+            System.out.println("Checking conns for: "+i);
             ArrayList<SingleSynapticConnection> conns = proj.generatedNetworkConnections.getConnsFromSource(nc1, i);
-            //System.out.println(conns);
             int num = conns.size();
             assertTrue(num<=maxPre);
             assertTrue(num>=minPre);
@@ -147,26 +192,38 @@ public class MorphBasedConnGeneratorTest
             {
                 if (!uniq.contains(ssc.targetEndPoint.cellNumber))
                     uniq.add(ssc.targetEndPoint.cellNumber);
+                
+                assertTrue(ssc.props.get(0).weight >= weightMin);
+                assertTrue(ssc.props.get(0).weight <= weightMax);
+                
             }
             assertEquals(uniq.size(), conns.size());
+            
+            
         }
         
         for(int i=0;i<numPost;i++)
         {
-            //System.out.println("Checking conns for: "+ tgt+", "+i);
             ArrayList<SingleSynapticConnection> conns = proj.generatedNetworkConnections.getConnsToTarget(nc1, i);
-            //System.out.println(conns.size()+": "+ conns);
             int num = conns.size();
             assertTrue(num<=maxPost);
         }
         
-        ArrayList<SingleSynapticConnection> allConns = proj.generatedNetworkConnections.getSynapticConnections(nc1);
-        for(SingleSynapticConnection conn: allConns)
+        if (testLength)
         {
-            float dist = CellTopologyHelper.getSynapticEndpointsDistance(proj, src, conn.sourceEndPoint, tgt, conn.targetEndPoint, MaxMinLength.RADIAL);
-            
-            assertTrue(dist<=maxLength);
-            assertTrue(dist>=minLength);
+            ArrayList<SingleSynapticConnection> allConns = proj.generatedNetworkConnections.getSynapticConnections(nc1);
+            for(SingleSynapticConnection conn: allConns)
+            {
+                float dist = CellTopologyHelper.getSynapticEndpointsDistance(proj, src, conn.sourceEndPoint, tgt, conn.targetEndPoint, MaxMinLength.RADIAL);
+
+                assertTrue(dist<=maxLength);
+                assertTrue(dist>=minLength);
+                if (speed<Float.MAX_VALUE)
+                {
+                    assertTrue(conn.apPropDelay>= minLength/speed);
+                    assertTrue(conn.apPropDelay<= maxLength/speed);
+                }
+            }
         }
         
         
