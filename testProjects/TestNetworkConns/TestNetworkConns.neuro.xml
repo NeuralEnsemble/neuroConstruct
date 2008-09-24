@@ -370,7 +370,7 @@ part of NeuroML or any standardised XML specification. -->
      <float>3.4028235E38</float> 
     </void> 
     <void method="add"> 
-     <float>3.4028235E38</float> 
+     <float>1000.0</float> 
     </void> 
    </void> 
    <void method="get"> 
@@ -459,6 +459,12 @@ part of NeuroML or any standardised XML specification. -->
         </void> 
         <void property="weightsGenerator"> 
          <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator"> 
+          <void property="distributionType"> 
+           <int>1</int> 
+          </void> 
+          <void property="min"> 
+           <float>0.5</float> 
+          </void> 
           <void property="numberType"> 
            <int>11</int> 
           </void> 
@@ -503,8 +509,11 @@ part of NeuroML or any standardised XML specification. -->
     </void> 
     <void method="add"> 
      <object class="ucl.physiol.neuroconstruct.project.SearchPattern"> 
+      <void property="randomCloseNumber"> 
+       <int>20</int> 
+      </void> 
       <void property="type"> 
-       <int>0</int> 
+       <int>1</int> 
       </void> 
      </object> 
     </void> 
