@@ -497,6 +497,16 @@ public class GeneralUtils
 
         return "<font color=\""+colour+"\">" + text + "</font>";
     }
+    
+    /**
+     * Quick way to get either a string in plaintext, or a html coloured string depending on a boolean value
+     */
+    public static String getBoldColouredString(String text, String colour, boolean html)
+    {
+        if (!html) return text;
+
+        return "<b>" + getColouredString(text, colour, html) + "</b>";
+    }
 
 
     public static String getEndLine(boolean html)

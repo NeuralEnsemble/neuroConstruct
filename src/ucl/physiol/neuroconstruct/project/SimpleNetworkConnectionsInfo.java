@@ -210,42 +210,6 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
         this.fireTableRowsInserted(countSoFar, countSoFar);
     }
 
-    /**
-     * As the ComplexConnectionsInfo is deprecated and any of it's extra functionality implemented here,
-     * we take any old ComplexConns and add them here...
-     
-    protected void stealComplexConns(ComplexConnectionsInfo compConns)
-    {
-        Vector<String> names = compConns.getAllComplexConnNames();
-
-        for (String name : names)
-        {
-            boolean added = false;
-
-            while(!added)
-            {
-                try
-                {
-                    this.addRow(name,
-                                compConns.getSourceCellGroup(name),
-                                compConns.getTargetCellGroup(name),
-                                compConns.getSynapseList(name),
-                                compConns.getSearchPattern(name),
-                                compConns.getMaxMinLength(name),
-                                compConns.getConnectivityConditions(name),
-                                Float.MAX_VALUE);
-
-                    added = true;
-
-                    compConns.deleteComplexConn(name);
-                }
-                catch (NamingException ex)
-                {
-                    name = name +"_1";
-                }
-            }
-        }
-    }*/
 
 
 
@@ -331,17 +295,17 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
     }
     
 
-    public Vector<SynapticProperties> getSynapseList(String complexConnName)
+    public Vector<SynapticProperties> getSynapseList(String connName)
     {
-        int index = vectorNames.indexOf(complexConnName);
+        int index = vectorNames.indexOf(connName);
         Vector<SynapticProperties> synPropList = (Vector<SynapticProperties>) getValueAt(index, COL_NUM_SYNAPSE_LIST);
         return synPropList;
     }
 
 
-    public void setSynapseList(String complexConnName, Vector<SynapticProperties> synPropList)
+    public void setSynapseList(String connName, Vector<SynapticProperties> synPropList)
     {
-        int index = vectorNames.indexOf(complexConnName);
+        int index = vectorNames.indexOf(connName);
         this.setValueAt(synPropList, index, COL_NUM_SYNAPSE_LIST);
     }
 
@@ -368,6 +332,23 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
         int index = vectorNames.indexOf(netConnName);
         String target = (String) vectorTarget.elementAt(index);
         return target;
+    }
+    
+    public String getGenerationStartCellGroup(String netConnName)
+    {
+        if (!vectorNames.contains(netConnName)) return null;
+        int index = vectorNames.indexOf(netConnName);
+        ConnectivityConditions cc = (ConnectivityConditions)vectorConnConds.elementAt(index);
+        if (cc.getGenerationDirection()==ConnectivityConditions.SOURCE_TO_TARGET) return getSourceCellGroup(netConnName);
+        else  return getTargetCellGroup(netConnName);
+    }
+    public String getGenerationEndCellGroup(String netConnName)
+    {
+        if (!vectorNames.contains(netConnName)) return null;
+        int index = vectorNames.indexOf(netConnName);
+        ConnectivityConditions cc = (ConnectivityConditions)vectorConnConds.elementAt(index);
+        if (cc.getGenerationDirection()==ConnectivityConditions.SOURCE_TO_TARGET) return getTargetCellGroup(netConnName);
+        else  return getSourceCellGroup(netConnName);
     }
 
 

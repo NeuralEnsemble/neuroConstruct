@@ -6813,7 +6813,18 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jProgressBarGenerate.setValue(newVal);
 
         if (jProgressBarGenerate.getValue()>=jProgressBarGenerate.getMaximum())
-        jProgressBarGenerate.setString("Network generated");
+        {
+            String info = jEditorPaneGenerateInfo.getText();
+            if (info.indexOf("Warning") >=0 )
+            {
+                jProgressBarGenerate.setString("Network generated, with warnings!");
+                jProgressBarGenerate.setForeground(ValidityStatus.VALIDATION_COLOUR_WARN_OBJ);
+            }
+            else
+            {
+                jProgressBarGenerate.setString("Network generated");
+            }
+        }
     }
 
 
@@ -10553,6 +10564,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
 
         jProgressBarGenerate.setEnabled(true);
+        JProgressBar tempPb = new JProgressBar();
+        jProgressBarGenerate.setForeground(tempPb.getForeground()); // reset
 
         logger.logComment("simConfig: "+simConfig.getName());
         logger.logComment("getCellGroups: "+simConfig.getCellGroups());

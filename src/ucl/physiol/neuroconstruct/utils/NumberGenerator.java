@@ -61,6 +61,14 @@ public class NumberGenerator implements Serializable
     {
         return this.distributionType == FIXED_NUM;
     }
+    public boolean isTypeRandomNum()
+    {
+        return this.distributionType == RANDOM_NUM;
+    }
+    public boolean isTypeGaussianNum()
+    {
+        return this.distributionType == GAUSSIAN_NUM;
+    }
 
     @Override
     public boolean equals(Object otherObj)

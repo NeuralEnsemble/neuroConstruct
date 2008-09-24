@@ -69,7 +69,7 @@ public class RandomCellPackingAdapter extends CellPackingAdapter
 
         logger.logComment("---      Being asked to generate a new position");
 
-        if (getNumPosAlreadyTaken()>=getMaxNumberInCell())
+        if (getNumPosAlreadyTaken()>=getMaxNumberCells())
             throw new CellPackingException("Maximum number in region reached");
 
         Point3f proposedPoint = null;
@@ -143,11 +143,12 @@ public class RandomCellPackingAdapter extends CellPackingAdapter
         else return false;
     }
 
-    private int getMaxNumberInCell()
+    public int getMaxNumberCells()
     {
         return (int)parameterList[2].value;
     }
 
+    @Override
     public boolean avoidOtherCellGroups()
     {
         return parameterList[3].value==0;
@@ -202,7 +203,7 @@ public class RandomCellPackingAdapter extends CellPackingAdapter
 
         sb.append("Random: ");
 
-        sb.append("num: "+ getMaxNumberInCell()+", ");
+        sb.append("num: "+ getMaxNumberCells()+", ");
 
         sb.append("edge: ");
         if (mustBeCompletelyInsideRegion()) sb.append("1, ");

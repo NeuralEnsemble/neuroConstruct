@@ -24,6 +24,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import javax.vecmath.*;
 import ucl.physiol.neuroconstruct.gui.ClickProjectHelper;
+import ucl.physiol.neuroconstruct.gui.ValidityStatus;
 
 /**
  * Storage for network connection info generated when "Generate cell positions
@@ -574,10 +575,70 @@ public class GeneratedNetworkConnections
                                         +
                                         project.generatedNetworkConnections.getSynapticConnections(netConnName).
                                         size()
-                                        + "</b> (<font color=\"green\">" + srcAvg + srcStdString + " each</font>, " +
+                                        + "</b> (<font color=\"green\">" + srcAvg + srcStdString + " each</font> -> " +
                                         "<font color=\"red\">" + tgtAvg + tgtStdString + " each</font>)<br>");
                 
+                NumberGenerator nb = null;
+                String startCellGroup = null;
+                float numStartConnGen = -1;
+                
+                if (project.morphNetworkConnectionsInfo.isValidSimpleNetConn(netConnName))
+                {
+                    nb = project.morphNetworkConnectionsInfo.getConnectivityConditions(netConnName).getNumConnsInitiatingCellGroup();
+                    startCellGroup = project.morphNetworkConnectionsInfo.getGenerationStartCellGroup(netConnName);
+                    if (project.morphNetworkConnectionsInfo.getConnectivityConditions(netConnName).getGenerationDirection()==ConnectivityConditions.SOURCE_TO_TARGET)
+                        numStartConnGen = srcAvg;
+                    else
+                        numStartConnGen = tgtAvg;
+                        
+                }
+                else if (project.volBasedConnsInfo.isValidVolBasedConn(netConnName))
+                {
+                    nb = project.volBasedConnsInfo.getConnectivityConditions(netConnName).getNumConnsInitiatingCellGroup();
+                    startCellGroup = project.volBasedConnsInfo.getGenerationStartCellGroup(netConnName);
+                    if (project.volBasedConnsInfo.getConnectivityConditions(netConnName).getGenerationDirection()==ConnectivityConditions.SOURCE_TO_TARGET)
+                        numStartConnGen = srcAvg;
+                    else
+                        numStartConnGen = tgtAvg;
+                }
+                
+                String warn = null;
+                
+                if (nb.isTypeFixedNum() )
+                {
+                    if(numStartConnGen<nb.getFixedNum())
+                    {
+                        warn = "Warning: this network connection specifies "+nb.getFixedNum()+" as the number of connections on each cell in: "+startCellGroup+", but the average " +
+                                "number of connections per cell is "+ numStartConnGen;
+                    }
+                }
+                else if(nb.isTypeRandomNum())
+                {
+                    if(numStartConnGen<nb.getMin())
+                    {
+                        warn = "Warning: this network connection specifies "+nb.toShortString()+" as the number of connections on each cell in: "+startCellGroup+", but the average " +
+                                "number of connections per cell is "+ numStartConnGen;
+                    }
+                }
+                else if(nb.isTypeGaussianNum())
+                {
+                    if(numStartConnGen<nb.getMin() || numStartConnGen<(nb.getMean()-(nb.getStdDev()/5f)))
+                    {
+                        warn = "Warning: this network connection specifies "+nb.toShortString()+" as the number of connections on each cell in: "+startCellGroup+", but the average " +
+                                "number of connections per cell is "+ numStartConnGen;
+                    }
+                    
+                }
+                
+                        
+                
                 generationReport.append(synReport);
+                
+                if (warn!=null)
+                {
+                    generationReport.append(GeneralUtils.getBoldColouredString(warn+"<br>", ValidityStatus.VALIDATION_COLOUR_WARN, true));
+                
+                }
 
                 generationReport.append("<br>");
             }

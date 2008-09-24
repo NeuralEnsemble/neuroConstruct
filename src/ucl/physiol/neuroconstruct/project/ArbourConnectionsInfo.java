@@ -303,6 +303,24 @@ public class ArbourConnectionsInfo extends AbstractTableModel
         int index = vectorNames.indexOf(complexConnName);
         this.setValueAt(target, index, COL_NUM_TARGET);
     }
+    
+    
+    public String getGenerationStartCellGroup(String netConnName)
+    {
+        if (!vectorNames.contains(netConnName)) return null;
+        int index = vectorNames.indexOf(netConnName);
+        ConnectivityConditions cc = (ConnectivityConditions)vectorConnConds.elementAt(index);
+        if (cc.getGenerationDirection()==ConnectivityConditions.SOURCE_TO_TARGET) return getSourceCellGroup(netConnName);
+        else  return getTargetCellGroup(netConnName);
+    }
+    public String getGenerationEndCellGroup(String netConnName)
+    {
+        if (!vectorNames.contains(netConnName)) return null;
+        int index = vectorNames.indexOf(netConnName);
+        ConnectivityConditions cc = (ConnectivityConditions)vectorConnConds.elementAt(index);
+        if (cc.getGenerationDirection()==ConnectivityConditions.SOURCE_TO_TARGET) return getTargetCellGroup(netConnName);
+        else  return getSourceCellGroup(netConnName);
+    }
 
 
 

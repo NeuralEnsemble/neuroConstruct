@@ -19,6 +19,7 @@ import javax.vecmath.*;
 
 import ucl.physiol.neuroconstruct.gui.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
+import ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.xml.*;
 
@@ -259,9 +260,22 @@ public class GeneratedCellPositions
                 + "</b> (" + ClickProjectHelper.getCellTypeLink(cellType) 
                 + " in "+ClickProjectHelper.getRegionLink(region)+")<br>");
             
+            int num = project.generatedCellPositions.getNumberInCellGroup(cellGroup);
             generationReport.append("Number in cell group: <b>"
-                      + project.generatedCellPositions.getNumberInCellGroup(cellGroup)
-                      + "</b><br><br>");
+                      + num
+                      + "</b><br>");
+            
+            if(project.cellGroupsInfo.getCellPackingAdapter(cellGroup) instanceof RandomCellPackingAdapter)
+            {
+                RandomCellPackingAdapter ra = (RandomCellPackingAdapter)project.cellGroupsInfo.getCellPackingAdapter(cellGroup);
+                int max = ra.getMaxNumberCells();
+                if(num<max)
+                {
+                    generationReport.append(GeneralUtils.getBoldColouredString("Warning, fewer than "+max+" cells in this cell group! Check packing algorithms and 3D regions.<br>", ValidityStatus.VALIDATION_COLOUR_WARN, true));
+                }
+            }
+                       
+            generationReport.append("<br>");
         }
 
         return generationReport.toString();

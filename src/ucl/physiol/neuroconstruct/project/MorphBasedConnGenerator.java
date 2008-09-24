@@ -404,7 +404,6 @@ public class MorphBasedConnGenerator extends Thread
                                             generationFinishCellInstance,
                                             synTypeNames,
                                             connConds.getPrePostAllowedLoc());
-
                                     }
 
                                     logger.logComment("genFinishConnPoint: " + genFinishConnPoint);
@@ -422,19 +421,20 @@ public class MorphBasedConnGenerator extends Thread
                                         boolean satisfiesUniqueness = false;
 
                                         availableCellsToConnectTo = numberInGenFinishCellGroup;
+                                        
+                                        boolean ignoreDistance = (maxMin.getMinLength()==0) && (maxMin.getMaxLength()==Float.MAX_VALUE);
 
                                         while (!(satisfiesMaxNumPerFinCell && satisfiesUniqueness)
                                                && finCellsMaxedOut.size()<availableCellsToConnectTo)
                                         {
                                             genFinishCellNumber = ProjectManager.getRandomGenerator().nextInt(numberInGenFinishCellGroup);
+                                            //if ()
 
                                             logger.logComment("--------------------------Testing if cell num: " + genFinishCellNumber +
-                                                              " is appropriate for cell number: "
-                                                               + genStartCellNumber);
+                                                              " is appropriate for cell number: " + genStartCellNumber);
 
                                             logger.logComment("finCellsMaxedOut: " + finCellsMaxedOut);
                                             logger.logComment("availableCellsToConnectTo: " + availableCellsToConnectTo);
-                                            //logger.logComment("checkMaxingOutFinCells: " + checkMaxingOutFinCells, true);
                                             
 
                                             ArrayList<Integer> connsOnFinishCell = null;
@@ -450,7 +450,6 @@ public class MorphBasedConnGenerator extends Thread
                                                 {
                                                     connsOnFinishCell = project.generatedNetworkConnections.getTargetCellIndices(netConnName,
                                                         genFinishCellNumber, false);
-
                                                 }
                                             }
 
@@ -513,7 +512,6 @@ public class MorphBasedConnGenerator extends Thread
                                                // logger.logComment("Not an autapse."+sourceCellGroup.equals(targetCellGroup) +" "+!connConds.isAllowAutapses()+" "+
                                                // (genStartCellNumber == genFinishCellNumber), true);
                                                 
-                                                boolean ignoreDistance = (maxMin.getMinLength()==0) && (maxMin.getMaxLength()==Float.MAX_VALUE);
                                                 
                                                 float distanceApart = 0;
                                                 
