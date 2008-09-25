@@ -13451,7 +13451,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
 
         GuiUtils.showInfoMessage(logger, "Success", "NeuroML file is well formed and valid, according to schema:\n"
-                                 + schemaFile.getAbsolutePath(), this);
+                                 + schemaFile.getAbsolutePath()+"\n\nNote: to change the version of the NeuroML schema with which to validate the file, go to:\n" +
+                                 "Settings -> General Properties & Project Defaults -> NeuroML version", this);
 
     }
 
