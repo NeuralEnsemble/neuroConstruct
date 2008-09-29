@@ -432,7 +432,9 @@ public class NeuronFileManager
             throw new NeuronException("Error writing to file: " + mainHocFile
                                       + "\n" + ex.getMessage()
                                       +
-                "\nEnsure the NEURON files you are trying to generate are not currently being used");
+                "\n\nEnsure the NEURON files you are trying to generate are not currently being used.\n" +
+                "Note: try selecting the \"Copy files to simulations dir\" option in the NEURON tab to prevent this.\n" +
+                "Hover over that check box for more details.\n ");
         }
         //generatedRunMode = runMode;
         this.hocFileGenerated = true;
