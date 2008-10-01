@@ -51,7 +51,7 @@ public class ViewVoltage2D extends View2DPlane implements VoltageEventListener
         logger.logComment("updateVoltage: "+voltage+", "+cellGroup+", "+cellNumber);
         if (this.cellGroup.equals(cellGroup))
         {
-            Color c = SimulationRerunFrame.getColorBasedOnValue(voltage);
+            Color c = SimulationRerunFrame.getLinearColor(voltage);
             viewCanvas.updateColour(c, cellGroup, cellNumber, refresh);
         }
     }

@@ -74,7 +74,8 @@ public class SimulationRerunFrame extends JFrame
     public static double smallestFreq = 10;  // 100ms ISI
     public static double largestFreq = 100; // 10ms ISI
 
-    private static int VOLTAGE_SHADING = 0;
+    private static int VOLTAGE_LINEAR_SHADING = 0;
+    private static int VOLTAGE_RAINBOW_SHADING = 0;
     private static int ISI_SHADING = 1;
     private static int FREQ_SHADING = 2;
     
@@ -109,7 +110,8 @@ public class SimulationRerunFrame extends JFrame
     JPanel jPanelMain = new JPanel();
     JPanel jPanelRun = new JPanel();
     JPanel jPanelVars = new JPanel();
-
+    JPanel jPanelLoop = new JPanel();
+    
 
     JLabel jLabelTimeStep = new JLabel();
     JFormattedTextField jTextFieldDelay = new JFormattedTextField();
@@ -151,7 +153,9 @@ public class SimulationRerunFrame extends JFrame
     Border border2;
     JPanel jPanelOptions = new JPanel();
 
-    JRadioButton jRadioButtonContinuous = new JRadioButton();
+    //JRadioButton jRadioButtonContinuous = new JRadioButton();
+    JRadioButton jRadioButtonShadLinear = new JRadioButton();
+    JRadioButton jRadioButtonShadRainbow = new JRadioButton();
     JRadioButton jRadioButtonSpikesOnly = new JRadioButton();
     JRadioButton jRadioButtonISIShading = new JRadioButton();
 
@@ -159,6 +163,7 @@ public class SimulationRerunFrame extends JFrame
     JFormattedTextField  jTextFieldSpikeThreshold = null;
     JLabel jLabelMv = new JLabel();
     BorderLayout borderLayout1 = new BorderLayout();
+    //JPanel jPanelColouring = new JPanel();
     JPanel jPanelSpiking2Options = new JPanel();
     JPanel jPanelSpikingInfo = new JPanel();
 
@@ -172,6 +177,9 @@ public class SimulationRerunFrame extends JFrame
     JPanel jPanelOtherCells = new JPanel();
     JPanel jPanelShowMore = new JPanel();
     JButton jButtonShowMore = new JButton(">>");
+    
+    
+    JCheckBox jCheckBoxLoop = new JCheckBox("Loop");
     
     
     ButtonGroup bgOtherCells = new ButtonGroup();
@@ -198,7 +206,8 @@ public class SimulationRerunFrame extends JFrame
             enableEvents(AWTEvent.WINDOW_EVENT_MASK);
             jbInit();
 
-            addGradedScale(VOLTAGE_SHADING);
+            addGradedScale(VOLTAGE_LINEAR_SHADING);
+            jRadioButtonShadLinear.setSelected(true);
             extraInit();
         }
         catch(Exception e)
@@ -229,6 +238,10 @@ public class SimulationRerunFrame extends JFrame
         jLabelVars.setText("Variable: ");
         this.jPanelVars.add(jLabelVars);
         this.jPanelVars.add(jComboBoxVars);
+        
+        
+        jPanelVars.add(this.jCheckBoxLoop, null);
+        jCheckBoxLoop.setToolTipText("Rerun simulation after finishing");
 
         jTextFieldSpikeThreshold = new JFormattedTextField(format1);
 
@@ -306,7 +319,7 @@ public class SimulationRerunFrame extends JFrame
         jPanelRun.setOpaque(true);
         jPanelRun.setLayout(flowLayout1);
         jButtonStop.setEnabled(false);
-        jButtonStop.setText("Stop");
+        jButtonStop.setText("Pause");
         jButtonStop.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -322,6 +335,8 @@ public class SimulationRerunFrame extends JFrame
             }
         });
 
+        
+        
         jPanelSpiking2Options.setPreferredSize(new Dimension(300, 27));
         this.jPanelSpikingInfo.setPreferredSize(new Dimension(300, 27));
 
@@ -333,17 +348,20 @@ public class SimulationRerunFrame extends JFrame
         this.setTitle("Simulation Reference: "+ mySimulationDir.getName());
 
 
-        buttonGroup.add(jRadioButtonContinuous);
+        buttonGroup.add(jRadioButtonShadLinear);
+        buttonGroup.add(jRadioButtonShadRainbow);
         buttonGroup.add(jRadioButtonSpikesOnly);
         buttonGroup.add(jRadioButtonISIShading);
+        
 
 
         
-        this.jRadioButtonContinuous.setText("Continuous shading");
+        this.jRadioButtonShadLinear.setText("Linear v(t)");
+        this.jRadioButtonShadRainbow.setText("Rainbow v(t)");
+        
         this.jRadioButtonISIShading.setText("ISI shading");
         this.jRadioButtonSpikesOnly.setText("Spikes Only Threshold:");
 
-        jRadioButtonContinuous.setSelected(true);
 
 
         jButton2D.setText("Add 2D view");
@@ -356,7 +374,14 @@ public class SimulationRerunFrame extends JFrame
                 jRadioButton_actionPerformed(e);
             }
         });
-        jRadioButtonContinuous.addActionListener(new java.awt.event.ActionListener()
+        jRadioButtonShadLinear.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jRadioButton_actionPerformed(e);
+            }
+        });
+        jRadioButtonShadRainbow.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
@@ -415,11 +440,13 @@ public class SimulationRerunFrame extends JFrame
 
 
         //jPanelOptions.add(jPanel2, null);
-        jPanelOptions.add(this.jPanelSpiking2Options, null);
+        //jPanelOptions.add(jPanelColouring, null);
+        jPanelOptions.add(jPanelSpiking2Options, null);
         jPanelOptions.add(jPanelSpikingInfo, null);
 
 
-        jPanelSpiking2Options.add(jRadioButtonContinuous, null);
+        jPanelSpiking2Options.add(this.jRadioButtonShadLinear, null);
+        jPanelSpiking2Options.add(this.jRadioButtonShadRainbow, null);
         jPanelSpiking2Options.add(this.jRadioButtonISIShading, null);
         jPanelSpikingInfo.add(jRadioButtonSpikesOnly, null);
 
@@ -570,10 +597,13 @@ public class SimulationRerunFrame extends JFrame
     
     private void updateCellForRerun()
     {
-        if (jRadioButtonBlacken.isSelected())
-            blackenAllCells();
-        else if (jRadioButtonTransp.isSelected())
-            transparentAllCells();
+        if (!jCheckBoxLoop.isSelected())
+        {
+            if (jRadioButtonBlacken.isSelected())
+                blackenAllCells();
+            else if (jRadioButtonTransp.isSelected())
+                transparentAllCells();
+        }
         
         refreshRerunVals((String)jComboBoxVars.getSelectedItem());
         
@@ -671,22 +701,22 @@ public class SimulationRerunFrame extends JFrame
 
 
 
-        jLabelV1.setBackground(SimulationRerunFrame.getColorBasedOnValue( (float) mostNegValue));
-        jLabelV2.setBackground(SimulationRerunFrame.getColorBasedOnValue( (float) mostNegValue));
-        jLabelV3.setBackground(SimulationRerunFrame.getColorBasedOnValue( (float) mostNegValue));
-        jLabelV4.setBackground(SimulationRerunFrame.getColorBasedOnValue( (float) mostNegValue));
-        jLabelV5.setBackground(SimulationRerunFrame.getColorBasedOnValue( (float) mostNegValue));
-        jLabelV6.setBackground(SimulationRerunFrame.getColorBasedOnValue( (float) mostNegValue));
-        jLabelV7.setBackground(SimulationRerunFrame.getColorBasedOnValue( (float) mostNegValue));
-        jLabelV8.setBackground(SimulationRerunFrame.getColorBasedOnValue( (float) mostNegValue));
-        jLabelV9.setBackground(SimulationRerunFrame.getColorBasedOnValue( (float) mostPosValue));
-        jLabelV10.setBackground(SimulationRerunFrame.getColorBasedOnValue( (float) mostPosValue));
-        jLabelV11.setBackground(SimulationRerunFrame.getColorBasedOnValue( (float) mostPosValue));
-        jLabelV12.setBackground(SimulationRerunFrame.getColorBasedOnValue( (float) mostPosValue));
-        jLabelV13.setBackground(SimulationRerunFrame.getColorBasedOnValue( (float) mostPosValue));
-        jLabelV14.setBackground(SimulationRerunFrame.getColorBasedOnValue( (float) mostPosValue));
-        jLabelV15.setBackground(SimulationRerunFrame.getColorBasedOnValue( (float) mostPosValue));
-        jLabelV16.setBackground(SimulationRerunFrame.getColorBasedOnValue( (float) mostPosValue));
+        jLabelV1.setBackground(getColBasedOnValue( mostNegValue));
+        jLabelV2.setBackground(getColBasedOnValue( mostNegValue));
+        jLabelV3.setBackground(getColBasedOnValue(  mostNegValue));
+        jLabelV4.setBackground(getColBasedOnValue(  mostNegValue));
+        jLabelV5.setBackground(getColBasedOnValue(  mostNegValue));
+        jLabelV6.setBackground(getColBasedOnValue(  mostNegValue));
+        jLabelV7.setBackground(getColBasedOnValue(  mostNegValue));
+        jLabelV8.setBackground(getColBasedOnValue( mostNegValue));
+        jLabelV9.setBackground(getColBasedOnValue(  mostPosValue));
+        jLabelV10.setBackground(getColBasedOnValue(  mostPosValue));
+        jLabelV11.setBackground(getColBasedOnValue(  mostPosValue));
+        jLabelV12.setBackground(getColBasedOnValue(  mostPosValue));
+        jLabelV13.setBackground(getColBasedOnValue(  mostPosValue));
+        jLabelV14.setBackground(getColBasedOnValue(  mostPosValue));
+        jLabelV15.setBackground(getColBasedOnValue(  mostPosValue));
+        jLabelV16.setBackground(getColBasedOnValue(  mostPosValue));
 
 
         jPanelScale.add(jLabelHigh, null);
@@ -707,7 +737,8 @@ public class SimulationRerunFrame extends JFrame
         double high = 100;
         String units = null;
 
-        if (shadingOption == VOLTAGE_SHADING)
+        if (shadingOption == VOLTAGE_LINEAR_SHADING ||
+            shadingOption == VOLTAGE_RAINBOW_SHADING)
         {
             units = "mV";
             jLabelHigh.setText(" High: " + mostPosValue + units);
@@ -812,9 +843,11 @@ public class SimulationRerunFrame extends JFrame
 
     private Color getShadingColour(int shadingOption, float value)
     {
-        if (shadingOption == VOLTAGE_SHADING)
+        if (shadingOption == VOLTAGE_LINEAR_SHADING ||
+            shadingOption == VOLTAGE_RAINBOW_SHADING)
         {
-            return getColorBasedOnValue(value);
+            return getColBasedOnValue(value);
+            //return getRainbowColor(value);
         }
         else if (shadingOption == ISI_SHADING)
         {
@@ -1128,7 +1161,7 @@ public class SimulationRerunFrame extends JFrame
 
             /** @todo Put this update check in a separate function!! */
 
-            if (this.jRadioButtonContinuous.isSelected())
+            if (this.jRadioButtonShadLinear.isSelected() || this.jRadioButtonShadRainbow.isSelected())
             {
                 String lowText = "Low: " + mostNegValue + ds.getYUnit() + " ";
                 this.jLabelLow.setText(lowText);
@@ -1184,7 +1217,13 @@ public class SimulationRerunFrame extends JFrame
 
                     currentTimeStep = numTimeSteps-1; // to display final value...
                     
-                    logger.logComment("Wall time simce start pressed: "+ (System.currentTimeMillis()-startSim)/1000f);
+                    logger.logComment("Wall time since start pressed: "+ (System.currentTimeMillis()-startSim)/1000f);
+                    
+                    if (jCheckBoxLoop.isSelected())
+                    {
+                        logger.logComment("Looping back to start...");
+                        jButtonStart_actionPerformed(null);
+                    }
                 }
 
                 //System.out.println("At time: " + currentTimeStep);
@@ -1399,9 +1438,9 @@ public class SimulationRerunFrame extends JFrame
             if (this.jRadioButtonSpikesOnly.isSelected())
             {
                 if (value<thresholdForRun)
-                    newColour = getColorBasedOnValue(mostNegValue);
+                    newColour = getColBasedOnValue(mostNegValue);
                 else
-                    newColour = getColorBasedOnValue(mostPosValue);
+                    newColour = getColBasedOnValue(mostPosValue);
 
             }
             else if (this.jRadioButtonISIShading.isSelected())
@@ -1426,9 +1465,9 @@ public class SimulationRerunFrame extends JFrame
                     newColour = getColorBasedOnFreq(1000/isiState.runningISIAverage);
                 }
             }
-            else if (this.jRadioButtonContinuous.isSelected())
+            else if (jRadioButtonShadLinear.isSelected()|| jRadioButtonShadRainbow.isSelected())
             {
-                newColour = getColorBasedOnValue((float)value);
+                newColour = getColBasedOnValue((float)value);
             }
 
             logger.logComment("Decided on a colour: "+ newColour.toString());
@@ -1476,9 +1515,23 @@ public class SimulationRerunFrame extends JFrame
     }
 
 
+    public static Color getRainbowCol(float value)
+    {
+       float fractionAlong = (value - mostNegValue) / (mostPosValue - mostNegValue);
+       
+       return GeneralUtils.getRainbowColour(1-fractionAlong);
+   }
 
 
-    public static Color getColorBasedOnValue(float value)
+    public Color getColBasedOnValue(float value)
+    {
+        if (jRadioButtonShadRainbow.isSelected())
+            return getRainbowCol(value);
+        else
+            return getLinearColor(value);
+    }
+
+    public static Color getLinearColor(float value)
     {
         Color mostNegVoltageColour = new Color(105, 0, 105); // dark purple
         Color mostPosVoltageColour = new Color(255, 255, 0); // yellowy
@@ -1576,6 +1629,11 @@ public class SimulationRerunFrame extends JFrame
     public static  void main(String[] args)
     {
 
+        for (float v=mostNegValue; v<=mostPosValue; v=v+10)
+        {
+            Color c = getRainbowCol(v);
+            System.out.println("Color for "+v+": "+ c);
+        }
 
         File pf = new File("examples/Ex5-Networks/Ex5-Networks.neuro.xml");
 
@@ -1802,10 +1860,15 @@ public class SimulationRerunFrame extends JFrame
             this.jTextFieldSpikeThreshold.setEnabled(true);
             this.addSpikingVoltage();
         }
-        else if (jRadioButtonContinuous.isSelected())
+        else if (jRadioButtonShadLinear.isSelected())
         {
             this.jTextFieldSpikeThreshold.setEnabled(false);
-            this.addGradedScale(VOLTAGE_SHADING);
+            this.addGradedScale(VOLTAGE_LINEAR_SHADING);
+        }
+        else if (jRadioButtonShadRainbow.isSelected())
+        {
+            this.jTextFieldSpikeThreshold.setEnabled(false);
+            this.addGradedScale(VOLTAGE_RAINBOW_SHADING);
         }
         else if (jRadioButtonISIShading.isSelected())
         {

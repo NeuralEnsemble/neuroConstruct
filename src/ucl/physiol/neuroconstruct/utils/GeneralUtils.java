@@ -706,51 +706,21 @@ public class GeneralUtils
         return new Color( (int) redValue, (int) greenValue, (int) blueValue);
     }
 
-
-
+    private static double cachedColourFract = Float.NaN;
+    private static Color cachedColour = null;
+    
     /**
-     * Gets a colour from Red to Blue, based on the fraction given.
+     * Gets a colour from Red to Violet, based on the fraction given.
      * Roughly a colour of the rainbow...
      */
     public static Color getRainbowColour(double fraction)
     {
-        double redValue = 0;
-        double greenValue = 0;
-        double blueValue = 0;
-
-        if (fraction < 0) return Color.red;
-        if (fraction > 1) return Color.blue;
-
-        if (fraction<= 0.25)
-        {
-            double partialFraction = fraction*4d;
-            redValue = 255;
-            greenValue = 255*partialFraction;
-            blueValue = 0;
-        }
-        else if (fraction>  0.25 && fraction<= 0.5)
-        {
-            double partialFraction = (fraction - 0.25)*4d;
-            redValue = 255* (1-partialFraction);
-            greenValue = 255;
-            blueValue = 0;
-        }
-        else if (fraction>  0.5 && fraction<= 0.75)
-        {
-            double partialFraction = (fraction - 0.5)*4d;
-            redValue = 0;
-            greenValue = 255;
-            blueValue = 255* (partialFraction);
-        }
-        else
-        {
-            double partialFraction = (fraction - 0.75)*4d;
-            redValue = 0;
-            greenValue = 255*(1-partialFraction);
-            blueValue = 255;
-        }
-
-        return new Color( (int) redValue, (int) greenValue, (int) blueValue);
+        if (fraction == cachedColourFract) return cachedColour;
+        float corrFract = ((float)fraction*255/360f);
+        Color c = Color.getHSBColor(corrFract, 1, 1);
+        cachedColourFract = fraction;
+        cachedColour = c;
+        return c;
     }
 
     /**

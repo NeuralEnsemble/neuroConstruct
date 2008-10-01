@@ -1620,7 +1620,14 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
             logger.logComment("There are " + mtg.getNumTransforms() + " TransformGroups in ViewingPlatform");
             TransformGroup lastTG = mtg.getTransformGroup(mtg.getNumTransforms() - 1);
 
-            lastTG.setTransform(lastViewingTransform3D);
+            try
+            {
+                lastTG.setTransform(lastViewingTransform3D);
+            }
+            catch(BadTransformException e)
+            {
+                // ignore..
+            }
         }
 
     }
