@@ -1924,97 +1924,19 @@ public class Cell implements Serializable
     {
         try
         {
-            SimpleCell cell = new SimpleCell("Testcell");
-            Segment a1 = cell.getSegmentWithId(5);
-            System.out.println(a1);
-
-            Segment a2 = cell.addAxonalSegment(1, "axseg2", new Point3f(-60,0,0), a1, 
-                    1, a1.getSection().getSectionName());
+            Cell cell = new Cell();
             
-
-            a2.setSegmentId(1000);
+            cell.setInstanceName("TestCell");
             
+            Segment somaSegment = cell.addFirstSomaSegment(10, 10, "SomaSegment", new Point3f(0,0,0), new Point3f(0,10,0), new Section("SomaSection"));
             
-            cell.addAxonalSegment(1, "axseg3", new Point3f(-80,0,0), a2, 
-                    1, a2.getSection().getSectionName());
+            Segment dendSegment = cell.addDendriticSegment(3, "DendSegment", new Point3f(0,40,0), somaSegment, 1, "DendSection", false);
             
-
+            dendSegment.getSection().getGroups().add("TestGroup");
+            
             
             System.out.println(CellTopologyHelper.printDetails(cell, null));
             
-            LinkedList<Segment> segs = cell.getAllSegmentsInSection(a1.getSection());
-            
-            System.out.println(segs);
-            
-            
-            //if (true) return; // chop off here
-            
-           ChannelMechanism chMech = new ChannelMechanism( "ggg", 22);
-
-           cell.associateGroupWithChanMech("dendrite_group", chMech);
-
-           cell.associateGroupWithSpecCap("dendrite_group", 1234);
-           cell.associateGroupWithSpecCap("soma_group", 1235);
-           cell.associateGroupWithSpecCap("axon_group", 1235);
-
-
-
-           cell.disassociateGroupFromSpecCap("all");
-
-           System.out.println("Loaded cell: " + cell);
-           System.out.println("Groups: " + cell.getAllGroupNames());
-
-           System.out.println("Chan mechs: " + cell.getAllFixedChannelMechanisms(false));
-
-           ChannelMechanism cm2 = new ChannelMechanism( "ggg", 22);
-           ChannelMechanism cm3 = new ChannelMechanism( "ggg", 33);
-
-           System.out.println("cm2.equals(chMech): " + chMech.equals(cm2));
-           cell.associateGroupWithChanMech("soma_group", cm2);
-
-           System.out.println("Chan mechs vs groups: " + cell.getChanMechsVsGroups());
-
-           cell.associateGroupWithChanMech("soma_group", cm3);
-
-           System.out.println("Chan mechs vs groups: " + cell.getChanMechsVsGroups());
-
-           //if (true) return;
-
-
-           System.out.println("\n\ngetSpecCapVsGroups: " + cell.getSpecCapVsGroups());
-
-           cell.associateGroupWithSpecCap("axon_group", 777);
-           cell.associateGroupWithSpecCap("dendrite_group", 777);
-
-           System.out.println("\n\ngetSpecCapVsGroups: " + cell.getSpecCapVsGroups());
-
-
-           ApPropSpeed appv = new ApPropSpeed(123);
-
-
-           cell.associateGroupWithApPropSpeed("axon_group", appv);
-
-           boolean html = true;
-
-
-          Cell cellB = (Cell)cell.clone();
-
-
-          //cellB.associateGroupWithChanMech("soma_group", chMech);
-
-
-          //System.out.println("Chan mechs B: " + cellB.getChanMechsVsGroups());
-
-          //System.out.println("getDefinedSpecCaps: " + cell.getDefinedSpecCaps());
-
-          System.out.println("\n\n\nCompare: "+ CellTopologyHelper.compare(cell, cellB, false));
-          
-          System.out.println("\n\n\nHashcode A: "+ cell.hashCode());
-          System.out.println("\nHashcode B: "+ cellB.hashCode());
-          
-          System.out.println("\n\n\nHashcode sec A: "+ cell.getAllSections().hashCode());
-          System.out.println("\nHashcode sec B: "+ cellB.getAllSections().hashCode());
-
 
         }
         catch (Exception ex)
