@@ -93,6 +93,8 @@ public class ChannelMLConstants
     public static String DEFAULT_COND_DENSITY_ATTR = "default_gmax";
 
     public static String ION_REVERSAL_POTENTIAL_ATTR = "default_erev";
+    
+    public static String FIXED_ION_REV_POT_ATTR = "fixed_erev";
 
     public static String CHAN_TYPE_ELEMENT = "channel_type";
 
@@ -342,7 +344,7 @@ public class ChannelMLConstants
 
 
     // location of ion information pre v1.7.3
-    public static String getLegacyIonsXPath()
+    public static String getPreV1_7_3IonsXPath()
     {
         return ChannelMLConstants.ROOT_ELEMENT + "/" + ION_ELEMENT;
     }
@@ -350,14 +352,14 @@ public class ChannelMLConstants
 
 
     // location of ion information pre v1.7.3
-    public static String getLegacyIonXPath(int index)
+    public static String getPreV1_7_3IonXPath(int index)
     {
-        return getLegacyIonsXPath() + "["+index+"]";
+        return getPreV1_7_3IonsXPath() + "["+index+"]";
     }
 
-    public static String getLegacyIonRevPotXPath(int index)
+    public static String getPreV1_7_3IonRevPotXPath(int index)
     {
-        return getLegacyIonXPath(index)+"/@"+ ION_REVERSAL_POTENTIAL_ATTR;
+        return getPreV1_7_3IonXPath(index)+"/@"+ ION_REVERSAL_POTENTIAL_ATTR;
     }
 
 

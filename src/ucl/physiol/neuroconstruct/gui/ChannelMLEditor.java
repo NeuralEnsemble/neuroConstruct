@@ -903,7 +903,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                     
                     if(!postV1_7_3format)
                     {
-                        SimpleXMLEntity[] ions = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getLegacyIonsXPath());
+                        SimpleXMLEntity[] ions = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getPreV1_7_3IonsXPath());
                         SimpleXMLElement firstIon = (SimpleXMLElement) ions[0];
 
                         String revPotString = firstIon.getAttributeValue(ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR);

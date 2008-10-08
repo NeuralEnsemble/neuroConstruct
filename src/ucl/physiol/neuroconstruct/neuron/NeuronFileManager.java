@@ -449,6 +449,14 @@ public class NeuronFileManager
 
     }
     
+    /*
+     * Forces recompiling of mod files on next time needed
+     */
+    public void forceNextModRecompile()
+    {
+        firstRecompileComplete = false;
+    }
+    
     public static String makePythonFriendly(String name)
     {
         return GeneralUtils.replaceAllTokens(name, "-", "_"); 

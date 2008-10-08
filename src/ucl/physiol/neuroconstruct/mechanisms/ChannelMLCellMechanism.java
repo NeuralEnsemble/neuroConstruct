@@ -849,7 +849,7 @@ public class ChannelMLCellMechanism extends CellMechanism
 
         boolean nonSpecific = false;
 
-        String ionXpath = ChannelMLConstants.getLegacyIonsXPath();
+        String ionXpath = ChannelMLConstants.getPreV1_7_3IonsXPath();
 
         logger.logComment("Checking xpath: " + xpath);
 

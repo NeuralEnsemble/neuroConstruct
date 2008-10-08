@@ -12767,7 +12767,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     }
 
 
-                    cmlMech.getXMLDoc().setValueByXPath(ChannelMLConstants.getLegacyIonRevPotXPath(1),
+                    cmlMech.getXMLDoc().setValueByXPath(ChannelMLConstants.getPreV1_7_3IonRevPotXPath(1),
                                                         revPot + "");
                     cmlMech.getXMLDoc().setValueByXPath(ChannelMLConstants.getCondDensXPath(),
                                                         condDens + "");
@@ -13222,6 +13222,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             suggestedNum++;
             suggestedRef = "Input_"+ suggestedNum;
         }
+        
+        projManager.getCurrentProject().neuronFileManager.forceNextModRecompile();
 
 
         StimDialog dlg
@@ -13303,6 +13305,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         //if (!proceed) return;
         
         StimulationSettings selectedStim = projManager.getCurrentProject().elecInputInfo.getStim(selectedRow);
+        
+        
+        projManager.getCurrentProject().neuronFileManager.forceNextModRecompile();
 
         StimDialog dlg
             = new StimDialog(this,selectedStim.getReference(),
@@ -13346,13 +13351,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
 
         this.projManager.getCurrentProject().markProjectAsEdited();
+        
+        projManager.getCurrentProject().neuronFileManager.forceNextModRecompile();
 
         StimulationSettings selectedStim = projManager.getCurrentProject().elecInputInfo.getStim(selectedRow);
 
         StimDialog dlg
             = new StimDialog(this,selectedStim.getReference(),
                                     projManager.getCurrentProject());
-
 
         dlg.setStim(selectedStim);
 
@@ -13912,9 +13918,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         sb.append("\n\n    System properties:\n\n");
         
-        Map envProps = System.getenv();
-        Set set = envProps.keySet();
-        AbstractList allEnv = new ArrayList(set);
+        Map<String,String> envProps = System.getenv();
+        Set<String> set = envProps.keySet();
+        AbstractList allEnv = new ArrayList<String>(set);
         allEnv = GeneralUtils.reorderAlphabetically(allEnv, true);
         
         for(Object prop: allEnv)

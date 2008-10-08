@@ -1176,7 +1176,7 @@ public class NeuronTemplateGenerator
                         {
                             ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism) cellMech;
 
-                            String xpath = ChannelMLConstants.getLegacyIonsXPath();
+                            String xpath = ChannelMLConstants.getPreV1_7_3IonsXPath();
 
                             logger.logComment("Checking xpath: " + xpath);
 

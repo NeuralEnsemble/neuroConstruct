@@ -378,12 +378,12 @@ public class GenesisMorphologyGenerator
                                 }
                                 else if (cellMech instanceof ChannelMLCellMechanism)
                                 {
-                                    String xpath = ChannelMLConstants.getLegacyIonsXPath();
+                                    String xpath = ChannelMLConstants.getPreV1_7_3IonsXPath();
                                     logger.logComment("Checking xpath: " + xpath);
 
                                     SimpleXMLEntity[] ions = ((ChannelMLCellMechanism)cellMech).getXMLDoc().getXMLEntities(xpath);
 
-                                    if (ions != null)
+                                    if (ions != null && ions.length>0)
                                     {
                                         for (int i = 0; i < ions.length; i++)
                                         {
@@ -400,6 +400,15 @@ public class GenesisMorphologyGenerator
                                                 revPotential = Float.parseFloat(erev);
                                             }
                                         }
+                                    }
+                                    else   // post v1.7.3
+                                    {
+                                        xpath = ChannelMLConstants.getCurrVoltRelXPath()+"/@"+ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
+                                        String erev = ((ChannelMLCellMechanism)cellMech).getXMLDoc().getValueByXPath(xpath);
+                                        
+                                        logger.logComment("Setting erev from post v1.7.3 location: "+ erev);
+
+                                        revPotential = Float.parseFloat(erev);
                                     }
                                 }
 

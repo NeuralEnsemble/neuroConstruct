@@ -651,7 +651,7 @@ public class GenesisFileManager
 
                 for (int synPropIndex = 0; synPropIndex < synPropList.size(); synPropIndex++)
                 {
-                    SynapticProperties synProps = (SynapticProperties) synPropList.elementAt(synPropIndex);
+                    SynapticProperties synProps = synPropList.elementAt(synPropIndex);
 
                     logger.logComment("netConnName: "+netConnName
                                       + ", synapseIndex: " + synapseIndex
@@ -2710,12 +2710,65 @@ public class GenesisFileManager
                 if (cellMech instanceof ChannelMLCellMechanism)
                 {
                     ChannelMLCellMechanism cmlp = (ChannelMLCellMechanism)cellMech;
-
-                    String xpath = ChannelMLConstants.getLegacyIonsXPath();
-                    logger.logComment("Checking xpath: " + xpath);
-
                     try
                     {
+                        // Post v1.7.3 form of cml
+                        String xpath = ChannelMLConstants.getCurrVoltRelXPath();
+                        SimpleXMLEntity[] currVoltRels = cmlp.getXMLDoc().getXMLEntities(xpath);
+
+                        for(SimpleXMLEntity sxe: currVoltRels)
+                        {
+                            String ionName = ((SimpleXMLElement)sxe).getAttributeValue(ChannelMLConstants.NEW_ION_NAME_ATTR);
+                            if (ionName!=null)
+                            {
+                                logger.logComment("Found transmitted ion: "+ionName);
+
+                                ArrayList<String> cellProcsTransmittingIon = ionCurrentSources.get(ionName);
+                                if (cellProcsTransmittingIon == null)
+                                {
+                                    cellProcsTransmittingIon = new ArrayList<String> ();
+                                    ionCurrentSources.put(ionName, cellProcsTransmittingIon);
+                                }
+                                if (!cellProcsTransmittingIon.contains(cellMech.getInstanceName()))
+                                    cellProcsTransmittingIon.add(cellMech.getInstanceName());
+                            
+                                String fixedRevPot = ((SimpleXMLElement)sxe).getAttributeValue(ChannelMLConstants.FIXED_ION_REV_POT_ATTR);
+                                if (fixedRevPot!=null)
+                                {
+                                    ArrayList<String> cellMechsFixedRevPot = ionCurrFixedRevPot.get(ionName);
+                                    
+                                    if (cellMechsFixedRevPot==null)
+                                    {
+                                        cellMechsFixedRevPot = new ArrayList<String> ();
+                                        ionCurrFixedRevPot.put(ionName, cellMechsFixedRevPot);
+                                    }
+                                    cellMechsFixedRevPot.add(cellMech.getInstanceName());
+                                }
+                            }                            
+                        }
+                        
+                        xpath = ChannelMLConstants.getCurrVoltRelXPath()+"/"+ChannelMLConstants.CONC_DEP_ELEMENT;
+                        SimpleXMLEntity[] concDeps = cmlp.getXMLDoc().getXMLEntities(xpath);
+                        
+                        for(SimpleXMLEntity sxe: concDeps)
+                        {
+                            String ionName = ((SimpleXMLElement)sxe).getAttributeValue(ChannelMLConstants.CONC_DEP_ION_ATTR);
+                            
+                            ArrayList<String> cellProcsDepOnIonConc = ionRateDependence.get(ionName);
+
+                            if (cellProcsDepOnIonConc==null)
+                            {
+                                cellProcsDepOnIonConc = new ArrayList<String> ();
+                                ionRateDependence.put(ionName, cellProcsDepOnIonConc);
+                            }
+                            cellProcsDepOnIonConc.add(cellMech.getInstanceName());
+                        }
+
+                        // Pre v1.7.3 form of cml
+                        xpath = ChannelMLConstants.getPreV1_7_3IonsXPath();
+                        logger.logComment("Checking xpath: " + xpath);
+
+                    
                         SimpleXMLEntity[] ions = cmlp.getXMLDoc().getXMLEntities(xpath);
 
                         if (ions != null)
@@ -2794,15 +2847,11 @@ public class GenesisFileManager
                             }
                             if (!cellProcsTransmittingIon.contains(cellMech.getInstanceName()))
                                 cellProcsTransmittingIon.add(cellMech.getInstanceName());
-
                         }
                         else
                         {
                             logger.logComment("No ohmic relation, so assuming no transmitted ion...");
                         }
-
-
-
                     }
                     catch(ChannelMLException ex)
                     {
