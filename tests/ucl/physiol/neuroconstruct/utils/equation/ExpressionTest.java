@@ -47,7 +47,8 @@ public class ExpressionTest {
                                             "cos(v)",
                                             "tan(v)",
                                             "log(v)",
-                                            "ln(v)"};
+                                            "ln(v)",
+                                            "100.0 *(  (v - -0.0089) / (-0.0050) ) / (1 - exp(-1 * ( (v - -0.0089) / (-0.0050) )))"};
         
         Variable v = new Variable("v");
         Variable t = new Variable("t");
