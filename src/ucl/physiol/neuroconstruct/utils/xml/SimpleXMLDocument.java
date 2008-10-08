@@ -14,7 +14,6 @@ package ucl.physiol.neuroconstruct.utils.xml;
 
 import java.util.*;
 import ucl.physiol.neuroconstruct.utils.ClassLogger;
-import java.io.File;
 import java.io.*;
 
 /**

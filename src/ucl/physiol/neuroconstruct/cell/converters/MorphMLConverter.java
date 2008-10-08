@@ -737,7 +737,7 @@ public class MorphMLConverter extends FormatImporter
                             revPotParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
                                                                              BiophysicsConstants.PARAMETER_REV_POT));
                             
-                            String xpath = ChannelMLConstants.getIonsXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
+                            String xpath = ChannelMLConstants.getLegacyIonsXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
                             String val = cmlCm.getXMLDoc().getValueByXPath(xpath);
 
                             logger.logComment("Trying to get: "+ xpath+": "+ val);

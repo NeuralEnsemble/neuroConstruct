@@ -71,7 +71,8 @@ public class ChannelMLConstants
 
     public static String ION_ELEMENT = "ion";
 
-    public static String ION_NAME_ATTR = "name";
+    public static String LEGACY_ION_NAME_ATTR = "name";
+    public static String NEW_ION_NAME_ATTR = "ion";
 
     public static String ION_ROLE_ATTR = "role";
 
@@ -114,6 +115,9 @@ public class ChannelMLConstants
     public static String ION_CONC_FIXED_POOL_PHI_ELEMENT = "phi";
 
     public static String CURR_VOLT_REL_ELEMENT = "current_voltage_relation";
+    
+    
+    public static String COND_LAW_ATTR = "cond_law";
 
     
     public static String I_AND_F_ELEMENT = "integrate_and_fire";
@@ -127,6 +131,8 @@ public class ChannelMLConstants
     public static String CONDUCTANCE_ELEMENT = "conductance";
 
     public static String GATE_ELEMENT = "gate";
+    
+    public static String GATE_NAME_ELEMENT = "name";
 
     public static String STATE_ELEMENT = "state";
 
@@ -149,6 +155,7 @@ public class ChannelMLConstants
     public static String TRANSITION_ELEMENT = "transition";
     public static String VOLTAGE_GATE_ELEMENT = "voltage_gate";
     public static String VOLTAGE_CONC_GATE_ELEMENT = "voltage_conc_gate";
+    
 
     public static String CONC_DEP_ELEMENT = "conc_dependence";
     public static String CONC_DEP_NAME_ATTR = "name";
@@ -159,22 +166,42 @@ public class ChannelMLConstants
 
     public static String ALPHA_ELEMENT = "alpha";
     public static String BETA_ELEMENT = "beta";
+    
+    
+    public static String TIME_COURSE_ELEMENT = "time_course";
+    public static String STEADY_STATE_ELEMENT = "steady_state";
 
 
     public static String PARAMETERISED_HH_ELEMENT = "parameterised_hh";
     public static String PARAMETERISED_HH_TYPE_ATTR = "type";
 
-    public static String GENERIC_HH_ELEMENT = "generic_equation_hh";
+    public static String GENERIC_HH_ELEMENT_OLDER = "generic_equation_hh";
+    public static String GENERIC_HH_ELEMENT_OLD = "generic";
+    
+    
+    public static String EXPR_FORM_ATTR = "expr_form";
+    public static String EXPR_ATTR = "expr";
+    public static String GENERIC_ATTR = "generic";
+    
+    
     public static String GENERIC_HH_EXPR_ATTR = "expr";
+    
+    public static String RATE_NAME_ATTR = "name";
 
     public static String PARAMETER_ELEMENT = "parameter";
     public static String PARAMETER_NAME_ATTR = "name";
     public static String PARAMETER_VALUE_ATTR = "value";
 
 
-    public static String LINOID_TYPE = "linoid";
+    public static String LINOID_TYPE_OLD = "linoid";
+    public static String EXP_LINEAR_TYPE = "exp_linear";
     public static String EXPONENTIAL_TYPE = "exponential";
     public static String SIGMOID_TYPE = "sigmoid";
+    
+    
+    public static String RATE_ATTR = "rate";
+    public static String SCALE_ATTR = "scale";
+    public static String MIDPOINT_ATTR = "midpoint";
 
 
 
@@ -314,29 +341,46 @@ public class ChannelMLConstants
 
 
 
-    public static String getIonsXPath()
+    // location of ion information pre v1.7.3
+    public static String getLegacyIonsXPath()
     {
         return ChannelMLConstants.ROOT_ELEMENT + "/" + ION_ELEMENT;
     }
 
 
 
-    public static String getIonXPath(int index)
+    // location of ion information pre v1.7.3
+    public static String getLegacyIonXPath(int index)
     {
-        return getIonsXPath() + "["+index+"]";
+        return getLegacyIonsXPath() + "["+index+"]";
     }
 
-    public static String getIonRevPotXPath(int index)
+    public static String getLegacyIonRevPotXPath(int index)
     {
-        return getIonXPath(index)+"/@"+ ION_REVERSAL_POTENTIAL_ATTR;
+        return getLegacyIonXPath(index)+"/@"+ ION_REVERSAL_POTENTIAL_ATTR;
     }
 
 
+    public static String getIonNameXPath()
+    {
+        return getCurrVoltRelXPath() + "/@" + NEW_ION_NAME_ATTR;
+    }
+
+
+    public static String getCondLawXPath()
+    {
+        return getCurrVoltRelXPath() + "/@" + COND_LAW_ATTR;
+    }
 
 
     public static String getCurrVoltRelXPath()
     {
         return getChannelTypeXPath() + "/" + CURR_VOLT_REL_ELEMENT;
+    }
+
+    public static String getGatesXPath()
+    {
+        return getCurrVoltRelXPath() + "/" + GATE_ELEMENT;
     }
 
     public static String getOhmicXPath()

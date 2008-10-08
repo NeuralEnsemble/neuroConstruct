@@ -50,8 +50,7 @@ import ucl.physiol.neuroconstruct.utils.equation.*;
 
 public class ChannelMLEditor extends JFrame implements HyperlinkListener
 {
-
-    ClassLogger logger = new ClassLogger("ChannelMLEditor");
+    private static ClassLogger logger = new ClassLogger("ChannelMLEditor");
 
     Project project = null;
 
@@ -718,11 +717,12 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
             };
 
 
-            Project testProj = Project.loadProject(new File("/bernal/models/Layer2_3PyramidalCell/Layer2_3PyramidalCell.neuro.xml"),
+            Project testProj = Project.loadProject(new File("C:/fullCheckout/tempModels/neuroConstruct/Ex7_GranuleCell/Ex7_GranuleCell.neuro.xml"),
                                                    pel);
 
             //ChannelMLCellMechanism cmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("NaConductance_CML");
-            ChannelMLCellMechanism cmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("Kahp");
+            ChannelMLCellMechanism cmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("Gran_CaHVA_98");
+            ChannelMLEditor.logger.setThisClassVerbose(true);
 
             ChannelMLEditor frame = new ChannelMLEditor(cmlMechanism, testProj, pel);
 
@@ -877,21 +877,59 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
             
             try
             {
-                SimpleXMLEntity[] gates = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getHHGateXPath());
+                boolean postV1_7_3format = false;
+                SimpleXMLEntity[] gates = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getHHGateXPath()); // pre v1.7.3 format
+                
+                if (gates.length==0)
+                {
+                    gates = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getGatesXPath()); // post v1.7.3 format
+                    for(SimpleXMLEntity sxe: gates)
+                        logger.logComment("Found gate: "+sxe);
+                    
+                    if (gates.length>0) 
+                        postV1_7_3format =true;
+                }
 
                 if (gates.length==0)
                 {
                     logger.logComment("Assuming leak conductance");
-                    SimpleXMLEntity[] ions = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getIonsXPath());
-                    SimpleXMLElement firstIon = (SimpleXMLElement) ions[0];
-                    String revPotString = firstIon.getAttributeValue(ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR);
-                    float revPot = Float.parseFloat(revPotString);
-                    SimpleXMLEntity[] conductances = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getConductanceXPath());
+                    float gmax = Float.NaN;
+                    float revPot = Float.NaN;
+                    
+                    String newCondRule = cmlMechanism.getXMLDoc().getValueByXPath(ChannelMLConstants.getCondLawXPath());
+                    if (newCondRule!=null)
+                        postV1_7_3format =true;
+                        
+                    
+                    if(!postV1_7_3format)
+                    {
+                        SimpleXMLEntity[] ions = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getLegacyIonsXPath());
+                        SimpleXMLElement firstIon = (SimpleXMLElement) ions[0];
 
+                        String revPotString = firstIon.getAttributeValue(ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR);
 
-                    SimpleXMLElement firstCond = (SimpleXMLElement) conductances[0];
-                    String gmaxString = firstCond.getAttributeValue(ChannelMLConstants.DEFAULT_COND_DENSITY_ATTR);
-                    float gmax = Float.parseFloat(gmaxString);
+                        SimpleXMLEntity[] conductances = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getConductanceXPath());
+
+                        SimpleXMLElement firstCond = (SimpleXMLElement) conductances[0];
+                        String gmaxString = firstCond.getAttributeValue(ChannelMLConstants.DEFAULT_COND_DENSITY_ATTR);
+
+                        gmax = Float.parseFloat(gmaxString);
+
+                        revPot = Float.parseFloat(revPotString);
+                    }
+                    else
+                    {
+                        SimpleXMLEntity[] currVoltRel = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getCurrVoltRelXPath());
+                        SimpleXMLElement firstCurrVoltRel = (SimpleXMLElement) currVoltRel[0];
+                        String revPotString = firstCurrVoltRel.getAttributeValue(ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR);
+                        String gmaxString = firstCurrVoltRel.getAttributeValue(ChannelMLConstants.DEFAULT_COND_DENSITY_ATTR);
+                        
+                        gmax = Float.parseFloat(gmaxString);
+
+                        revPot = Float.parseFloat(revPotString);
+                    }
+                    
+                    
 
                     String expression = gmax +" * (v - ("+revPot+"))";
                     EquationUnit func = Expression.parseExpression(expression, new Variable[]{v});
@@ -928,363 +966,708 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                     if (gates[gateIndex] instanceof SimpleXMLElement)
                     {
                         SimpleXMLElement gate = (SimpleXMLElement)gates[gateIndex];
-
-                        String gateState = gate.getAttributeValue(ChannelMLConstants.HH_GATE_STATE_ATTR);
-
-                        logger.logComment("Found gate with state: " + gateState);
-
-                        SimpleXMLEntity[] gateElements = gate.getXMLEntities(ChannelMLConstants.TRANSITION_ELEMENT + "/"
-                            + ChannelMLConstants.VOLTAGE_GATE_ELEMENT);
                         
-                        boolean voltConcGate = false;
-                        
-                        if (gateElements.length==0)
+                        if(postV1_7_3format)
                         {
-                            gateElements = gate.getXMLEntities(ChannelMLConstants.TRANSITION_ELEMENT + "/"
-                                + ChannelMLConstants.VOLTAGE_CONC_GATE_ELEMENT);
+                            String gateName = gate.getAttributeValue(ChannelMLConstants.GATE_NAME_ELEMENT);
                             
-                            voltConcGate = true;
-                        }
-                        
-                        if (gateElements.length==0)
-                        {
-                            GuiUtils.showErrorMessage(logger, "Did not find any relevant voltage/conc dependent transitions in state: "+gateState, null, this);
-                        }
-                     
+                            boolean voltConcGate = false;
+                            SimpleXMLEntity[] concDep = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getCurrVoltRelXPath()+"/"
+                                +ChannelMLConstants.CONC_DEP_ELEMENT);
+                            
+                            String concVarName = null;
+                            float concVarVal = -1;
+                            float concMin = -1;
+                            float concMax = -1;
 
-                        for (int vgIndex = 0; vgIndex < gateElements.length; vgIndex++)
-                        {
-                            if (gateElements[vgIndex] instanceof SimpleXMLElement)
-                            {
-                                Hashtable<String, DataSet> rateData = new Hashtable<String,DataSet>();
-
-                                SimpleXMLElement vg = (SimpleXMLElement)gateElements[vgIndex];
-
-                                ArrayList<SimpleXMLEntity> rates = vg.getContents();
                                 
-                                String concVarName = null;
-                                float concVarVal = -1;
-                                float concMin = -1;
-                                float concMax = -1;
+                            if (concDep!=null && concDep.length>0)
+                            {
+                                voltConcGate = true;
+                                SimpleXMLElement concDepEl = (SimpleXMLElement)concDep[0];
+                                
+                                concVarName = concDepEl.getAttributeValue(ChannelMLConstants.CONC_DEP_VAR_NAME_ATTR);
+                                concMin = Float.parseFloat(concDepEl.getAttributeValue(ChannelMLConstants.CONC_DEP_MIN_CONC_ATTR));
+                                concMax = Float.parseFloat(concDepEl.getAttributeValue(ChannelMLConstants.CONC_DEP_MAX_CONC_ATTR));
+                            }
 
-                                for (SimpleXMLEntity child: rates)
+                            logger.logComment("Found gate: " + gate.getXMLString("", false));
+
+                            SimpleXMLEntity[] transElements = gate.getXMLEntities(ChannelMLConstants.TRANSITION_ELEMENT);
+                            SimpleXMLEntity[] timeCourseElements  = gate.getXMLEntities(ChannelMLConstants.TIME_COURSE_ELEMENT);
+                            SimpleXMLEntity[] steadyStateElements  = gate.getXMLEntities(ChannelMLConstants.STEADY_STATE_ELEMENT);
+                            
+                            SimpleXMLEntity[] gateElements = new SimpleXMLEntity[transElements.length+timeCourseElements.length+steadyStateElements.length];
+                            
+                            System.arraycopy(transElements, 0, gateElements, 0, transElements.length);
+                            System.arraycopy(timeCourseElements, 0, gateElements, transElements.length, timeCourseElements.length);
+                            System.arraycopy(steadyStateElements, 0, gateElements, timeCourseElements.length+transElements.length, steadyStateElements.length);
+                            
+                            for(SimpleXMLEntity sxe: gateElements)
+                            {
+                                logger.logComment("gateElement: " + sxe);
+                            }
+
+                            if (gateElements.length==0)
+                            {
+                                GuiUtils.showErrorMessage(logger, "Did not find any relevant voltage/conc dependent transitions in gate: "+gateName, null, this);
+                            }
+
+
+                            Hashtable<String, DataSet> rateData = new Hashtable<String,DataSet>();
+                                    
+                            for (int index = 0; index < gateElements.length; index++)
+                            {
+                                logger.logComment("- Found contents of gate: "+ gateElements[index]);
+                                
+                                if (gateElements[index] instanceof SimpleXMLElement)
                                 {
 
-                                    if (child instanceof SimpleXMLElement)
-                                    {
-                                        //Enumeration<String> prevRate = rateData.keys();
-                                        
-                                        SimpleXMLElement rate = (SimpleXMLElement)child;
+                                    SimpleXMLElement rate = (SimpleXMLElement)gateElements[index];
+                                    
+                                    String rateName = rate.getAttributeValue(ChannelMLConstants.RATE_NAME_ATTR);
+                                    
+                                    logger.logComment("- Found a SimpleXMLElement: "+ rate);
 
-                                        logger.logComment("Found: " + rate);
+                                    //ArrayList<SimpleXMLEntity> rates = vg.getContents();
+
+                                    /*
+                                    String concVarName = null;
+                                    float concVarVal = -1;
+                                    float concMin = -1;
+                                    float concMax = -1;
+
+                                 
+
+
+                                    if (rate.getName().equals(ChannelMLConstants.CONC_DEP_ELEMENT))
+                                    {
+                                        concVarName = rate.getAttributeValue(ChannelMLConstants.CONC_DEP_VAR_NAME_ATTR);
+                                        concMin = Float.parseFloat(rate.getAttributeValue(ChannelMLConstants.CONC_DEP_MIN_CONC_ATTR));
+                                        concMax = Float.parseFloat(rate.getAttributeValue(ChannelMLConstants.CONC_DEP_MAX_CONC_ATTR));
+
+                                        logger.logComment("It's a volt conc el: " + concVarName+" ("+concMin+" -> "+ concMax+")");
+                                    }*/
+
+
+                                    String expression = null;
+
+                                    EquationUnit mainFunc = null;
+                                    EquationUnit condPreFunc = null;
+                                    EquationUnit condPostFunc = null;
+                                    EquationUnit trueFunc = null;
+                                    EquationUnit falseFunc = null;
+
+                                    RelationalOperator relationship = null;
+
+                                    String exprForm = rate.getAttributeValue(ChannelMLConstants.EXPR_FORM_ATTR);
+                                    
+                                    logger.logComment("exprForm: "+exprForm);
+
+                                    if (!exprForm.equals(ChannelMLConstants.GENERIC_ATTR))
+                                    {
                                         
-                                        if (rate.getName().equals(ChannelMLConstants.CONC_DEP_ELEMENT))
+                                        float A = Float.NaN;
+                                        float B = Float.NaN;
+                                        float Vhalf = Float.NaN;
+                                        try
                                         {
-                                            concVarName = rate.getAttributeValue(ChannelMLConstants.CONC_DEP_VAR_NAME_ATTR);
-                                            concMin = Float.parseFloat(rate.getAttributeValue(ChannelMLConstants.CONC_DEP_MIN_CONC_ATTR));
-                                            concMax = Float.parseFloat(rate.getAttributeValue(ChannelMLConstants.CONC_DEP_MAX_CONC_ATTR));
-                                            
-                                            logger.logComment("It's a volt conc el: " + concVarName+" ("+concMin+" -> "+ concMax+")");
+                                            A = Float.parseFloat(rate.getAttributeValue(ChannelMLConstants.RATE_ATTR));
+                                            B = Float.parseFloat(rate.getAttributeValue(ChannelMLConstants.SCALE_ATTR));
+                                            Vhalf = Float.parseFloat(rate.getAttributeValue(ChannelMLConstants.MIDPOINT_ATTR));
+                                        
+                                                      
+                                        }
+                                        catch (NumberFormatException ex)
+                                        {
+                                            GuiUtils.showErrorMessage(logger, "Error getting parameter for rate: "+ rate.getName()+" in state "
+                                            + gateName+" in Cell Mechanism "+ cmlMechanism.getInstanceName(), ex, this);
+                                        }
+
+                                        if (exprForm.equals(ChannelMLConstants.EXP_LINEAR_TYPE))
+                                        {
+                                            expression = A + " *(  (v - "+Vhalf+") / ("+B+") ) / (1 - exp(-1 * ( (v - "+Vhalf+") / ("+B+") )))";
+                                        }
+                                        else if (exprForm.equals(ChannelMLConstants.SIGMOID_TYPE))
+                                        {
+                                            expression = A + " /(1 + exp((v - "+Vhalf+") / ("+B+") ))";
+                                        }
+                                        else if (exprForm.equals(ChannelMLConstants.EXPONENTIAL_TYPE))
+                                        {
+                                            expression = A +" * exp((v - "+Vhalf+") / ("+B+") )";
+                                        }
+
+                                        mainFunc = Expression.parseExpression(expression, new Variable[]{v});
+
+
+                                    }
+                                    else
+                                    {
+                                        String expr = rate.getAttributeValue(ChannelMLConstants.EXPR_ATTR);
+
+                                        logger.logComment(" -+- Found generic expr: " + expr+", voltConcGate: "+voltConcGate);
+
+                                        expression = expr;
+
+                                        if (voltConcGate && expr.indexOf(concVarName)>=0)
+                                        {
+                                            String val = JOptionPane.showInputDialog(this, "A concentration dependent expression for rate: "
+                                                + rateName + " in gate " + gateName+" has been found:\n"
+                                                    +expr+"\nPlease enter the value for "+concVarName+" to use in the graph. " +
+                                                    "Max val: "+concMax+", min val: "+concMin, concMin + (concMax-concMin)/2);
+
+                                            concVarVal = Float.parseFloat(val);
+
+                                            Variable newRateVar = new Variable(concVarName);
+
+                                            Variable[] tempMainVars = new Variable[mainVars.length+1];
+                                            for(int i=0; i<mainVars.length;i++) tempMainVars[i] = mainVars[i];
+                                            tempMainVars[mainVars.length] = newRateVar;
+                                            mainVars = tempMainVars;
                                         }
 
 
-                                        String expression = null;
-
-                                        EquationUnit mainFunc = null;
-                                        EquationUnit condPreFunc = null;
-                                        EquationUnit condPostFunc = null;
-                                        EquationUnit trueFunc = null;
-                                        EquationUnit falseFunc = null;
-                                        
-                                        RelationalOperator relationship = null;
-
-
-                                        SimpleXMLEntity[] paramHHPlots = rate.getXMLEntities(ChannelMLConstants.PARAMETERISED_HH_ELEMENT);
+                                    if (expr.indexOf("?")<0 && expr.indexOf(":")<0)
+                                    {
+                                        mainFunc = Expression.parseExpression(expr, mainVars);
+                                    }
+                                    else
+                                    {
+                                        String condFull = expr.substring(0, expr.indexOf("?")).trim();
+                                        String trueExpr = expr.substring(expr.indexOf("?")+1, expr.indexOf(":")).trim();
+                                        String falseExpr = expr.substring(expr.indexOf(":")+1).trim();
 
 
-                                        for (int paramPlotIndex = 0; paramPlotIndex < paramHHPlots.length; paramPlotIndex++)
+                                        trueFunc = Expression.parseExpression(trueExpr, mainVars);
+                                        falseFunc = Expression.parseExpression(falseExpr, mainVars);
+
+                                        condFull = GeneralUtils.replaceAllTokens(condFull, "&lt;", "<");
+                                        condFull = GeneralUtils.replaceAllTokens(condFull, "&gt;", ">");
+
+
+                                        ArrayList<RelationalOperator> allROs = RelationalOperator.allROs;
+
+                                        for(RelationalOperator ro: allROs)
                                         {
-                                            logger.logComment(" - - Found: "+ paramHHPlots[paramPlotIndex]);
-
-                                            if (paramHHPlots[paramPlotIndex] instanceof SimpleXMLElement)
+                                            if (condFull.indexOf(ro.operator)>0)
                                             {
-                                                SimpleXMLElement paramPlot = (SimpleXMLElement)paramHHPlots[paramPlotIndex];
+                                                relationship = ro;
+                                                String condExpr = condFull.substring(0, condFull.indexOf(ro.operator)).trim();
+                                                String evalExpr = condFull.substring(condFull.indexOf(ro.operator)+ro.operator.length()).trim();
+                                                condPreFunc = Expression.parseExpression(condExpr, mainVars);
+                                                condPostFunc = Expression.parseExpression(evalExpr, mainVars);
+                                            }
+                                        }
 
-                                               String eqnType = paramPlot.getAttributeValue(ChannelMLConstants.PARAMETERISED_HH_TYPE_ATTR);
+                                    }
+                                }
+                            
 
-                                                float A = Float.NaN;
-                                                float k = Float.NaN;
-                                                float d = Float.NaN;
+                                String graphRef = "Plots for gating complex "
+                                    + gateName + " in Cell Mechanism " + cmlMechanism.getInstanceName();
 
-                                                try
+                                String dsRef = "Plot of: " + rateName + " in gating complex "
+                                    + gateName + " in Cell Mechanism " + cmlMechanism.getInstanceName();
+
+                                String desc = dsRef;
+
+
+                                if (mainFunc!=null)
+                                {
+
+                                    desc = desc + "\n\n Expression for graph: " + expression;
+                                    desc = desc + "\nwhich has been parsed as: " + mainFunc.getNiceString();
+
+
+                                    DataSet ds = new DataSet(dsRef, desc, yUnits, "", "Membrane Potential", gateName);
+
+                                    for (int i = 0; i < numPoints; i++)
+                                    {
+                                        float nextVval = minV + ( (maxV - minV) * i / (numPoints));
+
+                                       // Argument[] a0 = new Argument[]
+                                       //     {new Argument(v.getName(), nextVval),
+                                       //     new Argument(temp.getName(), project.simulationParameters.getTemperature())};
+
+                                        Argument[] a0 = getArgsList(nextVval,
+                                                v, temp, rateData, 
+                                                concVarName, concVarVal, mainFunc.getNiceString(), project, logger);
+
+                                        ds.addPoint(nextVval, mainFunc.evaluateAt(a0));
+                                    }
+
+                                    PlotterFrame pf = PlotManager.getPlotterFrame(graphRef);
+
+                                    pf.addDataSet(ds);
+
+                                    rateData.put(rateName, ds);
+                                }
+                                else if (relationship!=null)
+                                {
+                                    String parsed = "IF ("+condPreFunc.getNiceString()+") "+ relationship.operator 
+                                    +"("+condPostFunc.getNiceString()+") THEN ("+trueFunc.getNiceString()+") ELSE ("+
+                                    falseFunc.getNiceString()+")";
+
+                                    desc = desc + "\n\n Expression for graph: " + expression;
+                                    desc = desc + "\nwhich has been parsed as: " + parsed;
+
+
+                                    DataSet ds = new DataSet(dsRef, desc, yUnits, "", "Membrane Potential", gateName);
+
+
+                                    for (int j = 0; j < numPoints; j++)
+                                    {
+                                        float nextVval = minV + ( (maxV - minV) * j / (numPoints));
+
+                                        Argument[] a0 = getArgsList(nextVval,
+                                                v, temp, rateData, 
+                                                concVarName, concVarVal, parsed, project, logger);
+
+                                        double condPreEval = condPreFunc.evaluateAt(a0);
+                                        double condPostEval = condPostFunc.evaluateAt(a0);
+
+                                        if (relationship.evaluate(condPreEval, condPostEval))
+                                        {
+                                            ds.addPoint(nextVval, trueFunc.evaluateAt(a0));
+                                        }
+                                        else
+                                        {
+                                            ds.addPoint(nextVval, falseFunc.evaluateAt(a0));
+                                        }
+
+                                    }
+
+                                    PlotterFrame pf = PlotManager.getPlotterFrame(graphRef);
+
+                                    pf.addDataSet(ds);
+
+                                    rateData.put(rateName, ds);
+                                }
+
+
+                                Variable newRateVar = new Variable(rateName);
+
+                                Variable[] tempMainVars = new Variable[mainVars.length+1];
+                                for(int i=0; i<mainVars.length;i++) tempMainVars[i] = mainVars[i];
+                                tempMainVars[mainVars.length] = newRateVar;
+                                mainVars = tempMainVars;
+                                
+                                
+                                }
+                            }
+                            
+                            logger.logComment("-       rateData: "+rateData);
+                                    
+
+                            if (rateData.containsKey("alpha") && rateData.containsKey("beta"))
+                            {
+                                DataSet dsAlpha = rateData.get("alpha");
+                                DataSet dsBeta = rateData.get("beta");
+
+                                String graphRef = "Plots for tau/inf in gating complex "
+                                    + gateName+" in Cell Mechanism "+ cmlMechanism.getInstanceName();
+
+                                if (!rateData.containsKey("tau"))
+                                {
+                                    String dsRef = "Plot of tau (1/(alpha+beta)) in gating complex "
+                                    + gateName+" in Cell Mechanism "+ cmlMechanism.getInstanceName();
+
+                                    DataSet tau = new DataSet(dsRef, dsRef, yUnits,timeUnits, "Membrane Potential", "tau");
+
+                                    for (int i = 0; i < numPoints; i++)
+                                    {
+                                        float nextVval = minV + ( (maxV - minV) * i / (numPoints));
+
+
+                                        tau.addPoint(nextVval, 1 / (dsAlpha.getYValues()[i] + dsBeta.getYValues()[i]));
+                                    }
+
+                                    PlotterFrame pf = PlotManager.getPlotterFrame(graphRef);
+
+                                    pf.addDataSet(tau);
+                                }
+                                if (!rateData.containsKey("inf"))
+                                {
+                                    String dsRef = "Plot of inf (alpha/(alpha+beta)) in gating complex "
+                                    + gateName+" in Cell Mechanism "+ cmlMechanism.getInstanceName();
+
+                                    DataSet inf = new DataSet(dsRef, dsRef, yUnits, "","Membrane Potential", "inf");
+
+                                    for (int i = 0; i < numPoints; i++)
+                                    {
+                                        float nextVval = minV + ( (maxV - minV) * i / (numPoints));
+
+                                        inf.addPoint(nextVval, dsAlpha.getYValues()[i] / (dsAlpha.getYValues()[i] + dsBeta.getYValues()[i]));
+                                    }
+
+                                    PlotterFrame pf = PlotManager.getPlotterFrame(graphRef);
+
+                                    pf.addDataSet(inf);
+                                }
+                            }
+                        
+                            
+                        }
+                        else   // postV1_7_3format = false
+                        {
+
+                            String gateState = gate.getAttributeValue(ChannelMLConstants.HH_GATE_STATE_ATTR);
+
+                            logger.logComment("Found a gate with state: " + gateState);
+
+                            SimpleXMLEntity[] gateElements = gate.getXMLEntities(ChannelMLConstants.TRANSITION_ELEMENT + "/"
+                                + ChannelMLConstants.VOLTAGE_GATE_ELEMENT);
+
+                            boolean voltConcGate = false;
+
+                            if (gateElements.length==0)
+                            {
+                                gateElements = gate.getXMLEntities(ChannelMLConstants.TRANSITION_ELEMENT + "/"
+                                    + ChannelMLConstants.VOLTAGE_CONC_GATE_ELEMENT);
+
+                                voltConcGate = true;
+                            }
+
+                            if (gateElements.length==0)
+                            {
+                                GuiUtils.showErrorMessage(logger, "Did not find any relevant voltage/conc dependent transitions in state: "+gateState, null, this);
+                            }
+
+
+                            for (int vgIndex = 0; vgIndex < gateElements.length; vgIndex++)
+                            {
+                                if (gateElements[vgIndex] instanceof SimpleXMLElement)
+                                {
+                                    Hashtable<String, DataSet> rateData = new Hashtable<String,DataSet>();
+
+                                    SimpleXMLElement vg = (SimpleXMLElement)gateElements[vgIndex];
+                                    
+                                    logger.logComment("Found vg: " + vg);
+
+                                    ArrayList<SimpleXMLEntity> rates = vg.getContents();
+
+                                    String concVarName = null;
+                                    float concVarVal = -1;
+                                    float concMin = -1;
+                                    float concMax = -1;
+
+                                    for (SimpleXMLEntity child: rates)
+                                    {
+
+                                        if (child instanceof SimpleXMLElement)
+                                        {
+                                            //Enumeration<String> prevRate = rateData.keys();
+
+                                            SimpleXMLElement rate = (SimpleXMLElement)child;
+
+                                            logger.logComment("Found: " + rate);
+
+                                            if (rate.getName().equals(ChannelMLConstants.CONC_DEP_ELEMENT))
+                                            {
+                                                concVarName = rate.getAttributeValue(ChannelMLConstants.CONC_DEP_VAR_NAME_ATTR);
+                                                concMin = Float.parseFloat(rate.getAttributeValue(ChannelMLConstants.CONC_DEP_MIN_CONC_ATTR));
+                                                concMax = Float.parseFloat(rate.getAttributeValue(ChannelMLConstants.CONC_DEP_MAX_CONC_ATTR));
+
+                                                logger.logComment("It's a volt conc el: " + concVarName+" ("+concMin+" -> "+ concMax+")");
+                                            }
+
+
+                                            String expression = null;
+
+                                            EquationUnit mainFunc = null;
+                                            EquationUnit condPreFunc = null;
+                                            EquationUnit condPostFunc = null;
+                                            EquationUnit trueFunc = null;
+                                            EquationUnit falseFunc = null;
+
+                                            RelationalOperator relationship = null;
+
+
+                                            SimpleXMLEntity[] paramHHPlots = rate.getXMLEntities(ChannelMLConstants.PARAMETERISED_HH_ELEMENT);
+
+
+                                            for (int paramPlotIndex = 0; paramPlotIndex < paramHHPlots.length; paramPlotIndex++)
+                                            {
+                                                logger.logComment(" - - Found: "+ paramHHPlots[paramPlotIndex]);
+
+                                                if (paramHHPlots[paramPlotIndex] instanceof SimpleXMLElement)
                                                 {
-                                                    SimpleXMLEntity[] param = paramPlot.getXMLEntities(ChannelMLConstants.PARAMETER_ELEMENT);
+                                                    SimpleXMLElement paramPlot = (SimpleXMLElement)paramHHPlots[paramPlotIndex];
 
-                                                    for (int paramIndex = 0; paramIndex < param.length; paramIndex++)
+                                                   String eqnType = paramPlot.getAttributeValue(ChannelMLConstants.PARAMETERISED_HH_TYPE_ATTR);
+
+                                                    float A = Float.NaN;
+                                                    float k = Float.NaN;
+                                                    float d = Float.NaN;
+
+                                                    try
                                                     {
-                                                        if (param[paramIndex] instanceof SimpleXMLElement)
-                                                        {
-                                                            SimpleXMLElement oneParam = (SimpleXMLElement)param[paramIndex];
+                                                        SimpleXMLEntity[] param = paramPlot.getXMLEntities(ChannelMLConstants.PARAMETER_ELEMENT);
 
-                                                            if (oneParam.getAttributeValue(ChannelMLConstants.PARAMETER_NAME_ATTR)!=null)
+                                                        for (int paramIndex = 0; paramIndex < param.length; paramIndex++)
+                                                        {
+                                                            if (param[paramIndex] instanceof SimpleXMLElement)
                                                             {
-                                                                if (oneParam.getAttributeValue(ChannelMLConstants.PARAMETER_NAME_ATTR).equals("A"))
+                                                                SimpleXMLElement oneParam = (SimpleXMLElement)param[paramIndex];
+
+                                                                if (oneParam.getAttributeValue(ChannelMLConstants.PARAMETER_NAME_ATTR)!=null)
                                                                 {
-                                                                    A = Float.parseFloat(oneParam.getAttributeValue(ChannelMLConstants.PARAMETER_VALUE_ATTR));
-                                                                }
-                                                                else if (oneParam.getAttributeValue(ChannelMLConstants.PARAMETER_NAME_ATTR).equals("k"))
-                                                                {
-                                                                    k = Float.parseFloat(oneParam.getAttributeValue(ChannelMLConstants.PARAMETER_VALUE_ATTR));
-                                                                }
-                                                                else if (oneParam.getAttributeValue(ChannelMLConstants.PARAMETER_NAME_ATTR).equals("d"))
-                                                                {
-                                                                    d = Float.parseFloat(oneParam.getAttributeValue(ChannelMLConstants.PARAMETER_VALUE_ATTR));
+                                                                    if (oneParam.getAttributeValue(ChannelMLConstants.PARAMETER_NAME_ATTR).equals("A"))
+                                                                    {
+                                                                        A = Float.parseFloat(oneParam.getAttributeValue(ChannelMLConstants.PARAMETER_VALUE_ATTR));
+                                                                    }
+                                                                    else if (oneParam.getAttributeValue(ChannelMLConstants.PARAMETER_NAME_ATTR).equals("k"))
+                                                                    {
+                                                                        k = Float.parseFloat(oneParam.getAttributeValue(ChannelMLConstants.PARAMETER_VALUE_ATTR));
+                                                                    }
+                                                                    else if (oneParam.getAttributeValue(ChannelMLConstants.PARAMETER_NAME_ATTR).equals("d"))
+                                                                    {
+                                                                        d = Float.parseFloat(oneParam.getAttributeValue(ChannelMLConstants.PARAMETER_VALUE_ATTR));
+                                                                    }
                                                                 }
                                                             }
                                                         }
                                                     }
-                                                }
-                                                catch (NumberFormatException ex)
-                                                {
-                                                    GuiUtils.showErrorMessage(logger, "Error getting parameter for rate: "+ rate.getName()+" in state "
-                                                    + gateState+" in Cell Mechanism "+ cmlMechanism.getInstanceName(), ex, this);
-                                                }
-
-                                                if (eqnType.equals(ChannelMLConstants.LINOID_TYPE))
-                                                {
-                                                    expression = A + " *( "+k+" * (v - "+d+")) / (1 - exp(-1 * ("+k+" * (v - "+d+"))))";
-                                                }
-                                                else if (eqnType.equals(ChannelMLConstants.SIGMOID_TYPE))
-                                                {
-                                                    expression = A + " /(1 + exp("+k+" *(v - "+d+")))";
-                                                }
-                                                else if (eqnType.equals(ChannelMLConstants.EXPONENTIAL_TYPE))
-                                                {
-                                                    expression = A +" * exp("+k+" *(v - "+d+"))";
-                                                }
-
-
-
-                                                mainFunc = Expression.parseExpression(expression, new Variable[]{v});
-
-
-                                            }
-                                        }
-
-                                        //SimpleXMLEntity[] genericPlots = rate.getXMLEntities(ChannelMLConstants.PARAMETERISED_HH_ELEMENT);
-                                        SimpleXMLEntity[] generic = rate.getXMLEntities(ChannelMLConstants.GENERIC_HH_ELEMENT);
-
-
-                                        for (int genericIndex = 0; genericIndex < generic.length; genericIndex++)
-                                        {
-                                            logger.logComment(" - - Found: " + generic[genericIndex]);
-
-                                            if (generic[genericIndex] instanceof SimpleXMLElement)
-                                            {
-                                                SimpleXMLElement genericPlot = (SimpleXMLElement) generic[genericIndex];
-
-                                                String expr = genericPlot.getAttributeValue(ChannelMLConstants.GENERIC_HH_EXPR_ATTR);
-                                                logger.logComment(" -+- Found expr: " + expr+", voltConcGate: "+voltConcGate);
-                                                
-                                                expression = expr;
-                                                
-                                                if (voltConcGate && expr.indexOf(concVarName)>=0)
-                                                {
-                                                    String val = JOptionPane.showInputDialog(this, "A concentration dependent expression for rate: "+rate.getName() + " in state "
-                                            + gateState+" has been found:\n"
-                                                            +expr+"\nPlease enter the value for "+concVarName+" to use in the graph. Max val: "+concMax+", min val: "+concMin, concMin + (concMax-concMin)/2);
-                                                    
-                                                    concVarVal = Float.parseFloat(val);
-                                                    
-                                                    Variable newRateVar = new Variable(concVarName);
-                                                    
-                                                    Variable[] tempMainVars = new Variable[mainVars.length+1];
-                                                    for(int i=0; i<mainVars.length;i++) tempMainVars[i] = mainVars[i];
-                                                    tempMainVars[mainVars.length] = newRateVar;
-                                                    mainVars = tempMainVars;
-                                                }
-                                                
-                                                
-                                                if (expr.indexOf("?")<0 && expr.indexOf(":")<0)
-                                                {
-                                                    mainFunc = Expression.parseExpression(expr, mainVars);
-                                                }
-                                                else
-                                                {
-                                                    String condFull = expr.substring(0, expr.indexOf("?")).trim();
-                                                    String trueExpr = expr.substring(expr.indexOf("?")+1, expr.indexOf(":")).trim();
-                                                    String falseExpr = expr.substring(expr.indexOf(":")+1).trim();
-                                                    
-
-                                                    trueFunc = Expression.parseExpression(trueExpr, mainVars);
-                                                    falseFunc = Expression.parseExpression(falseExpr, mainVars);
-
-                                                    condFull = GeneralUtils.replaceAllTokens(condFull, "&lt;", "<");
-                                                    condFull = GeneralUtils.replaceAllTokens(condFull, "&gt;", ">");
-                                                    
-
-                                                    ArrayList<RelationalOperator> allROs = RelationalOperator.allROs;
-                                                    
-                                                    for(RelationalOperator ro: allROs)
+                                                    catch (NumberFormatException ex)
                                                     {
-                                                        if (condFull.indexOf(ro.operator)>0)
-                                                        {
-                                                            relationship = ro;
-                                                            String condExpr = condFull.substring(0, condFull.indexOf(ro.operator)).trim();
-                                                            String evalExpr = condFull.substring(condFull.indexOf(ro.operator)+ro.operator.length()).trim();
-                                                            condPreFunc = Expression.parseExpression(condExpr, mainVars);
-                                                            condPostFunc = Expression.parseExpression(evalExpr, mainVars);
-                                                        }
+                                                        GuiUtils.showErrorMessage(logger, "Error getting parameter for rate: "+ rate.getName()+" in state "
+                                                        + gateState+" in Cell Mechanism "+ cmlMechanism.getInstanceName(), ex, this);
                                                     }
-                                                    
+
+                                                    if (eqnType.equals(ChannelMLConstants.LINOID_TYPE_OLD))
+                                                    {
+                                                        expression = A + " *( "+k+" * (v - "+d+")) / (1 - exp(-1 * ("+k+" * (v - "+d+"))))";
+                                                    }
+                                                    else if (eqnType.equals(ChannelMLConstants.SIGMOID_TYPE))
+                                                    {
+                                                        expression = A + " /(1 + exp("+k+" *(v - "+d+")))";
+                                                    }
+                                                    else if (eqnType.equals(ChannelMLConstants.EXPONENTIAL_TYPE))
+                                                    {
+                                                        expression = A +" * exp("+k+" *(v - "+d+"))";
+                                                    }
+
+
+
+                                                    mainFunc = Expression.parseExpression(expression, new Variable[]{v});
+
+
                                                 }
                                             }
+
+                                            //SimpleXMLEntity[] genericPlots = rate.getXMLEntities(ChannelMLConstants.PARAMETERISED_HH_ELEMENT);
+                                            SimpleXMLEntity[] generic = rate.getXMLEntities(ChannelMLConstants.GENERIC_HH_ELEMENT_OLDER);
+                                            if (generic.length==0)
+                                                generic = rate.getXMLEntities(ChannelMLConstants.GENERIC_HH_ELEMENT_OLD);
+
+
+                                            for (int genericIndex = 0; genericIndex < generic.length; genericIndex++)
+                                            {
+                                                logger.logComment(" - - Found: " + generic[genericIndex]);
+
+                                                if (generic[genericIndex] instanceof SimpleXMLElement)
+                                                {
+                                                    SimpleXMLElement genericPlot = (SimpleXMLElement) generic[genericIndex];
+
+                                                    String expr = genericPlot.getAttributeValue(ChannelMLConstants.GENERIC_HH_EXPR_ATTR);
+                                                    logger.logComment(" -+- Found expr: " + expr+", voltConcGate: "+voltConcGate);
+
+                                                    expression = expr;
+
+                                                    if (voltConcGate && expr.indexOf(concVarName)>=0)
+                                                    {
+                                                        String val = JOptionPane.showInputDialog(this, "A concentration dependent expression for rate: "+rate.getName() + " in state "
+                                                + gateState+" has been found:\n"
+                                                                +expr+"\nPlease enter the value for "+concVarName+" to use in the graph. Max val: "+concMax+", min val: "+concMin, concMin + (concMax-concMin)/2);
+
+                                                        concVarVal = Float.parseFloat(val);
+
+                                                        Variable newRateVar = new Variable(concVarName);
+
+                                                        Variable[] tempMainVars = new Variable[mainVars.length+1];
+                                                        for(int i=0; i<mainVars.length;i++) tempMainVars[i] = mainVars[i];
+                                                        tempMainVars[mainVars.length] = newRateVar;
+                                                        mainVars = tempMainVars;
+                                                    }
+
+
+                                                    if (expr.indexOf("?")<0 && expr.indexOf(":")<0)
+                                                    {
+                                                        mainFunc = Expression.parseExpression(expr, mainVars);
+                                                    }
+                                                    else
+                                                    {
+                                                        String condFull = expr.substring(0, expr.indexOf("?")).trim();
+                                                        String trueExpr = expr.substring(expr.indexOf("?")+1, expr.indexOf(":")).trim();
+                                                        String falseExpr = expr.substring(expr.indexOf(":")+1).trim();
+
+
+                                                        trueFunc = Expression.parseExpression(trueExpr, mainVars);
+                                                        falseFunc = Expression.parseExpression(falseExpr, mainVars);
+
+                                                        condFull = GeneralUtils.replaceAllTokens(condFull, "&lt;", "<");
+                                                        condFull = GeneralUtils.replaceAllTokens(condFull, "&gt;", ">");
+
+
+                                                        ArrayList<RelationalOperator> allROs = RelationalOperator.allROs;
+
+                                                        for(RelationalOperator ro: allROs)
+                                                        {
+                                                            if (condFull.indexOf(ro.operator)>0)
+                                                            {
+                                                                relationship = ro;
+                                                                String condExpr = condFull.substring(0, condFull.indexOf(ro.operator)).trim();
+                                                                String evalExpr = condFull.substring(condFull.indexOf(ro.operator)+ro.operator.length()).trim();
+                                                                condPreFunc = Expression.parseExpression(condExpr, mainVars);
+                                                                condPostFunc = Expression.parseExpression(evalExpr, mainVars);
+                                                            }
+                                                        }
+
+                                                    }
+                                                }
+                                            }
+
+                                            String graphRef = "Plots for state "
+                                                + gateState + " in Cell Mechanism " + cmlMechanism.getInstanceName();
+
+                                            String dsRef = "Plot of: " + rate.getName() + " in state "
+                                                + gateState + " in Cell Mechanism " + cmlMechanism.getInstanceName();
+
+                                            String desc = dsRef;
+
+
+                                            if (mainFunc!=null)
+                                            {
+
+                                                desc = desc + "\n\n Expression for graph: " + expression;
+                                                desc = desc + "\nwhich has been parsed as: " + mainFunc.getNiceString();
+
+
+                                                DataSet ds = new DataSet(dsRef, desc, yUnits, "", "Membrane Potential", gateState);
+
+                                                for (int i = 0; i < numPoints; i++)
+                                                {
+                                                    float nextVval = minV + ( (maxV - minV) * i / (numPoints));
+
+                                                   // Argument[] a0 = new Argument[]
+                                                   //     {new Argument(v.getName(), nextVval),
+                                                   //     new Argument(temp.getName(), project.simulationParameters.getTemperature())};
+
+                                                    Argument[] a0 = getArgsList(nextVval,
+                                                            v, temp, rateData, 
+                                                            concVarName, concVarVal, mainFunc.getNiceString(), project, logger);
+
+                                                    ds.addPoint(nextVval, mainFunc.evaluateAt(a0));
+                                                }
+
+                                                PlotterFrame pf = PlotManager.getPlotterFrame(graphRef);
+
+                                                pf.addDataSet(ds);
+
+                                                rateData.put(rate.getName(), ds);
+                                            }
+                                            else if (relationship!=null)
+                                            {
+                                                String parsed = "IF ("+condPreFunc.getNiceString()+") "+ relationship.operator 
+                                                +"("+condPostFunc.getNiceString()+") THEN ("+trueFunc.getNiceString()+") ELSE ("+
+                                                falseFunc.getNiceString()+")";
+
+                                                desc = desc + "\n\n Expression for graph: " + expression;
+                                                desc = desc + "\nwhich has been parsed as: " + parsed;
+
+
+                                                DataSet ds = new DataSet(dsRef, desc, yUnits, "", "Membrane Potential", gateState);
+
+
+                                                for (int j = 0; j < numPoints; j++)
+                                                {
+                                                    float nextVval = minV + ( (maxV - minV) * j / (numPoints));
+
+                                                    Argument[] a0 = getArgsList(nextVval,
+                                                            v, temp, rateData, 
+                                                            concVarName, concVarVal, parsed, project, logger);
+
+                                                    double condPreEval = condPreFunc.evaluateAt(a0);
+                                                    double condPostEval = condPostFunc.evaluateAt(a0);
+
+                                                    if (relationship.evaluate(condPreEval, condPostEval))
+                                                    {
+                                                        ds.addPoint(nextVval, trueFunc.evaluateAt(a0));
+                                                    }
+                                                    else
+                                                    {
+                                                        ds.addPoint(nextVval, falseFunc.evaluateAt(a0));
+                                                    }
+
+                                                }
+
+                                                PlotterFrame pf = PlotManager.getPlotterFrame(graphRef);
+
+                                                pf.addDataSet(ds);
+
+                                                rateData.put(rate.getName(), ds);
+                                            }
+
+
+                                            Variable newRateVar = new Variable(rate.getName());
+
+                                            Variable[] tempMainVars = new Variable[mainVars.length+1];
+                                            for(int i=0; i<mainVars.length;i++) tempMainVars[i] = mainVars[i];
+                                            tempMainVars[mainVars.length] = newRateVar;
+                                            mainVars = tempMainVars;
                                         }
 
-                                        String graphRef = "Plots for state "
-                                            + gateState + " in Cell Mechanism " + cmlMechanism.getInstanceName();
 
-                                        String dsRef = "Plot of rate: " + rate.getName() + " in state "
-                                            + gateState + " in Cell Mechanism " + cmlMechanism.getInstanceName();
 
-                                        String desc = dsRef;
-                                        
-                                        
-                                        if (mainFunc!=null)
+                                    }
+
+                                    if (rateData.containsKey("alpha") && rateData.containsKey("beta"))
+                                    {
+                                        DataSet dsAlpha = rateData.get("alpha");
+                                        DataSet dsBeta = rateData.get("beta");
+
+                                        String graphRef = "Plots for tau/inf in state "
+                                            + gateState+" in Cell Mechanism "+ cmlMechanism.getInstanceName();
+
+                                        if (!rateData.containsKey("tau"))
                                         {
+                                            String dsRef = "Plot of tau (1/(alpha+beta)) in state "
+                                            + gateState+" in Cell Mechanism "+ cmlMechanism.getInstanceName();
 
-                                            desc = desc + "\n\n Expression for graph: " + expression;
-                                            desc = desc + "\nwhich has been parsed as: " + mainFunc.getNiceString();
-                                            
-
-                                            DataSet ds = new DataSet(dsRef, desc, yUnits, "", "Membrane Potential", gateState);
+                                            DataSet tau = new DataSet(dsRef, dsRef, yUnits,timeUnits, "Membrane Potential", "tau");
 
                                             for (int i = 0; i < numPoints; i++)
                                             {
                                                 float nextVval = minV + ( (maxV - minV) * i / (numPoints));
 
-                                               // Argument[] a0 = new Argument[]
-                                               //     {new Argument(v.getName(), nextVval),
-                                               //     new Argument(temp.getName(), project.simulationParameters.getTemperature())};
-                                                
-                                                Argument[] a0 = getArgsList(nextVval,
-                                                        v, temp, rateData, 
-                                                        concVarName, concVarVal, mainFunc.getNiceString(), project, logger);
 
-                                                ds.addPoint(nextVval, mainFunc.evaluateAt(a0));
+                                                tau.addPoint(nextVval, 1 / (dsAlpha.getYValues()[i] + dsBeta.getYValues()[i]));
                                             }
 
                                             PlotterFrame pf = PlotManager.getPlotterFrame(graphRef);
 
-                                            pf.addDataSet(ds);
-
-                                            rateData.put(rate.getName(), ds);
+                                            pf.addDataSet(tau);
                                         }
-                                        else if (relationship!=null)
+                                        if (!rateData.containsKey("inf"))
                                         {
-                                            String parsed = "IF ("+condPreFunc.getNiceString()+") "+ relationship.operator 
-                                            +"("+condPostFunc.getNiceString()+") THEN ("+trueFunc.getNiceString()+") ELSE ("+
-                                            falseFunc.getNiceString()+")";
+                                            String dsRef = "Plot of inf (alpha/(alpha+beta)) in state "
+                                            + gateState+" in Cell Mechanism "+ cmlMechanism.getInstanceName();
 
-                                            desc = desc + "\n\n Expression for graph: " + expression;
-                                            desc = desc + "\nwhich has been parsed as: " + parsed;
-                                            
+                                            DataSet inf = new DataSet(dsRef, dsRef, yUnits, "","Membrane Potential", "inf");
 
-                                            DataSet ds = new DataSet(dsRef, desc, yUnits, "", "Membrane Potential", gateState);
-                                            
-
-                                            for (int j = 0; j < numPoints; j++)
+                                            for (int i = 0; i < numPoints; i++)
                                             {
-                                                float nextVval = minV + ( (maxV - minV) * j / (numPoints));
+                                                float nextVval = minV + ( (maxV - minV) * i / (numPoints));
 
-                                                Argument[] a0 = getArgsList(nextVval,
-                                                        v, temp, rateData, 
-                                                        concVarName, concVarVal, parsed, project, logger);
-
-                                                double condPreEval = condPreFunc.evaluateAt(a0);
-                                                double condPostEval = condPostFunc.evaluateAt(a0);
-                                                
-                                                if (relationship.evaluate(condPreEval, condPostEval))
-                                                {
-                                                    ds.addPoint(nextVval, trueFunc.evaluateAt(a0));
-                                                }
-                                                else
-                                                {
-                                                    ds.addPoint(nextVval, falseFunc.evaluateAt(a0));
-                                                }
-
+                                                inf.addPoint(nextVval, dsAlpha.getYValues()[i] / (dsAlpha.getYValues()[i] + dsBeta.getYValues()[i]));
                                             }
-                                            
+
                                             PlotterFrame pf = PlotManager.getPlotterFrame(graphRef);
 
-                                            pf.addDataSet(ds);
-
-                                            rateData.put(rate.getName(), ds);
+                                            pf.addDataSet(inf);
                                         }
-                                        
-
-                                        Variable newRateVar = new Variable(rate.getName());
-                                        
-                                        Variable[] tempMainVars = new Variable[mainVars.length+1];
-                                        for(int i=0; i<mainVars.length;i++) tempMainVars[i] = mainVars[i];
-                                        tempMainVars[mainVars.length] = newRateVar;
-                                        mainVars = tempMainVars;
                                     }
-                                    
-                                    
-
                                 }
-
-                                if (rateData.containsKey("alpha") && rateData.containsKey("beta"))
-                                {
-                                    DataSet dsAlpha = rateData.get("alpha");
-                                    DataSet dsBeta = rateData.get("beta");
-
-                                    String graphRef = "Plots for tau/inf in state "
-                                        + gateState+" in Cell Mechanism "+ cmlMechanism.getInstanceName();
-
-                                    if (!rateData.containsKey("tau"))
-                                    {
-                                        String dsRef = "Plot of tau (1/(alpha+beta)) in state "
-                                        + gateState+" in Cell Mechanism "+ cmlMechanism.getInstanceName();
-
-                                        DataSet tau = new DataSet(dsRef, dsRef, yUnits,timeUnits, "Membrane Potential", "tau");
-
-                                        for (int i = 0; i < numPoints; i++)
-                                        {
-                                            float nextVval = minV + ( (maxV - minV) * i / (numPoints));
-
-
-                                            tau.addPoint(nextVval, 1 / (dsAlpha.getYValues()[i] + dsBeta.getYValues()[i]));
-                                        }
-
-                                        PlotterFrame pf = PlotManager.getPlotterFrame(graphRef);
-
-                                        pf.addDataSet(tau);
-                                    }
-                                    if (!rateData.containsKey("inf"))
-                                    {
-                                        String dsRef = "Plot of inf (alpha/(alpha+beta)) in state "
-                                        + gateState+" in Cell Mechanism "+ cmlMechanism.getInstanceName();
-
-                                        DataSet inf = new DataSet(dsRef, dsRef, yUnits, "","Membrane Potential", "inf");
-
-                                        for (int i = 0; i < numPoints; i++)
-                                        {
-                                            float nextVval = minV + ( (maxV - minV) * i / (numPoints));
-
-                                            inf.addPoint(nextVval, dsAlpha.getYValues()[i] / (dsAlpha.getYValues()[i] + dsBeta.getYValues()[i]));
-                                        }
-
-                                        PlotterFrame pf = PlotManager.getPlotterFrame(graphRef);
-
-                                        pf.addDataSet(inf);
-                                    }
-
-
-
-                                }
-
                             }
                         }
                     }

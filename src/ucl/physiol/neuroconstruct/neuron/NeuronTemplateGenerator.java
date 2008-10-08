@@ -1176,7 +1176,7 @@ public class NeuronTemplateGenerator
                         {
                             ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism) cellMech;
 
-                            String xpath = ChannelMLConstants.getIonsXPath();
+                            String xpath = ChannelMLConstants.getLegacyIonsXPath();
 
                             logger.logComment("Checking xpath: " + xpath);
 
@@ -1195,19 +1195,52 @@ public class NeuronTemplateGenerator
 
                                 return "Error in generation: " + ex.getMessage();
                             }
+                            boolean postV1_7_3 = false;
+                            
+                            if (ions == null || ions.length == 0)
+                            {
+                                // Test for v1.7.3 preferered form..
+                                
+                                xpath = ChannelMLConstants.getIonNameXPath();
+                                try
+                                {
+                                    String ionName = cmlMech.getXMLDoc().getValueByXPath(xpath);
+                                    logger.logComment("--- Got ion: " + ionName+ " for cell mech: "+cellMech, true);
+                                    if (ionName!=null)
+                                    {
+                                        postV1_7_3 = true;
+                                        
+                                        xpath = ChannelMLConstants.getCurrVoltRelXPath();
+                                        ions = cmlMech.getXMLDoc().getXMLEntities(xpath);
+                                    }
+                                }
+                                catch (ChannelMLException ex)
+                                {
+                                    return "Error in getting ion name: " + ex.getMessage();
+                                }
+                                
+                            }
 
                             if (ions != null && ions.length > 0)
                             {
                                 for (int i = 0; i < ions.length; i++)
                                 {
-                                    SimpleXMLElement ion = (SimpleXMLElement) ions[i];
-                                    logger.logComment("Got ion: " + ion.getXMLString("", false));
+                                    SimpleXMLElement ionEl = (SimpleXMLElement) ions[i];
+                                    String ionName = null;
+                                    String erev = ionEl.getAttributeValue(ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR);
+                                    
+                                    if (!postV1_7_3)
+                                        ionName = ionEl.getAttributeValue(ChannelMLConstants.LEGACY_ION_NAME_ATTR);
+                                    else
+                                        ionName = ionEl.getAttributeValue(ChannelMLConstants.NEW_ION_NAME_ATTR);
+                                    
+                                        
+                                    logger.logComment("Got ion: " + ionName+ ", rev pot: "+erev+" for cell mech: "+cellMech, true);
 
-                                    NeuronFileManager.addHocComment(response, "    Ion " + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR) + " is used in this process...");
+                                    NeuronFileManager.addHocComment(response, "    Ion " + ionName + " is used in this process...");
 
                                     String unitsUsed = cmlMech.getUnitsUsedInFile();
 
-                                    String erev = ion.getAttributeValue(ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR);
                                     
                                     MechParameter mpErev = nextChanMech.getExtraParameter("e");
                                     if (mpErev==null)
@@ -1307,11 +1340,11 @@ public class NeuronTemplateGenerator
                                         
                                         logger.logComment("revPotSetElsewhere for "+ revPotSetElsewhere);
                                         
-                                        if (!(ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR).equals(ChannelMLConstants.NON_SPECIFIC_ION_NAME)))
+                                        if (!(ionName.equals(ChannelMLConstants.NON_SPECIFIC_ION_NAME)))
                                         {
                                             if (!revPotSetElsewhere)
                                             {
-                                                response.append("        e" + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR) + " = " + erev + "\n");
+                                                response.append("        e" + ionName + " = " + erev + "\n");
                                             }
                                         }
                                         else
@@ -1328,11 +1361,13 @@ public class NeuronTemplateGenerator
                                     else
                                     {
                                         NeuronFileManager.addHocComment(response,
-                                                                        "Note: there is no reversal potential present for ion: " + ion.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR));
+                                                                        "Note: there is no reversal potential present for ion: " + ionName);
                                     }
                                 }
-
-                            
+                            }
+                            else
+                            {
+                                logger.logComment("No ion present for cell mech: "+ cellMech, true);
                             }
 
                         }

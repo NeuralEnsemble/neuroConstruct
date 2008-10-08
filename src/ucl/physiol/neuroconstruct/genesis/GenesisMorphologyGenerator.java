@@ -378,7 +378,7 @@ public class GenesisMorphologyGenerator
                                 }
                                 else if (cellMech instanceof ChannelMLCellMechanism)
                                 {
-                                    String xpath = ChannelMLConstants.getIonsXPath();
+                                    String xpath = ChannelMLConstants.getLegacyIonsXPath();
                                     logger.logComment("Checking xpath: " + xpath);
 
                                     SimpleXMLEntity[] ions = ((ChannelMLCellMechanism)cellMech).getXMLDoc().getXMLEntities(xpath);
@@ -389,7 +389,7 @@ public class GenesisMorphologyGenerator
                                         {
                                             logger.logComment("Got entity: " + ions[i].getXMLString("", false));
 
-                                            if(((SimpleXMLElement)ions[i]).getAttributeValue(ChannelMLConstants.ION_NAME_ATTR)
+                                            if(((SimpleXMLElement)ions[i]).getAttributeValue(ChannelMLConstants.LEGACY_ION_NAME_ATTR)
                                                    .equals(ChannelMLConstants.NON_SPECIFIC_ION_NAME))
                                             {
                                                 String erev = ((SimpleXMLElement)ions[i])

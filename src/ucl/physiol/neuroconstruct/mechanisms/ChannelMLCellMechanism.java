@@ -46,7 +46,7 @@ public class ChannelMLCellMechanism extends CellMechanism
     public ChannelMLCellMechanism()
     {
         logger = new ClassLogger("ChannelMLCellMechanism");
-        logger.setThisClassSilent(true);
+        //logger.setThisClassVerbose(true);
     }
 
     public void initPropsFromPropsFile(File propsFile) throws IOException
@@ -821,7 +821,7 @@ public class ChannelMLCellMechanism extends CellMechanism
         if (chanType==null || chanType.length==0) return false;
 
         xpath = ChannelMLConstants.getGateXPath(1);
-        logger.logComment("Checking xpath: "+xpath);
+        logger.logComment("Checking gates xpath: "+xpath);
 
         SimpleXMLEntity[] gates = xmlDoc.getXMLEntities(xpath);
 
@@ -835,10 +835,21 @@ public class ChannelMLCellMechanism extends CellMechanism
         }
 
         boolean gatesAbsent = (gates==null || gates.length==0);
+        
+        if(gatesAbsent)
+        {
+            xpath = ChannelMLConstants.getIonNameXPath();
+            String possName = xmlDoc.getValueByXPath(xpath);
+            if (possName!=null && possName.equals(ChannelMLConstants.NON_SPECIFIC_ION_NAME))
+            {
+                logger.logComment("Ion is non specific in post v1.7.3 format");
+                return true;
+            }
+        }
 
         boolean nonSpecific = false;
 
-        String ionXpath = ChannelMLConstants.getIonsXPath();
+        String ionXpath = ChannelMLConstants.getLegacyIonsXPath();
 
         logger.logComment("Checking xpath: " + xpath);
 
@@ -850,7 +861,7 @@ public class ChannelMLCellMechanism extends CellMechanism
             {
                 logger.logComment("Got entity: " + ions[i].getXMLString("", false));
 
-                if ( ( (SimpleXMLElement) ions[i]).getAttributeValue(ChannelMLConstants.ION_NAME_ATTR).equals(ChannelMLConstants.NON_SPECIFIC_ION_NAME))
+                if ( ( (SimpleXMLElement) ions[i]).getAttributeValue(ChannelMLConstants.LEGACY_ION_NAME_ATTR).equals(ChannelMLConstants.NON_SPECIFIC_ION_NAME))
                 {
                     nonSpecific = true;
                 }
@@ -869,7 +880,7 @@ public class ChannelMLCellMechanism extends CellMechanism
     {
         try
         {
-            Project testProj = Project.loadProject(new File("C:/copynCmodels/TraubEtAl2005/TraubEtAl2005.neuro.xml"),
+            Project testProj = Project.loadProject(new File("C:/fullCheckout/tempModels/neuroConstruct/Ex7_GranuleCell/Ex7_GranuleCell.neuro.xml"),
                                                    new ProjectEventListener()
             {
                 public void tableDataModelUpdated(String tableModelName)
@@ -883,11 +894,22 @@ public class ChannelMLCellMechanism extends CellMechanism
 
             });
 
-            ChannelMLCellMechanism cmlProc = (ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("kc");
+            System.out.println("\n\n\n");
+            ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("Gran_KCa_98");
+            ChannelMLCellMechanism.logger.setThisClassVerbose(true);
 
-            cmlProc.initialise(testProj, false);
+            cmlMech.initialise(testProj, false);
 
-            System.out.println("Is this passive: "+ cmlProc.isPassiveNonSpecificCond());
+            System.out.println("Channel: "+cmlMech);
+            System.out.println("Is this passive: "+ cmlMech.isPassiveNonSpecificCond());
+            
+            
+            cmlMech = (ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("GranPassiveCond");
+
+            cmlMech.initialise(testProj, false);
+
+            System.out.println("Channel: "+cmlMech);
+            System.out.println("Is this passive: "+ cmlMech.isPassiveNonSpecificCond());
 
 
 
@@ -911,7 +933,7 @@ public class ChannelMLCellMechanism extends CellMechanism
             SimXSLMapping map = (SimXSLMapping)cmlProc.getSimMappings().get(0);
 
             logger.logComment("mapping for: "+map.getSimEnv()+", file: "+ map.getXslFile());
-*/
+
            // map.
 
            File tempFile = new File("../temp/temp.txt");
@@ -920,7 +942,7 @@ public class ChannelMLCellMechanism extends CellMechanism
            boolean success = cmlProc.createImplementationFile("NEURON", UnitConverter.GENESIS_SI_UNITS,tempFile, testProj, false, false, false);
 
            System.out.println("Created file: "+tempFile.getAbsolutePath()+": "+ success);
-
+*/
         }
         catch(Exception e)
         {

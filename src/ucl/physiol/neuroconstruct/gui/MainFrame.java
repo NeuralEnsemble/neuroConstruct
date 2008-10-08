@@ -12767,7 +12767,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     }
 
 
-                    cmlMech.getXMLDoc().setValueByXPath(ChannelMLConstants.getIonRevPotXPath(1),
+                    cmlMech.getXMLDoc().setValueByXPath(ChannelMLConstants.getLegacyIonRevPotXPath(1),
                                                         revPot + "");
                     cmlMech.getXMLDoc().setValueByXPath(ChannelMLConstants.getCondDensXPath(),
                                                         condDens + "");

@@ -465,7 +465,7 @@ public class SimulationBrowser extends JDialog
 
         if (!success)
         {
-            GuiUtils.showErrorMessage(logger, "Problem renaming the simulation directory: "+ simData.getSimulationDirectory(), null, this);
+            GuiUtils.showErrorMessage(logger, "Problem renaming the simulation directory: "+ simData.getSimulationDirectory()+" to "+ newFileName, null, this);
             return;
         }
 

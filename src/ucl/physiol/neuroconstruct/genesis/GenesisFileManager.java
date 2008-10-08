@@ -2711,7 +2711,7 @@ public class GenesisFileManager
                 {
                     ChannelMLCellMechanism cmlp = (ChannelMLCellMechanism)cellMech;
 
-                    String xpath = ChannelMLConstants.getIonsXPath();
+                    String xpath = ChannelMLConstants.getLegacyIonsXPath();
                     logger.logComment("Checking xpath: " + xpath);
 
                     try
@@ -2725,7 +2725,7 @@ public class GenesisFileManager
                                 SimpleXMLElement ionElement = (SimpleXMLElement)ions[k];
 
                                 logger.logComment("Got entity: " + ionElement.getXMLString("", false));
-                                String name = ionElement.getAttributeValue(ChannelMLConstants.ION_NAME_ATTR);
+                                String name = ionElement.getAttributeValue(ChannelMLConstants.LEGACY_ION_NAME_ATTR);
                                 String role = ionElement.getAttributeValue(ChannelMLConstants.ION_ROLE_ATTR);
                                 logger.logComment("Ion name: "+ name + ", role: "+ role);
 
