@@ -16,10 +16,11 @@ import java.util.*;
 import java.io.*;
 import javax.vecmath.*;
 
-import ucl.physiol.neuroconstruct.cell.examples.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
+import ucl.physiol.neuroconstruct.utils.equation.Argument;
+import ucl.physiol.neuroconstruct.utils.equation.Variable;
 
  /**
   * The base class for all cells, defining the segments, section etc. Also contains
@@ -1918,6 +1919,102 @@ public class Cell implements Serializable
 
         return clonedCell;
     }
+    
+    
+   public void renameGroup(String oldGroup, String newGroup)
+   {
+     for (int i = 0; i < getAllSections().size(); i++)
+     {
+         Section sec = getAllSections().get(i);
+         
+            if (sec.getGroups().contains(oldGroup)){
+                sec.addToGroup(newGroup);
+                sec.removeFromGroup(oldGroup);
+            }               
+        }
+     
+     // change group name in all the ashtalbes
+     
+     Enumeration<String> k = synapsesVsGroups.keys();
+     
+     while (k.hasMoreElements())
+        {
+         String syn = k.nextElement();
+         Vector<String> groups = synapsesVsGroups.get(syn);
+         
+            if (groups.contains(oldGroup)){
+                groups.add(newGroup);
+                groups.remove(oldGroup);
+            }               
+        }
+     
+     Enumeration<ChannelMechanism> cm = chanMechsVsGroups.keys();
+     
+     while (cm.hasMoreElements())
+        {
+         ChannelMechanism chanM = cm.nextElement();
+         Vector<String> groups = chanMechsVsGroups.get(chanM);
+         
+            if (groups.contains(oldGroup)){
+                groups.add(newGroup);
+                groups.remove(oldGroup);
+            }               
+        }
+     
+     Enumeration<ApPropSpeed> sp = apPropSpeedsVsGroups.keys();
+     
+     while (sp.hasMoreElements())
+        {
+         ApPropSpeed speed = sp.nextElement();
+         Vector<String> groups = apPropSpeedsVsGroups.get(speed);
+         
+            if (groups.contains(oldGroup)){
+                groups.add(newGroup);
+                groups.remove(oldGroup);
+            }               
+        }
+     
+     Enumeration<Float> a = specAxResVsGroups.keys();
+     
+     while (a.hasMoreElements())
+        {
+         Float ax = a.nextElement();
+         Vector<String> groups = specAxResVsGroups.get(ax);
+         
+            if (groups.contains(oldGroup)){
+                groups.add(newGroup);
+                groups.remove(oldGroup);
+            }               
+        }
+     
+     Enumeration<Float> c = specCapVsGroups.keys();
+     
+     while (c.hasMoreElements())
+        {
+         Float cap = c.nextElement();
+         Vector<String> groups = specCapVsGroups.get(cap);
+         
+            if (groups.contains(oldGroup)){
+                groups.add(newGroup);
+                groups.remove(oldGroup);
+            }               
+        }
+     
+     // change group name in the parameterisedGroup
+  
+     Enumeration<VariableMechanism> vm = varMechsVsParaGroups.keys();
+     
+     while (vm.hasMoreElements())
+        {
+         VariableMechanism varMech = vm.nextElement();
+         if (varMechsVsParaGroups.get(varMech).getGroup().equals(oldGroup))
+         {
+                varMechsVsParaGroups.get(varMech).setGroup(newGroup);          
+         }
+     }
+     
+   }
+ 
 
 
     public static void main(String[] args)
@@ -1934,7 +2031,47 @@ public class Cell implements Serializable
             
             dendSegment.getSection().getGroups().add("TestGroup");
             
+            cell.associateGroupWithSynapse("TestGroup", "SynType1");
             
+            ChannelMechanism chanMech1 = new ChannelMechanism("chanMech1", serialVersionUID);
+            
+            cell.associateGroupWithChanMech("TestGroup", chanMech1);
+            
+            ApPropSpeed apPropSpeed1 = new ApPropSpeed();
+            
+            cell.associateGroupWithApPropSpeed("TestGroup", apPropSpeed1);
+            
+            cell.associateGroupWithSpecAxRes("TestGroup", serialVersionUID);
+            
+            cell.associateGroupWithSpecCap("TestGroup", serialVersionUID);            
+            
+            ParameterisedGroup TestGroup = new ParameterisedGroup("ParaTestGroup", "TestGroup", 
+                    ParameterisedGroup.Metric.PATH_LENGTH_FROM_ROOT, 
+                    ParameterisedGroup.ProximalPref.MOST_PROX_AT_0, 
+                    ParameterisedGroup.DistalPref.MOST_DIST_AT_1 );
+            
+            cell.getParameterisedGroups().add(TestGroup);
+            
+            VariableParameter vp = new VariableParameter("cm", "p*p", new Variable("p"), new ArrayList<Argument>());
+            
+            VariableMechanism varMech1 = new VariableMechanism("cm", vp);
+            
+            cell.associateParamGroupWithVarMech(TestGroup, varMech1);
+            
+            cell.renameGroup("TestGroup", "NewGroup");
+            
+            System.out.println("synapsesVsGroups: "+cell.synapsesVsGroups);
+            
+            System.out.println("chanMechsVsGroups: "+cell.chanMechsVsGroups);
+            
+            System.out.println("apPropSpeedsVsGroups: "+cell.apPropSpeedsVsGroups);
+            
+            System.out.println("specAxResVsGroups: "+cell.specAxResVsGroups);
+            
+            System.out.println("specCapVsGroups: "+cell.specCapVsGroups);
+            
+            System.out.println("parameterisedGroups: "+cell.parameterisedGroups);
+           
             System.out.println(CellTopologyHelper.printDetails(cell, null));
             
 
