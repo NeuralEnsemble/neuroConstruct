@@ -2079,9 +2079,11 @@ public class NeuronFileManager
                                     String synObjName = this.getSynObjName(synDetail);
 
                                     String var = synObjName + "." + neuronVar;
+                                    String varForFileName = GeneralUtils.replaceAllTokens(synObjName, "[", "_");
+                                    varForFileName = GeneralUtils.replaceAllTokens(varForFileName, "]", "_");
 
-                                    String vectorObj = "v_" + synObjName+"_"+neuronVar;
-                                    String fileObj = "f_" + synObjName+"_"+neuronVar;
+                                    String vectorObj = "v_" + varForFileName +"_"+neuronVar;
+                                    String fileObj = "f_" + varForFileName +"_"+neuronVar;
                                     vectorObj = GeneralUtils.replaceAllTokens(vectorObj, ".", "_");
                                     fileObj = GeneralUtils.replaceAllTokens(fileObj, ".", "_");
 
@@ -2325,9 +2327,12 @@ public class NeuronFileManager
                                         String synObjName = this.getSynObjName(postSynObj);
 
                                         //String var = synObjName + "." + neuronVar;
+                                        
+                                        String varForFileName = GeneralUtils.replaceAllTokens(synObjName, "[", "_");
+                                        varForFileName = GeneralUtils.replaceAllTokens(varForFileName, "]", "_");
 
-                                        String vectorObj = "v_" + synObjName + "_" + neuronVar;
-                                        String fileObj = "f_" + synObjName + "_" + neuronVar;
+                                        String vectorObj = "v_" + varForFileName + "_" + neuronVar;
+                                        String fileObj =   "f_" + varForFileName + "_" + neuronVar;
                                         
                                         vectorObj = GeneralUtils.replaceAllTokens(vectorObj, ".", "_");
                                         fileObj = GeneralUtils.replaceAllTokens(fileObj, ".", "_");
@@ -3054,7 +3059,7 @@ public class NeuronFileManager
     {
         String objectVarName = "syn_" + synDetails.getNetConnName()
             + "_" + synDetails.getSynapseType()
-            + "_" + synDetails.getSynapseIndex();
+            + "[" + synDetails.getSynapseIndex()+"]";
 
         return objectVarName;
 
