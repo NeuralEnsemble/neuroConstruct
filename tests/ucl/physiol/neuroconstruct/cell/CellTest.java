@@ -5,6 +5,7 @@
 
 package ucl.physiol.neuroconstruct.cell;
 
+import java.util.Vector;
 import javax.vecmath.Point3f;
 import org.junit.After;
 import org.junit.Before;
@@ -24,6 +25,8 @@ import static org.junit.Assert.*;
 public class CellTest {
     
     static String testGroup = "TestGroup";
+    static String OldGroup = "OldGroup";
+    private static final long serialVersionUID = -1542517048619766744L;
 
     public CellTest() {
     }
@@ -89,6 +92,29 @@ public class CellTest {
         
         cell.associateParamGroupWithVarMech(pg, vm);
         
+         // some changes added to test the rename group function
+        
+        dendSeg.getSection().addToGroup(OldGroup);
+                
+        cell.associateGroupWithSynapse(OldGroup, "SynType1");
+
+        cell.associateGroupWithChanMech(OldGroup, new ChannelMechanism("chanMech1", 123));
+
+        ApPropSpeed apPropSpeed1 = new ApPropSpeed();
+
+        cell.associateGroupWithApPropSpeed(OldGroup, apPropSpeed1);
+
+        cell.associateGroupWithSpecAxRes(OldGroup, serialVersionUID);
+
+        cell.associateGroupWithSpecCap(OldGroup, serialVersionUID);            
+
+        ParameterisedGroup OldGroup = new ParameterisedGroup("ParaOldGroup", "OldGroup", 
+                ParameterisedGroup.Metric.PATH_LENGTH_FROM_ROOT, 
+                ParameterisedGroup.ProximalPref.MOST_PROX_AT_0, 
+                ParameterisedGroup.DistalPref.MOST_DIST_AT_1 );
+
+        cell.getParameterisedGroups().add(OldGroup);
+       
         return cell;
     }
     
@@ -131,6 +157,87 @@ public class CellTest {
         assertTrue(cell1.isGroup(Section.SOMA_GROUP));
         assertFalse(cell1.isGroup("zhxfghdfg"));
         
+    }
+    
+    
+    
+    @Test 
+    public void testRenameGroup()  throws EquationException
+    {
+        
+        System.out.println("---  testRenameGroup...");
+        
+        Cell cell1 = getDetailedCell(); 
+        
+        // testing the rename group function
+        
+        cell1.renameGroup(OldGroup, "NewGroup");
+        
+        assertTrue(cell1.isGroup("NewGroup"));
+        
+        assertFalse(cell1.isGroup(OldGroup));
+        
+        assertTrue(cell1.getSynapsesForGroup("NewGroup").contains("SynType1"));
+        
+        
+        boolean foundGroup = false;
+        
+        for(Vector<String> groups: cell1.getSynapsesVsGroups().values())
+        {
+            assertFalse(groups.contains(OldGroup));
+            if (groups.contains("NewGroup"))
+                foundGroup = true;
+        }
+        assertTrue(foundGroup);
+        
+        
+        foundGroup = false;
+        
+        for(Vector<String> groups: cell1.getSpecAxResVsGroups().values())
+        {
+            assertFalse(groups.contains(OldGroup));
+            if (groups.contains("NewGroup"))
+                foundGroup = true;
+        }
+        assertTrue(foundGroup);
+        
+        
+        foundGroup = false;        
+        
+        for(Vector<String> groups: cell1.getSpecCapVsGroups().values())
+        {
+            assertFalse(groups.contains(OldGroup));
+            if (groups.contains("NewGroup"))
+                foundGroup = true;
+        }
+        assertTrue(foundGroup);
+        
+        
+        foundGroup = false;        
+        
+        for(Vector<String> groups: cell1.getSpecCapVsGroups().values())
+        {
+            assertFalse(groups.contains(OldGroup));
+            if (groups.contains("NewGroup"))
+                foundGroup = true;
+        }
+        assertTrue(foundGroup);
+        
+        
+        foundGroup = false;               
+        
+        
+//        foundGroup = false;
+//        
+//        for (int i = 0; i < cell1.getParameterisedGroups().size(); i++) {      
+//            ParameterisedGroup group = cell1.getParameterisedGroups().elementAt(i);
+//            assertFalse(group.getGroup().equals(OldGroup));
+//            if (group.getGroup().equals("NewGroup"))
+//                foundGroup = true;
+//        }
+//        assertTrue(foundGroup);
+        
+        System.out.println("parameterisedGroups: "+cell1.getParameterisedGroups().toString());
     }
     
     public static void main(String[] args)

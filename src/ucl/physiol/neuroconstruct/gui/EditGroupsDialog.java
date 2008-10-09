@@ -84,6 +84,7 @@ public class EditGroupsDialog
     Border border4;
     GridBagLayout gridBagLayout2 = new GridBagLayout();
     JButton jButtonOK = new JButton();
+    JButton jButtonRename = new JButton();
     GridBagLayout gridBagLayout3 = new GridBagLayout();
     JButton jButtonAddGroup = new JButton();
     JTextField jTextFieldNewGroup = new JTextField();
@@ -176,14 +177,32 @@ public class EditGroupsDialog
             }
         });
 
+        jButtonRename.setText("Rename group");
+        jButtonRename.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonRename_actionPerformed(e);
+            }
+        });
+        
+
         jButtonAddGroup.setText("Add group:");
-        jButtonAddGroup.addActionListener(new java.awt.event.ActionListener()
+        
+        ActionListener al = new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
                 jButtonAddGroup_actionPerformed(e);
             }
-        });
+        };
+        
+        jButtonAddGroup.addActionListener(al);
+        
+        
+        
+        
+        
         jTextFieldNewGroup.setText("");
         jTextFieldNewGroup.setColumns(6);
         jPanelSwitch.setBorder(null);
@@ -217,6 +236,7 @@ public class EditGroupsDialog
                                                              , GridBagConstraints.CENTER, GridBagConstraints.NONE,
                                                              new Insets(0, 0, 1, 0), 300, 0));
         jPanelButtons.add(jButtonOK, null);
+        jPanelButtons.add(jButtonRename, null);
         jPanelSelectGroup.add(jLabelSelect, null);
         jPanelSelectGroup.add(jComboBoxGroupNames, null);
         jPanelSelectGroup.add(jButtonAddGroup, null);
@@ -301,7 +321,7 @@ public class EditGroupsDialog
 
         this.dispose();
     }
-
+    
     public static void main(String[] args)
     {
         String favouredLookAndFeel = MainApplication.getFavouredLookAndFeel();
@@ -353,8 +373,6 @@ public class EditGroupsDialog
             }
 
 
-
-
             Vector allSegments = myCell.getAllSegments();
 
             for (int i = 0; i < allSegments.size(); i++)
@@ -375,7 +393,6 @@ public class EditGroupsDialog
                     }
                 }
             }
-
 
             updateInterface.refreshGroup(selectedGroup);
 
@@ -482,4 +499,45 @@ public class EditGroupsDialog
 
     }
 
+    void jButtonRename_actionPerformed(ActionEvent e)
+    {
+        String groupName = new String();
+        groupName = JOptionPane.showInputDialog("Please enter the new name of the group");
+        if (groupName == null) return;
+        String newGroupName = groupName;
+//        String newGroupName = jTextFieldRename.getText().trim();
+        String oldGroupName = (String) jComboBoxGroupNames.getSelectedItem();
+
+        if (newGroupName.length()==0) return;
+
+
+        for (int i = 0; i < jComboBoxGroupNames.getItemCount(); i++)
+        {
+              if (jComboBoxGroupNames.getItemAt(i).equals(newGroupName))
+              {
+                  GuiUtils.showErrorMessage(logger, "That group name is already taken", null, this);
+                  return;
+              }
+        }
+
+        if (newGroupName.equalsIgnoreCase("all"))
+        {
+            GuiUtils.showErrorMessage(logger, "The group name: "+newGroupName+" may cause conflicts when generating the hoc.\nPlease choose another.", null, this);
+            jTextFieldNewGroup.setText("");
+            return;
+        }
+        
+        jComboBoxGroupNames.addItem(newGroupName);
+        jComboBoxGroupNames.removeItem(oldGroupName);
+        jComboBoxGroupNames.setSelectedItem(newGroupName);
+
+        // rename the group in the cell
+        
+        myCell.renameGroup(oldGroupName, newGroupName);
+        //updateInterface.refreshGroup(newGroupName);
+        
+        jComboBoxGroupNames.setSelectedItem(defaultGroupSelection);
+        jComboBoxGroupNames.setSelectedItem(newGroupName);
+    }
+    
 }
