@@ -40,6 +40,10 @@ public class MorphBasedConnGenerator extends Thread
     GenerationReport myReportInterface = null;
 
     private SimConfig simConfig = null;
+    
+    private String synLocWarning = "Please ensure there is a Synaptic Mechanism of that name at tab Cell Mechanisms and that the locations where synaptic connections \n"
+                                  +"of that type are allowed on the cell are specified via Visualisation -> (View cell type) -> Synaptic Conn Locations in drop down box.\n" +
+                                  "Note also the conditions in the Net Conn on which of soma, axon, dendrite are allowed pre/post synaptically";
 
     public MorphBasedConnGenerator(Project project, GenerationReport reportInterface)
     {
@@ -208,6 +212,32 @@ public class MorphBasedConnGenerator extends Thread
             {
                 for (int genStartCellNumber = 0; genStartCellNumber < numberInGenStartCellGroup; genStartCellNumber++)
                 {
+                    if(genStartCellNumber==0)
+                    {
+                        for(String synType: synTypeNames)
+                        {
+                            if (!CellTopologyHelper.isSynapseAllowed(generationStartCellInstance, synType))
+                            {
+                                
+                                GuiUtils.showErrorMessage(logger, "Error getting synaptic location for: "+synType+" on cell of type " +
+                                                      generationStartCellInstance+".\n"+
+                                                      synLocWarning, null, null);
+                            
+                                continueGeneration = false;
+                            }
+                            if (!CellTopologyHelper.isSynapseAllowed(generationFinishCellInstance, synType))
+                            {
+                                
+                                GuiUtils.showErrorMessage(logger, "Error getting synaptic location for: "+synType+" on cell of type " +
+                                                      generationFinishCellInstance+".\n"+
+                                                      synLocWarning, null, null);
+                            
+                                continueGeneration = false;
+                            }
+                        }
+                    }
+                    
+                    
                     float numConnFloat = connConds.getNumConnsInitiatingCellGroup().getNextNumber();
                     int numberConnections = (int) numConnFloat;
                     
@@ -216,10 +246,10 @@ public class MorphBasedConnGenerator extends Thread
                     
                     if (numberInGenStartCellGroup>1000)
                     {
-                        int part1percent = (int)(numberInGenStartCellGroup/100);
-                        int part5percent = (int)(numberInGenStartCellGroup/20);
-                        int part10percent = (int)(numberInGenStartCellGroup/10);
-                        int part20percent = (int)(numberInGenStartCellGroup/5);
+                        int part1percent = (int)(numberInGenStartCellGroup*0.01f);
+                        int part5percent = (int)(numberInGenStartCellGroup*0.05f);
+                        int part10percent = (int)(numberInGenStartCellGroup*0.1f);
+                        int part20percent = (int)(numberInGenStartCellGroup*0.2f);
                         int part30percent = (int)(numberInGenStartCellGroup*0.3f);
                         int part40percent = (int)(numberInGenStartCellGroup*0.4f);
                         int part50percent = (int)(numberInGenStartCellGroup*0.5f);
@@ -345,9 +375,7 @@ public class MorphBasedConnGenerator extends Thread
                         {
                             GuiUtils.showErrorMessage(logger, "Error getting synaptic location for: "+synPropList+" on cell of type " +
                                                       generationStartCellInstance.toString()+".\n"+
-                                                      "Please ensure there is a Synaptic Mechanism of that name at tab Cell Mechanisms and that the locations where synaptic connections \n"
-                                                      +"of that type are allowed on the cell are specified via Visualisation -> (View cell type) -> Synaptic Conn Locations.\n" +
-                                                      "Note also the conditions in the Net Conn on which of soma, axon, dendrite are allowed pre/post synaptically", null, null);
+                                                      synLocWarning, null, null);
                             continueGeneration = false;
                         }
 

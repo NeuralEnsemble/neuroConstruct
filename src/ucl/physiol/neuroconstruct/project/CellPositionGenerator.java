@@ -28,18 +28,18 @@ import javax.vecmath.*;
 
 public class CellPositionGenerator extends Thread
 {
-    ClassLogger logger = new ClassLogger("CellPositionGenerator");
+    private ClassLogger logger = new ClassLogger("CellPositionGenerator");
 
     public final static String myGeneratorType = "CellPositionGenerator";
 
-    Project project = null;
-    long startGenerationTime;
-    boolean continueGeneration = true;
+    private Project project = null;
+    private long startGenerationTime;
+    private boolean continueGeneration = true;
 
-    GenerationReport myReportInterface = null;
+    private GenerationReport myReportInterface = null;
 
     /** @todo Make this settable */
-    int MAX_NUM_TRIES = 300;
+    private int MAX_NUM_TRIES = 300;
 
     private SimConfig simConfig = null;
 
@@ -186,12 +186,9 @@ public class CellPositionGenerator extends Thread
 
                         Point3f nextPosn = adapter.getNextPosition();
 
-                        logger.logComment("Trying position "
-                                          + nextPosn
-                                          + " for cell number: "
-                                          + numCellsInGroupSoFar
-                                          + ". Have tried "
-                                          + triesAtFittingOneCell
+                        logger.logComment("Trying position " + nextPosn
+                                          + " for cell number: " + numCellsInGroupSoFar
+                                          + ". Have tried " + triesAtFittingOneCell
                                           + " time(s) so far to fit it...");
 
                         boolean canBeUsed = true;
@@ -237,7 +234,7 @@ public class CellPositionGenerator extends Thread
                 {
                     logger.logComment("Reached end of generating positions for cell group: " +
                                       nextCellGroup);
-                    logger.logComment("Reason for ending: " + ex);
+                    logger.logComment("Reason for ending: " + ex, true);
                     logger.logComment("Number in cell group: " + adapter.getCurrentNumberPositions());
                 }
 
@@ -255,7 +252,7 @@ public class CellPositionGenerator extends Thread
         generationReport.append("Cell positions generated for Sim Config: <b>"+this.simConfig.getName()+"</b>.<br><br>");
 
         if (!continueGeneration)
-            generationReport.append("<center><b>NOTE: Generation interrupted</b></center><br>");
+            generationReport.append("<center><b>NOTE: Generation was interrupted</b></center><br>");
 
 
 

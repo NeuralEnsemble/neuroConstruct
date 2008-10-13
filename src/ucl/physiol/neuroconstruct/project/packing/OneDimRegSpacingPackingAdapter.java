@@ -12,6 +12,7 @@
 
 package ucl.physiol.neuroconstruct.project.packing;
 
+
 import javax.vecmath.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.cell.examples.*;
@@ -29,6 +30,9 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
 public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
 {
     ClassLogger logger = new ClassLogger("OneDimRegSpacingPackingAdapter");
+    
+    
+    Point3f lastProposedPoint = null;
 
 
     public static final int EDGE_POLICY_PARAM = 0;
@@ -84,13 +88,7 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
 
         logger.logComment("----   Generating next position. positionsAlreadyTaken.size() = "+getNumPosAlreadyTaken());
 
-        float minXLoc;
-        float minYLoc;
-        float minZLoc;
-
-        float maxXLoc;
-        float maxYLoc;
-        float maxZLoc;
+        float minXLoc, minYLoc, minZLoc, maxXLoc, maxYLoc, maxZLoc;
 
         if (mustBeCompletelyInsideRegion())
         {
@@ -127,46 +125,45 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
         }
 
 
-        if (getNumPosAlreadyTaken() >= parameterList[NUMBER_PARAM].value)
+        if (getNumPosAlreadyTaken() >= getNumberCells())
         {
             throw new CellPackingException("All cells successfully placed");
         }
 
-        if (parameterList[NUMBER_PARAM].value == 0)
+        if (getNumberCells() == 0)
         {
             throw new CellPackingException("Cell number set to zero!!");
         }
 
-        else if (parameterList[NUMBER_PARAM].value == 1)
+        else if (getNumberCells() == 1)
         {
             if (parameterList[DIMENSION_PARAM].value == DIMENSION_PARAM_X)
-                {
-                    proposedPoint = new Point3f( (minXLoc + maxXLoc) / 2,
-                                        minYLoc,
-                                        minZLoc);
+            {
+                proposedPoint = new Point3f( (minXLoc + maxXLoc) / 2,
+                                    minYLoc,
+                                    minZLoc);
 
-                }
+            }
 
-                else if (parameterList[DIMENSION_PARAM].value == DIMENSION_PARAM_Y)
-                {
-                    proposedPoint = new Point3f(minXLoc,
-                                        (minYLoc + maxYLoc) / 2,
-                                        minZLoc);
+            else if (parameterList[DIMENSION_PARAM].value == DIMENSION_PARAM_Y)
+            {
+                proposedPoint = new Point3f(minXLoc,
+                                    (minYLoc + maxYLoc) / 2,
+                                    minZLoc);
 
-                }
+            }
 
-                else if (parameterList[DIMENSION_PARAM].value == DIMENSION_PARAM_Z)
-                {
+            else if (parameterList[DIMENSION_PARAM].value == DIMENSION_PARAM_Z)
+            {
 
-                    proposedPoint = new Point3f(minXLoc,
-                                                minYLoc,
-                                                (minZLoc + maxZLoc) / 2);
-                }
+                proposedPoint = new Point3f(minXLoc,
+                                            minYLoc,
+                                            (minZLoc + maxZLoc) / 2);
+            }
 
         }
         else
         {
-
             if (getNumPosAlreadyTaken() == 0)
             {
                 logger.logComment("This is first point...");
@@ -177,31 +174,37 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
             }
             else
             {
-                Point3f lastPositionedPoint = (Point3f) getLastPosTaken();
-                logger.logComment("Last point attempted at: " + lastPositionedPoint);
+                //Point3f lastPositionedPoint = getLastPosTaken();
+                logger.logComment("Last point proposed at: " + lastProposedPoint);
 
                 if (parameterList[DIMENSION_PARAM].value == DIMENSION_PARAM_X)
                 {
                     logger.logComment("Placing cell in x dim...");
-                    float distanceApart = (maxXLoc - minXLoc) / (parameterList[NUMBER_PARAM].value-1);
-                    proposedPoint = new Point3f(lastPositionedPoint);
+                    float distanceApart = (maxXLoc - minXLoc) / (getNumberCells()-1);
+                    proposedPoint = new Point3f(lastProposedPoint);
                     proposedPoint.add(new Point3f(distanceApart, 0, 0));
+                    if(proposedPoint.x > maxXLoc)
+                        throw new CellPackingException("Reached end of x dimension");
                 }
 
                 else if (parameterList[DIMENSION_PARAM].value == DIMENSION_PARAM_Y)
                 {
                     logger.logComment("Placing cell in y dim...");
-                    float distanceApart = (maxYLoc - minYLoc) / (parameterList[NUMBER_PARAM].value-1);
-                    proposedPoint = new Point3f(lastPositionedPoint);
+                    float distanceApart = (maxYLoc - minYLoc) / (getNumberCells()-1);
+                    proposedPoint = new Point3f(lastProposedPoint);
                     proposedPoint.add(new Point3f(0, distanceApart, 0));
+                    if(proposedPoint.y > maxYLoc)
+                        throw new CellPackingException("Reached end of y dimension");
                 }
 
                 else if (parameterList[DIMENSION_PARAM].value == DIMENSION_PARAM_Z)
                 {
                     logger.logComment("Placing cell in z dim...");
-                    float distanceApart = (maxZLoc - minZLoc) / (parameterList[NUMBER_PARAM].value-1);
-                    proposedPoint = new Point3f(lastPositionedPoint);
+                    float distanceApart = (maxZLoc - minZLoc) / (getNumberCells()-1);
+                    proposedPoint = new Point3f(lastProposedPoint);
                     proposedPoint.add(new Point3f(0, 0, distanceApart));
+                    if(proposedPoint.z > maxZLoc)
+                        throw new CellPackingException("Reached end of z dimension");
                 }
 
             }
@@ -209,6 +212,7 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
             if (proposedPoint == null)
             throw new CellPackingException("Cannot successfully place cell.");
         }
+        lastProposedPoint = new Point3f(proposedPoint);
         return proposedPoint;
 
     }
@@ -219,6 +223,11 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
             return true;
         else
             return false;
+    }
+    
+    public int getNumberCells()
+    {
+        return (int)parameterList[NUMBER_PARAM].value;
     }
 
 
@@ -265,6 +274,7 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
 
     };
 
+    @Override
     public void reset()
     {
         super.reset();
@@ -281,7 +291,7 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
         sb.append("One dim: ");
 
         sb.append("num: ");
-        sb.append(parameterList[NUMBER_PARAM].value+ ", ");
+        sb.append(getNumberCells()+ ", ");
 
         sb.append("dim: ");
         if (parameterList[DIMENSION_PARAM].value == 0) sb.append("x, ");
@@ -302,6 +312,7 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
     }
 
 
+    @Override
     public boolean avoidOtherCellGroups()
     {
         return parameterList[OTHER_OVERLAP_PARAM].value==0;
@@ -316,7 +327,7 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
         {
             ada.setParameter(OneDimRegSpacingPackingAdapter.NUMBER_PARAM_NAME, 1);
 
-            ada.addRegionAndCellInfo(new RectangularBox(0, 0, 0, 10, 90, 90), pCell);
+            ada.addRegionAndCellInfo(new RectangularBox(0, 0, 0, 90, 90, 90), pCell);
 
             System.out.println("Parameter: " + ada.getParameterList()[0]);
             System.out.println("Description: " + ada.getDescription());

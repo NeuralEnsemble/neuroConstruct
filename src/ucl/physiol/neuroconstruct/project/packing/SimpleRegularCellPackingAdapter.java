@@ -31,8 +31,7 @@ public class SimpleRegularCellPackingAdapter extends CellPackingAdapter
 {
     ClassLogger logger = new ClassLogger("SimpleRegularCellPackingAdapter");
 
-    // this will be like positionsAlreadyTaken, but will include ALL the points
-    // attempted, including ones removed with cancelPosition(Point3d point)
+    // this will be like positionsAlreadyTaken, but will include ALL the points attempted
     Vector<Point3f> positionsAlreadyAttempted = new Vector<Point3f>();
 
     public SimpleRegularCellPackingAdapter()
@@ -103,7 +102,7 @@ public class SimpleRegularCellPackingAdapter extends CellPackingAdapter
         }
         else
         {
-            Point3f lastPositionedPoint = (Point3f)positionsAlreadyAttempted.lastElement();
+            Point3f lastPositionedPoint = positionsAlreadyAttempted.lastElement();
             logger.logComment("Last point attempted at: "+ lastPositionedPoint);
 
             float proposedNewXPos = lastPositionedPoint.x

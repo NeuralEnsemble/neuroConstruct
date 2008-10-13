@@ -19,6 +19,7 @@ import javax.vecmath.*;
 
 import ucl.physiol.neuroconstruct.gui.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
+import ucl.physiol.neuroconstruct.project.packing.OneDimRegSpacingPackingAdapter;
 import ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.xml.*;
@@ -99,7 +100,7 @@ public class GeneratedCellPositions
             ArrayList<PositionRecord> newCellGroupArrayList = new ArrayList<PositionRecord>();
             myCellGroupPosns.put(cellGroupName, newCellGroupArrayList);
         }
-        ArrayList<PositionRecord> cellGroupVector = (ArrayList<PositionRecord>)myCellGroupPosns.get(cellGroupName);
+        ArrayList<PositionRecord> cellGroupVector = myCellGroupPosns.get(cellGroupName);
 
         cellGroupVector.add(posRecord);
         cachedCellPosition1 = null;
@@ -114,7 +115,7 @@ public class GeneratedCellPositions
         {
             return new ArrayList<PositionRecord>();
         }
-        ArrayList<PositionRecord> cellGroupArrayList = (ArrayList<PositionRecord>)myCellGroupPosns.get(cellGroupName);
+        ArrayList<PositionRecord> cellGroupArrayList = myCellGroupPosns.get(cellGroupName);
 
         return cellGroupArrayList;
     }
@@ -271,7 +272,20 @@ public class GeneratedCellPositions
                 int max = ra.getMaxNumberCells();
                 if(num<max)
                 {
-                    generationReport.append(GeneralUtils.getBoldColouredString("Warning, fewer than "+max+" cells in this cell group! Check packing algorithms and 3D regions.<br>", ValidityStatus.VALIDATION_COLOUR_WARN, true));
+                    generationReport.append(GeneralUtils.getBoldColouredString("Warning, fewer than "
+                        +max+" cells in this cell group! " +
+                        "Check packing algorithm ("+ra+") and 3D regions.<br>", ValidityStatus.VALIDATION_COLOUR_WARN, true));
+                }
+            }
+            else if(project.cellGroupsInfo.getCellPackingAdapter(cellGroup) instanceof OneDimRegSpacingPackingAdapter)
+            {
+                OneDimRegSpacingPackingAdapter od = (OneDimRegSpacingPackingAdapter)project.cellGroupsInfo.getCellPackingAdapter(cellGroup);
+                int max = od.getNumberCells();
+                if(num<max)
+                {
+                    generationReport.append(GeneralUtils.getBoldColouredString("Warning, fewer than "
+                        +max+" cells in this cell group! " +
+                        "Check packing algorithm ("+od+") and 3D regions.<br>", ValidityStatus.VALIDATION_COLOUR_WARN, true));
                 }
             }
                        

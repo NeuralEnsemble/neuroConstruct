@@ -571,6 +571,36 @@ public class CellTopologyHelper
         return secSegments;
     }
     
+    
+    
+    /*
+     * Checks whether a syanapse type is allowed somewhere
+     */
+    public static boolean isSynapseAllowed(Cell cell, String synType)
+    {
+        Enumeration<String> syns = cell.getSynapsesVsGroups().keys();
+        while(syns.hasMoreElements())
+        {
+            String syn = syns.nextElement();
+            if (syn.equals(synType))
+            {
+                boolean atLeastOneGroupOK = false;
+                Vector<String> groups = cell.getSynapsesVsGroups().get(syn);
+                for (String grp: groups)
+                {
+                    if (cell.isGroup(grp))
+                        atLeastOneGroupOK = true;
+                }
+                if (atLeastOneGroupOK) 
+                    return true;
+                
+            }
+        }
+        return false;
+        
+    }
+    
+    
     /*
      * Checks whether all sections of groupA are in groupB for cell
      */
