@@ -1,0 +1,1 @@
+c:\neuroConstruct\nC.bat -plot %1

@@ -194,19 +194,19 @@ public class SimulationsInfo extends AbstractTableModel
 
     @Override
     public String getColumnName(int col) {
-        return (String)columnsShown.elementAt(col);
+        return columnsShown.elementAt(col);
     }
 
 
     public SimulationData getSimulationData(int row)
     {
-        return (SimulationData)simDataObjs.elementAt(row);
+        return simDataObjs.elementAt(row);
     }
 
 
     public Object getValueAt(int row, int col)
     {
-        SimulationData sim = (SimulationData)simDataObjs.elementAt(row);
+        SimulationData sim = simDataObjs.elementAt(row);
 
         switch (col)
         {
@@ -219,8 +219,8 @@ public class SimulationsInfo extends AbstractTableModel
             }
             default:
             {
-                String colName = (String)columnsShown.elementAt(col);
-                Properties propsForSim = (Properties)extraColumns.elementAt(row);
+                String colName = columnsShown.elementAt(col);
+                Properties propsForSim = extraColumns.elementAt(row);
                 if (propsForSim==null) return "- n/a -";
 
                 return propsForSim.getProperty(colName);
@@ -323,7 +323,7 @@ public class SimulationsInfo extends AbstractTableModel
         StringBuffer pops = new StringBuffer();
         for (int i = 0; i < cellGroupNames.size(); i++)
         {
-            String cellGroupName = (String)cellGroupNames.get(i);
+            String cellGroupName = cellGroupNames.get(i);
 
             // No point including info if it's not included in the sim config...
 
