@@ -271,6 +271,14 @@ public class EditGroupsDialog
 
         logger.logComment("Finished initialising...");
     }
+    
+    public void setSelectedGroup(String group)
+    {
+        if (group!=null)
+        {
+            jComboBoxGroupNames.setSelectedItem(group);
+        }
+    }
 
     public void valueChanged(ListSelectionEvent e)
     {

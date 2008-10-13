@@ -15,6 +15,7 @@ package ucl.physiol.neuroconstruct.simulation;
 import ucl.physiol.neuroconstruct.project.stimulation.*;
 import ucl.physiol.neuroconstruct.utils.NumberGenerator;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
+import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentChooser;
 
 
 /**
@@ -49,6 +50,18 @@ public class RandomSpikeTrainExtSettings extends StimulationSettings
         randomSpikeTrainExt = new RandomSpikeTrainExt(rate, noise, synapseType);
     }
     
+    public RandomSpikeTrainExtSettings(String reference,
+                           String cellGroup,
+                           CellChooser cellChooser,
+                           SegmentChooser segs,
+                           NumberGenerator rate,
+                           float noise,
+                           String synapseType)
+    {
+        super(reference, cellGroup, cellChooser, segs);
+        randomSpikeTrainExt = new RandomSpikeTrainExt(rate, noise, synapseType);
+    }
+    
     
     
     public Object clone()
@@ -60,7 +73,7 @@ public class RandomSpikeTrainExtSettings extends StimulationSettings
         RandomSpikeTrainExtSettings rsts = new RandomSpikeTrainExtSettings(this.reference,
                                  this.cellGroup,
                                  (CellChooser)this.cellChooser.clone(),
-                                 this.segmentID,
+                                 (SegmentChooser)this.segmentChooser.clone(),
                                  rstClone.getRate(),
                                  rstClone.getNoise(),
                                  rstClone.getSynapseType());

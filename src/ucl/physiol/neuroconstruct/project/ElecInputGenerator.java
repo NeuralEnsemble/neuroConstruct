@@ -15,7 +15,11 @@ package ucl.physiol.neuroconstruct.project;
 import java.util.*;
 
 
+import java.util.logging.Level;
+import ucl.physiol.neuroconstruct.cell.Cell;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
+import ucl.physiol.neuroconstruct.project.segmentchoice.AllSegmentsChosenException;
+import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentChooserException;
 import ucl.physiol.neuroconstruct.project.stimulation.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
@@ -177,14 +181,34 @@ public class ElecInputGenerator extends Thread
                         
                         
                     }
+                    Cell cell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(nextStim.getCellGroup()));
+                    
+                    nextStim.getSegChooser().initialise(cell);
 
-                    project.generatedElecInputs.addSingleInput(nextStim.getReference(),
-                                                               nextStim.getElectricalInput().getType(),
-                                                               nextStim.getCellGroup(),
-                                                               nextCellNumber,
-                                                               nextStim.getSegmentID(),
-                                                               nextStim.getFractionAlong(),
-                                                               ip);
+                    try
+                    {
+                        while (true)
+                        {
+                            project.generatedElecInputs.addSingleInput(nextStim.getReference(), 
+                                                                       nextStim.getElectricalInput().getType(), 
+                                                                       nextStim.getCellGroup(), 
+                                                                       nextCellNumber, 
+                                                                       nextStim.getSegChooser().getNextSegmentId(), 
+                                                                       nextStim.getFractionAlong(), 
+                                                                       ip);
+
+                        }
+                    }
+                    catch (AllSegmentsChosenException ex)
+                    {
+                        logger.logComment("All segs which could be generated have been..");
+                    }
+                    catch (SegmentChooserException ex)
+                    {
+                        GuiUtils.showErrorMessage(logger, "Problem determining segment locations from: "+nextStim.getSegChooser(), ex, null);
+                        return;
+                        
+                    }
                     
                     
 

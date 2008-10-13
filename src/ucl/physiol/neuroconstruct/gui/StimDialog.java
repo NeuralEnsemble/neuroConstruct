@@ -24,6 +24,7 @@ import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
+import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentChooser;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
@@ -69,7 +70,8 @@ public class StimDialog extends JDialog
 
 
 
-    int chosenSegmentId = 0;
+    //int chosenSegmentId = 0;
+    SegmentChooser chosenSegChooser = null;
 
     CellChooser myCellChooser = new AllCells();
 
@@ -289,17 +291,18 @@ public class StimDialog extends JDialog
         String cellGroupToStim = (String)jComboBoxCellGroup.getSelectedItem();
 
         String cellType = project.cellGroupsInfo.getCellType(cellGroupToStim);
-        Cell cellForSelectedGroup = project.cellManager.getCell(cellType);
+        //Cell cellForSelectedGroup = project.cellManager.getCell(cellType);
 
-        Segment segToStim = cellForSelectedGroup.getSegmentWithId(chosenSegmentId);
+        //Segment segToStim = cellForSelectedGroup.getSegmentWithId(chosenSegmentId);
 
-        setSegInfo(segToStim);
+        setSegChooserInfo(chosenSegChooser);
 
     }
 
 
 
     //Overridden so we can exit when window is closed
+    @Override
     protected void processWindowEvent(WindowEvent e)
     {
         if (e.getID() == WindowEvent.WINDOW_CLOSING)
@@ -322,7 +325,7 @@ public class StimDialog extends JDialog
     {
 
         // Check seg id is in cell...
-        checkSegId();
+        /////////checkSegId();
         
         
         logger.logComment("OK pressed...");
@@ -360,7 +363,7 @@ public class StimDialog extends JDialog
 
         stim.setCellChooser(this.myCellChooser);
 
-        stim.setSegmentID(chosenSegmentId);
+        stim.setSegChooser(chosenSegChooser);
         stim.setFractionAlong(Float.parseFloat(jTextFieldFractionAlong.getText()));
 
         return stim;
@@ -881,12 +884,10 @@ public class StimDialog extends JDialog
 
     }
 
-    private void setSegInfo(Segment segToStim)
+    
+    private void setSegChooserInfo(SegmentChooser segCh)
     {
-        jTextFieldSegmentId.setText(segToStim.getSegmentName()
-                                    + " (ID: "
-                                    + segToStim.getSegmentId()
-                                    + ")");
+        jTextFieldSegmentId.setText(chosenSegChooser.toString());
 
     }
 
@@ -930,14 +931,14 @@ public class StimDialog extends JDialog
         jTextFieldInfo.setText(stim.toString());
         
         
-        this.chosenSegmentId = stim.getSegmentID();
+        this.chosenSegChooser = stim.getSegChooser();
         
-        Segment segToStim = checkSegId();
+        //Segment segToStim = checkSegId();
         
-        setSegInfo(segToStim);
+        setSegChooserInfo(chosenSegChooser);
 
     }
-    
+    /*
     Segment checkSegId()
     {
         
@@ -955,12 +956,13 @@ public class StimDialog extends JDialog
             
         }
         return segToStim;
-    }
+    }*/
 
     void jButtonSegment_actionPerformed(ActionEvent e)
     {
         String cellGroupToStim = (String)jComboBoxCellGroup.getSelectedItem();
 
+        /*
         String cellType = project.cellGroupsInfo.getCellType(cellGroupToStim);
         Cell cellForSelectedGroup = project.cellManager.getCell(cellType);
 
@@ -1015,7 +1017,7 @@ public class StimDialog extends JDialog
             return;
         }
 
-
+*/
 
 
 

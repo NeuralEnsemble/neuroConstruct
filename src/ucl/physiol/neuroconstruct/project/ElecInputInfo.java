@@ -33,7 +33,8 @@ public class ElecInputInfo extends AbstractTableModel
     public final static int COL_NUM_REFERENCE = 0;
     public final static int COL_NUM_CELL_GROUP = 1;
     public final static int COL_NUM_CELL_NUM = 2;
-    public final static int COL_NUM_CELL_SEGMENT_ID = 3;
+    //public final static int COL_NUM_CELL_SEGMENT_ID = 3;
+    public final static int COL_NUM_CELL_SEGMENT_INFO = 3;
     public final static int COL_NUM_CELL_INFO = 4;
 
     final String[] columnNames = new String[5];
@@ -46,7 +47,8 @@ public class ElecInputInfo extends AbstractTableModel
         columnNames[COL_NUM_REFERENCE] = new String("Reference");
         columnNames[COL_NUM_CELL_GROUP] = new String("Cell Group");
         columnNames[COL_NUM_CELL_NUM] = new String("Cells to choose");
-        columnNames[COL_NUM_CELL_SEGMENT_ID] = new String("Segment");
+        //columnNames[COL_NUM_CELL_SEGMENT_ID] = new String("Segment");
+        columnNames[COL_NUM_CELL_SEGMENT_INFO] = new String("Segment Info");
         columnNames[COL_NUM_CELL_INFO] = new String("Info");
     }
 
@@ -79,8 +81,8 @@ public class ElecInputInfo extends AbstractTableModel
                 return stim.getCellGroup();
             case COL_NUM_CELL_NUM:
                 return stim.getCellChooser().toString();
-            case COL_NUM_CELL_SEGMENT_ID:
-                return new Integer(stim.getSegmentID());
+            case COL_NUM_CELL_SEGMENT_INFO:
+                return stim.getSegChooser();
             case COL_NUM_CELL_INFO:
                 return stim.toString();
 
@@ -172,12 +174,6 @@ public class ElecInputInfo extends AbstractTableModel
         }
         return allNames;
     }
-
-
-
-
-
-
 
 
     /**

@@ -12,7 +12,10 @@
 
 package ucl.physiol.neuroconstruct.simulation;
 
+import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
+import ucl.physiol.neuroconstruct.project.segmentchoice.IndividualSegments;
+import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentChooser;
 import ucl.physiol.neuroconstruct.project.stimulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 
@@ -28,14 +31,14 @@ public abstract class StimulationSettings
     private static ClassLogger logger = new ClassLogger("StimulationSettings");
 
     protected String cellGroup;
-
     protected String reference;
-
 
     protected CellChooser cellChooser = new AllCells(); // a default...
 
-
-    protected int segmentID = 0;
+    //protected int segmentID = 0;
+    
+    protected SegmentChooser segmentChooser = null;
+    
     protected float fractionAlong = 0.5f;
 
 
@@ -51,7 +54,24 @@ public abstract class StimulationSettings
         this.reference = reference;
         this.cellGroup = cellGroup;
         this.cellChooser = cellChooser;
-        this.segmentID = segmentID;
+        //this.segmentID = segmentID;
+        
+        ArrayList<Integer> listOfSegmentIds = new ArrayList<Integer>();
+        listOfSegmentIds.add(segmentID);
+        this.segmentChooser = new IndividualSegments(listOfSegmentIds);
+        
+    }
+    
+    public StimulationSettings(String reference,
+                               String cellGroup,
+                               CellChooser cellChooser,
+                               SegmentChooser segs)
+    {
+        this.reference = reference;
+        this.cellGroup = cellGroup;
+        this.cellChooser = cellChooser;
+        this.segmentChooser = segs;
+        
     }
     
     @Override
@@ -143,15 +163,38 @@ public abstract class StimulationSettings
     {
         this.cellGroup = cellGroup;
     }
-
+/*
     public int getSegmentID()
     {
         return segmentID;
-    }
+    }*/
     public void setSegmentID(int segmentID)
     {
-        this.segmentID = segmentID;
+        //this.segmentID = segmentID;
+        
+        ArrayList<Integer> listOfSegmentIds = new ArrayList<Integer>();
+        listOfSegmentIds.add(segmentID);
+        this.segmentChooser = new IndividualSegments(listOfSegmentIds);
     }
+
+    public SegmentChooser getSegChooser()
+    {
+        if (segmentChooser==null)
+        {
+            ArrayList<Integer> listOfSegmentIds = new ArrayList<Integer>();
+            listOfSegmentIds.add(0);          // default value
+            this.segmentChooser = new IndividualSegments(listOfSegmentIds);
+        }
+        return segmentChooser;
+    }
+
+    public void setSegChooser(SegmentChooser segChooser)
+    {
+        this.segmentChooser = segChooser;
+    }
+    
+    
+    
     public String getReference()
     {
         return reference;

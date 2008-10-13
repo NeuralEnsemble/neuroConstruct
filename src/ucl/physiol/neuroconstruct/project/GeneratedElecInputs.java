@@ -437,7 +437,7 @@ public class GeneratedElecInputs
             generationReport.append("<b>" + ClickProjectHelper.getElecInputLink(elecInputName) + "</b> ("+s.getElectricalInput().toLinkedString()
                                     +" on "+s.getCellChooser().toNiceString()+" of "
                                     + ClickProjectHelper.getCellGroupLink(s.getCellGroup())
-                                    +", seg: "+s.getSegmentID()+")<br>");
+                                    +", segs: "+s.getSegChooser()+")<br>");
 
             generationReport.append("Number of individual inputs: <b>"+
                                     project.generatedElecInputs.getNumberSingleInputs(elecInputName)

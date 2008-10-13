@@ -14,7 +14,6 @@ package ucl.physiol.neuroconstruct.j3D;
 
 import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
 import javax.media.j3d.*;
 import javax.vecmath.*;
 
@@ -909,8 +908,10 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         }
         if (groupRadioButtons.size()>12)
         {
-            int height = (int)(groupRadioButtons.size()/7f) * 32;
-            jPanelControls.setPreferredSize(new Dimension(400, height+70));
+            int height = ((int)(groupRadioButtons.size()/7f) * 32) + 70;
+            
+            jPanelControls.setPreferredSize(new Dimension(400, Math.min(height, 300)));
+            
             jPanelColourControls.setPreferredSize(new Dimension(400, height));
         }
         
@@ -1730,7 +1731,26 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         dlg.setLocation( (frmSize.width - dlgSize.width) / 2 + loc.x,
                         (frmSize.height - dlgSize.height) / 2 + loc.y);
         dlg.setModal(true);
+        
+        Enumeration<String> radButtonNames = groupRadioButtons.keys();
+        
+        String selected = null;
+        while(radButtonNames.hasMoreElements())
+        {
+            String name = radButtonNames.nextElement();
+            JRadioButton nextRadioButton = groupRadioButtons.get(name);
+            if (nextRadioButton.isSelected())
+                selected = name;
+        }
+        logger.logComment("selected: "+ selected, true);
+        
+        if (!selected.equals(Section.ALL))
+        {
+            dlg.setSelectedGroup(selected);
+        }
+        
         dlg.setVisible(true);
+        
 
         if (dlg.cancelled)
         {

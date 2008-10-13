@@ -40,6 +40,7 @@ import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.*;
 import ucl.physiol.neuroconstruct.neuron.NeuronException;
+import ucl.physiol.neuroconstruct.project.segmentchoice.*;
 import ucl.physiol.neuroconstruct.utils.SequenceGenerator.EndOfSequenceException;
 
 /**
@@ -1174,6 +1175,51 @@ public class ProjectManager implements GenerationReport
             }
             else
             {
+                
+                if (stim.getSegChooser() instanceof IndividualSegments)
+                {
+                    for(int id: ((IndividualSegments)stim.getSegChooser()).getListOfSegmentIds())
+                    {
+                        if (cell.getSegmentWithId(id)==null)
+                        {
+                            report.addTaggedElement("Error, Input: " + stim.getReference() + " specifies segments: "+stim.getSegChooser()
+                                +" on cells of type " + cellType +
+                                                ", but this generates an invalid id: "+id+" for such cells!",
+                                                "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
+
+                            report.addBreak();
+
+                            overallValidity = ValidityStatus.VALIDATION_ERROR;
+                        }
+                    }
+                }
+                if(stim.getSegChooser() instanceof GroupDistributedSegments)
+                {
+                    String grp = ((GroupDistributedSegments)stim.getSegChooser()).getGroup();
+                    int num = ((GroupDistributedSegments)stim.getSegChooser()).getNumberOfSegments();
+                    if (!cell.isGroup(grp))
+                    {
+                            report.addTaggedElement("Error, Input: " + stim.getReference() + " specifies segments: "+stim.getSegChooser()
+                                +" but there is no group "+grp+" on such cells!",
+                                                "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
+
+                            report.addBreak();
+
+                            overallValidity = ValidityStatus.VALIDATION_ERROR;
+                    }
+                    if (num<=0)
+                    {
+                            report.addTaggedElement("Error, Input: " + stim.getReference() + " specifies segments: "+stim.getSegChooser()
+                                +" but "+num+" is an invalid number of segments for this!",
+                                                "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
+
+                            report.addBreak();
+
+                            overallValidity = ValidityStatus.VALIDATION_ERROR;
+                    }
+                }
+                    
+                /*
                 if (cell.getSegmentWithId(stim.getSegmentID())==null)
                 {
                     report.addTaggedElement("Error, Input: " + stim.getReference() + " specifies segment ID: "+stim.getSegmentID()
@@ -1184,7 +1230,7 @@ public class ProjectManager implements GenerationReport
                     report.addBreak();
 
                     overallValidity = ValidityStatus.VALIDATION_ERROR;
-                }
+                }*/
             }
         }
         
