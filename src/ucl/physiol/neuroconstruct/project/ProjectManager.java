@@ -869,7 +869,6 @@ public class ProjectManager implements GenerationReport
 
         for (String cellTypeName: cellNames)
         {
-
             report.addTaggedElement("Checking cell: <b>"+cellTypeName+"</b>", "p");
 
             Cell cell = activeProject.cellManager.getCell(cellTypeName);
@@ -898,15 +897,20 @@ public class ProjectManager implements GenerationReport
 
             String bioFormat = "font color=\""+bioStatus.getColour()+"\"";
 
-            //System.out.println("ov: "+ overallValidity);
-
             message = bioStatus.getMessage();
-
+            
             if (html)
             {
                 message = GeneralUtils.replaceAllTokens(message, "\n", "<br>");
             }
             report.addTaggedElement(message, bioFormat);
+            
+            if (!activeProject.cellGroupsInfo.getUsedCellTypes().contains(cell.getInstanceName()))
+            {
+                report.addBreak();
+                report.addTaggedElement("Note: Cell Type: "+cell.getInstanceName()+" not currently used in any Cell Group",
+                        "font color=\"" + ValidityStatus.VALIDATION_COLOUR_INFO + "\"");
+            }
 
         }
 
@@ -1141,6 +1145,12 @@ public class ProjectManager implements GenerationReport
                 overallValidity = ValidityStatus.combineValidities(overallValidity, ValidityStatus.VALIDATION_WARN);
 
             }
+            if (!activeProject.simConfigInfo.getAllUsedCellGroups().contains(cellGroup))
+            {
+                report.addBreak();
+                report.addTaggedElement("Note: Cell Group: "+cellGroup+" is not currently included in any Simulation Configuration",
+                        "font color=\"" + ValidityStatus.VALIDATION_COLOUR_INFO + "\"");
+            }
         }
 
 
@@ -1219,18 +1229,13 @@ public class ProjectManager implements GenerationReport
                     }
                 }
                     
-                /*
-                if (cell.getSegmentWithId(stim.getSegmentID())==null)
+                
+                if (!activeProject.simConfigInfo.getAllUsedElectInputs().contains(stim.getReference()))
                 {
-                    report.addTaggedElement("Error, Input: " + stim.getReference() + " specifies segment ID: "+stim.getSegmentID()
-                        +" on cells of type " + cellType +
-                                        ", but there isn't any segment with that ID on such cells!",
-                                        "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
-                    
                     report.addBreak();
-
-                    overallValidity = ValidityStatus.VALIDATION_ERROR;
-                }*/
+                    report.addTaggedElement("Note: Input: "+stim.getReference()+" is not currently included in any Simulation Configuration",
+                            "font color=\"" + ValidityStatus.VALIDATION_COLOUR_INFO + "\"");
+                }
             }
         }
         
@@ -1248,6 +1253,14 @@ public class ProjectManager implements GenerationReport
                 report.addBreak();
 
                 overallValidity = ValidityStatus.combineValidities(overallValidity, ValidityStatus.VALIDATION_WARN);
+            }
+            
+            
+            if (!activeProject.simConfigInfo.getAllUsedPlots().contains(plot.getPlotReference()))
+            {
+                report.addBreak();
+                report.addTaggedElement("Note: Plot: "+plot.getPlotReference()+" is not currently included in any Simulation Configuration",
+                        "font color=\"" + ValidityStatus.VALIDATION_COLOUR_INFO + "\"");
             }
         }
 

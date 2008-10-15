@@ -189,6 +189,67 @@ public class SimConfigInfo
     }
 
 
+    public ArrayList<String> getAllUsedCellGroups()
+    {
+        ArrayList<String> usedCellGroups = new ArrayList<String>();
+
+        for (SimConfig sc: simConfigs)
+        {
+            for(String cg: sc.getCellGroups())
+            {
+                if (!usedCellGroups.contains(cg))
+                    usedCellGroups.add(cg);
+            }
+        }
+        return usedCellGroups;
+    }
+    
+    
+    public ArrayList<String> getAllUsedNetConns()
+    {
+        ArrayList<String> used = new ArrayList<String>();
+
+        for (SimConfig sc: simConfigs)
+        {
+            for(String nc: sc.getNetConns())
+            {
+                if (!used.contains(nc))
+                    used.add(nc);
+            }
+        }
+        return used;
+    }
+    
+    public ArrayList<String> getAllUsedElectInputs()
+    {
+        ArrayList<String> used = new ArrayList<String>();
+
+        for (SimConfig sc: simConfigs)
+        {
+            for(String in: sc.getInputs())
+            {
+                if (!used.contains(in))
+                    used.add(in);
+            }
+        }
+        return used;
+    }
+    
+    
+    public ArrayList<String> getAllUsedPlots()
+    {
+        ArrayList<String> used = new ArrayList<String>();
+
+        for (SimConfig sc: simConfigs)
+        {
+            for(String p: sc.getPlots())
+            {
+                if (!used.contains(p))
+                    used.add(p);
+            }
+        }
+        return used;
+    }
 
     public ArrayList<String> getAllSimConfigNames()
     {

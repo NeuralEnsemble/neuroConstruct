@@ -234,7 +234,7 @@ public class CellPositionGenerator extends Thread
                 {
                     logger.logComment("Reached end of generating positions for cell group: " +
                                       nextCellGroup);
-                    logger.logComment("Reason for ending: " + ex, true);
+                    logger.logComment("Reason for ending: " + ex);
                     logger.logComment("Number in cell group: " + adapter.getCurrentNumberPositions());
                 }
 

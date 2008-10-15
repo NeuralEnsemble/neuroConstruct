@@ -320,18 +320,18 @@ public class SlicerFrame extends JFrame
         
         logger.logComment("Cutoffs: ("+fractStartX+" -> "+fractEndX+") ("+fractStartY+" -> "+fractEndY+") ("+fractStartZ+" -> "+fractEndZ+")");
         
-        float minX = enclosingBox.getLowestXValue() +(fractStartX*enclosingBox.getXDim());
-        float maxX = enclosingBox.getLowestXValue() +(fractEndX*enclosingBox.getXDim());
+        float minX = enclosingBox.getLowestXValue() +(fractStartX*enclosingBox.getXExtent());
+        float maxX = enclosingBox.getLowestXValue() +(fractEndX*enclosingBox.getXExtent());
         
         logger.logComment("Maxmin x: ("+minX+" -> "+maxX+")");
         
-        float minY = enclosingBox.getLowestYValue() +(fractStartY*enclosingBox.getYDim());
-        float maxY = enclosingBox.getLowestYValue() +(fractEndY*enclosingBox.getYDim());
+        float minY = enclosingBox.getLowestYValue() +(fractStartY*enclosingBox.getYExtent());
+        float maxY = enclosingBox.getLowestYValue() +(fractEndY*enclosingBox.getYExtent());
         
         logger.logComment("Maxmin y: ("+minY+" -> "+maxY+")");
         
-        float minZ = enclosingBox.getLowestZValue() +(fractStartZ*enclosingBox.getZDim());
-        float maxZ = enclosingBox.getLowestZValue() +(fractEndZ*enclosingBox.getZDim());
+        float minZ = enclosingBox.getLowestZValue() +(fractStartZ*enclosingBox.getZExtent());
+        float maxZ = enclosingBox.getLowestZValue() +(fractEndZ*enclosingBox.getZExtent());
         
         logger.logComment("Maxmin z: ("+minZ+" -> "+maxZ+")");
         

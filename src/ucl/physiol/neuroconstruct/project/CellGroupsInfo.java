@@ -123,6 +123,19 @@ public class CellGroupsInfo extends AbstractTableModel
 
         return usedRegs;
     }
+    
+    public ArrayList<String> getUsedCellTypes()
+    {
+        ArrayList<String> usedCellTypes = new ArrayList<String>();
+
+        for (String ct: vectorCellTypes)
+        {
+            if (!usedCellTypes.contains(ct))
+                usedCellTypes.add(ct);
+        }
+
+        return usedCellTypes;
+    }
 
 
 

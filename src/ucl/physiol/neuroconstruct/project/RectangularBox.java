@@ -77,6 +77,7 @@ public class RectangularBox extends Region
                                                  100);
     }
 
+    @Override
     public boolean equals(Object otherObj)
     {
         if (otherObj instanceof RectangularBox)
@@ -379,15 +380,15 @@ public class RectangularBox extends Region
     };
 
     
-    public float getXDim()
+    public float getXExtent()
     {
         return getHighestXValue()-getLowestXValue();
     }
-    public float getYDim()
+    public float getYExtent()
     {
         return getHighestYValue()-getLowestYValue();
     }
-    public float getZDim()
+    public float getZExtent()
     {
         return getHighestZValue()-getLowestZValue();
     }

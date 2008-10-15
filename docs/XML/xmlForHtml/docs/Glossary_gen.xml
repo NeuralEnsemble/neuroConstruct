@@ -92,7 +92,7 @@
         
 </ul>
         Note: see points on allocating extra memory for the application <a href="install.html#Building+and+running">here</a>, which will be important when displaying large networks in 3D. Also,
-        there is sometimes excessive flickering when showing 3D on Windows (a common problem when mixing Java3D and Swing, see <a href="http://www.int.com/products/3d/jview3d/problem_resolution/index.html" target="_blank">here</a>), try updating the drivers for your graphics card, or adding <strong>-Dsun.java2d.noddraw=true</strong> to the command in run.bat.
+        there is sometimes excessive flickering when showing 3D on Windows (a common problem when mixing Java3D and Swing, see <a href="http://www.int.com/products/3d/jview3d/problem_resolution/index.html" target="_blank">here</a>), try updating the drivers for your graphics card, or adding <strong>-Dsun.java2d.noddraw=true</strong> to the command in nC.bat.
     </p>
 </span>
 <p style="font-size: 11">

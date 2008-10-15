@@ -484,6 +484,134 @@ public class CellTopologyHelper
         return preSynTerm;
 
     }
+    
+    private static int[] cachedAllCellIds = null;
+    private static String cachedFinishCellGroup = null;
+    private static MaxMinLength cachedMaxMinLength = null;
+    private static Point3f cachedStartPos = null;
+    private static String cachedCellType = null;
+    private static RectangularBox cachedCellBoundBox = null;
+    
+    
+    public static int[] getAllowedPostCellIds(Cell cell,
+                                              Point3f startCellPos, 
+                                              MaxMinLength maxMin, 
+                                              String finishCellGroup, 
+                                              ArrayList<PositionRecord> finishPosRecords)
+    {
+        boolean maxMinIncludesAll = maxMin.getMinLength()==0 && maxMin.getMaxLength()==Float.MAX_VALUE;
+        
+        if (maxMinIncludesAll &&
+            finishCellGroup.equals(cachedFinishCellGroup) &&
+            finishPosRecords.size() == cachedAllCellIds.length)
+        {
+            return cachedAllCellIds;
+        }
+        
+        int[] allowedFinishCells = null;
+        
+        if (maxMinIncludesAll)
+        {
+            allowedFinishCells = new int[finishPosRecords.size()];
+
+            for(int i=0;i<finishPosRecords.size();i++)
+            {
+                allowedFinishCells[i] = finishPosRecords.get(i).cellNumber;
+            }
+        }
+        else
+        {
+            RectangularBox cellBox = null;
+            
+            if(cachedCellType!=null && cachedCellType.equals(cell.getInstanceName()))
+            {
+                cellBox = cachedCellBoundBox;
+            }
+            else
+            {
+                float maxX = CellTopologyHelper.getMaxXExtent(cell, false, false);
+                float maxY = CellTopologyHelper.getMaxYExtent(cell, false, false);
+                float maxZ = CellTopologyHelper.getMaxZExtent(cell, false, false);
+                float minX = CellTopologyHelper.getMinXExtent(cell, false, false);
+                float minY = CellTopologyHelper.getMinYExtent(cell, false, false);
+                float minZ = CellTopologyHelper.getMinZExtent(cell, false, false);
+
+                cellBox = new RectangularBox(minX, minY, minZ, maxX-minX, maxY-minY, maxZ-minZ);
+
+                if (maxMin.getDimension().equals(MaxMinLength.RADIAL) ||
+                    maxMin.getDimension().equals(MaxMinLength.X_DIR))
+                {
+                    cellBox.setParameter(RectangularBox.X_PARAM, cellBox.getLowestXValue() - maxMin.getMaxLength());
+                    cellBox.setParameter(RectangularBox.WIDTH_PARAM, cellBox.getXExtent() + 2*maxMin.getMaxLength());
+                }
+                if (maxMin.getDimension().equals(MaxMinLength.RADIAL) ||
+                    maxMin.getDimension().equals(MaxMinLength.Y_DIR))
+                {
+                    cellBox.setParameter(RectangularBox.Y_PARAM, cellBox.getLowestYValue() - maxMin.getMaxLength());
+                    cellBox.setParameter(RectangularBox.HEIGHT_PARAM, cellBox.getYExtent() + 2*maxMin.getMaxLength());
+                }
+                if (maxMin.getDimension().equals(MaxMinLength.RADIAL) ||
+                    maxMin.getDimension().equals(MaxMinLength.Z_DIR))
+                {
+                    cellBox.setParameter(RectangularBox.Z_PARAM, cellBox.getLowestZValue() - maxMin.getMaxLength());
+                    cellBox.setParameter(RectangularBox.DEPTH_PARAM, cellBox.getZExtent() + 2*maxMin.getMaxLength());
+                }
+                logger.logComment("Box: "+ cellBox, true);
+
+                cachedCellType = cell.getInstanceName();
+                cachedCellBoundBox = cellBox;
+            }
+                
+            int[] tempPosRecs = new int[finishPosRecords.size()]; // set to max temp
+
+            int countGoodPos = 0;
+            
+            RectangularBox connBoundBox = (RectangularBox)cellBox.getTranslatedRegion(new Vector3f(startCellPos));
+
+            float minX = connBoundBox.getLowestXValue();
+            float minY = connBoundBox.getLowestYValue();
+            float minZ = connBoundBox.getLowestZValue();
+            float maxX = connBoundBox.getHighestXValue();
+            float maxY = connBoundBox.getHighestYValue();
+            float maxZ = connBoundBox.getHighestZValue();
+            
+            for(PositionRecord pos: finishPosRecords)
+            {
+                if (pos.x_pos >= minX &&
+                    pos.x_pos <= maxX &&
+                    pos.y_pos >= minY &&
+                    pos.y_pos <= maxY &&
+                    pos.z_pos >= minZ &&
+                    pos.z_pos <= maxZ)
+                {
+                    tempPosRecs[countGoodPos] = pos.cellNumber;
+                    countGoodPos++;
+                }
+            }
+
+            allowedFinishCells = new int[countGoodPos];
+
+            for(int i=0;i<countGoodPos;i++)
+            {
+                allowedFinishCells[i] = tempPosRecs[i];
+            }
+            //logger.logComment("Total finish cells: "+ finishPosRecords.size() +", but returning only: "+ countGoodPos, true);
+                        
+        }
+        
+        
+        cachedFinishCellGroup = finishCellGroup;
+        cachedAllCellIds = allowedFinishCells;
+        cachedMaxMinLength = maxMin;
+        
+        return allowedFinishCells;
+    }
+    
+    
+    
+    
+    
+    
 
     /**
      * Converts from a specification of a point along a particular segment of

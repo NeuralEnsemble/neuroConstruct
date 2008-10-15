@@ -51,11 +51,48 @@ public class MaxMinLength
         this.dimension = dimension;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MaxMinLength other = (MaxMinLength) obj;
+        if (this.maxLength != other.maxLength) {
+            return false;
+        }
+        if (this.minLength != other.minLength) {
+            return false;
+        }
+        if (this.numberAttempts != other.numberAttempts) {
+            return false;
+        }
+        if (this.dimension != other.dimension && (this.dimension == null || !this.dimension.equals(other.dimension))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 11 * hash + Float.floatToIntBits(this.maxLength);
+        hash = 11 * hash + Float.floatToIntBits(this.minLength);
+        hash = 11 * hash + this.numberAttempts;
+        hash = 11 * hash + (this.dimension != null ? this.dimension.hashCode() : 0);
+        return hash;
+    }
+    
+    
+
 
     /**
      * Return a simple string representation...
      * @return A string summarising the state
      */
+    @Override
     public String toString()
     {
         return "Max: "
@@ -64,8 +101,6 @@ public class MaxMinLength
             + minLength
                + ", dim: "
                + dimension
-
-
                + " (num attempts: "
                + numberAttempts
                + ")";
@@ -87,8 +122,6 @@ public class MaxMinLength
     {
         this.dimension = dimension;
     }
-
-
     public int getNumberAttempts()
     {
         return numberAttempts;
