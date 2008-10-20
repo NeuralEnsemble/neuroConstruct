@@ -14,6 +14,7 @@ package ucl.physiol.neuroconstruct.project.segmentchoice;
 
 
 import ucl.physiol.neuroconstruct.cell.Cell;
+import ucl.physiol.neuroconstruct.cell.SegmentLocation;
 import ucl.physiol.neuroconstruct.utils.ClassLogger;
 
 
@@ -27,7 +28,7 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
  */
 
 
-public abstract class SegmentChooser
+public abstract class SegmentLocationChooser
 {
     static ClassLogger logger = new ClassLogger("SegmentChooser");
 
@@ -36,12 +37,12 @@ public abstract class SegmentChooser
     String description = null;
 
 
-    private SegmentChooser()
+    private SegmentLocationChooser()
     {
 
     }
 
-    public SegmentChooser(String description)
+    public SegmentLocationChooser(String description)
     {
         this.description = description;
     }
@@ -67,11 +68,11 @@ public abstract class SegmentChooser
     /**
      * Gets the next chosen segment based on the settings in the sub class
      */
-    public int getNextSegmentId() throws AllSegmentsChosenException, SegmentChooserException
+    public SegmentLocation getNextSegLoc() throws AllSegmentsChosenException, SegmentChooserException
     {
         if (myCell == null) throw new SegmentChooserException("SegmentChooser not yet initialised");
 
-        return generateNextSegmentId();
+        return generateNextSegLoc();
     };
     
     public boolean isInitialised()
@@ -79,7 +80,7 @@ public abstract class SegmentChooser
         return (myCell != null);
     }
 
-    protected abstract int generateNextSegmentId() throws AllSegmentsChosenException, SegmentChooserException;
+    protected abstract SegmentLocation generateNextSegLoc() throws AllSegmentsChosenException, SegmentChooserException;
 
     protected abstract void reinitialise();
 

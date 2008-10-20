@@ -15,7 +15,7 @@ package ucl.physiol.neuroconstruct.simulation;
 import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
 import ucl.physiol.neuroconstruct.project.segmentchoice.IndividualSegments;
-import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentChooser;
+import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentLocationChooser;
 import ucl.physiol.neuroconstruct.project.stimulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 
@@ -35,9 +35,9 @@ public abstract class StimulationSettings
 
     protected CellChooser cellChooser = new AllCells(); // a default...
 
-    //protected int segmentID = 0;
+    protected int segmentID = 0;
     
-    protected SegmentChooser segmentChooser = null;
+    protected SegmentLocationChooser segmentChooser = null;
     
     protected float fractionAlong = 0.5f;
 
@@ -65,7 +65,7 @@ public abstract class StimulationSettings
     public StimulationSettings(String reference,
                                String cellGroup,
                                CellChooser cellChooser,
-                               SegmentChooser segs)
+                               SegmentLocationChooser segs)
     {
         this.reference = reference;
         this.cellGroup = cellGroup;
@@ -177,7 +177,7 @@ public abstract class StimulationSettings
         this.segmentChooser = new IndividualSegments(listOfSegmentIds);
     }
 
-    public SegmentChooser getSegChooser()
+    public SegmentLocationChooser getSegChooser()
     {
         if (segmentChooser==null)
         {
@@ -188,7 +188,7 @@ public abstract class StimulationSettings
         return segmentChooser;
     }
 
-    public void setSegChooser(SegmentChooser segChooser)
+    public void setSegChooser(SegmentLocationChooser segChooser)
     {
         this.segmentChooser = segChooser;
     }

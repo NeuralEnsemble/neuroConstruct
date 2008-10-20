@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ucl.physiol.neuroconstruct.cell.Cell;
+import ucl.physiol.neuroconstruct.cell.SegmentLocation;
 import ucl.physiol.neuroconstruct.cell.examples.SimpleCell;
 
 
@@ -28,7 +29,7 @@ import ucl.physiol.neuroconstruct.cell.examples.SimpleCell;
  *  
  */
 
-public class IndividualSegments extends SegmentChooser
+public class IndividualSegments extends SegmentLocationChooser
 {
     ArrayList<Integer> listOfSegmentIds = new ArrayList<Integer>();
     
@@ -71,7 +72,7 @@ public class IndividualSegments extends SegmentChooser
     
 
     @Override
-    protected int generateNextSegmentId() throws AllSegmentsChosenException, SegmentChooserException
+    protected SegmentLocation generateNextSegLoc() throws AllSegmentsChosenException, SegmentChooserException
     {
         if (segIdsReturned>=listOfSegmentIds.size())
             throw new AllSegmentsChosenException();
@@ -79,7 +80,8 @@ public class IndividualSegments extends SegmentChooser
         int toReturn = listOfSegmentIds.get(segIdsReturned);
         
         segIdsReturned++;
-        return toReturn;
+        SegmentLocation sl = new SegmentLocation(toReturn, 0.5f);
+        return sl;
     }
 
     @Override
@@ -125,7 +127,7 @@ public class IndividualSegments extends SegmentChooser
         {
             while (true)
             {
-                System.out.println("Next Segment id: " + chooser.getNextSegmentId());
+                System.out.println("Next Segment id: " + chooser.getNextSegLoc());
 
             }
         }

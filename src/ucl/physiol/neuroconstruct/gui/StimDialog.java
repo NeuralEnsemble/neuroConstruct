@@ -17,6 +17,7 @@ import java.util.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -24,7 +25,9 @@ import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
-import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentChooser;
+import ucl.physiol.neuroconstruct.project.segmentchoice.GroupDistributedSegments;
+import ucl.physiol.neuroconstruct.project.segmentchoice.IndividualSegments;
+import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentLocationChooser;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
@@ -33,7 +36,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
  * Dialog to specify electrophysiological stimulations to add to the network
  *
  * @author Padraig Gleeson
- *  
+ *
  */
 
 
@@ -42,7 +45,9 @@ import ucl.physiol.neuroconstruct.utils.units.*;
 public class StimDialog extends JDialog
 {
     ClassLogger logger = new ClassLogger("StimDialog");
-
+    
+    CellChooser myCellChooser = new AllCells();
+    
     IClampSettings tempIClamp = new IClampSettings("tempIClamp",
                                                    null,
                                                    null,
@@ -67,15 +72,14 @@ public class StimDialog extends JDialog
                                                                           new NumberGenerator(0.05f),
                                                                           10,
                                                                           null);
-
-
-
-    //int chosenSegmentId = 0;
-    SegmentChooser chosenSegChooser = null;
-
-    CellChooser myCellChooser = new AllCells();
-
-    Project project = null;
+    
+    IndividualSegments indSegChooser = new IndividualSegments();
+    
+    GroupDistributedSegments gds = new GroupDistributedSegments("all", 4);
+       
+    SegmentLocationChooser chosenSegLocChooser = indSegChooser;
+    
+   Project project = null;
 
     boolean cancelled = false;
     JPanel jPanelButtons = new JPanel();
@@ -93,26 +97,30 @@ public class StimDialog extends JDialog
     JLabel jLabelCellGroups = new JLabel();
     JComboBox jComboBoxCellGroup = new JComboBox();
     JLabel jLabelCellNumber = new JLabel();
+    JLabel jLabelLocation = new JLabel();
+    JLabel jLabelType = new JLabel();
     JTextField jTextFieldCellNumber = new JTextField();
-    JLabel jLabelSegment = new JLabel();
+//    JLabel jLabelSegment = new JLabel();
     JTextField jTextFieldSegmentId = new JTextField();
     GridBagLayout gridBagLayout1 = new GridBagLayout();
     //JLabel jLabelCellNum2 = new JLabel();
     JButton jButtonSegment = new JButton();
 
-
+    JRadioButton jRadioButtonSingle = new JRadioButton();
+    JRadioButton jRadioButtonDistributed = new JRadioButton();
     JRadioButton jRadioButtonIClamp = new JRadioButton();
     JRadioButton jRadioButtonRandSpike = new JRadioButton();
     JRadioButton jRadioButtonRandSpikeExt = new JRadioButton();
 
 
-
+    JButton jButtonLocationChange = new JButton();
     JButton jButtonStimChange = new JButton();
     JButton jButtonCellChooserChange = new JButton();
 
-
+    ButtonGroup buttonGroupSegments = new ButtonGroup();
     ButtonGroup buttonGroupStims = new ButtonGroup();
     JTextField jTextFieldInfo = new JTextField();
+    JTextField jTextFieldLocationInfo = new JTextField();
     JLabel jLabelFraction = new JLabel();
     JTextField jTextFieldFractionAlong = new JTextField();
 
@@ -160,10 +168,10 @@ public class StimDialog extends JDialog
             else
             {
                 //Exp2SynMechanism exp2 = new Exp2SynMechanism();
-                
-                    
+
+
                 File cmlTemplateDir = ProjectStructure.getCMLTemplatesDir();
-                
+
                 File fromDir = new File(cmlTemplateDir, "DoubleExpSyn");
                 Properties props = new Properties();
 
@@ -176,11 +184,11 @@ public class StimDialog extends JDialog
                     logger.logError("Problem getting properties", ex);
                     //ignore...
                 }
-                
+
                 String name = "SynForRndSpike";
                 String desc = "Default Synaptic mechanism added automatically when a new Input was created (needed for Random stim option in input)";
-                
-                
+
+
                 File dirForCMLFiles = ProjectStructure.getDirForCellMechFiles(project, name);
 
                 dirForCMLFiles.mkdir();
@@ -189,13 +197,13 @@ public class StimDialog extends JDialog
 
                 cmlMech.setInstanceName(name);
                 cmlMech.setDescription(desc);
-                
+
                 logger.logComment("Info so far: "+cmlMech.toString());
-                
+
                 cmlMech.setMechanismType(props.getProperty("CellProcessType"));
-                
+
                 cmlMech.setMechanismModel("Template based ChannelML file");
-                
+
                 if (props.getProperty("ChannelMLFile")!=null)
                 {
                     String relativeFile = props.getProperty("ChannelMLFile");
@@ -244,8 +252,8 @@ public class StimDialog extends JDialog
 
                 }
                 logger.logComment("Info so far: "+cmlMech.toString());
-                
-                
+
+
                 if (props.getProperty("NEURONNeedsCompilation") != null)
                 {
                     Boolean b = Boolean.parseBoolean(props.getProperty("NEURONNeedsCompilation"));
@@ -253,9 +261,9 @@ public class StimDialog extends JDialog
                 }
 
                 project.cellMechanismInfo.addCellMechanism(cmlMech);
-                
+
                 cmlMech.initialise(project, true);
-                
+
                 logger.logComment("Info so far: "+cmlMech);
 
                 tempRandSpike.setSynapseType(cmlMech.getInstanceName());
@@ -277,6 +285,11 @@ public class StimDialog extends JDialog
     private void extraInit()
     {
         logger.logComment("-----------------------------New StimDialog created");
+        
+        ArrayList<Integer> someSegIds = new ArrayList<Integer>();
+        someSegIds.add(0);
+        indSegChooser.setListOfSegmentIds(someSegIds);
+        
 
         ArrayList<String> cellGroupNames = project.cellGroupsInfo.getAllCellGroupNames();
         for (int i = 0; i < cellGroupNames.size(); i++)
@@ -287,15 +300,16 @@ public class StimDialog extends JDialog
         jRadioButtonIClamp.setSelected(true);
 
         jTextFieldInfo.setText(tempIClamp.toString());
+        jTextFieldLocationInfo.setText(indSegChooser.toString());
 
-        String cellGroupToStim = (String)jComboBoxCellGroup.getSelectedItem();
+        //String cellGroupToStim = (String)jComboBoxCellGroup.getSelectedItem();
 
-        String cellType = project.cellGroupsInfo.getCellType(cellGroupToStim);
+        //String cellType = project.cellGroupsInfo.getCellType(cellGroupToStim);
         //Cell cellForSelectedGroup = project.cellManager.getCell(cellType);
 
         //Segment segToStim = cellForSelectedGroup.getSegmentWithId(chosenSegmentId);
 
-        setSegChooserInfo(chosenSegChooser);
+        setSegChooserInfo(chosenSegLocChooser);
 
     }
 
@@ -326,8 +340,8 @@ public class StimDialog extends JDialog
 
         // Check seg id is in cell...
         /////////checkSegId();
-        
-        
+
+
         logger.logComment("OK pressed...");
 
         this.dispose();
@@ -363,8 +377,8 @@ public class StimDialog extends JDialog
 
         stim.setCellChooser(this.myCellChooser);
 
-        stim.setSegChooser(chosenSegChooser);
-        stim.setFractionAlong(Float.parseFloat(jTextFieldFractionAlong.getText()));
+        stim.setSegChooser(chosenSegLocChooser);
+        //stim.setFractionAlong(Float.parseFloat(jTextFieldFractionAlong.getText()));
 
         return stim;
     }
@@ -418,10 +432,48 @@ public class StimDialog extends JDialog
 
         jTextFieldCellNumber.setText(myCellChooser.toString());
 
-        jLabelSegment.setText("Segment Id:");
-        jTextFieldSegmentId.setEditable(false);
-        jTextFieldSegmentId.setText("...");
-        jTextFieldSegmentId.setColumns(10);
+        jLabelLocation.setText("Location:");
+        jLabelType.setText("Type:");
+
+        jRadioButtonSingle.setSelected(true);
+        jRadioButtonSingle.setText("Single segment");
+        
+        jRadioButtonSingle.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jRadioButtonSingle_actionPerformed(e);
+            }
+
+            private void jRadioButtonSingle_actionPerformed(ActionEvent e)
+            {
+                chosenSegLocChooser = indSegChooser;
+                
+                jTextFieldLocationInfo.setText(chosenSegLocChooser.toNiceString());
+            }
+        });
+
+
+        jRadioButtonDistributed.setText("Group distributed segments");
+        jRadioButtonDistributed.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jRadioButtonDistributed_actionPerformed(e);
+            }
+
+            private void jRadioButtonDistributed_actionPerformed(ActionEvent e)
+            { 
+                chosenSegLocChooser = gds;
+                
+                jTextFieldLocationInfo.setText(chosenSegLocChooser.toNiceString());
+            }
+        });
+
+//        jLabelSegment.setText("Segment Id:");
+//        jTextFieldSegmentId.setEditable(false);
+//        jTextFieldSegmentId.setText("...");
+//        jTextFieldSegmentId.setColumns(10);
 
 
         jButtonSegment.setText("...");
@@ -463,9 +515,16 @@ public class StimDialog extends JDialog
 
 
 
-
+        jButtonLocationChange.setText("Change..");
         jButtonStimChange.setText("Change..");
         jButtonCellChooserChange.setText("Change...");
+        jButtonLocationChange.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonLocationChange_actionPerformed(e);
+            }
+        });
         jButtonStimChange.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -485,8 +544,11 @@ public class StimDialog extends JDialog
         jTextFieldInfo.setEnabled(true);
         jTextFieldInfo.setEditable(false);
         jTextFieldInfo.setText("...");
-        jLabelFraction.setText("Fraction along (only used for NEURON):");
-        jTextFieldFractionAlong.setText("0.5");
+        jTextFieldLocationInfo.setEnabled(true);
+        jTextFieldLocationInfo.setEditable(false);
+        jTextFieldLocationInfo.setText("...");
+//        jLabelFraction.setText("Fraction along (only used for NEURON):");
+//        jTextFieldFractionAlong.setText("0.5");
         this.getContentPane().add(jPanelButtons, BorderLayout.SOUTH);
         jPanelButtons.add(jButtonOK, null);
         jPanelButtons.add(jButtonCancel, null);
@@ -507,43 +569,68 @@ public class StimDialog extends JDialog
         jPanelMain.add(jTextFieldCellNumber,          new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(6, 14, 6, 14), 200, 0));
 
-        jPanelMain.add(jLabelSegment,            new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 14, 6, 0), 0, 0));
+//        jPanelMain.add(jLabelSegment,            new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
+//            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 14, 6, 0), 0, 0));
+//
+//        jPanelMain.add(jTextFieldSegmentId,               new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0
+//            ,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(6, 14, 6, 6), 0, 0));
+//
+        jPanelMain.add(this.jButtonCellChooserChange,          new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 14, 6, 0), 0, 0));
 
-        jPanelMain.add(jTextFieldSegmentId,               new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0
-            ,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(6, 14, 6, 6), 0, 0));
+//        jPanelMain.add(jButtonSegment,          new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0
+//            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(6, 6, 6, 14), 0, 0));
 
 
         jPanelMain.add(this.jButtonCellChooserChange,          new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0
             ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 14, 6, 0), 0, 0));
 
+        jPanelMain.add(jLabelLocation,          new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 14, 6, 0), 0, 0));
 
-        jPanelMain.add(jButtonSegment,          new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(6, 6, 6, 14), 0, 0));
-
-        jPanelMain.add(jRadioButtonIClamp,
+        jPanelMain.add(jRadioButtonSingle,
                        new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
                                               GridBagConstraints.WEST,
                                               GridBagConstraints.NONE,
                                               new Insets(6, 14, 6, 0), 0, 0));
 
-        jPanelMain.add(jRadioButtonRandSpike,
+        jPanelMain.add(jRadioButtonDistributed,
                        new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0,
                                               GridBagConstraints.WEST,
                                               GridBagConstraints.NONE,
                                               new Insets(6, 14, 6, 0), 0, 0));
 
-        jPanelMain.add(jRadioButtonRandSpikeExt,
-                       new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0,
+        jPanelMain.add(jLabelType,          new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 14, 6, 0), 0, 0));
+
+        jPanelMain.add(jRadioButtonIClamp,
+                       new GridBagConstraints(0, 9, 1, 1, 0.0, 0.0,
                                               GridBagConstraints.WEST,
                                               GridBagConstraints.NONE,
                                               new Insets(6, 14, 6, 0), 0, 0));
 
+        jPanelMain.add(jRadioButtonRandSpike,
+                       new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0,
+                                              GridBagConstraints.WEST,
+                                              GridBagConstraints.NONE,
+                                              new Insets(6, 14, 6, 0), 0, 0));
 
-        jPanelMain.add(jButtonStimChange,    new GridBagConstraints(1, 5, 2, 3, 0.0, 0.0
+        jPanelMain.add(jRadioButtonRandSpikeExt,
+                       new GridBagConstraints(0, 11, 1, 1, 0.0, 0.0,
+                                              GridBagConstraints.WEST,
+                                              GridBagConstraints.NONE,
+                                              new Insets(6, 14, 6, 0), 0, 0));
+
+        jPanelMain.add(jButtonLocationChange,    new GridBagConstraints(1, 5, 2, 3, 0.0, 0.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+        
+        jPanelMain.add(jTextFieldLocationInfo,   new GridBagConstraints(0, 7, 3, 1, 0.0, 0.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(6, 14, 6, 14), 0, 0));
+
+        jPanelMain.add(jButtonStimChange,    new GridBagConstraints(1, 8, 2, 3, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-        jPanelMain.add(jTextFieldInfo,   new GridBagConstraints(0, 8, 3, 1, 0.0, 0.0
+        jPanelMain.add(jTextFieldInfo,   new GridBagConstraints(0, 12, 3, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(6, 14, 6, 14), 0, 0));
 
 
@@ -551,6 +638,8 @@ public class StimDialog extends JDialog
             ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 14, 6, 0), 0, 0));
 
 
+        buttonGroupSegments.add(jRadioButtonSingle);
+        buttonGroupSegments.add(jRadioButtonDistributed);
 
 
         buttonGroupStims.add(jRadioButtonIClamp);
@@ -558,8 +647,8 @@ public class StimDialog extends JDialog
         buttonGroupStims.add(jRadioButtonRandSpikeExt);
 
 
-        jPanelMain.add(jTextFieldFractionAlong,   new GridBagConstraints(1, 4, 2, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 14, 6, 14), 0, 0));
+//        jPanelMain.add(jTextFieldFractionAlong,   new GridBagConstraints(1, 4, 2, 1, 0.0, 0.0
+//            ,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 14, 6, 14), 0, 0));
     }
 
 
@@ -637,30 +726,81 @@ public class StimDialog extends JDialog
 
     }
 
+    void jButtonLocationChange_actionPerformed(ActionEvent e)
+    {
+        String cellGroupToStim = (String)jComboBoxCellGroup.getSelectedItem();
+        String cellType = project.cellGroupsInfo.getCellType(cellGroupToStim);
+
+        if (jRadioButtonSingle.isSelected())
+        {
+            String segIdString = JOptionPane.showInputDialog("Please enter the segmentIDs: ", 0);
+
+            Float fraction = new Float(JOptionPane.showInputDialog("Please enter the fraction along the segment (only used in NEURON): ", 0.5));
+                  
+            IndividualSegments chooser = (IndividualSegments)chosenSegLocChooser;
+            ArrayList<Integer> ids = new ArrayList<Integer>();
+            String[] segIds = segIdString.split(" ");
+            for(String s: segIds)
+            {
+                ids.add(Integer.parseInt(s));
+            }
+            
+            chooser.setListOfSegmentIds(ids);
+            jTextFieldLocationInfo.setText(chooser.toNiceString());
+        }
+
+        if (jRadioButtonDistributed.isSelected())
+        {
+            
+            GroupDistributedSegments chooser = (GroupDistributedSegments)chosenSegLocChooser;
+            
+            Cell cellForSelectedGroup = project.cellManager.getCell(cellType);
+            
+            Vector<String> grps = cellForSelectedGroup.getAllGroupNames();
+            String[] names = new String[grps.size()];
+            for(int i=0;i<grps.size();i++)
+            {
+                names[i] = grps.get(i);
+            }
+            String selectedGroup  
+                    = (String)JOptionPane.showInputDialog(this, "Please enter the name of the group: ", 
+                    "Select group", JOptionPane.QUESTION_MESSAGE, null, names, chooser.getGroup());
+        
+
+            Integer nPoints = new Integer(JOptionPane.showInputDialog("Please enter the number of points along the group: "));
+
+            
+            chooser.setGroup(selectedGroup);
+            chooser.setNumberOfSegments(nPoints);
+            jTextFieldLocationInfo.setText(chooser.toNiceString());
+        }
+
+
+    }
 
 
     void jButtonStimChange_actionPerformed(ActionEvent e)
     {
         if (jRadioButtonIClamp.isSelected())
         {
-            
+
             NumberGenerator oldNumGenDel = tempIClamp.getDel();
 
             NumberGenerator newNumGenDel = NumberGeneratorDialog.showDialog(this,
                                                                          "Delay",
                                                                          "Please enter the delay before the pulse (ms)", oldNumGenDel);
             tempIClamp.setDel(newNumGenDel);
-            
-            
+
+
             NumberGenerator oldNumGenDur = tempIClamp.getDur();
 
             NumberGenerator newNumGenDur = NumberGeneratorDialog.showDialog(this,
                                                                          "Duration",
                                                                          "Please enter the duration of the pulse (ms)", oldNumGenDur);
             tempIClamp.setDur(newNumGenDur);
-            
-            
-            
+
+
+
             NumberGenerator oldNumGenAmp = tempIClamp.getAmp();
 
             NumberGenerator newNumGenAmp = NumberGeneratorDialog.showDialog(this,
@@ -668,10 +808,10 @@ public class StimDialog extends JDialog
                                                                          "Please enter the amplitude of the pulse ("+
                                                      UnitConverter.currentUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+")", oldNumGenAmp);
             tempIClamp.setAmp(newNumGenAmp);
-            
-            
-            
-            
+
+
+
+
  /*           SequenceGenerator sg1 = tempIClamp.getDelay();
 
             SequenceGenerator newSg1 = SequenceGeneratorDialog.showDialog(this,
@@ -884,10 +1024,10 @@ public class StimDialog extends JDialog
 
     }
 
-    
-    private void setSegChooserInfo(SegmentChooser segCh)
+
+    private void setSegChooserInfo(SegmentLocationChooser segCh)
     {
-        jTextFieldSegmentId.setText(chosenSegChooser.toString());
+        jTextFieldSegmentId.setText(chosenSegLocChooser.toString());
 
     }
 
@@ -909,7 +1049,7 @@ public class StimDialog extends JDialog
         Cell cellForSelectedGroup = project.cellManager.getCell(cellType);
 
 
-        
+
         if (stim instanceof IClampSettings)
         {
             jRadioButtonIClamp.setSelected(true);
@@ -929,31 +1069,39 @@ public class StimDialog extends JDialog
         }
 
         jTextFieldInfo.setText(stim.toString());
-        
-        
-        this.chosenSegChooser = stim.getSegChooser();
-        
+
+
+        this.chosenSegLocChooser = stim.getSegChooser();
+        if(chosenSegLocChooser instanceof IndividualSegments)
+        {
+            indSegChooser = (IndividualSegments)chosenSegLocChooser;
+        }
+        else if (chosenSegLocChooser instanceof GroupDistributedSegments)
+        {
+            gds = (GroupDistributedSegments)chosenSegLocChooser;
+        }
+
         //Segment segToStim = checkSegId();
-        
-        setSegChooserInfo(chosenSegChooser);
+
+        setSegChooserInfo(chosenSegLocChooser);
 
     }
     /*
     Segment checkSegId()
     {
-        
+
         String cellType = project.cellGroupsInfo.getCellType((String)jComboBoxCellGroup.getSelectedItem());
         Cell cellForSelectedGroup = project.cellManager.getCell(cellType);
-        
+
         Segment segToStim = null;
-            
+
         while ((segToStim = cellForSelectedGroup.getSegmentWithId(chosenSegmentId)) == null)
         {
             GuiUtils.showErrorMessage(logger, "Error: stimulation: "+jTextFieldReference.getText()+" specified as placed on segment ID: "+chosenSegmentId+
                 ", but there is no such segment in cell "+ cellForSelectedGroup.getInstanceName(), null, this);
-            
+
             this.jButtonSegment_actionPerformed(null);
-            
+
         }
         return segToStim;
     }*/
@@ -969,16 +1117,16 @@ public class StimDialog extends JDialog
         String message = "Please specify which segment to stimulate";
 
         //String answer = JOptionPane.showInputDialog(message, this.chosenSegmentId+"");
-        
+
         Vector<Segment> segs = cellForSelectedGroup.getAllSegments();
         String[] opts = new String[segs.size()];
         String pref = null;
-        
+
         for (int i=0;i<segs.size();i++)
         {
             Segment seg = segs.get(i);
             opts[i] = seg.getSegmentId()+": "+seg.getSegmentName();
-            
+
             if (chosenSegmentId == seg.getSegmentId())
             {
                 logger.logComment("Pref is: "+opts[i]);
@@ -986,12 +1134,12 @@ public class StimDialog extends JDialog
             }
         }
         if (pref == null) pref = opts[0];
-        
-        String answer = (String)JOptionPane.showInputDialog(this, message, "Select segment to stimulate", 
+
+        String answer = (String)JOptionPane.showInputDialog(this, message, "Select segment to stimulate",
             JOptionPane.QUESTION_MESSAGE, null, opts, pref);
-        
+
         if (answer == null) return;
-        
+
         answer = answer.substring(0,answer.indexOf(":"));
 
         try
@@ -999,8 +1147,8 @@ public class StimDialog extends JDialog
             chosenSegmentId = Integer.parseInt(answer);
 
             Segment segToStim = cellForSelectedGroup.getSegmentWithId(chosenSegmentId);
-            
-            
+
+
             setSegInfo(segToStim);
 
         }

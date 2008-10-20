@@ -15,8 +15,8 @@ package ucl.physiol.neuroconstruct.project;
 import java.util.*;
 
 
-import java.util.logging.Level;
 import ucl.physiol.neuroconstruct.cell.Cell;
+import ucl.physiol.neuroconstruct.cell.SegmentLocation;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
 import ucl.physiol.neuroconstruct.project.segmentchoice.AllSegmentsChosenException;
 import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentChooserException;
@@ -189,12 +189,14 @@ public class ElecInputGenerator extends Thread
                     {
                         while (true)
                         {
+                            SegmentLocation sl = nextStim.getSegChooser().getNextSegLoc();
+                            
                             project.generatedElecInputs.addSingleInput(nextStim.getReference(), 
                                                                        nextStim.getElectricalInput().getType(), 
                                                                        nextStim.getCellGroup(), 
                                                                        nextCellNumber, 
-                                                                       nextStim.getSegChooser().getNextSegmentId(), 
-                                                                       nextStim.getFractionAlong(), 
+                                                                       sl.getSegmentId(), 
+                                                                       sl.getFractAlong(), 
                                                                        ip);
 
                         }
