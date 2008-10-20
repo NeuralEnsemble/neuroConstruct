@@ -489,11 +489,12 @@ public class CellTopologyHelper
     private static String cachedFinishCellGroup = null;
     private static MaxMinLength cachedMaxMinLength = null;
     private static Point3f cachedStartPos = null;
-    private static String cachedCellType = null;
+    private static String cachedStartCellType = null;
     private static RectangularBox cachedCellBoundBox = null;
     
     
-    public static int[] getAllowedPostCellIds(Cell cell,
+    public static int[] getAllowedPostCellIds(Cell startCell,
+                                              Cell finishCell,
                                               Point3f startCellPos, 
                                               MaxMinLength maxMin, 
                                               String finishCellGroup, 
@@ -510,7 +511,7 @@ public class CellTopologyHelper
         
         int[] allowedFinishCells = null;
         
-        if (maxMinIncludesAll)
+        if (maxMinIncludesAll || finishCell.getAllSegments().size()>1)  // TODO: deal with case where post cell size is taken into account...
         {
             allowedFinishCells = new int[finishPosRecords.size()];
 
@@ -523,18 +524,18 @@ public class CellTopologyHelper
         {
             RectangularBox cellBox = null;
             
-            if(cachedCellType!=null && cachedCellType.equals(cell.getInstanceName()))
+            if(cachedStartCellType!=null && cachedStartCellType.equals(startCell.getInstanceName()))
             {
                 cellBox = cachedCellBoundBox;
             }
             else
             {
-                float maxX = CellTopologyHelper.getMaxXExtent(cell, false, false);
-                float maxY = CellTopologyHelper.getMaxYExtent(cell, false, false);
-                float maxZ = CellTopologyHelper.getMaxZExtent(cell, false, false);
-                float minX = CellTopologyHelper.getMinXExtent(cell, false, false);
-                float minY = CellTopologyHelper.getMinYExtent(cell, false, false);
-                float minZ = CellTopologyHelper.getMinZExtent(cell, false, false);
+                float maxX = CellTopologyHelper.getMaxXExtent(startCell, false, false);
+                float maxY = CellTopologyHelper.getMaxYExtent(startCell, false, false);
+                float maxZ = CellTopologyHelper.getMaxZExtent(startCell, false, false);
+                float minX = CellTopologyHelper.getMinXExtent(startCell, false, false);
+                float minY = CellTopologyHelper.getMinYExtent(startCell, false, false);
+                float minZ = CellTopologyHelper.getMinZExtent(startCell, false, false);
 
                 cellBox = new RectangularBox(minX, minY, minZ, maxX-minX, maxY-minY, maxZ-minZ);
 
@@ -558,7 +559,7 @@ public class CellTopologyHelper
                 }
                 logger.logComment("Box: "+ cellBox, true);
 
-                cachedCellType = cell.getInstanceName();
+                cachedStartCellType = startCell.getInstanceName();
                 cachedCellBoundBox = cellBox;
             }
                 

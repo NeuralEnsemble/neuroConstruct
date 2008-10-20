@@ -95,8 +95,13 @@ public class MaxMinLength
     @Override
     public String toString()
     {
+        String maxLenStr = minLength+"";
+        
+        if (maxLength==Float.MAX_VALUE)
+            maxLenStr = "MAX";
+        
         return "Max: "
-            + maxLength
+            + maxLenStr
             + ", min: "
             + minLength
                + ", dim: "

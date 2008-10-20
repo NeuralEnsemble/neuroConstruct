@@ -7294,8 +7294,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             return;
         }
 
-
-
         boolean isSourceCellGroup = false;
         boolean isTargetCellGroup = false;
         String theOtherCellGroup = null;
@@ -7306,7 +7304,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             String tgt = projManager.getCurrentProject().morphNetworkConnectionsInfo.getTargetCellGroup(selectedNetConn);
 
             isSourceCellGroup = selectedCellGroup.equals(src);
-
             isTargetCellGroup = selectedCellGroup.equals(tgt);
 
              if (isSourceCellGroup) theOtherCellGroup = tgt;
@@ -7318,15 +7315,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             String tgt = projManager.getCurrentProject().volBasedConnsInfo.getTargetCellGroup(selectedNetConn);
 
             isSourceCellGroup = selectedCellGroup.equals(src);
-
             isTargetCellGroup = selectedCellGroup.equals(tgt);
 
             if (isSourceCellGroup) theOtherCellGroup = tgt;
             else theOtherCellGroup = src;
 
         }
-
-
 
         if (!isSourceCellGroup && !isTargetCellGroup)
         {
@@ -7337,7 +7331,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             return;
         }
 
-        ArrayList<SingleSynapticConnection> netConns = projManager.getCurrentProject().generatedNetworkConnections.getSynapticConnections(selectedNetConn);
+        //ArrayList<SingleSynapticConnection> netConns = projManager.getCurrentProject().generatedNetworkConnections.getSynapticConnections(selectedNetConn);
+        
+        int[][] mx = projManager.getCurrentProject().generatedNetworkConnections.getConnectionMatrix(selectedNetConn, projManager.getCurrentProject());
 
         String desc = "No. of conns on "
                                           + selectedCellGroup + " in "
@@ -7345,22 +7341,45 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         PlotterFrame frame = PlotManager.getPlotterFrame(desc);
 
-        DataSet dataSet = new DataSet(selectedCellGroup + " to "+theOtherCellGroup +" conns in "+selectedNetConn,
-                                      desc,
-            "", "", "Cell index", "Number of conns");
+        DataSet dataSet1 = new DataSet(selectedCellGroup + " to "+theOtherCellGroup +" in "+selectedNetConn,
+                                      desc, "", "", "Cell index", "Number of conns");
+        
+        DataSet dataSet2 = new DataSet(selectedCellGroup + " to UNIQUE cells in "+theOtherCellGroup +" in "+selectedNetConn,
+                                      desc, "", "", "Cell index", "Number of unique conns");
 
-        dataSet.setGraphFormat(PlotCanvas.USE_BARCHART_FOR_PLOT);
+        dataSet1.setGraphFormat(PlotCanvas.USE_BARCHART_FOR_PLOT);
+        dataSet2.setGraphFormat(PlotCanvas.USE_BARCHART_FOR_PLOT);
 
         frame.setViewMode(PlotCanvas.INCLUDE_ORIGIN_VIEW);
 
         int numInCellGroup = projManager.getCurrentProject().generatedCellPositions.getNumberInCellGroup(selectedCellGroup);
 
         int[] numberConnections = new int[numInCellGroup];
-        for (int i = 0; i < numInCellGroup; i++)
+        int[] numberUniqueConnections = new int[numInCellGroup];
+        
+        for(int i =0;i<mx.length;i++)
         {
-            numberConnections[i] = 0;
+            for(int j =0;j<mx[i].length;j++)
+            {
+                int totConns = mx[i][j];
+                //System.out.println("x(i,j) = x("+i+","+j+") = "+mx[i][j]);
+                if (isSourceCellGroup)
+                {
+                    numberConnections[i] = numberConnections[i]+ totConns;
+                    if (totConns>0)
+                    numberUniqueConnections[i]++;
+                }
+                else if (isTargetCellGroup)
+                {
+                    numberConnections[j] = numberConnections[j]+ totConns;
+                    if (totConns>0)
+                    numberUniqueConnections[j]++;
+                }
+                
+            }
         }
-
+        
+/*
         for (int i = 0; i < netConns.size(); i++)
         {
             SingleSynapticConnection oneConn = netConns.get(i);
@@ -7375,13 +7394,18 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 // add 1 for the entry correspondign to the cell number of this single conn...
                   numberConnections[oneConn.targetEndPoint.cellNumber]++;
             }
-        }
+        }*/
+        
+        
+        
         for (int i = 0; i < numInCellGroup; i++)
         {
-            dataSet.addPoint(i, numberConnections[i]);
+            dataSet1.addPoint(i, numberConnections[i]);
+            dataSet2.addPoint(i, numberUniqueConnections[i]);
         }
 
-        frame.addDataSet(dataSet);
+        frame.addDataSet(dataSet1);
+        frame.addDataSet(dataSet2);
         frame.repaint();
 
 

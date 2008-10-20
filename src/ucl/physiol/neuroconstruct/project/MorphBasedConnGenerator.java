@@ -232,7 +232,13 @@ public class MorphBasedConnGenerator extends Thread
                     ArrayList<PositionRecord> finishPosRecords = project.generatedCellPositions.getPositionRecords(genFinishCellGroup);
                     Point3f startCellPos = project.generatedCellPositions.getOneCellPosition(genStartCellGroup, genStartCellNumber);
                     
-                    int[] allowedFinishCells = CellTopologyHelper.getAllowedPostCellIds(genStartCellInstance, startCellPos, maxMin, genFinishCellGroup, finishPosRecords);
+                    int[] allowedFinishCells 
+                        = CellTopologyHelper.getAllowedPostCellIds(genStartCellInstance, 
+                                                                   genFinishCellInstance,
+                                                                   startCellPos, 
+                                                                   maxMin, 
+                                                                   genFinishCellGroup, 
+                                                                   finishPosRecords);
                     
                     
                     float numConnFloat = connConds.getNumConnsInitiatingCellGroup().getNextNumber();

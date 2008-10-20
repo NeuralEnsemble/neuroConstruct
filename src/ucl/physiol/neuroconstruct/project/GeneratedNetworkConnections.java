@@ -125,6 +125,58 @@ public class GeneratedNetworkConnections
                 +targetCellNumber+"("+targetCellSgmentIndex+"("+targetCellDisplacement+")), props: "+props);
         //logger.logComment("Current num syn conns: "+ getNumberSynapticConnections());
     }
+    
+    /*
+     * @returns A matrix of size (pre syn cell number) x (post syn cell number) with entry (i,j)
+     * giving the number of connections between pre cell i and post cell j
+     * 
+     */
+    public int[][] getConnectionMatrix(String netConnectionName, Project project)
+    {
+        logger.logComment("Synaptic conn matrix sought for: #" + this.hashCode() + " out of my " +
+                          getNumberSynapticConnections(ANY_NETWORK_CONNECTION)
+                          + " net conns from " + mySynapticConnectionVectors.keySet());
+        
+
+        if (!mySynapticConnectionVectors.containsKey(netConnectionName))
+        {
+            logger.logComment("No SingleSynapticConnections yet...");
+            return null;
+        }
+        
+        ArrayList<SingleSynapticConnection> synapticConnectionVector
+            = mySynapticConnectionVectors.get(netConnectionName);
+        
+        String src = null;
+        String tgt = null;
+        
+        if (project.morphNetworkConnectionsInfo.isValidSimpleNetConn(netConnectionName))
+        {
+            src = project.morphNetworkConnectionsInfo.getSourceCellGroup(netConnectionName);
+            tgt = project.morphNetworkConnectionsInfo.getTargetCellGroup(netConnectionName);
+
+        }
+        else if (project.volBasedConnsInfo.isValidVolBasedConn(netConnectionName))
+        {
+            src = project.volBasedConnsInfo.getSourceCellGroup(netConnectionName);
+            tgt = project.volBasedConnsInfo.getTargetCellGroup(netConnectionName);
+
+        }
+        
+        
+        int[][] mx = new int[project.generatedCellPositions.getNumberInCellGroup(src)][project.generatedCellPositions.getNumberInCellGroup(tgt)];
+       
+        
+        
+        for(SingleSynapticConnection conn: synapticConnectionVector)
+        {
+            mx[conn.sourceEndPoint.cellNumber][conn.targetEndPoint.cellNumber]++;
+        }
+
+        logger.logComment(synapticConnectionVector.size()+ " SingleSynapticConnections so far...");
+        
+        return mx;
+    }
 
 
     public ArrayList<SingleSynapticConnection> getSynapticConnections(String netConnectionName)
@@ -1146,7 +1198,7 @@ public class GeneratedNetworkConnections
     {
         try
         {
-            Project testProj = Project.loadProject(new File("/bernal/projects/Delays/Delays.neuro.xml"),
+            Project testProj = Project.loadProject(new File("examples/Ex5-Networks/Ex5-Networks.neuro.xml"),
                                                    new ProjectEventListener()
             {
                 public void tableDataModelUpdated(String tableModelName)
@@ -1160,7 +1212,17 @@ public class GeneratedNetworkConnections
 
             });
 
-            GeneratedNetworkConnections gnc = new GeneratedNetworkConnections(testProj);
+            GeneratedCellPositions gcp = testProj.generatedCellPositions;
+            GeneratedNetworkConnections gnc = testProj.generatedNetworkConnections;
+
+            gcp.addPosition("LowerCellGroup", 0, 0, 1, 2);
+            gcp.addPosition("LowerCellGroup", 1, 0, 1, 2);
+            gcp.addPosition("LowerCellGroup", 2, 0, 1, 2);
+            gcp.addPosition("LowerCellGroup", 3, 0, 1, 2);
+            
+            gcp.addPosition("UpperCellGroup", 0, 0, 1, 2);
+            gcp.addPosition("UpperCellGroup", 1, 0, 1, 2);
+            gcp.addPosition("UpperCellGroup", 2, 0, 1, 2);
 
             //System.out.println("Internal info: \n" + gnc.toString()); ;
 
@@ -1174,24 +1236,36 @@ public class GeneratedNetworkConnections
             props.add(cp);
             System.out.println("props: " + props);
 
+            String nc1 = "Random";
+            String nc2 = "NetConn_SampleCellGroup_CellGroup_2_1";
+            
 
-
-            gnc.addSynapticConnection("NetConn_SampleCellGroup_CellGroup_2",
-                                      GeneratedNetworkConnections.COMPLEX_NETWORK_CONNECTION,
+            gnc.addSynapticConnection(nc1,
+                                      GeneratedNetworkConnections.VOL_NETWORK_CONNECTION,
                                       1,2,0.5f,2,4,0.7f,
                                       999,
                                       null);
-            gnc.addSynapticConnection("NetConn_SampleCellGroup_CellGroup_2",
-                                      GeneratedNetworkConnections.COMPLEX_NETWORK_CONNECTION,
+            
+            
+            gnc.addSynapticConnection(nc1,
+                                      GeneratedNetworkConnections.VOL_NETWORK_CONNECTION,
                                       1,2,0.7f,2,4,0.7f,
                                       999,
                                       null);
-            gnc.addSynapticConnection("NetConn_SampleCellGroup_CellGroup_2_1",
-                                      GeneratedNetworkConnections.COMPLEX_NETWORK_CONNECTION,
+            
+            
+            gnc.addSynapticConnection(nc1, 2,1);
+            gnc.addSynapticConnection(nc1, 1,1);
+            gnc.addSynapticConnection(nc1, 0,0);
+            gnc.addSynapticConnection(nc1, 0,1);
+            
+            
+            gnc.addSynapticConnection(nc2,
+                                      GeneratedNetworkConnections.VOL_NETWORK_CONNECTION,
                                       1,2,0.6f,2,4,0.7f,
                                       999,
                                       null);
-            gnc.addSynapticConnection("NetConn_SampleCellGroup_CellGroup_2_1",
+            gnc.addSynapticConnection(nc2,
                                       GeneratedNetworkConnections.MORPH_NETWORK_CONNECTION,
                                       1,2,0.9f,2,4,0.7f,
                                       999,
@@ -1199,7 +1273,17 @@ public class GeneratedNetworkConnections
 
             System.out.println("Internal info: \n" + gnc.toString()); 
             String home = System.getProperty("user.home");
+            
+            int[][] mx = gnc.getConnectionMatrix(nc1, testProj);
+            
+            for(int i =0;i<mx.length;i++)
+            {
+                for(int j =0;j<mx[i].length;j++)
+                    System.out.println("x(i,j) = x("+i+","+j+") = "+mx[i][j]);
+            }
+            
 
+            /*
             SimpleXMLEntity projs = gnc.getNetworkMLElement(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, true);
 
             System.out.println("projs: "+projs.getXMLString("", false));
@@ -1215,7 +1299,7 @@ if (true) return;
 
             cpr2.loadFromFile(f);
             System.out.println("New internal info: \n" + cpr2.toString()); 
-
+*/
 
 
 

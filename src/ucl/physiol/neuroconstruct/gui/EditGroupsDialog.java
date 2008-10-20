@@ -509,13 +509,13 @@ public class EditGroupsDialog
 
     void jButtonRename_actionPerformed(ActionEvent e)
     {
+        String oldGroupName = (String) jComboBoxGroupNames.getSelectedItem();
+
         String groupName = new String();
-        groupName = JOptionPane.showInputDialog("Please enter the new name of the group");
+        groupName = JOptionPane.showInputDialog("Please enter the new name for the group: "+ oldGroupName);
         if (groupName == null) return;
         String newGroupName = groupName;
 //        String newGroupName = jTextFieldRename.getText().trim();
-        String oldGroupName = (String) jComboBoxGroupNames.getSelectedItem();
-
         if (newGroupName.length()==0) return;
 
 
