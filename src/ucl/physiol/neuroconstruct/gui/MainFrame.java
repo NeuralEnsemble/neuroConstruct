@@ -6633,6 +6633,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     }
     
+    private void setGeneratorInfo(String text)
+    {
+            jEditorPaneGenerateInfo.setText(text);
+    }
     
 
 
@@ -6642,7 +6646,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         if (generatorType.equals(CellPositionGenerator.myGeneratorType))
         {
-            jEditorPaneGenerateInfo.setText(report);
+            setGeneratorInfo(report);
+            try 
+            {
+                Thread.sleep(500); // to ensure updated info screen
+            } 
+            catch (InterruptedException ex) {
+                // go on...
+            }
             //Document doc = jEditorPaneGenerateInfo.getEditorKit().createDefaultDocument();
             //doc.insertString(0, report, null);
             
@@ -6685,7 +6696,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             String update = new String(currentReport.substring(0, currentReport.lastIndexOf("</body>")) + report);
 
-            jEditorPaneGenerateInfo.setText(update + "  ");
+            setGeneratorInfo(update + "  ");
 
 
 
@@ -6712,7 +6723,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             String update = new String(currentReport.substring(0,currentReport.lastIndexOf("</body>")) // as the jEditorPane returns html...
                                        +report);
             
-            jEditorPaneGenerateInfo.setText(update);
+            setGeneratorInfo(update);
 
             if (report.indexOf("Generation interrupted")>0)
             {
@@ -6736,7 +6747,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             String update = new String(currentReport.substring(0,currentReport.lastIndexOf("</body>")) // as the jEditorPane returns html...
                                        +report);
 
-            jEditorPaneGenerateInfo.setText(update);
+            setGeneratorInfo(update);
 
 
 
@@ -6762,7 +6773,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             String update = new String(currentReport.substring(0, currentReport.lastIndexOf("</body>")) // as the jEditorPane returns html...
                                        + report);
-            jEditorPaneGenerateInfo.setText(update);
+            
+            setGeneratorInfo(update);
 
             if (report.indexOf("Generation interrupted") > 0)
             {
@@ -6788,7 +6800,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             String update = new String(currentReport.substring(0, currentReport.lastIndexOf("</body>")) // as the jEditorPane returns html...
                                        + report);
 
-            jEditorPaneGenerateInfo.setText(update);
+            setGeneratorInfo(update);
 
             this.jButtonGenerateStop.setEnabled(false);
 

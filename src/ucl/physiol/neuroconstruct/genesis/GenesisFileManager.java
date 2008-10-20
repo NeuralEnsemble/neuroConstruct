@@ -2001,7 +2001,6 @@ public class GenesisFileManager
 
         if (project.genesisSettings.isGraphicsMode())
         {
-
             addMajorComment(response, "Adding " + plots.size() + " plot(s)");
 
             for (PlotSaveDetails plot : plots)
@@ -2010,7 +2009,7 @@ public class GenesisFileManager
                 {
                     String error = "Note, synaptic mechanism variable plotting/saving not supported yet in GENESIS, so not plotting: "+plot.simPlot;
                     logger.logError(error);
-
+                    response.append("\n");
                     addComment(response, error);
 
                 }

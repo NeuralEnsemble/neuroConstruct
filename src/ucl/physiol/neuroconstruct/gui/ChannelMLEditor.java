@@ -1965,9 +1965,10 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         }
         catch (Exception ex)
         {
-            GuiUtils.showErrorMessage(logger, "Problem validating the ChannelML file. Note that the file was validated\n"
-                                      + "against the version of the ChannelML schema (v"+GeneralProperties.getNeuroMLVersionNumber()+") included with this distribution\n"
-                                      + "of neuroConstruct. To validate it against current and past schema see:\n"
+            GuiUtils.showErrorMessage(logger, "Problem validating the ChannelML file. Note that the file was validated against the version of the ChannelML " +
+                "schema (v"+GeneralProperties.getNeuroMLVersionNumber()+") included with this distribution of neuroConstruct:\n" 
+                + schemaFile.getAbsolutePath()+"\n\n"
+                                      + "To validate it against current and past schema see:\n"
                                       + GeneralProperties.getWebsiteNMLValidator(), ex, this);
 
             return;
