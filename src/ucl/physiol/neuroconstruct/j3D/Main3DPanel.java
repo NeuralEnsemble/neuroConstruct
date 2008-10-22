@@ -592,15 +592,14 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         }
 
         ArrayList<String> refs = project.generatedElecInputs.getInputReferences();
-
-
-        float probeLength = 50;
-        float probeStartRadius = 3f;
-        float probeEndRadius = 1f;
+      
+        float probeLength = 40; //50
+        float probeStartRadius = 2f; //3f
+        float probeEndRadius = 0.5f; //1f
         Appearance inputApp = Utils3D.getTransparentObjectAppearance(Color.white, 0.7f);
 
         for (int k = 0; k < refs.size(); k++)
-        {
+                {
             ArrayList<SingleElectricalInput> allInputs = project.generatedElecInputs.getInputLocations(refs.get(k));
 
 
@@ -635,25 +634,21 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                 //addPositionedSphere(mainTG, absolutePositionProbe, Color.yellow, probeStartRadius);
 
                 Vector3d move = new Vector3d(absolutePositionProbe);
-                Vector3d moveUp = new Vector3d(0, probeLength/-2, 0);
+                
                 //Vector3d moveUp = new Vector3d(probeLength/-2,0, 0);
                 Transform3D shiftAlong = new Transform3D();
-                move.add(moveUp);
-                shiftAlong.setTranslation(move);
-
-                TransformGroup shiftedTG = new TransformGroup(shiftAlong);
-
-                //Sphere sphere = new Sphere(radius,
-                //                           Sphere.GENERATE_NORMALS |
-                //                           Sphere.GENERATE_TEXTURE_COORDS,
-                //                           30,
-                //                           Utils3D.getGeneralObjectAppearance(colour));
-
+                
 /*
                 Point3f endProbePosition = new Point3f(absolutePositionProbe.x,
                                                        absolutePositionProbe.y - probeLength,
                                                        absolutePositionProbe.z);*/
-
+                
+ 
+                Vector3d moveUp = new Vector3d(0, probeLength/-2, 0);
+                move.add(moveUp);
+                shiftAlong.setTranslation(move);
+                TransformGroup shiftedTG = new TransformGroup(shiftAlong);
+                
                 ConicalFrustrum probe = new ConicalFrustrum(probeStartRadius,
                               probeEndRadius,
                               probeLength,
@@ -662,14 +657,19 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                               ConicalFrustrum.ENABLE_APPEARANCE_MODIFY,
                               project.proj3Dproperties.getResolution3DElements(),
                               inputApp);
-
-
+                
                 shiftedTG.addChild(probe);
-
                 mainTG.addChild(shiftedTG);
 
-            }
+                     
 
+//                shiftAlong.setTranslation(move);
+//                TransformGroup shiftedTG = new TransformGroup(shiftAlong);
+//                Sphere sphere = new Sphere(3);
+//                shiftedTG.addChild(sphere);
+//                mainTG.addChild(shiftedTG);
+          
+        }
         }
     }
 

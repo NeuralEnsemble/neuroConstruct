@@ -1075,11 +1075,15 @@ public class StimDialog extends JDialog
         if(chosenSegLocChooser instanceof IndividualSegments)
         {
             indSegChooser = (IndividualSegments)chosenSegLocChooser;
+            jRadioButtonSingle.setSelected(true);
         }
         else if (chosenSegLocChooser instanceof GroupDistributedSegments)
         {
             gds = (GroupDistributedSegments)chosenSegLocChooser;
+            jRadioButtonDistributed.setSelected(true);
         }
+        
+        jTextFieldLocationInfo.setText(chosenSegLocChooser.toString());
 
         //Segment segToStim = checkSegId();
 
