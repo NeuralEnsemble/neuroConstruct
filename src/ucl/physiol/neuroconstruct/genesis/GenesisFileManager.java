@@ -2558,7 +2558,7 @@ public class GenesisFileManager
                                                 //    paramName = "Ek";
                                                 //}
                                                 response.append("foreach tempChanName ({el "+chanElement+"})\n"+
-                                                                "    echo Resetting param "+paramName+" to "+paramVal+" on {tempChanName} \n"+
+                                                                "    //echo Resetting param "+paramName+" to "+paramVal+" on {tempChanName} \n"+
                                                                 "    setfield {tempChanName} "+paramName+" "+paramVal+"\n"+
                                                                 initCmd+
                                                                 "end\n\n");

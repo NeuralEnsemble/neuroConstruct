@@ -103,6 +103,21 @@ public class ChannelMechanism implements Serializable
         return false;
     }
 
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 73 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 73 * hash + Float.floatToIntBits(this.density);
+        //hash = 73 * hash + (this.extraParameters != null ? this.extraParameters.hashCode() : 0);
+        if(extraParameters != null)
+        {
+            for(MechParameter mp: extraParameters)
+                hash = 73 * hash + mp.hashCode();
+        }
+        return hash;
+    }
+
 
     @Override
     public String toString()
@@ -142,6 +157,20 @@ public class ChannelMechanism implements Serializable
                 info.append("__"+ mp.getName()+"_"+ val);
             }
         }
+        
+        if (info.toString().length()>name.length()+12)
+        {
+            info = new StringBuffer(name);
+            int tot = 0;
+            if(extraParameters != null)
+            {
+                for(MechParameter mp: extraParameters)
+                    tot+=mp.hashCode();
+            }
+                   info.append("__"+ tot);
+            
+        }
+        
         return info.toString();
     }
     
@@ -212,9 +241,26 @@ public class ChannelMechanism implements Serializable
         cm.getExtraParameters().add(mp1);
         cm2.getExtraParameters().add(mp2);
         
+        cm.getExtraParameters().add(new MechParameter("a", 0));
+        cm.getExtraParameters().add(new MechParameter("b", 0));
+        cm.getExtraParameters().add(new MechParameter("c", 0));
+        cm.getExtraParameters().add(new MechParameter("d", 0));
+        
         
         System.out.println("ChannelMechanism: "+ cm);
+        System.out.println("ChannelMechanism: "+ cm.getUniqueName());
         
+        
+        System.out.println("ChannelMechanism: "+ cm.hashCode());
+        
+        
+        ChannelMechanism cm3 = (ChannelMechanism)cm.clone();
+        
+        System.out.println("ChannelMechanism 3: "+ cm3);
+        System.out.println("ChannelMechanism 3: "+ cm3.hashCode());
+        
+        
+  /*      
         //cell.associateGroupWithChanMech("all", cm);
         cell.associateGroupWithChanMech("soma_group", cm);
         //cell.associateGroupWithChanMech("dendrite_group", cm2);
@@ -226,7 +272,7 @@ public class ChannelMechanism implements Serializable
         System.out.println("Cell chans: "+ cell.getChanMechsVsGroups());
         
         
-/*
+
         ChannelMechanism cm2 = new ChannelMechanism(cm.toString());
 
 

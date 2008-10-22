@@ -523,7 +523,7 @@ public class GenesisMorphologyGenerator
             
             Vector<ChannelMechanism> consolChanMechs = new Vector<ChannelMechanism>();
             
-            logger.logComment("Consolidating...", true);
+            //logger.logComment("Consolidating...", true);
             
             for (int ll = 0; ll < longChanMechs.size(); ll++)
             {
@@ -550,7 +550,7 @@ public class GenesisMorphologyGenerator
                 if (!dealtWith)
                     consolChanMechs.add((ChannelMechanism)nextChanMech.clone());
             }
-            logger.logComment("Done Consolidating...", true);
+            //logger.logComment("Done Consolidating...", true);
 
             for (int ll = 0; ll < consolChanMechs.size(); ll++)
             {
@@ -616,14 +616,28 @@ public class GenesisMorphologyGenerator
                             }
                             else
                             {
-                                channelCondString.append(nextChanMech.getUniqueName()+ " "+ genDens+ " ");
+                                // In case line is too long...
+                                String d = genDens+ "";
+                                if (genDens==(int)genDens)
+                                    d = (int)genDens+ "";
+                                if (d.startsWith("0."))
+                                    d = d.substring(1);
+                                
+                                channelCondString.append(nextChanMech.getUniqueName()+ " "+ d+ " ");
                             }
                         }
                         else
                         {
                             if (genDens>=0)
                             {
-                                channelCondString.append(nextChanMech.getUniqueName()+ " "+ genDens+ "  ");
+                                // In case line is too long...
+                                String d = genDens+ "";
+                                if (genDens==(int)genDens)
+                                    d = (int)genDens+ "";
+                                if (d.startsWith("0."))
+                                    d = d.substring(1);
+                                
+                                channelCondString.append(nextChanMech.getUniqueName()+ " "+ d+ "  ");
                             }
                             //if (genDens==0)
                             //{
