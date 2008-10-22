@@ -2155,11 +2155,13 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                     {
                         CellChooser choice = (CellChooser)this.jComboBoxCellNum.getSelectedItem();
 
-                        frameTitle = "Plots of: " + choice.toNiceString() + " in cell group " + cellGroupSelected;
+                        frameTitle = "Plots of: " + choice.toNiceString() + " in cell group " 
+                                + cellGroupSelected + " in sim: "+ simRerunFrame.getSimReference();
                     }
                     else if (cellSegRefsToUse.size() > 1)
                     {
-                        frameTitle = "Plots of "+cellSegRefsToUse.size()+" locations in cell group " + cellGroupSelected;
+                        frameTitle = "Plots of "+cellSegRefsToUse.size()+" locations in cell group " 
+                                + cellGroupSelected + " in sim: "+ simRerunFrame.getSimReference();
                     }
                         
 

@@ -2466,7 +2466,7 @@ public class GenesisFileManager
                 PositionRecord posRecord
                     = (PositionRecord) cellGroupPositions.get(cellNumber);
 
-                logger.logComment("Moving cell number: " + cellNumber + " into place");
+                logger.logComment("Moving cell number: " + cellNumber + " into place", true);
 
                 if (cellNumber != posRecord.cellNumber)
                 {
@@ -2500,15 +2500,21 @@ public class GenesisFileManager
                         
                         Enumeration<ChannelMechanism> keys =  chanMechVsGroups.keys();
                         
+                        Hashtable<String, ArrayList<Segment>> segsVsGroups = new Hashtable<String, ArrayList<Segment>>();  // caching of seg lists per group
+                        
                         while(keys.hasMoreElements())
                         {
                             ChannelMechanism cm = keys.nextElement();
                             
                             for(String group: chanMechVsGroups.get(cm))
                             {
-                                ArrayList<Segment> segs = mappedCell.getSegmentsInGroup(group);
+                                if (!segsVsGroups.containsKey(group))
+                                {
+                                    ArrayList<Segment> segsTemp = mappedCell.getSegmentsInGroup(group);
+                                    segsVsGroups.put(group, segsTemp);
+                                }
                                 
-                                
+                                ArrayList<Segment> segs = segsVsGroups.get(group); // retrieve from cache
                                 
                                 ArrayList<String> moveCommands = new ArrayList<String>();
                                 
@@ -2544,11 +2550,11 @@ public class GenesisFileManager
                                                 //{
                                                 //    paramName = "Ek";
                                                 //}
-                                                response.append("foreach tempChanName ({el "+chanElement+"})\n");
-                                                response.append("    echo Resetting param "+paramName+" to "+paramVal+" on {tempChanName} \n");
-                                                response.append("    setfield {tempChanName} "+paramName+" "+paramVal+"\n");
-                                                response.append(initCmd);
-                                                response.append("end\n\n");
+                                                response.append("foreach tempChanName ({el "+chanElement+"})\n"+
+                                                                "    echo Resetting param "+paramName+" to "+paramVal+" on {tempChanName} \n"+
+                                                                "    setfield {tempChanName} "+paramName+" "+paramVal+"\n"+
+                                                                initCmd+
+                                                                "end\n\n");
                                             }
                                             else
                                             {
@@ -2602,8 +2608,8 @@ public class GenesisFileManager
                                                     paramName = "Em";
                                                     initCmd="";
                                                    
-                                                    response.append("setfield "+chanElement+" "+paramName+" "+paramVal+"\n");
-                                                    response.append(initCmd);
+                                                    response.append("setfield "+chanElement+" "+paramName+" "+paramVal+"\n"+
+                                                            initCmd);
                                                 }
                                                 else
                                                 {
@@ -2655,6 +2661,9 @@ public class GenesisFileManager
                                     + "\n");
 
                 }
+                
+                
+                logger.logComment("Done cell number: " + cellNumber + "..", true);
 
                 if (!mooseCompatMode()) 
                 {
@@ -2690,7 +2699,7 @@ public class GenesisFileManager
 
             logger.logComment("\n              ++++++++    Calculating ion exchange, conc dep, etc for: "+mappedCell.getInstanceName()+"...");
 
-            ArrayList<String> chanMechNames = mappedCell.getAllChanMechNames(false);
+            ArrayList<String> chanMechNames = mappedCell.getAllChanMechNames(true);
             logger.logComment("Chan mechs: "+ chanMechNames);
 
             Hashtable<String, ArrayList<String>> ionCurrentSources = new Hashtable<String,ArrayList<String>>();
@@ -2700,7 +2709,7 @@ public class GenesisFileManager
 
             for (int j = 0; j < chanMechNames.size(); j++)
             {
-                logger.logComment(j+"   -    Looking at Chan mech...: "+chanMechNames.get(j));
+                logger.logComment(j+"   -    Looking at Chan mech...: "+chanMechNames.get(j), true);
 
                 String nextChanMech = chanMechNames.get(j);
                 CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech);
@@ -3599,6 +3608,10 @@ public class GenesisFileManager
                                 }
 
                                 String realElementToRecord = compElement; //var.getCompFullElementName();
+                                if (!realElementToRecord.endsWith(var.getCompTopElementName()))
+                                {
+                                    realElementToRecord = realElementToRecord+"/"+var.getCompTopElementName();
+                                }
 
                                 String realVariableToSave = var.getVariableName();
 
@@ -3618,7 +3631,7 @@ public class GenesisFileManager
                                 if (!isSpikeRecording)
                                 {
                                     response.append("    addmsg " + realElementToRecord + " " + fileElement + " SAVE " +
-                                                    realVariableToSave + "\n");
+                                                    realVariableToSave + "  //  .. \n");
                                     response.append("    call " + fileElement + " OUT_OPEN\n");
                                     response.append("    call " + fileElement + " OUT_WRITE {getfield "
                                                     + realElementToRecord + " " + realVariableToSave + "}\n\n");

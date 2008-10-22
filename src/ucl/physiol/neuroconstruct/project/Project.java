@@ -1233,7 +1233,7 @@ public class Project implements TableModelListener
                 
                 boolean saveProps = !internalPropsFile.exists() || projProperties.getSaveOption().equals(ProjectStructure.PROJ_QUICK_SAVE); // false if svn save
                 
-                logger.logComment("Saving int props in "+internalPropsFile.getAbsolutePath()+": "+ saveProps, true);
+                logger.logComment("Saving int props in "+internalPropsFile.getAbsolutePath()+": "+ saveProps);
                 
                 if (internalPropsFile.exists() && projProperties.getSaveOption().equals(ProjectStructure.PROJ_SVN_SAVE))
                 {

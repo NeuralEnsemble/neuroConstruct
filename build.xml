@@ -45,16 +45,16 @@
     <property name="j3d.libs" value="lib/j3d"/>
     <property name="jython.libs" value="lib/jython"/>
     <property name="junit.libs" value="lib/junit"/>
-    
-    
+
+
     <condition property="arch.suffix" value="64" else="32">
         <os arch="amd64"/>
     </condition>
-    
+
     <condition property="java.library.path.touse" value="./lib/hdf5/win${arch.suffix};./lib/j3d/win${arch.suffix}" else="./lib/hdf5/linux${arch.suffix}:./lib/j3d/linux${arch.suffix}">
         <os family="windows"/>
     </condition>
-    
+
 
 
     <property name="build.dir" value="./"/>
@@ -482,6 +482,13 @@
         </fileset>
       </copy>
 
+      <mkdir dir="${temp_ver.dir}/pythonnC"/>
+      <copy todir="${temp_ver.dir}/pythonnC">
+        <fileset dir="pythonnC">
+              <include name="**/*"/>
+        </fileset>
+      </copy>
+
       <mkdir dir="${temp_ver.dir}/igorNeuroMatic"/>
       <copy todir="${temp_ver.dir}/igorNeuroMatic">
         <fileset dir="igorNeuroMatic">
@@ -512,9 +519,8 @@
       </copy>
 
       <copy file="build.xml" todir="${temp_ver.dir}"/>
-      <copy file="run.bat" todir="${temp_ver.dir}"/>
-      <copy file="test.py" todir="${temp_ver.dir}"/>
-      <copy file="run.sh" todir="${temp_ver.dir}"/>
+      <copy file="nC.bat" todir="${temp_ver.dir}"/>
+      <copy file="nC.sh" todir="${temp_ver.dir}"/>
       <copy file="README" todir="${temp_ver.dir}"/>
       <copy file="RELEASE_NOTES" todir="${temp_ver.dir}"/>
       <copy file="RELEASE_NOTES" todir="${temp_ver.dir}/docs/helpdocs"/>
