@@ -47,7 +47,7 @@ public class UncaughtExceptionInfo implements UncaughtExceptionHandler
        }
        else if (e instanceof OutOfMemoryError)
        {
-            String run = GeneralUtils.isWindowsBasedPlatform()?"run.bat":"run.sh";
+            String run = GeneralUtils.isWindowsBasedPlatform()?"nC.bat":"nC.sh";
            
             error = error + "\n\nJava has run out of available memory for this task.\n\n" +
                "Note that not all RAM is available to an instance of the JVM when it starts. The amount available is set by the\n" +

@@ -194,9 +194,11 @@ public class GenesisFileManager
 
             fw.write(generateScriptBlock(ScriptLocation.BEFORE_CELL_CREATION));
 
+            GeneralUtils.timeCheck("B4 generateCellGroups");
             fw.write(generateCellGroups());
             
 
+            GeneralUtils.timeCheck("B4 generateNetworkConnections");
             fw.write(generateNetworkConnections());
 
             fw.write(generateStimulations());
@@ -1436,7 +1438,9 @@ public class GenesisFileManager
         String pre = "echo \"    ";
         desc = GeneralUtils.replaceAllTokens(desc, "\n", "\"\n"+pre);
         
-        response.append(pre+"Description: " + desc + "\"\n");
+        response.append(pre+"Description: " + desc + "\"\n\n");
+        response.append(pre+"Simulation configuration: " + simConfig.getName() + "\"\n");
+        response.append(pre+"Simulation reference: " + project.simulationParameters.getReference() + "\"\n");
 
         response.append("echo \" \"\n");
         response.append("echo  \"*****************************************************\"\n\n\n");
@@ -2386,7 +2390,7 @@ public class GenesisFileManager
             String cellGroupName = cellGroupNames.get(ii);
 
             logger.logComment("***  Looking at cell group number " + ii + ", called: " +
-                              cellGroupName);
+                              cellGroupName, true);
 
             String cellTypeName = project.cellGroupsInfo.getCellType(cellGroupName);
 
@@ -2401,6 +2405,8 @@ public class GenesisFileManager
 
 
             Cell mappedCell = this.mappedCells.get(cellTypeName);
+            
+            logger.logComment("Got the mapped cell", true);
 
             File dirForGenFiles = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory());
 
@@ -2416,7 +2422,7 @@ public class GenesisFileManager
             String filenameToBeGenerated = cellMorphGen.getFilename();
 
             logger.logComment("Will need a cell template file called: " +
-                              filenameToBeGenerated);
+                              filenameToBeGenerated, true);
 
             if (cellTemplatesGenAndIncl.contains(filenameToBeGenerated))
             {
@@ -2428,6 +2434,7 @@ public class GenesisFileManager
                 try
                 {
                     cellMorphGen.generateFile();
+                    logger.logComment("Generated file: "+ cellMorphGen.getFilename(), true);
 
                     cellTemplatesGenAndIncl.add(filenameToBeGenerated);
                 }

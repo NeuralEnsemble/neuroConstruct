@@ -15,6 +15,7 @@ package ucl.physiol.neuroconstruct.genesis;
 import java.io.*;
 import java.util.*;
 
+import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
@@ -126,7 +127,7 @@ public class GenesisMorphologyGenerator
 
     private String checkExtraParams()
     {
-        logger.logComment("calling checkExtraParams");
+        logger.logComment("calling checkExtraParams", true);
         StringBuffer response = new StringBuffer();
         if (CellTopologyHelper.hasExtraCellMechParams(cell))
         {
@@ -158,11 +159,15 @@ public class GenesisMorphologyGenerator
 
     private String getMainMorphology()
     {
-        logger.logComment("calling getMainMorphology");
+        logger.logComment("calling getMainMorphology", true);
         StringBuffer response = new StringBuffer();
 
         //Vector segments = cell.getAllSegments();
         Vector<Segment> segments = cell.getExplicitlyModelledSegments();
+        
+        Hashtable<String, ArrayList<ChannelMechanism>> chanMechsVsGrps = new Hashtable<String, ArrayList<ChannelMechanism>>();
+        ArrayList<String> passiveChanMechs = new ArrayList<String>();
+        ArrayList<String> notPassiveChanMechs = new ArrayList<String>();
 
         logger.logComment("Investigating " + segments.size() + " segments...");
         String line = null;
@@ -305,14 +310,26 @@ public class GenesisMorphologyGenerator
                 parentName = SimEnvHelper.getSimulatorFriendlyName(parentName);
             }
 
-            Vector groups = segment.getGroups();
+            Vector<String> groups = segment.getGroups();
             Vector<ChannelMechanism> longChanMechs = new Vector<ChannelMechanism>();
 
             String firstPassiveCellProc = null; // first passive cond will be use to set Rm
 
             for (int j = 0; j < groups.size(); j++)
             {
-                ArrayList<ChannelMechanism> thisGroupChanMechs = cell.getChanMechsForGroup( (String) groups.elementAt(j));
+                ArrayList<ChannelMechanism> thisGroupChanMechs = null;
+                
+                if(!chanMechsVsGrps.containsKey(groups.elementAt(j)))
+                {
+                    thisGroupChanMechs = cell.getChanMechsForGroup(groups.elementAt(j));
+                    chanMechsVsGrps.put(groups.elementAt(j), thisGroupChanMechs);
+                }
+                else
+                {
+                    thisGroupChanMechs = chanMechsVsGrps.get(groups.elementAt(j));
+                }
+                    
+                
 
                 logger.logComment("Looking for chan mechs in group: " + groups.elementAt(j));
 
@@ -331,19 +348,45 @@ public class GenesisMorphologyGenerator
 
 
                         boolean isCMLPassive = false;
-                        if (cellMech instanceof ChannelMLCellMechanism)
+                        
+                        if(notPassiveChanMechs.contains(cellMech.getInstanceName()))
+                        {
+                            isCMLPassive = false;
+                        }
+                        else if(passiveChanMechs.contains(cellMech.getInstanceName()))
+                        {
+                            isCMLPassive = true;
+                        }
+                        else if (cellMech instanceof ChannelMLCellMechanism)
                         {
                             try
                             {
                                 isCMLPassive = ( (ChannelMLCellMechanism) cellMech).isPassiveNonSpecificCond();
+                                if(isCMLPassive && !passiveChanMechs.contains(cellMech.getInstanceName()))
+                                {
+                                    passiveChanMechs.add(cellMech.getInstanceName());
+                                }
+                                if(!isCMLPassive && !notPassiveChanMechs.contains(cellMech.getInstanceName()))
+                                {
+                                    notPassiveChanMechs.add(cellMech.getInstanceName());
+                                }
                             }
                             catch (CMLMechNotInitException e)
                             {
                                 ChannelMLCellMechanism cp = (ChannelMLCellMechanism) cellMech;
                                 try
                                 {
-                                    isCMLPassive = cp.isPassiveNonSpecificCond();
                                     cp.initialise(project, false);
+                                    isCMLPassive = cp.isPassiveNonSpecificCond();
+                                    
+                                    if(isCMLPassive && !passiveChanMechs.contains(cellMech.getInstanceName()))
+                                    {
+                                        passiveChanMechs.add(cellMech.getInstanceName());
+                                    }
+                                    if(!isCMLPassive && !notPassiveChanMechs.contains(cellMech.getInstanceName()))
+                                    {
+                                        notPassiveChanMechs.add(cellMech.getInstanceName());
+                                    }
                                 }
                                 catch (CMLMechNotInitException cmle)
                                 {
@@ -480,6 +523,8 @@ public class GenesisMorphologyGenerator
             
             Vector<ChannelMechanism> consolChanMechs = new Vector<ChannelMechanism>();
             
+            logger.logComment("Consolidating...", true);
+            
             for (int ll = 0; ll < longChanMechs.size(); ll++)
             {
                 ChannelMechanism nextChanMech = longChanMechs.elementAt(ll);
@@ -505,6 +550,7 @@ public class GenesisMorphologyGenerator
                 if (!dealtWith)
                     consolChanMechs.add((ChannelMechanism)nextChanMech.clone());
             }
+            logger.logComment("Done Consolidating...", true);
 
             for (int ll = 0; ll < consolChanMechs.size(); ll++)
             {
@@ -608,6 +654,8 @@ public class GenesisMorphologyGenerator
 
                 logger.logComment("channelCondString: "+channelCondString);
             }
+            
+            logger.logComment("Done Consolidating 2...", true);
             
             ArrayList<VariableMechanism> varMechs = cell.getVarChanMechsForSegment(segment);
             for(VariableMechanism vm: varMechs)

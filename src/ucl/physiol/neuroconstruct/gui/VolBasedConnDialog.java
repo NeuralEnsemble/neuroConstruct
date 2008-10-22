@@ -188,6 +188,11 @@ public class VolBasedConnDialog extends JDialog
     //JRadioButton jRadioButtonSynTargetUnique = new JRadioButton();
     //JRadioButton jRadioButtonSynTargetReuse = new JRadioButton();
     //ButtonGroup buttonGroupSynTargetOption = new ButtonGroup();
+    
+    
+    JPanel jPanelConnCondsAutapses = new JPanel();
+    JLabel jLabelConnCondsAutapses = new JLabel();
+    JCheckBox jCheckBoxAutapses = new JCheckBox();
 
 
 
@@ -305,6 +310,9 @@ public class VolBasedConnDialog extends JDialog
 
             this.jTextFieldInh.setText(exp);
             //this.inhomoExp = exp;
+            
+            
+            jCheckBoxAutapses.setSelected(connConds.isAllowAutapses());
 
 
         }
@@ -507,6 +515,10 @@ public class VolBasedConnDialog extends JDialog
         jCheckBoxConnCondsUnique.setText("Connections from cells in Source Cell group go to unique cells in Target Cell " +
     "Group");
     this.jLabelConnCondsMaxTarget.setText("Max number of conns from cells in Source Cell Group to each cell in Target Cell Group");
+    
+    
+        jCheckBoxAutapses.setText("Allow autapses (when source Cell Group = target)");
+        jPanelConnCondsAutapses.add(jCheckBoxAutapses);
 
 
         scrollPaneSyns.setMinimumSize(new Dimension(400, 60));
@@ -568,9 +580,13 @@ c       */
             GridBagConstraints.NONE, new Insets(11, 79, 6, 0), 0, 0));
 
 
-    jPanelConnConds.add(this.jCheckBoxConnCondsUnique, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
+        jPanelConnConds.add(this.jCheckBoxConnCondsUnique, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
         , GridBagConstraints.CENTER,
-        GridBagConstraints.NONE, new Insets(11, 79, 6, 0), 0, 0));
+        GridBagConstraints.NONE, new Insets(0, 0, 6, 0), 0, 0));
+    
+    
+        jPanelConnConds.add(jPanelConnCondsAutapses,   new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0, 0), 0, 0));
 
 
 
@@ -836,6 +852,7 @@ c       */
         connConds.setOnlyConnectToUniqueCells(jCheckBoxConnCondsUnique.isSelected());
 
 
+        connConds.setAllowAutapses(jCheckBoxAutapses.isSelected());
 
 
         boolean problem = false;
@@ -990,8 +1007,8 @@ c       */
         jComboBoxTarget.addItem(targetComboString);
         for (int i = 0; i < names.size(); i++)
         {
-            if (!names.get(i).equals(sourceCG))
-                jComboBoxTarget.addItem(names.get(i));
+            ////////if (!names.get(i).equals(sourceCG))
+            jComboBoxTarget.addItem(names.get(i));
         }
         jComboBoxTarget.setEnabled(true);
 

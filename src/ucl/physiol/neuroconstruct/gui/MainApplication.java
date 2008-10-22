@@ -155,7 +155,7 @@ public class MainApplication
 
     private static void printUsageAndQuit()
     {
-        String run = GeneralUtils.isWindowsBasedPlatform()?"run.bat":"./run.sh";
+        String run = GeneralUtils.isWindowsBasedPlatform()?"nC.bat":"./nC.sh";
         
         System.out.println(
             "Usage: \n" +
@@ -331,7 +331,7 @@ public class MainApplication
             {
                 MainApplication app = new MainApplication();
 
-                String script = GeneralUtils.isWindowsBasedPlatform()?"run.bat":"run.sh";
+                String script = GeneralUtils.isWindowsBasedPlatform()?"nC.bat":"nC.sh";
 
                 System.out.println("\nneuroConstruct v"+GeneralProperties.getVersionNumber()
                         +" starting...\nTo start application with extra memory, see "+script+" in the neuroConstruct home directory.\n");

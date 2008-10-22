@@ -482,6 +482,15 @@ public class VolumeBasedConnGenerator extends Thread
                                             foundOne = true;
                                         }
                                     }
+                                    
+                                    //TODO, optimise by doing this check earlier!!
+                                    if (sourceCellGroup.equals(targetCellGroup) && 
+                                        !connConds.isAllowAutapses() &&
+                                        genStartCellNumber == genFinishCellNumber)
+                                    {
+                                         logger.logComment("That would be an autapse, which isn't allowed!");
+                                         foundOne = false;
+                                    }
 
                                     if (foundOne)
                                     {

@@ -90,5 +90,29 @@ public class PrePostAllowedLocs
         this.somaAllowedPre = somaAllowedPre;
     }
     
+    @Override
+    public String toString()
+    {
+        StringBuffer info = new StringBuffer("Pre: ");
+        if (axonsAllowedPre)
+            info.append("axons ");
+        if (dendritesAllowedPre)
+            info.append("dends ");
+        if (somaAllowedPre)
+            info.append("soma ");
+        
+        info.append("Post: ");
+        if (axonsAllowedPost)
+            info.append("axons ");
+        if (dendritesAllowedPost)
+            info.append("dends ");
+        if (somaAllowedPost)
+            info.append("soma");
+        
+        return info.toString();
+            
+        
+    }
+    
     
 }

@@ -2538,9 +2538,10 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
             for (int netConnNum = 0; netConnNum < allNetConns.size(); netConnNum++)
             {
                 String nextNetConn = allNetConns.elementAt(netConnNum);
-                ArrayList<GeneratedNetworkConnections.SingleSynapticConnection> conns = null;
+                ArrayList<GeneratedNetworkConnections.SingleSynapticConnection> connsToTgt = null;
+                ArrayList<GeneratedNetworkConnections.SingleSynapticConnection> connsToSrc = null;
                 String otherGroup = null;
-                String otherType = null;
+                //String otherType = null;
                 String connType = "morphology based network connection";
 
                 if (allAAConns.contains(nextNetConn))
@@ -2552,12 +2553,12 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                     if (cellGroupSelected.equals(project.volBasedConnsInfo.getSourceCellGroup(nextNetConn)))
                     {
                         info.append("Cell Group <b>" + cellGroupSelected
-                                    + "</b> is the source of " + connType + ": <b>" + nextNetConn + "</b><br>\n");
+                                    + "</b> is the <b>source</b> of " + connType + ": <b>" + nextNetConn + "</b><br>\n");
 
-                        conns = project.generatedNetworkConnections.getConnsFromSource(nextNetConn, cellNumber);
+                        connsToTgt = project.generatedNetworkConnections.getConnsFromSource(nextNetConn, cellNumber);
 
                         otherGroup = project.volBasedConnsInfo.getTargetCellGroup(nextNetConn);
-                        otherType = "target";
+                        //otherType = "target";
                         for (SynapticProperties prop : synProps)
                         {
                             info.append(TAB +"Global props: "+ prop.toNiceString() + "<br>\n");
@@ -2565,15 +2566,15 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                         }
 
                     }
-                    else if (cellGroupSelected.equals(project.volBasedConnsInfo.getTargetCellGroup(nextNetConn)))
+                    if (cellGroupSelected.equals(project.volBasedConnsInfo.getTargetCellGroup(nextNetConn)))
                     {
                         info.append("Cell Group <b>" + cellGroupSelected
-                                    + "</b> is the target of " + connType + ": <b>" + nextNetConn + "</b><br>\n");
+                                    + "</b> is the <b>target</b> of " + connType + ": <b>" + nextNetConn + "</b><br>\n");
 
-                        conns = project.generatedNetworkConnections.getConnsToTarget(nextNetConn, cellNumber);
+                        connsToSrc = project.generatedNetworkConnections.getConnsToTarget(nextNetConn, cellNumber);
 
                         otherGroup = project.volBasedConnsInfo.getSourceCellGroup(nextNetConn);
-                        otherType = "source";
+                        //otherType = "source";
                         for (SynapticProperties prop : synProps)
                         {
                             info.append(TAB +"Global syn props: " + prop.toNiceString() + "<br>\n");
@@ -2587,16 +2588,20 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                 {
 
                     Vector<SynapticProperties> synProps = project.morphNetworkConnectionsInfo.getSynapseList(nextNetConn);
-
+                    boolean intraGroupConn = false;
+                    
                     if (cellGroupSelected.equals(project.morphNetworkConnectionsInfo.getSourceCellGroup(nextNetConn)))
                     {
                         info.append("Cell Group <b>" + cellGroupSelected
-                                    + "</b> is the source of " + connType + ": <b>" + nextNetConn + "</b><br>\n");
+                                    + "</b> is the <b>source</b> of " + connType + ": <b>" + nextNetConn + "</b><br>\n");
 
-                        conns = project.generatedNetworkConnections.getConnsFromSource(nextNetConn, cellNumber);
+                        connsToTgt = project.generatedNetworkConnections.getConnsFromSource(nextNetConn, cellNumber);
 
                         otherGroup = project.morphNetworkConnectionsInfo.getTargetCellGroup(nextNetConn);
-                        otherType = "target";
+                        //otherType = "target";
+                        if (cellGroupSelected.equals(otherGroup))
+                            intraGroupConn = true;
+                        
                         for (SynapticProperties prop : synProps)
                         {
                             info.append(TAB +"Global syn props: " + prop.toNiceString() + "<br>\n");
@@ -2604,15 +2609,19 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                         }
 
                     }
-                    else if (cellGroupSelected.equals(project.morphNetworkConnectionsInfo.getTargetCellGroup(nextNetConn)))
+                    if (cellGroupSelected.equals(project.morphNetworkConnectionsInfo.getTargetCellGroup(nextNetConn)))
                     {
                         info.append("Cell Group <b>" + cellGroupSelected
-                                    + "</b> is the target of " + connType + ": <b>" + nextNetConn + "</b><br>\n");
+                                    + "</b> is the <b>target</b> of " + connType + ": <b>" + nextNetConn + "</b><br>\n");
 
-                        conns = project.generatedNetworkConnections.getConnsToTarget(nextNetConn, cellNumber);
+                        connsToSrc = project.generatedNetworkConnections.getConnsToTarget(nextNetConn, cellNumber);
 
                         otherGroup = project.morphNetworkConnectionsInfo.getSourceCellGroup(nextNetConn);
-                        otherType = "source";
+                        //otherType = "source";
+                        
+                        if (cellGroupSelected.equals(otherGroup))
+                            intraGroupConn = true;
+                        
                         for (SynapticProperties prop : synProps)
                         {
                             info.append(TAB +"Global syn props: "+ prop.toNiceString() + "<br>\n");
@@ -2622,29 +2631,74 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                     info.append("<br>\n");
                 }
 
-                if (conns != null)
+                if (connsToTgt != null)
                 {
 
-                    info.append(TAB+"Cell num <b>" + cellNumber + "</b> makes <b>" + conns.size() + "</b> connections to " + otherType +
-                                " cells:<br>\n");
+                    info.append(TAB+"Cell num <b>" + cellNumber + "</b> makes <b>" + connsToTgt.size() + "</b> connections to <b>target</b> cells:<br>\n");
 
-                    ArrayList<Integer> unique = new ArrayList<Integer> (conns.size());
+                    ArrayList<Integer> unique = new ArrayList<Integer> (connsToTgt.size());
 
                     /** @todo Make swifter */
-                    for (int otherNum = 0; otherNum < conns.size(); otherNum++)
+                    for (int otherNum = 0; otherNum < connsToTgt.size(); otherNum++)
                     {
-                        GeneratedNetworkConnections.SingleSynapticConnection conn = conns.get(otherNum);
+                        GeneratedNetworkConnections.SingleSynapticConnection conn = connsToTgt.get(otherNum);
                         
                         Integer nextNum = conn.targetEndPoint.cellNumber;
                         SegmentLocation nextThisLoc = conn.sourceEndPoint.location;
                         SegmentLocation nextOtherLoc = conn.targetEndPoint.location;
                         
-                        if (otherType.equals("source")) 
+                        info.append(TAB+TAB+"Cell num <b>" + nextNum + "</b>, seg: <b>" + nextOtherLoc.getSegmentId() + "</b>, fract: <b>" 
+                            + nextOtherLoc.getFractAlong() + "</b> in <b>" + otherGroup+"</b>");
+
+                        Point3f posnOther = project.generatedCellPositions.getOneCellPosition(otherGroup, nextNum.intValue());
+
+                        info.append(" (cell position: <b>" + posnOther + "</b>)");
+                        info.append(" is connected to this cell, seg: <b>" + nextThisLoc.getSegmentId() + "</b>, fract: <b>" 
+                            + nextThisLoc.getFractAlong() + "</b><br>\n");
+
+                        if (conn.apPropDelay>0) 
+                            info.append(TAB+TAB+TAB+"Delay due to AP propagation: " + conn.apPropDelay + " ms. "+ "<br>\n");
+
+                        ArrayList<ConnSpecificProps> props = conn.props;
+
+                        if (props != null)
                         {
-                            nextNum = conns.get(otherNum).sourceEndPoint.cellNumber;
-                            nextThisLoc = conn.targetEndPoint.location;
-                            nextOtherLoc = conn.sourceEndPoint.location;
+                            for (ConnSpecificProps prop : props)
+                            {
+                                info.append(TAB+TAB+TAB+prop.toNiceString() + "<br>\n");
+
+                            }
                         }
+                        else
+                        {
+                        }
+
+                        if (!unique.contains(nextNum)) unique.add(nextNum);
+                    }
+                    if (connsToTgt.size() > 1)
+                        info.append(TAB+TAB+TAB+"(<b>" + unique.size() + "</b> individual cell(s), so average of <b>"
+                                    + (float) connsToTgt.size() / (float) unique.size() + "</b> connection(s) to each)<br>\n");
+                    info.append("<br>\n");
+                }
+                
+                
+
+                if (connsToSrc != null)
+                {
+                    info.append(TAB+"Cell num <b>" + cellNumber + "</b> receives <b>" + connsToSrc.size() 
+                        + "</b> connections from <b>source</b> cells:<br>\n");
+
+                    ArrayList<Integer> unique = new ArrayList<Integer> (connsToSrc.size());
+
+                    /** @todo Make swifter */
+                    for (int otherNum = 0; otherNum < connsToSrc.size(); otherNum++)
+                    {
+                        GeneratedNetworkConnections.SingleSynapticConnection conn = connsToSrc.get(otherNum);
+                        
+                        Integer nextNum = conn.sourceEndPoint.cellNumber;
+                        SegmentLocation nextThisLoc = conn.targetEndPoint.location;
+                        SegmentLocation nextOtherLoc = conn.sourceEndPoint.location;
+                        
 
                         info.append(TAB+TAB+"Cell num <b>" + nextNum + "</b>, seg: <b>" + nextOtherLoc.getSegmentId() + "</b>, fract: <b>" 
                             + nextOtherLoc.getFractAlong() + "</b> in <b>" + otherGroup+"</b>");
@@ -2674,9 +2728,9 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                         if (!unique.contains(nextNum)) unique.add(nextNum);
                     }
-                    if (conns.size() > 1)
+                    if (connsToSrc.size() > 1)
                         info.append(TAB+TAB+TAB+"(<b>" + unique.size() + "</b> individual cell(s), so average of <b>"
-                                    + (float) conns.size() / (float) unique.size() + "</b> connection(s) to each)<br>\n");
+                                    + (float) connsToSrc.size() / (float) unique.size() + "</b> connection(s) to each)<br>\n");
                     info.append("<br>\n");
                 }
 

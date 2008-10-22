@@ -99,6 +99,15 @@ public class ConnectivityConditions
         {
             sb.append(" per Tgt, max: "+getMaxNumInitPerFinishCellString()+ " per Src");
         }
+        if (onlyConnectToUniqueCells)
+        {
+            sb.append(", unique conns");
+        }
+        if (allowAutapses)
+        {
+            sb.append(", autapses allowed");
+        }
+        sb.append(", "+prePostAllowedLoc.toString());
 
 
         return sb.toString();

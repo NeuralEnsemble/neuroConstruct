@@ -1205,7 +1205,7 @@ public class NeuronTemplateGenerator
                                 try
                                 {
                                     String ionName = cmlMech.getXMLDoc().getValueByXPath(xpath);
-                                    logger.logComment("--- Got ion: " + ionName+ " for cell mech: "+cellMech, true);
+                                    logger.logComment("--- Got ion: " + ionName+ " for cell mech: "+cellMech);
                                     if (ionName!=null)
                                     {
                                         postV1_7_3 = true;
@@ -1235,7 +1235,7 @@ public class NeuronTemplateGenerator
                                         ionName = ionEl.getAttributeValue(ChannelMLConstants.NEW_ION_NAME_ATTR);
                                     
                                         
-                                    logger.logComment("Got ion: " + ionName+ ", rev pot: "+erev+" for cell mech: "+cellMech, true);
+                                    logger.logComment("Got ion: " + ionName+ ", rev pot: "+erev+" for cell mech: "+cellMech);
 
                                     NeuronFileManager.addHocComment(response, "    Ion " + ionName + " is used in this process...");
 
@@ -1367,7 +1367,7 @@ public class NeuronTemplateGenerator
                             }
                             else
                             {
-                                logger.logComment("No ion present for cell mech: "+ cellMech, true);
+                                logger.logComment("No ion present for cell mech: "+ cellMech);
                             }
 
                         }

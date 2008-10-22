@@ -2822,19 +2822,32 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     {
                         if (projManager.getCurrentProject().volBasedConnsInfo.isValidVolBasedConn(sel))
                         {
-                            jComboBoxAnalyseCellGroup.addItem(projManager.getCurrentProject().volBasedConnsInfo.
-                                                              getSourceCellGroup(sel));
-                            jComboBoxAnalyseCellGroup.addItem(projManager.getCurrentProject().volBasedConnsInfo.
-                                                              getTargetCellGroup(sel));
+                            String src = projManager.getCurrentProject().volBasedConnsInfo.
+                                                              getSourceCellGroup(sel);
+                            String tgt = projManager.getCurrentProject().volBasedConnsInfo.
+                                                              getTargetCellGroup(sel);
+                            if(src.equals(tgt))
+                            {
+                                src = src+" (source)";
+                                tgt = tgt+" (target)";
+                                
+                            }
+                            jComboBoxAnalyseCellGroup.addItem(src);
+                            jComboBoxAnalyseCellGroup.addItem(tgt);
                         }
                         if (projManager.getCurrentProject().morphNetworkConnectionsInfo.isValidSimpleNetConn(sel))
                         {
-                            jComboBoxAnalyseCellGroup.addItem(projManager.getCurrentProject().
-                                                              morphNetworkConnectionsInfo.
-                                                              getSourceCellGroup(sel));
-                            jComboBoxAnalyseCellGroup.addItem(projManager.getCurrentProject().
-                                                              morphNetworkConnectionsInfo.
-                                                              getTargetCellGroup(sel));
+                            String src = projManager.getCurrentProject().morphNetworkConnectionsInfo.
+                                                              getSourceCellGroup(sel);
+                            String tgt = projManager.getCurrentProject().morphNetworkConnectionsInfo.
+                                                              getTargetCellGroup(sel);
+                            if(src.equals(tgt))
+                            {
+                                src = src+" (source)";
+                                tgt = tgt+" (target)";
+                            }
+                            jComboBoxAnalyseCellGroup.addItem(src);
+                            jComboBoxAnalyseCellGroup.addItem(tgt);
                         }
 
                         if (jComboBoxAnalyseCellGroup.getItemCount() > 1)
@@ -7296,18 +7309,25 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             return;
         }
 
-        String selectedCellGroup = (String)jComboBoxAnalyseCellGroup.getSelectedItem();
+        String selCellGroup = (String)jComboBoxAnalyseCellGroup.getSelectedItem();
         String selectedNetConn = (String)jComboBoxAnalyseNetConn.getSelectedItem();
 
         if (selectedNetConn.equals(defaultAnalyseNetConnString) ||
-            selectedCellGroup.equals(defaultAnalyseCellGroupString))
+            selCellGroup.equals(defaultAnalyseCellGroupString))
         {
             GuiUtils.showErrorMessage(logger, "Please select the Network Connection whose Cell Group connectivity you would like to analyse", null, this);
             return;
         }
 
-        boolean isSourceCellGroup = false;
-        boolean isTargetCellGroup = false;
+        boolean isSourceCellGroup = selCellGroup.indexOf("source")>0; // usually false
+        boolean isTargetCellGroup = selCellGroup.indexOf("target")>0; // usually false
+        
+        if (selCellGroup.indexOf(" ")>0)
+        {
+            selCellGroup = selCellGroup.substring(0, selCellGroup.indexOf(" "));
+        }
+        
+        //String thisCellGroup = null;
         String theOtherCellGroup = null;
 
         if (projManager.getCurrentProject().morphNetworkConnectionsInfo.isValidSimpleNetConn(selectedNetConn))
@@ -7315,8 +7335,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             String src = projManager.getCurrentProject().morphNetworkConnectionsInfo.getSourceCellGroup(selectedNetConn);
             String tgt = projManager.getCurrentProject().morphNetworkConnectionsInfo.getTargetCellGroup(selectedNetConn);
 
-            isSourceCellGroup = selectedCellGroup.equals(src);
-            isTargetCellGroup = selectedCellGroup.equals(tgt);
+            if (!isSourceCellGroup && !isTargetCellGroup)
+                isSourceCellGroup = selCellGroup.indexOf(src)>=0;
+            if (!isTargetCellGroup && !isSourceCellGroup)            
+                isTargetCellGroup = selCellGroup.indexOf(tgt)>=0;
 
              if (isSourceCellGroup) theOtherCellGroup = tgt;
              else theOtherCellGroup = src;
@@ -7326,8 +7348,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             String src = projManager.getCurrentProject().volBasedConnsInfo.getSourceCellGroup(selectedNetConn);
             String tgt = projManager.getCurrentProject().volBasedConnsInfo.getTargetCellGroup(selectedNetConn);
 
-            isSourceCellGroup = selectedCellGroup.equals(src);
-            isTargetCellGroup = selectedCellGroup.equals(tgt);
+            if (!isSourceCellGroup && !isTargetCellGroup)
+                isSourceCellGroup = selCellGroup.indexOf(src)>=0;
+            if (!isTargetCellGroup && !isSourceCellGroup)            
+                isTargetCellGroup = selCellGroup.indexOf(tgt)>=0;
 
             if (isSourceCellGroup) theOtherCellGroup = tgt;
             else theOtherCellGroup = src;
@@ -7337,7 +7361,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         if (!isSourceCellGroup && !isTargetCellGroup)
         {
             GuiUtils.showErrorMessage(logger, "The cell group " +
-                                      selectedCellGroup
+                                      selCellGroup
                                       + " is not involved in Network Connection "
                                       + selectedNetConn, null, this);
             return;
@@ -7348,15 +7372,24 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         int[][] mx = projManager.getCurrentProject().generatedNetworkConnections.getConnectionMatrix(selectedNetConn, projManager.getCurrentProject());
 
         String desc = "No. of conns on "
-                                          + selectedCellGroup + " in "
+                                          + selCellGroup + " in "
                                           + selectedNetConn;
 
         PlotterFrame frame = PlotManager.getPlotterFrame(desc);
+        String dirInfo = selCellGroup + " to "+theOtherCellGroup;
+        
+        if (selCellGroup.equals(theOtherCellGroup))
+        {
+            if (isSourceCellGroup)
+                dirInfo = selCellGroup + " (source) to "+theOtherCellGroup+" (target)";
+            else if (isTargetCellGroup)
+                dirInfo = selCellGroup + " (target) to "+theOtherCellGroup+" (source)";
+        }
 
-        DataSet dataSet1 = new DataSet(selectedCellGroup + " to "+theOtherCellGroup +" in "+selectedNetConn,
+        DataSet dataSet1 = new DataSet(dirInfo +" in "+selectedNetConn,
                                       desc, "", "", "Cell index", "Number of conns");
         
-        DataSet dataSet2 = new DataSet(selectedCellGroup + " to UNIQUE cells in "+theOtherCellGroup +" in "+selectedNetConn,
+        DataSet dataSet2 = new DataSet(dirInfo +" (only num conns to UNIQUE cells) in "+selectedNetConn,
                                       desc, "", "", "Cell index", "Number of unique conns");
 
         dataSet1.setGraphFormat(PlotCanvas.USE_BARCHART_FOR_PLOT);
@@ -7364,7 +7397,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         frame.setViewMode(PlotCanvas.INCLUDE_ORIGIN_VIEW);
 
-        int numInCellGroup = projManager.getCurrentProject().generatedCellPositions.getNumberInCellGroup(selectedCellGroup);
+        int numInCellGroup = projManager.getCurrentProject().generatedCellPositions.getNumberInCellGroup(selCellGroup);
 
         int[] numberConnections = new int[numInCellGroup];
         int[] numberUniqueConnections = new int[numInCellGroup];
@@ -10519,7 +10552,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 +"\n and the location of the libraries (libjhdf5.so etc. for Linux, jhdf5.dll etc. for Win)\n" +
                 "should be specified in the java.library.path:\n    " +System.getProperty("java.library.path")+
                 "\nvariable. \n\nNote also that on a 64 bit Windows system, a 32 bit JVM should be used when using any HDF5 functionality, as the HDF5 dlls are 32bit." +
-                "\n\nIt might be best to alter and use the run.bat/run.sh files in the install directory.", ex1, this);
+                "\n\nIt might be best to alter and use the nC.bat/nC.sh files in the install directory.", ex1, this);
         }
         long end = System.currentTimeMillis();
         
