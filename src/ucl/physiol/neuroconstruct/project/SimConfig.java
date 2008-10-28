@@ -96,10 +96,12 @@ public class SimConfig
 
     public String getName()
     {
+        if (name==null) return "";
         return name;
     }
     public String getDescription()
     {
+        if (description==null) return "";
         return description;
     }
 
