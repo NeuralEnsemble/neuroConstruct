@@ -106,6 +106,8 @@ public class OptionsFrame extends JFrame
     JCheckBox jCheckBoxShowAxonalArbours = new JCheckBox();
     JCheckBox jCheckBoxShowSynapseConns = new JCheckBox();
     JCheckBox jCheckBoxShowSynEndPoints = new JCheckBox();
+    
+    JButton jButtonChangeInput = new JButton();
 
     GridBagLayout gridBagLayout2 = new GridBagLayout();
     JLabel jLabelCommandLine = new JLabel();
@@ -180,7 +182,7 @@ public class OptionsFrame extends JFrame
     {
         panelMain.setLayout(borderLayout1);
 
-        Dimension dim = new Dimension(420, 500);
+        Dimension dim = new Dimension(500, 500);
 
         panelMain.setMaximumSize(dim);
         panelMain.setMinimumSize(dim);
@@ -278,6 +280,16 @@ public class OptionsFrame extends JFrame
         jCheckBoxShowAxonalArbours.setText("Axonal arbours");
         jCheckBoxShowSynapseConns.setText("Synaptic connections");
 
+        jButtonChangeInput.setText("Change...");
+
+        jButtonChangeInput.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonChangeInput_actionPerformed(e);
+            }
+        });
+        
         jLabelCommandLine.setText("Command line:");
 
         jTextPaneExplaination.setText("The command line needed to run processes in a new terminal window. "+
@@ -456,8 +468,11 @@ public class OptionsFrame extends JFrame
         jPanelProjProps.add(jCheckBoxShowInputs, new GridBagConstraints(3, 8, 1, 1, 0.0, 0.0, 
                                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 0), 0, 0));
         
-        
+        jPanelProjProps.add(jButtonChangeInput, new GridBagConstraints(4, 8, 1, 1, 0.0, 0.0, 
+                                GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 0), 0, 0));
 
+             
+             
         jPanelProjProps.add(jCheckBoxShowAxonalArbours, new GridBagConstraints(3, 9, 1, 1, 0.0, 0.0, 
                                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 0), 0, 0));
         
@@ -477,11 +492,6 @@ public class OptionsFrame extends JFrame
         jPanelProjProps.add(jButtonApply, new GridBagConstraints(0, 12, 5, 1, 0.0, 0.0
                                                           , GridBagConstraints.CENTER, GridBagConstraints.NONE,
                                                           new Insets(6, 0, 12, 0), 0, 0));
-
-
-
-
-
 
 
         jPanelGeneral.setPreferredSize(new Dimension(200,200));
@@ -878,7 +888,7 @@ public class OptionsFrame extends JFrame
             GeneralProperties.setDefaultDisplayOption((String)jComboBoxDisplayOptions.getSelectedItem());
             GeneralProperties.setDefaultShowRegions(jCheckBoxShowRegions.isSelected());
             GeneralProperties.setDefaultShowInputs(jCheckBoxShowInputs.isSelected());
-
+           
             GeneralProperties.setDefaultShowAxonalArbours(jCheckBoxShowAxonalArbours.isSelected());
 
             GeneralProperties.setDefaultShowSynapseConns(jCheckBoxShowSynapseConns.isSelected());
@@ -959,12 +969,31 @@ public class OptionsFrame extends JFrame
 
 
     }
+    
+    
+    void jButtonChangeInput_actionPerformed(ActionEvent e)
+    {
+        Vector<String> InputType = new Vector<String>();
+        InputType.add("probes");
+        InputType.add("boutons");
+        String[] names = new String[InputType.size()];
+        for(int i=0;i<InputType.size();i++)
+        {
+            names[i] = InputType.get(i);
+        }
+        String selectedType  
+                = (String)JOptionPane.showInputDialog(this, "Please select the type of input to display: ", 
+                "Input types", JOptionPane.QUESTION_MESSAGE, null, names, mainFrame.projManager.getProjectDispProps().getShowInputsAs());
+        
+        mainFrame.projManager.getProjectDispProps().setShowInputsAs(selectedType);
+    }
+    
 
     void jButtonApply_actionPerformed(ActionEvent e)
     {
         this.saveToGeneralProperties();
         mainFrame.applyNew3DSettings();
-
+        
     }
 
 
@@ -995,7 +1024,5 @@ public class OptionsFrame extends JFrame
         {
             jButtonCellColour.setBackground(c);
         }
-
-
     }
 }

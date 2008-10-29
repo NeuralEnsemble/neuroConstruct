@@ -34,6 +34,8 @@ public class Display3DProperties
     public static final String DISPLAY_SOMA_SOLID_NEURITE_NONE= "Soma solid, no neurites";
     public static final String DISPLAY_SOMA_SOLID_NEURITE_LINE= "Soma solid, neurite lines";
     public static final String DISPLAY_SOMA_LINE_NEURITE_LINE = "All lines";
+    public static final String DISPLAY_INPUTS_AS_PROBES = "probes";
+    public static final String DISPLAY_INPUTS_AS_BOUTONS = "boutons";
 
 
 
@@ -53,6 +55,8 @@ public class Display3DProperties
     private boolean showAxonalArbours = true;
     private boolean showSynapseConns = true;
     private boolean showSynapseEndpoints = true;
+    
+    private String showInputsAs = DISPLAY_INPUTS_AS_PROBES;
 
     private String displayOption = DISPLAY_SOMA_NEURITE_SOLID;
 
@@ -114,6 +118,7 @@ public class Display3DProperties
         show3DAxes = GeneralProperties.getDefault3DAxesOption();
         showRegions = GeneralProperties.getDefaultShowRegions();
         showInputs = GeneralProperties.getDefaultShowInputs();
+        showInputsAs = GeneralProperties.getDefaultShowInputsAs();
         this.showAxonalArbours = GeneralProperties.getDefaultShowAxonalArbours();
         showSynapseConns = GeneralProperties.getDefaultShowSynapseConns();
         showSynapseEndpoints = GeneralProperties.getDefaultShowSynapseEndpoints();
@@ -190,13 +195,25 @@ public class Display3DProperties
     {
         return showInputs;
     }
-
+    
+    public String getShowInputsAs()
+    {
+        if (showInputsAs.equals(null))
+        {
+            showInputsAs = DISPLAY_INPUTS_AS_PROBES;
+        }
+        return showInputsAs;
+    }
 
     public void setShowInputs(boolean show)
     {
         this.showInputs = show;
     }
-
+    
+    public void setShowInputsAs(String showAs)
+    {
+        this.showInputsAs = showAs;
+    }
 
     public boolean getShowAxonalArbours()
     {

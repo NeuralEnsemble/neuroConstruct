@@ -813,6 +813,11 @@ public class GeneralProperties
     {
         return defaultDisplay3DProps.getShowInputs();
     }
+    
+    public static String getDefaultShowInputsAs()
+    {
+        return defaultDisplay3DProps.getShowInputsAs();
+    }
 
     public static boolean getDefaultShowAxonalArbours()
     {
@@ -823,6 +828,11 @@ public class GeneralProperties
     public static void setDefaultShowInputs(boolean show)
     {
         defaultDisplay3DProps.setShowInputs(show);
+    }
+    
+    public static void setDefaultShowInputsAs(String probe)
+    {
+        defaultDisplay3DProps.setShowInputsAs(probe);
     }
 
 

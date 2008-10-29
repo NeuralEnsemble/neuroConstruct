@@ -592,17 +592,16 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         }
 
         ArrayList<String> refs = project.generatedElecInputs.getInputReferences();
-      
-        float probeLength = 40; //50
-        float probeStartRadius = 2f; //3f
-        float probeEndRadius = 0.5f; //1f
+        
         Appearance inputApp = Utils3D.getTransparentObjectAppearance(Color.white, 0.7f);
 
         for (int k = 0; k < refs.size(); k++)
                 {
+            float probeLength = 50;
+            float probeStartRadius = 2f;
+            float probeEndRadius = 0.5f; 
             ArrayList<SingleElectricalInput> allInputs = project.generatedElecInputs.getInputLocations(refs.get(k));
-
-
+            
             for (int j = 0; j < allInputs.size(); j++)
             {
                 SingleElectricalInput input = allInputs.get(j);
@@ -641,14 +640,35 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 /*
                 Point3f endProbePosition = new Point3f(absolutePositionProbe.x,
                                                        absolutePositionProbe.y - probeLength,
-                                                       absolutePositionProbe.z);*/
+                                                       absolutePositionProbe.z);*/              
+               
                 
- 
-                Vector3d moveUp = new Vector3d(0, probeLength/-2, 0);
-                move.add(moveUp);
-                shiftAlong.setTranslation(move);
-                TransformGroup shiftedTG = new TransformGroup(shiftAlong);
-                
+            
+            
+            if (project.proj3Dproperties.getShowInputsAs().equals("probes")) //visualize inputs as probes
+            {
+            
+            /* scale the value of the probe for a better resolution */
+
+            if ((allInputs.size() > 10) && (allInputs.size() < 100))
+            {
+                probeLength = 50 - ((allInputs.size()/2)-10);
+                probeStartRadius = probeStartRadius * (probeLength/50);
+                probeEndRadius = probeEndRadius * (probeLength/50); 
+            }
+            
+            else
+            {
+                if (allInputs.size() > 99)
+                {
+                    probeLength = 10;
+                    probeStartRadius = 0.5f;
+                    probeEndRadius = 0.1f;
+                }
+            }
+            
+            /*generate the probe*/
+            
                 ConicalFrustrum probe = new ConicalFrustrum(probeStartRadius,
                               probeEndRadius,
                               probeLength,
@@ -658,20 +678,35 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                               project.proj3Dproperties.getResolution3DElements(),
                               inputApp);
                 
+                Vector3d moveUp = new Vector3d(0, probeLength/-2, 0);
+                move.add(moveUp);
+                shiftAlong.setTranslation(move);
+                TransformGroup shiftedTG = new TransformGroup(shiftAlong);
                 shiftedTG.addChild(probe);
                 mainTG.addChild(shiftedTG);
+            }
+                
+            else //visualize inputs as spheres (synapses)  
+            {
+               if (project.proj3Dproperties.getShowInputsAs().equals("boutons"))
+               {
 
-                     
-
-//                shiftAlong.setTranslation(move);
-//                TransformGroup shiftedTG = new TransformGroup(shiftAlong);
-//                Sphere sphere = new Sphere(3);
-//                shiftedTG.addChild(sphere);
-//                mainTG.addChild(shiftedTG);
+                    Sphere sphere = new Sphere(3);
+                    shiftAlong.setTranslation(move);
+                    TransformGroup shiftedTG = new TransformGroup(shiftAlong);   
+                    shiftedTG.addChild(sphere);
+                    mainTG.addChild(shiftedTG); 
+                }              
+            }
+              
+            }
+        }
+        }
+            
+           
           
-        }
-        }
-    }
+ 
+
 
 
     // for before the 3d panel is reset...
