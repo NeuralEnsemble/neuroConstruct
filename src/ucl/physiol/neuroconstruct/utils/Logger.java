@@ -201,8 +201,18 @@ public class Logger
         {
             StringWriter traceAsString = new StringWriter();
             PrintWriter trace = new PrintWriter(traceAsString);
-            t.printStackTrace(trace);
+            
+            t.printStackTrace(trace);        
             this.logError(className, traceAsString.toString(), forceConsoleOut);
+            
+            Throwable cause = null;
+            while((cause = t.getCause())!=null)
+            {
+                this.logError(className, "------- more.... ", forceConsoleOut);
+                cause.printStackTrace(trace);        
+                this.logError(className, traceAsString.toString(), forceConsoleOut);
+                t = cause;
+            }
         }
         catch (Exception ex)
         {
