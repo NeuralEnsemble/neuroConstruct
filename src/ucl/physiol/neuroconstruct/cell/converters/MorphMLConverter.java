@@ -91,6 +91,10 @@ public class MorphMLConverter extends FormatImporter
 
     public static Cell loadFromJavaObjFile(File objFile) throws MorphologyException
     {
+            String error = "Problem converting the morphology file: "+ objFile+
+                    "\n\nThis may be due to incompatibilities between the version of neuroConstruct used to save the morphology file and the current version.\n\n"+
+                    "One possible solution is to open the project with the previous version, go to Settings -> Project Properties and change the save format to Java XML.\n" +
+                    "Save the project, and reload it in the new neuroConstruct version.\n";
         try
         {
             //GeneralUtils.timeCheck("-----   Starting decoding java obj morph...");
@@ -105,7 +109,7 @@ public class MorphMLConverter extends FormatImporter
             catch (InvalidClassException e)
             {
                 logger.logComment("Cell details: "+ CellTopologyHelper.printDetails(cell, null));
-                GuiUtils.showErrorMessage(logger, "Problem converting the morphology file: "+ objFile, e, null);
+                GuiUtils.showErrorMessage(logger, error, e, null);
             }
             si.close();
             //GeneralUtils.timeCheck("-----   Finished decoding java obj morph...");
@@ -113,7 +117,7 @@ public class MorphMLConverter extends FormatImporter
         }
         catch (Exception e)
         {
-            throw new MorphologyException("Problem converting the morphology file: "+ objFile, e);
+            throw new MorphologyException(error, e);
         }
     }
 

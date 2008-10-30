@@ -102,7 +102,7 @@ public class ChannelMechanism implements Serializable
         }
         return false;
     }
-
+/*
     @Override
     public int hashCode()
     {
@@ -116,7 +116,7 @@ public class ChannelMechanism implements Serializable
                 hash = 73 * hash + mp.hashCode();
         }
         return hash;
-    }
+    }*/
 
 
     @Override

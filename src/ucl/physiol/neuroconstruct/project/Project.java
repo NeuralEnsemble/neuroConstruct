@@ -785,7 +785,7 @@ public class Project implements TableModelListener
                     catch (MorphologyException ex1)
                     {
                         GuiUtils.showErrorMessage(logger,
-                                                  "Problem loading the Cell morphology information in: " + contents[i],
+                                                  ex1.getLocalizedMessage(),
                                                   ex1, null);
                     }
                     try
