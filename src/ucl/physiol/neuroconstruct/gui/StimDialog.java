@@ -432,8 +432,8 @@ public class StimDialog extends JDialog
 
         jTextFieldCellNumber.setText(myCellChooser.toString());
 
-        jLabelLocation.setText("Location:");
-        jLabelType.setText("Type:");
+        jLabelLocation.setText("Segment location to choose:");
+        jLabelType.setText("Type of input:");
 
         jRadioButtonSingle.setSelected(true);
         jRadioButtonSingle.setText("Single segment");
@@ -733,11 +733,18 @@ public class StimDialog extends JDialog
 
         if (jRadioButtonSingle.isSelected())
         {
-            String segIdString = JOptionPane.showInputDialog("Please enter the segmentIDs: ", 0);
+            
+            IndividualSegments chooser = (IndividualSegments)chosenSegLocChooser; 
+            String suggestion = "";
+            for(int next: chooser.getListOfSegmentIds())
+            {
+                suggestion = suggestion +next+" ";
+            }
+            
+            String segIdString = JOptionPane.showInputDialog("Please enter the segment ID, or a space seperated list of IDs: ", suggestion);
 
-            Float fraction = new Float(JOptionPane.showInputDialog("Please enter the fraction along the segment (only used in NEURON): ", 0.5));
+            String fraction = JOptionPane.showInputDialog("Please enter the fraction along the segment (only used in NEURON): ", chooser.getFractionAlong());
                   
-            IndividualSegments chooser = (IndividualSegments)chosenSegLocChooser;
             ArrayList<Integer> ids = new ArrayList<Integer>();
             String[] segIds = segIdString.split(" ");
             for(String s: segIds)
@@ -746,12 +753,13 @@ public class StimDialog extends JDialog
             }
             
             chooser.setListOfSegmentIds(ids);
+            chooser.setFractionAlong(Float.parseFloat(fraction));
+            
             jTextFieldLocationInfo.setText(chooser.toNiceString());
         }
 
         if (jRadioButtonDistributed.isSelected())
         {
-            
             GroupDistributedSegments chooser = (GroupDistributedSegments)chosenSegLocChooser;
             
             Cell cellForSelectedGroup = project.cellManager.getCell(cellType);
@@ -763,11 +771,11 @@ public class StimDialog extends JDialog
                 names[i] = grps.get(i);
             }
             String selectedGroup  
-                    = (String)JOptionPane.showInputDialog(this, "Please enter the name of the group: ", 
+                    = (String)JOptionPane.showInputDialog(this, "Please enter the name of the group from which to choose segment locations: ", 
                     "Select group", JOptionPane.QUESTION_MESSAGE, null, names, chooser.getGroup());
         
 
-            Integer nPoints = new Integer(JOptionPane.showInputDialog("Please enter the number of points along the group: "));
+            Integer nPoints = new Integer(JOptionPane.showInputDialog("Please enter the number of segment locations to choose along the group: ", chooser.getNumberOfSegments()));
 
             
             chooser.setGroup(selectedGroup);

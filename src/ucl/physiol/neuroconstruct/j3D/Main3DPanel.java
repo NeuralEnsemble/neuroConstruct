@@ -596,7 +596,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         Appearance inputApp = Utils3D.getTransparentObjectAppearance(Color.white, 0.7f);
 
         for (int k = 0; k < refs.size(); k++)
-                {
+        {
             float probeLength = 50;
             float probeStartRadius = 2f;
             float probeEndRadius = 0.5f; 
@@ -645,7 +645,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                 
             
             
-            if (project.proj3Dproperties.getShowInputsAs().equals("probes")) //visualize inputs as probes
+            if (project.proj3Dproperties.getShowInputsAs().equals(Display3DProperties.DISPLAY_INPUTS_AS_PROBES)) //visualize inputs as probes
             {
             
             /* scale the value of the probe for a better resolution */
@@ -688,7 +688,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                 
             else //visualize inputs as spheres (synapses)  
             {
-               if (project.proj3Dproperties.getShowInputsAs().equals("boutons"))
+               if (project.proj3Dproperties.getShowInputsAs().equals(Display3DProperties.DISPLAY_INPUTS_AS_SPHERES))
                {
 
                     Sphere sphere = new Sphere(3);

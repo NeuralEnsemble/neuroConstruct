@@ -34,8 +34,8 @@ public class Display3DProperties
     public static final String DISPLAY_SOMA_SOLID_NEURITE_NONE= "Soma solid, no neurites";
     public static final String DISPLAY_SOMA_SOLID_NEURITE_LINE= "Soma solid, neurite lines";
     public static final String DISPLAY_SOMA_LINE_NEURITE_LINE = "All lines";
-    public static final String DISPLAY_INPUTS_AS_PROBES = "probes";
-    public static final String DISPLAY_INPUTS_AS_BOUTONS = "boutons";
+    public static final String DISPLAY_INPUTS_AS_PROBES = "Probes";
+    public static final String DISPLAY_INPUTS_AS_SPHERES = "Spheres";
 
 
 

@@ -175,7 +175,7 @@ public class GroupDistributedSegments extends SegmentLocationChooser
     public String toNiceString()
     {
         
-        return numberOfPoints+ " segments on group: "+ group;
+        return numberOfPoints+ " segment locations on group: "+ group;
     }
 
     

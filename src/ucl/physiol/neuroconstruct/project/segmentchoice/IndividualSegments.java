@@ -33,6 +33,8 @@ public class IndividualSegments extends SegmentLocationChooser
 {
     ArrayList<Integer> listOfSegmentIds = new ArrayList<Integer>();
     
+    float fractionAlong = 0.5f;
+    
     int segIdsReturned = 0;
     
     public IndividualSegments()
@@ -55,6 +57,22 @@ public class IndividualSegments extends SegmentLocationChooser
         super("Individual segments");
         this.listOfSegmentIds = listOfSegments;
     }
+
+    public float getFractionAlong()
+    {
+        return fractionAlong;
+    }
+
+    public void setFractionAlong(float fractAlong)
+    {
+        this.fractionAlong = fractAlong;
+        if (fractionAlong>1) 
+            fractionAlong =1;
+        if (fractionAlong<0) 
+            fractionAlong =0;
+    }
+    
+    
     
     @Override
     public Object clone()
@@ -80,7 +98,7 @@ public class IndividualSegments extends SegmentLocationChooser
         int toReturn = listOfSegmentIds.get(segIdsReturned);
         
         segIdsReturned++;
-        SegmentLocation sl = new SegmentLocation(toReturn, 0.5f);
+        SegmentLocation sl = new SegmentLocation(toReturn, this.fractionAlong);
         return sl;
     }
 
@@ -100,7 +118,7 @@ public class IndividualSegments extends SegmentLocationChooser
             if (i<listOfSegmentIds.size()-1)
                 info.append(", "); 
         }
-        info.append("]"); 
+        info.append("], fract: "+ fractionAlong); 
         return info.toString();
     }
 

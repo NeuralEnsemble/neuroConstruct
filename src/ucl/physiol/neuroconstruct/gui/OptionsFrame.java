@@ -974,16 +974,16 @@ public class OptionsFrame extends JFrame
     void jButtonChangeInput_actionPerformed(ActionEvent e)
     {
         Vector<String> InputType = new Vector<String>();
-        InputType.add("probes");
-        InputType.add("boutons");
+        InputType.add(Display3DProperties.DISPLAY_INPUTS_AS_PROBES);
+        InputType.add(Display3DProperties.DISPLAY_INPUTS_AS_SPHERES);
         String[] names = new String[InputType.size()];
         for(int i=0;i<InputType.size();i++)
         {
             names[i] = InputType.get(i);
         }
         String selectedType  
-                = (String)JOptionPane.showInputDialog(this, "Please select the type of input to display: ", 
-                "Input types", JOptionPane.QUESTION_MESSAGE, null, names, mainFrame.projManager.getProjectDispProps().getShowInputsAs());
+                = (String)JOptionPane.showInputDialog(this, "Please select the type of shape to use for the electrical input locations: ", 
+                     "Input types", JOptionPane.QUESTION_MESSAGE, null, names, mainFrame.projManager.getProjectDispProps().getShowInputsAs());
         
         mainFrame.projManager.getProjectDispProps().setShowInputsAs(selectedType);
     }
