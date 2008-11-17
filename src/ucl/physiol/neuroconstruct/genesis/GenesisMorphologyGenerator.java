@@ -127,7 +127,7 @@ public class GenesisMorphologyGenerator
 
     private String checkExtraParams()
     {
-        logger.logComment("calling checkExtraParams", true);
+        logger.logComment("calling checkExtraParams");
         StringBuffer response = new StringBuffer();
         if (CellTopologyHelper.hasExtraCellMechParams(cell))
         {
@@ -159,7 +159,7 @@ public class GenesisMorphologyGenerator
 
     private String getMainMorphology()
     {
-        logger.logComment("calling getMainMorphology", true);
+        logger.logComment("calling getMainMorphology");
         StringBuffer response = new StringBuffer();
 
         //Vector segments = cell.getAllSegments();
@@ -669,7 +669,7 @@ public class GenesisMorphologyGenerator
                 logger.logComment("channelCondString: "+channelCondString);
             }
             
-            logger.logComment("Done Consolidating 2...", true);
+            logger.logComment("Done Consolidating 2...");
             
             ArrayList<VariableMechanism> varMechs = cell.getVarChanMechsForSegment(segment);
             for(VariableMechanism vm: varMechs)

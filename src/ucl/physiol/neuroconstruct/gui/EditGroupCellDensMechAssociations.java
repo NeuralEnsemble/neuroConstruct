@@ -1231,7 +1231,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         for (int i = 0; i < selected.length; i++)
         {
             String group = (String) listModelGroupsIn.elementAt(selected[i]);
-            logger.logComment("Sel: "+ group, true);
+            logger.logComment("Sel: "+ group);
             if (!myCell.isGroup(group))
             {
                 String name = group.substring(0,group.indexOf(" "));
@@ -1242,7 +1242,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                 }
             }                
         }
-        logger.logComment("paramGroups: "+ paramGroups, true);
+        logger.logComment("paramGroups: "+ paramGroups);
 
         if(paramGroups.size()>1 || (paramGroups.size()>0 && selected.length>1))
         {
@@ -1253,7 +1253,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         {
             String selMechParaGroupAssoc = (String)listModelGroupsIn.elementAt(0);
             
-            logger.logComment("Removing assoc: "+ paramGroups.get(0), true);
+            logger.logComment("Removing assoc: "+ paramGroups.get(0));
                     
             Iterator<VariableMechanism> vMechs = myCell.getVarMechsVsParaGroups().keySet().iterator();
             VariableMechanism vmToRemove = null;
@@ -1278,7 +1278,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
             if(vmToRemove!=null && pgToRemove!=null)
             {
                 myCell.dissociateParamGroupFromVarMech(pgToRemove, vmToRemove);
-                logger.logComment("Removed assoc for: "+ vmToRemove, true);
+                logger.logComment("Removed assoc for: "+ vmToRemove);
             }
         }
             

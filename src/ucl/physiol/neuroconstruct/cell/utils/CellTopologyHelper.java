@@ -557,7 +557,7 @@ public class CellTopologyHelper
                     cellBox.setParameter(RectangularBox.Z_PARAM, cellBox.getLowestZValue() - maxMin.getMaxLength());
                     cellBox.setParameter(RectangularBox.DEPTH_PARAM, cellBox.getZExtent() + 2*maxMin.getMaxLength());
                 }
-                logger.logComment("Box: "+ cellBox, true);
+                logger.logComment("Box: "+ cellBox);
 
                 cachedStartCellType = startCell.getInstanceName();
                 cachedCellBoundBox = cellBox;

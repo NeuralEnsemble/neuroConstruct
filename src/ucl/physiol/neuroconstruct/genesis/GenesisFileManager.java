@@ -2390,7 +2390,7 @@ public class GenesisFileManager
             String cellGroupName = cellGroupNames.get(ii);
 
             logger.logComment("***  Looking at cell group number " + ii + ", called: " +
-                              cellGroupName, true);
+                              cellGroupName);
 
             String cellTypeName = project.cellGroupsInfo.getCellType(cellGroupName);
 
@@ -2406,7 +2406,7 @@ public class GenesisFileManager
 
             Cell mappedCell = this.mappedCells.get(cellTypeName);
             
-            logger.logComment("Got the mapped cell", true);
+            logger.logComment("Got the mapped cell");
 
             File dirForGenFiles = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory());
 
@@ -2422,7 +2422,7 @@ public class GenesisFileManager
             String filenameToBeGenerated = cellMorphGen.getFilename();
 
             logger.logComment("Will need a cell template file called: " +
-                              filenameToBeGenerated, true);
+                              filenameToBeGenerated);
 
             if (cellTemplatesGenAndIncl.contains(filenameToBeGenerated))
             {
@@ -2434,7 +2434,7 @@ public class GenesisFileManager
                 try
                 {
                     cellMorphGen.generateFile();
-                    logger.logComment("Generated file: "+ cellMorphGen.getFilename(), true);
+                    logger.logComment("Generated file: "+ cellMorphGen.getFilename());
 
                     cellTemplatesGenAndIncl.add(filenameToBeGenerated);
                 }
@@ -2473,7 +2473,7 @@ public class GenesisFileManager
                 PositionRecord posRecord
                     = (PositionRecord) cellGroupPositions.get(cellNumber);
 
-                logger.logComment("Moving cell number: " + cellNumber + " into place", true);
+                logger.logComment("Moving cell number: " + cellNumber + " into place");
 
                 if (cellNumber != posRecord.cellNumber)
                 {
@@ -2670,7 +2670,7 @@ public class GenesisFileManager
                 }
                 
                 
-                logger.logComment("Done cell number: " + cellNumber + "..", true);
+                logger.logComment("Done cell number: " + cellNumber + "..");
 
                 if (!mooseCompatMode()) 
                 {
@@ -2716,7 +2716,7 @@ public class GenesisFileManager
 
             for (int j = 0; j < chanMechNames.size(); j++)
             {
-                logger.logComment(j+"   -    Looking at Chan mech...: "+chanMechNames.get(j), true);
+                logger.logComment(j+"   -    Looking at Chan mech...: "+chanMechNames.get(j));
 
                 String nextChanMech = chanMechNames.get(j);
                 CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech);

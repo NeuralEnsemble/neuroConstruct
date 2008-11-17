@@ -35,7 +35,7 @@ public class GeneralProperties
 
     private static final String packageOfCellTypes = new String("ucl.physiol.neuroconstruct.cell");
 
-    private static final String versionNumber = "1.1.4";
+    private static final String versionNumber = "1.2.0";
 
     private static final String latestNeuroMLVersionNumber = "1.7.3";
 
@@ -96,12 +96,14 @@ public class GeneralProperties
         	if (GeneralUtils.isWindowsBasedPlatform())
         	{
 
-        		if ((new File("C:\\nrn61")).exists()) userSettings.setNeuronHome(new String("C:\\nrn61"));
+        		if ((new File("C:\\nrn62")).exists()) userSettings.setNeuronHome(new String("C:\\nrn62"));
+                else if ((new File("C:\\nrn70")).exists()) userSettings.setNeuronHome(new String("C:\\nrn70"));
+                else if ((new File("C:\\nrn61")).exists()) userSettings.setNeuronHome(new String("C:\\nrn61"));
         		else if ((new File("C:\\nrn60")).exists()) userSettings.setNeuronHome(new String("C:\\nrn60"));
         		else if ((new File("C:\\nrn59")).exists()) userSettings.setNeuronHome(new String("C:\\nrn59"));
         		else if ((new File("C:\\nrn58")).exists()) userSettings.setNeuronHome(new String("C:\\nrn58"));
         		else if ((new File("C:\\nrn57")).exists()) userSettings.setNeuronHome(new String("C:\\nrn57"));
-        		else userSettings.setNeuronHome(new String("C:\\nrn61"));
+        		else userSettings.setNeuronHome(new String("C:\\nrn62"));
 
         		//System.out.println("Neuron home: "+userSettings.getNeuronHome());
 
@@ -110,18 +112,22 @@ public class GeneralProperties
         	else if (GeneralUtils.isMacBasedPlatform())
         	{
         		if ((new File("/Applications/NEURON-6.1/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.1/nrn/powerpc"));
+        		else if ((new File("/Applications/NEURON-7.0/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-7.0/nrn/powerpc"));
+        		else if ((new File("/Applications/NEURON-6.2/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.2/nrn/powerpc"));
         		else if ((new File("/Applications/NEURON-6.0/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.0/nrn/powerpc"));
         		else if ((new File("/Applications/NEURON-5.9/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.9/nrn/powerpc"));
         		else if ((new File("/Applications/NEURON-5.8/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.8/nrn/powerpc"));
         		else if ((new File("/Applications/NEURON-5.7/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.7/nrn/powerpc"));
 
+                else if ((new File("/Applications/NEURON-7.0/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-7.0/nrn/i386"));
+                else if ((new File("/Applications/NEURON-6.2/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.2/nrn/i386"));
                 else if ((new File("/Applications/NEURON-6.1/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.1/nrn/i386"));
                 else if ((new File("/Applications/NEURON-6.0/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.0/nrn/i386"));
                 else if ((new File("/Applications/NEURON-5.9/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.9/nrn/i386"));
                 else if ((new File("/Applications/NEURON-5.8/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.8/nrn/i386"));
                 
                 
-        		else  userSettings.setNeuronHome(new String("/Applications/NEURON-6.0/nrn/powerpc"));
+        		else  userSettings.setNeuronHome(new String("/Applications/NEURON-6.2/nrn/powerpc"));
 
 
         		userSettings.setExecutableCommandLine("/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal ");

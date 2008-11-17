@@ -810,7 +810,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             {
                 public void actionPerformed(ActionEvent e)
                 {
-                    logger.logComment("Adding a ParamGroup", true);
+                    logger.logComment("Adding a ParamGroup");
                     
                     Vector<String> groups = displayedCell.getAllGroupNames();
                     
@@ -1148,7 +1148,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                     {
                         double midPGval = minPGVal + i*(maxPGVal -minPGVal);
                         float midMechVal = (float)vm.evaluateAt(midPGval); 
-                        logger.logComment("i: "+i+", midPGval: "+midPGval+", midMechVal: "+midMechVal, true);
+                        logger.logComment("i: "+i+", midPGval: "+midPGval+", midMechVal: "+midMechVal);
                         
                         if (maxVal < midMechVal) maxVal = midMechVal;
                         if (minVal > midMechVal) minVal = midMechVal;
@@ -1742,7 +1742,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             if (nextRadioButton.isSelected())
                 selected = name;
         }
-        logger.logComment("selected: "+ selected, true);
+        logger.logComment("selected: "+ selected);
         
         if (!selected.equals(Section.ALL))
         {
