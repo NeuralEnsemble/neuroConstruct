@@ -6,24 +6,19 @@ REM
  
 
 
-
 REM ##########################################################################
-
 
 REM Change this line to your install location
 REM Use quotes if there is a space in the directory name: set NC_HOME="C:\Program Files\neuroConstruct_X.X.X"
 set NC_HOME=C:\neuroConstruct
 
-
-REM   Use an altered value with -Xmx in the line below to run the application with extra 
+REM   Use an altered value in the line below to run the application with extra 
 REM   memory; type java -X for more details. Choosing a max java heap size slightly less 
 REM   than half your total physical memory is best. 
-REM   *** ASKING FOR MORE MEMORY THAN THIS ON WINDOWS HAS LED TO THE APPLICATION CRASHING ***  
+REM   *** ASKING FOR MORE MEMORY THAN HALF MAX ON WINDOWS HAS LED TO THE APPLICATION CRASHING ***  
 set NC_MAX_MEMORY=450M 
 
-
 set NC_VERSION=1.1.4
-
 
 REM ##########################################################################
 
@@ -41,8 +36,9 @@ if not exist %NC_HOME% goto WARN_UPDATE_PATHS
 REM Determine 32bit or 64bit architecture for JDK
 set JDK_ARCH=32
  
-if [ %PROCESSOR_ARCHITEW6432% == "AMD64" ] (
-    echo "Assuming using a 64bit JDK"
+
+if /I %PROCESSOR_ARCHITECTURE% == AMD64  (
+    echo Assuming using a 64bit JDK, processor architecture: %PROCESSOR_ARCHITECTURE%
     set JDK_ARCH=64
 )
 
