@@ -202,7 +202,7 @@ public class Expand
             generateMainPage(testProj, f);
             
 
-            logger.logComment("Created doc at: "+ f.getCanonicalPath());
+            logger.logComment("Created doc at: "+ f.getCanonicalPath(), true);
         }
         catch(Exception e)
         {

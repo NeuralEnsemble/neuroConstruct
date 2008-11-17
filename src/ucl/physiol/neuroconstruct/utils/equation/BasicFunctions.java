@@ -34,9 +34,10 @@ public class BasicFunctions implements Serializable
     public static String EXPONENT = "exp";
     public static String LN = "ln";
     public static String LOG = "log";
+    public static String HEAVISIDE = "H";
 
     public static String[] allFunctions
-        = new String[]{SINE,COSINE,TANGENT,EXPONENT,LN,LOG};
+        = new String[]{SINE,COSINE,TANGENT,EXPONENT,LN,LOG, HEAVISIDE};
 
 
  /*
@@ -87,6 +88,12 @@ public class BasicFunctions implements Serializable
          {
              
              FunctionUnit eq = new LogFunctionUnit(internalEqn);
+             return eq;
+         }
+         else if (name.equals(HEAVISIDE))
+         {
+             
+             FunctionUnit eq = new HeavisideStepFunctionUnit(internalEqn);
              return eq;
          }
 
