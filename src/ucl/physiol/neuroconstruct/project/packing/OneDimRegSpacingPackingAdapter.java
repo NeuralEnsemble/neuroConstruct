@@ -32,7 +32,8 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
     ClassLogger logger = new ClassLogger("OneDimRegSpacingPackingAdapter");
     
     
-    Point3f lastProposedPoint = null;
+    //Point3d lastProposedPoint = null;
+    int numProposedPoints = 0;
 
 
     public static final int EDGE_POLICY_PARAM = 0;
@@ -81,6 +82,7 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
 
     }
 
+            
 
     protected Point3f generateNextPosition() throws CellPackingException
     {
@@ -116,6 +118,11 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
             maxZLoc = myRegion.getHighestZValue();
 
         }
+        
+        
+        Point3f startPoint = new Point3f(minXLoc,
+                                         minYLoc,
+                                         minZLoc);
 
         logger.logComment("minXLoc: "+ minXLoc+", maxXLoc: "+maxXLoc);
 
@@ -164,56 +171,53 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
         }
         else
         {
-            if (getNumPosAlreadyTaken() == 0)
+            
+            //Point3f lastPositionedPoint = getLastPosTaken();
+
+            if (parameterList[DIMENSION_PARAM].value == DIMENSION_PARAM_X)
             {
-                logger.logComment("This is first point...");
-                proposedPoint = new Point3f(minXLoc,
-                                            minYLoc,
-                                            minZLoc);
-
+                float distanceApart = (maxXLoc - minXLoc) / (getNumberCells()-1);
+                
+                proposedPoint = new Point3f(startPoint);
+                proposedPoint.add(new Point3f(distanceApart*numProposedPoints, 0, 0));
+                
+                logger.logComment("Placing cell in x dim..."+distanceApart+" apart, new: "+proposedPoint, true);
+                
+                if(proposedPoint.x > maxXLoc)
+                    throw new CellPackingException("Reached end of x dimension");
             }
-            else
+
+            else if (parameterList[DIMENSION_PARAM].value == DIMENSION_PARAM_Y)
             {
-                //Point3f lastPositionedPoint = getLastPosTaken();
-                logger.logComment("Last point proposed at: " + lastProposedPoint);
-
-                if (parameterList[DIMENSION_PARAM].value == DIMENSION_PARAM_X)
-                {
-                    logger.logComment("Placing cell in x dim...");
-                    float distanceApart = (maxXLoc - minXLoc) / (getNumberCells()-1);
-                    proposedPoint = new Point3f(lastProposedPoint);
-                    proposedPoint.add(new Point3f(distanceApart, 0, 0));
-                    if(proposedPoint.x > maxXLoc)
-                        throw new CellPackingException("Reached end of x dimension");
-                }
-
-                else if (parameterList[DIMENSION_PARAM].value == DIMENSION_PARAM_Y)
-                {
-                    logger.logComment("Placing cell in y dim...");
-                    float distanceApart = (maxYLoc - minYLoc) / (getNumberCells()-1);
-                    proposedPoint = new Point3f(lastProposedPoint);
-                    proposedPoint.add(new Point3f(0, distanceApart, 0));
-                    if(proposedPoint.y > maxYLoc)
-                        throw new CellPackingException("Reached end of y dimension");
-                }
-
-                else if (parameterList[DIMENSION_PARAM].value == DIMENSION_PARAM_Z)
-                {
-                    logger.logComment("Placing cell in z dim...");
-                    float distanceApart = (maxZLoc - minZLoc) / (getNumberCells()-1);
-                    proposedPoint = new Point3f(lastProposedPoint);
-                    proposedPoint.add(new Point3f(0, 0, distanceApart));
-                    if(proposedPoint.z > maxZLoc)
-                        throw new CellPackingException("Reached end of z dimension");
-                }
-
+                logger.logComment("Placing cell in y dim...");
+                float distanceApart = (maxYLoc - minYLoc) / (getNumberCells()-1);
+                proposedPoint = new Point3f(startPoint);
+                proposedPoint.add(new Point3f(0, distanceApart*numProposedPoints, 0));
+                
+                if(proposedPoint.y > maxYLoc)
+                    throw new CellPackingException("Reached end of y dimension");
             }
+
+            else if (parameterList[DIMENSION_PARAM].value == DIMENSION_PARAM_Z)
+            {
+                logger.logComment("Placing cell in z dim...");
+                float distanceApart = (maxZLoc - minZLoc) / (getNumberCells()-1);
+                proposedPoint = new Point3f(startPoint);
+                proposedPoint.add(new Point3f(0, 0, distanceApart*numProposedPoints));
+                if(proposedPoint.z > maxZLoc)
+                    throw new CellPackingException("Reached end of z dimension");
+            }
+
+            
 
             if (proposedPoint == null)
+                
             throw new CellPackingException("Cannot successfully place cell.");
         }
-        lastProposedPoint = new Point3f(proposedPoint);
-        return proposedPoint;
+        //lastProposedPoint = new Point3d(proposedPoint);
+        numProposedPoints++;
+        
+        return new Point3f(proposedPoint);
 
     }
 
