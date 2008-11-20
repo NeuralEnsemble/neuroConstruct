@@ -55,6 +55,7 @@ public class HexagonalLayerPackingAdapter extends CellPackingAdapter
 
 
 
+    @Override
     public void reset()
     {
         super.reset();
@@ -121,7 +122,7 @@ public class HexagonalLayerPackingAdapter extends CellPackingAdapter
         }
         else
         {
-            Point3f lastPositionedPoint = (Point3f) positionsAlreadyAttempted.lastElement();
+            Point3f lastPositionedPoint = positionsAlreadyAttempted.lastElement();
             logger.logComment("Last point attempted at: " + lastPositionedPoint);
 
             float proposedNewXPos = lastPositionedPoint.x + getCentreSpacing();

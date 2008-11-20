@@ -34,8 +34,8 @@ public class RandomCellPackingAdapter extends CellPackingAdapter
 {
     ClassLogger logger = new ClassLogger("RandomCellPackingAdapter");
 
-    int maximumNumberAllowed = 1;
-    int maxNumberOfTries = 70;
+    final int maximumNumberAllowed = 1;
+    final int maxNumberOfTries = 70;
 
     public final static String EDGE_POLICY = "EdgePolicy";
     public final static String SELF_OVERLAP_POLICY = "Self Overlap Policy";

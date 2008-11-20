@@ -4037,8 +4037,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         this.jButtonSimConfigEdit.setToolTipText(toolTipText.getToolTip("Simulation Configuration"));
 
-        this.jLabelSimConfigs.setToolTipText(toolTipText.getToolTip("Click sim config"));
-        this.jPanelSimConfigClicks.setToolTipText(toolTipText.getToolTip("Click sim config"));
+        this.jLabelSimConfigs.setToolTipText(toolTipText.getToolTip("Simulation Configuration"));
+        this.jPanelSimConfigClicks.setToolTipText(toolTipText.getToolTip("Simulation Configuration"));
 
 
 

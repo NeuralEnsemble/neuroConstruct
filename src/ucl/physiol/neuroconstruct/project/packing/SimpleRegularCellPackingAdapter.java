@@ -206,6 +206,7 @@ public class SimpleRegularCellPackingAdapter extends CellPackingAdapter
 
     };
 
+    @Override
     public void reset()
     {
         super.reset();

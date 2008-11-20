@@ -89,6 +89,7 @@ public class SinglePositionedCellPackingAdapter extends CellPackingAdapter
     }
 
 
+    @Override
     public boolean avoidOtherCellGroups()
     {
         return false;

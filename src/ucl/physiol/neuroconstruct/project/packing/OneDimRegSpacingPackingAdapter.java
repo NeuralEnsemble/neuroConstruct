@@ -181,7 +181,8 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
                 proposedPoint = new Point3f(startPoint);
                 proposedPoint.add(new Point3f(distanceApart*numProposedPoints, 0, 0));
                 
-                logger.logComment("Placing cell in x dim..."+distanceApart+" apart, new: "+proposedPoint, true);
+                logger.logComment("Placing one of "+getNumberCells()+" cells in x dim..."+distanceApart
+                    +" apart, new: "+proposedPoint+", already proposed: "+numProposedPoints, true);
                 
                 if(proposedPoint.x > maxXLoc)
                     throw new CellPackingException("Reached end of x dimension");
@@ -282,6 +283,8 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
     public void reset()
     {
         super.reset();
+        
+        numProposedPoints = 0;
         logger.logComment("------------------  Adapter being reset...");
     }
 
