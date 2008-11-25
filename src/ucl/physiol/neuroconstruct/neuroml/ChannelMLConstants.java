@@ -166,6 +166,9 @@ public class ChannelMLConstants
     public static String CONC_DEP_VAR_NAME_ATTR = "variable_name";
     public static String CONC_DEP_MIN_CONC_ATTR = "min_conc";
     public static String CONC_DEP_MAX_CONC_ATTR = "max_conc";
+    
+    
+    public static String CONC_FACTOR_ELEMENT = "conc_factor";
 
     public static String ALPHA_ELEMENT = "alpha";
     public static String BETA_ELEMENT = "beta";

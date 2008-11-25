@@ -1927,7 +1927,7 @@ public class GenesisFileManager
                                             
                                             String name = ( (SimpleXMLElement)newGate[0]).getAttributeValue(ChannelMLConstants.GATE_NAME_ATTR);
                                             
-                                            logger.logComment("Looking at: " + newGate[0]+", name = "+name, true);
+                                            logger.logComment("Looking at: " + newGate[0]+", name = "+name);
                                             
                                             if (name.equals(simIndepVarPart))
                                             {
@@ -2780,6 +2780,25 @@ public class GenesisFileManager
                             }                            
                         }
                         
+                        
+                        
+                        xpath = ChannelMLConstants.getCurrVoltRelXPath()+"/"+ChannelMLConstants.CONC_FACTOR_ELEMENT;
+                        SimpleXMLEntity[] concFactors = cmlp.getXMLDoc().getXMLEntities(xpath);
+                        
+                        for(SimpleXMLEntity sxe: concFactors)
+                        {
+                            String ionName = ((SimpleXMLElement)sxe).getAttributeValue(ChannelMLConstants.CONC_DEP_ION_ATTR);
+                            
+                            ArrayList<String> cellProcsDepOnIonConc = ionRateDependence.get(ionName);
+
+                            if (cellProcsDepOnIonConc==null)
+                            {
+                                cellProcsDepOnIonConc = new ArrayList<String> ();
+                                ionRateDependence.put(ionName, cellProcsDepOnIonConc);
+                            }
+                            cellProcsDepOnIonConc.add(cellMech.getInstanceName());
+                        }
+                        
                         xpath = ChannelMLConstants.getCurrVoltRelXPath()+"/"+ChannelMLConstants.CONC_DEP_ELEMENT;
                         SimpleXMLEntity[] concDeps = cmlp.getXMLDoc().getXMLEntities(xpath);
                         
@@ -2899,10 +2918,10 @@ public class GenesisFileManager
             }
             
 
-            logger.logComment("ionConcentration: "+ ionConcentration);
-            logger.logComment("ionRateDependence: "+ ionRateDependence);
-            logger.logComment("ionCurrentSources: "+ ionCurrentSources);
-            logger.logComment("ionCurrFixedRevPot: "+ ionCurrFixedRevPot);
+            logger.logComment("ionConcentration: "+ ionConcentration, true);
+            logger.logComment("ionRateDependence: "+ ionRateDependence, true);
+            logger.logComment("ionCurrentSources: "+ ionCurrentSources, true);
+            logger.logComment("ionCurrFixedRevPot: "+ ionCurrFixedRevPot, true);
 
             Enumeration<String> ionsAffectingRates = ionRateDependence.keys();
 
