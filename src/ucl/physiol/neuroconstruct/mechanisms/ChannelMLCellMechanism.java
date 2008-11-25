@@ -820,7 +820,7 @@ public class ChannelMLCellMechanism extends CellMechanism
 
         if (chanType==null || chanType.length==0) return false;
 
-        xpath = ChannelMLConstants.getGateXPath(1);
+        xpath = ChannelMLConstants.getPreV1_7_3GateXPath(1);
         logger.logComment("Checking gates xpath: "+xpath);
 
         SimpleXMLEntity[] gates = xmlDoc.getXMLEntities(xpath);

@@ -62,7 +62,7 @@ public class Expression
         String info = "+++++  Parsing line: ["+line+ "] with variables: [";
         for(Variable v: variables)
         {
-            info = info + v.toString();
+            info = info + v.toString()+" ";
         }
         info = info + "]";
         

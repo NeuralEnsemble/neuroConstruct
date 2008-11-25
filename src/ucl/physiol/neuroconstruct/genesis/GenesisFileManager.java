@@ -1887,23 +1887,19 @@ public class GenesisFileManager
 
                                     for (int gateIndex = 1; gateIndex <= maxGates; gateIndex++)
                                     {
-                                        String xpath = ChannelMLConstants.getGateXPath(
-                                            gateIndex);
+                                        String oldGateXpath = ChannelMLConstants.getPreV1_7_3GateXPath(gateIndex);
 
-                                        logger.logComment("Checking xpath: " + xpath);
+                                        logger.logComment("Checking xpath: " + oldGateXpath);
 
-                                        SimpleXMLEntity[] gate = ( (ChannelMLCellMechanism) cellMech).
-                                            getXMLDoc().
-                                            getXMLEntities(xpath);
+                                        SimpleXMLEntity[] oldGate = ( (ChannelMLCellMechanism) cellMech).getXMLDoc().getXMLEntities(oldGateXpath);
 
-                                        if (gate != null && gate.length > 0)
+                                        if (oldGate != null && oldGate.length > 0)
                                         {
-
-                                            logger.logComment("Looking at: " + gate[0]);
+                                            logger.logComment("Looking at: " + oldGate[0]);
 
                                             SimpleXMLEntity gateState = ( (SimpleXMLElement)
-                                                                         gate[0]).getXMLEntities(ChannelMLConstants.
-                                                STATE_ELEMENT)[0];
+                                                                         oldGate[0]).getXMLEntities(ChannelMLConstants.
+                                                                            STATE_ELEMENT)[0];
 
                                             logger.logComment("State: " +
                                                               gateState.getXMLString("", false));
@@ -1920,6 +1916,28 @@ public class GenesisFileManager
                                                 else if (gateIndex == 3) variableName = "Z";
                                             }
                                         }
+                                        
+                                        
+                                        String newGateXpath = ChannelMLConstants.getIndexedGateXPath(gateIndex);
+                                        
+                                        SimpleXMLEntity[] newGate = ( (ChannelMLCellMechanism) cellMech).getXMLDoc().getXMLEntities(newGateXpath);
+                                        
+                                        if (newGate != null && newGate.length > 0)
+                                        {
+                                            
+                                            String name = ( (SimpleXMLElement)newGate[0]).getAttributeValue(ChannelMLConstants.GATE_NAME_ATTR);
+                                            
+                                            logger.logComment("Looking at: " + newGate[0]+", name = "+name, true);
+                                            
+                                            if (name.equals(simIndepVarPart))
+                                            {
+                                                foundGateVariable = true;
+                                                if (gateIndex == 1) variableName = "X"; // GENESIS convention...
+                                                else if (gateIndex == 2) variableName = "Y";
+                                                else if (gateIndex == 3) variableName = "Z";
+                                            }
+                                        }
+                                        
                                     }
                                     if (!foundGateVariable && simIndepVarPart.startsWith(SimPlot.REV_POT))
                                     {

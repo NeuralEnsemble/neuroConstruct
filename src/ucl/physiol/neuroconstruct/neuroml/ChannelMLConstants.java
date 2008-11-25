@@ -135,6 +135,7 @@ public class ChannelMLConstants
     public static String GATE_ELEMENT = "gate";
     
     public static String GATE_NAME_ELEMENT = "name";
+    public static String GATE_NAME_ATTR = "name";
 
     public static String STATE_ELEMENT = "state";
 
@@ -190,6 +191,7 @@ public class ChannelMLConstants
     
     public static String RATE_NAME_ATTR = "name";
 
+    public static String PARAMETERS_ELEMENT = "parameters";
     public static String PARAMETER_ELEMENT = "parameter";
     public static String PARAMETER_NAME_ATTR = "name";
     public static String PARAMETER_VALUE_ATTR = "value";
@@ -257,6 +259,14 @@ public class ChannelMLConstants
     {
         return getChannelTypeXPath()+ "/" +
             ChannelMLConstants.STATUS_ELEMENT;
+
+    }
+    
+    public static String getChannelParameterXPath()
+    {
+        return getChannelTypeXPath()+ "/" +
+            ChannelMLConstants.PARAMETERS_ELEMENT+ "/" +
+            ChannelMLConstants.PARAMETER_ELEMENT;
 
     }
 
@@ -380,7 +390,7 @@ public class ChannelMLConstants
         return getChannelTypeXPath() + "/" + CURR_VOLT_REL_ELEMENT;
     }
 
-    public static String getGatesXPath()
+    public static String getPostV1_7_3GatesXPath()
     {
         return getCurrVoltRelXPath() + "/" + GATE_ELEMENT;
     }
@@ -406,12 +416,16 @@ public class ChannelMLConstants
     }
 
 
-    public static String getGateXPath(int index)
+    public static String getPreV1_7_3GateXPath(int index)
     {
         return getConductanceXPath() + "/" + GATE_ELEMENT+"["+index+"]";
     }
 
 
+    public static String getIndexedGateXPath(int index)
+    {
+        return getCurrVoltRelXPath() + "/" + GATE_ELEMENT+"["+index+"]";
+    }
 
 
 

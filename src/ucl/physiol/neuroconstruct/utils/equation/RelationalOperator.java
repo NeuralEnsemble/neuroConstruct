@@ -27,10 +27,10 @@ public class RelationalOperator
 {
     public static final String EQUAL = "==";
     public static final String NOT_EQUAL = "!=";
-    public static final String GREATER_THAN = ">";
     public static final String GREATER_THAN_OR_EQUAL = ">=";
-    public static final String LESS_THAN = "<";
+    public static final String GREATER_THAN = ">";
     public static final String LESS_THAN_OR_EQUAL = "<=";
+    public static final String LESS_THAN = "<";
     
     public String operator = null;
     
@@ -40,10 +40,10 @@ public class RelationalOperator
     {
         allROs.add(new RelationalOperator(EQUAL));
         allROs.add(new RelationalOperator(NOT_EQUAL));
-        allROs.add(new RelationalOperator(GREATER_THAN));
         allROs.add(new RelationalOperator(GREATER_THAN_OR_EQUAL));
-        allROs.add(new RelationalOperator(LESS_THAN));
+        allROs.add(new RelationalOperator(GREATER_THAN));
         allROs.add(new RelationalOperator(LESS_THAN_OR_EQUAL));
+        allROs.add(new RelationalOperator(LESS_THAN));
     }
     
     private RelationalOperator(String operator)
