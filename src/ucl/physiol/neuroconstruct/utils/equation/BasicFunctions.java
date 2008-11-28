@@ -35,9 +35,10 @@ public class BasicFunctions implements Serializable
     public static String LN = "ln";
     public static String LOG = "log";
     public static String HEAVISIDE = "H";
+    public static String RANDOM = "random";
 
     public static String[] allFunctions
-        = new String[]{SINE,COSINE,TANGENT,EXPONENT,LN,LOG, HEAVISIDE};
+        = new String[]{SINE,COSINE,TANGENT,EXPONENT,LN,LOG, HEAVISIDE, RANDOM};
 
 
  /*
@@ -94,6 +95,12 @@ public class BasicFunctions implements Serializable
          {
              
              FunctionUnit eq = new HeavisideStepFunctionUnit(internalEqn);
+             return eq;
+         }
+         else if (name.equals(RANDOM))
+         {
+             
+             FunctionUnit eq = new RandomFunctionUnit(internalEqn);
              return eq;
          }
 
