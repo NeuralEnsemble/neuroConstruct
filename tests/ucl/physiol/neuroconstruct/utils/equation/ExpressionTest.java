@@ -48,8 +48,9 @@ public class ExpressionTest {
                                             "tan(v)",
                                             "log(v)",
                                             "ln(v)",
+                                            "random(v)",
                                             "100.0 *(  (v - -0.0089) / (-0.0050) ) / (1 - exp(-1 * ( (v - -0.0089) / (-0.0050) )))",
-                                            "v-(-0.065)",};
+                                            "v-(-0.065)"};
         
         Variable v = new Variable("v");
         Variable t = new Variable("t");
@@ -71,7 +72,9 @@ public class ExpressionTest {
         
         Argument[] v0 = new Argument[]{new Argument(v.getName(), 0)};
         Argument[] v1 = new Argument[]{new Argument(v.getName(), 1)};
-        Argument[] v90deg = new Argument[]{new Argument(v.getName(), Math.PI/2)};
+        double halfPi = Math.PI/2;
+        
+        Argument[] v90deg = new Argument[]{new Argument(v.getName(), halfPi)};
         
         assertEquals(eqnUnits.get(2).evaluateAt(v0), 0.00024893534183931975, 0);
         
@@ -80,6 +83,9 @@ public class ExpressionTest {
         assertEquals(eqnUnits.get(5).evaluateAt(v0), 0, 0);
         assertEquals(eqnUnits.get(6).evaluateAt(v1), 0, 0);
         assertEquals(eqnUnits.get(7).evaluateAt(v1), 0, 0);
+        
+        assertTrue(eqnUnits.get(8).evaluateAt(v90deg)<=halfPi);
+        assertTrue(eqnUnits.get(8).evaluateAt(v90deg)>=0);
         
     }
     
