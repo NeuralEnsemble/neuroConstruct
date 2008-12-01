@@ -104,6 +104,11 @@ public abstract class CellMechanism
 
 
 
+    public boolean isGapJunctionMechanism()
+    {
+        return getMechanismType().equals(CellMechanism.GAP_JUNCTION);
+    }
+    
     public boolean isSynapticMechanism()
     {
         return getMechanismType().equals(CellMechanism.SYNAPTIC_MECHANISM);

@@ -557,7 +557,31 @@ public class CellTopologyHelper
                     cellBox.setParameter(RectangularBox.Z_PARAM, cellBox.getLowestZValue() - maxMin.getMaxLength());
                     cellBox.setParameter(RectangularBox.DEPTH_PARAM, cellBox.getZExtent() + 2*maxMin.getMaxLength());
                 }
-                logger.logComment("Box: "+ cellBox);
+                
+                
+                if (maxMin.getDimension().equals(MaxMinLength.X_DIR))
+                {
+                    cellBox.setParameter(RectangularBox.Y_PARAM, Float.MAX_VALUE*-1);
+                    cellBox.setParameter(RectangularBox.HEIGHT_PARAM, Float.MAX_VALUE);
+                    cellBox.setParameter(RectangularBox.Z_PARAM, Float.MAX_VALUE*-1);
+                    cellBox.setParameter(RectangularBox.DEPTH_PARAM, Float.MAX_VALUE);
+                }
+                
+                if (maxMin.getDimension().equals(MaxMinLength.Y_DIR))
+                {
+                    cellBox.setParameter(RectangularBox.X_PARAM, Float.MAX_VALUE*-1);
+                    cellBox.setParameter(RectangularBox.WIDTH_PARAM, Float.MAX_VALUE);
+                    cellBox.setParameter(RectangularBox.Z_PARAM, Float.MAX_VALUE*-1);
+                    cellBox.setParameter(RectangularBox.DEPTH_PARAM, Float.MAX_VALUE);
+                }
+                
+                if (maxMin.getDimension().equals(MaxMinLength.Z_DIR))
+                {
+                    cellBox.setParameter(RectangularBox.X_PARAM, Float.MAX_VALUE*-1);
+                    cellBox.setParameter(RectangularBox.WIDTH_PARAM, Float.MAX_VALUE);
+                    cellBox.setParameter(RectangularBox.Y_PARAM, Float.MAX_VALUE*-1);
+                    cellBox.setParameter(RectangularBox.HEIGHT_PARAM, Float.MAX_VALUE);
+                }
 
                 cachedStartCellType = startCell.getInstanceName();
                 cachedCellBoundBox = cellBox;
@@ -588,6 +612,10 @@ public class CellTopologyHelper
                     tempPosRecs[countGoodPos] = pos.cellNumber;
                     countGoodPos++;
                 }
+                else
+                {
+                    logger.logComment("No good point: "+pos+" for start cell: "+ startCellPos, true);
+                }
             }
 
             allowedFinishCells = new int[countGoodPos];
@@ -596,7 +624,7 @@ public class CellTopologyHelper
             {
                 allowedFinishCells[i] = tempPosRecs[i];
             }
-            //logger.logComment("Total finish cells: "+ finishPosRecords.size() +", but returning only: "+ countGoodPos, true);
+            logger.logComment("Total finish cells: "+ finishPosRecords.size() +", but returning only: "+ countGoodPos+", box: "+ connBoundBox, true);
                         
         }
         

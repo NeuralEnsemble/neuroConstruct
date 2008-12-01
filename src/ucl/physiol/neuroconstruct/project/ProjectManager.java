@@ -618,7 +618,7 @@ public class ProjectManager implements GenerationReport
                                                             NetworkMLConstants.NAMESPACE_URI
                                                             + "  " + NetworkMLConstants.DEFAULT_SCHEMA_FILENAME));
 
-            rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS, "micron"));
+            rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS_NEW, "micron"));
 
             doc.addRootElement(rootElement);
 

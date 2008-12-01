@@ -788,22 +788,22 @@ public class UnitConverter
             UnitConverter.NEURON_UNITS) + dimensionlessUnits[NEURON_UNITS].getSymbol());
         
         
-        fromUnits = GENESIS_PHYSIOLOGICAL_UNITS;
-        PhysicalQuantity condDens = new PhysicalQuantity(1, conductanceDensityUnits[fromUnits]);
+        fromUnits = GENESIS_SI_UNITS;
+        PhysicalQuantity cond = new PhysicalQuantity(1, conductanceUnits[fromUnits]);
 
-        System.out.println("condDens: "+ condDens.getMagnitude()+ " "+condDens.getUnits().getSafeSymbol());
+        System.out.println("cond: "+ cond.getMagnitude()+ " "+cond.getUnits().getSafeSymbol());
 
-        System.out.println("condDens GENESIS_SI_UNITS: " + UnitConverter.getConductanceDensity(condDens.getMagnitude(),
+        System.out.println("cond GENESIS_SI_UNITS: " + UnitConverter.getConductance(cond.getMagnitude(),
             fromUnits,
-            UnitConverter.GENESIS_SI_UNITS) + conductanceDensityUnits[GENESIS_SI_UNITS].getSafeSymbol());
+            UnitConverter.GENESIS_SI_UNITS) + conductanceUnits[GENESIS_SI_UNITS].getSafeSymbol());
 
-        System.out.println("condDens GENESIS_PHYSIOLOGICAL_UNITS: " + UnitConverter.getConductanceDensity(condDens.getMagnitude(),
+        System.out.println("cond GENESIS_PHYSIOLOGICAL_UNITS: " + UnitConverter.getConductance(cond.getMagnitude(),
             fromUnits,
-            UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + conductanceDensityUnits[GENESIS_PHYSIOLOGICAL_UNITS].getSafeSymbol());
+            UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + conductanceUnits[GENESIS_PHYSIOLOGICAL_UNITS].getSafeSymbol());
 
-        System.out.println("condDens NEURON: " + UnitConverter.getConductanceDensity(condDens.getMagnitude(),
+        System.out.println("cond NEURON: " + UnitConverter.getConductance(cond.getMagnitude(),
             fromUnits,
-            UnitConverter.NEURON_UNITS) + conductanceDensityUnits[NEURON_UNITS].getSafeSymbol());
+            UnitConverter.NEURON_UNITS) + conductanceUnits[NEURON_UNITS].getSafeSymbol());
 
 
 /*

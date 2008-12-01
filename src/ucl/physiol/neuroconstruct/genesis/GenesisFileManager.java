@@ -817,9 +817,9 @@ public class GenesisFileManager
                     else  /// isGapJunction
                     {
                         
-                        response.append("makechannel_" + synProps.getSynapseType()
+                        response.append("connectGapJunction_" + synProps.getSynapseType()
                                         + " " + receivingElement
-                                        + " " + triggeringElement + "\n\n");
+                                        + " " + triggeringElement + " "+weight+"\n\n");
                     }
 
                 }

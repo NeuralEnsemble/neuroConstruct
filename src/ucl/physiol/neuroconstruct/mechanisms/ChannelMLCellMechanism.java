@@ -294,6 +294,10 @@ public class ChannelMLCellMechanism extends CellMechanism
         {
             return ChannelMLConstants.getChannelNameXPath();
         }
+        else if (this.isGapJunctionMechanism())
+        {
+            return ChannelMLConstants.getSynapseNameXPath();
+        }
         else if (this.isSynapticMechanism())
         {
             return ChannelMLConstants.getSynapseNameXPath();
@@ -316,6 +320,10 @@ public class ChannelMLCellMechanism extends CellMechanism
         else if (this.isPointProcess())
         {
             return ChannelMLConstants.getFirstChannelNotesXPath();
+        }
+        else if (this.isGapJunctionMechanism())
+        {
+            return ChannelMLConstants.getFirstSynapseNotesXPath();
         }
         else if (this.isSynapticMechanism())
         {
@@ -348,6 +356,11 @@ public class ChannelMLCellMechanism extends CellMechanism
             else if (xmlDoc.getValueByXPath(ChannelMLConstants.getChannelTypeXPath()) != null)
             {
                 mechanismType = CellMechanism.CHANNEL_MECHANISM;
+                return mechanismType;
+            }
+            else if (xmlDoc.getValueByXPath(ChannelMLConstants.getElecSynapseXPath()) != null)
+            {
+                mechanismType = CellMechanism.GAP_JUNCTION;
                 return mechanismType;
             }
             else if (xmlDoc.getValueByXPath(ChannelMLConstants.getSynapseTypeXPath()) != null)

@@ -27,8 +27,7 @@ import ucl.physiol.neuroconstruct.utils.equation.*;
 public class RandomFunctionUnit extends FunctionUnit
 {
     static final long serialVersionUID = -66653452445563623L;
-                     
-    
+              
 
     public RandomFunctionUnit(EquationUnit internalEqn)
     {
@@ -38,8 +37,6 @@ public class RandomFunctionUnit extends FunctionUnit
     public RandomFunctionUnit()
     {
     }
-    
-    
 
     public double evaluateAt(Argument[] args) throws EquationException
     {

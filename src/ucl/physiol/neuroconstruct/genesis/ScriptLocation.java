@@ -61,6 +61,7 @@ public class ScriptLocation
     }
 
 
+    @Override
     public boolean equals(Object obj)
     {
         //System.out.println("Checking equality of this: "+ this + " to "+ obj);
@@ -76,6 +77,16 @@ public class ScriptLocation
             }
         }
         return false;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 41 * hash + this.positionReference;
+        hash = 41 * hash + (this.shortDescription != null ? this.shortDescription.hashCode() : 0);
+        hash = 41 * hash + (this.usage != null ? this.usage.hashCode() : 0);
+        return hash;
     }
 
 
@@ -157,9 +168,15 @@ public class ScriptLocation
 
 
 
+    @Override
     public String toString()
     {
         return "Type "+ positionReference+", "+ this.shortDescription;
+    }
+
+    public String toShortString()
+    {
+        return "Type "+ positionReference;
     }
 
     public static ArrayList<ScriptLocation> getAllKnownLocations()

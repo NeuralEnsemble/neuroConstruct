@@ -68,6 +68,7 @@ public class NativeCodeLocation
     }
 
 
+    @Override
     public boolean equals(Object obj)
     {
         //System.out.println("Checking equality of this: "+ this + " to "+ obj);
@@ -83,6 +84,16 @@ public class NativeCodeLocation
             }
         }
         return false;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 11 * hash + this.positionReference;
+        hash = 11 * hash + (this.shortDescription != null ? this.shortDescription.hashCode() : 0);
+        hash = 11 * hash + (this.usage != null ? this.usage.hashCode() : 0);
+        return hash;
     }
 
 
@@ -161,9 +172,15 @@ public class NativeCodeLocation
 
 
 
+    @Override
     public String toString()
     {
         return "Type "+ positionReference+", "+ this.shortDescription /*+ (present? " *": "")*/;
+    }
+
+    public String toShortString()
+    {
+        return "Type "+ positionReference;
     }
 
     public static ArrayList<NativeCodeLocation> getAllKnownLocations()

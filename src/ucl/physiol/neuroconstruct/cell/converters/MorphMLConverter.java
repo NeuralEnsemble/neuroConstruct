@@ -415,7 +415,7 @@ public class MorphMLConverter extends FormatImporter
             }
 
 
-            rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS, "micron"));
+            rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS_NEW, "micron"));
 
             String mmlPrefix = "";
             if (!level.equals(NeuroMLConstants.NEUROML_LEVEL_1))
@@ -748,6 +748,12 @@ public class MorphMLConverter extends FormatImporter
                             
 
                             logger.logComment("Trying to get: "+ cmlCm.getXMLDoc().getXPathLocations(true));
+                            
+                            if (val==null || val.trim().length()==0)  // post v1.7.3 format
+                            {
+                                xpath = ChannelMLConstants.getCurrVoltRelXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
+                                val = cmlCm.getXMLDoc().getValueByXPath(xpath);
+                            }
                             
                             float revPot = Float.parseFloat(val);
                             

@@ -182,7 +182,7 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
                 proposedPoint.add(new Point3f(distanceApart*numProposedPoints, 0, 0));
                 
                 logger.logComment("Placing one of "+getNumberCells()+" cells in x dim..."+distanceApart
-                    +" apart, new: "+proposedPoint+", already proposed: "+numProposedPoints, true);
+                    +" apart, new: "+proposedPoint+", already proposed: "+numProposedPoints);
                 
                 if(proposedPoint.x > maxXLoc)
                     throw new CellPackingException("Reached end of x dimension");

@@ -401,6 +401,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JLabel jLabelNeuronRandomGenDesc = new JLabel("Random seed for NEURON:");
     JTextField jTextFieldNeuronRandomGen = new JTextField();
     JCheckBox jCheckBoxNeuronRandomGen = new JCheckBox("Recalculate before creating script files");
+    
+    
+    JPanel jPanelNeuronExtraLinks =  new JPanel();
+    JLabel jLabelNeuronExtraLinks = new JLabel("Extra code blocks:");
+    
+    JPanel jPanelGenesisExtraLinks =  new JPanel();
+    JLabel jLabelGenesisExtraLinks = new JLabel("Extra code blocks:");
 
     JPanel jPanelGenesisRandomGen =  new JPanel();
     JPanel jPanelGenesisComps =  new JPanel();
@@ -3137,21 +3144,27 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                      , GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(0, 0, 20, 0), 0, 0));
+        
+        jPanelGenesisMain.add(this.jPanelGenesisExtraLinks,
+                              new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
+                                                     , GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(0, 0, 20, 0), 0, 0));
 
         jPanelGenesisMain.add(this.jPanelGenesisComps,
-                              new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
+                              new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
                                                      , GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(0, 0, 0, 0), 20, 0));
 
         jPanelGenesisMain.add(jPanelGenesisButtons,
-                              new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
+                              new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
                                                      , GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(0, 0, 0, 0), 0, 0));
         
         jPanelGenesisMain.add(jPanelGenesisView,
-                              new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
+                              new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0
                                                      , GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(0, 0, 170, 0), 0, 0));
@@ -3179,6 +3192,21 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelHocFile2Buttons.add(jCheckBoxNeuronLineNums, null);
         
         jPanelHocFile1Buttons.add(jButtonNeuronRun, null);
+        
+        jPanelNeuronExtraLinks.setBorder(BorderFactory.createEtchedBorder());
+        
+        Dimension d = new Dimension(400, 42);
+        jPanelNeuronExtraLinks.setMinimumSize(d);
+        jPanelNeuronExtraLinks.setPreferredSize(d);
+        
+
+        jPanelGenesisExtraLinks.setBorder(BorderFactory.createEtchedBorder());
+        
+        Dimension d2 = new Dimension(400, 32);
+        jPanelGenesisExtraLinks.setMinimumSize(d2);
+        jPanelGenesisExtraLinks.setPreferredSize(d2);
+        
+
 
         
         jPanelNeuronMainSettings.add(jLabelNeuronMainLabel,  new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
@@ -3195,12 +3223,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelNeuronMainSettings.add(this.jPanelNeuronRandomGen,    new GridBagConstraints(0, 3, 1, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 12));
 
+        jPanelNeuronMainSettings.add(this.jPanelNeuronExtraLinks,    new GridBagConstraints(0, 4, 1, 1, 1.0, 1.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(6, 0, 6, 0), 0, 12));
 
-        jPanelNeuronMainSettings.add(jPanelHocFile1Buttons,        new GridBagConstraints(0, 4, 1, 1, 1.0, 1.0
+
+        jPanelNeuronMainSettings.add(jPanelHocFile1Buttons,        new GridBagConstraints(0, 5, 1, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 12));
 
-        jPanelNeuronMainSettings.add(jPanelHocFile2Buttons,        new GridBagConstraints(0, 5, 1, 1, 1.0, 1.0
-            ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 180, 0), 0, 70));
+        jPanelNeuronMainSettings.add(jPanelHocFile2Buttons,        new GridBagConstraints(0, 6, 1, 1, 1.0, 1.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 150, 0), 0, 70));
 
 
   /*      jPanelNeuronMainSettings.add(jLabelNeuronMainLabel);
@@ -3468,7 +3499,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         
         jPanelExportGenesis.add(jTabbedPaneGenesis,  BorderLayout.CENTER);
-        jTabbedPaneGenesis.add(jPanelGenesisMain,   "Generate code");
+        jTabbedPaneGenesis.add(jPanelGenesisMain,   GENESIS_TAB_GENERATE);
         jPanelNeuronExtraHoc.add(jPanelNeuronExtraHocBlock, null);
         jPanelGenesisExtra.add(jPanelGenesisExtraBlock, null);
 
@@ -3621,7 +3652,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jScrollPaneGenesisAfter.getViewport().add(jTextAreaGenesisAfter, null);
 */
 
-        jTabbedPaneGenesis.add(jPanelGenesisExtra,  "Extra code");
+        jTabbedPaneGenesis.add(jPanelGenesisExtra,  GENESIS_TAB_EXTRA);
         jPanelNeuronGraphOptions.add(jCheckBoxNeuronShowShapePlot, null);
         jPanelNeuronGraphOptions.add(jCheckBoxNeuronComments, null);
         jPanelNeuronGraphOptions.add(this.jCheckBoxNeuronNoGraphicsMode, null);
@@ -8614,6 +8645,49 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                    jRadioButtonGenesisSI.setSelected(true);
 
            }
+       
+            ArrayList<ScriptLocation> ncls = ScriptLocation.getAllKnownLocations();
+            jPanelGenesisExtraLinks.removeAll();
+            
+            jPanelGenesisExtraLinks.add(jLabelGenesisExtraLinks);
+
+            for(int i=0;i<ncls.size();i++)
+            {
+                final ScriptLocation ncl = ncls.get(i);
+
+                String text = projManager.getCurrentProject().genesisSettings.getNativeBlock(ncl);
+              
+                ClickLink cl = new ClickLink(ncl.toShortString(), ncl.getShortDescription());
+
+                if(text==null || text.trim().length()==0)
+                    cl.setForeground(Color.lightGray);
+
+                jPanelGenesisExtraLinks.add(cl);
+
+                cl.addMouseListener(new MouseListener()
+                {
+                    //String cellGroup = cellGroup;
+                    public void mouseClicked(MouseEvent e)
+                    {
+                        //jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(GENESIS_SIMULATOR_TAB));
+                        jTabbedPaneGenesis.setSelectedIndex(jTabbedPaneGenesis.indexOfTab(GENESIS_TAB_EXTRA));
+
+                        jComboBoxGenesisExtraBlocks.setSelectedItem(ncl);
+
+                    };
+
+                    public void mousePressed(MouseEvent e) {};
+
+                    public void mouseReleased(MouseEvent e) {};
+
+                    public void mouseEntered(MouseEvent e) {};
+
+                    public void mouseExited(MouseEvent e) {};
+
+                });
+            
+
+           }
 
            jLabelGenesisNumMethod.setText(projManager.getCurrentProject().genesisSettings.getNumMethod().toString());
 
@@ -9031,6 +9105,48 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             this.jTextAreaNeuronBlock.setBackground(Color.white);
             this.jTextAreaNeuronBlockDesc.setBackground(Color.white);
+            
+
+            ArrayList<NativeCodeLocation> ncls = NativeCodeLocation.getAllKnownLocations();
+            jPanelNeuronExtraLinks.removeAll();
+            
+            jPanelNeuronExtraLinks.add(jLabelNeuronExtraLinks);
+
+            for(int i=0;i<ncls.size();i++)
+            {
+                final NativeCodeLocation ncl = ncls.get(i);
+
+                String text = projManager.getCurrentProject().neuronSettings.getNativeBlock(ncl);
+              
+                ClickLink cl = new ClickLink(ncl.toShortString(), ncl.getShortDescription());
+
+                if(text==null || text.trim().length()==0)
+                    cl.setForeground(Color.lightGray);
+
+                jPanelNeuronExtraLinks.add(cl);
+
+                cl.addMouseListener(new MouseListener()
+                {
+                    //String cellGroup = cellGroup;
+                    public void mouseClicked(MouseEvent e)
+                    {
+                        //jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(GENESIS_SIMULATOR_TAB));
+                        jTabbedPaneNeuron.setSelectedIndex(jTabbedPaneNeuron.indexOfTab(NEURON_TAB_EXTRA));
+
+                        jComboBoxNeuronExtraBlocks.setSelectedItem(ncl);
+
+                    };
+
+                    public void mousePressed(MouseEvent e) {};
+
+                    public void mouseReleased(MouseEvent e) {};
+
+                    public void mouseEntered(MouseEvent e) {};
+
+                    public void mouseExited(MouseEvent e) {};
+
+                });
+            }
 
 
 
@@ -10619,7 +10735,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         if (!projManager.projectLoaded()) return;
 
-
         projManager.getCurrentProject().simConfigInfo.validateStoredSimConfigs(projManager.getCurrentProject());
 
         SimConfig simConfig = getSelectedSimConfig();
@@ -10688,8 +10803,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         // need this to update list of 3d position files...
         refreshTab3D();
         
+        //jComboBoxSimConfig.repaint();
         jComboBoxSimConfig.setSelectedItem(simConfig.getName());
-        jComboBoxSimConfig.repaint();
+        
+        
         
         logger.logComment("Finished generating network!");
         logger.logComment("Num cells generated: "+ projManager.getCurrentProject().generatedCellPositions.getNumberInAllCellGroups());

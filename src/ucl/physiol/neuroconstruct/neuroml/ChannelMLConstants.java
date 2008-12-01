@@ -100,6 +100,8 @@ public class ChannelMLConstants
 
     public static String SYN_TYPE_ELEMENT = "synapse_type";
 
+    public static String ELEC_SYN_ELEMENT = "electrical_syn";
+
     public static String DOUB_EXP_SYN_ELEMENT = "doub_exp_syn";
     public static String BLOCKING_SYN_ELEMENT = "blocking_syn";
 
@@ -225,6 +227,10 @@ public class ChannelMLConstants
     public static String getSynapseTypeXPath()
     {
         return ChannelMLConstants.ROOT_ELEMENT + "/" + SYN_TYPE_ELEMENT;
+    }
+    public static String getElecSynapseXPath()
+    {
+        return ChannelMLConstants.ROOT_ELEMENT + "/" + SYN_TYPE_ELEMENT + "/" + ELEC_SYN_ELEMENT;
     }
 
 

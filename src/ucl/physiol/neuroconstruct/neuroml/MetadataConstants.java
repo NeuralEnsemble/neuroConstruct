@@ -36,7 +36,8 @@ public class MetadataConstants
 
     public static String PREFIX = "meta";
 
-    public static String LENGTH_UNITS = "lengthUnits";
+    public static String LENGTH_UNITS_OLD = "lengthUnits";
+    public static String LENGTH_UNITS_NEW = "length_units";
 
     public static String NOTES_ELEMENT = "notes";
 

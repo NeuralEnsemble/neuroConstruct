@@ -28,6 +28,8 @@ import ucl.physiol.neuroconstruct.utils.*;
 public class ClickLink extends JLabel
 {
     String text  = null;
+    Color prefColour = Color.black;
+    
     public ClickLink(String text, String tip)
     {
         super(text);
@@ -55,27 +57,44 @@ public class ClickLink extends JLabel
 
             public void mouseEntered(MouseEvent e)
             {
-                setForeground(Color.lightGray.darker());
+                setTempForeground(Color.lightGray.darker());
             };
 
             public void mouseExited(MouseEvent e)
             {
                 //System.out.println("Exited");
                 setFont(originalFont);
-                setForeground(Color.black);
+                setForeground(prefColour);
             };
 
         });
     }
 
+    @Override
     public String getName()
     {
         return text;
     }
 
+    
+    public void setTempForeground(Color fg)
+    {
+        super.setForeground(fg);
+    }
+    
+    @Override
+    public void setForeground(Color fg)
+    {
+        super.setForeground(fg);
+        this.prefColour = fg;
+    }
+    
+    
+
     public static void main(String[] args)
     {
-        ClickLink cl = new ClickLink("Click it!", "<html>Go ahead, have a <b>click</b></html>");
+        ClickLink cl = new ClickLink("Click it!", "<html>Go ahead, have a <b>click em</b></html>");
+        
         new ClickLink("No! Me!", "Go ahead, <b>click this instead</b>");
 
         //String favouredLookAndFeel = MainApplication.getFavouredLookAndFeel();

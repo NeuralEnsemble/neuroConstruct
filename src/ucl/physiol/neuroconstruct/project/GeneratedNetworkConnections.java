@@ -1158,10 +1158,10 @@ public class GeneratedNetworkConnections
 
             if (props!=null)
             {
-             for (ConnSpecificProps prop:props)
-             {
-                 sb.append(indent+prop.details(html)+GeneralUtils.getEndLine(html));
-             }
+                 for (ConnSpecificProps prop:props)
+                 {
+                     sb.append(indent+prop.details(html)+GeneralUtils.getEndLine(html));
+                 }
             }
             return sb.toString();
         }
