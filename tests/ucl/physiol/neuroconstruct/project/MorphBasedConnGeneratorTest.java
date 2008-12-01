@@ -7,6 +7,7 @@ package ucl.physiol.neuroconstruct.project;
 
 import java.io.File;
 import java.util.*;
+import javax.vecmath.Point3f;
 import org.junit.*;
 import org.junit.Test;
 import org.junit.runner.Result;
@@ -33,7 +34,7 @@ public class MorphBasedConnGeneratorTest
     {
     }
 
-
+            
 
     @Before
     public void setUp() 
@@ -44,7 +45,7 @@ public class MorphBasedConnGeneratorTest
         File projFile = new File(projDir, projName+ProjectStructure.getProjectFileExtension());
         
         pm = new ProjectManager();
-        
+
         try 
         {
             pm.loadProject(projFile);
@@ -307,7 +308,7 @@ public class MorphBasedConnGeneratorTest
         pp.setSomaAllowedPost(true); 
         pp.setAxonsAllowedPost(false);
         pp.setDendritesAllowedPost(false);
-        
+                      
         cc.setPrePostAllowedLoc(pp);        
         
         generate(proj, proj.simConfigInfo.getSimConfig("TestPrePost"));

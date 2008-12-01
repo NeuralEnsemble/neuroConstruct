@@ -226,9 +226,6 @@ part of NeuroML or any standardised XML specification. -->
     <int>255</int> 
    </object> 
   </void> 
-  <void property="displayOption"> 
-   <string>Soma solid, neurite lines</string> 
-  </void> 
   <void property="show3DAxes"> 
    <boolean>true</boolean> 
   </void> 
@@ -290,9 +287,6 @@ part of NeuroML or any standardised XML specification. -->
        <string>CG2</string> 
       </void> 
      </void> 
-     <void property="description"> 
-      <string></string> 
-     </void> 
      <void property="name"> 
       <string>TestPrePost</string> 
      </void> 
@@ -320,9 +314,6 @@ part of NeuroML or any standardised XML specification. -->
       <void method="add"> 
        <string>CG2</string> 
       </void> 
-     </void> 
-     <void property="description"> 
-      <string></string> 
      </void> 
      <void property="name"> 
       <string>TwoCG</string> 
@@ -487,6 +478,9 @@ part of NeuroML or any standardised XML specification. -->
      <object class="ucl.physiol.neuroconstruct.project.MaxMinLength"> 
       <void property="maxLength"> 
        <float>50.0</float> 
+      </void> 
+      <void property="minLength"> 
+       <float>8.0</float> 
       </void> 
      </object> 
     </void> 

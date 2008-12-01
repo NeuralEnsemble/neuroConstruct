@@ -11,7 +11,9 @@
  */
 
 package ucl.physiol.neuroconstruct.project;
+import java.util.logging.Level;
 import ucl.physiol.neuroconstruct.utils.*;
+import ucl.physiol.neuroconstruct.utils.equation.EquationException;
 
 /**
  * Dialog for entry of synaptic connection properties: type, delay threshold, etc.
@@ -26,7 +28,7 @@ public class SynapticProperties
     private String synapseType = null;
 
     private NumberGenerator delayGenerator = null;
-    private NumberGenerator weightsGenerator = null;
+    private WeightGenerator weightsGenerator = null;
     private double threshold;
 
 
@@ -41,7 +43,13 @@ public class SynapticProperties
     {
         this.synapseType = synapseType;
         delayGenerator = new NumberGenerator(5f);  // fixed at 5ms
-        weightsGenerator = new NumberGenerator(1f); // fixed at 1 each
+        try {
+            // fixed at 5ms
+            weightsGenerator = new WeightGenerator("1", false); // fixed at 1 each
+        } catch (EquationException ex) 
+        {
+            // equation 1 should not throw an error
+        }
         threshold = -20f; // -20 mV
     }
 
@@ -76,7 +84,7 @@ public class SynapticProperties
     {
         return threshold;
     }
-    public NumberGenerator getWeightsGenerator()
+    public WeightGenerator getWeightsGenerator()
     {
         return weightsGenerator;
     }
@@ -100,9 +108,14 @@ public class SynapticProperties
     {
         this.threshold = threshold;
     }
-    public void setWeightsGenerator(NumberGenerator weightsGenerator)
+    public void setWeightsGenerator(WeightGenerator weightsGenerator)
     {
         this.weightsGenerator = weightsGenerator;
+    }
+
+    public void setWeightsGenerator(NumberGenerator numGenerator) 
+    {
+        this.weightsGenerator = WeightGenerator.initialiseFromNumGenerator(numGenerator);
     }
 
 

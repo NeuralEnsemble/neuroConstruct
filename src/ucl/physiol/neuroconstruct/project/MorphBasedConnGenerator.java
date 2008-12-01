@@ -144,8 +144,8 @@ public class MorphBasedConnGenerator extends Thread
 
             String genFinishCellGroup = null;
             Cell genFinishCellInstance = null;
-            int numberInGenFinishCellGroup = -1;
-
+            int numberInGenFinishCellGroup = -1;            
+                     
 
             // NOTE: we create the name "GenerationStartCellGroup", etc for the cell group we generate from
             // and "GenerationFinishCellGroup" for the one we connect to, so if
@@ -173,6 +173,15 @@ public class MorphBasedConnGenerator extends Thread
                 numberInGenFinishCellGroup = numberInSourceCellGroup;
 
             }
+            
+            // the 2 following variables are used only if the soma to soma distance is checked (created here for optimization)
+            
+            Section sourceSec = sourceCellInstance.getFirstSomaSegment().getSection();
+            Section targetSec = targetCellInstance.getFirstSomaSegment().getSection();
+
+            Point3f sourceSomaPosition = CellTopologyHelper.convertSectionDisplacement(sourceCellInstance, sourceSec, (float) 0.5);
+
+            Point3f targetSomaPosition = CellTopologyHelper.convertSectionDisplacement(targetCellInstance, targetSec, (float) 0.5);         
 
             MaxMinLength maxMin = project.morphNetworkConnectionsInfo.getMaxMinLength(netConnName);
             SearchPattern searchPattern = project.morphNetworkConnectionsInfo.getSearchPattern(netConnName);
@@ -387,7 +396,8 @@ public class MorphBasedConnGenerator extends Thread
                         {
                             SegmentLocation genFinishConnPoint = null;
 
-                            float connectionDistance = -1;
+                            float connDistance = -1;
+                            float maxMinCheckDistance = -1;
                             int genFinishCellNumber = -1;
 
 
@@ -444,13 +454,15 @@ public class MorphBasedConnGenerator extends Thread
                                         boolean satisfiesMaxNumPerFinCell = false;
 
                                         boolean satisfiesUniqueness = false;
-
+                                        
+                                        boolean satisfiesGAPj = false;
+                                        
                                         availableCellsToConnectTo = numberInGenFinishCellGroup;
                                         
                                         boolean ignoreDistance = (maxMin.getMinLength()==0) && (maxMin.getMaxLength()==Float.MAX_VALUE);
-
-                                        while (!(satisfiesMaxNumPerFinCell && satisfiesUniqueness)
-                                               && finCellsMaxedOut.size()<availableCellsToConnectTo)
+                                        
+                                        while (!(satisfiesMaxNumPerFinCell && satisfiesUniqueness) && !(satisfiesGAPj)
+                                               && finCellsMaxedOut.size()<availableCellsToConnectTo)                                                                                         
                                         {
                                             
                                             genFinishCellNumber = allowedFinishCells[ProjectManager.getRandomGenerator().nextInt(allowedFinishCells.length)];
@@ -463,7 +475,27 @@ public class MorphBasedConnGenerator extends Thread
                                             
 
                                             ArrayList<Integer> connsOnFinishCell = null;
-
+                                            
+                                            if (connConds.isGAPj())
+                                            {
+                                                                                                
+                                                if (!(project.generatedNetworkConnections.areConnected(netConnName, genStartCellNumber, genFinishCellNumber))
+                                                    && (!(project.generatedNetworkConnections.areConnected(netConnName, genFinishCellNumber, genStartCellNumber))))
+                                                {
+                                                    satisfiesGAPj = true;
+                                                    logger.logComment("Reccurent connections are not allowed, satisfies condition: " + satisfiesGAPj);
+                                                }
+                                                else 
+                                                {
+                                                    satisfiesGAPj = false;
+                                                    logger.logComment("Reccurent connections are not allowed, satisfies condition: " + satisfiesGAPj + "the two cells are already coupled");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                satisfiesGAPj = true;
+                                            }
+                                            
                                             if(checkMaxingOutFinCells)
                                             {
                                                 if (connConds.getGenerationDirection() == ConnectivityConditions.SOURCE_TO_TARGET)
@@ -508,7 +540,7 @@ public class MorphBasedConnGenerator extends Thread
                                                 {
                                                     satisfiesUniqueness = true;
                                                 }
-
+                                                
                                             }
                                             else
                                             {
@@ -521,10 +553,10 @@ public class MorphBasedConnGenerator extends Thread
                                                     finCellsMaxedOut.add(genFinishCellNumber);
                                             }
                                         }
-
-
-                                        if (satisfiesMaxNumPerFinCell && satisfiesUniqueness)
+                                                                                
+                                        if (satisfiesMaxNumPerFinCell && satisfiesUniqueness && satisfiesGAPj)
                                         {
+                                            
                                             if (sourceCellGroup.equals(targetCellGroup) && 
                                                 !connConds.isAllowAutapses() &&
                                                 genStartCellNumber == genFinishCellNumber)
@@ -533,31 +565,47 @@ public class MorphBasedConnGenerator extends Thread
                                             }
                                             else
                                             {
-                                                float distanceApart = 0;
+                                                float distApart = -1;
+                                                float distForMaxMin = -1;
                                                 
                                                 if(!ignoreDistance)
                                                 {
-                                                    distanceApart = CellTopologyHelper.getSynapticEndpointsDistance(
-                                                                                            project,
-                                                                                            genStartCellGroup,
-                                                                                            new SynapticConnectionEndPoint(genStartConnPoint,
-                                                                                                    genStartCellNumber),
-                                                                                                    genFinishCellGroup,
-                                                                                            new SynapticConnectionEndPoint(genFinishConnPoint,
-                                                                                                    genFinishCellNumber),
-                                                                                            maxMin.getDimension());
+                                                    if (!maxMin.getDimension().equals("s"))
+                                                    {
+                                                            distApart = CellTopologyHelper.getSynapticEndpointsDistance(
+                                                                                                    project,
+                                                                                                    genStartCellGroup,
+                                                                                                    new SynapticConnectionEndPoint(genStartConnPoint,
+                                                                                                            genStartCellNumber),
+                                                                                                            genFinishCellGroup,
+                                                                                                    new SynapticConnectionEndPoint(genFinishConnPoint,
+                                                                                                            genFinishCellNumber),
+                                                                                                    maxMin.getDimension());
+                                                            
+                                                            distForMaxMin = distApart;
+                                                    }
+                                                    else                                                     
+                                                    {
+                                                        Point3f absoluteStartPoint = project.generatedCellPositions.getOneCellPosition(genStartCellGroup, genStartCellNumber);
+                                                        Point3f absoluteEndPoint = project.generatedCellPositions.getOneCellPosition(genFinishCellGroup, genFinishCellNumber);
+                                                                                                                                                                    
+                                                        absoluteStartPoint.add(sourceSomaPosition); //add the displacement of the soma referred to the cell axes
+                                                        absoluteEndPoint.add(targetSomaPosition);
+                                                                                                                                                                      
+                                                        distForMaxMin =  absoluteStartPoint.distance(absoluteEndPoint);
+                                                     }
                                                 }
 
-                                                if (ignoreDistance || (distanceApart >= maxMin.getMinLength()
-                                                    && distanceApart <= maxMin.getMaxLength()))
+                                                if (ignoreDistance || (distForMaxMin >= maxMin.getMinLength()
+                                                    && distForMaxMin <= maxMin.getMaxLength()))
                                                 {
                                                     logger.logComment("Distance condition satisfied, ignored dist: "+ ignoreDistance);
                                                     foundOne = true;
-                                                    connectionDistance = distanceApart;
+                                                    connDistance = distApart;
                                                 }
                                                 else
                                                 {
-                                                    logger.logComment("The length: " + distanceApart + " isn't between " +
+                                                    logger.logComment("The length: " + distForMaxMin + " isn't between " +
                                                                       maxMin.getMinLength() + " and " + maxMin.getMaxLength());
                                                     numFailedAttemptsMaxMin++;
                                                     genFinishConnPoint = null;
@@ -565,6 +613,7 @@ public class MorphBasedConnGenerator extends Thread
                                                 }
                                             }
                                         }
+//                                        else { System.out.println("something wrong with conditions...");}
                                     }
                                 }
                             }
@@ -615,11 +664,12 @@ public class MorphBasedConnGenerator extends Thread
                                     boolean satisfiesMaxNumPerFinCell = false;
 
                                     boolean satisfiesUniqueness = false;
-
+                                    
+                                    boolean satisfiesGAPj = false;
 
                                     int numCellsNotConnTo = numberInGenFinishCellGroup;
 
-                                    while (!(satisfiesMaxNumPerFinCell && satisfiesUniqueness)
+                                    while (!(satisfiesMaxNumPerFinCell && satisfiesUniqueness) && !(satisfiesGAPj)
                                            && finCellsMaxedOut.size() < numCellsNotConnTo)
                                     {
                                         //tempGenFinishCellNumber = ProjectManager.getRandomGenerator().nextInt(numberInGenFinishCellGroup);
@@ -635,7 +685,7 @@ public class MorphBasedConnGenerator extends Thread
                                         logger.logComment("genFinCellsAlreadyConnected: " + genFinCellsAlreadyConnected);
 
                                         int numConnsOnFinishCell = 0;
-
+                                        
                                         if (connConds.getGenerationDirection() == ConnectivityConditions.SOURCE_TO_TARGET)
                                         {
                                             numConnsOnFinishCell = project.generatedNetworkConnections.getSourceCellIndices(netConnName,
@@ -663,6 +713,19 @@ public class MorphBasedConnGenerator extends Thread
                                                 {
                                                     satisfiesUniqueness = true;
                                                         logger.logComment("Needs uniqueness, satisfiesUniqueness: " + satisfiesUniqueness);
+                                                        
+                                                    if (connConds.isGAPj()) {
+                                                        if (!(project.generatedNetworkConnections.areConnected(netConnName, genStartCellNumber, tempGenFinishCellNumber))
+                                                            && (!(project.generatedNetworkConnections.areConnected(netConnName, tempGenFinishCellNumber, genStartCellNumber)))) {
+                                                            satisfiesGAPj = true;
+                                                            logger.logComment("Reccurent connections are not allowed, satisfies condition: " + satisfiesGAPj);
+                                                        } else {
+                                                            satisfiesGAPj = false;
+                                                            logger.logComment("Reccurent connections are not allowed, satisfies condition: " + satisfiesGAPj + "the two cells are already connected");
+                                                        }
+                                                    } else {
+                                                        satisfiesGAPj = true;
+                                                    }
                                                 }
                                                 else
                                                 {
@@ -674,8 +737,8 @@ public class MorphBasedConnGenerator extends Thread
                                             else
                                             {
                                                 satisfiesUniqueness = true;
-                                            }
-
+                                            } 
+                                            
                                         }
                                         else
                                         {
@@ -693,7 +756,7 @@ public class MorphBasedConnGenerator extends Thread
 
                                     logger.logComment("tempGenFinishCellNumber: " + tempGenFinishCellNumber);
 
-                                    if(satisfiesMaxNumPerFinCell && satisfiesUniqueness)
+                                    if(satisfiesMaxNumPerFinCell && satisfiesUniqueness && satisfiesGAPj)
                                     {
                                         if (sourceCellGroup.equals(targetCellGroup) && 
                                                 !connConds.isAllowAutapses() &&
@@ -710,19 +773,31 @@ public class MorphBasedConnGenerator extends Thread
                                             SynapticConnectionEndPoint tempGenFinishEndpoint =
                                                 new SynapticConnectionEndPoint(tempGenFinishConnPoint, tempGenFinishCellNumber);
 
-                                            float distToThisPoint
-                                                = CellTopologyHelper.getSynapticEndpointsDistance(
+                                            // dimension dependent distance of the connection (r,x,y,z or soma distance)
+                                            
+                                            float distToThisPoint;
+                                            
+                                            if (!maxMin.getDimension().equals("s")) {
+                                                
+                                                distToThisPoint = CellTopologyHelper.getSynapticEndpointsDistance(
                                                     project,
                                                     genStartCellGroup,
                                                     new SynapticConnectionEndPoint(genStartConnPoint,
-                                                                                   genStartCellNumber),
+                                                    genStartCellNumber),
                                                     genFinishCellGroup,
                                                     tempGenFinishEndpoint,
-                                                    maxMin.getDimension()
+                                                    maxMin.getDimension());
+
+                                            } else {
                                                 
-                                                
-                                                
-                                                );
+                                                Point3f absoluteStartPoint = project.generatedCellPositions.getOneCellPosition(genStartCellGroup, genStartCellNumber);
+                                                Point3f absoluteEndPoint = project.generatedCellPositions.getOneCellPosition(genFinishCellGroup, tempGenFinishCellNumber);
+
+                                                absoluteStartPoint.add(sourceSomaPosition); //add the displacement of the soma referred to the cell axes
+                                                absoluteEndPoint.add(targetSomaPosition);
+
+                                                distToThisPoint = absoluteStartPoint.distance(absoluteEndPoint);
+                                            }
 
                                             if (distToThisPoint >= maxMin.getMinLength()
                                                 && distToThisPoint <= maxMin.getMaxLength())
@@ -736,7 +811,7 @@ public class MorphBasedConnGenerator extends Thread
                                                     genFinishCellNumber = tempGenFinishCellNumber;
                                                     logger.logComment("It's the best distance so far...");
 
-                                                    connectionDistance = bestDistanceSoFar;
+                                                    connDistance = bestDistanceSoFar;
                                                 }
                                                 else
                                                 {
@@ -794,19 +869,49 @@ public class MorphBasedConnGenerator extends Thread
                                     
                                     logger.logComment("Checking cell number: " + nextGenFinishCellNum + " in cell group: " +
                                                       genFinishCellGroup);
+                                    
+                                    boolean alreadyConnected;
+                                    boolean satisfiesGAPj = false;
 
-                                    if (connConds.isOnlyConnectToUniqueCells() &&
+                                   if (connConds.isOnlyConnectToUniqueCells() &&
                                         genFinCellsAlreadyConnected.contains(new Integer(nextGenFinishCellNum)))
                                     {
+                                       alreadyConnected = true;
                                         logger.logComment(
                                             "Ignoring this cell, as it's already connected to the start cell, and uniqueness is specified");
                                     }
-                                    else
+                                    
+                                   else
+                                   {
+                                       alreadyConnected = false;
+                                                                                      
+                                       if (connConds.isGAPj())
+                                        {
+                                            if ((project.generatedNetworkConnections.areConnected(netConnName, genStartCellNumber, nextGenFinishCellNum))
+                                                || ((project.generatedNetworkConnections.areConnected(netConnName, nextGenFinishCellNum, genStartCellNumber))))
+                                            {
+                                                satisfiesGAPj = false;
+                                                logger.logComment("Needs GAPj, satisfiesGAPj: " + satisfiesGAPj + "the two cells are already coupled");
+                                                
+                                            }
+                                            else 
+                                            {
+                                                satisfiesGAPj = true;
+                                                logger.logComment("Needs GAPj, satisfiesGAPj: " + satisfiesGAPj);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            satisfiesGAPj = true;
+                                        }
+                                  }
+                                
+                                    if ((!alreadyConnected) && (satisfiesGAPj))
                                     {
 
                                         boolean satisfiesMaxNumPerFinCell = false;
-
-                                        int numConnsOnFinishCell = 0;
+                             
+                                        int numConnsOnFinishCell = 0;                                       
                                         if (connConds.getGenerationDirection() ==
                                             ConnectivityConditions.SOURCE_TO_TARGET)
                                         {
@@ -831,8 +936,8 @@ public class MorphBasedConnGenerator extends Thread
                                                               + " src conns on finish cell " + nextGenFinishCellNum);
 
                                                 satisfiesMaxNumPerFinCell = true;
-
-
+                                                
+                                                
 
                                         }
                                         else
@@ -847,7 +952,7 @@ public class MorphBasedConnGenerator extends Thread
                                         }
 
 
-                                        if(satisfiesMaxNumPerFinCell)
+                                        if(satisfiesMaxNumPerFinCell && satisfiesGAPj)
                                         {
                                             if (sourceCellGroup.equals(targetCellGroup) && 
                                                 !connConds.isAllowAutapses() &&
@@ -904,21 +1009,16 @@ public class MorphBasedConnGenerator extends Thread
 
                                                     SynapticConnectionEndPoint tempGenFinishEndpoint =
                                                         new SynapticConnectionEndPoint(bestPointOnGenFinishCell, nextGenFinishCellNum);
-
-                                                    float distToThisPoint
-                                                        = CellTopologyHelper.getSynapticEndpointsDistance(
-                                                            project,
-                                                            genStartCellGroup,
-                                                            new SynapticConnectionEndPoint(genStartConnPoint,
-                                                                                           genStartCellNumber),
-                                                            genFinishCellGroup,
-                                                            tempGenFinishEndpoint,
-                                                            maxMin.getDimension()
-                                                        
-                                                        
-                                                        
-                                                        );
-
+                                                    
+                                                       float distToThisPoint = CellTopologyHelper.getSynapticEndpointsDistance(
+                                                                project,
+                                                                genStartCellGroup,
+                                                                new SynapticConnectionEndPoint(genStartConnPoint,
+                                                                genStartCellNumber),
+                                                                genFinishCellGroup,
+                                                                tempGenFinishEndpoint,
+                                                            maxMin.getDimension());
+                                                                
                                                     logger.logComment("Distance to that point: " + distToThisPoint);
 
                                                     if (distToThisPoint < bestDistanceSoFar)
@@ -930,7 +1030,7 @@ public class MorphBasedConnGenerator extends Thread
                                                         bestDistanceSoFar = distToThisPoint;
 
 
-                                                        connectionDistance = bestDistanceSoFar;
+                                                        connDistance = bestDistanceSoFar;
                                                     }
                                                     else logger.logComment("Close but no cigar...");
                                                 }
@@ -941,8 +1041,8 @@ public class MorphBasedConnGenerator extends Thread
                                 }
 
                             }
-
-
+                            
+                            
                             if (continueSingleConnGeneration
                                 && genFinishCellNumber >= 0
                                 && genFinishConnPoint != null
@@ -952,41 +1052,61 @@ public class MorphBasedConnGenerator extends Thread
                                                   genFinishCellNumber + ": " +genFinishConnPoint.toString());
 
                                 ArrayList<ConnSpecificProps> props = new ArrayList<ConnSpecificProps>();
-
-                                for (SynapticProperties synProp: synPropList)
-                                {
-                                    if (!synProp.getDelayGenerator().isTypeFixedNum()
-                                        || !synProp.getWeightsGenerator().isTypeFixedNum())
-                                    {
+                                
+                                for (SynapticProperties synProp : synPropList) {
+                                    
+                                    if (connDistance <= 0) {
+                                        connDistance = CellTopologyHelper.getSynapticEndpointsDistance(
+                                                project,
+                                                genStartCellGroup,
+                                                new SynapticConnectionEndPoint(genStartConnPoint,
+                                                genStartCellNumber),
+                                                genFinishCellGroup,
+                                                new SynapticConnectionEndPoint(genFinishConnPoint,
+                                                genFinishCellNumber),
+                                                maxMin.getDimension());
+                                    }
+                                    
+                                    if (!synProp.getDelayGenerator().isTypeFixedNum() || !synProp.getWeightsGenerator().isTypeFixedNum()) {
                                         ConnSpecificProps csp = new ConnSpecificProps(synProp.getSynapseType());
 
                                         csp.internalDelay = synProp.getDelayGenerator().getNextNumber();
-                                        csp.weight = synProp.getWeightsGenerator().getNextNumber();
+
+                                        if (synProp.getWeightsGenerator().isTypeFunction()) {
+
+                                            if (!synProp.getWeightsGenerator().isSomaToSoma()) {
+                                                
+                                                csp.weight = synProp.getWeightsGenerator().getNextNumber(connDistance);
+                                                System.out.println("csp.weight: " + csp.weight + ", dist " + connDistance);
+                                                System.out.println(synProp.getWeightsGenerator());
+                                            
+                                            } else {
+                                                
+                                                Point3f absoluteStartPoint = project.generatedCellPositions.getOneCellPosition(genStartCellGroup, genStartCellNumber);
+                                                Point3f absoluteEndPoint = project.generatedCellPositions.getOneCellPosition(genFinishCellGroup, genFinishCellNumber);
+
+                                                absoluteStartPoint.add(sourceSomaPosition); //add the displacement of the soma referred to the cell axes
+                                                absoluteEndPoint.add(targetSomaPosition);
+
+                                                float somaConnDistance =  absoluteStartPoint.distance(absoluteEndPoint);
+                                                
+                                                csp.weight = synProp.getWeightsGenerator().getNextNumber(somaConnDistance);
+                                                System.out.println("csp.weight: " + csp.weight + ", dist " + somaConnDistance);
+                                                System.out.println(synProp.getWeightsGenerator());
+                                                
+                                            }
+
+                                        } else {
+                                            csp.weight = synProp.getWeightsGenerator().getNextNumber();
+                                        }
 
                                         props.add(csp);
                                     }
                                 }
                                 if (props.size()==0) props = null;
                                 
-                                
-                                if (connectionDistance<0)
-                                {
-                                    connectionDistance = CellTopologyHelper.getSynapticEndpointsDistance(
-                                                        project,
-                                                        genStartCellGroup,
-                                                        new SynapticConnectionEndPoint(genStartConnPoint,
-                                                                                       genStartCellNumber),
-                                                        genFinishCellGroup,
-                                                        new SynapticConnectionEndPoint(genFinishConnPoint,
-                                                                                       genFinishCellNumber),
-                                                        maxMin.getDimension()
-                                                        
-                                                        
-                                                        
-                                                        );
-                                }
-
-                                Float propDelay = connectionDistance/project.morphNetworkConnectionsInfo.getAPSpeed(netConnName) ;
+                                                              
+                                Float propDelay = connDistance/project.morphNetworkConnectionsInfo.getAPSpeed(netConnName) ;
 
                                 if (project.morphNetworkConnectionsInfo.getAPSpeed(netConnName)==Float.MAX_VALUE)
                                     propDelay = 0f;
