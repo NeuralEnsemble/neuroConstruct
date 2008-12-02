@@ -508,32 +508,16 @@ public class VolumeBasedConnGenerator extends Thread
                                             else
                                             {
                                                 logger.logComment("Nonuniform prob of conn given by: " + inhomoExp);
-                                                Point3f synPosnRelToStartCell = null;
-                                                
-                                                if (project.morphNetworkConnectionsInfo.getMaxMinLength(volConnName).getDimension().equals("r"))
-                                                {
 
-                                                     synPosnRelToStartCell = new Point3f(absoluteGenFinishCellPosition);
-                                
-                                                }
-                                                
-                                                else
-                                                {
-                                                    logger.logComment("Probability is a function of the distance between somas...");                                                    
-                                                    
-                                                    synPosnRelToStartCell = new Point3f(project.generatedCellPositions.getOneCellPosition(
-                                                                                                                                generationFinishCellGroup,
-                                                                                                                                genFinishCellNumber));
-                                                   
-                                                }
-                                                
+                                                Point3f synPosnRelToStartCell = new Point3f(absoluteGenFinishCellPosition);
                                                 synPosnRelToStartCell.sub(genStartCellPosition);
 
                                                 logger.logComment("synPosnRelToStartCell: "+synPosnRelToStartCell);
-                            
+
                                                 float x = synPosnRelToStartCell.x;
                                                 float y = synPosnRelToStartCell.y;
                                                 float z = synPosnRelToStartCell.z;
+
                                                 float r = (float)Math.sqrt((x*x)+(y*y)+(z*z));
 
                                                 Argument[] args = new Argument[]

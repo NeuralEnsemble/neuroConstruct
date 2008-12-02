@@ -137,7 +137,7 @@ public class VolBasedConnDialog extends JDialog
 
 
 
-    
+
     GridBagLayout gridBagLayout1 = new GridBagLayout();
 
     Border border6;
@@ -478,7 +478,7 @@ public class VolBasedConnDialog extends JDialog
 
         this.jPanelInh.add(jLabelInh);
         this.jPanelInh.add(jTextFieldInh);
-        
+
         jPanelInh.setBorder(titledBorder9);
 
 
@@ -726,8 +726,8 @@ c       */
         jPanelSynTargetOption.add(jRadioButtonSynTargetReuse, null);
         buttonGroupSynTargetOption.add(jRadioButtonSynTargetUnique);
         buttonGroupSynTargetOption.add(jRadioButtonSynTargetReuse);*/
-        
-        
+
+
 
     }
 
@@ -853,7 +853,7 @@ c       */
 
 
         connConds.setAllowAutapses(jCheckBoxAutapses.isSelected());
-        
+
 
         boolean problem = false;
 
@@ -949,7 +949,7 @@ c       */
         {
             chosenSynapticPropList.add((SynapticProperties)listModelSyns.getElementAt(i));
         }
-        
+
 
         this.dispose();
     }

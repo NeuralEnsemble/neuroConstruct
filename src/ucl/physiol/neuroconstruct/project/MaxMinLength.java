@@ -31,7 +31,6 @@ public class MaxMinLength
     public static final String X_DIR = "x";
     public static final String Y_DIR = "y";
     public static final String Z_DIR = "z";
-    public static final String SOMA = "s";
 
 
     private String dimension = RADIAL;

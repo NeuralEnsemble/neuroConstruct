@@ -57,18 +57,16 @@ public class ConnectivityConditions
      *
      */
     private int maxNumInitPerFinishCell = Integer.MAX_VALUE;
-        
+    
     /*
      * When source & target cell groups are the same, this indicates whether synapses from
      * a cell to itself are allowed
      */ 
     private boolean allowAutapses = true;
-    
-    private boolean GAPj = false;
 
     private PrePostAllowedLocs prePostAllowedLoc = new PrePostAllowedLocs();
 
-    
+
     public ConnectivityConditions()
     {
     };
@@ -108,10 +106,6 @@ public class ConnectivityConditions
         if (allowAutapses)
         {
             sb.append(", autapses allowed");
-        }
-        if (GAPj)
-        {
-            sb.append(", GAP junctions network");
         }
         sb.append(", "+prePostAllowedLoc.toString());
 
@@ -199,23 +193,11 @@ public class ConnectivityConditions
     {
         return allowAutapses;
     }
-    
-    
-    public boolean isGAPj()
-    {
-        return GAPj;
-    }    
 
 
     public void setAllowAutapses(boolean aa)
     {
         this.allowAutapses = aa;
-
-    }
-    
-    public void setGAPj(boolean aa)
-    {
-        this.GAPj = aa;
 
     }
 

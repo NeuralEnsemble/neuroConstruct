@@ -17,7 +17,6 @@ import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
 import ucl.physiol.neuroconstruct.cell.*;
 import java.io.*;
-import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.utils.xml.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
@@ -178,7 +177,7 @@ public class GeneratedNetworkConnections
         
         return mx;
     }
-    
+
 
     public ArrayList<SingleSynapticConnection> getSynapticConnections(String netConnectionName)
     {
@@ -277,38 +276,6 @@ public class GeneratedNetworkConnections
         return false;
         
     }
-    
-        
-//    // Matteo needs to check for connection in both directions...
-//    
-//    public boolean areConnected(int numberCellA, int numberCellB, String connectionName)
-//    {
-//        boolean connected = false;
-//        
-//        int i=0;
-//        ArrayList<SingleSynapticConnection> connFromA = getConnsFromSource(connectionName, numberCellA);
-//        while ((connected)&&(i<connFromA.size()))
-//        {            
-//            if (connFromA.get(i).targetEndPoint.cellNumber == numberCellB)
-//                connected = true;
-//            
-//            i++;            
-//        }
-//        
-//        i=0;
-//        ArrayList<SingleSynapticConnection> connFromB = getConnsFromSource(connectionName, numberCellB);
-//        while ((connected)&&(i<connFromB.size()))
-//        {            
-//            if (connFromA.get(i).targetEndPoint.cellNumber == numberCellA)
-//                connected = true;
-//            
-//            i++;            
-//        }
-//        
-//        return connected;
-//    }        
-//    
-
 
     public ArrayList<SingleSynapticConnection> getConnsFromSource(String netConnectionName,
                                                                   int sourceCellIndex)
@@ -530,8 +497,6 @@ public class GeneratedNetworkConnections
                 {
                     numInEachSrcCell[conn.sourceEndPoint.cellNumber]++;
                     numInEachTgtCell[conn.targetEndPoint.cellNumber]++;
-                    
-                    //conn.props.get(0).
                 }
 
                 float srcAvg = 0;
