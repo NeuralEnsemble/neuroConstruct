@@ -93,20 +93,20 @@ public class ParameterisedGroupTest
     {
         System.out.println("---  testEvaluateAt...");
         
-        SegmentLocation loc1 = new PostSynapticTerminalLocation(d2.getSegmentId(), 0.5f);
+        //SegmentLocation loc1 = new PostSynapticTerminalLocation(d2.getSegmentId(), 0.5f);
         
-        assertEquals(0.5, pg1.evaluateAt(cell, loc1), 0);
-        assertEquals(15, pg2.evaluateAt(cell, loc1), 0);
+        assertEquals(0.5, pg1.evaluateAt(cell, d2, 0.5f), 0);
+        assertEquals(15, pg2.evaluateAt(cell, d2, 0.5f), 0);
         
         ////////assertEquals(15, pg5.evaluateAt(cell, loc1), 0);
         
-        SegmentLocation loc2 = new PostSynapticTerminalLocation(d3.getSegmentId(), 0.5f);
+        //SegmentLocation loc2 = new PostSynapticTerminalLocation(d3.getSegmentId(), 0.5f);
         
-        assertEquals(5d/6d, pg1.evaluateAt(cell, loc2), 1e-7);
-        assertEquals(25, pg2.evaluateAt(cell, loc2), 0);
+        assertEquals(5d/6d, pg1.evaluateAt(cell, d3, 0.5f), 1e-7);
+        assertEquals(25, pg2.evaluateAt(cell, d3, 0.5f), 0);
         
-        assertEquals(0.5, pg3.evaluateAt(cell, loc2), 0);
-        assertEquals(5, pg4.evaluateAt(cell, loc2), 0);
+        assertEquals(0.5, pg3.evaluateAt(cell, d3, 0.5f), 0);
+        assertEquals(5, pg4.evaluateAt(cell, d3, 0.5f), 0);
         
     }
     
