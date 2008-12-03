@@ -3167,7 +3167,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                               new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0
                                                      , GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
-                                                     new Insets(0, 0, 170, 0), 0, 0));
+                                                     new Insets(0, 0, 140, 0), 0, 0));
 
 
 
@@ -3195,7 +3195,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         jPanelNeuronExtraLinks.setBorder(BorderFactory.createEtchedBorder());
         
-        Dimension d = new Dimension(400, 42);
+        Dimension d = new Dimension(500, 38);
         jPanelNeuronExtraLinks.setMinimumSize(d);
         jPanelNeuronExtraLinks.setPreferredSize(d);
         
