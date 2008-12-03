@@ -677,7 +677,7 @@ public class GenesisMorphologyGenerator
                 ParameterisedGroup pg = cell.getVarMechsVsParaGroups().get(vm);
                 try
                 {
-                    double pgVal = pg.evaluateAt(cell, new SegmentLocation(segment.getSegmentId(), 0.5f));
+                    double pgVal = pg.evaluateAt(cell, segment, 0.5f);
 
                     float dens = (float)vm.evaluateAt(pgVal);
                     

@@ -36,8 +36,8 @@ public class Equation
 
         try
         {
-            double minx = -80;
-            double maxx = 10;
+            double minx = -800;
+            double maxx = 100;
             int numPoints = (int)(maxx - minx)*2 +1;
 
             Variable v = new Variable("v");
@@ -66,7 +66,7 @@ public class Equation
 
             String exp1m = Am +" * (" + delVm + "/ ("+Bm+")) "+" /( exp("+delVm +"/ "+Bm+") - 1)";
 
-            String exp2m =  Am +" * (" +Bm +" * " +"(1 -  (("+delVm+"/"+Bm+") / 2 ) )" + ")";
+            String exp2m =  Am +" * (" +Bm +" * " +"(1 -  (("+delVm+"/ "+Bm+") / 2 ) )" + ")";
 
 
             float Ak = 1f;
@@ -81,22 +81,23 @@ public class Equation
 
 
             System.out.println("exp1k: "+ exp1k);
+            System.out.println("exp2m: "+ exp2m);
 
 
             EquationUnit func1m = Expression.parseExpression(exp1m, vars);
             EquationUnit func1k = Expression.parseExpression(exp1k, vars);
-            EquationUnit func2m = Expression.parseExpression(exp2m, vars);
+            //EquationUnit func2m = Expression.parseExpression(exp2m, vars);
 
             System.out.println("func1k: "+ func1k.getNiceString());
 
 
             String plotName1m = "y = " + func1m.getNiceString() +" or y = "+ exp1m;
-            String plotName2m = "y = " + func2m.getNiceString() +" or y = "+ exp2m;
+            //String plotName2m = "y = " + func2m.getNiceString() +" or y = "+ exp2m;
             String plotName1k = "y = " + func1k.getNiceString() +" or y = "+ exp1k;
 
 
             DataSet ds1m = new DataSet(plotName1m, plotName1m, "", "", "", "");
-            DataSet ds2m = new DataSet(plotName2m, plotName2m, "", "", "", "");
+            //DataSet ds2m = new DataSet(plotName2m, plotName2m, "", "", "", "");
             DataSet ds1k = new DataSet(plotName1k, plotName1k, "", "", "", "");
             DataSet dsman = new DataSet("manual", "manual", "", "", "", "");
 
@@ -110,7 +111,7 @@ public class Equation
 
                 ds1m.addPoint(nextXval, func1m.evaluateAt(a0));
 
-                ds2m.addPoint(nextXval, func2m.evaluateAt(a0));
+                //ds2m.addPoint(nextXval, func2m.evaluateAt(a0));
                 ds1k.addPoint(nextXval, func1k.evaluateAt(a0));
 
                 dsman.addPoint(nextXval, Ak * (kk * (nextXval - dk)) / (1-Math.exp(-1 * (kk * (nextXval - dk)))));
@@ -119,7 +120,7 @@ public class Equation
             PlotterFrame frame = PlotManager.getPlotterFrame("Some plots", true, true);
 
             frame.addDataSet(ds1m);
-            frame.addDataSet(ds2m);
+            //frame.addDataSet(ds2m);
             frame.addDataSet(ds1k);
             frame.addDataSet(dsman);
 

@@ -133,21 +133,21 @@ public class ParameterisedGroup implements Serializable
     }
     
     
-    public double evaluateAt(Cell cell, SegmentLocation location) throws ParameterException
+    public double evaluateAt(Cell cell, Segment seg, float fractAlong) throws ParameterException
     {
-        Segment seg = cell.getSegmentWithId(location.getSegmentId());
+        //Segment seg = cell.getSegmentWithId(location.getSegmentId());
         
         if (seg == null) 
-            throw new ParameterException("The point: "+location+" is not on the cell: "+ cell );
+            throw new ParameterException("Null segment");
         
         if (!seg.getSection().getGroups().contains(this.group))
-            throw new ParameterException("The point: "+location+" on the cell: "+ cell +" is not a part of group of "+ this);
+            throw new ParameterException("The segment: "+seg+" on the cell: "+ cell +" is not a part of group of "+ this);
                
         
         
         if (metric.equals(Metric.PATH_LENGTH_FROM_ROOT))
         {
-            float segLen = CellTopologyHelper.getLengthFromRoot(cell, location);
+            float segLen = CellTopologyHelper.getLengthFromRoot(cell, new SegmentLocation(seg.getSegmentId(), fractAlong));
             
             if (proximalPref.equals(ProximalPref.NO_TRANSLATION))
             {
@@ -441,7 +441,7 @@ public class ParameterisedGroup implements Serializable
             System.out.println("Checking seg: "+ seg);
             
             
-            System.out.println("Param eval: "+ pg.evaluateAt(cell, new SegmentLocation(seg.getSegmentId(), 0.5f)));
+            System.out.println("Param eval: "+ pg.evaluateAt(cell, seg, 0.5f));
             
             cell.associateGroupWithChanMech(Section.ALL, new ChannelMechanism("pas", 3.333f));
             

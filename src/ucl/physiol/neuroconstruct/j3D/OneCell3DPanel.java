@@ -963,7 +963,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             {
                 Segment nextSegment = segments.get(i);
 
-                double val = pg.evaluateAt(displayedCell, new SegmentLocation(nextSegment.getSegmentId(), 0.5f));
+                double val = pg.evaluateAt(displayedCell, nextSegment, 0.5f);
 
                 double fract = (val - min) / (max - min);
 
@@ -1234,7 +1234,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                     ArrayList<Segment> segs = displayedCell.getSegmentsInGroup(pg.getGroup());
                     for(Segment seg:  segs)
                     {
-                        double pgVal = pg.evaluateAt(displayedCell, new SegmentLocation(seg.getSegmentId(), 0.5f));
+                        double pgVal = pg.evaluateAt(displayedCell, seg, 0.5f);
                         float vmVal = (float)vm.evaluateAt(pgVal);
                         float fraction = -1;
                         if (maxVal != minVal)
@@ -1366,7 +1366,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                 double pgVal;
                 try
                 {
-                    pgVal = pg.evaluateAt(displayedCell, new SegmentLocation(latestSelectedSegment.getSegmentId(), 0.5f));
+                    pgVal = pg.evaluateAt(displayedCell, latestSelectedSegment, 0.5f);
                     float dens = (float)vm.evaluateAt(pgVal);
                     chanInfo.append(" "+vm.getName() + ": "+dens);
                 }
