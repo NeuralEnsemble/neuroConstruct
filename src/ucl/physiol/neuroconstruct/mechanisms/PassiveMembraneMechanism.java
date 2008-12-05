@@ -95,7 +95,7 @@ public class PassiveMembraneMechanism extends DistMembraneMechanism
                                          new File("../temp/test.mod"),
                                          null,
                                          true,
-                true,false);
+                true,false,false);
 
 
             pas.createImplementationFile(SimEnvHelper.GENESIS,
@@ -103,7 +103,7 @@ public class PassiveMembraneMechanism extends DistMembraneMechanism
                                          new File("../temp/test.g"),
                                          null,
                                          false,
-                true,false);
+                true,false,false);
 
 
         }

@@ -140,6 +140,7 @@ public abstract class CellMechanism
                                            Project project,
                                            boolean requiresCompilation,
                                            boolean includeComments,
-                                            boolean forceCorrectInit);
+                                            boolean forceCorrectInit,
+                                            boolean parallelMode);
 
 }

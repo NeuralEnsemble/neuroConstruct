@@ -516,7 +516,8 @@ public class ChannelMLCellMechanism extends CellMechanism
                                             Project project,
                                             boolean requiresCompilation,
                                             boolean includeComments,
-                                            boolean forceCorrectInit)
+                                            boolean forceCorrectInit,
+                                            boolean parallelMode)
     {
         logger.logComment("Creating file for env: "+targetEnv+" file: "+ fileToGenerate);
 
@@ -692,6 +693,28 @@ public class ChannelMLCellMechanism extends CellMechanism
                                                 SimpleXMLContent cont = (SimpleXMLContent) var.getContents().get(l);
 
                                                 if(forceCorrectInit)
+                                                    cont.setText("1");
+                                                else
+                                                    cont.setText("0");
+                                            }
+                                        }
+                                    }
+                                    
+                                    if (var.getAttributeValue(ChannelMLConstants.VARIABLE_NAME_ATTR).equals(ChannelMLConstants.PARALLEL_MODE_VAL))
+                                    {
+
+                                        logger.logComment("..Found the element: ("+ var+") in xslFile: "+xslFile.getAbsolutePath());
+                                        
+                                        
+                                        for (int l = 0; l < var.getContents().size(); l++)
+                                        {
+                                            logger.logComment("Checking content "+l+": ("+var.getContents().get(l)+")");
+
+                                            if (var.getContents().get(l) instanceof SimpleXMLContent)
+                                            {
+                                                SimpleXMLContent cont = (SimpleXMLContent) var.getContents().get(l);
+
+                                                if(parallelMode)
                                                     cont.setText("1");
                                                 else
                                                     cont.setText("0");

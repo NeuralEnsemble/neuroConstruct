@@ -214,7 +214,8 @@ public abstract class AbstractedCellMechanism extends CellMechanism
                                             Project project,
                                             boolean requiresCompilation,
                                             boolean includeComments,
-                                            boolean forceCorrectInit)
+                                            boolean forceCorrectInit,
+                                            boolean parallelMode)
     {
         logger.logComment("Creating file for env: "+targetEnv+" file: "+ fileToGenerate);
         for (int i = 0; i < mechanismImpls.length; i++)

@@ -2685,7 +2685,8 @@ public class NeuronFileManager
                                         project,
                                         true,
                                         addComments,
-                                        project.neuronSettings.isForceCorrectInit());
+                                        project.neuronSettings.isForceCorrectInit(),
+                                        simConfig.getMpiConf().isParallel());
                                 }
                                 else if (cellMechanism instanceof ChannelMLCellMechanism)
                                 {
@@ -2714,7 +2715,8 @@ public class NeuronFileManager
                                         project,
                                         cmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation(),
                                         addComments,
-                                        project.neuronSettings.isForceCorrectInit());
+                                        project.neuronSettings.isForceCorrectInit(),
+                                        simConfig.getMpiConf().isParallel());
                                 }
                             }
 
@@ -2938,7 +2940,8 @@ public class NeuronFileManager
                                     project,
                                     true,
                                     addComments,
-                                    project.neuronSettings.isForceCorrectInit());
+                                    project.neuronSettings.isForceCorrectInit(),
+                                    simConfig.getMpiConf().isParallel());
                             }
                             else if (cellMechanism instanceof ChannelMLCellMechanism)
                             {
@@ -2967,7 +2970,8 @@ public class NeuronFileManager
                                     project,
                                     cmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation(),
                                     addComments,
-                                    project.neuronSettings.isForceCorrectInit());
+                                    project.neuronSettings.isForceCorrectInit(),
+                                    simConfig.getMpiConf().isParallel());
                             }
 
                             if (!success)

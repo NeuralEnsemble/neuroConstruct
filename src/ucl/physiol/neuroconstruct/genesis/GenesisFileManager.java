@@ -999,6 +999,7 @@ public class GenesisFileManager
                                     project,
                                     false,
                                     addComments,
+                                    false,
                                     false);
                             }
                             else if (cellMech instanceof ChannelMLCellMechanism)
@@ -1010,6 +1011,7 @@ public class GenesisFileManager
                                     project,
                                     false,
                                     addComments,
+                                    false,
                                     false);
                             }
 
@@ -1268,6 +1270,7 @@ public class GenesisFileManager
                                                                                               project,
                                                                                               false,
                                                                                               addComments,
+                                                                                              false,
                                                                                               false);
                     }
                     else if(cellMech instanceof ChannelMLCellMechanism)
@@ -1279,6 +1282,7 @@ public class GenesisFileManager
                                                                                               project,
                                                                                               false,
                                                                                               addComments,
+                                                                                              false,
                                                                                               false);
 
 
@@ -1343,6 +1347,7 @@ public class GenesisFileManager
                             project,
                             false,
                             addComments,
+                            false,
                             false);
                     }
                     else if (cellMech instanceof ChannelMLCellMechanism)
@@ -1353,6 +1358,7 @@ public class GenesisFileManager
                             project,
                             false,
                             addComments,
+                            false,
                             false);
                     }
 

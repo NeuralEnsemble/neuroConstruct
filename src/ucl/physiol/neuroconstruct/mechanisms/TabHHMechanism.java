@@ -370,20 +370,20 @@ public class TabHHMechanism extends DistMembraneMechanism
                                                           new File("../temp/testna/"+hh.getInstanceName()+".mod"),
                                                           null,
                                                           true,
-                true,false);
+                true,false,false);
 
             success = hh.createImplementationFile(SimEnvHelper.GENESIS,
                                                           UnitConverter.GENESIS_SI_UNITS,
                                                           new File("../temp/testna/"+hh.getInstanceName()+"_SI.g"),
                                                           null,false,
-                true,false);
+                true,false,false);
 
             success = hh.createImplementationFile(SimEnvHelper.GENESIS,
                                                           UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS,
                                                           new File("../temp/testna/"+hh.getInstanceName()+".g"),
                                                           null,
                                                           true,
-                true,false);
+                true,false,false);
 
             System.out.println("Success: "+ success);
         }

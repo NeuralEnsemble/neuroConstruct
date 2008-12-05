@@ -64,6 +64,8 @@ public class ChannelMLConstants
     public static String VARIABLE_NAME_ATTR = "name";
     
     public static String FORCE_INIT_ATTR_VAL = "forceCorrectInit";
+    
+    public static String PARALLEL_MODE_VAL = "parallelMode";
 
     public static String XSL_TARGET_UNITS_ATTR = "targetUnitSystem";
 
