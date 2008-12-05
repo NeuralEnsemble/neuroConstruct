@@ -41,6 +41,7 @@ import ucl.physiol.neuroconstruct.cell.examples.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.dataset.*;
 import ucl.physiol.neuroconstruct.genesis.*;
+import ucl.physiol.neuroconstruct.psics.*;
 import ucl.physiol.neuroconstruct.gui.plotter.*;
 import ucl.physiol.neuroconstruct.hpc.condor.*;
 import ucl.physiol.neuroconstruct.hpc.mpi.*;
@@ -105,6 +106,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     String GENESIS_SIMULATOR_TAB = "GENESIS";
     String GENESIS_TAB_GENERATE = "Generate code";
     String GENESIS_TAB_EXTRA = "Extra GENESIS code";
+    
+    String PSICS_SIMULATOR_TAB = "PSICS";
 
     String MORPHML_TAB = "NeuroML";
 
@@ -204,6 +207,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     JPanel jPanelExportNeuron = new JPanel();
     JPanel jPanelExportGenesis = new JPanel();
+    JPanel jPanelExportPsics = new JPanel();
     //JPanel jPanelExportNeosim = new JPanel();
 
 
@@ -480,8 +484,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JPanel jPanelCellTypeMainInfo = new JPanel();
     JButton jButtonCellTypeViewCellInfo = new JButton();
     JPanel jPanelGenesisMain = new JPanel();
+    JPanel jPanelPsicsMain = new JPanel();
     BorderLayout borderLayout26 = new BorderLayout();
     JLabel jLabelGenesisMain = new JLabel();
+    JLabel jLabelPsicsMain = new JLabel();
     JPanel jPanelSimNeosimMain = new JPanel();
     JLabel jLabelSimulatorNeosimMain = new JLabel();
     BorderLayout borderLayout27 = new BorderLayout();
@@ -550,10 +556,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     GridBagLayout gridBagLayout3 = new GridBagLayout();
     GridBagLayout gridBagLayout33 = new GridBagLayout();
     JPanel jPanelGenesisButtons = new JPanel();
+    JPanel jPanelPsicsButtons = new JPanel();
     JPanel jPanelGenesisView = new JPanel();
     JPanel jPanelGenesisSettings = new JPanel();
     JButton jButtonGenesisGenerate = new JButton();
     JButton jButtonGenesisRun = new JButton();
+    JButton jButtonPsicsGenerate = new JButton();
+    JButton jButtonPsicsRun = new JButton();
     BorderLayout borderLayout32 = new BorderLayout();
     JButton jButtonGenesisView = new JButton();
     JButton jButtonRegionsEdit = new JButton();
@@ -761,6 +770,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JMenuItem jMenuItemGenNeuronPyXML = new JMenuItem();
     JMenuItem jMenuItemGenNeuronPyHDF5 = new JMenuItem();
     JMenuItem jMenuItemGenGenesis = new JMenuItem();
+    JMenuItem jMenuItemGenPsics = new JMenuItem();
     JMenuItem jMenuItemPrevSims = new JMenuItem();
     JMenuItem jMenuItemDataSets = new JMenuItem();
     JMenuItem jMenuItemListSims = new JMenuItem();
@@ -956,6 +966,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         });
         jButtonToggleConsoleOut.setEnabled(true);
         jPanelExportGenesis.setLayout(borderLayout26);
+        
+        jPanelExportPsics.setLayout(new BorderLayout());
+        
+        
         jLabelGenesisMain.setEnabled(false);
         jLabelGenesisMain.setBorder(border8);
         jLabelGenesisMain.setHorizontalAlignment(SwingConstants.CENTER);
@@ -1211,6 +1225,28 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jButtonGenesisRun_actionPerformed(e);
             }
         });
+        
+        jButtonPsicsRun.setEnabled(false);
+        jButtonPsicsRun.setText("Run PSICS Simulation");
+        jButtonPsicsRun.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonPsicsRun_actionPerformed(e);
+            }
+        });
+        
+        jButtonPsicsGenerate.setEnabled(false);
+        jButtonPsicsGenerate.setText("Generate PSICS files");
+        jButtonPsicsGenerate.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonPsicsGenerate_actionPerformed(e);
+            }
+        });
+        
+        
         //jPanelGenesisMain.setLayout(borderLayout32);
         jButtonGenesisView.setEnabled(false);
         jButtonGenesisView.setDoubleBuffered(false);
@@ -1858,6 +1894,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             public void actionPerformed(ActionEvent e)
             {
                 jMenuItemGenGenesis_actionPerformed(e);
+            }
+        });
+        jMenuItemGenPsics.setText("Generate PSICS");
+        jMenuItemGenPsics.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jMenuItemGenPsics_actionPerformed(e);
             }
         });
 
@@ -3130,7 +3174,24 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
        // jPanelSimRecord.add(jPanelSimWhatToRecord, BorderLayout.NORTH);
 
         jPanelGenesisSettings.add(jLabelGenesisMain,  BorderLayout.NORTH);
+        
+        jPanelExportPsics.add(jPanelPsicsMain);
 
+        jPanelPsicsMain.setLayout(new GridBagLayout());
+        jLabelPsicsMain.setText("Generate code for the PSICS simulator");
+        
+        jPanelPsicsMain.add(jLabelPsicsMain,
+                              new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
+                                                     ,GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(20, 0, 20, 0), 20, 20));
+        jPanelPsicsMain.add(jPanelPsicsButtons,
+                              new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
+                                                     ,GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(20, 0, 20, 0), 20, 20));
+        
+        
         jPanelGenesisMain.setLayout(this.gridBagLayoutGen);
 
         jPanelGenesisMain.add(jPanelGenesisSettings,
@@ -3167,7 +3228,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                               new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0
                                                      , GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
-                                                     new Insets(0, 0, 140, 0), 0, 0));
+                                                     new Insets(0, 0, 120, 0), 0, 0));
 
 
 
@@ -3492,6 +3553,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelGenesisButtons.add(jButtonGenesisGenerate, null);
         jPanelGenesisButtons.add(jButtonGenesisRun, null);
         
+        
+        jPanelPsicsButtons.add(jButtonPsicsGenerate, null);
+        
+        jPanelPsicsButtons.add(jButtonPsicsRun, null);
+        
+        
         jPanelGenesisView.add(jButtonGenesisView, null);
         jPanelGenesisView.add(jComboBoxGenesisFiles, null);
         jPanelGenesisView.add(jCheckBoxGenesisLineNums, null);
@@ -3737,6 +3804,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
         
         jMenuProject.add(jMenuItemGenGenesis);
+        
+        if (PsicsFileManager.showPsicsFunc())
+            jMenuProject.add(jMenuItemGenPsics);
+        
         jMenuProject.addSeparator();
         jMenuProject.add(jMenuItemPrevSims);
         jMenuProject.add(jMenuItemDataSets);
@@ -3761,6 +3832,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTabbedPaneNeuron.add(jPanelNeuronMainSettings, NEURON_TAB_GENERATE);
         jTabbedPaneNeuron.add(jPanelNeuronExtraHoc, NEURON_TAB_EXTRA);
         jTabbedPaneExportFormats.add(jPanelExportGenesis, GENESIS_SIMULATOR_TAB);
+        
+        if (PsicsFileManager.showPsicsFunc())
+            jTabbedPaneExportFormats.add(jPanelExportPsics, PSICS_SIMULATOR_TAB);
 
 
         jTabbedPaneExportFormats.add(jPanelNeuroML, MORPHML_TAB);
@@ -6068,6 +6142,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         this.jComboBoxGenesisFiles.setEnabled(enabled);
         this.jCheckBoxGenesisLineNums.setEnabled(enabled);
     }
+    
+    private void setPsicsRunEnabled(boolean enabled)
+    {
+        this.jButtonPsicsRun.setEnabled(enabled);
+    }
 
     private void doDestroy3D()
     {
@@ -6306,6 +6385,97 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     }
 
+
+    /**
+     * Generates the PSICS files for the project
+     *
+     */
+    protected void doGeneratePsics()
+    {
+        if (projManager.getCurrentProject() == null)
+        {
+            logger.logError("No project loaded...");
+            return;
+        }
+        
+        logger.logComment("Generating the PSICS files for the project...");
+        
+        
+        int seed = 0;
+        /*try
+        {
+            seed = Integer.parseInt(jTextFieldGenesisRandomGen.getText());
+        }
+        catch (NumberFormatException ex)
+        {
+            GuiUtils.showErrorMessage(logger, "Please enter a valid integer into the"
+                                      +" field for the PSICS random number generator seed", ex, this);
+            return;
+        }*/
+        
+        
+        refreshSimulationName();
+        
+        projManager.getCurrentProject().psicsFileManager.reset();
+
+
+
+        try
+        {
+            projManager.getCurrentProject().psicsFileManager.generateThePsicsFiles(this.getSelectedSimConfig(), seed);
+        }
+        catch (Exception ex)
+        {
+            GuiUtils.showErrorMessage(logger, "Error when generating the files: " + ex.getMessage(), ex, this);
+
+            return;
+        }
+        
+        setPsicsRunEnabled(true);
+        
+        refreshTabPsics();
+        
+    }
+
+    /**
+     * Runs the PSICS files for the project
+     *
+     */
+    protected void doRunPsics()
+    {
+        if (projManager.getCurrentProject() == null)
+        {
+            logger.logError("No project loaded...");
+            return;
+        }
+
+        logger.logComment("Running the PSICS files for the project...");
+        
+        try
+        {
+            if (GeneralProperties.getGenerateMatlab())
+            {
+                MatlabOctave.createSimulationLoader(projManager.getCurrentProject(), getSelectedSimConfig(), this.jTextFieldSimRef.getText());
+            }
+
+            if ((GeneralUtils.isWindowsBasedPlatform() || GeneralUtils.isMacBasedPlatform())
+                && GeneralProperties.getGenerateIgor())
+            {
+                IgorNeuroMatic.createSimulationLoader(projManager.getCurrentProject(), getSelectedSimConfig(),
+                                                      this.jTextFieldSimRef.getText());
+            }
+            
+            projManager.getCurrentProject().psicsFileManager.runFile(true);
+        }
+        catch (PsicsException ex)
+        {
+            GuiUtils.showErrorMessage(logger, ex.getMessage(), ex, this);
+            return;
+        }
+        
+    }
+    
+    
 
     /**
      * Runs the GENESIS files for the project
@@ -7537,6 +7707,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         this.refreshTabExport();
         this.refreshTabNeuron();
         this.refreshTabGenesis();
+        this.refreshTabPsics();
         this.refreshTab3D();
         logger.logComment("----------------    *  Done refreshing all  *    ----------------");
 
@@ -8521,6 +8692,28 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     }
 
+    
+
+    /**
+     * Refreshes the tab related to PSICS
+     *
+     */
+    private void refreshTabPsics()
+    {
+        logger.logComment("> Refreshing the Tab for PSICS...");
+        
+        if (projManager.getCurrentProject() == null ||
+            projManager.getCurrentProject().getProjectStatus() == Project.PROJECT_NOT_INITIALISED)
+        {
+            jButtonPsicsGenerate.setEnabled(false);
+            jButtonPsicsRun.setEnabled(false);
+        }
+        else
+        {
+            jButtonPsicsGenerate.setEnabled(true);
+        }
+
+    }
 
     /**
      * Refreshes the tab related to GENESIS
@@ -11712,8 +11905,19 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     {
         logger.logComment("Run GENESIS button pressed...");
         doRunGenesis();
+    }
+    
+    void jButtonPsicsGenerate_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("Create Psics button pressed...");
+        doGeneratePsics();
 
+    }
 
+    void jButtonPsicsRun_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("Run Psics button pressed...");
+        doRunPsics();
     }
 
     void jButtonGenesisView_actionPerformed(ActionEvent e)
@@ -14197,6 +14401,17 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
 
+    void jMenuItemGenPsics_actionPerformed(ActionEvent e)
+    {
+        if (!projManager.projectLoaded()) return;
+
+        jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(this.EXPORT_TAB));
+        jTabbedPaneExportFormats.setSelectedIndex(jTabbedPaneExportFormats.indexOfTab(this.PSICS_SIMULATOR_TAB));
+
+        doGeneratePsics();
+
+    }
+
     void jMenuItemGenGenesis_actionPerformed(ActionEvent e)
     {
         if (!projManager.projectLoaded()) return;
@@ -14208,6 +14423,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         doCreateGenesis();
 
     }
+    
+    
+    
 
 
     void jMenuItemPrevSims_actionPerformed(ActionEvent e)

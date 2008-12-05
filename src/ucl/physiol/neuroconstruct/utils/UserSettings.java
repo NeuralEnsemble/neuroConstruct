@@ -29,6 +29,8 @@ public class UserSettings
     private String nCProjectsDir = null;
 
     private String neuronHome = null;
+    private String psicsJar = null;
+    
     private String executableCommandLine = null;
 
     private String browserExecutable = null;
@@ -106,10 +108,6 @@ public class UserSettings
     {
         return logFileSaveToFilePolicy;
     }
-    public String getNeuronHome()
-    {
-        return neuronHome;
-    }
     public void setExecutableCommandLine(String executableCommandLine)
     {
         this.executableCommandLine = executableCommandLine;
@@ -126,9 +124,21 @@ public class UserSettings
     {
         this.logFileSaveToFilePolicy = logFileSaveToFilePolicy;
     }
+    public String getNeuronHome()
+    {
+        return neuronHome;
+    }
     public void setNeuronHome(String neuronHome)
     {
         this.neuronHome = neuronHome;
+    }
+    public String getPsicsJar()
+    {
+        return psicsJar;
+    }
+    public void setPsicsJar(String jar)
+    {
+        this.psicsJar = jar;
     }
     public String getBrowserPath()
     {

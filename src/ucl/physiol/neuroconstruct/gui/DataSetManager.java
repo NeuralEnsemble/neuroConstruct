@@ -76,6 +76,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
 
 
     public static final String DATA_SET_COMMENT = "//";
+    public static final String DATA_SET_COMMENT_2 = "#";
 
     public static final String DATA_SET_PARAM_PREFIX = "@";
 
@@ -441,9 +442,14 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                 {
                     // ignore line...
                 }
-                else if (nextLine.startsWith(DATA_SET_COMMENT))
+                else if (nextLine.startsWith(DATA_SET_COMMENT) || nextLine.startsWith(DATA_SET_COMMENT_2))
                 {
-                    String commentPart = nextLine.substring(DATA_SET_COMMENT.length()).trim();
+                    String commentPart = "";
+                    if (nextLine.startsWith(DATA_SET_COMMENT))
+                        commentPart = nextLine.substring(DATA_SET_COMMENT.length()).trim();
+                    if (nextLine.startsWith(DATA_SET_COMMENT_2))
+                        commentPart = nextLine.substring(DATA_SET_COMMENT_2.length()).trim();
+                    
 
                     if (commentPart.startsWith(DATA_SET_PARAM_PREFIX) &&
                         commentPart.indexOf("=")>0)
@@ -488,8 +494,6 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                 }
                 else
                 {
-                    String xVal = null;
-                    String yVal = null;
                     String comment = null;
 
                     String[] preWords = null;
@@ -516,7 +520,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                     
                     for(String word: preWords)
                     {
-                        logger.logComment("Pre: (" + word +")");
+                        logger.logComment("Pre word: (" + word +")", true);
                         if (word.indexOf(DATA_SET_COMMENT)>=0)
                         {
                             comment = word.substring(word.indexOf(DATA_SET_COMMENT)
@@ -532,7 +536,8 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                             splitWords.add(noSpace);
                         }
                     }
-                        logger.logComment("splitWords: " + splitWords +"");
+                       
+                    logger.logComment("splitWords: " + splitWords +"", true);
                     boolean dataLine = true;
 
                     for (int i = 0; i < splitWords.size(); i++)
@@ -799,6 +804,10 @@ public class DataSetManager extends JFrame implements ListSelectionListener
             //DataSetManager frame = new DataSetManager(dataDir, true);
             //frame.pack();
             //frame.setVisible(true);
+            
+            File f = new File("C:\\JavaStuff\\psics\\psics-out\\pattest\\run-continuous-results\\out-cont-20.txt");
+            
+            loadFromDataSetFile(f,false);
         }
         catch (Exception ex)
         {

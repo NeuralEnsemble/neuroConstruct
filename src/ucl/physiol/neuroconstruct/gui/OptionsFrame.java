@@ -81,6 +81,9 @@ public class OptionsFrame extends JFrame
 
     JLabel jLabelNeuronDir = new JLabel();
     JTextField jTextFieldNeuronLocation = new JTextField();
+
+    JLabel jLabelPsicsDir = new JLabel();
+    JTextField jTextFieldPsicsLocation = new JTextField();
     
     JLabel jLabelPrefProjDir = new JLabel();
     JTextField jTextFieldPrefProjDir = new JTextField();
@@ -112,7 +115,7 @@ public class OptionsFrame extends JFrame
     GridBagLayout gridBagLayout2 = new GridBagLayout();
     JLabel jLabelCommandLine = new JLabel();
     JTextField jTextFieldCommandLine = new JTextField();
-    JLabel jLabelExplination = new JLabel();
+    JLabel jLabelExplaination = new JLabel();
     JLabel jLabel1 = new JLabel();
 
     JTextPane jTextPaneExplaination = new JTextPane();
@@ -241,9 +244,13 @@ public class OptionsFrame extends JFrame
         jPanelGeneral.setRequestFocusEnabled(true);
         jPanelGeneral.setLayout(gridBagLayout2);
 
-        jLabelNeuronDir.setText("Neuron home directory:");
+        jLabelNeuronDir.setText("NEURON home directory:");
         jTextFieldNeuronLocation.setText("");
         jTextFieldNeuronLocation.setColumns(20);
+
+        jLabelPsicsDir.setText("PSICS jarfile:");
+        jTextFieldPsicsLocation.setText("");
+        jTextFieldPsicsLocation.setColumns(20);
 
         jLabelPrefProjDir.setText("Default location projects:");
         jTextFieldPrefProjDir.setText("");
@@ -524,67 +531,79 @@ public class OptionsFrame extends JFrame
                                                  GridBagConstraints.HORIZONTAL,
                                                  new Insets(6, 6, 6, 20), 0, 0));
 
-        jPanelGeneral.add(jLabelBrowserDir,
+        jPanelGeneral.add(jLabelPsicsDir,
                           new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
                                                  GridBagConstraints.WEST,
                                                  GridBagConstraints.NONE,
                                                  new Insets(6, 20, 6, 6), 0, 0));
-
-        jPanelGeneral.add(jTextFieldBrowser,
+        
+        jPanelGeneral.add(jTextFieldPsicsLocation,
                           new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0,
                                                  GridBagConstraints.WEST,
                                                  GridBagConstraints.HORIZONTAL,
                                                  new Insets(6, 6, 6, 20), 0, 0));
 
-        jPanelGeneral.add(jLabelEditorDir,
+        jPanelGeneral.add(jLabelBrowserDir,
                           new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
                                                  GridBagConstraints.WEST,
                                                  GridBagConstraints.NONE,
                                                  new Insets(6, 20, 6, 6), 0, 0));
 
-        jPanelGeneral.add(jTextFieldEditor,
+        jPanelGeneral.add(jTextFieldBrowser,
                           new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0,
                                                  GridBagConstraints.WEST,
                                                  GridBagConstraints.HORIZONTAL,
                                                  new Insets(6, 6, 6, 20), 0, 0));
-        jPanelGeneral.add(jLabelNeuroML,
+
+        jPanelGeneral.add(jLabelEditorDir,
                           new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
                                                  GridBagConstraints.WEST,
                                                  GridBagConstraints.NONE,
                                                  new Insets(6, 20, 6, 6), 0, 0));
 
-        jPanelGeneral.add(jComboBoxNeuroML,
+        jPanelGeneral.add(jTextFieldEditor,
                           new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0,
+                                                 GridBagConstraints.WEST,
+                                                 GridBagConstraints.HORIZONTAL,
+                                                 new Insets(6, 6, 6, 20), 0, 0));
+        jPanelGeneral.add(jLabelNeuroML,
+                          new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
+                                                 GridBagConstraints.WEST,
+                                                 GridBagConstraints.NONE,
+                                                 new Insets(6, 20, 6, 6), 0, 0));
+
+        jPanelGeneral.add(jComboBoxNeuroML,
+                          new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0,
                                                  GridBagConstraints.WEST,
                                                  GridBagConstraints.HORIZONTAL,
                                                  new Insets(6, 6, 6, 20), 0, 0));
 
         jPanelGeneral.add(jLabelCommandLine,
-                          new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0
+                          new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0
                                                  , GridBagConstraints.WEST, 
                                                  GridBagConstraints.NONE,
                                                  new Insets(6, 20, 0, 6), 0, 0));
 
         jPanelGeneral.add(jTextFieldCommandLine,
-                          new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0
+                          new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0
                                                  , GridBagConstraints.WEST, 
                                                  GridBagConstraints.HORIZONTAL,
                                                  new Insets(6, 6, 6, 20), 0, 0));
-        jPanelGeneral.add(jLabelExplination,
-                          new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0
+        jPanelGeneral.add(jLabelExplaination,
+                          new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0
                                                  , GridBagConstraints.WEST,
                                                  GridBagConstraints.NONE,
                                                  new Insets(6, 6, 0, 0), 0, 0));
-        jPanelGeneral.add(jLabel1,
-                          new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0
-                                                 , GridBagConstraints.CENTER, 
-                                                 GridBagConstraints.NONE,
-                                                 new Insets(0, 0, 0, 0), 0, 0));
         jPanelGeneral.add(jTextPaneExplaination,
-                          new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0
+                          new GridBagConstraints(0, 7, 2, 1, 0.0, 0.0
                                                  , GridBagConstraints.WEST, 
                                                  GridBagConstraints.HORIZONTAL,
                                                  new Insets(6, 20, 6, 20), 0, 0));
+        jPanelGeneral.add(jLabel1,
+                          new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0
+                                                 , GridBagConstraints.CENTER, 
+                                                 GridBagConstraints.NONE,
+                                                 new Insets(0, 0, 0, 0), 0, 0));
 
 
         
@@ -686,6 +705,11 @@ public class OptionsFrame extends JFrame
             jTextFieldBrowser.setText(GeneralProperties.getBrowserPath(false));
             jTextFieldEditor.setText(GeneralProperties.getEditorPath(false));
             jTextFieldNeuronLocation.setText(GeneralProperties.getNeuronHomeDir());
+            
+            String psicsJar = GeneralProperties.getPsicsJar();
+            if (psicsJar!=null)
+                jTextFieldPsicsLocation.setText(GeneralProperties.getPsicsJar());
+            
             jTextFieldCommandLine.setText(GeneralProperties.getExecutableCommandLine());
             jTextFieldPrefProjDir.setText(GeneralProperties.getnCProjectsDir().getAbsolutePath());
 
@@ -848,6 +872,8 @@ public class OptionsFrame extends JFrame
             
             
             GeneralProperties.setNeuronHomeDir(jTextFieldNeuronLocation.getText());
+            GeneralProperties.setPsicsJar(jTextFieldPsicsLocation.getText());
+            
             GeneralProperties.setBrowserPath(jTextFieldBrowser.getText());
             GeneralProperties.setEditorPath(jTextFieldEditor.getText());
             GeneralProperties.setExecutableCommandLine(jTextFieldCommandLine.getText());

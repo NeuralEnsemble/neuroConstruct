@@ -339,10 +339,19 @@ public class GeneralProperties
         String nrnHome = userSettings.getNeuronHome();
         return nrnHome;	
     }
+    public static String getPsicsJar()
+    {
+        String jar = userSettings.getPsicsJar();
+        return jar;	
+    }
 
     public static void setNeuronHomeDir(String neuronHomeDir)
     {
         userSettings.setNeuronHome(neuronHomeDir);
+    }
+    public static void setPsicsJar(String jar)
+    {
+        userSettings.setPsicsJar(jar);
     }
 
 
