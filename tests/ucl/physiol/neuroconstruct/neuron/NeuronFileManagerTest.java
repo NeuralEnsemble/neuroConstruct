@@ -211,6 +211,11 @@ public class NeuronFileManagerTest {
         
         Thread.sleep(wait); // Shouldn't take longer than this
         
+        if (!timesFile.exists())
+        {
+            Thread.sleep(wait*2);
+        }
+        
         assertTrue(timesFile.exists());
         
         simDataSerial.initialise();
@@ -293,7 +298,7 @@ public class NeuronFileManagerTest {
         Thread.sleep(wait); // Shouldn't take longer than this
         
         if (!timesFile.exists())
-            Thread.sleep(wait);
+            Thread.sleep(wait*3);
         
         assertTrue(timesFile.exists());
         
