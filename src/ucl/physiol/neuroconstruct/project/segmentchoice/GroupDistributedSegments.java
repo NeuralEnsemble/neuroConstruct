@@ -43,7 +43,7 @@ public class GroupDistributedSegments extends SegmentLocationChooser
     // Array to store seg ids after they have been initialised
     ArrayList<Integer> generatedSegmentIds = new ArrayList<Integer>();
     
-    // Array to store fraction alog the choosed segments after they have been initialised
+    // Array to store fraction along the choosed segments after they have been initialised
     ArrayList<Float> generatedFractionAlongChosenSegments = new ArrayList<Float>();
     
     // Counts the number of generated ids returned
@@ -120,55 +120,59 @@ public class GroupDistributedSegments extends SegmentLocationChooser
         Vector<Segment> allSegments = cell.getAllSegments();
         
         // store the ids and the lengths of all the segments in the group
-        for (int i = 0; i < allSegments.size(); i++) {
+        for (int i = 0; i < allSegments.size(); i++) 
+        {
             Segment seg = allSegments.get(i);
-            if (seg.getGroups().contains(group)){
+            if (seg.getGroups().contains(group))
+            {
                 idsOfPossibleSegments.add(seg.getSegmentId());
                 lensOfPossibleSegments.add(seg.getSegmentLength());
                 totalLengthOfValidSegments = totalLengthOfValidSegments + seg.getSegmentLength();
             }
         }      
         
-        /* generate the positions on the total lenght of the segments (in this way the probability is proportional to the length) */
-        for (int i = 0; i < numberOfPoints; i++) {
+        /* generate the positions on the total length of the segments (in this way the probability is proportional to the length) */
+        for (int i = 0; i < numberOfPoints; i++) 
+        {
             totalPositions.add(ProjectManager.getRandomGenerator().nextFloat() * totalLengthOfValidSegments);
         }
         
         /* retrive the segments on wich the position is located */
-            if (totalLengthOfValidSegments == 0)
+        if (totalLengthOfValidSegments == 0 && idsOfPossibleSegments.size()==1)
+        {
+            logger.logComment("the only segment is the soma...");
+            for (int i = 0; i < numberOfPoints; i++) 
             {
-                logger.logComment("the only segment is the soma...");
+                generatedFractionAlongChosenSegments.add(0.5f);
+                generatedSegmentIds.add(idsOfPossibleSegments.get(0));
             }
-            else
+            return;
+        }
+        else
+        {
+            for (int i = 0; i < totalPositions.size(); i++) 
             {
-                for (int i = 0; i < totalPositions.size(); i++) {
-                    float distChecked = 0;
-                    int numSegmentsChecked = 0;
-                    boolean pointFound = false;
-                    while (!pointFound && numSegmentsChecked <= idsOfPossibleSegments.size())
-                        {
-                            float length = lensOfPossibleSegments.get(numSegmentsChecked);
-                            if ( (distChecked + length) > totalPositions.get(i))
-                            {
-                                pointFound = true;
-                                generatedFractionAlongChosenSegments.add(((totalPositions.get(i)) - distChecked) / length);
-                                generatedSegmentIds.add(idsOfPossibleSegments.get(numSegmentsChecked));
-                            }
-                            else
-                            {
-                                distChecked += length;
-                                numSegmentsChecked++;
-                            }
-                        }
+                float distChecked = 0;
+                int numSegmentsChecked = 0;
+                boolean pointFound = false;
+                while (!pointFound && numSegmentsChecked <= idsOfPossibleSegments.size())
+                {
+                    float length = lensOfPossibleSegments.get(numSegmentsChecked);
+                    if ( (distChecked + length) > totalPositions.get(i))
+                    {
+                        pointFound = true;
+                        generatedFractionAlongChosenSegments.add(((totalPositions.get(i)) - distChecked) / length);
+                        generatedSegmentIds.add(idsOfPossibleSegments.get(numSegmentsChecked));
                     }
+                    else
+                    {
+                        distChecked += length;
+                        numSegmentsChecked++;
+                    }
+                }
+            }
         
-//        /* checking */
-//        System.out.println("lensOfPossibleSegments: " + lensOfPossibleSegments.toString());
-//        System.out.println("idsOfPossibleSegments: " + idsOfPossibleSegments.toString());
-//        System.out.println("totalPositions: " + totalPositions.toString());
-//        System.out.println("generatedSegmentIds: " + generatedSegmentIds.toString());
-//        System.out.println("segDist: " + generatedFractionAlongChosenSegments.toString());
-    }
+        }
     }
 
     @Override
