@@ -26,6 +26,7 @@ import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
 import ucl.physiol.neuroconstruct.project.stimulation.IClampInstanceProps;
+import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
 import ucl.physiol.neuroconstruct.utils.xml.*;
 
 
@@ -129,7 +130,6 @@ public class PsicsFileManager
 
         // Reinitialise the neuroConstruct rand num gen with the neuroConstruct seed
 
-        //addComments = project.genesisSettings.isGenerateComments();
 
         FileWriter fw = null;
         nextColour = new Hashtable<String, Integer>(); // reset it...
@@ -223,6 +223,9 @@ public class PsicsFileManager
             
             SimpleXMLAttribute sto = new SimpleXMLAttribute("stochThreshold", "0");
             sxe.addAttribute(sto);
+            
+            SimpleXMLAttribute sqCaps = new SimpleXMLAttribute("squareCaps", "true");
+            sxe.addAttribute(sqCaps);
             
             sxe.addContent("\n");
             
@@ -873,7 +876,7 @@ public class PsicsFileManager
 
                 String scriptText = javaEx + " "+fullFileToRun;
 
-                File scriptFile = new File(ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory()),
+                File scriptFile = new File(ProjectStructure.getPsicsCodeDir(project.getProjectMainDirectory()),
                                            "runsim.sh");
                 FileWriter fw = new FileWriter(scriptFile);
 
@@ -909,7 +912,52 @@ public class PsicsFileManager
                 rt.exec(commandToExecute);
 
                 logger.logComment("Have successfully executed command: " + commandToExecute);
+                
+               
             }
+            boolean loadResults = true;
+            if(loadResults)
+            {
+                File resultsHtml = new File(dirToRunFrom+"/"+project.getProjectName()+"-results/index.html");
+                
+                logger.logComment("Checking for results info: " + resultsHtml.getAbsolutePath(), true);
+                        
+                int tries = 5;
+                while (tries>0)
+                {
+                    if (resultsHtml.exists())
+                    {
+                        tries=0;
+                        String browserPath = GeneralProperties.getBrowserPath(true);
+                        if (browserPath==null)
+                        {
+                            GuiUtils.showErrorMessage(logger, "Could not start a browser!", null, null);
+                            return;
+                        }
+
+                        String command = browserPath + " " + resultsHtml.toURI();
+
+                        logger.logComment("Going to execute command: " + command, true);
+
+                        try
+                        {
+                            rt.exec(command);
+                        }
+                        catch (IOException ex)
+                        {
+                            logger.logError("Error running " + command);
+                        }
+
+                        logger.logComment("Have successfully executed command: " + command);
+                    }
+                    else
+                    {
+                        Thread.sleep(1000);
+                        tries--;
+                    }
+                }
+            }
+            
         }
         catch (Exception ex)
         {
@@ -999,7 +1047,7 @@ public class PsicsFileManager
                             else if (cellMech instanceof ChannelMLCellMechanism)
                             {
                                 success = ( (ChannelMLCellMechanism) cellMech).createImplementationFile(SimEnvHelper.PSICS,
-                                    project.genesisSettings.getUnitSystemToUse(),
+                                    UnitConverter.GENESIS_SI_UNITS,
                                     newMechFile,
                                     project,
                                     false,
@@ -1066,7 +1114,7 @@ public class PsicsFileManager
 
 
             gen.generateThePsicsFiles(p.simConfigInfo.getDefaultSimConfig(), 12345);
-            //gen.runGenesisFile();
+        
         }
         catch(Exception e)
         {

@@ -234,6 +234,10 @@ public class PsicsMorphologyGenerator
                         proxPoint.addAttribute(new SimpleXMLAttribute("parent", parent.getSegmentName()));
                         newPointId = seg.getSegmentName()+"_minor";
                     }
+                    else
+                    {
+                        newPointId = newPointId+"_root";
+                    }
 
                     SimpleXMLAttribute segIdProx = new SimpleXMLAttribute("id", newPointId);
 
@@ -245,13 +249,16 @@ public class PsicsMorphologyGenerator
                     SimpleXMLAttribute yDistProx = new SimpleXMLAttribute("y", connectionPointParent.y+"");
                     SimpleXMLAttribute zDistProx = new SimpleXMLAttribute("z", connectionPointParent.z+"");
                     SimpleXMLAttribute rDistProx = new SimpleXMLAttribute("r", seg.getSegmentStartRadius()+"");
-                    SimpleXMLAttribute minorProx = new SimpleXMLAttribute("minor", "true");
 
                     proxPoint.addAttribute(xDistProx);
                     proxPoint.addAttribute(yDistProx);
                     proxPoint.addAttribute(zDistProx);
                     proxPoint.addAttribute(rDistProx);
-                    proxPoint.addAttribute(minorProx);
+                    if(parent!=null)
+                    {
+                        SimpleXMLAttribute minorProx = new SimpleXMLAttribute("minor", "true");
+                        proxPoint.addAttribute(minorProx);
+                    }
 
 
                     cellMorph.addChildElement(proxPoint);

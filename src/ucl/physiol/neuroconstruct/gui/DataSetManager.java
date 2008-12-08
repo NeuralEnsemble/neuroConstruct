@@ -17,6 +17,7 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.util.*;
 import javax.swing.table.*;
 
 import ucl.physiol.neuroconstruct.utils.*;
@@ -392,23 +393,23 @@ public class DataSetManager extends JFrame implements ListSelectionListener
      * @param partial only loads the reference, description, etc from the comments at the beginning of the file
      *
      */
-    public static DataSet loadFromDataSetFile(File dsFile, boolean partial) throws DataSetException
+    public static ArrayList<DataSet> loadFromDataSetFile(File dsFile, boolean partial) throws DataSetException
     {
-        DataSet dataSet = new DataSet(null, null, "", "", "", "");
-
+        ArrayList<DataSet> dataSets = new ArrayList<DataSet>();
+        
         String name = "Data loaded from file: "+ dsFile.getAbsolutePath();
-
-
+        
         if (name.endsWith(ProjectStructure.getDataSetExtension()))
         {
             name = name.substring(0, name.length()
                                   -ProjectStructure.getDataSetExtension().length());
         }
-        // temp name
-        dataSet.setRefrence(name);
-        // temp description
-        dataSet.setDescription(name);
+        String description = name;
 
+        int dataReadFormat = -1;
+        int EACH_COL_DATA = 1;
+        int FIRST_COL_TIME = 2;
+        
 
         FileReader fr = null;
         try
@@ -422,12 +423,23 @@ public class DataSetManager extends JFrame implements ListSelectionListener
 
         BufferedReader lineReader = new BufferedReader(fr);
         String nextLine = null;
+        String origLine = null;
 
 
         int lineNumber = 0;
         int dataPointIndex = 0;
 
         boolean reachedDataPoints = false;
+        
+      
+        String graphFormat = PlotCanvas.USE_LINES_FOR_PLOT;
+        
+        Color graphColor = Color.black;
+        
+        String xUnit = "";
+        String xLegend = "";
+        String yUnit = "";
+        String yLegend = "";
 
         try
         {
@@ -436,6 +448,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
             {
                 lineNumber++;
                 //logger.logComment("Next line: " + nextLine);
+                origLine = new String(nextLine);
                 nextLine = nextLine.trim();
 
                 if (nextLine.length()==0)
@@ -460,19 +473,21 @@ public class DataSetManager extends JFrame implements ListSelectionListener
 
                         logger.logComment("Found param: "+ paramName+ ", it's val is: "+ paramVal);
 
-                        if (paramName.equals(DATA_SET_REF_PARAM)) dataSet.setRefrence(paramVal);
+                        if (paramName.equals(DATA_SET_REF_PARAM)) 
+                            name = paramVal;
                         if (paramName.equals(DATA_SET_DESCRIPTION_PARAM))
                         {
                             String desc = GeneralUtils.replaceAllTokens(paramVal, "\\n", " - ");
-                            dataSet.setDescription(desc);
+                            description = desc;
                         }
 
-                        if (paramName.equals(DATA_SET_GRAPH_FORMAT_PARAM)) dataSet.setGraphFormat(paramVal);
+                        if (paramName.equals(DATA_SET_GRAPH_FORMAT_PARAM)) 
+                            graphFormat = paramVal;
 
-                        if (paramName.equals(DATA_SET_X_UNITS)) dataSet.setXUnit(paramVal);
-                        if (paramName.equals(DATA_SET_Y_UNITS)) dataSet.setYUnit(paramVal);
-                        if (paramName.equals(DATA_SET_X_LEGEND)) dataSet.setXLegend(paramVal);
-                        if (paramName.equals(DATA_SET_Y_LEGEND)) dataSet.setYLegend(paramVal);
+                        if (paramName.equals(DATA_SET_X_UNITS)) xUnit = paramVal;
+                        if (paramName.equals(DATA_SET_Y_UNITS)) yUnit = paramVal;
+                        if (paramName.equals(DATA_SET_X_LEGEND)) xLegend = paramVal;
+                        if (paramName.equals(DATA_SET_Y_LEGEND)) yLegend = paramVal;
 
                         if (paramName.equals(DATA_SET_GRAPH_COLOUR_PARAM))
                         {
@@ -483,7 +498,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                             Color newColor = new Color(Integer.parseInt(red),
                                                        Integer.parseInt(green),
                                                        Integer.parseInt(blue));
-                            dataSet.setGraphColour(newColor);
+                            graphColor = newColor;
                         }
 
                     }
@@ -497,6 +512,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                     String comment = null;
 
                     String[] preWords = null;
+                    
                     ArrayList<String> splitWords = new ArrayList<String>();
                     
                     nextLine = nextLine.trim();
@@ -520,7 +536,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                     
                     for(String word: preWords)
                     {
-                        logger.logComment("Pre word: (" + word +")", true);
+                        logger.logComment("Pre word: (" + word +")");
                         if (word.indexOf(DATA_SET_COMMENT)>=0)
                         {
                             comment = word.substring(word.indexOf(DATA_SET_COMMENT)
@@ -537,8 +553,9 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                         }
                     }
                        
-                    logger.logComment("splitWords: " + splitWords +"", true);
+                    logger.logComment("splitWords: " + splitWords +"");
                     boolean dataLine = true;
+                    
 
                     for (int i = 0; i < splitWords.size(); i++)
                     {
@@ -560,85 +577,102 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                     {
                         if (splitWords.size()==1)
                         {
-                            int pointNum = dataSet.addPoint(dataPointIndex, Double.parseDouble(splitWords.get(0).trim()));
+                            if (dataSets.size()==0)
+                            {
+                                DataSet ds = new DataSet(name, description, xUnit, yUnit, xLegend, yLegend);
+                                ds.setGraphFormat(graphFormat);
+                                ds.setGraphColour(graphColor);
+                                ds.setDataSetFile(dsFile);
+                                dataSets.add(ds);
+                            }
+                            int pointNum = dataSets.get(0).addPoint(dataPointIndex, Double.parseDouble(splitWords.get(0).trim()));
                             dataPointIndex++;
                             if (comment!=null)
-                                dataSet.setCommentOnPoint(pointNum, comment);
-                            
+                                dataSets.get(0).setCommentOnPoint(pointNum, comment);
                             
                         
                         }
-                        else if (splitWords.size()==2)
-                        {
-                            int pointNum = dataSet.addPoint(Double.parseDouble(splitWords.get(0).trim()), Double.parseDouble(splitWords.get(1).trim()));
-                            dataPointIndex++;
-                            if (comment!=null)
-                                dataSet.setCommentOnPoint(pointNum, comment);
-                        }
                         else
                         {
-                            logger.logComment("Line has too many entries...");
+                            //logger.logComment("Line has too many entries..."); 
+                            if (dataReadFormat<0)
+                            {
+                                String msg = new String("Note: the data file appears to have "+splitWords.size()+" columns of data. Example line:\n\n" 
+                                    +origLine+"\n\n" +
+                                    "Please select either:\n"+"A) plot every column \nB) use first column as X values, and plot all others against this");
+                                
+                                Object[] vars = new Object[]{"Option A", "Option B", "Cancel"};
+
+                                int sel = JOptionPane.showOptionDialog(GuiUtils.getMainFrame(), msg, "Select option for data file", 
+                                                       JOptionPane.OK_OPTION,
+                                                       JOptionPane.QUESTION_MESSAGE,
+                                                       null,
+                                                       vars,vars[0]);
+                                if (sel == 0)
+                                {
+                                    dataReadFormat = EACH_COL_DATA;
+                                }
+                                else if (sel == 1)
+                                {
+                                    dataReadFormat = FIRST_COL_TIME;
+                                }
+                                else
+                                {
+                                    return null;
+                                }  
+                            }
+                            
+                            if (dataReadFormat == EACH_COL_DATA)
+                            {
+                                if (dataSets.size()==0)
+                                {
+                                    for(int i=0;i<splitWords.size();i++)
+                                    {
+                                        DataSet ds = new DataSet(name+" (column "+i+")", description+" (column "+i+")", xUnit, yUnit, xLegend, yLegend);
+                                        ds.setGraphFormat(graphFormat);
+                                        ds.setGraphColour(graphColor);
+                                        ds.setDataSetFile(dsFile);
+                                        dataSets.add(ds);
+                                    }
+                                }
+                                
+                                for(int i=0;i<splitWords.size();i++)
+                                {
+                                    int pointNum = dataSets.get(i).addPoint(dataPointIndex, Double.parseDouble(splitWords.get(i).trim()));
+                                    dataPointIndex++;
+                                    if (comment!=null)
+                                        dataSets.get(i).setCommentOnPoint(pointNum, comment);
+                                }
+                            }
+                            else if (dataReadFormat == FIRST_COL_TIME)
+                            {
+                                if (dataSets.size()==0)
+                                {
+                                    for(int i=0;i<splitWords.size()-1;i++)
+                                    {
+                                        DataSet ds = new DataSet(name+" (column "+(i+1)+")", description+" (column "+(i+1)+")", xUnit, yUnit, xLegend, yLegend);
+                                        ds.setGraphFormat(graphFormat);
+                                        ds.setGraphColour(graphColor);
+                                        ds.setDataSetFile(dsFile);
+                                        dataSets.add(ds);
+                                    }
+                                }
+                                
+                                for(int i=0;i<splitWords.size()-1;i++)
+                                {
+                                    int pointNum = dataSets.get(i).addPoint(Double.parseDouble(splitWords.get(0).trim()), Double.parseDouble(splitWords.get(i+1).trim()));
+                                    dataPointIndex++;
+                                    if (comment!=null)
+                                        dataSets.get(i).setCommentOnPoint(pointNum, comment);
+                                }
+                            }
                         }
-
-
                     }
                     else
                     {
                         logger.logComment("Unrecognised line...");
                     }
                     
-                    /*
-                    if (nextLine.indexOf(",") >= 0)
-                    {
-                        xVal = nextLine.substring(0, nextLine.indexOf(",")).trim();
-                        String rest = nextLine.substring(nextLine.indexOf(",") + 1).trim();
-                        if (rest.indexOf(DATA_SET_COMMENT)>=0)
-                        {
-
-                            yVal = rest.substring(0, rest.indexOf(DATA_SET_COMMENT));
-
-                            comment = rest.substring(rest.indexOf(DATA_SET_COMMENT)
-                                                     + DATA_SET_COMMENT.length()).trim();
-
-                        }
-                        else
-                        {
-                            yVal = rest;
-                        }
-                    }
-                    else if (nextLine.indexOf(" ") > 0)
-                    {
-                        xVal = nextLine.substring(0, nextLine.indexOf(" ")).trim();
-                        yVal = nextLine.substring(nextLine.indexOf(" ") + 1).trim();
-                    }
-                    
-                    
-                    
-                    else
-                    {
-                        
-                        throw new DataSetException("Problem reading Data Set file: " + dsFile +
-                                                   "\nBadly formatted line: (" + nextLine+")");
-                    }
-                    
-                    
-                    try
-                    {
-                        double x = Double.parseDouble(xVal);
-                        double y = Double.parseDouble(yVal);
-                        int pointNum = dataSet.addPoint(x, y);
-
-                        if (comment!=null)
-                        {
-                            dataSet.setCommentOnPoint(pointNum, comment);
-                        }
-
-                    }
-                    catch (NumberFormatException ex1)
-                    {
-                        throw new DataSetException("Problem reading Data Set file: " + dsFile +
-                                                   "\nBadly formatted line: " + nextLine, ex1);
-                    }*/
 
                     reachedDataPoints = true;
                 }
@@ -649,9 +683,8 @@ public class DataSetManager extends JFrame implements ListSelectionListener
             throw new DataSetException("Problem reading Data Set file: "+ dsFile, ex1);
         }
 
-        dataSet.setDataSetFile(dsFile);
 
-        return dataSet;
+        return dataSets;
     }
 
 

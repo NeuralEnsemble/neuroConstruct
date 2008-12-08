@@ -3178,7 +3178,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelExportPsics.add(jPanelPsicsMain);
 
         jPanelPsicsMain.setLayout(new GridBagLayout());
-        jLabelPsicsMain.setText("Generate code for the PSICS simulator");
+        jLabelPsicsMain.setText("Generate code for the PSICS simulator (alpha)");
         
         jPanelPsicsMain.add(jLabelPsicsMain,
                               new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
@@ -11984,13 +11984,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         File defaultDir = new File(lastDir);
 
-        DataSet ds = PlotterFrame.addNewDataSet(defaultDir, this);
+        ArrayList<DataSet> dss = PlotterFrame.addNewDataSet(defaultDir, this);
         
 
-        if (ds != null)
+        if (dss != null)
         {
             PlotterFrame frame = PlotManager.getPlotterFrame("Imported Data Set plot", false, false);
-            frame.addDataSet(ds);
+            for(DataSet ds: dss)
+                frame.addDataSet(ds);
+            
             frame.setVisible(true);
         }
     }

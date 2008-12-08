@@ -14,6 +14,7 @@ package ucl.physiol.neuroconstruct.dataset;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
@@ -130,13 +131,14 @@ public class DataSetInfo extends AbstractTableModel
                 {
                     logger.logComment("Looking at directory: " + childrenDirs[i].getAbsolutePath());
 
-                    DataSet dataSet = null;
+                    ArrayList<DataSet> dataSets = null;
 
                     try
                     {
-                        dataSet = DataSetManager.loadFromDataSetFile(childrenDirs[i], true);
+                        dataSets = DataSetManager.loadFromDataSetFile(childrenDirs[i], true);
 
-                        dataSetObjs.add(dataSet);
+                        for(DataSet ds: dataSets)
+                            dataSetObjs.add(ds);
 
                         logger.logComment("That's a valid data set...");
                     }
@@ -185,7 +187,7 @@ public class DataSetInfo extends AbstractTableModel
     {
         DataSet ds = dataSetObjs.elementAt(row);
 
-        return DataSetManager.loadFromDataSetFile(ds.getDataSetFile(), false);
+        return DataSetManager.loadFromDataSetFile(ds.getDataSetFile(), false).get(0);
     }
 
     public String getDataSetReference(int row) throws DataSetException

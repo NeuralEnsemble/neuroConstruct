@@ -145,10 +145,12 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener
                 logger.logComment("Have successfully executed command: " + command);
 
             }
+            @Override
             public void mouseEntered(MouseEvent mouseEvent)
             {
                 jLabelWeb.setForeground(Color.BLACK);
             }
+            @Override
             public void mouseExited(MouseEvent mouseEvent)
             {
                 jLabelWeb.setForeground(Color.BLUE);
@@ -180,6 +182,7 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener
         setResizable(true);
     }
     //Overridden so we can exit when window is closed
+    @Override
     protected void processWindowEvent(WindowEvent e)
     {
         if (e.getID() == WindowEvent.WINDOW_CLOSING)

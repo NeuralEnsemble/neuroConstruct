@@ -14,6 +14,7 @@ package ucl.physiol.neuroconstruct.gui;
 
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.plaf.metal.*;
 import ucl.physiol.neuroconstruct.gui.plotter.PlotterFrame;
@@ -268,14 +269,15 @@ public class MainApplication
                     }
                     File dataFile = new File(args[i+1]);
                     
-                    DataSet dataSet = DataSetManager.loadFromDataSetFile(dataFile, false);
+                    ArrayList<DataSet> dataSets = DataSetManager.loadFromDataSetFile(dataFile, false);
                     
-                    String plotFrameRef = "Plot of "+dataSet.getRefrence();
+                    String plotFrameRef = "Plot of data from "+dataFile.getAbsolutePath();
 
 
                     PlotterFrame frame = PlotManager.getPlotterFrame(plotFrameRef);
 
-                    frame.addDataSet(dataSet);
+                    for(DataSet dataSet: dataSets)
+                        frame.addDataSet(dataSet);
                     
 
                     frame.setVisible(true);

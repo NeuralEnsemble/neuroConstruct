@@ -2990,9 +2990,13 @@ public class PlotterFrame extends JFrame
 
         File defaultDir = new File(lastDir);
 
-        DataSet ds = addNewDataSet(defaultDir, this);
+        ArrayList<DataSet> dataSets = addNewDataSet(defaultDir, this);
 
-        if (ds!=null) this.addDataSet(ds);
+        if (dataSets!=null)
+        {
+            for(DataSet ds: dataSets)
+                this.addDataSet(ds);
+        }
     }
     
     
@@ -3107,7 +3111,7 @@ public class PlotterFrame extends JFrame
     
     
 
-    public static DataSet addNewDataSet(File dirToLookIn, Component parent)
+    public static ArrayList<DataSet> addNewDataSet(File dirToLookIn, Component parent)
     {
         final JFileChooser chooser = new JFileChooser();
         
@@ -3133,11 +3137,12 @@ public class PlotterFrame extends JFrame
             public void actionPerformed(ActionEvent e){
             GuiUtils.showInfoMessage(logger,
                                      "Data file import format",
-                "Data files can be imported in either single column (y values) or double column (x, y values) format.\n"+
+                "Data files can be imported as either a single column (y values) or multiple column ((x and) multiple y values) format.\n" +
+                "If there are 2 or more columns in the file, an option will be given to use the first column as the x values, or treat all columns as y values.\n"+
                 "Each data entry must be followed by a carriage return, and lines not recognised as a sequence of numbers\n"
                 +"separated by a space (or one of , : ;) are ignored.\n"
                 +"Note: after the data points are imported the x axis values (or y axis values) can be corrected (e.g. scaled by 1000)\n"
-                +"by selecting "+PlotterFrame.generateNew+" in the Data Set's menu", chooser);}});
+                +"by selecting "+PlotterFrame.generateNew+" in the Data Set's menu. Also Data Sets can be moved between Plot Frames.", chooser);}});
         helpPanel.add(helpButton);
 
         chooser.setAccessory(helpPanel);
@@ -3156,108 +3161,19 @@ public class PlotterFrame extends JFrame
             }
             
             RecentFiles.getRecentFilesInstance(ProjectStructure.getNeuConRecentFilesFilename()).setMyLastExportPointsDir(file.getAbsolutePath());
-            DataSet ds = null;
+            ArrayList<DataSet> dss = null;
             try
             {
-                ds = DataSetManager.loadFromDataSetFile(file, false);
+                dss = DataSetManager.loadFromDataSetFile(file, false);
             }
             catch(Exception ex)
             {
                 GuiUtils.showErrorMessage(logger, "Error loading data from file: "+file, ex, null);
-                ds.setDescription(ds.getDescription()+"\n\nError loading data from file: "+file+"\n"+ex.getMessage());
+                for (DataSet ds: dss)
+                    ds.setDescription(ds.getDescription()+"\n\nError loading data from file: "+file+"\n"+ex.getMessage());
             }
             
-            /*
-            DataSet ds = new DataSet(ref, "Data loaded from file: "+ file.getAbsolutePath(),"","","","");
-
-            try
-            {
-                Reader in = new FileReader(file);
-
-                BufferedReader lineReader = new BufferedReader(in);
-                String nextLine = null;
-
-                int lineNumber = 0;
-                int dataPointIndex = 0;
-
-                while ( (nextLine = lineReader.readLine()) != null)
-                {
-
-                    logger.logComment("Looking at line num "+lineNumber+": " + nextLine);
-
-                    String[] words = null;
-                    nextLine = nextLine.trim();
-
-                    if (nextLine.indexOf(",")>=0)
-                    {
-                        words = nextLine.split(",");
-                    }
-                    else if (nextLine.indexOf(";")>=0)
-                    {
-                        words = nextLine.split(";");
-                    }
-                    else if (nextLine.indexOf(":")>=0)
-                    {
-                        words = nextLine.split(":");
-                    }
-                    else
-                    {
-                        words = nextLine.split("\\s+");
-                    }
-                    boolean dataLine = true;
-
-                    for (int i = 0; i < words.length; i++)
-                    {
-                        try
-                        {
-                            Double.parseDouble(words[i].trim());
-                            logger.logComment("Found a number: (" + words[i].trim() +")");
-                        }
-                        catch (NumberFormatException ex1)
-                        {
-
-                            logger.logComment("Not a number: (" + words[i].trim() +")");
-                            dataLine = false;
-                        }
-                    }
-                    if (dataLine)
-                    {
-                        if (words.length==1)
-                        {
-                            ds.addPoint(dataPointIndex, Double.parseDouble(words[0].trim()));
-                            dataPointIndex++;
-                        }
-                        else if (words.length==2)
-                        {
-                            ds.addPoint(Double.parseDouble(words[0].trim()), Double.parseDouble(words[1].trim()));
-                            dataPointIndex++;
-                        }
-                        else
-                        {
-                            logger.logComment("Line has too many entries...");
-                        }
-
-
-                    }
-                    else
-                    {
-                        logger.logComment("Unrecognised line...");
-                    }
-
-
-
-                    lineNumber++;
-                }
-            }
-            catch(Exception ex)
-            {
-                GuiUtils.showErrorMessage(logger, "Error loading data from file: "+file, ex, null);
-                ds.setDescription(ds.getDescription()+"\n\nError loading data from file: "+file+"\n"+ex.getMessage());
-            }*/
-
-
-            return ds;
-
+            return dss;
 
         }
 
