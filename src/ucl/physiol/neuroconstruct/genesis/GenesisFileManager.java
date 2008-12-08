@@ -982,8 +982,8 @@ public class GenesisFileManager
 
                         }
 
-                        if ( (cellMech.getMechanismType().equals(DistMembraneMechanism.CHANNEL_MECHANISM) ||
-                              cellMech.getMechanismType().equals(DistMembraneMechanism.ION_CONCENTRATION)) &&
+                        if ( (cellMech.getMechanismType().equals(CellMechanism.CHANNEL_MECHANISM) ||
+                              cellMech.getMechanismType().equals(CellMechanism.ION_CONCENTRATION)) &&
                             ! (cellMech instanceof PassiveMembraneMechanism))
                         {
                             File newMechFile = new File(ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory()),

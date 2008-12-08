@@ -12346,6 +12346,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     {
                         newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_GENESIStab.xsl");
                     }
+                    else if (simEnv.equals(SimEnvHelper.PSICS))
+                    {
+                        newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_PSICS.xsl");
+                    }
 
                     SimpleDateFormat formatter = new SimpleDateFormat("H:mm:ss, EEEE MMMM d, yyyy");
 

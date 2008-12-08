@@ -16,7 +16,10 @@ import java.io.*;
 import java.util.*;
 
 
+import java.util.logging.Level;
 import ucl.physiol.neuroconstruct.cell.*;
+import ucl.physiol.neuroconstruct.mechanisms.*;
+import ucl.physiol.neuroconstruct.neuroml.ChannelMLConstants;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.GeneratedPlotSaves.*;
 import ucl.physiol.neuroconstruct.simulation.*;
@@ -51,6 +54,8 @@ public class PsicsFileManager
     boolean mainFileGenerated = false;
 
     ArrayList<String> cellTemplatesGenAndIncl = new ArrayList<String>();
+        
+    ArrayList<String> includedChanMechNames = new ArrayList<String>();
     
     String theOneCellGroup = null;
 
@@ -93,6 +98,7 @@ public class PsicsFileManager
         cellTemplatesGenAndIncl = new ArrayList<String>();
         graphsCreated = new ArrayList<String>();
         nextColour = new Hashtable<String, Integer>(); // reset it...
+        includedChanMechNames = new ArrayList<String>();
 
         //addComments = project.psicsSettings.isGenerateComments();
     }
@@ -139,6 +145,8 @@ public class PsicsFileManager
             mainPsicsFile = new File(dirForPsicsFiles, project.getProjectName() + ".xml");
 
             logger.logComment("generating: "+ mainPsicsFile);
+            
+            generateChanMechIncludes();
             
             fw = new FileWriter(mainPsicsFile);
 
@@ -245,17 +253,20 @@ public class PsicsFileManager
                 xAxis.addAttribute(new SimpleXMLAttribute("max",simConfig.getSimDuration()+""));
                 xAxis.addAttribute(new SimpleXMLAttribute("label","time / ms"));
                 lg.addChildElement(xAxis);
+                lg.addContent("\n    ");
                 
                 
                 SimpleXMLElement yAxis = new SimpleXMLElement("YAxis");
                 yAxis.addAttribute(new SimpleXMLAttribute("min",psd.simPlot.getMinValue()+""));
                 yAxis.addAttribute(new SimpleXMLAttribute("max",psd.simPlot.getMaxValue()+""));
                 lg.addChildElement(yAxis);
+                lg.addContent("\n    ");
                 
                 SimpleXMLElement lineSet = new SimpleXMLElement("LineSet");
                 lineSet.addAttribute(new SimpleXMLAttribute("file","psics-out.txt"));
                 lineSet.addAttribute(new SimpleXMLAttribute("color","red"));
                 lg.addChildElement(lineSet);
+                lg.addContent("\n    ");
                 
                 SimpleXMLElement view = new SimpleXMLElement("View");
                 view.addAttribute(new SimpleXMLAttribute("id",psd.simPlot.getPlotReference()));
@@ -264,12 +275,14 @@ public class PsicsFileManager
                 view.addAttribute(new SimpleXMLAttribute("ymin",psd.simPlot.getMinValue()+""));
                 view.addAttribute(new SimpleXMLAttribute("ymax",psd.simPlot.getMaxValue()+""));
                 lg.addChildElement(view);
+                lg.addContent("\n");
                 
                 
                 vc.addChildElement(lg);
+                vc.addContent("\n");
                 
             }
-                sxe.addChildElement(vc);
+            sxe.addChildElement(vc);
             
             sxe.addContent("\n");
             
@@ -388,7 +401,11 @@ public class PsicsFileManager
                         
                         
                         cc.addChildElement(cp);
+                        
+                        cc.addContent("\n");
                         access.addChildElement(cc);
+                        
+                        access.addContent("\n");
                     }
                     else
                     {
@@ -485,6 +502,49 @@ public class PsicsFileManager
             
             SimpleXMLAttribute id = new SimpleXMLAttribute("id", "environment");
             sxe.addAttribute(id);
+            
+            for(String chanMech: includedChanMechNames)
+            {
+                try
+                {
+                    ChannelMLCellMechanism cmlcm = (ChannelMLCellMechanism)project.cellMechanismInfo.getCellMechanism(chanMech);
+
+                    String ion;
+
+                    SimpleXMLElement ionEl = new SimpleXMLElement("Ion");
+
+                    ion = cmlcm.getXMLDoc().getValueByXPath(ChannelMLConstants.getIonNameXPath());
+                    
+                    String erev  = cmlcm.getXMLDoc().getValueByXPath(ChannelMLConstants.getIonRevPotXPath());
+
+                    SimpleXMLAttribute idAttr = new SimpleXMLAttribute("id", ion);
+
+                    ionEl.addAttribute(idAttr);
+
+                    SimpleXMLAttribute nameAttr = new SimpleXMLAttribute("name", ion+"_ion");
+                    ionEl.addAttribute(nameAttr);
+                    
+                    String units = cmlcm.getXMLDoc().getValueByXPath(ChannelMLConstants.getUnitsXPath());
+                    String unit = units.equals(ChannelMLConstants.PHYSIOLOGICAL_UNITS) ? "mV" : "V";
+                    
+                    SimpleXMLAttribute revPotAttr = new SimpleXMLAttribute("reversalPotential", erev+unit);
+                    ionEl.addAttribute(revPotAttr);
+
+                    sxe.addChildElement(ionEl);
+                    sxe.addContent("\n    ");
+                }
+                catch (ChannelMLException ex)
+                {
+                    throw new PsicsException("Error finding information on ion in "+chanMech);
+                }
+                catch (ClassCastException cc)
+                {
+                    throw new PsicsException("Error casting cell mech "+chanMech+" to ChannelMLCellMechanism", cc);
+                }
+                
+            }
+            sxe.addContent("\n");
+            
             
             fw.write(sxe.getXMLString("", false));
             
@@ -871,6 +931,114 @@ public class PsicsFileManager
         return this.mainPsicsFile.getAbsolutePath();
 
     }
+    
+    
+    
+    private String generateChanMechIncludes() throws PsicsException
+    {
+        StringBuffer response = new StringBuffer();
+
+        ArrayList<String> cellGroupNames = project.cellGroupsInfo.getAllCellGroupNames();
+
+
+        String dir = ""; // needed under windows...
+        if (GeneralUtils.isWindowsBasedPlatform())
+        {
+            dir = this.mainPsicsFile.getParentFile().getAbsolutePath() + System.getProperty("file.separator");
+        }
+
+
+        for (int ii = 0; ii < cellGroupNames.size(); ii++)
+        {
+            String cellGroupName = cellGroupNames.get(ii);
+
+            logger.logComment("***  Looking at cell group number " + ii + ", called: " +
+                              cellGroupName);
+
+            if(project.generatedCellPositions.getNumberInCellGroup(cellGroupName)>0)
+            {
+                String cellTypeName = project.cellGroupsInfo.getCellType(cellGroupName);
+                Cell cell = project.cellManager.getCell(cellTypeName);
+
+                ArrayList<String> chanMechsAll = cell.getAllChanMechNames(false);
+
+                //boolean foundFirstPassi
+
+                for (int j = 0; j < chanMechsAll.size(); j++)
+                {
+                    //ChannelMechanism nextChanMech = chanMechNames.get(j);
+                    String nextChanMechName = chanMechsAll.get(j);
+                    
+                    logger.logComment("Cell in group " + cellGroupName + " needs channel mech: " + nextChanMechName);
+                    
+                    //String chanMechNameToUse = nextChanMech.getName();
+                    
+                    if (!includedChanMechNames.contains(nextChanMechName) &&
+                        project.generatedCellPositions.getNumberInCellGroup(cellGroupName) > 0)
+                    {
+                        CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMechName);
+
+                        if (cellMech == null)
+                        {
+                            throw new PsicsException("Problem including cell mech: " + nextChanMechName);
+
+                        }
+
+                        if ( (cellMech.getMechanismType().equals(CellMechanism.CHANNEL_MECHANISM) ||
+                              cellMech.getMechanismType().equals(CellMechanism.ION_CONCENTRATION)))
+                        {
+                            File newMechFile = new File(ProjectStructure.getPsicsCodeDir(project.getProjectMainDirectory()),
+                                                           cellMech.getInstanceName() + ".xml");
+
+                            boolean success = false;
+
+                            if (cellMech instanceof AbstractedCellMechanism)
+                            {
+                                success = false;
+                            }
+                            else if (cellMech instanceof ChannelMLCellMechanism)
+                            {
+                                success = ( (ChannelMLCellMechanism) cellMech).createImplementationFile(SimEnvHelper.PSICS,
+                                    project.genesisSettings.getUnitSystemToUse(),
+                                    newMechFile,
+                                    project,
+                                    false,
+                                    false,
+                                    false,
+                                    false);
+                            }
+
+                            if (!success)
+                            {
+                                throw new PsicsException("Problem generating file for cell mech: "
+                                                           + nextChanMechName
+                                                           +
+                                                           "\nPlease ensure there is an implementation for that mechanism in PSICS");
+
+                            }
+
+                            //response.append("include " + getFriendlyDirName(dir) + cellMech.getInstanceName() + "\n");
+                            //response.append("make_" + cellMech.getInstanceName() + "\n\n");
+
+                            includedChanMechNames.add(nextChanMechName);
+                        }
+                    }
+                }
+                
+                
+                
+            }
+            else
+            {
+                logger.logComment("No cells in group, ignoring the channels...");
+            }
+
+        }
+        return response.toString();
+    }
+    
+    
+    
 
 
 

@@ -389,6 +389,11 @@ public class ChannelMLConstants
         return getCurrVoltRelXPath() + "/@" + NEW_ION_NAME_ATTR;
     }
 
+    public static String getIonRevPotXPath()
+    {
+        return getCurrVoltRelXPath() + "/@" + ION_REVERSAL_POTENTIAL_ATTR;
+    }
+
 
     public static String getCondLawXPath()
     {

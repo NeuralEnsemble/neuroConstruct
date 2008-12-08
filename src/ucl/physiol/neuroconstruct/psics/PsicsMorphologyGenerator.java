@@ -12,11 +12,10 @@
 
 package ucl.physiol.neuroconstruct.psics;
 
-import com.sun.j3d.utils.universe.LocaleFactory;
 import java.io.*;
 
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
+import java.util.*;
 import java.util.Vector;
 import javax.vecmath.Point3f;
 import ucl.physiol.neuroconstruct.cell.*;
@@ -44,6 +43,7 @@ public class PsicsMorphologyGenerator
     File membFile = null;
     
     Project project = null;
+    
     
 
     private PsicsMorphologyGenerator()
@@ -161,94 +161,107 @@ public class PsicsMorphologyGenerator
             
             String parentId = null;
             
+            //if (parent != null)
+            //{    
+            Point3f connectionPointParent = null;
+            
             if (parent != null)
-            {       
-                Point3f connectionPointParent = parent.getPointAlong(seg.getFractionAlongParent());
-            
-                boolean minor = false;
+                connectionPointParent = parent.getPointAlong(seg.getFractionAlongParent());
+            else
+                connectionPointParent = seg.getStartPointPosition();
 
-                if (!connectionPointParent.equals(prox))
-                {
+            boolean minor = false;
 
-                    GuiUtils.showErrorMessage(logger,
-                                          "Error. Cell: "+cell+" is discontinuous, such cells are not supported in the mapping to PSICS yet!\n" +
-                                          "Segment: "+ seg+"\nis not connected to the point "+seg.getFractionAlongParent()+" along parent segment: "+ parent,
-                                          null, null);
+            if (!connectionPointParent.equals(prox))
+            {
 
-                    return "";
-                }
-                float connectionPointRadius = -1;
-                
-                if (seg.getFractionAlongParent()==0)
-                {
-                    connectionPointRadius = parent.getSegmentStartRadius();
-                }
-                else if(seg.getFractionAlongParent()==1)
-                {
-                    connectionPointRadius = parent.getRadius();
-                }
-                else if(parent.isSpherical())
-                {
-                    connectionPointRadius = parent.getRadius();
-                }
-                else
-                {
-                    GuiUtils.showErrorMessage(logger,
-                                          "Error. Cell has a segment connected between the end points of a parent segment, such cells are not supported in the mapping to PSICS yet!\n" +
-                                          "Segment: "+ seg+"\nis not connected to the 0 or 1 point along (cylindrical) parent segment: "+ parent,
-                                          null, null);
+                GuiUtils.showErrorMessage(logger,
+                                      "Error. Cell: "+cell+" is discontinuous, such cells are not supported in the mapping to PSICS yet!\n" +
+                                      "Segment: "+ seg+"\nis not connected to the point "+seg.getFractionAlongParent()+" along parent segment: "+ parent,
+                                      null, null);
 
-                    return "";
-                }
-                
-                    
-                    
-                if (connectionPointRadius==seg.getSegmentStartRadius())
-                {
-                    // use existing parent point...
-                    parentId = parent.getSegmentName();
-                }
-                else
-                {
-                    if (seg.isSpherical())
-                    {
-                        // just use distal point...
-                    }
-                    else
-                    {
-                        SimpleXMLElement proxPoint = new SimpleXMLElement("Point");
-
-                        proxPoint.addAttribute(new SimpleXMLAttribute("parent", parent.getSegmentName()));
-
-                        String newPointId = seg.getSegmentName()+"_minor";
-
-                        SimpleXMLAttribute segIdProx = new SimpleXMLAttribute("id", newPointId);
-                        
-                        proxPoint.addAttribute(segIdProx);
-
-                        parentId = newPointId;
-
-                        SimpleXMLAttribute xDistProx = new SimpleXMLAttribute("x", connectionPointParent.x+"");
-                        SimpleXMLAttribute yDistProx = new SimpleXMLAttribute("y", connectionPointParent.y+"");
-                        SimpleXMLAttribute zDistProx = new SimpleXMLAttribute("z", connectionPointParent.z+"");
-                        SimpleXMLAttribute rDistProx = new SimpleXMLAttribute("r", seg.getSegmentStartRadius()+"");
-                        SimpleXMLAttribute minorProx = new SimpleXMLAttribute("minor", "true");
-
-                        proxPoint.addAttribute(xDistProx);
-                        proxPoint.addAttribute(yDistProx);
-                        proxPoint.addAttribute(zDistProx);
-                        proxPoint.addAttribute(rDistProx);
-                        proxPoint.addAttribute(minorProx);
-
-
-                        cellMorph.addChildElement(proxPoint);
-                        cellMorph.addContent("\n    ");
-                    }
-                    
-                    
-                }
-            
+                return "";
             }
+            float connectionPointRadius = -1;
+
+            if (parent==null)
+            {
+                connectionPointRadius = seg.getSegmentStartRadius();
+            }
+            else if (seg.getFractionAlongParent()==0)
+            {
+                connectionPointRadius = parent.getSegmentStartRadius();
+            }
+            else if(seg.getFractionAlongParent()==1)
+            {
+                connectionPointRadius = parent.getRadius();
+            }
+            else if(parent.isSpherical())
+            {
+                connectionPointRadius = parent.getRadius();
+            }
+            else
+            {
+                GuiUtils.showErrorMessage(logger,
+                                      "Error. Cell has a segment connected between the end points of a parent segment, such cells are not supported in the mapping to PSICS yet!\n" +
+                                      "Segment: "+ seg+"\nis not connected to the 0 or 1 point along (cylindrical) parent segment: "+ parent,
+                                      null, null);
+
+                return "";
+            }
+
+
+
+            if (connectionPointRadius==seg.getSegmentStartRadius() && parent!=null)
+            {
+                // use existing parent point...
+                parentId = parent.getSegmentName();
+            }
+            else
+            {
+                if (seg.isSpherical())
+                {
+                    // just use distal point...
+                }
+                else
+                {
+                    SimpleXMLElement proxPoint = new SimpleXMLElement("Point");
+
+                    String newPointId = seg.getSegmentName();
+                        
+                    if(parent!=null)
+                    {
+                        proxPoint.addAttribute(new SimpleXMLAttribute("parent", parent.getSegmentName()));
+                        newPointId = seg.getSegmentName()+"_minor";
+                    }
+
+                    SimpleXMLAttribute segIdProx = new SimpleXMLAttribute("id", newPointId);
+
+                    proxPoint.addAttribute(segIdProx);
+
+                    parentId = newPointId;
+
+                    SimpleXMLAttribute xDistProx = new SimpleXMLAttribute("x", connectionPointParent.x+"");
+                    SimpleXMLAttribute yDistProx = new SimpleXMLAttribute("y", connectionPointParent.y+"");
+                    SimpleXMLAttribute zDistProx = new SimpleXMLAttribute("z", connectionPointParent.z+"");
+                    SimpleXMLAttribute rDistProx = new SimpleXMLAttribute("r", seg.getSegmentStartRadius()+"");
+                    SimpleXMLAttribute minorProx = new SimpleXMLAttribute("minor", "true");
+
+                    proxPoint.addAttribute(xDistProx);
+                    proxPoint.addAttribute(yDistProx);
+                    proxPoint.addAttribute(zDistProx);
+                    proxPoint.addAttribute(rDistProx);
+                    proxPoint.addAttribute(minorProx);
+
+
+                    cellMorph.addChildElement(proxPoint);
+                    cellMorph.addContent("\n    ");
+                }
+
+
+            }
+            
+            //}
             
             if (parentId!=null)
             {
@@ -285,7 +298,7 @@ public class PsicsMorphologyGenerator
 
     private String getMembraneProps()
     {
-        int prefUnits = UnitConverter.NEUROCONSTRUCT_UNITS;
+        //int prefUnits = UnitConverter.NEUROCONSTRUCT_UNITS;
         
         logger.logComment("calling getMainMorphology");
         StringBuffer response = new StringBuffer();
@@ -298,22 +311,23 @@ public class PsicsMorphologyGenerator
         memb.addAttribute(id);
         
         float spAxRResNc = cell.getSpecAxResForGroup("all");
-        double spAxRRes = UnitConverter.getSpecificAxialResistance(spAxRResNc, UnitConverter.NEUROCONSTRUCT_UNITS, prefUnits);
         
         String unitSpAxRes = null;
+        String unitSpCap = null;
+        String unitDens = null;
+        
         
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(12);
 
         
-        if(prefUnits == UnitConverter.NEUROCONSTRUCT_UNITS)
-        {
-            unitSpAxRes = "ohm_cm";
-        }
-        else
-        {
+    
             unitSpAxRes = "ohm_m";
-        }
+            unitSpCap = "F_per_m2";
+            unitDens = "per_um2";
+    
+        
+        double spAxRRes = UnitConverter.getSpecificAxialResistance(spAxRResNc, UnitConverter.NEUROCONSTRUCT_UNITS, UnitConverter.GENESIS_SI_UNITS);
             
         
         SimpleXMLAttribute cytRes = new SimpleXMLAttribute("cytoplasmResistivity", df.format(spAxRRes)+unitSpAxRes);
@@ -321,24 +335,49 @@ public class PsicsMorphologyGenerator
         
         
         float spCapNc = cell.getSpecCapForGroup("all");
-        double spCap = UnitConverter.getSpecificCapacitance(spCapNc, UnitConverter.NEUROCONSTRUCT_UNITS, prefUnits);
+        double spCap = UnitConverter.getSpecificCapacitance(spCapNc, UnitConverter.NEUROCONSTRUCT_UNITS, UnitConverter.GENESIS_SI_UNITS);
         
-        String unitSpCap = null;
         
-        if(prefUnits == UnitConverter.NEUROCONSTRUCT_UNITS)
-        {
-            unitSpCap = "uF_per_um2";
-        }
-        else
-        {
-            unitSpCap = "F_per_m2";
-        }
             
         
         SimpleXMLAttribute spCapAttr = new SimpleXMLAttribute("membraneCapacitance", df.format(spCap)+unitSpCap);
         memb.addAttribute(spCapAttr);
         
         memb.addContent("\n");
+        
+        Enumeration<ChannelMechanism> chans = cell.getChanMechsVsGroups().keys();
+        
+        while(chans.hasMoreElements())
+        {
+            ChannelMechanism cm = chans.nextElement();
+            Vector<String> groups = cell.getChanMechsVsGroups().get(cm);
+            for(String group:groups)
+            {
+                if (group.equals(Section.ALL))
+                {
+                    // <ChannelPopulation channel="k1" density="20per_um2" distribution="start"/>
+                    SimpleXMLElement cp = new SimpleXMLElement("ChannelPopulation");
+                    cp.addAttribute(new SimpleXMLAttribute("channel", cm.getName()));
+                    
+                    float condDensity = cm.getDensity(); // mS/um2
+                    float defaultSingChanCond_pS = 10; // pS
+                    float defaultSingChanCond_mS = defaultSingChanCond_pS/1e9f;
+                    float numPerum2 = condDensity/defaultSingChanCond_mS;
+                    
+                    cp.addAttribute(new SimpleXMLAttribute("density", numPerum2+unitDens));
+                    
+                    memb.addChildElement(cp);
+                    memb.addContent("\n");
+                    
+                }
+                else
+                {
+                    memb.addComment(new SimpleXMLComment("NOTE: channels not on group: all not yet supported!!"));
+                }
+            }
+        }
+        
+        
         
         response.append(memb.getXMLString("", false));
 
