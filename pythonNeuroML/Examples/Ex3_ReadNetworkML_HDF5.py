@@ -25,7 +25,7 @@ from NetworkHandler import NetworkHandler
 from NetworkHolder import NetworkHolder
 from NetworkMLHDF5Handler import NetworkMLHDF5Handler
 
-file_name = 'random.nml'
+file_name = 'GranCellLayer.h5'
 
 logging.basicConfig(level=logging.DEBUG, format="%(name)-19s %(levelname)-5s - %(message)s")
 
