@@ -725,7 +725,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
             //ChannelMLCellMechanism cmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("kc_fast");
             ChannelMLCellMechanism cmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("kdr_fs");
             
-            ChannelMLEditor.logger.setThisClassVerbose(true);
+            ChannelMLEditor.logger.setThisClassVerbose(false);
 
             ChannelMLEditor frame = new ChannelMLEditor(cmlMechanism, testProj, pel);
 

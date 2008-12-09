@@ -2924,10 +2924,10 @@ public class GenesisFileManager
             }
             
 
-            logger.logComment("ionConcentration: "+ ionConcentration, true);
-            logger.logComment("ionRateDependence: "+ ionRateDependence, true);
-            logger.logComment("ionCurrentSources: "+ ionCurrentSources, true);
-            logger.logComment("ionCurrFixedRevPot: "+ ionCurrFixedRevPot, true);
+            logger.logComment("ionConcentration: "+ ionConcentration);
+            logger.logComment("ionRateDependence: "+ ionRateDependence);
+            logger.logComment("ionCurrentSources: "+ ionCurrentSources);
+            logger.logComment("ionCurrFixedRevPot: "+ ionCurrFixedRevPot);
 
             Enumeration<String> ionsAffectingRates = ionRateDependence.keys();
 

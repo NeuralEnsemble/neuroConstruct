@@ -16,7 +16,6 @@ import java.io.*;
 import java.util.*;
 
 
-import java.util.logging.Level;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.ChannelMLConstants;
@@ -196,7 +195,7 @@ public class PsicsFileManager
 
            Cell cell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(theOneCellGroup));
            
-           logger.logComment("theOneCellGroup: "+theOneCellGroup, true);
+           logger.logComment("theOneCellGroup: "+theOneCellGroup);
            
 
            PsicsMorphologyGenerator morphGen = new PsicsMorphologyGenerator(cell, project, dirForPsicsFiles);
@@ -920,7 +919,7 @@ public class PsicsFileManager
             {
                 File resultsHtml = new File(dirToRunFrom+"/"+project.getProjectName()+"-results/index.html");
                 
-                logger.logComment("Checking for results info: " + resultsHtml.getAbsolutePath(), true);
+                logger.logComment("Checking for results info: " + resultsHtml.getAbsolutePath());
                         
                 int tries = 5;
                 while (tries>0)

@@ -18,7 +18,6 @@ import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.logging.Level;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
@@ -123,7 +122,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
     {
         super(owner, "Edit Group to "+mechType+ " associations", true);
         
-        this.logger.setThisClassVerbose(true);
+        this.logger.setThisClassVerbose(false);
 
         this.project = project;
 

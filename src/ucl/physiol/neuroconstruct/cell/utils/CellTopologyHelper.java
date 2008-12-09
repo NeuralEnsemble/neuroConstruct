@@ -614,7 +614,7 @@ public class CellTopologyHelper
                 }
                 else
                 {
-                    logger.logComment("No good point: "+pos+" for start cell: "+ startCellPos, true);
+                    logger.logComment("No good point: "+pos+" for start cell: "+ startCellPos);
                 }
             }
 
@@ -624,7 +624,7 @@ public class CellTopologyHelper
             {
                 allowedFinishCells[i] = tempPosRecs[i];
             }
-            logger.logComment("Total finish cells: "+ finishPosRecords.size() +", but returning only: "+ countGoodPos+", box: "+ connBoundBox, true);
+            logger.logComment("Total finish cells: "+ finishPosRecords.size() +", but returning only: "+ countGoodPos+", box: "+ connBoundBox);
                         
         }
         

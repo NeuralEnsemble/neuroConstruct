@@ -942,7 +942,7 @@ public class ChannelMLCellMechanism extends CellMechanism
 
             System.out.println("\n\n\n");
             ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("Gran_KCa_98");
-            ChannelMLCellMechanism.logger.setThisClassVerbose(true);
+            ChannelMLCellMechanism.logger.setThisClassVerbose(false);
 
             cmlMech.initialise(testProj, false);
 

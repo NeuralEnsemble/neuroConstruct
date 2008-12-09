@@ -53,6 +53,7 @@ public class FieldPotentialFrame extends JFrame
     
     
     JPanel jPanelMain = new JPanel();
+    JPanel jPanelInfo = new JPanel();
     
     JLabel jLabelMain = new JLabel();
     
@@ -60,6 +61,8 @@ public class FieldPotentialFrame extends JFrame
     JPanel jPanelButtons = new JPanel();
     JButton jButtonCancel = new JButton("Cancel");
     JButton jButtonCreate = new JButton("Create");
+    
+    JTextArea jTextAreaInfo = new JTextArea();
     
     ArrayList<JCheckBox> allCellGroupCBs = new ArrayList<JCheckBox>();
     
@@ -93,7 +96,17 @@ public class FieldPotentialFrame extends JFrame
         jLabelMain.setHorizontalAlignment(JLabel.CENTER);
         jLabelMain.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         
-        jPanelMain.add(jLabelMain, BorderLayout.NORTH);
+        jPanelMain.add(jPanelInfo, BorderLayout.NORTH);
+        jPanelInfo.setLayout(new BorderLayout());
+        jPanelInfo.add(jLabelMain, BorderLayout.NORTH);
+        jPanelInfo.add(jTextAreaInfo, BorderLayout.SOUTH);
+        
+        jTextAreaInfo.setBackground(jPanelMain.getBackground());
+        jTextAreaInfo.setBorder(BorderFactory.createEmptyBorder(6, 6,6,6));
+        
+        jTextAreaInfo.setText("A very simple approximation of the \"field potential\" due to network activity created by summing the\n" +
+                              "membrane potentials at the somas in the cell groups below, and inverting");
+        
         jPanelMain.add(jPanelOptions, BorderLayout.CENTER);
         jPanelMain.add(jPanelButtons, BorderLayout.SOUTH);
         

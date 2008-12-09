@@ -866,13 +866,16 @@ public class Cell implements Serializable
                 allChanMechs.add(next.getName());
         }
         
-        Iterator<VariableMechanism> vMechs = varMechsVsParaGroups.keySet().iterator();
-        while(vMechs.hasNext())
+        if (varMechsVsParaGroups!=null)
         {
-            String nextMech = vMechs.next().getName();
-            
-            if (!removeRepeats || !allChanMechs.contains(nextMech))
-                allChanMechs.add(nextMech);
+            Iterator<VariableMechanism> vMechs = varMechsVsParaGroups.keySet().iterator();
+            while(vMechs.hasNext())
+            {
+                String nextMech = vMechs.next().getName();
+
+                if (!removeRepeats || !allChanMechs.contains(nextMech))
+                    allChanMechs.add(nextMech);
+            }
         }
 
         return allChanMechs;
