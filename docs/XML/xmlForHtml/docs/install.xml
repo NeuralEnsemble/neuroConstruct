@@ -21,7 +21,7 @@ you'll need a fairly recent machine, and the more RAM and graphics memory, the b
 See <a href="Glossary_gen.html#3D View of Cells">here</a> for tips on improving graphics performance on slower machines.<br/></p>
 
 
-<p>Install Java J2SE 5.0 or higher. Available <a href="http://java.sun.com/javase/downloads/index.jsp">here</a> (Note: Java and Java3D are
+<p>Install Java J2SE 6 or higher. Available <a href="http://java.sun.com/javase/downloads/index.jsp">here</a> (Note: Java and Java3D are
     normally installed by default on Macs, but the latest version may need to be downloaded). It's better to download the <strong>JDK 
         (Java Development Kit)</strong>, which includes command line tools for Java. If there are any problems with the preinstalled 
     version of Java on Linux, install a local copy in your home directory and change the PATH variable as appropriate.</p>
