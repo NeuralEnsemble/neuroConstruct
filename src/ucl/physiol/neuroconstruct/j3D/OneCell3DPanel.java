@@ -729,7 +729,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         
         if (pgs.size()==0)
         {
-            JButton jButtonAddDefaultParamGroups = new JButton("Add example parameterised groups");
+            JButton jButtonAddDefaultParamGroups = new JButton("Add example parameterised groups (alpha impl, subject to change)");
             
             jPanelColourControls.add(jButtonAddDefaultParamGroups, null);
             
