@@ -1,6 +1,6 @@
 #
 #
-#   A class with...
+#   A class which stores the contents of a NeuroML file
 #
 #   Author: Padraig Gleeson
 #
@@ -39,7 +39,6 @@ class NetworkHolder(NetworkHandler):
             
             self.log.info("Creating population: "+cellGroup+", cell type: "+cellType+sizeInfo)
             
-
         else:
                 
             self.log.error("Population: "+cellGroup+", cell type: "+cellType+" specifies no size. May lead to errors!")
@@ -50,8 +49,8 @@ class NetworkHolder(NetworkHandler):
     #    
     def handleLocation(self, id, cellGroup, cellType, x, y, z):
         self.printLocationInformation(id, cellGroup, cellType, x, y, z)
-
-        self.nmlFile.population.
+        
+        self.nmlFile.getPopulation(cellGroup).addInstance(x,y,z)
                 
         
     #
@@ -74,7 +73,12 @@ class NetworkHolder(NetworkHandler):
         self.printConnectionInformation(projName, id, source, target, synapseType, preCellId, postCellId, localWeight)
           
         
-        
-        
+        proj = self.nmlFile.getProjection(projName)
+        if proj == None:
+            proj = self.nmlFile.addProjection(projName, source, target)
+            
+            
+        # NOTE: segment ID, fractalong, synapse props not supported yet in NetworkMLFile!!
+        proj.addConnection(preCellId, postSegId)
         
         

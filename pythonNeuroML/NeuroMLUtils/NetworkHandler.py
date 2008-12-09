@@ -92,6 +92,6 @@ class NetworkHandler:
     #    
     def setParallelStatus(self, val):
         
-        self.log.info("Parallel status (0=serial mode, 1=parallel distributed): "+str(val))
+        self.log.debug("Parallel status (0=serial mode, 1=parallel distributed): "+str(val))
         self.isParallel = val
         

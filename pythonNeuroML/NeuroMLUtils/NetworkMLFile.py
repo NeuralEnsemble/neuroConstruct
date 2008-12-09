@@ -36,6 +36,13 @@ class NetworkMLFile:
         newPop = Population(populationName, cellType)
         self.populations.append(newPop)
         return newPop
+        
+        
+    def getPopulation(self, populationName):
+        for population in self.populations:
+            if population.popName == populationName:
+                return population
+        return None
     
     
     def setProjectionUnits(self, projUnits):
@@ -47,12 +54,24 @@ class NetworkMLFile:
         newProj = Projection(projectionName, source, target)
         self.projections.append(newProj)
         return newProj
+        
+                
+    def getProjection(self, projectionName):
+        for projection in self.projections:
+            if projection.projName == projectionName:
+                return projection
+        return None
+        
+        
     
     def __str__(self):
-        info =  "NetworkMLFile:"
+        info =  "NetworkMLFile with "+str(len(self.populations))+" populations and "+str(len(self.projections))+" projections:"
         
         for population in self.populations:
           info = info + "\n    Population: "+ population.popName +" with "+ str(len(population.instances)) +" cells"
+        
+        for projection in self.projections:
+          info = info + "\n    Projection: "+ projection.projName +" with "+ str(len(projection.connections)) +" connections"
           
         return info
     
