@@ -214,14 +214,18 @@ public class MainApplication
             }
             catch(Exception ex)
             {
-                GuiUtils.showErrorMessage(null, "Problem finding Java 3D. Please ensure it is installed correctly.\n"
+                String error = "Problem finding Java 3D. Please ensure it is installed correctly.\n"
                                           +"The latest version can be downloaded from: https://java3d.dev.java.net\n\n"
                                           +"A local installation of Java3D should result in Java 3D jarfiles being installed in:\n"
                                           +System.getProperty("java.ext.dirs")
                                           +"\n\nA version of Java3D is included with neuroConstruct and should normally be found using java.library.path:\n"
                                           +System.getProperty("java.library.path")
                                           +"\nand java.class.path:\n"
-                                          +System.getProperty("java.class.path"), ex, null);
+                                          +System.getProperty("java.class.path");
+                
+                System.out.println("Error: "+ error);
+                
+                GuiUtils.showErrorMessage(null, error, ex, null);
             }
 
 
