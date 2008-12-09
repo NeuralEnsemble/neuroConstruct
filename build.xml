@@ -308,7 +308,7 @@
   <target name="runbiglast" depends="makejar"
           description="Runs the main application with lots of memory, opening last project">
     <java classname="${main.app.class}" fork="true">
-        <jvmarg value="-Xmx6000M" />
+        <jvmarg value="-Xmx4000M" />
         <jvmarg value="-Xms2000M" />
         <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
         <jvmarg value="-Dsun.java2d.noddraw=true" />
@@ -521,6 +521,8 @@
       <copy file="build.xml" todir="${temp_ver.dir}"/>
       <copy file="nC.bat" todir="${temp_ver.dir}"/>
       <copy file="nC.sh" todir="${temp_ver.dir}"/>
+      <copy file="nCplot.bat" todir="${temp_ver.dir}"/>
+      <copy file="nCplot.sh" todir="${temp_ver.dir}"/>
       <copy file="README" todir="${temp_ver.dir}"/>
       <copy file="RELEASE_NOTES" todir="${temp_ver.dir}"/>
       <copy file="RELEASE_NOTES" todir="${temp_ver.dir}/docs/helpdocs"/>

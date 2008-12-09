@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.1.1" transformSequenceNumber="2">
   <directoryPresets config="./dist" />
-  <application name="neuroConstruct_v1.1.2" distributionSourceDir="" applicationId="3908-4270-9616-7309" mediaDir="Y:/Padraig/devDocs/releases/install4j" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="neuroConstruct" publisher="Silver Lab, UCL" publisherWeb="http://www.neuroConstruct.org" version="1.1.2" allPathsRelative="true" backupOnSave="true" autoSave="true" convertDotsToUnderscores="true" macSignature="????" javaMinVersion="1.5" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
+  <application name="neuroConstruct_v1.2.0" distributionSourceDir="" applicationId="3908-4270-9616-7309" mediaDir="Y:/Padraig/devDocs/releases/install4j" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="neuroConstruct" publisher="Silver Lab, UCL" publisherWeb="http://www.neuroConstruct.org" version="1.2.0" allPathsRelative="true" backupOnSave="true" autoSave="true" convertDotsToUnderscores="true" macSignature="????" javaMinVersion="1.6" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -37,7 +37,7 @@
           <versionLine x="175" y="83" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
-      <java mainClass="ucl.physiol.neuroconstruct.gui.MainApplication" vmParameters="-Xmx250m &quot;-Djava.library.path=lib/hdf5/win${launcher:sys.pathlistSeparator}lib/hdf5/linux&quot;" arguments="-lastproj" allowVMPassthroughParameters="true" preferredVM="">
+      <java mainClass="ucl.physiol.neuroconstruct.gui.MainApplication" vmParameters="-Xmx250m &quot;-Djava.library.path=./lib/hdf5/win32${launcher:sys.pathlistSeparator}./lib/j3d/win32${launcher:sys.pathlistSeparator}./lib/hdf5/linux32${launcher:sys.pathlistSeparator}./lib/j3d/linux32&quot;" arguments="-lastproj" allowVMPassthroughParameters="true" preferredVM="">
         <classPath>
           <scanDirectory location="." failOnError="false" />
           <archive location="lib/hdf5/jhdfobj.jar" failOnError="false" />
@@ -45,6 +45,9 @@
           <archive location="lib/hdf5/jhdf5obj.jar" failOnError="false" />
           <archive location="lib/hdf5/jhdf.jar" failOnError="false" />
           <archive location="lib/hdf5/jhdf5.jar" failOnError="false" />
+          <archive location="lib/j3d/j3dutils.jar" failOnError="false" />
+          <archive location="lib/j3d/j3dcore.jar" failOnError="false" />
+          <archive location="lib/j3d/vecmath.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -399,7 +402,7 @@
     </applications>
   </installerGui>
   <mediaSets>
-    <win32 name="WindowsBundled" id="19" mediaFileName="" installDir="${compiler:sys.shortName}_${compiler:sys.version}" overridePrincipalLanguage="false" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+    <win32 name="WindowsBundled" id="19" mediaFileName="" installDir="${compiler:sys.shortName}_${compiler:sys.version}" overridePrincipalLanguage="false" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="true">
       <excludedLaunchers />
       <excludedComponents />
       <excludedBeans />
