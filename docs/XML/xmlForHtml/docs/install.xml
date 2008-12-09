@@ -27,16 +27,11 @@ See <a href="Glossary_gen.html#3D View of Cells">here</a> for tips on improving 
     version of Java on Linux, install a local copy in your home directory and change the PATH variable as appropriate.</p>
 
 
-<p>You'll need to install Java 3D. Downloads available for
-	<a  href="https://java3d.dev.java.net/binary-builds.html">Windows</a>,
-	<a href="https://java3d.dev.java.net/binary-builds.html">Linux</a>,
-	and <a  href="http://www.apple.com/support/downloads/java3dandjavaadvancedimagingupdate.html">Mac.</a>
-	Note: even if you’ve installed Java 3D in the past, Java may have automatically updated itself with a newer version (e.g. in 
-    C:\Program Files\Java). In this case run the Java 3D installer from the link above and it will find the correct version.</p>
+<p>From version 1.2.0 the libraries for Java3D are included with the download. There is no need to install this separately.</p>
 
 
 
-<p>The simplest way to install is to use the automatic installers for Windows, Linux and Mac. Save the appropriate installer file 
+<p>The simplest way to install neuroConstruct is to use the automatic installers for Windows, Linux and Mac (though it's best to use the manual install for Vista/Win64). Save the appropriate installer file 
     to your hard drive and run it.</p>
     <p>&nbsp;&nbsp;<strong>Windows</strong>: double click on the neuroConstruct_1.x.x.exe file (where 1.x.x represents the current version number)</p>
     <p>&nbsp;&nbsp;<strong>Linux</strong>: change the permission of the neuroConstruct_1.x.x.sh file (<strong>chmod u+x neuroConstruct_1.x.x.sh</strong>) and run it in a terminal (<strong>./neuroConstruct_1.x.x.sh</strong>)</p>
@@ -48,12 +43,12 @@ See <a href="Glossary_gen.html#3D View of Cells">here</a> for tips on improving 
     of your choice, and the application can be launched
 	via the desktop icon, or via <strong>Start -> Programs -> neuroConstruct_1.x.x</strong>. There is also a link to the 
 	documentation in this menu, or the HTML files are available at: 
-	<strong>C:\Program Files\neuroConstruct_1.x.x\docs\website\docs</strong>. 
-	With the Linux installer you should choose an appropriate directory, 
+	<strong>C:\Program Files\neuroConstruct_1.x.x\docs\website\docs</strong>. </p>
+    <p>With the Linux installer you should choose an appropriate directory, 
 	e.g. <strong>/home/myuser/neuroConstruct_1.x.x</strong>. A desktop link should be automatically created, but this may vary 
     depending on the Linux distribution. In any case there will be an executable: <strong>/home/myuser/neuroConstruct_1.x.x/neuroConstruct</strong>
-	which can be run in a console to start the application.
-Clicking on the Mac installer will extract an executable which when run puts 
+	which can be run in a console to start the application.</p>
+    <p>Clicking on the Mac installer will extract an executable which when run puts 
 the application in <strong>/Applications/neuroConstruct_1.x.x</strong>. A desktop link will be created but the best way to run 
 		it is to open a Terminal, go to <strong>/Applications/neuroConstruct_1.x.x</strong> and execute <strong>./neuroConstruct</strong>.
 
@@ -107,7 +102,7 @@ Under Linux and Mac you might need to run <strong>chmod u+x nC.sh</strong> befor
 
 <p>The <strong>-Xmx500M</strong> (request to the JVM to have 500MB as the max Java heap size) is there to ensure enough memory
     for the graphics. Alter according to your machine's capabilities (approx 50% of max memory available).
-	<strong>NOTE:</strong> it's been found that requesting too much memory for Java can result in the application crashing when
+	<strong>NOTE:</strong> it's been found that requesting too much memory for neuroConstruct under Windows can result in the application crashing when
     the graphics card is required to display large networks; aim for less than half the available RAM. See points on displaying 
     large 3D networks <a href="Glossary_gen.html#3D View of Cells">here</a></p>
 
