@@ -43,8 +43,8 @@ include("ute.php");
 $mailServer= "smtp-server.ucl.ac.uk";
 
 
-$verDots = "1.1.2";
-$verDashs = "1_1_2";
+$verDots = "1.2.0";
+$verDashs = "1_2_0";
 
 
 if (isset($_REQUEST['myversion']))
@@ -57,20 +57,20 @@ if (isset($_REQUEST['myversion']))
 
     echo "<h3>Your version of neuroConstruct: <span style='color:#FF0000;'>v".$theirver."</span></h3>";
     echo "<h3>Currently available version of neuroConstruct: <span style='color:#FF0000;'>v".$verDots."</span></h3>";
-    
+
     if ($theirver == $verDots)
     {
         echo "<p>It looks like you've got the latest version of neuroConstruct. Congratulations!</p>";
     }
     else
     {
-        
+
         echo "<p><a href='form.php'>Download version v".$verDots."</a></p>";
 
         //$theirsplit = split('.', $theirver);
         //$oursplit = split('.', $verDots);
 
- 
+
     }
 
 
@@ -90,7 +90,7 @@ else if (isset($_REQUEST['existingemail']))
             where email = '$existingemail' ";
 
     $result = mysql_query($sql,$conn);
-        
+
     if (!$result)
     {
         die('<p>Error: ' . mysql_error() . "</p>");
@@ -115,7 +115,7 @@ else if (isset($_REQUEST['existingemail']))
 
         $subject = "$email has downloaded the code, again...";
         $message = "$email ($name) has downloaded the code, again...";
-    
+
         $from = "info@neuroconstruct.org";
 
         $headers = "From: $from " . "\r\n" . "Reply-To: $from";
@@ -212,7 +212,7 @@ else if (isset($_REQUEST['reference']))
 			echo "<p>&nbsp;&nbsp;<a href ='RELEASE_NOTES'>Release notes for v".$verDots."</a></p>";
 
 
-			echo "<h4>Installer for Windows (for Vista or 64bit, use **zip file** below, not exe):</h4>";
+			echo "<h4>Installer for Windows (<span style='color:#FF0000;'>for VISTA or 64bit, use **zip file** below, not the automatic installer</span>):</h4>";
 			echo "<p>&nbsp;&nbsp;<a href='form.php?reference=".$ref."&dl=neuroConstruct_windows_".$verDashs.".exe'>neuroConstruct_windows_".$verDashs.".exe</a></p>";
 
 			echo "<h4>Installer for Linux:</h4>";
@@ -227,6 +227,17 @@ else if (isset($_REQUEST['reference']))
 
 			echo "<br/><br/>";
 			echo "<h3>Older versions...</h3>";
+
+
+
+            echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_windows_1_1_2.exe'>neuroConstruct_windows_1_1_2.exe</a></p>";
+
+            echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_unix_1_1_2.sh'>neuroConstruct_unix_1_1_2.sh</a></p>";
+
+            echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_macos_1_1_2.dmg'>neuroConstruct_macos_1_1_2.dmg</a></p>";
+
+            echo "<p style='font-size: 80%'><a href='form.php?reference=".$ref."&dl=neuroConstruct_1.1.2.zip'>neuroConstruct_1.1.2.zip</a></p>";
+
 
 
 
