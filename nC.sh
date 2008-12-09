@@ -39,7 +39,7 @@ export CLASSPATH=$NC_HOME/neuroConstruct_$NC_VERSION.jar:$H5_JARS:$J3D_JARS:$NC_
 machine=`uname -a | grep 64`
 
 if [ $? -eq 0 ]; then
-	export JAVA_LIBRARY_PATH=$H5_DIR/linux:$J3D_DIR/linux64
+	export JAVA_LIBRARY_PATH=$H5_DIR/linux64:$J3D_DIR/linux64
 else
 	export JAVA_LIBRARY_PATH=$H5_DIR/linux32:$J3D_DIR/linux32
 fi
