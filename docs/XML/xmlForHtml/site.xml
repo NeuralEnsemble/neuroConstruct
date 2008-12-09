@@ -7,13 +7,10 @@
     <index label="Introduction" href="index.html" description="Introduction to neuroConstruct"/>
   </main>
   
-  <examples label="Screenshots"  href="examples/index.html" tab="Screenshots" >
+  <examples label="Examples"  href="examples/index.html" tab="Examples" >
     <screenshots label="Included examples" href="#Examples+included+with+distribution" description="Included examples of neuroConstruct projects"/>
     <screenshots label="General Screenshots" href="#General+screenshots" description="Screenshots of neuroConstruct"/>
     <screenshots label="Models" href="#Imported+models" description="Existing models as neuroConstruct projects"/>
-  </examples>
-  <examples label="Projects"  href="models/index.html" tab="Projects" >
-    <projects label="Projects" href="#" description="Downloadable neuroConstruct projects"/>
   </examples>
 <!---->
   <documenation label="Documentation"    tab="Documentation">
