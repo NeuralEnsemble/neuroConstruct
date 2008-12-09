@@ -2,12 +2,66 @@ Release notes/change log for neuroConstruct
 
 See also the README file
 
---------- Version 1.1.4 (XXXX 08) ---------
+--------- Version 1.2.0 (Dec 08) ---------
 
+-  Added libraries for Java 3D, Jython and HDF5 in the standard distribution, making the download size larger, but meaning that no
+   extra packages need be installed to use these with neuroConstruct. 
+
+-  Renamed run.bat/run.sh to nC.bat/nC.sh and increased checks for 32/64 bit and win/linux to use correct libraries
+
+-  Large networks in NEURON are more efficient/faster to load due to use of arrays of synapse objects as opposed to naming each individually
+
+-  A number of optimisations have been added for random network connection, to speed up nets including conditions such as uniqueness of post 
+   syn cells and max and min length. May slow smaller networks marginally, but most larger networks using these options will be faster to 
+   generate.
+
+-  Added warnings at generate tab when cell groups (in current sim config) are empty after generation, and if there are fewer than expected 
+   network connections.
+
+-  Allows setting of the version of NeuroML to use for validation, etc. via Settings -> General Properties
+
+-  Renaming of groups in cells enabled in Edit Groups dialog
+
+-  New method to specify segments for inputs, either: give a list of the segment ids to apply inputs to; or specify a group (e.g. dendrite_group)
+   along with how many inputs to generate, and these will be randomly palced over the group. Can be used for adding multiple random synaptic 
+   inputs over a dendritic tree.
+
+-  Updated simulation replay to allow looping of simulation replaying, and "rainbow" shading of voltages
 
 -  Added option to create distribution histogram over either X or Y values in a plotted Data Set (previously only Y). X distribution
    useful e.g. for plotting number of timesteps used per ms in NEURON variable time step simulation.
 
+-  Updated import function for plotting of data files (now allows import of data in multiple columns). Added helper scripts nCplot.bat/nCplot.sh 
+   with which data files (e.g. *.dat) can be associated, to allow double clicking of such files to plot them in neuroConstruct.
+
+-  Added function for generating a *very simple* field potential from the activities of all somas in cell groups (in Analyse drop down box 
+   when a simulation is reloaded)
+
+-  Updated Volume based connections to allow such connections within a cell group.
+
+-  Added support for new functions in parsable expressions (e.g. in expression for prob of connection in Volume based connections): H(x), 
+   Heaviside function (=0 x<0, =1 otherwise); random(x) for a random number between 0 and x
+
+-  Added links on main NEURON & GENESIS tabs directly to each of the extra code blocks
+
+-  Extra support for gap junctions (no example yet, get in contact if you need one...)
+
+-  Updated examples in pythonNeuroML for creating and for reading in the structure of NetworkML from Python scripts
+
+-  Plotting of rate equations, etc. updated to support new ChannelML format as at: 
+   http://www.morphml.org:8080/NeuroMLValidator/NeuroMLFiles/Examples/ChannelML/NaChannel_newFormat.xml
+
+-  Added very provisional mapping to PSICS (get in contact for more info...)
+
+-  Updated examples in pythonnC for controlling neuroConstruct projects via Python/Jython scripts
+
+-  Added initial version of parameterisation over groups (e.g. 0 to 1 from soma to tips of dends) as step to allow inhomogeneous channel dists
+
+
+
+
+
+-  
 
 
 
