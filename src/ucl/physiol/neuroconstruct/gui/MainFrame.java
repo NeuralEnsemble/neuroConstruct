@@ -6465,7 +6465,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                       this.jTextFieldSimRef.getText());
             }
             
-            projManager.getCurrentProject().psicsFileManager.runFile(true);
+            projManager.getCurrentProject().psicsFileManager.runFile(false);
         }
         catch (PsicsException ex)
         {

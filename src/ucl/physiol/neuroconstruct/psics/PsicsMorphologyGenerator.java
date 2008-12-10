@@ -324,8 +324,8 @@ public class PsicsMorphologyGenerator
         String unitDens = null;
         
         
-        DecimalFormat df = new DecimalFormat();
-        df.setMaximumFractionDigits(12);
+        //DecimalFormat df = new DecimalFormat();
+        //df.setMaximumFractionDigits(12);
 
         
     
@@ -337,7 +337,7 @@ public class PsicsMorphologyGenerator
         double spAxRRes = UnitConverter.getSpecificAxialResistance(spAxRResNc, UnitConverter.NEUROCONSTRUCT_UNITS, UnitConverter.GENESIS_SI_UNITS);
             
         
-        SimpleXMLAttribute cytRes = new SimpleXMLAttribute("cytoplasmResistivity", df.format(spAxRRes)+unitSpAxRes);
+        SimpleXMLAttribute cytRes = new SimpleXMLAttribute("cytoplasmResistivity", spAxRRes+unitSpAxRes);
         memb.addAttribute(cytRes);
         
         
@@ -347,7 +347,7 @@ public class PsicsMorphologyGenerator
         
             
         
-        SimpleXMLAttribute spCapAttr = new SimpleXMLAttribute("membraneCapacitance", df.format(spCap)+unitSpCap);
+        SimpleXMLAttribute spCapAttr = new SimpleXMLAttribute("membraneCapacitance", spCap+unitSpCap);
         memb.addAttribute(spCapAttr);
         
         memb.addContent("\n");

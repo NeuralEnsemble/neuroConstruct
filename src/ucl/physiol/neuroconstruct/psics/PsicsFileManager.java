@@ -17,6 +17,9 @@ import java.util.*;
 
 
 import ucl.physiol.neuroconstruct.cell.*;
+import ucl.physiol.neuroconstruct.dataset.*;
+import ucl.physiol.neuroconstruct.gui.DataSetManager;
+import ucl.physiol.neuroconstruct.gui.plotter.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.ChannelMLConstants;
 import ucl.physiol.neuroconstruct.project.*;
@@ -225,6 +228,12 @@ public class PsicsFileManager
             
             SimpleXMLAttribute sqCaps = new SimpleXMLAttribute("squareCaps", "true");
             sxe.addAttribute(sqCaps);
+            
+            File dirForSimDataFiles = getDirectoryForSimulationFiles();
+            
+            SimpleXMLAttribute outputFolder = new SimpleXMLAttribute("outputFolder", dirForSimDataFiles.getAbsolutePath());
+            sxe.addAttribute(outputFolder);
+          
             
             sxe.addContent("\n");
             
@@ -586,26 +595,6 @@ public class PsicsFileManager
     {
         return this.genTime;
     }
-    /*
-    public void setQuitAfterRun(boolean quit)
-    {
-        this.quitAfterRun = quit;
-    }
-    
-    
-    private String generateQuit()
-    {
-        StringBuffer response = new StringBuffer();
-
-        addComment(response,
-                          " The script will quit after finishing...\n");
-
-        response.append("\nexit\n");
-
-        return response.toString();
-    }*/
-    
-
 
 
 
@@ -672,50 +661,6 @@ public class PsicsFileManager
             return simConfig.getSimDuration();
     }
 
-
-
-    /**
-     * Adds a line commented out by //, and an empty line after the comment
-     
-    public static void addComment(StringBuffer responseBuffer, String comment)
-    {
-        logger.logComment("Adding GENESIS comment: "+ comment);
-        if (!addComments) return;
-
-        if (!responseBuffer.toString().endsWith("\n")) responseBuffer.append("\n");
-        String pre = "//   ";
-        String safeComment = GeneralUtils.replaceAllTokens(comment, "\n", "\n"+pre);
-        responseBuffer.append(pre + safeComment + "\n");
-        responseBuffer.append("\n");
-    }*/
-
-    /**
-     * Adds a line commented out by //, but with no empty line after the comment
-    
-    public static void addQuickComment(StringBuffer responseBuffer, String comment)
-    {
-        logger.logComment("Adding GENESIS comment: "+ comment);
-        if (!addComments) return;
-
-        if (!responseBuffer.toString().endsWith("\n")) responseBuffer.append("\n");
-        responseBuffer.append("//   " + comment + "\n");
-
-    } 
-
-
-
-    public static void addMajorComment(StringBuffer responseBuffer, String comment)
-    {
-        if (!addComments) return;
-
-        if (!responseBuffer.toString().endsWith("\n")) responseBuffer.append("\n");
-        responseBuffer.append("//////////////////////////////////////////////////////////////////////\n");
-        String pre = "//   ";
-        String safeComment = GeneralUtils.replaceAllTokens(comment, "\n", "\n"+pre);
-        responseBuffer.append(pre + safeComment + "\n");
-        responseBuffer.append("//////////////////////////////////////////////////////////////////////\n");
-        responseBuffer.append("\n");
-    }*/
 
 
 
@@ -917,7 +862,9 @@ public class PsicsFileManager
             boolean loadResults = true;
             if(loadResults)
             {
-                File resultsHtml = new File(dirToRunFrom+"/"+project.getProjectName()+"-results/index.html");
+                File resultsDir = new File(dirToRunFrom+"/"+project.getProjectName()+"-results");
+                File resultsHtml = new File(resultsDir, "index.html");
+                File resultsDatafile = new File(resultsDir, "psics-out.txt");
                 
                 logger.logComment("Checking for results info: " + resultsHtml.getAbsolutePath());
                         
@@ -935,6 +882,7 @@ public class PsicsFileManager
                         }
 
                         String command = browserPath + " " + resultsHtml.toURI();
+                        //String command2 = browserPath + " " + resultsHtml.toURI();
 
                         logger.logComment("Going to execute command: " + command, true);
 
@@ -948,6 +896,19 @@ public class PsicsFileManager
                         }
 
                         logger.logComment("Have successfully executed command: " + command);
+                        
+                        ArrayList<DataSet> dataSets = DataSetManager.loadFromDataSetFile(resultsDatafile, false);
+                        
+                        String plotFrameRef = "Plot of data from simulation "+project.simulationParameters.getReference();
+
+
+                        PlotterFrame frame = PlotManager.getPlotterFrame(plotFrameRef);
+
+                        for(DataSet dataSet: dataSets)
+                            frame.addDataSet(dataSet);
+                        
+                        frame.setVisible(true);
+                        
                     }
                     else
                     {
