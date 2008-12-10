@@ -162,37 +162,44 @@ else if (isset($_REQUEST['reference']))
 
 			$hostname = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 
-			$t = time();
-
-			$sql="INSERT INTO Downloads (downloadDate, clientserver, reference, filename)
-					VALUES ('$t', '$hostname', '$ref', '$dl')";
-
-			if (!mysql_query($sql,$conn))
+			if(strstr($hostname, 'crawl.yahoo.net') or strstr($hostname, 'silverlab333'))
 			{
-				die('Error in SQL: ' . mysql_error().'<br/>'."SQL: ".$sql);
+        		die('<p>Sorry, no downloads from: '.$hostname." currently allowed. This seems to be a webcrawler, and we're bandwidth limited.</p>");
 			}
 			else
 			{
+
+				$t = time();
+
+				$sql="INSERT INTO Downloads (downloadDate, clientserver, reference, filename)
+						VALUES ('$t', '$hostname', '$ref', '$dl')";
+
+				if (!mysql_query($sql,$conn))
+				{
+					die('Error in SQL: ' . mysql_error().'<br/>'."SQL: ".$sql);
+				}
+				else
+				{
+				}
+
+				$filename="/export/home/ucgbpgl/basing/downloads/".$dl;
+
+				$extension = substr($dl,strrpos($dl,".")+1);
+				//header("Content-type:application/$extension");
+
+				header("Content-Type: application/octet-stream");
+
+				header("Content-Disposition:attachment;filename=$dl");
+				header("Content-Transfer-Encoding: binary");
+				header("Content-Length: ".@filesize($filename));
+				header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+				header("Expires: 0");
+
+				@readfile($filename);
+
+
+				exit();
 			}
-
-			$filename="/export/home/ucgbpgl/basing/downloads/".$dl;
-
-			$extension = substr($dl,strrpos($dl,".")+1);
-			//header("Content-type:application/$extension");
-
-			header("Content-Type: application/octet-stream");
-
-			header("Content-Disposition:attachment;filename=$dl");
-			header("Content-Transfer-Encoding: binary");
-			header("Content-Length: ".@filesize($filename));
-			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-			header("Expires: 0");
-
-			@readfile($filename);
-
-
-			exit();
-
 		}
 		else
 		{
