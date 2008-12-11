@@ -45,6 +45,13 @@ cell = converter.loadFromMorphologyFile(morphmlFile, "NewCell")
 print "Loaded cell: " + cell.getInstanceName() + " with " + str(cell.getAllSegments().size()) +" segments" 
 
 myProject.cellManager.addCellType(cell) # Actually add it to the project
+myProject.cellGroupsInfo.setCellType("SampleCellGroup", cell.getInstanceName()) # Set the type of an existing cell group to this
+
+
+
+# Now the project can be generated as in Ex5_MultiSimGenerate.py
+
+# OR 
 
 
 # Save project
@@ -62,6 +69,5 @@ GuiUtils.centreWindow(frame)
 frame.setVisible(1)
 frame.doLoadProject(projFile.getCanonicalPath())    
 '''
-
 
 
