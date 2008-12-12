@@ -2991,7 +2991,10 @@ public class PlotterFrame extends JFrame
             {
                 lastDir = System.getProperty("user.dir");
             }
-            lastDir = project.getProjectMainDirectory().getAbsolutePath();
+            else
+            {
+                lastDir = project.getProjectMainDirectory().getAbsolutePath();
+            }
         }
 
         File defaultDir = new File(lastDir);
