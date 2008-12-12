@@ -349,6 +349,12 @@ public class PsicsFileManager
             SimpleXMLAttribute id = new SimpleXMLAttribute("id", "recording");
             access.addAttribute(id);
             
+            SimpleXMLAttribute saveInterval = new SimpleXMLAttribute("saveInterval", project.simulationParameters.getDt()+"ms");
+            access.addAttribute(saveInterval);
+            
+            SimpleXMLAttribute separateFiles = new SimpleXMLAttribute("separateFiles", "true");
+            access.addAttribute(separateFiles);
+            
             Cell cell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(theOneCellGroup));
             
             ArrayList<String> refs = project.generatedElecInputs.getInputReferences();
@@ -445,6 +451,11 @@ public class PsicsFileManager
                 
                 SimpleXMLAttribute col = new SimpleXMLAttribute("lineColor", getNextColour(psd.simPlot.getPlotReference()));
                 vr.addAttribute(col);
+                
+                String fileName = SimPlot.getFilename(psd, seg, "0");
+                
+                SimpleXMLAttribute label = new SimpleXMLAttribute("label", fileName);
+                vr.addAttribute(label);
                 
                 access.addChildElement(vr);
                 
@@ -868,7 +879,7 @@ public class PsicsFileManager
                 
                 logger.logComment("Checking for results info: " + resultsHtml.getAbsolutePath());
                         
-                int tries = 5;
+                int tries = 10;
                 while (tries>0)
                 {
                     if (resultsHtml.exists())

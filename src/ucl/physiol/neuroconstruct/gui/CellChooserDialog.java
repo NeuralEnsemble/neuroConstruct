@@ -129,7 +129,7 @@ public class CellChooserDialog extends JDialog
 
                 logger.logComment(i+": Looking at: "+paramName+", value: "+stringVal);
 
-                JTextField textField = (JTextField)paramInfo.get(paramName);
+                JTextField textField = paramInfo.get(paramName);
                 textField.setText(stringVal);
             }
         }
@@ -139,6 +139,7 @@ public class CellChooserDialog extends JDialog
 
 
     //Overridden so we can exit when window is closed
+    @Override
     protected void processWindowEvent(WindowEvent e)
     {
         if (e.getID() == WindowEvent.WINDOW_CLOSING)
@@ -198,7 +199,7 @@ public class CellChooserDialog extends JDialog
         {
             String nextName = (String)paramNames.nextElement();
 
-            JTextField textField = (JTextField)paramInfo.get(nextName);
+            JTextField textField = paramInfo.get(nextName);
 
             String valueTyped = textField.getText();
 
