@@ -57,14 +57,16 @@ public class Expression
         line = line.trim();
 
         line = tidyBasicFunctions(line);
+        
+        //logger.setThisClassVerbose(true);
 
         logger.logComment(" ");
-        String info = "+++++  Parsing line: ["+line+ "] with variables: [";
+        String info = "+++++  Parsing line: [ "+line+ " ] with variables: [ ";
         for(Variable v: variables)
         {
             info = info + v.toString()+" ";
         }
-        info = info + "]";
+        info = info + " ]";
         
         logger.logComment(info);
 
@@ -460,8 +462,11 @@ public class Expression
 
                     equationSoFar = BasicFunctions.getFunction(nextFunc, internalEqn);
 
-                    if (endBracket> line.length()-1)
-                        remainder = line.substring(endBracket);
+                    if (endBracket< line.length()-1)
+                        remainder = line.substring(endBracket+1);
+                    
+                    logger.logComment(commentIndent +"remainder: "+ remainder);
+                    
                 }
             }
         }
@@ -548,7 +553,8 @@ public class Expression
         
         //String expression = "v &lt; -60 ? 0.005 :0.005 * (exp (-0.05 * (v - (-60))))";
         //String expression = "exp ((-v - 40)/ 10)";
-        String expression = "((-v - 40)/ 10)";
+        //String expression = "((-v - 40)/ 10)";
+        String expression = "sin( sin(v) -1 )";
 
         try
         {

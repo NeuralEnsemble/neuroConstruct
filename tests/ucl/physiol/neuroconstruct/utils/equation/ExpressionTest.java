@@ -7,11 +7,7 @@ package ucl.physiol.neuroconstruct.utils.equation;
 
 
 import java.util.ArrayList;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.Result;
 import test.MainTest;
 import static org.junit.Assert.*;
@@ -50,7 +46,8 @@ public class ExpressionTest {
                                             "ln(v)",
                                             "random(v)",
                                             "100.0 *(  (v - -0.0089) / (-0.0050) ) / (1 - exp(-1 * ( (v - -0.0089) / (-0.0050) )))",
-                                            "v-(-0.065)"};
+                                            "v-(-0.065)",
+                                            "sin(sin(v)-1)"};
         
         Variable v = new Variable("v");
         Variable t = new Variable("t");
@@ -86,6 +83,7 @@ public class ExpressionTest {
         
         assertTrue(eqnUnits.get(8).evaluateAt(v90deg)<=halfPi);
         assertTrue(eqnUnits.get(8).evaluateAt(v90deg)>=0);
+        assertTrue(eqnUnits.get(11).evaluateAt(v90deg)==0);
         
     }
     
