@@ -2985,8 +2985,14 @@ public class PlotterFrame extends JFrame
     {
         String lastDir = recentFiles.getMyLastExportPointsDir();
 
-        if (lastDir == null) lastDir
-            = project.getProjectMainDirectory().getAbsolutePath();
+        if (lastDir == null)
+        {
+            if (project==null)
+            {
+                lastDir = System.getProperty("user.dir");
+            }
+            lastDir = project.getProjectMainDirectory().getAbsolutePath();
+        }
 
         File defaultDir = new File(lastDir);
 
