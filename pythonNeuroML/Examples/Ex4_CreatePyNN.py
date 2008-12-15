@@ -70,7 +70,10 @@ for projName in nmlHandler.projections.keys():
     print "Projection which has been created: %s with %d connections"% (projName, len(projection))
         
     for conn in projection:
-        print dir(conn)
+        if (simulator == "neuron"):
+            print "    Connection: %s"% (conn)
+        else:
+            print "    Connection: %s from %s to %s, weight: %s, delay: %s" % (conn.port, conn.pre, conn.post, conn.weight, conn.delay)
 
     
 exit()
