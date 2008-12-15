@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<networkml xmlns="http://morphml.org/networkml/schema" xmlns:meta="http://morphml.org/metadata/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://morphml.org/networkml/schema  NetworkML_v1.7.xsd" lengthUnits="micron">
+
+
+<populations>
+    <population name="CellsA" cell_type="IF_cond_alpha">
+        <instances size="3">
+            <instance id="0" node_id="0">
+                <location x="12.175047" y="24.67475" z="42.81618"/>
+            </instance>
+            <instance id="1" node_id="1">
+                <location x="32.95397" y="24.873947" z="67.57293"/>
+            </instance>
+            <instance id="2" node_id="2">
+                <location x="66.66395" y="88.0889" z="38.37398"/>
+            </instance>
+        </instances>
+    </population>
+    <population name="CellsB" cell_type="IF_cond_alpha">
+        <instances size="3">
+            <instance id="0" node_id="3">
+                <location x="43.980293" y="6.0147104" z="2.3251653"/>
+            </instance>
+            <instance id="1" node_id="0">
+                <location x="51.507248" y="44.408886" z="67.51696"/>
+            </instance>
+            <instance id="2" node_id="1">
+                <location x="71.42178" y="33.324604" z="16.896135"/>
+            </instance>
+        </instances>
+    </population>
+</populations>
+
+<projections units="Physiological Units">
+    <projection name="CellsA_to_CellsB" source="CellsA" target="CellsB">
+        <synapse_props synapse_type="MF_AMPA" internal_delay="2.0" weight="6.0" threshold="-20.0">
+        </synapse_props>
+        <connections>
+            <connection id="0" pre_cell_id="1" post_cell_id="0"/>
+            <connection id="1" pre_cell_id="2" post_cell_id="1"/>
+            <connection id="2" pre_cell_id="0" post_cell_id="2"/>
+        </connections>
+    </projection>
+</projections>
+
+</networkml>

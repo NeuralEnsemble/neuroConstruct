@@ -320,8 +320,10 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
 	                       
 			       
     else:
-    	print 'Unhandled element: '+ name
-    
+      others = ["populations", "projections", "connections"]
+      if (others.count(name) == 0):
+      	print 'Unhandled, unknown element: '+ name
+      
     return
     
     
@@ -360,7 +362,7 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
       
       
     elif name == 'instances':
-      self.log.info("Dealt with %d location instances"% (self.totalInstances))
+      self.log.debug("Dealt with %d location instances"% (self.totalInstances))
       
       
     elif name == 'projection':
@@ -378,7 +380,7 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
       
     elif name == 'connection':
 	    
-      self.log.info("                                                               Gathered all details of connection: " + self.currentConnId)
+      self.log.debug(" Gathered all details of connection: " + self.currentConnId)
       
       for synType in self.localSynapseProps.keys():
       

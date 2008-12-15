@@ -5,7 +5,7 @@
 #   Author: Padraig Gleeson
 #
 #   This file has been developed as part of the neuroConstruct project
-#   This work has been funded by the Medical Research Council and Wellcome Trust
+#   This work has been funded by the Medical Research Council and the Wellcome Trust
 #
 # 
 
@@ -26,7 +26,8 @@ rng = NumpyRNG(seed=1234)
 
 print "Running PyNN script in simulator: "+ simulator
 
-cellNum = 5
+cellNumA = 5
+cellNumB = 6
 cellType = IF_cond_alpha
 connNum = 10
 
@@ -35,7 +36,8 @@ if (simulator == 'neuroml'):
 else:
 	setup()
 
-cells = Population((cellNum,), cellType)
+cellsA = Population((cellNumA,), cellType, label="Cells_A")
+cellsB = Population((cellNumB,), cellType, label="Cells_B")
 
 xMin=0
 xMax=200
@@ -44,26 +46,36 @@ yMax=200
 zMin=0
 zMax=50
 
-for cell in cells:
+for cell in cellsA:
 	cell.position = (xMin+(NumpyRNG.next(rng)*(xMax-xMin)), yMin+(NumpyRNG.next(rng)*(yMax-yMin)), zMin+(NumpyRNG.next(rng)*(zMax-zMin)))
 
-addrs = cells.addresses()
+for cell in cellsB:
+	cell.position = (xMin+(NumpyRNG.next(rng)*(xMax-xMin)), yMin+(NumpyRNG.next(rng)*(yMax-yMin)), zMin+(NumpyRNG.next(rng)*(zMax-zMin)))
 
-gids = []
+addrsA = cellsA.addresses()
+addrsB = cellsB.addresses()
 
-for addr in addrs:
-	gid  = cells[addr]
-	print "Cell %s (id = %d) is at %s" % (addr, gid, cells[addr].position)
-	gids.append(gid)
+gidsA = []
+gidsB = []
+
+for addr in addrsA:
+	gid  = cellsA[addr]
+	print "Cell %s (id = %d) is at %s" % (addr, gid, cellsA[addr].position)
+	gidsA.append(gid)
+
+for addr in addrsB:
+	gid  = cellsB[addr]
+	print "Cell %s (id = %d) is at %s" % (addr, gid, cellsB[addr].position)
+	gidsB.append(gid)
 	
 	
 for i in range(connNum):
 	
-	src = gids[int(NumpyRNG.next(rng) * len(gids))]
-	tgt = gids[int(NumpyRNG.next(rng) * len(gids))]
+	src = gidsA[int(NumpyRNG.next(rng) * len(gidsA))]
+	tgt = gidsB[int(NumpyRNG.next(rng) * len(gidsB))]
 	
-	print "Connecting cell %s to cell %s" % (src, tgt)
-	connect(cells[cells.locate(src)], cells[cells.locate(tgt)])
+	print "Connecting cell %s in %s to cell %s in %s" % (src, cellsA.label, tgt, cellsB.label)
+	connect(cellsA[cellsA.locate(src)], cellsB[cellsB.locate(tgt)])
 
 	
 	
