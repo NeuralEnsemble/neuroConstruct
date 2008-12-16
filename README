@@ -7,9 +7,9 @@ The application can be run via the desktop/start menu links if the automatic
 installers have been used, or with run.bat (Windows) or run.sh (Linux/Mac), after 
 Java and Java3D have been installed. 
 
-Full installation and setup instructions can be found at docs/website/docs/index.html
+Full installation and setup instructions can be found at docs/website/docs/index.html 
 
-For more information contact info@neuroConstruct.org
+For more information contact info@neuroConstruct.org  
 
 Note: neuroConstruct is currently in the process of going Open Source. More to follow...
 
