@@ -276,6 +276,40 @@ public class GeneratedNetworkConnections
         return false;
         
     }
+    
+    
+//    // Matteo needs to check for connection in both directions for the "no recurrent" option...
+//    public boolean areConnectedInAnyDirection(String netConnectionNameA, 
+//                               int cellIndexA,
+//                               String netConnectionNameB,
+//                               int cellIndexB)
+//    {
+//                
+//        boolean connected = false;
+//        
+//        int i=0;
+//        ArrayList<SingleSynapticConnection> connFromA = getConnsFromSource(netConnectionNameA, cellIndexA);
+//        while ((connected)&&(i<connFromA.size()))
+//        {            
+//            if (connFromA.get(i).targetEndPoint.cellNumber == cellIndexB)
+//                connected = true;
+//            
+//            i++;            
+//        }
+//        
+//        i=0;
+//        ArrayList<SingleSynapticConnection> connFromB = getConnsFromSource(netConnectionNameB, cellIndexB);
+//        while ((connected)&&(i<connFromB.size())) //if "connected" is already true this loop is skipped (optimization)
+//        {            
+//            if (connFromA.get(i).targetEndPoint.cellNumber == cellIndexA)
+//                connected = true;
+//            
+//            i++;            
+//        }
+//        
+//        return connected;
+//          
+//    }
 
     public ArrayList<SingleSynapticConnection> getConnsFromSource(String netConnectionName,
                                                                   int sourceCellIndex)
@@ -708,9 +742,9 @@ public class GeneratedNetworkConnections
     }
 
 
-
-
-
+    
+    
+    
     public SimpleXMLEntity getNetworkMLElement(int unitSystem,
                                                 boolean extraComments) throws NeuroMLException
     {
@@ -914,8 +948,8 @@ public class GeneratedNetworkConnections
                             propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.PROP_DELAY_ATTR, 
                                     (float)UnitConverter.getTime(synConn.apPropDelay, UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem) + ""));
 
-                            System.out.println("..."+prop.internalDelay);
-                            System.out.println("..."+(float)UnitConverter.getTime(prop.internalDelay, UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem));
+                            //System.out.println("..."+prop.internalDelay);
+                            //System.out.println("..."+(float)UnitConverter.getTime(prop.internalDelay, UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem));
                                     
                             propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INTERNAL_DELAY_ATTR, 
                                     (float)UnitConverter.getTime(prop.internalDelay, UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem)+""));
@@ -1314,5 +1348,4 @@ if (true) return;
     }
 
 }
-
 

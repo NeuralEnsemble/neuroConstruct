@@ -552,6 +552,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JComboBox jComboBoxNeuroML = new JComboBox();
     JButton jButtonNeuroMLViewPlain = new JButton();
     JButton jButtonNeuroMLGenSim = new JButton();
+    JCheckBox jCheckBoxNeuroMLGenNet = new JCheckBox();
     JButton jButtonNeuroMLViewFormatted = new JButton();
     GridBagLayout gridBagLayout3 = new GridBagLayout();
     GridBagLayout gridBagLayout33 = new GridBagLayout();
@@ -1176,6 +1177,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jButtonMorphMLView_actionPerformed(e, false);
             }
         });
+        
+        jCheckBoxNeuroMLGenNet.setSelected(false);
+        jCheckBoxNeuroMLGenNet.setText("Generate single NeuroML Level 3 file");
         
         jButtonNeuroMLGenSim.setEnabled(false);
         jButtonNeuroMLGenSim.setText("Generate all NeuroML scripts");
@@ -1983,6 +1987,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         jPanelNeuroMLPySim.add(jButtonNeuroMLGenSim,
                 new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER,
+                        GridBagConstraints.NONE,
+                        new Insets(6, 0, 12, 0), 0, 0));
+        
+        jPanelNeuroMLPySim.add(jCheckBoxNeuroMLGenNet,
+                new GridBagConstraints(15, 1, 1, 1, 0.0, 0.0,
                         GridBagConstraints.CENTER,
                         GridBagConstraints.NONE,
                         new Insets(6, 0, 12, 0), 0, 0));
@@ -3539,8 +3549,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         jPanelNeuroML.add(jPanelNeuroMLView,  BorderLayout.CENTER);
 
-        if (GeneralUtils.includeParallelFunc())
-            jPanelNeuroML.add(jPanelNeuroMLPySim, BorderLayout.SOUTH);
+        //if (GeneralUtils.includeParallelFunc())
+            
+        jPanelNeuroML.add(jPanelNeuroMLPySim, BorderLayout.SOUTH);
         
         jPanelExport.add(jPanelExportHeader, BorderLayout.NORTH);
         jPanelExportHeader.add( jLabelExportMain, null);
@@ -6465,7 +6476,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                       this.jTextFieldSimRef.getText());
             }
             
-            projManager.getCurrentProject().psicsFileManager.runFile(false);
+            projManager.getCurrentProject().psicsFileManager.runFile(true);
         }
         catch (PsicsException ex)
         {
@@ -11839,7 +11850,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         MorphCompartmentalisation mc = (MorphCompartmentalisation)jComboBoxNeuroMLComps.getSelectedItem();
 
         
-        projManager.getCurrentProject().neuromlPythonFileManager.generateTheFiles(this.getSelectedSimConfig(), mc, 1234);
+        projManager.getCurrentProject().neuromlPythonFileManager.generateTheFiles(this.getSelectedSimConfig(), mc, 1234, jCheckBoxNeuroMLGenNet.isSelected());
 
         jButtonNeuroMLGenSim.setText(origText);
         

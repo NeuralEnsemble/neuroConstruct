@@ -17,6 +17,7 @@ import java.util.*;
 
 import java.awt.*;
 
+import java.util.ArrayList;
 import java.util.zip.*;
 import org.xml.sax.*;
 
@@ -27,6 +28,7 @@ import javax.xml.transform.stream.*;
 import javax.xml.validation.*;
 
 import ucl.physiol.neuroconstruct.cell.*;
+import ucl.physiol.neuroconstruct.cell.converters.MorphMLConverter;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.dataset.*;
 import ucl.physiol.neuroconstruct.gui.*;
@@ -41,6 +43,9 @@ import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.*;
 import ucl.physiol.neuroconstruct.neuron.NeuronException;
 import ucl.physiol.neuroconstruct.project.segmentchoice.*;
+import ucl.physiol.neuroconstruct.project.stimulation.ElectricalInput;
+import ucl.physiol.neuroconstruct.project.stimulation.IClamp;
+import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrain;
 import ucl.physiol.neuroconstruct.utils.SequenceGenerator.EndOfSequenceException;
 
 /**
@@ -551,11 +556,379 @@ public class ProjectManager implements GenerationReport
     }
 
   
+    public static File saveCompleteNetworkXML(Project project,
+                                        File neuroMLFile,
+                                       boolean zipped,
+                                       boolean extraComments,
+                                       String simConfig,
+                                       String networkUnits) throws NeuroMLException
+                                       
+    {
+      
+        int preferredUnits = UnitConverter.getUnitSystemIndex(networkUnits);
+        
+        try
+        {
+                    
+            StringBuffer notes = new StringBuffer("\nComplete network structure generated with project: "
+                                +project.getProjectName() + " saved with neuroConstruct v"+
+                                GeneralProperties.getVersionNumber()+" on: "+ GeneralUtils.getCurrentTimeAsNiceString() +", "
+                                + GeneralUtils.getCurrentDateAsNiceString()+"\n\n");
+            
+            
+    
+            
+            Iterator<String> cellGroups = project.generatedCellPositions.getNamesGeneratedCellGroups();
+            ArrayList<String> cellGroupsNames = new ArrayList<String>();
+            
+            while (cellGroups.hasNext())
+            {
+                String cg = cellGroups.next();
+                cellGroupsNames.add(cg);
+                int numHere = project.generatedCellPositions.getNumberInCellGroup(cg);
+                if (numHere>0)
+                notes.append("Cell Group: "+cg+" contains "+numHere+" cells\n");
+                
+            }
+            notes.append("\n");
+            
+            
+            Iterator<String> netConns = project.generatedNetworkConnections.getNamesNetConnsIter();
+            
+            while (netConns.hasNext())
+            {
+            String mc = netConns.next();
+            int numHere = project.generatedNetworkConnections.getSynapticConnections(mc).size();
+            if (numHere>0)
+            notes.append("Network connection: "+mc+" contains "+numHere+" individual synaptic connections\n");
+            
+            }
+            notes.append("\n");
+            
+            
+            logger.logComment("Going to save complete network in NeuroML format in " + neuroMLFile.getAbsolutePath());
+
+            SimpleXMLDocument doc = new SimpleXMLDocument();
+
+            SimpleXMLElement rootElement = null;
+
+            rootElement = new SimpleXMLElement(NeuroMLConstants.ROOT_ELEMENT);
+
+            rootElement.addNamespace(new SimpleXMLNamespace("", NeuroMLConstants.NAMESPACE_URI));
+
+            rootElement.addNamespace(new SimpleXMLNamespace(MetadataConstants.PREFIX,
+                                                            MetadataConstants.NAMESPACE_URI));
+
+            rootElement.addNamespace(new SimpleXMLNamespace(NeuroMLConstants.XSI_PREFIX,
+                                                            NeuroMLConstants.XSI_URI));
+            
+            rootElement.addNamespace(new SimpleXMLNamespace(MorphMLConstants.PREFIX,
+                                                             MorphMLConstants.NAMESPACE_URI));
+             
+            rootElement.addNamespace(new SimpleXMLNamespace(ChannelMLConstants.PREFIX,
+                                                             ChannelMLConstants.NAMESPACE_URI));
+            
+            rootElement.addNamespace(new SimpleXMLNamespace(BiophysicsConstants.PREFIX,
+                                                             BiophysicsConstants.NAMESPACE_URI));
+            
+            rootElement.addNamespace(new SimpleXMLNamespace(NetworkMLConstants.PREFIX,
+                                                             NetworkMLConstants.NAMESPACE_URI));
+
+            rootElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC,
+                                                            NeuroMLConstants.NAMESPACE_URI+"../../Schemata/v1.7.3/Level3/NeuroML_Level3_v1.7.3.xsd"));// + "NeuroMLConstants.NAMESPACE_URI + "  " + NeuroMLConstants.DEFAULT_SCHEMA_FILENAME));
+            
+
+            rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS_OLD, "micron"));
+
+            doc.addRootElement(rootElement);
+
+            logger.logComment("    ****    Full XML:  ****");
+            logger.logComment("  ");
+
+            rootElement.addContent("\n\n");
+
+            rootElement.addChildElement(new SimpleXMLElement(MetadataConstants.PREFIX + ":" +
+                                                             MetadataConstants.NOTES_ELEMENT, "\n" + notes.toString()));
+
+            SimpleXMLElement props = new SimpleXMLElement(MetadataConstants.PREFIX + ":" +
+                                                          MorphMLConstants.PROPS_ELEMENT);
+
+            rootElement.addContent("\n\n");
+
+            rootElement.addChildElement(props);
+
+            MetadataConstants.addProperty(props,
+                                          NetworkMLConstants.NC_NETWORK_GEN_RAND_SEED,
+                                          project.generatedCellPositions.getRandomSeed() + "",
+                                          "    ");
+
+            if (simConfig!=null)
+            {
+                MetadataConstants.addProperty(props,
+                                              NetworkMLConstants.NC_SIM_CONFIG,
+                                              simConfig,
+                                              "    ");
+            }
+
+            
+            
+    //The cell types present in the network
+         
+            rootElement.addContent("\n\n");
+            
+            SimpleXMLElement cellsElement = new SimpleXMLElement("cells");
+            
+            int i = -1;
+            ArrayList<String> ct = new ArrayList<String>();
+            for (int j = 0; j < cellGroupsNames.size(); j++) 
+            {
+                MorphMLConverter mmlC = new MorphMLConverter();
+                String cg = cellGroupsNames.get(j);
+                if (!ct.contains(project.cellGroupsInfo.getCellType(cg)))
+                {
+                    i++;
+                    ct.add(project.cellGroupsInfo.getCellType(cg));
+                    Cell cell = project.cellManager.getCell(ct.get(i));
+                    SimpleXMLElement element = mmlC.getCellXMLElement(cell, project, NeuroMLConstants.NEUROML_LEVEL_3);
+                    cellsElement.addChildElement(element);                    
+                }
+                
+                      
+            }
+            
+            rootElement.addChildElement(cellsElement);
+
+            rootElement.addContent("\n\n");
+            
+    //The biophysical mechanisms present in the network
+            
+            SimpleXMLElement cmechsElement = new SimpleXMLElement("channels");
+            cmechsElement.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.UNIT_SCHEME, ChannelMLConstants.PHYSIOLOGICAL_UNITS));
+            String cmlPrefix = ChannelMLConstants.PREFIX + ":";
+            
+
+            
+            boolean addChan = false; //flag to avoid repetitions and unuseful checks
+            Vector<String> allm = project.cellMechanismInfo.getAllCellMechanismNames();
+            Vector<String> cellMechs = new Vector<String>();            
+            
+            //loop over all the existing cell mechanisms
+            //to find all the cell mechanisms in the generated cell groups
+            for (int j = 0; j < allm.size(); j++)
+            {                
+                String m = allm.get(j);
+                addChan = false;
+                
+                //add the synapses that are used in the generated connections
+                Iterator connsNames = project.generatedNetworkConnections.getNamesNetConnsIter();                
+                while (connsNames.hasNext()&&(addChan==false))
+                {
+                    if (project.morphNetworkConnectionsInfo.getSynapseList((String)connsNames.next()).contains(m)
+                            && !cellMechs.contains(m))
+                    {
+                        cellMechs.add(m);
+                        addChan = true;
+                    }                    
+                }
+                                
+                //add the synapses that are used in the the stimulations
+                Iterator inputsNames = project.generatedElecInputs.getElecInputsItr();
+                while (inputsNames.hasNext()&&(addChan==false))
+                {
+                    ElectricalInput ei  = project.elecInputInfo.getStim((String)inputsNames.next()).getElectricalInput();
+                    if (ei.getType().equals("RandomSpikeTrainExt") || ei.getType().equals("RandomSpikeTrain"))
+                    {
+                        RandomSpikeTrain rst = (RandomSpikeTrain)ei;
+                        if (rst.getSynapseType().equals(m)
+                                && !cellMechs.contains(m))
+                        {                            
+                            cellMechs.add(m);
+                            addChan = true;
+                        }                        
+                    }
+                }
+                
+                //add channels that are used in the generated cell groups
+                i=0;
+                while ((i<cellGroupsNames.size())&&(addChan==false))
+                {  
+                    if (project.cellManager.getCell(project.cellGroupsInfo.getCellType(cellGroupsNames.get(i))).getAllChanMechNames(true).contains(m)
+                            && !cellMechs.contains(m))
+                    {
+                        cellMechs.add(m);
+                        addChan = true;
+                    }
+                    i++;
+                 }
+            }
+            
+            //System.out.println("cellMechs "+cellMechs.toString());
+            
+            //add the channelML descriptions for all the cell mechanisms selected
+            ArrayList<SimpleXMLElement> channels = new ArrayList<SimpleXMLElement>();
+            ArrayList<SimpleXMLElement> synapses = new ArrayList<SimpleXMLElement>();
+            
+            for(String cellMech: cellMechs)
+            {
+                CellMechanism cm = project.cellMechanismInfo.getCellMechanism(cellMech);
+
+                if ((cm instanceof ChannelMLCellMechanism))
+                {
+                    ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism)cm;
+                    SimpleXMLEntity[] elements = cmlCm.getXMLDoc().getXMLEntities(ChannelMLConstants.getChannelTypeXPath());
+                    
+                    if (elements.length>=0)
+                    {
+                        for (int j = 0; j < elements.length; j++)
+                        {
+                            SimpleXMLElement el = (SimpleXMLElement)elements[j];
+                            if(!el.hasAttributeValue(NeuroMLConstants.XML_NS))
+                                el.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XML_NS, ChannelMLConstants.NAMESPACE_URI));
+                            channels.add(el);
+                        }    
+                    }
+                    
+                    elements = cmlCm.getXMLDoc().getXMLEntities(ChannelMLConstants.getSynapseTypeXPath());
+                    
+                    if (elements.length>=0)
+                    {
+                        for (int j = 0; j < elements.length; j++)
+                        {
+                            SimpleXMLElement el = (SimpleXMLElement)elements[j];   
+                            if(!el.hasAttributeValue(NeuroMLConstants.XML_NS))
+                                el.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XML_NS, ChannelMLConstants.NAMESPACE_URI));
+                            synapses.add(el);
+                        }    
+                    }
+                                       
+                    
+                    
+                }
+                else
+                {
+                    logger.logComment("Warning: cell mechanism "+cm.getInstanceName()+" is not implemented in ChannelML");
+                    File warnFile = new File(ProjectStructure.getNeuroMLDir(project.getProjectMainDirectory()), cm.getInstanceName()+".warning");
+                    try
+                    {
+                        FileWriter fw = new FileWriter(warnFile);
+                        fw.write("Warning: cell mechanism "+cm.getInstanceName()+" is not implemented in ChannelML in the project: "+project.getProjectFileName()+", and so cannot be used in the Python/NeuroML test simulation.");
+
+                        fw.close();
+
+                    }
+                    catch(IOException ioe)
+                    {
+                        GuiUtils.showErrorMessage(logger, "Problem writing to file: " +warnFile, ioe, null);
+                    }
+                    
+                }
+            }
+            
+            //System.out.println("channels "+ channels.size());
+            for (int j = 0; j < channels.size(); j++) {
+                cmechsElement.addChildElement(channels.get(j));                
+            }
+            //System.out.println("synapses "+ synapses.size());
+            for (int j = 0; j < synapses.size(); j++) {
+                cmechsElement.addChildElement(synapses.get(j));                
+            }
+            
+//            ArrayList<SimpleXMLAttribute> namesSpaces = cmechsElement.getAttributes();
+//            for (int j = 0; j < namesSpaces.size(); j++)
+//            {
+//                namesSpaces.get(j).;
+//            }
+
+                    
+            rootElement.addChildElement(cmechsElement);
+            rootElement.addContent("\n\n");
+            
+            
+    //The cell populations present in the network
+            SimpleXMLElement el = project.generatedCellPositions.getNetworkMLElement();
+            el.addAttribute(new SimpleXMLAttribute("xmlns", NetworkMLConstants.NAMESPACE_URI));
+            rootElement.addChildElement(el);
+
+            rootElement.addContent("\n\n");
+            
+    //The projections between populations in the network 
+
+
+            SimpleXMLEntity netEntity = project.generatedNetworkConnections.getNetworkMLElement(preferredUnits, extraComments);
+            
+            if (netEntity instanceof SimpleXMLElement)
+            {
+                SimpleXMLElement el2 = (SimpleXMLElement)netEntity;
+                el2.addAttribute(new SimpleXMLAttribute("xmlns", NetworkMLConstants.NAMESPACE_URI));
+                rootElement.addChildElement(el2);
+            }
+            else if (netEntity instanceof SimpleXMLComment)
+            {
+                rootElement.addComment((SimpleXMLComment)netEntity);
+            }
+
+            rootElement.addContent("\n\n");
+            
+     //The electrical inputs to the cells in the network
+            
+            SimpleXMLEntity elecInputEntity = project.generatedElecInputs.getNetworkMLElement(preferredUnits);
+            
+            if (elecInputEntity instanceof SimpleXMLElement)
+            {
+                SimpleXMLElement el3 = (SimpleXMLElement)elecInputEntity;
+                el3.addAttribute(new SimpleXMLAttribute("xmlns", NetworkMLConstants.NAMESPACE_URI));
+                rootElement.addChildElement(el3);
+            }
+            else if (elecInputEntity instanceof SimpleXMLComment)
+            {
+                rootElement.addComment((SimpleXMLComment)elecInputEntity);
+            }
+            
+            rootElement.addContent("\n\n");
+            
+            
+      //Returning the file...
+            
+            String stringForm = doc.getXMLString("", false);
+
+            logger.logComment(stringForm);
+
+            if (!zipped)
+            {
+                FileWriter fw = new FileWriter(neuroMLFile);
+                fw.write(stringForm);
+                fw.close();
+                
+                return neuroMLFile;
+            }
+            else
+            {
+                File zipFile = neuroMLFile;
+                
+                if (!neuroMLFile.getName().endsWith(ProjectStructure.getNeuroMLCompressedFileExtension()))
+                    zipFile = new File(neuroMLFile.getAbsolutePath() +
+                                        ProjectStructure.getNeuroMLCompressedFileExtension());
+                
+                String internalFilename = GeneralUtils.replaceAllTokens(zipFile.getName(), 
+                                        ProjectStructure.getNeuroMLCompressedFileExtension(), 
+                                        ProjectStructure.getNeuroMLFileExtension());
+                
+                ZipUtils.zipStringAsFile(stringForm, zipFile, internalFilename, notes.toString());
+                
+                return zipFile;
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.logError("Problem creating NeuroML file: "   + neuroMLFile.getAbsolutePath(), ex);
+            
+            throw new NeuroMLException("Problem creating NeuroML file: "  + neuroMLFile.getAbsolutePath(), ex);
+        }
+        
+    }
     
     
-    
-    
-    
+       
     public static File saveNetworkStructureXML(Project project,
                                         File neuroMLFile,
                                        boolean zipped,
@@ -618,7 +991,7 @@ public class ProjectManager implements GenerationReport
                                                             NetworkMLConstants.NAMESPACE_URI
                                                             + "  " + NetworkMLConstants.DEFAULT_SCHEMA_FILENAME));
 
-            rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS_NEW, "micron"));
+            rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS_OLD, "micron"));
 
             doc.addRootElement(rootElement);
 
@@ -718,8 +1091,8 @@ public class ProjectManager implements GenerationReport
             throw new NeuroMLException("Problem creating NeuroML file: "  + neuroMLFile.getAbsolutePath(), ex);
         }
     }
-
-
+    
+    
     public Display3DProperties getProjectDispProps()
     {
         return activeProject.proj3Dproperties;
@@ -1526,6 +1899,15 @@ public class ProjectManager implements GenerationReport
     {
             logger.logComment(">>> "+ update);
     };
+    
+    public static void main(String[] args) throws ProjectFileParsingException
+    {
+        
+        Project proj = Project.loadProject(new File("examples/Ex1-Simple/Ex1-Simple.neuro.xml"), null);
+        File neuroMLDir = ProjectStructure.getNeuroMLDir(proj.getProjectMainDirectory());
+        File generatedNetworkFile = new File(neuroMLDir, NetworkMLConstants.DEFAULT_NETWORKML_FILENAME_XML);
+        //saveGeneratedNetworkXML(proj, generatedNetworkFile, false, false, proj.simConfigInfo, NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+    }
 
 
 }

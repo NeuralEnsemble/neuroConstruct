@@ -43,11 +43,13 @@ public class RandomSpikeTrainExtSettings extends StimulationSettings
                            CellChooser cellChooser,
                            int segmentID,
                            NumberGenerator rate,
-                           float noise,
-                           String synapseType)
+                           String synapseType,
+                           NumberGenerator delay,
+                           float duration,
+                           boolean repeat)
     {
         super(reference, cellGroup, cellChooser, segmentID);
-        randomSpikeTrainExt = new RandomSpikeTrainExt(rate, noise, synapseType);
+        randomSpikeTrainExt = new RandomSpikeTrainExt(rate, synapseType, delay, duration, repeat);
     }
     
     public RandomSpikeTrainExtSettings(String reference,
@@ -55,11 +57,13 @@ public class RandomSpikeTrainExtSettings extends StimulationSettings
                            CellChooser cellChooser,
                            SegmentLocationChooser segs,
                            NumberGenerator rate,
-                           float noise,
-                           String synapseType)
+                           String synapseType,
+                           NumberGenerator delay,
+                           float duration,
+                           boolean repeat)
     {
         super(reference, cellGroup, cellChooser, segs);
-        randomSpikeTrainExt = new RandomSpikeTrainExt(rate, noise, synapseType);
+        randomSpikeTrainExt = new RandomSpikeTrainExt(rate, synapseType, delay, duration, repeat);
     }
     
     
@@ -75,8 +79,10 @@ public class RandomSpikeTrainExtSettings extends StimulationSettings
                                  (CellChooser)this.cellChooser.clone(),
                                  (SegmentLocationChooser)this.segmentChooser.clone(),
                                  rstClone.getRate(),
-                                 rstClone.getNoise(),
-                                 rstClone.getSynapseType());
+                                 rstClone.getSynapseType(),
+                                 rstClone.getDelay(),
+                                 rstClone.getDuration(),
+                                 rstClone.isRepeat());
         
         return rsts;
                                  
@@ -102,7 +108,7 @@ public class RandomSpikeTrainExtSettings extends StimulationSettings
 
 
 
-    public float getDelay()
+    public NumberGenerator getDelay()
     {
         return randomSpikeTrainExt.getDelay();
     }
@@ -113,7 +119,15 @@ public class RandomSpikeTrainExtSettings extends StimulationSettings
     }
 
 
-    public void setDelay(float delay)
+    public void setDelay(float fixedDelay)
+    {
+        NumberGenerator delay = new NumberGenerator();
+        delay.initialiseAsFixedFloatGenerator(fixedDelay);
+
+        randomSpikeTrainExt.setDelay(delay);
+    }
+    
+    public void setDelay(NumberGenerator delay)
     {
         randomSpikeTrainExt.setDelay(delay);
     }
@@ -129,10 +143,7 @@ public class RandomSpikeTrainExtSettings extends StimulationSettings
     {
         return randomSpikeTrainExt.getRate();
     }
-    public float getNoise()
-    {
-        return randomSpikeTrainExt.getNoise();
-    }
+    
     /**
      * This is to cope with the old code, where rate was always fixed
      */
@@ -150,13 +161,6 @@ public class RandomSpikeTrainExtSettings extends StimulationSettings
         //System.out.println("rate: " + rate);
         randomSpikeTrainExt.setRate(rate);
     }
-
-
-    public void setNoise(float noise)
-    {
-        randomSpikeTrainExt.setNoise(noise);
-    }
-
 
     public String toString()
     {

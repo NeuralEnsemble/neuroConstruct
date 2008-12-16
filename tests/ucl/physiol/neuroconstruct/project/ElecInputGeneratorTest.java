@@ -11,6 +11,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.Result;
+import test.MainTest;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
 import static org.junit.Assert.*;
 
@@ -35,6 +37,8 @@ public class ElecInputGeneratorTest {
         String projName = "TestStims";
         File projDir = new File("testProjects/"+ projName);
         File projFile = new File(projDir, projName+ProjectStructure.getProjectFileExtension());
+        
+        System.out.println("File: "+ projFile.getAbsolutePath());
         
         pm = new ProjectManager();
         
@@ -125,5 +129,11 @@ public class ElecInputGeneratorTest {
     
     
     
+    public static void main(String[] args)
+    {
+        ElecInputGeneratorTest ct = new ElecInputGeneratorTest();
+        Result r = org.junit.runner.JUnitCore.runClasses(ct.getClass());
+        MainTest.checkResults(r);
+    }
 
 }

@@ -27,12 +27,33 @@ import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
 public class RandomSpikeTrainInstanceProps extends InputInstanceProps
 {
-    float rate = Float.NaN;
+    private float rate = Float.NaN;
+    private String synapseType = null;
     
     @Override
     public String details(boolean html)
     {
-        return "rate: "+ GeneralUtils.getBold(rate, html);
+        return "rate: "+ GeneralUtils.getBold(rate, html)
+              +", type: "+ GeneralUtils.getBold(synapseType, html);
     }
     
+    public float getRate()
+    {
+        return rate;
+    }
+
+    public void setRate(float rate)
+    {
+        this.rate = rate;
+    }
+    
+    public String getSynapseType()
+    {
+        return synapseType;
+    }
+
+    public void setSynapseType(String synapseType)
+    {
+        this.synapseType = synapseType;
+    }
 }

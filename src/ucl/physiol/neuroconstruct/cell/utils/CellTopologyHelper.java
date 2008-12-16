@@ -540,18 +540,21 @@ public class CellTopologyHelper
                 cellBox = new RectangularBox(minX, minY, minZ, maxX-minX, maxY-minY, maxZ-minZ);
 
                 if (maxMin.getDimension().equals(MaxMinLength.RADIAL) ||
+                   (maxMin.getDimension().equals(MaxMinLength.SOMA)) ||
                     maxMin.getDimension().equals(MaxMinLength.X_DIR))
                 {
                     cellBox.setParameter(RectangularBox.X_PARAM, cellBox.getLowestXValue() - maxMin.getMaxLength());
                     cellBox.setParameter(RectangularBox.WIDTH_PARAM, cellBox.getXExtent() + 2*maxMin.getMaxLength());
                 }
                 if (maxMin.getDimension().equals(MaxMinLength.RADIAL) ||
+                   (maxMin.getDimension().equals(MaxMinLength.SOMA)) ||
                     maxMin.getDimension().equals(MaxMinLength.Y_DIR))
                 {
                     cellBox.setParameter(RectangularBox.Y_PARAM, cellBox.getLowestYValue() - maxMin.getMaxLength());
                     cellBox.setParameter(RectangularBox.HEIGHT_PARAM, cellBox.getYExtent() + 2*maxMin.getMaxLength());
                 }
                 if (maxMin.getDimension().equals(MaxMinLength.RADIAL) ||
+                   (maxMin.getDimension().equals(MaxMinLength.SOMA)) ||
                     maxMin.getDimension().equals(MaxMinLength.Z_DIR))
                 {
                     cellBox.setParameter(RectangularBox.Z_PARAM, cellBox.getLowestZValue() - maxMin.getMaxLength());
@@ -581,7 +584,7 @@ public class CellTopologyHelper
                     cellBox.setParameter(RectangularBox.WIDTH_PARAM, Float.MAX_VALUE);
                     cellBox.setParameter(RectangularBox.Y_PARAM, Float.MAX_VALUE*-1);
                     cellBox.setParameter(RectangularBox.HEIGHT_PARAM, Float.MAX_VALUE);
-                }
+                }               
 
                 cachedStartCellType = startCell.getInstanceName();
                 cachedCellBoundBox = cellBox;

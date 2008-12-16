@@ -126,6 +126,21 @@ public class SimpleXMLElement extends SimpleXMLEntity
         return value;
     }
 
+    public boolean hasAttributeValue(String attrName)
+    {
+        boolean has = false;
+
+        for (int i = 0; i < attributes.size(); i++)
+        {
+            if (attributes.get(i).getName().equals(attrName))
+            {
+                has=true;
+            }
+        }
+
+        return has;
+    }
+
     public ArrayList<SimpleXMLEntity> getContents()
     {
         return this.contents;

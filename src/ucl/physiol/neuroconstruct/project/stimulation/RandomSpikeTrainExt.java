@@ -36,15 +36,10 @@ public class RandomSpikeTrainExt extends ElectricalInput
      * they can all have a fixed rate, or a random/gaussian set of rates, etc.
      */
     public NumberGenerator rate = null;
-    public float noise;
     public String synapseType = null;
-
-
-    private float delay = 0;
-    private float duration = 1000000;
-
-
-    private boolean repeat = false;
+    public NumberGenerator delay = new NumberGenerator(0);
+    public float duration = 100;
+    public boolean repeat = false;
 
 
     public RandomSpikeTrainExt()
@@ -53,21 +48,26 @@ public class RandomSpikeTrainExt extends ElectricalInput
     }
 
     public RandomSpikeTrainExt(NumberGenerator rate,
-                               float noise,
-                               String synapseType)
+                               String synapseType,
+                               NumberGenerator delay,
+                               float duration,
+                               boolean repeat)
    {
         this.setType(TYPE);
         this.rate = rate;
-        this.noise = noise;
         this.synapseType = synapseType;
+        this.delay = delay;
+        this.duration = duration;
+        this.repeat = repeat;
     }
     
     
     public Object clone()
     {
         NumberGenerator rateClone = (NumberGenerator)rate.clone();
+        NumberGenerator delayClone = (NumberGenerator)delay.clone();
         
-        RandomSpikeTrainExt rste = new RandomSpikeTrainExt(rateClone,this.noise, new String(synapseType));
+        RandomSpikeTrainExt rste = new RandomSpikeTrainExt(rateClone, new String(synapseType), delayClone, this.duration, this.repeat);
         
         return rste;
     }
@@ -87,12 +87,7 @@ public class RandomSpikeTrainExt extends ElectricalInput
         this.repeat = repeat;
     }
 
-    public float getNoise()
-    {
-        return noise;
-    }
-
-    public float getDelay()
+    public NumberGenerator getDelay()
     {
         return delay;
     }
@@ -119,12 +114,14 @@ public class RandomSpikeTrainExt extends ElectricalInput
         this.rate = rate;
     }
 
-
-    public void setNoise(float noise)
+    
+    public void setDelay(float fixedDelay)
     {
-        this.noise = noise;
+        //System.out.println("Spiking rate being set at a fixed rate: "+fixedRate);
+        this.delay = new NumberGenerator();
+        delay.initialiseAsFixedFloatGenerator(fixedDelay);
     }
-    public void setDelay(float delay)
+    public void setDelay(NumberGenerator delay)
     {
         this.delay = delay;
     }
@@ -138,30 +135,31 @@ public class RandomSpikeTrainExt extends ElectricalInput
     public String toString()
     {
         return this.getType()+": [rate: "
-            +rate.toShortString()+", syn: "+synapseType+", del: "+delay+", dur: "+duration+", repeats: "+repeat+"]";
+            +rate.toShortString()+", syn: "+synapseType+", del: "+delay.toShortString()+", dur: "+duration+", repeats: "+repeat+"]";
     }
     
     public String toLinkedString()
     {
         return this.getType()+": [rate: "
-            +rate.toShortString()+", syn: "+ ClickProjectHelper.getCellMechLink(synapseType)+", del: "+delay+", dur: "+duration+", repeats: "+repeat+"]";
+            +rate.toShortString()+", syn: "+ ClickProjectHelper.getCellMechLink(synapseType)+", del: "+delay.toShortString()+", dur: "+duration+", repeats: "+repeat+"]";
     }
 
     public String getDescription()
     {
         return this.getType()+" with a rate of "
-            +rate.toShortString()+" "+" and syn input type: "+synapseType+", delay: "+delay+", duration: "+duration+"";
+            +rate.toShortString()+" "+" and syn input type: "+synapseType+", delay: "+delay.toShortString()+", duration: "+duration+"";
     }
-
 
 
     public String getSynapseType()
     {
         return synapseType;
     }
+    
     public void setSynapseType(String synapseType)
     {
         this.synapseType = synapseType;
     }
-
+    
+    
 }

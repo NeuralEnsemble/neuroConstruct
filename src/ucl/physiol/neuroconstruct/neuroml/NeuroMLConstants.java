@@ -42,6 +42,8 @@ public class NeuroMLConstants
 
     public static String XSI_PREFIX = "xsi";
 
+    public static String XML_NS = "xmlns";
+
     public static String XSI_URI = "http://www.w3.org/2001/XMLSchema-instance";
 
     public static String XSI_SCHEMA_LOC = "xsi:schemaLocation";

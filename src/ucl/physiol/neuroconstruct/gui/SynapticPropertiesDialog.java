@@ -18,6 +18,8 @@ import java.util.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.awt.event.*;
+import java.io.File;
+import ucl.physiol.neuroconstruct.utils.equation.EquationException;
 
 
 /**
@@ -295,7 +297,8 @@ public class SynapticPropertiesDialog extends JDialog
 
     void jButtonWeights_actionPerformed(ActionEvent e)
     {
-        NumberGeneratorDialog dlg = new NumberGeneratorDialog((Frame)null, "Weights", "Weight of synaptic connections", mySynProps.getWeightsGenerator());
+        NumberGeneratorDialog dlg 
+                = new NumberGeneratorDialog((Frame)null, "Weights", "Weight of synaptic connections", mySynProps.getWeightsGenerator(), true);
 
         //Center the window
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -313,14 +316,36 @@ public class SynapticPropertiesDialog extends JDialog
 
 
         jTextFieldWeights.setText(mySynProps.getWeightsGenerator().toShortString());
+        
+                //mySynProps.setWeightsGenerator(dlg.getFinalNumGen());
     }
 
 
 
-    public static void main(String[] args)
+    public static void main(String[] args) throws ProjectFileParsingException, EquationException
     {
+        
+            Project testProj = Project.loadProject(new File("examples/Ex5-Networks/Ex5-Networks.neuro.xml"),
+                                                   new ProjectEventListener()
+            {
+                public void tableDataModelUpdated(String tableModelName)
+                {};
 
-        SynapticPropertiesDialog dlg = new SynapticPropertiesDialog(new Frame(), null, null);
+                public void tabUpdated(String tabName)
+                {};
+                public void cellMechanismUpdated()
+                {
+                };
+
+            });
+        
+        SynapticProperties sp = new SynapticProperties("Syn1");
+        sp.setDelayGenerator(new NumberGenerator(33));
+        WeightGenerator wg = new WeightGenerator("r*r", true);
+        
+        sp.setWeightsGenerator(wg);
+
+        SynapticPropertiesDialog dlg = new SynapticPropertiesDialog(new Frame(), sp, testProj);
 
 
 
@@ -328,6 +353,8 @@ public class SynapticPropertiesDialog extends JDialog
         dlg.setModal(true);
         dlg.pack();
         dlg.setVisible(true);
+        
+        System.out.println("wg: "+ sp.getWeightsGenerator());
 
     }
 

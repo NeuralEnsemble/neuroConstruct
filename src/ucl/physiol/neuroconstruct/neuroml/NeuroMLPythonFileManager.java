@@ -15,6 +15,7 @@ package ucl.physiol.neuroconstruct.neuroml;
 import java.io.*;
 import java.util.*;
 
+import java.util.logging.Level;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
@@ -84,7 +85,8 @@ public class NeuroMLPythonFileManager
 
     public void generateTheFiles(SimConfig simConfig,
                                   MorphCompartmentalisation mc,
-                                  int seed)
+                                  int seed,
+                                  boolean generatedNetwork)
     {
         logger.logComment("Starting generation of the files...");
 
@@ -99,6 +101,24 @@ public class NeuroMLPythonFileManager
         
 
         File neuroMLDir = ProjectStructure.getNeuroMLDir(project.getProjectMainDirectory());
+        File generatedNetworkFile = new File(neuroMLDir, NetworkMLConstants.DEFAULT_NETWORKML_FILENAME_XML);
+        
+        if (generatedNetwork)
+            {
+                
+                try {
+                    ProjectManager.saveCompleteNetworkXML(project,
+                                                          generatedNetworkFile,
+                                                          false, false,
+                                                          simConfig.getName(),
+                                                          NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+                } catch (NeuroMLException ex) {
+                     GuiUtils.showErrorMessage(logger, "Problem saving complete network in NeuroML", ex, null);
+                }
+            
+            }           
+        else
+        {
 
         ArrayList<Cell> generatedCells = null;
         
@@ -301,6 +321,7 @@ public class NeuroMLPythonFileManager
         logger.logComment("... Created Main GENESIS file: " + mainGenesisFile
                 +" in "+genTime+" seconds. ");
         */
+        }
 
     }
 

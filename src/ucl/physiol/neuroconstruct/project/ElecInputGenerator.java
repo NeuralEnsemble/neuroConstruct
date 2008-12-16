@@ -181,6 +181,41 @@ public class ElecInputGenerator extends Thread
                         
                         
                     }
+                    
+                    if (nextStim.getElectricalInput() instanceof RandomSpikeTrain)
+                    {
+                        RandomSpikeTrain rst = (RandomSpikeTrain)nextStim.getElectricalInput();
+                        
+                        if (!rst.getRate().isTypeFixedNum())
+                        {
+                            RandomSpikeTrainInstanceProps rstip = new RandomSpikeTrainInstanceProps();
+                            rstip.setRate(rst.getRate().getNextNumber());
+                            rstip.setSynapseType(rst.getSynapseType());
+                            ip = rstip;
+                        }
+                        
+                        
+                    }
+                    
+                    if (nextStim.getElectricalInput() instanceof RandomSpikeTrainExt)
+                    {
+                        RandomSpikeTrainExt rste = (RandomSpikeTrainExt)nextStim.getElectricalInput();
+                        
+                        if (!rste.getRate().isTypeFixedNum() || 
+                            !rste.getDelay().isTypeFixedNum())
+                        {
+                            RandomSpikeTrainExtInstanceProps rsteip = new RandomSpikeTrainExtInstanceProps();
+                            rsteip.setRate(rste.getRate().getNextNumber());
+                            rsteip.setSynapseType(rste.getSynapseType());
+                            rsteip.setDelay(rste.getDelay().getNextNumber());
+                            rsteip.setDuration(rste.getDuration());
+                            rsteip.setRepeat(rste.isRepeat());
+                            ip = rsteip;
+                        }
+                        
+                        
+                    }
+                    
                     Cell cell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(nextStim.getCellGroup()));
                     
                     nextStim.getSegChooser().initialise(cell);

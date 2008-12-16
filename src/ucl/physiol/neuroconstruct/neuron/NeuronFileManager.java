@@ -1768,7 +1768,7 @@ public class NeuronFileManager
                         response.append(prefix+stimName + "[" + j + "].interval = " + interval + "\n");
 
                         response.append(prefix+stimName + "[" + j + "].noise = " + noise + " \n");
-                        response.append(prefix+stimName + "[" + j + "].del = "+ rndTrainExt.getDelay() +" \n");
+                        response.append(prefix+stimName + "[" + j + "].del = "+ rndTrainExt.getDelay().getNextNumber() +" \n");
                         response.append(prefix+stimName + "[" + j + "].dur = "+ rndTrainExt.getDuration() +" \n");
 
                         int repeat = rndTrainExt.isRepeat() ? 1:0;

@@ -70,8 +70,10 @@ public class StimDialog extends JDialog
                                                                           null,
                                                                           0,
                                                                           new NumberGenerator(0.05f),
+                                                                          null,
+                                                                          new NumberGenerator(0.05f),
                                                                           10,
-                                                                          null);
+                                                                          false);
     
     IndividualSegments indSegChooser = new IndividualSegments();
     
@@ -962,33 +964,43 @@ public class StimDialog extends JDialog
 
             tempRandSpikeExt.setSynapseType((String)selection);
 
+                        
+            NumberGenerator oldDelNumGen = tempRandSpikeExt.getDelay();
+
+            NumberGenerator newDelNumGen = NumberGeneratorDialog.showDialog(this,
+                                                                         "Delay before the stimulation",
+                                                                         "Please enter the delay before onset of the stimulation (ms)." +
+                                                                         "Note that delay of this input will not necessarily be equal to the resultant delay in the simulations.",
+                                                                         oldDelNumGen);
+            
+            
             try
             {
-                tempRandSpikeExt.setRate(newNumGen);
+                tempRandSpikeExt.setDelay(newDelNumGen);
             }
             catch (Exception ex)
             {
-                GuiUtils.showErrorMessage(logger, "Please enter a proper value for the spike rate", ex, this);
+                GuiUtils.showErrorMessage(logger, "Please enter a proper value for the delay", ex, this);
                 return;
             }
 
 
 
-            String delayString = JOptionPane.showInputDialog("Please enter the delay before onset of the stimulation (ms)",
-                                                       tempRandSpikeExt.getDelay());
-
-
-            try
-            {
-                float delay = Float.parseFloat(delayString);
-                assert delay>=0;
-                tempRandSpikeExt.setDelay(delay);
-            }
-            catch (Exception ex)
-            {
-                GuiUtils.showErrorMessage(logger, "Please enter a proper value for the delay (>=0ms)", ex, this);
-                return;
-            }
+//            String delayString = JOptionPane.showInputDialog("Please enter the delay before onset of the stimulation (ms)",
+//                                                       tempRandSpikeExt.getDelay());
+//
+//
+//            try
+//            {
+//                float delay = Float.parseFloat(delayString);
+//                assert delay>=0;
+//                tempRandSpikeExt.setDelay(delay);
+//            }
+//            catch (Exception ex)
+//            {
+//                GuiUtils.showErrorMessage(logger, "Please enter a proper value for the delay (>=0ms)", ex, this);
+//                return;
+//            }
 
             String durationString = JOptionPane.showInputDialog("Please enter the duration of the stimulation (ms)",
                                                        tempRandSpikeExt.getDuration());

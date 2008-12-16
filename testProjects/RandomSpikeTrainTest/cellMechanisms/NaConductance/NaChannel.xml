@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channelml xmlns="http://morphml.org/channelml/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:meta="http://morphml.org/metadata/schema" xsi:schemaLocation="http://morphml.org/channelml/schema  ../../Schemata/v1.7.3/Level2/ChannelML_v1.7.3.xsd" units="Physiological Units">
+
+    <meta:notes>ChannelML file containing a single Channel description</meta:notes>
+
+    <ion name="na" charge="1" default_erev="50"/>      <!-- phys units: mV -->
+
+
+    <channel_type name="NaConductance" density="yes">
+        
+        <status value="stable">
+            <meta:comment>Equations adapted from paper for modern convention of external potential being zero</meta:comment>
+            <meta:contributor>
+                <meta:name>Padraig Gleeson</meta:name>
+            </meta:contributor>
+        </status>
+
+        <meta:notes>Simple example of Na conductance in squid giant axon. Based on channel from Hodgkin and Huxley 1952</meta:notes>
+        
+        <meta:authorList>
+            <meta:modelTranslator>
+                <meta:name>Padraig Gleeson</meta:name>
+                <meta:institution>UCL</meta:institution>    
+                <meta:email>p.gleeson - at - ucl.ac.uk</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+
+        <meta:publication>
+            <meta:fullTitle>A. L. Hodgkin and A. F. Huxley, A quantitative description of membrane current and 
+            its application to conduction and excitation in nerve, J. Physiol., vol. 117, pp. 500-544, 1952.</meta:fullTitle>
+            <meta:pubmedRef>http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=pubmed&amp;dopt=Abstract&amp;list_uids=12991237</meta:pubmedRef>
+        </meta:publication>
+
+        <meta:neuronDBref>
+            <meta:modelName>Na channels</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/senselab/NeuronDB/channelGene2.htm#table2</meta:uri>
+        </meta:neuronDBref>
+
+
+        <current_voltage_relation>
+            <ohmic ion="na">
+                <conductance default_gmax="120">     <!-- phys units: mS/cm2 -->
+
+                    <gate power="3">
+                        <state name="m" fraction="1"/>
+                    </gate>
+                    <gate power="1">
+                        <state name="h" fraction="1"/>
+                    </gate>
+                </conductance>
+            </ohmic>
+        </current_voltage_relation>
+        
+        
+        <hh_gate state="m">
+            <transition>
+                <voltage_gate>
+                    <alpha>
+                        <parameterised_hh type="linoid">     <!-- Form of equation: A*(k*(v-d)) / (1 - exp(-(k*(v-d)))) -->
+
+                            <parameter name="A" value="1"/>
+                            <parameter name="k" value="0.1"/>
+                            <parameter name="d" value="-40"/>
+                        </parameterised_hh>
+                    </alpha>
+                    <beta>
+                        <parameterised_hh type="exponential">      <!-- Form of equation: A*exp(k*(v-d)) -->
+
+                            <parameter name="A" value="4"/>
+                            <parameter name="k" value="-0.0555555555"/>
+                            <parameter name="d" value="-65"/>
+                        </parameterised_hh>
+                    </beta>
+                </voltage_gate>
+            </transition>
+        </hh_gate>
+        
+        <hh_gate state="h">
+            <transition>
+                <voltage_gate>
+                    <alpha>
+                        <parameterised_hh type="exponential">      <!-- Form of equation: A*exp(k*(v-d)) -->
+
+                            <parameter name="A" value="0.07"/>
+                            <parameter name="k" value="-0.05"/>
+                            <parameter name="d" value="-65"/>
+                        </parameterised_hh>
+                    </alpha>
+                    <beta>
+                        <parameterised_hh type="sigmoid">      <!-- Form of equation: A / (1 + exp(k*(v-d))) -->
+
+                            <parameter name="A" value="1"/>
+                            <parameter name="k" value="-0.1"/>
+                            <parameter name="d" value="-35"/>
+                        </parameterised_hh>
+                    </beta>
+                </voltage_gate>
+            </transition>
+        </hh_gate>
+        
+        
+    </channel_type>
+</channelml>

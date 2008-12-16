@@ -525,7 +525,7 @@ public class GeneratedCellPositions
     {
         try
         {
-            Project testProj = Project.loadProject(new File("projects/NetworkML/NetworkML.neuro.xml"),
+            Project testProj = Project.loadProject(new File("testProjects/testNetworkML/testNetworkML.neuro.xml"),
                                                    new ProjectEventListener()
             {
                 public void tableDataModelUpdated(String tableModelName)

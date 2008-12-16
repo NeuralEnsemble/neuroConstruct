@@ -1,10 +1,12 @@
 package ucl.physiol.neuroconstruct.gui;
 
 import java.awt.*;
+import java.util.logging.Level;
 import javax.swing.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import javax.swing.border.*;
 import java.awt.event.*;
+import ucl.physiol.neuroconstruct.utils.equation.EquationException;
 
 /**
  * Dialog for specifying a type of number generator, and the main parameters
@@ -23,7 +25,10 @@ public class NumberGeneratorDialog extends JDialog
     String fixedNumString = "Fixed number";
     String randomNumString = "Random distribution";
     String gaussianNumString = "Gaussian distribution";
+    String expressionString = "Generic expression";
 
+    boolean weightGeneratorMode = false;
+    
     boolean cancelled = false;
 
     JLabel fixedValLabel = new JLabel("Value: ");
@@ -66,10 +71,23 @@ public class NumberGeneratorDialog extends JDialog
     JPanel jPanelChoices = new JPanel();
 
     JLabel jLabelComment = new JLabel();
+    
+    JLabel jExpLabel = new JLabel("Expression f(r): ");
+    JTextField jExpTexField = new JTextField();
+    JCheckBox jChekBoxSomaToSoma = new JCheckBox();
 
+    
     public NumberGeneratorDialog(Frame frame, String title, String comment, NumberGenerator numGenOriginal)
     {
+        this(frame, title, comment, numGenOriginal, false);
+    }
+    
+    
+    public NumberGeneratorDialog(Frame frame, String title, String comment, NumberGenerator numGenOriginal, boolean weightGeneratorMode)
+    {
         super(frame, "Number range properties", true);
+        this.weightGeneratorMode = weightGeneratorMode;
+        
         enableEvents(AWTEvent.WINDOW_EVENT_MASK);
 
         this.setTitle(title);
@@ -96,8 +114,15 @@ public class NumberGeneratorDialog extends JDialog
 
     public NumberGeneratorDialog(Dialog dia, String title, String comment, NumberGenerator numGenOriginal)
     {
+        this(dia, title, comment, numGenOriginal, false);
+        
+    }
+    
+    public NumberGeneratorDialog(Dialog dia, String title, String comment, NumberGenerator numGenOriginal, boolean weightGeneratorMode)
+    {
         super(dia, "Number range properties", true);
         enableEvents(AWTEvent.WINDOW_EVENT_MASK);
+        this.weightGeneratorMode = weightGeneratorMode;
 
         this.setTitle(title);
 
@@ -138,7 +163,11 @@ public class NumberGeneratorDialog extends JDialog
         {
             public void actionPerformed(ActionEvent e)
             {
-                jButtonOK_actionPerformed(e);
+                try {
+                    jButtonOK_actionPerformed(e);
+                } catch (EquationException ex) {
+                    java.util.logging.Logger.getLogger(NumberGeneratorDialog.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
         jLabelType.setText("Type:");
@@ -205,10 +234,13 @@ public class NumberGeneratorDialog extends JDialog
         jComboBoxType.addItem(fixedNumString);
         jComboBoxType.addItem(randomNumString);
         jComboBoxType.addItem(gaussianNumString);
+        if (weightGeneratorMode)
+            jComboBoxType.addItem(expressionString);
 
         if (numGen.distributionType==NumberGenerator.FIXED_NUM) jComboBoxType.setSelectedItem(fixedNumString);
         else if (numGen.distributionType==NumberGenerator.RANDOM_NUM) jComboBoxType.setSelectedItem(randomNumString);
         else if (numGen.distributionType==NumberGenerator.GAUSSIAN_NUM) jComboBoxType.setSelectedItem(gaussianNumString);
+        else if (numGen.distributionType==WeightGenerator.FUNCTION) jComboBoxType.setSelectedItem(expressionString);
 
         if (numGen.numberType==NumberGenerator.INT_GENERATOR) jRadioButtonInt.setSelected(true);
         else jRadioButtonFloat.setSelected(true);
@@ -226,7 +258,7 @@ public class NumberGeneratorDialog extends JDialog
     }
 
 
-    public static void main(String[] args)
+    public static void main(String[] args) throws EquationException
     {
         NumberGenerator ng = new NumberGenerator();
 
@@ -238,11 +270,20 @@ public class NumberGeneratorDialog extends JDialog
         //dlg.show();
 
         System.out.println("Number Gen: "+ ng);
+        
 
         for (int i = 0; i < 10; i++)
         {
-            System.out.println("Next float: " + ng.getNextNumber());
-            System.out.println("Next int: " + ng.getNextNumber());
+            if (ng instanceof WeightGenerator)
+            {
+                WeightGenerator wg = (WeightGenerator)ng;
+                System.out.println("Next float: " + wg.getNextNumber(i));
+            }
+            else
+            {
+                System.out.println("Next float: " + ng.getNextNumber());
+                
+            }
         }
     }
 
@@ -298,7 +339,7 @@ public class NumberGeneratorDialog extends JDialog
             dlg.setLocation( (screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
             dlg.setVisible(true);
 
-            return ng;
+            return dlg.getFinalNumGen();
 
         }
 
@@ -313,7 +354,7 @@ public class NumberGeneratorDialog extends JDialog
 
     void doOK()
     {
-        logger.logComment("OK pressed...");
+        logger.logComment("OK pressed...", true);
 
         if (jRadioButtonFloat.isSelected())
         {
@@ -390,6 +431,32 @@ public class NumberGeneratorDialog extends JDialog
 
                 numGen.initialiseAsGaussianFloatGenerator( (float) maxVal, (float) minVal, (float) meanVal,
                                                           (float) stdDevVal);
+            }
+            else if (jComboBoxType.getSelectedItem().equals(expressionString))
+            {
+                try {
+
+                    WeightGenerator weiGen = null;
+                    if (numGen instanceof WeightGenerator) {
+                        weiGen = (WeightGenerator) numGen;
+                    } else {
+
+                        weiGen = new WeightGenerator("1", false);
+
+                        numGen = weiGen;
+                    }
+                    String exp = jExpTexField.getText();
+
+
+                    weiGen.initialiseAsFunction(exp, jChekBoxSomaToSoma.isSelected());
+                    logger.logComment("New weight gen: " + weiGen, true);
+
+
+                } catch (EquationException ex) {
+
+                    ex.printStackTrace();
+                }
+
             }
         }
         else
@@ -469,7 +536,31 @@ public class NumberGeneratorDialog extends JDialog
                 numGen.initialiseAsGaussianIntGenerator(  maxVal, minVal, (float) meanVal,
                                                           (float) stdDevVal);
             }
+            else if (jComboBoxType.getSelectedItem().equals(expressionString))
+            {
+                try {
 
+                    WeightGenerator weiGen = null;
+                    if (numGen instanceof WeightGenerator) {
+                        weiGen = (WeightGenerator) numGen;
+                    } else {
+
+                        weiGen = new WeightGenerator("1", false);
+
+                        numGen = weiGen;
+                    }
+                    String exp = jExpTexField.getText();
+
+
+                    weiGen.initialiseAsFunction(exp, jChekBoxSomaToSoma.isSelected());
+                    logger.logComment("New weight gen: " + weiGen, true);
+
+
+                } catch (EquationException ex) {
+
+                    ex.printStackTrace();
+                }
+        }
         }
 
 
@@ -477,7 +568,7 @@ public class NumberGeneratorDialog extends JDialog
         this.dispose();
     }
 
-    void jButtonOK_actionPerformed(ActionEvent e)
+    void jButtonOK_actionPerformed(ActionEvent e) throws EquationException
     {
         doOK();
     }
@@ -486,6 +577,12 @@ public class NumberGeneratorDialog extends JDialog
     {
         doCancel();
     }
+
+    public WeightGenerator getFinalNumGen()
+    {
+        return (WeightGenerator) numGen;
+    }
+    
 
     void jComboBoxType_itemStateChanged(ItemEvent e)
     {
@@ -562,9 +659,37 @@ public class NumberGeneratorDialog extends JDialog
                     maxValTextField.setText(numGen.getMax() + "");
                 }
 
-
+                
+            }
+            else if (selected.equals(expressionString))
+            {
+                WeightGenerator weiGen = null;
+                if (numGen instanceof WeightGenerator)
+                    weiGen = (WeightGenerator) numGen;
+                else
+                {
+                    try 
+                    {
+                        weiGen = new WeightGenerator("r", false);
+                    } 
+                    catch (EquationException ex) 
+                    {
+                        ex.printStackTrace();
+                        return;
+                    }
+                }
+                
+                gridLayout1.setRows(3);
+                jPanelVariables.add(jExpLabel, null);
+                jPanelVariables.add(jExpTexField, null);
+                jExpTexField.setText(weiGen.toShortString());
+                jChekBoxSomaToSoma.setText("r = soma to soma distance");
+                jPanelVariables.add(jChekBoxSomaToSoma);
+                jChekBoxSomaToSoma.setSelected(weiGen.somaToSoma);
+                
             }
 
+                        
             this.pack();
         }
     }

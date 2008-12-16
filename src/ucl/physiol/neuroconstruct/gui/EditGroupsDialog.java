@@ -19,6 +19,7 @@ import javax.swing.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.cell.*;
 import java.util.*;
+import java.util.ArrayList;
 import javax.swing.border.*;
 import javax.swing.event.*;
 import ucl.physiol.neuroconstruct.j3D.*;
@@ -88,6 +89,12 @@ public class EditGroupsDialog
     GridBagLayout gridBagLayout3 = new GridBagLayout();
     JButton jButtonAddGroup = new JButton();
     JTextField jTextFieldNewGroup = new JTextField();
+    
+    JPanel jPanelAddWhat = new JPanel();
+    JLabel jLabelAddWhat = new JLabel();
+    JRadioButton jRadioButtonAddSections = new JRadioButton();
+    JRadioButton jRadioButtonAddGroups = new JRadioButton();
+    ButtonGroup JButtonGroup = new ButtonGroup();
 
     private EditGroupsDialog()
     {
@@ -187,7 +194,7 @@ public class EditGroupsDialog
         });
         
 
-        jButtonAddGroup.setText("Add group:");
+        jButtonAddGroup.setText("New group:");
         
         ActionListener al = new java.awt.event.ActionListener()
         {
@@ -210,12 +217,12 @@ public class EditGroupsDialog
         jPanelLists.setMinimumSize(new Dimension(410, 300));
         jPanelLists.setPreferredSize(new Dimension(410, 300));
         jPanelMain.setMaximumSize(new Dimension(490, 380));
-        jPanelMain.setMinimumSize(new Dimension(490, 380));
-        jPanelMain.setPreferredSize(new Dimension(490, 380));
+        jPanelMain.setMinimumSize(new Dimension(500, 400));
+        jPanelMain.setPreferredSize(new Dimension(500, 400));
         this.getContentPane().add(jPanelMain, BorderLayout.CENTER);
         jPanelMain.add(jPanelSelectGroup,  new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 300, 0));
-        jPanelMain.add(jPanelLists, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
+        jPanelMain.add(jPanelLists, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0
                                                            , GridBagConstraints.CENTER, GridBagConstraints.NONE,
                                                            new Insets(0, 0, 0, 0), 0, 0));
         jPanelLists.add(jPanelSectionsOut, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0
@@ -232,7 +239,7 @@ public class EditGroupsDialog
                                                                  , GridBagConstraints.CENTER,
                                                                  GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 1),
                                                                  70, 0));
-        jPanelMain.add(jPanelButtons, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0
+        jPanelMain.add(jPanelButtons, new GridBagConstraints(0, 3, 1, 1, 1.0, 1.0
                                                              , GridBagConstraints.CENTER, GridBagConstraints.NONE,
                                                              new Insets(0, 0, 1, 0), 300, 0));
         jPanelButtons.add(jButtonOK, null);
@@ -255,7 +262,108 @@ public class EditGroupsDialog
 
         jListSectionsIn.addListSelectionListener(this);
         jListSectionsOut.addListSelectionListener(this);
+        
+        jLabelAddWhat.setText("Add");
+        jRadioButtonAddSections.setText("sections");
+        jRadioButtonAddSections.setSelected(true);
+        jRadioButtonAddGroups.setText("groups");
+        JButtonGroup.add(jRadioButtonAddSections);
+        JButtonGroup.add(jRadioButtonAddGroups);
+        jPanelMain.add(jPanelAddWhat, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
+            ,GridBagConstraints.WEST, GridBagConstraints.WEST, new Insets(0, 0, 0, 0), 300, 0));
+        jPanelAddWhat.add(jLabelAddWhat, null);
+        jPanelAddWhat.add(jRadioButtonAddSections, null);
+        jPanelAddWhat.add(jRadioButtonAddGroups, null);
+        jRadioButtonAddSections.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jRadioButtonAddSections_actionPerformed(e);
+            }
 
+            
+        });
+        jRadioButtonAddGroups.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jRadioButtonAddGroups_actionPerformed(e);
+            }
+
+        });
+        
+    }
+    
+    private void jRadioButtonAddSections_actionPerformed(ActionEvent e) {
+               jLabelSectionsOut.setText("Sections outside group");
+               jLabelSectionsIn.setText("Sections in this group");
+               listModelSectionsIn.clear();
+               listModelSectionsOut.clear();
+               
+               String selectedGroup = (String) jComboBoxGroupNames.getSelectedItem();
+                logger.logComment("Setting the selected group to: " + selectedGroup);
+
+                if (selectedGroup.equals(defaultGroupSelection))
+                {
+                    return;
+                }
+
+                if (selectedGroup.equals("all"))
+                {
+                    GuiUtils.showErrorMessage(logger, "That group cannot be altered", null, this);
+                    jComboBoxGroupNames.setSelectedItem(defaultGroupSelection);
+                    return;
+                }
+                
+                Vector allSegments = myCell.getAllSegments();
+                for (int i = 0; i < allSegments.size(); i++) {
+                Segment segment = (Segment) allSegments.elementAt(i);
+                if (segment.isFirstSectionSegment()) {
+                    Vector sectionGroups = segment.getSection().getGroups();
+                    if (sectionGroups.contains(selectedGroup)) {
+                        listModelSectionsIn.addElement(new SectionHelper(segment.getSection()));
+                    } else {
+                        listModelSectionsOut.addElement(new SectionHelper(segment.getSection()));
+                    }
+                }
+            }
+            updateInterface.refreshGroup(selectedGroup);
+    }
+            
+            
+    private void jRadioButtonAddGroups_actionPerformed(ActionEvent e) {
+                jLabelSectionsOut.setText("other groups in the cell");
+                jLabelSectionsIn.setText("subgrops");
+                listModelSectionsIn.clear();                
+                listModelSectionsOut.clear();
+                
+               String selectedGroup = (String) jComboBoxGroupNames.getSelectedItem();
+                logger.logComment("Setting the selected group to: " + selectedGroup);
+
+                if (selectedGroup.equals(defaultGroupSelection))
+                {
+                    return;
+                }
+
+                if (selectedGroup.equals("all"))
+                {
+                    GuiUtils.showErrorMessage(logger, "That group cannot be altered", null, this);
+                    jComboBoxGroupNames.setSelectedItem(defaultGroupSelection);
+                    return;
+                }
+                
+                Vector<String> allGroups = myCell.getAllGroupNames();
+                for (int i = 0; i < allGroups.size(); i++) {
+                    String group = allGroups.elementAt(i);
+                    if (!selectedGroup.equals(group)) {
+                        ArrayList<Section> allSecInGroup = myCell.getSectionsInGroup(group);
+                        if (myCell.getSectionsInGroup(selectedGroup).containsAll(allSecInGroup)) {
+                            listModelSectionsIn.addElement(allGroups.elementAt(i));
+                        } else
+                            listModelSectionsOut.addElement(allGroups.elementAt(i));
+                    }
+                }
+                updateInterface.refreshGroup(selectedGroup);
     }
 
     private void extraInit()
@@ -380,7 +488,8 @@ public class EditGroupsDialog
                 return;
             }
 
-
+            if (jRadioButtonAddSections.isSelected()== true) {
+                    
             Vector allSegments = myCell.getAllSegments();
 
             for (int i = 0; i < allSegments.size(); i++)
@@ -401,11 +510,29 @@ public class EditGroupsDialog
                     }
                 }
             }
+            }
+            
+            else if (jRadioButtonAddGroups.isSelected()== true)
+            {
+                Vector<String> allGroups = myCell.getAllGroupNames();
 
+            for (int i = 0; i <  allGroups.size(); i++)
+            {
+                String group = allGroups.elementAt(i);
+                if (!selectedGroup.equals(group))
+                {
+                    ArrayList<Section> allSecInGroup = myCell.getSectionsInGroup(group);
+                    if (myCell.getSectionsInGroup(selectedGroup).containsAll(allSecInGroup))
+                        listModelSectionsIn.addElement(allGroups.elementAt(i)); 
+                    else
+                        listModelSectionsOut.addElement(allGroups.elementAt(i));  
+                }
+            }
+            }
             updateInterface.refreshGroup(selectedGroup);
-
         }
     }
+
 
     void jButtonAdd_actionPerformed(ActionEvent e)
     {
@@ -417,12 +544,30 @@ public class EditGroupsDialog
 
         for (int i = 0; i < selected.length; i++)
         {
+            if (jRadioButtonAddSections.isSelected()== true)
+            {
 
             SectionHelper selSection = (SectionHelper)listModelSectionsOut.elementAt(selected[i]);
 
             logger.logComment("Item: " + selected[i] + " ("+selSection+") is selected...");
 
             selSection.getSection().addToGroup(selectedGroup);
+            
+             }
+             
+             else if (jRadioButtonAddGroups.isSelected()== true)
+             {
+                 ArrayList<Section> sectionsToAdd = myCell.getSectionsInGroup((String)listModelSectionsOut.elementAt(selected[i]));
+                 
+                 for (int j = 0; j < sectionsToAdd.size(); j++) {
+                     
+                    Section selSection = sectionsToAdd.get(j);
+                    logger.logComment("Adding " + selected[i] + " section of group " + listModelSectionsOut.elementAt(selected[i]).toString());
+                    selSection.addToGroup(selectedGroup);
+            
+                 }                 
+             }
+            listModelSectionsIn.addElement(jListSectionsOut.getName());
         }
 
         // simple update...

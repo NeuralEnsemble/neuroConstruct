@@ -63,6 +63,8 @@ public class ConnectivityConditions
      * a cell to itself are allowed
      */ 
     private boolean allowAutapses = true;
+    
+    private boolean noRecurrent = false;
 
     private PrePostAllowedLocs prePostAllowedLoc = new PrePostAllowedLocs();
 
@@ -106,6 +108,10 @@ public class ConnectivityConditions
         if (allowAutapses)
         {
             sb.append(", autapses allowed");
+        }
+        if (noRecurrent)
+        {
+            sb.append(", direct recurrent connections not allowed");
         }
         sb.append(", "+prePostAllowedLoc.toString());
 
@@ -193,12 +199,23 @@ public class ConnectivityConditions
     {
         return allowAutapses;
     }
+    
+    
+    public boolean isNoRecurrent()
+    {
+        return noRecurrent;
+    }    
 
 
     public void setAllowAutapses(boolean aa)
     {
         this.allowAutapses = aa;
 
+    }
+    
+    public void setNoRecurrent(boolean aa)
+    {
+        this.noRecurrent = aa;
     }
 
     public PrePostAllowedLocs getPrePostAllowedLoc()

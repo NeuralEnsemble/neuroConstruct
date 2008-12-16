@@ -16,11 +16,13 @@ import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.util.logging.Level;
 import javax.swing.*;
 import javax.swing.border.*;
 
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
+import ucl.physiol.neuroconstruct.utils.equation.EquationException;
 
  /**
  * Dialog for new simple network connection
@@ -169,14 +171,16 @@ public class NetworkConnectionDialog extends JDialog
     JPanel jPanelConnCondsMaxTarget = new JPanel();
     
     JPanel jPanelConnCondsAutapses = new JPanel();
-
+    JPanel jPanelConnCondsRecurrent = new JPanel();
+    
 
     JLabel jLabelConnCondsMaxTarget = new JLabel();
     JTextField jTextFieldConnCondsMaxTarget = new JTextField();
     
     
     JLabel jLabelConnCondsAutapses = new JLabel();
-    JCheckBox jCheckBoxAutapses = new JCheckBox();
+    JCheckBox jCheckBoxAutapses = new JCheckBox();      
+    JCheckBox jCheckBoxRecurrent = new JCheckBox();
     
     
     JPanel jPanelConnCondsPrePost = new JPanel();
@@ -192,6 +196,7 @@ public class NetworkConnectionDialog extends JDialog
     
     JLabel jLabelConnCondsPost = new JLabel();
 
+    JCheckBox jCheckBoxSomaToSoma = new JCheckBox();
 
     GridBagLayout gridBagLayout2 = new GridBagLayout();
 
@@ -340,6 +345,7 @@ public class NetworkConnectionDialog extends JDialog
             jCheckBoxConnCondsUnique.setSelected(connConds.isOnlyConnectToUniqueCells());
             
             jCheckBoxAutapses.setSelected(connConds.isAllowAutapses());
+            jCheckBoxRecurrent.setSelected(connConds.isNoRecurrent());
             
             jCheckBoxSomaPre.setSelected(connConds.getPrePostAllowedLoc().isSomaAllowedPre());
             jCheckBoxAxonPre.setSelected(connConds.getPrePostAllowedLoc().isAxonsAllowedPre());
@@ -570,12 +576,28 @@ public class NetworkConnectionDialog extends JDialog
 
         
         //jLabelConnCondsAutapses.setText("Allow autapses (when source group = target)");
-        jCheckBoxAutapses.setText("Allow autapses (when source Cell Group = target)");
+        jCheckBoxAutapses.setText("Allow autapses (only if target = source)");
         jPanelConnCondsAutapses.add(jCheckBoxAutapses);
+        jCheckBoxRecurrent.setText("Direct recurrent connections not allowed (only if target = source)");
+        jPanelConnCondsRecurrent.add(jCheckBoxRecurrent);
+        
+        jPanelConnConds.add(jPanelConnCondsAutapses,   new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0
+                            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0, 0), 0, 0));
+        jPanelConnConds.add(jPanelConnCondsRecurrent,   new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
+                            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0, 0), 0, 0));
         
         
-        jPanelConnConds.add(jPanelConnCondsAutapses,   new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0, 0), 0, 0));
+        if (jComboBoxSource.getSelectedItem()==jComboBoxTarget.getSelectedItem())// && !(jComboBoxTarget.getSelectedItem().equals(targetComboString)))
+        {
+            jCheckBoxAutapses.setEnabled(true);
+            jCheckBoxRecurrent.setEnabled(true);
+        }
+        else
+        {
+            jCheckBoxAutapses.setEnabled(false);
+            jCheckBoxRecurrent.setEnabled(false);
+        }
+        
         
         
         jLabelConnCondsPre.setText("Allowed presynaptically:");
@@ -607,7 +629,7 @@ public class NetworkConnectionDialog extends JDialog
         jCheckBoxDendPost.setText("Dendrites");
         jCheckBoxDendPost.setSelected(true);
         
-        jPanelConnConds.add(jPanelConnCondsPrePost,   new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0
+        jPanelConnConds.add(jPanelConnCondsPrePost,   new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0, 0), 0, 0));
         
         this.getContentPane().add(jPanelMain, BorderLayout.CENTER);
@@ -744,7 +766,11 @@ public class NetworkConnectionDialog extends JDialog
         {
             public void actionPerformed(ActionEvent e)
             {
+                try {
                 jButtonSynPropsAdd_actionPerformed(e);
+                } catch (EquationException ex) {
+                    java.util.logging.Logger.getLogger(NetworkConnectionDialog.class.getName()).log(Level.SEVERE, null, ex);
+            }
             }
         });
 
@@ -890,13 +916,15 @@ public class NetworkConnectionDialog extends JDialog
             if (!(dim.equals(MaxMinLength.RADIAL)||
                   dim.equals(MaxMinLength.X_DIR)||
                   dim.equals(MaxMinLength.Y_DIR)||
-                  dim.equals(MaxMinLength.Z_DIR)))
+                  dim.equals(MaxMinLength.Z_DIR)||
+                  dim.equals(MaxMinLength.SOMA)))
             {
             GuiUtils.showErrorMessage(logger, "The only possible values for dimension in which to measure the max/min distance are:\n"
                                       +MaxMinLength.RADIAL+": the radial distance between pre and post synaptic connection sites\n"
                                       +MaxMinLength.X_DIR+": the max/min distance in x direction\n"
                                       +MaxMinLength.Y_DIR+": the max/min distance in y direction\n"
-                                      +MaxMinLength.Z_DIR+": the max/min distance in z direction\n", null, this);
+                                      +MaxMinLength.Z_DIR+": the max/min distance in z direction\n"
+                                      +MaxMinLength.SOMA+": the radial distance between the source cell soma and the target cell soma\n", null, this);
             return;
 
 
@@ -937,6 +965,8 @@ public class NetworkConnectionDialog extends JDialog
         
         connConds.setAllowAutapses(jCheckBoxAutapses.isSelected());
         
+        connConds.setNoRecurrent(jCheckBoxRecurrent.isSelected());
+        
         PrePostAllowedLocs pp = new PrePostAllowedLocs();
         
         pp.setSomaAllowedPre(jCheckBoxSomaPre.isSelected());
@@ -949,6 +979,10 @@ public class NetworkConnectionDialog extends JDialog
         
         connConds.setPrePostAllowedLoc(pp);
 
+        if (jTextFieldDim.getText().equals("s"))
+        {
+             maxMin.setDimension("s");
+        }
 
 
 
@@ -1068,7 +1102,7 @@ public class NetworkConnectionDialog extends JDialog
 
 
 
-    void jButtonSynPropsAdd_actionPerformed(ActionEvent e)
+    void jButtonSynPropsAdd_actionPerformed(ActionEvent e) throws EquationException
     {
 
         Vector synapticTypes =  project.cellMechanismInfo.getAllChemElecSynMechNames();
@@ -1107,7 +1141,7 @@ public class NetworkConnectionDialog extends JDialog
             jTextFieldCellTypeTrgt.setText("");
             jTextFieldRegionTgt.setText("");
             return;
-        }
+        }        
         String sourceCG = (String)e.getItem();
         logger.logComment("New Cell group selected: "+sourceCG);
 
@@ -1129,8 +1163,8 @@ public class NetworkConnectionDialog extends JDialog
                 jComboBoxTarget.addItem(names.get(i));
         }
         jComboBoxTarget.setEnabled(true);
-
-
+        
+        
     }
 
 
@@ -1146,6 +1180,22 @@ public class NetworkConnectionDialog extends JDialog
             jTextFieldRegionTgt.setText("");
             return;
         }
+        
+        if (jComboBoxSource.getSelectedItem().equals(jComboBoxTarget.getSelectedItem()))
+        {
+            jCheckBoxAutapses.setEnabled(true);
+            jCheckBoxRecurrent.setEnabled(true);
+        }
+        else
+        {
+           jCheckBoxAutapses.setEnabled(false);
+           jCheckBoxRecurrent.setEnabled(false);
+        }
+        
+        Dimension d = this.getContentPane().getPreferredSize();
+        jPanelMain.setMaximumSize(d);
+        
+        
         String targetCG = (String)e.getItem();
         logger.logComment("New Cell group selected: "+targetCG);
 
@@ -1172,6 +1222,15 @@ public class NetworkConnectionDialog extends JDialog
             }
             jTextFieldName.setText(proposedName);
         }
+        
+        
+        
+        
+//        try {
+//                jbInit();
+//            } catch (Exception ex) {
+//                java.util.logging.Logger.getLogger(NetworkConnectionDialog.class.getName()).log(Level.SEVERE, null, ex);
+//            }
 
 
     }
@@ -1354,7 +1413,7 @@ public class NetworkConnectionDialog extends JDialog
     }
     
     
-    public static void main(String[] args)
+    public static void main(String[] args) throws EquationException
     {
         File pf = new File("examples/Ex5-Networks/Ex5-Networks.neuro.xml");
 
