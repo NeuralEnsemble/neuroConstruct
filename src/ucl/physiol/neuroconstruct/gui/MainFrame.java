@@ -4933,6 +4933,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                      +"If NEURON or GENESIS are installed, the cell can be simulated via tab Export Network.");
 
         }
+        catch (ChannelMLException ex)
+        {
+            GuiUtils.showErrorMessage(logger, "Problem adding sample items to project: "+ex.getMessage(), ex, this);
+            return;
+        }
         catch (Exception ex)
         {
             GuiUtils.showErrorMessage(logger, "Error adding sample items to project", ex, this);

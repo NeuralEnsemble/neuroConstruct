@@ -89,7 +89,7 @@ public class ChannelMLCellMechanism extends CellMechanism
      * To support the templates of common channels included in the neuroConstruct
      * distribution
      */
-    public static ChannelMLCellMechanism createFromTemplate(File templateDir, Project project)
+    public static ChannelMLCellMechanism createFromTemplate(File templateDir, Project project) throws ChannelMLException
     {
         logger.logComment("Trying to create a cml cell mechanism from contents of dir: "+ templateDir);
         ChannelMLCellMechanism cmlMech = new ChannelMLCellMechanism();
@@ -99,7 +99,7 @@ public class ChannelMLCellMechanism extends CellMechanism
         return cmlMech;
     }
 
-    protected void initPropsFromTemplate(File templateDir, Project project)
+    protected void initPropsFromTemplate(File templateDir, Project project) throws ChannelMLException
     {
         Properties props = new Properties();
 
@@ -128,6 +128,14 @@ public class ChannelMLCellMechanism extends CellMechanism
             File cellMechDir = ProjectStructure.getCellMechanismDir(project.getProjectMainDirectory());
 
             File dirForCMLFiles = new File(cellMechDir, getInstanceName());
+            
+            if (!absFile.exists())
+            {
+                File readme = new File(ProjectStructure.getXMLTemplatesDir(), "README");
+                throw new ChannelMLException("Directory does not exist: "+ absFile.getAbsolutePath()+"\n" +
+                    "Check that the XML example files and XSL mappings for ChannelML have been downloaded. The latest version of these can\n" +
+                    "be obtained from the Sourceforge SVN repository as outlined in "+readme.getAbsolutePath());
+            }
 
             File newFile = GeneralUtils.copyFileIntoDir(absFile, dirForCMLFiles);
 
