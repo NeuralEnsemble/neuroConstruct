@@ -35,9 +35,9 @@ public class GeneralProperties
 
     private static final String packageOfCellTypes = new String("ucl.physiol.neuroconstruct.cell");
 
-    private static final String versionNumber = "1.2.0";
+    private static final String versionNumber = "1.2.1";
 
-    private static final String latestNeuroMLVersionNumber = "1.7.3";
+    private static final String latestNeuroMLVersionNumber = "1.8.0";
 
     private static final String minimumVersionJava = "J2SE 5.0";
 

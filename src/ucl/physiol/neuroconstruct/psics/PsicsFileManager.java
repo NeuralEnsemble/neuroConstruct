@@ -829,7 +829,7 @@ public class PsicsFileManager
                     executable = basicCommLine.trim();
                 }
 
-                String scriptText = javaEx + " "+fullFileToRun;
+                String scriptText = javaEx+ " "+psicsJar+ " "+fullFileToRun;
 
                 File scriptFile = new File(ProjectStructure.getPsicsCodeDir(project.getProjectMainDirectory()),
                                            "runsim.sh");
