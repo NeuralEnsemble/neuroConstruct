@@ -720,15 +720,28 @@ public class ProjectManager implements GenerationReport
                 addChan = false;
                 
                 //add the synapses that are used in the generated connections
-                Iterator connsNames = project.generatedNetworkConnections.getNamesNetConnsIter();                
-                while (connsNames.hasNext()&&(addChan==false))
+                Iterator<String> connsNames = project.generatedNetworkConnections.getNamesNetConnsIter();             
+                
+                while (connsNames.hasNext() && (addChan==false))
                 {
-                    if (project.morphNetworkConnectionsInfo.getSynapseList((String)connsNames.next()).contains(m)
-                            && !cellMechs.contains(m))
+                    String netConnName = connsNames.next();
+                    
+                    if (project.morphNetworkConnectionsInfo.isValidSimpleNetConn(netConnName))
                     {
-                        cellMechs.add(m);
-                        addChan = true;
-                    }                    
+                        if (project.morphNetworkConnectionsInfo.getSynapseList(netConnName).contains(m) && !cellMechs.contains(m))
+                        {
+                            cellMechs.add(m);
+                            addChan = true;
+                        }         
+                    }
+                    if (project.volBasedConnsInfo.isValidVolBasedConn(netConnName))
+                    {
+                        if (project.volBasedConnsInfo.getSynapseList(netConnName).contains(m) && !cellMechs.contains(m))
+                        {
+                            cellMechs.add(m);
+                            addChan = true;
+                        }         
+                    }
                 }
                                 
                 //add the synapses that are used in the the stimulations
