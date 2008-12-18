@@ -771,14 +771,16 @@ public class PsicsFileManager
             {
                 logger.logComment("Assuming Windows environment...");
 
-
-                commandToExecute = "cmd /K start \""+title+"\"  " +  javaEx + " "+psicsJar+" "+fullFileToRun;
+                String setDir = "";
+                //String setDir = " -Duser.dir="+dirToRunFrom.getAbsolutePath();
+                
+                commandToExecute = "cmd /K start \""+title+"\"  " +  javaEx +setDir+ " "+psicsJar+" "+fullFileToRun;
 
                 logger.logComment("Going to execute command: " + commandToExecute);
 
                 rt.exec(commandToExecute);
 
-                logger.logComment("Have executed command: " + commandToExecute);
+                logger.logComment("Have executed command: " + commandToExecute/*+" in woriking dir: "+ dirToRunFrom*/, true);
 
             }
             else
@@ -873,7 +875,7 @@ public class PsicsFileManager
             boolean loadResults = true;
             if(loadResults)
             {
-                File resultsDir = new File(dirToRunFrom+"/"+project.getProjectName()+"-results");
+                File resultsDir = dirForSimDataFiles;
                 File resultsHtml = new File(resultsDir, "index.html");
                 File resultsDatafile = new File(resultsDir, "psics-out.txt");
                 
