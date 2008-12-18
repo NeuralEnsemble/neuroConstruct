@@ -162,6 +162,14 @@ public class RandomSpikeTrainExtSettings extends StimulationSettings
         randomSpikeTrainExt.setRate(rate);
     }
 
+
+    public void setNoise(float noise)
+    {
+        // Note: noise removed from randomSpikeTrainExt
+        //randomSpikeTrainExt.setNoise(noise);
+    }
+
+
     public String toString()
     {
         return randomSpikeTrainExt.toString();
