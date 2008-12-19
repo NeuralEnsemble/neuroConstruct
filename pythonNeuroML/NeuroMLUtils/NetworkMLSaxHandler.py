@@ -320,7 +320,7 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
 	                       
 			       
     else:
-      others = ["populations", "projections", "connections"]
+      others = ["populations", "projections", "connections", "meta:tag", "meta:value", "meta:property", "meta:properties"]
       if (others.count(name) == 0):
       	print 'Unhandled, unknown element: '+ name
       

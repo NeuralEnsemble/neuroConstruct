@@ -1,46 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <networkml xmlns="http://morphml.org/networkml/schema" xmlns:meta="http://morphml.org/metadata/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://morphml.org/networkml/schema  NetworkML_v1.7.xsd" lengthUnits="micron">
 
+<meta:notes>
+
+Network structure for project: PyNNTest saved with neuroConstruct v1.2.1 on: 17:17:45, 17-Dec-08
+
+Cell Group: CellsB contains 4 cells
+Cell Group: CellsA contains 3 cells
+
+Network connection: NetConn_CellsA_CellsA contains 6 individual synaptic connections
+
+</meta:notes>
+
+<meta:properties>
+    <meta:property>
+        <meta:tag>neuroConstruct_random_seed</meta:tag>
+        <meta:value>261929075</meta:value>    
+    </meta:property>
+    <meta:property>
+        <meta:tag>neuroConstruct_sim_config</meta:tag>
+        <meta:value>Default Simulation Configuration</meta:value>    
+    </meta:property>
+</meta:properties>
 
 <populations>
-    <population name="CellsA" cell_type="IF_cond_alpha">
-        <instances size="3">
-            <instance id="0" node_id="0">
-                <location x="12.175047" y="24.67475" z="42.81618"/>
+    <population name="CellsB" cell_type="IF_cond_alpha">
+        <instances size="4">
+            <instance id="0">
+                <location x="39.78004" y="75.63996" z="105.16366"/>
             </instance>
-            <instance id="1" node_id="1">
-                <location x="32.95397" y="24.873947" z="67.57293"/>
+            <instance id="1">
+                <location x="108.0673" y="61.73585" z="80.07959"/>
             </instance>
-            <instance id="2" node_id="2">
-                <location x="66.66395" y="88.0889" z="38.37398"/>
+            <instance id="2">
+                <location x="98.52728" y="78.73311" z="56.62902"/>
+            </instance>
+            <instance id="3">
+                <location x="90.9616" y="81.71725" z="89.82342"/>
             </instance>
         </instances>
     </population>
-    <population name="CellsB" cell_type="IF_cond_alpha">
+    <population name="CellsA" cell_type="IF_cond_alpha">
         <instances size="3">
-            <instance id="0" node_id="3">
-                <location x="43.980293" y="6.0147104" z="2.3251653"/>
+            <instance id="0">
+                <location x="71.45491" y="23.219496" z="45.37951"/>
             </instance>
-            <instance id="1" node_id="0">
-                <location x="51.507248" y="44.408886" z="67.51696"/>
+            <instance id="1">
+                <location x="12.910358" y="17.322762" z="11.761658"/>
             </instance>
-            <instance id="2" node_id="1">
-                <location x="71.42178" y="33.324604" z="16.896135"/>
+            <instance id="2">
+                <location x="81.7464" y="16.256758" z="75.689285"/>
             </instance>
         </instances>
     </population>
 </populations>
 
 <projections units="Physiological Units">
-    <projection name="CellsA_to_CellsB" source="CellsA" target="CellsB">
-        <synapse_props synapse_type="MF_AMPA" internal_delay="2.0" weight="6.0" threshold="-20.0">
+    <projection name="NetConn_CellsA_CellsA" source="CellsA" target="CellsB">
+        <synapse_props synapse_type="AlphaSyn1" internal_delay="5.0" weight="1.0" threshold="-20.0">
         </synapse_props>
         <connections>
-            <connection id="0" pre_cell_id="1" post_cell_id="0"/>
-            <connection id="1" pre_cell_id="2" post_cell_id="1"/>
-            <connection id="2" pre_cell_id="0" post_cell_id="2"/>
+            <connection id="0" pre_cell_id="0" post_cell_id="0">
+            </connection>
+            <connection id="1" pre_cell_id="0" post_cell_id="2">
+            </connection>
+            <connection id="2" pre_cell_id="1" post_cell_id="1">
+            </connection>
+            <connection id="3" pre_cell_id="1" post_cell_id="1">
+            </connection>
+            <connection id="4" pre_cell_id="2" post_cell_id="3">
+            </connection>
+            <connection id="5" pre_cell_id="2" post_cell_id="1">
+            </connection>
         </connections>
     </projection>
 </projections>
+
+    <!--There are no electrical inputs present in the network-->
+
 
 </networkml>

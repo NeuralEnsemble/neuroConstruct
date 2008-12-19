@@ -26,18 +26,24 @@ rng = NumpyRNG(seed=1234)
 
 print "Running PyNN script in simulator: "+ simulator
 
-cellNumA = 5
-cellNumB = 6
+cellNumA = 2
+cellNumB = 4
 cellType = IF_cond_alpha
 connNum = 10
+
+tstop = 200.0
 
 if (simulator == 'neuroml'):
 	setup(file="test.xml")
 else:
-	setup()
+	setup(debug=True)
+    
+    
 
-cellsA = Population((cellNumA,), cellType, label="Cells_A")
-cellsB = Population((cellNumB,), cellType, label="Cells_B")
+cell_params = {'tau_refrac':2.0,'v_thresh':-50.0,'tau_syn_E':2.0, 'tau_syn_I':2.0}
+
+cellsA = Population((cellNumA,), cellType, cell_params, label="Cells_A")
+cellsB = Population((cellNumB,), cellType, cell_params, label="Cells_B")
 
 xMin=0
 xMax=200
@@ -45,6 +51,7 @@ yMin=0
 yMax=200
 zMin=0
 zMax=50
+
 
 for cell in cellsA:
 	cell.position = (xMin+(NumpyRNG.next(rng)*(xMax-xMin)), yMin+(NumpyRNG.next(rng)*(yMax-yMin)), zMin+(NumpyRNG.next(rng)*(zMax-zMin)))
@@ -75,8 +82,43 @@ for i in range(connNum):
 	tgt = gidsB[int(NumpyRNG.next(rng) * len(gidsB))]
 	
 	print "Connecting cell %s in %s to cell %s in %s" % (src, cellsA.label, tgt, cellsB.label)
-	connect(cellsA[cellsA.locate(src)], cellsB[cellsB.locate(tgt)])
+	connect(cellsA[cellsA.locate(src)], cellsB[cellsB.locate(tgt)], weight=1)
 
-	
+
+voltDistr = RandomDistribution('uniform',[-80,-50],rng)
+
+cellsA.randomInit(voltDistr)
+cellsB.randomInit(voltDistr)
+
+spikes = [20,40,60,80]
+input_population  = Population(cellNumA, SpikeSourceArray, {'spike_times': spikes }, "inputsToA")
+
+
+for i in range(0,cellNumA):
+    connect(input_population[(i,)], cellsA[(i,)], weight=1)
+
+cellsA.record_v()
+cellsB.record_v()
+input_population.record()
+
+print "---- Running the simulation ----"
+run(tstop)
+
+#cellsA.i_offset = 200
+#run(60)
+#cellsA.i_offset = 0
+#run(20)
+
+cellsA.print_v("cellsA.dat")
+cellsB.print_v("cellsB.dat")
+input_population.printSpikes("inputs.dat")
+
+'''
+for addr in cellsA.addresses():
+    fileName = 'Cell_%d.dat' % (cellsA[addr])
+    print "Saving v of cell %s in: %s" % (addr, fileName)
+    print (dir)
+    cellsA[addr].print_v(fileName)
+'''
 	
 end()
