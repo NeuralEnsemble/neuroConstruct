@@ -75,6 +75,10 @@ for projName in nmlHandler.projections.keys():
         else:
             print "    Connection: %s from %s to %s, weight: %s, delay: %s" % (conn.port, conn.pre, conn.post, conn.weight, conn.delay)
 
+for inputName in nmlHandler.inputSources.keys():
+    
+    input_population = nmlHandler.inputSources[inputName]
+    print "Input source which has been created: %s with %d connections"% (inputName, input_population.size)
     
 exit()
 

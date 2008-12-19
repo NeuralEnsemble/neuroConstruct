@@ -148,6 +148,9 @@ public class NetworkMLConstants
 
     public static String INPUT_TARGET_ELEMENT = "target";
     public static String INPUT_TARGET_SITES_ELEMENT = "sites";
+    
+    public static String INPUT_SITES_SIZE_ATTR = "size";
+    
     public static String INPUT_TARGET_SITE_ELEMENT = "site";
     public static String INPUT_TARGET_CELLGROUP_ATTR = "cell_group";
     

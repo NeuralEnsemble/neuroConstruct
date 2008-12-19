@@ -41,6 +41,14 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
   
   currentConnId = -1
   
+  
+  currentInputName = ""
+  currentInputSynType = ""
+  currentSynInputFreq = ""
+  currentInputTarget = ""
+  currentInputId = -1
+  
+  
   preCellId = -1
   preSegId = 0
   preFract = -1
@@ -162,7 +170,7 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
           self.isSourceElement = 1
            
            
-    elif name == 'target':
+    elif name == 'target' and not attrs.has_key('cell_group'):
       if self.currentProjectionName != "":    
           self.isTargetElement = 1  
           
@@ -317,10 +325,48 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
                 synProps.threshold = attrs.get('threshold',"")    
                       
             self.log.info("Changed vals of local syn props: "+ synapse_type+": "+ str(synProps))      
-	                       
+	            
+    elif name == 'input':
+      self.currentInputName = attrs.get('name',"")   
+      self.log.info("Found input element: "+ self.currentInputName)   
+      
+           
+    elif name == 'random_stim':
+      self.currentSynType = attrs.get('synaptic_mechanism',"")   
+      self.currentSynInputFreq = attrs.get('frequency',"")   
+      self.log.info("Found input synapse: "+ self.currentSynType+", firing at "+self.currentSynInputFreq)   
+      
+           
+    elif name == 'target':
+      self.currentInputTarget = attrs.get('cell_group',"")    
+      self.log.info("Input: "+ self.currentInputName+" is to population: "+self.currentInputTarget)   
+      
+           
+    elif name == 'sites':
+      size = -1
+      if attrs.has_key('size'):
+          size = int(attrs.get('size',""))     
+      
+      
+      self.netHandler.handleInputSource(self.currentInputName, self.currentInputTarget, self.currentSynType, size)
+      
+           
+    elif name == 'site':
+        cell_id = int(attrs.get('cell_id',""))
+        segment_id = 0
+        fract = 0.5
+        if attrs.has_key('segment_id'):
+            segment_id = int(attrs.get('segment_id',""))
+                
+        if attrs.has_key('fract'):
+            fract = float(attrs.get('fract',""))
+            
+        self.netHandler.handleSingleInput(self.currentInputName, cell_id, segment_id, fract)
+
 			       
     else:
-      others = ["populations", "projections", "connections", "meta:tag", "meta:value", "meta:property", "meta:properties"]
+      others = ["populations", "projections", "connections", "inputs",
+                "meta:tag", "meta:value", "meta:property", "meta:properties"]
       if (others.count(name) == 0):
       	print 'Unhandled, unknown element: '+ name
       

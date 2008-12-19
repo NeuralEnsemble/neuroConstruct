@@ -76,7 +76,18 @@ Network connection: NetConn_CellsA_CellsA contains 6 individual synaptic connect
     </projection>
 </projections>
 
-    <!--There are no electrical inputs present in the network-->
+<inputs units="Physiological Units">
+    <input name="Input_0">
+        <random_stim frequency="0.05000000074505806" synaptic_mechanism="AlphaSyn1"/>
+        <target cell_group="CellsA">
+            <sites size="3">
+                <site cell_id="0" segment_id="0" fraction_along="0.5"/>
+                <site cell_id="1" segment_id="0" fraction_along="0.5"/>
+                <site cell_id="2" segment_id="0" fraction_along="0.5"/>
+            </sites>
+        </target>
+    </input>
+</inputs>
 
 
 </networkml>

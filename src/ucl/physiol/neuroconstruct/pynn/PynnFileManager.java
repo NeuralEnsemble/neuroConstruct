@@ -152,6 +152,13 @@ public class PynnFileManager
         FileWriter fw = null;
         nextColour = new Hashtable<String, Integer>(); // reset it...
         
+        if (project.generatedCellPositions.getNumberInAllCellGroups()==0)
+        {
+            GuiUtils.showErrorMessage(logger, "Please generate a network containing at least one " +
+                    "cell before generating the PyNN scripts", null, null);
+            return;
+        }
+        
         
 
         try

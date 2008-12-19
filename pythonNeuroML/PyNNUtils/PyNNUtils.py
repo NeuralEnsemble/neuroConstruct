@@ -36,6 +36,7 @@ class NetManagerPyNN(NetworkHandler):
         
     populations = {}
     projections = {}  # Note: not yet PyNN "Projections"
+    inputSources = {}  
 	
     simulator = "neuron"
 	
@@ -126,5 +127,18 @@ class NetManagerPyNN(NetworkHandler):
 
         
         
+    #
+    #  Overridden from NetworkHandler
+    #            
+    def handleInputSource(self, inputName, cellGroup, synapseType, size=-1):
         
+        exec("from pyNN.%s import *" % self.simulator) # Does this really need to be imported every time?
+        
+        if size<0:
+            self.log.error("Error at handleInputSource! Need a size attribute in sites element to create spike source!")
+            return
+        
+        input_population  = Population(size, SpikeSourcePoisson, {'rate': 3 }, inputName)
+        
+        self.inputSources[inputName] = input_population
         

@@ -346,13 +346,13 @@ public class GeneratedElecInputs
                     SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.PULSEINPUT_ELEMENT);
 
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DELAY_ATTR, 
-                            UnitConverter.getTime(delay, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+                           (float)UnitConverter.getTime(delay, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
                     
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DUR_ATTR, 
-                            UnitConverter.getTime(duration, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+                            (float)UnitConverter.getTime(duration, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
                     
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_AMP_ATTR, 
-                            UnitConverter.getCurrent(amp, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+                            (float)UnitConverter.getCurrent(amp, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
                     
                     inputElement.addChildElement(inputTypeElement);
                     
@@ -367,7 +367,7 @@ public class GeneratedElecInputs
                    
                     SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.RANDOMSTIM_ELEMENT);
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_FREQ_ATTR, 
-                            UnitConverter.getRate(stimFreq, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+                            (float)UnitConverter.getRate(stimFreq, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
                     
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_MECH_ATTR, stimMech));
                     inputElement.addChildElement(inputTypeElement);
@@ -381,7 +381,9 @@ public class GeneratedElecInputs
                 inputElement.addChildElement(inputTargetElement);
                 inputTargetElement.addContent("\n            ");
                 
-                SimpleXMLElement inputTargetSitesElement = new SimpleXMLElement(NetworkMLConstants.INPUT_TARGET_SITES_ELEMENT);                                
+                SimpleXMLElement inputTargetSitesElement = new SimpleXMLElement(NetworkMLConstants.INPUT_TARGET_SITES_ELEMENT); 
+                
+                inputTargetSitesElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITES_SIZE_ATTR,inputsHere.size()+""));
 
                 inputTargetElement.addChildElement(inputTargetSitesElement);                
                

@@ -86,6 +86,29 @@ class NetworkHandler:
             self.log.debug("Src cell: %d, seg: %f, fract: %f -> Tgt cell %d, seg: %f, fract: %f" % (preCellId,preSegId,preFract,postCellId,postSegId,postFract))
         
         
+   
+    #
+    #  Should be overridden to create input source array
+    #  
+    def handleInputSource(self, inputName, cellGroup, synapseType, size=-1):
+      
+        if size<0:
+            self.log.error("Error! Need a size attribute in sites element to create spike source!")
+            return
+        
+        sizeInfo = " size: "+ str(size)+ " cells"
+            
+        self.log.info("Input Source: "+inputName+", on population: "+cellGroup+sizeInfo)
+             
+        
+    #
+    #  Should be overridden to to connect eacj input to the target celll
+    #  
+    def handleSingleInput(self, inputName, cellId, segId = 0, fract = 0.5):
+        self.log.info("Input : %s, cellId: %i, seg: %i, fract: %f" % (inputName,cellId,segId,fract))
+        
+        
+        
 
     #
     #  To signify network is distributed over parallel nodes
