@@ -24,6 +24,7 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.genesis.*;
 import ucl.physiol.neuroconstruct.neuron.*;
 import ucl.physiol.neuroconstruct.psics.*;
+import ucl.physiol.neuroconstruct.pynn.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
@@ -108,6 +109,7 @@ public class Project implements TableModelListener
     public NeuronFileManager neuronFileManager = null;
     public GenesisFileManager genesisFileManager = null;
     public PsicsFileManager psicsFileManager = null;
+    public PynnFileManager pynnFileManager = null;
     
 
     /**
@@ -853,6 +855,7 @@ public class Project implements TableModelListener
         neuronFileManager = new NeuronFileManager(this);
         genesisFileManager = new GenesisFileManager(this);
         psicsFileManager = new PsicsFileManager(this);
+        pynnFileManager = new PynnFileManager(this);
         neuromlPythonFileManager = new NeuroMLPythonFileManager(this);
 
         proj3Dproperties = new Display3DProperties();

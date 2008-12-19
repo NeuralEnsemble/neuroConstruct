@@ -42,6 +42,7 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.dataset.*;
 import ucl.physiol.neuroconstruct.genesis.*;
 import ucl.physiol.neuroconstruct.psics.*;
+import ucl.physiol.neuroconstruct.pynn.*;
 import ucl.physiol.neuroconstruct.gui.plotter.*;
 import ucl.physiol.neuroconstruct.hpc.condor.*;
 import ucl.physiol.neuroconstruct.hpc.mpi.*;
@@ -56,6 +57,7 @@ import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
 import ucl.physiol.neuroconstruct.project.packing.*;
+import ucl.physiol.neuroconstruct.pynn.PynnFileManager.PynnSimulator;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
@@ -108,6 +110,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     String GENESIS_TAB_EXTRA = "Extra GENESIS code";
     
     String PSICS_SIMULATOR_TAB = "PSICS";
+    
+    String PYNN_SIMULATOR_TAB = "PyNN";
 
     String MORPHML_TAB = "NeuroML";
 
@@ -208,6 +212,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JPanel jPanelExportNeuron = new JPanel();
     JPanel jPanelExportGenesis = new JPanel();
     JPanel jPanelExportPsics = new JPanel();
+    JPanel jPanelExportPynn = new JPanel();
     //JPanel jPanelExportNeosim = new JPanel();
 
 
@@ -485,9 +490,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JButton jButtonCellTypeViewCellInfo = new JButton();
     JPanel jPanelGenesisMain = new JPanel();
     JPanel jPanelPsicsMain = new JPanel();
+    JPanel jPanelPynnMain = new JPanel();
     BorderLayout borderLayout26 = new BorderLayout();
     JLabel jLabelGenesisMain = new JLabel();
     JLabel jLabelPsicsMain = new JLabel();
+    JLabel jLabelPynnMain = new JLabel();
     JPanel jPanelSimNeosimMain = new JPanel();
     JLabel jLabelSimulatorNeosimMain = new JLabel();
     BorderLayout borderLayout27 = new BorderLayout();
@@ -557,13 +564,26 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     GridBagLayout gridBagLayout3 = new GridBagLayout();
     GridBagLayout gridBagLayout33 = new GridBagLayout();
     JPanel jPanelGenesisButtons = new JPanel();
-    JPanel jPanelPsicsButtons = new JPanel();
     JPanel jPanelGenesisView = new JPanel();
     JPanel jPanelGenesisSettings = new JPanel();
     JButton jButtonGenesisGenerate = new JButton();
     JButton jButtonGenesisRun = new JButton();
+    JPanel jPanelPsicsButtons = new JPanel();
+    JPanel jPanelPynnSimOptions = new JPanel();
+    
+    JRadioButton jRadioButtonPynnNeuron = new JRadioButton(PynnFileManager.PynnSimulator.NEURON.name);
+    JRadioButton jRadioButtonPynnNest2 = new JRadioButton(PynnFileManager.PynnSimulator.NEST2.name);
+    JRadioButton jRadioButtonPynnPcsim = new JRadioButton(PynnFileManager.PynnSimulator.PCSIM.name);
+    JRadioButton jRadioButtonPynnBrian = new JRadioButton(PynnFileManager.PynnSimulator.BRIAN.name);
+    JRadioButton jRadioButtonPynnPyMoose = new JRadioButton(PynnFileManager.PynnSimulator.PYMOOSE.name);
+    
+    ButtonGroup buttonGroupPynn = new ButtonGroup();
+    
     JButton jButtonPsicsGenerate = new JButton();
     JButton jButtonPsicsRun = new JButton();
+    JPanel jPanelPynnButtons = new JPanel();
+    JButton jButtonPynnGenerate = new JButton();
+    JButton jButtonPynnRun = new JButton();
     BorderLayout borderLayout32 = new BorderLayout();
     JButton jButtonGenesisView = new JButton();
     JButton jButtonRegionsEdit = new JButton();
@@ -772,6 +792,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JMenuItem jMenuItemGenNeuronPyHDF5 = new JMenuItem();
     JMenuItem jMenuItemGenGenesis = new JMenuItem();
     JMenuItem jMenuItemGenPsics = new JMenuItem();
+    JMenuItem jMenuItemGenPynn = new JMenuItem();
     JMenuItem jMenuItemPrevSims = new JMenuItem();
     JMenuItem jMenuItemDataSets = new JMenuItem();
     JMenuItem jMenuItemListSims = new JMenuItem();
@@ -969,6 +990,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelExportGenesis.setLayout(borderLayout26);
         
         jPanelExportPsics.setLayout(new BorderLayout());
+        jPanelExportPynn.setLayout(new BorderLayout());
         
         
         jLabelGenesisMain.setEnabled(false);
@@ -1247,6 +1269,26 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             public void actionPerformed(ActionEvent e)
             {
                 jButtonPsicsGenerate_actionPerformed(e);
+            }
+        });
+        
+        jButtonPynnRun.setEnabled(false);
+        jButtonPynnRun.setText("Run PyNN Simulation");
+        jButtonPynnRun.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonPynnRun_actionPerformed(e);
+            }
+        });
+        
+        jButtonPynnGenerate.setEnabled(false);
+        jButtonPynnGenerate.setText("Generate Pynn files");
+        jButtonPynnGenerate.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonPynnGenerate_actionPerformed(e);
             }
         });
         
@@ -1906,6 +1948,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             public void actionPerformed(ActionEvent e)
             {
                 jMenuItemGenPsics_actionPerformed(e);
+            }
+        });
+        jMenuItemGenPynn.setText("Generate PyNN");
+        jMenuItemGenPynn.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jMenuItemGenPynn_actionPerformed(e);
             }
         });
 
@@ -3186,9 +3236,25 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelGenesisSettings.add(jLabelGenesisMain,  BorderLayout.NORTH);
         
         jPanelExportPsics.add(jPanelPsicsMain);
+        jPanelExportPynn.add(jPanelPynnMain);
 
         jPanelPsicsMain.setLayout(new GridBagLayout());
         jLabelPsicsMain.setText("Generate code for the PSICS simulator (alpha)");
+        
+        jRadioButtonPynnNest2.setSelected(true);
+                
+        jPanelPynnSimOptions.add(jRadioButtonPynnNeuron);
+        jPanelPynnSimOptions.add(jRadioButtonPynnNest2);
+        jPanelPynnSimOptions.add(jRadioButtonPynnPcsim);
+        jPanelPynnSimOptions.add(jRadioButtonPynnBrian);
+        jPanelPynnSimOptions.add(jRadioButtonPynnPyMoose);
+        
+        buttonGroupPynn.add(jRadioButtonPynnNeuron);
+        buttonGroupPynn.add(jRadioButtonPynnNest2);
+        buttonGroupPynn.add(jRadioButtonPynnPcsim);
+        buttonGroupPynn.add(jRadioButtonPynnBrian);
+        buttonGroupPynn.add(jRadioButtonPynnPyMoose);
+        
         
         jPanelPsicsMain.add(jLabelPsicsMain,
                               new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
@@ -3197,6 +3263,25 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                      new Insets(20, 0, 20, 0), 20, 20));
         jPanelPsicsMain.add(jPanelPsicsButtons,
                               new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
+                                                     ,GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(20, 0, 20, 0), 20, 20));
+        
+        jPanelPynnMain.setLayout(new GridBagLayout());
+        jLabelPynnMain.setText("Generate code for a PyNN simulator (alpha)");
+        
+        jPanelPynnMain.add(jLabelPynnMain,
+                              new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
+                                                     ,GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(20, 0, 20, 0), 20, 20));
+        jPanelPynnMain.add(jPanelPynnSimOptions,
+                              new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
+                                                     ,GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(20, 0, 20, 0), 20, 20));
+        jPanelPynnMain.add(jPanelPynnButtons,
+                              new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
                                                      ,GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(20, 0, 20, 0), 20, 20));
@@ -3569,6 +3654,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         jPanelPsicsButtons.add(jButtonPsicsRun, null);
         
+        jPanelPynnButtons.add(jButtonPynnGenerate, null);
+        
+        jPanelPynnButtons.add(jButtonPynnRun, null);
+        
         
         jPanelGenesisView.add(jButtonGenesisView, null);
         jPanelGenesisView.add(jComboBoxGenesisFiles, null);
@@ -3819,6 +3908,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         if (PsicsFileManager.showPsicsFunc())
             jMenuProject.add(jMenuItemGenPsics);
         
+        
+        jMenuProject.add(jMenuItemGenPynn);
+        
         jMenuProject.addSeparator();
         jMenuProject.add(jMenuItemPrevSims);
         jMenuProject.add(jMenuItemDataSets);
@@ -3846,6 +3938,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         if (PsicsFileManager.showPsicsFunc())
             jTabbedPaneExportFormats.add(jPanelExportPsics, PSICS_SIMULATOR_TAB);
+        
+        
+        jTabbedPaneExportFormats.add(jPanelExportPynn, PYNN_SIMULATOR_TAB);
 
 
         jTabbedPaneExportFormats.add(jPanelNeuroML, MORPHML_TAB);
@@ -6163,6 +6258,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     {
         this.jButtonPsicsRun.setEnabled(enabled);
     }
+    
+    private void setPynnRunEnabled(boolean enabled)
+    {
+        this.jButtonPynnRun.setEnabled(enabled);
+    }
 
     private void doDestroy3D()
     {
@@ -6401,6 +6501,57 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     }
 
+    
+    /**
+     * Generates the Pynn files for the project
+     *
+     */
+    protected void doGeneratePynn()
+    {
+        if (projManager.getCurrentProject() == null)
+        {
+            logger.logError("No project loaded...");
+            return;
+        }
+        
+        logger.logComment("Generating the PyNN files for the project...");
+        
+        int seed = 0;
+        refreshSimulationName();
+        
+        projManager.getCurrentProject().pynnFileManager.reset();
+        
+        
+        try
+        {
+            PynnSimulator sim = null;
+            
+            if (jRadioButtonPynnNeuron.isSelected())
+                sim = PynnFileManager.PynnSimulator.NEURON;
+            else if (jRadioButtonPynnNest2.isSelected())
+                sim = PynnFileManager.PynnSimulator.NEST2;
+            else if (jRadioButtonPynnPcsim.isSelected())
+                sim = PynnFileManager.PynnSimulator.PCSIM;
+            else if (jRadioButtonPynnBrian.isSelected())
+                sim = PynnFileManager.PynnSimulator.BRIAN;
+            else if (jRadioButtonPynnPyMoose.isSelected())
+                sim = PynnFileManager.PynnSimulator.PYMOOSE;
+            
+            projManager.getCurrentProject().pynnFileManager.generateThePynnFiles(this.getSelectedSimConfig(), sim, seed);
+        }
+        catch (Exception ex)
+        {
+            GuiUtils.showErrorMessage(logger, "Error when generating the files: " + ex.getMessage(), ex, this);
+
+            return;
+        }
+        
+        setPynnRunEnabled(true);
+        
+        refreshTabPynn();
+        
+        
+    }
 
     /**
      * Generates the PSICS files for the project
@@ -6450,6 +6601,45 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         setPsicsRunEnabled(true);
         
         refreshTabPsics();
+        
+    }
+    
+    
+    /**
+     * Runs the PSICS files for the project
+     *
+     */
+    protected void doRunPynn()
+    {
+        if (projManager.getCurrentProject() == null)
+        {
+            logger.logError("No project loaded...");
+            return;
+        }
+
+        logger.logComment("Running the Pynn files for the project...");
+        
+        try
+        {
+            if (GeneralProperties.getGenerateMatlab())
+            {
+                MatlabOctave.createSimulationLoader(projManager.getCurrentProject(), getSelectedSimConfig(), this.jTextFieldSimRef.getText());
+            }
+
+            if ((GeneralUtils.isWindowsBasedPlatform() || GeneralUtils.isMacBasedPlatform())
+                && GeneralProperties.getGenerateIgor())
+            {
+                IgorNeuroMatic.createSimulationLoader(projManager.getCurrentProject(), getSelectedSimConfig(),
+                                                      this.jTextFieldSimRef.getText());
+            }
+            
+            projManager.getCurrentProject().pynnFileManager.runFile(true);
+        }
+        catch (PynnException ex)
+        {
+            GuiUtils.showErrorMessage(logger, ex.getMessage(), ex, this);
+            return;
+        }
         
     }
 
@@ -7724,6 +7914,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         this.refreshTabNeuron();
         this.refreshTabGenesis();
         this.refreshTabPsics();
+        this.refreshTabPynn();
         this.refreshTab3D();
         logger.logComment("----------------    *  Done refreshing all  *    ----------------");
 
@@ -8705,6 +8896,29 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
            this.jButtonSimStimCopy.setEnabled(true);
 
        }
+
+    }
+
+    
+
+    /**
+     * Refreshes the tab related to Pynn
+     *
+     */
+    private void refreshTabPynn()
+    {
+        logger.logComment("> Refreshing the Tab for Pynn...");
+        
+        if (projManager.getCurrentProject() == null ||
+            projManager.getCurrentProject().getProjectStatus() == Project.PROJECT_NOT_INITIALISED)
+        {
+            jButtonPynnGenerate.setEnabled(false);
+            jButtonPynnRun.setEnabled(false);
+        }
+        else
+        {
+            jButtonPynnGenerate.setEnabled(true);
+        }
 
     }
 
@@ -11935,6 +12149,19 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         logger.logComment("Run Psics button pressed...");
         doRunPsics();
     }
+    
+    void jButtonPynnGenerate_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("Create Pynn button pressed...");
+        doGeneratePynn();
+
+    }
+
+    void jButtonPynnRun_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("Run Pynn button pressed...");
+        doRunPynn();
+    }
 
     void jButtonGenesisView_actionPerformed(ActionEvent e)
     {
@@ -14431,6 +14658,18 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTabbedPaneExportFormats.setSelectedIndex(jTabbedPaneExportFormats.indexOfTab(this.PSICS_SIMULATOR_TAB));
 
         doGeneratePsics();
+
+    }
+
+
+    void jMenuItemGenPynn_actionPerformed(ActionEvent e)
+    {
+        if (!projManager.projectLoaded()) return;
+
+        jTabbedPaneMain.setSelectedIndex(jTabbedPaneMain.indexOfTab(this.EXPORT_TAB));
+        jTabbedPaneExportFormats.setSelectedIndex(jTabbedPaneExportFormats.indexOfTab(this.PYNN_SIMULATOR_TAB));
+
+        doGeneratePynn();
 
     }
 
