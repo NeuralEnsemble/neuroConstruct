@@ -1283,7 +1283,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         });
         
         jButtonPynnGenerate.setEnabled(false);
-        jButtonPynnGenerate.setText("Generate Pynn files");
+        jButtonPynnGenerate.setText("Generate PyNN files");
         jButtonPynnGenerate.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)

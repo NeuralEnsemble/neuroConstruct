@@ -223,7 +223,10 @@ public class PynnFileManager
             
             fw.write("import sys\n");
             fw.write("import xml\n");
+            fw.write("import time\n");
             fw.write("import logging\n\n");
+            fw.write("startTime = time.time()\n\n");
+            
             
             fw.write("sys.path.append(\"NeuroMLUtils\")\n");
             fw.write("sys.path.append(\"PyNNUtils\")\n\n");
@@ -231,6 +234,12 @@ public class PynnFileManager
             fw.write("from NetworkHandler import NetworkHandler\n");
             fw.write("from NetworkMLSaxHandler import NetworkMLSaxHandler\n");
             fw.write("from PyNNUtils import NetManagerPyNN\n\n");
+            
+            
+            fw.write("tstop = "+simConfig.getSimDuration()+"\n\n");
+            fw.write("dt = "+project.simulationParameters.getDt()+"\n\n");
+            
+            fw.write("setup(timestep=dt)\n\n");
             
             fw.write("netFileName = '"+networkFile.getName()+"'\n");
 
@@ -242,21 +251,91 @@ public class PynnFileManager
 
             fw.write("parser = xml.sax.make_parser()   # A parser for any XML file\n");
 
-            fw.write("nmlHandler = NetManagerPyNN(simulator)	# Stores (most of) the network structure\n");
+            fw.write("pynnNetMgr = NetManagerPyNN(simulator)	# Stores (most of) the network structure\n");
 
-            fw.write("curHandler = NetworkMLSaxHandler(nmlHandler) # The SAX handler knows of the structure of NetworkML and calls appropriate functions in NetworkHandler\n");
+            fw.write("curHandler = NetworkMLSaxHandler(pynnNetMgr) # The SAX handler knows of the structure of NetworkML and calls appropriate functions in NetManagerPyNN\n");
 
-            fw.write("curHandler.setNodeId(-1) 	# Flags to handle cell info for all nodes, as opposed to only cells with a single nodeId >=0\n");
+            //fw.write("curHandler.setNodeId(-1) 	# Flags to handle cell info for all nodes, as opposed to only cells with a single nodeId >=0\n");
 
             fw.write("parser.setContentHandler(curHandler) # Tells the parser to invoke the NetworkMLSaxHandler when elements, characters etc. parsed\n");
 
             fw.write("parser.parse(open(netFileName)) # The parser opens the file and ultimately the appropriate functions in NetworkHandler get called\n");
 
 
-            fw.write("print(\"Have read in contents of file: \"+netFileName)\n");
+            fw.write("print(\"Have read in contents of file: \"+netFileName)\n\n");
+            fw.write("print(\"Have created: %s populations, %s projections and %s input sources\" % " +
+                    "(len(pynnNetMgr.populations.keys())," +
+                    "len(pynnNetMgr.projections.keys())," +
+                    "len(pynnNetMgr.inputSources.keys())))\n\n");
+            
+            //ArrayList<String> plotSaves = simConfig.getPlots();
+            ArrayList<PlotSaveDetails> plotSaves = project.generatedPlotSaves.getAllPlotSaves();
+            
+            for (PlotSaveDetails psd: plotSaves)
+            {
+                if(psd.simPlot.toBeSaved())  // No plotting just yet...
+                {
+                    fw.write("print(\"Going to save details of: %s cells in population: %s\" % ("+psd.cellNumsToPlot.size()
+                            +", \""+psd.simPlot.getCellGroup()+"\"))\n");
+                    
+                    if (psd.allCellsInGroup)
+                    {
+                        if (psd.simPlot.getValuePlotted().equals(SimPlot.VOLTAGE))
+                        {
+                            fw.write("pynnNetMgr.populations[\""+psd.simPlot.getCellGroup()+"\"].record_v()\n\n");
+                        }
+                        else
+                        {
+                            fw.write("print(\"Recording anything besides voltage not implemented yet!\"\n");
+                        }
+                        
+                    }
+                    else
+                    {
+                        fw.write("print(\"Recording of individual cells not implemented yet!\"\n");
+                    }
+                }
+            }
             
             
             
+
+            fw.write("preRunTime = time.time()\n\n");
+            fw.write("print(\"Running simulation for %sms\"%tstop)\n");
+            fw.write("run(tstop)\n");
+            fw.write("postRunTime = time.time()\n\n");
+            fw.write("print(\"Finished simulation. Setup time: %f secs, run time: %f secs\" % (preRunTime-startTime, postRunTime-preRunTime))\n\n");
+            
+            for (PlotSaveDetails psd: plotSaves)
+            {
+                if(psd.simPlot.toBeSaved())  // No plotting just yet...
+                {                    
+                    if (psd.allCellsInGroup)
+                    {
+                        if (psd.simPlot.getValuePlotted().equals(SimPlot.VOLTAGE))
+                        {
+                            fw.write("pynnNetMgr.populations[\""+psd.simPlot.getCellGroup()+"\"].print_v(\""+psd.simPlot.getCellGroup()+".dat\")\n");
+                        }
+                        
+                    }
+                }
+            }
+            
+            fw.write("\ntimeFile = open(\"time.dat\", mode=\"w\")\n");
+            //fw.write("for i in range(0,int(tstop/dt)+1):\n");
+            fw.write("for i in range(1,int(tstop/dt)):\n");
+            fw.write("    timeFile.write(str(i*dt)+\"\\n\")\n");
+            fw.write("timeFile.close()\n\n");
+            
+            fw.write("postSaveTime = time.time()\n\n");
+            
+            fw.write("simFile = open(\"simulator.props\", mode=\"w\")\n");
+            fw.write("simFile.write(\"#This file contains properties generated during the PyNN script execution\\n\")\n");
+            fw.write("simFile.write(\"RealSimulationTime=%f\\n\"% (postRunTime-preRunTime))\n");
+            fw.write("simFile.write(\"SimulationSetupTime=%f\\n\"% (preRunTime-startTime))\n");
+            fw.write("simFile.write(\"SimulationSaveTime=%f\\n\"% (postSaveTime-postRunTime))\n");
+            fw.write("simFile.write(\"TotalTime=%f\\n\"% (postSaveTime-startTime))\n");
+            fw.write("simFile.close()\n\n");
             
             
             fw.flush();
@@ -288,6 +367,8 @@ public class PynnFileManager
 
         logger.logComment("... Created Main Pynn file: " + mainFile
                 +" in "+genTime+" seconds. ");
+        
+        
         
 
     }
@@ -437,6 +518,17 @@ public class PynnFileManager
                                       "Problem saving generated positions in file: " + positionsFile.getAbsolutePath(),
                                       ex, null);
             return;
+        }
+        
+        // Saving summary of the simulation params
+        try
+        {
+            SimulationsInfo.recordSimulationSummary(project, simConfig, dirForSimDataFiles, "PyNN_"+simulator.moduleName, null);
+        }
+        catch (IOException ex2)
+        {
+            GuiUtils.showErrorMessage(logger, "Error when trying to save a summary of the simulation settings in dir: "+ dirForSimDataFiles +
+                                      "\nThere will be less info on this simulation in the previous simulation browser dialog", ex2, null);
         }
 
 

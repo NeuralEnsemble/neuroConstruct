@@ -379,7 +379,12 @@ public class SimulationsInfo extends AbstractTableModel
 
         props.setProperty("Simulation temp", project.simulationParameters.getTemperature()+"");
 
-        if (simulator.equals("GENESIS") || simulator.equals("MOOSE"))
+        
+        if (simulator.toLowerCase().indexOf("pynn")>=0)
+        {
+            props.setProperty("Unit system", UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS));
+        }
+        else if (simulator.equals("GENESIS") || simulator.equals("MOOSE"))
         {
             props.setProperty("Num integration method", project.genesisSettings.getNumMethod().toString());
             props.setProperty("Unit system", UnitConverter.getUnitSystemDescription(project.genesisSettings.getUnitSystemToUse()));

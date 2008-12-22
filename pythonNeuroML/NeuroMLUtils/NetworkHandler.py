@@ -43,7 +43,15 @@ class NetworkHandler:
         self.log.info("Connection "+str(id)+" of: "+projName+": cell "+str(preCellId)+" in "+source \
                               +" -> cell "+str(postCellId)+" in "+target+", syn: "+ str(synapseType)+", weight: "+str(weight))
         
+         
+    #
+    #  Internal info method, can be reused in overriding classes for debugging
+    #        
+    def printInputInformation(self, inputName, cellGroup, inputProps, size=-1):
+        sizeInfo = " size: "+ str(size)+ " cells"
+        self.log.info("Input Source: "+inputName+", on population: "+cellGroup+sizeInfo+" with props: "+ str(inputProps))
         
+    
 
     #
     #  Should be overridden to create cell group/population array
@@ -90,15 +98,12 @@ class NetworkHandler:
     #
     #  Should be overridden to create input source array
     #  
-    def handleInputSource(self, inputName, cellGroup, synapseType, size=-1):
-      
+    def handleInputSource(self, inputName, cellGroup, inputProps=[], size=-1):
+        self.printInputInformation(inputName, cellGroup, inputProps, size)
+        
         if size<0:
             self.log.error("Error! Need a size attribute in sites element to create spike source!")
             return
-        
-        sizeInfo = " size: "+ str(size)+ " cells"
-            
-        self.log.info("Input Source: "+inputName+", on population: "+cellGroup+sizeInfo)
              
         
     #

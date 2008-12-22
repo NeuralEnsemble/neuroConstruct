@@ -51,6 +51,7 @@ public class SimulationData
     //private File timesDataFile = null;
 
     private int suggestedInitCapData = 1000;
+    private int suggestedInitCapCells = 100;
     private int suggestedInitCapSpikes = 50;
 
     /**
@@ -258,15 +259,32 @@ public class SimulationData
                 yUnit = UnitConverter.conductanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
             }
 
-
-
-
             if (yUnit.length()>0)
             {
                 xUnit =  "ms";
             }
+            
+            logger.logComment("yUnit: "+yUnit+", xUnit: "+xUnit+", conversionFactor: "+conversionFactor);
 
-            if (variable.indexOf(SimPlot.SPIKE)<0)
+            
+            if (cellNum<0)  // probably from PyNN...
+            {
+                double[][] dataArrays = read2dDataFileToArrays(cellDataFiles[fileIndex], conversionFactor);
+                
+                for (int cellNumIndex= 0 ; cellNumIndex<dataArrays.length;cellNumIndex++)
+                {
+                    
+                    DataStore ds = new DataStore(dataArrays[cellNumIndex], cellGroup, cellNumIndex, segId, variable, xUnit, yUnit, pso);
+
+                    logger.logComment("Added ds: "+ ds);
+                    dataSources.add(ds);
+                }
+                //DataStore ds = new DataStore(dataArray, cellGroup, cellNum, segId, variable, xUnit, yUnit, pso);
+
+                //dataSources.add(ds);
+
+            }
+            else if (variable.indexOf(SimPlot.SPIKE)<0)
             {
                 double[] dataArray = readDataFileToArray(cellDataFiles[fileIndex], conversionFactor);
                 DataStore ds = new DataStore(dataArray, cellGroup, cellNum, segId, variable, xUnit, yUnit, pso);
@@ -507,6 +525,80 @@ public class SimulationData
             for (int i = 0; i < tempList.size(); i++)
             {
                 data[i] = tempList.get(i);
+            }
+            //System.out.println("Read in "+data.length+" values. First: "+data[0]+", last: "+data[data.length-1] );
+            return data;
+        }
+        catch (IOException e)
+        {
+            throw new SimulationDataException("Error reading from file: "+ dataFile.getAbsolutePath(), e);
+        }
+        catch (NumberFormatException ne)
+        {
+            throw new SimulationDataException("Error reading line: ("+nextLine+") from file: "+ dataFile.getAbsolutePath(), ne);
+        }
+
+    }
+
+    /*
+     * To handle data files saved through PyNN. These are 2 column data files with voltage & cell number, i.e.
+     * -65      0
+     * -65      1
+     * -65.1    0
+     * -65.1    1
+     * ...
+     * 
+     */
+    private double[][] read2dDataFileToArrays(File dataFile, double scaleFactor) throws SimulationDataException
+    {
+        String nextLine = null;
+        double[][] data = null;
+        try
+        {
+            Reader in = new FileReader(dataFile);
+            LineNumberReader reader = new LineNumberReader(in);
+
+            /** @todo check if there's a quicker way to do this */
+
+            
+            Hashtable<Integer, ArrayList<Double>> tempList = new Hashtable<Integer, ArrayList<Double>>();
+
+            while ( (nextLine = reader.readLine()) != null && nextLine.length()>0)
+            {
+                if (!nextLine.startsWith("//") && 
+                    !nextLine.startsWith("#") && 
+                        nextLine.trim().length()>0)
+                {
+                    String[] sp = nextLine.trim().split("\\s+");
+                    
+                    double nextVal = Double.parseDouble(sp[0]);
+                    int cellNum = Integer.parseInt(sp[1]);
+                    if (!tempList.containsKey(cellNum))
+                        tempList.put(cellNum, new ArrayList<Double>(suggestedInitCapData));
+                    ArrayList<Double> arr = tempList.get(cellNum);
+                    arr.add(scaleFactor * nextVal);
+                        
+                }
+            }
+
+            if (tempList.size() > suggestedInitCapData) suggestedInitCapData = tempList.size();
+
+            in.close();
+            
+            data = new double[tempList.keySet().size()][tempList.get(0).size()];
+
+            Enumeration<Integer> cellNums = tempList.keys();
+            
+            while (cellNums.hasMoreElements())
+            {
+                int cellNum = cellNums.nextElement();
+                ArrayList<Double> vals = tempList.get(cellNum);
+                
+                for (int i = 0; i < vals.size(); i++)
+                {
+                    data[cellNum][i] = vals.get(i);
+                }
+                ////////////data[i] = tempList.get(i);
             }
             //System.out.println("Read in "+data.length+" values. First: "+data[0]+", last: "+data[data.length-1] );
             return data;
@@ -832,6 +924,8 @@ public class SimulationData
 
     public static String getCellGroup(String cellRefOrCellSegRef)
     {
+        if (cellRefOrCellSegRef.indexOf("_")<0)
+            return cellRefOrCellSegRef;
         String cellRef = getCellRef(cellRefOrCellSegRef);
         return cellRef.substring(0, cellRef.lastIndexOf("_"));
     }
@@ -1035,7 +1129,8 @@ public class SimulationData
     public static void main(String[] args)
     {
         //File f = new File("projects/PlotSave/simulations/Sim_43/");
-        File f = new File("projects/Spiky/simulations/Sim_33");
+        //File f = new File("projects/Spiky/simulations/Sim_33");
+        File f = new File("models/PyNNTest/simulations/Sim_80");
         SimulationData simulationData1 = null;
         try
         {

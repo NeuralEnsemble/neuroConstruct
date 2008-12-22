@@ -37,6 +37,9 @@ class NetManagerPyNN(NetworkHandler):
     populations = {}
     projections = {}  # Note: not yet PyNN "Projections"
     inputSources = {}  
+    inputCellGroups = {}  
+    
+    inputCount = {}
 	
     simulator = "neuron"
 	
@@ -125,12 +128,13 @@ class NetManagerPyNN(NetworkHandler):
         proj.append(connect(srcCell, tgtCell, weight=float(localWeight), delay=float(delayTotal)))
         
 
-        
+      
         
     #
     #  Overridden from NetworkHandler
     #            
-    def handleInputSource(self, inputName, cellGroup, synapseType, size=-1):
+    def handleInputSource(self, inputName, cellGroup, inputProps=[], size=-1):
+        self.printInputInformation(inputName, cellGroup, inputProps, size)
         
         exec("from pyNN.%s import *" % self.simulator) # Does this really need to be imported every time?
         
@@ -138,7 +142,35 @@ class NetManagerPyNN(NetworkHandler):
             self.log.error("Error at handleInputSource! Need a size attribute in sites element to create spike source!")
             return
         
-        input_population  = Population(size, SpikeSourcePoisson, {'rate': 3 }, inputName)
+        if inputProps.keys().count("synaptic_mechanism")>0 and inputProps.keys().count("frequency")>0:
+            
+            #TODO: check units in nml files and put correct conversion here
+            input_population  = Population(size, SpikeSourcePoisson, {'rate': float(inputProps["frequency"])*1000 }, inputName)
         
-        self.inputSources[inputName] = input_population
+            self.inputCellGroups[inputName] = cellGroup
+        
+            self.inputSources[inputName] = input_population
+        
+        
+    #
+    #  Overridden from NetworkHandler
+    #          
+    def handleSingleInput(self, inputName, cellId, segId = 0, fract = 0.5):
+        
+        exec("from pyNN.%s import *" % self.simulator) # Does this really need to be imported every time?
+        
+        if self.inputCount.keys().count(inputName)==0:
+            self.inputCount[inputName] = 0
+            
+        self.log.info("Associating input: %i from: %s to cell %i"%(self.inputCount[inputName],inputName,cellId))
+        
+        srcInput = self.inputSources[inputName][(self.inputCount[inputName],)]
+       
+        tgtCell = self.populations[self.inputCellGroups[inputName]][(int(cellId),)]
+        connect(srcInput, tgtCell, weight=1.0)
+            
+        self.inputCount[inputName]+=1
+             
+        
+    
         

@@ -13,17 +13,20 @@ import sys
 import xml
 
 import logging
+import time
  
 sys.path.append("../NeuroMLUtils")
 sys.path.append("../PyNNUtils")
 
 # Lines from standard PyNN examples
 if hasattr(sys,"argv"):     # run using python
-	print sys.argv
 	simulator = sys.argv[-1]
 else:
     simulator = "neuron"    # run using nrngui -python
 	
+
+logging.basicConfig(level=logging.INFO, format="%(name)-19s %(levelname)-5s - %(message)s")
+
 from NetworkHandler import NetworkHandler
 from NetworkMLSaxHandler import NetworkMLSaxHandler
 from PyNNUtils import NetManagerPyNN
@@ -31,9 +34,12 @@ from PyNNUtils import NetManagerPyNN
 	
 exec("from pyNN.%s import *" % simulator)
 
-file_name = 'small_pynn.nml'
+startTime = time.time()
 
-logging.basicConfig(level=logging.INFO, format="%(name)-19s %(levelname)-5s - %(message)s")
+dt = 0.1
+setup(timestep=dt, debug=False)
+
+file_name = 'small_pynn.nml'
 
 
 print("Going to read contents of a NetworkML file: "+str(file_name))
@@ -58,6 +64,8 @@ for popName in nmlHandler.populations.keys():
     
     population = nmlHandler.populations[popName]
     print "Population which has been created: %s with %d cells"% (popName, population.size)
+    
+    population.record_v()
 
     for addr in population.addresses():
         gid  = population[addr]
@@ -78,9 +86,43 @@ for projName in nmlHandler.projections.keys():
 for inputName in nmlHandler.inputSources.keys():
     
     input_population = nmlHandler.inputSources[inputName]
+    
+    input_population.record()
+    
     print "Input source which has been created: %s with %d connections"% (inputName, input_population.size)
     
+
+
+tstop = 200.0
+
+preRunTime = time.time()
+print "---- Running the simulation ----"
+run(tstop)
+postRunTime = time.time()
+
+print "Finished simulation. Setup time: %f secs, run time: %f secs"%(preRunTime-startTime, postRunTime-preRunTime)
+
+
+for popName in nmlHandler.populations.keys():
+    
+    population = nmlHandler.populations[popName]
+    population.print_v("%s.dat"%population.label)
+    
+    
+for inputName in nmlHandler.inputSources.keys():
+    
+    input_population = nmlHandler.inputSources[inputName]
+    input_population.printSpikes("inputs.dat")
+
+'''
+tFile = open("time.dat", mode="w")
+for i in range(0,int(tstop/dt)+1):
+    tFile.write(str(i*dt)+"\n")
+tFile.close()
+'''
+
 exit()
+
 
 
 

@@ -43,8 +43,7 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
   
   
   currentInputName = ""
-  currentInputSynType = ""
-  currentSynInputFreq = ""
+  currentInputProps = {}
   currentInputTarget = ""
   currentInputId = -1
   
@@ -332,9 +331,12 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
       
            
     elif name == 'random_stim':
-      self.currentSynType = attrs.get('synaptic_mechanism',"")   
-      self.currentSynInputFreq = attrs.get('frequency',"")   
-      self.log.info("Found input synapse: "+ self.currentSynType+", firing at "+self.currentSynInputFreq)   
+        
+      self.currentInputProps["synaptic_mechanism"] = attrs.get('synaptic_mechanism',"")
+      self.currentInputProps["frequency"] = attrs.get('frequency',"") 
+      
+      self.log.info("Found input properties: "+ str(self.currentInputProps))   
+      
       
            
     elif name == 'target':
@@ -348,7 +350,7 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
           size = int(attrs.get('size',""))     
       
       
-      self.netHandler.handleInputSource(self.currentInputName, self.currentInputTarget, self.currentSynType, size)
+      self.netHandler.handleInputSource(self.currentInputName, self.currentInputTarget, self.currentInputProps, size)
       
            
     elif name == 'site':
@@ -458,6 +460,11 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
       self.isSynapseTypeElement = 0    
       self.log.debug("Found end of synapse_type: "+ self.latestSynapseType)       
       
+    elif name == 'input':         
+        currentInputName = ""
+        currentInputProps = {}
+        currentInputTarget = ""
+        currentInputId = -1
            
 
         
