@@ -31,7 +31,6 @@ from NetworkHandler import NetworkHandler
 from NetworkMLSaxHandler import NetworkMLSaxHandler
 from PyNNUtils import NetManagerPyNN
 
-	
 exec("from pyNN.%s import *" % simulator)
 
 startTime = time.time()
@@ -81,6 +80,7 @@ for projName in nmlHandler.projections.keys():
         if (simulator == "neuron"):
             print "    Connection: %s"% (conn)
         else:
+            print "    Connection: %s"% (conn)
             print "    Connection: %s from %s to %s, weight: %s, delay: %s" % (conn.port, conn.pre, conn.post, conn.weight, conn.delay)
 
 for inputName in nmlHandler.inputSources.keys():

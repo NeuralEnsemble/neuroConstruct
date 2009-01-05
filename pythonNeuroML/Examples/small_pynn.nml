@@ -24,7 +24,7 @@ Network connection: NetConn_CellsA_CellsA contains 6 individual synaptic connect
 </meta:properties>
 
 <populations>
-    <population name="CellsB" cell_type="IF_cond_alpha">
+    <population name="CellsB" cell_type="CellTypeA">
         <instances size="4">
             <instance id="0">
                 <location x="39.78004" y="75.63996" z="105.16366"/>
@@ -40,7 +40,7 @@ Network connection: NetConn_CellsA_CellsA contains 6 individual synaptic connect
             </instance>
         </instances>
     </population>
-    <population name="CellsA" cell_type="IF_cond_alpha">
+    <population name="CellsA" cell_type="CellTypeA">
         <instances size="3">
             <instance id="0">
                 <location x="71.45491" y="23.219496" z="45.37951"/>

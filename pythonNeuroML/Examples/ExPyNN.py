@@ -12,6 +12,10 @@
 
 import sys
 
+simulator = ""
+
+print "Has args: %s" % hasattr(sys,"argv")
+
 # Lines from standard PyNN examples
 if hasattr(sys,"argv"):     # run using python
     simulator = sys.argv[-1]
@@ -26,9 +30,11 @@ rng = NumpyRNG(seed=1234)
 
 print "Running PyNN script in simulator: "+ simulator
 
+from CellTypeA import *
+
 cellNumA = 2
 cellNumB = 4
-cellType = IF_cond_alpha
+cellType = CellTypeA
 connNum = 10
 
 tstop = 200.0
@@ -82,20 +88,21 @@ for i in range(connNum):
 	tgt = gidsB[int(NumpyRNG.next(rng) * len(gidsB))]
 	
 	print "Connecting cell %s in %s to cell %s in %s" % (src, cellsA.label, tgt, cellsB.label)
-	connect(cellsA[cellsA.locate(src)], cellsB[cellsB.locate(tgt)], weight=1)
+	connect(cellsA[cellsA.locate(src)], cellsB[cellsB.locate(tgt)], weight=1.0)
 
-
-voltDistr = RandomDistribution('uniform',[-80,-50],rng)
-
-cellsA.randomInit(voltDistr)
-cellsB.randomInit(voltDistr)
+if simulator != "nest2":
+        
+    voltDistr = RandomDistribution('uniform',[-80,-50],rng)
+    
+    cellsA.randomInit(voltDistr)
+    cellsB.randomInit(voltDistr)
 
 spikes = [20,40,60,80]
 input_population  = Population(cellNumA, SpikeSourceArray, {'spike_times': spikes }, "inputsToA")
 
 
 for i in range(0,cellNumA):
-    connect(input_population[(i,)], cellsA[(i,)], weight=1)
+    connect(input_population[(i,)], cellsA[(i,)], weight=1.0)
 
 cellsA.record_v()
 cellsB.record_v()
