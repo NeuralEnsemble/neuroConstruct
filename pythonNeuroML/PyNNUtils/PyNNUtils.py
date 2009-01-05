@@ -42,6 +42,8 @@ class NetManagerPyNN(NetworkHandler):
     inputCount = {}
 	
     simulator = "neuron"
+    
+    myRandNumGen = None
 	
 	
     def __init__(self, simulator="neuron"):
@@ -50,6 +52,10 @@ class NetManagerPyNN(NetworkHandler):
         exec("from pyNN.%s import *" % self.simulator)
         
         setup()
+        
+        
+    def setRandNumGen(self, rng):
+        self.myRandNumGen = rng
        
     
     #
@@ -66,9 +72,16 @@ class NetManagerPyNN(NetworkHandler):
             
             standardCell = IF_cond_alpha
             
-            if (cellType.count("IF_cond_alpha")>=0):
-                standardCell = IF_cond_alpha
-            # Todo: add more...
+            try:
+                # Try importing a files named after that cell
+                exec("from %s import *" % cellType)
+                exec("standardCell = %s" % cellType)
+                
+            except ImportError:
+                # Else check if it refers to a standard type
+                if (cellType.count("IF_cond_alpha")>=0):
+                    standardCell = IF_cond_alpha
+                #TODO: more...
             
             pop = Population((size,), standardCell, label=cellGroup)
             self.populations[cellGroup] = pop
@@ -167,7 +180,8 @@ class NetManagerPyNN(NetworkHandler):
         srcInput = self.inputSources[inputName][(self.inputCount[inputName],)]
        
         tgtCell = self.populations[self.inputCellGroups[inputName]][(int(cellId),)]
-        connect(srcInput, tgtCell, weight=1.0)
+        #TODO use max cond*weight for weight here...
+        connect(srcInput, tgtCell, weight=0.005)
             
         self.inputCount[inputName]+=1
              
