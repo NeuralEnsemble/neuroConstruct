@@ -426,9 +426,14 @@ public class ChannelMLConstants
         return getOhmicXPath() + "/" + CONDUCTANCE_ELEMENT;
     }
 
-    public static String getCondDensXPath()
+    public static String getPreV1_7_3CondDensXPath()
     {
         return getConductanceXPath() + "/@" + DEFAULT_COND_DENSITY_ATTR;
+    }
+    
+    public static String getPostV1_7_3CondDensXPath()
+    {
+        return getCurrVoltRelXPath() + "/@" + DEFAULT_COND_DENSITY_ATTR;
     }
 
 

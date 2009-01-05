@@ -135,7 +135,7 @@ public class DataSetInfo extends AbstractTableModel
 
                     try
                     {
-                        dataSets = DataSetManager.loadFromDataSetFile(childrenDirs[i], true);
+                        dataSets = DataSetManager.loadFromDataSetFile(childrenDirs[i], true, DataSetManager.DataReadFormat.UNSPECIFIED);
 
                         for(DataSet ds: dataSets)
                             dataSetObjs.add(ds);
@@ -187,7 +187,7 @@ public class DataSetInfo extends AbstractTableModel
     {
         DataSet ds = dataSetObjs.elementAt(row);
 
-        return DataSetManager.loadFromDataSetFile(ds.getDataSetFile(), false).get(0);
+        return DataSetManager.loadFromDataSetFile(ds.getDataSetFile(), false, DataSetManager.DataReadFormat.UNSPECIFIED).get(0);
     }
 
     public String getDataSetReference(int row) throws DataSetException

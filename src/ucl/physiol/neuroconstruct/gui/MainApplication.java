@@ -282,7 +282,7 @@ public class MainApplication
                     }
                     File dataFile = new File(args[i+1]);
                     
-                    ArrayList<DataSet> dataSets = DataSetManager.loadFromDataSetFile(dataFile, false);
+                    ArrayList<DataSet> dataSets = DataSetManager.loadFromDataSetFile(dataFile, false, DataSetManager.DataReadFormat.UNSPECIFIED);
                     
                     String plotFrameRef = "Plot of data from "+dataFile.getAbsolutePath();
 

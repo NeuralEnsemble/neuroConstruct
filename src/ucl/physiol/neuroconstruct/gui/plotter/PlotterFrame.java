@@ -3173,7 +3173,7 @@ public class PlotterFrame extends JFrame
             ArrayList<DataSet> dss = null;
             try
             {
-                dss = DataSetManager.loadFromDataSetFile(file, false);
+                dss = DataSetManager.loadFromDataSetFile(file, false, DataSetManager.DataReadFormat.UNSPECIFIED);
             }
             catch(Exception ex)
             {

@@ -247,6 +247,7 @@ public class NumberGeneratorDialog extends JDialog
 
     }
 
+    @Override
     protected void processWindowEvent(WindowEvent e)
     {
         //super.processWindowEvent(e);
@@ -339,7 +340,7 @@ public class NumberGeneratorDialog extends JDialog
             dlg.setLocation( (screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
             dlg.setVisible(true);
 
-            return dlg.getFinalNumGen();
+            return dlg.getFinalNumberGen();
 
         }
 
@@ -578,7 +579,12 @@ public class NumberGeneratorDialog extends JDialog
         doCancel();
     }
 
-    public WeightGenerator getFinalNumGen()
+    public NumberGenerator getFinalNumberGen()
+    {
+        return numGen;
+    }
+    
+    public WeightGenerator getFinalWeightGen()
     {
         return (WeightGenerator) numGen;
     }

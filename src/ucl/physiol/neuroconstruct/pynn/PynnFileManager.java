@@ -16,8 +16,9 @@ import java.io.*;
 import java.util.*;
 
 
-import ucl.physiol.neuroconstruct.neuroml.NetworkMLConstants;
-import ucl.physiol.neuroconstruct.neuroml.NeuroMLException;
+import ucl.physiol.neuroconstruct.cell.*;
+import ucl.physiol.neuroconstruct.mechanisms.*;
+import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.GeneratedPlotSaves.*;
 import ucl.physiol.neuroconstruct.simulation.*;
@@ -227,6 +228,10 @@ public class PynnFileManager
             fw.write("import logging\n\n");
             fw.write("startTime = time.time()\n\n");
             
+            //fw.write("from pyNN.random import NumpyRNG\n");
+            //fw.write("rng = NumpyRNG(seed="+randomSeed+")\n\n");
+            fw.write("numpy.random.seed("+randomSeed+") # Is this the only place the seed needs to be set??\n\n");
+            
             
             fw.write("sys.path.append(\"NeuroMLUtils\")\n");
             fw.write("sys.path.append(\"PyNNUtils\")\n\n");
@@ -235,6 +240,24 @@ public class PynnFileManager
             fw.write("from NetworkMLSaxHandler import NetworkMLSaxHandler\n");
             fw.write("from PyNNUtils import NetManagerPyNN\n\n");
             
+            ArrayList<String> cellTypeDefsToInclude = new ArrayList<String>();
+            
+            ArrayList<String> cellGroups = project.generatedCellPositions.getNonEmptyCellGroups();
+            for(String cg: cellGroups)
+            {
+                String cellType = project.cellGroupsInfo.getCellType(cg);
+                
+                if (!cellTypeDefsToInclude.contains(cellType)) 
+                {
+                    cellTypeDefsToInclude.add(cellType);
+                    
+                    generateFileForCell(project.cellManager.getCell(cellType), dirForPynnFiles);
+                }
+            }
+            for (String cellType: cellTypeDefsToInclude)
+            {
+                fw.write("from "+cellType+" import *\n\n");
+            }
             
             fw.write("tstop = "+simConfig.getSimDuration()+"\n\n");
             fw.write("dt = "+project.simulationParameters.getDt()+"\n\n");
@@ -417,9 +440,144 @@ public class PynnFileManager
 
 
 
+    public void generateFileForCell(Cell cell, File dir) throws PynnException
+    {
+        File f = new File(dir, cell.getInstanceName()+".py");
+        
+        FileWriter fw = null;
+        
+        try
+        {
+            fw = new FileWriter(f);
+               
+            fw.write(getFileHeader());
+            
+            
+            fw.write("simulator = '"+simulator.moduleName+"'\n\n");           
+            
+            
+            fw.write("try:\n");
+            fw.write("    exec(\"from pyNN.%s import *\" % simulator)\n");
+            fw.write("except ImportError:\n");
+            fw.write("    print \'There was a problem importing the module: pyNN.%s\' % simulator\n");
+            fw.write("    print \'Please make sure the PyNN implementation of %s is correctly installed\' % simulator\n");
+            fw.write("    exit()\n\n");
+            
+            if (cell.getAllSegments().size()>1)
+            {
+                throw new PynnException("Error, PyNN does not support multi compartmental cells yet!");
+                
+            }
+            
+            Hashtable<String, Float> cellParams = new Hashtable<String, Float>();
+            
+            cellParams.put("v_init", cell.getInitialPotential().getNominalNumber());
+            
+            float cellArea = cell.getAllSegments().get(0).getSegmentSurfaceArea();
+            float specCap = cell.getSpecCapForGroup(Section.ALL);
+            
+            ////////// TODO: use correct units, etc.
+            
+            cellParams.put("cm", cellArea*specCap*1e5f); // ????????????
+            
+            
+            Enumeration<ChannelMechanism> cms = cell.getChanMechsVsGroups().keys();
+            while(cms.hasMoreElements())
+            {
+                ChannelMechanism cm = cms.nextElement();
+                try 
+                {
+                
+                    ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism)project.cellMechanismInfo.getCellMechanism(cm.getName());
+                
+                    cmlMech.initialise(project, false);
+              
+
+                    Vector<String> groups = cell.getChanMechsVsGroups().get(cm);
+                    for(String group: groups)
+                    {
+                        if (!(group.equals(Section.ALL) || group.equals(Section.SOMA_GROUP)))
+                        {
+                            throw new PynnException("Error, only channels on soma group or all allowed!\n" +
+                                    "Channels: "+ cell.getChanMechsVsGroups());
+                        }
+                        if (cmlMech.isPassiveNonSpecificCond())
+                        {
+                            float condDens = Float.parseFloat(cmlMech.getValue(ChannelMLConstants.getPostV1_7_3CondDensXPath()));
+                            
+                            float totRes = (1.0f/condDens) * cellArea;
+                            float membTimeConst = (totRes * cellArea * specCap);
+            
+                            cellParams.put("tau_m", membTimeConst*1000);
+                            
+                            
+                            float revPot = Float.parseFloat(cmlMech.getValue(ChannelMLConstants.getIonRevPotXPath()));
+                            
+                            // TODO: check units!!
+                            cellParams.put("v_rest", revPot);
+                            
+                            
+                        }
+                    }
+                } 
+                catch (ChannelMLException ex) 
+                {
+                    throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanims");
+                    
+                }
+                catch (ClassCastException ex) 
+                {
+                    throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanims");
+                    
+                }
+            }
+            
+            
+            
+            fw.write("class "+cell.getInstanceName()+"(IF_cond_exp):\n\n");
+            fw.write("    def __init__ (self, parameters): \n");
+            Enumeration<String> names = cellParams.keys();
+            
+            fw.write("        if parameters == None:\n");
+            fw.write("            parameters = {}\n\n");
+            while(names.hasMoreElements())
+            {
+                String name = names.nextElement();
+                float val = cellParams.get(name);
+                
+                fw.write("        if not parameters.has_key('"+name+"'): \n");
+                fw.write("            parameters['"+name+"'] = "+val+" \n\n");
+                
+            }
+                
+            fw.write("        IF_cond_exp.__init__ (self, parameters)\n");
+            fw.write("        print \"Created new "+cell.getInstanceName()+"...\"\n");
+            
+            
+            
+            fw.close();
+            
+        }
+        catch (IOException ex)
+        {
+            logger.logError("Problem: ",ex);
+            try
+            {
+                fw.close();
+            }
+            catch (Exception ex1)
+            {
+                throw new PynnException("Error creating file: " + mainFile.getAbsolutePath()
+                                          + "\n"+ ex.getMessage()+ "\nEnsure the PyNN files you are trying to generate are not currently being used", ex1);
+            }
+            throw new PynnException("Error creating file: " + mainFile.getAbsolutePath()
+                                      + "\n"+ ex.getMessage()+ "\nEnsure the PyNN files you are trying to generate are not currently being used", ex);
+
+        }
+        
+    }
 
 
-    
     
 
 
@@ -550,7 +708,7 @@ public class PynnFileManager
             
             
             
-            String title = "PyNN_simulation" + "___" + project.simulationParameters.getReference();
+            String title = "PyNN_"+simulator.moduleName+"__" + project.simulationParameters.getReference();
             
 
             if (GeneralUtils.isWindowsBasedPlatform())

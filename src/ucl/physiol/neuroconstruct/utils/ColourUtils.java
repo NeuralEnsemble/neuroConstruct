@@ -41,8 +41,7 @@ public class ColourUtils
 
         // Java supported colours
 
-        addColourRecord("DarkGray", Color.darkGray, -1);
-        addColourRecord("DarkGrey", Color.darkGray, -1);
+        addColourRecord("DarkGray", Color.darkGray, 0); // 0 to fit into scheme above
         addColourRecord("LightGray", Color.lightGray, -1);
         addColourRecord("LightGrey", Color.lightGray, -1);
         addColourRecord("Gray", Color.gray, -1);
@@ -74,6 +73,16 @@ public class ColourUtils
     {
         ColourRecord cr = new ColourRecord(name, color, neuronColourIndex);
         allColours.add(cr);
+    }
+    
+    /*
+     * Returns one of 10 colours cycling over all ints >0
+     */
+    public static Color getSequentialColour(int colNumber)
+    {
+        if (colNumber<0) colNumber = colNumber*-1;
+        int neuCol = colNumber%10;
+        return getColour(getColourName(neuCol));
     }
 
     public static Color getColour(String colourName)
@@ -122,7 +131,7 @@ public class ColourUtils
             if (allColours.get(i).neuronColourIndex == neuronColourIndex)
             {
                 return allColours.get(i).name;
-            };
+            }
         }
         return null;
     }
@@ -145,6 +154,7 @@ public class ColourUtils
             this.neuronColourIndex = neuronColourIndex;
         };
 
+        @Override
         public String toString()
         {
             return "ColourRecord ["+name+", "+colour.toString()+", "+neuronColourIndex+"]";
@@ -163,6 +173,11 @@ public class ColourUtils
         String col = "RGB123_34_34";
 
         System.out.println("Colour: " + getColour(col));
+        
+        for(int i=-11;i<22;i++)
+        {
+            System.out.println("Colour "+i+": " + getSequentialColour(i));
+        }
 
     }
 

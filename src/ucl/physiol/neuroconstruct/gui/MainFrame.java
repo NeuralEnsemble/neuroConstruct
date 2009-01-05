@@ -412,6 +412,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JCheckBox jCheckBoxNeuronRandomGen = new JCheckBox("Recalculate before creating script files");
     
     
+    JLabel jLabelPyNNRandomGenDesc = new JLabel("Random seed for PyNN:");
+    JTextField jTextFieldPyNNRandomGen = new JTextField("1234");
+    JCheckBox jCheckBoxPyNNRandomGen = new JCheckBox("Recalculate before creating script files", false);
+    
+    
+    
     JPanel jPanelNeuronExtraLinks =  new JPanel();
     JLabel jLabelNeuronExtraLinks = new JLabel("Extra code blocks:");
     
@@ -491,6 +497,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JPanel jPanelGenesisMain = new JPanel();
     JPanel jPanelPsicsMain = new JPanel();
     JPanel jPanelPynnMain = new JPanel();
+    JCheckBox jCheckBoxPynnShowTraces = new JCheckBox();
+    JPanel jPanelPynnOptions1 = new JPanel();
+    JPanel jPanelPynnOptions2 = new JPanel();
     BorderLayout borderLayout26 = new BorderLayout();
     JLabel jLabelGenesisMain = new JLabel();
     JLabel jLabelPsicsMain = new JLabel();
@@ -3270,6 +3279,20 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelPynnMain.setLayout(new GridBagLayout());
         jLabelPynnMain.setText("Generate code for a PyNN simulator (alpha)");
         
+        jCheckBoxPynnShowTraces.setText("Show traces after execution");
+        jCheckBoxPynnShowTraces.setSelected(true);
+        
+        
+        
+        
+        
+        jPanelPynnOptions1.add(jCheckBoxPynnShowTraces);
+        jTextFieldPyNNRandomGen.setColumns(12);
+        
+        jPanelPynnOptions2.add(jLabelPyNNRandomGenDesc);
+        jPanelPynnOptions2.add(jTextFieldPyNNRandomGen);
+        jPanelPynnOptions2.add(jCheckBoxPyNNRandomGen);
+        
         jPanelPynnMain.add(jLabelPynnMain,
                               new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
                                                      ,GridBagConstraints.CENTER,
@@ -3280,8 +3303,18 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                      ,GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(20, 0, 20, 0), 20, 20));
-        jPanelPynnMain.add(jPanelPynnButtons,
+        jPanelPynnMain.add(jPanelPynnOptions1,
                               new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
+                                                     ,GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(20, 0, 20, 0), 20, 20));
+        jPanelPynnMain.add(jPanelPynnOptions2,
+                              new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
+                                                     ,GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(20, 0, 20, 0), 20, 20));
+        jPanelPynnMain.add(jPanelPynnButtons,
+                              new GridBagConstraints(0,4, 1, 1, 0.0, 0.0
                                                      ,GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(20, 0, 20, 0), 20, 20));
@@ -6514,10 +6547,23 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             return;
         }
         
+
+        boolean cont = this.checkReloadOrRegenerate();
+        
+        if (!cont) return;
+        
         logger.logComment("Generating the PyNN files for the project...");
         
-        int seed = 0;
         refreshSimulationName();
+        
+        
+        if (this.jCheckBoxPyNNRandomGen.isSelected())
+        {
+            Random tempRandom = new Random();
+            this.jTextFieldPyNNRandomGen.setText(Math.abs(tempRandom.nextInt())+"");
+        }
+        
+        int seed = Integer.parseInt(jTextFieldPyNNRandomGen.getText());
         
         projManager.getCurrentProject().pynnFileManager.reset();
         
@@ -6616,24 +6662,79 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             logger.logError("No project loaded...");
             return;
         }
+        
+        String simRef = this.jTextFieldSimRef.getText();
+        
 
-        logger.logComment("Running the Pynn files for the project...");
+        logger.logComment("Running the Pynn files for the project for simulation ref: "+simRef+"...");
         
         try
         {
             if (GeneralProperties.getGenerateMatlab())
             {
-                MatlabOctave.createSimulationLoader(projManager.getCurrentProject(), getSelectedSimConfig(), this.jTextFieldSimRef.getText());
+                MatlabOctave.createSimulationLoader(projManager.getCurrentProject(), getSelectedSimConfig(), simRef);
             }
 
             if ((GeneralUtils.isWindowsBasedPlatform() || GeneralUtils.isMacBasedPlatform())
                 && GeneralProperties.getGenerateIgor())
             {
                 IgorNeuroMatic.createSimulationLoader(projManager.getCurrentProject(), getSelectedSimConfig(),
-                                                      this.jTextFieldSimRef.getText());
+                                                      simRef);
             }
             
             projManager.getCurrentProject().pynnFileManager.runFile(true);
+            
+            if (jCheckBoxPynnShowTraces.isSelected())
+            {
+                File simResDir = new File(ProjectStructure.getSimulationsDir(projManager.getCurrentProject().getProjectMainDirectory()), simRef);
+                File simTimeFile = new File(simResDir, SimulationData.TIME_DATA_FILE);
+                int maxWaitSecs = 10;
+               
+                long startWait = System.currentTimeMillis();
+                while (System.currentTimeMillis()-startWait < maxWaitSecs*1000)
+                {
+                    try 
+                    {
+                        Thread.sleep(500);
+                        logger.logComment("Waiting for "+ simTimeFile.getAbsolutePath()+" to be generated...");
+                        if(simTimeFile.exists())
+                        {
+                            String info = "Saved traces from simulation "+simRef+" in project "+ projManager.getCurrentProject().getProjectName();
+                            PlotterFrame pf = PlotManager.getPlotterFrame(info);
+                            
+                            ArrayList<String> cgs =projManager.getCurrentProject().generatedCellPositions.getNonEmptyCellGroups();
+                            
+                            for(String cellGroup: cgs)
+                            {
+                                File cgDataFile = new File(simResDir, cellGroup+".dat");
+                                ArrayList<DataSet> dss = DataSetManager.loadFromDataSetFile(cgDataFile, false, DataSetManager.DataReadFormat.NUMBERED_TRACES);
+                                
+                                for(DataSet ds: dss)
+                                {
+                                    pf.addDataSet(ds);
+                                }
+                            }
+                            
+                            return;
+                        }
+                    } 
+                    catch (InterruptedException ex) 
+                    {
+                        GuiUtils.showErrorMessage(logger, "Error waiting for generation of file: "+ simTimeFile.getAbsolutePath(), ex, this);
+                        return;
+                    }
+                    catch (DataSetException ex) 
+                    {
+                        GuiUtils.showErrorMessage(logger, "Error extracting data sets", ex, this);
+                        return;
+                    }
+                }
+                        
+                GuiUtils.showWarningMessage(logger, "Have waited "+maxWaitSecs+" seconds for completion of simulation "+simRef
+                        +" but the file: "+ simTimeFile.getAbsolutePath()+" has not yet been generated", this);
+                
+                
+            }
         }
         catch (PynnException ex)
         {
@@ -13408,7 +13509,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                     cmlMech.getXMLDoc().setValueByXPath(ChannelMLConstants.getPreV1_7_3IonRevPotXPath(1),
                                                         revPot + "");
-                    cmlMech.getXMLDoc().setValueByXPath(ChannelMLConstants.getCondDensXPath(),
+                    
+                    cmlMech.getXMLDoc().setValueByXPath(ChannelMLConstants.getPreV1_7_3CondDensXPath(),
                                                         condDens + "");
 
                 }

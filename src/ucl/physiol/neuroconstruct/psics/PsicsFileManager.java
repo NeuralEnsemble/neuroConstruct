@@ -19,6 +19,7 @@ import java.util.*;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.dataset.*;
 import ucl.physiol.neuroconstruct.gui.DataSetManager;
+import ucl.physiol.neuroconstruct.gui.DataSetManager.DataReadFormat;
 import ucl.physiol.neuroconstruct.gui.plotter.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.ChannelMLConstants;
@@ -910,7 +911,7 @@ public class PsicsFileManager
 
                         logger.logComment("Have successfully executed command: " + command);
                         
-                        ArrayList<DataSet> dataSets = DataSetManager.loadFromDataSetFile(resultsDatafile, false);
+                        ArrayList<DataSet> dataSets = DataSetManager.loadFromDataSetFile(resultsDatafile, false, DataReadFormat.UNSPECIFIED);
                         
                         String plotFrameRef = "Plot of data from simulation "+project.simulationParameters.getReference();
 

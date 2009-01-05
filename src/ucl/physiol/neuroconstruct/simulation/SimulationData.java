@@ -30,7 +30,7 @@ import ucl.physiol.neuroconstruct.project.PostSynapticObject;
 
 public class SimulationData
 {
-    private ClassLogger logger = new ClassLogger("SimulationData");
+    private static ClassLogger logger = new ClassLogger("SimulationData");
 
 
     private ArrayList<DataStore> dataSources = new ArrayList<DataStore>();
@@ -50,9 +50,8 @@ public class SimulationData
     private File dataDirectory = null;
     //private File timesDataFile = null;
 
-    private int suggestedInitCapData = 1000;
-    private int suggestedInitCapCells = 100;
-    private int suggestedInitCapSpikes = 50;
+    private static int suggestedInitCapData = 1000;
+    private static int suggestedInitCapSpikes = 50;
 
     /**
      * Gives an indication whether the voltages are present for just the soma or lots of segs...
@@ -127,6 +126,7 @@ public class SimulationData
 
 
         times = readDataFileToArray(getTimesFile(), timeConversionFactor);
+        logger.logComment("There are "+times.length+" entries in the time file", true);
 
         //GeneralUtils.timeCheck("Starting reading voltages");
 
@@ -276,7 +276,7 @@ public class SimulationData
                     
                     DataStore ds = new DataStore(dataArrays[cellNumIndex], cellGroup, cellNumIndex, segId, variable, xUnit, yUnit, pso);
 
-                    logger.logComment("Added ds: "+ ds);
+                    logger.logComment("Added a ds: "+ ds, true);
                     dataSources.add(ds);
                 }
                 //DataStore ds = new DataStore(dataArray, cellGroup, cellNum, segId, variable, xUnit, yUnit, pso);
@@ -549,7 +549,7 @@ public class SimulationData
      * ...
      * 
      */
-    private double[][] read2dDataFileToArrays(File dataFile, double scaleFactor) throws SimulationDataException
+    public static double[][] read2dDataFileToArrays(File dataFile, double scaleFactor) throws SimulationDataException
     {
         String nextLine = null;
         double[][] data = null;
@@ -559,20 +559,24 @@ public class SimulationData
             LineNumberReader reader = new LineNumberReader(in);
 
             /** @todo check if there's a quicker way to do this */
-
             
             Hashtable<Integer, ArrayList<Double>> tempList = new Hashtable<Integer, ArrayList<Double>>();
 
-            while ( (nextLine = reader.readLine()) != null && nextLine.length()>0)
+            while ( (nextLine = reader.readLine()) != null)
             {
                 if (!nextLine.startsWith("//") && 
                     !nextLine.startsWith("#") && 
-                        nextLine.trim().length()>0)
+                    nextLine.trim().length()>0)
                 {
                     String[] sp = nextLine.trim().split("\\s+");
+                    if (sp.length!=2)
+                        throw new SimulationDataException("Error reading PyNN format line: "
+                                +nextLine+" in data file "+dataFile.getAbsolutePath());
+                    
                     
                     double nextVal = Double.parseDouble(sp[0]);
                     int cellNum = Integer.parseInt(sp[1]);
+                    //logger.logComment(cellNum+": "+nextVal, true);
                     if (!tempList.containsKey(cellNum))
                         tempList.put(cellNum, new ArrayList<Double>(suggestedInitCapData));
                     ArrayList<Double> arr = tempList.get(cellNum);
@@ -600,7 +604,7 @@ public class SimulationData
                 }
                 ////////////data[i] = tempList.get(i);
             }
-            //System.out.println("Read in "+data.length+" values. First: "+data[0]+", last: "+data[data.length-1] );
+            //logger.logComment("Read in "+data[0].length+" values. First: "+data[0][0]+", last: "+data[data.length-1][data[0].length-1], true);
             return data;
         }
         catch (IOException e)
@@ -616,7 +620,7 @@ public class SimulationData
 
 
 
-    private double[] readSpikesToArray(File spikeFile, double[] times, double timeConversionFactor) throws SimulationDataException
+    public static double[] readSpikesToArray(File spikeFile, double[] times, double timeConversionFactor) throws SimulationDataException
     {
         logger.logComment("Reading spikes from file: "+ spikeFile);
 
@@ -1130,7 +1134,7 @@ public class SimulationData
     {
         //File f = new File("projects/PlotSave/simulations/Sim_43/");
         //File f = new File("projects/Spiky/simulations/Sim_33");
-        File f = new File("models/PyNNTest/simulations/Sim_80");
+        File f = new File("models/PyNNTest/simulations/Sim_117");
         SimulationData simulationData1 = null;
         try
         {
@@ -1140,7 +1144,7 @@ public class SimulationData
             simulationData1.initialise();
 
             //System.out.println("dataOnlyForSoma: "+simulationData1.dataOnlyForSoma());
-            //System.out.println("Num steps: "+simulationData1.getNumberTimeSteps());
+            System.out.println("Num time steps: "+simulationData1.getNumberTimeSteps());
             //System.out.println("Cell value: "+simulationData1.getVoltageAtTimeStep(33, "CellGroup_2_3.0"));
 
 

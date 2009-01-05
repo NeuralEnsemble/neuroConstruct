@@ -17,7 +17,6 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.util.*;
 import javax.swing.table.*;
 
 import ucl.physiol.neuroconstruct.utils.*;
@@ -29,6 +28,9 @@ import javax.swing.event.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.simulation.SimulationData;
+import ucl.physiol.neuroconstruct.simulation.SimulationData.DataStore;
+import ucl.physiol.neuroconstruct.simulation.SimulationDataException;
 
 /**
  * Dialog for managing saved data sets
@@ -72,6 +74,25 @@ public class DataSetManager extends JFrame implements ListSelectionListener
     public static final String DATA_SET_Y_UNITS = "yUnits";
     public static final String DATA_SET_X_LEGEND = "xLegend";
     public static final String DATA_SET_Y_LEGEND = "yLegend";
+    
+    /*
+     * Used for reading in data form *.dat files
+     */
+    public enum DataReadFormat
+    {
+        UNSPECIFIED("Data format not yet set"),
+        EACH_COL_DATA("Each column in the file is a separate data trace"),
+        FIRST_COL_TIME("First column is the x axis (e.g. time) and all subsequent cols are y axis traces"),
+        NUMBERED_TRACES("First column contains a data value, second column contains an integer for the trace to which the data point belongs (format used by default in PyNN)");
+        
+        public final String desc;
+        
+        DataReadFormat(String desc)
+        {
+            this.desc = desc;
+        }
+     }
+            
 
 
 
@@ -393,7 +414,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
      * @param partial only loads the reference, description, etc from the comments at the beginning of the file
      *
      */
-    public static ArrayList<DataSet> loadFromDataSetFile(File dsFile, boolean partial) throws DataSetException
+    public static ArrayList<DataSet> loadFromDataSetFile(File dsFile, boolean partial, DataReadFormat dataReadFormat) throws DataSetException
     {
         ArrayList<DataSet> dataSets = new ArrayList<DataSet>();
         
@@ -406,9 +427,6 @@ public class DataSetManager extends JFrame implements ListSelectionListener
         }
         String description = name;
 
-        int dataReadFormat = -1;
-        int EACH_COL_DATA = 1;
-        int FIRST_COL_TIME = 2;
         
 
         FileReader fr = null;
@@ -440,11 +458,14 @@ public class DataSetManager extends JFrame implements ListSelectionListener
         String xLegend = "";
         String yUnit = "";
         String yLegend = "";
+        
+        boolean completedAllPoints = false;
 
         try
         {
             while ( ((nextLine = lineReader.readLine()) != null)
-                    && !(reachedDataPoints && partial))  // so ignores points if partial is true
+                    && !(reachedDataPoints && partial)
+                    && !completedAllPoints)  // so ignores points if partial is true
             {
                 lineNumber++;
                 //logger.logComment("Next line: " + nextLine);
@@ -595,13 +616,18 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                         else
                         {
                             //logger.logComment("Line has too many entries..."); 
-                            if (dataReadFormat<0)
+                            if (dataReadFormat.equals(DataReadFormat.UNSPECIFIED))
                             {
-                                String msg = new String("Note: the data file appears to have "+splitWords.size()+" columns of data. Example line:\n\n" 
-                                    +origLine+"\n\n" +
-                                    "Please select either:\n"+"A) plot every column \nB) use first column as X values, and plot all others against this");
+                                String line = GeneralUtils.replaceAllTokens(origLine, "\t", "    ");
                                 
-                                Object[] vars = new Object[]{"Option A", "Option B", "Cancel"};
+                                String msg = new String("Note: the data file appears to have "+splitWords.size()
+                                        +" columns of data. Example line:\n\n" +line+"\n\n" +
+                                    "Please specify whether the format is:\n"
+                                    +"A) "+DataReadFormat.EACH_COL_DATA+" \n" +
+                                    "B) "+DataReadFormat.FIRST_COL_TIME+"\n" +
+                                    "C) "+DataReadFormat.NUMBERED_TRACES+"\n");
+                                
+                                Object[] vars = new Object[]{"Option A", "Option B", "Option C", "Cancel"};
 
                                 int sel = JOptionPane.showOptionDialog(GuiUtils.getMainFrame(), msg, "Select option for data file", 
                                                        JOptionPane.OK_OPTION,
@@ -610,11 +636,15 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                                                        vars,vars[0]);
                                 if (sel == 0)
                                 {
-                                    dataReadFormat = EACH_COL_DATA;
+                                    dataReadFormat = DataReadFormat.EACH_COL_DATA;
                                 }
                                 else if (sel == 1)
                                 {
-                                    dataReadFormat = FIRST_COL_TIME;
+                                    dataReadFormat = DataReadFormat.FIRST_COL_TIME;
+                                }
+                                else if (sel == 2)
+                                {
+                                    dataReadFormat = DataReadFormat.NUMBERED_TRACES;
                                 }
                                 else
                                 {
@@ -622,7 +652,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                                 }  
                             }
                             
-                            if (dataReadFormat == EACH_COL_DATA)
+                            if (dataReadFormat == DataReadFormat.EACH_COL_DATA)
                             {
                                 if (dataSets.size()==0)
                                 {
@@ -644,7 +674,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                                         dataSets.get(i).setCommentOnPoint(pointNum, comment);
                                 }
                             }
-                            else if (dataReadFormat == FIRST_COL_TIME)
+                            else if (dataReadFormat == DataReadFormat.FIRST_COL_TIME)
                             {
                                 if (dataSets.size()==0)
                                 {
@@ -666,6 +696,30 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                                         dataSets.get(i).setCommentOnPoint(pointNum, comment);
                                 }
                             }
+                            else if (dataReadFormat == DataReadFormat.NUMBERED_TRACES)
+                            {
+                                double[][] dataArrays = SimulationData.read2dDataFileToArrays(dsFile, 1);
+                                
+                                for (int cellNumIndex= 0 ; cellNumIndex<dataArrays.length;cellNumIndex++)
+                                {
+                                    String info = "Data for element "+cellNumIndex+" in file "+ dsFile;
+                                    DataSet ds = new DataSet(info, info, xUnit, yUnit, xLegend, yLegend);
+                                    ds.setGraphFormat(graphFormat);
+                                    ds.setGraphColour(ColourUtils.getSequentialColour(cellNumIndex+1));
+                                    ds.setDataSetFile(dsFile);
+                                    
+                                    for(int i=0;i<dataArrays[cellNumIndex].length;i++)
+                                    {
+                                        ds.addPoint(i, dataArrays[cellNumIndex][i]);
+                                    }
+                                    
+                                    
+                                    dataSets.add(ds);
+                                    
+                                }
+                                
+                                completedAllPoints = true;
+                            }
                         }
                     }
                     else
@@ -679,6 +733,10 @@ public class DataSetManager extends JFrame implements ListSelectionListener
             }
         }
         catch (IOException ex1)
+        {
+            throw new DataSetException("Problem reading Data Set file: "+ dsFile, ex1);
+        }
+        catch (SimulationDataException ex1)
         {
             throw new DataSetException("Problem reading Data Set file: "+ dsFile, ex1);
         }
@@ -840,7 +898,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
             
             File f = new File("C:\\JavaStuff\\psics\\psics-out\\pattest\\run-continuous-results\\out-cont-20.txt");
             
-            loadFromDataSetFile(f,false);
+            loadFromDataSetFile(f,false, DataReadFormat.UNSPECIFIED);
         }
         catch (Exception ex)
         {
