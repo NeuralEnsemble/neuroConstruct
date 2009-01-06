@@ -1,0 +1,1 @@
+This is the directory where imported morphology files, (e.g. in GENESIS, NEURON format) are stored. Note, these aren't reloaded each time, the file is converted to neuroConstruct format and saved that way.
