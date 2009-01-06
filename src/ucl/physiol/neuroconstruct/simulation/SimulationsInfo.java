@@ -93,10 +93,8 @@ public class SimulationsInfo extends AbstractTableModel
         {
             for (int j = 1; j < childrenDirs.length; j++)
             {
-
                 for (int k = 0; k < j; k++)
                 {
-
                     if (childrenDirs[j].lastModified()<childrenDirs[k].lastModified())
                     {
                         File earlierFile = childrenDirs[j];
@@ -131,7 +129,10 @@ public class SimulationsInfo extends AbstractTableModel
                         simSummaryFile = new File(childrenDirs[i], oldSimSummaryFileName);
                     }
 
-                    File timeFile = new File(childrenDirs[i], SimulationData.TIME_DATA_FILE);
+                    
+                    File timeFile = SimulationData.getTimesFile(childrenDirs[i]);
+                    
+                    
 
                     extraColumns.setSize(rowNumber + 1);
                     if (simSummaryFile.exists() && timeFile.exists())
@@ -384,6 +385,10 @@ public class SimulationsInfo extends AbstractTableModel
         {
             props.setProperty("Unit system", UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS));
         }
+        else if (simulator.equals("PSICS"))
+        {
+            props.setProperty("Unit system", UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS));
+        }
         else if (simulator.equals("GENESIS") || simulator.equals("MOOSE"))
         {
             props.setProperty("Num integration method", project.genesisSettings.getNumMethod().toString());
@@ -617,8 +622,6 @@ public class SimulationsInfo extends AbstractTableModel
      */
     public static String getSimProps(File simulationDir, boolean html)
     {
-
-
         Properties props = getSimulationProperties(simulationDir);
         if (props==null) return "Problem getting simulation properties from directory: "+ simulationDir;
 
@@ -643,7 +646,8 @@ public class SimulationsInfo extends AbstractTableModel
         for (int i = 0; i < mainProperties.length; i++)
         {
             String value = props.getProperty(mainProperties[i]);
-            sb.append(createLine(mainProperties[i], value, html));
+            if(value!=null)
+                sb.append(createLine(mainProperties[i], value, html));
             allPropNames.remove(mainProperties[i]);
         }
 

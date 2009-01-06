@@ -740,6 +740,17 @@ public class PsicsFileManager
                                       ex, null);
             return;
         }
+        
+        // Saving summary of the simulation params
+        try
+        {
+            SimulationsInfo.recordSimulationSummary(project, simConfig, dirForSimDataFiles, "PSICS", null);
+        }
+        catch (IOException ex2)
+        {
+            GuiUtils.showErrorMessage(logger, "Error when trying to save a summary of the simulation settings in dir: "+ dirForSimDataFiles +
+                                      "\nThere will be less info on this simulation in the previous simulation browser dialog", ex2, null);
+        }
 
 
         
@@ -771,13 +782,26 @@ public class PsicsFileManager
             if (GeneralUtils.isWindowsBasedPlatform())
             {
                 logger.logComment("Assuming Windows environment...");
-
-                String setDir = "";
-                //String setDir = " -Duser.dir="+dirToRunFrom.getAbsolutePath();
                 
-                commandToExecute = "cmd /K start \""+title+"\"  " +  javaEx +setDir+ " "+psicsJar+" "+fullFileToRun;
+                File scriptFile = new File(ProjectStructure.getPsicsCodeDir(project.getProjectMainDirectory()),
+                                           "runsim.bat");
+                
+                commandToExecute = "cmd /K start \""+title+"\"  " +  scriptFile.getAbsolutePath();
+                String runCommand = javaEx+ " "+psicsJar+" "+fullFileToRun.getName();
+                //commandToExecute = "cmd /K start \""+title+"\"  tree c:\\";
 
-                logger.logComment("Going to execute command: " + commandToExecute);
+                //logger.logComment("Going to execute command: " + commandToExecute);
+                
+                //String[] env = {};
+                
+                String scriptText = "@echo off\n\ncd "+ dirToRunFrom.getAbsolutePath()+"\n";
+                scriptText = scriptText + runCommand +"\n";
+                //scriptText = scriptText + "pause\n";
+
+                FileWriter fw = new FileWriter(scriptFile);
+
+                fw.write(scriptText);
+                fw.close();
 
                 rt.exec(commandToExecute);
 
@@ -882,7 +906,7 @@ public class PsicsFileManager
                 
                 logger.logComment("Checking for results info: " + resultsHtml.getAbsolutePath());
                         
-                int tries = 10;
+                int tries = 4;
                 while (tries>0)
                 {
                     if (resultsHtml.exists())
@@ -895,26 +919,29 @@ public class PsicsFileManager
                             return;
                         }
 
-                        String command = browserPath + " " + resultsHtml.toURI();
-                        //String command2 = browserPath + " " + resultsHtml.toURI();
-
-                        logger.logComment("Going to execute command: " + command, true);
-
-                        try
+                        boolean showHtml = false;
+                        if(showHtml)
                         {
-                            rt.exec(command);
-                        }
-                        catch (IOException ex)
-                        {
-                            logger.logError("Error running " + command);
-                        }
+                            String command = browserPath + " " + resultsHtml.toURI();
+                            //String command2 = browserPath + " " + resultsHtml.toURI();
 
-                        logger.logComment("Have successfully executed command: " + command);
+                            logger.logComment("Going to execute command: " + command, true);
+
+                            try
+                            {
+                                rt.exec(command);
+                            }
+                            catch (IOException ex)
+                            {
+                                logger.logError("Error running " + command);
+                            }
+
+                            logger.logComment("Have successfully executed command: " + command);
+                        }
                         
-                        ArrayList<DataSet> dataSets = DataSetManager.loadFromDataSetFile(resultsDatafile, false, DataReadFormat.UNSPECIFIED);
+                        ArrayList<DataSet> dataSets = DataSetManager.loadFromDataSetFile(resultsDatafile, false, DataReadFormat.FIRST_COL_TIME);
                         
                         String plotFrameRef = "Plot of data from simulation "+project.simulationParameters.getReference();
-
 
                         PlotterFrame frame = PlotManager.getPlotterFrame(plotFrameRef);
 

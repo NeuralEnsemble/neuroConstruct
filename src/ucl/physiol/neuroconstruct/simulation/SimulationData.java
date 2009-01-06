@@ -40,7 +40,8 @@ public class SimulationData
 
     private double[] times = null;
 
-    public static final String TIME_DATA_FILE = "time."+SimPlot.CONTINUOUS_DATA_EXT;
+    private static final String TIME_DATA_FILE_STD = "time."+SimPlot.CONTINUOUS_DATA_EXT;
+    private static final String TIME_DATA_FILE_PSICS = "time.txt";
     public static final String POSITION_DATA_FILE = "CellPositions."+SimPlot.CONTINUOUS_DATA_EXT;
     public static final String NETCONN_DATA_FILE = "NetworkConnections."+SimPlot.CONTINUOUS_DATA_EXT;
     public static final String ELEC_INPUT_DATA_FILE = "ElectricalInputs."+SimPlot.CONTINUOUS_DATA_EXT;
@@ -85,9 +86,19 @@ public class SimulationData
     
     public File getTimesFile()
     {
-        return new File(dataDirectory.getAbsolutePath()
-                                      + System.getProperty("file.separator")
-                                      + TIME_DATA_FILE);
+        return getTimesFile(dataDirectory);
+    }
+    
+    public static File getTimesFile(File simDir)
+    {
+        File psicsFile = new File(simDir,TIME_DATA_FILE_PSICS);
+        if (psicsFile.exists())
+            return psicsFile;
+        return new File(simDir,TIME_DATA_FILE_STD);
+    }
+    public static String getStandardTimesFilename()
+    {
+        return TIME_DATA_FILE_STD;
     }
 
     public void reset()
@@ -108,7 +119,7 @@ public class SimulationData
         }
         this.reset();
 
-        logger.logComment("+++   Initialising SimulationData "+this.hashCode()+" with directory: "+ dataDirectory.getAbsolutePath());
+        logger.logComment("++--+   Initialising SimulationData "+this.hashCode()+" with directory: "+ dataDirectory.getAbsolutePath(), true);
 
         //GeneralUtils.timeCheck("Starting reading times file");
 
@@ -117,6 +128,7 @@ public class SimulationData
         double timeConversionFactor = 1;
 
         String unitSystemDesc = props.getProperty("Unit system");
+        logger.logComment("unitSystemDesc: "+ unitSystemDesc, true);
 
         int unitSystem = UnitConverter.getUnitSystemIndex(unitSystemDesc);
 
@@ -135,18 +147,22 @@ public class SimulationData
         {
             public boolean accept(File dir, String name)
             {
-                if ( (name.endsWith("." + SimPlot.CONTINUOUS_DATA_EXT) || name.endsWith("." + SimPlot.SPIKE_EXT))
-                    && !name.equals(TIME_DATA_FILE)
+                if ( (name.endsWith("." + SimPlot.CONTINUOUS_DATA_EXT) || 
+                    name.endsWith("." + SimPlot.CONTINUOUS_DATA_EXT+".txt") || /* TEMP for PSICS!!*/
+                    name.endsWith("." + SimPlot.SPIKE_EXT))
+                    && !name.equals(TIME_DATA_FILE_STD)
+                    && !name.equals(TIME_DATA_FILE_PSICS)
                     && !name.equals(POSITION_DATA_FILE)
                     && !name.equals(NETCONN_DATA_FILE)
-                    && !name.equals(ELEC_INPUT_DATA_FILE))
+                    && !name.equals(ELEC_INPUT_DATA_FILE)
+                    && name.indexOf("psics-out")<0)
                 {
-                    logger.logComment("-----   Taking " + name);
+                    logger.logComment("-----   Taking " + name, true);
                     return true;
                 }
                 else
                 {
-                    logger.logComment("-----   Rejecting " + name);
+                    logger.logComment("-----   Rejecting " + name, true);
                     return false;
                 }
 
@@ -161,7 +177,12 @@ public class SimulationData
 
             String dataSourceName = null;
 
-            if (cellDataFiles[fileIndex].getName().indexOf("."+SimPlot.CONTINUOUS_DATA_EXT)>0)
+            if (cellDataFiles[fileIndex].getName().indexOf("."+SimPlot.CONTINUOUS_DATA_EXT+".txt")>0)
+            {
+                dataSourceName = cellDataFiles[fileIndex].getName().substring(0, cellDataFiles[fileIndex].getName().length()
+                                                                      - ("." + SimPlot.CONTINUOUS_DATA_EXT+".txt").length());
+            }
+            else if (cellDataFiles[fileIndex].getName().indexOf("."+SimPlot.CONTINUOUS_DATA_EXT)>0)
             {
                 dataSourceName = cellDataFiles[fileIndex].getName().substring(0, cellDataFiles[fileIndex].getName().length()
                                                                       - ("." + SimPlot.CONTINUOUS_DATA_EXT).length());
@@ -764,6 +785,11 @@ public class SimulationData
                         + System.getProperty("file.separator")
                         + ELEC_INPUT_DATA_FILE);
 
+    }
+    
+    public ArrayList<DataStore> getAllLoadedDataStores()
+    {
+        return dataSources;
     }
 
     public ArrayList<DataStore> getDataForCellSegRef(String cellSegRef, boolean inclSynapses)

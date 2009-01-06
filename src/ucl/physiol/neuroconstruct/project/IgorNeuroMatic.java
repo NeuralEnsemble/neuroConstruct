@@ -145,7 +145,7 @@ public class IgorNeuroMatic
         String loadPrefix = "/J/D/K=0 \""+ IgorNeuroMatic.convertFilePath(simDir.getAbsolutePath())+":";
         String loadSuffix = "\"";
 
-        contents.append(loadPrePrefx+"time"+loadPrefix+SimulationData.TIME_DATA_FILE+loadSuffix+"\n\n");
+        contents.append(loadPrePrefx+"time"+loadPrefix+SimulationData.getStandardTimesFilename()+loadSuffix+"\n\n");
 
 
         ArrayList<PlotSaveDetails> recordings = project.generatedPlotSaves.getSavedPlotSaves();

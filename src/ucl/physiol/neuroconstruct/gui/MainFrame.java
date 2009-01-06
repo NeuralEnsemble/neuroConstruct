@@ -157,6 +157,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     String defaultNeuronFilesText = "-- Select NEURON file to view --";
     String defaultGenesisFilesText = "-- Select GENESIS file to view --";
+    String defaultPyNNFilesText = "-- Select PyNN file to view --";
+    String defaultPsicsFilesText = "-- Select PSICS file to view --";
 
     //private int neuronRunMode = NeuronFileManager.RUN_HOC;
 
@@ -238,6 +240,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     JPanel jPanelHocFile1Buttons = new JPanel();
     JPanel jPanelHocFile2Buttons = new JPanel();
+    JPanel jPanelPsicsFileView = new JPanel();
+    JPanel jPanelPynnFileView = new JPanel();
     
     
     JPanel jPanelCellGroupsMainPanel = new JPanel();
@@ -305,6 +309,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     
     
     JButton jButtonNeuronView = new JButton();
+    JButton jButtonPsicsView = new JButton("View:");
+    JButton jButtonPynnView = new JButton("View:");
+    
     JPanel jPanelSimStorage = new JPanel();
     JLabel jLabelSimRef = new JLabel();
     JTextField jTextFieldSimRef = new JTextField();
@@ -623,6 +630,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JComboBox jComboBoxNeuronFileList = new JComboBox();
     JCheckBox jCheckBoxNeuronLineNums = new JCheckBox("Show line numbers");
     JCheckBox jCheckBoxGenesisLineNums = new JCheckBox("Show line numbers");
+    
+    JComboBox jComboBoxPynnFileList = new JComboBox();
+    JCheckBox jCheckBoxPynnLineNums = new JCheckBox("Show line numbers");
+    JComboBox jComboBoxPsicsFileList = new JComboBox();
+    JCheckBox jCheckBoxPsicsLineNums = new JCheckBox("Show line numbers");
+    
     Border border5;
     Border border6;
     JMenuItem jMenuItemCondorMonitor = new JMenuItem();
@@ -1371,6 +1384,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         ////jScrollPaneNeuronAfter.setMinimumSize(new Dimension(440, 450));
         ////jScrollPaneNeuronAfter.setPreferredSize(new Dimension(440, 450));
         jComboBoxNeuronFileList.setEnabled(false);
+        jComboBoxPynnFileList.setEnabled(false);
+        jComboBoxPsicsFileList.setEnabled(false);
         this.jCheckBoxNeuronLineNums.setEnabled(false);
         this.jCheckBoxGenesisLineNums.setEnabled(false);
 
@@ -2616,6 +2631,22 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jButtonNeuronView_actionPerformed(e);
             }
         });
+        jButtonPynnView.setEnabled(false);
+        jButtonPynnView.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonPynnView_actionPerformed(e);
+            }
+        });
+        jButtonPsicsView.setEnabled(false);
+        jButtonPsicsView.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonPsicsView_actionPerformed(e);
+            }
+        });
         jLabelSimRef.setText("Simulation Reference:");
         jTextFieldSimRef.setText("Sim_1");
         jTextFieldSimRef.setColumns(10);
@@ -3275,6 +3306,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                      ,GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(20, 0, 20, 0), 20, 20));
+        jPanelPsicsMain.add(jPanelPsicsFileView,
+                              new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
+                                                     ,GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(20, 0, 120, 0), 20, 20));
         
         jPanelPynnMain.setLayout(new GridBagLayout());
         jLabelPynnMain.setText("Generate code for a PyNN simulator (alpha)");
@@ -3318,6 +3354,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                      ,GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(20, 0, 20, 0), 20, 20));
+        jPanelPynnMain.add(jPanelPynnFileView,
+                              new GridBagConstraints(0,5, 1, 1, 0.0, 0.0
+                                                     ,GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(20, 0, 100, 0), 20, 20));
         
         
         jPanelGenesisMain.setLayout(this.gridBagLayoutGen);
@@ -3379,6 +3420,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelHocFile2Buttons.add(jButtonNeuronView, null);
         jPanelHocFile2Buttons.add(jComboBoxNeuronFileList, null);
         jPanelHocFile2Buttons.add(jCheckBoxNeuronLineNums, null);
+        
+        jPanelPynnFileView.add(jButtonPynnView, null);
+        jPanelPynnFileView.add(jComboBoxPynnFileList, null);
+        jPanelPynnFileView.add(jCheckBoxPynnLineNums, null);
+        
+        jPanelPsicsFileView.add(jButtonPsicsView, null);
+        jPanelPsicsFileView.add(jComboBoxPsicsFileList, null);
+        jPanelPsicsFileView.add(jCheckBoxPsicsLineNums, null);
         
         jPanelHocFile1Buttons.add(jButtonNeuronRun, null);
         
@@ -5806,7 +5855,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             logger.logComment("Using set of points from simulation :"+ selectedObjectToView);
 
 
-                GeneralUtils.timeCheck("Loading cell pos, net conns, etc. from file... ");
+            GeneralUtils.timeCheck("Loading cell pos, net conns, etc. from file... ");
 
 
             projManager.getCurrentProject().generatedCellPositions.reset();
@@ -6171,6 +6220,48 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
         }
     }
+    
+    private void updatePsicsFileList()
+    {
+        jComboBoxPsicsFileList.removeAllItems();
+
+        String[] types = new String[]{".py", ".xml", ".sh"};
+        SimpleFileFilter filter = new SimpleFileFilter(types, "Any Python/XML file");
+
+
+        File[] genFiles = ProjectStructure.getPsicsCodeDir(projManager.getCurrentProject().getProjectMainDirectory()).listFiles(filter);
+
+        for (int i = 0; i < genFiles.length; i++)
+        {
+            logger.logComment("----    Checking file to add to file viewing list: "+ genFiles[i]);
+            
+            if (!genFiles[i].isDirectory() && !genFiles[i].getName().equals("README"))
+            {
+                jComboBoxPsicsFileList.addItem(genFiles[i].getName());
+            }
+        }
+    }
+    
+    private void updatePynnFileList()
+    {
+        jComboBoxPynnFileList.removeAllItems();
+
+        String[] types = new String[]{".py", ".xml", ".sh"};
+        SimpleFileFilter filter = new SimpleFileFilter(types, "Any Python/XML file");
+
+
+        File[] genFiles = ProjectStructure.getPynnCodeDir(projManager.getCurrentProject().getProjectMainDirectory()).listFiles(filter);
+
+        for (int i = 0; i < genFiles.length; i++)
+        {
+            logger.logComment("----    Checking file to add to file viewing list: "+ genFiles[i]);
+            
+            if (!genFiles[i].isDirectory() && !genFiles[i].getName().equals("README"))
+            {
+                jComboBoxPynnFileList.addItem(genFiles[i].getName());
+            }
+        }
+    }
 
     private void setNeuronRunEnabled(boolean runEnabled, boolean viewEnabled)
     {
@@ -6290,11 +6381,17 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     private void setPsicsRunEnabled(boolean enabled)
     {
         this.jButtonPsicsRun.setEnabled(enabled);
+        this.jButtonPsicsView.setEnabled(enabled);
+        jComboBoxPsicsFileList.setEnabled(enabled);
+        jCheckBoxPsicsLineNums.setEnabled(enabled);
     }
     
     private void setPynnRunEnabled(boolean enabled)
     {
         this.jButtonPynnRun.setEnabled(enabled);
+        this.jButtonPynnView.setEnabled(enabled);
+        jComboBoxPynnFileList.setEnabled(enabled);
+        jCheckBoxPynnLineNums.setEnabled(enabled);
     }
 
     private void doDestroy3D()
@@ -6592,6 +6689,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             return;
         }
         
+        updatePynnFileList();
         setPynnRunEnabled(true);
         
         refreshTabPynn();
@@ -6613,6 +6711,20 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         logger.logComment("Generating the PSICS files for the project...");
         
+        
+
+        if (projManager.getCurrentProject().cellGroupsInfo.getNumberCellGroups() == 0 ||
+            (projManager.getCurrentProject().cellGroupsInfo.getNumberCellGroups() > 0 &&
+            projManager.getCurrentProject().generatedCellPositions.getNumberPositionRecords() == 0))
+        {
+            GuiUtils.showErrorMessage(logger,
+                                      "Please generate the cell positions before proceeding", null, this);
+            return;
+        }
+
+        boolean cont = this.checkReloadOrRegenerate();
+        
+        if (!cont) return;
         
         int seed = 0;
         /*try
@@ -6643,7 +6755,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             return;
         }
-        
+        updatePsicsFileList();
         setPsicsRunEnabled(true);
         
         refreshTabPsics();
@@ -6687,7 +6799,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             if (jCheckBoxPynnShowTraces.isSelected())
             {
                 File simResDir = new File(ProjectStructure.getSimulationsDir(projManager.getCurrentProject().getProjectMainDirectory()), simRef);
-                File simTimeFile = new File(simResDir, SimulationData.TIME_DATA_FILE);
+                File simTimeFile = new File(simResDir, SimulationData.getStandardTimesFilename());
                 int maxWaitSecs = 10;
                
                 long startWait = System.currentTimeMillis();
@@ -9015,6 +9127,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             jButtonPynnGenerate.setEnabled(false);
             jButtonPynnRun.setEnabled(false);
+            jButtonPynnView.setEnabled(false);
+            jComboBoxPynnFileList.setEnabled(false);
+            jCheckBoxPynnLineNums.setEnabled(false);
+            
+            
+            jComboBoxPynnFileList.removeAllItems();
+            jComboBoxPynnFileList.addItem(defaultPyNNFilesText);
         }
         else
         {
@@ -9038,6 +9157,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             jButtonPsicsGenerate.setEnabled(false);
             jButtonPsicsRun.setEnabled(false);
+            jButtonPsicsView.setEnabled(false);
+            jComboBoxPsicsFileList.setEnabled(false);
+            jCheckBoxPsicsLineNums.setEnabled(false);
+            jComboBoxPsicsFileList.removeAllItems();
+            jComboBoxPsicsFileList.addItem(defaultPsicsFilesText);
         }
         else
         {
@@ -10771,8 +10895,71 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             GuiUtils.showErrorMessage(logger, "Hoc file not yet generated", ex, this);
         }
+    }
 
+    void jButtonPynnView_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("Going to display the selected Pynn file...");
 
+        if (projManager.getCurrentProject() == null)
+        {
+            logger.logError("No project loaded...");
+            return;
+        }
+            
+        String selectedFile = (String)jComboBoxPynnFileList.getSelectedItem();
+        
+        if (selectedFile.equals(defaultPyNNFilesText))
+            return;
+
+        try
+        {
+            File file = new File(ProjectStructure.getPynnCodeDir(projManager.getCurrentProject().getProjectMainDirectory()), selectedFile);
+            if (file.getName().endsWith("xml"))
+            {
+                showHighlightedXML(file, false);
+            }
+            else
+            {
+                SimpleViewer.showFile(file.getAbsolutePath(), 12, false, false, this.jCheckBoxPynnLineNums.isSelected());
+            }
+        }
+        catch (Exception ex)
+        {
+            GuiUtils.showErrorMessage(logger, "Cannot display PyNN file: "+selectedFile, ex, this);
+        }
+    }
+
+    void jButtonPsicsView_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("Going to display the selected PSICS file...");
+
+        if (projManager.getCurrentProject() == null)
+        {
+            logger.logError("No project loaded...");
+            return;
+        }
+            
+        String selectedFile = (String)jComboBoxPsicsFileList.getSelectedItem();
+
+        if (selectedFile.equals(defaultPsicsFilesText))
+            return;
+        try
+        {
+            File file = new File(ProjectStructure.getPsicsCodeDir(projManager.getCurrentProject().getProjectMainDirectory()), selectedFile);
+            if (file.getName().endsWith("xml"))
+            {
+                showHighlightedXML(file, false);
+            }
+            else
+            {
+                SimpleViewer.showFile(file.getAbsolutePath(), 12, false, false, this.jCheckBoxPsicsLineNums.isSelected());
+            }
+        }
+        catch (Exception ex)
+        {
+            GuiUtils.showErrorMessage(logger, "Cannot display PSICS file: "+selectedFile, ex, this);
+        }
     }
 
     void jButtonNetSetAddNew_actionPerformed(ActionEvent e)
@@ -12202,28 +12389,46 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         );
             return;
         }
-
+        else
+        {
+            showHighlightedXML(file, true);
+        }
+        
+    }
+    
+    private void showHighlightedXML(File file, boolean validateNeuroMLButton)
+    {
         SimpleXMLDocument doc = null;
+        String stringToView = "";
         try
         {
             doc = SimpleXMLReader.getSimpleXMLDoc(file);
+            stringToView = doc.getXMLString("", true);
         }
         catch (Exception ex)
         {
-            GuiUtils.showErrorMessage(logger, "Error showing that XML file", ex, this);
-            return;
+            //GuiUtils.showErrorMessage(logger, "Error showing that XML file", ex, this);
+            //return;
+            stringToView = "<span style=\"color:red\"><h3>Warning: could not successfully parse "+ file.getAbsolutePath()+"</h3></span>";
         }
-        //System.out.println("Attrs: "+ doc.getRootElement().getAttributes());
-        SimpleViewer.showString( doc.getXMLString("", formatted), "The NeuroML file: "+ fileToView ,12, false, formatted, .9f, .9f,this, false, "Validate", new ActionListener(){
-            public void actionPerformed(ActionEvent e)
-            {
-                jButtonNeuroMLValidate_actionPerformed(e);
+        String title = "Viewing XML file: "+ file.getAbsolutePath();
+        if (validateNeuroMLButton)
+        {
+            SimpleViewer.showString(stringToView , title,12, false, true, .9f, .9f,this, false, "Validate", new ActionListener(){
+                public void actionPerformed(ActionEvent e)
+                {
+                    jButtonNeuroMLValidate_actionPerformed(e);
+                }
             }
+            );
         }
-        );
-
-
+        else
+        {
+            SimpleViewer.showString(stringToView , title,12, false, true, .9f);
+        }
     }
+    
+    
 
     void jButtonGenesisGenerate_actionPerformed(ActionEvent e)
     {
@@ -12664,6 +12869,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             return;
         }
         
+        SimpleDateFormat formatter = new SimpleDateFormat("H:mm:ss, EEEE MMMM d, yyyy");
+        
+        
         for (int row: selectedRows)
         {
             CellMechanism cellMech = projManager.getCurrentProject().cellMechanismInfo.getCellMechanismAt(row);
@@ -12697,7 +12905,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                         newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_PSICS.xsl");
                     }
 
-                    SimpleDateFormat formatter = new SimpleDateFormat("H:mm:ss, EEEE MMMM d, yyyy");
 
                     java.util.Date modifiedOld = new java.util.Date(oldXsl.lastModified());
                     java.util.Date modifiedNew = new java.util.Date(newXsl.lastModified());
@@ -12721,6 +12928,61 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                         {
                             GuiUtils.showErrorMessage(logger,"Problem copying that file into the project", ex, this);
                         }
+                    }
+                }
+                
+                for(String simEnv:SimEnvHelper.currentSimEnvironments)
+                {
+                    if (cmlMech.getSimMapping(simEnv)==null)
+                    {
+                        File newXsl = null;
+
+                        if (simEnv.equals(SimEnvHelper.NEURON))
+                        {
+                            newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_NEURONmod.xsl");
+                        }
+                        else if (simEnv.equals(SimEnvHelper.GENESIS))
+                        {
+                            newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_GENESIStab.xsl");
+                        }
+                        else if (simEnv.equals(SimEnvHelper.PSICS))
+                        {
+                            newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_PSICS.xsl");
+                        }
+                        
+                        int ans = JOptionPane.showConfirmDialog(this, "There is currently no mapping for environment "+simEnv+", cell mech: " +cmlMech.getInstanceName()
+                            + "\nWould you like to add the following XSL mapping for this cell mechanism:\n\n"+ newXsl.getAbsolutePath()
+                            + " ("+formatter.format(new java.util.Date(newXsl.lastModified()))+")"+"?" , "Add mapping?", JOptionPane.YES_NO_CANCEL_OPTION);
+
+                        if (ans==JOptionPane.CANCEL_OPTION)
+                            return;
+                        if (ans==JOptionPane.YES_OPTION)
+                        {
+                            try 
+                            {
+                                GeneralUtils.copyFileIntoDir(newXsl, implFile.getParentFile());
+                                SimXSLMapping map = new SimXSLMapping(newXsl.getName(), simEnv, (simEnv.equals(SimEnvHelper.NEURON)));
+                                
+                                cmlMech.addSimMapping(map);
+                                try
+                                {
+                                    cmlMech.reset(projManager.getCurrentProject(), false);
+                                    logger.logComment("New cml mech: "+ cmlMech, true);
+                                }
+                                catch (Exception ex)
+                                {
+                                    GuiUtils.showErrorMessage(logger,"Problem updating mechanism to support mapping to simulator: "+ simEnv, ex, this);
+                                }
+                                //map.setXslFile(newXsl.getName());
+                                refreshTabCellMechanisms();
+                                projManager.getCurrentProject().markProjectAsEdited();
+                            } 
+                            catch (IOException ex) 
+                            {
+                                GuiUtils.showErrorMessage(logger,"Problem copying that file into the project", ex, this);
+                            }
+                        }
+                        
                     }
                 }
             }

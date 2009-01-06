@@ -28,9 +28,7 @@ import javax.swing.event.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import ucl.physiol.neuroconstruct.project.*;
-import ucl.physiol.neuroconstruct.simulation.SimulationData;
-import ucl.physiol.neuroconstruct.simulation.SimulationData.DataStore;
-import ucl.physiol.neuroconstruct.simulation.SimulationDataException;
+import ucl.physiol.neuroconstruct.simulation.*;
 
 /**
  * Dialog for managing saved data sets
@@ -623,9 +621,9 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                                 String msg = new String("Note: the data file appears to have "+splitWords.size()
                                         +" columns of data. Example line:\n\n" +line+"\n\n" +
                                     "Please specify whether the format is:\n"
-                                    +"A) "+DataReadFormat.EACH_COL_DATA+" \n" +
-                                    "B) "+DataReadFormat.FIRST_COL_TIME+"\n" +
-                                    "C) "+DataReadFormat.NUMBERED_TRACES+"\n");
+                                    +"A) "+DataReadFormat.EACH_COL_DATA.desc+" \n" +
+                                    "B) "+DataReadFormat.FIRST_COL_TIME.desc+"\n" +
+                                    "C) "+DataReadFormat.NUMBERED_TRACES.desc+"\n");
                                 
                                 Object[] vars = new Object[]{"Option A", "Option B", "Option C", "Cancel"};
 
@@ -852,7 +850,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
         DataSet dataSet = null;
         try
         {
-            dataSet = (DataSet) allDataSets.getDataSet(jTableDataSets.getSelectedRow());
+            dataSet = allDataSets.getDataSet(jTableDataSets.getSelectedRow());
         }
         catch (DataSetException ex)
         {

@@ -13,11 +13,13 @@
 package ucl.physiol.neuroconstruct.cell;
 
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.*;
 
 import ucl.physiol.neuroconstruct.cell.examples.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
+import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.equation.*;
 
  /**
@@ -43,6 +45,13 @@ public class ParameterisedGroup implements Serializable
     private ProximalPref proximalPref = null;
 
     private DistalPref distalPref = null;
+    
+    
+    
+    private float cachedMinLen = -1;
+    private float cachedMaxLen = -1;
+    private long cacheTime = -1;
+    private final float maxCacheTime = 2000; // ms
     
     public enum Metric implements Serializable { 
         
@@ -113,6 +122,7 @@ public class ParameterisedGroup implements Serializable
      */
     public String getNeuronObject()
     {
+        // todo: move these vals to enum...
         int metricRef = -1;
         if (metric.equals(Metric.PATH_LENGTH_FROM_ROOT)) 
             metricRef = 0;
@@ -165,13 +175,37 @@ public class ParameterisedGroup implements Serializable
             }
             else if (proximalPref.equals(ProximalPref.MOST_PROX_AT_0))
             {
-                float minLen = CellTopologyHelper.getMinLengthFromRoot(cell, group);
+                float minLen, maxLen;
+//                
+//                    //System.out.println(".. time .."+System.currentTimeMillis());
+//                    System.out.println("..cachedMinLen.."+cachedMinLen+"..cachedMaxLen.."+cachedMaxLen);
+//                    System.out.println("..maxCacheTime.."+maxCacheTime);
+//                    System.out.println("..diff.."+(System.currentTimeMillis()-cacheTime));
+//                    System.out.println("..use cache?.."+((System.currentTimeMillis()-cacheTime)<maxCacheTime));
+//                
+                if (cachedMinLen>=0 &&
+                    cachedMaxLen>=0&&
+                    ((System.currentTimeMillis()-cacheTime)<maxCacheTime) )
+                {
+                    maxLen = cachedMaxLen;
+                    minLen = cachedMinLen;
+                    //cacheTime = System.currentTimeMillis();
+                    //System.out.println("..using cache.."+cacheTime);
+                }
+                else
+                {
+                    minLen = CellTopologyHelper.getMinLengthFromRoot(cell, group);
+                    cachedMinLen = minLen;
+                    maxLen = CellTopologyHelper.getMaxLengthFromRoot(cell, group);
+                    cachedMaxLen = maxLen;
+                    cacheTime = System.currentTimeMillis();
+                    //System.out.println(".. refilling cache.."+cacheTime);
+                }
                 
                 if (distalPref.equals(DistalPref.NO_NORMALISATION))
                 {
                     return segLen - minLen;
                 }
-                float maxLen = CellTopologyHelper.getMaxLengthFromRoot(cell, group);
                 
                 if(distalPref.equals(DistalPref.MOST_DIST_AT_1))
                 {
@@ -391,11 +425,9 @@ public class ParameterisedGroup implements Serializable
     {
         try
         {
-            SimpleCell cell = new SimpleCell("Testcell");
+            Cell cell = new SimpleCell("Testcell");
             
-            
-            String group1 = Section.ALL;
-            String group2 = "Tip";
+            String group2 = "all";
             cell.getSegmentWithId(3).getSection().addToGroup(group2);
             
             
@@ -436,16 +468,44 @@ public class ParameterisedGroup implements Serializable
             
             cell.associateParamGroupWithVarMech(pg, cm);
             
-            Segment seg = cell.getSegmentsInGroup(group2).get(cell.getSegmentsInGroup(group2).size()-1);
+            Segment sega = cell.getSegmentsInGroup(group2).get(cell.getSegmentsInGroup(group2).size()-1);
             
-            System.out.println("Checking seg: "+ seg);
+            System.out.println("Checking seg: "+ sega);
             
             
-            System.out.println("Param eval: "+ pg.evaluateAt(cell, seg, 0.5f));
+            System.out.println("Param eval: "+ pg.evaluateAt(cell, sega, 0.5f));
             
             cell.associateGroupWithChanMech(Section.ALL, new ChannelMechanism("pas", 3.333f));
             
-            System.out.println("Cell: "+ CellTopologyHelper.printDetails(cell, null, false, true, false));
+            //System.out.println("Cell: "+ CellTopologyHelper.printDetails(cell, null, false, true, false));
+            
+            ProjectManager pm = new ProjectManager();
+            File projFile = new File("testProjects/TestDetailedMorphs/TestDetailedMorphs.neuro.xml");
+        
+        
+            pm.loadProject(projFile);
+      
+            Project proj = pm.getCurrentProject();
+            
+            cell = proj.cellManager.getCell("Purk");
+            
+            long start = System.currentTimeMillis();
+            Random r = new Random();
+            
+            System.out.println("Have cell with: "+ cell.getAllSegments().size()+" segs");
+            
+            pg = cell.getParameterisedGroups().get(0);
+            
+            System.out.println("pg: "+ pg);
+            
+            for(Segment seg: cell.getAllSegments())
+            {
+                pg.evaluateAt(cell, seg, r.nextFloat());
+                //CellTopologyHelper.getLengthFromRoot(cell, sl);
+                
+            }
+            long stop = System.currentTimeMillis();
+            System.out.println("Completed in "+(stop-start)+" milli");
             
             
         }

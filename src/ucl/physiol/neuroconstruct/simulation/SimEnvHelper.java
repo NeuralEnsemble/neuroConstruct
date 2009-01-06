@@ -28,7 +28,7 @@ public class SimEnvHelper
     public static final String GENESIS = "GENESIS";
     public static final String PSICS = "PSICS";
 
-    public String[] currentSimEnvironments = new String[]{NEURON,GENESIS, PSICS};
+    public static String[] currentSimEnvironments = new String[]{NEURON,GENESIS, PSICS};
 
     public SimEnvHelper()
     {

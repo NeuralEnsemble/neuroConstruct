@@ -128,7 +128,7 @@ public class MatlabOctave
 
         //contents.append("function "+LOAD_SIM+"()\n\n");
 
-        contents.append("load('"+SimulationData.TIME_DATA_FILE+"');\n\n");
+        contents.append("load('"+SimulationData.getStandardTimesFilename()+"');\n\n");
 
 
         ArrayList<PlotSaveDetails> recordings = project.generatedPlotSaves.getSavedPlotSaves();

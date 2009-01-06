@@ -3469,7 +3469,7 @@ public class GenesisFileManager
                 response.append("create asc_file " + timeFileElement + "\n");
                 response.append("setfield " + timeFileElement + "    flush 1    leave_open 1    append 1  notime 1\n");
 
-                response.append("setfield " + timeFileElement + " filename {strcat {targetDir} {\"" + SimulationData.TIME_DATA_FILE +  "\"}}\n");
+                response.append("setfield " + timeFileElement + " filename {strcat {targetDir} {\"" + SimulationData.getStandardTimesFilename() +  "\"}}\n");
                 response.append("call " + timeFileElement + " OUT_OPEN\n");
             }
             else
@@ -3914,7 +3914,7 @@ public class GenesisFileManager
         
         if (useTablesToSave)
         {
-            response.append("tab2file "+SimulationData.TIME_DATA_FILE+" "+timeFileElement+" table -nentries "+steps+" -overwrite\n");
+            response.append("tab2file "+SimulationData.getStandardTimesFilename()+" "+timeFileElement+" table -nentries "+steps+" -overwrite\n");
         }
         
         if (!GeneralUtils.isWindowsBasedPlatform() && !mooseCompatMode())  //  Functions need further testing on windows

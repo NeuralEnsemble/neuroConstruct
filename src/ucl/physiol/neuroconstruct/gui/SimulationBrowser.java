@@ -93,7 +93,7 @@ public class SimulationBrowser extends JDialog
         Vector allAvailableCols = allSims.getAllColumns();
         for (int i = 0; i < columnsToShow.size(); i++)
         {
-                String nextCol = (String)columnsToShow.elementAt(i);
+                String nextCol = columnsToShow.elementAt(i);
                 if (!allAvailableCols.contains(nextCol))
                     columnsToShow.remove(nextCol);
         }

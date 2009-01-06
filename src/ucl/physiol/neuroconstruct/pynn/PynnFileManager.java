@@ -487,10 +487,15 @@ public class PynnFileManager
                 ChannelMechanism cm = cms.nextElement();
                 try 
                 {
-                
                     ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism)project.cellMechanismInfo.getCellMechanism(cm.getName());
                 
                     cmlMech.initialise(project, false);
+                    
+                    if (cmlMech.isChannelMechanism()&& !cmlMech.isPassiveNonSpecificCond())
+                    {
+                            throw new PynnException("Error, only passive channels and Integrate & Fire mechanisms are allowed in PyNN at the moment!\n" +
+                                    "Channels: "+ cell.getChanMechsVsGroups());
+                    }
               
 
                     Vector<String> groups = cell.getChanMechsVsGroups().get(cm);
@@ -522,12 +527,13 @@ public class PynnFileManager
                 } 
                 catch (ChannelMLException ex) 
                 {
-                    throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanims");
+                    throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanims", ex);
                     
                 }
                 catch (ClassCastException ex) 
                 {
-                    throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanims");
+                    throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanims\n" +
+                        "Note: File Based Cell Mechanisms are not supported for PyNN", ex);
                     
                 }
             }

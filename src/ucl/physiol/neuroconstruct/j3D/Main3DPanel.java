@@ -2347,8 +2347,20 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         //Properties props = SimulationsInfo.getSimulationProperties(simRerunFrame.getSimulationDirectory());
 
         sb.append("\n<h3>Simulation reference     : " + simRerunFrame.getSimReference() + "<h3>\n");
-        sb.append("<p>Date recorded            : <b>" + simRerunFrame.getDateModified() + "</b></p>\n\n");
+        sb.append("   <p>Date recorded            : <b>" + simRerunFrame.getDateModified() + "</b></p>\n\n");
 
+        
+        if (simRerunFrame!=null && simRerunFrame.getSimulationData()!=null)
+        {
+            ArrayList<DataStore> dss = simRerunFrame.getSimulationData().getAllLoadedDataStores();
+            
+            sb.append("<p>Number of data sets reloaded  : <b>" + dss.size() + "</b></p>\n\n");
+            for(DataStore ds: dss)
+            {
+                sb.append("<p>"+ds.toString()+"</p>\n\n");
+            }
+        }
+        
         sb.append(SimulationsInfo.getSimProps(simRerunFrame.getSimulationDirectory(), true));
 
         SimpleViewer simpleViewer = new SimpleViewer(sb.toString(),

@@ -2231,7 +2231,7 @@ public class NeuronFileManager
             }
 
 
-            response.append(prefix+"{ sprint(timeFilename, \"%s%s\", targetDir, \"" + SimulationData.TIME_DATA_FILE + "\")}\n");
+            response.append(prefix+"{ sprint(timeFilename, \"%s%s\", targetDir, \"" + SimulationData.getStandardTimesFilename() + "\")}\n");
             response.append(prefix+"{ f_time.wopen(timeFilename) }\n");
             response.append(prefix+"{ v_time.printf(f_time) }\n");
             response.append(prefix+"{ f_time.close() }\n");
