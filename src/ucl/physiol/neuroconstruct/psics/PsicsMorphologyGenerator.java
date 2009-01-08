@@ -182,6 +182,15 @@ public class PsicsMorphologyGenerator
 
                 return "";
             }
+            if (seg.isSpherical())
+            {
+
+                GuiUtils.showWarningMessage(logger,
+                                      "Warning. Cell: "+cell+" has a spherical segment. The behaviour of cells with such segments when mapped to PSICS\n" +
+                                      "will not fully match NEURON & GENESIS implementations at present, due to the default method of connection\n" +
+                                      "in PSICS to spherical points.",
+                                      null);
+            }
             float connectionPointRadius = -1;
 
             if (parent==null)

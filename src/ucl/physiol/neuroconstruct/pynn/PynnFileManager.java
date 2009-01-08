@@ -508,18 +508,32 @@ public class PynnFileManager
                         }
                         if (cmlMech.isPassiveNonSpecificCond())
                         {
-                            float condDens = Float.parseFloat(cmlMech.getValue(ChannelMLConstants.getPostV1_7_3CondDensXPath()));
+                            try
+                            {
+                                float condDens = Float.parseFloat(cmlMech.getValue(ChannelMLConstants.getPostV1_7_3CondDensXPath()));
                             
-                            float totRes = (1.0f/condDens) * cellArea;
-                            float membTimeConst = (totRes * cellArea * specCap);
-            
-                            cellParams.put("tau_m", membTimeConst*1000);
-                            
-                            
-                            float revPot = Float.parseFloat(cmlMech.getValue(ChannelMLConstants.getIonRevPotXPath()));
-                            
-                            // TODO: check units!!
-                            cellParams.put("v_rest", revPot);
+
+                                float totRes = (1.0f/condDens) * cellArea;
+                                float membTimeConst = (totRes * cellArea * specCap);
+
+                                cellParams.put("tau_m", membTimeConst*1000);
+
+
+                                float revPot = Float.parseFloat(cmlMech.getValue(ChannelMLConstants.getIonRevPotXPath()));
+
+                                // TODO: check units!!
+                                cellParams.put("v_rest", revPot);
+                            }
+                            catch (NumberFormatException ex) 
+                            {
+                                throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanim, and that it is in the post v1.7.3 format (i.e. no <ohmic> sub element in <current_voltage_relation>)", ex);
+
+                            }
+                            catch (NullPointerException ex) 
+                            {
+                                throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanim, and that it is in the post v1.7.3 format (i.e. no <ohmic> sub element in <current_voltage_relation>)", ex);
+
+                            }
                             
                             
                         }
@@ -527,7 +541,7 @@ public class PynnFileManager
                 } 
                 catch (ChannelMLException ex) 
                 {
-                    throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanims", ex);
+                    throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanim", ex);
                     
                 }
                 catch (ClassCastException ex) 

@@ -174,6 +174,22 @@ public class ChannelMLCellMechanism extends CellMechanism
 
                 addSimMapping(mapping);
             }
+            if (props.getProperty("MappingPSICS") != null)
+            {
+                relativeFile = props.getProperty("MappingPSICS");
+
+                absFile = new File(templateDir, relativeFile);
+                absFile = absFile.getCanonicalFile();
+
+                logger.logComment("MappingPSICS file found in props to be: " + absFile);
+
+                newFile = GeneralUtils.copyFileIntoDir(absFile, dirForCMLFiles);
+
+                SimXSLMapping mapping = new SimXSLMapping(newFile.getName(),
+                                                          SimEnvHelper.PSICS, false);
+
+                addSimMapping(mapping);
+            }
 
             if (props.getProperty("NEURONNeedsCompilation") != null)
             {

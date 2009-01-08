@@ -43,9 +43,7 @@ import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.*;
 import ucl.physiol.neuroconstruct.neuron.NeuronException;
 import ucl.physiol.neuroconstruct.project.segmentchoice.*;
-import ucl.physiol.neuroconstruct.project.stimulation.ElectricalInput;
-import ucl.physiol.neuroconstruct.project.stimulation.IClamp;
-import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrain;
+import ucl.physiol.neuroconstruct.project.stimulation.*;
 import ucl.physiol.neuroconstruct.utils.SequenceGenerator.EndOfSequenceException;
 
 /**
@@ -682,14 +680,13 @@ public class ProjectManager implements GenerationReport
             ArrayList<String> ct = new ArrayList<String>();
             for (int j = 0; j < cellGroupsNames.size(); j++) 
             {
-                MorphMLConverter mmlC = new MorphMLConverter();
                 String cg = cellGroupsNames.get(j);
                 if (!ct.contains(project.cellGroupsInfo.getCellType(cg)))
                 {
                     i++;
                     ct.add(project.cellGroupsInfo.getCellType(cg));
                     Cell cell = project.cellManager.getCell(ct.get(i));
-                    SimpleXMLElement element = mmlC.getCellXMLElement(cell, project, NeuroMLConstants.NEUROML_LEVEL_3);
+                    SimpleXMLElement element = MorphMLConverter.getCellXMLElement(cell, project, NeuroMLConstants.NEUROML_LEVEL_3);
                     cellsElement.addChildElement(element);                    
                 }
                 
@@ -745,10 +742,10 @@ public class ProjectManager implements GenerationReport
                 }
                                 
                 //add the synapses that are used in the the stimulations
-                Iterator inputsNames = project.generatedElecInputs.getElecInputsItr();
+                Iterator<String> inputsNames = project.generatedElecInputs.getElecInputsItr();
                 while (inputsNames.hasNext()&&(addChan==false))
                 {
-                    ElectricalInput ei  = project.elecInputInfo.getStim((String)inputsNames.next()).getElectricalInput();
+                    ElectricalInput ei  = project.elecInputInfo.getStim(inputsNames.next()).getElectricalInput();
                     if (ei.getType().equals("RandomSpikeTrainExt") || ei.getType().equals("RandomSpikeTrain"))
                     {
                         RandomSpikeTrain rst = (RandomSpikeTrain)ei;
@@ -1551,6 +1548,25 @@ public class ProjectManager implements GenerationReport
             String cellType = activeProject.cellGroupsInfo.getCellType(stim.getCellGroup());
             Cell cell = activeProject.cellManager.getCell(cellType);
             
+            if (stim.getElectricalInput() instanceof RandomSpikeTrain || stim.getElectricalInput() instanceof RandomSpikeTrainExt)
+            {
+                String syn = null;
+                if (stim.getElectricalInput() instanceof RandomSpikeTrain)
+                    syn = ((RandomSpikeTrain)stim.getElectricalInput()).getSynapseType();
+                if (stim.getElectricalInput() instanceof RandomSpikeTrainExt)
+                    syn = ((RandomSpikeTrainExt)stim.getElectricalInput()).getSynapseType();
+                if(activeProject.cellMechanismInfo.getCellMechanism(syn) == null ||
+                   !activeProject.cellMechanismInfo.getCellMechanism(syn).isSynapticMechanism())
+                {
+                    report.addTaggedElement("Error, Input: " + stim.getReference() + " specifies synaptic mechanism: " + syn +
+                                            ", but there isn't any synaptic mechanism by that name in the project!",
+                                            "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
+                    report.addBreak();
+
+                    overallValidity = ValidityStatus.VALIDATION_ERROR;
+                }
+            }
+            
             if (cellType==null)
             {
                 report.addTaggedElement("Error, Input: " + stim.getReference() + " specifies Cell Group: " + stim.getCellGroup() +
@@ -1647,6 +1663,29 @@ public class ProjectManager implements GenerationReport
                 report.addBreak();
                 report.addTaggedElement("Note: Plot: "+plot.getPlotReference()+" is not currently included in any Simulation Configuration",
                         "font color=\"" + ValidityStatus.VALIDATION_COLOUR_INFO + "\"");
+            }
+            
+            if (!plot.getSegmentId().equals("*"))
+            {
+                String cellType = activeProject.cellGroupsInfo.getCellType(plot.getCellGroup());
+                Cell cell = activeProject.cellManager.getCell(cellType);
+                
+                try
+                {
+                    int id = Integer.parseInt(plot.getSegmentId());
+                    cell.getSegmentWithId(id).getSegmentName();
+                }
+                catch(Exception e) // Null pointer or parse exception
+                {
+                    report.addTaggedElement("Error, Plot: " + plot.getPlotReference() + " specifies segment Id: " + plot.getSegmentId() +
+                                        ", but this doesn't refer to a valid segment in this cell!",
+                                        "font color=\"" + ValidityStatus.VALIDATION_COLOUR_WARN + "\"");
+                    report.addBreak();
+
+                    overallValidity = ValidityStatus.combineValidities(overallValidity, ValidityStatus.VALIDATION_WARN);
+                    
+                }
+                    
             }
         }
 

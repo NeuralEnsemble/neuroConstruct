@@ -16,6 +16,7 @@ import java.io.*;
 import java.util.*;
 
 
+import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.dataset.*;
 import ucl.physiol.neuroconstruct.gui.DataSetManager;
@@ -442,23 +443,40 @@ public class PsicsFileManager
             
             for(PlotSaveDetails psd: psds)
             {
-                Segment seg = cell.getSegmentWithId(Integer.parseInt(psd.simPlot.getSegmentId()));
+                ArrayList<Integer> segIds = new ArrayList<Integer>();
+                if (psd.simPlot.getSegmentId().equals("*"))
+                {
+                    for(Segment seg: cell.getAllSegments())
+                    {
+                        segIds.add(seg.getSegmentId());
+                    }
+                }
+                else
+                {
+                    segIds.add(Integer.parseInt(psd.simPlot.getSegmentId()));
+                        
+                }
                 
+                for(int segId: segIds)
+                {
+                    Segment seg = cell.getSegmentWithId(segId);
 
-                SimpleXMLElement vr = new SimpleXMLElement("VoltageRecorder");
 
-                SimpleXMLAttribute at = new SimpleXMLAttribute("at", seg.getSegmentName());
-                vr.addAttribute(at);
-                
-                SimpleXMLAttribute col = new SimpleXMLAttribute("lineColor", getNextColour(psd.simPlot.getPlotReference()));
-                vr.addAttribute(col);
-                
-                String fileName = SimPlot.getFilename(psd, seg, "0");
-                
-                SimpleXMLAttribute label = new SimpleXMLAttribute("label", fileName);
-                vr.addAttribute(label);
-                
-                access.addChildElement(vr);
+                    SimpleXMLElement vr = new SimpleXMLElement("VoltageRecorder");
+
+                    SimpleXMLAttribute at = new SimpleXMLAttribute("at", seg.getSegmentName());
+                    vr.addAttribute(at);
+
+                    SimpleXMLAttribute col = new SimpleXMLAttribute("lineColor", getNextColour(psd.simPlot.getPlotReference()));
+                    vr.addAttribute(col);
+
+                    String fileName = SimPlot.getFilename(psd, seg, "0");
+
+                    SimpleXMLAttribute label = new SimpleXMLAttribute("label", fileName);
+                    vr.addAttribute(label);
+
+                    access.addChildElement(vr);
+                }
                 
             }
             
@@ -678,7 +696,9 @@ public class PsicsFileManager
 
 
 
-    public void runFile(boolean copyToSimDataDir) throws PsicsException
+    public void runFile(boolean copyToSimDataDir,
+                        boolean htmlSummary,
+                        boolean showPlot) throws PsicsException
     {
         logger.logComment("Trying to run the mainFile...");
 
@@ -796,7 +816,8 @@ public class PsicsFileManager
                 
                 String scriptText = "@echo off\n\ncd "+ dirToRunFrom.getAbsolutePath()+"\n";
                 scriptText = scriptText + runCommand +"\n";
-                //scriptText = scriptText + "pause\n";
+                scriptText = scriptText + "pause\n";
+                scriptText = scriptText + "exit\n";
 
                 FileWriter fw = new FileWriter(scriptFile);
 
@@ -897,8 +918,8 @@ public class PsicsFileManager
                 
                
             }
-            boolean loadResults = true;
-            if(loadResults)
+            
+            if(htmlSummary || showPlot)
             {
                 File resultsDir = dirForSimDataFiles;
                 File resultsHtml = new File(resultsDir, "index.html");
@@ -919,8 +940,7 @@ public class PsicsFileManager
                             return;
                         }
 
-                        boolean showHtml = false;
-                        if(showHtml)
+                        if(htmlSummary)
                         {
                             String command = browserPath + " " + resultsHtml.toURI();
                             //String command2 = browserPath + " " + resultsHtml.toURI();
@@ -938,17 +958,19 @@ public class PsicsFileManager
 
                             logger.logComment("Have successfully executed command: " + command);
                         }
-                        
-                        ArrayList<DataSet> dataSets = DataSetManager.loadFromDataSetFile(resultsDatafile, false, DataReadFormat.FIRST_COL_TIME);
-                        
-                        String plotFrameRef = "Plot of data from simulation "+project.simulationParameters.getReference();
+                        if(showPlot)
+                        {
+                            ArrayList<DataSet> dataSets = DataSetManager.loadFromDataSetFile(resultsDatafile, false, DataReadFormat.FIRST_COL_TIME);
 
-                        PlotterFrame frame = PlotManager.getPlotterFrame(plotFrameRef);
+                            String plotFrameRef = "Plot of data from simulation "+project.simulationParameters.getReference();
 
-                        for(DataSet dataSet: dataSets)
-                            frame.addDataSet(dataSet);
-                        
-                        frame.setVisible(true);
+                            PlotterFrame frame = PlotManager.getPlotterFrame(plotFrameRef);
+
+                            for(DataSet dataSet: dataSets)
+                                frame.addDataSet(dataSet);
+
+                            frame.setVisible(true);
+                        }
                         
                     }
                     else

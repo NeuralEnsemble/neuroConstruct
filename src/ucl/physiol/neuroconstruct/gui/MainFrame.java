@@ -241,6 +241,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JPanel jPanelHocFile1Buttons = new JPanel();
     JPanel jPanelHocFile2Buttons = new JPanel();
     JPanel jPanelPsicsFileView = new JPanel();
+    JPanel jPanelPsicsPostOptions = new JPanel();
     JPanel jPanelPynnFileView = new JPanel();
     
     
@@ -422,6 +423,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JLabel jLabelPyNNRandomGenDesc = new JLabel("Random seed for PyNN:");
     JTextField jTextFieldPyNNRandomGen = new JTextField("1234");
     JCheckBox jCheckBoxPyNNRandomGen = new JCheckBox("Recalculate before creating script files", false);
+    
+    JCheckBox jCheckBoxPsicsShowHtml = new JCheckBox("Show HTML summary", false);
+    JCheckBox jCheckBoxPsicsShowPlot = new JCheckBox("Quick plot after run", true);
+    
     
     
     
@@ -3295,19 +3300,27 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         buttonGroupPynn.add(jRadioButtonPynnBrian);
         buttonGroupPynn.add(jRadioButtonPynnPyMoose);
         
+        jPanelPsicsPostOptions.add(jCheckBoxPsicsShowHtml);
+        jPanelPsicsPostOptions.add(jCheckBoxPsicsShowPlot);
+        
         
         jPanelPsicsMain.add(jLabelPsicsMain,
                               new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
                                                      ,GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(20, 0, 20, 0), 20, 20));
-        jPanelPsicsMain.add(jPanelPsicsButtons,
+        jPanelPsicsMain.add(jPanelPsicsPostOptions,
                               new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
                                                      ,GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(20, 0, 20, 0), 20, 20));
-        jPanelPsicsMain.add(jPanelPsicsFileView,
+        jPanelPsicsMain.add(jPanelPsicsButtons,
                               new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
+                                                     ,GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(20, 0, 20, 0), 20, 20));
+        jPanelPsicsMain.add(jPanelPsicsFileView,
+                              new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
                                                      ,GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(20, 0, 120, 0), 20, 20));
@@ -6884,7 +6897,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                       this.jTextFieldSimRef.getText());
             }
             
-            projManager.getCurrentProject().psicsFileManager.runFile(true);
+            projManager.getCurrentProject().psicsFileManager.runFile(true, 
+                                                jCheckBoxPsicsShowHtml.isSelected(), 
+                                                jCheckBoxPsicsShowPlot.isSelected());
         }
         catch (PsicsException ex)
         {

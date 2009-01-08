@@ -119,7 +119,7 @@ public class SimulationData
         }
         this.reset();
 
-        logger.logComment("++--+   Initialising SimulationData "+this.hashCode()+" with directory: "+ dataDirectory.getAbsolutePath(), true);
+        logger.logComment("++--+   Initialising SimulationData "+this.hashCode()+" with directory: "+ dataDirectory.getAbsolutePath());
 
         //GeneralUtils.timeCheck("Starting reading times file");
 
@@ -128,7 +128,7 @@ public class SimulationData
         double timeConversionFactor = 1;
 
         String unitSystemDesc = props.getProperty("Unit system");
-        logger.logComment("unitSystemDesc: "+ unitSystemDesc, true);
+        logger.logComment("unitSystemDesc: "+ unitSystemDesc);
 
         int unitSystem = UnitConverter.getUnitSystemIndex(unitSystemDesc);
 
@@ -138,7 +138,7 @@ public class SimulationData
 
 
         times = readDataFileToArray(getTimesFile(), timeConversionFactor);
-        logger.logComment("There are "+times.length+" entries in the time file", true);
+        logger.logComment("There are "+times.length+" entries in the time file");
 
         //GeneralUtils.timeCheck("Starting reading voltages");
 
@@ -157,12 +157,12 @@ public class SimulationData
                     && !name.equals(ELEC_INPUT_DATA_FILE)
                     && name.indexOf("psics-out")<0)
                 {
-                    logger.logComment("-----   Taking " + name, true);
+                    logger.logComment("-----   Taking " + name);
                     return true;
                 }
                 else
                 {
-                    logger.logComment("-----   Rejecting " + name, true);
+                    logger.logComment("-----   Rejecting " + name);
                     return false;
                 }
 
@@ -297,7 +297,7 @@ public class SimulationData
                     
                     DataStore ds = new DataStore(dataArrays[cellNumIndex], cellGroup, cellNumIndex, segId, variable, xUnit, yUnit, pso);
 
-                    logger.logComment("Added a ds: "+ ds, true);
+                    logger.logComment("Added a ds: "+ ds);
                     dataSources.add(ds);
                 }
                 //DataStore ds = new DataStore(dataArray, cellGroup, cellNum, segId, variable, xUnit, yUnit, pso);
