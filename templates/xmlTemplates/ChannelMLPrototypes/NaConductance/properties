@@ -1,8 +1,9 @@
 #This file provides some additional information to help the import of the ChannelML files into neuroConstruct
 DefaultName=NaConductance
 Description=Simple HH Na channel mapped to a mod file (NEURON) and a tabbed channel (GENESIS)
-ChannelMLFile=../../Examples/ChannelML/NaChannel.xml
-MappingNEURON=../../Schemata/v1.7.2/Level2/ChannelML_v1.7.2_NEURONmod.xsl
-MappingGENESIS=../../Schemata/v1.7.2/Level2/ChannelML_v1.7.2_GENESIStab.xsl
+ChannelMLFile=../../Examples/ChannelML/NaChannel_HH.xml
+MappingNEURON=../../Schemata/v1.8.0/Level2/ChannelML_v1.8.0_NEURONmod.xsl
+MappingGENESIS=../../Schemata/v1.8.0/Level2/ChannelML_v1.8.0_GENESIStab.xsl
+MappingPSICS=../../Schemata/v1.8.0/Level2/ChannelML_v1.8.0_PSICS.xsl
 NEURONNeedsCompilation=true
 CellProcessType=Channel mechanism

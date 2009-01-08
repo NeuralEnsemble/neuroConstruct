@@ -2,7 +2,8 @@
 DefaultName=LeakConductance
 Description=Simple Leak conductance
 ChannelMLFile=../../Examples/ChannelML/LeakConductance.xml
-MappingNEURON=../../Schemata/v1.7.2/Level2/ChannelML_v1.7.2_NEURONmod.xsl
-MappingGENESIS=../../Schemata/v1.7.2/Level2/ChannelML_v1.7.2_GENESIStab.xsl
+MappingNEURON=../../Schemata/v1.8.0/Level2/ChannelML_v1.8.0_NEURONmod.xsl
+MappingGENESIS=../../Schemata/v1.8.0/Level2/ChannelML_v1.8.0_GENESIStab.xsl
+MappingPSICS=../../Schemata/v1.8.0/Level2/ChannelML_v1.8.0_PSICS.xsl
 NEURONNeedsCompilation=true
 CellProcessType=Channel mechanism
