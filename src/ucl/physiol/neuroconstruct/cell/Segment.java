@@ -810,7 +810,7 @@ public class Segment implements Serializable
         {
             if (!getSection().getSectionName().equals(other.getSection().getSectionName()))
             {
-                logger.logComment("Sections do not match");
+                //logger.logComment("Sections do not match");
                 return false;
             }
         }
@@ -819,7 +819,7 @@ public class Segment implements Serializable
         {
             if (getParentSegment().getSegmentId() != other.getParentSegment().getSegmentId())
             {
-                logger.logComment("Parent Sections do not match");
+                //logger.logComment("Parent Sections do not match");
                 return false;
             }
         }

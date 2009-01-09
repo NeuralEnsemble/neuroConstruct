@@ -1164,7 +1164,6 @@ public class SimulationData
         SimulationData simulationData1 = null;
         try
         {
-
             //System.out.println("Info: "+ SimulationsInfo.getSimProps(f, false));
             simulationData1 = new SimulationData(f, true);
             simulationData1.initialise();
@@ -1172,8 +1171,6 @@ public class SimulationData
             //System.out.println("dataOnlyForSoma: "+simulationData1.dataOnlyForSoma());
             System.out.println("Num time steps: "+simulationData1.getNumberTimeSteps());
             //System.out.println("Cell value: "+simulationData1.getVoltageAtTimeStep(33, "CellGroup_2_3.0"));
-
-
 
         }
         catch (SimulationDataException ex)

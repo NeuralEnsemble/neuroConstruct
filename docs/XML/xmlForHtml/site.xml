@@ -12,9 +12,13 @@
     <screenshots label="General Screenshots" href="#General+screenshots" description="Screenshots of neuroConstruct"/>
     <screenshots label="Models" href="#Imported+models" description="Existing models as neuroConstruct projects"/>
   </examples>
-  <examples label="Projects"  href="models/index.html" tab="Projects" >
+  
+  
+  <projects label="Projects"  href="projects/index.html" tab="Projects" >
     <projects label="Projects" href="#" description="Downloadable neuroConstruct projects"/>
-  </examples>
+  </projects>
+  
+  
 <!---->
   <documenation label="Documentation"    tab="Documentation">
     <documenation label="Home" href="docs/index.html" description="Documentation for neuroConstruct"/>

@@ -119,6 +119,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
     
     
     JButton jButtonCoords = new JButton("...");
+    JButton jButtonJump = new JButton("->");
     
     
     JLabel jLabelSegLength = new JLabel();
@@ -481,6 +482,20 @@ public class SegmentSelector extends JFrame implements DocumentListener
             }
         }); 
         
+        jButtonJump.setPreferredSize(d);
+        jButtonJump.setMaximumSize(d);
+        jButtonJump.setMargin(new Insets(2, 2,2,2));
+        jButtonJump.setToolTipText("Jump to parent Section...");
+        
+        
+        jButtonJump.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonJump_actionPerformed(e);
+            }
+        }); 
+        
         
         jComboBoxFunctions.addActionListener(new ActionListener()
         {
@@ -683,7 +698,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
         jPanelParameters.add(jButtonCoords, new GridBagConstraints(2, 5, 1, 1, 1.0, 0.0
                                                                         , GridBagConstraints.CENTER,
                                                                         GridBagConstraints.NONE,
-                                                                        new Insets(6, 0, 6, 14), 0, 0));
+                                                                        new Insets(6, 0, 6, 0), 0, 0));
         
         
         
@@ -711,10 +726,16 @@ public class SegmentSelector extends JFrame implements DocumentListener
         jPanelParameters.add(jLabelParent, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0
                                                                   , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                                   new Insets(6, 14, 6, 0), 0, 0));
-        jPanelParameters.add(jTextFieldParent, new GridBagConstraints(1, 8, 2, 1, 1.0, 0.0
+        
+        jPanelParameters.add(jTextFieldParent, new GridBagConstraints(1, 8, 1, 1, 1.0, 0.0
                                                                       , GridBagConstraints.WEST,
                                                                       GridBagConstraints.HORIZONTAL,
-                                                                      new Insets(6, 0, 6, 14), 0, 0));
+                                                                      new Insets(6, 0, 6, 0), 0, 0));
+        
+        jPanelParameters.add(jButtonJump, new GridBagConstraints(2, 8, 1, 1, 1.0, 0.0
+                                                                      , GridBagConstraints.CENTER,
+                                                                      GridBagConstraints.NONE,
+                                                                      new Insets(6, 0, 6, 0), 0, 0));
         
         
         
@@ -1080,7 +1101,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
             UIManager.setLookAndFeel(favouredLookAndFeel);
 
 
-            Project testProj = Project.loadProject(new File("projects/Simple/Simple.neuro.xml"),
+            Project testProj = Project.loadProject(new File("nCexamples/Ex6_CerebellumDemo/Ex6_CerebellumDemo.neuro.xml"),
                                                    new ProjectEventListener()
             {
                 public void tableDataModelUpdated(String tableModelName)
@@ -1093,10 +1114,10 @@ public class SegmentSelector extends JFrame implements DocumentListener
                 };
 
             });
-
+            Cell p = testProj.cellManager.getCell("PurkinjeCell");
             SegmentSelector dlg = new SegmentSelector(new Frame(),
                                                       testProj,
-                                                      testProj.cellManager.getCell("CellType_1"),
+                                                      p,
                                                       true);
 
             //Center the window
@@ -1113,7 +1134,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
             dlg.setLocation( (screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
             dlg.setVisible(true);
 
-            //dlg.setSelectedSegment((Segment)p.getAllSegments().elementAt(1));
+            dlg.setSelectedSegment(p.getSegmentWithId(43));
 
         }
         catch (Exception ex)
@@ -1826,6 +1847,38 @@ public class SegmentSelector extends JFrame implements DocumentListener
         jComboBoxSegment.setSelectedItem(newSegment.getSegmentName());
     }
     
+    public void jButtonJump_actionPerformed(ActionEvent e)
+    {
+        if (currentlyAddressedSegment==null) 
+            return;
+        
+        if (currentlyAddressedSegment.getParentSegment()==null)
+            return;
+        
+        setSelectedSegment(currentlyAddressedSegment.getParentSegment());
+        
+        
+        if (oneCell3DPanel != null)
+        {
+            oneCell3DPanel.markSegmentAsSelected(currentlyAddressedSegment.getSegmentId(), false);
+            this.toFront();
+        }
+        
+        /*
+        jComboBoxSection.setSelectedItem(currentlyAddressedSegment.getParentSegment().getSection().getSectionName());
+        this.repaint();
+        try
+        {
+            Thread.sleep(2000);
+        }
+        catch (InterruptedException ex)
+        {
+            // continue...
+        }
+        //jComboBoxSegment.setSelectedItem(currentlyAddressedSegment.getParentSegment().getSegmentName());*/
+    }
+    
+    
     public void jButtonCoords_actionPerformed(ActionEvent e)
     {
         if (currentlyAddressedSegment==null) return;
@@ -1907,6 +1960,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
         if (this.currentlyAddressedSegment==null) return;
 
         String suggestedNewName = currentlyAddressedSegment.getSection().getSectionName()+"_split";
+        int segId = currentlyAddressedSegment.getSegmentId();
 
 
         String requestSeg = "Please enter the name of the new Section which will be created after the split.\n"
@@ -1935,6 +1989,16 @@ public class SegmentSelector extends JFrame implements DocumentListener
         }
 
         this.setSecForSegAndChildren(currentlyAddressedSegment, newSection, true);
+        
+        currentlyAddressedSegment = myCell.getSegmentWithId(segId);
+        
+        this.setSelectedSegment(currentlyAddressedSegment);
+        
+        if (oneCell3DPanel != null)
+        {
+            oneCell3DPanel.markSegmentAsSelected(currentlyAddressedSegment.getSegmentId(), true);
+            this.toFront();
+        }
 
 
     }

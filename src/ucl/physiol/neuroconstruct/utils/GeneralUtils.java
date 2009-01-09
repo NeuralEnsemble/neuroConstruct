@@ -108,7 +108,9 @@ public class GeneralUtils
      */
     public static boolean includeParallelFunc()
     {
-        return new File("parallel").exists(); // A file of that name in the neuroConstruct main dir...
+        // If a file named parallel exists in the neuroConstruct main dir, enable testing of 
+        // parallel func...
+        return new File("parallel").exists(); 
     }
     
 

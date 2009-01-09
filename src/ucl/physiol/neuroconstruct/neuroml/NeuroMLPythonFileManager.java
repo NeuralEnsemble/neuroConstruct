@@ -15,7 +15,6 @@ package ucl.physiol.neuroconstruct.neuroml;
 import java.io.*;
 import java.util.*;
 
-import java.util.logging.Level;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
@@ -54,7 +53,7 @@ public class NeuroMLPythonFileManager
 
     //ArrayList<String> graphsCreated = new ArrayList<String>();
 
-    SimConfig simConfig = null;
+    //SimConfig simConfig = null;
 
     //////MorphCompartmentalisation morphComp = null;
 
@@ -83,16 +82,12 @@ public class NeuroMLPythonFileManager
 
 
 
-    public void generateTheFiles(SimConfig simConfig,
+    public void generateNeuroMLFiles(SimConfig simConf,
                                   MorphCompartmentalisation mc,
                                   int seed,
-                                  boolean generatedNetwork)
+                                  boolean singleL3File)
     {
         logger.logComment("Starting generation of the files...");
-
-        //long generationTimeStart = System.currentTimeMillis();
-        
-        this.simConfig = simConfig;
 
         this.removeAllPreviousGeneratedFiles();
 
@@ -103,31 +98,34 @@ public class NeuroMLPythonFileManager
         File neuroMLDir = ProjectStructure.getNeuroMLDir(project.getProjectMainDirectory());
         File generatedNetworkFile = new File(neuroMLDir, NetworkMLConstants.DEFAULT_NETWORKML_FILENAME_XML);
         
-        if (generatedNetwork)
-            {
-                
-                try {
-                    ProjectManager.saveCompleteNetworkXML(project,
-                                                          generatedNetworkFile,
-                                                          false, false,
-                                                          simConfig.getName(),
-                                                          NetworkMLConstants.UNITS_PHYSIOLOGICAL);
-                } catch (NeuroMLException ex) {
-                     GuiUtils.showErrorMessage(logger, "Problem saving complete network in NeuroML", ex, null);
-                }
-            
-            }           
+        if (singleL3File)
+        {
+
+            try {
+                ProjectManager.saveCompleteNetworkXML(project,
+                                                      generatedNetworkFile,
+                                                      false, false,
+                                                      simConf.getName(),
+                                                      NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+            } catch (NeuroMLException ex) {
+                 GuiUtils.showErrorMessage(logger, "Problem saving complete network in NeuroML", ex, null);
+            }
+
+        }           
         else
         {
 
         ArrayList<Cell> generatedCells = null;
+        
+        if (project.generatedCellPositions.getAllPositionRecords().size()==0)
+            simConf = null; // signifies no particular sim conf, so gen all cells, channels, etc.
         
         try
         {
             generatedCells = MorphMLConverter.saveAllCellsInNeuroML(project, 
                                                    mc, 
                                                    NeuroMLConstants.NEUROML_LEVEL_3, 
-                                                   simConfig,
+                                                   simConf,
                                                    neuroMLDir);
         }
         catch (MorphologyException ex1)
@@ -159,7 +157,11 @@ public class NeuroMLPythonFileManager
                 {
                     CellMechanism cm = project.cellMechanismInfo.getCellMechanism(cellMech);
                     
-                    if (!(cm instanceof ChannelMLCellMechanism))
+                    if (cm== null)
+                    {
+                        //??
+                    }
+                    else if (!(cm instanceof ChannelMLCellMechanism))
                     {
                         File warnFile = new File(neuroMLDir, cm.getInstanceName()+".warning");
                         try
@@ -200,19 +202,22 @@ public class NeuroMLPythonFileManager
 
         File networkFile = new File(neuroMLDir, NetworkMLConstants.DEFAULT_NETWORKML_FILENAME_XML);
         
-        try
+        if (project.generatedCellPositions.getAllPositionRecords().size()>0)
         {
+            try
+            {
 
-            ProjectManager.saveNetworkStructureXML(project,
-                                         networkFile,
-                                         false,
-                                         false,
-                                         simConfig.getName(),
-                                         NetworkMLConstants.UNITS_PHYSIOLOGICAL);
-        }
-        catch (NeuroMLException ex1)
-        {
-            GuiUtils.showErrorMessage(logger, "Problem saving network in NeuroML", ex1, null);
+                ProjectManager.saveNetworkStructureXML(project,
+                                             networkFile,
+                                             false,
+                                             false,
+                                             simConf.getName(),
+                                             NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+            }
+            catch (NeuroMLException ex1)
+            {
+                GuiUtils.showErrorMessage(logger, "Problem saving network in NeuroML", ex1, null);
+            }
         }
 
 

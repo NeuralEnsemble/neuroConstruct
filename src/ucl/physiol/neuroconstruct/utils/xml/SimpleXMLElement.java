@@ -81,6 +81,11 @@ public class SimpleXMLElement extends SimpleXMLEntity
         attributes.add(attr);
     }
 
+    public void addAttribute(String name, String value)
+    {
+        attributes.add(new SimpleXMLAttribute(name, value));
+    }
+
     public void addNamespace(SimpleXMLNamespace ns)
     {
         namespaces.add(ns);

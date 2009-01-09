@@ -45,9 +45,9 @@ public class ZipUtils
                              ArrayList<String> ignoreFileDirs,
                              ArrayList<String> ignoreExtns) throws FileNotFoundException, IOException
     {
-        logger.logComment("Adding contents of: "+ sourceDir+" to zip file: "+ destZipFileName);
 
         File destZipFile = new File(destZipFileName);
+        logger.logComment("Adding contents of: "+ sourceDir+" to zip file: "+ destZipFile.getAbsolutePath(), true);
         FileOutputStream dest = new FileOutputStream(destZipFileName);
 
         ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
