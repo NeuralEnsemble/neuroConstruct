@@ -416,6 +416,9 @@
   <target name="helpdocs" depends="glossary"
           description="Generates the documentation for the help viewer inside neuroConstruct. Makes a simpler version of the docs on the website, using the same base XML">
 
+
+    <mkdir dir="${helpdocs.dir}"/>
+      
     <java classname="${xml.transform.class}"
           fork="true">
         <jvmarg value="-Xmx700M" />
