@@ -7,6 +7,7 @@ package ucl.physiol.neuroconstruct.project;
 
 import java.io.File;
 import java.util.*;
+import java.util.regex.Matcher;
 import javax.vecmath.Point3f;
 import org.junit.*;
 import org.junit.Test;
@@ -142,7 +143,7 @@ public class MorphBasedConnGeneratorTest
         
         generate(proj, sc);
         
-        testTheNet(proj, true);
+        testTheNet(proj, true, true);
         
         
         
@@ -154,9 +155,24 @@ public class MorphBasedConnGeneratorTest
         
         generate(proj, sc);
         
-        testTheNet(proj, true);
+        testTheNet(proj, true, true);
         
+        /* 
+        ngNum.initialiseAsFixedIntGenerator(maxPre);
+        */
         
+        NumberGenerator ngNum2 = new NumberGenerator();
+        ngNum2.initialiseAsGaussianIntGenerator(maxPre*100, minPre, meanPre, stdPre);
+        
+        proj.morphNetworkConnectionsInfo.getConnectivityConditions(nc1).setNumConnsInitiatingCellGroup(ngNum2);
+        
+        proj.morphNetworkConnectionsInfo.getConnectivityConditions(nc1).setOnlyConnectToUniqueCells(false);
+        
+        generate(proj, sc);
+       
+        testTheNet(proj, true, false);
+        
+        proj.morphNetworkConnectionsInfo.getConnectivityConditions(nc1).setNumConnsInitiatingCellGroup(ngNum);
         
         
         System.out.println("Generating network with closest connectivity");
@@ -165,14 +181,22 @@ public class MorphBasedConnGeneratorTest
         
         proj.morphNetworkConnectionsInfo.setSearchPattern(nc1, spClosest);
         
+        proj.morphNetworkConnectionsInfo.getConnectivityConditions(nc1).setOnlyConnectToUniqueCells(true);
+        
         generate(proj, sc);
         
-        testTheNet(proj, false); // max/min length ignored for closest option
+        testTheNet(proj, false, true); // max/min length ignored for closest option
+        
+        proj.morphNetworkConnectionsInfo.getConnectivityConditions(nc1).setOnlyConnectToUniqueCells(false);
+        
+        generate(proj, sc);
+        
+        testTheNet(proj, false, false); // max/min length ignored for closest option
         
     }
     
     
-    private void testTheNet(Project proj, boolean testLength)
+    private void testTheNet(Project proj, boolean testLength, boolean testUniq)
     {
         String nc1 = proj.morphNetworkConnectionsInfo.getNetConnNameAt(2);
         String src = proj.morphNetworkConnectionsInfo.getSourceCellGroup(nc1);
@@ -182,23 +206,29 @@ public class MorphBasedConnGeneratorTest
         
         for(int i=0;i<numPre;i++)
         {
-            System.out.println("Checking conns for: "+i);
             ArrayList<SingleSynapticConnection> conns = proj.generatedNetworkConnections.getConnsFromSource(nc1, i);
             int num = conns.size();
+            
+            System.out.println("Checking conns for: "+i+", num: "+num);
+            
             assertTrue(num<=maxPre);
             assertTrue(num>=minPre);
-            ArrayList<Integer> uniq = new ArrayList<Integer>();
             
-            for(SingleSynapticConnection ssc: conns)
+            if(testUniq)
             {
-                if (!uniq.contains(ssc.targetEndPoint.cellNumber))
-                    uniq.add(ssc.targetEndPoint.cellNumber);
-                
-                assertTrue(ssc.props.get(0).weight >= weightMin);
-                assertTrue(ssc.props.get(0).weight <= weightMax);
-                
+                ArrayList<Integer> uniq = new ArrayList<Integer>();
+
+                for(SingleSynapticConnection ssc: conns)
+                {
+                    if (!uniq.contains(ssc.targetEndPoint.cellNumber))
+                        uniq.add(ssc.targetEndPoint.cellNumber);
+
+                    assertTrue(ssc.props.get(0).weight >= weightMin);
+                    assertTrue(ssc.props.get(0).weight <= weightMax);
+
+                }
+                assertEquals(uniq.size(), conns.size());
             }
-            assertEquals(uniq.size(), conns.size());
             
             
         }
@@ -275,7 +305,6 @@ public class MorphBasedConnGeneratorTest
         generate(proj); 
                
         assertTrue(proj.generatedNetworkConnections.areConnected(nc1, somePre, somePre));
-        
         
     }
     

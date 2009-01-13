@@ -11,7 +11,6 @@
  */
 
 package ucl.physiol.neuroconstruct.project;
-import java.util.logging.Level;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.equation.EquationException;
 

@@ -109,13 +109,17 @@ public class WeightGenerator extends NumberGenerator
     @Override
     public String toString()
     {
+        if (!this.isTypeFunction())
+        {
+            return super.toString();
+        }
         if (this.somaToSoma)
         {
-        return ("Expression: " + this.inhomoExpr.toString() + " function of soma to soma distance");
+            return ("Expression: " + this.inhomoExpr.toString() + " function of soma to soma distance");
         }
         else
         {
-        return ("Expression: " + this.inhomoExpr.toString() + " function of the radius");
+            return ("Expression: " + this.inhomoExpr.toString() + " function of the distance between connection points");
         }
         
     }
@@ -123,10 +127,14 @@ public class WeightGenerator extends NumberGenerator
     /**
      * Gives a short representation of the string for textfields, etc.
      */
-     @Override
+    @Override
     public String toShortString()
     {
-            return (this.inhomoExpr.getNiceString());
+        if (!this.isTypeFunction())
+        {
+            return super.toShortString();
+        }
+        return (this.inhomoExpr.getNiceString());
     }
     
      

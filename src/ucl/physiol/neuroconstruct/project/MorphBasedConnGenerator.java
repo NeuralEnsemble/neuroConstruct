@@ -734,7 +734,7 @@ public class MorphBasedConnGenerator extends Thread
                                         
                                         tempGenFinishCellNumber = allowedFinishCells[ProjectManager.getRandomGenerator().nextInt(allowedFinishCells.length)];
 
-                                        logger.logComment("Testing if cell num: " + tempGenFinishCellNumber +
+                                        logger.logComment("----  Testing if cell num: " + tempGenFinishCellNumber +
                                                           " is appropriate for cell number: "
                                                           + genStartCellNumber);
 
@@ -763,27 +763,32 @@ public class MorphBasedConnGenerator extends Thread
                                             logger.logComment("There are not more than: " + connConds.getMaxNumInitPerFinishCell()
                                                               + " src conns on finish cell " + tempGenFinishCellNumber);
                                             satisfiesMaxNumPerFinCell = true;
-
+    
+                                            if (connConds.isNoRecurrent()) 
+                                            {
+                                                if (!(project.generatedNetworkConnections.areConnected(netConnName, genStartCellNumber, tempGenFinishCellNumber))
+                                                    && (!(project.generatedNetworkConnections.areConnected(netConnName, tempGenFinishCellNumber, genStartCellNumber)))) {
+                                                    satisfiesGAPj = true;
+                                                    logger.logComment("Reccurent connections are not allowed, satisfies condition: " + satisfiesGAPj);
+                                                } 
+                                                else 
+                                                {
+                                                    satisfiesGAPj = false;
+                                                    logger.logComment("Reccurent connections are not allowed, satisfies condition: " + satisfiesGAPj + "the two cells are already connected");
+                                                }
+                                            } 
+                                            else 
+                                            {
+                                                satisfiesGAPj = true;
+                                            }
+                                            
                                             if (connConds.isOnlyConnectToUniqueCells())
                                             {
-                                                if (!genFinCellsAlreadyConnected.contains(new Integer(
-                                                    tempGenFinishCellNumber)))
+                                                if (!genFinCellsAlreadyConnected.contains(new Integer(tempGenFinishCellNumber)))
                                                 {
                                                     satisfiesUniqueness = true;
                                                         logger.logComment("Needs uniqueness, satisfiesUniqueness: " + satisfiesUniqueness);
-                                                        
-                                                    if (connConds.isNoRecurrent()) {
-                                                        if (!(project.generatedNetworkConnections.areConnected(netConnName, genStartCellNumber, tempGenFinishCellNumber))
-                                                            && (!(project.generatedNetworkConnections.areConnected(netConnName, tempGenFinishCellNumber, genStartCellNumber)))) {
-                                                            satisfiesGAPj = true;
-                                                            logger.logComment("Reccurent connections are not allowed, satisfies condition: " + satisfiesGAPj);
-                                                        } else {
-                                                            satisfiesGAPj = false;
-                                                            logger.logComment("Reccurent connections are not allowed, satisfies condition: " + satisfiesGAPj + "the two cells are already connected");
-                                                        }
-                                                    } else {
-                                                        satisfiesGAPj = true;
-                                                    }
+                                                    
                                                 }
                                                 else
                                                 {
@@ -825,8 +830,8 @@ public class MorphBasedConnGenerator extends Thread
                                         else
                                         {
 
-                                                    logger.logComment("Not an autapse? "+sourceCellGroup.equals(targetCellGroup) +" "+!connConds.isAllowAutapses()+" "+
-                                                    (genStartCellNumber == tempGenFinishCellNumber));
+                                            logger.logComment("Not an autapse? "+sourceCellGroup.equals(targetCellGroup) +" "+!connConds.isAllowAutapses()+" "+
+                                            (genStartCellNumber == tempGenFinishCellNumber));
 
                                             SynapticConnectionEndPoint tempGenFinishEndpoint =
                                                 new SynapticConnectionEndPoint(tempGenFinishConnPoint, tempGenFinishCellNumber);
@@ -885,6 +890,9 @@ public class MorphBasedConnGenerator extends Thread
                                     else
                                     {
                                         logger.logComment("satisfiesMaxNumPerFinCell: " + satisfiesMaxNumPerFinCell);
+                                        logger.logComment("satisfiesUniqueness: " + satisfiesUniqueness);
+                                        logger.logComment("satisfiesGAPj: " + satisfiesGAPj);
+                                        
                                     }
                                 }
                                 logger.logComment("Finished checking the " + numberOfSectionsToCheck +
