@@ -20,9 +20,11 @@
 
   <tab id="Introduction" label="Introduction" dir="" indexfile="index.html"/>
 
-  <tab id="Examples" label="Screenshots" dir="examples" indexfile="index.html"/>
+  <!--<tab id="Examples" label="Screenshots" dir="examples" indexfile="index.html"/>-->
   
-  <tab id="Projects" label="Projects" dir="projects" indexfile="index.html"/>
+  <tab id="Examples" label="Examples" dir="samples" indexfile="index.html"/>
+  
+  <tab id="Models" label="Models" dir="models" indexfile="index.html"/>
 
   <tab id="Documentation" label="Documentation" dir="docs" indexfile="index.html"/><!---->
 
