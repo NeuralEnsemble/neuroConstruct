@@ -24,6 +24,8 @@ import ucl.physiol.neuroconstruct.project.GeneratedPlotSaves.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
+import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLElement;
+import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLEntity;
 
 
 /**
@@ -534,8 +536,32 @@ public class PynnFileManager
                                 throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanim, and that it is in the post v1.7.3 format (i.e. no <ohmic> sub element in <current_voltage_relation>)", ex);
 
                             }
-                            
-                            
+                        }
+                        if (cmlMech.isPointProcess())
+                        {
+                            try
+                            {
+                                SimpleXMLEntity[] ents = cmlMech.getXMLDoc().getXMLEntities(ChannelMLConstants.getIandFXPath());
+                                if (ents!=null && ents.length==1)
+                                {
+                                    SimpleXMLElement ifElement = (SimpleXMLElement) ents[0];
+                                    float thresh = Float.parseFloat(ifElement.getAttributeValue(ChannelMLConstants.I_AND_F_THRESHOLD));
+                                    float tRefrac = Float.parseFloat(ifElement.getAttributeValue(ChannelMLConstants.I_AND_F_T_REFRAC));
+                                    float vReset = Float.parseFloat(ifElement.getAttributeValue(ChannelMLConstants.I_AND_F_V_RESET));
+
+                                    // TODO: check units!!
+                                    cellParams.put("v_thresh", thresh);
+                                    cellParams.put("tau_refrac", tRefrac);
+                                    cellParams.put("v_reset", vReset);
+                                    
+                                    
+                                }
+                            }
+                            catch (NullPointerException ex) 
+                            {
+                                throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanim, and that it is in the post v1.7.3 format (i.e. no <ohmic> sub element in <current_voltage_relation>)", ex);
+
+                            }
                         }
                     }
                 } 

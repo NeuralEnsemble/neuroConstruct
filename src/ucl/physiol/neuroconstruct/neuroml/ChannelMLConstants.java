@@ -127,6 +127,10 @@ public class ChannelMLConstants
 
     
     public static String I_AND_F_ELEMENT = "integrate_and_fire";
+    
+    public static String I_AND_F_THRESHOLD = "threshold";
+    public static String I_AND_F_T_REFRAC = "t_refrac";
+    public static String I_AND_F_V_RESET = "v_reset";
 
     public static String OHMIC_ELEMENT = "ohmic";
 
