@@ -39,7 +39,7 @@ public class ExampleProjects
 
 
 
-    public static void generateMainPage(File mainFile) throws IOException, ProjectFileParsingException
+    public static void generateMainPage(File mainFile, File sourceProjDir) throws IOException, ProjectFileParsingException
     {
         SimpleXMLElement root = new SimpleXMLElement("document");
         SimpleXMLElement header = new SimpleXMLElement("header");
@@ -48,21 +48,42 @@ public class ExampleProjects
         SimpleXMLElement title = new SimpleXMLElement("title");
         header.addChildElement(title);
 
-        title.addContent("neuroConstruct example projects");
 
         SimpleXMLElement body = new SimpleXMLElement("body");
         root.addChildElement(body);
         SimpleXMLElement intro = new SimpleXMLElement("p");
         body.addChildElement(intro);
         
+        if(!mainFile.getParentFile().exists())
+            mainFile.getParentFile().mkdir();
+        
         File targetDownloadDir = new File(mainFile.getParentFile(), "downloads");
         if(!targetDownloadDir.exists())
             targetDownloadDir.mkdir();
-
-        intro.addContent("Downloadable neuroConstruct example projects");
+            
         
-        File exsDir = new File("nCexamples");
-        for(File exProjDir: exsDir.listFiles())
+        if (sourceProjDir.getName().indexOf("examples")>=0)
+        {
+            title.addContent("neuroConstruct example projects");
+        
+            intro.addContent( "Downloadable neuroConstruct example projects. These <strong>illustrate the core " +
+            "functionality of neuroConstruct</strong>, as opposed to providing electrophysiologically accurate " +
+            "models. Projects based on published conductance based models can be found <a href=\"../models/index.html\">here</a>");
+        }
+        if (sourceProjDir.getName().indexOf("models")>=0)
+        {
+            title.addContent("neuroConstruct projects based on published neuronal and network models");
+            
+            intro.addContent("Downloadable neuroConstruct projects <strong>based on published conductance based models</strong>. " +
+            "Some examples to illustrate the core functionality of neuroConstruct, as opposed to " +
+            "providing electrophysiologically accurate models can be found <a href=\"../samples/index.html\">here</a>");
+        }
+        File[] fileArray = sourceProjDir.listFiles();
+        
+        ArrayList<File> files = GeneralUtils.toArrayList(fileArray);
+        //if (files.contains(""))
+        
+        for(File exProjDir: files)
         {
             File morphDir = new File(exProjDir, "cellMechanisms");
             
@@ -94,7 +115,9 @@ public class ExampleProjects
                 File targetImageDir = new File(mainFile.getParentFile(), "images");
                 if (!targetImageDir.exists())
                     targetImageDir.mkdir();
+                
                 File targetProjImageDir = new File(targetImageDir, projName);
+                
                 if (!targetProjImageDir.exists())
                     targetProjImageDir.mkdir();
                 
@@ -139,7 +162,7 @@ public class ExampleProjects
                 row.addChildElement(colRight);
                 colRight.addAttribute("width","150");
                 colMid.addChildElement(secIntro);
-                secIntro.addContent("Project name: "+ projName);
+                secIntro.addContent("Project name: <strong>"+ projName+"</strong>");
                 
                 File projFile = new File(exProjDir, projName+ProjectStructure.getProjectFileExtension());
                 
@@ -156,7 +179,7 @@ public class ExampleProjects
                 
                 SimpleXMLElement desc = new SimpleXMLElement("p");
                 colMid.addChildElement(desc);
-                desc.addContent(descShort);
+                desc.addContent(GeneralUtils.parseForHyperlinks(descShort));
                 
                 SimpleXMLElement modified = new SimpleXMLElement("p");
                 colMid.addChildElement(modified);
@@ -190,7 +213,7 @@ public class ExampleProjects
                 
                 SimpleXMLElement downloads = new SimpleXMLElement("p");
                 colRight.addChildElement(downloads);
-                downloads.addContent("Downloads:");
+                downloads.addContent("Downloads<a href=\"#downloadInfo\">*</a>:");
                 
                 SimpleXMLElement downloadProj = new SimpleXMLElement("p");
                 colRight.addChildElement(downloadProj);
@@ -203,6 +226,7 @@ public class ExampleProjects
                 
                 ArrayList<String> noNeuroML = new ArrayList<String>();
                 noNeuroML.add("Ex3_Morphology");
+                noNeuroML.add("DentateGyrus");
                 
                 if(!noNeuroML.contains(projName))
                 {
@@ -237,6 +261,27 @@ public class ExampleProjects
                 
             }
         }
+        
+        
+        SimpleXMLElement end = new SimpleXMLElement("p");
+        body.addChildElement(end);
+        end.addContent("&nbsp;");
+        
+        SimpleXMLElement infoDlanchor = new SimpleXMLElement("anchor");
+        body.addChildElement(infoDlanchor);
+        end.addAttribute("id", "downloadInfo");
+        
+        SimpleXMLElement infoDl = new SimpleXMLElement("p");
+        body.addChildElement(infoDl);
+        end.addContent("* Note: neuroConstruct project downloads (most of which are included with the standard software distribution) " +
+            "can be loaded directly into neuroConstruct to generate cell and network scripts for NEURON, GENESIS, etc.," +
+            " but NeuroML downloads just consist of the core elements of the project" +
+            " (morphologies, channels, etc.) which have been exported in NeuroML format. The latter can be useful for testing NeuroML compliant applications.");
+        
+        
+        SimpleXMLElement end2 = new SimpleXMLElement("p");
+        body.addChildElement(end2);
+        end2.addContent("&nbsp;");
 
 
         FileWriter fw = null;
@@ -285,15 +330,23 @@ public class ExampleProjects
         
         try
         {
-            File mainFile = new File("docs/XML/xmlForHtml/projects/index.xml");
             
-
+            File exsDir = new File("nCexamples");
+            
+            File mainFile = new File("docs/XML/xmlForHtml/samples/index.xml");
+            
             logger.logComment("Going to create docs at: "+ mainFile.getCanonicalPath(), true);
             
-           
             
-            generateMainPage(mainFile);
+            generateMainPage(mainFile, exsDir);
             
+            logger.logComment("Created doc at: "+ mainFile.getCanonicalPath(), true);
+            
+            File modelsDir = new File("nCmodels");
+            mainFile = new File("docs/XML/xmlForHtml/models/index.xml");
+            
+            
+            generateMainPage(mainFile, modelsDir);
 
             logger.logComment("Created doc at: "+ mainFile.getCanonicalPath(), true);
         }

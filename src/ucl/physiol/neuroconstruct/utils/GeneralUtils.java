@@ -262,7 +262,15 @@ public class GeneralUtils
         return formatter.format(now);
     }
 
-
+    public static ArrayList<File> toArrayList(File[] files)
+    {
+        ArrayList<File> fArr = new ArrayList<File>(files.length);
+        for(File f: files)
+        {
+            fArr.add(f);
+        }
+        return fArr;
+    }
 
     public static File[] reorderAlphabetically(File[] files, boolean ascending)
     {
@@ -382,6 +390,39 @@ public class GeneralUtils
 
 
 
+    public static String parseForHyperlinks(String text)
+    {
+        String prefix="http://";
+        int checkpoint = 0;
+        
+        while(text.indexOf(prefix, checkpoint)>=0)
+        {
+            int start = text.indexOf(prefix, checkpoint);
+            int end = text.length();
+            if (text.indexOf(" ", start)>0)
+                end = text.indexOf(" ", start);
+            if (text.indexOf("\n", start)>0)
+                end = Math.min(end,text.indexOf("\n", start));
+                
+            
+            //System.out.println("start: ("+start+"), end: ("+end+")");
+            String url = text.substring(start, end);
+            if (url.endsWith("."))
+            {
+                url=url.substring(0,url.length()-1);
+            }
+            //System.out.println("url: ("+url+")");
+            
+            String link = "<a href=\""+url+"\">"+url+"</a>";
+            
+            text = replaceToken(text, url, link, start);
+            
+            checkpoint = start+link.length();
+            
+            System.out.println("text: ("+text+"), text len: ("+text.length()+"), checkpoint: ("+checkpoint+")");
+        }
+        return text;
+    }
 
 
     /**
@@ -868,7 +909,19 @@ public class GeneralUtils
 
     public static void main(String[] args)
     {
+        String ss = "12345.6";
+        System.out.println(ss.replaceFirst("45.6", "abc"));
+        
+        
+        String text="Implementation of the Mainen et al. pyramidal cell model from: http://senselab.med.yale.edu/senselab/modeldb/ShowModel.asp?model=8210. End.";
+        
+            System.out.println("Old: "+text);
+            System.out.println("New: "+parseForHyperlinks(text));
+        
+        
         //String dir = "/home/padraig/temp/gg gg/";
+        
+        if (true) return;
         String dir = "../../temp/gg gg/";
         
         File f1 = new File(dir+"uuu");
@@ -889,7 +942,6 @@ public class GeneralUtils
         }
         
         
-        if (true) return;
         
         /*
         String path = "c:\\temp\\gg";
