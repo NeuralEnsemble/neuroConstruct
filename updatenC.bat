@@ -43,7 +43,7 @@ svn update %NC_EXAMPLES%
 
 
 if not exist %NC_MODELS% (
-    svn co svn://87.106.103.176:3999/models/examples/trunk/nCmodels %NC_MODELS%
+    svn co svn://87.106.103.176:3999/models/models/trunk/nCmodels %NC_MODELS%
 )
 
 
