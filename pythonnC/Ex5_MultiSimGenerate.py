@@ -99,6 +99,8 @@ if numGenerated > 0:
 
         print "Going to run simulation: "+simRef
         
+        ########  Adjusting the amplitude of the current clamp ###############
+        
         stim = myProject.elecInputInfo.getStim("Input_0")
         
         newAmp = i/10.0
@@ -108,6 +110,30 @@ if numGenerated > 0:
         myProject.elecInputInfo.updateStim(stim)
         
         print "Next stim: "+ str(stim)
+        
+        #######################################################################
+        
+        '''
+        ######### This code would adjust the density of one of the channels ########
+
+				cell = myProject.cellManager.getCell('SampleCell')
+
+				print "Channels present: "+str(cell.getChanMechsVsGroups())
+
+				dens = i*1e-7
+
+				# Should be put at start...
+				from ucl.physiol.neuroconstruct.cell import *
+
+				chanMech = ChannelMechanism("KConductance", dens)
+
+				cell.associateGroupWithChanMech("all", chanMech)
+				        
+        print "Channels present: "+str(cell.getChanMechsVsGroups())
+        
+        ############################################################################
+        
+        '''
         
         myProject.simulationParameters.setReference(simRef)
     
