@@ -9,7 +9,7 @@ set NML_EX_DIR=templates\xmlTemplates\Examples
 set NML_SC_DIR=templates\xmlTemplates\Schemata
 
 set NC_EXAMPLES=nCexamples
-set NC_MODELS=nCexamples
+set NC_MODELS=nCmodels
 
 
 if not exist %NML_EX_DIR% (
