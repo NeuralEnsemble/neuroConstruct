@@ -41,7 +41,7 @@ svn update $NC_EXAMPLES
 
 
 if [ ! -d $NC_MODELS ]; then
-    svn co svn://87.106.103.176:3999/models/examples/trunk/nCmodels $NC_MODELS
+    svn co svn://87.106.103.176:3999/models/models/trunk/nCmodels $NC_MODELS
 fi
 
 echo Updating the neuroConstruct detailed model examples
