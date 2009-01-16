@@ -278,7 +278,7 @@
                 </ul>
 
 
-                 More information is available <a target="_blank" href="http://www.neuroml.org">here</a>, and a web interface for checking the validity of NeuroML file is <a target="_blank" href="http://www.morphml.org:8080/NeuroMLValidator/">here</a>.</defined>
+                 More information is available <a target="_blank" href="http://www.neuroml.org">here</a>, and a web interface for checking the validity of NeuroML file is <a target="_blank" href="http://www.neuroml.org/NeuroMLValidator/Validation.jsp">here</a>.</defined>
     </term>
 
     <term>
@@ -286,7 +286,7 @@
         <defined>MorphML is an standard which has been developed (using <intref>XML</intref> technologies) to allow data on cell morphologies to be <br/>
         easily transferred between neuronal simulation applications. More information is available <a target="_blank" href="http://www.neuroml.org">here</a>.<br/>
         It is a part of the <intref>NeuroML</intref> initiative, and is the core of NeuroML Level 1. Detailed specifications of the elements allowed in a MorphML document are<br/>
-        available <a target="_blank" href="http://www.morphml.org:8080/NeuroMLValidator/Latest.jsp?spec=MorphML">here</a>. 
+        available <a target="_blank" href="http://www.neuroml.org/NeuroMLValidator/Latest.jsp?spec=MorphML">here</a>. 
         There is a <a href="../links/publications.html">paper</a> describing this part of the NeuroML standards.
     </defined>
     </term>
@@ -303,8 +303,8 @@
         script files in the language of the target simulator for inclusion in cell models.
         The format for valid ChannelML files is described in an <a href="http://www.w3schools.com/schema/default.asp">XML Schema</a> document.
         Examples of valid ChannelML files and mappings to simulators can be found
-        <a  href="http://www.MorphML.org:8080/NeuroMLValidator/">here</a>, and detailed specifications of the elements allowed in a ChannelML document are<br/>
-        available <a target="_blank" href="http://www.morphml.org:8080/NeuroMLValidator/Latest.jsp?spec=ChannelML">here</a>.
+        <a  href="http://www.neuroml.org/NeuroMLValidator/Samples.jsp">here</a>, and detailed specifications of the elements allowed in a ChannelML document are<br/>
+        available <a target="_blank" href="http://www.neuroml.org/NeuroMLValidator/Latest.jsp?spec=ChannelML">here</a>.
         Details of the process to convert an existing channel script, e.g. a mod file, to ChannelML is outlined <a  href="importneuron.html#Converting+mod+file%2FGENESIS+script+channels+into+ChannelML" >converting channels to ChannelML</a>
         </defined>
     </term>

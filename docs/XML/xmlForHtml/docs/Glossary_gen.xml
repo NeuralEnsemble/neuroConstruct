@@ -299,8 +299,8 @@
         script files in the language of the target simulator for inclusion in cell models.
         The format for valid ChannelML files is described in an <a href="http://www.w3schools.com/schema/default.asp" target="_blank">XML Schema</a> document.
         Examples of valid ChannelML files and mappings to simulators can be found
-        <a href="http://www.MorphML.org:8080/NeuroMLValidator/" target="_blank">here</a>, and detailed specifications of the elements allowed in a ChannelML document are
-        available <a href="http://www.morphml.org:8080/NeuroMLValidator/Latest.jsp?spec=ChannelML" target="_blank">here</a>.
+        <a href="http://www.neuroml.org/NeuroMLValidator/Samples.jsp" target="_blank">here</a>, and detailed specifications of the elements allowed in a ChannelML document are
+        available <a href="http://www.neuroml.org/NeuroMLValidator/Latest.jsp?spec=ChannelML" target="_blank">here</a>.
         Details of the process to convert an existing channel script, e.g. a mod file, to ChannelML is outlined <a href="importneuron.html#Converting+mod+file%2FGENESIS+script+channels+into+ChannelML">converting channels to ChannelML</a>
         
 </p>
@@ -522,7 +522,7 @@
 <p>MorphML is an standard which has been developed (using <a href="#XML">XML</a> technologies) to allow data on cell morphologies to be 
         easily transferred between neuronal simulation applications. More information is available <a href="http://www.neuroml.org" target="_blank">here</a>.
         It is a part of the <a href="#NeuroML">NeuroML</a> initiative, and is the core of NeuroML Level 1. Detailed specifications of the elements allowed in a MorphML document are
-        available <a href="http://www.morphml.org:8080/NeuroMLValidator/Latest.jsp?spec=MorphML" target="_blank">here</a>. 
+        available <a href="http://www.neuroml.org/NeuroMLValidator/Latest.jsp?spec=MorphML" target="_blank">here</a>. 
         There is a <a href="../links/publications.html">paper</a> describing this part of the NeuroML standards.
     </p>
 </span>
@@ -706,7 +706,7 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
 </ul>
 
 
-                 More information is available <a href="http://www.neuroml.org" target="_blank">here</a>, and a web interface for checking the validity of NeuroML file is <a href="http://www.morphml.org:8080/NeuroMLValidator/" target="_blank">here</a>.</p>
+                 More information is available <a href="http://www.neuroml.org" target="_blank">here</a>, and a web interface for checking the validity of NeuroML file is <a href="http://www.neuroml.org/NeuroMLValidator/Validation.jsp" target="_blank">here</a>.</p>
 </span>
 <p style="font-size: 11">
 <a href="#top">index</a>

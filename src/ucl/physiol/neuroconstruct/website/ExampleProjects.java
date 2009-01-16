@@ -16,8 +16,8 @@ import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.text.*;
+import java.util.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.OriginalCompartmentalisation;
 import ucl.physiol.neuroconstruct.utils.xml.*;
 
@@ -227,6 +227,7 @@ public class ExampleProjects
                 ArrayList<String> noNeuroML = new ArrayList<String>();
                 noNeuroML.add("Ex3_Morphology");
                 noNeuroML.add("DentateGyrus");
+                noNeuroML.add("RothmanEtAl_KoleEtAl_PyrCell");
                 
                 if(!noNeuroML.contains(projName))
                 {
@@ -276,7 +277,9 @@ public class ExampleProjects
         end.addContent("* Note: neuroConstruct project downloads (most of which are included with the standard software distribution) " +
             "can be loaded directly into neuroConstruct to generate cell and network scripts for NEURON, GENESIS, etc.," +
             " but NeuroML downloads just consist of the core elements of the project" +
-            " (morphologies, channels, etc.) which have been exported in NeuroML format. The latter can be useful for testing NeuroML compliant applications.");
+            " (morphologies, channels, etc.) which have been exported in NeuroML format. The latter can be useful for testing NeuroML compliant applications. " +
+            "If no NeuroML download link is present, this usually indicates that the model is mainly implemented using channel/synapse mechanisms in a simulator's " +
+            "native language (e.g. mod files) which have not fully been converted to ChannelML yet.");
         
         
         SimpleXMLElement end2 = new SimpleXMLElement("p");

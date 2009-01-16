@@ -19,7 +19,7 @@
 		</td>
 		<td><p>&nbsp;</p>
 			The main neuroConstruct paper. An introduction to all of the key functionality, including some 
-                        network examples.
+                        network examples. <p><strong>Please cite this paper if you use neuroConstruct in your research.</strong></p>
 		</td>
 	</tr>
         
@@ -31,7 +31,7 @@
 		<p><a href="http://www.elsevier.com/wps/find/bookdescription.cws_home/713686/description">Elsevier</a></p>
 		</td>
 		<td><p>&nbsp;</p>
-			A chapter in a book outlining the various modelling approached being used in epilepsy research. Attractive image on the cover...
+			A chapter in a book outlining the various modelling approached being used in epilepsy research. Attractive image on the book cover...
                        
 		</td>
 	</tr>
@@ -74,6 +74,19 @@
                 </td>
 		<td><p>&nbsp;</p>
 			A review of the current state of interoperability for modelling applications, resulting from a workshop at CNS 2006.
+                        
+		</td>
+	</tr>
+        
+	<tr>
+		<td>
+			<p><strong>Jason S. Rothman, Laurence Cathala, Volker Steuber,  R. Angus Silver</strong></p>
+			<p><em>Synaptic depression enables neuronal gain control. Nature 2009</em></p>
+		<p><a  href="http://www.nature.com/nature/journal/vaop/ncurrent/full/nature07604.html">Advance Online Publication</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			An experimental and modelling paper looking at the effects of short term plasticity on gain control. Used neuroConstruct to investigate
+            a detailed layer 5 pyramidal cell model (Kole et al 2008) with dendritically distributed excitatory and inhibitory synaptic input.
                         
 		</td>
 	</tr>

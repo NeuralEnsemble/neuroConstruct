@@ -403,6 +403,8 @@ public class GeneralUtils
                 end = text.indexOf(" ", start);
             if (text.indexOf("\n", start)>0)
                 end = Math.min(end,text.indexOf("\n", start));
+            if (text.indexOf(")", start)>0)
+                end = Math.min(end,text.indexOf(")", start));
                 
             
             //System.out.println("start: ("+start+"), end: ("+end+")");
@@ -421,6 +423,7 @@ public class GeneralUtils
             
             System.out.println("text: ("+text+"), text len: ("+text.length()+"), checkpoint: ("+checkpoint+")");
         }
+        //text = replaceAllTokens(text, "&", "&amp;");
         return text;
     }
 
@@ -913,7 +916,7 @@ public class GeneralUtils
         System.out.println(ss.replaceFirst("45.6", "abc"));
         
         
-        String text="Implementation of the Mainen et al. pyramidal cell model from: http://senselab.med.yale.edu/senselab/modeldb/ShowModel.asp?model=8210. End.";
+        String text="Implementation of the Mainen et al. pyramidal cell model from: (http://senselab.med.yale.edu/senselab/modeldb/ShowModel.asp?model=8210). End.";
         
             System.out.println("Old: "+text);
             System.out.println("New: "+parseForHyperlinks(text));

@@ -193,7 +193,7 @@ public class RecentFiles
         newRecentFiles.myRecentFilesFile = new File(recentFilesFilename);
 
         // try loading up the contents of the examples dir...
-
+/*
         File examplesDirectory = ProjectStructure.getExamplesDirectory();
 
         if (!examplesDirectory.exists() || !examplesDirectory.isDirectory())
@@ -203,13 +203,11 @@ public class RecentFiles
         File[] subDirs = examplesDirectory.listFiles();
         subDirs = GeneralUtils.reorderAlphabetically(subDirs, true);
 
-        /** @todo Clean up... */
         ArrayList<File> allExes = new ArrayList<File>();
         ArrayList<File> addAfter = new ArrayList<File>();
 
         for (int i = 0; i < subDirs.length; i++)
         {
-            /** @todo Make more generic for new examples... */
             if (subDirs[i].getName().equals("Ex10-MainenEtAl"))
             {
                 addAfter.add(subDirs[i]);
@@ -249,7 +247,7 @@ public class RecentFiles
 
         recentFilesInstances.put(recentFilesFilename, newRecentFiles);
         ///System.out.println("Existing rec files: "+ recentFilesInstances);
-
+*/
         return newRecentFiles;
 
 

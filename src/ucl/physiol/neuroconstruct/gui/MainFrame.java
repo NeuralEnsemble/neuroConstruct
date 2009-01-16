@@ -480,6 +480,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JLabel jLabelProjFileVersion = new JLabel();
     JTextField jTextFieldProjFileVersion = new JTextField();
     JMenuItem jMenuItemUnzipProject = new JMenuItem();
+    
+    JMenu jMenuExamples = new JMenu();
+    JMenu jMenuModels = new JMenu();
+    
+    
+    
     JPanel jPanelAllNetSettings = new JPanel();
     JPanel jPanelNetSetAA = new JPanel();
     BorderLayout borderLayout9 = new BorderLayout();
@@ -917,6 +923,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jMenuItemUnzipProject_actionPerformed(e);
             }
         });
+        
+        
+        jMenuExamples.setText("Load Example Project");
+        jMenuModels.setText("Load Detailed Model");
 
 
         jComboBoxView3DChoice.addPopupMenuListener(new javax.swing.event.PopupMenuListener()
@@ -3059,20 +3069,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jToolBar.add(jButtonValidate);
 
 
-        jMenuFile.add(jMenuItemNewProject);
-        jMenuFile.add(jMenuItemFileOpen);
-
-        jMenuFile.add(jMenuItemSaveProject);
-
-
-        jMenuFile.add(jMenuItemCloseProject);
-        jMenuFile.addSeparator();
-        jMenuFile.add(jMenuItemCopyProject);
-
-        jMenuFile.add(jMenuItemZipUp);
-        jMenuFile.add(jMenuItemUnzipProject);
-
-        jMenuFile.addSeparator();
+        addStandardFileMenuItems();
+        
+        
         jMenuFile.add(jMenuFileExit);
 
         jMenuHelp.add(jMenuItemHelpMain);
@@ -5338,13 +5337,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         String projectName = this.projManager.getCurrentProject().getProjectName();
 
         if (projManager.getCurrentProject().getProjectMainDirectory().getParentFile().getAbsolutePath().equals(
-                        ProjectStructure.getExamplesDirectory().getAbsolutePath()))
+                        ProjectStructure.getnCExamplesDir().getAbsolutePath()) ||
+            projManager.getCurrentProject().getProjectMainDirectory().getParentFile().getAbsolutePath().equals(
+                        ProjectStructure.getnCModelsDir().getAbsolutePath()))
         {
-            boolean goOn = GuiUtils.showYesNoMessage(logger, "Note: the project: "+projManager.getCurrentProject().getProjectFile()
+            boolean goOngoOngoOn = GuiUtils.showYesNoMessage(logger, "Note: the project: "+projManager.getCurrentProject().getProjectFile()
                                       +"\nis one of the included example projects in neuroConstruct. These are referenced in the documentation and paper.\n"
                                       +"Are you sure you want to save over it?\n\nSelect No to save the project in a different location.", null);
 
-            if (!goOn)
+            if (!goOngoOngoOn)
             {
                 doSaveAs();
                 return;
@@ -5370,7 +5371,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     public void doReloadLastProject()
     {
-        doLoadProject(recentFiles.getFileNames()[0]);
+        if (recentFiles.getFileNames().length>0)
+        {
+            doLoadProject(recentFiles.getFileNames()[0]);
+        }
     }
 
     public void doLoadProject(String projectName)
@@ -8185,7 +8189,70 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         this.setTitle(mainFrameTitle.toString());
     }
 
+    private void addStandardFileMenuItems()
+    {
+        jMenuFile.add(jMenuItemNewProject);
+        jMenuFile.add(jMenuItemFileOpen);
 
+        jMenuFile.add(jMenuItemSaveProject);
+
+        jMenuFile.add(jMenuItemCloseProject);
+        jMenuFile.addSeparator();
+        jMenuFile.add(jMenuItemCopyProject);
+        jMenuFile.add(jMenuItemZipUp);
+        jMenuFile.add(jMenuItemUnzipProject);
+        jMenuFile.addSeparator();
+        
+        jMenuFile.add(jMenuExamples);
+        jMenuExamples.removeAll();
+        
+        File[] exProjs = ProjectStructure.getnCExamplesDir().listFiles();
+        for(File ex: exProjs)
+        {
+            File projFile = new File(ex, ex.getName()+ProjectStructure.getProjectFileExtension());
+            if (projFile.exists())
+            {
+                JMenuItem jMenuRecentFileItem = new JMenuItem();
+                jMenuRecentFileItem.setText(projFile.getAbsolutePath());
+                jMenuExamples.add(jMenuRecentFileItem);
+
+                jMenuRecentFileItem.addActionListener(new ActionListener()
+                {
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        jMenuRecentFile_actionPerformed(e);
+                    }
+                });
+            }
+        }
+        jMenuFile.add(jMenuModels);
+        
+        jMenuModels.removeAll();
+        
+        File[] modProjs = ProjectStructure.getnCModelsDir().listFiles();
+        for(File ex: modProjs)
+        {
+            File projFile = new File(ex, ex.getName()+ProjectStructure.getProjectFileExtension());
+            if (projFile.exists())
+            {
+                JMenuItem jMenuRecentFileItem = new JMenuItem();
+                jMenuRecentFileItem.setText(projFile.getAbsolutePath());
+                jMenuModels.add(jMenuRecentFileItem);
+
+                jMenuRecentFileItem.addActionListener(new ActionListener()
+                {
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        jMenuRecentFile_actionPerformed(e);
+                    }
+                });
+            }
+        }
+
+        jMenuFile.addSeparator();
+    
+        
+    }
 
     /**
      * Refreshes the menus
@@ -8204,19 +8271,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             logger.logComment("No recent files found...");
             return;
         }
-
+        
         jMenuFile.removeAll();
-        jMenuFile.add(jMenuItemNewProject);
-        jMenuFile.add(jMenuItemFileOpen);
-
-        jMenuFile.add(jMenuItemSaveProject);
-
-        jMenuFile.add(jMenuItemCloseProject);
-        jMenuFile.addSeparator();
-        jMenuFile.add(jMenuItemCopyProject);
-        jMenuFile.add(jMenuItemZipUp);
-        jMenuFile.add(jMenuItemUnzipProject);
-        jMenuFile.addSeparator();
+        
+        addStandardFileMenuItems();
 
 
         for (int i = 0; i < recentFileList.length; i++)

@@ -122,7 +122,10 @@ public class ProjectStructure
     
     
     
-    private static String examplesDirInInstall = "examples";
+    //private static String examplesDirInInstall = "examples";
+    
+    private static String nCexamplesDirInInstall = "nCexamples";
+    private static String nCmodelsDirInInstall = "nCmodels";
 
     private static String pythonNeuroMLDir = "pythonNeuroML";
     
@@ -419,7 +422,7 @@ public class ProjectStructure
     //}
 
 
-
+/*
     public static File getExamplesDirectory()
     {
         File examplesDirectory = new File(getnCHome(), examplesDirInInstall);
@@ -429,8 +432,30 @@ public class ProjectStructure
             examplesDirectory.mkdir();
         }
         return examplesDirectory;
-    }
+    }*/
+    
+    public static File getnCExamplesDir()
+    {
+        File examplesDirectory = new File(getnCHome(), nCexamplesDirInInstall);
 
+        if (!examplesDirectory.exists())
+        {
+            examplesDirectory.mkdir();
+        }
+        return examplesDirectory;
+    }
+    
+    
+    public static File getnCModelsDir()
+    {
+        File examplesDirectory = new File(getnCHome(), nCmodelsDirInInstall);
+
+        if (!examplesDirectory.exists())
+        {
+            examplesDirectory.mkdir();
+        }
+        return examplesDirectory;
+    }
 
 
 

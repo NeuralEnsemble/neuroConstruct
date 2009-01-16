@@ -36,22 +36,13 @@
 		</td>
 	</tr>
 	
-	<tr>
-		<td>
-			MorphML
-		</td>
-		<td>
-			<a  href="http://www.morphml.org">http://www.morphml.org</a>
-		</td>
-	</tr>
-    
     
 	<tr>
 		<td>
 			Web application for validating MorphML/ChannelML files
 		</td>
 		<td>
-			<a href="http://www.morphml.org:8080/NeuroMLValidator/">http://www.morphml.org:8080/NeuroMLValidator</a>
+			<a href="http://www.morphml.org:8080/NeuroMLValidator/">http://www.neuroml.org/NeuroMLValidator</a>
 		</td>
 	</tr>            
     
@@ -82,6 +73,24 @@
 		</td>
 		<td>
 			<a  href="http://www.neuron.yale.edu/neuron/">http://www.neuron.yale.edu/neuron</a>
+		</td>
+	</tr>
+        
+	<tr>
+		<td>
+			PyNN simulator language
+		</td>
+		<td>
+			<a  href="http://neuralensemble.org/trac/PyNN">http://neuralensemble.org/trac/PyNN</a>
+		</td>
+	</tr>
+    
+	<tr>
+		<td>
+			PSICS
+		</td>
+		<td>
+			<a  href="http://www.psics.org">http://www.psics.org</a>
 		</td>
 	</tr>
         
