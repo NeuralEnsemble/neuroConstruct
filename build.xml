@@ -30,8 +30,9 @@
     <property name="optimize" value="on"/>
     <property name="deprecation" value="on"/>
     <property name="src.dir" value="./src"/>
-    <property name="examples.dir" value="./examples"/>
-    <property name="models.dir" value="./models"/>
+    <property name="nCexamples.dir" value="./nCexamples"/>
+    <property name="nCmodels.dir" value="./nCmodels"/>
+    <property name="testmodels.dir" value="./models"/>
     <property name="projects.dir" value="./projects"/>
     <property name="templates.dir" value="./templates"/>
 
@@ -415,8 +416,6 @@
 
   <target name="helpdocs" depends="glossary"
           description="Generates the documentation for the help viewer inside neuroConstruct. Makes a simpler version of the docs on the website, using the same base XML">
-
-
     <mkdir dir="${helpdocs.dir}"/>
       
     <java classname="${xml.transform.class}"
@@ -430,9 +429,7 @@
         <classpath refid="run.class.path"/>
     </java>
 
-
      <echo>Generated the helpdocs...</echo>
-
 
     <copy file="./README" todir="${helpdocs.dir}" />
     <copy file="./RELEASE_NOTES" todir="${helpdocs.dir}" />
@@ -474,9 +471,18 @@
       <mkdir dir="${temp_ver.dir}/logs"/>
       <copy file="./logs/README" todir="${temp_ver.dir}/logs" />
 
-      <mkdir dir="${temp_ver.dir}/examples"/>
-      <copy todir="${temp_ver.dir}/examples">
-          <fileset dir="${examples.dir}">
+      <mkdir dir="${temp_ver.dir}/nCexamples"/>
+      <copy todir="${temp_ver.dir}/nCexamples">
+          <fileset dir="${nCexamples.dir}">
+              <include name="*/*.*"/>
+              <include name="*/cellMechanisms/**/*"/>
+              <include name="*/morphologies/*"/>
+              <include name="*/importedMorphologies/*"/>
+          </fileset>
+      </copy>
+      <mkdir dir="${temp_ver.dir}/nCmodels"/>
+      <copy todir="${temp_ver.dir}/nCmodels">
+          <fileset dir="${nCmodels.dir}">
               <include name="*/*.*"/>
               <include name="*/cellMechanisms/**/*"/>
               <include name="*/morphologies/*"/>
@@ -591,8 +597,8 @@
 
     <target name="replacecopyright" depends="init" description="Replaces copyright line in *.java">
       <replaceregexp
-          match="2007 Padraig Gleeson"
-          replace="2008 Padraig Gleeson"
+          match="2008 Padraig Gleeson"
+          replace="2009 Padraig Gleeson"
           byline="true">
           <fileset dir="${src.dir}">
               <filename name="**/*.java"/>
