@@ -45,6 +45,16 @@ public class PynnFileManager
 
     int randomSeed = 0;
     
+    /*
+     * Note: PyNN functionality is in testing stage and this will quickly turn off 
+     * PyNN support in the GUI for releasable versions
+     */
+    public static boolean enablePynnFunc()
+    {
+        return false;
+        //return true;
+    }
+    
     public enum PynnSimulator 
     {
         NEURON  ("NEURON", "neuron"),
@@ -277,6 +287,8 @@ public class PynnFileManager
             fw.write("parser = xml.sax.make_parser()   # A parser for any XML file\n");
 
             fw.write("pynnNetMgr = NetManagerPyNN(simulator)	# Stores (most of) the network structure\n");
+            
+            fw.write("pynnNetMgr.setMaxSimLength(tstop)  # Needed for generating input spike time array...\n");
 
             fw.write("curHandler = NetworkMLSaxHandler(pynnNetMgr) # The SAX handler knows of the structure of NetworkML and calls appropriate functions in NetManagerPyNN\n");
 

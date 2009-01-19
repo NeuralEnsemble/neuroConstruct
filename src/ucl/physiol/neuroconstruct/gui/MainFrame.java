@@ -57,7 +57,7 @@ import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
 import ucl.physiol.neuroconstruct.project.packing.*;
-import ucl.physiol.neuroconstruct.pynn.PynnFileManager.PynnSimulator;
+import ucl.physiol.neuroconstruct.pynn.PynnFileManager.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
@@ -4003,11 +4003,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             jMenuProject.add(jMenuItemGenPsics);
         
         
-        jMenuProject.add(jMenuItemGenPynn);
-        
-        jMenuProject.addSeparator();
-        jMenuProject.add(jMenuItemPrevSims);
-        jMenuProject.add(jMenuItemDataSets);
 
         jTabbedPaneMain.addTab(PROJECT_INFO_TAB, null, jPanelProjInfo, toolTipText.getToolTip("Project Info Tab"));
         jTabbedPaneMain.addTab(CELL_TYPES_TAB, null, jPanelCellTypes, toolTipText.getToolTip("Cell Type Tab"));
@@ -4033,8 +4028,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         if (PsicsFileManager.showPsicsFunc())
             jTabbedPaneExportFormats.add(jPanelExportPsics, PSICS_SIMULATOR_TAB);
         
+        if (PynnFileManager.enablePynnFunc())
+        {
+            jTabbedPaneExportFormats.add(jPanelExportPynn, PYNN_SIMULATOR_TAB);
+            jMenuProject.add(jMenuItemGenPynn);
+        }
         
-        jTabbedPaneExportFormats.add(jPanelExportPynn, PYNN_SIMULATOR_TAB);
+        jMenuProject.addSeparator();
+        jMenuProject.add(jMenuItemPrevSims);
+        jMenuProject.add(jMenuItemDataSets);
 
 
         jTabbedPaneExportFormats.add(jPanelNeuroML, MORPHML_TAB);

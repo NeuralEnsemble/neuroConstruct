@@ -44,6 +44,8 @@ class NetManagerPyNN(NetworkHandler):
     simulator = "neuron"
     
     myRandNumGen = None
+    
+    maxSimLength = -1 # Needed for generating input spike time array...
 	
 	
     def __init__(self, simulator="neuron"):
@@ -56,6 +58,10 @@ class NetManagerPyNN(NetworkHandler):
         
     def setRandNumGen(self, rng):
         self.myRandNumGen = rng
+        
+        
+    def setMaxSimLength(self, length):
+        self.maxSimLength = length
        
     
     #
@@ -138,7 +144,7 @@ class NetManagerPyNN(NetworkHandler):
         srcCell = self.populations[source][int(preCellId)]
         tgtCell = self.populations[target][int(postCellId)]
         
-        proj.append(connect(srcCell, tgtCell, weight=float(localWeight), delay=float(delayTotal)))
+        proj.append(connect(srcCell, tgtCell, weight=float(localWeight)/100, delay=float(delayTotal)))
         
 
       
@@ -157,8 +163,73 @@ class NetManagerPyNN(NetworkHandler):
         
         if inputProps.keys().count("synaptic_mechanism")>0 and inputProps.keys().count("frequency")>0:
             
+            freq = float(inputProps["frequency"])
+            
+            if (self.maxSimLength<0):
+                raise ValueError, "The value of maxSimLength must be set!"
+            
+            numberExp = int(float(self.maxSimLength)*freq)
+            
+            print "Number of spikes expected in %f ms at %fHz: %d"%(self.maxSimLength, freq, numberExp)
+            
+            spike_times = numpy.add.accumulate(numpy.random.exponential(1/freq, size=numberExp))
+            spike_times = [200,500,900,1500,1505,1510,1515,1518,1520,1522,1525,1528,1530,1532,1535,1538,1540]
+            #print spike_times
+            
             #TODO: check units in nml files and put correct conversion here
-            input_population  = Population(size, SpikeSourcePoisson, {'rate': float(inputProps["frequency"])*1000 }, inputName)
+            input_population  = Population(size, SpikeSourceArray, {'spike_times': spike_times }, inputName)
+            
+            for ip in input_population:
+                
+                print "--------------------------"
+                spikes = numpy.add.accumulate(numpy.random.exponential(1/freq, size=numberExp))
+                
+                #print ip.cellclass
+                #print dir(ip)
+                #print input_population.locate(ip)
+                #print input_population[input_population.locate(ip)].__class__
+                #print input_population.index(1).cellclass
+                print ip.spike_times.__class__
+                print ip.get_parameters()
+                #print ip.cellclass.describe()
+                
+                ip.spike_times = spikes
+                
+                print ip.get_parameters()
+                '''#ip.spike_times = spikes#list(ip.spike_times)
+                
+                #print ip.get_parameters()
+                
+                #print lSpikes.__class__
+                
+                #ip.spike_times=[]
+                
+                #ip.spike_times.append(33)
+                
+                #f = SpikeSourceArray([200,300,400])
+                
+                print spikes.__class__
+                
+                print dir(ip.spike_times)
+                                
+                for t in ip.spike_times:
+                    ip.spike_times.remove(t)
+                    
+                print ip.spike_times
+                
+                newSpikes = []
+                print newSpikes
+                print newSpikes.__class__
+                #ip.set_parameters(spike_times=newSpikes)
+                #dir(newSpikes)
+                
+                #print dir(ip)
+                #print input_population[input_population.locate(ip)]
+                #input_population[input_population.locate(ip)].set_parameters(spike_times=spikes)
+                
+                #print ip.default_parameters
+                print ip.get_parameters()
+                print "--------------------------"'''
         
             self.inputCellGroups[inputName] = cellGroup
         

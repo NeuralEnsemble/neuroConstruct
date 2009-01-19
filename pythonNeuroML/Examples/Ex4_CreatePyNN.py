@@ -36,6 +36,8 @@ exec("from pyNN.%s import *" % simulator)
 startTime = time.time()
 
 dt = 0.1
+tstop = 200.0
+
 setup(timestep=dt, debug=False)
 
 file_name = 'small_pynn.nml'
@@ -47,6 +49,8 @@ print("Going to read contents of a NetworkML file: "+str(file_name))
 parser = xml.sax.make_parser()   # A parser for any XML file
 
 nmlHandler = NetManagerPyNN(simulator)	# Stores (most of) the network structure
+
+nmlHandler.setMaxSimLength(tstop)
 
 curHandler = NetworkMLSaxHandler(nmlHandler) # The SAX handler knows of the structure of NetworkML and calls appropriate functions in NetworkHandler
 
@@ -93,7 +97,6 @@ for inputName in nmlHandler.inputSources.keys():
     
 
 
-tstop = 200.0
 
 preRunTime = time.time()
 print "---- Running the simulation ----"

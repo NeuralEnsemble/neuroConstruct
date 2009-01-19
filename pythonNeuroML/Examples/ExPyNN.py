@@ -97,8 +97,17 @@ if simulator != "nest2":
     cellsA.randomInit(voltDistr)
     cellsB.randomInit(voltDistr)
 
-spikes = [20,40,60,80]
-input_population  = Population(cellNumA, SpikeSourceArray, {'spike_times': spikes }, "inputsToA")
+freq = 50 # Hz
+
+number = int(tstop*freq/1000.0)
+
+print "Number of spikes expected in %d ms at %dHz: %d"%(tstop, freq, number)
+
+spike_times = numpy.add.accumulate(numpy.random.exponential(1000.0/freq, size=number))
+
+print spike_times
+
+input_population  = Population(cellNumA, SpikeSourceArray, {'spike_times': spike_times }, "inputsToA")
 
 
 for i in range(0,cellNumA):
