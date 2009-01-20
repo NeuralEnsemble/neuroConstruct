@@ -19,7 +19,7 @@
   <target name="init">
     <tstamp/>
     <property name="name" value="neuroConstruct"/>
-    <property name="version" value="1.2.1"/>
+    <property name="version" value="1.2.2"/>
     <property name="version.impl" value="${version}"/>
     <property name="year" value="2008"/>
 
@@ -467,7 +467,6 @@
       <delete dir="${temp_ver.dir}"/>
       <mkdir dir="${temp_ver.dir}"/>
 
-
       <mkdir dir="${temp_ver.dir}/logs"/>
       <copy file="./logs/README" todir="${temp_ver.dir}/logs" />
 
@@ -478,6 +477,7 @@
               <include name="*/cellMechanisms/**/*"/>
               <include name="*/morphologies/*"/>
               <include name="*/importedMorphologies/*"/>
+              <include name="README"/>
           </fileset>
       </copy>
       <mkdir dir="${temp_ver.dir}/nCmodels"/>
@@ -487,6 +487,7 @@
               <include name="*/cellMechanisms/**/*"/>
               <include name="*/morphologies/*"/>
               <include name="*/importedMorphologies/*"/>
+              <include name="README"/>
           </fileset>
       </copy>
 
@@ -536,6 +537,35 @@
               <include name="*.*"/>
               <include name="README"/>
         </fileset>
+      </copy>
+      
+      
+      <mkdir dir="${temp_ver.dir}/src"/>
+      <copy todir="${temp_ver.dir}/src">
+        <fileset dir="src">
+              <include name="**/*.*"/>
+              <include name="README"/>
+        </fileset>
+      </copy>
+
+      <mkdir dir="${temp_ver.dir}/tests"/>
+      <copy todir="${temp_ver.dir}/tests">
+        <fileset dir="tests">
+              <include name="**/*.*"/>
+              <include name="README"/>
+        </fileset>
+      </copy>
+      
+      
+      <mkdir dir="${temp_ver.dir}/testProjects"/>
+      <copy todir="${temp_ver.dir}/testProjects">
+          <fileset dir="testProjects">
+              <include name="*/*.*"/>
+              <include name="*/cellMechanisms/**/*"/>
+              <include name="*/morphologies/*"/>
+              <include name="*/importedMorphologies/*"/>
+              <include name="README"/>
+          </fileset>
       </copy>
 
 
