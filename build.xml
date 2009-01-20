@@ -379,7 +379,7 @@
 
   <!-- ====================================================================== -->
   <!-- Generates the xml which is used to generate the html page of standard  -->
-  <!-- neuroConstruct examples   -->
+  <!-- neuroConstruct examples                                                -->
   <!-- ====================================================================== -->
 
   <target name="generateexamples" depends="makejar" description="Generates the xml which is used to generate the html page of standard neuroConstruct examples">
@@ -456,8 +456,8 @@
 
 
   <!-- =================================================================== -->
-  <!-- Creates a dist dir and a zip file with directory structure,         -->
-  <!--  jar but no source                                                  -->
+  <!-- Creates a dist dir and a zip file with directory structure, a       -->
+  <!-- compiled jar file and the source code                               -->
   <!-- =================================================================== -->
 
   <target name="dist" depends="clean, cleandocs, website,helpdocs" description="Creates a zip file with directory structure, jar but no source">
