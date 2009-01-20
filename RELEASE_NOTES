@@ -4,6 +4,14 @@ See also the README file
 
 --------- Version 1.2.2 (Jan 09) ---------
 
+-  Added preliminary mapping to PSICS. To use the PSICS functionality you will need to get a copy of 
+   the jar file from the PSICS website, save it locally and set the location in Settings -> General 
+   Properties and Project Defaults. The included example nCexamples\Ex7_PSICSDemo illustrates current
+   functionality
+-  Added one more Python interface example for loading morphologies by script
+-  Added option in MorphNetConn "Direct recurrent connections not allowed" for connections within a 
+   cell group, so that if A is connected to B, B won't form a connection back to A. Useful for electrical
+   synapses
 -  Moved to GNU GPL v2 licence
 
 

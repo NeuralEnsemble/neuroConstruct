@@ -1402,6 +1402,8 @@ public class ProjectManager implements GenerationReport
                         status = cmlCm.getValue(ChannelMLConstants.getChannelStatusValueXPath());
                     else if (cmlCm.isSynapticMechanism())
                         status = cmlCm.getValue(ChannelMLConstants.getSynapseStatusValueXPath());
+                    else if (cmlCm.isGapJunctionMechanism())
+                        status = cmlCm.getValue(ChannelMLConstants.getGapJunctionStatusValueXPath());
                     else if (cmlCm.isIonConcMechanism())
                         status = cmlCm.getValue(ChannelMLConstants.getIonConcStatusValueXPath());
 

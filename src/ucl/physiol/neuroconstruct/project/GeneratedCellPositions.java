@@ -205,14 +205,22 @@ public class GeneratedCellPositions
 
     public Point3f getOneCellPosition(String cellGroupName, int index)
     {
-        if (cachedCellPosition1!=null && cachedCellPosition1.index == index && cachedCellPosition1.cellGroupName.equals(cellGroupName))
-            return cachedCellPosition1.point;
-        if (cachedCellPosition2!=null && cachedCellPosition2.index == index && cachedCellPosition2.cellGroupName.equals(cellGroupName))
-            return cachedCellPosition2.point;
-        if (cachedCellPosition3!=null && cachedCellPosition3.index == index && cachedCellPosition3.cellGroupName.equals(cellGroupName))
-            return cachedCellPosition3.point;
+        //logger.logComment("Being requested for posn of cell num: "+ index+ " in group: "+ cellGroupName, true);
+        if (cachedCellPosition1!=null && 
+            cachedCellPosition1.index == index && 
+            cachedCellPosition1.cellGroupName.equals(cellGroupName))
+            return new Point3f(cachedCellPosition1.point.x, cachedCellPosition1.point.y,cachedCellPosition1.point.z);
         
-        //logger.logComment("Being requested for posn of cell num: "+ index+ " in group: "+ cellGroupName);
+        if (cachedCellPosition2!=null && 
+            cachedCellPosition2.index == index && 
+            cachedCellPosition2.cellGroupName.equals(cellGroupName))
+            return new Point3f(cachedCellPosition2.point.x, cachedCellPosition2.point.y,cachedCellPosition2.point.z);
+        
+        if (cachedCellPosition3!=null && 
+            cachedCellPosition3.index == index && 
+            cachedCellPosition3.cellGroupName.equals(cellGroupName))
+            return new Point3f(cachedCellPosition3.point.x, cachedCellPosition3.point.y,cachedCellPosition3.point.z);
+        
         if (!myCellGroupPosns.containsKey(cellGroupName))
         {
             return null;
@@ -228,7 +236,7 @@ public class GeneratedCellPositions
                 CachedCellPosition cp = new CachedCellPosition();
                 cp.index = index;
                 cp.cellGroupName = cellGroupName;
-                cp.point = p;
+                cp.point = new Point3f(p);
                 cachedCellPosition3 = cachedCellPosition2;
                 cachedCellPosition2 = cachedCellPosition1;
                 cachedCellPosition1 = cp;

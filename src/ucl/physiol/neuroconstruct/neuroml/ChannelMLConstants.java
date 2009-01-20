@@ -322,6 +322,21 @@ public class ChannelMLConstants
 
     }
 
+    public static String getGapJunctionStatusXPath()
+    {
+        return getSynapseTypeXPath()+ "/" +
+            ChannelMLConstants.STATUS_ELEMENT;
+
+    }
+
+
+    public static String getGapJunctionStatusValueXPath()
+    {
+        return getGapJunctionStatusXPath()+ "/@" +
+            ChannelMLConstants.STATUS_VALUE_ATTR;
+
+    }
+
     public static String getIonConcStatusXPath()
     {
         return getIonConcTypeXPath()+ "/" +

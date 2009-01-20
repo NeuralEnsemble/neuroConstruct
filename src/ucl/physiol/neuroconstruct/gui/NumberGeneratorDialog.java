@@ -128,7 +128,7 @@ public class NumberGeneratorDialog extends JDialog
         try
         {
             jbInit();
-        this.jLabelComment.setText(comment);
+            this.jLabelComment.setText(comment);
             extraInit();
             pack();
         }
@@ -290,7 +290,8 @@ public class NumberGeneratorDialog extends JDialog
     {
         NumberGenerator ng = new NumberGenerator();
 
-        ng.initialiseAsGaussianIntGenerator(277, 07, 17, 17);
+        //ng.initialiseAsGaussianIntGenerator(277, 07, 17, 17);
+        ng.initialiseAsFixedIntGenerator(1);
 
         ng = showDialog((Frame)null, "Tester", "Tester...", ng);
 

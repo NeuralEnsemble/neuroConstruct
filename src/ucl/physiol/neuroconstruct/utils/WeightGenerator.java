@@ -80,7 +80,24 @@ public class WeightGenerator extends NumberGenerator
      */
     public WeightGenerator(String expr, boolean soma) throws EquationException
     {
+        this.distributionType = FUNCTION;
+        this.somaToSoma = soma;
         this.inhomoExpr = Expression.parseExpression(expr, VolumeBasedConnGenerator.allowedVars);    
+    }
+    
+    
+    /**
+     * Generates a nominal value for the number. Useful only for giving a rough indication of what the value will be.
+     * Will be the function evaluated at 100um, or the evaluation according to NumberGenerator.getNominalNumber()
+     */
+    @Override
+    public float getNominalNumber()
+    {
+        if (this.distributionType != FUNCTION)
+            return super.getNominalNumber();
+        
+        float nominalDistance = 100;
+        return this.getNextNumber(nominalDistance);
     }
     
     
@@ -148,7 +165,11 @@ public class WeightGenerator extends NumberGenerator
         {
             return super.toShortString();
         }
-        return (this.inhomoExpr.getNiceString());
+        if (!somaToSoma)
+            return (this.inhomoExpr.getNiceString());
+        
+        return (this.inhomoExpr.getNiceString()+" (soma to soma)");
+        
     }
     
      

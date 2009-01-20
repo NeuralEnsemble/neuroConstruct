@@ -64,6 +64,7 @@ public class MainTest
                 ucl.physiol.neuroconstruct.project.ProjectStructureTest.class,
                 ucl.physiol.neuroconstruct.project.ProjectTest.class,
                 ucl.physiol.neuroconstruct.project.MorphBasedConnGeneratorTest.class,
+                ucl.physiol.neuroconstruct.project.ExtendedNetworkGeneratorTest.class,
                 ucl.physiol.neuroconstruct.project.packing.OneDimRegSpacingPackingAdapterTest.class,
                 ucl.physiol.neuroconstruct.utils.NumberGeneratorTest.class,
                 ucl.physiol.neuroconstruct.utils.equation.ExpressionTest.class/**/); 

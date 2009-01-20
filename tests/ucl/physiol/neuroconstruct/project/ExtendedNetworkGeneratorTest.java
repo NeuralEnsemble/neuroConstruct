@@ -39,19 +39,23 @@ import ucl.physiol.neuroconstruct.cell.Section;
 import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.SingleSynapticConnection;
 import ucl.physiol.neuroconstruct.project.packing.CellPackingException;
+import ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter;
 import ucl.physiol.neuroconstruct.utils.NumberGenerator;
+import ucl.physiol.neuroconstruct.utils.WeightGenerator;
 import static org.junit.Assert.*;
+import ucl.physiol.neuroconstruct.utils.equation.*;
 
 /**
  *
  * @author Matteo Farinella
  */
 
-public class ExtendedNetworkGeneretorTest {
-ProjectManager pm = null;
+public class ExtendedNetworkGeneratorTest 
+{
+    ProjectManager pm = null;
     Random r = new Random();
     
-    public ExtendedNetworkGeneretorTest() 
+    public ExtendedNetworkGeneratorTest() 
     {
     }
 
@@ -94,18 +98,11 @@ ProjectManager pm = null;
             Thread.sleep(200);
         }
         
-        System.out.println("Generated proj with: "+ proj.generatedCellPositions.getNumberInAllCellGroups()+" cells");
+        System.out.println("Generated proj with: "+ proj.generatedCellPositions.getNumberInAllCellGroups()+" cells, "
+            + proj.generatedNetworkConnections.getNumAllSynConns()+" net conns");
     }
     
 
-
-    private void generate(Project proj) throws InterruptedException 
-    {       
-        
-        SimConfig sc = proj.simConfigInfo.getDefaultSimConfig();
-        
-        generate(proj, sc);
-    }
     
     int numPre = 20;
     int numPost = 20;
@@ -128,22 +125,44 @@ ProjectManager pm = null;
     /* test the option "soma to soma" distance for the length of the connections
      */
     @Test
-    public void testSomaToSomaDistance() throws InterruptedException, CellPackingException, ProjectFileParsingException
+    public void testSomaToSomaDistance() throws InterruptedException, CellPackingException, ProjectFileParsingException, EquationException
     {        
         System.out.println("---  test SomaToSoma distance()");       
         
-//        File f = new File("C:\\neuroConstruct\\testProjects\\TestNetworkConnsSomas\\TestNetworkConns.neuro.xml");
-//        Project proj2 = pm.loadProject(f);
-        Project proj2 = pm.getCurrentProject();
+        File f = new File("testProjects/TestNetworkConnsSomas/TestNetworkConnsSomas.neuro.xml");
+        Project proj2 = pm.loadProject(f);
+        //Project proj2 = pm.getCurrentProject();
         
         SimConfig sc = proj2.simConfigInfo.getSimConfig("TwoCG");
         
         String nc2 = proj2.morphNetworkConnectionsInfo.getNetConnNameAt(2);  
         String src = proj2.morphNetworkConnectionsInfo.getSourceCellGroup(nc2);
-        String trg = proj2.morphNetworkConnectionsInfo.getTargetCellGroup(nc2);
+        String tgt = proj2.morphNetworkConnectionsInfo.getTargetCellGroup(nc2);
+        
+        
+        ((RandomCellPackingAdapter)proj2.cellGroupsInfo.getCellPackingAdapter(src)).setMaxNumberCells(20);
+        ((RandomCellPackingAdapter)proj2.cellGroupsInfo.getCellPackingAdapter(tgt)).setMaxNumberCells(20);
               
         proj2.morphNetworkConnectionsInfo.getMaxMinLength(nc2).setDimension("s");        
-        proj2.morphNetworkConnectionsInfo.getConnectivityConditions(nc2).setMaxNumInitPerFinishCell(100);        
+        proj2.morphNetworkConnectionsInfo.getConnectivityConditions(nc2).setMaxNumInitPerFinishCell(100);    
+        
+        String exprForWeight = "r*r";
+        //String exprForWeight = "r";
+        
+        
+        Variable[] vars = new Variable[]{new Variable("r")};
+            
+        EquationUnit eqn = Expression.parseExpression(exprForWeight, vars);
+            
+        boolean somaToSoma = Math.random()>0.5; // one or the other...
+        
+        WeightGenerator wg = new WeightGenerator(exprForWeight, somaToSoma);
+        
+        System.out.println("wg: "+wg);
+        
+        proj2.morphNetworkConnectionsInfo.getSynapseList(nc2).get(0).setWeightsGenerator(wg);
+        
+        System.out.println("Syns: "+proj2.morphNetworkConnectionsInfo.getSynapseList(nc2));
         
         NumberGenerator ngNum = new NumberGenerator();
         ngNum.initialiseAsGaussianIntGenerator(maxPre, minPre, meanPre, stdPre);
@@ -151,7 +170,7 @@ ProjectManager pm = null;
         proj2.morphNetworkConnectionsInfo.getConnectivityConditions(nc2).setNumConnsInitiatingCellGroup(ngNum);       
         
         maxLength = 100;
-        minLength = 0;
+        minLength = 5;
         
         proj2.morphNetworkConnectionsInfo.getMaxMinLength(nc2).setMaxLength(maxLength);
         proj2.morphNetworkConnectionsInfo.getMaxMinLength(nc2).setMinLength(minLength);
@@ -159,39 +178,202 @@ ProjectManager pm = null;
         generate(proj2, sc);
         
         Cell sourceCellInstance = proj2.cellManager.getCell(proj2.cellGroupsInfo.getCellType(src));
-        Cell targetCellInstance = proj2.cellManager.getCell(proj2.cellGroupsInfo.getCellType(trg));
+        Cell targetCellInstance = proj2.cellManager.getCell(proj2.cellGroupsInfo.getCellType(tgt));
         
         Section sourceSec = sourceCellInstance.getFirstSomaSegment().getSection();
         Section targetSec = targetCellInstance.getFirstSomaSegment().getSection();
 
         Point3f sourceSomaPosition = CellTopologyHelper.convertSectionDisplacement(sourceCellInstance, sourceSec, (float) 0.5);
-
         Point3f targetSomaPosition = CellTopologyHelper.convertSectionDisplacement(targetCellInstance, targetSec, (float) 0.5);
         
-        ArrayList<SingleSynapticConnection> SynConn= proj2.generatedNetworkConnections.getSynapticConnections(nc2);
         
-//        System.out.println("*** MAX length " +maxLength);
-//        System.out.println("*** MIN length " +minLength);
-//        System.out.println("*** " +SynConn.size()+ " connections to check");
-//        System.out.println("...");
-
-        for (int i = 0; i < SynConn.size(); i++)
+        ArrayList<SingleSynapticConnection> synConn= proj2.generatedNetworkConnections.getSynapticConnections(nc2);
+        
+        for (int i = 0; i < synConn.size(); i++)
         {
-        
-        Point3f startCell = proj2.generatedCellPositions.getOneCellPosition(src,SynConn.get(i).sourceEndPoint.cellNumber);
-        Point3f endCell = proj2.generatedCellPositions.getOneCellPosition(trg,SynConn.get(i).targetEndPoint.cellNumber);
-        
-        startCell.add(sourceSomaPosition);
-        endCell.add(targetSomaPosition);
-        
-//        System.out.println(i + " connection lenght = " + startCell.distance(endCell));
-        assertTrue((startCell.distance(endCell)>=minLength)&&(startCell.distance(endCell)<=maxLength));        
-        
+            //System.out.println("-------------------------");
+            
+            Point3f startCell = proj2.generatedCellPositions.getOneCellPosition(src,synConn.get(i).sourceEndPoint.cellNumber);
+            Point3f endCell = proj2.generatedCellPositions.getOneCellPosition(tgt,synConn.get(i).targetEndPoint.cellNumber);
+
+            startCell.add(sourceSomaPosition);
+            endCell.add(targetSomaPosition);
+            
+            float somaToSomaDist = startCell.distance(endCell);
+
+            //System.out.println(i + ": connection length soma to soma = " + somaToSomaDist);
+            assertTrue((somaToSomaDist>=minLength)&&somaToSomaDist<=maxLength);   
+            
+            if (synConn.get(i).props!=null && synConn.get(i).props.size()>0)
+            {
+                float weight = synConn.get(i).props.get(0).weight;
+
+                if(somaToSoma)
+                {
+                    //System.out.println();
+                    
+                    Argument[] args = new Argument[]{new Argument("r", somaToSomaDist)};
+                    
+                    double test = eqn.evaluateAt(args);
+                    System.out.println("Weight: "+weight+", dist: "+somaToSomaDist+", test: "+test);
+                        
+                    assertEquals(weight, test, weight*1e-6);
+                }
+                else
+                {
+                    
+                    //System.out.println("Weight: "+weight+" in "+ synConn.get(i));
+                    
+                    Point3f synPre = CellTopologyHelper.getAbsolutePosSegLoc(proj2, 
+                                                             src, 
+                                                             synConn.get(i).sourceEndPoint.cellNumber, 
+                                                             synConn.get(i).sourceEndPoint.location);
+                    
+                    Point3f synPost = CellTopologyHelper.getAbsolutePosSegLoc(proj2, 
+                                                             tgt, 
+                                                             synConn.get(i).targetEndPoint.cellNumber, 
+                                                             synConn.get(i).targetEndPoint.location);
+                    
+                    float dist = synPre.distance(synPost);
+                    
+                    Argument[] args = new Argument[]{new Argument("r", dist)};
+                    
+                    double test = eqn.evaluateAt(args);
+                    System.out.println("Weight: "+weight+", dist: "+dist+", test: "+test);
+                        
+                    assertEquals(weight, test, weight*1e-6);
+                }
+            }
+
         }
         
-        System.out.println("All the " + SynConn.size() + " connections follow the soma to soma distance costrains" );
+        System.out.println("All the " + synConn.size() + " connections follow the soma to soma distance costrains" );
 
     }
+    
+    
+    
+    /* test the option "soma to soma" distance for the length of the connections
+     */
+    @Test
+    public void testSomaToSomaDistanceAA() throws InterruptedException, CellPackingException, ProjectFileParsingException, EquationException
+    {        
+        System.out.println("---  testSomaToSomaDistanceAA()");       
+        
+        File f = new File("testProjects/TestNetworkConnsSomas/TestNetworkConnsSomas.neuro.xml");
+        Project proj2 = pm.loadProject(f);
+        //Project proj2 = pm.getCurrentProject();
+        
+        SimConfig sc = proj2.simConfigInfo.getSimConfig("AATest");
+        
+        String nc2 = proj2.volBasedConnsInfo.getAllAAConnNames().get(0);  
+        String src = proj2.volBasedConnsInfo.getSourceCellGroup(nc2);
+        String tgt = proj2.volBasedConnsInfo.getTargetCellGroup(nc2);
+        
+        
+        ((RandomCellPackingAdapter)proj2.cellGroupsInfo.getCellPackingAdapter(src)).setMaxNumberCells(20);
+                 
+        proj2.volBasedConnsInfo.getConnectivityConditions(nc2).setMaxNumInitPerFinishCell(100);    
+        
+        String exprForWeight = "r*r";
+        //String exprForWeight = "r";
+        
+        
+        Variable[] vars = new Variable[]{new Variable("r")};
+            
+        EquationUnit eqn = Expression.parseExpression(exprForWeight, vars);
+            
+        boolean somaToSoma = Math.random()>0.5; // one or the other...
+        
+        WeightGenerator wg = new WeightGenerator(exprForWeight, somaToSoma);
+        
+        System.out.println("wg: "+wg);
+        
+        proj2.volBasedConnsInfo.getSynapseList(nc2).get(0).setWeightsGenerator(wg);
+        
+        System.out.println("Syns: "+proj2.volBasedConnsInfo.getSynapseList(nc2));
+        
+        NumberGenerator ngNum = new NumberGenerator();
+        ngNum.initialiseAsGaussianIntGenerator(maxPre, minPre, meanPre, stdPre);
+        
+        proj2.volBasedConnsInfo.getConnectivityConditions(nc2).setNumConnsInitiatingCellGroup(ngNum);       
+        
+        
+        generate(proj2, sc);
+        
+        Cell sourceCellInstance = proj2.cellManager.getCell(proj2.cellGroupsInfo.getCellType(src));
+        Cell targetCellInstance = proj2.cellManager.getCell(proj2.cellGroupsInfo.getCellType(tgt));
+        
+        Section sourceSec = sourceCellInstance.getFirstSomaSegment().getSection();
+        Section targetSec = targetCellInstance.getFirstSomaSegment().getSection();
+
+        Point3f sourceSomaPosition = CellTopologyHelper.convertSectionDisplacement(sourceCellInstance, sourceSec, (float) 0.5);
+        Point3f targetSomaPosition = CellTopologyHelper.convertSectionDisplacement(targetCellInstance, targetSec, (float) 0.5);
+        
+        
+        ArrayList<SingleSynapticConnection> synConn= proj2.generatedNetworkConnections.getSynapticConnections(nc2);
+        
+        for (int i = 0; i < synConn.size(); i++)
+        {
+            //System.out.println("-------------------------");
+            
+            Point3f startCell = proj2.generatedCellPositions.getOneCellPosition(src,synConn.get(i).sourceEndPoint.cellNumber);
+            Point3f endCell = proj2.generatedCellPositions.getOneCellPosition(tgt,synConn.get(i).targetEndPoint.cellNumber);
+
+            startCell.add(sourceSomaPosition);
+            endCell.add(targetSomaPosition);
+            
+            float somaToSomaDist = startCell.distance(endCell);
+            
+            if (synConn.get(i).props!=null && synConn.get(i).props.size()>0)
+            {
+                float weight = synConn.get(i).props.get(0).weight;
+
+                if(somaToSoma)
+                {
+                    //System.out.println();
+                    
+                    Argument[] args = new Argument[]{new Argument("r", somaToSomaDist)};
+                    
+                    double test = eqn.evaluateAt(args);
+                    System.out.println("Weight: "+weight+", somaToSomaDist: "+somaToSomaDist+", test: "+test);
+                        
+                    assertEquals(weight, test, weight*1e-6);
+                }
+                else
+                {
+                    
+                    //System.out.println("Weight: "+weight+" in "+ synConn.get(i));
+                    
+                    Point3f synPre = CellTopologyHelper.getAbsolutePosSegLoc(proj2, 
+                                                             src, 
+                                                             synConn.get(i).sourceEndPoint.cellNumber, 
+                                                             synConn.get(i).sourceEndPoint.location);
+                    
+                    Point3f synPost = CellTopologyHelper.getAbsolutePosSegLoc(proj2, 
+                                                             tgt, 
+                                                             synConn.get(i).targetEndPoint.cellNumber, 
+                                                             synConn.get(i).targetEndPoint.location);
+                    
+                    float dist = synPre.distance(synPost);
+                    
+                    Argument[] args = new Argument[]{new Argument("r", dist)};
+                    
+                    double test = eqn.evaluateAt(args);
+                    System.out.println("Weight: "+weight+", dist: "+dist+", test: "+test);
+                        
+                    assertEquals(weight, test, weight*1e-6);
+                }
+            }
+
+        }
+        
+        System.out.println("All the " + synConn.size() + " connections follow the soma to soma distance costrains" );
+
+    }
+    
+    
+    
     
     
     /* test the option x dimention option for the length of the connections (valid also for y and z dimensions)
@@ -335,7 +517,7 @@ ProjectManager pm = null;
     
     public static void main(String[] args)
     {
-        ExtendedNetworkGeneretorTest ct = new ExtendedNetworkGeneretorTest();
+        ExtendedNetworkGeneratorTest ct = new ExtendedNetworkGeneratorTest();
         Result r = org.junit.runner.JUnitCore.runClasses(ct.getClass());
         MainTest.checkResults(r);
     }

@@ -161,6 +161,11 @@ public class RandomCellPackingAdapter extends CellPackingAdapter
     {
         return (int)parameterList[2].value;
     }
+    
+    public void setMaxNumberCells(int num)
+    {
+        parameterList[2].value = num;
+    }
 
     @Override
     public boolean avoidOtherCellGroups()

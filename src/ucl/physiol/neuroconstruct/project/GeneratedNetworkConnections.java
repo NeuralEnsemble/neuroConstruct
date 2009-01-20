@@ -221,6 +221,10 @@ public class GeneratedNetworkConnections
         return mySynapticConnectionVectors.keySet().iterator();
     }
 
+    public int getNumAllSynConns()
+    {
+        return getNumberSynapticConnections(ANY_NETWORK_CONNECTION);
+    }
 
     public int getNumberSynapticConnections(int connType)
     {

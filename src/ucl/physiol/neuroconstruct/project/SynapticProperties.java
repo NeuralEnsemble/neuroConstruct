@@ -56,13 +56,10 @@ public class SynapticProperties
     {
         this.synapseType = synapseType;
         delayGenerator = new NumberGenerator(5f);  // fixed at 5ms
-        try {
-            // fixed at 5ms
-            weightsGenerator = new WeightGenerator("1", false); // fixed at 1 each
-        } catch (EquationException ex) 
-        {
-            // equation 1 should not throw an error
-        }
+    
+        weightsGenerator = new WeightGenerator();
+        weightsGenerator.initialiseAsFixedFloatGenerator(1);
+
         threshold = -20f; // -20 mV
     }
 

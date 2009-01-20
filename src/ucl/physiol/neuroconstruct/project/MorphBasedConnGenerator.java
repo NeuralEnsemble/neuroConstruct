@@ -195,8 +195,8 @@ public class MorphBasedConnGenerator extends Thread
 
             Point3f sourceSomaPosition = CellTopologyHelper.convertSectionDisplacement(sourceCellInstance, sourceSec, (float) 0.5);
 
-            Point3f targetSomaPosition = CellTopologyHelper.convertSectionDisplacement(targetCellInstance, targetSec, (float) 0.5);         
-
+            Point3f targetSomaPosition = CellTopologyHelper.convertSectionDisplacement(targetCellInstance, targetSec, (float) 0.5);        
+            
             MaxMinLength maxMin = project.morphNetworkConnectionsInfo.getMaxMinLength(netConnName);
             SearchPattern searchPattern = project.morphNetworkConnectionsInfo.getSearchPattern(netConnName);
 
@@ -929,8 +929,7 @@ public class MorphBasedConnGenerator extends Thread
                                     genStartConnPoint.getSegmentId(),
                                     genStartConnPoint.getFractAlong());
 
-                                Point3f genStartCellPosition
-                                    = project.generatedCellPositions.getOneCellPosition(
+                                Point3f genStartCellPosition = project.generatedCellPositions.getOneCellPosition(
                                     genStartCellGroup,
                                     genStartCellNumber);
 
@@ -1097,7 +1096,7 @@ public class MorphBasedConnGenerator extends Thread
                                                                 genStartCellNumber),
                                                                 genFinishCellGroup,
                                                                 tempGenFinishEndpoint,
-                                                            maxMin.getDimension());
+                                                                maxMin.getDimension());
                                                                 
                                                     logger.logComment("Distance to that point: " + distToThisPoint);
 
@@ -1133,10 +1132,8 @@ public class MorphBasedConnGenerator extends Thread
 
                                 ArrayList<ConnSpecificProps> props = new ArrayList<ConnSpecificProps>();
                                 
-                                for (SynapticProperties synProp : synPropList) {
-                                    
-                                    if (connDistance <= 0) {
-                                        connDistance = CellTopologyHelper.getSynapticEndpointsDistance(
+                                
+                                float distRadial = CellTopologyHelper.getSynapticEndpointsDistance(
                                                 project,
                                                 genStartCellGroup,
                                                 new SynapticConnectionEndPoint(genStartConnPoint,
@@ -1144,10 +1141,15 @@ public class MorphBasedConnGenerator extends Thread
                                                 genFinishCellGroup,
                                                 new SynapticConnectionEndPoint(genFinishConnPoint,
                                                 genFinishCellNumber),
-                                                maxMin.getDimension());
-                                    }
+                                                MaxMinLength.RADIAL);
+                                
+                                
+                                for (SynapticProperties synProp : synPropList) {
                                     
-                                    if (!synProp.getDelayGenerator().isTypeFixedNum() || !synProp.getWeightsGenerator().isTypeFixedNum()) {
+                                    
+                                    
+                                    if (!synProp.getDelayGenerator().isTypeFixedNum() || !synProp.getWeightsGenerator().isTypeFixedNum()) 
+                                    {
                                         ConnSpecificProps csp = new ConnSpecificProps(synProp.getSynapseType());
 
                                         csp.internalDelay = synProp.getDelayGenerator().getNextNumber();
@@ -1156,11 +1158,13 @@ public class MorphBasedConnGenerator extends Thread
 
                                             if (!synProp.getWeightsGenerator().isSomaToSoma()) {
                                                 
-                                                csp.weight = synProp.getWeightsGenerator().getNextNumber(connDistance);
-                                                System.out.println("csp.weight: " + csp.weight + ", dist " + connDistance);
-                                                System.out.println(synProp.getWeightsGenerator());
+                                                csp.weight = synProp.getWeightsGenerator().getNextNumber(distRadial);
+                                                //System.out.println("csp.weight: " + csp.weight + ", dist " + distRadial);
+                                                //System.out.println(synProp.getWeightsGenerator());
                                             
-                                            } else {
+                                            } 
+                                            else 
+                                            {
                                                 
                                                 Point3f absoluteStartPoint = project.generatedCellPositions.getOneCellPosition(genStartCellGroup, genStartCellNumber);
                                                 Point3f absoluteEndPoint = project.generatedCellPositions.getOneCellPosition(genFinishCellGroup, genFinishCellNumber);
@@ -1171,12 +1175,13 @@ public class MorphBasedConnGenerator extends Thread
                                                 float somaConnDistance =  absoluteStartPoint.distance(absoluteEndPoint);
                                                 
                                                 csp.weight = synProp.getWeightsGenerator().getNextNumber(somaConnDistance);
-                                                System.out.println("csp.weight: " + csp.weight + ", dist " + somaConnDistance);
-                                                System.out.println(synProp.getWeightsGenerator());
+                                                //System.out.println(synProp.getWeightsGenerator());
                                                 
                                             }
 
-                                        } else {
+                                        } 
+                                        else 
+                                        {
                                             csp.weight = synProp.getWeightsGenerator().getNextNumber();
                                         }
 

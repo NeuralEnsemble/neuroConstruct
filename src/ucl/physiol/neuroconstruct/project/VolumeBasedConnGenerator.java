@@ -222,6 +222,8 @@ public class VolumeBasedConnGenerator extends Thread
                               + numberInGenFinishCellGroup
                               + " cells in cell group "
                               + generationFinishCellGroup);
+            
+           
 
 
             Vector<AxonalConnRegion> allVolRegions = generationStartCellInstance.getAxonalArbours();
@@ -271,13 +273,18 @@ public class VolumeBasedConnGenerator extends Thread
                     SegmentLocation genStartConnPoint = null;
 
                     ArrayList<Integer> genFinCellsConnToThis = null;
+                    
+                    PrePostAllowedLocs startLoc = new PrePostAllowedLocs();
+                    startLoc.axonsAllowedPre=false;
+                    startLoc.dendritesAllowedPre=false;
+                    startLoc.somaAllowedPre=true;
 
                     if (connConds.getGenerationDirection() == ConnectivityConditions.SOURCE_TO_TARGET)
                     {
                         genStartConnPoint
                             = cth.getPossiblePreSynapticTerminal(generationStartCellInstance,
-                                                                                synPropList,
-                                                                                     connConds.getPrePostAllowedLoc());
+                                                                 synPropList,
+                                                                 startLoc);
 
                         genFinCellsConnToThis = project.generatedNetworkConnections.getTargetCellIndices(volConnName,
                             genStartCellNumber, true);
@@ -286,8 +293,8 @@ public class VolumeBasedConnGenerator extends Thread
                     {
                         genStartConnPoint
                             = cth.getPossiblePostSynapticTerminal(generationStartCellInstance,
-                                                                                 synPropList,
-                                                                                     connConds.getPrePostAllowedLoc());
+                                                                  synPropList,
+                                                                  connConds.getPrePostAllowedLoc());
 
                         genFinCellsConnToThis = project.generatedNetworkConnections.getSourceCellIndices(volConnName,
                             genStartCellNumber, true);
@@ -600,6 +607,25 @@ public class VolumeBasedConnGenerator extends Thread
                             logger.logComment(genFinishConnPoint.toString());
 
                             ArrayList<ConnSpecificProps> props = new ArrayList<ConnSpecificProps> ();
+                            
+                            float connDistance = CellTopologyHelper.getSynapticEndpointsDistance(
+                                            project,
+                                            generationStartCellGroup,
+                                            new SynapticConnectionEndPoint(genStartConnPoint,
+                                            genStartCellNumber),
+                                            generationFinishCellGroup,
+                                            new SynapticConnectionEndPoint(genFinishConnPoint,
+                                            genFinishCellNumber),
+                                            MaxMinLength.RADIAL);
+                            
+                            
+                            Section sourceSec = sourceCellInstance.getFirstSomaSegment().getSection();
+                            Section targetSec = targetCellInstance.getFirstSomaSegment().getSection();
+
+                            Point3f sourceSomaPosition = CellTopologyHelper.convertSectionDisplacement(sourceCellInstance, sourceSec, (float) 0.5);
+
+                            Point3f targetSomaPosition = CellTopologyHelper.convertSectionDisplacement(targetCellInstance, targetSec, (float) 0.5);  
+                            
                             for (SynapticProperties synProp : synapticPropList)
                             {
                                 if (!synProp.getDelayGenerator().isTypeFixedNum()
@@ -608,11 +634,41 @@ public class VolumeBasedConnGenerator extends Thread
                                     ConnSpecificProps csp = new ConnSpecificProps(synProp.getSynapseType());
 
                                     csp.internalDelay = synProp.getDelayGenerator().getNextNumber();
-                                    csp.weight = synProp.getWeightsGenerator().getNextNumber();
+                                    //csp.weight = synProp.getWeightsGenerator().getNextNumber();
+                                    if (synProp.getWeightsGenerator().isTypeFunction()) 
+                                    {
+
+                                        if (!synProp.getWeightsGenerator().isSomaToSoma()) {
+
+                                            csp.weight = synProp.getWeightsGenerator().getNextNumber(connDistance);
+                                            //System.out.println(synProp.getWeightsGenerator());
+
+                                        } else {
+
+                                            Point3f absoluteStartPoint = project.generatedCellPositions.getOneCellPosition(generationStartCellGroup, genStartCellNumber);
+                                            Point3f absoluteEndPoint = project.generatedCellPositions.getOneCellPosition(generationFinishCellGroup, genFinishCellNumber);
+
+                                            absoluteStartPoint.add(sourceSomaPosition); //add the displacement of the soma referred to the cell axes
+                                            absoluteEndPoint.add(targetSomaPosition);
+
+                                            float somaConnDistance =  absoluteStartPoint.distance(absoluteEndPoint);
+
+                                            csp.weight = synProp.getWeightsGenerator().getNextNumber(somaConnDistance);
+                                            //System.out.println("csp.weight: " + csp.weight + ", dist " + somaConnDistance);
+                                            //System.out.println(synProp.getWeightsGenerator());
+
+                                        }
+
+                                        } 
+                                        else 
+                                        {
+                                            csp.weight = synProp.getWeightsGenerator().getNextNumber();
+                                        }
 
                                     props.add(csp);
                                 }
                             }
+                            
                             if (props.size() == 0) props = null;
 
 
