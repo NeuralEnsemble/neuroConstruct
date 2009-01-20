@@ -1,7 +1,14 @@
 <!--
+
      This is the neuroConstruct build file for use with Ant (http://ant.apache.org/)
+     
+     Running "ant runlast" will run neuroConstruct and load the last project
 
      Type ant -p to view all possible build targets
+     
+     NOTE: if the jar file (neuroConstruct_x.x.x.jar) is present, nC.bat/nC.sh can
+     also be used to run the application
+     
 -->
 
 <project default="makejar" basedir=".">

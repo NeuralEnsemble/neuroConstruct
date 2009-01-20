@@ -19,7 +19,7 @@ export NC_MAX_MEMORY=450M
 
 
 # Current version of neuroConstruct
-export NC_VERSION=1.2.1
+export NC_VERSION=1.2.2
 
 
 # Location of jars and native libraries for HDF5
