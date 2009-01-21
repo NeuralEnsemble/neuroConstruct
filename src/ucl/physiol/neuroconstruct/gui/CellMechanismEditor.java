@@ -321,6 +321,7 @@ public class CellMechanismEditor extends JDialog implements FocusListener
     }
 
     //Overridden so we can exit when window is closed
+    @Override
     protected void processWindowEvent(WindowEvent e)
     {
         if (e.getID() == WindowEvent.WINDOW_CLOSING)
@@ -331,9 +332,11 @@ public class CellMechanismEditor extends JDialog implements FocusListener
         super.processWindowEvent(e);
     }
 
+    @Override
     public void dispose()
     {
-        if (this.parent==null) System.exit(0);
+        if (this.parent==null) 
+            System.exit(0);
         project.markProjectAsEdited();
         super.dispose();
     }

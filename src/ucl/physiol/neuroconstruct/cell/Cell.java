@@ -876,7 +876,7 @@ public class Cell implements Serializable
         {
             ChannelMechanism next = chanMechs.next();
 
-            if (!removeRepeats || !allChanMechs.contains(next))
+            if (!removeRepeats || !allChanMechs.contains(next.getName()))
                 allChanMechs.add(next.getName());
         }
         

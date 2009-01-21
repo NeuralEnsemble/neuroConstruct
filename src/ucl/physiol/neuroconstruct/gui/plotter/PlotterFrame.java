@@ -2159,7 +2159,7 @@ public class PlotterFrame extends JFrame
 
             String newYUnit = "";
             String newYLegend = "";
-            if (dataSet.getYUnit().length()>0 & dataSet.getXUnit().length()>0)
+            if (dataSet.getYUnit().length()>0 && dataSet.getXUnit().length()>0)
             {
                 newYUnit = "("+dataSet.getYUnit()+") / ("+dataSet.getXUnit()+")";
             }
@@ -2214,7 +2214,7 @@ public class PlotterFrame extends JFrame
             String newYUnit = "";
             String newYLegend = "";
             
-            if (dataSet.getYUnit().length()>0 & dataSet.getXUnit().length()>0)
+            if (dataSet.getYUnit().length()>0 && dataSet.getXUnit().length()>0)
             {
                 newYUnit = "("+dataSet.getYUnit()+") / ("+dataSet.getXUnit()+")";
             }

@@ -30,9 +30,12 @@ import java.io.File;
 import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.Result;
+import test.MainTest;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.GenesisCompartmentalisation;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.simulation.*;
+import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 import static org.junit.Assert.*;
 
 /**
@@ -78,8 +81,8 @@ public class GenesisFileManagerTest {
         
         int wait = 2000;
         
-        //if (GeneralUtils.isWindowsBasedPlatform())
-        //    wait = 8000;
+        if (GeneralUtils.isWindowsBasedPlatform())
+            wait = 8000;
         
         while(pm.isGenerating())
         {
@@ -128,6 +131,7 @@ public class GenesisFileManagerTest {
         
         Thread.sleep(wait); // Shouldn't take longer than this
         
+        
         if(!timesFile.exists())
             Thread.sleep(4000); // One more try...
         
@@ -149,5 +153,14 @@ public class GenesisFileManagerTest {
         
         
     }
+    
+    
+     public static void main(String[] args)
+     {
+        GenesisFileManagerTest ct = new GenesisFileManagerTest();
+        Result r = org.junit.runner.JUnitCore.runClasses(ct.getClass());
+        MainTest.checkResults(r);
+        
+     }
 
 }

@@ -685,12 +685,12 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
             
             /*generate the probe*/
             
-                ConicalFrustrum probe = new ConicalFrustrum(probeStartRadius,
+                ConicalFrustum probe = new ConicalFrustum(probeStartRadius,
                               probeEndRadius,
                               probeLength,
-                              ConicalFrustrum.GENERATE_NORMALS |
-                              ConicalFrustrum.GENERATE_TEXTURE_COORDS |
-                              ConicalFrustrum.ENABLE_APPEARANCE_MODIFY,
+                              ConicalFrustum.GENERATE_NORMALS |
+                              ConicalFrustum.GENERATE_TEXTURE_COORDS |
+                              ConicalFrustum.ENABLE_APPEARANCE_MODIFY,
                               project.proj3Dproperties.getResolution3DElements(),
                               inputApp);
                 

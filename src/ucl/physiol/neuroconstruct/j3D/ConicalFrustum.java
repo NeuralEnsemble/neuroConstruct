@@ -38,7 +38,7 @@ import javax.media.j3d.*;
  */
 
 
-public class ConicalFrustrum extends Primitive
+public class ConicalFrustum extends Primitive
 {
     float startRadius;
     float endRadius;
@@ -64,6 +64,7 @@ public class ConicalFrustrum extends Primitive
      * Returns the flags of primitive (generate normal, textures, caching, etc).
      */
 
+    @Override
     public int getPrimitiveFlags()
     {
       return flags;
@@ -71,24 +72,24 @@ public class ConicalFrustrum extends Primitive
 
 
 
-    public ConicalFrustrum()
+    public ConicalFrustum()
     {
         this(1.0f,0.5f, 2.0f, GENERATE_NORMALS, DEFAULT_DIVISIONS, null);
     }
 
 
-    public ConicalFrustrum (float startRadius, float endRadius, float height)
+    public ConicalFrustum (float startRadius, float endRadius, float height)
     {
         this(startRadius, endRadius, height, GENERATE_NORMALS, DEFAULT_DIVISIONS, null);
     }
 
 
-    public ConicalFrustrum (float startRadius, float endRadius, float height, Appearance ap)
+    public ConicalFrustum (float startRadius, float endRadius, float height, Appearance ap)
     {
         this(startRadius, endRadius, height, GENERATE_NORMALS, DEFAULT_DIVISIONS, ap);
     }
 
-    public ConicalFrustrum (float startRadius, float endRadius, float height, int primflags, Appearance ap)
+    public ConicalFrustum (float startRadius, float endRadius, float height, int primflags, Appearance ap)
     {
         this(startRadius, endRadius, height, primflags, DEFAULT_DIVISIONS, ap);
     }
@@ -117,7 +118,7 @@ public class ConicalFrustrum extends Primitive
 
 
 
-    public ConicalFrustrum(float startRadius, float endRadius, float height, int primflags,
+    public ConicalFrustum(float startRadius, float endRadius, float height, int primflags,
             int divisions, Appearance ap)
     {
       super();
@@ -426,7 +427,7 @@ public class ConicalFrustrum extends Primitive
 
 
     public Node cloneNode(boolean forceDuplicate) {
-        ConicalFrustrum c = new ConicalFrustrum(startRadius, endRadius, height, flags, divisions, getAppearance());
+        ConicalFrustum c = new ConicalFrustum(startRadius, endRadius, height, flags, divisions, getAppearance());
         c.duplicateNode(this, forceDuplicate);
         return c;
     }

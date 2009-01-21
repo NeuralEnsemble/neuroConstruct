@@ -1091,10 +1091,10 @@ public class PlotCanvas extends Canvas
                 {
                     double[] nextPoint = dataSets[dataSetIndex].getPoint(pointNum);
 
-                    if (nextPoint[0] == Double.NaN ||
+                    if ((new Double(nextPoint[0])).isNaN() ||
                         nextPoint[0] == Double.NEGATIVE_INFINITY ||
                         nextPoint[0] == Double.POSITIVE_INFINITY ||
-                        nextPoint[1] == Double.NaN ||
+                        (new Double(nextPoint[1])).isNaN() ||
                         nextPoint[1] == Double.NEGATIVE_INFINITY ||
                         nextPoint[1] == Double.POSITIVE_INFINITY)
                     {

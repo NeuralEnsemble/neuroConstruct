@@ -878,10 +878,10 @@ public class OneCell3D
             }*/
 
 
-            ConicalFrustrum somaPrimitive = new ConicalFrustrum(startRadius, endRadius, length,
-                                                         ConicalFrustrum.GENERATE_NORMALS |
-                                                         ConicalFrustrum.GENERATE_TEXTURE_COORDS |
-                                                         ConicalFrustrum.ENABLE_APPEARANCE_MODIFY,
+            ConicalFrustum somaPrimitive = new ConicalFrustum(startRadius, endRadius, length,
+                                                         ConicalFrustum.GENERATE_NORMALS |
+                                                         ConicalFrustum.GENERATE_TEXTURE_COORDS |
+                                                         ConicalFrustum.ENABLE_APPEARANCE_MODIFY,
                                                          project.proj3Dproperties.getResolution3DElements(),
                                                          getDefaultSegmentApp());
 
@@ -1114,12 +1114,12 @@ public class OneCell3D
                 float equivCylinderRadius
                     = (float) CompartmentHelper.getEquivalentRadius(startRadius, endRadius, segment.getSegmentLength());
 
-                newPrim = new ConicalFrustrum(equivCylinderRadius,
+                newPrim = new ConicalFrustum(equivCylinderRadius,
                                               equivCylinderRadius,
                                               length,
-                                              ConicalFrustrum.GENERATE_NORMALS |
-                                              ConicalFrustrum.GENERATE_TEXTURE_COORDS |
-                                              ConicalFrustrum.ENABLE_APPEARANCE_MODIFY,
+                                              ConicalFrustum.GENERATE_NORMALS |
+                                              ConicalFrustum.GENERATE_TEXTURE_COORDS |
+                                              ConicalFrustum.ENABLE_APPEARANCE_MODIFY,
                                               project.proj3Dproperties.getResolution3DElements(),
                                               getDefaultSegmentApp());
 
@@ -1130,15 +1130,15 @@ public class OneCell3D
 
             else
             {
-                 logger.logComment("Adding ConicalFrustrum...");
+                 logger.logComment("Adding ConicalFrustum...");
 
-                ConicalFrustrum conFru
-                    = new ConicalFrustrum(startRadius,
+                ConicalFrustum conFru
+                    = new ConicalFrustum(startRadius,
                                           endRadius,
                                           length,
-                                          ConicalFrustrum.GENERATE_NORMALS |
-                                          ConicalFrustrum.GENERATE_TEXTURE_COORDS |
-                                          ConicalFrustrum.ENABLE_APPEARANCE_MODIFY,
+                                          ConicalFrustum.GENERATE_NORMALS |
+                                          ConicalFrustum.GENERATE_TEXTURE_COORDS |
+                                          ConicalFrustum.ENABLE_APPEARANCE_MODIFY,
                                           project.proj3Dproperties.getResolution3DElements(),
                                           getDefaultSegmentApp());
 

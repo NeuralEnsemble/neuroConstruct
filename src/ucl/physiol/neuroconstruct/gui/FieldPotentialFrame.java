@@ -32,14 +32,10 @@ import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.logging.Level;
 import javax.swing.*;
 
-import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.simulation.SimulationDataException;
 import ucl.physiol.neuroconstruct.utils.*;
-import ucl.physiol.neuroconstruct.cell.*;
-import ucl.physiol.neuroconstruct.cell.converters.*;
 import ucl.physiol.neuroconstruct.dataset.DataSet;
 import ucl.physiol.neuroconstruct.gui.plotter.*;
 import ucl.physiol.neuroconstruct.project.*;

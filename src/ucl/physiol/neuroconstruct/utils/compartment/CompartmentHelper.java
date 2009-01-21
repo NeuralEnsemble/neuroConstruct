@@ -277,7 +277,7 @@ public class CompartmentHelper
         for (int i = 0; i < multiComp.length; i++)
         {
             SimpleCompartment nextComp = multiComp[i];
-            logger.logComment("Curv Surf area of inner frustrum "+nextComp+": "+ nextComp.getCurvedSurfaceArea());
+            logger.logComment("Curv Surf area of inner frustum "+nextComp+": "+ nextComp.getCurvedSurfaceArea());
             total = total + nextComp.getCurvedSurfaceArea();
         }
         return total;
@@ -290,7 +290,7 @@ public class CompartmentHelper
         for (int i = 0; i < multiComp.length; i++)
         {
             SimpleCompartment nextComp = multiComp[i];
-            logger.logComment("Volume of inner frustrum "+nextComp+": "+ nextComp.getVolume());
+            logger.logComment("Volume of inner frustum "+nextComp+": "+ nextComp.getVolume());
             total = total + nextComp.getVolume();
         }
         return total;
@@ -313,7 +313,7 @@ public class CompartmentHelper
 
 
     /**
-     * Get volume of compound frustrum truncated at dist (fractionFromStart * total height)
+     * Get volume of compound frustum truncated at dist (fractionFromStart * total height)
      * from start point, cut in plane parallel to start face.
      */
     public static double getFractionalVolume(SimpleCompartment[] multiComp, double fractionFromStart)
@@ -333,7 +333,7 @@ public class CompartmentHelper
             if ((lengthTraversed+nextComp.getHeight()) <=
                 (totalLength*fractionFromStart))
             {
-                logger.logComment("Volume of inner frustrum " + nextComp + ": " + nextComp.getVolume());
+                logger.logComment("Volume of inner frustum " + nextComp + ": " + nextComp.getVolume());
                 totalVol = totalVol + nextComp.getVolume();
                 lengthTraversed = lengthTraversed +  nextComp.getHeight();
             }
@@ -359,8 +359,8 @@ public class CompartmentHelper
 
 
     /**
-     * Get curved surface area of compound frustrum truncated at dist (fractionFromStart * total height)
-     * from start point, cut in plane perpendicular to axis of truncated frustrum.
+     * Get curved surface area of compound frustum truncated at dist (fractionFromStart * total height)
+     * from start point, cut in plane perpendicular to axis of truncated frustum.
      */
     public static double getFractionalSurfArea(SimpleCompartment[] multiComp, double fractionFromStart)
     {
