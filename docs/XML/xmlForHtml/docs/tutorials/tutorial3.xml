@@ -61,9 +61,10 @@ There are four pre defined Section Groups:</p>
 </ul>
 
 
-<p>Network Connections will always initiate on a Section in either the <strong>soma_group</strong> or the
-<strong>axon_group</strong>. Similarly, the connections will terminate on a Section in either the <strong>soma_group</strong>
-or the <strong>dendrite_group</strong>. </p>
+<p>Network Connections will generally initiate on a Section in either the <strong>soma_group</strong> or the
+<strong>axon_group</strong>, and the connections will generally terminate on a Section in either the <strong>soma_group</strong>
+or the <strong>dendrite_group</strong>. These can be changed at the bottom of the Morphology based connection dialog to allow, e.g. axo-axonic or dendrodendritic 
+connections, which can be quite useful for electrical synapses.</p>
 
 <p>Not every <a href="../Glossary_gen.html#Section">Section</a> of the Cell would be a suitable location of a particular synapse,
     so other subgroups can be defined which specify where the connections should be made. By pressing <strong>Edit Groups</strong>,
@@ -84,8 +85,8 @@ interesting regions of the cell. A Section will always belong to at most one of 
     The added Synaptic Mechanism (PF_Purk_Syn) should be in the drop down list. Select this and then select the Section Group, <strong>parallel_fibers</strong>, where the
 synapse can be found.</p>
 
-<p>It is important to point out again that the PRE synaptic location will be the intersection of the Sections in the (<strong>soma_group</strong> or the
-<strong>axon_group</strong>) and the Group(s) selected here. Similarly for the POST synaptic location. Therefore if the
+<p>It is important to point out again that the PRE synaptic location will be the intersection of the Sections specified in the GUI for presynaptic connections (nromally <strong>soma_group</strong> or the
+<strong>axon_group</strong>, but see above) and the Group(s) selected here. Similarly for the POST synaptic location. Therefore if the
 Group <strong>all</strong> is selected as a Synaptic Connection Location, synapses can be made on the axons (PRE),
 dendrites (POST) and soma (PRE and POST). However if only the Group <strong>dendrite_group</strong> is selected as a
 Synaptic Connection Location (or another Group only containing dendrites), then this particular Cell Type will only have

@@ -363,14 +363,14 @@ public class VolBasedConnDialog extends JDialog
         jPanelMain.setLayout(borderLayout1);
         jPanelSourceInfo.setBorder(titledBorder1);
         //jPanelSourceInfo.setMaximumSize(new Dimension(350, 150));
-        jPanelSourceInfo.setMinimumSize(new Dimension(350, 150));
-        jPanelSourceInfo.setPreferredSize(new Dimension(350, 150));
+        jPanelSourceInfo.setMinimumSize(new Dimension(350, 170));
+        jPanelSourceInfo.setPreferredSize(new Dimension(350, 170));
         jPanelSourceInfo.setLayout(gridBagLayoutSrc);
         jPanelTargetInfo.setLayout(gridBagLayoutTrgt);
         jPanelTargetInfo.setBorder(titledBorder2);
         //jPanelTargetInfo.setMaximumSize(new Dimension(350, 150));
-        jPanelTargetInfo.setMinimumSize(new Dimension(350, 150));
-        jPanelTargetInfo.setPreferredSize(new Dimension(350, 150));
+        jPanelTargetInfo.setMinimumSize(new Dimension(350, 170));
+        jPanelTargetInfo.setPreferredSize(new Dimension(350, 170));
         jComboBoxTarget.setEnabled(false);
         jComboBoxTarget.addItemListener(new java.awt.event.ItemListener()
         {
@@ -456,9 +456,9 @@ public class VolBasedConnDialog extends JDialog
         jTextFieldRandCloseNumber.setText("");
         jTextFieldRandCloseNumber.setColumns(5);
         jPanelSourceTarget.setLayout(flowLayout1);
-        jPanelSourceTarget.setMaximumSize(new Dimension(715, 160));
-        jPanelSourceTarget.setMinimumSize(new Dimension(715, 160));
-        jPanelSourceTarget.setPreferredSize(new Dimension(715, 160));
+        jPanelSourceTarget.setMaximumSize(new Dimension(715, 180));
+        jPanelSourceTarget.setMinimumSize(new Dimension(715, 180));
+        jPanelSourceTarget.setPreferredSize(new Dimension(715, 180));
         /*
         jLabelRegionSrc.setVerifyInputWhenFocusTarget(true);
         jLabelRegionSrc.setText("Region:");
@@ -665,8 +665,8 @@ c       */
         //jPanelSrcArbours.setBackground(Color.red);
         //jPanelTgtArbours.setBackground(Color.blue);
 
-        jPanelSourceInfo.add(jPanelSrcArbours,   new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(12, 12, 12, 0), 0, 0));
+        jPanelSourceInfo.add(jPanelSrcArbours,   new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 12, 12, 0), 0, 0));
 
 
     jPanelTargetInfo.add(jPanelTgtArbours,  new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
@@ -1007,10 +1007,56 @@ c       */
         jPanelSrcArbours.removeAll();
         sourceRegionCheckBoxes.removeAllElements();
 
+        JComponent toAddTo = jPanelSrcArbours;
+        
+        if (aas.size()>2)
+        {
+            //JPanel jPanelInner = new JPanel();
+            //JList list = new JList();
+//            JScrollPane scrollPane = new JScrollPane(list); 
+//            jPanelSrcArbours.add(scrollPane);
+//                
+//                
+//            jPanelSrcArbours.setPreferredSize(d);
+//            jPanelSrcArbours.setMinimumSize(d);
+            
+            JPanel innerPanel = new JPanel(); 
+            innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS)); 
+            //innerPanel.add("goo..."); 
+  
+  
+            JPanel innerList = new JPanel() { 
+                Insets insets = new Insets(0, 4, 0, 0); 
+                public Insets getInsets() { 
+                    return insets; 
+                } 
+            }; 
+            innerList.setLayout(new BoxLayout(innerList, BoxLayout.Y_AXIS)); 
+            JScrollPane scrollPane = new JScrollPane(innerList); 
+            
+            scrollPane.getVerticalScrollBar().setUnitIncrement(10); 
+            innerPanel.add(scrollPane);  
+            Dimension r = new Dimension(50,30);
+            //innerPanel.add(Box.createRigidArea(r)); 
+            Dimension d = new Dimension(250,35);
+            jPanelSrcArbours.setPreferredSize(d);
+            jPanelSrcArbours.setMinimumSize(d);
+            jPanelSrcArbours.add(innerPanel);
+            innerPanel.setPreferredSize(d);
+            innerPanel.setMinimumSize(d);
+            
+            
+            //jPanelSrcArbours.setBackground(Color.yellow);
+            //innerPanel.setBackground(Color.red);
+            //innerList.setBackground(Color.blue);
+            
+            
+            toAddTo = innerList;
+        }
         for (AxonalConnRegion aa: aas)
         {
             JCheckBox cb = new JCheckBox(aa.getName());
-            this.jPanelSrcArbours.add(cb);
+            toAddTo.add(cb);
             sourceRegionCheckBoxes.add(cb);
         }
 
@@ -1222,21 +1268,11 @@ c       */
 
         try
         {
-            Project p = Project.loadProject(new File("examples/Ex5-Networks/Ex5-Networks.neuro.xml"), null);
+            Project p = Project.loadProject(new File("../nC_projects/Project_1ax/Project_1ax.neuro.xml"), null);
 
             VolBasedConnDialog dlg = new VolBasedConnDialog(null, p, "Jimbo");
 
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            Dimension frameSize = dlg.getSize();
-
-            if (frameSize.height > screenSize.height)
-                frameSize.height = screenSize.height;
-            if (frameSize.width > screenSize.width)
-                frameSize.width = screenSize.width;
-
-            dlg.setLocation( (screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
-
-            dlg.setModal(true);
+            GuiUtils.centreWindow(dlg);
 
             dlg.pack();
             dlg.setVisible(true);
