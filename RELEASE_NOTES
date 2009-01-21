@@ -4,14 +4,32 @@ See also the README file
 
 --------- Version 1.2.2 (Jan 09) ---------
 
+-  Restructured main examples to 2 new dirs: nCexamples for non anatomical examples used to illustrate 
+   core nC functionality; nCmodels for more biologically realistic examples, mainly based on published 
+   models. Added Pyramidal cell model from Kole et al 2008/Rothman et al 2009.
+
 -  Added preliminary mapping to PSICS. To use the PSICS functionality you will need to get a copy of 
    the jar file from the PSICS website, save it locally and set the location in Settings -> General 
    Properties and Project Defaults. The included example nCexamples\Ex7_PSICSDemo illustrates current
    functionality
--  Added one more Python interface example for loading morphologies by script
+
+-  Added one more Python interface example for loading morphologies by script (Ex6_LoadCells.py)
+
+-  Added option to export project elements in single NeuroML level 3 file
+
 -  Added option in MorphNetConn "Direct recurrent connections not allowed" for connections within a 
-   cell group, so that if A is connected to B, B won't form a connection back to A. Useful for electrical
-   synapses
+   cell group, so that if cell A is connected to B, B won't form a connection back to A. Useful for 
+   electrical synapses
+
+-  Fixed minor bugs in Morph Conn generator
+
+-  Added option to have weights of syn connections function of radial distance between source & target. 
+   Also can be function of soma to soma distances
+
+-  Optimised viewing of parameterised groups in cells with a large number of segments
+
+-  Updated channel templates to use v1.8.0 ChannelML examples, added gap junction template
+
 -  Moved to GNU GPL v2 licence
 
 
