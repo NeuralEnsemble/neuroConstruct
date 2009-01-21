@@ -289,9 +289,9 @@
 <b>ChannelML</b>
 </p>
 </a><span>
-<p>ChannelML is a standard (using <a href="#XML">XML</a> technologies) for specifying the dynamics of various subcellular processes
+<p>ChannelML is a language (using <a href="#XML">XML</a> technologies) for specifying the dynamics of various subcellular processes
         (<a href="#Channel Mechanism">Channel Mechanism</a>s, <a href="#Synaptic Mechanism">Synaptic Mechanism</a>s, etc.) which are present on biologically detailed model neurons.
-        It is a part of Level 2 of the <a href="#NeuroML">NeuroML</a> set of standards.
+        It is a part of Level 2 of the <a href="#NeuroML">NeuroML</a> set of specifications.
         The ability to model these types of mechanisms is one of the key features of platforms like <a href="#NEURON">NEURON</a> or <a href="#GENESIS">GENESIS</a>, but the implementation
         of the mechanisms is far from trivial, requiring both knowledge of the physiological processes and of a low level programming language. ChannelML seeks to separate the
         electrophysiological data from any specific implementation, defining a template for numerous types of cellular mechanism, containing only the relevant biophysical parameters
@@ -519,11 +519,11 @@
 <b>MorphML</b>
 </p>
 </a><span>
-<p>MorphML is an standard which has been developed (using <a href="#XML">XML</a> technologies) to allow data on cell morphologies to be 
+<p>MorphML is an language which has been developed (using <a href="#XML">XML</a> technologies) to allow data on cell morphologies to be 
         easily transferred between neuronal simulation applications. More information is available <a href="http://www.neuroml.org" target="_blank">here</a>.
         It is a part of the <a href="#NeuroML">NeuroML</a> initiative, and is the core of NeuroML Level 1. Detailed specifications of the elements allowed in a MorphML document are
         available <a href="http://www.neuroml.org/NeuroMLValidator/Latest.jsp?spec=MorphML" target="_blank">here</a>. 
-        There is a <a href="../links/publications.html">paper</a> describing this part of the NeuroML standards.
+        There is a <a href="../links/publications.html">paper</a> describing this part of the NeuroML language.
     </p>
 </span>
 <p style="font-size: 11">
@@ -619,7 +619,7 @@ the previously stored morphology before a new one is saved (if a problem occurs 
 the .bak from the name of the morphology file to use the previous structure of the cell when reloading the project).
 
 Note that the cells aren't currently stored in neuroConstruct projects in <a href="#NeuroML">NeuroML</a>/<a href="#MorphML">MorphML</a> format, since new functionality 
-is usually added to the neuroConstruct Cell class before it is supported in the standards.</p>
+is usually added to the neuroConstruct Cell class before it is supported in the specifications.</p>
 </span>
 <p style="font-size: 11">
 <a href="#top">index</a>
@@ -658,7 +658,8 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
 <b>NetworkML</b>
 </p>
 </a><span>
-<p>NetworkML is an standard (using <a href="#XML">XML</a> technologies, <a href="#HDF5">HDF5</a> equivalent in development) to allow data on cell placement and connectivity in 3D to be 
+<p>NetworkML is a language (based on <a href="#XML">XML</a> technologies and a <a href="#HDF5">HDF5</a> equivalent in development) to allow data on cell placement and 
+        connectivity in 3D to be 
         easily transferred between neuronal simulation applications. More information is available <a href="http://www.neuroml.org" target="_blank">here</a>.
         It is a part of the <a href="#NeuroML">NeuroML</a> initiative, and is the core of NeuroML Level 3.</p>
 </span>
@@ -684,8 +685,9 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
 </p>
 </a><span>
 <p>
-<a href="http://www.neuroml.org" target="_blank">NeuroML</a>, the Neural Open Markup Language, is an open standard in <a href="#XML">XML</a> for describing models, data, literature, methods and other aspects of neuroscience. 
-                 Currently, there are three Levels of compliance to the NeuroML standards:
+<a href="http://www.neuroml.org" target="_blank">NeuroML</a>, the Neural Open Markup Language, is a model development language in <a href="#XML">XML</a> 
+            that provides a common data format for defining and exchanging descriptions of neuronal cell and network models. 
+                 Currently, there are three Levels of compliance to the NeuroML specifications:
 
                 <ul>
             
@@ -693,7 +695,7 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
 <strong>Level 1</strong> provides a common data format for neuronal morphology data and metadata. <a href="#MorphML">MorphML</a> forms the main part of the specification at this Level.</li>
             
 <li>
-<strong>Level 2</strong> builds on Level 1 to include standards for describing passive membrane properties, and the distributions of channels on neuron models.
+<strong>Level 2</strong> builds on Level 1 to include specifications for describing passive membrane properties, and the distributions of channels on neuron models.
                 The dynamics of ion channels, synapses, and ion concentration mechanisms can also be described at this Level in <a href="#ChannelML">ChannelML</a>
 </li>
             
@@ -1093,7 +1095,7 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
 <p>Short for eXtensible Markup Language, XML is a specification developed by the <a href="http://www.w3c.org" target="_blank">W3C</a>. XML uses a similar tag structure to HTML, 
         as used for Web documents. However, it allows designers to create their own customised tags, enabling the definition, transmission, validation, 
         and interpretation of data between applications and between organisations. It is useful in the context of neuroscience when it comes to exchanging
-        anatomical data, model descriptions, etc. between research groups and simulation environments and is the technology used in specifying the <a href="#NeuroML">NeuroML</a> standards. </p>
+        anatomical data, model descriptions, etc. between research groups and simulation environments and is the technology used in specifying the <a href="#NeuroML">NeuroML</a> language. </p>
 </span>
 <p style="font-size: 11">
 <a href="#top">index</a>

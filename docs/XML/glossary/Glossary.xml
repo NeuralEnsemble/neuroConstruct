@@ -264,12 +264,13 @@
 
     <term>
         <name>NeuroML</name>
-        <defined><a target="_blank" href="http://www.neuroml.org">NeuroML</a>, the Neural Open Markup Language, is an open standard in <intref>XML</intref> for describing models, data, literature, methods and other aspects of neuroscience. <br/>
-                 Currently, there are three Levels of compliance to the NeuroML standards:
+        <defined><a target="_blank" href="http://www.neuroml.org">NeuroML</a>, the Neural Open Markup Language, is a model development language in <intref>XML</intref> 
+            that provides a common data format for defining and exchanging descriptions of neuronal cell and network models. <br/>
+                 Currently, there are three Levels of compliance to the NeuroML specifications:
 
                 <ul>
             <li><b>Level 1</b> provides a common data format for neuronal morphology data and metadata. <intref>MorphML</intref> forms the main part of the specification at this Level.</li>
-            <li><b>Level 2</b> builds on Level 1 to include standards for describing passive membrane properties, and the distributions of channels on neuron models.<br/>
+            <li><b>Level 2</b> builds on Level 1 to include specifications for describing passive membrane properties, and the distributions of channels on neuron models.<br/>
                 The dynamics of ion channels, synapses, and ion concentration mechanisms can also be described at this Level in <intref>ChannelML</intref></li>
             <li><b>Level 3</b> allows networks of cells to be described, either in template form (from which networks can be generated) or as explicit descriptions of <br/>
                 cell placement and synaptic connectivity. The core of this level is described in <intref>NetworkML</intref>. neuroConstruct can save generated networks in <br/>
@@ -283,19 +284,19 @@
 
     <term>
         <name>MorphML</name>
-        <defined>MorphML is an standard which has been developed (using <intref>XML</intref> technologies) to allow data on cell morphologies to be <br/>
+        <defined>MorphML is an language which has been developed (using <intref>XML</intref> technologies) to allow data on cell morphologies to be <br/>
         easily transferred between neuronal simulation applications. More information is available <a target="_blank" href="http://www.neuroml.org">here</a>.<br/>
         It is a part of the <intref>NeuroML</intref> initiative, and is the core of NeuroML Level 1. Detailed specifications of the elements allowed in a MorphML document are<br/>
         available <a target="_blank" href="http://www.neuroml.org/NeuroMLValidator/Latest.jsp?spec=MorphML">here</a>. 
-        There is a <a href="../links/publications.html">paper</a> describing this part of the NeuroML standards.
+        There is a <a href="../links/publications.html">paper</a> describing this part of the NeuroML language.
     </defined>
     </term>
 
     <term>
         <name>ChannelML</name>
-        <defined>ChannelML is a standard (using <intref>XML</intref> technologies) for specifying the dynamics of various subcellular processes
+        <defined>ChannelML is a language (using <intref>XML</intref> technologies) for specifying the dynamics of various subcellular processes
         (<intref>Channel Mechanism</intref>s, <intref>Synaptic Mechanism</intref>s, etc.) which are present on biologically detailed model neurons.
-        It is a part of Level 2 of the <intref>NeuroML</intref> set of standards.
+        It is a part of Level 2 of the <intref>NeuroML</intref> set of specifications.
         The ability to model these types of mechanisms is one of the key features of platforms like <intref>NEURON</intref> or <intref>GENESIS</intref>, but the implementation
         of the mechanisms is far from trivial, requiring both knowledge of the physiological processes and of a low level programming language. ChannelML seeks to separate the
         electrophysiological data from any specific implementation, defining a template for numerous types of cellular mechanism, containing only the relevant biophysical parameters
@@ -312,7 +313,8 @@
 
     <term>
         <name>NetworkML</name>
-        <defined>NetworkML is an standard (using <intref>XML</intref> technologies, <intref>HDF5</intref> equivalent in development) to allow data on cell placement and connectivity in 3D to be <br/>
+        <defined>NetworkML is a language (based on <intref>XML</intref> technologies and a <intref>HDF5</intref> equivalent in development) to allow data on cell placement and 
+        connectivity in 3D to be <br/>
         easily transferred between neuronal simulation applications. More information is available <a target="_blank" href="http://www.neuroml.org">here</a>.<br/>
         It is a part of the <intref>NeuroML</intref> initiative, and is the core of NeuroML Level 3.</defined>
     </term>
@@ -332,7 +334,7 @@
         <defined>Short for eXtensible Markup Language, XML is a specification developed by the <a  href="http://www.w3c.org">W3C</a>. XML uses a similar tag structure to HTML, <br/>
         as used for Web documents. However, it allows designers to create their own customised tags, enabling the definition, transmission, validation, <br/>
         and interpretation of data between applications and between organisations. It is useful in the context of neuroscience when it comes to exchanging<br/>
-        anatomical data, model descriptions, etc. between research groups and simulation environments and is the technology used in specifying the <intref>NeuroML</intref> standards. </defined>
+        anatomical data, model descriptions, etc. between research groups and simulation environments and is the technology used in specifying the <intref>NeuroML</intref> language. </defined>
     </term>
 
 
@@ -1091,7 +1093,7 @@ the previously stored morphology before a new one is saved (if a problem occurs 
 the .bak from the name of the morphology file to use the previous structure of the cell when reloading the project).<br/>
 <br/>
 Note that the cells aren't currently stored in neuroConstruct projects in <intref>NeuroML</intref>/<intref>MorphML</intref> format, since new functionality <br/>
-is usually added to the neuroConstruct Cell class before it is supported in the standards.</defined>
+is usually added to the neuroConstruct Cell class before it is supported in the specifications.</defined>
 </term>
 
 
