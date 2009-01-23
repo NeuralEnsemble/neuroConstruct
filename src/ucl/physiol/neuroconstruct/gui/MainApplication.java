@@ -212,9 +212,9 @@ public class MainApplication
 
             String javaVersion = System.getProperty("java.version");
 
-            if (javaVersion.compareTo("1.6") < 0)
+            if (javaVersion.compareTo("1.5") < 0)
             {
-                String error = "You are running Java version " + javaVersion + ". "+"neuroConstruct requires Java 1.6 (J2SE 6) or later.\n\n" +
+                String error = "You are running Java version " + javaVersion + ". "+"neuroConstruct requires Java 1.5 (J2SE 5) or later.\n\n" +
                     "Please download the latest version of the JDK, and remove any earlier versions (or customise nC.bat/nC.sh to use the latest).";
                 
                 System.out.println("Error: "+ error);
