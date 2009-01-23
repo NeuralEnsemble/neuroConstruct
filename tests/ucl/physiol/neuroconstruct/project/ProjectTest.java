@@ -27,9 +27,12 @@
 package ucl.physiol.neuroconstruct.project;
 
 import java.io.File;
+import java.io.IOException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.Result;
+import test.MainTest;
 import static org.junit.Assert.*;
 
 
@@ -88,13 +91,16 @@ public class ProjectTest
      * Test of createNewProject method, of class Project.
      */
     @Test
-    public void testCreateNewProject() {
+    public void testCreateNewProject() throws  IOException 
+    {
         System.out.println("---  createNewProject");
       
         String projName2 = "TestingFrameworkProject";
-        File projDir2 = new File("..\temp");
+        File projDir2 = new File("../temp");
     
         Project proj = Project.createNewProject(projDir2.getAbsolutePath(), projName2, null);
+        
+        System.out.println("Created project at: "+ proj.getProjectFile().getCanonicalPath());
         
         assertEquals(proj.getProjectName(), projName2);
     }
@@ -114,6 +120,15 @@ public class ProjectTest
     }
 
 
+    public static void main(String[] args)
+    {
+        ProjectTest ct = new ProjectTest();
+        Result r = org.junit.runner.JUnitCore.runClasses(ct.getClass());
+        MainTest.checkResults(r);
+        
+    }
+    
+    
 
 
 

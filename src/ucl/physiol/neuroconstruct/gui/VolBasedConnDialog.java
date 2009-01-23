@@ -1027,6 +1027,7 @@ c       */
   
             JPanel innerList = new JPanel() { 
                 Insets insets = new Insets(0, 4, 0, 0); 
+                @Override
                 public Insets getInsets() { 
                     return insets; 
                 } 
@@ -1038,12 +1039,13 @@ c       */
             innerPanel.add(scrollPane);  
             Dimension r = new Dimension(50,30);
             //innerPanel.add(Box.createRigidArea(r)); 
-            Dimension d = new Dimension(250,35);
-            jPanelSrcArbours.setPreferredSize(d);
-            jPanelSrcArbours.setMinimumSize(d);
+            Dimension d1 = new Dimension(250,40);
+            Dimension d2 = new Dimension(250,36);
+            jPanelSrcArbours.setPreferredSize(d1);
+            jPanelSrcArbours.setMinimumSize(d1);
             jPanelSrcArbours.add(innerPanel);
-            innerPanel.setPreferredSize(d);
-            innerPanel.setMinimumSize(d);
+            innerPanel.setPreferredSize(d2);
+            innerPanel.setMinimumSize(d2);
             
             
             //jPanelSrcArbours.setBackground(Color.yellow);
