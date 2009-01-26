@@ -624,7 +624,9 @@ public class GeneralProperties
         return "v"+latestNeuroMLVersionNumber;
     }
     
-    
+    /*
+     * Returns the number part of the NeuroML version, e.g. 1.8.1 as a String
+     */
     public static String getNeuroMLVersionNumber()
     {
         String ver = userSettings.getPrefNeuroMLVersionString();
@@ -635,6 +637,9 @@ public class GeneralProperties
     }
     
     
+    /*
+     * Returns a string for the NeuroML version, e.g. v1.8.1
+     */
     public static String getNeuroMLVersionString()
     {
         String ver = userSettings.getPrefNeuroMLVersionString();    

@@ -646,6 +646,9 @@ public class ChannelMLCellMechanism extends CellMechanism
                                 {
                                     String safeValue = GeneralUtils.replaceAllTokens(xmlDoc.getValueByXPath(name),
                                         "\n", " ");
+                                    
+                                    if (safeValue.length()>150)
+                                        safeValue = safeValue.substring(0,150)+" ...";
 
                                     fileOut.write(commentLinePrefix + name
                                                   + " = "

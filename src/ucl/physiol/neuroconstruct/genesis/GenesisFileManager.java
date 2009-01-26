@@ -1332,7 +1332,9 @@ public class GenesisFileManager
         for (int i = 0; i < allStims.size(); i++)
         {
             StimulationSettings nextStim = (StimulationSettings) allStims.elementAt(i);
-            if (nextStim instanceof RandomSpikeTrainSettings)
+            
+            if (nextStim instanceof RandomSpikeTrainSettings &&
+                project.generatedElecInputs.getNumberSingleInputs(nextStim.getReference())>0)
             {
                 RandomSpikeTrainSettings randStim = (RandomSpikeTrainSettings)nextStim;
 

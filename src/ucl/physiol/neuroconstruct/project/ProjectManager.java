@@ -1251,6 +1251,25 @@ public class ProjectManager implements GenerationReport
         SimpleHtmlDoc report = new SimpleHtmlDoc();
 
         report.addTaggedElement("Validating the project: "+ this.activeProject.getProjectFile(), "h3");
+        
+        String latestNml = "0.0.0";
+        
+        for(File f: ProjectStructure.getNeuroMLSchemataDir().listFiles())
+        {
+            if (f.isDirectory()&&f.getName().startsWith("v"))
+            {
+                String ver = f.getName().substring(1);
+                if (ProjectStructure.compareVersions(ver, latestNml)>0)
+                    latestNml = ver;
+            }
+        }
+        
+        if (ProjectStructure.compareVersions(latestNml, GeneralProperties.getNeuroMLVersionNumber())>0)
+        {
+            report.addTaggedElement("<b>Note: validating using NeuroML "+GeneralProperties.getNeuroMLVersionString()
+                +", but the latest version available is v"+latestNml+"</b><br/></br/>" +
+                "This can be corrected via Settings -> General Properties & Project Defaults -> NeuroML version", "font color=\""+ValidityStatus.VALIDATION_COLOUR_WARN+"\"");
+        }
 
         report.addTaggedElement("Validating cells in project", "p");
 
