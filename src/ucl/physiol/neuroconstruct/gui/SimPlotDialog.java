@@ -239,7 +239,8 @@ public class SimPlotDialog extends JDialog
         catch(NumberFormatException ex)
         {
             if (!jTextFieldCellNumber.getText().trim().equals("*") &&
-                !jTextFieldCellNumber.getText().trim().endsWith("%"))
+                !jTextFieldCellNumber.getText().trim().endsWith("%")&&
+                !jTextFieldCellNumber.getText().trim().endsWith("#"))
             {
                 GuiUtils.showErrorMessage(logger, "Please enter a positive integer or * for the cell number", ex, this);
                 return;
@@ -320,7 +321,7 @@ public class SimPlotDialog extends JDialog
         jTextFieldPlotReference.setColumns(12);
         jPanelTop.setLayout(borderLayout4);
         jLabelCellGroups.setText("Cell Group:");
-        jLabelCellNumber.setText("Cell Number (or * for all cells in group,");
+        jLabelCellNumber.setText("Cell Number (or * for all cells, n% for a random");
         jTextFieldCellNumber.setText("0");
         jLabelValuePlotted.setText("Value to be plotted/saved:");
         jLabelMin.setText("Min value (only needed when plotting):");
@@ -334,7 +335,7 @@ public class SimPlotDialog extends JDialog
         jLabelOr.setText("or");
         jTextFieldValuePlotted.setText("");
         jTextFieldValuePlotted.setColumns(16);
-        jLabelCellNum2.setText("or n% for a random n percent of cells)");
+        jLabelCellNum2.setText("n percent of cells, or n# for a max of n cells)");
 
         this.jLabelPlotSave.setText("Plot values during simulation, save them, or both");
 

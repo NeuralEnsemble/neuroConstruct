@@ -131,7 +131,6 @@ public class PlotSaveGenerator extends Thread
                 {
                     float percentage = -1;
 
-
                     try
                     {
                         percentage
@@ -155,9 +154,41 @@ public class PlotSaveGenerator extends Thread
                         while (numAlreadyUsed < numToPlot)
                         {
                             int nextCellNum = ProjectManager.getRandomGenerator().nextInt(numInCellGroup);
-                            if (!cellNumsToPlot.contains(new Integer(nextCellNum)))
+                            if (!cellNumsToPlot.contains(nextCellNum))
                             {
-                                cellNumsToPlot.add(new Integer(nextCellNum));
+                                cellNumsToPlot.add(nextCellNum);
+                                numAlreadyUsed++;
+                            }
+                        }
+                    }
+                }
+                else if (simPlot.getCellNumber().indexOf("#")>0)
+                {
+                    int max = 0;
+                    try
+                    {
+                        max
+                            = Integer.parseInt(simPlot.getCellNumber().substring(0,
+                                                                                 simPlot.getCellNumber().length() - 1));
+                    }
+                    catch (NumberFormatException ex)
+                    {
+                        logger.logError("Badly formatted max number. Using 0", ex);
+
+                    }
+
+
+                    if (max > 0)
+                    {
+                        int numToPlot = Math.min(max, numInCellGroup);
+
+                        int numAlreadyUsed = 0;
+                        while (numAlreadyUsed < numToPlot)
+                        {
+                            int nextCellNum = ProjectManager.getRandomGenerator().nextInt(numInCellGroup);
+                            if (!cellNumsToPlot.contains(nextCellNum))
+                            {
+                                cellNumsToPlot.add(nextCellNum);
                                 numAlreadyUsed++;
                             }
                         }
