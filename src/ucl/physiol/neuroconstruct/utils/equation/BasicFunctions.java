@@ -50,9 +50,11 @@ public class BasicFunctions implements Serializable
     public static String LOG = "log";
     public static String HEAVISIDE = "H";
     public static String RANDOM = "random";
+    public static String SQUAREROOT = "sqrt";
+    //public static String SQUARE = "sqr";      // Note: gets confused with sqrt when parsing eqns! Better name?
 
     public static String[] allFunctions
-        = new String[]{SINE,COSINE,TANGENT,EXPONENT,LN,LOG, HEAVISIDE, RANDOM};
+        = new String[]{SINE,COSINE,TANGENT,EXPONENT,LN,LOG, HEAVISIDE, RANDOM, SQUAREROOT};
 
 
  /*
@@ -113,8 +115,21 @@ public class BasicFunctions implements Serializable
          }
          else if (name.equals(RANDOM))
          {
-             
+
              FunctionUnit eq = new RandomFunctionUnit(internalEqn);
+             return eq;
+         }
+         /*
+         else if (name.equals(SQUARE))
+         {
+
+             FunctionUnit eq = new SqrFunctionUnit(internalEqn);
+             return eq;
+         }*/
+         else if (name.equals(SQUAREROOT))
+         {
+
+             FunctionUnit eq = new SqrtFunctionUnit(internalEqn);
              return eq;
          }
 

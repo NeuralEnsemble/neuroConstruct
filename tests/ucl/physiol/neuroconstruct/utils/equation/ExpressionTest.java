@@ -68,7 +68,8 @@ public class ExpressionTest {
                                             "random(v)",
                                             "100.0 *(  (v - -0.0089) / (-0.0050) ) / (1 - exp(-1 * ( (v - -0.0089) / (-0.0050) )))",
                                             "v-(-0.065)",
-                                            "sin(sin(v)-1)"};
+                                            "sin(sin(v)-1)",
+                                            "sqrt(v)"};
         
         Variable v = new Variable("v");
         Variable t = new Variable("t");
@@ -105,6 +106,8 @@ public class ExpressionTest {
         assertTrue(eqnUnits.get(8).evaluateAt(v90deg)<=halfPi);
         assertTrue(eqnUnits.get(8).evaluateAt(v90deg)>=0);
         assertTrue(eqnUnits.get(11).evaluateAt(v90deg)==0);
+
+        assertTrue(eqnUnits.get(12).evaluateAt(v90deg)==Math.sqrt(halfPi));
         
     }
     
