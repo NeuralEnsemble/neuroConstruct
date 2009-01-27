@@ -1514,6 +1514,13 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                 chosen.initialise(project.generatedCellPositions.getPositionRecords((String)jComboBoxCellGroup.getSelectedItem()));
 
+                if (chosen instanceof RegionAssociatedCells)
+                {
+                    RegionAssociatedCells rac = (RegionAssociatedCells) chosen;
+
+                    rac.setProject(project); // to give info on regions...
+                }
+
                 jComboBoxCellNum.addItem(chosen);
 
                 jComboBoxCellNum.setSelectedItem(chosen); // will cause another jComboBoxCellNumber_itemStateChanged...

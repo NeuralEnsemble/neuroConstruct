@@ -44,7 +44,6 @@ public class RegionAssociatedCells extends CellChooser
 {
     //private static ClassLogger logger = new ClassLogger("RegionAssociatedCells");
 
-
     public static final String REGION_NAME = "RegionName";
     public static final String REGION_NAME_DESC = "Which of the 3D Regions is used";
 
@@ -145,23 +144,6 @@ public class RegionAssociatedCells extends CellChooser
         nextIndexToCheck = 0;
     }
 
-    /**
-     * Overridden, to check the string...
-
-    public void setParameter(String parameterName,
-                             float parameterValue) throws CellChooserException
-    {
-        if (!parameterName.equals(this.INSIDE_OR_OUT))
-        {
-            throw new CellChooserException("No parameter with the name: " + parameterName + " found in " +
-                                           this.getClass().getName());
-        }
-
-        Object[] acceptableValues
-
-
-    }
-*/
 
     protected int generateNextCellIndex() throws AllCellsChosenException
     {
@@ -199,9 +181,4 @@ public class RegionAssociatedCells extends CellChooser
 
     }
 
-    public static void main(String[] args)
-    {
-
-
-    }
 }
