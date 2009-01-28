@@ -3604,7 +3604,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
             rac.setProject(project); // to give info on regions...
         }
-
+        
         ArrayList<Integer> orderedCellNums = null;
         try
         {
@@ -3818,7 +3818,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         System.out.println("time: "+times.length);
         
         
-
+        
         
 //        for(Integer next: orderedCellNums)
 //            {
@@ -3845,19 +3845,19 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         
         ArrayList<double[]> voltages = new ArrayList<double[]>();
         ArrayList<double[]> AP = new ArrayList<double[]>();
-        for (Integer next : orderedCellNums)
+        for (int i = 0; i <  orderedCellNums.size(); i++)  
                 {
-                    int cellNum = next;
-                    String cellRef = SimulationData.getCellSegRef(cellGroup, cellNum, 0, simRerunFrame.isOnlySomaValues());
-                    voltages.add(cellNum, simRerunFrame.getVoltageAtAllTimes(cellRef));  
-                    AP.add(cellNum, SpikeAnalyser.getSpikeTimes(voltages.get(cellNum), times, threshold, startTime, stopTime));
+                    int cellNum = orderedCellNums.get(i);
+                    String cellSegRef = SimulationData.getCellSegRef(cellGroup, cellNum, 0, simRerunFrame.isOnlySomaValues());
+                    voltages.add(i, (double[])simRerunFrame.getVoltageAtAllTimes(cellSegRef));  
+                    AP.add(i, SpikeAnalyser.getSpikeTimes(voltages.get(i), times, threshold, startTime, stopTime));
                 }
-        
+
         int t = 0;
 
         while ((t < numBins)) {
-            for (Integer next : orderedCellNums) {
-                double[] spikes = AP.get(next);
+            for (int i = 0; i <  AP.size(); i++){ 
+                double[] spikes = AP.get(i);
                 for (int idx = 0; idx < spikes.length; idx++) {                    
                     if ((spikes[idx]*corr >= t) && (spikes[idx]*corr <= t + (binSize*corr))) {
                         numInEachBin[t]++;
@@ -3868,8 +3868,8 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
             // cellGroupSync.addPoint(t, numInEachBin[t]);
             t++;
         }
-        
 
+        
         for (int i = 0; i < numInEachBin.length; i++)
         {
             double Time = i/corr;
@@ -3877,8 +3877,8 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         }
 
-
-
+        
+        
         cellGroupSync.setDescription(desc.toString());
         cellGroupSync.setGraphFormat(PlotCanvas.USE_LINES_FOR_PLOT);
         PlotterFrame frame = PlotManager.getPlotterFrame(cellGroupSync.getRefrence());
