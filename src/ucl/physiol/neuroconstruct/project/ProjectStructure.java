@@ -268,6 +268,18 @@ public class ProjectStructure
     {
         System.out.println("nc Home: "+ getnCHome().getAbsolutePath());
         System.out.println("Gen temps: "+ getGenesisTemplatesDir());
+
+        String lo = "1.6.0";
+        String hi = "1.8.0";
+
+        System.out.println("Comp "+ lo +" to "+hi+": "+compareVersions(lo, hi));
+        System.out.println("Comp "+ hi +" to "+lo+": "+compareVersions(hi, lo));
+
+        lo = "1.3beta";
+
+        System.out.println("Comp "+ lo +" to "+hi+": "+compareVersions(lo, hi));
+        System.out.println("Comp "+ hi +" to "+lo+": "+compareVersions(hi, lo));
+
     }
 
     /**
@@ -278,6 +290,18 @@ public class ProjectStructure
     {
         if (currAppVersion.equals(projFileVersion)) return 0;
 
+        if (currAppVersion.endsWith("beta"))
+            currAppVersion = currAppVersion.substring(0, currAppVersion.length()-4);
+        if (currAppVersion.endsWith("alpha"))
+            currAppVersion = currAppVersion.substring(0, currAppVersion.length()-5);
+
+        if (projFileVersion.endsWith("beta"))
+            projFileVersion = projFileVersion.substring(0, projFileVersion.length()-4);
+        if (projFileVersion.endsWith("alpha"))
+            projFileVersion = projFileVersion.substring(0, projFileVersion.length()-5);
+
+        //System.out.println(currAppVersion);
+
         String[] appVerNums = currAppVersion.split("\\.");
         String[] projVerNums = projFileVersion.split("\\.");
 
@@ -285,6 +309,7 @@ public class ProjectStructure
         {
             for (int i = 0; i < Math.min(appVerNums.length, projVerNums.length); i++)
             {
+                //System.out.println("Comp "+ appVerNums[i] +" to "+projVerNums[i]);
                 if (Integer.parseInt(appVerNums[i]) > Integer.parseInt(projVerNums[i])) return 1;
                 if (Integer.parseInt(appVerNums[i]) < Integer.parseInt(projVerNums[i])) return -1;
 
