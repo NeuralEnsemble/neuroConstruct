@@ -73,6 +73,8 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
     private final String EDIT_TAB = "Edit";
     private final String CML_CONTENTS_TAB = "ChannelML file";
 
+    public static final String CELSIUS_PARAMETER = "celsius";
+
     /**
      * To avoid events when refreshing interface
      */
@@ -858,6 +860,26 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
     }
 
+    private float checkTempInExpression(float prefTemp, String expression)
+    {
+        if (expression.indexOf(CELSIUS_PARAMETER)>=0 && Float.isNaN(prefTemp))
+        {
+            float defaultTemp = project.simulationParameters.getTemperature();
+            String res = JOptionPane.showInputDialog(this, "Please enter the preferred temperature at which to plot the expressions", defaultTemp);
+            if (res == null)
+                return defaultTemp;
+            try
+            {
+                return Float.parseFloat(res);
+            }
+            catch (NumberFormatException ex)
+            {
+                return defaultTemp;
+            }
+        }
+        return prefTemp;
+    }
+
     /**
      * Rate equation plotter. Not all cases covered yet...
      */
@@ -874,11 +896,13 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         String timeUnits = "ms";
 
         Variable v = new Variable("v");
-        Variable temp = new Variable("celsius");
+        Variable temp = new Variable(CELSIUS_PARAMETER);
         
         Variable[] mainVars = new Variable[]{v, temp};
 
         float numPoints = maxV - minV +1;
+
+        float prefTemperature = Float.NaN;
 
         if (cmlMechanism.isChannelMechanism())
         {
@@ -1234,10 +1258,11 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                                 if (mainFunc!=null)
                                 {
+                                    prefTemperature = checkTempInExpression(prefTemperature, mainFunc.getNiceString());
 
                                     desc = desc + "\n\nExpression for graph: " + expression;
                                     desc = desc + "\nwhich has been parsed as: " + mainFunc.getNiceString();
-                                    desc = desc + "\n"+getArgsInfo(paramsFound, concVarName, concVarVal, project);
+                                    desc = desc + "\n"+getArgsInfo(paramsFound, concVarName, concVarVal, project, prefTemperature);
 
 
                                     DataSet ds = new DataSet(dsRef, desc, yUnits, "", "Membrane Potential", gateName);
@@ -1252,7 +1277,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                                         Argument[] a0 = getArgsList(nextVval,
                                                 v, temp, rateData, paramsFound,
-                                                concVarName, concVarVal, mainFunc.getNiceString(), project, logger);
+                                                concVarName, concVarVal, mainFunc.getNiceString(), project, logger, prefTemperature);
 
                                         ds.addPoint(nextVval, mainFunc.evaluateAt(a0));
                                     }
@@ -1271,7 +1296,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                                     desc = desc + "\n\nExpression for graph: " + expression;
                                     desc = desc + "\nwhich has been parsed as: " + parsed;
-                                    desc = desc + "\n"+getArgsInfo(paramsFound, concVarName, concVarVal, project);
+                                    desc = desc + "\n"+getArgsInfo(paramsFound, concVarName, concVarVal, project, prefTemperature);
 
 
                                     DataSet ds = new DataSet(dsRef, desc, yUnits, "", "Membrane Potential", gateName);
@@ -1283,7 +1308,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                                         Argument[] a0 = getArgsList(nextVval,
                                                 v, temp, rateData, paramsFound,
-                                                concVarName, concVarVal, parsed, project, logger);
+                                                concVarName, concVarVal, parsed, project, logger, prefTemperature);
 
                                         double condPreEval = condPreFunc.evaluateAt(a0);
                                         double condPostEval = condPostFunc.evaluateAt(a0);
@@ -1606,7 +1631,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                                                 desc = desc + "\n\nExpression for graph: " + expression;
                                                 desc = desc + "\nwhich has been parsed as: " + mainFunc.getNiceString();
-                                                desc = desc + "\n"+getArgsInfo(paramsFound, concVarName, concVarVal, project);
+                                                desc = desc + "\n"+getArgsInfo(paramsFound, concVarName, concVarVal, project, prefTemperature);
 
 
                                                 DataSet ds = new DataSet(dsRef, desc, yUnits, "", "Membrane Potential", gateState);
@@ -1621,7 +1646,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                                                     Argument[] a0 = getArgsList(nextVval,
                                                             v, temp, rateData, paramsFound,
-                                                            concVarName, concVarVal, mainFunc.getNiceString(), project, logger);
+                                                            concVarName, concVarVal, mainFunc.getNiceString(), project, logger, prefTemperature);
 
                                                     ds.addPoint(nextVval, mainFunc.evaluateAt(a0));
                                                 }
@@ -1640,7 +1665,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                                                 desc = desc + "\n\nExpression for graph: " + expression;
                                                 desc = desc + "\nwhich has been parsed as: " + parsed;
-                                                desc = desc + "\n"+getArgsInfo(paramsFound, concVarName, concVarVal, project);
+                                                desc = desc + "\n"+getArgsInfo(paramsFound, concVarName, concVarVal, project, prefTemperature);
 
 
                                                 DataSet ds = new DataSet(dsRef, desc, yUnits, "", "Membrane Potential", gateState);
@@ -1652,7 +1677,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                                                     Argument[] a0 = getArgsList(nextVval,
                                                             v, temp, rateData, paramsFound,
-                                                            concVarName, concVarVal, parsed, project, logger);
+                                                            concVarName, concVarVal, parsed, project, logger, prefTemperature);
 
                                                     double condPreEval = condPreFunc.evaluateAt(a0);
                                                     double condPostEval = condPostFunc.evaluateAt(a0);
@@ -1854,9 +1879,12 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
     }
     
 
-    private String getArgsInfo(Properties paramsFound, String concVarName, float concVarVal, Project project)
+    private String getArgsInfo(Properties paramsFound, String concVarName, float concVarVal, Project project, float prefTemperature)
     {
-        StringBuffer info = new StringBuffer("at temperature: "+ project.simulationParameters.getTemperature());
+        StringBuffer info = new StringBuffer();
+        if (!Float.isNaN(prefTemperature))
+            info.append("at temperature: "+ prefTemperature);
+
         if (concVarName!=null && concVarName.length()>0)
             info.append(", "+concVarName+" = "+concVarVal);
         if (paramsFound.size()>0)
@@ -1868,7 +1896,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
     
     private  Argument[] getArgsList(float nextVval,
             Variable v, Variable temp, Hashtable<String, DataSet> rateData, Properties paramsFound,
-            String concVarName, float concVarVal, String parsed, Project project, ClassLogger logger)
+            String concVarName, float concVarVal, String parsed, Project project, ClassLogger logger, float prefTemperature)
     {
         int numMain = 2;
         Argument concVar = null;
@@ -1882,7 +1910,8 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         Argument[] a0 = new Argument[numMain + rateData.size()+paramsFound.size()];
         
         a0[0] = new Argument(v.getName(), nextVval);
-        a0[1] = new Argument(temp.getName(), project.simulationParameters.getTemperature());
+        
+        a0[1] = new Argument(temp.getName(), prefTemperature);
 
         if (concVarName!=null)
             a0[2] = concVar;
