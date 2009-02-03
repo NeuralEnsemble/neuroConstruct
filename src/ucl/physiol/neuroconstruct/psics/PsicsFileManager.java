@@ -367,9 +367,12 @@ public class PsicsFileManager
             
             SimpleXMLAttribute saveInterval = new SimpleXMLAttribute("saveInterval", project.simulationParameters.getDt()+"ms");
             access.addAttribute(saveInterval);
-            
+
             SimpleXMLAttribute separateFiles = new SimpleXMLAttribute("separateFiles", "true");
             access.addAttribute(separateFiles);
+
+            SimpleXMLAttribute recordClamps = new SimpleXMLAttribute("recordClamps", "true");
+            access.addAttribute(recordClamps);
             
             Cell cell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(theOneCellGroup));
             
