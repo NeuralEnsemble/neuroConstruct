@@ -65,8 +65,8 @@ public class PynnFileManager
      */
     public static boolean enablePynnFunc()
     {
-        return false;
-        //return true;
+        //return false;
+        return true;
     }
     
     public enum PynnSimulator 
