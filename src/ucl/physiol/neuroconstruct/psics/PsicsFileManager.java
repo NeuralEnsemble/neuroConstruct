@@ -557,9 +557,12 @@ public class PsicsFileManager
             //fw.write(getFileHeader());
             
             SimpleXMLElement sxe = new SimpleXMLElement("CellEnvironment");
-            
+
             SimpleXMLAttribute id = new SimpleXMLAttribute("id", "environment");
             sxe.addAttribute(id);
+
+            SimpleXMLAttribute temperature = new SimpleXMLAttribute("temperature", project.simulationParameters.getTemperature()+"Celsius");
+            sxe.addAttribute(temperature);
             
             for(String chanMech: includedChanMechNames)
             {

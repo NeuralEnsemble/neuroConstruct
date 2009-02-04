@@ -638,6 +638,8 @@ public class NeuronFileManager
         }
     }
 
+    private boolean warnedOfNewObjInBlock = false;
+
     private String generateInitHandlers()
     {
         StringBuffer response = new StringBuffer();
@@ -657,6 +659,15 @@ public class NeuronFileManager
 
             text = NativeCodeLocation.parseForSimConfigSpecifics(text, simConfig.getName());
             logger.logComment("Cleaned up to: "+ text);
+
+            if (!warnedOfNewObjInBlock && (text.indexOf("objref")>=0 || text.indexOf("objvar")>=0 || text.indexOf(" = new ")>=0 ))
+            {
+                GuiUtils.showWarningMessage(logger, "Warning! The text for NEURON code block Type "+neuronFInitNcls[i].getPositionReference()+" seems to be creating new objects.\n" +
+                    "New objects should only be created in blocks Type -1 or Type 10, as the other blocks are placed in functions\n" +
+                    "which are called using FInitializeHandler, and new objects cannot be created inside functions.", null);
+
+                warnedOfNewObjInBlock = true;
+            }
 
 
             if (text != null && text.trim().length() > 0)
