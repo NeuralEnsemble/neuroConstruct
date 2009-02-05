@@ -266,47 +266,49 @@ public class PsicsFileManager
                 
             for(PlotSaveDetails psd: psds)
             {
-                
-                SimpleXMLElement lg = new SimpleXMLElement("LineGraph");
+                if (psd.simPlot.toBeSaved() && psd.simPlot.getValuePlotted().equals(SimPlot.VOLTAGE))
+                {
+                    SimpleXMLElement lg = new SimpleXMLElement("LineGraph");
 
-                SimpleXMLAttribute w = new SimpleXMLAttribute("width", "500");
-                lg.addAttribute(w);
-                
-                SimpleXMLAttribute h = new SimpleXMLAttribute("height","400");
-                lg.addAttribute(h);
-                
-                SimpleXMLElement xAxis = new SimpleXMLElement("XAxis");
-                xAxis.addAttribute(new SimpleXMLAttribute("min","0"));
-                xAxis.addAttribute(new SimpleXMLAttribute("max",simConfig.getSimDuration()+""));
-                xAxis.addAttribute(new SimpleXMLAttribute("label","time / ms"));
-                lg.addChildElement(xAxis);
-                lg.addContent("\n    ");
-                
-                
-                SimpleXMLElement yAxis = new SimpleXMLElement("YAxis");
-                yAxis.addAttribute(new SimpleXMLAttribute("min",psd.simPlot.getMinValue()+""));
-                yAxis.addAttribute(new SimpleXMLAttribute("max",psd.simPlot.getMaxValue()+""));
-                lg.addChildElement(yAxis);
-                lg.addContent("\n    ");
-                
-                SimpleXMLElement lineSet = new SimpleXMLElement("LineSet");
-                lineSet.addAttribute(new SimpleXMLAttribute("file","psics-out.txt"));
-                lineSet.addAttribute(new SimpleXMLAttribute("color","red"));
-                lg.addChildElement(lineSet);
-                lg.addContent("\n    ");
-                
-                SimpleXMLElement view = new SimpleXMLElement("View");
-                view.addAttribute(new SimpleXMLAttribute("id",psd.simPlot.getPlotReference()));
-                view.addAttribute(new SimpleXMLAttribute("xmin","0"));
-                view.addAttribute(new SimpleXMLAttribute("xmax",simConfig.getSimDuration()+""));
-                view.addAttribute(new SimpleXMLAttribute("ymin",psd.simPlot.getMinValue()+""));
-                view.addAttribute(new SimpleXMLAttribute("ymax",psd.simPlot.getMaxValue()+""));
-                lg.addChildElement(view);
-                lg.addContent("\n");
-                
-                
-                vc.addChildElement(lg);
-                vc.addContent("\n");
+                    SimpleXMLAttribute w = new SimpleXMLAttribute("width", "500");
+                    lg.addAttribute(w);
+
+                    SimpleXMLAttribute h = new SimpleXMLAttribute("height","400");
+                    lg.addAttribute(h);
+
+                    SimpleXMLElement xAxis = new SimpleXMLElement("XAxis");
+                    xAxis.addAttribute(new SimpleXMLAttribute("min","0"));
+                    xAxis.addAttribute(new SimpleXMLAttribute("max",simConfig.getSimDuration()+""));
+                    xAxis.addAttribute(new SimpleXMLAttribute("label","time / ms"));
+                    lg.addChildElement(xAxis);
+                    lg.addContent("\n    ");
+
+
+                    SimpleXMLElement yAxis = new SimpleXMLElement("YAxis");
+                    yAxis.addAttribute(new SimpleXMLAttribute("min",psd.simPlot.getMinValue()+""));
+                    yAxis.addAttribute(new SimpleXMLAttribute("max",psd.simPlot.getMaxValue()+""));
+                    lg.addChildElement(yAxis);
+                    lg.addContent("\n    ");
+
+                    SimpleXMLElement lineSet = new SimpleXMLElement("LineSet");
+                    lineSet.addAttribute(new SimpleXMLAttribute("file","psics-out.txt"));
+                    lineSet.addAttribute(new SimpleXMLAttribute("color","red"));
+                    lg.addChildElement(lineSet);
+                    lg.addContent("\n    ");
+
+                    SimpleXMLElement view = new SimpleXMLElement("View");
+                    view.addAttribute(new SimpleXMLAttribute("id",psd.simPlot.getPlotReference()));
+                    view.addAttribute(new SimpleXMLAttribute("xmin","0"));
+                    view.addAttribute(new SimpleXMLAttribute("xmax",simConfig.getSimDuration()+""));
+                    view.addAttribute(new SimpleXMLAttribute("ymin",psd.simPlot.getMinValue()+""));
+                    view.addAttribute(new SimpleXMLAttribute("ymax",psd.simPlot.getMaxValue()+""));
+                    lg.addChildElement(view);
+                    lg.addContent("\n");
+
+
+                    vc.addChildElement(lg);
+                    vc.addContent("\n");
+                }
                 
             }
             sxe.addChildElement(vc);
@@ -460,39 +462,42 @@ public class PsicsFileManager
             
             for(PlotSaveDetails psd: psds)
             {
-                ArrayList<Integer> segIds = new ArrayList<Integer>();
-                if (psd.simPlot.getSegmentId().equals("*"))
+                if (psd.simPlot.toBeSaved() && psd.simPlot.getValuePlotted().equals(SimPlot.VOLTAGE))
                 {
-                    for(Segment seg: cell.getAllSegments())
+                    ArrayList<Integer> segIds = new ArrayList<Integer>();
+                    if (psd.simPlot.getSegmentId().equals("*"))
                     {
-                        segIds.add(seg.getSegmentId());
+                        for(Segment seg: cell.getAllSegments())
+                        {
+                            segIds.add(seg.getSegmentId());
+                        }
                     }
-                }
-                else
-                {
-                    segIds.add(Integer.parseInt(psd.simPlot.getSegmentId()));
-                        
-                }
-                
-                for(int segId: segIds)
-                {
-                    Segment seg = cell.getSegmentWithId(segId);
+                    else
+                    {
+                        segIds.add(Integer.parseInt(psd.simPlot.getSegmentId()));
+
+                    }
+
+                    for(int segId: segIds)
+                    {
+                        Segment seg = cell.getSegmentWithId(segId);
 
 
-                    SimpleXMLElement vr = new SimpleXMLElement("VoltageRecorder");
+                        SimpleXMLElement vr = new SimpleXMLElement("VoltageRecorder");
 
-                    SimpleXMLAttribute at = new SimpleXMLAttribute("at", seg.getSegmentName());
-                    vr.addAttribute(at);
+                        SimpleXMLAttribute at = new SimpleXMLAttribute("at", seg.getSegmentName());
+                        vr.addAttribute(at);
 
-                    SimpleXMLAttribute col = new SimpleXMLAttribute("lineColor", getNextColour(psd.simPlot.getPlotReference()));
-                    vr.addAttribute(col);
+                        SimpleXMLAttribute col = new SimpleXMLAttribute("lineColor", getNextColour(psd.simPlot.getPlotReference()));
+                        vr.addAttribute(col);
 
-                    String fileName = SimPlot.getFilename(psd, seg, "0");
+                        String fileName = SimPlot.getFilename(psd, seg, "0");
 
-                    SimpleXMLAttribute label = new SimpleXMLAttribute("label", fileName);
-                    vr.addAttribute(label);
+                        SimpleXMLAttribute label = new SimpleXMLAttribute("label", fileName);
+                        vr.addAttribute(label);
 
-                    access.addChildElement(vr);
+                        access.addChildElement(vr);
+                    }
                 }
                 
             }
