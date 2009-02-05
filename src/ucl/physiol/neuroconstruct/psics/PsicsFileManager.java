@@ -947,7 +947,7 @@ public class PsicsFileManager
                 
                 logger.logComment("Checking for results info: " + resultsHtml.getAbsolutePath());
                         
-                int tries = 4;
+                int tries = 9;
                 while (tries>0)
                 {
                     if (resultsHtml.exists())
