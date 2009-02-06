@@ -45,6 +45,8 @@ import ucl.physiol.neuroconstruct.utils.units.*;
 import ucl.physiol.neuroconstruct.utils.python.*;
 import ucl.physiol.neuroconstruct.project.GeneratedPlotSaves.*;
 import ucl.physiol.neuroconstruct.hpc.mpi.*;
+import ucl.physiol.neuroconstruct.hpc.utils.ProcessFeedback;
+import ucl.physiol.neuroconstruct.hpc.utils.ProcessManager;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.*;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
 
@@ -461,6 +463,15 @@ public class NeuronFileManager
         
         return;
 
+    }
+
+    /*
+     * Generate test scripts for UCL cluster system. Will be changed ad cleaned up in near future!!
+     *
+     */
+    private boolean isUCLTest()
+    {
+        return simConfig.getMpiConf().isParallel() && simConfig.getMpiConf().getName().indexOf("Cluster")>=0;
     }
     
     /*
@@ -2223,18 +2234,28 @@ public class NeuronFileManager
 
         String dataFileDirName = dirForSims.getAbsolutePath() + System.getProperty("file.separator");
 
-        String hocFriendlyDirName = getHocFriendlyFilename(dataFileDirName);
+        if (isUCLTest())
+        {
+            response.append("strdef targetDir\n");
+            response.append("targetDir = \"sim/\"\n\n");
+        }
+        else
+        {
+            String hocFriendlyDirName = getHocFriendlyFilename(dataFileDirName);
 
-        response.append("\n\nstrdef simsDir\n");
-        response.append("simsDir = \"" + hocFriendlyDirName + "\"\n\n");
+            response.append("\n\nstrdef simsDir\n");
+            response.append("simsDir = \"" + hocFriendlyDirName + "\"\n\n");
 
-        response.append("strdef simReference\n");
-        response.append("simReference = \"" + project.simulationParameters.getReference() + "\"\n\n");
+            response.append("strdef simReference\n");
+            response.append("simReference = \"" + project.simulationParameters.getReference() + "\"\n\n");
 
-        addHocComment(response, "Note: to change location of the generated simulation files, just change value of targetDir\ne.g. targetDir=\"\" or targetDir=\"aSubDir/\"");
+            addHocComment(response, "Note: to change location of the generated simulation files, just change value of targetDir\ne.g. targetDir=\"\" or targetDir=\"aSubDir/\"");
+
+            response.append("strdef targetDir\n");
+            response.append("{ sprint(targetDir, \"%s%s/\", simsDir, simReference)}\n\n");
+        }
+
         
-        response.append("strdef targetDir\n");
-        response.append("{ sprint(targetDir, \"%s%s/\", simsDir, simReference)}\n\n");
 
         response.append(generateMultiRunPreScript());
 
@@ -4485,11 +4506,11 @@ public class NeuronFileManager
                         if (basicCommLine.indexOf("konsole") >= 0)
                         {
                             logger.logComment("Assume we're using KDE");
-                            titleOpt = "-T";
+                            titleOpt = "--title";
                             workdirOpt = "--workdir";
                                // + dirToRunIn.getAbsolutePath();
                             
-                            extraArgs = "-e";
+                            extraArgs = "-e /bin/bash ";
                             executable = basicCommLine.trim();
                         }
                         else if (basicCommLine.indexOf("gnome") >= 0)
@@ -4584,14 +4605,52 @@ public class NeuronFileManager
                     fullCommand = "";
                     for (int i=0;i<commandToExe.length;i++)
                     {
-                        fullCommand = fullCommand+" "+ commandToExe[i];
+                        fullCommand = fullCommand+commandToExe[i]+" ";
                     }
 
-                    logger.logComment("Going to execute command: " + fullCommand);
+                    String summary = "command: <" + fullCommand+"> with params: [";
 
-                    rt.exec(commandToExe, envParams);
+                    if(envParams!=null)
+                    {
+                        for(String p:envParams)
+                            summary = summary + p;
+                    }
+                    else
+                    {
+                        envParams = new String[]{};
+                        summary = summary+"-none-";
+                    }
+                    summary = summary+"]";
 
-                    logger.logComment("Have successfully executed command: " + fullCommand);
+
+                    logger.logComment("Going to execute "+summary);
+
+                    if(envParams!=null && envParams.length>0)
+                    {
+                        rt.exec(commandToExe, envParams);
+                    }
+                    else
+                    {
+                        //rt.exec(fullCommand, envParams);#
+                        ProcessFeedback pf = new ProcessFeedback() {
+
+                            public void comment(String comment)
+                            {
+                                System.out.println("pf comm: ");
+                            }
+
+                            public void error(String comment)
+                            {
+                                System.out.println("pf err: ");
+                            }
+                        };
+                        logger.logComment("== <" + fullCommand+">");
+                        
+                        ProcessManager.runCommand(fullCommand, pf, 4);
+
+                    }
+
+                    logger.logComment("Have successfully executed " + summary);
 
                 }
 
