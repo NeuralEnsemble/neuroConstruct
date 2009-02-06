@@ -87,6 +87,7 @@ public class PostSynapticObject
 
 
 
+    @Override
     public String toString()
     {
         return "PostSynapticObject [netConnName: "+netConnName

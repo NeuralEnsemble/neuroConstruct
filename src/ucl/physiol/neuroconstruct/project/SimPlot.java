@@ -52,6 +52,8 @@ public class SimPlot
 
     public static String SYN_COND = "COND";
 
+    public static String SYN_CURR = "SYN_CURR";
+
     // whether to just plot or plot and save...
     public static String PLOT_ONLY = "Plot only";
     public static String SAVE_ONLY = "Save only";
@@ -158,6 +160,10 @@ public class SimPlot
         {
             return UnitConverter.conductanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
         }
+        else if (variable.indexOf(SimPlot.SYN_CURR) >= 0)
+        {
+            return UnitConverter.currentUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
+        }
 
 
         return "";
@@ -195,6 +201,10 @@ public class SimPlot
         else if (variable.indexOf(SimPlot.SYN_COND) >= 0)
         {
             return "Synaptic conductance";
+        }
+        else if (variable.indexOf(SimPlot.SYN_CURR) >= 0)
+        {
+            return "Synaptic current";
         }
 
         return "";

@@ -3767,6 +3767,8 @@ public class NeuronFileManager
                         
                         String synType = SimPlot.getSynapseType(plot.simPlot.getValuePlotted());
 
+                        boolean isGapJunc = project.cellMechanismInfo.getCellMechanism(synType).isGapJunctionMechanism();
+
                         ArrayList<PostSynapticObject> synObjs = project.generatedNetworkConnections.getSynObjsPresent(netConn,
                                                                       synType,
                                                                       cellNum,
@@ -3778,6 +3780,13 @@ public class NeuronFileManager
                         for (PostSynapticObject synObj: synObjs)
                         {
                             title = this.getSynObjName(synObj)+"."+neuronVar;
+                            if(isGapJunc)
+                            {
+                                title = "elec"+title;
+                                title = GeneralUtils.replaceAllTokens(title, "[", "_A[");
+                                //title = GeneralUtils.replaceAllTokens(title, ".g", ".i");
+                            }
+                            
                             varRefIncFract = title;
 
                             response.append(generateSinglePlot(title,
@@ -4164,6 +4173,11 @@ public class NeuronFileManager
             else if (variable.indexOf(SimPlot.SYN_COND)>=0)
             {
                 neuronVar = "g";
+
+            }
+            else if (variable.indexOf(SimPlot.SYN_CURR)>=0)
+            {
+                neuronVar = "i";
 
             }
             else if (isSyn)
