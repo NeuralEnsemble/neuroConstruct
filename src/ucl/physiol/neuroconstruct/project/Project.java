@@ -91,6 +91,7 @@ public class Project implements TableModelListener
 
     public NeuronSettings neuronSettings = null;
     public GenesisSettings genesisSettings = null;
+    public PsicsSettings psicsSettings = null;
 
     public ProjectProperties projProperties = null;
     
@@ -356,6 +357,13 @@ public class Project implements TableModelListener
                 {
                     logger.logComment("Found GenesisSettings object in project file...");
                     proj.genesisSettings = (GenesisSettings) nextReadObject;
+                }
+
+                /* --  Reading PSICS Info --*/
+                if (nextReadObject instanceof PsicsSettings)
+                {
+                    logger.logComment("Found PsicsSettings object in project file...");
+                    proj.psicsSettings = (PsicsSettings) nextReadObject;
                 }
 
                 /* --  Reading Simulation Info --*/
@@ -860,6 +868,7 @@ public class Project implements TableModelListener
 
         neuronSettings = new NeuronSettings();
         genesisSettings = new GenesisSettings();
+        psicsSettings = new PsicsSettings();
 
         generatedCellPositions = new GeneratedCellPositions(this);
         generatedNetworkConnections = new GeneratedNetworkConnections(this);
@@ -1188,6 +1197,9 @@ public class Project implements TableModelListener
 
         /* -- Writing GENESIS settings -- */
         xmlEncoder.writeObject(genesisSettings);
+
+        /* -- Writing GENESIS settings -- */
+        xmlEncoder.writeObject(psicsSettings);
 
         /* -- Writing Simulation info --*/
         xmlEncoder.writeObject(simulationParameters);

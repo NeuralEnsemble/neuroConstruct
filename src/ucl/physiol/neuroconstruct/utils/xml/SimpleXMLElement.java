@@ -165,6 +165,11 @@ public class SimpleXMLElement extends SimpleXMLEntity
         return this.contents;
     };
 
+    public void removeAllContents()
+    {
+        contents = new ArrayList<SimpleXMLEntity> ();
+    }
+
 
 
     public ArrayList<SimpleXMLNamespace> getNamespaces()

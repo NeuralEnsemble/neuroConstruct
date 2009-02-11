@@ -389,7 +389,7 @@ public class PsicsMorphologyGenerator
                     cp.addAttribute(new SimpleXMLAttribute("channel", cm.getName()));
                     
                     float condDensity = cm.getDensity(); // mS/um2
-                    float defaultSingChanCond_pS = 10; // pS
+                    float defaultSingChanCond_pS = project.psicsSettings.getSingleChannelCond()*1e9f; // pS
                     float defaultSingChanCond_mS = defaultSingChanCond_pS/1e9f;
                     float numPerum2 = condDensity/defaultSingChanCond_mS;
                     

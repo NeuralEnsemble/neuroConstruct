@@ -21,7 +21,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
+ *+
  */
 
 package ucl.physiol.neuroconstruct.gui;
@@ -256,6 +256,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JPanel jPanelHocFile2Buttons = new JPanel();
     JPanel jPanelPsicsFileView = new JPanel();
     JPanel jPanelPsicsPostOptions = new JPanel();
+    JPanel jPanelPsicsDiscOptions = new JPanel();
     JPanel jPanelPynnFileView = new JPanel();
     
     
@@ -440,8 +441,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     
     JCheckBox jCheckBoxPsicsShowHtml = new JCheckBox("Show HTML summary", false);
     JCheckBox jCheckBoxPsicsShowPlot = new JCheckBox("Quick plot after run", true);
-    
-    
+
+    JLabel jLabelPsicsSpatDisc = new JLabel("Structural discretization (\u03bcm):");
+    JTextField jTextFieldPsicsSpatDisc = new JTextField();
+
+    JLabel jLabelPsicsSingleCond = new JLabel("Default single channel cond (mS):");
+    JTextField jTextFieldPsicsSingleCond = new JTextField();
     
     
     JPanel jPanelNeuronExtraLinks =  new JPanel();
@@ -3315,28 +3320,40 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         jPanelPsicsPostOptions.add(jCheckBoxPsicsShowHtml);
         jPanelPsicsPostOptions.add(jCheckBoxPsicsShowPlot);
+
+        jPanelPsicsDiscOptions.add(jLabelPsicsSpatDisc);
+        jPanelPsicsDiscOptions.add(jTextFieldPsicsSpatDisc);
+        jTextFieldPsicsSpatDisc.setColumns(8);
+        jPanelPsicsDiscOptions.add(jLabelPsicsSingleCond);
+        jPanelPsicsDiscOptions.add(jTextFieldPsicsSingleCond);
+        jTextFieldPsicsSingleCond.setColumns(8);
         
         
         jPanelPsicsMain.add(jLabelPsicsMain,
                               new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
                                                      ,GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
-                                                     new Insets(20, 0, 20, 0), 20, 20));
+                                                     new Insets(20, 0, 0, 0), 20, 20));
         jPanelPsicsMain.add(jPanelPsicsPostOptions,
                               new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
                                                      ,GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
-                                                     new Insets(20, 0, 20, 0), 20, 20));
-        jPanelPsicsMain.add(jPanelPsicsButtons,
+                                                     new Insets(20, 0, 0, 0), 20, 20));
+        jPanelPsicsMain.add(jPanelPsicsDiscOptions,
                               new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
                                                      ,GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
-                                                     new Insets(20, 0, 20, 0), 20, 20));
-        jPanelPsicsMain.add(jPanelPsicsFileView,
+                                                     new Insets(20, 0, 0, 0), 20, 20));
+        jPanelPsicsMain.add(jPanelPsicsButtons,
                               new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
                                                      ,GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
-                                                     new Insets(20, 0, 120, 0), 20, 20));
+                                                     new Insets(20, 0, 0, 0), 20, 20));
+        jPanelPsicsMain.add(jPanelPsicsFileView,
+                              new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
+                                                     ,GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(20, 0, 80, 0), 20, 20));
         
         jPanelPynnMain.setLayout(new GridBagLayout());
         jLabelPynnMain.setText("Generate code for a PyNN simulator (alpha)");
@@ -4263,6 +4280,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
 
+        addCheckBoxListner(PSICS_SIMULATOR_TAB, jCheckBoxPsicsShowHtml);
+        addCheckBoxListner(PSICS_SIMULATOR_TAB, jCheckBoxPsicsShowPlot);
+
+        addNamedDocumentListner(PSICS_SIMULATOR_TAB, jTextFieldPsicsSpatDisc);
+        addNamedDocumentListner(PSICS_SIMULATOR_TAB, jTextFieldPsicsSingleCond);
 
 
     }
@@ -4613,6 +4635,40 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 this.refreshTabGenesis();
 
+            }
+            else if (tableModelName.equals(PSICS_SIMULATOR_TAB))
+            {
+                projManager.getCurrentProject().psicsSettings.setShowHtmlSummary(jCheckBoxPsicsShowHtml.isSelected());
+                projManager.getCurrentProject().psicsSettings.setShowPlotSummary(jCheckBoxPsicsShowPlot.isSelected());
+
+                try
+                {
+                    projManager.getCurrentProject().psicsSettings.setSpatialDiscretisation(Float.parseFloat(jTextFieldPsicsSpatDisc.getText()));
+                }
+                catch (NumberFormatException ex)
+                {
+                    if (jTextFieldPsicsSpatDisc.getText().length()==0)
+                        return;
+
+                    GuiUtils.showErrorMessage(logger,
+                                              "Problem parsing value for PSICS spatial discretisation: "+jTextFieldPsicsSpatDisc.getText(), ex, this);
+                    return;
+                }
+                try
+                {
+                    projManager.getCurrentProject().psicsSettings.setSingleChannelCond(Float.parseFloat(jTextFieldPsicsSingleCond.getText()));
+                }
+                catch (NumberFormatException ex)
+                {
+                    if (jTextFieldPsicsSingleCond.getText().length()==0)
+                        return;
+
+                    GuiUtils.showErrorMessage(logger,
+                                              "Problem parsing value for PSICS single channel conductance: "+jTextFieldPsicsSingleCond.getText(), ex, this);
+                    return;
+                }
+
+                projManager.getCurrentProject().markProjectAsEdited();
             }
             else if (tableModelName.equals(NEURON_SIMULATOR_TAB))
             {
@@ -9254,6 +9310,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         else
         {
             jButtonPsicsGenerate.setEnabled(true);
+
+            if (initialisingProject)
+            {
+                jCheckBoxPsicsShowHtml.setSelected(projManager.getCurrentProject().psicsSettings.isShowHtmlSummary());
+                jCheckBoxPsicsShowPlot.setSelected(projManager.getCurrentProject().psicsSettings.isShowPlotSummary());
+
+                jTextFieldPsicsSpatDisc.setText(projManager.getCurrentProject().psicsSettings.getSpatialDiscretisation()+"");
+                jTextFieldPsicsSingleCond.setText(projManager.getCurrentProject().psicsSettings.getSingleChannelCond()+"");
+            }
         }
 
     }

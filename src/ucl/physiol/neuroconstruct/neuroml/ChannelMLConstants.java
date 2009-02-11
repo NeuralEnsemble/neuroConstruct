@@ -73,6 +73,9 @@ public class ChannelMLConstants
     public static String XSL_TARGET_UNITS_ELEMENT = XSL_ROOT + "/variable[3]";
 
     public static String FORCE_INIT_ELEMENT = XSL_ROOT + "/variable";
+
+    public static String PSICS_SING_CHAN_COND_ELEMENT = XSL_ROOT + "/variable";
+    public static String PSICS_SING_CHAN_COND_NAME = "singleChannelCond_pS";
     
     
     public static String VARIABLE_NAME_ATTR = "name";

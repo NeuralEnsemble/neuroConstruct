@@ -671,7 +671,45 @@ public class ChannelMLCellMechanism extends CellMechanism
 
                         String transformed = null;
 
-                        if (targetEnv.equals(SimEnvHelper.GENESIS))
+                        if (targetEnv.equals(SimEnvHelper.PSICS))
+                        {
+                            logger.logComment("   -----   xslFile: "+xslFile.getAbsolutePath());
+
+                            SimpleXMLDocument xslDoc = SimpleXMLReader.getSimpleXMLDoc(xslFile);
+
+                            SimpleXMLEntity[] variables = xslDoc.getXMLEntities(ChannelMLConstants.PSICS_SING_CHAN_COND_ELEMENT);
+
+                            SimpleXMLElement singChanVariableEl = null;
+
+                            for (int j = 0; j < variables.length; j++)
+                            {
+                                logger.logComment("Checking variable: "+ variables[j].getXMLString("", false), true);
+
+                                if (variables[j] instanceof SimpleXMLElement)
+                                {
+                                    SimpleXMLElement var = (SimpleXMLElement) variables[j];
+                                        logger.logComment("In element: ("+ var+")", true);
+
+                                    String name = var.getAttributeValue("name");
+                                    if (name !=null && name.equals(ChannelMLConstants.PSICS_SING_CHAN_COND_NAME))
+                                    {
+                                        logger.logComment("..Found the correct element: ("+ var+") in xslFile: "+xslFile.getAbsolutePath(), true);
+                                        singChanVariableEl = var;
+                                    }
+                                 
+                                }
+                            }
+                            if (singChanVariableEl!=null)
+                            {
+                                singChanVariableEl.removeAllContents();
+                                singChanVariableEl.addContent(project.psicsSettings.getSingleChannelCond()*1e9+"");// Converting mS to pS
+                                logger.logComment("Current variable: "+ singChanVariableEl.getXMLString("", false), true);
+                            }
+
+                            transformed = XMLUtils.transform(cmlFile, xslDoc.getXMLString("", false));
+
+                        }
+                        else if (targetEnv.equals(SimEnvHelper.GENESIS))
                         {
                             logger.logComment("   -----   xslFile: "+xslFile.getAbsolutePath());
 
@@ -704,7 +742,7 @@ public class ChannelMLCellMechanism extends CellMechanism
                                 unitsVariable.setText(ChannelMLConstants.PHYSIOLOGICAL_UNITS);
                             else if (unitsSystem == UnitConverter.GENESIS_SI_UNITS)
                                 unitsVariable.setText(ChannelMLConstants.SI_UNITS);
-                            
+
                             transformed = XMLUtils.transform(cmlFile, xslDoc.getXMLString("", false));
 
                         }

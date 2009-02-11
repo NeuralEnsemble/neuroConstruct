@@ -27,10 +27,9 @@
 package ucl.physiol.neuroconstruct.psics;
 
 import java.io.*;
+
+
 import java.util.*;
-
-
-import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.dataset.*;
 import ucl.physiol.neuroconstruct.gui.DataSetManager;
@@ -256,6 +255,15 @@ public class PsicsFileManager
             SimpleXMLElement info = new SimpleXMLElement("info");
             info.addContent("PSICS project generated from: "+project.getProjectFileName());
             sxe.addChildElement(info);
+
+            sxe.addContent("\n");
+            
+            SimpleXMLElement disc = new SimpleXMLElement("StructureDiscretization");
+            SimpleXMLAttribute baseElementSize = new SimpleXMLAttribute("baseElementSize", project.psicsSettings.getSpatialDiscretisation()+"");
+            disc.addAttribute(baseElementSize);
+            sxe.addChildElement(disc);
+
+
             
             sxe.addContent("\n");
             
@@ -1094,7 +1102,9 @@ public class PsicsFileManager
                             }
                             else if (cellMech instanceof ChannelMLCellMechanism)
                             {
-                                success = ( (ChannelMLCellMechanism) cellMech).createImplementationFile(SimEnvHelper.PSICS,
+                                ChannelMLCellMechanism cmlcm =  (ChannelMLCellMechanism) cellMech;
+
+                                success = cmlcm.createImplementationFile(SimEnvHelper.PSICS,
                                     UnitConverter.GENESIS_SI_UNITS,
                                     newMechFile,
                                     project,
