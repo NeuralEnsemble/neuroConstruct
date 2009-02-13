@@ -270,52 +270,73 @@ public class PsicsFileManager
             ArrayList<PlotSaveDetails> psds = project.generatedPlotSaves.getSavedPlotSaves();
             
             
-                SimpleXMLElement vc = new SimpleXMLElement("ViewConfig");
-                
+            SimpleXMLElement vc = new SimpleXMLElement("ViewConfig");
+
+            Hashtable<String, SimpleXMLElement> lineGraphs = new Hashtable<String, SimpleXMLElement>();
+            
+            resetColours();
+            int colNum = 2;
             for(PlotSaveDetails psd: psds)
             {
                 if (psd.simPlot.toBeSaved() && psd.simPlot.getValuePlotted().equals(SimPlot.VOLTAGE))
                 {
-                    SimpleXMLElement lg = new SimpleXMLElement("LineGraph");
+                    String lineGraphRef = psd.simPlot.getGraphWindow();
+                    SimpleXMLElement lineGraph = null;
 
-                    SimpleXMLAttribute w = new SimpleXMLAttribute("width", "500");
-                    lg.addAttribute(w);
+                    if (!lineGraphs.containsKey(lineGraphRef))
+                    {
+                        SimpleXMLElement lg = new SimpleXMLElement("LineGraph");
 
-                    SimpleXMLAttribute h = new SimpleXMLAttribute("height","400");
-                    lg.addAttribute(h);
+                        SimpleXMLAttribute w = new SimpleXMLAttribute("width", "500");
+                        lg.addAttribute(w);
 
-                    SimpleXMLElement xAxis = new SimpleXMLElement("XAxis");
-                    xAxis.addAttribute(new SimpleXMLAttribute("min","0"));
-                    xAxis.addAttribute(new SimpleXMLAttribute("max",simConfig.getSimDuration()+""));
-                    xAxis.addAttribute(new SimpleXMLAttribute("label","time / ms"));
-                    lg.addChildElement(xAxis);
-                    lg.addContent("\n    ");
+                        SimpleXMLAttribute h = new SimpleXMLAttribute("height","400");
+                        lg.addAttribute(h);
 
-
-                    SimpleXMLElement yAxis = new SimpleXMLElement("YAxis");
-                    yAxis.addAttribute(new SimpleXMLAttribute("min",psd.simPlot.getMinValue()+""));
-                    yAxis.addAttribute(new SimpleXMLAttribute("max",psd.simPlot.getMaxValue()+""));
-                    lg.addChildElement(yAxis);
-                    lg.addContent("\n    ");
-
-                    SimpleXMLElement lineSet = new SimpleXMLElement("LineSet");
-                    lineSet.addAttribute(new SimpleXMLAttribute("file","psics-out.txt"));
-                    lineSet.addAttribute(new SimpleXMLAttribute("color","red"));
-                    lg.addChildElement(lineSet);
-                    lg.addContent("\n    ");
-
-                    SimpleXMLElement view = new SimpleXMLElement("View");
-                    view.addAttribute(new SimpleXMLAttribute("id",psd.simPlot.getPlotReference()));
-                    view.addAttribute(new SimpleXMLAttribute("xmin","0"));
-                    view.addAttribute(new SimpleXMLAttribute("xmax",simConfig.getSimDuration()+""));
-                    view.addAttribute(new SimpleXMLAttribute("ymin",psd.simPlot.getMinValue()+""));
-                    view.addAttribute(new SimpleXMLAttribute("ymax",psd.simPlot.getMaxValue()+""));
-                    lg.addChildElement(view);
-                    lg.addContent("\n");
+                        SimpleXMLElement xAxis = new SimpleXMLElement("XAxis");
+                        xAxis.addAttribute(new SimpleXMLAttribute("min","0"));
+                        xAxis.addAttribute(new SimpleXMLAttribute("max",simConfig.getSimDuration()+""));
+                        xAxis.addAttribute(new SimpleXMLAttribute("label","time / ms"));
+                        lg.addChildElement(xAxis);
+                        lg.addContent("\n    ");
 
 
-                    vc.addChildElement(lg);
-                    vc.addContent("\n");
+                        SimpleXMLElement yAxis = new SimpleXMLElement("YAxis");
+                        yAxis.addAttribute(new SimpleXMLAttribute("min",psd.simPlot.getMinValue()+""));
+                        yAxis.addAttribute(new SimpleXMLAttribute("max",psd.simPlot.getMaxValue()+""));
+                        lg.addChildElement(yAxis);
+                        lg.addContent("\n    ");
+
+
+                        SimpleXMLElement view = new SimpleXMLElement("View");
+                        view.addAttribute(new SimpleXMLAttribute("id",psd.simPlot.getPlotReference()));
+                        view.addAttribute(new SimpleXMLAttribute("xmin","0"));
+                        view.addAttribute(new SimpleXMLAttribute("xmax",simConfig.getSimDuration()+""));
+                        view.addAttribute(new SimpleXMLAttribute("ymin",psd.simPlot.getMinValue()+""));
+                        view.addAttribute(new SimpleXMLAttribute("ymax",psd.simPlot.getMaxValue()+""));
+                        lg.addChildElement(view);
+                        lg.addContent("\n");
+
+                        lineGraphs.put(lineGraphRef, lg);
+
+                        vc.addChildElement(lg);
+                        vc.addContent("\n");
+
+                    }
+                    lineGraph = lineGraphs.get(lineGraphRef);
+
+                    SimpleXMLElement line = new SimpleXMLElement("Line");
+                    line.addAttribute(new SimpleXMLAttribute("file","psics-out.txt"));
+                    line.addAttribute(new SimpleXMLAttribute("color","#"+getNextColourHex(lineGraphRef)));
+                    //line.addAttribute(new SimpleXMLAttribute("label",psd.simPlot.getSegmentId()));
+                    line.addAttribute(new SimpleXMLAttribute("show",colNum+""));
+                    colNum++;
+
+                    lineGraph.addChildElement(line);
+                    lineGraph.addContent("\n    ");
+
+
+
                 }
                 
             }
@@ -496,7 +517,7 @@ public class PsicsFileManager
                         SimpleXMLAttribute at = new SimpleXMLAttribute("at", seg.getSegmentName());
                         vr.addAttribute(at);
 
-                        SimpleXMLAttribute col = new SimpleXMLAttribute("lineColor", getNextColour(psd.simPlot.getPlotReference()));
+                        SimpleXMLAttribute col = new SimpleXMLAttribute("lineColor", "0x"+getNextColourHex(psd.simPlot.getGraphWindow()));
                         vr.addAttribute(col);
 
                         String fileName = SimPlot.getFilename(psd, seg, "0");
@@ -505,6 +526,7 @@ public class PsicsFileManager
                         vr.addAttribute(label);
 
                         access.addChildElement(vr);
+                        access.addContent("\n");
                     }
                 }
                 
@@ -539,8 +561,17 @@ public class PsicsFileManager
         return f;
         
     }
-    
-    
+
+    public void resetColours()
+    {
+        for(String ref: nextColour.keySet())
+        {
+            nextColour.put(ref, 1);
+        }
+
+    }
+
+
     public String getNextColour(String plotFrame)
     {
         if (!nextColour.containsKey(plotFrame))
@@ -548,13 +579,31 @@ public class PsicsFileManager
             nextColour.put(plotFrame, 1);
         }
         int colNum = nextColour.get(plotFrame);
-        
+
         String colour = ColourUtils.getColourName(colNum).toLowerCase();
         int newColour = colNum +1;
         if (newColour >= 10) newColour = 1;
 
         nextColour.put(plotFrame, newColour);
-        
+
+        return colour;
+    }
+
+
+    public String getNextColourHex(String plotFrame)
+    {
+        if (!nextColour.containsKey(plotFrame))
+        {
+            nextColour.put(plotFrame, 1);
+        }
+        int colNum = nextColour.get(plotFrame);
+
+        String colour = ColourUtils.getSequentialColourHex(colNum);
+        int newColour = colNum +1;
+        if (newColour >= 10) newColour = 1;
+
+        nextColour.put(plotFrame, newColour);
+
         return colour;
     }
     
@@ -960,7 +1009,7 @@ public class PsicsFileManager
                 
                 logger.logComment("Checking for results info: " + resultsHtml.getAbsolutePath());
                         
-                int tries = 9;
+                int tries = 15;
                 while (tries>0)
                 {
                     if (resultsHtml.exists())

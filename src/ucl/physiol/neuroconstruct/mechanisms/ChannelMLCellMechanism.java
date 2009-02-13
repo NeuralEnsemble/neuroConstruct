@@ -683,17 +683,17 @@ public class ChannelMLCellMechanism extends CellMechanism
 
                             for (int j = 0; j < variables.length; j++)
                             {
-                                logger.logComment("Checking variable: "+ variables[j].getXMLString("", false), true);
+                                logger.logComment("Checking variable: "+ variables[j].getXMLString("", false));
 
                                 if (variables[j] instanceof SimpleXMLElement)
                                 {
                                     SimpleXMLElement var = (SimpleXMLElement) variables[j];
-                                        logger.logComment("In element: ("+ var+")", true);
+                                        logger.logComment("In element: ("+ var+")");
 
                                     String name = var.getAttributeValue("name");
                                     if (name !=null && name.equals(ChannelMLConstants.PSICS_SING_CHAN_COND_NAME))
                                     {
-                                        logger.logComment("..Found the correct element: ("+ var+") in xslFile: "+xslFile.getAbsolutePath(), true);
+                                        logger.logComment("..Found the correct element: ("+ var+") in xslFile: "+xslFile.getAbsolutePath());
                                         singChanVariableEl = var;
                                     }
                                  
@@ -703,7 +703,7 @@ public class ChannelMLCellMechanism extends CellMechanism
                             {
                                 singChanVariableEl.removeAllContents();
                                 singChanVariableEl.addContent(project.psicsSettings.getSingleChannelCond()*1e9+"");// Converting mS to pS
-                                logger.logComment("Current variable: "+ singChanVariableEl.getXMLString("", false), true);
+                                logger.logComment("Current variable: "+ singChanVariableEl.getXMLString("", false));
                             }
 
                             transformed = XMLUtils.transform(cmlFile, xslDoc.getXMLString("", false));

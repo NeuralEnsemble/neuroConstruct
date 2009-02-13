@@ -98,6 +98,19 @@ public class ColourUtils
         int neuCol = colNumber%10;
         return getColour(getColourName(neuCol));
     }
+    /*
+     * Returns one of 10 colours cycling over all ints >0
+     */
+    public static String getSequentialColourHex(int colNumber)
+    {
+        if (colNumber<0) colNumber = colNumber*-1;
+        int neuCol = colNumber%10;
+        Color c = getColour(getColourName(neuCol));
+        String rgb = Integer.toHexString(c.getRGB());
+        rgb = rgb.substring(2, rgb.length());
+
+        return rgb;
+    }
 
     public static Color getColour(String colourName)
     {

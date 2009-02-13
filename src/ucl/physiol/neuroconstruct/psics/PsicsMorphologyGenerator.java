@@ -160,6 +160,19 @@ public class PsicsMorphologyGenerator
         
         SimpleXMLAttribute id = new SimpleXMLAttribute("id", cell.getInstanceName());
         cellMorph.addAttribute(id);
+
+        ArrayList<Section> secs = cell.getAllSections();
+        Hashtable<String, String> labelsForSections = new Hashtable<String, String>();
+        for(Section sec: secs)
+        {
+            StringBuffer label = new StringBuffer();
+            for(String grp: sec.getGroups())
+            {
+                label.append("~"+grp+"~");
+            }
+            labelsForSections.put(sec.getSectionName(), label.toString());
+        }
+
         Vector<Segment> segs = cell.getAllSegments();
         //Segment lastSeg = null;
         
@@ -271,6 +284,7 @@ public class PsicsMorphologyGenerator
                     SimpleXMLAttribute yDistProx = new SimpleXMLAttribute("y", connectionPointParent.y+"");
                     SimpleXMLAttribute zDistProx = new SimpleXMLAttribute("z", connectionPointParent.z+"");
                     SimpleXMLAttribute rDistProx = new SimpleXMLAttribute("r", seg.getSegmentStartRadius()+"");
+                    SimpleXMLAttribute label = new SimpleXMLAttribute("label", labelsForSections.get(seg.getSection().getSectionName()));
 
                     proxPoint.addAttribute(xDistProx);
                     proxPoint.addAttribute(yDistProx);
@@ -281,6 +295,7 @@ public class PsicsMorphologyGenerator
                         SimpleXMLAttribute minorProx = new SimpleXMLAttribute("minor", "true");
                         proxPoint.addAttribute(minorProx);
                     }
+                    proxPoint.addAttribute(label);
 
 
                     cellMorph.addChildElement(proxPoint);
@@ -303,12 +318,14 @@ public class PsicsMorphologyGenerator
             SimpleXMLAttribute yDist = new SimpleXMLAttribute("y", dist.y+"");
             SimpleXMLAttribute zDist = new SimpleXMLAttribute("z", dist.z+"");
             SimpleXMLAttribute rDist = new SimpleXMLAttribute("r", seg.getRadius()+"");
+            SimpleXMLAttribute label = new SimpleXMLAttribute("label", labelsForSections.get(seg.getSection().getSectionName()));
             
             distPoint.addAttribute(segIdDist);
             distPoint.addAttribute(xDist);
             distPoint.addAttribute(yDist);
             distPoint.addAttribute(zDist);
             distPoint.addAttribute(rDist);
+            distPoint.addAttribute(label);
             
             
             cellMorph.addChildElement(distPoint);
@@ -325,6 +342,8 @@ public class PsicsMorphologyGenerator
         return response.toString();
     }
 
+
+
     private String getMembraneProps()
     {
         //int prefUnits = UnitConverter.NEUROCONSTRUCT_UNITS;
@@ -338,71 +357,125 @@ public class PsicsMorphologyGenerator
         
         SimpleXMLAttribute id = new SimpleXMLAttribute("id", "membrane_"+cell.getInstanceName());
         memb.addAttribute(id);
-        
-        float spAxRResNc = cell.getSpecAxResForGroup("all");
-        
-        String unitSpAxRes = null;
-        String unitSpCap = null;
-        String unitDens = null;
-        
-        
-        //DecimalFormat df = new DecimalFormat();
-        //df.setMaximumFractionDigits(12);
+
+
+
+        String unitSpAxRes = "ohm_m";
+        String unitSpCap = "F_per_m2";
+        String unitDens = "per_um2";
 
         
+        float spAxRResNc = cell.getSpecAxResForGroup("all");
+
+        if (Float.isNaN(spAxRResNc))
+        {
+            // just use the first...
+            spAxRResNc = cell.getSpecAxResVsGroups().keys().nextElement();
+        }
     
-            unitSpAxRes = "ohm_m";
-            unitSpCap = "F_per_m2";
-            unitDens = "per_um2";
-    
-        
-        double spAxRRes = UnitConverter.getSpecificAxialResistance(spAxRResNc, UnitConverter.NEUROCONSTRUCT_UNITS, UnitConverter.GENESIS_SI_UNITS);
+        double spAxResFactor = UnitConverter.getSpecificAxialResistance(1, UnitConverter.NEUROCONSTRUCT_UNITS, UnitConverter.GENESIS_SI_UNITS);
+
+        double spAxRRes = spAxResFactor * spAxRResNc;
             
         
         SimpleXMLAttribute cytRes = new SimpleXMLAttribute("cytoplasmResistivity", spAxRRes+unitSpAxRes);
         memb.addAttribute(cytRes);
+
+        Enumeration<Float> spResVals = cell.getSpecAxResVsGroups().keys();
+        while(spResVals.hasMoreElements())
+        {
+            float nextSpRes = spResVals.nextElement();
+
+            for(String group: cell.getSpecAxResVsGroups().get(nextSpRes))
+            {
+                if (!group.equals(Section.ALL))
+                {
+                    SimpleXMLElement pp = new SimpleXMLElement("PassiveProperties");
+                    pp.addAttribute("region", group);
+                    pp.addAttribute("cytoplasmResistivity", (nextSpRes*spAxResFactor)+unitSpAxRes);
+
+                    memb.addChildElement(pp);
+                    memb.addContent("\n");
+                }
+            }
+        }
         
         
         float spCapNc = cell.getSpecCapForGroup("all");
-        double spCap = UnitConverter.getSpecificCapacitance(spCapNc, UnitConverter.NEUROCONSTRUCT_UNITS, UnitConverter.GENESIS_SI_UNITS);
+
+        if (Float.isNaN(spCapNc))
+        {
+            // just use the first...
+            spCapNc = cell.getSpecCapVsGroups().keys().nextElement();
+        }
+        double spCapFactor = UnitConverter.getSpecificCapacitance(1, UnitConverter.NEUROCONSTRUCT_UNITS, UnitConverter.GENESIS_SI_UNITS);
+        double spCap = spCapFactor * spCapNc;
         
-        
-            
         
         SimpleXMLAttribute spCapAttr = new SimpleXMLAttribute("membraneCapacitance", spCap+unitSpCap);
         memb.addAttribute(spCapAttr);
+
+
+        Enumeration<Float> spCapVals = cell.getSpecCapVsGroups().keys();
+
+        while(spCapVals.hasMoreElements())
+        {
+            float nextCapRes = spCapVals.nextElement();
+
+            for(String group: cell.getSpecCapVsGroups().get(nextCapRes))
+            {
+                if (!group.equals(Section.ALL))
+                {
+                    SimpleXMLElement pp = new SimpleXMLElement("PassiveProperties");
+                    pp.addAttribute("region", group);
+                    pp.addAttribute("membraneCapacitance", (nextCapRes*spCapFactor)+unitSpCap);
+
+                    memb.addChildElement(pp);
+                    memb.addContent("\n");
+                }
+            }
+        }
         
         memb.addContent("\n");
+
+
         
         Enumeration<ChannelMechanism> chans = cell.getChanMechsVsGroups().keys();
-        
+
+        int colourNum = 2; // Not black first...
+
         while(chans.hasMoreElements())
         {
             ChannelMechanism cm = chans.nextElement();
             Vector<String> groups = cell.getChanMechsVsGroups().get(cm);
             for(String group:groups)
             {
-                if (group.equals(Section.ALL))
+               
+                // <ChannelPopulation channel="k1" density="20per_um2" distribution="start"/>
+                SimpleXMLElement cp = new SimpleXMLElement("ChannelPopulation");
+                cp.addAttribute(new SimpleXMLAttribute("channel", cm.getName()));
+
+                float condDensity = cm.getDensity(); // mS/um2
+                float defaultSingChanCond_pS = project.psicsSettings.getSingleChannelCond()*1e9f; // pS
+                float defaultSingChanCond_mS = defaultSingChanCond_pS/1e9f;
+                float numPerum2 = condDensity/defaultSingChanCond_mS;
+
+                cp.addAttribute(new SimpleXMLAttribute("density", numPerum2+unitDens));
+                cp.addAttribute(new SimpleXMLAttribute("color", "0x"+ColourUtils.getSequentialColourHex(colourNum)));
+                colourNum++;
+
+                memb.addChildElement(cp);
+                if(!group.equals(Section.ALL))
                 {
-                    // <ChannelPopulation channel="k1" density="20per_um2" distribution="start"/>
-                    SimpleXMLElement cp = new SimpleXMLElement("ChannelPopulation");
-                    cp.addAttribute(new SimpleXMLAttribute("channel", cm.getName()));
-                    
-                    float condDensity = cm.getDensity(); // mS/um2
-                    float defaultSingChanCond_pS = project.psicsSettings.getSingleChannelCond()*1e9f; // pS
-                    float defaultSingChanCond_mS = defaultSingChanCond_pS/1e9f;
-                    float numPerum2 = condDensity/defaultSingChanCond_mS;
-                    
-                    cp.addAttribute(new SimpleXMLAttribute("density", numPerum2+unitDens));
-                    
-                    memb.addChildElement(cp);
-                    memb.addContent("\n");
-                    
+                    SimpleXMLElement rm = new SimpleXMLElement("RegionMask");
+                    rm.addAttribute(new SimpleXMLAttribute("action", "include"));
+                    rm.addAttribute(new SimpleXMLAttribute("where", "region = *"+group+"*"));
+                    cp.addChildElement(rm);
+                    cp.addContent("\n");
                 }
-                else
-                {
-                    memb.addComment(new SimpleXMLComment("NOTE: channels not on group: all not yet supported!!"));
-                }
+                memb.addContent("\n\n");
+
+              
             }
         }
         
