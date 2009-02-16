@@ -103,7 +103,7 @@ public class StimDialog extends JDialog
                                                                           null,
                                                                           null,
                                                                           0,
-                                                                          "0.05 + 0.05 * cos(2 * 3.14159265 * t/200)",
+                                                                          "0.05 + 0.04 * cos(2 * 3.14159265 * t/400)",
                                                                           null,
                                                                           new NumberGenerator(20),
                                                                           new NumberGenerator(60));
