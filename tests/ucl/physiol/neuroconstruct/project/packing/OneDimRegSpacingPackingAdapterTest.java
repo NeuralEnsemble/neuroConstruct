@@ -63,7 +63,7 @@ public class OneDimRegSpacingPackingAdapterTest {
         
         String projName = "TestingFrameworkProject";
     
-        File projDir = new File("..\\temp");// won't be saved...
+        File projDir = new File("../temp");// won't be saved...
     
         Project proj = Project.createNewProject(projDir.getAbsolutePath(), projName, null);
         
