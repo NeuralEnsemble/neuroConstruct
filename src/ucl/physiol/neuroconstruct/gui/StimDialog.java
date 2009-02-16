@@ -85,9 +85,30 @@ public class StimDialog extends JDialog
                                                                           0,
                                                                           new NumberGenerator(0.05f),
                                                                           null,
-                                                                          new NumberGenerator(0.05f),
-                                                                          10,
+                                                                          new NumberGenerator(20),
+                                                                          new NumberGenerator(60),
                                                                           false);
+    
+    IClampVariableSettings tempIClampVariable = new IClampVariableSettings("tempIClampVariable",
+                                                            null, 
+                                                            null, 
+                                                            0, 
+                                                            new NumberGenerator(20), 
+                                                            new NumberGenerator(60), 
+                                                            "0.2 * sin(2 * 3.14159265 * t/200)");
+
+
+
+    RandomSpikeTrainVariableSettings tempRandSpikeVar = new RandomSpikeTrainVariableSettings("tempRandSpikeVar",
+                                                                          null,
+                                                                          null,
+                                                                          0,
+                                                                          "0.05 + 0.05 * cos(2 * 3.14159265 * t/200)",
+                                                                          null,
+                                                                          new NumberGenerator(20),
+                                                                          new NumberGenerator(60));
+
+
     
     IndividualSegments indSegChooser = new IndividualSegments();
     
@@ -124,9 +145,12 @@ public class StimDialog extends JDialog
 
     JRadioButton jRadioButtonSingle = new JRadioButton();
     JRadioButton jRadioButtonDistributed = new JRadioButton();
+
     JRadioButton jRadioButtonIClamp = new JRadioButton();
     JRadioButton jRadioButtonRandSpike = new JRadioButton();
     JRadioButton jRadioButtonRandSpikeExt = new JRadioButton();
+    JRadioButton jRadioButtonIClampVariable = new JRadioButton();
+    JRadioButton jRadioButtonRandSpikeVar = new JRadioButton();
 
 
     JButton jButtonLocationChange = new JButton();
@@ -140,28 +164,7 @@ public class StimDialog extends JDialog
     JLabel jLabelFraction = new JLabel();
     JTextField jTextFieldFractionAlong = new JTextField();
 
-/*
-    public StimDialog(Dialog owner, String suggestedRef, Project project)
-    {
-        super(owner, "Choose a stimulation to apply to the network", false);
 
-        enableEvents(AWTEvent.WINDOW_EVENT_MASK);
-
-        try
-        {
-            this.project = project;
-
-            jbInit();
-            extraInit();
-            jTextFieldReference.setText(suggestedRef);
-            pack();
-        }
-        catch(Exception ex)
-        {
-            logger.logComment("Exception starting GUI: "+ ex);
-        }
-
-    }*/
 
 
     public StimDialog(Frame owner, String suggestedRef, Project project)
@@ -180,12 +183,10 @@ public class StimDialog extends JDialog
             {
                 tempRandSpike.setSynapseType((String)synapticTypes.elementAt(0));
                 tempRandSpikeExt.setSynapseType((String)synapticTypes.elementAt(0));
+                tempRandSpikeVar.setSynapseType((String)synapticTypes.elementAt(0));
             }
             else
             {
-                //Exp2SynMechanism exp2 = new Exp2SynMechanism();
-
-
                 File cmlTemplateDir = ProjectStructure.getCMLTemplatesDir();
 
                 File fromDir = new File(cmlTemplateDir, "DoubleExpSyn");
@@ -284,6 +285,7 @@ public class StimDialog extends JDialog
 
                 tempRandSpike.setSynapseType(cmlMech.getInstanceName());
                 tempRandSpikeExt.setSynapseType(cmlMech.getInstanceName());
+                tempRandSpikeVar.setSynapseType(cmlMech.getInstanceName());
             }
             jbInit();
             extraInit();
@@ -386,6 +388,14 @@ public class StimDialog extends JDialog
         else if (jRadioButtonRandSpikeExt.isSelected())
         {
             stim = tempRandSpikeExt;
+        }
+        else if (jRadioButtonIClampVariable.isSelected())
+        {
+            stim = tempIClampVariable;
+        }
+        else if (jRadioButtonRandSpikeVar.isSelected())
+        {
+            stim = tempRandSpikeVar;
         }
 
         stim.setReference(jTextFieldReference.getText());
@@ -519,7 +529,7 @@ public class StimDialog extends JDialog
                 jRadioButtonRandSpike_actionPerformed(e);
             }
         });
-        jRadioButtonRandSpikeExt.setText("Random spike input (extended, not complete!!)");
+        jRadioButtonRandSpikeExt.setText("Random spikes with delay & duration (note: NEURON only)");
         jRadioButtonRandSpikeExt.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -528,6 +538,22 @@ public class StimDialog extends JDialog
             }
         });
 
+        jRadioButtonIClampVariable.setText("Current Clamp with variable amp (note: NEURON only)");
+        jRadioButtonIClampVariable.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jRadioButtonIClampVariable_actionPerformed(e);
+            }
+        });
+        jRadioButtonRandSpikeVar.setText("Random spikes with variable rate (note: NEURON only)");
+        jRadioButtonRandSpikeVar.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jRadioButtonRandSpikeVar_actionPerformed(e);
+            }
+        });
 
 
 
@@ -637,6 +663,21 @@ public class StimDialog extends JDialog
                                               GridBagConstraints.NONE,
                                               new Insets(6, 14, 6, 0), 0, 0));
 
+        jPanelMain.add(jRadioButtonIClampVariable,
+                       new GridBagConstraints(0, 12, 1, 1, 0.0, 0.0,
+                                              GridBagConstraints.WEST,
+                                              GridBagConstraints.NONE,
+                                              new Insets(6, 14, 6, 0), 0, 0));
+
+
+        jPanelMain.add(jRadioButtonRandSpikeVar,
+                       new GridBagConstraints(0, 13, 1, 1, 0.0, 0.0,
+                                              GridBagConstraints.WEST,
+                                              GridBagConstraints.NONE,
+                                              new Insets(6, 14, 6, 0), 0, 0));
+
+
+
         jPanelMain.add(jButtonLocationChange,    new GridBagConstraints(1, 5, 2, 3, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
         
@@ -646,7 +687,7 @@ public class StimDialog extends JDialog
         jPanelMain.add(jButtonStimChange,    new GridBagConstraints(1, 8, 2, 3, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-        jPanelMain.add(jTextFieldInfo,   new GridBagConstraints(0, 12, 3, 1, 0.0, 0.0
+        jPanelMain.add(jTextFieldInfo,   new GridBagConstraints(0, 14, 3, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(6, 14, 6, 14), 0, 0));
 
 
@@ -659,6 +700,8 @@ public class StimDialog extends JDialog
 
 
         buttonGroupStims.add(jRadioButtonIClamp);
+        buttonGroupStims.add(jRadioButtonIClampVariable);
+        buttonGroupStims.add(jRadioButtonRandSpikeVar);
         buttonGroupStims.add(jRadioButtonRandSpike);
         buttonGroupStims.add(jRadioButtonRandSpikeExt);
 
@@ -715,6 +758,20 @@ public class StimDialog extends JDialog
     void jRadioButtonRandSpikeExt_actionPerformed(ActionEvent e)
     {
         jTextFieldInfo.setText(tempRandSpikeExt.toString());
+
+    }
+
+    void jRadioButtonIClampVariable_actionPerformed(ActionEvent e)
+    {
+        jTextFieldInfo.setText(tempIClampVariable.toString());
+
+    }
+
+
+
+    void jRadioButtonRandSpikeVar_actionPerformed(ActionEvent e)
+    {
+        jTextFieldInfo.setText(tempRandSpikeVar.toString());
 
     }
 
@@ -807,23 +864,17 @@ public class StimDialog extends JDialog
     {
         if (jRadioButtonIClamp.isSelected())
         {
-
             NumberGenerator oldNumGenDel = tempIClamp.getDel();
-
             NumberGenerator newNumGenDel = NumberGeneratorDialog.showDialog(this,
                                                                          "Delay",
                                                                          "Please enter the delay before the pulse (ms)", oldNumGenDel);
             tempIClamp.setDel(newNumGenDel);
 
-
             NumberGenerator oldNumGenDur = tempIClamp.getDur();
-
             NumberGenerator newNumGenDur = NumberGeneratorDialog.showDialog(this,
                                                                          "Duration",
                                                                          "Please enter the duration of the pulse (ms)", oldNumGenDur);
             tempIClamp.setDur(newNumGenDur);
-
-
 
             NumberGenerator oldNumGenAmp = tempIClamp.getAmp();
 
@@ -833,47 +884,10 @@ public class StimDialog extends JDialog
                                                      UnitConverter.currentUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+")", oldNumGenAmp);
             tempIClamp.setAmp(newNumGenAmp);
 
-
-
-
- /*           SequenceGenerator sg1 = tempIClamp.getDelay();
-
-            SequenceGenerator newSg1 = SequenceGeneratorDialog.showDialog(this,
-                                                                          "Please enter the delay before the pulse (ms)",
-                                                                          sg1);
-
-            if (newSg1==null) return;
-
-            tempIClamp.setDelay(newSg1);
-
-            SequenceGenerator sg2 = tempIClamp.getDuration();
-
-            SequenceGenerator newSg2 = SequenceGeneratorDialog.showDialog(this,
-                                                                          "Please enter the duration of the pulse (ms)",
-                                                                          sg2);
-
-            if (newSg2==null) return;
-
-            tempIClamp.setDuration(newSg2);
-
-
-            SequenceGenerator sg3 = tempIClamp.getAmplitude();
-
-            String message = "Please enter the amplitude of the pulse ("+
-                                                     UnitConverter.currentUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+")";
-
-            SequenceGenerator newSg3 = SequenceGeneratorDialog.showDialog(this, message, sg3);
-
-
-            tempIClamp.setAmplitude(newSg3);
-
-*/
-
             Object[] opts = new Object[]{"Pulse once", "Repeat pulse"};
 
             int selected  = 0;
             if (tempIClamp.isRepeat()) selected  = 1;
-
 
             Object sel = JOptionPane.showInputDialog(this,
                                         "Should the stimulation repeat continuously after the given duration?",
@@ -886,23 +900,43 @@ public class StimDialog extends JDialog
             if (sel.equals(opts[0])) tempIClamp.setRepeat(false);
             else if (sel.equals(opts[1])) tempIClamp.setRepeat(true);
 
-
-
             jTextFieldInfo.setText(tempIClamp.toString());
 
         }
+
+        else if (jRadioButtonIClampVariable.isSelected())
+        {
+            NumberGenerator oldNumGenDel = tempIClampVariable.getDel();
+
+            NumberGenerator newNumGenDel = NumberGeneratorDialog.showDialog(this,
+                                                                         "Delay",
+                                                                         "Please enter the delay before the pulse (ms)", oldNumGenDel);
+            tempIClampVariable.setDel(newNumGenDel);
+
+            NumberGenerator oldNumGenDur = tempIClampVariable.getDur();
+            NumberGenerator newNumGenDur = NumberGeneratorDialog.showDialog(this,
+                                                                         "Duration",
+                                                                         "Please enter the duration of the pulse (ms)", oldNumGenDur);
+            tempIClampVariable.setDur(newNumGenDur);
+
+            String oldNumGenAmp = tempIClampVariable.getAmp();
+
+            String newNumGenAmp = JOptionPane.showInputDialog(this,
+                                                                         "Please enter the expression for the amplitude of the pulse as a function of t ("+
+                                                     UnitConverter.currentUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+")", oldNumGenAmp);
+            tempIClampVariable.setAmp(newNumGenAmp);
+
+
+            jTextFieldInfo.setText(tempIClampVariable.toString());
+        }
         else if (jRadioButtonRandSpike.isSelected())
         {
-            //String inputValue = JOptionPane.showInputDialog(this, "Please enter frequency of the spike train (ms^-1)",
-            //                                                tempRandSpike.getRate()+"");
 
             NumberGenerator oldNumGen = tempRandSpike.getRate();
 
             NumberGenerator newNumGen = NumberGeneratorDialog.showDialog(this,
                                                                          "Frequency of the spike train",
                                                                          "Please enter frequency of the spike train (ms\u207b\u00b9). Note that frequency of this input will not necessarily be equal to the resultant firing frequency of the cell.", oldNumGen);
-
-            //if (inputValue==null) return;
 
             try
             {
@@ -945,7 +979,6 @@ public class StimDialog extends JDialog
                                                                          "Frequency of the spike train",
                                                                          "Please enter frequency of the spike train (ms\u207b\u00b9). Note that frequency of this input will not necessarily be equal to the resultant firing frequency of the cell.",
                                                                          oldNumGen);
-
             try
             {
                 tempRandSpikeExt.setRate(newNumGen);
@@ -978,7 +1011,6 @@ public class StimDialog extends JDialog
 
             tempRandSpikeExt.setSynapseType((String)selection);
 
-                        
             NumberGenerator oldDelNumGen = tempRandSpikeExt.getDelay();
 
             NumberGenerator newDelNumGen = NumberGeneratorDialog.showDialog(this,
@@ -986,8 +1018,6 @@ public class StimDialog extends JDialog
                                                                          "Please enter the delay before onset of the stimulation (ms)." +
                                                                          "Note that delay of this input will not necessarily be equal to the resultant delay in the simulations.",
                                                                          oldDelNumGen);
-            
-            
             try
             {
                 tempRandSpikeExt.setDelay(newDelNumGen);
@@ -998,40 +1028,21 @@ public class StimDialog extends JDialog
                 return;
             }
 
+            NumberGenerator oldDurNumGen = tempRandSpikeExt.getDuration();
 
-
-//            String delayString = JOptionPane.showInputDialog("Please enter the delay before onset of the stimulation (ms)",
-//                                                       tempRandSpikeExt.getDelay());
-//
-//
-//            try
-//            {
-//                float delay = Float.parseFloat(delayString);
-//                assert delay>=0;
-//                tempRandSpikeExt.setDelay(delay);
-//            }
-//            catch (Exception ex)
-//            {
-//                GuiUtils.showErrorMessage(logger, "Please enter a proper value for the delay (>=0ms)", ex, this);
-//                return;
-//            }
-
-            String durationString = JOptionPane.showInputDialog("Please enter the duration of the stimulation (ms)",
-                                                       tempRandSpikeExt.getDuration());
-
-
+            NumberGenerator newDurNumGen = NumberGeneratorDialog.showDialog(this,
+                                                                         "Duration of the stimulation",
+                                                                         "Please enter the duration of the stimulation (ms)",
+                                                                         oldDurNumGen);
             try
             {
-                float duration = Float.parseFloat(durationString);
-                assert duration>=0;
-                tempRandSpikeExt.setDuration(duration);
+                tempRandSpikeExt.setDuration(newDurNumGen);
             }
             catch (Exception ex)
             {
-                GuiUtils.showErrorMessage(logger, "Please enter a proper value for the duration (>=0ms)", ex, this);
+                GuiUtils.showErrorMessage(logger, "Please enter a proper value for the duration", ex, this);
                 return;
             }
-
 
             Object[] opts = new Object[]{"Pulse once", "Repeat pulse"};
 
@@ -1051,8 +1062,82 @@ public class StimDialog extends JDialog
 
             else if (sel.equals(opts[1])) tempRandSpikeExt.setRepeat(true);
 
-
             jTextFieldInfo.setText(tempRandSpikeExt.toString());
+        }
+        else if (jRadioButtonRandSpikeVar.isSelected())
+        {
+            String oldRate = tempRandSpikeVar.getRate();
+
+
+            String newRate = JOptionPane.showInputDialog(this,
+                                                         "Please enter the expression for the rate of firing as a function of t ("+
+                                                     UnitConverter.currentUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+")", oldRate);
+
+            try
+            {
+                tempRandSpikeVar.setRate(newRate);
+            }
+            catch (Exception ex)
+            {
+                GuiUtils.showErrorMessage(logger, "Please enter a proper value for the spike rate", ex, this);
+                return;
+            }
+
+            Vector synapticTypes =  project.cellMechanismInfo.getAllChemSynMechNames();
+
+            if (synapticTypes.size()==0)
+            {
+                GuiUtils.showErrorMessage(logger,
+                                          "Please add at least one synapse type at the Cell Process Tab",
+                                          null, this);
+                return;
+            }
+
+            Object selection = JOptionPane.showInputDialog(this,
+                                        "Please select the type of synaptic input to use as the input for the random spike train",
+                                        "Select synapse type",
+                                        JOptionPane.QUESTION_MESSAGE,
+                                        null,
+                                        synapticTypes.toArray(),
+                                        tempRandSpikeVar.getSynapseType());
+
+            if (selection==null) return;
+
+            tempRandSpikeVar.setSynapseType((String)selection);
+
+            NumberGenerator oldDelNumGen = tempRandSpikeVar.getDelay();
+
+            NumberGenerator newDelNumGen = NumberGeneratorDialog.showDialog(this,
+                                                                         "Delay before the stimulation",
+                                                                         "Please enter the delay before onset of the stimulation (ms)",
+                                                                         oldDelNumGen);
+            try
+            {
+                tempRandSpikeVar.setDelay(newDelNumGen);
+            }
+            catch (Exception ex)
+            {
+                GuiUtils.showErrorMessage(logger, "Please enter a proper value for the delay", ex, this);
+                return;
+            }
+
+            NumberGenerator oldDurNumGen = tempRandSpikeVar.getDuration();
+
+            NumberGenerator newDurNumGen = NumberGeneratorDialog.showDialog(this,
+                                                                         "Duration of the stimulation",
+                                                                         "Please enter the duration of the stimulation (ms)",
+                                                                         oldDurNumGen);
+            try
+            {
+                tempRandSpikeVar.setDuration(newDurNumGen);
+            }
+            catch (Exception ex)
+            {
+                GuiUtils.showErrorMessage(logger, "Please enter a proper value for the duration", ex, this);
+                return;
+            }
+
+            jTextFieldInfo.setText(tempRandSpikeVar.toString());
         }
 
 
@@ -1101,6 +1186,18 @@ public class StimDialog extends JDialog
 
             tempRandSpikeExt = (RandomSpikeTrainExtSettings)stim;
         }
+        else if (stim instanceof IClampVariableSettings)
+        {
+            jRadioButtonIClampVariable.setSelected(true);
+
+            tempIClampVariable = (IClampVariableSettings)stim;
+        }
+        else if (stim instanceof RandomSpikeTrainVariableSettings)
+        {
+            jRadioButtonRandSpikeVar.setSelected(true);
+
+            tempRandSpikeVar = (RandomSpikeTrainVariableSettings)stim;
+        }
 
         jTextFieldInfo.setText(stim.toString());
 
@@ -1124,25 +1221,6 @@ public class StimDialog extends JDialog
         setSegChooserInfo(chosenSegLocChooser);
 
     }
-    /*
-    Segment checkSegId()
-    {
-
-        String cellType = project.cellGroupsInfo.getCellType((String)jComboBoxCellGroup.getSelectedItem());
-        Cell cellForSelectedGroup = project.cellManager.getCell(cellType);
-
-        Segment segToStim = null;
-
-        while ((segToStim = cellForSelectedGroup.getSegmentWithId(chosenSegmentId)) == null)
-        {
-            GuiUtils.showErrorMessage(logger, "Error: stimulation: "+jTextFieldReference.getText()+" specified as placed on segment ID: "+chosenSegmentId+
-                ", but there is no such segment in cell "+ cellForSelectedGroup.getInstanceName(), null, this);
-
-            this.jButtonSegment_actionPerformed(null);
-
-        }
-        return segToStim;
-    }*/
 
     void jButtonSegment_actionPerformed(ActionEvent e)
     {

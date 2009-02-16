@@ -32,30 +32,45 @@ import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
 
 /**
- * Helper class for info on variations in amplitude, etc. of a single electrical instance
+ * Helper class for info on variations in delay/duration, etc. of a single electrical instance
  *
  * @author Padraig Gleeson
  *  
  */
 
 
-public class RandomSpikeTrainInstanceProps extends InputInstanceProps
+public class IClampVariableInstanceProps extends InputInstanceProps
 {
-    private float rate = Float.NaN;
+    private float delay = Float.NaN;
+    private float duration = Float.NaN;
     
     @Override
     public String details(boolean html)
     {
-        return "rate: "+ GeneralUtils.getBold(rate, html);
-    }
-    
-    public float getRate()
-    {
-        return rate;
+        return "delay: "+ GeneralUtils.getBold(delay, html)
+            +", duration: "+ GeneralUtils.getBold(duration, html);
     }
 
-    public void setRate(float rate)
+
+
+    public float getDelay()
     {
-        this.rate = rate;
+        return delay;
     }
+
+    public void setDelay(float delay)
+    {
+        this.delay = delay;
+    }
+
+    public float getDuration()
+    {
+        return duration;
+    }
+
+    public void setDuration(float duration)
+    {
+        this.duration = duration;
+    }
+    
 }

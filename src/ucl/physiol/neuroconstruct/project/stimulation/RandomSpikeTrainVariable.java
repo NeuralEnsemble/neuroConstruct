@@ -31,76 +31,60 @@ import ucl.physiol.neuroconstruct.utils.NumberGenerator;
 
 
 /**
- * Settings specifically for NetStim/randomspike like stimulation, extended to allow specification
- * of duration etc.
+ * Settings specifically for NetStim/randomspike like stimulation, extended to 
+ * allow variable rate
  *
  * @author Padraig Gleeson
  *  
  */
 
 
-public class RandomSpikeTrainExt extends ElectricalInput
+public class RandomSpikeTrainVariable extends ElectricalInput
 {
-    public static final String TYPE =  "RandomSpikeTrainExt";
+    public static final String TYPE =  "RandomSpikeTrainVariable";
 
 
-    //public float rate;
-    /**
-     * This is a NumberGenerator so that, say, if all cells in a cell group have this stim,
-     * they can all have a fixed rate, or a random/gaussian set of rates, etc.
-     */
-    public NumberGenerator rate = null;
+    public String rate = null; // Expression for rate(t)
+    
     public String synapseType = null;
     public NumberGenerator delay = new NumberGenerator(0);
     public NumberGenerator duration = new NumberGenerator(100);
-    public boolean repeat = false;
 
 
-    public RandomSpikeTrainExt()
+    public RandomSpikeTrainVariable()
     {
         this.setType(TYPE);
     }
 
-    public RandomSpikeTrainExt(NumberGenerator rate,
+    public RandomSpikeTrainVariable(String rate,
                                String synapseType,
                                NumberGenerator delay,
-                               NumberGenerator duration,
-                               boolean repeat)
+                               NumberGenerator duration)
    {
         this.setType(TYPE);
         this.rate = rate;
         this.synapseType = synapseType;
         this.delay = delay;
         this.duration = duration;
-        this.repeat = repeat;
     }
     
     
     public Object clone()
     {
-        NumberGenerator rateClone = (NumberGenerator)rate.clone();
+        String rateClone = new String(rate);
         NumberGenerator delayClone = (NumberGenerator)delay.clone();
-        NumberGenerator durationClone = (NumberGenerator)duration.clone();
+        NumberGenerator durClone = (NumberGenerator)duration.clone();
         
-        RandomSpikeTrainExt rste = new RandomSpikeTrainExt(rateClone, new String(synapseType), delayClone, durationClone, this.repeat);
+        RandomSpikeTrainVariable rste = new RandomSpikeTrainVariable(rateClone, new String(synapseType), delayClone, durClone);
         
         return rste;
     }
 
-    public NumberGenerator getRate()
+    public String getRate()
     {
         return rate;
     }
 
-    public boolean isRepeat()
-    {
-        return repeat;
-    }
-
-    public void setRepeat(boolean repeat)
-    {
-        this.repeat = repeat;
-    }
 
     public NumberGenerator getDelay()
     {
@@ -113,38 +97,19 @@ public class RandomSpikeTrainExt extends ElectricalInput
     }
 
 
-    /**
-     * This is left in to cope with old code where rate was always fixed
-     */
-    public void setRate(float fixedRate)
-    {
-        //System.out.println("Spiking rate being set at a fixed rate: "+fixedRate);
-        this.rate = new NumberGenerator();
-        rate.initialiseAsFixedFloatGenerator(fixedRate);
-    }
 
-    public void setRate(NumberGenerator rate)
+    public void setRate(String rate)
     {
-        //System.out.println("Spiking rate being set with NumberGenerator: "+rate.toString());
+
         this.rate = rate;
     }
 
     
-    public void setDelay(float fixedDelay)
-    {
-        //System.out.println("Spiking rate being set at a fixed rate: "+fixedRate);
-        this.delay = new NumberGenerator();
-        delay.initialiseAsFixedFloatGenerator(fixedDelay);
-    }
     public void setDelay(NumberGenerator delay)
     {
         this.delay = delay;
     }
 
-    public void setDuration(float duration)
-    {
-        this.duration = new NumberGenerator(duration);
-    }
     public void setDuration(NumberGenerator duration)
     {
         this.duration = duration;
@@ -153,20 +118,20 @@ public class RandomSpikeTrainExt extends ElectricalInput
 
     public String toString()
     {
-        return this.getType()+": [rate: "
-            +rate.toShortString()+", syn: "+synapseType+", del: "+delay.toShortString()+", dur: "+duration.toShortString()+", repeats: "+repeat+"]";
+        return this.getType()+": [rate(t) = "
+            +rate+", syn: "+synapseType+", del: "+delay.toShortString()+", dur: "+duration.toShortString()+"]";
     }
     
     public String toLinkedString()
     {
-        return this.getType()+": [rate: "
-            +rate.toShortString()+", syn: "+ ClickProjectHelper.getCellMechLink(synapseType)+", del: "+delay.toShortString()+", dur: "+duration.toShortString()+", repeats: "+repeat+"]";
+        return this.getType()+": [rate(t) = "
+            +rate+", syn: "+ ClickProjectHelper.getCellMechLink(synapseType)+", del: "+delay.toShortString()+", dur: "+duration.toShortString()+"]";
     }
 
     public String getDescription()
     {
-        return this.getType()+" with a rate of "
-            +rate.toShortString()+" "+" and syn input type: "+synapseType+", delay: "+delay.toShortString()+", duration: "+duration.toShortString()+"";
+        return this.getType()+" with rate(t) = "
+            +rate+" "+" and syn input type: "+synapseType+", delay: "+delay.toShortString()+", duration: "+duration.toShortString()+"";
     }
 
 

@@ -114,6 +114,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
     private String firstLineCellGroupComboBox = new String("Cell Group:");
     private String firstLineCellNumberComboBox = new String("Cell num:");
     private String selectManyCellNumComboBox = new String("Select many...");
+    private String selectAllCellNumComboBox = new String("Select all");
 
     private String defaultSegmentBoxText = new String("Segment");
 
@@ -1198,7 +1199,6 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         jComboBoxCellGroup.addItem(firstLineCellGroupComboBox);
         jComboBoxCellNum.addItem(firstLineCellNumberComboBox);
-        //jComboBoxCellNum.addItem(this.selectManyCellNumComboBox);
 
         ArrayList<String> cellGroupNames = project.cellGroupsInfo.getAllCellGroupNames();
 
@@ -1401,6 +1401,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
             jComboBoxCellNum.addItem(firstLineCellNumberComboBox);
             jComboBoxCellNum.addItem(selectManyCellNumComboBox);
+            jComboBoxCellNum.addItem(selectAllCellNumComboBox);
 
             for (int i = 0; i < numInThisGroup; i++)
             {
@@ -1524,6 +1525,27 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                 jComboBoxCellNum.addItem(chosen);
 
                 jComboBoxCellNum.setSelectedItem(chosen); // will cause another jComboBoxCellNumber_itemStateChanged...
+
+                return;
+
+            }
+
+            else if (jComboBoxCellNum.getSelectedItem().equals(this.selectAllCellNumComboBox))
+            {
+                logger.logComment("selectAllCellNumComboBox is selected...");
+
+                selectedCells = null;
+
+                CellChooser allCells = new AllCells();
+
+                logger.logComment("Choosen one: " + allCells);
+
+                allCells.initialise(project.generatedCellPositions.getPositionRecords((String)jComboBoxCellGroup.getSelectedItem()));
+
+
+                jComboBoxCellNum.addItem(allCells);
+
+                jComboBoxCellNum.setSelectedItem(allCells); // will cause another jComboBoxCellNumber_itemStateChanged...
 
                 return;
 

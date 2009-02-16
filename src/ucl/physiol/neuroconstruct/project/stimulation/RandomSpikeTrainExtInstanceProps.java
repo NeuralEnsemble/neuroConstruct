@@ -43,16 +43,13 @@ import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 public class RandomSpikeTrainExtInstanceProps extends InputInstanceProps
 {
     public float rate = Float.NaN;
-    public String SynapseType = null;
     public float delay = Float.NaN;
     public float duration = Float.NaN;
-    public boolean repeat = false;
     
     @Override
     public String details(boolean html)
     {
         return "rate: "+ GeneralUtils.getBold(rate, html)
-              +", type: "+ GeneralUtils.getBold(SynapseType, html)
               +", delay: "+ GeneralUtils.getBold(delay, html)
               +", duration: "+ GeneralUtils.getBold(duration, html);
     }
@@ -67,15 +64,6 @@ public class RandomSpikeTrainExtInstanceProps extends InputInstanceProps
         this.rate = rate;
     }
     
-    public String getSynapseType()
-    {
-        return SynapseType;
-    }
-
-    public void setSynapseType(String synapseType)
-    {
-        this.SynapseType = synapseType;
-    }
     
      public float getDelay()
     {
@@ -97,13 +85,4 @@ public class RandomSpikeTrainExtInstanceProps extends InputInstanceProps
         this.duration = duration;
     }
     
-    public boolean getRepeat()
-    {
-        return repeat;
-    }
-
-    public void setRepeat(boolean repeat)
-    {
-        this.repeat = repeat;
-    }
 }

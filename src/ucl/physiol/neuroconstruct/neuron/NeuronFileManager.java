@@ -142,8 +142,13 @@ public class NeuronFileManager
     
     File cellCheckFile = ProjectStructure.getNeuronCellCheckFile();
     
-    
+
     public static final String EXT_CURR_CLAMP_MOD = "CurrentClampExt.mod";
+    public static final String CURR_CLAMP_VAR_MOD = "CurrentClampVariable.mod";
+    public static final String RAND_STIM_VAR_MOD = "NetStimVariable.mod";
+
+    public static final String CURR_CLAMP_VAR_AMP_EXPR = "%AMPLITUDE_EXPRESSION%";
+    public static final String RAND_STIM_VAR_RATE_EXPR = "%RATE_EXPRESSION%";
     
     public static final String FORCE_REGENERATE_MODS_FILENAME = "regenerateMods";
     
@@ -1521,12 +1526,12 @@ public class NeuronFileManager
                             {
                                 File soFile = new File(stimObjectFilename);
                                 long lastMod = soFile.lastModified();
-                                    
+
                                 File copied = GeneralUtils.copyFileIntoDir(soFile,
                                                              ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory()));
-                                
+
                                 copied.setLastModified(lastMod);
-                                
+
                             }
                             catch(IOException io)
                             {
@@ -1572,11 +1577,11 @@ public class NeuronFileManager
                                         + "." + getHocSectionName(segToStim.getSection().getSectionName()) + " {\n");
 
                         String stimObjectName = EXT_CURR_CLAMP_MOD.substring(0, EXT_CURR_CLAMP_MOD.indexOf(".mod"));
-                        
+
                         response.append(prefix+"    "+stimName + "[" + j + "] = new "+stimObjectName+"(" +
                                         fractionAlongSection +
                                         ")\n");
-                        
+
                         float del = -1, dur = -1, amp = -1;
                         if (nextInput.getInstanceProps()!=null)
                         {
@@ -1599,6 +1604,110 @@ public class NeuronFileManager
                         int repeat = iClamp.isRepeat() ? 1:0;
 
                         response.append(prefix+"    "+stimName + "[" + j + "].repeat = " + repeat + "\n");
+
+                        response.append(prefix+"}" + "\n");
+                        response.append(post);
+                        response.append("\n");
+
+                    }
+                    else if (nextInput.getElectricalInputType().equals(IClampVariable.TYPE))
+                    {
+                        String stimObjectFilename = ProjectStructure.getModTemplatesDir().getAbsolutePath()+"/"+ CURR_CLAMP_VAR_MOD;
+
+
+                        IClampVariableSettings iClampVariable = (IClampVariableSettings) project.elecInputInfo.getStim(allStims.get(k));
+
+                        if (!stimModFilesRequired.contains(stimObjectFilename))
+                        {
+                            stimModFilesRequired.add(stimObjectFilename);
+
+                            try
+                            {
+                                File soFile = new File(stimObjectFilename);
+                                FileReader fr = new FileReader(soFile);
+
+                                LineNumberReader reader = new LineNumberReader(fr);
+                                String nextLine = null;
+
+                                StringBuilder sb = new StringBuilder();
+
+                                while ((nextLine = reader.readLine()) != null)
+                                {
+                                    sb.append(GeneralUtils.replaceAllTokens(nextLine, CURR_CLAMP_VAR_AMP_EXPR, iClampVariable.getAmp())+ "\n");
+                                }
+                                reader.close();
+                                fr.close();
+
+                                File targetFile = new File(ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory()), soFile.getName());
+                                FileWriter fw = new FileWriter(targetFile);
+                                fw.write(sb.toString());
+                                fw.close();
+
+                            }
+                            catch(IOException io)
+                            {
+                                GuiUtils.showErrorMessage(logger, "Problem copying mod file for stimulation: " + stimObjectFilename, io, null);
+                                return null;
+                            }
+                        }
+
+                        String stimName = getStimArrayName(allStims.get(k));
+
+                        logger.logComment("Adding stim: " + nextInput);
+
+                        if (j == 0) // define array...
+                        {
+                            String sizeName = getStimArraySizeName(allStims.get(k));
+                            response.append("{ "+sizeName + " = " + allInputLocs.size() + " }\n");
+                            response.append("objectvar " + stimName + "[" + sizeName + "]\n\n");
+                        }
+
+                        String prefix = "";
+                        String post = "";
+
+                        if (simConfig.getMpiConf().isParallel())
+                        {
+                            prefix = "    ";
+                            post = "}" + "\n";
+                            response.append("if (isCellOnNode(\""
+                                            + nextInput.getCellGroup() + "\", "
+                                            + nextInput.getCellNumber() + ")) {\n");
+                        }
+
+                        addHocComment(response, "Note: the stimulation was specified as being at a point "
+                                          + fractionAlongSegment + " along segment: " + segToStim.getSegmentName(),prefix, false);
+                        addHocComment(response, "in section: " + getHocSectionName(segToStim.getSection().getSectionName()) +
+                                          ". For NEURON, this translates to a point " + fractionAlongSection +
+                                          " along section: " +
+                                          getHocSectionName(segToStim.getSection().getSectionName()),prefix,true);
+
+                        response.append(prefix+"a_" + nextInput.getCellGroup()
+                                        + "[" + nextInput.getCellNumber() + "]"
+                                        + "." + getHocSectionName(segToStim.getSection().getSectionName()) + " {\n");
+
+                        String stimObjectName = CURR_CLAMP_VAR_MOD.substring(0, CURR_CLAMP_VAR_MOD.indexOf(".mod"));
+
+                        response.append(prefix+"    "+stimName + "[" + j + "] = new "+stimObjectName+"(" +
+                                        fractionAlongSection +
+                                        ")\n");
+
+                        float del = -1, dur = -1;
+
+                        if (nextInput.getInstanceProps()!=null)
+                        {
+                            IClampVariableInstanceProps icip = (IClampVariableInstanceProps)nextInput.getInstanceProps();
+                            del = icip.getDelay();
+                            dur = icip.getDuration();
+                        }
+                        else
+                        {
+                            del = iClampVariable.getDel().getNominalNumber(); //should be a fixed num generator anyway...
+                            dur = iClampVariable.getDur().getNominalNumber(); //should be a fixed num generator anyway...
+                        }
+
+                        response.append(prefix+"    "+stimName + "[" + j + "].del = " + del + "\n");
+                        response.append(prefix+"    "+stimName + "[" + j + "].dur = " + dur + "\n");
+
 
                         response.append(prefix+"}" + "\n");
                         response.append(post);
@@ -1639,8 +1748,6 @@ public class NeuronFileManager
                                         + "]." + getHocSectionName(segToStim.getSection().getSectionName()) + " \n");
                          */
 
-
-
                         String prefix = "";
                         String post = "";
 
@@ -1662,18 +1769,27 @@ public class NeuronFileManager
                         response.append(prefix+stimName + "[" + j + "] = new NetStim(" +
                                         fractionAlongSection + ")\n");
 
-                        /** @todo This is wrong!!! */
-                        float expectedRate = rndTrain.getRate().getNextNumber();
+                        float rate = -1;
+
+                        if (nextInput.getInstanceProps()!=null)
+                        {
+                            RandomSpikeTrainInstanceProps icip = (RandomSpikeTrainInstanceProps)nextInput.getInstanceProps();
+                            rate = icip.getRate();
+                        }
+                        else
+                        {
+                            rate = rndTrain.getRate().getNominalNumber(); //should be a fixed num generator anyway...
+                        }
 
                         addHocComment(response,
-                                          "NOTE: This is a very rough way to get an average rate of " + expectedRate +
+                                          "NOTE: This is a very rough way to get an average rate of " + rate +
                                           " kHz!!!", prefix, false);
 
                         float expectedNumber = getSimDuration()
-                            * expectedRate
+                            * rate
                             * increaseFactor; // no units...
 
-                        double interval = UnitConverter.getTime(1f / expectedRate,
+                        double interval = UnitConverter.getTime(1f / rate,
                                                                 UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                 UnitConverter.NEURON_UNITS);
 
@@ -1726,8 +1842,6 @@ public class NeuronFileManager
                                 return null;
                             }
                         }
-
-
 
                         // to make the NetStim more randomish...
                         int increaseFactor = 100;
@@ -1784,18 +1898,34 @@ public class NeuronFileManager
                         response.append(prefix+stimName + "[" + j + "] = new "+stimObjectName+"(" +
                                         fractionAlongSection + ")\n");
 
-                        /** @todo This is wrong!!! */
-                        float expectedRate = rndTrainExt.getRate().getNextNumber();
+
+
+                        float del = -1, dur = -1, rate = -1;
+
+                        if (nextInput.getInstanceProps()!=null)
+                        {
+                            RandomSpikeTrainExtInstanceProps icip = (RandomSpikeTrainExtInstanceProps)nextInput.getInstanceProps();
+                            del = icip.getDelay();
+                            dur = icip.getDuration();
+                            rate = icip.getRate();
+                        }
+                        else
+                        {
+                            del = rndTrainExt.getDelay().getNominalNumber(); //should be a fixed num generator anyway...
+                            dur = rndTrainExt.getDuration().getNominalNumber(); //should be a fixed num generator anyway...
+                            rate = rndTrainExt.getRate().getNominalNumber(); //should be a fixed num generator anyway...
+                        }
+
 
                         addHocComment(response,
-                                          "NOTE: This is a very rough way to get an average rate of " + expectedRate +
+                                          "NOTE: This is a very rough way to get an average rate of " + rate +
                                           " kHz!!!", prefix, false);
 
                         float expectedNumber = getSimDuration()
-                            * expectedRate
+                            * rate
                             * increaseFactor; // no units...
 
-                        double interval = UnitConverter.getTime(1f / expectedRate,
+                        double interval = UnitConverter.getTime(1f / rate,
                                                                 UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                 UnitConverter.NEURON_UNITS);
 
@@ -1804,8 +1934,8 @@ public class NeuronFileManager
                         response.append(prefix+stimName + "[" + j + "].interval = " + interval + "\n");
 
                         response.append(prefix+stimName + "[" + j + "].noise = " + noise + " \n");
-                        response.append(prefix+stimName + "[" + j + "].del = "+ rndTrainExt.getDelay().getNextNumber() +" \n");
-                        response.append(prefix+stimName + "[" + j + "].dur = "+ rndTrainExt.getDuration() +" \n");
+                        response.append(prefix+stimName + "[" + j + "].del = "+ del +" \n");
+                        response.append(prefix+stimName + "[" + j + "].dur = "+ dur +" \n");
 
                         int repeat = rndTrainExt.isRepeat() ? 1:0;
 
@@ -1813,6 +1943,136 @@ public class NeuronFileManager
 
                         response.append(prefix+synapseName + "[" + j + "] = new " +
                                         rndTrainExt.getSynapseType() +
+                                        "(" + fractionAlongSection +
+                                        ") \n");
+
+                        addHocComment(response, " Inserts synapse 0.5 of way down",prefix, true);
+
+                        response.append(prefix+connectionName + "["
+                                        + j
+                                        + "] = new NetCon("
+                                        + stimName + "["
+                                        + j +
+                                        "], " + synapseName + "["
+                                        + j +
+                                        "], thresh, delay, weight)\n");
+
+                        response.append(post);
+                        response.append("\n\n");
+
+                    }
+
+
+                    else if (nextInput.getElectricalInputType().equals(RandomSpikeTrainVariable.TYPE))
+                    {
+
+                        String stimObjectFilename = ProjectStructure.getModTemplatesDir().getAbsolutePath()+"/"+ RAND_STIM_VAR_MOD;
+                        String stimObjectName = RAND_STIM_VAR_MOD.substring(0, RAND_STIM_VAR_MOD.indexOf(".mod"));
+
+                        RandomSpikeTrainVariableSettings rstvs = (RandomSpikeTrainVariableSettings) project.elecInputInfo.getStim(allStims.get(k));
+
+                        if (!stimModFilesRequired.contains(stimObjectFilename))
+                        {
+                            stimModFilesRequired.add(stimObjectFilename);
+
+                            try
+                            {
+                                File soFile = new File(stimObjectFilename);
+                                FileReader fr = new FileReader(soFile);
+
+                                LineNumberReader reader = new LineNumberReader(fr);
+                                String nextLine = null;
+
+                                StringBuilder sb = new StringBuilder();
+
+                                while ((nextLine = reader.readLine()) != null)
+                                {
+                                    sb.append(GeneralUtils.replaceAllTokens(nextLine, RAND_STIM_VAR_RATE_EXPR, rstvs.getRate())+ "\n");
+                                }
+                                reader.close();
+                                fr.close();
+
+                                File targetFile = new File(ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory()), soFile.getName());
+                                FileWriter fw = new FileWriter(targetFile);
+                                fw.write(sb.toString());
+                                fw.close();
+
+                            }
+                            catch(IOException io)
+                            {
+                                GuiUtils.showErrorMessage(logger, "Problem copying mod file for stimulation: " + stimObjectFilename, io, null);
+                                return null;
+                            }
+                        }
+
+
+                        // to make the NetStim more randomish...
+                        int increaseFactor = 100;
+                        float noise = 1f;
+
+                        RandomSpikeTrainVariableSettings rt =
+                            (RandomSpikeTrainVariableSettings) project.elecInputInfo.getStim(allStims.get(k));
+
+                        logger.logComment("Adding stim: " + nextInput);
+
+                        String stimName = "spikesource_" + allStims.get(k);
+                        String synapseName = "synapse_" + allStims.get(k);
+                        String connectionName = "connection_" + allStims.get(k);
+
+                        if (j == 0) // define arrays...
+                        {
+                            response.append("objref " + stimName + "[" + allInputLocs.size() + "]\n\n");
+                            response.append("objref " + synapseName + "[" + allInputLocs.size() + "]\n");
+                            response.append("objref " + connectionName + "[" + allInputLocs.size() + "]\n");
+                            response.append("thresh = -20\n");
+                            response.append("delay = 0\n");
+                            response.append("weight = 1\n\n");
+
+                        }
+
+                        String prefix = "";
+                        String post = "";
+
+                        if (simConfig.getMpiConf().isParallel())
+                        {
+                            prefix = "    ";
+                            post = "}" + "\n";
+                            response.append("if (isCellOnNode(\""
+                                            + nextInput.getCellGroup() + "\", "
+                                            + nextInput.getCellNumber() + ")) {\n");
+                        }
+
+                        response.append(prefix+"access "
+                                        + "a_" + nextInput.getCellGroup()
+                                        + "["
+                                        + nextInput.getCellNumber()
+                                        + "]." + getHocSectionName(segToStim.getSection().getSectionName()) + " \n");
+
+                        response.append(prefix+stimName + "[" + j + "] = new "+stimObjectName+"(" +
+                                        fractionAlongSection + ")\n");
+
+                        float del = -1, dur = -1;
+
+                        if (nextInput.getInstanceProps()!=null)
+                        {
+                            RandomSpikeTrainVarInstanceProps icip = (RandomSpikeTrainVarInstanceProps)nextInput.getInstanceProps();
+                            del = icip.getDelay();
+                            dur = icip.getDuration();
+                        }
+                        else
+                        {
+                            del = rstvs.getDelay().getNominalNumber(); //should be a fixed num generator anyway...
+                            dur = rstvs.getDuration().getNominalNumber(); //should be a fixed num generator anyway...
+                        }
+
+
+                        response.append(prefix+stimName + "[" + j + "].noise = " + noise + " \n");
+                        response.append(prefix+stimName + "[" + j + "].del = "+ del +" \n");
+                        response.append(prefix+stimName + "[" + j + "].dur = "+ dur +" \n");
+
+
+                        response.append(prefix+synapseName + "[" + j + "] = new " +
+                                        rstvs.getSynapseType() +
                                         "(" + fractionAlongSection +
                                         ") \n");
 

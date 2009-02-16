@@ -177,12 +177,12 @@ public class ElecInputGenerator extends Thread
                     logger.logComment("Adding stim to cell number: "+ nextCellNumber);
 
                     InputInstanceProps ip = null;
-                    
+
                     if (nextStim.getElectricalInput() instanceof IClamp)
                     {
                         IClamp ic = (IClamp)nextStim.getElectricalInput();
-                        
-                        if (!ic.getDel().isTypeFixedNum() || 
+
+                        if (!ic.getDel().isTypeFixedNum() ||
                             !ic.getDur().isTypeFixedNum() ||
                             !ic.getAmp().isTypeFixedNum())
                         {
@@ -192,8 +192,21 @@ public class ElecInputGenerator extends Thread
                             icip.setAmplitude(ic.getAmp().getNextNumber());
                             ip = icip;
                         }
-                        
-                        
+
+
+                    }
+                    if (nextStim.getElectricalInput() instanceof IClampVariable)
+                    {
+                        IClampVariable ic = (IClampVariable)nextStim.getElectricalInput();
+
+                        if (!ic.getDel().isTypeFixedNum() ||
+                            !ic.getDur().isTypeFixedNum())
+                        {
+                            IClampVariableInstanceProps icip = new IClampVariableInstanceProps();
+                            icip.setDelay(ic.getDel().getNextNumber());
+                            icip.setDuration(ic.getDur().getNextNumber());
+                            ip = icip;
+                        }
                     }
                     
                     if (nextStim.getElectricalInput() instanceof RandomSpikeTrain)
@@ -204,30 +217,40 @@ public class ElecInputGenerator extends Thread
                         {
                             RandomSpikeTrainInstanceProps rstip = new RandomSpikeTrainInstanceProps();
                             rstip.setRate(rst.getRate().getNextNumber());
-                            rstip.setSynapseType(rst.getSynapseType());
                             ip = rstip;
                         }
                         
                         
                     }
-                    
+
                     if (nextStim.getElectricalInput() instanceof RandomSpikeTrainExt)
                     {
                         RandomSpikeTrainExt rste = (RandomSpikeTrainExt)nextStim.getElectricalInput();
-                        
-                        if (!rste.getRate().isTypeFixedNum() || 
-                            !rste.getDelay().isTypeFixedNum())
+
+                        if (!rste.getRate().isTypeFixedNum() ||
+                            !rste.getDelay().isTypeFixedNum() ||
+                            !rste.getDuration().isTypeFixedNum())
                         {
                             RandomSpikeTrainExtInstanceProps rsteip = new RandomSpikeTrainExtInstanceProps();
                             rsteip.setRate(rste.getRate().getNextNumber());
-                            rsteip.setSynapseType(rste.getSynapseType());
                             rsteip.setDelay(rste.getDelay().getNextNumber());
-                            rsteip.setDuration(rste.getDuration());
-                            rsteip.setRepeat(rste.isRepeat());
+                            rsteip.setDuration(rste.getDuration().getNextNumber());
                             ip = rsteip;
                         }
-                        
-                        
+                    }
+
+                    if (nextStim.getElectricalInput() instanceof RandomSpikeTrainVariable)
+                    {
+                        RandomSpikeTrainVariable rste = (RandomSpikeTrainVariable)nextStim.getElectricalInput();
+
+                        if (!rste.getDelay().isTypeFixedNum() ||
+                            !rste.getDuration().isTypeFixedNum())
+                        {
+                            RandomSpikeTrainVarInstanceProps rsteip = new RandomSpikeTrainVarInstanceProps();
+                            rsteip.setDelay(rste.getDelay().getNextNumber());
+                            rsteip.setDuration(rste.getDuration().getNextNumber());
+                            ip = rsteip;
+                        }
                     }
                     
                     Cell cell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(nextStim.getCellGroup()));

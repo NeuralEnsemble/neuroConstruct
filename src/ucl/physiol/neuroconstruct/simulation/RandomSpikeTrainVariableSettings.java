@@ -42,61 +42,58 @@ import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentLocationChooser;
  */
 
 
-public class RandomSpikeTrainExtSettings extends StimulationSettings
+public class RandomSpikeTrainVariableSettings extends StimulationSettings
 {
-    public RandomSpikeTrainExt randomSpikeTrainExt = null;
+    public RandomSpikeTrainVariable randomSpikeTrainVariable = null;
 
 
-    public RandomSpikeTrainExtSettings()
+    public RandomSpikeTrainVariableSettings()
     {
-        randomSpikeTrainExt = new RandomSpikeTrainExt();
+        randomSpikeTrainVariable = new RandomSpikeTrainVariable();
     }
 
-    public RandomSpikeTrainExtSettings(String reference,
+    public RandomSpikeTrainVariableSettings(String reference,
                            String cellGroup,
                            CellChooser cellChooser,
                            int segmentID,
-                           NumberGenerator rate,
+                           String rate,
                            String synapseType,
                            NumberGenerator delay,
-                           NumberGenerator duration,
-                           boolean repeat)
+                           NumberGenerator duration)
     {
         super(reference, cellGroup, cellChooser, segmentID);
-        randomSpikeTrainExt = new RandomSpikeTrainExt(rate, synapseType, delay, duration, repeat);
+        randomSpikeTrainVariable = new RandomSpikeTrainVariable(rate, synapseType, delay, duration);
     }
     
-    public RandomSpikeTrainExtSettings(String reference,
+    public RandomSpikeTrainVariableSettings(String reference,
                            String cellGroup,
                            CellChooser cellChooser,
                            SegmentLocationChooser segs,
-                           NumberGenerator rate,
+                           String rate,
                            String synapseType,
                            NumberGenerator delay,
-                           NumberGenerator duration,
-                           boolean repeat)
+                           NumberGenerator duration)
     {
         super(reference, cellGroup, cellChooser, segs);
-        randomSpikeTrainExt = new RandomSpikeTrainExt(rate, synapseType, delay, duration, repeat);
+        randomSpikeTrainVariable = new RandomSpikeTrainVariable(rate, synapseType, delay, duration);
     }
     
     
     
     public Object clone()
     {
-        RandomSpikeTrainExt rstOrig = (RandomSpikeTrainExt)this.getElectricalInput();
+        RandomSpikeTrainVariable rstOrig = (RandomSpikeTrainVariable)this.getElectricalInput();
         
-        RandomSpikeTrainExt rstClone = (RandomSpikeTrainExt)rstOrig.clone();
+        RandomSpikeTrainVariable rstClone = (RandomSpikeTrainVariable)rstOrig.clone();
         
-        RandomSpikeTrainExtSettings rsts = new RandomSpikeTrainExtSettings(this.reference,
+        RandomSpikeTrainVariableSettings rsts = new RandomSpikeTrainVariableSettings(this.reference,
                                  this.cellGroup,
                                  (CellChooser)this.cellChooser.clone(),
                                  (SegmentLocationChooser)this.segmentChooser.clone(),
                                  rstClone.getRate(),
                                  rstClone.getSynapseType(),
                                  rstClone.getDelay(),
-                                 rstClone.getDuration(),
-                                 rstClone.isRepeat());
+                                 rstClone.getDuration());
         
         return rsts;
                                  
@@ -106,100 +103,62 @@ public class RandomSpikeTrainExtSettings extends StimulationSettings
 
     public ElectricalInput getElectricalInput()
     {
-        return randomSpikeTrainExt;
+        return randomSpikeTrainVariable;
     };
 
-
-    public boolean isRepeat()
-    {
-        return randomSpikeTrainExt.isRepeat();
-    }
-
-    public void setRepeat(boolean repeat)
-    {
-        randomSpikeTrainExt.setRepeat(repeat);
-    }
 
 
 
     public NumberGenerator getDelay()
     {
-        return randomSpikeTrainExt.getDelay();
+        return randomSpikeTrainVariable.getDelay();
     }
 
     public NumberGenerator getDuration()
     {
-        return randomSpikeTrainExt.getDuration();
+        return randomSpikeTrainVariable.getDuration();
     }
 
 
-    public void setDelay(float fixedDelay)
-    {
-        NumberGenerator delay = new NumberGenerator();
-        delay.initialiseAsFixedFloatGenerator(fixedDelay);
-
-        randomSpikeTrainExt.setDelay(delay);
-    }
     
     public void setDelay(NumberGenerator delay)
     {
-        randomSpikeTrainExt.setDelay(delay);
+        randomSpikeTrainVariable.setDelay(delay);
     }
 
     public void setDuration(NumberGenerator duration)
     {
-        randomSpikeTrainExt.setDuration(duration);
+        randomSpikeTrainVariable.setDuration(duration);
     }
 
 
 
-    public NumberGenerator getRate()
+    public String getRate()
     {
-        return randomSpikeTrainExt.getRate();
+        return randomSpikeTrainVariable.getRate();
     }
     
-    /**
-     * This is to cope with the old code, where rate was always fixed
-     */
-    public void setRate(float fixedRate)
-    {
-        //System.out.println("Spiking rate being set at a fixed rate: "+fixedRate);
-        NumberGenerator rate = new NumberGenerator();
-        rate.initialiseAsFixedFloatGenerator(fixedRate);
 
-        randomSpikeTrainExt.setRate(rate);
-    }
-
-    public void setRate(NumberGenerator rate)
+    public void setRate(String rate)
     {
-        //System.out.println("rate: " + rate);
-        randomSpikeTrainExt.setRate(rate);
+        randomSpikeTrainVariable.setRate(rate);
     }
 
 
-    public void setNoise(float noise)
-    {
-        // Note: noise removed from randomSpikeTrainExt
-        //randomSpikeTrainExt.setNoise(noise);
-    }
 
 
     public String toString()
     {
-        return randomSpikeTrainExt.toString();
+        return randomSpikeTrainVariable.toString();
     }
     public String getSynapseType()
     {
-        return randomSpikeTrainExt.getSynapseType();
+        return randomSpikeTrainVariable.getSynapseType();
     }
     public void setSynapseType(String synapseType)
     {
-        randomSpikeTrainExt.setSynapseType(synapseType);
+        randomSpikeTrainVariable.setSynapseType(synapseType);
     }
 
-    public static void main(String[] args)
-    {
-
-    }
 
 }
