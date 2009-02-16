@@ -56,7 +56,11 @@ public class MpiSettings
     public static final String LOCAL_SERIAL = "Local machine, serial mode";
     public static final String LOCAL_2PROC = "Local machine (2p)";
     public static final String LOCAL_4PROC = "Local machine (4p)";
-    
+
+    public static final String OTHER_4PROC = "Other machine (4p)";
+
+    public static final String CLUSTER_1PROC = "Cluster (1p)";
+    public static final String CLUSTER_4PROC = "Cluster (1 x 4p)";
     public static final String CLUSTER_8PROC = "Cluster (2 x 4p)";
     public static final String CLUSTER_12PROC = "Cluster (3 x 4p)";
     public static final String CLUSTER_24PROC = "Cluster (6 x 4p)";
@@ -101,6 +105,12 @@ public class MpiSettings
             MpiConfiguration p = new MpiConfiguration(LOCAL_4PROC);
             p.getHostList().add(new MpiHost(LOCALHOST,4, 1));
             configurations.add(p);
+        }
+        if (getMpiConfiguration(OTHER_4PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(OTHER_4PROC);
+            p.getHostList().add(new MpiHost("bernal",4, 1));
+            configurations.add(p);
         } /*
         if (getMpiConfiguration(local8Config)==null)
         {
@@ -130,7 +140,23 @@ public class MpiSettings
             p.getHostList().add(new MpiHost("bernal", 4, 1));
             configurations.add(p);
         }
-        
+
+        if (getMpiConfiguration(CLUSTER_1PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(CLUSTER_1PROC);
+
+            p.getHostList().add(new MpiHost("node0",1, 1));
+            configurations.add(p);
+        }
+
+        if (getMpiConfiguration(CLUSTER_4PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(CLUSTER_4PROC);
+
+            p.getHostList().add(new MpiHost("node0",4, 1));
+            configurations.add(p);
+        }
+
         if (getMpiConfiguration(CLUSTER_8PROC)==null)
         {
             MpiConfiguration p = new MpiConfiguration(CLUSTER_8PROC);

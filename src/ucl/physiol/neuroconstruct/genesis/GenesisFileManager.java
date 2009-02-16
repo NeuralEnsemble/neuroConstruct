@@ -33,6 +33,8 @@ import java.util.regex.*;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
+import ucl.physiol.neuroconstruct.hpc.utils.ProcessFeedback;
+import ucl.physiol.neuroconstruct.hpc.utils.ProcessManager;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
 
@@ -3069,6 +3071,21 @@ public class GenesisFileManager
     {
         logger.logComment("Trying to run the mainGenesisFile...");
 
+
+        ProcessFeedback pf = new ProcessFeedback()
+        {
+
+            public void comment(String comment)
+            {
+                logger.logComment("ProcessFeedback: ");
+            }
+
+            public void error(String comment)
+            {
+                logger.logComment("ProcessFeedback: ");
+            }
+        };
+
         nextColour = new Hashtable<String, Integer>(); // reset it...
         if (!this.mainFileGenerated)
         {
@@ -3226,9 +3243,9 @@ public class GenesisFileManager
                 if (basicCommLine.indexOf("konsole")>=0)
                 {
                     logger.logComment("Assume we're using KDE");
-                    titleOption = " -T="+title;
+                    titleOption = " --title="+title;
                     workdirOption = " --workdir="+ dirToRunFrom.getAbsolutePath();
-                    extraArgs = "-e ";
+                    extraArgs = "-e /bin/bash ";
                     executable = basicCommLine.trim();
                 }
                 else if (basicCommLine.indexOf("gnome")>=0)
@@ -3293,7 +3310,9 @@ public class GenesisFileManager
 
                 logger.logComment("Going to execute command: " + commandToExecute);
 
-                rt.exec(commandToExecute);
+                //rt.exec(commandToExecute);
+
+                ProcessManager.runCommand(commandToExecute, pf, 4);
 
                 logger.logComment("Have successfully executed command: " + commandToExecute);
             }

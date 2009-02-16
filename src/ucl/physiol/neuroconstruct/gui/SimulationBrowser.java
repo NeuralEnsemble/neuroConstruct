@@ -181,9 +181,10 @@ public class SimulationBrowser extends JDialog
         });
         gridLayout1.setHgap(5);
         gridLayout1.setVgap(5);
-        jPanelMain.setMaximumSize(new Dimension(850, 500));
-        jPanelMain.setPreferredSize(new Dimension(850, 500));
-        jPanelMain.setMinimumSize(new Dimension(850, 500));
+        Dimension mainDim = new Dimension(870, 500);
+        jPanelMain.setMaximumSize(mainDim);
+        jPanelMain.setPreferredSize(mainDim);
+        jPanelMain.setMinimumSize(mainDim);
 
         jButtonDelete.setText("Delete selected simulation(s)");
         jButtonDelete.addActionListener(new java.awt.event.ActionListener()

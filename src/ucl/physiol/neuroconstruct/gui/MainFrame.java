@@ -2242,7 +2242,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                   new Color(228, 228, 228), new Color(93, 93, 93),
                                                   new Color(134, 134, 134));
         contentPane.setLayout(borderLayout1);
-        this.setSize(new Dimension(964, 744));
+
+        this.setSize(new Dimension(1000, 800));
         this.setTitle("neuroConstruct v"+GeneralProperties.getVersionNumber());
         statusBar.setBorder(BorderFactory.createEtchedBorder());
         statusBar.setText(" ");

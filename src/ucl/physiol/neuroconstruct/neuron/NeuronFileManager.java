@@ -4308,6 +4308,20 @@ public class NeuronFileManager
                                       + " does not exist. Have you generated the NEURON code?");
         }
 
+        ProcessFeedback pf = new ProcessFeedback()
+        {
+
+            public void comment(String comment)
+            {
+                logger.logComment("ProcessFeedback: ");
+            }
+
+            public void error(String comment)
+            {
+                logger.logComment("ProcessFeedback: ");
+            }
+        };
+
 
         logger.logComment("Getting rid of old simulation files...");
 
@@ -4632,18 +4646,7 @@ public class NeuronFileManager
                     else
                     {
                         //rt.exec(fullCommand, envParams);#
-                        ProcessFeedback pf = new ProcessFeedback() {
-
-                            public void comment(String comment)
-                            {
-                                System.out.println("pf comm: ");
-                            }
-
-                            public void error(String comment)
-                            {
-                                System.out.println("pf err: ");
-                            }
-                        };
+                        
                         logger.logComment("== <" + fullCommand+">");
                         
                         ProcessManager.runCommand(fullCommand, pf, 4);
