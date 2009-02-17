@@ -146,6 +146,12 @@ public class RandomSpikeTrainExtSettings extends StimulationSettings
         randomSpikeTrainExt.setDelay(delay);
     }
 
+    public void setDuration(float duration)
+    {
+        randomSpikeTrainExt.setDuration(duration);
+    }
+
+
     public void setDuration(NumberGenerator duration)
     {
         randomSpikeTrainExt.setDuration(duration);
