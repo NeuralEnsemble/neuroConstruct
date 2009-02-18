@@ -1122,27 +1122,30 @@ public class Project implements TableModelListener
     {
         logger.logComment(">>>>>  Saving the project...", true);
 
-        File backupFile = new File(getProjectMainDirectory(), getProjectFile().getName()+".bak");
-
-        try
+        if (getProjectFile().exists())
         {
-            InputStream in = new FileInputStream(getProjectFile());
-            OutputStream out = new FileOutputStream(backupFile);
+            File backupFile = new File(getProjectMainDirectory(), getProjectFile().getName()+".bak");
 
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
+            try
+            {
+                InputStream in = new FileInputStream(getProjectFile());
+                OutputStream out = new FileOutputStream(backupFile);
+
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                in.close();
+                out.close();
+
+                logger.logComment(">>>>>  Saved backup file to: "+ backupFile.getAbsolutePath(), true);
             }
-            in.close();
-            out.close();
-
-            logger.logComment(">>>>>  Saved backup file to: "+ backupFile.getAbsolutePath(), true);
-        }
-        catch (IOException ex3)
-        {
-            GuiUtils.showErrorMessage(logger, "Error backing up project file to: " + backupFile+"\nWill proceed with trying to save...",
-                                      ex3, null);
+            catch (IOException ex3)
+            {
+                GuiUtils.showErrorMessage(logger, "Error backing up project file to: " + backupFile+"\nWill proceed with trying to save...",
+                                          ex3, null);
+            }
         }
 
         
