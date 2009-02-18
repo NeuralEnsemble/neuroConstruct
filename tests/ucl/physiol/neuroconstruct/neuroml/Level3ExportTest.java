@@ -69,7 +69,7 @@ public class Level3ExportTest {
         
         System.out.println("---------------   setUp() Level3ExportTest");
         
-        File projFile = new File(projDir, projName+ProjectStructure.getProjectFileExtension());
+        File projFile = ProjectStructure.findProjectFile(projDir);
         
         pm = new ProjectManager();
         try 

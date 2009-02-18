@@ -56,7 +56,7 @@ ProjectManager pm = null;
         System.out.println("---------------   setUp() RandomSpikeTrainTest");
         String projName = "RandomSpikeTrainTest";
         File projDir = new File("testProjects/"+projName);
-        File projFile = new File(projDir, projName+ProjectStructure.getProjectFileExtension());
+        File projFile = ProjectStructure.findProjectFile(projDir);
         
         pm = new ProjectManager();
         

@@ -167,7 +167,7 @@ public class ProjectFileUpdate
                         String zipFileName = projFile.getParentFile()
                             + System.getProperty("file.separator")
                             + projFile.getName().substring(0, projFile.getName().indexOf("."))
-                            + ProjectStructure.getProjectZipFileExtension()
+                            + ProjectStructure.getNewProjectZipFileExtension()
 ;
                         int goAhead = JOptionPane.showConfirmDialog(null,
 

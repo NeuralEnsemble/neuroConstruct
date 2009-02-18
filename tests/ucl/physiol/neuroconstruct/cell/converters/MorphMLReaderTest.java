@@ -56,7 +56,7 @@ public class MorphMLReaderTest {
     {
         System.out.println("---------------   setUp() MorphMLReaderTest");        
         
-        File projFile = new File(projDir, projName+ProjectStructure.getProjectFileExtension());
+        File projFile = ProjectStructure.findProjectFile(projDir);
         
         pm = new ProjectManager();
         

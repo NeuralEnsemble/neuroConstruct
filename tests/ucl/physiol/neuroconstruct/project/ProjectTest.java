@@ -65,7 +65,7 @@ public class ProjectTest
     {
         
         System.out.println("---------------   setUp() ProjectTest");
-        projFile = new File(projDir, projName+ProjectStructure.getProjectFileExtension());
+        projFile = ProjectStructure.findProjectFile(projDir);
         
         try 
         {
@@ -113,7 +113,7 @@ public class ProjectTest
     public void testGetProjectFileName() {
         System.out.println("---  getProjectFileName");
      
-        String expResult = projName+ProjectStructure.getProjectFileExtension();
+        String expResult = ProjectStructure.findProjectFile(projDir).getName();
         String result = projLoaded.getProjectFileName();
         assertEquals(expResult, result);
         

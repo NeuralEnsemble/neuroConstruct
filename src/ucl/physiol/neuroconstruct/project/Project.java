@@ -147,7 +147,7 @@ public class Project implements TableModelListener
                                            ProjectEventListener projectEventListner)
     {
         Project proj = new Project();
-        proj.currentProjectFile = new File(projectDir, projectName + ProjectStructure.getProjectFileExtension());
+        proj.currentProjectFile = new File(projectDir, projectName + ProjectStructure.getNewProjectFileExtension());
 
         proj.initialiseInternalObjects();
         
@@ -1121,6 +1121,30 @@ public class Project implements TableModelListener
     public void saveProject() throws NoProjectLoadedException
     {
         logger.logComment(">>>>>  Saving the project...", true);
+
+        File backupFile = new File(getProjectMainDirectory(), getProjectFile().getName()+".bak");
+
+        try
+        {
+            InputStream in = new FileInputStream(getProjectFile());
+            OutputStream out = new FileOutputStream(backupFile);
+
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            in.close();
+            out.close();
+
+            logger.logComment(">>>>>  Saved backup file to: "+ backupFile.getAbsolutePath(), true);
+        }
+        catch (IOException ex3)
+        {
+            GuiUtils.showErrorMessage(logger, "Error backing up project file to: " + backupFile+"\nWill proceed with trying to save...",
+                                      ex3, null);
+        }
+
         
         if (this.myStatus == Project.PROJECT_NOT_INITIALISED)
         {

@@ -178,7 +178,7 @@ public class ExampleProjects
                 colMid.addChildElement(secIntro);
                 secIntro.addContent("Project name: <strong>"+ projName+"</strong>");
                 
-                File projFile = new File(exProjDir, projName+ProjectStructure.getProjectFileExtension());
+                File projFile = ProjectStructure.findProjectFile(exProjDir);
                 
                 Project project = Project.loadProject(projFile, null);
                 String descFull = project.getProjectDescription();
@@ -205,7 +205,7 @@ public class ExampleProjects
                 modified.addContent("Project last modified: "+ formatter.format(date));
                 
                 File zipFile = null;
-                String zipFileName = targetDownloadDir.getAbsolutePath()+"/"+ projName+ProjectStructure.getProjectZipFileExtension();
+                String zipFileName = targetDownloadDir.getAbsolutePath()+"/"+ projName+ProjectStructure.getNewProjectZipFileExtension();
          
                 ArrayList<String> ignore = new ArrayList<String> ();
                 ArrayList<String> ignoreNone = new ArrayList<String> ();

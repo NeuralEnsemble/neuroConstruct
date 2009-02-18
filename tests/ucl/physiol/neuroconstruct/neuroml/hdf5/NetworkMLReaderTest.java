@@ -62,7 +62,7 @@ public class NetworkMLReaderTest
         
         System.out.println("Sys prop: "+System.getProperty("java.library.path"));
         
-        File projFile = new File(projDir, projName+ProjectStructure.getProjectFileExtension());
+        File projFile = ProjectStructure.findProjectFile(projDir);
         
         pm = new ProjectManager();
         

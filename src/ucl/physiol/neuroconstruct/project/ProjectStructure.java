@@ -27,6 +27,7 @@
 package ucl.physiol.neuroconstruct.project;
 
 import java.io.*;
+import ucl.physiol.neuroconstruct.gui.SimpleFileFilter;
 import ucl.physiol.neuroconstruct.utils.*;
 
 
@@ -50,7 +51,9 @@ public class ProjectStructure
     
     private static final String updateCheckUrl = "http://www.physiol.ucl.ac.uk/research/silver_a/nCinfo/form.php?myversion=";
 
-    private static final String projectFileExtension = new String(".neuro.xml");
+    private static final String oldProjectFileExtension = new String(".neuro.xml");
+    
+    private static final String newProjectFileExtension = new String(".ncx");
 
     private static final String morphFileExtension = new String(".morph.xml");
 
@@ -76,7 +79,9 @@ public class ProjectStructure
 
     private static final String javaObjFileExtension = new String(".java.ser");
 
-    private static final String zippedProjectFileExtension = new String(".neuro.zip");
+    private static final String oldZippedProjectFileExtension = new String(".neuro.zip");
+
+    private static final String newZippedProjectFileExtension = new String(".ncx.zip");
 
     private static final String dataSetExtension = new String(".ds");
 
@@ -885,14 +890,50 @@ public class ProjectStructure
         return nmodlEditRecentFilesFilename;
     }
 
-    /**
-     * Just in case I decide to change the extension...
-     *
-     * @return The extension of files which can be loaded by the app
-     */
-    public static String getProjectFileExtension()
+
+    public static String getOldProjectFileExtension()
     {
-        return projectFileExtension;
+        return oldProjectFileExtension;
+    }
+
+    public static String getNewProjectFileExtension()
+    {
+        return newProjectFileExtension;
+    }
+
+    public static SimpleFileFilter getProjectFileFilter()
+    {
+        SimpleFileFilter fileFilter
+            = new SimpleFileFilter(new String[]{getNewProjectFileExtension(),
+                                                getOldProjectFileExtension()},
+                                   "neuroConstruct files. Extension: *"+getNewProjectFileExtension()
+                                   +", *"+getOldProjectFileExtension());
+
+        return fileFilter;
+    }
+
+    public static SimpleFileFilter getZippedProjectFileFilter()
+    {
+        SimpleFileFilter fileFilter
+            = new SimpleFileFilter(new String[]{getNewProjectZipFileExtension(),
+                                                getOldProjectZipFileExtension()},
+                                   "Zipped neuroConstruct files. Extension: *"+getNewProjectZipFileExtension()
+                                   +", *"+getOldProjectZipFileExtension());
+
+        return fileFilter;
+    }
+
+    public static File findProjectFile(File projectMainDir)
+    {
+        File projFile = new File(projectMainDir, projectMainDir.getName()+ProjectStructure.getNewProjectFileExtension());
+        if(projFile.exists())
+            return projFile;
+
+        projFile = new File(projectMainDir, projectMainDir.getName()+ProjectStructure.getOldProjectFileExtension());
+        if(projFile.exists())
+            return projFile;
+
+        return null;
     }
 
 
@@ -953,15 +994,13 @@ public class ProjectStructure
 
 
 
-
-    /**
-     * Just in case I decide to change the extension...
-     *
-     * @return The extension of the zip file created when a project is zipped
-     */
-    public static String getProjectZipFileExtension()
+    public static String getOldProjectZipFileExtension()
     {
-        return zippedProjectFileExtension;
+        return oldZippedProjectFileExtension;
+    }
+    public static String getNewProjectZipFileExtension()
+    {
+        return newZippedProjectFileExtension;
     }
 
     /**

@@ -54,7 +54,7 @@ public class ElecInputGeneratorTest {
         System.out.println("---------------   setUp() ElecInputGeneratorTest");
         String projName = "TestStims";
         File projDir = new File("testProjects/"+ projName);
-        File projFile = new File(projDir, projName+ProjectStructure.getProjectFileExtension());
+        File projFile = ProjectStructure.findProjectFile(projDir);
         
         System.out.println("File: "+ projFile.getAbsolutePath());
         

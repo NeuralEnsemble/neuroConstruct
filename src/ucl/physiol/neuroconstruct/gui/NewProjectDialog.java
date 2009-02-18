@@ -167,6 +167,7 @@ public class NewProjectDialog extends JDialog
     }
 
     //Overridden so we can exit when window is closed
+    @Override
     protected void processWindowEvent(WindowEvent e)
     {
         if (e.getID() == WindowEvent.WINDOW_CLOSING)
@@ -207,7 +208,7 @@ public class NewProjectDialog extends JDialog
                                            +projCurrName
                                            +fileSep
                                            +projCurrName
-                                           +ProjectStructure.getProjectFileExtension());
+                                           +ProjectStructure.getNewProjectFileExtension());
 
     }
 

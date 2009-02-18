@@ -110,7 +110,8 @@ public class ZipUtils
             else
             {
                 if ( !ignoreFileDirs.contains(files[i].getName())  &&
-                     !files[i].getName().endsWith(ProjectStructure.getProjectZipFileExtension()))
+                     !files[i].getName().endsWith(ProjectStructure.getNewProjectZipFileExtension()) &&
+                     !files[i].getName().endsWith(ProjectStructure.getOldProjectZipFileExtension()))
                 {
                     boolean matchesExtn = false;
                     for (String extn: ignoreExtns)
