@@ -79,6 +79,11 @@ public class SimulationData
     }
 
 
+    public SimulationData(File dataDirectory) throws SimulationDataException
+    {
+        this(dataDirectory, true);
+    }
+
     public SimulationData(File dataDirectory, boolean checkTimesFile) throws SimulationDataException
     {
         //logger.setThisClassVerbose(true);

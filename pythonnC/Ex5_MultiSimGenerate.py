@@ -136,7 +136,7 @@ if numGenerated > 0:
     
         compileProcess = ProcessManager(myProject.neuronFileManager.getMainHocFile())
     
-        compileSuccess = compileProcess.compileFileWithNeuron(0)
+        compileSuccess = compileProcess.compileFileWithNeuron(0,0)
 
         print "Compiled NEURON files for: "+simRef
     
