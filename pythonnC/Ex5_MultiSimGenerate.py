@@ -7,7 +7,8 @@
 #   Author: Padraig Gleeson
 #
 #   This file has been developed as part of the neuroConstruct project
-#   This work has been funded by the Medical Research Council
+#   This work has been funded by the Medical Research Council and the
+#   Wellcome Trust
 #
 #
 
@@ -24,20 +25,16 @@ from ucl.physiol.neuroconstruct.nmodleditor.processes import ProcessManager
 from math import *
 import time
 
-
 neuroConstructSeed = 1234
-
 simulatorSeed = 4321
 
 # Load an existing neuroConstruct project
 
 projFile = File("TestPython/TestPython.neuro.xml")
-
 print "Loading project from file: " + projFile.getAbsolutePath()+", exists: "+ str(projFile.exists())
 
 pm = ProjectManager()
 myProject = pm.loadProject(projFile)
-
 
 simConfig = myProject.simConfigInfo.getSimConfig("SingleCell")
 
@@ -70,23 +67,22 @@ def updateSimsRunning():
         for sim in simsFinished:
             simsRunning.remove(sim)
 
+            
 
 if numGenerated > 0:
 
     print "Generating NEURON scripts..."
     
     myProject.neuronFileManager.setQuitAfterRun(1) # Remove this line to leave the NEURON sim windows open after finishing
-    
     myProject.neuronSettings.setCopySimFiles(1) # 1 copies hoc/mod files to PySim_0 etc. and will allow multiple sims to run at once
     
 
     # Note same network structure will be used for each!
-    numSimulationsToRun = 22
-
+    numSimulationsToRun = 12
+    # Change this number to the number of processors you wish to use on your local machine
     maxNumSimultaneousSims = 4
     
     for i in range(0, numSimulationsToRun):
-
 
         while (len(simsRunning)>=maxNumSimultaneousSims):
             print "Sims currently running: "+str(simsRunning)
@@ -102,11 +98,8 @@ if numGenerated > 0:
         ########  Adjusting the amplitude of the current clamp ###############
         
         stim = myProject.elecInputInfo.getStim("Input_0")
-        
         newAmp = i/10.0
-        
         stim.setAmp(NumberGenerator(newAmp))
-        
         myProject.elecInputInfo.updateStim(stim)
         
         print "Next stim: "+ str(stim)

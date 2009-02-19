@@ -270,7 +270,15 @@ public class GeneratedElecInputs
         }
         return sb.toString();
     }
-    
+
+
+    /*
+     * Useful for Python interface
+     */
+    public String details()
+    {
+        return details(false);
+    }
     
     public String details(boolean html)
     {

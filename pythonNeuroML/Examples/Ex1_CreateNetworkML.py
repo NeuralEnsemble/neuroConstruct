@@ -2,17 +2,20 @@
 #   A simple example of using the NetworkML helper file to create a network and save it
 #   in a format which can be loaded into neuroConstruct.
 #
-#   Note, only fully works if you have Python/pytables/HDF5 set up correctly. Only tested
-#   on Linux so far.
+#   Note, HDF5 functionality only fully works if you have Python/pytables/HDF5
+#   set up correctly. Only tested on Linux so far.
 #
 #   Author: Padraig Gleeson
 #
 #   This file has been developed as part of the neuroConstruct project
-#   This work has been funded by the Medical Research Council
+#   This work has been funded by the Medical Research Council and the
+#   Wellcome Trust
 #
 #
- 
-import sys, os, math, random, xml
+
+import sys
+import math
+import random
  
 sys.path.append("../NeuroMLUtils")
 from NetworkMLFile import NetworkMLFile

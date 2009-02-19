@@ -5,7 +5,8 @@
 #   Author: Padraig Gleeson
 #
 #   This file has been developed as part of the neuroConstruct project
-#   This work has been funded by the Medical Research Council and the Wellcome Trust
+#   This work has been funded by the Medical Research Council and the
+#   Wellcome Trust
 #
 # 
 

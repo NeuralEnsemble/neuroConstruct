@@ -7,7 +7,8 @@
 #   Author: Padraig Gleeson
 #
 #   This file has been developed as part of the neuroConstruct project
-#   This work has been funded by the Medical Research Council
+#   This work has been funded by the Medical Research Council and the
+#   Wellcome Trust
 #
 #
 
@@ -23,21 +24,17 @@ from math import *
 # Load an existing neuroConstruct project
 
 projFile = File("TestPython/TestPython.neuro.xml")
-
 print "Loading project from file: " + projFile.getAbsolutePath()+", exists: "+ str(projFile.exists())
 
 pm = ProjectManager()
 myProject = pm.loadProject(projFile)
-
 print "Loaded project: " + myProject.getProjectName() 
-
 
 
 # Get the names of the first Cell Group, Network Connection and Electrical Stimulation
 cellGroup0 = myProject.cellGroupsInfo.getAllCellGroupNames().get(0)
 netConn0 = myProject.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().get(0)
 elecInput0 = myProject.elecInputInfo.getAllStimRefs().get(0)
-
 
 
 # Add a number of cells to the generatedCellPositions, connections to generatedNetworkConnections
@@ -59,14 +56,13 @@ input = SingleElectricalInput(elecInput0, cellGroup0, 0)
 myProject.generatedElecInputs.addSingleInput(elecInput0, input)
 
 
-
 print "-----------------------------------"
 print "Information on network generated: "
 print
 
-print myProject.generatedCellPositions
-print myProject.generatedNetworkConnections
-print myProject.generatedElecInputs
+print myProject.generatedCellPositions.details()
+print myProject.generatedNetworkConnections.details()
+print myProject.generatedElecInputs.details()
 
 print "-----------------------------------"
 print

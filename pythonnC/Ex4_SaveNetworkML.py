@@ -6,7 +6,8 @@
 #   Author: Padraig Gleeson
 #
 #   This file has been developed as part of the neuroConstruct project
-#   This work has been funded by the Medical Research Council
+#   This work has been funded by the Medical Research Council and the
+#   Wellcome Trust
 #
 #
 
@@ -21,14 +22,11 @@ from math import *
 # Load an existing neuroConstruct project
 
 projFile = File("TestPython/TestPython.neuro.xml")
-
 print "Loading project from file: " + projFile.getAbsolutePath()+", exists: "+ str(projFile.exists())
 
 pm = ProjectManager()
 myProject = pm.loadProject(projFile)
-
 print "Loaded project: " + myProject.getProjectName() 
-
 
 
 # Add a number of cells to the generatedCellPositions, connections to generatedNetworkConnections
@@ -45,8 +43,8 @@ for i in range(0, numCells) :
 
 
 # Print details
-print myProject.generatedCellPositions
-print myProject.generatedNetworkConnections
+print myProject.generatedCellPositions.details()
+print myProject.generatedNetworkConnections.details()
 
 
 

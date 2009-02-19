@@ -11,29 +11,22 @@
 #
 
 from java.io import File
-from java.lang import System
 
-from ucl.physiol.neuroconstruct.project import Project, ProjectManager
-from ucl.physiol.neuroconstruct.utils import NumberGenerator
+from ucl.physiol.neuroconstruct.project import ProjectManager
 from ucl.physiol.neuroconstruct.cell.converters import MorphMLConverter
-from ucl.physiol.neuroconstruct.gui import MainFrame
-from ucl.physiol.neuroconstruct.utils import GuiUtils
 
 
 # Load an existing neuroConstruct project
 
 projFile = File("TestPython/TestPython.neuro.xml")
-
 print "Loading project from file: " + projFile.getAbsolutePath()+", exists: "+ str(projFile.exists())
 
 pm = ProjectManager()
-
 myProject = pm.loadProject(projFile)
-
 print "Loaded project: " + myProject.getProjectName() 
 
 
-morphDir = File("../examples/Ex3-Morphology/importedMorphologies/")
+morphDir = File("../nCexamples/Ex3_Morphology/importedMorphologies/")
 morphmlFile = File(morphDir, "SimplePurkinjeCell.morph.xml")
 
 
@@ -51,19 +44,21 @@ myProject.cellGroupsInfo.setCellType("SampleCellGroup", cell.getInstanceName()) 
 
 # Now the project can be generated as in Ex5_MultiSimGenerate.py
 
-# OR 
+#      * OR *
 
 
 # Save project
-# Uncomment these lines to save the morphology in the project
+# Uncomment these lines to save the morphology in the project, then view the
+# updated project in neuroConstruct
 '''
 myProject.markProjectAsEdited()
 myProject.saveProject()
-'''
 
 # Run neuroConstruct and check that the cell has been added
 
-'''
+from ucl.physiol.neuroconstruct.gui import MainFrame
+from ucl.physiol.neuroconstruct.utils import GuiUtils
+
 frame = MainFrame()
 GuiUtils.centreWindow(frame)
 frame.setVisible(1)
