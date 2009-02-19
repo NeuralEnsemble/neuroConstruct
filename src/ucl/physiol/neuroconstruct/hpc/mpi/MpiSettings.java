@@ -55,6 +55,7 @@ public class MpiSettings
     
     public static final String LOCAL_SERIAL = "Local machine, serial mode";
     public static final String LOCAL_2PROC = "Local machine (2p)";
+    public static final String LOCAL_3PROC = "Local machine (3p)";
     public static final String LOCAL_4PROC = "Local machine (4p)";
 
     public static final String OTHER_4PROC = "Other machine (4p)";
@@ -104,6 +105,12 @@ public class MpiSettings
         {
             MpiConfiguration p = new MpiConfiguration(LOCAL_4PROC);
             p.getHostList().add(new MpiHost(LOCALHOST,4, 1));
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(LOCAL_3PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(LOCAL_3PROC);
+            p.getHostList().add(new MpiHost(LOCALHOST,3, 1));
             configurations.add(p);
         }
         if (getMpiConfiguration(OTHER_4PROC)==null)
