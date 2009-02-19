@@ -55,10 +55,13 @@ public class NeuronSettings
     private boolean useVarTimeStep = false;
     
     private boolean genAllModFiles = false;
-    
+
     private boolean forceModFileRegeneration = false;
+
+    private boolean modSilentMode = true;
     
     private boolean copySimFiles = false;
+
     
     private boolean forceCorrectInit = true;
 
@@ -197,6 +200,17 @@ public class NeuronSettings
     public void setVarTimeStep(boolean useVarTimeStep)
     {
         this.useVarTimeStep = useVarTimeStep;
+    }
+
+
+    public boolean isModSilentMode()
+    {
+        return modSilentMode;
+    }
+
+    public void setModSilentMode(boolean modSilentMode)
+    {
+        this.modSilentMode = modSilentMode;
     }
 
 

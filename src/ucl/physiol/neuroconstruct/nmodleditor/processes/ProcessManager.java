@@ -146,7 +146,7 @@ public class ProcessManager
      */
     public boolean compileFileWithNeuron(boolean forceRecompile, boolean showDialog) throws NeuronException
     {
-        logger.logComment("Going to compile the file: "+ myFile.getAbsolutePath());
+        logger.logComment("Going to compile the file: "+ myFile.getAbsolutePath()+", forcing recompile: "+ forceRecompile, true);
 
         Runtime rt = Runtime.getRuntime();
         String neuronHome = GeneralProperties.getNeuronHomeDir();
@@ -159,7 +159,6 @@ public class ProcessManager
             File otherCheckFileToBeCreated = null; // for now...
 
             logger.logComment("Parent dir: "+ directoryToExecuteIn);
-
 
             if (GeneralUtils.isWindowsBasedPlatform())
             {
@@ -174,14 +173,28 @@ public class ProcessManager
 
                 logger.logComment("Name of file to be created: " + fileToBeCreated.getAbsolutePath());
 
-                commandToExecute = neuronHome
+                File modCompileScript = ProjectStructure.getNeuronUtilsWinModCompileFile();
+
+                if (showDialog)
+                {
+                    commandToExecute = neuronHome
                                    + "\\bin\\rxvt.exe -e "
                                    + neuronHome
-                                   + "/bin/sh "
-                                   + neuronHome
-                                   + "/lib/mknrndll.sh "
+                                   + "/bin/sh \""
+                                   + modCompileScript.getAbsolutePath()
+                                   + "\" "
                                    + neuronHome
                                    + " ";
+                }
+                else
+                {
+                   commandToExecute = neuronHome
+                                   + "/bin/sh \""
+                                   + modCompileScript.getAbsolutePath()
+                                   + "\" "
+                                   + neuronHome
+                                   + " "+" -q"; //quiet mode, no "press any key to continue"...
+                }
                 
                 logger.logComment("commandToExecute: " + commandToExecute);
             }

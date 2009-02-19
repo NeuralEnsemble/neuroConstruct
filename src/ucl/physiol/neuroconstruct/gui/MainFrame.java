@@ -426,8 +426,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JCheckBox jCheckBoxNeuronCopySimFiles = new JCheckBox("Copy files to simulations dir");
     JCheckBox jCheckBoxGenesisCopySimFiles = new JCheckBox("Copy files to simulations dir");
     
-    
+
     JCheckBox jCheckBoxNeuronForceCorrInit = new JCheckBox("Force correct ChannelML init");
+    JCheckBox jCheckBoxNeuronModSilent = new JCheckBox("Silent mod compile");
 
     JPanel jPanelNeuronRandomGen =  new JPanel();
     JLabel jLabelNeuronRandomGenDesc = new JLabel("Random seed for NEURON:");
@@ -3211,11 +3212,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelNeuronNumInt.add(this.jCheckBoxNeuronGenAllMod);
         jPanelNeuronNumInt.add(this.jCheckBoxNeuronCopySimFiles);
         jPanelNeuronNumInt.add(jCheckBoxNeuronForceCorrInit);
+        jPanelNeuronNumInt.add(jCheckBoxNeuronModSilent);
 
-        
+
         jCheckBoxNeuronForceCorrInit.setSelected(true);
-        
-        
+
+
         jCheckBoxNeuronForceCorrInit.addItemListener(new java.awt.event.ItemListener()
         {
             public void itemStateChanged(ItemEvent e)
@@ -3223,6 +3225,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 flagModsToBeRegenerated(e);
             }
         });
+
+        jCheckBoxNeuronModSilent.setSelected(true);
+
+        
         
         jCheckBoxNeuronGenAllMod.addItemListener(new java.awt.event.ItemListener()
         {
@@ -4254,6 +4260,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronSaveHoc);
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronNumInt);
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronForceCorrInit);
+        addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronModSilent);
        
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronGenAllMod);
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronCopySimFiles);
@@ -4435,6 +4442,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jCheckBoxNeuronGenAllMod.setToolTipText(toolTipText.getToolTip("NeuronGenAllMod"));
         jCheckBoxNeuronCopySimFiles.setToolTipText(toolTipText.getToolTip("NeuronCopySimFiles"));
         jCheckBoxNeuronForceCorrInit.setToolTipText(toolTipText.getToolTip("NeuronForceCorrInit"));
+        jCheckBoxNeuronModSilent.setToolTipText(toolTipText.getToolTip("NeuronModSilent"));
         
 
         jCheckBoxGenesisCopySimFiles.setToolTipText(toolTipText.getToolTip("GenesisCopySimFiles"));
@@ -4701,8 +4709,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
                 projManager.getCurrentProject().neuronSettings.setCopySimFiles(this.jCheckBoxNeuronCopySimFiles.isSelected());
-                
+
                 projManager.getCurrentProject().neuronSettings.setForceCorrectInit(this.jCheckBoxNeuronForceCorrInit.isSelected());
+                projManager.getCurrentProject().neuronSettings.setModSilentMode(this.jCheckBoxNeuronModSilent.isSelected());
 
 
                 try
@@ -6247,7 +6256,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     logger.logComment("Trying to compile the files in dir: " + modFiles[0].getParentFile());
                     
 
-                    compileSuccess = compileProcess.compileFileWithNeuron(projManager.getCurrentProject().neuronSettings.isForceModFileRegeneration(), true);
+                    compileSuccess = compileProcess.compileFileWithNeuron(projManager.getCurrentProject().neuronSettings.isForceModFileRegeneration(),
+                        !projManager.getCurrentProject().neuronSettings.isModSilentMode());
                 }
             }
             catch (Exception ex)
@@ -9850,6 +9860,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jCheckBoxNeuronGenAllMod.setSelected(projManager.getCurrentProject().neuronSettings.isGenAllModFiles());
             this.jCheckBoxNeuronCopySimFiles.setSelected(projManager.getCurrentProject().neuronSettings.isCopySimFiles());
             this.jCheckBoxNeuronForceCorrInit.setSelected(projManager.getCurrentProject().neuronSettings.isForceCorrectInit());
+            this.jCheckBoxNeuronModSilent.setSelected(projManager.getCurrentProject().neuronSettings.isModSilentMode());
 
             jComboBoxNeuronExtraBlocks.setEnabled(true);
 

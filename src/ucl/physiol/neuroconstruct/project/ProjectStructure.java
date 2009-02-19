@@ -175,6 +175,12 @@ public class ProjectStructure
         + "neuronUtils"
         + System.getProperty("file.separator")
         + "nCtools.hoc";
+
+    private static String neuronUtilsWinModCompile = "templates"
+        + System.getProperty("file.separator")
+        + "neuronUtils"
+        + System.getProperty("file.separator")
+        + "mknrndll.sh";
     
     private static String neuronCellCheckFileInInstall = "templates"
         + System.getProperty("file.separator")
@@ -440,6 +446,12 @@ public class ProjectStructure
     public static File getNeuronUtilsFile()
     {
         return new File(getnCHome(), neuronUtilsFileInInstall);
+    }
+
+
+    public static File getNeuronUtilsWinModCompileFile()
+    {
+        return new File(getnCHome(), neuronUtilsWinModCompile);
     }
 
 

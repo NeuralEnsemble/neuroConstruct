@@ -938,6 +938,10 @@ Set to MAX if no restriction applies.</defined>
             will be initialised correctly (e.g. m=minf for v at t=0) as opposed to using this value. The &amp;lt;initialisation&amp;gt; element was introduced to  <br/>
             test agreement of ChannelML files with incorrectly initialised original mod files.</defined>
 </term>
+<term hidden="true">
+    <name>NeuronModSilent</name>
+    <defined>If this is selected, the mod files will be compiled in the background and not require any user feedback (e.g. Press any key to continue...)</defined>
+</term>
 
 
 
