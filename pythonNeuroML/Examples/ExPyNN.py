@@ -52,6 +52,9 @@ cell_params = {'tau_refrac':2.0,'v_thresh':-50.0,'tau_syn_E':2.0, 'tau_syn_I':2.
 cellsA = Population((cellNumA,), cellType, cell_params, label="Cells_A")
 cellsB = Population((cellNumB,), cellType, cell_params, label="Cells_B")
 
+print "ffffffffffffffffff"
+print cellsA.__class__
+
 xMin=0
 xMax=200
 yMin=0
