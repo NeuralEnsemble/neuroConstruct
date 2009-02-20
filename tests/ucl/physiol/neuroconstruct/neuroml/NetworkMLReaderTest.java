@@ -27,6 +27,9 @@
 package ucl.physiol.neuroconstruct.neuroml;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Vector;
 import javax.xml.validation.*;
 import javax.xml.*;
 import javax.xml.transform.Source;
@@ -34,6 +37,8 @@ import javax.xml.transform.stream.StreamSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import ucl.physiol.neuroconstruct.cell.Cell;
+import ucl.physiol.neuroconstruct.mechanisms.CellMechanism;
 import static org.junit.Assert.*;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.Hdf5Exception;
 import ucl.physiol.neuroconstruct.project.*;
@@ -160,7 +165,7 @@ public class NetworkMLReaderTest
         
         proj.resetGenerated();
                 
-        pm.doLoadNetworkML(nmlFile);
+        pm.doLoadNetworkML(nmlFile, true);
         
         
         StringBuffer stateString2 = new StringBuffer();
@@ -178,10 +183,66 @@ public class NetworkMLReaderTest
         
         System.out.println("Strings representing internal states equal!");
         
+        
+        //test the NetworkML reader on a Level3 file
+        File l3File = new File(saveNetsDir, "l3test.nml");
+        ProjectManager.saveLevel3NetworkXML(proj, l3File, false, false, sc.getName(), NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+        assertTrue(l3File.exists());
+        
+        Iterator<String> groups = proj.generatedCellPositions.getNamesGeneratedCellGroups();
+        ArrayList<String> cells = new ArrayList<String>();
+        while (groups.hasNext()) {
+            String string = groups.next();
+            cells.add(proj.cellGroupsInfo.getCellType(string));
+        }
+        Vector<Cell> projCells = proj.cellManager.getAllCells();
+        Vector cellMechs = proj.cellMechanismInfo.getAllCellMechanisms();
+        Iterator<String> nets =  proj.generatedNetworkConnections.getNamesNetConnsIter();
+        Vector<String> netsVector = new Vector<String>();
+        while (nets.hasNext()) {
+           netsVector.add(nets.next());            
+        }
+        ArrayList<String> inputs = proj.generatedElecInputs.getInputReferences();
+
+        System.out.println("Saved Level 3 Network  in: "+ l3File.getAbsolutePath());
+
+        try
+        {
+            Schema schema = factory.newSchema(schemaFileSource);
+
+            Validator validator = schema.newValidator();
+
+            Source xmlFileSource = new StreamSource(l3File);
+
+            validator.validate(xmlFileSource);
+        } 
+        catch (Exception ex)
+        {
+            fail("Unable to validate saved Level 3 file: "+ nmlFile+"\n"+ex.toString());
+        }
+        
+        System.out.println(l3File.getAbsolutePath()+" is valid according to: "+ schemaFile);
+                
+        proj.resetGenerated();
+
+       pm.doLoadNetworkML(l3File, true);       
+      
+       Vector<Cell> cellsImp = proj.cellManager.getAllCells();
+       Vector cellMechsImp = proj.cellMechanismInfo.getAllCellMechanisms();
+       Iterator<String> netsImp =  proj.generatedNetworkConnections.getNamesNetConnsIter();
+       
+       ArrayList<String> inputsImp = proj.generatedElecInputs.getInputReferences();
+       
+        assertTrue(projCells.containsAll(cellsImp));
+        assertTrue(cellMechs.containsAll(cellMechsImp));      
+        assertTrue(inputsImp.containsAll(inputs));   
+        while (netsImp.hasNext()) {
+            assertTrue(netsVector.contains(netsImp.next()));
+            
+        }
+        
+
+        
     }
-
-
-
-
 
 }

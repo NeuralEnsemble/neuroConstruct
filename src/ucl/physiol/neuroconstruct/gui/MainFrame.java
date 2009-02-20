@@ -30,6 +30,7 @@ import java.beans.*;
 import java.io.*;
 import java.net.*;
 import java.text.*;
+import java.util.logging.Level;
 import java.util.zip.*;
 import java.lang.management.*;
 import javax.media.j3d.*;
@@ -500,6 +501,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JLabel jLabelProjFileVersion = new JLabel();
     JTextField jTextFieldProjFileVersion = new JTextField();
     JMenuItem jMenuItemUnzipProject = new JMenuItem();
+    JMenuItem jMenuItemImportLevel123 = new JMenuItem();
     
     JMenu jMenuExamples = new JMenu();
     JMenu jMenuModels = new JMenu();
@@ -579,6 +581,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JRadioButton jRadioButtonNeuroMLLevel1 = new JRadioButton();
     JRadioButton jRadioButtonNeuroMLLevel2 = new JRadioButton();
     JRadioButton jRadioButtonNeuroMLLevel3 = new JRadioButton();
+    JRadioButton jRadioButtonNeuroMLCellChan = new JRadioButton();
+
     ButtonGroup buttonGroupNeuroML = new ButtonGroup();
     
     //JButton jButtonNeuroMLExportLevel2 = new JButton();
@@ -935,12 +939,21 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTextFieldProjFileVersion.setEditable(false);
         jTextFieldProjFileVersion.setText("");
         jMenuItemUnzipProject.setText("Import Zipped Project...");
+        jMenuItemImportLevel123.setText("Import NeuroML level 1, 2, 3...");
 
         jMenuItemUnzipProject.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
                 jMenuItemUnzipProject_actionPerformed(e);
+            }
+        });
+        
+       jMenuItemImportLevel123.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jMenuItemImportLevel123_actionPerformed(e);
             }
         });
         
@@ -1175,10 +1188,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jRadioButtonNeuroMLLevel1.setText("Level 1 (Anatomy only)");
         jRadioButtonNeuroMLLevel2.setText("Level 2 (L1 & cell biophysics)");
         jRadioButtonNeuroMLLevel3.setText("Level 3 (L2 & network aspects)");
+        jRadioButtonNeuroMLCellChan.setText("Channels details");
 
         buttonGroupNeuroML.add(jRadioButtonNeuroMLLevel1);
         buttonGroupNeuroML.add(jRadioButtonNeuroMLLevel2);
         buttonGroupNeuroML.add(jRadioButtonNeuroMLLevel3);
+        buttonGroupNeuroML.add(jRadioButtonNeuroMLCellChan);
 
         jButtonNeuroMLExport.setEnabled(false);
         jButtonNeuroMLExport.setText("Export all Cell Types");
@@ -1193,6 +1208,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     jButtonNeuroMLExport_actionPerformed(e, NeuroMLConstants.NEUROML_LEVEL_2);
                 else if (jRadioButtonNeuroMLLevel3.isSelected())
                     jButtonNeuroMLExport_actionPerformed(e, NeuroMLConstants.NEUROML_LEVEL_3);
+                else if (jRadioButtonNeuroMLCellChan.isSelected()) {
+                    jButtonNeuroMLExport_actionPerformed(e, "Cells with channels"); //added by Matteo
+                }
             }
         });
         
@@ -2042,6 +2060,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLLevel1);
         jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLLevel2);
         jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLLevel3);
+        jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLCellChan);
         jRadioButtonNeuroMLLevel2.setSelected(true);
         
 
@@ -4331,6 +4350,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jMenuItemCopyProject.setToolTipText(toolTipText.getToolTip("Copy project"));
         jMenuItemZipUp.setToolTipText(toolTipText.getToolTip("Zipped Project"));
         jMenuItemUnzipProject.setToolTipText(toolTipText.getToolTip("Import project"));
+//        jMenuItemImportLevel123.setToolTipText(toolTipText.getToolTip("Import Level 3 Network"));
 
         jMenuItemDataSets.setToolTipText(toolTipText.getToolTip("Data Set Manager"));
 
@@ -8278,6 +8298,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jMenuFile.add(jMenuItemCopyProject);
         jMenuFile.add(jMenuItemZipUp);
         jMenuFile.add(jMenuItemUnzipProject);
+        jMenuFile.add(jMenuItemImportLevel123);
         jMenuFile.addSeparator();
         
         jMenuFile.add(jMenuExamples);
@@ -8398,6 +8419,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jMenuItemSaveProject.setEnabled(true);
             this.jMenuItemZipUp.setEnabled(true);
             this.jMenuItemUnzipProject.setEnabled(true);
+            this.jMenuItemImportLevel123.setEnabled(true);
 
             jMenuItemCopyProject.setEnabled(true);
 
@@ -11380,7 +11402,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     this.jTextFieldRandomGen.setText(tempRandom.nextInt() + "");
                 }
 
-                NetworkMLnCInfo extraInfo = projManager.doLoadNetworkML(chooser.getSelectedFile());
+                NetworkMLnCInfo extraInfo = projManager.doLoadNetworkML(chooser.getSelectedFile(), false);
                 
                 logger.logComment("Elec inputs read: "+ projManager.getCurrentProject().generatedElecInputs);
                 
@@ -11455,7 +11477,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
     }
-
+    
     void jButtonGenerateSave_actionPerformed(ActionEvent e)
     {
         logger.logComment("Saving the currently generated network");
@@ -11730,7 +11752,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         String dir = null;
 
         if (projManager.getCurrentProject()!=null)
-            dir = projManager.getCurrentProject().getProjectMainDirectory().getAbsolutePath();
+            dir = projManager.getCurrentProject().getProjectMainDirectory().getAbs````olutePath();
         else
             dir = GeneralProperties.getnCProjectsDir().getAbsolutePath();
 
@@ -12036,6 +12058,265 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     void jMenuItemUnzipProject_actionPerformed(ActionEvent e)
     {
         doUnzipProject();
+    }
+    
+    void  jMenuItemImportLevel123_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("Loading a previously generated network...");
+
+        final JFileChooser chooser = new JFileChooser();
+
+        chooser.setCurrentDirectory(ProjectStructure.getNeuroMLDir(projManager.getCurrentProject().getProjectMainDirectory()));
+
+//        chooser.setFileFilter(new SimpleFileFilter(new String[]{".net.xml"}, "Level 3 NeuroML Network files", true));
+
+        logger.logComment("chooser.getCurrentDirectory(): "+chooser.getCurrentDirectory());
+
+        chooser.setDialogTitle("Choose NeuroML  file to load");
+
+        final JTextArea summary = new JTextArea(12,40);
+        summary.setMargin(new Insets(5,5,5,5));
+        summary.setEditable(false);
+        JPanel addedPanel = new JPanel();
+        addedPanel.setLayout(new BorderLayout());
+        
+        JScrollPane jScrollPane = new JScrollPane(summary);
+        //jScrollPane.setBorder(BorderFactory.createEtchedBorder());
+        addedPanel.add(jScrollPane, BorderLayout.NORTH);
+
+        JPanel viewPanel = new JPanel();
+        final JLabel sizeInfo = new JLabel("");
+        final JButton openButton = new JButton("View file");
+        final JButton editButton = new JButton("Edit externally");
+
+        viewPanel.add(sizeInfo);
+        viewPanel.add(openButton);
+        viewPanel.add(editButton);
+        openButton.setEnabled(false);
+        editButton.setEnabled(false);
+        addedPanel.add(viewPanel, BorderLayout.SOUTH);
+        
+        openButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                File newFile = chooser.getSelectedFile();
+                if (newFile!=null)
+                {
+                    chooser.cancelSelection();
+                    //System.out.println("Opening file: "+newFile);
+                    SimpleViewer.showFile(newFile.getAbsolutePath(), 12, false, false, false);
+                }
+                
+            }
+        });
+        editButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                File newFile = chooser.getSelectedFile();
+                if (newFile!=null)
+                {
+                    chooser.cancelSelection();
+                    
+                    String editorPath = GeneralProperties.getEditorPath(true);
+
+                    Runtime rt = Runtime.getRuntime();
+
+                    String command = editorPath + " " + newFile.getAbsolutePath()+"";
+
+                    if (GeneralUtils.isWindowsBasedPlatform() && newFile.getAbsolutePath().indexOf(" " )>=0)
+                    {
+                        command = editorPath + " \"" + newFile.getAbsolutePath()+"\"";
+                    }
+
+
+                    logger.logComment("Going to execute command: " + command);
+
+                    try
+                    {
+
+                        rt.exec(command);
+                    }
+                    catch (IOException ex)
+                    {
+                        logger.logError("Error running "+command);
+                    }
+
+                    logger.logComment("Have successfully executed command: " + command);
+                }
+                
+            }
+        });
+
+
+        chooser.addPropertyChangeListener(new PropertyChangeListener(){
+
+            public void propertyChange(PropertyChangeEvent e)
+            {
+                logger.logComment("propertyChange: " + e);
+                logger.logComment("getPropertyName: " + e.getPropertyName());
+                
+                if (e.getPropertyName().equals("SelectedFileChangedProperty"))
+                {
+                    File newFile = chooser.getSelectedFile();
+                    logger.logComment("Looking at: " + newFile);
+                    try
+                    {
+                        if (newFile.getName().endsWith(ProjectStructure.getNeuroMLCompressedFileExtension()))
+                        {
+                            openButton.setEnabled(false);
+                            
+                            ZipInputStream zf = new ZipInputStream(new FileInputStream( newFile));
+                            ZipEntry ze = null;
+
+                            //summary.setText("Comment: "+zf.getNextEntry().getComment());
+                            while ((ze=zf.getNextEntry())!=null)
+                            {
+                                logger.logComment("Entry: " +ze );
+                                summary.setText("Contains: "+ze);
+                            }
+                            summary.setCaretPosition(0);
+
+
+                        }
+                        else
+                        {
+                            openButton.setEnabled(true);
+                            editButton.setEnabled(true);
+
+                            FileReader fr = null;
+
+                            fr = new FileReader(newFile);
+
+                            LineNumberReader reader = new LineNumberReader(fr);
+                            String nextLine = null;
+
+                            StringBuilder sb = new StringBuilder();
+                            int count = 0;
+                            int maxlines = 100;
+
+                            while (count <= maxlines && (nextLine = reader.readLine()) != null)
+                            {
+                                sb.append(nextLine + "\n");
+                                count++;
+                            }
+                            if (count >= maxlines) sb.append("\n\n  ... NetworkML file continues ...");
+                            reader.close();
+                            fr.close();
+                            summary.setText(sb.toString());
+                            summary.setCaretPosition(0);
+                            
+                            sizeInfo.setText("Size: "+ newFile.length()+" bytes");
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        summary.setText("Error loading contents of file: " + newFile);
+                    }
+                }
+
+            }
+
+            });
+
+        chooser.setAccessory(addedPanel);
+
+        int retval = chooser.showDialog(this, "Choose network");
+
+        if (retval == JOptionPane.OK_OPTION)
+        {
+            long start = System.currentTimeMillis();
+            try
+            {
+                
+                projManager.getCurrentProject().resetGenerated();
+
+                logger.logComment("Removing 3D network, as it's no longer relevant...");
+                doDestroy3D();
+
+                if (this.jCheckBoxRandomGen.isSelected())
+                {
+                    Random tempRandom = new Random();
+                    this.jTextFieldRandomGen.setText(tempRandom.nextInt() + "");
+                }
+
+                NetworkMLnCInfo extraInfo = projManager.doLoadNetworkML(chooser.getSelectedFile(), false);
+                
+                logger.logComment("Elec inputs read: "+ projManager.getCurrentProject().generatedElecInputs);
+                
+                String prevSimConfig = extraInfo.getSimConfig();
+                long randomSeed = extraInfo.getRandomSeed();
+
+                if (randomSeed!=Long.MIN_VALUE)
+                {
+                    this.jTextFieldRandomGen.setText(randomSeed+"");
+                    ProjectManager.setRandomGeneratorSeed(randomSeed);
+                    ProjectManager.reinitialiseRandomGenerator();
+                }
+                if (prevSimConfig!=null)
+                {
+                    this.jComboBoxSimConfig.setSelectedItem(prevSimConfig);
+                }               
+                
+
+            }
+            catch (Exception ex)
+            {
+                GuiUtils.showErrorMessage(logger, "Error loading network info from: "+chooser.getSelectedFile(), ex, this);
+                return;
+            }
+            long end = System.currentTimeMillis();
+
+            SimConfig simConfig = getSelectedSimConfig();
+            
+            
+            Hashtable<String, ArrayList<Integer>> hostsVsProcs = CompNodeGenerator.getHostsVsNumOnProcs(projManager.getCurrentProject(), simConfig);
+            
+            String compNodesReport = CompNodeGenerator.generateCompNodesReport(hostsVsProcs, simConfig.getMpiConf(), -1);
+            
+            
+            boolean elecInputsReadFromFile = projManager.getCurrentProject().generatedElecInputs.getNumberSingleInputs()>0;
+            
+            String inputReport = "";
+            if (elecInputsReadFromFile)
+            {
+                inputReport = projManager.getCurrentProject().generatedElecInputs.getHtmlReport();
+            }
+            String note = "<center><b>NOTE: The following elements have been generated based on Simulation Configuration: "+simConfig.getName()+"</b></center><br>";
+
+            jEditorPaneGenerateInfo.setText("Cell positions and network connections loaded from: <b>"+chooser.getSelectedFile()+"</b> in "+((end-start)/1000.0)+" seconds<br><br>"
+                                            +"<center><b>Cell Groups:</b></center>"
+                                            +projManager.getCurrentProject().generatedCellPositions.getHtmlReport()
+                                            +"<center><b>Network Connections:</b></center>"
+                +projManager.getCurrentProject().generatedNetworkConnections.getHtmlReport(
+                                        GeneratedNetworkConnections.ANY_NETWORK_CONNECTION,simConfig)
+                                        + compNodesReport+inputReport+"<br>"+note);
+            
+            
+
+            if (elecInputsReadFromFile)
+            {
+                projManager.plotSaveGenerator = new PlotSaveGenerator(projManager.getCurrentProject(), this);
+                projManager.plotSaveGenerator.setSimConfig(simConfig);
+                projManager.plotSaveGenerator.start();
+            }
+            else
+            {
+                projManager.elecInputGenerator = new ElecInputGenerator(projManager.getCurrentProject(), this);
+                projManager.elecInputGenerator.setSimConfig(simConfig);
+                projManager.elecInputGenerator.start();
+            }
+
+            sourceOfCellPosnsInMemory = NETWORKML_POSITIONS;
+
+            jComboBoxView3DChoice.setSelectedItem(LATEST_GENERATED_POSITIONS);
+
+        }
+        
+        refreshAll();
+
     }
 
 
@@ -12458,17 +12739,45 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     {
 
         logger.logComment("Saving the cell morphologies in NeuroML form...");
-
-        File neuroMLDir = ProjectStructure.getNeuroMLDir(projManager.getCurrentProject().getProjectMainDirectory());
+        
+        Project proj = projManager.getCurrentProject();
+                
+        File neuroMLDir = ProjectStructure.getNeuroMLDir(proj.getProjectMainDirectory());
 
         GeneralUtils.removeAllFiles(neuroMLDir, false, false, false);
+        
+        if (level.equals("Cells with channels"))
+        {
+            for (int i = 0; i <  (proj.cellManager.getNumberCellTypes()); i++) 
+            {
+                String cellName = proj.cellManager.getAllCellTypeNames().get(i);
+                logger.logComment("saving cell type "+ cellName +" with all the channels details in a XML file");  
+                File cellFile = new File(neuroMLDir,
+                                    cellName
+                                    + ProjectStructure.getMorphMLFileExtension());
+                
+                try 
+                {
+                    ProjectManager.saveCompleteCellXML(proj, cellFile, false, false, cellName);
+                } 
+                catch (NeuroMLException ex)
+                {
+                    logger.logComment("Unable to save cell type "+ cellName);  
+                }
+            }
+
+        }
+        
+        else
+            
+        {
 
         MorphCompartmentalisation mc = (MorphCompartmentalisation)jComboBoxNeuroMLComps.getSelectedItem();
 
    
         try
         {
-            MorphMLConverter.saveAllCellsInNeuroML(projManager.getCurrentProject(), 
+            MorphMLConverter.saveAllCellsInNeuroML(proj, 
                                                    mc, 
                                                    level, 
                                                    null,
@@ -12479,6 +12788,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             GuiUtils.showErrorMessage(logger, "Problem saving cells " , ex1, this);
         }
         refreshTabNeuroML();
+        }
     
 
     }

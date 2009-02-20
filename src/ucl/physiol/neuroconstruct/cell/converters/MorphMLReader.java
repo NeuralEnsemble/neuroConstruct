@@ -93,7 +93,7 @@ public class MorphMLReader extends XMLFilterImpl
     //private ChannelMechanism currentChanMech = null;
 
     private String currentPropertyTag = null;
-
+    
     String metadataPrefix = MetadataConstants.PREFIX + ":";
 
     @Override
@@ -340,7 +340,7 @@ public class MorphMLReader extends XMLFilterImpl
         logger.logComment("\n                                            -----   Start element: namespaceURI: " + namespaceURI
                            + ", localName: " + localName
                            + ", qName: " + qName);
-
+        
 
          int attrsLength = attributes.getLength();
          for (int i = 0; i < attrsLength; i++)

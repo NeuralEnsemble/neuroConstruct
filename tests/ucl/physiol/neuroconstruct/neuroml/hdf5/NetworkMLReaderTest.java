@@ -143,7 +143,7 @@ public class NetworkMLReaderTest
         
         proj.resetGenerated();
                 
-        pm.doLoadNetworkML(nmlFile);
+        pm.doLoadNetworkML(nmlFile, true);
         
         
         StringBuffer stateString2 = new StringBuffer();

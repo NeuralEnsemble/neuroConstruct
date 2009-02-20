@@ -69,7 +69,7 @@ public class NumberGenerator implements Serializable
     // extra variables for Gaussian
     float mean = 0f;
     float stdDev = 1f;
-
+    
 
     public boolean isTypeFixedNum()
     {
@@ -83,7 +83,7 @@ public class NumberGenerator implements Serializable
     {
         return this.distributionType == GAUSSIAN_NUM;
     }
-
+    
     @Override
     public boolean equals(Object otherObj)
     {
@@ -191,7 +191,7 @@ public class NumberGenerator implements Serializable
         this.mean = mean;
         this.stdDev = stdDev;
     }
-
+    
     public void initialiseAsFixedIntGenerator(int num)
     {
         this.distributionType = FIXED_NUM;
@@ -216,7 +216,7 @@ public class NumberGenerator implements Serializable
         this.mean = mean;
         this.stdDev = stdDev;
     }
-
+    
     /**
      * Generate the next number based on the internal specs. For an INT_GENERATOR it will return an int
      * as a float

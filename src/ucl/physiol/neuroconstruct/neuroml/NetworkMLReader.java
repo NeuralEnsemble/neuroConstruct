@@ -26,13 +26,32 @@
 
 package ucl.physiol.neuroconstruct.neuroml;
 
+import java.awt.Color;
 import java.io.*;
 import java.util.*;
 import java.util.ArrayList;
 
+import java.util.logging.Level;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
+import ucl.physiol.neuroconstruct.cell.Cell;
+import ucl.physiol.neuroconstruct.cell.converters.MorphMLReader;
+import ucl.physiol.neuroconstruct.gui.MainFrame;
+import ucl.physiol.neuroconstruct.mechanisms.ChannelMLCellMechanism;
+import ucl.physiol.neuroconstruct.mechanisms.SimXSLMapping;
 import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.project.cellchoice.AllCells;
+import ucl.physiol.neuroconstruct.project.cellchoice.CellChooser;
+import ucl.physiol.neuroconstruct.project.packing.CellPackingAdapter;
+import ucl.physiol.neuroconstruct.project.packing.CellPackingException;
+import ucl.physiol.neuroconstruct.project.packing.OneDimRegSpacingPackingAdapter;
+import ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter;
+import ucl.physiol.neuroconstruct.project.segmentchoice.GroupDistributedSegments;
+import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentLocationChooser;
 import ucl.physiol.neuroconstruct.project.stimulation.IClamp;
 import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrain;
 import ucl.physiol.neuroconstruct.simulation.IClampSettings;
@@ -41,12 +60,27 @@ import ucl.physiol.neuroconstruct.simulation.StimulationSettings;
 import ucl.physiol.neuroconstruct.utils.*;
 
 import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
+import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLAttribute;
+import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLDocument;
+import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLElement;
+import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLNamespace;
 
 /**
  * NetworkML file Reader. Importer of NetworkML files to neuroConstruct format using SAX
  *
  * @author Padraig Gleeson
  *  
+ * 
+ * Changes made to extend the importer to Level 3 NeuroML files (cells and channels have to be extracted):
+ * - if the startElement find a CELL element turn on the flag insideCell.
+ * - if the flag insideCell is true the reader start to copy the file line by line in a new file containing a Level 3 Cell Description.
+ * - once the CELL is finished the new cell type is loaded in the project.
+ * 
+ * The same procedure is applied to the CHANNEL type...
+ * NB: the channels can't be renamed by the user because the loaded cells will use the old names.
+ * 
+ * @author  Matteo Farinella
+ * 
  */
 
 public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
@@ -94,7 +128,36 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
     private String currentInputType = null;
     private String currentCellGroup = null;
     private String currentInputName = null;
-        
+    
+    private boolean level3 = false;
+    private String cellBuffer = ""; // contains the cell element of a Level 3 Network that once stored in a file can be parse with morphMLReader
+    private boolean insideCell = false;
+    private String cellPrefix = "";
+    private String cellName = "Cell";
+    private Boolean addCell = true;
+    private Boolean replaceAll = false;
+    private Boolean renameAll = false;                            
+    
+    private String chanBuffer = ""; // contains the channelML substring of a Level 3 Network that once stored in a file can be parse with channelMLReader
+    private boolean insideChannel = false;
+    private String chanPrefix = "";
+    private String chanName = "Channel";
+    private Boolean replace = false;
+    
+    private Hashtable<String, String> renamedCells = new Hashtable<String, String>();
+    private RectangularBox region = new RectangularBox(0, 0, 0, 100, 100, 100);
+    private String source = "";
+    private String target = "";
+    private boolean addNet = false;
+    
+    private String synInput = "";
+    private boolean addStim = false;
+    
+    SimConfig importedSimConfig = new SimConfig();
+    private Integer priority = 0;
+    private String groupCellType = "";
+
+    
     //private String metadataPrefix = MetadataConstants.PREFIX + ":";
 
     private GeneratedCellPositions cellPos = null;
@@ -104,6 +167,8 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
     private GeneratedElecInputs elecInputs = null;    
     
     private Project project = null;
+    
+    public boolean testMode = false;
 
     public NetworkMLReader(Project project)
     {
@@ -111,22 +176,53 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
         this.netConns = project.generatedNetworkConnections;
         this.elecInputs = project.generatedElecInputs;
         this.project = project;
+        this.testMode = false;
+    }
+    
+    public void setTestMode(boolean test)
+    {
+        this.testMode = test;
     }
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException
     {
         String contents = new String(ch, start, length);
-
-
+        
+         
         if (contents.trim().length() > 0)
         {
             logger.logComment("Got a string: (" + contents + ") at: "+ elementStack);
+            
+            
+            
+         if (insideCell)
+             
+         {
+              cellBuffer = cellBuffer + contents;            
+         }
+
+         else
+             
+         {
+                
+         if (insideChannel)
+
+         {
+              contents = contents.replace("&", "&amp;");
+              chanBuffer = chanBuffer + contents;            
+         }
+
+         else
+
+         {
+             
 
             if (getCurrentElement().equals(NetworkMLConstants.CELLTYPE_ELEMENT)
                 && getAncestorElement(1).equals(NetworkMLConstants.POPULATION_ELEMENT))
             {
                 //currentCellType = contents;
+                contents = renamedCells.get(contents);
                 logger.logComment(">> currentCellType: "+contents+", currentPopulation: "+currentPopulation);
             }
             else if (getCurrentElement().equals(NetworkMLConstants.SOURCE_ELEMENT)
@@ -169,8 +265,39 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                 else if (this.currentPropertyName.equals(NetworkMLConstants.NC_SIM_CONFIG))
                 {
                     this.foundSimConfig = contents;
+                    Integer nameN = -1;
+                    String simName = this.foundSimConfig;
+                    while (project.simConfigInfo.getAllSimConfigNames().contains(simName))
+                    {
+                        nameN++;
+                        simName = this.foundSimConfig.concat("_imported"+nameN);
+                    }
+                    importedSimConfig = new SimConfig(simName, "");
+                    project.simConfigInfo.add(importedSimConfig);        
+                    logger.logComment(">>>Found a simulation configuration name...");
+
                 }
+                else if (this.currentPropertyName.equals(NetworkMLConstants.NC_SIM_DURATION))
+                {
+                     project.simulationParameters.setDuration(Float.valueOf(contents));
+                     importedSimConfig.setSimDuration(Float.valueOf(contents));
+                     logger.logComment(">>>Found a simulation duration...");
+
+                 }
+                else if (this.currentPropertyName.equals(NetworkMLConstants.NC_SIM_TIME_STEP)) 
+                {
+                     project.simulationParameters.setDt(Float.valueOf(contents));
+                     //importedSimConfig.setSimDt(Float.valueOf(contents));
+                     logger.logComment(">>>Found a simulation time step duration...");
+                }
+                else if (this.currentPropertyName.equals(NetworkMLConstants.NC_TEMPERATURE)) 
+                 {
+                     project.simulationParameters.setTemperature(Float.valueOf(contents));
+                     logger.logComment(">>>Found a simulation temperature...");
+                 }
             }
+         }//else channel
+         }//else cell
         }
     }
 
@@ -243,7 +370,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
     public void startElement(String namespaceURI, String localName,
                              String qName, Attributes attributes)
     throws SAXException
-    {
+    {        
         logger.logComment("\n\n          -----   Start element: " + qName + "        (namespaceURI: " + namespaceURI
                            + ", localName: " + localName + ")");
 
@@ -253,21 +380,145 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
         {
          String name = attributes.getLocalName(i);
          String val = attributes.getValue(i);
+          val = renamedCells.get(val);
 
          logger.logComment("Attr:  " + name+ " = " + val+ "         (qname: "
                            + attributes.getQName(i)+ ", uri: " + attributes.getURI(i)+")");
         }
 
          setCurrentElement(localName);
+         
+         logger.logComment("current element:"+ getCurrentElement());
+         
+         if (!insideCell && getCurrentElement().equals(MorphMLConstants.CELL_ELEMENT))
+         {
+             level3 = true;
+             
+             logger.logComment(">>  Founded a cell type: going to write a separate NeuroML file");
+             cellName = attributes.getValue(attributes.getLocalName(0));
+             insideCell = true;
+         }
+                      
+         logger.logComment("inside a cell:" +insideCell);
+        
+         
+         if (insideCell)
+             
+         {
+             
+          //dealing with prefix
+             if (elementStack.contains("segments") || elementStack.contains("cables")){
+                 cellPrefix = MorphMLConstants.PREFIX+":";
+                 if (getCurrentElement().equals("group"))
+                     cellPrefix = MetadataConstants.PREFIX+":";
+             }
+             if (elementStack.contains("biophysics")) 
+                 cellPrefix = BiophysicsConstants.PREFIX + ":";
+             if (elementStack.contains("connectivity")) 
+                 cellPrefix = NetworkMLConstants.PREFIX + ":";
+             if (getCurrentElement().equals("notes"))
+                 cellPrefix = MetadataConstants.PREFIX+":";
+             if (getCurrentElement().equals("cell") || getCurrentElement().equals("biophysics") || getCurrentElement().equals("connectivity"))
+                 cellPrefix = "";
+                                   
+         //string elongation
+             if (getCurrentElement().equals("biophysics"))
+                 cellBuffer = cellBuffer + ("<!--Adding the biophysical parameters-->\n");
+             if (cellBuffer.endsWith(">"))
+                 cellBuffer = cellBuffer + "\n";
+             cellBuffer = cellBuffer + ("<"+cellPrefix+getCurrentElement());
+             for (int i = 0; i < attrsLength; i++) {
+                 String name = attributes.getLocalName(i);
+                 String val = attributes.getValue(i);
 
-         if (getCurrentElement().equals(NetworkMLConstants.POPULATION_ELEMENT)
-             && getAncestorElement(1).equals(NetworkMLConstants.POPULATIONS_ELEMENT))
+                 cellBuffer = cellBuffer + (" "+name+"=\""+val+"\"");
+             }
+             cellBuffer = cellBuffer +">";
+
+         }
+         
+         
+         if (!insideChannel && ((getCurrentElement().equals(ChannelMLConstants.CHAN_TYPE_ELEMENT)) || (getCurrentElement().equals(ChannelMLConstants.SYN_TYPE_ELEMENT))))
+         {
+             logger.logComment(">>  Founded a channel mechanism: going to write a separate ChannelML file");
+             chanName = attributes.getValue(attributes.getLocalName(0));
+             insideChannel = true;
+         }
+         
+         logger.logComment("inside a channel:" +insideChannel);
+             
+         if (insideChannel)
+         {
+         //dealing with prefix
+             Vector<String> meta = new Vector<String>();
+             meta.add("comment");
+             meta.add("contributor");
+             meta.add("notes");
+             meta.add("authorList");
+             meta.add("modelTranslator");
+             meta.add("publication");
+             meta.add("neuronDBref");
+             if (meta.contains(getCurrentElement()) || meta.contains(getAncestorElement(1)))
+                 chanPrefix = MetadataConstants.PREFIX+":";
+             else
+                 chanPrefix = "";
+             
+         //string elongation
+             if (chanBuffer.endsWith(">"))
+                 chanBuffer = chanBuffer + "\n";
+             chanBuffer = chanBuffer + ("<"+chanPrefix+getCurrentElement());
+             for (int i = 0; i < attributes.getLength(); i++) {
+                 String name = attributes.getLocalName(i);
+                 String val = attributes.getValue(i);
+
+                 chanBuffer = chanBuffer + (" "+name+"=\""+val+"\"");
+             }
+            chanBuffer = chanBuffer +">";
+
+         }
+
+         
+         if (getCurrentElement().equals(NetworkMLConstants.POPULATION_ELEMENT))
          {
              String name = attributes.getValue(NetworkMLConstants.POP_NAME_ATTR);
-
+             
+             groupCellType = attributes.getValue(NetworkMLConstants.CELLTYPE_ATTR);
+             
              logger.logComment(">>  Found a population of name: "+ name);
+             currentPopulation = name;             
+         }
+         
+         else if (getCurrentElement().equals(NetworkMLConstants.INSTANCES_ELEMENT))
+         {
+             Integer popNumber = Integer.valueOf(attributes.getValue(NetworkMLConstants.INSTANCES_SIZE_ATTR));
+             
+             if (!project.cellGroupsInfo.getAllCellGroupNames().contains(currentPopulation) && (level3))
+             {
+                 if (renamedCells.containsKey(groupCellType))
+                         groupCellType = renamedCells.get(groupCellType);
+                 logger.logComment("Going to add a group "+currentPopulation+" for the new cell type "+groupCellType);
+                 try {
+                     Random rand= new  Random();
+                     Color col = new Color(rand.nextInt(256), 
+                                                     rand.nextInt(256),
+                                                     rand.nextInt(256));
+                     project.regionsInfo.addRow(groupCellType+"_region", region, col);
+                     CellPackingAdapter cp = new RandomCellPackingAdapter();
+                        try {
+                            cp.setParameter(RandomCellPackingAdapter.CELL_NUMBER_POLICY, popNumber);
+                            cp.setParameter(RandomCellPackingAdapter.EDGE_POLICY, 0);
+                            cp.setParameter(RandomCellPackingAdapter.SELF_OVERLAP_POLICY, 1);
+                            cp.setParameter(RandomCellPackingAdapter.OTHER_OVERLAP_POLICY, 1);
 
-             currentPopulation = name;
+                        } catch (CellPackingException ex) {
+                            java.util.logging.Logger.getLogger(NetworkMLReader.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                     project.cellGroupsInfo.addRow(currentPopulation, groupCellType, groupCellType, col, cp, priority++);
+                     importedSimConfig.addCellGroup(currentPopulation);
+                 } catch (NamingException ex) {
+                     logger.logComment("Problem creating a new cell group...");
+                 }
+             }
          }
 
          else if (getCurrentElement().equals(NetworkMLConstants.INSTANCE_ELEMENT))
@@ -324,37 +575,52 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
          else if (getCurrentElement().equals(NetworkMLConstants.PROJECTION_ELEMENT))
          {
              this.currentProjection = attributes.getValue(NetworkMLConstants.PROJ_NAME_ATTR);
+
+             logger.logComment(">>  Found a network connection of name: "+ currentProjection);
              
-             //if ()
-             
-             Vector<SynapticProperties> sps = null;
-             
-             if (project.morphNetworkConnectionsInfo.isValidSimpleNetConn(currentProjection))
-                sps = project.morphNetworkConnectionsInfo.getSynapseList(currentProjection);
-             else if (project.volBasedConnsInfo.isValidVolBasedConn(currentProjection))
-                sps = project.volBasedConnsInfo.getSynapseList(currentProjection);
-             else
-                 throw new SAXException("Error when parsing NetworkML file. Network Connection: "+ currentProjection
-                         +" not found in project: "+ project.getProjectName()+".\n" +
-                         "Add a network connection with this name to the project to allow this NetworkML file to be used with this project. ");
-             
-             for(SynapticProperties sp:sps)
-             {
-                 ConnSpecificProps csp = new ConnSpecificProps(sp.getSynapseType());
-                 if (sp.getDelayGenerator().isTypeFixedNum())
-                     csp.internalDelay = sp.getDelayGenerator().getNextNumber();   
-                 else
-                     csp.internalDelay = Float.NaN;
-                 
-                 if (sp.getWeightsGenerator().isTypeFixedNum())
-                     csp.weight = sp.getWeightsGenerator().getNextNumber();   
-                 else
-                     csp.weight = Float.NaN;
-                 
-                 projectConnProps.add(csp);
+              Vector<SynapticProperties> sps = null;
+              if (level3)
+               {
+                  importedSimConfig.addNetConn(currentProjection);
+                  if (project.morphNetworkConnectionsInfo.isValidSimpleNetConn(currentProjection)) {
+                      sps = project.morphNetworkConnectionsInfo.getSynapseList(currentProjection);
+                  } else if (project.volBasedConnsInfo.isValidVolBasedConn(currentProjection)) {
+                      sps = project.volBasedConnsInfo.getSynapseList(currentProjection);
+                  } else {
+                         addNet = true;
+                         source = attributes.getValue(NetworkMLConstants.SOURCE_ELEMENT);
+                         target = attributes.getValue(NetworkMLConstants.TARGET_ELEMENT);
+                  }
+              }
+              else
+              {               
+                  if (project.morphNetworkConnectionsInfo.isValidSimpleNetConn(currentProjection)) {
+                      sps = project.morphNetworkConnectionsInfo.getSynapseList(currentProjection);
+                  } else if (project.volBasedConnsInfo.isValidVolBasedConn(currentProjection)) {
+                      sps = project.volBasedConnsInfo.getSynapseList(currentProjection);
+                  } else {
+                      throw new SAXException("Error when parsing NetworkML file. Network Connection: " + currentProjection + " not found in project: " + project.getProjectName() + ".\n" +
+                              "Add a network connection with this name to the project to allow this NetworkML file to be used with this project. ");
+                  }
+                  for (SynapticProperties sp : sps) {
+                      ConnSpecificProps csp = new ConnSpecificProps(sp.getSynapseType());
+                      if (sp.getDelayGenerator().isTypeFixedNum()) {
+                          csp.internalDelay = sp.getDelayGenerator().getNextNumber();
+                      } else {
+                          csp.internalDelay = Float.NaN;
+                      }
+                      if (sp.getWeightsGenerator().isTypeFixedNum()) {
+                          csp.weight = sp.getWeightsGenerator().getNextNumber();
+                      } else {
+                          csp.weight = Float.NaN;
+                      }
+                      projectConnProps.add(csp);
+                  }
              }
+
              
-         }
+         }         
+         
          else if (getCurrentElement().equals(NetworkMLConstants.PRE_CONN_ELEMENT)
              && getAncestorElement(1).equals(NetworkMLConstants.CONNECTION_ELEMENT))
          {
@@ -415,6 +681,26 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
          else if (getCurrentElement().equals(NetworkMLConstants.SYN_PROPS_ELEMENT)
              && getAncestorElement(1).equals(NetworkMLConstants.PROJECTION_ELEMENT))
          {
+               if (level3 && addNet)
+             { 
+                 String synType = attributes.getValue(NetworkMLConstants.SYN_TYPE_ATTR);
+                 SynapticProperties synProp = new SynapticProperties(synType);
+                 Vector<SynapticProperties> synList = new Vector<SynapticProperties>();
+                 synList.add(synProp);
+                 SearchPattern sp = SearchPattern.getRandomSearchPattern();
+                 MaxMinLength mml = new MaxMinLength(100, 0, "r", 100);
+                 ConnectivityConditions connConds = new ConnectivityConditions();
+                 float jumpSpeed = 0;
+
+                 logger.logComment("Going to add a volume based network connection "+currentProjection+" from group "+source+" to group "+target);
+
+                 try {
+                     project.morphNetworkConnectionsInfo.addRow(currentProjection, source, target, synList, sp, mml, connConds, jumpSpeed);
+                 } catch (NamingException ex) {
+                     logger.logComment("Problem creating volume based network connection...");
+                 }
+             }
+               
              ConnSpecificProps connProps = null;
              if (attributes.getValue(NetworkMLConstants.SYN_TYPE_ATTR)!=null)
              {
@@ -532,12 +818,20 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
          else if (getCurrentElement().equals(NetworkMLConstants.INPUT_ELEMENT)
                  && getAncestorElement(1).equals(NetworkMLConstants.INPUTS_ELEMENT))
          {    
-         
+             
              String inputName = attributes.getValue(NetworkMLConstants.INPUT_NAME_ATTR);
 
              logger.logComment(">>  Found a input of name: "+ inputName);
 
              currentInputName = inputName;
+             
+             if (level3 && !project.elecInputInfo.getAllStimRefs().contains(currentInputName))
+             {                 
+                     addStim = true;
+                     logger.logComment("Input "+currentInputName+" doesn't exist in the current project. Going to add it...");
+
+             }
+             
              //currentElecInput = inputName;
              
 /*             StimulationSettings ss = project.elecInputInfo.getStim(currentInputName);
@@ -549,16 +843,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
 */             
          }
          
-         else if (getCurrentElement().equals(NetworkMLConstants.INPUT_TARGET_ELEMENT))
-         {
-             currentCellGroup = attributes.getValue(NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR);
-                        
-             if (!project.cellGroupsInfo.isValidCellGroup(currentCellGroup))
-             {
-                 GuiUtils.showWarningMessage(logger, "Error, target cell group "+currentCellGroup+" not found in project", null);
-                 currentCellGroup = null;
-             }
-         }
+               
          // If pulse input get pulse input attributes
          else if (getCurrentElement().equals(NetworkMLConstants.PULSEINPUT_ELEMENT))
          {
@@ -568,8 +853,11 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              
              if (!(ss instanceof IClampSettings))
              {
+                 if (!level3)
+                 {
                   GuiUtils.showWarningMessage(logger, "Error, IClamp "+currentInputName+" not found in project", null);
-                  currentInputName = null;                
+                  currentInputName = null;          
+                 }
              }
              else
              {
@@ -618,13 +906,16 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
          else if (getCurrentElement().equals(NetworkMLConstants.RANDOMSTIM_ELEMENT))
          {
              currentInputType = RandomSpikeTrain.TYPE;
-             
+             synInput = attributes.getValue(NetworkMLConstants.RND_STIM_MECH_ATTR);         
              StimulationSettings ss = project.elecInputInfo.getStim(currentInputName);
              
              if (!(ss instanceof RandomSpikeTrainSettings))
              {
-                  GuiUtils.showWarningMessage(logger, "Error, RandomSpikeTrain "+currentInputName+" not found in project", null);
-                  currentInputName = null;                
+                 if (!level3)
+                 {
+                      GuiUtils.showWarningMessage(logger, "Error, RandomSpikeTrain "+currentInputName+" not found in project", null);
+                      currentInputName = null;                
+                 }
              }
              else
              {
@@ -658,8 +949,42 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                    GuiUtils.showWarningMessage(logger, "Error, imported synapse type ("+currentSynapseType+") for RandomSpikeTrain "+currentInputName+" is different from that currently in the project", null);                
                  }
              }
-         }             
+         } 
+         
+         
+         else if (getCurrentElement().equals(NetworkMLConstants.INPUT_TARGET_ELEMENT))
+         {
+             currentCellGroup = attributes.getValue(NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR);
              
+             if (!project.cellGroupsInfo.isValidCellGroup(currentCellGroup))
+             {
+                 GuiUtils.showWarningMessage(logger, "Error, target cell group "+currentCellGroup+" not found in project", null);
+             }
+             
+             else if (level3 && addStim)
+             {
+                     StimulationSettings stim = null;
+                     CellChooser cellChoose = new AllCells();
+                     SegmentLocationChooser segChoose = new GroupDistributedSegments(project.cellManager.getCell(project.cellGroupsInfo.getCellType(currentCellGroup)).getAllGroupNames().get(0), 1);
+                     NumberGenerator delay = new NumberGenerator();
+                     NumberGenerator duration = new NumberGenerator();
+                     NumberGenerator amplitude = new NumberGenerator();
+                     NumberGenerator rate = new NumberGenerator();
+
+                    if (currentInputType.equals(IClamp.TYPE))
+                    {
+                        stim = new IClampSettings(currentInputName, currentCellGroup, cellChoose, segChoose, delay, duration, amplitude, false);
+                    }
+                    if (currentInputType.equals(RandomSpikeTrain.TYPE))
+                    {
+                        stim = new RandomSpikeTrainSettings(currentInputName, currentCellGroup, cellChoose, segChoose, rate, 0, synInput);
+                    }
+                    project.elecInputInfo.addStim(stim);
+                    importedSimConfig.addInput(stim.getReference());
+                    logger.logComment(currentInputType+" elecetrical input "+currentInputName+" on the cell group "+ currentCellGroup+" added to the project.");
+             }
+         }
+               
          // if site element get cellID segmentID and fraction along
          else if (getCurrentElement().equals(NetworkMLConstants.INPUT_TARGET_SITE_ELEMENT))
          {
@@ -672,7 +997,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              
              SingleElectricalInput currentInput = new SingleElectricalInput(currentInputType, currentCellGroup, currentCellID, currentSegID, currentFrac, null);
              elecInputs.addSingleInput(currentInputName, currentInput);
-          }         
+          } 
     }
     
     private ConnSpecificProps getGlobalSynProps(String synType)
@@ -696,11 +1021,362 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
     
 
     @Override
-    public void endElement(String namespaceURI, String localName, String qName)
+    public void endElement(String namespaceURI, String localName, String qName) throws SAXException
     {
 
         logger.logComment("-----   End element: " + localName);
+        
+        
+        
+         if (insideCell)
+             
+         {
+             //dealing with prefix
+                 if (elementStack.contains("segments") || elementStack.contains("cables")){
+                     cellPrefix = MorphMLConstants.PREFIX+":";
+                     if (getCurrentElement().equals("group"))
+                         cellPrefix = MetadataConstants.PREFIX+":";
+                 }
+                 if (elementStack.contains("biophysics")) 
+                     cellPrefix = BiophysicsConstants.PREFIX + ":";
+                 if (elementStack.contains("connectivity")) 
+                     cellPrefix = NetworkMLConstants.PREFIX + ":";
+                 if (getCurrentElement().equals("notes"))
+                     cellPrefix = MetadataConstants.PREFIX+":";
+                 if (getCurrentElement().equals("cell") || getCurrentElement().equals("biophysics") || getCurrentElement().equals("connectivity"))
+                     cellPrefix = "";
 
+             
+                  cellBuffer = cellBuffer + ("</"+cellPrefix+getCurrentElement()+">\n");
+                  if (getCurrentElement().equals(MorphMLConstants.CELL_ELEMENT))
+                  {
+                      
+                  logger.logComment("FINISHED CELL STRING for "+cellName+":\n"+cellBuffer);
+                  insideCell = false;
+                  SimpleXMLDocument doc = new SimpleXMLDocument();
+                  SimpleXMLElement rootElement = null;
+                  
+               //make some checks before write to the file                  
+                  addCell = false;
+                   Object choice = "";
+                  if (!testMode && !replaceAll && !renameAll){
+                      logger.logComment( "Asking the user if the cell type " + cellName+ " has to be added...");
+                      Object[] options = {"Yes", "No"};
+                      JOptionPane option = new JOptionPane(
+                              "Founded a new cell type: " + cellName + "\n do you want to add this to the project?",
+                              JOptionPane.DEFAULT_OPTION,
+                              JOptionPane.WARNING_MESSAGE,
+                              null,
+                              options,
+                              options[0]);
+
+                      JDialog dialog = option.createDialog("Reading the Level 3 file...");
+
+                      dialog.setVisible(true);
+
+                      choice = option.getValue();
+                      logger.logComment("User has chosen: " + choice);
+                  }                  
+                  
+                  
+                  
+                  if (choice.equals("Yes") || testMode || replaceAll || renameAll) {
+                      logger.logComment("User accepted the cell type. Checking if it is already defined...") ;   
+                      addCell = true;
+                          ArrayList<String> existingCells = project.cellManager.getAllCellTypeNames();
+                          if (existingCells.contains(cellName)) {
+                                  Object choice2 = "";
+                                  if (!testMode && !replaceAll && !renameAll){
+                                      logger.logComment("The cell type " + cellName + " already exists in the current project. Asking the user...");
+                                      Object[] options2 = {"Replace", "Replace all", "Rename" , "Rename all"};
+
+                                      JOptionPane option2 = new JOptionPane(
+                                              "The cell type: " + cellName + " is already defined in the current project. \n You can overwrite the old definition or rename the new cell type",
+                                              JOptionPane.DEFAULT_OPTION,
+                                              JOptionPane.WARNING_MESSAGE,
+                                              null,
+                                              options2,
+                                              options2[0]);
+
+                                      JDialog dialog2 = option2.createDialog("Warning");
+                                      dialog2.setVisible(true);
+                                      choice2 = option2.getValue();
+                                  }
+                                      
+                                  if (choice2.equals("Replace all"))
+                                      replaceAll=true;
+                                  if (choice2.equals("Rename all"))
+                                      renameAll=true;
+                                  if (choice2.equals("Replace") || replaceAll || testMode) {
+                                      renamedCells.put(cellName,cellName);//to avoid a check each time that we have to use the cellName
+                                      logger.logComment("User decided to replace the old type");
+                                      project.cellManager.deleteCellType(project.cellManager.getCell(cellName));
+                                  }
+                                  if (choice2.equals("Rename") || renameAll) {
+                                      int i = 0;
+                                      String newCellName = cellName+"_imported";
+                                      if (!renameAll)
+                                           newCellName = JOptionPane.showInputDialog("Please enter a new name for the cell type", newCellName);
+                                      while (existingCells.contains(newCellName)){
+                                           i++;
+                                          newCellName = cellName+"_imported"+String.valueOf(i);
+                                          if (!renameAll)
+                                              newCellName = JOptionPane.showInputDialog("The chosed name is already taken. Please enter a new name for the cell type", newCellName);
+                                      }
+                                      renamedCells.put(cellName, newCellName);
+                                      logger.logComment("cell " + cellName + " renamed " + renamedCells.get(cellName));
+                                      cellBuffer = cellBuffer.replaceAll(cellName, renamedCells.get(cellName));
+                                  }
+                                                                    
+                          } else {
+                              
+                              logger.logComment("The cell type " + cellName  + " doesn't already exist");
+                              
+                          }
+                  }
+                  
+                  else if (choice.equals("No")) {
+                      logger.logComment("User refused the cell type "+cellName);
+                      addCell = false;
+                  }
+
+                  
+                  if (addCell)
+                  {
+                      
+              //initializing the root element
+                  rootElement = new SimpleXMLElement(NeuroMLConstants.ROOT_ELEMENT);
+                  rootElement.addNamespace(new SimpleXMLNamespace("", NeuroMLConstants.NAMESPACE_URI));
+                  rootElement.addNamespace(new SimpleXMLNamespace(MetadataConstants.PREFIX, MetadataConstants.NAMESPACE_URI));
+                  rootElement.addNamespace(new SimpleXMLNamespace(MorphMLConstants.PREFIX, MorphMLConstants.NAMESPACE_URI));
+                  rootElement.addNamespace(new SimpleXMLNamespace(BiophysicsConstants.PREFIX, BiophysicsConstants.NAMESPACE_URI));
+                   rootElement.addNamespace(new SimpleXMLNamespace(NetworkMLConstants.PREFIX, NetworkMLConstants.NAMESPACE_URI));  
+                  rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS_OLD, "micron"));
+                  doc.addRootElement(rootElement);
+                  rootElement.addContent("\n\n");
+                  StringBuffer notes = new StringBuffer("\nNeuroML (level 3) description of a cell "+renamedCells.get(cellName)+" generated with project: "
+                                +project.getProjectName() + " saved with neuroConstruct v"+
+                                GeneralProperties.getVersionNumber()+" on: "+ GeneralUtils.getCurrentTimeAsNiceString() +", "
+                                + GeneralUtils.getCurrentDateAsNiceString()+"\n\n");
+                  rootElement.addChildElement(new SimpleXMLElement(MetadataConstants.PREFIX + ":" + MetadataConstants.NOTES_ELEMENT, "\n" + notes.toString()));
+                  SimpleXMLElement props = new SimpleXMLElement(MetadataConstants.PREFIX + ":" + MorphMLConstants.PROPS_ELEMENT);
+                  rootElement.addContent("\n\n");
+                  rootElement.addChildElement(props);
+                  rootElement.addContent("\n\n");
+                  rootElement.addContent("<cells>");
+                  
+              //add the generated cellBuffer
+                  rootElement.addContent(cellBuffer);
+                  rootElement.addContent("</cells>");
+                  doc.addRootElement(rootElement);
+
+              //reset the string for the next cell
+                  cellBuffer=""; 
+                  
+             
+              //write the NeuroML file
+                  File neuroMLDir = ProjectStructure.getNeuroMLDir(project.getProjectMainDirectory());
+                  File morphMLFile = new File(neuroMLDir, 
+                                    renamedCells.get(cellName)
+                                    + ProjectStructure.getMorphMLFileExtension());
+                  String stringForm = doc.getXMLString("", false);
+                  FileWriter fw;
+                try {
+                    fw = new FileWriter(morphMLFile);
+                    fw.write(stringForm);
+                    fw.close();
+                } catch (IOException ex) {
+                    logger.logComment("Problem writing to file: "+morphMLFile);
+                }                  
+
+//              pass the file to a MorphMLReader and generate the cell type in the project                                    
+                      SAXParserFactory spf = SAXParserFactory.newInstance();
+                      spf.setNamespaceAware(true);
+                      XMLReader xmlReader;
+                      MorphMLReader mmlBuilder = new MorphMLReader();
+                      try {
+                          try {
+                              try {
+                                  try {
+                                      
+                                      xmlReader = spf.newSAXParser().getXMLReader();
+                                      xmlReader.setContentHandler(mmlBuilder);
+                                      FileInputStream instream = new FileInputStream(morphMLFile);
+                                      InputSource is = new InputSource(instream);
+                                      xmlReader.parse(is);
+                                      Cell builtCell = mmlBuilder.getBuiltCell();
+                                      project.cellManager.addCellType(builtCell);
+                                      
+                                      logger.logComment(builtCell.getInstanceName()+" added to the project");                                      
+                                  } catch (NamingException ex) {
+                                      java.util.logging.Logger.getLogger(NetworkMLReader.class.getName()).log(Level.SEVERE, null, ex);
+                                  }
+                              } catch (FileNotFoundException ex) {
+                                  java.util.logging.Logger.getLogger(NetworkMLReader.class.getName()).log(Level.SEVERE, null, ex);
+                              }
+                          } catch (IOException ex) {
+                              java.util.logging.Logger.getLogger(NetworkMLReader.class.getName()).log(Level.SEVERE, null, ex);
+                          }
+                      } catch (ParserConfigurationException ex) {
+                          logger.logComment("MorphML reader can't read the file: " + morphMLFile);
+                      }
+                      
+                  }//if add the cell
+              
+         }//if the cell is finished 
+                  
+         }//if not a cell
+            
+ 
+         if (insideChannel)
+         
+         {
+                 //dealing with prefix
+                     Vector<String> meta = new Vector<String>();
+                     meta.add("comment");
+                     meta.add("contributor");
+                     meta.add("notes");
+                     meta.add("authorList");
+                     meta.add("modelTranslator");
+                     meta.add("publication");
+                     meta.add("neuronDBref");
+                     if (meta.contains(getCurrentElement()) || meta.contains(getAncestorElement(1)))
+                         chanPrefix = MetadataConstants.PREFIX+":";
+                     else
+                     chanPrefix = ""; chanBuffer = chanBuffer + ("</"+chanPrefix+getCurrentElement()+">\n");
+                     
+                      if (getCurrentElement().equals(ChannelMLConstants.CHAN_TYPE_ELEMENT) || getCurrentElement().equals(ChannelMLConstants.SYN_TYPE_ELEMENT))
+                      {
+
+                          logger.logComment("FINISHED CHANNEL STRING for "+chanName+":\n"+chanBuffer);
+                          insideChannel = false;
+                          SimpleXMLDocument doc = new SimpleXMLDocument();
+                          SimpleXMLElement rootElement = null;
+                          
+                         
+               //make some checks befor write to the file
+                          Vector<String> existingChannels = project.cellMechanismInfo.getAllCellMechanismNames();
+                          if (existingChannels.contains(chanName)) {
+                              Object choice = "";                          
+                              if (!replace && !testMode){
+                                  logger.logComment("Some mechanisms in the Level3 file have the same name of the existing mechanisms\n Warning the user...");
+                                  Object[] options = {"Yes", "No"};
+                                  JOptionPane option = new JOptionPane(
+                                          "Some cell mechanisms in the Level3 file you are importing will overwrite the existing mechanisms\n" +
+                                          "Overwrite?\n" +
+                                          "\nNOTE: This will remove files in the project/cellMechanisms directory!",
+                                          JOptionPane.DEFAULT_OPTION,
+                                          JOptionPane.WARNING_MESSAGE,
+                                          null,
+                                          options,
+                                          options[0]);
+
+                                  JDialog dialog = option.createDialog("WARNING");
+                                  dialog.setVisible(true);
+                                  choice = option.getValue();                              
+                                  logger.logComment("User has chosen: " + choice);
+                                  }
+                                  
+                                  if (choice.equals("No")) {
+                                  logger.logComment("User aborted the program");
+                                  Runtime.getRuntime().halt(0);
+                                  } else if (choice.equals("Yes") || testMode) {
+                                      replace = true;
+                                      project.cellMechanismInfo.deleteCellMechanism(project.cellMechanismInfo.getCellMechanism(chanName));
+                                  }
+                          }
+
+                  //initializing the root element
+                      rootElement = new SimpleXMLElement(ChannelMLConstants.ROOT_ELEMENT);
+                      rootElement.addNamespace(new SimpleXMLNamespace("", ChannelMLConstants.NAMESPACE_URI)); 
+                      rootElement.addNamespace(new SimpleXMLNamespace(NeuroMLConstants.XSI_PREFIX, NeuroMLConstants.XSI_URI));
+                      rootElement.addNamespace(new SimpleXMLNamespace(MetadataConstants.PREFIX, MetadataConstants.NAMESPACE_URI));
+                      rootElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC, NeuroMLConstants.NAMESPACE_URI+"../../Schemata/v1.7.3/Level2/ChannelML_v1.7.3.xsd"));
+                      rootElement.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.UNIT_SCHEME, ChannelMLConstants.PHYSIOLOGICAL_UNITS));
+                      doc.addRootElement(rootElement);
+                      rootElement.addContent("\n\n");
+                      StringBuffer notes = new StringBuffer("\nChannelML description of a channel "+chanName+" generated with project: "
+                                    +project.getProjectName() + " saved with neuroConstruct v"+
+                                    GeneralProperties.getVersionNumber()+" on: "+ GeneralUtils.getCurrentTimeAsNiceString() +", "
+                                    + GeneralUtils.getCurrentDateAsNiceString()+"\n\n");
+                      rootElement.addChildElement(new SimpleXMLElement(MetadataConstants.PREFIX + ":" + MetadataConstants.NOTES_ELEMENT, "\n" + notes.toString()));
+    //                  SimpleXMLElement props = new SimpleXMLElement(MetadataConstants.PREFIX + ":" +  MorphMLConstants.PROPS_ELEMENT);
+                      rootElement.addContent("\n\n");
+    //                  rootElement.addChildElement(props);
+                      rootElement.addContent("\n\n");
+
+                  //add the generated cellBuffer
+                      rootElement.addContent(chanBuffer);
+                      doc.addRootElement(rootElement);
+
+                  //reset the string for the next cell
+                      chanBuffer=""; 
+
+                  //write the NeuroML file
+                      
+                      File CMLDir = ProjectStructure.getCellMechanismDir(project.getProjectMainDirectory());
+                      File newDir = new File(CMLDir, chanName);
+                      newDir.mkdirs();
+                      
+                      File chanMLFile = new File(newDir,
+                                    chanName
+                                    + ".xml");
+                      String stringForm = doc.getXMLString("", false);
+                      FileWriter fw;
+                    try {
+                        fw = new FileWriter(chanMLFile);
+                        fw.write(stringForm);
+                        fw.close();
+                    } catch (IOException ex) {
+                        logger.logComment("Problem writing to file: "+chanMLFile);
+                    }
+                      
+                  File xslDir = GeneralProperties.getChannelMLSchemataDir();
+                  ChannelMLCellMechanism cmlMech = new ChannelMLCellMechanism();
+                  cmlMech.setChannelMLFile(chanMLFile.getName());
+                  cmlMech.setInstanceName(chanName);
+                  if (getCurrentElement().equals(ChannelMLConstants.CHAN_TYPE_ELEMENT))
+                      cmlMech.setMechanismType(ChannelMLConstants.CHAN_TYPE_ELEMENT);
+                  if (getCurrentElement().equals(ChannelMLConstants.SYN_TYPE_ELEMENT))
+                      cmlMech.setMechanismType(ChannelMLConstants.SYN_TYPE_ELEMENT);
+                  cmlMech.setDescription(doc.getValueByXPath(ChannelMLConstants.NOTES_ELEMENT));
+                  cmlMech.setMechanismModel("ChannelML mechanism imported from a network");
+
+                  project.cellMechanismInfo.addCellMechanism(cmlMech);
+                   
+
+                  File newXslNeuron = new File(xslDir, "ChannelML_v" + GeneralProperties.getNeuroMLVersionNumber() + "_NEURONmod.xsl");
+                  File newXslGenesis = new File(xslDir, "ChannelML_v" + GeneralProperties.getNeuroMLVersionNumber() + "_GENESIStab.xsl");
+                  File newXslPSICS = new File(xslDir, "ChannelML_v" + GeneralProperties.getNeuroMLVersionNumber() + "_PSICS.xsl");
+                  
+                  File[] newXsl = {newXslNeuron,newXslGenesis, newXslPSICS};
+                  String[] simEnv = {"NEURON", "GENESIS", "PSICS"};
+                  
+                  for (int i = 0; i < newXsl.length; i++) {
+                              try {
+                                  GeneralUtils.copyFileIntoDir(newXsl[i], newDir);
+                                  SimXSLMapping map = new SimXSLMapping(newXsl[i].getName(), simEnv[i], true);
+
+                                  cmlMech.addSimMapping(map);
+                                  
+                                  try {
+                                      cmlMech.reset(project, false);
+                                      logger.logComment("New cml mech: " + cmlMech.getInstanceName(), true);
+                                  } catch (Exception ex) {
+                                      GuiUtils.showErrorMessage(logger, "Problem updating mechanism to support mapping to simulator: " + simEnv[i], ex, null);
+                                  }
+                                  project.markProjectAsEdited();
+
+                              } catch (IOException ex) {
+                                  GuiUtils.showErrorMessage(logger, "Problem adding the mapping for " + chanName, ex, null);
+                              }
+                          }
+
+
+                  
+                }//if the channel is finished
+         }//if not a channel
+         
         if (getCurrentElement().equals(NetworkMLConstants.POPULATION_ELEMENT))
         {
             currentPopulation = null;
@@ -761,6 +1437,46 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
             this.localConnProps = new ArrayList<ConnSpecificProps>();
             localAPDelay = 0;
         }
+        
+        else if (!testMode && level3 && getCurrentElement().equals(NetworkMLConstants.INPUTS_ELEMENT))
+        {
+            File savedNetsDir = ProjectStructure.getSavedNetworksDir(project.getProjectMainDirectory());
+
+            String timeInfo = GeneralUtils.getCurrentDateAsNiceString() +"_"+GeneralUtils.getCurrentTimeAsNiceString();
+            timeInfo = GeneralUtils.replaceAllTokens(timeInfo, ":", "-");
+
+            String fullName = "Net_" +timeInfo+ ProjectStructure.getNeuroMLFileExtension();
+
+            File networkFile = new File(savedNetsDir, fullName);
+
+            if (networkFile.exists())
+            {
+
+            }
+            try {
+
+                File fileSaved = ProjectManager.saveNetworkStructureXML(project, networkFile, false, false, importedSimConfig.getName(), NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+            } catch (NeuroMLException ex) {
+                java.util.logging.Logger.getLogger(NetworkMLReader.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+
+            logger.logComment("Reached the end of the file. Warning the user about the project state...");
+            Object[] options = {"OK"};
+            JOptionPane fileEnd = new JOptionPane(
+                                          "All the elements in the file have been correctly imported and a copy of the network structure has been stored in the savedNetworks folder of the current project." +
+                                          "\n You can run a simulation from the Generate tab but any variables will be plot or you can save the project and genarate it again with some Output settings" +
+                                          "\n\nNOTE: some default regions, cell groups and inputs have been created but these may not be equals to the ones used to create the imported file!\n",
+                                          JOptionPane.DEFAULT_OPTION,
+                                          JOptionPane.INFORMATION_MESSAGE,
+                                          null,
+                                          options,
+                                          options[0]);
+
+                                  JDialog dialog = fileEnd.createDialog("IMPORTED");
+                                  dialog.setVisible(true);
+        }
+        
 /*        else if (getCurrentElement().equals(NetworkMLConstants.INPUTS_ELEMENT))
         {
             //elecInputs.addSingleInput(name, );
@@ -768,10 +1484,10 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
             //this.currentCellType = null;
         }
 */
+                    
+              
 
         
-
-
 
         stepDownElement();
     }
@@ -784,17 +1500,21 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
         try
         {
             //Project testProj = Project.loadProject(new File("projects/Parall/Parall.neuro.xml"),null);
-            Project testProj = Project.loadProject(new File("examples/Ex4-NEURONGENESIS/Ex4-NEURONGENESIS.neuro.xml"),null);
+//            Project testProj = Project.loadProject(new File("examples/Ex4-NEURONGENESIS/Ex4-NEURONGENESIS.neuro.xml"),null);
+            Project testProj = Project.loadProject(new File("/home/matteo/neuroConstruct/nCexamples/Ex5_Networks/Ex5_Networks.neuro.xml"),null);
 
-            File f = new File("examples/Ex4-NEURONGENESIS/savedNetworks/nnn.nml");
+//            File f = new File("examples/Ex4-NEURONGENESIS/savedNetworks/nnn.nml");
+            File f = new File("nCexamples/Ex5_Networks/generatedNeuroML/Generated.net.xml");
 
             logger.logComment("Loading netml cell from "+ f.getAbsolutePath()+" for proj: "+ testProj);
             
             ProjectManager pm = new ProjectManager(null, null);
-            
+   
             pm.setCurrentProject(testProj);
             
-            pm.doLoadNetworkMLAndGenerate(f);
+//            pm.doLoadNetworkMLAndGenerate(f);
+            
+            pm.doLoadNetworkML(f, false);
             
             
             while (pm.isGenerating())

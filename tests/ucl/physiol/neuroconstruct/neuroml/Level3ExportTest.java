@@ -26,6 +26,7 @@
 
 package ucl.physiol.neuroconstruct.neuroml;
 
+import com.ziclix.python.sql.pipe.Source;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,7 +34,12 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Iterator;
+import javax.xml.XMLConstants;
+import javax.xml.bind.Validator;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -124,8 +130,8 @@ public class Level3ExportTest {
             
             File nmlFile = new File(saveNetsDir, "test.nml");
 
-            File l3 = pm.saveCompleteNetworkXML(proj, nmlFile, false, false, sc.getName(), NetworkMLConstants.UNITS_PHYSIOLOGICAL);
-
+            File l3 = ProjectManager.saveLevel3NetworkXML(proj, nmlFile, false, false, sc.getName(), NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+            
             SimpleXMLDocument doc = SimpleXMLReader.getSimpleXMLDoc(l3);
             
 //            ArrayList<String> paths = doc.getXPathLocations(true);
@@ -163,27 +169,50 @@ public class Level3ExportTest {
             
             Vector<String> allMechs = proj.cellMechanismInfo.getAllCellMechanismNames();
             boolean addChan = false;
+            
             Vector<String> genMechs = new Vector<String>();
 
-            for (int j = 0; j < allMechs.size(); j++)
+              for (int j = 0; j < allMechs.size(); j++)
             {                
-                String m = allMechs.get(j);
+                String m = allMechs.get(j); 
                 addChan = false;
                 
                 //add the synapses that are used in the generated connections
-                java.util.Iterator<String> connsNames = proj.generatedNetworkConnections.getNamesNetConnsIter();                
-                while (connsNames.hasNext()&&(addChan==false)){
-                    if (proj.morphNetworkConnectionsInfo.getSynapseList(connsNames.next()).contains(m)
-                            && !genMechs.contains(m))
+                Iterator<String> connsNames = proj.generatedNetworkConnections.getNamesNetConnsIter();             
+                
+                while (connsNames.hasNext() && (addChan==false))
+                {
+                    String netConnName = connsNames.next();
+                    
+                    if (proj.morphNetworkConnectionsInfo.isValidSimpleNetConn(netConnName))
                     {
-                        genMechs.add(m);
-                        addChan = true;
-                    }                    
+                        Vector<SynapticProperties> synPropsM = proj.morphNetworkConnectionsInfo.getSynapseList(netConnName);
+                        for (int k = 0; k < synPropsM.size(); k++) {
+                            SynapticProperties synapticProperties = synPropsM.elementAt(k);
+                            if (synapticProperties.getSynapseType().equals(m) && !genMechs.contains(m)) {
+                                genMechs.add(m);
+                                addChan = true;
+                            }                  
+                        }
+                    }
+                    
+                    if (proj.volBasedConnsInfo.isValidVolBasedConn(netConnName))
+                    {
+                        Vector<SynapticProperties> synPropsV = proj.volBasedConnsInfo.getSynapseList(netConnName);
+                        for (int k = 0; k < synPropsV.size(); k++) {
+                            SynapticProperties synapticProperties = synPropsV.elementAt(k);
+                            if (synapticProperties.getSynapseType().equals(m) && !genMechs.contains(m)) {
+                                genMechs.add(m);
+                                addChan = true;
+                            }                           
+                        }                            
+                    }
                 }
                                 
-                //add the synapses that are used in the the stimulations
-                java.util.Iterator<String> inputsNames = proj.generatedElecInputs.getElecInputsItr();
-                while (inputsNames.hasNext()&&(addChan==false)){
+                //add the synapses that are used in the stimulations
+                Iterator<String> inputsNames = proj.generatedElecInputs.getElecInputsItr();
+                while (inputsNames.hasNext()&&(addChan==false))
+                {
                     ElectricalInput ei  = proj.elecInputInfo.getStim(inputsNames.next()).getElectricalInput();
                     if (ei.getType().equals("RandomSpikeTrainExt") || ei.getType().equals("RandomSpikeTrain"))
                     {
@@ -196,11 +225,21 @@ public class Level3ExportTest {
                         }                        
                     }
                 }
-                
+                                
                 //add channels that are used in the generated cell groups
-                int i=0;
-                while ((i<genGroups.size())&&(addChan==false)){  
-                    if (proj.cellManager.getCell(proj.cellGroupsInfo.getCellType(genGroups.get(i))).getAllChanMechNames(true).contains(m)
+                Iterator<String> cellGroups = proj.generatedCellPositions.getNamesGeneratedCellGroups();
+                ArrayList<String> cellGroupsNames = new ArrayList<String>();
+
+                while (cellGroups.hasNext())
+                {
+                    String cg = cellGroups.next();
+                    cellGroupsNames.add(cg);
+
+                }
+                Integer i =0;
+                while ((i<cellGroupsNames.size())&&(addChan==false))
+                {  
+                    if (proj.cellManager.getCell(proj.cellGroupsInfo.getCellType(cellGroupsNames.get(i))).getAllChanMechNames(true).contains(m)
                             && !genMechs.contains(m))
                     {
                         genMechs.add(m);

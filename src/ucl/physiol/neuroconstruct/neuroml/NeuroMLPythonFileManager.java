@@ -110,13 +110,17 @@ public class NeuroMLPythonFileManager
         
 
         File neuroMLDir = ProjectStructure.getNeuroMLDir(project.getProjectMainDirectory());
-        File generatedNetworkFile = new File(neuroMLDir, NetworkMLConstants.DEFAULT_NETWORKML_FILENAME_XML);
+        String timeInfo = GeneralUtils.getCurrentDateAsNiceString() +"_"+GeneralUtils.getCurrentTimeAsNiceString();
+         timeInfo = GeneralUtils.replaceAllTokens(timeInfo, ":", "-");
+
+        String fileName = "L3Net_" +timeInfo+ ProjectStructure.getNeuroMLFileExtension();
+        File generatedNetworkFile = new File(neuroMLDir, fileName);
         
         if (singleL3File)
         {
 
             try {
-                ProjectManager.saveCompleteNetworkXML(project,
+                ProjectManager.saveLevel3NetworkXML(project,
                                                       generatedNetworkFile,
                                                       false, false,
                                                       simConf.getName(),
