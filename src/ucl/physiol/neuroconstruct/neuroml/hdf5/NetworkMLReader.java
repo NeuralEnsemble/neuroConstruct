@@ -521,16 +521,16 @@ public class NetworkMLReader  implements NetworkMLnCInfo
                 if (pre_segment_id_col>=0) 
                     pre_seg_id = (int)data[i][pre_segment_id_col];
                 if (pre_fraction_along_col>=0) 
-                    pre_fract_along = (float)data[i][pre_fraction_along_col];
+                    pre_fract_along = data[i][pre_fraction_along_col];
                 if (post_segment_id_col>=0) 
                     post_seg_id = (int)data[i][post_segment_id_col];
                 if (post_fraction_along_col>=0) 
-                    post_fract_along = (float)data[i][post_fraction_along_col];
+                    post_fract_along = data[i][post_fraction_along_col];
                 
                 
                     //(float)UnitConverter.getTime(XXXXXXXXX, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+"";
                 if (prop_delay_col>=0) 
-                    prop_delay = (float)UnitConverter.getTime((float)data[i][prop_delay_col], projUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+                    prop_delay = (float)UnitConverter.getTime(data[i][prop_delay_col], projUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
                 
                 
                 
@@ -544,9 +544,9 @@ public class NetworkMLReader  implements NetworkMLnCInfo
                         ConnSpecificProps cp2 = new ConnSpecificProps(currCp.synapseType);
                         
                         if (currCp.internalDelay>0) // index was stored in this val...
-                            cp2.internalDelay = (float)UnitConverter.getTime((float)data[i][(int)currCp.internalDelay], projUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+                            cp2.internalDelay = (float)UnitConverter.getTime(data[i][(int)currCp.internalDelay], projUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
                         if (currCp.weight>0) // index was stored in this val...
-                            cp2.weight = (float)data[i][(int)currCp.weight];
+                            cp2.weight = data[i][(int)currCp.weight];
                         
                         logger.logComment("Filled cp: "+cp2);
                         

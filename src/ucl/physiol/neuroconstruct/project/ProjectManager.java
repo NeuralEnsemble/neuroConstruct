@@ -45,6 +45,7 @@ import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.converters.MorphMLConverter;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.dataset.*;
+import ucl.physiol.neuroconstruct.genesis.GenesisException;
 import ucl.physiol.neuroconstruct.gui.*;
 import ucl.physiol.neuroconstruct.gui.plotter.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
@@ -159,6 +160,33 @@ public class ProjectManager implements GenerationReport
         activeProject = project;
 
         PlotManager.setCurrentProject(project);
+    }
+
+    public boolean doRunGenesis(SimConfig simConfig)
+    {
+
+        String simRef = activeProject.simulationParameters.getReference();
+        try
+        {
+            if (GeneralProperties.getGenerateMatlab())
+            {
+                MatlabOctave.createSimulationLoader(activeProject, simConfig, simRef);
+            }
+
+            if ((GeneralUtils.isWindowsBasedPlatform() || GeneralUtils.isMacBasedPlatform())
+                && GeneralProperties.getGenerateIgor())
+            {
+                IgorNeuroMatic.createSimulationLoader(activeProject, simConfig, simRef);
+            }
+
+            activeProject.genesisFileManager.runGenesisFile(activeProject.genesisSettings.isCopySimFiles());
+        }
+        catch (GenesisException ex)
+        {
+            GuiUtils.showErrorMessage(logger, ex.getMessage(), ex, null);
+            return false;
+        }
+        return true;
     }
 
     public boolean doRunNeuron(SimConfig simConfig)

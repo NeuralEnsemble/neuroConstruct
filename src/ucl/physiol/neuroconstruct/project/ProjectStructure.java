@@ -155,6 +155,7 @@ public class ProjectStructure
     public static String pynnUtilsDir = "PyNNUtils";
     
 
+    private static String genesisWinScript = "templates\\genesisUtils\\startxwin2.bat";
 
     private static String modTemplatesDirInInstall = "templates"
         + System.getProperty("file.separator")
@@ -416,6 +417,7 @@ public class ProjectStructure
     {
         return updateCheckUrl;
     }
+
 
 
     public static File getMainHelpFile()
@@ -881,6 +883,13 @@ public class ProjectStructure
     }
 
 
+
+
+
+    public static File getGenesisWinScript()
+    {
+        return new File(getnCHome(),genesisWinScript);
+    }
 
 
 

@@ -152,15 +152,22 @@ public class GenesisFileManager
                                         MorphCompartmentalisation mc,
                                         int seed) throws GenesisException, IOException
     {
-        logger.logComment("Starting generation of the files...");
+ 
+        this.removeAllPreviousGenesisFiles();
+
+        File dirForGenesisFiles = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory().getCanonicalFile());
+
+        logger.logComment("Starting generation of the files into: "+dirForGenesisFiles+", exists: "+dirForGenesisFiles.exists(), true);
+
+
+        File utilsFile = ProjectStructure.getGenesisUtilsFile();
+        GeneralUtils.copyFileIntoDir(utilsFile, dirForGenesisFiles);
 
         long generationTimeStart = System.currentTimeMillis();
         
         this.simConfig = simConfig;
 
         this.multiRunManager = multiRunManager;
-
-        this.removeAllPreviousGenesisFiles();
 
         morphComp = mc;
 
@@ -183,9 +190,6 @@ public class GenesisFileManager
         try
         {
             generateCellMappings();
-
-            File dirForGenesisFiles = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory());
-
 
             mainGenesisFile = new File(dirForGenesisFiles, project.getProjectName() + ".g");
 
@@ -251,10 +255,6 @@ public class GenesisFileManager
             fw.flush();
             fw.close();
 
-
-            File utilsFile = ProjectStructure.getGenesisUtilsFile();
-            GeneralUtils.copyFileIntoDir(utilsFile, dirForGenesisFiles);
-
         }
         catch (IOException ex)
         {
@@ -307,6 +307,12 @@ public class GenesisFileManager
 
         addComment(response,
                           " The script will quit after finishing...\n");
+
+        response.append("\ncreate asc_file /finished\n");
+        response.append("setfield /finished filename {strcat {targetDir} {\"finished\"}}\n");
+
+        response.append("call /finished OUT_OPEN\n");
+        response.append("call /finished FLUSH\n\n");
 
         response.append("\nexit\n");
 
@@ -3199,7 +3205,7 @@ public class GenesisFileManager
             {
                 logger.logComment("Assuming Windows environment...");
 
-                genesisExecutable = "templates\\genesisUtils\\startxwin2.bat";
+                genesisExecutable = ProjectStructure.getGenesisWinScript().getAbsolutePath();
                 
                 File fullFileToRun = new File(dirToRunFrom, mainGenesisFile.getName());
 

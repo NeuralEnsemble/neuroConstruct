@@ -1256,7 +1256,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         jLabelNeuroMLMain.setHorizontalAlignment(SwingConstants.CENTER);
         jLabelNeuroMLMain.setHorizontalTextPosition(SwingConstants.CENTER);
-        jLabelNeuroMLMain.setText("The Cells included in this project can be exported to NeuroML/MorphML format");
+        jLabelNeuroMLMain.setText("Export project elements in NeuroML format");
         jPanelNeuroML.setLayout(borderLayout31);
         jPanelNeuroMLHeader.setMinimumSize(new Dimension(391, 35));
         jPanelNeuroMLHeader.setPreferredSize(new Dimension(391, 35));
@@ -7028,6 +7028,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             return;
         }
 
+        projManager.doRunGenesis(getSelectedSimConfig());
+/*
         try
         {
             if (GeneralProperties.getGenerateMatlab())
@@ -7048,11 +7050,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             GuiUtils.showErrorMessage(logger, ex.getMessage(), ex, this);
             return;
-        }
+        }*/
 
-        //GuiUtils.showInfoMessage(logger,
-       //                          "Running simulation in NEURON...",
-       //                          "A new simulation entitled "+jTextFieldSimRef.getText()+" is being run in NEURON. Please wait ", this);
+
+        refreshTabGenesis();
         refreshTab3D();
 
     }
