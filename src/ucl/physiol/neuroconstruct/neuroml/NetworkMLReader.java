@@ -40,7 +40,6 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 import ucl.physiol.neuroconstruct.cell.Cell;
 import ucl.physiol.neuroconstruct.cell.converters.MorphMLReader;
-import ucl.physiol.neuroconstruct.gui.MainFrame;
 import ucl.physiol.neuroconstruct.mechanisms.ChannelMLCellMechanism;
 import ucl.physiol.neuroconstruct.mechanisms.SimXSLMapping;
 import ucl.physiol.neuroconstruct.project.*;
@@ -48,7 +47,6 @@ import ucl.physiol.neuroconstruct.project.cellchoice.AllCells;
 import ucl.physiol.neuroconstruct.project.cellchoice.CellChooser;
 import ucl.physiol.neuroconstruct.project.packing.CellPackingAdapter;
 import ucl.physiol.neuroconstruct.project.packing.CellPackingException;
-import ucl.physiol.neuroconstruct.project.packing.OneDimRegSpacingPackingAdapter;
 import ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter;
 import ucl.physiol.neuroconstruct.project.segmentchoice.GroupDistributedSegments;
 import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentLocationChooser;
@@ -515,6 +513,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                         }
                      project.cellGroupsInfo.addRow(currentPopulation, groupCellType, groupCellType, col, cp, priority++);
                      importedSimConfig.addCellGroup(currentPopulation);
+                     project.markProjectAsEdited();
                  } catch (NamingException ex) {
                      logger.logComment("Problem creating a new cell group...");
                  }
@@ -1206,6 +1205,8 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                                       xmlReader.parse(is);
                                       Cell builtCell = mmlBuilder.getBuiltCell();
                                       project.cellManager.addCellType(builtCell);
+
+                                      project.markProjectAsEdited();
                                       
                                       logger.logComment(builtCell.getInstanceName()+" added to the project");                                      
                                   } catch (NamingException ex) {
