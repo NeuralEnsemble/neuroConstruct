@@ -116,7 +116,11 @@ public class MpiSettings
         if (getMpiConfiguration(OTHER_4PROC)==null)
         {
             MpiConfiguration p = new MpiConfiguration(OTHER_4PROC);
-            p.getHostList().add(new MpiHost("bernal",4, 1));
+            p.getHostList().add(new MpiHost(LOCALHOST,4, 1));
+            
+            p.setRemoteLogin(new RemoteLogin("192.168.15.70", "/tmp"));
+
+
             configurations.add(p);
         } /*
         if (getMpiConfiguration(local8Config)==null)

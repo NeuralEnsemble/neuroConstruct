@@ -470,14 +470,6 @@ public class NeuronFileManager
 
     }
 
-    /*
-     * Generate test scripts for UCL cluster system. Will be changed ad cleaned up in near future!!
-     *
-     */
-    private boolean isUCLTest()
-    {
-        return simConfig.getMpiConf().isParallel() && simConfig.getMpiConf().getName().indexOf("Cluster")>=0;
-    }
     
     /*
      * Forces recompiling of mod files on next time needed
@@ -2494,10 +2486,10 @@ public class NeuronFileManager
 
         String dataFileDirName = dirForSims.getAbsolutePath() + System.getProperty("file.separator");
 
-        if (isUCLTest())
+        if (simConfig.getMpiConf().isRemotelyExecuted())
         {
             response.append("strdef targetDir\n");
-            response.append("targetDir = \"sim/\"\n\n");
+            response.append("targetDir = \"./\"\n\n");
         }
         else
         {

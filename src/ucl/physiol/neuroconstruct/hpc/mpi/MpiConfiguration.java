@@ -38,9 +38,10 @@ import java.util.*;
 public class MpiConfiguration
 {
     private String name = null;
+
+    private RemoteLogin remoteLogin = null;
     
     private ArrayList<MpiHost> hostList = new ArrayList<MpiHost>();
-    
 
 
     private MpiConfiguration()
@@ -51,6 +52,18 @@ public class MpiConfiguration
     {
         this.name = name;
     }
+
+
+    public RemoteLogin getRemoteLogin()
+    {
+        return remoteLogin;
+    }
+
+    public void setRemoteLogin(RemoteLogin remoteLogin)
+    {
+        this.remoteLogin = remoteLogin;
+    }
+    
 
     public void setHostList(ArrayList<MpiHost> hostList)
     {
@@ -82,11 +95,17 @@ public class MpiConfiguration
         }
         return num;
     }
-    
+
     public boolean isParallel()
     {
         return getTotalNumProcessors()>1;
-        
+
+    }
+
+    public boolean isRemotelyExecuted()
+    {
+        return this.remoteLogin!=null;
+
     }
 
     public int getNumProcessorsOnHost(String hostname)
@@ -124,26 +143,47 @@ public class MpiConfiguration
         
         return -1;
     }
-    
-    public boolean equals(Object other)
-    {
-        if (!(other instanceof MpiConfiguration)) return false;
-        
-        MpiConfiguration mcOther = (MpiConfiguration)other;
-        
-        if (!mcOther.getName().equals(getName())) return false;
-        
-        if (mcOther.getHostList().size()!=this.getHostList().size()) return false;
 
-        for (int i=0;i<getHostList().size();i++)
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == null)
         {
-            if (!mcOther.getHostList().get(i).equals(getHostList().get(i))) return false;
+            return false;
         }
-        
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        final MpiConfiguration other = (MpiConfiguration) obj;
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name))
+        {
+            return false;
+        }
+        if (this.remoteLogin != other.remoteLogin && (this.remoteLogin == null || !this.remoteLogin.equals(other.remoteLogin)))
+        {
+            return false;
+        }
+        if (this.hostList != other.hostList && (this.hostList == null || !this.hostList.equals(other.hostList)))
+        {
+            return false;
+        }
         return true;
     }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 3;
+        hash = 29 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 29 * hash + (this.remoteLogin != null ? this.remoteLogin.hashCode() : 0);
+        hash = 29 * hash + (this.hostList != null ? this.hostList.hashCode() : 0);
+        return hash;
+    }
+
     
     
+    @Override
     public Object clone()
     {
         MpiConfiguration mc2 = new MpiConfiguration(new String(name));
@@ -153,11 +193,16 @@ public class MpiConfiguration
             mh2.add((MpiHost)mh.clone());
         }
         mc2.setHostList(mh2);
+        if (remoteLogin!=null)
+        {
+            mc2.setRemoteLogin((RemoteLogin)remoteLogin.clone());
+        }
         
         return mc2;
     }
 
 
+    @Override
     public String toString()
     {
         int totHosts = 0;
@@ -173,7 +218,14 @@ public class MpiConfiguration
         if (totHosts==1) hosts = "1 host, ";
         if (totProcs==1) procs = "1 processor";
 
-        StringBuffer info = new StringBuffer(name+" with "+hosts+procs+"\n");
+        StringBuffer info = new StringBuffer(name+" with "+hosts+procs);
+
+        if (this.remoteLogin!=null)
+        {
+            info.append(" on "+remoteLogin.getHostname());
+        }
+        
+        info.append("\n");
         return info.toString();
     }
     
