@@ -12,7 +12,7 @@ part of NeuroML or any standardised XML specification. -->
    <string>Simple test project to check generation of N&amp;G simulation codes</string> 
   </void> 
   <void property="projectFileVersion"> 
-   <string>neuroConstruct v1.1.1</string> 
+   <string>neuroConstruct v1.2.3</string> 
   </void> 
   <void property="projectName"> 
    <string>TestGenNetworks</string> 
@@ -59,23 +59,15 @@ part of NeuroML or any standardised XML specification. -->
     <string>Cell Packing Adapter</string> 
     <void method="add"> 
      <object class="ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter"> 
-      <void property="parameterList"> 
-       <void index="2"> 
-        <void property="value"> 
-         <float>4.0</float> 
-        </void> 
-       </void> 
+      <void property="maxNumberCells"> 
+       <int>4</int> 
       </void> 
      </object> 
     </void> 
     <void method="add"> 
      <object class="ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter"> 
-      <void property="parameterList"> 
-       <void index="2"> 
-        <void property="value"> 
-         <float>3.0</float> 
-        </void> 
-       </void> 
+      <void property="maxNumberCells"> 
+       <int>3</int> 
       </void> 
      </object> 
     </void> 
@@ -222,6 +214,7 @@ part of NeuroML or any standardised XML specification. -->
  </object> 
  <object class="ucl.physiol.neuroconstruct.neuron.NeuronSettings"/> 
  <object class="ucl.physiol.neuroconstruct.genesis.GenesisSettings"/> 
+ <object class="ucl.physiol.neuroconstruct.psics.PsicsSettings"/> 
  <object class="ucl.physiol.neuroconstruct.simulation.SimulationParameters"> 
   <void property="dt"> 
    <float>0.02</float> 
@@ -230,7 +223,7 @@ part of NeuroML or any standardised XML specification. -->
    <float>100.0</float> 
   </void> 
   <void property="reference"> 
-   <string>Sim_1</string> 
+   <string>Sim_4</string> 
   </void> 
   <void property="saveCopyGenSimFiles"> 
    <boolean>true</boolean> 
@@ -349,7 +342,7 @@ part of NeuroML or any standardised XML specification. -->
          <double>-20.0</double> 
         </void> 
         <void property="weightsGenerator"> 
-         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator"> 
+         <object class="ucl.physiol.neuroconstruct.utils.WeightGenerator"> 
           <void property="numberType"> 
            <int>11</int> 
           </void> 

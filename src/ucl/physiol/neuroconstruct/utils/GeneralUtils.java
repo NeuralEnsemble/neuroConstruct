@@ -800,7 +800,6 @@ public class GeneralUtils
             winPath = GeneralUtils.replaceAllTokens(winPath, "Documents and Settings", "Docume~1");
         }
 
-
         if (GeneralUtils.isWindowsBasedPlatform())
         {
             boolean canFix = true;
@@ -828,9 +827,10 @@ public class GeneralUtils
                 }
             }
         }
-
-
-
+        if (winPath.indexOf( ":")<0)
+        {
+            return winPath;
+        }
         String drive = winPath.substring(0, winPath.indexOf( ":")).toLowerCase();
         String cygwinPath = "/cygdrive/"+ drive +"/" + replaceAllTokens(winPath.substring(winPath.indexOf( ":")+2), "\\", "/");
         logger.logComment("As cygwin: "+ cygwinPath);

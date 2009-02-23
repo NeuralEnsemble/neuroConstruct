@@ -881,12 +881,20 @@ public class GenesisFileManager
     private String generateIncludes()
     {
         StringBuffer response = new StringBuffer();
-        
+
+        boolean copyToSimDataDir = project.genesisSettings.isCopySimFiles();
         
         String dir = ""; // needed under windows...
         if (GeneralUtils.isWindowsBasedPlatform())
         {
-            dir = this.mainGenesisFile.getParentFile().getAbsolutePath()+ System.getProperty("file.separator");
+            if (!copyToSimDataDir)
+            {
+                dir = this.mainGenesisFile.getParentFile().getAbsolutePath()+ System.getProperty("file.separator");
+            }
+            else
+            {
+                dir = getDirectoryForSimulationFiles()+ System.getProperty("file.separator");
+            }
 
             //if (!(new File(dir)))
             dir = GeneralUtils.convertToCygwinPath(dir);
@@ -961,7 +969,14 @@ public class GenesisFileManager
         String dir = ""; // needed under windows...
         if (GeneralUtils.isWindowsBasedPlatform())
         {
-            dir = this.mainGenesisFile.getParentFile().getAbsolutePath() + System.getProperty("file.separator");
+            if (!project.genesisSettings.isCopySimFiles())
+            {
+                dir = this.mainGenesisFile.getParentFile().getAbsolutePath()+ System.getProperty("file.separator");
+            }
+            else
+            {
+                dir = getDirectoryForSimulationFiles()+ System.getProperty("file.separator");
+            }
 
             dir = GeneralUtils.convertToCygwinPath(dir);
         }
@@ -1195,8 +1210,15 @@ public class GenesisFileManager
         String dir = ""; // needed under windows...
         if (GeneralUtils.isWindowsBasedPlatform())
         {
-            dir = this.mainGenesisFile.getParentFile().getAbsolutePath() + System.getProperty("file.separator");
-
+            if (!project.genesisSettings.isCopySimFiles())
+            {
+                dir = this.mainGenesisFile.getParentFile().getAbsolutePath()+ System.getProperty("file.separator");
+            }
+            else
+            {
+                dir = getDirectoryForSimulationFiles()+ System.getProperty("file.separator");
+            }
+            
             dir = GeneralUtils.convertToCygwinPath(dir);
         }
 
@@ -1491,7 +1513,7 @@ public class GenesisFileManager
         {
             dirForDataFiles.mkdir();
         }
-        return dirForDataFiles;
+        return dirForDataFiles.getAbsoluteFile();
     }
 
 
@@ -2511,7 +2533,16 @@ public class GenesisFileManager
 
             if (GeneralUtils.isWindowsBasedPlatform())
             {
-                filenameToBeGenerated = GeneralUtils.convertToCygwinPath(filenameToBeGenerated);
+                if (!project.genesisSettings.isCopySimFiles())
+                {
+                    filenameToBeGenerated = GeneralUtils.convertToCygwinPath(filenameToBeGenerated);
+                }
+                else
+                {
+                    File copiedFile = new File(getDirectoryForSimulationFiles(), (new File(filenameToBeGenerated)).getName());
+                    filenameToBeGenerated = GeneralUtils.convertToCygwinPath(copiedFile.getAbsolutePath());
+                }
+
             }
 
 
@@ -3073,10 +3104,11 @@ public class GenesisFileManager
 
 
 
-    public void runGenesisFile(boolean copyToSimDataDir) throws GenesisException
+    public void runGenesisFile() throws GenesisException
     {
         logger.logComment("Trying to run the mainGenesisFile...");
 
+        boolean copyToSimDataDir = project.genesisSettings.isCopySimFiles();
 
         ProcessFeedback pf = new ProcessFeedback()
         {
@@ -3363,7 +3395,8 @@ public class GenesisFileManager
 
     public static String getFriendlyDirName(String fileDirName)
     {
-
+        if (fileDirName.length()==0)
+            return "";
         Pattern p = Pattern.compile("\\\\"); // looking for one \ (there's \\ needed for java, and twice this for perl)
         Matcher m = p.matcher(fileDirName);
         String friendlyDirName = m.replaceAll("\\/"); // replacing with \\ (see above)

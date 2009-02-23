@@ -100,57 +100,56 @@ public class GenesisFileManagerTest {
         
         File simDir = new File(ProjectStructure.getSimulationsDir(proj.getProjectMainDirectory()), simName);
         
-        if (simDir.exists())
-            simDir.delete();
+        //if (simDir.exists())
+        //    simDir.delete();
         
         proj.genesisSettings.setGraphicsMode(false);
         
         proj.genesisFileManager.setQuitAfterRun(true);
-   
-        proj.genesisFileManager.generateTheGenesisFiles(sc, null, new GenesisCompartmentalisation(), 1234);
-        
-           
-        File mainFile = new File(proj.genesisFileManager.getMainGenesisFileName());
-        
-        
-        assertTrue(mainFile.exists());
-        
-        System.out.println("Created files, including: "+mainFile);
-         
-        
-    
-        
-        proj.genesisFileManager.runGenesisFile(true);
-        
-        System.out.println("Run GENESIS files");
-        
-         
-        SimulationData simData = new SimulationData(simDir, false);
-        
-        File timesFile = simData.getTimesFile();
-        
-        Thread.sleep(wait); // Shouldn't take longer than this
-        
-        
-        if(!timesFile.exists())
-            Thread.sleep(4000); // One more try...
-        
-        assertTrue(timesFile.exists());
-        
-        simData.initialise();
-        
-        
-        int numRecordings = simData.getCellSegRefs(false).size();
-        
-        assertEquals(numRecordings, numGen);
-        
-        
-        System.out.println("Have found "+ numRecordings+" recordings in dir: "+ simData.getSimulationDirectory().getAbsolutePath());
-        
-        double[] volts = simData.getVoltageAtAllTimes(SimulationData.getCellRef(sc.getCellGroups().get(0), 0));
-        
-        assertEquals(volts.length, 1 + (sc.getSimDuration()/proj.simulationParameters.getDt()), 0);
-        
+
+        for(int i=0;i<=1;i++)
+        {
+            proj.genesisSettings.setCopySimFiles((i==0));
+
+            proj.genesisFileManager.generateTheGenesisFiles(sc, null, new GenesisCompartmentalisation(), 1234);
+
+            File mainFile = new File(proj.genesisFileManager.getMainGenesisFileName());
+
+            assertTrue(mainFile.exists());
+
+            System.out.println("Created files, including: "+mainFile);
+
+            proj.genesisFileManager.runGenesisFile();
+
+            System.out.println("Run GENESIS files");
+
+
+            SimulationData simData = new SimulationData(simDir, false);
+
+            File timesFile = simData.getTimesFile();
+
+            Thread.sleep(wait); // Shouldn't take longer than this
+
+
+            if(!timesFile.exists())
+                Thread.sleep(4000); // One more try...
+
+            assertTrue(timesFile.exists());
+
+            simData.initialise();
+
+
+            int numRecordings = simData.getCellSegRefs(false).size();
+
+            assertEquals(numRecordings, numGen);
+
+
+            System.out.println("Have found "+ numRecordings+" recordings in dir: "+ simData.getSimulationDirectory().getAbsolutePath());
+
+            double[] volts = simData.getVoltageAtAllTimes(SimulationData.getCellRef(sc.getCellGroups().get(0), 0));
+
+            assertEquals(volts.length, 1 + (sc.getSimDuration()/proj.simulationParameters.getDt()), 0);
+        }
         
     }
     

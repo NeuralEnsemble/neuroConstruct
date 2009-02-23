@@ -30,7 +30,6 @@ import java.beans.*;
 import java.io.*;
 import java.net.*;
 import java.text.*;
-import java.util.logging.Level;
 import java.util.zip.*;
 import java.lang.management.*;
 import javax.media.j3d.*;
@@ -939,7 +938,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTextFieldProjFileVersion.setEditable(false);
         jTextFieldProjFileVersion.setText("");
         jMenuItemUnzipProject.setText("Import Zipped Project...");
-        jMenuItemImportLevel123.setText("Import NeuroML level 1, 2, 3...");
+        jMenuItemImportLevel123.setText("Import NeuroML Levels 1-3...");
 
         jMenuItemUnzipProject.addActionListener(new java.awt.event.ActionListener()
         {
@@ -1188,7 +1187,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jRadioButtonNeuroMLLevel1.setText("Level 1 (Anatomy only)");
         jRadioButtonNeuroMLLevel2.setText("Level 2 (L1 & cell biophysics)");
         jRadioButtonNeuroMLLevel3.setText("Level 3 (L2 & network aspects)");
-        jRadioButtonNeuroMLCellChan.setText("Channels details");
+        jRadioButtonNeuroMLCellChan.setText("L3 & channel details");
 
         buttonGroupNeuroML.add(jRadioButtonNeuroMLLevel1);
         buttonGroupNeuroML.add(jRadioButtonNeuroMLLevel2);
@@ -1256,7 +1255,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         jLabelNeuroMLMain.setHorizontalAlignment(SwingConstants.CENTER);
         jLabelNeuroMLMain.setHorizontalTextPosition(SwingConstants.CENTER);
-        jLabelNeuroMLMain.setText("Export project elements in NeuroML format");
+        jLabelNeuroMLMain.setText("The Cells included in this project can be exported to NeuroML/MorphML format");
         jPanelNeuroML.setLayout(borderLayout31);
         jPanelNeuroMLHeader.setMinimumSize(new Dimension(391, 35));
         jPanelNeuroMLHeader.setPreferredSize(new Dimension(391, 35));
@@ -7028,8 +7027,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             return;
         }
 
-        projManager.doRunGenesis(getSelectedSimConfig());
-/*
         try
         {
             if (GeneralProperties.getGenerateMatlab())
@@ -7044,16 +7041,17 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                       this.jTextFieldSimRef.getText());
             }
             
-            projManager.getCurrentProject().genesisFileManager.runGenesisFile(jCheckBoxGenesisCopySimFiles.isSelected());
+            projManager.getCurrentProject().genesisFileManager.runGenesisFile();
         }
         catch (GenesisException ex)
         {
             GuiUtils.showErrorMessage(logger, ex.getMessage(), ex, this);
             return;
-        }*/
+        }
 
-
-        refreshTabGenesis();
+        //GuiUtils.showInfoMessage(logger,
+       //                          "Running simulation in NEURON...",
+       //                          "A new simulation entitled "+jTextFieldSimRef.getText()+" is being run in NEURON. Please wait ", this);
         refreshTab3D();
 
     }
@@ -8299,6 +8297,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jMenuFile.add(jMenuItemCopyProject);
         jMenuFile.add(jMenuItemZipUp);
         jMenuFile.add(jMenuItemUnzipProject);
+        jMenuFile.addSeparator();
         jMenuFile.add(jMenuItemImportLevel123);
         jMenuFile.addSeparator();
         
@@ -12073,7 +12072,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         logger.logComment("chooser.getCurrentDirectory(): "+chooser.getCurrentDirectory());
 
-        chooser.setDialogTitle("Choose NeuroML  file to load");
+        chooser.setDialogTitle("Choose NeuroML file to load");
 
         final JTextArea summary = new JTextArea(12,40);
         summary.setMargin(new Insets(5,5,5,5));
@@ -15503,7 +15502,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         doGeneratePynn();
 
-    }
+    } 
 
     void jMenuItemGenGenesis_actionPerformed(ActionEvent e)
     {

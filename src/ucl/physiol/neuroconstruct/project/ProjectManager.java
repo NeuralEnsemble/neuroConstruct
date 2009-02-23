@@ -179,7 +179,7 @@ public class ProjectManager implements GenerationReport
                 IgorNeuroMatic.createSimulationLoader(activeProject, simConfig, simRef);
             }
 
-            activeProject.genesisFileManager.runGenesisFile(activeProject.genesisSettings.isCopySimFiles());
+            activeProject.genesisFileManager.runGenesisFile();
         }
         catch (GenesisException ex)
         {
