@@ -28,6 +28,7 @@ package ucl.physiol.neuroconstruct.psics;
 
 import java.io.*;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.Vector;
 import javax.vecmath.Point3f;
@@ -444,6 +445,9 @@ public class PsicsMorphologyGenerator
 
         int colourNum = 2; // Not black first...
 
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(12);
+
         while(chans.hasMoreElements())
         {
             ChannelMechanism cm = chans.nextElement();
@@ -460,7 +464,7 @@ public class PsicsMorphologyGenerator
                 float defaultSingChanCond_mS = defaultSingChanCond_pS/1e9f;
                 float numPerum2 = condDensity/defaultSingChanCond_mS;
 
-                cp.addAttribute(new SimpleXMLAttribute("density", numPerum2+unitDens));
+                cp.addAttribute(new SimpleXMLAttribute("density", df.format(numPerum2)+unitDens));
                 cp.addAttribute(new SimpleXMLAttribute("color", "0x"+ColourUtils.getSequentialColourHex(colourNum)));
                 colourNum++;
 
