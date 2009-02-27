@@ -58,7 +58,7 @@ public class MainTest
                 ucl.physiol.neuroconstruct.neuroml.NetworkMLReaderTest.class,
                 ucl.physiol.neuroconstruct.neuroml.Level3ExportTest.class,
                 ucl.physiol.neuroconstruct.neuroml.hdf5.NetworkMLReaderTest.class,
-                ucl.physiol.neuroconstruct.project.RandomSpikeTrainTest.class,
+                ucl.physiol.neuroconstruct.project.InputsTest.class,
                 ucl.physiol.neuroconstruct.project.ElecInputGeneratorTest.class,
                 ucl.physiol.neuroconstruct.project.ConnSpecificPropsTest.class,
                 ucl.physiol.neuroconstruct.project.ProjectStructureTest.class,

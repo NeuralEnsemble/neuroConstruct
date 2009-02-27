@@ -104,7 +104,12 @@ PROCEDURE event_time() {
             event = event + invl(interval)
     }
     if (event > end) {
-            on = 0
+	if (repeat == 1) {
+		event = event + del
+		end = end + del + dur
+	}else{
+		on = 0
+	}
     }
         
 }

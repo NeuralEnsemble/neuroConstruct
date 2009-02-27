@@ -1071,7 +1071,9 @@ public class StimDialog extends JDialog
 
             String newRate = JOptionPane.showInputDialog(this,
                                                          "Please enter the expression for the rate of firing as a function of t ("+
-                                                     UnitConverter.currentUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+")", oldRate);
+                                                     UnitConverter.currentUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+")" +
+                                                     "\n\nNOTE: with an average firing rate smaller than 0.05 the frequency of the function should be less than 1Hz" +
+                                                     "\n              (if you need a zero average you could use a Random spikes with in \"repeat\" mode instead) \n ", oldRate);
 
             try
             {
