@@ -272,7 +272,7 @@ public class EditGroupsDialog
         jPanelSectionsIn.add(jLabelSectionsIn, BorderLayout.NORTH);
         jPanelSectionsIn.add(scrollPaneSectionsIn, BorderLayout.CENTER);
         jPanelSelectGroup.add(jTextFieldNewGroup, null);
-        //viewportSectionsIn.setView(jListSectionsIn);
+//        viewportSectionsIn.setView(jListSectionsIn);
 
         jListSectionsIn.addListSelectionListener(this);
         jListSectionsOut.addListSelectionListener(this);
@@ -281,6 +281,7 @@ public class EditGroupsDialog
         jRadioButtonAddSections.setText("sections");
         jRadioButtonAddSections.setSelected(true);
         jRadioButtonAddGroups.setText("groups");
+//        jRadioButtonAddGroups.setEnabled(false);
         JButtonGroup.add(jRadioButtonAddSections);
         JButtonGroup.add(jRadioButtonAddGroups);
         jPanelMain.add(jPanelAddWhat, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
@@ -342,12 +343,16 @@ public class EditGroupsDialog
                 }
             }
             updateInterface.refreshGroup(selectedGroup);
+            
+            // simple update...
+            this.jComboBoxGroupNames.setSelectedItem(defaultGroupSelection);
+            this.jComboBoxGroupNames.setSelectedItem(selectedGroup);
     }
             
             
     private void jRadioButtonAddGroups_actionPerformed(ActionEvent e) {
                 jLabelSectionsOut.setText("other groups in the cell");
-                jLabelSectionsIn.setText("subgrops");
+                jLabelSectionsIn.setText("subgroups");
                 listModelSectionsIn.clear();                
                 listModelSectionsOut.clear();
                 
@@ -370,14 +375,24 @@ public class EditGroupsDialog
                 for (int i = 0; i < allGroups.size(); i++) {
                     String group = allGroups.elementAt(i);
                     if (!selectedGroup.equals(group)) {
+                        
                         ArrayList<Section> allSecInGroup = myCell.getSectionsInGroup(group);
-                        if (myCell.getSectionsInGroup(selectedGroup).containsAll(allSecInGroup)) {
-                            listModelSectionsIn.addElement(allGroups.elementAt(i));
-                        } else
-                            listModelSectionsOut.addElement(allGroups.elementAt(i));
+                        
+                        if (!allSecInGroup.containsAll(myCell.getSectionsInGroup(selectedGroup))) { //groups that contains the selected group should not appear
+                            
+                            if (myCell.getSectionsInGroup(selectedGroup).containsAll(allSecInGroup)) {
+                                listModelSectionsIn.addElement(group);
+                            } else {                           
+                                listModelSectionsOut.addElement(group);
+                            }
+                        }
                     }
                 }
                 updateInterface.refreshGroup(selectedGroup);
+                
+                // simple update...
+                this.jComboBoxGroupNames.setSelectedItem(defaultGroupSelection);
+                this.jComboBoxGroupNames.setSelectedItem(selectedGroup);
     }
 
     private void extraInit()
@@ -526,16 +541,17 @@ public class EditGroupsDialog
             }
             }
             
-            else if (jRadioButtonAddGroups.isSelected()== true)
-            {
-                Vector<String> allGroups = myCell.getAllGroupNames();
+            else if (jRadioButtonAddGroups.isSelected()== true)  {
+                
+            Vector<String> allGroups = myCell.getAllGroupNames();
 
             for (int i = 0; i <  allGroups.size(); i++)
             {
-                String group = allGroups.elementAt(i);
+                String group = allGroups.elementAt(i);                
                 if (!selectedGroup.equals(group))
                 {
                     ArrayList<Section> allSecInGroup = myCell.getSectionsInGroup(group);
+                    
                     if (myCell.getSectionsInGroup(selectedGroup).containsAll(allSecInGroup))
                         listModelSectionsIn.addElement(allGroups.elementAt(i)); 
                     else
@@ -566,7 +582,7 @@ public class EditGroupsDialog
             logger.logComment("Item: " + selected[i] + " ("+selSection+") is selected...");
 
             selSection.getSection().addToGroup(selectedGroup);
-            
+
              }
              
              else if (jRadioButtonAddGroups.isSelected()== true)
@@ -576,12 +592,18 @@ public class EditGroupsDialog
                  for (int j = 0; j < sectionsToAdd.size(); j++) {
                      
                     Section selSection = sectionsToAdd.get(j);
-                    logger.logComment("Adding " + selected[i] + " section of group " + listModelSectionsOut.elementAt(selected[i]).toString());
-                    selSection.addToGroup(selectedGroup);
-            
-                 }                 
+                    
+                    logger.logComment("Item: " + selSection + "section  of group "+ selected[i] +" is selected...");
+                    
+                    if (!myCell.getSectionsInGroup(selectedGroup).contains(selSection)) //check for overlapping sections
+                        selSection.addToGroup(selectedGroup);
+                     
+                 }
+
              }
-            listModelSectionsIn.addElement(jListSectionsOut.getName());
+            
+//             listModelSectionsIn.addElement(jListSectionsOut.getName());
+             listModelSectionsIn.addElement(listModelSectionsOut.elementAt(selected[i]));
         }
 
         // simple update...
@@ -619,12 +641,33 @@ public class EditGroupsDialog
 
         for (int i = 0; i < selected.length; i++)
         {
+            
+            if (jRadioButtonAddSections.isSelected()== true)
+            {
 
             SectionHelper selSection = (SectionHelper)listModelSectionsIn.elementAt(selected[i]);
 
             logger.logComment("Item: " + selected[i] + " ("+selSection+") is selected...");
 
             selSection.getSection().removeFromGroup(selectedGroup);
+            
+            }
+            
+             else if (jRadioButtonAddGroups.isSelected()== true)
+             {
+                     
+                 ArrayList<Section> sectionsToRemove = myCell.getSectionsInGroup((String)listModelSectionsIn.elementAt(selected[i]));
+                 
+                 for (int j = 0; j < sectionsToRemove.size(); j++) {
+                     
+                     Section selSection = sectionsToRemove.get(j);
+
+                     selSection.removeFromGroup(selectedGroup);              
+                                  
+                 }
+                 
+             }
+            
         }
 
         // simple update...

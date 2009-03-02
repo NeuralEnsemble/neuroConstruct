@@ -197,6 +197,10 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
          if (insideCell)
              
          {
+              contents = contents.replace("<", "&lt;");
+              contents = contents.replace(">", "&gt;");
+              contents = contents.replace("\"", "&quot;");
+              contents = contents.replace("&", "&amp;");
               cellBuffer = cellBuffer + contents;            
          }
 
@@ -207,6 +211,9 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
          if (insideChannel)
 
          {
+              contents = contents.replace("<", "&lt;");
+              contents = contents.replace(">", "&gt;");
+              contents = contents.replace("\"", "&quot;");
               contents = contents.replace("&", "&amp;");
               chanBuffer = chanBuffer + contents;            
          }
