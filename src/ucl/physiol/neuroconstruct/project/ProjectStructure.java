@@ -233,9 +233,10 @@ public class ProjectStructure
     private static String importDocFileInInstall = helpFileDirInInstall + "import.html";
 
     private static String glossaryHtmlFileInInstall = helpFileDirInInstall + "Glossary_gen.html";
-    
+
     private static String relNotesFileInInstall = helpFileDirInInstall + "RELEASE_NOTES";
-    
+
+    private static String gnuplotEpsFilename = "generateEps.gp";
 
    // private static String neuronModSourcesDir = "src"
     //    + System.getProperty("file.separator")
@@ -993,6 +994,12 @@ public class ProjectStructure
     }
 
 
+
+    public static String getGnuplotEpsFilename()
+    {
+        return gnuplotEpsFilename;
+    }
+    
 
 
     /**

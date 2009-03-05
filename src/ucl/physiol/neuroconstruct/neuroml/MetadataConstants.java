@@ -53,6 +53,8 @@ public class MetadataConstants
     public static String LENGTH_UNITS_OLD = "lengthUnits";
     public static String LENGTH_UNITS_NEW = "length_units";
 
+    public static String LENGTH_UNITS_MICROMETER = "micrometer";
+
     public static String NOTES_ELEMENT = "notes";
 
     public static String PROPS_ELEMENT = "properties";

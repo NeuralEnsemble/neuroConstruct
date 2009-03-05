@@ -1157,7 +1157,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                   rootElement.addNamespace(new SimpleXMLNamespace(MorphMLConstants.PREFIX, MorphMLConstants.NAMESPACE_URI));
                   rootElement.addNamespace(new SimpleXMLNamespace(BiophysicsConstants.PREFIX, BiophysicsConstants.NAMESPACE_URI));
                    rootElement.addNamespace(new SimpleXMLNamespace(NetworkMLConstants.PREFIX, NetworkMLConstants.NAMESPACE_URI));  
-                  rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS_OLD, "micron"));
+                  rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS_OLD, MetadataConstants.LENGTH_UNITS_MICROMETER));
                   doc.addRootElement(rootElement);
                   rootElement.addContent("\n\n");
                   StringBuffer notes = new StringBuffer("\nNeuroML (level 3) description of a cell "+renamedCells.get(cellName)+" generated with project: "

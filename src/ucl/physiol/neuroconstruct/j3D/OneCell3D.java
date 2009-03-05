@@ -1132,9 +1132,11 @@ public class OneCell3D
             {
                  logger.logComment("Adding ConicalFrustum...");
 
+                 float minRadius = 2.5f;
+
                 ConicalFrustum conFru
-                    = new ConicalFrustum(startRadius,
-                                          endRadius,
+                    = new ConicalFrustum(Math.max(startRadius, minRadius),
+                                          Math.max(endRadius, minRadius) ,
                                           length,
                                           ConicalFrustum.GENERATE_NORMALS |
                                           ConicalFrustum.GENERATE_TEXTURE_COORDS |

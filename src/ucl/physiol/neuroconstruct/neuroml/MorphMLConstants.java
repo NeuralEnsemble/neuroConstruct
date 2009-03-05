@@ -47,8 +47,6 @@ public class MorphMLConstants
     public static String DEFAULT_SCHEMA_FILENAME = "MorphML.xsd";
 
 
-
-
     public static String CELLS_ELEMENT = "cells";
     public static String CELL_ELEMENT = "cell";
 
@@ -95,6 +93,19 @@ public class MorphMLConstants
     public static String NUMBER_INTERNAL_DIVS_PROP = "numberInternalDivisions";
 
     public static String FINITE_VOL_PROP = "finiteVolume";
+
+    public static String INHOMO_PARAM = "inhomogeneous_param";
+    public static String INHOMO_PARAM_NAME_ATTR = "name";
+    public static String INHOMO_PARAM_VARIABLE_ATTR = "variable";
+
+    public static String INHOMO_PARAM_METRIC = "metric";
+    public static String INHOMO_PARAM_PROXIMAL = "proximal";
+    public static String INHOMO_PARAM_PROXIMAL_TRANS_START_ATTR = "translationStart";
+
+    public static String INHOMO_PARAM_DISTAL = "distal";
+    public static String INHOMO_PARAM_DISTAL_NORM_END_ATTR = "normalizationEnd";
+
+
 
     private MorphMLConstants()
     {

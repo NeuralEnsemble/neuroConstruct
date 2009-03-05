@@ -631,7 +631,7 @@ public class ProjectManager implements GenerationReport
             rootElement.addNamespace(new SimpleXMLNamespace(NetworkMLConstants.PREFIX,
                                                              NetworkMLConstants.NAMESPACE_URI));            
 
-            rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS_OLD, "micron"));
+            rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS_OLD, MetadataConstants.LENGTH_UNITS_MICROMETER));
 
             doc.addRootElement(rootElement);
 
@@ -837,10 +837,12 @@ public class ProjectManager implements GenerationReport
                                                              NetworkMLConstants.NAMESPACE_URI));
 
             rootElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC,
-                                                            NeuroMLConstants.NAMESPACE_URI+"../../Schemata/v1.7.3/Level3/NeuroML_Level3_v1.7.3.xsd"));// + "NeuroMLConstants.NAMESPACE_URI + "  " + NeuroMLConstants.DEFAULT_SCHEMA_FILENAME));
+                                                            NeuroMLConstants.NAMESPACE_URI+"../../Schemata/v"+GeneralProperties.getNeuroMLVersionNumber()
+                                                            +"/Level3/NeuroML_Level3_v"+GeneralProperties.getNeuroMLVersionNumber()
+                                                            +".xsd"));// + "NeuroMLConstants.NAMESPACE_URI + "  " + NeuroMLConstants.DEFAULT_SCHEMA_FILENAME));
             
 
-            rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS_OLD, "micron"));
+            rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS_OLD, MetadataConstants.LENGTH_UNITS_MICROMETER));
 
             doc.addRootElement(rootElement);
 
@@ -1222,7 +1224,7 @@ public class ProjectManager implements GenerationReport
                                                             NetworkMLConstants.NAMESPACE_URI
                                                             + "  " + NetworkMLConstants.DEFAULT_SCHEMA_FILENAME));
 
-            rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS_OLD, "micron"));
+            rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS_OLD, MetadataConstants.LENGTH_UNITS_MICROMETER));
 
             doc.addRootElement(rootElement);
 

@@ -69,7 +69,7 @@ public class ParameterisedGroup implements Serializable
     
     public enum Metric implements Serializable { 
         
-        PATH_LENGTH_FROM_ROOT("Path length from root")/*,
+        PATH_LENGTH_FROM_ROOT("Path Length from root")/*,
         THREE_D_RADIAL_POSITION("3D radial distance from origin"),
         THREE_D_PROJ_ONTO_LINE*/;
     

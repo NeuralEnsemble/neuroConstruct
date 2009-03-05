@@ -35,6 +35,8 @@ import javax.xml.parsers.*;
 
 import org.xml.sax.*;
 import ucl.physiol.neuroconstruct.cell.*;
+import ucl.physiol.neuroconstruct.cell.ParameterisedGroup.DistalPref;
+import ucl.physiol.neuroconstruct.cell.ParameterisedGroup.ProximalPref;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
@@ -586,6 +588,46 @@ public class MorphMLConverter extends FormatImporter
                         cableGroupElement.addContent("\n                "); // to make it more readable...
                         cableGroupElement.addChildElement(cableElement);
                 
+                    }
+                    for(ParameterisedGroup pg: cell.getParameterisedGroups())
+                    {
+                        if (pg.getGroup().equals(group))
+                        {
+                            SimpleXMLElement inhomoElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.INHOMO_PARAM);
+                            inhomoElement.addAttribute(MorphMLConstants.INHOMO_PARAM_NAME_ATTR, pg.getName());
+                            inhomoElement.addAttribute(MorphMLConstants.INHOMO_PARAM_VARIABLE_ATTR, "p");
+
+                            SimpleXMLElement metric = new SimpleXMLElement(mmlPrefix+MorphMLConstants.INHOMO_PARAM_METRIC);
+                            metric.addContent(pg.getMetric().toString());
+                                inhomoElement.addContent("\n                    "); // to make it more readable...
+                            inhomoElement.addChildElement(metric);
+
+
+                            if (pg.getProximalPref().equals(ProximalPref.MOST_PROX_AT_0))
+                            {
+                                SimpleXMLElement proximal = new SimpleXMLElement(mmlPrefix+MorphMLConstants.INHOMO_PARAM_PROXIMAL);
+                                proximal.addAttribute(MorphMLConstants.INHOMO_PARAM_PROXIMAL_TRANS_START_ATTR, "0");
+
+                                inhomoElement.addContent("\n                    "); // to make it more readable...
+                                inhomoElement.addChildElement(proximal);
+
+                            }
+
+                            if (pg.getDistalPref().equals(DistalPref.MOST_DIST_AT_1))
+                            {
+                                SimpleXMLElement distal = new SimpleXMLElement(mmlPrefix+MorphMLConstants.INHOMO_PARAM_DISTAL);
+                                distal.addAttribute(MorphMLConstants.INHOMO_PARAM_DISTAL_NORM_END_ATTR, "1");
+                                inhomoElement.addContent("\n                    "); // to make it more readable...
+                                inhomoElement.addChildElement(distal);
+
+                            }
+
+                            inhomoElement.addContent("\n                "); // to make it more readable...
+                            cableGroupElement.addContent("\n                "); // to make it more readable...
+                            cableGroupElement.addChildElement(inhomoElement);
+
+
+                        }
                     }
                     
                     cableGroupElement.addContent("\n            "); // to make it more readable...
