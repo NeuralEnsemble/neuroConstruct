@@ -26,7 +26,6 @@
 
 package ucl.physiol.neuroconstruct.neuroml;
 
-import com.ziclix.python.sql.pipe.Source;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,12 +33,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Iterator;
-import javax.xml.XMLConstants;
-import javax.xml.bind.Validator;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

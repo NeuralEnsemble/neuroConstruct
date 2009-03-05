@@ -37,8 +37,9 @@ import javax.xml.transform.stream.StreamSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.Result;
+import test.MainTest;
 import ucl.physiol.neuroconstruct.cell.Cell;
-import ucl.physiol.neuroconstruct.mechanisms.CellMechanism;
 import static org.junit.Assert.*;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.Hdf5Exception;
 import ucl.physiol.neuroconstruct.project.*;
@@ -243,6 +244,14 @@ public class NetworkMLReaderTest
         
 
         
+    }
+
+     public static void main(String[] args)
+    {
+        NetworkMLReaderTest ct = new NetworkMLReaderTest();
+        Result r = org.junit.runner.JUnitCore.runClasses(ct.getClass());
+        MainTest.checkResults(r);
+
     }
 
 }
