@@ -1,0 +1,1 @@
+../NaConductance.mod
