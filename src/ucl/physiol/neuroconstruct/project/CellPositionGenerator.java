@@ -86,6 +86,8 @@ public class CellPositionGenerator extends Thread
         logger.logComment("CellPositionGenerator being told to stop...");
         continueGeneration = false;
     }
+
+
     
  
     @Override
@@ -95,54 +97,8 @@ public class CellPositionGenerator extends Thread
         startGenerationTime = System.currentTimeMillis();
 
 
-        ArrayList<String> cellGroupNamesUnordered = simConfig.getCellGroups();
-        LinkedList<String> cellGroupNames = new LinkedList<String>();
-
-        for (String nextCG: cellGroupNamesUnordered)
-        {
-            //System.out.println("Putting "+nextCG+" into: "+ cellGroupNames);
-            int priority = project.cellGroupsInfo.getPriority(nextCG);
-            if (cellGroupNames.size()==0)
-            {
-                cellGroupNames.add(nextCG);
-            }
-            else
-            {
-                int topPriority = project.cellGroupsInfo.getPriority(cellGroupNames.getFirst());
-                int bottomPriority = project.cellGroupsInfo.getPriority(cellGroupNames.getLast());
-
-                if (priority>topPriority)
-                {
-                    cellGroupNames.addFirst(nextCG);
-                }
-                else if (priority<bottomPriority)
-                {
-                    cellGroupNames.addLast(nextCG);
-                }
-                else
-                {
-                    int numToCheck = cellGroupNames.size()-1;
-
-                    for (int i = 0; i < numToCheck; i++)
-                    {
-                        int upperPriority = project.cellGroupsInfo.getPriority(cellGroupNames.get(i));
-                        int lowerPriority = project.cellGroupsInfo.getPriority(cellGroupNames.get(i+1));
-                        if (priority==upperPriority)
-                        {
-                            cellGroupNames.add(i, nextCG);
-                            i = cellGroupNames.size();
-                        }
-                        else if (priority<upperPriority && priority>lowerPriority )
-                        {
-                            cellGroupNames.add(i+1, nextCG);
-                            i = cellGroupNames.size();
-                        }
-                    }
-                }
-            }
-        }
-        logger.logComment("Old order: "+ cellGroupNamesUnordered);
-        logger.logComment("New order: "+ cellGroupNames);
+        //ArrayList<String> cellGroupNamesUnordered = simConfig.getCellGroups();
+        LinkedList<String> cellGroupNames = simConfig.getPrioritizedCellGroups(project);
 
         project.generatedCellPositions.reset();
 
