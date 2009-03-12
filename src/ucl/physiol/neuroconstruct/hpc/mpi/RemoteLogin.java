@@ -36,18 +36,41 @@ package ucl.physiol.neuroconstruct.hpc.mpi;
 public class RemoteLogin
 {
     private String hostname = null;
-
+    private String userName = null;
     private String workDir = null;
+    private String nrnivLocation = null;
 
     public RemoteLogin()
     {
 
     }
 
-    public RemoteLogin(String hostname, String workDir)
+    public RemoteLogin(String hostname, String userName, String workDir, String nrnivLocation)
     {
         this.hostname = hostname;
+        this.userName = userName;
         this.workDir = workDir;
+        this.nrnivLocation = nrnivLocation;
+    }
+
+    public String getNrnivLocation()
+    {
+        return nrnivLocation;
+    }
+
+    public void setNrnivLocation(String nrnivLocation)
+    {
+        this.nrnivLocation = nrnivLocation;
+    }
+
+    public String getUserName()
+    {
+        return userName;
+    }
+
+    public void setUserName(String userName)
+    {
+        this.userName = userName;
     }
 
 
@@ -75,11 +98,10 @@ public class RemoteLogin
     @Override
     public Object clone()
     {
-        RemoteLogin rl2 = new RemoteLogin(new String(hostname), new String(workDir));
+        RemoteLogin rl2 = new RemoteLogin(new String(hostname), new String(userName), new String(workDir), new String(nrnivLocation));
         return rl2;
 
     }
-
 
     @Override
     public boolean equals(Object obj)
@@ -97,7 +119,15 @@ public class RemoteLogin
         {
             return false;
         }
+        if ((this.userName == null) ? (other.userName != null) : !this.userName.equals(other.userName))
+        {
+            return false;
+        }
         if ((this.workDir == null) ? (other.workDir != null) : !this.workDir.equals(other.workDir))
+        {
+            return false;
+        }
+        if ((this.nrnivLocation == null) ? (other.nrnivLocation != null) : !this.nrnivLocation.equals(other.nrnivLocation))
         {
             return false;
         }
@@ -107,11 +137,14 @@ public class RemoteLogin
     @Override
     public int hashCode()
     {
-        int hash = 5;
+        int hash = 3;
         hash = 83 * hash + (this.hostname != null ? this.hostname.hashCode() : 0);
+        hash = 83 * hash + (this.userName != null ? this.userName.hashCode() : 0);
         hash = 83 * hash + (this.workDir != null ? this.workDir.hashCode() : 0);
+        hash = 83 * hash + (this.nrnivLocation != null ? this.nrnivLocation.hashCode() : 0);
         return hash;
     }
+
     
 
 

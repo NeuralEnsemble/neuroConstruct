@@ -62,9 +62,9 @@ public class MpiSettings
 
     public static final String CLUSTER_1PROC = "Cluster (1p)";
     public static final String CLUSTER_4PROC = "Cluster (1 x 4p)";
-    public static final String CLUSTER_8PROC = "Cluster (2 x 4p)";
-    public static final String CLUSTER_12PROC = "Cluster (3 x 4p)";
-    public static final String CLUSTER_16PROC = "Cluster (4 x 4p)";
+    public static final String CLUSTER_8PROC = "Cluster (1 x 8p)";
+    public static final String CLUSTER_12PROC = "Cluster (1 x 12p)";
+    public static final String CLUSTER_16PROC = "Cluster (1 x 16p)";
     public static final String CLUSTER_24PROC = "Cluster (6 x 4p)";
     public static final String CLUSTER_48PROC = "Cluster (12 x 4p)";
     public static final String CLUSTER_80PROC = "Cluster (20 x 4p)";
@@ -87,7 +87,7 @@ public class MpiSettings
         String multiConfig = "TestConf";
         //String testConfig22 = "TestConfMore";
 
-        RemoteLogin r900Login = new RemoteLogin("smp-test.rc.ucl.ac.uk", "/home/ucgbpgl/nCsims");
+        RemoteLogin r900Login = new RemoteLogin("smp-test.rc.ucl.ac.uk", "ucgbpgl", "/home/ucgbpgl/nCsims", "/home/ucgbpgl/nrn62/x86_64/bin/nrniv");
 
 
         if (getMpiConfiguration(LOCAL_SERIAL)==null)
@@ -121,7 +121,7 @@ public class MpiSettings
             MpiConfiguration p = new MpiConfiguration(OTHER_4PROC);
             p.getHostList().add(new MpiHost(LOCALHOST,4, 1));
             
-            p.setRemoteLogin(new RemoteLogin("192.168.15.70", "/tmp"));
+            //p.setRemoteLogin(new RemoteLogin("192.168.15.70", "/tmp"));
 
 
             configurations.add(p);
@@ -159,7 +159,7 @@ public class MpiSettings
         {
             MpiConfiguration p = new MpiConfiguration(CLUSTER_1PROC);
 
-            p.getHostList().add(new MpiHost("node0",1, 1));
+            p.getHostList().add(new MpiHost("localhost",1, 1));
             p.setRemoteLogin(r900Login);
             configurations.add(p);
         }
@@ -168,7 +168,7 @@ public class MpiSettings
         {
             MpiConfiguration p = new MpiConfiguration(CLUSTER_4PROC);
 
-            p.getHostList().add(new MpiHost("node0",4, 1));
+            p.getHostList().add(new MpiHost("localhost",4, 1));
             p.setRemoteLogin(r900Login);
             configurations.add(p);
         }
@@ -176,8 +176,7 @@ public class MpiSettings
         if (getMpiConfiguration(CLUSTER_8PROC)==null)
         {
             MpiConfiguration p = new MpiConfiguration(CLUSTER_8PROC);
-            for(int i=0;i<2;i++)
-                p.getHostList().add(new MpiHost("node"+i,4, 1));
+            p.getHostList().add(new MpiHost("localhost",8, 1));
             p.setRemoteLogin(r900Login);
             configurations.add(p);
         }
@@ -185,8 +184,7 @@ public class MpiSettings
         if (getMpiConfiguration(CLUSTER_12PROC)==null)
         {
             MpiConfiguration p = new MpiConfiguration(CLUSTER_12PROC);
-            for(int i=0;i<3;i++)
-                p.getHostList().add(new MpiHost("node"+i,4, 1));
+            p.getHostList().add(new MpiHost("localhost",12, 1));
             p.setRemoteLogin(r900Login);
             configurations.add(p);
         }
@@ -194,8 +192,7 @@ public class MpiSettings
         if (getMpiConfiguration(CLUSTER_16PROC)==null)
         {
             MpiConfiguration p = new MpiConfiguration(CLUSTER_16PROC);
-            for(int i=0;i<4;i++)
-                p.getHostList().add(new MpiHost("node"+i,4, 1));
+            p.getHostList().add(new MpiHost("localhost",16, 1));
             p.setRemoteLogin(r900Login);
             configurations.add(p);
         }

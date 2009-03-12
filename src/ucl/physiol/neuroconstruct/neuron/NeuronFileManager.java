@@ -4765,6 +4765,10 @@ public class NeuronFileManager
                     File scriptFile = new File(ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory()),
                                                "runsim.sh");
                     
+                    
+                    StringBuffer scriptText = new StringBuffer();
+
+                    
                     if (GeneralUtils.isLinuxBasedPlatform())
                     {
                         logger.logComment("Is linux platform...");
@@ -4775,7 +4779,7 @@ public class NeuronFileManager
                             titleOpt = "--title";
                             workdirOpt = "--workdir";
                                // + dirToRunIn.getAbsolutePath();
-                            
+
                             extraArgs = "-e /bin/bash ";
                             executable = basicCommLine.trim();
                         }
@@ -4805,7 +4809,7 @@ public class NeuronFileManager
                             executable = basicCommLine.trim();
                         }
 
-                        commandToExe = new String[]{executable, 
+                        commandToExe = new String[]{executable,
                                 titleOpt, title,
                                 workdirOpt, dirToRunInPath,
                                 extraArgs,
@@ -4826,32 +4830,143 @@ public class NeuronFileManager
                             dirToRunInFile = ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory());
                             dirToRunInPath = "";
                             title = "";
-                            
 
-                            commandToExe = new String[]{executable, 
+
+                            commandToExe = new String[]{executable,
                                     scriptFile.getAbsolutePath()};
                     }
 
-                    String scriptText = "cd '" + dirToRunInFile.getAbsolutePath() + "'\n";
-                    
-                    if (true || !isRunModePythonBased(genRunMode))
+
+                    if(!simConfig.getMpiConf().isRemotelyExecuted())
                     {
-                        scriptText = scriptText + preCommand
-                        + neuronExecutable
-                        + " "
-                        + mpiFlags
-                        + mainHocFile.getName()
-                        + postArgs;
+
+                        scriptText.append("cd '" + dirToRunInFile.getAbsolutePath() + "'\n");
+
+                        if (true || !isRunModePythonBased(genRunMode))
+                        {
+                            scriptText.append(preCommand
+                            + neuronExecutable
+                            + " "
+                            + mpiFlags
+                            + mainHocFile.getName()
+                            + postArgs);
+                        }
+                        else
+                        {
+                            scriptText.append("python "+ runPythonFile.getName());
+                        }
+
+
+
                     }
                     else
                     {
-                        scriptText = scriptText + "python "+ runPythonFile.getName();
+                        RemoteLogin rl = simConfig.getMpiConf().getRemoteLogin();
+
+                        scriptText.append("#!/bin/bash \n\n");
+                        scriptText.append("\n");
+                        scriptText.append("export simRef=\""+project.simulationParameters.getReference()+"\"\n");
+                        scriptText.append("export projName=\""+project.getProjectName()+"\"\n");
+                        scriptText.append("\n");
+                        scriptText.append("export targetDir=\""+rl.getWorkDir()+"\"\n");
+                        scriptText.append("export remoteHost=\""+rl.getHostname()+"\"\n");
+                        scriptText.append("export remoteUser=\""+rl.getUserName()+"\"\n");
+                        scriptText.append("export nrnivLocation=\""+rl.getNrnivLocation()+"\"\n");
+                        scriptText.append("\n");
+                        scriptText.append("projDir=$targetDir\"/\"$projName\n");
+                        scriptText.append("simDir=$projDir\"/\"$simRef\n");
+                        scriptText.append("\n");
+                        scriptText.append("echo \"Going to send files to dir: \"$simDir\" on \"$remoteHost\n");
+                        scriptText.append("\n");
+                        scriptText.append("echo \"mpirun -map ");
+                        
+                        for (int i = 0; i < simConfig.getMpiConf().getHostList().size(); i++)
+                        {
+                            for (int j = 0; j < simConfig.getMpiConf().getHostList().get(i).getNumProcessors(); j++)
+                            {
+                                if (!(i==0 && j==0)) scriptText.append(":");
+
+                                scriptText.append(simConfig.getMpiConf().getHostList().get(i).getHostname());
+                            }
+                            
+                        }
+                        
+
+                        scriptText.append(" \"$nrnivLocation\" \"$simDir\"/\"$projName\".hoc\">runmpi.sh\n");
+                        scriptText.append("\n");
+                        scriptText.append("chmod u+x runmpi.sh\n");
+                        scriptText.append("\n");
+                        scriptText.append("ssh $remoteUser@$remoteHost \"mkdir $projDir\"\n");
+                        scriptText.append("ssh $remoteUser@$remoteHost \"rm -rf $simDir\"\n");
+                        scriptText.append("ssh $remoteUser@$remoteHost \"mkdir $simDir\"\n");
+                        scriptText.append("\n");
+                        scriptText.append("zipFile=$simRef\".tar.gz\"\n");
+                        scriptText.append("\n");
+                        scriptText.append("echo \"Going to zip files into \"$zipFile\n");
+                        scriptText.append("\n");
+                        scriptText.append("tar czf $zipFile *.mod *.hoc *.props *.dat runmpi.sh\n");
+                        scriptText.append("\n");
+                        scriptText.append("scp $zipFile $remoteUser@$remoteHost:$simDir\n");
+                        scriptText.append("\n");
+                        scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;tar xzf $zipFile; rm $zipFile\"\n");
+                        scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;nrnivmodl\"\n");
+                        scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;./runmpi.sh\"\n");
+                        scriptText.append("\n");
+                        scriptText.append("\n");
+
+                        File simResultsDir = new File(ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()),
+                                project.simulationParameters.getReference());
+
+                        File pullScriptFile = new File(simResultsDir, "pullsim.sh");
+                        
+                        
+                        StringBuffer pullScriptText = new StringBuffer();
+                        
+                        pullScriptText.append("#!/bin/bash \n\n");
+                        pullScriptText.append("\n");
+                        pullScriptText.append("export simRef=\""+project.simulationParameters.getReference()+"\"\n");
+                        pullScriptText.append("export projName=\""+project.getProjectName()+"\"\n");
+                        pullScriptText.append("\n");
+                        pullScriptText.append("export targetDir=\""+rl.getWorkDir()+"\"\n");
+                        pullScriptText.append("export remoteHost=\""+rl.getHostname()+"\"\n");
+                        pullScriptText.append("export remoteUser=\""+rl.getUserName()+"\"\n");
+                        pullScriptText.append("\n");
+
+                        pullScriptText.append("\n");
+                        pullScriptText.append("projDir=$targetDir\"/\"$projName\n");
+                        pullScriptText.append("simDir=$projDir\"/\"$simRef\n");
+                        pullScriptText.append("\n");
+                        pullScriptText.append("export localDir="+ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()).getAbsolutePath()+"\"/\"$simRef\"/\"\n");
+                        pullScriptText.append("\n");
+                        pullScriptText.append("\n");
+                        pullScriptText.append("echo \"Going to get files from dir: \"$simDir\" on \"$remoteHost\" and place them locally on \"$localDir\n");
+                        pullScriptText.append("\n");
+                        pullScriptText.append("zipFile=$simRef\".tar.gz\"\n");
+                        pullScriptText.append("\n");
+                        pullScriptText.append("echo \"Going to zip files into \"$zipFile\n");
+                        pullScriptText.append("\n");
+                        pullScriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;tar czf $zipFile *.dat *.props *.mod *.hoc\"\n");
+                        pullScriptText.append("\n");
+                        pullScriptText.append("scp  $remoteUser@$remoteHost:$simDir\"/\"$zipFile $localDir\n");
+                        pullScriptText.append("\n");
+                        pullScriptText.append("cd $localDir\n");
+                        pullScriptText.append("tar xzf $zipFile\n");
+                        pullScriptText.append("rm $zipFile\n");
+
+
+                        FileWriter fw = new FileWriter(pullScriptFile);
+                        //scriptFile.se
+                        fw.write(pullScriptText.toString());
+                        fw.close();
+
+
                     }
+
 
                     
                     FileWriter fw = new FileWriter(scriptFile);
                     //scriptFile.se
-                    fw.write(scriptText);
+                    fw.write(scriptText.toString());
                     fw.close();
 
                     // bit of a hack...
