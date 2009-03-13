@@ -411,7 +411,8 @@ public class SimulationBrowser extends JDialog
         {
 
         }
-        File simDir = new File("nCmodels/InProgress/TraubEtAl05/simulations");
+        File simDir = new File("../copyNcModels/Parallel/simulations");
+        //File simDir = new File("nCmodels/InProgress/TraubEtAl05/simulations");
         //File simDir = new File("projects/temp/simulations/");
         SimulationBrowser dlg = new SimulationBrowser(simDir, null);
 

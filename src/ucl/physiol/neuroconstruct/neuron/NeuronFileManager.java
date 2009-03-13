@@ -4565,12 +4565,12 @@ public class NeuronFileManager
 
             public void comment(String comment)
             {
-                logger.logComment("ProcessFeedback: ");
+                logger.logComment("ProcessFeedback: "+comment);
             }
 
             public void error(String comment)
             {
-                logger.logComment("ProcessFeedback: ");
+                logger.logComment("ProcessFeedback: "+comment);
             }
         };
 
@@ -4873,7 +4873,7 @@ public class NeuronFileManager
                         scriptText.append("export remoteUser=\""+rl.getUserName()+"\"\n");
                         scriptText.append("export nrnivLocation=\""+rl.getNrnivLocation()+"\"\n");
                         scriptText.append("\n");
-                        scriptText.append("projDir=$targetDir\"/\"$projName\n");
+                        scriptText.append("projDir=$targetDir\"/\"$projName\"_\"$HOST\n");
                         scriptText.append("simDir=$projDir\"/\"$simRef\n");
                         scriptText.append("\n");
                         scriptText.append("echo \"Going to send files to dir: \"$simDir\" on \"$remoteHost\n");
@@ -4933,7 +4933,7 @@ public class NeuronFileManager
                         pullScriptText.append("\n");
 
                         pullScriptText.append("\n");
-                        pullScriptText.append("projDir=$targetDir\"/\"$projName\n");
+                        pullScriptText.append("projDir=$targetDir\"/\"$projName\"_\"$HOST\n");
                         pullScriptText.append("simDir=$projDir\"/\"$simRef\n");
                         pullScriptText.append("\n");
                         pullScriptText.append("export localDir="+ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()).getAbsolutePath()+"\"/\"$simRef\"/\"\n");

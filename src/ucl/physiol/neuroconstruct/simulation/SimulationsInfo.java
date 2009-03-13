@@ -73,6 +73,7 @@ public class SimulationsInfo extends AbstractTableModel
     public static final String simulatorPropsFileName = new String("simulator.props");
 
     Vector<SimulationData> simDataObjs = new Vector<SimulationData>();
+
     Vector<Properties> extraColumns = new Vector<Properties>();
 
     File simulationsDir = null;
@@ -93,12 +94,12 @@ public class SimulationsInfo extends AbstractTableModel
 
             public void comment(String comment)
             {
-                logger.logComment("ProcessFeedback: ");
+                logger.logComment("ProcessFeedback comment: "+comment, true);
             }
 
             public void error(String comment)
             {
-                logger.logComment("ProcessFeedback: ");
+                logger.logComment("ProcessFeedback - error: "+comment);
             }
         };
 
@@ -167,24 +168,21 @@ public class SimulationsInfo extends AbstractTableModel
                 if (pullRemoteScript.exists() && !timeFile.exists() && checkRemote)
                 {
 
-                    logger.logComment("Going to execute pullRemoteScript file: " + pullRemoteScript, true);
                     try
                     {
-                        ProcessManager.runCommand(pullRemoteScript.getAbsolutePath(), pf, 5);
+                        String res = ProcessManager.runCommand(pullRemoteScript.getAbsolutePath(), pf, 3000);
+                        logger.logComment("Result of executing pullRemoteScript file: " + pullRemoteScript+": "+ res, true);
                     }
-                    catch (IOException ex)
+                    catch (Exception ex)
                     {
                         logger.logComment("Error running: "+ pullRemoteScript+ex, true);
                     }
                 }
 
-
                 try
                 {
-
                     if (simSummaryFile.exists() && timeFile.exists())
                     {
-
                         simData = new SimulationData(childrenDirs[i].getAbsoluteFile(), true);
 
                         simDataObjs.add(simData);
@@ -202,6 +200,8 @@ public class SimulationsInfo extends AbstractTableModel
                             //fis.close();
 
                             simProps = getSimulationProperties(simSummaryFile.getParentFile());
+                            logger.logComment("simProps at: " + simSummaryFile.getParentFile()+": "+simProps.stringPropertyNames(), true);
+
 
                             extraColumns.setElementAt(simProps, rowNumber);
                             logger.logComment("extraColumns: " + extraColumns);
@@ -302,7 +302,7 @@ public class SimulationsInfo extends AbstractTableModel
 
             case COL_NUM_DATE:
             {
-                if (sim.isDataAtRemoteLocation()&& !sim.getTimesFile().exists())
+                if (sim.isDataAtRemoteLocation() && !sim.getTimesFile().exists())
                 {
                     return "Remote simulation";
                 }
@@ -312,6 +312,7 @@ public class SimulationsInfo extends AbstractTableModel
             {
                 String colName = columnsShown.elementAt(col);
                 Properties propsForSim = extraColumns.elementAt(row);
+                
                 if (propsForSim==null) return "- n/a -";
 
                 return propsForSim.getProperty(colName);

@@ -43,16 +43,14 @@ public class ProcessManager
 
 
 
-        public static String runCommand(String command, ProcessFeedback feedback, int millisToWait) throws IOException
-        {
-            File directoryToExecuteIn =  new File(".");
-            return runCommand(command, feedback, directoryToExecuteIn, millisToWait);
-        }
+    public static String runCommand(String command, ProcessFeedback feedback, int millisToWait) throws IOException
+    {
+        File directoryToExecuteIn =  new File(".");
+        return runCommand(command, feedback, directoryToExecuteIn, millisToWait);
+    }
 
-        public static String runCommand(String command, ProcessFeedback feedback, File directoryToExecuteIn, int millisToWait) throws IOException
-        {
-
-        //File directoryToExecuteIn =  new File("c:\\condor\\bin\\");
+    public static String runCommand(String command, ProcessFeedback feedback, File directoryToExecuteIn, int millisToWait) throws IOException
+    {
 
         Runtime rt = Runtime.getRuntime();
 

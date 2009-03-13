@@ -57,7 +57,6 @@ public class ProcessOutputCatcher extends Thread
     {
         this.inputStrReader = new InputStreamReader(inputStr);
 
-
         this.referenceName = referenceName;
         this.feedback = feedback;
         this.streamType = streamType;
@@ -68,6 +67,7 @@ public class ProcessOutputCatcher extends Thread
         return log.toString();
     }
 
+    @Override
     public void run()
     {
         try
