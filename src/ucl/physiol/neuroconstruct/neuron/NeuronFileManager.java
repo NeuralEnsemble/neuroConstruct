@@ -4917,7 +4917,7 @@ public class NeuronFileManager
                         File simResultsDir = new File(ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()),
                                 project.simulationParameters.getReference());
 
-                        File pullScriptFile = new File(simResultsDir, "pullsim.sh");
+                        File pullScriptFile = new File(simResultsDir, RemoteLogin.remotePullScriptName);
                         
                         
                         StringBuffer pullScriptText = new StringBuffer();
@@ -4954,10 +4954,15 @@ public class NeuronFileManager
                         pullScriptText.append("rm $zipFile\n");
 
 
+
+
                         FileWriter fw = new FileWriter(pullScriptFile);
                         //scriptFile.se
                         fw.write(pullScriptText.toString());
                         fw.close();
+
+                        // bit of a hack...
+                        rt.exec(new String[]{"chmod","u+x",pullScriptFile.getAbsolutePath()});
 
 
                     }

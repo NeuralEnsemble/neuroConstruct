@@ -36,6 +36,8 @@ import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.neuron.*;
 import ucl.physiol.neuroconstruct.genesis.*;
 //import ucl.physiol.neuroconstruct.hpc.mpi.*;
+import ucl.physiol.neuroconstruct.hpc.mpi.RemoteLogin;
+import ucl.physiol.neuroconstruct.hpc.utils.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
@@ -75,6 +77,8 @@ public class SimulationsInfo extends AbstractTableModel
 
     File simulationsDir = null;
 
+    ProcessFeedback pf = null;
+
 
     public SimulationsInfo(File simulationsDir, Vector<String> preferredColumns)
     {
@@ -82,11 +86,27 @@ public class SimulationsInfo extends AbstractTableModel
         this.simulationsDir = simulationsDir;
         this.columnsShown = preferredColumns;
 
-        refresh();
+
+
+        pf = new ProcessFeedback()
+        {
+
+            public void comment(String comment)
+            {
+                logger.logComment("ProcessFeedback: ");
+            }
+
+            public void error(String comment)
+            {
+                logger.logComment("ProcessFeedback: ");
+            }
+        };
+
+        refresh(false);
     }
 
 
-    public void refresh()
+    public void refresh(boolean checkRemote)
     {
         logger.logComment("Refreshing the contents of table model");
 
@@ -126,37 +146,57 @@ public class SimulationsInfo extends AbstractTableModel
         {
             if (childrenDirs[i].isDirectory())
             {
-                //logger.logComment("Looking at directory: " + childrenDirs[i].getAbsolutePath());
+                logger.logComment("Looking at directory: " + childrenDirs[i].getAbsolutePath());
 
                 SimulationData simData = null;
+
+                File timeFile = SimulationData.getTimesFile(childrenDirs[i]);
+
+                File pullRemoteScript = new File(childrenDirs[i], RemoteLogin.remotePullScriptName);
+
+                File simSummaryFile = new File(childrenDirs[i], simSummaryFileName);
+
+                if (!simSummaryFile.exists())
+                {
+                    logger.logComment("Trying for the legacy name...");
+                    simSummaryFile = new File(childrenDirs[i], oldSimSummaryFileName);
+                }
+
+                logger.logComment("Simulation summary file: " + simSummaryFile+", exists: "+ simSummaryFile.exists());
+
+                if (pullRemoteScript.exists() && !timeFile.exists() && checkRemote)
+                {
+
+                    logger.logComment("Going to execute pullRemoteScript file: " + pullRemoteScript, true);
+                    try
+                    {
+                        ProcessManager.runCommand(pullRemoteScript.getAbsolutePath(), pf, 5);
+                    }
+                    catch (IOException ex)
+                    {
+                        logger.logComment("Error running: "+ pullRemoteScript+ex, true);
+                    }
+                }
+
+
                 try
                 {
-                    simData = new SimulationData(childrenDirs[i].getAbsoluteFile(), true);
 
-                    simDataObjs.add(simData);
-
-                    File simSummaryFile = new File(childrenDirs[i], simSummaryFileName);
-
-                    if (!simSummaryFile.exists())
-                    {
-                        logger.logComment("Trying for the legacy name...");
-                        simSummaryFile = new File(childrenDirs[i], oldSimSummaryFileName);
-                    }
-
-                    
-                    File timeFile = SimulationData.getTimesFile(childrenDirs[i]);
-                    
-                    
-
-                    extraColumns.setSize(rowNumber + 1);
                     if (simSummaryFile.exists() && timeFile.exists())
                     {
-                        logger.logComment("Found a simulation summary file: " + simSummaryFile);
+
+                        simData = new SimulationData(childrenDirs[i].getAbsoluteFile(), true);
+
+                        simDataObjs.add(simData);
+
+                        extraColumns.setSize(rowNumber + 1);
+
                         Properties simProps = new Properties();
 
                         try
                         {
                             logger.logComment("Row number: " + rowNumber);
+
                             //FileInputStream fis = new FileInputStream(simSummaryFile);
                             //simProps.load(fis);
                             //fis.close();
@@ -172,7 +212,39 @@ public class SimulationsInfo extends AbstractTableModel
                                 String nextSimProp = (String) simPropNames.nextElement();
                                 if (!allColumns.contains(nextSimProp))
                                     allColumns.add(nextSimProp);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.logError("Problem reading the sim summary from file: " + simSummaryFile, ex);
+                        }
+                    }
+                    else if (simSummaryFile.exists() && pullRemoteScript.exists())
+                    {
 
+                        simData = new SimulationData(childrenDirs[i].getAbsoluteFile(), false);
+
+                        simData.setDataAtRemoteLocation(true);
+
+                        simDataObjs.add(simData);
+
+                        extraColumns.setSize(rowNumber + 1);
+
+                        logger.logComment("pullRemoteScript file: " + pullRemoteScript+", exists: "+ pullRemoteScript.exists());
+                        Properties simProps = new Properties();
+                        try
+                        {
+                            simProps = getSimulationProperties(simSummaryFile.getParentFile());
+
+                            extraColumns.setElementAt(simProps, rowNumber);
+                            logger.logComment("extraColumns: " + extraColumns);
+
+                            Enumeration simPropNames = simProps.propertyNames();
+                            while (simPropNames.hasMoreElements())
+                            {
+                                String nextSimProp = (String) simPropNames.nextElement();
+                                if (!allColumns.contains(nextSimProp))
+                                    allColumns.add(nextSimProp);
                             }
                         }
                         catch (Exception ex)
@@ -230,6 +302,10 @@ public class SimulationsInfo extends AbstractTableModel
 
             case COL_NUM_DATE:
             {
+                if (sim.isDataAtRemoteLocation()&& !sim.getTimesFile().exists())
+                {
+                    return "Remote simulation";
+                }
                 return sim.getDateModified();
             }
             default:

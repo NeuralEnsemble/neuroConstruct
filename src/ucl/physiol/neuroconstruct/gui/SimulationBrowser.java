@@ -145,8 +145,8 @@ public class SimulationBrowser extends JDialog
         jPanelSelection.setBorder(BorderFactory.createEtchedBorder());
         jPanelSelection.setLayout(gridLayout1);
         jPanelButtons.setBorder(BorderFactory.createEtchedBorder());
-        jPanelButtons.setMaximumSize(new Dimension(249, 39));
-        jPanelButtons.setMinimumSize(new Dimension(249, 39));
+        jPanelButtons.setMaximumSize(new Dimension(300, 39));
+        jPanelButtons.setMinimumSize(new Dimension(300, 39));
         jButtonOpen.setText("Load simualtion");
         jButtonOpen.addActionListener(new java.awt.event.ActionListener()
         {
@@ -181,7 +181,7 @@ public class SimulationBrowser extends JDialog
         });
         gridLayout1.setHgap(5);
         gridLayout1.setVgap(5);
-        Dimension mainDim = new Dimension(870, 500);
+        Dimension mainDim = new Dimension(930, 500);
         jPanelMain.setMaximumSize(mainDim);
         jPanelMain.setPreferredSize(mainDim);
         jPanelMain.setMinimumSize(mainDim);
@@ -217,7 +217,7 @@ public class SimulationBrowser extends JDialog
     private void extraInit()
     {
         //jListSimList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        refresh();
+        refresh(false);
         //jListSimList.setSelectedIndex(0);
         logger.logComment("Finished initialising...");
         //if ()
@@ -252,23 +252,21 @@ public class SimulationBrowser extends JDialog
     {
         logger.logComment("Adding column: "+prop);
         allSims.addShownColumn(prop);
-        refresh();
+        refresh(false);
     }
 
     protected void removeShownColumn(String prop)
     {
         logger.logComment("Removing column: "+prop);
         allSims.removeShownColumn(prop);
-        refresh();
+        refresh(false);
 
     }
 
 
-    private void refresh()
+    private void refresh(boolean checkRemote)
     {
-
-
-        allSims.refresh();
+        allSims.refresh(checkRemote);
 
         jMenuColunms.removeAll();
         Vector allPossibleCols = allSims.getAllColumns();
@@ -307,15 +305,11 @@ public class SimulationBrowser extends JDialog
                 nextColumn.setMaxWidth(200);
             }
 
-
             DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
-
 
             renderer.setToolTipText("Value of " + name);
 
-
             nextColumn.setCellRenderer(renderer);
-
 
         }
     }
@@ -328,6 +322,7 @@ public class SimulationBrowser extends JDialog
 
 
     //Overridden so we can exit when window is closed
+    @Override
     protected void processWindowEvent(WindowEvent e)
     {
         //super.processWindowEvent(e);
@@ -416,12 +411,14 @@ public class SimulationBrowser extends JDialog
         {
 
         }
-        File simDir = new File("models/MaexDeSchutter/simulations");
+        File simDir = new File("nCmodels/InProgress/TraubEtAl05/simulations");
         //File simDir = new File("projects/temp/simulations/");
         SimulationBrowser dlg = new SimulationBrowser(simDir, null);
 
         dlg.setModal(true);
         dlg.pack();
+        GuiUtils.centreWindow(dlg);
+
         dlg.setVisible(true);
 
     }
@@ -429,7 +426,7 @@ public class SimulationBrowser extends JDialog
     void jButtonRefresh_actionPerformed(ActionEvent e)
     {
         logger.logComment("Refreshing view");
-        refresh();
+        refresh(true);
     }
 
     void jButtonDelete_actionPerformed(ActionEvent e)
@@ -446,7 +443,7 @@ public class SimulationBrowser extends JDialog
             GeneralUtils.removeAllFiles(dirToDelete, true, true, true);
 
         }
-        refresh();
+        refresh(false);
 
     }
 
@@ -488,7 +485,7 @@ public class SimulationBrowser extends JDialog
 
 
 
-        refresh();
+        refresh(false);
 
         //jTableSimulations
     }

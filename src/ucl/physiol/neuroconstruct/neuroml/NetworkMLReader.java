@@ -1076,7 +1076,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                               options,
                               options[0]);
 
-                      JDialog dialog = option.createDialog("Reading the Level 3 file...");
+                      JDialog dialog = option.createDialog(null, "Reading the Level 3 file...");
 
                       dialog.setVisible(true);
 
@@ -1104,7 +1104,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                                               options2,
                                               options2[0]);
 
-                                      JDialog dialog2 = option2.createDialog("Warning");
+                                      JDialog dialog2 = option2.createDialog(null, "Warning");
                                       dialog2.setVisible(true);
                                       choice2 = option2.getValue();
                                   }
@@ -1279,7 +1279,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                                           options,
                                           options[0]);
 
-                                  JDialog dialog = option.createDialog("WARNING");
+                                  JDialog dialog = option.createDialog(null, "WARNING");
                                   dialog.setVisible(true);
                                   choice = option.getValue();                              
                                   logger.logComment("User has chosen: " + choice);
@@ -1481,7 +1481,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                                           options,
                                           options[0]);
 
-                                  JDialog dialog = fileEnd.createDialog("IMPORTED");
+                                  JDialog dialog = fileEnd.createDialog(null, "IMPORTED");
                                   dialog.setVisible(true);
         }
         

@@ -73,6 +73,8 @@ public class SimulationData
      */
     private boolean onlySomaValues = true;
 
+    private boolean dataAtRemoteLocation = false;
+
 
     private SimulationData()
     {
@@ -102,6 +104,18 @@ public class SimulationData
 
 
     }
+
+    public boolean isDataAtRemoteLocation()
+    {
+        return dataAtRemoteLocation;
+    }
+
+    public void setDataAtRemoteLocation(boolean dataAtRemoteLocation)
+    {
+        this.dataAtRemoteLocation = dataAtRemoteLocation;
+    }
+
+
     
     public File getTimesFile()
     {

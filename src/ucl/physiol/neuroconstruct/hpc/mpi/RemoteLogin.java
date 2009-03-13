@@ -40,6 +40,8 @@ public class RemoteLogin
     private String workDir = null;
     private String nrnivLocation = null;
 
+    public static final String remotePullScriptName = "pullsim.sh";
+
     public RemoteLogin()
     {
 
