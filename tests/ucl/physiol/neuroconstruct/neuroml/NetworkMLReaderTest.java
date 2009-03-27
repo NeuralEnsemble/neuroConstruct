@@ -52,7 +52,7 @@ import ucl.physiol.neuroconstruct.utils.SequenceGenerator.EndOfSequenceException
 public class NetworkMLReaderTest 
 {
     String projName = "TestNetworkML";
-    File projDir = new File("testProjects/"+ projName);
+    File projDir = new File(MainTest.getTestProjectDirectory()+ projName);
         
     ProjectManager pm = null;
     
@@ -222,26 +222,31 @@ public class NetworkMLReaderTest
             fail("Unable to validate saved Level 3 file: "+ nmlFile+"\n"+ex.toString());
         }
         
-        System.out.println(l3File.getAbsolutePath()+" is valid according to: "+ schemaFile);
+        System.out.println("-----------------  "+l3File.getAbsolutePath()+" is valid according to: "+ schemaFile+"  -----------------");
                 
         proj.resetGenerated();
 
-       pm.doLoadNetworkML(l3File, true);       
+
+        String projName2 = "TestNetworkML_reloaded";
+        File projDir2 = new File(MainTest.getTempProjectDirectory()+ projName2);
+
+        Project proj2 = Project.createNewProject(projDir2.getAbsolutePath(), projName2, null);
+
+        pm.setCurrentProject(proj2);
+
+        pm.doLoadNetworkML(l3File, true);
+
+        //TODO: more thorough checks needed!!
+
+        assertTrue(proj.cellManager.getAllCellTypeNames().containsAll(proj2.cellManager.getAllCellTypeNames()));
+
+        assertTrue(proj.cellMechanismInfo.getAllCellMechanismNames().containsAll(proj2.cellMechanismInfo.getAllCellMechanismNames()));
+
+        assertTrue(proj.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().containsAll(proj2.morphNetworkConnectionsInfo.getAllSimpleNetConnNames()));
+
+        assertTrue(proj.elecInputInfo.getAllStimRefs().containsAll(proj2.elecInputInfo.getAllStimRefs()));
+
       
-       Vector<Cell> cellsImp = proj.cellManager.getAllCells();
-       Vector cellMechsImp = proj.cellMechanismInfo.getAllCellMechanisms();
-       Iterator<String> netsImp =  proj.generatedNetworkConnections.getNamesNetConnsIter();
-       
-       ArrayList<String> inputsImp = proj.generatedElecInputs.getInputReferences();
-       
-        assertTrue(projCells.containsAll(cellsImp));
-        assertTrue(cellMechs.containsAll(cellMechsImp));      
-        assertTrue(inputsImp.containsAll(inputs));   
-        while (netsImp.hasNext()) {
-            assertTrue(netsVector.contains(netsImp.next()));
-            
-        }
-        
 
         
     }

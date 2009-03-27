@@ -26,6 +26,7 @@
 
 package test;
 
+import java.io.File;
 import org.junit.runner.*;
 import org.junit.runner.notification.*;
 
@@ -35,13 +36,29 @@ import org.junit.runner.notification.*;
  */
 public class MainTest 
 {
+    public static String getTestProjectDirectory()
+    {
+        return "testProjects/";
+    }
 
+    public static String getTempProjectDirectory()
+    {
+        return "testProjects/TEMP_PROJECTS/projects/";
+    }
 
     public static void main(String[] args)
             
     {
         System.out.println("Running the main nC tests...");
-        
+
+        File tempProjs = new File(getTempProjectDirectory());
+
+        if (tempProjs.exists())
+        {
+            tempProjs.delete();
+            tempProjs.mkdir();
+        }
+
         Result r = null;
         
         r = org.junit.runner.JUnitCore.runClasses(/*ucl.physiol.neuroconstruct.cell.CellSuite.class,*/

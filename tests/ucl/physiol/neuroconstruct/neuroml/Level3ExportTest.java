@@ -54,7 +54,7 @@ import ucl.physiol.neuroconstruct.utils.xml.*;
 public class Level3ExportTest {
     
     String projName = "TestNetworkML";
-    File projDir = new File("testProjects/"+ projName);
+    File projDir = new File(MainTest.getTestProjectDirectory()+ projName);
         
     ProjectManager pm = null;    
     
@@ -66,7 +66,6 @@ public class Level3ExportTest {
      @Before
     public void setUp() 
     {
-        
         System.out.println("---------------   setUp() Level3ExportTest");
         
         File projFile = ProjectStructure.findProjectFile(projDir);

@@ -63,7 +63,7 @@ ProjectManager pm = null;
         
         System.out.println("---------------   setUp() TestInputGeneration");
         String projName = "TestInputGeneration";
-        File projDir = new File("testProjects/"+projName);
+        File projDir = new File(MainTest.getTestProjectDirectory()+projName);
         File projFile = ProjectStructure.findProjectFile(projDir);
         
         pm = new ProjectManager();
@@ -189,9 +189,8 @@ ProjectManager pm = null;
         System.out.println("Run NEURON files");
         
         
-        Thread.sleep(2000); // Shouldn't take longer than this
-        
-        
+        Thread.sleep(3000); // Shouldn't take longer than this
+
         SimulationData simData = new SimulationData(simDir, false);
         
         simData.initialise();        
@@ -278,7 +277,7 @@ ProjectManager pm = null;
         System.out.println("Run NEURON files");
         
         
-        Thread.sleep(2000); // Shouldn't take longer than this
+        Thread.sleep(3000); // Shouldn't take longer than this
         
         
         simData = new SimulationData(simDir, false);
@@ -365,7 +364,7 @@ ProjectManager pm = null;
         System.out.println("Run NEURON files");
         
         
-        Thread.sleep(2000); // Shouldn't take longer than this
+        Thread.sleep(3000); // Shouldn't take longer than this
         
         
         simData = new SimulationData(simDir, false);
