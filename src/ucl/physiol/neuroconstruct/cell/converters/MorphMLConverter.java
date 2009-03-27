@@ -139,54 +139,6 @@ public class MorphMLConverter extends FormatImporter
 
 
 
-
-
-/* Old way of doing it...
-    public Cell loadFromMorphologyFile(File morphologyFile, String name) throws MorphologyException
-    {
-        try
-        {
-            TransformerFactory tFactory = TransformerFactory.newInstance();
-
-            StreamSource xls = new StreamSource(ProjectStructure.getMorphMLToJavaXMLFile());
-
-            Transformer transformer = tFactory.newTransformer(xls);
-
-
-            File tempFile = new File(morphologyFile.getParent()
-                                     + System.getProperty("file.separator")
-                                     + morphologyFile.getName()+ "_temp.xml");
-
-            StreamResult resultantXML = new StreamResult(tempFile);
-
-            transformer.transform(new StreamSource(morphologyFile), resultantXML);
-
-            System.out.println("Temporary Java XML created: " + tempFile.getAbsolutePath());
-
-            System.out.println("Decoding Java XML...");
-            XMLDecoder decoder = new XMLDecoder(new BufferedInputStream(new FileInputStream(tempFile)));
-            decoder.close();
-            Cell cell = (Cell) decoder.readObject();
-
-            if (name!=null)
-            {
-                cell.setInstanceName(name);
-            }
-            System.out.println("Finished decoding Java XML...");
-
-            //tempFile.delete();
-
-            return cell;
-
-        }
-        catch (Exception e)
-        {
-            throw new MorphologyException("Problem converting the morphology file: "+ morphologyFile, e);
-        }
-
-    }
-*/
-
     public Cell loadFromMorphologyFile(File morphologyFile, String name) throws MorphologyException
     {
 

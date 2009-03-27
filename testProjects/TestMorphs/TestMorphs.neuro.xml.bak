@@ -16,7 +16,7 @@ Go to tab Generate, press Generate Cell Positions and Connections, and then to v
 If NEURON or GENESIS are installed, the cell can be simulated via tab Export Network.</string> 
   </void> 
   <void property="projectFileVersion"> 
-   <string>neuroConstruct v1.2.3</string> 
+   <string>neuroConstruct v1.1.4</string> 
   </void> 
   <void property="projectName"> 
    <string>TestMorphs</string> 
@@ -159,7 +159,6 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export Net
  </object> 
  <object class="ucl.physiol.neuroconstruct.neuron.NeuronSettings"/> 
  <object class="ucl.physiol.neuroconstruct.genesis.GenesisSettings"/> 
- <object class="ucl.physiol.neuroconstruct.psics.PsicsSettings"/> 
  <object class="ucl.physiol.neuroconstruct.simulation.SimulationParameters"> 
   <void property="dt"> 
    <float>0.02</float> 

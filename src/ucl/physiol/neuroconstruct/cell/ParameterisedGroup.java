@@ -85,6 +85,14 @@ public class ParameterisedGroup implements Serializable
         {
             this.info = info;
         }
+
+        public static Metric getMetric(String m)
+        {
+            if (m.equals(PATH_LENGTH_FROM_ROOT.info))
+                return PATH_LENGTH_FROM_ROOT;
+
+            return null;
+        }
         
         public String info()
         {

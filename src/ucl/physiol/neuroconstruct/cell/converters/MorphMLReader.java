@@ -37,6 +37,7 @@ import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
 import javax.xml.parsers.SAXParserFactory;
+import ucl.physiol.neuroconstruct.cell.ParameterisedGroup.Metric;
 
 /**
  * MorphML file Reader. Importer of MorphML/NeuroML Level1/2/3 files to 
@@ -95,6 +96,8 @@ public class MorphMLReader extends XMLFilterImpl
     private String currentPropertyTag = null;
     
     String metadataPrefix = MetadataConstants.PREFIX + ":";
+
+    private ParameterisedGroup currentParamGroup = null;
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException
@@ -264,6 +267,16 @@ public class MorphMLReader extends XMLFilterImpl
 
                 cell.associateGroupWithSpecCap(contents, this.currentSpecCap);
             }
+            else if (getCurrentElement().equals(MorphMLConstants.INHOMO_PARAM_METRIC) &&
+                     this.getAncestorElement(1).equals(MorphMLConstants.INHOMO_PARAM))
+            {
+
+                Metric m = Metric.getMetric(contents);
+                logger.logComment("Found a metric: " + m, true);
+
+                currentParamGroup.setMetric(m);
+
+            }
 
 
         }
@@ -314,16 +327,10 @@ public class MorphMLReader extends XMLFilterImpl
         return elementStack.elementAt(elementStack.size()-(generationsBack+1));
     }
 
-
-
-
-
     public void setCurrentElement(String newElement)
     {
         this.elementStack.push(newElement);
-
-         logger.logComment("Elements: "+ elementStack);
-
+        logger.logComment("Elements: "+ elementStack);
      }
 
      public void stepDownElement()
@@ -335,13 +342,12 @@ public class MorphMLReader extends XMLFilterImpl
     @Override
     public void startElement(String namespaceURI, String localName,
                              String qName, Attributes attributes)
-    throws SAXException
+                                    throws SAXException
     {
         logger.logComment("\n                                            -----   Start element: namespaceURI: " + namespaceURI
                            + ", localName: " + localName
                            + ", qName: " + qName);
         
-
          int attrsLength = attributes.getLength();
          for (int i = 0; i < attrsLength; i++)
          {
@@ -350,7 +356,6 @@ public class MorphMLReader extends XMLFilterImpl
 
              logger.logComment("Attr name: " + name+ ", val: " + val+ ", qname: "
                                + attributes.getQName(i)+ ", uri: " + attributes.getURI(i));
-
          }
 
          //setCurrentElement(qName);
@@ -418,7 +423,8 @@ public class MorphMLReader extends XMLFilterImpl
 
          }
 
-         else if (getCurrentElement().equals(MorphMLConstants.SEGMENT_PROXIMAL_ELEMENT))
+         else if (getCurrentElement().equals(MorphMLConstants.SEGMENT_PROXIMAL_ELEMENT)
+                  && getAncestorElement(1).equals(MorphMLConstants.SEGMENT_ELEMENT))
          {
              logger.logComment("Proximal element found...");
 
@@ -435,7 +441,8 @@ public class MorphMLReader extends XMLFilterImpl
          }
 
 
-         else if (getCurrentElement().equals(MorphMLConstants.SEGMENT_DISTAL_ELEMENT))
+         else if (getCurrentElement().equals(MorphMLConstants.SEGMENT_DISTAL_ELEMENT)
+                  && getAncestorElement(1).equals(MorphMLConstants.SEGMENT_ELEMENT))
          {
              String xVal = attributes.getValue(MorphMLConstants.POINT_X_ATTR);
              String yVal = attributes.getValue(MorphMLConstants.POINT_Y_ATTR);
@@ -525,7 +532,6 @@ public class MorphMLReader extends XMLFilterImpl
                  sec.setComment(null);
              logger.logComment("Section now: " + sec);
              
-             
             // Ensure soma segs are finite vol unless something already specified for it
             if (currentSectionGroup.equals(MorphMLConstants.SOMA_CABLE_GROUP))
             {
@@ -537,8 +543,39 @@ public class MorphMLReader extends XMLFilterImpl
 
                 this.foundSomaSection = true;
             }
-             
+         }
+         else if (getCurrentElement().equals(MorphMLConstants.INHOMO_PARAM)
+                  && getAncestorElement(1).equals(MorphMLConstants.CABLE_GROUP_ELEMENT))
+         {
+             String name = attributes.getValue(MorphMLConstants.INHOMO_PARAM_NAME_ATTR);
+             String variable = attributes.getValue(MorphMLConstants.INHOMO_PARAM_VARIABLE_ATTR);
 
+             logger.logComment("     Have found an inhomogeneous_param: " + name+", var: "+variable);
+
+             currentParamGroup = new ParameterisedGroup();
+             currentParamGroup.setName(name);
+             currentParamGroup.setGroup(this.currentSectionGroup);
+             currentParamGroup.setProximalPref(ParameterisedGroup.ProximalPref.NO_TRANSLATION);
+             currentParamGroup.setDistalPref(ParameterisedGroup.DistalPref.NO_NORMALISATION);
+
+         }
+         else if (getCurrentElement().equals(MorphMLConstants.INHOMO_PARAM_PROXIMAL)
+                  && getAncestorElement(1).equals(MorphMLConstants.INHOMO_PARAM))
+         {
+             String p = attributes.getValue(MorphMLConstants.INHOMO_PARAM_PROXIMAL_TRANS_START_ATTR);
+             if (p.equals("0"))
+             {
+                 currentParamGroup.setProximalPref(ParameterisedGroup.ProximalPref.MOST_PROX_AT_0);
+             }
+         }
+         else if (getCurrentElement().equals(MorphMLConstants.INHOMO_PARAM_DISTAL)
+                  && getAncestorElement(1).equals(MorphMLConstants.INHOMO_PARAM))
+         {
+             String d = attributes.getValue(MorphMLConstants.INHOMO_PARAM_DISTAL_NORM_END_ATTR);
+             if (d.equals("1"))
+             {
+                 currentParamGroup.setDistalPref(ParameterisedGroup.DistalPref.MOST_DIST_AT_1);
+             }
          }
 
 
@@ -789,13 +826,21 @@ public class MorphMLReader extends XMLFilterImpl
         {
             currentSectionGroup = null;
             logger.logComment("currentSectionGroup: " + currentSectionGroup);
-
-
         }
 
         else if (getCurrentElement().equals(MorphMLConstants.SEGMENT_ELEMENT))
         {
             logger.logComment("<<<<      End of segment: " + this.currentSegment);
+
+        }
+        else if (getCurrentElement().equals(MorphMLConstants.INHOMO_PARAM)
+              && getAncestorElement(1).equals(MorphMLConstants.CABLE_GROUP_ELEMENT))
+        {
+            logger.logComment("<<<<      End of inhomo param: " + this.currentParamGroup, true);
+
+            cell.addParameterisedGroup(currentParamGroup);
+            
+            currentParamGroup=null;
 
         }
 
