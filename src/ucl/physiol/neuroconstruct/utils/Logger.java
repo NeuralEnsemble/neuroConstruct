@@ -51,6 +51,8 @@ public class Logger
     // True if the logger was set to log to file when instantiated
     private boolean initialSaveToFileState = false;
 
+    public static final String LOG_FILE_SUFFIX = "log";
+
     private Logger()
     {
         //System.out.println("In logger");
@@ -66,7 +68,7 @@ public class Logger
                      + "Log_"+ GeneralUtils.replaceAllTokens(GeneralUtils.getCurrentTimeAsNiceString(), ":", "-")
                      + "_"
                      + GeneralUtils.getCurrentDateAsNiceString()
-                     +".log";
+                     +"."+LOG_FILE_SUFFIX;
 
 
         if (initialSaveToFileState)

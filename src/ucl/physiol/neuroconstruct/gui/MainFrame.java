@@ -867,6 +867,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             addToolTips();
 
             refreshAll();
+
+            doCheckForLogFiles();
         }
         catch (Exception e)
         {
@@ -6746,6 +6748,35 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         refreshTabNeuron();
         refreshTab3D();
 
+    }
+
+
+    protected void doCheckForLogFiles()
+    {
+        File logFileDir = GeneralProperties.getLogFileDir();
+
+        if(logFileDir.exists()&&GeneralProperties.getLogFileSaveToFilePolicy())
+        {
+            File[] subfiles = logFileDir.listFiles();
+            int totFileCount = 0;
+            long totBytes = 0;
+            for(File f: subfiles)
+            {
+                if (f.getName().endsWith(Logger.LOG_FILE_SUFFIX))
+                {
+                    totFileCount++;
+                    totBytes += f.length();
+                }
+            }
+            if (totFileCount%10==0)
+            {
+                String info = "Please note that saving to log files in folder: "+ logFileDir.getAbsolutePath()+" is enabled and\n"+
+                    "this folder contains "+totFileCount+" files totalling "+totBytes+" bytes. Note that logging to file can be turned off\n" +
+                    "via Settings -> General Properties & Project Defaults -> Logging";
+
+                GuiUtils.showWarningMessage(logger, info, this);
+            }
+        }
     }
 
     

@@ -515,13 +515,19 @@ public class GeneralProperties
 
 
 
-     public static File getLogFileDir()
-     {
-         File logFileDir = new File(userSettings.getLocationLogFiles());
-         
-         if (!logFileDir.exists()) logFileDir.mkdir();
-         return logFileDir;
-     }
+    public static File getLogFileDir()
+    {
+        File logFileDir = new File(userSettings.getLocationLogFiles());
+
+        if (!logFileDir.exists())
+        {
+            if (GeneralProperties.getLogFileSaveToFilePolicy())
+            {
+                logFileDir.mkdir();
+            }
+        }
+        return logFileDir;
+    }
 
 /*
      public static void setMorphologySaveFormat(String morphFormat)
