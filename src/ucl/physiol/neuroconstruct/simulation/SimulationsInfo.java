@@ -200,7 +200,7 @@ public class SimulationsInfo extends AbstractTableModel
                             //fis.close();
 
                             simProps = getSimulationProperties(simSummaryFile.getParentFile());
-                            logger.logComment("simProps at: " + simSummaryFile.getParentFile()+": "+simProps.stringPropertyNames(), true);
+                            logger.logComment("simProps at: " + simSummaryFile.getParentFile()+": "+simProps.keySet());
 
 
                             extraColumns.setElementAt(simProps, rowNumber);
