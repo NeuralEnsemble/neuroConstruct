@@ -4863,59 +4863,27 @@ public class NeuronFileManager
                     {
                         RemoteLogin rl = simConfig.getMpiConf().getRemoteLogin();
 
-                        scriptText.append("#!/bin/bash \n\n");
-                        scriptText.append("\n");
-                        scriptText.append("export simRef=\""+project.simulationParameters.getReference()+"\"\n");
-                        scriptText.append("export projName=\""+project.getProjectName()+"\"\n");
-                        scriptText.append("\n");
-                        scriptText.append("export targetDir=\""+rl.getWorkDir()+"\"\n");
-                        scriptText.append("export remoteHost=\""+rl.getHostname()+"\"\n");
-                        scriptText.append("export remoteUser=\""+rl.getUserName()+"\"\n");
-                        scriptText.append("export nrnivLocation=\""+rl.getNrnivLocation()+"\"\n");
-                        scriptText.append("\n");
-                        scriptText.append("projDir=$targetDir\"/\"$projName\"_\"$HOST\n");
-                        scriptText.append("simDir=$projDir\"/\"$simRef\n");
-                        scriptText.append("\n");
-                        scriptText.append("echo \"Going to send files to dir: \"$simDir\" on \"$remoteHost\n");
-                        scriptText.append("\n");
-                        scriptText.append("echo \"mpirun -map ");
-                        
-                        for (int i = 0; i < simConfig.getMpiConf().getHostList().size(); i++)
-                        {
-                            for (int j = 0; j < simConfig.getMpiConf().getHostList().get(i).getNumProcessors(); j++)
-                            {
-                                if (!(i==0 && j==0)) scriptText.append(":");
-
-                                scriptText.append(simConfig.getMpiConf().getHostList().get(i).getHostname());
-                            }
-                            
-                        }
-                        
-
-                        scriptText.append(" \"$nrnivLocation\" \"$simDir\"/\"$projName\".hoc\">runmpi.sh\n");
-                        scriptText.append("\n");
-                        scriptText.append("chmod u+x runmpi.sh\n");
-                        scriptText.append("\n");
-                        scriptText.append("ssh $remoteUser@$remoteHost \"mkdir $projDir\"\n");
-                        scriptText.append("ssh $remoteUser@$remoteHost \"rm -rf $simDir\"\n");
-                        scriptText.append("ssh $remoteUser@$remoteHost \"mkdir $simDir\"\n");
-                        scriptText.append("\n");
-                        scriptText.append("zipFile=$simRef\".tar.gz\"\n");
-                        scriptText.append("\n");
-                        scriptText.append("echo \"Going to zip files into \"$zipFile\n");
-                        scriptText.append("\n");
-                        scriptText.append("tar czf $zipFile *.mod *.hoc *.props *.dat runmpi.sh\n");
-                        scriptText.append("\n");
-                        scriptText.append("scp $zipFile $remoteUser@$remoteHost:$simDir\n");
-                        scriptText.append("\n");
-                        scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;tar xzf $zipFile; rm $zipFile\"\n");
-                        scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;nrnivmodl\"\n");
-                        scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;./runmpi.sh\"\n");
-                        scriptText.append("\n");
-                        scriptText.append("\n");
+                        scriptText.append(simConfig.getMpiConf().getPushScript(project.getProjectName(), project.simulationParameters.getReference()));
 
                         File simResultsDir = new File(ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()),
                                 project.simulationParameters.getReference());
+
+                        if (simConfig.getMpiConf().getQueueInfo()!=null)
+                        {
+                            String submitJob = simConfig.getMpiConf().getQueueSubmitScript(project.getProjectName(), project.simulationParameters.getReference());
+
+                            File submitJobFile = new File(ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory()), QueueInfo.submitScript);
+
+                            FileWriter fw = new FileWriter(submitJobFile);
+                            //scriptFile.se
+                            fw.write(submitJob);
+                            fw.close();
+
+                            // bit of a hack...
+                            rt.exec(new String[]{"chmod","u+x",submitJobFile.getAbsolutePath()});
+                        }
+
+
 
                         File pullScriptFile = new File(simResultsDir, RemoteLogin.remotePullScriptName);
                         
@@ -4947,7 +4915,22 @@ public class NeuronFileManager
                         pullScriptText.append("\n");
                         pullScriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;tar czf $zipFile *.dat *.props *.mod *.hoc\"\n");
                         pullScriptText.append("\n");
+
+
                         pullScriptText.append("scp  $remoteUser@$remoteHost:$simDir\"/\"$zipFile $localDir\n");
+
+
+                        if (false)
+                        {
+                            pullScriptText.append("scp $remoteUser@$remoteHost:$simDir\"/\"$zipFile $localDir\n");
+                        }
+                        else
+                        {
+                            pullScriptText.append("echo -e \"get $simDir\"/\"$zipFile\">pullFile.b\n");
+                            pullScriptText.append("sftp -b pullFile.b $remoteUser@$remoteHost\n");
+                        }
+
+
                         pullScriptText.append("\n");
                         pullScriptText.append("cd $localDir\n");
                         pullScriptText.append("tar xzf $zipFile\n");

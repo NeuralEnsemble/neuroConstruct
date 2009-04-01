@@ -35,6 +35,8 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
 /**
  * Support for interacting with MPI platform
  *
+ *  *** STILL IN DEVELOPMENT! SUBJECT TO CHANGE WITHOUT NOTICE! ***
+ *
  * @author Padraig Gleeson
  *  
  */
@@ -58,8 +60,6 @@ public class MpiSettings
     public static final String LOCAL_3PROC = "Local machine (3p)";
     public static final String LOCAL_4PROC = "Local machine (4p)";
 
-    public static final String OTHER_4PROC = "Other machine (4p)";
-
     public static final String CLUSTER_1PROC = "Cluster (1p)";
     public static final String CLUSTER_4PROC = "Cluster (1 x 4p)";
     public static final String CLUSTER_8PROC = "Cluster (1 x 8p)";
@@ -68,6 +68,22 @@ public class MpiSettings
     public static final String CLUSTER_24PROC = "Cluster (6 x 4p)";
     public static final String CLUSTER_48PROC = "Cluster (12 x 4p)";
     public static final String CLUSTER_80PROC = "Cluster (20 x 4p)";
+
+    public static final String LEGION_1PROC = "Legion (1 x 1p)";
+    public static final String LEGION_2PROC = "Legion (1 x 2p)";
+    public static final String LEGION_4PROC = "Legion (1 x 4p)";
+    public static final String LEGION_8PROC = "Legion (2 x 4p)";
+    public static final String LEGION_16PROC = "Legion (4 x 4p)";
+    public static final String LEGION_24PROC = "Legion (6 x 4p)";
+    public static final String LEGION_32PROC = "Legion (8 x 4p)";
+    
+    public static final String LEGION_40PROC = "Legion (10 x 4p)";
+
+    public static final String LEGION_48PROC = "Legion (12 x 4p)";
+    public static final String LEGION_64PROC = "Legion (16 x 4p)";
+    public static final String LEGION_80PROC = "Legion (20 x 4p)";
+    public static final String LEGION_96PROC = "Legion (24 x 4p)";
+    public static final String LEGION_112PROC = "Legion (28 x 4p)";
     
     public static final String MACHINE_FILE = "machinesToUse";
     
@@ -88,6 +104,9 @@ public class MpiSettings
         //String testConfig22 = "TestConfMore";
 
         RemoteLogin r900Login = new RemoteLogin("smp-test.rc.ucl.ac.uk", "ucgbpgl", "/home/ucgbpgl/nCsims", "/home/ucgbpgl/nrn62/x86_64/bin/nrniv");
+        RemoteLogin legionLogin = new RemoteLogin("legion.rc.ucl.ac.uk", "ucgbpgl", "/home/ucgbpgl/nCsims", "/home/ucgbpgl/nrnmpi/x86_64/bin/nrniv");
+
+        QueueInfo legionQueue = new QueueInfo(5, "ucl/NeuroSci/neuroconst", "cvos-launcher");
 
 
         if (getMpiConfiguration(LOCAL_SERIAL)==null)
@@ -104,48 +123,19 @@ public class MpiSettings
             p.getHostList().add(new MpiHost(LOCALHOST,2, 1));
             configurations.add(p);
         }
-        if (getMpiConfiguration(LOCAL_4PROC)==null)
-        {
-            MpiConfiguration p = new MpiConfiguration(LOCAL_4PROC);
-            p.getHostList().add(new MpiHost(LOCALHOST,4, 1));
-            configurations.add(p);
-        }
         if (getMpiConfiguration(LOCAL_3PROC)==null)
         {
             MpiConfiguration p = new MpiConfiguration(LOCAL_3PROC);
             p.getHostList().add(new MpiHost(LOCALHOST,3, 1));
             configurations.add(p);
         }
-        if (getMpiConfiguration(OTHER_4PROC)==null)
+        if (getMpiConfiguration(LOCAL_4PROC)==null)
         {
-            MpiConfiguration p = new MpiConfiguration(OTHER_4PROC);
+            MpiConfiguration p = new MpiConfiguration(LOCAL_4PROC);
             p.getHostList().add(new MpiHost(LOCALHOST,4, 1));
-            
-            //p.setRemoteLogin(new RemoteLogin("192.168.15.70", "/tmp"));
+            configurations.add(p);
+        }
 
-
-            configurations.add(p);
-        } /*
-        if (getMpiConfiguration(local8Config)==null)
-        {
-            MpiConfiguration p = new MpiConfiguration(local8Config);
-            p.getHostList().add(new MpiHost("localhost",8, 1));
-            configurations.add(p);
-        }
-       
-        if (getMpiConfiguration(local32Config)==null)
-        {
-            MpiConfiguration p = new MpiConfiguration(local32Config);
-            p.getHostList().add(new MpiHost("localhost",32, 1));
-            configurations.add(p);
-        }
-        if (getMpiConfiguration(local128Config)==null)
-        {
-            MpiConfiguration p = new MpiConfiguration(local128Config);
-            p.getHostList().add(new MpiHost("localhost",128, 1));
-            configurations.add(p);
-        }
-*/
         if (getMpiConfiguration(multiConfig)==null)
         {
             MpiConfiguration p = new MpiConfiguration(multiConfig);
@@ -221,7 +211,160 @@ public class MpiSettings
                 p.getHostList().add(new MpiHost("node"+i,4, 1));
             configurations.add(p);
         }
-        
+
+
+
+        if (getMpiConfiguration(LEGION_1PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(LEGION_1PROC);
+
+            p.getHostList().add(new MpiHost("localhost", 1, 1));
+            p.setRemoteLogin(legionLogin);
+            p.setQueueInfo(legionQueue);
+            configurations.add(p);
+        }
+
+        if (getMpiConfiguration(LEGION_2PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(LEGION_2PROC);
+
+            p.getHostList().add(new MpiHost("localhost", 2, 1));
+            p.setRemoteLogin(legionLogin);
+            p.setQueueInfo(legionQueue);
+            configurations.add(p);
+        }
+
+        if (getMpiConfiguration(LEGION_4PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(LEGION_4PROC);
+
+            p.getHostList().add(new MpiHost("localhost",4, 1));
+            p.setRemoteLogin(legionLogin);
+            p.setQueueInfo(legionQueue);
+            configurations.add(p);
+        }
+
+
+        if (getMpiConfiguration(LEGION_8PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(LEGION_8PROC);
+
+            for(int i=0;i<2;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+
+            p.setRemoteLogin(legionLogin);
+            p.setQueueInfo(legionQueue);
+            configurations.add(p);
+        }
+
+
+        if (getMpiConfiguration(LEGION_16PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(LEGION_16PROC);
+
+            for(int i=0;i<4;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+
+            p.setRemoteLogin(legionLogin);
+            p.setQueueInfo(legionQueue);
+            configurations.add(p);
+        }
+
+        if (getMpiConfiguration(LEGION_24PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(LEGION_24PROC);
+
+            for(int i=0;i<6;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+
+            p.setRemoteLogin(legionLogin);
+            p.setQueueInfo(legionQueue);
+            configurations.add(p);
+        }
+
+
+        if (getMpiConfiguration(LEGION_32PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(LEGION_32PROC);
+
+            for(int i=0;i<8;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+
+            p.setRemoteLogin(legionLogin);
+            p.setQueueInfo(legionQueue);
+            configurations.add(p);
+        }
+
+
+        if (getMpiConfiguration(LEGION_40PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(LEGION_40PROC);
+
+            for(int i=0;i<10;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+
+            p.setRemoteLogin(legionLogin);
+            p.setQueueInfo(legionQueue);
+            configurations.add(p);
+        }
+
+
+        if (getMpiConfiguration(LEGION_48PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(LEGION_48PROC);
+
+            for(int i=0;i<12;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+
+            p.setRemoteLogin(legionLogin);
+            p.setQueueInfo(legionQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(LEGION_64PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(LEGION_64PROC);
+
+            for(int i=0;i<16;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+
+            p.setRemoteLogin(legionLogin);
+            p.setQueueInfo(legionQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(LEGION_80PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(LEGION_80PROC);
+
+            for(int i=0;i<20;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+
+            p.setRemoteLogin(legionLogin);
+            p.setQueueInfo(legionQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(LEGION_96PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(LEGION_96PROC);
+
+            for(int i=0;i<24;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+
+            p.setRemoteLogin(legionLogin);
+            p.setQueueInfo(legionQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(LEGION_112PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(LEGION_112PROC);
+
+            for(int i=0;i<28;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+
+            p.setRemoteLogin(legionLogin);
+            p.setQueueInfo(legionQueue);
+            configurations.add(p);
+        }
+
         
 
 

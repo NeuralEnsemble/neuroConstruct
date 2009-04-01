@@ -26,13 +26,21 @@
 
 package ucl.physiol.neuroconstruct.hpc.mpi;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import sun.net.util.*;
+
 
 /**
  * Support for interacting with MPI platform
  *
+ *  *** STILL IN DEVELOPMENT! SUBJECT TO CHANGE WITHOUT NOTICE! ***
+ *
  * @author Padraig Gleeson
- *  
+ *
  */
 
 public class MpiConfiguration
@@ -40,6 +48,8 @@ public class MpiConfiguration
     private String name = null;
 
     private RemoteLogin remoteLogin = null;
+
+    private QueueInfo queueInfo = null;
     
     private ArrayList<MpiHost> hostList = new ArrayList<MpiHost>();
 
@@ -53,6 +63,188 @@ public class MpiConfiguration
         this.name = name;
     }
 
+    public String getQueueSubmitScript(String projName, String simRef)
+    {
+        if (queueInfo==null)
+            return null;
+        StringBuffer script = new StringBuffer();
+
+        script.append("#!/bin/bash \n");
+        script.append("\n");
+        script.append("#PBS -N "+projName+"_"+simRef+"\n");
+        script.append("#PBS -A "+queueInfo.getAccount()+"\n");
+        script.append("#PBS -j oe\n");
+        script.append("#PBS -l qos=parallel\n");
+        script.append("\n");
+        script.append("#! Number of nodes \n");
+        script.append("#! The total number of nodes passed to mpirun will be nodes*ppn \n");
+        script.append("#! Second entry: Total amount of wall-clock time (true time). \n");
+        script.append("#! 02:00:00 indicates 02 hours\n");
+        script.append("\n");
+
+        int nodes = hostList.size();
+        int ppn = 0;
+        for(MpiHost host: hostList)
+        {
+            if (host.getNumProcessors()>ppn) ppn = host.getNumProcessors();
+        }
+
+        script.append("#PBS -l nodes="+nodes+":ppn="+ppn+",walltime=00:"+queueInfo.getWallTimeMins()+":00\n");
+        script.append("\n");
+        script.append("#! Full path to application + application name\n");
+        script.append("application=\""+remoteLogin.getNrnivLocation()+"\"\n");
+        script.append("\n");
+        script.append("#! Work directory\n");
+        script.append("workdir=\""+getProjectSimDir(projName)+"/"+simRef+"\"\n");
+        script.append("\n");
+        script.append("#! Run options for the application\n");
+        script.append("options=\"$workdir/"+projName+".hoc\"\n");
+        script.append("\n");
+        script.append("\n");
+        script.append("###############################################################\n");
+        script.append("### You should not have to change anything below this line ####\n");
+        script.append("###############################################################\n");
+        script.append("\n");
+        script.append("#! change the working directory (default is home directory)\n");
+        script.append("\n");
+        script.append("cd $workdir\n");
+        script.append("\n");
+        script.append("echo Running on the host `hostname`\n");
+        script.append("echo Time is `date`\n");
+        script.append("echo Directory is `pwd`\n");
+        script.append("echo PBS job ID is $PBS_JOBID\n");
+        script.append("echo PATH is $PATH\n");
+        script.append("echo This job runs on the following machines:\n");
+        script.append("echo `cat $PBS_NODEFILE | uniq`\n");
+        script.append(" \n");
+        script.append("#! Create a machine file for MPI\n");
+        script.append("cat $PBS_NODEFILE | uniq > machine.file.$PBS_JOBID\n");
+        script.append("\n");
+        script.append("numnodes=`wc $PBS_NODEFILE | awk '{ print $1 }'`\n");
+        script.append("sleep 1\n");
+        script.append("#! Run the parallel MPI executable (nodes*ppn)\n");
+        script.append("\n");
+        script.append("export LAUNCH_APP=\"$application $options\"\n");
+        if (false && queueInfo.getLauncherScript()!=null && queueInfo.getLauncherScript().length()>0)
+        {
+            script.append("export CVOS_LAUNCHER=\""+queueInfo.getLauncherScript()+"\"\n");
+        }
+        else
+        {
+            script.append("export CVOS_LAUNCHER=\"\"\n");
+        }
+        
+        script.append("export MPI_RUN=\"mpirun\"\n");
+        script.append("\n");
+        script.append("echo \"Running $CVOS_LAUNCHER $MPI_RUN -machinefile machine.file.$PBS_JOBID -np $numnodes  $LAUNCH_APP\"\n");
+        script.append("echo \"--------------------------------------------------------------\"\n");
+        script.append("echo \"\"\n");
+        script.append("\n");
+        script.append("$CVOS_LAUNCHER $MPI_RUN -machinefile machine.file.$PBS_JOBID -np $numnodes  $LAUNCH_APP\n");
+        script.append("\n");
+        script.append("\n");
+        script.append("\n");
+
+        return script.toString();
+    }
+
+    private String getProjectSimDir(String projName)
+    {
+        String hostname = null;
+        try
+        {
+            InetAddress localMachine = InetAddress.getLocalHost();
+            hostname = localMachine.getHostName();
+        }
+        catch (UnknownHostException ex)
+        {
+            hostname = "UnknownHost";
+        }
+
+        return remoteLogin.getWorkDir() + "/" + projName + "_" + hostname;
+    }
+
+
+
+    public String getPushScript(String projName, String simRef)
+    {
+
+        StringBuffer scriptText = new StringBuffer();
+
+        scriptText.append("#!/bin/bash \n\n");
+        scriptText.append("\n");
+        scriptText.append("export simRef=\""+simRef+"\"\n");
+        scriptText.append("export projName=\""+projName+"\"\n");
+        scriptText.append("\n");
+        scriptText.append("export remoteHost=\""+remoteLogin.getHostname()+"\"\n");
+        scriptText.append("export remoteUser=\""+remoteLogin.getUserName()+"\"\n");
+        scriptText.append("export nrnivLocation=\""+remoteLogin.getNrnivLocation()+"\"\n");
+        scriptText.append("\n");
+        scriptText.append("projDir="+getProjectSimDir(projName)+"\n");
+        scriptText.append("simDir=$projDir\"/\"$simRef\n");
+        scriptText.append("\n");
+        scriptText.append("echo \"Going to send files to dir: \"$simDir\" on \"$remoteHost\n");
+        scriptText.append("\n");
+        scriptText.append("echo \"mpirun -map ");
+
+        for (int i = 0; i < getHostList().size(); i++)
+        {
+            for (int j = 0; j < getHostList().get(i).getNumProcessors(); j++)
+            {
+                if (!(i==0 && j==0)) scriptText.append(":");
+
+                scriptText.append(getHostList().get(i).getHostname());
+            }
+
+        }
+
+
+        scriptText.append(" \"$nrnivLocation\" \"$simDir\"/\"$projName\".hoc\">runmpi.sh\n");
+        scriptText.append("\n");
+        scriptText.append("chmod u+x runmpi.sh\n");
+        scriptText.append("\n");
+        scriptText.append("ssh $remoteUser@$remoteHost \"mkdir $projDir\"\n");
+        scriptText.append("ssh $remoteUser@$remoteHost \"rm -rf $simDir\"\n");
+        scriptText.append("ssh $remoteUser@$remoteHost \"mkdir $simDir\"\n");
+        scriptText.append("\n");
+        scriptText.append("zipFile=$simRef\".tar.gz\"\n");
+        scriptText.append("\n");
+        scriptText.append("echo \"Going to zip files into \"$zipFile\n");
+        scriptText.append("\n");
+        scriptText.append("tar czf $zipFile *.mod *.hoc *.props *.dat *.sh\n");
+        scriptText.append("\n");
+
+        scriptText.append("echo \"Going to send to: $simDir on $remoteUser@$remoteHost\"\n");
+
+        boolean useScp = false;
+        if (useScp)
+        {
+            scriptText.append("scp $zipFile $remoteUser@$remoteHost:$simDir\n");
+        }
+        else
+        {
+            scriptText.append("echo -e \"put $zipFile\">putFile.b\n");
+            scriptText.append("sftp -b putFile.b $remoteUser@$remoteHost\n");
+            scriptText.append("ssh $remoteUser@$remoteHost \"cp ~/$zipFile $simDir/$zipFile\"\n");
+        }
+
+        scriptText.append("\n");
+        scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;tar xzf $zipFile; rm $zipFile\"\n");
+        scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic nrnivmodl\"\n");
+        if (queueInfo==null)
+        {
+            scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;./runmpi.sh\"\n");
+        }
+        else
+        {
+            scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic 'qsub "+QueueInfo.submitScript+"'\"\n");
+        }
+        scriptText.append("\n");
+        scriptText.append("\n");
+
+        return scriptText.toString();
+    }
+
 
     public RemoteLogin getRemoteLogin()
     {
@@ -63,6 +255,18 @@ public class MpiConfiguration
     {
         this.remoteLogin = remoteLogin;
     }
+
+    public QueueInfo getQueueInfo()
+    {
+        return queueInfo;
+    }
+
+    public void setQueueInfo(QueueInfo queueInfo)
+    {
+        this.queueInfo = queueInfo;
+    }
+
+    
     
 
     public void setHostList(ArrayList<MpiHost> hostList)
@@ -164,6 +368,10 @@ public class MpiConfiguration
         {
             return false;
         }
+        if (this.queueInfo != other.queueInfo && (this.queueInfo == null || !this.queueInfo.equals(other.queueInfo)))
+        {
+            return false;
+        }
         if (this.hostList != other.hostList && (this.hostList == null || !this.hostList.equals(other.hostList)))
         {
             return false;
@@ -174,12 +382,14 @@ public class MpiConfiguration
     @Override
     public int hashCode()
     {
-        int hash = 3;
+        int hash = 5;
         hash = 29 * hash + (this.name != null ? this.name.hashCode() : 0);
         hash = 29 * hash + (this.remoteLogin != null ? this.remoteLogin.hashCode() : 0);
+        hash = 29 * hash + (this.queueInfo != null ? this.queueInfo.hashCode() : 0);
         hash = 29 * hash + (this.hostList != null ? this.hostList.hashCode() : 0);
         return hash;
     }
+
 
     
     
@@ -196,6 +406,10 @@ public class MpiConfiguration
         if (remoteLogin!=null)
         {
             mc2.setRemoteLogin((RemoteLogin)remoteLogin.clone());
+        }
+        if (queueInfo!=null)
+        {
+            mc2.setQueueInfo((QueueInfo)queueInfo.clone());
         }
         
         return mc2;

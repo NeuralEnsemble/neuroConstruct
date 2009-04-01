@@ -34,11 +34,14 @@ import java.io.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.hpc.utils.*;
 
+
 /**
  * Support for interacting with MPI platform
  *
+ *  *** STILL IN DEVELOPMENT! SUBJECT TO CHANGE WITHOUT NOTICE! ***
+ *
  * @author Padraig Gleeson
- *  
+ *
  */
 
 

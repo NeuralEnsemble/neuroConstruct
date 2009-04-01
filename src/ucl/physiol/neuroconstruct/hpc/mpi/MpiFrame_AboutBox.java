@@ -31,11 +31,14 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+
 /**
  * Support for interacting with MPI platform
  *
+ *  *** STILL IN DEVELOPMENT! SUBJECT TO CHANGE WITHOUT NOTICE! ***
+ *
  * @author Padraig Gleeson
- *  
+ *
  */
  
 

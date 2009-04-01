@@ -28,10 +28,12 @@ package ucl.physiol.neuroconstruct.hpc.mpi;
 
 
 /**
- * Host information to use in deciding cell distribution
+ * Support for interacting with MPI platform
+ *
+ *  *** STILL IN DEVELOPMENT! SUBJECT TO CHANGE WITHOUT NOTICE! ***
  *
  * @author Padraig Gleeson
- *  
+ *
  */
 
 public class KnownHost

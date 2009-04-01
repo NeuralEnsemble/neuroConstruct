@@ -32,11 +32,14 @@ import javax.swing.*;
 import ucl.physiol.neuroconstruct.gui.*;
 import java.io.File;
 
+
 /**
  * Support for interacting with MPI platform
  *
+ *  *** STILL IN DEVELOPMENT! SUBJECT TO CHANGE WITHOUT NOTICE! ***
+ *
  * @author Padraig Gleeson
- *  
+ *
  */
 
 
