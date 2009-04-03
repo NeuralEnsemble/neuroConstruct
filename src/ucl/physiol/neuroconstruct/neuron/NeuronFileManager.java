@@ -29,6 +29,7 @@ package ucl.physiol.neuroconstruct.neuron;
 import java.io.*;
 import java.util.*;
 
+import javax.swing.JOptionPane;
 import javax.vecmath.*;
 
 import ucl.physiol.neuroconstruct.cell.*;
@@ -2735,6 +2736,11 @@ public class NeuronFileManager
             response.append(prefix+"{propsFile.printf(\"RealSimulationTime=%g\\n\", realtime)}\n");
             response.append(prefix+"{propsFile.printf(\"SimulationSetupTime=%g\\n\", setuptime)}\n");
 
+            if (simConfig.getMpiConf().isParallel())
+            {
+                response.append(prefix+"{propsFile.printf(\"NumberHosts=%g\\n\", pnm.pc.nhost)}\n");
+            }
+
             response.append(generateMultiRunPostScript());
             response.append(prefix+"{propsFile.close()}\n");
             response.append(post);
@@ -2750,7 +2756,7 @@ public class NeuronFileManager
     private boolean savingHostname()
     {
         // There have been some problems getting C:/WINDOWS/SYSTEM32/hostname.exe to run on win
-        // so temporarily disableing it. It's only needed for parallel running of sims, which is 
+        // so temporarily disabling it. It's only needed for parallel running of sims, which is 
         // unlikely on win for the forseeable future.
         
         if (GeneralUtils.isWindowsBasedPlatform()) return false;
@@ -4863,6 +4869,61 @@ public class NeuronFileManager
                     {
                         RemoteLogin rl = simConfig.getMpiConf().getRemoteLogin();
 
+
+                        int time = simConfig.getMpiConf().getQueueInfo().getWallTimeMins();
+
+                        int numCells = project.generatedCellPositions.getNumberInAllCellGroups();
+
+                        int totNseg = 0;
+
+                        for (String cg: simConfig.getCellGroups())
+                        {
+                            int numCellsHere = project.generatedCellPositions.getNumberInCellGroup(cg);
+
+                            if (numCellsHere>0)
+                            {
+                                int totNsegHere = 0;
+                                Cell c = project.cellManager.getCell(project.cellGroupsInfo.getCellType(cg));
+                                for(Section s: c.getAllSections())
+                                {
+                                    totNsegHere+=s.getNumberInternalDivisions();
+                                }
+                                totNseg +=(numCellsHere*totNsegHere);
+
+                            }
+                        }
+                        
+                        boolean check = true;
+
+                        while (check)
+                        {
+                            String res = JOptionPane.showInputDialog("Simulation: "+project.simulationParameters.getReference()+
+                                    " to run for "+simConfig.getSimDuration()+" ms on "+simConfig.getMpiConf().getTotalNumProcessors()+" processor cores.\n" +
+                                    "Total number of cells: "+numCells+"\n" +
+                                    "Total number of nseg for all sections: "+totNseg+"\n" +
+                                    "nseg per core: "+totNseg/(float)simConfig.getMpiConf().getTotalNumProcessors()+"\n\n" +
+                                "Please enter the time in minutes of the run: ", time);
+
+                            if (res ==null)
+                            {
+                                return;
+                            }
+                        
+                            try
+                            {
+                                float val = Float.parseFloat(res);
+                                
+                                time = Math.max(1,(int)val);
+                                
+                                check = false;
+                            }
+                            catch (Exception e)
+                            {
+                                check = true;
+                            }
+                        }
+                        
+
                         scriptText.append(simConfig.getMpiConf().getPushScript(project.getProjectName(), project.simulationParameters.getReference()));
 
                         File simResultsDir = new File(ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()),
@@ -4870,7 +4931,7 @@ public class NeuronFileManager
 
                         if (simConfig.getMpiConf().getQueueInfo()!=null)
                         {
-                            String submitJob = simConfig.getMpiConf().getQueueSubmitScript(project.getProjectName(), project.simulationParameters.getReference());
+                            String submitJob = simConfig.getMpiConf().getQueueSubmitScript(project.getProjectName(), project.simulationParameters.getReference(), time);
 
                             File submitJobFile = new File(ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory()), QueueInfo.submitScript);
 
@@ -4886,8 +4947,13 @@ public class NeuronFileManager
 
 
                         File pullScriptFile = new File(simResultsDir, RemoteLogin.remotePullScriptName);
+
+                        String pullScriptText = simConfig.getMpiConf().getPullScript(project.getProjectName(),
+                                                                                     project.simulationParameters.getReference(),
+                                                                                     ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()));
+
                         
-                        
+                        /*
                         StringBuffer pullScriptText = new StringBuffer();
                         
                         pullScriptText.append("#!/bin/bash \n\n");
@@ -4913,7 +4979,7 @@ public class NeuronFileManager
                         pullScriptText.append("\n");
                         pullScriptText.append("echo \"Going to zip files into \"$zipFile\n");
                         pullScriptText.append("\n");
-                        pullScriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;tar czf $zipFile *.dat *.spike *.props *.mod *.hoc\"\n");
+                        pullScriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;tar czf $zipFile *.*\"\n");
                         pullScriptText.append("\n");
 
 
@@ -4934,14 +5000,14 @@ public class NeuronFileManager
                         pullScriptText.append("\n");
                         pullScriptText.append("cd $localDir\n");
                         pullScriptText.append("tar xzf $zipFile\n");
-                        pullScriptText.append("rm $zipFile\n");
+                        pullScriptText.append("rm $zipFile\n");*/
 
 
 
 
                         FileWriter fw = new FileWriter(pullScriptFile);
                         //scriptFile.se
-                        fw.write(pullScriptText.toString());
+                        fw.write(pullScriptText);
                         fw.close();
 
                         // bit of a hack...

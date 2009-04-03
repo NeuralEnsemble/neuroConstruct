@@ -57,12 +57,14 @@ public class MpiHost
         this.weight = weight;
     }
     
+    @Override
     public Object clone()
     {
         return new MpiHost(new String(hostname), numProcessors, weight);
     }
 
     
+    @Override
     public boolean equals(Object other)
     {
         if (!(other instanceof MpiHost)) return false;
@@ -109,6 +111,7 @@ public class MpiHost
 
 
 
+    @Override
     public String toString()
     {
         return "Host: "+hostname+", num of processors: "+numProcessors+", weight: "+weight;

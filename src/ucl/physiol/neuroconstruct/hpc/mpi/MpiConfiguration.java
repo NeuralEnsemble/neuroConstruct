@@ -26,12 +26,10 @@
 
 package ucl.physiol.neuroconstruct.hpc.mpi;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import sun.net.util.*;
 
 
 /**
@@ -63,7 +61,7 @@ public class MpiConfiguration
         this.name = name;
     }
 
-    public String getQueueSubmitScript(String projName, String simRef)
+    public String getQueueSubmitScript(String projName, String simRef, int timeMins)
     {
         if (queueInfo==null)
             return null;
@@ -89,7 +87,7 @@ public class MpiConfiguration
             if (host.getNumProcessors()>ppn) ppn = host.getNumProcessors();
         }
 
-        script.append("#PBS -l nodes="+nodes+":ppn="+ppn+",walltime=00:"+queueInfo.getWallTimeMins()+":00\n");
+        script.append("#PBS -l nodes="+nodes+":ppn="+ppn+",walltime=00:"+timeMins+":00\n");
         script.append("\n");
         script.append("#! Full path to application + application name\n");
         script.append("application=\""+remoteLogin.getNrnivLocation()+"\"\n");
@@ -243,6 +241,60 @@ public class MpiConfiguration
         scriptText.append("\n");
 
         return scriptText.toString();
+    }
+
+
+    public String getPullScript(String projName, String simRef, File localDir)
+    {
+
+        StringBuffer pullScriptText = new StringBuffer();
+
+        pullScriptText.append("#!/bin/bash \n\n");
+        pullScriptText.append("\n");
+        pullScriptText.append("export simRef=\""+simRef+"\"\n");
+        pullScriptText.append("export projName=\""+projName+"\"\n");
+        pullScriptText.append("\n");
+        pullScriptText.append("export targetDir=\""+remoteLogin.getWorkDir()+"\"\n");
+        pullScriptText.append("export remoteHost=\""+remoteLogin.getHostname()+"\"\n");
+        pullScriptText.append("export remoteUser=\""+remoteLogin.getUserName()+"\"\n");
+        pullScriptText.append("\n");
+
+        pullScriptText.append("\n");
+        pullScriptText.append("projDir=$targetDir\"/\"$projName\"_\"$HOST\n");
+        pullScriptText.append("simDir=$projDir\"/\"$simRef\n");
+        pullScriptText.append("\n");
+        pullScriptText.append("export localDir="+localDir.getAbsolutePath()+"\"/\"$simRef\"/\"\n");
+        pullScriptText.append("\n");
+        pullScriptText.append("\n");
+        pullScriptText.append("echo \"Going to get files from dir: \"$simDir\" on \"$remoteHost\" and place them locally on \"$localDir\n");
+        pullScriptText.append("\n");
+        pullScriptText.append("zipFile=$simRef\".tar.gz\"\n");
+        pullScriptText.append("\n");
+        pullScriptText.append("echo \"Going to zip files into \"$zipFile\n");
+        pullScriptText.append("\n");
+        pullScriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;tar czf $zipFile *.*\"\n");
+        pullScriptText.append("\n");
+
+        pullScriptText.append("scp  $remoteUser@$remoteHost:$simDir\"/\"$zipFile $localDir\n");
+
+
+        if (false)
+        {
+            pullScriptText.append("scp $remoteUser@$remoteHost:$simDir\"/\"$zipFile $localDir\n");
+        }
+        else
+        {
+            pullScriptText.append("echo -e \"get $simDir\"/\"$zipFile\">pullFile.b\n");
+            pullScriptText.append("sftp -b pullFile.b $remoteUser@$remoteHost\n");
+        }
+
+
+        pullScriptText.append("\n");
+        pullScriptText.append("cd $localDir\n");
+        pullScriptText.append("tar xzf $zipFile\n");
+        pullScriptText.append("rm $zipFile\n");
+
+        return pullScriptText.toString();
     }
 
 
