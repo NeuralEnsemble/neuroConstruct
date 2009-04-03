@@ -106,7 +106,7 @@ public class MpiSettings
         RemoteLogin r900Login = new RemoteLogin("smp-test.rc.ucl.ac.uk", "ucgbpgl", "/home/ucgbpgl/nCsims", "/home/ucgbpgl/nrn62/x86_64/bin/nrniv");
         RemoteLogin legionLogin = new RemoteLogin("legion.rc.ucl.ac.uk", "ucgbpgl", "/home/ucgbpgl/nCsims", "/home/ucgbpgl/nrnmpi/x86_64/bin/nrniv");
 
-        QueueInfo legionQueue = new QueueInfo(5, "ucl/NeuroSci/neuroconst", "cvos-launcher");
+        QueueInfo legionQueue = new QueueInfo(6, "ucl/NeuroSci/neuroconst", "cvos-launcher");
 
 
         if (getMpiConfiguration(LOCAL_SERIAL)==null)

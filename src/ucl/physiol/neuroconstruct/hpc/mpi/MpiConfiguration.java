@@ -71,7 +71,7 @@ public class MpiConfiguration
 
         script.append("#!/bin/bash \n");
         script.append("\n");
-        script.append("#PBS -N "+projName+"_"+simRef+"\n");
+        script.append("#PBS -N "+simRef+"_"+projName+"\n");
         script.append("#PBS -A "+queueInfo.getAccount()+"\n");
         script.append("#PBS -j oe\n");
         script.append("#PBS -l qos=parallel\n");

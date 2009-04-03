@@ -4913,7 +4913,7 @@ public class NeuronFileManager
                         pullScriptText.append("\n");
                         pullScriptText.append("echo \"Going to zip files into \"$zipFile\n");
                         pullScriptText.append("\n");
-                        pullScriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;tar czf $zipFile *.dat *.props *.mod *.hoc\"\n");
+                        pullScriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;tar czf $zipFile *.dat *.spike *.props *.mod *.hoc\"\n");
                         pullScriptText.append("\n");
 
 
