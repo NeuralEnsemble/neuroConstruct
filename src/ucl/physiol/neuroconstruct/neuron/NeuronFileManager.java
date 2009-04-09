@@ -4867,10 +4867,6 @@ public class NeuronFileManager
                     }
                     else
                     {
-                        RemoteLogin rl = simConfig.getMpiConf().getRemoteLogin();
-
-
-                        int time = simConfig.getMpiConf().getQueueInfo().getWallTimeMins();
 
                         int numCells = project.generatedCellPositions.getNumberInAllCellGroups();
 
@@ -4894,9 +4890,12 @@ public class NeuronFileManager
                         }
                         
                         boolean check = true;
+                        int time = 5;
 
-                        while (check)
+                        while (simConfig.getMpiConf().getQueueInfo()!=null && check)
                         {
+                            time = simConfig.getMpiConf().getQueueInfo().getWallTimeMins();
+
                             String res = JOptionPane.showInputDialog("Simulation: "+project.simulationParameters.getReference()+
                                     " to run for "+simConfig.getSimDuration()+" ms on "+simConfig.getMpiConf().getTotalNumProcessors()+" processor cores.\n" +
                                     "Total number of cells: "+numCells+"\n" +

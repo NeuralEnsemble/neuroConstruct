@@ -236,6 +236,7 @@ public class MpiConfiguration
         else
         {
             scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic 'qsub "+QueueInfo.submitScript+"'\"\n");
+            scriptText.append("sleep 4\n"); // Quick snooze to see result of qsub...
         }
         scriptText.append("\n");
         scriptText.append("\n");
