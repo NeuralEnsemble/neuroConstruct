@@ -1,18 +1,18 @@
 /**
  *  neuroConstruct
  *  Software for developing large scale 3D networks of biologically realistic neurons
- * 
+ *
  *  Copyright (c) 2009 Padraig Gleeson
  *  UCL Department of Neuroscience, Physiology and Pharmacology
  *
  *  Development of this software was made possible with funding from the
  *  Medical Research Council and the Wellcome Trust
- *  
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -47,7 +47,7 @@ import ucl.physiol.neuroconstruct.utils.compartment.*;
  * of cells (as in Main3DPanel)
  *
  * @author Padraig Gleeson
- *  
+ *
  */
 
 public class OneCell3D
@@ -58,7 +58,7 @@ public class OneCell3D
      * The cell to visualise
      */
     private Cell myCell = null;
-    
+
     // To help in debugging multiple OneCell3D instances
     private int myIndex = -1;
 
@@ -87,7 +87,7 @@ public class OneCell3D
      */
     private Appearance cellAppBeforeTempSwitch = null;
     private Appearance cellAppDuringTempSwitch = null;
-    
+
     float stickScalingToVanish = 0.0001f;
 
     /**
@@ -706,9 +706,9 @@ public class OneCell3D
                 if (showSomaDiam() &&
                     (currSegment.isSomaSegment() && currSegment.isFirstSectionSegment()))
                 {
-                    
+
                     logger.logComment("Adding a solid segment 0: "+ currSegment);
-                            
+
                     addedSegmentTG = addFirstSomaSeg(currSegment);
 
 
@@ -1001,7 +1001,7 @@ public class OneCell3D
         logger.logComment("---   Adding positioned segment: "+ segment);
         logger.logComment("---   Positioned segment section: "+ segment.getSection());
         logger.logComment("---   Positioned segment parent: "+ segment.getParentSegment());
-        
+
 
         if (Float.isInfinite(segment.getRadius())||Float.isInfinite(segment.getSection().getStartRadius()))
         {
@@ -1322,9 +1322,9 @@ public class OneCell3D
 
             if (segmentPrimitives.get(segId) != null)
             {
-                
+
                 Primitive segmentShape = segmentPrimitives.get(segId);
-                
+
                 if (!segmentShape.getAppearance().equals(app))
                 {
                     logger.logComment("Setting the color of the finite vol cylinder of segment: "+segId);
@@ -1415,17 +1415,17 @@ public class OneCell3D
     public void setTempWholeCellAppearance(Appearance app)
     {
         cellAppDuringTempSwitch = app;
-        
+
         Primitive primarySomaPrimitive = segmentPrimitives.elements().nextElement();
 
         cellAppBeforeTempSwitch = primarySomaPrimitive.getAppearance();
 
         setWholeCellAppearance(app);
-        
+
         if (showSticks() && Utils3D.isTransparent(app))
         {
             logger.logComment("Vanishing sticks for "+ myIndex);
-            
+
             if (stickSegmentGeom!=null)
             {
                 int numVerts = stickSegmentGeom.getValidVertexCount();
@@ -1440,7 +1440,7 @@ public class OneCell3D
             }
         }
     }
-    
+
         public void resetCellAppearance()
     {
         logger.logComment("-------------                Resetting cell app   ");
@@ -1455,8 +1455,8 @@ public class OneCell3D
         {
             logger.logComment("Resetting to colour before temp...: " + cellAppBeforeTempSwitch);
             setWholeCellAppearance(cellAppBeforeTempSwitch);
-            
-                    
+
+
             if (showSticks() && Utils3D.isTransparent(cellAppDuringTempSwitch))
             {
                 logger.logComment("Reconstructing sticks for "+ myIndex);
@@ -1475,7 +1475,7 @@ public class OneCell3D
                 }
             }
         }
-        
+
         cellAppBeforeTempSwitch = null;
         cellAppDuringTempSwitch = null;
     }

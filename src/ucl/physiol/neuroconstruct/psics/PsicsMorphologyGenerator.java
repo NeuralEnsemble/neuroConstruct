@@ -118,6 +118,7 @@ public class PsicsMorphologyGenerator
             }
             catch (IOException ex1)
             {
+                throw new PsicsException("Error writing to file: " + cellFile, ex1);
             }
             throw new PsicsException("Error writing to file: " + cellFile, ex);
 
@@ -207,7 +208,6 @@ public class PsicsMorphologyGenerator
                                       "Segment: "+ seg+"\nis not connected to the point "+seg.getFractionAlongParent()+" along parent segment: "+ parent,
                                       null, null);
 
-                return "";
             }
             if (seg.isSpherical())
             {
@@ -291,10 +291,17 @@ public class PsicsMorphologyGenerator
                     proxPoint.addAttribute(yDistProx);
                     proxPoint.addAttribute(zDistProx);
                     proxPoint.addAttribute(rDistProx);
+
                     if(parent!=null)
                     {
                         SimpleXMLAttribute minorProx = new SimpleXMLAttribute("minor", "true");
                         proxPoint.addAttribute(minorProx);
+
+                        //if (parent.isSpherical())
+                        //{
+                        //    SimpleXMLAttribute onSurface = new SimpleXMLAttribute("onSurface", "true");
+                        //    proxPoint.addAttribute(onSurface);
+                        //}
                     }
                     proxPoint.addAttribute(label);
 
