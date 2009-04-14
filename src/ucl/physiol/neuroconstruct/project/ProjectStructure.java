@@ -236,7 +236,7 @@ public class ProjectStructure
 
     private static String relNotesFileInInstall = helpFileDirInInstall + "RELEASE_NOTES";
 
-    private static String gnuplotEpsFilename = "generateEps.gp";
+    private static String matplotlibEpsFilename = "generateEps.py";
 
    // private static String neuronModSourcesDir = "src"
     //    + System.getProperty("file.separator")
@@ -995,9 +995,9 @@ public class ProjectStructure
 
 
 
-    public static String getGnuplotEpsFilename()
+    public static String getMatplotlibEpsFilename()
     {
-        return gnuplotEpsFilename;
+        return matplotlibEpsFilename;
     }
     
 

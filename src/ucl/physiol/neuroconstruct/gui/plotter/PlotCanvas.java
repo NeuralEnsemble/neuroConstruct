@@ -95,6 +95,8 @@ public class PlotCanvas extends Canvas
 
     public final static String USE_CIRCLES_FOR_PLOT = "Circles";
     public final static String USE_LINES_FOR_PLOT = "Lines";
+    public final static String USE_THICK_LINES_FOR_PLOT = "Thick lines";
+    public final static String USE_CROSSES_FOR_PLOT = "Crosses";
     public final static String USE_POINTS_FOR_PLOT = "Points";
     public final static String USE_BARCHART_FOR_PLOT = "Bar chart";
 
@@ -1135,9 +1137,44 @@ public class PlotCanvas extends Canvas
                                                radius * 2);
                                 }
                             }
+                            else if (dataSets[dataSetIndex].getGraphFormat().equals(USE_CROSSES_FOR_PLOT))
+                            {
+                                int radius = 2;
+                                int upperXcorner = xVal - radius;
+                                int upperYcorner = yVal - radius;
+                                int lowerXcorner = xVal + radius;
+                                int lowerYcorner = yVal + radius;
+
+                                if (xVal>=0 && xVal<=this.getWidth() &&
+                                    yVal >=0 && yVal<=this.getHeight())
+                                {
+                                    g.drawLine(upperXcorner, upperYcorner, lowerXcorner, lowerYcorner);
+                                    g.drawLine(upperXcorner, lowerYcorner, lowerXcorner, upperYcorner);
+                                }
+                            }
                             else if (dataSets[dataSetIndex].getGraphFormat().equals(USE_LINES_FOR_PLOT))
                             {
                                 g.drawLine(xVal, yVal, lastXVal, lastYVal);
+                                lastXVal = xVal;
+                                lastYVal = yVal;
+                            }
+                            else if (dataSets[dataSetIndex].getGraphFormat().equals(USE_THICK_LINES_FOR_PLOT))
+                            {
+                                // TODO: improve...
+
+                                g.drawLine(xVal, yVal, lastXVal, lastYVal);
+
+                                g.drawLine(xVal-1, yVal-1, lastXVal-1, lastYVal-1);
+                                g.drawLine(xVal-1, yVal+1, lastXVal-1, lastYVal+1);
+                                g.drawLine(xVal+1, yVal-1, lastXVal+1, lastYVal-1);
+                                g.drawLine(xVal+1, yVal+1, lastXVal+1, lastYVal+1);
+
+                                g.drawLine(xVal, yVal-1, lastXVal, lastYVal-1);
+                                g.drawLine(xVal, yVal+1, lastXVal, lastYVal+1);
+                                g.drawLine(xVal-1, yVal, lastXVal-1, lastYVal);
+                                g.drawLine(xVal+1, yVal, lastXVal+1, lastYVal);
+
+
                                 lastXVal = xVal;
                                 lastYVal = yVal;
                             }

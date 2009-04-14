@@ -596,6 +596,18 @@ public class DataSet
         return refrence;
     }
 
+
+    public String getSafeRefrence()
+    {
+        String refNew = new String(refrence);
+        refNew = GeneralUtils.replaceAllTokens(refNew, " ", "_");
+        refNew = GeneralUtils.replaceAllTokens(refNew, "(", "");
+        refNew = GeneralUtils.replaceAllTokens(refNew, ")", "");
+        refNew = GeneralUtils.replaceAllTokens(refNew, "-", "_");
+        refNew = GeneralUtils.replaceAllTokens(refNew, ":", "_");
+        return refNew;
+    }
+
     public void setRefrence(String refrence)
     {
         this.refrence = refrence;
