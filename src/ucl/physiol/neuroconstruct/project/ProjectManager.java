@@ -85,6 +85,7 @@ public class ProjectManager implements GenerationReport
     public CompNodeGenerator compNodeGenerator = null;
     public ElecInputGenerator elecInputGenerator = null;
     public PlotSaveGenerator plotSaveGenerator = null;
+    public CellInitialiser cellInitialiser = null;
 
     private GenerationReport reportInterface = null;
     private ProjectEventListener projEventListener = null;
@@ -486,6 +487,7 @@ public class ProjectManager implements GenerationReport
         compNodeGenerator = null;
         elecInputGenerator = null;
         plotSaveGenerator = null;
+        cellInitialiser = null;
 
         System.gc();
         System.gc();
@@ -2102,8 +2104,6 @@ public class ProjectManager implements GenerationReport
 
             arbourConnectionGenerator.start();
 
-
-
         }
 
         else if (simConfig.getMpiConf().isParallel() 
@@ -2169,7 +2169,32 @@ public class ProjectManager implements GenerationReport
         else if (generatorType.equals(PlotSaveGenerator.myGeneratorType))
         {
 
-            
+            if (report.indexOf("Generation interrupted") > 0)
+            {
+                logger.logComment("It seems the generation of plots was interrupted...");
+                currentlyGenerating = false;
+                return;
+            }
+
+            cellInitialiser = new CellInitialiser(activeProject, this);
+
+            cellInitialiser.setSimConfig(simConfig);
+
+            cellInitialiser.start();
+
+
+        }
+
+        else if (generatorType.equals(CellInitialiser.myGeneratorType))
+        {
+
+            if (report.indexOf("Generation interrupted") > 0)
+            {
+                logger.logComment("It seems the generation of initial cell settings was interrupted...");
+                currentlyGenerating = false;
+                return;
+            }
+
             currentlyGenerating = false;
         }
         else
@@ -2178,8 +2203,6 @@ public class ProjectManager implements GenerationReport
             
             //////////////currentlyGenerating = false;
         }
-
-        //////////////currentlyGenerating = false;
 
 
     }

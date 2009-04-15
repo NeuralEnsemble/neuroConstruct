@@ -53,6 +53,10 @@ public class PositionRecord
     
     private int nodeId = NO_NODE_ID;
 
+    public static final float NO_INIT_V = Float.MIN_VALUE;
+
+    private float initV = NO_INIT_V;
+
     public PositionRecord(int cellNumber, float x_pos, float y_pos, float z_pos)
     {
         this.cellNumber = cellNumber;
@@ -83,15 +87,23 @@ public class PositionRecord
     @Override
     public String toString()
     {
-        if (nodeId == NO_NODE_ID) return "Cell: [" + cellNumber + "] (" + x_pos + ", " + y_pos + ", " + z_pos + ")";
-        return "Cell: [" + cellNumber + "] (" + x_pos + ", " + y_pos + ", " + z_pos + ") Node id: "+nodeId;
+        String initVInfo = "";
+        if (initV!=NO_INIT_V)
+            initVInfo = "; initial v: "+initV;
+
+        if (nodeId == NO_NODE_ID) return "Cell: [" + cellNumber + "] (" + x_pos + ", " + y_pos + ", " + z_pos + ")"+initVInfo;
+        return "Cell: [" + cellNumber + "] (" + x_pos + ", " + y_pos + ", " + z_pos + ")"+initVInfo+"; node id: "+nodeId;
     }
     
     
     public String toHtmlString()
     {
-        if (nodeId == NO_NODE_ID) return "Cell " + cellNumber + ": "+GeneralUtils.getBold("(" + x_pos + ", " + y_pos + ", " + z_pos + ")", true);
-        return "Cell: [" + cellNumber + "] "+GeneralUtils.getBold("(" + x_pos + ", " + y_pos + ", " + z_pos + ")", true)+" Node id: "+GeneralUtils.getBold(nodeId, true) ;
+        String initVInfo = "";
+        if (initV!=NO_INIT_V)
+            initVInfo = "; initial v: "+initV;
+
+        if (nodeId == NO_NODE_ID) return "Cell " + cellNumber + ": "+GeneralUtils.getBold("(" + x_pos + ", " + y_pos + ", " + z_pos + ")"+initVInfo, true);
+        return "Cell: [" + cellNumber + "] "+GeneralUtils.getBold("(" + x_pos + ", " + y_pos + ", " + z_pos + ")"+initVInfo, true)+"; node id: "+GeneralUtils.getBold(nodeId, true) ;
     }
 
     /*
@@ -123,6 +135,23 @@ public class PositionRecord
     {
         this.nodeId = nodeId;
     }
+
+    public float getInitV()
+    {
+        return initV;
+    }
+
+    public boolean hasUniqueInitV()
+    {
+        return initV!=NO_INIT_V;
+    }
+
+    public void setInitV(float initV)
+    {
+        this.initV = initV;
+    }
+
+    
     
     public static void main(String[] args)
     {

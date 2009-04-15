@@ -2766,14 +2766,14 @@ public class GenesisFileManager
                    +"\n\n");
                 }
 
-                   if (mappedCell.getInitialPotential().getDistributionType()!=NumberGenerator.FIXED_NUM)
-                   {
-                       response.append("setfield " + newElementName + "/# initVm " +
-                                       UnitConverter.getVoltage(mappedCell.getInitialPotential().getNextNumber(),
-                                                                UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                                project.genesisSettings.getUnitSystemToUse()) + "\n");
+               if (posRecord.hasUniqueInitV())
+               {
+                   response.append("setfield " + newElementName + "/# initVm " +
+                                   UnitConverter.getVoltage(posRecord.getInitV(),
+                                                            UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                            project.genesisSettings.getUnitSystemToUse()) + "\n");
 
-                   }
+               }
 
 
 
@@ -3977,7 +3977,8 @@ public class GenesisFileManager
         if (!mooseCompatMode())
             dateInfo = " at: \" {getdate}";
         
-        response.append("echo \"Starting simulation reference: "+project.simulationParameters.getReference()+dateInfo+"\n");
+        response.append("echo \"Starting simulation reference: "+project.simulationParameters.getReference()+" with duration: "+simConfig.getSimDuration()+
+                " and dt: "+project.simulationParameters.getDt()+dateInfo+"\n");
 
         response.append("step "+(Math.round(getSimDuration()/project.simulationParameters.getDt()))+"\n\n"); // +1 to include 0 and last timestep
 

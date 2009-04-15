@@ -213,11 +213,17 @@ public class SimulationsInfo extends AbstractTableModel
                                 if (!allColumns.contains(nextSimProp))
                                     allColumns.add(nextSimProp);
                             }
+
+                            rowNumber++;
+
+                            logger.logComment("That's a valid simulation dir...");
+
                         }
                         catch (Exception ex)
                         {
                             logger.logError("Problem reading the sim summary from file: " + simSummaryFile, ex);
                         }
+
                     }
                     else if (simSummaryFile.exists() && pullRemoteScript.exists())
                     {
@@ -246,6 +252,11 @@ public class SimulationsInfo extends AbstractTableModel
                                 if (!allColumns.contains(nextSimProp))
                                     allColumns.add(nextSimProp);
                             }
+
+
+                            rowNumber++;
+
+                            logger.logComment("That's a valid simulation dir...");
                         }
                         catch (Exception ex)
                         {
@@ -253,9 +264,6 @@ public class SimulationsInfo extends AbstractTableModel
                         }
                     }
 
-                    rowNumber++;
-
-                    logger.logComment("That's a valid simulation dir...");
                 }
                 catch (SimulationDataException ex1)
                 {
@@ -313,7 +321,7 @@ public class SimulationsInfo extends AbstractTableModel
                 String colName = columnsShown.elementAt(col);
                 Properties propsForSim = extraColumns.elementAt(row);
                 
-                if (propsForSim==null) return "- n/a -";
+                if (propsForSim==null) return "-- n/a --";
 
                 return propsForSim.getProperty(colName);
             }

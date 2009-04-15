@@ -3088,7 +3088,7 @@ public class PlotterFrame extends JFrame
                     String rgb = Integer.toHexString(ds.getGraphColour().getRGB());
                     rgb = rgb.substring(2, rgb.length());
                     //StringBuffer sb = new StringBuffer();
-                    String name = dsFile.getAbsolutePath();
+                    String name = dsFile.getName();
 
                     name = GeneralUtils.replaceAllTokens(name, "\\", "\\\\");
                     //if (j>0) mainScript.append(", ");
@@ -3110,6 +3110,7 @@ public class PlotterFrame extends JFrame
                     String linestyle = "-";
                     String marker = ".";
                     String pre = "";
+                    String post = "";
 
                     if (ds.getGraphFormat().equals(PlotCanvas.USE_LINES_FOR_PLOT))
                     {
@@ -3131,6 +3132,7 @@ public class PlotterFrame extends JFrame
                     {
                        linestyle = "None";
                        marker = "o";
+                       post = ", markerfacecolor='None', markeredgecolor='#"+rgb+"'";
                     }
                     else if (ds.getGraphFormat().equals(PlotCanvas.USE_CROSSES_FOR_PLOT))
                     {
@@ -3144,7 +3146,7 @@ public class PlotterFrame extends JFrame
                     }  // TODO, more for barcharts!
 
 
-                    mainScript.append("p.plot("+objRef+"_x, "+objRef+"_y"+pre+", color='#"+rgb+"', linestyle='"+linestyle+"', marker='"+marker+"')\n\n");
+                    mainScript.append("p.plot("+objRef+"_x, "+objRef+"_y"+pre+", color='#"+rgb+"', linestyle='"+linestyle+"', marker='"+marker+"'"+post+")\n\n");
 
 
 

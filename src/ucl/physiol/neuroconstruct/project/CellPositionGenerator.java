@@ -182,11 +182,21 @@ public class CellPositionGenerator extends Thread
                         if (canBeUsed)
                         {
                             logger.logComment("That point can be used...");
-                            project.generatedCellPositions.addPosition(nextCellGroup,
-                                                                       numCellsInGroupSoFar,
+
+                            PositionRecord pr = new PositionRecord(numCellsInGroupSoFar,
                                                                        nextPosn.x,
                                                                        nextPosn.y,
                                                                        nextPosn.z);
+                            /* This should be done AFTER all cell pos, conns, inputs, etc. generated,
+                             * to pereserve ablity to regenerate old networks from neuroConstruct rand seeds
+                            if (!cell.getInitialPotential().isTypeFixedNum())
+                            {
+                                float initPot = cell.getInitialPotential().getNextNumber();
+                                pr.setInitV(initPot);
+                            }*/
+
+                            project.generatedCellPositions.addPosition(nextCellGroup,
+                                                                       pr);
                             numCellsInGroupSoFar++;
                             triesAtFittingOneCell = 0;
                         }

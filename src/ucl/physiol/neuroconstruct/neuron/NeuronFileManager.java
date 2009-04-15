@@ -749,11 +749,10 @@ public class NeuronFileManager
                     PositionRecord posRecord
                         = (PositionRecord) cellGroupPositions.get(cellIndex);
 
-                    if (cell.getInitialPotential().getDistributionType() != NumberGenerator.FIXED_NUM)
+                    if (posRecord.hasUniqueInitV())
                     {
-                        double initVolt = UnitConverter.getVoltage(cell.getInitialPotential().getNextNumber(),
-                                                                   UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                                   UnitConverter.NEURON_UNITS);
+                        double initVolt = posRecord.getInitV();
+                        
                         addHocComment(response,
                                    "Giving cell " + posRecord.cellNumber + " an initial potential of: " + initVolt+" based on: "+ cell.getInitialPotential().toString());
 
@@ -4217,7 +4216,7 @@ public class NeuronFileManager
         response.append("{setuptime = stopsw()}\n\n");
         response.append("print \"Setup time for simulation: \",setuptime,\" seconds\"\n\n");
 
-        response.append("print \"Starting simulation of duration "+simConfig.getSimDuration()+" ms, reference: " + project.simulationParameters.getReference() +
+        response.append("print \"Starting simulation of duration "+simConfig.getSimDuration()+" ms, dt: "+project.simulationParameters.getDt()+", reference: " + project.simulationParameters.getReference() +
                 dateInfo+"\"\n\n");
 
         response.append("{startsw()}\n\n");

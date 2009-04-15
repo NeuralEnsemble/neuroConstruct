@@ -7470,13 +7470,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     // go on...
                 }
             }
-
-
             String update = new String(currentReport.substring(0, currentReport.lastIndexOf("</body>")) + report);
 
             setGeneratorInfo(update + "  ");
-
-
 
             if (report.indexOf("Generation interrupted") > 0) {
                 logger.logComment("It seems the generation of connections was interrupted...");
@@ -7579,6 +7575,25 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                        + report);
 
             setGeneratorInfo(update);
+
+            if (report.indexOf("Generation interrupted") > 0)
+            {
+                logger.logComment("It seems the generation of cell positions was interrupted...");
+                return;
+            }
+
+            projManager.cellInitialiser = new CellInitialiser(projManager.getCurrentProject(), this);
+
+            projManager.cellInitialiser.setSimConfig(simConfig);
+
+            projManager.cellInitialiser.start();
+
+
+        }
+
+        else if (generatorType.equals(CellInitialiser.myGeneratorType))
+        {
+
 
             this.jButtonGenerateStop.setEnabled(false);
 
