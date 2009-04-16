@@ -67,6 +67,35 @@ echo "+++++++++++++++++++++++++++++++++++++++++++++++++"
 end
 
 
+/*
+ * Prints ca conc of all of the created compartments
+ */
+function allca
+
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++"
+
+str compName
+str chanName
+
+foreach compName ({el {cellsRoot}/##[][TYPE=compartment],{cellsRoot}/##[][TYPE=symcompartment]})
+
+    if ({exists {compName}/../solve} && {getfield {compName}/../solve chanmode} > 2)
+        echo "TODO: get Ca conc via findsolvefield..."
+        //echo "Voltage (via findsolvefield) of " {compName} ": " {getfield {compName}/../solve {findsolvefield {compName}/../solve {compName} Vm}}
+    else
+        foreach chanName ({el {compName}/##[][TYPE=Ca_concen]})
+
+            echo "Ca conc of " {chanName} ": " {getfield {chanName} Ca}  
+        end
+    end
+
+end
+
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++"
+
+end
+
+
 
 /*
  * Prints info on all stimulations

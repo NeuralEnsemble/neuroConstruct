@@ -146,20 +146,62 @@ public class GenesisFileManagerTest {
 
             System.out.println("Have found "+ numRecordings+" recordings in dir: "+ simData.getSimulationDirectory().getAbsolutePath());
 
-            double[] volts = simData.getVoltageAtAllTimes(SimulationData.getCellRef(sc.getCellGroups().get(0), 0));
+            double[] someVolts = simData.getVoltageAtAllTimes(SimulationData.getCellRef(sc.getCellGroups().get(0), 0));
 
-            assertEquals(volts.length, 1 + (sc.getSimDuration()/proj.simulationParameters.getDt()), 0);
+            assertEquals(someVolts.length, 1 + (sc.getSimDuration()/proj.simulationParameters.getDt()), 0);
+
+            File simDataDir = new File(ProjectStructure.getSimulationsDir(proj.getProjectMainDirectory()), simName);
+
+            SimulationData sd = new SimulationData(simDataDir);
+
+            sd.initialise();
+
+            System.out.println("Data saved: "+ sd.getCellSegRefs(true));
+
+            String ref = "Pacemaker_0";
+
+            double[] volts = sd.getVoltageAtAllTimes(ref);
+			double[] times = sd.getAllTimes();
+
+            double[] spikeTimes = SpikeAnalyser.getSpikeTimes(volts, times, 0, 0, (float)times[times.length-1]);
+
+            System.out.println("Num spikeTimes: "+ spikeTimes.length);
+
+            int expectedNum = 15; // As checked through gui
+
+            assertEquals(expectedNum, spikeTimes.length);
+
+
+            
+            /*
+							print "Data loaded: "
+							print simData.getAllLoadedDataStores()
+							times = simData.getAllTimes()
+							cellSegmentRef = simConfig.getCellGroups().get(0)+"_0"
+							volts = simData.getVoltageAtAllTimes(cellSegmentRef)
+
+							traceInfo = "Voltage at: %s in simulation: %s"%(cellSegmentRef, sim)
+
+							dataSetV = DataSet(traceInfo, traceInfo, "mV", "ms", "Membrane potential", "Time")
+							for i in range(len(times)):
+									dataSetV.addPoint(times[i], volts[i])
+
+							plotFrameVolts.addDataSet(dataSetV)
+
+							spikeTimes = SpikeAnalyser.getSpikeTimes(volts, times, analyseThreshold, analyseStartTime, analyseStopTime)*/
+
+            
         }
         
     }
     
-    
+
      public static void main(String[] args)
      {
         GenesisFileManagerTest ct = new GenesisFileManagerTest();
         Result r = org.junit.runner.JUnitCore.runClasses(ct.getClass());
         MainTest.checkResults(r);
-        
+
      }
 
 }

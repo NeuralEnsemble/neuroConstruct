@@ -2208,24 +2208,29 @@ public class GenesisFileManager
     {
         StringBuffer response = new StringBuffer();
 
-        response.append("\n\n");
+        if (project.genesisSettings.isGraphicsMode())
+        {
 
-        addMajorComment(response, "Creating a simple Run Control");
+            response.append("\n\n");
 
-        response.append("if (!{exists "+CONTROLS_ELEMENT_ROOT+"})\n"+
-                        "    create neutral "+CONTROLS_ELEMENT_ROOT+"\n"+
-                        "end\n");
+            addMajorComment(response, "Creating a simple Run Control");
 
-        String runControl = CONTROLS_ELEMENT_ROOT + "/runControl";
-        response.append("create xform "+runControl + " [700, 20, 200, 120] -title \"Run Controls\"\n");
+            response.append("if (!{exists "+CONTROLS_ELEMENT_ROOT+"})\n"+
+                            "    create neutral "+CONTROLS_ELEMENT_ROOT+"\n"+
+                            "end\n");
 
-        response.append("xshow " + runControl+"\n\n");
+            String runControl = CONTROLS_ELEMENT_ROOT + "/runControl";
+            response.append("create xform "+runControl + " [700, 20, 200, 120] -title \"Run Controls\"\n");
 
-        response.append("create xbutton " + runControl+"/RESET -script reset\n");
-        response.append("create xbutton " + runControl+"/RUN -script \"step "
-                        + ( (int) (getSimDuration() /
-                                   project.simulationParameters.getDt())) + "\"\n"); // +1 to include 0 and last timestep
-       response.append("create xbutton " + runControl+"/QUIT -script quit\n\n");
+            response.append("xshow " + runControl+"\n\n");
+
+            response.append("create xbutton " + runControl+"/RESET -script reset\n");
+            response.append("create xbutton " + runControl+"/RUN -script \"step "
+                            + ( (int) (getSimDuration() /
+                                       project.simulationParameters.getDt())) + "\"\n"); // +1 to include 0 and last timestep
+           response.append("create xbutton " + runControl+"/QUIT -script quit\n\n");
+
+        }
 
 
         return response.toString();

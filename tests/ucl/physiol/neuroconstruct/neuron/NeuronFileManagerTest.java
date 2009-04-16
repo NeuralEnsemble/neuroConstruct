@@ -30,12 +30,15 @@ import java.io.File;
 import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.Result;
+import test.MainTest;
 import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings;
 import ucl.physiol.neuroconstruct.nmodleditor.processes.ProcessManager;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.simulation.SimulationData;
 import static org.junit.Assert.*;
 import ucl.physiol.neuroconstruct.simulation.SimulationDataException;
+import ucl.physiol.neuroconstruct.simulation.SpikeAnalyser;
 import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
 /**
@@ -145,9 +148,30 @@ public class NeuronFileManagerTest {
         
         System.out.println("Have found "+ numRecordings+" recordings in dir: "+ simData.getSimulationDirectory().getAbsolutePath());
         
-        double[] volts = simData.getVoltageAtAllTimes(SimulationData.getCellRef(sc.getCellGroups().get(0), 0));
+        double[] someVolts = simData.getVoltageAtAllTimes(SimulationData.getCellRef(sc.getCellGroups().get(0), 0));
         
-        assertEquals(volts.length, 1 + (sc.getSimDuration()/proj.simulationParameters.getDt()), 0);
+        assertEquals(someVolts.length, 1 + (sc.getSimDuration()/proj.simulationParameters.getDt()), 0);
+
+        File simDataDir = new File(ProjectStructure.getSimulationsDir(proj.getProjectMainDirectory()), simName);
+
+        SimulationData sd = new SimulationData(simDataDir);
+
+        sd.initialise();
+
+        System.out.println("Data saved: "+ sd.getCellSegRefs(true));
+
+        String ref = "Pacemaker_0";
+
+        double[] volts = sd.getVoltageAtAllTimes(ref);
+        double[] times = sd.getAllTimes();
+
+        double[] spikeTimes = SpikeAnalyser.getSpikeTimes(volts, times, 0, 0, (float)times[times.length-1]);
+
+        System.out.println("Num spikeTimes: "+ spikeTimes.length);
+
+        int expectedNum = 15; // As checked through gui
+
+        assertEquals(expectedNum, spikeTimes.length);
         
         
     }
@@ -354,7 +378,14 @@ public class NeuronFileManagerTest {
         
     }
     
-    
+
+     public static void main(String[] args)
+     {
+        NeuronFileManagerTest ct = new NeuronFileManagerTest();
+        Result r = org.junit.runner.JUnitCore.runClasses(ct.getClass());
+        MainTest.checkResults(r);
+
+     }
     
     
 

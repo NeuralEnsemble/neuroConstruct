@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<java version="1.6.0_03" class="java.beans.XMLDecoder"> 
+<java version="1.6.0_13" class="java.beans.XMLDecoder"> 
 
 <!-- This is a neuroConstruct project file. It's best to open this
 file with neuroConstruct, as opposed to editing it directly. 
@@ -71,9 +71,15 @@ part of NeuroML or any standardised XML specification. -->
       </void> 
      </object> 
     </void> 
+    <void method="add"> 
+     <object class="ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter"/> 
+    </void> 
    </void> 
    <void method="get"> 
     <string>Cell Type</string> 
+    <void method="add"> 
+     <string>SampleCell</string> 
+    </void> 
     <void method="add"> 
      <string>SampleCell</string> 
     </void> 
@@ -88,6 +94,9 @@ part of NeuroML or any standardised XML specification. -->
     </void> 
     <void method="add"> 
      <int>9</int> 
+    </void> 
+    <void method="add"> 
+     <int>8</int> 
     </void> 
    </void> 
    <void method="get"> 
@@ -108,9 +117,20 @@ part of NeuroML or any standardised XML specification. -->
       <int>255</int> 
      </object> 
     </void> 
+    <void method="add"> 
+     <object class="java.awt.Color"> 
+      <int>113</int> 
+      <int>130</int> 
+      <int>2</int> 
+      <int>255</int> 
+     </object> 
+    </void> 
    </void> 
    <void method="get"> 
     <string>Region Name</string> 
+    <void method="add"> 
+     <string>SampleRegion</string> 
+    </void> 
     <void method="add"> 
      <string>SampleRegion</string> 
     </void> 
@@ -125,6 +145,9 @@ part of NeuroML or any standardised XML specification. -->
     </void> 
     <void method="add"> 
      <string>CellGroup_2</string> 
+    </void> 
+    <void method="add"> 
+     <string>Pacemaker</string> 
     </void> 
    </void> 
   </void> 
@@ -181,6 +204,34 @@ part of NeuroML or any standardised XML specification. -->
      </void> 
      <void property="plotReference"> 
       <string>CellGroup_2_v</string> 
+     </void> 
+     <void property="segmentId"> 
+      <string>0</string> 
+     </void> 
+    </object> 
+   </void> 
+   <void method="add"> 
+    <object class="ucl.physiol.neuroconstruct.project.SimPlot"> 
+     <void property="cellGroup"> 
+      <string>Pacemaker</string> 
+     </void> 
+     <void property="cellNumber"> 
+      <string>*</string> 
+     </void> 
+     <void property="graphWindow"> 
+      <string>Pacemaker_v</string> 
+     </void> 
+     <void property="maxValue"> 
+      <float>50.0</float> 
+     </void> 
+     <void property="minValue"> 
+      <float>-90.0</float> 
+     </void> 
+     <void property="plotAndOrSave"> 
+      <string>Plot and save</string> 
+     </void> 
+     <void property="plotReference"> 
+      <string>Pacemaker_v</string> 
      </void> 
      <void property="segmentId"> 
       <string>0</string> 
@@ -260,6 +311,34 @@ part of NeuroML or any standardised XML specification. -->
      </void> 
     </object> 
    </void> 
+   <void method="add"> 
+    <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings"> 
+     <void property="amp"> 
+      <void property="fixedNum"> 
+       <float>0.2</float> 
+      </void> 
+     </void> 
+     <void property="cellGroup"> 
+      <string>Pacemaker</string> 
+     </void> 
+     <void property="del"> 
+      <void property="fixedNum"> 
+       <float>0.0</float> 
+      </void> 
+     </void> 
+     <void property="dur"> 
+      <void property="fixedNum"> 
+       <float>1000.0</float> 
+      </void> 
+      <void property="numberType"> 
+       <int>11</int> 
+      </void> 
+     </void> 
+     <void property="reference"> 
+      <string>Input_0</string> 
+     </void> 
+    </object> 
+   </void> 
   </void> 
  </object> 
  <object class="ucl.physiol.neuroconstruct.project.SimConfigInfo"> 
@@ -268,10 +347,13 @@ part of NeuroML or any standardised XML specification. -->
     <object class="ucl.physiol.neuroconstruct.project.SimConfig"> 
      <void property="cellGroups"> 
       <void method="add"> 
-       <string>SampleCellGroup</string> 
+       <string>CellGroup_2</string> 
       </void> 
       <void method="add"> 
-       <string>CellGroup_2</string> 
+       <string>Pacemaker</string> 
+      </void> 
+      <void method="add"> 
+       <string>SampleCellGroup</string> 
       </void> 
      </void> 
      <void property="description"> 
@@ -280,6 +362,9 @@ part of NeuroML or any standardised XML specification. -->
      <void property="inputs"> 
       <void method="add"> 
        <string>SampleIClamp</string> 
+      </void> 
+      <void method="add"> 
+       <string>Input_0</string> 
       </void> 
      </void> 
      <void property="name"> 
@@ -292,6 +377,9 @@ part of NeuroML or any standardised XML specification. -->
      </void> 
      <void property="plots"> 
       <void method="add"> 
+       <string>Pacemaker_v</string> 
+      </void> 
+      <void method="add"> 
        <string>SamplePlot</string> 
       </void> 
       <void method="add"> 
@@ -299,7 +387,7 @@ part of NeuroML or any standardised XML specification. -->
       </void> 
      </void> 
      <void property="simDuration"> 
-      <float>100.0</float> 
+      <float>200.0</float> 
      </void> 
     </object> 
    </void> 

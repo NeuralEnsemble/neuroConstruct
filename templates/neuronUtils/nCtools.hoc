@@ -10,6 +10,7 @@
 
 objectvar nil
 
+
 /*
  * Provides information on the morphology of the current accessed section
  */
@@ -103,7 +104,47 @@ proc allv(){
 
     print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
-    forall print secname(), ": ", v
+    forall {
+        if (nseg ==1) {
+            print secname(), ": ", v
+        } else {
+            print secname(), " (nseg = ",nseg,"): "
+            for i=0,nseg+1{
+                strdef ind
+                sprint(ind, "    %f: ", (i/(nseg+1)))
+
+                print ind, "\t\t ", v((i/(nseg+1)))
+            }
+    
+        }
+    }
+
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+}
+
+/*
+ * Prints ca conc of all of the created compartments
+ */
+proc allca(){
+
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+    forall {
+        if (ismembrane("ca_ion")) {
+            if (nseg ==1) {
+                print secname(), ": ", cai
+            } else {
+                print secname(), " (nseg = ",nseg,"): "
+                for i=0,nseg+1{
+                    strdef ind
+                    sprint(ind, "    %f: ", (i/(nseg+1)))
+                    print ind, "\t\t ", cai((i/(nseg+1)))
+                }
+        
+            }
+        }
+    }
 
     print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 

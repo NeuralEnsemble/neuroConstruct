@@ -27,7 +27,6 @@
 package ucl.physiol.neuroconstruct.genesis;
 
 import ucl.physiol.neuroconstruct.utils.units.*;
-import java.util.Hashtable;
 import ucl.physiol.neuroconstruct.utils.ClassLogger;
 import java.util.*;
 
