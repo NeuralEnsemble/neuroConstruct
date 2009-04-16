@@ -2531,18 +2531,15 @@ public class GenesisFileManager
 
             response.append("\nstr compName\n");
 
-            if (GeneralUtils.isWindowsBasedPlatform())
-            {
-                if (!project.genesisSettings.isCopySimFiles())
-                {
-                    filenameToBeGenerated = GeneralUtils.convertToCygwinPath(filenameToBeGenerated);
-                }
-                else
-                {
-                    File copiedFile = new File(getDirectoryForSimulationFiles(), (new File(filenameToBeGenerated)).getName());
-                    filenameToBeGenerated = GeneralUtils.convertToCygwinPath(copiedFile.getAbsolutePath());
-                }
 
+            if (!project.genesisSettings.isCopySimFiles())
+            {
+                filenameToBeGenerated = GeneralUtils.convertToCygwinPath(filenameToBeGenerated);
+            }
+            else
+            {
+                File copiedFile = new File(getDirectoryForSimulationFiles(), (new File(filenameToBeGenerated)).getName());
+                filenameToBeGenerated = GeneralUtils.convertToCygwinPath(copiedFile.getAbsolutePath());
             }
 
 
@@ -3744,14 +3741,15 @@ public class GenesisFileManager
                                 if (project.genesisSettings.getNumMethod().isHsolve() &&
                                     project.genesisSettings.getNumMethod().getChanMode() >= 2)
                                 {
-                                    String hsolveElement = "{getpath {compName} -head}/" + var.getCompTopElementName() +
-                                        HSOLVE_ELEMENT_NAME;
+                                    String hsolveElement = "{getpath {compName} -head}" + HSOLVE_ELEMENT_NAME;
 
                                     realVariableToSave = "{findsolvefield " + hsolveElement + " " + "{compName}"
                                         + " " + var.getVariableName() + "}";
 
                                     realElementToRecord = hsolveElement;
                                 }
+
+
                                 if (!isSpikeRecording)
                                 {
                                     response.append("    addmsg " + realElementToRecord + " " + fileElement + " SAVE " +

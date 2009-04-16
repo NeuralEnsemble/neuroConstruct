@@ -133,7 +133,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
     
     
     JButton jButtonCoords = new JButton("...");
-    JButton jButtonJump = new JButton("->");
+    JButton jButtonJump = new JButton(">");
     
     
     JLabel jLabelSegLength = new JLabel();

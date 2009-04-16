@@ -173,10 +173,10 @@ public class Section implements Serializable
         if (!includeTabs) return toString();
 
         String info =  "Section: <span style=\"color:green;font-weight:bold\">"+ sectionName
-                + "</span>, init radius: " + startRadius
-                + ", start: " +getStartPointPosition()
-                + ", internal divs: " + numberInternalDivisions
-                + ", groups: <b>"+ groups+ "</b>";
+                + "</span>, init radius: <b>" + startRadius
+                + "</b>, start: <b>" +getStartPointPosition()
+                + "</b>, internal divs: <b>" + numberInternalDivisions
+                + "</b>, groups: <b>"+ groups+ "</b>";
 
         if (comment!=null)  info = info +"<span style=\"color:#A9A9A9;font-weight:bold\">"+" // "+comment+"</span>";
             return info;
