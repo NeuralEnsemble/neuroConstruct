@@ -79,7 +79,7 @@ public class GenesisFileManagerTest {
                 
         pm.doGenerate(sc.getName(), 1234);
         
-        int wait = 2000;
+        int wait = 1000;
         
         if (GeneralUtils.isWindowsBasedPlatform())
             wait = 8000;
@@ -128,11 +128,11 @@ public class GenesisFileManagerTest {
 
             File timesFile = simData.getTimesFile();
 
-            Thread.sleep(wait); // Shouldn't take longer than this
+            Thread.sleep(wait*5); // Shouldn't take longer than this
 
 
             if(!timesFile.exists())
-                Thread.sleep(4000); // One more try...
+                Thread.sleep(wait*4); // One more try...
 
             assertTrue(timesFile.exists());
 
@@ -146,15 +146,18 @@ public class GenesisFileManagerTest {
 
             System.out.println("Have found "+ numRecordings+" recordings in dir: "+ simData.getSimulationDirectory().getAbsolutePath());
 
-            double[] someVolts = simData.getVoltageAtAllTimes(SimulationData.getCellRef(sc.getCellGroups().get(0), 0));
-
-            assertEquals(someVolts.length, 1 + (sc.getSimDuration()/proj.simulationParameters.getDt()), 0);
 
             File simDataDir = new File(ProjectStructure.getSimulationsDir(proj.getProjectMainDirectory()), simName);
 
             SimulationData sd = new SimulationData(simDataDir);
 
             sd.initialise();
+
+            while(!sd.isDataLoaded())
+            {
+                System.out.println("Waiting for data to be loaded");
+                Thread.sleep(1000);
+            }
 
             System.out.println("Data saved: "+ sd.getCellSegRefs(true));
 
@@ -163,11 +166,14 @@ public class GenesisFileManagerTest {
             double[] volts = sd.getVoltageAtAllTimes(ref);
 			double[] times = sd.getAllTimes();
 
+            
+            assertEquals(volts.length, 1 + (sc.getSimDuration()/proj.simulationParameters.getDt()), 0);
+
             double[] spikeTimes = SpikeAnalyser.getSpikeTimes(volts, times, 0, 0, (float)times[times.length-1]);
 
             System.out.println("Num spikeTimes: "+ spikeTimes.length);
 
-            int expectedNum = 15; // As checked through gui
+            int expectedNum = 76; // As checked through gui
 
             assertEquals(expectedNum, spikeTimes.length);
 

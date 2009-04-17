@@ -274,7 +274,7 @@ part of NeuroML or any standardised XML specification. -->
    <float>100.0</float> 
   </void> 
   <void property="reference"> 
-   <string>Sim_4</string> 
+   <string>Sim_7</string> 
   </void> 
   <void property="saveCopyGenSimFiles"> 
    <boolean>true</boolean> 
@@ -387,7 +387,7 @@ part of NeuroML or any standardised XML specification. -->
       </void> 
      </void> 
      <void property="simDuration"> 
-      <float>200.0</float> 
+      <float>1000.0</float> 
      </void> 
     </object> 
    </void> 

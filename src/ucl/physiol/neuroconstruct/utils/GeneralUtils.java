@@ -201,6 +201,36 @@ public class GeneralUtils
          lastMeasuredMemory = currUsed;
     }
 
+    /*
+     * Quick & dirty reader for short text file into a String
+     */
+    public static String readShortFile(File shortFile)
+    {
+        Reader in = null;
+        StringBuffer sb = new StringBuffer();
+
+        try
+        {
+            in = new FileReader(shortFile);
+            BufferedReader lineReader = new BufferedReader(in);
+            String nextLine = null;
+            int lineNumber = 0;
+
+            while ((nextLine = lineReader.readLine()) != null)
+            {
+                lineNumber++;
+                logger.logComment("Looking at line number: " + lineNumber + " (" + nextLine + ")");
+                sb.append(nextLine + "\n");
+            }
+        }
+        catch (Exception ex)
+        {
+            sb.append("Error reading from file: "+shortFile.getAbsolutePath()+":\n"+ex);
+        }
+        return sb.toString();
+
+    }
+
     /**
      * Prints the current time and the time since the function was last called
      * Useful for timing methods

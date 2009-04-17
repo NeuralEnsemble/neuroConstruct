@@ -330,7 +330,7 @@ numTestsFailed = 0
 proc testEquals() {
 
 	if ($1 != $2) { 
-		print "Test failed: ", $1, "  != ", "$2"
+		print "Test failed: ", $1, "  != ", $2
 		numTestsFailed = numTestsFailed + 1
 	} else {
 		numTestsPassed = numTestsPassed + 1
@@ -349,7 +349,7 @@ proc createTestReport() {
 
     {testResultFile = new File()}
 
-    if(numTestsFailed > 0) {
+    if(numTestsFailed == 0) {
         testResultFile.wopen("passed")
     } else {
         testResultFile.wopen("failed")

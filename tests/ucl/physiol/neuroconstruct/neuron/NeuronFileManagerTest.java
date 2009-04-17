@@ -78,7 +78,7 @@ public class NeuronFileManagerTest {
                 
         pm.doGenerate(sc.getName(), 1234);
         
-        int wait = 2000;
+        int wait = 1000;
         if (GeneralUtils.isWindowsBasedPlatform())
             wait = 4000;
         
@@ -135,7 +135,11 @@ public class NeuronFileManagerTest {
         File timesFile = simData.getTimesFile();
         
         
-        Thread.sleep(wait); // Shouldn't take longer than this
+        Thread.sleep(wait*3); // Shouldn't take longer than this
+
+
+        if(!timesFile.exists())
+            Thread.sleep(wait*3); // One more try...
         
         assertTrue(timesFile.exists());
         
@@ -169,7 +173,7 @@ public class NeuronFileManagerTest {
 
         System.out.println("Num spikeTimes: "+ spikeTimes.length);
 
-        int expectedNum = 15; // As checked through gui
+        int expectedNum = 76; // As checked through gui
 
         assertEquals(expectedNum, spikeTimes.length);
         

@@ -367,6 +367,11 @@ public class SimulationData
 
         dataLoaded = true;
     }
+    
+    public boolean isDataLoaded()
+    {
+        return dataLoaded;
+    }
 
 /*
     public boolean dataOnlyForSoma()

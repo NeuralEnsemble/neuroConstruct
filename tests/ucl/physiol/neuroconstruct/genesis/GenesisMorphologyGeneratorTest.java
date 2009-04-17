@@ -24,7 +24,7 @@
  *
  */
 
-package ucl.physiol.neuroconstruct.neuron;
+package ucl.physiol.neuroconstruct.genesis;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Result;
 import test.MainTest;
-import ucl.physiol.neuroconstruct.nmodleditor.processes.ProcessManager;
+import ucl.physiol.neuroconstruct.cell.compartmentalisation.GenesisCompartmentalisation;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.simulation.SimulationData;
 import static org.junit.Assert.*;
@@ -43,16 +43,16 @@ import ucl.physiol.neuroconstruct.utils.GeneralUtils;
  *
  * @author padraig
  */
-public class NeuronTemplateGeneratorTest {
+public class GenesisMorphologyGeneratorTest {
 
-    public NeuronTemplateGeneratorTest() {
+    public GenesisMorphologyGeneratorTest() {
     }
 
 
     @Before
     public void setUp() 
     {
-        System.out.println("---------------   setUp() NeuronTemplateGeneratorTest");
+        System.out.println("---------------   setUp() GenesisMorphologyGeneratorTest");
     }
     
     private ProjectManager loadProject(String projectFile) throws ProjectFileParsingException
@@ -65,9 +65,9 @@ public class NeuronTemplateGeneratorTest {
         return pm;
     }
     
-    @Test public void testGenerateHoc() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException 
+    @Test public void testGenerateGenesis() throws ProjectFileParsingException, InterruptedException, GenesisException, IOException, SimulationDataException
     {
-        System.out.println("---  testGenerateHoc...");
+        System.out.println("---  testGenerateGenesis...");
         
         ProjectManager pm = loadProject("testProjects/TestDetailedMorphs/TestDetailedMorphs.neuro.xml");
         
@@ -99,33 +99,24 @@ public class NeuronTemplateGeneratorTest {
         if (simDir.exists())
             simDir.delete();
         
-        proj.neuronSettings.setGraphicsMode(false);
-        proj.neuronSettings.setVarTimeStep(false);
+        proj.genesisSettings.setGraphicsMode(false);
         
-        proj.neuronFileManager.setQuitAfterRun(true);
+        proj.genesisFileManager.setQuitAfterRun(true);
         
-        proj.neuronFileManager.generateTheNeuronFiles(sc, null, NeuronFileManager.RUN_HOC, 1234);
-        
-        File mainHoc = proj.neuronFileManager.getMainHocFile();
-        
-        
-        assertTrue(mainHoc.exists());
-        
-        System.out.println("Created hoc files, including: "+mainHoc);
+        proj.genesisFileManager.generateTheGenesisFiles(sc, null, new GenesisCompartmentalisation(), 1234);
+
+        File mainFile = new File(proj.genesisFileManager.getMainGenesisFileName());
         
         
-        ProcessManager prm = new ProcessManager(mainHoc);
+        assertTrue(mainFile.exists());
         
-        boolean success = prm.compileFileWithNeuron(true, false);
-        
-        assertTrue(success);
+        System.out.println("Created files, including: "+mainFile);
         
         
-        System.out.println("Compiled NEURON files: "+ success);
-        
-        pm.doRunNeuron(sc);
-        
-        System.out.println("Run NEURON files");
+
+        proj.genesisFileManager.runGenesisFile();
+
+        System.out.println("Run GENESIS files");
         
         
         SimulationData simData = new SimulationData(simDir, false);
@@ -153,26 +144,13 @@ public class NeuronTemplateGeneratorTest {
 
         
         
-        /*
-        int numRecordings = simData.getCellSegRefs(false).size();
-        
-        assertEquals(numRecordings, numGen);
-        
-        System.out.println("Have found "+ numRecordings+" recordings in dir: "+ simData.getSimulationDirectory().getAbsolutePath());
-        
-        double[] volts = simData.getVoltageAtAllTimes(SimulationData.getCellRef(sc.getCellGroups().get(0), 0));
-        
-        assertEquals(volts.length, 1 + (sc.getSimDuration()/proj.simulationParameters.getDt()), 0);
-         * */
-        
-        
     }
     
     
     
     public static void main(String[] args)
     {
-        NeuronTemplateGeneratorTest ct = new NeuronTemplateGeneratorTest();
+        GenesisMorphologyGeneratorTest ct = new GenesisMorphologyGeneratorTest();
         Result r = org.junit.runner.JUnitCore.runClasses(ct.getClass());
         MainTest.checkResults(r);
         

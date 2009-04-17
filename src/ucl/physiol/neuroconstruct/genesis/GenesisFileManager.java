@@ -3530,50 +3530,11 @@ public class GenesisFileManager
 
 
             logger.logComment("Creating the simulation code");
-
-
-
-            addComment(response, "Saving file containing time details");
-
-            response.append("float i, timeAtStep\n");
-
-            
-            
-            if (!useTablesToSave)
-            {
-                response.append("create neutral " + FILE_ELEMENT_ROOT + "\n");
-                response.append("create asc_file " + timeFileElement + "\n");
-                response.append("setfield " + timeFileElement + "    flush 1    leave_open 1    append 1  notime 1\n");
-
-                response.append("setfield " + timeFileElement + " filename {strcat {targetDir} {\"" + SimulationData.getStandardTimesFilename() +  "\"}}\n");
-                response.append("call " + timeFileElement + " OUT_OPEN\n");
-            }
-            else
-            {
-                response.append("create neutral " + FILE_ELEMENT_ROOT + "\n");
-                response.append("create table " + timeFileElement + "\n");
-                response.append("call " + timeFileElement + " TABCREATE "+steps+" 0 "+getSimDuration()+"\n");
-            }
-
-            response.append("for (i = 0; i <= "
-                            + steps
-                            + "; i = i + 1"
-                            + ")\n");
-
-            response.append("    timeAtStep = " + convertNeuroConstructTime(project.simulationParameters.getDt()) + " * i\n");
-            if (!useTablesToSave)
-            {
-                response.append("    call " + timeFileElement + " OUT_WRITE {timeAtStep} \n");
-            }
-            else
-            {
-                response.append("setfield " + timeFileElement + " table->table[{i}] {timeAtStep}\n");
-            }
-
-            response.append("end\n\n\n");
             
             
 
+            response.append("create neutral " + FILE_ELEMENT_ROOT + "\n");
+            
             response.append("str cellName\n");
             response.append("str compName\n");
 
@@ -3989,6 +3950,44 @@ public class GenesisFileManager
         response.append("echo \"Finished simulation reference: "+project.simulationParameters.getReference()+dateInfo+"\n");
 
         if (addComments) response.append("echo Data stored in directory: {targetDir}\n\n");
+
+        addComment(response, "Saving file containing time details");
+
+        response.append("float i, timeAtStep\n");
+
+
+
+        if (!useTablesToSave)
+        {
+            response.append("create asc_file " + timeFileElement + "\n");
+            response.append("setfield " + timeFileElement + "    flush 1    leave_open 1    append 1  notime 1\n");
+
+            response.append("setfield " + timeFileElement + " filename {strcat {targetDir} {\"" + SimulationData.getStandardTimesFilename() +  "\"}}\n");
+            response.append("call " + timeFileElement + " OUT_OPEN\n");
+        }
+        else
+        {
+            response.append("create table " + timeFileElement + "\n");
+            response.append("call " + timeFileElement + " TABCREATE "+steps+" 0 "+getSimDuration()+"\n");
+        }
+
+        response.append("for (i = 0; i <= "
+                        + steps
+                        + "; i = i + 1"
+                        + ")\n");
+
+        response.append("    timeAtStep = " + convertNeuroConstructTime(project.simulationParameters.getDt()) + " * i\n");
+        if (!useTablesToSave)
+        {
+            response.append("    call " + timeFileElement + " OUT_WRITE {timeAtStep} \n");
+        }
+        else
+        {
+            response.append("setfield " + timeFileElement + " table->table[{i}] {timeAtStep}\n");
+        }
+
+        response.append("end\n\n\n");
+
         
         if (useTablesToSave)
         {

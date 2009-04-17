@@ -32,6 +32,7 @@ import java.util.*;
 import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
+import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.project.*;
@@ -52,7 +53,7 @@ import ucl.physiol.neuroconstruct.utils.xml.*;
 
 public class GenesisMorphologyGenerator
 {
-    ClassLogger logger = new ClassLogger("GenesisMorphologyGenerator");
+    static ClassLogger logger = new ClassLogger("GenesisMorphologyGenerator");
 
     Cell cell = null;
 
@@ -183,84 +184,87 @@ public class GenesisMorphologyGenerator
         ArrayList<String> passiveChanMechs = new ArrayList<String>();
         ArrayList<String> notPassiveChanMechs = new ArrayList<String>();
 
+        Hashtable<Vector<String>, String[]> groupListVsChanStrings = new Hashtable<Vector<String>, String[]>();
+
+
         logger.logComment("Investigating " + segments.size() + " segments...");
-        String line = null;
+        String prePassiveLine = null;
         float lastSpecAxRes = -1;
         float lastSpecCap = -1;
 
         float globalRA = cell.getSpecAxResForGroup(Section.ALL);
         if (!Float.isNaN(globalRA))
         {
-            line = "*set_global RA "
+            prePassiveLine = "*set_global RA "
                 + UnitConverter.getSpecificAxialResistance(globalRA,
                                                            UnitConverter.NEUROCONSTRUCT_UNITS,
                                                            project.genesisSettings.getUnitSystemToUse());
             lastSpecAxRes = globalRA;
             if (project.genesisSettings.isGenerateComments())
             {
-                line = line + "  // using: "
+                prePassiveLine = prePassiveLine + "  // using: "
                     + UnitConverter.specificAxialResistanceUnits[project.genesisSettings.getUnitSystemToUse()];
 
             }
-            response.append(line+"\n\n");
+            response.append(prePassiveLine+"\n\n");
         }
 
         float globalCM = cell.getSpecCapForGroup(Section.ALL);
                 if (!Float.isNaN(globalCM))
         {
-            line = "*set_global CM "
+            prePassiveLine = "*set_global CM "
                 + UnitConverter.getSpecificCapacitance(globalCM,
                                                        UnitConverter.NEUROCONSTRUCT_UNITS,
                                                        project.genesisSettings.getUnitSystemToUse());
             lastSpecCap = globalCM;
             if (project.genesisSettings.isGenerateComments())
-                line = line + "   // using: "
+                prePassiveLine = prePassiveLine + "   // using: "
                     + UnitConverter.specificCapacitanceUnits[project.genesisSettings.getUnitSystemToUse()];
 
-            response.append(line+"\n\n");
+            response.append(prePassiveLine+"\n\n");
         }
 
-        line = "*set_global	RM	"
+        prePassiveLine = "*set_global	RM	"
                         + UnitConverter.getSpecificMembraneResistance(project.simulationParameters.getGlobalRm(),
                                                                       UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                       project.genesisSettings.getUnitSystemToUse());
 
         if (project.genesisSettings.isGenerateComments())
-                        line = line + "  // using: "
+                        prePassiveLine = prePassiveLine + "  // using: "
                         + UnitConverter.specificMembraneResistanceUnits[project.genesisSettings.getUnitSystemToUse()];
 
-        response.append(line+"\n\n");
+        response.append(prePassiveLine+"\n\n");
 
 
-        line = "*set_global     EREST_ACT	"
+        prePassiveLine = "*set_global     EREST_ACT	"
                         + UnitConverter.getVoltage(cell.getInitialPotential().getNominalNumber(),
                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
                                                    project.genesisSettings.getUnitSystemToUse());
 
         if (project.genesisSettings.isGenerateComments())
         {
-            line = line + "  // using: "
+            prePassiveLine = prePassiveLine + "  // using: "
                 + UnitConverter.voltageUnits[project.genesisSettings.getUnitSystemToUse()];
 
             if (cell.getInitialPotential().getDistributionType() != NumberGenerator.FIXED_NUM)
             {
-                line = line + "  // Note this actually has value: " + cell.getInitialPotential().toShortString()
+                prePassiveLine = prePassiveLine + "  // Note this actually has value: " + cell.getInitialPotential().toShortString()
                     + " and so will be reset for each instance of the cell";
             }
         }
 
-        response.append(line+"\n\n");
+        response.append(prePassiveLine+"\n\n");
 
-        line = "*set_compt_param     ELEAK	"
+        prePassiveLine = "*set_compt_param     ELEAK	"
                         + UnitConverter.getVoltage(project.simulationParameters.getGlobalVLeak(),
                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
                                                    project.genesisSettings.getUnitSystemToUse());
 
         if (project.genesisSettings.isGenerateComments())
-                        line = line + "  // using: "
+                        prePassiveLine = prePassiveLine + "  // using: "
                         + UnitConverter.voltageUnits[project.genesisSettings.getUnitSystemToUse()];
 
-        response.append(line+"\n\n");
+        response.append(prePassiveLine+"\n\n");
 
 
         if (project.genesisSettings.isSymmetricCompartments()) response.append("*compt /library/symcompartment\n\n");
@@ -283,7 +287,7 @@ public class GenesisMorphologyGenerator
         {
             Segment segment = segments.elementAt(ii);
 
-            logger.logComment("Looking at segment number " + ii + ": " + segment);
+            logger.logComment("**************************************************\n\nLooking at segment number " + ii + ": " + segment);
 
             String segName = segment.getSegmentName();
             segName = SimEnvHelper.getSimulatorFriendlyName(segName);
@@ -325,74 +329,75 @@ public class GenesisMorphologyGenerator
             }
 
             Vector<String> groups = segment.getGroups();
-            Vector<ChannelMechanism> longChanMechs = new Vector<ChannelMechanism>();
 
-            String firstPassiveCellProc = null; // first passive cond will be use to set Rm
+            groups = (Vector<String>)GeneralUtils.reorderAlphabetically(groups, true);
 
-            for (int j = 0; j < groups.size(); j++)
+            String passParamInfo = new String();
+            String channelCondInfo = new String();
+            String comments = new String();
+
+            if (groupListVsChanStrings.containsKey(groups)&&false)
             {
-                ArrayList<ChannelMechanism> thisGroupChanMechs = null;
-                
-                if(!chanMechsVsGrps.containsKey(groups.elementAt(j)))
+                String[] chanInfo = groupListVsChanStrings.get(groups);
+                passParamInfo = chanInfo[0];
+                channelCondInfo = chanInfo[1];
+                comments = chanInfo[2];
+            }
+            else
+            {
+                Vector<ChannelMechanism> longChanMechs = new Vector<ChannelMechanism>();
+
+                String firstPassiveCellMech = null; // first passive cond will be use to set Rm
+
+                for (int j = 0; j < groups.size(); j++)
                 {
-                    thisGroupChanMechs = cell.getChanMechsForGroup(groups.elementAt(j));
-                    chanMechsVsGrps.put(groups.elementAt(j), thisGroupChanMechs);
-                }
-                else
-                {
-                    thisGroupChanMechs = chanMechsVsGrps.get(groups.elementAt(j));
-                }
-                    
-                
+                    ArrayList<ChannelMechanism> thisGroupChanMechs = null;
 
-                logger.logComment("Looking for chan mechs in group: " + groups.elementAt(j));
-
-                for (int k = 0; k < thisGroupChanMechs.size(); k++)
-                {
-                    ChannelMechanism nextChanMech = thisGroupChanMechs.get(k);
-
-                    logger.logComment("Looking at: "+ nextChanMech);
-
-                    if (!longChanMechs.contains(nextChanMech))
+                    if(!chanMechsVsGrps.containsKey(groups.elementAt(j)))
                     {
-                        CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
+                        thisGroupChanMechs = cell.getChanMechsForGroup(groups.elementAt(j));
+                        chanMechsVsGrps.put(groups.elementAt(j), thisGroupChanMechs);
+                    }
+                    else
+                    {
+                        thisGroupChanMechs = chanMechsVsGrps.get(groups.elementAt(j));
+                    }
 
-                        if (project.genesisSettings.isGenerateComments())
-                            response.append("// Cell mechanism: " +nextChanMech.toString() + "\n");
 
 
-                        boolean isCMLPassive = false;
-                        
-                        if(notPassiveChanMechs.contains(cellMech.getInstanceName()))
+                    logger.logComment("Looking for chan mechs in group: " + groups.elementAt(j));
+
+                    for (int k = 0; k < thisGroupChanMechs.size(); k++)
+                    {
+                        ChannelMechanism nextChanMech = thisGroupChanMechs.get(k);
+
+                        logger.logComment("Looking at: "+ nextChanMech);
+
+                        if (!longChanMechs.contains(nextChanMech))
                         {
-                            isCMLPassive = false;
-                        }
-                        else if(passiveChanMechs.contains(cellMech.getInstanceName()))
-                        {
-                            isCMLPassive = true;
-                        }
-                        else if (cellMech instanceof ChannelMLCellMechanism)
-                        {
-                            try
+                            CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
+
+                            if (project.genesisSettings.isGenerateComments())
                             {
-                                isCMLPassive = ( (ChannelMLCellMechanism) cellMech).isPassiveNonSpecificCond();
-                                if(isCMLPassive && !passiveChanMechs.contains(cellMech.getInstanceName()))
-                                {
-                                    passiveChanMechs.add(cellMech.getInstanceName());
-                                }
-                                if(!isCMLPassive && !notPassiveChanMechs.contains(cellMech.getInstanceName()))
-                                {
-                                    notPassiveChanMechs.add(cellMech.getInstanceName());
-                                }
+                                comments = comments +"// Cell mechanism: " +nextChanMech.toString() + "\n";
                             }
-                            catch (CMLMechNotInitException e)
+
+
+                            boolean isCMLPassive = false;
+
+                            if(notPassiveChanMechs.contains(cellMech.getInstanceName()))
                             {
-                                ChannelMLCellMechanism cp = (ChannelMLCellMechanism) cellMech;
+                                isCMLPassive = false;
+                            }
+                            else if(passiveChanMechs.contains(cellMech.getInstanceName()))
+                            {
+                                isCMLPassive = true;
+                            }
+                            else if (cellMech instanceof ChannelMLCellMechanism)
+                            {
                                 try
                                 {
-                                    cp.initialise(project, false);
-                                    isCMLPassive = cp.isPassiveNonSpecificCond();
-                                    
+                                    isCMLPassive = ( (ChannelMLCellMechanism) cellMech).isPassiveNonSpecificCond();
                                     if(isCMLPassive && !passiveChanMechs.contains(cellMech.getInstanceName()))
                                     {
                                         passiveChanMechs.add(cellMech.getInstanceName());
@@ -402,321 +407,354 @@ public class GenesisMorphologyGenerator
                                         notPassiveChanMechs.add(cellMech.getInstanceName());
                                     }
                                 }
-                                catch (CMLMechNotInitException cmle)
+                                catch (CMLMechNotInitException e)
                                 {
-                                    // nothing more to try...
-                                }
-                                catch (ChannelMLException ex1)
-                                {
-                                    GuiUtils.showErrorMessage(logger,
-                                                              "Error creating implementation of Cell Mechanism: " +
-                                                              cellMech.getInstanceName(),
-                                                              ex1,
-                                                              null);
-
-                                }
-
-                            }
-                        }
-
-
-                        if ((firstPassiveCellProc==null) &&
-                            (cellMech instanceof PassiveMembraneMechanism || isCMLPassive)
-                            && nextChanMech.getDensity() >=0 )
-                        {
-                            logger.logComment("First passive?");
-                            try
-                            {
-                                float revPotential = 0;
-                                if (cellMech instanceof PassiveMembraneMechanism)
-                                {
-                                    revPotential = ((PassiveMembraneMechanism)cellMech).getParameter(PassiveMembraneMechanism.
-                                    REV_POTENTIAL);
-                                }
-                                else if (cellMech instanceof ChannelMLCellMechanism)
-                                {
-                                    String xpath = ChannelMLConstants.getPreV1_7_3IonsXPath();
-                                    logger.logComment("Checking xpath: " + xpath);
-
-                                    SimpleXMLEntity[] ions = ((ChannelMLCellMechanism)cellMech).getXMLDoc().getXMLEntities(xpath);
-
-                                    if (ions != null && ions.length>0)
+                                    ChannelMLCellMechanism cp = (ChannelMLCellMechanism) cellMech;
+                                    try
                                     {
-                                        for (int i = 0; i < ions.length; i++)
+                                        cp.initialise(project, false);
+                                        isCMLPassive = cp.isPassiveNonSpecificCond();
+
+                                        if(isCMLPassive && !passiveChanMechs.contains(cellMech.getInstanceName()))
                                         {
-                                            logger.logComment("Got entity: " + ions[i].getXMLString("", false));
-
-                                            if(((SimpleXMLElement)ions[i]).getAttributeValue(ChannelMLConstants.LEGACY_ION_NAME_ATTR)
-                                                   .equals(ChannelMLConstants.NON_SPECIFIC_ION_NAME))
-                                            {
-                                                String erev = ((SimpleXMLElement)ions[i])
-                                                    .getAttributeValue(ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR);
-
-                                                logger.logComment("Setting erev: "+ erev);
-
-                                                revPotential = Float.parseFloat(erev);
-                                            }
+                                            passiveChanMechs.add(cellMech.getInstanceName());
+                                        }
+                                        if(!isCMLPassive && !notPassiveChanMechs.contains(cellMech.getInstanceName()))
+                                        {
+                                            notPassiveChanMechs.add(cellMech.getInstanceName());
                                         }
                                     }
-                                    else   // post v1.7.3
+                                    catch (CMLMechNotInitException cmle)
                                     {
-                                        xpath = ChannelMLConstants.getCurrVoltRelXPath()+"/@"+ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
-                                        String erev = ((ChannelMLCellMechanism)cellMech).getXMLDoc().getValueByXPath(xpath);
-                                        
-                                        logger.logComment("Setting erev from post v1.7.3 location: "+ erev);
-
-                                        revPotential = Float.parseFloat(erev);
+                                        // nothing more to try...
                                     }
+                                    catch (ChannelMLException ex1)
+                                    {
+                                        GuiUtils.showErrorMessage(logger,
+                                                                  "Error creating implementation of Cell Mechanism: " +
+                                                                  cellMech.getInstanceName(),
+                                                                  ex1,
+                                                                  null);
+
+                                    }
+
                                 }
-
-                                line = "*set_compt_param     ELEAK "
-                                    +
-                                    UnitConverter.getVoltage(revPotential,
-                                                             UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                             project.genesisSettings.getUnitSystemToUse());
-
-                                if (project.genesisSettings.isGenerateComments())
-                                    line = line + "  // using: "
-                                        + UnitConverter.voltageUnits[project.genesisSettings.getUnitSystemToUse()];
-
-
-                                line = line+ "\n*set_compt_param     RM "
-                                    +
-                                    (1 / UnitConverter.getConductanceDensity(nextChanMech.getDensity(),
-                                    UnitConverter.NEUROCONSTRUCT_UNITS,
-                                    project.genesisSettings.getUnitSystemToUse()));
-
-                                if (project.genesisSettings.isGenerateComments())
-                                    line = line + "  // using: "
-                                        +
-                                        UnitConverter.specificMembraneResistanceUnits[project.genesisSettings.getUnitSystemToUse()];
-
-                                if (!lastPassiveParams.equals(line)) response.append(line + "\n");
-
-                                lastPassiveParams = line;
-
-                                firstPassiveCellProc = cellMech.getInstanceName();
-
                             }
-                            catch (CellMechanismException ex)
+
+
+                            if ((firstPassiveCellMech==null) &&
+                                (cellMech instanceof PassiveMembraneMechanism || isCMLPassive)
+                                && nextChanMech.getDensity() >=0 )
                             {
-                                GuiUtils.showErrorMessage(logger,
-                                                          "Problem getting the cell mechanism info from: " + cellMech,
-                                                          ex, null);
+                                logger.logComment("First passive?");
+                                try
+                                {
+                                    float revPotential = 0;
+                                    if (cellMech instanceof PassiveMembraneMechanism)
+                                    {
+                                        revPotential = ((PassiveMembraneMechanism)cellMech).getParameter(PassiveMembraneMechanism.
+                                        REV_POTENTIAL);
+                                    }
+                                    else if (cellMech instanceof ChannelMLCellMechanism)
+                                    {
+                                        String xpath = ChannelMLConstants.getPreV1_7_3IonsXPath();
+                                        logger.logComment("Checking xpath: " + xpath);
+
+                                        SimpleXMLEntity[] ions = ((ChannelMLCellMechanism)cellMech).getXMLDoc().getXMLEntities(xpath);
+
+                                        if (ions != null && ions.length>0)
+                                        {
+                                            for (int i = 0; i < ions.length; i++)
+                                            {
+                                                logger.logComment("Got entity: " + ions[i].getXMLString("", false));
+
+                                                if(((SimpleXMLElement)ions[i]).getAttributeValue(ChannelMLConstants.LEGACY_ION_NAME_ATTR)
+                                                       .equals(ChannelMLConstants.NON_SPECIFIC_ION_NAME))
+                                                {
+                                                    String erev = ((SimpleXMLElement)ions[i]).getAttributeValue(ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR);
+
+                                                    logger.logComment("Setting erev: "+ erev);
+
+                                                    revPotential = Float.parseFloat(erev);
+                                                }
+                                            }
+                                        }
+                                        else   // post v1.7.3
+                                        {
+                                            xpath = ChannelMLConstants.getCurrVoltRelXPath()+"/@"+ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
+                                            String erev = ((ChannelMLCellMechanism)cellMech).getXMLDoc().getValueByXPath(xpath);
+
+                                            logger.logComment("Setting erev from post v1.7.3 location: "+ erev);
+
+                                            revPotential = Float.parseFloat(erev);
+                                        }
+                                    }
+
+                                    String preLine = "*set_compt_param     ELEAK "
+                                        +
+                                        UnitConverter.getVoltage(revPotential,
+                                                                 UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                 project.genesisSettings.getUnitSystemToUse());
+
+                                    if (project.genesisSettings.isGenerateComments())
+                                        preLine = preLine + "  // using: "
+                                            + UnitConverter.voltageUnits[project.genesisSettings.getUnitSystemToUse()];
+
+
+                                    preLine = preLine+ "\n*set_compt_param     RM "
+                                        +
+                                        (1 / UnitConverter.getConductanceDensity(nextChanMech.getDensity(),
+                                        UnitConverter.NEUROCONSTRUCT_UNITS,
+                                        project.genesisSettings.getUnitSystemToUse()));
+
+                                    if (project.genesisSettings.isGenerateComments())
+                                        preLine = preLine + "  // using: "
+                                            + UnitConverter.specificMembraneResistanceUnits[project.genesisSettings.getUnitSystemToUse()];
+
+                                    if (!lastPassiveParams.equals(preLine))
+                                    {
+                                        passParamInfo = passParamInfo + preLine + "\n";
+                                    }
+
+                                    lastPassiveParams = preLine;
+
+                                    firstPassiveCellMech = cellMech.getInstanceName();
+
+                                }
+                                catch (CellMechanismException ex)
+                                {
+                                    GuiUtils.showErrorMessage(logger,
+                                                              "Problem getting the cell mechanism info from: " + cellMech,
+                                                              ex, null);
+                                }
+                            }
+                            else
+                            {
+                                logger.logComment("Ignoring, firstPassiveCellMech: "+firstPassiveCellMech+", cellMech class: "+cellMech.getClass().getName());
                             }
                         }
                         else
                         {
-                            logger.logComment("Ignoring, firstPassiveCellProc: "+firstPassiveCellProc+", cellMech class: "+cellMech.getClass().getName());
+                            logger.logComment("Already added that chan mech...");
                         }
+
+                        longChanMechs.add(nextChanMech);
+                    }
+
+                }
+
+                if (firstPassiveCellMech==null)
+                {
+                    passParamInfo = passParamInfo +"\n// No passive conductance found!!\n*set_compt_param     RM "
+                                        +
+                                        UnitConverter.getResistance(1e12,
+                                        UnitConverter.NEUROCONSTRUCT_UNITS,
+                                        project.genesisSettings.getUnitSystemToUse())+"\n";
+                }
+
+                StringBuffer channelCondString = new StringBuffer();
+
+                // Consolidating chan mechs for this segment, ie. joining...
+                //  nextChanMech: naf2 (density: -1.0 mS um^-2, fastNa_shift = -2.5)
+                //  nextChanMech: naf2 (density: 6.0E-7 mS um^-2)
+
+                Vector<ChannelMechanism> consolChanMechs = new Vector<ChannelMechanism>();
+
+            //logger.logComment("Consolidating...", true);
+
+                for (int ll = 0; ll < longChanMechs.size(); ll++)
+                {
+                    ChannelMechanism nextChanMech = longChanMechs.elementAt(ll);
+                    boolean dealtWith = false;
+
+                    for (int pre = 0; pre < consolChanMechs.size(); pre++)
+                    {
+                        ChannelMechanism preChanMech = consolChanMechs.elementAt(pre);
+
+                        if (preChanMech.getName().equals(nextChanMech.getName()))
+                        {
+                            if (preChanMech.getDensity()<0 && nextChanMech.getDensity()>=0)
+                                preChanMech.setDensity(nextChanMech.getDensity());
+
+                            for (MechParameter mp: nextChanMech.getExtraParameters())
+                            {
+                                preChanMech.getExtraParameters().add((MechParameter)mp.clone());
+                            }
+
+                            dealtWith = true;
+                        }
+                    }
+                    if (!dealtWith)
+                        consolChanMechs.add((ChannelMechanism)nextChanMech.clone());
+                }
+            //logger.logComment("Done Consolidating...", true);
+
+                for (int ll = 0; ll < consolChanMechs.size(); ll++)
+                {
+                    ChannelMechanism nextChanMech = consolChanMechs.elementAt(ll);
+                    logger.logComment("--  nextChanMech: " + nextChanMech);
+                    CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
+
+                    logger.logComment("--  checking mech : " + cellMech.getInstanceName());
+
+                    if(!cellMech.getInstanceName().equals(firstPassiveCellMech))
+                    {
+                        try
+                        {
+                            float genDens =  (float)UnitConverter.getConductanceDensity(
+                                    nextChanMech.getDensity(),
+                                    UnitConverter.NEUROCONSTRUCT_UNITS,
+                                    project.genesisSettings.getUnitSystemToUse());
+
+                            logger.logComment("Adding chan mech: "+cellMech.getInstanceName()
+                                              +", dens: "+nextChanMech.getDensity());
+
+                            if (cellMech.getMechanismType().equals(CellMechanism.ION_CONCENTRATION) &&
+                                    cellMech instanceof ChannelMLCellMechanism)
+                            {
+                                ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism)cellMech;
+
+                                if (cmlMech.getValue(ChannelMLConstants.getIonConcFixedPoolXPath())!=null)
+                                {
+
+                                    double phi = Float.parseFloat( cmlMech.getValue(ChannelMLConstants.getIonConcFixedPoolPhiXPath().trim()));
+
+                                    if (nextChanMech.getExtraParameter(ChannelMLConstants.ION_CONC_FIXED_POOL_PHI_ELEMENT)!=null)
+                                    {
+                                        phi = nextChanMech.getExtraParameter(ChannelMLConstants.ION_CONC_FIXED_POOL_PHI_ELEMENT).getValue();
+                                    }
+
+                                    phi = phi / UnitConverter.getCurrentDensity(1,
+                                                                                UnitConverter.NEURON_UNITS,
+                                                                                project.genesisSettings.getUnitSystemToUse());
+
+                                    SimpleCompartment comp = new SimpleCompartment(segment);
+
+                                    double area = comp.getCurvedSurfaceArea();
+
+                                    if (segment.isSpherical())  area = 4 * Math.PI * segment.getRadius()*segment.getRadius();
+
+
+                                    area =  area * ((UnitConverter.getArea(1, UnitConverter.NEURON_UNITS,
+                                            project.genesisSettings.getUnitSystemToUse())));
+
+                                    float B = (float)( phi / area);
+
+                                    /** @todo Fix this for correct units of ConcFixedPool!!! ... */
+                                    float factor = 1;
+                                    if (project.genesisSettings.isPhysiologicalUnits()) factor = 1e-6f;
+                                    if (project.genesisSettings.isSIUnits()) factor = 1e3f;
+
+                                    B = -1 * B *factor; //-1 so readcell will use absolute value (see http://www.genesis-sim.org/GENESIS/Hyperdoc/Manual-25.html#ss25.131)
+
+                                    logger.logComment("phi: "+ phi+", comp: "+comp.toString()+", area: "+ area+", B: "+B+", seg: "+segment.getRadius());
+
+                                    channelCondString.append(nextChanMech.getUniqueName()+ " "+ B+ " ");
+                                }
+                                else
+                                {
+                                    // In case line is too long...
+                                    String d = genDens+ "";
+                                    if (genDens==(int)genDens)
+                                        d = (int)genDens+ "";
+                                    if (d.startsWith("0."))
+                                        d = d.substring(1);
+
+                                    channelCondString.append(nextChanMech.getUniqueName()+ " "+ d+ " ");
+                                }
+                            }
+                            else
+                            {
+                                if (genDens>=0)
+                                {
+                                    // In case line is too long...
+                                    String d = genDens+ "";
+                                    if (genDens==(int)genDens)
+                                        d = (int)genDens+ "";
+                                    if (d.startsWith("0."))
+                                        d = d.substring(1);
+
+                                    channelCondString.append(nextChanMech.getUniqueName()+ " "+ d+ "  ");
+                                }
+                                //if (genDens==0)
+                                //{
+                                //    logger.logComment("Ignoring density of "+ genDens+ " on "+cellMech.getInstanceName()+ " as it is zero...");
+                               //    // channelCondString.append(nextChanMech.getUniqueName()+ " "+ genDens+ "  ");
+                               // }
+                                else
+                                {
+                                    logger.logComment("Ignoring density of "+ genDens+ " on "+cellMech.getInstanceName()+ " as it is negative...");
+                                }
+                            }
+                        }
+                        catch (Exception ex1)
+                        {
+                            GuiUtils.showErrorMessage(logger, "Problem including cell mech: "
+                                                      + nextChanMech
+                                                      + " in morphology file for cell: " + cell, ex1, null);
+
+                            //return "";
+
+                        }
+
                     }
                     else
                     {
-                        logger.logComment("Already added that chan mech...");
+                        logger.logComment("Not adding chan mech: "+cellMech.getInstanceName()+" to the list. channelCondString: "+channelCondString);
                     }
 
-                    longChanMechs.add(nextChanMech);
+                    logger.logComment("channelCondString: "+channelCondString);
                 }
 
-            }
-            
-            if (firstPassiveCellProc==null)
-            {
-                response.append("\n// No passive conductance found!!\n*set_compt_param     RM "
-                                    +
-                                    UnitConverter.getResistance(1e12,
-                                    UnitConverter.NEUROCONSTRUCT_UNITS,
-                                    project.genesisSettings.getUnitSystemToUse())+"\n");
-            }
+                logger.logComment("Done Consolidating 2...");
 
-            StringBuffer channelCondString = new StringBuffer();
-            
-            // Consolidating chan mechs for this segment, ie. joining... 
-            //  nextChanMech: naf2 (density: -1.0 mS um^-2, fastNa_shift = -2.5)
-            //  nextChanMech: naf2 (density: 6.0E-7 mS um^-2)
-            
-            Vector<ChannelMechanism> consolChanMechs = new Vector<ChannelMechanism>();
-            
-            //logger.logComment("Consolidating...", true);
-            
-            for (int ll = 0; ll < longChanMechs.size(); ll++)
-            {
-                ChannelMechanism nextChanMech = longChanMechs.elementAt(ll);
-                boolean dealtWith = false;
-                
-                for (int pre = 0; pre < consolChanMechs.size(); pre++)
+                ArrayList<VariableMechanism> varMechs = cell.getVarChanMechsForSegment(segment);
+                for(VariableMechanism vm: varMechs)
                 {
-                    ChannelMechanism preChanMech = consolChanMechs.elementAt(pre);
-                    
-                    if (preChanMech.getName().equals(nextChanMech.getName()))
-                    {
-                        if (preChanMech.getDensity()<0 && nextChanMech.getDensity()>=0)
-                            preChanMech.setDensity(nextChanMech.getDensity());
-                        
-                        for (MechParameter mp: nextChanMech.getExtraParameters())
-                        {
-                            preChanMech.getExtraParameters().add((MechParameter)mp.clone());
-                        }
-                            
-                        dealtWith = true;
-                    }
-                }
-                if (!dealtWith)
-                    consolChanMechs.add((ChannelMechanism)nextChanMech.clone());
-            }
-            //logger.logComment("Done Consolidating...", true);
-
-            for (int ll = 0; ll < consolChanMechs.size(); ll++)
-            {
-                ChannelMechanism nextChanMech = consolChanMechs.elementAt(ll);
-                logger.logComment("--  nextChanMech: " + nextChanMech);
-                CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
-
-                logger.logComment("--  checking mech : " + cellMech.getInstanceName());
-
-                if(!cellMech.getInstanceName().equals(firstPassiveCellProc))
-                {
+                    ParameterisedGroup pg = cell.getVarMechsVsParaGroups().get(vm);
                     try
-                    {                      
+                    {
+                        double pgVal = pg.evaluateAt(cell, segment, 0.5f);
+
+                        float dens = (float)vm.evaluateAt(pgVal);
+
                         float genDens =  (float)UnitConverter.getConductanceDensity(
-                                nextChanMech.getDensity(),
+                                dens,
                                 UnitConverter.NEUROCONSTRUCT_UNITS,
                                 project.genesisSettings.getUnitSystemToUse());
-                        
-                        logger.logComment("Adding chan mech: "+cellMech.getInstanceName()
-                                          +", dens: "+nextChanMech.getDensity());
-                        
-                        if (cellMech.getMechanismType().equals(CellMechanism.ION_CONCENTRATION) &&
-                                cellMech instanceof ChannelMLCellMechanism)
-                        {
-                            ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism)cellMech;
-                            
-                            if (cmlMech.getValue(ChannelMLConstants.getIonConcFixedPoolXPath())!=null)
-                            {
-                                
-                                double phi = Float.parseFloat( cmlMech.getValue(ChannelMLConstants.getIonConcFixedPoolPhiXPath().trim()));
-                                
-                                if (nextChanMech.getExtraParameter(ChannelMLConstants.ION_CONC_FIXED_POOL_PHI_ELEMENT)!=null)
-                                {
-                                    phi = nextChanMech.getExtraParameter(ChannelMLConstants.ION_CONC_FIXED_POOL_PHI_ELEMENT).getValue();
-                                }
-                                
-                                phi = phi / UnitConverter.getCurrentDensity(1, 
-                                                                            UnitConverter.NEURON_UNITS, 
-                                                                            project.genesisSettings.getUnitSystemToUse());
-                                 
-                                SimpleCompartment comp = new SimpleCompartment(segment);
-                                
-                                double area = comp.getCurvedSurfaceArea();
-                                
-                                if (segment.isSpherical())  area = 4 * Math.PI * segment.getRadius()*segment.getRadius();
-                                
-                                
-                                area =  area * ((UnitConverter.getArea(1, UnitConverter.NEURON_UNITS, 
-                                        project.genesisSettings.getUnitSystemToUse())));
-                                
-                                float B = (float)( phi / area);
 
-                                /** @todo Fix this for correct units of ConcFixedPool!!! ... */
-                                float factor = 1;
-                                if (project.genesisSettings.isPhysiologicalUnits()) factor = 1e-6f;
-                                if (project.genesisSettings.isSIUnits()) factor = 1e3f;
-                                
-                                B = -1 * B *factor; //-1 so readcell will use absolute value (see http://www.genesis-sim.org/GENESIS/Hyperdoc/Manual-25.html#ss25.131)
-                                
-                                logger.logComment("phi: "+ phi+", comp: "+comp.toString()+", area: "+ area+", B: "+B+", seg: "+segment.getRadius());
+                        channelCondString.append(vm.getName()+ " "+ genDens+ " ");
 
-                                channelCondString.append(nextChanMech.getUniqueName()+ " "+ B+ " ");
-                            }
-                            else
-                            {
-                                // In case line is too long...
-                                String d = genDens+ "";
-                                if (genDens==(int)genDens)
-                                    d = (int)genDens+ "";
-                                if (d.startsWith("0."))
-                                    d = d.substring(1);
-                                
-                                channelCondString.append(nextChanMech.getUniqueName()+ " "+ d+ " ");
-                            }
-                        }
-                        else
-                        {
-                            if (genDens>=0)
-                            {
-                                // In case line is too long...
-                                String d = genDens+ "";
-                                if (genDens==(int)genDens)
-                                    d = (int)genDens+ "";
-                                if (d.startsWith("0."))
-                                    d = d.substring(1);
-                                
-                                channelCondString.append(nextChanMech.getUniqueName()+ " "+ d+ "  ");
-                            }
-                            //if (genDens==0)
-                            //{
-                            //    logger.logComment("Ignoring density of "+ genDens+ " on "+cellMech.getInstanceName()+ " as it is zero...");
-                           //    // channelCondString.append(nextChanMech.getUniqueName()+ " "+ genDens+ "  ");
-                           // }
-                            else
-                            {
-                                logger.logComment("Ignoring density of "+ genDens+ " on "+cellMech.getInstanceName()+ " as it is negative...");
-                            }
-                        }
+
                     }
-                    catch (Exception ex1)
+                    catch (ParameterException ex)
                     {
-                        GuiUtils.showErrorMessage(logger, "Problem including cell mech: "
-                                                  + nextChanMech
-                                                  + " in morphology file for cell: " + cell, ex1, null);
-
-                        //return "";
-
+                        String error = "Unable to evaluate values for: "+ pg+" on cell: "+cell;
+                        GuiUtils.showErrorMessage(logger, error, ex, null);
+                        return error;
                     }
-
+                    catch (EquationException ex)
+                    {
+                        String error = "Unable to evaluate values for: "+ vm+" on cell: "+cell;
+                        GuiUtils.showErrorMessage(logger, error, ex, null);
+                        return error;
+                    }
                 }
-                else
-                {
-                    logger.logComment("Not adding chan mech: "+cellMech.getInstanceName()+" to the list. channelCondString: "+channelCondString);
-                }
 
-                logger.logComment("channelCondString: "+channelCondString);
+                channelCondInfo = channelCondString.toString();
+                String[] chanInfo = new String[3];
+                chanInfo[0] = passParamInfo;
+                chanInfo[1] = channelCondInfo;
+                chanInfo[2] = comments;
+
+                groupListVsChanStrings.put(groups, chanInfo);
+                //System.out.println("groupListVsChanString size: "+ groupListVsChanString.keySet().size());
+
             }
-            
-            logger.logComment("Done Consolidating 2...");
-            
-            ArrayList<VariableMechanism> varMechs = cell.getVarChanMechsForSegment(segment);
-            for(VariableMechanism vm: varMechs)
-            {
-                ParameterisedGroup pg = cell.getVarMechsVsParaGroups().get(vm);
-                try
-                {
-                    double pgVal = pg.evaluateAt(cell, segment, 0.5f);
 
-                    float dens = (float)vm.evaluateAt(pgVal);
-                    
-                    float genDens =  (float)UnitConverter.getConductanceDensity(
-                            dens,
-                            UnitConverter.NEUROCONSTRUCT_UNITS,
-                            project.genesisSettings.getUnitSystemToUse());
-                    
-                    channelCondString.append(vm.getName()+ " "+ genDens+ " ");
-                    
-                    
-                }
-                catch (ParameterException ex)
-                {
-                    String error = "Unable to evaluate values for: "+ pg+" on cell: "+cell;
-                    GuiUtils.showErrorMessage(logger, error, ex, null);
-                    return error;
-                }
-                catch (EquationException ex)
-                {
-                    String error = "Unable to evaluate values for: "+ vm+" on cell: "+cell;
-                    GuiUtils.showErrorMessage(logger, error, ex, null);
-                    return error;
-                }
-            }
+            response.append(comments);
+
+            response.append(passParamInfo);
                 
 
             // Note: the use of a GenesisCompartmentalisation will make much of this redundant.
@@ -755,7 +793,7 @@ public class GenesisMorphologyGenerator
                                     + convertToMorphDataLength(segment.getEndPointPositionY()) + " "
                                     + convertToMorphDataLength(segment.getEndPointPositionZ()) + " "
                                     + convertToMorphDataLength(equivalentRadius * 2d) + " " 
-                                    + channelCondString + "\n");
+                                    + channelCondInfo + "\n");
                     
                     response.append("*double_endpoint_off\n");
 
@@ -770,7 +808,7 @@ public class GenesisMorphologyGenerator
                                     + convertToMorphDataLength(segment.getEndPointPositionY()) + " "
                                     + convertToMorphDataLength(segment.getEndPointPositionZ()) + " "
                                     + convertToMorphDataLength(equivalentRadius * 2d) + " " 
-                                    + channelCondString + "\n");
+                                    + channelCondInfo + "\n");
                 }
             }
             else
@@ -784,7 +822,7 @@ public class GenesisMorphologyGenerator
                                 + " " + convertToMorphDataLength(segment.getEndPointPositionY()) // = startPoint
                                 + " " + convertToMorphDataLength(segment.getEndPointPositionZ()) // = startPoint
                                 + " " + convertToMorphDataLength( (segment.getRadius() * 2d)) 
-                                + " " + channelCondString + "\n");
+                                + " " + channelCondInfo + "\n");
 
                 if (segments.size() > 1)
                     response.append("\n*cylindrical \n");
@@ -821,39 +859,61 @@ public class GenesisMorphologyGenerator
     public static void main(String[] args)
     {
         try
-                {
-                    Project testProj = Project.loadProject(new File("models/BioMorph/BioMorph.neuro.xml"),
-                                                           new ProjectEventListener()
-                    {
-                        public void tableDataModelUpdated(String tableModelName)
-                        {};
+        {
 
-                        public void tabUpdated(String tabName)
-                        {};
-                        public void cellMechanismUpdated()
-                        {
-                        };
+            GeneralUtils.timeCheck("Before proj load");
 
-                    });
+            //File projFile = new File("models/BioMorph/BioMorph.neuro.xml");
+            File projFile = new File("nCmodels/InProgress/TraubEtAl05/TraubEtAl05.ncx");
 
-                    //SimpleCell cell = new SimpleCell("DummyCell");
-                    //ComplexCell cell = new ComplexCell("DummyCell");
+            Project testProj = Project.loadProject(projFile, new ProjectEventListener()
+            {
+                public void tableDataModelUpdated(String tableModelName)
+                {};
+                public void tabUpdated(String tabName)
+                {};
+                public void cellMechanismUpdated()
+                {};
 
-                    Cell cell = testProj.cellManager.getCell("LongCellDelayLine");
+            });
 
-                    //File f = new File("/home/padraig/temp/tempNC/NEURON/PatTest/basics/");
-                    File f = new File("../temp");
+            //logger.setThisClassVerbose(true);
 
-                    GenesisMorphologyGenerator cellTemplateGenerator1 = new GenesisMorphologyGenerator(cell,testProj,
-                        f);
+            System.out.println("Loaded project: "+testProj.getProjectFullFileName());
 
-                    System.out.println("Generated: " + cellTemplateGenerator1.generateFile());
+            //SimpleCell cell = new SimpleCell("DummyCell");
+            //ComplexCell cell = new ComplexCell("DummyCell");
 
-                    System.out.println(CellTopologyHelper.printDetails(cell, null));
-                }
-                catch (Exception ex)
-                {
-                    ex.printStackTrace();
+            //Cell cell = testProj.cellManager.getCell("LongCellDelayLine");
+            Cell cell_1 = testProj.cellManager.getCell("L23PyrRS_cut");
+
+            GenesisCompartmentalisation gc = new GenesisCompartmentalisation();
+
+            
+            Cell cell_2 = gc.generateComp(cell_1);
+
+
+            Cell cellToUse = cell_2;
+
+            //File f = new File("/home/padraig/temp/tempNC/NEURON/PatTest/basics/");
+            File f = new File("../temp");
+
+            System.out.println("Cell has # comps/segments: "+ cellToUse.getAllSegments().size());
+
+            GenesisMorphologyGenerator cellTemplateGenerator1 = new GenesisMorphologyGenerator(cellToUse,testProj, f);
+
+
+            GeneralUtils.timeCheck("Before gen morph");
+
+            System.out.println("Generated: " + cellTemplateGenerator1.generateFile());
+
+            GeneralUtils.timeCheck("After gen morph");
+
+            //System.out.println(CellTopologyHelper.printDetails(cell, null));
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
         }
     }
 
