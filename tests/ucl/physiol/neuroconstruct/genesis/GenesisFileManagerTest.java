@@ -131,8 +131,11 @@ public class GenesisFileManagerTest {
             Thread.sleep(wait*5); // Shouldn't take longer than this
 
 
-            if(!timesFile.exists())
-                Thread.sleep(wait*4); // One more try...
+            if (!timesFile.exists())
+            {
+                System.out.println("Waiting for file to be created: "+ timesFile.getAbsolutePath());
+                Thread.sleep(wait*3);
+            }
 
             assertTrue(timesFile.exists());
 

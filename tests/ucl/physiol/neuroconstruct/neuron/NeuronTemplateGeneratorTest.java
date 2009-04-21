@@ -142,6 +142,12 @@ public class NeuronTemplateGeneratorTest {
         
         
         Thread.sleep(wait); // Shouldn't take longer than this
+
+        if (!timesFile.exists())
+        {
+            System.out.println("Waiting for file to be created: "+ timesFile.getAbsolutePath());
+            Thread.sleep(wait*3);
+        }
         
         assertTrue(timesFile.exists());
         
