@@ -540,6 +540,9 @@ public class NeuronTemplateGenerator
                     CellTopologyHelper.getFractionAlongSection(cell,
                                                                segment.getParentSegment(),
                                                                segment.getFractionAlongParent());
+
+                if (fractionAlongParentSection>0.999f)
+                    fractionAlongParentSection = 1; // to remove rounding errors
                 
                 connectLines.add("    connect " + NeuronFileManager.getHocSectionName(segment.getSection().getSectionName())
                                  + "(0), "
@@ -850,14 +853,6 @@ public class NeuronTemplateGenerator
 
         response.append("    "+"all = new SectionList()\n");
 
-        //response.append("soma all.append()\n");
-        //if (cell.getOnlyAxonalSegments().size() > 0) response.append("for i=0, nAxons axon[i] all.append()\n");
-        //if (cell.getOnlyDendriticSegments().size() > 0) response.append("for i=0, nDendrites dend[i] all.append()\n\n");
-
-
-
-
-
 
         if (subsetLines.size() < maxNumLinesInProc)
         {
@@ -1086,6 +1081,9 @@ public class NeuronTemplateGenerator
             response.append("proc addChanMechs() {\n\n");
         }
 
+        int totLines = 0;
+        int subProcCount = 0;
+
         for (String nextGroup: groupNames)
         {
             logger.logComment("nextGroup: "+nextGroup+"--------------------------------");
@@ -1096,6 +1094,9 @@ public class NeuronTemplateGenerator
             {
                 for (int j = 0; j < allChanMechs.size(); j++)
                 {
+
+                    StringBuffer subResponse = new StringBuffer();
+
                     ChannelMechanism nextChanMech = allChanMechs.get(j);
 
                     CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
@@ -1109,7 +1110,7 @@ public class NeuronTemplateGenerator
                             pointProcessCreates.append("public "+name+"\n");
                             pointProcessCreates.append("objref "+name+"\n\n");
                             
-                            response.append("    "+sec.getSectionName()+" "+name+" = new " + cellMech.getInstanceName() + "(0.5) \n");
+                            subResponse.append("    "+sec.getSectionName()+" "+name+" = new " + cellMech.getInstanceName() + "(0.5) \n");
                         }
                     }
                     else
@@ -1128,22 +1129,22 @@ public class NeuronTemplateGenerator
                         }
 
 
-                        response.append("    forsec " + nextGroup + " { ");
+                        subResponse.append("    forsec " + nextGroup + " { ");
 
                         ArrayList<MechParameter> mps = nextChanMech.getExtraParameters();
                         
                         if (mps.size()==0)
                         {
-                            NeuronFileManager.addHocComment(response,
+                            NeuronFileManager.addHocComment(subResponse,
                                                      "    Assuming parameters other than max cond dens are set in the mod file...");
                         }
                         else
                         {
-                            NeuronFileManager.addHocComment(response,
+                            NeuronFileManager.addHocComment(subResponse,
                                                      "    Using parameters: "+mps);
                         }
                         
-                        response.append("        insert " + nextChanMech.getName() + "");
+                        subResponse.append("        insert " + nextChanMech.getName() + "");
 
                         double condDens = UnitConverter.getConductanceDensity(nextChanMech.getDensity(),
                                                                               UnitConverter.NEUROCONSTRUCT_UNITS,
@@ -1167,8 +1168,8 @@ public class NeuronTemplateGenerator
                                 String condString = "g_" + nextChanMech.getName() + " = " + condDens + moreParams.toString();
                                 if (condDens<0) condString = "    // Ignoring gmax ("+ condDens+") for this channel mechanism\n";
                                 
-                                response.append("  { "+condString+ " }  ");
-                                NeuronFileManager.addHocComment(response,
+                                subResponse.append("  { "+condString+ " }  ");
+                                NeuronFileManager.addHocComment(subResponse,
                                                      "    pas is name of mechanism, so using inbuilt mechanism, and better use g for conductance density...");
                             }
                             else
@@ -1176,13 +1177,13 @@ public class NeuronTemplateGenerator
                                 String condString = "gmax_" + nextChanMech.getName() + " = " + condDens;
                                 if (condDens<0) condString = "\n    // Ignoring gmax ("+ condDens+") for this channel mechanism\n";
                                 
-                                response.append("  { "+condString + moreParams.toString() +" }  ");
+                                subResponse.append("  { "+condString + moreParams.toString() +" }  ");
                             }
                         }
                         else if (cellMech.getMechanismType().equals(CellMechanism.ION_CONCENTRATION))
                         {
                             
-                                response.append("  { "+moreParams.toString() +" }  ");
+                                subResponse.append("  { "+moreParams.toString() +" }  ");
                             
                         }
 
@@ -1251,7 +1252,7 @@ public class NeuronTemplateGenerator
                                         
                                     logger.logComment("Got ion: " + ionName+ ", rev pot: "+erev+" for cell mech: "+cellMech);
 
-                                    NeuronFileManager.addHocComment(response, "    Ion " + ionName + " is used in this process...");
+                                    NeuronFileManager.addHocComment(subResponse, "    Ion " + ionName + " is used in this process...");
 
                                     String unitsUsed = cmlMech.getUnitsUsedInFile();
 
@@ -1324,7 +1325,7 @@ public class NeuronTemplateGenerator
                                                     {
                                                         if (!grp.equals(nextGroup) /*|| nextChanMech.getName().equals("pas")*/)
                                                         {
-                                                            NeuronFileManager.addHocComment(response, "    Group " + grp +" also has "+ nextChanMech.getName()+" ("+cm+")", false);
+                                                            NeuronFileManager.addHocComment(subResponse, "    Group " + grp +" also has "+ nextChanMech.getName()+" ("+cm+")", false);
 
                                                             if (CellTopologyHelper.isGroupASubset(nextGroup, grp, cell))
                                                             {
@@ -1335,7 +1336,7 @@ public class NeuronTemplateGenerator
                                                                 {
                                                                     revPotSetElsewhere = true;
 
-                                                                    NeuronFileManager.addHocComment(response, "    Reverse potential for ion set by " 
+                                                                    NeuronFileManager.addHocComment(subResponse, "    Reverse potential for ion set by "
                                                                         + cm.toString()+" which is on superset group: "+ grp);
                                                                 }
                                                             }
@@ -1358,7 +1359,7 @@ public class NeuronTemplateGenerator
                                         {
                                             if (!revPotSetElsewhere)
                                             {
-                                                response.append("        e" + ionName + " = " + erev + "\n");
+                                                subResponse.append("        e" + ionName + " = " + erev + "\n");
                                             }
                                         }
                                         else
@@ -1367,14 +1368,14 @@ public class NeuronTemplateGenerator
                                             
                                             if (!revPotSetElsewhere && nextChanMech.getName().equals("pas"))
                                             {
-                                                response.append("  e_" + nextChanMech.getName() + " = " + erev + "\n");
+                                                subResponse.append("  e_" + nextChanMech.getName() + " = " + erev + "\n");
                                             }
                                         }
 
                                     }
                                     else
                                     {
-                                        NeuronFileManager.addHocComment(response,
+                                        NeuronFileManager.addHocComment(subResponse,
                                                                         "Note: there is no reversal potential present for ion: " + ionName);
                                     }
                                 }
@@ -1386,23 +1387,42 @@ public class NeuronTemplateGenerator
 
                         }
 
-                        response.append("\n    }\n\n");
+                        subResponse.append("\n    }\n\n");
 
 
                         if (requiresXYZ)
                         {
-                            NeuronFileManager.addHocComment(response, "Need to add x,y,z coords for this mechanism...");
+                            NeuronFileManager.addHocComment(subResponse, "Need to add x,y,z coords for this mechanism...");
 
                             ArrayList<Section> secs = cell.getSectionsInGroup(nextGroup);
                             for (Section sec: secs)
                             {
                                 Point3f midpoint = CellTopologyHelper.convertSectionDisplacement(cell, sec, 0.5f);
-                                response.append("    "+NeuronFileManager.getHocSectionName(sec.getSectionName())+".x_"+nextChanMech.getName()+" = "+midpoint.x+"\n");
-                                response.append("    "+NeuronFileManager.getHocSectionName(sec.getSectionName())+".y_"+nextChanMech.getName()+" = "+midpoint.y+"\n");
-                                response.append("    "+NeuronFileManager.getHocSectionName(sec.getSectionName())+".z_"+nextChanMech.getName()+" = "+midpoint.z+"\n\n");
+                                subResponse.append("    "+NeuronFileManager.getHocSectionName(sec.getSectionName())+".x_"+nextChanMech.getName()+" = "+midpoint.x+"\n");
+                                subResponse.append("    "+NeuronFileManager.getHocSectionName(sec.getSectionName())+".y_"+nextChanMech.getName()+" = "+midpoint.y+"\n");
+                                subResponse.append("    "+NeuronFileManager.getHocSectionName(sec.getSectionName())+".z_"+nextChanMech.getName()+" = "+midpoint.z+"\n\n");
                             }
                         }
                     }
+                    int numLinesHere = 0;
+                    for(int i=0;i<subResponse.length();i++)
+                    {
+                        if (subResponse.charAt(i)=='\n')
+                            numLinesHere++;
+                    }
+                    if (totLines+numLinesHere>=maxNumLinesInProc)
+                    {
+
+                        response.append("    addChanMechs_"+subProcCount+"()  // Spliting function to prevent errors when proc too big\n");
+                        response.append("}\n\n");
+                        response.append("proc addChanMechs_"+subProcCount+"() {\n\n");
+                        subProcCount++;
+                        totLines = 0;
+
+                    }
+                    totLines +=numLinesHere;
+
+                    response.append(subResponse.toString());
                 }
             }
 
@@ -1482,6 +1502,11 @@ public class NeuronTemplateGenerator
         
         response.append("}\n");
         response.append("\n");
+
+        response.append("func H() { // Heaviside function, can be used to set gmax = 0 when x <100 etc.\n");
+        response.append("    if ($1>=0) return 1\n");
+        response.append("    return 0\n");
+        response.append("}\n\n");
         
         response.append(postProcs.toString());
  

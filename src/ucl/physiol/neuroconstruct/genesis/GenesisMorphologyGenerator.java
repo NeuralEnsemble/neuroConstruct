@@ -587,7 +587,7 @@ public class GenesisMorphologyGenerator
                     if (!dealtWith)
                         consolChanMechs.add((ChannelMechanism)nextChanMech.clone());
                 }
-            //logger.logComment("Done Consolidating...", true);
+            logger.logComment("Done Consolidating: ..."+ consolChanMechs);
 
                 for (int ll = 0; ll < consolChanMechs.size(); ll++)
                 {
@@ -723,7 +723,19 @@ public class GenesisMorphologyGenerator
                                 UnitConverter.NEUROCONSTRUCT_UNITS,
                                 project.genesisSettings.getUnitSystemToUse());
 
-                        channelCondString.append(vm.getName()+ " "+ genDens+ " ");
+                        String name = vm.getName();
+
+                        for(ChannelMechanism con: consolChanMechs)
+                        {
+                            if (con.getName().equals(name))
+                            {
+                                logger.logComment("Instead of "+name+", using unique name of: "+ con);
+                                name = con.getUniqueName();
+                            }
+                        }
+                        comments = comments +"// Variable cell mechanism "+vm.getName()+" evaluated as: " +dens + " on "+name+" \n";
+
+                        channelCondString.append(name+ " "+ genDens+ " ");
 
 
                     }

@@ -5,7 +5,7 @@
 #    one or more columns
 #    
 #    Might be useful to associate some file types with nCplot.bat, e,g, *.dat so
-#    That double clicking on them plots them
-#  
+#    That double clicking on them plots them 
+#
 
 ~/neuroConstruct/nC.sh -plot $1

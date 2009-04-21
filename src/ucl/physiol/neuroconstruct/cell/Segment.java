@@ -216,7 +216,7 @@ public class Segment implements Serializable
         /** @todo remove... */
         if (parentSegment.getSegmentId() == getSegmentId())
         {
-            logger.logError("parentSegment: " + parentSegment+" and "+this +" have same id, so cannot getStartPointPosition()!!");
+            logger.logError("parentSegment: " + parentSegment.getSegmentName()+" and "+this.getSegmentName() +" have same id, so cannot getStartPointPosition()!!");
             return null;
         }
 

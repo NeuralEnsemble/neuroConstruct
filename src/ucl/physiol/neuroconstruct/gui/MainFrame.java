@@ -3329,7 +3329,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelExportPynn.add(jPanelPynnMain);
 
         jPanelPsicsMain.setLayout(new GridBagLayout());
-        jLabelPsicsMain.setText("Generate code for the PSICS simulator (alpha)");
+        jLabelPsicsMain.setText("Generate code for the PSICS simulator (beta)");
         
         jRadioButtonPynnNest2.setSelected(true);
                 
@@ -4674,27 +4674,24 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 try
                 {
                     projManager.getCurrentProject().psicsSettings.setSpatialDiscretisation(Float.parseFloat(jTextFieldPsicsSpatDisc.getText()));
+                    jTextFieldPsicsSpatDisc.setBackground(Color.white);
+
                 }
                 catch (NumberFormatException ex)
                 {
-                    if (jTextFieldPsicsSpatDisc.getText().length()==0)
-                        return;
-
-                    GuiUtils.showErrorMessage(logger,
-                                              "Problem parsing value for PSICS spatial discretisation: "+jTextFieldPsicsSpatDisc.getText(), ex, this);
+                    jTextFieldPsicsSpatDisc.setBackground(Color.red);
                     return;
                 }
                 try
                 {
                     projManager.getCurrentProject().psicsSettings.setSingleChannelCond(Float.parseFloat(jTextFieldPsicsSingleCond.getText()));
+                    jTextFieldPsicsSingleCond.setBackground(Color.white);
                 }
                 catch (NumberFormatException ex)
                 {
-                    if (jTextFieldPsicsSingleCond.getText().length()==0)
-                        return;
 
-                    GuiUtils.showErrorMessage(logger,
-                                              "Problem parsing value for PSICS single channel conductance: "+jTextFieldPsicsSingleCond.getText(), ex, this);
+                    jTextFieldPsicsSingleCond.setBackground(Color.red);
+
                     return;
                 }
 
@@ -4738,7 +4735,23 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 try
                 {
                     String dur = jTextFieldSimDefDur.getText();
-                    String dt = jTextFieldSimDT.getText();
+                    try
+                    {
+                        String dt = jTextFieldSimDT.getText();
+
+
+                        if(dt.length()>0)
+                            projManager.getCurrentProject().simulationParameters.setDt(Float.parseFloat(dt));
+                        else
+                            projManager.getCurrentProject().simulationParameters.setDt(0f);
+
+                        jTextFieldSimDT.setBackground(Color.white);
+                    }
+                    catch (NumberFormatException ex)
+                    {
+                        jTextFieldSimDT.setBackground(Color.red);
+                        return;
+                    }
 
                     String globCm = jTextFieldSimulationGlobCm.getText();
                     String globRa = jTextFieldSimulationGlobRa.getText();
@@ -4803,16 +4816,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     else
                         projManager.getCurrentProject().simulationParameters.setDuration(0);
 
-                    if(dt.length()>0)
-                        projManager.getCurrentProject().simulationParameters.setDt(Float.parseFloat(dt));
-                    else
-                        projManager.getCurrentProject().simulationParameters.setDt(0f);
 
                 }
                 catch (NumberFormatException ex)
                 {
                     GuiUtils.showErrorMessage(logger,
-                                              "Problem reading the Simulation paramters: " +
+                                              "Problem in reading the Simulation parameters: " +
                                               ex.getMessage(), ex, this);
                     return;
                 }
@@ -11082,8 +11091,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
         catch (NumberFormatException ex)
         {
-            GuiUtils.showErrorMessage(logger, "Please enter a correctly formatted number for dt.",
-                                      ex, this);
+            // Will be set red by tabUpdated...
         }
 
     }
@@ -14286,11 +14294,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     }
 
 
-                    cmlMech.getXMLDoc().setValueByXPath(ChannelMLConstants.getPreV1_7_3IonRevPotXPath(1),
-                                                        revPot + "");
+                    cmlMech.getXMLDoc().setValueByXPath(ChannelMLConstants.getIonRevPotXPath(),
+                                                        (float)revPot + "");
                     
-                    cmlMech.getXMLDoc().setValueByXPath(ChannelMLConstants.getPreV1_7_3CondDensXPath(),
-                                                        condDens + "");
+                    cmlMech.getXMLDoc().setValueByXPath(ChannelMLConstants.getPostV1_7_3CondDensXPath(),
+                                                        (float)condDens + "");
 
                 }
             }

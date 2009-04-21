@@ -112,12 +112,9 @@ public class MainApplication
         int active = Thread.activeCount();
         Thread all[] = new Thread[active];
         Thread.enumerate(all);
-        for (int i = 0; i < active; i++) 
-        {
-            //System.out.println(i + ": " + all[i]);
-            all[i].setDefaultUncaughtExceptionHandler(new UncaughtExceptionInfo());
-        }
-
+ 
+        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionInfo());
+  
         
         frame.validate();
 
@@ -302,6 +299,8 @@ public class MainApplication
 
 
                     PlotterFrame frame = PlotManager.getPlotterFrame(plotFrameRef);
+
+                    frame.setStandAlone(true);
 
                     for(DataSet dataSet: dataSets)
                         frame.addDataSet(dataSet);

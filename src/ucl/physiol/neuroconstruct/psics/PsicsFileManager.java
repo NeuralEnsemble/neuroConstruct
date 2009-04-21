@@ -35,6 +35,7 @@ import ucl.physiol.neuroconstruct.dataset.*;
 import ucl.physiol.neuroconstruct.gui.DataSetManager;
 import ucl.physiol.neuroconstruct.gui.DataSetManager.DataReadFormat;
 import ucl.physiol.neuroconstruct.gui.plotter.*;
+import ucl.physiol.neuroconstruct.hpc.utils.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.ChannelMLConstants;
 import ucl.physiol.neuroconstruct.project.*;
@@ -736,16 +737,6 @@ public class PsicsFileManager
         return response.toString();
     }
 
-
-
-
-
-    
-    
-
-
-
-
     private File getDirectoryForSimulationFiles()
     {
         File dirForSims = ProjectStructure.getSimulationsDir(project.getProjectMainDirectory());
@@ -772,9 +763,6 @@ public class PsicsFileManager
         else
             return simConfig.getSimDuration();
     }
-
-
-
 
 
 
@@ -878,7 +866,7 @@ public class PsicsFileManager
                 return;
             }
             
-            String title = "PSICS_simulation" + "___" + project.simulationParameters.getReference();
+            String title = "PSICS" + "__" + project.simulationParameters.getReference();
             
 
             if (GeneralUtils.isWindowsBasedPlatform())
@@ -915,7 +903,6 @@ public class PsicsFileManager
             {
                 logger.logComment("Assuming *nix environment...");
 
-                
 
                 //File dirToRunIn = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory());
 
@@ -929,9 +916,9 @@ public class PsicsFileManager
                 if (basicCommLine.indexOf("konsole")>=0)
                 {
                     logger.logComment("Assume we're using KDE");
-                    titleOption = " -T="+title;
+                    titleOption = " --title="+title;
                     workdirOption = " --workdir="+ dirToRunFrom.getAbsolutePath();
-                    extraArgs = "-e ";
+                    extraArgs = "-e /bin/bash ";
                     executable = basicCommLine.trim();
                 }
                 else if (basicCommLine.indexOf("gnome")>=0)
@@ -991,10 +978,25 @@ public class PsicsFileManager
                     scriptFile.getAbsolutePath();
 
 
+                ProcessFeedback pf = new ProcessFeedback()
+                {
+
+                    public void comment(String comment)
+                    {
+                        logger.logComment("ProcessFeedback: "+comment);
+                    }
+
+                    public void error(String comment)
+                    {
+                        logger.logComment("ProcessFeedback: "+comment);
+                    }
+                };
 
                 logger.logComment("Going to execute command: " + commandToExecute);
 
-                rt.exec(commandToExecute);
+                //rt.exec(commandToExecute);
+
+                ProcessManager.runCommand(commandToExecute, pf, 4);
 
                 logger.logComment("Have successfully executed command: " + commandToExecute);
                 

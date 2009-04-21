@@ -4950,55 +4950,7 @@ public class NeuronFileManager
                                                                                      project.simulationParameters.getReference(),
                                                                                      ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()));
 
-                        
-                        /*
-                        StringBuffer pullScriptText = new StringBuffer();
-                        
-                        pullScriptText.append("#!/bin/bash \n\n");
-                        pullScriptText.append("\n");
-                        pullScriptText.append("export simRef=\""+project.simulationParameters.getReference()+"\"\n");
-                        pullScriptText.append("export projName=\""+project.getProjectName()+"\"\n");
-                        pullScriptText.append("\n");
-                        pullScriptText.append("export targetDir=\""+rl.getWorkDir()+"\"\n");
-                        pullScriptText.append("export remoteHost=\""+rl.getHostname()+"\"\n");
-                        pullScriptText.append("export remoteUser=\""+rl.getUserName()+"\"\n");
-                        pullScriptText.append("\n");
-
-                        pullScriptText.append("\n");
-                        pullScriptText.append("projDir=$targetDir\"/\"$projName\"_\"$HOST\n");
-                        pullScriptText.append("simDir=$projDir\"/\"$simRef\n");
-                        pullScriptText.append("\n");
-                        pullScriptText.append("export localDir="+ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()).getAbsolutePath()+"\"/\"$simRef\"/\"\n");
-                        pullScriptText.append("\n");
-                        pullScriptText.append("\n");
-                        pullScriptText.append("echo \"Going to get files from dir: \"$simDir\" on \"$remoteHost\" and place them locally on \"$localDir\n");
-                        pullScriptText.append("\n");
-                        pullScriptText.append("zipFile=$simRef\".tar.gz\"\n");
-                        pullScriptText.append("\n");
-                        pullScriptText.append("echo \"Going to zip files into \"$zipFile\n");
-                        pullScriptText.append("\n");
-                        pullScriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;tar czf $zipFile *.*\"\n");
-                        pullScriptText.append("\n");
-
-
-                        pullScriptText.append("scp  $remoteUser@$remoteHost:$simDir\"/\"$zipFile $localDir\n");
-
-
-                        if (false)
-                        {
-                            pullScriptText.append("scp $remoteUser@$remoteHost:$simDir\"/\"$zipFile $localDir\n");
-                        }
-                        else
-                        {
-                            pullScriptText.append("echo -e \"get $simDir\"/\"$zipFile\">pullFile.b\n");
-                            pullScriptText.append("sftp -b pullFile.b $remoteUser@$remoteHost\n");
-                        }
-
-
-                        pullScriptText.append("\n");
-                        pullScriptText.append("cd $localDir\n");
-                        pullScriptText.append("tar xzf $zipFile\n");
-                        pullScriptText.append("rm $zipFile\n");*/
+                       
 
 
 

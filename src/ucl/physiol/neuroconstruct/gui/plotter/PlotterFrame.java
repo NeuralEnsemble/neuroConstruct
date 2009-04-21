@@ -2781,7 +2781,7 @@ public class PlotterFrame extends JFrame
         {
             PlotManager.plotFrameClosing(plotFrameReference);
             
-            logger.logComment("WINDOW_CLOSING...");
+            logger.logComment("WINDOW_CLOSING, standalone: "+standAlone);
             if (standAlone) 
                 System.exit(0);
         }

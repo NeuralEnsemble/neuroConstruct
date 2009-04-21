@@ -96,8 +96,16 @@ public class NeuronTemplateGeneratorTest {
         
         File simDir = new File(ProjectStructure.getSimulationsDir(proj.getProjectMainDirectory()), simName);
         
+        System.out.println("Going to delete: "+ simDir.getAbsolutePath());
+        
         if (simDir.exists())
-            simDir.delete();
+        {
+            for(File f: simDir.listFiles())
+            {
+                f.delete();
+            }
+        }
+
         
         proj.neuronSettings.setGraphicsMode(false);
         proj.neuronSettings.setVarTimeStep(false);
@@ -151,20 +159,6 @@ public class NeuronTemplateGeneratorTest {
                 GeneralUtils.readShortFile(passFile)+
                 "\n----------------------------\n");
 
-        
-        
-        /*
-        int numRecordings = simData.getCellSegRefs(false).size();
-        
-        assertEquals(numRecordings, numGen);
-        
-        System.out.println("Have found "+ numRecordings+" recordings in dir: "+ simData.getSimulationDirectory().getAbsolutePath());
-        
-        double[] volts = simData.getVoltageAtAllTimes(SimulationData.getCellRef(sc.getCellGroups().get(0), 0));
-        
-        assertEquals(volts.length, 1 + (sc.getSimDuration()/proj.simulationParameters.getDt()), 0);
-         * */
-        
         
     }
     

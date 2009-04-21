@@ -69,7 +69,8 @@ public class ExpressionTest {
                                             "100.0 *(  (v - -0.0089) / (-0.0050) ) / (1 - exp(-1 * ( (v - -0.0089) / (-0.0050) )))",
                                             "v-(-0.065)",
                                             "sin(sin(v)-1)",
-                                            "sqrt(v)"};
+                                            "sqrt(v)",
+                                            "H(100+ (-v))"};
         
         Variable v = new Variable("v");
         Variable t = new Variable("t");
@@ -91,6 +92,8 @@ public class ExpressionTest {
         
         Argument[] v0 = new Argument[]{new Argument(v.getName(), 0)};
         Argument[] v1 = new Argument[]{new Argument(v.getName(), 1)};
+        Argument[] v99 = new Argument[]{new Argument(v.getName(), 99)};
+        Argument[] v101 = new Argument[]{new Argument(v.getName(), 101)};
         double halfPi = Math.PI/2;
         
         Argument[] v90deg = new Argument[]{new Argument(v.getName(), halfPi)};
@@ -108,6 +111,8 @@ public class ExpressionTest {
         assertTrue(eqnUnits.get(11).evaluateAt(v90deg)==0);
 
         assertTrue(eqnUnits.get(12).evaluateAt(v90deg)==Math.sqrt(halfPi));
+        assertTrue(eqnUnits.get(13).evaluateAt(v99)==1);
+        assertTrue(eqnUnits.get(13).evaluateAt(v101)==0);
         
     }
     

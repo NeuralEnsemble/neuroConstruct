@@ -111,7 +111,7 @@ public class EditGroupSynapseAssociations extends JDialog implements ListSelecti
                                         String processType,
                                         Vector<String> mechList) throws HeadlessException
     {
-        super(owner, "Edit Group to "+processType + " associations", true);
+        super(owner, "Edit Group to "+processType + " associations for "+cell.getInstanceName(), true);
 
         mechOptions = mechList;
 

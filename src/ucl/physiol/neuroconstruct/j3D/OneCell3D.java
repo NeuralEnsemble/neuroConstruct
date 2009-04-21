@@ -1441,7 +1441,7 @@ public class OneCell3D
         }
     }
 
-        public void resetCellAppearance()
+    public void resetCellAppearance()
     {
         logger.logComment("-------------                Resetting cell app   ");
 

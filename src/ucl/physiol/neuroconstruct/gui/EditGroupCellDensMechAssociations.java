@@ -134,7 +134,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                                          String mechType,
                                          Project project) throws HeadlessException
     {
-        super(owner, "Edit Group to "+mechType+ " associations", true);
+        super(owner, "Edit Group to "+mechType+ " associations for "+cell.getInstanceName(), true);
         
         this.logger.setThisClassVerbose(false);
 
@@ -631,63 +631,106 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
         logger.logComment("Edit value button pressed");
 
-        Object[] selected = this.jListGroupsIn.getSelectedValues();
+        //Object[] selected = this.jListGroupsIn.getSelectedValues();
 
-        for (int j = 0; j < selected.length; j++)
+        int[] selected = jListGroupsIn.getSelectedIndices();
+
+        ArrayList<ParameterisedGroup> paramGroups = new ArrayList<ParameterisedGroup>();
+
+        for (int i = 0; i < selected.length; i++)
         {
-            String next = (String)selected[j];
-
-            logger.logComment("Changing value of: "+ next);
-
-            String groupName = next.substring(0, next.indexOf(" ")).trim();
-
-            logger.logComment("Item: " + selected[j] + " ("+next
-                              +") is selected, so group: " + groupName);
-
-            if (selectedMechanism.equals(this.apPropVelSelection))
+            String group = (String) listModelGroupsIn.elementAt(selected[i]);
+            logger.logComment("Selected: "+ group);
+            if (!myCell.isGroup(group))
             {
-                ApPropSpeed appv = myCell.getApPropSpeedForGroup(groupName);
-
-                float vel = this.getApPropSpeedForGroup(appv.getSpeed());
-
-                appv.setSpeed(vel);
-                myCell.associateGroupWithApPropSpeed(groupName, appv);
-            }
-            else if (selectedMechanism.equals(this.specAxResSelection))
-            {
-                float specAxRes = myCell.getSpecAxResForGroup(groupName);
-
-                specAxRes = this.getSpecAxResForGroup(specAxRes, groupName);
-
-                myCell.associateGroupWithSpecAxRes(groupName, specAxRes);
-            }
-            else if (selectedMechanism.equals(this.specCapSelection))
-            {
-                float specCap = myCell.getSpecCapForGroup(groupName);
-
-                specCap = this.getSpecCapForGroup(specCap, groupName);
-
-                myCell.associateGroupWithSpecCap(groupName, specCap);
-            }
-            else
-            {
-
-                ChannelMechanism chanMech = null;
-                ArrayList<ChannelMechanism> allChans = myCell.getChanMechsForGroup(groupName);
-                for (int k = 0; k < allChans.size(); k++)
+                String name = group.substring(0,group.indexOf(" "));
+                for(ParameterisedGroup pg: myCell.getParameterisedGroups())
                 {
-                    if (allChans.get(k).getName().equals(selectedMechanism))
-                        chanMech = allChans.get(k);
+                    if (name.equals(pg.getName()))
+                        paramGroups.add(pg);
                 }
+            }
+        }
+        logger.logComment("paramGroups: "+ paramGroups);
 
-                float newVal = this.getDensForGroup(selectedMechanism, chanMech.getDensity(), "(" + groupName + ")");
+        if(paramGroups.size()>1 || (paramGroups.size()>0 && selected.length>1))
+        {
+            GuiUtils.showWarningMessage(logger,
+                                      "Warning, can only edit parameter groups for mechanisms one at a time",null);
+        }
+        else if(paramGroups.size() == 1)
+        {
+            /*
+            String request = "Please enter a value for the max conductance density for the channel:\n"
+                + cellMech + " placed on sections in " + groupRef + " (Units: "
+                + UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()
+                + ")";
 
-                if (newVal >=0)
+            String inputValue
+                = JOptionPane.showInputDialog(this,
+                                              request,
+                                              suggestedValue + "");
+
+            if (inputValue==null || inputValue.length()==0) return -1;*/
+        }
+        else
+        {
+
+
+            for (int j = 0; j < selected.length; j++)
+            {
+                String next = (String)listModelGroupsIn.elementAt(selected[j]);
+
+                logger.logComment("Changing value of: "+ next);
+
+                String groupName = next.substring(0, next.indexOf(" ")).trim();
+
+                logger.logComment("Item: " + selected[j] + " ("+next
+                                  +") is selected, so group: " + groupName);
+
+                if (selectedMechanism.equals(this.apPropVelSelection))
                 {
-                    chanMech.setDensity(newVal);
-                    myCell.associateGroupWithChanMech(groupName, chanMech);
-                }
+                    ApPropSpeed appv = myCell.getApPropSpeedForGroup(groupName);
 
+                    float vel = this.getApPropSpeedForGroup(appv.getSpeed());
+
+                    appv.setSpeed(vel);
+                    myCell.associateGroupWithApPropSpeed(groupName, appv);
+                }
+                else if (selectedMechanism.equals(this.specAxResSelection))
+                {
+                    float specAxRes = myCell.getSpecAxResForGroup(groupName);
+
+                    specAxRes = this.getSpecAxResForGroup(specAxRes, groupName);
+
+                    myCell.associateGroupWithSpecAxRes(groupName, specAxRes);
+                }
+                else if (selectedMechanism.equals(this.specCapSelection))
+                {
+                    float specCap = myCell.getSpecCapForGroup(groupName);
+
+                    specCap = this.getSpecCapForGroup(specCap, groupName);
+
+                    myCell.associateGroupWithSpecCap(groupName, specCap);
+                }
+                else
+                {
+                    ChannelMechanism chanMech = null;
+                    ArrayList<ChannelMechanism> allChans = myCell.getChanMechsForGroup(groupName);
+                    for (int k = 0; k < allChans.size(); k++)
+                    {
+                        if (allChans.get(k).getName().equals(selectedMechanism))
+                            chanMech = allChans.get(k);
+                    }
+
+                    float newVal = this.getDensForGroup(selectedMechanism, chanMech.getDensity(), "(" + groupName + ")");
+
+                    if (newVal >=0)
+                    {
+                        chanMech.setDensity(newVal);
+                        myCell.associateGroupWithChanMech(groupName, chanMech);
+                    }
+                }
             }
         }
 
@@ -1112,7 +1155,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                     logger.logComment("Going to create variable mechanism of "+selectedMech+" for parameterised group: "+ group);
                     
                     String var  ="gmax";
-                    String testExpr = "100*exp(-p/10)";
+                    String testExpr = "1e-7*exp(-p/100)";
                     
                     Variable p = new Variable("p");
                     
@@ -1232,6 +1275,8 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
     void jButtonRemove_actionPerformed(ActionEvent e)
     {
+        logger.logComment("Remove button pressed: "+ e);
+
         String selectedMech = (String) jComboBoxMechNames.getSelectedItem();
 
         if (selectedMech.equals(defaultMechSelection) ||
@@ -1244,7 +1289,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         for (int i = 0; i < selected.length; i++)
         {
             String group = (String) listModelGroupsIn.elementAt(selected[i]);
-            logger.logComment("Sel: "+ group);
+            logger.logComment("Selected: "+ group);
             if (!myCell.isGroup(group))
             {
                 String name = group.substring(0,group.indexOf(" "));
@@ -1264,9 +1309,9 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         }
         else if(paramGroups.size() == 1) 
         {
-            String selMechParaGroupAssoc = (String)listModelGroupsIn.elementAt(0);
+            //String selMechParaGroupAssoc = (String)listModelGroupsIn.elementAt(0);
             
-            logger.logComment("Removing assoc: "+ paramGroups.get(0));
+            logger.logComment("-------- Removing assoc: "+ paramGroups.get(0));
                     
             Iterator<VariableMechanism> vMechs = myCell.getVarMechsVsParaGroups().keySet().iterator();
             VariableMechanism vmToRemove = null;
@@ -1275,10 +1320,14 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
             while(vMechs.hasNext())
             {
                 VariableMechanism nextVMech = vMechs.next();
+                logger.logComment("-- nextVMech: "+ nextVMech);
                 if(nextVMech.getName().equals(selectedMech))
                 {
                     ParameterisedGroup pg = myCell.getVarMechsVsParaGroups().get(nextVMech);
-                    if(paramGroups.get(0).equals(pg) && selMechParaGroupAssoc.indexOf(nextVMech.getParam().getExpression().toString())>=0)
+                    logger.logComment("pg: "+ pg+", paramGroups.get(0): "+paramGroups.get(0));
+                    //logger.logComment("nextVMech.getParam().getExpression(): "+nextVMech.getParam().getExpression());
+
+                    if(paramGroups.get(0).equals(pg)/* && selectedMech.indexOf(nextVMech.getParam().getExpression().toString())>=0*/)
                     {
                         vmToRemove = nextVMech;
                         pgToRemove = pg;
@@ -1288,13 +1337,18 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                 }
 
             }
+            logger.logComment("vmToRemove: "+ vmToRemove);
+            logger.logComment("pgToRemove: "+ pgToRemove);
+
             if(vmToRemove!=null && pgToRemove!=null)
             {
                 myCell.dissociateParamGroupFromVarMech(pgToRemove, vmToRemove);
-                logger.logComment("Removed assoc for: "+ vmToRemove);
+                logger.logComment("^^ Removed assoc for: "+ vmToRemove);
             }
+
+            logger.logComment("-------- Done removing assoc: "+ paramGroups.get(0));
         }
-            
+        else
         {
             for (int i = 0; i < selected.length; i++)
             {
@@ -1344,7 +1398,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
         }
    
-        Project testProj = Project.loadProject(new File("../nC_projects/Inhh/Inhh.neuro.xml"),
+        Project testProj = Project.loadProject(new File("../copyNcModels/Inhomogen/Inhomogen.neuro.xml"),
                                                new ProjectEventListener()
         {
             public void tableDataModelUpdated(String tableModelName)
@@ -1358,8 +1412,8 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
         });
 
-        Cell cell = testProj.cellManager.getCell("SampleCell");
-        
+        Cell cell = testProj.cellManager.getCell("Longer");
+        /*
         String expression1 = "100 + 200*(p+10)";
         
         VariableParameter vp1 = null;
@@ -1379,7 +1433,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         
         cell.associateParamGroupWithVarMech(cell.getParameterisedGroups().get(0), vm);
         
-        System.out.println(CellTopologyHelper.printDetails(cell, testProj));
+        System.out.println(CellTopologyHelper.printDetails(cell, testProj));*/
         
 
 /*
