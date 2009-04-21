@@ -263,7 +263,11 @@ part of NeuroML or any standardised XML specification. -->
    </object> 
   </void> 
  </object> 
- <object class="ucl.physiol.neuroconstruct.neuron.NeuronSettings"/> 
+ <object class="ucl.physiol.neuroconstruct.neuron.NeuronSettings"> 
+  <void property="varTimeStep"> 
+   <boolean>true</boolean> 
+  </void> 
+ </object> 
  <object class="ucl.physiol.neuroconstruct.genesis.GenesisSettings"/> 
  <object class="ucl.physiol.neuroconstruct.psics.PsicsSettings"/> 
  <object class="ucl.physiol.neuroconstruct.simulation.SimulationParameters"> 
