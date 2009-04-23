@@ -842,7 +842,7 @@ public class Cell implements Serializable
         return allTypes;
     }
 
-    public ArrayList<ChannelMechanism> getAllFixedChannelMechanisms(boolean removeRepeats)
+    public ArrayList<ChannelMechanism> getAllUniformChanMechs(boolean removeRepeats)
     {
         ArrayList<ChannelMechanism> allChanMechs = new ArrayList<ChannelMechanism>();
         Iterator<ChannelMechanism> chanMechs = chanMechsVsGroups.keySet().iterator();
@@ -854,15 +854,6 @@ public class Cell implements Serializable
             if (!removeRepeats || !allChanMechs.contains(next))
                 allChanMechs.add(next);
         }
-        /*
-        Iterator<VariableMechanism> vMechs = varMechsVsParaGroups.keySet().iterator();
-        while(vMechs.hasNext())
-        {
-            String nextMech = vMechs.next().getName();
-            
-            if (!removeRepeats || !allChanMechs.contains(nextMech))
-                allChanMechs.add(nextMech);
-        }*/
 
         return allChanMechs;
     }
@@ -1209,12 +1200,12 @@ public class Cell implements Serializable
 
 
 
-    public ArrayList<ChannelMechanism> getFixedChanMechsForSegment(Segment segment)
+    public ArrayList<ChannelMechanism> getUniformChanMechsForSeg(Segment segment)
     {
-        return getFixedChanMechsForSection(segment.getSection());
+        return getUniformChanMechsForSec(segment.getSection());
     }
 
-    public ArrayList<ChannelMechanism> getFixedChanMechsForSection(Section section)
+    public ArrayList<ChannelMechanism> getUniformChanMechsForSec(Section section)
     {
         ArrayList<ChannelMechanism> chanMechs = new ArrayList<ChannelMechanism>();
 
@@ -2065,7 +2056,8 @@ public class Cell implements Serializable
             ParameterisedGroup TestGroup = new ParameterisedGroup("ParaTestGroup", "TestGroup", 
                     ParameterisedGroup.Metric.PATH_LENGTH_FROM_ROOT, 
                     ParameterisedGroup.ProximalPref.MOST_PROX_AT_0, 
-                    ParameterisedGroup.DistalPref.MOST_DIST_AT_1 );
+                    ParameterisedGroup.DistalPref.MOST_DIST_AT_1,
+                    ParameterisedGroup.DEFAULT_VARIABLE);
             
             cell.getParameterisedGroups().add(TestGroup);
             

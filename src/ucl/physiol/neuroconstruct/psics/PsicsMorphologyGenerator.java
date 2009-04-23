@@ -359,8 +359,6 @@ public class PsicsMorphologyGenerator
         logger.logComment("calling getMainMorphology");
         StringBuffer response = new StringBuffer();
         
-        response.append("\n<!-- NOTE: Uniform cell properties based on what's set for group: all!!!!-->\n\n");
-        
         SimpleXMLElement memb = new SimpleXMLElement("CellProperties");
         
         SimpleXMLAttribute id = new SimpleXMLAttribute("id", "membrane_"+cell.getInstanceName());
@@ -458,35 +456,36 @@ public class PsicsMorphologyGenerator
         while(chans.hasMoreElements())
         {
             ChannelMechanism cm = chans.nextElement();
-            Vector<String> groups = cell.getChanMechsVsGroups().get(cm);
-            for(String group:groups)
+
+            if (cm.getDensity()>=0)
             {
-               
-                // <ChannelPopulation channel="k1" density="20per_um2" distribution="start"/>
-                SimpleXMLElement cp = new SimpleXMLElement("ChannelPopulation");
-                cp.addAttribute(new SimpleXMLAttribute("channel", cm.getName()));
-
-                float condDensity = cm.getDensity(); // mS/um2
-                float defaultSingChanCond_pS = project.psicsSettings.getSingleChannelCond()*1e9f; // pS
-                float defaultSingChanCond_mS = defaultSingChanCond_pS/1e9f;
-                float numPerum2 = condDensity/defaultSingChanCond_mS;
-
-                cp.addAttribute(new SimpleXMLAttribute("density", df.format(numPerum2)+unitDens));
-                cp.addAttribute(new SimpleXMLAttribute("color", "0x"+ColourUtils.getSequentialColourHex(colourNum)));
-                colourNum++;
-
-                memb.addChildElement(cp);
-                if(!group.equals(Section.ALL))
+                Vector<String> groups = cell.getChanMechsVsGroups().get(cm);
+                for(String group:groups)
                 {
-                    SimpleXMLElement rm = new SimpleXMLElement("RegionMask");
-                    rm.addAttribute(new SimpleXMLAttribute("action", "include"));
-                    rm.addAttribute(new SimpleXMLAttribute("where", "region = *"+group+"*"));
-                    cp.addChildElement(rm);
-                    cp.addContent("\n");
-                }
-                memb.addContent("\n\n");
+                    // <ChannelPopulation channel="k1" density="20per_um2" distribution="start"/>
+                    SimpleXMLElement cp = new SimpleXMLElement("ChannelPopulation");
+                    cp.addAttribute(new SimpleXMLAttribute("channel", cm.getUniqueName()));
 
-              
+                    float condDensity = cm.getDensity(); // mS/um2
+                    float defaultSingChanCond_pS = project.psicsSettings.getSingleChannelCond()*1e9f; // pS
+                    float defaultSingChanCond_mS = defaultSingChanCond_pS/1e9f;
+                    float numPerum2 = condDensity/defaultSingChanCond_mS;
+
+                    cp.addAttribute(new SimpleXMLAttribute("density", df.format(numPerum2)+unitDens));
+                    cp.addAttribute(new SimpleXMLAttribute("color", "0x"+ColourUtils.getSequentialColourHex(colourNum)));
+                    colourNum++;
+
+                    memb.addChildElement(cp);
+                    if(!group.equals(Section.ALL))
+                    {
+                        SimpleXMLElement rm = new SimpleXMLElement("RegionMask");
+                        rm.addAttribute(new SimpleXMLAttribute("action", "include"));
+                        rm.addAttribute(new SimpleXMLAttribute("where", "region = *"+group+"*"));
+                        cp.addChildElement(rm);
+                        cp.addContent("\n");
+                    }
+                    memb.addContent("\n\n");
+                }
             }
         }
         
@@ -506,10 +505,6 @@ public class PsicsMorphologyGenerator
     {
         return membFile;
     }
-
-    
-
-
 
 
     public static void main(String[] args)

@@ -55,8 +55,14 @@ public class BiophysicsConstants
     public static String MECHANISM_ELEMENT = "mechanism";
 
     public static String PARAMETER_ELEMENT = "parameter";
+    public static String VAR_PARAMETER_ELEMENT = "variable_parameter";
+
     public static String PARAMETER_NAME_ATTR = "name";
     public static String PARAMETER_VALUE_ATTR = "value";
+    public static String INHOMOGENEOUS_VALUE = "inhomogeneous_value";
+    public static String INHOMOGENEOUS_PARAM_NAME = "param_name";
+    public static String INHOMOGENEOUS_PARAM_VALUE = "value";
+
 
 
     public static String PARAMETER_GMAX = "gmax";

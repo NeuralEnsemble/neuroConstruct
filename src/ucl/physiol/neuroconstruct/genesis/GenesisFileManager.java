@@ -994,7 +994,7 @@ public class GenesisFileManager
                 String cellTypeName = project.cellGroupsInfo.getCellType(cellGroupName);
                 Cell cell = this.mappedCells.get(cellTypeName);
 
-                ArrayList<ChannelMechanism> chanMechsFixed = cell.getAllFixedChannelMechanisms(false);
+                ArrayList<ChannelMechanism> chanMechsFixed = cell.getAllUniformChanMechs(false);
                 ArrayList<String> chanMechsAll = cell.getAllChanMechNames(false);
 
                 //boolean foundFirstPassi

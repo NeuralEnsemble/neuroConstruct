@@ -769,9 +769,10 @@ public class UnitConverter
                                                                       UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                       UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + "\n");
 
+        System.out.println("--------------------------------------");
 
         int fromUnits = GENESIS_SI_UNITS;
-        PhysicalQuantity concn = new PhysicalQuantity(0.002, concentrationUnits[fromUnits]);
+        PhysicalQuantity concn = new PhysicalQuantity(1e-5, concentrationUnits[fromUnits]);
 
         System.out.println("Concentration: "+ concn);
 
@@ -792,6 +793,7 @@ public class UnitConverter
             UnitConverter.NEUROCONSTRUCT_UNITS) + concentrationUnits[NEUROCONSTRUCT_UNITS].getSymbol());
 
 
+        System.out.println("--------------------------------------");
 
         PhysicalQuantity dimLess = new PhysicalQuantity(100, dimensionlessUnits[fromUnits]);
 

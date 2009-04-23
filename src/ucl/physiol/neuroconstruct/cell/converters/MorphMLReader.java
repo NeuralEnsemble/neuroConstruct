@@ -35,9 +35,12 @@ import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.utils.*;
+import ucl.physiol.neuroconstruct.utils.equation.EquationException;
 import ucl.physiol.neuroconstruct.utils.units.*;
 import javax.xml.parsers.SAXParserFactory;
 import ucl.physiol.neuroconstruct.cell.ParameterisedGroup.Metric;
+import ucl.physiol.neuroconstruct.utils.equation.Argument;
+import ucl.physiol.neuroconstruct.utils.equation.Variable;
 
 /**
  * MorphML file Reader. Importer of MorphML/NeuroML Level1/2/3 files to 
@@ -78,6 +81,9 @@ public class MorphMLReader extends XMLFilterImpl
     private String currentSynType = null;
 
     private String currentMechName = null;
+
+    private String currentVariableParam = null;
+    private String currentVariableParamGroup = null;
 
     private float currentSpecAxRes = Float.NaN;
     private float currentSpecCap = Float.NaN;
@@ -188,6 +194,16 @@ public class MorphMLReader extends XMLFilterImpl
                 }
 
             }
+            
+             else if (getCurrentElement().equals(BiophysicsConstants.GROUP_ELEMENT) &&
+                     getAncestorElement(1).equals(BiophysicsConstants.VAR_PARAMETER_ELEMENT))
+             {
+                 currentVariableParamGroup = contents;
+
+
+                 logger.logComment("Found new group: "+currentVariableParamGroup +" for "+ currentVariableParam +" (currentMechName: "+ currentMechName+")", true);
+
+             }
 
             else if (getCurrentElement().equals(NetworkMLConstants.SYN_TYPE_ELEMENT) &&
                      this.getAncestorElement(1).equals(NetworkMLConstants.POT_SYN_LOC_ELEMENT_preV1_7_1))
@@ -272,7 +288,7 @@ public class MorphMLReader extends XMLFilterImpl
             {
 
                 Metric m = Metric.getMetric(contents);
-                logger.logComment("Found a metric: " + m, true);
+                logger.logComment("Found a metric: " + m);
 
                 currentParamGroup.setMetric(m);
 
@@ -557,6 +573,7 @@ public class MorphMLReader extends XMLFilterImpl
              currentParamGroup.setGroup(this.currentSectionGroup);
              currentParamGroup.setProximalPref(ParameterisedGroup.ProximalPref.NO_TRANSLATION);
              currentParamGroup.setDistalPref(ParameterisedGroup.DistalPref.NO_NORMALISATION);
+             currentParamGroup.setVariable(variable);
 
          }
          else if (getCurrentElement().equals(MorphMLConstants.INHOMO_PARAM_PROXIMAL)
@@ -645,6 +662,80 @@ public class MorphMLReader extends XMLFilterImpl
              logger.logComment("Found initial membrane potential element...");
 
          }
+         else if (getCurrentElement().equals(BiophysicsConstants.VAR_PARAMETER_ELEMENT))
+         {
+             logger.logComment("Found new variable biophysics parameter", true);
+
+             currentVariableParam = attributes.getValue(BiophysicsConstants.PARAMETER_NAME_ATTR);
+
+             logger.logComment("Found new parameter: "+ currentVariableParam+" for "+ getAncestorElement(1) +" (currentMechName: "+ currentMechName+")", true);
+
+         }
+
+         else if (getCurrentElement().equals(BiophysicsConstants.INHOMOGENEOUS_VALUE))
+         {
+
+             String paramName = attributes.getValue(BiophysicsConstants.INHOMOGENEOUS_PARAM_NAME);
+             String paramVal = attributes.getValue(BiophysicsConstants.INHOMOGENEOUS_PARAM_VALUE);
+
+             if (currentVariableParam.equals(BiophysicsConstants.PARAMETER_GMAX))
+             {
+                 float convFactor = (float)UnitConverter.getConductanceDensity(1, UnitConverter.getUnitSystemIndex(unitsUsed), UnitConverter.NEUROCONSTRUCT_UNITS);
+                 String invConvFactor = 1/convFactor + " * ";
+                 if (paramVal.startsWith(paramVal))
+                 {
+                     paramVal = paramVal.substring(invConvFactor.length());
+                 }
+                 else
+                 {
+                    paramVal = convFactor+" * "+ paramVal;
+                 }
+             }
+             if (currentVariableParam.equals(BiophysicsConstants.PARAMETER_REV_POT)||
+                 currentVariableParam.equals(BiophysicsConstants.PARAMETER_REV_POT_2))
+             {
+                 float convFactor = (float)UnitConverter.getVoltage(1, UnitConverter.getUnitSystemIndex(unitsUsed), UnitConverter.NEUROCONSTRUCT_UNITS);
+                 String invConvFactor = 1/convFactor + " * ";
+                 if (paramVal.startsWith(paramVal))
+                 {
+                     paramVal = paramVal.substring(invConvFactor.length());
+                 }
+                 else
+                 {
+                    paramVal = convFactor+" * "+ paramVal;
+                 }
+             }
+
+
+             logger.logComment("Found new inhomog parameter: "+ paramName+", paramVal: "+ paramVal+" for "+ currentVariableParam +" on: "+ currentVariableParamGroup, true);
+
+             ParameterisedGroup pgToUse = null;
+             for (ParameterisedGroup pg: cell.getParameterisedGroups())
+             {
+                 if (pg.getName().equals(paramName))
+                 {
+                     pgToUse = pg;
+                 }
+             }
+             logger.logComment("Using: "+pgToUse, true);
+            try
+            {
+                ArrayList<Argument> expressionArgs =  new ArrayList<Argument>();
+
+                VariableParameter vp = new VariableParameter(currentVariableParam, paramVal, new Variable(pgToUse.getVariable()), expressionArgs);
+                VariableMechanism vm = new VariableMechanism(currentMechName, vp);
+
+                cell.associateParamGroupWithVarMech(pgToUse, vm);
+                
+            } catch (EquationException ex)
+            {
+                throw new SAXException("Error parsing expression: "+paramVal);
+            }
+
+            // VariableMechanism vm = new VariableMechanism(currentVariableParam, vp);
+
+         }
+
          else if (getCurrentElement().equals(BiophysicsConstants.PARAMETER_ELEMENT))
          {
              logger.logComment("Found new biophysics parameter");
@@ -653,7 +744,7 @@ public class MorphMLReader extends XMLFilterImpl
              String paramVal = attributes.getValue(BiophysicsConstants.PARAMETER_VALUE_ATTR);
 
 
-             logger.logComment("Found new parameter: "+ paramName+", paramVal: "+ paramVal);
+             logger.logComment("Found new parameter: "+ paramName+", paramVal: "+ paramVal+" for "+ getAncestorElement(1) +" (currentMechName: "+ currentMechName+")");
 
              if (getAncestorElement(1).equals(BiophysicsConstants.MECHANISM_ELEMENT) &&
                  currentMechType != null && paramName != null &&
@@ -767,8 +858,6 @@ public class MorphMLReader extends XMLFilterImpl
              }
 
          }
-
-
          else
          {
              logger.logComment("Warning, unhandled element: "+ getCurrentElement());
@@ -836,7 +925,7 @@ public class MorphMLReader extends XMLFilterImpl
         else if (getCurrentElement().equals(MorphMLConstants.INHOMO_PARAM)
               && getAncestorElement(1).equals(MorphMLConstants.CABLE_GROUP_ELEMENT))
         {
-            logger.logComment("<<<<      End of inhomo param: " + this.currentParamGroup, true);
+            logger.logComment("<<<<      End of inhomo param: " + this.currentParamGroup);
 
             cell.addParameterisedGroup(currentParamGroup);
             
@@ -941,10 +1030,13 @@ public class MorphMLReader extends XMLFilterImpl
 
 
 
-            File f = new File("..\\copynCmodels\\TraubEtAl2005\\generatedNEURON\\ttt.xml");
+            //File f = new File("..\\copynCmodels\\TraubEtAl2005\\generatedNEURON\\ttt.xml");
+
+            File f = new File("testProjects/TestMorphs/generatedNeuroML/test.mml");
+
            // File f = new File("/bernal/a4d.xml");
 
-            logger.logComment("Loading mml cell from "+ f.getAbsolutePath());
+            System.out.println("Loading mml cell from "+ f.getAbsolutePath());
 
             FileInputStream instream = null;
             InputSource is = null;
@@ -965,10 +1057,10 @@ public class MorphMLReader extends XMLFilterImpl
 
             Cell builtCell = mmlBuilder.getBuiltCell();
 
-            logger.logComment("Cell which has been built: ");
-            logger.logComment(CellTopologyHelper.printDetails(builtCell, null));
+            System.out.println("Cell which has been built: ");
+            System.out.println(CellTopologyHelper.printDetails(builtCell, null));
             
-            logger.logComment(mmlBuilder.getWarnings());
+            System.out.println("Warnings: "+mmlBuilder.getWarnings());
 
             //logger.logComment("Segments: "+ builtCell.getAllSegments());
 

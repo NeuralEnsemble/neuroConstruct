@@ -138,10 +138,15 @@ public class NeuronFileManagerTest {
         Thread.sleep(wait*3); // Shouldn't take longer than this
 
 
-        if(!timesFile.exists())
-            Thread.sleep(wait*3); // One more try...
+        if (!timesFile.exists())
+        {
+            System.out.println("Waiting for file to be created: "+ timesFile.getAbsolutePath());
+            Thread.sleep(wait*3);
+        }
         
         assertTrue(timesFile.exists());
+
+        Thread.sleep(wait); // Wait for all files to be written...
         
         simData.initialise();
         

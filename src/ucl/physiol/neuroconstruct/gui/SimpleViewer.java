@@ -285,6 +285,7 @@ public class SimpleViewer extends JDialog
 
 
     //Overridden so we can exit when window is closed
+    @Override
     protected void processWindowEvent(WindowEvent e)
     {
         super.processWindowEvent(e);
@@ -600,86 +601,7 @@ public class SimpleViewer extends JDialog
 
     }
 
-/*
-    public void showValidationButton(String message, String url)
-    {
-        JButton newButton = new JButton(message);
 
-        this.jPanelButtons.add(newButton, 0);
-
-        newButton.addActionListener(new ValidationListener(url));
-
-
-        this.validate();
-    }
-
-
-    private class ValidationListener implements ActionListener
-    {
-        String url = null;
-
-        public ValidationListener(String url)
-        {
-            this.url = url;
-        }
-
-
-        public void actionPerformed(ActionEvent e)
-        {
-            postContentsToURL(url);
-        }
-    }
-
-    private void postContentsToURL(String urlString)
-    {
-        logger.logComment("Posting contents to url: "+ urlString);
-
-        try
-        {
-            URL url = new URL(urlString+"?pastedFile=" + URLEncoder.encode(jEditorPaneMain.getText(), "UTF-8"));
-            //url.
-            jEditorPaneMain.setPage(url);
-            this.setTitle("URL: "+ url.toExternalForm());
-        }
-        catch (IOException ex)
-        {
-            GuiUtils.showErrorMessage(logger, "Problem posting contents to url: "+ urlString, ex, this);
-        }
-    };
-
-
-*/
-
-
-/*
-    public static String showEditableString(String message,
-                                    String title,
-                                    int fontSize,
-                                    boolean standalone)
-    {
-        SimpleViewer simpleViewer = new SimpleViewer(message, title, fontSize, standalone, false);
-
-
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
-        simpleViewer.setFrameSize((int)(screenSize.getWidth()*0.4d), (int)(screenSize.getHeight()*0.4d));
-
-        Dimension frameSize = simpleViewer.getSize();
-
-        if (frameSize.height > screenSize.height)
-            frameSize.height = screenSize.height;
-        if (frameSize.width > screenSize.width)
-            frameSize.width = screenSize.width;
-
-        simpleViewer.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
-        simpleViewer.setEditable();
-        //simpleViewer.
-        simpleViewer.show();
-
-        return simpleViewer.getString();
-
-    }
-    */
     protected void setEditable()
     {
         jEditorPaneMain.setEditable(true);

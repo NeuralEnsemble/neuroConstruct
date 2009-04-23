@@ -118,6 +118,12 @@ public class SimpleXMLElement extends SimpleXMLEntity
         contents.add(comment);
     }
 
+    public void addComment(String comment)
+    {
+        //comment.setParent(this);
+        contents.add(new SimpleXMLComment(comment));
+    }
+
 
 
     public SimpleXMLElement getParent()

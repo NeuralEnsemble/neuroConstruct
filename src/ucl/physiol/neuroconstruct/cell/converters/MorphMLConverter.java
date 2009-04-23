@@ -71,6 +71,8 @@ public class MorphMLConverter extends FormatImporter
      */
     private static boolean usePreV1_7_1Format = false;
 
+    private static int preferredExportUnits = UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS;
+
     public MorphMLConverter()
     {
         super("NeuroMLConverter",
@@ -103,6 +105,18 @@ public class MorphMLConverter extends FormatImporter
     {
         return this.warning;
     }
+
+    public static int getPreferredExportUnits()
+    {
+        return preferredExportUnits;
+    }
+
+    public static void setPreferredExportUnits(int prefUnits)
+    {
+        preferredExportUnits = prefUnits;
+    }
+
+
 
 
     public static Cell loadFromJavaObjFile(File objFile) throws MorphologyException
@@ -455,14 +469,16 @@ public class MorphMLConverter extends FormatImporter
 
                 if (nextSection.getNumberInternalDivisions()!=1)
                 {
-                    cableElement.addContent("\n    "); // to make it more readable...
+                    cableElement.addContent("\n                "); // to make it more readable...
                     cableElement.addChildElement(props);
-                    props.addContent("\n                        "); // to make it more readable...
+                    props.addContent("\n                    "); // to make it more readable...
 
                     MetadataConstants.addProperty(props,
                                 MorphMLConstants.NUMBER_INTERNAL_DIVS_PROP,
                                 nextSection.getNumberInternalDivisions() + "",
-                                "                        ");
+                                "                    ");
+                    props.addContent("\n                "); // to make it more readable...
+                    cableElement.addContent("\n            "); // to make it more readable...
                 }
 
                 if (nextSection.getComment() != null)
@@ -595,18 +611,26 @@ public class MorphMLConverter extends FormatImporter
 
                 SimpleXMLElement bioElement = new SimpleXMLElement(BiophysicsConstants.ROOT_ELEMENT);
 
-                bioElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.UNITS_ATTR,
-                                                               BiophysicsConstants.UNITS_PHYSIOLOGICAL));
+                if (preferredExportUnits==UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS)
+                {
+                    bioElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.UNITS_ATTR,
+                                                                   BiophysicsConstants.UNITS_PHYSIOLOGICAL));
+                }
+                else if (preferredExportUnits==UnitConverter.GENESIS_SI_UNITS)
+                {
+                    bioElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.UNITS_ATTR,
+                                                                   BiophysicsConstants.UNITS_SI));
+                }
 
                 cellElement.addChildElement(bioElement);
 
                 String prefix = BiophysicsConstants.PREFIX + ":";
 
-                ArrayList<ChannelMechanism> allChanMechs = cell.getAllFixedChannelMechanisms(true);
+                ArrayList<ChannelMechanism> allUniformChanMechs = cell.getAllUniformChanMechs(true);
 
-                for (int j = 0; j < allChanMechs.size(); j++)
+                for (int j = 0; j < allUniformChanMechs.size(); j++)
                 {
-                    ChannelMechanism chanMech = allChanMechs.get(j);
+                    ChannelMechanism chanMech = allUniformChanMechs.get(j);
 
                     SimpleXMLElement mechElement = new SimpleXMLElement(prefix + BiophysicsConstants.MECHANISM_ELEMENT);
                     bioElement.addChildElement(mechElement);
@@ -627,8 +651,8 @@ public class MorphMLConverter extends FormatImporter
 
                     gmaxParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
                                                                      UnitConverter.getConductanceDensity(chanMech.getDensity(),
-                        UnitConverter.NEUROCONSTRUCT_UNITS,
-                        UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + ""));
+                                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                    preferredExportUnits) + ""));
 
                     allParamGrps.add(gmaxParamElement);
                     
@@ -712,8 +736,8 @@ public class MorphMLConverter extends FormatImporter
 
                             revPotParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
                                                                              (float)UnitConverter.getVoltage(revPot,
-                                UnitConverter.NEUROCONSTRUCT_UNITS,
-                                UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + ""));
+                                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                    preferredExportUnits) + ""));
                             
 
                             mechElement.addChildElement(revPotParamElement);
@@ -747,6 +771,68 @@ public class MorphMLConverter extends FormatImporter
                     }
                 }
 
+
+                Hashtable<VariableMechanism, ParameterisedGroup> allVarChanMechs = cell.getVarMechsVsParaGroups();
+
+                Enumeration<VariableMechanism> varMechs = allVarChanMechs.keys();
+                while(varMechs.hasMoreElements())
+                {
+                    VariableMechanism vm = varMechs.nextElement();
+                    ParameterisedGroup pg = allVarChanMechs.get(vm);
+                    bioElement.addComment(vm.toString() + " on "+pg);
+
+                    SimpleXMLElement mechElement = new SimpleXMLElement(prefix + BiophysicsConstants.MECHANISM_ELEMENT);
+                    bioElement.addChildElement(mechElement);
+
+                    mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_NAME_ATTR,
+                                                                    vm.getName()));
+
+                    mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_TYPE_ATTR,
+                                                                    BiophysicsConstants.MECHANISM_TYPE_CHAN_MECH));
+                    
+                    
+                    SimpleXMLElement pe = new SimpleXMLElement(prefix + BiophysicsConstants.VAR_PARAMETER_ELEMENT);
+                    mechElement.addChildElement(pe);
+
+                    pe.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
+                                                                    vm.getParam().getName()));
+
+
+                    SimpleXMLElement group = new SimpleXMLElement(prefix + BiophysicsConstants.GROUP_ELEMENT);
+                    pe.addChildElement(group);
+                    group.addContent(pg.getGroup());
+
+                    SimpleXMLElement iv = new SimpleXMLElement(prefix + BiophysicsConstants.INHOMOGENEOUS_VALUE);
+                    pe.addChildElement(iv);
+                    iv.addAttribute(BiophysicsConstants.INHOMOGENEOUS_PARAM_NAME, pg.getName());
+                    String convFactor = "";
+
+                    if (vm.getParam().getName().equals(BiophysicsConstants.PARAMETER_GMAX))
+                    {
+                        convFactor = UnitConverter.getConductanceDensity(1, UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                preferredExportUnits) +" * ";
+                    }
+                    if (vm.getParam().getName().equals(BiophysicsConstants.PARAMETER_REV_POT)||
+                            vm.getParam().getName().equals(BiophysicsConstants.PARAMETER_REV_POT_2))
+                    {
+                        convFactor = UnitConverter.getVoltage(1, UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                preferredExportUnits) +" * ";
+                    }
+
+                    iv.addAttribute(BiophysicsConstants.INHOMOGENEOUS_PARAM_VALUE, convFactor+vm.getParam().getExpression().toString());
+                    if (convFactor.length()>0)
+                    {
+                        //pe.addContent("\n                "); // to make it more readable...
+                        pe.addComment("Note: conversion factor ("+convFactor+") included to convert to units: "+UnitConverter.getUnitSystemDescription(preferredExportUnits));
+                    }
+
+                    pe.addContent("\n                "); // to make it more readable...
+
+                }
+
+
+
+
                 SimpleXMLElement specCapElement = new SimpleXMLElement(prefix + BiophysicsConstants.SPECIFIC_CAP_ELEMENT);
                 
                 if (usePreV1_7_1Format) 
@@ -764,7 +850,7 @@ public class MorphMLConverter extends FormatImporter
                     paramElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
                                                                      UnitConverter.getSpecificCapacitance(specCap,
                         UnitConverter.NEUROCONSTRUCT_UNITS,
-                        UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + ""));
+                        preferredExportUnits) + ""));
 
                     specCapElement.addChildElement(paramElement);
 
@@ -797,7 +883,7 @@ public class MorphMLConverter extends FormatImporter
                     paramElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
                                                                      UnitConverter.getSpecificAxialResistance(specAxRes,
                         UnitConverter.NEUROCONSTRUCT_UNITS,
-                        UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + ""));
+                        preferredExportUnits) + ""));
 
                     specAxResElement.addChildElement(paramElement);
 
@@ -825,7 +911,7 @@ public class MorphMLConverter extends FormatImporter
                                                                  UnitConverter.getVoltage(cell.getInitialPotential().
                     getNominalNumber(),
                     UnitConverter.NEUROCONSTRUCT_UNITS,
-                    UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + ""));
+                    preferredExportUnits) + ""));
 
 
                 initPotElement.addChildElement(paramElement);
@@ -1176,9 +1262,9 @@ public class MorphMLConverter extends FormatImporter
 
         try
         {
-
-           Project testProj = Project.loadProject(new File("examples/Ex1-Simple/Ex1-Simple.neuro.xml"),
-                                                  new ProjectEventListener()
+            //File f = new File("nCexamples/Ex1_Simple/Ex1_Simple.neuro.xml");
+            File f = new File("../copyNcModels/Inhomogen/Inhomogen.neuro.xml");
+           Project testProj = Project.loadProject(f,new ProjectEventListener()
            {
                public void tableDataModelUpdated(String tableModelName)
                {};

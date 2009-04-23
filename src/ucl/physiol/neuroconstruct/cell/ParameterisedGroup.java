@@ -59,6 +59,10 @@ public class ParameterisedGroup implements Serializable
     private ProximalPref proximalPref = null;
 
     private DistalPref distalPref = null;
+
+    public static final String DEFAULT_VARIABLE = "p";
+
+    private String variable = DEFAULT_VARIABLE;
     
     
     
@@ -129,14 +133,17 @@ public class ParameterisedGroup implements Serializable
                               String group, 
                               Metric metric, 
                               ProximalPref proximalPref, 
-                              DistalPref distalPref)
+                              DistalPref distalPref,
+                              String variable)
     {
         this.name = name;
         this.group = group;
         this.metric = metric;
         this.proximalPref = proximalPref;
         this.distalPref = distalPref;
+        this.variable = variable;
     }
+
     
     /*
      * Returns the appropriate NEURON object (SubsetDomainIterator) with a constructor relevant for 
@@ -335,6 +342,20 @@ public class ParameterisedGroup implements Serializable
     {
         this.group = group;
     }
+
+
+    public String getVariable()
+    {
+        if (variable==null || variable.equals("null"))
+            variable = DEFAULT_VARIABLE;
+        return variable;
+    }
+
+    public void setVariable(String variable)
+    {
+        this.variable = variable;
+    }
+
     
     public Metric getMetric()
     {
@@ -371,7 +392,7 @@ public class ParameterisedGroup implements Serializable
     @Override
     public String toString()
     {
-        return "ParameterisedGroup: "+name + " on: "+group+" with metric: "+ metric+" ("+proximalPref+", "+distalPref+")";
+        return "ParameterisedGroup: "+name + " on: "+group+" with metric: "+ metric+" ("+proximalPref+", "+distalPref+"), var: "+getVariable();
         
     }
     
@@ -385,7 +406,7 @@ public class ParameterisedGroup implements Serializable
     public Object clone()
     {
         ParameterisedGroup pg2 = new ParameterisedGroup(new String(name),new String(group), metric, 
-            proximalPref, distalPref);
+            proximalPref, distalPref, new String(getVariable()));
         
         
         
@@ -425,6 +446,10 @@ public class ParameterisedGroup implements Serializable
         {
             return false;
         }
+        if (this.variable != other.variable && (this.variable == null || !this.variable.equals(other.variable)))
+        {
+            return false;
+        }
         return true;
     }
 
@@ -437,6 +462,7 @@ public class ParameterisedGroup implements Serializable
         hash = 53 * hash + (this.metric != null ? this.metric.hashCode() : 0);
         hash = 53 * hash + (this.proximalPref != null ? this.proximalPref.hashCode() : 0);
         hash = 53 * hash + (this.distalPref != null ? this.distalPref.hashCode() : 0);
+        hash = 53 * hash + (this.variable != null ? this.variable.hashCode() : 0);
         return hash;
     }
     
@@ -452,13 +478,15 @@ public class ParameterisedGroup implements Serializable
             String group2 = "all";
             cell.getSegmentWithId(3).getSection().addToGroup(group2);
             
-            
+
+            Variable p = new Variable("p");
 
             ParameterisedGroup pg = new ParameterisedGroup("OneToEnd", 
                                                            group2, 
                                                            Metric.PATH_LENGTH_FROM_ROOT, 
                                                            ProximalPref.MOST_PROX_AT_0, 
-                                                           DistalPref.MOST_DIST_AT_1);
+                                                           DistalPref.MOST_DIST_AT_1,
+                                                           p.getName());
 
             cell.addParameterisedGroup(pg);
             
@@ -469,7 +497,6 @@ public class ParameterisedGroup implements Serializable
             String expression1 = "A + B*(p)";
 
 
-            Variable p = new Variable("p");
             Argument a = new Argument("A", 2);
             Argument b = new Argument("B", 1);
 

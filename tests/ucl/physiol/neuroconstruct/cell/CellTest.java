@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
 public class CellTest {
     
     static String testGroup = "TestGroup";
-    static String OldGroup = "OldGroup";
+    static String oldGroupStr = "OldGroup";
     private static final long serialVersionUID = -1542517048619766744L;
 
     public CellTest() {
@@ -105,7 +105,8 @@ public class CellTest {
                                                Section.ALL, 
                                                Metric.PATH_LENGTH_FROM_ROOT, 
                                                ProximalPref.MOST_PROX_AT_0, 
-                                               DistalPref.MOST_DIST_AT_1);
+                                               DistalPref.MOST_DIST_AT_1,
+                                               "ppp");
         
         cell.getParameterisedGroups().add(pg);
         
@@ -115,26 +116,26 @@ public class CellTest {
         
          // some changes added to test the rename group function
         
-        dendSeg.getSection().addToGroup(OldGroup);
+        dendSeg.getSection().addToGroup(oldGroupStr);
                 
-        cell.associateGroupWithSynapse(OldGroup, "SynType1");
+        cell.associateGroupWithSynapse(oldGroupStr, "SynType1");
 
-        cell.associateGroupWithChanMech(OldGroup, new ChannelMechanism("chanMech1", 123));
+        cell.associateGroupWithChanMech(oldGroupStr, new ChannelMechanism("chanMech1", 123));
 
         ApPropSpeed apPropSpeed1 = new ApPropSpeed();
 
-        cell.associateGroupWithApPropSpeed(OldGroup, apPropSpeed1);
+        cell.associateGroupWithApPropSpeed(oldGroupStr, apPropSpeed1);
 
-        cell.associateGroupWithSpecAxRes(OldGroup, serialVersionUID);
+        cell.associateGroupWithSpecAxRes(oldGroupStr, serialVersionUID);
 
-        cell.associateGroupWithSpecCap(OldGroup, serialVersionUID);            
+        cell.associateGroupWithSpecCap(oldGroupStr, serialVersionUID);
 
-        ParameterisedGroup OldGroup = new ParameterisedGroup("ParaOldGroup", "OldGroup", 
+        ParameterisedGroup oldGroup = new ParameterisedGroup("ParaOldGroup", "OldGroup",
                 ParameterisedGroup.Metric.PATH_LENGTH_FROM_ROOT, 
                 ParameterisedGroup.ProximalPref.MOST_PROX_AT_0, 
-                ParameterisedGroup.DistalPref.MOST_DIST_AT_1 );
+                ParameterisedGroup.DistalPref.MOST_DIST_AT_1, "ggg");
 
-        cell.getParameterisedGroups().add(OldGroup);
+        cell.getParameterisedGroups().add(oldGroup);
        
         return cell;
     }
@@ -192,11 +193,11 @@ public class CellTest {
         
         // testing the rename group function
         
-        cell1.renameGroup(OldGroup, "NewGroup");
+        cell1.renameGroup(oldGroupStr, "NewGroup");
         
         assertTrue(cell1.isGroup("NewGroup"));
         
-        assertFalse(cell1.isGroup(OldGroup));
+        assertFalse(cell1.isGroup(oldGroupStr));
         
         assertTrue(cell1.getSynapsesForGroup("NewGroup").contains("SynType1"));
         
@@ -205,7 +206,7 @@ public class CellTest {
         
         for(Vector<String> groups: cell1.getSynapsesVsGroups().values())
         {
-            assertFalse(groups.contains(OldGroup));
+            assertFalse(groups.contains(oldGroupStr));
             if (groups.contains("NewGroup"))
                 foundGroup = true;
         }
@@ -216,7 +217,7 @@ public class CellTest {
         
         for(Vector<String> groups: cell1.getSpecAxResVsGroups().values())
         {
-            assertFalse(groups.contains(OldGroup));
+            assertFalse(groups.contains(oldGroupStr));
             if (groups.contains("NewGroup"))
                 foundGroup = true;
         }
@@ -227,7 +228,7 @@ public class CellTest {
         
         for(Vector<String> groups: cell1.getSpecCapVsGroups().values())
         {
-            assertFalse(groups.contains(OldGroup));
+            assertFalse(groups.contains(oldGroupStr));
             if (groups.contains("NewGroup"))
                 foundGroup = true;
         }
@@ -238,7 +239,7 @@ public class CellTest {
         
         for(Vector<String> groups: cell1.getSpecCapVsGroups().values())
         {
-            assertFalse(groups.contains(OldGroup));
+            assertFalse(groups.contains(oldGroupStr));
             if (groups.contains("NewGroup"))
                 foundGroup = true;
         }

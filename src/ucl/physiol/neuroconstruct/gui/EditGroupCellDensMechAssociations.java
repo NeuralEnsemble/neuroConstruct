@@ -144,7 +144,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
         myCell = cell;
 
-        ArrayList<ChannelMechanism> mechs = cell.getAllFixedChannelMechanisms(false);
+        ArrayList<ChannelMechanism> mechs = cell.getAllUniformChanMechs(false);
 
         // create copy...
         
@@ -158,7 +158,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
             if (!mechList.contains(nextMech.getName()))
             {
-                logger.logComment("Latest chan mechs: "+ cell.getAllFixedChannelMechanisms(false));
+                logger.logComment("Latest chan mechs: "+ cell.getAllUniformChanMechs(false));
 
                 int result = JOptionPane.showConfirmDialog(this, "The channel mechanism " +
                                                            nextMech +
@@ -182,7 +182,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
                     }
 
-                    logger.logComment("Chan mechs: "+ cell.getAllFixedChannelMechanisms(false));
+                    logger.logComment("Chan mechs: "+ cell.getAllUniformChanMechs(false));
                 }
                 else logger.logComment("Leaving it alone...");
 
@@ -1155,9 +1155,11 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                     logger.logComment("Going to create variable mechanism of "+selectedMech+" for parameterised group: "+ group);
                     
                     String var  ="gmax";
-                    String testExpr = "1e-7*exp(-p/100)";
+
+                    Variable p = new Variable(paramGroups.get(0).getVariable());
                     
-                    Variable p = new Variable("p");
+                    String testExpr = "1e-7*exp(-"+p.getName()+"/100)";
+                    
                     
                     String expr
                         = JOptionPane.showInputDialog(this,

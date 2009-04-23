@@ -758,7 +758,8 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                                                                    Section.ALL, 
                                                                    Metric.PATH_LENGTH_FROM_ROOT, 
                                                                    ProximalPref.MOST_PROX_AT_0, 
-                                                                   DistalPref.MOST_DIST_AT_1);
+                                                                   DistalPref.MOST_DIST_AT_1,
+                                                                   ParameterisedGroup.DEFAULT_VARIABLE);
                     
                     displayedCell.addParameterisedGroup(pg1);
                     
@@ -766,7 +767,8 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                                                                    Section.ALL, 
                                                                    Metric.PATH_LENGTH_FROM_ROOT, 
                                                                    ProximalPref.NO_TRANSLATION, 
-                                                                   DistalPref.NO_NORMALISATION);
+                                                                   DistalPref.NO_NORMALISATION,
+                                                                   ParameterisedGroup.DEFAULT_VARIABLE);
                     
                     displayedCell.addParameterisedGroup(pg2);
                     
@@ -774,7 +776,8 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                                                                    Section.DENDRITIC_GROUP, 
                                                                    Metric.PATH_LENGTH_FROM_ROOT, 
                                                                    ProximalPref.MOST_PROX_AT_0, 
-                                                                   DistalPref.NO_NORMALISATION);
+                                                                   DistalPref.NO_NORMALISATION,
+                                                                   ParameterisedGroup.DEFAULT_VARIABLE);
                     
                     displayedCell.addParameterisedGroup(pg3);
                     
@@ -869,7 +872,8 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                                    DistalPref.values(), 
                                    DistalPref.values()[0]);
                     
-                    ParameterisedGroup pg = new ParameterisedGroup(name, group, metric, pp, dp);
+                    ParameterisedGroup pg = new ParameterisedGroup(name, group, metric, pp, dp,
+                                                                   ParameterisedGroup.DEFAULT_VARIABLE);
                     
                     displayedCell.getParameterisedGroups().add(pg);
                     
@@ -1358,7 +1362,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             StringBuffer chanInfo = new StringBuffer("(Seg: "+ latestSelectedSegment.getSegmentName()
                                                      +", Sec: "+ latestSelectedSegment.getSection().getSectionName()+") ");
 
-            ArrayList<ChannelMechanism> chans = this.displayedCell.getFixedChanMechsForSegment(latestSelectedSegment);
+            ArrayList<ChannelMechanism> chans = this.displayedCell.getUniformChanMechsForSeg(latestSelectedSegment);
 
             for (int i = 0; i < chans.size(); i++)
             {

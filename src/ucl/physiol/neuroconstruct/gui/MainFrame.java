@@ -11547,6 +11547,22 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         String timeInfo = GeneralUtils.getCurrentDateAsNiceString() +"_"+GeneralUtils.getCurrentTimeAsNiceString();
         timeInfo = GeneralUtils.replaceAllTokens(timeInfo, ":", "-");
 
+        boolean warnedReInput=false;
+        for(String inptRef: projManager.getCurrentProject().generatedElecInputs.getInputReferences())
+        {
+            for(SingleElectricalInput sei: projManager.getCurrentProject().generatedElecInputs.getInputLocations(inptRef))
+            {
+                if (sei.getInstanceProps()!=null && !warnedReInput)
+                {
+                    GuiUtils.showWarningMessage(logger, "Note that not all of the generated information in this network can currently be saved to NetworkML.\n" +
+                            "For example input "+projManager.getCurrentProject().elecInputInfo.getStim(inptRef)+" has some unique values for individual conections, e.g.:\n" +
+                            ""+sei+": "+sei.getInstanceProps().details(false)+"\n" +
+                            "which cannot be saved and reloaded in NetworkML.", this);
+                    warnedReInput = true;
+                }
+            }
+        }
+
         String fileName = "Net_" +timeInfo;
 
         fileName = JOptionPane.showInputDialog("Please enter the name of the NetworkML file (without extension)",fileName);

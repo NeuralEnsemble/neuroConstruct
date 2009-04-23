@@ -76,25 +76,25 @@ public class ParameterisedGroupTest
                                    Section.DENDRITIC_GROUP, 
                                    Metric.PATH_LENGTH_FROM_ROOT, 
                                    ProximalPref.MOST_PROX_AT_0, 
-                                   DistalPref.MOST_DIST_AT_1);
+                                   DistalPref.MOST_DIST_AT_1,"p1");
         
         pg2 = new ParameterisedGroup("StartToEnd", 
                                    Section.DENDRITIC_GROUP, 
                                    Metric.PATH_LENGTH_FROM_ROOT, 
                                    ProximalPref.NO_TRANSLATION, 
-                                   DistalPref.NO_NORMALISATION);
+                                   DistalPref.NO_NORMALISATION,"p2");
         
         pg3 = new ParameterisedGroup("TipZeroToOne", 
                                    tipSection, 
                                    Metric.PATH_LENGTH_FROM_ROOT, 
                                    ProximalPref.MOST_PROX_AT_0, 
-                                   DistalPref.MOST_DIST_AT_1);
+                                   DistalPref.MOST_DIST_AT_1,"p3");
         
         pg4 = new ParameterisedGroup("TipToEnd", 
                                    tipSection, 
                                    Metric.PATH_LENGTH_FROM_ROOT, 
                                    ProximalPref.MOST_PROX_AT_0, 
-                                   DistalPref.NO_NORMALISATION);
+                                   DistalPref.NO_NORMALISATION,"p4");
         
         /*
         pg5 = new ParameterisedGroup("3DDistZeroToOne", 

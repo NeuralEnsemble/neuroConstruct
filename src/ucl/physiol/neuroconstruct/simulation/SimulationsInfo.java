@@ -437,7 +437,7 @@ public class SimulationsInfo extends AbstractTableModel
                 StringBuffer info = new StringBuffer("[");
                 Cell cell = project.cellManager.getCell(cellType);
 
-                ArrayList<ChannelMechanism> allChanMechs = cell.getAllFixedChannelMechanisms(true);
+                ArrayList<ChannelMechanism> allChanMechs = cell.getAllUniformChanMechs(true);
 
                 for (int j = 0; j < allChanMechs.size(); j++)
                 {

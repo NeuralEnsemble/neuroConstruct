@@ -800,7 +800,7 @@ public class CellTopologyHelper
      */
     public static boolean hasExtraCellMechParams(Cell cell)
     {
-        ArrayList<ChannelMechanism> chanMechs = cell.getAllFixedChannelMechanisms(true);
+        ArrayList<ChannelMechanism> chanMechs = cell.getAllUniformChanMechs(true);
         for(ChannelMechanism cm: chanMechs)
         {
             if (cm.getExtraParameters().size()>0) return true;
@@ -2253,7 +2253,7 @@ public class CellTopologyHelper
      */
     public static void updateChannelMechanisms(Cell cell, Project project)
     {
-        ArrayList allChanMechs = cell.getAllFixedChannelMechanisms(true);
+        ArrayList allChanMechs = cell.getAllUniformChanMechs(true);
         boolean usingOldMethod = false;
 
         for (int i = 0; i < allChanMechs.size(); i++)
@@ -2397,7 +2397,7 @@ public class CellTopologyHelper
 
         sb.append("  "+GeneralUtils.getEndLine(html));
 
-        ArrayList<ChannelMechanism> allChanMechs = cell.getAllFixedChannelMechanisms(true);
+        ArrayList<ChannelMechanism> allChanMechs = cell.getAllUniformChanMechs(true);
         GeneralUtils.reorderAlphabetically(allChanMechs, true);
         for (int i = 0; i < allChanMechs.size(); i++)
         {
@@ -2537,7 +2537,8 @@ public class CellTopologyHelper
         {
             sb.append("    ParameterisedGroup: "+GeneralUtils.getBold(pg.getName(), html) 
                 + " on: "+GeneralUtils.getBold(pg.getGroup(), html)+" with metric: "
-                + GeneralUtils.getBold(pg.getMetric()+"", html)+ GeneralUtils.getEndLine(html));
+                + GeneralUtils.getBold(pg.getMetric()+"", html)+", variable: "
+                + GeneralUtils.getBold(pg.getVariable()+"", html)+ GeneralUtils.getEndLine(html));
         }
 
         float totalSurfaceArea = 0;
@@ -2905,7 +2906,7 @@ public class CellTopologyHelper
             for (int j = 0; j < allSections.size(); j++)
             {
                 Section nextSec = allSections.get(j);
-                ArrayList<ChannelMechanism> fixedMechs = cell.getFixedChanMechsForSection(nextSec);
+                ArrayList<ChannelMechanism> fixedMechs = cell.getUniformChanMechsForSec(nextSec);
                 ArrayList<VariableMechanism> varMechs = cell.getVarChanMechsForSection(nextSec);
                 
                 ApPropSpeed appv = cell.getApPropSpeedForSection(nextSec);
@@ -3446,7 +3447,7 @@ public class CellTopologyHelper
         
             ArrayList<String> infoB = new ArrayList<String>();
             
-            ArrayList<ChannelMechanism> allChanMechsB = cellB.getAllFixedChannelMechanisms(true);
+            ArrayList<ChannelMechanism> allChanMechsB = cellB.getAllUniformChanMechs(true);
             GeneralUtils.reorderAlphabetically(allChanMechsB, true);
             
             for (int i = 0; i < allChanMechsB.size(); i++)
@@ -3464,7 +3465,7 @@ public class CellTopologyHelper
             
             ArrayList<String> infoA = new ArrayList<String>();
             
-            ArrayList<ChannelMechanism> allChanMechsA = cellA.getAllFixedChannelMechanisms(true);
+            ArrayList<ChannelMechanism> allChanMechsA = cellA.getAllUniformChanMechs(true);
             GeneralUtils.reorderAlphabetically(allChanMechsA, true);
             for (int i = 0; i < allChanMechsA.size(); i++)
             {
@@ -4183,7 +4184,7 @@ public class CellTopologyHelper
                                            html) + GeneralUtils.getEndLine(html));
 
 
-        ArrayList<ChannelMechanism>  allFixedChanMechs = cell.getFixedChanMechsForSegment(segment);
+        ArrayList<ChannelMechanism>  allFixedChanMechs = cell.getUniformChanMechsForSeg(segment);
 
         float specMembRes = -1;
 
@@ -4354,7 +4355,7 @@ public class CellTopologyHelper
     public static float getSpecMembResistance(Cell cell, Project project, Section section) throws CellMechanismException
     {
         //TODO: check variable chan mechs!!
-        ArrayList<ChannelMechanism>  allFixedChanMechs = cell.getFixedChanMechsForSection(section);
+        ArrayList<ChannelMechanism>  allFixedChanMechs = cell.getUniformChanMechsForSec(section);
 
         float specMembRes = -1;
 

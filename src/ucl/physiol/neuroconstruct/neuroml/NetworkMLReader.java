@@ -875,27 +875,29 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                  
                  try
                  {
-//////////                     currentIClampSettings.getDelay().reset();
-//////////                     float currDelay = currentIClampSettings.getDelay().getNumber();
-//////////                     if (currDelay != currentPulseDelay)
-//////////                     {
-//////////                       GuiUtils.showWarningMessage(logger, "Error, imported delay ("+currentPulseDelay+") for IClamp "+currentInputName+" is different from that currently in the project: "+ ss, null);                
-//////////                     }                 
-//////////
-//////////                     currentIClampSettings.getDuration().reset();
-//////////                     float currDur = currentIClampSettings.getDuration().getNumber();
-//////////                     if (currDur != currentPulseDur)
-//////////                     {
-//////////                       GuiUtils.showWarningMessage(logger, "Error, imported duration ("+currentPulseDur+") for IClamp "+currentInputName+" is different from that currently in the project: "+currDur, null);                
-//////////                     }
-//////////
-//////////                     currentIClampSettings.getAmplitude().reset();
-//////////                     float currAmp = currentIClampSettings.getAmplitude().getNumber();
-//////////
-//////////                     if (currAmp != currentPulseAmp)
-//////////                     {
-//////////                       GuiUtils.showWarningMessage(logger, "Error, the imported amplitude ("+currentPulseAmp+") for IClamp "+currentInputName+" is different from that currently in the project: "+ currAmp, null);                
-//////////                     }
+
+                     float currDelay = currentIClampSettings.getDel().getNominalNumber();
+                     if (currDelay != currentPulseDelay)
+                     {
+                        GuiUtils.showWarningMessage(logger, "Error, delay in NetworkML ("+currentPulseDelay+") for IClamp: "+currentInputName+" is different from that currently in the project: "+ ss+".\n" +
+                                "Project settings will be used!", null);
+                     }                 
+
+                     float currDur = currentIClampSettings.getDur().getNominalNumber();
+                     if (currDur != currentPulseDur)
+                     {
+                       GuiUtils.showWarningMessage(logger, "Error, duration in NetworkML ("+currentPulseDur+") for IClamp: "+currentInputName+" is different from that currently in the project: "+ss+".\n" +
+                                "Project settings will be used!", null);
+                     }
+
+                     //.getAmplitude().reset();
+                     float currAmp = currentIClampSettings.getAmp().getNominalNumber();
+
+                     if (currAmp != currentPulseAmp)
+                     {
+                       GuiUtils.showWarningMessage(logger, "Error, amplitude in NetworkML ("+currentPulseAmp+") for IClamp: "+currentInputName+" is different from that currently in the project: "+ ss+".\n" +
+                                "Project settings will be used!", null);
+                     }
                 } 
                 catch (Exception ex)
                 {

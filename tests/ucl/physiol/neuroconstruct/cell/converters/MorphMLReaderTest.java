@@ -27,15 +27,24 @@
 package ucl.physiol.neuroconstruct.cell.converters;
 
 import java.io.File;
+import java.io.IOException;
+import javax.xml.XMLConstants;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Result;
 import static org.junit.Assert.*;
+import org.xml.sax.SAXException;
 import test.MainTest;
 import ucl.physiol.neuroconstruct.cell.Cell;
 import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants;
 import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
 
 /**
  *
@@ -74,33 +83,60 @@ public class MorphMLReaderTest {
         }
     }
 
-    @Test public void testWriteAndRead() throws MorphologyException 
+    @Test public void testWriteAndRead() throws MorphologyException, SAXException, IOException
     {
         System.out.println("---  testWriteAndRead...");
         
         Cell cell1 = pm.getCurrentProject().cellManager.getAllCells().get(0);
         
         cell1.setCellDescription("This is\na test\n...");
+
+        System.out.println("PGs: "+ cell1.getParameterisedGroups());
         
         MorphMLConverter mmlC = new MorphMLConverter();
         
         File savedNeuroMLDir = ProjectStructure.getNeuroMLDir(projDir);
         File morphFile = new File(savedNeuroMLDir, "test.mml");
-        
-        MorphMLConverter.saveCellInNeuroMLFormat(cell1, pm.getCurrentProject(), morphFile, NeuroMLConstants.NEUROML_LEVEL_3);
-        
-        assertTrue(morphFile.exists());
-        
-        System.out.println("Saved cell in NeuroML Level 3 file: "+ morphFile.getAbsolutePath());
-        
-        Cell cell2 = mmlC.loadFromMorphologyFile(morphFile, cell1.getInstanceName());
-        String compare = CellTopologyHelper.compare(cell1, cell2, false);
-        
-        System.out.println("Comparison 1: "+ compare);
-        
-        assertTrue(compare.indexOf(CellTopologyHelper.CELLS_ARE_IDENTICAL)>=0);
-        
-        System.out.println("Reloaded file and cells are identical");
+
+        int[] units = new int[]{UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, UnitConverter.GENESIS_SI_UNITS};
+
+        for(int unit: units)
+        {
+            MorphMLConverter.setPreferredExportUnits(unit);
+            
+            MorphMLConverter.saveCellInNeuroMLFormat(cell1, pm.getCurrentProject(), morphFile, NeuroMLConstants.NEUROML_LEVEL_3);
+
+            assertTrue(morphFile.exists());
+
+            System.out.println("Saved cell in NeuroML Level 3 file: "+ morphFile.getAbsolutePath());
+
+            File schemaFile = GeneralProperties.getNeuroMLSchemaFile();
+
+            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+            System.out.println("Found the XSD file: " + schemaFile.getAbsolutePath());
+
+            Source schemaFileSource = new StreamSource(schemaFile);
+            Schema schema = factory.newSchema(schemaFileSource);
+
+            Validator validator = schema.newValidator();
+
+            Source xmlFileSource = new StreamSource(morphFile);
+
+            validator.validate(xmlFileSource);
+
+            System.out.println("File is valid!");
+
+            Cell cell2 = mmlC.loadFromMorphologyFile(morphFile, cell1.getInstanceName());
+            String compare = CellTopologyHelper.compare(cell1, cell2, false);
+
+            System.out.println("Comparison 1: "+ compare);
+
+            assertTrue(compare.indexOf(CellTopologyHelper.CELLS_ARE_IDENTICAL)>=0);
+
+            System.out.println("Reloaded file and cells are identical");
+
+        }
         
     }
     
