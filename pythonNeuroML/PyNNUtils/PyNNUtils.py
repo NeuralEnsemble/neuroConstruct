@@ -41,17 +41,17 @@ class NetManagerPyNN(NetworkHandler):
     
     inputCount = {}
 	
-    simulator = "neuron"
+    my_simulator = "neuron2"
     
     myRandNumGen = None
     
     maxSimLength = -1 # Needed for generating input spike time array...
 	
 	
-    def __init__(self, simulator="neuron"):
-        self.log.info("Using simulator: "+simulator)
-        self.simulator = simulator
-        exec("from pyNN.%s import *" % self.simulator)
+    def __init__(self, my_simulator="neuron2"):
+        self.log.info("Using simulator: "+my_simulator)
+        self.my_simulator = my_simulator
+        exec("from pyNN.%s import *" % self.my_simulator)
         
         setup()
         
@@ -69,7 +69,7 @@ class NetManagerPyNN(NetworkHandler):
     #    
     def handlePopulation(self, cellGroup, cellType, size):
       
-        exec("from pyNN.%s import *" % self.simulator) # Does this really need to be imported every time?
+        exec("from pyNN.%s import *" % self.my_simulator) # Does this really need to be imported every time?
 		
         if (size>=0):
             sizeInfo = ", size "+ str(size)+ " cells"
@@ -128,7 +128,7 @@ class NetManagerPyNN(NetworkHandler):
                                                     localWeight = 1, \
                                                     localThreshold = 0):
         
-        exec("from pyNN.%s import *" % self.simulator) # Does this really need to be imported every time?
+        exec("from pyNN.%s import *" % self.my_simulator) # Does this really need to be imported every time?
         
         self.printConnectionInformation(projName, id, source, target, synapseType, preCellId, postCellId, localWeight)
         
@@ -155,7 +155,7 @@ class NetManagerPyNN(NetworkHandler):
     def handleInputSource(self, inputName, cellGroup, inputProps=[], size=-1):
         self.printInputInformation(inputName, cellGroup, inputProps, size)
         
-        exec("from pyNN.%s import *" % self.simulator) # Does this really need to be imported every time?
+        exec("from pyNN.%s import *" % self.my_simulator) # Does this really need to be imported every time?
         
         if size<0:
             self.log.error("Error at handleInputSource! Need a size attribute in sites element to create spike source!")
@@ -241,7 +241,7 @@ class NetManagerPyNN(NetworkHandler):
     #          
     def handleSingleInput(self, inputName, cellId, segId = 0, fract = 0.5):
         
-        exec("from pyNN.%s import *" % self.simulator) # Does this really need to be imported every time?
+        exec("from pyNN.%s import *" % self.my_simulator) # Does this really need to be imported every time?
         
         if self.inputCount.keys().count(inputName)==0:
             self.inputCount[inputName] = 0
