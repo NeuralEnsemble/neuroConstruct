@@ -28,7 +28,6 @@ package ucl.physiol.neuroconstruct.cell;
  
 
 import java.io.Serializable;
-import ucl.physiol.neuroconstruct.utils.units.*;
 
  /**
   * A class representing a generic parameter for a channel mechanism
@@ -42,8 +41,8 @@ public class MechParameter implements Serializable
 {
     static final long serialVersionUID = -6656553218847575L;
 
-    public String name = null;
-    public float value = Float.NaN;
+    private String name = null;
+    private float value = Float.NaN;
     
     
     public MechParameter()

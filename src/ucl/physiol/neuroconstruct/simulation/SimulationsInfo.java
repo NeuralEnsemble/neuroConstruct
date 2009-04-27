@@ -72,6 +72,8 @@ public class SimulationsInfo extends AbstractTableModel
 
     public static final String simulatorPropsFileName = new String("simulator.props");
 
+    public static final String psicsLogFile = new String("log.txt");
+
     Vector<SimulationData> simDataObjs = new Vector<SimulationData>();
 
     Vector<Properties> extraColumns = new Vector<Properties>();
@@ -677,8 +679,7 @@ public class SimulationsInfo extends AbstractTableModel
 
             try
             {
-                    simulatorProps.loadFromXML(fis2);
-
+                simulatorProps.loadFromXML(fis2);
                 fis2.close();
 
             }
@@ -688,14 +689,11 @@ public class SimulationsInfo extends AbstractTableModel
                 try
                 {
                     simulatorProps.load(fis2);
-
                     fis2.close();
                 }
                 catch (IOException ex2)
                 {
-
                     // this props file is not necessary...
-
                 }
             }
         }
@@ -710,6 +708,29 @@ public class SimulationsInfo extends AbstractTableModel
         {
             String next = (String)simulatorPropEnum.nextElement();
             props.setProperty(next, simulatorProps.getProperty(next));
+        }
+
+        if (props.getProperty("Simulator")!=null && props.getProperty("Simulator").equals("PSICS"))
+        {
+            File psicsInfo = new File(simulationDir, psicsLogFile);
+            String contents = GeneralUtils.readShortFile(psicsInfo);
+            String timeTag = "ppp: psics-out";
+
+            int index = contents.indexOf(timeTag);
+            if(index>=0)
+            {
+                String simTime = contents.substring(index+timeTag.length(), contents.indexOf("\n", index+timeTag.length()));
+                try
+                {
+                    float time = (float)Double.parseDouble(simTime.trim());
+
+                    props.setProperty("RealSimulationTime", time+"");
+                }
+                catch(NumberFormatException e)
+                {
+                    props.setProperty("RealSimulationTime", "Could not extract from: "+ psicsInfo.getAbsolutePath());
+                }
+            }
         }
 
         return props;

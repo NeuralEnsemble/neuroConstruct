@@ -851,7 +851,7 @@ public class PsicsFileManager
         {
             //String executable = null;
             
-            String javaEx = "java -jar";
+            String javaEx = "java -Xmx1000M -jar ";
             
             File fullFileToRun = new File(dirToRunFrom, mainPsicsFile.getName());
             

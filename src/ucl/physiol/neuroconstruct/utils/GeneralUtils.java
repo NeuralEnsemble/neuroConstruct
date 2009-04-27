@@ -202,6 +202,19 @@ public class GeneralUtils
     }
 
     /*
+     * Quick & dirty writer for short text file into a String
+     */
+    public static void writeShortFile(File shortFile, String contents) throws IOException
+    {
+        Writer out = new FileWriter(shortFile);
+        out.write(contents);
+        out.flush();
+        out.close();
+      
+    }
+
+
+    /*
      * Quick & dirty reader for short text file into a String
      */
     public static String readShortFile(File shortFile)

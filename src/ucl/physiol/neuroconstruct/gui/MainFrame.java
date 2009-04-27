@@ -425,6 +425,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JCheckBox jCheckBoxNeuronGenAllMod = new JCheckBox("Generate all mod files");
     JCheckBox jCheckBoxNeuronCopySimFiles = new JCheckBox("Copy files to simulations dir");
     JCheckBox jCheckBoxGenesisCopySimFiles = new JCheckBox("Copy files to simulations dir");
+    JCheckBox jCheckBoxGenesisMooseMode = new JCheckBox("MOOSE test mode (alpha)");
     
 
     JCheckBox jCheckBoxNeuronForceCorrInit = new JCheckBox("Force correct ChannelML init");
@@ -4031,8 +4032,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelGenesisCheckBoxes.add(jCheckBoxGenesisSymmetric, null);
         jPanelGenesisCheckBoxes.add(jCheckBoxGenesisComments, null);
         jPanelGenesisCheckBoxes.add(jCheckBoxGenesisNoGraphicsMode, null);
-        
+
         jPanelGenesisCheckBoxes.add(this.jCheckBoxGenesisCopySimFiles);
+        jPanelGenesisCheckBoxes.add(this.jCheckBoxGenesisMooseMode);
 
         jPanelGenesisNumMethod.add(jLabelGenesisNumMethod, null);
         jPanelGenesisNumMethod.add(jButtonGenesisNumMethod, null);
@@ -4301,6 +4303,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisShapePlot);
         addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisNoGraphicsMode);
         addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisCopySimFiles);
+        addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisMooseMode);
 
         addRadioButtonListner(GENESIS_SIMULATOR_TAB, jRadioButtonGenesisPhy);
         addRadioButtonListner(GENESIS_SIMULATOR_TAB, jRadioButtonGenesisSI);
@@ -4467,6 +4470,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
 
         jCheckBoxGenesisCopySimFiles.setToolTipText(toolTipText.getToolTip("GenesisCopySimFiles"));
+        jCheckBoxGenesisMooseMode.setToolTipText(toolTipText.getToolTip("GenesisMooseMode"));
 
         jLabelSimDefDur.setToolTipText(toolTipText.getToolTip("Simulation def duration"));
         this.jTextFieldSimDefDur.setToolTipText(toolTipText.getToolTip("Simulation def duration"));
@@ -4653,8 +4657,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 projManager.getCurrentProject().genesisSettings.setSymmetricCompartments(jCheckBoxGenesisSymmetric.isSelected());
                 projManager.getCurrentProject().genesisSettings.setGenerateComments(jCheckBoxGenesisComments.isSelected());
                 projManager.getCurrentProject().genesisSettings.setShowShapePlot(jCheckBoxGenesisShapePlot.isSelected());
-                
+
                 projManager.getCurrentProject().genesisSettings.setCopySimFiles(this.jCheckBoxGenesisCopySimFiles.isSelected());
+                projManager.getCurrentProject().genesisSettings.setMooseCompatMode(this.jCheckBoxGenesisMooseMode.isSelected());
 
                 if (jRadioButtonGenesisPhy.isSelected())
                     projManager.getCurrentProject().genesisSettings.setUnitSystemToUse(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS);
@@ -9521,8 +9526,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                //////////jCheckBoxGenesisVoltPlot.setSelected(projManager.getCurrentProject().genesisSettings.isShowVoltPlot());
                jCheckBoxGenesisShapePlot.setSelected(projManager.getCurrentProject().genesisSettings.isShowShapePlot());
                
-               
+
                jCheckBoxGenesisCopySimFiles.setSelected(projManager.getCurrentProject().genesisSettings.isCopySimFiles());
+               jCheckBoxGenesisMooseMode.setSelected(projManager.getCurrentProject().genesisSettings.isMooseCompatMode());
 
                if (projManager.getCurrentProject().genesisSettings.getUnitSystemToUse() == UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS)
                    jRadioButtonGenesisPhy.setSelected(true);

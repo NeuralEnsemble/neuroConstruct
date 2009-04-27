@@ -126,12 +126,9 @@ public class GenesisFileManager
     
     
     
-    // temporary!!!
-    public static boolean mooseCompatMode()
+    public boolean mooseCompatMode()
     {
-        File testFile = new File("moosecompat");
-        
-        return testFile.exists();
+        return project.genesisSettings.isMooseCompatMode();
     }
 
 
@@ -3213,7 +3210,7 @@ public class GenesisFileManager
         // Saving summary of the simulation params
         try
         {
-            if (!GenesisFileManager.mooseCompatMode())
+            if (!mooseCompatMode())
             {
                 SimulationsInfo.recordSimulationSummary(project, simConfig, dirForSimDataFiles, "GENESIS", morphComp);
             }
@@ -3264,9 +3261,13 @@ public class GenesisFileManager
                 String title = "GENESIS_simulation" + "___" + project.simulationParameters.getReference();
 
                 
-                if (GenesisFileManager.mooseCompatMode())
+                if (mooseCompatMode())
                 {
-                    genesisExecutable = "~/moose/moose";
+                    genesisExecutable = System.getProperty("user.home")+"/moose/moose";
+                    if (!(new File(genesisExecutable)).exists())
+                    {
+                        genesisExecutable = "moose"; // Hope it's on the path
+                    }
                     title = "MOOSE_simulation" + "___" + project.simulationParameters.getReference();
 
                 }

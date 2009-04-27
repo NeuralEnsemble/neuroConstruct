@@ -31,9 +31,11 @@ import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.Vector;
+import java.util.logging.Level;
 import javax.vecmath.Point3f;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
+import ucl.physiol.neuroconstruct.neuroml.BiophysicsConstants;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
@@ -352,7 +354,7 @@ public class PsicsMorphologyGenerator
 
 
 
-    private String getMembraneProps()
+    private String getMembraneProps() throws PsicsException
     {
         //int prefUnits = UnitConverter.NEUROCONSTRUCT_UNITS;
         
@@ -453,23 +455,68 @@ public class PsicsMorphologyGenerator
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(12);
 
+        float defaultSingChanCond_pS = project.psicsSettings.getSingleChannelCond()*1e9f; // pS
+        float defaultSingChanCond_mS = defaultSingChanCond_pS/1e9f;
+        float convFactor = 1/defaultSingChanCond_mS;
+
         while(chans.hasMoreElements())
         {
             ChannelMechanism cm = chans.nextElement();
 
-            if (cm.getDensity()>=0)
+            Vector<String> groups = cell.getChanMechsVsGroups().get(cm);
+            for(String group:groups)
             {
-                Vector<String> groups = cell.getChanMechsVsGroups().get(cm);
-                for(String group:groups)
-                {
-                    // <ChannelPopulation channel="k1" density="20per_um2" distribution="start"/>
-                    SimpleXMLElement cp = new SimpleXMLElement("ChannelPopulation");
-                    cp.addAttribute(new SimpleXMLAttribute("channel", cm.getUniqueName()));
+                // <ChannelPopulation channel="k1" density="20per_um2" distribution="start"/>
+                SimpleXMLElement cp = new SimpleXMLElement("ChannelPopulation");
 
-                    float condDensity = cm.getDensity(); // mS/um2
-                    float defaultSingChanCond_pS = project.psicsSettings.getSingleChannelCond()*1e9f; // pS
-                    float defaultSingChanCond_mS = defaultSingChanCond_pS/1e9f;
-                    float numPerum2 = condDensity/defaultSingChanCond_mS;
+                cp.addAttribute(new SimpleXMLAttribute("channel", cm.getUniqueName()));
+
+                if (cm.getExtraParameters()!=null && !cm.getExtraParameters().isEmpty())
+                {
+
+    //                    <DerivedKSChannel id="Na3-coded-basal" from="Na3-coded-soma">
+    //                        <ParameterChange to="Na3-a2-semiconstant" attribute="value"
+    //                    newText="1"/>
+    //                     </DerivedKSChannel>
+                    SimpleXMLDocument derivedChanFile = new SimpleXMLDocument();
+                    SimpleXMLElement root = new SimpleXMLElement("DerivedKSChannel");
+                    derivedChanFile.addRootElement(root);
+                    root.addAttribute("id", cm.getUniqueName());
+                    root.addAttribute("from", cm.getName());
+                    for (MechParameter mp : cm.getExtraParameters())
+                    {
+                        SimpleXMLElement pc = new SimpleXMLElement("ParameterChange");
+                        root.addChildElement(pc);
+                        root.addContent("\n");
+                        String paramName = mp.getName();
+
+                        if (paramName.equals(BiophysicsConstants.PARAMETER_REV_POT) ||
+                            paramName.equals(BiophysicsConstants.PARAMETER_REV_POT_2))
+                        {
+                            paramName = "reversalPotential";
+                        }
+
+                        pc.addAttribute("to", paramName);
+                        pc.addAttribute("attribute", "value");
+                        pc.addAttribute("newText", "" + mp.getValue());
+                    }
+                    File extraFile = new File(cellFile.getParentFile(), cm.getUniqueName()+".xml");
+                    try
+                    {
+                        GeneralUtils.writeShortFile(extraFile, derivedChanFile.getXMLString("", false));
+                    }
+                    catch (IOException ex)
+                    {
+                        throw new PsicsException("Error writing to file: " + cellFile, ex);
+                    }
+
+                }
+
+                float condDensity = cm.getDensity(); // mS/um2
+
+                if (condDensity>=0)
+                {
+                    float numPerum2 = convFactor * condDensity;
 
                     cp.addAttribute(new SimpleXMLAttribute("density", df.format(numPerum2)+unitDens));
                     cp.addAttribute(new SimpleXMLAttribute("color", "0x"+ColourUtils.getSequentialColourHex(colourNum)));
@@ -486,9 +533,126 @@ public class PsicsMorphologyGenerator
                     }
                     memb.addContent("\n\n");
                 }
+                
             }
         }
-        
+
+        Hashtable<VariableMechanism, ParameterisedGroup> vmPg = cell.getVarMechsVsParaGroups();
+        Enumeration<VariableMechanism> varMechs = vmPg.keys();
+        while(varMechs.hasMoreElements())
+        {
+            VariableMechanism vm = varMechs.nextElement();
+            ParameterisedGroup pg = vmPg.get(vm);
+
+//            <ChannelPopulation channel="Kaprox-coded" density="16 * (1 + p/100) per_um2">
+//            <RegionMask action="exclude" where="p .gt. 100"/>
+//            </ChannelPopulation>
+
+
+            String condDensExpression = vm.getParam().getExpression().toString(); // mS/um2
+            condDensExpression = convFactor +" * " + condDensExpression;
+            SimpleXMLElement excludeMask = null;
+
+            while(condDensExpression.indexOf("H(")>=0)
+            {
+                int startInternal = condDensExpression.indexOf("H(")+2;
+                int endInternal = -1;
+                int bracketDepth = 1;
+                int charCount = startInternal;
+                while(endInternal<0)
+                {
+                    if (condDensExpression.charAt(charCount)=='(')
+                            bracketDepth++;
+                    if (condDensExpression.charAt(charCount)==')')
+                            bracketDepth--;
+                    if(bracketDepth==0)
+                        endInternal = charCount-1;
+                    charCount++;
+                }
+                String internal = condDensExpression.substring(startInternal,endInternal+1);
+                //System.out.println(internal);
+                //String newExpr = "((abs("+internal+")+("+internal+"))/2.0)";
+
+                String newExpr = "1"; //// NOTE: This will only work if the H(x) is only used in the expression as a multiplicative factor and H(x)=0 => cond dens = 0 !!
+                excludeMask = new SimpleXMLElement("RegionMask");
+
+                excludeMask.addAttribute(new SimpleXMLAttribute("action", "exclude"));
+                excludeMask.addAttribute(new SimpleXMLAttribute("where", internal+" .lt. 0"));
+
+                condDensExpression = GeneralUtils.replaceAllTokens(condDensExpression, "H("+internal+")", newExpr);
+                //condDensExpression = "5.0E-10";
+
+            }
+
+
+            
+            Enumeration<ChannelMechanism> fixedChans = cell.getChanMechsVsGroups().keys();
+            
+            boolean useGroupHere = true;
+            
+            while(fixedChans.hasMoreElements())
+            {
+                ChannelMechanism cm = fixedChans.nextElement();
+
+                if (vm.getName().equals(cm.getName()) && cm.getDensity()<0)
+                {
+                    Vector<String> grps = cell.getGroupsWithChanMech(cm);
+
+
+                    for(String group: grps)
+                    {
+                        if (CellTopologyHelper.isGroupASubset(group, pg.getGroup(), cell))
+                        {
+                            useGroupHere = false;
+
+                            SimpleXMLElement cp = new SimpleXMLElement("ChannelPopulation");
+                            cp.addAttribute(new SimpleXMLAttribute("channel", cm.getUniqueName()));
+
+                            cp.addAttribute(new SimpleXMLAttribute("density", condDensExpression+" "+unitDens));
+
+                            SimpleXMLElement rm = new SimpleXMLElement("RegionMask");
+                            rm.addAttribute(new SimpleXMLAttribute("action", "include"));
+                            rm.addAttribute(new SimpleXMLAttribute("where", "region = *"+group+"*"));
+
+                            cp.addChildElement(rm);
+                            cp.addContent("\n");
+                            if(excludeMask!=null)
+                            {
+                                cp.addChildElement(excludeMask);
+                                cp.addContent("\n");
+                            }
+                            memb.addChildElement(cp);
+                            memb.addContent("\n\n");
+                            
+                        }
+                    }
+                }
+            }
+
+            if (useGroupHere)
+            {
+                SimpleXMLElement cp = new SimpleXMLElement("ChannelPopulation");
+                cp.addAttribute(new SimpleXMLAttribute("channel", vm.getName()));
+
+                cp.addAttribute(new SimpleXMLAttribute("density", condDensExpression+" "+unitDens));
+
+                SimpleXMLElement rm = new SimpleXMLElement("RegionMask");
+                rm.addAttribute(new SimpleXMLAttribute("action", "include"));
+                rm.addAttribute(new SimpleXMLAttribute("where", "region = *"+pg.getGroup()+"*"));
+                cp.addChildElement(rm);
+                cp.addContent("\n");
+                if(excludeMask!=null)
+                {
+                    cp.addChildElement(excludeMask);
+                    cp.addContent("\n");
+                }
+                memb.addChildElement(cp);
+                memb.addContent("\n\n");
+            }
+            
+        }
+
+
         
         
         response.append(memb.getXMLString("", false));
@@ -511,8 +675,11 @@ public class PsicsMorphologyGenerator
     {
         try
         {
-            Project testProj = Project.loadProject(new File("models/BioMorph/BioMorph.neuro.xml"),
-                                                   new ProjectEventListener()
+            //File f = new File("models/BioMorph/BioMorph.neuro.xml");
+
+            File fp = new File("nCmodels/InProgress/CA1PyramidalCell/CA1PyramidalCell.ncx");
+
+            Project testProj = Project.loadProject(fp, new ProjectEventListener()
             {
                 public void tableDataModelUpdated(String tableModelName)
                 {};
@@ -528,19 +695,19 @@ public class PsicsMorphologyGenerator
             //SimpleCell cell = new SimpleCell("DummyCell");
             //ComplexCell cell = new ComplexCell("DummyCell");
 
-            Cell cell = testProj.cellManager.getCell("LongCellDelayLine");
+            Cell cell = testProj.cellManager.getCell("CA1");
 
             //File f = new File("/home/padraig/temp/tempNC/NEURON/PatTest/basics/");
-            File f = new File("../temp");
+            File ff = new File("../temp");
 
             PsicsMorphologyGenerator cellTemplateGenerator1 = new PsicsMorphologyGenerator(cell,testProj,
-                f);
+                ff);
 
             cellTemplateGenerator1.generateFiles();
 
             System.out.println("Generated: " + cellTemplateGenerator1.getCellFile().getAbsolutePath()+" and "+ cellTemplateGenerator1.getMembraneProps());
 
-            System.out.println(CellTopologyHelper.printDetails(cell, null));
+            //System.out.println(CellTopologyHelper.printDetails(cell, null));
         }
         catch (Exception ex)
         {

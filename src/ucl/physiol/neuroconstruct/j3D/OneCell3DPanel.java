@@ -1387,6 +1387,9 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                     pgVal = pg.evaluateAt(displayedCell, latestSelectedSegment, 0.5f);
                     float dens = (float)vm.evaluateAt(pgVal);
                     chanInfo.append(" "+vm.getName() + ": "+dens);
+
+
+                    logger.logComment("Var mech ("+vm.getParam().getExpression()+") on seg: "+ latestSelectedSegment+" at dist "+pgVal+" as "+ dens);
                 }
                 catch (ParameterException ex)
                 {

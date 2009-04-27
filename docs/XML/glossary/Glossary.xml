@@ -919,6 +919,13 @@ Set to MAX if no restriction applies.</defined>
     Both options save the results of the simulation in the simulations/Sim_XXX dir. The first option had been used prior to v1.0.7,<br/>
     and may have been the cause of some problems on Linux </defined>
 </term>
+
+
+<term hidden="true">
+    <name>GenesisMooseMode</name>
+    <defined>Generate scripts compatible with MOOSE, and run using executable: moose (must be on PATH or present at ~/moose/moose)</defined>
+</term>
+
 <term hidden="true">
     <name>GenesisCopySimFiles</name>
     <defined>

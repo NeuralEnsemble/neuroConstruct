@@ -47,7 +47,7 @@ public class ParameterisedGroupTest
     ParameterisedGroup pg2 = null;
     ParameterisedGroup pg3 = null;
     ParameterisedGroup pg4 = null;
-    //ParameterisedGroup pg5 = null;
+    ParameterisedGroup pg5 = null;
     
     Cell cell = null;
     Segment d1 = null;
@@ -89,12 +89,19 @@ public class ParameterisedGroupTest
                                    Metric.PATH_LENGTH_FROM_ROOT, 
                                    ProximalPref.MOST_PROX_AT_0, 
                                    DistalPref.MOST_DIST_AT_1,"p3");
-        
-        pg4 = new ParameterisedGroup("TipToEnd", 
-                                   tipSection, 
-                                   Metric.PATH_LENGTH_FROM_ROOT, 
-                                   ProximalPref.MOST_PROX_AT_0, 
+
+        pg4 = new ParameterisedGroup("TipToEnd",
+                                   tipSection,
+                                   Metric.PATH_LENGTH_FROM_ROOT,
+                                   ProximalPref.MOST_PROX_AT_0,
                                    DistalPref.NO_NORMALISATION,"p4");
+
+
+        pg5 = new ParameterisedGroup("TipToEnd_PathFromRoot",
+                                   tipSection,
+                                   Metric.PATH_LENGTH_FROM_ROOT,
+                                   ProximalPref.NO_TRANSLATION,
+                                   DistalPref.NO_NORMALISATION,"p5");
         
         /*
         pg5 = new ParameterisedGroup("3DDistZeroToOne", 
@@ -127,7 +134,12 @@ public class ParameterisedGroupTest
         assertEquals(25, pg2.evaluateAt(cell, d3, 0.5f), 0);
         
         assertEquals(0.5, pg3.evaluateAt(cell, d3, 0.5f), 0);
+
+        assertEquals(0, pg4.evaluateAt(cell, d3, 0), 0);
         assertEquals(5, pg4.evaluateAt(cell, d3, 0.5f), 0);
+
+        assertEquals(25, pg5.evaluateAt(cell, d3, 0.5f), 0);
+        assertEquals(30, pg5.evaluateAt(cell, d3, 1), 0);
         
     }
     

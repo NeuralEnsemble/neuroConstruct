@@ -1491,10 +1491,11 @@ public class NeuronTemplateGenerator
             
             postProcs.append("proc "+procName+" { local x, p, p0, p1"+"\n");
             postProcs.append("    "+pg.getName()+".update()\n");
-            postProcs.append("    p0 = "+pg.getName()+".p0  p1 = "+pg.getName()+".p1\n");
+            //postProcs.append("    p0 = "+pg.getName()+".p0  p1 = "+pg.getName()+".p1\n");
             postProcs.append("    for "+pg.getName()+".loop() {\n");
-            postProcs.append("        x = "+pg.getName()+".x  p = "+pg.getName()+".p\n");
-            postProcs.append("        "+vm.getParam().getName()+"_"+vm.getName()+"(x) = "+convFactor+" * "+vm.getParam().getExpression()+" // "+convFactor+" to convert from nc to NEURON units\n");
+            postProcs.append("        x = "+pg.getName()+".x \n");
+            postProcs.append("        p = "+pg.getName()+".p\n");
+            postProcs.append("        "+vm.getParam().getName()+"_"+vm.getName()+"(x) = "+convFactor+" * ("+vm.getParam().getExpression()+") // "+convFactor+" to convert from nc to NEURON units\n");
             postProcs.append("    }\n");
   
             postProcs.append("}\n\n");

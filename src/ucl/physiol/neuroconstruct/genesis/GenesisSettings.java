@@ -59,8 +59,10 @@ public class GenesisSettings
     int unitSystemToUse = UnitConverter.GENESIS_SI_UNITS;
 
     NumericalMethod numMethod = new NumericalMethod();
-    
+
     private boolean copySimFiles = true;
+
+    private boolean mooseCompatMode = false;
 
     public GenesisSettings()
     {
@@ -159,6 +161,18 @@ public class GenesisSettings
     {
         return unitSystemToUse;
     }
+
+    public boolean isMooseCompatMode()
+    {
+        return mooseCompatMode;
+    }
+
+    public void setMooseCompatMode(boolean mooseCompatMode)
+    {
+        this.mooseCompatMode = mooseCompatMode;
+    }
+
+
 
     public boolean isSIUnits()
     {
