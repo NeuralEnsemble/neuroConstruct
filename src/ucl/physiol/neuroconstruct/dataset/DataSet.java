@@ -605,6 +605,8 @@ public class DataSet
         refNew = GeneralUtils.replaceAllTokens(refNew, ")", "");
         refNew = GeneralUtils.replaceAllTokens(refNew, "-", "_");
         refNew = GeneralUtils.replaceAllTokens(refNew, ":", "_");
+        refNew = GeneralUtils.replaceAllTokens(refNew, "+", "_");
+        refNew = GeneralUtils.replaceAllTokens(refNew, "/", "_");
         return refNew;
     }
 

@@ -3042,7 +3042,8 @@ public class PlotterFrame extends JFrame
         if (retval != JOptionPane.CANCEL_OPTION)
         {
             defaultDir = chooser.getSelectedFile();
-            String plotRef = getCompactFilename(getPlotFrameReference());
+            String dir = GeneralUtils.replaceAllTokens(getPlotFrameReference(), "/", "_");
+            String plotRef = getCompactFilename(dir);
             
             File matplotlibFilesDir = new File(defaultDir, plotRef);
 
@@ -3068,13 +3069,14 @@ public class PlotterFrame extends JFrame
             for (int j=0;j<plotCanvas.getDataSets().length;j++)
             {
                 DataSet ds = plotCanvas.getDataSets()[j];
-                File dsFile = new File(matplotlibFilesDir, getCompactFilename(ds.getRefrence())+".dat");
+                String dsFileRef = GeneralUtils.replaceAllTokens(getCompactFilename(ds.getRefrence()), "/", "_");
+                File dsFile = new File(matplotlibFilesDir, dsFileRef+".dat");
 
                 logger.logComment("Going to write file: "+dsFile, true);
                 try
                 {
                     FileWriter fw = new FileWriter(dsFile);
-                    fw.write("# Data from : "+ds.getRefrence()+"\n");
+                    fw.write("# Data from : "+dsFileRef+"\n");
 
                     for(int i=0;i<ds.getNumberPoints();i++)
                     {
@@ -3227,6 +3229,7 @@ public class PlotterFrame extends JFrame
         compact = GeneralUtils.replaceAllTokens(compact, ")", "");
         compact = GeneralUtils.replaceAllTokens(compact, "-", "_");
         compact = GeneralUtils.replaceAllTokens(compact, ":", "_");
+        compact = GeneralUtils.replaceAllTokens(compact, "+", "_");
         if (compact.length()>30)
         {
             compact = compact.substring(0,30);
