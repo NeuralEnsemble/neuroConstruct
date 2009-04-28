@@ -3080,8 +3080,14 @@ public class NeuronFileManager
 
                         addComment(response, "Adding cell template file: "+cellTemplateGen.getHocShortFilename()
                                 +" for cell group "+cellGroupName+"");
-                        
-                        response.append("{ "+prefix+"load_file(\"" + cellTemplateGen.hocFile.getName() + "\") }\n");
+                        if (prefix.length()==0)
+                        {
+                            response.append("{ load_file(\"" + cellTemplateGen.hocFile.getName() + "\") }\n");
+                        }
+                        else
+                        {
+                            response.append(""+prefix+"load_file(\"" + cellTemplateGen.hocFile.getName() + "\")\n");
+                        }
                     }
                     catch (NeuronException ex)
                     {
@@ -4026,6 +4032,14 @@ public class NeuronFileManager
                 for (Integer segId: segIdsToPlot)
                 {
                     Segment seg = nextCell.getSegmentWithId(segId);
+
+                    if (seg==null)
+                    {
+                        GuiUtils.showErrorMessage(logger,
+                                              "Problem getting segment with id: "+segId+" for input: "+plot.simPlot.getPlotReference(), null, null);
+
+                        return null;
+                    }
 
                     float lenAlongSegment
                         = CellTopologyHelper.getFractionAlongSection(nextCell,

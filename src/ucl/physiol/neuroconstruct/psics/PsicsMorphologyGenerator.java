@@ -31,7 +31,6 @@ import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.Vector;
-import java.util.logging.Level;
 import javax.vecmath.Point3f;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
@@ -696,6 +695,31 @@ public class PsicsMorphologyGenerator
             //ComplexCell cell = new ComplexCell("DummyCell");
 
             Cell cell = testProj.cellManager.getCell("CA1");
+            Cell cell2 = testProj.cellManager.getCell("CA1_pas_e");
+            
+            Hashtable<Integer, Integer> p = new Hashtable<Integer, Integer>();
+            
+            for(Segment s: cell2.getAllSegments())
+            {
+                if (s.getParentSegment()!=null)
+                {
+                    if (!p.containsKey(s.getParentSegment().getSegmentId()))
+                    {
+                        p.put(s.getParentSegment().getSegmentId(), 0);
+                    }
+                    p.put(s.getParentSegment().getSegmentId(), p.get(s.getParentSegment().getSegmentId())+1);
+                }
+            }
+            Enumeration<Integer> e = p.keys();
+            while(e.hasMoreElements())
+            {
+                int id = e.nextElement();
+                int num = p.get(id);
+                if(num>1)
+                {
+                    System.out.println("Num childs: "+num+" in "+ cell.getSegmentWithId(id) );
+                }
+            }
 
             //File f = new File("/home/padraig/temp/tempNC/NEURON/PatTest/basics/");
             File ff = new File("../temp");

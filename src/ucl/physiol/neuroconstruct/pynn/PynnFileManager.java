@@ -71,7 +71,7 @@ public class PynnFileManager
     
     public enum PynnSimulator 
     {
-        NEURON  ("NEURON", "neuron"),
+        NEURON  ("NEURON 2", "neuron2"),
         NEST2   ("NEST 2", "nest2"),
         PCSIM   ("PCSIM", "pcsim"),
         BRIAN   ("Brian", "brian"),
@@ -233,17 +233,17 @@ public class PynnFileManager
 
             fw.write(getFileHeader());
             
-            fw.write("simulator = '"+simulator.moduleName+"'\n\n");
+            fw.write("my_simulator = '"+simulator.moduleName+"'\n\n");
             
-            fw.write("print \'Generating PyNN script for simulator: \'+simulator\n\n");
+            fw.write("print \'Generating PyNN script for simulator: \'+my_simulator\n\n");
             
             
             
             fw.write("try:\n");
-            fw.write("    exec(\"from pyNN.%s import *\" % simulator)\n");
+            fw.write("    exec(\"from pyNN.%s import *\" % my_simulator)\n");
             fw.write("except ImportError:\n");
-            fw.write("    print \'There was a problem importing the module: pyNN.%s\' % simulator\n");
-            fw.write("    print \'Please make sure the PyNN implementation of %s is correctly installed\' % simulator\n");
+            fw.write("    print \'There was a problem importing the module: pyNN.%s\' % my_simulator\n");
+            fw.write("    print \'Please make sure the PyNN implementation of %s is correctly installed\' % my_simulator\n");
             fw.write("    exit()\n\n");
             
             
@@ -300,7 +300,7 @@ public class PynnFileManager
 
             fw.write("parser = xml.sax.make_parser()   # A parser for any XML file\n");
 
-            fw.write("pynnNetMgr = NetManagerPyNN(simulator)	# Stores (most of) the network structure\n");
+            fw.write("pynnNetMgr = NetManagerPyNN(my_simulator)	# Stores (most of) the network structure\n");
             
             fw.write("pynnNetMgr.setMaxSimLength(tstop)  # Needed for generating input spike time array...\n");
 
@@ -481,14 +481,14 @@ public class PynnFileManager
             fw.write(getFileHeader());
             
             
-            fw.write("simulator = '"+simulator.moduleName+"'\n\n");           
+            fw.write("my_simulator = '"+simulator.moduleName+"'\n\n");
             
             
             fw.write("try:\n");
-            fw.write("    exec(\"from pyNN.%s import *\" % simulator)\n");
+            fw.write("    exec(\"from pyNN.%s import *\" % my_simulator)\n");
             fw.write("except ImportError:\n");
-            fw.write("    print \'There was a problem importing the module: pyNN.%s\' % simulator\n");
-            fw.write("    print \'Please make sure the PyNN implementation of %s is correctly installed\' % simulator\n");
+            fw.write("    print \'There was a problem importing the module: pyNN.%s\' % my_simulator\n");
+            fw.write("    print \'Please make sure the PyNN implementation of %s is correctly installed\' % my_simulator\n");
             fw.write("    exit()\n\n");
             
             if (cell.getAllSegments().size()>1)
@@ -818,9 +818,9 @@ public class PynnFileManager
                 if (basicCommLine.indexOf("konsole")>=0)
                 {
                     logger.logComment("Assume we're using KDE");
-                    titleOption = " -T="+title;
+                    titleOption = " --title="+title;
                     workdirOption = " --workdir="+ dirToRunFrom.getAbsolutePath();
-                    extraArgs = "-e ";
+                    extraArgs = "-e /bin/bash ";
                     executable = basicCommLine.trim();
                 }
                 else if (basicCommLine.indexOf("gnome")>=0)

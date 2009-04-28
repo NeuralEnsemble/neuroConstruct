@@ -1541,7 +1541,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 "but no documentation so far...</html>";
 
         jButtonNeuronCreatePythonXML.setEnabled(false);
-        jButtonNeuronCreatePythonXML.setText("Create Python/XML sim (beta)");
+        jButtonNeuronCreatePythonXML.setText("Create Python/XML/hoc sim (beta)");
         jButtonNeuronCreatePythonXML.setToolTipText(warnPyH5);
         
         jButtonNeuronCreatePythonXML.addActionListener(new java.awt.event.ActionListener()
