@@ -2301,7 +2301,17 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                 double[] points = dsToPlot.getDataPoints();
 
-                for (int i = 0; i < times.length; i++)
+                logger.logComment("Plotting "+points.length+" data points vs "+times.length+" time points");
+
+
+                if (points.length!=times.length)
+                {
+                    GuiUtils.showWarningMessage(logger, "Warning. For data set: "+data.getRefrence()+" the number of data points is: "+ points.length
+                            +" ("+points[0]+", ..., "+points[points.length-1]+")\n" +
+                            " while the number of time points in the simulation is: "+times.length+" ("+times[0]+", ..., "+times[times.length-1]+")", frame);
+                }
+
+                for (int i = 0; i < Math.min(times.length, points.length); i++)
                 {
                     data.addPoint(times[i], points[i]);
                 }

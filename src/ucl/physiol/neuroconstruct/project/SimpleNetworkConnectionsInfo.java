@@ -106,6 +106,7 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
         return columnNames.length;
     }
 
+    @Override
     public String getColumnName(int col) {
         return columnNames[col];
     }
@@ -159,6 +160,7 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
         }
     }
 
+    @Override
     public void setValueAt(Object value, int row, int col)
     {
         logger.logComment("Setting row: "+row+", col: "+col + " to: "+ value) ;
@@ -253,6 +255,7 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
 
 
 
+    @Override
     public boolean isCellEditable(int row, int col)
     {
         // Changed due to using NewNetworkConnDialog for editing...
@@ -275,22 +278,7 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
     {
         return new Vector<String>(vectorNames);
     }
-/*
-    public SynapticProperties getSynapseProperties(String netConnName)
-    {
-        int index = vectorNames.indexOf(netConnName);
-        //System.out.println("Need index: "+index+", name: "+netConnName+",Synapses: "+ vectorSynapseProperties);
-        SynapticProperties synProps = (SynapticProperties) vectorSynapseProperties.elementAt(index);
-        return synProps;
-    }
- public void setSynapseProperties(String netConnName, SynapticProperties synProps)
-    {
-        int index = vectorNames.indexOf(netConnName);
-        this.setValueAt(synProps, index, this.COL_NUM_SYNAPSE_PROPS);
-    }
 
-
- */
 
     public String getSummary(String netConnName)
     {

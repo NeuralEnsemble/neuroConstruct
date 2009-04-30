@@ -123,6 +123,25 @@ public class ChannelMLConstants
 
     public static String DOUB_EXP_SYN_ELEMENT = "doub_exp_syn";
     public static String BLOCKING_SYN_ELEMENT = "blocking_syn";
+    
+    public static String FAC_DEP_SYN_ELEMENT = "fac_dep_syn";
+    public static String FAC_DEP_SYN_PLA_ELEMENT = "plasticity";
+    public static String FAC_DEP_SYN_REL_PROB = "init_release_prob";
+    public static String FAC_DEP_SYN_TAU_FAC = "tau_fac";
+    public static String FAC_DEP_SYN_TAU_REC = "tau_rec";
+
+
+    public static String STDP_SYN_ELEMENT = "stdp_syn";
+
+    public static String STDP_TIME_DEP_ELEMENT = "spike_time_dep";
+    public static String STDP_DEL_WEIGHT_LTP = "del_weight_ltp";
+    public static String STDP_DEL_WEIGHT_LTD = "del_weight_ltd";
+
+    public static String STDP_TAU_LTP = "tau_ltp";
+    public static String STDP_TAU_LTD = "tau_ltd";
+    public static String STDP_MAX_WEIGHT = "max_syn_weight";
+    public static String STDP_POST_SPIKE_THRESH = "post_spike_thresh";
+
 
     public static String DES_MAX_COND_ATTR = "max_conductance";
     public static String DES_RISE_TIME_ATTR = "rise_time";

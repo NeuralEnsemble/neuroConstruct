@@ -21,9 +21,9 @@ sys.path.append("../PyNNUtils")
 
 # Lines from standard PyNN examples
 if hasattr(sys,"argv"):     # run using python
-	simulator = sys.argv[-1]
+	my_simulator = sys.argv[-1]
 else:
-    simulator = "neuron"    # run using nrngui -python
+    my_simulator = "neuron2"    # run using nrngui -python
 	
 
 logging.basicConfig(level=logging.INFO, format="%(name)-19s %(levelname)-5s - %(message)s")
@@ -32,12 +32,13 @@ from NetworkHandler import NetworkHandler
 from NetworkMLSaxHandler import NetworkMLSaxHandler
 from PyNNUtils import NetManagerPyNN
 
-exec("from pyNN.%s import *" % simulator)
+exec("from pyNN.%s import *" % my_simulator)
 
 startTime = time.time()
 
 dt = 0.1
 tstop = 200.0
+seed = 123456
 
 setup(timestep=dt, debug=False)
 
@@ -49,7 +50,9 @@ print("Going to read contents of a NetworkML file: "+str(file_name))
 
 parser = xml.sax.make_parser()   # A parser for any XML file
 
-nmlHandler = NetManagerPyNN(simulator)	# Stores (most of) the network structure
+nmlHandler = NetManagerPyNN(my_simulator)	# Stores (most of) the network structure
+
+nmlHandler.setSeed(seed)
 
 nmlHandler.setMaxSimLength(tstop)
 
@@ -67,7 +70,7 @@ print("Have read in contents of file: "+str(file_name))
 for popName in nmlHandler.populations.keys():
     
     population = nmlHandler.populations[popName]
-    print "Population which has been created: %s with %d cells"% (popName, population.size)
+    print population.describe()
     
     population.record_v()
 
@@ -79,23 +82,27 @@ for popName in nmlHandler.populations.keys():
 for projName in nmlHandler.projections.keys():
          
     projection = nmlHandler.projections[projName]
-    print "Projection which has been created: %s with %d connections"% (projName, len(projection))
+    print projection.describe()
         
-    for conn in projection:
-        if (simulator == "neuron"):
-            print "    Connection: %s"% (conn)
-        else:
-            print "    Connection: %s"% (conn)
-            print "    Connection: %s from %s to %s, weight: %s, delay: %s" % (conn.port, conn.pre, conn.post, conn.weight, conn.delay)
-
-for inputName in nmlHandler.inputSources.keys():
     
-    input_population = nmlHandler.inputSources[inputName]
+for inputName in nmlHandler.input_populations.keys():
+    
+    input_population = nmlHandler.input_populations[inputName]
     
     input_population.record()
     
     print "Input source which has been created: %s with %d connections"% (inputName, input_population.size)
-    
+    print input_population.describe()
+
+
+for inputName in nmlHandler.input_projections.keys():
+    proj = nmlHandler.input_projections[inputName]
+    print proj.describe()
+    '''
+    p = proj.connections.targets
+    print dir(p)
+    print p.__class__
+    print p'''
 
 
 
@@ -108,22 +115,18 @@ print "Finished simulation. Setup time: %f secs, run time: %f secs"%(preRunTime-
 
 
 for popName in nmlHandler.populations.keys():
-    
     population = nmlHandler.populations[popName]
     population.print_v("%s.dat"%population.label)
     
     
-for inputName in nmlHandler.inputSources.keys():
+for projName in nmlHandler.projections.keys():
+    projection = nmlHandler.projections[projName]
     
-    input_population = nmlHandler.inputSources[inputName]
+for inputName in nmlHandler.input_populations.keys():
+    input_population = nmlHandler.input_populations[inputName]
     input_population.printSpikes("inputs.dat")
 
-'''
-tFile = open("time.dat", mode="w")
-for i in range(0,int(tstop/dt)+1):
-    tFile.write(str(i*dt)+"\n")
-tFile.close()
-'''
+
 
 exit()
 

@@ -30,6 +30,7 @@ import java.io.*;
 import java.util.*;
 
 
+import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
@@ -38,6 +39,7 @@ import ucl.physiol.neuroconstruct.project.GeneratedPlotSaves.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
+import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrain;
 import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLElement;
 import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLEntity;
 
@@ -58,6 +60,12 @@ public class PynnFileManager
     File mainFile = null;
 
     int randomSeed = 0;
+
+    //ArrayList<String> synapseDetails = new ArrayList<String>();
+
+
+    File dirForPynnFiles = null;
+
     
     /*
      * Note: PyNN functionality is in testing stage and this will quickly turn off 
@@ -191,7 +199,7 @@ public class PynnFileManager
         try
         {
 
-            File dirForPynnFiles = ProjectStructure.getPynnCodeDir(project.getProjectMainDirectory());
+            dirForPynnFiles = ProjectStructure.getPynnCodeDir(project.getProjectMainDirectory());
 
 
             mainFile = new File(dirForPynnFiles, project.getProjectName() + ".py");
@@ -256,7 +264,6 @@ public class PynnFileManager
             
             //fw.write("from pyNN.random import NumpyRNG\n");
             //fw.write("rng = NumpyRNG(seed="+randomSeed+")\n\n");
-            fw.write("numpy.random.seed("+randomSeed+") # Is this the only place the seed needs to be set??\n\n");
             
             
             fw.write("sys.path.append(\"NeuroMLUtils\")\n");
@@ -271,15 +278,18 @@ public class PynnFileManager
             ArrayList<String> cellGroups = project.generatedCellPositions.getNonEmptyCellGroups();
             for(String cg: cellGroups)
             {
-                String cellType = project.cellGroupsInfo.getCellType(cg);
+                //String cellType = project.cellGroupsInfo.getCellType(cg);
                 
-                if (!cellTypeDefsToInclude.contains(cellType)) 
+                if (!cellTypeDefsToInclude.contains(cg))
                 {
-                    cellTypeDefsToInclude.add(cellType);
+                    cellTypeDefsToInclude.add(cg);
                     
-                    generateFileForCell(project.cellManager.getCell(cellType), dirForPynnFiles);
+                    generateFileForCellGroup(cg, dirForPynnFiles);
                 }
             }
+
+            
+
             for (String cellType: cellTypeDefsToInclude)
             {
                 fw.write("from "+cellType+" import *\n\n");
@@ -301,6 +311,8 @@ public class PynnFileManager
             fw.write("parser = xml.sax.make_parser()   # A parser for any XML file\n");
 
             fw.write("pynnNetMgr = NetManagerPyNN(my_simulator)	# Stores (most of) the network structure\n");
+
+            fw.write("pynnNetMgr.setSeed("+randomSeed+") # Is this the only place the seed needs to be set??\n\n");
             
             fw.write("pynnNetMgr.setMaxSimLength(tstop)  # Needed for generating input spike time array...\n");
 
@@ -317,14 +329,30 @@ public class PynnFileManager
             fw.write("print(\"Have created: %s populations, %s projections and %s input sources\" % " +
                     "(len(pynnNetMgr.populations.keys())," +
                     "len(pynnNetMgr.projections.keys())," +
-                    "len(pynnNetMgr.inputSources.keys())))\n\n");
+                    "len(pynnNetMgr.input_populations.keys())))\n\n");
+
+            fw.write("for p in pynnNetMgr.populations.values(): \n");
+            fw.write("    print p.describe()\n\n");
+
+            //fw.write("for p in pynnNetMgr.projections.values(): \n");
+            ///fw.write("    print p.describe()\n\n");
+
+            fw.write("for p in pynnNetMgr.input_populations.values(): \n");
+            fw.write("    print p.describe()\n\n");
+
+            //fw.write("for p in pynnNetMgr.input_projections.values(): \n");
+            //fw.write("    print p.describe()\n\n");
+
+            //fw.write("for p in pynnNetMgr.projections.values(): \n");
+            //fw.write("    print p\n\n");
+
             
             //ArrayList<String> plotSaves = simConfig.getPlots();
             ArrayList<PlotSaveDetails> plotSaves = project.generatedPlotSaves.getAllPlotSaves();
             
             for (PlotSaveDetails psd: plotSaves)
             {
-                if(psd.simPlot.toBeSaved())  // No plotting just yet...
+                if(psd.simPlot.toBeSaved() && psd.simPlot.getValuePlotted().equals(SimPlot.VOLTAGE))  // No plotting just yet...
                 {
                     fw.write("print(\"Going to save details of: %s cells in population: %s\" % ("+psd.cellNumsToPlot.size()
                             +", \""+psd.simPlot.getCellGroup()+"\"))\n");
@@ -387,7 +415,7 @@ public class PynnFileManager
             fw.write("simFile.write(\"SimulationSaveTime=%f\\n\"% (postSaveTime-postRunTime))\n");
             fw.write("simFile.write(\"TotalTime=%f\\n\"% (postSaveTime-startTime))\n");
             fw.write("simFile.close()\n\n");
-            
+
             
             fw.flush();
             fw.close();
@@ -468,9 +496,12 @@ public class PynnFileManager
 
 
 
-    public void generateFileForCell(Cell cell, File dir) throws PynnException
+    public void generateFileForCellGroup(String cellGroup, File dir) throws PynnException
     {
-        File f = new File(dir, cell.getInstanceName()+".py");
+
+        Cell cell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(cellGroup));
+
+        File f = new File(dir, cellGroup+".py");
         
         FileWriter fw = null;
         
@@ -490,6 +521,8 @@ public class PynnFileManager
             fw.write("    print \'There was a problem importing the module: pyNN.%s\' % my_simulator\n");
             fw.write("    print \'Please make sure the PyNN implementation of %s is correctly installed\' % my_simulator\n");
             fw.write("    exit()\n\n");
+
+            String baseClass = "IF_cond_alpha";
             
             if (cell.getAllSegments().size()>1)
             {
@@ -505,8 +538,11 @@ public class PynnFileManager
             float specCap = cell.getSpecCapForGroup(Section.ALL);
             
             ////////// TODO: use correct units, etc.
-            
-            cellParams.put("cm", cellArea*specCap*1e5f); // ????????????
+
+            float totalCap = cellArea*specCap;  // uF
+            float totalCapPyNN = totalCap*1e3f;  // nF
+
+            cellParams.put("cm", totalCapPyNN); // ????????????
             
             
             Enumeration<ChannelMechanism> cms = cell.getChanMechsVsGroups().keys();
@@ -538,13 +574,11 @@ public class PynnFileManager
                         {
                             try
                             {
-                                float condDens = Float.parseFloat(cmlMech.getValue(ChannelMLConstants.getPostV1_7_3CondDensXPath()));
-                            
+                                float condDens = cm.getDensity();
+                                
+                                float membTimeConst = (specCap/condDens);
 
-                                float totRes = (1.0f/condDens) * cellArea;
-                                float membTimeConst = (totRes * cellArea * specCap);
-
-                                cellParams.put("tau_m", membTimeConst*1000);
+                                cellParams.put("tau_m", membTimeConst);
 
 
                                 float revPot = Float.parseFloat(cmlMech.getValue(ChannelMLConstants.getIonRevPotXPath()));
@@ -603,10 +637,71 @@ public class PynnFileManager
                     
                 }
             }
+
+            for(StimulationSettings ss:project.elecInputInfo.getAllStims())
+            {
+                if (ss.getCellGroup().equals(cellGroup))
+                {
+                    if(project.generatedElecInputs.getInputLocations(ss.getReference()).size()>0)
+                    {
+                        if(ss.getElectricalInput() instanceof RandomSpikeTrain)
+                        {
+                            RandomSpikeTrain rst = (RandomSpikeTrain)ss.getElectricalInput();
+                            try
+                            {
+                                ChannelMLCellMechanism cm = (ChannelMLCellMechanism)project.cellMechanismInfo.getCellMechanism(rst.getSynapseType());
+
+                                SynapseProps sp = parseSynapticMech(cm);
+                                baseClass = sp.prefBaseClass;
+                                cellParams.putAll(sp.synParams);
+
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new PynnException("Error, reading from cell mechanism: "+rst.getSynapseType()+"!!", ex);
+                            }
+
+                        }
+                        else
+                        {
+                            throw new PynnException("Error, electrical input: "+ss+" not supported!!");
+                        }
+                    }
+                }
+            }
+
+            for(String nc: project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames())
+            {
+                if (project.morphNetworkConnectionsInfo.getTargetCellGroup(nc).equals(cellGroup))
+                {
+                    Vector<SynapticProperties> syns = project.morphNetworkConnectionsInfo.getSynapseList(nc);
+                    if(syns.size()>1)
+                    {
+                        throw new PynnException("Error, cannot support network connection "+nc+
+                                " with multiple synapses:"+syns+"!!");
+                    }
+                    try
+                    {
+                        ChannelMLCellMechanism cm = (ChannelMLCellMechanism)project.cellMechanismInfo.getCellMechanism(syns.get(0).getSynapseType());
+
+
+                        SynapseProps sp = parseSynapticMech(cm);
+                        baseClass = sp.prefBaseClass;
+                        cellParams.putAll(sp.synParams);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new PynnException("Error, reading from cell mechanism: "+syns.get(0).getSynapseType()+"!!", ex);
+                    }
+
+
+                }
+            }
             
             
             
-            fw.write("class "+cell.getInstanceName()+"(IF_cond_exp):\n\n");
+            fw.write("class "+cellGroup+"("+baseClass+"):\n\n");
             fw.write("    def __init__ (self, parameters): \n");
             Enumeration<String> names = cellParams.keys();
             
@@ -622,8 +717,8 @@ public class PynnFileManager
                 
             }
                 
-            fw.write("        IF_cond_exp.__init__ (self, parameters)\n");
-            fw.write("        print \"Created new "+cell.getInstanceName()+"...\"\n");
+            fw.write("        "+baseClass+".__init__ (self, parameters)\n");
+            fw.write("        print \"Created new "+cellGroup+"...\"\n");
             
             
             
@@ -647,6 +742,127 @@ public class PynnFileManager
 
         }
         
+    }
+
+    private class SynapseProps
+    {
+        String prefBaseClass = null;
+        Hashtable<String, Float> synParams = new Hashtable<String, Float>();
+        //StringBuffer synClassInfo = new StringBuffer();
+    }
+
+
+    private SynapseProps parseSynapticMech(ChannelMLCellMechanism cm) throws PynnException
+    {
+        SynapseProps synProps = new SynapseProps();
+
+        try
+        {
+            cm.initialise(project, false);
+
+            String mainSynElPath = ChannelMLConstants.getSynapseTypeXPath()+"/"
+                    +ChannelMLConstants.DOUB_EXP_SYN_ELEMENT;
+            
+            String synDynInfo = null;
+
+            if(cm.getValue(mainSynElPath)!=null)
+            {
+                synDynInfo = "None";
+
+            }
+            else
+            {
+                mainSynElPath = ChannelMLConstants.getSynapseTypeXPath()+"/"
+                    +ChannelMLConstants.FAC_DEP_SYN_ELEMENT;
+
+                if(cm.getValue(mainSynElPath)!=null)
+                {
+                    String u = cm.getValue(mainSynElPath+"/"+ChannelMLConstants.FAC_DEP_SYN_PLA_ELEMENT+"/@"+ChannelMLConstants.FAC_DEP_SYN_REL_PROB);
+                    String tauRec = cm.getValue(mainSynElPath+"/"+ChannelMLConstants.FAC_DEP_SYN_PLA_ELEMENT+"/@"+ChannelMLConstants.FAC_DEP_SYN_TAU_REC);
+                    String tauFac = cm.getValue(mainSynElPath+"/"+ChannelMLConstants.FAC_DEP_SYN_PLA_ELEMENT+"/@"+ChannelMLConstants.FAC_DEP_SYN_TAU_FAC);
+
+                    synDynInfo = "SynapseDynamics(fast=TsodyksMarkramMechanism(U="+u+", tau_rec="+tauRec+", tau_facil="+tauFac+"))";
+
+                }
+                else
+                {
+                    mainSynElPath = ChannelMLConstants.getSynapseTypeXPath()+"/"
+                        +ChannelMLConstants.STDP_SYN_ELEMENT;
+
+                    if(cm.getValue(mainSynElPath)!=null)
+                    {
+                        String tauLtp = cm.getValue(mainSynElPath+"/"+ChannelMLConstants.STDP_TIME_DEP_ELEMENT+"/@"+ChannelMLConstants.STDP_TAU_LTP);
+                        String tauLtd = cm.getValue(mainSynElPath+"/"+ChannelMLConstants.STDP_TIME_DEP_ELEMENT+"/@"+ChannelMLConstants.STDP_TAU_LTD);
+
+                        String delLtp = cm.getValue(mainSynElPath+"/"+ChannelMLConstants.STDP_TIME_DEP_ELEMENT+"/@"+ChannelMLConstants.STDP_DEL_WEIGHT_LTP);
+                        String delLtd = cm.getValue(mainSynElPath+"/"+ChannelMLConstants.STDP_TIME_DEP_ELEMENT+"/@"+ChannelMLConstants.STDP_DEL_WEIGHT_LTD);
+
+                        String maxWeight = cm.getValue(mainSynElPath+"/"+ChannelMLConstants.STDP_TIME_DEP_ELEMENT+"/@"+ChannelMLConstants.STDP_MAX_WEIGHT);
+                        if (maxWeight==null) 
+                            maxWeight = "1e9";
+
+                        // Not yet used!!
+                        String postSpikeThresh = cm.getValue(mainSynElPath+"/"+ChannelMLConstants.STDP_TIME_DEP_ELEMENT+"/@"+ChannelMLConstants.STDP_POST_SPIKE_THRESH);
+
+                        synDynInfo = "SynapseDynamics(slow=STDPMechanism(timing_dependence=SpikePairRule(tau_plus="+tauLtp+", tau_minus="+tauLtd+"),"
+                           +"weight_dependence=AdditiveWeightDependence(w_min=0, w_max="+maxWeight+","+
+                                                                      "A_plus="+delLtp+", A_minus="+delLtd+")))";
+
+                    }
+                    else
+                    {
+                        throw new PynnException("Error determining synapse type of: "+cm.getChannelMLFile(project)+"!!");
+                    }
+
+                }
+            }
+
+            String riseTime = cm.getValue(mainSynElPath+"/@"+ChannelMLConstants.DES_RISE_TIME_ATTR);
+            String decayTime = cm.getValue(mainSynElPath+"/@"+ChannelMLConstants.DES_DECAY_TIME_ATTR);
+            String revPot = cm.getValue(mainSynElPath+"/@"+ChannelMLConstants.DES_REV_POT_ATTR);
+            String gmax = cm.getValue(mainSynElPath+"/@"+ChannelMLConstants.DES_MAX_COND_ATTR);
+
+            if (riseTime.equals("0"))
+            {
+                synProps.prefBaseClass = "IF_cond_exp";
+                synProps.synParams.put("tau_syn_E", Float.parseFloat(decayTime));
+
+            }
+            else if(riseTime.equals(decayTime))
+            {
+                synProps.prefBaseClass = "IF_cond_alpha";
+                synProps.synParams.put("tau_syn_E", Float.parseFloat(decayTime));
+                synProps.synParams.put("e_rev_E", Float.parseFloat(revPot));
+            }
+            else
+            {
+                throw new PynnException("Error, synapse with rise time "+riseTime+" and decay time: "+decayTime
+                        +" (i.e. not exponential or alpha) is not currently supported by PyNN!!");
+            }
+
+
+            StringBuffer synFileContents = new StringBuffer();
+
+            synFileContents.append(getFileHeader()+"\n");
+
+            synFileContents.append("my_simulator = '"+simulator.moduleName+"'\n\n");
+
+            synFileContents.append("exec(\"from pyNN.%s import *\" % my_simulator)\n\n");
+
+            synFileContents.append("synapse_dynamics = "+synDynInfo+"\n\n");
+            
+            synFileContents.append("gmax = "+gmax+"\n\n");
+
+            File f = new File(dirForPynnFiles, cm.getInstanceName()+".py");
+
+            GeneralUtils.writeShortFile(f, synFileContents.toString());
+
+        }
+        catch (Exception ex)
+        {
+            throw new PynnException("Error, reading from cell mechanism: "+cm.getInstanceName()+"!!", ex);
+        }
+        return synProps;
     }
 
 
@@ -771,10 +987,11 @@ public class PynnFileManager
             //String executable = null;
             
             String pyEx = "python -i";
+            /*
             if (simulator.equals(PynnSimulator.NEURON))
             {
                 pyEx = "nrniv -python";
-            }
+            }*/
             
             File fullFileToRun = new File(dirToRunFrom, mainFile.getName());
             

@@ -46,11 +46,12 @@ cellType = CellTypeA
 connNum = 10
 
 tstop = 200.0
+dt=0.01
 
 if (my_simulator == 'neuroml'):
 	setup(file="test.xml")
 else:
-	setup()
+	setup(timestep=dt)
    
 
 cell_params = {'tau_refrac':2.0,'v_thresh':-50.0,'tau_syn_E':2.0, 'tau_syn_I':2.0}
@@ -98,13 +99,23 @@ for addr in addrsB:
 print gidsA
 print gidsB
 
+syn_dynamics_STPSynapse = SynapseDynamics(fast=TsodyksMarkramMechanism(U=0.04, tau_rec=100.0, tau_facil=1000.0))
+
+if my_simulator=='neuron2': connector= AllToAllConnector(weights=0.01, delays=0.5)  # Needs to be consolidated!
+if my_simulator=='nest2': connector= FixedNumberPreConnector(0)                     # Needs to be consolidated!
+proj = Projection(cellsA, cellsB, connector, target='excitatory', label='TestProj' ,synapse_dynamics=syn_dynamics_STPSynapse)
+if my_simulator=='neuron2': del proj.connection_manager.connections[:]              # Needs to be consolidated!
+
+
+
 for i in range(connNum):	
     src = gidsA[int(NumpyRNG.next(rng) * len(gidsA))]
     tgt = gidsB[int(NumpyRNG.next(rng) * len(gidsB))]
 
     print "Connecting cell %s (%s) in %s to cell %s (%s) in %s" % (src, str(cellsA.locate(src)) ,cellsA.label, tgt, str(cellsB.locate(tgt)), cellsB.label)
 
-    connect(cellsA[cellsA.locate(src)], cellsB[cellsB.locate(tgt)], weight=1.0)
+    proj.connection_manager.connect(cellsA[cellsA.locate(src)], cellsB[cellsB.locate(tgt)], weights=1.0, delays=1.0, synapse_type='excitatory')
+    
 
 
 voltDistr = RandomDistribution('uniform',[-80,-50],rng)
@@ -129,8 +140,14 @@ print "spike_times: " +str(spike_times)
 
 input_population  = Population(cellNumA, SpikeSourceArray, {'spike_times': spike_times}, "inputsToA")
 
+if my_simulator=='neuron2': connector2= AllToAllConnector(weights=0.01, delays=0.5)  # Needs to be consolidated!
+if my_simulator=='nest2': connector2= FixedNumberPreConnector(0)                     # Needs to be consolidated!
+input_proj = Projection(input_population, cellsA, connector2, target='excitatory', label='InputProj' ,synapse_dynamics=None)
+if my_simulator=='neuron2': del input_proj.connection_manager.connections[:]         # Needs to be consolidated!
+
+
 for i in range(0,cellNumA):
-    connect(input_population[(i,)], cellsA[(i,)], weight=1.0)
+    input_proj.connection_manager.connect(input_population[(i,)], cellsA[(i,)], weights=0.6, delays=3.0, synapse_type='excitatory')
 
 cellsA.record_v()
 cellsB.record_v()
@@ -144,13 +161,13 @@ cellsA.print_v("cellsA.dat")
 cellsB.print_v("cellsB.dat")
 input_population.printSpikes("inputs.dat")
 
-'''
-for addr in cellsA.addresses():
-    fileName = 'Cell_%d.dat' % (cellsA[addr])
-    print "Saving v of cell %s in: %s" % (addr, fileName)
-    print (dir)
-    cellsA[addr].print_v(fileName)
-'''
 
+print cellsA.describe()
+print cellsB.describe()
+print proj.describe()
+print input_population.describe()
+print input_proj.describe()
+
+print get_time_step()
 	
 end()
