@@ -236,7 +236,8 @@ public class MpiConfiguration
         else
         {
             scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic 'qsub "+QueueInfo.submitScript+"'\"\n");
-            scriptText.append("sleep 4\n"); // Quick snooze to see result of qsub...
+            scriptText.append("ssh $remoteUser@$remoteHost \"echo 'Submitted job!';qstat -u $USER\"\n");
+            scriptText.append("sleep 6\n"); // Quick snooze to see result of qsub...
         }
         scriptText.append("\n");
         scriptText.append("\n");
@@ -279,6 +280,8 @@ public class MpiConfiguration
         pullScriptText.append("scp  $remoteUser@$remoteHost:$simDir\"/\"$zipFile $localDir\n");
 
 
+        pullScriptText.append("cd $localDir\n");
+
         if (false)
         {
             pullScriptText.append("scp $remoteUser@$remoteHost:$simDir\"/\"$zipFile $localDir\n");
@@ -291,9 +294,9 @@ public class MpiConfiguration
 
 
         pullScriptText.append("\n");
-        pullScriptText.append("cd $localDir\n");
         pullScriptText.append("tar xzf $zipFile\n");
         pullScriptText.append("rm $zipFile\n");
+        pullScriptText.append("rm pullFile.b\n");
 
         return pullScriptText.toString();
     }
@@ -353,9 +356,14 @@ public class MpiConfiguration
         return num;
     }
 
-    public boolean isParallel()
+    public boolean isParallelNet()
     {
         return getTotalNumProcessors()>1;
+
+    }
+    public boolean isParallelOrRemote()
+    {
+        return isParallelNet()||isRemotelyExecuted();
 
     }
 

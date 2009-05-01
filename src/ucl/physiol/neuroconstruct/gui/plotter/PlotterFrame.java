@@ -2715,7 +2715,7 @@ public class PlotterFrame extends JFrame
 
         double minX = 0;
         double maxX = 20;
-        int numPoints = 1001;
+        int numPoints = 1000001;
 
         DataSet data1 = new DataSet("data1", "test data", "", "", "", "");
         DataSet data2 = new DataSet("data2", "more test data, more test data", "", "", "", "");
@@ -3075,14 +3075,31 @@ public class PlotterFrame extends JFrame
                 logger.logComment("Going to write file: "+dsFile, true);
                 try
                 {
+                    float res = 5000;
+                    double minXdist = Math.abs((ds.getMaxX()[0]-ds.getMinX()[0])/res);
+                    
+                    double minYdist = Math.abs((ds.getMaxY()[1]-ds.getMinY()[1])/res);
+
                     FileWriter fw = new FileWriter(dsFile);
                     fw.write("# Data from : "+dsFileRef+"\n");
+                    fw.write("# NOTE!!! Not all points have necessarily been exported!\n");
+                    fw.write("# Only enough points are here to ensure resolution of 1/"+res+" between max & min x & y values.\n");
+
+                    double[] lastP = new double[]{Float.MIN_VALUE, Float.MIN_VALUE};
+                    int count = 0;
 
                     for(int i=0;i<ds.getNumberPoints();i++)
                     {
                         double[] p = ds.getPoint(i);
-                        fw.write((float)p[0]+" "+(float)p[1]+"\n");
+
+                        if( Math.abs(p[0]-lastP[0])>minXdist || Math.abs(p[1]-lastP[1])>minYdist)
+                        {
+                            fw.write((float)p[0]+" "+(float)p[1]+"\n");
+                            count++;
+                            lastP = p;
+                        }
                     }
+                    logger.logComment("Written "+count+" out of points: "+ds.getNumberPoints(), true);
                   
 
                     fw.close();

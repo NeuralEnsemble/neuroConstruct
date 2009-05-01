@@ -2079,7 +2079,9 @@ public class SegmentSelector extends JFrame implements DocumentListener
         ArrayList<Section> secs = myCell.getAllSections();
         
        
-        
+        int countNew = 0;
+        int countOld = 0;
+
         for(Section nextSec: secs)
         {
             try
@@ -2109,12 +2111,14 @@ public class SegmentSelector extends JFrame implements DocumentListener
                 report.append(nextSec.getSectionName()+" has a total electrotonic length of: "+ totalElecLen+sphercalNote+"\n");
                 
                 int oldNseg = nextSec.getNumberInternalDivisions();
+                countOld += oldNseg;
                 
                 int bestNseg = Math.max(1, (int)Math.ceil(totalElecLen/project.simulationParameters.getMaxElectroLen()));
                 
                 nextSec.setNumberInternalDivisions(bestNseg);
 
                 report.append("Old num internal divs: "+oldNseg+", new number of internal divs: "+bestNseg+"\n\n");
+                countNew += bestNseg;
                 
             }
             catch (CellMechanismException ex)
@@ -2124,8 +2128,9 @@ public class SegmentSelector extends JFrame implements DocumentListener
             }
             
         }
+
         
-        SimpleViewer.showString(report.toString(), "Remeshing report", 12, false, false, 0.8f, 0.8f);
+        SimpleViewer.showString("Total old divs: "+countOld+", total new divs: "+ countNew+"\n\n"+report.toString(), "Remeshing report", 12, false, false, 0.8f, 0.8f);
         
         
     }
@@ -2285,6 +2290,7 @@ public class SegmentSelector extends JFrame implements DocumentListener
             }
             else if (selected.equals(REMESH_CELL))
             {
+                project.markProjectAsEdited();
                 this.reMesh();
 
             }

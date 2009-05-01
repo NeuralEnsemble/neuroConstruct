@@ -146,7 +146,7 @@ public class ProcessManager
      */
     public boolean compileFileWithNeuron(boolean forceRecompile, boolean showDialog) throws NeuronException
     {
-        logger.logComment("Going to compile the file: "+ myFile.getAbsolutePath()+", forcing recompile: "+ forceRecompile, true);
+        logger.logComment("Going to compile the file: "+ myFile.getAbsolutePath()+", forcing recompile: "+ forceRecompile);
 
         Runtime rt = Runtime.getRuntime();
         String neuronHome = GeneralProperties.getNeuronHomeDir();

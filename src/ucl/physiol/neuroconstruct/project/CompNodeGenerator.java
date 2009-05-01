@@ -81,6 +81,7 @@ public class CompNodeGenerator extends Thread
         continueGeneration = false;
     }
 
+    @Override
     public void run()
     {
         logger.logComment("Running CompNodeGenerator thread...");
@@ -213,7 +214,7 @@ public class CompNodeGenerator extends Thread
         
         Iterator<String> cellGroupNames = project.generatedCellPositions.getNamesGeneratedCellGroups();
         
-        if (!simConfig.getMpiConf().isParallel())
+        if (!simConfig.getMpiConf().isParallelOrRemote())
         {
             ArrayList<Integer> allLocal = new ArrayList<Integer>();
             allLocal.add(project.generatedCellPositions.getNumberInAllCellGroups());

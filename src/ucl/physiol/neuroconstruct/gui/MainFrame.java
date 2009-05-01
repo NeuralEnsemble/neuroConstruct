@@ -7503,7 +7503,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         }
 
-        else if (simConfig.getMpiConf().isParallel() 
+        else if (simConfig.getMpiConf().isParallelOrRemote()
                    && generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
         {
             String currentReport = jEditorPaneGenerateInfo.getText();
@@ -7526,7 +7526,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             projManager.compNodeGenerator.start();
         }
 
-        else if ((!(simConfig.getMpiConf().isParallel())
+        else if ((!(simConfig.getMpiConf().isParallelOrRemote())
                 && (generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
                 || generatorType.equals(CompNodeGenerator.myGeneratorType)))
         {
@@ -11730,7 +11730,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             + simConfig.getNetConns().size()
             + simConfig.getInputs().size();
         
-        if (GeneralUtils.includeParallelFunc() && simConfig.getMpiConf().isParallel()) 
+        if (GeneralUtils.includeParallelFunc() && simConfig.getMpiConf().isParallelOrRemote())
             totalSteps = totalSteps + simConfig.getCellGroups().size(); // for the compute node gen...
 
         jProgressBarGenerate.setMaximum(totalSteps * 100);

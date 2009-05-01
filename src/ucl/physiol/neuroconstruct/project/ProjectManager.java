@@ -2106,7 +2106,7 @@ public class ProjectManager implements GenerationReport
 
         }
 
-        else if (simConfig.getMpiConf().isParallel() 
+        else if (simConfig.getMpiConf().isParallelOrRemote()
                    && generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
         {
 
@@ -2124,7 +2124,7 @@ public class ProjectManager implements GenerationReport
             compNodeGenerator.start();
         }
 
-        else if ((!(simConfig.getMpiConf().isParallel())
+        else if ((!(simConfig.getMpiConf().isParallelOrRemote())
                 && (generatorType.equals(VolumeBasedConnGenerator.myGeneratorType))
                 || generatorType.equals(CompNodeGenerator.myGeneratorType)))
         {

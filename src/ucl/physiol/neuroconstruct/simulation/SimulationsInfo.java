@@ -471,6 +471,19 @@ public class SimulationsInfo extends AbstractTableModel
                 procs = procs + "]";
                 props.setProperty("Cell Processes on " + cell.getInstanceName(), procs);
 
+                info = new StringBuffer();
+                info.append("Segs:"+cell.getAllSegments().size());
+                ArrayList<Section> sections = cell.getAllSections();
+                info.append("_Secs:"+sections.size());
+
+                int totIntDivs = 0;
+                for (Section sec: sections)
+                    totIntDivs = totIntDivs + sec.getNumberInternalDivisions();
+
+                info.append("_IntDivs:"+totIntDivs);
+
+
+                props.setProperty("Morph summary " + cell.getInstanceName(), info.toString());
 
             }
         }

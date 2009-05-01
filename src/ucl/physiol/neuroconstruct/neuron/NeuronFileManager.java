@@ -370,7 +370,7 @@ public class NeuronFileManager
 
             hocWriter.write(generateAccess());
             
-            if (runMode != RUN_VIA_CONDOR && !simConfig.getMpiConf().isParallel()) // No gui if it's condor or parallel...
+            if (runMode != RUN_VIA_CONDOR && !simConfig.getMpiConf().isParallelOrRemote()) // No gui if it's condor or parallel...
             {
                 if (project.neuronSettings.isGraphicsMode())
                 {
@@ -394,12 +394,12 @@ public class NeuronFileManager
             
             // Finishing up...
             
-            if (!simConfig.getMpiConf().isParallel())
+            if (!simConfig.getMpiConf().isParallelOrRemote())
                 hocWriter.write(generateGUIForRerunning());
            
             hocWriter.write(generateNeuronCodeBlock(NativeCodeLocation.AFTER_SIMULATION));
             
-            if (simConfig.getMpiConf().isParallel())
+            if (simConfig.getMpiConf().isParallelNet())
                 hocWriter.write(finishParallel());
             
             if (runMode == RUN_VIA_CONDOR || quitAfterRun)
@@ -756,14 +756,14 @@ public class NeuronFileManager
                         addHocComment(response,
                                    "Giving cell " + posRecord.cellNumber + " an initial potential of: " + initVolt+" based on: "+ cell.getInitialPotential().toString());
 
-                        if (simConfig.getMpiConf().isParallel()) response.append("  if(isCellOnNode(\""+cellGroupName+"\", "
+                        if (simConfig.getMpiConf().isParallelNet()) response.append("  if(isCellOnNode(\""+cellGroupName+"\", "
                                                                         + posRecord.cellNumber + ")) {\n");
 
                         response.append("    forsec " + nameOfArrayOfTheseCells + "[" + posRecord.cellNumber + "].all {\n");
                         response.append("        v = " + initVolt + "\n");
                         response.append("    }\n\n");
                         
-                        if (simConfig.getMpiConf().isParallel()) response.append("  }\n\n");
+                        if (simConfig.getMpiConf().isParallelNet()) response.append("  }\n\n");
                     }
 
                     //Point3f point = new Point3f(posRecord.x_pos, posRecord.y_pos, posRecord.z_pos);
@@ -783,7 +783,7 @@ public class NeuronFileManager
                     response.append("    for i = 0, " + nameOfNumberOfTheseCells + "-1 {" + "\n");
                     response.append("        ");
 
-                        if (simConfig.getMpiConf().isParallel()) response.append("if(isCellOnNode(\""+cellGroupName
+                        if (simConfig.getMpiConf().isParallelNet()) response.append("if(isCellOnNode(\""+cellGroupName
                                                                         +"\", i)) ");
 
                         response.append("forsec " + nameOfArrayOfTheseCells + "[i].all "
@@ -809,7 +809,7 @@ public class NeuronFileManager
         StringBuffer response = new StringBuffer();
         response.append("\n");
 
-        if (simConfig.getMpiConf().isParallel())
+        if (simConfig.getMpiConf().isParallelNet())
         {
             addHocComment(response, "Cycling through cells and setting access to first one on this node");
             response.append("test_gid = 0\n");
@@ -872,7 +872,7 @@ public class NeuronFileManager
 
         addHocComment(response, "Initializes random-number generator");
         response.append("{use_mcell_ran4(1)}\n\n");
-        if (!simConfig.getMpiConf().isParallel())
+        if (!simConfig.getMpiConf().isParallelNet())
         {
             response.append("{mcell_ran4_init(" + this.randomSeed + ")}\n");
         }
@@ -919,7 +919,7 @@ public class NeuronFileManager
     {
         StringBuffer response = new StringBuffer();
         
-        if (simConfig.getMpiConf().isParallel())
+        if (simConfig.getMpiConf().isParallelNet())
         {
             addMajorHocComment(response, "Initialising parallelization");
     
@@ -957,7 +957,7 @@ public class NeuronFileManager
         StringBuffer response = new StringBuffer();
         
         
-        if (!simConfig.getMpiConf().isParallel())
+        if (!simConfig.getMpiConf().isParallelNet())
         {
             if (!isRunModePythonBased(genRunMode))
             {
@@ -1378,7 +1378,7 @@ public class NeuronFileManager
 
             response.append("curHandler = NetworkMLSaxHandler.NetworkMLSaxHandler(nmlHandler)\n");
 
-            if (simConfig.getMpiConf().isParallel())
+            if (simConfig.getMpiConf().isParallelNet())
                 response.append("curHandler.setNodeId(h.hostid)\n");
             else
                 response.append("curHandler.setNodeId(-1) \n");
@@ -1392,7 +1392,7 @@ public class NeuronFileManager
         {
             response.append("curHandler = NetworkMLHDF5Handler.NetworkMLHDF5Handler(nmlHandler)\n");
 
-            if (simConfig.getMpiConf().isParallel())
+            if (simConfig.getMpiConf().isParallelNet())
                 response.append("curHandler.setNodeId(h.hostid)\n");
             else
                 response.append("curHandler.setNodeId(-1) \n");
@@ -1428,7 +1428,7 @@ public class NeuronFileManager
         //response.append("steps_per_ms = " + Math.round(1d / (double) project.simulationParameters.getDt()) + "\n");
         response.append("steps_per_ms = " + (float)(1d / (double) project.simulationParameters.getDt()) + "\n");
 
-        if (simConfig.getMpiConf().isParallel())
+        if (simConfig.getMpiConf().isParallelNet())
         {
             response.append("pnm.set_maxstep(5)\n\n");
             return response.toString();
@@ -1548,7 +1548,7 @@ public class NeuronFileManager
                         String prefix = "";
                         String post = "";
 
-                        if (simConfig.getMpiConf().isParallel())
+                        if (simConfig.getMpiConf().isParallelNet())
                         {
                             prefix = "    ";
                             post = "}" + "\n";
@@ -1657,7 +1657,7 @@ public class NeuronFileManager
                         String prefix = "";
                         String post = "";
 
-                        if (simConfig.getMpiConf().isParallel())
+                        if (simConfig.getMpiConf().isParallelNet())
                         {
                             prefix = "    ";
                             post = "}" + "\n";
@@ -1743,7 +1743,7 @@ public class NeuronFileManager
                         String prefix = "";
                         String post = "";
 
-                        if (simConfig.getMpiConf().isParallel())
+                        if (simConfig.getMpiConf().isParallelNet())
                         {
                             prefix = "    ";
                             post = "}" + "\n";
@@ -1872,7 +1872,7 @@ public class NeuronFileManager
                         String prefix = "";
                         String post = "";
 
-                        if (simConfig.getMpiConf().isParallel())
+                        if (simConfig.getMpiConf().isParallelNet())
                         {
                             prefix = "    ";
                             post = "}" + "\n";
@@ -2025,7 +2025,7 @@ public class NeuronFileManager
                         String prefix = "";
                         String post = "";
 
-                        if (simConfig.getMpiConf().isParallel())
+                        if (simConfig.getMpiConf().isParallelNet())
                         {
                             prefix = "    ";
                             post = "}" + "\n";
@@ -2226,7 +2226,7 @@ public class NeuronFileManager
             String prefix = "";
             String post = "";
 
-            if (simConfig.getMpiConf().isParallel())
+            if (simConfig.getMpiConf().isParallelNet())
             {
                 prefix = "    ";
                 post = "}" + "\n";
@@ -2299,7 +2299,7 @@ public class NeuronFileManager
                         String prefix = "";
                         String post = "";
 
-                        if (simConfig.getMpiConf().isParallel())
+                        if (simConfig.getMpiConf().isParallelNet())
                         {
                             prefix = "    ";
                             post = "    }" + "\n";
@@ -2380,7 +2380,7 @@ public class NeuronFileManager
                                     String prefix = "";
                                     String post = "";
 
-                                    if (simConfig.getMpiConf().isParallel())
+                                    if (simConfig.getMpiConf().isParallelNet())
                                     {
                                         prefix = "    ";
                                         post = "}" + "\n";
@@ -2423,7 +2423,7 @@ public class NeuronFileManager
                                 String prefix = "";
                                 String post = "";
 
-                                if (simConfig.getMpiConf().isParallel())
+                                if (simConfig.getMpiConf().isParallelNet())
                                 {
                                     prefix = "    ";
                                     post = "}" + "\n";
@@ -2521,7 +2521,7 @@ public class NeuronFileManager
             String prefix = "";
             String post = "";
 
-            if (simConfig.getMpiConf().isParallel())
+            if (simConfig.getMpiConf().isParallelNet())
             {
                 prefix = "    ";
                 post = "}" + "\n";
@@ -2577,7 +2577,7 @@ public class NeuronFileManager
                             prefix = "";
                             post = "";
 
-                            if (simConfig.getMpiConf().isParallel())
+                            if (simConfig.getMpiConf().isParallelNet())
                             {
                                 prefix = "    ";
                                 post = "    }" + "\n";
@@ -2638,7 +2638,7 @@ public class NeuronFileManager
                                         prefix = "";
                                         post = "";
 
-                                        if (simConfig.getMpiConf().isParallel())
+                                        if (simConfig.getMpiConf().isParallelNet())
                                         {
                                             prefix = "    ";
                                             post = "}" + "\n";
@@ -2683,7 +2683,7 @@ public class NeuronFileManager
                                     prefix = "";
                                     post = "";
 
-                                    if (simConfig.getMpiConf().isParallel())
+                                    if (simConfig.getMpiConf().isParallelNet())
                                     {
                                         prefix = "    ";
                                         post = "}" + "\n";
@@ -2713,7 +2713,7 @@ public class NeuronFileManager
             prefix = "";
             post = "";
 
-            if (simConfig.getMpiConf().isParallel())
+            if (simConfig.getMpiConf().isParallelNet())
             {
                 prefix = "    ";
                 post = "}" + "\n";
@@ -2735,7 +2735,7 @@ public class NeuronFileManager
             response.append(prefix+"{propsFile.printf(\"RealSimulationTime=%g\\n\", realtime)}\n");
             response.append(prefix+"{propsFile.printf(\"SimulationSetupTime=%g\\n\", setuptime)}\n");
 
-            if (simConfig.getMpiConf().isParallel())
+            if (simConfig.getMpiConf().isParallelNet())
             {
                 response.append(prefix+"{propsFile.printf(\"NumberHosts=%g\\n\", pnm.pc.nhost)}\n");
             }
@@ -2989,7 +2989,7 @@ public class NeuronFileManager
                                         true,
                                         addComments,
                                         project.neuronSettings.isForceCorrectInit(),
-                                        simConfig.getMpiConf().isParallel());
+                                        simConfig.getMpiConf().isParallelNet());
                                 }
                                 else if (cellMechanism instanceof ChannelMLCellMechanism)
                                 {
@@ -3019,7 +3019,7 @@ public class NeuronFileManager
                                         cmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation(),
                                         addComments,
                                         project.neuronSettings.isForceCorrectInit(),
-                                        simConfig.getMpiConf().isParallel());
+                                        simConfig.getMpiConf().isParallelNet());
                                 }
                             }
 
@@ -3120,7 +3120,7 @@ public class NeuronFileManager
                         response.append("objectvar " + nameOfArrayOfTheseCells + "[" + nameOfNumberOfTheseCells + "]" +
                                         "\n\n");
     
-                        if (!simConfig.getMpiConf().isParallel())
+                        if (!simConfig.getMpiConf().isParallelNet())
                         {
                             response.append("proc addCell_" + cellGroupName + "() {\n");
     
@@ -3201,7 +3201,7 @@ public class NeuronFileManager
                         }
     
                         String parallelCheck = "";
-                        if (simConfig.getMpiConf().isParallel())
+                        if (simConfig.getMpiConf().isParallelNet())
                             parallelCheck = "if (isCellOnNode(\""+cellGroupName+"\", "+posRecord.cellNumber+")) ";
     
                         response.append(parallelCheck+ "{"+nameOfArrayOfTheseCells + "[" + posRecord.cellNumber + "].position("
@@ -3250,7 +3250,7 @@ public class NeuronFileManager
                                     true,
                                     addComments,
                                     project.neuronSettings.isForceCorrectInit(),
-                                    simConfig.getMpiConf().isParallel());
+                                    simConfig.getMpiConf().isParallelNet());
                             }
                             else if (cellMechanism instanceof ChannelMLCellMechanism)
                             {
@@ -3280,7 +3280,7 @@ public class NeuronFileManager
                                     cmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation(),
                                     addComments,
                                     project.neuronSettings.isForceCorrectInit(),
-                                    simConfig.getMpiConf().isParallel());
+                                    simConfig.getMpiConf().isParallelNet());
                             }
 
                             if (!success)
@@ -3399,13 +3399,13 @@ public class NeuronFileManager
 
         addMajorHocComment(responsePre, "Adding Network Connections");
         
-        if (simConfig.getMpiConf().isParallel())
+        if (simConfig.getMpiConf().isParallelNet())
         {
             responsePre.append("objectvar allCurrentNetConns\n");
             responsePre.append("allCurrentNetConns = new List()\n\n");
         }
         
-        if (addComments && simConfig.getMpiConf().isParallel())
+        if (addComments && simConfig.getMpiConf().isParallelNet())
         {
             //response.append("for i=0, (20000000 *hostid)  { rr = i*i }\n"); 
             responsePre.append("print \" -----------------------   Starting generation of net conns on host: \", hostid\n\n"); 
@@ -3520,7 +3520,7 @@ public class NeuronFileManager
 
             hocWriter.write("\n");
             
-            if (simConfig.getMpiConf().isParallel())
+            if (simConfig.getMpiConf().isParallelNet())
             {
                 //////////response.append("allCurrentNetConns.remove_all()   // Empty list \n");
             }
@@ -3670,7 +3670,7 @@ public class NeuronFileManager
 
                     float totalDelay = synInternalDelay + apSegmentPropDelay + apSpaceDelay;
                     
-                    if (totalDelay==0 && simConfig.getMpiConf().isParallel() && !warnedReZeroDelayParallel)
+                    if (totalDelay==0 && simConfig.getMpiConf().isParallelNet() && !warnedReZeroDelayParallel)
                     {
                         GuiUtils.showWarningMessage(logger, "Warning, zero delay for at least one synaptic connection for synapse type: " +
                                 synProps.getSynapseType()+" on "+netConnName+"\nAs this is a parallel simulation, this will probably throw errors when NEURON is run.", null);
@@ -3704,7 +3704,7 @@ public class NeuronFileManager
                         String objectVarName = objectVarArrayName + "["+singleConnIndex+"]";
                         String objectVarTempName = null;
                         
-                        if(simConfig.getMpiConf().isParallel())
+                        if(simConfig.getMpiConf().isParallelNet())
                         {
                             if (!synObjvarArraysCreated.contains(objVarTempCmd))
                             {
@@ -3715,7 +3715,7 @@ public class NeuronFileManager
                         }
                         
                         
-                        if (!simConfig.getMpiConf().isParallel())
+                        if (!simConfig.getMpiConf().isParallelNet())
                         {
                             // put synaptic start point on source axon
                             responseConn.append("{"+tgtSecNameFull + " " + objectVarName
@@ -3906,7 +3906,7 @@ public class NeuronFileManager
                         int srcGlobalId  = globalPreSynId*2;
                         globalPreSynId++;
                         
-                        if (!simConfig.getMpiConf().isParallel())
+                        if (!simConfig.getMpiConf().isParallelNet())
                         {
                             // Target cell mechanism
                             responseConn.append(tgtSecNameFull + " { " + gjListenObjA + " = new " + synapseType + "(" + fractTgtSection + ") }\n");
@@ -3968,7 +3968,7 @@ public class NeuronFileManager
             
             //StringBuffer responseConn = new StringBuffer(); 
             
-            if (simConfig.getMpiConf().isParallel() && addComments)
+            if (simConfig.getMpiConf().isParallelNet() && addComments)
             {
                 hocWriter.write("print \"++++++++++++\"\n");
                 hocWriter.write("print \"Created netcons: \", allCurrentNetConns.count(), \" on host \", hostid\n");
@@ -3979,7 +3979,7 @@ public class NeuronFileManager
             }
         }
         
-        if (containsGapJunctions && simConfig.getMpiConf().isParallel())
+        if (containsGapJunctions && simConfig.getMpiConf().isParallelNet())
         {
             hocWriter.write("\npnm.pc.setup_transfer()\n\n");
         }
@@ -3989,7 +3989,7 @@ public class NeuronFileManager
         GeneralUtils.timeCheck("Finsihed gen of syn conns");
         
         
-        if (addComments && simConfig.getMpiConf().isParallel())
+        if (addComments && simConfig.getMpiConf().isParallelNet())
         {
             hocWriter.write("print \" -----------------------   Finished generation of net conns on host: \", hostid\n"); 
            // response.append("waittime = pnm.pc.barrier()\n"); 
@@ -4191,7 +4191,7 @@ public class NeuronFileManager
 
         String dateCommand = "date +%x,%X:%N";
 
-        if (simConfig.getMpiConf().isParallel())
+        if (simConfig.getMpiConf().isParallelNet())
         {
             response.append("setuptime = stopsw()\n\n");
             response.append("print \"Setup time for simulation on host \",hostid,\": \",setuptime,\" seconds\"\n\n");
@@ -4687,7 +4687,7 @@ public class NeuronFileManager
                     
                     String mainExecutable = "nrngui";
                     
-                    if (simConfig.getMpiConf().isParallel()) mainExecutable = "nrniv";
+                    if (simConfig.getMpiConf().isParallelOrRemote()) mainExecutable = "nrniv";
 
                     neuronExecutable = locationOfNeuron
                         + System.getProperty("file.separator")
@@ -4716,7 +4716,7 @@ public class NeuronFileManager
 
                     /*TODO: Move to hpc/mpi package...*/
 
-                    if (simConfig.getMpiConf().isParallel())
+                    if (simConfig.getMpiConf().isParallelNet())
                     {
                         MpiSettings mpiSets = new MpiSettings();
                         
