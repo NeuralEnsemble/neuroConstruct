@@ -80,7 +80,7 @@ public class NeuronFileManagerTest {
         
         int wait = 1000;
         if (GeneralUtils.isWindowsBasedPlatform())
-            wait = 4000;
+            wait = 2000;
         
         while(pm.isGenerating())
         {
@@ -135,13 +135,13 @@ public class NeuronFileManagerTest {
         File timesFile = simData.getTimesFile();
         
         
-        Thread.sleep(wait*3); // Shouldn't take longer than this
+        Thread.sleep(wait); // Shouldn't take longer than this
 
 
-        if (!timesFile.exists())
+        while (!timesFile.exists())
         {
             System.out.println("Waiting for file to be created: "+ timesFile.getAbsolutePath());
-            Thread.sleep(wait*3);
+            Thread.sleep(wait);
         }
         
         assertTrue(timesFile.exists());
@@ -149,6 +149,12 @@ public class NeuronFileManagerTest {
         Thread.sleep(wait); // Wait for all files to be written...
         
         simData.initialise();
+
+        while(!simData.isDataLoaded())
+        {
+            System.out.println("Waiting for data to be loaded");
+            Thread.sleep(wait);
+        }
         
         
         int numRecordings = simData.getCellSegRefs(false).size();
@@ -166,6 +172,12 @@ public class NeuronFileManagerTest {
         SimulationData sd = new SimulationData(simDataDir);
 
         sd.initialise();
+        
+        while(!simData.isDataLoaded())
+        {
+            System.out.println("Waiting for data to be loaded");
+            Thread.sleep(wait);
+        }
 
         System.out.println("Data saved: "+ sd.getCellSegRefs(true));
 
@@ -208,7 +220,7 @@ public class NeuronFileManagerTest {
                 
         pm.doGenerate(sc.getName(), 1234);
         
-        int wait = 3000;
+        int wait = 1000;
         
         while(pm.isGenerating())
         {
@@ -262,12 +274,12 @@ public class NeuronFileManagerTest {
         
         File timesFile = simDataSerial.getTimesFile();
         
+       
         
-        Thread.sleep(wait); // Shouldn't take longer than this
-        
-        if (!timesFile.exists())
+        while (!timesFile.exists())
         {
-            Thread.sleep(wait*2);
+            System.out.println("Waiting for: "+ timesFile.getAbsolutePath());
+            Thread.sleep(wait);
         }
         
         assertTrue(timesFile.exists());
@@ -291,7 +303,7 @@ public class NeuronFileManagerTest {
                 
         pm.doGenerate(sc.getName(), 1234);
         
-        wait = 4000;  // Give longer to set up parallel
+        wait = 1000;  // Give longer to set up parallel
         
         while(pm.isGenerating())
         {
@@ -348,13 +360,11 @@ public class NeuronFileManagerTest {
         
         timesFile = simDataParallel.getTimesFile();
         
-        
-        Thread.sleep(wait); // Shouldn't take longer than this
 
-        if (!timesFile.exists())
+        while (!timesFile.exists())
         {
             System.out.println("Waiting for file to be created: "+ timesFile.getAbsolutePath());
-            Thread.sleep(wait*3);
+            Thread.sleep(wait);
         }
         
         assertTrue(timesFile.exists());

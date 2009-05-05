@@ -3209,6 +3209,9 @@ public class PlotterFrame extends JFrame
             //mainScript.append("fig.set_figwidth("+this.getSize().width+"*0.03)  # Approx width in inches\n");
 
 
+            mainScript.append("p.get_axes().get_yaxis().tick_left()\n");
+            mainScript.append("p.get_axes().get_xaxis().tick_bottom()\n");
+
             mainScript.append("canvas = FigureCanvas(fig)\n");
 
             mainScript.append("canvas.print_eps('plot.eps')\n");
