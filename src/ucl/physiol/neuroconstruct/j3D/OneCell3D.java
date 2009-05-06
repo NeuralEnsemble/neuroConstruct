@@ -876,9 +876,10 @@ public class OneCell3D
                 endRadius = equivCylinderRadius;
 
             }*/
+            float minRadius = project.proj3Dproperties.getMinRadius();
 
 
-            ConicalFrustum somaPrimitive = new ConicalFrustum(startRadius, endRadius, length,
+            ConicalFrustum somaPrimitive = new ConicalFrustum(Math.max(startRadius, minRadius), Math.max(endRadius, minRadius), length,
                                                          ConicalFrustum.GENERATE_NORMALS |
                                                          ConicalFrustum.GENERATE_TEXTURE_COORDS |
                                                          ConicalFrustum.ENABLE_APPEARANCE_MODIFY,
@@ -937,7 +938,9 @@ public class OneCell3D
 
             mainCellTG.addChild(tg1);
 
-            Primitive somaPrimitive = new Sphere(soma.getRadius(),
+            float minRadius = project.proj3Dproperties.getMinRadius();
+
+            Primitive somaPrimitive = new Sphere(Math.max(soma.getRadius(), minRadius),
                                                  Sphere.GENERATE_NORMALS |
                                                  Sphere.GENERATE_TEXTURE_COORDS |
                                                  Sphere.ENABLE_APPEARANCE_MODIFY,
@@ -1114,8 +1117,10 @@ public class OneCell3D
                 float equivCylinderRadius
                     = (float) CompartmentHelper.getEquivalentRadius(startRadius, endRadius, segment.getSegmentLength());
 
-                newPrim = new ConicalFrustum(equivCylinderRadius,
-                                              equivCylinderRadius,
+                 float minRadius = project.proj3Dproperties.getMinRadius();
+
+                newPrim = new ConicalFrustum(Math.max(equivCylinderRadius, minRadius),
+                                              Math.max(equivCylinderRadius, minRadius),
                                               length,
                                               ConicalFrustum.GENERATE_NORMALS |
                                               ConicalFrustum.GENERATE_TEXTURE_COORDS |
@@ -1132,7 +1137,7 @@ public class OneCell3D
             {
                  logger.logComment("Adding ConicalFrustum...");
 
-                 float minRadius = 0;
+                 float minRadius = project.proj3Dproperties.getMinRadius();
 
                 ConicalFrustum conFru
                     = new ConicalFrustum(Math.max(startRadius, minRadius),
@@ -1151,10 +1156,12 @@ public class OneCell3D
         }
         else
         {
-                 logger.logComment("Adding Sphere...");
+            logger.logComment("Adding Sphere...");
+
+            float minRadius = project.proj3Dproperties.getMinRadius();
 
             Primitive newPrim = null;
-            newPrim = new Sphere(segment.getRadius(),
+            newPrim = new Sphere(Math.max(segment.getRadius(), minRadius),
                                  Sphere.GENERATE_NORMALS |
                                  Sphere.GENERATE_TEXTURE_COORDS |
                                  Sphere.ENABLE_APPEARANCE_MODIFY,

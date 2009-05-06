@@ -55,7 +55,7 @@ public class DataSet
 
     private int numberValidPoints = 0;
 
-    private String refrence = null;
+    private String reference = null;
     private String description = null;
 
     private Color graphColour = Color.BLACK;
@@ -99,13 +99,13 @@ public class DataSet
 
     private DataSet(String refrence, String description)
     {
-        this.refrence = refrence;
+        this.reference = refrence;
         this.description = description;
     }
 
     public DataSet(String refrence, String description, String xUnit, String yUnit, String xLegend, String yLegend)
     {
-        this.refrence = refrence;
+        this.reference = refrence;
         this.description = description;
 
         this.xUnit = xUnit;
@@ -346,7 +346,7 @@ public class DataSet
     @Override
     public String toString()
     {
-        StringBuffer sb = new StringBuffer("DataSet: "+this.getRefrence()+"[");
+        StringBuffer sb = new StringBuffer("DataSet: "+this.getReference()+"[");
         for (int i = 0; i < Math.min(3, numberValidPoints); i++)
         {
             sb.append(pointToString(i));
@@ -591,15 +591,15 @@ public class DataSet
         this.graphFormat = graphFormat;
     }
 
-    public String getRefrence()
+    public String getReference()
     {
-        return refrence;
+        return reference;
     }
 
 
-    public String getSafeRefrence()
+    public String getSafeReference()
     {
-        String refNew = new String(refrence);
+        String refNew = new String(reference);
         refNew = GeneralUtils.replaceAllTokens(refNew, " ", "_");
         refNew = GeneralUtils.replaceAllTokens(refNew, "(", "");
         refNew = GeneralUtils.replaceAllTokens(refNew, ")", "");
@@ -610,9 +610,9 @@ public class DataSet
         return refNew;
     }
 
-    public void setRefrence(String refrence)
+    public void setReference(String reference)
     {
-        this.refrence = refrence;
+        this.reference = reference;
     }
 
 

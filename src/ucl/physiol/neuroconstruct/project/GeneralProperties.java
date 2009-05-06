@@ -920,6 +920,16 @@ public class GeneralProperties
         defaultDisplay3DProps.setResolution3DElements(res);
     }
 
+    public static float getDefaultMinRadius()
+    {
+        return defaultDisplay3DProps.getMinRadius();
+    }
+
+    public static void setDefaultMinRadius(float res)
+    {
+        defaultDisplay3DProps.setMinRadius(res);
+    }
+
     public static void setDefaultTransparency(float trans)
     {
         defaultDisplay3DProps.setTransparency(trans);

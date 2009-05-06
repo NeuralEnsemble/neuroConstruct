@@ -191,7 +191,7 @@ public class DataSetInfo extends AbstractTableModel
         for (int i = 0; i < dataSetObjs.size(); i++)
         {
             DataSet ds = dataSetObjs.get(i);
-            allRefs.add(ds.getRefrence());
+            allRefs.add(ds.getReference());
         }
         return allRefs;
     }
@@ -208,7 +208,7 @@ public class DataSetInfo extends AbstractTableModel
     {
         DataSet ds = dataSetObjs.elementAt(row);
 
-        return ds.getRefrence();
+        return ds.getReference();
     }
 
 
@@ -250,7 +250,7 @@ public class DataSetInfo extends AbstractTableModel
 
             case COL_NUM_NAME:
             {
-                return dataSet.getRefrence();
+                return dataSet.getReference();
             }
 
             case COL_NUM_DESC:

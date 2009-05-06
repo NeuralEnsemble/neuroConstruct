@@ -393,7 +393,7 @@ public class Hdf5Utils
                     if (d.getDims()[0]>1)
                     {
                         DataSet ds = Hdf5Utils.parseDataset(d, includePoints, p);
-                        ds.setRefrence(g.getFullName()+"/"+ds.getRefrence());
+                        ds.setReference(g.getFullName()+"/"+ds.getReference());
                         
                         logger.logComment(ds.toString());
                         String desc = ds.getDescription();

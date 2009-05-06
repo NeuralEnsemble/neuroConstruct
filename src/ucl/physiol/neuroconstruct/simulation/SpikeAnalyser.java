@@ -214,7 +214,7 @@ public class SpikeAnalyser
             data = ds.getXValues();
             newXval = "X values";
             unit = ds.getXUnit();
-            desc = "Distribution of X values of: "+ ds.getRefrence();
+            desc = "Distribution of X values of: "+ ds.getReference();
             if (ds.getXLegend().length() > 0)
             {
                 newXval = ds.getXLegend();
@@ -225,7 +225,7 @@ public class SpikeAnalyser
             data = ds.getYValues();
             newXval = "Y values";
             unit = ds.getYUnit();
-            desc = "Distribution of Y values of: "+ ds.getRefrence();
+            desc = "Distribution of Y values of: "+ ds.getReference();
             if (ds.getYLegend().length() > 0)
             {
                 newXval = ds.getYLegend();

@@ -42,7 +42,6 @@ import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 
 public class Display3DProperties
 {
-
     public static final String DISPLAY_SOMA_NEURITE_SOLID = "All solid";
     public static final String DISPLAY_SOMA_NEURITE_SOLID_UNSHINY = "All solid (unshiny)";
     public static final String DISPLAY_SOMA_SOLID_NEURITE_NONE= "Soma solid, no neurites";
@@ -50,7 +49,6 @@ public class Display3DProperties
     public static final String DISPLAY_SOMA_LINE_NEURITE_LINE = "All lines";
     public static final String DISPLAY_INPUTS_AS_PROBES = "Probes";
     public static final String DISPLAY_INPUTS_AS_SPHERES = "Spheres";
-
 
 
     /**
@@ -80,6 +78,7 @@ public class Display3DProperties
      */
     private int resolution3DElements = 30;
 
+    private float minRadius = 0;
 
     private float transparency = 0.85f;
 
@@ -112,6 +111,7 @@ public class Display3DProperties
         this.transparency = transparency;
     }
     
+    @Override
     public String toString()
     {
     	return "Display3DProperties: backgroundColour3D: "+backgroundColour3D+", displayOption: "+displayOption;
@@ -313,6 +313,19 @@ public class Display3DProperties
     {
         this.resolution3DElements = resolution3DElements;
     }
+
+    public float getMinRadius()
+    {
+        return minRadius;
+    }
+
+    public void setMinRadius(float minRadius)
+    {
+        this.minRadius = minRadius;
+    }
+
+
+
     public Color getCellColour3D()
     {
         return cellColour3D;

@@ -105,7 +105,7 @@ public class EditPointsDialog extends JDialog implements FocusListener, KeyListe
                       DataSet dataSet,
                       boolean modal)
     {
-        super(frame, "Edit points in Data Set: "+ dataSet.getRefrence(), modal);
+        super(frame, "Edit points in Data Set: "+ dataSet.getReference(), modal);
 
         this.dataSet = dataSet;
         try
@@ -478,7 +478,7 @@ public class EditPointsDialog extends JDialog implements FocusListener, KeyListe
     {
         logger.logComment("---- Updating the GUI to show point " + currentPointNumber);
 
-        this.jTextFieldRef.setText(dataSet.getRefrence());
+        this.jTextFieldRef.setText(dataSet.getReference());
         this.jTextFieldNum.setText(dataSet.getNumberPoints()+"");
 
         inputPointNumber.setIntValue(currentPointNumber);
@@ -645,7 +645,7 @@ public class EditPointsDialog extends JDialog implements FocusListener, KeyListe
     void jButtonPlot_actionPerformed(ActionEvent e)
     {
         PlotterFrame frame = PlotManager.getPlotterFrame("Quick Plot of data points in: "
-                                                         + dataSet.getRefrence());
+                                                         + dataSet.getReference());
 
         frame.addDataSet(dataSet);
 

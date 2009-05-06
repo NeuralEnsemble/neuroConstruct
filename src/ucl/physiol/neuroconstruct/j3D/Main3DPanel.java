@@ -2306,7 +2306,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                 if (points.length!=times.length)
                 {
-                    GuiUtils.showWarningMessage(logger, "Warning. For data set: "+data.getRefrence()+" the number of data points is: "+ points.length
+                    GuiUtils.showWarningMessage(logger, "Warning. For data set: "+data.getReference()+" the number of data points is: "+ points.length
                             +" ("+points[0]+", ..., "+points[points.length-1]+")\n" +
                             " while the number of time points in the simulation is: "+times.length+" ("+times[0]+", ..., "+times[times.length-1]+")", frame);
                 }
@@ -3245,7 +3245,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         }
         cellGroupFreqData.setDescription(desc.toString());
-        PlotterFrame frame = PlotManager.getPlotterFrame(cellGroupFreqData.getRefrence());
+        PlotterFrame frame = PlotManager.getPlotterFrame(cellGroupFreqData.getReference());
         updatePlotList();
 
         frame.addDataSet(cellGroupFreqData);
@@ -3563,7 +3563,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         cellGroupHist.setDescription(desc.toString());
         cellGroupHist.setGraphFormat(PlotCanvas.USE_BARCHART_FOR_PLOT);
-        PlotterFrame frame = PlotManager.getPlotterFrame(cellGroupHist.getRefrence());
+        PlotterFrame frame = PlotManager.getPlotterFrame(cellGroupHist.getReference());
         updatePlotList();
         frame.addDataSet(cellGroupHist);
         frame.setViewMode(PlotCanvas.INCLUDE_ORIGIN_VIEW);
@@ -3913,7 +3913,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         
         cellGroupSync.setDescription(desc.toString());
         cellGroupSync.setGraphFormat(PlotCanvas.USE_LINES_FOR_PLOT);
-        PlotterFrame frame = PlotManager.getPlotterFrame(cellGroupSync.getRefrence());
+        PlotterFrame frame = PlotManager.getPlotterFrame(cellGroupSync.getReference());
         updatePlotList();
         frame.addDataSet(cellGroupSync);
         frame.setViewMode(PlotCanvas.INCLUDE_ORIGIN_VIEW);
@@ -4562,7 +4562,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         popISIHist.setDescription(desc.toString());
         popISIHist.setGraphFormat(PlotCanvas.USE_BARCHART_FOR_PLOT);
-        PlotterFrame frame = PlotManager.getPlotterFrame(popISIHist.getRefrence());
+        PlotterFrame frame = PlotManager.getPlotterFrame(popISIHist.getReference());
         updatePlotList();
         frame.addDataSet(popISIHist);
         frame.setViewMode(PlotCanvas.INCLUDE_ORIGIN_VIEW);

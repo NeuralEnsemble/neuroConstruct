@@ -55,6 +55,7 @@ public class PhysicalQuantity
         this.units = units;
     }
 
+    @Override
     public String toString()
     {
         return magnitude + " " + units.getSymbol();

@@ -361,7 +361,7 @@ public class PlotCanvas extends Canvas
             dataSetForUnits = areaNumMouseIn;
 
             //logger.logComment("areaNumMouseIn: " + areaNumMouseIn);
-            dataSetInfo = "Data set: " + dataSets[areaNumMouseIn].getRefrence() + " ";
+            dataSetInfo = "Data set: " + dataSets[areaNumMouseIn].getReference() + " ";
         }
 
 
@@ -497,7 +497,7 @@ public class PlotCanvas extends Canvas
         boolean foundDataSet = false;
         for (int i = 0; i < dataSets.length; i++)
         {
-            if (!(dataSets[i].getRefrence().equals(dataSet.getRefrence())
+            if (!(dataSets[i].getReference().equals(dataSet.getReference())
                   && dataSets[i].getDescription().equals(dataSet.getDescription()))
                 || foundDataSet)
             {
@@ -1076,7 +1076,7 @@ public class PlotCanvas extends Canvas
 
             for (int dataSetIndex=dataSetIndexStart; dataSetIndex <= dataSetIndexEnd; dataSetIndex++)
             {
-                logger.logComment(">>>>   Plotting data Set: "+ dataSets[dataSetIndex].getRefrence());
+                logger.logComment(">>>>   Plotting data Set: "+ dataSets[dataSetIndex].getReference());
 
                 int numPoints = dataSets[dataSetIndex].getNumberPoints();
                 // double[] nextPoint = null;

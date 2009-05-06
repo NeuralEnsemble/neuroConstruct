@@ -149,7 +149,8 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
     JButton jButtonDetach = new JButton();
 
 
-    JLabel warningLabel =  new JLabel("");
+    JLabel warningLabel1 =  new JLabel("");
+    JLabel warningLabel2 =  new JLabel("");
 
     JLabel sectionChanMechInfo =  new JLabel("");
 
@@ -269,10 +270,8 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         jButtonFind.setToolTipText(toolTipText.getToolTip("3D Find one cell"));
 
 
-        warningLabel.setForeground(Color.red);
-
-
-        warningLabel.setToolTipText("Check on the validity of the displayed cell");
+        warningLabel1.setForeground(Color.red);
+        warningLabel1.setToolTipText("Check on the validity of the displayed cell");
 
     }
 
@@ -634,21 +633,21 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             logger.logError("Invalid cell:" + validity);
 
             //jPanelExtraButton.add(warningLabel);
-            warningLabel.setForeground(ValidityStatus.VALIDATION_COLOUR_ERROR_OBJ);
-            warningLabel.setText("Cell not valid");
+            warningLabel1.setForeground(ValidityStatus.VALIDATION_COLOUR_ERROR_OBJ);
+            warningLabel1.setText("Cell not valid");
         }
         else if (validity.isWarning()||bioValidity.isWarning())
         {
             logger.logError("Warning on cell:" + validity);
 
             //jPanelExtraButton.add(warningLabel);
-            warningLabel.setForeground(ValidityStatus.VALIDATION_COLOUR_WARN_OBJ);
-            warningLabel.setText("Cell has warnings");
+            warningLabel1.setForeground(ValidityStatus.VALIDATION_COLOUR_WARN_OBJ);
+            warningLabel1.setText("Cell has warnings");
         }
 
         else
         {
-            warningLabel.setText("");
+            warningLabel1.setText("");
         }
 
 
@@ -1670,8 +1669,19 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         {
             jComboBoxHighlight.setToolTipText(toolTipText.getToolTip("Highlight pick section/segment"));
             jPanelExtraButton.add(jButtonCellInfo);
-            jPanelExtraButton.add(this.warningLabel);
+            jPanelExtraButton.add(this.warningLabel1);
+            jPanelExtraButton.add(this.warningLabel2);
             resetColours();
+
+            if (project.proj3Dproperties.getMinRadius()>0)
+            {
+                warningLabel2.setForeground(ValidityStatus.VALIDATION_COLOUR_WARN_OBJ);
+                warningLabel2.setText("Min radius: "+project.proj3Dproperties.getMinRadius());
+            }
+            else
+            {
+                warningLabel2.setText("");
+            }
 
             this.myOneCell3D.applyGroupColouring();
 

@@ -27,6 +27,7 @@
 package ucl.physiol.neuroconstruct.utils.units;
 
 import ucl.physiol.neuroconstruct.utils.ClassLogger;
+import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
 /**
  * Class for handling units. These classes are based on the CellML (http://www.cellml.org)
@@ -76,6 +77,17 @@ public class Unit
 
         return symbol;
 
+    }
+
+    public static String getSafeString(String possPhysQuantity)
+    {
+        String ret = new String(possPhysQuantity);
+        ret = GeneralUtils.replaceAllTokens(ret, "\u03bc", "u");
+        ret = GeneralUtils.replaceAllTokens(ret, "\u00b2", "2");
+        ret = GeneralUtils.replaceAllTokens(ret, "\u00b3", "3");
+        ret = GeneralUtils.replaceAllTokens(ret, "\u207b", "-");
+
+        return ret;
     }
 
     /**

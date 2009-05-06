@@ -144,6 +144,10 @@ public class OptionsFrame extends JFrame
     JRadioButton jRadioButtonJavaXML = new JRadioButton();
     GridBagLayout gridBagLayout4 = new GridBagLayout();
     ButtonGroup buttonGroupSaveOptions = new ButtonGroup();
+
+    JLabel jLabelMinRadius = new JLabel();
+    JTextField jTextFieldMinRadius = new JTextField();
+
     JLabel jLabelRes3DElements = new JLabel();
     JTextField jTextFieldRes3DElements = new JTextField();
 
@@ -188,6 +192,9 @@ public class OptionsFrame extends JFrame
        this.jButtonCellColour.setToolTipText(toolTipText.getToolTip("3D Settings cell colour"));
        this.jLabelRes3DElements.setToolTipText(toolTipText.getToolTip("3D Resolution"));
        this.jTextFieldRes3DElements.setToolTipText(toolTipText.getToolTip("3D Resolution"));
+
+       this.jLabelMinRadius.setToolTipText(toolTipText.getToolTip("Minimum radius to display for 3D segments"));
+       this.jTextFieldMinRadius.setToolTipText(toolTipText.getToolTip("Minimum radius to display for 3D segments"));
        
        
         jPanelSave.setToolTipText(toolTipText.getToolTip("Morphology save format"));
@@ -199,7 +206,7 @@ public class OptionsFrame extends JFrame
     {
         panelMain.setLayout(borderLayout1);
 
-        Dimension dim = new Dimension(500, 500);
+        Dimension dim = new Dimension(500, 550);
 
         panelMain.setMaximumSize(dim);
         panelMain.setMinimumSize(dim);
@@ -355,14 +362,22 @@ public class OptionsFrame extends JFrame
         jLabelRes3DElements.setText("Resolution 3D elements:");
         jLabelTrans.setText("Level of transparency (~0.8 -> 1):");
 
+
+        jLabelMinRadius.setText("Min radius segments:");
+
+        jTextFieldMinRadius.setText("0");
+        jTextFieldMinRadius.setColumns(5);
+        jTextFieldMinRadius.setMinimumSize(new Dimension(100,20));
+        jTextFieldMinRadius.setHorizontalAlignment(SwingConstants.TRAILING);
+
         jTextFieldRes3DElements.setText("30");
         jTextFieldRes3DElements.setColumns(5);
-        jTextFieldRes3DElements.setMinimumSize(new Dimension(100,24));
+        jTextFieldRes3DElements.setMinimumSize(new Dimension(100,20));
         jTextFieldRes3DElements.setHorizontalAlignment(SwingConstants.TRAILING);
 
         this.jTextFieldTrans.setText("0.7");
         jTextFieldTrans.setColumns(5);
-        jTextFieldTrans.setMinimumSize(new Dimension(100,24));
+        jTextFieldTrans.setMinimumSize(new Dimension(100,20));
 
         jTextFieldTrans.setHorizontalAlignment(SwingConstants.TRAILING);
 
@@ -453,22 +468,30 @@ public class OptionsFrame extends JFrame
                                                                  , GridBagConstraints.CENTER, GridBagConstraints.NONE,
                                                                  new Insets(6, 12, 6, 0), 0, 0));
 
-        
 
-        jPanelProjProps.add(jLabelRes3DElements, new GridBagConstraints(0, 5, 3, 1, 0.0, 0.0
+
+        jPanelProjProps.add(jLabelMinRadius, new GridBagConstraints(0, 5, 3, 1, 0.0, 0.0
                                                                  , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                                  new Insets(6, 12, 6, 0), 0, 0));
 
-        jPanelProjProps.add(jTextFieldRes3DElements, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0
+        jPanelProjProps.add(jTextFieldMinRadius, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0
+                                                                     , GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                                                                     new Insets(6, 0, 6, 0), 0, 0));
+
+        jPanelProjProps.add(jLabelRes3DElements, new GridBagConstraints(0, 6, 3, 1, 0.0, 0.0
+                                                                 , GridBagConstraints.WEST, GridBagConstraints.NONE,
+                                                                 new Insets(6, 12, 6, 0), 0, 0));
+
+        jPanelProjProps.add(jTextFieldRes3DElements, new GridBagConstraints(3, 6, 1, 1, 0.0, 0.0
                                                                      , GridBagConstraints.CENTER, GridBagConstraints.NONE,
                                                                      new Insets(6, 0, 6, 0), 0, 0));
 
 
-        jPanelProjProps.add(this.jLabelTrans, new GridBagConstraints(0, 6, 3, 1, 0.0, 0.0
+        jPanelProjProps.add(this.jLabelTrans, new GridBagConstraints(0, 7, 3, 1, 0.0, 0.0
                                                                  , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                                  new Insets(6, 12, 6, 0), 0, 0));
 
-        jPanelProjProps.add(jTextFieldTrans, new GridBagConstraints(3, 6, 1, 1, 0.0, 0.0
+        jPanelProjProps.add(jTextFieldTrans, new GridBagConstraints(3, 7, 1, 1, 0.0, 0.0
                                                                      , GridBagConstraints.CENTER, GridBagConstraints.NONE,
                                                                      new Insets(6, 0, 6, 0), 0, 0));
 
@@ -477,40 +500,40 @@ public class OptionsFrame extends JFrame
 
 
 
-        jPanelProjProps.add(jLabelShow, new GridBagConstraints(0, 7, 3, 1, 0.0, 0.0, 
+        jPanelProjProps.add(jLabelShow, new GridBagConstraints(0, 8, 3, 1, 0.0, 0.0,
                                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 12, 6, 0), 0, 0));
 
-        jPanelProjProps.add(jCheckBoxShowRegions, new GridBagConstraints(3, 7, 1, 1, 0.0, 0.0, 
+        jPanelProjProps.add(jCheckBoxShowRegions, new GridBagConstraints(3, 8, 1, 1, 0.0, 0.0,
                                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 6, 0, 0), 0, 0));
         
         
         
 
-        jPanelProjProps.add(jCheckBoxShowInputs, new GridBagConstraints(3, 8, 1, 1, 0.0, 0.0, 
+        jPanelProjProps.add(jCheckBoxShowInputs, new GridBagConstraints(3, 9, 1, 1, 0.0, 0.0,
                                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 0), 0, 0));
         
-        jPanelProjProps.add(jButtonChangeInput, new GridBagConstraints(4, 8, 1, 1, 0.0, 0.0, 
+        jPanelProjProps.add(jButtonChangeInput, new GridBagConstraints(4, 9, 1, 1, 0.0, 0.0,
                                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 0), 0, 0));
 
              
              
-        jPanelProjProps.add(jCheckBoxShowAxonalArbours, new GridBagConstraints(3, 9, 1, 1, 0.0, 0.0, 
+        jPanelProjProps.add(jCheckBoxShowAxonalArbours, new GridBagConstraints(3, 10, 1, 1, 0.0, 0.0,
                                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 0), 0, 0));
         
         
 
-        jPanelProjProps.add(jCheckBoxShowSynapseConns, new GridBagConstraints(3, 10, 1, 1, 0.0, 0.0, 
+        jPanelProjProps.add(jCheckBoxShowSynapseConns, new GridBagConstraints(3, 11, 1, 1, 0.0, 0.0,
                                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 0), 0, 0));
         
         
 
-        jPanelProjProps.add(jCheckBoxShowSynEndPoints, new GridBagConstraints(3, 11, 1, 1, 0.0, 0.0, 
+        jPanelProjProps.add(jCheckBoxShowSynEndPoints, new GridBagConstraints(3, 12, 1, 1, 0.0, 0.0,
                                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 0), 0, 0));
         
         
 
 
-        jPanelProjProps.add(jButtonApply, new GridBagConstraints(0, 12, 5, 1, 0.0, 0.0
+        jPanelProjProps.add(jButtonApply, new GridBagConstraints(0, 13, 5, 1, 0.0, 0.0
                                                           , GridBagConstraints.CENTER, GridBagConstraints.NONE,
                                                           new Insets(6, 0, 12, 0), 0, 0));
 
@@ -696,6 +719,7 @@ public class OptionsFrame extends JFrame
             jCheckBoxShowSynEndPoints.setSelected(props3D.getShowSynapseEndpoints());
 
 
+            jTextFieldMinRadius.setText(props3D.getMinRadius()+"");
             jTextFieldRes3DElements.setText(props3D.getResolution3DElements()+"");
             jTextFieldTrans.setText(props3D.getTransparency()+"");
 
@@ -745,6 +769,7 @@ public class OptionsFrame extends JFrame
             jCheckBoxShowSynapseConns.setSelected(GeneralProperties.getDefaultShowSynapseConns());
             jCheckBoxShowSynEndPoints.setSelected(GeneralProperties.getDefaultShowSynapseEndpoints());
 
+            jTextFieldRes3DElements.setText(GeneralProperties.getDefaultMinRadius()+"");
             jTextFieldRes3DElements.setText(GeneralProperties.getDefaultResolution3DElements()+"");
             jTextFieldTrans.setText(GeneralProperties.getDefaultTransparency()+"");
 
@@ -934,8 +959,10 @@ public class OptionsFrame extends JFrame
             GeneralProperties.setDefaultShowSynapseConns(jCheckBoxShowSynapseConns.isSelected());
             GeneralProperties.setDefaultShowSynapseEndpoints(jCheckBoxShowSynEndPoints.isSelected());
 
+            GeneralProperties.setDefaultMinRadius(Float.parseFloat(jTextFieldMinRadius.getText()));
+
             GeneralProperties.setDefaultResolution3DElements(Integer.parseInt(jTextFieldRes3DElements.getText()));
-            GeneralProperties.setDefaultTransparency(Float.parseFloat(jTextFieldRes3DElements.getText()));
+            GeneralProperties.setDefaultTransparency(Float.parseFloat(jTextFieldTrans.getText()));
 
 
         }
@@ -964,7 +991,9 @@ public class OptionsFrame extends JFrame
             props3D.setShowSynapseConns(jCheckBoxShowSynapseConns.isSelected());
             props3D.setShowSynapseEndpoints(jCheckBoxShowSynEndPoints.isSelected());
 
+            props3D.setMinRadius(Float.parseFloat(jTextFieldMinRadius.getText()));
             props3D.setResolution3DElements(Integer.parseInt(jTextFieldRes3DElements.getText()));
+            
             props3D.setTransparency(Float.parseFloat(jTextFieldTrans.getText()));
 
 

@@ -1930,7 +1930,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
             catch (ValueNotPresentException e1)
             {
                 GuiUtils.showErrorMessage(logger, 
-                        "Unable to determine value of variable: "+argName+" in DataSet:\n"+ argDs.getRefrence()
+                        "Unable to determine value of variable: "+argName+" in DataSet:\n"+ argDs.getReference()
                         +"\nto evaluate: "+ parsed, e1, this);
                 return null;
             }

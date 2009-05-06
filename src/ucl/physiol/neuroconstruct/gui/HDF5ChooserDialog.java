@@ -135,7 +135,7 @@ public class HDF5ChooserDialog extends javax.swing.JDialog
         @Override
         public String toString()
         {
-            return ds.getRefrence();
+            return ds.getReference();
         }
             
     }
@@ -250,7 +250,7 @@ public class HDF5ChooserDialog extends javax.swing.JDialog
             
             String targetFrame = (String)jComboBoxPlotFrames.getSelectedItem();
             
-            String plotFrame = "Data from: " + dsh.ds.getRefrence();
+            String plotFrame = "Data from: " + dsh.ds.getReference();
             if (!targetFrame.equals(defaultPlotLocation))
             {
                 plotFrame = targetFrame;

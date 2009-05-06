@@ -787,7 +787,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                                      numPoints + ""));
 
             fw.write(getParamComment(DataSetManager.DATA_SET_REF_PARAM,
-                                     dataSet.getRefrence()));
+                                     dataSet.getReference()));
 
             String desc = dataSet.getDescription();
             if (desc.indexOf("\n") > 0)
@@ -872,7 +872,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
             return;
         }
 
-        String plotFrameRef = "Plot of "+dataSet.getRefrence();
+        String plotFrameRef = "Plot of "+dataSet.getReference();
 
         String selectedPlotFrame = (String)jComboBoxPlotFrames.getSelectedItem();
         if (!selectedPlotFrame.equals(defaultPlotLocation))
@@ -984,11 +984,11 @@ public class DataSetManager extends JFrame implements ListSelectionListener
             DataSet dataSet = allDataSets.getDataSet(selectedDataSet);
 
             String newName = JOptionPane.showInputDialog(this, "Please enter the new name for the Data Set",
-                                                         dataSet.getRefrence());
+                                                         dataSet.getReference());
 
             if (newName==null) return;
 
-            dataSet.setRefrence(newName);
+            dataSet.setReference(newName);
 
             String goodFileName = GeneralUtils.getBetterFileName(newName
                                           + ProjectStructure.getDataSetExtension());

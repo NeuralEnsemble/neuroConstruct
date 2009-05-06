@@ -41,6 +41,7 @@ import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.equation.*;
+import ucl.physiol.neuroconstruct.utils.units.Unit;
 
 /**
  * Main frame of application for popping up a graph of a vector of points
@@ -425,7 +426,7 @@ public class PlotterFrame extends JFrame
     public void addDataSet(DataSet dataSet)
     {
         if (dataSet!=null) 
-            logger.logComment("Adding data set: "+dataSet.getRefrence());
+            logger.logComment("Adding data set: "+dataSet.getReference());
         plotCanvas.addDataSet(dataSet);
 
         updateMenus();
@@ -434,7 +435,7 @@ public class PlotterFrame extends JFrame
 
     public void removeDataSet(DataSet dataSet)
     {
-        logger.logComment("-----   Being asked to remove data set: "+ dataSet.getRefrence());
+        logger.logComment("-----   Being asked to remove data set: "+ dataSet.getReference());
         plotCanvas.removeDataSet(dataSet);
         updateMenus();
     }
@@ -484,10 +485,10 @@ public class PlotterFrame extends JFrame
             JMenu newMenu = new JMenu();
 
 
-            newMenu.setText(nextDataSet.getRefrence());
+            newMenu.setText(nextDataSet.getReference());
             if (nextDataSet.getDataSetFile()!=null)
             {
-                newMenu.setText(savedDataSetMenuPrefix + nextDataSet.getRefrence());
+                newMenu.setText(savedDataSetMenuPrefix + nextDataSet.getReference());
             }
 
             newMenu.setForeground(nextDataSet.getGraphColour());
@@ -773,7 +774,7 @@ public class PlotterFrame extends JFrame
         {
             StringBuffer sb = new StringBuffer();
 
-            sb.append("Information on Data Set: " + dataSet.getRefrence() + "\n\n");
+            sb.append("Information on Data Set: " + dataSet.getReference() + "\n\n");
 
 
             if (dataSet.getXLegend().length() > 0 && dataSet.getYLegend().length() > 0)
@@ -802,14 +803,14 @@ public class PlotterFrame extends JFrame
             if (sb.length()<400)
             {
 
-                GuiUtils.showInfoMessage(null, "Info on Data Set: " + dataSet.getRefrence(),
+                GuiUtils.showInfoMessage(null, "Info on Data Set: " + dataSet.getReference(),
                                          sb.toString(), null);
 
             }
             else
             {
                 SimpleViewer.showString(sb.toString(),
-                                        "Info on Data Set: " + dataSet.getRefrence(),
+                                        "Info on Data Set: " + dataSet.getReference(),
                     12, false, false);
             }
 
@@ -890,8 +891,8 @@ public class PlotterFrame extends JFrame
                 return;
             }
 
-            DataSet generatedDataSet = new DataSet("Transformation of "+dataSet.getRefrence(),
-                                                   "Data Set: "+dataSet.getRefrence()+ "transformed by:\n"
+            DataSet generatedDataSet = new DataSet("Transformation of "+dataSet.getReference(),
+                                                   "Data Set: "+dataSet.getReference()+ "transformed by:\n"
                                                    +xName+"\n"+yName+"\n"+"Original description:\n"
                                                    +dataSet.getDescription(),
                                                    dataSet.getXUnit(),
@@ -947,7 +948,7 @@ public class PlotterFrame extends JFrame
         {
             StringBuffer sb = new StringBuffer();
 
-            sb.append("Quick stats on y axis of Data Set: " + dataSet.getRefrence() + "\n\n");
+            sb.append("Quick stats on y axis of Data Set: " + dataSet.getReference() + "\n\n");
 
             double total = 0;
 
@@ -985,7 +986,7 @@ public class PlotterFrame extends JFrame
 
 
 
-            GuiUtils.showInfoMessage(null, "Info on Data Set: " + dataSet.getRefrence(),
+            GuiUtils.showInfoMessage(null, "Info on Data Set: " + dataSet.getReference(),
                                      sb.toString(), null);
 
         };
@@ -1180,7 +1181,7 @@ public class PlotterFrame extends JFrame
             StringBuffer sb = new StringBuffer();
 
             //sb.append("<span style=\"color:#0000FF;\">");
-            sb.append("<h2>Simple spiking info on Data Set: " + dataSet.getRefrence() + "</h2>");
+            sb.append("<h2>Simple spiking info on Data Set: " + dataSet.getReference() + "</h2>");
 
             sb.append("Spiking threshold: " + plotCanvas.getSpikeOptions().getThreshold()+ "<br>");
             sb.append("Total number of spikes: " + spikeTimes.length+ "<br>");
@@ -1238,11 +1239,11 @@ public class PlotterFrame extends JFrame
 
 
 
-           // GuiUtils.showInfoMessage(null, "Spike info on graph: " + dataSet.getRefrence(),
+           // GuiUtils.showInfoMessage(null, "Spike info on graph: " + dataSet.getReference(),
             //                         sb.toString(), null);
             SimpleViewer simpleViewer = new SimpleViewer(sb.toString(),
                                                          "Spike info on Data Set: "
-                                                         + dataSet.getRefrence(),
+                                                         + dataSet.getReference(),
                                                          12,
                                                          false,
                                                          true);
@@ -1274,7 +1275,7 @@ public class PlotterFrame extends JFrame
 
         public void actionPerformed(ActionEvent e)
         {
-            logger.logComment("-----   Generating SI for: " + dataSet.getRefrence());
+            logger.logComment("-----   Generating SI for: " + dataSet.getReference());
 
             double xSpacing = dataSet.getXSpacing();
 
@@ -1284,7 +1285,7 @@ public class PlotterFrame extends JFrame
                 logger.logComment("xSpacing: " + xSpacing);
                 logger.logComment("dataSet.getMinXvalue(): " + dataSet.getMinX());
                 GuiUtils.showErrorMessage(logger,
-                                          "The set of points: " + dataSet.getRefrence()
+                                          "The set of points: " + dataSet.getReference()
                                           +" are not strictly increasing and evenly spaced, "
                                           +" or the lowest x value is not zero, and these are requirements for generating a Synchronisation Index", null,
                                           parent);
@@ -1326,7 +1327,7 @@ public class PlotterFrame extends JFrame
             }
             logger.logComment("optimalPeriod: " + optimalPeriod);
 
-            //PlotterFrame frame = PlotManager.getPlotterFrame(ds.getRefrence(), false);
+            //PlotterFrame frame = PlotManager.getPlotterFrame(ds.getReference(), false);
             //frame.addDataSet(ds);
 
             double total = 0;
@@ -1362,7 +1363,7 @@ public class PlotterFrame extends JFrame
 
         public void actionPerformed(ActionEvent e)
         {
-            logger.logComment("-----   Generating autocorrelogram for : " + dataSet.getRefrence());
+            logger.logComment("-----   Generating autocorrelogram for : " + dataSet.getReference());
 
             double xSpacing = dataSet.getXSpacing();
 
@@ -1371,7 +1372,7 @@ public class PlotterFrame extends JFrame
             if (!dataSet.areXvalsStrictlyIncreasing() || xSpacing < 0)
             {
                 GuiUtils.showErrorMessage(logger,
-                                          "The set of points: " + dataSet.getRefrence()
+                                          "The set of points: " + dataSet.getReference()
                                           +
                     " are not strictly increasing and evenly spaced, and this is a requirement for generating an autocorrelogram", null,
                                           parent);
@@ -1493,8 +1494,8 @@ public class PlotterFrame extends JFrame
 
             }
 
-            DataSet acDataSet = new DataSet("Autocorrelogram of " + dataSet.getRefrence(),
-                                            "Autocorrelogram of " + dataSet.getRefrence(),
+            DataSet acDataSet = new DataSet("Autocorrelogram of " + dataSet.getReference(),
+                                            "Autocorrelogram of " + dataSet.getReference(),
                                             "ms",
                                             "",
                                             "Time",
@@ -1508,7 +1509,7 @@ public class PlotterFrame extends JFrame
             }
 
             //acDataSet.setGraphFormat(PlotCanvas.USE_BARCHART_FOR_PLOT);
-            PlotterFrame frame = PlotManager.getPlotterFrame(acDataSet.getRefrence(), false, true);
+            PlotterFrame frame = PlotManager.getPlotterFrame(acDataSet.getReference(), false, true);
 
             frame.setSIOptionEnabled(true);
 
@@ -1661,8 +1662,8 @@ public class PlotterFrame extends JFrame
 
               int numBins = Math.round((maxSize)/binSize);
 
-              DataSet isiHist = new DataSet("ISI Histogram of "+dataSet.getRefrence(),
-                                            "ISI Histogram of "+dataSet.getRefrence(),
+              DataSet isiHist = new DataSet("ISI Histogram of "+dataSet.getReference(),
+                                            "ISI Histogram of "+dataSet.getReference(),
                   "ms",
         "",
         "Interspike interval",
@@ -1708,7 +1709,7 @@ public class PlotterFrame extends JFrame
 
 
               isiHist.setGraphFormat(PlotCanvas.USE_BARCHART_FOR_PLOT);
-              PlotterFrame frame = PlotManager.getPlotterFrame(isiHist.getRefrence(), false, true);
+              PlotterFrame frame = PlotManager.getPlotterFrame(isiHist.getReference(), false, true);
 
               frame.addDataSet(isiHist);
 
@@ -1846,7 +1847,7 @@ public class PlotterFrame extends JFrame
               chooser.setDialogType(JFileChooser.OPEN_DIALOG);
 
               chooser.setCurrentDirectory(defaultDir);
-              String prefFileName = GeneralUtils.getBetterFileName(dataSet.getRefrence() + ".dat");
+              String prefFileName = GeneralUtils.getBetterFileName(dataSet.getReference() + ".dat");
 
               chooser.setSelectedFile(new File(prefFileName));
 
@@ -1930,7 +1931,7 @@ public class PlotterFrame extends JFrame
             logger.logComment("Action performed on DataSetColourMenuListener");
 
             Color c = JColorChooser.showDialog(plotFrame,
-                                               "Please choose a colour for the data set: "+ dataSet.getRefrence(),
+                                               "Please choose a colour for the data set: "+ dataSet.getReference(),
                                                dataSet.getGraphColour());
             if (c != null)
             {
@@ -2000,7 +2001,7 @@ public class PlotterFrame extends JFrame
             
             if (newPlotFrameRef.equals(newPlotFrame))
             { 
-                newPlotFrameRef = dataSet.getRefrence();
+                newPlotFrameRef = dataSet.getReference();
                 
                 while (r.contains(newPlotFrameRef))
                     newPlotFrameRef = "New Plot Frame: "+newPlotFrameRef;
@@ -2045,7 +2046,7 @@ public class PlotterFrame extends JFrame
             
             if (dimension==DataSet.xDim)
             {
-                info = "Plotting the distribution of the X values of the Data Set: " + dataSet.getRefrence() + "\n"
+                info = "Plotting the distribution of the X values of the Data Set: " + dataSet.getReference() + "\n"
                 + "Max X: " + dataSet.getMaxX()[0] + ", min X: " + dataSet.getMinX()[0] + "\n"
                 + "Please enter the number of bins to use:";
             
@@ -2057,7 +2058,7 @@ public class PlotterFrame extends JFrame
             }
             else
             {
-                info = "Plotting the distribution of the y values of the Data Set: " + dataSet.getRefrence() + "\n"
+                info = "Plotting the distribution of the y values of the Data Set: " + dataSet.getReference() + "\n"
                 + "Max y: " + dataSet.getMaxY()[1] + ", min y: " + dataSet.getMinY()[1] + "\n"
                 + "Please enter the number of bins to use:";
             
@@ -2128,12 +2129,12 @@ public class PlotterFrame extends JFrame
             String newXval = "Y values";
             if (dataSet.getYLegend().length() > 0)
             {
-                desc = "Distribution of: "+ dataSet.getRefrence();
+                desc = "Distribution of: "+ dataSet.getReference();
                 newXval = dataSet.getYLegend();
             }
             else
             {
-                desc = "Distribution of y values of "+ dataSet.getRefrence();
+                desc = "Distribution of y values of "+ dataSet.getReference();
             }
 
             DataSet ds = new DataSet(desc,
@@ -2150,7 +2151,7 @@ public class PlotterFrame extends JFrame
 
             //ds.set
 
-            PlotterFrame frame = PlotManager.getPlotterFrame(ds.getRefrence(), false, true);
+            PlotterFrame frame = PlotManager.getPlotterFrame(ds.getReference(), false, true);
             frame.setViewMode(PlotCanvas.INCLUDE_ORIGIN_VIEW);
             frame.addDataSet(ds);
 
@@ -2181,7 +2182,7 @@ public class PlotterFrame extends JFrame
             {
                 newYLegend = "Derivative of "+ dataSet.getYLegend();
             }
-            DataSet ds = new DataSet("Simple derivative of " + dataSet.getRefrence(),
+            DataSet ds = new DataSet("Simple derivative of " + dataSet.getReference(),
                                      "Simple derivative of \n" + dataSet.getDescription(),
                                      dataSet.getXUnit(),
                                      newYUnit,
@@ -2204,7 +2205,7 @@ public class PlotterFrame extends JFrame
 
             //ds.set
 
-            PlotterFrame frame = PlotManager.getPlotterFrame(ds.getRefrence(), false, true);
+            PlotterFrame frame = PlotManager.getPlotterFrame(ds.getReference(), false, true);
             //frame.setViewMode(PlotCanvas.INCLUDE_ORIGIN_VIEW);
             frame.addDataSet(ds);
 
@@ -2238,7 +2239,7 @@ public class PlotterFrame extends JFrame
                 newYLegend = "Derivative of "+ dataSet.getYLegend();
             }
             
-            DataSet ds = new DataSet("Phase plane plot of " + dataSet.getRefrence(),
+            DataSet ds = new DataSet("Phase plane plot of " + dataSet.getReference(),
                                      "Phase plane plot of \n" + dataSet.getDescription(),
                                      dataSet.getYUnit(),
                                      newYUnit,
@@ -2262,7 +2263,7 @@ public class PlotterFrame extends JFrame
                 prevPoint = currPoint;
             }
 
-            PlotterFrame frame = PlotManager.getPlotterFrame(ds.getRefrence(), false, true);
+            PlotterFrame frame = PlotManager.getPlotterFrame(ds.getReference(), false, true);
             //frame.setViewMode(PlotCanvas.INCLUDE_ORIGIN_VIEW);
             frame.addDataSet(ds);
 
@@ -2324,7 +2325,7 @@ public class PlotterFrame extends JFrame
         {
             StringBuffer sb = new StringBuffer();
 
-            sb.append("// Interpolated zeros of     : " + dataSet.getRefrence() + "\n");
+            sb.append("// Interpolated zeros of     : " + dataSet.getReference() + "\n");
 
             sb.append("// Number of points: " + dataSet.getNumberPoints() + "\n");
             sb.append("// Max X: " + dataSet.getMaxX()[0] + "\n");
@@ -2369,7 +2370,7 @@ public class PlotterFrame extends JFrame
 
             SimpleViewer simpleViewer = new SimpleViewer(sb.toString(),
                                                          "Zeros of Data Set: "
-                                                         + dataSet.getRefrence(),
+                                                         + dataSet.getReference(),
                                                          12,
                                                          false,
                                                          false);
@@ -2411,7 +2412,7 @@ public class PlotterFrame extends JFrame
             StringBuffer sb = new StringBuffer();
 
 
-            sb.append("Simple area under Data Set     : " + dataSet.getRefrence() + "\n");
+            sb.append("Simple area under Data Set     : " + dataSet.getReference() + "\n");
 
 
             double[] xVals = dataSet.getXValues();
@@ -2439,7 +2440,7 @@ public class PlotterFrame extends JFrame
             //sb.append(zeros.toString())
 
             showSmallInfoBox("Area under Data Set: "
-                               + dataSet.getRefrence(), sb.toString()     );
+                               + dataSet.getReference(), sb.toString()     );
 
         };
 
@@ -2465,7 +2466,7 @@ public class PlotterFrame extends JFrame
             StringBuffer sb = new StringBuffer();
 
 
-            sb.append("Absolute area under Data Set     : " + dataSet.getRefrence() + "\n");
+            sb.append("Absolute area under Data Set     : " + dataSet.getReference() + "\n");
 
 
             double[] xVals = dataSet.getXValues();
@@ -2515,7 +2516,7 @@ public class PlotterFrame extends JFrame
             //sb.append(zeros.toString())
 
             showSmallInfoBox("Area under Data Set: "
-                             + dataSet.getRefrence(), sb.toString());
+                             + dataSet.getReference(), sb.toString());
 
 
         };
@@ -2560,7 +2561,7 @@ public class PlotterFrame extends JFrame
             StringBuffer sb = new StringBuffer();
 
 
-            sb.append("// Times of peaks above "+threshold+"(m)V of     : " + dataSet.getRefrence() + "\n");
+            sb.append("// Times of peaks above "+threshold+"(m)V of     : " + dataSet.getReference() + "\n");
 
 
             double[] xVals = dataSet.getXValues();
@@ -2609,7 +2610,7 @@ public class PlotterFrame extends JFrame
 
             SimpleViewer simpleViewer = new SimpleViewer(sb.toString(),
                                                          "Peaks of graph: "
-                                                         + dataSet.getRefrence(),
+                                                         + dataSet.getReference(),
                                                          12,
                                                          false,
                                                          false);
@@ -2648,7 +2649,7 @@ public class PlotterFrame extends JFrame
             StringBuffer sb = new StringBuffer();
 
 
-            sb.append("// Data Set        : " + dataSet.getRefrence() + "\n");
+            sb.append("// Data Set        : " + dataSet.getReference() + "\n");
             if (dataSet.getDescription() != null)
                 sb.append("// Description : " + dataSet.getDescription() + "\n");
 
@@ -2686,7 +2687,7 @@ public class PlotterFrame extends JFrame
 
             SimpleViewer simpleViewer = new SimpleViewer(sb.toString(),
                                                          "Values present in Data Set: "
-                                                         + dataSet.getRefrence(),
+                                                         + dataSet.getReference(),
                                                          12,
                                                          false,
                                                          false);
@@ -2926,7 +2927,7 @@ public class PlotterFrame extends JFrame
                 DataSet data0 = plotCanvas.dataSets[firstDataSetIndex];
                 DataSet data1 = plotCanvas.dataSets[secondDataSetIndex];
 
-                String name = data0.getRefrence() + " minus " + data1.getRefrence();
+                String name = data0.getReference() + " minus " + data1.getReference();
 
                 String desc = "  *** Data Set with description: ***\n" + data0.getDescription() +
                     "\n  ***has had the following subtracted from it: ***\n" + data1.getDescription();
@@ -2946,8 +2947,8 @@ public class PlotterFrame extends JFrame
                 }
                 if (dataSet.getNumberPoints() == 0)
                 {
-                    GuiUtils.showErrorMessage(logger, "Note: data sets " + data0.getRefrence()
-                                              + " and " + data1.getRefrence()
+                    GuiUtils.showErrorMessage(logger, "Note: data sets " + data0.getReference()
+                                              + " and " + data1.getReference()
                                               + " have no x values in common and so cannot be subtracted", null, this);
                 }
                 frame.addDataSet(dataSet);
@@ -3069,13 +3070,13 @@ public class PlotterFrame extends JFrame
             for (int j=0;j<plotCanvas.getDataSets().length;j++)
             {
                 DataSet ds = plotCanvas.getDataSets()[j];
-                String dsFileRef = GeneralUtils.replaceAllTokens(getCompactFilename(ds.getRefrence()), "/", "_");
+                String dsFileRef = GeneralUtils.replaceAllTokens(getCompactFilename(ds.getReference()), "/", "_");
                 File dsFile = new File(matplotlibFilesDir, dsFileRef+".dat");
 
                 logger.logComment("Going to write file: "+dsFile, true);
                 try
                 {
-                    float res = 5000;
+                    float res = 2000;
                     double minXdist = Math.abs((ds.getMaxX()[0]-ds.getMinX()[0])/res);
                     
                     double minYdist = Math.abs((ds.getMaxY()[1]-ds.getMinY()[1])/res);
@@ -3113,7 +3114,7 @@ public class PlotterFrame extends JFrame
                     //if (j>0) mainScript.append(", ");
 
                     mainScript.append("file_"+j+" = open('"+name+"','r')\n\n");
-                    String objRef = ds.getSafeRefrence();
+                    String objRef = ds.getSafeReference();
                     
                     mainScript.append(objRef+"_x = []\n");
                     mainScript.append(objRef+"_y = []\n\n");
@@ -3165,7 +3166,7 @@ public class PlotterFrame extends JFrame
                     }  // TODO, more for barcharts!
 
 
-                    mainScript.append("p.plot("+objRef+"_x, "+objRef+"_y"+pre+", color='#"+rgb+"', linestyle='"+linestyle+"', marker='"+marker+"'"+post+")\n\n");
+                    mainScript.append("p.plot("+objRef+"_x, "+objRef+"_y"+pre+", solid_joinstyle ='round', solid_capstyle ='round', color='#"+rgb+"', linestyle='"+linestyle+"', marker='"+marker+"'"+post+")\n\n");
 
 
 
@@ -3185,7 +3186,7 @@ public class PlotterFrame extends JFrame
             {
                 if(dsToUse.getYUnit()!=null && dsToUse.getYUnit().length()>0)
                 {
-                    mainScript.append("p.set_ylabel('"+dsToUse.getYLegend()+" ("+dsToUse.getYUnit()+")', fontsize=14)\n");
+                    mainScript.append("p.set_ylabel('"+dsToUse.getYLegend()+" ("+Unit.getSafeString(dsToUse.getYUnit())+")', fontsize=14)\n");
                 }
                 else
                 {
@@ -3197,7 +3198,7 @@ public class PlotterFrame extends JFrame
             {
                 if(dsToUse.getXUnit()!=null && dsToUse.getXUnit().length()>0)
                 {
-                    mainScript.append("p.set_xlabel('"+dsToUse.getXLegend()+" ("+dsToUse.getXUnit()+")', fontsize=14)\n");
+                    mainScript.append("p.set_xlabel('"+dsToUse.getXLegend()+" ("+Unit.getSafeString(dsToUse.getXUnit())+")', fontsize=14)\n");
                 }
                 else
                 {
@@ -3250,9 +3251,9 @@ public class PlotterFrame extends JFrame
         compact = GeneralUtils.replaceAllTokens(compact, "-", "_");
         compact = GeneralUtils.replaceAllTokens(compact, ":", "_");
         compact = GeneralUtils.replaceAllTokens(compact, "+", "_");
-        if (compact.length()>30)
+        if (compact.length()>42)
         {
-            compact = compact.substring(0,30);
+            compact = compact.substring(0,20)+"___"+compact.substring(compact.length()-20,compact.length());
         }
         return compact;
     }
@@ -3621,7 +3622,7 @@ public class PlotterFrame extends JFrame
 
                     try
                     {
-                        logger.logComment("---  For cell "+cellIndex+" Data set already exists: " +dataSets.get(cellIndex).getRefrence());
+                        logger.logComment("---  For cell "+cellIndex+" Data set already exists: " +dataSets.get(cellIndex).getReference());
 
                     }
                     catch (Exception e)
@@ -3631,7 +3632,7 @@ public class PlotterFrame extends JFrame
                         DataSet ds = new DataSet(name + ", cell: " + cellIndex, "Cell " + cellIndex, "", "", "", "");
                         dataSets.setElementAt(ds, cellIndex);
                         ds.addPoint(startTime, down);
-                        logger.logComment("Created data set: " + ds.getRefrence());
+                        logger.logComment("Created data set: " + ds.getReference());
 
 
                             logger.logComment(dataSets.size()+" data sets now: " + dataSets);
@@ -3655,7 +3656,7 @@ public class PlotterFrame extends JFrame
             {
                 if (ds!=null)
                 {
-                    logger.logComment("Data set: " + ds.getRefrence() +" has num points: "+ ds.getNumberPoints());
+                    logger.logComment("Data set: " + ds.getReference() +" has num points: "+ ds.getNumberPoints());
                     frame.addDataSet(ds);
                 }
             }
