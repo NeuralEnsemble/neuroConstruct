@@ -88,11 +88,10 @@ public class NumericalMethod
     /**
      * Short description of the NumericalMethod
      */
+    @Override
     public String toString()
     {
         StringBuffer info = new StringBuffer();
-
-
 
         switch (methodNumber)
         {

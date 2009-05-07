@@ -152,6 +152,9 @@ part of NeuroML or any standardised XML specification. -->
     <int>255</int> 
    </object> 
   </void> 
+  <void property="show3DAxes"> 
+   <boolean>true</boolean> 
+  </void> 
  </object> 
  <object class="ucl.physiol.neuroconstruct.neuron.NeuronSettings"> 
   <void property="copySimFiles"> 
@@ -288,7 +291,7 @@ createTestReport</string>
    <float>100.0</float> 
   </void> 
   <void property="reference"> 
-   <string>Sim_89</string> 
+   <string>Sim_93</string> 
   </void> 
   <void property="saveCopyGenSimFiles"> 
    <boolean>true</boolean> 

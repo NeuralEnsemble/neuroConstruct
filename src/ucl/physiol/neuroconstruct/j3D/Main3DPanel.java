@@ -2075,12 +2075,13 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                 {
                     Object[] poss = new Object[allCellSegRefs.size()+1];
 
-                    for (int i = 0; i < allCellSegRefs.size(); i++)
+                    String all =  "All of the below";
+                    poss[0] =all;
+
+                    for (int i = 1; i <= allCellSegRefs.size(); i++)
                     {
-                        poss[i] = allCellSegRefs.get(i);
+                        poss[i] = allCellSegRefs.get(i-1);
                     }
-                    String all =  "All of the above";
-                    poss[allCellSegRefs.size()] =all;
                             
                     if (poss.length == 1)
                     {
@@ -2304,7 +2305,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                 logger.logComment("Plotting "+points.length+" data points vs "+times.length+" time points");
 
 
-                if (points.length!=times.length)
+                if (points.length!=times.length && points.length!=times.length+1)  // TODO: check second case: occours when reloading Genesis
                 {
                     GuiUtils.showWarningMessage(logger, "Warning. For data set: "+data.getReference()+" the number of data points is: "+ points.length
                             +" ("+points[0]+", ..., "+points[points.length-1]+")\n" +

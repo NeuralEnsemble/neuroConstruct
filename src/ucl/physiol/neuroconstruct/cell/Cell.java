@@ -174,6 +174,25 @@ public class Cell implements Serializable
        }
     }
 
+    /*
+     * Get a short string summarising the morphology numbers, e.g. Segs:180_Secs:40_IntDivs:300
+     */
+    public String getMorphSummary()
+    {
+        StringBuffer info = new StringBuffer();
+        info.append("Segs:"+getAllSegments().size());
+        ArrayList<Section> sections = getAllSections();
+        info.append("_Secs:"+sections.size());
+
+        int totIntDivs = 0;
+        for (Section sec: sections)
+            totIntDivs = totIntDivs + sec.getNumberInternalDivisions();
+
+        info.append("_IntDivs:"+totIntDivs);
+        
+        return info.toString();
+    }
+
 
     public void setAxonalArbours(Vector<AxonalConnRegion> axonalArbours)
     {

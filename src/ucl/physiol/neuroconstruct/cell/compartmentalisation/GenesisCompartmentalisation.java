@@ -62,6 +62,8 @@ public class GenesisCompartmentalisation extends MorphCompartmentalisation
               "Projection onto a morphology optimized for simulators based on indivisible compartmental"
               +" modelling, i.e. GENESIS as opposed to cable/section based modelling of NEURON. Maps a multi segment section "
               + "on to 2 single segment cylindrical sections which have radii chosen to preserve the section length, curved surface area and axial resistance. ");
+
+        //logger.setThisClassVerbose(true);
     }
 
     public Cell generateComp(Cell originalCell)
@@ -329,9 +331,6 @@ public class GenesisCompartmentalisation extends MorphCompartmentalisation
                         firstSeg.getSection().setNumberInternalDivisions(numInEach);
                         secSeg.getSection().setNumberInternalDivisions(numInEach);
 
-
-
-
                         logger.logComment("\n                                        Done splitting!!! ");
 
                         //logger.logComment("Previous first seg: " + firstSeg);
@@ -341,9 +340,15 @@ public class GenesisCompartmentalisation extends MorphCompartmentalisation
                         ArrayList<Integer> arrayToMapTo = firstSegsMappedIds;
                         arrayToMapTo.addAll(secSegsMappedIds);
 
-                        float newSegLength = origSecLength/(float)origNumIntDivs;
-                        float totalLeftCurrSeg = newSegLength;
+                        int newNumSegs = origNumIntDivs;
 
+                        if (Math.floor((float)origNumIntDivs/2.0)!=(origNumIntDivs/2.0))
+                            newNumSegs = origNumIntDivs+1;
+
+                        logger.logComment("origNumIntDivs: " + origNumIntDivs+", newNumSegs: " + newNumSegs);
+
+                        float newSegLength = origSecLength/(float)newNumSegs;
+                        float totalLeftCurrSeg = newSegLength;
 
                         for (SegmentRange oldSegRange : oldSegs)
                         {
@@ -366,13 +371,13 @@ public class GenesisCompartmentalisation extends MorphCompartmentalisation
                                 mapper.addMapping(oldSegRange, new SegmentRange[]
                                                   {sr});
 
-                                logger.logComment("Added mapping to: " + sr);
+                                logger.logComment("-- Added mapping to: " + sr);
 
                                 totalLeftCurrSeg -= oldSegRange.getRangeLength();
                             }
                             else
                             {
-                                logger.logComment("Range len longer than new seg len");
+                                logger.logComment("Old range len longer than new seg len");
 
                                 logger.logComment("oldSegRange.getRangeLength(): " + oldSegRange.getRangeLength());
                                 logger.logComment("totalLeftCurrSeg: " + totalLeftCurrSeg);
@@ -395,7 +400,7 @@ public class GenesisCompartmentalisation extends MorphCompartmentalisation
                                                                         startFractFirstSeg,
                                                                         endFractFirstSeg);
 
-                                logger.logComment("srFirst: " + srFirst);
+                                logger.logComment("- srFirst: " + srFirst);
 
                                 srs.add(srFirst);
 
@@ -421,8 +426,7 @@ public class GenesisCompartmentalisation extends MorphCompartmentalisation
                                     rangeLenOrigSegCompleted = rangeLenOrigSegCompleted + newSegLength;
 
 
-
-                                    logger.logComment("srs: " + srs);
+                                    logger.logComment("-- tot srs: " + srs);
                                     indexToMapTo++;
                                     lenToStartOnCurrSeg = 0;
                                     //totalToTraverse = newSegLength;
@@ -465,7 +469,7 @@ public class GenesisCompartmentalisation extends MorphCompartmentalisation
                                 }
                                 else
                                 {
-                                    // if float rounding off caused all segs to be used up
+                                    logger.logComment("**********   float rounding off caused all segs to be used up...");
 
                                     totalLeftCurrSeg = newSegLength;
                                     indexToMapTo++;
@@ -730,9 +734,9 @@ public class GenesisCompartmentalisation extends MorphCompartmentalisation
         try
         {
             /// p = Project.loadProject(new File("projects/m2/m2.neuro.xml"), null);
-            p = Project.loadProject(new File("projects/Moff/Moff.neuro.xml"), null);
+            //p = Project.loadProject(new File("projects/Moff/Moff.neuro.xml"), null);
         //p = Project.loadProject(new File("projects/MMMm/MMMm.neuro.xml"), null);
-            //p = Project.loadProject(new File("examples/Ex10-MainenEtAl/Ex10-MainenEtAl.neuro.xml"), null);
+            p = Project.loadProject(new File("examples/Ex10_MainenEtAl/Ex10-MainenEtAl.neuro.xml"), null);
 
             Cell cell = p.cellManager.getCell("SimplePurkinje");
             //Cell cell = p.cellManager.getCell("SampleCell");

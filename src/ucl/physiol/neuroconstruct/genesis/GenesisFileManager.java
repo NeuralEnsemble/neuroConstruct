@@ -2134,7 +2134,7 @@ public class GenesisFileManager
                             response.append(createSinglePlot(plotFrameName,
                                                              dataSetName,
                                                              "Values of " + plotted + " in " +
-                                                             getCellElementName(plot.simPlot.getCellGroup(), cellNum),
+                                                             getCellElementName(plot.simPlot.getCellGroup(), cellNum)+": "+project.simulationParameters.getReference(),
                                                              var.getCompParentElementName(),
                                                              var.getCompTopElementName(),
                                                              var.getVariableName(),
@@ -2217,7 +2217,7 @@ public class GenesisFileManager
                             "end\n");
 
             String runControl = CONTROLS_ELEMENT_ROOT + "/runControl";
-            response.append("create xform "+runControl + " [700, 20, 200, 120] -title \"Run Controls\"\n");
+            response.append("create xform "+runControl + " [700, 20, 200, 120] -title \"Run Controls: "+project.simulationParameters.getReference()+"\"\n");
 
             response.append("xshow " + runControl+"\n\n");
 
@@ -3942,8 +3942,8 @@ public class GenesisFileManager
         if (!mooseCompatMode())
             dateInfo = " at: \" {getdate}";
         
-        response.append("echo \"Starting simulation reference: "+project.simulationParameters.getReference()+" with duration: "+simConfig.getSimDuration()+
-                " and dt: "+project.simulationParameters.getDt()+dateInfo+"\n");
+        response.append("echo \"Starting sim: "+project.simulationParameters.getReference()+" with dur: "+simConfig.getSimDuration()+
+                " and dt: "+project.simulationParameters.getDt()+"(+"+project.genesisSettings.getNumMethod()+"+)"+dateInfo+",\n");
 
         response.append("step "+(Math.round(getSimDuration()/project.simulationParameters.getDt()))+"\n\n"); // +1 to include 0 and last timestep
 

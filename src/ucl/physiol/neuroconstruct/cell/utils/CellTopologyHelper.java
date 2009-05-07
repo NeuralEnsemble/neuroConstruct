@@ -2536,8 +2536,8 @@ public class CellTopologyHelper
         for(ParameterisedGroup pg: cell.getParameterisedGroups())
         {
             sb.append("    ParameterisedGroup: "+GeneralUtils.getBold(pg.getName(), html) 
-                + " on: "+GeneralUtils.getBold(pg.getGroup(), html)+" with metric: "
-                + GeneralUtils.getBold(pg.getMetric()+"", html)+", variable: "
+                + " on: "+GeneralUtils.getBold(pg.getGroup(), html)+", "
+                + GeneralUtils.getBold(pg.getMetric()+", ("+pg.getProximalPref()+", "+pg.getDistalPref()+")", html)+", var: "
                 + GeneralUtils.getBold(pg.getVariable()+"", html)+ GeneralUtils.getEndLine(html));
         }
 
@@ -2992,6 +2992,16 @@ public class CellTopologyHelper
 
                         missingCellMechs.add(vm.getName());
                     }
+                    // TODO: evaluate at centre of section and ensure val >=0
+
+                    if (posCondDensChans.contains(vm.getName()))
+                    {
+                        errorReport.append("Error: Section "+nextSec.getSectionName()+" has 2 seperate values for the conductance density of: "+vm.getName()+"\n");
+                        errorReport.append("Channels on this section: "+fixedMechs+", "+varMechs+"\n");
+                    }
+                    posCondDensChans.add(vm.getName());
+
+
                     //TODO: Check if pass chan is variable
                     //////////if (passChanNames.contains(vm.getName())) passChansHere.add(cm); //numPassiveChans++;
                 }

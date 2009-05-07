@@ -419,7 +419,7 @@ public class PsicsMorphologyGenerator
         double spCap = spCapFactor * spCapNc;
         
         
-        SimpleXMLAttribute spCapAttr = new SimpleXMLAttribute("membraneCapacitance", spCap+unitSpCap);
+        SimpleXMLAttribute spCapAttr = new SimpleXMLAttribute("membraneCapacitance", ((float)spCap)+unitSpCap);
         memb.addAttribute(spCapAttr);
 
 
@@ -435,7 +435,7 @@ public class PsicsMorphologyGenerator
                 {
                     SimpleXMLElement pp = new SimpleXMLElement("PassiveProperties");
                     pp.addAttribute("region", group);
-                    pp.addAttribute("membraneCapacitance", (nextCapRes*spCapFactor)+unitSpCap);
+                    pp.addAttribute("membraneCapacitance", ((float)(nextCapRes*spCapFactor))+unitSpCap);
 
                     memb.addChildElement(pp);
                     memb.addContent("\n");
@@ -453,6 +453,7 @@ public class PsicsMorphologyGenerator
 
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(12);
+        df.setGroupingSize(999);
 
         float defaultSingChanCond_pS = project.psicsSettings.getSingleChannelCond()*1e9f; // pS
         float defaultSingChanCond_mS = defaultSingChanCond_pS/1e9f;

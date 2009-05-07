@@ -58,7 +58,7 @@ part of NeuroML or any standardised XML specification. -->
    <void method="get"> 
     <string>Cell Packing Adapter</string> 
     <void method="add"> 
-     <object class="ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter"/> 
+     <object class="ucl.physiol.neuroconstruct.project.packing.SinglePositionedCellPackingAdapter"/> 
     </void> 
    </void> 
    <void method="get"> 
@@ -151,6 +151,9 @@ part of NeuroML or any standardised XML specification. -->
     <int>255</int> 
     <int>255</int> 
    </object> 
+  </void> 
+  <void property="show3DAxes"> 
+   <boolean>true</boolean> 
   </void> 
  </object> 
  <object class="ucl.physiol.neuroconstruct.neuron.NeuronSettings"> 
@@ -288,7 +291,7 @@ createTestReport</string>
    <float>100.0</float> 
   </void> 
   <void property="reference"> 
-   <string>Sim_93</string> 
+   <string>Sim_100</string> 
   </void> 
   <void property="saveCopyGenSimFiles"> 
    <boolean>true</boolean> 

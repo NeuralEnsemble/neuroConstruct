@@ -34,7 +34,9 @@ import org.junit.runner.Result;
 import test.MainTest;
 import static org.junit.Assert.*;
 import ucl.physiol.neuroconstruct.cell.ParameterisedGroup.*;
+import ucl.physiol.neuroconstruct.cell.compartmentalisation.GenesisCompartmentalisation;
 import ucl.physiol.neuroconstruct.cell.examples.OneSegment;
+import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 
 /**
  *
@@ -65,9 +67,15 @@ public class ParameterisedGroupTest
         
         
         d1 = cell.addDendriticSegment(1, "d1", new Point3f(10,0,0), cell.getFirstSomaSegment(), 1, "Sec1", false);
-        d2 = cell.addDendriticSegment(1, "d2", new Point3f(20,0,0), d1, 1, "Sec2", false);
-        d3 = cell.addDendriticSegment(1, "d3", new Point3f(20,10,0), d2, 1, "Sec3", false);
-        
+        d2 = cell.addDendriticSegment(2, "d2", new Point3f(20,0,0), d1, 1, "Sec2", false);
+        d3 = cell.addDendriticSegment(7, "d3", new Point3f(20,10,0), d2, 1, "Sec3", false);
+
+        d3.getSection().setStartRadius(3);
+
+        d1.getSection().setNumberInternalDivisions(4);
+        d2.getSection().setNumberInternalDivisions(3);
+        d3.getSection().setNumberInternalDivisions(5);
+
         d3.getSection().addToGroup(tipSection);
         
         
@@ -138,8 +146,32 @@ public class ParameterisedGroupTest
         assertEquals(0, pg4.evaluateAt(cell, d3, 0), 0);
         assertEquals(5, pg4.evaluateAt(cell, d3, 0.5f), 0);
 
-        assertEquals(25, pg5.evaluateAt(cell, d3, 0.5f), 0);
+        SegmentLocation sl1 = new SegmentLocation(d3.getSegmentId(), 0.5f);
+
+        assertEquals(25, pg5.evaluateAt(cell, cell.getSegmentWithId(sl1.getSegmentId()), sl1.getFractAlong()), 0);
+
         assertEquals(30, pg5.evaluateAt(cell, d3, 1), 0);
+
+        GenesisCompartmentalisation g = new GenesisCompartmentalisation();
+
+        Cell gCell = g.getCompartmentalisation(cell);
+
+        System.out.println(CellTopologyHelper.printDetails(cell, null));
+
+        System.out.println("Changed from morph: "+cell.getMorphSummary()+", to morph: "+gCell.getMorphSummary());
+
+        System.out.println("getSegmentMapper: " + g.getSegmentMapper());
+        
+
+        System.out.println(CellTopologyHelper.printDetails(gCell, null));
+
+        SegmentLocation sl1_g = g.getSegmentMapper().mapSegmentLocation(sl1);
+
+        System.out.println("Mapped: "+sl1+" to "+ sl1_g);
+
+
+        assertEquals(25, pg5.evaluateAt(gCell, gCell.getSegmentWithId(sl1_g.getSegmentId()), sl1_g.getFractAlong()), 0);
+
         
     }
     

@@ -283,6 +283,8 @@ public class GenesisMorphologyGenerator
 
         logger.logComment("=======    Going to calculate chan mechs....");
 
+        boolean cellHasVarMechs = (cell.getVarMechsVsParaGroups().size()>0);
+
 
         for (int ii = 0; ii < segments.size(); ii++)
         {
@@ -337,7 +339,7 @@ public class GenesisMorphologyGenerator
             String channelCondInfo = new String();
             String comments = new String();
 
-            if (groupListVsChanStrings.containsKey(groups)/*&&false*/)
+            if (groupListVsChanStrings.containsKey(groups)&&!cellHasVarMechs)
             {
                 String[] chanInfo = groupListVsChanStrings.get(groups);
                 passParamInfo = chanInfo[0];
@@ -591,7 +593,7 @@ public class GenesisMorphologyGenerator
                     if (!dealtWith)
                         consolChanMechs.add((ChannelMechanism)nextChanMech.clone());
                 }
-            logger.logComment("Done Consolidating: ..."+ consolChanMechs);
+                logger.logComment("Done Consolidating: ..."+ consolChanMechs);
 
                 for (int ll = 0; ll < consolChanMechs.size(); ll++)
                 {

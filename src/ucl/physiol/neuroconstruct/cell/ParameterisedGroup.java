@@ -536,7 +536,7 @@ public class ParameterisedGroup implements Serializable
       
             Project proj = pm.getCurrentProject();
             
-            cell = proj.cellManager.getCell("Purk");
+            cell = proj.cellManager.getCell("SampleCell");
             
             long start = System.currentTimeMillis();
             Random r = new Random();

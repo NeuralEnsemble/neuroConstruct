@@ -71,6 +71,7 @@ public class MainTest
                 ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelperTest.class,
                 ucl.physiol.neuroconstruct.cell.SegmentTest.class,
                 ucl.physiol.neuroconstruct.cell.converters.MorphMLReaderTest.class,
+                ucl.physiol.neuroconstruct.cell.compartmentalisation.GenesisCompartmentalisationTest.class,
                 ucl.physiol.neuroconstruct.genesis.GenesisFileManagerTest.class,
                 ucl.physiol.neuroconstruct.genesis.GenesisMorphologyGeneratorTest.class,
                 ucl.physiol.neuroconstruct.neuron.NeuronFileManagerTest.class,
