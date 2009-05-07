@@ -4230,7 +4230,13 @@ public class NeuronFileManager
         response.append("{setuptime = stopsw()}\n\n");
         response.append("print \"Setup time for simulation: \",setuptime,\" seconds\"\n\n");
 
-        response.append("print \"Starting simulation of duration "+simConfig.getSimDuration()+" ms, dt: "+project.simulationParameters.getDt()+", reference: " + project.simulationParameters.getReference() +
+        String timeStepInfo = "dt: "+project.simulationParameters.getDt()+",";
+        if(project.neuronSettings.isVarTimeStep())
+        {
+            timeStepInfo = " variable time step,";
+        }
+
+        response.append("print \"Starting simulation of duration "+simConfig.getSimDuration()+" ms, "+timeStepInfo+" reference: " + project.simulationParameters.getReference() +
                 dateInfo+"\"\n\n");
 
         response.append("{startsw()}\n\n");

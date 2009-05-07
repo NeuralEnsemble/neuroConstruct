@@ -173,7 +173,7 @@ public class NeuronFileManagerTest {
 
         sd.initialise();
         
-        while(!simData.isDataLoaded())
+        while(!sd.isDataLoaded())
         {
             System.out.println("Waiting for data to be loaded");
             Thread.sleep(wait);
@@ -285,7 +285,12 @@ public class NeuronFileManagerTest {
         assertTrue(timesFile.exists());
         
         simDataSerial.initialise();
-        
+
+        while(!simDataSerial.isDataLoaded())
+        {
+            System.out.println("Waiting for data to be loaded");
+            Thread.sleep(wait);
+        }
         
         int numRecordings = simDataSerial.getCellSegRefs(false).size();
         
@@ -370,7 +375,12 @@ public class NeuronFileManagerTest {
         assertTrue(timesFile.exists());
         
         simDataParallel.initialise();
-        
+
+        while(!simDataParallel.isDataLoaded())
+        {
+            System.out.println("Waiting for data to be loaded");
+            Thread.sleep(wait);
+        }
         
         numRecordings = simDataParallel.getCellSegRefs(false).size();
         

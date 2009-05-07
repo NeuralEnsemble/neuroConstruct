@@ -210,7 +210,8 @@ public class GenesisMorphologyGenerator
         }
 
         float globalCM = cell.getSpecCapForGroup(Section.ALL);
-                if (!Float.isNaN(globalCM))
+
+        if (!Float.isNaN(globalCM))
         {
             prePassiveLine = "*set_global CM "
                 + UnitConverter.getSpecificCapacitance(globalCM,
@@ -278,7 +279,7 @@ public class GenesisMorphologyGenerator
                 "// in micrometers. If we use physiological units above, the lengths below will appear quite high\n\n\n");
         }
 
-        String lastPassiveParams = "";
+        String lastPassParamInfo = "";
 
         logger.logComment("=======    Going to calculate chan mechs....");
 
@@ -336,7 +337,7 @@ public class GenesisMorphologyGenerator
             String channelCondInfo = new String();
             String comments = new String();
 
-            if (groupListVsChanStrings.containsKey(groups)&&false)
+            if (groupListVsChanStrings.containsKey(groups)/*&&false*/)
             {
                 String[] chanInfo = groupListVsChanStrings.get(groups);
                 passParamInfo = chanInfo[0];
@@ -355,7 +356,10 @@ public class GenesisMorphologyGenerator
 
                     if(!chanMechsVsGrps.containsKey(groups.elementAt(j)))
                     {
-                        thisGroupChanMechs = cell.getChanMechsForGroup(groups.elementAt(j));
+                        ArrayList<ChannelMechanism> cms = cell.getChanMechsForGroup(groups.elementAt(j));
+
+                        thisGroupChanMechs = (ArrayList<ChannelMechanism>)GeneralUtils.reorderAlphabetically(cms, true);
+
                         chanMechsVsGrps.put(groups.elementAt(j), thisGroupChanMechs);
                     }
                     else
@@ -511,12 +515,12 @@ public class GenesisMorphologyGenerator
                                         preLine = preLine + "  // using: "
                                             + UnitConverter.specificMembraneResistanceUnits[project.genesisSettings.getUnitSystemToUse()];
 
-                                    if (!lastPassiveParams.equals(preLine))
-                                    {
-                                        passParamInfo = passParamInfo + preLine + "\n";
-                                    }
+                                    //if (!lastPassiveParams.equals(preLine))
+                                    //{
+                                        passParamInfo = preLine + "\n";
 
-                                    lastPassiveParams = preLine;
+                                        //lastPassiveParams = preLine;
+                                    //}
 
                                     firstPassiveCellMech = cellMech.getInstanceName();
 
@@ -765,8 +769,11 @@ public class GenesisMorphologyGenerator
             }
 
             response.append(comments);
-
-            response.append(passParamInfo);
+            if (!lastPassParamInfo.equals(passParamInfo))
+            {
+                response.append(passParamInfo);
+                lastPassParamInfo = passParamInfo;
+            }
                 
 
             // Note: the use of a GenesisCompartmentalisation will make much of this redundant.
@@ -844,6 +851,54 @@ public class GenesisMorphologyGenerator
             response.append("\n");
 
         }
+
+/* For testing...
+        Enumeration<String> grps = chanMechsVsGrps.keys();
+        while(grps.hasMoreElements())
+        {
+            String g = grps.nextElement();
+
+            ArrayList<ChannelMechanism> cm = chanMechsVsGrps.get(g);
+
+            for(ChannelMechanism c: cm)
+            {
+                System.out.println("Chan mech in "+g+": "+c);
+            }
+        }
+
+        //Hashtable<Vector<String>, String[]> groupListVsChanStrings = new Hashtable<Vector<String>, String[]>();
+
+        Enumeration<Vector<String>> grpls = groupListVsChanStrings.keys();
+
+        while(grpls.hasMoreElements())
+        {
+            Vector<String> g = grpls.nextElement();
+
+            String[] cs = groupListVsChanStrings.get(g);
+
+            System.out.println("\n\n------------------------------------------------");
+            for(int i=0;i< cs.length;i++)
+            {
+                if(i!=2)
+                {
+                    System.out.println(i+": chan string for "+g+": \n"+cs[i]);
+                    System.out.println("\n------------");
+                }
+            }
+
+        }
+            System.out.println("\n\n------------------------------------------------");
+
+        for(String c: passiveChanMechs)
+        {
+            System.out.println("passiveChanMechs: "+c);
+        }
+        for(String c: notPassiveChanMechs)
+        {
+            System.out.println("notPassiveChanMechs: "+c);
+        }
+ */
+
         return response.toString();
     }
 
@@ -877,6 +932,7 @@ public class GenesisMorphologyGenerator
 
             //File projFile = new File("models/BioMorph/BioMorph.neuro.xml");
             File projFile = new File("nCmodels/InProgress/TraubEtAl05/TraubEtAl05.ncx");
+            //File projFile = new File("testProjects/TestDetailedMorphs/TestDetailedMorphs.neuro.xml");
 
             Project testProj = Project.loadProject(projFile, new ProjectEventListener()
             {
@@ -897,7 +953,9 @@ public class GenesisMorphologyGenerator
             //ComplexCell cell = new ComplexCell("DummyCell");
 
             //Cell cell = testProj.cellManager.getCell("LongCellDelayLine");
-            Cell cell_1 = testProj.cellManager.getCell("L23PyrRS_cut");
+            //Cell cell_1 = testProj.cellManager.getCell("L23PyrRS_cut");
+            Cell cell_1 = testProj.cellManager.getCell("L23PyrFRB");
+            //Cell cell_1 = testProj.cellManager.getCell("SampleCell");
 
             GenesisCompartmentalisation gc = new GenesisCompartmentalisation();
 
