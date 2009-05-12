@@ -339,7 +339,7 @@ public class GenesisMorphologyGenerator
             String channelCondInfo = new String();
             String comments = new String();
 
-            if (groupListVsChanStrings.containsKey(groups)&&!cellHasVarMechs)
+            if (groupListVsChanStrings.containsKey(groups)&&!cellHasVarMechs&&false)
             {
                 String[] chanInfo = groupListVsChanStrings.get(groups);
                 passParamInfo = chanInfo[0];
