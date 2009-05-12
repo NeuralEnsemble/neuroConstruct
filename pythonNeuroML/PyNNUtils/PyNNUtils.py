@@ -45,14 +45,14 @@ class NetManagerPyNN(NetworkHandler):
     
     inputCount = {}
 	
-    my_simulator = "neuron2"
+    my_simulator = "neuron"
     
     my_stgen = StGen()
     
     maxSimLength = -1 # Needed for generating input spike time array...
 	
 	
-    def __init__(self, my_simulator="neuron2"):
+    def __init__(self, my_simulator="neuron"):
         self.log.info("Using simulator: "+my_simulator)
         self.my_simulator = my_simulator
         exec("from pyNN.%s import *" % self.my_simulator)
@@ -138,7 +138,7 @@ class NetManagerPyNN(NetworkHandler):
         if (self.projections.keys().count(projName)==0):
             print "Making a projection obj for "+ projName
             
-            if self.my_simulator=='neuron2': connector= AllToAllConnector(weights=0.01, delays=0.5)
+            if self.my_simulator=='neuron': connector= AllToAllConnector(weights=0.01, delays=0.5)
             if self.my_simulator=='nest2': connector= FixedNumberPreConnector(0)
             
             try:
@@ -153,7 +153,7 @@ class NetManagerPyNN(NetworkHandler):
             
             proj = Projection(self.populations[source], self.populations[target], connector, target='excitatory', label=projName, synapse_dynamics=sd)
 
-            if self.my_simulator=='neuron2': del proj.connection_manager.connections[:]
+            if self.my_simulator=='neuron': del proj.connection_manager.connections[:]
             self.projections[projName] = proj
             
         proj = self.projections[projName]
@@ -214,7 +214,7 @@ class NetManagerPyNN(NetworkHandler):
             
             print "Making a projection obj for "+ inputName
             
-            if self.my_simulator=='neuron2': connector2= AllToAllConnector(weights=1.0001, delays=0.1)
+            if self.my_simulator=='neuron': connector2= AllToAllConnector(weights=1.0001, delays=0.1)
             if self.my_simulator=='nest2': connector2= FixedNumberPreConnector(0)
             
             try:
@@ -230,7 +230,7 @@ class NetManagerPyNN(NetworkHandler):
             
             input_proj = Projection(input_population, self.populations[cellGroup], connector2, target='excitatory', label=label ,synapse_dynamics=sd)
 
-            if self.my_simulator=='neuron2': del input_proj.connection_manager.connections[:]
+            if self.my_simulator=='neuron': del input_proj.connection_manager.connections[:]
             
             self.input_projections[inputName] = input_proj
             

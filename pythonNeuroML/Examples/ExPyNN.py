@@ -101,10 +101,10 @@ print gidsB
 
 syn_dynamics_STPSynapse = SynapseDynamics(fast=TsodyksMarkramMechanism(U=0.04, tau_rec=100.0, tau_facil=1000.0))
 
-if my_simulator=='neuron2': connector= AllToAllConnector(weights=0.01, delays=0.5)  # Needs to be consolidated!
+if my_simulator=='neuron': connector= AllToAllConnector(weights=0.01, delays=0.5)  # Needs to be consolidated!
 if my_simulator=='nest2': connector= FixedNumberPreConnector(0)                     # Needs to be consolidated!
 proj = Projection(cellsA, cellsB, connector, target='excitatory', label='TestProj' ,synapse_dynamics=syn_dynamics_STPSynapse)
-if my_simulator=='neuron2': del proj.connection_manager.connections[:]              # Needs to be consolidated!
+if my_simulator=='neuron': del proj.connection_manager.connections[:]              # Needs to be consolidated!
 
 
 
@@ -140,10 +140,10 @@ print "spike_times: " +str(spike_times)
 
 input_population  = Population(cellNumA, SpikeSourceArray, {'spike_times': spike_times}, "inputsToA")
 
-if my_simulator=='neuron2': connector2= AllToAllConnector(weights=0.01, delays=0.5)  # Needs to be consolidated!
+if my_simulator=='neuron': connector2= AllToAllConnector(weights=0.01, delays=0.5)  # Needs to be consolidated!
 if my_simulator=='nest2': connector2= FixedNumberPreConnector(0)                     # Needs to be consolidated!
 input_proj = Projection(input_population, cellsA, connector2, target='excitatory', label='InputProj' ,synapse_dynamics=None)
-if my_simulator=='neuron2': del input_proj.connection_manager.connections[:]         # Needs to be consolidated!
+if my_simulator=='neuron': del input_proj.connection_manager.connections[:]         # Needs to be consolidated!
 
 
 for i in range(0,cellNumA):
