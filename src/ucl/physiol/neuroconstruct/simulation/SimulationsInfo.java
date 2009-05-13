@@ -493,6 +493,8 @@ public class SimulationsInfo extends AbstractTableModel
         else if (simulator.equals("PSICS"))
         {
             props.setProperty("Unit system", UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS));
+            props.setProperty("Single channel conductance", project.psicsSettings.getSingleChannelCond()+"");
+            props.setProperty("Spatial discretisation", project.psicsSettings.getSpatialDiscretisation()+"");
         }
         else if (simulator.equals("GENESIS") || simulator.equals("MOOSE"))
         {

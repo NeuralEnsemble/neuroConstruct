@@ -276,7 +276,12 @@ public class PsicsFileManager
             Hashtable<String, SimpleXMLElement> lineGraphs = new Hashtable<String, SimpleXMLElement>();
             
             resetColours();
-            int colNum = 2;
+            int colNum = 0;
+
+            colNum++; // As first col will be time
+            
+            colNum += project.generatedElecInputs.getNumberSingleInputs(); // as input traces will be put in next
+
             for(PlotSaveDetails psd: psds)
             {
                 if (psd.simPlot.toBeSaved() && psd.simPlot.getValuePlotted().equals(SimPlot.VOLTAGE))
@@ -299,14 +304,14 @@ public class PsicsFileManager
                         xAxis.addAttribute(new SimpleXMLAttribute("max",simConfig.getSimDuration()+""));
                         xAxis.addAttribute(new SimpleXMLAttribute("label","time / ms"));
                         lg.addChildElement(xAxis);
-                        lg.addContent("\n    ");
+                        lg.addContent("\n        ");
 
 
                         SimpleXMLElement yAxis = new SimpleXMLElement("YAxis");
                         yAxis.addAttribute(new SimpleXMLAttribute("min",psd.simPlot.getMinValue()+""));
                         yAxis.addAttribute(new SimpleXMLAttribute("max",psd.simPlot.getMaxValue()+""));
                         lg.addChildElement(yAxis);
-                        lg.addContent("\n    ");
+                        lg.addContent("\n        ");
 
 
                         SimpleXMLElement view = new SimpleXMLElement("View");
@@ -316,7 +321,7 @@ public class PsicsFileManager
                         view.addAttribute(new SimpleXMLAttribute("ymin",psd.simPlot.getMinValue()+""));
                         view.addAttribute(new SimpleXMLAttribute("ymax",psd.simPlot.getMaxValue()+""));
                         lg.addChildElement(view);
-                        lg.addContent("\n");
+                        lg.addContent("        \n");
 
                         lineGraphs.put(lineGraphRef, lg);
 
@@ -333,14 +338,16 @@ public class PsicsFileManager
                     line.addAttribute(new SimpleXMLAttribute("show",colNum+""));
                     colNum++;
 
+                    lineGraph.addContent("\n        ");
                     lineGraph.addChildElement(line);
-                    lineGraph.addContent("\n    ");
 
 
 
                 }
                 
             }
+
+
             sxe.addChildElement(vc);
             
             sxe.addContent("\n");
@@ -946,7 +953,10 @@ public class PsicsFileManager
                     executable = basicCommLine.trim();
                 }
 
-                String scriptText = javaEx+ " "+psicsJar+ " "+fullFileToRun;
+                String scriptText = javaEx+ " "+psicsJar+ " "+fullFileToRun+"\n";
+                int secs = 5;
+                scriptText = scriptText + "echo \"Finished simulation. Data stored in "+dirToRunFrom.getAbsolutePath()+". Will close terminal in "+secs+" seconds...\"\n";
+                scriptText = scriptText + "sleep "+secs+"\n";
 
                 File scriptFile = new File(ProjectStructure.getPsicsCodeDir(project.getProjectMainDirectory()),
                                            "runsim.sh");

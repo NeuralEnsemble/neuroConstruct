@@ -297,6 +297,8 @@ public class PsicsMorphologyGenerator
                     {
                         SimpleXMLAttribute minorProx = new SimpleXMLAttribute("minor", "true");
                         proxPoint.addAttribute(minorProx);
+                        SimpleXMLAttribute onSurface = new SimpleXMLAttribute("onSurface", "true");
+                        proxPoint.addAttribute(onSurface);
 
                         //if (parent.isSpherical())
                         //{
@@ -398,7 +400,7 @@ public class PsicsMorphologyGenerator
                 if (!group.equals(Section.ALL))
                 {
                     SimpleXMLElement pp = new SimpleXMLElement("PassiveProperties");
-                    pp.addAttribute("region", group);
+                    pp.addAttribute("region", "*~"+group+"~*");
                     pp.addAttribute("cytoplasmResistivity", (nextSpRes*spAxResFactor)+unitSpAxRes);
 
                     memb.addChildElement(pp);
@@ -434,7 +436,7 @@ public class PsicsMorphologyGenerator
                 if (!group.equals(Section.ALL))
                 {
                     SimpleXMLElement pp = new SimpleXMLElement("PassiveProperties");
-                    pp.addAttribute("region", group);
+                    pp.addAttribute("region", "*~"+group+"~*");
                     pp.addAttribute("membraneCapacitance", ((float)(nextCapRes*spCapFactor))+unitSpCap);
 
                     memb.addChildElement(pp);
@@ -527,7 +529,7 @@ public class PsicsMorphologyGenerator
                     {
                         SimpleXMLElement rm = new SimpleXMLElement("RegionMask");
                         rm.addAttribute(new SimpleXMLAttribute("action", "include"));
-                        rm.addAttribute(new SimpleXMLAttribute("where", "region = *"+group+"*"));
+                        rm.addAttribute(new SimpleXMLAttribute("where", "region = *~"+group+"~*"));
                         cp.addChildElement(rm);
                         cp.addContent("\n");
                     }
@@ -612,7 +614,7 @@ public class PsicsMorphologyGenerator
 
                             SimpleXMLElement rm = new SimpleXMLElement("RegionMask");
                             rm.addAttribute(new SimpleXMLAttribute("action", "include"));
-                            rm.addAttribute(new SimpleXMLAttribute("where", "region = *"+group+"*"));
+                            rm.addAttribute(new SimpleXMLAttribute("where", "region = *~"+group+"~*"));
 
                             cp.addChildElement(rm);
                             cp.addContent("\n");
@@ -638,7 +640,7 @@ public class PsicsMorphologyGenerator
 
                 SimpleXMLElement rm = new SimpleXMLElement("RegionMask");
                 rm.addAttribute(new SimpleXMLAttribute("action", "include"));
-                rm.addAttribute(new SimpleXMLAttribute("where", "region = *"+pg.getGroup()+"*"));
+                rm.addAttribute(new SimpleXMLAttribute("where", "region = *~"+pg.getGroup()+"~*"));
                 cp.addChildElement(rm);
                 cp.addContent("\n");
                 if(excludeMask!=null)
