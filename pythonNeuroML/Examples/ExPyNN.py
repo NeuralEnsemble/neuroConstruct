@@ -41,7 +41,7 @@ class CellTypeA(IF_cond_exp):
 
 
 cellNumA = 2
-cellNumB = 4
+cellNumB = 2
 cellType = CellTypeA
 connNum = 10
 
@@ -112,18 +112,18 @@ for i in range(connNum):
     src = gidsA[int(NumpyRNG.next(rng) * len(gidsA))]
     tgt = gidsB[int(NumpyRNG.next(rng) * len(gidsB))]
 
-    print "Connecting cell %s (%s) in %s to cell %s (%s) in %s" % (src, str(cellsA.locate(src)) ,cellsA.label, tgt, str(cellsB.locate(tgt)), cellsB.label)
+    print "-- Connecting cell %s (%s) in %s to cell %s (%s) in %s" % (src, str(cellsA.locate(src)) ,cellsA.label, tgt, str(cellsB.locate(tgt)), cellsB.label)
 
-    proj.connection_manager.connect(cellsA[cellsA.locate(src)], cellsB[cellsB.locate(tgt)], weights=1.0, delays=1.0, synapse_type='excitatory')
+    proj.connection_manager.connect(cellsA[cellsA.locate(src)], cellsB[cellsB.locate(tgt)], weights=0.01, delays=1.0, synapse_type='excitatory')
     
 
 
-voltDistr = RandomDistribution('uniform',[-80,-50],rng)
+voltDistr = RandomDistribution('uniform',[-65,-50],rng)
 
 cellsA.randomInit(voltDistr)
 cellsB.randomInit(voltDistr)
 
-freq = 50 # Hz
+freq = 150 # Hz
 
 number = int(tstop*freq/1000.0)
 
@@ -136,9 +136,11 @@ stgen.seed(seed)
 
 spike_times = stgen.poisson_generator(rate=freq, t_stop=tstop, array=True)
 
-print "spike_times: " +str(spike_times)
 
 input_population  = Population(cellNumA, SpikeSourceArray, {'spike_times': spike_times}, "inputsToA")
+for i in input_population:
+    i.spike_times = stgen.poisson_generator(rate=freq, t_stop=tstop, array=True)
+    print "spike_times: " +str(i.spike_times)
 
 if my_simulator=='neuron': connector2= AllToAllConnector(weights=0.01, delays=0.5)  # Needs to be consolidated!
 if my_simulator=='nest2': connector2= FixedNumberPreConnector(0)                     # Needs to be consolidated!
@@ -147,10 +149,14 @@ if my_simulator=='neuron': del input_proj.connection_manager.connections[:]     
 
 
 for i in range(0,cellNumA):
-    input_proj.connection_manager.connect(input_population[(i,)], cellsA[(i,)], weights=0.6, delays=3.0, synapse_type='excitatory')
+    input_proj.connection_manager.connect(input_population[(i,)], cellsA[(i,)], weights=0.05, delays=3.0, synapse_type='excitatory')
 
 cellsA.record_v()
 cellsB.record_v()
+
+cellsA.record_gsyn()
+cellsB.record_gsyn()
+
 input_population.record()
 
 print "---- Running the simulation ----"
@@ -159,6 +165,11 @@ run(tstop)
 
 cellsA.print_v("cellsA.dat")
 cellsB.print_v("cellsB.dat")
+
+
+cellsA.print_gsyn("cellsAgsyn.dat")
+cellsB.print_gsyn("cellsBgsyn.dat")
+
 input_population.printSpikes("inputs.dat")
 
 

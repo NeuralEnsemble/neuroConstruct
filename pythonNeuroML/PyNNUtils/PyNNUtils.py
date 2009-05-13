@@ -32,6 +32,8 @@ from NetworkHandler import NetworkHandler
 class NetManagerPyNN(NetworkHandler):
     
     log = logging.getLogger("NetManagerPyNN")
+    
+    logging.basicConfig(level=logging.INFO, format="%(name)-19s %(levelname)-5s - %(message)s")
         
     populations = {}
     projections = {}  
@@ -136,7 +138,7 @@ class NetManagerPyNN(NetworkHandler):
         
         
         if (self.projections.keys().count(projName)==0):
-            print "Making a projection obj for "+ projName
+            #print "Making a projection obj for "+ projName
             
             if self.my_simulator=='neuron': connector= AllToAllConnector(weights=0.01, delays=0.5)
             if self.my_simulator=='nest2': connector= FixedNumberPreConnector(0)
@@ -160,12 +162,14 @@ class NetManagerPyNN(NetworkHandler):
           
         delayTotal = float(localInternalDelay) + float(localPreDelay) + float(localPostDelay) + float(localPropDelay)
         
-        self.log.info("Delay: "+str(delayTotal)+", weight: "+ str(localWeight)+", threshold: "+ str(localThreshold))
         
         srcCell = self.populations[source][int(preCellId)]
         tgtCell = self.populations[target][int(postCellId)]
         weight = float(localWeight)*self.projWeightFactor[projName]
-        print "Conn weight: "+str(weight)
+        #print "Conn weight: "+str(weight)
+        
+        self.log.info("-- Conn id: "+str(id)+", delay: "+str(delayTotal)+", localWeight: "+ str(localWeight)+", weight: "+ str(weight)+", threshold: "+ str(localThreshold))
+        
         proj.connection_manager.connect(srcCell, tgtCell, weights=weight, delays=float(delayTotal), synapse_type='excitatory')
         
 
@@ -201,11 +205,11 @@ class NetManagerPyNN(NetworkHandler):
             
             for ip in input_population:
                 
-                print "--------------------------"
                 spikes = self.my_stgen.poisson_generator(rate=freq*1000, t_stop=self.maxSimLength, array=True)
                 ip.spike_times = spikes
-                print "Spike times: "+ str(ip.spike_times)
-                print "--------------------------"
+                #print "--------------------------"
+                #print "Spike times: "+ str(ip.spike_times)
+                #print "--------------------------"
         
             self.inputCellGroups[inputName] = cellGroup
             self.input_populations[inputName] = input_population
@@ -246,15 +250,16 @@ class NetManagerPyNN(NetworkHandler):
         if self.inputCount.keys().count(inputName)==0:
             self.inputCount[inputName] = 0
             
-        self.log.info("Associating input: %i from: %s to cell %i"%(self.inputCount[inputName],inputName,cellId))
+        weight = float(self.inputWeights[inputName])
+            
+        self.log.warn("Associating input: %i from: %s to cell %i, weight: %f"%(self.inputCount[inputName],inputName,cellId, weight))
         
         srcInput = self.input_populations[inputName][(self.inputCount[inputName],)]
        
         tgtCell = self.populations[self.inputCellGroups[inputName]][(int(cellId),)]
         
         #TODO use max cond*weight for weight here...
-        #connect(srcInput, tgtCell, weight=0.0001)
-        self.input_projections[inputName].connection_manager.connect(srcInput, tgtCell, weights=float(self.inputWeights[inputName]), delays=0.1, synapse_type='excitatory')
+        self.input_projections[inputName].connection_manager.connect(srcInput, tgtCell, weights=weight, delays=0.1, synapse_type='excitatory')
             
         self.inputCount[inputName]+=1
              
