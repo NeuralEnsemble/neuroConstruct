@@ -79,7 +79,7 @@ public class PynnFileManager
     
     public enum PynnSimulator 
     {
-        NEURON  ("NEURON 2", "neuron2"),
+        NEURON  ("NEURON", "neuron"),
         NEST2   ("NEST 2", "nest2"),
         PCSIM   ("PCSIM", "pcsim"),
         BRIAN   ("Brian", "brian"),
@@ -117,9 +117,6 @@ public class PynnFileManager
     
     PynnSimulator simulator = null;
 
-
-    private Hashtable<String, Integer> nextColour = new Hashtable<String, Integer>();
-
     //private static boolean addComments = true;
 
 
@@ -155,7 +152,7 @@ public class PynnFileManager
     {
         cellTemplatesGenAndIncl = new ArrayList<String>();
         graphsCreated = new ArrayList<String>();
-        nextColour = new Hashtable<String, Integer>(); // reset it...
+        //nextColour = new Hashtable<String, Integer>(); // reset it...
         includedChanMechNames = new ArrayList<String>();
 
     }
@@ -185,7 +182,7 @@ public class PynnFileManager
 
 
         FileWriter fw = null;
-        nextColour = new Hashtable<String, Integer>(); // reset it...
+        //nextColour = new Hashtable<String, Integer>(); // reset it...
         
         if (project.generatedCellPositions.getNumberInAllCellGroups()==0)
         {
@@ -352,9 +349,9 @@ public class PynnFileManager
             
             for (PlotSaveDetails psd: plotSaves)
             {
-                if(psd.simPlot.toBeSaved() && psd.simPlot.getValuePlotted().equals(SimPlot.VOLTAGE))  // No plotting just yet...
+                if(psd.simPlot.toBeSaved() )  // No plotting just yet...
                 {
-                    fw.write("print(\"Going to save details of: %s cells in population: %s\" % ("+psd.cellNumsToPlot.size()
+                    fw.write("print(\"Going to save "+psd.simPlot.getValuePlotted()+" from: %s cells in population: %s\" % ("+psd.cellNumsToPlot.size()
                             +", \""+psd.simPlot.getCellGroup()+"\"))\n");
                     
                     if (psd.allCellsInGroup)
@@ -363,9 +360,14 @@ public class PynnFileManager
                         {
                             fw.write("pynnNetMgr.populations[\""+psd.simPlot.getCellGroup()+"\"].record_v()\n\n");
                         }
+                        else if (psd.simPlot.getValuePlotted().indexOf(SimPlot.SYN_COND)>=0 &&
+                                psd.simPlot.getValuePlotted().indexOf(SimPlot.SYNAPSES)>=0)
+                        {
+                            fw.write("pynnNetMgr.populations[\""+psd.simPlot.getCellGroup()+"\"].record_gsyn()\n\n");
+                        }
                         else
                         {
-                            fw.write("print(\"Recording anything besides voltage not implemented yet!\"\n");
+                            fw.write("print(\"Recording anything besides voltage ("+psd.simPlot.getValuePlotted()+") not implemented yet!\"\n\n");
                         }
                         
                     }
@@ -393,7 +395,12 @@ public class PynnFileManager
                     {
                         if (psd.simPlot.getValuePlotted().equals(SimPlot.VOLTAGE))
                         {
-                            fw.write("pynnNetMgr.populations[\""+psd.simPlot.getCellGroup()+"\"].print_v(\""+psd.simPlot.getCellGroup()+".dat\")\n");
+                            fw.write("pynnNetMgr.populations[\""+psd.simPlot.getCellGroup()+"\"].print_v(\""+psd.simPlot.getCellGroup()+".dat\")\n\n");
+                        }
+                        else if (psd.simPlot.getValuePlotted().indexOf(SimPlot.SYN_COND)>=0 &&
+                                psd.simPlot.getValuePlotted().indexOf(SimPlot.SYNAPSES)>=0)
+                        {
+                            fw.write("pynnNetMgr.populations[\""+psd.simPlot.getCellGroup()+"\"].print_gsyn(\""+psd.simPlot.getCellGroup()+".gsyn\")\n\n");
                         }
                         
                     }
@@ -651,7 +658,7 @@ public class PynnFileManager
                             {
                                 ChannelMLCellMechanism cm = (ChannelMLCellMechanism)project.cellMechanismInfo.getCellMechanism(rst.getSynapseType());
 
-                                SynapseProps sp = parseSynapticMech(cm);
+                                SynapseProps sp = parseSynapticMech(cm, 1);
                                 baseClass = sp.prefBaseClass;
                                 cellParams.putAll(sp.synParams);
 
@@ -680,19 +687,26 @@ public class PynnFileManager
                         throw new PynnException("Error, cannot support network connection "+nc+
                                 " with multiple synapses:"+syns+"!!");
                     }
-                    try
+                    if(!syns.get(0).getWeightsGenerator().isTypeFixedNum())
                     {
-                        ChannelMLCellMechanism cm = (ChannelMLCellMechanism)project.cellMechanismInfo.getCellMechanism(syns.get(0).getSynapseType());
-
-
-                        SynapseProps sp = parseSynapticMech(cm);
-                        baseClass = sp.prefBaseClass;
-                        cellParams.putAll(sp.synParams);
-
+                        throw new PynnException("Error, mapping to PyNN does not currently support network connections with non fixed weights, as in "+nc+": "+syns+"!!");
                     }
-                    catch (Exception ex)
+                    if(project.generatedNetworkConnections.getSynapticConnections(nc).size()>0)
                     {
-                        throw new PynnException("Error, reading from cell mechanism: "+syns.get(0).getSynapseType()+"!!", ex);
+                        try
+                        {
+                            ChannelMLCellMechanism cm = (ChannelMLCellMechanism)project.cellMechanismInfo.getCellMechanism(syns.get(0).getSynapseType());
+
+                            float weight = syns.get(0).getWeightsGenerator().getFixedNum();
+                            SynapseProps sp = parseSynapticMech(cm, weight);
+                            baseClass = sp.prefBaseClass;
+                            cellParams.putAll(sp.synParams);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new PynnException("Error, reading from cell mechanism: "+syns.get(0).getSynapseType()+"!!", ex);
+                        }
                     }
 
 
@@ -752,7 +766,7 @@ public class PynnFileManager
     }
 
 
-    private SynapseProps parseSynapticMech(ChannelMLCellMechanism cm) throws PynnException
+    private SynapseProps parseSynapticMech(ChannelMLCellMechanism cm, float extraWeightFactor) throws PynnException
     {
         SynapseProps synProps = new SynapseProps();
 
@@ -794,19 +808,29 @@ public class PynnFileManager
                         String tauLtp = cm.getValue(mainSynElPath+"/"+ChannelMLConstants.STDP_TIME_DEP_ELEMENT+"/@"+ChannelMLConstants.STDP_TAU_LTP);
                         String tauLtd = cm.getValue(mainSynElPath+"/"+ChannelMLConstants.STDP_TIME_DEP_ELEMENT+"/@"+ChannelMLConstants.STDP_TAU_LTD);
 
-                        String delLtp = cm.getValue(mainSynElPath+"/"+ChannelMLConstants.STDP_TIME_DEP_ELEMENT+"/@"+ChannelMLConstants.STDP_DEL_WEIGHT_LTP);
-                        String delLtd = cm.getValue(mainSynElPath+"/"+ChannelMLConstants.STDP_TIME_DEP_ELEMENT+"/@"+ChannelMLConstants.STDP_DEL_WEIGHT_LTD);
+                        float delLtp = Float.parseFloat(cm.getValue(mainSynElPath+"/"+ChannelMLConstants.STDP_TIME_DEP_ELEMENT+"/@"+ChannelMLConstants.STDP_DEL_WEIGHT_LTP));
+                        float delLtd = Float.parseFloat(cm.getValue(mainSynElPath+"/"+ChannelMLConstants.STDP_TIME_DEP_ELEMENT+"/@"+ChannelMLConstants.STDP_DEL_WEIGHT_LTD));
 
-                        String maxWeight = cm.getValue(mainSynElPath+"/"+ChannelMLConstants.STDP_TIME_DEP_ELEMENT+"/@"+ChannelMLConstants.STDP_MAX_WEIGHT);
-                        if (maxWeight==null) 
-                            maxWeight = "1e9";
+                        String mw = cm.getValue(mainSynElPath+"/"+ChannelMLConstants.STDP_TIME_DEP_ELEMENT+"/@"+ChannelMLConstants.STDP_MAX_WEIGHT);
+
+                        if (mw==null)
+                            mw = "1e9";
+
+                        float maxWeight = Float.parseFloat(mw);
+
+                        
+                        String gmax = cm.getValue(mainSynElPath+"/@"+ChannelMLConstants.DES_MAX_COND_ATTR);
+
+                        // Todo calculate with UnitConverter!!!
+                        float weightConvFactor = Float.parseFloat(gmax)*1e3f*extraWeightFactor;
+
 
                         // Not yet used!!
                         String postSpikeThresh = cm.getValue(mainSynElPath+"/"+ChannelMLConstants.STDP_TIME_DEP_ELEMENT+"/@"+ChannelMLConstants.STDP_POST_SPIKE_THRESH);
 
                         synDynInfo = "SynapseDynamics(slow=STDPMechanism(timing_dependence=SpikePairRule(tau_plus="+tauLtp+", tau_minus="+tauLtd+"),"
-                           +"weight_dependence=AdditiveWeightDependence(w_min=0, w_max="+maxWeight+","+
-                                                                      "A_plus="+delLtp+", A_minus="+delLtd+")))";
+                           +"weight_dependence=AdditiveWeightDependence(w_min=0, w_max="+(weightConvFactor*maxWeight)+","+
+                                                                      "A_plus="+(delLtp)+", A_minus="+(delLtd)+")))";
 
                     }
                     else
