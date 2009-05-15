@@ -23,7 +23,7 @@ print "Has args: %s" % hasattr(sys,"argv")
 if hasattr(sys,"argv") and len(sys.argv) >1:     # run using python
     my_simulator = sys.argv[-1]
 else:
-    my_simulator = "neuron2"    # run using nrngui -python
+    my_simulator = "neuron"    # run using nrngui -python
 	
 print "Running PyNN script in simulator: "+ my_simulator
 
@@ -99,11 +99,16 @@ for addr in addrsB:
 print gidsA
 print gidsB
 
-syn_dynamics_STPSynapse = SynapseDynamics(fast=TsodyksMarkramMechanism(U=0.04, tau_rec=100.0, tau_facil=1000.0))
+
+#syn_dynam = SynapseDynamics(fast=TsodyksMarkramMechanism(U=0.04, tau_rec=100.0, tau_facil=1000.0))
+
+syn_dynam = SynapseDynamics(slow=STDPMechanism(timing_dependence=SpikePairRule(tau_plus=20.0, tau_minus=20.0),
+                           weight_dependence=AdditiveWeightDependence(w_min=0, w_max=0.4,
+                                                                      A_plus=0.01, A_minus=0.012)))
 
 if my_simulator=='neuron': connector= AllToAllConnector(weights=0.01, delays=0.5)  # Needs to be consolidated!
 if my_simulator=='nest2': connector= FixedNumberPreConnector(0)                     # Needs to be consolidated!
-proj = Projection(cellsA, cellsB, connector, target='excitatory', label='TestProj' ,synapse_dynamics=syn_dynamics_STPSynapse)
+proj = Projection(cellsA, cellsB, connector, target='excitatory', label='TestProj' ,synapse_dynamics=syn_dynam)
 if my_simulator=='neuron': del proj.connection_manager.connections[:]              # Needs to be consolidated!
 
 
@@ -123,7 +128,7 @@ voltDistr = RandomDistribution('uniform',[-65,-50],rng)
 cellsA.randomInit(voltDistr)
 cellsB.randomInit(voltDistr)
 
-freq = 150 # Hz
+freq = 90 # Hz
 
 number = int(tstop*freq/1000.0)
 
@@ -149,7 +154,7 @@ if my_simulator=='neuron': del input_proj.connection_manager.connections[:]     
 
 
 for i in range(0,cellNumA):
-    input_proj.connection_manager.connect(input_population[(i,)], cellsA[(i,)], weights=0.05, delays=3.0, synapse_type='excitatory')
+    input_proj.connection_manager.connect(input_population[(i,)], cellsA[(i,)], weights=0.1, delays=3.0, synapse_type='excitatory')
 
 cellsA.record_v()
 cellsB.record_v()
@@ -175,7 +180,7 @@ input_population.printSpikes("inputs.dat")
 
 print cellsA.describe()
 print cellsB.describe()
-print proj.describe()
+#print proj.describe()
 print input_population.describe()
 print input_proj.describe()
 

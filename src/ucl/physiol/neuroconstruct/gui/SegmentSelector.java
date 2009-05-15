@@ -2070,9 +2070,20 @@ public class SegmentSelector extends JFrame implements DocumentListener
             +"The cell will be remeshed to get the electronic length per internal division as close as possible to:\n"
             +""+ project.simulationParameters.getMaxElectroLen()+" (dimensionless units; set via Common Simulation Settings tab)\n\nProceed?";
         
-        boolean proceed = GuiUtils.showYesNoMessage(logger, note, this);
+        //boolean proceed = GuiUtils.showYesNoMessage(logger, note, this);
         
-        if (!proceed) return;
+        Object[] vars = new Object[]{"Proceed", "Test only", "Cancel"};
+
+        int sel = JOptionPane.showOptionDialog(this, note, "Proceed?",
+                                               JOptionPane.OK_OPTION,
+                                               JOptionPane.QUESTION_MESSAGE,
+                                               null,
+                                               vars,
+                                               vars[0]);
+        
+        if (sel==2) return;
+
+        boolean justTest = (sel==1);
         
         StringBuffer report = new StringBuffer();
         
@@ -2114,10 +2125,19 @@ public class SegmentSelector extends JFrame implements DocumentListener
                 countOld += oldNseg;
                 
                 int bestNseg = Math.max(1, (int)Math.ceil(totalElecLen/project.simulationParameters.getMaxElectroLen()));
-                
-                nextSec.setNumberInternalDivisions(bestNseg);
 
-                report.append("Old num internal divs: "+oldNseg+", new number of internal divs: "+bestNseg+"\n\n");
+                String changed = "";
+
+                if(!justTest)
+                {
+                    nextSec.setNumberInternalDivisions(bestNseg);
+                }
+                else
+                {
+                    changed = " (not changed)";
+                }
+
+                report.append("Old num internal divs: "+oldNseg+", new number of internal divs: "+bestNseg+changed+"\n\n");
                 countNew += bestNseg;
                 
             }
