@@ -990,11 +990,18 @@ public class SimulationData
     }
 
 
-    public static String getCellGroup(String cellRefOrCellSegRef)
+    public String getCellGroup(String cellRefOrCellSegRef)
     {
         if (cellRefOrCellSegRef.indexOf("_")<0)
             return cellRefOrCellSegRef;
         String cellRef = getCellRef(cellRefOrCellSegRef);
+        
+        if ((new File(dataDirectory, "PyNNUtils")).exists())
+        {
+            // A Pynn based sim
+            return cellRef; // As all of the cell info will be in CellGroupA.dat etc.
+        }
+
         return cellRef.substring(0, cellRef.lastIndexOf("_"));
     }
 
@@ -1198,13 +1205,19 @@ public class SimulationData
     {
         //File f = new File("projects/PlotSave/simulations/Sim_43/");
         //File f = new File("projects/Spiky/simulations/Sim_33");
-        File f = new File("models/PyNNTest/simulations/Sim_117");
+        File f = new File("models/PyNNTest/simulations/Sim_759");
         SimulationData simulationData1 = null;
         try
         {
             //System.out.println("Info: "+ SimulationsInfo.getSimProps(f, false));
             simulationData1 = new SimulationData(f, true);
             simulationData1.initialise();
+
+            ArrayList<DataStore> dss= simulationData1.getAllLoadedDataStores();
+            for(DataStore ds: dss)
+            {
+                System.out.println(ds);
+            }
 
             //System.out.println("dataOnlyForSoma: "+simulationData1.dataOnlyForSoma());
             System.out.println("Num time steps: "+simulationData1.getNumberTimeSteps());

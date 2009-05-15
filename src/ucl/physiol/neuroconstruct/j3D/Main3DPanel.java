@@ -1433,7 +1433,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
             if (segForPrim>=0)
             {
-                String cellGroup = SimulationData.getCellGroup(nextName);
+                String cellGroup = simRerunFrame.getCellGroup(nextName);
                 int cellNumber = SimulationData.getCellNum(nextName);
 
                 logger.logComment("Found the cell. It's number : " + cellNumber + " in " + cellGroup);
@@ -1652,7 +1652,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                         OneCell3D nextCell3D = all3DCells.get(nextCellRef);
                         int nextCellNum = SimulationData.getCellNum(nextCellRef);
-                        String nextCellGroup = SimulationData.getCellGroup(nextCellRef);
+                        String nextCellGroup = simRerunFrame.getCellGroup(nextCellRef);
 
                         if (!nextCell3D.hasTempAppearance()
                             && !(selectedNums.contains(nextCellNum) && cellGroup.equals(nextCellGroup)))

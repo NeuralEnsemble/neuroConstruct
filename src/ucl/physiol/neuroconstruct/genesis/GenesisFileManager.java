@@ -394,7 +394,7 @@ public class GenesisFileManager
     {
         StringBuffer response = new StringBuffer();
 
-        ArrayList<String> allStims = simConfig.getInputs();
+        ArrayList<String> allStims = project.generatedElecInputs.getNonEmptyInputRefs();
 
         addMajorComment(response, "Adding "+allStims.size()+" stimulation(s)");
 
@@ -436,7 +436,7 @@ public class GenesisFileManager
                                                    getTopElementName(getCellElementName(cellGroup,
                         cellNum)));
 
-                    response.append("create pulsegen " + stimElement + "\n");
+                    response.append("create pulsegen " + stimElement + "\n\n");
                     
                     IClampSettings iClamp = (IClampSettings) project.elecInputInfo.getStim(allStims.get(k));
                     
@@ -464,9 +464,14 @@ public class GenesisFileManager
                     addComment(response, "Adding a current pulse of amplitude: " + current + " "
                                       +
                                       UnitConverter.currentUnits[project.genesisSettings.getUnitSystemToUse()].getSafeSymbol()
-                                      + ", "+input+" \n");
+                                      + ", "+input+"");
 
-                    addComment(response, "Pulses are shifted one dt step, so that pulse will begin at delay1, as in NEURON\n");
+                    float delToUse = del;
+                    if(delToUse>0)
+                    {
+                        addComment(response, "Pulses are shifted one dt step, so that pulse will begin at delay1, as in NEURON");
+                        delToUse = del - project.simulationParameters.getDt();
+                    }
 
                     float recurDelay = Integer.MAX_VALUE; // A long time before any recurrance
 
@@ -477,7 +482,7 @@ public class GenesisFileManager
                                     + " width1 "
                                     + convertNeuroConstructTime(dur)
                                     + " delay1 "
-                                    + convertNeuroConstructTime(del - project.simulationParameters.getDt())
+                                    + convertNeuroConstructTime(delToUse)
                                     + " delay2 "
                                     + convertNeuroConstructTime(recurDelay)
                                     + "  \n");
@@ -2571,7 +2576,13 @@ public class GenesisFileManager
                                     + filenameToBeGenerated
                                     + " "
                                     + newElementName
-                                    + "\n\n");
+                                    + "\n");
+                    response.append("addfield "
+                                    + newElementName
+                                    + " celltype\n");
+                    response.append("setfield "
+                                    + newElementName
+                                    + " celltype " + mappedCell.getInstanceName() + "\n\n");
                     
                     if (CellTopologyHelper.hasExtraCellMechParams(mappedCell))
                     {
@@ -3943,7 +3954,7 @@ public class GenesisFileManager
             dateInfo = " at: \" {getdate}";
         
         response.append("echo \"Starting sim: "+project.simulationParameters.getReference()+" with dur: "+simConfig.getSimDuration()+
-                " and dt: "+project.simulationParameters.getDt()+"(+"+project.genesisSettings.getNumMethod()+"+)"+dateInfo+",\n");
+                " and dt: "+project.simulationParameters.getDt()+" ("+project.genesisSettings.getNumMethod()+")"+dateInfo+",\n");
 
         response.append("step "+(Math.round(getSimDuration()/project.simulationParameters.getDt()))+"\n\n"); // +1 to include 0 and last timestep
 

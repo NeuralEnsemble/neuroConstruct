@@ -232,6 +232,23 @@ public class GeneratedElecInputs
         return totalCount;
     }
 
+    public ArrayList<String> getNonEmptyInputRefs()
+    {
+        ArrayList<String> neir = new ArrayList<String>();
+
+        Enumeration<String> keys = this.myElecInputs.keys();
+
+        while (keys.hasMoreElements())
+        {
+            String ref = keys.nextElement();
+            ArrayList inputArrayList = myElecInputs.get(ref);
+            if(inputArrayList.size()>0) 
+                neir.add(ref);
+        }
+
+        return neir;
+    }
+
     public int getNumberSingleInputs(String inputRef)
     {
         if (!myElecInputs.containsKey(inputRef))return 0;

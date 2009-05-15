@@ -1331,6 +1331,13 @@ public class SimulationRerunFrame extends JFrame
     }
 
 
+
+    public String getCellGroup(String cellRefOrCellSegRef)
+    {
+        return myCurrSimData.getCellGroup(cellRefOrCellSegRef);
+    }
+
+
     private void updateISIs(int timeStep) throws SimulationDataException
     {
         for (int cellSegIndex = 0;cellSegIndex<this.rerunCellItemRefs.length;cellSegIndex++)
@@ -1338,7 +1345,7 @@ public class SimulationRerunFrame extends JFrame
             String ref = rerunCellItemRefs[cellSegIndex];
 
             String cellOnlyReference = SimulationData.getCellOnlyReference(ref);
-            String cellGroupName = SimulationData.getCellGroup(cellOnlyReference);
+            String cellGroupName = myCurrSimData.getCellGroup(cellOnlyReference);
             int cellNumber = SimulationData.getCellNum(cellOnlyReference);
 
             double value = this.rerunValues[cellSegIndex][ timeStep];
@@ -1436,7 +1443,7 @@ public class SimulationRerunFrame extends JFrame
 
             String cellOnlyReference = SimulationData.getCellOnlyReference(ref);
 
-            String cellGroupName = SimulationData.getCellGroup(cellOnlyReference);
+            String cellGroupName = myCurrSimData.getCellGroup(cellOnlyReference);
 
             int cellNumber = SimulationData.getCellNum(cellOnlyReference);
 
