@@ -27,6 +27,7 @@
 package ucl.physiol.neuroconstruct.neuroml;
 
 import java.awt.Color;
+import java.beans.XMLDecoder;
 import java.io.*;
 import java.util.*;
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ import ucl.physiol.neuroconstruct.project.stimulation.IClamp;
 import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrain;
 import ucl.physiol.neuroconstruct.simulation.IClampSettings;
 import ucl.physiol.neuroconstruct.simulation.RandomSpikeTrainSettings;
+import ucl.physiol.neuroconstruct.simulation.SimulationParameters;
 import ucl.physiol.neuroconstruct.simulation.StimulationSettings;
 import ucl.physiol.neuroconstruct.utils.*;
 
@@ -148,11 +150,17 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
     private String synInput = "";
     private boolean addStim = false;
     
-    SimConfig importedSimConfig = new SimConfig();
+    private SimConfig importedSimConfig = new SimConfig();
     private Integer priority = 0;
     private String groupCellType = "";
-
     
+    private Boolean annotations = false; //if true networkMLreader will assume that all the necessary NC informations are stored in annotations of the level3 file
+                                                        //if false it will try to add some buffer NC objects just to enable the project generation
+    private Boolean firstOccurence = true;
+    private Boolean insideAnnotation = false;
+    private Boolean addAnnotations = true;
+    private String annotationString = "";
+
     //private String metadataPrefix = MetadataConstants.PREFIX + ":";
 
     private GeneratedCellPositions cellPos = null;
@@ -209,6 +217,18 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
          }
          else
          {
+         
+        if (insideAnnotation && addAnnotations)
+        {
+            contents = contents.replace("<", "&lt;");
+            contents = contents.replace(">", "&gt;");
+            contents = contents.replace("\"", "&quot;");
+            contents = contents.replace("&", "&amp;");
+            annotationString = annotationString + contents;
+        }
+        else
+        {
+             
             if (getCurrentElement().equals(NetworkMLConstants.CELLTYPE_ELEMENT)
                 && getAncestorElement(1).equals(NetworkMLConstants.POPULATION_ELEMENT))
             {
@@ -273,7 +293,6 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                      project.simulationParameters.setDuration(Float.valueOf(contents));
                      importedSimConfig.setSimDuration(Float.valueOf(contents));
                      logger.logComment(">>>Found a simulation duration...");
-
                  }
                 else if (this.currentPropertyName.equals(NetworkMLConstants.NC_SIM_TIME_STEP)) 
                 {
@@ -285,8 +304,9 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                  {
                      project.simulationParameters.setTemperature(Float.valueOf(contents));
                      logger.logComment(">>>Found a simulation temperature...");
-                 }
+                 }                
             }
+         }//else annotation
          }//else channel
          }//else cell
         }
@@ -393,8 +413,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
          logger.logComment("inside a cell:" +insideCell);
         
          
-         if (insideCell)
-             
+         if (insideCell)             
          {
              
           //dealing with prefix
@@ -467,7 +486,54 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
             chanBuffer = chanBuffer +">";
 
          }
+         
+         if (!insideAnnotation && getCurrentElement().equals(MetadataConstants.ANNOTATION_ELEMENT))
+         {             
+             annotations = true;
+             level3 = true;         
+             
+              if (!testMode && annotations && firstOccurence)
+              {
+                  firstOccurence = false;
+                  logger.logComment("The file contains annotations that will overwrite NC objects. Asking the user...");
+                  Object[] options2 = {"Import", "Ignore"};
+                  Object choice = "";
 
+                  JOptionPane option2 = new JOptionPane(
+                          "The file contains annotations that could overwrite existing informations about regions, cell groups, networks and input/output configurations.\n" +
+                          "What do you want to do with them?",
+                          JOptionPane.DEFAULT_OPTION,
+                          JOptionPane.WARNING_MESSAGE,
+                          null,
+                          options2,
+                          options2[0]);
+
+                  JDialog dialog2 = option2.createDialog(null, "Warning");
+                  dialog2.setVisible(true);
+                  choice = option2.getValue();
+                  if (choice.equals("Ignore"))
+                  {
+                      logger.logComment("User chosed to ignore annotations");
+                      addAnnotations = false;
+                  }
+             }
+             logger.logComment(">>  Founded an annotation element: going to extract relevant informations for NeuroConstruct");
+             insideAnnotation = true;    
+             annotationString = "";
+         }         
+         
+         if (insideAnnotation && !getCurrentElement().equals(MetadataConstants.ANNOTATION_ELEMENT) && addAnnotations)
+         {
+              logger.logComment("inside an annotation:" +insideAnnotation);
+              annotationString = annotationString + "\n<" + getCurrentElement();
+               for (int i = 0; i < attributes.getLength(); i++)
+               {
+                 String name = attributes.getLocalName(i);
+                 String val = attributes.getValue(i);
+                 annotationString = annotationString + (" "+name+"=\""+val+"\"");
+               }
+               annotationString = annotationString + ">";
+         }
          
          if (getCurrentElement().equals(NetworkMLConstants.POPULATION_ELEMENT))
          {
@@ -489,36 +555,41 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                 {
                      groupCellType = renamedCells.get(groupCellType);
                 }
-                logger.logComment("Going to add a group "+currentPopulation+" for the new cell type "+groupCellType);
-                try
+                
+                if (!annotations)
                 {
-                    Random rand= new  Random();
-                    Color col = new Color(rand.nextInt(256),
-                                          rand.nextInt(256),
-                                          rand.nextInt(256));
-
-                    project.regionsInfo.addRow(currentPopulation+"_region", region, col);
-                    CellPackingAdapter cp = new RandomCellPackingAdapter();
+                                   
+                    logger.logComment("Going to add a group "+currentPopulation+" for the new cell type "+groupCellType);
                     try
                     {
-                        cp.setParameter(RandomCellPackingAdapter.CELL_NUMBER_POLICY, popNumber);
-                        cp.setParameter(RandomCellPackingAdapter.EDGE_POLICY, 0);
-                        cp.setParameter(RandomCellPackingAdapter.SELF_OVERLAP_POLICY, 1);
-                        cp.setParameter(RandomCellPackingAdapter.OTHER_OVERLAP_POLICY, 1);
+                        Random rand= new  Random();
+                        Color col = new Color(rand.nextInt(256),
+                                              rand.nextInt(256),
+                                              rand.nextInt(256));
 
+                        project.regionsInfo.addRow(currentPopulation+"_region", region, col);
+                        CellPackingAdapter cp = new RandomCellPackingAdapter();
+                        try
+                        {
+                            cp.setParameter(RandomCellPackingAdapter.CELL_NUMBER_POLICY, popNumber);
+                            cp.setParameter(RandomCellPackingAdapter.EDGE_POLICY, 0);
+                            cp.setParameter(RandomCellPackingAdapter.SELF_OVERLAP_POLICY, 1);
+                            cp.setParameter(RandomCellPackingAdapter.OTHER_OVERLAP_POLICY, 1);
+
+                        }
+                        catch (CellPackingException ex)
+                        {
+                            logger.logError("Error: "+ex.getMessage(), ex);
+                        }
+                        project.cellGroupsInfo.addRow(currentPopulation, groupCellType, currentPopulation+"_region", col, cp, priority++);
+                        importedSimConfig.addCellGroup(currentPopulation);
+                        project.markProjectAsEdited();
                     }
-                    catch (CellPackingException ex)
+                    catch (NamingException ex)
                     {
-                        logger.logError("Error: "+ex.getMessage(), ex);
-                    }
-                    project.cellGroupsInfo.addRow(currentPopulation, groupCellType, groupCellType, col, cp, priority++);
-                    importedSimConfig.addCellGroup(currentPopulation);
-                    project.markProjectAsEdited();
-                }
-                catch (NamingException ex)
-                {
-                    GuiUtils.showErrorMessage(logger, "Problem creating a new cell group...", ex, null);
+                        GuiUtils.showErrorMessage(logger, "Problem creating a new cell group...", ex, null);
 
+                    }
                 }
             }
          }
@@ -588,7 +659,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                       sps = project.morphNetworkConnectionsInfo.getSynapseList(currentProjection);
                   } else if (project.volBasedConnsInfo.isValidVolBasedConn(currentProjection)) {
                       sps = project.volBasedConnsInfo.getSynapseList(currentProjection);
-                  } else {
+                  } else if (!annotations){
                          addNet = true;
                          source = attributes.getValue(NetworkMLConstants.SOURCE_ELEMENT);
                          target = attributes.getValue(NetworkMLConstants.TARGET_ELEMENT);
@@ -607,17 +678,17 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                   for (SynapticProperties sp : sps) {
                       ConnSpecificProps csp = new ConnSpecificProps(sp.getSynapseType());
                       if (sp.getDelayGenerator().isTypeFixedNum()) {
-                          csp.internalDelay = sp.getDelayGenerator().getNextNumber();
+                      csp.internalDelay = sp.getDelayGenerator().getNextNumber();
                       } else {
                           csp.internalDelay = Float.NaN;
                       }
                       if (sp.getWeightsGenerator().isTypeFixedNum()) {
-                          csp.weight = sp.getWeightsGenerator().getNextNumber();
+                      csp.weight = sp.getWeightsGenerator().getNextNumber();
                       } else {
                           csp.weight = Float.NaN;
-                      }
-                      projectConnProps.add(csp);
                   }
+                      projectConnProps.add(csp);
+             }
              }
 
              
@@ -683,7 +754,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
          else if (getCurrentElement().equals(NetworkMLConstants.SYN_PROPS_ELEMENT)
              && getAncestorElement(1).equals(NetworkMLConstants.PROJECTION_ELEMENT))
          {
-               if (level3 && addNet)
+             if (!annotations && level3 && addNet)
              { 
                  String synType = attributes.getValue(NetworkMLConstants.SYN_TYPE_ATTR);
                  SynapticProperties synProp = new SynapticProperties(synType);
@@ -965,7 +1036,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                  GuiUtils.showWarningMessage(logger, "Error, target cell group: "+currentCellGroup+" not found in project. Current Cell Groups: "+ project.cellGroupsInfo.getAllCellGroupNames(), null);
              }
              
-             else if (level3 && addStim)
+             else if (!annotations && level3 && addStim)
              {
                  StimulationSettings stim = null;
                  CellChooser cellChoose = new AllCells();
@@ -1029,7 +1100,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
     {
 
         logger.logComment("-----   End element: " + localName);
-        
+       
          if (insideCell)
          {
              //dealing with prefix
@@ -1238,11 +1309,10 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
               
          }//if the cell is finished 
                   
-         }//if not a cell
+         }//if cell
             
  
-         if (insideChannel)
-         
+         if (insideChannel)         
          {
                  //dealing with prefix
                      Vector<String> meta = new Vector<String>();
@@ -1388,8 +1458,94 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
 
                   
                 }//if the channel is finished
-         }//if not a channel
-         
+         }//if channel        
+        
+        
+        
+        if (insideAnnotation && addAnnotations)
+        {     
+             if (!getCurrentElement().equals(MetadataConstants.ANNOTATION_ELEMENT))
+             {
+                 annotationString = annotationString + "</" + getCurrentElement() + ">\n";
+             }
+             else
+             {
+                insideAnnotation = false;
+                logger.logComment("FINISHED ANNOTATION STRING: \n"+annotationString);
+                XMLDecoder xmlDecoder = null;
+                ByteArrayInputStream baos = null;               
+                try
+                { 
+                    baos = new ByteArrayInputStream(annotationString.getBytes());
+                    baos.close();
+                } catch (IOException ex) {
+                    logger.logComment("Problem with annotation ByteArrayInputStream");
+                }
+                
+                xmlDecoder = new XMLDecoder(baos);
+                Object nextReadObject = xmlDecoder.readObject();
+                
+                 /* --  Reading Regions Info -- */
+                if  (nextReadObject instanceof RegionsInfo)
+                {
+                    logger.logComment("Found RegionsInfo object in level3 file annotation...");
+                    project.regionsInfo = (RegionsInfo) nextReadObject;
+                    project.regionsInfo.addTableModelListener(project);
+                }                 
+
+                /* --  Reading Cell Group Info -- */
+                if (nextReadObject instanceof CellGroupsInfo)
+                {
+                    logger.logComment("Found CellGroupsInfo object in  level3  file annotation...");
+                     project.cellGroupsInfo = (CellGroupsInfo) nextReadObject;
+                     project.cellGroupsInfo.addTableModelListener(project);
+                }
+                
+                /* --  Reading ElecInputInfo --*/
+                if (nextReadObject instanceof ElecInputInfo)
+                {
+                    logger.logComment("Found ElecInputInfo object in  level3  file annotation...");
+                     project.elecInputInfo = (ElecInputInfo) nextReadObject;
+                     project.elecInputInfo.addTableModelListener(project);
+                }
+
+                /* --  Reading Simple Net Conn Info -- */
+                if (nextReadObject instanceof SimpleNetworkConnectionsInfo)
+                {
+                    logger.logComment("Found SimpleNetworkConnectionsInfo object in  level3  file annotation...");
+                     project.morphNetworkConnectionsInfo = (SimpleNetworkConnectionsInfo) nextReadObject;
+                     project.morphNetworkConnectionsInfo.addTableModelListener(project);
+                }
+
+                /* --  Reading Simulation Info --*/
+                if (nextReadObject instanceof SimulationParameters)
+                {
+                    logger.logComment("Found SimulationParameters object in  level3  file annotation...");
+                     project.simulationParameters = (SimulationParameters) nextReadObject;
+                }
+                
+                /* --  Reading Sim Plot Info -- */
+                if (nextReadObject instanceof SimPlotInfo)
+                {
+                    logger.logComment("Found SimPlotInfo object in  level3  file annotation...");
+                     project.simPlotInfo = (SimPlotInfo) nextReadObject;
+                     project.simPlotInfo.addTableModelListener(project);
+                }
+
+                /* --  Reading SimConfigInfo --*/
+                if (nextReadObject instanceof SimConfigInfo)
+                {
+                    logger.logComment("Found SimConfigInfo object in  level3  file annotation...");
+                     project.simConfigInfo = (SimConfigInfo) nextReadObject;
+                }               
+                
+                xmlDecoder.close();
+                baos.reset();
+                
+            }//if the annotation is finished
+        }//if annotation
+        
+        
         if (getCurrentElement().equals(NetworkMLConstants.POPULATION_ELEMENT))
         {
             currentPopulation = null;
@@ -1478,10 +1634,15 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
 
             logger.logComment("Reached the end of the file. Warning the user about the project state...");
             Object[] options = {"OK"};
+            String message = "All the elements in the file have been correctly imported and a copy of the network structure has been stored in the savedNetworks folder of the current project.";
+            if (!addAnnotations)
+            {
+                message = message+"\nYou can run a simulation from the Export tab but no variables will be plotted/saved, as this information was not present in the NeuroML file." +
+                                                "\n\nNOTE: some default regions, Cell Groups and inputs have been created but these may not be equal to the ones used to create the imported file\n";
+            }
+                
             JOptionPane fileEnd = new JOptionPane(
-                                          "All the elements in the file have been correctly imported and a copy of the network structure has been stored in the savedNetworks folder of the current project." +
-                                          "\nYou can run a simulation from the Export tab but no variables will be plotted/saved, as this information was not present in the NeuroML file." +
-                                          "\n\nNOTE: some default regions, Cell Groups and inputs have been created but these may not be equal to the ones used to create the imported file!\n",
+                                          message,
                                           JOptionPane.DEFAULT_OPTION,
                                           JOptionPane.INFORMATION_MESSAGE,
                                           null,

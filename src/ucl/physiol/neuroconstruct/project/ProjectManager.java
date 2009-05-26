@@ -31,6 +31,7 @@ import java.util.*;
 
 import java.awt.*;
 
+import java.beans.XMLEncoder;
 import java.util.ArrayList;
 import java.util.zip.*;
 import org.xml.sax.*;
@@ -761,9 +762,21 @@ public class ProjectManager implements GenerationReport
     
     
     public static File saveLevel3NetworkXML(Project project,
-                                        File neuroMLFile,
+                                       File neuroMLFile,
                                        boolean zipped,
                                        boolean extraComments,
+                                       String simConfig,
+                                       String networkUnits) throws NeuroMLException
+                                       
+    {
+        return saveLevel3NetworkXML(project, neuroMLFile, zipped, extraComments, false, simConfig, networkUnits);
+    }
+    
+    public static File saveLevel3NetworkXML(Project project,
+                                       File neuroMLFile,
+                                       boolean zipped,
+                                       boolean extraComments, 
+                                       boolean annotations,
                                        String simConfig,
                                        String networkUnits) throws NeuroMLException
                                        
@@ -873,7 +886,7 @@ public class ProjectManager implements GenerationReport
                 MetadataConstants.addProperty(props,
                                               NetworkMLConstants.NC_SIM_CONFIG,
                                               simConfig,
-                                              "    ");
+                                              "    ");             
             }
             
             MetadataConstants.addProperty(props,
@@ -890,8 +903,111 @@ public class ProjectManager implements GenerationReport
                                         NetworkMLConstants.NC_TEMPERATURE,
                                         Float.toString(project.simulationParameters.getTemperature()),
                                         "    ");
+        
+            if (annotations)
+            {
+                rootElement.addContent("\n\n");            
+                XMLEncoder xmlEncoder = null;
+                ByteArrayOutputStream fos = null;
+                BufferedOutputStream bos = null;
 
-            
+                /* -- Writing Regions info -- */
+                fos = new ByteArrayOutputStream();
+                xmlEncoder = new XMLEncoder(fos);
+                xmlEncoder.flush();            
+                xmlEncoder.writeObject(project.regionsInfo); 
+                xmlEncoder.close();            
+                SimpleXMLElement annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);  
+                String content =  fos.toString();
+                content = content.substring(content.indexOf("?>")+2, content.length()); //the XML version has to be removed and to be added later in the NetworkMLReader
+                String indent = "    ";
+                annotation.addContent("\n"+indent); // to make it more readable...
+                annotation.addContent("\n"+content);
+                annotation.addContent("\n"+indent); // to make it more readable... 
+                rootElement.addChildElement(annotation);
+                rootElement.addContent("\n\n");
+
+                /* -- Writing Cell Groups info -- */
+                fos= new ByteArrayOutputStream();
+                xmlEncoder = new XMLEncoder(fos);           
+                xmlEncoder.writeObject(project.cellGroupsInfo);    
+                xmlEncoder.close();            
+                annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);            
+                content =  fos.toString();            
+                content = content.substring(content.indexOf("?>")+2, content.length());
+                indent = "    ";
+                annotation.addContent("\n"+indent); // to make it more readable...
+                annotation.addContent("\n"+content);
+                annotation.addContent("\n"+indent); // to make it more readable...
+                rootElement.addContent("\n\n");
+                rootElement.addChildElement(annotation);
+                rootElement.addContent("\n\n");
+
+                 /* --  Writing ElecInputInfo --*/
+                fos= new ByteArrayOutputStream();
+                xmlEncoder = new XMLEncoder(fos);           
+                xmlEncoder.writeObject(project.elecInputInfo);    
+                xmlEncoder.close();            
+                annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);            
+                content =  fos.toString();            
+                content = content.substring(content.indexOf("?>")+2, content.length());
+                indent = "    ";
+                annotation.addContent("\n"+indent); // to make it more readable...
+                annotation.addContent("\n"+content);
+                annotation.addContent("\n"+indent); // to make it more readable...
+                rootElement.addContent("\n\n");
+                rootElement.addChildElement(annotation);
+                rootElement.addContent("\n\n");
+
+                /* -- Writing Simple Net Conn info -- */
+                fos= new ByteArrayOutputStream();
+                xmlEncoder = new XMLEncoder(fos);           
+                xmlEncoder.writeObject(project.morphNetworkConnectionsInfo);    
+                xmlEncoder.close();            
+                annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);            
+                content =  fos.toString();            
+                content = content.substring(content.indexOf("?>")+2, content.length());
+                indent = "    ";
+                annotation.addContent("\n"+indent); // to make it more readable...
+                annotation.addContent("\n"+content);
+                annotation.addContent("\n"+indent); // to make it more readable...
+                rootElement.addContent("\n\n");
+                rootElement.addChildElement(annotation);
+                rootElement.addContent("\n\n");
+
+                /* -- Writing Simulation plot info -- */
+                fos= new ByteArrayOutputStream();
+                xmlEncoder = new XMLEncoder(fos);           
+                xmlEncoder.writeObject(project.simPlotInfo);    
+                xmlEncoder.close();            
+                annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);            
+                content =  fos.toString();            
+                content = content.substring(content.indexOf("?>")+2, content.length());
+                indent = "    ";
+                annotation.addContent("\n"+indent); // to make it more readable...
+                annotation.addContent("\n"+content);
+                annotation.addContent("\n"+indent); // to make it more readable...
+                rootElement.addContent("\n\n");
+                rootElement.addChildElement(annotation);
+                rootElement.addContent("\n\n");
+
+                /* --  Reading SimConfigInfo --*/
+                fos= new ByteArrayOutputStream();
+                xmlEncoder = new XMLEncoder(fos);           
+                xmlEncoder.writeObject(project.simConfigInfo);    
+                xmlEncoder.close();            
+                annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);            
+                content =  fos.toString();            
+                content = content.substring(content.indexOf("?>")+2, content.length());
+                indent = "    ";
+                annotation.addContent("\n"+indent); // to make it more readable...
+                annotation.addContent("\n"+content);
+                annotation.addContent("\n"+indent); // to make it more readable...
+                rootElement.addContent("\n\n");
+                rootElement.addChildElement(annotation);
+                rootElement.addContent("\n\n");
+            }          
+           
             
     //The cell types present in the network
          
@@ -1165,7 +1281,7 @@ public class ProjectManager implements GenerationReport
     
        
     public static File saveNetworkStructureXML(Project project,
-                                        File neuroMLFile,
+                                       File neuroMLFile,
                                        boolean zipped,
                                        boolean extraComments,
                                        String simConfig,

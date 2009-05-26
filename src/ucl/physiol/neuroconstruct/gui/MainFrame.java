@@ -611,6 +611,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JButton jButtonNeuroMLViewPlain = new JButton();
     JButton jButtonNeuroMLGenSim = new JButton();
     JCheckBox jCheckBoxNeuroMLGenNet = new JCheckBox();
+    JCheckBox jCheckBoxNeuroMLneuroCobjects = new JCheckBox();
     JButton jButtonNeuroMLViewFormatted = new JButton();
     GridBagLayout gridBagLayout3 = new GridBagLayout();
     GridBagLayout gridBagLayout33 = new GridBagLayout();
@@ -1279,6 +1280,25 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         jCheckBoxNeuroMLGenNet.setSelected(false);
         jCheckBoxNeuroMLGenNet.setText("Generate single NeuroML Level 3 file");
+        
+        jCheckBoxNeuroMLneuroCobjects.setSelected(false);
+        jCheckBoxNeuroMLneuroCobjects.setText("with neuroConstruct objects");
+        jCheckBoxNeuroMLneuroCobjects.setEnabled(jCheckBoxNeuroMLGenNet.isSelected());
+        
+        jCheckBoxNeuroMLGenNet.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                 jCheckBoxNeuroMLGenNet_actionPerformed(e);
+            }
+            void jCheckBoxNeuroMLGenNet_actionPerformed(ActionEvent e)
+           {
+                 jCheckBoxNeuroMLneuroCobjects.setEnabled(jCheckBoxNeuroMLGenNet.isSelected());
+           }
+
+        });
+        
+        
         
         jButtonNeuroMLGenSim.setEnabled(false);
         jButtonNeuroMLGenSim.setText("Generate all NeuroML scripts");
@@ -2123,6 +2143,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         jPanelNeuroMLPySim.add(jCheckBoxNeuroMLGenNet,
                 new GridBagConstraints(15, 1, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER,
+                        GridBagConstraints.NONE,
+                        new Insets(6, 0, 12, 0), 0, 0));
+        
+         jPanelNeuroMLPySim.add(jCheckBoxNeuroMLneuroCobjects,
+                new GridBagConstraints(17, 1, 1, 1, 0.0, 0.0,
                         GridBagConstraints.CENTER,
                         GridBagConstraints.NONE,
                         new Insets(6, 0, 12, 0), 0, 0));
@@ -12904,7 +12930,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         MorphCompartmentalisation mc = (MorphCompartmentalisation)jComboBoxNeuroMLComps.getSelectedItem();
 
         
-        projManager.getCurrentProject().neuromlPythonFileManager.generateNeuroMLFiles(this.getSelectedSimConfig(), mc, 1234, jCheckBoxNeuroMLGenNet.isSelected());
+        projManager.getCurrentProject().neuromlPythonFileManager.generateNeuroMLFiles(this.getSelectedSimConfig(), mc, 1234, jCheckBoxNeuroMLGenNet.isSelected(), jCheckBoxNeuroMLneuroCobjects.isSelected());
 
         jButtonNeuroMLGenSim.setText(origText);
         

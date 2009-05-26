@@ -190,7 +190,7 @@ public class NetworkMLConstants
     public static String NC_SIM_DURATION = "neuroConstruct_sim_duration";    
     public static String NC_SIM_TIME_STEP = "neuroConstruct_sim_time_step";
     public static String NC_TEMPERATURE = "neuroConstruct_temperature";
-
+    
     private NetworkMLConstants()
     {
     }

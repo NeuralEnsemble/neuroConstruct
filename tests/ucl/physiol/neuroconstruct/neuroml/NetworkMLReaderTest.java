@@ -30,6 +30,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.table.AbstractTableModel;
 import javax.xml.validation.*;
 import javax.xml.*;
 import javax.xml.transform.Source;
@@ -43,6 +46,7 @@ import ucl.physiol.neuroconstruct.cell.Cell;
 import static org.junit.Assert.*;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.Hdf5Exception;
 import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.utils.ColourUtils.ColourRecord;
 import ucl.physiol.neuroconstruct.utils.SequenceGenerator.EndOfSequenceException;
 
 /**
@@ -245,10 +249,80 @@ public class NetworkMLReaderTest
         assertTrue(proj.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().containsAll(proj2.morphNetworkConnectionsInfo.getAllSimpleNetConnNames()));
 
         assertTrue(proj.elecInputInfo.getAllStimRefs().containsAll(proj2.elecInputInfo.getAllStimRefs()));
-
-      
-
         
+        
+        
+        
+        //test the NetworkML reader on a Level3 file with annotations
+        System.out.println("\n\n*** LEVEL3 WITH ANNOTATIONS TEST ***\n");
+        File l3FileAnnotations = new File(saveNetsDir, "l3testAnnotations.nml");
+        proj = pm.getCurrentProject();
+        ProjectManager.saveLevel3NetworkXML(proj, l3FileAnnotations, false, false, true, sc.getName(), NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+        assertTrue(l3FileAnnotations.exists());
+        
+        String projName3 = "TestNetworkML_reloaded_withAnnotations";
+        File projDir3 = new File(MainTest.getTempProjectDirectory()+ projName2);
+        Project proj3 = Project.createNewProject(projDir3.getAbsolutePath(), projName3, null);
+        pm.setCurrentProject(proj3);
+        pm.doLoadNetworkML(l3File, true);
+        
+        System.out.println("comparing regionsInfo...");
+        assertTrue(compareAbstractTableObjects(proj.regionsInfo, proj3.regionsInfo));
+        System.out.println("OK");
+        
+        System.out.println("comparing cellGroupsInfo...");
+        assertTrue(compareAbstractTableObjects(proj.cellGroupsInfo, proj3.cellGroupsInfo));
+        System.out.println("OK");
+        
+        System.out.println("comparing morphNetworkConnectionsInfo...");
+        assertTrue(compareAbstractTableObjects(proj.morphNetworkConnectionsInfo, proj3.morphNetworkConnectionsInfo));
+        System.out.println("OK");
+        
+        System.out.println("comparing volBasedConnsInfo...");
+        assertTrue(compareAbstractTableObjects(proj.volBasedConnsInfo, proj3.volBasedConnsInfo));
+        System.out.println("OK");
+        
+        System.out.println("comparing cellMechanismInfo...");
+        assertTrue(compareAbstractTableObjects(proj.cellMechanismInfo, proj3.cellMechanismInfo));
+        System.out.println("OK");
+        
+        System.out.println("comparing simPlotInfo...");
+        assertTrue(compareAbstractTableObjects(proj.simPlotInfo, proj3.simPlotInfo));
+        System.out.println("OK");
+        
+        System.out.println("comparing simConfigInfo...");
+        proj.simConfigInfo.equals(proj3.simConfigInfo);
+        System.out.println("OK");
+       
+    }
+    
+    public boolean compareAbstractTableObjects(AbstractTableModel object1, AbstractTableModel object2)
+    {
+        boolean compare = true;
+        int col1 = object1.getColumnCount();
+        int row1 = object1.getRowCount();
+        int col2 = object2.getColumnCount();
+        int row2 = object2.getRowCount();
+
+        if (col1==col2 && row1==row2)
+        {
+            for (int i = 0; i < col1; i++)
+            {
+                for (int j = 0; j < row1; j++) 
+                {
+                    if (!object1.getValueAt(j,i).equals(object2.getValueAt(j,i)) && object1.getColumnClass(i).equals(ColourRecord.class))
+                    {
+                        compare = false;
+                        System.out.println("Difference: \n"+object1.getValueAt(j,i)+" in object "+object1.getColumnName(i)+"\n"+object2.getValueAt(j,i)+" in object "+object2.getColumnName(i));                        
+                    }
+                }
+            }
+        }
+        else
+        {
+            compare = false;
+        }
+        return compare;
     }
 
      public static void main(String[] args)

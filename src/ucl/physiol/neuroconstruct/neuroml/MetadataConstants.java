@@ -56,6 +56,8 @@ public class MetadataConstants
     public static String LENGTH_UNITS_MICROMETER = "micrometer";
 
     public static String NOTES_ELEMENT = "notes";
+    
+    public static String ANNOTATION_ELEMENT = "annotation";
 
     public static String PROPS_ELEMENT = "properties";
     public static String PROP_ELEMENT = "property";
@@ -86,5 +88,5 @@ public class MetadataConstants
         propElement.addContent(indent+"\n"+indent); // to make it more readable...
 
     }
-
+    
 }

@@ -94,12 +94,19 @@ public class NeuroMLPythonFileManager
     }
 
 
-
-
     public void generateNeuroMLFiles(SimConfig simConf,
                                   MorphCompartmentalisation mc,
                                   int seed,
                                   boolean singleL3File)
+    {
+         generateNeuroMLFiles(simConf, mc, seed, singleL3File, false);
+    }
+
+    public void generateNeuroMLFiles(SimConfig simConf,
+                                  MorphCompartmentalisation mc,
+                                  int seed,
+                                  boolean singleL3File,
+                                  boolean annotations)
     {
         logger.logComment("Starting generation of the files...");
 
@@ -118,15 +125,30 @@ public class NeuroMLPythonFileManager
         
         if (singleL3File)
         {
-
-            try {
-                ProjectManager.saveLevel3NetworkXML(project,
-                                                      generatedNetworkFile,
-                                                      false, false,
-                                                      simConf.getName(),
-                                                      NetworkMLConstants.UNITS_PHYSIOLOGICAL);
-            } catch (NeuroMLException ex) {
-                 GuiUtils.showErrorMessage(logger, "Problem saving complete network in NeuroML", ex, null);
+            
+            if (annotations)
+            {
+                try {
+                    ProjectManager.saveLevel3NetworkXML(project,
+                                                          generatedNetworkFile,
+                                                          false, false, annotations,
+                                                          simConf.getName(),
+                                                          NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+                } catch (NeuroMLException ex) {
+                     GuiUtils.showErrorMessage(logger, "Problem saving complete network with annotations in NeuroML", ex, null);
+                }
+            }
+            else
+            {
+                try {
+                    ProjectManager.saveLevel3NetworkXML(project,
+                                                          generatedNetworkFile,
+                                                          false, false,
+                                                          simConf.getName(),
+                                                          NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+                } catch (NeuroMLException ex) {
+                     GuiUtils.showErrorMessage(logger, "Problem saving complete network in NeuroML", ex, null);
+                }
             }
 
         }           
