@@ -779,9 +779,10 @@ public class GenesisFileManager
                         response.append("if (!({exists " + spikeElement + "}))\n");
                         response.append("    create spikegen " + spikeElement + "\n");
 
-                        float absRefractVal = 10;
-                        ////addComment(response, "Setting high abs_refract to ensure same behaviour as NEURON ");
-                        /** @todo Change handling of abs_refract */
+                        // Changed from 10ms to 1ms
+                        /** @todo Change handling of abs_refract to give option for this in GUI!!!*/
+                        float absRefractVal = 1;
+                    
                         response.append("    setfield " + spikeElement + "  thresh "
                                         + UnitConverter.getVoltage(synProps.getThreshold(),
                                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
