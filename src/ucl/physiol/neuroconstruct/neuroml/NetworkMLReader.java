@@ -495,12 +495,12 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
               if (!testMode && annotations && firstOccurence)
               {
                   firstOccurence = false;
-                  logger.logComment("The file contains annotations that will overwrite NC objects. Asking the user...");
+                  logger.logComment("The file contains neuroConstruct annotations that will overwrite existing information on Regions, cell Groups, etc. Asking the user...");
                   Object[] options2 = {"Import", "Ignore"};
                   Object choice = "";
 
                   JOptionPane option2 = new JOptionPane(
-                          "The file contains annotations that could overwrite existing informations about regions, cell groups, networks and input/output configurations.\n" +
+                          "The file contains neuroConstruct annotations that will overwrite existing information on Regions, Cell Groups, Networks and input/output configurations.\n" +
                           "What do you want to do with them?",
                           JOptionPane.DEFAULT_OPTION,
                           JOptionPane.WARNING_MESSAGE,
@@ -508,7 +508,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                           options2,
                           options2[0]);
 
-                  JDialog dialog2 = option2.createDialog(null, "Warning");
+                  JDialog dialog2 = option2.createDialog(null, "Import annotations?");
                   dialog2.setVisible(true);
                   choice = option2.getValue();
                   if (choice.equals("Ignore"))
@@ -1471,7 +1471,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              else
              {
                 insideAnnotation = false;
-                logger.logComment("FINISHED ANNOTATION STRING: \n"+annotationString);
+                logger.logComment("FINISHED ANNOTATION STRING: \n"+annotationString, true);
                 XMLDecoder xmlDecoder = null;
                 ByteArrayInputStream baos = null;               
                 try
@@ -1479,19 +1479,28 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                     baos = new ByteArrayInputStream(annotationString.getBytes());
                     baos.close();
                 } catch (IOException ex) {
-                    logger.logComment("Problem with annotation ByteArrayInputStream");
+                    logger.logError("Problem with annotation ByteArrayInputStream", ex);
                 }
                 
                 xmlDecoder = new XMLDecoder(baos);
                 Object nextReadObject = xmlDecoder.readObject();
-                
+
+                 /* --  Reading Basic Info -- */
+                if  (nextReadObject instanceof BasicProjectInfo)
+                {
+                    logger.logComment("Found BasicProjectInfo object in level3 file annotation...", true);
+                    BasicProjectInfo bpi = (BasicProjectInfo) nextReadObject;
+
+                    project.setProjectDescription(bpi.getProjectDescription());
+                    project.setProjectFileVersion(bpi.getProjectFileVersion());
+                }
                  /* --  Reading Regions Info -- */
                 if  (nextReadObject instanceof RegionsInfo)
                 {
                     logger.logComment("Found RegionsInfo object in level3 file annotation...");
                     project.regionsInfo = (RegionsInfo) nextReadObject;
                     project.regionsInfo.addTableModelListener(project);
-                }                 
+                }
 
                 /* --  Reading Cell Group Info -- */
                 if (nextReadObject instanceof CellGroupsInfo)
@@ -1677,7 +1686,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
         {
             //Project testProj = Project.loadProject(new File("projects/Parall/Parall.neuro.xml"),null);
 //            Project testProj = Project.loadProject(new File("examples/Ex4-NEURONGENESIS/Ex4-NEURONGENESIS.neuro.xml"),null);
-            Project testProj = Project.loadProject(new File("/home/matteo/neuroConstruct/nCexamples/Ex5_Networks/Ex5_Networks.neuro.xml"),null);
+            Project testProj = Project.loadProject(new File("nCexamples/Ex5_Networks/Ex5_Networks.neuro.xml"),null);
 
 //            File f = new File("examples/Ex4-NEURONGENESIS/savedNetworks/nnn.nml");
             File f = new File("nCexamples/Ex5_Networks/generatedNeuroML/Generated.net.xml");

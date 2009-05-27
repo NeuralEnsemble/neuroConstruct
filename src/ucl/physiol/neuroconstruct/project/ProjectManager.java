@@ -906,16 +906,24 @@ public class ProjectManager implements GenerationReport
         
             if (annotations)
             {
-                rootElement.addContent("\n\n");            
+                rootElement.addContent("\n\n");
+                rootElement.addComment("Note: the annotation below contains data to facilitate the reloading of this file into an empty neuroConstruct project.\n" +
+                        "This information should be ignored by any other NeuroML Level 3 compliant application");
+                rootElement.addContent("\n\n");
                 XMLEncoder xmlEncoder = null;
                 ByteArrayOutputStream fos = null;
-                BufferedOutputStream bos = null;
 
                 /* -- Writing Regions info -- */
                 fos = new ByteArrayOutputStream();
                 xmlEncoder = new XMLEncoder(fos);
-                xmlEncoder.flush();            
-                xmlEncoder.writeObject(project.regionsInfo); 
+                xmlEncoder.flush();
+                xmlEncoder.writeObject(project.basicProjectInfo);
+                xmlEncoder.writeObject(project.regionsInfo);
+                xmlEncoder.writeObject(project.cellGroupsInfo);
+                xmlEncoder.writeObject(project.elecInputInfo);
+                xmlEncoder.writeObject(project.morphNetworkConnectionsInfo);
+                xmlEncoder.writeObject(project.simPlotInfo);
+                xmlEncoder.writeObject(project.simConfigInfo);
                 xmlEncoder.close();            
                 SimpleXMLElement annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);  
                 String content =  fos.toString();
@@ -926,13 +934,13 @@ public class ProjectManager implements GenerationReport
                 annotation.addContent("\n"+indent); // to make it more readable... 
                 rootElement.addChildElement(annotation);
                 rootElement.addContent("\n\n");
-
-                /* -- Writing Cell Groups info -- */
+/*
+                // Writing Cell Groups info --
                 fos= new ByteArrayOutputStream();
                 xmlEncoder = new XMLEncoder(fos);           
                 xmlEncoder.writeObject(project.cellGroupsInfo);    
                 xmlEncoder.close();            
-                annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);            
+                //////////////////annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);
                 content =  fos.toString();            
                 content = content.substring(content.indexOf("?>")+2, content.length());
                 indent = "    ";
@@ -943,12 +951,12 @@ public class ProjectManager implements GenerationReport
                 rootElement.addChildElement(annotation);
                 rootElement.addContent("\n\n");
 
-                 /* --  Writing ElecInputInfo --*/
+                 //  Writing ElecInputInfo --
                 fos= new ByteArrayOutputStream();
                 xmlEncoder = new XMLEncoder(fos);           
                 xmlEncoder.writeObject(project.elecInputInfo);    
                 xmlEncoder.close();            
-                annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);            
+                ///////////////annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);
                 content =  fos.toString();            
                 content = content.substring(content.indexOf("?>")+2, content.length());
                 indent = "    ";
@@ -959,12 +967,12 @@ public class ProjectManager implements GenerationReport
                 rootElement.addChildElement(annotation);
                 rootElement.addContent("\n\n");
 
-                /* -- Writing Simple Net Conn info -- */
+                // Writing Simple Net Conn info --
                 fos= new ByteArrayOutputStream();
                 xmlEncoder = new XMLEncoder(fos);           
                 xmlEncoder.writeObject(project.morphNetworkConnectionsInfo);    
                 xmlEncoder.close();            
-                annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);            
+                //////////////annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);
                 content =  fos.toString();            
                 content = content.substring(content.indexOf("?>")+2, content.length());
                 indent = "    ";
@@ -975,12 +983,12 @@ public class ProjectManager implements GenerationReport
                 rootElement.addChildElement(annotation);
                 rootElement.addContent("\n\n");
 
-                /* -- Writing Simulation plot info -- */
+                // Writing Simulation plot info --
                 fos= new ByteArrayOutputStream();
                 xmlEncoder = new XMLEncoder(fos);           
                 xmlEncoder.writeObject(project.simPlotInfo);    
                 xmlEncoder.close();            
-                annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);            
+                ///////////////annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);
                 content =  fos.toString();            
                 content = content.substring(content.indexOf("?>")+2, content.length());
                 indent = "    ";
@@ -991,12 +999,12 @@ public class ProjectManager implements GenerationReport
                 rootElement.addChildElement(annotation);
                 rootElement.addContent("\n\n");
 
-                /* --  Reading SimConfigInfo --*/
+                //  Reading SimConfigInfo --
                 fos= new ByteArrayOutputStream();
                 xmlEncoder = new XMLEncoder(fos);           
                 xmlEncoder.writeObject(project.simConfigInfo);    
                 xmlEncoder.close();            
-                annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);            
+                ///////////////annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);
                 content =  fos.toString();            
                 content = content.substring(content.indexOf("?>")+2, content.length());
                 indent = "    ";
@@ -1005,7 +1013,7 @@ public class ProjectManager implements GenerationReport
                 annotation.addContent("\n"+indent); // to make it more readable...
                 rootElement.addContent("\n\n");
                 rootElement.addChildElement(annotation);
-                rootElement.addContent("\n\n");
+                rootElement.addContent("\n\n");*/
             }          
            
             

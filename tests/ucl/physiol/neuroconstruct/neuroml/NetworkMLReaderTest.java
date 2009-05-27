@@ -30,8 +30,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
 import javax.xml.validation.*;
 import javax.xml.*;
@@ -99,13 +97,13 @@ public class NetworkMLReaderTest
     
     
     @Test
-    public void testSavingLoadingNetworkML() throws InterruptedException, NeuroMLException, Hdf5Exception, EndOfSequenceException
+    public void testSavingLoadingNetworkML() throws InterruptedException, NeuroMLException, Hdf5Exception, EndOfSequenceException, NoProjectLoadedException
     {
         System.out.println("---  testSavingLoadingNetworkML");
         
-        Project proj = pm.getCurrentProject();
+        Project proj0 = pm.getCurrentProject();
         
-        SimConfig sc = proj.simConfigInfo.getDefaultSimConfig();
+        SimConfig sc = proj0.simConfigInfo.getDefaultSimConfig();
                 
         pm.doGenerate(sc.getName(), 1234);
         
@@ -117,14 +115,14 @@ public class NetworkMLReaderTest
         
         StringBuffer stateString1 = new StringBuffer();
         
-        stateString1.append(proj.generatedCellPositions.toLongString(false));
-        stateString1.append(proj.generatedNetworkConnections.details(false));
-        stateString1.append(proj.generatedElecInputs.toString());
+        stateString1.append(proj0.generatedCellPositions.toLongString(false));
+        stateString1.append(proj0.generatedNetworkConnections.details(false));
+        stateString1.append(proj0.generatedElecInputs.toString());
         
         
         
         
-        System.out.println("Generated proj with: "+ proj.generatedCellPositions.getNumberInAllCellGroups()+" cells");
+        System.out.println("Generated proj with: "+ proj0.generatedCellPositions.getNumberInAllCellGroups()+" cells");
         if (verbose) 
             System.out.println(stateString1);
         
@@ -134,7 +132,7 @@ public class NetworkMLReaderTest
         
         boolean zipped = false;
         
-        nmlFile = ProjectManager.saveNetworkStructureXML(proj, 
+        nmlFile = ProjectManager.saveNetworkStructureXML(proj0,
                                                          nmlFile, 
                                                          zipped, 
                                                          true, 
@@ -167,20 +165,21 @@ public class NetworkMLReaderTest
         }
         System.out.println(nmlFile.getAbsolutePath()+" is valid according to: "+ schemaFile);
         
-        
-        proj.resetGenerated();
+         
+        proj0.resetGenerated();
+
                 
         pm.doLoadNetworkML(nmlFile, true);
         
-        
+       
         StringBuffer stateString2 = new StringBuffer();
         
-        stateString2.append(proj.generatedCellPositions.toLongString(false));
-        stateString2.append(proj.generatedNetworkConnections.details(false));
-        stateString2.append(proj.generatedElecInputs.toString());
+        stateString2.append(proj0.generatedCellPositions.toLongString(false));
+        stateString2.append(proj0.generatedNetworkConnections.details(false));
+        stateString2.append(proj0.generatedElecInputs.toString());
         
         
-        System.out.println("Reloaded proj with: "+ proj.generatedCellPositions.getNumberInAllCellGroups()+" cells");
+        System.out.println("Reloaded proj with: "+ proj0.generatedCellPositions.getNumberInAllCellGroups()+" cells");
         if (verbose) 
             System.out.println(stateString2);
         
@@ -191,23 +190,23 @@ public class NetworkMLReaderTest
         
         //test the NetworkML reader on a Level3 file
         File l3File = new File(saveNetsDir, "l3test.nml");
-        ProjectManager.saveLevel3NetworkXML(proj, l3File, false, false, sc.getName(), NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+        ProjectManager.saveLevel3NetworkXML(proj0, l3File, false, false, sc.getName(), NetworkMLConstants.UNITS_PHYSIOLOGICAL);
         assertTrue(l3File.exists());
         
-        Iterator<String> groups = proj.generatedCellPositions.getNamesGeneratedCellGroups();
+        Iterator<String> groups = proj0.generatedCellPositions.getNamesGeneratedCellGroups();
         ArrayList<String> cells = new ArrayList<String>();
         while (groups.hasNext()) {
             String string = groups.next();
-            cells.add(proj.cellGroupsInfo.getCellType(string));
+            cells.add(proj0.cellGroupsInfo.getCellType(string));
         }
-        Vector<Cell> projCells = proj.cellManager.getAllCells();
-        Vector cellMechs = proj.cellMechanismInfo.getAllCellMechanisms();
-        Iterator<String> nets =  proj.generatedNetworkConnections.getNamesNetConnsIter();
+        Vector<Cell> projCells = proj0.cellManager.getAllCells();
+        Vector cellMechs = proj0.cellMechanismInfo.getAllCellMechanisms();
+        Iterator<String> nets =  proj0.generatedNetworkConnections.getNamesNetConnsIter();
         Vector<String> netsVector = new Vector<String>();
         while (nets.hasNext()) {
            netsVector.add(nets.next());            
         }
-        ArrayList<String> inputs = proj.generatedElecInputs.getInputReferences();
+        ArrayList<String> inputs = proj0.generatedElecInputs.getInputReferences();
 
         System.out.println("Saved Level 3 Network  in: "+ l3File.getAbsolutePath());
 
@@ -227,8 +226,8 @@ public class NetworkMLReaderTest
         }
         
         System.out.println("-----------------  "+l3File.getAbsolutePath()+" is valid according to: "+ schemaFile+"  -----------------");
-                
-        proj.resetGenerated();
+               
+        //proj.resetGenerated();
 
 
         String projName2 = "TestNetworkML_reloaded";
@@ -240,58 +239,96 @@ public class NetworkMLReaderTest
 
         pm.doLoadNetworkML(l3File, true);
 
+        proj2.saveProject();
+
         //TODO: more thorough checks needed!!
 
-        assertTrue(proj.cellManager.getAllCellTypeNames().containsAll(proj2.cellManager.getAllCellTypeNames()));
+        assertTrue(proj0.cellManager.getAllCellTypeNames().containsAll(proj2.cellManager.getAllCellTypeNames()));
 
-        assertTrue(proj.cellMechanismInfo.getAllCellMechanismNames().containsAll(proj2.cellMechanismInfo.getAllCellMechanismNames()));
+        assertTrue(proj0.cellMechanismInfo.getAllCellMechanismNames().containsAll(proj2.cellMechanismInfo.getAllCellMechanismNames()));
 
-        assertTrue(proj.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().containsAll(proj2.morphNetworkConnectionsInfo.getAllSimpleNetConnNames()));
+        assertTrue(proj0.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().containsAll(proj2.morphNetworkConnectionsInfo.getAllSimpleNetConnNames()));
 
-        assertTrue(proj.elecInputInfo.getAllStimRefs().containsAll(proj2.elecInputInfo.getAllStimRefs()));
+        assertTrue(proj0.elecInputInfo.getAllStimRefs().containsAll(proj2.elecInputInfo.getAllStimRefs()));
         
-        
+   
         
         
         //test the NetworkML reader on a Level3 file with annotations
         System.out.println("\n\n*** LEVEL3 WITH ANNOTATIONS TEST ***\n");
         File l3FileAnnotations = new File(saveNetsDir, "l3testAnnotations.nml");
-        proj = pm.getCurrentProject();
-        ProjectManager.saveLevel3NetworkXML(proj, l3FileAnnotations, false, false, true, sc.getName(), NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+
+        //pm.setCurrentProject(proj);
+   
+        //proj = pm.getCurrentProject();
+        boolean annotations = true;
+
+        ProjectManager.saveLevel3NetworkXML(proj0, l3FileAnnotations, false, false, annotations, sc.getName(), NetworkMLConstants.UNITS_PHYSIOLOGICAL);
         assertTrue(l3FileAnnotations.exists());
+ 
+        try
+        {
+            Schema schema = factory.newSchema(schemaFileSource);
+
+            Validator validator = schema.newValidator();
+
+            Source xmlFileSource = new StreamSource(l3FileAnnotations);
+
+            validator.validate(xmlFileSource);
+        }
+        catch (Exception ex)
+        {
+            fail("Unable to validate saved Level 3 file: "+ nmlFile+"\n"+ex.toString());
+        }
+
+        System.out.println("-----------------  "+l3FileAnnotations.getAbsolutePath()+" is valid according to: "+ schemaFile+"  -----------------");
+
         
         String projName3 = "TestNetworkML_reloaded_withAnnotations";
-        File projDir3 = new File(MainTest.getTempProjectDirectory()+ projName2);
+        File projDir3 = new File(MainTest.getTempProjectDirectory()+ projName3);
+        projDir3.mkdir();
         Project proj3 = Project.createNewProject(projDir3.getAbsolutePath(), projName3, null);
+
         pm.setCurrentProject(proj3);
         pm.doLoadNetworkML(l3File, true);
-        
+
+        proj3.saveProject();
+
+        System.out.println("Comparing info in project: "+proj0.getProjectFullFileName()+" to "+proj3.getProjectFullFileName()+"...");
+
+ 
+        System.out.println("comparing basic info...");
+        assertNotSame(proj0.getProjectName(), proj3.getProjectName());
+        //assertEquals(proj.getProjectDescription(), proj3.getProjectDescription());
+        //assertEquals(proj.getProjectFileVersion(), proj3.getProjectFileVersion());
+        System.out.println("OK");
+
         System.out.println("comparing regionsInfo...");
-        assertTrue(compareAbstractTableObjects(proj.regionsInfo, proj3.regionsInfo));
+        assertTrue(compareAbstractTableObjects(proj0.regionsInfo, proj3.regionsInfo));
         System.out.println("OK");
         
         System.out.println("comparing cellGroupsInfo...");
-        assertTrue(compareAbstractTableObjects(proj.cellGroupsInfo, proj3.cellGroupsInfo));
+        assertTrue(compareAbstractTableObjects(proj0.cellGroupsInfo, proj3.cellGroupsInfo));
         System.out.println("OK");
         
         System.out.println("comparing morphNetworkConnectionsInfo...");
-        assertTrue(compareAbstractTableObjects(proj.morphNetworkConnectionsInfo, proj3.morphNetworkConnectionsInfo));
+        assertTrue(compareAbstractTableObjects(proj0.morphNetworkConnectionsInfo, proj3.morphNetworkConnectionsInfo));
         System.out.println("OK");
         
         System.out.println("comparing volBasedConnsInfo...");
-        assertTrue(compareAbstractTableObjects(proj.volBasedConnsInfo, proj3.volBasedConnsInfo));
+        assertTrue(compareAbstractTableObjects(proj0.volBasedConnsInfo, proj3.volBasedConnsInfo));
         System.out.println("OK");
         
         System.out.println("comparing cellMechanismInfo...");
-        assertTrue(compareAbstractTableObjects(proj.cellMechanismInfo, proj3.cellMechanismInfo));
+        assertTrue(compareAbstractTableObjects(proj0.cellMechanismInfo, proj3.cellMechanismInfo));
         System.out.println("OK");
         
         System.out.println("comparing simPlotInfo...");
-        assertTrue(compareAbstractTableObjects(proj.simPlotInfo, proj3.simPlotInfo));
+        assertTrue(compareAbstractTableObjects(proj0.simPlotInfo, proj3.simPlotInfo));
         System.out.println("OK");
         
         System.out.println("comparing simConfigInfo...");
-        proj.simConfigInfo.equals(proj3.simConfigInfo);
+        proj0.simConfigInfo.equals(proj3.simConfigInfo);
         System.out.println("OK");
        
     }

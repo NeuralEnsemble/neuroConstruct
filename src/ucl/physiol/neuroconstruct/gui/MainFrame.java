@@ -581,7 +581,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JRadioButton jRadioButtonNeuroMLLevel1 = new JRadioButton();
     JRadioButton jRadioButtonNeuroMLLevel2 = new JRadioButton();
     JRadioButton jRadioButtonNeuroMLLevel3 = new JRadioButton();
-    JRadioButton jRadioButtonNeuroMLCellChan = new JRadioButton();
+    //JRadioButton jRadioButtonNeuroMLCellChan = new JRadioButton();
 
     ButtonGroup buttonGroupNeuroML = new ButtonGroup();
     
@@ -1191,15 +1191,17 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jRadioButtonNeuroMLLevel1.setText("Level 1 (Anatomy only)");
         jRadioButtonNeuroMLLevel2.setText("Level 2 (L1 & cell biophysics)");
         jRadioButtonNeuroMLLevel3.setText("Level 3 (L2 & network aspects)");
-        jRadioButtonNeuroMLCellChan.setText("L3 & channel details");
+        //jRadioButtonNeuroMLCellChan.setText("L3 & channel details");
 
         buttonGroupNeuroML.add(jRadioButtonNeuroMLLevel1);
         buttonGroupNeuroML.add(jRadioButtonNeuroMLLevel2);
         buttonGroupNeuroML.add(jRadioButtonNeuroMLLevel3);
-        buttonGroupNeuroML.add(jRadioButtonNeuroMLCellChan);
+        //buttonGroupNeuroML.add(jRadioButtonNeuroMLCellChan);
 
         jButtonNeuroMLExport.setEnabled(false);
         jButtonNeuroMLExport.setText("Export all Cell Types");
+        jButtonNeuroMLExport.setToolTipText("<html>Export only cells, including just morphologies (MorphML/Level 1), morphologies & passive electrical<br>" +
+                "properties & channel densities (Level 2) or all of previous & allowed synaptic connection locations (Level 3)</html>");
 
         jButtonNeuroMLExport.addActionListener(new java.awt.event.ActionListener()
         {
@@ -1211,9 +1213,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     jButtonNeuroMLExport_actionPerformed(e, NeuroMLConstants.NEUROML_LEVEL_2);
                 else if (jRadioButtonNeuroMLLevel3.isSelected())
                     jButtonNeuroMLExport_actionPerformed(e, NeuroMLConstants.NEUROML_LEVEL_3);
-                else if (jRadioButtonNeuroMLCellChan.isSelected()) {
-                    jButtonNeuroMLExport_actionPerformed(e, "Cells with channels"); //added by Matteo
-                }
+               // else if (jRadioButtonNeuroMLCellChan.isSelected()) {
+               //     jButtonNeuroMLExport_actionPerformed(e, "Cells with channels"); //added by Matteo
+               // }
             }
         });
         
@@ -1259,7 +1261,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         jLabelNeuroMLMain.setHorizontalAlignment(SwingConstants.CENTER);
         jLabelNeuroMLMain.setHorizontalTextPosition(SwingConstants.CENTER);
-        jLabelNeuroMLMain.setText("The Cells included in this project can be exported to NeuroML/MorphML format");
+        jLabelNeuroMLMain.setText("Export elements of this project to NeuroML format");
         jPanelNeuroML.setLayout(borderLayout31);
         jPanelNeuroMLHeader.setMinimumSize(new Dimension(391, 35));
         jPanelNeuroMLHeader.setPreferredSize(new Dimension(391, 35));
@@ -1280,9 +1282,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         jCheckBoxNeuroMLGenNet.setSelected(false);
         jCheckBoxNeuroMLGenNet.setText("Generate single NeuroML Level 3 file");
+        jCheckBoxNeuroMLGenNet.setToolTipText("Generate just one Level 3 file containing all cells, channel & synaptic mechanisms, network structure");
         
         jCheckBoxNeuroMLneuroCobjects.setSelected(false);
-        jCheckBoxNeuroMLneuroCobjects.setText("with neuroConstruct objects");
+        jCheckBoxNeuroMLneuroCobjects.setText("Add neuroConstruct annotations");
+        jCheckBoxNeuroMLneuroCobjects.setToolTipText("<html>Add annotations in the NeuroML file related to the current neuroConstruct project. These will allow the Level 3 file to be <br>" +
+                "reloaded into a new empty neuroConstruct project. Note that the NeuroML file generated will still be valid Level 3<br>" +
+                "NeuroML which any compliant application should be able to read. Use of annotations for application specific data is<br>" +
+                "common in SBML applications, e.g. CellDesigner, where some extra information (e.g. layout of graphical elements on the<br>" +
+                "screen) is embedded in SBML based project files.</html>");
         jCheckBoxNeuroMLneuroCobjects.setEnabled(jCheckBoxNeuroMLGenNet.isSelected());
         
         jCheckBoxNeuroMLGenNet.addActionListener(new java.awt.event.ActionListener()
@@ -1302,7 +1310,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         jButtonNeuroMLGenSim.setEnabled(false);
         jButtonNeuroMLGenSim.setText("Generate all NeuroML scripts");
-        jButtonNeuroMLGenSim.setToolTipText("Work in progress...");
+        jButtonNeuroMLGenSim.setToolTipText("Generate NeuroML file(s) with all model elements currently within the scope of NeuroML: cells, channel & synaptic mechanisms, network structure");
         
         jButtonNeuroMLGenSim.addActionListener(new java.awt.event.ActionListener()
         {
@@ -1327,7 +1335,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelNeuroMLView.setBorder(BorderFactory.createEtchedBorder());
         
         jPanelNeuroMLPySim.setLayout(gridBagLayout33);
-        jPanelNeuroMLPySim.setBorder(BorderFactory.createEtchedBorder());
+        //jPanelNeuroMLPySim.setBorder(BorderFactory.createEtchedBorder());
 
         jButtonGenesisGenerate.setEnabled(false);
         jButtonGenesisGenerate.setActionCommand("Create GENESIS files");
@@ -2082,7 +2090,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLLevel1);
         jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLLevel2);
         jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLLevel3);
-        jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLCellChan);
+//        jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLCellChan);
         jRadioButtonNeuroMLLevel2.setSelected(true);
         
 
@@ -2096,17 +2104,24 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         jPanelNeuroMLComp.add(new JLabel("Compartmentalisation to use: "));
         jPanelNeuroMLComp.add(jComboBoxNeuroMLComps);
-        
+
+
+        jPanelNeuroMLView.add(jPanelNeuroMLPySim,
+                              new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+                                                     GridBagConstraints.CENTER,
+                                                     GridBagConstraints.NONE,
+                                                     new Insets(6, 0, 6, 0), 0, 0));
+
 
         jPanelNeuroMLView.add(jPanelNeuroMLComp,
-                              new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+                              new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
                                                      GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(6, 0, 6, 0), 0, 0));
         
 
         jPanelNeuroMLView.add(jTextAreaNeuroMLCompsDesc,
-                              new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
+                              new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
                                                      GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(6, 0, 12, 0), 0, 0));
@@ -2118,7 +2133,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelNeuroMLGenFiles.add(jComboBoxNeuroML);
 
         jPanelNeuroMLView.add(jPanelNeuroMLGenFiles,
-                              new GridBagConstraints(0, 4, 1, 1, 1.0, 0.0,
+                              new GridBagConstraints(0, 5, 1, 1, 1.0, 0.0,
                                                      GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(6, 0, 12, 0), 0, 0));
@@ -2129,7 +2144,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelNeuroMLViewFiles.add(jButtonNeuroMLViewFormatted);        
 
         jPanelNeuroMLView.add(jPanelNeuroMLViewFiles,
-                              new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
+                              new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0,
                                                      GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
                                                      new Insets(6, 0, 12, 0), 0, 0));
@@ -3815,7 +3830,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         //if (GeneralUtils.isParallelFuncStable())
             
-        jPanelNeuroML.add(jPanelNeuroMLPySim, BorderLayout.SOUTH);
+        //jPanelNeuroML.add(jPanelNeuroMLPySim, BorderLayout.SOUTH);
         
         jPanelExport.add(jPanelExportHeader, BorderLayout.NORTH);
         jPanelExportHeader.add( jLabelExportMain, null);
@@ -12847,7 +12862,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         File neuroMLDir = ProjectStructure.getNeuroMLDir(proj.getProjectMainDirectory());
 
         GeneralUtils.removeAllFiles(neuroMLDir, false, false, false);
-        
+        /*
         if (level.equals("Cells with channels"))
         {
             for (int i = 0; i <  (proj.cellManager.getNumberCellTypes()); i++) 
@@ -12872,7 +12887,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         else
             
-        {
+        {*/
 
         MorphCompartmentalisation mc = (MorphCompartmentalisation)jComboBoxNeuroMLComps.getSelectedItem();
 
@@ -12890,7 +12905,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             GuiUtils.showErrorMessage(logger, "Problem saving cells " , ex1, this);
         }
         refreshTabNeuroML();
-        }
+        //}
     
 
     }

@@ -1,22 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<channelml xmlns="http://morphml.org/channelml/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:meta="http://morphml.org/metadata/schema" xsi:schemaLocation="http://morphml.org/neuroml/schema../../Schemata/v1.7.3/Level2/ChannelML_v1.7.3.xsd" units="Physiological Units">
+<channelml xmlns="http://morphml.org/channelml/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:meta="http://morphml.org/metadata/schema" xsi:schemaLocation="http://morphml.org/channelml/schema     ../../Schemata/v1.8.0/Level2/ChannelML_v1.8.0.xsd" units="Physiological Units">
+    
+    <meta:notes>ChannelML file containing a single Channel description</meta:notes>        
 
-<meta:notes>
+    <channel_type name="LeakConductance" density="yes">
+        
+        <status value="stable"/>
 
-ChannelML description of a channel LeakConductance generated with project: TestNetworkML saved with neuroConstruct v1.2.3 on: 10:14:10, 23-Feb-09
-
-</meta:notes>
-
-
-
-<channel_type name="LeakConductance" density="yes">
-<status value="stable"></status>
-<meta:notes>Simple example of a leak/passive conductance. Note: for GENESIS cells with a single leak conductance,
+        <meta:notes>Simple example of a leak/passive conductance. Note: for GENESIS cells with a single leak conductance,
         it is better to use the Rm and Em variables for a passive current.</meta:notes>
-<current_voltage_relation>
-<ohmic ion="non_specific">
-<conductance default_gmax="0.3"></conductance>
-</ohmic>
-</current_voltage_relation>
-</channel_type>
+
+        <current_voltage_relation cond_law="ohmic" ion="non_specific" default_erev="-54.3" default_gmax="0.3"/>
+
+    </channel_type>
+ 
 </channelml>

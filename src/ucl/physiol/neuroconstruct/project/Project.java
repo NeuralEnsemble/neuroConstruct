@@ -78,7 +78,7 @@ public class Project implements TableModelListener
      * These hold the main info of the project. They will be written to/read from
      * file when saving/loading
      */
-    private BasicProjectInfo basicProjectInfo = null;
+    public BasicProjectInfo basicProjectInfo = null;
 
     public CellGroupsInfo cellGroupsInfo = null;
     public RegionsInfo regionsInfo = null;
@@ -1678,7 +1678,12 @@ public class Project implements TableModelListener
         basicProjectInfo.setProjectDescription(projectDescription);
         this.markProjectAsEdited();
     }
-    
+
+    public void setProjectFileVersion(String pfv)
+    {
+        basicProjectInfo.setProjectFileVersion(pfv);
+    }
+
     
     public static void main(String[] args)
     {
