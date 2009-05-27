@@ -134,7 +134,9 @@ public class GenesisMorphologyGeneratorTest {
         
         
         System.out.println("Checking existence of pass file: "+ passFile.getAbsolutePath());
-    
+
+        Thread.sleep(wait); // Shouldn't take longer than this
+
         
         assertTrue(passFile.exists());
         

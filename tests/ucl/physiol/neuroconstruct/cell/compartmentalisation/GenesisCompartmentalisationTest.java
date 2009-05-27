@@ -6,15 +6,12 @@
 package ucl.physiol.neuroconstruct.cell.compartmentalisation;
 
 import javax.vecmath.Point3f;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.Result;
 import test.MainTest;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.examples.OneSegment;
-import ucl.physiol.neuroconstruct.cell.examples.PurkinjeCell;
 import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import static org.junit.Assert.*;
 
