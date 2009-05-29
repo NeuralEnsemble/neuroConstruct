@@ -141,7 +141,7 @@ class NetManagerPyNN(NetworkHandler):
             #print "Making a projection obj for "+ projName
             
             if self.my_simulator=='neuron': connector= AllToAllConnector(weights=0.01, delays=0.5)
-            if self.my_simulator=='nest2': connector= FixedNumberPreConnector(0)
+            else: connector= FixedNumberPreConnector(0)
             
             try:
                 exec("from %s import synapse_dynamics as sd" % synapseType)
@@ -219,7 +219,7 @@ class NetManagerPyNN(NetworkHandler):
             print "Making a projection obj for "+ inputName
             
             if self.my_simulator=='neuron': connector2= AllToAllConnector(weights=1.0001, delays=0.1)
-            if self.my_simulator=='nest2': connector2= FixedNumberPreConnector(0)
+            else: connector2= FixedNumberPreConnector(0)
             
             try:
                 exec("from %s import synapse_dynamics as sd" % synaptic_mechanism)
