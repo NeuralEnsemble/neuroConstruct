@@ -234,7 +234,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
             {
                 //currentCellType = contents;
                 contents = renamedCells.get(contents);
-                logger.logComment(">> currentCellType: "+contents+", currentPopulation: "+currentPopulation);
+                logger.logComment(">> currentCellType: "+contents+", currentPopulation: "+currentPopulation, true);
             }
             else if (getCurrentElement().equals(NetworkMLConstants.SOURCE_ELEMENT)
                 && getAncestorElement(1).equals(NetworkMLConstants.PROJECTION_ELEMENT))
@@ -405,7 +405,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
          {
              level3 = true;
              
-             logger.logComment(">>  Founded a cell type: going to write a separate NeuroML file");
+             logger.logComment(">>  Found a cell type: going to write a separate NeuroML file");
              cellName = attributes.getValue(attributes.getLocalName(0));
              insideCell = true;
          }
@@ -450,7 +450,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
          
          if (!insideChannel && ((getCurrentElement().equals(ChannelMLConstants.CHAN_TYPE_ELEMENT)) || (getCurrentElement().equals(ChannelMLConstants.SYN_TYPE_ELEMENT))))
          {
-             logger.logComment(">>  Founded a channel mechanism: going to write a separate ChannelML file");
+             logger.logComment(">>  Found a channel mechanism: going to write a separate ChannelML file");
              chanName = attributes.getValue(attributes.getLocalName(0));
              insideChannel = true;
          }
@@ -465,14 +465,20 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              meta.add("contributor");
              meta.add("notes");
              meta.add("authorList");
+             meta.add("modelAuthor");
              meta.add("modelTranslator");
              meta.add("publication");
              meta.add("neuronDBref");
-             if (meta.contains(getCurrentElement()) || meta.contains(getAncestorElement(1)))
+             meta.add("modelDBref");
+             meta.add("modelName");
+
+             if (getCurrentElement().equals("comment") && getAncestorElement(1).equals("impl_prefs"))
+                 chanPrefix = "";
+             else if (meta.contains(getCurrentElement()) || meta.contains(getAncestorElement(1)))
                  chanPrefix = MetadataConstants.PREFIX+":";
              else
-                 chanPrefix = "";
-             
+                chanPrefix = "";
+
          //string elongation
              if (chanBuffer.endsWith(">"))
                  chanBuffer = chanBuffer + "\n";
@@ -480,6 +486,8 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              for (int i = 0; i < attributes.getLength(); i++) {
                  String name = attributes.getLocalName(i);
                  String val = attributes.getValue(i);
+
+                 val = GeneralUtils.replaceAllTokens(val, "<", "&lt;");
 
                  chanBuffer = chanBuffer + (" "+name+"=\""+val+"\"");
              }
@@ -517,7 +525,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                       addAnnotations = false;
                   }
              }
-             logger.logComment(">>  Founded an annotation element: going to extract relevant informations for NeuroConstruct");
+             logger.logComment(">>  Found an annotation element: going to extract relevant informations for NeuroConstruct");
              insideAnnotation = true;    
              annotationString = "";
          }         
@@ -530,6 +538,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                {
                  String name = attributes.getLocalName(i);
                  String val = attributes.getValue(i);
+                 
                  annotationString = annotationString + (" "+name+"=\""+val+"\"");
                }
                annotationString = annotationString + ">";
@@ -541,7 +550,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              
              groupCellType = attributes.getValue(NetworkMLConstants.CELLTYPE_ATTR);
              
-             logger.logComment(">>  Found a population of name: "+ name);
+             logger.logComment(">>  Found a population of name: "+ name, true);
              currentPopulation = name;             
          }
          
@@ -551,6 +560,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              
             if (!project.cellGroupsInfo.getAllCellGroupNames().contains(currentPopulation) && (level3))
             {
+                logger.logComment("groupCellType: "+groupCellType+", renamedCells: "+renamedCells, true);
                 if (renamedCells.containsKey(groupCellType))
                 {
                      groupCellType = renamedCells.get(groupCellType);
@@ -1123,7 +1133,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                   if (getCurrentElement().equals(MorphMLConstants.CELL_ELEMENT))
                   {
                       
-                  logger.logComment("FINISHED CELL STRING for "+cellName+":\n"+cellBuffer);
+                  logger.logComment("FINISHED CELL STRING for "+cellName+":\n"+cellBuffer, true);
                   insideCell = false;
                   SimpleXMLDocument doc = new SimpleXMLDocument();
                   SimpleXMLElement rootElement = null;
@@ -1135,7 +1145,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                       logger.logComment( "Asking the user if the cell type " + cellName+ " has to be added...");
                       Object[] options = {"Yes", "No"};
                       JOptionPane option = new JOptionPane(
-                              "Founded a new cell type: " + cellName + "\n do you want to add this to the project?",
+                              "Found a new Cell Type in NeuroML file: " + cellName + "\nWould you like to add this to the current project?",
                               JOptionPane.DEFAULT_OPTION,
                               JOptionPane.WARNING_MESSAGE,
                               null,
@@ -1319,14 +1329,21 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                      meta.add("comment");
                      meta.add("contributor");
                      meta.add("notes");
+                     meta.add("modelAuthor");
                      meta.add("authorList");
                      meta.add("modelTranslator");
                      meta.add("publication");
                      meta.add("neuronDBref");
-                     if (meta.contains(getCurrentElement()) || meta.contains(getAncestorElement(1)))
+                     meta.add("modelDBref");
+                     meta.add("modelName");
+                    if (getCurrentElement().equals("comment") && getAncestorElement(1).equals("impl_prefs"))
+                         chanPrefix = "";
+                     else if (meta.contains(getCurrentElement()) || meta.contains(getAncestorElement(1)))
                          chanPrefix = MetadataConstants.PREFIX+":";
                      else
-                     chanPrefix = ""; chanBuffer = chanBuffer + ("</"+chanPrefix+getCurrentElement()+">\n");
+                        chanPrefix = "";
+
+                     chanBuffer = chanBuffer + ("</"+chanPrefix+getCurrentElement()+">\n");
                      
                       if (getCurrentElement().equals(ChannelMLConstants.CHAN_TYPE_ELEMENT) || getCurrentElement().equals(ChannelMLConstants.SYN_TYPE_ELEMENT))
                       {
@@ -1643,7 +1660,11 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
 
             logger.logComment("Reached the end of the file. Warning the user about the project state...");
             Object[] options = {"OK"};
-            String message = "All the elements in the file have been correctly imported and a copy of the network structure has been stored in the savedNetworks folder of the current project.";
+            String message = "All of the elements in the file have been correctly imported.\n" +
+                "NOTE: the network structure present in the NeuroML file has been loaded into memory (Latest Generated Positions)\n" +
+                "and a copy of the network structure has been stored " +
+                "in the savedNetworks folder of the current project.";
+            
             if (!addAnnotations)
             {
                 message = message+"\nYou can run a simulation from the Export tab but no variables will be plotted/saved, as this information was not present in the NeuroML file." +
@@ -1658,7 +1679,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                                           options,
                                           options[0]);
 
-                                  JDialog dialog = fileEnd.createDialog(null, "IMPORTED");
+                                  JDialog dialog = fileEnd.createDialog(null, "Imported NeuroML");
                                   dialog.setVisible(true);
         }
         

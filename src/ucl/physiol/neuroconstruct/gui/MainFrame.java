@@ -4943,7 +4943,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
      * for creating a new project
      *
      */
-    private void doNewProject()
+    private void doNewProject(boolean offerSamples)
     {
         boolean continueClosing = checkToSave();
         if (!continueClosing) return;
@@ -5036,13 +5036,16 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             logger.logError("Error when saving project", ex);
         }
 
-        int yesNo = JOptionPane.showConfirmDialog(this, "Would you like to add some example Cell Types/Regions/Cell Mechanisms to the project?"
-                                                  + "\nThese can all be removed later.", "Add sample items", JOptionPane.YES_NO_OPTION);
-
-        if (yesNo==JOptionPane.YES_OPTION)
+        if (offerSamples)
         {
+            int yesNo = JOptionPane.showConfirmDialog(this, "Would you like to add some example Cell Types/Regions/Cell Mechanisms to the project?"
+                                                      + "\nThese can all be removed later.", "Add sample items", JOptionPane.YES_NO_OPTION);
 
-            addSampleItems();
+            if (yesNo==JOptionPane.YES_OPTION)
+            {
+
+                addSampleItems();
+            }
         }
 
         this.refreshAll();
@@ -10628,14 +10631,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     void jMenuItemNewProject_actionPerformed(ActionEvent e)
     {
         logger.logComment("Attempting to create a new project via a menu item being selected...");
-        doNewProject();
+        doNewProject(true);
     }
 
     void jButtonNewProject_actionPerformed(ActionEvent e)
     {
         logger.logComment("Attempting to create a new project via a button being pressed...");
 
-        doNewProject();
+        doNewProject(true);
     }
 
     /*
@@ -12180,6 +12183,23 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     void  jMenuItemImportLevel123_actionPerformed(ActionEvent e)
     {
         logger.logComment("Loading a previously generated network...");
+
+
+        if (projManager.getCurrentProject() == null)
+        {
+            int yesNo = JOptionPane.showConfirmDialog(this,"There is no project currently loaded. Would you like to create a new project to load the NeuroML file into?"
+                , "Create new project for NeuroML?", JOptionPane.YES_NO_OPTION);
+
+            if (yesNo==JOptionPane.YES_OPTION)
+            {
+                doNewProject(false);
+            }
+            else
+            {
+                return;
+            }
+        }
+
 
         final JFileChooser chooser = new JFileChooser();
 
