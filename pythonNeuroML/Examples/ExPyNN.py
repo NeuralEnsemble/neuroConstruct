@@ -41,7 +41,7 @@ class CellTypeA(IF_cond_exp):
 
 
 cellNumA = 2
-cellNumB = 2
+cellNumB = 4
 cellType = CellTypeA
 connNum = 10
 
@@ -99,17 +99,18 @@ for addr in addrsB:
 print gidsA
 print gidsB
 
+#syn_dynam = None
 
-#syn_dynam = SynapseDynamics(fast=TsodyksMarkramMechanism(U=0.04, tau_rec=100.0, tau_facil=1000.0))
+syn_dynam = SynapseDynamics(fast=TsodyksMarkramMechanism(U=0.4, tau_rec=100.0, tau_facil=1000.0))
 
-syn_dynam = SynapseDynamics(slow=STDPMechanism(timing_dependence=SpikePairRule(tau_plus=20.0, tau_minus=20.0),
-                           weight_dependence=AdditiveWeightDependence(w_min=0, w_max=0.4,
-                                                                      A_plus=0.01, A_minus=0.012)))
+#syn_dynam = SynapseDynamics(slow=STDPMechanism(timing_dependence=SpikePairRule(tau_plus=20.0, tau_minus=20.0),
+#                           weight_dependence=AdditiveWeightDependence(w_min=0, w_max=0.4,
+#                                                                      A_plus=0.01, A_minus=0.012)))
 
-if my_simulator=='neuron': connector= AllToAllConnector(weights=0.01, delays=0.5)  # Needs to be consolidated!
-if my_simulator=='nest2': connector= FixedNumberPreConnector(0)                     # Needs to be consolidated!
+
+connector= FixedNumberPreConnector(0)               
 proj = Projection(cellsA, cellsB, connector, target='excitatory', label='TestProj' ,synapse_dynamics=syn_dynam)
-if my_simulator=='neuron': del proj.connection_manager.connections[:]              # Needs to be consolidated!
+
 
 
 
@@ -128,7 +129,7 @@ voltDistr = RandomDistribution('uniform',[-65,-50],rng)
 cellsA.randomInit(voltDistr)
 cellsB.randomInit(voltDistr)
 
-freq = 90 # Hz
+freq = 150 # Hz
 
 number = int(tstop*freq/1000.0)
 
@@ -147,10 +148,9 @@ for i in input_population:
     i.spike_times = stgen.poisson_generator(rate=freq, t_stop=tstop, array=True)
     print "spike_times: " +str(i.spike_times)
 
-if my_simulator=='neuron': connector2= AllToAllConnector(weights=0.01, delays=0.5)  # Needs to be consolidated!
-if my_simulator=='nest2': connector2= FixedNumberPreConnector(0)                     # Needs to be consolidated!
+
+connector2= FixedNumberPreConnector(0)               
 input_proj = Projection(input_population, cellsA, connector2, target='excitatory', label='InputProj' ,synapse_dynamics=None)
-if my_simulator=='neuron': del input_proj.connection_manager.connections[:]         # Needs to be consolidated!
 
 
 for i in range(0,cellNumA):
@@ -180,7 +180,7 @@ input_population.printSpikes("inputs.dat")
 
 print cellsA.describe()
 print cellsB.describe()
-#print proj.describe()
+print proj.describe()
 print input_population.describe()
 print input_proj.describe()
 
