@@ -414,8 +414,12 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
       
       
     elif name == 'projection':
+      self.netHandler.finaliseProjection(self.currentProjectionName, self.currentProjectionSource, self.currentProjectionTarget)
       self.currentProjectionName = ""
+      self.currentProjectionSource = ""
+      self.currentProjectionTarget = ""
       self.globalSynapseProps.clear()
+      
       
       
     elif name == 'source':
@@ -460,7 +464,8 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
       self.isSynapseTypeElement = 0    
       self.log.debug("Found end of synapse_type: "+ self.latestSynapseType)       
       
-    elif name == 'input':         
+    elif name == 'input':        
+        self.netHandler.finaliseInputSource(self.currentInputName) 
         currentInputName = ""
         currentInputProps = {}
         currentInputTarget = ""

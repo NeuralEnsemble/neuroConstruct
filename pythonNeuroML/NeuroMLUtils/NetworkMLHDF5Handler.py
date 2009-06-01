@@ -6,6 +6,8 @@
 #   information, or if it's a class overriding NetworkHandler can create
 #   the appropriate network in a simulator dependent fashion
 #
+#   NOTE: Inputs not currently supported
+#
 #   Author: Padraig Gleeson
 #
 #   This file has been developed as part of the neuroConstruct project
@@ -289,9 +291,13 @@ class NetworkMLHDF5Handler():
         self.currentCellType = ""
     
     if g._v_hdf5name.count('projection_')>=1:
+        self.netHandler.finaliseProjection(self.currentProjectionName)
         self.currentProjectionName = ""
         self.currentProjectionSource = ""
         self.currentProjectionTarget = ""
+        
+    if g._v_hdf5name.count('input_')>=1:
+        # TODO: support inputs in HDF5
     
     
           

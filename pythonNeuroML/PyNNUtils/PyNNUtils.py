@@ -37,13 +37,18 @@ class NetManagerPyNN(NetworkHandler):
         
     populations = {}
     projections = {}  
+    
     projWeightFactor = {}  
+    projSynapseDynamics = {}  
+    projConns = []
     
     input_populations = {}  
     input_projections = {}  
     
     inputCellGroups = {}  
     inputWeights = {}  
+    inputSynapseDynamics = {}  
+    inputConns = []
     
     inputCount = {}
 	
@@ -86,10 +91,13 @@ class NetManagerPyNN(NetworkHandler):
             
             try:
                 # Try importing a files named after that cell
+                
                 exec("from %s import *" % cellGroup)
+                self.log.info("-- Imported cell props from: "+ cellGroup)
                 exec("standardCell = %s" % cellGroup)
                 
             except ImportError:
+                self.log.info("-- Could not find file for: "+ cellGroup)
                 # Else check if it refers to a standard type
                 if (cellType.count("IF_cond_alpha")>=0):
                     standardCell = IF_cond_alpha
@@ -136,12 +144,7 @@ class NetManagerPyNN(NetworkHandler):
         
         self.printConnectionInformation(projName, id, source, target, synapseType, preCellId, postCellId, localWeight)
         
-        
-        if (self.projections.keys().count(projName)==0):
-            #print "Making a projection obj for "+ projName
-            
-            if self.my_simulator=='neuron': connector= AllToAllConnector(weights=0.01, delays=0.5)
-            else: connector= FixedNumberPreConnector(0)
+        if (len(self.projConns)==0):
             
             try:
                 exec("from %s import synapse_dynamics as sd" % synapseType)
@@ -152,13 +155,7 @@ class NetManagerPyNN(NetworkHandler):
                 gmax = 1e-7
                 
             self.projWeightFactor[projName] = gmax*1e3  # TODO: Check correct units!!!
-            
-            proj = Projection(self.populations[source], self.populations[target], connector, target='excitatory', label=projName, synapse_dynamics=sd)
-
-            if self.my_simulator=='neuron': del proj.connection_manager.connections[:]
-            self.projections[projName] = proj
-            
-        proj = self.projections[projName]
+            self.projSynapseDynamics[projName] = sd 
           
         delayTotal = float(localInternalDelay) + float(localPreDelay) + float(localPostDelay) + float(localPropDelay)
         
@@ -166,15 +163,26 @@ class NetManagerPyNN(NetworkHandler):
         srcCell = self.populations[source][int(preCellId)]
         tgtCell = self.populations[target][int(postCellId)]
         weight = float(localWeight)*self.projWeightFactor[projName]
-        #print "Conn weight: "+str(weight)
         
         self.log.info("-- Conn id: "+str(id)+", delay: "+str(delayTotal)+", localWeight: "+ str(localWeight)+", weight: "+ str(weight)+", threshold: "+ str(localThreshold))
         
-        proj.connection_manager.connect(srcCell, tgtCell, weights=weight, delays=float(delayTotal), synapse_type='excitatory')
+        self.projConns.append([self.populations[source].locate(srcCell),self.populations[target].locate(tgtCell),weight,delayTotal])
         
 
-      
         
+    #
+    #  Overridden from NetworkHandler
+    #    
+    def finaliseProjection(self, projName, source, target):
+        
+        exec("from pyNN.%s import *" % self.my_simulator) # Does this really need to be imported every time?
+        
+        connector=FromListConnector(self.projConns)
+        proj = Projection(self.populations[source], self.populations[target], connector, target='excitatory', label=projName, synapse_dynamics=self.projSynapseDynamics[projName]) 
+        self.projections[projName] = proj
+        self.projConns = []
+            
+            
     #
     #  Overridden from NetworkHandler
     #            
@@ -216,10 +224,6 @@ class NetManagerPyNN(NetworkHandler):
             
             synaptic_mechanism = inputProps["synaptic_mechanism"]
             
-            print "Making a projection obj for "+ inputName
-            
-            if self.my_simulator=='neuron': connector2= AllToAllConnector(weights=1.0001, delays=0.1)
-            else: connector2= FixedNumberPreConnector(0)
             
             try:
                 exec("from %s import synapse_dynamics as sd" % synaptic_mechanism)
@@ -230,13 +234,8 @@ class NetManagerPyNN(NetworkHandler):
                 gmax = 1e-7  # TODO: Check correct units!!!
                 
             self.inputWeights[inputName] = gmax*1e3  # TODO: Check correct units!!!
-            label = "%s_projection"%inputName
+            self.inputSynapseDynamics[inputName] = sd
             
-            input_proj = Projection(input_population, self.populations[cellGroup], connector2, target='excitatory', label=label ,synapse_dynamics=sd)
-
-            if self.my_simulator=='neuron': del input_proj.connection_manager.connections[:]
-            
-            self.input_projections[inputName] = input_proj
             
         
         
@@ -259,10 +258,41 @@ class NetManagerPyNN(NetworkHandler):
         tgtCell = self.populations[self.inputCellGroups[inputName]][(int(cellId),)]
         
         #TODO use max cond*weight for weight here...
-        self.input_projections[inputName].connection_manager.connect(srcInput, tgtCell, weights=weight, delays=0.1, synapse_type='excitatory')
+        self.inputConns.append([self.input_populations[inputName].locate(srcInput),self.populations[self.inputCellGroups[inputName]].locate(tgtCell),weight,0.1])
             
         self.inputCount[inputName]+=1
              
+       
         
+    #
+    #  Overridden from NetworkHandler
+    #           
+    def finaliseInputSource(self, inputName):
     
+        exec("from pyNN.%s import *" % self.my_simulator) # Does this really need to be imported every time?
+        
+        label = "%s_projection"%inputName
+        
+        input_population = self.input_populations[inputName]
+        cellGroup = self.inputCellGroups[inputName]
+        connector=FromListConnector(self.inputConns)
+        sd = self.inputSynapseDynamics[inputName]
+        
+        self.log.info("-- Adding connections for %s: %s from %s to %s with %s" % (inputName, str(connector), str(input_population), str(self.populations[cellGroup]), str(sd)))
+            
+        input_proj = Projection(input_population, self.populations[cellGroup], connector, target='excitatory', label=label ,synapse_dynamics=self.inputSynapseDynamics[inputName])
+
+        self.input_projections[inputName] = input_proj
+        self.inputConns = []
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         

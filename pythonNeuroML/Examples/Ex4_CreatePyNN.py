@@ -34,9 +34,14 @@ from PyNNUtils import NetManagerPyNN
 
 exec("from pyNN.%s import *" % my_simulator)
 
+f = open("my_simulator", mode='w')
+f.write(my_simulator)
+f.close()
+
+
 startTime = time.time()
 
-dt = 0.1
+dt = 0.01
 tstop = 200.0
 seed = 123456
 
@@ -73,6 +78,7 @@ for popName in nmlHandler.populations.keys():
     print population.describe()
     
     population.record_v()
+    population.record_gsyn()
 
     for addr in population.addresses():
         gid  = population[addr]
@@ -117,7 +123,7 @@ print "Finished simulation. Setup time: %f secs, run time: %f secs"%(preRunTime-
 for popName in nmlHandler.populations.keys():
     population = nmlHandler.populations[popName]
     population.print_v("%s.dat"%population.label)
-    
+    population.print_gsyn("%s.gsyn"%population.label)
     
 for projName in nmlHandler.projections.keys():
     projection = nmlHandler.projections[projName]
@@ -127,6 +133,8 @@ for inputName in nmlHandler.input_populations.keys():
     input_population.printSpikes("inputs.dat")
 
 
+
+print "Time step: " + str(get_time_step())
 
 exit()
 

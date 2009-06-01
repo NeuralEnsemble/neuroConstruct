@@ -1,9 +1,12 @@
 # Test class extending a standard cell
 
-my_simulator = "nest2"
-exec("from pyNN.%s import *" % my_simulator)
+f = open("my_simulator", mode='r')
 
-class CellTypeA(IF_cond_alpha):
+my_simulator = f.read()
+exec("from pyNN.%s import *" % my_simulator)
+f.close()
+
+class CellsA(IF_cond_alpha):
 
 
     def __init__ (self, parameters): 
@@ -38,4 +41,4 @@ class CellTypeA(IF_cond_alpha):
             parameters['v_init'] = -55.0 
         IF_cond_alpha.__init__ (self, parameters)
         
-        print "Created new CellTypeA on simulator: "+str(simulator)
+        print "Created cell class on simulator: "+str(simulator)

@@ -1,7 +1,7 @@
 #
 #   A simple example of a PyNN script which creates some cells and makes connections 
 #
-#   This file should be runnable on any PyNN simulator and uses most of the functions 
+#   This standalone file should be runnable on any PyNN simulator and uses most of the functions 
 #   that neuroConstruct generated PyNN code would use
 #
 #   Author: Padraig Gleeson
@@ -34,10 +34,13 @@ from pyNN.random import NumpyRNG
 seed=1234
 rng = NumpyRNG(seed)
 
-class CellTypeA(IF_cond_exp):
+cellTypeToUse = IF_cond_exp
+#cellTypeToUse = IF_cond_alpha
+
+class CellTypeA(cellTypeToUse):
 
     def __init__ (self, parameters): 
-        IF_cond_exp.__init__ (self, parameters)
+        cellTypeToUse.__init__ (self, parameters)
 
 
 cellNumA = 2
@@ -108,11 +111,7 @@ syn_dynam = SynapseDynamics(fast=TsodyksMarkramMechanism(U=0.4, tau_rec=100.0, t
 #                                                                      A_plus=0.01, A_minus=0.012)))
 
 
-connector= FixedNumberPreConnector(0)               
-proj = Projection(cellsA, cellsB, connector, target='excitatory', label='TestProj' ,synapse_dynamics=syn_dynam)
-
-
-
+projConns = []
 
 for i in range(connNum):	
     src = gidsA[int(NumpyRNG.next(rng) * len(gidsA))]
@@ -120,8 +119,11 @@ for i in range(connNum):
 
     print "-- Connecting cell %s (%s) in %s to cell %s (%s) in %s" % (src, str(cellsA.locate(src)) ,cellsA.label, tgt, str(cellsB.locate(tgt)), cellsB.label)
 
-    proj.connection_manager.connect(cellsA[cellsA.locate(src)], cellsB[cellsB.locate(tgt)], weights=0.01, delays=1.0, synapse_type='excitatory')
+    projConns.append([cellsA.locate(src), cellsB.locate(tgt), 0.01, 1.0])
     
+
+connector= FromListConnector(projConns)               
+proj = Projection(cellsA, cellsB, connector, target='excitatory', label='TestProj' ,synapse_dynamics=syn_dynam)
 
 
 voltDistr = RandomDistribution('uniform',[-65,-50],rng)
@@ -142,19 +144,21 @@ stgen.seed(seed)
 
 spike_times = stgen.poisson_generator(rate=freq, t_stop=tstop, array=True)
 
-
 input_population  = Population(cellNumA, SpikeSourceArray, {'spike_times': spike_times}, "inputsToA")
+
 for i in input_population:
     i.spike_times = stgen.poisson_generator(rate=freq, t_stop=tstop, array=True)
     print "spike_times: " +str(i.spike_times)
 
 
-connector2= FixedNumberPreConnector(0)               
-input_proj = Projection(input_population, cellsA, connector2, target='excitatory', label='InputProj' ,synapse_dynamics=None)
-
+inputConns = []
 
 for i in range(0,cellNumA):
-    input_proj.connection_manager.connect(input_population[(i,)], cellsA[(i,)], weights=0.1, delays=3.0, synapse_type='excitatory')
+    inputConns.append([input_population.locate(input_population[(i,)]), cellsA.locate(cellsA[(i,)]), 0.1, 3.0])
+
+connector2= FromListConnector(inputConns)               
+input_proj = Projection(input_population, cellsA, connector2, target='excitatory', label='InputProj' ,synapse_dynamics=None)
+
 
 cellsA.record_v()
 cellsB.record_v()

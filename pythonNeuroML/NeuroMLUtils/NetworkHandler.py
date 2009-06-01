@@ -93,8 +93,14 @@ class NetworkHandler:
         if preSegId != 0 or postSegId!=0 or preFract != 0.5 or postFract != 0.5:
             self.log.debug("Src cell: %d, seg: %f, fract: %f -> Tgt cell %d, seg: %f, fract: %f" % (preCellId,preSegId,preFract,postCellId,postSegId,postFract))
         
-        
+    #
+    #  Should be overridden to handle end of network connection
+    #  
+    def finaliseProjection(self, projName, source, target):
    
+        self.log.info("Projection: "+projName+" from "+source+" to "+target+" completed")
+        
+        
     #
     #  Should be overridden to create input source array
     #  
@@ -107,11 +113,17 @@ class NetworkHandler:
              
         
     #
-    #  Should be overridden to to connect eacj input to the target celll
+    #  Should be overridden to to connect each input to the target cell
     #  
     def handleSingleInput(self, inputName, cellId, segId = 0, fract = 0.5):
         self.log.info("Input : %s, cellId: %i, seg: %i, fract: %f" % (inputName,cellId,segId,fract))
         
+        
+    #
+    #  Should be overridden to to connect each input to the target cell
+    #  
+    def finaliseInputSource(self, inputName):
+        self.log.info("Input : %s completed" % inputName)
         
         
 
