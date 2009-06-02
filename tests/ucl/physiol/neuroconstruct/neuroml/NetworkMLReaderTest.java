@@ -262,7 +262,7 @@ public class NetworkMLReaderTest
    
         //proj = pm.getCurrentProject();
         boolean annotations = true;
-
+        
         ProjectManager.saveLevel3NetworkXML(proj0, l3FileAnnotations, false, false, annotations, sc.getName(), NetworkMLConstants.UNITS_PHYSIOLOGICAL);
         assertTrue(l3FileAnnotations.exists());
  
@@ -283,14 +283,16 @@ public class NetworkMLReaderTest
 
         System.out.println("-----------------  "+l3FileAnnotations.getAbsolutePath()+" is valid according to: "+ schemaFile+"  -----------------");
 
+        pm.doLoadNetworkMLAndGenerate(l3FileAnnotations, true);
+        assertTrue(pm.isGenerating());
         
         String projName3 = "TestNetworkML_reloaded_withAnnotations";
         File projDir3 = new File(MainTest.getTempProjectDirectory()+ projName3);
         projDir3.mkdir();
-        Project proj3 = Project.createNewProject(projDir3.getAbsolutePath(), projName3, null);
+        Project proj3 = Project.createNewProject(projDir3.getAbsolutePath(), projName3, null);   
 
         pm.setCurrentProject(proj3);
-        pm.doLoadNetworkML(l3File, true);
+        pm.doLoadNetworkML(l3FileAnnotations, true);
 
         proj3.saveProject();
 
@@ -358,6 +360,7 @@ public class NetworkMLReaderTest
         else
         {
             compare = false;
+            System.out.println("Dimensions mismatch: \ntable1=["+col1+"*"+row1+"]\ntable1=["+col2+"*"+row2+"]");                        
         }
         return compare;
     }

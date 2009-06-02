@@ -924,6 +924,8 @@ public class ProjectManager implements GenerationReport
                 xmlEncoder.writeObject(project.morphNetworkConnectionsInfo);
                 xmlEncoder.writeObject(project.simPlotInfo);
                 xmlEncoder.writeObject(project.simConfigInfo);
+                xmlEncoder.writeObject(project.neuronSettings);
+                xmlEncoder.writeObject(project.genesisSettings);
                 xmlEncoder.close();            
                 SimpleXMLElement annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);  
                 String content =  fos.toString();

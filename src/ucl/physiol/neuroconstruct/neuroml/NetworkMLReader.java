@@ -38,8 +38,10 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 import ucl.physiol.neuroconstruct.cell.Cell;
 import ucl.physiol.neuroconstruct.cell.converters.MorphMLReader;
+import ucl.physiol.neuroconstruct.genesis.GenesisSettings;
 import ucl.physiol.neuroconstruct.mechanisms.ChannelMLCellMechanism;
 import ucl.physiol.neuroconstruct.mechanisms.SimXSLMapping;
+import ucl.physiol.neuroconstruct.neuron.NeuronSettings;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.cellchoice.AllCells;
 import ucl.physiol.neuroconstruct.project.cellchoice.CellChooser;
@@ -1500,74 +1502,103 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                 }
                 
                 xmlDecoder = new XMLDecoder(baos);
-                Object nextReadObject = xmlDecoder.readObject();
-
-                 /* --  Reading Basic Info -- */
-                if  (nextReadObject instanceof BasicProjectInfo)
-                {
-                    logger.logComment("Found BasicProjectInfo object in level3 file annotation...", true);
-                    BasicProjectInfo bpi = (BasicProjectInfo) nextReadObject;
-
-                    project.setProjectDescription(bpi.getProjectDescription());
-                    project.setProjectFileVersion(bpi.getProjectFileVersion());
-                }
-                 /* --  Reading Regions Info -- */
-                if  (nextReadObject instanceof RegionsInfo)
-                {
-                    logger.logComment("Found RegionsInfo object in level3 file annotation...");
-                    project.regionsInfo = (RegionsInfo) nextReadObject;
-                    project.regionsInfo.addTableModelListener(project);
-                }
-
-                /* --  Reading Cell Group Info -- */
-                if (nextReadObject instanceof CellGroupsInfo)
-                {
-                    logger.logComment("Found CellGroupsInfo object in  level3  file annotation...");
-                     project.cellGroupsInfo = (CellGroupsInfo) nextReadObject;
-                     project.cellGroupsInfo.addTableModelListener(project);
-                }
+                Object nextReadObject = null;
+                nextReadObject = xmlDecoder.readObject();
                 
-                /* --  Reading ElecInputInfo --*/
-                if (nextReadObject instanceof ElecInputInfo)
+                while (  nextReadObject != null)
                 {
-                    logger.logComment("Found ElecInputInfo object in  level3  file annotation...");
-                     project.elecInputInfo = (ElecInputInfo) nextReadObject;
-                     project.elecInputInfo.addTableModelListener(project);
-                }
 
-                /* --  Reading Simple Net Conn Info -- */
-                if (nextReadObject instanceof SimpleNetworkConnectionsInfo)
-                {
-                    logger.logComment("Found SimpleNetworkConnectionsInfo object in  level3  file annotation...");
-                     project.morphNetworkConnectionsInfo = (SimpleNetworkConnectionsInfo) nextReadObject;
-                     project.morphNetworkConnectionsInfo.addTableModelListener(project);
-                }
+                     /* --  Reading Basic Info -- */
+                    if  (nextReadObject instanceof BasicProjectInfo)
+                    {
+                        logger.logComment("Found BasicProjectInfo object in level3 file annotation...", true);
+                        BasicProjectInfo bpi = (BasicProjectInfo) nextReadObject;
 
-                /* --  Reading Simulation Info --*/
-                if (nextReadObject instanceof SimulationParameters)
-                {
-                    logger.logComment("Found SimulationParameters object in  level3  file annotation...");
-                     project.simulationParameters = (SimulationParameters) nextReadObject;
-                }
-                
-                /* --  Reading Sim Plot Info -- */
-                if (nextReadObject instanceof SimPlotInfo)
-                {
-                    logger.logComment("Found SimPlotInfo object in  level3  file annotation...");
-                     project.simPlotInfo = (SimPlotInfo) nextReadObject;
-                     project.simPlotInfo.addTableModelListener(project);
-                }
+                        project.setProjectDescription(bpi.getProjectDescription());
+                        project.setProjectFileVersion(bpi.getProjectFileVersion());
+                    }
+                     /* --  Reading Regions Info -- */
+                    if  (nextReadObject instanceof RegionsInfo)
+                    {
+                        logger.logComment("Found RegionsInfo object in level3 file annotation...");
+                        project.regionsInfo = (RegionsInfo) nextReadObject;
+                        project.regionsInfo.addTableModelListener(project);
+                    }
 
-                /* --  Reading SimConfigInfo --*/
-                if (nextReadObject instanceof SimConfigInfo)
-                {
-                    logger.logComment("Found SimConfigInfo object in  level3  file annotation...");
-                     project.simConfigInfo = (SimConfigInfo) nextReadObject;
-                }               
-                
+                    /* --  Reading Cell Group Info -- */
+                    if (nextReadObject instanceof CellGroupsInfo)
+                    {
+                        logger.logComment("Found CellGroupsInfo object in  level3  file annotation...");
+                         project.cellGroupsInfo = (CellGroupsInfo) nextReadObject;
+                         project.cellGroupsInfo.addTableModelListener(project);
+                    }
+
+                    /* --  Reading ElecInputInfo --*/
+                    if (nextReadObject instanceof ElecInputInfo)
+                    {
+                        logger.logComment("Found ElecInputInfo object in  level3  file annotation...");
+                         project.elecInputInfo = (ElecInputInfo) nextReadObject;
+                         project.elecInputInfo.addTableModelListener(project);
+                    }
+
+                    /* --  Reading Simple Net Conn Info -- */
+                    if (nextReadObject instanceof SimpleNetworkConnectionsInfo)
+                    {
+                        logger.logComment("Found SimpleNetworkConnectionsInfo object in  level3  file annotation...");
+                         project.morphNetworkConnectionsInfo = (SimpleNetworkConnectionsInfo) nextReadObject;
+                         project.morphNetworkConnectionsInfo.addTableModelListener(project);
+                    }
+
+                    /* --  Reading Simulation Info --*/
+                    if (nextReadObject instanceof SimulationParameters)
+                    {
+                        logger.logComment("Found SimulationParameters object in  level3  file annotation...");
+                         project.simulationParameters = (SimulationParameters) nextReadObject;
+                    }
+
+                    /* --  Reading Sim Plot Info -- */
+                    if (nextReadObject instanceof SimPlotInfo)
+                    {
+                        logger.logComment("Found SimPlotInfo object in  level3  file annotation...");
+                         project.simPlotInfo = (SimPlotInfo) nextReadObject;
+                         project.simPlotInfo.addTableModelListener(project);
+                    }
+
+                    /* --  Reading SimConfigInfo --*/
+                    if (nextReadObject instanceof SimConfigInfo)
+                    {
+                        logger.logComment("Found SimConfigInfo object in  level3  file annotation...");
+                         project.simConfigInfo = (SimConfigInfo) nextReadObject;
+                    }     
+                    
+                    /* --  Reading NeuronSettings --*/
+                    if (nextReadObject instanceof NeuronSettings)
+                    {
+                        logger.logComment("Found SimConfigInfo object in  level3  file annotation...");
+                         project.neuronSettings = (NeuronSettings) nextReadObject;
+                    }   
+                    
+                    /* --  Reading GenesisSettings --*/
+                    if (nextReadObject instanceof GenesisSettings)
+                    {
+                        logger.logComment("Found GenesisSettings object in  level3  file annotation...");
+                         project.genesisSettings = (GenesisSettings) nextReadObject;
+                    }    
+                    
+                    try
+                    {
+                        nextReadObject = xmlDecoder.readObject();
+                    }
+                    catch (Exception ex)
+                    {
+                        nextReadObject = null;
+                        logger.logError("No more objects to read...", ex);
+                    }
+
+                }
                 xmlDecoder.close();
                 baos.reset();
-                
+                    
             }//if the annotation is finished
         }//if annotation
         
