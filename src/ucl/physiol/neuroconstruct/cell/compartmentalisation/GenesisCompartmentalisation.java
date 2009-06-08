@@ -636,7 +636,7 @@ public class GenesisCompartmentalisation extends MorphCompartmentalisation
         int origSegId = origSegment.getSegmentId();
         float origSegLen = origSegment.getSegmentLength();
 
-        Segment parentSeg = (Segment) origSegment.getParentSegment();
+        Segment parentSeg = origSegment.getParentSegment();
         float origFractAlong = origSegment.getFractionAlongParent();
         Point3f origStart = origSegment.getStartPointPosition();
         Point3f origEnd = origSegment.getEndPointPosition();

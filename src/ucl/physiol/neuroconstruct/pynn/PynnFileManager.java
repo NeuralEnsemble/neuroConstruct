@@ -367,13 +367,13 @@ public class PynnFileManager
                         }
                         else
                         {
-                            fw.write("print(\"Recording anything besides voltage ("+psd.simPlot.getValuePlotted()+") not implemented yet!\"\n\n");
+                            fw.write("print(\"Recording anything besides voltage ("+psd.simPlot.getValuePlotted()+") not implemented yet!\")\n\n");
                         }
                         
                     }
                     else
                     {
-                        fw.write("print(\"Recording of individual cells not implemented yet!\"\n");
+                        fw.write("print(\"Recording of individual cells not implemented yet!\")\n");
                     }
                 }
             }

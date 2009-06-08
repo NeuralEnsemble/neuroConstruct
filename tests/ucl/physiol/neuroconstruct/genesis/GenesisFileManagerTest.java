@@ -123,24 +123,25 @@ public class GenesisFileManagerTest {
 
             System.out.println("Run GENESIS files");
 
-
             SimulationData simData = new SimulationData(simDir, false);
 
             File timesFile = simData.getTimesFile();
 
-            Thread.sleep(wait*5); // Shouldn't take longer than this
-
-
-            if (!timesFile.exists())
+            while (!timesFile.exists())
             {
                 System.out.println("Waiting for file to be created: "+ timesFile.getAbsolutePath());
-                Thread.sleep(wait*3);
+                Thread.sleep(wait);
             }
 
             assertTrue(timesFile.exists());
 
             simData.initialise();
 
+            while(!simData.isDataLoaded())
+            {
+                System.out.println("Waiting for data to be loaded");
+                Thread.sleep(1000);
+            }
 
             int numRecordings = simData.getCellSegRefs(false).size();
 
