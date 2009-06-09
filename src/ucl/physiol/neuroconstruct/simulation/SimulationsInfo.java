@@ -777,6 +777,8 @@ public class SimulationsInfo extends AbstractTableModel
             allPropNames.remove(mainProperties[i]);
         }
 
+        allPropNames = (ArrayList)GeneralUtils.reorderAlphabetically(allPropNames, true);
+
         // Do the rest
         for (int i = 0; i < allPropNames.size(); i++)
         {

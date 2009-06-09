@@ -69,9 +69,9 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener
 
     String comments
         = "Java application for creating 3D networks of biologically realistic\n"
-         +"neurons for the NEURON and GENESIS simulators. "
-         +"\nThis work has been primarily funded by the Medical Research Council"
-         +"\nand has also been supported by the Wellcome Trust";
+         +"neurons for the NEURON, GENESIS, PSICS and PyNN compliant simulators. "
+         +"\nThis work is primarily funded by the Wellcome Trust and has also"
+         +"\nbeen supported by the Medical Research Council";
 
     Border border1;
     JLabel jLabelWeb = new JLabel();
@@ -111,7 +111,7 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener
         insetsPanel2.setBorder(border3);
         label1.setHorizontalAlignment(SwingConstants.LEFT);
         label1.setText("neuroConstruct v"+ GeneralProperties.getVersionNumber());
-        label3.setText("Copyright (c) 2008 Dept of Physiology, UCL");
+        label3.setText("Copyright (c) 2009, Dept of Neuroscience, Pharmacology & Physiology, UCL");
         label4.setText("Contact Padraig Gleeson (p.gleeson@ucl.ac.uk) for more information");
 
         label4.setToolTipText("This work is dedicated to the memory of Nancy Gleeson");
@@ -132,6 +132,7 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener
 
         jLabelWeb.addMouseListener(new MouseAdapter()
         {
+            @Override
             public void mouseClicked(MouseEvent mouseEvent)
             {
                 String browserPath = GeneralProperties.getBrowserPath(true);
