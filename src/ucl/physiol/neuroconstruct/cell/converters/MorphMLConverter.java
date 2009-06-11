@@ -663,13 +663,23 @@ public class MorphMLConverter extends FormatImporter
 
                         SimpleXMLElement pe = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
-                        pe.addComment(new SimpleXMLComment("Note: Units of extra parameters are not known!!"));
+                        pe.addComment(new SimpleXMLComment("Note: Units of extra parameters are not known, except if it's e!!"));
                         
                         pe.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
                                                                          mp.getName()));
 
+                        float val = mp.getValue();
+
+                        if (mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT))
+                        {
+                            val = (float)UnitConverter.getVoltage(val,
+                                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                    preferredExportUnits);
+                        }
+
+
                         pe.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
-                                                                         mp.getValue()+""));
+                                                                         val+""));
                         
                         allParamGrps.add(pe);
 
@@ -718,7 +728,7 @@ public class MorphMLConverter extends FormatImporter
                             {
                                 if (mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT))
                                 {
-                                    logger.logComment("The reversal potential has ben set as one of the extra params");
+                                    logger.logComment("The reversal potential has been set as one of the extra params");
                                     
                                     revPot=mp.getValue(); 
                                     // remove from param list, as units dealt with here

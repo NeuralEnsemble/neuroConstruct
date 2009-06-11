@@ -132,9 +132,15 @@ public class MorphMLReaderTest {
 
             System.out.println("Comparison 1: "+ compare);
 
+            System.out.println("Chans 1: "+ cell1.getChanMechsVsGroups());
+            System.out.println("Chans 2: "+ cell2.getChanMechsVsGroups());
+
             assertTrue(compare.indexOf(CellTopologyHelper.CELLS_ARE_IDENTICAL)>=0);
 
             System.out.println("Reloaded file and cells are identical");
+
+
+
 
         }
         

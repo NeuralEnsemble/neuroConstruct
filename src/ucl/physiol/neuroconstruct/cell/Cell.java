@@ -1031,7 +1031,7 @@ public class Cell implements Serializable
 
     public Vector<String> getGroupsWithChanMech(ChannelMechanism chanMech)
     {
-        // Note: chanMechsVsGroups.get(chanMech) isn't good enough if the chanMechs aren't exactly same obj
+        // Note: chanMechsVsGroups.get(newChanMech) isn't good enough if the chanMechs aren't exactly same obj
 
         Vector<String> theGroups = new Vector<String>();
 
@@ -1369,9 +1369,9 @@ public class Cell implements Serializable
         
     }
 
-    public boolean associateGroupWithChanMech(String group, ChannelMechanism chanMech)
+    public boolean associateGroupWithChanMech(String group, ChannelMechanism newChanMech)
     {
-        logger.logComment("Cell being told to associate group: " + group + " with channel mechanism: " + chanMech);
+        logger.logComment("Cell being told to associate group: " + group + " with channel mechanism: " + newChanMech);
            
         Vector<String> grps = getAllGroupNames();
         
@@ -1387,9 +1387,9 @@ public class Cell implements Serializable
         {
             ChannelMechanism otherChanMech = chanMechs.nextElement();
 
-            if (otherChanMech.getName().equals(chanMech.getName()))
+            if (otherChanMech.getName().equals(newChanMech.getName()))
             {
-                logger.logComment("otherChanMech: " +otherChanMech+", new chanMech: " +chanMech );
+                logger.logComment("otherChanMech: " +otherChanMech+", new chanMech: " +newChanMech );
                 Vector<String> groups = chanMechsVsGroups.get(otherChanMech);
 
                 logger.logComment("groups: " + groups);
@@ -1399,32 +1399,51 @@ public class Cell implements Serializable
                     logger.logComment("group: " + group+" is there");
                     groups.remove(group);
                     
-                    if (otherChanMech.getDensity()==chanMech.getDensity())
+                    if (otherChanMech.getDensity()==newChanMech.getDensity())
                     {
-                        logger.logComment("otherChanMech: " +otherChanMech+" and chanMech: " +chanMech +" have the same group/name/density. ");
+                        logger.logComment("otherChanMech: " +otherChanMech+" and chanMech: " +newChanMech +" have the same group/name/density. ");
                         logger.logComment("Amalgamating extra params. Mainly needed for importing of parameters from NEURON exported NeuroML");
                         
                         for (MechParameter mp: otherChanMech.getExtraParameters())
                         {
                             logger.logComment("Adding mech param: " + mp);
-                            chanMech.setExtraParam(mp.getName(), mp.getValue());
+                            newChanMech.setExtraParam(mp.getName(), mp.getValue());
                         } 
-                        logger.logComment("Current chanMech: " +chanMech);
+                        logger.logComment("Current chanMech: " +newChanMech);
                     }
-                    else if (chanMech.getDensity()==-1)
+                    else if (newChanMech.getDensity()==-1)
                     {
-                        logger.logComment("otherChanMech: has density: "+ chanMech.getDensity()+", so using older density");
-                        
-                        chanMech.setDensity(otherChanMech.getDensity());
-                        
+                        logger.logComment("otherChanMech: has density: "+ newChanMech.getDensity()+", so using older density");
+
+                        newChanMech.setDensity(otherChanMech.getDensity());
+
                         logger.logComment("Amalgamating extra params. Mainly needed for importing of parameters from NEURON exported NeuroML");
-                        
+
                         for (MechParameter mp: otherChanMech.getExtraParameters())
                         {
                             logger.logComment("Adding mech param: " + mp);
-                            chanMech.setExtraParam(mp.getName(), mp.getValue());
-                        } 
-                        logger.logComment("Current chanMech: " +chanMech);
+                            newChanMech.setExtraParam(mp.getName(), mp.getValue());
+                        }
+                        logger.logComment("Current chanMech: " +newChanMech);
+                    }
+                    else if (otherChanMech.getDensity()==-1)
+                    {
+                        logger.logComment("otherChanMech: has density: "+ otherChanMech.getDensity()+", newChanMech: has density: "+ newChanMech.getDensity()+", so using new density");
+
+                        //otherChanMech.setDensity(newChanMech.getDensity());
+
+                        logger.logComment("Amalgamating extra params. Mainly needed for importing of parameters from NEURON exported NeuroML");
+
+                        for (MechParameter mp: otherChanMech.getExtraParameters())
+                        {
+                            logger.logComment("Adding mech param: " + mp);
+                            newChanMech.setExtraParam(mp.getName(), mp.getValue());
+                        }
+                        logger.logComment("Current chanMech: " +newChanMech);
+                    }
+                    else
+                    {
+                        logger.logComment("... Not match");
                     }
                     
                     if (groups.size() > 0)
@@ -1441,7 +1460,7 @@ public class Cell implements Serializable
 
         Vector<String> groups = null;
 
-        if (!chanMechsVsGroups.containsKey(chanMech))
+        if (!chanMechsVsGroups.containsKey(newChanMech))
         {
             logger.logComment("Making new group" );
             groups = new Vector<String>();
@@ -1449,18 +1468,18 @@ public class Cell implements Serializable
         else
         {
             logger.logComment("Not Making new group" );
-            groups = chanMechsVsGroups.get(chanMech);
+            groups = chanMechsVsGroups.get(newChanMech);
         }
                     
-        logger.logComment("Groups which had chan mech: " + chanMech+": "+ groups);
+        logger.logComment("Groups which had chan mech: " + newChanMech+": "+ groups);
         
         if (!groups.contains(group)) 
             groups.add(group);
 
 
-        chanMechsVsGroups.put(chanMech, groups);
+        chanMechsVsGroups.put(newChanMech, groups);
         
-        logger.logComment("Now: " + chanMechsVsGroups.get(chanMech));
+        logger.logComment("Now: " + chanMechsVsGroups.get(newChanMech));
 
         logger.logComment("");
 

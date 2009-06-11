@@ -260,7 +260,7 @@ public class MorphMLReader extends XMLFilterImpl
                         cm.getExtraParameters().add(mp);
                         
                         cell.associateGroupWithChanMech(group, cm);
-                        
+
                     }
                     //cell.associateGroupWithChanMech(contents, this.currentChanMech);
                 }
@@ -767,6 +767,24 @@ public class MorphMLReader extends XMLFilterImpl
                      {
                          neuroConUnits
                              = (float) UnitConverter.getConductanceDensity(nmlUnits,
+                                                                           UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS,
+                                                                           UnitConverter.NEUROCONSTRUCT_UNITS);
+                     }
+                 }
+                 else if (paramName.equals(BiophysicsConstants.PARAMETER_REV_POT) || paramName.equals(BiophysicsConstants.PARAMETER_REV_POT_2))
+                 {
+                     if (this.unitsUsed.equals(BiophysicsConstants.UNITS_SI))
+                     {
+                         neuroConUnits
+                             = (float) UnitConverter.getVoltage(nmlUnits,
+                                                                           UnitConverter.GENESIS_SI_UNITS,
+                                                                           UnitConverter.NEUROCONSTRUCT_UNITS);
+
+                     }
+                     if (this.unitsUsed.equals(BiophysicsConstants.UNITS_PHYSIOLOGICAL))
+                     {
+                         neuroConUnits
+                             = (float) UnitConverter.getVoltage(nmlUnits,
                                                                            UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS,
                                                                            UnitConverter.NEUROCONSTRUCT_UNITS);
                      }

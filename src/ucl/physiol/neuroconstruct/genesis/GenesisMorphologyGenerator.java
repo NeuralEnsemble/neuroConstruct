@@ -914,13 +914,16 @@ public class GenesisMorphologyGenerator
      * @param length The length in "normal" units
      * @return The length which will be used in the main morphology lines
      */
-    private float convertToMorphDataLength(double length)
+    private String convertToMorphDataLength(double length)
     {
         logger.logComment("Converting double: "+ length);
         double conversionFactor = 1000000;
-        return (float)(conversionFactor * UnitConverter.getLength(length,
+        float len = (float)(conversionFactor * UnitConverter.getLength(length,
                                        UnitConverter.NEUROCONSTRUCT_UNITS,
                                        project.genesisSettings.getUnitSystemToUse()));
+
+        if (len==(int)(len)) return (int)len+"";
+        return len+"";
     }
 
 

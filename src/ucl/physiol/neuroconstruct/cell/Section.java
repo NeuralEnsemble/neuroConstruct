@@ -286,6 +286,11 @@ public class Section implements Serializable
     @Override
     public boolean equals(Object obj)
     {
+        return equalsG(obj, false);
+    }
+
+    public boolean equalsG(Object obj, boolean ignoreGroupOrder)
+    {
         if (obj == this)
             return true;
         
@@ -296,6 +301,18 @@ public class Section implements Serializable
             if (!otherSection.getSectionName().equals(sectionName)) // v quick check for most cases
                 return false;
 
+
+            if (ignoreGroupOrder)
+            {
+                if (!groups.containsAll(otherSection.getGroups()) && otherSection.getGroups().containsAll(groups))
+                        return false;
+            }
+            else
+            {
+                if (!groups.equals(otherSection.getGroups()))
+                        return false;
+            }
+
             // detailed checks
             if (((otherSection.getSectionName() == null && sectionName == null) ||
                 otherSection.getSectionName().equals(sectionName)) &&
@@ -305,14 +322,16 @@ public class Section implements Serializable
 
                 otherSection.getNumberInternalDivisions() == numberInternalDivisions &&
 
-                otherSection.getStartRadius() == startRadius &&
+                otherSection.getStartRadius() == startRadius
 
                 /** @todo check comment... */
 
-                groups.equals(otherSection.getGroups()))
+                )
             {
                 return true;
             }
+
+
         }
         return false;
     }

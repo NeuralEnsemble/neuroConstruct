@@ -82,7 +82,7 @@ public class GenesisFileManagerTest {
         int wait = 1000;
         
         if (GeneralUtils.isWindowsBasedPlatform())
-            wait = 8000;
+            wait = 4000;
         
         while(pm.isGenerating())
         {
@@ -121,7 +121,10 @@ public class GenesisFileManagerTest {
 
             proj.genesisFileManager.runGenesisFile();
 
+
             System.out.println("Run GENESIS files");
+
+            Thread.sleep(wait);
 
             SimulationData simData = new SimulationData(simDir, false);
 
@@ -135,12 +138,14 @@ public class GenesisFileManagerTest {
 
             assertTrue(timesFile.exists());
 
+            Thread.sleep(wait);
+
             simData.initialise();
 
             while(!simData.isDataLoaded())
             {
                 System.out.println("Waiting for data to be loaded");
-                Thread.sleep(1000);
+                Thread.sleep(wait);
             }
 
             int numRecordings = simData.getCellSegRefs(false).size();
@@ -160,15 +165,19 @@ public class GenesisFileManagerTest {
             while(!sd.isDataLoaded())
             {
                 System.out.println("Waiting for data to be loaded");
-                Thread.sleep(1000);
+                Thread.sleep(wait);
             }
 
             System.out.println("Data saved: "+ sd.getCellSegRefs(true));
 
             String ref = "Pacemaker_0";
 
+
             double[] volts = sd.getVoltageAtAllTimes(ref);
 			double[] times = sd.getAllTimes();
+
+
+            System.out.println("volts: "+ volts.length+ ", times: "+ times.length);
 
             
             assertEquals(volts.length, 1 + (sc.getSimDuration()/proj.simulationParameters.getDt()), 0);

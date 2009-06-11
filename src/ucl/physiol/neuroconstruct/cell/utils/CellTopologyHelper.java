@@ -3317,7 +3317,7 @@ public class CellTopologyHelper
         
         for (int i = 0; i < minSize; i++)
         {
-            if (!secsA.get(i).equals(secsB.get(i)))
+            if (!secsA.get(i).equalsG(secsB.get(i), true))
             {
                 identical = false;
                 secCompare.append(GeneralUtils.getColouredString("A section does not match:", "red", html)+EOL

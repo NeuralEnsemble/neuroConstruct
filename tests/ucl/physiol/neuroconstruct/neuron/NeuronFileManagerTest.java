@@ -128,6 +128,8 @@ public class NeuronFileManagerTest {
         pm.doRunNeuron(sc);
         
         System.out.println("Run NEURON files");
+
+        Thread.sleep(wait);
         
         
         SimulationData simData = new SimulationData(simDir, false);
@@ -268,13 +270,13 @@ public class NeuronFileManagerTest {
         pm.doRunNeuron(sc);
         
         System.out.println("Run NEURON files using: "+ sc.getMpiConf());
-        
+
+        Thread.sleep(wait);
         
         SimulationData simDataSerial = new SimulationData(simDirSerial, false);
         
         File timesFile = simDataSerial.getTimesFile();
         
-       
         
         while (!timesFile.exists())
         {
