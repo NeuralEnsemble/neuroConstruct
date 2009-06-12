@@ -52,12 +52,13 @@
         <defined>This measure of the length of dendrites, etc. as "seen" by electrical charge is dependent on the shape, axial<br/>
                  and membrane resistance of the section. See the NEURON or GENESIS books for more details. It is important when<br/>
                  simulating neurons with realistic morphologies that individually simulated points are not too far apart in terms<br/>
-                 of electrotonic length (a max of 0.1 is usually fine), i.e. a sufficiently fine-graned spatial discretisation<br/>
+                 of electrotonic length (a max of 0.1 is usually fine, though much smaller is needed if trying to match the behaviour of<br/>
+                 morphologically complex cells between simulators), i.e. a sufficiently fine-graned spatial discretisation<br/>
                  should be used. Too short an electrotonic length can sometimes lead to problems in numerical integration, and <br/>
                  neuroConstruct will perform validity checks for both of these (too long and too short). To correct the <br/>
                  <intref>internal number of divisions</intref> in a<br/> <intref>Section</intref> to stay below a maximum electrotonic length,<br/>
                  e.g. on an imported morphology, visualise the cell in 3D, showing all solids, click on any section,<br/>
-                 then <b>Edit...</b> and either manually set the parameter for each Section or select the Remesh option in the drop down function selector. See also the note <br/>
+                 then <b>Edit...</b> and either manually set the parameter for each Section or select the <b>Remesh</b> option in the drop down function selector. See also the note <br/>
                  about <intref>Compartmentalisations</intref>. Note that electrotonic length is dimensionless, and the term space constant<br/>
                  is used for this measure in microns (see GENESIS book, or Rall's chapter in Koch and Segev 1989).</defined>
     </term>

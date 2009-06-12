@@ -730,7 +730,7 @@ public class MorphMLConverter extends FormatImporter
                                 {
                                     logger.logComment("The reversal potential has been set as one of the extra params");
                                     
-                                    revPot=mp.getValue(); 
+                                    revPot=mp.getValue();
                                     // remove from param list, as units dealt with here
                                     SimpleXMLElement toRemove = null;
                                     for(SimpleXMLElement paramElement: allParamGrps)
@@ -744,13 +744,34 @@ public class MorphMLConverter extends FormatImporter
                                 }
                             }
 
+                            boolean revPotSetElsewhere = false;
+                            
+                            Iterator<ChannelMechanism> chanMechs = cell.getChanMechsVsGroups().keySet().iterator();
+                            while(chanMechs.hasNext())
+                            {
+                                ChannelMechanism other = chanMechs.next();
+                                if (!other.equals(chanMech) && other.getName().equals(chanMech.getName()) && other.getDensity()<0)
+                                {
+                                    
+                                    Vector<String> groups = cell.getGroupsWithChanMech(other);
+                                    // todo: make this more generic for any groups!
+                                    if (groups.contains(Section.ALL))
+                                    {
+                                        revPotSetElsewhere = true;
+                                    }
+                                }
+                            }
+
+
                             revPotParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
                                                                              (float)UnitConverter.getVoltage(revPot,
                                                                     UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                     preferredExportUnits) + ""));
                             
-
-                            mechElement.addChildElement(revPotParamElement);
+                            if (!revPotSetElsewhere)
+                            {
+                                mechElement.addChildElement(revPotParamElement);
+                            }
                             
                             Vector<String> groups = cell.getGroupsWithChanMech(chanMech);
 

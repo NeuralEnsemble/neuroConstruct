@@ -49,13 +49,13 @@ public class GeneralProperties
 
     private static final String packageOfCellTypes = new String("ucl.physiol.neuroconstruct.cell");
 
-    private static final String versionNumber = "1.2.3";
+    private static final String versionNumber = "1.3.0";
 
-    private static final String latestNeuroMLVersionNumber = "1.8.0";
+    private static final String latestNeuroMLVersionNumber = "1.8.1";
 
     private static final String minimumVersionJava = "J2SE 5.0";
 
-    private static final String websiteNMLValidator = "http://www.morphml.org:8080/NeuroMLValidator";
+    private static final String websiteNMLValidator = "http://www.neuroml.org/NeuroMLValidator";
 
 
     // VARIABLE values: Can be changed by the user

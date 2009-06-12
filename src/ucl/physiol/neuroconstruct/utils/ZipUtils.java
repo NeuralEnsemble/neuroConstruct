@@ -61,7 +61,7 @@ public class ZipUtils
     {
 
         File destZipFile = new File(destZipFileName);
-        logger.logComment("Adding contents of: "+ sourceDir+" to zip file: "+ destZipFile.getAbsolutePath(), true);
+        logger.logComment("Adding contents of: "+ sourceDir+" to zip file: "+ destZipFile.getAbsolutePath());
         FileOutputStream dest = new FileOutputStream(destZipFileName);
 
         ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));

@@ -444,8 +444,13 @@ public class Project implements TableModelListener
             logger.logError("Reached end of file without finding BasicProjectInfo");
             throw new ProjectFileParsingException("Problem reading the BasicProjectInfo element in file: "
                                                   + projectFile
-                                                  + "\nThis is probably due to the file not being a properly formatted"
-                                                  + "\n project file for neuroConstruct version 0.5 or greater.");
+                                                  + "\nThis is probably due to the file not being a properly formatted project file for neuroConstruct \n" +
+                                                  "version 0.5 or greater.\n\n" +
+                                                  "There may have been a problem saving the project file on the previous occasion.\n" +
+                                                  "Check the project file (*.ncx or *.neuro.xml) and ensure it is a well formatted XML document. If\n" +
+                                                  "there is a problem with this try closing neuroConstruct and renaming the backup project file \n" +
+                                                  "(*.ncx.bak or *.neuro.xml.bak, which should contain the last correctly saved project) to the correct \n" +
+                                                  "project filename and reopen.");
         }
 
         int compVer = ProjectStructure.compareVersions(GeneralProperties.getVersionNumber(),

@@ -1646,9 +1646,32 @@ public class ProjectManager implements GenerationReport
 
             ValidityStatus bioStatus = CellTopologyHelper.getBiophysicalValidityStatus(cell, this.activeProject);
 
-            overallValidity = ValidityStatus.combineValidities(overallValidity, bioStatus.getValidity());
 
             String bioFormat = "font color=\""+bioStatus.getColour()+"\"";
+
+            String thisStatus = bioStatus.getValidity();
+
+            if (!activeProject.cellGroupsInfo.getUsedCellTypes().contains(cell.getInstanceName()))
+            {
+                report.addTaggedElement("Note: Cell Type: "+cell.getInstanceName()+" not currently used in any Cell Group",
+                        "font color=\"" + ValidityStatus.VALIDATION_COLOUR_INFO + "\"");
+                report.addBreak();
+                report.addBreak();
+
+                if (bioStatus.isError())
+                {
+                    report.addTaggedElement("Note: Biological valididity status below down graded from erro to warning as cell isn't used in project!\"",
+                        "font color=\"" + ValidityStatus.VALIDATION_COLOUR_INFO + "");
+
+                    report.addBreak();
+                    report.addBreak();
+                    thisStatus = ValidityStatus.VALIDATION_WARN;
+                    bioFormat = "font color=\""+ValidityStatus.VALIDATION_COLOUR_WARN+"\"";
+                }
+            }
+
+
+            overallValidity = ValidityStatus.combineValidities(overallValidity, thisStatus);
 
             message = bioStatus.getMessage();
             
@@ -1658,12 +1681,6 @@ public class ProjectManager implements GenerationReport
             }
             report.addTaggedElement(message, bioFormat);
             
-            if (!activeProject.cellGroupsInfo.getUsedCellTypes().contains(cell.getInstanceName()))
-            {
-                report.addBreak();
-                report.addTaggedElement("Note: Cell Type: "+cell.getInstanceName()+" not currently used in any Cell Group",
-                        "font color=\"" + ValidityStatus.VALIDATION_COLOUR_INFO + "\"");
-            }
 
         }
 

@@ -236,7 +236,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
             {
                 //currentCellType = contents;
                 contents = renamedCells.get(contents);
-                logger.logComment(">> currentCellType: "+contents+", currentPopulation: "+currentPopulation, true);
+                logger.logComment(">> currentCellType: "+contents+", currentPopulation: "+currentPopulation);
             }
             else if (getCurrentElement().equals(NetworkMLConstants.SOURCE_ELEMENT)
                 && getAncestorElement(1).equals(NetworkMLConstants.PROJECTION_ELEMENT))
@@ -552,7 +552,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              
              groupCellType = attributes.getValue(NetworkMLConstants.CELLTYPE_ATTR);
              
-             logger.logComment(">>  Found a population of name: "+ name, true);
+             logger.logComment(">>  Found a population of name: "+ name);
              currentPopulation = name;             
          }
          
@@ -562,7 +562,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              
             if (!project.cellGroupsInfo.getAllCellGroupNames().contains(currentPopulation) && (level3))
             {
-                logger.logComment("groupCellType: "+groupCellType+", renamedCells: "+renamedCells, true);
+                logger.logComment("groupCellType: "+groupCellType+", renamedCells: "+renamedCells);
                 if (renamedCells.containsKey(groupCellType))
                 {
                      groupCellType = renamedCells.get(groupCellType);
@@ -1135,7 +1135,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                   if (getCurrentElement().equals(MorphMLConstants.CELL_ELEMENT))
                   {
                       
-                  logger.logComment("FINISHED CELL STRING for "+cellName+":\n"+cellBuffer, true);
+                  logger.logComment("FINISHED CELL STRING for "+cellName+":\n"+cellBuffer);
                   insideCell = false;
                   SimpleXMLDocument doc = new SimpleXMLDocument();
                   SimpleXMLElement rootElement = null;
@@ -1490,7 +1490,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              else
              {
                 insideAnnotation = false;
-                logger.logComment("FINISHED ANNOTATION STRING: \n"+annotationString, true);
+                logger.logComment("FINISHED ANNOTATION STRING: \n"+annotationString);
                 XMLDecoder xmlDecoder = null;
                 ByteArrayInputStream baos = null;               
                 try
@@ -1511,7 +1511,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                      /* --  Reading Basic Info -- */
                     if  (nextReadObject instanceof BasicProjectInfo)
                     {
-                        logger.logComment("Found BasicProjectInfo object in level3 file annotation...", true);
+                        logger.logComment("Found BasicProjectInfo object in level3 file annotation...");
                         BasicProjectInfo bpi = (BasicProjectInfo) nextReadObject;
 
                         project.setProjectDescription(bpi.getProjectDescription());

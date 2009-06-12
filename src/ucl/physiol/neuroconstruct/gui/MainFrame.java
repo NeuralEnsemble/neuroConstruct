@@ -13575,7 +13575,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                 try
                                 {
                                     cmlMech.reset(projManager.getCurrentProject(), false);
-                                    logger.logComment("New cml mech: "+ cmlMech, true);
+                                    logger.logComment("New cml mech: "+ cmlMech);
                                 }
                                 catch (Exception ex)
                                 {

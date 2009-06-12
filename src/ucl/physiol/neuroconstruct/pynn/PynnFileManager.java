@@ -1037,7 +1037,7 @@ public class PynnFileManager
 
                 rt.exec(commandToExecute);
 
-                logger.logComment("Have executed command: " + commandToExecute/*+" in woriking dir: "+ dirToRunFrom*/, true);
+                logger.logComment("Have executed command: " + commandToExecute/*+" in woriking dir: "+ dirToRunFrom*/);
 
             }
             else

@@ -201,7 +201,7 @@ public class MorphMLReader extends XMLFilterImpl
                  currentVariableParamGroup = contents;
 
 
-                 logger.logComment("Found new group: "+currentVariableParamGroup +" for "+ currentVariableParam +" (currentMechName: "+ currentMechName+")", true);
+                 logger.logComment("Found new group: "+currentVariableParamGroup +" for "+ currentVariableParam +" (currentMechName: "+ currentMechName+")");
 
              }
 
@@ -664,11 +664,11 @@ public class MorphMLReader extends XMLFilterImpl
          }
          else if (getCurrentElement().equals(BiophysicsConstants.VAR_PARAMETER_ELEMENT))
          {
-             logger.logComment("Found new variable biophysics parameter", true);
+             logger.logComment("Found new variable biophysics parameter");
 
              currentVariableParam = attributes.getValue(BiophysicsConstants.PARAMETER_NAME_ATTR);
 
-             logger.logComment("Found new parameter: "+ currentVariableParam+" for "+ getAncestorElement(1) +" (currentMechName: "+ currentMechName+")", true);
+             logger.logComment("Found new parameter: "+ currentVariableParam+" for "+ getAncestorElement(1) +" (currentMechName: "+ currentMechName+")");
 
          }
 
@@ -707,7 +707,7 @@ public class MorphMLReader extends XMLFilterImpl
              }
 
 
-             logger.logComment("Found new inhomog parameter: "+ paramName+", paramVal: "+ paramVal+" for "+ currentVariableParam +" on: "+ currentVariableParamGroup, true);
+             logger.logComment("Found new inhomog parameter: "+ paramName+", paramVal: "+ paramVal+" for "+ currentVariableParam +" on: "+ currentVariableParamGroup);
 
              ParameterisedGroup pgToUse = null;
              for (ParameterisedGroup pg: cell.getParameterisedGroups())
@@ -717,7 +717,7 @@ public class MorphMLReader extends XMLFilterImpl
                      pgToUse = pg;
                  }
              }
-             logger.logComment("Using: "+pgToUse, true);
+             logger.logComment("Using: "+pgToUse);
             try
             {
                 ArrayList<Argument> expressionArgs =  new ArrayList<Argument>();

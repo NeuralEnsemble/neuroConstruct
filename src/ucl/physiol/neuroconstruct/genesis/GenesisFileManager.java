@@ -154,7 +154,7 @@ public class GenesisFileManager
 
         File dirForGenesisFiles = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory().getCanonicalFile());
 
-        logger.logComment("Starting generation of the files into: "+dirForGenesisFiles+", exists: "+dirForGenesisFiles.exists(), true);
+        logger.logComment("Starting generation of the files into: "+dirForGenesisFiles+", exists: "+dirForGenesisFiles.exists());
 
 
         File utilsFile = ProjectStructure.getGenesisUtilsFile();

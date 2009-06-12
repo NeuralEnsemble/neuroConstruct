@@ -903,7 +903,7 @@ public class PsicsFileManager
 
                 rt.exec(commandToExecute);
 
-                logger.logComment("Have executed command: " + commandToExecute/*+" in woriking dir: "+ dirToRunFrom*/, true);
+                logger.logComment("Have executed command: " + commandToExecute/*+" in woriking dir: "+ dirToRunFrom*/);
 
             }
             else
@@ -1039,7 +1039,7 @@ public class PsicsFileManager
                             String command = browserPath + " " + resultsHtml.toURI();
                             //String command2 = browserPath + " " + resultsHtml.toURI();
 
-                            logger.logComment("Going to execute command: " + command, true);
+                            logger.logComment("Going to execute command: " + command);
 
                             try
                             {

@@ -96,7 +96,7 @@ public class SimulationsInfo extends AbstractTableModel
 
             public void comment(String comment)
             {
-                logger.logComment("ProcessFeedback comment: "+comment, true);
+                logger.logComment("ProcessFeedback comment: "+comment);
             }
 
             public void error(String comment)
@@ -173,11 +173,11 @@ public class SimulationsInfo extends AbstractTableModel
                     try
                     {
                         String res = ProcessManager.runCommand(pullRemoteScript.getAbsolutePath(), pf, 3000);
-                        logger.logComment("Result of executing pullRemoteScript file: " + pullRemoteScript+": "+ res, true);
+                        logger.logComment("Result of executing pullRemoteScript file: " + pullRemoteScript+": "+ res);
                     }
                     catch (Exception ex)
                     {
-                        logger.logComment("Error running: "+ pullRemoteScript+ex, true);
+                        logger.logComment("Error running: "+ pullRemoteScript+ex);
                     }
                 }
 

@@ -383,7 +383,7 @@ public class NumberGeneratorDialog extends JDialog
 
     void doOK()
     {
-        logger.logComment("OK pressed...", true);
+        logger.logComment("OK pressed...");
 
         if (jRadioButtonFloat.isSelected())
         {
@@ -478,7 +478,7 @@ public class NumberGeneratorDialog extends JDialog
 
 
                     weiGen.initialiseAsFunction(exp, jChekBoxSomaToSoma.isSelected());
-                    logger.logComment("New weight gen: " + weiGen, true);
+                    logger.logComment("New weight gen: " + weiGen);
 
 
                 } catch (EquationException ex) {
@@ -582,7 +582,7 @@ public class NumberGeneratorDialog extends JDialog
 
 
                     weiGen.initialiseAsFunction(exp, jChekBoxSomaToSoma.isSelected());
-                    logger.logComment("New weight gen: " + weiGen, true);
+                    logger.logComment("New weight gen: " + weiGen);
 
 
                 } catch (EquationException ex) {
