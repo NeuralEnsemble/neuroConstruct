@@ -4100,8 +4100,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         jMenuProject.add(jMenuItemGenGenesis);
         
-        if (PsicsFileManager.showPsicsFunc())
-            jMenuProject.add(jMenuItemGenPsics);
+        jMenuProject.add(jMenuItemGenPsics);
         
         
 
@@ -4126,14 +4125,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTabbedPaneNeuron.add(jPanelNeuronExtraHoc, NEURON_TAB_EXTRA);
         jTabbedPaneExportFormats.add(jPanelExportGenesis, GENESIS_SIMULATOR_TAB);
         
-        if (PsicsFileManager.showPsicsFunc())
-            jTabbedPaneExportFormats.add(jPanelExportPsics, PSICS_SIMULATOR_TAB);
+        jTabbedPaneExportFormats.add(jPanelExportPsics, PSICS_SIMULATOR_TAB);
         
-        if (PynnFileManager.enablePynnFunc())
-        {
-            jTabbedPaneExportFormats.add(jPanelExportPynn, PYNN_SIMULATOR_TAB);
-            jMenuProject.add(jMenuItemGenPynn);
-        }
+
+        jTabbedPaneExportFormats.add(jPanelExportPynn, PYNN_SIMULATOR_TAB);
+        jMenuProject.add(jMenuItemGenPynn);
+  
         
         jMenuProject.addSeparator();
         jMenuProject.add(jMenuItemPrevSims);
@@ -11990,10 +11987,20 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         if (!recentFile.exists())
         {
-            GuiUtils.showErrorMessage(logger, "The file: "+recentFileName+" doesn't exist...", null, this);
-            recentFiles.removeFromList(recentFile);
-            refreshAll();
-            return;
+            String tryFilename = GeneralUtils.replaceAllTokens(recentFileName, "neuro.xml", "ncx");
+            File recentncxFile = new File(tryFilename);
+            
+            if(recentncxFile.exists())
+            {
+                recentFile = recentncxFile;
+            }
+            else
+            {
+                GuiUtils.showErrorMessage(logger, "The file: "+recentFileName+" doesn't exist...", null, this);
+                recentFiles.removeFromList(recentFile);
+                refreshAll();
+                return;
+            }
         }
 
         boolean continueClosing = checkToSave();
@@ -12182,8 +12189,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     
     void  jMenuItemImportLevel123_actionPerformed(ActionEvent e)
     {
-        logger.logComment("Loading a previously generated network...");
-
+        logger.logComment("Loading elements from NeuroML files levels 1-3...");
 
         if (projManager.getCurrentProject() == null)
         {
@@ -12360,7 +12366,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         chooser.setAccessory(addedPanel);
 
-        int retval = chooser.showDialog(this, "Choose network");
+        int retval = chooser.showDialog(this, "Choose NeuroML file");
 
         if (retval == JOptionPane.OK_OPTION)
         {

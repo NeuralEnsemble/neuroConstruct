@@ -2,6 +2,56 @@ Release notes/change log for neuroConstruct
 
 See also the README file
 
+--------- Version 1.3.0 (June 09) ---------
+
+- Changed default project extension to ncx. Now it's easire to associate this file type with nC.bat/nC.sh for quick opening of neuroConstruct  
+  projects by (double) clicking on project file in file explorer. However, it may still be better to start nC in a terminal/shell
+  as any error console output will be caught if there is a problem and the application closes.
+
+- Option in Plot Frame when one or more Data Sets being plotted to generate python files which will allow a high resolution PDF, ESP, png of 
+  the data to be created. Requires install of matplotlib (http://matplotlib.sourceforge.net/).
+ 
+- Added (long overdue) option for "silent mod file compilation", e.g. no pop up confirmation etc. when mod files are compiled on Windows.
+
+- Improved import & export of NeuroML, incl Variable Parameters & inhomogenous channel densities. Added option File -> Import NeuroML Levels 1-3, to have all of the 
+  cells, channels, synapses and networks found in a Level 1-3 file imported, possibly into a new project. Also added option (at tab Export -> NeuroML) to include in annotation 
+  in Level 3 file details of neuroConstruct specific objects, to allow easy import of associates plots, sim configs etc. into a new nC project, using a valid Level 3 file 
+  (note: other applications which parse this file will ignore this info, and just get the cell, populations, etc.)
+
+- Reset absolute refractory period for ***NETWORK CONNECTIONS IN GENESIS*** from 10ms to 1ms. May cause functionality change in some networks on GENESIS!!! 
+  But should make net behaviour more similar to NEURON
+
+- Added 2 new options for electrical input to cells: variable current clamp (e.g. ramped input current or sinusoidal input) & variable spike input rate. A generic 
+  function of time can be provided for the input amplitude or the input spike rate. Both of these are only available for NEURON currently.
+
+- Added warning every 10th startup if logging to file is turned on as it can lead to v big log file dir.
+
+- Added some more expressions for equation parser incl sqrt(x) and Heaviside function
+
+- Added option for minimum radius of segments displayed in 3D. Improves 3D display of large cells with thin dendrites
+
+- Updated a number of the example files for controlling nC projects through Python. Generates/runs GENESIS projects now too.
+
+- Added option to add all sections in existing groups (e.g. basal_dendrites, oblique_dendites) to new groups (e.g. basal_plus_obliques) as opposed to having
+  to add all sections individually
+
+- Allowed plotting of a specified max number of cells (e.g. 5# for up to 5 cells in a group)
+
+- Added a number of other options for plotting Data Sets: crosses (x), thicker lines
+
+- Added "MOOSE test mode" option in GENESIS tab. Note: there are known problems with this at the moment!
+
+- Restructured how cell initial potentials are generated so when initial pot of cells in group != fixed num, NEURON & GENESIS use the same set of values
+
+- Improved plotting of internals of ChannelML files when there is a tempreature dependence (q10/generic expressions)
+
+- Improved PSICS export functionality. See nCexamples\Ex7_PSICSDemo for example
+
+- Improved PyNN export functionality. See nCexamples\Ex8_PyNNDemo for example of what is currently supported. Only tested on Linux so far.
+
+- Better support for running on KDE4 & Macs. Min Java version required is 1.5 again, doue to some lack of support for 1.6 on Macs. 
+
+
 --------- Version 1.2.2 (Jan 09) ---------
 
 -  Restructured main examples to 2 new dirs: nCexamples for non anatomical examples used to illustrate 

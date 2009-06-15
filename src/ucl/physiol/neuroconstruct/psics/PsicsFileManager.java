@@ -122,15 +122,7 @@ public class PsicsFileManager
         //addComments = project.psicsSettings.isGenerateComments();
     }
     
-    
-    public static boolean showPsicsFunc()
-    {
-        return (GeneralProperties.getPsicsJar()!=null && GeneralProperties.getPsicsJar().trim().length()>0);
-    }
-
-
-
-
+  
     public void generateThePsicsFiles(SimConfig simConfig,
                                         int seed) throws PsicsException, IOException
     {

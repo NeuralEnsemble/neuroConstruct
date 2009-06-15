@@ -412,6 +412,11 @@ public class GeneratedElecInputs
                     inputElement.addChildElement(inputTypeElement);
                     inputElement.addContent("\n        ");
                 }
+                else
+                {
+                    throw new NeuroMLException("Error trying to save input "+inputReference+". Cannot save in NeuroML an input of type: "+ myElectricalInput.getType());
+
+                }
                 
                 SimpleXMLElement inputTargetElement = new SimpleXMLElement(NetworkMLConstants.INPUT_TARGET_ELEMENT);
                 

@@ -1283,7 +1283,7 @@ public class ProjectManager implements GenerationReport
         {
             logger.logError("Problem creating NeuroML file: "   + neuroMLFile.getAbsolutePath(), ex);
             
-            throw new NeuroMLException("Problem creating NeuroML file: "  + neuroMLFile.getAbsolutePath(), ex);
+            throw new NeuroMLException("Problem creating NeuroML file: "  + neuroMLFile.getAbsolutePath()+"\n"+ex.getMessage(), ex);
         }
         
     }
@@ -1449,7 +1449,7 @@ public class ProjectManager implements GenerationReport
         {
             logger.logError("Problem creating NeuroML file: "   + neuroMLFile.getAbsolutePath(), ex);
             
-            throw new NeuroMLException("Problem creating NeuroML file: "  + neuroMLFile.getAbsolutePath(), ex);
+            throw new NeuroMLException("Problem creating NeuroML file: "  + neuroMLFile.getAbsolutePath()+"\n"+ex.getMessage(), ex);
         }
     }
     

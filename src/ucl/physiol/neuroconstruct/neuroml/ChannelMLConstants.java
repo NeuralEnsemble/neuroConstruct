@@ -157,7 +157,12 @@ public class ChannelMLConstants
     public static String ION_CONC_FIXED_POOL_PHI_ELEMENT = "phi";
 
     public static String CURR_VOLT_REL_ELEMENT = "current_voltage_relation";
-    
+
+    public static String Q10_SETTINGS_ELEMENT = "q10_settings";
+    public static String Q10_SETTINGS_GATE_ATTR = "gate";
+    public static String Q10_SETTINGS_FACTOR_ATTR = "q10_factor";
+    public static String Q10_SETTINGS_FIXED_FACTOR_ATTR = "fixed_q10";
+    public static String Q10_SETTINGS_TEMP_ATTR = "experimental_temp";    
     
     public static String COND_LAW_ATTR = "cond_law";
 
@@ -459,6 +464,11 @@ public class ChannelMLConstants
     public static String getCurrVoltRelXPath()
     {
         return getChannelTypeXPath() + "/" + CURR_VOLT_REL_ELEMENT;
+    }
+
+    public static String getQ10SettingsXPath()
+    {
+        return getCurrVoltRelXPath() + "/" + Q10_SETTINGS_ELEMENT;
     }
 
     public static String getPostV1_7_3GatesXPath()

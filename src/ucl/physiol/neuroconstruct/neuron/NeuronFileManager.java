@@ -1815,7 +1815,6 @@ public class NeuronFileManager
 
                     else if (nextInput.getElectricalInputType().equals(RandomSpikeTrainExt.TYPE))
                     {
-
                         String stimObjectName = "NetStimExt";
                         String stimObjectFilename = ProjectStructure.getModTemplatesDir().getAbsolutePath()+"/"+ stimObjectName + ".mod";
 
@@ -1957,7 +1956,6 @@ public class NeuronFileManager
 
                     else if (nextInput.getElectricalInputType().equals(RandomSpikeTrainVariable.TYPE))
                     {
-
                         String stimObjectFilename = ProjectStructure.getModTemplatesDir().getAbsolutePath()+"/"+ RAND_STIM_VAR_MOD;
                         String stimObjectName = RAND_STIM_VAR_MOD.substring(0, RAND_STIM_VAR_MOD.indexOf(".mod"));
 
@@ -2894,6 +2892,14 @@ public class NeuronFileManager
                         else if (next instanceof RandomSpikeTrainExtSettings)
                         {
                             RandomSpikeTrainExtSettings spikeSettings = (RandomSpikeTrainExtSettings) next;
+                            if (!cellMechanisms.contains(spikeSettings.getSynapseType()))
+                            {
+                                cellMechanisms.add(spikeSettings.getSynapseType());
+                            }
+                        }
+                        else if (next instanceof RandomSpikeTrainVariableSettings)
+                        {
+                            RandomSpikeTrainVariableSettings spikeSettings = (RandomSpikeTrainVariableSettings) next;
                             if (!cellMechanisms.contains(spikeSettings.getSynapseType()))
                             {
                                 cellMechanisms.add(spikeSettings.getSynapseType());
@@ -4629,28 +4635,22 @@ public class NeuronFileManager
                 {
                     logger.logComment("Assuming Windows environment...");
                     
-                    neuronExecutable = locationOfNeuron
-                        + System.getProperty("file.separator")
-                        + "bin"
-                        + System.getProperty("file.separator")
-                        + "neuron.exe";
+                    neuronExecutable = locationOfNeuron + System.getProperty("file.separator")
+                        + "bin" + System.getProperty("file.separator") + "neuron.exe";
                     
                     String filename = getHocFriendlyFilename(mainHocFile.getAbsolutePath());
 
                     if (filename.indexOf(" ")>=0)
                     {
                         GuiUtils.showErrorMessage(logger, "Error. The full name of the file to execute in NEURON: "+filename
-                                                  +" contains a space. This will throw an error in NEURON.\n Was the code created in a directory containing a space in its name?", null, null);
-
+                                                  +" contains a space. This will throw an error in NEURON." +
+                                                  "\n Was the code created in a directory containing a space in its name?", null, null);
                     }
 
                     fullCommand = GeneralProperties.getExecutableCommandLine() + " "
                     	+ neuronExecutable + " "+filename;
-                  
-
 
                     File dirToRunIn = dirForDataFiles;
-
 
                     String scriptText = "cd "+dirToRunIn.getAbsolutePath()+"\n";
                   
@@ -4661,12 +4661,9 @@ public class NeuronFileManager
                     fw.write(scriptText);
                     fw.close();
 
-                    logger.logComment("Going to execute command: " + fullCommand + " in dir: " +
-                                      dirToRunIn);
-
+                    logger.logComment("Going to execute command: " + fullCommand + " in dir: " + dirToRunIn);
 
                     rt.exec(fullCommand, null, dirToRunIn);
-                    
 
                     logger.logComment("Have executed command: " + fullCommand + " in dir: " +
                                       dirToRunIn);

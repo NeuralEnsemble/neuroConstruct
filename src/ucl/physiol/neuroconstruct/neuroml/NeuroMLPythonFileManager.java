@@ -147,7 +147,8 @@ public class NeuroMLPythonFileManager
                                                           simConf.getName(),
                                                           NetworkMLConstants.UNITS_PHYSIOLOGICAL);
                 } catch (NeuroMLException ex) {
-                     GuiUtils.showErrorMessage(logger, "Problem saving complete network in NeuroML", ex, null);
+                     GuiUtils.showErrorMessage(logger, "Problem saving complete network in NeuroML:\n" +
+                         ""+ex.getMessage(), ex, null);
                 }
             }
 

@@ -67,16 +67,6 @@ public class PynnFileManager
     File dirForPynnFiles = null;
 
     
-    /*
-     * Note: PyNN functionality is in testing stage and this will quickly turn off 
-     * PyNN support in the GUI for releasable versions
-     */
-    public static boolean enablePynnFunc()
-    {
-        //return false;
-        return true;
-    }
-    
     public enum PynnSimulator 
     {
         NEURON  ("NEURON", "neuron"),
@@ -1011,15 +1001,8 @@ public class PynnFileManager
             //String executable = null;
             
             String pyEx = "python -i";
-            /*
-            if (simulator.equals(PynnSimulator.NEURON))
-            {
-                pyEx = "nrniv -python";
-            }*/
-            
+
             File fullFileToRun = new File(dirToRunFrom, mainFile.getName());
-            
-            
             
             String title = "PyNN_"+simulator.moduleName+"__" + project.simulationParameters.getReference();
             
@@ -1033,11 +1016,12 @@ public class PynnFileManager
                 
                 commandToExecute = "cmd /K start \""+title+"\"  " +  pyEx +setDir+" "+fullFileToRun;
 
+
                 logger.logComment("Going to execute command: " + commandToExecute);
 
-                rt.exec(commandToExecute);
+                rt.exec(commandToExecute, null, dirToRunFrom);
 
-                logger.logComment("Have executed command: " + commandToExecute/*+" in woriking dir: "+ dirToRunFrom*/);
+                logger.logComment("Have executed command: " + commandToExecute+" in woriking dir: "+ dirToRunFrom);
 
             }
             else

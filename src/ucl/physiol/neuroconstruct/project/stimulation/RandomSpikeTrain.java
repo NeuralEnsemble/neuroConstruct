@@ -26,7 +26,6 @@
 
 package ucl.physiol.neuroconstruct.project.stimulation;
 
-import ucl.physiol.neuroconstruct.gui.ClickLink;
 import ucl.physiol.neuroconstruct.gui.ClickProjectHelper;
 import ucl.physiol.neuroconstruct.utils.NumberGenerator;
 
@@ -49,10 +48,10 @@ public class RandomSpikeTrain extends ElectricalInput
      * This is a NumberGenerator so that, say, if all cells in a cell group have this stim,
      * they can all have a fixed rate, or a random/gaussian set of rates, etc.
      */
-    public NumberGenerator rate = null;
-    public float noise;
+    private NumberGenerator rate = null;
+    private float noise;
     
-    public String synapseType = null;
+    private String synapseType = null;
 
     public RandomSpikeTrain()
     {

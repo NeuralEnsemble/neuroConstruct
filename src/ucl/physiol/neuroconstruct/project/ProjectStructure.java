@@ -49,7 +49,7 @@ public class ProjectStructure
     {
     }
     
-    private static final String updateCheckUrl = "http://www.physiol.ucl.ac.uk/research/silver_a/nCinfo/form.php?myversion=";
+    private static final String updateCheckUrl = "http://www.neuroConstruct.org/nCinfo/form.php?myversion=";
 
     private static final String oldProjectFileExtension = new String(".neuro.xml");
     
