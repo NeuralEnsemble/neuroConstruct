@@ -17,7 +17,7 @@
 but there is more interaction from the operating system security features (see note below). </p>
 
 <p>neuroConstruct will run on most machines with a video card and which can run Java and Java3D. For networks/cells with >5000 total segments,
-you'll need a fairly recent machine, and the more RAM and graphics memory, the better; 1GB RAM and 128MB graphics is usually fine, higher is better. 
+you'll need a fairly modern machine, and the more RAM and graphics memory, the better; 1GB RAM and 128MB graphics is usually fine, higher is better. 
 See <a href="Glossary_gen.html#3D View of Cells">here</a> for tips on improving graphics performance on slower machines.<br/></p>
 
 

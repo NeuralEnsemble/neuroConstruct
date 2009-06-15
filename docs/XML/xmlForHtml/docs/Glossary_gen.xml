@@ -1107,7 +1107,9 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
 </p>
 </a><span>
 <p>All files in a neuroConstruct <a href="#Project">Project</a> (morphology files, simulation data, etc.) can be zipped up into a
-    single file for easy distribution/backup</p>
+    single file for easy distribution/backup. To create a zipped neuroConstruct project select <strong>File -&gt; Zip this Project...</strong> and to
+    automatically unzip and open a file created in this way, select <strong>File -&gt; Import Zipped Project...</strong>
+</p>
 </span>
 <p style="font-size: 11">
 <a href="#top">index</a>

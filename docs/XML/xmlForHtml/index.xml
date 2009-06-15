@@ -19,12 +19,16 @@ title="Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, 
       <p>&nbsp;</p>
     <section>
       <title>Introduction</title>
-      <p>neuroConstruct has been developed in the <a href="http://www.physiol.ucl.ac.uk/research/silver_a/">Silver Lab</a> in the Department of Physiology at
+      <p>neuroConstruct is being developed in the <a href="http://www.ucl.ac.uk/npp/as">Silver Lab</a> in the
+      
+      <a href="http://www.ucl.ac.uk/npp/">Department of Neuroscience, Physiology and Pharmacology</a> at
           <a href="http://www.ucl.ac.uk">UCL</a>. neuroConstruct has been designed to simplify development of complex networks
           of biologically realistic neurons, i.e. models incorporating dendritic morphologies and realistic cell membrane conductances.
       It is implemented in Java and generates script files for the <a  href="docs/Glossary_gen.html#NEURON">NEURON</a> and
-      <a  href="docs/Glossary_gen.html#GENESIS">GENESIS</a> simulators. It uses the latest <a href="docs/Glossary_gen.html#NeuroML">NeuroML</a> specifications,
+      <a  href="docs/Glossary_gen.html#GENESIS">GENESIS</a> simulators, with support for other simulation platforms (including <a  href="http://www.psics.org">PSICS</a> and <a href="http://neuralensemble.org/trac/PyNN">PyNN</a>) in development. It uses the latest <a href="docs/Glossary_gen.html#NeuroML">NeuroML</a> specifications,
       including <a href="docs/Glossary_gen.html#MorphML">MorphML</a>, <a href="docs/Glossary_gen.html#ChannelML">ChannelML</a> and <a href="docs/Glossary_gen.html#NetworkML">NetworkML</a>.</p>
+
+      <p>Development of this software was made possible with funding from the <a href="http://www.mrc.ac.uk/">Medical Research Council</a> and the <a href="http://www.wellcome.ac.uk/">Wellcome Trust</a>.</p>
     </section>
 
 

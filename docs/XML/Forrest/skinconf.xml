@@ -29,7 +29,7 @@ which will be used to configure the chosen Forrest skin.
     no search box. @domain will enable sitesearch for the specific domain with google.
     In other words google will search the @domain for the query string.
   -->
-  <search name="UCL Physiology" domain="http://www.physiol.ucl.ac.uk/research/silver_a/" provider="google"/>
+  <search name="neuroConstruct" domain="http://www.neuroConstruct.org" provider="google"/>
 
   <!-- Disable the print link? If enabled, invalid HTML 4.0.1 -->
   <disable-print-link>true</disable-print-link>  
@@ -98,7 +98,7 @@ which will be used to configure the chosen Forrest skin.
     For some skins just set the attributes to blank.
 -->
   <trail location = "alt">
-    <link1 name="UCL Physiology" href="http://www.physiol.ucl.ac.uk"/>
+    <link1 name="neuroConstruct" href="http://www.neuroConstruct.org"/>
   </trail> 
  
   <!-- Configure the TOC, i.e. the Table of Contents.
