@@ -2519,12 +2519,7 @@ public class NeuronFileManager
             String prefix = "";
             String post = "";
 
-            if (simConfig.getMpiConf().isParallelNet())
-            {
-                prefix = "    ";
-                post = "}" + "\n";
-                response.append("if (hostid == 0) {\n");
-            }
+    
 
 
 
