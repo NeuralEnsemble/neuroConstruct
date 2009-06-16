@@ -2540,7 +2540,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         logger.logComment("Hi y: "+ highestYToShow+ ", lo y: "+ lowestYToShow);
         logger.logComment("Hi z: "+ highestZToShow+ ", lo z: "+ lowestZToShow);
 
-        logger.logComment("viewPoint from cell perspective: "+ viewPoint);
+        logger.logComment("viewPoint Main3D from cell perspective: "+ viewPoint);
         viewPoint.scale(optimalScale);
 
         logger.logComment("viewPoint scaled: "+ viewPoint);

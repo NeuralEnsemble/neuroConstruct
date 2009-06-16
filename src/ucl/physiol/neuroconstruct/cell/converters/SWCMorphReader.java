@@ -51,13 +51,17 @@ public class SWCMorphReader extends FormatImporter
 
     private boolean daughtersOfSomaInherit = false;
     private boolean includeAnatFeatures = false;
+
+    private boolean removeDuplicatedPoints = true;
     
     private int compTypeCutoff = 10;
     
     private int compTypeSoma = 1;
     private String somaSectionName = "Soma";
     private String somaExtraSecPrefix = "ExtraSomaSec_";
-    
+
+    private ArrayList<PointInfo> somaPoints = new ArrayList<PointInfo>();
+    private ArrayList<PointInfo> otherPoints = new ArrayList<PointInfo>();
 
     // To mimic the cvapp/neurolucida colours..
     
@@ -75,6 +79,7 @@ public class SWCMorphReader extends FormatImporter
         super("SWCMorphReader",
                             "Importer of SWC (Cvapp format) files",
                             new String[]{".swc"});
+
     }
 
 
@@ -96,15 +101,10 @@ public class SWCMorphReader extends FormatImporter
             String nextLine = null;
             int lineCount = 0;
 
-            //Hashtable<String, Segment> namesVsSegments = new Hashtable<String, Segment>();
-            
-            //Segment firstSomaSeg = null;
-            
-            //String ignoredSecondSomaComp = null;
 
-            ArrayList<PointInfo> somaPoints = new ArrayList<PointInfo>();
-            ArrayList<PointInfo> otherPoints = new ArrayList<PointInfo>();
-
+            //Point4f prevPoint = null;
+            //String prevPointName = null;
+            Hashtable<String, String> repeatedPointAliases = new Hashtable<String, String>();
             
             while ( (nextLine = lineReader.readLine()) != null)
             {
@@ -113,6 +113,7 @@ public class SWCMorphReader extends FormatImporter
                 nextLine = nextLine.trim();
                 
                 logger.logComment("Looking at line num " + lineCount + ": " + nextLine);
+
 
                 if (nextLine.startsWith("#"))
                 {
@@ -144,7 +145,10 @@ public class SWCMorphReader extends FormatImporter
                         float yCoord = Float.parseFloat(GeneralUtils.replaceAllTokens(items[3], ",", ""));
                         float zCoord = Float.parseFloat(GeneralUtils.replaceAllTokens(items[4], ",", ""));
                         float radius = Float.parseFloat(GeneralUtils.replaceAllTokens(items[5], ",", ""));
-                        
+
+                        Point3f p = new Point3f(xCoord, yCoord, zCoord);
+                        //Point4f point = new Point4f(xCoord, yCoord, zCoord, radius);
+
                         int sectionType = -1;
                         
                         try
@@ -157,183 +161,57 @@ public class SWCMorphReader extends FormatImporter
                         }
 
                         logger.logComment("Line indicating type: "+ sectionType);
-                        
-                        if (sectionType==compTypeSoma)
+
+                        if (repeatedPointAliases.keySet().contains(parentName))
                         {
-                            PointInfo pi = new PointInfo(new Point3f(xCoord, yCoord, zCoord),
-                                    sectionType, radius, segmentName, parentName);
-                            
-                            somaPoints.add(pi);
-                            
-                        } 
-                        else if (includeAnatFeatures || sectionType<compTypeCutoff)
-                        {
-                            PointInfo pi = new PointInfo(new Point3f(xCoord, yCoord, zCoord),
-                                    sectionType, radius, segmentName, parentName);
-                            
-                            otherPoints.add(pi);
+                            parentName = repeatedPointAliases.get(parentName);
                         }
 
-                        /*
-                        Segment newSeg = null;
+                        boolean includePoint = true;
                         
-                        if (includeAnatFeatures || sectionType<compTypeCutoff)
+                        if (removeDuplicatedPoints && parentName!=null)
                         {
-                            if (!hasParent)
+                            boolean checkParent = true;
+                            String parentToCheck = parentName;
+
+                            while(checkParent)
                             {
-                                logger.logComment("Adding first soma seg");
-                                
-                                newSeg = cell.addFirstSomaSegment(radius,
-                                                radius,
-                                                segmentName,
-                                                new Point3f(xCoord,
-                                                            yCoord,
-                                                            zCoord),
-                                                new Point3f(xCoord,
-                                                            yCoord,
-                                                            zCoord),
-                                                new Section(somaSectionName));
-                                
-                                newSeg.getSection().addToGroup(Section.SOMA_GROUP);
-                                newSeg.getSection().addToGroup(somaColourGroup);
-                                
-                                newSeg.setComment("Soma added as a sphere, based on single somatic compartment at line "+lineCount
-                                        +", line: "+origLine);
-    
-                                namesVsSegments.put(segmentName, newSeg);
-
-                                logger.logComment("Soma seg: "+ newSeg);
-                                
-                                firstSomaSeg = newSeg;
-    
-                            }
-                            else
-                            {
-                                Segment parSegment = (Segment) namesVsSegments.get(parentName);
-                                
-                                float connectionPoint = 1;
-                                
-                                if (parentName.equals(ignoredSecondSomaComp))
+                                PointInfo parInfo = getPointInfo(parentToCheck);
+                                if (parInfo!=null && parInfo.xyz.equals(p) /*&& parInfo.radius==radius*/)
                                 {
-                                    parSegment = firstSomaSeg;
-                                    connectionPoint = 1;
-                                }
-                                else if (parentName.equals(firstSomaSeg.getSegmentName()))
-                                {
-                                    connectionPoint = 0;
-                                }
-
-                                String sectionName = "Sec_"+segmentName;
-                                
-                                if (sectionType == compTypeSoma)
-                                {
-                                    sectionName = somaSectionName;
-                                }
-                                
-                                
-                                boolean inheritRadius = true;
-                                
-                                if (parSegment.isSomaSegment() 
-                                        && sectionType!=compTypeSoma)         // i.e. not a sub segment of soma
-                                {
-                                   inheritRadius = daughtersOfSomaInherit;
-                                }
-                                
-                                if (parSegment.isSomaSegment() 
-                                        && sectionType==compTypeSoma
-                                        && parSegment.isSpherical())         // i.e. multi comp soma
-                                {
-                                    ignoredSecondSomaComp = segmentName;
-                                    
-                                    // replacing spherical soma with 2nd point of initial seg
-                                    parSegment.setEndPointPositionX(xCoord);
-                                    parSegment.setEndPointPositionY(yCoord);
-                                    parSegment.setEndPointPositionZ(zCoord);
-                                    
-                                    parSegment.setRadius(radius);
-                                    
-                                    parSegment.setComment("First soma segment added based on first two swc lines/points with type "
-                                            +compTypeSoma+", as there is a multi compartment soma. Second point obtained from line: ("+origLine+")");
-                                    
-
-                                    //namesVsSegments.put(segmentName, parentSegment);
-                                    
-
-                                    logger.logComment("Now first soma seg: "+ parSegment);
-                                    
-                                    newSeg = parSegment;
+                                    //System.out.println("Improving parent of: "+segmentName+" at "+p+" from "+ parInfo);
+                                    includePoint = false;
+                                    repeatedPointAliases.remove(segmentName);
+                                    repeatedPointAliases.put(segmentName, parentToCheck);
+                                    parentToCheck = parInfo.parentName;
                                 }
                                 else
                                 {
-                                    newSeg
-                                        = cell.addDendriticSegment(radius,
-                                                                   segmentName,
-                                                                   new Point3f(xCoord,
-                                                                               yCoord,
-                                                                               zCoord),
-                                                                   parSegment,
-                                                                   1,
-                                                                   sectionName,
-                                                                   inheritRadius);
-                                    
-                                    newSeg.setFractionAlongParent(connectionPoint);
-                                    
-                                    namesVsSegments.put(segmentName, newSeg);
-                                    
-                                    logger.logComment("New seg: "+ newSeg);
-
+                                    checkParent = false;
                                 }
-    
-                                
-    
                             }
-                           
-    
-                            switch (sectionType)
-                            {
-                                case 0:
-                                    newSeg.getSection().addToGroup("undefined");
-                                    break;
-                                case 1:
-                                    newSeg.getSection().addToGroup(Section.SOMA_GROUP);
-                                    newSeg.getSection().addToGroup(somaColourGroup);
-                                    break;
-                                case 2:
-                                    newSeg.getSection().addToGroup(Section.AXONAL_GROUP);
-                                    newSeg.getSection().addToGroup(axonColourGroup);
-                                    
-                                    break;
-                                case 3:
-                                    newSeg.getSection().addToGroup(Section.DENDRITIC_GROUP);
-                                    newSeg.getSection().addToGroup(dendColourGroup);
-                                    break;
-                                case 4:
-                                    newSeg.getSection().addToGroup("apical_dendrite");
-                                    newSeg.getSection().addToGroup(dendApicalColourGroup);
-                                    break;
-                                case 5:
-                                    newSeg.getSection().addToGroup("custom-1");
-                                    newSeg.getSection().addToGroup(c1ColourGroup);
-                                    break;
-                                case 6:
-                                    newSeg.getSection().addToGroup("custom-2");
-                                    newSeg.getSection().addToGroup(c2ColourGroup);
-                                    break;
-                                case 7:
-                                    newSeg.getSection().addToGroup("custom-n");
-                                    newSeg.getSection().addToGroup(c3ColourGroup);
-                                    break;
-    
-                            }
-                            
-
-                            logger.logComment("New seg section: "+ newSeg.getSection());
-                            
-
-                            logger.logComment("Soma segs: "+ cell.getOnlySomaSegments());
                         }
-                        */
-                        
+                        if (includePoint)
+                        {
+                            //prevPoint = point;
+                            //prevPointName = segmentName;
+                            
+                            if (sectionType==compTypeSoma)
+                            {
+                                PointInfo pi = new PointInfo(p,
+                                        sectionType, radius, segmentName, parentName);
+
+                                somaPoints.add(pi);
+
+                            }
+                            else if (includeAnatFeatures || sectionType<compTypeCutoff)
+                            {
+                                PointInfo pi = new PointInfo(p,
+                                        sectionType, radius, segmentName, parentName);
+
+                                otherPoints.add(pi);
+                            }
+                        }
                         
                     }
                 }
@@ -344,6 +222,7 @@ public class SWCMorphReader extends FormatImporter
             }
 
             logger.logComment("somaPoints: "+ somaPoints);
+            logger.logComment("repeatedPointAliases: "+ repeatedPointAliases, true);
             
             
             Hashtable<String, Segment> origNamesVsSegments = new Hashtable<String, Segment>();
@@ -552,6 +431,21 @@ public class SWCMorphReader extends FormatImporter
 
         return cell;
     }
+
+    private PointInfo getPointInfo(String name)
+    {
+        for(int i=(otherPoints.size()-1);i>=0;i--) // backwards...
+        {
+            if (otherPoints.get(i).name.equals(name))
+                return otherPoints.get(i);
+        }
+        for(int i=(somaPoints.size()-1);i>=0;i--) // backwards...
+        {
+            if (somaPoints.get(i).name.equals(name))
+                return somaPoints.get(i);
+        }
+        return null;
+    }
     
     
     private void addGroups(Segment newSeg, int sectionType)
@@ -646,6 +540,7 @@ public class SWCMorphReader extends FormatImporter
             this.parentName = parentName;
         }
         
+        @Override
         public String toString()
         {
             return "PointInfo: "+ name+"("+parentName+")"
@@ -658,7 +553,8 @@ public class SWCMorphReader extends FormatImporter
 
         try
         {
-            File f = (new File("../temp/l22s.swc")).getCanonicalFile();
+            //File f = (new File("../temp/l22s.swc")).getCanonicalFile();
+            File f = (new File("../temp/enthoCNG.swc")).getCanonicalFile();
             //File f = (new File("../temp/c73162.CNG.swc")).getCanonicalFile();
             
             logger.logComment("loading cell...");
@@ -671,11 +567,12 @@ public class SWCMorphReader extends FormatImporter
 
 
             GeneralUtils.timeCheck("After loading swc");
-            
-            System.out.println(CellTopologyHelper.printDetails(swcCell, null));
+
+            System.out.println(CellTopologyHelper.getValidityStatus(swcCell));
             
             if (true) return;
 
+            System.out.println(CellTopologyHelper.printDetails(swcCell, null));
 
             GeneralUtils.timeCheck("After showing cell info...");
 

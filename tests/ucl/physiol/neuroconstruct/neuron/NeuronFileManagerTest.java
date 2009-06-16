@@ -131,14 +131,11 @@ public class NeuronFileManagerTest {
 
         Thread.sleep(wait);
         
-        
         SimulationData simData = new SimulationData(simDir, false);
         
         File timesFile = simData.getTimesFile();
         
-        
         Thread.sleep(wait); // Shouldn't take longer than this
-
 
         while (!timesFile.exists())
         {
@@ -147,6 +144,8 @@ public class NeuronFileManagerTest {
         }
         
         assertTrue(timesFile.exists());
+
+        System.out.println("Times file exists");
 
         Thread.sleep(wait); // Wait for all files to be written...
         
@@ -157,6 +156,7 @@ public class NeuronFileManagerTest {
             System.out.println("Waiting for data to be loaded");
             Thread.sleep(wait);
         }
+        Thread.sleep(wait);
         
         
         int numRecordings = simData.getCellSegRefs(false).size();

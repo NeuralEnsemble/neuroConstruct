@@ -2249,7 +2249,9 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         float largestXYExtent =  Math.max(20, Math.max(highestXToShow-lowestXToShow,
                                            highestYToShow-lowestYToShow));
 
-        float zCoordAfterScale = (largestXYExtent * 2) + highestZToShow;
+        //System.out.println("largestXYExtent: "+ largestXYExtent+", highestZToShow: "+ highestZToShow);
+
+        float zCoordAfterScale = (largestXYExtent * 2.2f) + highestZToShow;
 
         Transform3D t3d = new Transform3D();
         Vector3d viewPoint = new Vector3d(xCoordAfterScale,
@@ -2257,7 +2259,14 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                                           zCoordAfterScale);
 
         logger.logComment("viewPoint from cell perspective: "+ viewPoint);
-        viewPoint.scale(optimalScale);
+
+        float extra = 1;
+        if (largestXYExtent>2000)
+        {
+            //viewPoint.z = viewPoint.z +1000;
+            extra = 0.4f;
+        }
+        viewPoint.scale(optimalScale*extra);
 
         logger.logComment("viewPoint scaled: "+ viewPoint);
 
