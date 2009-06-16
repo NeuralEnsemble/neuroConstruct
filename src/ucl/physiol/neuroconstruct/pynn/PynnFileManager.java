@@ -70,6 +70,7 @@ public class PynnFileManager
     public enum PynnSimulator 
     {
         NEURON  ("NEURON", "neuron"),
+        NEST   ("NEST", "nest"),
         NEST2   ("NEST 2", "nest2"),
         PCSIM   ("PCSIM", "pcsim"),
         BRIAN   ("Brian", "brian"),

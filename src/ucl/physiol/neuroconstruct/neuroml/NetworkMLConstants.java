@@ -46,7 +46,7 @@ public class NetworkMLConstants
     public static String NAMESPACE_URI = "http://morphml.org/networkml/schema";
 
     //public static String DEFAULT_SCHEMA_FILENAME = "http://www.morphml.org:8080/NeuroMLValidator/NeuroMLFiles/Schemata/v1.7/Level3/NetworkML_v1.7.xsd";
-    public static String DEFAULT_SCHEMA_FILENAME = "NetworkML_v1.7.xsd";
+    public static String DEFAULT_SCHEMA_FILENAME = "NetworkML_v1.8.1.xsd";
     //public static String DEFAULT_SCHEMA_FILENAME = "http://localhost:8084/NeuroMLValidator/NeuroMLFiles/Schemata/v1.7.1/Level3/NetworkML_v1.7.1.xsd";
 
     public static String PREFIX = "net";
@@ -167,14 +167,16 @@ public class NetworkMLConstants
     
     public static String INPUT_TARGET_SITE_ELEMENT = "site";
     public static String INPUT_TARGET_CELLGROUP_ATTR = "cell_group";
-    
+
     public static String PULSEINPUT_ELEMENT = "pulse_input";
+    public static String PULSEINPUT_INSTANCE_ELEMENT = "pulse_input_instance";
 
     public static String INPUT_DELAY_ATTR = "delay";
     public static String INPUT_DUR_ATTR = "duration";
     public static String INPUT_AMP_ATTR = "amplitude";  
 
-    public static String RANDOMSTIM_ELEMENT = "random_stim";    
+    public static String RANDOMSTIM_ELEMENT = "random_stim";
+    public static String RANDOMSTIM_INSTANCE_ELEMENT = "random_stim_instance";
 
     public static String RND_STIM_FREQ_ATTR = "frequency";    
     public static String RND_STIM_MECH_ATTR = "synaptic_mechanism";

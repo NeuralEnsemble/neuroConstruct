@@ -434,15 +434,72 @@ public class GeneratedElecInputs
                 // Iterate around the list of sites
                 for (int i=0; i < inputsHere.size() ; i++)
                 {
-                        
                     inputTargetSitesElement.addContent("\n                ");
+
+                    SingleElectricalInput sei = inputsHere.get(i);
                     
                     SimpleXMLElement inputTargetSiteElement = new SimpleXMLElement(NetworkMLConstants.INPUT_TARGET_SITE_ELEMENT);
 
-                    inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_CELLID_ATTR, inputsHere.get(i).getCellNumber()+""));
-                    inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_SEGID_ATTR, inputsHere.get(i).getSegmentId()+""));
-                    inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_FRAC_ATTR, inputsHere.get(i).getFractionAlong()+""));                               
+                    inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_CELLID_ATTR, sei.getCellNumber()+""));
+                    inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_SEGID_ATTR, sei.getSegmentId()+""));
+                    inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_FRAC_ATTR, sei.getFractionAlong()+""));
                     inputTargetSitesElement.addChildElement(inputTargetSiteElement);
+
+                    if(sei.getInstanceProps()!=null)
+                    {
+                        inputTargetSiteElement.addContent("\n                ");
+                        inputTargetSiteElement.addComment("Adding the site specific props");
+
+                        if (sei.getInstanceProps() instanceof IClampInstanceProps)
+                        {
+                            IClampInstanceProps ic = (IClampInstanceProps)sei.getInstanceProps();
+
+                            float delay = ic.getDelay();
+                            float duration = ic.getDuration();
+                            float amp = ic.getAmplitude();
+
+                            SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.PULSEINPUT_INSTANCE_ELEMENT);
+
+                            inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DELAY_ATTR,
+                                   (float)UnitConverter.getTime(delay, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+
+                            inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DUR_ATTR,
+                                    (float)UnitConverter.getTime(duration, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+
+                            double a = UnitConverter.getCurrent(amp, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem);
+                            System.out.println("Converted "+amp+" to "+ a);
+                            inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_AMP_ATTR,
+                                    a+""));
+
+                            inputTargetSiteElement.addContent("                    ");
+                            inputTargetSiteElement.addChildElement(inputTypeElement);
+
+                            inputTargetSiteElement.addContent("\n                ");
+                        }
+                        else if (sei.getInstanceProps() instanceof RandomSpikeTrainInstanceProps)
+                        {
+                            RandomSpikeTrainInstanceProps rst = (RandomSpikeTrainInstanceProps)sei.getInstanceProps();
+
+                            float stimFreq = rst.getRate();
+                            //String stimMech = rst.get;
+
+                            SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.RANDOMSTIM_INSTANCE_ELEMENT);
+
+                            inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_FREQ_ATTR,
+                                    (float)UnitConverter.getRate(stimFreq, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+
+                            //inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_MECH_ATTR, stimMech));
+
+                            inputTargetSiteElement.addContent("                    ");
+                            inputTargetSiteElement.addChildElement(inputTypeElement);
+                            inputTargetSiteElement.addContent("\n                ");
+                        }
+                        else
+                        {
+                            throw new NeuroMLException("Error trying to save input "+inputReference+". Cannot save in NeuroML an input of type: "+ myElectricalInput.getType());
+
+                        }
+                    }
 
                     if (i == inputsHere.size()-1) 
                         inputTargetSitesElement.addContent("\n            ");

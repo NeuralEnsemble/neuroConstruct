@@ -51,7 +51,10 @@ import ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter;
 import ucl.physiol.neuroconstruct.project.segmentchoice.GroupDistributedSegments;
 import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentLocationChooser;
 import ucl.physiol.neuroconstruct.project.stimulation.IClamp;
+import ucl.physiol.neuroconstruct.project.stimulation.IClampInstanceProps;
+import ucl.physiol.neuroconstruct.project.stimulation.InputInstanceProps;
 import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrain;
+import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrainInstanceProps;
 import ucl.physiol.neuroconstruct.simulation.IClampSettings;
 import ucl.physiol.neuroconstruct.simulation.RandomSpikeTrainSettings;
 import ucl.physiol.neuroconstruct.simulation.SimulationParameters;
@@ -127,6 +130,8 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
     private String currentInputType = null;
     private String currentCellGroup = null;
     private String currentInputName = null;
+
+    private SingleElectricalInput currentSingleInput = null;
     
     private boolean level3 = false;
     private String cellBuffer = ""; // contains the cell element of a Level 3 Network that once stored in a file can be parse with morphMLReader
@@ -1068,7 +1073,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                 }
                 project.elecInputInfo.addStim(stim);
                 importedSimConfig.addInput(stim.getReference());
-                logger.logComment(currentInputType+" elecetrical input "+currentInputName+" on the cell group "+ currentCellGroup+" added to the project.");
+                logger.logComment(currentInputType+" electrical input "+currentInputName+" on the cell group "+ currentCellGroup+" added to the project.");
              }
          }
                
@@ -1081,10 +1086,50 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              Integer currentSegID = (Integer.parseInt(attributes.getValue(NetworkMLConstants.INPUT_SITE_SEGID_ATTR)));
              // get fraction along segment of target segment and convert to float so it can be added to SingleElectricalInput in GeneratedInputs
              Float currentFrac = (Float.parseFloat(attributes.getValue(NetworkMLConstants.INPUT_SITE_FRAC_ATTR)));
-             
-             SingleElectricalInput currentInput = new SingleElectricalInput(currentInputType, currentCellGroup, currentCellID, currentSegID, currentFrac, null);
-             elecInputs.addSingleInput(currentInputName, currentInput);
-          } 
+
+             currentSingleInput = new SingleElectricalInput(currentInputType, currentCellGroup, currentCellID, currentSegID, currentFrac, null);
+             logger.logComment("New instance: "+ currentSingleInput);
+
+             elecInputs.addSingleInput(currentInputName, currentSingleInput);
+          }
+         else if (getCurrentElement().equals(NetworkMLConstants.PULSEINPUT_INSTANCE_ELEMENT) && getAncestorElement(1).equals(NetworkMLConstants.INPUT_TARGET_SITE_ELEMENT))
+         {
+
+             Float currentPulseDelay =
+                     (float)UnitConverter.getTime(Float.parseFloat(attributes.getValue(NetworkMLConstants.INPUT_DELAY_ATTR)), inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+             Float currentPulseDur =
+                     (float)UnitConverter.getTime(Float.parseFloat (attributes.getValue(NetworkMLConstants.INPUT_DUR_ATTR)), inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+             Float currentPulseAmp =
+                     (float)UnitConverter.getCurrent(Double.parseDouble(attributes.getValue(NetworkMLConstants.INPUT_AMP_ATTR)), inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+
+             IClampInstanceProps iip = new IClampInstanceProps();
+
+             iip.setDelay(currentPulseDelay);
+             iip.setDuration(currentPulseDur);
+             iip.setAmplitude(currentPulseAmp);
+
+             currentSingleInput.setInstanceProps(iip);
+
+             //currentSingleInput.
+
+             logger.logComment("New instance props: "+ getCurrentElement()+" ("+currentPulseDelay+", "+currentPulseDur+", "+currentPulseAmp+")");
+          }
+         else if (getCurrentElement().equals(NetworkMLConstants.RANDOMSTIM_INSTANCE_ELEMENT) && getAncestorElement(1).equals(NetworkMLConstants.INPUT_TARGET_SITE_ELEMENT))
+         {
+
+             Float currentRate =
+                     (float)UnitConverter.getRate(Float.parseFloat(attributes.getValue(NetworkMLConstants.RND_STIM_FREQ_ATTR)), inputUnitSystem, UnitConverter.NEUROCONSTRUCT_UNITS);
+
+             RandomSpikeTrainInstanceProps rp = new RandomSpikeTrainInstanceProps();
+
+             rp.setRate(currentRate);
+
+             currentSingleInput.setInstanceProps(rp);
+
+             //currentSingleInput.
+
+             logger.logComment("New instance props: "+ getCurrentElement()+" ("+rp.details(false)+")");
+          }
     }
     
     private ConnSpecificProps getGlobalSynProps(String synType)
@@ -1738,10 +1783,12 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
         {
             //Project testProj = Project.loadProject(new File("projects/Parall/Parall.neuro.xml"),null);
 //            Project testProj = Project.loadProject(new File("examples/Ex4-NEURONGENESIS/Ex4-NEURONGENESIS.neuro.xml"),null);
-            Project testProj = Project.loadProject(new File("nCexamples/Ex5_Networks/Ex5_Networks.neuro.xml"),null);
+            //Project testProj = Project.loadProject(new File("nCexamples/Ex5_Networks/Ex5_Networks.neuro.xml"),null);
+            Project testProj = Project.loadProject(new File("testProjects/TestNetworkML/TestNetworkML.neuro.xml"),null);
 
 //            File f = new File("examples/Ex4-NEURONGENESIS/savedNetworks/nnn.nml");
-            File f = new File("nCexamples/Ex5_Networks/generatedNeuroML/Generated.net.xml");
+            //File f = new File("nCexamples/Ex5_Networks/generatedNeuroML/Generated.net.xml");
+            File f = new File("testProjects/TestNetworkML/savedNetworks/test.xml");
 
             logger.logComment("Loading netml cell from "+ f.getAbsolutePath()+" for proj: "+ testProj);
             
@@ -1761,7 +1808,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
             }
             
             
-            System.out.println(testProj.generatedElecInputs.toString());
+            System.out.println(testProj.generatedElecInputs.details());
             
 
             /*

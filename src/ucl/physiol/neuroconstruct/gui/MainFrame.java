@@ -11594,6 +11594,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         String timeInfo = GeneralUtils.getCurrentDateAsNiceString() +"_"+GeneralUtils.getCurrentTimeAsNiceString();
         timeInfo = GeneralUtils.replaceAllTokens(timeInfo, ":", "-");
 
+        /*
         boolean warnedReInput=false;
         for(String inptRef: projManager.getCurrentProject().generatedElecInputs.getInputReferences())
         {
@@ -11608,7 +11609,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     warnedReInput = true;
                 }
             }
-        }
+        }*/
 
         String fileName = "Net_" +timeInfo;
 
@@ -14270,6 +14271,24 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 SimXSLMapping mapping = new SimXSLMapping(newFile.getName(),
                                                           SimEnvHelper.GENESIS, false);
+
+                cmlMech.addSimMapping(mapping);
+
+            }
+
+            if (props.getProperty("MappingPSICS")!=null)
+            {
+                String relativeFile = props.getProperty("MappingPSICS");
+
+                File absFile = new File(fromDir, relativeFile);
+                absFile = absFile.getCanonicalFile();
+
+                logger.logComment("MappingPSICS file found in props to be: "+ absFile);
+
+                File newFile = GeneralUtils.copyFileIntoDir(absFile, dirForCMLFiles);
+
+                SimXSLMapping mapping = new SimXSLMapping(newFile.getName(),
+                                                          SimEnvHelper.PSICS, false);
 
                 cmlMech.addSimMapping(mapping);
 

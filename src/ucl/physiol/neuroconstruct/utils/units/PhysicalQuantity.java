@@ -97,10 +97,10 @@ public class PhysicalQuantity
 
             factor = factor * (oldMultiplier/newMultiplier);
 
-            //logger.logComment("Factor for old unit: "+ oldMultiplier
-             //                 + ", new unit: "+ newMultiplier
-              //                + " therefore new total factor: "+ factor
-               //               + " and new magnitude: "+magnitude*factor);
+            logger.logComment("Factor for old unit: "+ oldMultiplier
+                              + ", new unit: "+ newMultiplier
+                              + " therefore new total factor: "+ factor
+                              + " and new magnitude: "+magnitude*factor);
 
         }
 

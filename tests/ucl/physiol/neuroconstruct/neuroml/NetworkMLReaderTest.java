@@ -128,7 +128,7 @@ public class NetworkMLReaderTest
         
         File saveNetsDir = ProjectStructure.getSavedNetworksDir(projDir);
         
-        File nmlFile = new File(saveNetsDir, "test.nml");
+        File nmlFile = new File(saveNetsDir, "test.xml");
         
         boolean zipped = false;
         
@@ -161,7 +161,7 @@ public class NetworkMLReaderTest
         } 
         catch (Exception ex)
         {
-            fail("Unable to validate saved NetworkML file: "+ nmlFile+"\n"+ex.toString());
+            fail("Unable to validate saved NetworkML file: "+ nmlFile+" against: "+schemaFile+"\n"+ex.toString());
         }
         System.out.println(nmlFile.getAbsolutePath()+" is valid according to: "+ schemaFile);
         
@@ -177,6 +177,7 @@ public class NetworkMLReaderTest
         stateString2.append(proj0.generatedCellPositions.toLongString(false));
         stateString2.append(proj0.generatedNetworkConnections.details(false));
         stateString2.append(proj0.generatedElecInputs.toString());
+        //proj0.generatedNetworkConnections.getSynapticConnections(projName)
         
         
         System.out.println("Reloaded proj with: "+ proj0.generatedCellPositions.getNumberInAllCellGroups()+" cells");
@@ -186,6 +187,8 @@ public class NetworkMLReaderTest
         assertEquals(stateString1.toString(), stateString2.toString());
         
         System.out.println("Strings representing internal states equal!");
+
+
         
         
         //test the NetworkML reader on a Level3 file
@@ -199,14 +202,11 @@ public class NetworkMLReaderTest
             String string = groups.next();
             cells.add(proj0.cellGroupsInfo.getCellType(string));
         }
-        Vector<Cell> projCells = proj0.cellManager.getAllCells();
-        Vector cellMechs = proj0.cellMechanismInfo.getAllCellMechanisms();
         Iterator<String> nets =  proj0.generatedNetworkConnections.getNamesNetConnsIter();
         Vector<String> netsVector = new Vector<String>();
         while (nets.hasNext()) {
            netsVector.add(nets.next());            
         }
-        ArrayList<String> inputs = proj0.generatedElecInputs.getInputReferences();
 
         System.out.println("Saved Level 3 Network  in: "+ l3File.getAbsolutePath());
 
