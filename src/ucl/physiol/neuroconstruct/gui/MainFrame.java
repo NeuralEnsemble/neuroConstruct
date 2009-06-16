@@ -624,7 +624,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JPanel jPanelPynnSimOptions = new JPanel();
     
     JRadioButton jRadioButtonPynnNeuron = new JRadioButton(PynnFileManager.PynnSimulator.NEURON.name);
-    JRadioButton jRadioButtonPynnNest2 = new JRadioButton(PynnFileManager.PynnSimulator.NEST2.name);
+    JRadioButton jRadioButtonPynnNest2 = new JRadioButton(PynnFileManager.PynnSimulator.NEST.name);
     JRadioButton jRadioButtonPynnPcsim = new JRadioButton(PynnFileManager.PynnSimulator.PCSIM.name);
     JRadioButton jRadioButtonPynnBrian = new JRadioButton(PynnFileManager.PynnSimulator.BRIAN.name);
     JRadioButton jRadioButtonPynnPyMoose = new JRadioButton(PynnFileManager.PynnSimulator.PYMOOSE.name);
@@ -6875,7 +6875,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             if (jRadioButtonPynnNeuron.isSelected())
                 sim = PynnFileManager.PynnSimulator.NEURON;
             else if (jRadioButtonPynnNest2.isSelected())
-                sim = PynnFileManager.PynnSimulator.NEST2;
+                sim = PynnFileManager.PynnSimulator.NEST;
             else if (jRadioButtonPynnPcsim.isSelected())
                 sim = PynnFileManager.PynnSimulator.PCSIM;
             else if (jRadioButtonPynnBrian.isSelected())
