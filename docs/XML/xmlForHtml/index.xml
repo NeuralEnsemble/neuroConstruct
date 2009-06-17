@@ -40,7 +40,7 @@ title="Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, 
         inhibitory synaptic input to look at the effects of short term plasticity on gain control (<a  href="models/index.html#RothmanEtAl_KoleEtAl_PyrCell-N10162">Download neuroConstruct project</a>). </p>
 
  
-        <p>The latest version of neuroConstruct (<strong>v1.2.2, Jan 2009</strong>) is available for download <a href="download/index.html">here</a>. The source code is available with this release under GPL.</p>
+        <p>The latest version of neuroConstruct (<strong>v1.3.0, June 2009</strong>) is available for download <a href="download/index.html">here</a>. The source code is available with this release under GPL.</p>
         <p>The paper describing the application has been published: <em>
             P. Gleeson, V. Steuber and R. A. Silver, neuroConstruct: A Tool for Modeling Networks of Neurons in 3D Space, Neuron,
             Volume 54, Issue 2, 19 April 2007, Pages 219-235.</em>
