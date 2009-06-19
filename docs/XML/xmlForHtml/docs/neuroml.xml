@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document>
+  <header>
+    <title>Support for NeuroML</title>
+  </header>
+  <body>
+      
+  <p>Listed here are all the possible ways neuroConstruct can import/export data in <a href="Glossary_gen.html#NeuroML">NeuroML</a> format</p>
+
+
+<section>
+      <title>ChannelML</title>
+      
+<p><strong>IMPORT:</strong> go to the <strong>Cell Mechanisms</strong> tab, press <strong>Create ChannelML Mechanism</strong> and select the file containing the ChannelML description
+(you can find a mapping for NEURON and GENESIS under templates/xmlTemplates/schemata/vx.x/Level2 in the local folder of NeuroConstruct).</p>
+<p><strong>EXPORT:</strong> go to <strong>Export Network -> NeuroML</strong> tab and press <strong>Generate all NeuroML scripts</strong>,
+ a file for each cell mechanism is also saved in the <strong>generatedNeuroML</strong> folder of the current project (NOTE: a ChannelML file will be also saved by deafult in each folder of the cellMechanisms folder of the current project).</p>
+<p>&nbsp;</p>
+
+</section>
+
+
+<section>
+      <title>MorphML and Morphology</title>
+
+<ul>
+<li><p><strong>Level 1 = </strong> the anatomy of the cell (pure MorphML description)</p>
+<p><strong>IMPORT:</strong> go to <strong>Cell Types</strong> press <strong>Add new Cell Type to project...</strong> and select <strong>NeuroMLConverter</strong> in the scroll down menu.</p>
+<p><strong>EXPORT:</strong> go to <strong>Export Network -> NeuroML</strong> tab and press <strong>Export all Cell Types</strong> with the <strong>Level 1</strong> button selected,
+ a file for each cell type will be saved in the <strong>generatedNeuroML</strong> folder of the current project.</p>
+</li>
+<li><p><strong>Level 2 = </strong> Level 1 and cell biophysics</p>
+<p><strong>IMPORT:</strong> go to <strong>Cell Types</strong> tab press <strong>Add new Cell Type to project...</strong> and select <strong>NeuroMLConverter</strong> in the scroll down menu (NOTE: biophysics information is lost).</p>
+<p><strong>EXPORT:</strong> go to <strong>Export Network -> NeuroML</strong> tab and press <strong>Export all Cell Types</strong> with the <strong>Level 2</strong> button selected,
+ a file for each cell type will be saved in the <strong>generatedNeuroML</strong> folder of the current project.</p>
+</li>
+<li><p><strong>Level 3 = </strong> Level 1, Level 2 and network aspects</p>
+<p><strong>IMPORT:</strong> go to <strong>Cell Types</strong> press <strong>Add new Cell Type to project...</strong> and select <strong>NeuroMLConverter</strong> in the scroll down menu (NOTE: biophysics and network informations are lost).</p>
+<p><strong>EXPORT:</strong> go to <strong>Export Network -> NeuroML</strong> tab and press <strong>Export all Cell Types</strong> with the <strong>Level 3</strong> button selected,
+ a file for each cell type will be saved in the <strong>generatedNeuroML</strong> folder of the current project.</p>
+<p>or go to <strong>Export Network -> NeuroML</strong> tab and press <strong>Generate all NeruoML scripts</strong>, a Level 3 description of each cell type will be saved in the <strong>generatedNeuroML</strong> folder of the current project.</p>
+</li>
+</ul>
+
+</section>
+<p>&nbsp;</p>
+
+<section>
+      <title>NetworkML</title>
+
+<p><strong>IMPORT:</strong> go to the <strong>Generate</strong> tab, press <strong>Load NetworkML</strong> and select the .xml file containing the NetworklML description</p>
+<p>or select <strong>File -> Load NeuroML level 1, 2, 3...</strong> from the main menu and select the .xml file.</p>
+<p><strong>EXPORT:</strong> go to the <strong>Generate</strong> tab, press <strong>Save NetworkML</strong>,
+a NetworkML description of the generated network will be saved in the <strong>savedNetworks</strong> folder of the current project.</p>
+<p>or go to <strong>Export Network -> NeuroML</strong> tab and press <strong>Generate all NeuroML scripts</strong>, a NetworkML description of the generated network will be saved in the <strong>generatedNeuroML</strong> folder of the current project.</p>
+
+</section>
+<p>&nbsp;</p>
+
+<section>
+      <title>Level 3 NeuroML</title>
+
+<p> NeuroConstruct is able to generate and import a single file containing all the generated elements of a project (cells, mechanisms, inputs, connections, etc).
+This file is fully NeuroML compliant and allow easy exchange of self-sufficient models between neuroConstruct users.</p>
+<p><strong>IMPORT:</strong> select <strong>File -> Load NeuroML level 1, 2, 3...</strong> from the main menu and select the Level 3 file to be imported. (NOTE: this could overwrite some existing elements to avoid conflicts)</p>
+<p><strong>EXPORT:</strong> go to <strong>Export Network -> NeuroML</strong> tab and press <strong>Generate all NeuroML scripts</strong> with the <strong>Generate single NeuroML Level 3 file</strong> box ticked,
+a single file containing all the generated elements will be saved in the <strong>savedNetworks</strong> folder of the current project. (tick the <strong>Add neuroConstruct annotations</strong> box if you wish to include the neuroConstruct specific settings like cell groups, regions, simulation configurations etc)</p>
+
+</section>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+  </body>
+</document>
