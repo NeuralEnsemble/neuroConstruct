@@ -111,6 +111,7 @@ public class GeneralProperties
         	{
 
         		if ((new File("C:\\nrn62")).exists()) userSettings.setNeuronHome(new String("C:\\nrn62"));
+                else if ((new File("C:\\nrn71")).exists()) userSettings.setNeuronHome(new String("C:\\nrn71"));
                 else if ((new File("C:\\nrn70")).exists()) userSettings.setNeuronHome(new String("C:\\nrn70"));
                 else if ((new File("C:\\nrn61")).exists()) userSettings.setNeuronHome(new String("C:\\nrn61"));
         		else if ((new File("C:\\nrn60")).exists()) userSettings.setNeuronHome(new String("C:\\nrn60"));
@@ -125,16 +126,18 @@ public class GeneralProperties
         	}
         	else if (GeneralUtils.isMacBasedPlatform())
         	{
-        		if ((new File("/Applications/NEURON-6.1/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.1/nrn/powerpc"));
+        		if ((new File("/Applications/NEURON-6.2/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.2/nrn/powerpc"));
+        		else if ((new File("/Applications/NEURON-7.1/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-7.1/nrn/powerpc"));
         		else if ((new File("/Applications/NEURON-7.0/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-7.0/nrn/powerpc"));
-        		else if ((new File("/Applications/NEURON-6.2/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.2/nrn/powerpc"));
+        		else if ((new File("/Applications/NEURON-6.1/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.1/nrn/powerpc"));
         		else if ((new File("/Applications/NEURON-6.0/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.0/nrn/powerpc"));
         		else if ((new File("/Applications/NEURON-5.9/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.9/nrn/powerpc"));
         		else if ((new File("/Applications/NEURON-5.8/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.8/nrn/powerpc"));
         		else if ((new File("/Applications/NEURON-5.7/nrn/powerpc")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.7/nrn/powerpc"));
 
-                else if ((new File("/Applications/NEURON-7.0/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-7.0/nrn/i386"));
                 else if ((new File("/Applications/NEURON-6.2/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.2/nrn/i386"));
+                else if ((new File("/Applications/NEURON-7.1/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-7.1/nrn/i386"));
+                else if ((new File("/Applications/NEURON-7.0/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-7.0/nrn/i386"));
                 else if ((new File("/Applications/NEURON-6.1/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.1/nrn/i386"));
                 else if ((new File("/Applications/NEURON-6.0/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.0/nrn/i386"));
                 else if ((new File("/Applications/NEURON-5.9/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.9/nrn/i386"));

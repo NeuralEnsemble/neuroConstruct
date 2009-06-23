@@ -388,10 +388,15 @@ public class ProcessManager
         catch (Exception ex)
         {
             logger.logError("Error running the command: " + commandToExecute);
+            String dirContents = "bin/nrniv";
+            if (GeneralUtils.isWindowsBasedPlatform())
+            {
+                dirContents = "bin\\neuron.exe";
+            }
             throw new NeuronException("Error testing: " +
                                        myFile.getAbsolutePath()+".\nIs NEURON correctly installed?\n"
                                        +"NEURON home dir being used: "+GeneralProperties.getNeuronHomeDir()
-                                       +"\nThis should be set to the correct location at Settings -> General Properties & Project Defaults\n\n"
+                                       +"\nThis should be set to the correct location (the folder containing "+dirContents+") at Settings -> General Properties & Project Defaults\n\n"
                                        +"Note: leave that field blank in that options window and restart and neuroConstruct will search for a possible location of NEURON\n\n", ex);
         }
 

@@ -31,13 +31,13 @@ signifying an electrical input.</li>
 
 <li>If <a href="../Glossary_gen.html#NEURON">NEURON</a> or <a href="../Glossary_gen.html#GENESIS">GENESIS</a> are installed (assuming NEURON) go to tab
 <strong>Export Network</strong> and select the <strong>NEURON</strong> tab.
-Select the <strong>Show 3D potential plot</strong> checkbox, and click <strong>Create files for local execution</strong>. This will create the hoc code
+Select the <strong>Show 3D potential plot</strong> checkbox, and click <strong>Create hoc simulation</strong>. This will create the hoc code
 for the main file, and a template for the cell, as well as <a href="../Glossary_gen.html#NMODL">NMODL</a> code for the channels. The NMODL files
 will be compiled and a confirmation shown. If there is a problem, go to <strong>Settings -> General Properties</strong> and check location there for the NEURON home directory.
 The contents of the *.mod and *.hoc files can be viewed by selecting the filename and pressing <strong>View</strong>.
 </li>
 
-<li>Click on <strong>Run NEURON Simulation</strong>. This should start NEURON and run the simulation you have just created.
+<li>Click on <strong>Run Simulation</strong>. This should start NEURON and run the simulation you have just created.
 </li>
 
 <li>Back in neuroConstruct, once the simulation has finished, go to tab <strong>Visualisation</strong>, and click on <strong>Previous Simulations</strong>

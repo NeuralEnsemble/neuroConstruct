@@ -87,12 +87,12 @@ of cells you want randomly placed in the Region.</p>
 
       <p>If <a href="../Glossary_gen.html#NEURON">NEURON</a> or <a href="../Glossary_gen.html#GENESIS">GENESIS</a> are installed (assuming NEURON) go to tab
 <strong>Export Network</strong> and select the <strong>NEURON</strong> tab.
-Select the <strong>Show 3D potential plot</strong> checkbox, and click <strong>Create files for local execution</strong>. This will create the hoc code
+Select the <strong>Show 3D potential plot</strong> checkbox, and click <strong>Create hoc simulation</strong>. This will create the hoc code
 for the main file, and a template for the cell, as well as <a href="../Glossary_gen.html#NMODL">NMODL</a> code for the channels. The NMODL files
 will be compiled and a confirmation shown.
 </p>
 
-<p>Click on <strong>Run NEURON Simulation</strong>. This should start NEURON and run the simulation you have just created.
+<p>Click on <strong>Run Simulation</strong>. This should start NEURON and run the simulation you have just created.
     If there is a problem starting, and it is installed correctly go to <strong>Settings -> General Properties</strong> and check the entries there.</p>
 
 <p>Back in neuroConstruct, once the simulation has finished, go to tab <strong>Visualisation</strong>, and click on <strong>Previous Simulations</strong>
@@ -122,7 +122,7 @@ voltage trace. Individual cells can also be selected by clicking on them in the 
         click on <strong>Edit Selected Region</strong>, and either change the position and size of the Rectangular region
         or change it to a Spherical Region placed in 3D.</p>
 
-       <p>Edit the morphology of the cell. Go to tab <strong>Visualisation</strong>, select <strong>3D Settings</strong>and make sure display is on <strong>All solid</strong>
+       <p>Edit the morphology of the cell. Go to tab <strong>Visualisation</strong>, select <strong>3D Settings</strong> and make sure display is on <strong>All solid</strong>
            and the 3D axes are not shown. Save these settings and view the cell you've added. Click on any of the segments. Make sure <strong>Pick Segments/Sections</strong> is selected
            in the lower right drop down box. It will turn red (if there are any other segments in the same section they will turn yellow). Click on <strong>Edit...</strong> and you can alter the end points, etc.
            At the drop down box in the Segment selector, there are a number of functions for adding new segments, specifying axonal arbours for <a href="../Glossary_gen.html#Volume Based Connection">Volume Based Connections</a>, etc.</p>

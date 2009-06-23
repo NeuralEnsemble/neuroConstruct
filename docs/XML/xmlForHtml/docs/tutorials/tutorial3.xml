@@ -150,7 +150,7 @@ this Synaptic Mechanism to make a Network Connection.
       </p>
 
       <p>Try adding cell mechanisms to the cell as in <a href="tutorial2.html">Tutorial 2</a>, adding input to the Granule cells and running the network. Note these cells are greatly simplified versions of the
-          cells in the cerebellum and are unlikely to show very many of the properties of their biological counterparts. Look at the included examples, e.g. Ex7-GranuleCell for more realistic cells.</p>
+          cells in the cerebellum and are unlikely to show very many of the properties of their biological counterparts. Look at the included examples, e.g. <a href="http://www.neuroConstruct.org/models">GranuleCellLayer.ncx</a> for more realistic cells.</p>
 
 
         </section>
