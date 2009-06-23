@@ -222,7 +222,7 @@ public class NeuroMLPythonFileManager
                     {
                         ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism)cm;
                         
-                        File cmlFile = new File(neuroMLDir, cm.getInstanceName()+".channel.xml");
+                        File cmlFile = new File(neuroMLDir, cm.getInstanceName()+".xml");
                         try
                         {
                             File copied = GeneralUtils.copyFileIntoDir(cmlCm.getChannelMLFile(project), neuroMLDir);
