@@ -3680,7 +3680,7 @@ public class NeuronFileManager
 
                     float totalDelay = synInternalDelay + apSegmentPropDelay + apSpaceDelay;
                     
-                    if (totalDelay==0 && simConfig.getMpiConf().isParallelNet() && !warnedReZeroDelayParallel)
+                    if (totalDelay==0 && simConfig.getMpiConf().isParallelNet() && !warnedReZeroDelayParallel && !isGapJunction)
                     {
                         GuiUtils.showWarningMessage(logger, "Warning, zero delay for at least one synaptic connection for synapse type: " +
                                 synProps.getSynapseType()+" on "+netConnName+"\nAs this is a parallel simulation, this will probably throw errors when NEURON is run.", null);
