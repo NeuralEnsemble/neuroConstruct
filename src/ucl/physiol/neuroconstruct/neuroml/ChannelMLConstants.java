@@ -279,6 +279,11 @@ public class ChannelMLConstants
     {
         return ChannelMLConstants.ROOT_ELEMENT + "/" + SYN_TYPE_ELEMENT + "/" + ELEC_SYN_ELEMENT;
     }
+    
+    public static String getSTDPSynapseXPath()
+    {
+        return ChannelMLConstants.ROOT_ELEMENT + "/" + SYN_TYPE_ELEMENT + "/" + STDP_SYN_ELEMENT;
+    }
 
 
     public static String getIonConcTypeXPath()

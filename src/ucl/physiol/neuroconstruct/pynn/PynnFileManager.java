@@ -373,7 +373,7 @@ public class PynnFileManager
             
 
             fw.write("preRunTime = time.time()\n\n");
-            fw.write("print(\"Running simulation for %sms\"%tstop)\n");
+            fw.write("print(\"Running simulation for %s ms on %s\"%(tstop, my_simulator))\n");
             fw.write("run(tstop)\n");
             fw.write("postRunTime = time.time()\n\n");
             fw.write("print(\"Finished simulation. Setup time: %f secs, run time: %f secs, dt: %f\" % (preRunTime-startTime, postRunTime-preRunTime, get_time_step()))\n\n");

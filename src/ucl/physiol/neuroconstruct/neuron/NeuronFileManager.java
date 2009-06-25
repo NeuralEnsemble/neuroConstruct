@@ -3767,6 +3767,29 @@ public class NeuronFileManager
                                     logger.logComment("No xyz parameter: "+ex);
                                 }
                             }
+                            if (cm instanceof ChannelMLCellMechanism)
+                            {
+                                ChannelMLCellMechanism ccm = (ChannelMLCellMechanism)cm;
+                                try
+                                {
+                                    String stdpEl = ccm.getXMLDoc().getValueByXPath(ChannelMLConstants.getSTDPSynapseXPath());
+                                    if(stdpEl!=null)
+                                    {
+                                        addHocComment(responseConn, "This is an STDP based synaptic contact!");
+                                        String postNetConnObj = GeneralUtils.replaceAllTokens(objectVarName, "[", "_");
+                                        postNetConnObj = GeneralUtils.replaceAllTokens(postNetConnObj, "]", "_");
+                                        postNetConnObj = "postNetCon_"+postNetConnObj;
+
+                                        responseConn.append("\nobjectvar "+postNetConnObj+"\n");
+                                        responseConn.append(tgtSecNameFull+" { "+postNetConnObj+" = new NetCon(&v(0.5), "
+                                            + objectVarName+", "+threshold+", 0, -1)"+"}\n");
+                                    }
+                                }
+                                catch (ChannelMLException e)
+                                {
+
+                                }
+                            }
                         }
                         else   // not if (!simConfig.getMpiConf().isParallel())
                         {

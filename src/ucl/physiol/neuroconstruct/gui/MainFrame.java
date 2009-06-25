@@ -8507,7 +8507,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jMenuItemProjProperties.setEnabled(false);
             this.jMenuItemViewProjSource.setEnabled(false);
 
-        jMenuItemCopyProject.setEnabled(false);
+            jMenuItemCopyProject.setEnabled(false);
             this.jMenuItemSaveProject.setEnabled(false);
             this.jMenuItemCloseProject.setEnabled(false);
             this.jMenuItemZipUp.setEnabled(false);
