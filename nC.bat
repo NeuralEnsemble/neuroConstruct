@@ -9,7 +9,8 @@ REM
 REM ##########################################################################
 
 REM Change this line to your install location
-REM Use quotes if there is a space in the directory name: set NC_HOME="C:\Program Files\neuroConstruct_X.X.X"
+REM Use quotes if there is a space in the directory name, e.g.
+REM set NC_HOME="C:\Program Files\neuroConstruct_X.X.X"
 set NC_HOME=C:\neuroConstruct
 
 REM   Use an altered value in the line below to run the application with extra 
@@ -24,9 +25,6 @@ REM ##########################################################################
 
 
 REM The rest of the settings below shouldn't have to change
-
-
-
 
 
 
@@ -60,6 +58,18 @@ set CLASSPATH=%NC_HOME%/neuroConstruct_%NC_VERSION%.jar;%H5_JARS%;%J3D_JARS%;%NC
 
 set JAVA_LIBRARY_PATH=%H5_DIR%/win%JDK_ARCH%;%J3D_DIR%/win%JDK_ARCH%
 
+if "%1"=="-make" (
+	echo Building the application from source...
+	mkdir classes
+	@echo on
+	javac  -sourcepath src -d classes -classpath %CLASSPATH%  %NC_HOME%/src/ucl/physiol/neuroconstruct/gui/*.java
+	@echo off
+	copy %NC_HOME%\src\ucl\physiol\neuroconstruct\gui\* %NC_HOME%\classes\ucl\physiol\neuroconstruct\gui  
+  jar -cf neuroConstruct_%NC_VERSION%.jar -C classes .
+  echo Have created neuroConstruct_%NC_VERSION%.jar
+	goto END
+)
+
 
 REM   Note: the -Dsun.java2d.noddraw=true has been added to solve problems with excessive 
 REM   flickering of the Swing components when showing 3D on some Windows systems
@@ -73,7 +83,6 @@ goto END
 
 :WARN_UPDATE_PATHS
 echo The path %NC_HOME% does not exist! Please set the variable NC_HOME to the correct neuroConstruct install location in nC.bat
-
 
 
 :END
