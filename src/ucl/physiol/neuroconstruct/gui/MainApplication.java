@@ -182,7 +182,8 @@ public class MainApplication
         System.out.println("-? -help          print this help message");
         System.out.println("-version          print version information");
         System.out.println("-lastproj         reloads the last opened project");
-        System.out.println("-python           use PRELIMINARY Jython based scripting interface");
+        System.out.println("-python           use Jython based scripting interface");
+        System.out.println("-make             build neuroConstruct from source (JDK 1.5+ is needed)");
         System.out.println("");
         
       /*  System.out.println("-nogui        run without main Graphical User Interface");
