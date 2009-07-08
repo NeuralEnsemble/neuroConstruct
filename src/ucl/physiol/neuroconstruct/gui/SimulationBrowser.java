@@ -59,7 +59,8 @@ public class SimulationBrowser extends JDialog
 
 
     JMenuBar jMenuBarMainMenu = new JMenuBar();
-    JMenu jMenuColunms = new JMenu();
+    JMenu jMenuColumnsMain = new JMenu();
+    Hashtable<String, JMenu> jMenuColumnsSub = new Hashtable<String, JMenu>();
 
 
     JPanel jPanelMain = new JPanel();
@@ -76,8 +77,13 @@ public class SimulationBrowser extends JDialog
     JButton jButtonDelete = new JButton();
     JButton jButtonRename = new JButton();
 
+    String subMenuNetConns = "Network Connections";
+    String subMenuStimulations = "Stimulations";
+    String subMenuCellMechanims = "Cell Mechanisms";
+    String subMenuMorphSummaries = "Morph summaries";
+
     private SimulationBrowser()
-    {
+    { 
 
     }
 
@@ -134,10 +140,23 @@ public class SimulationBrowser extends JDialog
                 jButtonRename_actionPerformed(e);
             }
         });
-        jMenuBarMainMenu.add(jMenuColunms);
+        jMenuBarMainMenu.add(jMenuColumnsMain);
+
         this.setJMenuBar(jMenuBarMainMenu);
 
-        jMenuColunms.setText("     Columns to show");
+        jMenuColumnsMain.setText("     Columns to show");
+
+        JMenu jMenuNetConns = new JMenu(subMenuNetConns);
+        jMenuColumnsSub.put(subMenuNetConns, jMenuNetConns);
+
+        JMenu jMenuCellMechanims = new JMenu(subMenuCellMechanims);
+        jMenuColumnsSub.put(subMenuCellMechanims, jMenuCellMechanims);
+
+        JMenu jMenuMorphSummaries = new JMenu(subMenuMorphSummaries);
+        jMenuColumnsSub.put(subMenuMorphSummaries, jMenuMorphSummaries);
+
+        JMenu jMenuStimulations = new JMenu(subMenuStimulations);
+        jMenuColumnsSub.put(subMenuStimulations, jMenuStimulations);
 
 
         jTableSimulations = new JTable(allSims);
@@ -268,7 +287,13 @@ public class SimulationBrowser extends JDialog
     {
         allSims.refresh(checkRemote);
 
-        jMenuColunms.removeAll();
+        jMenuColumnsMain.removeAll();
+
+        for(String subMenu: jMenuColumnsSub.keySet())
+        {
+            jMenuColumnsSub.get(subMenu).removeAll();
+        }
+
         Vector allPossibleCols = allSims.getAllColumns();
         Vector shownCols = allSims.getAllShownColumns();
 
@@ -277,7 +302,28 @@ public class SimulationBrowser extends JDialog
                 String nextCol = (String)allPossibleCols.elementAt(i);
 
                 JCheckBoxMenuItem jMenuItemNext = new JCheckBoxMenuItem(nextCol);
-                jMenuColunms.add(jMenuItemNext);
+
+                if(nextCol.startsWith("Net Conn:"))
+                {
+                    jMenuColumnsSub.get(subMenuNetConns).add(jMenuItemNext);
+                }
+                else if(nextCol.startsWith("Stimulation:"))
+                {
+                    jMenuColumnsSub.get(subMenuStimulations).add(jMenuItemNext);
+                }
+                else if(nextCol.startsWith("Cell Processes on") || nextCol.startsWith("Cell Mechanisms on") )
+                {
+                    jMenuColumnsSub.get(subMenuCellMechanims).add(jMenuItemNext);
+                }
+                else if(nextCol.startsWith("Morph summary")  )
+                {
+                    jMenuColumnsSub.get(subMenuMorphSummaries).add(jMenuItemNext);
+                }
+                else
+                {
+                    jMenuColumnsMain.add(jMenuItemNext);
+                }
+
                 jMenuItemNext.setSelected(shownCols.contains(nextCol));
 
                 jMenuItemNext.setEnabled(!nextCol.equals(SimulationsInfo.COL_NAME_NAME)
@@ -285,7 +331,11 @@ public class SimulationBrowser extends JDialog
 
                 jMenuItemNext.addActionListener(new PropertiesMenuListener());
 
+        }
 
+        for(String subMenu: jMenuColumnsSub.keySet())
+        {
+            jMenuColumnsMain.add(jMenuColumnsSub.get(subMenu));
         }
 
 

@@ -465,11 +465,12 @@ public class SimulationsInfo extends AbstractTableModel
                     Vector groups = cell.getGroupsWithSynapse(syn);
                     info.append(syn.toString() + " on: " + groups + ", ");
                 }
-                String procs = info.toString();
 
-                if (procs.endsWith(", ")) procs = procs.substring(0, procs.length() - 2);
-                procs = procs + "]";
-                props.setProperty("Cell Processes on " + cell.getInstanceName(), procs);
+                String cellMechs = info.toString();
+
+                if (cellMechs.endsWith(", ")) cellMechs = cellMechs.substring(0, cellMechs.length() - 2);
+                cellMechs = cellMechs + "]";
+                props.setProperty("Cell Mechanisms on " + cell.getInstanceName(), cellMechs);
 
                 
 
