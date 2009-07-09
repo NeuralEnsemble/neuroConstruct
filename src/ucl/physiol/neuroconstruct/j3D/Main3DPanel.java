@@ -46,6 +46,8 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.dataset.*;
 import ucl.physiol.neuroconstruct.gui.*;
 import ucl.physiol.neuroconstruct.gui.plotter.*;
+import ucl.physiol.neuroconstruct.mechanisms.CellMechanism;
+import ucl.physiol.neuroconstruct.mechanisms.ChannelMLCellMechanism;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.Project;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
@@ -458,17 +460,21 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                 String sourceCellGroup = null;
                 String targetCellGroup = null;
+                Vector<SynapticProperties> syns = null;
+
 
                 if (project.morphNetworkConnectionsInfo.isValidSimpleNetConn(netConnName))
                 {
                     sourceCellGroup = project.morphNetworkConnectionsInfo.getSourceCellGroup(netConnName);
                     targetCellGroup = project.morphNetworkConnectionsInfo.getTargetCellGroup(netConnName);
+                    syns = project.morphNetworkConnectionsInfo.getSynapseList(netConnName);
                 }
 
                 else if (project.volBasedConnsInfo.isValidVolBasedConn(netConnName))
                 {
                     sourceCellGroup = project.volBasedConnsInfo.getSourceCellGroup(netConnName);
                     targetCellGroup = project.volBasedConnsInfo.getTargetCellGroup(netConnName);
+                    syns = project.volBasedConnsInfo.getSynapseList(netConnName);
                 }
 
                 String sourceCellType = project.cellGroupsInfo.getCellType(sourceCellGroup);
@@ -476,6 +482,27 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                 Cell sourceCell = project.cellManager.getCell(sourceCellType);
                 Cell targetCell = project.cellManager.getCell(targetCellType);
+                boolean gapJunction = false;
+
+                if (syns.size()==1)
+                {
+                    CellMechanism cm = project.cellMechanismInfo.getCellMechanism(syns.get(0).getSynapseType());
+                    if (cm instanceof ChannelMLCellMechanism)
+                    {
+                        if (((ChannelMLCellMechanism)cm).isGapJunctionMechanism())
+                            gapJunction = true;
+
+                    }
+                }
+
+                Color srcColour = Color.green;
+                Color tgtColour = Color.red;
+
+                if(gapJunction)
+                {
+                    srcColour = Color.orange;
+                    tgtColour = Color.orange;
+                }
 
                 for (int singleConnIndex = 0; singleConnIndex < connections.size(); singleConnIndex++)
                 {
@@ -548,12 +575,12 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                         if (project.proj3Dproperties.getShowSynapseEndpoints())
                         {
+
                             Primitive srcPrim
-                                = addPositionedSphere(mainTG, sourceSynAbsolutePosition, Color.green, sphereRadius, false);
+                                = addPositionedSphere(mainTG, sourceSynAbsolutePosition, srcColour, sphereRadius, false);
 
                             float rad = sphereRadius;
                             
-                            Color c = Color.red;
                             
                             /*
                             float rad = sphereRadius*2;
@@ -564,7 +591,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                             }*/
                             
                             Primitive tgtPrim
-                                = addPositionedSphere(mainTG, targetSynAbsolutePosition, c,rad , true);
+                                = addPositionedSphere(mainTG, targetSynAbsolutePosition, tgtColour ,rad , true);
 
                             String tgtCellRef = SimulationData.getCellRef(targetCellGroup, conn.targetEndPoint.cellNumber);
 
@@ -578,9 +605,9 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                         {
                             joinTheDots(mainTG,
                                         sourceSynAbsolutePosition,
-                                        Color.green,
+                                        srcColour,
                                         targetSynAbsolutePosition,
-                                        Color.red);
+                                        tgtColour);
                         }
                     }
                     else
