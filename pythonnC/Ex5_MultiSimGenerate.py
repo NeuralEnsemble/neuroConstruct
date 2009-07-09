@@ -75,6 +75,7 @@ if numGenerated > 0:
     
     myProject.neuronFileManager.setQuitAfterRun(1) # Remove this line to leave the NEURON sim windows open after finishing
     myProject.neuronSettings.setCopySimFiles(1) # 1 copies hoc/mod files to PySim_0 etc. and will allow multiple sims to run at once
+    modCompileConfirmation = 0 # 0 means do not pop up console or confirmation dialog when mods have compiled
     
 
     # Note same network structure will be used for each!
@@ -136,7 +137,7 @@ if numGenerated > 0:
     
         compileProcess = ProcessManager(myProject.neuronFileManager.getMainHocFile())
     
-        compileSuccess = compileProcess.compileFileWithNeuron(0,0)
+        compileSuccess = compileProcess.compileFileWithNeuron(0,modCompileConfirmation)
 
         print "Compiled NEURON files for: "+simRef
     
