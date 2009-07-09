@@ -623,7 +623,7 @@ public class PynnFileManager
                         }
                     }
                 } 
-                catch (ChannelMLException ex) 
+                catch (XMLMechanismException ex)
                 {
                     throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanim", ex);
                     
@@ -826,7 +826,7 @@ public class PynnFileManager
                     }
                     else
                     {
-                        throw new PynnException("Error determining synapse type of: "+cm.getChannelMLFile(project)+"!!");
+                        throw new PynnException("Error determining synapse type of: "+cm.getXMLFile(project)+"!!");
                     }
 
                 }

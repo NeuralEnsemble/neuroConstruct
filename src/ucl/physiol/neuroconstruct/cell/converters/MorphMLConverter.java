@@ -65,9 +65,9 @@ public class MorphMLConverter extends FormatImporter
     //public static String MML_CELLS = "cells";
     
     String warning = "";
-    
+
     /*
-     * If true use the elements with pre 1.7.1 naming conventions, e.g. passiveConductance not 
+     * If true use the elements with pre 1.7.1 naming conventions, e.g. passiveConductance not
      */
     private static boolean usePreV1_7_1Format = false;
 
@@ -328,11 +328,13 @@ public class MorphMLConverter extends FormatImporter
     }
 
 
-    public static SimpleXMLElement getCellXMLElement(Cell cell, Project project, String level) throws NeuroMLException, CMLMechNotInitException, ChannelMLException
+    public static SimpleXMLElement getCellXMLElement(Cell cell, Project project, String level, String version) throws NeuroMLException, CMLMechNotInitException, XMLMechanismException
     {
             String mmlPrefix = "";
             if (!level.equals(NeuroMLConstants.NEUROML_LEVEL_1))
                 mmlPrefix = MorphMLConstants.PREFIX + ":";
+
+            boolean useV2 = (version.equals(NeuroMLConstants.NEUROML_VERSION_2));
         
             String metadataPrefix = MetadataConstants.PREFIX + ":";
             
@@ -1093,7 +1095,7 @@ public class MorphMLConverter extends FormatImporter
      * @param level The level (currently 1 for "pure" MorphML, or 2 to include channel distributions, level 3 for net aspects)
      * as defined in NeuroMLConstants
      */
-    public static void saveCellInNeuroMLFormat(Cell cell, Project project, File neuroMLFile, String level) throws MorphologyException
+    public static void saveCellInNeuroMLFormat(Cell cell, Project project, File neuroMLFile, String level, String version) throws MorphologyException
     {
         try
         {
@@ -1162,7 +1164,7 @@ public class MorphMLConverter extends FormatImporter
 
             SimpleXMLElement cellsElement = new SimpleXMLElement(MorphMLConstants.CELLS_ELEMENT);
 
-            cellsElement.addChildElement(MorphMLConverter.getCellXMLElement(cell, project, level));
+            cellsElement.addChildElement(MorphMLConverter.getCellXMLElement(cell, project, level, version));
             
             rootElement.addChildElement(cellsElement);
 
@@ -1202,8 +1204,9 @@ public class MorphMLConverter extends FormatImporter
     
     
     public static ArrayList<Cell> saveAllCellsInNeuroML(Project project, 
-                                               MorphCompartmentalisation mc, 
+                                               MorphCompartmentalisation mc,
                                                String level,
+                                               String version,
                                                SimConfig simConfig,
                                                File destDir) throws MorphologyException
     {
@@ -1267,7 +1270,7 @@ public class MorphMLConverter extends FormatImporter
                                     mappedCell.getInstanceName()
                                     + ProjectStructure.getMorphMLFileExtension());
 
-                MorphMLConverter.saveCellInNeuroMLFormat(mappedCell,project, cellFile, level);
+                MorphMLConverter.saveCellInNeuroMLFormat(mappedCell,project, cellFile, level, version);
                 
                 generatedCells.add(mappedCell);
          
@@ -1315,8 +1318,8 @@ public class MorphMLConverter extends FormatImporter
            cell.getAllSegments().elementAt(4).setFractionAlongParent(0.5f);
 
            File oosFile = new File("../temp/cell.oos");
-           File jXmlFile = new File("../temp/cell.xml");
-           File mmlFile = new File("../temp/cell.mml");
+           File jXmlFile = new File("../temp/cell.jxml");
+           File mmlFile = new File("../temp/cell.xml");
 
            /*
 
@@ -1329,7 +1332,7 @@ public class MorphMLConverter extends FormatImporter
 
           MorphMLConverter.saveCellInJavaObjFormat(cell, oosFile);
           MorphMLConverter.saveCellInJavaXMLFormat(cell, jXmlFile);
-          MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  mmlFile, NeuroMLConstants.NEUROML_LEVEL_2);
+          MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  mmlFile, NeuroMLConstants.NEUROML_LEVEL_2, NeuroMLConstants.NEUROML_VERSION_2);
 
 
           System.out.println("Saved MML file as: " + mmlFile.getCanonicalPath());

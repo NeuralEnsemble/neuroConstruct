@@ -666,7 +666,7 @@ public class ProjectManager implements GenerationReport
             SimpleXMLElement morphElement = new SimpleXMLElement("cells");
                             
             Cell cell = project.cellManager.getCell(cellName);
-            SimpleXMLElement element = MorphMLConverter.getCellXMLElement(cell, project, NeuroMLConstants.NEUROML_LEVEL_3);                 
+            SimpleXMLElement element = MorphMLConverter.getCellXMLElement(cell, project, NeuroMLConstants.NEUROML_LEVEL_3, NeuroMLConstants.NEUROML_VERSION_1);
             morphElement.addChildElement(element);
                 
             rootElement.addChildElement(morphElement);
@@ -1035,7 +1035,8 @@ public class ProjectManager implements GenerationReport
                     i++;
                     ct.add(project.cellGroupsInfo.getCellType(cg));
                     Cell cell = project.cellManager.getCell(ct.get(i));
-                    SimpleXMLElement element = MorphMLConverter.getCellXMLElement(cell, project, NeuroMLConstants.NEUROML_LEVEL_3);
+                    SimpleXMLElement element = MorphMLConverter.getCellXMLElement(cell, project, 
+                        NeuroMLConstants.NEUROML_LEVEL_3, NeuroMLConstants.NEUROML_VERSION_1);
                     cellsElement.addChildElement(element);                    
                 }
                 
@@ -1748,9 +1749,9 @@ public class ProjectManager implements GenerationReport
 
                     }
 
-                    ArrayList<SimXSLMapping> simMappings = cmlCm.getSimMappings();
+                    ArrayList<SimulatorMapping> simMappings = cmlCm.getSimMappings();
 
-                    for (SimXSLMapping simMapping : simMappings)
+                    for (SimulatorMapping simMapping : simMappings)
                     {
                         File f = simMapping.getXslFileObject(activeProject, next.getInstanceName());
 
@@ -1822,7 +1823,7 @@ public class ProjectManager implements GenerationReport
 
                         Validator validator = schema.newValidator();
 
-                        Source xmlFileSource = new StreamSource(cmlCm.getChannelMLFile(activeProject));
+                        Source xmlFileSource = new StreamSource(cmlCm.getXMLFile(activeProject));
 
                         validator.validate(xmlFileSource);
 
@@ -1844,7 +1845,7 @@ public class ProjectManager implements GenerationReport
                     catch (IOException ex)
                     {
                         logger.logError("<br>Problem validating ChannelML file", ex);
-                        report.addTaggedElement("Problem validating ChannelML file: "+ cmlCm.getChannelMLFile()
+                        report.addTaggedElement("Problem validating ChannelML file: "+ cmlCm.getXMLFile()
                                 +" against XSD file: " +schemaFile.getAbsolutePath()+".",
                                 "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
 
@@ -1853,10 +1854,10 @@ public class ProjectManager implements GenerationReport
                     }
                     
                 }
-                catch (ChannelMLException ex)
+                catch (XMLMechanismException ex)
                 {
                     report.addTaggedElement("Error instantiating Channel mechanism: " + cmlCm.getInstanceName()
-                                            +", file: "+ cmlCm.getChannelMLFile(),
+                                            +", file: "+ cmlCm.getXMLFile(),
                                             "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
 
                     cellMechValidity = ValidityStatus.VALIDATION_ERROR;

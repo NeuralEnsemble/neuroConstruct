@@ -118,27 +118,27 @@ public class CellMechanismInfo extends AbstractTableModel
                     return null;
             }
         }
-        if (allCellMechanisms.elementAt(rowIndex) instanceof ChannelMLCellMechanism)
+        else if (allCellMechanisms.elementAt(rowIndex) instanceof XMLCellMechanism)
         {
-            ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism) allCellMechanisms.elementAt(rowIndex);
+            XMLCellMechanism xmlMech = (XMLCellMechanism) allCellMechanisms.elementAt(rowIndex);
 
-            if (cmlMech == null) return null;
+            if (xmlMech == null) return null;
 
             switch (columnIndex)
             {
                 case COL_NUM_INSTANCE_NAME:
-                    return cmlMech.getInstanceName();
+                    return xmlMech.getInstanceName();
                 case COL_NUM_MECHANISM_TYPE:
-                    return cmlMech.getMechanismType();
+                    return xmlMech.getMechanismType();
                 case COL_NUM_MECHANISM_MODEL:
-                    return cmlMech.getMechanismModel();
+                    return xmlMech.getMechanismModel();
                 case COL_NUM_DESC:
-                    return cmlMech.getDescription();
+                    return xmlMech.getDescription();
 
                 case COL_NUM_SIM_ENVS:
                 {
 
-                    ArrayList<SimXSLMapping> simMappings = cmlMech.getSimMappings();
+                    ArrayList<SimulatorMapping> simMappings = xmlMech.getSimMappings();
                     StringBuffer sb = new StringBuffer();
                     for (int i = 0; i < simMappings.size(); i++)
                     {
@@ -153,9 +153,7 @@ public class CellMechanismInfo extends AbstractTableModel
             }
         }
 
-
-
-        return null;
+        return "???";
 
     }
 
@@ -173,15 +171,15 @@ public class CellMechanismInfo extends AbstractTableModel
 
 
 
-    public void reinitialiseCMLMechs(Project project) throws ChannelMLException
+    public void reinitialiseCMLMechs(Project project) throws XMLMechanismException
     {
         logger.logComment("reinitialiseCMLMechs...");
         for (int i = 0; i < getRowCount(); i++)
         {
             CellMechanism nextCellMech = getCellMechanismAt(i);
-            if (nextCellMech instanceof ChannelMLCellMechanism)
+            if (nextCellMech instanceof XMLCellMechanism)
             {
-                ((ChannelMLCellMechanism)nextCellMech).initialise(project, false);
+                ((XMLCellMechanism)nextCellMech).initialise(project, false);
             }
         }
     }
@@ -222,6 +220,20 @@ public class CellMechanismInfo extends AbstractTableModel
                 logger.logComment("-------     Checking cell mechanism: " + nextCellMech);
                 if (nextCellMech.getMechanismType().equals(CellMechanism.CHANNEL_MECHANISM) ||
                     nextCellMech.getMechanismType().equals(CellMechanism.ION_CONCENTRATION))
+                    allNames.add(nextCellMech.getInstanceName());
+
+        }
+        return allNames;
+    }
+
+    public Vector<String> getSBMLMechs()
+    {
+        Vector<String> allNames = new Vector<String>();
+        for (int i = 0; i < getRowCount(); i++)
+        {
+                CellMechanism nextCellMech = getCellMechanismAt(i);
+                logger.logComment("-------     Checking cell mechanism: " + nextCellMech);
+                if (nextCellMech.getMechanismType().equals(CellMechanism.SBML_MECHANISM))
                     allNames.add(nextCellMech.getInstanceName());
 
         }

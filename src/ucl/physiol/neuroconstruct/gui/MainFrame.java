@@ -4635,7 +4635,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             projManager.getCurrentProject().cellMechanismInfo.reinitialiseCMLMechs(projManager.getCurrentProject());
         }
-        catch (ChannelMLException ex1)
+        catch (XMLMechanismException ex1)
         {
             GuiUtils.showErrorMessage(logger,
                                       "Error reinitialising Cell Mechanisms: " +
@@ -12922,8 +12922,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         try
         {
             MorphMLConverter.saveAllCellsInNeuroML(proj, 
-                                                   mc, 
-                                                   level, 
+                                                   mc,
+                                                   level,
+                                                   NeuroMLConstants.NEUROML_VERSION_1,
                                                    null,
                                                    neuroMLDir);
         }
@@ -13431,28 +13432,28 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             CellMechanism cellMech = projManager.getCurrentProject().cellMechanismInfo.getCellMechanismAt(row);
 
-            if (cellMech instanceof ChannelMLCellMechanism)
+            if (cellMech instanceof XMLCellMechanism)
             {
-                ChannelMLCellMechanism cmlMechanism = (ChannelMLCellMechanism)cellMech;
+                XMLCellMechanism xmlMechanism = (XMLCellMechanism)cellMech;
 
                 try
                 {
-                    cmlMechanism.reset(projManager.getCurrentProject(), false);
+                    xmlMechanism.reset(projManager.getCurrentProject(), false);
 
                     SimpleDateFormat formatter = new SimpleDateFormat("H:mm:ss, EEEE MMMM d, yyyy");
 
-                    File implFile = cmlMechanism.getChannelMLFile(projManager.getCurrentProject());
+                    File implFile = xmlMechanism.getXMLFile(projManager.getCurrentProject());
                     java.util.Date modified = new java.util.Date(implFile.lastModified());
 
 
 
-                    GuiUtils.showInfoMessage(logger,"Success","Reloaded cell mechanism: "+ cmlMechanism.getInstanceName()
+                    GuiUtils.showInfoMessage(logger,"Success","Reloaded cell mechanism: "+ xmlMechanism.getInstanceName()
                         +" from file: "+implFile.getAbsolutePath() +" (modified "+formatter.format(modified)+")", this);
                 }
-                catch (ChannelMLException ex1)
+                catch (XMLMechanismException ex1)
                 {
                     GuiUtils.showErrorMessage(logger,
-                                              "Error initialising Cell Mechanism: " +cmlMechanism.getInstanceName(),
+                                              "Error initialising Cell Mechanism: " +xmlMechanism.getInstanceName(),
                                               ex1,
                                               null);
 
@@ -13499,12 +13500,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             {
                 File xslDir = GeneralProperties.getChannelMLSchemataDir();
                 ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism) cellMech;
-                File implFile = cmlMech.getChannelMLFile(projManager.getCurrentProject());
+                File implFile = cmlMech.getXMLFile(projManager.getCurrentProject());
 
-                for (SimXSLMapping map: cmlMech.getSimMappings())
+                for (SimulatorMapping map: cmlMech.getSimMappings())
                 {
                     String simEnv = map.getSimEnv();
-                    File oldXsl = new File (implFile.getParent(), map.getXslFile());
+                    File oldXsl = new File (implFile.getParent(), map.getMappingFile());
                     File newXsl = null;
 
                     if (simEnv.equals(SimEnvHelper.NEURON))
@@ -13536,7 +13537,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                         try 
                         {
                             GeneralUtils.copyFileIntoDir(newXsl, implFile.getParentFile());
-                            map.setXslFile(newXsl.getName());
+                            map.setMappingFile(newXsl.getName());
                             projManager.getCurrentProject().markProjectAsEdited();
                         } 
                         catch (IOException ex) 
@@ -13576,7 +13577,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                             try 
                             {
                                 GeneralUtils.copyFileIntoDir(newXsl, implFile.getParentFile());
-                                SimXSLMapping map = new SimXSLMapping(newXsl.getName(), simEnv, (simEnv.equals(SimEnvHelper.NEURON)));
+                                SimulatorMapping map = new SimulatorMapping(newXsl.getName(), simEnv, (simEnv.equals(SimEnvHelper.NEURON)));
                                 
                                 cmlMech.addSimMapping(map);
                                 try
@@ -13640,10 +13641,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             projManager.getCurrentProject().cellMechanismInfo.updateCellMechanism(cp);
         }
-        else if (cellMech instanceof ChannelMLCellMechanism)
+        else if (cellMech instanceof XMLCellMechanism)
         {
             ChannelMLEditor cmlEditor
-                = new ChannelMLEditor( (ChannelMLCellMechanism) cellMech,
+                = new ChannelMLEditor( (XMLCellMechanism) cellMech,
                                       projManager.getCurrentProject(),
                                       this);
 
@@ -13921,7 +13922,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 cmlFile = GeneralUtils.copyFileIntoDir(cmlFileChooser.getSelectedFile(),
                                                               dirForCMLFiles);
 
-                cmlm.setChannelMLFile(cmlFileChooser.getSelectedFile().getName());
+                cmlm.setXMLFile(cmlFileChooser.getSelectedFile().getName());
 
                 //cmlm.initialise(this.projManager.getCurrentProject(), true);
 
@@ -13999,7 +14000,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                     /** @todo Put in dialog asking if it's a mod mapping for neuron, and set real val for requiresCompilation */
 
-                    SimXSLMapping sxm = new SimXSLMapping(newFile.getName(), simEnvs[i], true);
+                    SimulatorMapping sxm = new SimulatorMapping(newFile.getName(), simEnvs[i], true);
                     cmlm.addSimMapping(sxm);
 
 
@@ -14027,7 +14028,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             cmlm.initialise(projManager.getCurrentProject(), true);
         }
-        catch (ChannelMLException ex1)
+        catch (XMLMechanismException ex1)
         {
             GuiUtils.showErrorMessage(logger,
                                       "Error initialising Cell Mechanism: " +cmlm.getInstanceName() +", "+
@@ -14238,7 +14239,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 logger.logComment("ChannelML file found in props to be: "+ absFile);
 
                 File newFile = GeneralUtils.copyFileIntoDir(absFile, dirForCMLFiles);
-                cmlMech.setChannelMLFile(newFile.getName());
+                cmlMech.setXMLFile(newFile.getName());
             }
             if (props.getProperty("MappingNEURON")!=null)
             {
@@ -14251,7 +14252,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 File newFile = GeneralUtils.copyFileIntoDir(absFile, dirForCMLFiles);
 
-                SimXSLMapping mapping = new SimXSLMapping(newFile.getName(),
+                SimulatorMapping mapping = new SimulatorMapping(newFile.getName(),
                                                           SimEnvHelper.NEURON, true); // can be reset later
 
                 cmlMech.addSimMapping(mapping);
@@ -14269,7 +14270,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 File newFile = GeneralUtils.copyFileIntoDir(absFile, dirForCMLFiles);
 
-                SimXSLMapping mapping = new SimXSLMapping(newFile.getName(),
+                SimulatorMapping mapping = new SimulatorMapping(newFile.getName(),
                                                           SimEnvHelper.GENESIS, false);
 
                 cmlMech.addSimMapping(mapping);
@@ -14287,7 +14288,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 File newFile = GeneralUtils.copyFileIntoDir(absFile, dirForCMLFiles);
 
-                SimXSLMapping mapping = new SimXSLMapping(newFile.getName(),
+                SimulatorMapping mapping = new SimulatorMapping(newFile.getName(),
                                                           SimEnvHelper.PSICS, false);
 
                 cmlMech.addSimMapping(mapping);
@@ -14304,7 +14305,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     contents[i].getName().endsWith(ChannelMLConstants.DEFAULT_FILE_EXTENSION))
                 {
                     File newFile = GeneralUtils.copyFileIntoDir(contents[i], dirForCMLFiles);
-                    cmlMech.setChannelMLFile(newFile.getName());
+                    cmlMech.setXMLFile(newFile.getName());
 
                 }
                 if (contents[i].getName().endsWith(ChannelMLConstants.DEFAULT_MAPPING_EXTENSION))
@@ -14315,7 +14316,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     if (props.getProperty("MappingNEURON")==null &&
                         newFile.getName().startsWith(SimEnvHelper.NEURON))
                     {
-                        SimXSLMapping mapping = new SimXSLMapping(newFile.getName(),
+                        SimulatorMapping mapping = new SimulatorMapping(newFile.getName(),
                                                                   SimEnvHelper.NEURON, true); // true can be reset later
 
                         cmlMech.addSimMapping(mapping);
@@ -14323,7 +14324,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     if (props.getProperty("MappingGENESIS")==null &&
                         newFile.getName().startsWith(SimEnvHelper.GENESIS))
                     {
-                        SimXSLMapping mapping = new SimXSLMapping(newFile.getName(),
+                        SimulatorMapping mapping = new SimulatorMapping(newFile.getName(),
                                                                   SimEnvHelper.GENESIS, false);
 
                         cmlMech.addSimMapping(mapping);
@@ -14333,7 +14334,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             //cmlMech.initialise(projManager.getCurrentProject());
 
-            if (cmlMech.getChannelMLFile()==null)
+            if (cmlMech.getXMLFile()==null)
             {
                 GuiUtils.showErrorMessage(logger,
                                           "Error finding the "
@@ -14361,7 +14362,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             projManager.getCurrentProject().cellMechanismInfo.addCellMechanism(cmlMech);
 
-            logger.logComment("Added CML process with main file: "+ cmlMech.getChannelMLFile());
+            logger.logComment("Added CML process with main file: "+ cmlMech.getXMLFile());
 
 
 
@@ -14445,7 +14446,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                       ex, this);
             return;
         }
-        catch (ChannelMLException ex)
+        catch (XMLMechanismException ex)
         {
             GuiUtils.showErrorMessage(logger,
                                       "Problem adding the Cell Mechanism from "+ fromDir.getAbsolutePath()

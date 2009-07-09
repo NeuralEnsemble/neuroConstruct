@@ -661,7 +661,7 @@ public class GeneratedNetworkConnections
                             }
 
                         }
-                        catch(ChannelMLException e)
+                        catch(XMLMechanismException e)
                         {
                             logger.logError("Problem getting info out of "+cmlMech);
                         }

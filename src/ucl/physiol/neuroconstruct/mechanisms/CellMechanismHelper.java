@@ -48,6 +48,7 @@ public  class CellMechanismHelper
     public static final String PROP_CELL_MECH_TYPE = "Mechanism Type";
     public static final String PROP_PLOT_INFO_FILE = "Plot Info File";
     public static final String PROP_CHANNELML_FILE = "ChannelML file";
+    public static final String PROP_SBML_FILE = "SBML file";
     public static final String PROP_IMPL_METHOD = "Implementation method";
     public static final String PROP_SIMENV_SUFFIX = " implementation";
     public static final String PROP_MAPPING_SUFFIX = " mapping";

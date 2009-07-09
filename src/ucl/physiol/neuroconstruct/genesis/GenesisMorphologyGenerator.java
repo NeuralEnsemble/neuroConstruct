@@ -434,7 +434,7 @@ public class GenesisMorphologyGenerator
                                     {
                                         // nothing more to try...
                                     }
-                                    catch (ChannelMLException ex1)
+                                    catch (XMLMechanismException ex1)
                                     {
                                         GuiUtils.showErrorMessage(logger,
                                                                   "Error creating implementation of Cell Mechanism: " +

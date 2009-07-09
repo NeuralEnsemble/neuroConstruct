@@ -35,6 +35,7 @@ import java.io.*;
 import java.util.Vector;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
+import ucl.physiol.neuroconstruct.mechanisms.XMLMechanismException;
 
 /**
  * Class for generating HTML representation of neuroConstruct project
@@ -79,16 +80,27 @@ public class Expand
     {
         SimpleHtmlDoc mainPage = new SimpleHtmlDoc();
 
+        mainPage.setMainFontSize(10);
+
         mainPage.addTaggedElement("neuroConstruct project: "+ project.getProjectName(), "h1");
 
         mainPage.addTaggedElement(""+ handleWhitespaces(project.getProjectDescription()), "p");
+
+        mainPage.addTaggedElement("Simulation configurations", "h2");
+
+        for (String sc: project.simConfigInfo.getAllSimConfigNames())
+        {
+            String scFile = getItemPage(sc);
+            mainPage.addTaggedElement(mainPage.getLinkedText(sc, scFile), "p");
+        }
+
 
         mainPage.addTaggedElement("Cell Types present in the project", "h2");
 
         Vector<Cell> cells = project.cellManager.getAllCells();
 
 
-    	mainPage.addRawHtml("<table>");
+    	mainPage.addRawHtml("<table border=\"1\" width ='300'>");
     	
         for (Cell cell: cells)
         {
@@ -148,7 +160,7 @@ public class Expand
 
                 	cmPage.addRawHtml(readable);
                 } 
-                catch (ChannelMLException e) 
+                catch (XMLMechanismException e)
 				{
                 	cmPage.addTaggedElement("Unable to generate HTML representation of: "+ cm.getInstanceName(), "b");
 				}
@@ -161,7 +173,7 @@ public class Expand
                 {
                 	cmXmlPage.addRawHtml(cmlCm.getXMLDoc().getXMLString("", true));
 				} 
-                catch (ChannelMLException e) 
+                catch (XMLMechanismException e)
 				{
 					cmXmlPage.addTaggedElement("Unable to generate ChannelML representation of: "+ cm.getInstanceName(), "b");
 				}
@@ -198,7 +210,8 @@ public class Expand
         try
         {
             //File projFile = new File("examples/Ex6-Cerebellum/Ex6-Cerebellum.neuro.xml");
-            File projFile = new File("C:\\copynCmodels\\TraubEtAl2005\\TraubEtAl2005.neuro.xml");
+            //File projFile = new File("C:\\copynCmodels\\TraubEtAl2005\\TraubEtAl2005.neuro.xml");
+            File projFile = new File("nCmodels/CA1PyramidalCell/CA1PyramidalCell.ncx");
             //File projFile = new File("/bernal/models/Layer23_names/Layer23_names.neuro.xml");
             
 

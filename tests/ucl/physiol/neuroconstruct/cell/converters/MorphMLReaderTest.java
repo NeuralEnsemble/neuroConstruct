@@ -104,7 +104,8 @@ public class MorphMLReaderTest {
         {
             MorphMLConverter.setPreferredExportUnits(unit);
             
-            MorphMLConverter.saveCellInNeuroMLFormat(cell1, pm.getCurrentProject(), morphFile, NeuroMLConstants.NEUROML_LEVEL_3);
+            MorphMLConverter.saveCellInNeuroMLFormat(cell1, pm.getCurrentProject(), morphFile,
+                NeuroMLConstants.NEUROML_LEVEL_3, NeuroMLConstants.NEUROML_VERSION_1);
 
             assertTrue(morphFile.exists());
 

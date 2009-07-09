@@ -40,7 +40,7 @@ import ucl.physiol.neuroconstruct.cell.Cell;
 import ucl.physiol.neuroconstruct.cell.converters.MorphMLReader;
 import ucl.physiol.neuroconstruct.genesis.GenesisSettings;
 import ucl.physiol.neuroconstruct.mechanisms.ChannelMLCellMechanism;
-import ucl.physiol.neuroconstruct.mechanisms.SimXSLMapping;
+import ucl.physiol.neuroconstruct.mechanisms.SimulatorMapping;
 import ucl.physiol.neuroconstruct.neuron.NeuronSettings;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.cellchoice.AllCells;
@@ -1480,7 +1480,9 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                       
                   File xslDir = GeneralProperties.getChannelMLSchemataDir();
                   ChannelMLCellMechanism cmlMech = new ChannelMLCellMechanism();
-                  cmlMech.setChannelMLFile(chanMLFile.getName());
+
+                  cmlMech.setXMLFile(chanMLFile.getName());
+
                   cmlMech.setInstanceName(chanName);
                   if (getCurrentElement().equals(ChannelMLConstants.CHAN_TYPE_ELEMENT))
                       cmlMech.setMechanismType(ChannelMLConstants.CHAN_TYPE_ELEMENT);
@@ -1502,7 +1504,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                   for (int i = 0; i < newXsl.length; i++) {
                               try {
                                   GeneralUtils.copyFileIntoDir(newXsl[i], newDir);
-                                  SimXSLMapping map = new SimXSLMapping(newXsl[i].getName(), simEnv[i], true);
+                                  SimulatorMapping map = new SimulatorMapping(newXsl[i].getName(), simEnv[i], true);
 
                                   cmlMech.addSimMapping(map);
                                   

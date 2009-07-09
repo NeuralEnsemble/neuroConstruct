@@ -68,11 +68,17 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
     Project project = null;
 
-    ChannelMLCellMechanism cmlMechanism = null;
+    XMLCellMechanism xmlMechanism = null;
+
+    private final static String CHANNELML = "ChannelML";
+    private final static String SBML = "SBML";
+
+    private String xmlDialect = CHANNELML;
 
     private final String SUMMARY_TAB = "Summary of file contents";
     private final String EDIT_TAB = "Edit";
-    private final String CML_CONTENTS_TAB = "ChannelML file";
+    private String CML_CONTENTS_TAB = "XML file";
+
 
     public static final String CELSIUS_PARAMETER = "celsius";
     public static final String TEMP_ADJ_PARAMETER = "temp_adj_";
@@ -176,14 +182,21 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         }
     }
 
-    public ChannelMLEditor(ChannelMLCellMechanism cmlMechanism, Project project, ProjectEventListener eventIf)
+    public ChannelMLEditor(XMLCellMechanism cmlMechanism, Project project, ProjectEventListener eventIf)
     {
         super();
 
         this.project = project;
         this.eventIf = eventIf;
-        this.cmlMechanism = cmlMechanism;
+        this.xmlMechanism = cmlMechanism;
 
+        if (xmlMechanism instanceof ChannelMLCellMechanism)
+            xmlDialect = CHANNELML;
+        else if (xmlMechanism instanceof SBMLCellMechanism)
+            xmlDialect = SBML;
+
+
+        CML_CONTENTS_TAB = xmlDialect+" file";
 
         try
         {
@@ -193,7 +206,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
             jbInit();
             refreshingInterface = false;
 
-            this.jLabelFileName.setText("Editing ChannelML file: " + cmlFileUsed.getAbsolutePath());
+            this.jLabelFileName.setText("Editing "+xmlDialect+" file: " + cmlFileUsed.getAbsolutePath());
 
             jLabelFileName.setHorizontalAlignment(JLabel.CENTER);
             jLabelFileName.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
@@ -213,7 +226,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
     private void jbInit() throws Exception
     {
-        this.setTitle("Editing ChannelML Cell Mechanism: "+ this.cmlMechanism.getInstanceName());
+        this.setTitle("Editing "+xmlDialect+" Cell Mechanism: "+ this.xmlMechanism.getInstanceName());
 
 
         jListXPaths.setModel(listModelXPaths);
@@ -280,17 +293,17 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
 
         /** @todo Put to glossary */
-        jButtonValidate.setToolTipText("Validate the current ChannelML file with the current specifications:\n"+GeneralProperties.getChannelMLSchemaFile()+"");
+        jButtonValidate.setToolTipText("Validate the current "+xmlDialect+" file with the current specifications:\n"+GeneralProperties.getChannelMLSchemaFile()+"");
 
         jButtonSave.setToolTipText("Saves any changes to the values in the Cell Mechanism **made through this interface** in an updated XML file");
 
 
-        jButtonReload.setToolTipText("Reload the ChannelML file (if it has been externally modified) and update information above");
+        jButtonReload.setToolTipText("Reload the "+xmlDialect+" file (if it has been externally modified) and update information above");
 
         jButtonCancel.setToolTipText("Close this window without saving any changes");
 
-        jTextAreaMain.setText("  ***  Note: below is an experimental interface for altering the parameters in the ChannelML file  ***\n"
-                              +"The ChannelML file can either be edited by an external text editor (recommended, above), or " +
+        jTextAreaMain.setText("  ***  Note: below is an experimental interface for altering the parameters in the "+xmlDialect+" file  ***\n"
+                              +"The "+xmlDialect+" file can either be edited by an external text editor (recommended, above), or " +
                               "the values listed below can be altered and the XML file regenerated automatically. Note, the " +
                               "structure of the XML file can only be altered by the former means.");
         //jTextAreaMain.set
@@ -430,7 +443,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         jScrollPaneList.getViewport().add(jListXPaths);
 
         jTabbedPane1.addTab(CML_CONTENTS_TAB, null, jPanelCMLFile, "Contents of the XML file");
-        jTabbedPane1.addTab(EDIT_TAB, null, jPanelEdit, "The parameters in the ChannelML file can be changed here, along with the settings file for loading it into neuroConstruct");
+        jTabbedPane1.addTab(EDIT_TAB, null, jPanelEdit, "The parameters in the "+xmlDialect+" file can be changed here, along with the settings file for loading it into neuroConstruct");
 
         jPanelCMLFile.add(jScrollPaneCMLFile, java.awt.BorderLayout.CENTER);
         jScrollPaneCMLFile.getViewport().add(jEditorPaneCMLFile);
@@ -467,13 +480,13 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         if (dir!=null && dir.exists())
         {
             return new File(ProjectStructure.getCellMechanismDir(project.getProjectMainDirectory()),
-                            cmlMechanism.getInstanceName());
+                            xmlMechanism.getInstanceName());
         }
         else
         {
             // old method...
             return new File(ProjectStructure.getCellProcessesDir(project.getProjectMainDirectory(), false),
-                            cmlMechanism.getInstanceName());
+                            xmlMechanism.getInstanceName());
         }
     }
 
@@ -484,7 +497,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         int selectedTab = jTabbedPane1.getSelectedIndex();
         String tab = jTabbedPane1.getTitleAt(selectedTab);
 
-        File cmlFile = this.cmlMechanism.getChannelMLFile(project);
+        File cmlFile = this.xmlMechanism.getXMLFile(project);
         File xslDoc = GeneralProperties.getChannelMLReadableXSL();
 
 
@@ -497,23 +510,23 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
             jTabbedPane1.addTab(SUMMARY_TAB,
                                 null,
                                 jPanelCMLSummary,
-                                "Summary of contents of ChannelML file converted to HTML from XML using: "
+                                "Summary of contents of "+xmlDialect+" file converted to HTML from XML using: "
                 +xslDoc.getAbsolutePath());
 
             jPanelEdit.add(jPanelEditExt, java.awt.BorderLayout.NORTH);
             jPanelEdit.add(jPanelEditInt, java.awt.BorderLayout.CENTER);
 
-            jTabbedPane1.addTab(CML_CONTENTS_TAB, null, jPanelCMLFile, "Contents of ChannelML file: "+cmlFile.getAbsolutePath());
+            jTabbedPane1.addTab(CML_CONTENTS_TAB, null, jPanelCMLFile, "Contents of "+xmlDialect+" file: "+cmlFile.getAbsolutePath());
 
             jTabbedPane1.addTab(EDIT_TAB,
                                 null,
                                 jPanelEdit,
-                                "The parameters in the ChannelML file can be changed here, along with the settings file for loading it into neuroConstruct");
+                                "The parameters in the "+xmlDialect+" file can be changed here, along with the settings file for loading it into neuroConstruct");
             //jPanelEdit.setToolTipText();
 
 
 
-            SimpleXMLDocument xmlDoc = cmlMechanism.getXMLDoc();
+            SimpleXMLDocument xmlDoc = xmlMechanism.getXMLDoc();
 
             String htmlString = xmlDoc.getXMLString("", true);
 
@@ -536,7 +549,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
             if (tab.equals(SUMMARY_TAB))  // only transform xml if the tab is shown
             {
-                String readable = XMLUtils.transform(this.cmlMechanism.getXMLDoc().getXMLString("", false),xslDoc);
+                String readable = XMLUtils.transform(this.xmlMechanism.getXMLDoc().getXMLString("", false),xslDoc);
 
 
                 //String readable = XMLUtils.transform(cmlFile,xslDoc);
@@ -547,13 +560,13 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                 this.jEditorPaneCMLSummary.setText(readable);
             }
 
-            ArrayList<SimXSLMapping> simMappings = cmlMechanism.getSimMappings();
+            ArrayList<SimulatorMapping> simMappings = xmlMechanism.getSimMappings();
 
             //System.out.println("Done p1...");
 
             for (int i = 0; i < simMappings.size(); i++)
             {
-                SimXSLMapping nextMapping = simMappings.get(i);
+                SimulatorMapping nextMapping = simMappings.get(i);
                 JPanel jPanelImplFile = new JPanel();
 
                 jTabbedPane1.add(jPanelImplFile, nextMapping.getSimEnv() + " mapping");
@@ -563,7 +576,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                     File dirForFiles = this.getDirForCMLFiles();
 
-                    File implFile = new File(dirForFiles, nextMapping.getXslFile());
+                    File implFile = new File(dirForFiles, nextMapping.getMappingFile());
 
                     JLabel jLabelName = new JLabel("File: " + implFile.getAbsolutePath());
                     jLabelName.setHorizontalAlignment(JLabel.CENTER);
@@ -640,13 +653,13 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
             }
 
         }
-        catch (ChannelMLException ex)
+        catch (XMLMechanismException ex)
         {
-            GuiUtils.showErrorMessage(logger, "Problem displaying the ChannelML source", ex, this);
+            GuiUtils.showErrorMessage(logger, "Problem displaying the "+xmlDialect+" source", ex, this);
         }
         catch (IOException ex)
         {
-            GuiUtils.showErrorMessage(logger, "Problem displaying one of the ChannelML files", ex, this);
+            GuiUtils.showErrorMessage(logger, "Problem displaying one of the "+xmlDialect+" files", ex, this);
         }
 
 
@@ -682,7 +695,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
     private void previewNativeScript(String simEnv)
     {
         logger.logComment("Looking for native env mapping: "+ simEnv);
-        ArrayList<SimXSLMapping> simMappings = cmlMechanism.getSimMappings();
+        ArrayList<SimulatorMapping> simMappings = xmlMechanism.getSimMappings();
 
         for (int i = 0; i < simMappings.size(); i++)
         {
@@ -692,17 +705,17 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                 {
                     File dirForFiles = this.getDirForCMLFiles();
 
-                    SimpleXMLDocument xmlDoc = cmlMechanism.getXMLDoc();
+                    SimpleXMLDocument xmlDoc = xmlMechanism.getXMLDoc();
 
                     String xmlString = xmlDoc.getXMLString("", false);
 
-                    File xslFile = new File(dirForFiles, simMappings.get(i).getXslFile());
+                    File xslFile = new File(dirForFiles, simMappings.get(i).getMappingFile());
 
                     String transformed = XMLUtils.transform(xmlString, xslFile);
 
                     SimpleViewer.showString(transformed, "Preview of " + simEnv + " script file", 12, false, false);
                 }
-                catch (ChannelMLException ex)
+                catch (XMLMechanismException ex)
                 {
                     GuiUtils.showErrorMessage(logger, "Error transforming XML content", ex, this);
                 }
@@ -736,11 +749,11 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
             //Project testProj = Project.loadProject(new File("C:/fullCheckout/tempModels/neuroConstruct/Ex7_GranuleCell/Ex7_GranuleCell.neuro.xml"),pel);
             //Project testProj = Project.loadProject(new File("C:\\copynCmodels\\TraubEtAl2005\\TraubEtAl2005.neuro.xml"),pel);
-            Project testProj = Project.loadProject(new File("nCmodels/InProgress/CA1PyramidalCell/CA1PyramidalCell.ncx"),pel);
+            Project testProj = Project.loadProject(new File("nCmodels/CA1PyramidalCell/CA1PyramidalCell.ncx"),pel);
 
-            //ChannelMLCellMechanism cmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("NaConductance_CML");
-            //ChannelMLCellMechanism cmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("Gran_CaHVA_98");
-            //ChannelMLCellMechanism cmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("kc_fast");
+            //ChannelMLCellMechanism xmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("NaConductance_CML");
+            //ChannelMLCellMechanism xmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("Gran_CaHVA_98");
+            //ChannelMLCellMechanism xmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("kc_fast");
             ChannelMLCellMechanism cmlMechanism =(ChannelMLCellMechanism)testProj.cellMechanismInfo.getCellMechanism("na3");
             
             ChannelMLEditor.logger.setThisClassVerbose(false);
@@ -780,12 +793,12 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
         try
         {
-            cmlMechanism.reset(project, false);
+            xmlMechanism.reset(project, false);
         }
-        catch (ChannelMLException ex1)
+        catch (XMLMechanismException ex1)
         {
             GuiUtils.showErrorMessage(logger,
-                                      "Error initialising Cell Mechanism: " +cmlMechanism.getInstanceName(),
+                                      "Error initialising Cell Mechanism: " +xmlMechanism.getInstanceName(),
                                       ex1,
                                       null);
 
@@ -803,7 +816,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
     {
         logger.logComment("Editing props");
 
-        File cmlFile = this.cmlMechanism.getChannelMLFile(project);
+        File cmlFile = this.xmlMechanism.getXMLFile(project);
 
         File propsFile = new File(cmlFile.getParentFile(), CellMechanismHelper.PROPERTIES_FILENAME);
 
@@ -813,7 +826,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         {
             try
             {
-                this.cmlMechanism.initPropsFromPropsFile(propsFile);
+                this.xmlMechanism.initPropsFromPropsFile(propsFile);
             }
             catch (IOException ex)
             {
@@ -835,7 +848,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
         Runtime rt = Runtime.getRuntime();
 
-        File cmlFile = this.cmlMechanism.getChannelMLFile(project);
+        File cmlFile = this.xmlMechanism.getXMLFile(project);
 
         String command = editorPath + " " + cmlFile.getAbsolutePath()+"";
 
@@ -850,7 +863,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         try
         {
             GuiUtils.showInfoMessage(logger, "Confirm","Please note that any changes made in an external application to the file will not be\n"+
-                                                        "registered here until you press <b>Reload ChannelML file</b>", this);
+                                                        "registered here until you press <b>Reload "+xmlDialect+" file</b>", this);
 
             rt.exec(command);
         }
@@ -911,9 +924,11 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
         float prefTemperature = Float.NaN;
 
-        if (cmlMechanism.isChannelMechanism())
+        if (xmlMechanism.isChannelMechanism())
         {
-            if (cmlMechanism.getUnitsUsedInFile().equals(ChannelMLConstants.SI_UNITS))
+            ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism)xmlMechanism;
+
+            if (cmlMech.getUnitsUsedInFile().equals(ChannelMLConstants.SI_UNITS))
             {
                 minV = minV/1000;
                 maxV = maxV/1000;
@@ -926,11 +941,11 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                 boolean postV1_7_3format = false;
 
 
-                SimpleXMLEntity[] gates = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getHHGateXPath()); // pre v1.7.3 format
+                SimpleXMLEntity[] gates = xmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getHHGateXPath()); // pre v1.7.3 format
 
                 if (gates.length==0)
                 {
-                    gates = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getPostV1_7_3GatesXPath()); // post v1.7.3 format
+                    gates = xmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getPostV1_7_3GatesXPath()); // post v1.7.3 format
                     for(SimpleXMLEntity sxe: gates)
                         logger.logComment("Found gate: "+sxe);
 
@@ -938,7 +953,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                         postV1_7_3format =true;
                 }
                 
-                SimpleXMLEntity[] q10s = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getQ10SettingsXPath());
+                SimpleXMLEntity[] q10s = xmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getQ10SettingsXPath());
 
                 ArrayList<Argument> q10sFound = new ArrayList<Argument>();
                 Float tempToUseQ10 = Float.NaN;
@@ -1024,7 +1039,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                 }
 
 
-                SimpleXMLEntity[] parameters = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getChannelParameterXPath());
+                SimpleXMLEntity[] parameters = xmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getChannelParameterXPath());
 
                 Properties paramsFound = new Properties();
                 for(SimpleXMLEntity sxe: parameters)
@@ -1068,19 +1083,19 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                     float gmax = Float.NaN;
                     float revPot = Float.NaN;
                     
-                    String newCondRule = cmlMechanism.getXMLDoc().getValueByXPath(ChannelMLConstants.getCondLawXPath());
+                    String newCondRule = xmlMechanism.getXMLDoc().getValueByXPath(ChannelMLConstants.getCondLawXPath());
                     if (newCondRule!=null)
                         postV1_7_3format =true;
                         
                     
                     if(!postV1_7_3format)
                     {
-                        SimpleXMLEntity[] ions = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getPreV1_7_3IonsXPath());
+                        SimpleXMLEntity[] ions = xmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getPreV1_7_3IonsXPath());
                         SimpleXMLElement firstIon = (SimpleXMLElement) ions[0];
 
                         String revPotString = firstIon.getAttributeValue(ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR);
 
-                        SimpleXMLEntity[] conductances = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getConductanceXPath());
+                        SimpleXMLEntity[] conductances = xmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getConductanceXPath());
 
                         SimpleXMLElement firstCond = (SimpleXMLElement) conductances[0];
                         String gmaxString = firstCond.getAttributeValue(ChannelMLConstants.DEFAULT_COND_DENSITY_ATTR);
@@ -1091,7 +1106,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                     }
                     else
                     {
-                        SimpleXMLEntity[] currVoltRel = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getCurrVoltRelXPath());
+                        SimpleXMLEntity[] currVoltRel = xmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getCurrVoltRelXPath());
                         SimpleXMLElement firstCurrVoltRel = (SimpleXMLElement) currVoltRel[0];
                         String revPotString = firstCurrVoltRel.getAttributeValue(ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR);
                         String gmaxString = firstCurrVoltRel.getAttributeValue(ChannelMLConstants.DEFAULT_COND_DENSITY_ATTR);
@@ -1107,7 +1122,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                     EquationUnit func = Expression.parseExpression(expression, new Variable[]{v});
 
 
-                    String graphRef = "Plot of leak current due to Cell Mechanism: " + cmlMechanism.getInstanceName();
+                    String graphRef = "Plot of leak current due to Cell Mechanism: " + xmlMechanism.getInstanceName();
 
                     String dsRef = graphRef;
 
@@ -1144,7 +1159,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                             String gateName = gate.getAttributeValue(ChannelMLConstants.GATE_NAME_ELEMENT);
                             
                             boolean voltConcGate = false;
-                            SimpleXMLEntity[] concDep = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getCurrVoltRelXPath()+"/"
+                            SimpleXMLEntity[] concDep = xmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getCurrVoltRelXPath()+"/"
                                 +ChannelMLConstants.CONC_DEP_ELEMENT);
                             
                             String concVarName = null;
@@ -1253,7 +1268,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                         catch (NumberFormatException ex)
                                         {
                                             GuiUtils.showErrorMessage(logger, "Error getting parameter for rate: "+ rate.getName()+" in state "
-                                            + gateName+" in Cell Mechanism "+ cmlMechanism.getInstanceName(), ex, this);
+                                            + gateName+" in Cell Mechanism "+ xmlMechanism.getInstanceName(), ex, this);
                                         }
 
                                         if (exprForm.equals(ChannelMLConstants.EXP_LINEAR_TYPE))
@@ -1342,10 +1357,10 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                             
 
                                 String graphRef = "Plots for gating complex "
-                                    + gateName + " in Cell Mechanism " + cmlMechanism.getInstanceName();
+                                    + gateName + " in Cell Mechanism " + xmlMechanism.getInstanceName();
 
                                 String dsRef = "Plot of: " + rateName + " in gating complex "
-                                    + gateName + " in Cell Mechanism " + cmlMechanism.getInstanceName();
+                                    + gateName + " in Cell Mechanism " + xmlMechanism.getInstanceName();
 
                                 String desc = dsRef;
 
@@ -1452,12 +1467,12 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                 DataSet dsBeta = rateData.get("beta");
 
                                 String graphRef = "Plots for tau/inf in gating complex "
-                                    + gateName+" in Cell Mechanism "+ cmlMechanism.getInstanceName();
+                                    + gateName+" in Cell Mechanism "+ xmlMechanism.getInstanceName();
 
                                 if (!rateData.containsKey("tau"))
                                 {
                                     String dsRef = "Plot of tau (1/(alpha+beta)) in gating complex "
-                                    + gateName+" in Cell Mechanism "+ cmlMechanism.getInstanceName();
+                                    + gateName+" in Cell Mechanism "+ xmlMechanism.getInstanceName();
 
                                     DataSet tau = new DataSet(dsRef, dsRef, yUnits,timeUnits, "Membrane Potential", "tau");
 
@@ -1476,7 +1491,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                 if (!rateData.containsKey("inf"))
                                 {
                                     String dsRef = "Plot of inf (alpha/(alpha+beta)) in gating complex "
-                                    + gateName+" in Cell Mechanism "+ cmlMechanism.getInstanceName();
+                                    + gateName+" in Cell Mechanism "+ xmlMechanism.getInstanceName();
 
                                     DataSet inf = new DataSet(dsRef, dsRef, yUnits, "","Membrane Potential", "inf");
 
@@ -1618,7 +1633,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                                     catch (NumberFormatException ex)
                                                     {
                                                         GuiUtils.showErrorMessage(logger, "Error getting parameter for rate: "+ rate.getName()+" in state "
-                                                        + gateState+" in Cell Mechanism "+ cmlMechanism.getInstanceName(), ex, this);
+                                                        + gateState+" in Cell Mechanism "+ xmlMechanism.getInstanceName(), ex, this);
                                                     }
 
                                                     if (eqnType.equals(ChannelMLConstants.LINOID_TYPE_OLD))
@@ -1718,10 +1733,10 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                             }
 
                                             String graphRef = "Plots for state "
-                                                + gateState + " in Cell Mechanism " + cmlMechanism.getInstanceName();
+                                                + gateState + " in Cell Mechanism " + xmlMechanism.getInstanceName();
 
                                             String dsRef = "Plot of: " + rate.getName() + " in state "
-                                                + gateState + " in Cell Mechanism " + cmlMechanism.getInstanceName();
+                                                + gateState + " in Cell Mechanism " + xmlMechanism.getInstanceName();
 
                                             String desc = dsRef;
 
@@ -1819,12 +1834,12 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                         DataSet dsBeta = rateData.get("beta");
 
                                         String graphRef = "Plots for tau/inf in state "
-                                            + gateState+" in Cell Mechanism "+ cmlMechanism.getInstanceName();
+                                            + gateState+" in Cell Mechanism "+ xmlMechanism.getInstanceName();
 
                                         if (!rateData.containsKey("tau"))
                                         {
                                             String dsRef = "Plot of tau (1/(alpha+beta)) in state "
-                                            + gateState+" in Cell Mechanism "+ cmlMechanism.getInstanceName();
+                                            + gateState+" in Cell Mechanism "+ xmlMechanism.getInstanceName();
 
                                             DataSet tau = new DataSet(dsRef, dsRef, yUnits,timeUnits, "Membrane Potential", "tau");
 
@@ -1843,7 +1858,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                         if (!rateData.containsKey("inf"))
                                         {
                                             String dsRef = "Plot of inf (alpha/(alpha+beta)) in state "
-                                            + gateState+" in Cell Mechanism "+ cmlMechanism.getInstanceName();
+                                            + gateState+" in Cell Mechanism "+ xmlMechanism.getInstanceName();
 
                                             DataSet inf = new DataSet(dsRef, dsRef, yUnits, "","Membrane Potential", "inf");
 
@@ -1865,20 +1880,20 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                     }
                 }
             }
-            catch (ChannelMLException ex)
+            catch (XMLMechanismException ex)
             {
-                GuiUtils.showErrorMessage(logger, "Error calculating plots for ChannelML process: "+ cmlMechanism, ex, this);
+                GuiUtils.showErrorMessage(logger, "Error calculating plots for "+xmlDialect+" process: "+ xmlMechanism, ex, this);
             }
             catch (EquationException ex)
             {
-                GuiUtils.showErrorMessage(logger, "Error calculating plots for ChannelML process: "+ cmlMechanism, ex, this);
+                GuiUtils.showErrorMessage(logger, "Error calculating plots for "+xmlDialect+" process: "+ xmlMechanism, ex, this);
             }
         }
-        else if (cmlMechanism.isSynapticMechanism())
+        else if (xmlMechanism.isSynapticMechanism())
         {
             try
             {
-                SimpleXMLEntity[] synTypes = cmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getSynapseTypeXPath());
+                SimpleXMLEntity[] synTypes = xmlMechanism.getXMLDoc().getXMLEntities(ChannelMLConstants.getSynapseTypeXPath());
 
                 for (int synTypeIndex = 0; synTypeIndex < synTypes.length; synTypeIndex++)
                 {
@@ -1924,7 +1939,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                  EquationUnit func = Expression.parseExpression(expression, new Variable[]{t});
 
 
-                                String graphRef = "Plots for time course of Synaptic Mechanism " + cmlMechanism.getInstanceName();
+                                String graphRef = "Plots for time course of Synaptic Mechanism " + xmlMechanism.getInstanceName();
 
                                 String desc = graphRef;
 
@@ -1956,13 +1971,13 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                 }
 
             }
-            catch (ChannelMLException ex)
+            catch (XMLMechanismException ex)
             {
-                GuiUtils.showErrorMessage(logger, "Error calculating plots for ChannelML process: " + cmlMechanism, ex, this);
+                GuiUtils.showErrorMessage(logger, "Error calculating plots for "+xmlDialect+" process: " + xmlMechanism, ex, this);
             }
             catch (EquationException ex)
             {
-                GuiUtils.showErrorMessage(logger, "Error calculating plots for ChannelML process: "+ cmlMechanism, ex, this);
+                GuiUtils.showErrorMessage(logger, "Error calculating plots for "+xmlDialect+" process: "+ xmlMechanism, ex, this);
             }
 
 
@@ -1970,7 +1985,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         else
         {
             GuiUtils.showErrorMessage(logger, "Unfortunately there is no information on what would be interesting to plot for"+
-                                      " this type of ChannelML file at present.", null, this);
+                                      " this type of "+xmlDialect+" file at present.", null, this);
 
             return;
 
@@ -2115,15 +2130,15 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
             try
             {
-                SimpleXMLDocument xmlDoc = cmlMechanism.getXMLDoc();
+                SimpleXMLDocument xmlDoc = xmlMechanism.getXMLDoc();
 
                 this.jTextAreaValue.setText(xmlDoc.getValueByXPath(selected));
 
                 this.jTextAreaXPathString.setText(selected);
             }
-            catch (ChannelMLException ex)
+            catch (XMLMechanismException ex)
             {
-                GuiUtils.showErrorMessage(logger, "Problem parsing the ChannelML file", ex, this);
+                GuiUtils.showErrorMessage(logger, "Problem parsing the "+xmlDialect+" file", ex, this);
             }
         }
     }
@@ -2137,13 +2152,13 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
         try
         {
-            SimpleXMLDocument xmlDoc = cmlMechanism.getXMLDoc();
+            SimpleXMLDocument xmlDoc = xmlMechanism.getXMLDoc();
 
             logger.logComment("Setting: "+ selected+" to: "+ text+", result: "+xmlDoc.setValueByXPath(selected, text));
         }
-        catch (ChannelMLException ex)
+        catch (XMLMechanismException ex)
         {
-            GuiUtils.showErrorMessage(logger, "Problem parsing the ChannelML file", ex, this);
+            GuiUtils.showErrorMessage(logger, "Problem parsing the "+xmlDialect+" file", ex, this);
         }
 
     }
@@ -2160,12 +2175,12 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         logger.logComment("Closing with saving...");
         try
         {
-            this.cmlMechanism.saveCurrentState(project);
+            this.xmlMechanism.saveCurrentState(project);
             this.dispose();
         }
-        catch (ChannelMLException ex)
+        catch (XMLMechanismException ex)
         {
-            GuiUtils.showErrorMessage(logger, "Problem saving the ChannelML file", ex, this);
+            GuiUtils.showErrorMessage(logger, "Problem saving the "+xmlDialect+" file", ex, this);
         }
     }
 
@@ -2193,26 +2208,26 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         }
         catch (Exception ex)
         {
-            GuiUtils.showErrorMessage(logger, "Problem validating the ChannelML file. Note that the file was validated against the version of the ChannelML " +
+            GuiUtils.showErrorMessage(logger, "Problem validating the "+xmlDialect+" file. Note that the file was validated against the version of the NeuroML " +
                 "schema (v"+GeneralProperties.getNeuroMLVersionNumber()+") included with this distribution of neuroConstruct:\n" 
                 + schemaFile.getAbsolutePath()+"\n\n"
-                                      + "To validate it against current and past schema see:\n"
+                                      + "To validate it against current and past NeuroML schema see:\n"
                                       + GeneralProperties.getWebsiteNMLValidator(), ex, this);
 
             return;
         }
 
-        GuiUtils.showInfoMessage(logger, "Success", "ChannelML file is well formed and valid, according to schema:\n"
+        GuiUtils.showInfoMessage(logger, "Success", ""+xmlDialect+" file is well formed and valid, according to schema:\n"
                                  + schemaFile.getAbsolutePath()+"\n\nNote: to change the version of the NeuroML schema with which to validate the file, go to:\n" +
                                  "Settings -> General Properties & Project Defaults -> NeuroML version", this);
 
     }
 
-    private Reader getMyXMLReader() throws IOException, ChannelMLException
+    private Reader getMyXMLReader() throws IOException, XMLMechanismException
     {
         Reader in = null;
 
-        in = new StringReader(this.cmlMechanism.getXMLDoc().getXMLString("", false));
+        in = new StringReader(this.xmlMechanism.getXMLDoc().getXMLString("", false));
 
         return in;
     }

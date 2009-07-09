@@ -1202,7 +1202,7 @@ public class NeuronTemplateGenerator
 
                                 ions = cmlMech.getXMLDoc().getXMLEntities(xpath);
                             }
-                            catch (ChannelMLException ex)
+                            catch (XMLMechanismException ex)
                             {
                                 GuiUtils.showErrorMessage(logger,
                                                           "Error getting information from ChannelML process: "
@@ -1229,7 +1229,7 @@ public class NeuronTemplateGenerator
                                         ions = cmlMech.getXMLDoc().getXMLEntities(xpath);
                                     }
                                 }
-                                catch (ChannelMLException ex)
+                                catch (XMLMechanismException ex)
                                 {
                                     return "Error in getting ion name: " + ex.getMessage();
                                 }

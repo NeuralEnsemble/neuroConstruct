@@ -28,7 +28,7 @@ package ucl.physiol.neuroconstruct.mechanisms;
 
 
 /**
- * Class for specifying a ChannelML related Exception
+ * Class for specifying a SBML related Exception
  *
  * @author Padraig Gleeson
  *  
@@ -36,13 +36,13 @@ package ucl.physiol.neuroconstruct.mechanisms;
 
 @SuppressWarnings("serial")
 
-public class ChannelMLException extends XMLMechanismException
+public class SBMLException extends XMLMechanismException
 {
-    public ChannelMLException(String e)
+    public SBMLException(String e)
     {
         super(e);
     }
-    public ChannelMLException(String e, Throwable t)
+    public SBMLException(String e, Throwable t)
     {
         super(e, t);
     }

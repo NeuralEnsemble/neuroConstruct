@@ -2006,7 +2006,7 @@ public class GenesisFileManager
                                         variableName = simIndepVarPart;
                                     }
                                 }
-                                catch (ChannelMLException ex)
+                                catch (XMLMechanismException ex)
                                 {
                                     GuiUtils.showErrorMessage(logger,
                                                               "Problem generating plot/save " +
@@ -2977,9 +2977,9 @@ public class GenesisFileManager
                             logger.logComment("No ohmic relation, so assuming no transmitted ion...");
                         }
                     }
-                    catch(ChannelMLException ex)
+                    catch(XMLMechanismException ex)
                     {
-                        logger.logError( "Problem extracting ion info from Cell Mechanism: "+ cmlp+", file: "+cmlp.getChannelMLFile(), ex);
+                        logger.logError( "Problem extracting ion info from Cell Mechanism: "+ cmlp+", file: "+cmlp.getXMLFile(), ex);
 
                     }
                 }

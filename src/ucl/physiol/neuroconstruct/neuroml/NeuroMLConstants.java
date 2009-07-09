@@ -43,6 +43,10 @@ public class NeuroMLConstants
 
     public static String NEUROML_LEVEL_3 = "Level 3";
 
+    public static String NEUROML_VERSION_1 = "1.x";
+    
+    public static String NEUROML_VERSION_2 = "2.x";
+
     public static String ROOT_ELEMENT = "neuroml";
 
     public static String NAMESPACE_URI = "http://morphml.org/neuroml/schema";

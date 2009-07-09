@@ -29,6 +29,7 @@ package ucl.physiol.neuroconstruct.utils;
 import ucl.physiol.neuroconstruct.gui.SimpleViewer;
 import java.util.*;
 import java.io.*;
+import java.util.ArrayList;
 
 /**
  * Class for developing VERY simple HTML files formatted in a standard style,
@@ -43,6 +44,9 @@ public class SimpleHtmlDoc
     private static ClassLogger logger = new ClassLogger("SimpleHtmlDoc");
     
     ArrayList<SimpleHtmlElement> contents = new ArrayList<SimpleHtmlElement>();
+
+    int mainFontSize = 12;
+
 
     public void addTaggedElement(String text, String tab)
     {
@@ -63,6 +67,22 @@ public class SimpleHtmlDoc
         contents.add(new TabbedElement(text, tabs));
     }
 
+    public void addTaggedElement(SimpleHtmlElement el, String tab)
+    {
+        contents.add(new TabbedElement(el, tab));
+    }
+
+
+    public SimpleHtmlElement getLinkedText(String text, String link)
+    {
+        return new LinkedElement(text, link);
+    }
+
+    public void addLinkedText(String text, String link)
+    {
+        contents.add(getLinkedText(text, link));
+    }
+
 
     public void addRawHtml(String html)
     {
@@ -81,10 +101,26 @@ public class SimpleHtmlDoc
     {
     }
 
+    public void setMainFontSize(int fs)
+    {
+        mainFontSize = fs;
+    }
+
     public String toHtmlString()
     {
         StringBuffer message = new StringBuffer("<html>\n<head>\n<style type=\"text/css\">"
-            + " p {text-align: left; font-size: 12pt; font-family: monospaced}"
+
+            + "         h1 {color: gray; font-family: Dialog, Verdana, Helvetica, Arial, sans-serif}"
+            + "         h2 {color: gray; font-family: Dialog, Verdana, Helvetica, Arial, sans-serif}"
+            + "         h3 {color: gray; font-family: Dialog, Verdana, Helvetica, Arial, sans-serif}"
+            + "         p {font-family: Dialog, Verdana, Helvetica, Arial, sans-serif; font-size: "+mainFontSize+"pt}"
+            + "         td {font-family: Dialog, Verdana, Helvetica, Arial, sans-serif; font-size: "+mainFontSize+"pt}"
+            + "         li {font-family: Dialog, Verdana, Helvetica, Arial, sans-serif}"
+            + "         ol {font-family: Dialog, Verdana, Helvetica, Arial, sans-serif}"
+            + "         ul {font-family: Dialog, Verdana, Helvetica, Arial, sans-serif}"
+            + "         table {border-collapse:collapse}"
+
+            /*+ " p {text-align: left; font-size: 12pt; font-family: monospaced}"*/
             + "\n</style>\n</head>\n"
             +"<body>");
 
@@ -98,6 +134,7 @@ public class SimpleHtmlDoc
 
     }
 
+    @Override
     public String toString()
     {
         StringBuffer message = new StringBuffer();
@@ -113,15 +150,35 @@ public class SimpleHtmlDoc
 
     private class TabbedElement extends SimpleHtmlElement
     {
-        public String contents = null;
+        public ArrayList<SimpleHtmlElement> contents = new ArrayList<SimpleHtmlElement>();
         public ArrayList<String> tabs = new ArrayList<String>();
 
         public TabbedElement(String contents, String tab)
         {
-            this.contents = contents;
+            this.contents.add(new RawHtml(contents));
             tabs.add(tab);
         }
         public TabbedElement(String contents, ArrayList<String> tabs)
+        {
+            this.contents.add(new RawHtml(contents));
+            this.tabs = tabs;
+        }
+        public TabbedElement(SimpleHtmlElement contents, String tab)
+        {
+            this.contents.add(contents);
+            tabs.add(tab);
+        }
+        public TabbedElement(SimpleHtmlElement contents, ArrayList<String> tabs)
+        {
+            this.contents.add(contents);
+            this.tabs = tabs;
+        }
+        public TabbedElement(ArrayList<SimpleHtmlElement> contents, String tab)
+        {
+            this.contents = contents;
+            tabs.add(tab);
+        }
+        public TabbedElement(ArrayList<SimpleHtmlElement> contents, ArrayList<String> tabs)
         {
             this.contents = contents;
             this.tabs = tabs;
@@ -129,19 +186,50 @@ public class SimpleHtmlDoc
 
         public String toHtmlString()
         {
-            String tabbedUp = contents;
-            
+            String tabbedUp = "";
+
+            for(SimpleHtmlElement she: contents)
+                tabbedUp = tabbedUp + she.toHtmlString();
+
             for (int i = 0; i < tabs.size(); i++)
             {
                 tabbedUp = GeneralUtils.getTabbedString(tabbedUp, tabs.get(i), true);
             }
-            
+
             return tabbedUp;
         }
 
         public String toString()
         {
-            return contents;
+            String fullString = "";
+
+            for(SimpleHtmlElement she: contents)
+                fullString = fullString + she.toHtmlString();
+
+            return fullString;
+        }
+    }
+
+    public class LinkedElement extends SimpleHtmlElement
+    {
+        public String text = null;
+        public String link = null;
+
+        public LinkedElement(String text, String link)
+        {
+            this.text = text;
+            this.link = link;
+        }
+
+        public String toHtmlString()
+        {
+
+            return "<a href=\""+link+"\">"+text+"</a>";
+        }
+
+        public String toString()
+        {
+            return text+"("+link+")";
         }
     }
 
@@ -176,9 +264,10 @@ public class SimpleHtmlDoc
         };
     }
 
-    private abstract class SimpleHtmlElement
+    public abstract class SimpleHtmlElement
     {
         public abstract String toHtmlString();
+        @Override
         public abstract String toString();
     }
 

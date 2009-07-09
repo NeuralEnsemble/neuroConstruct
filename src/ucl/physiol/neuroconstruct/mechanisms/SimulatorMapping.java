@@ -34,30 +34,30 @@ import ucl.physiol.neuroconstruct.utils.ClassLogger;
 
 
 /**
- * Mapping of ChannelML File via XSL file to simulation environment
+ * Mapping of Cell Mechanism File (e.g. via XSL file) to simulation environment
  *
  * @author Padraig Gleeson
  *  
  */
 
-public class SimXSLMapping
+public class SimulatorMapping
 {
 
-    ClassLogger logger = new ClassLogger("SimXSLMapping");
+    ClassLogger logger = new ClassLogger("SimulatorMapping");
 
-    private String xslFile = null;
+    private String mappingFile = null;
     String simulationEnvironment = null;
 
     private boolean requiresCompilation = true;
 
-    public SimXSLMapping()
+    public SimulatorMapping()
     {
 
     }
 
-    public SimXSLMapping(String xslFile, String simulationEnvironment, boolean requiresCompilation)
+    public SimulatorMapping(String mappingFile, String simulationEnvironment, boolean requiresCompilation)
     {
-        this.xslFile = xslFile;
+        this.mappingFile = mappingFile;
         this.simulationEnvironment = simulationEnvironment;
         this.requiresCompilation = requiresCompilation;
     }
@@ -66,9 +66,9 @@ public class SimXSLMapping
     {
         return this.simulationEnvironment;
     }
-    public String getXslFile()
+    public String getMappingFile()
     {
-        return this.xslFile;
+        return this.mappingFile;
     }
 
     public File getXslFileObject(Project project, String cellMechanismName)
@@ -82,7 +82,7 @@ public class SimXSLMapping
         {
             File idealDir = new File(targetDir, cellMechanismName);
 
-            idealFileLocation = new File(idealDir, xslFile);
+            idealFileLocation = new File(idealDir, mappingFile);
 
             if (idealFileLocation.exists())
             {
@@ -94,7 +94,7 @@ public class SimXSLMapping
                 //System.out.println(");
             }
         }
-        logger.logError(xslFile+" not found near: "+ targetDir.getAbsolutePath(), null);
+        logger.logError(mappingFile+" not found near: "+ targetDir.getAbsolutePath(), null);
         return null;
 
     }
@@ -106,9 +106,9 @@ public class SimXSLMapping
         this.simulationEnvironment = simEnv;
     }
 
-    public void setXslFile(String xslFile)
+    public void setMappingFile(String mappingFile)
     {
-        this.xslFile = xslFile;
+        this.mappingFile = mappingFile;
     }
 
     public void setRequiresCompilation(boolean rc)
@@ -121,9 +121,10 @@ public class SimXSLMapping
     }
 
 
+    @Override
     public String toString()
     {
-        return "SimXSLMapping[xslFile: "+ xslFile
+        return "SimulatorMapping[file: "+ mappingFile
             +", simulationEnvironment: "+simulationEnvironment+
             ", requiresCompilation: "+requiresCompilation+"]";
     }

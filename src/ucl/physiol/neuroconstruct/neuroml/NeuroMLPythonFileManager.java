@@ -164,8 +164,9 @@ public class NeuroMLPythonFileManager
         try
         {
             generatedCells = MorphMLConverter.saveAllCellsInNeuroML(project, 
-                                                   mc, 
-                                                   NeuroMLConstants.NEUROML_LEVEL_3, 
+                                                   mc,
+                                                   NeuroMLConstants.NEUROML_LEVEL_3,
+                                                   NeuroMLConstants.NEUROML_VERSION_1,
                                                    simConf,
                                                    neuroMLDir);
         }
@@ -225,7 +226,7 @@ public class NeuroMLPythonFileManager
                         File cmlFile = new File(neuroMLDir, cm.getInstanceName()+".xml");
                         try
                         {
-                            File copied = GeneralUtils.copyFileIntoDir(cmlCm.getChannelMLFile(project), neuroMLDir);
+                            File copied = GeneralUtils.copyFileIntoDir(cmlCm.getXMLFile(project), neuroMLDir);
                             
                             copied.renameTo(cmlFile);
                             

@@ -656,7 +656,7 @@ public class PsicsFileManager
                     sxe.addChildElement(ionEl);
                     sxe.addContent("\n    ");
                 }
-                catch (ChannelMLException ex)
+                catch (XMLMechanismException ex)
                 {
                     throw new PsicsException("Error finding information on ion in "+chanMech);
                 }

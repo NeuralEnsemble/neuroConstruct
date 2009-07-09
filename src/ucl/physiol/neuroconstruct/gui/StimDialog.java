@@ -231,7 +231,7 @@ public class StimDialog extends JDialog
                     logger.logComment("ChannelML file found in props to be: "+ absFile);
 
                     File newFile = GeneralUtils.copyFileIntoDir(absFile, dirForCMLFiles);
-                    cmlMech.setChannelMLFile(newFile.getName());
+                    cmlMech.setXMLFile(newFile.getName());
                 }
                 if (props.getProperty("MappingNEURON")!=null)
                 {
@@ -244,7 +244,7 @@ public class StimDialog extends JDialog
 
                     File newFile = GeneralUtils.copyFileIntoDir(absFile, dirForCMLFiles);
 
-                    SimXSLMapping mapping = new SimXSLMapping(newFile.getName(),
+                    SimulatorMapping mapping = new SimulatorMapping(newFile.getName(),
                                                               SimEnvHelper.NEURON, true); // can be reset later
 
                     cmlMech.addSimMapping(mapping);
@@ -262,7 +262,7 @@ public class StimDialog extends JDialog
 
                     File newFile = GeneralUtils.copyFileIntoDir(absFile, dirForCMLFiles);
 
-                    SimXSLMapping mapping = new SimXSLMapping(newFile.getName(),
+                    SimulatorMapping mapping = new SimulatorMapping(newFile.getName(),
                                                               SimEnvHelper.GENESIS, false);
 
                     cmlMech.addSimMapping(mapping);

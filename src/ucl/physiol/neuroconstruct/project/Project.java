@@ -531,10 +531,10 @@ public class Project implements TableModelListener
                             try
                             {
                                 cmlcm.initialise(proj, false);
-                                
+
                                logger.logComment("CML Channel mech: "+ cmlcm.toString());
                             }
-                            catch (ChannelMLException ex1)
+                            catch (XMLMechanismException ex1)
                             {
                                 GuiUtils.showErrorMessage(logger,
                                                           "Error creating implementation of Cell Mechanism: " +
@@ -544,6 +544,30 @@ public class Project implements TableModelListener
                             }
 
                             proj.cellMechanismInfo.addCellMechanism(cmlcm);
+
+                        }
+                        if (implMethod.equals(CellMechanism.SBML_BASED_CELL_MECHANISM))
+                        {
+                            SBMLCellMechanism sbmlCm = new SBMLCellMechanism();
+
+                            sbmlCm.initPropsFromPropsFile(propsFile);
+
+                            try
+                            {
+                                sbmlCm.initialise(proj, false);
+
+                               logger.logComment("SBML Channel mech: "+ sbmlCm.toString());
+                            }
+                            catch (XMLMechanismException ex1)
+                            {
+                                GuiUtils.showErrorMessage(logger,
+                                                          "Error creating implementation of Cell Mechanism: " +
+                                                          sbmlCm.getInstanceName(),
+                                                          ex1,
+                                                          null);
+                            }
+
+                            proj.cellMechanismInfo.addCellMechanism(sbmlCm);
 
                         }
                         else if (implMethod.equals(CellMechanism.ABSTRACTED_CELL_MECHANISM) ||
@@ -1411,26 +1435,31 @@ public class Project implements TableModelListener
                                               CellMechanism.ABSTRACTED_CELL_MECHANISM);
                 }
             }
-            else if (cellMech instanceof ChannelMLCellMechanism)
+            else if (cellMech instanceof XMLCellMechanism)
             {
-                ChannelMLCellMechanism cmlcm = (ChannelMLCellMechanism) cellMech;
-                cellMechProps.setProperty(CellMechanismHelper.PROP_CHANNELML_FILE, cmlcm.getChannelMLFile());
+                XMLCellMechanism xmlcm = (XMLCellMechanism) cellMech;
+                cellMechProps.setProperty(CellMechanismHelper.PROP_CHANNELML_FILE, xmlcm.getXMLFile());
 
+                String implMeth = CellMechanism.CHANNELML_BASED_CELL_MECHANISM;
+                if (xmlcm instanceof SBMLCellMechanism)
+                {
+                    implMeth = CellMechanism.SBML_BASED_CELL_MECHANISM;
+                }
                 // Note name and description will be taken from the channelml file...
                 cellMechProps.setProperty(CellMechanismHelper.PROP_IMPL_METHOD,
-                                          CellMechanism.CHANNELML_BASED_CELL_MECHANISM);
+                                          implMeth);
 
                 //cmlcm.initialise(this, false);
 
                 cellMechProps.setProperty(CellMechanismHelper.PROP_CELL_MECH_NAME, cellMech.getInstanceName());
                 cellMechProps.setProperty(CellMechanismHelper.PROP_CELL_MECH_DESCRIPTION, cellMech.getDescription());
 
-                ArrayList<SimXSLMapping> simMaps = cmlcm.getSimMappings();
+                ArrayList<SimulatorMapping> simMaps = xmlcm.getSimMappings();
 
-                for (SimXSLMapping simMap : simMaps)
+                for (SimulatorMapping simMap : simMaps)
                 {
                     cellMechProps.setProperty(simMap.getSimEnv() + CellMechanismHelper.PROP_MAPPING_SUFFIX,
-                                              simMap.getXslFile());
+                                              simMap.getMappingFile());
 
                     cellMechProps.setProperty(simMap.getSimEnv() + CellMechanismHelper.PROP_NEEDS_COMP_SUFFIX,
                                               simMap.isRequiresCompilation() + "");

@@ -73,7 +73,9 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
     String specAxResSelection = "Specific Axial Resistance";
     
     //String varMechs = "-- Variable mechanism parameters --";
-    
+
+    String sbmlSelection = "-- SBML Mechanisms: --";
+
     String extraMechSelection = "-- Other mechanisms: --";
     String apPropVelSelection = "Action Potential propagation speed";
 
@@ -426,7 +428,16 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
             jComboBoxMechNames.addItem(spacing);
         }*/
         
-        
+
+        jComboBoxMechNames.addItem(this.sbmlSelection);
+
+        Vector<String> sbmlMechList = project.cellMechanismInfo.getSBMLMechs();
+
+        for (int i = 0; i < sbmlMechList.size(); i++)
+        {
+            jComboBoxMechNames.addItem(sbmlMechList.elementAt(i));
+        }
+
         jComboBoxMechNames.addItem(this.extraMechSelection);
         jComboBoxMechNames.addItem(this.apPropVelSelection);
 
@@ -501,6 +512,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
          if (selectedMechanism.equals(defaultMechSelection) ||
             selectedMechanism.equals(this.extraMechSelection)||
+            selectedMechanism.equals(this.sbmlSelection)||
             selectedMechanism.equals(spacing)) return;
         
         
@@ -627,6 +639,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
         if (selectedMechanism.equals(defaultMechSelection) ||
             selectedMechanism.equals(this.extraMechSelection)||
+            selectedMechanism.equals(this.sbmlSelection)||
             selectedMechanism.equals(spacing)) return;
 
         logger.logComment("Edit value button pressed");
@@ -755,6 +768,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
             if (selectedMechanism.equals(defaultMechSelection) ||
                 selectedMechanism.equals(this.extraMechSelection) ||
+                selectedMechanism.equals(this.sbmlSelection) ||
                 selectedMechanism.equals(this.spacing))
             {
                 return;
@@ -1037,6 +1051,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
         if (selectedMech.equals(defaultMechSelection) ||
             selectedMech.equals(this.extraMechSelection)||
+            selectedMech.equals(this.sbmlSelection)||
             selectedMech.equals(spacing)) return;
         
         
@@ -1239,6 +1254,10 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
                             }
                         }
+                        else
+                        {
+                            suggestedValue="0";
+                        }
 
                         condDens = getDensForGroup(selectedMech, Float.parseFloat(suggestedValue), "the selected groups");
                     }
@@ -1282,7 +1301,8 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         String selectedMech = (String) jComboBoxMechNames.getSelectedItem();
 
         if (selectedMech.equals(defaultMechSelection) ||
-            selectedMech.equals(this.extraMechSelection)) return;
+            selectedMech.equals(this.extraMechSelection)||
+            selectedMech.equals(this.sbmlSelection)) return;
 
         int[] selected = jListGroupsIn.getSelectedIndices();
         

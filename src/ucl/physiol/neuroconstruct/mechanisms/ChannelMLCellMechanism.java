@@ -42,62 +42,20 @@ import ucl.physiol.neuroconstruct.utils.xml.*;
 /**
  * Base class for all ChannelML based Cell Mechanism. Contains (in addition to info
  * in CellMechanism class) a string with the name of the file and a SimpleXMLDocument
- * containing the contents of the xml (once initialised) and a number of SimXSLMapping to NEURON, etc.
+ * containing the contents of the xml (once initialised) and a number of SimulatorMapping to NEURON, etc.
  *
  * @author Padraig Gleeson
  *  
  */
 
-public class ChannelMLCellMechanism extends CellMechanism
+public class ChannelMLCellMechanism extends XMLCellMechanism
 {
-    private String channelMLFile = null;
-    private SimpleXMLDocument xmlDoc = null;
-
-    private ArrayList<SimXSLMapping> simMappings = new ArrayList<SimXSLMapping>();
-
-    //File templateDir = null;
 
     public ChannelMLCellMechanism()
     {
         logger = new ClassLogger("ChannelMLCellMechanism");
         //logger.setThisClassVerbose(true);
     }
-
-    public void initPropsFromPropsFile(File propsFile) throws IOException
-    {
-        Properties cellMechProps = new Properties();
-        cellMechProps.loadFromXML(new FileInputStream(propsFile));
-        setChannelMLFile(cellMechProps.getProperty(CellMechanismHelper.PROP_CHANNELML_FILE));
-        setInstanceName(cellMechProps.getProperty(CellMechanismHelper.PROP_CELL_MECH_NAME));
-        setMechanismModel(cellMechProps.getProperty(CellMechanismHelper.PROP_CELL_MECH_MODEL));
-        setMechanismType(cellMechProps.getProperty(CellMechanismHelper.PROP_CELL_MECH_TYPE));
-        setDescription(cellMechProps.getProperty(CellMechanismHelper.PROP_CELL_MECH_DESCRIPTION));
-
-        Enumeration names = cellMechProps.propertyNames();
-
-        while (names.hasMoreElements())
-        {
-            String nextPropName = (String) names.nextElement();
-
-            if (nextPropName.endsWith(CellMechanismHelper.PROP_MAPPING_SUFFIX))
-            {
-                String simEnv = nextPropName.substring(0, nextPropName.lastIndexOf(" "));
-                boolean requiresCompilation = false;
-                String stringReqComp = cellMechProps.getProperty(simEnv + CellMechanismHelper.PROP_NEEDS_COMP_SUFFIX);
-
-                if (stringReqComp != null && stringReqComp.equals("true"))
-                {
-                    requiresCompilation = true;
-                }
-
-                SimXSLMapping map = new SimXSLMapping(cellMechProps.getProperty(nextPropName), simEnv,
-                                                      requiresCompilation);
-
-                addSimMapping(map);
-            }
-        }
-    }
-
 
     /**
      * To support the templates of common channels included in the neuroConstruct
@@ -153,7 +111,7 @@ public class ChannelMLCellMechanism extends CellMechanism
 
             File newFile = GeneralUtils.copyFileIntoDir(absFile, dirForCMLFiles);
 
-            setChannelMLFile(newFile.getName());
+            setXMLFile(newFile.getName());
 
             if (props.getProperty("MappingNEURON")!=null)
             {
@@ -166,7 +124,7 @@ public class ChannelMLCellMechanism extends CellMechanism
 
                 newFile = GeneralUtils.copyFileIntoDir(absFile, dirForCMLFiles);
 
-                SimXSLMapping mapping = new SimXSLMapping(newFile.getName(),
+                SimulatorMapping mapping = new SimulatorMapping(newFile.getName(),
                                                           SimEnvHelper.NEURON, true); // true can be reset later
 
                 addSimMapping(mapping);
@@ -183,7 +141,7 @@ public class ChannelMLCellMechanism extends CellMechanism
 
                 newFile = GeneralUtils.copyFileIntoDir(absFile, dirForCMLFiles);
 
-                SimXSLMapping mapping = new SimXSLMapping(newFile.getName(),
+                SimulatorMapping mapping = new SimulatorMapping(newFile.getName(),
                                                           SimEnvHelper.GENESIS, false);
 
                 addSimMapping(mapping);
@@ -199,7 +157,7 @@ public class ChannelMLCellMechanism extends CellMechanism
 
                 newFile = GeneralUtils.copyFileIntoDir(absFile, dirForCMLFiles);
 
-                SimXSLMapping mapping = new SimXSLMapping(newFile.getName(),
+                SimulatorMapping mapping = new SimulatorMapping(newFile.getName(),
                                                           SimEnvHelper.PSICS, false);
 
                 addSimMapping(mapping);
@@ -238,91 +196,14 @@ public class ChannelMLCellMechanism extends CellMechanism
     @Override
     public String toString()
     {
-        return "ChannelMLCell Mechanism [InstanceName: "+this.getInstanceName()+", channelMLFile: "+channelMLFile+"]";
-    }
-
-
-
-    public String getChannelMLFile()
-    {
-        return channelMLFile;
+        return "ChannelMLCell Mechanism [InstanceName: "+this.getInstanceName()+", channelMLFile: "+getXMLFile()+"]";
     }
 
 
 
 
 
-
-    public File getChannelMLFile(Project project)
-    {
-        File cellMechDir = ProjectStructure.getDirForCellMechFiles(project, this.getInstanceName());
-
-        return  new File(cellMechDir, channelMLFile);
-
-    }
-
-
-    public SimpleXMLDocument getXMLDoc() throws ChannelMLException
-    {
-        if (channelMLFile==null)
-            throw new ChannelMLException("ChannelML file not initialised in ChannelMLCellMechanism");
-
-        if (xmlDoc==null)
-            throw new ChannelMLException("SimpleXMLDocument not yet created in ChannelMLCellMechanism");
-
-        return xmlDoc;
-    }
-
-
-
-    public void setChannelMLFile(String channelMLFile)
-    {
-        this.channelMLFile = channelMLFile;
-    }
-
-    @Override
-    public String getDescription()
-    {
-        String desc = null;
-
-        if (xmlDoc == null)
-        {
-            desc = description; // and hope for the best...
-        }
-        else
-        {
-            desc = xmlDoc.getValueByXPath(this.getDescriptionXPath());
-
-        }
-        return (desc!=null ? desc : "");
-    }
-
-    @Override
-    public void setDescription(String description)
-    {
-        this.description = description;
-
-        if (this.xmlDoc!=null)
-        {
-            xmlDoc.setValueByXPath(this.getDescriptionXPath(), description);
-        }
-
-    }
-
-    @Override
-    public String getInstanceName()
-    {
-        if (xmlDoc == null)
-        {
-            return instanceName;
-        }
-        else
-        {
-            return xmlDoc.getValueByXPath(this.getNameXPath());
-        }
-    }
-
-    private String getNameXPath()
+    public String getNameXPath()
     {
         if (this.isChannelMechanism())
         {
@@ -349,7 +230,7 @@ public class ChannelMLCellMechanism extends CellMechanism
         return null;
     }
 
-    private String getDescriptionXPath()
+    public String getDescriptionXPath()
     {
         if (this.isChannelMechanism())
         {
@@ -383,166 +264,47 @@ public class ChannelMLCellMechanism extends CellMechanism
     @Override
     public String getMechanismType()
     {
-        // check internal cml setting first..
-        if (xmlDoc!=null)
-        {
-            if (xmlDoc.getValueByXPath(ChannelMLConstants.getIandFXPath()) != null)
-            {
-                mechanismType = CellMechanism.POINT_PROCESS;
-                return mechanismType;
-            }
-            else if (xmlDoc.getValueByXPath(ChannelMLConstants.getChannelTypeXPath()) != null)
-            {
-                mechanismType = CellMechanism.CHANNEL_MECHANISM;
-                return mechanismType;
-            }
-            else if (xmlDoc.getValueByXPath(ChannelMLConstants.getElecSynapseXPath()) != null)
-            {
-                mechanismType = CellMechanism.GAP_JUNCTION;
-                return mechanismType;
-            }
-            else if (xmlDoc.getValueByXPath(ChannelMLConstants.getSynapseTypeXPath()) != null)
-            {
-                mechanismType = CellMechanism.SYNAPTIC_MECHANISM;
-                return mechanismType;
-            }
-            else if (xmlDoc.getValueByXPath(ChannelMLConstants.getIonConcTypeXPath()) != null)
-            {
-                mechanismType = CellMechanism.ION_CONCENTRATION;
-                return mechanismType;
-            }
-        }
-        return mechanismType;
-    }
-
-
-
-    @Override
-    public void setInstanceName(String instanceName)
-    {
-        this.instanceName = instanceName;
-
-        if (this.xmlDoc!=null)
-        {
-            xmlDoc.setValueByXPath(this.getNameXPath(), instanceName);
-        }
-    }
-
-    /**
-     * Sets the xmlDoc to null and reinitialises
-     */
-    public File reset(Project project, boolean save) throws ChannelMLException
-    {
-        xmlDoc = null;
-        return initialise(project, save);
-    }
-
-
-    /**
-     * Loads up the xmlDoc with information from the file specified, using the
-     * location based on the project directory
-     * @return The actual File used
-     */
-    public File initialise(Project project, boolean save) throws ChannelMLException
-    {
-        //this.initialiseProperties(project);
-
-        String currentInstanceName = getInstanceName();
-        if (xmlDoc != null)
-        {
-            logger.logComment("ChannelML Mechanism "+currentInstanceName+" has already been initialised");
-
-            File file = this.getChannelMLFile(project);
-
-            logger.logComment("File for cml proc: "+file);
-
-            return file;
-
-        }
-        logger.logComment("ChannelML Mechanism "+currentInstanceName+" being initialised in project: "+ project.getProjectName());
-        FileInputStream instream = null;
-        InputSource is = null;
-        File fileUsed = null;
         try
         {
-            SAXParserFactory spf = SAXParserFactory.newInstance();
-            spf.setNamespaceAware(true);
-
-            XMLReader xmlReader = spf.newSAXParser().getXMLReader();
-
-            SimpleXMLReader docBuilder = new SimpleXMLReader();
-            xmlReader.setContentHandler(docBuilder);
-
-            xmlReader.setProperty("http://xml.org/sax/properties/lexical-handler", docBuilder);
-
-            fileUsed = this.getChannelMLFile(project);
-
-            instream = new FileInputStream(fileUsed);
-
-            is = new InputSource(instream);
-
-            xmlReader.parse(is);
-
-            xmlDoc = docBuilder.getDocRead();
-
-            if (save)
+            // check internal cml setting first..
+            if (getXMLDoc() != null)
             {
-                xmlDoc.setValueByXPath(this.getNameXPath(), currentInstanceName);
-
-                saveCurrentState(project);
+                if (getXMLDoc().getValueByXPath(ChannelMLConstants.getIandFXPath()) != null)
+                {
+                    mechanismType = CellMechanism.POINT_PROCESS;
+                    return mechanismType;
+                }
+                else if (getXMLDoc().getValueByXPath(ChannelMLConstants.getChannelTypeXPath()) != null)
+                {
+                    mechanismType = CellMechanism.CHANNEL_MECHANISM;
+                    return mechanismType;
+                }
+                else if (getXMLDoc().getValueByXPath(ChannelMLConstants.getElecSynapseXPath()) != null)
+                {
+                    mechanismType = CellMechanism.GAP_JUNCTION;
+                    return mechanismType;
+                }
+                else if (getXMLDoc().getValueByXPath(ChannelMLConstants.getSynapseTypeXPath()) != null)
+                {
+                    mechanismType = CellMechanism.SYNAPTIC_MECHANISM;
+                    return mechanismType;
+                }
+                else if (getXMLDoc().getValueByXPath(ChannelMLConstants.getIonConcTypeXPath()) != null)
+                {
+                    mechanismType = CellMechanism.ION_CONCENTRATION;
+                    return mechanismType;
+                }
             }
-
+            return mechanismType;
         }
-        catch (ParserConfigurationException e)
+        catch (XMLMechanismException ex)
         {
-            throw new ChannelMLException( "Error when parsing XML file: "+channelMLFile, e);
+            return "Unknown mechanism type!";
         }
-        catch (SAXException e)
-        {
-            throw new ChannelMLException("Error when parsing XML file: "+channelMLFile, e);
-        }
-
-        catch (IOException e)
-        {
-            throw new ChannelMLException("Error with XML file: "+channelMLFile, e);
-        }
-
-        catch (ChannelMLException e)
-        {
-            throw new ChannelMLException("Error with XML file: "+channelMLFile, e);
-        }
-
-        return fileUsed;
-
     }
 
 
-    public void saveCurrentState(Project project) throws ChannelMLException
-    {
-        logger.logComment("Saving the state of the ChannelMLCellMechanism "+this.getInstanceName());
-        try
-        {
 
-            File myFile = this.getChannelMLFile(project);
-
-            logger.logComment("Channelml file: "+ myFile.getAbsolutePath());
-
-            FileWriter fw = new FileWriter(myFile);
-
-            if (this.xmlDoc == null)
-            {
-                throw new ChannelMLException("Error: ChannelMLCellMechanism "+this.getInstanceName()+" not yet initialised");
-            }
-
-            fw.write(this.xmlDoc.getXMLString("", false));
-
-            fw.close();
-        }
-        catch (IOException e)
-        {
-            GuiUtils.showErrorMessage(logger, "Error with XML file: "+channelMLFile, e, null);
-        }
-    }
 
 
     /**
@@ -559,9 +321,9 @@ public class ChannelMLCellMechanism extends CellMechanism
     {
         logger.logComment("Creating file for env: "+targetEnv+" file: "+ fileToGenerate);
 
-        for (int k = 0; k < simMappings.size(); k++)
+        for (int k = 0; k < getSimMappings().size(); k++)
         {
-            if(simMappings.get(k).getSimEnv().equals(targetEnv))
+            if(getSimMappings().get(k).getSimEnv().equals(targetEnv))
             {
                 logger.logComment("Found suitable sim env");
 
@@ -597,9 +359,9 @@ public class ChannelMLCellMechanism extends CellMechanism
                             commentLinePrefix = "   ";
                         }
 
-                        File cmlFile = this.getChannelMLFile(project);
+                        File cmlFile = this.getXMLFile(project);
 
-                        File xslFile = new File(cmlFile.getParentFile(), simMappings.get(k).getXslFile());
+                        File xslFile = new File(cmlFile.getParentFile(), getSimMappings().get(k).getMappingFile());
 
                         if (!targetEnv.equals(SimEnvHelper.PSICS)) // temp disabling comments in psics xml
                         {
@@ -625,7 +387,7 @@ public class ChannelMLCellMechanism extends CellMechanism
                                 {
                                     this.initialise(project, false);
                                 }
-                                catch (ChannelMLException ex1)
+                                catch (XMLMechanismException ex1)
                                 {
                                     GuiUtils.showErrorMessage(logger,
                                                               "Error creating implementation of Cell Mechanism: " +
@@ -864,18 +626,6 @@ public class ChannelMLCellMechanism extends CellMechanism
     }
 
 
-    public void addSimMapping(SimXSLMapping simMapping)
-    {
-        for (int i = 0; i < simMappings.size(); i++)
-        {
-            if (simMappings.get(i).getSimEnv().equals(simMapping.getSimEnv()))
-            {
-                simMappings.remove(i);
-            }
-        }
-        simMappings.add(simMapping);
-    }
-
     public String getUnitsUsedInFile()
     {
         if (xmlDoc!=null)
@@ -885,48 +635,7 @@ public class ChannelMLCellMechanism extends CellMechanism
         return null;
     }
 
-    public String getValue(String simpleXPathExp)
-    {
-        if (xmlDoc!=null)
-        {
-            return xmlDoc.getValueByXPath(simpleXPathExp);
-        }
-        return null;
-    }
 
-    public boolean setValue(String path, String value)
-    {
-        if (xmlDoc!=null)
-        {
-            return xmlDoc.setValueByXPath(path, value);
-        }
-        return false;
-    }
-
-
-    public ArrayList<SimXSLMapping> getSimMappings()
-    {
-        return this.simMappings;
-    }
-
-    public SimXSLMapping getSimMapping(String simEnv)
-    {
-        for (int i = 0; i < simMappings.size(); i++)
-        {
-            if (simMappings.get(i).getSimEnv().equals(simEnv))
-            {
-                return simMappings.get(i);
-            }
-        }
-        return null;
-
-    }
-
-
-    public void setSimMappings(ArrayList<SimXSLMapping> simMappings)
-    {
-        this.simMappings = simMappings;
-    }
 
     /**
      * Needed as GENESIS treats the first passive, non specific conductance on a compartment
@@ -1055,7 +764,7 @@ public class ChannelMLCellMechanism extends CellMechanism
             logger.logComment("Value of " + gmaxXpath + ": " + cmlProc.getValue(gmaxXpath));
             //logger.logComment("Value of " + eXpath + ": " + cmlProc.getValue(eXpath));
 
-            SimXSLMapping map = (SimXSLMapping)cmlProc.getSimMappings().get(0);
+            SimulatorMapping map = (SimulatorMapping)cmlProc.getSimMappings().get(0);
 
             logger.logComment("mapping for: "+map.getSimEnv()+", file: "+ map.getXslFile());
 

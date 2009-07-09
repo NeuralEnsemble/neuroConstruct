@@ -4084,7 +4084,7 @@ public class CellTopologyHelper
                     {
                         // nothing more to try...
                     }
-                    catch (ChannelMLException ex2)
+                    catch (XMLMechanismException ex2)
                     {
                         logger.logError("Error initialising Cell mech: "+ cmlMech.getInstanceName(), ex2);
                         //return null;

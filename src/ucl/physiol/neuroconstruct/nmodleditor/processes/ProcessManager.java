@@ -402,69 +402,6 @@ public class ProcessManager
 
     }
 
-/* No longer used...
- 
-    public void runAsHocFile() throws NeuronException
-    {
-
-        logger.logComment("Trying to run file as hoc: "+ myFile.getAbsolutePath());
-
-        File directoryToExecuteIn =  myFile.getParentFile();
-
-        Runtime rt = Runtime.getRuntime();
-        String commandToExecute = null;
-        try
-        {
-            //commandToExecute = "cmd /K start \"Neuron...\" /wait "+neuronHome+"\\bin\\neuron.exe " + myFile.getAbsolutePath();
-
-            String locationOfNeuron = GeneralProperties.getNeuronHomeDir();
-            String neuronExecutable =null;
-
-            if (GeneralUtils.isWindowsBasedPlatform())
-            {
-                logger.logComment("Assuming Windows environment...");
-                neuronExecutable = locationOfNeuron
-                                   + System.getProperty("file.separator")
-                                   + "bin"
-                                   + System.getProperty("file.separator")
-                                   + "neuron.exe";
-            }
-            else
-            {
-                logger.logComment("Assuming *nix environment...");
-
-                neuronExecutable = locationOfNeuron
-                               + System.getProperty("file.separator")
-                               + "bin"
-                               + System.getProperty("file.separator")
-                               + "nrngui -dll "
-                               + directoryToExecuteIn
-                               + System.getProperty("file.separator")
-                               + GeneralUtils.getArchSpecificDir()
-                               + System.getProperty("file.separator")
-                               + ".libs"
-                               + System.getProperty("file.separator")
-                               + "libnrnmech.so";
-            }
-
-            commandToExecute = GeneralProperties.getExecutableCommandLine() + " " +
-                       neuronExecutable + " " + myFile.getAbsolutePath();
-
-            Process currentProcess = rt.exec(commandToExecute, null, directoryToExecuteIn);
-            ProcessOutputWatcher procOutputMain = new ProcessOutputWatcher(currentProcess.getInputStream(), "Output");
-            procOutputMain.start();
-
-            ProcessOutputWatcher procOutputError = new ProcessOutputWatcher(currentProcess.getErrorStream(), "Error");
-            procOutputError.start();
-
-            logger.logComment("Have successfully executed command: " + commandToExecute + " in directory: "+ directoryToExecuteIn);
-        }
-        catch (Exception ex)
-        {
-            throw new NeuronException("Error running the command: "+ commandToExecute);
-        }
-    }*/
-
 
 
 

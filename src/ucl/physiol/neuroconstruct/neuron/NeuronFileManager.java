@@ -2914,7 +2914,7 @@ public class NeuronFileManager
                     }
                 }
 
-                logger.logComment("------------    All cell mechs for "+cellGroupName+": " + cellMechanisms);
+                logger.logComment("------------    All cell mechs for "+cellGroupName+": " + cellMechanisms, true);
 
                 for (int i = 0; i < cellMechanisms.size(); i++)
                 {
@@ -3001,14 +3001,14 @@ public class NeuronFileManager
                                         project.neuronSettings.isForceCorrectInit(),
                                         simConfig.getMpiConf().isParallelNet());
                                 }
-                                else if (cellMechanism instanceof ChannelMLCellMechanism)
+                                else if (cellMechanism instanceof XMLCellMechanism)
                                 {
-                                    ChannelMLCellMechanism cmlMechanism = (ChannelMLCellMechanism) cellMechanism;
+                                    XMLCellMechanism xmlMechanism = (XMLCellMechanism) cellMechanism;
                                     File newMechFile = null;
 
-                                    logger.logComment("Sim map: " + cmlMechanism.getSimMapping(SimEnvHelper.NEURON));
+                                    logger.logComment("Sim map: " + xmlMechanism.getSimMapping(SimEnvHelper.NEURON));
 
-                                    if (cmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation())
+                                    if (xmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation())
                                     {
                                         newMechFile = new File(dirForNeuronFiles,
                                                                cellMechanism.getInstanceName() + ".mod");
@@ -3021,12 +3021,12 @@ public class NeuronFileManager
                                         response.append("{load_file(\"" + cellMechanism.getInstanceName() + ".hoc\")}\n");
 
                                     }
-                                    success = cmlMechanism.createImplementationFile(SimEnvHelper.
+                                    success = xmlMechanism.createImplementationFile(SimEnvHelper.
                                         NEURON,
                                         UnitConverter.NEURON_UNITS,
                                         newMechFile,
                                         project,
-                                        cmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation(),
+                                        xmlMechanism.getSimMapping(SimEnvHelper.NEURON).isRequiresCompilation(),
                                         addComments,
                                         project.neuronSettings.isForceCorrectInit(),
                                         simConfig.getMpiConf().isParallelNet());
@@ -3785,7 +3785,7 @@ public class NeuronFileManager
                                             + objectVarName+", "+threshold+", 0, -1)"+"}\n");
                                     }
                                 }
-                                catch (ChannelMLException e)
+                                catch (XMLMechanismException e)
                                 {
 
                                 }
