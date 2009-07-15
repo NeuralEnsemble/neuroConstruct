@@ -76,6 +76,12 @@
     <property name="xmldocs.dir" value="${docs.dir}/XML"/>
 
     <property name="orig.helpdocs.dir" value="${xmldocs.dir}/xmlForHtml/docs"/>
+
+    <property name="website.python.dir" value="${orig.helpdocs.dir}/python"/>
+
+    <property name="pythonnC.dir" value="./pythonnC"/>
+    <property name="pythonNeuroML.Examples.dir" value="./pythonNeuroML/Examples"/>
+
     <property name="helpdocs.xsl.file" value="${xmldocs.dir}/helpViewer/helpdocs.xsl"/>
 
     <property name="orig.glossary.file" value="${xmldocs.dir}/glossary/Glossary.xml"/>
@@ -408,6 +414,17 @@
 
     <copy file="./README" todir="${website.dir}/docs" />
     <copy file="./RELEASE_NOTES" todir="${website.dir}/docs" />
+
+    <mkdir dir="${website.python.dir}"/>
+
+    <copy todir="${website.python.dir}">
+      <fileset dir="${pythonnC.dir}">
+         <include name="*.py"/>
+      </fileset>
+      <fileset dir="${pythonNeuroML.Examples.dir}">
+         <include name="*.py"/>
+      </fileset>
+    </copy>
 
     <ant antfile="${forrest.antfile}" dir="${forrest.settings.dir}" target="site"/>
 

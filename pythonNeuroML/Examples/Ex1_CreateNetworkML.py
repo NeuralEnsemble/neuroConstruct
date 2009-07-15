@@ -49,7 +49,7 @@ filenameX = "random.nml"
 nmlFile.writeXML(filenameX)     # Create XML based NetworkML file
 
 
-###############  Put back in these lines for HDF5 saving. Note pytables should be installed and tested before this!
+###############  Put back in these lines to save in HDF5 format. Note: pytables should be installed and tested before this!
 #filenameH = "random.h5"
 #nmlFile.writeHDF5(filenameH)     # Create HDF5 based NetworkML file
 #print("All done! File with "+str(popSize)+" cells saved to: "+ filenameH)

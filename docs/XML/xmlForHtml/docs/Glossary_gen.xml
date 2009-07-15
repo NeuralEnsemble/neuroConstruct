@@ -9,7 +9,7 @@
 </header>
 <body>
 <anchor id="top"></anchor>
-<a name="top"></a><a href="#3D View of Cells">3D View of Cells</a> - <a href="#Abstract Cell">Abstract Cell</a> - <a href="#Abstracted Cell Mechanisms">Abstracted Cell Mechanisms</a> - <a href="#Action Potential Propagation Speed">Action Potential Propagation Speed</a> - <a href="#Arborization Defined Connection">Arborization Defined Connection</a> - <a href="#ASC">ASC</a> - <a href="#Axes in 3D">Axes in 3D</a> - <a href="#Biophysical validity">Biophysical validity</a> - <a href="#Cell density mechanism">Cell density mechanism</a> - <a href="#Cell Group">Cell Group</a> - <a href="#Cell Group Priority">Cell Group Priority</a> - <a href="#Cell Mechanism">Cell Mechanism</a> - <a href="#Cell Type">Cell Type</a> - <a href="#Channel Mechanism">Channel Mechanism</a> - <a href="#ChannelML">ChannelML</a> - <a href="#Compartmentalisation">Compartmentalisation</a> - <a href="#Cvapp">Cvapp</a> - <a href="#Data Set">Data Set</a> - <a href="#Data Set Manager">Data Set Manager</a> - <a href="#Electrotonic length">Electrotonic length</a> - <a href="#File based Cell Mechanisms">File based Cell Mechanisms</a> - <a href="#Finite volume Segment">Finite volume Segment</a> - <a href="#GENESIS">GENESIS</a> - <a href="#GENESIS Compartmentalisation">GENESIS Compartmentalisation</a> - <a href="#Glomerulus">Glomerulus</a> - <a href="#Graph">Graph</a> - <a href="#Group">Group</a> - <a href="#HDF5">HDF5</a> - <a href="#Internal number of divisions">Internal number of divisions</a> - <a href="#Ion Concentration">Ion Concentration</a> - <a href="#MorphML">MorphML</a> - <a href="#Morphological validity">Morphological validity</a> - <a href="#Morphology Based Connection">Morphology Based Connection</a> - <a href="#Morphology save format">Morphology save format</a> - <a href="#Network Connection">Network Connection</a> - <a href="#NetworkML">NetworkML</a> - <a href="#Neurolucida">Neurolucida</a> - <a href="#NeuroML">NeuroML</a> - <a href="#NEURON">NEURON</a> - <a href="#NMODL">NMODL</a> - <a href="#nseg">nseg</a> - <a href="#Packing Pattern">Packing Pattern</a> - <a href="#Plot/Graph">Plot/Graph</a> - <a href="#Plot Frame">Plot Frame</a> - <a href="#Project">Project</a> - <a href="#Project validity">Project validity</a> - <a href="#Region">Region</a> - <a href="#Section">Section</a> - <a href="#Section Group">Section Group</a> - <a href="#Segment">Segment</a> - <a href="#Simply Connected cell">Simply Connected cell</a> - <a href="#Simulation Configuration">Simulation Configuration</a> - <a href="#SWC">SWC</a> - <a href="#Synaptic Connection Location">Synaptic Connection Location</a> - <a href="#Synaptic Mechanism">Synaptic Mechanism</a> - <a href="#Tool Tips">Tool Tips</a> - <a href="#Validity checks">Validity checks</a> - <a href="#Variables to plot/save">Variables to plot/save</a> - <a href="#Volume Based Connection">Volume Based Connection</a> - <a href="#XML">XML</a> - <a href="#Zipped Project">Zipped Project</a> - <a name="3D View of Cells">
+<a name="top"></a><a href="#3D View of Cells">3D View of Cells</a> - <a href="#Abstract Cell">Abstract Cell</a> - <a href="#Abstracted Cell Mechanisms">Abstracted Cell Mechanisms</a> - <a href="#Action Potential Propagation Speed">Action Potential Propagation Speed</a> - <a href="#Arborization Defined Connection">Arborization Defined Connection</a> - <a href="#ASC">ASC</a> - <a href="#Axes in 3D">Axes in 3D</a> - <a href="#Biophysical validity">Biophysical validity</a> - <a href="#Cell density mechanism">Cell density mechanism</a> - <a href="#Cell Group">Cell Group</a> - <a href="#Cell Group Priority">Cell Group Priority</a> - <a href="#Cell Mechanism">Cell Mechanism</a> - <a href="#Cell Type">Cell Type</a> - <a href="#Channel Mechanism">Channel Mechanism</a> - <a href="#ChannelML">ChannelML</a> - <a href="#Compartmentalisation">Compartmentalisation</a> - <a href="#Cvapp">Cvapp</a> - <a href="#Data Set">Data Set</a> - <a href="#Data Set Manager">Data Set Manager</a> - <a href="#Electrotonic length">Electrotonic length</a> - <a href="#File based Cell Mechanisms">File based Cell Mechanisms</a> - <a href="#Finite volume Segment">Finite volume Segment</a> - <a href="#GENESIS">GENESIS</a> - <a href="#GENESIS Compartmentalisation">GENESIS Compartmentalisation</a> - <a href="#Glomerulus">Glomerulus</a> - <a href="#Graph">Graph</a> - <a href="#Group">Group</a> - <a href="#HDF5">HDF5</a> - <a href="#Internal number of divisions">Internal number of divisions</a> - <a href="#Ion Concentration">Ion Concentration</a> - <a href="#MorphML">MorphML</a> - <a href="#Morphological validity">Morphological validity</a> - <a href="#Morphology Based Connection">Morphology Based Connection</a> - <a href="#Morphology save format">Morphology save format</a> - <a href="#Network Connection">Network Connection</a> - <a href="#NetworkML">NetworkML</a> - <a href="#Neurolucida">Neurolucida</a> - <a href="#NeuroML">NeuroML</a> - <a href="#NEURON">NEURON</a> - <a href="#NMODL">NMODL</a> - <a href="#nseg">nseg</a> - <a href="#Packing Pattern">Packing Pattern</a> - <a href="#Plot/Graph">Plot/Graph</a> - <a href="#Plot Frame">Plot Frame</a> - <a href="#Project">Project</a> - <a href="#Project validity">Project validity</a> - <a href="#Python">Python</a> - <a href="#Region">Region</a> - <a href="#Section">Section</a> - <a href="#Section Group">Section Group</a> - <a href="#Segment">Segment</a> - <a href="#Simply Connected cell">Simply Connected cell</a> - <a href="#Simulation Configuration">Simulation Configuration</a> - <a href="#SWC">SWC</a> - <a href="#Synaptic Connection Location">Synaptic Connection Location</a> - <a href="#Synaptic Mechanism">Synaptic Mechanism</a> - <a href="#Tool Tips">Tool Tips</a> - <a href="#Validity checks">Validity checks</a> - <a href="#Variables to plot/save">Variables to plot/save</a> - <a href="#Volume Based Connection">Volume Based Connection</a> - <a href="#XML">XML</a> - <a href="#Zipped Project">Zipped Project</a> - <a name="3D View of Cells">
 <p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
 <b>3D View of Cells</b>
 </p>
@@ -291,7 +291,7 @@
 </a><span>
 <p>ChannelML is a language (using <a href="#XML">XML</a> technologies) for specifying the dynamics of various subcellular processes
         (<a href="#Channel Mechanism">Channel Mechanism</a>s, <a href="#Synaptic Mechanism">Synaptic Mechanism</a>s, etc.) which are present on biologically detailed model neurons.
-        It is a part of Level 2 of the <a href="#NeuroML">NeuroML</a> set of specifications.
+        It is a part of Level 2 of <a href="#NeuroML">NeuroML</a>.
         The ability to model these types of mechanisms is one of the key features of platforms like <a href="#NEURON">NEURON</a> or <a href="#GENESIS">GENESIS</a>, but the implementation
         of the mechanisms is far from trivial, requiring both knowledge of the physiological processes and of a low level programming language. ChannelML seeks to separate the
         electrophysiological data from any specific implementation, defining a template for numerous types of cellular mechanism, containing only the relevant biophysical parameters
@@ -301,9 +301,10 @@
         Examples of valid ChannelML files and mappings to simulators can be found
         <a href="http://www.neuroml.org/NeuroMLValidator/Samples.jsp" target="_blank">here</a>, and detailed specifications of the elements allowed in a ChannelML document are
         available <a href="http://www.neuroml.org/NeuroMLValidator/Latest.jsp?spec=ChannelML" target="_blank">here</a>.
-        Details of the process to convert an existing channel script, e.g. a mod file, to ChannelML is outlined <a href="importneuron.html#Converting+mod+file%2FGENESIS+script+channels+into+ChannelML">converting channels to ChannelML</a>
-        
-</p>
+        A description of the current support
+                 for MorphML and NeuroML in general in neuroConstruct is available <a href="neuroml.html">here</a> and
+        details of the process to convert an existing channel script, e.g. a mod file, to ChannelML is outlined <a href="importneuron.html#Converting+mod+file%2FGENESIS+script+channels+into+ChannelML">here</a>.
+        </p>
 </span>
 <p style="font-size: 11">
 <a href="#top">index</a>
@@ -524,7 +525,9 @@
         easily transferred between neuronal simulation applications. More information is available <a href="http://www.neuroml.org" target="_blank">here</a>.
         It is a part of the <a href="#NeuroML">NeuroML</a> initiative, and is the core of NeuroML Level 1. Detailed specifications of the elements allowed in a MorphML document are
         available <a href="http://www.neuroml.org/NeuroMLValidator/Latest.jsp?spec=MorphML" target="_blank">here</a>. 
-        There is a <a href="../links/publications.html">paper</a> describing this part of the NeuroML language.
+        There has been a <a href="../links/publications.html">paper</a> describing this part of the NeuroML language.
+        A description of the current support
+                 for MorphML and NeuroML in general in neuroConstruct is available <a href="neuroml.html">here</a>.
     </p>
 </span>
 <p style="font-size: 11">
@@ -702,14 +705,14 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
             
 <li>
 <strong>Level 3</strong> allows networks of cells to be described, either in template form (from which networks can be generated) or as explicit descriptions of 
-                cell placement and synaptic connectivity. The core of this level is described in <a href="#NetworkML">NetworkML</a>. neuroConstruct can save generated networks in 
-                NetworkML, and load NetworkML files from any other application to use in simulations, provided cell type/group/network connection names match those in the project.
+                cell placement and synaptic connectivity. The core of this Level is described in <a href="#NetworkML">NetworkML</a>. neuroConstruct can save generated networks in 
+                NetworkML, and load NetworkML files from any other application to use in simulations, provided the cell type/group/network connection names match those in the project.
             </li>
                 
 </ul>
-
-
-                 More information is available <a href="http://www.neuroml.org" target="_blank">here</a>, and a web interface for checking the validity of NeuroML file is <a href="http://www.neuroml.org/NeuroMLValidator/Validation.jsp" target="_blank">here</a>.</p>
+                 More information on NeuroML is available <a href="http://www.neuroml.org" target="_blank">here</a>, and a web interface for checking the validity of
+                 any NeuroML file is <a href="http://www.neuroml.org/NeuroMLValidator/Validation.jsp" target="_blank">here</a>. A description of the support
+                 for NeuroML in neuroConstruct is <a href="neuroml.html">here</a>.</p>
 </span>
 <p style="font-size: 11">
 <a href="#top">index</a>
@@ -841,6 +844,19 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
 <p>To catch many, <strong>but not all</strong>, potential sources of error in a project a number of <a href="#validity checks">validity checks</a> are performed. These include 
         checks on the morphology and biophysical parameters of each of the cells in the project, and various global checks on the project
         settings, e.g. appropriate temperature, electrical input or network connection to all cell groups, etc.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Python">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Python</b>
+</p>
+</a><span>
+<p>
+<a href="http://www.python.org" target="_blank">Python</a> is a scripting language which is becoming increasingly widely used in
+        <a href="http://frontiersin.org/neuroinformatics/specialtopics/8/" target="_blank">computational neuroscience</a>. Details of the support for Python in neuroConstruct can
+        be found <a href="python.html">here</a>.        </p>
 </span>
 <p style="font-size: 11">
 <a href="#top">index</a>

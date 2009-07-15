@@ -13876,7 +13876,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                             CellMechanism.SYNAPTIC_MECHANISM,
                             CellMechanism.ION_CONCENTRATION,
                             CellMechanism.POINT_PROCESS,
-                            CellMechanism.GAP_JUNCTION};
+                            CellMechanism.GAP_JUNCTION,
+                            CellMechanism.SBML_MECHANISM};
 
         JOptionPane option = new JOptionPane("Please select the type of Cell Mechanism",
                                              JOptionPane.DEFAULT_OPTION,

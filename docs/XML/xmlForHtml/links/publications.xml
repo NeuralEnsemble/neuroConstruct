@@ -6,7 +6,12 @@
     <title>neuroConstruct and NeuroML related publications</title> 
   </header> 
   <body> 
-  
+
+
+
+<section>
+      <title>Core publications</title>
+
 <table class="noborder">
 
 	<tr>
@@ -50,6 +55,28 @@
                         NEURON, GENESIS, Neurolucida and neuroConstruct to MorphML.
 		</td>
 	</tr>
+
+	<tr>
+		<td>
+			<p><strong>Robert C. Cannon, Marc-Oliver Gewaltig, Padraig Gleeson, Upinder S. Bhalla, Hugo Cornelis, Michael L. Hines,
+                        Fredrick W. Howell, Eilif Muller, Joel R. Stiles, Stefan Wils, Erik De Schutter</strong></p>
+			<p><em>Interoperability of Neuroscience Modeling Software: Current Status and Future Directions. Neuroinformatics 5, 127-138.</em></p>
+		<p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/17873374">PubMed</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			A review of the current state of interoperability for modelling applications, resulting from a workshop at CNS 2006.
+
+		</td>
+	</tr>
+
+    </table>
+    </section>
+<section>
+      <title>The original NeuroML paper</title>
+
+
+<table class="noborder">
+
 	<tr>
 		<td>
 			<p><strong>Nigel Goddard, Michael Hucka, Fred Howell, Hugo Cornelis, Kavita Shankar, David Beeman</strong></p>
@@ -57,27 +84,23 @@
 		<p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/11545699">PubMed</a></p>
                 </td>
 		<td><p>&nbsp;</p>
-			The original NeuroML introductory paper. Although the actual standards themselves have evolved since this paper
+			The original NeuroML introductory paper. Although <strong>the language has evolved significantly since this paper</strong>
                         (with a focus now on key elements which need to be transferred between neuroinformatics applications, as represented by
                         MorphML, ChannelML and NeuroML, the latest version of which are available <a  href="http://www.morphml.org:8080/NeuroMLValidator/">here</a>) the key aims of NeuroML as outlined in this paper, including clarity, portability and modularity of neuronal model descriptions, remain the same.
                         
 		</td>
 	</tr>
         
-        
-	<tr>
-		<td>
-			<p><strong>Robert C. Cannon, Marc-Oliver Gewaltig, Padraig Gleeson, Upinder S. Bhalla, Hugo Cornelis, Michael L. Hines, 
-                        Fredrick W. Howell, Eilif Muller, Joel R. Stiles, Stefan Wils, Erik De Schutter</strong></p>
-			<p><em>Interoperability of Neuroscience Modeling Software: Current Status and Future Directions. Neuroinformatics 5, 127-138.</em></p>
-		<p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/17873374">PubMed</a></p>
-                </td>
-		<td><p>&nbsp;</p>
-			A review of the current state of interoperability for modelling applications, resulting from a workshop at CNS 2006.
-                        
-		</td>
-	</tr>
-        
+
+    </table>
+    </section>
+<section>
+      <title>Combined experimental and modelling investigations</title>
+
+
+<table class="noborder">
+
+    
 	<tr>
 		<td>
 			<p><strong>Jason S. Rothman, Laurence Cathala, Volker Steuber,  R. Angus Silver</strong></p>
@@ -87,13 +110,27 @@
 		<td><p>&nbsp;</p>
 			An experimental and modelling paper looking at the effects of short term plasticity on gain control. Used neuroConstruct to investigate
             a detailed layer 5 pyramidal cell model (Kole et al 2008) with dendritically distributed excitatory and inhibitory synaptic input.
-                        
+
+		</td>
+	</tr>
+
+	<tr>
+		<td>
+			<p><strong>Nathan W. Gouwens and Rachel I. Wilson</strong></p>
+			<p><em>Signal Propagation in Drosophila Central Neurons. Journal of Neuroscience 2009</em></p>
+		<p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/19439602">Pubmed</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			A paper investigating the electrical properties of Drosophila neurons which utilises realistic morphological reconstructions and electrophysiological recordings.
+
 		</td>
 	</tr>
         
 
 
 </table>
+
+    </section>
 
 <p>&nbsp;</p>
 <p>&nbsp;</p>

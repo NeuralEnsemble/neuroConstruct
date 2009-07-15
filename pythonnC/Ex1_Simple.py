@@ -2,7 +2,8 @@
 #
 #   A simple example of loading a neuroConstruct project using the Jython scripting interface
 #
-#   To use type 'nC.bat -python TestSimple.py' or 'nC.sh -python test.py'.
+#   To execute this type of file, type '..\nC.bat -python Ex1_Simple.py' (Windows)
+#   or '../nC.sh -python Ex1_Simple.py' (Linux/Mac)
 #
 #   Author: Padraig Gleeson
 #

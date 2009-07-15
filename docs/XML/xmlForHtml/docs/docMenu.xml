@@ -8,7 +8,7 @@
   <body>
 
 
-  <p>&nbsp;&nbsp;<a  href="index.html" >Home</a></p>
+<p>&nbsp;&nbsp;<a  href="index.html" >Home</a></p>
 
 
 <p>&nbsp;&nbsp;<a  href="install.html" >Installation</a></p>
@@ -41,6 +41,7 @@
 
 <p>&nbsp;&nbsp;<a  href="interact.html" >Interacting with native environments</a></p>
 <p>&nbsp;&nbsp;<a  href="neuroml.html" >Importing and exporting NeuroML</a></p>
+<p>&nbsp;&nbsp;<a  href="python.html" >Use of Python in neuroConstruct</a></p>
 
 
   </body>

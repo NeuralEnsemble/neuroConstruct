@@ -32,6 +32,7 @@ import ucl.physiol.neuroconstruct.utils.*;
 import java.io.*;
 import java.text.*;
 import java.util.*;
+import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.OriginalCompartmentalisation;
 import ucl.physiol.neuroconstruct.utils.xml.*;
 
@@ -96,12 +97,17 @@ public class ExampleProjects
         
         ArrayList<File> files = GeneralUtils.toArrayList(fileArray);
         //if (files.contains(""))
+
+
+        ArrayList<String> toIgnore = new ArrayList<String>();
+        toIgnore.add("Thalamocortical"); // temporarily
+        toIgnore.add("CA1PyramidalCell"); // temporarily
         
         for(File exProjDir: files)
         {
             File morphDir = new File(exProjDir, "cellMechanisms");
             
-            if (morphDir.isDirectory())
+            if (morphDir.isDirectory() && !toIgnore.contains(exProjDir.getName()))
             {
                 String projName = exProjDir.getName();
                 SimpleXMLElement section = new SimpleXMLElement("section");
@@ -276,6 +282,7 @@ public class ExampleProjects
                 
             }
         }
+
         
         
         SimpleXMLElement end = new SimpleXMLElement("p");

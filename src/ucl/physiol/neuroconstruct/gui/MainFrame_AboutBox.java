@@ -74,7 +74,15 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener
          +"\nbeen supported by the Medical Research Council";
 
     Border border1;
-    JLabel jLabelWeb = new JLabel();
+    JLabel jLabelWeb1 = new JLabel();
+    JLabel jLabelWeb2 = new JLabel();
+    JLabel jLabelInfo = new JLabel();
+
+    JLabel jLabelLib1 = new JLabel();
+    JLabel jLabelLib2 = new JLabel();
+    JLabel jLabelLib3 = new JLabel();
+    JLabel jLabelLib4 = new JLabel();
+
     Border border2;
     GridBagLayout gridBagLayout1 = new GridBagLayout();
     Border border3;
@@ -127,10 +135,82 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener
         insetsPanel3.setBorder(border1);
         button1.setText("OK");
         button1.addActionListener(this);
-        jLabelWeb.setText("http://www.neuroConstruct.org");
-        jLabelWeb.setForeground(Color.blue);
+        jLabelWeb1.setText("http://www.neuroConstruct.org");
+        addWebLink(jLabelWeb1, jLabelWeb1.getText());
 
-        jLabelWeb.addMouseListener(new MouseAdapter()
+        jLabelWeb2.setText("Credits");
+        addWebLink(jLabelWeb2, "http://www.neuroconstruct.org/contact/index.html");
+
+        jLabelInfo.setText("This application includes libraries from:");
+
+        jLabelLib1.setText("The HDF Group");
+        addWebLink(jLabelLib1, "http://www.hdfgroup.org");
+        jLabelLib2.setText("Jython");
+        addWebLink(jLabelLib2, "http://www.jython.org");
+        jLabelLib3.setText("JUnit");
+        addWebLink(jLabelLib3, "http://www.junit.org");
+        jLabelLib4.setText("Java3D");
+        addWebLink(jLabelLib4, "https://java3d.dev.java.net");
+
+        
+
+        insetsPanel2.add(imageLabel, null);
+        panel2.add(insetsPanel2,  BorderLayout.NORTH);
+        this.getContentPane().add(panel1, null);
+        insetsPanel3.add(label1,    new GridBagConstraints(0, 0, 4, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 6, 0), 0, 0));
+
+        insetsPanel3.add(CommentArea,    new GridBagConstraints(0, 1, 4, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 0, 0));
+
+        insetsPanel3.add(label3,    new GridBagConstraints(0, 2, 4, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 6, 0), 0, 0));
+
+        insetsPanel3.add(label4,    new GridBagConstraints(0, 3, 4, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 6, 0), 0, 0));
+
+
+        insetsPanel3.add(jLabelWeb1,   new GridBagConstraints(0, 4, 4, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 6, 0), 0, 0));
+
+        insetsPanel3.add(jLabelWeb2,   new GridBagConstraints(0, 5, 4, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 6, 0), 0, 0));
+
+        insetsPanel3.add(jLabelInfo,   new GridBagConstraints(0, 6, 4, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 6, 0), 0, 0));
+
+        insetsPanel3.add(jLabelLib1,   new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,6,12), 0, 0));
+        insetsPanel3.add(jLabelLib2,   new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,6,12), 0, 0));
+        insetsPanel3.add(jLabelLib3,   new GridBagConstraints(2, 7, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,6,12), 0, 0));
+        insetsPanel3.add(jLabelLib4,   new GridBagConstraints(3, 7, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,6,12), 0, 0));
+
+
+        panel2.add(insetsPanel3, BorderLayout.CENTER);
+        insetsPanel1.add(button1, null);
+        panel1.add(insetsPanel1, BorderLayout.SOUTH);
+        panel1.add(panel2, BorderLayout.NORTH);
+        setResizable(true);
+    }
+    //Overridden so we can exit when window is closed
+    @Override
+    protected void processWindowEvent(WindowEvent e)
+    {
+        if (e.getID() == WindowEvent.WINDOW_CLOSING)
+        {
+            cancel();
+        }
+        super.processWindowEvent(e);
+    }
+
+    private void addWebLink(final JLabel jLabel, final String url)
+    {
+        jLabel.setForeground(Color.BLUE);
+        
+        MouseAdapter ma = new MouseAdapter()
         {
             @Override
             public void mouseClicked(MouseEvent mouseEvent)
@@ -144,7 +224,7 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener
 
                 Runtime rt = Runtime.getRuntime();
 
-                String command = browserPath + " " + jLabelWeb.getText();
+                String command = browserPath + " " + url;
 
                 logger.logComment("Going to execute command: " + command);
 
@@ -163,49 +243,22 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener
             @Override
             public void mouseEntered(MouseEvent mouseEvent)
             {
-                jLabelWeb.setForeground(Color.BLACK);
+                jLabel.setForeground(Color.BLACK);
             }
             @Override
             public void mouseExited(MouseEvent mouseEvent)
             {
-                jLabelWeb.setForeground(Color.BLUE);
+                jLabel.setForeground(Color.BLUE);
 
             }
 
 
-        });
+        };
 
-        insetsPanel2.add(imageLabel, null);
-        panel2.add(insetsPanel2,  BorderLayout.NORTH);
-        this.getContentPane().add(panel1, null);
-        insetsPanel3.add(label1,    new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 6, 0), 0, 0));
-
-        insetsPanel3.add(CommentArea,    new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 0, 0));
-
-        insetsPanel3.add(label3,    new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 6, 0), 0, 0));
-        insetsPanel3.add(label4,    new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 6, 0), 0, 0));
-        insetsPanel3.add(jLabelWeb,   new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-        panel2.add(insetsPanel3, BorderLayout.CENTER);
-        insetsPanel1.add(button1, null);
-        panel1.add(insetsPanel1, BorderLayout.SOUTH);
-        panel1.add(panel2, BorderLayout.NORTH);
-        setResizable(true);
+        jLabel.addMouseListener(ma);
     }
-    //Overridden so we can exit when window is closed
-    @Override
-    protected void processWindowEvent(WindowEvent e)
-    {
-        if (e.getID() == WindowEvent.WINDOW_CLOSING)
-        {
-            cancel();
-        }
-        super.processWindowEvent(e);
-    }
+
+
     //Close the dialog
     void cancel()
     {

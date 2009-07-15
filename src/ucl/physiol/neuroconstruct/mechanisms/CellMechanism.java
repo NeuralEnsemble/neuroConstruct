@@ -49,7 +49,6 @@ public abstract class CellMechanism
     public static final String ION_CONCENTRATION = "Ion concentration";
     public static final String POINT_PROCESS = "Point process";
     public static final String GAP_JUNCTION = "Gap junction";
-
     public static final String SBML_MECHANISM = "SBML mechanism";
 
     /**

@@ -264,6 +264,13 @@
     </term>
 
     <term>
+        <name>Python</name>
+        <defined><a target="_blank" href="http://www.python.org">Python</a> is a scripting language which is becoming increasingly widely used in
+        <a target="_blank" href="http://frontiersin.org/neuroinformatics/specialtopics/8/">computational neuroscience</a>. Details of the support for Python in neuroConstruct can
+        be found <a  href="python.html">here</a>.        </defined>
+    </term>
+
+    <term>
         <name>NeuroML</name>
         <defined><a target="_blank" href="http://www.neuroml.org">NeuroML</a>, the Neural Open Markup Language, is a model development language in <intref>XML</intref> 
             that provides a common data format for defining and exchanging descriptions of neuronal cell and network models. <br/>
@@ -274,13 +281,13 @@
             <li><b>Level 2</b> builds on Level 1 to include specifications for describing passive membrane properties, and the distributions of channels on neuron models.<br/>
                 The dynamics of ion channels, synapses, and ion concentration mechanisms can also be described at this Level in <intref>ChannelML</intref></li>
             <li><b>Level 3</b> allows networks of cells to be described, either in template form (from which networks can be generated) or as explicit descriptions of <br/>
-                cell placement and synaptic connectivity. The core of this level is described in <intref>NetworkML</intref>. neuroConstruct can save generated networks in <br/>
-                NetworkML, and load NetworkML files from any other application to use in simulations, provided cell type/group/network connection names match those in the project.
+                cell placement and synaptic connectivity. The core of this Level is described in <intref>NetworkML</intref>. neuroConstruct can save generated networks in <br/>
+                NetworkML, and load NetworkML files from any other application to use in simulations, provided the cell type/group/network connection names match those in the project.
             </li>
                 </ul>
-
-
-                 More information is available <a target="_blank" href="http://www.neuroml.org">here</a>, and a web interface for checking the validity of NeuroML file is <a target="_blank" href="http://www.neuroml.org/NeuroMLValidator/Validation.jsp">here</a>.</defined>
+                 More information on NeuroML is available <a target="_blank" href="http://www.neuroml.org">here</a>, and a web interface for checking the validity of
+                 any NeuroML file is <a target="_blank" href="http://www.neuroml.org/NeuroMLValidator/Validation.jsp">here</a>. A description of the support
+                 for NeuroML in neuroConstruct is <a href="neuroml.html">here</a>.</defined>
     </term>
 
     <term>
@@ -289,7 +296,9 @@
         easily transferred between neuronal simulation applications. More information is available <a target="_blank" href="http://www.neuroml.org">here</a>.<br/>
         It is a part of the <intref>NeuroML</intref> initiative, and is the core of NeuroML Level 1. Detailed specifications of the elements allowed in a MorphML document are<br/>
         available <a target="_blank" href="http://www.neuroml.org/NeuroMLValidator/Latest.jsp?spec=MorphML">here</a>. 
-        There is a <a href="../links/publications.html">paper</a> describing this part of the NeuroML language.
+        There has been a <a href="../links/publications.html">paper</a> describing this part of the NeuroML language.
+        A description of the current support
+                 for MorphML and NeuroML in general in neuroConstruct is available <a href="neuroml.html">here</a>.
     </defined>
     </term>
 
@@ -297,7 +306,7 @@
         <name>ChannelML</name>
         <defined>ChannelML is a language (using <intref>XML</intref> technologies) for specifying the dynamics of various subcellular processes
         (<intref>Channel Mechanism</intref>s, <intref>Synaptic Mechanism</intref>s, etc.) which are present on biologically detailed model neurons.
-        It is a part of Level 2 of the <intref>NeuroML</intref> set of specifications.
+        It is a part of Level 2 of <intref>NeuroML</intref>.
         The ability to model these types of mechanisms is one of the key features of platforms like <intref>NEURON</intref> or <intref>GENESIS</intref>, but the implementation
         of the mechanisms is far from trivial, requiring both knowledge of the physiological processes and of a low level programming language. ChannelML seeks to separate the
         electrophysiological data from any specific implementation, defining a template for numerous types of cellular mechanism, containing only the relevant biophysical parameters
@@ -307,7 +316,9 @@
         Examples of valid ChannelML files and mappings to simulators can be found
         <a  href="http://www.neuroml.org/NeuroMLValidator/Samples.jsp">here</a>, and detailed specifications of the elements allowed in a ChannelML document are<br/>
         available <a target="_blank" href="http://www.neuroml.org/NeuroMLValidator/Latest.jsp?spec=ChannelML">here</a>.
-        Details of the process to convert an existing channel script, e.g. a mod file, to ChannelML is outlined <a  href="importneuron.html#Converting+mod+file%2FGENESIS+script+channels+into+ChannelML" >converting channels to ChannelML</a>
+        A description of the current support
+                 for MorphML and NeuroML in general in neuroConstruct is available <a href="neuroml.html">here</a> and
+        details of the process to convert an existing channel script, e.g. a mod file, to ChannelML is outlined <a  href="importneuron.html#Converting+mod+file%2FGENESIS+script+channels+into+ChannelML" >here</a>.
         </defined>
     </term>
 

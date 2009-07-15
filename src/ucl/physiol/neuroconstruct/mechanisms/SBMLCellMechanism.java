@@ -49,7 +49,7 @@ public class SBMLCellMechanism extends XMLCellMechanism
     public SBMLCellMechanism()
     {
         logger = new ClassLogger("SBMLCellMechanism");
-        logger.setThisClassVerbose(true);
+        //logger.setThisClassVerbose(true);
     }
 
     
@@ -94,7 +94,7 @@ public class SBMLCellMechanism extends XMLCellMechanism
                                             boolean forceCorrectInit,
                                             boolean parallelMode)
     {
-        logger.logComment("Creating file for env: "+targetEnv+" file: "+ fileToGenerate, true);
+        logger.logComment("Creating file for env: "+targetEnv+" file: "+ fileToGenerate);
 
         for (int k = 0; k < getSimMappings().size(); k++)
         {
@@ -182,16 +182,19 @@ public class SBMLCellMechanism extends XMLCellMechanism
                                 String name = xpathLocs.get(j);
                                 if (name.indexOf("schemaLocation")<0)
                                 {
-                                    String safeValue = GeneralUtils.replaceAllTokens(getXMLDoc().getValueByXPath(name),
-                                        "\n", " ");
-                                    
-                                    if (safeValue.length()>150)
-                                        safeValue = safeValue.substring(0,150)+" ...";
+                                    String val = getXMLDoc().getValueByXPath(name);
+                                    if(val!=null)
+                                    {
+                                        String safeValue = GeneralUtils.replaceAllTokens(val, "\n", " ");
 
-                                    fileOut.write(commentLinePrefix + name
-                                                  + " = "
-                                                  + safeValue
-                                                  + " \n");
+                                        if (safeValue.length()>150)
+                                            safeValue = safeValue.substring(0,150)+" ...";
+
+                                        fileOut.write(commentLinePrefix + name
+                                                      + " = "
+                                                      + safeValue
+                                                      + " \n");
+                                    }
                                 }
                             }
 
@@ -222,13 +225,13 @@ public class SBMLCellMechanism extends XMLCellMechanism
                         ProcessOutputWatcher procOutputError = new ProcessOutputWatcher(currentProcess.getErrorStream(), "Error");
                         procOutputError.start();
 
-                        logger.logComment("Have successfully executed command: " + commandToExecute, true);
+                        logger.logComment("Have successfully executed command: " + commandToExecute);
 
                         currentProcess.waitFor();
 
-                        logger.logComment("Exit value for compilation: "+currentProcess.exitValue(), true);
-                        logger.logComment(procOutputMain.getLog(), true);
-                        logger.logComment(procOutputError.getLog(), true);
+                        logger.logComment("Exit value for compilation: "+currentProcess.exitValue());
+                        logger.logComment(procOutputMain.getLog());
+                        logger.logComment(procOutputError.getLog());
 
                         //transformed = GeneralUtils.replaceAllTokens(transformed, "\n\n", "\n");
 
