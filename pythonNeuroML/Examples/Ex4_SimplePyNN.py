@@ -2,7 +2,12 @@
 #   A simple example of a PyNN script which creates some cells and makes connections 
 #
 #   This standalone file should be runnable on any PyNN simulator and uses most of the functions 
-#   that neuroConstruct generated PyNN code would use
+#   that neuroConstruct generated PyNN code would use. Note some of the more advanced functionality
+#   e.g. synaptic plasticity, is turned off for some less well tested simulators (all except Nest & NEURON)
+#
+#   To run this example type:
+#       python Ex4_SimplePyNN.py neuron
+#   or replace neuron ith another PyNN simulator
 #
 #   Author: Padraig Gleeson
 #
@@ -102,9 +107,10 @@ for addr in addrsB:
 print gidsA
 print gidsB
 
-#syn_dynam = None
+syn_dynam = None
 
-syn_dynam = SynapseDynamics(fast=TsodyksMarkramMechanism(U=0.4, tau_rec=100.0, tau_facil=1000.0))
+if my_simulator == 'neuron' or my_simulator == 'nest' :
+    syn_dynam = SynapseDynamics(fast=TsodyksMarkramMechanism(U=0.4, tau_rec=100.0, tau_facil=1000.0))
 
 #syn_dynam = SynapseDynamics(slow=STDPMechanism(timing_dependence=SpikePairRule(tau_plus=20.0, tau_minus=20.0),
 #                           weight_dependence=AdditiveWeightDependence(w_min=0, w_max=0.4,
@@ -126,10 +132,11 @@ connector= FromListConnector(projConns)
 proj = Projection(cellsA, cellsB, connector, target='excitatory', label='TestProj' ,synapse_dynamics=syn_dynam)
 
 
-voltDistr = RandomDistribution('uniform',[-65,-50],rng)
+if my_simulator == 'neuron' or my_simulator == 'nest' :
+    voltDistr = RandomDistribution('uniform',[-65,-50],rng)
 
-cellsA.randomInit(voltDistr)
-cellsB.randomInit(voltDistr)
+    cellsA.randomInit(voltDistr)
+    cellsB.randomInit(voltDistr)
 
 freq = 150 # Hz
 

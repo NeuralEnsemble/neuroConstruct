@@ -1,6 +1,6 @@
 #
 #
-#   A class to allow easy generation of NetworkML files from Python.
+#   A class which stores the structure of a network in a NetworkML friendly way
 # 
 #   Should move this to a more PyNN friendly interface over time...
 # 
@@ -15,7 +15,7 @@
 genForVer2compat = 1  # Incorporates changes in v1.7.1 to clean up for v2.0
 
 
-class NetworkMLFile:
+class NetworkMLNet:
     
     currNeuroMLVersion = "1.7.1"
     
@@ -26,7 +26,7 @@ class NetworkMLFile:
     
     def __init__(self):
         
-        print("NetworkMLFile object created")
+        print("NetworkMLNet object created")
         self.populations = []
         self.projections = []
         
@@ -65,7 +65,7 @@ class NetworkMLFile:
         
     
     def __str__(self):
-        info =  "NetworkMLFile with "+str(len(self.populations))+" populations and "+str(len(self.projections))+" projections:"
+        info =  "NetworkMLNet with "+str(len(self.populations))+" populations and "+str(len(self.projections))+" projections:"
         
         for population in self.populations:
           info = info + "\n    Population: "+ population.popName +" with "+ str(len(population.instances)) +" cells"
@@ -78,7 +78,7 @@ class NetworkMLFile:
         
     def writeXML(self, filename):
         
-        print("NetworkMLFile going to be written to XML file: "+ str(filename))
+        print("NetworkMLNet going to be written to XML file: "+ str(filename))
         
         out_file = open(filename, "w")
         
@@ -118,7 +118,7 @@ class NetworkMLFile:
         
     def writeHDF5(self, filename):
         
-        print("NetworkMLFile going to be written to HDF5 file: "+ str(filename))
+        print("NetworkMLNet going to be written to HDF5 file: "+ str(filename))
         
         import tables
         

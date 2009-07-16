@@ -18,17 +18,17 @@ import math
 import random
  
 sys.path.append("../NeuroMLUtils")
-from NetworkMLFile import NetworkMLFile
+from NetworkMLNet import NetworkMLNet
 
 print("Going to create a NetworkML file...")
 
-nmlFile = NetworkMLFile()
+nmlNet = NetworkMLNet()
 
-newPop = nmlFile.addPopulation("SampleCellGroup", "SampleCell") # Names chosen for easy import into neuroConstruct...
+newPop = nmlNet.addPopulation("SampleCellGroup", "SampleCell") # Names chosen for easy import into neuroConstruct...
 popSize = 40
 compNodes = 4 # Number of processors to generate for
 
-newProj = nmlFile.addProjection("NetConn_SampleCellGroup_SampleCellGroup", "SampleCellGroup", "SampleCellGroup")
+newProj = nmlNet.addProjection("NetConn_SampleCellGroup_SampleCellGroup", "SampleCellGroup", "SampleCellGroup")
 newProj.addSynapse("DoubExpSyn", 1, -20, 5)
 
 
@@ -46,7 +46,7 @@ for i in range(popSize):
     
   
 filenameX = "random.nml"
-nmlFile.writeXML(filenameX)     # Create XML based NetworkML file
+nmlNet.writeXML(filenameX)     # Create XML based NetworkML file
 
 
 ###############  Put back in these lines to save in HDF5 format. Note: pytables should be installed and tested before this!

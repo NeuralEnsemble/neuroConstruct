@@ -1,5 +1,6 @@
 #
-#   A simple example of reading in and instantiating cells and connections using PyNN
+#   A simple example of reading in a NetworkML file and instantiating cells and
+#   connections using PyNN
 #
 #   Author: Padraig Gleeson
 #
@@ -28,7 +29,6 @@ else:
 
 logging.basicConfig(level=logging.INFO, format="%(name)-19s %(levelname)-5s - %(message)s")
 
-from NetworkHandler import NetworkHandler
 from NetworkMLSaxHandler import NetworkMLSaxHandler
 from PyNNUtils import NetManagerPyNN
 

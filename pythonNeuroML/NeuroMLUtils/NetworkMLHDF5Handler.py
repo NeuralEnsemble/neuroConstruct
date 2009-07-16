@@ -14,8 +14,7 @@
 #   This work has been funded by the Medical Research Council
 #
 #
-
-import xml.sax
+  
 import logging
 
 from SynapseProperties import SynapseProperties
@@ -126,7 +125,7 @@ class NetworkMLHDF5Handler():
         
         
         for attrName in d.attrs._v_attrnames:
-            val = d.attrs._g_getAttr(attrName)
+            val = d.attrs.__getattr__(attrName)
             
             self.log.debug("Val of attribute: "+ attrName + " is "+ str(val))
             
@@ -223,9 +222,9 @@ class NetworkMLHDF5Handler():
     
     
   def startGroup(self, g):
-    self.log.debug("Going into a group: "+ g._v_hdf5name)
+    self.log.debug("Going into a group: "+ g._v_name)
     
-    if g._v_hdf5name.count('population_')>=1:
+    if g._v_name.count('population_')>=1:
         # TODO: a better check to see if the attribute is a str or numpy.ndarray
         self.currPopulation = g._v_attrs.name[0]
         if (len(self.currPopulation)==1):          # i.e. it was a str and just took the first letter...
@@ -244,7 +243,7 @@ class NetworkMLHDF5Handler():
         
         self.netHandler.handlePopulation(self.currPopulation, self.currentCellType, size)
         
-    if g._v_hdf5name.count('projection_')>=1:
+    if g._v_name.count('projection_')>=1:
       
         self.currentProjectionName = g._v_attrs.name[0]
         self.currentProjectionSource = g._v_attrs.source[0]
@@ -252,14 +251,14 @@ class NetworkMLHDF5Handler():
           
         self.log.info("------    Found a projection: "+ self.currentProjectionName+ ", from "+ self.currentProjectionSource+" to "+ self.currentProjectionTarget)  
     
-    if g._v_hdf5name.count('synapse_props_')>=1:
+    if g._v_name.count('synapse_props_')>=1:
       
         newSynapseProps = SynapseProperties()
-        name = g._v_hdf5name[len('synapse_props_'):]
+        name = g._v_name[len('synapse_props_'):]
         
         #print dir(g._v_attrs) 
         for attrName in g._v_attrs._v_attrnames:
-            val = g._v_attrs._g_getAttr(attrName)
+            val = g._v_attrs.__getattr__(attrName)
             self.log.debug("Val of attribute: "+ attrName + " is "+ str(val))
             
             if attrName == "internal_delay":
@@ -285,22 +284,23 @@ class NetworkMLHDF5Handler():
   def endGroup(self, g):
     self.log.debug("Coming out of a group: "+ str(g))
   
-    if g._v_hdf5name.count('population_')>=1:
+    if g._v_name.count('population_')>=1:
         self.log.debug("End of population: "+ self.currPopulation+", cell type: "+self.currentCellType)  
         self.currPopulation =""
         self.currentCellType = ""
     
-    if g._v_hdf5name.count('projection_')>=1:
-        self.netHandler.finaliseProjection(self.currentProjectionName)
+    if g._v_name.count('projection_')>=1:
+        self.netHandler.finaliseProjection(self.currentProjectionName, self.currentProjectionSource, self.currentProjectionTarget)
         self.currentProjectionName = ""
         self.currentProjectionSource = ""
         self.currentProjectionTarget = ""
         
-    if g._v_hdf5name.count('input_')>=1:
+    if g._v_name.count('input_')>=1:
         # TODO: support inputs in HDF5
+        self.log.debug("Not implemented yet!")
     
     
-          
+
 class SynapseProperties():
 
     internalDelay = 0   # default from NetworkML.xsd

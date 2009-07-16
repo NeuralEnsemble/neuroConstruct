@@ -10,14 +10,13 @@
 #
 
 import sys
-import os
 import logging
 
 
 sys.path.append("../NeuroMLUtils")
 
 from NetworkHandler import NetworkHandler
-from NetworkMLFile import NetworkMLFile
+from NetworkMLNet import NetworkMLNet
     
 
 
@@ -25,14 +24,14 @@ class NetworkHolder(NetworkHandler):
     
     log = logging.getLogger("NetworkHolder")
   
-    nmlFile = NetworkMLFile()
+    nmlNet = NetworkMLNet()
    
     #
     #  Overridden from NetworkHandler
     #    
     def handlePopulation(self, cellGroup, cellType, size):
       
-        newPop = self.nmlFile.addPopulation(cellGroup, cellType)
+        self.nmlNet.addPopulation(cellGroup, cellType)
         
         if (size>=0):
             sizeInfo = ", size "+ str(size)+ " cells"
@@ -50,7 +49,7 @@ class NetworkHolder(NetworkHandler):
     def handleLocation(self, id, cellGroup, cellType, x, y, z):
         self.printLocationInformation(id, cellGroup, cellType, x, y, z)
         
-        self.nmlFile.getPopulation(cellGroup).addInstance(x,y,z)
+        self.nmlNet.getPopulation(cellGroup).addInstance(x,y,z)
                 
         
     #
@@ -73,9 +72,9 @@ class NetworkHolder(NetworkHandler):
         self.printConnectionInformation(projName, id, source, target, synapseType, preCellId, postCellId, localWeight)
           
         
-        proj = self.nmlFile.getProjection(projName)
+        proj = self.nmlNet.getProjection(projName)
         if proj == None:
-            proj = self.nmlFile.addProjection(projName, source, target)
+            proj = self.nmlNet.addProjection(projName, source, target)
             
             
         # NOTE: segment ID, fractalong, synapse props not supported yet in NetworkMLFile!!

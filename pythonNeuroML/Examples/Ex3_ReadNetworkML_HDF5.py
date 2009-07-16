@@ -13,22 +13,19 @@
 #
 
 import sys
-import os
-import math
-import xml
-import xml.sax
 
 import logging
  
 sys.path.append("../NeuroMLUtils")
 
-from NetworkHandler import NetworkHandler
 from NetworkHolder import NetworkHolder
+
+
 from NetworkMLHDF5Handler import NetworkMLHDF5Handler
 
 file_name = 'GranCellLayer.h5'
 
-logging.basicConfig(level=logging.DEBUG, format="%(name)-19s %(levelname)-5s - %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(name)-19s %(levelname)-5s - %(message)s")
 
 
 print("Going to read contents of a HDF5 NetworkML file: "+str(file_name))
@@ -45,5 +42,5 @@ curHandler.parse(file_name)
 
 print("Have read in contents of file: "+str(file_name))
 
-print (str(nmlHandler.nmlFile))
+print (str(nmlHandler.nmlNet))
 
