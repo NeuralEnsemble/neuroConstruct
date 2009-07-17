@@ -1263,6 +1263,7 @@ public class MorphBasedConnGenerator extends Thread
         float seconds = (float) (netConnsGenerationTime - startGenerationTime) / 1000f;
 
         int totNum = project.generatedNetworkConnections.getNumberSynapticConnections(GeneratedNetworkConnections.MORPH_NETWORK_CONNECTION);
+        int totNNum = project.generatedNetworkConnections.getNumNonEmptyNetConns();
 
         generationReport.append("<center><b>Morphology Based Network Connections:</b></center>");
 
@@ -1278,7 +1279,7 @@ public class MorphBasedConnGenerator extends Thread
         {
             generationReport.append("Time taken to generate "
                                     + totNum
-                                    + " network connections: " + seconds + " seconds.<br>");
+                                    + " connections (in "+totNNum+" net conns): " + seconds + " seconds.<br>");
 
             generationReport.append(project.generatedNetworkConnections.getHtmlReport(GeneratedNetworkConnections.MORPH_NETWORK_CONNECTION, simConfig));
 

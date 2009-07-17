@@ -226,6 +226,21 @@ public class GeneratedNetworkConnections
         return getNumberSynapticConnections(ANY_NETWORK_CONNECTION);
     }
 
+    public int getNumNonEmptyNetConns()
+    {
+        int totalCount = 0;
+
+        Enumeration keys = mySynapticConnectionVectors.keys();
+
+        while(keys.hasMoreElements())
+        {
+            ArrayList<SingleSynapticConnection> synConns = mySynapticConnectionVectors.get((String)keys.nextElement());
+            if (synConns.size()>0)
+                totalCount++;
+        }
+        return totalCount;
+    }
+
     public int getNumberSynapticConnections(int connType)
     {
         //logger.logComment("getNumberSynapticConnections sought for : "+this.hashCode());
