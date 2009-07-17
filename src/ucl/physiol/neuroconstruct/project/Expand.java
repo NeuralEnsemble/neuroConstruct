@@ -32,6 +32,7 @@ import ucl.physiol.neuroconstruct.mechanisms.ChannelMLException;
 import ucl.physiol.neuroconstruct.utils.*;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Vector;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
@@ -76,125 +77,182 @@ public class Expand
     	return CELL_MECHANISMS+"/"+getItemPage(cellMechName);
     }
 
-    public static void generateMainPage(Project project, File mainHtmlFile)
+    public static File generateMainPage(Project project, File parentFile)
     {
-        SimpleHtmlDoc mainPage = new SimpleHtmlDoc();
+        String mainPageTitle = "index";
 
-        mainPage.setMainFontSize(10);
-
-        mainPage.addTaggedElement("neuroConstruct project: "+ project.getProjectName(), "h1");
-
-        mainPage.addTaggedElement(""+ handleWhitespaces(project.getProjectDescription()), "p");
-
-        mainPage.addTaggedElement("Simulation configurations", "h2");
+        ArrayList<String> pages = new ArrayList<String>();
+        pages.add(mainPageTitle);
 
         for (String sc: project.simConfigInfo.getAllSimConfigNames())
+            pages.add(sc);
+
+        for(String title: pages)
         {
-            String scFile = getItemPage(sc);
-            mainPage.addTaggedElement(mainPage.getLinkedText(sc, scFile), "p");
-        }
-
-
-        mainPage.addTaggedElement("Cell Types present in the project", "h2");
-
-        Vector<Cell> cells = project.cellManager.getAllCells();
-
-
-    	mainPage.addRawHtml("<table border=\"1\" width ='300'>");
-    	
-        for (Cell cell: cells)
-        {
-        	mainPage.addRawHtml("<tr><td>"+cell.getInstanceName());
-        	mainPage.addRawHtml("</td><td>"+cell.getCellDescription()+"</td><td>");
-        	
-        	String cellPageLoc = getCellTypePage(cell.getInstanceName());
-        	mainPage.addRawHtml("<a href = "+cellPageLoc	+">Cell details</a></td></tr>");
-
-
-            SimpleHtmlDoc cellPage = new SimpleHtmlDoc();
+            File fileToSave = new File(parentFile, getItemPage(title));
             
-            cellPage.addRawHtml(CellTopologyHelper.printDetails(cell, project, true, true, true));
+            SimpleHtmlDoc mainPage = new SimpleHtmlDoc();
 
+            mainPage.setMainFontSize(10);
 
-            cellPage.saveAsFile(new File(mainHtmlFile.getParentFile(), cellPageLoc));
+            mainPage.addTaggedElement("neuroConstruct project: "+ project.getProjectName(), "h1");
+
+            mainPage.addTaggedElement("Simulation configurations", "h2");
             
-        }
-    	mainPage.addRawHtml("</table>");
-
-        mainPage.addTaggedElement("Cell Mechanisms present in the project", "h2");
-
-    	mainPage.addRawHtml("<table>");
-        
-        Vector<String> cellMechs = project.cellMechanismInfo.getAllCellMechanismNames();
-
-        for (String cmName: cellMechs)
-        {
-        	CellMechanism cm = project.cellMechanismInfo.getCellMechanism(cmName);
             
-
-        	String cmPageLoc = getCellMechPage(cm.getInstanceName());
-        	
-        	mainPage.addRawHtml("<tr><td>"+cm.getInstanceName());
-        	mainPage.addRawHtml("</td><td>"+cm.getDescription()+"</td><td>");
-        	
-
-        	mainPage.addRawHtml("</td><td>"+cm.getMechanismModel()+"</td><td>");
-        	mainPage.addRawHtml("</td><td>"+cm.getMechanismType()+"</td><td>");
-        	
-        	mainPage.addRawHtml("<a href = "+cmPageLoc	+">Full details</a></td></tr>");
-
-            File xslDoc = GeneralProperties.getChannelMLReadableXSL();
-
-        	
-        	
-            SimpleHtmlDoc cmPage = new SimpleHtmlDoc();
-            
-            if (cm instanceof ChannelMLCellMechanism)
+            for (String sc: project.simConfigInfo.getAllSimConfigNames())
             {
-            	ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism)cm;
-            	
+                String scFile = getItemPage(sc);
+                mainPage.addTaggedElement(mainPage.getLinkedText(sc, scFile), "b");
+            }
 
-                try 
-                {
-                	String readable = XMLUtils.transform(cmlCm.getXMLDoc().getXMLString("", false),xslDoc);
+            String desc = project.getProjectDescription();
 
-                	cmPage.addRawHtml(readable);
-                } 
-                catch (XMLMechanismException e)
-				{
-                	cmPage.addTaggedElement("Unable to generate HTML representation of: "+ cm.getInstanceName(), "b");
-				}
-            	String cmXmlPageLoc = getCellMechPage(cm.getInstanceName()+".channelml");
+            Vector<Cell> cells = new Vector<Cell>();
 
-                SimpleHtmlDoc cmXmlPage = new SimpleHtmlDoc();
-                
-                
-                try 
-                {
-                	cmXmlPage.addRawHtml(cmlCm.getXMLDoc().getXMLString("", true));
-				} 
-                catch (XMLMechanismException e)
-				{
-					cmXmlPage.addTaggedElement("Unable to generate ChannelML representation of: "+ cm.getInstanceName(), "b");
-				}
+            Vector<String> cellMechs = new Vector<String>();
 
-                cmXmlPage.saveAsFile(new File(mainHtmlFile.getParentFile(), cmXmlPageLoc));
-                
-            	mainPage.addRawHtml("</td><td><a href = "+cmXmlPageLoc	+">ChannelML file</td><td>");
+            if(title.equals(mainPageTitle))
+            {
+                cells = project.cellManager.getAllCells();
+
+                cellMechs = project.cellMechanismInfo.getAllCellMechanismNames();
             }
             else
             {
-            	
+                SimConfig sc = project.simConfigInfo.getSimConfig(title);
+                desc=sc.getDescription();
+                //cells.removeAllElements();
+                //cellMechs.removeAllElements();
+
+                for(String cg: sc.getCellGroups())
+                {
+                    String cellType = project.cellGroupsInfo.getCellType(cg);
+                    Cell cell = project.cellManager.getCell(cellType);
+
+                    System.out.println("cg: "+ cg);
+                    System.out.println("cellType: "+ cellType);
+                    System.out.println("celz: "+ project.cellManager.getAllCellTypeNames());
+                    System.out.println("Cell: "+ cell);
+                    
+                    if (!cells.contains(cell))
+                        cells.add(cell);
+
+                    ArrayList<String> cms = cell.getAllChanMechNames(true);
+
+                    cms.addAll(cell.getAllAllowedSynapseTypes());
+                    for(String cm: cms)
+                    {
+                        if (!cellMechs.contains(cm))
+                            cellMechs.add(cm);
+                    }
+
+                }
             }
-            
+                
+            mainPage.addTaggedElement(""+ handleWhitespaces(desc), "p");
+ 
 
-        	cmPage.saveAsFile(new File(mainHtmlFile.getParentFile(), cmPageLoc));
-        	
+            mainPage.addTaggedElement("Cell Types present in the project", "h2");
+
+
+
+            mainPage.addRawHtml("<table border=\"1\" >");
+
+            for (Cell cell: cells)
+            {
+                mainPage.addRawHtml("<tr><td>"+cell.getInstanceName());
+                mainPage.addRawHtml("</td><td>"+cell.getCellDescription()+"</td><td>");
+
+                String cellPageLoc = getCellTypePage(cell.getInstanceName());
+                mainPage.addRawHtml("<a href = "+cellPageLoc	+">Cell details</a></td></tr>");
+
+
+                SimpleHtmlDoc cellPage = new SimpleHtmlDoc();
+
+                cellPage.addRawHtml(CellTopologyHelper.printDetails(cell, project, true, true, true));
+
+
+                cellPage.saveAsFile(new File(fileToSave.getParentFile(), cellPageLoc));
+
+            }
+            mainPage.addRawHtml("</table>");
+
+            mainPage.addTaggedElement("Cell Mechanisms present in the project", "h2");
+
+            mainPage.addRawHtml("<table border=\"1\">");
+
+
+            for (String cmName: cellMechs)
+            {
+                CellMechanism cm = project.cellMechanismInfo.getCellMechanism(cmName);
+
+
+                String cmPageLoc = getCellMechPage(cm.getInstanceName());
+
+                mainPage.addRawHtml("<tr><td>"+cm.getInstanceName());
+                mainPage.addRawHtml("</td><td>"+cm.getDescription()+"</td><td>");
+
+
+                mainPage.addRawHtml("</td><td>"+cm.getMechanismModel()+"</td><td>");
+                mainPage.addRawHtml("</td><td>"+cm.getMechanismType()+"</td><td>");
+
+                mainPage.addRawHtml("<a href = "+cmPageLoc	+">Full details</a></td></tr>");
+
+                File xslDoc = GeneralProperties.getChannelMLReadableXSL();
+
+
+
+                SimpleHtmlDoc cmPage = new SimpleHtmlDoc();
+
+                if (cm instanceof ChannelMLCellMechanism)
+                {
+                    ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism)cm;
+
+
+                    try
+                    {
+                        String readable = XMLUtils.transform(cmlCm.getXMLDoc().getXMLString("", false),xslDoc);
+
+                        cmPage.addRawHtml(readable);
+                    }
+                    catch (XMLMechanismException e)
+                    {
+                        cmPage.addTaggedElement("Unable to generate HTML representation of: "+ cm.getInstanceName(), "b");
+                    }
+                    String cmXmlPageLoc = getCellMechPage(cm.getInstanceName()+".channelml");
+
+                    SimpleHtmlDoc cmXmlPage = new SimpleHtmlDoc();
+
+
+                    try
+                    {
+                        cmXmlPage.addRawHtml(cmlCm.getXMLDoc().getXMLString("", true));
+                    }
+                    catch (XMLMechanismException e)
+                    {
+                        cmXmlPage.addTaggedElement("Unable to generate ChannelML representation of: "+ cm.getInstanceName(), "b");
+                    }
+
+                    cmXmlPage.saveAsFile(new File(fileToSave.getParentFile(), cmXmlPageLoc));
+
+                    mainPage.addRawHtml("</td><td><a href = "+cmXmlPageLoc	+">ChannelML file</td><td>");
+                }
+                else
+                {
+
+                }
+
+
+                cmPage.saveAsFile(new File(fileToSave.getParentFile(), cmPageLoc));
+
+            }
+
+            mainPage.addRawHtml("</table>");
+            logger.logComment("Going to save: "+ fileToSave.getAbsolutePath(), true);
+            mainPage.saveAsFile(fileToSave);
         }
-        
-    	mainPage.addRawHtml("</table>");
-
-        mainPage.saveAsFile(mainHtmlFile);
+        return new File(getItemPage(mainPageTitle));
         
     }
     
@@ -228,10 +286,9 @@ public class Expand
                     public void cellMechanismUpdated()
                     {};
                 });
-            
-            File f = new File("../temp/testExpand/proj.html");
-            
-            generateMainPage(testProj, f);
+
+            File par = new File("../temp/testExpand");
+            File f = generateMainPage(testProj, par);
             
 
             logger.logComment("Created doc at: "+ f.getCanonicalPath(), true);
