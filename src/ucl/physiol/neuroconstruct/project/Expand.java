@@ -26,17 +26,12 @@
 
 package ucl.physiol.neuroconstruct.project;
 
-import ucl.physiol.neuroconstruct.mechanisms.CellMechanism;
-import ucl.physiol.neuroconstruct.mechanisms.ChannelMLCellMechanism;
-import ucl.physiol.neuroconstruct.mechanisms.ChannelMLException;
 import ucl.physiol.neuroconstruct.utils.*;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Vector;
 import ucl.physiol.neuroconstruct.cell.*;
-import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
-import ucl.physiol.neuroconstruct.mechanisms.XMLMechanismException;
 
 /**
  * Class for generating HTML representation of neuroConstruct project
@@ -95,7 +90,7 @@ public class Expand
 
             mainPage.setMainFontSize(10);
 
-            mainPage.addTaggedElement("neuroConstruct project: "+ project.getProjectName(), "h1");
+            mainPage.addTaggedElement("neuroConstruct project: "+ project.getProjectName(), "h2");
 
             mainPage.addTaggedElement("Simulation configurations", "h2");
             
@@ -110,13 +105,23 @@ public class Expand
 
             Vector<Cell> cells = new Vector<Cell>();
 
-            Vector<String> cellMechs = new Vector<String>();
+            ArrayList<String> cellMechs = new ArrayList<String>();
+            ArrayList<String> cellGroups = new ArrayList<String>();
+            ArrayList<String> netConns = new ArrayList<String>();
+            ArrayList<String> inputs = new ArrayList<String>();
 
             if(title.equals(mainPageTitle))
             {
                 cells = project.cellManager.getAllCells();
 
-                cellMechs = project.cellMechanismInfo.getAllCellMechanismNames();
+                cellMechs.addAll(project.cellMechanismInfo.getAllCellMechanismNames());
+
+                cellGroups = project.cellGroupsInfo.getAllCellGroupNames();
+
+                netConns.addAll(project.morphNetworkConnectionsInfo.getAllSimpleNetConnNames());
+                netConns.addAll(project.volBasedConnsInfo.getAllAAConnNames());
+
+                inputs.addAll(project.elecInputInfo.getAllStimRefs());
             }
             else
             {
@@ -125,16 +130,15 @@ public class Expand
                 //cells.removeAllElements();
                 //cellMechs.removeAllElements();
 
+                cellGroups = sc.getCellGroups();
+                netConns = sc.getNetConns();
+                inputs = sc.getInputs();
+
                 for(String cg: sc.getCellGroups())
                 {
                     String cellType = project.cellGroupsInfo.getCellType(cg);
                     Cell cell = project.cellManager.getCell(cellType);
 
-                    System.out.println("cg: "+ cg);
-                    System.out.println("cellType: "+ cellType);
-                    System.out.println("celz: "+ project.cellManager.getAllCellTypeNames());
-                    System.out.println("Cell: "+ cell);
-                    
                     if (!cells.contains(cell))
                         cells.add(cell);
 
@@ -149,10 +153,114 @@ public class Expand
 
                 }
             }
-                
-            mainPage.addTaggedElement(""+ handleWhitespaces(desc), "p");
- 
 
+            int width = 700;
+            int width1 = 140;
+
+
+            mainPage.addRawHtml("<p>&nbsp;</p>");
+
+            mainPage.addRawHtml("<table border=\"1\" width='"+width+"' valign='centre'>");
+
+            mainPage.addRawHtml("<tr><td colspan='2'><b>A: Model Summary</b></td></tr>");
+            mainPage.addRawHtml("<tr><td width='"+width1+"'><b>Description</b></td><td>"+ handleWhitespaces(desc)+"</td></tr>");
+            mainPage.addRawHtml("<tr><td><b>Populations</b></td><td>");
+            for(String cg: cellGroups)
+            {
+                mainPage.addRawHtml(" "+cg+" ("+project.cellGroupsInfo.getCellType(cg)+")");
+            }
+
+            mainPage.addRawHtml("</td><tr>");
+            mainPage.addRawHtml("<tr><td><b>Topology</b></td><td>Network of neurons positioned & connected in 3D space</td><tr>");
+
+            mainPage.addRawHtml("<tr><td><b>Connectivity</b></td><td>");
+            for(String nc: netConns)
+            {
+                mainPage.addRawHtml(" "+nc);
+            }
+            mainPage.addRawHtml("</td><tr>");
+
+
+            mainPage.addRawHtml("<tr><td><b>Neuron models</b></td><td>");
+            for(Cell cell: cells)
+            {
+                mainPage.addRawHtml(" "+cell.getInstanceName());
+            }
+            mainPage.addRawHtml("</td></tr>");
+
+
+            StringBuffer cmInfo = new StringBuffer();
+
+            StringBuffer synInfo = new StringBuffer();
+
+            for(String cm: cellMechs)
+            {
+                if(project.cellMechanismInfo.getCellMechanism(cm).isChannelMechanism())
+                    cmInfo.append(cm+" ");
+                if(project.cellMechanismInfo.getCellMechanism(cm).isSynapticMechanism() ||
+                   project.cellMechanismInfo.getCellMechanism(cm).isGapJunctionMechanism())
+                    synInfo.append(cm+" ");
+
+            }
+
+            mainPage.addRawHtml("<tr><td><b>Channel models</b></td><td>"+cmInfo+"</td></tr>");
+            mainPage.addRawHtml("<tr><td><b>Synapse models</b></td><td>"+synInfo+"</td></tr>");
+
+
+            mainPage.addRawHtml("<tr><td><b>Input</b></td><td>");
+            for(String in: inputs)
+            {
+
+                mainPage.addRawHtml(" "+in+" (to "+ project.elecInputInfo.getStim(in).getCellGroup()+")");
+            }
+            mainPage.addRawHtml("</td></tr>");
+
+            mainPage.addRawHtml("</table>");
+
+
+
+            mainPage.addRawHtml("<p>&nbsp;</p>");
+
+            mainPage.addRawHtml("<table border=\"1\" width='"+width+"' >");
+
+            mainPage.addRawHtml("<tr><td colspan='3'><b>B: Populations</b></td></tr>");
+
+            mainPage.addRawHtml("<tr><td width='"+width1+"'><b>Name</b></td><td  width='100'><b>Elements</b></td><td><b>Description</b></td></tr>");
+            for(String cg: cellGroups)
+            {
+                mainPage.addRawHtml("<tr><td>"+cg+"</td><td>"+project.cellGroupsInfo.getCellType(cg)+"</td><td>"+project.cellGroupsInfo.getCellPackingAdapter(cg).getDescription()+"</td></tr>");
+            }
+
+
+            mainPage.addRawHtml("</table>");
+
+            mainPage.addRawHtml("<p>&nbsp;</p>");
+            mainPage.addRawHtml("<p>&nbsp;</p>");
+
+            mainPage.addRawHtml("<table border=\"1\" width='"+width+"' valign='centre'>");
+
+            mainPage.addRawHtml("<tr><td colspan='4'><b>C: Connectivity</b></td></tr>");
+
+
+            mainPage.addRawHtml("<tr><td width='"+width1+"'><b>Name</b></td><td  width='100'><b>Source</b></td><td  width='100'><b>Target</b></td><td><b>Pattern</b></td></tr>");
+
+            for(String nc: netConns)
+            {
+                String src = project.morphNetworkConnectionsInfo.getSourceCellGroup(nc);
+                String tgt = project.morphNetworkConnectionsInfo.getTargetCellGroup(nc);
+                ConnectivityConditions cc = project.morphNetworkConnectionsInfo.getConnectivityConditions(nc);
+
+                mainPage.addRawHtml("<tr><td>"+nc+"</td><td>"+src+"</td><td>"+tgt+"</td><td>"+cc+"</td></tr>");
+
+            }
+            mainPage.addRawHtml("</table>");
+
+            
+
+            mainPage.addRawHtml("<p>&nbsp;</p>");
+            mainPage.addRawHtml("<p>&nbsp;</p>");
+
+  /*          
             mainPage.addTaggedElement("Cell Types present in the project", "h2");
 
 
@@ -248,7 +356,7 @@ public class Expand
 
             }
 
-            mainPage.addRawHtml("</table>");
+            mainPage.addRawHtml("</table>");*/
             logger.logComment("Going to save: "+ fileToSave.getAbsolutePath(), true);
             mainPage.saveAsFile(fileToSave);
         }
@@ -269,7 +377,10 @@ public class Expand
         {
             //File projFile = new File("examples/Ex6-Cerebellum/Ex6-Cerebellum.neuro.xml");
             //File projFile = new File("C:\\copynCmodels\\TraubEtAl2005\\TraubEtAl2005.neuro.xml");
-            File projFile = new File("nCmodels/CA1PyramidalCell/CA1PyramidalCell.ncx");
+            //File projFile = new File("nCmodels/Thalamocortical/Thalamocortical.ncx");
+            //File projFile = new File("nCmodels/CA1PyramidalCell/CA1PyramidalCell.ncx");
+            File projFile = new File("nCmodels/GranCellLayer/GranCellLayer.ncx");
+            //File projFile = new File("nCexamples/Ex4_HHcell/Ex4_HHcell.ncx");
             //File projFile = new File("/bernal/models/Layer23_names/Layer23_names.neuro.xml");
             
 
