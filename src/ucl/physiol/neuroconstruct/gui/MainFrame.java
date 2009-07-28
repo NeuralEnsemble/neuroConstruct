@@ -7468,7 +7468,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     
     private void setGeneratorInfo(String text)
     {
-            jEditorPaneGenerateInfo.setText(text);
+        SimpleHtmlDoc ht = new SimpleHtmlDoc();
+        ht.addRawHtml(text);
+
+        String text2 = ht.toHtmlString();
+        jEditorPaneGenerateInfo.setText(text2);
     }
     
 
@@ -10920,8 +10924,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 */
 
-            jEditorPaneCellTypeInfo.setText(CellTopologyHelper.printDetails(cell, this.projManager.getCurrentProject(), true, false, true));
+            String text = CellTopologyHelper.printDetails(cell, this.projManager.getCurrentProject(), true, false, true);
+            SimpleHtmlDoc ht = new SimpleHtmlDoc();
+            ht.addRawHtml(text);
 
+            text = ht.toHtmlString();
+
+            jEditorPaneCellTypeInfo.setText(text);
 
             jEditorPaneCellTypeInfo.setCaretPosition(0);
 

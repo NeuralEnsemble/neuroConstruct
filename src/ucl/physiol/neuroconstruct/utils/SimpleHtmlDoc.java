@@ -27,9 +27,9 @@
 package ucl.physiol.neuroconstruct.utils;
 
 import ucl.physiol.neuroconstruct.gui.SimpleViewer;
-import java.util.*;
 import java.io.*;
 import java.util.ArrayList;
+import ucl.physiol.neuroconstruct.gui.CustomLookAndFeel;
 
 /**
  * Class for developing VERY simple HTML files formatted in a standard style,
@@ -45,7 +45,7 @@ public class SimpleHtmlDoc
     
     ArrayList<SimpleHtmlElement> contents = new ArrayList<SimpleHtmlElement>();
 
-    int mainFontSize = 12;
+    int mainFontSize = CustomLookAndFeel.getMainFontSize();
 
 
     public void addTaggedElement(String text, String tab)
@@ -108,16 +108,19 @@ public class SimpleHtmlDoc
 
     public String toHtmlString()
     {
+        String fonts = CustomLookAndFeel.getMainFont()+ " Dialog, Verdana, Helvetica, sans-serif, Arial";
+
         StringBuffer message = new StringBuffer("<html>\n<head>\n<style type=\"text/css\">"
 
-            + "         h1 {color: gray; font-family: Dialog, Verdana, Helvetica, Arial, sans-serif}"
-            + "         h2 {color: gray; font-family: Dialog, Verdana, Helvetica, Arial, sans-serif}"
-            + "         h3 {color: gray; font-family: Dialog, Verdana, Helvetica, Arial, sans-serif}"
-            + "         p {font-family: Dialog, Verdana, Helvetica, Arial, sans-serif; font-size: "+mainFontSize+"pt}"
-            + "         td {font-family: Dialog, Verdana, Helvetica, Arial, sans-serif; font-size: "+mainFontSize+"pt}"
-            + "         li {font-family: Dialog, Verdana, Helvetica, Arial, sans-serif}"
-            + "         ol {font-family: Dialog, Verdana, Helvetica, Arial, sans-serif}"
-            + "         ul {font-family: Dialog, Verdana, Helvetica, Arial, sans-serif}"
+            + "         h1 {color: gray; font-family: "+fonts+"}"
+            + "         h2 {color: gray; font-family: "+fonts+"}"
+            + "         h3 {color: gray; font-family: "+fonts+"}"
+            + "         body  {font-family: "+fonts+"; font-size: "+mainFontSize+"pt}"
+            + "         p  {font-family: "+fonts+"; font-size: "+mainFontSize+"pt}"
+            + "         td {font-family: "+fonts+"; font-size: "+mainFontSize+"pt}"
+            + "         li {font-family: "+fonts+"}"
+            + "         ol {font-family: "+fonts+"}"
+            + "         ul {font-family: "+fonts+"}"
             + "         table {border-collapse:collapse}"
 
             /*+ " p {text-align: left; font-size: 12pt; font-family: monospaced}"*/

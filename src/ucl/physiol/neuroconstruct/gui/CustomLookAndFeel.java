@@ -47,6 +47,7 @@ import javax.swing.plaf.metal.*;
 public class CustomLookAndFeel extends OceanTheme
 {
 
+    @Override
     public String getName() { return "Custom Look and Feel for neuroConstruct"; }
 
 
@@ -80,31 +81,37 @@ public class CustomLookAndFeel extends OceanTheme
 
     // the functions overridden from the base class => DefaultMetalTheme
 
+    @Override
     protected ColorUIResource getPrimary1()
     {
         return primary1;
     }
 
+    @Override
     protected ColorUIResource getPrimary2()
     {
         return primary2;
     }
 
+    @Override
     protected ColorUIResource getPrimary3()
     {
         return primary3;
     }
 
+    @Override
     protected ColorUIResource getSecondary1()
     {
         return secondary1;
     }
 
+    @Override
     protected ColorUIResource getSecondary2()
     {
         return secondary2;
     }
 
+    @Override
     protected ColorUIResource getSecondary3()
     {
         return secondary3;
@@ -113,17 +120,67 @@ public class CustomLookAndFeel extends OceanTheme
     ColorUIResource black = new ColorUIResource(10, 10, 10); // main text
     ColorUIResource white = new ColorUIResource(250, 250, 255); // open areas text fields etc.
 
+    @Override
     protected ColorUIResource getBlack()
     {
         return black;
     }
 
+    @Override
     protected ColorUIResource getWhite()
     {
         return white;
     }
 
+    public void printThemeInfo()
+    {
+        System.out.println("ControlTextFont: "+getControlTextFont());
+        System.out.println("getSystemTextFont: "+getSystemTextFont());
+        System.out.println("getUserTextFont: "+getUserTextFont());
+        System.out.println("getMenuTextFont: "+getMenuTextFont());
+        System.out.println("getWindowTitleFont: "+getWindowTitleFont());
+        System.out.println("getSubTextFont: "+getSubTextFont());
+    }
 
+
+    private static int mainFontSize = 12;
+    private static int smallFontSize = 10;
+    
+    private static String  mainFont = "Arial";
+    private static String userFont = "Arial";
+
+    public static int getMainFontSize()
+    {
+        return mainFontSize;
+    }
+    public static String getMainFont()
+    {
+        return mainFont;
+    }
+    
+
+    private final FontUIResource controlFont = new FontUIResource(mainFont, Font.BOLD, mainFontSize);
+    private final FontUIResource systemFont = new FontUIResource(mainFont, Font.PLAIN, mainFontSize);
+    private final FontUIResource windowTitleFont = new FontUIResource(mainFont, Font.BOLD,mainFontSize);
+
+    private final FontUIResource userUFont = new FontUIResource(userFont, Font.PLAIN, mainFontSize);
+    private final FontUIResource smallFont = new FontUIResource(mainFont, Font.PLAIN, smallFontSize);
+
+    @Override
+    public FontUIResource getControlTextFont() { return controlFont;}
+    @Override
+    public FontUIResource getSystemTextFont() { return systemFont;}
+    @Override
+    public FontUIResource getUserTextFont() { return userUFont;}
+    @Override
+    public FontUIResource getMenuTextFont() { return controlFont;}
+    @Override
+    public FontUIResource getWindowTitleFont() { return windowTitleFont;}
+    @Override
+    public FontUIResource getSubTextFont() { return smallFont;}
+
+
+    @Override
     public void addCustomEntriesToTable(UIDefaults table)
     {
         Object focusBorder
@@ -140,12 +197,8 @@ public class CustomLookAndFeel extends OceanTheme
                               LIGHTER_CONTROL_COLOUR.brighter(),
                               MAIN_BACKGROUND_COLOUR});
 
-
-
-
         Color anImportantColor1 = new ColorUIResource(0xCCCCCC);
         //Color anImportantColor2 = new ColorUIResource(Color.GREEN);
-
 
         //Color anImportantColor3 = new ColorUIResource(Color.red);
 
@@ -165,10 +218,8 @@ public class CustomLookAndFeel extends OceanTheme
             "Button.toolBarBorderBackground", getInactiveControlTextColor(),
             "Button.disabledToolBarBorderBackground", anImportantColor1,
             "Button.rolloverIconType", "ocean",
-
             "CheckBox.rollover", Boolean.TRUE,
             "CheckBox.gradient", buttonGradient,
-
             "CheckBoxMenuItem.gradient", buttonGradient,
 
                   /*
@@ -260,7 +311,6 @@ public class CustomLookAndFeel extends OceanTheme
             "ToolBar.isRollover", Boolean.TRUE,
 /*
             "Tree.closedIcon", directoryIcon,
-
 
             "Tree.expandedIcon",
             getIconResource("icons/ocean/expanded.gif"),

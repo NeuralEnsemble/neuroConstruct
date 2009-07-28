@@ -64,9 +64,11 @@ public class MainApplication
         favouredLookAndFeel = "javax.swing.plaf.metal.MetalLookAndFeel";
         try
         {
-            MetalTheme theme = new CustomLookAndFeel();
+            CustomLookAndFeel theme = new CustomLookAndFeel();
             MetalLookAndFeel.setCurrentTheme(theme);
             UIManager.setLookAndFeel(favouredLookAndFeel);
+
+            //theme.printThemeInfo();
 
         }
         catch (Exception ex)
@@ -186,10 +188,6 @@ public class MainApplication
         System.out.println("-make             build neuroConstruct from source (JDK 1.5+ is needed)");
         System.out.println("");
         
-      /*  System.out.println("-nogui        run without main Graphical User Interface");
-        System.out.println("-generate     generate the cell positions/connections from the settings stored in the file");
-        System.out.println("-createhoc    generates the positions etc. and creates the hoc files");
-        System.out.println("-runhoc       generates the positions, creates the hoc files, and runs the main file in NEURON");*/
         System.exit(0);
 
     }
