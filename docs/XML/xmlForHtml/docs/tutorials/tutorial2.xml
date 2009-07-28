@@ -67,11 +67,11 @@ Press the <strong>Choose...</strong> button next to Packing Pattern. In the fiel
 of cells you want randomly placed in the Region.</p>
 
 <p>A dialog box will ask if you wish to record the membrane potential of the cell during simulations. Press <strong>Yes</strong>. It would be good to also view the membrane potential while the simulation is running.
-    Go to tab <strong>Input and Output</strong>. Click on the entry for saving the voltage in the lower table and click <strong>Edit selected plot</strong>. This dialog specified what variable to save and/or plot during a simulation,
+    Go to tab <strong>Input/Output</strong>. Click on the entry for saving the voltage in the lower table and click <strong>Edit selected plot</strong>. This dialog specified what variable to save and/or plot during a simulation,
     which cells of the Cell Group to record, etc. In the bottom drop down box select <strong>Plot and save</strong>. Press <strong>OK</strong>.
 </p>
 
-<p>A stimulation must be applied to the cell or it will be an uninteresting simulation. Still at tab <strong>Input and Output</strong>,
+<p>A stimulation must be applied to the cell or it will be an uninteresting simulation. Still at tab <strong>Input/Output</strong>,
     select <strong>Add electrophysiological input</strong>. Keep the default values (a single current pulse on the soma of all cells in the Cell Group) and press <strong>Ok</strong>.</p>
 
 
@@ -86,7 +86,7 @@ of cells you want randomly placed in the Region.</p>
       <title>Running/replaying simulation</title>
 
       <p>If <a href="../Glossary_gen.html#NEURON">NEURON</a> or <a href="../Glossary_gen.html#GENESIS">GENESIS</a> are installed (assuming NEURON) go to tab
-<strong>Export Network</strong> and select the <strong>NEURON</strong> tab.
+<strong>Export</strong> and select the <strong>NEURON</strong> tab.
 Select the <strong>Show 3D potential plot</strong> checkbox, and click <strong>Create hoc simulation</strong>. This will create the hoc code
 for the main file, and a template for the cell, as well as <a href="../Glossary_gen.html#NMODL">NMODL</a> code for the channels. The NMODL files
 will be compiled and a confirmation shown.

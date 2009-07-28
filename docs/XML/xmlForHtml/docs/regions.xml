@@ -13,7 +13,7 @@
 <p>A volume in 3D space which can be filled with cells. Regions defined at the tab <strong>Regions</strong> can be also used for specifying bounding regions for selecting cells, for example:</p>
 
 <ul>
-<li>To selectively apply stimulations to a subset of cells, either inside or outside a given region, via tab <strong>Input and Outputs</strong> </li>
+<li>To selectively apply stimulations to a subset of cells, either inside or outside a given region, via tab <strong>Input/Output</strong> </li>
 <li>To select a subset of cells in a 3D network visualisation. Select <strong>Select many...</strong> in the drop down box for Cell Number.</li>
 <li>To select a subset of cells to analyse (e.g. to generate a rasterplot for) when a previous simulation is reloaded.</li>
 </ul>

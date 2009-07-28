@@ -48,7 +48,7 @@ public class SimulationParameters
     public static final float PREF_MIN_ELECT_LEN = 0.0001f;
 
     /**
-     * deprecated, what to save set in tab Input and Output instead...
+     * deprecated, what to save set in tab Input/Output instead...
      */
     private int whatToRecord;
 

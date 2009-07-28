@@ -156,7 +156,7 @@ PyNN example project: <a href="../samples/index.html#Ex8_PyNNDemo"><strong>Ex8_P
 <section>
       <title>Python usage in native NEURON simulations</title>
 
-      <p>There is an option at the <strong>Export Networks -> NEURON -> Generate code</strong> tab to create Python/XML/hoc or Python/HDF5 simulations,
+      <p>There is an option at the <strong>Export -> NEURON -> Generate code</strong> tab to create Python/XML/hoc or Python/HDF5 simulations,
       as opposed to "pure" hoc (and mod) NEURON scripts. These use a similar method to <strong>Ex2_ReadNetworkML_XML.py</strong> and <strong>Ex5_NetworkMLPyNN.py</strong>
       above, using utility files in <strong>pythonNeuroML/NeuroMLUtils</strong> and <strong>pythonNeuroML/NEURONUtils</strong> to parse XML/HDF5 based NetworkML and
       call the appropriate NEURON methods to create cells/connections.</p>

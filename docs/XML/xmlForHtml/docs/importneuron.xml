@@ -106,7 +106,7 @@ If it's a single compartment cell, just use the group all.</li>
 
 <li>Finally create a new <a href="Glossary_gen.html#Region">Region</a>, create a new <a href="Glossary_gen.html#Cell Group">Cell Group</a>
 (the default values will create a single randomly placed cell) and press <strong>Generate</strong>. You can also add an
-electrophysiological input (e.g. an IClamp) and a graph of the cell voltage via the tab <strong>Export Network -> Input and Output</strong>.
+electrophysiological input (e.g. an IClamp) and a graph of the cell voltage via the tab <strong>Input/Output</strong>.
 Again the default values should be a good starting point.</li>
 
 <li>Hopefully all of this will be successful and you can go to tab <strong>Export</strong> and generate the NEURON code. </li>

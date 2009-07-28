@@ -464,7 +464,7 @@
 
 
     <term hidden="true">
-        <name>Input and Output</name>
+        <name>Input/Output</name>
         <defined>The inputs to the network, what to plot during the simulation run and what to record for playback in neuroConstruct<br/>
             can be defined here</defined>
     </term>
@@ -691,7 +691,7 @@
 <term hidden="true">
     <name>Previous Simulations</name>
     <defined>If simulations have been run in NEURON/GENESIS, etc. and some parameters have been saved (as specified at the <br/>
-        <b>Input and Output</b> tab), those simulations will be listed in the Simulation Browser here.</defined>
+        <b>Input/Output</b> tab), those simulations will be listed in the Simulation Browser here.</defined>
 </term>
 
 <term hidden="true">
@@ -1243,7 +1243,7 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
     <name>Plot/Graph</name>
     <defined>These terms are used in various ways by <intref>NEURON</intref> and <intref>GENESIS</intref> for a) the frame/window showing a number of sets of data and
     b) the individual sets of points in each trace. In neuroConstruct, <intref>Data Set</intref> is used for a set of points which can be plotted, and
-    <intref>Plot Frame</intref> is used for the window in which a number of these can be viewed. In the <b>Input and Output</b> tab, the second table lists the values to
+    <intref>Plot Frame</intref> is used for the window in which a number of these can be viewed. In the <b>Input/Output</b> tab, the second table lists the values to
     to be plotted during a simulation run. For example, the membrane potential of a subset of cells in each group could be plotted. Note that here too is where variables
     to be saved during the simulation are specified, e.g. all cells' membrane potential could be saved but just one specified to be plotted, etc. The names to use for variables
     to plot and/or save are given <a  href="#Variables to plot/save">here</a>
@@ -1254,7 +1254,7 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
 <term>
     <name>Variables to plot/save</name>
     <defined>Variables which change during the simulation can be specified to be plotted and/or saved for later display in neuroConstruct via<br/>
-             the <b>Input and Output</b> tab. Variables have different names in each of the simulation environments (e.g. v or Vm), so a set of <br/>
+             the <b>Input/Output</b> tab. Variables have different names in each of the simulation environments (e.g. v or Vm), so a set of <br/>
              generic names of the most common interesting values has been defined:
     <ul>
         <li><b>VOLTAGE</b> for the membrane potential (v in NEURON, Vm in GENESIS)</li>

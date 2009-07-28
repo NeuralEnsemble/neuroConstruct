@@ -109,10 +109,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     String NETWORK_TAB = "Network";
     String GENERATE_TAB = "Generate";
     String VISUALISATION_TAB = "Visualisation";
-    String EXPORT_TAB = "Export Network";
+    String EXPORT_TAB = "Export";
 
     String SIMULATOR_SETTINGS_TAB = "Common Simulation Settings";
-    String INPUT_OUTPUT_TAB = "Input and Output";
+    String INPUT_OUTPUT_TAB = "Input/Output";
 
     String NEURON_SIMULATOR_TAB = "NEURON";
     String NEURON_TAB_GENERATE = "Generate code";
@@ -4432,7 +4432,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         jButtonSimStimAdd.setToolTipText(toolTipText.getToolTip("Elec Input"));
 
-        String newSavingTip = "Note: to save values calculated during a simulation, go to Input and Output";
+        String newSavingTip = "Note: to save values calculated during a simulation, go to Input/Output";
 
         jLabelSimWhatToRecord.setToolTipText(newSavingTip);
         jRadioButtonSimAllSegments.setToolTipText(newSavingTip);
@@ -5277,7 +5277,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                              "This is a simple project with a single cell placed randomly in a 3D rectangular box.\n\n"
                              +"Go to tab Generate, press Generate Cell Positions and Connections, and then to visualise"
                              +" the results, go to tab Visualisation and press View, with Latest Generated Positions selected in the drop down box.\n\n"
-                                     +"If NEURON or GENESIS are installed, the cell can be simulated via tab Export Network.");
+                                     +"If NEURON or GENESIS are installed, the cell can be simulated via tab Export.");
 
         }
         catch (ChannelMLException ex)
@@ -7225,7 +7225,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         int save = JOptionPane.showConfirmDialog(this, "Would you like the membrane potential of this Cell Group recorded and plotted during simulations?\n"
                                                  +"Note: this can be changed later by altering the Simulation Configuration or deleting\n"
-                                                 +"the variable at tab Input and Output", "Save Cell Group voltage?", JOptionPane.YES_NO_OPTION);
+                                                 +"the variable at tab Input/Output", "Save Cell Group voltage?", JOptionPane.YES_NO_OPTION);
 
         if (save == JOptionPane.YES_OPTION)
         {
@@ -9337,7 +9337,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
      */
     private void refreshTabInputOutput()
     {
-        logger.logComment("> Refreshing the Tab for Input and output...");
+        logger.logComment("> Refreshing the Tab for Input/Output...");
 
 
         if (projManager.getCurrentProject() == null ||
