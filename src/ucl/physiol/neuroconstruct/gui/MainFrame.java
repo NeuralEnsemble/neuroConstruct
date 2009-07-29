@@ -48,6 +48,7 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 
 
+import javax.swing.text.Document;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.cell.converters.*;
@@ -7468,11 +7469,17 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     
     private void setGeneratorInfo(String text)
     {
+        Document doc = jEditorPaneGenerateInfo.getEditorKit().createDefaultDocument();
+        jEditorPaneGenerateInfo.setDocument(doc);
+
         SimpleHtmlDoc ht = new SimpleHtmlDoc();
         ht.addRawHtml(text);
 
         String text2 = ht.toHtmlString();
+
         jEditorPaneGenerateInfo.setText(text2);
+        
+        //System.out.println("info: "+text2);
     }
     
 
@@ -11556,7 +11563,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
             String note = "<center><b>NOTE: The following elements have been generated based on Simulation Configuration: "+simConfig.getName()+"</b></center><br>";
 
-            jEditorPaneGenerateInfo.setText("Cell positions and network connections loaded from: <b>"+chooser.getSelectedFile()+"</b> in "+((end-start)/1000.0)+" seconds<br><br>"
+
+            setGeneratorInfo("Cell positions and network connections loaded from: <b>"+chooser.getSelectedFile()+"</b> in "+((end-start)/1000.0)+" seconds<br><br>"
                                             +"<center><b>Cell Groups:</b></center>"
                                             +projManager.getCurrentProject().generatedCellPositions.getHtmlReport()
                                             +"<center><b>Network Connections:</b></center>"
@@ -11815,7 +11823,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         this.jButton3DView.setEnabled(true);
         this.jButton3DPrevSims.setEnabled(true);
-        jEditorPaneGenerateInfo.setText(generatePleaseWait);
+        setGeneratorInfo(generatePleaseWait);
 
         sourceOfCellPosnsInMemory = GENERATED_POSITIONS;
 
@@ -12439,7 +12447,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
             String note = "<center><b>NOTE: The following elements have been generated based on Simulation Configuration: "+simConfig.getName()+"</b></center><br>";
 
-            jEditorPaneGenerateInfo.setText("Cell positions and network connections loaded from: <b>"+chooser.getSelectedFile()+"</b> in "+((end-start)/1000.0)+" seconds<br><br>"
+            setGeneratorInfo("Cell positions and network connections loaded from: <b>"+chooser.getSelectedFile()+"</b> in "+((end-start)/1000.0)+" seconds<br><br>"
                                             +"<center><b>Cell Groups:</b></center>"
                                             +projManager.getCurrentProject().generatedCellPositions.getHtmlReport()
                                             +"<center><b>Network Connections:</b></center>"
@@ -13271,7 +13279,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         logger.logComment("Selected sim: "+ selected);
 
-        this.jEditorPaneGenerateInfo.setText("<p>Network has been reloaded from simulation: <b>"+selected+"</b></p>"+"<br>"
+        setGeneratorInfo("<p>Network has been reloaded from simulation: <b>"+selected+"</b></p>"+"<br>"
                                              +"<center><b>Cell Groups:</b></center>"
                                              +projManager.getCurrentProject().generatedCellPositions.getHtmlReport()+"<br>"
                                             +"<center><b>Network Connections:</b></center>"

@@ -618,7 +618,7 @@ public class NeuronFileManager
         StringBuffer response = new StringBuffer();
         response.append("{load_file(\"nrngui.hoc\")}" + "\n");
         addHocComment(response, "Initialising stopwatch for timing setup");
-        response.append("startsw()\n\n");
+        response.append("{startsw()}\n\n");
         return response.toString();
     }
 
@@ -882,7 +882,7 @@ public class NeuronFileManager
                                 +"Adding the hostid to the rand seed allows reproducability of the sim, as long as the\n"
                                 +"same network distribution is used.");
             
-            response.append("mcell_ran4_init(" + this.randomSeed + " + hostid)\n");
+            response.append("{mcell_ran4_init(" + this.randomSeed + " + hostid)}\n");
         }
         
         return response.toString();
@@ -1025,8 +1025,8 @@ public class NeuronFileManager
             for (PositionRecord pr: posRecs)
             {
 
-                gidToNodeInfo.append("pnm.set_gid2node(getCellGlobalId(\"" + cellGroupName 
-                        + "\", " + pr.cellNumber + "), " + pr.getNodeId() + ")\n");
+                gidToNodeInfo.append("{pnm.set_gid2node(getCellGlobalId(\"" + cellGroupName
+                        + "\", " + pr.cellNumber + "), " + pr.getNodeId() + ")}\n");
                 
 
                 ///////////response.append("        if ($2 == "+pr.cellNumber+") return (hostid == " + pr.nodeId + ")\n");
@@ -1127,7 +1127,7 @@ public class NeuronFileManager
         response.append("\n");
 
 
-        response.append("pnm.pc.done\n");
+        response.append("{pnm.pc.done}\n");
        // response.append("quit()\n");
 
 
@@ -1430,7 +1430,7 @@ public class NeuronFileManager
 
         if (simConfig.getMpiConf().isParallelNet())
         {
-            response.append("pnm.set_maxstep(5)\n\n");
+            response.append("{pnm.set_maxstep(5)}\n\n");
             return response.toString();
         }
 
@@ -2712,6 +2712,9 @@ public class NeuronFileManager
             response.append(post);
             response.append("\n");
 
+
+            response.append("{savetime = stopsw()}\n\n");
+
             prefix = "";
             post = "";
 
@@ -2734,8 +2737,10 @@ public class NeuronFileManager
 
             if (this.savingHostname()) response.append(prefix+"{propsFile.printf(\"Host=%s\\n\", host)}\n");
 
-            response.append(prefix+"{propsFile.printf(\"RealSimulationTime=%g\\n\", realtime)}\n");
+            response.append(prefix+"{propsFile.printf(\"RealSimulationTime=%g\\n\", realruntime)}\n");
+            response.append(prefix+"{propsFile.printf(\"SimulationSaveTime=%g\\n\", savetime)}\n");
             response.append(prefix+"{propsFile.printf(\"SimulationSetupTime=%g\\n\", setuptime)}\n");
+            response.append(prefix+"{propsFile.printf(\"NEURONversion=%s\\n\", nrnversion())}\n");
 
             if (simConfig.getMpiConf().isParallelNet())
             {
@@ -2747,7 +2752,7 @@ public class NeuronFileManager
             response.append(post);
             response.append("\n");
 
-            response.append(prefix+"print \"Data stored in directory: \", targetDir\n\n");
+            response.append(prefix+"print \"Data stored in \",savetime, \"secs in directory: \", targetDir\n\n");
         }
 
         return response.toString();
@@ -2914,7 +2919,7 @@ public class NeuronFileManager
                     }
                 }
 
-                logger.logComment("------------    All cell mechs for "+cellGroupName+": " + cellMechanisms, true);
+                logger.logComment("------------    All cell mechs for "+cellGroupName+": " + cellMechanisms);
 
                 for (int i = 0; i < cellMechanisms.size(); i++)
                 {
@@ -3848,7 +3853,7 @@ public class NeuronFileManager
                                 
                                 if (addComments) responseConn.append("    print \"No NetCon exists yet for section: "+srcSecNameFull+" on host \", hostid\n\n");
                                 
-                                responseConn.append("    pnm.pc.set_gid2node(globalPreSynId, hostid)\n");
+                                responseConn.append("    {pnm.pc.set_gid2node(globalPreSynId, hostid)}\n");
 
                                 responseConn.append("    "+srcSecNameFull+" "+objectVarName+" = new NetCon(&v("+synConn.sourceEndPoint.location.getFractAlong()+"), nil)\n");
                                 
@@ -4224,6 +4229,28 @@ public class NeuronFileManager
 
         String dateCommand = "date +%x,%X:%N";
 
+
+        String timeStepInfo = "dt: "+project.simulationParameters.getDt()+",";
+        if(project.neuronSettings.isVarTimeStep())
+        {
+            timeStepInfo = " variable time step,";
+        }
+
+        boolean announceDate = !GeneralUtils.isWindowsBasedPlatform();
+        String dateInfo = "";
+
+
+        if(announceDate)
+        {
+
+            response.append("strdef date\n");
+            response.append("{system(\"" + dateCommand + "\", date)}\n");
+            dateInfo = " at time: \", date, \"";
+        }
+        
+        String startUpInfo = "print \"Starting simulation of duration "+simConfig.getSimDuration()+" ms, "+timeStepInfo+" reference: " + project.simulationParameters.getReference() +
+                    dateInfo+"\"\n\n";
+
         if (simConfig.getMpiConf().isParallelNet())
         {
             response.append("setuptime = stopsw()\n\n");
@@ -4232,10 +4259,21 @@ public class NeuronFileManager
             response.append("{pnm.want_all_spikes()}\n");
 
             response.append("{stdinit()}\n");
-            response.append("print \"Initialised on \", host\n");
-            response.append("{realtime = startsw()}\n");
+            response.append("print \"Initialised on \", host, \", hostid: \", hostid\n");
+            response.append("{currenttime = startsw()}\n");
+
+            response.append(startUpInfo);
+
             response.append("{pnm.psolve("+simConfig.getSimDuration()+")}\n");
-            response.append("{realtime = startsw() - realtime}\n");
+            response.append("{realruntime = startsw() - currenttime}\n");
+
+            response.append("print \"Finished simulation in \", realruntime ,\"seconds on host \", hostid\n\n");
+
+            if(announceDate)
+            {
+                response.append("{system(\"" + dateCommand + "\", date)}\n");
+                dateInfo = "print \"Current time: \", date\n\n";
+            }
 
             if (addComments) 
             {
@@ -4250,29 +4288,14 @@ public class NeuronFileManager
 
         //if (this.windowsTargetEnv()) dateCommand = "c:/windows/time.exe /T";
         
-        boolean announceDate = !GeneralUtils.isWindowsBasedPlatform();
-        String dateInfo = "";
         
-        if(announceDate)
-        {
-    
-            response.append("strdef date\n");
-            response.append("{system(\"" + dateCommand + "\", date)}\n");
-            dateInfo = " at time: \", date, \"";
-        }
         response.append("{setuptime = stopsw()}\n\n");
         response.append("print \"Setup time for simulation: \",setuptime,\" seconds\"\n\n");
 
-        String timeStepInfo = "dt: "+project.simulationParameters.getDt()+",";
-        if(project.neuronSettings.isVarTimeStep())
-        {
-            timeStepInfo = " variable time step,";
-        }
 
-        response.append("print \"Starting simulation of duration "+simConfig.getSimDuration()+" ms, "+timeStepInfo+" reference: " + project.simulationParameters.getReference() +
-                dateInfo+"\"\n\n");
+        response.append(startUpInfo);
 
-        response.append("{startsw()}\n\n");
+        response.append("{currenttime = startsw()}\n");
 
         if (!project.neuronSettings.isVarTimeStep())
         {
@@ -4296,7 +4319,9 @@ public class NeuronFileManager
             dateInfo = "print \"Current time: \", date\n\n";
         }
 
-        response.append("print \"Finished simulation in \", realtime ,\"seconds\"\n\n");
+        response.append("{realruntime = startsw() - currenttime}\n");
+
+        response.append("print \"Finished simulation in \", realruntime ,\"seconds\"\n\n");
         response.append(dateInfo);
 
         return response.toString();

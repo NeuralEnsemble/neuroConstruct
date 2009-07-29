@@ -209,7 +209,7 @@ public class MpiConfiguration
         scriptText.append("\n");
         scriptText.append("echo \"Going to zip files into \"$zipFile\n");
         scriptText.append("\n");
-        scriptText.append("tar czf $zipFile *.mod *.hoc *.props *.dat *.sh\n");
+        scriptText.append("tar czf $zipFile *.mod *.hoc *.props *.dat *.sh *.py *.xml *.h5\n");
         scriptText.append("\n");
 
         scriptText.append("echo \"Going to send to: $simDir on $remoteUser@$remoteHost\"\n");
@@ -223,7 +223,7 @@ public class MpiConfiguration
         {
             scriptText.append("echo -e \"put $zipFile\">putFile.b\n");
             scriptText.append("sftp -b putFile.b $remoteUser@$remoteHost\n");
-            scriptText.append("ssh $remoteUser@$remoteHost \"cp ~/$zipFile $simDir/$zipFile\"\n");
+            scriptText.append("ssh $remoteUser@$remoteHost \"mv ~/$zipFile $simDir/$zipFile\"\n");
         }
 
         scriptText.append("\n");
@@ -236,7 +236,7 @@ public class MpiConfiguration
         else
         {
             scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic 'qsub "+QueueInfo.submitScript+"'\"\n");
-            scriptText.append("ssh $remoteUser@$remoteHost \"echo 'Submitted job!';qstat -u $USER\"\n");
+            scriptText.append("ssh $remoteUser@$remoteHost \"echo 'Submitted job!';/bin/bash -ic 'qstat -u $remoteUser'\"\n");
             scriptText.append("sleep 6\n"); // Quick snooze to see result of qsub...
         }
         scriptText.append("\n");
@@ -296,7 +296,8 @@ public class MpiConfiguration
         pullScriptText.append("\n");
         pullScriptText.append("tar xzf $zipFile\n");
         pullScriptText.append("rm $zipFile\n");
-        pullScriptText.append("rm pullFile.b\n");
+        pullScriptText.append("rm pullFile.b\n\n");
+        pullScriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;rm $zipFile\"\n");
 
         return pullScriptText.toString();
     }

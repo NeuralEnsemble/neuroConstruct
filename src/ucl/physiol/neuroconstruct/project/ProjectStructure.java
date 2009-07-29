@@ -238,22 +238,12 @@ public class ProjectStructure
 
     private static String matplotlibEpsFilename = "generateEps.py";
 
-   // private static String neuronModSourcesDir = "src"
-    //    + System.getProperty("file.separator")
-     //   + "nrnoc";
 
-    //private static File javaXMLToMorphMLFile = new File("morphml"
-    //                                                    + System.getProperty("file.separator")
-    //                                                    + "JavaXMLToMorphML.xsl");
-
-    //private static File morphMLToJavaXMLFile = new File("morphml"
-    //                                                    + System.getProperty("file.separator")
-    //                                                    + "MorphMLToJavaXML.xsl");
 
     /**
      * Gets a File for the directory dirName, and if it's not there already, creates it
      */
-    private static synchronized File getDirectoryInProject(File projectDir,
+    private static File getDirectoryInProject(File projectDir,
                                               String dirName,
                                               String readme)
     {
@@ -359,7 +349,7 @@ public class ProjectStructure
 
 
 
-    private static synchronized File getDirandReadme(File parentDir,
+    private static File getDirandReadme(File parentDir,
                                         String newDirName,
                                         String readmeText,
                                         boolean createIfNotFound)
@@ -559,7 +549,7 @@ public class ProjectStructure
     }
 
 
-    public synchronized static File getPsicsCodeDir(File projectDir)
+    public static File getPsicsCodeDir(File projectDir)
     {
         File dirForPsicsFiles
             = getDirectoryInProject(projectDir, psicsCodeDir,
@@ -570,7 +560,7 @@ public class ProjectStructure
     }
 
 
-    public synchronized static File getPynnCodeDir(File projectDir)
+    public static File getPynnCodeDir(File projectDir)
     {
         File dirForPynnFiles
             = getDirectoryInProject(projectDir, pynnCodeDir,

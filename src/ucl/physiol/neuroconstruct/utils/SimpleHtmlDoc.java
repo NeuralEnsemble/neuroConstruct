@@ -108,7 +108,7 @@ public class SimpleHtmlDoc
 
     public String toHtmlString()
     {
-        String fonts = CustomLookAndFeel.getMainFont()+ " Dialog, Verdana, Helvetica, sans-serif, Arial";
+        String fonts = CustomLookAndFeel.getMainFont()+ ", Dialog, Verdana, Helvetica, sans-serif, Arial";
 
         StringBuffer message = new StringBuffer("<html>\n<head>\n<style type=\"text/css\">"
 
