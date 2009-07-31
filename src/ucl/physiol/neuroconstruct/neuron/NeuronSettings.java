@@ -48,7 +48,9 @@ public class NeuronSettings
 
     private boolean showShapePlot = false;
 
-    private boolean graphicsMode = true;
+    public enum GraphicsMode{ ALL_SHOW, NO_PLOTS, NO_CONSOLE }
+
+    private GraphicsMode graphicsMode = GraphicsMode.ALL_SHOW;
 
     private boolean generateComments = true;
 
@@ -162,31 +164,67 @@ public class NeuronSettings
 
     }
 
-
+    /*
+     * Should the Shape Plot (3D cell view) be shown when NEURON is run?
+     */
     public boolean isShowShapePlot()
     {
         return showShapePlot;
     }
+
+    /*
+     * Should the Shape Plot (3D cell view) be shown when NEURON is run?
+     */
     public void setShowShapePlot(boolean showShapePlot)
     {
         this.showShapePlot = showShapePlot;
     }
 
-    public boolean isGraphicsMode()
-    {
-        return graphicsMode;
-    }
+
+    /**
+     * @deprecated
+     */
     public void setGraphicsMode(boolean graphicsMode)
+    {
+        if (graphicsMode) this.graphicsMode = GraphicsMode.ALL_SHOW;
+        else this.graphicsMode = GraphicsMode.NO_PLOTS;
+    }
+
+
+    public void setGraphicsMode(GraphicsMode graphicsMode)
     {
         this.graphicsMode = graphicsMode;
     }
 
+    public GraphicsMode getGraphicsMode()
+    {
+        return graphicsMode;
+    }
+
+    /*
+     * Sets the graphics mode to GraphicsMode.NO_CONSOLE, i.e. no console pops up when simulation is run, but
+     * nrniv runs in background
+     */
+    public void setNoConsole()
+    {
+        this.graphicsMode = GraphicsMode.NO_CONSOLE;
+    }
 
 
+
+
+    /*
+     * If true puts comments & print statements in generated code
+     */
     public boolean isGenerateComments()
     {
         return generateComments;
     }
+
+
+    /*
+     * If true puts comments & print statements in generated code
+     */
     public void setGenerateComments(boolean generateComments)
     {
         this.generateComments = generateComments;

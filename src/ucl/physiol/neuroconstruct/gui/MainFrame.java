@@ -736,7 +736,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     JCheckBox jCheckBoxNeuronShowShapePlot = new JCheckBox();
 
-    JCheckBox jCheckBoxNeuronNoGraphicsMode = new JCheckBox();
+    //JCheckBox jCheckBoxNeuronNoGraphicsMode = new JCheckBox();
+    JRadioButton jRadioButtonNeuronAllGUI = new JRadioButton();
+    JRadioButton jRadioButtonNeuronNoPlots = new JRadioButton();
+    JRadioButton jRadioButtonNeuronNoConsole = new JRadioButton();
+    ButtonGroup buttonGroupNeuronGUI = new ButtonGroup();
+    JLabel jLabelNeuronGUI  = new JLabel();
+
     JCheckBox jCheckBoxGenesisNoGraphicsMode = new JCheckBox();
 
 
@@ -1678,11 +1684,21 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     //    jButtonSimulationRecord.setText("Change...");
 
         jCheckBoxNeuronShowShapePlot.setEnabled(false);// jPanelSimulationParams.add(jPanelSimulationWhatToRec,  BorderLayout.NORTH);
-        this.jCheckBoxNeuronNoGraphicsMode.setEnabled(false);
+        this.jRadioButtonNeuronAllGUI.setEnabled(false);
+        this.jRadioButtonNeuronAllGUI.setText("Show all");
+        this.jRadioButtonNeuronNoConsole.setEnabled(false);
+        this.jRadioButtonNeuronNoConsole.setText("No console");
+        this.jRadioButtonNeuronNoPlots.setEnabled(false);
+        this.jRadioButtonNeuronNoPlots.setText("No plots");
+
+        buttonGroupNeuronGUI.add(jRadioButtonNeuronAllGUI);
+        buttonGroupNeuronGUI.add(jRadioButtonNeuronNoConsole);
+        buttonGroupNeuronGUI.add(jRadioButtonNeuronNoPlots);
+
         jCheckBoxGenesisNoGraphicsMode.setEnabled(false);
 
         jCheckBoxNeuronShowShapePlot.setText("Show 3D potential plot");
-        jCheckBoxNeuronNoGraphicsMode.setText("No GUI mode");
+        jLabelNeuronGUI.setText("  GUI mode: ");
         jCheckBoxGenesisNoGraphicsMode.setText("No GUI mode");
 
    //     jPanelSimulationWhatToRec.add(jButtonSimulationRecord, null);
@@ -4017,7 +4033,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTabbedPaneGenesis.add(jPanelGenesisExtra,  GENESIS_TAB_EXTRA);
         jPanelNeuronGraphOptions.add(jCheckBoxNeuronShowShapePlot, null);
         jPanelNeuronGraphOptions.add(jCheckBoxNeuronComments, null);
-        jPanelNeuronGraphOptions.add(this.jCheckBoxNeuronNoGraphicsMode, null);
+        jPanelNeuronGraphOptions.add(this.jLabelNeuronGUI, null);
+        jPanelNeuronGraphOptions.add(this.jRadioButtonNeuronAllGUI, null);
+        jPanelNeuronGraphOptions.add(this.jRadioButtonNeuronNoPlots, null);
+        jPanelNeuronGraphOptions.add(this.jRadioButtonNeuronNoConsole, null);
 
 
         jPanelSimWhatToRecord.add(jPanelSimRecordWhere,  BorderLayout.SOUTH);
@@ -4282,7 +4301,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronShowShapePlot);
-        addCheckBoxListner(NEURON_SIMULATOR_TAB, this.jCheckBoxNeuronNoGraphicsMode);
+        addRadioButtonListner(NEURON_SIMULATOR_TAB, this.jRadioButtonNeuronAllGUI);
+        addRadioButtonListner(NEURON_SIMULATOR_TAB, this.jRadioButtonNeuronNoConsole);
+        addRadioButtonListner(NEURON_SIMULATOR_TAB, this.jRadioButtonNeuronNoPlots);
 
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronComments);
 
@@ -4474,7 +4495,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jCheckBoxSpecifySimRef.setToolTipText(toolTipText.getToolTip("Specify Reference"));
 
 
-        this.jCheckBoxNeuronNoGraphicsMode.setToolTipText(toolTipText.getToolTip("No Graphics Mode"));
         this.jCheckBoxGenesisNoGraphicsMode.setToolTipText(toolTipText.getToolTip("No Graphics Mode"));
 
         this.jButtonMechanismNewCML.setToolTipText(toolTipText.getToolTip("File Based ChannelML"));
@@ -4745,7 +4765,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             {
 
                 projManager.getCurrentProject().neuronSettings.setShowShapePlot(jCheckBoxNeuronShowShapePlot.isSelected());
-                projManager.getCurrentProject().neuronSettings.setGraphicsMode(!this.jCheckBoxNeuronNoGraphicsMode.isSelected());
+
+               // projManager.getCurrentProject().neuronSettings.setGraphicsMode(!this.jCheckBoxNeuronNoGraphicsMode.isSelected());
+                if (jRadioButtonNeuronAllGUI.isSelected())
+                     projManager.getCurrentProject().neuronSettings.setGraphicsMode(NeuronSettings.GraphicsMode.ALL_SHOW);
+                if (jRadioButtonNeuronNoPlots.isSelected())
+                     projManager.getCurrentProject().neuronSettings.setGraphicsMode(NeuronSettings.GraphicsMode.NO_PLOTS);
+                if (jRadioButtonNeuronNoConsole.isSelected())
+                     projManager.getCurrentProject().neuronSettings.setGraphicsMode(NeuronSettings.GraphicsMode.NO_CONSOLE);
+
                 projManager.getCurrentProject().neuronSettings.setGenerateComments(jCheckBoxNeuronComments.isSelected());
 
                 //System.out.println("ID: "+projManager.getCurrentProject().stimulationSettings.getSegmentID());
@@ -9893,7 +9921,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jButtonNeuronRun.setEnabled(false);
 
             this.jCheckBoxNeuronShowShapePlot.setEnabled(false);
-            this.jCheckBoxNeuronNoGraphicsMode.setEnabled(false);
+
+            this.jRadioButtonNeuronAllGUI.setEnabled(false);
+            this.jRadioButtonNeuronNoConsole.setEnabled(false);
+            this.jRadioButtonNeuronNoPlots.setEnabled(false);
+
             this.jCheckBoxNeuronComments.setEnabled(false);
 
             this.jCheckBoxNeuronNumInt.setEnabled(false);
@@ -9981,14 +10013,27 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
             this.jCheckBoxNeuronShowShapePlot.setEnabled(true);
-            this.jCheckBoxNeuronNoGraphicsMode.setEnabled(true);
+            this.jRadioButtonNeuronAllGUI.setEnabled(true);
+            this.jRadioButtonNeuronNoConsole.setEnabled(true);
+            this.jRadioButtonNeuronNoPlots.setEnabled(true);
             this.jCheckBoxNeuronComments.setEnabled(true);
             this.jCheckBoxNeuronNumInt.setEnabled(true);
             this.jCheckBoxNeuronGenAllMod.setEnabled(true);
 
 
             this.jCheckBoxNeuronShowShapePlot.setSelected(projManager.getCurrentProject().neuronSettings.isShowShapePlot());
-            this.jCheckBoxNeuronNoGraphicsMode.setSelected(!projManager.getCurrentProject().neuronSettings.isGraphicsMode());
+            
+
+
+            if (projManager.getCurrentProject().neuronSettings.getGraphicsMode().equals(NeuronSettings.GraphicsMode.ALL_SHOW))
+                jRadioButtonNeuronAllGUI.setSelected(true);
+            if (projManager.getCurrentProject().neuronSettings.getGraphicsMode().equals(NeuronSettings.GraphicsMode.NO_PLOTS))
+                jRadioButtonNeuronNoPlots.setSelected(true);
+            if (projManager.getCurrentProject().neuronSettings.getGraphicsMode().equals(NeuronSettings.GraphicsMode.NO_CONSOLE))
+                jRadioButtonNeuronNoConsole.setSelected(true);
+
+
+
             this.jCheckBoxNeuronComments.setSelected(projManager.getCurrentProject().neuronSettings.isGenerateComments());
             this.jCheckBoxNeuronNumInt.setSelected(projManager.getCurrentProject().neuronSettings.isVarTimeStep());
 

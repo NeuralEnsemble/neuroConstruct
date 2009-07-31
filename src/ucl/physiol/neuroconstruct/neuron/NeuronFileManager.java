@@ -323,7 +323,8 @@ public class NeuronFileManager
 
 
             //if (!simConfig.getMpiConf().isParallel())
-                
+
+            
             hocWriter.write(generateGUIInclude());
             
             hocWriter.write(generateWelcomeComments());
@@ -372,7 +373,7 @@ public class NeuronFileManager
             
             if (runMode != RUN_VIA_CONDOR && !simConfig.getMpiConf().isParallelOrRemote()) // No gui if it's condor or parallel...
             {
-                if (project.neuronSettings.isGraphicsMode())
+                if (project.neuronSettings.getGraphicsMode().equals(NeuronSettings.GraphicsMode.ALL_SHOW))
                 {
                     hocWriter.write(generatePlots());
 
@@ -394,7 +395,7 @@ public class NeuronFileManager
             
             // Finishing up...
             
-            if (!simConfig.getMpiConf().isParallelOrRemote())
+            if (!simConfig.getMpiConf().isParallelOrRemote() && !project.neuronSettings.getGraphicsMode().equals(NeuronSettings.GraphicsMode.NO_CONSOLE))
                 hocWriter.write(generateGUIForRerunning());
            
             hocWriter.write(generateNeuronCodeBlock(NativeCodeLocation.AFTER_SIMULATION));
@@ -402,7 +403,9 @@ public class NeuronFileManager
             if (simConfig.getMpiConf().isParallelNet())
                 hocWriter.write(finishParallel());
             
-            if (runMode == RUN_VIA_CONDOR || quitAfterRun)
+            if (runMode == RUN_VIA_CONDOR ||
+                   quitAfterRun ||
+                   project.neuronSettings.getGraphicsMode().equals(NeuronSettings.GraphicsMode.NO_CONSOLE))
                 hocWriter.write(generateQuit());
             
 
@@ -616,7 +619,17 @@ public class NeuronFileManager
     private String generateGUIInclude()
     {
         StringBuffer response = new StringBuffer();
-        response.append("{load_file(\"nrngui.hoc\")}" + "\n");
+
+        if (project.neuronSettings.getGraphicsMode().equals(NeuronSettings.GraphicsMode.NO_CONSOLE))
+        {
+            response.append("{load_file(\"stdlib.hoc\")}" + "\n");
+            response.append("{load_file(\"stdgui.hoc\")}" + "\n");
+        }
+        else
+        {
+            response.append("{load_file(\"nrngui.hoc\")}" + "\n");
+        }
+        
         addHocComment(response, "Initialising stopwatch for timing setup");
         response.append("{startsw()}\n\n");
         return response.toString();
@@ -4742,7 +4755,8 @@ public class NeuronFileManager
                     
                     String mainExecutable = "nrngui";
                     
-                    if (simConfig.getMpiConf().isParallelOrRemote()) mainExecutable = "nrniv";
+                    if (simConfig.getMpiConf().isParallelOrRemote() || 
+                            project.neuronSettings.getGraphicsMode().equals(NeuronSettings.GraphicsMode.NO_CONSOLE)) mainExecutable = "nrniv";
 
                     neuronExecutable = locationOfNeuron
                         + System.getProperty("file.separator")
@@ -4758,6 +4772,7 @@ public class NeuronFileManager
 
 
                     String basicCommLine = GeneralProperties.getExecutableCommandLine();
+
 
                     String executable = "";
                     String extraArgs = "";
@@ -4908,6 +4923,12 @@ public class NeuronFileManager
 
                             commandToExe = new String[]{executable,
                                     scriptFile.getAbsolutePath()};
+                    }
+
+
+                    if (project.neuronSettings.getGraphicsMode().equals(NeuronSettings.GraphicsMode.NO_CONSOLE))
+                    {
+                        commandToExe = new String[]{scriptFile.getAbsolutePath()};
                     }
 
 

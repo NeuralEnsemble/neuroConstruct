@@ -530,7 +530,7 @@ public class SimulationsInfo extends AbstractTableModel
         {
             props.setProperty("Unit system", UnitConverter.getUnitSystemDescription(UnitConverter.NEURON_UNITS));
             props.setProperty("NEURON random seed", project.neuronFileManager.getCurrentRandomSeed()+"");
-            props.setProperty("No GUI Mode", !project.neuronSettings.isGraphicsMode()+"");
+            props.setProperty("GUI Mode", project.neuronSettings.getGraphicsMode().toString());
 
             if (project.neuronSettings.isVarTimeStep())
             {
