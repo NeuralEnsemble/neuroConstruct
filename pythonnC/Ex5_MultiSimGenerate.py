@@ -1,8 +1,9 @@
 #
 #
 #   A file which opens a neuroConstruct project and generates it, then generates a series
-#   of slightly different NEURON simulations, using the same network, but different stimulations
-#   The simulations can be viewed and analysed afterwards in the neuroConstruct GUI
+#   of slightly different NEURON simulations, using the same network, but different stimulations.
+#   An input current vs firing frequency plot is generated afterwards.
+#   The simulations can also be viewed and analysed afterwards in the neuroConstruct GUI
 #
 #   Author: Padraig Gleeson
 #
@@ -15,12 +16,17 @@
 from sys import *
 
 from java.io import File
-from java.lang import System
 
 from ucl.physiol.neuroconstruct.project import ProjectManager
 from ucl.physiol.neuroconstruct.neuron import NeuronFileManager
 from ucl.physiol.neuroconstruct.utils import NumberGenerator
 from ucl.physiol.neuroconstruct.nmodleditor.processes import ProcessManager
+from ucl.physiol.neuroconstruct.project import ProjectManager
+from ucl.physiol.neuroconstruct.gui.plotter import PlotManager
+from ucl.physiol.neuroconstruct.gui.plotter import PlotCanvas
+from ucl.physiol.neuroconstruct.dataset import DataSet
+from ucl.physiol.neuroconstruct.simulation import SimulationData
+from ucl.physiol.neuroconstruct.simulation import SpikeAnalyser
 
 from math import *
 import time
@@ -73,8 +79,11 @@ if numGenerated > 0:
 
     print "Generating NEURON scripts..."
     
-    myProject.neuronFileManager.setQuitAfterRun(1) # Remove this line to leave the NEURON sim windows open after finishing
+    
     myProject.neuronSettings.setCopySimFiles(1) # 1 copies hoc/mod files to PySim_0 etc. and will allow multiple sims to run at once
+    myProject.neuronSettings.setNoConsole() # Calling this means no console/terminal is opened when each simulation is run. Sim runs in background & exists on completion
+    #myProject.neuronFileManager.setQuitAfterRun(1) # Might be needed if above line was not used
+    
     modCompileConfirmation = 0 # 0 means do not pop up console or confirmation dialog when mods have compiled
     
 
@@ -82,6 +91,8 @@ if numGenerated > 0:
     numSimulationsToRun = 12
     # Change this number to the number of processors you wish to use on your local machine
     maxNumSimultaneousSims = 4
+    
+    simReferences = {}
     
     for i in range(0, numSimulationsToRun):
 
@@ -96,16 +107,18 @@ if numGenerated > 0:
 
         print "Going to run simulation: "+simRef
         
-        ########  Adjusting the amplitude of the current clamp ###############
+        ########  Adjusting the amplitude of the current clamp #######
         
         stim = myProject.elecInputInfo.getStim("Input_0")
         newAmp = i/10.0
         stim.setAmp(NumberGenerator(newAmp))
+
+        simReferences[simRef] = newAmp
+
         myProject.elecInputInfo.updateStim(stim)
         
         print "Next stim: "+ str(stim)
         
-        #######################################################################
         
         '''
         ######### This code would adjust the density of one of the channels ########
@@ -153,8 +166,53 @@ if numGenerated > 0:
     print "These can be loaded and replayed in the previous simulation browser in the GUI"
     print
 
-System.exit(0)
+    ########  Generating a current versus firing rate plot  #######
+    
+    plotFrameFI = PlotManager.getPlotterFrame("F-I curve from project: "+str(myProject.getProjectFile()) , 1, 1)
+
+    plotFrameFI.setViewMode(PlotCanvas.INCLUDE_ORIGIN_VIEW)
+
+    info = "F-I curve for Simulation Configuration: "+str(simConfig)
+
+    dataSet = DataSet(info, info, "nA", "Hz", "Current injected", "Firing frequency")
+    dataSet.setGraphFormat(PlotCanvas.USE_CIRCLES_FOR_PLOT)
+
+    simList = simReferences.keys()
+    simList.sort()
+
+    for sim in simList:
+
+        simDir = File(projFile.getParentFile(), "/simulations/"+sim)
+        print
+        print "--- Reloading data from simulation in directory: %s"%simDir.getCanonicalPath()
+        try:
+            simData = SimulationData(simDir)
+            simData.initialise()
+            print "Data loaded: "
+            print simData.getAllLoadedDataStores()
+            times = simData.getAllTimes()
+            cellSegmentRef = simConfig.getCellGroups().get(0)+"_0"
+            volts = simData.getVoltageAtAllTimes(cellSegmentRef)
+
+            print "Got "+str(len(volts))+" data points on cell seg ref: "+cellSegmentRef
+
+            analyseStartTime = 100 # So it's firing at a steady rate...
+            analyseStopTime = simConfig.getSimDuration()
+            analyseThreshold = -20 # mV
+
+            spikeTimes = SpikeAnalyser.getSpikeTimes(volts, times, analyseThreshold, analyseStartTime, analyseStopTime)
+            
+            stimAmp = simReferences[sim]
+            print "Number of spikes at %f nA in sim %s: %i"%(stimAmp, sim, len(spikeTimes))
+            avgFreq = 0
+            if len(spikeTimes)>1:
+                avgFreq = len(spikeTimes)/ ((analyseStopTime - analyseStartTime)/1000.0)
+                dataSet.addPoint(stimAmp,avgFreq)
+        except:
+            print "Error analysing simulation data from: %s"%simDir.getCanonicalPath()
+            print exc_info()[0]
 
 
+    plotFrameFI.addDataSet(dataSet)
 
 
