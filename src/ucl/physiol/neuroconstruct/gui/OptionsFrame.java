@@ -104,8 +104,12 @@ public class OptionsFrame extends JFrame
 
     JLabel jLabelBrowserDir = new JLabel();
     JTextField jTextFieldBrowser = new JTextField();
+
     JLabel jLabelEditorDir = new JLabel();
     JTextField jTextFieldEditor = new JTextField();
+
+    JLabel jLabelNumProcs = new JLabel();
+    JSpinner jSpinnerNumProcs = null;
     
     JLabel jLabelNeuroML = new JLabel();
     JComboBox jComboBoxNeuroML = new JComboBox();
@@ -285,6 +289,22 @@ public class OptionsFrame extends JFrame
         jLabelEditorDir.setText("Path to text editor:");
         jTextFieldEditor.setText("");
         jTextFieldEditor.setColumns(20);
+
+        jLabelNumProcs.setText("Num processes for generate:");
+        SpinnerModel model = new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1);
+        jSpinnerNumProcs = new JSpinner(model);
+
+        ((JSpinner.DefaultEditor)jSpinnerNumProcs.getEditor()).getTextField().setHorizontalAlignment(SwingConstants.LEFT);
+
+
+
+        String info = "<html>Multithreading: Select the max number of processes to run at one time when generating networks in neuroConstruct.<br>" +
+                      "Note for a quad core machine, up to 4 processes can run be at once for generating the network. As all processes<br>" +
+                      "(or threads) are accessing some common data, the speedup will be less than 4. Multithreading is only implemented<br>" +
+                      "for a few parts of the network generation, currently Morphology based network connections only. </html>";
+
+        jLabelNumProcs.setToolTipText(info);
+        jSpinnerNumProcs.setToolTipText(info);
 
         jLabelNeuroML.setText("NeuroML version:");
         //jTextFieldNeuroML.setText("");
@@ -603,62 +623,71 @@ public class OptionsFrame extends JFrame
                                                  GridBagConstraints.WEST,
                                                  GridBagConstraints.HORIZONTAL,
                                                  new Insets(6, 6, 6, 20), 0, 0));
-        jPanelGeneral.add(jLabelNeuroML,
+
+        jPanelGeneral.add(jLabelNumProcs,
                           new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
                                                  GridBagConstraints.WEST,
                                                  GridBagConstraints.NONE,
                                                  new Insets(6, 20, 6, 6), 0, 0));
 
-        jPanelGeneral.add(jComboBoxNeuroML,
+        jPanelGeneral.add(jSpinnerNumProcs,
                           new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0,
+                                                 GridBagConstraints.WEST,
+                                                 GridBagConstraints.HORIZONTAL,
+                                                 new Insets(6, 6, 6, 20), 0, 0));
+        jPanelGeneral.add(jLabelNeuroML,
+                          new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0,
+                                                 GridBagConstraints.WEST,
+                                                 GridBagConstraints.NONE,
+                                                 new Insets(6, 20, 6, 6), 0, 0));
+
+        jPanelGeneral.add(jComboBoxNeuroML,
+                          new GridBagConstraints(1, 6, 1, 1, 1.0, 0.0,
                                                  GridBagConstraints.WEST,
                                                  GridBagConstraints.HORIZONTAL,
                                                  new Insets(6, 6, 6, 20), 0, 0));
 
         jPanelGeneral.add(jLabelCommandLine,
-                          new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0
+                          new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0
                                                  , GridBagConstraints.WEST, 
                                                  GridBagConstraints.NONE,
                                                  new Insets(6, 20, 0, 6), 0, 0));
 
         jPanelGeneral.add(jTextFieldCommandLine,
-                          new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0
+                          new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0
                                                  , GridBagConstraints.WEST, 
                                                  GridBagConstraints.HORIZONTAL,
                                                  new Insets(6, 6, 6, 20), 0, 0));
         jPanelGeneral.add(jLabelExplaination,
-                          new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0
+                          new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0
                                                  , GridBagConstraints.WEST,
                                                  GridBagConstraints.NONE,
                                                  new Insets(6, 6, 0, 0), 0, 0));
         jPanelGeneral.add(jTextPaneExplaination,
-                          new GridBagConstraints(0, 7, 2, 1, 0.0, 0.0
+                          new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0
                                                  , GridBagConstraints.WEST, 
                                                  GridBagConstraints.HORIZONTAL,
                                                  new Insets(6, 20, 6, 20), 0, 0));
         jPanelGeneral.add(jLabel1,
-                          new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0
+                          new GridBagConstraints(0, 9, 1, 1, 0.0, 0.0
                                                  , GridBagConstraints.CENTER, 
                                                  GridBagConstraints.NONE,
                                                  new Insets(0, 0, 0, 0), 0, 0));
-
-
-        
         
         jPanelGeneral.add(jCheckBoxToolTips,
-                          new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0
+                          new GridBagConstraints(0, 9, 2, 1, 0.0, 0.0
                                                  , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                  new Insets(6, 20, 6, 12), 0, 0));
 
 
         
         jPanelGeneral.add(jCheckBoxGenMatlab,
-                          new GridBagConstraints(0, 9, 2, 1, 0.0, 0.0
+                          new GridBagConstraints(0, 10, 2, 1, 0.0, 0.0
                                                  , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                  new Insets(6, 20, 6, 12), 0, 0));
 
         jPanelGeneral.add(jCheckBoxGenIgor,
-                          new GridBagConstraints(0, 10, 2, 1, 0.0, 0.0
+                          new GridBagConstraints(0, 11, 2, 1, 0.0, 0.0
                                                  , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                  new Insets(6, 20, 12, 12), 0, 0));
 
@@ -742,6 +771,9 @@ public class OptionsFrame extends JFrame
         {
             jTextFieldBrowser.setText(GeneralProperties.getBrowserPath(false));
             jTextFieldEditor.setText(GeneralProperties.getEditorPath(false));
+
+            jSpinnerNumProcs.setValue(GeneralProperties.getNumProcessorstoUse());
+
             jTextFieldNeuronLocation.setText(GeneralProperties.getNeuronHomeDir());
             
             String psicsJar = GeneralProperties.getPsicsJar();
@@ -918,8 +950,11 @@ public class OptionsFrame extends JFrame
             GeneralProperties.setExecutableCommandLine(jTextFieldCommandLine.getText());
             
             
+            GeneralProperties.setNumProcessorstoUse((Integer)jSpinnerNumProcs.getValue());
+
             GeneralProperties.setGenerateMatlab(jCheckBoxGenMatlab.isSelected());
             GeneralProperties.setGenerateIgor(jCheckBoxGenIgor.isSelected());
+
             
             GeneralProperties.setNeuroMLVersionString((String)jComboBoxNeuroML.getSelectedItem());
             
@@ -1094,4 +1129,6 @@ public class OptionsFrame extends JFrame
             jButtonCellColour.setBackground(c);
         }
     }
+
+
 }

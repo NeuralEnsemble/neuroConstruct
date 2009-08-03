@@ -47,6 +47,8 @@ public class SimpleHtmlDoc
 
     int mainFontSize = CustomLookAndFeel.getMainFontSize();
 
+    boolean includeReturnsInHtml = true;
+
 
     public void addTaggedElement(String text, String tab)
     {
@@ -61,6 +63,18 @@ public class SimpleHtmlDoc
 
         contents.add(new TabbedElement(text, tabs));
     }
+
+    public boolean isIncludeReturnsInHtml()
+    {
+        return includeReturnsInHtml;
+    }
+
+    public void setIncludeReturnsInHtml(boolean includeReturnsInHtml)
+    {
+        this.includeReturnsInHtml = includeReturnsInHtml;
+    }
+
+
 
     public void addTaggedElement(String text, ArrayList<String> tabs)
     {
@@ -108,9 +122,13 @@ public class SimpleHtmlDoc
 
     public String toHtmlString()
     {
+        String ret = "\n";
+        if (!includeReturnsInHtml)
+            ret = " ";
+        
         String fonts = CustomLookAndFeel.getMainFont()+ ", Dialog, Verdana, Helvetica, sans-serif, Arial";
 
-        StringBuffer message = new StringBuffer("<html>\n<head>\n<style type=\"text/css\">"
+        StringBuffer message = new StringBuffer("<html>"+ret+"<head>"+ret+"<style type=\"text/css\">"
 
             + "         h1 {color: gray; font-family: "+fonts+"}"
             + "         h2 {color: gray; font-family: "+fonts+"}"
@@ -124,14 +142,14 @@ public class SimpleHtmlDoc
             + "         table {border-collapse:collapse}"
 
             /*+ " p {text-align: left; font-size: 12pt; font-family: monospaced}"*/
-            + "\n</style>\n</head>\n"
+            +ret+"</style>"+ret+"</head>"+ret
             +"<body>");
 
         for (int i = 0; i < contents.size(); i++)
         {
-            message.append(contents.get(i).toHtmlString()+"\n");
+            message.append(contents.get(i).toHtmlString()+ret);
         }
-        message.append("</body>\n</html>");
+        message.append("</body>"+ret+"</html>");
 
         return message.toString();
 
@@ -240,7 +258,7 @@ public class SimpleHtmlDoc
     {
         public String toHtmlString()
         {
-            return "<br>";
+            return "<br/>";
         };
         public String toString()
         {

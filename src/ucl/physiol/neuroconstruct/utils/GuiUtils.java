@@ -28,6 +28,7 @@ package ucl.physiol.neuroconstruct.utils;
 
 import java.awt.*;
 import javax.swing.*;
+import ucl.physiol.neuroconstruct.gui.MainApplication;
 
 /**
  * Some helper stuff for the GUIs
@@ -46,6 +47,9 @@ public class GuiUtils
      */
     private static Frame mainApplicationFrame = null;
 
+    private static boolean showInfoGuis = !MainApplication.getStartupMode().equals(MainApplication.StartupMode.COMMAND_LINE_INTERFACE_MODE);
+
+
     private GuiUtils()
     {
     }
@@ -61,7 +65,9 @@ public class GuiUtils
     {
         if (parent == null) parent = getMainFrame();
 
-        StringBuffer fullError = new StringBuffer();
+        SimpleHtmlDoc fullError = new SimpleHtmlDoc();
+        fullError.setIncludeReturnsInHtml(false);
+
         if (logger!=null)
         {
             logger.logError("User being informed of error");
@@ -72,33 +78,6 @@ public class GuiUtils
         int numLines = 0;
         int maxLines = 18;
 
-        while (nextThrowable !=null)
-        {
-            fullError.append(toSimpleHtmlSmall(nextThrowable.getClass().getName() + ": " + nextThrowable.getMessage()));
-            fullError.append("<br >");
-            StackTraceElement[] ste =  nextThrowable.getStackTrace();
-            for (int i = 0; i < ste.length; i++)
-            {
-                if (numLines<maxLines)
-                {
-                    fullError.append(toSimpleHtmlSmall(ste[i].toString()) + "<br>");
-                }
-                else if (numLines==maxLines)
-                {
-                    fullError.append(toSimpleHtmlSmall("More ...")+"<br>");
-                }
-                numLines++;
-
-            }
-            nextThrowable = nextThrowable.getCause();
-            fullError.append( "<br>");
-        }
-
-
-        StringBuffer htmlMessage = new StringBuffer();
-
-        htmlMessage.append("<html><b>");
-
 
         String[] lines = errorMessage.split("\\n");
         for (int i = 0; i < lines.length; i++)
@@ -108,31 +87,88 @@ public class GuiUtils
             if (truncated.length()>maxLength)
                 truncated = truncated.substring(0,maxLength)+"...";
 
-            htmlMessage.append(truncated);
+            fullError.addTaggedElement(truncated, "b");
+
             if (i != lines.length - 1)
-                htmlMessage.append("<br>");
-            else
-                htmlMessage.append("</b>");
+                fullError.addBreak();
+        }
+
+        while (nextThrowable !=null)
+        {
+            fullError.addBreak();
+            fullError.addTaggedElement(nextThrowable.getClass().getName() + ": " + nextThrowable.getMessage(), "p", "i");
+
+            fullError.addBreak();
+            StackTraceElement[] ste =  nextThrowable.getStackTrace();
+            for (int i = 0; i < ste.length; i++)
+            {
+                if (numLines<maxLines)
+                {
+                    fullError.addTaggedElement(ste[i].toString(), "p", "i");
+                    fullError.addBreak();
+                }
+                else if (numLines==maxLines)
+                {
+                    fullError.addTaggedElement("More ...", "p", "i");
+                    fullError.addBreak();
+                }
+                numLines++;
+
+            }
+            nextThrowable = nextThrowable.getCause();
+            fullError.addBreak();
         }
 
 
-
-        if (t != null)
-            htmlMessage.append("<br><br>" + fullError.toString());
-
-        htmlMessage.append("</html>");
         if (logger!=null)
         {
-            logger.logComment("HTML to show: " + htmlMessage.toString());
+            logger.logComment("HTML to show: " + fullError.toHtmlString(), true);
         }
-        JOptionPane.showMessageDialog(parent, htmlMessage.toString(), "Error",
-                                      JOptionPane.ERROR_MESSAGE);
+
+        showMessage(parent, fullError, "Error", JOptionPane.ERROR_MESSAGE);
 
     }
-    
-    private static void showMessageDialog(Component parent, String message, String title, int type)
+
+    private static void showMessage(Component parent, String message, String title, int type)
     {
-    	// todo: make this default message showing dialog...
+        SimpleHtmlDoc htmlMessage = new SimpleHtmlDoc();
+        htmlMessage.setIncludeReturnsInHtml(false);
+        htmlMessage.addRawHtml(message);
+        showMessage(parent, htmlMessage, title, type);
+
+    }
+
+    private static void showMessage(Component parent, SimpleHtmlDoc message, String title, int type)
+    {
+
+    	if (showInfoGuis)
+        {
+            //String pp = "<html>fff <br/> lll</html>";
+            JOptionPane.showMessageDialog(parent, message.toHtmlString(), title, type);
+            //JOptionPane.showMessageDialog(parent, pp, title, type);
+        }
+        else
+        {
+            String typeInfo = "";
+            switch (type)
+            {
+                case JOptionPane.ERROR_MESSAGE:
+                    typeInfo = "ERROR:  ";
+                break;
+                case JOptionPane.WARNING_MESSAGE:
+                    typeInfo = "WARNING:  ";
+                break;
+                case JOptionPane.INFORMATION_MESSAGE:
+                    typeInfo = "INFO:  ";
+                break;
+                case JOptionPane.PLAIN_MESSAGE:
+                    typeInfo = "INFO:  ";
+                break;
+
+            }
+
+            System.out.println(typeInfo+message.toString());
+        }
     }
 
     /**
@@ -152,10 +188,10 @@ public class GuiUtils
            logger.logComment(message);
        }
 
-       JOptionPane.showMessageDialog(parent,
-                                     toSimpleHtmlWrapped(message),
-                                     title,
-                                     JOptionPane.PLAIN_MESSAGE);
+       showMessage(parent,
+                   message,
+                   title,
+                   JOptionPane.PLAIN_MESSAGE);
    }
 
 
@@ -176,10 +212,10 @@ public class GuiUtils
            logger.logComment(message);
        }
 
-       JOptionPane.showMessageDialog(parent,
-                                     toSimpleHtmlWrapped(message),
-                                     "Warning",
-                                     JOptionPane.WARNING_MESSAGE);
+       showMessage(parent,
+                   message,
+                   "Warning",
+                   JOptionPane.WARNING_MESSAGE);
    }
 
 
@@ -237,50 +273,6 @@ public class GuiUtils
    }
 
 
-   public static String toSimpleHtmlWrapped(String message)
-   {
-       StringBuffer htmlMessage = new StringBuffer();
-       htmlMessage.append("<html><b>");
-
-       htmlMessage.append(toSimpleHtmlMain(message));
-
-       htmlMessage.append("</b></html>");
-       return htmlMessage.toString();
-   }
-
-   public static String toSimpleHtmlSmall(String message)
-   {
-       StringBuffer htmlBit = new StringBuffer();
-       htmlBit.append("<font size =\"2\">");
-       String[] lines = message.split("\\n");
-       for (int i = 0; i < lines.length; i++)
-       {
-           htmlBit.append(lines[i]);
-           if (i != lines.length - 1)
-               htmlBit.append("<br>");
-       }
-       htmlBit.append("</font>");
-       return htmlBit.toString();
-   }
-
-
-   public static String toSimpleHtmlMain(String message)
-   {
-       StringBuffer htmlBit = new StringBuffer();
-       htmlBit.append("<b>");
-       String[] lines = message.split("\\n");
-       for (int i = 0; i < lines.length; i++)
-       {
-           htmlBit.append(lines[i]);
-           if (i != lines.length - 1)
-               htmlBit.append("<br>");
-       }
-       htmlBit.append("</b>");
-       return htmlBit.toString();
-   }
-
-
-
 
    public static void setMainFrame(Frame frame)
    {
@@ -294,13 +286,15 @@ public class GuiUtils
 
    public static void main(String[] args)
    {
+       ClassLogger logger = new ClassLogger("Dummy");
+       
+       Throwable t = new NullPointerException("Something's null");
 
-    ClassLogger logger = new ClassLogger("Dummy");
-       GuiUtils.showErrorMessage(logger, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTOOPPPPPPPPPPPPPPPPPPPPPPPPPP", null, null);
+       GuiUtils.showErrorMessage(logger, "This is some major error here!!", t, null);
+
+       GuiUtils.showInfoMessage(logger, "Not much up", "Just keeping you informed", null);
 
    }
-
-
 
 
 

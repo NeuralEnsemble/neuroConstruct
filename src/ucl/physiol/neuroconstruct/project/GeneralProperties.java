@@ -573,6 +573,16 @@ public class GeneralProperties
     
     
 
+    public static int getNumProcessorstoUse()
+    {
+        return userSettings.getNumProcessorstoUse();
+    }
+
+    public static void setNumProcessorstoUse(int num)
+    {
+        userSettings.setNumProcessorstoUse(num);
+    }
+
     public static boolean getGenerateMatlab()
     {
         return userSettings.getGenerateMatlab();
@@ -582,6 +592,8 @@ public class GeneralProperties
     {
         userSettings.setGenerateMatlab(policy);
     }
+
+
     public static boolean getGenerateIgor()
     {
         return userSettings.getGenerateIgor();

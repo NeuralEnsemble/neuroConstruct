@@ -53,9 +53,13 @@ public class MainApplication
 {
     private MainFrame frame = null;
 
-    private static boolean plotOnlyMode = false;
+    public enum StartupMode {NORMAL_GUI_MODE, PLOT_ONLY_MODE, COMMAND_LINE_INTERFACE_MODE};
+
+    private static StartupMode startupMode = StartupMode.NORMAL_GUI_MODE;
 
     private static String favouredLookAndFeel = null;
+
+
 
     static
     {
@@ -285,7 +289,7 @@ public class MainApplication
                
                 else if (args[i].equalsIgnoreCase("-plot"))
                 {
-                    plotOnlyMode = true;
+                    
                     if (args.length<i+2)
                     {
                         printUsageAndQuit();
@@ -306,16 +310,14 @@ public class MainApplication
                     
 
                     frame.setVisible(true);
+
+                    startupMode = StartupMode.PLOT_ONLY_MODE;
                      
                 }
 
                 else if (args[i].equalsIgnoreCase("-lastproj"))
                 {
                     reloadLastProject = true;
-                }
-                else if (args[i].equalsIgnoreCase("-generate"))
-                {
-                    generate = true;
                 }
          
                 else if  (args[i].equalsIgnoreCase("-python"))
@@ -347,16 +349,17 @@ public class MainApplication
                 }
             }
             
-            if ((generate || createHoc) &&
-                (fileToOpen==null && !reloadLastProject))
+            if ((generate || createHoc) && (fileToOpen==null && !reloadLastProject))
             {
                 System.out.println("Please only use -generate etc. when a project file is specified.");
                 System.exit(0);
             }
             
-            if (!runPython && !plotOnlyMode)
+            if (!runPython && !startupMode.equals(StartupMode.PLOT_ONLY_MODE))
             {
                 MainApplication app = new MainApplication();
+
+                startupMode = StartupMode.NORMAL_GUI_MODE;
 
                 String script = GeneralUtils.isWindowsBasedPlatform()?"nC.bat":"nC.sh";
 
@@ -390,7 +393,9 @@ public class MainApplication
                 {
                     //System.out.println("Arg for jython: "+arg);
                 }
+                startupMode = StartupMode.COMMAND_LINE_INTERFACE_MODE;
                 jython.main(pyArgs); // it's as easy as that!
+
                 
             }
         }
@@ -399,7 +404,10 @@ public class MainApplication
             System.err.println("An exception has been caught in the main function: ");
             e.printStackTrace();
         }
+    }
 
-
+    public static StartupMode getStartupMode()
+    {
+        return startupMode;
     }
 }

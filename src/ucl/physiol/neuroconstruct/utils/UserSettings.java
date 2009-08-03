@@ -27,6 +27,7 @@
 package ucl.physiol.neuroconstruct.utils;
 
 
+import java.lang.management.*;
 import ucl.physiol.neuroconstruct.project.ProjectStructure;
 
 
@@ -58,6 +59,8 @@ public class UserSettings
     
     private boolean generateMatlab = false;
     private boolean generateIgor = false;
+
+    private int numProcessorstoUse = -1;
     
     private String prefNeuroMLVersionString = null;
 
@@ -83,6 +86,25 @@ public class UserSettings
     {
         nCProjectsDir = dir;
     }
+
+    public int getNumProcessorstoUse()
+    {
+        if (numProcessorstoUse<=0)
+        {
+            numProcessorstoUse = ManagementFactory.getOperatingSystemMXBean().getAvailableProcessors();
+        }
+
+        return numProcessorstoUse;
+    }
+
+    public void setNumProcessorstoUse(int numProcessorstoUse)
+    {
+        if (numProcessorstoUse<1)
+            numProcessorstoUse = 1;
+        this.numProcessorstoUse = numProcessorstoUse;
+    }
+
+
 
 
     public void setGenerateMatlab(boolean gen)
