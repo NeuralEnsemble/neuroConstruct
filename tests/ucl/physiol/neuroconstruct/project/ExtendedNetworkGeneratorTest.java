@@ -40,6 +40,7 @@ import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.SingleSynapticConnection;
 import ucl.physiol.neuroconstruct.project.packing.CellPackingException;
 import ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter;
+import ucl.physiol.neuroconstruct.project.stimulation.IClampInstanceProps;
 import ucl.physiol.neuroconstruct.utils.NumberGenerator;
 import ucl.physiol.neuroconstruct.utils.WeightGenerator;
 import static org.junit.Assert.*;
@@ -89,9 +90,9 @@ public class ExtendedNetworkGeneratorTest
     public void tearDown() {
     }
     
-    private void generate(Project proj, SimConfig sc) throws InterruptedException 
+    private void generate(Project proj, SimConfig sc, int randSeed) throws InterruptedException
     {                
-        pm.doGenerate(sc.getName(), 1234);
+        pm.doGenerate(sc.getName(), randSeed);
         
         while(pm.isGenerating())
         {
@@ -119,7 +120,58 @@ public class ExtendedNetworkGeneratorTest
 
     float weightMin = 0.5f;
     float weightMax = 0.8f;
-    
+
+    /*
+     * test that a set of previously calculated values for positions, connection
+     * weights, etc. are reproduced if the same random seed is used
+     */
+    @Test
+    public void testReproducability() throws InterruptedException
+    {
+        System.out.println("---  test testReproducability()");
+
+        Project proj = pm.getCurrentProject();
+
+        SimConfig sc = proj.simConfigInfo.getSimConfig("TwoCG");
+
+        String cg1 = sc.getCellGroups().get(0);
+        String cg2 = sc.getCellGroups().get(1);
+
+        String nc1 = sc.getNetConns().get(0);
+        String input1 = sc.getInputs().get(0);
+
+
+
+        generate(proj, sc, 12345);
+
+        ArrayList<PositionRecord> posRecs = proj.generatedCellPositions.getPositionRecords(cg2);
+
+        Point3f aPoint = posRecs.get(19).getPoint();
+        System.out.println(aPoint);
+
+        // this was obtained by running the project through the GUI with seed = 12345
+        Point3f aPointExpected = new Point3f(58.340458f, 12.1995125f, 51.59832f);
+
+        assertEquals(aPointExpected, aPoint);
+
+
+        SingleSynapticConnection synConn = proj.generatedNetworkConnections.getSynapticConnections(nc1).get(132);
+
+
+        // these values were obtained by running the project through the GUI with seed = 12345
+        assertEquals(synConn.sourceEndPoint.cellNumber, 19);
+        assertEquals(synConn.targetEndPoint.cellNumber, 0);
+        assertEquals(synConn.props.get(0).weight, 0.97659814, 0.00001);
+
+        SingleElectricalInput inp = proj.generatedElecInputs.getInputLocations(input1).get(19);
+
+        // this was obtained by running the project through the GUI with seed = 12345
+        assertEquals(((IClampInstanceProps)inp.getInstanceProps()).getAmplitude(), 0.72577375, 0.00001);
+
+
+        System.out.println("All good!");
+
+    }
     
     
     /* test the option "soma to soma" distance for the length of the connections
@@ -175,7 +227,7 @@ public class ExtendedNetworkGeneratorTest
         proj2.morphNetworkConnectionsInfo.getMaxMinLength(nc2).setMaxLength(maxLength);
         proj2.morphNetworkConnectionsInfo.getMaxMinLength(nc2).setMinLength(minLength);
         
-        generate(proj2, sc);
+        generate(proj2, sc, 1234);
         
         Cell sourceCellInstance = proj2.cellManager.getCell(proj2.cellGroupsInfo.getCellType(src));
         Cell targetCellInstance = proj2.cellManager.getCell(proj2.cellGroupsInfo.getCellType(tgt));
@@ -299,7 +351,7 @@ public class ExtendedNetworkGeneratorTest
         proj2.volBasedConnsInfo.getConnectivityConditions(nc2).setNumConnsInitiatingCellGroup(ngNum);       
         
         
-        generate(proj2, sc);
+        generate(proj2, sc, 1234);
         
         Cell sourceCellInstance = proj2.cellManager.getCell(proj2.cellGroupsInfo.getCellType(src));
         Cell targetCellInstance = proj2.cellManager.getCell(proj2.cellGroupsInfo.getCellType(tgt));
@@ -410,7 +462,7 @@ public class ExtendedNetworkGeneratorTest
         maxMin.setMaxLength(maxLength);
         maxMin.setMinLength(minLength);
         
-        generate(proj2, sc);       
+        generate(proj2, sc, 1234);
         
         ArrayList<SingleSynapticConnection> synConn= proj2.generatedNetworkConnections.getSynapticConnections(nc2);
         
@@ -463,7 +515,7 @@ public class ExtendedNetworkGeneratorTest
         // test the case of a COMPLETE_RANDOM search pattern
         proj.morphNetworkConnectionsInfo.setSearchPattern(nc1, SearchPattern.getRandomSearchPattern());
        
-        generate(proj, sc);        
+        generate(proj, sc, 1234);
               
         int [][] mat = proj.generatedNetworkConnections.getConnectionMatrix(nc1, proj);
         for (int i = 0; i < mat.length; i++)
@@ -479,7 +531,7 @@ public class ExtendedNetworkGeneratorTest
         // test the case of a RANDOM_BUT_CLOSE search pattern
         proj.morphNetworkConnectionsInfo.setSearchPattern(nc1, SearchPattern.getRandomCloseSearchPattern(10));
         
-        generate(proj, sc);        
+        generate(proj, sc, 1234);
               
         int [][] mat1 = proj.generatedNetworkConnections.getConnectionMatrix(nc1, proj);
         for (int i = 0; i < mat1.length; i++)
@@ -499,7 +551,7 @@ public class ExtendedNetworkGeneratorTest
         proj.morphNetworkConnectionsInfo.getMaxMinLength(nc1).setMaxLength(maxLength);
         proj.morphNetworkConnectionsInfo.getMaxMinLength(nc1).setMinLength(0);
         
-        generate(proj, sc);        
+        generate(proj, sc, 1234);
               
         int [][] mat2 = proj.generatedNetworkConnections.getConnectionMatrix(nc1, proj);
         for (int i = 0; i < mat2.length; i++)
