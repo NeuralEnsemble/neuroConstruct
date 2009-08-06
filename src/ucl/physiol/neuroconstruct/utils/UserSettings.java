@@ -91,7 +91,7 @@ public class UserSettings
     {
         if (numProcessorstoUse<=0)
         {
-            numProcessorstoUse = ManagementFactory.getOperatingSystemMXBean().getAvailableProcessors();
+            numProcessorstoUse = 1;
         }
 
         return numProcessorstoUse;

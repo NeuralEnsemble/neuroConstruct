@@ -78,7 +78,9 @@ public class GuiUtils
         int numLines = 0;
         int maxLines = 18;
 
+        fullError.addTaggedElement(errorMessage, "b", "p");
 
+        /*
         String[] lines = errorMessage.split("\\n");
         for (int i = 0; i < lines.length; i++)
         {
@@ -91,38 +93,44 @@ public class GuiUtils
 
             if (i != lines.length - 1)
                 fullError.addBreak();
-        }
+        }*/
+
+        StringBuffer throwableError = new StringBuffer();
+        String format = "font color=\"gray\"";
 
         while (nextThrowable !=null)
         {
-            fullError.addBreak();
-            fullError.addTaggedElement(nextThrowable.getClass().getName() + ": " + nextThrowable.getMessage(), "p", "i");
+            throwableError.append("\n");
 
-            fullError.addBreak();
+            throwableError.append(nextThrowable.getClass().getName() + ": " + nextThrowable.getMessage()+"\n");
+
             StackTraceElement[] ste =  nextThrowable.getStackTrace();
+
             for (int i = 0; i < ste.length; i++)
             {
                 if (numLines<maxLines)
                 {
-                    fullError.addTaggedElement(ste[i].toString(), "p", "i");
-                    fullError.addBreak();
+                    throwableError.append(ste[i].toString()+"\n");
                 }
                 else if (numLines==maxLines)
                 {
-                    fullError.addTaggedElement("More ...", "p", "i");
-                    fullError.addBreak();
+                    throwableError.append("More ..."+"\n");
                 }
                 numLines++;
 
             }
             nextThrowable = nextThrowable.getCause();
-            fullError.addBreak();
         }
+        fullError.addTaggedElement(throwableError.toString(), format);
 
 
         if (logger!=null)
         {
-            logger.logComment("HTML to show: " + fullError.toHtmlString(), true);
+           logger.logComment("User being passed the following error message:");
+           logger.logComment("---------------------------------------------------------");
+           logger.logComment(fullError.toString());
+           logger.logComment("---------------------------------------------------------");
+           logger.logComment("HTML: ((("+fullError.toHtmlString()+")))");
         }
 
         showMessage(parent, fullError, "Error", JOptionPane.ERROR_MESSAGE);
@@ -184,8 +192,10 @@ public class GuiUtils
 
        if (logger!=null)
        {
-           logger.logComment("User being passed info");
+           logger.logComment("User being passed the following information message:");
+           logger.logComment("---------------------------------------------------------");
            logger.logComment(message);
+           logger.logComment("---------------------------------------------------------");
        }
 
        showMessage(parent,
@@ -287,12 +297,14 @@ public class GuiUtils
    public static void main(String[] args)
    {
        ClassLogger logger = new ClassLogger("Dummy");
-       
-       Throwable t = new NullPointerException("Something's null");
 
-       GuiUtils.showErrorMessage(logger, "This is some major error here!!", t, null);
+       Throwable t = new NullPointerException("Something's null\nSomewhere...");
+       Throwable t2 = new ClassCastException("BadOldClass");
+       t.initCause(t2);
 
-       GuiUtils.showInfoMessage(logger, "Not much up", "Just keeping you informed", null);
+       GuiUtils.showErrorMessage(logger, "This is some major error here!!\nYou must have messed up there...\nOh well!", t, null);
+
+       GuiUtils.showInfoMessage(logger, "Not much up", "Just keeping you informed.\nSafe home now.", null);
 
    }
 

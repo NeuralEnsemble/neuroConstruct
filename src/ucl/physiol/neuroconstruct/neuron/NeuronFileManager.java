@@ -4417,7 +4417,8 @@ public class NeuronFileManager
         String pre = preSlashes+ "//  ";
         
         
-        if (!comment.toString().endsWith("\n")) comment = comment +"\n";
+        if (!comment.toString().endsWith("\n"))
+            comment = comment +"\n";
 
         comment = GeneralUtils.replaceAllTokens(comment.substring(0,comment.length()-1), "\n", "\n"+pre) + "\n";
 
@@ -4739,12 +4740,12 @@ public class NeuronFileManager
                     String[] commandToExe = null;
                     String[] envParams = null;
                     
-                    //TODO: Make this an input option!!!
+                    /*TODO: Make this an input option!!!
                     if (genRunMode==RUN_PYTHON_HDF5)
                     {
                         envParams = new String[1];
                         envParams[0] = "LD_LIBRARY_PATH=/usr/local/hdf5/lib";
-                    }
+                    }*/
                     
                     if (dirForDataFiles.getAbsolutePath().indexOf(" ")>=0)
                     {
@@ -4937,7 +4938,11 @@ public class NeuronFileManager
 
                         scriptText.append("cd '" + dirToRunInFile.getAbsolutePath() + "'\n");
 
-                        if (true || !isRunModePythonBased(genRunMode))
+                        if (genRunMode==RUN_PYTHON_HDF5)
+                        {
+                            scriptText.append(GeneralUtils.getArchSpecificDir()+"/special -python "+ runPythonFile.getName());
+                        }
+                        else if (true || !isRunModePythonBased(genRunMode))
                         {
                             scriptText.append(preCommand
                             + neuronExecutable

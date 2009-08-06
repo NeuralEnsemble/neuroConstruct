@@ -132,7 +132,7 @@ public class MorphBasedConnGenerator extends Thread
             netConnStarting(netConnName);
             scg.start();
 
-            logger.logComment("Generating: "+generatingNetConns+"...", true);
+            logger.logComment("Generating: "+generatingNetConns+"...");
 
             while(netConnsRunning()>=maxNumThreads)
             {
@@ -172,7 +172,7 @@ public class MorphBasedConnGenerator extends Thread
 
     protected synchronized void netConnCompleted(String netConnName)
     {
-        logger.logComment("Finished generating: "+netConnName+"...", true);
+        logger.logComment("Finished generating: "+netConnName+"...");
         generatingNetConns.remove(netConnName);
     }
 

@@ -29,13 +29,13 @@ package ucl.physiol.neuroconstruct.simulation;
 import java.io.*;
 import java.util.*;
 
+import java.util.ArrayList;
 import javax.swing.table.*;
 
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.neuron.*;
 import ucl.physiol.neuroconstruct.genesis.*;
-//import ucl.physiol.neuroconstruct.hpc.mpi.*;
 import ucl.physiol.neuroconstruct.hpc.mpi.RemoteLogin;
 import ucl.physiol.neuroconstruct.hpc.utils.*;
 import ucl.physiol.neuroconstruct.project.*;
@@ -81,6 +81,8 @@ public class SimulationsInfo extends AbstractTableModel
     File simulationsDir = null;
 
     ProcessFeedback pf = null;
+
+    private static Hashtable<String, String> extraSimProperties = new Hashtable<String, String>();
 
 
     public SimulationsInfo(File simulationsDir, Vector<String> preferredColumns)
@@ -325,7 +327,27 @@ public class SimulationsInfo extends AbstractTableModel
                 
                 if (propsForSim==null) return "-- n/a --";
 
-                return propsForSim.getProperty(colName);
+                String value = propsForSim.getProperty(colName);
+
+                if(colName.indexOf("Time")>=0 || colName.indexOf("time")>=0)
+                {
+                    try
+                    {
+                        float val = Float.parseFloat(value);
+                        if (val/3600>1)
+                            return (val/3600)+" h";
+                        else if (val/60>1)
+                            return (val/60)+" m";
+                        else
+                            return (val)+" s";
+                    }
+                    catch (Exception e)
+                    {
+                        // continue below
+                    }
+                }
+
+                return value;
             }
         }
     }
@@ -369,6 +391,16 @@ public class SimulationsInfo extends AbstractTableModel
 
     }
 
+    /*
+     * Add an extra properti which will be added to the list of properties in simulation.props
+     * and so will be shown in the SimulationBrowser interface. Mostly useful for recording
+     * extra information in a Python script
+     */
+    public static void addExtraSimProperty(String name, String value)
+    {
+        extraSimProperties.put(name, value);
+    }
+
 
     /**
      * Creates a record of the main simulation parameters in a properties file in the
@@ -388,6 +420,11 @@ public class SimulationsInfo extends AbstractTableModel
         props.setProperty("Global Cm", project.simulationParameters.getGlobalCm()+"");
         props.setProperty("Global Rm", project.simulationParameters.getGlobalRm()+"");
         props.setProperty("Global Ra", project.simulationParameters.getGlobalRa()+"");
+
+        for(String name: extraSimProperties.keySet())
+        {
+            props.setProperty(name, extraSimProperties.get(name));
+        }
 
 
         props.setProperty("neuroConstruct random seed", ProjectManager.getRandomGeneratorSeed()+"");

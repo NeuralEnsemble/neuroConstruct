@@ -147,7 +147,7 @@ public class SimpleHtmlDoc
 
         for (int i = 0; i < contents.size(); i++)
         {
-            message.append(contents.get(i).toHtmlString()+ret);
+            message.append(contents.get(i).toHtmlString(includeReturnsInHtml)+ret);
         }
         message.append("</body>"+ret+"</html>");
 
@@ -205,12 +205,12 @@ public class SimpleHtmlDoc
             this.tabs = tabs;
         }
 
-        public String toHtmlString()
+        public String toHtmlString(boolean includeReturnsInHtml)
         {
             String tabbedUp = "";
 
             for(SimpleHtmlElement she: contents)
-                tabbedUp = tabbedUp + she.toHtmlString();
+                tabbedUp = tabbedUp + she.toHtmlString(includeReturnsInHtml);
 
             for (int i = 0; i < tabs.size(); i++)
             {
@@ -242,10 +242,16 @@ public class SimpleHtmlDoc
             this.link = link;
         }
 
-        public String toHtmlString()
+        public String toHtmlString(boolean includeReturnsInHtml)
         {
+            String textPart = new String(text);
 
-            return "<a href=\""+link+"\">"+text+"</a>";
+            if(!includeReturnsInHtml)
+            {
+                textPart = GeneralUtils.replaceAllTokens(text, "\n", "<br>");
+            }
+
+            return "<a href=\""+link+"\">"+textPart+"</a>";
         }
 
         public String toString()
@@ -256,7 +262,7 @@ public class SimpleHtmlDoc
 
     private class BreakElement extends SimpleHtmlElement
     {
-        public String toHtmlString()
+        public String toHtmlString(boolean includeReturnsInHtml)
         {
             return "<br/>";
         };
@@ -274,8 +280,12 @@ public class SimpleHtmlDoc
         {
             this.contents = contents;
         }
-        public String toHtmlString()
+        public String toHtmlString(boolean includeReturnsInHtml)
         {
+            if(!includeReturnsInHtml)
+            {
+                return GeneralUtils.replaceAllTokens(contents, "\n", "<br>");
+            }
             return contents;
         };
         public String toString()
@@ -287,7 +297,13 @@ public class SimpleHtmlDoc
 
     public abstract class SimpleHtmlElement
     {
-        public abstract String toHtmlString();
+        public String toHtmlString()
+        {
+            return toHtmlString(true);
+        };
+
+        public abstract String toHtmlString(boolean includeReturnsInHtml);
+        
         @Override
         public abstract String toString();
     }
@@ -326,9 +342,13 @@ public class SimpleHtmlDoc
         simplehtmldoc.addTaggedElement("Heading", "h1");
         simplehtmldoc.addTaggedElement("This is me, red", "font color=\"red\"");
         simplehtmldoc.addTaggedElement("This is me, green", "font color=\"green\"");
+        simplehtmldoc.addTaggedElement("This is me, bold", "b", "p");
+        simplehtmldoc.addTaggedElement("This is me, plain", "p");
+
+        System.out.println(simplehtmldoc.toHtmlString());
 
 
-        SimpleViewer.showString(simplehtmldoc.toString(), "Validity status", 12, true, true);
+        SimpleViewer.showString(simplehtmldoc.toHtmlString(), "Validity status", 10, true, true);
 
 
 
