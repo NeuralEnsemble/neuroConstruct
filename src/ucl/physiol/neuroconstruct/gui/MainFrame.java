@@ -7451,9 +7451,23 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                             if (!(new File(nameOfNewProjectFile)).exists())
                             {
-                                GuiUtils.showErrorMessage(logger, "The expected project file: "+ nameOfNewProjectFile + " was not found!", null, this);
-                                projDirToCreate.delete();
-                                return;
+
+                                String nameOfOldProjectFile = projDirToCreate.getAbsolutePath()
+                                                     + System.getProperty("file.separator")
+                                                     + newProjName
+                                                     + ProjectStructure.getOldProjectFileExtension();
+
+                                if (!(new File(nameOfOldProjectFile)).exists())
+                                {
+                                    GuiUtils.showErrorMessage(logger, "The expected project file: "+ nameOfNewProjectFile
+                                            + " was not found (neither was: "+nameOfOldProjectFile+")! ", null, this);
+                                    projDirToCreate.delete();
+                                    return;
+                                }
+                                else
+                                {
+                                    nameOfNewProjectFile = nameOfOldProjectFile;
+                                }
                             }
 
                             doLoadProject(nameOfNewProjectFile);
