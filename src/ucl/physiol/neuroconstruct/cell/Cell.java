@@ -76,9 +76,14 @@ public class Cell implements Serializable
     private Hashtable<String, Vector<String>> synapsesVsGroups = new Hashtable<String, Vector<String>>();
 
     /**
-     * For the recording of ChannelMechanisms types
+     * For the locations of ChannelMechanisms
      */
     private Hashtable<ChannelMechanism, Vector<String>> chanMechsVsGroups = new Hashtable<ChannelMechanism, Vector<String>>();
+
+    /**
+     * For the locations of "species", though usually only used for ions, e.g. na, k, ca
+     */
+    private Hashtable<Species, Vector<String>> speciesVsGroups = new Hashtable<Species, Vector<String>>();
 
     /**
      * For the recording of ChannelMechanisms types
@@ -2164,6 +2169,24 @@ public class Cell implements Serializable
     {
         return chanMechsVsGroups;
     }
+    public void setChanMechsVsGroups(Hashtable<ChannelMechanism, Vector<String>> chanMechsVsGroups)
+    {
+        this.chanMechsVsGroups = chanMechsVsGroups;
+    }
+    
+    public Hashtable<Species, Vector<String>> getSpeciesVsGroups()
+    {
+        if (speciesVsGroups == null)
+        {
+            speciesVsGroups = new Hashtable<Species, Vector<String>>();
+        }
+        return speciesVsGroups;
+    }
+    public void setSpeciesVsGroups(Hashtable<Species, Vector<String>> speciesVsGroups)
+    {
+        this.speciesVsGroups = speciesVsGroups;
+    }
+
 
     public void setVarMechsVsParaGroups(Hashtable<VariableMechanism, ParameterisedGroup> varMechsVsParaGroups)
     {
@@ -2195,11 +2218,6 @@ public class Cell implements Serializable
         return this.apPropSpeedsVsGroups;
     }
 
-
-    public void setChanMechsVsGroups(Hashtable<ChannelMechanism, Vector<String>> chanMechsVsGroups)
-    {
-        this.chanMechsVsGroups = chanMechsVsGroups;
-    }
 
     public void setSpecCapVsGroups(Hashtable<Float, Vector<String>> specCapVsGroups)
     {

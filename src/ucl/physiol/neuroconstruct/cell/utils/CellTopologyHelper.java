@@ -2479,7 +2479,20 @@ public class CellTopologyHelper
             
         }
         if (varMechsVsParaGroups.size()>0) sb.append("  "+GeneralUtils.getEndLine(html));
-        
+
+
+        Enumeration<Species> species =  cell.getSpeciesVsGroups().keys();
+
+        while(species.hasMoreElements())
+        {
+            Species sp = species.nextElement();
+
+            Vector<String> grps =  cell.getSpeciesVsGroups().get(sp);
+
+            sb.append("    Species: "+GeneralUtils.getTabbedString(sp.toString(), "b", html)
+                      +" is present on: "+GeneralUtils.getTabbedString(grps.toString(), "b", html)+GeneralUtils.getEndLine(html));
+        }
+        if (cell.getSpeciesVsGroups().size()>0) sb.append("  "+GeneralUtils.getEndLine(html));
 
         ArrayList<String> allSynapses = cell.getAllAllowedSynapseTypes();
         for (int i = 0; i < allSynapses.size(); i++)
