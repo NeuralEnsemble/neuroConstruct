@@ -915,7 +915,7 @@ public class NeuronFileManager
     
             response.append("strdef host\n");
     
-            if (GeneralUtils.isWindowsBasedPlatform())
+            if (!generateLinuxBasedScripts())
                 response.append("{system(\"C:/WINDOWS/SYSTEM32/hostname.exe\", host)}\n");
             else
                 response.append("{system(\"hostname\", host)}\n");
@@ -2158,7 +2158,7 @@ public class NeuronFileManager
         return getHocSectionName(secname);
     }
 
-    public static String getHocFriendlyFilename(String filename)
+    public String getHocFriendlyFilename(String filename)
     {
         logger.logComment("filename: " + filename);
         filename = GeneralUtils.replaceAllTokens(filename, "\\", "/");
@@ -2171,7 +2171,7 @@ public class NeuronFileManager
                                                  "Documents and Settings",
                                                  "Docume~1");
 
-        if (GeneralUtils.isWindowsBasedPlatform())
+        if (!generateLinuxBasedScripts())
         {
             boolean canFix = true;
             // Can catch spaces if a dir is called c:\Padraig Gleeson and change it to c:\Padrai~1
@@ -2778,9 +2778,7 @@ public class NeuronFileManager
         // so temporarily disabling it. It's only needed for parallel running of sims, which is 
         // unlikely on win for the forseeable future.
         
-        if (GeneralUtils.isWindowsBasedPlatform()) return false;
-        
-        return true;
+        return generateLinuxBasedScripts();
     }
 
     private String getObjectName(PlotSaveDetails record, int cellNum, String segName)
@@ -4236,6 +4234,15 @@ public class NeuronFileManager
         return colour;
     }
 
+
+    public boolean generateLinuxBasedScripts()
+    {
+        // If the code is remotely eecuted it assumes it will be Linux based scripts (for running on Linux or Macs)
+        if (GeneralUtils.isWindowsBasedPlatform() && !simConfig.getMpiConf().isRemotelyExecuted()) return false;
+
+        return true;
+    }
+
     public String generateRunMechanism()
     {
         StringBuffer response = new StringBuffer();
@@ -4249,7 +4256,7 @@ public class NeuronFileManager
             timeStepInfo = " variable time step,";
         }
 
-        boolean announceDate = !GeneralUtils.isWindowsBasedPlatform();
+        boolean announceDate = !generateLinuxBasedScripts();
         String dateInfo = "";
 
 
@@ -4697,7 +4704,7 @@ public class NeuronFileManager
 
                 String neuronExecutable = null;
 
-                if (GeneralUtils.isWindowsBasedPlatform())
+                if (!generateLinuxBasedScripts())
                 {
                     logger.logComment("Assuming Windows environment...");
                     
@@ -4859,7 +4866,7 @@ public class NeuronFileManager
                     StringBuffer scriptText = new StringBuffer();
 
                     
-                    if (GeneralUtils.isLinuxBasedPlatform())
+                    if (GeneralUtils.isLinuxBasedPlatform() || simConfig.getMpiConf().isRemotelyExecuted())
                     {
                         logger.logComment("Is linux platform...");
 
@@ -4891,6 +4898,15 @@ public class NeuronFileManager
                                 extraArgs = "-x";
                             }
 
+                        }
+                        else if (GeneralUtils.isWindowsBasedPlatform())
+                        {
+                            // i.e. is remotely executed from Windows
+                            title = "";
+                            dirToRunInPath = "";
+                            extraArgs = " /D "+scriptFile.getParent()+" bash ";
+
+                            executable = GeneralProperties.getExecutableCommandLine();
                         }
                         else
                         {
@@ -5103,7 +5119,7 @@ public class NeuronFileManager
                     summary = summary+"]";
 
 
-                    logger.logComment("Going to execute "+summary);
+                    logger.logComment("Going to execute "+summary, true);
 
                     if(envParams!=null && envParams.length>0)
                     {

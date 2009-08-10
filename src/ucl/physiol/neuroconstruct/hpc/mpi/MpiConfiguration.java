@@ -30,6 +30,7 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
+import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
 
 /**
@@ -262,10 +263,16 @@ public class MpiConfiguration
         pullScriptText.append("\n");
 
         pullScriptText.append("\n");
-        pullScriptText.append("projDir=$targetDir\"/\"$projName\"_\"$HOST\n");
+        pullScriptText.append("projDir="+getProjectSimDir(projName)+"\n");
         pullScriptText.append("simDir=$projDir\"/\"$simRef\n");
         pullScriptText.append("\n");
-        pullScriptText.append("export localDir="+localDir.getAbsolutePath()+"\"/\"$simRef\"/\"\n");
+        String localPath = localDir.getAbsolutePath();
+        if (GeneralUtils.isWindowsBasedPlatform())
+        {
+            localPath = GeneralUtils.convertToCygwinPath(localPath);
+        }
+
+        pullScriptText.append("export localDir="+localPath+"\"/\"$simRef\"/\"\n");
         pullScriptText.append("\n");
         pullScriptText.append("\n");
         pullScriptText.append("echo \"Going to get files from dir: \"$simDir\" on \"$remoteHost\" and place them locally on \"$localDir\n");

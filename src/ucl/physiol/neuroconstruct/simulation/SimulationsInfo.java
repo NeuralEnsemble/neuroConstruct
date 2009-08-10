@@ -174,7 +174,16 @@ public class SimulationsInfo extends AbstractTableModel
 
                     try
                     {
-                        String res = ProcessManager.runCommand(pullRemoteScript.getAbsolutePath(), pf, 3000);
+                        String toRun = pullRemoteScript.getAbsolutePath();
+
+                        if (GeneralUtils.isWindowsBasedPlatform())
+                        {
+                            String cygwinFriendlyFile = GeneralUtils.convertToCygwinPath(pullRemoteScript.getAbsolutePath());
+                            
+                            toRun = "bash -c "+cygwinFriendlyFile; // Assumes cygwin installed...
+                        }
+
+                        String res = ProcessManager.runCommand(toRun, pf, 3000);
                         logger.logComment("Result of executing pullRemoteScript file: " + pullRemoteScript+": "+ res);
                     }
                     catch (Exception ex)
