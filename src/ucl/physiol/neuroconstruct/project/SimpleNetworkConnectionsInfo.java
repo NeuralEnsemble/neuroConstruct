@@ -72,10 +72,6 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
     Vector<SearchPattern> vectorSearchPattern = new Vector<SearchPattern>();
     Vector<MaxMinLength> vectorMaxMin = new Vector<MaxMinLength>();
     Vector<ConnectivityConditions> vectorConnConds = new Vector<ConnectivityConditions>();
-
-    //Vector vectorSynapseProperties = new Vector();
-    //Vector<GapOption> vectorGapOption = new Vector<GapOption>();
-
     Vector<Float> vectorAPSpeed = new Vector<Float>();
 
 
@@ -201,12 +197,30 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
     }
 
 
+    public void addNetConn(String name,
+                       String source,
+                       String target,
+                       Vector<SynapticProperties> synList,
+                       SearchPattern searchPattern,
+                       MaxMinLength maxMin,
+                       ConnectivityConditions connConds,
+                       float jumpSpeed)  throws NamingException
+    {
+        addRow(name,
+               source,
+               target,
+               synList,
+               searchPattern,
+               maxMin,
+               connConds,
+               jumpSpeed);
+    }
+
     public void addRow(String name,
                        String source,
                        String target,
                        Vector<SynapticProperties> synList,
                        SearchPattern searchPattern,
-                       /*GrowMode growMode,*/
                        MaxMinLength maxMin,
                        ConnectivityConditions connConds,
                        float jumpSpeed)  throws NamingException
@@ -245,6 +259,18 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
 
         this.fireTableRowsDeleted(index, index);
         return true;
+    }
+
+    public void deleteAllNetConns()
+    {
+        vectorNames = new Vector<String>();
+        vectorSynapseList = new Vector();  // type not specified, as used to be Vector<SynapticProperties>, now Vector<Vector<SynapticProperties>>
+        vectorSource = new Vector<String>();
+        vectorTarget = new Vector<String>();
+        vectorSearchPattern = new Vector<SearchPattern>();
+        vectorMaxMin = new Vector<MaxMinLength>();
+        vectorConnConds = new Vector<ConnectivityConditions>();
+        vectorAPSpeed = new Vector<Float>();
     }
 
 

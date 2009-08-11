@@ -267,6 +267,16 @@ public class CellGroupsInfo extends AbstractTableModel
 
     }
 
+    public void deleteAllCellGroups()
+    {
+        vectorCellGroupNames = new Vector<String>();
+        vectorCellTypes = new Vector<String>();
+        vectorRegionNames = new Vector<String>();
+        vectorColours = new Vector<Color>();
+        vectorPackingAdapter = new Vector<CellPackingAdapter>();
+        vectorPriority = new Vector<Integer>();
+    }
+
     private String printSimpleContents()
     {
         StringBuffer sb = new StringBuffer();
@@ -280,6 +290,22 @@ public class CellGroupsInfo extends AbstractTableModel
                       +vectorCellTypes.elementAt(i)+"), ");
         }
         return sb.toString();
+    }
+
+    public void addCellGroup(String cellGroupName,
+                       String cellType,
+                       String regionName,
+                       Color colour,
+                       CellPackingAdapter adapter,
+                       int priority)
+        throws NamingException
+    {
+        addRow(cellGroupName,
+                       cellType,
+                       regionName,
+                       colour,
+                       adapter,
+                       priority);
     }
 
     public void addRow(String cellGroupName,

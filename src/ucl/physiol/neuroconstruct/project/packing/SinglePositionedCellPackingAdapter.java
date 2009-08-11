@@ -43,6 +43,11 @@ public class SinglePositionedCellPackingAdapter extends CellPackingAdapter
 {
     ClassLogger logger = new ClassLogger("SinglePositionedCellPackingAdapter");
 
+    public final static String X_POS = "X_position";
+    public final static String Y_POS = "Y_position";
+    public final static String Z_POS = "Z_position";
+    public final static String RELATIVE = "Relative";
+
 
     public SinglePositionedCellPackingAdapter()
     {
@@ -50,24 +55,29 @@ public class SinglePositionedCellPackingAdapter extends CellPackingAdapter
 
         parameterList = new InternalParameter[4];
 
-        parameterList[0] = new InternalParameter("X_position",
+        parameterList[0] = new InternalParameter(X_POS,
                                               "Displacement in X direction from corner of region",
                                               0);
-        parameterList[1] = new InternalParameter("Y_position",
+        parameterList[1] = new InternalParameter(Y_POS,
                                               "Displacement in Y direction from corner of region",
                                               0);
-        parameterList[2] = new InternalParameter("Z_position",
+        parameterList[2] = new InternalParameter(Z_POS,
                                               "Displacement in Z direction from corner of region",
                                               0);
-        parameterList[3] = new InternalParameter("Relative",
+        parameterList[3] = new InternalParameter(RELATIVE,
                                               "Value = 1: Above coords are relative to lowest (x,y,z) point in this region, Value = 0, Coordinates are absolute",
                                               1);
 
-
-
-
     }
 
+    public SinglePositionedCellPackingAdapter(float x, float y, float z)  throws CellPackingException
+    {
+        this();
+        this.setParameter(X_POS, x);
+        this.setParameter(Y_POS, y);
+        this.setParameter(Z_POS, z);
+        this.setParameter(RELATIVE, 0);
+    }
 
 
     protected Point3f generateNextPosition() throws CellPackingException

@@ -84,6 +84,8 @@ public class MpiSettings
     public static final String LEGION_80PROC = "Legion (20 x 4p)";
     public static final String LEGION_96PROC = "Legion (24 x 4p)";
     public static final String LEGION_112PROC = "Legion (28 x 4p)";
+    public static final String LEGION_128PROC = "Legion (32 x 4p)";
+    public static final String LEGION_256PROC = "Legion (64 x 4p)";
     
     public static final String MACHINE_FILE = "machinesToUse";
     
@@ -358,6 +360,28 @@ public class MpiSettings
             MpiConfiguration p = new MpiConfiguration(LEGION_112PROC);
 
             for(int i=0;i<28;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+
+            p.setRemoteLogin(legionLogin);
+            p.setQueueInfo(legionQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(LEGION_128PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(LEGION_128PROC);
+
+            for(int i=0;i<32;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+
+            p.setRemoteLogin(legionLogin);
+            p.setQueueInfo(legionQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(LEGION_256PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(LEGION_256PROC);
+
+            for(int i=0;i<64;i++)
                 p.getHostList().add(new MpiHost("node"+i,4, 1));
 
             p.setRemoteLogin(legionLogin);
