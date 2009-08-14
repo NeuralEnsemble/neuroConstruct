@@ -251,7 +251,17 @@ public class GeneralUtils
      */
     public static void timeCheck(String marker)
     {
-        boolean alsoSysOut = false; // for debugging
+        timeCheck(marker, false);
+    }
+
+    /**
+     * Prints the current time and the time since the function was last called
+     * Useful for timing methods
+     * @param marker A string identifing the time step
+     * @param alsoSysOut If true, also prints output to system out
+     */
+    public static void timeCheck(String marker, boolean alsoSysOut)
+    {
         String currentTime = null;
 
         java.util.Date today = null;

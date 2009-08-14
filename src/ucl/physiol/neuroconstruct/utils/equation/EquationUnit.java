@@ -28,6 +28,7 @@
 package ucl.physiol.neuroconstruct.utils.equation;
 
 import java.io.Serializable;
+import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
 
 /**
@@ -77,7 +78,42 @@ public abstract class EquationUnit implements Serializable
 
 
     public abstract double evaluateAt(Argument[] args) throws EquationException;
+
+        public static void main(String[] args)
+    {
+
+
+        try
+        {
+
+            Variable r = new Variable("r");
+            Variable[] vars = new Variable[]{r};
+
+            String expr1 = "exp(((-1) * (r * r)) / ((2 * 250) * 250))";
+            String expr2 = "exp(r * r / -125000)";
+
+            //System.out.println("Parsed: "+ func1m.getNiceString());
+
+            GeneralUtils.timeCheck("Before test", true);
+
+            for(float i=0;i<500;i=i+0.1f)
+            {
+                EquationUnit func1m = Expression.parseExpression(expr2, vars);
+                Argument[] a0 = new Argument[]{new Argument(r.getName(), i)};
+                double f = func1m.evaluateAt(a0);
+                //System.out.println("i: "+i+", = "+f);
+            }
+
+            GeneralUtils.timeCheck("After test", true);
+        }
+
+        catch (EquationException ex)
+        {
+            ex.printStackTrace();
+        }
+    }
 }
+
 
 
 

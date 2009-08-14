@@ -26,11 +26,13 @@
 
 package ucl.physiol.neuroconstruct.project;
 
+import java.io.File;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import javax.vecmath.*;
+import ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter;
 import ucl.physiol.neuroconstruct.utils.equation.*;
 
 /**
@@ -51,14 +53,7 @@ public class VolumeBasedConnGenerator extends Thread
 
     public VolumeBasedConnGenerator()
     {
-        try
-        {
-            jbInit();
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
+
     }
 
     ClassLogger logger = new ClassLogger("VolumeBasedConnGenerator");
@@ -150,6 +145,19 @@ public class VolumeBasedConnGenerator extends Thread
             Vector<SynapticProperties> synapticPropList = project.volBasedConnsInfo.getSynapseList(volConnName);
 
             String exp = project.volBasedConnsInfo.getInhomogenousExp(volConnName);
+
+            EquationUnit inhomoExp = null;
+
+            try
+            {
+                inhomoExp = Expression.parseExpression(exp, VolumeBasedConnGenerator.allowedVars);
+
+            }
+            catch (EquationException ex1)
+            {
+                GuiUtils.showErrorMessage(logger, "Error evaluating expression: "+exp, ex1, null);
+                return;
+            }
 
             String[] synPropList = new String[synapticPropList.size()];
             for (int i = 0; i < synapticPropList.size(); i++)
@@ -516,8 +524,6 @@ public class VolumeBasedConnGenerator extends Thread
 
                                         try
                                         {
-                                            EquationUnit inhomoExp = Expression.parseExpression(exp,
-                                                                                                VolumeBasedConnGenerator.allowedVars);
 
                                             if (inhomoExp.toString().equals("1"))
                                             {
@@ -773,8 +779,69 @@ public class VolumeBasedConnGenerator extends Thread
         }
     }
 
-    private void jbInit() throws Exception
+    
+    public static void main(String[] args)
     {
+        try
+        {
+            File projFile = new File("testProjects/TestNetworkConns/TestNetworkConns.neuro.xml");
+
+            ProjectManager pm = new ProjectManager();
+
+            Project proj = pm.loadProject(projFile);
+
+            String simConf = "VolBasedTest";
+            SimConfig sc = proj.simConfigInfo.getSimConfig(simConf);
+
+
+            String nc1 = proj.volBasedConnsInfo.getConnNameAt(0);
+            String nc2 = proj.volBasedConnsInfo.getConnNameAt(1);
+
+            String src = proj.volBasedConnsInfo.getSourceCellGroup(nc1);
+            String tgt = proj.volBasedConnsInfo.getTargetCellGroup(nc1);
+
+
+            int numPreCells = 200;
+            int numPostCells = 200;
+
+            int numPreConns1 = 10;
+            int maxPostConns1 = 5;
+
+            int numPreConns2 = 10;
+            int maxPostConns2 = 5;
+
+
+            ((RandomCellPackingAdapter)proj.cellGroupsInfo.getCellPackingAdapter(src)).setParameter(RandomCellPackingAdapter.CELL_NUMBER_POLICY, numPreCells);
+            ((RandomCellPackingAdapter)proj.cellGroupsInfo.getCellPackingAdapter(tgt)).setParameter(RandomCellPackingAdapter.CELL_NUMBER_POLICY, numPostCells);
+
+            GeneralUtils.timeCheck("Before generation", true);
+
+            pm.doGenerate(sc.getName(), 1234);
+
+            while (pm.isGenerating())
+            {
+                Thread.sleep(100);
+            }
+
+            GeneralUtils.timeCheck("After generation", true);
+
+            System.out.println("Number of cells generated: "+ proj.generatedCellPositions.getNumberInAllCellGroups());
+            for (String nc: proj.generatedNetworkConnections.getNamesNonEmptyNetConns())
+            {
+                System.out.println("with "+ proj.generatedNetworkConnections.getSynapticConnections(nc).size()+" conns in "+ nc);
+            }
+
+            
+
+
+
+
+
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
 }
