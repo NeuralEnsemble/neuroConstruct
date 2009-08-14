@@ -40,6 +40,11 @@ import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
 public abstract class EquationUnit implements Serializable
 {
+    /*
+     * A unique id to assist serialisation of the cell class. Don't change this or saved morphologies
+     * won't reload!
+     */
+    private static final long serialVersionUID = -5346073251568817855L;
     
     private String name = null;
 
