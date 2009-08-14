@@ -151,7 +151,6 @@ public class VolumeBasedConnGenerator extends Thread
 
             String exp = project.volBasedConnsInfo.getInhomogenousExp(volConnName);
 
-
             String[] synPropList = new String[synapticPropList.size()];
             for (int i = 0; i < synapticPropList.size(); i++)
             {
@@ -223,9 +222,7 @@ public class VolumeBasedConnGenerator extends Thread
                               + " cells in cell group "
                               + generationFinishCellGroup);
             
-           
-
-
+          
             Vector<AxonalConnRegion> allVolRegions = generationStartCellInstance.getAxonalArbours();
 
             Vector<String> regionsInConn = project.volBasedConnsInfo.getSourceConnRegions(volConnName);

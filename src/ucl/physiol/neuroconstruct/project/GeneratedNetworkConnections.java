@@ -31,6 +31,7 @@ import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
 import ucl.physiol.neuroconstruct.cell.*;
 import java.io.*;
+import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.utils.xml.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
@@ -240,6 +241,24 @@ public class GeneratedNetworkConnections
         }
         return totalCount;
     }
+
+
+    public ArrayList<String> getNamesNonEmptyNetConns()
+    {
+        ArrayList<String> ncs = new ArrayList<String>();
+
+        Enumeration<String> keys = mySynapticConnectionVectors.keys();
+
+        while(keys.hasMoreElements())
+        {
+            String nc = keys.nextElement();
+            ArrayList<SingleSynapticConnection> synConns = mySynapticConnectionVectors.get(nc);
+            if (synConns.size()>0)
+                ncs.add(nc);
+        }
+        return ncs;
+    }
+
 
     public int getNumberSynapticConnections(int connType)
     {

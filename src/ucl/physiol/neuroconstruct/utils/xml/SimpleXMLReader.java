@@ -62,6 +62,7 @@ public class SimpleXMLReader extends XMLFilterImpl implements LexicalHandler
         return docRead;
     }
 
+    @Override
     public void characters(char[] ch, int start, int length)
     {
         String gotString = new String(ch, start, length);
@@ -89,12 +90,14 @@ public class SimpleXMLReader extends XMLFilterImpl implements LexicalHandler
         }
     } 
 
+    @Override
     public void startDocument()
     {
         logger.setThisClassSilent(true);
         docRead = new SimpleXMLDocument();
     }
 
+    @Override
     public void startElement(String namespaceURI, String localName,
                              String qName, Attributes attributes)
     {
@@ -141,6 +144,7 @@ public class SimpleXMLReader extends XMLFilterImpl implements LexicalHandler
 
     }
 
+    @Override
     public void endElement(String namespaceURI, String localName, String qName)
     {
         currentElement = currentElement.getParent();
@@ -149,6 +153,7 @@ public class SimpleXMLReader extends XMLFilterImpl implements LexicalHandler
     }
 
 
+    @Override
     public void startPrefixMapping (String prefix, String uri)
     {
         //logger.logComment("startPrefixMapping called... prefix: "+ prefix + ", uri: "+ uri);
@@ -157,16 +162,19 @@ public class SimpleXMLReader extends XMLFilterImpl implements LexicalHandler
 
     }
 
+    @Override
     public void endPrefixMapping (String prefix)
     {
         logger.logComment("endPrefixMapping called... prefix: "+ prefix);
     }
 
+    @Override
     public void skippedEntity (String name)
     {
         logger.logComment("skippedEntity called... name: "+ name);
 
     }
+    @Override
     public void processingInstruction (String target, String data)
     {
         logger.logComment("processingInstruction called... target: "+target+", data: "+data);

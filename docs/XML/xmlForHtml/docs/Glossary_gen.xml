@@ -796,7 +796,7 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
 </a><span>
 <p>These terms are used in various ways by <a href="#NEURON">NEURON</a> and <a href="#GENESIS">GENESIS</a> for a) the frame/window showing a number of sets of data and
     b) the individual sets of points in each trace. In neuroConstruct, <a href="#Data Set">Data Set</a> is used for a set of points which can be plotted, and
-    <a href="#Plot Frame">Plot Frame</a> is used for the window in which a number of these can be viewed. In the <strong>Input and Output</strong> tab, the second table lists the values to
+    <a href="#Plot Frame">Plot Frame</a> is used for the window in which a number of these can be viewed. In the <strong>Input/Output</strong> tab, the second table lists the values to
     to be plotted during a simulation run. For example, the membrane potential of a subset of cells in each group could be plotted. Note that here too is where variables
     to be saved during the simulation are specified, e.g. all cells' membrane potential could be saved but just one specified to be plotted, etc. The names to use for variables
     to plot and/or save are given <a href="#Variables to plot/save">here</a>
@@ -1051,7 +1051,7 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
 </p>
 </a><span>
 <p>Variables which change during the simulation can be specified to be plotted and/or saved for later display in neuroConstruct via
-             the <strong>Input and Output</strong> tab. Variables have different names in each of the simulation environments (e.g. v or Vm), so a set of 
+             the <strong>Input/Output</strong> tab. Variables have different names in each of the simulation environments (e.g. v or Vm), so a set of 
              generic names of the most common interesting values has been defined:
     <ul>
         
