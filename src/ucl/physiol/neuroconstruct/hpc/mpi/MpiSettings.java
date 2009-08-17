@@ -51,24 +51,30 @@ public class MpiSettings
     public static final String OPENMPI_V2 = "OPENMPI v2.*";
 
     private String version = MPICH_V1;
+    
+    public static final String LOCALHOST = "localhost";
 
-    public static int prefConfig = 0;
-    
-    
+    /*
+     * To run on the local machine
+     */
     public static final String LOCAL_SERIAL = "Local machine, serial mode";
     public static final String LOCAL_2PROC = "Local machine (2p)";
     public static final String LOCAL_3PROC = "Local machine (3p)";
     public static final String LOCAL_4PROC = "Local machine (4p)";
 
+    /*
+     * To run on a remote machine and execute directly, i.e. no queue
+     * There must be automatic ssh login to this machine
+     */
     public static final String CLUSTER_1PROC = "Cluster (1p)";
+    public static final String CLUSTER_2PROC = "Cluster (1 x 2p)";
     public static final String CLUSTER_4PROC = "Cluster (1 x 4p)";
-    public static final String CLUSTER_8PROC = "Cluster (1 x 8p)";/*
-    public static final String CLUSTER_12PROC = "Cluster (1 x 12p)";
-    public static final String CLUSTER_16PROC = "Cluster (1 x 16p)";
-    public static final String CLUSTER_24PROC = "Cluster (6 x 4p)";
-    public static final String CLUSTER_48PROC = "Cluster (12 x 4p)";
-    public static final String CLUSTER_80PROC = "Cluster (20 x 4p)";*/
 
+    /*
+     * To run on a remote machine, jobs set running using a submit script.
+     * Note the UCL Legion cluster is not on offer to neuroConstruct users
+     * outside UCL...
+     */
     public static final String LEGION_1PROC = "Legion (1 x 1p)";
     public static final String LEGION_2PROC = "Legion (1 x 2p)";
     public static final String LEGION_4PROC = "Legion (1 x 4p)";
@@ -89,24 +95,31 @@ public class MpiSettings
     
     public static final String MACHINE_FILE = "machinesToUse";
     
-    public static final String LOCALHOST = "localhost";
     
+    /*
+     * Index of "preferred" configuration in configurations
+     */
+    public static int prefConfig = 0;
     
-    
-
-
     private ArrayList<MpiConfiguration> configurations = new ArrayList<MpiConfiguration>();
 
     public MpiSettings()
     {
-        //String local8Config = "Local machine (8p)";
-        //String local32Config = "Local machine (32p)";
-        //String local128Config = "Local machine (128p)";
-        //String multiConfig = "TestConf";
-        //String testConfig22 = "TestConfMore";
 
-        RemoteLogin r900Login = new RemoteLogin("smp-test.rc.ucl.ac.uk", "ucgbpgl", "/home/ucgbpgl/nCsims", "/home/ucgbpgl/nrn62/x86_64/bin/nrniv");
-        RemoteLogin legionLogin = new RemoteLogin("legion.rc.ucl.ac.uk", "ucgbpgl", "/shared/scratch/ucgbpgl/nCsims", "/home/ucgbpgl/nrnmpi/x86_64/bin/nrniv");
+        // This is a 4 processor Linux machine in our lab. Auto ssh login is enabled to it from the
+        // machine on which neuroConstruct is running. Jobs are set running directly on this machine
+        RemoteLogin directLogin = new RemoteLogin("192.168.15.70",
+                                                  "padraig",
+                                                  "/home/padraig/nCsims",
+                                                  "/home/padraig/nrnpympi/x86_64/bin/nrniv");
+
+        // Legion is the UCL supercomputing cluster. Legion operates the Torque batch queueing system
+        // and the Moab scheduler, i.e. jobs aren't eecuted directly, but submitted to a queue and will
+        // be run when the requested resources are available.
+        RemoteLogin legionLogin = new RemoteLogin("legion.rc.ucl.ac.uk",
+                                                  "ucgbpgl",
+                                                  "/shared/scratch/ucgbpgl/nCsims",
+                                                  "/home/ucgbpgl/nrnmpi/x86_64/bin/nrniv");
 
         QueueInfo legionQueue = new QueueInfo(6, "ucl/NeuroSci/neuroconst", "cvos-launcher");
 
@@ -151,8 +164,17 @@ public class MpiSettings
         {
             MpiConfiguration p = new MpiConfiguration(CLUSTER_1PROC);
 
-            p.getHostList().add(new MpiHost("localhost",1, 1));
-            p.setRemoteLogin(r900Login);
+            p.getHostList().add(new MpiHost(directLogin.getHostname(),1, 1));
+            p.setRemoteLogin(directLogin);
+            configurations.add(p);
+        }
+
+        if (getMpiConfiguration(CLUSTER_2PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(CLUSTER_2PROC);
+
+            p.getHostList().add(new MpiHost(directLogin.getHostname(),2, 1));
+            p.setRemoteLogin(directLogin);
             configurations.add(p);
         }
 
@@ -160,60 +182,10 @@ public class MpiSettings
         {
             MpiConfiguration p = new MpiConfiguration(CLUSTER_4PROC);
 
-            p.getHostList().add(new MpiHost("localhost",4, 1));
-            p.setRemoteLogin(r900Login);
+            p.getHostList().add(new MpiHost(directLogin.getHostname(),4, 1));
+            p.setRemoteLogin(directLogin);
             configurations.add(p);
         }
-
-        if (getMpiConfiguration(CLUSTER_8PROC)==null)
-        {
-            MpiConfiguration p = new MpiConfiguration(CLUSTER_8PROC);
-            p.getHostList().add(new MpiHost("localhost",8, 1));
-            p.setRemoteLogin(r900Login);
-            configurations.add(p);
-        }
-/*
-        if (getMpiConfiguration(CLUSTER_12PROC)==null)
-        {
-            MpiConfiguration p = new MpiConfiguration(CLUSTER_12PROC);
-            p.getHostList().add(new MpiHost("localhost",12, 1));
-            p.setRemoteLogin(r900Login);
-            configurations.add(p);
-        }
-
-        if (getMpiConfiguration(CLUSTER_16PROC)==null)
-        {
-            MpiConfiguration p = new MpiConfiguration(CLUSTER_16PROC);
-            p.getHostList().add(new MpiHost("localhost",16, 1));
-            p.setRemoteLogin(r900Login);
-            configurations.add(p);
-        }
-        
-        if (getMpiConfiguration(CLUSTER_24PROC)==null)
-        {
-            MpiConfiguration p = new MpiConfiguration(CLUSTER_24PROC);
-            for(int i=0;i<6;i++)
-                p.getHostList().add(new MpiHost("node"+i,4, 1));
-            configurations.add(p);
-        }
-        
-        if (getMpiConfiguration(CLUSTER_48PROC)==null)
-        {
-            MpiConfiguration p = new MpiConfiguration(CLUSTER_48PROC);
-            for(int i=0;i<12;i++)
-                p.getHostList().add(new MpiHost("node"+i,4, 1));
-            configurations.add(p);
-        }
-        
-        
-        if (getMpiConfiguration(CLUSTER_80PROC)==null)
-        {
-            MpiConfiguration p = new MpiConfiguration(CLUSTER_80PROC);
-            for(int i=0;i<20;i++)
-                p.getHostList().add(new MpiHost("node"+i,4, 1));
-            configurations.add(p);
-        }*/
-
 
 
         if (getMpiConfiguration(LEGION_1PROC)==null)
@@ -388,10 +360,6 @@ public class MpiSettings
             p.setQueueInfo(legionQueue);
             configurations.add(p);
         }
-
-        
-
-
     }
 
 
