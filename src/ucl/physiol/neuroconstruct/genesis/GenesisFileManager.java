@@ -902,6 +902,7 @@ public class GenesisFileManager
             //if (!(new File(dir)))
             dir = GeneralUtils.convertToCygwinPath(dir);
         }
+        
         if (!mooseCompatMode()) 
         {
             addComment(response, "Including neuroConstruct utilities file");
@@ -914,21 +915,25 @@ public class GenesisFileManager
         {
             response.append("include compartments \n\n");
         }
-        else
-        {
-            response.append("include /usr/local/genesis-2.3/genesis/Scripts/neurokit/prototypes/compartments \n\n");
-        }
 
 
         addComment(response, "Creating element for channel prototypes");
-        response.append("create neutral /library\n");
-        response.append("disable /library\n");
+        
+        response.append("if (!{exists /library})\n");
+        response.append("    create neutral /library\n");
+        response.append("end\n\n");
 
-        response.append("pushe /library\n");
-        response.append("make_cylind_compartment\n");
+        if (!mooseCompatMode())
+        {
 
-        response.append("make_cylind_symcompartment\n");
-        response.append("pope\n\n");
+            response.append("disable /library\n");
+
+            response.append("pushe /library\n");
+            response.append("make_cylind_compartment\n");
+
+            response.append("make_cylind_symcompartment\n");
+            response.append("pope\n\n");
+        }
         
 
         return response.toString();
@@ -1447,8 +1452,16 @@ public class GenesisFileManager
                         + convertNeuroConstructTime(project.simulationParameters.getDt()));
         if (project.genesisSettings.isGenerateComments())
             response.append(" // " + getTimeUnitString());
-
         response.append("\n");
+
+        if (mooseCompatMode())
+        {
+            response.append("setclock 1 "
+                            + convertNeuroConstructTime(project.simulationParameters.getDt()));
+            if (project.genesisSettings.isGenerateComments())
+                response.append(" // " + getTimeUnitString());
+            response.append("\n");
+        }
 
         return response.toString();
     }
@@ -3524,6 +3537,8 @@ public class GenesisFileManager
                              project.simulationParameters.getDt()));
             
         boolean useTablesToSave = mooseCompatMode(); // to test pre asc_file impl in moose
+
+        StringBuffer postRunLines = new StringBuffer();
             
         if (newRecordingToBeMade)
         {
@@ -3587,8 +3602,13 @@ public class GenesisFileManager
 
                         if (record.allCellsInGroup)
                         {
-                            response.append("foreach cellName ({el " + getCellGroupElementName(cellGroupName) +
-                                            "/#})\n");
+                            response.append("foreach cellName ({el " + getCellGroupElementName(cellGroupName) + "/#})\n");
+
+                            if (useTablesToSave)
+                            {
+                                postRunLines.append("foreach cellName ({el " + getCellGroupElementName(cellGroupName) + "/#})\n");
+                                postRunLines.append("    ce {cellName}\n\n");
+                            }
 
                             String fileDir = FILE_ELEMENT_ROOT + "{cellName}";
 
@@ -3613,6 +3633,13 @@ public class GenesisFileManager
                                 response.append("    compName = {strcat {cellName} /" +
                                                 SimEnvHelper.getSimulatorFriendlyName(segInMappedCell.getSegmentName()) +
                                                 "}\n");
+
+                                if (useTablesToSave)
+                                {
+                                    postRunLines.append("    compName = {strcat {cellName} /" +
+                                                    SimEnvHelper.getSimulatorFriendlyName(segInMappedCell.getSegmentName()) +
+                                                    "}\n");
+                                }
 
                                 String compElement = "{cellName}/" +
                                     SimEnvHelper.getSimulatorFriendlyName(segInMappedCell.getSegmentName());
@@ -3643,17 +3670,39 @@ public class GenesisFileManager
                                     varFileNamePart = "." + record.simPlot.getSafeVarName();
                                 }
 
+
                                 if (!isSpikeRecording)
                                 {
-                                    response.append("    create asc_file " + fileElement + "\n");
-                                    response.append("    setfield " + fileElement +
-                                                    "    flush 1    leave_open 1    append 1 notime 1\n");
+                                    String fileNameDef = "    str fileNameStr\n"
+                                            +"    fileNameStr = {strcat {getpath {cellName} -tail} {\"" + segFileNamePart + varFileNamePart +
+                                                    "." + extension + "\"} }\n";
 
-                                    response.append("    str fileNameStr\n");
-                                    response.append("    fileNameStr = {strcat {getpath {cellName} -tail} {\"" + segFileNamePart + varFileNamePart +
-                                                    "." + extension + "\"} }\n");
+                                    response.append(fileNameDef);
 
-                                    response.append("    setfield " + fileElement + " filename {strcat {targetDir} {fileNameStr}}\n");
+                                    if (useTablesToSave)
+                                    {
+                                        postRunLines.append(fileNameDef);
+                                    }
+
+                                    if (!useTablesToSave)
+                                    {
+                                        response.append("    create asc_file " + fileElement + "\n");
+                                        response.append("    setfield " + fileElement +
+                                                        "    flush 1    leave_open 1    append 1 notime 1\n");
+
+
+                                        response.append("    setfield " + fileElement + " filename {strcat {targetDir} {fileNameStr}}\n");
+                                    }
+                                    else
+                                    {
+                                        response.append("    echo \"Going to record element at \" {compName}\n");
+                                        response.append("    create table " + fileElement + "\n");
+                                        response.append("    setfield " + fileElement + " step_mode 3\n");
+                                        response.append("    call " + fileElement + " TABCREATE "+steps+" -1000 1000\n");
+
+                                        postRunLines.append("    tab2file {strcat {targetDir} {fileNameStr}} " + fileElement + " table -overwrite\n");
+
+                                    }
 
                                 }
                                 else
@@ -3731,11 +3780,19 @@ public class GenesisFileManager
 
                                 if (!isSpikeRecording)
                                 {
-                                    response.append("    addmsg " + realElementToRecord + " " + fileElement + " SAVE " +
-                                                    realVariableToSave + "  //  .. \n");
-                                    response.append("    call " + fileElement + " OUT_OPEN\n");
-                                    response.append("    call " + fileElement + " OUT_WRITE {getfield "
-                                                    + realElementToRecord + " " + realVariableToSave + "}\n\n");
+                                    if (!useTablesToSave)
+                                    {
+                                        response.append("    addmsg " + realElementToRecord + " " + fileElement + " SAVE " +
+                                                        realVariableToSave + "  //  .. \n");
+                                        response.append("    call " + fileElement + " OUT_OPEN\n");
+                                        response.append("    call " + fileElement + " OUT_WRITE {getfield "
+                                                        + realElementToRecord + " " + realVariableToSave + "}\n\n");
+                                    }
+                                    else
+                                    {
+
+                                        response.append("    addmsg  " + realElementToRecord + " " + fileElement + " INPUT " + realVariableToSave + "\n");
+                                    }
 
                                 }
                                 else
@@ -3747,6 +3804,12 @@ public class GenesisFileManager
 
                             }
                             response.append("end\n\n");
+
+
+                            if (useTablesToSave)
+                            {
+                                postRunLines.append("end\n\n");
+                            }
                         }
                         else
                         {
@@ -3952,15 +4015,15 @@ public class GenesisFileManager
         
         String dateInfo = "";
         if (!mooseCompatMode())
-            dateInfo = " at: \" {getdate}";
+            dateInfo = " at: {getdate}";
         
-        response.append("echo \"Starting sim: "+project.simulationParameters.getReference()+" with dur: "+simConfig.getSimDuration()+
-                " and dt: "+project.simulationParameters.getDt()+" ("+project.genesisSettings.getNumMethod()+")"+dateInfo+",\n");
+        response.append("echo Starting sim: "+project.simulationParameters.getReference()+" with dur: "+simConfig.getSimDuration()+
+                " and dt: "+project.simulationParameters.getDt()+" ("+project.genesisSettings.getNumMethod()+")"+dateInfo+"\n");
 
-        response.append("step "+(Math.round(getSimDuration()/project.simulationParameters.getDt()))+"\n\n"); // +1 to include 0 and last timestep
+        response.append("step "+steps+"\n\n"); // +1 to include 0 and last timestep
 
 
-        response.append("echo \"Finished simulation reference: "+project.simulationParameters.getReference()+dateInfo+"\n");
+        response.append("echo Finished simulation reference: "+project.simulationParameters.getReference()+dateInfo+"\n");
 
         if (addComments) response.append("echo Data stored in directory: {targetDir}\n\n");
 
@@ -4004,8 +4067,11 @@ public class GenesisFileManager
         
         if (useTablesToSave)
         {
-            response.append("tab2file "+SimulationData.getStandardTimesFilename()+" "+timeFileElement+" table -nentries "+steps+" -overwrite\n");
+            response.append("tab2file {strcat {targetDir} {\"" + SimulationData.getStandardTimesFilename()
+                    + "\"}} "+timeFileElement+" table -nentries "+steps+" -overwrite\n\n");
         }
+
+        response.append(postRunLines.toString()+"\n");
         
         if (!GeneralUtils.isWindowsBasedPlatform() && !mooseCompatMode())  //  Functions need further testing on windows
         {
@@ -4044,22 +4110,24 @@ public class GenesisFileManager
             response.append("writefile {simPropsFile} \"RealSimulationTime=\"{runTime}\n");
             response.append("writefile {simPropsFile} \"Host=\"{hostnamestr}\n");
             response.append("closefile {simPropsFile} \n");
-    }
+        }
 
 
+        if (!mooseCompatMode())
+        {
+            addComment(response, "This will ensure the data files don't get written to again..");
 
-        addComment(response, "This will ensure the data files don't get written to again..");
+            response.append("str fileElement\n");
+            response.append("foreach fileElement ({el "+FILE_ELEMENT_ROOT+CELL_ELEMENT_ROOT+"/##[][TYPE=asc_file]})\n");
+            //response.append("echo Written from element {fileElement} to file {getfield {fileElement} filename}\n\n");
+            //response.append("    deletemsg {fileElement} 0 -incoming\n");
+            response.append("end\n");
 
-        response.append("str fileElement\n");
-        response.append("foreach fileElement ({el "+FILE_ELEMENT_ROOT+CELL_ELEMENT_ROOT+"/##[][TYPE=asc_file]})\n");
-        //response.append("echo Written from element {fileElement} to file {getfield {fileElement} filename}\n\n");
-        //response.append("    deletemsg {fileElement} 0 -incoming\n");
-        response.append("end\n");
-
-        response.append("foreach fileElement ({el "+FILE_ELEMENT_ROOT+CELL_ELEMENT_ROOT+"/##[][TYPE=event_tofile]})\n");
-        response.append("    echo Closing {fileElement}\n\n");
-        response.append("    call {fileElement} CLOSE\n");
-        response.append("end\n");
+            response.append("foreach fileElement ({el "+FILE_ELEMENT_ROOT+CELL_ELEMENT_ROOT+"/##[][TYPE=event_tofile]})\n");
+            response.append("    echo Closing {fileElement}\n\n");
+            response.append("    call {fileElement} CLOSE\n");
+            response.append("end\n");
+        }
 
 
         /// ********************

@@ -1355,7 +1355,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
         });
         jButtonGenesisRun.setEnabled(false);
-        jButtonGenesisRun.setText("Run GENESIS Simulation");
+        jButtonGenesisRun.setText("Run GENESIS simulation");
         jButtonGenesisRun.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -4096,6 +4096,26 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         jPanelGenesisCheckBoxes.add(this.jCheckBoxGenesisCopySimFiles);
         jPanelGenesisCheckBoxes.add(this.jCheckBoxGenesisMooseMode);
+
+        jCheckBoxGenesisMooseMode.addItemListener(new ItemListener()
+        {
+            public void itemStateChanged(ItemEvent e)
+            {
+                System.out.println("Changing...");
+                if (((JCheckBox)e.getItem()).isSelected())
+                {
+                    jButtonGenesisGenerate.setText("Create MOOSE files");
+                    jButtonGenesisRun.setText("Run MOOSE simulation");
+                }
+                else
+                {
+                    jButtonGenesisGenerate.setText("Create GENESIS files");
+                    jButtonGenesisRun.setText("Run GENESIS simulation");
+                }
+                //if (e.getStateChange().)
+            }
+        });
+
 
         jPanelGenesisNumMethod.add(jLabelGenesisNumMethod, null);
         jPanelGenesisNumMethod.add(jButtonGenesisNumMethod, null);

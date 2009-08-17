@@ -268,8 +268,13 @@ public class GenesisMorphologyGenerator
         response.append(prePassiveLine+"\n\n");
 
 
-        if (project.genesisSettings.isSymmetricCompartments()) response.append("*compt /library/symcompartment\n\n");
-        else response.append("*compt /library/compartment\n\n");
+        if (!mooseCompatMode())
+        {
+            if (project.genesisSettings.isSymmetricCompartments())
+                response.append("*compt /library/symcompartment\n\n");
+            else
+                response.append("*compt /library/compartment\n\n");
+        }
 
         if (project.genesisSettings.isGenerateComments())
         {
@@ -905,6 +910,10 @@ public class GenesisMorphologyGenerator
     }
 
 
+    public boolean mooseCompatMode()
+    {
+        return project.genesisSettings.isMooseCompatMode();
+    }
 
     /**
      * Converts to the proper length for the morphological data
