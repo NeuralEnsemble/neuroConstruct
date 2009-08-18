@@ -29,7 +29,7 @@ package ucl.physiol.neuroconstruct.project;
 import java.io.*;
 import java.util.*;
 
-import java.awt.*;
+import java.awt.*;  
 
 import java.beans.XMLEncoder;
 import java.util.ArrayList;

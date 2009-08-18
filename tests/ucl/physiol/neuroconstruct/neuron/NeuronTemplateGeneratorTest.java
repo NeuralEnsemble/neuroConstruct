@@ -107,7 +107,7 @@ public class NeuronTemplateGeneratorTest {
         }
 
         
-        proj.neuronSettings.setGraphicsMode(false);
+        proj.neuronSettings.setGraphicsMode(NeuronSettings.GraphicsMode.NO_CONSOLE);
         proj.neuronSettings.setVarTimeStep(false);
         
         proj.neuronFileManager.setQuitAfterRun(true);

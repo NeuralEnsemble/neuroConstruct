@@ -192,6 +192,7 @@
            optimize="${optimize}"
            compiler="modern">
       <classpath refid="compile.class.path"/>
+      <compilerarg value="-Xlint:deprecation"/>
       <compilerarg value="-Xlint:serial"/> <!-- As cells can be stored as Java serialised objs, essential to have this check-->
     </javac>
 

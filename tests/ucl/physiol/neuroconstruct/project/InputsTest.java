@@ -34,14 +34,10 @@ import java.util.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import test.MainTest;
-import ucl.physiol.neuroconstruct.neuron.NeuronException;
-import ucl.physiol.neuroconstruct.neuron.NeuronFileManager;
+import ucl.physiol.neuroconstruct.neuron.*;
 import ucl.physiol.neuroconstruct.nmodleditor.processes.ProcessManager;
 import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrainExtInstanceProps;
-import ucl.physiol.neuroconstruct.simulation.SimulationData;
-import ucl.physiol.neuroconstruct.simulation.SimulationDataException;
-import ucl.physiol.neuroconstruct.simulation.SpikeAnalyser;
-import ucl.physiol.neuroconstruct.simulation.StimulationSettings;
+import ucl.physiol.neuroconstruct.simulation.*;
 import static org.junit.Assert.*;
 
 /**
@@ -159,7 +155,7 @@ ProjectManager pm = null;
         if (simDir.exists())
             simDir.delete();
         
-        proj.neuronSettings.setGraphicsMode(false);
+        proj.neuronSettings.setGraphicsMode(NeuronSettings.GraphicsMode.NO_CONSOLE);
         proj.neuronSettings.setVarTimeStep(false);
         
         proj.neuronFileManager.setQuitAfterRun(true);
@@ -247,7 +243,7 @@ ProjectManager pm = null;
         if (simDir.exists())
             simDir.delete();
         
-        proj.neuronSettings.setGraphicsMode(false);
+        proj.neuronSettings.setGraphicsMode(NeuronSettings.GraphicsMode.NO_CONSOLE);
         proj.neuronSettings.setVarTimeStep(false);
         
         proj.neuronFileManager.setQuitAfterRun(true);
@@ -334,7 +330,7 @@ ProjectManager pm = null;
         if (simDir.exists())
             simDir.delete();
         
-        proj.neuronSettings.setGraphicsMode(false);
+        proj.neuronSettings.setGraphicsMode(NeuronSettings.GraphicsMode.NO_CONSOLE);
         proj.neuronSettings.setVarTimeStep(false);
         
         proj.neuronFileManager.setQuitAfterRun(true);

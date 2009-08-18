@@ -101,7 +101,7 @@ public class NeuronFileManagerTest {
         if (simDir.exists())
             simDir.delete();
         
-        proj.neuronSettings.setGraphicsMode(false);
+        proj.neuronSettings.setGraphicsMode(NeuronSettings.GraphicsMode.NO_CONSOLE);
         proj.neuronSettings.setVarTimeStep(false);
         
         proj.neuronFileManager.setQuitAfterRun(true);
@@ -243,7 +243,7 @@ public class NeuronFileManagerTest {
         if (simDirSerial.exists())
             simDirSerial.delete();
         
-        proj.neuronSettings.setGraphicsMode(false);
+        proj.neuronSettings.setGraphicsMode(NeuronSettings.GraphicsMode.NO_CONSOLE);
         proj.neuronSettings.setVarTimeStep(false);
         
         proj.neuronFileManager.setQuitAfterRun(true);
@@ -334,7 +334,7 @@ public class NeuronFileManagerTest {
         if (simDirParallel.exists())
             simDirParallel.delete();
         
-        proj.neuronSettings.setGraphicsMode(false);
+        proj.neuronSettings.setGraphicsMode(NeuronSettings.GraphicsMode.NO_CONSOLE); 
         proj.neuronSettings.setVarTimeStep(false);
         
         proj.neuronFileManager.setQuitAfterRun(true);
