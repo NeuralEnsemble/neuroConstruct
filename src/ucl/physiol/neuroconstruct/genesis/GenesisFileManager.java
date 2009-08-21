@@ -4015,7 +4015,14 @@ public class GenesisFileManager
         
         String dateInfo = "";
         if (!mooseCompatMode())
+        {
             dateInfo = " at: {getdate}";
+        }
+        else
+        {
+            dateInfo = "\ndate +%F__%T__%N";
+        }
+
         
         response.append("echo Starting sim: "+project.simulationParameters.getReference()+" with dur: "+simConfig.getSimDuration()+
                 " and dt: "+project.simulationParameters.getDt()+" ("+project.genesisSettings.getNumMethod()+")"+dateInfo+"\n");

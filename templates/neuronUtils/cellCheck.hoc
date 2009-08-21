@@ -36,8 +36,10 @@ proc cellInfo() {
     }
     
     print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-    
-    print "+        Number of sections: ", numSections
+
+    print "+        "
+    print "+        Temperature:        ", celsius
+    print "+        "
     print "+        Total diam:         ", totalDiam
     print "+        Total length        ", totalL
     print "+        Total nseg:         ", totalNseg
