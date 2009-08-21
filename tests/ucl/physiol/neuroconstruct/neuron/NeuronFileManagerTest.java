@@ -333,8 +333,8 @@ public class NeuronFileManagerTest {
         
         if (simDirParallel.exists())
             simDirParallel.delete();
-        
-        proj.neuronSettings.setGraphicsMode(NeuronSettings.GraphicsMode.NO_CONSOLE); 
+
+        proj.neuronSettings.setGraphicsMode(NeuronSettings.GraphicsMode.NO_CONSOLE);
         proj.neuronSettings.setVarTimeStep(false);
         
         proj.neuronFileManager.setQuitAfterRun(true);
