@@ -4760,23 +4760,48 @@ public class NeuronFileManager
                                 + " containing spaces.\nThis is due to the way neuroConstruct starts the external processes (e.g. konsole) to run NEURON.\nArguments need to be given to this executable and spaces in filenames cause problems.\n"
                                 +"Try saving the project in a directory without spaces.");
                     }
-                    
-                    String mainExecutable = "nrngui";
-                    
-                    if (simConfig.getMpiConf().isParallelOrRemote() || 
-                            project.neuronSettings.getGraphicsMode().equals(NeuronSettings.GraphicsMode.NO_CONSOLE)) mainExecutable = "nrniv";
-
-                    neuronExecutable = locationOfNeuron
-                        + System.getProperty("file.separator")
-                        + "bin"
-                        + System.getProperty("file.separator")
-                        + mainExecutable;
 
                     String title = "NEURON_simulation" + "__"+ project.simulationParameters.getReference();
 
                     File dirToRunInFile = dirForDataFiles;
-                    
+
                     String dirToRunInPath = dirToRunInFile.getAbsolutePath();
+                    
+                    String mainExecutable = "nrngui";
+                    
+                    if (simConfig.getMpiConf().isParallelOrRemote() )
+                    {
+                        mainExecutable = "nrniv";
+
+                        neuronExecutable = locationOfNeuron
+                            + System.getProperty("file.separator")
+                            + "bin"
+                            + System.getProperty("file.separator")
+                            + mainExecutable;
+                    }
+                    else if (project.neuronSettings.getGraphicsMode().equals(NeuronSettings.GraphicsMode.NO_CONSOLE))
+                    {
+                        neuronExecutable = dirToRunInFile.getAbsolutePath()+"/"+GeneralUtils.getArchSpecificDir()+"/special";
+
+                        if(neuronExecutable.indexOf("generated")<0)
+                        {
+                            // Ensure the file is executable
+                            rt.exec(new String[]{"chmod","u+x",neuronExecutable});
+
+                        }
+
+                    }
+                    else
+                    {
+
+                        neuronExecutable = locationOfNeuron
+                            + System.getProperty("file.separator")
+                            + "bin"
+                            + System.getProperty("file.separator")
+                            + mainExecutable;
+                    }
+
+
 
 
                     String basicCommLine = GeneralProperties.getExecutableCommandLine();
