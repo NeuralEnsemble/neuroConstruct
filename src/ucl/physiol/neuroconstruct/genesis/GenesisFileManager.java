@@ -816,8 +816,17 @@ public class GenesisFileManager
                                         + newSynapseName + " SPIKE\n");
 
                         response.append("int msgnum\n");
-                        response.append("msgnum = {getfield " + receivingElement + "/" + newSynapseName
+                        if (!mooseCompatMode())
+                        {
+                            response.append("msgnum = {getfield " + receivingElement + "/" + newSynapseName
                                         + " nsynapses} - 1\n\n");
+                        }
+                        else
+                        {
+                            response.append("msgnum = {getfield " + receivingElement + "/" + newSynapseName
+                                        + " numSynapses} \n\n");
+                            response.append("echo \"msgnum is: \" {msgnum}\n\n");
+                        }
 
 
 
@@ -3882,13 +3891,39 @@ public class GenesisFileManager
 
                                     if (!isSpikeRecording)
                                     {
-                                        response.append("create asc_file " + fileElement + "\n");
-                                        response.append("setfield " + fileElement +
-                                                        "    flush 1    leave_open 1    append 1 notime 1\n");
 
-                                        response.append("setfield " + fileElement + " filename { strcat {strcat {targetDir} "  +
-                                                        "{getpath {cellName} -tail} } {\"" + segFileNamePart +
-                                                        varFileNamePart + "." + SimPlot.CONTINUOUS_DATA_EXT + "\"}}\n");
+                                        String fileNameDef = "str fileNameStr\n"
+                                            +"fileNameStr = {strcat {getpath {cellName} -tail} {\"" + segFileNamePart + varFileNamePart +
+                                                    "." + SimPlot.CONTINUOUS_DATA_EXT + "\"} }\n";
+
+
+                                        response.append(fileNameDef);
+
+                                        if (useTablesToSave)
+                                        {
+                                            postRunLines.append(fileNameDef);
+                                        }
+
+                                        if (!useTablesToSave)
+                                        {
+                                            response.append("create asc_file " + fileElement + "\n");
+
+                                            response.append("setfield " + fileElement +
+                                                            "    flush 1    leave_open 1    append 1 notime 1\n");
+
+                                            response.append("setfield " + fileElement + " filename { strcat  {targetDir} {fileNameStr}}\n");
+                                        }
+
+                                        else
+                                        {
+                                            response.append("echo \"Going to record element at \" {compName}\n");
+                                            response.append("create table " + fileElement + "\n");
+                                            response.append("setfield " + fileElement + " step_mode 3\n");
+                                            response.append("call " + fileElement + " TABCREATE "+steps+" -1000 1000\n");
+
+                                            postRunLines.append("    tab2file {strcat {targetDir} {fileNameStr}} " + fileElement + " table -overwrite\n");
+
+                                        }
 
                                     }
                                     else
@@ -3964,13 +3999,21 @@ public class GenesisFileManager
 
                                     if (!isSpikeRecording)
                                     {
+                                        if (!useTablesToSave)
+                                        {
+                                            response.append("addmsg " + realElementToRecord + " " + fileElement + " SAVE " +
+                                                            realVariableToSave + "\n");
 
-                                        response.append("addmsg " + realElementToRecord + " " + fileElement + " SAVE " +
-                                                        realVariableToSave + "\n");
+                                            response.append("call " + fileElement + " OUT_OPEN\n");
+                                            response.append("call " + fileElement + " OUT_WRITE {getfield "
+                                                            + realElementToRecord + " " + realVariableToSave + "}\n\n");
+                                        }
+                                        else
+                                        {
 
-                                        response.append("call " + fileElement + " OUT_OPEN\n");
-                                        response.append("call " + fileElement + " OUT_WRITE {getfield "
-                                                        + realElementToRecord + " " + realVariableToSave + "}\n\n");
+                                            response.append("    addmsg  " + realElementToRecord + " " + fileElement + " INPUT " + realVariableToSave + "\n");
+                                        }
+
 
                                     }
                                     else
