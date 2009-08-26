@@ -33,6 +33,9 @@ import java.util.regex.*;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
+import ucl.physiol.neuroconstruct.dataset.DataSet;
+import ucl.physiol.neuroconstruct.gui.plotter.PlotManager;
+import ucl.physiol.neuroconstruct.gui.plotter.PlotterFrame;
 import ucl.physiol.neuroconstruct.hpc.utils.ProcessFeedback;
 import ucl.physiol.neuroconstruct.hpc.utils.ProcessManager;
 import ucl.physiol.neuroconstruct.mechanisms.*;
@@ -48,6 +51,7 @@ import ucl.physiol.neuroconstruct.utils.compartment.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
 import ucl.physiol.neuroconstruct.utils.xml.*;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
+import ucl.physiol.neuroconstruct.simulation.SimulationData.DataStore;
 
 
 /**
@@ -83,6 +87,11 @@ public class GenesisFileManager
     private static boolean addComments = true;
 
     MultiRunManager multiRunManager = null;
+
+    public static final String GEN_CORE_VARIABLE = "genesisCore";
+    public static final String GEN_CORE_GENESIS = "GENESIS2";
+    public static final String GEN_CORE_MOOSE = "MOOSE";
+    public static final String GEN_CORE_NEUROSPACES = "Neurospaces";
 
     public static final String HSOLVE_ELEMENT_NAME = "solve";
     public static final String CELL_ELEMENT_ROOT = "/cells";
@@ -912,7 +921,7 @@ public class GenesisFileManager
             dir = GeneralUtils.convertToCygwinPath(dir);
         }
         
-        if (!mooseCompatMode()) 
+        //if (!mooseCompatMode())
         {
             addComment(response, "Including neuroConstruct utilities file");
             response.append("include "+ getFriendlyDirName(dir)+"nCtools \n\n");
@@ -955,6 +964,19 @@ public class GenesisFileManager
         response.append("float celsius = " + project.simulationParameters.getTemperature() + "\n\n");
 
         response.append("str units = \"" + UnitConverter.getUnitSystemDescription(project.genesisSettings.getUnitSystemToUse()) + "\"\n\n");
+
+
+        if (mooseCompatMode())
+        {
+            if (project.genesisSettings.getUnitSystemToUse()==UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS)
+            {
+                GuiUtils.showWarningMessage(logger, "Note that MOOSE interaction has only been tested with SI Units so far", null);
+            }
+        }
+
+        String core = mooseCompatMode()?GEN_CORE_MOOSE:GEN_CORE_GENESIS;
+
+        response.append("str "+GEN_CORE_VARIABLE+" = \"" + core + "\"\n\n");
 
 
         return response.toString();
@@ -1467,8 +1489,10 @@ public class GenesisFileManager
         {
             response.append("setclock 1 "
                             + convertNeuroConstructTime(project.simulationParameters.getDt()));
+
             if (project.genesisSettings.isGenerateComments())
                 response.append(" // " + getTimeUnitString());
+
             response.append("\n");
         }
 
@@ -2784,7 +2808,7 @@ public class GenesisFileManager
                 
                 logger.logComment("Done cell number: " + cellNumber + "..");
 
-                if (!mooseCompatMode()) 
+                if (!mooseCompatMode())
                 {
                 response.append("position "+ newElementName +" "
                    +UnitConverter.getLength(posRecord.x_pos,
@@ -3391,12 +3415,66 @@ public class GenesisFileManager
 
                 logger.logComment("Have successfully executed command: " + commandToExecute);
             }
+
+
+
+
         }
         catch (Exception ex)
         {
             logger.logError("Error running the command: " + commandToExecute);
             throw new GenesisException("Error executing the GENESIS file: " + mainGenesisFile, ex);
         }
+
+        // Due to no plots during Moose at the moment, this plots the results of the Moose simulation
+        // in neuroConstruct if the simulation completes within 10 secs
+
+        if (mooseCompatMode()/* || !project.genesisSettings.isGraphicsMode()*/)
+        {
+            logger.logComment("Going to reload data from: "+getDirectoryForSimulationFiles(), true);
+            SimulationData sd;
+            try
+            {
+                File timesFile = new File (getDirectoryForSimulationFiles(), SimulationData.getStandardTimesFilename());
+                int maxTries = 10;
+                int tries = 0;
+                while(tries<maxTries)
+                {
+                    tries++;
+                    if (timesFile.exists())
+                    {
+                        Thread.sleep(500);
+                        sd = new SimulationData(getDirectoryForSimulationFiles());
+                        sd.initialise();
+
+                        logger.logComment("Loading: " + sd.getAllLoadedDataStores(), true);
+                        tries = maxTries;
+                        for(DataStore ds:sd.getAllLoadedDataStores())
+                        {
+                            DataSet dataSet = sd.getDataSet(ds.getCellSegRef(), ds.getVariable(), true);
+
+                            String plotFrameRef = "Plot of "+ds.getVariable()+" from cell(s) in: "+ds.getCellGroupName()+", sim ref: "+project.simulationParameters.getReference();
+
+                            PlotterFrame frame = PlotManager.getPlotterFrame(plotFrameRef);
+
+                            frame.addDataSet(dataSet);
+
+                            frame.setVisible(true);
+                        }
+                    }
+                    else
+                    {
+                        Thread.sleep(1000);
+                        logger.logComment("Sim not complete", true);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.logError("Error reloading data from: "+getDirectoryForSimulationFiles(), ex);
+            }
+        }
+
     }
 
     public String getNextColour(String plotFrame)

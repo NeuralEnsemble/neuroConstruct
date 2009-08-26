@@ -51,7 +51,8 @@ echo "+++++++++++++++++++++++++++++++++++++++++++++++++"
 str compName
 foreach compName ({el {cellsRoot}/##[][TYPE=compartment],{cellsRoot}/##[][TYPE=symcompartment]})
 
-    if ({exists {compName}/../solve})
+    if ({exists {compName}/../solve} && {strcmp {genesisCore} "GENESIS2"}==0)
+
         if ({getfield {compName}/../solve chanmode} > 2)
             echo "Voltage (via findsolvefield) of " {compName} ": " {getfield {compName}/../solve {findsolvefield {compName}/../solve {compName} Vm}}
         else
@@ -79,7 +80,7 @@ str chanName
 
 foreach compName ({el {cellsRoot}/##[][TYPE=compartment],{cellsRoot}/##[][TYPE=symcompartment]})
 
-    if ({exists {compName}/../solve} && {getfield {compName}/../solve chanmode} > 2)
+    if ({exists {compName}/../solve} && {strcmp {genesisCore} "GENESIS2"}==0  && {getfield {compName}/../solve chanmode} > 2)
         echo "TODO: get Ca conc via findsolvefield..."
         //echo "Voltage (via findsolvefield) of " {compName} ": " {getfield {compName}/../solve {findsolvefield {compName}/../solve {compName} Vm}}
     else
@@ -182,18 +183,18 @@ function compchans(compName)
     echo "Spec axial res:   " { { {getfield {compName} Ra} * 3.14159265 * {getfield {compName} dia} * {getfield {compName} dia} } / {4 * {getfield {compName} len}} }
 
     foreach chanName ({el {compName}/##[][TYPE=hh_channel]})
-        showfield {chanName} Ik Gk Ek Gbar surface
-        echo "Cond dens: " {{getfield {chanName} Gbar} / {getfield {chanName} surface}}
+        showfield {chanName} Ik Gk Ek Gbar
+        echo "Conductance density  = " {{getfield {chanName} Gbar} / {area}}
     end
 
     foreach chanName ({el {compName}/##[][TYPE=tabchannel]})
-        showfield {chanName} Ik Gk Ek Gbar X Y Z surface
-        echo "Cond dens: " {{getfield {chanName} Gbar} / {getfield {chanName} surface}}
+        showfield {chanName} Ik Gk Ek Gbar X Y Z
+        echo "Conductance density  = " {{getfield {chanName} Gbar} / {area}}
     end
 
     foreach chanName ({el {compName}/##[][TYPE=tab2Dchannel]})
-        showfield {chanName} Ik Gk Ek Gbar X Y Z surface
-        echo "Cond dens: " {{getfield {chanName} Gbar} / {getfield {chanName} surface}}
+        showfield {chanName} Ik Gk Ek Gbar X Y Z
+        echo "Conductance density  = " {{getfield {chanName} Gbar} / {area}}
     end
 
     foreach chanName ({el {compName}/##[][TYPE=Ca_concen]})
