@@ -2084,7 +2084,14 @@ public class SegmentSelector extends JFrame implements DocumentListener
         if (sel==2) return;
 
         boolean justTest = (sel==1);
-        
+
+        String report = CellTopologyHelper.recompartmentaliseCell(myCell,
+                              project.simulationParameters.getMaxElectroLen(),
+                              project,
+                              true,
+                              justTest);
+
+        /*
         StringBuffer report = new StringBuffer();
         
         ArrayList<Section> secs = myCell.getAllSections();
@@ -2148,9 +2155,9 @@ public class SegmentSelector extends JFrame implements DocumentListener
             }
             
         }
-
+*/
         
-        SimpleViewer.showString("Total old divs: "+countOld+", total new divs: "+ countNew+"\n\n"+report.toString(), "Remeshing report", 12, false, false, 0.8f, 0.8f);
+        SimpleViewer.showString(report, "Remeshing report", 12, false, false, 0.8f, 0.8f);
         
         
     }

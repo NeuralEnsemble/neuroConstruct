@@ -20,5 +20,10 @@ Ant too: http://ant.apache.org/. Note: you should be able to compile and run
 neuroConstruct using "nC.bat -make" and "nC.bat" respectively (replace with nC.sh
 on Linux/Mac) without Ant.
 
+The Java code is best viewed using an Integrated Development Environment (IDE). 
+NetBeans is used for development of neuroConstruct, and there is a NetBeans project
+present in directory nbproj, which can be used to view the code, build and run 
+the application.
+
 Java, Subversion and Ant can be normally be installed with the standard packet
 manager of most Linux distributions (e.g. YAST on SUSE).

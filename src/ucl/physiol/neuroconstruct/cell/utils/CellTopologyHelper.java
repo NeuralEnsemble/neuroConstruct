@@ -2878,6 +2878,88 @@ public class CellTopologyHelper
         return true;
     }
 
+    /*
+     * Can be used to change the numberInternalDivisions in each Section of the cell to give a 
+     * maximum electrotonic length of each internal division of targetMaxElectLen. Used by the remesh
+     * function of the Segment Selector.
+     */
+    public static String recompartmentaliseCell(Cell cell, float targetMaxElectLen, Project project, boolean longReport, boolean justTest)
+    {
+        StringBuffer report = new StringBuffer();
+
+        ArrayList<Section> secs = cell.getAllSections();
+
+
+        int countNew = 0;
+        int countOld = 0;
+
+        for(Section nextSec: secs)
+        {
+            try
+            {
+                LinkedList<Segment> segs = cell.getAllSegmentsInSection(nextSec);
+
+                float totalElecLen = 0;
+
+                float specMembRes = CellTopologyHelper.getSpecMembResistance(cell, project, nextSec);
+
+                float specAxRes = cell.getSpecAxResForSection(nextSec);
+
+                boolean isSpherical = true;
+
+                for (int i = 0; i < segs.size(); i++)
+                {
+                    Segment nextSeg = segs.get(i);
+
+                    isSpherical = isSpherical && nextSeg.isSpherical();
+
+                    totalElecLen = totalElecLen + CellTopologyHelper.getElectrotonicLength(nextSeg, specMembRes, specAxRes);
+                }
+
+                String sphercalNote = isSpherical?" (spherical section)":"";
+
+                report.append(nextSec.getSectionName()+" has a total electrotonic length of: "+ totalElecLen+sphercalNote+"\n");
+
+                int oldNseg = nextSec.getNumberInternalDivisions();
+                countOld += oldNseg;
+
+                int bestNseg = Math.max(1, (int)Math.ceil(totalElecLen/targetMaxElectLen));
+
+                String changed = "";
+
+                if(!justTest)
+                {
+                    nextSec.setNumberInternalDivisions(bestNseg);
+                }
+                else
+                {
+                    changed = " (not yet changed!)";
+                }
+
+                report.append("Old num internal divs: "+oldNseg+", new number of internal divs: "+bestNseg+changed+"\n\n");
+                countNew += bestNseg;
+
+            }
+            catch (CellMechanismException ex)
+            {
+                report.append("Error: Could not determine the electrotonic length of section: " + nextSec.getSectionName() +
+                                   "\n");
+            }
+
+        }
+        String summary = "Total number old divs in cell: "+countOld+", total new divs: "+ countNew;
+
+        if (longReport)
+            return summary+"\n\n"+report.toString();
+        else
+            return summary;
+
+    }
+
+    public static String recompartmentaliseCell(Cell cell, float targetMaxElectLen, Project project)
+    {
+        return recompartmentaliseCell(cell, targetMaxElectLen, project, false, false);
+    }
 
 
     /**

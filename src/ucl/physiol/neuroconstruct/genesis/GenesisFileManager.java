@@ -1480,7 +1480,7 @@ public class GenesisFileManager
         //response.append("tstop = "+project.simulationParameters.duration+"\n");
 
         response.append("setclock 0 "
-                        + convertNeuroConstructTime(project.simulationParameters.getDt()));
+                        + (float)convertNeuroConstructTime(project.simulationParameters.getDt()));
         if (project.genesisSettings.isGenerateComments())
             response.append(" // " + getTimeUnitString());
         response.append("\n");
@@ -1488,7 +1488,7 @@ public class GenesisFileManager
         if (mooseCompatMode())
         {
             response.append("setclock 1 "
-                            + convertNeuroConstructTime(project.simulationParameters.getDt()));
+                            + (float)convertNeuroConstructTime(project.simulationParameters.getDt()));
 
             if (project.genesisSettings.isGenerateComments())
                 response.append(" // " + getTimeUnitString());
