@@ -183,8 +183,8 @@ cellsA.print_v("cellsA.dat")
 cellsB.print_v("cellsB.dat")
 
 
-cellsA.print_gsyn("cellsAgsyn.dat")
-cellsB.print_gsyn("cellsBgsyn.dat")
+cellsA.print_gsyn("cellsAgsyn.dat",  compatible_output=True)
+cellsB.print_gsyn("cellsBgsyn.dat",  compatible_output=True)
 
 input_population.printSpikes("inputs.dat")
 
