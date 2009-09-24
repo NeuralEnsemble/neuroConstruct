@@ -634,7 +634,7 @@ public class SimulationData
                     
                     
                     double nextVal = Double.parseDouble(sp[0]);
-                    int cellNum = Integer.parseInt(sp[1]);
+                    int cellNum = (int)Float.parseFloat(sp[1]); // in case it's 0.0, 1.0 etc.
                     //logger.logComment(cellNum+": "+nextVal, true);
                     if (!tempList.containsKey(cellNum))
                         tempList.put(cellNum, new ArrayList<Double>(suggestedInitCapData));

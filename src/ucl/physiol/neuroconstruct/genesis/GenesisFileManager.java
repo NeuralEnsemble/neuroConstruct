@@ -524,6 +524,11 @@ public class GenesisFileManager
                     RandomSpikeTrainSettings rndTrain =
                         (RandomSpikeTrainSettings)project.elecInputInfo.getStim(allStims.get(k));
 
+
+                    // Changed from 5ms to 0.1ms
+                    /** @todo Change handling of abs_refract to give option for this in GUI!!!*/
+                    float absRefractVal = 0.1f;
+
                     response.append("setfield " + stimulationElement
                                     + " min_amp 1.0 "
                                     + "max_amp 1.0 "
@@ -533,7 +538,7 @@ public class GenesisFileManager
                                                           project.genesisSettings.getUnitSystemToUse())
                                     + " reset 1 "
                                     + " abs_refract "
-                                    + UnitConverter.getTime(5f,
+                                    + UnitConverter.getTime(absRefractVal,
                                                             UnitConverter.NEUROCONSTRUCT_UNITS,
                                                             project.genesisSettings.getUnitSystemToUse())
                                     + " reset_value 0\n");

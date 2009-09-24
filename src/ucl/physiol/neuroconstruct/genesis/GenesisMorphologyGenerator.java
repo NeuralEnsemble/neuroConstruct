@@ -382,11 +382,17 @@ public class GenesisMorphologyGenerator
                     {
                         ChannelMechanism nextChanMech = thisGroupChanMechs.get(k);
 
-                        logger.logComment("Looking at: "+ nextChanMech);
+                        logger.logComment("Looking at: "+ nextChanMech, true);
+                        CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
+
+                        if (cellMech.isPointProcess())
+                        {
+                            GuiUtils.showErrorMessage(logger, "The cell mechanism: "+cellMech+" is a Point Process. These are not yet supported in GENESIS!", null, null);
+                            return "";
+                        }
 
                         if (!longChanMechs.contains(nextChanMech))
                         {
-                            CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
 
                             if (project.genesisSettings.isGenerateComments())
                             {
