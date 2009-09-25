@@ -382,7 +382,7 @@ public class GenesisMorphologyGenerator
                     {
                         ChannelMechanism nextChanMech = thisGroupChanMechs.get(k);
 
-                        logger.logComment("Looking at: "+ nextChanMech, true);
+                        logger.logComment("Looking at: "+ nextChanMech);
                         CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(nextChanMech.getName());
 
                         if (cellMech.isPointProcess())
