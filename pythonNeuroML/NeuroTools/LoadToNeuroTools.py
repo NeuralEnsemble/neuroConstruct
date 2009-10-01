@@ -1,8 +1,7 @@
 #
 #   This file can be placed in the simulations directory of any neuroConstruct simulation
 #   and all of the data traces found in that directory will be loaded into NeuroTools
-#   AnalogSignal objects 
-#   (TODO: load *.spike files into SpikeTrain objects)
+#   AnalogSignal and SpikeTrain objects 
 #
 #
 #   Author: Padraig Gleeson
@@ -15,6 +14,7 @@
 import os
 
 from NeuroTools.signals.analogs import AnalogSignal
+from NeuroTools.signals.spikes import *
 from NeuroTools.plotting import *
 
 ## Open the time.dat file & get time points
@@ -30,6 +30,21 @@ for line in time_file:
         
 print "There are %i time points"%len(times)   
 dt = times[1]-times[0]
+
+
+## Function for reading a spike train from a file in neuroConstruct format
+
+def getSpikeTrain(s_filename):
+  s_file = open(s_filename, 'r')
+  spiketimes = []
+
+  for line in s_file:
+      if len(line.strip()) > 0 :
+        st = float(line)
+        spiketimes.append(st)
+
+  return SpikeTrain(spiketimes,t_start = times[0], t_stop=times[-1])
+
 
 
 ## Function for reading an analog file
@@ -50,12 +65,14 @@ def getAnalogSignal(v_filename):
 ## Read in all traces
 
 allAnalogSignals = {}
+allSpikeLists = {}
   
 file_names = os.listdir('.')
 
 populations = []
 
 for file_name in file_names:
+    
   if file_name.endswith('.dat') and file_name.find('_')>0:
     cellRef = file_name[:-4]
     popName = cellRef[:cellRef.rfind('_')]
@@ -65,8 +82,28 @@ for file_name in file_names:
     sig = getAnalogSignal(file_name) 
     
     allAnalogSignals[cellRef] = sig
+    
+  if file_name.endswith('.spike') and file_name.find('_')>0:
+    cellRef = file_name[:file_name.find('.')]
+    id = int(cellRef[cellRef.find('_')+1:])
+    popName = cellRef[:cellRef.rfind('_')]
+    
+    #print "Found cell %i in population %s"%(id, popName)
+    
+    if populations.count(popName)==0 : populations.append(popName)
+    
+    sig = getSpikeTrain(file_name) 
+    
+    if not allSpikeLists.has_key(popName):
+        allSpikeLists[popName] = SpikeList([], [], t_start = times[0], t_stop=times[-1])
+        
+    allSpikeLists[popName].append(id, sig)
+    
 
-print "All populations: "+ str(populations)
+print "All populations with signals: "+ str(populations)
+
+for popName in allSpikeLists.keys():
+    print "Spikes found for cell ids in population %s: %s"%(popName, allSpikeLists[popName].id_list())
 
 
 ## Plot the loaded data
@@ -77,15 +114,20 @@ import matplotlib.pyplot
 plots = {}
 
 for pop in populations:
-    figure = matplotlib.pyplot.figure()
-    figure.suptitle(pop)
-    plots[pop] = figure.add_subplot(111)
-
-    pylab.ylabel('Membrane potential (mV)')
-    pylab.xlabel('Time (ms)')
+    if allSpikeLists.has_key(pop):
+        allSpikeLists[pop].raster_plot(kwargs={'label':pop})
+        pylab.ylabel('Neuron # in population '+pop)
+    else:
+        figure = matplotlib.pyplot.figure()
+        figure.suptitle(pop)
+        plots[pop] = figure.add_subplot(111)
+    
+        pylab.ylabel('Membrane potential (mV)')
+        pylab.xlabel('Time (ms)')
 
 
 print "\nTraces which have been loaded: "
+
 for cellRef in allAnalogSignals.keys():
     
   print "\n%s:\n     %s"%(cellRef, allAnalogSignals[cellRef])
