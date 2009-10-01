@@ -130,7 +130,7 @@ print "\nTraces which have been loaded: "
 
 for cellRef in allAnalogSignals.keys():
     
-  print "\n%s:\n     %s"%(cellRef, allAnalogSignals[cellRef])
+  #print "\n%s:\n     %s"%(cellRef, allAnalogSignals[cellRef])
 
   popName = cellRef[:cellRef.rfind('_')]
     
