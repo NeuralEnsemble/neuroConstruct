@@ -92,34 +92,40 @@ public class SimpleXMLElement extends SimpleXMLEntity
 
     public void addAttribute(SimpleXMLAttribute attr)
     {
+        clearCache();
         attributes.add(attr);
     }
 
     public void addAttribute(String name, String value)
     {
+        clearCache();
         attributes.add(new SimpleXMLAttribute(name, value));
     }
 
     public void addNamespace(SimpleXMLNamespace ns)
     {
+        clearCache();
         namespaces.add(ns);
     }
 
 
     public void addChildElement(SimpleXMLElement childElement)
     {
+        clearCache();
         childElement.setParent(this);
         contents.add(childElement);
     }
 
     public void addComment(SimpleXMLComment comment)
     {
+        clearCache();
         //comment.setParent(this);
         contents.add(comment);
     }
 
     public void addComment(String comment)
     {
+        clearCache();
         //comment.setParent(this);
         contents.add(new SimpleXMLComment(comment));
     }
@@ -173,6 +179,7 @@ public class SimpleXMLElement extends SimpleXMLEntity
 
     public void removeAllContents()
     {
+        clearCache();
         contents = new ArrayList<SimpleXMLEntity> ();
     }
 
@@ -236,6 +243,7 @@ public class SimpleXMLElement extends SimpleXMLEntity
 
     public void setNsPrefix(String nsPrefix)
     {
+        clearCache();
         this.nsPrefix = nsPrefix;
     };
 
@@ -249,6 +257,7 @@ public class SimpleXMLElement extends SimpleXMLEntity
 
     public void addContent(String text)
     {
+        clearCache();
         SimpleXMLContent content = new SimpleXMLContent(text);
         this.contents.add(content);
     };
@@ -318,6 +327,7 @@ public class SimpleXMLElement extends SimpleXMLEntity
      */
     protected boolean setValueByXPath(String simpleXPathExp, String value)
     {
+        clearCache();
         logger.logComment("Setting value of ("+simpleXPathExp+") in "+name +" to: "+value);
 
         SimpleXMLEntity[] entities = getXMLEntities(simpleXPathExp);
@@ -340,20 +350,53 @@ public class SimpleXMLElement extends SimpleXMLEntity
         return false;
     }
 
+    // To enable caching of XPath query results
+    private Hashtable<String,SimpleXMLEntity[]> lastXPathResults = new Hashtable<String,SimpleXMLEntity[]>();
+    private long lastXPathReqTime = -1;
 
+    private void clearCache()
+    {
+        lastXPathResults = new Hashtable<String,SimpleXMLEntity[]>();
+        lastXPathReqTime = -1;
+    }
 
     /**
      * Gets a SimpleXMLEntity in the tree from an expression in a limited form of XPath
      */
     public SimpleXMLEntity[] getXMLEntities(String simpleXPathExp)
     {
+        boolean verbose = false;
+        boolean performCaching = true;
+
+        String attrInfo = "";
+        if (verbose)
+        {
+            for(SimpleXMLAttribute a: attributes)
+            {
+                attrInfo = " "+ attrInfo+ a.getXMLString("", false);
+            }
+        }
+
+        long currTime = System.currentTimeMillis();
+
+        if (performCaching &&
+            lastXPathResults.size()>0 &&
+            (currTime-lastXPathReqTime<200) &&
+            lastXPathResults.keySet().contains(simpleXPathExp))
+        {
+            logger.logComment("-- -   Returning cached val for "+simpleXPathExp +" in entity: <"+ this.toString()+" "+attrInfo+">", verbose);
+            return lastXPathResults.get(simpleXPathExp);
+        }
+        lastXPathReqTime = System.currentTimeMillis();
 
         SimpleXMLEntity[] emptyArray = new SimpleXMLEntity[]{};
-        logger.logComment("-- -   Getting "+simpleXPathExp +" in entity: "+ this.toString());
+        logger.logComment("-- -   Getting "+simpleXPathExp +" in entity: <"+ this.toString()+" "+attrInfo+">", verbose);
 
         if (simpleXPathExp.startsWith("/") && !simpleXPathExp.startsWith("//"))
         {
             logger.logError("Looking for something on the root element. Don't allow that here!!");
+
+            lastXPathResults.put(simpleXPathExp, emptyArray);
             return emptyArray;
         }
 
@@ -389,10 +432,15 @@ public class SimpleXMLElement extends SimpleXMLEntity
                         logger.logComment("Found matching: "+ attributes.get(i));
                         SimpleXMLEntity[] ents = new SimpleXMLEntity[]{attributes.get(i)};
                         logger.logComment("ents: "+ents);
+                        lastXPathResults.put(simpleXPathExp, ents);
                         return ents;
                     }
                 }
-                if (!anyLocation) return emptyArray;
+                if (!anyLocation)
+                {
+                    lastXPathResults.put(simpleXPathExp, emptyArray);
+                    return emptyArray;
+                }
             }
             firstElement = simpleXPathExp;
             subElement = "";
@@ -412,6 +460,8 @@ public class SimpleXMLElement extends SimpleXMLEntity
                 ((SimpleXMLContent)contents.get(i)).getText().trim().length()>0)
             {
                 SimpleXMLEntity[] ents = new SimpleXMLEntity[]{contents.get(i)};
+
+                lastXPathResults.put(simpleXPathExp, ents);
                 return ents;
             }
             if (contents.get(i) instanceof SimpleXMLElement)
@@ -442,7 +492,7 @@ public class SimpleXMLElement extends SimpleXMLEntity
                         if (subElement.trim().length() == 0)
                         {
                             logger.logComment("---  Zero sub element, it's the one we're after...");
-                            //return new SimpleXMLEntity[]{xe};
+                            
                             allFoundEntities.add(xe);
                         }
                         else
@@ -467,18 +517,28 @@ public class SimpleXMLElement extends SimpleXMLEntity
                 {
                     logger.logComment("Checking in the sub element for the path");
                     SimpleXMLEntity[] subElementResults = xe.getXMLEntities("//" + simpleXPathExp);
-                    if (subElementResults!=null && subElementResults.length>0) return subElementResults;
+                    if (subElementResults!=null && subElementResults.length>0)
+                    {
+                        lastXPathResults.put(simpleXPathExp, subElementResults);
+                        return subElementResults;
+                    }
                 }
             }
         }
 
-        if (allFoundEntities.size()==0) return emptyArray;
+        if (allFoundEntities.size()==0)
+        {
+            lastXPathResults.put(simpleXPathExp, emptyArray);
+            return emptyArray;
+        }
 
         SimpleXMLEntity[] results = new SimpleXMLEntity[allFoundEntities.size()];
         for (int i = 0; i < allFoundEntities.size(); i++)
         {
             results[i] = allFoundEntities.get(i);
         }
+        
+        lastXPathResults.put(simpleXPathExp, results);
         return results;
 
     }

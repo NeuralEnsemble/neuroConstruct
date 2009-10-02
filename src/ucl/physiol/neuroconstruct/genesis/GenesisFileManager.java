@@ -3698,6 +3698,8 @@ public class GenesisFileManager
 
                             if (useTablesToSave)
                             {
+
+                                postRunLines.append("// "+ record.getDescription(true, false)+"\n");
                                 postRunLines.append("foreach cellName ({el " + getCellGroupElementName(cellGroupName) + "/#})\n");
                                 postRunLines.append("    ce {cellName}\n\n");
                             }
@@ -3792,7 +3794,8 @@ public class GenesisFileManager
                                         response.append("    setfield " + fileElement + " step_mode 3\n");
                                         response.append("    call " + fileElement + " TABCREATE "+steps+" -1000 1000\n");
 
-                                        postRunLines.append("    tab2file {strcat {targetDir} {fileNameStr}} " + fileElement + " table -overwrite\n");
+                                        //postRunLines.append("compName = "+compElement+"\n");
+                                        postRunLines.append("tab2file {strcat {targetDir} {fileNameStr}} " + fileElement + " table -overwrite\n");
 
                                     }
 
@@ -4004,7 +4007,10 @@ public class GenesisFileManager
                                             response.append("setfield " + fileElement + " step_mode 3\n");
                                             response.append("call " + fileElement + " TABCREATE "+steps+" -1000 1000\n");
 
-                                            postRunLines.append("    tab2file {strcat {targetDir} {fileNameStr}} " + fileElement + " table -overwrite\n");
+                                            postRunLines.append("compName = {strcat {cellName} /" +
+                                                    SimEnvHelper.getSimulatorFriendlyName(segInMappedCell.getSegmentName()) +
+                                                    "}\n");
+                                            postRunLines.append("tab2file {strcat {targetDir} {fileNameStr}} " + fileElement + " table -overwrite\n");
 
                                         }
 

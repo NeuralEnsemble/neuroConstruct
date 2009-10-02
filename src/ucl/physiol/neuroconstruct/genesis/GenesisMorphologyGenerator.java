@@ -948,10 +948,10 @@ public class GenesisMorphologyGenerator
         try
         {
 
-            GeneralUtils.timeCheck("Before proj load");
+            GeneralUtils.timeCheck("Before proj load", true);
 
             //File projFile = new File("models/BioMorph/BioMorph.neuro.xml");
-            File projFile = new File("nCmodels/InProgress/TraubEtAl05/TraubEtAl05.ncx");
+            File projFile = new File("nCmodels/Thalamocortical/Thalamocortical.ncx");
             //File projFile = new File("testProjects/TestDetailedMorphs/TestDetailedMorphs.neuro.xml");
 
             Project testProj = Project.loadProject(projFile, new ProjectEventListener()
@@ -993,11 +993,11 @@ public class GenesisMorphologyGenerator
             GenesisMorphologyGenerator cellTemplateGenerator1 = new GenesisMorphologyGenerator(cellToUse,testProj, f);
 
 
-            GeneralUtils.timeCheck("Before gen morph");
+            GeneralUtils.timeCheck("Before gen morph", true);
 
             System.out.println("Generated: " + cellTemplateGenerator1.generateFile());
 
-            GeneralUtils.timeCheck("After gen morph");
+            GeneralUtils.timeCheck("After gen morph", true);
 
             //System.out.println(CellTopologyHelper.printDetails(cell, null));
         }
