@@ -971,13 +971,7 @@ public class GenesisFileManager
         response.append("str units = \"" + UnitConverter.getUnitSystemDescription(project.genesisSettings.getUnitSystemToUse()) + "\"\n\n");
 
 
-        if (mooseCompatMode())
-        {
-            if (project.genesisSettings.getUnitSystemToUse()==UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS)
-            {
-                GuiUtils.showWarningMessage(logger, "Note that MOOSE interaction has only been tested with SI Units so far", null);
-            }
-        }
+       
 
         String core = mooseCompatMode()?GEN_CORE_MOOSE:GEN_CORE_GENESIS;
 
@@ -2629,6 +2623,20 @@ public class GenesisFileManager
                                     + " "
                                     + newElementName
                                     + "\n");
+
+                    if (mooseCompatMode())
+                    {
+                        for (ChannelMechanism cm: mappedCell.getChanMechsVsGroups().keySet())
+                        {
+                            if (project.cellMechanismInfo.getCellMechanism(cm.getName()).isIonConcMechanism())
+                            {
+                                response.append("//************************************************************************************************\n");
+                                response.append("//*** Assuming cell: "+newElementName+" will use tab2dchannel, so using method ee on it ***************\n");
+                                response.append("setfield "+newElementName+" method ee\n");
+                                response.append("//************************************************************************************************\n\n");
+                            }
+                        }
+                    }
                     response.append("addfield "
                                     + newElementName
                                     + " celltype\n");

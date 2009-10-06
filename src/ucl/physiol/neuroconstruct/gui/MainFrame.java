@@ -79,7 +79,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
 import ucl.physiol.neuroconstruct.utils.xml.*;
 
 /**
- * The big class. The main neuroConstruct frame, lots of GUI stuff. A lot of the
+ * The big class, the main neuroConstruct frame, lots of GUI stuff. A lot of the
  * non gui specific stuff should be moved to ProjectManager
  *
  * @author Padraig Gleeson
@@ -426,7 +426,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JCheckBox jCheckBoxNeuronGenAllMod = new JCheckBox("Generate all mod files");
     JCheckBox jCheckBoxNeuronCopySimFiles = new JCheckBox("Copy files to simulations dir");
     JCheckBox jCheckBoxGenesisCopySimFiles = new JCheckBox("Copy files to simulations dir");
-    JCheckBox jCheckBoxGenesisMooseMode = new JCheckBox("MOOSE test mode (alpha)");
+    JCheckBox jCheckBoxGenesisMooseMode = new JCheckBox("MOOSE test mode (beta)");
     
 
     JCheckBox jCheckBoxNeuronForceCorrInit = new JCheckBox("Force correct ChannelML init");
