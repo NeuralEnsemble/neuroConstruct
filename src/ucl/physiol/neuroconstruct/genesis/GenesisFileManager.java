@@ -222,6 +222,8 @@ public class GenesisFileManager
 
             GeneralUtils.timeCheck("B4 generateCellGroups");
             fw.write(generateCellGroups());
+
+            fw.write(generateScriptBlock(ScriptLocation.AFTER_CELL_CREATION));
             
 
             GeneralUtils.timeCheck("B4 generateNetworkConnections");
@@ -476,13 +478,14 @@ public class GenesisFileManager
                                       + ", "+input+"");
 
                     float delToUse = del;
+
                     if(delToUse>0)
                     {
                         addComment(response, "Pulses are shifted one dt step, so that pulse will begin at delay1, as in NEURON");
                         delToUse = del - project.simulationParameters.getDt();
                     }
 
-                    float recurDelay = Integer.MAX_VALUE; // A long time before any recurrance
+                    float recurDelay = 10000000; // A long time before any recurrance
 
                     if (iClamp.isRepeat())  recurDelay = 0;
 
@@ -2268,7 +2271,7 @@ public class GenesisFileManager
                             "end\n");
 
             String runControl = CONTROLS_ELEMENT_ROOT + "/runControl";
-            response.append("create xform "+runControl + " [700, 20, 200, 160] -title \"Run Controls: "+project.simulationParameters.getReference()+"\"\n");
+            response.append("create xform "+runControl + " [700, 20, 200, 140] -title \"Run Controls: "+project.simulationParameters.getReference()+"\"\n");
 
             response.append("xshow " + runControl+"\n\n");
 
@@ -2508,6 +2511,12 @@ public class GenesisFileManager
         response.append("\ncreate neutral "+CELL_ELEMENT_ROOT+"\n\n");
 
 
+        ArrayList<String> tempChans = new ArrayList<String>();
+        
+        // List of cells checked for bug in hsolve preventing use of hsolve and 
+        // symmetric compartments when a compartment has 3 or more child compartments
+        ArrayList<String> cellsCheckedHsolveBug = new ArrayList<String>();
+
 
         for (int ii = 0; ii < cellGroupNames.size(); ii++)
         {
@@ -2529,6 +2538,42 @@ public class GenesisFileManager
 
 
             Cell mappedCell = this.mappedCells.get(cellTypeName);
+
+            if (project.genesisSettings.numMethod.isHsolve() && 
+                project.genesisSettings.isSymmetricCompartments() &&
+                !mooseCompatMode() &&
+                !cellsCheckedHsolveBug.contains(mappedCell.getInstanceName()))
+            {
+                int numComps = mappedCell.getAllSegments().size();
+                Hashtable<Integer, Integer> numChildren = new Hashtable<Integer, Integer>();
+                for(Segment seg: mappedCell.getAllSegments())
+                {
+                    if (seg.getParentSegment()!=null)
+                    {
+                        if (numChildren.get(seg.getParentSegment().getSegmentId())==null)
+                        {
+                            numChildren.put(seg.getParentSegment().getSegmentId(), 0);
+                        }
+                        numChildren.put(seg.getParentSegment().getSegmentId(), numChildren.get(seg.getParentSegment().getSegmentId())+1);
+                    }
+                }
+                logger.logComment("numChildren: "+ numChildren);
+
+
+                boolean problem = false;
+                for(Integer children: numChildren.values())
+                {
+                    if (children>=3) problem = true;
+                }
+
+                if (problem)
+                {
+                    GuiUtils.showWarningMessage(logger, "Warning. There is a known bug in GENESIS 2 which occurs when using hsolve with symmetric compartments. Cells which have compartments with\n" +
+                            "3 or more children will not behave properly. This is the case for cell: "+mappedCell.getInstanceName()+" in this simulation.", null);
+                }
+
+                cellsCheckedHsolveBug.add(mappedCell.getInstanceName());
+            }
             
             logger.logComment("Got the mapped cell");
 
@@ -2644,6 +2689,7 @@ public class GenesisFileManager
                     response.append("setfield "
                                     + newElementName
                                     + " celltype " + mappedCell.getInstanceName() + "\n\n");
+
                     
                     if (CellTopologyHelper.hasExtraCellMechParams(mappedCell))
                     {
@@ -2728,6 +2774,9 @@ public class GenesisFileManager
                                                 {
                                                     if (addComments)
                                                         moveCommands.add("//   " +"Channel was set to "+uniq+" in *.p file, and correct params set there. Moving back to original name.\n");
+
+                                                    if (!tempChans.contains(uniq))
+                                                        tempChans.add(uniq);
                                                     
                                                     moveCommands.add(command);
                                                     
@@ -2781,6 +2830,9 @@ public class GenesisFileManager
                                                     {
                                                         if (addComments)
                                                             moveCommands.add("//   " +"Channel was set to "+uniq+" in *.p file, and correct params set there. Moving back to original name.\n");
+
+                                                        if (!tempChans.contains(uniq))
+                                                            tempChans.add(uniq);
 
                                                         moveCommands.add(command);
                                                     }

@@ -51,6 +51,7 @@ public class ScriptLocation
 
 
     public static ScriptLocation BEFORE_CELL_CREATION = new ScriptLocation(-1, "Before Cells created", "The GENESIS code will be called before any of the generated cells are created");
+    public static ScriptLocation AFTER_CELL_CREATION = new ScriptLocation(1, "After Cells created", "Called just after generated cells are created");
     public static ScriptLocation BEFORE_FINAL_RESET = new ScriptLocation(5, "Before Final reset", "Called just before final reset, which is intended to reinitialise all channels, etc.");
     public static ScriptLocation AFTER_FINAL_RESET = new ScriptLocation(10, "After Final reset", "Called just after final reset, when initial conditions of channels etc. can be altered");
     public static ScriptLocation AFTER_SIMULATION = new ScriptLocation(15, "After simulation run", "Code executed after simulation is completed");
@@ -58,6 +59,7 @@ public class ScriptLocation
     static
     {
         allLocations.add(BEFORE_CELL_CREATION);
+        allLocations.add(AFTER_CELL_CREATION);
         allLocations.add(BEFORE_FINAL_RESET);
         allLocations.add(AFTER_FINAL_RESET);
         allLocations.add(AFTER_SIMULATION);

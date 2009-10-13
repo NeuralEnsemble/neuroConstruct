@@ -267,7 +267,7 @@ public class SimulationData
             String yUnit = "";
 
 
-            if (variable.equals(SimPlot.VOLTAGE) || variable.equals(SimPlot.REV_POT))
+            if (variable.equals(SimPlot.VOLTAGE) || variable.contains(SimPlot.REV_POT))
             {
                 conversionFactor = UnitConverter.getVoltage(conversionFactor,
                                                                     unitSystem,
