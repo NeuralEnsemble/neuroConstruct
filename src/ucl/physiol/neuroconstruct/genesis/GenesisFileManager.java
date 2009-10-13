@@ -2268,7 +2268,7 @@ public class GenesisFileManager
                             "end\n");
 
             String runControl = CONTROLS_ELEMENT_ROOT + "/runControl";
-            response.append("create xform "+runControl + " [700, 20, 200, 120] -title \"Run Controls: "+project.simulationParameters.getReference()+"\"\n");
+            response.append("create xform "+runControl + " [700, 20, 200, 160] -title \"Run Controls: "+project.simulationParameters.getReference()+"\"\n");
 
             response.append("xshow " + runControl+"\n\n");
 
@@ -2276,6 +2276,7 @@ public class GenesisFileManager
             response.append("create xbutton " + runControl+"/RUN -script \"step "
                             + ( (int) (getSimDuration() /
                                        project.simulationParameters.getDt())) + "\"\n"); // +1 to include 0 and last timestep
+           response.append("create xbutton " + runControl+"/STOP -script stop\n\n");
            response.append("create xbutton " + runControl+"/QUIT -script quit\n\n");
 
         }
