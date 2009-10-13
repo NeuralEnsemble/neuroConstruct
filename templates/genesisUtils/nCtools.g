@@ -183,8 +183,10 @@ function compchans(compName)
     echo "Spec axial res:   " { { {getfield {compName} Ra} * 3.14159265 * {getfield {compName} dia} * {getfield {compName} dia} } / {4 * {getfield {compName} len}} }
 
     foreach chanName ({el {compName}/##[][TYPE=hh_channel]})
-        showfield {chanName} Ik Gk Ek Gbar
-        echo "Conductance density  = " {{getfield {chanName} Gbar} / {area}}
+        if ({version} < 3.0)
+            showfield {chanName} Ik Gk Ek Gbar
+            echo "Conductance density  = " {{getfield {chanName} Gbar} / {area}}
+        end
     end
 
     foreach chanName ({el {compName}/##[][TYPE=tabchannel]})
