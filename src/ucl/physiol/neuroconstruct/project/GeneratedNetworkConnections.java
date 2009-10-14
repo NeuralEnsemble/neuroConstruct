@@ -587,10 +587,36 @@ public class GeneratedNetworkConnections
                 int[] numInEachSrcCell = new int[srcCellNum];
                 int[] numInEachTgtCell = new int[tgtCellNum];
 
+                int numZeroWeight = 0;
+                int numNegWeight = 0;
+
                 for (SingleSynapticConnection conn : conns)
                 {
                     numInEachSrcCell[conn.sourceEndPoint.cellNumber]++;
                     numInEachTgtCell[conn.targetEndPoint.cellNumber]++;
+
+                    if (conn.props!=null && conn.props.size()>0)
+                    {
+                        for(ConnSpecificProps csp: conn.props)
+                        {
+                            if (csp.weight==0) numZeroWeight++;
+                            if (csp.weight<0) numNegWeight++;
+
+                        }
+                    }
+                }
+
+                String weightReport = "";
+
+
+
+                if(numZeroWeight>0)
+                {
+                    weightReport = weightReport +" <font color=\""+ValidityStatus.VALIDATION_COLOUR_WARN+"\">("+numZeroWeight+" with zero weight)</font>";
+                }
+                if(numNegWeight>0)
+                {
+                    weightReport = weightReport +" <font color=\"red\">("+numNegWeight+" with negative weight)</font>";
                 }
 
                 float srcAvg = 0;
@@ -719,9 +745,8 @@ public class GeneratedNetworkConnections
 
                 generationReport.append("No. of conns: <b>"
                                         +
-                                        project.generatedNetworkConnections.getSynapticConnections(netConnName).
-                                        size()
-                                        + "</b> (<font color=\"green\">" + srcAvg + srcStdString + " each</font> -> " +
+                                        project.generatedNetworkConnections.getSynapticConnections(netConnName).size()
+                                        + weightReport+ "</b> (<font color=\"green\">" + srcAvg + srcStdString + " each</font> -> " +
                                         "<font color=\"red\">" + tgtAvg + tgtStdString + " each</font>)<br>");
                 
                 NumberGenerator nb = null;
