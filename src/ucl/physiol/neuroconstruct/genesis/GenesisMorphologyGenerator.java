@@ -195,8 +195,8 @@ public class GenesisMorphologyGenerator
         float globalRA = cell.getSpecAxResForGroup(Section.ALL);
         if (!Float.isNaN(globalRA))
         {
-            prePassiveLine = "*set_global RA "
-                + UnitConverter.getSpecificAxialResistance(globalRA,
+            prePassiveLine = "*set_global	         RA "
+                + (float)UnitConverter.getSpecificAxialResistance(globalRA,
                                                            UnitConverter.NEUROCONSTRUCT_UNITS,
                                                            project.genesisSettings.getUnitSystemToUse());
             lastSpecAxRes = globalRA;
@@ -213,8 +213,8 @@ public class GenesisMorphologyGenerator
 
         if (!Float.isNaN(globalCM))
         {
-            prePassiveLine = "*set_global CM "
-                + UnitConverter.getSpecificCapacitance(globalCM,
+            prePassiveLine = "*set_global	         CM "
+                + (float)UnitConverter.getSpecificCapacitance(globalCM,
                                                        UnitConverter.NEUROCONSTRUCT_UNITS,
                                                        project.genesisSettings.getUnitSystemToUse());
             lastSpecCap = globalCM;
@@ -225,8 +225,8 @@ public class GenesisMorphologyGenerator
             response.append(prePassiveLine+"\n\n");
         }
 
-        prePassiveLine = "*set_global	RM	"
-                        + UnitConverter.getSpecificMembraneResistance(project.simulationParameters.getGlobalRm(),
+        prePassiveLine = "*set_global	         RM	"
+                        + (float)UnitConverter.getSpecificMembraneResistance(project.simulationParameters.getGlobalRm(),
                                                                       UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                       project.genesisSettings.getUnitSystemToUse());
 
@@ -237,8 +237,8 @@ public class GenesisMorphologyGenerator
         response.append(prePassiveLine+"\n\n");
 
 
-        prePassiveLine = "*set_global     EREST_ACT	"
-                        + UnitConverter.getVoltage(cell.getInitialPotential().getNominalNumber(),
+        prePassiveLine = "*set_global	         EREST_ACT	"
+                        + (float)UnitConverter.getVoltage(cell.getInitialPotential().getNominalNumber(),
                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
                                                    project.genesisSettings.getUnitSystemToUse());
 
@@ -257,7 +257,7 @@ public class GenesisMorphologyGenerator
         response.append(prePassiveLine+"\n\n");
 
         prePassiveLine = "*set_compt_param     ELEAK	"
-                        + UnitConverter.getVoltage(project.simulationParameters.getGlobalVLeak(),
+                        + (float)UnitConverter.getVoltage(project.simulationParameters.getGlobalVLeak(),
                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
                                                    project.genesisSettings.getUnitSystemToUse());
 
@@ -307,7 +307,7 @@ public class GenesisMorphologyGenerator
 
             if (specAxRes!= lastSpecAxRes)
             {
-                response.append("*set_compt_param RA " + UnitConverter.getSpecificAxialResistance(specAxRes,
+                response.append("*set_compt_param     RA " + (float)UnitConverter.getSpecificAxialResistance(specAxRes,
                     UnitConverter.NEUROCONSTRUCT_UNITS,
                     project.genesisSettings.getUnitSystemToUse()) + "\n");
 
@@ -320,7 +320,7 @@ public class GenesisMorphologyGenerator
                     response.append("// Spec cap is zero, causes problems, so using v small CM \n");
                     specCap = 1e-18f;
                 }
-                response.append("*set_compt_param CM " + UnitConverter.getSpecificCapacitance(specCap,
+                response.append("*set_compt_param     CM " + (float)UnitConverter.getSpecificCapacitance(specCap,
                     UnitConverter.NEUROCONSTRUCT_UNITS,
                     project.genesisSettings.getUnitSystemToUse()) + "\n");
 
@@ -508,8 +508,7 @@ public class GenesisMorphologyGenerator
                                     }
 
                                     String preLine = "*set_compt_param     ELEAK "
-                                        +
-                                        UnitConverter.getVoltage(revPotential,
+                                        + (float)UnitConverter.getVoltage(revPotential,
                                                                  UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                  project.genesisSettings.getUnitSystemToUse());
 
@@ -520,7 +519,7 @@ public class GenesisMorphologyGenerator
 
                                     preLine = preLine+ "\n*set_compt_param     RM "
                                         +
-                                        (1 / UnitConverter.getConductanceDensity(nextChanMech.getDensity(),
+                                        (float)(1 / UnitConverter.getConductanceDensity(nextChanMech.getDensity(),
                                         UnitConverter.NEUROCONSTRUCT_UNITS,
                                         project.genesisSettings.getUnitSystemToUse()));
 
@@ -530,7 +529,7 @@ public class GenesisMorphologyGenerator
 
                                     //if (!lastPassiveParams.equals(preLine))
                                     //{
-                                        passParamInfo = preLine + "\n";
+                                        passParamInfo = preLine + "\n\n\n";
 
                                         //lastPassiveParams = preLine;
                                     //}
@@ -563,10 +562,9 @@ public class GenesisMorphologyGenerator
                 if (firstPassiveCellMech==null)
                 {
                     passParamInfo = passParamInfo +"\n// No passive conductance found!!\n*set_compt_param     RM "
-                                        +
-                                        UnitConverter.getResistance(1e12,
+                                        + (float)UnitConverter.getResistance(1e12,
                                         UnitConverter.NEUROCONSTRUCT_UNITS,
-                                        project.genesisSettings.getUnitSystemToUse())+"\n";
+                                        project.genesisSettings.getUnitSystemToUse())+"\n\n\n";
                 }
 
                 StringBuffer channelCondString = new StringBuffer();
@@ -652,7 +650,7 @@ public class GenesisMorphologyGenerator
                                     if (segment.isSpherical())  area = 4 * Math.PI * segment.getRadius()*segment.getRadius();
 
 
-                                    area =  area * ((UnitConverter.getArea(1, UnitConverter.NEURON_UNITS,
+                                    area =  area * ((float)(UnitConverter.getArea(1, UnitConverter.NEURON_UNITS,
                                             project.genesisSettings.getUnitSystemToUse())));
 
                                     float B = (float)( phi / area);

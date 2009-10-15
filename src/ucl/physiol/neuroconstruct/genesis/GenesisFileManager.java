@@ -1207,8 +1207,20 @@ public class GenesisFileManager
                                     if (nextChanMech.getExtraParameters().size()==1)
                                         onlyPassive = true;
                                 }
+                                else if (mp.getName().equals("tau"))
+                                {
+                                    paramVal = (float)UnitConverter.getTime(mp.getValue(),
+                                                        UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                        project.genesisSettings.getUnitSystemToUse());
+                                }
+                                else if (mp.getName().equals("beta"))
+                                {
+                                    paramVal = (float)UnitConverter.getRate(mp.getValue(),
+                                                        UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                        project.genesisSettings.getUnitSystemToUse());
+                                }
 
-                                response.append("setfield "+newChan+" "+paramName+" "+paramVal+"\n");
+                                response.append("setfield "+newChan+" "+paramName+" "+paramVal+" \n");
                                 initCall = "init_"+nextChanMech.getName()+" "+newChan+"\n\n";
                             }
                             else
@@ -1481,16 +1493,21 @@ public class GenesisFileManager
         response.append("\n");
         //response.append("tstop = "+project.simulationParameters.duration+"\n");
 
-        response.append("setclock 0 "
-                        + (float)convertNeuroConstructTime(project.simulationParameters.getDt()));
+        response.append("float dt = "
+                        + (float)convertNeuroConstructTime(project.simulationParameters.getDt())+"\n");
+        response.append("float duration = "
+                        + (float)convertNeuroConstructTime(project.simulationParameters.getDuration())+"\n");
+        response.append("int steps = {duration}/{dt}\n\n");
+        
+        
+        response.append("setclock 0 {dt}");
         if (project.genesisSettings.isGenerateComments())
             response.append(" // " + getTimeUnitString());
         response.append("\n");
 
         if (mooseCompatMode())
         {
-            response.append("setclock 1 "
-                            + (float)convertNeuroConstructTime(project.simulationParameters.getDt()));
+            response.append("setclock 1 {dt}");
 
             if (project.genesisSettings.isGenerateComments())
                 response.append(" // " + getTimeUnitString());
@@ -1568,7 +1585,7 @@ public class GenesisFileManager
     }
 
 
-
+/*
     private float getSimDuration()
     {
         if (simConfig.getSimDuration()==0) // shouldn't be...
@@ -1579,7 +1596,7 @@ public class GenesisFileManager
             return simConfig.getSimDuration();
     }
 
-/*
+
     private String generateCellParamControl()
     {
         StringBuffer response = new StringBuffer();
@@ -2276,9 +2293,7 @@ public class GenesisFileManager
             response.append("xshow " + runControl+"\n\n");
 
             response.append("create xbutton " + runControl+"/RESET -script reset\n");
-            response.append("create xbutton " + runControl+"/RUN -script \"step "
-                            + ( (int) (getSimDuration() /
-                                       project.simulationParameters.getDt())) + "\"\n"); // +1 to include 0 and last timestep
+            response.append("create xbutton " + runControl+"/RUN -script \"step {steps}\"\n"); // +1 to include 0 and last timestep
            response.append("create xbutton " + runControl+"/STOP -script stop\n\n");
            response.append("create xbutton " + runControl+"/QUIT -script quit\n\n");
 
@@ -2334,8 +2349,7 @@ public class GenesisFileManager
 
             response.append("create xgraph "
                             + plotFrameName + "/graph"
-                            + " -xmin 0 -xmax "
-                            + convertNeuroConstructTime(getSimDuration())
+                            + " -xmin 0 -xmax {duration}"
                             + " -ymin " + min
                             + " -ymax " + max + "\n");
 
@@ -2672,14 +2686,16 @@ public class GenesisFileManager
 
                     if (mooseCompatMode())
                     {
+                        boolean methodChanged = false;
                         for (ChannelMechanism cm: mappedCell.getChanMechsVsGroups().keySet())
                         {
-                            if (project.cellMechanismInfo.getCellMechanism(cm.getName()).isIonConcMechanism())
+                            if (!methodChanged && project.cellMechanismInfo.getCellMechanism(cm.getName()).isIonConcMechanism())
                             {
-                                response.append("//************************************************************************************************\n");
-                                response.append("//*** Assuming cell: "+newElementName+" will use tab2dchannel, so using method ee on it ***************\n");
+                                response.append("//***********************************************************************************************\n");
+                                response.append("//****** Assuming cell: "+newElementName+" will use tab2dchannel, so using method ee on it ******\n");
                                 response.append("setfield "+newElementName+" method ee\n");
-                                response.append("//************************************************************************************************\n\n");
+                                response.append("//***********************************************************************************************\n\n");
+                                methodChanged = true;
                             }
                         }
                     }
@@ -3685,9 +3701,6 @@ public class GenesisFileManager
         
         
         String timeFileElement = FILE_ELEMENT_ROOT + "/timefile";
-
-        int steps = ( (int) (getSimDuration() /
-                             project.simulationParameters.getDt()));
             
         boolean useTablesToSave = mooseCompatMode(); // to test pre asc_file impl in moose
 
@@ -3853,7 +3866,7 @@ public class GenesisFileManager
                                         response.append("    echo \"Going to record element at \" {compName}\n");
                                         response.append("    create table " + fileElement + "\n");
                                         response.append("    setfield " + fileElement + " step_mode 3\n");
-                                        response.append("    call " + fileElement + " TABCREATE "+steps+" -1000 1000\n");
+                                        response.append("    call " + fileElement + " TABCREATE {steps} -1000 1000\n");
 
                                         //postRunLines.append("compName = "+compElement+"\n");
                                         postRunLines.append("tab2file {strcat {targetDir} {fileNameStr}} " + fileElement + " table -overwrite\n");
@@ -4066,7 +4079,7 @@ public class GenesisFileManager
                                             response.append("echo \"Going to record element at \" {compName}\n");
                                             response.append("create table " + fileElement + "\n");
                                             response.append("setfield " + fileElement + " step_mode 3\n");
-                                            response.append("call " + fileElement + " TABCREATE "+steps+" -1000 1000\n");
+                                            response.append("call " + fileElement + " TABCREATE {steps} -1000 1000\n");
 
                                             postRunLines.append("compName = {strcat {cellName} /" +
                                                     SimEnvHelper.getSimulatorFriendlyName(segInMappedCell.getSegmentName()) +
@@ -4217,10 +4230,10 @@ public class GenesisFileManager
         }
 
         
-        response.append("echo Starting sim: "+project.simulationParameters.getReference()+" with dur: "+simConfig.getSimDuration()+
-                " and dt: "+project.simulationParameters.getDt()+" ("+project.genesisSettings.getNumMethod()+")"+dateInfo+"\n");
+        response.append("echo Starting sim: "+project.simulationParameters.getReference()+" with dur: {duration}"+
+                " dt: {dt} and steps: {steps} ("+project.genesisSettings.getNumMethod()+")"+dateInfo+"\n");
 
-        response.append("step "+steps+"\n\n"); // +1 to include 0 and last timestep
+        response.append("step {steps}\n\n"); // +1 to include 0 and last timestep
 
 
         response.append("echo Finished simulation reference: "+project.simulationParameters.getReference()+dateInfo+"\n");
@@ -4244,15 +4257,13 @@ public class GenesisFileManager
         else
         {
             response.append("create table " + timeFileElement + "\n");
-            response.append("call " + timeFileElement + " TABCREATE "+steps+" 0 "+getSimDuration()+"\n");
+            response.append("call " + timeFileElement + " TABCREATE {steps} 0 {duration}\n");
         }
 
-        response.append("for (i = 0; i <= "
-                        + steps
-                        + "; i = i + 1"
+        response.append("for (i = 0; i <= {steps}; i = i + 1"
                         + ")\n");
 
-        response.append("    timeAtStep = " + convertNeuroConstructTime(project.simulationParameters.getDt()) + " * i\n");
+        response.append("    timeAtStep = {dt} * i\n");
         if (!useTablesToSave)
         {
             response.append("    call " + timeFileElement + " OUT_WRITE {timeAtStep} \n");
@@ -4268,7 +4279,7 @@ public class GenesisFileManager
         if (useTablesToSave)
         {
             response.append("tab2file {strcat {targetDir} {\"" + SimulationData.getStandardTimesFilename()
-                    + "\"}} "+timeFileElement+" table -nentries "+steps+" -overwrite\n\n");
+                    + "\"}} "+timeFileElement+" table -nentries {steps} -overwrite\n\n");
         }
 
         response.append(postRunLines.toString()+"\n");
