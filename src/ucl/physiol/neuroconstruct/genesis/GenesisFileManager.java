@@ -1497,7 +1497,7 @@ public class GenesisFileManager
                         + (float)convertNeuroConstructTime(project.simulationParameters.getDt())+"\n");
         response.append("float duration = "
                         + (float)convertNeuroConstructTime(simConfig.getSimDuration())+"\n");
-        response.append("int steps = {duration}/{dt}\n\n");
+        response.append("int steps =  {round {{duration}/{dt}}}\n\n");
         
         
         response.append("setclock 0 {dt}");
@@ -3869,7 +3869,7 @@ public class GenesisFileManager
                                         response.append("    echo \"Going to record element at \" {compName}\n");
                                         response.append("    create table " + fileElement + "\n");
                                         response.append("    setfield " + fileElement + " step_mode 3\n");
-                                        response.append("    call " + fileElement + " TABCREATE {steps} -1000 1000\n");
+                                        response.append("    call " + fileElement + " TABCREATE {{steps}+1} -1000 1000\n");
 
                                         //postRunLines.append("compName = "+compElement+"\n");
                                         postRunLines.append("tab2file {strcat {targetDir} {fileNameStr}} " + fileElement + " table -overwrite\n");
@@ -4082,7 +4082,7 @@ public class GenesisFileManager
                                             response.append("echo \"Going to record element at \" {compName}\n");
                                             response.append("create table " + fileElement + "\n");
                                             response.append("setfield " + fileElement + " step_mode 3\n");
-                                            response.append("call " + fileElement + " TABCREATE {steps} -1000 1000\n");
+                                            response.append("call " + fileElement + " TABCREATE {{steps}+1} -1000 1000\n");
 
                                             postRunLines.append("compName = {strcat {cellName} /" +
                                                     SimEnvHelper.getSimulatorFriendlyName(segInMappedCell.getSegmentName()) +
@@ -4260,11 +4260,10 @@ public class GenesisFileManager
         else
         {
             response.append("create table " + timeFileElement + "\n");
-            response.append("call " + timeFileElement + " TABCREATE {steps} 0 {duration}\n");
+            response.append("call " + timeFileElement + " TABCREATE {{steps}+1} 0 {duration}\n");
         }
 
-        response.append("for (i = 0; i <= {steps}; i = i + 1"
-                        + ")\n");
+        response.append("for (i = 0; i <= {steps}; i = i + 1"  + ")\n");
 
         response.append("    timeAtStep = {dt} * i\n");
         if (!useTablesToSave)
@@ -4282,7 +4281,7 @@ public class GenesisFileManager
         if (useTablesToSave)
         {
             response.append("tab2file {strcat {targetDir} {\"" + SimulationData.getStandardTimesFilename()
-                    + "\"}} "+timeFileElement+" table -nentries {steps} -overwrite\n\n");
+                    + "\"}} "+timeFileElement+" table -nentries {{steps}+1} -overwrite\n\n");
         }
 
         response.append(postRunLines.toString()+"\n");
