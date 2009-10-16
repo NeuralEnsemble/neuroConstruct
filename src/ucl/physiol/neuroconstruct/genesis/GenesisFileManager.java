@@ -1496,7 +1496,7 @@ public class GenesisFileManager
         response.append("float dt = "
                         + (float)convertNeuroConstructTime(project.simulationParameters.getDt())+"\n");
         response.append("float duration = "
-                        + (float)convertNeuroConstructTime(project.simulationParameters.getDuration())+"\n");
+                        + (float)convertNeuroConstructTime(simConfig.getSimDuration())+"\n");
         response.append("int steps = {duration}/{dt}\n\n");
         
         
@@ -2293,9 +2293,12 @@ public class GenesisFileManager
             response.append("xshow " + runControl+"\n\n");
 
             response.append("create xbutton " + runControl+"/RESET -script reset\n");
-            response.append("create xbutton " + runControl+"/RUN -script \"step {steps}\"\n"); // +1 to include 0 and last timestep
-           response.append("create xbutton " + runControl+"/STOP -script stop\n\n");
-           response.append("create xbutton " + runControl+"/QUIT -script quit\n\n");
+
+            response.append("str rerun\n");
+            response.append("rerun = { strcat \"step \" {steps} }\n");
+            response.append("create xbutton " + runControl+"/RUN -script {rerun}\n"); // +1 to include 0 and last timestep
+            response.append("create xbutton " + runControl+"/STOP -script stop\n\n");
+            response.append("create xbutton " + runControl+"/QUIT -script quit\n\n");
 
         }
 
@@ -2693,7 +2696,7 @@ public class GenesisFileManager
                             {
                                 response.append("//***********************************************************************************************\n");
                                 response.append("//****** Assuming cell: "+newElementName+" will use tab2dchannel, so using method ee on it ******\n");
-                                response.append("setfield "+newElementName+" method ee\n");
+                                response.append("//setfield "+newElementName+" method ee\n");
                                 response.append("//***********************************************************************************************\n\n");
                                 methodChanged = true;
                             }
