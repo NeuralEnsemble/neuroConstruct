@@ -64,6 +64,12 @@ public class PlotManager
         return getPlotterFrame(reference, false, true);
     }
 
+    public static PlotterFrame getPlotterFrame(String reference,
+                                               boolean setVisible)
+    {
+        return getPlotterFrame(reference, false, setVisible);
+    }
+
 
     public static PlotterFrame getPlotterFrame(String reference, 
                                                 boolean standalone, 
@@ -72,7 +78,7 @@ public class PlotManager
 
         if (existingPlotFrames.containsKey(reference))
         {
-            PlotterFrame frame = (PlotterFrame)existingPlotFrames.get(reference);
+            PlotterFrame frame = existingPlotFrames.get(reference);
             return frame;
         }
         PlotterFrame frame = new PlotterFrame(reference, project, standalone);

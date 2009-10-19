@@ -89,6 +89,7 @@ public class MainTest
                 ucl.physiol.neuroconstruct.project.VolumeBasedConnGeneratorTest.class,
                 ucl.physiol.neuroconstruct.project.ExtendedNetworkGeneratorTest.class,
                 ucl.physiol.neuroconstruct.project.packing.OneDimRegSpacingPackingAdapterTest.class,
+                ucl.physiol.neuroconstruct.simulation.SpikeAnalyserTest.class,
                 ucl.physiol.neuroconstruct.utils.NumberGeneratorTest.class,
                 ucl.physiol.neuroconstruct.utils.equation.ExpressionTest.class/**/); 
         

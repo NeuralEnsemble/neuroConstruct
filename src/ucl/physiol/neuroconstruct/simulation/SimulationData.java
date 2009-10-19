@@ -525,7 +525,7 @@ public class SimulationData
         
         DataStore dataStore = getDataAtAllTimes(cellItemRef, variable, incSpikeOrVoltage);
         
-        String ref = "Plot of "+ variable+" in "+ cellItemRef;
+        String ref = "Plot of "+ variable+" in "+ cellItemRef+ " ("+this.getSimulationName()+")";
         String desc = ref;
         DataSet dataSet = new DataSet(ref, desc, 
                                        "ms", 
