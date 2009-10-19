@@ -5,6 +5,7 @@
 
 package ucl.physiol.neuroconstruct.simulation;
 
+import java.util.ArrayList;
 import java.util.Vector;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +38,16 @@ public class SpikeAnalyserTest {
         for (int i=0;i<times.length;i++)
         {
             times[i]=i*dt;
+        }
+        return times;
+    }
+
+    private double[] getTimesArray(double endTime, double dt)
+    {
+        double[] times = new double[(int)(endTime/dt)];
+        for (int i=0;i<times.length;i++)
+        {
+            times[i]=(float)i*dt;
         }
         return times;
     }
@@ -162,6 +173,38 @@ public class SpikeAnalyserTest {
 
     }
 
+    @Test
+    public void testSlidingSynchrony() throws ValueNotPresentException
+    {
+        System.out.println("---  testSlidingSynchrony...");
+
+        double[] s1 = new double[]{5, 11, 23};
+        double[] s2 = new double[]{12, 25};
+        double[] s3 = new double[]{26};
+        double[] s4 = new double[]{44};
+        double[] s5 = new double[]{29, 89};
+
+        ArrayList<double[]> spikeSets = new ArrayList<double[]>();
+        spikeSets.add(s1);
+        spikeSets.add(s2);
+        spikeSets.add(s3);
+        spikeSets.add(s4);
+        spikeSets.add(s5);
+
+        double[] times = getTimesArray(100, 0.1);
+
+        DataSet ds = SpikeAnalyser.getSlidingSpikeSynchrony(spikeSets, times, 10, 10, 90);
+
+        System.out.println("Generated sliding synch data: "+ds);
+
+        assertEquals(ds.getYvalue(10), 2, 0);
+        assertEquals(ds.getYvalue(20), 4, 0);
+        assertEquals(ds.getYvalue(50), 0, 0);
+        assertEquals(ds.getYvalue(88), 1, 0);
+
+
+
+    }
 
     public static void main(String[] args)
     {

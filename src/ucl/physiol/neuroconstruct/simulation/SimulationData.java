@@ -65,7 +65,7 @@ public class SimulationData
     private File dataDirectory = null;
     //private File timesDataFile = null;
 
-    private static int suggestedInitCapData = 1000;
+    private static int suggestedInitCapData = 100000;
     private static int suggestedInitCapSpikes = 50;
 
     /**
@@ -565,25 +565,46 @@ public class SimulationData
 
             /** @todo check if there's a quicker way to do this */
 
-            ArrayList<Double> tempList = new ArrayList<Double>(suggestedInitCapData);
+            //ArrayList<Double> tempList = new ArrayList<Double>(suggestedInitCapData);
+            double[] tempArray = new double[suggestedInitCapData];
+
+            int numDataPointsAdded = 0;
 
             while ( (nextLine = reader.readLine()) != null && nextLine.length()>0)
             {
                 if (!nextLine.startsWith("//") && nextLine.trim().length()>0)
                 {
                     double nextEntry = Double.parseDouble(nextLine);
-                    tempList.add(scaleFactor * nextEntry);
+                    if (tempArray.length<=numDataPointsAdded)
+                    {
+                        double[] tempArray2 = new double[numDataPointsAdded*2];
+                        logger.logComment("Rescaling array of data points to size: "+ tempArray2.length);
+                        for(int i=0;i<numDataPointsAdded;i++)
+                        {
+                            tempArray2[i] = tempArray[i];
+                        }
+                        tempArray = tempArray2;
+                    }
+                    tempArray[numDataPointsAdded] = scaleFactor * nextEntry;
+                    numDataPointsAdded++;
                 }
             }
 
-            if (tempList.size() > suggestedInitCapData) suggestedInitCapData = tempList.size();
+            suggestedInitCapData = numDataPointsAdded; // for next time...
 
             in.close();
-            data = new double[tempList.size()];
-
-            for (int i = 0; i < tempList.size(); i++)
+            
+            if (tempArray.length == numDataPointsAdded)
             {
-                data[i] = tempList.get(i);
+                //logger.logComment("Quick return", true);
+                return tempArray;
+            }
+            
+            data = new double[numDataPointsAdded];
+
+            for (int i = 0; i < numDataPointsAdded; i++)
+            {
+                data[i] = tempArray[i];
             }
             //System.out.println("Read in "+data.length+" values. First: "+data[0]+", last: "+data[data.length-1] );
             return data;
@@ -1205,7 +1226,7 @@ public class SimulationData
     {
         //File f = new File("projects/PlotSave/simulations/Sim_43/");
         //File f = new File("projects/Spiky/simulations/Sim_33");
-        File f = new File("models/PyNNTest/simulations/Sim_759");
+        File f = new File("nCexamples/Ex6_CerebellumDemo/simulations/Sim_51");
         SimulationData simulationData1 = null;
         try
         {

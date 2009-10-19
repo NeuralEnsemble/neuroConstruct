@@ -6063,118 +6063,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         if (selectedObjectToView!=LATEST_GENERATED_POSITIONS)
         {
             File simDataFile = (File)selectedObjectToView;
-
-            try
-            {
-                simData = new SimulationData(simDataFile, true);
-            }
-            catch (SimulationDataException ex1)
-            {
-                GuiUtils.showErrorMessage(logger, "Error getting the simulation info from "+ simDataFile, ex1, this);
-                return;
-            }
-
-            logger.logComment("Using set of points from simulation :"+ selectedObjectToView);
-
-
-            GeneralUtils.timeCheck("Loading cell pos, net conns, etc. from file... ");
-
-
-            projManager.getCurrentProject().generatedCellPositions.reset();
-            try
-            {
-                projManager.getCurrentProject().generatedCellPositions.loadFromFile(simData.getCellPositionsFile());
-
-                //System.out.println("Positions loaded: "+ projManager.getCurrentProject().generatedCellPositions.getNumberPositionRecords());
-            }
-            catch (IOException ex2)
-            {
-                GuiUtils.showErrorMessage(logger,
-                                          "Problem loading the cell position data from: " +
-                                          simData.getCellPositionsFile(), ex2, this);
-
-
-                projManager.getCurrentProject().resetGenerated();
-                return;
-            }
-
-
-            projManager.getCurrentProject().generatedNetworkConnections.reset();
-            try
-            {
-                projManager.getCurrentProject().generatedNetworkConnections.loadFromFile(simData.getNetConnectionsFile());
-            }
-            catch (IOException ex2)
-            {
-                GuiUtils.showErrorMessage(logger,
-                                          "Problem loading the net connections data from: " +
-                                          simData.getNetConnectionsFile(), ex2, this);
-
-                projManager.getCurrentProject().resetGenerated();
-                return;
-            }
-
-
-            projManager.getCurrentProject().generatedElecInputs.reset();
-            try
-            {
-                projManager.getCurrentProject().generatedElecInputs.loadFromFile(simData.getElecInputsFile());
-                //System.out.println("Stims loaded: "+ projManager.getCurrentProject().generatedElecInputs);
-
-            }
-            catch (IOException ex2)
-            {
-                GuiUtils.showErrorMessage(logger,
-                                          "Problem loading the electrical inputs data from: " +
-                                          simData.getElecInputsFile(), ex2, this);
-
-                projManager.getCurrentProject().resetGenerated();
-                return;
-            }
-
-
-            Iterator cellGroups = projManager.getCurrentProject().generatedCellPositions.getNamesGeneratedCellGroups();
-
-            while (cellGroups.hasNext())
-            {
-                String nextCellGroup = (String) cellGroups.next();
-                boolean isCellGroup = projManager.getCurrentProject().cellGroupsInfo.isValidCellGroup(nextCellGroup);
-
-                if (!isCellGroup)
-                {
-                    GuiUtils.showErrorMessage(logger, "The Cell Group " + nextCellGroup + ", as recorded in the simulation data is not a valid Cell Group for this project.\nThis may be due to the project file being altered (e.g Cell Groups changed) after running the simulation.", null, this);
-
-                    projManager.getCurrentProject().resetGenerated();
-                    return;
-                }
-            }
-
-            Iterator netConns = projManager.getCurrentProject().generatedNetworkConnections.getNamesNetConnsIter();
-
-            while (netConns.hasNext())
-            {
-                String nextNetConn = (String) netConns.next();
-                boolean isNetConn = projManager.getCurrentProject().morphNetworkConnectionsInfo.isValidSimpleNetConn(nextNetConn);
-                boolean isAAConn = projManager.getCurrentProject().volBasedConnsInfo.isValidVolBasedConn(nextNetConn);
-
-                if (!(isNetConn||isAAConn))
-                {
-                    GuiUtils.showErrorMessage(logger, "The Network Connection " + nextNetConn + ", as recorded in the simulation data is not a valid Network Connection for this project.\nThis may be due to the project file being altered (e.g Network Connections changed) after running the simulation.", null, this);
-                    projManager.getCurrentProject().generatedCellPositions.reset();
-                    projManager.getCurrentProject().generatedNetworkConnections.reset();
-                    return;
-                }
-            }
-            // No real need to check the inputs, they're just probe positions...
-
-
+            simData = projManager.reloadSimulation(simDataFile.getName());
 
             sourceOfCellPosnsInMemory = RELOADED_POSITIONS;
 
-            logger.logComment("Resetting plot/save info...");
-            projManager.getCurrentProject().generatedPlotSaves.reset();
 
-            GeneralUtils.timeCheck("Loaded cell pos, net conns, etc. from file... ");
 
         }
         else

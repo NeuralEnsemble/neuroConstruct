@@ -346,15 +346,26 @@ public class DataSet
     @Override
     public String toString()
     {
-        StringBuffer sb = new StringBuffer("DataSet: "+this.getReference()+"[");
-        for (int i = 0; i < Math.min(3, numberValidPoints); i++)
-        {
-            sb.append(pointToString(i));
+        StringBuffer sb = new StringBuffer("DataSet: "+this.getReference()+" [");
 
-            if (i < xValues.length - 1)
-                sb.append(", ");
+        if (numberValidPoints>=1)
+        {
+            sb.append(pointToString(0));
         }
-        sb.append("]\n");
+        if (numberValidPoints>=2)
+        {
+            sb.append(", "+pointToString(1));
+        }
+        if (numberValidPoints==3)
+        {
+            sb.append(", "+pointToString(2));
+        }
+        else if (numberValidPoints>3)
+        {
+            sb.append(", ... , "+pointToString(numberValidPoints-1));
+
+        }
+        sb.append("] ("+numberValidPoints+" points)\n");
         return sb.toString();
     }
     

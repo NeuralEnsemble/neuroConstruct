@@ -2203,6 +2203,120 @@ public class ProjectManager implements GenerationReport
         activeProject = Project.loadProject(projFile, projEventListener);
         return activeProject;
     }
+
+
+    public SimulationData reloadSimulation(String simRef)
+    {
+        File simDataFile = ProjectStructure.getDirForSimFiles(simRef, activeProject);
+        SimulationData simData = null;
+        try
+        {
+            simData = new SimulationData(simDataFile, true);
+            simData.initialise();
+
+        }
+        catch (SimulationDataException ex1)
+        {
+            GuiUtils.showErrorMessage(logger, "Error getting the simulation info from "+ simDataFile, ex1, null);
+            return null;
+        }
+
+
+        activeProject.generatedCellPositions.reset();
+        try
+        {
+            activeProject.generatedCellPositions.loadFromFile(simData.getCellPositionsFile());
+
+        }
+        catch (IOException ex2)
+        {
+            GuiUtils.showErrorMessage(logger,
+                                      "Problem loading the cell position data from: " +
+                                      simData.getCellPositionsFile(), ex2, null);
+
+
+            activeProject.resetGenerated();
+            return null;
+        }
+
+
+        activeProject.generatedNetworkConnections.reset();
+        try
+        {
+            activeProject.generatedNetworkConnections.loadFromFile(simData.getNetConnectionsFile());
+        }
+        catch (IOException ex2)
+        {
+            GuiUtils.showErrorMessage(logger,
+                                      "Problem loading the net connections data from: " +
+                                      simData.getNetConnectionsFile(), ex2, null);
+
+            activeProject.resetGenerated();
+            return null;
+        }
+
+
+        activeProject.generatedElecInputs.reset();
+        try
+        {
+            activeProject.generatedElecInputs.loadFromFile(simData.getElecInputsFile());
+
+        }
+        catch (IOException ex2)
+        {
+            GuiUtils.showErrorMessage(logger,
+                                      "Problem loading the electrical inputs data from: " +
+                                      simData.getElecInputsFile(), ex2, null);
+
+            activeProject.resetGenerated();
+            return null;
+        }
+
+
+        Iterator cellGroups = activeProject.generatedCellPositions.getNamesGeneratedCellGroups();
+
+        while (cellGroups.hasNext())
+        {
+            String nextCellGroup = (String) cellGroups.next();
+            boolean isCellGroup = activeProject.cellGroupsInfo.isValidCellGroup(nextCellGroup);
+
+            if (!isCellGroup)
+            {
+                GuiUtils.showErrorMessage(logger, "The Cell Group " + nextCellGroup +
+                    ", as recorded in the simulation data is not a valid Cell Group for this project.\n" +
+                    "This may be due to the project file being altered (e.g Cell Groups changed) after running the simulation.", null, null);
+
+                activeProject.resetGenerated();
+                return null;
+            }
+        }
+
+        Iterator netConns = activeProject.generatedNetworkConnections.getNamesNetConnsIter();
+
+        while (netConns.hasNext())
+        {
+            String nextNetConn = (String) netConns.next();
+            boolean isNetConn = activeProject.morphNetworkConnectionsInfo.isValidSimpleNetConn(nextNetConn);
+            boolean isAAConn = activeProject.volBasedConnsInfo.isValidVolBasedConn(nextNetConn);
+
+            if (!(isNetConn||isAAConn))
+            {
+                GuiUtils.showErrorMessage(logger, "The Network Connection " + nextNetConn +
+                    ", as recorded in the simulation data is not a valid Network Connection for this project.\n" +
+                    "This may be due to the project file being altered (e.g Network Connections changed) after running the simulation.", null, null);
+
+                activeProject.resetGenerated();
+                return null;
+            }
+        }
+        // No real need to check the inputs, they're just probe positions...
+
+        logger.logComment("Resetting plot/save info...");
+
+        activeProject.generatedPlotSaves.reset();
+
+        return simData;
+    }
     
 
     public void giveGenerationReport(String report, String generatorType, SimConfig simConfig)

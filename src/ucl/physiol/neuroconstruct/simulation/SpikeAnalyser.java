@@ -410,6 +410,50 @@ public class SpikeAnalyser
         return correl;
     }
 
+
+    public static DataSet getSlidingSpikeSynchrony(ArrayList<double[]> spikeSets,
+                                                 double[] times,
+                                                 float slideSize,
+                                                 float startTime,
+                                                 float stopTime)
+    {
+        String desc = "Synchrony of "+spikeSets.size()+" spike sets over "+slideSize+" ms sliding window";
+
+        DataSet cellGroupSync = new DataSet(desc.toString(), desc.toString(),
+            "ms", "", "Time", "Num spikes over "+slideSize+" ms");
+
+
+        cellGroupSync.setGraphFormat(PlotCanvas.USE_LINES_FOR_PLOT);
+
+        for(int j=0;j<times.length;j++)
+        {
+            double time = times[j];
+
+            int numSpikes = 0;
+
+            if(time>=startTime && time <=stopTime)
+            {
+                for (int i = 0; i <  spikeSets.size(); i++)
+                {
+                    double[] spikes = spikeSets.get(i);
+
+                    for (int idx = 0; idx < spikes.length; idx++)
+                    {
+                        if ((spikes[idx]>=time) && (spikes[idx] <= time + slideSize))
+                        {
+                            numSpikes++;
+                        }
+                    }
+                }
+
+                cellGroupSync.addPoint(time, numSpikes);
+            }
+
+        }
+
+        return cellGroupSync;
+    }
+
     
     public static float[] crossCorrelation(double[] traceA,
                                            double[] traceB,

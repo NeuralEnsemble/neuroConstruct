@@ -2209,7 +2209,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                     {
                         allOfTypeSelected = choice.substring(allOfType.length());
                     }
-                    logger.logComment("Selection: " + choice+", allOfTypeSelected: "+allOfTypeSelected, true);
+                    logger.logComment("Selection: " + choice+", allOfTypeSelected: "+allOfTypeSelected);
 
 
                     for (DataStore ds : dsForCellRef)
@@ -2240,7 +2240,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                     dssToPlot.add(dsForCellRef.get(0));
                 }
 
-                logger.logComment("dssToPlot: " + dssToPlot, true);
+                logger.logComment("dssToPlot: " + dssToPlot);
 
                 double[] times = null;
 
@@ -3630,7 +3630,6 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         double[] times = simRerunFrame.getAllTimes();
 
-
         ArrayList<String> everyCellGroup = project.cellGroupsInfo.getAllCellGroupNames();
 
         Vector<String> allNonEmptyCellGroups = new Vector<String>();
@@ -3645,7 +3644,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         allNonEmptyCellGroups.copyInto(allCellGroups);
 
 
-        String message = "Please select the Cell Group whose population spikes synchronty histogram you would like to see.";
+        String message = "Please select the Cell Group whose population spikes synchrony histogram you would like to see.";
 
         String cellGroup = (String)JOptionPane.showInputDialog(this,
                                                       message,
@@ -3703,26 +3702,11 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         }
 
 
-
-
-
-
         StringBuffer desc = new StringBuffer(simRerunFrame.getSimReference()
                                                 + ": Spikes synchrony in time of " + cellGroup + " for: "+cellChooser.toNiceString());
 
         DataSet cellGroupSync = new DataSet(desc.toString(), desc.toString(),
             "ms", "", "Time", "Num spikes in bin");
-
-
-
-        cellGroupSync.setGraphFormat(PlotCanvas.USE_LINES_FOR_PLOT);
-
-
-
-
-
-
-
 
 
 
@@ -3761,8 +3745,8 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         double suggestedBinSize = Math.min(1, (suggestedEnd -suggestedStart)/100f);
 
 
-        InputRequestElement binSizeInput = new InputRequestElement("binsize", req, null, suggestedBinSize+"", "ms");
-        inputs.add(binSizeInput);
+        InputRequestElement slideSizeInput = new InputRequestElement("slidesize", req, null, suggestedBinSize+"", "ms");
+        inputs.add(slideSizeInput);
 
 
 
@@ -3853,115 +3837,51 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         //String binSizeString = JOptionPane.showInputDialog(this, req, ""+suggestedBinSize);
 
-        if (binSizeInput.getValue() == null)
+        if (slideSizeInput.getValue() == null)
         {
             logger.logComment("Cancelled...");
             return;
         }
 
 
-        float binSize = 1;
+        float slideSize = 1;
         try
         {
-            binSize = Float.parseFloat(binSizeInput.getValue());
+            slideSize = Float.parseFloat(slideSizeInput.getValue());
         }
         catch (Exception ex)
         {
-            GuiUtils.showErrorMessage(logger, "Invalid bin size", ex, null);
+            GuiUtils.showErrorMessage(logger, "Invalid slideSize", ex, null);
             return;
         }
 
-        if (suggestedBinSize<=0 || suggestedBinSize > (stopTime -startTime))
+        if (slideSize<=0 || slideSize > (stopTime -startTime))
         {
-            GuiUtils.showErrorMessage(logger, "Invalid bin size", null, null);
+            GuiUtils.showErrorMessage(logger, "Invalid slide size", null, null);
             return;
         }
 
 
         preferredSpikeValsEntered = true;
 
-        double simDuration = (stopTime - startTime);
-        
-        float corr = (float)Math.floor(times.length/simDuration);
+        ArrayList<double[]> spikeSets = new ArrayList<double[]>();
 
-        int numBins = (int)Math.floor(times.length-(binSize*corr)-1);
-
-        //DataSet isiHist = new DataSet("Histogram of spiking of Cell Group "+cellGroup, "...");
-
-        int[] numInEachBin = new int[numBins];
-
-
-        
-        
-        //@Matteo: start of the synchrony analysis code...
-        
-        System.out.println("numBins: "+numBins);
-        System.out.println("simDuration: "+simDuration);
-        System.out.println("time: "+times.length);
-        
-        
-        
-        
-//        for(Integer next: orderedCellNums)
-//            {
-//                int cellNum = next;
-//                double[] voltages = null;
-//                String cellRef = SimulationData.getCellSegRef(cellGroup, cellNum, 0, simRerunFrame.isOnlySomaValues());
-//                voltages = simRerunFrame.getVoltageAtAllTimes(cellRef);
-//                
-//                int t = 0;
-//
-//                while ((t < numBins))
-//                {   
-//                    for (int tbin = t; tbin < t+binSize*corr; tbin++)
-//                    {
-//                        if (voltages[(int)startTime*corr+tbin] >= threshold)  
-//                        {
-//                            numInEachBin[t]++;
-//                        }
-//                    }
-//                // cellGroupSync.addPoint(t, numInEachBin[t]);
-//                t++;
-//                }            
-//        }
-        
-        ArrayList<double[]> voltages = new ArrayList<double[]>();
-        ArrayList<double[]> AP = new ArrayList<double[]>();
         for (int i = 0; i <  orderedCellNums.size(); i++)  
-                {
-                    int cellNum = orderedCellNums.get(i);
-                    String cellSegRef = SimulationData.getCellSegRef(cellGroup, cellNum, 0, simRerunFrame.isOnlySomaValues());
-                    voltages.add(i, (double[])simRerunFrame.getVoltageAtAllTimes(cellSegRef));  
-                    AP.add(i, SpikeAnalyser.getSpikeTimes(voltages.get(i), times, threshold, startTime, stopTime));
-                }
-
-        int t = 0;
-
-        while ((t < numBins)) {
-            for (int i = 0; i <  AP.size(); i++){ 
-                double[] spikes = AP.get(i);
-                for (int idx = 0; idx < spikes.length; idx++) {                    
-                    if ((spikes[idx]*corr >= t) && (spikes[idx]*corr <= t + (binSize*corr))) {
-                        numInEachBin[t]++;
-                    }
-                }
-
-            }
-            // cellGroupSync.addPoint(t, numInEachBin[t]);
-            t++;
-        }
-
-        
-        for (int i = 0; i < numInEachBin.length; i++)
         {
-            double Time = i/corr;
-            cellGroupSync.addPoint(Time, numInEachBin[i]);
-
+            int cellNum = orderedCellNums.get(i);
+            String cellSegRef = SimulationData.getCellSegRef(cellGroup, cellNum, 0, simRerunFrame.isOnlySomaValues());
+           
+            double[] voltages = simRerunFrame.getVoltageAtAllTimes(cellSegRef);
+            spikeSets.add(i, SpikeAnalyser.getSpikeTimes(voltages, times, threshold, startTime, stopTime));
         }
 
+        cellGroupSync = SpikeAnalyser.getSlidingSpikeSynchrony(spikeSets, times, slideSize, startTime, stopTime);
+
         
-        
+
         cellGroupSync.setDescription(desc.toString());
+        cellGroupSync.setReference(desc.toString());
+
         cellGroupSync.setGraphFormat(PlotCanvas.USE_LINES_FOR_PLOT);
         PlotterFrame frame = PlotManager.getPlotterFrame(cellGroupSync.getReference());
         updatePlotList();
