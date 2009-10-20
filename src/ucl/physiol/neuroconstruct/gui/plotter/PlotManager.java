@@ -95,8 +95,6 @@ public class PlotManager
             frameSize.width = screenSize.width;
         }
         frame.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
-        frame.setVisible(true);
-
 
         frame.setVisible(setVisible);
 

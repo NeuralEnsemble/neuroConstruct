@@ -290,6 +290,7 @@ public class GenesisMorphologyGenerator
 
         boolean cellHasVarMechs = (cell.getVarMechsVsParaGroups().size()>0);
 
+        boolean warnedLengthLine = false;
 
         for (int ii = 0; ii < segments.size(); ii++)
         {
@@ -689,7 +690,7 @@ public class GenesisMorphologyGenerator
                                     if (d.startsWith("0."))
                                         d = d.substring(1);
 
-                                    channelCondString.append(nextChanMech.getUniqueName()+ " "+ d+ "  ");
+                                    channelCondString.append(nextChanMech.getUniqueName()+ " "+ d+ " ");
                                 }
                                 //if (genDens==0)
                                 //{
@@ -750,7 +751,7 @@ public class GenesisMorphologyGenerator
                         }
                         comments = comments +"// Variable cell mechanism "+vm.getName()+" evaluated as: " +dens + " on "+name+" \n";
 
-                        channelCondString.append(name+ " "+ genDens+ " ");
+                        channelCondString.append(name+ " "+ genDens+" ");
 
 
                     }
@@ -769,6 +770,9 @@ public class GenesisMorphologyGenerator
                 }
 
                 channelCondInfo = channelCondString.toString();
+
+                
+
                 String[] chanInfo = new String[3];
                 chanInfo[0] = passParamInfo;
                 chanInfo[1] = channelCondInfo;
@@ -796,6 +800,7 @@ public class GenesisMorphologyGenerator
 
             float equivalentRadius = (float)CompartmentHelper.getEquivalentRadius(r1, r2, h);
 
+            String line = null;
 
             if (segment.getSegmentShape() == Segment.CYLINDRICAL_SHAPE)
             {
@@ -809,12 +814,13 @@ public class GenesisMorphologyGenerator
                     }
                 }
 
+
                 if (segment.isFirstSectionSegment() &&
                     specifyStartPoint)
                 {
                     // i.e. root segment
                     response.append("*double_endpoint\n");
-                    response.append(segName + " "
+                    line = segName + " "
                                     + parentName + " "
                                     + convertToMorphDataLength(segment.getStartPointPosition().x) + " "
                                     + convertToMorphDataLength(segment.getStartPointPosition().y) + " "
@@ -822,8 +828,10 @@ public class GenesisMorphologyGenerator
                                     + convertToMorphDataLength(segment.getEndPointPositionX()) + " "
                                     + convertToMorphDataLength(segment.getEndPointPositionY()) + " "
                                     + convertToMorphDataLength(segment.getEndPointPositionZ()) + " "
-                                    + convertToMorphDataLength(equivalentRadius * 2d) + " " 
-                                    + channelCondInfo + "\n");
+                                    + convertToMorphDataLength(equivalentRadius * 2d) + " "
+                                    + channelCondInfo;
+
+                    response.append(line + "\n");
                     
                     response.append("*double_endpoint_off\n");
 
@@ -832,13 +840,16 @@ public class GenesisMorphologyGenerator
                 {
                     // ordinary cylindrical segment..
 
-                    response.append(segName + " "
+                    line = segName + " "
                                     + parentName + " "
                                     + convertToMorphDataLength(segment.getEndPointPositionX()) + " "
                                     + convertToMorphDataLength(segment.getEndPointPositionY()) + " "
                                     + convertToMorphDataLength(segment.getEndPointPositionZ()) + " "
-                                    + convertToMorphDataLength(equivalentRadius * 2d) + " " 
-                                    + channelCondInfo + "\n");
+                                    + convertToMorphDataLength(equivalentRadius * 2d) + " "
+                                    + channelCondInfo;
+
+                    response.append(line + "\n");
+
                 }
             }
             else
@@ -846,17 +857,29 @@ public class GenesisMorphologyGenerator
 
                 response.append("*spherical \n\n");
 
-                response.append(segName + " "
+                line = segName + " "
                                 + parentName + " "
-                                + convertToMorphDataLength(segment.getEndPointPositionX()) // = startPoint 
+                                + convertToMorphDataLength(segment.getEndPointPositionX()) // = startPoint
                                 + " " + convertToMorphDataLength(segment.getEndPointPositionY()) // = startPoint
                                 + " " + convertToMorphDataLength(segment.getEndPointPositionZ()) // = startPoint
-                                + " " + convertToMorphDataLength( (segment.getRadius() * 2d)) 
-                                + " " + channelCondInfo + "\n");
+                                + " " + convertToMorphDataLength( (segment.getRadius() * 2d))
+                                + " " + channelCondInfo;
+
+                response.append(line + "\n");
 
                 if (segments.size() > 1)
                     response.append("\n*cylindrical \n");
 
+            }
+
+
+            if (!mooseCompatMode() && !warnedLengthLine && line.length()>=300)
+            {
+                GuiUtils.showWarningMessage(logger, "Warning: the following line (and perhaps other lines) in morphology file for "
+                    +cell.getInstanceName()+":\n"+line+"\n is of length "+line.length()
+                    +", but there appears to be a limit of 300 chars for lines in read cell files.\n" +
+                    "Check for any errors in GENESIS output!!", null);
+                warnedLengthLine = true;
             }
 
             response.append("\n");

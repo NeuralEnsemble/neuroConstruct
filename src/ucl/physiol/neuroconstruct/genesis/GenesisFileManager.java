@@ -1497,7 +1497,11 @@ public class GenesisFileManager
                         + (float)convertNeuroConstructTime(project.simulationParameters.getDt())+"\n");
         response.append("float duration = "
                         + (float)convertNeuroConstructTime(simConfig.getSimDuration())+"\n");
-        response.append("int steps =  {round {{duration}/{dt}}}\n\n");
+
+        if (!mooseCompatMode())
+            response.append("int steps =  {round {{duration}/{dt}}}\n\n");
+        else
+            response.append("int steps =  {{duration}/{dt}}\n\n");
         
         
         response.append("setclock 0 {dt}");
@@ -4211,7 +4215,7 @@ public class GenesisFileManager
         //String startTimeFile = friendlyDirName+"starttime";
         //String stopTimeFile = friendlyDirName+"stoptime";
 
-        if (!GeneralUtils.isWindowsBasedPlatform() && !mooseCompatMode())  // Functions need further testing on windows
+        if (!GeneralUtils.isWindowsBasedPlatform() )  // Functions need further testing on windows
         {
             response.append("str startTimeFile\n");
             response.append("str stopTimeFile\n");
@@ -4223,7 +4227,8 @@ public class GenesisFileManager
         }
         
         String dateInfo = "";
-        if (!mooseCompatMode())
+
+        if (false&&!mooseCompatMode())
         {
             dateInfo = " at: {getdate}";
         }
@@ -4286,7 +4291,7 @@ public class GenesisFileManager
 
         response.append(postRunLines.toString()+"\n");
         
-        if (!GeneralUtils.isWindowsBasedPlatform() && !mooseCompatMode())  //  Functions need further testing on windows
+        if (!GeneralUtils.isWindowsBasedPlatform())  //  Functions need further testing on windows
         {
             response.append("sh {strcat {\"date +%s.%N > \"} {stopTimeFile}}\n\n"); // if you know a better way to get output of a system command from a sh call, let me know...
 
