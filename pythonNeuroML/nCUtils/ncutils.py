@@ -15,14 +15,10 @@ from time import *
 
 from java.io import File
 
-from ucl.physiol.neuroconstruct.project import ProjectManager
+
 from ucl.physiol.neuroconstruct.neuron import NeuronFileManager
-from ucl.physiol.neuroconstruct.genesis import GenesisFileManager
+
 from ucl.physiol.neuroconstruct.nmodleditor.processes import ProcessManager
-from ucl.physiol.neuroconstruct.utils import NumberGenerator
-from ucl.physiol.neuroconstruct.hpc.mpi import MpiSettings
-from ucl.physiol.neuroconstruct.simulation import SimulationsInfo
-from ucl.physiol.neuroconstruct.cell.utils import CellTopologyHelper
 from ucl.physiol.neuroconstruct.cell.compartmentalisation import GenesisCompartmentalisation
 
 
@@ -39,20 +35,25 @@ def getUnusedSimRef(project, simRefPrefix="P_Sim_"):
     simRef = "%s%i"%(simRefPrefix,index)
     
     return simRef
-    
 
-def generateAndRunGenesis(project, 
-                         projectManager, 
-                         simConfig, 
-                         simRef, 
-                         simulatorSeed, 
-                         verbose=True, 
-                         quitAfterRun=False):
-    
+
+def generateAndRunGenesis(project,
+                         projectManager,
+                         simConfig,
+                         simRef,
+                         simulatorSeed,
+                         verbose=True,
+                         quitAfterRun=False,
+                         runInBackground=False):
+
     if verbose: print "Going to generate GENESIS files for: "+simRef
-    
+
+    project.genesisSettings.setGraphicsMode(not runInBackground)
+
+    project.genesisSettings.setMooseCompatMode(False)
+
     project.genesisFileManager.setQuitAfterRun(quitAfterRun)
-    
+
     compartmentalisation = GenesisCompartmentalisation()
 
     project.genesisFileManager.generateTheGenesisFiles(simConfig,
@@ -61,8 +62,37 @@ def generateAndRunGenesis(project,
                                                             simulatorSeed)
 
     projectManager.doRunGenesis(simConfig)
-    
-    if verbose: print "Set running GENESIS simulation: "+simRef
+
+    print "Set running GENESIS simulation: "+simRef
+
+
+def generateAndRunMoose(project,
+                         projectManager,
+                         simConfig,
+                         simRef,
+                         simulatorSeed,
+                         verbose=True,
+                         quitAfterRun=False,
+                         runInBackground=False):
+
+    if verbose: print "Going to generate MOOSE files for: "+simRef
+
+    project.genesisSettings.setGraphicsMode(not runInBackground)
+
+    project.genesisFileManager.setQuitAfterRun(quitAfterRun)
+
+    project.genesisSettings.setMooseCompatMode(True)
+
+    compartmentalisation = GenesisCompartmentalisation()
+
+    project.genesisFileManager.generateTheGenesisFiles(simConfig,
+                                                            None,
+                                                            compartmentalisation,
+                                                            simulatorSeed)
+
+    projectManager.doRunGenesis(simConfig)
+
+    print "Set running MOOSE simulation: "+simRef
     
     
 
@@ -100,7 +130,7 @@ def generateAndRunNeuron(project,
     
     if compileSuccess:
         projectManager.doRunNeuron(simConfig)
-        if verbose: print "Set running NEURON simulation: "+simRef
+        print "Set running NEURON simulation: "+simRef
         
         
         
