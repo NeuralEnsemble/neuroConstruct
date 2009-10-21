@@ -527,10 +527,7 @@ public class GenesisFileManager
                     RandomSpikeTrainSettings rndTrain =
                         (RandomSpikeTrainSettings)project.elecInputInfo.getStim(allStims.get(k));
 
-
-                    // Changed from 5ms to 0.1ms
-                    /** @todo Change handling of abs_refract to give option for this in GUI!!!*/
-                    float absRefractVal = 0.1f;
+                    float absRefractVal = 0f;
 
                     response.append("setfield " + stimulationElement
                                     + " min_amp 1.0 "
@@ -1813,6 +1810,9 @@ public class GenesisFileManager
 
             String fullVarName = record.simPlot.getValuePlotted();
 
+            logger.logComment("Creating VariableHelper for: " + record.getDescription(false, false)+", cell: "+cellNum, true);
+
+
             if (fullVarName.equals(SimPlot.VOLTAGE))
             {
                 variableName = "Vm";
@@ -1840,10 +1840,34 @@ public class GenesisFileManager
 
                 String element = compElement + extraElementPart;
 
+
                 compParentElement = getParentElement(element);
                 compTopElementName = getTopElementName(element);
 
-                if (simIndepVarPart.startsWith(SimPlot.COND_DENS))
+
+                logger.logComment("extraElementPart: "+extraElementPart+", mechanismName: "+mechanismName
+                        +", simIndepVarPart: "+simIndepVarPart+", element: "+ element
+                        +", compParentElement; "+compParentElement+", compTopElementName: "+ compTopElementName, true);
+
+                if (mechanismName.equals(SimPlot.SYNAPSES))
+                {
+                    String netConn = simIndepVarPart.substring(0, simIndepVarPart.indexOf(':'));
+                    String synMech = simIndepVarPart.substring(netConn.length()+1, simIndepVarPart.lastIndexOf(':'));
+                    compTopElementName = synMech+"_"+netConn;
+                    if(simIndepVarPart.endsWith(SimPlot.SYN_COND))
+                    {
+                        variableName = "Gk";
+                    }
+                    else if(simIndepVarPart.endsWith(SimPlot.SYN_CURR))
+                    {
+                        variableName = "Ik";
+                    }
+                    else
+                    {
+                        variableName = simIndepVarPart.substring(simIndepVarPart.lastIndexOf(':')+1);
+                    }
+                }
+                else if (simIndepVarPart.startsWith(SimPlot.COND_DENS))
                 {
                    // variableName = "Gk";
 
@@ -1904,11 +1928,11 @@ public class GenesisFileManager
                 else
                 {
                     logger.logComment("--------------     Looking to plot " + simIndepVarPart +
-                                      " on cell mech: " + mechanismName);
+                                      " on cell mech: " + mechanismName, true);
 
                     CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(mechanismName);
 
-                    logger.logComment("Cell mech found: " + cellMech);
+                    logger.logComment("Cell mech found: " + cellMech, true);
 
                     if (cellMech == null)
                     {
@@ -2100,7 +2124,7 @@ public class GenesisFileManager
 
             }
             logger.logComment("Created var helper for " +variableName+", on "+compTopElementName+" which is on "
-                + compParentElement +", with extra script : ("+extraLines+")");
+                + compParentElement +", with extra script : ("+extraLines+")", true);
 
 
         }
@@ -2151,52 +2175,45 @@ public class GenesisFileManager
 
             for (PlotSaveDetails plot : plots)
             {
-                if (plot.simPlot.isSynapticMechanism())
+
+                ArrayList<Integer> cellNumsToPlot = plot.cellNumsToPlot;
+                ArrayList<Integer> segIdsToPlot = plot.segIdsToPlot;
+
+                String plotFrameName = PLOT_ELEMENT_ROOT + "/" + plot.simPlot.getGraphWindow();
+
+                float minVal = convertToGenesisValue(plot.simPlot.getMinValue(),
+                                                          plot.simPlot.getValuePlotted(),
+                                                          project.genesisSettings.getUnitSystemToUse());
+
+                float maxVal = convertToGenesisValue(plot.simPlot.getMaxValue(),
+                                                          plot.simPlot.getValuePlotted(),
+                                                          project.genesisSettings.getUnitSystemToUse());
+
+                String cellType = project.cellGroupsInfo.getCellType(plot.simPlot.getCellGroup());
+
+                for (Integer cellNum : cellNumsToPlot)
                 {
-                    String error = "Note, synaptic mechanism variable plotting/saving not supported yet in GENESIS, so not plotting: "+plot.simPlot;
-                    logger.logError(error);
-                    response.append("\n");
-                    addComment(response, error);
-
-                }
-                else
-                {
-                    ArrayList<Integer> cellNumsToPlot = plot.cellNumsToPlot;
-                    ArrayList<Integer> segIdsToPlot = plot.segIdsToPlot;
-
-                    String plotFrameName = PLOT_ELEMENT_ROOT + "/" + plot.simPlot.getGraphWindow();
-
-                    float minVal = convertToGenesisValue(plot.simPlot.getMinValue(),
-                                                              plot.simPlot.getValuePlotted(),
-                                                              project.genesisSettings.getUnitSystemToUse());
-
-                    float maxVal = convertToGenesisValue(plot.simPlot.getMaxValue(),
-                                                              plot.simPlot.getValuePlotted(),
-                                                              project.genesisSettings.getUnitSystemToUse());
-
-                    String cellType = project.cellGroupsInfo.getCellType(plot.simPlot.getCellGroup());
-
-                    for (Integer cellNum : cellNumsToPlot)
+                    for (Integer segId : segIdsToPlot)
                     {
-                        for (Integer segId : segIdsToPlot)
-                        {
-                            //Segment segInOrigCell = project.cellManager.getCell(cellType).getSegmentWithId(segId);
+                        Segment segInMappedCell = this.getMappedSegment(cellType, segId, 0.5f);
 
-                            Segment segInMappedCell = this.getMappedSegment(cellType, segId, 0.5f);
 
-                            //String compElement = getCellElementName(plot.simPlot.getCellGroup(), cellNum)
-                            //    + "/" + SimEnvHelper.getSimulatorFriendlyName(segInMappedCell.getSegmentName());
+                        String plotted = plot.simPlot.getValuePlotted();
 
-                            VariableHelper var = new VariableHelper(plot, cellNum, segInMappedCell);
+                        VariableHelper var = new VariableHelper(plot, cellNum, segInMappedCell);
 
-                            String plotted = plot.simPlot.getValuePlotted();
+                       // if (plot.simPlot.isSynapticMechanism())
+                      //  {
+                    //        addComment(response, "Plotting synaptic value(s): "+plotted+" in: "+ plot.simPlot.toString());
+                    //    }
+                    //    else
+                   //     {
 
                             if (!plotted.equals(var.getVariableName())) plotted = plotted + " (" + var.getVariableName() +
                                 ")";
 
                             String dataSetName = var.getCompParentElementName() + "_" + var.getCompTopElementName() +
                                 ":" + var.getVariableName();
-                            //String dataSetName = var.getCompTopElementName() + ":" +var.getVariableName();
 
                             if (dataSetName.indexOf("Conv") >= 0) // i.e. maybe a converted amt, e.g. current
                             {
@@ -2217,10 +2234,11 @@ public class GenesisFileManager
                                                              minVal,
                                                              getNextColour(plotFrameName),
                                                              var.getExtraLines()));
+                  //  }
 
-                        }
                     }
                 }
+
 
             }
         }
@@ -3515,24 +3533,22 @@ public class GenesisFileManager
             throw new GenesisException("Error executing the GENESIS file: " + mainGenesisFile, ex);
         }
 
-        // Due to no plots during Moose at the moment, this plots the results of the Moose simulation
-        // in neuroConstruct if the simulation completes within 10 secs
 
-        if (false && mooseCompatMode()/* || !project.genesisSettings.isGraphicsMode()*/)
+        if (project.genesisSettings.getReloadSimAfterSecs()>0)
         {
             logger.logComment("Going to reload data from: "+getDirectoryForSimulationFiles(), true);
             SimulationData sd;
             try
             {
                 File timesFile = new File (getDirectoryForSimulationFiles(), SimulationData.getStandardTimesFilename());
-                int maxTries = 10;
+                int maxTries = (int)Math.ceil(project.genesisSettings.getReloadSimAfterSecs());
                 int tries = 0;
                 while(tries<maxTries)
                 {
                     tries++;
                     if (timesFile.exists())
                     {
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
                         sd = new SimulationData(getDirectoryForSimulationFiles());
                         sd.initialise();
 
@@ -3762,8 +3778,6 @@ public class GenesisFileManager
                     int numInCellGroup = project.generatedCellPositions.getNumberInCellGroup(cellGroupName);
 
                     String cellType = project.cellGroupsInfo.getCellType(cellGroupName);
-                    //Cell cell = project.cellManager.getCell(cellType);
-                    //Cell cell = this.mappedCells.get(cellType);
 
                     boolean isSpikeRecording = record.simPlot.getValuePlotted().indexOf(SimPlot.SPIKE) >= 0;
 
@@ -4367,34 +4381,31 @@ public class GenesisFileManager
 
         try
         {
-
-
-            getFriendlyDirName("\\doccccccc and se\\paaaaaat gell\\1234");
-            System.exit(2);
-
-
-
-
             //Project p = Project.loadProject(new File("projects/Moro/Moro.neuro.xml"), null);
-            Project p = Project.loadProject(new File("examples/Ex-Simple/Ex-Simple.neuro.xml"), null);
+            Project p = Project.loadProject(new File("../nC_projects/TestSyns/TestSyns.ncx"), null);
             //Proje
             ProjectManager pm = new ProjectManager(null,null);
             pm.setCurrentProject(p);
 
+            System.out.println("Going to generate project: "+ p.getProjectFullFileName());
+
             pm.doGenerate(SimConfigInfo.DEFAULT_SIM_CONFIG_NAME, 123);
+
             GenesisFileManager gen = new GenesisFileManager(p);
+
+            while (pm.isGenerating())
+            {
+                System.out.println("Generating...");
+                Thread.sleep(600);
+            }
 
 
 
             OriginalCompartmentalisation oc = new OriginalCompartmentalisation();
 
 
-            MultiRunManager multiRunManager = new MultiRunManager(pm.getCurrentProject(),
-                                                  p.simConfigInfo.getDefaultSimConfig(),
-                                                  p.simulationParameters.getReference());
 
-
-            gen.generateTheGenesisFiles(p.simConfigInfo.getDefaultSimConfig(), multiRunManager, oc, 12345);
+            gen.generateTheGenesisFiles(p.simConfigInfo.getDefaultSimConfig(), null, oc, 12345);
             //gen.runGenesisFile();
         }
         catch(Exception e)

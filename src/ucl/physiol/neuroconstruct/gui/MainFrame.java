@@ -427,6 +427,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JCheckBox jCheckBoxNeuronCopySimFiles = new JCheckBox("Copy files to simulations dir");
     JCheckBox jCheckBoxGenesisCopySimFiles = new JCheckBox("Copy files to simulations dir");
     JCheckBox jCheckBoxGenesisMooseMode = new JCheckBox("MOOSE test mode (beta)");
+
+    JCheckBox jCheckBoxGenesisReload = new JCheckBox("Attempt reload sim after ");
+    JLabel jLabelGenesisReload = new JLabel(" secs");
+    JTextField jTextFieldGenesisReload = new JTextField("10");
+
+
     
 
     JCheckBox jCheckBoxNeuronForceCorrInit = new JCheckBox("Force correct ChannelML init");
@@ -795,7 +801,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     JLabel jLabelSimStimDesc = new JLabel();
 
-    JPanel jPanelGenesisCheckBoxes = new JPanel();
+    JPanel jPanelGenesisCheckBoxes0 = new JPanel();
+    JPanel jPanelGenesisCheckBoxes1 = new JPanel();
+    JPanel jPanelGenesisCheckBoxes2 = new JPanel();
     JProgressBar jProgressBarGenerate = new JProgressBar();
     JPanel jPanelGenesisNumMethod = new JPanel();
     JLabel jLabelGenesisNumMethod = new JLabel();
@@ -1677,8 +1685,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jCheckBoxGenesisSymmetric.setHorizontalAlignment(SwingConstants.CENTER);
         jCheckBoxGenesisSymmetric.setText("Symmetric compartments");
         jPanelGenesisSettings.setLayout(borderLayout35);
-        borderLayout35.setHgap(10);
-        borderLayout35.setVgap(10);
+        //borderLayout35.setHgap(5);
+        //borderLayout35.setVgap(5);
      //   jButtonSimulationRecord.setEnabled(false);
      //   jButtonSimulationRecord.setSelected(false);
     //    jButtonSimulationRecord.setText("Change...");
@@ -3496,7 +3504,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                               new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
                                                      ,GridBagConstraints.CENTER,
                                                      GridBagConstraints.NONE,
-                                                     new Insets(20, 0, 20, 0), 20, 20));
+                                                     new Insets(20, 0, 0, 0), 0, 30));
 
         jPanelGenesisMain.add(this.jPanelGenesisRandomGen,
                               new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
@@ -4087,15 +4095,26 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelGenesisChoices.add(jPanelGenesisUnits, BorderLayout.NORTH);
         jPanelGenesisChoices.add(jPanelGenesisNumMethod,  BorderLayout.SOUTH);
 
-        jPanelGenesisSettings.add(jPanelGenesisCheckBoxes, BorderLayout.CENTER);
+        jPanelGenesisSettings.add(jPanelGenesisCheckBoxes0, BorderLayout.CENTER);
+        jPanelGenesisCheckBoxes0.setLayout(new BorderLayout());
+        jPanelGenesisCheckBoxes0.add(jPanelGenesisCheckBoxes1, BorderLayout.NORTH);
+        jPanelGenesisCheckBoxes0.add(jPanelGenesisCheckBoxes2, BorderLayout.CENTER);
 
-        jPanelGenesisCheckBoxes.add(jCheckBoxGenesisShapePlot, null);
-        jPanelGenesisCheckBoxes.add(jCheckBoxGenesisSymmetric, null);
-        jPanelGenesisCheckBoxes.add(jCheckBoxGenesisComments, null);
-        jPanelGenesisCheckBoxes.add(jCheckBoxGenesisNoGraphicsMode, null);
+        jPanelGenesisCheckBoxes1.add(jCheckBoxGenesisShapePlot, null);
+        jPanelGenesisCheckBoxes1.add(jCheckBoxGenesisSymmetric, null);
+        jPanelGenesisCheckBoxes1.add(jCheckBoxGenesisComments, null);
+        jPanelGenesisCheckBoxes1.add(jCheckBoxGenesisNoGraphicsMode, null);
 
-        jPanelGenesisCheckBoxes.add(this.jCheckBoxGenesisCopySimFiles);
-        jPanelGenesisCheckBoxes.add(this.jCheckBoxGenesisMooseMode);
+        jPanelGenesisCheckBoxes1.add(this.jCheckBoxGenesisCopySimFiles);
+
+        jPanelGenesisCheckBoxes2.add(this.jCheckBoxGenesisMooseMode);
+
+        jPanelGenesisCheckBoxes2.add(this.jCheckBoxGenesisReload);
+        jPanelGenesisCheckBoxes2.add(this.jTextFieldGenesisReload);
+
+        jTextFieldGenesisReload.setColumns(4);
+
+        jPanelGenesisCheckBoxes2.add(this.jLabelGenesisReload);
 
         jCheckBoxGenesisMooseMode.addItemListener(new ItemListener()
         {
@@ -4381,6 +4400,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisComments);
         //addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisVoltPlot);
         addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisShapePlot);
+
+
+        addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisReload);
+
+        addNamedDocumentListner(GENESIS_SIMULATOR_TAB, jTextFieldGenesisReload);
+
         addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisNoGraphicsMode);
         addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisCopySimFiles);
         addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisMooseMode);
@@ -4489,6 +4514,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         this.jRadioButtonGenesisPhy.setToolTipText(toolTipText.getToolTip("GENESIS Units"));
         this.jRadioButtonGenesisSI.setToolTipText(toolTipText.getToolTip("GENESIS Units"));
         this.jLabelGenesisNumMethod.setToolTipText(toolTipText.getToolTip("GENESIS Num Integration method"));
+        
+        String reload = toolTipText.getToolTip("GENESIS reload");
+
+        jCheckBoxGenesisReload.setToolTipText(reload);
+        jLabelGenesisReload.setToolTipText(reload);
+        jTextFieldGenesisReload.setToolTipText(reload);
 
         this.jButtonSimConfigEdit.setToolTipText(toolTipText.getToolTip("Simulation Configuration"));
 
@@ -4731,6 +4762,35 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 }
 
                 projManager.getCurrentProject().genesisSettings.setGraphicsMode(!this.jCheckBoxGenesisNoGraphicsMode.isSelected());
+
+                if (jCheckBoxGenesisReload.isSelected())
+                {
+                    logger.logComment("Upadting setReloadSimAfterSecs...", true);
+                    try
+                    {
+                        float wait = Float.parseFloat(jTextFieldGenesisReload.getText());
+                        if (wait<=0)
+                        {
+                            jTextFieldGenesisReload.setBackground(Color.red);
+                            return;
+                        }
+                        projManager.getCurrentProject().genesisSettings.setReloadSimAfterSecs(wait);
+                        jTextFieldGenesisReload.setBackground(Color.white);
+                    }
+                    catch (NumberFormatException ex)
+                    {
+
+                        jTextFieldGenesisReload.setBackground(Color.red);
+
+                        return;
+                    }
+                }
+                else
+                {
+                    logger.logComment("Upadting setReloadSimAfterSecs2...", true);
+                    projManager.getCurrentProject().genesisSettings.setReloadSimAfterSecs(-1);
+                    jTextFieldGenesisReload.setEnabled(false);
+                }
 
 
                 projManager.getCurrentProject().genesisSettings.setSymmetricCompartments(jCheckBoxGenesisSymmetric.isSelected());
@@ -9452,6 +9512,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
            jRadioButtonGenesisPhy.setEnabled(false);
            jRadioButtonGenesisSI.setEnabled(false);
 
+           jComboBoxGenesisComps.setEnabled(false);
+           jLabelGenesisCompsDesc.setEnabled(false);
+           jCheckBoxGenesisCopySimFiles.setEnabled(false);
+           jCheckBoxGenesisMooseMode.setEnabled(false);
+           jCheckBoxGenesisReload.setEnabled(false);
+           jLabelGenesisReload.setEnabled(false);
+           jTextFieldGenesisReload.setEnabled(false);
+
            //jlabelg
 
            Button b = new Button();
@@ -9486,6 +9554,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
        {
            jButtonGenesisGenerate.setEnabled(true);
            jButtonGenerateStop.setEnabled(true);
+
+
+           jComboBoxGenesisComps.setEnabled(true);
+           jLabelGenesisCompsDesc.setEnabled(true);
+           jCheckBoxGenesisCopySimFiles.setEnabled(true);
+           jCheckBoxGenesisMooseMode.setEnabled(true);
+           jCheckBoxGenesisReload.setEnabled(true);
+           jLabelGenesisReload.setEnabled(true);
+           jTextFieldGenesisReload.setEnabled(true);
 
 
            jCheckBoxGenesisSymmetric.setEnabled(true);
@@ -9541,6 +9618,20 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                    jRadioButtonGenesisPhy.setSelected(true);
                if (projManager.getCurrentProject().genesisSettings.getUnitSystemToUse() == UnitConverter.GENESIS_SI_UNITS)
                    jRadioButtonGenesisSI.setSelected(true);
+
+               if (projManager.getCurrentProject().genesisSettings.getReloadSimAfterSecs()>0)
+               {
+                   jTextFieldGenesisReload.setText(projManager.getCurrentProject().genesisSettings.getReloadSimAfterSecs()+"");
+                   jTextFieldGenesisReload.setEnabled(true);
+                   jCheckBoxGenesisReload.setSelected(true);
+               }
+               else
+               {
+                   jTextFieldGenesisReload.setText("10");
+                   jTextFieldGenesisReload.setEnabled(false);
+                   jCheckBoxGenesisReload.setSelected(false);
+
+               }
 
            }
        

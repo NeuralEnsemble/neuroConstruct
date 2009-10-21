@@ -64,6 +64,8 @@ public class GenesisSettings
 
     private boolean mooseCompatMode = false;
 
+    private float reloadSimAfterSecs = -1;
+
     public GenesisSettings()
     {
     }
@@ -122,6 +124,16 @@ public class GenesisSettings
             }
         }
     }
+
+    public float getReloadSimAfterSecs() {
+        return reloadSimAfterSecs;
+    }
+
+    public void setReloadSimAfterSecs(float reloadSimAfterSecs) {
+        this.reloadSimAfterSecs = reloadSimAfterSecs;
+    }
+
+    
 
   
 
