@@ -726,6 +726,15 @@
     <defined>Which numerical integration method to use. See GENESIS documentation for full details.</defined>
 </term>
 
+
+<term hidden="true">
+    <name>GENESIS reload</name>
+    <defined>Untick this checkbox and set a value >0 and neuroConstruct will try to reload a GENESIS/MOOSE simulation after this time.<br/>
+                This is useful for short simulations which run for less than 10 secs or so.<br/>
+                Can be used to plot MOOSE simulations, as there is no current native plotting functionality in that simulator.<br/><br/>
+                Note: neuroConstruct will hang while waiting for the simulation to finish!</defined>
+</term>
+
 <term hidden="true">
     <name>NEURON 3D</name>
     <defined>This creates a NEURON Shape plot during the simulation, so that the membrane potential of all cells can be visualised (Note: slows simulation)</defined>
