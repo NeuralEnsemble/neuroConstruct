@@ -5144,7 +5144,7 @@ public class NeuronFileManager
                     summary = summary+"]";
 
 
-                    logger.logComment("Going to execute "+summary, true);
+                    logger.logComment("Going to execute "+summary);
 
                     if(envParams!=null && envParams.length>0)
                     {

@@ -315,12 +315,12 @@ public class GenesisFileManager
 
         addComment(response,
                           " The script will quit after finishing...\n");
-
+        /*
         response.append("\ncreate asc_file /finished\n");
         response.append("setfield /finished filename {strcat {targetDir} {\"finished\"}}\n");
 
         response.append("call /finished OUT_OPEN\n");
-        response.append("call /finished FLUSH\n\n");
+        response.append("call /finished FLUSH\n\n");*/
 
         response.append("\nexit\n");
 
@@ -3518,7 +3518,7 @@ public class GenesisFileManager
         // Due to no plots during Moose at the moment, this plots the results of the Moose simulation
         // in neuroConstruct if the simulation completes within 10 secs
 
-        if (mooseCompatMode()/* || !project.genesisSettings.isGraphicsMode()*/)
+        if (false && mooseCompatMode()/* || !project.genesisSettings.isGraphicsMode()*/)
         {
             logger.logComment("Going to reload data from: "+getDirectoryForSimulationFiles(), true);
             SimulationData sd;
@@ -3647,6 +3647,8 @@ public class GenesisFileManager
         return friendlyDirName;
 
     }
+
+
 
 
     /**
@@ -4265,7 +4267,7 @@ public class GenesisFileManager
         else
         {
             response.append("create table " + timeFileElement + "\n");
-            response.append("call " + timeFileElement + " TABCREATE {{steps}+1} 0 {duration}\n");
+            response.append("call " + timeFileElement + " TABCREATE {steps} 0 {duration}\n");
         }
 
         response.append("for (i = 0; i <= {steps}; i = i + 1"  + ")\n");
