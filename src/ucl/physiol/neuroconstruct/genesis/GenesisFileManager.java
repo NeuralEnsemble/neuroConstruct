@@ -852,11 +852,11 @@ public class GenesisFileManager
 
                         if (!mooseCompatMode() && absRefractVal<0)
                         {
-                            response.append("    addfield /cells/CG1/CG1_0/Soma/spike spiking\n");
-                            response.append("    setfield /cells/CG1/CG1_0/Soma/spike spiking 0\n");
+                            response.append("    addfield " + spikeElement + " spiking\n");
+                            response.append("    setfield " + spikeElement + " spiking 0\n");
 
 
-                            response.append("    addaction /cells/CG1/CG1_0/Soma/spike PROCESS __doSpikingCheck__\n\n");
+                            response.append("    addaction " + spikeElement + " PROCESS __doSpikingCheck__\n\n");
                         }
 
                         response.append("end\n\n");
