@@ -426,11 +426,16 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JCheckBox jCheckBoxNeuronGenAllMod = new JCheckBox("Generate all mod files");
     JCheckBox jCheckBoxNeuronCopySimFiles = new JCheckBox("Copy files to simulations dir");
     JCheckBox jCheckBoxGenesisCopySimFiles = new JCheckBox("Copy files to simulations dir");
-    JCheckBox jCheckBoxGenesisMooseMode = new JCheckBox("MOOSE test mode (beta)");
+    JCheckBox jCheckBoxGenesisMooseMode = new JCheckBox("MOOSE test mode (beta)     ");
 
-    JCheckBox jCheckBoxGenesisReload = new JCheckBox("Attempt reload sim after ");
-    JLabel jLabelGenesisReload = new JLabel(" secs");
-    JTextField jTextFieldGenesisReload = new JTextField("10");
+    JCheckBox jCheckBoxGenesisReload = new JCheckBox("Attempt reload sim after");
+    JLabel jLabelGenesisReload = new JLabel("secs     ");
+    JTextField jTextFieldGenesisReload = new JTextField("10", 3);
+
+
+    JCheckBox jCheckBoxGenesisAbsRefract = new JCheckBox("Spike compat mode or");
+    JLabel jLabelGenesisAbsRefract = new JLabel("ms refract time");
+    JTextField jTextFieldGenesisAbsRefract = new JTextField("5", 3);
 
 
     
@@ -4112,9 +4117,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelGenesisCheckBoxes2.add(this.jCheckBoxGenesisReload);
         jPanelGenesisCheckBoxes2.add(this.jTextFieldGenesisReload);
 
-        jTextFieldGenesisReload.setColumns(4);
-
         jPanelGenesisCheckBoxes2.add(this.jLabelGenesisReload);
+
+
+        jPanelGenesisCheckBoxes2.add(this.jCheckBoxGenesisAbsRefract);
+        jPanelGenesisCheckBoxes2.add(this.jTextFieldGenesisAbsRefract);
+        jPanelGenesisCheckBoxes2.add(this.jLabelGenesisAbsRefract);
 
         jCheckBoxGenesisMooseMode.addItemListener(new ItemListener()
         {
@@ -4403,8 +4411,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
         addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisReload);
-
         addNamedDocumentListner(GENESIS_SIMULATOR_TAB, jTextFieldGenesisReload);
+
+        addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisAbsRefract);
+        addNamedDocumentListner(GENESIS_SIMULATOR_TAB, jTextFieldGenesisAbsRefract);
 
         addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisNoGraphicsMode);
         addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisCopySimFiles);
@@ -4520,6 +4530,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jCheckBoxGenesisReload.setToolTipText(reload);
         jLabelGenesisReload.setToolTipText(reload);
         jTextFieldGenesisReload.setToolTipText(reload);
+
+        String abs_refract = toolTipText.getToolTip("GENESIS abs_refract");
+
+
+        jCheckBoxGenesisAbsRefract.setToolTipText(abs_refract);
+        jLabelGenesisAbsRefract.setToolTipText(abs_refract);
+        jTextFieldGenesisAbsRefract.setToolTipText(abs_refract);
 
         this.jButtonSimConfigEdit.setToolTipText(toolTipText.getToolTip("Simulation Configuration"));
 
@@ -4765,22 +4782,28 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 if (jCheckBoxGenesisReload.isSelected())
                 {
-                    logger.logComment("Upadting setReloadSimAfterSecs...", true);
+                    logger.logComment("Updating jCheckBoxGenesisReload...", true);
+
+                    jTextFieldGenesisReload.setEnabled(true);
+                    //jTextFieldGenesisReload.setEditable(true);
                     try
                     {
                         float wait = Float.parseFloat(jTextFieldGenesisReload.getText());
                         if (wait<=0)
                         {
                             jTextFieldGenesisReload.setBackground(Color.red);
+                            jTextFieldGenesisReload.repaint();
                             return;
                         }
                         projManager.getCurrentProject().genesisSettings.setReloadSimAfterSecs(wait);
                         jTextFieldGenesisReload.setBackground(Color.white);
+                        jTextFieldGenesisReload.repaint();
                     }
                     catch (NumberFormatException ex)
                     {
 
                         jTextFieldGenesisReload.setBackground(Color.red);
+                        jTextFieldGenesisReload.repaint();
 
                         return;
                     }
@@ -4790,7 +4813,47 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     logger.logComment("Upadting setReloadSimAfterSecs2...", true);
                     projManager.getCurrentProject().genesisSettings.setReloadSimAfterSecs(-1);
                     jTextFieldGenesisReload.setEnabled(false);
+                    //jTextFieldGenesisReload.setEditable(false);
+                    jTextFieldGenesisReload.repaint();
                 }
+
+
+
+
+                if (!jCheckBoxGenesisAbsRefract.isSelected())
+                {
+                    logger.logComment("Updating jCheckBoxGenesisAbsRefract...", true);
+
+                    jTextFieldGenesisAbsRefract.setEnabled(true);
+                    try
+                    {
+                        float absRefract = Float.parseFloat(jTextFieldGenesisAbsRefract.getText());
+                        if (absRefract<0)
+                        {
+                            jTextFieldGenesisAbsRefract.setBackground(Color.red);
+                            jTextFieldGenesisAbsRefract.repaint();
+                            return;
+                        }
+                        projManager.getCurrentProject().genesisSettings.setAbsRefractSpikegen(absRefract);
+                        jTextFieldGenesisAbsRefract.setBackground(Color.white);
+                        jTextFieldGenesisAbsRefract.repaint();
+                    }
+                    catch (NumberFormatException ex)
+                    {
+                        jTextFieldGenesisAbsRefract.setBackground(Color.red);
+                        jTextFieldGenesisAbsRefract.repaint();
+                        return;
+                    }
+                }
+                else
+                {
+                    logger.logComment("Updating setAbsRefract...", true);
+                    projManager.getCurrentProject().genesisSettings.setAbsRefractSpikegen(-1);
+                    jTextFieldGenesisAbsRefract.setEnabled(false);
+                    jTextFieldGenesisAbsRefract.repaint();
+                }
+
+
 
 
                 projManager.getCurrentProject().genesisSettings.setSymmetricCompartments(jCheckBoxGenesisSymmetric.isSelected());
@@ -9520,7 +9583,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
            jLabelGenesisReload.setEnabled(false);
            jTextFieldGenesisReload.setEnabled(false);
 
-           //jlabelg
+           jTextFieldGenesisAbsRefract.setEnabled(false);
+           jLabelGenesisAbsRefract.setEnabled(false);
+           jCheckBoxGenesisAbsRefract.setEnabled(false);
 
            Button b = new Button();
            b.setEnabled(false);
@@ -9562,7 +9627,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
            jCheckBoxGenesisMooseMode.setEnabled(true);
            jCheckBoxGenesisReload.setEnabled(true);
            jLabelGenesisReload.setEnabled(true);
-           jTextFieldGenesisReload.setEnabled(true);
+           //jTextFieldGenesisReload.setEnabled(true);
+
+
+           //jTextFieldGenesisAbsRefract.setEnabled(true);
+           jLabelGenesisAbsRefract.setEnabled(true);
+           jCheckBoxGenesisAbsRefract.setEnabled(true);
 
 
            jCheckBoxGenesisSymmetric.setEnabled(true);
@@ -9623,13 +9693,29 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                {
                    jTextFieldGenesisReload.setText(projManager.getCurrentProject().genesisSettings.getReloadSimAfterSecs()+"");
                    jTextFieldGenesisReload.setEnabled(true);
+                   //jTextFieldGenesisReload.setEditable(true);
                    jCheckBoxGenesisReload.setSelected(true);
                }
                else
                {
                    jTextFieldGenesisReload.setText("10");
                    jTextFieldGenesisReload.setEnabled(false);
+                   //jTextFieldGenesisReload.setEditable(false);
                    jCheckBoxGenesisReload.setSelected(false);
+
+               }
+
+               if (projManager.getCurrentProject().genesisSettings.getAbsRefractSpikegen()<0)
+               {
+                   jTextFieldGenesisAbsRefract.setText("10");
+                   jTextFieldGenesisAbsRefract.setEnabled(false);
+                   jCheckBoxGenesisAbsRefract.setSelected(true);
+               }
+               else
+               {
+                   jTextFieldGenesisAbsRefract.setText(projManager.getCurrentProject().genesisSettings.getAbsRefractSpikegen()+"");
+                   jTextFieldGenesisAbsRefract.setEnabled(true);
+                   jCheckBoxGenesisAbsRefract.setSelected(false);
 
                }
 

@@ -533,12 +533,12 @@ public class GenesisFileManager
                                     + " min_amp 1.0 "
                                     + "max_amp 1.0 "
                                     + " rate " +
-                                    UnitConverter.getRate(rndTrain.getRate().getNextNumber(),
+                                    (float)UnitConverter.getRate(rndTrain.getRate().getNextNumber(),
                                                           UnitConverter.NEUROCONSTRUCT_UNITS,
                                                           project.genesisSettings.getUnitSystemToUse())
                                     + " reset 1 "
                                     + " abs_refract "
-                                    + UnitConverter.getTime(absRefractVal,
+                                    + (float)UnitConverter.getTime(absRefractVal,
                                                             UnitConverter.NEUROCONSTRUCT_UNITS,
                                                             project.genesisSettings.getUnitSystemToUse())
                                     + " reset_value 0\n");
@@ -609,6 +609,8 @@ public class GenesisFileManager
         }
 
         addMajorComment(response, "Adding Network Connections");
+
+        boolean addedSpikegenCompatFunc = false;
 
         // Adding specific network connections...
         while (allNetConnNames.hasNext())
@@ -789,27 +791,73 @@ public class GenesisFileManager
                         // put synaptic start point on source axon
 
                         String spikeElement = triggeringElement + "/spike";
+                        
+                        float absRefractVal = project.genesisSettings.getAbsRefractSpikegen();
+
+                        if (!mooseCompatMode() && !addedSpikegenCompatFunc && absRefractVal<0)
+                        {
+                            addComment(response, "Note this function is to help make the spikegen behave like a NetCon in NEURON\n" +
+                                    "i.e. the spikegen will pass a spike event on crossing threshold, not pass any event while the presyn location stays above threshold,\n" +
+                                    "and resume listening for passing threshold once it has gone below again. There will be no extra refractory period.");
+
+                            response.append("function __doSpikingCheck__(action)\n\n");
+                            response.append("    float input = {getmsg . -incoming -slot 0 0}\n\n");
+                            response.append("    //echo \"Spiking state: \"{getfield spiking}\", input: \"{input}\n");
+                            response.append("    \n");
+                            response.append("    if ({getfield spiking} == 0)\n");
+                            response.append("        call . PROCESS -parent  // Carry out all normal actions\n");
+                            response.append("        if (input >= {getfield thresh})\n");
+                            response.append("           setfield spiking 1\n");
+                            response.append("        end\n");
+                            response.append("    else\n");
+                            response.append("        if (input < {getfield thresh})\n");
+                            response.append("           setfield spiking 0\n");
+                            response.append("        end\n");
+                            response.append("    end\n");
+                            response.append("end\n\n");
+                                    
+
+                            addedSpikegenCompatFunc=true;
+
+                        }
 
                         response.append("if (!({exists " + spikeElement + "}))\n");
-                        response.append("    create spikegen " + spikeElement + "\n");
+                        response.append("    create spikegen " + spikeElement + "\n\n");
 
-                        // Changed from 10ms to 1ms
-                        /** @todo Change handling of abs_refract to give option for this in GUI!!!*/
-                        float absRefractVal = 1;
+
+                        if (absRefractVal<0)
+                        {
+                            if (mooseCompatMode())
+                            {
+                                addComment(response, "Note that in MOOSE (as of SVN rev 1388) if a negative abs_refract is set, the spikegen behaves like a NetCon in NEURON\n" +
+                                        "i.e. the spikegen will pass a spike event on crossing threshold, not pass any event while the presyn location stays above threshold,\n" +
+                                        "and resume listening for passing threshold once it has gone below again. There will be no extra refractory period.");
+                            }
+                        }
                     
                         response.append("    setfield " + spikeElement + "  thresh "
-                                        + UnitConverter.getVoltage(synProps.getThreshold(),
+                                        + (float)UnitConverter.getVoltage(synProps.getThreshold(),
                                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                    project.genesisSettings.getUnitSystemToUse())
 
                                         + "  abs_refract "
-                                        + UnitConverter.getTime(absRefractVal,
+                                        + (float)UnitConverter.getTime(absRefractVal,
                                                                 UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                 project.genesisSettings.getUnitSystemToUse())
                                         + " output_amp 1\n");
 
                         response.append("    addmsg  " + triggeringElement
                                         + "  " + spikeElement + "  INPUT Vm\n");
+
+
+                        if (!mooseCompatMode() && absRefractVal<0)
+                        {
+                            response.append("    addfield /cells/CG1/CG1_0/Soma/spike spiking\n");
+                            response.append("    setfield /cells/CG1/CG1_0/Soma/spike spiking 0\n");
+
+
+                            response.append("    addaction /cells/CG1/CG1_0/Soma/spike PROCESS __doSpikingCheck__\n\n");
+                        }
 
                         response.append("end\n\n");
 
@@ -857,7 +905,7 @@ public class GenesisFileManager
                                         + " synapse[{msgnum}].weight "
                                         + weight
                                         + " synapse[{msgnum}].delay "
-                                        + UnitConverter.getTime(  (synInternalDelay + apSegmentPropDelay + apSpaceDelay),
+                                        + (float)UnitConverter.getTime(  (synInternalDelay + apSegmentPropDelay + apSpaceDelay),
                                                                 UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                 project.genesisSettings.getUnitSystemToUse())
                                         + "\n\n");
@@ -1755,6 +1803,14 @@ public class GenesisFileManager
 
         }
 
+        else if (simIndepVarName.indexOf(SimPlot.SYNAPSES) >= 0 &&
+                 simIndepVarName.indexOf(SimPlot.SYN_COND) >= 0)
+        {
+            return (float) UnitConverter.getConductance(val,
+                                                       UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                       units);
+        }
+
         else if (simIndepVarName.indexOf(SimPlot.COND_DENS) >= 0)
         {
             return (float) UnitConverter.getConductanceDensity(val,
@@ -1810,7 +1866,7 @@ public class GenesisFileManager
 
             String fullVarName = record.simPlot.getValuePlotted();
 
-            logger.logComment("Creating VariableHelper for: " + record.getDescription(false, false)+", cell: "+cellNum, true);
+            logger.logComment("Creating VariableHelper for: " + record.getDescription(false, false)+", cell: "+cellNum);
 
 
             if (fullVarName.equals(SimPlot.VOLTAGE))
@@ -1847,7 +1903,7 @@ public class GenesisFileManager
 
                 logger.logComment("extraElementPart: "+extraElementPart+", mechanismName: "+mechanismName
                         +", simIndepVarPart: "+simIndepVarPart+", element: "+ element
-                        +", compParentElement; "+compParentElement+", compTopElementName: "+ compTopElementName, true);
+                        +", compParentElement; "+compParentElement+", compTopElementName: "+ compTopElementName);
 
                 if (mechanismName.equals(SimPlot.SYNAPSES))
                 {
@@ -1928,11 +1984,11 @@ public class GenesisFileManager
                 else
                 {
                     logger.logComment("--------------     Looking to plot " + simIndepVarPart +
-                                      " on cell mech: " + mechanismName, true);
+                                      " on cell mech: " + mechanismName);
 
                     CellMechanism cellMech = project.cellMechanismInfo.getCellMechanism(mechanismName);
 
-                    logger.logComment("Cell mech found: " + cellMech, true);
+                    logger.logComment("Cell mech found: " + cellMech);
 
                     if (cellMech == null)
                     {
@@ -2124,7 +2180,7 @@ public class GenesisFileManager
 
             }
             logger.logComment("Created var helper for " +variableName+", on "+compTopElementName+" which is on "
-                + compParentElement +", with extra script : ("+extraLines+")", true);
+                + compParentElement +", with extra script : ("+extraLines+")");
 
 
         }
@@ -3536,7 +3592,7 @@ public class GenesisFileManager
 
         if (project.genesisSettings.getReloadSimAfterSecs()>0)
         {
-            logger.logComment("Going to reload data from: "+getDirectoryForSimulationFiles(), true);
+            logger.logComment("Going to reload data from: "+getDirectoryForSimulationFiles());
             SimulationData sd;
             try
             {
@@ -3552,7 +3608,7 @@ public class GenesisFileManager
                         sd = new SimulationData(getDirectoryForSimulationFiles());
                         sd.initialise();
 
-                        logger.logComment("Loading: " + sd.getAllLoadedDataStores(), true);
+                        logger.logComment("Loading: " + sd.getAllLoadedDataStores());
                         tries = maxTries;
                         for(DataStore ds:sd.getAllLoadedDataStores())
                         {
@@ -3570,7 +3626,7 @@ public class GenesisFileManager
                     else
                     {
                         Thread.sleep(1000);
-                        logger.logComment("Sim not complete", true);
+                        logger.logComment("Sim not complete");
                     }
                 }
             }
@@ -3703,7 +3759,10 @@ public class GenesisFileManager
         /// ********************
 
        /////////// response.append("check\n");
-        response.append("reset\n");
+        if (!mooseCompatMode())
+        {
+            response.append("reset\n");
+        }
 
 
         File dirForDataFiles = getDirectoryForSimulationFiles();

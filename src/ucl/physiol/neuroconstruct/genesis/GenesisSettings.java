@@ -66,6 +66,9 @@ public class GenesisSettings
 
     private float reloadSimAfterSecs = -1;
 
+    private float absRefractSpikegen = -1;
+
+
     public GenesisSettings()
     {
     }
@@ -133,11 +136,19 @@ public class GenesisSettings
         this.reloadSimAfterSecs = reloadSimAfterSecs;
     }
 
+    public float getAbsRefractSpikegen() 
+    {
+        return absRefractSpikegen;
+    }
+
+    public void setAbsRefractSpikegen(float absRefractSpikegen)
+    {
+        this.absRefractSpikegen = absRefractSpikegen;
+    }
+
     
 
   
-
-
     /**
      * Used to ensure compatibility with old method of code blocks...
      * @deprecated

@@ -551,6 +551,11 @@ public class SimulationsInfo extends AbstractTableModel
             props.setProperty(simulator+" random seed", project.genesisFileManager.getCurrentRandomSeed()+"");
             props.setProperty("No GUI Mode", !project.genesisSettings.isGraphicsMode()+"");
 
+            props.setProperty("spikegen compatibility mode",
+                    (project.genesisSettings.getAbsRefractSpikegen()>=0) ?
+                        "GENESIS 2 behaviour, abs_refract = "+ project.genesisSettings.getAbsRefractSpikegen() :
+                        "NEURON compatible behaviour");
+
             
             for (ScriptLocation sl: ScriptLocation.allLocations)
             {
@@ -567,7 +572,6 @@ public class SimulationsInfo extends AbstractTableModel
 
             props.setProperty("Script format", simulator+" Script");
             
-
             props.setProperty("Script generation time",
                     project.genesisFileManager.getCurrentGenTime()+"");
 
