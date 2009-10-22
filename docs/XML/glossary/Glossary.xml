@@ -736,6 +736,16 @@
 </term>
 
 <term hidden="true">
+    <name>GENESIS abs_refract</name>
+    <defined>If this option is selected, the presynaptic object will pass spikes in a manner identical to NEURON, i.e. the spikegen will pass a <br/>
+             spike event on crossing threshold, not pass any event while the presyn location stays above threshold, and resume listening for passing<br/>
+             threshold once it has gone below again. There will be no extra refractory period. <br/>
+             If this option is deselected and a value is entered for absolute refractory time, the behaviour will be the default spikegen object behaviour,<br/>
+             i.e. once a spike event is sent, no more events will be sent for a time abs_refract, and after that time another event will be sent if the <br/>
+             presyn location is above threshold, even if it has not stopped spiking. This can lead to undesirable behaviour if abs_refract is small or zero.</defined>
+</term>
+
+<term hidden="true">
     <name>NEURON 3D</name>
     <defined>This creates a NEURON Shape plot during the simulation, so that the membrane potential of all cells can be visualised (Note: slows simulation)</defined>
 </term>
