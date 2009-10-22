@@ -2770,13 +2770,22 @@ public class GenesisFileManager
                         boolean methodChanged = false;
                         for (ChannelMechanism cm: mappedCell.getChanMechsVsGroups().keySet())
                         {
-                            if (!methodChanged && project.cellMechanismInfo.getCellMechanism(cm.getName()).isIonConcMechanism())
+                            if (!methodChanged && project.cellMechanismInfo.getCellMechanism(cm.getName()).isChannelMechanism())
                             {
-                                response.append("//***********************************************************************************************\n");
-                                response.append("//****** Assuming cell: "+newElementName+" will use tab2dchannel, so using method ee on it ******\n");
-                                response.append("//setfield "+newElementName+" method ee\n");
-                                response.append("//***********************************************************************************************\n\n");
-                                methodChanged = true;
+
+                                File channelScript = new File(mainGenesisFile.getParentFile(), cm.getName()+".g");
+                                logger.logComment("Checking "+channelScript+" for tab2dchannel..", true);
+
+                                String contents = GeneralUtils.readShortFile(channelScript);
+
+                                if (contents.indexOf("tab2Dchannel")>=0)
+                                {
+                                    response.append("//***********************************************************************************************\n");
+                                    response.append("//********** Cell: "+newElementName+" will use tab2Dchannel, so using method ee on it ***********\n");
+                                    response.append("setfield "+newElementName+" method ee\n");
+                                    response.append("//***********************************************************************************************\n\n");
+                                    methodChanged = true;
+                                }
                             }
                         }
                     }
