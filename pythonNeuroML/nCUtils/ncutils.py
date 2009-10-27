@@ -44,13 +44,16 @@ def generateAndRunGenesis(project,
                          simulatorSeed,
                          verbose=True,
                          quitAfterRun=False,
-                         runInBackground=False):
+                         runInBackground=False,
+                         symmetricComps=False):
 
     if verbose: print "Going to generate GENESIS files for: "+simRef
 
     project.genesisSettings.setGraphicsMode(not runInBackground)
 
     project.genesisSettings.setMooseCompatMode(False)
+
+    project.genesisSettings.setSymmetricCompartments(symmetricComps)
 
     project.genesisFileManager.setQuitAfterRun(quitAfterRun)
 
