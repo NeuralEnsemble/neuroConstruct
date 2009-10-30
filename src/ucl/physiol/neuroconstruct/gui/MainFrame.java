@@ -425,7 +425,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JCheckBox jCheckBoxNeuronNumInt = new JCheckBox("Use variable time step");
     JCheckBox jCheckBoxNeuronGenAllMod = new JCheckBox("Generate all mod files");
     JCheckBox jCheckBoxNeuronCopySimFiles = new JCheckBox("Copy files to simulations dir");
-    JCheckBox jCheckBoxGenesisCopySimFiles = new JCheckBox("Copy files to simulations dir");
+    JCheckBox jCheckBoxGenesisCopySimFiles = new JCheckBox("Copy files to sims dir");
     JCheckBox jCheckBoxGenesisMooseMode = new JCheckBox("MOOSE test mode (beta)     ");
 
     JCheckBox jCheckBoxGenesisReload = new JCheckBox("Attempt reload sim after");
@@ -754,7 +754,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     ButtonGroup buttonGroupNeuronGUI = new ButtonGroup();
     JLabel jLabelNeuronGUI  = new JLabel();
 
-    JCheckBox jCheckBoxGenesisNoGraphicsMode = new JCheckBox();
+
+    JRadioButton jRadioButtonGenesisAllGUI = new JRadioButton();
+    JRadioButton jRadioButtonGenesisNoPlots = new JRadioButton();
+    JRadioButton jRadioButtonGenesisNoConsole = new JRadioButton();
+    ButtonGroup buttonGroupGenesisGUI = new ButtonGroup();
+    JLabel jLabelGenesisGUI  = new JLabel();
+
+    //JCheckBox jCheckBoxGenesisNoGraphicsMode = new JCheckBox();
 
 
     JPanel jPanelSimWhatToRecord = new JPanel();
@@ -1688,7 +1695,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTextFieldSimulationVLeak.setColumns(6);
         jCheckBoxGenesisSymmetric.setEnabled(false);
         jCheckBoxGenesisSymmetric.setHorizontalAlignment(SwingConstants.CENTER);
-        jCheckBoxGenesisSymmetric.setText("Symmetric compartments");
+        jCheckBoxGenesisSymmetric.setText("Symmetric compts");
         jPanelGenesisSettings.setLayout(borderLayout35);
         //borderLayout35.setHgap(5);
         //borderLayout35.setVgap(5);
@@ -1697,6 +1704,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     //    jButtonSimulationRecord.setText("Change...");
 
         jCheckBoxNeuronShowShapePlot.setEnabled(false);// jPanelSimulationParams.add(jPanelSimulationWhatToRec,  BorderLayout.NORTH);
+
         this.jRadioButtonNeuronAllGUI.setEnabled(false);
         this.jRadioButtonNeuronAllGUI.setText("Show all");
         this.jRadioButtonNeuronNoConsole.setEnabled(false);
@@ -1708,11 +1716,26 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         buttonGroupNeuronGUI.add(jRadioButtonNeuronNoConsole);
         buttonGroupNeuronGUI.add(jRadioButtonNeuronNoPlots);
 
-        jCheckBoxGenesisNoGraphicsMode.setEnabled(false);
 
-        jCheckBoxNeuronShowShapePlot.setText("Show 3D potential plot");
+        this.jRadioButtonGenesisAllGUI.setEnabled(false);
+        this.jRadioButtonGenesisAllGUI.setText("Show all");
+        this.jRadioButtonGenesisNoConsole.setEnabled(false);
+        this.jRadioButtonGenesisNoConsole.setText("No console");
+        this.jRadioButtonGenesisNoPlots.setEnabled(false);
+        this.jRadioButtonGenesisNoPlots.setText("No plots");
+
+        buttonGroupGenesisGUI.add(jRadioButtonGenesisAllGUI);
+        buttonGroupGenesisGUI.add(jRadioButtonGenesisNoConsole);
+        buttonGroupGenesisGUI.add(jRadioButtonGenesisNoPlots);
+
+        //jCheckBoxGenesisNoGraphicsMode.setEnabled(false);
+
+        jCheckBoxNeuronShowShapePlot.setText("Show 3D potential");
         jLabelNeuronGUI.setText("  GUI mode: ");
-        jCheckBoxGenesisNoGraphicsMode.setText("No GUI mode");
+        jLabelGenesisGUI.setText("GUI mode: ");
+
+
+        //jCheckBoxGenesisNoGraphicsMode.setText("No GUI mode");
 
    //     jPanelSimulationWhatToRec.add(jButtonSimulationRecord, null);
         jRadioButtonSimSomaOnly.setSelected(true);
@@ -4108,7 +4131,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelGenesisCheckBoxes1.add(jCheckBoxGenesisShapePlot, null);
         jPanelGenesisCheckBoxes1.add(jCheckBoxGenesisSymmetric, null);
         jPanelGenesisCheckBoxes1.add(jCheckBoxGenesisComments, null);
-        jPanelGenesisCheckBoxes1.add(jCheckBoxGenesisNoGraphicsMode, null);
+
+
+        jPanelGenesisCheckBoxes1.add(jLabelGenesisGUI, null);
+        jPanelGenesisCheckBoxes1.add(jRadioButtonGenesisAllGUI, null);
+        jPanelGenesisCheckBoxes1.add(jRadioButtonGenesisNoPlots, null);
+        jPanelGenesisCheckBoxes1.add(jRadioButtonGenesisNoConsole, null);
 
         jPanelGenesisCheckBoxes1.add(this.jCheckBoxGenesisCopySimFiles);
 
@@ -4416,9 +4444,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisAbsRefract);
         addNamedDocumentListner(GENESIS_SIMULATOR_TAB, jTextFieldGenesisAbsRefract);
 
-        addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisNoGraphicsMode);
         addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisCopySimFiles);
         addCheckBoxListner(GENESIS_SIMULATOR_TAB, jCheckBoxGenesisMooseMode);
+
+        addRadioButtonListner(GENESIS_SIMULATOR_TAB, jRadioButtonGenesisAllGUI);
+        addRadioButtonListner(GENESIS_SIMULATOR_TAB, jRadioButtonGenesisNoPlots);
+        addRadioButtonListner(GENESIS_SIMULATOR_TAB, jRadioButtonGenesisNoConsole);
+
 
         addRadioButtonListner(GENESIS_SIMULATOR_TAB, jRadioButtonGenesisPhy);
         addRadioButtonListner(GENESIS_SIMULATOR_TAB, jRadioButtonGenesisSI);
@@ -4563,7 +4595,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jCheckBoxSpecifySimRef.setToolTipText(toolTipText.getToolTip("Specify Reference"));
 
 
-        this.jCheckBoxGenesisNoGraphicsMode.setToolTipText(toolTipText.getToolTip("No Graphics Mode"));
+        //this.jCheckBoxGenesisNoGraphicsMode.setToolTipText(toolTipText.getToolTip("No Graphics Mode"));
 
         this.jButtonMechanismNewCML.setToolTipText(toolTipText.getToolTip("File Based ChannelML"));
         this.jButtonMechanismTemplateCML.setToolTipText(toolTipText.getToolTip("Template Based ChannelML"));
@@ -4778,7 +4810,19 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     projManager.getCurrentProject().genesisSettings.setNativeBlock(currNcl, jTextAreaGenesisBlock.getText());
                 }
 
-                projManager.getCurrentProject().genesisSettings.setGraphicsMode(!this.jCheckBoxGenesisNoGraphicsMode.isSelected());
+
+                if (jRadioButtonGenesisAllGUI.isSelected())
+                {
+                    projManager.getCurrentProject().genesisSettings.setGraphicsMode(GenesisSettings.GraphicsMode.ALL_SHOW);
+                }
+                else if (jRadioButtonGenesisNoPlots.isSelected())
+                {
+                    projManager.getCurrentProject().genesisSettings.setGraphicsMode(GenesisSettings.GraphicsMode.NO_PLOTS);
+                }
+                else if (jRadioButtonGenesisNoConsole.isSelected())
+                {
+                    projManager.getCurrentProject().genesisSettings.setGraphicsMode(GenesisSettings.GraphicsMode.NO_CONSOLE);
+                }
 
                 if (jCheckBoxGenesisReload.isSelected())
                 {
@@ -9567,7 +9611,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
            jCheckBoxGenesisSymmetric.setEnabled(false);
            jCheckBoxGenesisComments.setEnabled(false);
-           this.jCheckBoxGenesisNoGraphicsMode.setEnabled(false);
+           this.jRadioButtonGenesisAllGUI.setEnabled(false);
+           this.jRadioButtonGenesisNoConsole.setEnabled(false);
+           this.jRadioButtonGenesisNoPlots.setEnabled(false);
            //////////jCheckBoxGenesisVoltPlot.setEnabled(false);
            jCheckBoxGenesisShapePlot.setEnabled(false);
 
@@ -9637,7 +9683,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
            jCheckBoxGenesisSymmetric.setEnabled(true);
            jCheckBoxGenesisComments.setEnabled(true);
-           jCheckBoxGenesisNoGraphicsMode.setEnabled(true);
+           this.jRadioButtonGenesisAllGUI.setEnabled(true);
+           this.jRadioButtonGenesisNoConsole.setEnabled(true);
+           this.jRadioButtonGenesisNoPlots.setEnabled(true);
            this.jTextAreaSimConfigDesc.setEnabled(true);
 
            
@@ -9676,7 +9724,23 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                jCheckBoxGenesisSymmetric.setSelected(projManager.getCurrentProject().genesisSettings.isSymmetricCompartments());
                jCheckBoxGenesisComments.setSelected(projManager.getCurrentProject().genesisSettings.isGenerateComments());
-               jCheckBoxGenesisNoGraphicsMode.setSelected(!projManager.getCurrentProject().genesisSettings.isGraphicsMode());
+               
+               //jCheckBoxGenesisNoGraphicsMode.setSelected(!projManager.getCurrentProject().genesisSettings.isGraphicsMode());
+               
+                if (projManager.getCurrentProject().genesisSettings.getGraphicsMode().equals(GenesisSettings.GraphicsMode.ALL_SHOW))
+                {
+                    jRadioButtonGenesisAllGUI.setSelected(true);
+                }
+                else if (projManager.getCurrentProject().genesisSettings.getGraphicsMode().equals(GenesisSettings.GraphicsMode.NO_PLOTS))
+                {
+                    jRadioButtonGenesisNoPlots.setSelected(true);
+                }
+
+                else if (projManager.getCurrentProject().genesisSettings.getGraphicsMode().equals(GenesisSettings.GraphicsMode.NO_CONSOLE))
+                {
+                    jRadioButtonGenesisNoConsole.setSelected(true);
+                }
+
                //////////jCheckBoxGenesisVoltPlot.setSelected(projManager.getCurrentProject().genesisSettings.isShowVoltPlot());
                jCheckBoxGenesisShapePlot.setSelected(projManager.getCurrentProject().genesisSettings.isShowShapePlot());
                

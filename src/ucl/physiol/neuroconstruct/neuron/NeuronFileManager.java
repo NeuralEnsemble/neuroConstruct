@@ -4256,7 +4256,7 @@ public class NeuronFileManager
             timeStepInfo = " variable time step,";
         }
 
-        boolean announceDate = !generateLinuxBasedScripts();
+        boolean announceDate = true;// !generateLinuxBasedScripts();
         String dateInfo = "";
 
 

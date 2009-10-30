@@ -549,7 +549,7 @@ public class SimulationsInfo extends AbstractTableModel
             props.setProperty("Unit system", UnitConverter.getUnitSystemDescription(project.genesisSettings.getUnitSystemToUse()));
             props.setProperty("Symmetric compartments", project.genesisSettings.isSymmetricCompartments()+"");
             props.setProperty(simulator+" random seed", project.genesisFileManager.getCurrentRandomSeed()+"");
-            props.setProperty("No GUI Mode", !project.genesisSettings.isGraphicsMode()+"");
+            props.setProperty("GUI Mode", project.genesisSettings.getGraphicsMode()+"");
 
             props.setProperty("spikegen compatibility mode",
                     (project.genesisSettings.getAbsRefractSpikegen()>=0) ?

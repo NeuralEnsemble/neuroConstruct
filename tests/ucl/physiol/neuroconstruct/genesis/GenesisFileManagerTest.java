@@ -103,7 +103,7 @@ public class GenesisFileManagerTest {
         //if (simDir.exists())
         //    simDir.delete();
         
-        proj.genesisSettings.setGraphicsMode(false);
+        proj.genesisSettings.setGraphicsMode(GenesisSettings.GraphicsMode.NO_CONSOLE);
         
         proj.genesisFileManager.setQuitAfterRun(true);
 

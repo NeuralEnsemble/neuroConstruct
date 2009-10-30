@@ -52,7 +52,10 @@ public class GenesisSettings
 
     boolean showVoltPlot = true;
 
-    private boolean graphicsMode = true;
+    public enum GraphicsMode{ ALL_SHOW, NO_PLOTS, NO_CONSOLE }
+
+    private GraphicsMode graphicsMode = GraphicsMode.ALL_SHOW;
+    //private boolean graphicsMode = true;
 
     boolean showShapePlot = false;
 
@@ -242,13 +245,26 @@ public class GenesisSettings
     {
         this.unitSystemToUse = unitSystemToUse;
     }
-    public boolean isGraphicsMode()
-    {
-        return graphicsMode;
-    }
+
+
+    /**
+     * @deprecated
+     */
     public void setGraphicsMode(boolean graphicsMode)
     {
+        if (graphicsMode) this.graphicsMode = GraphicsMode.ALL_SHOW;
+        else this.graphicsMode = GraphicsMode.NO_PLOTS;
+    }
+
+
+    public void setGraphicsMode(GraphicsMode graphicsMode)
+    {
         this.graphicsMode = graphicsMode;
+    }
+
+    public GraphicsMode getGraphicsMode()
+    {
+        return graphicsMode;
     }
 
     public boolean isCopySimFiles()

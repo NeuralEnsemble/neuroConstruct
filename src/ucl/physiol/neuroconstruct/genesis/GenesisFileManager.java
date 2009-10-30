@@ -257,8 +257,10 @@ public class GenesisFileManager
             if(mooseCompatMode()) fw.write("\n*/\n");
             
             
-            if (quitAfterRun)
+            if (quitAfterRun || project.genesisSettings.getGraphicsMode().equals(GenesisSettings.GraphicsMode.NO_CONSOLE))
+            {
                 fw.write(generateQuit());
+            }
             
             fw.flush();
             fw.close();
@@ -2225,7 +2227,7 @@ public class GenesisFileManager
 
         ArrayList<PlotSaveDetails> plots = project.generatedPlotSaves.getPlottedPlotSaves();
 
-        if (project.genesisSettings.isGraphicsMode())
+        if (project.genesisSettings.getGraphicsMode().equals(GenesisSettings.GraphicsMode.ALL_SHOW))
         {
             addMajorComment(response, "Adding " + plots.size() + " plot(s)");
 
@@ -2314,7 +2316,8 @@ public class GenesisFileManager
     {
         StringBuffer response = new StringBuffer();
 
-        if (project.genesisSettings.isShowShapePlot() && project.genesisSettings.isGraphicsMode())
+        if (project.genesisSettings.isShowShapePlot() && 
+            project.genesisSettings.getGraphicsMode().equals(GenesisSettings.GraphicsMode.ALL_SHOW))
         {
             /*
              response.append("create xform /cellform [50,50,800,400]\n");
@@ -2354,7 +2357,7 @@ public class GenesisFileManager
     {
         StringBuffer response = new StringBuffer();
 
-        if (project.genesisSettings.isGraphicsMode())
+        if (project.genesisSettings.getGraphicsMode().equals(GenesisSettings.GraphicsMode.ALL_SHOW))
         {
 
             response.append("\n\n");
@@ -2774,7 +2777,7 @@ public class GenesisFileManager
                             {
 
                                 File channelScript = new File(mainGenesisFile.getParentFile(), cm.getName()+".g");
-                                logger.logComment("Checking "+channelScript+" for tab2dchannel..", true);
+                                logger.logComment("Checking "+channelScript+" for tab2dchannel..");
 
                                 String contents = GeneralUtils.readShortFile(channelScript);
 
@@ -3504,6 +3507,7 @@ public class GenesisFileManager
 
                 //File dirToRunIn = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory());
 
+
                 String basicCommLine = GeneralProperties.getExecutableCommandLine();
 
                 String executable = "";
@@ -3567,15 +3571,22 @@ public class GenesisFileManager
                     ex.printStackTrace();
                 }
 
-                commandToExecute = executable
-                    + " "
-                    + titleOption
-                    + " "
-                    + workdirOption
-                    + " "
-                    + extraArgs
-                    + " " +
-                    scriptFile.getAbsolutePath();
+                if (project.genesisSettings.getGraphicsMode().equals(GenesisSettings.GraphicsMode.NO_CONSOLE))
+                {
+                    commandToExecute = scriptFile.getAbsolutePath();
+                }
+                else
+                {
+                    commandToExecute = executable
+                        + " "
+                        + titleOption
+                        + " "
+                        + workdirOption
+                        + " "
+                        + extraArgs
+                        + " " +
+                        scriptFile.getAbsolutePath();
+                }
 
 
 
@@ -4322,7 +4333,8 @@ public class GenesisFileManager
         }
 
         
-        response.append("echo Starting sim: "+project.simulationParameters.getReference()+" with dur: {duration}"+
+        response.append("echo Starting sim: "+project.simulationParameters.getReference()+" on {"+
+                GEN_CORE_VARIABLE+"} with dur: {duration}"+
                 " dt: {dt} and steps: {steps} ("+project.genesisSettings.getNumMethod()+")"+dateInfo+"\n");
 
         response.append("step {steps}\n\n"); // +1 to include 0 and last timestep
