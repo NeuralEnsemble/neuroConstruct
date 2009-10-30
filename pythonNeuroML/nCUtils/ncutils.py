@@ -107,7 +107,8 @@ def generateAndRunNeuron(project,
                          simulatorSeed, 
                          verbose=True, 
                          quitAfterRun=False, 
-                         runInBackground=False):
+                         runInBackground=False,
+                         varTimestep=False):
         
     if verbose: print "Going to generate NEURON files for simulation: "+simRef
     
@@ -115,6 +116,8 @@ def generateAndRunNeuron(project,
     
     if runInBackground:
         project.neuronSettings.setNoConsole()
+
+    project.neuronSettings.setVarTimeStep(varTimestep)
     
     project.neuronFileManager.generateTheNeuronFiles(simConfig,
                                                      None,
