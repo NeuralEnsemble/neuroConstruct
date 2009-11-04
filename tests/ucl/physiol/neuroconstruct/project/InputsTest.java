@@ -184,14 +184,19 @@ ProjectManager pm = null;
         
         System.out.println("Run NEURON files");
         
-        
-        Thread.sleep(3000); // Shouldn't take longer than this
-
         SimulationData simData = new SimulationData(simDir, false);
-        
-        simData.initialise();        
-        
         File timesFile = simData.getTimesFile();
+
+        while (!timesFile.exists())
+        {
+            Thread.sleep(1000); // Shouldn't take longer than this
+        }
+
+        Thread.sleep(1000); // Shouldn't take longer than this
+        
+        simData.initialise();
+        Thread.sleep(2000); // Shouldn't take longer than this
+        
         
         assertTrue(timesFile.exists());
         
@@ -273,16 +278,18 @@ ProjectManager pm = null;
         System.out.println("Run NEURON files");
         
         
-        Thread.sleep(3000); // Shouldn't take longer than this
-        
-        
         simData = new SimulationData(simDir, false);
-        
-        simData.initialise();        
-        
         timesFile = simData.getTimesFile();
-        
-        assertTrue(timesFile.exists());
+
+        while (!timesFile.exists())
+        {
+            Thread.sleep(1000); // Shouldn't take longer than this
+        }
+
+        Thread.sleep(1000); // Shouldn't take longer than this
+
+        simData.initialise();
+        Thread.sleep(2000); // Shouldn't take longer than this
         
         
         numRecordings = simData.getCellSegRefs(false).size();
@@ -360,16 +367,18 @@ ProjectManager pm = null;
         System.out.println("Run NEURON files");
         
         
-        Thread.sleep(3000); // Shouldn't take longer than this
-        
-        
         simData = new SimulationData(simDir, false);
-        
-        simData.initialise();        
-        
         timesFile = simData.getTimesFile();
-        
-        assertTrue(timesFile.exists());
+
+        while (!timesFile.exists())
+        {
+            Thread.sleep(1000); // Shouldn't take longer than this
+        }
+
+        Thread.sleep(1000); // Shouldn't take longer than this
+
+        simData.initialise();
+        Thread.sleep(2000); // Shouldn't take longer than this
         
         
         numRecordings = simData.getCellSegRefs(false).size();
