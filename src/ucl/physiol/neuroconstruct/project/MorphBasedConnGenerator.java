@@ -524,8 +524,10 @@ public class MorphBasedConnGenerator extends Thread
                             SegmentLocation genFinishConnPoint = null;
 
                             float connDistance = -1;
-                            float maxMinCheckDistance = -1;
+                            //float maxMinCheckDistance = -1;
                             int genFinishCellNumber = -1;
+
+                            boolean nonZeroPropDelay = !(project.morphNetworkConnectionsInfo.getAPSpeed(netConnName)==Float.MAX_VALUE);
 
 
             /****    COMPLETELY_RANDOM case...    ****/
@@ -722,19 +724,20 @@ public class MorphBasedConnGenerator extends Thread
                                                 float distApart = -1;
                                                 float distForMaxMin = -1;
 
-                                                if(!ignoreDistance)
+                                                if(!ignoreDistance || nonZeroPropDelay)
                                                 {
+                                                    distApart = CellTopologyHelper.getSynapticEndpointsDistance(
+                                                                                            project,
+                                                                                            genStartCellGroup,
+                                                                                            new SynapticConnectionEndPoint(genStartConnPoint,
+                                                                                                    genStartCellNumber),
+                                                                                                    genFinishCellGroup,
+                                                                                            new SynapticConnectionEndPoint(genFinishConnPoint,
+                                                                                                    genFinishCellNumber),
+                                                                                            maxMin.getDimension());
+                                                    
                                                     if (!maxMin.getDimension().equals("s"))
                                                     {
-                                                            distApart = CellTopologyHelper.getSynapticEndpointsDistance(
-                                                                                                    project,
-                                                                                                    genStartCellGroup,
-                                                                                                    new SynapticConnectionEndPoint(genStartConnPoint,
-                                                                                                            genStartCellNumber),
-                                                                                                            genFinishCellGroup,
-                                                                                                    new SynapticConnectionEndPoint(genFinishConnPoint,
-                                                                                                            genFinishCellNumber),
-                                                                                                    maxMin.getDimension());
 
                                                             distForMaxMin = distApart;
                                                     }
@@ -1207,7 +1210,7 @@ public class MorphBasedConnGenerator extends Thread
                             if (continueSingleConnGeneration
                                 && genFinishCellNumber >= 0
                                 && genFinishConnPoint != null
-                               && finCellsMaxedOut.size()<numberInGenFinishCellGroup)
+                                && finCellsMaxedOut.size()<numberInGenFinishCellGroup)
                             {
                                 logger.logComment("Generated a synaptic point for cell number " +
                                                   genFinishCellNumber + ": " +genFinishConnPoint.toString());

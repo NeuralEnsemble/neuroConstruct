@@ -30,8 +30,13 @@ import java.io.*;
 import java.util.*;
 
 import java.util.ArrayList;
+
+import javax.swing.event.TreeModelListener;
 import javax.swing.table.*;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.neuron.*;
@@ -39,11 +44,12 @@ import ucl.physiol.neuroconstruct.genesis.*;
 import ucl.physiol.neuroconstruct.hpc.mpi.RemoteLogin;
 import ucl.physiol.neuroconstruct.hpc.utils.*;
 import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.simulation.SimulationData.DataStore;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
 
 /**
- * Extension of AbstractTableModel to store the info on multiple simulations
+ * Helper class for displaying multiple simulations in a table or JTree
  *
  * @author Padraig Gleeson
  *  
@@ -51,7 +57,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
 
 @SuppressWarnings("serial")
 
-public class SimulationsInfo extends AbstractTableModel
+public class SimulationsInfo extends AbstractTableModel implements TreeModel
 {
     ClassLogger logger = new ClassLogger("SimulationsInfo");
 
@@ -85,13 +91,15 @@ public class SimulationsInfo extends AbstractTableModel
     private static Hashtable<String, String> extraSimProperties = new Hashtable<String, String>();
 
 
+    private TreeMap<String, TreeMap<String, TreeMap<Integer, ArrayList<DataStore>>>> dataInSims
+            = new TreeMap<String, TreeMap<String, TreeMap<Integer, ArrayList<DataStore>>>>();
+
+
     public SimulationsInfo(File simulationsDir, Vector<String> preferredColumns)
     {
         logger.logComment("New SimulationsInfo created");
         this.simulationsDir = simulationsDir;
         this.columnsShown = preferredColumns;
-
-
 
         pf = new ProcessFeedback()
         {
@@ -111,6 +119,299 @@ public class SimulationsInfo extends AbstractTableModel
     }
 
 
+    /////////////////////////  Methods for Tree Model  /////////////////////////
+
+
+    private ArrayList<TreeModelListener> treeModelListeners = new ArrayList<TreeModelListener>();
+
+    public class AllSimRoot extends DefaultMutableTreeNode
+    {
+        AllSimRoot()
+        {
+            super("All simulations");
+        }
+    }
+    public class SimNode extends DefaultMutableTreeNode
+    {
+        SimNode(SimulationData sd)
+        {
+            super(sd);
+        }
+    }
+
+    public class CellGroupNode extends DefaultMutableTreeNode
+    {
+        private String cellGroupName = null;
+        private String simRef = null;
+
+        CellGroupNode(String cgn, String simRef)
+        {
+            super(cgn);
+            this.cellGroupName = cgn;
+            this.simRef = simRef;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Cell Group: "+ cellGroupName;
+        }
+
+        public String getCellGroupName()
+        {
+            return cellGroupName;
+        }
+        public String getSimRef()
+        {
+            return simRef;
+        }
+    }
+    /*
+    public class SegmentNode extends DefaultMutableTreeNode
+    {
+        SegmentNode(Integer seg)
+        {
+            super(seg);
+        }
+    }*/
+    public class CellNode extends DefaultMutableTreeNode
+    {
+        private String cellGroupName = null;
+        private String simRef = null;
+        private int index;
+
+        CellNode(Integer index, String cgn, String simRef)
+        {
+            super(index);
+            this.cellGroupName = cgn;
+            this.simRef = simRef;
+            this.index = index;
+        }
+
+
+        @Override
+        public String toString()
+        {
+            return "Cell: "+ index;
+        }
+
+        public String getCellGroupName()
+        {
+            return cellGroupName;
+        }
+        public String getSimRef()
+        {
+            return simRef;
+        }
+        public int getIndex()
+        {
+            return index;
+        }
+    }
+    public class DataStoreNode extends DefaultMutableTreeNode
+    {
+        DataStoreNode(DataStore ds)
+        {
+            super(ds);
+        }
+    }
+
+    public Object getRoot()
+    {
+        return new AllSimRoot();
+    };
+
+
+    private void checkTreeMapForSim(SimulationData sd)
+    {
+        if (dataInSims.get(sd.getSimulationName())==null)
+        {
+            TreeMap<String, TreeMap<Integer, ArrayList<DataStore>>> treeCG =
+                    new TreeMap<String, TreeMap<Integer, ArrayList<DataStore>>>();
+
+            for(DataStore ds: sd.getAllLoadedDataStores())
+            {
+                String cellGroupName = ds.getCellGroupName();
+
+                int cellIndex = ds.getCellNumber();
+                //int segId = ds.getAssumedSegmentId();
+
+                if(treeCG.get(cellGroupName)==null)
+                {
+                    TreeMap<Integer, ArrayList<DataStore>> treeIndex = new TreeMap<Integer, ArrayList<DataStore>>();
+                    treeCG.put(cellGroupName, treeIndex);
+                }
+                TreeMap<Integer, ArrayList<DataStore>> treeIndex = treeCG.get(cellGroupName);
+
+                if(treeIndex.get(cellIndex)==null)
+                {
+                    ArrayList<DataStore> ads = new ArrayList<DataStore>();
+
+                    treeIndex.put(cellIndex, ads);
+                }
+
+                ArrayList<DataStore> ads = treeIndex.get(cellIndex);
+
+                ads.add(ds);
+            }
+            dataInSims.put(sd.getSimulationName(), treeCG);
+
+        }
+    }
+
+    public Object getChild(Object parent, int index)
+    {
+        if (parent instanceof AllSimRoot)
+        {
+            SimulationData sd = simDataObjs.get(index);
+            return new SimNode(sd);
+        }
+        if (parent instanceof SimNode)
+        {
+            SimulationData sd = (SimulationData)(((SimNode)parent).getUserObject());
+            try
+            {
+                sd.initialise();
+
+                checkTreeMapForSim(sd);
+
+                TreeMap<String, TreeMap<Integer, ArrayList<DataStore>>> treeCG = dataInSims.get(sd.getSimulationName());
+                Vector v = new Vector(treeCG.keySet());
+                return new CellGroupNode((String)v.get(index), sd.getSimulationName());
+            }
+            catch (SimulationDataException ex)
+            {
+                return new DefaultMutableTreeNode(ex.getMessage());
+            }
+        }
+        if (parent instanceof CellGroupNode)
+        {
+            CellGroupNode cellGroupNode = (CellGroupNode)parent;
+
+            try
+            {
+                TreeMap<String, TreeMap<Integer, ArrayList<DataStore>>> treeCG = dataInSims.get(cellGroupNode.getSimRef());
+                TreeMap<Integer, ArrayList<DataStore>> treeIndex = treeCG.get(cellGroupNode.getCellGroupName());
+                Vector v = new Vector(treeIndex.keySet());
+                return new CellNode((Integer)v.get(index), cellGroupNode.getCellGroupName(), cellGroupNode.getSimRef());
+            }
+            catch (Exception ex)
+            {
+                return new DefaultMutableTreeNode(ex.getMessage());
+            }
+        }
+        if (parent instanceof CellNode)
+        {
+            CellNode cellNode = (CellNode)parent;
+            try
+            {
+                TreeMap<String, TreeMap<Integer, ArrayList<DataStore>>> treeCG = dataInSims.get(cellNode.getSimRef());
+                TreeMap<Integer, ArrayList<DataStore>> treeIndex = treeCG.get(cellNode.getCellGroupName());
+                ArrayList<DataStore> ads = treeIndex.get(cellNode.getIndex());
+                DataStore ds = ads.get(index);
+                return new DataStoreNode(ds);
+            }
+            catch (Exception ex)
+            {
+                return new DefaultMutableTreeNode(ex.getMessage());
+            }
+        }
+        return null;
+    }
+
+
+    public int getChildCount(Object parent)
+    {
+        if (parent instanceof AllSimRoot)
+        {
+            return simDataObjs.size();
+        }
+        if (parent instanceof SimNode)
+        {
+            SimulationData sd = (SimulationData)(((SimNode)parent).getUserObject());
+            try
+            {
+                sd.initialise();
+
+                checkTreeMapForSim(sd);
+                TreeMap<String, TreeMap<Integer, ArrayList<DataStore>>> treeCG = dataInSims.get(sd.getSimulationName());
+
+                return treeCG.keySet().size();
+            }
+            catch (SimulationDataException ex)
+            {
+                return 1;
+            }
+        }
+
+        if (parent instanceof CellGroupNode)
+        {
+            CellGroupNode cellGroupNode = (CellGroupNode)parent;
+
+            try
+            {
+                TreeMap<String, TreeMap<Integer, ArrayList<DataStore>>> treeCG = dataInSims.get(cellGroupNode.getSimRef());
+                TreeMap<Integer, ArrayList<DataStore>> treeIndex = treeCG.get(cellGroupNode.getCellGroupName());
+
+                return treeIndex.size();
+            }
+            catch (Exception ex)
+            {
+                return 1;
+            }
+        }
+
+        if (parent instanceof CellNode)
+        {
+            CellNode cellNode = (CellNode)parent;
+            try
+            {
+                TreeMap<String, TreeMap<Integer, ArrayList<DataStore>>> treeCG = dataInSims.get(cellNode.getSimRef());
+                TreeMap<Integer, ArrayList<DataStore>> treeIndex = treeCG.get(cellNode.getCellGroupName());
+                ArrayList<DataStore> ads = treeIndex.get(cellNode.getIndex());
+                return ads.size();
+            }
+            catch (Exception ex)
+            {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+
+    public boolean isLeaf(Object node)
+    {
+        if (node instanceof DataStoreNode)
+            return true;
+        return false;
+    }
+
+
+    public void valueForPathChanged(TreePath path, Object newValue)
+    {
+
+    }
+
+    public int getIndexOfChild(Object parent, Object child)
+    {
+        System.out.println("aaaaaaaaaaaaaaaaaaaggghhhhhhhhhhhhhh");
+        return -1;
+    }
+
+    public void addTreeModelListener(TreeModelListener tml)
+    {
+        treeModelListeners.add(tml);
+    }
+
+    public void removeTreeModelListener(TreeModelListener tml)
+    {
+        treeModelListeners.remove(tml);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+
+
     public void refresh(boolean checkRemote)
     {
         logger.logComment("Refreshing the contents of table model");
@@ -118,6 +419,9 @@ public class SimulationsInfo extends AbstractTableModel
         allColumns.removeAllElements();
         simDataObjs.removeAllElements();
         extraColumns.removeAllElements();
+
+        dataInSims
+            = new TreeMap<String, TreeMap<String, TreeMap<Integer, ArrayList<DataStore>>>>();
 
         allColumns.add(COL_NUM_NAME, COL_NAME_NAME);
         allColumns.add(COL_NUM_DATE, COL_NAME_DATE);
@@ -288,6 +592,7 @@ public class SimulationsInfo extends AbstractTableModel
         this.fireTableStructureChanged();
 
     }
+
 
 
     public int getColumnCount()
