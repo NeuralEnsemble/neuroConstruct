@@ -256,6 +256,11 @@ public class GenesisSettings
         else this.graphicsMode = GraphicsMode.NO_PLOTS;
     }
 
+    public void setNoConsole()
+    {
+        this.graphicsMode = GraphicsMode.NO_CONSOLE;
+    }
+
 
     public void setGraphicsMode(GraphicsMode graphicsMode)
     {

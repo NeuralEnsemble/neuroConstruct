@@ -49,7 +49,8 @@ def generateAndRunGenesis(project,
 
     if verbose: print "Going to generate GENESIS files for: "+simRef
 
-    project.genesisSettings.setGraphicsMode(not runInBackground)
+    if runInBackground:
+        project.genesisSettings.setNoConsole()
 
     project.genesisSettings.setMooseCompatMode(False)
 
@@ -80,7 +81,8 @@ def generateAndRunMoose(project,
 
     if verbose: print "Going to generate MOOSE files for: "+simRef
 
-    project.genesisSettings.setGraphicsMode(not runInBackground)
+    if runInBackground:
+        project.genesisSettings.setNoConsole()
 
     project.genesisFileManager.setQuitAfterRun(quitAfterRun)
 
