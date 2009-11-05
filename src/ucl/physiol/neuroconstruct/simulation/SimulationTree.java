@@ -118,7 +118,9 @@ public class SimulationTree extends JTree implements ActionListener
                 @Override
                 public void mouseReleased( MouseEvent e )
                 {
-                    if ( e.isPopupTrigger() && getSelectionPath()!=null)
+                    logger.logComment("Mouse event: "+ e, true);
+                    
+                    if ( e.getButton()==3 && getSelectionPath()!=null)
                     {
                         logger.logComment("Pop up due to: "+e.getSource(), true);
                         logger.logComment("Sel: "+getSelectionPath(), true);
