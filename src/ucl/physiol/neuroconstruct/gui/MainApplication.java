@@ -53,7 +53,10 @@ public class MainApplication
 {
     private MainFrame frame = null;
 
-    public enum StartupMode {NORMAL_GUI_MODE, PLOT_ONLY_MODE, COMMAND_LINE_INTERFACE_MODE};
+    public enum StartupMode {NORMAL_GUI_MODE, 
+                             PLOT_ONLY_MODE,
+                             SIM_BROWSER_MODE,
+                             COMMAND_LINE_INTERFACE_MODE};
 
     private static StartupMode startupMode = StartupMode.NORMAL_GUI_MODE;
 
@@ -181,15 +184,16 @@ public class MainApplication
             "or\n" +
             "    "+run+" -plot datafilename\n");
         
-        System.out.println("\nwhere projectfilename is a *.neuro.xml project file,\n" +
+        System.out.println("\nwhere projectfilename is a *.ncx (or *.neuro.xml) project file,\n" +
                             "datafilename is a file containing a single column of data (or a *.ds file as used in Data Set Manager)");
         System.out.println("and where options can include: \n");
 
-        System.out.println("-? -help          print this help message");
-        System.out.println("-version          print version information");
-        System.out.println("-lastproj         reloads the last opened project");
-        System.out.println("-python           use Jython based scripting interface");
-        System.out.println("-make             build neuroConstruct from source (JDK 1.5+ is needed)");
+        System.out.println("-? -help                  print this help message");
+        System.out.println("-version                  print version information");
+        System.out.println("-lastproj                 reloads the last opened project");
+        System.out.println("-python [projectfilename] use Jython based scripting interface");
+        System.out.println("-make                     build neuroConstruct from source (JDK 1.5+ is needed)");
+        System.out.println("-sims projectfilename     load project with tree based simulation browser");
         System.out.println("");
         
         System.exit(0);
@@ -264,15 +268,8 @@ public class MainApplication
             boolean createHoc = false;
             boolean runHoc = false;
             
-            boolean runPython = false;
             String[] pyArgs = null;
             
-            //boolean foundPlot
-            
-            for(String arg: args)
-            {
-                //System.out.println("Arg for java: "+arg);
-            }
 
             for (int i = 0; i < args.length; i++)
             {
@@ -286,10 +283,38 @@ public class MainApplication
                     printVersionDetails();
                     System.exit(0);
                 }
-               
+
+                else if (args[i].equalsIgnoreCase("-sims"))
+                {
+
+                    if (args.length<i+2)
+                    {
+                        printUsageAndQuit();
+                    }
+                    final File projFile = new File(args[i+1]);
+                    System.out.println("Goint to load simulation data from project: "+projFile.getCanonicalFile());
+
+                    startupMode = StartupMode.SIM_BROWSER_MODE;
+
+                    try
+                    {
+                        UIManager.setLookAndFeel(favouredLookAndFeel);
+                    }
+                    catch (Exception ex)
+                    { }
+
+                    java.awt.EventQueue.invokeLater(new Runnable()
+                    {
+                        public void run()
+                        {
+                            new SimulationTreeFrame(projFile, true).setVisible(true);
+                        }
+                    });
+                }
+
                 else if (args[i].equalsIgnoreCase("-plot"))
                 {
-                    
+
                     if (args.length<i+2)
                     {
                         printUsageAndQuit();
@@ -322,7 +347,7 @@ public class MainApplication
          
                 else if  (args[i].equalsIgnoreCase("-python"))
                 {
-                    runPython = true;
+                    startupMode = StartupMode.COMMAND_LINE_INTERFACE_MODE;
                     int numArgsUsed = i+1;
                     int numArgsLeft = args.length - numArgsUsed;
                     
@@ -336,6 +361,7 @@ public class MainApplication
                             pyArgs[j+1] = args[numArgsUsed+j];
                     }
                     i = args.length; // end looping...
+
                 }
                 else if (args[i].startsWith("-"))
                 {
@@ -355,7 +381,9 @@ public class MainApplication
                 System.exit(0);
             }
             
-            if (!runPython && !startupMode.equals(StartupMode.PLOT_ONLY_MODE))
+            if (!startupMode.equals(StartupMode.COMMAND_LINE_INTERFACE_MODE) &&
+                !startupMode.equals(StartupMode.PLOT_ONLY_MODE)&&
+                !startupMode.equals(StartupMode.SIM_BROWSER_MODE))
             {
                 MainApplication app = new MainApplication();
 
@@ -384,7 +412,7 @@ public class MainApplication
                     app.runHoc();
                 }
             }
-            else if (runPython)
+            else if (startupMode.equals(StartupMode.COMMAND_LINE_INTERFACE_MODE))
             {
                 System.out.println("\nneuroConstruct "+GeneralProperties.getVersionNumber()
                         +" starting in Jython scripting mode...\n");

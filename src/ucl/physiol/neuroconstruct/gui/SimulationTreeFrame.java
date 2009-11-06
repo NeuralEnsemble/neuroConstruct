@@ -69,8 +69,19 @@ public class SimulationTreeFrame extends JFrame
         Vector<String> cols = new Vector<String>();
         this.standalone = standalone;
         File f = null;
-        f = new File("C:\\nC_projects\\Gran2\\simulations");
+        //f = new File("C:\\nC_projects\\Gran2\\simulations");
         //f = new File("C:\\neuroConstruct\\nCmodels\\Thalamocortical\\simulations");
+        f = new File("./nCmodels/CA1PyramidalCell/simulations");
+        simInfo = new SimulationsInfo(f, cols);
+
+        initComponents();
+    }
+    public SimulationTreeFrame(File projectFile, boolean standalone)
+    {
+        Vector<String> cols = new Vector<String>();
+        this.standalone = standalone;
+
+        File f = new File(projectFile.getParentFile(), "simulations");
         simInfo = new SimulationsInfo(f, cols);
 
         initComponents();

@@ -4991,6 +4991,12 @@ public class NeuronFileManager
                             + mpiFlags
                             + mainHocFile.getName()
                             + postArgs);
+
+                            if (project.neuronSettings.getGraphicsMode().equals(NeuronSettings.GraphicsMode.NO_CONSOLE))
+                            {
+                                scriptText.append(" > /tmp/logNEURON_"+project.getProjectFileName()
+                                        +"_"+project.simulationParameters.getReference());
+                            }
                         }
                         else
                         {
@@ -5148,13 +5154,14 @@ public class NeuronFileManager
 
                     if(envParams!=null && envParams.length>0)
                     {
+                        logger.logComment("++ <" + commandToExe+"> + <" + envParams[0]+", ..>", true);
                         rt.exec(commandToExe, envParams);
                     }
                     else
                     {
                         //rt.exec(fullCommand, envParams);#
                         
-                        logger.logComment("== <" + fullCommand+">");
+                        logger.logComment("== <" + fullCommand+">", true);
                         
                         ProcessManager.runCommand(fullCommand, pf, 4);
 

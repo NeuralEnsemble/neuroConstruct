@@ -3552,6 +3552,21 @@ public class GenesisFileManager
                     + " "
                     + mainGenesisFile.getName();
 
+
+                if (project.genesisSettings.getGraphicsMode().equals(GenesisSettings.GraphicsMode.NO_CONSOLE))
+                {
+                    if (!mooseCompatMode())
+                    {
+                        scriptText= scriptText +" > /tmp/logGENESIS_"+project.getProjectFileName()
+                                        +"_"+project.simulationParameters.getReference();
+                    }
+                    else
+                    {
+                        scriptText= scriptText +" > /tmp/logMOOSE_"+project.getProjectFileName()
+                                        +"_"+project.simulationParameters.getReference();
+                    }
+                }
+
                 File scriptFile = new File(ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory()),
                                            "runsim.sh");
                 FileWriter fw = new FileWriter(scriptFile);
