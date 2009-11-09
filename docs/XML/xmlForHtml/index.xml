@@ -7,39 +7,39 @@
   </header>
   <body>
       <p>&nbsp;</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.nature.com/nature/journal/vaop/ncurrent/full/nature07604.html" 
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.nature.com/nature/journal/vaop/ncurrent/full/nature07604.html"
 title="Recent Nature paper using neuroConstruct to investigate gain control in detailed cell models">
-  <img src="images/KoleCell.png" 
+  <img src="images/KoleCell.png"
         alt="Recent Nature paper using neuroConstruct to investigate gain control in detailed cell models"/></a>
-        &nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.elsevier.com/wps/find/bookdescription.cws_home/713686/description" 
+        &nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.elsevier.com/wps/find/bookdescription.cws_home/713686/description"
 title="Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, eds. (Elsevier). Contains chapter on neuroConstruct.">
-  <img src="images/EpilepsyBookCover.PNG" 
+  <img src="images/EpilepsyBookCover.PNG"
         alt="Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, eds. (Elsevier). Contains chapter on neuroConstruct."/></a></p>
 
       <p>&nbsp;</p>
     <section>
       <title>Introduction</title>
       <p>neuroConstruct is being developed in the <a href="http://www.ucl.ac.uk/npp/as">Silver Lab</a> in the
-      
+
       <a href="http://www.ucl.ac.uk/npp/">Department of Neuroscience, Physiology and Pharmacology</a> at
           <a href="http://www.ucl.ac.uk">UCL</a>. neuroConstruct has been designed to simplify development of complex networks
           of biologically realistic neurons, i.e. models incorporating dendritic morphologies and realistic cell membrane conductances.
       It is implemented in Java and generates script files for the <a  href="docs/Glossary_gen.html#NEURON">NEURON</a> and
-      <a  href="docs/Glossary_gen.html#GENESIS">GENESIS</a> simulators, with support for other simulation platforms (including <a  href="http://www.psics.org">PSICS</a> and <a href="http://neuralensemble.org/trac/PyNN">PyNN</a>) in development. It uses the latest <a href="docs/Glossary_gen.html#NeuroML">NeuroML</a> specifications,
+      <a  href="docs/Glossary_gen.html#GENESIS">GENESIS</a> simulators, with support for other simulation platforms (including <a  href="http://www.psics.org">PSICS</a>, <a  href="http://moose.sourceforge.net">MOOSE</a> and <a href="http://neuralensemble.org/trac/PyNN">PyNN</a>) in advanced stages of development. It uses the latest <a href="docs/Glossary_gen.html#NeuroML">NeuroML</a> specifications,
       including <a href="docs/Glossary_gen.html#MorphML">MorphML</a>, <a href="docs/Glossary_gen.html#ChannelML">ChannelML</a> and <a href="docs/Glossary_gen.html#NetworkML">NetworkML</a>.</p>
 
-      <p>Development of this software was made possible with funding from the <a href="http://www.mrc.ac.uk/">Medical Research Council</a> and the <a href="http://www.wellcome.ac.uk/">Wellcome Trust</a>.</p>
+      <p>Development of this software was made possible with funding from the <a href="http://www.wellcome.ac.uk/">Wellcome Trust</a>, the <a href="http://www.mrc.ac.uk/">Medical Research Council</a> and the <a href="http://www.eusynapse.mpg.de">EU Synapse Project</a>.</p>
     </section>
 
 
     <section>
         <title>Latest News</title>
-        <p>A recent <a  href="http://www.nature.com/nature/journal/vaop/ncurrent/full/nature07604.html">Nature paper</a> (<em>Jason S. Rothman, Laurence Cathala, Volker Steuber, R. Angus Silver, 
-        Synaptic depression enables neuronal gain control. Nature 2009</em>) has used neuroConstruct to investigate 
-        a detailed layer 5 pyramidal cell model (Kole et al 2008) with dendritically distributed excitatory and 
+        <p>A recent <a  href="http://www.nature.com/nature/journal/vaop/ncurrent/full/nature07604.html">Nature paper</a> (<em>Jason S. Rothman, Laurence Cathala, Volker Steuber, R. Angus Silver,
+        Synaptic depression enables neuronal gain control. Nature 2009</em>) has used neuroConstruct to investigate
+        a detailed layer 5 pyramidal cell model (Kole et al 2008) with dendritically distributed excitatory and
         inhibitory synaptic input to look at the effects of short term plasticity on gain control (<a  href="models/index.html#RothmanEtAl_KoleEtAl_PyrCell-N10162">Download neuroConstruct project</a>). </p>
 
- 
+
         <p>The latest version of neuroConstruct (<strong>v1.3.0, June 2009</strong>) is available for download <a href="download/index.html">here</a>. The source code is available with this release under GPL.</p>
         <p>The paper describing the application has been published: <em>
             P. Gleeson, V. Steuber and R. A. Silver, neuroConstruct: A Tool for Modeling Networks of Neurons in 3D Space, Neuron,
@@ -54,19 +54,19 @@ title="Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, 
 
     <section>
       <title>What is neuroConstruct?</title>
-      
+
       <p>Some of the key features of neuroConstruct are:</p>
 <ul>
     <li>neuroConstruct can <a href="samples/index.html#Ex3_Morphology">import</a> morphology files in GENESIS, NEURON, Neurolucida, SWC and MorphML format for inclusion in single cell or network models, or more abstract cells can also be built manually.</li>
       <li>Creation of networks of conductance based neurons <a href="samples/index.html#Ex2_Packing">positioned in 3D</a></li>
 <li>Complex <a href="samples/index.html#Ex5_Networks">connectivity patterns</a> between cell groups can be specified for the networks </li>
-<li>Simulations can be run on the <a href="samples/index.html#Ex4_HHCell">NEURON or GENESIS</a> platforms, and support for other simulators including <a  href="http://www.psics.org">PSICS</a> and 
+<li>Simulations can be run on the <a href="samples/index.html#Ex4_HHCell">NEURON or GENESIS</a> platforms, and support for other simulators including <a  href="http://www.psics.org">PSICS</a> and
 <a  href="http://neuralensemble.org/trac/PyNN">PyNN</a> based simulators is in development</li>
 <li>Biophysically realistic cellular mechanisms (synapses/channel mechanisms) can be imported from native script files (*.mod or *.g) or created from templates using <a href="docs/Glossary_gen.html#ChannelML">ChannelML</a></li>
 <li>Automatic generation of code to record simulation data and visualisation/analysis of data in neuroConstruct</li>
 
 <li>Recorded simulation runs can be viewed and managed through the Simulation Browser interface</li>
-<li>A <a href="http://www.python.org">Python</a> based scripting interface can be used to control model generation and execution, allowing multiple 
+<li>A <a href="http://www.python.org">Python</a> based scripting interface can be used to control model generation and execution, allowing multiple
    simulations to be run for cell and network model optimisation</li>
 
 

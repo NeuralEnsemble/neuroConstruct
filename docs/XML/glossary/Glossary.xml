@@ -26,12 +26,12 @@
 
     <term>
         <name>Cell Type</name>
-        <defined>A prototype cell containing information on its 3D morphology and the various <intref>Cell density mechanism</intref>s which determine its 
+        <defined>A prototype cell containing information on its 3D morphology and the various <intref>Cell density mechanism</intref>s which determine its
         electrophysiological behaviour.<br/>
-        Each <intref>Cell Group</intref> specifies a particular Cell Type and from these networks are built. Cell Types can be hard-coded (e.g. Simple Cell, 
+        Each <intref>Cell Group</intref> specifies a particular Cell Type and from these networks are built. Cell Types can be hard-coded (e.g. Simple Cell,
         Purkinje Cell)<br/>
         (which can form the basis of manually edited <intref>Abstract Cells</intref>) or ones based on imported morphology files, e.g. using GenesisMorphReader<br/>
-        where a morphology file (ending in .p) as used in <intref>GENESIS</intref> is specified (<a  href="import.html">more on importing morphologies</a>). A Cell Type can be checked for 
+        where a morphology file (ending in .p) as used in <intref>GENESIS</intref> is specified (<a  href="import.html">more on importing morphologies</a>). A Cell Type can be checked for
         <a  href="Glossary_gen.html#Validity checks">validity</a>. More on<br/>
         Cell Types in the <a  href="celltypes.html">main documentation</a></defined>
 
@@ -160,45 +160,45 @@
                  simulations (total membrane area, total axial resistance along branches, total length etc.) but enables mapping on to a smaller number of <br/>
                  simulated compartments. See <intref>GENESIS Compartmentalisation</intref>. The various Compartmentalisations can be visualised in 3D, see <intref>3D View of Cells</intref>.</defined>
     </term>
-    
-    
+
+
     <term>
         <name>nseg</name>
              <defined>A <intref>NEURON</intref> section property. See <intref>Internal number of divisions</intref>.</defined>
     </term>
     <term>
-        
+
         <name>Internal number of divisions</name>
         <alias>spatial discretisation</alias>
         <alias>internal number of divisions</alias>
         <alias>internal divisions</alias>
-             <defined>A <intref>Section</intref> (in neuroConstruct) can consist of a long list of 3D point/diameters (<intref>Segment</intref>s). 
-               Not all of this 3D information is relevant when modelling the Sections, sometimes just the surface area/axial resistance at a point 
+             <defined>A <intref>Section</intref> (in neuroConstruct) can consist of a long list of 3D point/diameters (<intref>Segment</intref>s).
+               Not all of this 3D information is relevant when modelling the Sections, sometimes just the surface area/axial resistance at a point
                is sufficient for modelling the dendrite. This is the approach <intref>NEURON</intref>
-             takes modelling cables/sections. For long sections, it is possible to specify a number of internal divisions, 
+             takes modelling cables/sections. For long sections, it is possible to specify a number of internal divisions,
              and the membrane potential at each
-             time step is calculated at the centre of each of these divisions (this is also known as setting the spatial discretisation of the 
-             morphology). The term <intref>nseg</intref> is used for this number in NEURON (see details in the NEURON book). It is also possible 
+             time step is calculated at the centre of each of these divisions (this is also known as setting the spatial discretisation of the
+             morphology). The term <intref>nseg</intref> is used for this number in NEURON (see details in the NEURON book). It is also possible
              to set this parameter for Sections in neuroConstruct. View the cell in 3D (All solid),
-             click on a segment, click <b>Edit...</b>, and in the second drop down box, select <b>Section details</b>. 
-             The number of internal divisions can be chosen automatically too (especially convenient for imported detailed morphologies, after 
-             the passive electrical properties are set), see <intref>electrotonic length</intref>. See information too on 
+             click on a segment, click <b>Edit...</b>, and in the second drop down box, select <b>Section details</b>.
+             The number of internal divisions can be chosen automatically too (especially convenient for imported detailed morphologies, after
+             the passive electrical properties are set), see <intref>electrotonic length</intref>. See information too on
          <intref>Compartmentalisations</intref>.
      </defined>
     </term>
-    
+
     <term>
     <name>Section</name>
     <alias>Sections</alias>
     <defined>An unbranched part of a cell morphology, corresponding roughly to the concept of a section in <intref>NEURON</intref>. <br/>
              An example would be a non bifurcating dendritic section, or the soma. <br/>
              Each Section contains at least one <intref>Segment</intref>. The Section provides the start point and <br/>
-             start radius, and each of the Segments has an end point and radius corresponding to the 3D points along the Section.<br/> 
-             Sections which have similar properties can be assigned to one or more <intref>Section Group</intref>. All of the Segments<br/> 
-             in a Section are also in these  Groups. Note that a Section is referred to as a cable in <intref>MorphML</intref>. A Section is mapped<br/> 
+             start radius, and each of the Segments has an end point and radius corresponding to the 3D points along the Section.<br/>
+             Sections which have similar properties can be assigned to one or more <intref>Section Group</intref>. All of the Segments<br/>
+             in a Section are also in these  Groups. Note that a Section is referred to as a cable in <intref>MorphML</intref>. A Section is mapped<br/>
              to a section in NEURON, and the start point of this and endpoints of the Segments become the pt3d points along it. <intref>GENESIS</intref><br/>
              only has the concept of a compartment, so the Segments are each mapped to a compartment as a default (but see <intref>GENESIS Compartmentalisation</intref>).<br/>
-             
+
              See the NeuroML Level 1/MorphML <a href="../links/publications.html">paper</a> for more details<br/>
              of the mapping to the different simulation environments.</defined>
 </term>
@@ -271,8 +271,14 @@
     </term>
 
     <term>
+        <name>Parallel computing support</name>
+        <defined>Support for generation of networks for execution in parallel computing environments is in development, concentrating on Parallel NEURON over MPI at present.
+        As documentation for this is currently limited, please <a  href="contact.html" >get in touch</a> for more details.</defined>
+    </term>
+
+    <term>
         <name>NeuroML</name>
-        <defined><a target="_blank" href="http://www.neuroml.org">NeuroML</a>, the Neural Open Markup Language, is a model development language in <intref>XML</intref> 
+        <defined><a target="_blank" href="http://www.neuroml.org">NeuroML</a>, the Neural Open Markup Language, is a model development language in <intref>XML</intref>
             that provides a common data format for defining and exchanging descriptions of neuronal cell and network models. <br/>
                  Currently, there are three Levels of compliance to the NeuroML specifications:
 
@@ -295,7 +301,7 @@
         <defined>MorphML is an language which has been developed (using <intref>XML</intref> technologies) to allow data on cell morphologies to be <br/>
         easily transferred between neuronal simulation applications. More information is available <a target="_blank" href="http://www.neuroml.org">here</a>.<br/>
         It is a part of the <intref>NeuroML</intref> initiative, and is the core of NeuroML Level 1. Detailed specifications of the elements allowed in a MorphML document are<br/>
-        available <a target="_blank" href="http://www.neuroml.org/NeuroMLValidator/Latest.jsp?spec=MorphML">here</a>. 
+        available <a target="_blank" href="http://www.neuroml.org/NeuroMLValidator/Latest.jsp?spec=MorphML">here</a>.
         There has been a <a href="../links/publications.html">paper</a> describing this part of the NeuroML language.
         A description of the current support
                  for MorphML and NeuroML in general in neuroConstruct is available <a href="neuroml.html">here</a>.
@@ -325,13 +331,13 @@
 
     <term>
         <name>NetworkML</name>
-        <defined>NetworkML is a language (based on <intref>XML</intref> technologies and a <intref>HDF5</intref> equivalent in development) to allow data on cell placement and 
+        <defined>NetworkML is a language (based on <intref>XML</intref> technologies and a <intref>HDF5</intref> equivalent in development) to allow data on cell placement and
         connectivity in 3D to be <br/>
         easily transferred between neuronal simulation applications. More information is available <a target="_blank" href="http://www.neuroml.org">here</a>.<br/>
         It is a part of the <intref>NeuroML</intref> initiative, and is the core of NeuroML Level 3.</defined>
     </term>
-    
-    
+
+
 
     <term>
         <name>HDF5</name>
@@ -366,7 +372,7 @@
     <term>
         <name>Channel Mechanism</name>
         <defined>An implementation of a model of an electrophysiological process (e.g. a voltage gated ion channel, ion pump, etc.) which is placed <br/>
-        on modelled cells' membranes to alter their behaviour. For <intref>NEURON</intref> these are usually implemented in <intref>NMODL</intref>. 
+        on modelled cells' membranes to alter their behaviour. For <intref>NEURON</intref> these are usually implemented in <intref>NMODL</intref>.
         The preferred way to specify these in neuroConstruct is with a <intref>ChannelML</intref> file.</defined>
     </term>
 
@@ -931,9 +937,9 @@ Set to MAX if no restriction applies.</defined>
 
 <term hidden="true">
     <name>NeuronGenAllMod</name>
-    <defined>Select this to generate and compile all of the mod files that can be generated from the entries at 
-             the Cell Mechanisms tab. If unselected, only the mod files needed in this Simulation Configuration 
-             will be generated. Selecting this option is useful if you wish to add extra mechanisms in the 
+    <defined>Select this to generate and compile all of the mod files that can be generated from the entries at
+             the Cell Mechanisms tab. If unselected, only the mod files needed in this Simulation Configuration
+             will be generated. Selecting this option is useful if you wish to add extra mechanisms in the
              'Extra hoc code' blocks, which aren't present in the cell specification.</defined>
 </term>
 
@@ -1148,7 +1154,7 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
     <alias>projects</alias>
     <defined>In neuroConstruct, a Project contains the specification of the <intref>Cell Type</intref>s, <intref>Region</intref>s,<br/>
     <intref>Cell Group</intref>s and <intref>Network Connection</intref>s in a model, along with the simulation parameters (duration, dt, <br/>
-    etc.) and inputs into the network. A Project can be used to generate networks using combinations of these cells/connections etc. in different <intref>Simulation Configurations</intref>. 
+    etc.) and inputs into the network. A Project can be used to generate networks using combinations of these cells/connections etc. in different <intref>Simulation Configurations</intref>.
     Also associated with a Project are a number of Previous Simulations, <br/>
     i.e. recorded simulations run in a simulation environment (e.g. <intref>NEURON</intref>) which are available for replaying<br/>
     when the project is opened. The main project file (*.neuro.xml) is a proprietary XML file (not part of <intref>NeuroML</intref>), which should<br/>
@@ -1585,13 +1591,13 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
             <li><b>Soma solid, neurite lines:</b> segments in the soma group are solid, all other segments are lines through their centres</li>
             <li><b>Soma solid, no neurites:</b> just the soma segments are shown in 3D</li>
             <li><b>All lines:</b> all segments are represented by lines</li>
-            <li><b>Original Compartmentalisation:</b> a transparent view of the cell, showing the segments in 3D, white lines through their centres, blue spheres 
-            for their end points, and yellow lines linking segments which are electrically connected, but not physically linked. There will be a red sphere in 
-            the middle of each of the <intref>internal divisions</intref>, with small blue spheres connecting them. These red spheres correspond to the simulated 
+            <li><b>Original Compartmentalisation:</b> a transparent view of the cell, showing the segments in 3D, white lines through their centres, blue spheres
+            for their end points, and yellow lines linking segments which are electrically connected, but not physically linked. There will be a red sphere in
+            the middle of each of the <intref>internal divisions</intref>, with small blue spheres connecting them. These red spheres correspond to the simulated
             points in NEURON as defined by the <intref>nseg</intref> value.</li>
             <li><b>GENESIS Compartmentalisation:</b> this is a <intref>Compartmentalisation</intref> of the cell which converts it to a smaller number of compartments for GENESIS
             but retains the section groups, total surface area, total dendritic length and total axial resistance.</li>
-            
+
         </ul>
         Note: see points on allocating extra memory for the application <a  href="install.html#Building+and+running">here</a>, which will be important when displaying large networks in 3D. Also,
         there is sometimes excessive flickering when showing 3D on Windows (a common problem when mixing Java3D and Swing, see <a  href="http://www.int.com/products/3d/jview3d/problem_resolution/index.html">here</a>), try updating the drivers for your graphics card, or adding <b>-Dsun.java2d.noddraw=true</b> to the command in nC.bat.

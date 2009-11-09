@@ -3,7 +3,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Documentation Contents</title>
+    <title>neuroConstruct Online Documentation</title>
   </header>
   <body>
 
@@ -20,7 +20,7 @@
 
 <p>&nbsp;&nbsp;<a  href="tutorials/index.html" >Tutorials</a></p>
 
-  <p>Main Concepts:</p>
+  <p>Main Concepts in neuroConstruct:</p>
 
 <p>&nbsp;&nbsp;<a  href="celltypes.html" >Cell Types</a></p>
 <p>&nbsp;&nbsp;<a  href="regions.html" >Regions</a></p>
