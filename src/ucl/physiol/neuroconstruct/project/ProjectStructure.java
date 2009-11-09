@@ -138,7 +138,8 @@ public class ProjectStructure
     private static String savedNetworksDir = "savedNetworks";
 
     private static String dataSetsDir = "dataSets";
-    
+
+    private static String pythonScripts = "pythonScripts";
     
     
     //private static String examplesDirInInstall = "examples";
@@ -633,6 +634,14 @@ public class ProjectStructure
             "This is the directory for storing interesting dataSets associated with the project. "
             +"These can be plots illustrating points which have been made in the accompanying papers, for example");
         return dataSetDir;
+    }
+
+
+
+    public static File getPythonScriptsDir(File projectDir, boolean createIfNotFound)
+    {
+        File dir = getDirandReadme(projectDir, pythonScripts, "", createIfNotFound);
+        return dir;
     }
 
 

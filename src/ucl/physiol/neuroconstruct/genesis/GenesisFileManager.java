@@ -3864,6 +3864,13 @@ public class GenesisFileManager
 
                     addComment(response, error);
                 }
+                else if (mooseCompatMode() && record.simPlot.getValuePlotted().contains(SimPlot.COND_DENS))
+                {
+                    String error = "Note, conductance density saving not supported yet in MOOSE, so not saving: "+record.simPlot;
+                    logger.logError(error);
+
+                    addComment(response, error);
+                }
                 else
                 {
 

@@ -14879,6 +14879,22 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
 
 
+        File pythonDir = ProjectStructure.getPythonScriptsDir(oldProjFile.getParentFile(), false);
+        if (pythonDir!=null)
+        {
+            try
+            {
+                GeneralUtils.copyDirIntoDir(pythonDir,
+                                            ProjectStructure.getPythonScriptsDir(newProjdir, true), true, true);
+            }
+            catch (IOException ex)
+            {
+                logger.logError("Problem copying python dirs", ex);
+                // continuing...
+            }
+        }
+
+
 
         doLoadProject(newProjectFile.getAbsolutePath());
 
