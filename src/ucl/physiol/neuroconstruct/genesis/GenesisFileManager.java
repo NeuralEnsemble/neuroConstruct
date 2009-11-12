@@ -1215,6 +1215,8 @@ public class GenesisFileManager
                     }*/
                 }
                 
+                ArrayList<String> copyCommands = new ArrayList<String>();
+                
                 for(int j = 0; j < chanMechsFixed.size(); j++)
                 {
                     ChannelMechanism nextChanMech = chanMechsFixed.get(j);
@@ -1228,7 +1230,16 @@ public class GenesisFileManager
                         String oldChan = "/library/"+nextChanMech.getName();
                         String newChan = "/library/"+ uniq;
                         
-                        response.append("copy "+oldChan +" "+ newChan + "\n");
+                        String copy = "copy "+oldChan +" "+ newChan + "\n";
+                        
+                        if (!copyCommands.contains(copy))
+                        {
+                            response.append(copy);
+                            copyCommands.add(copy);
+                        }
+                        else
+                            addComment(response, "Previously copied...");
+
                         
                         String initCall = "";
                         boolean onlyPassive = false;
@@ -2609,7 +2620,7 @@ public class GenesisFileManager
         response.append("\ncreate neutral "+CELL_ELEMENT_ROOT+"\n\n");
 
 
-        ArrayList<String> tempChans = new ArrayList<String>();
+        //ArrayList<String> tempChans = new ArrayList<String>();
         
         // List of cells checked for bug in hsolve preventing use of hsolve and 
         // symmetric compartments when a compartment has 3 or more child compartments
@@ -2851,17 +2862,12 @@ public class GenesisFileManager
                                                                     UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                     project.genesisSettings.getUnitSystemToUse()); 
 
-                                                //if (cm.getName().equals(passChans.get(0).getName()))
-                                                //{
-                                                    GenesisFileManager.addQuickComment(response, "That is the passive channel reversal potential");
-                                                    chanElement = newElementName+"/#";
-                                                    paramName = "Em";
-                                                    initCmd="";
-                                                //}
-                                                //else
-                                                //{
-                                                //    paramName = "Ek";
-                                                //}
+
+                                                GenesisFileManager.addQuickComment(response, "That is the passive channel reversal potential");
+                                                chanElement = newElementName+"/#";
+                                                paramName = "Em";
+                                                initCmd="";
+                                           
                                                 response.append("foreach tempChanName ({el "+chanElement+"})\n"+
                                                                 "    //echo Resetting param "+paramName+" to "+paramVal+" on {tempChanName} \n"+
                                                                 "    setfield {tempChanName} "+paramName+" "+paramVal+"\n"+
@@ -2884,8 +2890,8 @@ public class GenesisFileManager
                                                     if (addComments)
                                                         moveCommands.add("//   " +"Channel was set to "+uniq+" in *.p file, and correct params set there. Moving back to original name.\n");
 
-                                                    if (!tempChans.contains(uniq))
-                                                        tempChans.add(uniq);
+                                                    //if (!tempChans.contains(uniq))
+                                                    //    tempChans.add(uniq);
                                                     
                                                     moveCommands.add(command);
                                                     
@@ -2929,9 +2935,14 @@ public class GenesisFileManager
                                                 else
                                                 {
                                                     String uniq = cm.getUniqueName();
-                                                    String oldChanElement = newElementName+"/"+SimEnvHelper.getSimulatorFriendlyName(seg.getSegmentName())+"/"+uniq;
+                                                    //String oldChanElement = newElementName+"/"+SimEnvHelper.getSimulatorFriendlyName(seg.getSegmentName())+"/"+uniq;
+                                                    String oldChanElement = newElementName+"/#/"+uniq;
 
-                                                    String command = "move "+oldChanElement+" "+chanElement+"\n\n";
+                                                    /////////////String command = "move "+oldChanElement+" "+chanElement+"\n\n";
+
+                                                    String command = "foreach tempChanName ({el "+oldChanElement+"})\n"
+                                                        +"    move {tempChanName} {getpath {tempChanName} -head}"+cm.getName()+"\n"
+                                                        +"end\n\n";
                                                     
                                                     //if (moveCommand.length()==0)
                                                     //{
@@ -2940,8 +2951,8 @@ public class GenesisFileManager
                                                         if (addComments)
                                                             moveCommands.add("//   " +"Channel was set to "+uniq+" in *.p file, and correct params set there. Moving back to original name.\n");
 
-                                                        if (!tempChans.contains(uniq))
-                                                            tempChans.add(uniq);
+                                                        //if (!tempChans.contains(uniq))
+                                                        //    tempChans.add(uniq);
 
                                                         moveCommands.add(command);
                                                     }
