@@ -136,6 +136,13 @@ public class CellTest {
                 ParameterisedGroup.DistalPref.MOST_DIST_AT_1, "ggg");
 
         cell.getParameterisedGroups().add(oldGroup);
+
+
+        IonProperties ion2 = new IonProperties("na", 10, 100);
+        IonProperties ion3 = new IonProperties("k", -77);
+
+        cell.associateGroupWithIonProperties(testGroup, ion3);
+        cell.associateGroupWithIonProperties(Section.ALL, ion2);
        
         return cell;
     }
@@ -191,6 +198,8 @@ public class CellTest {
         
         Cell cell1 = getDetailedCell(); 
         
+        //System.out.println(CellTopologyHelper.printDetails(cell1, null));
+
         // testing the rename group function
         
         cell1.renameGroup(oldGroupStr, "NewGroup");

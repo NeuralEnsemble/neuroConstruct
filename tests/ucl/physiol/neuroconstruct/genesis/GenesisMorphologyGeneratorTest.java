@@ -123,20 +123,28 @@ public class GenesisMorphologyGeneratorTest {
         
         File timesFile = simData.getTimesFile();
         
-        
-        Thread.sleep(wait); // Shouldn't take longer than this
+        while (!timesFile.exists())
+        {
+            System.out.println("Waiting for generation of "+ timesFile.getAbsolutePath());
+            Thread.sleep(wait); // Shouldn't take longer than this
+        }
         
         assertTrue(timesFile.exists());
         
         simData.initialise();
-        
+
         File passFile = new File(simDir, "passed");
+
+        // Sometimes cygwin on windows puts file here...
+        File altPassFile = new File("c:\\cygwin\\home\\"+System.getProperty("user.name")+"\\", "passed");
+
+        if (!passFile.exists())
+            passFile = altPassFile;
         
         
         System.out.println("Checking existence of pass file: "+ passFile.getAbsolutePath());
 
         Thread.sleep(wait); // Shouldn't take longer than this
-
         
         assertTrue(passFile.exists());
         

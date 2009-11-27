@@ -82,6 +82,9 @@ public class MorphMLReader extends XMLFilterImpl
 
     private String currentMechName = null;
 
+    private IonProperties currentIonProps = null;
+    private String currentIonPropsGroup = null;
+
     private String currentVariableParam = null;
     private String currentVariableParamGroup = null;
 
@@ -221,6 +224,15 @@ public class MorphMLReader extends XMLFilterImpl
                 logger.logComment("Found a syn group: " + contents);
 
                 cell.associateGroupWithSynapse(contents, currentSynType);
+
+            }
+
+            else if (getCurrentElement().equals(BiophysicsConstants.GROUP_ELEMENT) &&
+                     this.getAncestorElement(1).equals(BiophysicsConstants.PARAMETER_ELEMENT) &&
+                     this.getAncestorElement(2).equals(BiophysicsConstants.ION_PROPS_ELEMENT))
+            {
+                currentIonPropsGroup = contents;
+                logger.logComment("Found a group: "+currentIonPropsGroup+" for the ion prop: "+ currentIonProps, true);
 
             }
 
@@ -662,6 +674,13 @@ public class MorphMLReader extends XMLFilterImpl
              logger.logComment("Found initial membrane potential element...");
 
          }
+         else if (getCurrentElement().equals(BiophysicsConstants.ION_PROPS_ELEMENT) )
+         {
+             String currentIonName = attributes.getValue(BiophysicsConstants.ION_PROPS_NAME_ATTR);
+             currentIonProps = new IonProperties(currentIonName, Float.NaN);
+             logger.logComment("Found ionProps element: "+currentIonProps+"...", true);
+
+         }
          else if (getCurrentElement().equals(BiophysicsConstants.VAR_PARAMETER_ELEMENT))
          {
              logger.logComment("Found new variable biophysics parameter");
@@ -743,14 +762,37 @@ public class MorphMLReader extends XMLFilterImpl
              String paramName = attributes.getValue(BiophysicsConstants.PARAMETER_NAME_ATTR);
              String paramVal = attributes.getValue(BiophysicsConstants.PARAMETER_VALUE_ATTR);
 
+             float valInNmlUnits = Float.parseFloat(paramVal);
 
-             logger.logComment("Found new parameter: "+ paramName+", paramVal: "+ paramVal+" for "+ getAncestorElement(1) +" (currentMechName: "+ currentMechName+")");
+             logger.logComment("Found new parameter: "+ paramName+", paramVal: "+ paramVal+" for "+ getAncestorElement(1) +" (currentMechName: "+ currentMechName+")", true);
 
-             if (getAncestorElement(1).equals(BiophysicsConstants.MECHANISM_ELEMENT) &&
+             if (getAncestorElement(1).equals(BiophysicsConstants.ION_PROPS_ELEMENT))
+             {
+                 if (paramName.equals(BiophysicsConstants.PARAMETER_REV_POT))
+                 {
+                     float volts = (float)UnitConverter.getVoltage(valInNmlUnits, UnitConverter.getUnitSystemIndex(unitsUsed),
+                                                                           UnitConverter.NEUROCONSTRUCT_UNITS);
+                     currentIonProps.setReversalPotential(volts);
+                 }
+                 else if (paramName.equals(BiophysicsConstants.PARAMETER_CONC_EXT))
+                 {
+                     float conc = (float)UnitConverter.getConcentration(valInNmlUnits, UnitConverter.getUnitSystemIndex(unitsUsed),
+                                                                           UnitConverter.NEUROCONSTRUCT_UNITS);
+                     currentIonProps.setExternalConcentration(conc);
+                 }
+                 else if (paramName.equals(BiophysicsConstants.PARAMETER_CONC_INT))
+                 {
+                     float conc = (float)UnitConverter.getConcentration(valInNmlUnits, UnitConverter.getUnitSystemIndex(unitsUsed),
+                                                                           UnitConverter.NEUROCONSTRUCT_UNITS);
+                     currentIonProps.setInternalConcentration(conc);
+                 }
+
+                 logger.logComment("Props now:  "+currentIonProps, true);
+             }
+             else if (getAncestorElement(1).equals(BiophysicsConstants.MECHANISM_ELEMENT) &&
                  currentMechType != null && paramName != null &&
                  currentMechType.equals(BiophysicsConstants.MECHANISM_TYPE_CHAN_MECH))
              {
-                 float nmlUnits = Float.parseFloat(paramVal);
                  float neuroConUnits = -1;
 
                  if (paramName.equals(BiophysicsConstants.PARAMETER_GMAX))
@@ -758,7 +800,7 @@ public class MorphMLReader extends XMLFilterImpl
                      if (this.unitsUsed.equals(BiophysicsConstants.UNITS_SI))
                      {
                          neuroConUnits
-                             = (float) UnitConverter.getConductanceDensity(nmlUnits,
+                             = (float) UnitConverter.getConductanceDensity(valInNmlUnits,
                                                                            UnitConverter.GENESIS_SI_UNITS,
                                                                            UnitConverter.NEUROCONSTRUCT_UNITS);
 
@@ -766,7 +808,7 @@ public class MorphMLReader extends XMLFilterImpl
                      if (this.unitsUsed.equals(BiophysicsConstants.UNITS_PHYSIOLOGICAL))
                      {
                          neuroConUnits
-                             = (float) UnitConverter.getConductanceDensity(nmlUnits,
+                             = (float) UnitConverter.getConductanceDensity(valInNmlUnits,
                                                                            UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS,
                                                                            UnitConverter.NEUROCONSTRUCT_UNITS);
                      }
@@ -776,7 +818,7 @@ public class MorphMLReader extends XMLFilterImpl
                      if (this.unitsUsed.equals(BiophysicsConstants.UNITS_SI))
                      {
                          neuroConUnits
-                             = (float) UnitConverter.getVoltage(nmlUnits,
+                             = (float) UnitConverter.getVoltage(valInNmlUnits,
                                                                            UnitConverter.GENESIS_SI_UNITS,
                                                                            UnitConverter.NEUROCONSTRUCT_UNITS);
 
@@ -784,14 +826,14 @@ public class MorphMLReader extends XMLFilterImpl
                      if (this.unitsUsed.equals(BiophysicsConstants.UNITS_PHYSIOLOGICAL))
                      {
                          neuroConUnits
-                             = (float) UnitConverter.getVoltage(nmlUnits,
+                             = (float) UnitConverter.getVoltage(valInNmlUnits,
                                                                            UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS,
                                                                            UnitConverter.NEUROCONSTRUCT_UNITS);
                      }
                  }
                  else
                  {
-                     neuroConUnits = nmlUnits;
+                     neuroConUnits = valInNmlUnits;
                  }
 
                  this.currentParamName = paramName;
@@ -951,6 +993,23 @@ public class MorphMLReader extends XMLFilterImpl
 
         }
 
+        else if (getCurrentElement().equals(BiophysicsConstants.ION_PROPS_ELEMENT))
+        {
+            logger.logComment("Have a group: "+currentIonPropsGroup+" for the ion prop: "+ currentIonProps, true);
+            logger.logComment("Note!! This will be incorrect if there are different groups for each parameter in the ion_props element!!!", true);
+            
+            cell.associateGroupWithIonProperties(currentIonPropsGroup, currentIonProps);
+            currentIonProps = null;
+            currentIonPropsGroup = null;
+
+        }
+
+         else if (getCurrentElement().equals(BiophysicsConstants.MECHANISM_ELEMENT))
+         {
+             currentMechName = null;
+             currentMechType = null;
+         }
+
         else if (getCurrentElement().equals(MorphMLConstants.CABLES_ELEMENT))
         {
             logger.logComment("<<<<      End of sections");
@@ -1050,7 +1109,8 @@ public class MorphMLReader extends XMLFilterImpl
 
             //File f = new File("..\\copynCmodels\\TraubEtAl2005\\generatedNEURON\\ttt.xml");
 
-            File f = new File("testProjects/TestMorphs/generatedNeuroML/test.mml");
+            //File f = new File("testProjects/TestMorphs/generatedNeuroML/test.mml");
+            File f = new File("../temp/cell.xml");
 
            // File f = new File("/bernal/a4d.xml");
 
@@ -1075,8 +1135,8 @@ public class MorphMLReader extends XMLFilterImpl
 
             Cell builtCell = mmlBuilder.getBuiltCell();
 
-            System.out.println("Cell which has been built: ");
-            System.out.println(CellTopologyHelper.printDetails(builtCell, null));
+            //System.out.println("Cell which has been built: ");
+            //System.out.println(CellTopologyHelper.printDetails(builtCell, null));
             
             System.out.println("Warnings: "+mmlBuilder.getWarnings());
 

@@ -78,6 +78,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
     String extraMechSelection = "-- Other mechanisms: --";
     String apPropVelSelection = "Action Potential propagation speed";
+    String ionPropsSelection = "Ion Properties";
 
     Frame myParent = null;
 
@@ -440,6 +441,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
         jComboBoxMechNames.addItem(this.extraMechSelection);
         jComboBoxMechNames.addItem(this.apPropVelSelection);
+        jComboBoxMechNames.addItem(this.ionPropsSelection);
 
 
         logger.logComment("Finished initialising...");
@@ -522,6 +524,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
             GuiUtils.showErrorMessage(logger, "Please select a single mechanism/group association" , null, this);
         
         if (selectedMechanism.equals(this.apPropVelSelection) ||
+            selectedMechanism.equals(this.ionPropsSelection) ||
             selectedMechanism.equals(this.specAxResSelection) ||
             selectedMechanism.equals(this.specCapSelection))
         {
@@ -710,6 +713,14 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                     appv.setSpeed(vel);
                     myCell.associateGroupWithApPropSpeed(groupName, appv);
                 }
+                else if (selectedMechanism.equals(this.ionPropsSelection))
+                {
+                    IonProperties ip1 = myCell.getIonPropertiesForGroup(groupName);
+
+                    IonProperties ip2 = this.getIonPropertiesForGroup(ip1);
+
+                    myCell.associateGroupWithIonProperties(groupName, ip2);
+                }
                 else if (selectedMechanism.equals(this.specAxResSelection))
                 {
                     float specAxRes = myCell.getSpecAxResForGroup(groupName);
@@ -798,6 +809,21 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                     }
 
                 }
+                else if (selectedMechanism.equals(this.ionPropsSelection))
+                {
+                    IonProperties ip = myCell.getIonPropertiesForGroup(nextGroup);
+
+                    if (ip == null)
+                    {
+                        if (!listModelGroupsOut.contains(nextGroup))
+                             listModelGroupsOut.addElement(nextGroup);
+                    }
+                    else
+                    {
+                        listModelGroupsIn.addElement(nextGroup + " ( " + ip.toString() + ")");
+                    }
+
+                }
                 else if (selectedMechanism.equals(this.specCapSelection))
                 {
                     float specCap = myCell.getSpecCapForGroup(nextGroup);
@@ -870,6 +896,10 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                 if (selectedMechanism.equals(this.apPropVelSelection))
                 {
                     logger.logComment("Not offering to associate param group with AP prop velocity");
+                }
+                else if (selectedMechanism.equals(this.ionPropsSelection))
+                {
+                    logger.logComment("Not YET offering to associate param group with IonProperties");
                 }
                 else if (selectedMechanism.equals(this.specCapSelection))
                 {
@@ -1016,18 +1046,13 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
         while (vel < 0)
         {
-
             String request = "Please enter the value for the propagation speed of the Action Potential\n"
                 + "on sections in selected groups (Units: "
                 + UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol() + " "
-                + UnitConverter.rateUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()
-
-                + ")";
+                + UnitConverter.rateUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+ ")";
 
             String inputValue
-                = JOptionPane.showInputDialog(this,
-                                              request,
-                                              suggestedValue + "");
+                = JOptionPane.showInputDialog(this,request,suggestedValue + "");
 
             try
             {
@@ -1036,12 +1061,41 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
             catch (NumberFormatException ex)
             {
                 GuiUtils.showErrorMessage(logger, "Please enter a valid float value", ex, this);
-
             }
-
         }
-
         return vel;
+    }
+
+
+    private IonProperties getIonPropertiesForGroup(IonProperties suggested)
+    {
+        float val = Float.NaN;
+        String name = null;
+
+        while (Float.isNaN(val))
+        {
+            String request = "Please enter the name of the ion";
+
+            name = JOptionPane.showInputDialog(this,request,suggested.getName() + "");
+
+
+            request = "Please enter the value for the reversal potential of ion ??? \n"
+                + "on sections in selected groups (Units: "
+                + UnitConverter.voltageUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+ ")";
+
+            String inputValue
+                = JOptionPane.showInputDialog(this,request,suggested.getReversalPotential() + "");
+
+            try
+            {
+                val = Float.parseFloat(inputValue);
+            }
+            catch (NumberFormatException ex)
+            {
+                GuiUtils.showErrorMessage(logger, "Please enter a valid float value", ex, this);
+            }
+        }
+        return new IonProperties(name, val);
     }
 
 
@@ -1058,10 +1112,8 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
         if (selectedMech.equals(this.apPropVelSelection))
         {
-            //float vel = this.getApPropVelForGroup(123);
             float vel = this.getApPropSpeedForGroup(GeneralProperties.getDefaultApPropagationVelocity());
             ApPropSpeed appv = new ApPropSpeed(vel);
-
             int[] selected = jListGroupsOut.getSelectedIndices();
 
             for (int i = 0; i < selected.length; i++)
@@ -1079,18 +1131,36 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                 {
                     GuiUtils.showErrorMessage(logger, "Note: cannot apply an action potential propagation speed to the soma group!\n"
                                               +"This section must be explicitly modelled", null, this);
-
                 }
                 else if (group.equals(Section.ALL))
                 {
                     GuiUtils.showErrorMessage(logger, "Note: cannot apply an action potential propagation speed to group: all\n"
                                               +"as this will contain the soma_group section, which must be explicitly modelled", null, this);
-
                 }
                 else
                 {
                     myCell.associateGroupWithApPropSpeed(group, appv);
                 }
+            }
+        }
+        else if (selectedMech.equals(this.ionPropsSelection))
+        {
+            IonProperties val = this.getIonPropertiesForGroup(new IonProperties("na", 55));
+
+            int[] selected = jListGroupsOut.getSelectedIndices();
+
+            for (int i = 0; i < selected.length; i++)
+            {
+                String group = (String) listModelGroupsOut.elementAt(selected[i]);
+                logger.logComment("Item: " + selected[i] + " (" + group + ") is selected...");
+
+                if (!myCell.isGroup(group))
+                {
+                    GuiUtils.showErrorMessage(logger, "Note: cannot apply an IonProperties speed to: "+ group, null, this);
+                    return;
+                }
+                myCell.associateGroupWithIonProperties(group, val);
+                
             }
         }
         else if(selectedMech.equals(this.specAxResSelection))
@@ -1383,6 +1453,10 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                 if (selectedMech.equals(this.apPropVelSelection))
                 {
                     myCell.disassociateGroupFromApPropSpeeds(groupName);
+                }
+                else if (selectedMech.equals(this.ionPropsSelection))
+                {
+                    myCell.disassociateGroupFromIonProperties(groupName);
                 }
                 else if (selectedMech.equals(this.specCapSelection))
                 {

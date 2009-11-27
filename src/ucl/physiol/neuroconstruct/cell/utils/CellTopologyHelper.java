@@ -2459,9 +2459,9 @@ public class CellTopologyHelper
         
         
         Hashtable<VariableMechanism, ParameterisedGroup> varMechsVsParaGroups = cell.getVarMechsVsParaGroups();
-        
+
         Enumeration<VariableMechanism> varMechs = varMechsVsParaGroups.keys();
-        
+
         while (varMechs.hasMoreElements())
         {
             VariableMechanism vm = varMechs.nextElement();
@@ -2471,14 +2471,32 @@ public class CellTopologyHelper
             {
                 mechString = ClickProjectHelper.getCellMechLink(mechString);
             }
-            
-            
+
+
             sb.append("    Variable Mechanism: "+GeneralUtils.getTabbedString(mechString, "b", html)
                 +" with param: "+GeneralUtils.getTabbedString(vm.getParam().toString(), "b", html)
                       +" is present on: "+GeneralUtils.getTabbedString(pg.getName(), "b", html)+GeneralUtils.getEndLine(html));
-            
+
         }
         if (varMechsVsParaGroups.size()>0) sb.append("  "+GeneralUtils.getEndLine(html));
+
+
+        Enumeration<IonProperties> ips = cell.getIonPropertiesVsGroups().keys();
+
+        //logger.logComment("ionPropsVsGroups: " + cell.getIonPropertiesVsGroups(), true);
+
+        while (ips.hasMoreElements())
+        {
+            IonProperties ip = ips.nextElement();
+            Vector<String> groups = cell.getIonPropertiesVsGroups().get(ip);
+
+            String grpInfo = GeneralUtils.getTabbedString(groups.toString(), "b", html);
+
+            sb.append("    "+GeneralUtils.getTabbedString(ip.toString(), "b", html)
+                +" is present on: "+grpInfo+GeneralUtils.getEndLine(html));
+
+        }
+        if (cell.getIonPropertiesVsGroups().size()>0) sb.append("  "+GeneralUtils.getEndLine(html));
 
 
         Enumeration<Species> species =  cell.getSpeciesVsGroups().keys();
@@ -3455,8 +3473,8 @@ public class CellTopologyHelper
 
             info.append(EOL);
         }
-        
-        
+
+
         /* TODO: Should really check the numbers match and that each in A is present in B */
         if (!cellA.getApPropSpeedsVsGroups().equals(cellB.getApPropSpeedsVsGroups()))
         {
@@ -3467,7 +3485,20 @@ public class CellTopologyHelper
 
             info.append("\n\n");
         }
-        
+
+
+        /* TODO: Should really check the numbers match and that each in A is present in B */
+        if (!cellA.getIonPropertiesVsGroups().equals(cellB.getIonPropertiesVsGroups()))
+        {
+            identical = false;
+            info.append(GeneralUtils.getColouredString("IonProperties do not match"+EOL
+                +LT+" " + cellA.getIonPropertiesVsGroups() + ""+EOL
+                +"> " + cellB.getIonPropertiesVsGroups() + EOL + EOL, "red", html));
+
+            info.append("\n\n");
+        }
+
+
 
         /* TODO: Should really check the numbers match and that each in A is present in B */
         if (!cellA.getParameterisedGroups().equals(cellB.getParameterisedGroups()))

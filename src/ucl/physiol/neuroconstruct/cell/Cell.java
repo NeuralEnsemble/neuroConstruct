@@ -97,6 +97,13 @@ public class Cell implements Serializable
      */
     private Hashtable<ApPropSpeed, Vector<String>> apPropSpeedsVsGroups = new Hashtable<ApPropSpeed, Vector<String>>();
 
+
+    /*
+     *  Ion properties per groups. In development!!
+     */
+    private Hashtable<IonProperties, Vector<String>> ionPropsVsGroups = new Hashtable<IonProperties, Vector<String>>();
+
+    
     /**
      * Fos the second connection method, specify the region in space, relative to the coordinate
      * system of the cell, where axonal connections can be made
@@ -943,20 +950,6 @@ public class Cell implements Serializable
 
 
 
-/*
-
-    public Vector getAllCellProcesses()
-    {
-        Vector allCellProcesses = new Vector();
-        Set chanMechs = chanMechsVsGroups.keySet();
-        Set synapses = synapsesVsGroups.keySet();
-
-        allCellProcesses.addAll(chanMechs);
-        allCellProcesses.addAll(synapses);
-
-        return allCellProcesses;
-    }
-*/
 
 
     public Vector<String> getAllGroupNames()
@@ -1058,6 +1051,34 @@ public class Cell implements Serializable
         return (Vector)apPropSpeedsVsGroups.get(appv);
     }
 
+    public Vector getGroupsWithApPropSpeed(IonProperties ip)
+    {
+        if (!this.ionPropsVsGroups.containsKey(ip)) return new Vector();
+        return (Vector)ionPropsVsGroups.get(ip);
+    }
+
+
+    public IonProperties getIonPropertiesForGroup(String group)
+    {
+        if (ionPropsVsGroups==null)
+        {
+            ionPropsVsGroups = new Hashtable<IonProperties, Vector<String>>();
+        }
+        Enumeration allIps = this.ionPropsVsGroups.keys();
+        while (allIps.hasMoreElements())
+        {
+            IonProperties nextIp = (IonProperties) allIps.nextElement();
+            Vector groupsForThis = (Vector) ionPropsVsGroups.get(nextIp);
+
+            if (groupsForThis.contains(group))
+            {
+                return nextIp; // note there could in theory be more than IonProperties associated with
+                                 // the group, but other checks should disallow this.
+            }
+
+        }
+        return null;
+    }
 
 
     /**
@@ -1287,6 +1308,30 @@ public class Cell implements Serializable
             ApPropSpeed apps = this.getApPropSpeedForGroup(nextGroup);
 
             if (apps!=null) return apps; // Should only be one ApPropSpeed per section!!
+        }
+        return null;
+    }
+
+
+
+    public IonProperties getIonPropertiesForSegment(Segment segment)
+    {
+        return getIonPropertiesForSection(segment.getSection());
+    }
+
+
+
+    public IonProperties getIonPropertiesForSection(Section section)
+    {
+        if (ionPropsVsGroups.size()==0) return null;
+
+        Vector groups = section.getGroups();
+        for (int i = 0; i < groups.size(); i++)
+        {
+            String nextGroup = (String) groups.elementAt(i);
+            IonProperties ips = this.getIonPropertiesForGroup(nextGroup);
+
+            if (ips!=null) return ips; // Should only be one IonProperties per section!!
         }
         return null;
     }
@@ -1595,10 +1640,8 @@ public class Cell implements Serializable
 
     public boolean associateGroupWithApPropSpeed(String group, ApPropSpeed apPropSpeed)
     {
-        logger.logComment("Cell being told to associate group: "
-                          + group
-                          + " with AP propagation speed: "
-                          + apPropSpeed);
+        logger.logComment("Cell being told to associate group: " + group
+                          + " with AP propagation speed: " + apPropSpeed);
 
         Vector<String> grps = getAllGroupNames();
         if (!grps.contains(group))
@@ -1606,7 +1649,7 @@ public class Cell implements Serializable
             logger.logError("The group: "+group+" is not present in the set of all groups: "+ grps);
             return false;
         }
-        
+
         Vector<String> groups = null;
 
         if (!this.apPropSpeedsVsGroups.containsKey(apPropSpeed))
@@ -1622,7 +1665,37 @@ public class Cell implements Serializable
 
         apPropSpeedsVsGroups.put(apPropSpeed, groups);
 
-        logger.logComment("");
+        return true;
+    }
+
+    public boolean associateGroupWithIonProperties(String group, IonProperties ip)
+    {
+        logger.logComment("Cell being told to associate group: " + group
+                          + " with IonProperties: " + ip);
+
+        Vector<String> grps = getAllGroupNames();
+        if (!grps.contains(group))
+        {
+            logger.logError("The group: "+group+" is not present in the set of all groups: "+ grps);
+            return false;
+        }
+
+        Vector<String> groups = null;
+
+        if (!this.ionPropsVsGroups.containsKey(ip))
+        {
+            groups = new Vector<String>();
+        }
+        else
+        {
+            groups = ionPropsVsGroups.get(ip);
+        }
+
+        if (!groups.contains(group)) groups.add(group);
+
+        ionPropsVsGroups.put(ip, groups);
+
+        logger.logComment("ionPropsVsGroups: " + ionPropsVsGroups, true);
 
         return true;
     }
@@ -1630,14 +1703,49 @@ public class Cell implements Serializable
 
 
     /**
+     * Since there should be only one IonProperties per group
+     */
+    public boolean disassociateGroupFromIonProperties(String group)
+    {
+        logger.logComment("Being told to disassociate group: " + group
+                          + " from all groups: " + getAllGroupNames());
+
+        logger.logComment("ionPropsVsGroups: "+ionPropsVsGroups);
+
+        Vector<String> grps = getAllGroupNames();
+        if (!grps.contains(group))
+        {
+            logger.logError("The group: "+group+" is not present in the set of all groups: "+ grps);
+            return false;
+        }
+
+        boolean success = false;
+
+        Enumeration allIps = this.ionPropsVsGroups.keys();
+        while (allIps.hasMoreElements())
+        {
+            IonProperties nextIp = (IonProperties) allIps.nextElement();
+            Vector groupsForThis = (Vector) ionPropsVsGroups.get(nextIp);
+            if (groupsForThis.contains(group))
+            {
+                success = groupsForThis.remove(group);
+                if (groupsForThis.size()==0) // as it should be...
+                {
+                    ionPropsVsGroups.remove(nextIp);
+                }
+            }
+        }
+        return success;
+    }
+
+
+    /**
      * Since there should be only one appv per group, disassociate group from all appvs
      */
     public boolean disassociateGroupFromApPropSpeeds(String group)
     {
-        logger.logComment("Being told to disassociate group: "
-                          + group
-                          + " from all groups: "
-                          + getAllGroupNames());
+        logger.logComment("Being told to disassociate group: " + group
+                          + " from all groups: " + getAllGroupNames());
 
         logger.logComment("apPropSpeedsVsGroups: "+apPropSpeedsVsGroups);
 
@@ -1647,7 +1755,7 @@ public class Cell implements Serializable
             logger.logError("The group: "+group+" is not present in the set of all groups: "+ grps);
             return false;
         }
-        
+
         boolean success = false;
 
         Enumeration allAppvs = this.apPropSpeedsVsGroups.keys();
@@ -1664,10 +1772,6 @@ public class Cell implements Serializable
                 }
             }
         }
-         logger.logComment("apPropSpeedsVsGroups: "+apPropSpeedsVsGroups);
-
-
-
         return success;
     }
 
@@ -1930,6 +2034,12 @@ public class Cell implements Serializable
                 clonedCell.associateGroupWithApPropSpeed(nextGroup,
                                                        apps);
             }
+            IonProperties ips = this.getIonPropertiesForGroup(nextGroup);
+
+            if (ips!=null)
+            {
+                clonedCell.associateGroupWithIonProperties(nextGroup, ips);
+            }
         }
         logger.logComment(">>>>>>>>>>>>    Finished cloning cell: "+ getInstanceName());
 
@@ -2012,18 +2122,35 @@ public class Cell implements Serializable
             }               
         }
      
-     Enumeration<ApPropSpeed> sp = apPropSpeedsVsGroups.keys();
      
-     while (sp.hasMoreElements())
-        {
-         ApPropSpeed speed = sp.nextElement();
-         Vector<String> groups = apPropSpeedsVsGroups.get(speed);
-         
-            if (groups.contains(oldGroup)){
-                groups.add(newGroup);
-                groups.remove(oldGroup);
-            }               
+     
+    Enumeration<IonProperties> ips = ionPropsVsGroups.keys();
+
+    while (ips.hasMoreElements())
+    {
+        IonProperties ip = ips.nextElement();
+        Vector<String> groups = ionPropsVsGroups.get(ip);
+
+        if (groups.contains(oldGroup)){
+            groups.add(newGroup);
+            groups.remove(oldGroup);
         }
+    }
+
+
+
+     Enumeration<ApPropSpeed> sp = apPropSpeedsVsGroups.keys();
+
+    while (sp.hasMoreElements())
+    {
+     ApPropSpeed speed = sp.nextElement();
+     Vector<String> groups = apPropSpeedsVsGroups.get(speed);
+
+        if (groups.contains(oldGroup)){
+            groups.add(newGroup);
+            groups.remove(oldGroup);
+        }
+    }
      
      Enumeration<Float> a = specAxResVsGroups.keys();
      
@@ -2219,6 +2346,16 @@ public class Cell implements Serializable
     }
 
 
+    public Hashtable<IonProperties, Vector<String>> getIonPropertiesVsGroups()
+    {
+        if (ionPropsVsGroups == null)
+        {
+            ionPropsVsGroups = new Hashtable<IonProperties, Vector<String>>();
+        }
+        return this.ionPropsVsGroups;
+    }
+
+
     public void setSpecCapVsGroups(Hashtable<Float, Vector<String>> specCapVsGroups)
     {
         this.specCapVsGroups = specCapVsGroups;
@@ -2234,6 +2371,11 @@ public class Cell implements Serializable
     public void setApPropSpeedsVsGroups(Hashtable<ApPropSpeed, Vector<String>> ap)
     {
         this.apPropSpeedsVsGroups = ap;
+    }
+
+    public void setIonPropertiesVsGroups(Hashtable<IonProperties, Vector<String>> ips)
+    {
+        this.ionPropsVsGroups = ips;
     }
 
 

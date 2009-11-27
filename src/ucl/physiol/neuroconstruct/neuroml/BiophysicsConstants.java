@@ -70,6 +70,10 @@ public class BiophysicsConstants
     public static String PARAMETER_REV_POT_2 = "erev";  // Sometimes used...
 
 
+    public static String PARAMETER_CONC_INT = "conc_i";
+    public static String PARAMETER_CONC_EXT = "conc_e";
+
+
     public static String MECHANISM_NAME_ATTR = "name";
     public static String MECHANISM_TYPE_ATTR = "type";
     public static String MECHANISM_PASSIVE_COND_ATTR_pre_v1_7_1 = "passiveConductance";
@@ -93,9 +97,13 @@ public class BiophysicsConstants
     
     public static String SPECIFIC_AX_RES_ELEMENT_pre_v1_7_1 = "specificAxialResistance";
     public static String SPECIFIC_AX_RES_ELEMENT = "spec_axial_resistance";
-    
+
     public static String INITIAL_POT_ELEMENT_pre_v1_7_1 = "initialMembPotential";
     public static String INITIAL_POT_ELEMENT = "init_memb_potential";
+
+
+    public static String ION_PROPS_ELEMENT = "ion_props";
+    public static String ION_PROPS_NAME_ATTR = "name";
 
 
 

@@ -1252,7 +1252,7 @@ public class NeuronTemplateGenerator
                                         
                                     logger.logComment("Got ion: " + ionName+ ", rev pot: "+erev+" for cell mech: "+cellMech);
 
-                                    NeuronFileManager.addHocComment(subResponse, "    Ion " + ionName + " is used in this process...");
+                                    NeuronFileManager.addHocComment(subResponse, "    Ion " + ionName + " is used in this mechanism...");
 
                                     String unitsUsed = cmlMech.getUnitsUsedInFile();
 
@@ -1359,7 +1359,7 @@ public class NeuronTemplateGenerator
                                         {
                                             if (!revPotSetElsewhere)
                                             {
-                                                subResponse.append("        e" + ionName + " = " + erev + "\n");
+                                                subResponse.append("        e" + ionName + " = " + erev + "  // note: this is val from ChannelML, may be reset later\n");
                                             }
                                         }
                                         else
@@ -1368,7 +1368,7 @@ public class NeuronTemplateGenerator
                                             
                                             if (!revPotSetElsewhere && nextChanMech.getName().equals("pas"))
                                             {
-                                                subResponse.append("  e_" + nextChanMech.getName() + " = " + erev + "\n");
+                                                subResponse.append("  e_" + nextChanMech.getName() + " = " + erev + "  // note: this is val from ChannelML, may be reset later\n");
                                             }
                                         }
 
@@ -1445,7 +1445,34 @@ public class NeuronTemplateGenerator
             
             response.append("    }\n");
         }
-        
+
+
+        if (cell.getIonPropertiesVsGroups().size()>0)
+        {
+            NeuronFileManager.addHocComment(response, "    Note: the following are from IonProperties in Cell");
+
+            Enumeration<IonProperties> ips = cell.getIonPropertiesVsGroups().keys();
+
+            while (ips.hasMoreElements())
+            {
+                IonProperties ip = ips.nextElement();
+                Vector<String> groups = cell.getIonPropertiesVsGroups().get(ip);
+                for (String group: groups)
+                {
+                    if (ip.revPotSetByConcs())
+                    {
+                        response.append("    forsec " + group + " {\n" +
+                                "        "+ip.getName()+"i = "+ip.getInternalConcentration()+"\n"+
+                                "        "+ip.getName()+"o = "+ip.getExternalConcentration()+"\n" +
+                                "    }\n\n");
+                    }
+                    else
+                    {
+                        response.append("    forsec " + group + " { e"+ip.getName()+" = "+ip.getReversalPotential()+"}\n\n");
+                    }
+                }
+            }
+        }
 
         response.append("}\n");
         response.append("\n");
@@ -1454,6 +1481,8 @@ public class NeuronTemplateGenerator
         {
             return pointProcessCreates.toString()+"\n\n" + response.toString();
         }
+
+
         
         return response.toString();
     }
@@ -1651,7 +1680,11 @@ public class NeuronTemplateGenerator
     {
         try
         {
-            Project testProj = Project.loadProject(new File("models/BioMorph/BioMorph.neuro.xml"),
+            File projFile = null;
+            //projFile = new File("models/BioMorph/BioMorph.neuro.xml");
+            projFile = new File("nCmodels/GranuleCell/GranuleCell.ncx");
+
+            Project testProj = Project.loadProject(projFile,
                                                    new ProjectEventListener()
             {
                 public void tableDataModelUpdated(String tableModelName)
@@ -1668,7 +1701,16 @@ public class NeuronTemplateGenerator
             //SimpleCell cell = new SimpleCell("DummyCell");
             //ComplexCell cell = new ComplexCell("DummyCell");
 
-            Cell cell = testProj.cellManager.getCell("LongCellDelayLine");
+            //Cell cell = testProj.cellManager.getCell("LongCellDelayLine");
+            Cell cell = testProj.cellManager.getCell("Granule_98");
+
+
+
+            IonProperties ion2 = new IonProperties("na", 55, 6);
+            IonProperties ion3 = new IonProperties("k", -77);
+
+            cell.associateGroupWithIonProperties(Section.SOMA_GROUP, ion3);
+            cell.associateGroupWithIonProperties(Section.ALL, ion2);
 
             //File f = new File("/home/padraig/temp/tempNC/NEURON/PatTest/basics/");
             File f = new File("../temp");

@@ -47,6 +47,9 @@ public class SWCMorphReaderTest {
         float expectedLen = 8735;  // As found previously through GUI
 
         System.out.println("Loaded cell: "+ swcCell);
+
+        //System.out.println(CellTopologyHelper.printDetails(swcCell, null));
+
         assertEquals(expectedSegs, swcCell.getAllSegments().size());
 
         ValidityStatus valStatus = CellTopologyHelper.getValidityStatus(swcCell);

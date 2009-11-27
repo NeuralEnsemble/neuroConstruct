@@ -333,8 +333,6 @@ public class MorphMLConverter extends FormatImporter
             String mmlPrefix = "";
             if (!level.equals(NeuroMLConstants.NEUROML_LEVEL_1))
                 mmlPrefix = MorphMLConstants.PREFIX + ":";
-
-            boolean useV2 = (version.equals(NeuroMLConstants.NEUROML_VERSION_2));
         
             String metadataPrefix = MetadataConstants.PREFIX + ":";
             
@@ -954,6 +952,63 @@ public class MorphMLConverter extends FormatImporter
                paramElement.addChildElement(groupElement1);
                groupElement1.addContent("all");
 
+               Enumeration<IonProperties> e = cell.getIonPropertiesVsGroups().keys();
+
+               while (e.hasMoreElements())
+               {
+                    IonProperties ip = e.nextElement();
+
+                    SimpleXMLElement ionPropEl = new SimpleXMLElement(prefix+BiophysicsConstants.ION_PROPS_ELEMENT);
+                    ionPropEl.addAttribute(BiophysicsConstants.ION_PROPS_NAME_ATTR, ip.getName());
+
+                    bioElement.addChildElement(ionPropEl);
+
+                    Vector<String> groups = cell.getIonPropertiesVsGroups().get(ip);
+
+                    for(String grp: groups)
+                    {
+                        SimpleXMLElement grpEl = new SimpleXMLElement(prefix+BiophysicsConstants.GROUP_ELEMENT);
+                        grpEl.addContent(grp);
+
+                        if (ip.revPotSetByConcs())
+                        {
+                            SimpleXMLElement paramElExt = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
+
+                            paramElExt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR, BiophysicsConstants.PARAMETER_CONC_EXT));
+                            paramElExt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,UnitConverter.getConcentration(ip.getExternalConcentration(),
+                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                    preferredExportUnits) +""));
+
+                            paramElExt.addChildElement(grpEl);
+                            ionPropEl.addChildElement(paramElExt);
+
+                            SimpleXMLElement paramElInt = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
+
+                            paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR, BiophysicsConstants.PARAMETER_CONC_INT));
+                            paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,UnitConverter.getConcentration(ip.getInternalConcentration(),
+                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                    preferredExportUnits) +""));
+
+                            paramElInt.addChildElement(grpEl);
+                            ionPropEl.addChildElement(paramElInt);
+                        }
+                        else
+                        {
+                            SimpleXMLElement paramElInt = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
+
+                            paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR, BiophysicsConstants.PARAMETER_REV_POT));
+                            paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,UnitConverter.getVoltage(ip.getReversalPotential(),
+                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                    preferredExportUnits) +""));
+
+                            paramElInt.addChildElement(grpEl);
+                            ionPropEl.addChildElement(paramElInt);
+                        }
+                        
+                    }
+
+               }
+
 
                if (!level.equals(NeuroMLConstants.NEUROML_LEVEL_2))
                {
@@ -1316,6 +1371,15 @@ public class MorphMLConverter extends FormatImporter
            cell.getFirstSomaSegment().setComment("This is the cell root...");
 
            cell.getAllSegments().elementAt(4).setFractionAlongParent(0.5f);
+           
+           
+            IonProperties na = new IonProperties("na", 55);
+            IonProperties k = new IonProperties("k", -77);
+            IonProperties ca = new IonProperties("ca", 100, 1000);
+
+           cell.associateGroupWithIonProperties(Section.ALL, na);
+           cell.associateGroupWithIonProperties(Section.DENDRITIC_GROUP, k);
+           cell.associateGroupWithIonProperties(Section.ALL, ca);
 
            File oosFile = new File("../temp/cell.oos");
            File jXmlFile = new File("../temp/cell.jxml");

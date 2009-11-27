@@ -43,7 +43,7 @@ import ucl.physiol.neuroconstruct.simulation.SimulationTree;
  */
 
 @SuppressWarnings("serial")
-public class SimulationTreeFrame extends JFrame 
+public class SimulationTreeFrame extends JFrame
 {
     private JButton jButtonOK;
     private JButton jButtonRefresh;
@@ -69,8 +69,10 @@ public class SimulationTreeFrame extends JFrame
         Vector<String> cols = new Vector<String>();
         this.standalone = standalone;
         File f = null;
+
         //f = new File("C:\\nC_projects\\Gran2\\simulations");
-        //f = new File("C:\\neuroConstruct\\nCmodels\\Thalamocortical\\simulations");
+        f = new File("C:\\neuroConstruct\\nCmodels\\Thalamocortical\\simulations");
+
         f = new File("./nCmodels/CA1PyramidalCell/simulations");
         simInfo = new SimulationsInfo(f, cols);
 

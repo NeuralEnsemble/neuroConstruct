@@ -38,6 +38,7 @@ import ucl.physiol.neuroconstruct.neuron.*;
 import ucl.physiol.neuroconstruct.nmodleditor.processes.ProcessManager;
 import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrainExtInstanceProps;
 import ucl.physiol.neuroconstruct.simulation.*;
+import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 import static org.junit.Assert.*;
 
 /**
@@ -104,6 +105,11 @@ ProjectManager pm = null;
         setUp();
         
         Project proj = pm.getCurrentProject();
+
+
+        int wait = 1000;
+        if (GeneralUtils.isWindowsBasedPlatform())
+            wait = 4000;
         
         //test a simple Random Spike Input with random delay
         
@@ -189,13 +195,13 @@ ProjectManager pm = null;
 
         while (!timesFile.exists())
         {
-            Thread.sleep(1000); // Shouldn't take longer than this
+            Thread.sleep(wait); // Shouldn't take longer than this
         }
 
-        Thread.sleep(1000); // Shouldn't take longer than this
+        Thread.sleep(wait); // Shouldn't take longer than this
         
         simData.initialise();
-        Thread.sleep(2000); // Shouldn't take longer than this
+        Thread.sleep(wait); // Shouldn't take longer than this
         
         
         assertTrue(timesFile.exists());
@@ -283,13 +289,13 @@ ProjectManager pm = null;
 
         while (!timesFile.exists())
         {
-            Thread.sleep(1000); // Shouldn't take longer than this
+            Thread.sleep(wait); // Shouldn't take longer than this
         }
 
-        Thread.sleep(1000); // Shouldn't take longer than this
+        Thread.sleep(wait); // Shouldn't take longer than this
 
         simData.initialise();
-        Thread.sleep(2000); // Shouldn't take longer than this
+        Thread.sleep(wait); // Shouldn't take longer than this
         
         
         numRecordings = simData.getCellSegRefs(false).size();
@@ -372,13 +378,13 @@ ProjectManager pm = null;
 
         while (!timesFile.exists())
         {
-            Thread.sleep(1000); // Shouldn't take longer than this
+            Thread.sleep(wait); // Shouldn't take longer than this
         }
 
-        Thread.sleep(1000); // Shouldn't take longer than this
+        Thread.sleep(wait); // Shouldn't take longer than this
 
         simData.initialise();
-        Thread.sleep(2000); // Shouldn't take longer than this
+        Thread.sleep(wait); // Shouldn't take longer than this
         
         
         numRecordings = simData.getCellSegRefs(false).size();

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<java version="1.6.0_13" class="java.beans.XMLDecoder"> 
+<java version="1.6.0_07" class="java.beans.XMLDecoder"> 
 
 <!-- This is a neuroConstruct project file. It's best to open this
 file with neuroConstruct, as opposed to editing it directly. 
@@ -16,7 +16,7 @@ Go to tab Generate, press Generate Cell Positions and Connections, and then to v
 If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</string> 
   </void> 
   <void property="projectFileVersion"> 
-   <string>neuroConstruct v1.2.3</string> 
+   <string>neuroConstruct v1.3.4</string> 
   </void> 
   <void property="projectName"> 
    <string>TestMorphs</string> 
@@ -158,7 +158,16 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
   </void> 
  </object> 
  <object class="ucl.physiol.neuroconstruct.neuron.NeuronSettings"/> 
- <object class="ucl.physiol.neuroconstruct.genesis.GenesisSettings"/> 
+ <object class="ucl.physiol.neuroconstruct.genesis.GenesisSettings"> 
+  <void property="nativeBlocks"> 
+   <void method="put"> 
+    <int>15</int> 
+    <string>print &quot;All done!&quot;
+
+allchans</string> 
+   </void> 
+  </void> 
+ </object> 
  <object class="ucl.physiol.neuroconstruct.psics.PsicsSettings"/> 
  <object class="ucl.physiol.neuroconstruct.simulation.SimulationParameters"> 
   <void property="dt"> 
@@ -168,7 +177,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
    <float>100.0</float> 
   </void> 
   <void property="reference"> 
-   <string>Sim_1</string> 
+   <string>Sim_4</string> 
   </void> 
   <void property="saveCopyGenSimFiles"> 
    <boolean>true</boolean> 
