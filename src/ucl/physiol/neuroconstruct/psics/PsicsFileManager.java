@@ -945,7 +945,7 @@ public class PsicsFileManager
                     executable = basicCommLine.trim();
                 }
 
-                String scriptText = javaEx+ " "+psicsJar+ " "+fullFileToRun+"\n";
+                String scriptText = javaEx+ " "+psicsJar+ " "+fullFileToRun.getCanonicalPath()+"\n";
                 int secs = 5;
                 scriptText = scriptText + "echo \"Finished simulation. Data stored in "+dirToRunFrom.getAbsolutePath()+". Will close terminal in "+secs+" seconds...\"\n";
                 scriptText = scriptText + "sleep "+secs+"\n";

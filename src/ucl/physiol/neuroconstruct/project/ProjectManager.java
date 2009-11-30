@@ -60,6 +60,7 @@ import ucl.physiol.neuroconstruct.neuroml.hdf5.*;
 import ucl.physiol.neuroconstruct.neuron.NeuronException;
 import ucl.physiol.neuroconstruct.project.segmentchoice.*;
 import ucl.physiol.neuroconstruct.project.stimulation.*;
+import ucl.physiol.neuroconstruct.psics.PsicsException;
 import ucl.physiol.neuroconstruct.utils.SequenceGenerator.EndOfSequenceException;
 
 /**
@@ -162,6 +163,22 @@ public class ProjectManager implements GenerationReport
         activeProject = project;
 
         PlotManager.setCurrentProject(project);
+    }
+
+    public boolean doRunPsics(SimConfig simConfig)
+    {
+
+        try
+        {
+
+            activeProject.psicsFileManager.runFile(true, false, false);
+        }
+        catch (PsicsException ex)
+        {
+            GuiUtils.showErrorMessage(logger, ex.getMessage(), ex, null);
+            return false;
+        }
+        return true;
     }
 
     public boolean doRunGenesis(SimConfig simConfig)
