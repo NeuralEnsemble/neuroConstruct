@@ -98,6 +98,31 @@ def generateAndRunMoose(project,
     projectManager.doRunGenesis(simConfig)
 
     print "Set running MOOSE simulation: "+simRef
+
+
+def generateAndRunPsics(project,
+                         projectManager,
+                         simConfig,
+                         simRef,
+                         simulatorSeed,
+                         verbose=True,
+                         quitAfterRun=False,
+                         runInBackground=False):
+
+    if verbose: print "Going to generate PSICS files for: "+simRef
+
+    if runInBackground:
+        print "*********   Cannot run PSICS in background yet!!!!   ***********"
+
+    #project.genesisFileManager.setQuitAfterRun(quitAfterRun)
+
+
+    project.psicsFileManager.generateThePsicsFiles(simConfig,
+                                                   simulatorSeed)
+
+    projectManager.doRunPsics(simConfig)
+
+    print "Set running PSICS simulation: "+simRef
     
     
 
