@@ -395,7 +395,7 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
 
     public int getIndexOfChild(Object parent, Object child)
     {
-        System.out.println("aaaaaaaaaaaaaaaaaaaggghhhhhhhhhhhhhh");
+        //System.out.println("aaaaaaaaaaaaaaaaaaaggghhhhhhhhhhhhhh");
         return -1;
     }
 

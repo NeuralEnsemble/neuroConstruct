@@ -28,10 +28,13 @@ package ucl.physiol.neuroconstruct.simulation;
 
 
 import java.awt.event.*;
+import java.util.Properties;
+import java.util.Vector;
 import javax.swing.*;
 
 import javax.swing.tree.*;
 import ucl.physiol.neuroconstruct.dataset.DataSet;
+import ucl.physiol.neuroconstruct.gui.SimpleViewer;
 import ucl.physiol.neuroconstruct.gui.plotter.PlotManager;
 import ucl.physiol.neuroconstruct.gui.plotter.PlotterFrame;
 import ucl.physiol.neuroconstruct.project.SimPlot;
@@ -60,9 +63,11 @@ public class SimulationTree extends JTree implements ActionListener
 
     private String PLOT = "Plot";
     private String PLOT_ALL = "Plot all";
+    private String PLOT_ALL_IN = "Plot all in...";
     private String PLOT_ALL_VOLTS = "Plot only voltage traces";
     private String PLOT_SEPARATE_CG_VAR = "Plot all in separate Plot Frames per Cell Group and data type";
     private String PLOT_SEPARATE_VAR = "Plot all in separate Plot Frames per data type";
+    private String SIM_INFO = "Simulation information";
 
     public SimulationTree(SimulationsInfo stm)
     {
@@ -71,6 +76,10 @@ public class SimulationTree extends JTree implements ActionListener
 
         popupOneSim = new JPopupMenu();
         mi = new JMenuItem(PLOT_ALL);
+        mi.addActionListener(this);
+        popupOneSim.add(mi);
+        
+        mi = new JMenuItem(PLOT_ALL_IN);
         mi.addActionListener(this);
         popupOneSim.add(mi);
 
@@ -82,12 +91,20 @@ public class SimulationTree extends JTree implements ActionListener
         mi.addActionListener(this);
         popupOneSim.add(mi);
 
+        mi = new JMenuItem(SIM_INFO);
+        mi.addActionListener(this);
+        popupOneSim.add(mi);
+
         popupOneSim.setOpaque(true);
         popupOneSim.setLightWeightPopupEnabled(true);
 
 
         popupCG = new JPopupMenu();
         mi = new JMenuItem(PLOT_ALL);
+        mi.addActionListener(this);
+        popupCG.add(mi);
+
+        mi = new JMenuItem(PLOT_ALL_IN);
         mi.addActionListener(this);
         popupCG.add(mi);
 
@@ -177,6 +194,8 @@ public class SimulationTree extends JTree implements ActionListener
                 if (comp instanceof SimulationsInfo.SimNode)
                 {
                     simData = (SimulationData)(dmtn.getUserObject());
+
+                    Properties p = simData.getSimulationProperties();
                 }
                 else if (comp instanceof SimulationsInfo.CellGroupNode)
                 {
@@ -192,6 +211,19 @@ public class SimulationTree extends JTree implements ActionListener
                 simData.initialise();
                 double[] times = simData.getAllTimes();
 
+                if (ae.getActionCommand().equals(SIM_INFO))
+                {
+                    logger.logComment("Giving data on: "+simData, true);
+
+                    String simInfo = SimulationsInfo.getSimProps(simData.getSimulationDirectory(), true);
+
+                    SimpleViewer.showString(simInfo, "Information on simulation: "+simData.getSimulationName(), 10, false, true);
+
+                    return;
+                }
+
+                String plotAllInOption = null;
+
                 for (DataStore ds: simData.getAllLoadedDataStores())
                 {
                     if (comp instanceof SimulationsInfo.SimNode ||
@@ -204,6 +236,53 @@ public class SimulationTree extends JTree implements ActionListener
                         if (ae.getActionCommand().equals(PLOT_ALL))
                         {
                             frameRef = "Plot of data in "+simData.getSimulationName()+"";
+                        }
+                        if (ae.getActionCommand().equals(PLOT_ALL_IN))
+                        {
+                            if (plotAllInOption==null)
+                            {
+                                Vector<String> r = PlotManager.getPlotterFrameReferences();
+
+                                if (r.size()==0)
+                                {
+                                    frameRef = "Plot of data in "+simData.getSimulationName()+"";
+                                }
+                                else
+                                {
+                                    String newPlotFrame = "-- New Empty Plot Frame --";
+
+                                    r.add(newPlotFrame);
+
+                                    String[] refs = new String[r.size()];
+                                    r.copyInto(refs);
+
+                                    String option = (String)JOptionPane.showInputDialog(this,
+                                            "Please select Plot Frame", "Select Plot Frame", JOptionPane.OK_CANCEL_OPTION, null, refs, refs[0]);
+
+                                    if (option == null)
+                                        return;
+
+                                    if (option.equals(newPlotFrame))
+                                    {
+                                        frameRef = "Plot of data in "+simData.getSimulationName()+"";
+                                        int count = 0;
+                                        while (r.contains(frameRef))
+                                        {
+                                            count++;
+                                            frameRef = "Plot of data in "+simData.getSimulationName()+" ("+count+")";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        frameRef = option;
+                                    }
+                                }
+                                plotAllInOption = frameRef;
+                            }
+                            else
+                            {
+                                frameRef = plotAllInOption;
+                            }
                         }
                         else if (ae.getActionCommand().equals(PLOT_SEPARATE_CG_VAR) || ae.getActionCommand().equals(PLOT_SEPARATE_CG_VAR))
                         {
