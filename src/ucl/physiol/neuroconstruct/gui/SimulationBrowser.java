@@ -347,12 +347,12 @@ public class SimulationBrowser extends JDialog
             if (name.equals(SimulationsInfo.COL_NAME_DATE))
             {
                 nextColumn.setPreferredWidth(150);
-                nextColumn.setMaxWidth(170);
+                nextColumn.setMaxWidth(200);
             }
             if (name.equals(SimulationsInfo.COL_NAME_NAME))
             {
                 nextColumn.setPreferredWidth(150);
-                nextColumn.setMaxWidth(200);
+                nextColumn.setMaxWidth(300);
             }
 
             DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();

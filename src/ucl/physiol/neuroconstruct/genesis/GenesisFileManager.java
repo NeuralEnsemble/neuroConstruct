@@ -36,6 +36,8 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.dataset.DataSet;
 import ucl.physiol.neuroconstruct.gui.plotter.PlotManager;
 import ucl.physiol.neuroconstruct.gui.plotter.PlotterFrame;
+import ucl.physiol.neuroconstruct.hpc.mpi.QueueInfo;
+import ucl.physiol.neuroconstruct.hpc.mpi.RemoteLogin;
 import ucl.physiol.neuroconstruct.hpc.utils.ProcessFeedback;
 import ucl.physiol.neuroconstruct.hpc.utils.ProcessManager;
 import ucl.physiol.neuroconstruct.mechanisms.*;
@@ -257,7 +259,9 @@ public class GenesisFileManager
             if(mooseCompatMode()) fw.write("\n*/\n");
             
             
-            if (quitAfterRun || project.genesisSettings.getGraphicsMode().equals(GenesisSettings.GraphicsMode.NO_CONSOLE))
+            if (quitAfterRun || 
+                project.genesisSettings.getGraphicsMode().equals(GenesisSettings.GraphicsMode.NO_CONSOLE) ||
+                simConfig.getMpiConf().isRemotelyExecuted())
             {
                 fw.write(generateQuit());
             }
@@ -2238,7 +2242,8 @@ public class GenesisFileManager
 
         ArrayList<PlotSaveDetails> plots = project.generatedPlotSaves.getPlottedPlotSaves();
 
-        if (project.genesisSettings.getGraphicsMode().equals(GenesisSettings.GraphicsMode.ALL_SHOW))
+        if (project.genesisSettings.getGraphicsMode().equals(GenesisSettings.GraphicsMode.ALL_SHOW) &&
+            !simConfig.getMpiConf().isRemotelyExecuted())
         {
             addMajorComment(response, "Adding " + plots.size() + " plot(s)");
 
@@ -2748,6 +2753,11 @@ public class GenesisFileManager
             {
                 File copiedFile = new File(getDirectoryForSimulationFiles(), (new File(filenameToBeGenerated)).getName());
                 filenameToBeGenerated = GeneralUtils.convertToCygwinPath(copiedFile.getAbsolutePath());
+            }
+
+            if (simConfig.getMpiConf().isRemotelyExecuted())
+            {
+                filenameToBeGenerated = cellMorphGen.getFile().getName();
             }
 
 
@@ -3559,30 +3569,93 @@ public class GenesisFileManager
                     executable = basicCommLine.trim();
                 }
 
-                String scriptText = "cd " + dirToRunFrom.getAbsolutePath() + "\n" + genesisExecutable
-                    + " "
-                    + mainGenesisFile.getName();
+
+                StringBuffer scriptText = new StringBuffer();
 
 
-                if (project.genesisSettings.getGraphicsMode().equals(GenesisSettings.GraphicsMode.NO_CONSOLE))
-                {
-                    if (!mooseCompatMode())
-                    {
-                        scriptText= scriptText +" > /tmp/logGENESIS_"+project.getProjectFileName()
-                                        +"_"+project.simulationParameters.getReference();
-                    }
-                    else
-                    {
-                        scriptText= scriptText +" > /tmp/logMOOSE_"+project.getProjectFileName()
-                                        +"_"+project.simulationParameters.getReference();
-                    }
-                }
 
                 File scriptFile = new File(ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory()),
                                            "runsim.sh");
+
+
+                if (!simConfig.getMpiConf().isRemotelyExecuted())
+                {
+
+                    scriptText.append("cd " + dirToRunFrom.getAbsolutePath() + "\n" + genesisExecutable
+                        + " "
+                        + mainGenesisFile.getName());
+
+
+                    if (project.genesisSettings.getGraphicsMode().equals(GenesisSettings.GraphicsMode.NO_CONSOLE))
+                    {
+                        if (!mooseCompatMode())
+                        {
+                            scriptText.append(" > /tmp/logGENESIS_"+project.getProjectFileName()
+                                            +"_"+project.simulationParameters.getReference());
+                        }
+                        else
+                        {
+                            scriptText.append(" > /tmp/logMOOSE_"+project.getProjectFileName()
+                                            +"_"+project.simulationParameters.getReference());
+                        }
+                    }
+
+
+
+                }
+                else
+                {
+                    int time = QueueInfo.getWallTimeSeconds(project, simConfig);
+                    
+                    String simName = mooseCompatMode() ? "MOOSE" : "GENESIS";
+
+                    scriptText.append(simConfig.getMpiConf().getPushScript(project.getProjectName(), project.simulationParameters.getReference(), simName));
+
+                    File simResultsDir = new File(ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()),
+                            project.simulationParameters.getReference());
+
+                    if (simConfig.getMpiConf().getQueueInfo()!=null)
+                    {
+                        String submitJob = simConfig.getMpiConf().getQueueSubmitScript(project.getProjectName(), project.simulationParameters.getReference(), time, simName);
+
+                        File submitJobFile = new File(dirForSimDataFiles, QueueInfo.submitScript);
+
+                        FileWriter fw = new FileWriter(submitJobFile);
+                        //scriptFile.se
+                        fw.write(submitJob);
+                        fw.close();
+
+                        // bit of a hack...
+                        rt.exec(new String[]{"chmod","u+x",submitJobFile.getAbsolutePath()});
+
+                        logger.logComment("-------   Written file: "+ submitJobFile.getAbsolutePath(), true);
+                    }
+
+
+
+                    File pullScriptFile = new File(simResultsDir, RemoteLogin.remotePullScriptName);
+
+                    String pullScriptText = simConfig.getMpiConf().getPullScript(project.getProjectName(),
+                                                                                 project.simulationParameters.getReference(),
+                                                                                 ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()));
+
+
+                    FileWriter fw = new FileWriter(pullScriptFile);
+                    //scriptFile.se
+                    fw.write(pullScriptText);
+                    fw.close();
+
+                    logger.logComment("-------   Written file: "+ pullScriptFile.getAbsolutePath(), true);
+
+                    // bit of a hack...
+                    rt.exec(new String[]{"chmod","u+x",pullScriptFile.getAbsolutePath()});
+
+                }
+
+
                 FileWriter fw = new FileWriter(scriptFile);
 
-                fw.write(scriptText);
+                fw.write(scriptText.toString());
                 fw.close();
 
                 // bit of a hack...
@@ -3590,7 +3663,7 @@ public class GenesisFileManager
                 try
                 {
                     // This is to make sure the file permission is updated..
-                    Thread.sleep(600);
+                    Thread.sleep(1000);
                 }
                 catch (InterruptedException ex)
                 {
@@ -3619,8 +3692,10 @@ public class GenesisFileManager
                 logger.logComment("Going to execute command: " + commandToExecute);
 
                 //rt.exec(commandToExecute);
-
-                ProcessManager.runCommand(commandToExecute, pf, 4);
+                if (true || !simConfig.getMpiConf().isRemotelyExecuted())
+                {
+                    ProcessManager.runCommand(commandToExecute, pf, 4);
+                }
 
                 logger.logComment("Have successfully executed command: " + commandToExecute);
             }
@@ -3826,8 +3901,16 @@ public class GenesisFileManager
         response.append("simReference = \"" + project.simulationParameters.getReference() + "\"\n\n");
 
         response.append("str targetDir\n");
-        response.append("targetDir =  {strcat {simsDir} {simReference}}\n");
-        response.append("targetDir =  {strcat {targetDir} {\"/\"}}\n\n");
+
+        if (!simConfig.getMpiConf().isRemotelyExecuted())
+        {
+            response.append("targetDir =  {strcat {simsDir} {simReference}}\n");
+            response.append("targetDir =  {strcat {targetDir} {\"/\"}}\n\n");
+        }
+        else
+        {
+            response.append("targetDir =  {\"./\"}\n\n");
+        }
         
         
         String timeFileElement = FILE_ELEMENT_ROOT + "/timefile";

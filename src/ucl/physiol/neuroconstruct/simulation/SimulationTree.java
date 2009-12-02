@@ -135,17 +135,17 @@ public class SimulationTree extends JTree implements ActionListener
                 @Override
                 public void mouseReleased( MouseEvent e )
                 {
-                    logger.logComment("Mouse event: "+ e, true);
+                    logger.logComment("Mouse event: "+ e);
                     
                     if ( e.getButton()==3 && getSelectionPath()!=null)
                     {
-                        logger.logComment("Pop up due to: "+e.getSource(), true);
-                        logger.logComment("Sel: "+getSelectionPath(), true);
+                        logger.logComment("Pop up due to: "+e.getSource());
+                        logger.logComment("Sel: "+getSelectionPath());
 
                         Object comp = getSelectionPath().getLastPathComponent();
                         Object userObj = ((DefaultMutableTreeNode)comp).getUserObject();
-                        logger.logComment("User obj ("+userObj.getClass()+"): "+userObj, true);
-                        logger.logComment("Comp ("+comp.getClass()+"): "+comp, true);
+                        logger.logComment("User obj ("+userObj.getClass()+"): "+userObj);
+                        logger.logComment("Comp ("+comp.getClass()+"): "+comp);
 
                         if (comp instanceof SimulationsInfo.SimNode)
                         {
@@ -178,8 +178,8 @@ public class SimulationTree extends JTree implements ActionListener
         Object comp = path.getLastPathComponent();
         dmtn = (DefaultMutableTreeNode) comp;
 
-        logger.logComment("User obj: "+dmtn.getUserObject(), true);
-        logger.logComment("ae.getActionCommand(): "+ae.getActionCommand(), true);
+        logger.logComment("User obj: "+dmtn.getUserObject());
+        logger.logComment("ae.getActionCommand(): "+ae.getActionCommand());
 
         if (comp instanceof SimulationsInfo.AllSimRoot)
         {
@@ -213,7 +213,7 @@ public class SimulationTree extends JTree implements ActionListener
 
                 if (ae.getActionCommand().equals(SIM_INFO))
                 {
-                    logger.logComment("Giving data on: "+simData, true);
+                    logger.logComment("Giving data on: "+simData);
 
                     String simInfo = SimulationsInfo.getSimProps(simData.getSimulationDirectory(), true);
 

@@ -26,6 +26,8 @@
 
 package ucl.physiol.neuroconstruct.hpc.mpi;
 
+import java.util.Hashtable;
+
 
 /**
  * Support for interacting with MPI platform
@@ -42,7 +44,7 @@ public class RemoteLogin
     private String hostname = null;
     private String userName = null;
     private String workDir = null;
-    private String nrnivLocation = null;
+    private Hashtable<String, String> executables = new Hashtable<String, String>();
 
     public static final String remotePullScriptName = "pullsim.sh";
 
@@ -51,23 +53,28 @@ public class RemoteLogin
 
     }
 
-    public RemoteLogin(String hostname, String userName, String workDir, String nrnivLocation)
+    public RemoteLogin(String hostname, String userName, String workDir, Hashtable<String, String> executables)
     {
         this.hostname = hostname;
         this.userName = userName;
         this.workDir = workDir;
-        this.nrnivLocation = nrnivLocation;
+        this.executables = executables;
     }
 
 
-    public String getNrnivLocation()
+    public Hashtable<String, String> getExecutables()
     {
-        return nrnivLocation;
+        return executables;
     }
 
-    public void setNrnivLocation(String nrnivLocation)
+    public String getExecutableForSimulator(String simulator)
     {
-        this.nrnivLocation = nrnivLocation;
+        return executables.get(simulator);
+    }
+
+    public void setExecutables(Hashtable<String, String> executables)
+    {
+        this.executables = executables;
     }
 
     public String getUserName()
@@ -105,52 +112,47 @@ public class RemoteLogin
     @Override
     public Object clone()
     {
-        RemoteLogin rl2 = new RemoteLogin(new String(hostname), new String(userName), new String(workDir), new String(nrnivLocation));
+        RemoteLogin rl2 = new RemoteLogin(new String(hostname), new String(userName), new String(workDir), new Hashtable<String, String>(executables));
         return rl2;
 
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (obj == null)
-        {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass())
-        {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         final RemoteLogin other = (RemoteLogin) obj;
-        if ((this.hostname == null) ? (other.hostname != null) : !this.hostname.equals(other.hostname))
-        {
+        if ((this.hostname == null) ? (other.hostname != null) : !this.hostname.equals(other.hostname)) {
             return false;
         }
-        if ((this.userName == null) ? (other.userName != null) : !this.userName.equals(other.userName))
-        {
+        if ((this.userName == null) ? (other.userName != null) : !this.userName.equals(other.userName)) {
             return false;
         }
-        if ((this.workDir == null) ? (other.workDir != null) : !this.workDir.equals(other.workDir))
-        {
+        if ((this.workDir == null) ? (other.workDir != null) : !this.workDir.equals(other.workDir)) {
             return false;
         }
-        if ((this.nrnivLocation == null) ? (other.nrnivLocation != null) : !this.nrnivLocation.equals(other.nrnivLocation))
-        {
+        if (this.executables != other.executables && (this.executables == null || !this.executables.equals(other.executables))) {
             return false;
         }
         return true;
     }
 
     @Override
-    public int hashCode()
-    {
-        int hash = 3;
-        hash = 83 * hash + (this.hostname != null ? this.hostname.hashCode() : 0);
-        hash = 83 * hash + (this.userName != null ? this.userName.hashCode() : 0);
-        hash = 83 * hash + (this.workDir != null ? this.workDir.hashCode() : 0);
-        hash = 83 * hash + (this.nrnivLocation != null ? this.nrnivLocation.hashCode() : 0);
+    public int hashCode() {
+        int hash = 7;
+        hash = 13 * hash + (this.hostname != null ? this.hostname.hashCode() : 0);
+        hash = 13 * hash + (this.userName != null ? this.userName.hashCode() : 0);
+        hash = 13 * hash + (this.workDir != null ? this.workDir.hashCode() : 0);
+        hash = 13 * hash + (this.executables != null ? this.executables.hashCode() : 0);
         return hash;
     }
+
+    
+
 
     
 

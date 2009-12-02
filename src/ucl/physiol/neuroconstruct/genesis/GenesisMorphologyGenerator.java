@@ -101,6 +101,11 @@ public class GenesisMorphologyGenerator
         return this.morphFile.getAbsolutePath();
     }
 
+    public File getFile()
+    {
+        return this.morphFile;
+    }
+
 
     public String generateFile() throws GenesisException
     {

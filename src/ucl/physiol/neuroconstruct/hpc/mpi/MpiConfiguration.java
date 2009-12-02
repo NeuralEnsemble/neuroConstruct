@@ -62,18 +62,38 @@ public class MpiConfiguration
         this.name = name;
     }
 
-    public String getQueueSubmitScript(String projName, String simRef, int timeMins)
+    public String getQueueSubmitScript(String projName, String simRef, int timeMins, String simulator)
     {
+        boolean isNeuron = simulator.equals("NEURON");
+
         if (queueInfo==null)
             return null;
         StringBuffer script = new StringBuffer();
 
-        script.append("#!/bin/bash \n");
+        script.append("#!/bin/bash -l\n");
         script.append("\n");
         script.append("#PBS -N "+simRef+"_"+projName+"\n");
         script.append("#PBS -A "+queueInfo.getAccount()+"\n");
         script.append("#PBS -j oe\n");
         script.append("#PBS -l qos=parallel\n");
+        
+        
+        int nodes = hostList.size();
+        int ppn = 0;
+        int totalProcs = 0;
+        for(MpiHost host: hostList)
+        {
+            totalProcs = totalProcs + host.getNumProcessors();
+            
+            if (host.getNumProcessors()>ppn) ppn = host.getNumProcessors();
+        }
+
+        if (remoteLogin.getHostname().indexOf("legion")>=0 && totalProcs<=4 && timeMins<=6)
+        {
+            script.append("# As job is small, using Test queue on Legion...\n");
+            script.append("#PBS -q Test  \n");
+        }
+
         script.append("\n");
         script.append("#! Number of nodes \n");
         script.append("#! The total number of nodes passed to mpirun will be nodes*ppn \n");
@@ -81,23 +101,22 @@ public class MpiConfiguration
         script.append("#! 02:00:00 indicates 02 hours\n");
         script.append("\n");
 
-        int nodes = hostList.size();
-        int ppn = 0;
-        for(MpiHost host: hostList)
-        {
-            if (host.getNumProcessors()>ppn) ppn = host.getNumProcessors();
-        }
 
         script.append("#PBS -l nodes="+nodes+":ppn="+ppn+",walltime=00:"+timeMins+":00\n");
         script.append("\n");
         script.append("#! Full path to application + application name\n");
-        script.append("application=\""+remoteLogin.getNrnivLocation()+"\"\n");
+        script.append("application=\""+remoteLogin.getExecutableForSimulator(simulator)+"\"\n");
         script.append("\n");
         script.append("#! Work directory\n");
         script.append("workdir=\""+getProjectSimDir(projName)+"/"+simRef+"\"\n");
         script.append("\n");
         script.append("#! Run options for the application\n");
-        script.append("options=\"$workdir/"+projName+".hoc\"\n");
+
+        if(isNeuron)
+            script.append("options=\"$workdir/"+projName+".hoc\"\n");
+        else
+            script.append("options=\"$workdir/"+projName+".g\"\n");
+
         script.append("\n");
         script.append("\n");
         script.append("###############################################################\n");
@@ -123,8 +142,10 @@ public class MpiConfiguration
         script.append("sleep 1\n");
         script.append("#! Run the parallel MPI executable (nodes*ppn)\n");
         script.append("\n");
-        script.append("export LAUNCH_APP=\"$application $options\"\n");
-        if (false && queueInfo.getLauncherScript()!=null && queueInfo.getLauncherScript().length()>0)
+        script.append("export LAUNCH_APP=\"$application\"\n");
+        script.append("export LAUNCH_APP_OP=\"$application $options\"\n");
+
+        if (queueInfo.getLauncherScript()!=null && queueInfo.getLauncherScript().length()>0)
         {
             script.append("export CVOS_LAUNCHER=\""+queueInfo.getLauncherScript()+"\"\n");
         }
@@ -135,11 +156,12 @@ public class MpiConfiguration
         
         script.append("export MPI_RUN=\"mpirun\"\n");
         script.append("\n");
-        script.append("echo \"Running $CVOS_LAUNCHER $MPI_RUN -machinefile machine.file.$PBS_JOBID -np $numnodes  $LAUNCH_APP\"\n");
+        String exe = "$CVOS_LAUNCHER $MPI_RUN -machinefile machine.file.$PBS_JOBID -np $numnodes  $LAUNCH_APP_OP";
+        script.append("echo \"Running: "+exe+"\"\n");
         script.append("echo \"--------------------------------------------------------------\"\n");
         script.append("echo \"\"\n");
         script.append("\n");
-        script.append("$CVOS_LAUNCHER $MPI_RUN -machinefile machine.file.$PBS_JOBID -np $numnodes  $LAUNCH_APP\n");
+        script.append(exe+"\n");
         script.append("\n");
         script.append("\n");
         script.append("\n");
@@ -165,19 +187,21 @@ public class MpiConfiguration
 
 
 
-    public String getPushScript(String projName, String simRef)
+    public String getPushScript(String projName, String simRef, String simulator)
     {
+
+        boolean isNeuron = simulator.equals("NEURON");
 
         StringBuffer scriptText = new StringBuffer();
 
-        scriptText.append("#!/bin/bash \n\n");
+        scriptText.append("#!/bin/bash -l\n\n");
         scriptText.append("\n");
         scriptText.append("export simRef=\""+simRef+"\"\n");
         scriptText.append("export projName=\""+projName+"\"\n");
         scriptText.append("\n");
         scriptText.append("export remoteHost=\""+remoteLogin.getHostname()+"\"\n");
         scriptText.append("export remoteUser=\""+remoteLogin.getUserName()+"\"\n");
-        scriptText.append("export nrnivLocation=\""+remoteLogin.getNrnivLocation()+"\"\n");
+        scriptText.append("export simulatorLocation=\""+remoteLogin.getExecutableForSimulator(simulator)+"\"\n");
         scriptText.append("\n");
         scriptText.append("projDir="+getProjectSimDir(projName)+"\n");
         scriptText.append("simDir=$projDir\"/\"$simRef\n");
@@ -198,7 +222,7 @@ public class MpiConfiguration
         }
 
 
-        scriptText.append(" \"$nrnivLocation\" \"$simDir\"/\"$projName\".hoc\">runmpi.sh\n");
+        scriptText.append(" \"$simulatorLocation\" \"$simDir\"/\"$projName\".hoc\">runmpi.sh\n");
         scriptText.append("\n");
         scriptText.append("chmod u+x runmpi.sh\n");
         scriptText.append("\n");
@@ -210,7 +234,7 @@ public class MpiConfiguration
         scriptText.append("\n");
         scriptText.append("echo \"Going to zip files into \"$zipFile\n");
         scriptText.append("\n");
-        scriptText.append("tar czf $zipFile *.mod *.hoc *.props *.dat *.sh *.py *.xml *.h5\n");
+        scriptText.append("tar czvf $zipFile *.mod *.hoc *.p *.g *.props *.dat *.sh *.py *.xml *.h5\n");
         scriptText.append("\n");
 
         scriptText.append("echo \"Going to send to: $simDir on $remoteUser@$remoteHost\"\n");
@@ -229,16 +253,29 @@ public class MpiConfiguration
 
         scriptText.append("\n");
         scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;tar xzf $zipFile; rm $zipFile\"\n");
-        scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic nrnivmodl\"\n");
+
+        if (isNeuron)
+        {
+            scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic nrnivmodl\"\n");
+        }
+
         if (queueInfo==null)
         {
             scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;./runmpi.sh\"\n");
         }
         else
         {
-            scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic 'qsub "+QueueInfo.submitScript+"'\"\n");
-            scriptText.append("ssh $remoteUser@$remoteHost \"echo 'Submitted job!';/bin/bash -ic 'qstat -u $remoteUser'\"\n");
-            scriptText.append("sleep 6\n"); // Quick snooze to see result of qsub...
+            if (true || isNeuron)
+            {
+                scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic 'qsub "+QueueInfo.submitScript+"'\"\n");
+                scriptText.append("ssh $remoteUser@$remoteHost \"echo 'Submitted job!';/bin/bash -ic 'qstat -u $remoteUser'\"\n");
+                scriptText.append("sleep 15\n"); // Quick snooze to see result of qsub...
+            }
+            else
+            {
+                scriptText.append("ssh $remoteUser@$remoteHost \"echo 'NOTSubmitted job!'\"\n");
+                scriptText.append("sleep 60\n"); // Quick snooze to see result of qsub...
+            }
         }
         scriptText.append("\n");
         scriptText.append("\n");

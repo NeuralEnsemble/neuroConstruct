@@ -26,6 +26,12 @@
 
 package ucl.physiol.neuroconstruct.hpc.mpi;
 
+import javax.swing.JOptionPane;
+import ucl.physiol.neuroconstruct.cell.Cell;
+import ucl.physiol.neuroconstruct.cell.Section;
+import ucl.physiol.neuroconstruct.project.Project;
+import ucl.physiol.neuroconstruct.project.SimConfig;
+
 
 
 /**
@@ -70,6 +76,65 @@ public class QueueInfo
         QueueInfo q2 = new QueueInfo(wallTimeMins, new String(account), new String(launcherScript));
         return q2;
 
+    }
+
+
+    public static int getWallTimeSeconds(Project project, SimConfig simConfig)
+    {
+        int numCells = project.generatedCellPositions.getNumberInAllCellGroups();
+
+        int totNseg = 0;
+
+        for (String cg: simConfig.getCellGroups())
+        {
+            int numCellsHere = project.generatedCellPositions.getNumberInCellGroup(cg);
+
+            if (numCellsHere>0)
+            {
+                int totNsegHere = 0;
+                Cell c = project.cellManager.getCell(project.cellGroupsInfo.getCellType(cg));
+                for(Section s: c.getAllSections())
+                {
+                    totNsegHere+=s.getNumberInternalDivisions();
+                }
+                totNseg +=(numCellsHere*totNsegHere);
+
+            }
+        }
+
+        boolean check = true;
+        int time = 5;
+
+        while (simConfig.getMpiConf().getQueueInfo()!=null && check)
+        {
+            time = simConfig.getMpiConf().getQueueInfo().getWallTimeMins();
+
+            String res = JOptionPane.showInputDialog("Simulation: "+project.simulationParameters.getReference()+
+                    " to run for "+simConfig.getSimDuration()+" ms on "+simConfig.getMpiConf().getTotalNumProcessors()+" processor cores.\n" +
+                    "Total number of cells: "+numCells+"\n" +
+                    "Total number of nseg for all sections: "+totNseg+"\n" +
+                    "nseg per core: "+totNseg/(float)simConfig.getMpiConf().getTotalNumProcessors()+"\n\n" +
+                "Please enter the time in minutes of the run: ", time);
+
+            if (res ==null)
+            {
+                return 5;
+            }
+
+            try
+            {
+                float val = Float.parseFloat(res);
+
+                time = Math.max(1,(int)val);
+
+                check = false;
+            }
+            catch (Exception e)
+            {
+                check = true;
+            }
+        }
+        return time;
     }
 
 

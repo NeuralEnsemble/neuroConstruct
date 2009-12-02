@@ -5009,6 +5009,8 @@ public class NeuronFileManager
                     else
                     {
 
+                        int time = QueueInfo.getWallTimeSeconds(project, simConfig);
+                        /*
                         int numCells = project.generatedCellPositions.getNumberInAllCellGroups();
 
                         int totNseg = 0;
@@ -5061,17 +5063,17 @@ public class NeuronFileManager
                             {
                                 check = true;
                             }
-                        }
+                        }*/
                         
 
-                        scriptText.append(simConfig.getMpiConf().getPushScript(project.getProjectName(), project.simulationParameters.getReference()));
+                        scriptText.append(simConfig.getMpiConf().getPushScript(project.getProjectName(), project.simulationParameters.getReference(), "NEURON"));
 
                         File simResultsDir = new File(ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()),
                                 project.simulationParameters.getReference());
 
                         if (simConfig.getMpiConf().getQueueInfo()!=null)
                         {
-                            String submitJob = simConfig.getMpiConf().getQueueSubmitScript(project.getProjectName(), project.simulationParameters.getReference(), time);
+                            String submitJob = simConfig.getMpiConf().getQueueSubmitScript(project.getProjectName(), project.simulationParameters.getReference(), time, "NEURON");
 
                             File submitJobFile = new File(ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory()), QueueInfo.submitScript);
 
@@ -5091,10 +5093,6 @@ public class NeuronFileManager
                         String pullScriptText = simConfig.getMpiConf().getPullScript(project.getProjectName(),
                                                                                      project.simulationParameters.getReference(),
                                                                                      ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()));
-
-                       
-
-
 
 
                         FileWriter fw = new FileWriter(pullScriptFile);

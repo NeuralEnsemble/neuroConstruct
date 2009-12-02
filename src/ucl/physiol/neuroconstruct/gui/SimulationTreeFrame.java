@@ -138,7 +138,11 @@ public class SimulationTreeFrame extends JFrame
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
                 simInfo.refresh(false);
-                jPanelScrool.repaint();
+
+                simInfo.fireTableStructureChanged();
+                tree = new SimulationTree(simInfo);
+                jScrollPane1.setViewportView(tree);
+                jScrollPane1.repaint();
             }
         });
 

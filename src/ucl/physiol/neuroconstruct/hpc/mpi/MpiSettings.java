@@ -106,12 +106,18 @@ public class MpiSettings
     public MpiSettings()
     {
 
+        Hashtable<String, String> simulatorExecutables = new Hashtable<String, String>();
+
+        simulatorExecutables.put("NEURON", "/home/ucgbpgl/nrnmpi/x86_64/bin/nrniv");
+        simulatorExecutables.put("GENESIS", "/home/ucgbpgl/gen23/genesis");
+        simulatorExecutables.put("MOOSE", "/home/ucgbpgl/moose/moose");
+
         // This is a 4 processor Linux machine in our lab. Auto ssh login is enabled to it from the
         // machine on which neuroConstruct is running. Jobs are set running directly on this machine
         RemoteLogin directLogin = new RemoteLogin("192.168.15.70",
                                                   "padraig",
                                                   "/home/padraig/nCsims",
-                                                  "/home/padraig/nrnpympi/x86_64/bin/nrniv");
+                                                  simulatorExecutables);
 
         // Legion is the UCL supercomputing cluster. Legion operates the Torque batch queueing system
         // and the Moab scheduler, i.e. jobs aren't eecuted directly, but submitted to a queue and will
@@ -119,7 +125,14 @@ public class MpiSettings
         RemoteLogin legionLogin = new RemoteLogin("legion.rc.ucl.ac.uk",
                                                   "ucgbpgl",
                                                   "/shared/scratch/ucgbpgl/nCsims",
-                                                  "/home/ucgbpgl/nrnmpi/x86_64/bin/nrniv");
+                                                  simulatorExecutables);
+
+        RemoteLogin legionSerialLogin = new RemoteLogin("legion.rc.ucl.ac.uk",
+                                                  "ucgbpgl",
+                                                  "/shared/scratch/ucgbpgl/nCsims",
+                                                  simulatorExecutables);
+
+        //QueueInfo legionQueueCvos = new QueueInfo(6, "ucl/NeuroSci/neuroconst", "cvos-launcher");
 
         QueueInfo legionQueue = new QueueInfo(6, "ucl/NeuroSci/neuroconst", "cvos-launcher");
 
