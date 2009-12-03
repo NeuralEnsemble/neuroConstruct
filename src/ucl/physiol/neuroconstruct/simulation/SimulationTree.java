@@ -222,7 +222,7 @@ public class SimulationTree extends JTree implements ActionListener
 
                     String simInfo = SimulationsInfo.getSimProps(simData.getSimulationDirectory(), true);
 
-                    SimpleViewer.showString(simInfo, "Information on simulation: "+simData.getSimulationName(), 10, false, true);
+                    SimpleViewer.showString(simInfo, "Information on simulation: "+simData.getSimulationName(), 12, false, true);
 
                     return;
                 }
@@ -232,7 +232,7 @@ public class SimulationTree extends JTree implements ActionListener
 
                     String simInfo = SimulationsInfo.getSimProps(simData.getSimulationDirectory(), true, true);
 
-                    SimpleViewer.showString(simInfo, "Summary of simulation: "+simData.getSimulationName(), 10, false, true);
+                    SimpleViewer.showString(simInfo, "Summary of simulation: "+simData.getSimulationName(), 12, false, true, 0.5f);
 
                     return;
                 }

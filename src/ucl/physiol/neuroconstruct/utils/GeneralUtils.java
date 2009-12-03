@@ -312,6 +312,25 @@ public class GeneralUtils
         return formatter.format(now);
     }
 
+    public static String getNiceStringForSeconds(String timeInSeconds)
+    {
+
+        try
+        {
+            float val = Float.parseFloat(timeInSeconds);
+            if (val/3600>1)
+                return (val/3600)+" h";
+            else if (val/60>1)
+                return (val/60)+" m";
+            else
+                return (val)+" s";
+        }
+        catch (Exception e)
+        {
+            return "??? sec";
+        }
+    }
+
 
     public static String getCurrentTimeAsNiceString()
     {

@@ -728,7 +728,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     //JScrollPane jScrollPaneGenesisBefore = new JScrollPane();
     //JTextArea jTextAreaGenesisBefore = new JTextArea();
     JPanel jPanelSimulationGlobal = new JPanel();
-    JButton jButton3DPrevSims = new JButton();
+    JButton jButton3DPrevSimuls = new JButton();
+    JButton jButton3DQuickSims = new JButton();
     JLabel jLabelSimulationGlobRm = new JLabel();
     JTextField jTextFieldSimulationGlobRm = new JTextField();
     JLabel jLabelSimulationInitVm = new JLabel();
@@ -1674,14 +1675,24 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelSimulationGlobal.setMinimumSize(new Dimension(790, 60));
         jPanelSimulationGlobal.setPreferredSize(new Dimension(790, 60));
         jPanelSimulationGlobal.setLayout(gridBagLayout5);
-        jButton3DPrevSims.setEnabled(false);
-        jButton3DPrevSims.setSelected(false);
-        jButton3DPrevSims.setText("Previous Simulations...");
-        jButton3DPrevSims.addActionListener(new java.awt.event.ActionListener()
+        jButton3DPrevSimuls.setEnabled(false);
+        jButton3DPrevSimuls.setSelected(false);
+        jButton3DPrevSimuls.setText("View Simulations in 3D...");
+        jButton3DPrevSimuls.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
                 jButton3DPrevSims_actionPerformed(e);
+            }
+        });
+        jButton3DQuickSims.setEnabled(false);
+        jButton3DQuickSims.setSelected(false);
+        jButton3DQuickSims.setText("Quick Plot...");
+        jButton3DQuickSims.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButton3DQuickSims_actionPerformed(e);
             }
         });
         jLabelSimulationGlobRm.setText("Default specific membrane resistance:");
@@ -3757,7 +3768,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         jPanel3DButtons.add(new JLabel("         "), null);
 
-        jPanel3DButtons.add(jButton3DPrevSims, null);
+        jPanel3DButtons.add(jButton3DPrevSimuls, null);
+        jPanel3DButtons.add(jButton3DQuickSims, null);
 
 
         jPanel3DDemo.add(jPanel3DMain, BorderLayout.CENTER);
@@ -4167,7 +4179,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     jButtonGenesisGenerate.setText("Create GENESIS files");
                     jButtonGenesisRun.setText("Run GENESIS simulation");
                 }
-                //if (e.getStateChange().)
+                //if (e.getStateChange().)pr
             }
         });
 
@@ -4536,8 +4548,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
 
-        jButton3DPrevSims.setToolTipText(toolTipText.getToolTip("Previous Simulations"));
+        jButton3DPrevSimuls.setToolTipText(toolTipText.getToolTip("Previous Simulations"));
         jMenuItemPrevSims.setToolTipText(toolTipText.getToolTip("Previous Simulations"));
+
+
+        jButton3DPrevSimuls.setToolTipText("New simulation browser GUI to quickly plot simulation results without viewing in 3D");
 
         jButtonSimStimAdd.setToolTipText(toolTipText.getToolTip("Elec Input"));
 
@@ -10434,7 +10449,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             // no project loaded...
             this.jButton3DView.setEnabled(false);
-            this.jButton3DPrevSims.setEnabled(false);
+            this.jButton3DPrevSimuls.setEnabled(false);
+            this.jButton3DQuickSims.setEnabled(false);
             this.jButton3DDestroy.setEnabled(false);
             this.jComboBoxView3DChoice.setEnabled(false);
             this.jButton3DSettings.setEnabled(false);
@@ -10452,7 +10468,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 projManager.getCurrentProject().cellManager.getNumberCellTypes() >0)
             {
                 this.jButton3DView.setEnabled(true);
-                this.jButton3DPrevSims.setEnabled(true);
+                this.jButton3DPrevSimuls.setEnabled(true);
+                this.jButton3DQuickSims.setEnabled(true);
 
                 this.jButton3DSettings.setEnabled(true);
                 this.jComboBoxView3DChoice.setEnabled(true);
@@ -12037,7 +12054,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         projManager.doGenerate(simConfig.getName(), seed);
 
         this.jButton3DView.setEnabled(true);
-        this.jButton3DPrevSims.setEnabled(true);
+        this.jButton3DPrevSimuls.setEnabled(true);
+        this.jButton3DQuickSims.setEnabled(true);
         setGeneratorInfo(generatePleaseWait);
 
         sourceOfCellPosnsInMemory = GENERATED_POSITIONS;
@@ -13455,6 +13473,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     }
 
 
+    void jButton3DQuickSims_actionPerformed(ActionEvent e)
+    {
+        logger.logComment("Loading quick plots...");
+
+        new SimulationTreeFrame(this.projManager.getCurrentProject().getProjectFile(), false).setVisible(true);
+
+    }
 
 
     void jButton3DPrevSims_actionPerformed(ActionEvent e)

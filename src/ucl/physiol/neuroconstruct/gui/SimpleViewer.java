@@ -253,7 +253,8 @@ public class SimpleViewer extends JDialog
                 if (!message.trim().toLowerCase().startsWith("<html>"))
                 {
                     message = "<html><head><style type=\"text/css\">"
-                        + " p {text-align: left; font-size: 12pt; font-family: monospaced}"
+                        + " p {text-align: left; font-size: "+fontSize+"pt; font-family: monospaced}"
+                        + " td {text-align: left; font-size: "+fontSize+"pt; font-family: monospaced}"
                         + "</style></head>"
                         +"<body>"
                         + message

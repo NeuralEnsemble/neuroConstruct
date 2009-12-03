@@ -645,26 +645,15 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
 
                 if(colName.indexOf("Time")>=0 || colName.indexOf("time")>=0)
                 {
-                    try
-                    {
-                        float val = Float.parseFloat(value);
-                        if (val/3600>1)
-                            return (val/3600)+" h";
-                        else if (val/60>1)
-                            return (val/60)+" m";
-                        else
-                            return (val)+" s";
-                    }
-                    catch (Exception e)
-                    {
-                        // continue below
-                    }
+                    return GeneralUtils.getNiceStringForSeconds(value);
                 }
 
                 return value;
             }
         }
     }
+
+
 
 
     @Override
@@ -1135,7 +1124,13 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
         {
             String value = props.getProperty(mainProperties[i]);
             if(value!=null)
+            {
+                if(mainProperties[i].indexOf("Time")>=0 || mainProperties[i].indexOf("time")>=0)
+                {
+                    value = GeneralUtils.getNiceStringForSeconds(value);
+                }
                 sb.append(createLine(mainProperties[i], value, html));
+            }
             allPropNames.remove(mainProperties[i]);
         }
 
@@ -1148,6 +1143,11 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
             {
                 String propName = (String)allPropNames.get(i);
                 String val = props.getProperty(propName);
+
+                if(propName.indexOf("Time")>=0 || propName.indexOf("time")>=0)
+                {
+                    val = GeneralUtils.getNiceStringForSeconds(val);
+                }
 
                 sb.append(createLine(propName, val, html));
             }
