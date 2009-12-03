@@ -163,13 +163,13 @@ public class GenesisFileManager
  
         this.removeAllPreviousGenesisFiles();
 
-        File dirForGenesisFiles = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory().getCanonicalFile());
+        File dirForGeneratedFiles = getGeneratedCodeDir();
 
-        logger.logComment("Starting generation of the files into: "+dirForGenesisFiles+", exists: "+dirForGenesisFiles.exists());
+        logger.logComment("Starting generation of the files into: "+dirForGeneratedFiles+", exists: "+dirForGeneratedFiles.exists());
 
 
         File utilsFile = ProjectStructure.getGenesisUtilsFile();
-        GeneralUtils.copyFileIntoDir(utilsFile, dirForGenesisFiles);
+        GeneralUtils.copyFileIntoDir(utilsFile, dirForGeneratedFiles);
 
         long generationTimeStart = System.currentTimeMillis();
         
@@ -199,7 +199,7 @@ public class GenesisFileManager
         {
             generateCellMappings();
 
-            mainGenesisFile = new File(dirForGenesisFiles, project.getProjectName() + ".g");
+            mainGenesisFile = new File(dirForGeneratedFiles, project.getProjectName() + ".g");
 
             logger.logComment("generating: "+ mainGenesisFile);
             fw = new FileWriter(mainGenesisFile);
@@ -931,15 +931,24 @@ public class GenesisFileManager
         return response.toString();
         }
 
+    private File getGeneratedCodeDir()
+    {
+        File genFileDir = null;
 
+        if (!mooseCompatMode())
+            return ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory());
+        else
+            return ProjectStructure.getMooseCodeDir(project.getProjectMainDirectory());
+
+    }
 
     private void removeAllPreviousGenesisFiles()
     {
         cellTemplatesGenAndIncl.clear();
 
-        File genesisFileDir = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory());
+        File genFileDir = getGeneratedCodeDir();
 
-        GeneralUtils.removeAllFiles(genesisFileDir, false, true, true);
+        GeneralUtils.removeAllFiles(genFileDir, false, true, true);
 
 
     }
@@ -1115,7 +1124,7 @@ public class GenesisFileManager
                               cellMech.getMechanismType().equals(CellMechanism.ION_CONCENTRATION)) &&
                             ! (cellMech instanceof PassiveMembraneMechanism))
                         {
-                            File newMechFile = new File(ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory()),
+                            File newMechFile = new File(getGeneratedCodeDir(),
                                                            cellMech.getInstanceName() + ".g");
 
                             boolean success = false;
@@ -1416,7 +1425,7 @@ public class GenesisFileManager
 
                     }
 
-                    File newMechFile = new File(ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory()),
+                    File newMechFile = new File(getGeneratedCodeDir(),
                                                    cellMech.getInstanceName() + ".g");
 
                     boolean success = false;
@@ -1496,7 +1505,7 @@ public class GenesisFileManager
                         return "";
                     }
 
-                    File newMechFile = new File(ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory()),
+                    File newMechFile = new File(getGeneratedCodeDir(),
                                                    cellMech.getInstanceName() + ".g");
 
                     boolean success = false;
@@ -2691,15 +2700,11 @@ public class GenesisFileManager
             
             logger.logComment("Got the mapped cell");
 
-            File dirForGenFiles = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory());
-
-            logger.logComment("Dir: " + dirForGenFiles);
-            
 
             GenesisMorphologyGenerator cellMorphGen
                 = new GenesisMorphologyGenerator(mappedCell,
                                                  project,
-                                                 dirForGenFiles);
+                                                 getGeneratedCodeDir());
             
 
             String filenameToBeGenerated = cellMorphGen.getFilename();
@@ -3356,6 +3361,12 @@ public class GenesisFileManager
     }
 
 
+    private int suggestedRemoteRunTime = -1;
+
+    public void setSuggestedRemoteRunTime(int t)
+    {
+        this.suggestedRemoteRunTime = t;
+    }
 
     public void runGenesisFile() throws GenesisException
     {
@@ -3410,7 +3421,7 @@ public class GenesisFileManager
 
         File dirForSimDataFiles = getDirectoryForSimulationFiles();
         File dirToRunFrom = null;
-        File genGenesisDir = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory());
+        File generatedCodeDir = getGeneratedCodeDir();
         
         if (copyToSimDataDir)
         {
@@ -3418,17 +3429,17 @@ public class GenesisFileManager
             
             try
             {
-                GeneralUtils.copyDirIntoDir(genGenesisDir, dirForSimDataFiles, false, true);
+                GeneralUtils.copyDirIntoDir(generatedCodeDir, dirForSimDataFiles, false, true);
             }
             catch (Exception e)
             {
-                throw new GenesisException("Problem copying the GENESIS files from "+genGenesisDir+" to "+ dirForSimDataFiles, e);
+                throw new GenesisException("Problem copying the GENESIS files from "+generatedCodeDir+" to "+ dirForSimDataFiles, e);
                 
             }
         }
         else
         {
-            dirToRunFrom = genGenesisDir; 
+            dirToRunFrom = generatedCodeDir;
         }
         
 
@@ -3574,8 +3585,7 @@ public class GenesisFileManager
 
 
 
-                File scriptFile = new File(ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory()),
-                                           "runsim.sh");
+                File scriptFile = new File(getGeneratedCodeDir(), "runsim.sh");
 
 
                 if (!simConfig.getMpiConf().isRemotelyExecuted())
@@ -3605,7 +3615,17 @@ public class GenesisFileManager
                 }
                 else
                 {
-                    int time = QueueInfo.getWallTimeSeconds(project, simConfig);
+
+                    int time;
+
+                    if (suggestedRemoteRunTime<=0)
+                    {
+                        time = QueueInfo.getWallTimeSeconds(project, simConfig);
+                    }
+                    else
+                    {
+                        time = suggestedRemoteRunTime;
+                    }
                     
                     String simName = mooseCompatMode() ? "MOOSE" : "GENESIS";
 

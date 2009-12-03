@@ -67,7 +67,8 @@ public class SimulationTree extends JTree implements ActionListener
     private String PLOT_ALL_VOLTS = "Plot only voltage traces";
     private String PLOT_SEPARATE_CG_VAR = "Plot all in separate Plot Frames per Cell Group and data type";
     private String PLOT_SEPARATE_VAR = "Plot all in separate Plot Frames per data type";
-    private String SIM_INFO = "Simulation information";
+    private String SIM_SUMMARY = "Simulation summary";
+    private String SIM_INFO = "Simulation full information";
 
     public SimulationTree(SimulationsInfo stm)
     {
@@ -88,6 +89,10 @@ public class SimulationTree extends JTree implements ActionListener
         popupOneSim.add(mi);
 
         mi = new JMenuItem(PLOT_ALL_VOLTS);
+        mi.addActionListener(this);
+        popupOneSim.add(mi);
+
+        mi = new JMenuItem(SIM_SUMMARY);
         mi.addActionListener(this);
         popupOneSim.add(mi);
 
@@ -218,6 +223,16 @@ public class SimulationTree extends JTree implements ActionListener
                     String simInfo = SimulationsInfo.getSimProps(simData.getSimulationDirectory(), true);
 
                     SimpleViewer.showString(simInfo, "Information on simulation: "+simData.getSimulationName(), 10, false, true);
+
+                    return;
+                }
+                if (ae.getActionCommand().equals(SIM_SUMMARY))
+                {
+                    logger.logComment("Giving data on: "+simData);
+
+                    String simInfo = SimulationsInfo.getSimProps(simData.getSimulationDirectory(), true, true);
+
+                    SimpleViewer.showString(simInfo, "Summary of simulation: "+simData.getSimulationName(), 10, false, true);
 
                     return;
                 }

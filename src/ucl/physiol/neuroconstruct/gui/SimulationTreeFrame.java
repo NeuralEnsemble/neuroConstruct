@@ -33,6 +33,7 @@ import java.util.Vector;
 import javax.swing.*;
 import ucl.physiol.neuroconstruct.simulation.SimulationsInfo;
 import ucl.physiol.neuroconstruct.simulation.SimulationTree;
+import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
 
 /**
@@ -47,6 +48,7 @@ public class SimulationTreeFrame extends JFrame
 {
     private JButton jButtonOK;
     private JButton jButtonRefresh;
+    private JButton jButtonRefreshRemote;
     private JPanel jPanelMain;
     private JPanel jPanelButtons;
     private JPanel jPanelScrool;
@@ -98,6 +100,7 @@ public class SimulationTreeFrame extends JFrame
         tree = new SimulationTree(simInfo);
         jButtonOK = new javax.swing.JButton("OK");
         jButtonRefresh = new javax.swing.JButton("Refresh");
+        jButtonRefreshRemote = new javax.swing.JButton("Check remote...");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -114,6 +117,10 @@ public class SimulationTreeFrame extends JFrame
 
         jPanelButtons.add(jButtonOK);
         jPanelButtons.add(jButtonRefresh);
+        if (GeneralUtils.includeParallelFunc())
+        {
+            jPanelButtons.add(jButtonRefreshRemote);
+        }
 
         jPanelScrool.add(jScrollPane1, BorderLayout.CENTER);
 
@@ -138,6 +145,19 @@ public class SimulationTreeFrame extends JFrame
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
                 simInfo.refresh(false);
+
+                simInfo.fireTableStructureChanged();
+                tree = new SimulationTree(simInfo);
+                jScrollPane1.setViewportView(tree);
+                jScrollPane1.repaint();
+            }
+        });
+
+        jButtonRefreshRemote.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                simInfo.refresh(true);
 
                 simInfo.fireTableStructureChanged();
                 tree = new SimulationTree(simInfo);

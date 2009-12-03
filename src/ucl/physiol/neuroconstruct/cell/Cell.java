@@ -2250,7 +2250,7 @@ public class Cell implements Serializable
             System.out.println("specCapVsGroups: "+cell.specCapVsGroups);
             
             System.out.println("parameterisedGroups: "+cell.parameterisedGroups);
-           
+
             System.out.println(CellTopologyHelper.printDetails(cell, null));
             
 

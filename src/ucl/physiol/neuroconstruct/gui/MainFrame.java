@@ -6637,6 +6637,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         setGenesisRunEnabled(true);
 
         File[] genFiles = ProjectStructure.getGenesisCodeDir(projManager.getCurrentProject().getProjectMainDirectory()).listFiles();
+        if (projManager.getCurrentProject().genesisSettings.isMooseCompatMode())
+            genFiles = ProjectStructure.getMooseCodeDir(projManager.getCurrentProject().getProjectMainDirectory()).listFiles();
 
         jComboBoxGenesisFiles.removeAllItems();
 
@@ -13327,7 +13329,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         String selected = (String)jComboBoxGenesisFiles.getSelectedItem();
 
+
+
         File selectedFile = new File(ProjectStructure.getGenesisCodeDir(projManager.getCurrentProject().getProjectMainDirectory()),
+                                 selected);
+
+        if (projManager.getCurrentProject().genesisSettings.isMooseCompatMode())
+            selectedFile = new File(ProjectStructure.getMooseCodeDir(projManager.getCurrentProject().getProjectMainDirectory()),
                                  selected);
 
         logger.logComment("Viewing genesis file: "+selectedFile);

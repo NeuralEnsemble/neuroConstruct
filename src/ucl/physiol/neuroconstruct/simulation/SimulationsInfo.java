@@ -1098,11 +1098,17 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
         return props;
     }
 
+
+    public static String getSimProps(File simulationDir, boolean html)
+    {
+        return getSimProps(simulationDir, html, false);
+    }
+
     /**
      * Gets the properties from the file named 'simSummaryFileName' in the specified dir
      * @return a nicely formatted string representation of the properties
      */
-    public static String getSimProps(File simulationDir, boolean html)
+    public static String getSimProps(File simulationDir, boolean html, boolean summary)
     {
         Properties props = getSimulationProperties(simulationDir);
         if (props==null) return "Problem getting simulation properties from directory: "+ simulationDir;
@@ -1123,7 +1129,7 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
 
         // Show some of the main props first, as the props can come out in undetermined order
 
-        String[] mainProperties = new String[]{"Simulator", "Unit system", "Populations", "Duration", "dt","Sim Config"};
+        String[] mainProperties = new String[]{"Simulator", "Unit system", "Populations", "Duration", "dt","Sim Config", "RealSimulationTime", "neuroConstruct random seed"};
 
         for (int i = 0; i < mainProperties.length; i++)
         {
@@ -1133,15 +1139,18 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
             allPropNames.remove(mainProperties[i]);
         }
 
-        allPropNames = (ArrayList)GeneralUtils.reorderAlphabetically(allPropNames, true);
-
-        // Do the rest
-        for (int i = 0; i < allPropNames.size(); i++)
+        if (!summary)
         {
-            String propName = (String)allPropNames.get(i);
-            String val = props.getProperty(propName);
+            allPropNames = (ArrayList)GeneralUtils.reorderAlphabetically(allPropNames, true);
 
-            sb.append(createLine(propName, val, html));
+            // Do the rest
+            for (int i = 0; i < allPropNames.size(); i++)
+            {
+                String propName = (String)allPropNames.get(i);
+                String val = props.getProperty(propName);
+
+                sb.append(createLine(propName, val, html));
+            }
         }
         if (html) sb.append("</table>");
 

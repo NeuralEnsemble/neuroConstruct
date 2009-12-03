@@ -4654,6 +4654,14 @@ public class NeuronFileManager
     }
 
 
+    private int suggestedRemoteRunTime = -1;
+
+    public void setSuggestedRemoteRunTime(int t)
+    {
+        this.suggestedRemoteRunTime = t;
+    }
+
+
     public void runNeuronFile(File mainHocFile) throws NeuronException
     {
         logger.logComment("Trying to run the hoc file: "+ mainHocFile);
@@ -5009,7 +5017,17 @@ public class NeuronFileManager
                     else
                     {
 
-                        int time = QueueInfo.getWallTimeSeconds(project, simConfig);
+                        int time;
+
+                        if (suggestedRemoteRunTime<=0)
+                        {
+                            time = QueueInfo.getWallTimeSeconds(project, simConfig);
+                        }
+                        else
+                        {
+                            time = suggestedRemoteRunTime;
+                        }
+
                         /*
                         int numCells = project.generatedCellPositions.getNumberInAllCellGroups();
 
