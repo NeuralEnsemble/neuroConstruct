@@ -204,6 +204,8 @@ public class SimulationData
 
         logger.logComment("Found: " + cellDataFiles.length);
 
+        cellDataFiles = GeneralUtils.reorderAlphabetically(cellDataFiles, true);
+
         for (int fileIndex = 0; fileIndex < cellDataFiles.length; fileIndex++)
         {
             logger.logComment("-----   Looking at "+fileIndex+": "+cellDataFiles[fileIndex]);
