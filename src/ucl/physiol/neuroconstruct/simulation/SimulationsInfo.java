@@ -264,7 +264,9 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
         if (parent instanceof AllSimRoot)
         {
             SimulationData sd = simDataObjs.get(index);
-            return new SimNode(sd);
+            SimNode sn = new SimNode(sd);
+            //sn.
+            return sn;
         }
         if (parent instanceof SimNode)
         {
@@ -411,6 +413,19 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
 
     ////////////////////////////////////////////////////////////////////////////
 
+    public enum ListStyle
+    {
+        Alphabetic, Date;
+
+    }
+
+    public ListStyle listStyle = ListStyle.Date;
+
+    public void setListStyle(ListStyle ls)
+    {
+        listStyle = ls;
+    }
+
 
     public void refresh(boolean checkRemote)
     {
@@ -434,18 +449,25 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
         // Quick reorder...
         if (childrenDirs.length>1)
         {
-            for (int j = 1; j < childrenDirs.length; j++)
+            if (listStyle.equals(listStyle.Date))
             {
-                for (int k = 0; k < j; k++)
+                for (int j = 1; j < childrenDirs.length; j++)
                 {
-                    if (childrenDirs[j].lastModified()<childrenDirs[k].lastModified())
+                    for (int k = 0; k < j; k++)
                     {
-                        File earlierFile = childrenDirs[j];
-                        File laterFile = childrenDirs[k];
-                        childrenDirs[j] = laterFile;
-                        childrenDirs[k] = earlierFile;
+                        if (childrenDirs[j].lastModified()<childrenDirs[k].lastModified())
+                        {
+                            File earlierFile = childrenDirs[j];
+                            File laterFile = childrenDirs[k];
+                            childrenDirs[j] = laterFile;
+                            childrenDirs[k] = earlierFile;
+                        }
                     }
                 }
+            }
+            else if (listStyle.equals(listStyle.Alphabetic))
+            {
+                childrenDirs = GeneralUtils.reorderAlphabetically(childrenDirs, true);
             }
         }
 

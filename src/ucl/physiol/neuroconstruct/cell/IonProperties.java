@@ -180,11 +180,20 @@ public class IonProperties implements Serializable
     @Override
     public String toString()
     {
+        return toString(false);
+
+    }
+
+    public String toString(boolean html)
+    {
+        String pre = html ? "<b>":"";
+        String post = html ? "</b>":"";
+
         if (revPotSetByConcs())
-            return "Ion: " + name +", int conc: "+internalConcentration+
-                    ", ext conc: "+externalConcentration;
+            return "Ion: "+pre + name +post +", int conc: "+pre+internalConcentration+post+
+                    ", ext conc: "+pre+externalConcentration+post;
         else
-            return "Ion: " + name +", rev pot: "+reversalPotential;
+            return "Ion: "+pre + name+post +", rev pot: "+pre+reversalPotential+" mV"+post;
 
     }
 

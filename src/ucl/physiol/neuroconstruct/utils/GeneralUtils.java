@@ -35,6 +35,7 @@ import java.net.*;
 import java.util.ArrayList;
 import javax.swing.*;
 import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings;
+import ucl.physiol.neuroconstruct.project.ProjectStructure;
 
 /**
  * Assorted handy utilities
@@ -124,7 +125,8 @@ public class GeneralUtils
     {
         // If a file named parallel exists in the neuroConstruct main dir, enable testing of 
         // parallel func...
-        return new File("parallel").exists(); 
+        File parallelFile = new File(ProjectStructure.getnCHome(), "parallel");
+        return parallelFile.exists();
     }
     
 

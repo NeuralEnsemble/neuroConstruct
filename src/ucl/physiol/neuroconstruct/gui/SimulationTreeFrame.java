@@ -57,6 +57,10 @@ public class SimulationTreeFrame extends JFrame
 
     private SimulationTree tree;
 
+    private JRadioButton jRadioButtonDate = new JRadioButton("Date");
+    private JRadioButton jRadioButtonAlpha = new JRadioButton("Alpha");
+    private ButtonGroup bg = new ButtonGroup();
+
     boolean standalone = false;
 
     SimulationsInfo simInfo = null;
@@ -87,6 +91,8 @@ public class SimulationTreeFrame extends JFrame
 
         File f = new File(projectFile.getParentFile(), "simulations");
         simInfo = new SimulationsInfo(f, cols);
+        
+        this.setTitle("Simulations in project: "+ projectFile.getAbsolutePath());
 
         initComponents();
     }
@@ -101,6 +107,9 @@ public class SimulationTreeFrame extends JFrame
         jButtonOK = new javax.swing.JButton("OK");
         jButtonRefresh = new javax.swing.JButton("Refresh");
         jButtonRefreshRemote = new javax.swing.JButton("Check remote...");
+
+        bg.add(jRadioButtonAlpha);
+        bg.add(jRadioButtonDate);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -121,6 +130,9 @@ public class SimulationTreeFrame extends JFrame
         {
             jPanelButtons.add(jButtonRefreshRemote);
         }
+
+        jPanelButtons.add(jRadioButtonDate);
+        jPanelButtons.add(jRadioButtonAlpha);
 
         jPanelScrool.add(jScrollPane1, BorderLayout.CENTER);
 
@@ -144,12 +156,7 @@ public class SimulationTreeFrame extends JFrame
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                simInfo.refresh(false);
-
-                simInfo.fireTableStructureChanged();
-                tree = new SimulationTree(simInfo);
-                jScrollPane1.setViewportView(tree);
-                jScrollPane1.repaint();
+                refresh(false);
             }
         });
 
@@ -157,16 +164,40 @@ public class SimulationTreeFrame extends JFrame
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                simInfo.refresh(true);
-
-                simInfo.fireTableStructureChanged();
-                tree = new SimulationTree(simInfo);
-                jScrollPane1.setViewportView(tree);
-                jScrollPane1.repaint();
+                refresh(true);
+            }
+        });
+        jRadioButtonDate.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                refresh(false);
+            }
+        });
+        jRadioButtonAlpha.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                refresh(false);
             }
         });
 
         pack();
+    }
+
+    private void refresh(boolean checkRemote)
+    {
+        if (jRadioButtonDate.isSelected())
+            simInfo.setListStyle(SimulationsInfo.ListStyle.Date);
+        else if (jRadioButtonAlpha.isSelected())
+            simInfo.setListStyle(SimulationsInfo.ListStyle.Alphabetic);
+        
+        simInfo.refresh(checkRemote);
+
+        simInfo.fireTableStructureChanged();
+        tree = new SimulationTree(simInfo);
+        jScrollPane1.setViewportView(tree);
+        jScrollPane1.repaint();
     }
 
     public static void main(String args[])

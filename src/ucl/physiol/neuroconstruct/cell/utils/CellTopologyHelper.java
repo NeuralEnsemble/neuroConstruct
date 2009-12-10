@@ -2492,7 +2492,7 @@ public class CellTopologyHelper
 
             String grpInfo = GeneralUtils.getTabbedString(groups.toString(), "b", html);
 
-            sb.append("    "+GeneralUtils.getTabbedString(ip.toString(), "b", html)
+            sb.append("    "+ip.toString(html)
                 +" is present on: "+grpInfo+GeneralUtils.getEndLine(html));
 
         }

@@ -110,7 +110,8 @@ public class QueueInfo
             time = simConfig.getMpiConf().getQueueInfo().getWallTimeMins();
 
             String res = JOptionPane.showInputDialog("Simulation: "+project.simulationParameters.getReference()+
-                    " to run for "+simConfig.getSimDuration()+" ms on "+simConfig.getMpiConf().getTotalNumProcessors()+" processor cores.\n" +
+                    " to run for "+simConfig.getSimDuration()+" ms with dt: "+project.simulationParameters.getDt()+" ms" +
+                    " on "+simConfig.getMpiConf().getTotalNumProcessors()+" processor cores.\n" +
                     "Total number of cells: "+numCells+"\n" +
                     "Total number of nseg for all sections: "+totNseg+"\n" +
                     "nseg per core: "+totNseg/(float)simConfig.getMpiConf().getTotalNumProcessors()+"\n\n" +

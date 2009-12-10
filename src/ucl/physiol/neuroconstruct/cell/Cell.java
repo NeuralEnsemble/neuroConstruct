@@ -1695,7 +1695,7 @@ public class Cell implements Serializable
 
         ionPropsVsGroups.put(ip, groups);
 
-        logger.logComment("ionPropsVsGroups: " + ionPropsVsGroups, true);
+        logger.logComment("ionPropsVsGroups: " + ionPropsVsGroups);
 
         return true;
     }
