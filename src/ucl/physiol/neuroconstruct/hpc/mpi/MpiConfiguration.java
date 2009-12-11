@@ -318,7 +318,7 @@ public class MpiConfiguration
         pullScriptText.append("\n");
         pullScriptText.append("echo \"Going to zip files into \"$zipFile\n");
         pullScriptText.append("\n");
-        pullScriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;tar czf $zipFile *.*\"\n");
+        pullScriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;tar czvf $zipFile *.*\"\n");
         pullScriptText.append("\n");
 
         pullScriptText.append("scp  $remoteUser@$remoteHost:$simDir\"/\"$zipFile $localDir\n");
