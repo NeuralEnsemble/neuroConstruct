@@ -28,6 +28,7 @@ package ucl.physiol.neuroconstruct.genesis;
 
 import java.io.*;
 import java.util.*;
+import java.util.ArrayList;
 import java.util.regex.*;
 
 import ucl.physiol.neuroconstruct.cell.*;
@@ -2797,20 +2798,37 @@ public class GenesisFileManager
                     if (mooseCompatMode())
                     {
                         boolean methodChanged = false;
+                        
+                        ArrayList<String> chansAndSyns = new ArrayList<String>();
+                        
                         for (ChannelMechanism cm: mappedCell.getChanMechsVsGroups().keySet())
                         {
-                            if (!methodChanged && project.cellMechanismInfo.getCellMechanism(cm.getName()).isChannelMechanism())
+                            chansAndSyns.add(cm.getName());
+                        }
+                        chansAndSyns.addAll(mappedCell.getAllAllowedSynapseTypes());
+
+                        for (String cs: chansAndSyns)
+                        {
+                            if (!methodChanged)
                             {
 
-                                File channelScript = new File(mainGenesisFile.getParentFile(), cm.getName()+".g");
-                                logger.logComment("Checking "+channelScript+" for tab2dchannel..");
+                                File channelScript = new File(mainGenesisFile.getParentFile(), cs+".g");
+                                logger.logComment("Checking "+channelScript+" for tab2dchannel or Mg_block..");
 
                                 String contents = GeneralUtils.readShortFile(channelScript);
 
-                                if (contents.indexOf("tab2Dchannel")>=0)
+                                if (contents.indexOf("tab2Dchannel")>=0 )
                                 {
                                     response.append("//***********************************************************************************************\n");
                                     response.append("//********** Cell: "+newElementName+" will use tab2Dchannel, so using method ee on it ***********\n");
+                                    response.append("setfield "+newElementName+" method ee\n");
+                                    response.append("//***********************************************************************************************\n\n");
+                                    methodChanged = true;
+                                }
+                                if (contents.indexOf("Mg_block")>=0 )
+                                {
+                                    response.append("//***********************************************************************************************\n");
+                                    response.append("//********** Cell: "+newElementName+" will use Mg_block, so using method ee on it ***********\n");
                                     response.append("setfield "+newElementName+" method ee\n");
                                     response.append("//***********************************************************************************************\n\n");
                                     methodChanged = true;
