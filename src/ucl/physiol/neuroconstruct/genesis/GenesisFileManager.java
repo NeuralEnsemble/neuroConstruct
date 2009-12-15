@@ -1327,7 +1327,7 @@ public class GenesisFileManager
     }
     
     
-    
+    private boolean warnedMooseRandStim = false; // temp warning flag
 
 
     private String generateSynMechIncludes() throws GenesisException
@@ -1492,6 +1492,13 @@ public class GenesisFileManager
                 project.generatedElecInputs.getNumberSingleInputs(nextStim.getReference())>0)
             {
                 RandomSpikeTrainSettings randStim = (RandomSpikeTrainSettings)nextStim;
+
+                if (mooseCompatMode()&& !warnedMooseRandStim)
+                {
+                    GuiUtils.showWarningMessage(logger, "MOOSE support for random synaptic input still under development! Use with caution!", null);
+
+                    warnedMooseRandStim = true;
+                }
 
                 if (!includedSynapses.contains(randStim.getSynapseType()))
                 {

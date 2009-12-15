@@ -94,6 +94,8 @@ public class ExampleProjects
             "providing electrophysiologically accurate models can be found <a href=\"../samples/index.html\">here</a>");
         }
         File[] fileArray = sourceProjDir.listFiles();
+
+        fileArray = GeneralUtils.reorderAlphabetically(fileArray, true);
         
         ArrayList<File> files = GeneralUtils.toArrayList(fileArray);
         //if (files.contains(""))

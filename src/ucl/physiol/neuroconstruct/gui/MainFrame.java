@@ -1677,7 +1677,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelSimulationGlobal.setLayout(gridBagLayout5);
         jButton3DPrevSimuls.setEnabled(false);
         jButton3DPrevSimuls.setSelected(false);
-        jButton3DPrevSimuls.setText("View Simulations in 3D...");
+        jButton3DPrevSimuls.setText("View Prev Sims in 3D...");
         jButton3DPrevSimuls.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -4552,7 +4552,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jMenuItemPrevSims.setToolTipText(toolTipText.getToolTip("Previous Simulations"));
 
 
-        jButton3DPrevSimuls.setToolTipText("New simulation browser GUI to quickly plot simulation results without viewing in 3D");
+        jButton3DQuickSims.setToolTipText("<html>New simulation browser GUI to quickly plot simulation results without viewing full network in 3D<br>" +
+                "Note: this can also be run in standalone mode using: <b>./nC.sh -sims projectpath/projectname.ncx</b></html>");
 
         jButtonSimStimAdd.setToolTipText(toolTipText.getToolTip("Elec Input"));
 
@@ -8556,6 +8557,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jMenuExamples.removeAll();
         
         File[] exProjs = ProjectStructure.getnCExamplesDir().listFiles();
+
+        exProjs = GeneralUtils.reorderAlphabetically(exProjs, true);
+
         for(File ex: exProjs)
         {
             File projFile = ProjectStructure.findProjectFile(ex);

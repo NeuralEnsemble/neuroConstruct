@@ -67,11 +67,13 @@ public class Unit
     protected String getSymbol()
     {
         String symbol = prefix.getSymbol() + units.getSymbol();
+
         if (units.equals(Units.KILOGRAM) && prefix!=Prefix.NONE) symbol = prefix.getSymbol() + "g??";
+
         if (exponent==2) symbol = symbol +"\u00b2";
         else if (exponent==3) symbol = symbol +"\u00b3";
-        else if (exponent==-2) symbol = symbol +"\u207b\u00b2";
-        else if (exponent==-3) symbol = symbol +"\u207b\u00b3";
+        else if (exponent==-2) symbol = symbol +"-2";
+        else if (exponent==-3) symbol = symbol +"-3";
         else if (exponent!=1) symbol = symbol + "^" + exponent;
         else if (exponent==0) symbol = "";
 

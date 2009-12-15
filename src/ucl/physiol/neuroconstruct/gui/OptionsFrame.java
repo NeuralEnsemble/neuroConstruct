@@ -624,17 +624,22 @@ public class OptionsFrame extends JFrame
                                                  GridBagConstraints.HORIZONTAL,
                                                  new Insets(6, 6, 6, 20), 0, 0));
 
-        jPanelGeneral.add(jLabelNumProcs,
+        if (false)   /// Disabling multithreading as it's unstable. May be readded later
+        {
+            jPanelGeneral.add(jLabelNumProcs,
                           new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
                                                  GridBagConstraints.WEST,
                                                  GridBagConstraints.NONE,
                                                  new Insets(6, 20, 6, 6), 0, 0));
 
-        jPanelGeneral.add(jSpinnerNumProcs,
+        
+            jPanelGeneral.add(jSpinnerNumProcs,
                           new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0,
                                                  GridBagConstraints.WEST,
                                                  GridBagConstraints.HORIZONTAL,
                                                  new Insets(6, 6, 6, 20), 0, 0));
+        }
+        
         jPanelGeneral.add(jLabelNeuroML,
                           new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0,
                                                  GridBagConstraints.WEST,

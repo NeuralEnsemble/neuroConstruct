@@ -40,7 +40,7 @@ title="Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, 
         inhibitory synaptic input to look at the effects of short term plasticity on gain control (<a  href="models/index.html#RothmanEtAl_KoleEtAl_PyrCell-N10162">Download neuroConstruct project</a>). </p>
 
 
-        <p>The latest version of neuroConstruct (<strong>v1.3.0, June 2009</strong>) is available for download <a href="download/index.html">here</a>. The source code is available with this release under GPL.</p>
+        <p>The latest version of neuroConstruct (<strong>v1.3.5, Dec 2009</strong>) is available for download <a href="download/index.html">here</a>. The source code is available with this release under GPL.</p>
         <p>The paper describing the application has been published: <em>
             P. Gleeson, V. Steuber and R. A. Silver, neuroConstruct: A Tool for Modeling Networks of Neurons in 3D Space, Neuron,
             Volume 54, Issue 2, 19 April 2007, Pages 219-235.</em>
@@ -60,8 +60,9 @@ title="Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, 
     <li>neuroConstruct can <a href="samples/index.html#Ex3_Morphology">import</a> morphology files in GENESIS, NEURON, Neurolucida, SWC and MorphML format for inclusion in single cell or network models, or more abstract cells can also be built manually.</li>
       <li>Creation of networks of conductance based neurons <a href="samples/index.html#Ex2_Packing">positioned in 3D</a></li>
 <li>Complex <a href="samples/index.html#Ex5_Networks">connectivity patterns</a> between cell groups can be specified for the networks </li>
-<li>Simulations can be run on the <a href="samples/index.html#Ex4_HHCell">NEURON or GENESIS</a> platforms, and support for other simulators including <a  href="http://www.psics.org">PSICS</a> and
-<a  href="http://neuralensemble.org/trac/PyNN">PyNN</a> based simulators is in development</li>
+<li>Simulation scripts can be generated for <a  href="docs/Glossary_gen.html#NEURON">NEURON</a>,
+      <a  href="docs/Glossary_gen.html#GENESIS">GENESIS</a>, <a  href="http://moose.sourceforge.net">MOOSE</a>,  <a  href="http://www.psics.org">PSICS</a> and
+<a  href="http://neuralensemble.org/trac/PyNN">PyNN</a> based simulators (note: not every project can be generated for every simulator)</li>
 <li>Biophysically realistic cellular mechanisms (synapses/channel mechanisms) can be imported from native script files (*.mod or *.g) or created from templates using <a href="docs/Glossary_gen.html#ChannelML">ChannelML</a></li>
 <li>Automatic generation of code to record simulation data and visualisation/analysis of data in neuroConstruct</li>
 

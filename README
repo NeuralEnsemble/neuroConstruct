@@ -7,7 +7,9 @@ The application can be run via the desktop/Start Menu links if the automatic
 installers have been used, or in a terminal with nC.bat (Windows) or ./nC.sh (Linux/Mac),
 after Java has been installed. 
 
-Full installation and setup instructions can be found at docs/website/docs/index.html 
+Full installation and setup instructions can be found in the file docs/website/docs/index.html
+which is normally the same as at http://www.neuroconstruct.org/docs/install.html
+
 
 **************************************************************************************
 
@@ -17,6 +19,7 @@ P. Gleeson, V. Steuber and R. A. Silver, neuroConstruct: A Tool for Modeling Net
 of Neurons in 3D Space, Neuron, Volume 54, Issue 2, 19 April 2007, Pages 219-235.
 
 **************************************************************************************
+
 
 For more information contact info@neuroConstruct.org  
 
