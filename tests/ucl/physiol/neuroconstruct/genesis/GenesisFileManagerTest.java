@@ -90,6 +90,7 @@ public class GenesisFileManagerTest {
         if (GeneralUtils.isWindowsBasedPlatform() && moose)
         {
             System.out.println("---  Not testing "+sim+" on Windows just yet......");
+            return;
         }
         
         ProjectManager pm = loadProject("testProjects/TestGenNetworks/TestGenNetworks.neuro.xml");
