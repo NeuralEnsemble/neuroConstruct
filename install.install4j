@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.1.1" transformSequenceNumber="2">
   <directoryPresets config="./dist" />
-  <application name="neuroConstruct_v1.3.1" distributionSourceDir="" applicationId="3908-4270-9616-7309" mediaDir="Y:/Padraig/devDocs/releases/install4j" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="neuroConstruct" publisher="Silver Lab, UCL" publisherWeb="http://www.neuroConstruct.org" version="1.3.1" allPathsRelative="true" backupOnSave="true" autoSave="true" convertDotsToUnderscores="true" macSignature="????" javaMinVersion="1.5" javaMaxVersion="" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
+  <application name="neuroConstruct_v1.3.5" distributionSourceDir="" applicationId="3908-4270-9616-7309" mediaDir="Y:/Padraig/devDocs/releases/install4j" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="neuroConstruct" publisher="Silver Lab, UCL" publisherWeb="http://www.neuroConstruct.org" version="1.3.5" allPathsRelative="true" backupOnSave="true" autoSave="true" convertDotsToUnderscores="true" macSignature="????" javaMinVersion="1.5" javaMaxVersion="" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />

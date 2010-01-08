@@ -513,12 +513,24 @@
       <mkdir dir="${temp_ver.dir}/logs"/>
       <copy file="./logs/README" todir="${temp_ver.dir}/logs" />
 
+      <mkdir dir="${temp_ver.dir}/templates"/>
+      <copy todir="${temp_ver.dir}/templates">
+        <fileset dir="${templates.dir}">
+          <include name="xmlTemplates/**/*"/>
+          <include name="genesisUtils/**/*"/>
+          <include name="neuronUtils/**/*"/>
+          <include name="modFileTemplates/**/*"/>
+          <include name="README"/>
+        </fileset>
+      </copy>
+
       <mkdir dir="${temp_ver.dir}/nCexamples"/>
       <copy todir="${temp_ver.dir}/nCexamples">
           <fileset dir="${nCexamples.dir}">
               <include name="*/*.*"/>
               <include name="*/cellMechanisms/**/*"/>
               <include name="*/morphologies/*"/>
+              <exclude name="*/morphologies/*.bak"/>
               <include name="*/importedMorphologies/*"/>
               <include name="README"/>
           </fileset>
@@ -529,20 +541,12 @@
               <include name="*/*.*"/>
               <include name="*/cellMechanisms/**/*"/>
               <include name="*/morphologies/*"/>
+              <exclude name="*/morphologies/*.bak"/>
               <include name="*/importedMorphologies/*"/>
               <include name="README"/>
           </fileset>
       </copy>
-      <mkdir dir="${temp_ver.dir}/nCmodels/InProgress"/>
-      <copy todir="${temp_ver.dir}/nCmodels/InProgress">
-          <fileset dir="${nCmodels.dir}/InProgress">
-              <include name="*/*.*"/>
-              <include name="*/cellMechanisms/**/*"/>
-              <include name="*/morphologies/*"/>
-              <include name="*/importedMorphologies/*"/>
-              <include name="README"/>
-          </fileset>
-      </copy>
+
 
       <mkdir dir="${temp_ver.dir}/docs"/>
       <copy todir="${temp_ver.dir}/docs">
@@ -573,6 +577,7 @@
       <copy todir="${temp_ver.dir}/pythonnC">
         <fileset dir="pythonnC">
               <include name="**/*"/>
+              <exclude name="TestPython/simulations/*"/>
         </fileset>
       </copy>
 
@@ -616,23 +621,13 @@
               <include name="*/*.*"/>
               <include name="*/cellMechanisms/**/*"/>
               <include name="*/morphologies/*"/>
+              <exclude name="*/morphologies/*.bak"/>
               <include name="*/importedMorphologies/*"/>
               <include name="README"/>
           </fileset>
       </copy>
 
 
-
-      <mkdir dir="${temp_ver.dir}/templates"/>
-      <copy todir="${temp_ver.dir}/templates">
-        <fileset dir="${templates.dir}">
-          <include name="xmlTemplates/**/*"/>
-          <include name="genesisUtils/**/*"/>
-          <include name="neuronUtils/**/*"/>
-          <include name="modFileTemplates/**/*"/>
-          <include name="README"/>
-        </fileset>
-      </copy>
 
       <copy file="build.xml" todir="${temp_ver.dir}"/>
       <copy file="nC.bat" todir="${temp_ver.dir}"/>
