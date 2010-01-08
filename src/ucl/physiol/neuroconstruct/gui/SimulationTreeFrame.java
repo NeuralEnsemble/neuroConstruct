@@ -111,7 +111,10 @@ public class SimulationTreeFrame extends JFrame
         bg.add(jRadioButtonAlpha);
         bg.add(jRadioButtonDate);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        if (standalone)
+        {
+            setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        }
 
         jPanelScrool.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 

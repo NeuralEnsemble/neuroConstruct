@@ -133,9 +133,19 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
     }
     public class SimNode extends DefaultMutableTreeNode
     {
+        String info = null;
+
         SimNode(SimulationData sd)
         {
             super(sd);
+            info = sd.getSimFullInfo();
+        }
+
+
+        @Override
+        public String toString()
+        {
+            return info;
         }
     }
 
@@ -208,6 +218,7 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
             return index;
         }
     }
+
     public class DataStoreNode extends DefaultMutableTreeNode
     {
         DataStoreNode(DataStore ds)

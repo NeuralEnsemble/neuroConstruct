@@ -2008,7 +2008,8 @@ public class Cell implements Serializable
 
             for (int k = 0; k < allChanMechs.size(); k++)
             {
-                clonedCell.associateGroupWithChanMech(nextGroup, allChanMechs.get(k));
+                ChannelMechanism cm2 = (ChannelMechanism)allChanMechs.get(k).clone();
+                clonedCell.associateGroupWithChanMech(nextGroup, cm2);
             }
 
             Vector allSyns = getSynapsesForGroup(nextGroup);
@@ -2027,17 +2028,17 @@ public class Cell implements Serializable
 
 
 
-            ApPropSpeed apps = this.getApPropSpeedForGroup(nextGroup);
 
-            if (apps!=null)
+            if (this.getApPropSpeedForGroup(nextGroup)!=null)
             {
+                ApPropSpeed apps = (ApPropSpeed)this.getApPropSpeedForGroup(nextGroup).clone();
                 clonedCell.associateGroupWithApPropSpeed(nextGroup,
                                                        apps);
             }
-            IonProperties ips = this.getIonPropertiesForGroup(nextGroup);
 
-            if (ips!=null)
+            if (this.getIonPropertiesForGroup(nextGroup)!=null)
             {
+                IonProperties ips = (IonProperties)this.getIonPropertiesForGroup(nextGroup).clone();
                 clonedCell.associateGroupWithIonProperties(nextGroup, ips);
             }
         }

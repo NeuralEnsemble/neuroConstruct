@@ -66,6 +66,7 @@ public class SimulationTree extends JTree implements ActionListener
     private String PLOT_ALL = "Plot all";
     private String PLOT_ALL_IN = "Plot all in...";
     private String PLOT_ALL_VOLTS = "Plot only voltage traces";
+    private String PLOT_NON_VOLTS = "Plot all non voltage traces";
     private String PLOT_SEPARATE_CG_VAR = "Plot all in separate Plot Frames per Cell Group and data type";
     private String PLOT_SEPARATE_VAR = "Plot all in separate Plot Frames per data type";
     private String SIM_SUMMARY = "Simulation summary";
@@ -93,6 +94,10 @@ public class SimulationTree extends JTree implements ActionListener
         mi.addActionListener(this);
         popupOneSim.add(mi);
 
+        mi = new JMenuItem(PLOT_NON_VOLTS);
+        mi.addActionListener(this);
+        popupOneSim.add(mi);
+
         mi = new JMenuItem(SIM_SUMMARY);
         mi.addActionListener(this);
         popupOneSim.add(mi);
@@ -116,6 +121,10 @@ public class SimulationTree extends JTree implements ActionListener
 
 
         mi = new JMenuItem(PLOT_ALL_VOLTS);
+        mi.addActionListener(this);
+        popupCG.add(mi);
+
+        mi = new JMenuItem(PLOT_NON_VOLTS);
         mi.addActionListener(this);
         popupCG.add(mi);
 
@@ -184,7 +193,7 @@ public class SimulationTree extends JTree implements ActionListener
 
     public void actionPerformed(ActionEvent ae)
     {
-        DefaultMutableTreeNode dmtn, node;
+        DefaultMutableTreeNode dmtn;
 
         TreePath path = this.getSelectionPath();
         Object comp = path.getLastPathComponent();
@@ -265,43 +274,6 @@ public class SimulationTree extends JTree implements ActionListener
                             {
                                 frameRef = getPlotFrame(simData);
                                 if (frameRef==null) return;
-                                /*
-                                Vector<String> r = PlotManager.getPlotterFrameReferences();
-
-                                if (r.size()==0)
-                                {
-                                    frameRef = "Plot of data in "+simData.getSimulationName()+"";
-                                }
-                                else
-                                {
-                                    String newPlotFrame = "-- New Empty Plot Frame --";
-
-                                    r.add(newPlotFrame);
-
-                                    String[] refs = new String[r.size()];
-                                    r.copyInto(refs);
-
-                                    String option = (String)JOptionPane.showInputDialog(this,
-                                            "Please select Plot Frame", "Select Plot Frame", JOptionPane.OK_CANCEL_OPTION, null, refs, refs[0]);
-
-                                    if (option == null)
-                                        return;
-
-                                    if (option.equals(newPlotFrame))
-                                    {
-                                        frameRef = "Plot of data in "+simData.getSimulationName()+"";
-                                        int count = 0;
-                                        while (r.contains(frameRef))
-                                        {
-                                            count++;
-                                            frameRef = "Plot of data in "+simData.getSimulationName()+" ("+count+")";
-                                        }
-                                    }
-                                    else
-                                    {
-                                        frameRef = option;
-                                    }
-                                }*/
                                 plotAllInOption = frameRef;
                             }
                             else
@@ -317,8 +289,22 @@ public class SimulationTree extends JTree implements ActionListener
                         {
                             frameRef = "Plot of voltage traces in "+simData.getSimulationName()+"";
                         }
+                        else if (ae.getActionCommand().equals(PLOT_NON_VOLTS))
+                        {
+                            frameRef = "Plot of all traces except voltages in "+simData.getSimulationName()+"";
+                        }
 
-                        if (!ae.getActionCommand().equals(PLOT_ALL_VOLTS) || ds.getVariable().endsWith(SimPlot.VOLTAGE))
+                        boolean isVoltData = ds.getVariable().endsWith(SimPlot.VOLTAGE);
+
+                        boolean plot = true;
+
+                        if (ae.getActionCommand().equals(PLOT_ALL_VOLTS))
+                            plot = isVoltData;
+                        else if (ae.getActionCommand().equals(PLOT_NON_VOLTS))
+                            plot = !isVoltData;
+
+
+                        if (plot)
                         {
                             PlotterFrame pf = PlotManager.getPlotterFrame(frameRef);
 

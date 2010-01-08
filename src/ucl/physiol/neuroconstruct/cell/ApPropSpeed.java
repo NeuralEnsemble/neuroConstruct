@@ -83,6 +83,16 @@ public class ApPropSpeed implements Serializable
     }
 
 
+    @Override
+    public Object clone()
+    {
+        ApPropSpeed aps2 = new ApPropSpeed();
+        aps2.setSpeed(this.speed);
+
+        return aps2;
+    }
+
+
     public ApPropSpeed(float speed)
     {
         this.speed = speed;

@@ -70,6 +70,19 @@ public class IonProperties implements Serializable
         this.name = name;
         this.externalConcentration = externalConcentration;
         this.internalConcentration = internalConcentration;
+        
+    }
+
+
+    @Override
+    public Object clone()
+    {
+        IonProperties ip2 = new IonProperties();
+        ip2.setName(new String(name));
+        ip2.setReversalPotential(reversalPotential);
+        ip2.setInternalConcentration(internalConcentration);
+        ip2.setExternalConcentration(externalConcentration);
+        return ip2;
     }
 
     @Override
@@ -210,10 +223,13 @@ public class IonProperties implements Serializable
         System.out.println("New: "+ ion3+"\nh: "+ion3.hashCode());
         System.out.println("New: "+ ion4+"\nh: "+ion4.hashCode());
 
-        System.out.println("Equals: "+ ion1.equals(ion2));
-        System.out.println("Equals: "+ ion1.equals(ion4));
-        System.out.println("Equals: "+ ion2.equals(ion4));
-        System.out.println("Equals: "+ ion2.equals(ion5));
+        System.out.println("Equals n: "+ ion1.equals(ion2));
+        System.out.println("Equals y: "+ ion1.equals(ion4));
+        System.out.println("Equals n: "+ ion2.equals(ion4));
+        System.out.println("Equals y: "+ ion2.equals(ion5));
+        
+        IonProperties ion1_c = (IonProperties)ion1.clone();
+        System.out.println("Equals y: "+ ion1.equals(ion1_c));
 
         try
         {

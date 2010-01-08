@@ -801,6 +801,11 @@ public class SimulationData
         return getSimulationName() + ": recorded at "+ getDateModified();
     }
 
+    public String getSimFullInfo()
+    {
+        return getSimulationName() + " ("+getSimulationProperties().getProperty("Simulator")+"): recorded at "+ getDateModified();
+    }
+
     public String getSimulationName()
     {
         return dataDirectory.getName();
