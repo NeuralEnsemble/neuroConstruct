@@ -223,7 +223,7 @@ public class SimConfig
                             cellGroupNames.add(i, nextCG);
                             i = cellGroupNames.size();
                         }
-                        else if (priority<upperPriority && priority>lowerPriority )
+                        else if (priority<=upperPriority && priority>lowerPriority )
                         {
                             cellGroupNames.add(i+1, nextCG);
                             i = cellGroupNames.size();
