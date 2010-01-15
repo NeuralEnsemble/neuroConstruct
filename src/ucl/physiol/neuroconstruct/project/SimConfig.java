@@ -187,6 +187,7 @@ public class SimConfig
         ArrayList<String> cellGroupNamesUnordered = new ArrayList<String>();
         cellGroupNamesUnordered.addAll(cellGroups);
 
+
         LinkedList<String> cellGroupNames = new LinkedList<String>();
 
         for (String nextCG: cellGroupNamesUnordered)
@@ -232,8 +233,8 @@ public class SimConfig
                 }
             }
         }
-        logger.logComment("Old order: "+ cellGroupNamesUnordered);
-        logger.logComment("New order: "+ cellGroupNames);
+        logger.logComment("Old order: "+ cellGroupNamesUnordered, true);
+        logger.logComment("New order: "+ cellGroupNames, true);
         return cellGroupNames;
     }
 
