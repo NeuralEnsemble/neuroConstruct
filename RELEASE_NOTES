@@ -2,14 +2,15 @@ Release notes/change log for neuroConstruct
 
 See also the README file
 
---------- Version 1.3.5 (June 09) ---------
+--------- Version 1.3.6 (Jan 2010) ---------
 
-Much improved MOOSE support. The very latest version of MOOSE from the Subversion repository should be used. The majority of projects which could run on
+Much improved MOOSE support. The very latest version of MOOSE from their Subversion repository should be used. The majority of projects which could run on
 GENESIS should work fine on MOOSE too, but users are advised to double check any simulation results. MOOSE simulations are running 2-5 times faster than
 GENESIS 2
 
 Added new tree based simulation browser GUI to allow quick plotting of simulation results without viewing full network in 3D. Can be run from main GUI via
-Quick Plot.. button. Also can be run in standalone mode using: ./nC.sh -sims projectpath/projectname.ncx (or nC.bat -sims projectpath/projectname.ncx).
+"Quick Plot..." button on Visualisation tab. Also can be run in standalone mode using: ./nC.sh -sims projectpath/projectname.ncx (or:
+nC.bat -sims projectpath/projectname.ncx).
 
 Added option in GENESIS tab to make spike transmission behave similarly to NEURON, or to use the usual GENESIS method based on abs_refract. Hover over the
 checkbox on the GENESIS tab for more details. ***Using this may be crucial to getting NEURON & GENESIS network simulations to match***
@@ -24,7 +25,8 @@ Added more 'GUI mode' options at NEURON & GENESIS tabs so that simulations can b
 Very useful when running multiple simulations using Python scripts. See pythonnC/Ex5_MultiSimGenerate.py for example. Note: only works on Linux/Mac so far. The console
 output is put into file: /tmp/logNEURON_Projectname_SimulationRef, etc.
 
-Added simple script to allow neuroConstruct simulations to be loaded/plotted/analysed using NeuroTools. Avaliable at pythonNeuroML/NeuroTools/LoadToNeuroTools.py
+Added simple script to allow neuroConstruct simulations to be loaded/plotted/analysed using NeuroTools (http://neuralensemble.org/trac/NeuroTools). Avaliable at 
+pythonNeuroML/NeuroTools/LoadToNeuroTools.py
 
 Updated many of the fonts used in the GUI & generated HTML views
 
@@ -35,7 +37,7 @@ Different colours for gap junction connections in 3D view (orange-> orange, not 
 
 --------- Version 1.3.0 (June 09) ---------
 
-- Changed default project extension to ncx. Now it's easire to associate this file type with nC.bat/nC.sh for quick opening of neuroConstruct  
+- Changed default project extension to ncx. Now it's easier to associate this file type with nC.bat/nC.sh for quick opening of neuroConstruct  
   projects by (double) clicking on project file in file explorer. However, it may still be better to start nC in a terminal/shell
   as any error console output will be caught if there is a problem and the application closes.
 

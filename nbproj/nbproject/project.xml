@@ -168,22 +168,7 @@
             </compilation-unit>
         </java-data>
         <preferences xmlns="http://www.netbeans.org/ns/auxiliary-configuration-preferences/1">
-            <module name="org-netbeans-modules-editor-indent">
-                <node name="CodeStyle">
-                    <property name="usedProfile" value="default"/>
-                    <node name="project">
-                        <property name="tab-size" value="8"/>
-                        <property name="text-limit-width" value="80"/>
-                    </node>
-                </node>
-                <node name="text">
-                    <node name="x-java">
-                        <node name="CodeStyle">
-                            <node name="project"/>
-                        </node>
-                    </node>
-                </node>
-            </module>
+            <module name="org-netbeans-modules-editor-indent"/>
         </preferences>
     </configuration>
 </project>

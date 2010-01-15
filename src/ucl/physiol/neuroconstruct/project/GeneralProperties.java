@@ -1,18 +1,18 @@
 /**
  *  neuroConstruct
  *  Software for developing large scale 3D networks of biologically realistic neurons
- * 
+ *
  *  Copyright (c) 2009 Padraig Gleeson
  *  UCL Department of Neuroscience, Physiology and Pharmacology
  *
  *  Development of this software was made possible with funding from the
  *  Medical Research Council and the Wellcome Trust
- *  
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -34,12 +34,12 @@ import javax.swing.*;
 
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.hpc.mpi.*;
- 
+
 /**
  * Storing of general properties associated with the application
  *
  * @author Padraig Gleeson
- *  
+ *
  */
 
 
@@ -49,7 +49,7 @@ public class GeneralProperties
 
     private static final String packageOfCellTypes = new String("ucl.physiol.neuroconstruct.cell");
 
-    private static final String versionNumber = "1.3.5";
+    private static final String versionNumber = "1.3.6";
 
     private static final String latestNeuroMLVersionNumber = "1.8.1";
 
@@ -95,16 +95,16 @@ public class GeneralProperties
                                   0.85f);
 
 
-    private static ProjectProperties defaultProjectProperties = new ProjectProperties();     
+    private static ProjectProperties defaultProjectProperties = new ProjectProperties();
 
 
     static
     {
         defaultProjectProperties.setPreferredSaveFormat(ProjectStructure.JAVA_OBJ_FORMAT);
-        
+
         GeneralProperties.loadFromSettingsFile();
-        
-        
+
+
         if (userSettings.getNeuronHome()==null || userSettings.getNeuronHome().trim().length()==0)
         {
         	if (GeneralUtils.isWindowsBasedPlatform())
@@ -142,8 +142,8 @@ public class GeneralProperties
                 else if ((new File("/Applications/NEURON-6.0/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-6.0/nrn/i386"));
                 else if ((new File("/Applications/NEURON-5.9/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.9/nrn/i386"));
                 else if ((new File("/Applications/NEURON-5.8/nrn/i386")).exists()) userSettings.setNeuronHome(new String("/Applications/NEURON-5.8/nrn/i386"));
-                
-                
+
+
         		else  userSettings.setNeuronHome(new String("/Applications/NEURON-6.2/nrn/powerpc"));
 
 
@@ -236,7 +236,7 @@ public class GeneralProperties
 
         /* -- Writing proj info -- */
         xmlEncoder.writeObject(defaultProjectProperties);
-        
+
         /* -- Writing 3D info -- */
         xmlEncoder.writeObject(defaultDisplay3DProps);
 
@@ -343,7 +343,7 @@ public class GeneralProperties
     public static File getnCProjectsDir()
     {
         File nCProjectsDir = new File(userSettings.getNCProjectsDir());
-        return nCProjectsDir;	
+        return nCProjectsDir;
     }
 
     public static void setnCProjectsDir(File nCProjectsDir)
@@ -354,12 +354,12 @@ public class GeneralProperties
     public static String getNeuronHomeDir()
     {
         String nrnHome = userSettings.getNeuronHome();
-        return nrnHome;	
+        return nrnHome;
     }
     public static String getPsicsJar()
     {
         String jar = userSettings.getPsicsJar();
-        return jar;	
+        return jar;
     }
 
     public static void setNeuronHomeDir(String neuronHomeDir)
@@ -468,7 +468,7 @@ public class GeneralProperties
                              if (GeneralUtils.is64bitPlatform())
                              {
                                 suggExec = "c:\\Program Files (x86)\\Internet Explorer\\iexplore.exe";
-                             } 
+                             }
                          }
                      }
                      else
@@ -559,8 +559,8 @@ public class GeneralProperties
     {
         userSettings.setLogFilePrintToScreenPolicy(policy);
     }
-    
-    
+
+
     public static String getDefaultPreferredSaveFormat()
     {
         return defaultProjectProperties.getPreferredSaveFormat();
@@ -570,8 +570,8 @@ public class GeneralProperties
         defaultProjectProperties.setPreferredSaveFormat(preferredSaveFormat);
     }
 
-    
-    
+
+
 
     public static int getNumProcessorstoUse()
     {
@@ -639,12 +639,12 @@ public class GeneralProperties
     {
         return latestNeuroMLVersionNumber;
     }
-    
+
     public static String getLatestNeuroMLVersionString()
     {
         return "v"+latestNeuroMLVersionNumber;
     }
-    
+
     /*
      * Returns the number part of the NeuroML version, e.g. 1.8.1 as a String
      */
@@ -656,14 +656,14 @@ public class GeneralProperties
             return ver.substring(1);
         return ver;
     }
-    
-    
+
+
     /*
      * Returns a string for the NeuroML version, e.g. v1.8.1
      */
     public static String getNeuroMLVersionString()
     {
-        String ver = userSettings.getPrefNeuroMLVersionString();    
+        String ver = userSettings.getPrefNeuroMLVersionString();
         if (ver==null)
         {
             userSettings.setPrefNeuroMLVersionString(getLatestNeuroMLVersionString());
@@ -673,8 +673,8 @@ public class GeneralProperties
             return "v"+ver;
         return ver;
     }
-    
-    
+
+
     public static void setNeuroMLVersionString(String ver)
     {
         userSettings.setPrefNeuroMLVersionString(ver);
@@ -825,7 +825,7 @@ public class GeneralProperties
      */
     public static String getDefaultDisplayOption()
     {
-        
+
         return defaultDisplay3DProps.getDisplayOption();
     }
 
@@ -868,7 +868,7 @@ public class GeneralProperties
     {
         return defaultDisplay3DProps.getShowInputs();
     }
-    
+
     public static String getDefaultShowInputsAs()
     {
         return defaultDisplay3DProps.getShowInputsAs();
@@ -884,7 +884,7 @@ public class GeneralProperties
     {
         defaultDisplay3DProps.setShowInputs(show);
     }
-    
+
     public static void setDefaultShowInputsAs(String probe)
     {
         defaultDisplay3DProps.setShowInputsAs(probe);
