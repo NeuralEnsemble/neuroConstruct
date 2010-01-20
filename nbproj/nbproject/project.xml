@@ -162,7 +162,7 @@
             <compilation-unit>
                 <package-root>${project.dir}/tests</package-root>
                 <unit-tests/>
-                <classpath mode="compile">${project.dir}/lib/junit/junit-4.4.jar:${project.dir}/lib/jython/jython.jar:${project.dir}/lib/hdf5/jhdf.jar:${project.dir}/lib/hdf5/jhdf4obj.jar:${project.dir}/lib/hdf5/jhdf5.jar:${project.dir}/lib/hdf5/jhdf5obj.jar:${project.dir}/lib/hdf5/jhdfobj.jar:${project.dir}/src:${project.dir}/lib/j3d/j3dcore.jar:${project.dir}/lib/j3d/j3dutils.jar:${project.dir}/lib/j3d/vecmath.jar</classpath>
+                <classpath mode="compile">${project.dir}/lib/junit/junit-4.4.jar:${project.dir}/lib/jython/jython.jar:${project.dir}/lib/hdf5/jhdf.jar:${project.dir}/lib/hdf5/jhdf4obj.jar:${project.dir}/lib/hdf5/jhdf5.jar:${project.dir}/lib/hdf5/jhdf5obj.jar:${project.dir}/lib/hdf5/jhdfobj.jar:${project.dir}/src:${project.dir}/lib/j3d/j3dcore.jar:${project.dir}/lib/j3d/j3dutils.jar:${project.dir}/lib/j3d/vecmath.jar:${project.dir}/lib/junit/junit-4.4.jar:${project.dir}/src</classpath>
                 <built-to>${project.dir}/classes</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
