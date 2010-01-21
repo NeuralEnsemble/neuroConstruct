@@ -1442,6 +1442,19 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
     }
 
 
+    private String getCellGroup(String cellSegRef)
+    {
+        if (simRerunFrame==null)
+        {
+            return cellSegRef.substring(0, cellSegRef.lastIndexOf("_"));
+        }
+        else
+        {
+            return simRerunFrame.getCellGroup(cellSegRef);
+        }
+    }
+
+
     @Override
     public void markPrimitiveAsSelected(Primitive prim)
     {
@@ -1458,9 +1471,13 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
             segForPrim = oneCell.hasPrimitive(prim);
 
+            logger.logComment("Checking cell: " + nextName + " with seg: "+ segForPrim);
+
+
             if (segForPrim>=0)
             {
-                String cellGroup = simRerunFrame.getCellGroup(nextName);
+                String cellGroup = getCellGroup(nextName);
+                
                 int cellNumber = SimulationData.getCellNum(nextName);
 
                 logger.logComment("Found the cell. It's number : " + cellNumber + " in " + cellGroup);
@@ -1679,7 +1696,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                         OneCell3D nextCell3D = all3DCells.get(nextCellRef);
                         int nextCellNum = SimulationData.getCellNum(nextCellRef);
-                        String nextCellGroup = simRerunFrame.getCellGroup(nextCellRef);
+                        String nextCellGroup = getCellGroup(nextCellRef);
 
                         if (!nextCell3D.hasTempAppearance()
                             && !(selectedNums.contains(nextCellNum) && cellGroup.equals(nextCellGroup)))
