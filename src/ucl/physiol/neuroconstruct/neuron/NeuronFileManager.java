@@ -4256,16 +4256,38 @@ public class NeuronFileManager
             timeStepInfo = " variable time step,";
         }
 
-        boolean announceDate = generateLinuxBasedScripts();
+        boolean announceDate = true;
+
+        if (GeneralUtils.isWindowsBasedPlatform())
+        {
+            if ((new File("c:\\cygwin")).exists() ||
+                (new File("c:\\Program Files\\cygwin")).exists() ||
+                (new File("c:\\Program Files (x86)\\cygwin")).exists())
+            {
+                announceDate = true;
+            }
+            else
+            {
+                announceDate = false;
+            }
+        }
+
         String dateInfo = "";
 
 
         if(announceDate)
         {
 
+            response.append("// Note: if there is a problem with this line under Windows, it may mean that you will have to install Cygwin");
+            response.append("// which includes the \"date\" unix command. Install under c:\\cygwin");
             response.append("strdef date\n");
             response.append("{system(\"" + dateCommand + "\", date)}\n");
             dateInfo = " at time: \", date, \"";
+        }
+        else
+        {
+            response.append("// Note: not recording date of start/stop of simulation. This requires Cygwin to be installed");
+            response.append("// which includes the \"date\" unix command. Install under c:\\cygwin");
         }
         
         String startUpInfo = "print \"Starting simulation of duration "+simConfig.getSimDuration()+" ms, "+timeStepInfo+" reference: " + project.simulationParameters.getReference() +
