@@ -4275,19 +4275,18 @@ public class NeuronFileManager
         String dateInfo = "";
 
 
+        response.append("strdef date\n");
         if(announceDate)
         {
-
             response.append("// Note: if there is a problem with this line under Windows, it may mean that you will have to install Cygwin");
-            response.append("// which includes the \"date\" unix command. Install under c:\\cygwin");
-            response.append("strdef date\n");
+            response.append("// which includes the \"date\" unix command. Install under c:\\cygwin\n\n");
             response.append("{system(\"" + dateCommand + "\", date)}\n");
             dateInfo = " at time: \", date, \"";
         }
         else
         {
-            response.append("// Note: not recording date of start/stop of simulation. This requires Cygwin to be installed");
-            response.append("// which includes the \"date\" unix command. Install under c:\\cygwin");
+            response.append("// Note: not showing date/time of start/stop of simulation. This requires Cygwin to be installed");
+            response.append("// which includes the \"date\" unix command. Install under c:\\cygwin\n\n");
         }
         
         String startUpInfo = "print \"Starting simulation of duration "+simConfig.getSimDuration()+" ms, "+timeStepInfo+" reference: " + project.simulationParameters.getReference() +
@@ -4331,7 +4330,7 @@ public class NeuronFileManager
         //if (this.windowsTargetEnv()) dateCommand = "c:/windows/time.exe /T";
         
         
-        response.append("{setuptime = stopsw()}\n\n");
+        response.append("setuptime = stopsw()\n\n");
         response.append("print \"Setup time for simulation: \",setuptime,\" seconds\"\n\n");
 
 
