@@ -2319,15 +2319,15 @@ public class NeuronFileManager
                         }
 
 
-                        response.append(prefix+"    " + vectorObj + "[i] = new Vector()\n");
+                        response.append(prefix+"    { " + vectorObj + "[i] = new Vector() }\n");
 
                         if (!isSpikeRecording)
                         {
-                            response.append(prefix+"    " + vectorObj + "[i].record(&a_" + cellGroupName + "[i]"
+                            response.append(prefix+"    { " + vectorObj + "[i].record(&a_" + cellGroupName + "[i]"
                                             + "." + getHocSectionName(segToRecord.getSection().getSectionName()) + "." + whatToRecord + "(" +
                                             lenAlongSection +
-                                            "))\n");
-                            response.append(prefix+"    " + vectorObj + "[i].resize(" + numStepsTotal + ")\n");
+                                            "))} \n");
+                            response.append(prefix+"    { " + vectorObj + "[i].resize(" + numStepsTotal + ") }\n");
                         }
                         else
                         {
@@ -2399,11 +2399,11 @@ public class NeuronFileManager
                                                         + cellGroupName + "\", " + cellNum + ")) {\n");
                                     }
 
-                                    response.append(prefix + vectorObj + " = new Vector()\n");
+                                    response.append(prefix + "{"+vectorObj + " = new Vector() }\n");
 
-                                    response.append(prefix + vectorObj + ".record(&"+var+")\n");
+                                    response.append(prefix + "{"+vectorObj + ".record(&"+var+") }\n");
 
-                                    response.append(prefix + vectorObj + ".resize(" + numStepsTotal + ")\n");
+                                    response.append(prefix + "{"+vectorObj + ".resize(" + numStepsTotal + ") }\n");
 
                                     response.append(post);
                                     response.append("objref " + fileObj + "\n");
@@ -2444,16 +2444,16 @@ public class NeuronFileManager
 
                                 if (isSpikeRecording) response.append(prefix + "objref " + apCountObj + "\n");
 
-                                response.append(prefix + vectorObj + " = new Vector()\n");
+                                response.append(prefix + "{ "+vectorObj + " = new Vector() }\n");
 
                                 if (!isSpikeRecording)
                                 {
-                                    response.append(prefix + vectorObj + ".record(&a_" + cellGroupName + "[" + cellNum +
+                                    response.append(prefix + "{ "+vectorObj + ".record(&a_" + cellGroupName + "[" + cellNum +
                                                     "]"
                                                     + "." + getHocSectionName(segToRecord.getSection().getSectionName()) + "." +
-                                                    whatToRecord + "(" + lenAlongSection + "))\n");
+                                                    whatToRecord + "(" + lenAlongSection + ")) }\n");
 
-                                    response.append(prefix + vectorObj + ".resize(" + numStepsTotal + ")\n");
+                                    response.append(prefix +  "{ "+vectorObj + ".resize(" + numStepsTotal + ") }\n");
                                 }
                                 else
                                 {
@@ -4256,7 +4256,7 @@ public class NeuronFileManager
             timeStepInfo = " variable time step,";
         }
 
-        boolean announceDate = true;// !generateLinuxBasedScripts();
+        boolean announceDate = generateLinuxBasedScripts();
         String dateInfo = "";
 
 
@@ -5099,9 +5099,20 @@ public class NeuronFileManager
                             //scriptFile.se
                             fw.write(submitJob);
                             fw.close();
+                            
+                            try
+                            {
+                                // This is to make sure the file is written
+                                Thread.sleep(500);
+                            }
+                            catch (InterruptedException ex)
+                            {
+                                ex.printStackTrace();
+                            }
 
                             // bit of a hack...
                             rt.exec(new String[]{"chmod","u+x",submitJobFile.getAbsolutePath()});
+
                         }
 
 
