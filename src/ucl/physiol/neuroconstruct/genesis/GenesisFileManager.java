@@ -3283,6 +3283,8 @@ public class GenesisFileManager
                 if (!nameDefined)
                 {
                     response.append("str tempCompName\n\n");
+                    response.append("str tempCellName\n\n");
+                    response.append("str tempChanName\n\n");
                     nameDefined = true;
                 }
 
@@ -3376,6 +3378,90 @@ public class GenesisFileManager
                 }
             }
 
+            //System.out.println(".... "+mappedCell.getIonPropertiesVsGroups());
+
+            Enumeration<IonProperties> ips = mappedCell.getIonPropertiesVsGroups().keys();
+
+            while (ips.hasMoreElements())
+            {
+                IonProperties ip = ips.nextElement();
+                Vector<String> groups = mappedCell.getIonPropertiesVsGroups().get(ip);
+                logger.logComment("Checking "+ip+", present on "+groups+" and cell: "+mappedCell, true);
+
+                if (ip.revPotSetByConcs())
+                {
+
+                    ArrayList<String> mechsPassingIon = ionCurrentSources.get(ip.getName());
+
+                    for (String mech: mechsPassingIon)
+                    {
+                        addComment(response, "    "+ip+" is present on "+groups+" and reversal potential of this through "+mech+" is calculated from internal/external membrane potential\n");
+
+                        response.append("foreach tempCellName ({el "+getCellGroupElementName(cellGroupName)+"/#})\n");
+
+                        for(String group: groups)
+                        {
+                            ArrayList<String> compsToDo = new ArrayList<String>();
+
+                            if (group.equals(Section.ALL))
+                            {
+                                compsToDo.add("#");
+                            }
+                            else
+                            {
+                                for (Segment seg : mappedCell.getSegmentsInGroup(group))
+                                {
+                                    compsToDo.add(seg.getSegmentName());
+                                }
+                                
+                            }
+
+                            for (String comp: compsToDo)
+                            {
+
+                                response.append("    foreach tempChanName ({el  {tempCellName}/"+comp+"/"+mech+"})\n");
+
+                                response.append("        echo \"Adding nernst object to: \" {tempChanName}\n");
+
+                                response.append("        if (!{exists {tempChanName}/Ca_nernst})\n");
+
+                                response.append("            create nernst {tempChanName}/Ca_nernst\n");
+
+                                response.append("            float CCaO = "+UnitConverter.getConcentration(ip.getExternalConcentration(),
+                                                                                 UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                                 project.genesisSettings.getUnitSystemToUse())+"\n");
+
+                                response.append("            float CCaI = "+UnitConverter.getConcentration(ip.getInternalConcentration(),
+                                                                                 UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                                 project.genesisSettings.getUnitSystemToUse())+"\n");
+
+
+                                response.append("            float scale = "+( project.genesisSettings.isSIUnits() ? 1 : 1e3f )+"\n");
+
+                                int valence = 2; //TODO: get valence from ChannelML!!!
+
+
+                                response.append("            setfield {tempChanName}/Ca_nernst Cin {CCaI} Cout {CCaO} valency {"+valence+"} scale {scale} T {celsius}\n");
+
+
+                                response.append("            addmsg {tempChanName}/../"+ionConcentration.get(ip.getName()).get(0)+"  {tempChanName}/Ca_nernst CIN Ca\n");
+
+                                response.append("            addmsg {tempChanName}/Ca_nernst  {tempChanName}/../"+mech+" EK E\n");
+
+                                response.append("        end\n");
+
+                                response.append("    end\n\n");
+                            }
+
+                            
+                        }
+
+                        response.append("end\n\n");
+
+                    }
+
+                }
+            }
 
 
 
@@ -4508,6 +4594,22 @@ public class GenesisFileManager
         response.append("echo Finished simulation reference: "+project.simulationParameters.getReference()+dateInfo+"\n");
 
         if (addComments) response.append("echo Data stored in directory: {targetDir}\n\n");
+        
+        if (!mooseCompatMode())
+        {
+            addComment(response, "This will ensure the data files don't get written to again..");
+
+            response.append("\nstr fileElement\n");
+            response.append("foreach fileElement ({el "+FILE_ELEMENT_ROOT+CELL_ELEMENT_ROOT+"/##[][TYPE=asc_file]})\n");
+            //response.append("echo Written from element {fileElement} to file {getfield {fileElement} filename}\n\n");
+            //response.append("    deletemsg {fileElement} 0 -incoming\n");
+            response.append("end\n");
+
+            response.append("foreach fileElement ({el "+FILE_ELEMENT_ROOT+CELL_ELEMENT_ROOT+"/##[][TYPE=event_tofile]})\n");
+            response.append("    echo Closing {fileElement}\n\n");
+            response.append("    call {fileElement} CLOSE\n");
+            response.append("end\n\n");
+        }
 
         addComment(response, "Saving file containing time details");
 
@@ -4591,22 +4693,6 @@ public class GenesisFileManager
             response.append("closefile {simPropsFile} \n");
         }
 
-
-        if (!mooseCompatMode())
-        {
-            addComment(response, "This will ensure the data files don't get written to again..");
-
-            response.append("str fileElement\n");
-            response.append("foreach fileElement ({el "+FILE_ELEMENT_ROOT+CELL_ELEMENT_ROOT+"/##[][TYPE=asc_file]})\n");
-            //response.append("echo Written from element {fileElement} to file {getfield {fileElement} filename}\n\n");
-            //response.append("    deletemsg {fileElement} 0 -incoming\n");
-            response.append("end\n");
-
-            response.append("foreach fileElement ({el "+FILE_ELEMENT_ROOT+CELL_ELEMENT_ROOT+"/##[][TYPE=event_tofile]})\n");
-            response.append("    echo Closing {fileElement}\n\n");
-            response.append("    call {fileElement} CLOSE\n");
-            response.append("end\n");
-        }
 
 
         /// ********************

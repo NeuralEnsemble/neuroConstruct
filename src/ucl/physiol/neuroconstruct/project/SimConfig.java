@@ -233,8 +233,8 @@ public class SimConfig
                 }
             }
         }
-        logger.logComment("Old order: "+ cellGroupNamesUnordered, true);
-        logger.logComment("New order: "+ cellGroupNames, true);
+        logger.logComment("Old order: "+ cellGroupNamesUnordered);
+        logger.logComment("New order: "+ cellGroupNames);
         return cellGroupNames;
     }
 

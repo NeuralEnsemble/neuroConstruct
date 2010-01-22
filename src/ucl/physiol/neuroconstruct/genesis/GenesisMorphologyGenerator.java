@@ -691,7 +691,7 @@ public class GenesisMorphologyGenerator
                                     if (segment.isSpherical())
                                     {
                                         double r = segment.getRadius();
-                                        System.out.println("r: "+r);
+                                        //System.out.println("r: "+r);
                                         double ri = segment.getRadius()-thicknessnC;
 
                                         volComp = (4d/3) * Math.PI * r*r*r;
@@ -712,11 +712,11 @@ public class GenesisMorphologyGenerator
                                         B = B * 1e-9f; /*TODO: work out from units of faraday!!!*/
                                     }
 
-
+                                    /*
                                     System.out.println("thicknessGen: "+ thicknessGen);
                                     System.out.println("thicknessnC: "+ thicknessnC);
                                     System.out.println("totVol: "+ totVol);
-                                    System.out.println("B: "+ B);
+                                    System.out.println("B: "+ B);*/
 
                                     channelCondString.append(nextChanMech.getUniqueName()+ " -"+ B + " ");
 

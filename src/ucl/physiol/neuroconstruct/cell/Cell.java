@@ -2036,11 +2036,27 @@ public class Cell implements Serializable
                                                        apps);
             }
 
+            Enumeration<IonProperties> ips = this.getIonPropertiesVsGroups().keys();
+
+            while (ips.hasMoreElements())
+            {
+                IonProperties ip = ips.nextElement();
+                groups = getIonPropertiesVsGroups().get(ip);
+
+                for(String g: groups)
+                {
+                    clonedCell.associateGroupWithIonProperties(new String(g), ip);
+                }
+
+            }
+            /*
             if (this.getIonPropertiesForGroup(nextGroup)!=null)
             {
                 IonProperties ips = (IonProperties)this.getIonPropertiesForGroup(nextGroup).clone();
                 clonedCell.associateGroupWithIonProperties(nextGroup, ips);
             }
+             *
+             */
         }
         logger.logComment(">>>>>>>>>>>>    Finished cloning cell: "+ getInstanceName());
 

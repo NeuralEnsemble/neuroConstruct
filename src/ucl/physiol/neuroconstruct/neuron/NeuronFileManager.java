@@ -782,46 +782,6 @@ public class NeuronFileManager
                         if (simConfig.getMpiConf().isParallelNet()) response.append("  }\n\n");
                     }
 
-
-                    if (cell.getIonPropertiesVsGroups().size()>0)
-                    {
-                        NeuronFileManager.addHocComment(responseType1, "    Note: the following are from IonProperties in Cell");
-
-                        Enumeration<IonProperties> ips = cell.getIonPropertiesVsGroups().keys();
-
-
-                        //response.append("    forsec " + nameOfArrayOfTheseCells + "[" + posRecord.cellNumber + "].all {\n");
-                        responseType1.append("    for i = 0, " + nameOfNumberOfTheseCells + "-1 {" + "\n");
-
-                        while (ips.hasMoreElements())
-                        {
-                            IonProperties ip = ips.nextElement();
-                            Vector<String> groups = cell.getIonPropertiesVsGroups().get(ip);
-                            for (String group: groups)
-                            {
-                                if (ip.revPotSetByConcs())
-                                {
-                                    float concFactor = (float)UnitConverter.getConcentration(1,
-                                            UnitConverter.NEUROCONSTRUCT_UNITS, UnitConverter.NEURON_UNITS);
-
-                                    responseType1.append("        forsec "+nameOfArrayOfTheseCells + "[i]." + group + " {\n" +
-                                            "        "+ip.getName()+"i = "+ip.getInternalConcentration()*concFactor+"\n"+
-                                            "        "+ip.getName()+"o = "+ip.getExternalConcentration()*concFactor+"\n" +
-                                            "    }\n\n");
-                                }
-                                else
-                                {
-                                    responseType1.append("        forsec "+nameOfArrayOfTheseCells + "[i]." + group + " { e"+ip.getName()+" = "+
-                                            ip.getReversalPotential()+"}\n\n"); // Note NEURON & nC units of volts are same...
-                                }
-                            }
-                        }
-
-                        responseType1.append("    }\n\n");
-                    }
-
-                    //Point3f point = new Point3f(posRecord.x_pos, posRecord.y_pos, posRecord.z_pos);
-
                 }
 
                 if (cell.getInitialPotential().getDistributionType() == NumberGenerator.FIXED_NUM &&
@@ -837,13 +797,49 @@ public class NeuronFileManager
                     response.append("    for i = 0, " + nameOfNumberOfTheseCells + "-1 {" + "\n");
                     response.append("        ");
 
-                        if (simConfig.getMpiConf().isParallelNet()) response.append("if(isCellOnNode(\""+cellGroupName
+                    if (simConfig.getMpiConf().isParallelNet()) response.append("if(isCellOnNode(\""+cellGroupName
                                                                         +"\", i)) ");
 
-                        response.append("forsec " + nameOfArrayOfTheseCells + "[i].all "
+                    response.append("forsec " + nameOfArrayOfTheseCells + "[i].all "
                                     + " v = " + initVolt + "\n\n");
                     response.append("    }" + "\n\n");
 
+                }
+                if (cell.getIonPropertiesVsGroups().size()>0)
+                {
+                    NeuronFileManager.addHocComment(responseType1, "    Note: the following are from IonProperties in Cell");
+
+                    Enumeration<IonProperties> ips = cell.getIonPropertiesVsGroups().keys();
+
+
+                    //response.append("    forsec " + nameOfArrayOfTheseCells + "[" + posRecord.cellNumber + "].all {\n");
+                    responseType1.append("    for i = 0, " + nameOfNumberOfTheseCells + "-1 {" + "\n");
+
+                    while (ips.hasMoreElements())
+                    {
+                        IonProperties ip = ips.nextElement();
+                        Vector<String> groups = cell.getIonPropertiesVsGroups().get(ip);
+                        for (String group: groups)
+                        {
+                            if (ip.revPotSetByConcs())
+                            {
+                                float concFactor = (float)UnitConverter.getConcentration(1,
+                                        UnitConverter.NEUROCONSTRUCT_UNITS, UnitConverter.NEURON_UNITS);
+
+                                responseType1.append("        forsec "+nameOfArrayOfTheseCells + "[i]." + group + " {\n" +
+                                        "            "+ip.getName()+"i = "+ip.getInternalConcentration()*concFactor+"\n"+
+                                        "            "+ip.getName()+"o = "+ip.getExternalConcentration()*concFactor+"\n" +
+                                        "        }\n");
+                            }
+                            else
+                            {
+                                responseType1.append("        forsec "+nameOfArrayOfTheseCells + "[i]." + group + " { e"+ip.getName()+" = "+
+                                        ip.getReversalPotential()+"}\n"); // Note NEURON & nC units of volts are same...
+                            }
+                        }
+                    }
+
+                    responseType1.append("    }\n\n");
                 }
 
                 response.append("\n");
