@@ -33,6 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Result;
 import test.MainTest;
+import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 import static org.junit.Assert.*;
 
 
@@ -91,18 +92,60 @@ public class ProjectTest
      * Test of createNewProject method, of class Project.
      */
     @Test
-    public void testCreateNewProject() throws  IOException 
+    public void testCreateNewProject() throws  IOException, NoProjectLoadedException
     {
-        System.out.println("---  createNewProject");
-      
+        System.out.println("---  testCreateNewProject");
+
         String projName2 = "TestingFrameworkProject";
-        File projDir2 = new File("../temp");
-    
+        File projDir2 = new File(MainTest.getTempProjectDirectory(), projName2);
+
         Project proj = Project.createNewProject(projDir2.getAbsolutePath(), projName2, null);
-        
+
         System.out.println("Created project at: "+ proj.getProjectFile().getCanonicalPath());
-        
+
+        proj.saveProject();
+
+        File projFileNew = proj.getProjectFile();
+
         assertEquals(proj.getProjectName(), projName2);
+
+        assertTrue(projFileNew.exists());
+    }
+
+    @Test
+    public void testCopyProject() throws  IOException, NoProjectLoadedException, ProjectFileParsingException, Exception
+    {
+        System.out.println("---  testCopyAndRunProject");
+
+        String projNameNew = "TestingGranCell";
+        File projDirNew = new File(MainTest.getTempProjectDirectory(), projNameNew);
+
+        if (projDirNew.exists())
+        {
+            GeneralUtils.removeAllFiles(projDirNew, false, true, true);
+        }
+
+        System.out.println("Ex "+projDirNew.getCanonicalFile()+": "+ projDirNew.exists());
+        projDirNew.mkdir();
+
+        
+        File projFile = new File(projDirNew, projNameNew+".ncx");
+
+        File oldProjDir = new File(ProjectStructure.getnCModelsDir(), "GranuleCell");
+        File oldProj = new File(oldProjDir, "GranuleCell.ncx");
+
+        ProjectManager p = new ProjectManager();
+
+        Project proj = p.copyProject(oldProj, projFile);
+
+
+        System.out.println("Created project at: "+ proj.getProjectFile().getCanonicalPath());
+
+
+        assertEquals(proj.getProjectName(), projNameNew);
+
+        assertTrue(projFile.exists());
+
     }
 
 

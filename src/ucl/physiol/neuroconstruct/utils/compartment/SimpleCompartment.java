@@ -66,6 +66,13 @@ public class SimpleCompartment
         this.height = segment.getSegmentLength();
     }
 
+    public SimpleCompartment(SimpleCompartment sc)
+    {
+        this.startRadius = sc.getStartRadius();
+        this.endRadius = sc.getEndRadius();
+        this.height = sc.getHeight();
+    }
+
     public double getCurvedSurfaceArea()
     {
         if (startRadius==endRadius) return getStartCircumference()*height;
@@ -133,6 +140,7 @@ public class SimpleCompartment
 
 
 
+    @Override
     public String toString()
     {
         if (startRadius == endRadius)

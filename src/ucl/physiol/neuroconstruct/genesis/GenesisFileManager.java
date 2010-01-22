@@ -35,6 +35,7 @@ import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.dataset.DataSet;
+import ucl.physiol.neuroconstruct.gui.MainApplication;
 import ucl.physiol.neuroconstruct.gui.plotter.PlotManager;
 import ucl.physiol.neuroconstruct.gui.plotter.PlotterFrame;
 import ucl.physiol.neuroconstruct.hpc.mpi.QueueInfo;
@@ -1495,7 +1496,10 @@ public class GenesisFileManager
 
                 if (mooseCompatMode()&& !warnedMooseRandStim)
                 {
-                    GuiUtils.showWarningMessage(logger, "MOOSE support for random synaptic input still under development! Use with caution!", null);
+                    if (MainApplication.isGUIBasedStartupMode())
+                    {
+                        GuiUtils.showWarningMessage(logger, "MOOSE support for random synaptic input still under development! Use with caution!", null);
+                    }
 
                     warnedMooseRandStim = true;
                 }

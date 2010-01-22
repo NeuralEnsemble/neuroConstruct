@@ -51,7 +51,7 @@ public class GeneralProperties
 
     private static final String versionNumber = "1.3.6";
 
-    private static final String latestNeuroMLVersionNumber = "1.8.1";
+    //private static final String latestNeuroMLVersionNumber = "1.8.1";
 
     private static final String minimumVersionJava = "J2SE 5.0";
 
@@ -634,15 +634,26 @@ public class GeneralProperties
      * The version of the NeuroML specs being used
      *
      * @return The version number
-     */
+    */
     public static String getLatestNeuroMLVersionNumber()
     {
-        return latestNeuroMLVersionNumber;
+        String latestNml = "0.0.0";
+
+        for(File f: ProjectStructure.getNeuroMLSchemataDir().listFiles())
+        {
+            if (f.isDirectory()&&f.getName().startsWith("v"))
+            {
+                String ver = f.getName().substring(1);
+                if (ProjectStructure.compareVersions(ver, latestNml)>0)
+                    latestNml = ver;
+            }
+        }
+        return latestNml;
     }
 
     public static String getLatestNeuroMLVersionString()
     {
-        return "v"+latestNeuroMLVersionNumber;
+        return "v"+getLatestNeuroMLVersionNumber();
     }
 
     /*

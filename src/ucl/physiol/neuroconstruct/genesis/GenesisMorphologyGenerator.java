@@ -635,6 +635,16 @@ public class GenesisMorphologyGenerator
                             {
                                 ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism)cellMech;
 
+                                SimpleCompartment comp = new SimpleCompartment(segment);
+
+                                double area = comp.getCurvedSurfaceArea();
+
+                                if (segment.isSpherical())  area = 4 * Math.PI * segment.getRadius()*segment.getRadius();
+
+
+                                area =  area * ((float)(UnitConverter.getArea(1, UnitConverter.NEURON_UNITS,
+                                        project.genesisSettings.getUnitSystemToUse())));
+
                                 if (cmlMech.getValue(ChannelMLConstants.getIonConcFixedPoolXPath())!=null)
                                 {
 
@@ -649,16 +659,6 @@ public class GenesisMorphologyGenerator
                                                                                 UnitConverter.NEURON_UNITS,
                                                                                 project.genesisSettings.getUnitSystemToUse());
 
-                                    SimpleCompartment comp = new SimpleCompartment(segment);
-
-                                    double area = comp.getCurvedSurfaceArea();
-
-                                    if (segment.isSpherical())  area = 4 * Math.PI * segment.getRadius()*segment.getRadius();
-
-
-                                    area =  area * ((float)(UnitConverter.getArea(1, UnitConverter.NEURON_UNITS,
-                                            project.genesisSettings.getUnitSystemToUse())));
-
                                     float B = (float)( phi / area);
 
                                     /** @todo Fix this for correct units of ConcFixedPool!!! ... */
@@ -671,6 +671,55 @@ public class GenesisMorphologyGenerator
                                     logger.logComment("phi: "+ phi+", comp: "+comp.toString()+", area: "+ area+", B: "+B+", seg: "+segment.getRadius());
 
                                     channelCondString.append(nextChanMech.getUniqueName()+ " "+ B+ " ");
+                                }
+                                else if (genDens == 0 && cmlMech.getValue(ChannelMLConstants.getIonConcShellThickXPath())!=null)
+                                {
+
+                                    double thicknessOrig = Float.parseFloat( cmlMech.getValue(ChannelMLConstants.getIonConcShellThickXPath().trim()));
+
+                                    double thicknessGen = UnitConverter.getLength(thicknessOrig, UnitConverter.getUnitSystemIndex(cmlMech.getUnitsUsedInFile()),
+                                                                                project.genesisSettings.getUnitSystemToUse());
+
+                                    double thicknessnC = UnitConverter.getLength(thicknessOrig, UnitConverter.getUnitSystemIndex(cmlMech.getUnitsUsedInFile()),
+                                                                                UnitConverter.NEUROCONSTRUCT_UNITS);
+
+                                    SimpleCompartment inside = new SimpleCompartment(comp.getStartRadius()-thicknessnC, comp.getEndRadius()-thicknessnC, comp.getHeight());
+
+                                    double volComp = comp.getVolume();
+                                    double insideVol = inside.getVolume();
+
+                                    if (segment.isSpherical())
+                                    {
+                                        double r = segment.getRadius();
+                                        System.out.println("r: "+r);
+                                        double ri = segment.getRadius()-thicknessnC;
+
+                                        volComp = (4d/3) * Math.PI * r*r*r;
+                                        insideVol = (4d/3) * Math.PI * ri*ri*ri;
+                                    }
+                                    
+                                    double totVol = volComp - insideVol;
+                                    totVol = UnitConverter.getVolume(totVol, UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                                project.genesisSettings.getUnitSystemToUse());
+
+                                    int valence = 2; /*TODO: check in ChannelML!!!*/
+                                    float faraday = 96485.3415f;
+
+                                    float B = 1 / ((float)totVol * (valence * faraday));
+
+                                    if (project.genesisSettings.isPhysiologicalUnits())
+                                    {
+                                        B = B * 1e-9f; /*TODO: work out from units of faraday!!!*/
+                                    }
+
+
+                                    System.out.println("thicknessGen: "+ thicknessGen);
+                                    System.out.println("thicknessnC: "+ thicknessnC);
+                                    System.out.println("totVol: "+ totVol);
+                                    System.out.println("B: "+ B);
+
+                                    channelCondString.append(nextChanMech.getUniqueName()+ " -"+ B + " ");
+
                                 }
                                 else
                                 {

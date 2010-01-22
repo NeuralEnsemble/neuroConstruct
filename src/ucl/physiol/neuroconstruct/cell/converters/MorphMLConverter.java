@@ -632,14 +632,25 @@ public class MorphMLConverter extends FormatImporter
                 {
                     ChannelMechanism chanMech = allUniformChanMechs.get(j);
 
+                    CellMechanism cm = project.cellMechanismInfo.getCellMechanism(chanMech.getName());
+
                     SimpleXMLElement mechElement = new SimpleXMLElement(prefix + BiophysicsConstants.MECHANISM_ELEMENT);
                     bioElement.addChildElement(mechElement);
 
                     mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_NAME_ATTR,
                                                                     chanMech.getName()));
 
-                    mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_TYPE_ATTR,
+                    if (!cm.isIonConcMechanism())
+                    {
+                        mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_TYPE_ATTR,
                                                                     BiophysicsConstants.MECHANISM_TYPE_CHAN_MECH));
+                    }
+                    else
+                    {
+                        mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_TYPE_ATTR,
+                                                                    BiophysicsConstants.MECHANISM_TYPE_ION_CONC));
+
+                    }
                     
 
                     ArrayList<SimpleXMLElement> allParamGrps = new ArrayList<SimpleXMLElement>();                                         
@@ -654,7 +665,19 @@ public class MorphMLConverter extends FormatImporter
                                                                     UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                     preferredExportUnits) + ""));
 
-                    allParamGrps.add(gmaxParamElement);
+                    if (cm.isIonConcMechanism() && chanMech.getDensity()==0)
+                    {
+                        
+                        mechElement.addComment("Note: not adding gmax for Ion Concentration. \n"
+                                +"Value for scaling factor to apply to current to get change in conc should be\n" +
+                                " determined from ChannelML file for the CaPool...");
+                    }
+                    else
+                    {
+                        allParamGrps.add(gmaxParamElement);
+                    }
+
+
                     
                     ArrayList<MechParameter> mps = chanMech.getExtraParameters();
                     
@@ -686,7 +709,6 @@ public class MorphMLConverter extends FormatImporter
                     }
                         
                     
-                    CellMechanism cm = project.cellMechanismInfo.getCellMechanism(chanMech.getName());
                     
                     if (cm instanceof ChannelMLCellMechanism)
                     {
@@ -817,9 +839,18 @@ public class MorphMLConverter extends FormatImporter
 
                     mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_NAME_ATTR,
                                                                     vm.getName()));
+                    
+                    CellMechanism cm = project.cellMechanismInfo.getCellMechanism(vm.getName());
 
-                    mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_TYPE_ATTR,
+                    if (!cm.isIonConcMechanism())
+                    {
+                        mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_TYPE_ATTR,
                                                                     BiophysicsConstants.MECHANISM_TYPE_CHAN_MECH));
+                    }
+                    else
+                    {
+
+                    }
                     
                     
                     SimpleXMLElement pe = new SimpleXMLElement(prefix + BiophysicsConstants.VAR_PARAMETER_ELEMENT);

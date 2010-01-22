@@ -153,6 +153,11 @@ public class ChannelMLConstants
     
 
     public static String ION_CONC_DEC_POOL_ELEMENT = "decaying_pool_model";
+    
+    public static String ION_CONC_POOL_VOL_ELEMENT = "pool_volume_info";
+    public static String ION_CONC_SHELL_THICK_ELEMENT = "shell_thickness";
+
+
     public static String ION_CONC_FIXED_POOL_ELEMENT = "fixed_pool_info";
     public static String ION_CONC_FIXED_POOL_PHI_ELEMENT = "phi";
 
@@ -237,7 +242,18 @@ public class ChannelMLConstants
     public static String EXPR_FORM_ATTR = "expr_form";
     public static String EXPR_ATTR = "expr";
     public static String GENERIC_ATTR = "generic";
-    
+
+    public static String TABULATED_ATTR = "tabulated"; // slated for NML v1.8.2
+
+
+    public static String TABLE_ELEMENT = "table"; // slated for NML v1.8.2
+
+    public static String TABLE_XMIN = "xmin"; // slated for NML v1.8.2
+    public static String TABLE_XMAX = "xmax"; // slated for NML v1.8.2
+
+    public static String ENTRY_ELEMENT = "entry"; // slated for NML v1.8.2
+    public static String ENTRY_VALUE_ATTR = "value"; // slated for NML v1.8.2
+
     
     public static String GENERIC_HH_EXPR_ATTR = "expr";
     
@@ -295,10 +311,21 @@ public class ChannelMLConstants
     {
         return getIonConcTypeXPath() + "/" + ION_CONC_DEC_POOL_ELEMENT;
     }
-    
+
     public static String getIonConcFixedPoolXPath()
     {
         return getIonConcDecPoolXPath() + "/" + ION_CONC_FIXED_POOL_ELEMENT;
+    }
+
+
+    public static String getIonConcPoolVolXPath()
+    {
+        return getIonConcDecPoolXPath() + "/" + ION_CONC_POOL_VOL_ELEMENT;
+    }
+
+    public static String getIonConcShellThickXPath()
+    {
+        return getIonConcPoolVolXPath() + "/" + ION_CONC_SHELL_THICK_ELEMENT;
     }
 
     

@@ -895,7 +895,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         }
         else
         {
-            logger.logComment("No temperature dependence in expression", true);
+            logger.logComment("No temperature dependence in expression");
         }
         return prefTemp;
     }
@@ -912,7 +912,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         float minV = -100;
         float maxV = 80;
 
-        String yUnits = "mV";
+        String voltUnits = "mV";
         String timeUnits = "ms";
 
         Variable v = new Variable("v");
@@ -932,7 +932,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
             {
                 minV = minV/1000;
                 maxV = maxV/1000;
-                yUnits = "V";
+                voltUnits = "V";
                 timeUnits = "s";
             }
                        
@@ -986,7 +986,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                         gatesForThis.add(gateAttr);
                     }
 
-                    logger.logComment("Gates: "+gatesForThis, true);
+                    logger.logComment("Gates: "+gatesForThis);
 
                     float expTemp = Float.parseFloat(el.getAttributeValue(ChannelMLConstants.Q10_SETTINGS_TEMP_ATTR));
                     
@@ -1049,7 +1049,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                     String name = el.getAttributeValue(ChannelMLConstants.PARAMETER_NAME_ATTR);
                     String value = el.getAttributeValue(ChannelMLConstants.PARAMETER_VALUE_ATTR);
 
-                    logger.logComment("Parameter: "+name+" = "+ value, true);
+                    logger.logComment("Parameter: "+name+" = "+ value);
 
                     paramsFound.setProperty(name, value);
                 }
@@ -1178,7 +1178,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                 concMax = Float.parseFloat(concDepEl.getAttributeValue(ChannelMLConstants.CONC_DEP_MAX_CONC_ATTR));
                             }
 
-                            logger.logComment("Found gate: " + gate.getXMLString("", false), true);
+                            logger.logComment("Found gate: " + gate.getXMLString("", false));
 
                             SimpleXMLEntity[] transElements = gate.getXMLEntities(ChannelMLConstants.TRANSITION_ELEMENT);
                             SimpleXMLEntity[] timeCourseElements  = gate.getXMLEntities(ChannelMLConstants.TIME_COURSE_ELEMENT);
@@ -1216,30 +1216,12 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                     
                                     logger.logComment("- Found a SimpleXMLElement: "+ rate);
 
-                                    //ArrayList<SimpleXMLEntity> rates = vg.getContents();
-
-                                    /*
-                                    String concVarName = null;
-                                    float concVarVal = -1;
-                                    float concMin = -1;
-                                    float concMax = -1;
-
-                                 
-
-
-                                    if (rate.getName().equals(ChannelMLConstants.CONC_DEP_ELEMENT))
-                                    {
-                                        concVarName = rate.getAttributeValue(ChannelMLConstants.CONC_DEP_VAR_NAME_ATTR);
-                                        concMin = Float.parseFloat(rate.getAttributeValue(ChannelMLConstants.CONC_DEP_MIN_CONC_ATTR));
-                                        concMax = Float.parseFloat(rate.getAttributeValue(ChannelMLConstants.CONC_DEP_MAX_CONC_ATTR));
-
-                                        logger.logComment("It's a volt conc el: " + concVarName+" ("+concMin+" -> "+ concMax+")");
-                                    }*/
-
-
                                     String expression = null;
 
                                     EquationUnit mainFunc = null;
+
+                                    DataSet dataSetFound = null;
+
                                     EquationUnit condPreFunc = null;
                                     EquationUnit condPostFunc = null;
                                     EquationUnit trueFunc = null;
@@ -1249,9 +1231,10 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                                     String exprForm = rate.getAttributeValue(ChannelMLConstants.EXPR_FORM_ATTR);
                                     
-                                    logger.logComment("exprForm: "+exprForm, true);
+                                    logger.logComment("exprForm: "+exprForm);
 
-                                    if (!exprForm.equals(ChannelMLConstants.GENERIC_ATTR))
+                                    if (!exprForm.equals(ChannelMLConstants.GENERIC_ATTR) &&
+                                        !exprForm.equals(ChannelMLConstants.TABULATED_ATTR))
                                     {
                                         
                                         float A = Float.NaN;
@@ -1288,11 +1271,51 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
 
                                     }
-                                    else
+                                    else if (exprForm.equals(ChannelMLConstants.TABULATED_ATTR))
+                                    {
+                                        logger.logComment("XPaths: "+rate.getXPathLocations(false));
+
+                                        SimpleXMLElement table = (SimpleXMLElement)rate.getXMLEntities(ChannelMLConstants.TABLE_ELEMENT)[0];
+                                        
+                                        try
+                                        {
+                                            maxV =  Float.parseFloat(table.getAttributeValue(ChannelMLConstants.TABLE_XMAX));
+                                            minV = Float.parseFloat(table.getAttributeValue(ChannelMLConstants.TABLE_XMIN));
+
+                                            SimpleXMLEntity[] entries = table.getXMLEntities(ChannelMLConstants.ENTRY_ELEMENT);
+
+                                            expression = "Tabulated data from: " + minV+" to : "+maxV+" with "+entries.length+" entries";
+
+                                            numPoints = entries.length;
+
+                                            logger.logComment(expression);
+
+                                            dataSetFound = new DataSet("", "", "", "", "", "");
+
+                                            for (int i=0;i<entries.length;i++)
+                                            {
+                                                float volt = minV + (i* (maxV-minV)/(entries.length-1));
+                                                float value = Float.parseFloat(((SimpleXMLElement)entries[i]).getAttributeValue(ChannelMLConstants.ENTRY_VALUE_ATTR));
+
+                                                logger.logComment(volt+" = "+value);
+
+                                                dataSetFound.addPoint(volt, value);
+
+                                            }
+                                                      
+                                        }
+                                        catch (NumberFormatException ex)
+                                        {
+                                            GuiUtils.showErrorMessage(logger, "Error getting table info from: "+ rate, ex, this);
+                                        }
+
+
+                                    }
+                                    else if (exprForm.equals(ChannelMLConstants.GENERIC_ATTR))
                                     {
                                         String expr = rate.getAttributeValue(ChannelMLConstants.EXPR_ATTR);
 
-                                        logger.logComment(" -+- Found generic expr: " + expr+", voltConcGate: "+voltConcGate, true);
+                                        logger.logComment(" -+- Found generic expr: " + expr+", voltConcGate: "+voltConcGate);
 
                                         expression = expr;
 
@@ -1364,6 +1387,23 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
                                 String desc = dsRef;
 
+                                if (dataSetFound!=null)
+                                {
+                                    desc = desc + "\n\nGraph source: " + expression;
+                                    dataSetFound.setReference(dsRef);
+                                    dataSetFound.setDescription(desc);
+                                    dataSetFound.setXUnit(voltUnits);
+                                    dataSetFound.setXLegend("Membrane Potential");
+                                    dataSetFound.setYLegend(gateName);
+
+
+                                    PlotterFrame pf = PlotManager.getPlotterFrame(graphRef);
+
+                                    pf.addDataSet(dataSetFound);
+
+                                    rateData.put(rateName, dataSetFound);
+
+                                }
                                 if (mainFunc!=null)
                                 {
                                     if (tempToUseQ10.isNaN())
@@ -1380,7 +1420,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                     desc = desc + ""+getArgsInfo(paramsFound, concVarName, concVarVal, project, prefTemperature, q10sFound);
 
 
-                                    DataSet ds = new DataSet(dsRef, desc, yUnits, "", "Membrane Potential", gateName);
+                                    DataSet ds = new DataSet(dsRef, desc, voltUnits, "", "Membrane Potential", gateName);
 
                                     for (int i = 0; i < numPoints; i++)
                                     {
@@ -1414,7 +1454,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                     desc = desc + "\n"+getArgsInfo(paramsFound, concVarName, concVarVal, project, prefTemperature, q10sFound);
 
 
-                                    DataSet ds = new DataSet(dsRef, desc, yUnits, "", "Membrane Potential", gateName);
+                                    DataSet ds = new DataSet(dsRef, desc, voltUnits, "", "Membrane Potential", gateName);
 
 
                                     for (int j = 0; j < numPoints; j++)
@@ -1474,12 +1514,11 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                     String dsRef = "Plot of tau (1/(alpha+beta)) in gating complex "
                                     + gateName+" in Cell Mechanism "+ xmlMechanism.getInstanceName();
 
-                                    DataSet tau = new DataSet(dsRef, dsRef, yUnits,timeUnits, "Membrane Potential", "tau");
+                                    DataSet tau = new DataSet(dsRef, dsRef, voltUnits, timeUnits, "Membrane Potential", "tau");
 
                                     for (int i = 0; i < numPoints; i++)
                                     {
                                         float nextVval = minV + ( (maxV - minV) * i / (numPoints));
-
 
                                         tau.addPoint(nextVval, 1 / (dsAlpha.getYValues()[i] + dsBeta.getYValues()[i]));
                                     }
@@ -1493,7 +1532,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                     String dsRef = "Plot of inf (alpha/(alpha+beta)) in gating complex "
                                     + gateName+" in Cell Mechanism "+ xmlMechanism.getInstanceName();
 
-                                    DataSet inf = new DataSet(dsRef, dsRef, yUnits, "","Membrane Potential", "inf");
+                                    DataSet inf = new DataSet(dsRef, dsRef, voltUnits, "", "Membrane Potential", "inf");
 
                                     for (int i = 0; i < numPoints; i++)
                                     {
@@ -1749,7 +1788,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                                 desc = desc + "\n"+getArgsInfo(paramsFound, concVarName, concVarVal, project, prefTemperature, q10sFound);
 
 
-                                                DataSet ds = new DataSet(dsRef, desc, yUnits, "", "Membrane Potential", gateState);
+                                                DataSet ds = new DataSet(dsRef, desc, voltUnits, "", "Membrane Potential", gateState);
 
                                                 for (int i = 0; i < numPoints; i++)
                                                 {
@@ -1783,7 +1822,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                                 desc = desc + "\n"+getArgsInfo(paramsFound, concVarName, concVarVal, project, prefTemperature, q10sFound);
 
 
-                                                DataSet ds = new DataSet(dsRef, desc, yUnits, "", "Membrane Potential", gateState);
+                                                DataSet ds = new DataSet(dsRef, desc, voltUnits, "", "Membrane Potential", gateState);
 
 
                                                 for (int j = 0; j < numPoints; j++)
@@ -1841,7 +1880,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                             String dsRef = "Plot of tau (1/(alpha+beta)) in state "
                                             + gateState+" in Cell Mechanism "+ xmlMechanism.getInstanceName();
 
-                                            DataSet tau = new DataSet(dsRef, dsRef, yUnits,timeUnits, "Membrane Potential", "tau");
+                                            DataSet tau = new DataSet(dsRef, dsRef, voltUnits, timeUnits, "Membrane Potential", "tau");
 
                                             for (int i = 0; i < numPoints; i++)
                                             {
@@ -1860,7 +1899,7 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                                             String dsRef = "Plot of inf (alpha/(alpha+beta)) in state "
                                             + gateState+" in Cell Mechanism "+ xmlMechanism.getInstanceName();
 
-                                            DataSet inf = new DataSet(dsRef, dsRef, yUnits, "","Membrane Potential", "inf");
+                                            DataSet inf = new DataSet(dsRef, dsRef, voltUnits, "", "Membrane Potential", "inf");
 
                                             for (int i = 0; i < numPoints; i++)
                                             {

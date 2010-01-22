@@ -32,6 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Result;
 import test.MainTest;
+import ucl.physiol.neuroconstruct.gui.ValidityStatus;
 import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings;
 import ucl.physiol.neuroconstruct.nmodleditor.processes.ProcessManager;
 import ucl.physiol.neuroconstruct.project.*;
@@ -67,14 +68,51 @@ public class NeuronFileManagerTest {
         return pm;
     }
     
-    @Test public void testGenerateHoc() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException 
+    @Test public void testGenerateHoc() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException, Exception
     {
         System.out.println("---  testGenerateHoc...");
         
-        ProjectManager pm = loadProject("testProjects/TestGenNetworks/TestGenNetworks.neuro.xml");
-        
-        Project proj = pm.getCurrentProject();
-        SimConfig sc = proj.simConfigInfo.getDefaultSimConfig();
+        //ProjectManager pm = loadProject("testProjects/TestGenNetworks/TestGenNetworks.neuro.xml");
+
+        String projName = "TestingGranCell";
+        File projDir = new File(MainTest.getTempProjectDirectory(), projName);
+
+        if (projDir.exists())
+        {
+            GeneralUtils.removeAllFiles(projDir, false, true, true);
+        }
+
+        System.out.println("Ex "+projDir.getCanonicalFile()+": "+ projDir.exists());
+        projDir.mkdir();
+
+
+        File projFile = new File(projDir, projName+".ncx");
+
+        File oldProjDir = new File(ProjectStructure.getnCModelsDir(), "GranuleCell");
+        File oldProj = new File(oldProjDir, "GranuleCell.ncx");
+
+        ProjectManager pm = new ProjectManager();
+
+        Project proj = pm.copyProject(oldProj, projFile);
+
+
+        System.out.println("Created project at: "+ proj.getProjectFile().getCanonicalPath());
+
+
+        assertEquals(proj.getProjectName(), projName);
+
+        assertTrue(projFile.exists());
+
+        GeneralProperties.setNeuroMLVersionString(GeneralProperties.getLatestNeuroMLVersionString());
+
+        String validity = pm.getValidityReport(false);
+
+        assertTrue(validity, validity.indexOf(ValidityStatus.PROJECT_IS_VALID)>=0);
+
+        System.out.println("Project is valid!! Using NeuroML "+ GeneralProperties.getNeuroMLVersionString());
+
+
+        SimConfig sc = proj.simConfigInfo.getSimConfig("OnlyVoltage");
                 
         pm.doGenerate(sc.getName(), 1234);
         
@@ -167,7 +205,7 @@ public class NeuronFileManagerTest {
         
         double[] someVolts = simData.getVoltageAtAllTimes(SimulationData.getCellRef(sc.getCellGroups().get(0), 0));
         
-        assertEquals(someVolts.length, 1 + (sc.getSimDuration()/proj.simulationParameters.getDt()), 0);
+        assertEquals(someVolts.length, 1 + (sc.getSimDuration()/proj.simulationParameters.getDt()), 0.1);
 
         File simDataDir = new File(ProjectStructure.getSimulationsDir(proj.getProjectMainDirectory()), simName);
 
@@ -183,16 +221,16 @@ public class NeuronFileManagerTest {
 
         System.out.println("Data saved: "+ sd.getCellSegRefs(true));
 
-        String ref = "Pacemaker_0";
+        String ref = "Gran_0";
 
         double[] volts = sd.getVoltageAtAllTimes(ref);
         double[] times = sd.getAllTimes();
 
-        double[] spikeTimes = SpikeAnalyser.getSpikeTimes(volts, times, 0, 0, (float)times[times.length-1]);
+        double[] spikeTimes = SpikeAnalyser.getSpikeTimes(volts, times, -20, 0, (float)times[times.length-1]);
 
         System.out.println("Num spikeTimes: "+ spikeTimes.length);
 
-        int expectedNum = 76; // As checked through gui
+        int expectedNum = 20; // As checked through gui
 
         assertEquals(expectedNum, spikeTimes.length);
         

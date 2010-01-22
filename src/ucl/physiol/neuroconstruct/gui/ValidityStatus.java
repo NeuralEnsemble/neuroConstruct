@@ -62,6 +62,7 @@ public class ValidityStatus
     public static final Color VALIDATION_COLOUR_WARN_OBJ = new Color(13*16+13,8*16+12,0);
     public static final Color VALIDATION_COLOUR_ERROR_OBJ = Color.red;
 
+    public static final String PROJECT_IS_VALID = "Project is valid";
 
 
     private String message = null;
@@ -149,36 +150,6 @@ public class ValidityStatus
             return newTestValidity;
         }
     }
-
-/*
-    public class Validity
-    {
-        String desc = null;
-
-        public static final Validity VALID;
-        //public final Validity WARNING = new Validity("Warning");
-        //public final Validity ERROR = new Validity("Error");
-
-        static
-        {
-            VALID = new Validity("Valid");
-        }
-
-        private Validity()
-        {
-
-        }
-
-        private Validity(String desc)
-        {
-            this.desc = desc;
-        }
-
-        public String toString()
-        {
-            return desc;
-        }
-*/
 
 
 

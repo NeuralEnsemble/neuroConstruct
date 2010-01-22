@@ -81,6 +81,7 @@ public class UnitConverter
 
     public static Units[] perUnitVoltageUnits = null;
     public static Units[] areaUnits = null;
+    public static Units[] volumeUnits = null;
     public static Units[] rateUnits = null;
     public static Units[] perUnitTimeVoltageUnits = null;
 
@@ -359,6 +360,20 @@ public class UnitConverter
                           , new Unit[]
                           {new Unit(Prefix.CENTI, Units.METER, 2)})};
 
+            volumeUnits = new Units[]
+                {new Units("neuroConstruct_area"
+                           , new Unit[]
+                           {new Unit(Prefix.MICRO, Units.METER, 3)}),
+                new Units("NEURON_area"
+                          , new Unit[]
+                          {new Unit(Prefix.MICRO, Units.METER, 3)}),
+                new Units("GENESIS_SI_area"
+                          , new Unit[]
+                          {new Unit(Prefix.NONE, Units.METER, 3)}),
+                new Units("GENESIS_PHY_area"
+                          , new Unit[]
+                          {new Unit(Prefix.CENTI, Units.METER, 3)})};
+
 
 
 
@@ -512,6 +527,11 @@ public class UnitConverter
                            areaUnits[NEUROCONSTRUCT_UNITS],
                            areaUnits[toUnits]);
 
+        else if (nCunits.equals(volumeUnits[NEUROCONSTRUCT_UNITS]))
+            return convert(value,
+                           volumeUnits[NEUROCONSTRUCT_UNITS],
+                           volumeUnits[toUnits]);
+
 
         else if (nCunits.equals(perUnitVoltageUnits[NEUROCONSTRUCT_UNITS]))
             return convert(value,
@@ -615,6 +635,13 @@ public class UnitConverter
     {
         Units oldUnits = areaUnits[fromUnits];
         Units newUnits = areaUnits[toUnits];
+        return convert(value, oldUnits, newUnits).getMagnitude();
+    }
+
+    public static double getVolume(double value, int fromUnits, int toUnits)
+    {
+        Units oldUnits = volumeUnits[fromUnits];
+        Units newUnits = volumeUnits[toUnits];
         return convert(value, oldUnits, newUnits).getMagnitude();
     }
 
@@ -772,7 +799,7 @@ public class UnitConverter
         System.out.println("--------------------------------------");
 
         int fromUnits = GENESIS_SI_UNITS;
-        PhysicalQuantity concn = new PhysicalQuantity(1e-5, concentrationUnits[fromUnits]);
+        PhysicalQuantity concn = new PhysicalQuantity(1, concentrationUnits[fromUnits]);
 
         System.out.println("Concentration: "+ concn);
 

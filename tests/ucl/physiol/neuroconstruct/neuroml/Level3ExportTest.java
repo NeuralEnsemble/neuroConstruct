@@ -244,7 +244,7 @@ public class Level3ExportTest {
                             
             assertTrue(genMechs.size()<=allMechs.size());
             System.out.println("*****");
-            System.out.println(l3Channels.length+" cannels in doc + " +l3Synapses.length+" synapses in doc " );
+            System.out.println(l3Channels.length+" channels in doc + " +l3Synapses.length+" synapses in doc " );
             System.out.println("generated mechanisms " +genMechs.size());
             assertTrue((l3Channels.length + l3Synapses.length) == genMechs.size());
             

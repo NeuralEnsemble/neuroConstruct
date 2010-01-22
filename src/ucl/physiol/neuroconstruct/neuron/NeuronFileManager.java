@@ -1197,11 +1197,15 @@ public class NeuronFileManager
 
         response.append("print \""+indent+"Description: " + desc + "\"\n");
         
-          response.append("print \"\"\n");
+        response.append("print \"\"\n");
+
         response.append("print \""+indent+"Simulation Configuration: " + simConfig + " \"\n");
         if (simConfig.getDescription().trim().length()>0)
         {
             desc = simConfig.getDescription();
+
+            desc = GeneralUtils.replaceAllTokens(desc, "\"", "");
+            desc = GeneralUtils.replaceAllTokens(desc, "\n", "\"\nprint \""+indent);
             
             response.append("print \""+indent + desc + " \"\n");
         }

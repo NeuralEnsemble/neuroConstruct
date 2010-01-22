@@ -87,7 +87,7 @@ public class MorphMLReaderTest {
     {
         System.out.println("---  testWriteAndRead...");
         
-        Cell cell1 = pm.getCurrentProject().cellManager.getAllCells().get(0);
+        Cell cell1 = pm.getCurrentProject().cellManager.getCell("SampleCell_ca");
         
         cell1.setCellDescription("This is\na test\n...");
 

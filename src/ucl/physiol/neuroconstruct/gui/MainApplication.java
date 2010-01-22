@@ -56,9 +56,10 @@ public class MainApplication
     public enum StartupMode {NORMAL_GUI_MODE, 
                              PLOT_ONLY_MODE,
                              SIM_BROWSER_MODE,
-                             COMMAND_LINE_INTERFACE_MODE};
+                             COMMAND_LINE_INTERFACE_MODE,
+                             TEST_MODE};
 
-    private static StartupMode startupMode = StartupMode.NORMAL_GUI_MODE;
+    private static StartupMode startupMode = StartupMode.TEST_MODE;
 
     private static String favouredLookAndFeel = null;
 
@@ -437,5 +438,12 @@ public class MainApplication
     public static StartupMode getStartupMode()
     {
         return startupMode;
+    }
+
+    public static boolean isGUIBasedStartupMode()
+    {
+        return startupMode == StartupMode.NORMAL_GUI_MODE ||
+               startupMode == StartupMode.PLOT_ONLY_MODE ||
+               startupMode == StartupMode.SIM_BROWSER_MODE;
     }
 }

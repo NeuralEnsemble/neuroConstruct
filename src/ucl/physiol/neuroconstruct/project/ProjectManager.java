@@ -1593,11 +1593,9 @@ public class ProjectManager implements GenerationReport
 
 
 
-    /**
-     * Displays information on the validity of the cells in the project and other
-     * project settings
-     */
-    public void doValidate(boolean html)
+
+
+    public String getValidityReport(boolean html)
     {
         boolean verbose = false;
         
@@ -1607,17 +1605,7 @@ public class ProjectManager implements GenerationReport
 
         report.addTaggedElement("Validating the project: "+ this.activeProject.getProjectFile(), "h3");
         
-        String latestNml = "0.0.0";
-        
-        for(File f: ProjectStructure.getNeuroMLSchemataDir().listFiles())
-        {
-            if (f.isDirectory()&&f.getName().startsWith("v"))
-            {
-                String ver = f.getName().substring(1);
-                if (ProjectStructure.compareVersions(ver, latestNml)>0)
-                    latestNml = ver;
-            }
-        }
+        String latestNml = GeneralProperties.getLatestNeuroMLVersionNumber();
         
         if (ProjectStructure.compareVersions(latestNml, GeneralProperties.getNeuroMLVersionNumber())>0)
         {
@@ -2150,7 +2138,7 @@ public class ProjectManager implements GenerationReport
 
         if (overallValidity.equals(ValidityStatus.VALIDATION_OK))
         {
-            projectOverallValidity = ValidityStatus.getValidStatus("Project is valid");
+            projectOverallValidity = ValidityStatus.getValidStatus(ValidityStatus.PROJECT_IS_VALID);
         }
         else if (overallValidity.equals(ValidityStatus.VALIDATION_WARN))
         {
@@ -2169,9 +2157,21 @@ public class ProjectManager implements GenerationReport
 
         report.addBreak();
         report.addBreak();
+        if (!html) return report.toString();
+        
+        return report.toHtmlString();
+    }
+
+        /**
+     * Displays information on the validity of the cells in the project and other
+     * project settings
+     */
+    public void doValidate(boolean html)
+    {
+        String report = getValidityReport(html);
 
 
-        SimpleViewer.showString(report.toHtmlString(), "Validity status", 12, false, html);
+        SimpleViewer.showString(report, "Validity status", 12, false, html);
     }
 
 
@@ -2213,6 +2213,119 @@ public class ProjectManager implements GenerationReport
         return currentlyGenerating;
     }
 
+    public Project copyProject(File oldProjFile, File newProjFile) throws Exception
+    {
+        File newProjDir = newProjFile.getParentFile();
+
+
+        if (newProjDir.exists() && newProjDir.listFiles().length>0)
+        {
+            throw new Exception("Cannot copy project to: "+ newProjDir+"; directory not empty!");
+            
+        }
+
+        if (!newProjDir.exists())
+            newProjDir.mkdir();
+
+
+        try
+        {
+            File tempProjectFile = GeneralUtils.copyFileIntoDir(oldProjFile, newProjDir);
+
+
+            tempProjectFile.renameTo(newProjFile);
+
+
+            GeneralUtils.copyDirIntoDir(ProjectStructure.getMorphologiesDir(oldProjFile.getParentFile()),
+                                        ProjectStructure.getMorphologiesDir(newProjDir), false, true);
+
+        }
+        catch (IOException ex)
+        {
+            GuiUtils.showErrorMessage(logger, "Problem creating copy of the project", ex, null);
+            return null;
+        }
+        try
+        {
+            File impMorphDir = ProjectStructure.getImportedMorphologiesDir(oldProjFile.getParentFile(), false);
+
+            if (impMorphDir!=null)
+            {
+                GeneralUtils.copyDirIntoDir(impMorphDir,
+                                            ProjectStructure.getImportedMorphologiesDir(newProjDir, true),
+                    false, true);
+            }
+        }
+        catch (IOException ex)
+        {
+            logger.logError("Problem copying DirForImportedMorphologies", ex);
+            // continuing...
+        }
+
+        File cellMechDir = ProjectStructure.getCellMechanismDir(oldProjFile.getParentFile(), false);
+        if (cellMechDir!=null)
+        {
+            try
+            {
+                GeneralUtils.copyDirIntoDir(cellMechDir,
+                                            ProjectStructure.getCellMechanismDir(newProjDir), true, true);
+            }
+            catch (IOException ex)
+            {
+                logger.logError("Problem copying DirFormportedCellProcesses", ex);
+                // continuing...
+            }
+        }
+
+        File oldCellProcDir = ProjectStructure.getCellProcessesDir(oldProjFile.getParentFile(), false);
+        if (oldCellProcDir!=null)
+        {
+            try
+            {
+                GeneralUtils.copyDirIntoDir(oldCellProcDir,
+                                            ProjectStructure.getCellProcessesDir(newProjDir, true), true, true);
+
+            }
+            catch (IOException ex)
+            {
+                logger.logError("Problem copying DirFormportedCellProcesses", ex);
+                // continuing...
+            }
+        }
+
+
+        File pythonDir = ProjectStructure.getPythonScriptsDir(oldProjFile.getParentFile(), false);
+        if (pythonDir!=null)
+        {
+            try
+            {
+                GeneralUtils.copyDirIntoDir(pythonDir,
+                                            ProjectStructure.getPythonScriptsDir(newProjDir, true), true, true);
+            }
+            catch (IOException ex)
+            {
+                logger.logError("Problem copying python dirs", ex);
+                // continuing...
+            }
+        }
+
+
+
+        Project p = loadProject(newProjFile.getAbsoluteFile());
+
+        p.markProjectAsEdited();
+        String newProjectName = newProjFile.getName();
+        if (newProjectName.endsWith(ProjectStructure.getNewProjectFileExtension()))
+            newProjectName = newProjectName.substring(0,newProjectName.length()-ProjectStructure.getNewProjectFileExtension().length());
+        p.setProjectName(newProjectName);
+
+        p.saveProject();
+
+        activeProject = p;
+
+        return activeProject;
+
+    }
 
 
     public Project loadProject(File projFile) throws ProjectFileParsingException

@@ -98,7 +98,7 @@ public class MorphMLReader extends XMLFilterImpl
 
     private String currentMechType = null;
     private String currentParamName = null;
-    private float currentParamValueNconUnits = -1;
+    private float currentParamValueNconUnits = Float.NaN;
 
     //private ChannelMechanism currentChanMech = null;
 
@@ -247,7 +247,8 @@ public class MorphMLReader extends XMLFilterImpl
                 {
                     cell.associateGroupWithSynapse(group, this.currentMechName);
                 }
-                else if (this.currentMechType.equals(BiophysicsConstants.MECHANISM_TYPE_CHAN_MECH))
+                else if (this.currentMechType.equals(BiophysicsConstants.MECHANISM_TYPE_CHAN_MECH) ||
+                        this.currentMechType.equals(BiophysicsConstants.MECHANISM_TYPE_ION_CONC))
                 {
                     if (this.currentParamName.equals(BiophysicsConstants.PARAMETER_GMAX))
                     {
@@ -791,7 +792,8 @@ public class MorphMLReader extends XMLFilterImpl
              }
              else if (getAncestorElement(1).equals(BiophysicsConstants.MECHANISM_ELEMENT) &&
                  currentMechType != null && paramName != null &&
-                 currentMechType.equals(BiophysicsConstants.MECHANISM_TYPE_CHAN_MECH))
+                 (currentMechType.equals(BiophysicsConstants.MECHANISM_TYPE_CHAN_MECH) ||
+                 currentMechType.equals(BiophysicsConstants.MECHANISM_TYPE_ION_CONC)))
              {
                  float neuroConUnits = -1;
 
@@ -1004,8 +1006,23 @@ public class MorphMLReader extends XMLFilterImpl
 
         }
 
+
          else if (getCurrentElement().equals(BiophysicsConstants.MECHANISM_ELEMENT))
          {
+             logger.logComment("End of mechanism element: "+ currentMechName, true);
+
+             if (currentParamName==null && currentMechType.equals(BiophysicsConstants.MECHANISM_TYPE_ION_CONC))
+             {
+                 logger.logComment("There has been no parameter specified for this mechanism: Adding it on all without specifying gmax; probably an ion conc", true);
+
+                 ChannelMechanism cm = new ChannelMechanism(currentMechName, 0);
+
+                 cell.associateGroupWithChanMech(Section.ALL, cm);
+             }
+
+             currentParamName = null;
+             currentParamValueNconUnits = Float.NaN;
+
              currentMechName = null;
              currentMechType = null;
          }

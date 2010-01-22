@@ -81,6 +81,7 @@ public class BiophysicsConstants
 
     //public static String MECHANISM_TYPE_MEMB_COND = "Membrane Conductance";
     public static String MECHANISM_TYPE_CHAN_MECH = "Channel Mechanism";
+    public static String MECHANISM_TYPE_ION_CONC = "Ion Concentration";
 
     public static String MECHANISM_TYPE_SYN_LOC = "Potential Synaptic Connection Location";
     public static String MECHANISM_TYPE_SPEC_AX_RES = "Specific Axial Resistance";

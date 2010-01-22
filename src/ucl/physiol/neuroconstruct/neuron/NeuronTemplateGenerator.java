@@ -1461,14 +1461,18 @@ public class NeuronTemplateGenerator
                 {
                     if (ip.revPotSetByConcs())
                     {
+                        float concFactor = (float)UnitConverter.getConcentration(1,
+                                UnitConverter.NEUROCONSTRUCT_UNITS, UnitConverter.NEURON_UNITS);
+
                         response.append("    forsec " + group + " {\n" +
-                                "        "+ip.getName()+"i = "+ip.getInternalConcentration()+"\n"+
-                                "        "+ip.getName()+"o = "+ip.getExternalConcentration()+"\n" +
+                                "        "+ip.getName()+"i = "+ip.getInternalConcentration()*concFactor+"\n"+
+                                "        "+ip.getName()+"o = "+ip.getExternalConcentration()*concFactor+"\n" +
                                 "    }\n\n");
                     }
                     else
                     {
-                        response.append("    forsec " + group + " { e"+ip.getName()+" = "+ip.getReversalPotential()+"}\n\n");
+                        response.append("    forsec " + group + " { e"+ip.getName()+" = "+
+                                ip.getReversalPotential()+"}\n\n"); // Note NEURON & nC units of volts are same...
                     }
                 }
             }

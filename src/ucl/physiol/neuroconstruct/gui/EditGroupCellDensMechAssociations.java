@@ -475,7 +475,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         {
 
             jButtonEditValue.setEnabled(false);
-                jButtonEditExtraValue.setEnabled(false);
+            jButtonEditExtraValue.setEnabled(false);
 
             logger.logComment("SectionsOut change: " + e.getFirstIndex());
             this.jButtonRemove.setEnabled(false);

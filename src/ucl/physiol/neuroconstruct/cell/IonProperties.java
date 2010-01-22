@@ -28,6 +28,7 @@ package ucl.physiol.neuroconstruct.cell;
 
 import java.beans.*;
 import java.io.*;
+import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
 
 
 
@@ -203,8 +204,12 @@ public class IonProperties implements Serializable
         String post = html ? "</b>":"";
 
         if (revPotSetByConcs())
-            return "Ion: "+pre + name +post +", int conc: "+pre+internalConcentration+post+
-                    ", ext conc: "+pre+externalConcentration+post;
+        {
+            String units = " "+UnitConverter.concentrationUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSafeSymbol();
+
+            return "Ion: "+pre + name +post +", int conc: "+pre+internalConcentration+units+post+
+                    ", ext conc: "+pre+externalConcentration+units+post;
+        }
         else
             return "Ion: "+pre + name+post +", rev pot: "+pre+reversalPotential+" mV"+post;
 
