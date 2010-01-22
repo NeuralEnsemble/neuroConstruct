@@ -16,7 +16,7 @@
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  GNU General Public License for more details.getd
 
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
@@ -726,6 +726,7 @@ public class NeuronFileManager
     private String generateInitialParameters()
     {
         StringBuffer response = new StringBuffer();
+        StringBuffer responseType1 = new StringBuffer();
 
         addMajorHocComment(response, "Setting initial parameters");
 
@@ -734,7 +735,9 @@ public class NeuronFileManager
 
         response.append("{celsius = " + project.simulationParameters.getTemperature() + "}\n\n");
 
-        response.append("proc initialiseValues() {\n\n");
+
+
+        response.append("proc initialiseValues0() {\n\n");
 
         ArrayList<String> cellGroupNames = project.cellGroupsInfo.getAllCellGroupNames();
 
@@ -779,6 +782,44 @@ public class NeuronFileManager
                         if (simConfig.getMpiConf().isParallelNet()) response.append("  }\n\n");
                     }
 
+
+                    if (cell.getIonPropertiesVsGroups().size()>0)
+                    {
+                        NeuronFileManager.addHocComment(responseType1, "    Note: the following are from IonProperties in Cell");
+
+                        Enumeration<IonProperties> ips = cell.getIonPropertiesVsGroups().keys();
+
+
+                        //response.append("    forsec " + nameOfArrayOfTheseCells + "[" + posRecord.cellNumber + "].all {\n");
+                        responseType1.append("    for i = 0, " + nameOfNumberOfTheseCells + "-1 {" + "\n");
+
+                        while (ips.hasMoreElements())
+                        {
+                            IonProperties ip = ips.nextElement();
+                            Vector<String> groups = cell.getIonPropertiesVsGroups().get(ip);
+                            for (String group: groups)
+                            {
+                                if (ip.revPotSetByConcs())
+                                {
+                                    float concFactor = (float)UnitConverter.getConcentration(1,
+                                            UnitConverter.NEUROCONSTRUCT_UNITS, UnitConverter.NEURON_UNITS);
+
+                                    responseType1.append("        forsec "+nameOfArrayOfTheseCells + "[i]." + group + " {\n" +
+                                            "        "+ip.getName()+"i = "+ip.getInternalConcentration()*concFactor+"\n"+
+                                            "        "+ip.getName()+"o = "+ip.getExternalConcentration()*concFactor+"\n" +
+                                            "    }\n\n");
+                                }
+                                else
+                                {
+                                    responseType1.append("        forsec "+nameOfArrayOfTheseCells + "[i]." + group + " { e"+ip.getName()+" = "+
+                                            ip.getReversalPotential()+"}\n\n"); // Note NEURON & nC units of volts are same...
+                                }
+                            }
+                        }
+
+                        responseType1.append("    }\n\n");
+                    }
+
                     //Point3f point = new Point3f(posRecord.x_pos, posRecord.y_pos, posRecord.z_pos);
 
                 }
@@ -809,10 +850,23 @@ public class NeuronFileManager
             }
         }
 
+
+
         response.append("}\n\n");
 
-        response.append("objref fih\n");
-        response.append("{fih = new FInitializeHandler(0, \"initialiseValues()\")}\n\n\n");
+        response.append("objref fih0\n");
+        response.append("{fih0 = new FInitializeHandler(0, \"initialiseValues0()\")}\n\n\n");
+
+        if (responseType1.length()>0)
+        {
+
+            response.append("proc initialiseValues1() {\n\n");
+            response.append(responseType1.toString());
+            response.append("}\n\n");
+
+            response.append("objref fih1\n");
+            response.append("{fih1 = new FInitializeHandler(1, \"initialiseValues1()\")}\n\n\n");
+        }
 
         return response.toString();
     }
