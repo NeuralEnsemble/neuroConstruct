@@ -140,9 +140,11 @@ public class CellTest {
 
         IonProperties ion2 = new IonProperties("na", 10, 100);
         IonProperties ion3 = new IonProperties("k", -77);
+        IonProperties ion4 = new IonProperties("ca", 80);
 
         cell.associateGroupWithIonProperties(testGroup, ion3);
         cell.associateGroupWithIonProperties(Section.ALL, ion2);
+        cell.associateGroupWithIonProperties(Section.ALL, ion4);
        
         return cell;
     }
