@@ -20,6 +20,7 @@ from ucl.physiol.neuroconstruct.neuron import NeuronFileManager
 
 from ucl.physiol.neuroconstruct.nmodleditor.processes import ProcessManager
 from ucl.physiol.neuroconstruct.cell.compartmentalisation import GenesisCompartmentalisation
+from ucl.physiol.neuroconstruct.utils.units import UnitConverter
 
 
 
@@ -45,12 +46,16 @@ def generateAndRunGenesis(project,
                          verbose=True,
                          quitAfterRun=False,
                          runInBackground=False,
+                         units=-1,
                          symmetricComps=False):
 
     if verbose: print "Going to generate GENESIS files for: "+simRef
 
     if runInBackground:
         project.genesisSettings.setNoConsole()
+
+    if units == UnitConverter.GENESIS_SI_UNITS or units == UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS:
+        project.genesisSettings.setUnitSystemToUse(units) # else leave it as the units set in the proj
 
     project.genesisSettings.setMooseCompatMode(False)
 
@@ -77,7 +82,8 @@ def generateAndRunMoose(project,
                          simulatorSeed,
                          verbose=True,
                          quitAfterRun=False,
-                         runInBackground=False):
+                         runInBackground=False,
+                         units=-1):
 
     if verbose: print "Going to generate MOOSE files for: "+simRef
 
@@ -85,6 +91,9 @@ def generateAndRunMoose(project,
         project.genesisSettings.setNoConsole()
 
     project.genesisFileManager.setQuitAfterRun(quitAfterRun)
+
+    if units == UnitConverter.GENESIS_SI_UNITS or units == UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS:
+        project.genesisSettings.setUnitSystemToUse(units) # else leave it as the units set in the proj
 
     project.genesisSettings.setMooseCompatMode(True)
 
