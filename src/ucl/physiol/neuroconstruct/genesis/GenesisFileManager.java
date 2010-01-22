@@ -3386,7 +3386,7 @@ public class GenesisFileManager
             {
                 IonProperties ip = ips.nextElement();
                 Vector<String> groups = mappedCell.getIonPropertiesVsGroups().get(ip);
-                logger.logComment("Checking "+ip+", present on "+groups+" and cell: "+mappedCell, true);
+                logger.logComment("Checking "+ip+", present on "+groups+" and cell: "+mappedCell);
 
                 if (ip.revPotSetByConcs())
                 {
@@ -3395,68 +3395,76 @@ public class GenesisFileManager
 
                     for (String mech: mechsPassingIon)
                     {
-                        addComment(response, "    "+ip+" is present on "+groups+" and reversal potential of this through "+mech+" is calculated from internal/external membrane potential\n");
-
-                        response.append("foreach tempCellName ({el "+getCellGroupElementName(cellGroupName)+"/#})\n");
-
-                        for(String group: groups)
+                        if (ionCurrFixedRevPot.get(ip.getName())!=null && ionCurrFixedRevPot.get(ip.getName()).contains(mech))
                         {
-                            ArrayList<String> compsToDo = new ArrayList<String>();
+                            addComment(response, "    "+ip+" is present on "+groups+" and flows through "+mech+" but that channel has a fixed rev pot (see the ChannelML file!)\n");
 
-                            if (group.equals(Section.ALL))
-                            {
-                                compsToDo.add("#");
-                            }
-                            else
-                            {
-                                for (Segment seg : mappedCell.getSegmentsInGroup(group))
-                                {
-                                    compsToDo.add(seg.getSegmentName());
-                                }
-                                
-                            }
-
-                            for (String comp: compsToDo)
-                            {
-
-                                response.append("    foreach tempChanName ({el  {tempCellName}/"+comp+"/"+mech+"})\n");
-
-                                response.append("        echo \"Adding nernst object to: \" {tempChanName}\n");
-
-                                response.append("        if (!{exists {tempChanName}/Ca_nernst})\n");
-
-                                response.append("            create nernst {tempChanName}/Ca_nernst\n");
-
-                                response.append("            float CCaO = "+UnitConverter.getConcentration(ip.getExternalConcentration(),
-                                                                                 UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                                                 project.genesisSettings.getUnitSystemToUse())+"\n");
-
-                                response.append("            float CCaI = "+UnitConverter.getConcentration(ip.getInternalConcentration(),
-                                                                                 UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                                                 project.genesisSettings.getUnitSystemToUse())+"\n");
-
-
-                                response.append("            float scale = "+( project.genesisSettings.isSIUnits() ? 1 : 1e3f )+"\n");
-
-                                int valence = 2; //TODO: get valence from ChannelML!!!
-
-
-                                response.append("            setfield {tempChanName}/Ca_nernst Cin {CCaI} Cout {CCaO} valency {"+valence+"} scale {scale} T {celsius}\n");
-
-
-                                response.append("            addmsg {tempChanName}/../"+ionConcentration.get(ip.getName()).get(0)+"  {tempChanName}/Ca_nernst CIN Ca\n");
-
-                                response.append("            addmsg {tempChanName}/Ca_nernst  {tempChanName}/../"+mech+" EK E\n");
-
-                                response.append("        end\n");
-
-                                response.append("    end\n\n");
-                            }
-
-                            
                         }
+                        else
+                        {
+                            addComment(response, "    "+ip+" is present on "+groups+" and reversal potential of this through "+mech+" is calculated from internal/external membrane potential\n");
 
-                        response.append("end\n\n");
+                            response.append("foreach tempCellName ({el "+getCellGroupElementName(cellGroupName)+"/#})\n");
+
+                            for(String group: groups)
+                            {
+                                ArrayList<String> compsToDo = new ArrayList<String>();
+
+                                if (group.equals(Section.ALL))
+                                {
+                                    compsToDo.add("#");
+                                }
+                                else
+                                {
+                                    for (Segment seg : mappedCell.getSegmentsInGroup(group))
+                                    {
+                                        compsToDo.add(seg.getSegmentName());
+                                    }
+
+                                }
+
+                                for (String comp: compsToDo)
+                                {
+
+                                    response.append("    foreach tempChanName ({el  {tempCellName}/"+comp+"/"+mech+"})\n");
+
+                                    response.append("        echo \"Adding nernst object to: \" {tempChanName}\n");
+
+                                    response.append("        if (!{exists {tempChanName}/Ca_nernst})\n");
+
+                                    response.append("            create nernst {tempChanName}/Ca_nernst\n");
+
+                                    response.append("            float CCaO = "+UnitConverter.getConcentration(ip.getExternalConcentration(),
+                                                                                     UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                                     project.genesisSettings.getUnitSystemToUse())+"\n");
+
+                                    response.append("            float CCaI = "+UnitConverter.getConcentration(ip.getInternalConcentration(),
+                                                                                     UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                                     project.genesisSettings.getUnitSystemToUse())+"\n");
+
+
+                                    response.append("            float scale = "+( project.genesisSettings.isSIUnits() ? 1 : 1e3f )+"\n");
+
+                                    int valence = 2; //TODO: get valence from ChannelML!!!
+
+
+                                    response.append("            setfield {tempChanName}/Ca_nernst Cin {CCaI} Cout {CCaO} valency {"+valence+"} scale {scale} T {celsius}\n");
+
+
+                                    response.append("            addmsg {tempChanName}/../"+ionConcentration.get(ip.getName()).get(0)+"  {tempChanName}/Ca_nernst CIN Ca\n");
+
+                                    response.append("            addmsg {tempChanName}/Ca_nernst  {tempChanName}/../"+mech+" EK E\n");
+
+                                    response.append("        end\n");
+
+                                    response.append("    end\n\n");
+                                }
+
+
+                            }
+
+                            response.append("end\n\n");
+                        }
 
                     }
 
