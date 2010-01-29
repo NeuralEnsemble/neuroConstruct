@@ -155,7 +155,8 @@ public class ChannelMLConstants
     public static String ION_CONC_DEC_POOL_ELEMENT = "decaying_pool_model";
     
     public static String ION_CONC_POOL_VOL_ELEMENT = "pool_volume_info";
-    public static String ION_CONC_SHELL_THICK_ELEMENT = "shell_thickness";
+    public static String ION_CONC_SHELL_THICK_ELEMENT_prev1_7_3 = "shell_thickness";
+    public static String ION_CONC_SHELL_THICK_ATTR = "shell_thickness";
 
 
     public static String ION_CONC_FIXED_POOL_ELEMENT = "fixed_pool_info";
@@ -323,9 +324,14 @@ public class ChannelMLConstants
         return getIonConcDecPoolXPath() + "/" + ION_CONC_POOL_VOL_ELEMENT;
     }
 
-    public static String getIonConcShellThickXPath()
+    public static String getIonConcShellThicknessXPath_pre1_7_3()
     {
-        return getIonConcPoolVolXPath() + "/" + ION_CONC_SHELL_THICK_ELEMENT;
+        return getIonConcPoolVolXPath() + "/" + ION_CONC_SHELL_THICK_ELEMENT_prev1_7_3;
+    }
+
+    public static String getIonConcShellThicknessXPath()
+    {
+        return getIonConcPoolVolXPath() + "/@" + ION_CONC_SHELL_THICK_ATTR;
     }
 
     

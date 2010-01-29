@@ -672,10 +672,17 @@ public class GenesisMorphologyGenerator
 
                                     channelCondString.append(nextChanMech.getUniqueName()+ " "+ B+ " ");
                                 }
-                                else if (genDens == 0 && cmlMech.getValue(ChannelMLConstants.getIonConcShellThickXPath())!=null)
+                                else if (genDens == 0 && 
+                                    (cmlMech.getValue(ChannelMLConstants.getIonConcShellThicknessXPath())!=null ||
+                                     cmlMech.getValue(ChannelMLConstants.getIonConcShellThicknessXPath_pre1_7_3())!=null))
                                 {
 
-                                    double thicknessOrig = Float.parseFloat( cmlMech.getValue(ChannelMLConstants.getIonConcShellThickXPath().trim()));
+                                    double thicknessOrig = Float.NaN;
+                                    
+                                    if (cmlMech.getValue(ChannelMLConstants.getIonConcShellThicknessXPath())!=null)
+                                        thicknessOrig = Float.parseFloat( cmlMech.getValue(ChannelMLConstants.getIonConcShellThicknessXPath().trim()));
+                                    else if (cmlMech.getValue(ChannelMLConstants.getIonConcShellThicknessXPath_pre1_7_3())!=null)
+                                        thicknessOrig = Float.parseFloat( cmlMech.getValue(ChannelMLConstants.getIonConcShellThicknessXPath_pre1_7_3().trim()));
 
                                     double thicknessGen = UnitConverter.getLength(thicknessOrig, UnitConverter.getUnitSystemIndex(cmlMech.getUnitsUsedInFile()),
                                                                                 project.genesisSettings.getUnitSystemToUse());
