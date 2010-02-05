@@ -113,6 +113,9 @@ public class NeuronFileManagerTest {
 
 
         SimConfig sc = proj.simConfigInfo.getSimConfig("OnlyVoltage");
+
+        proj.simulationParameters.setDt(0.01f);
+
                 
         pm.doGenerate(sc.getName(), 1234);
         

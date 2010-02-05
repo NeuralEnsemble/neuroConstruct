@@ -1180,7 +1180,8 @@ public class NeuronTemplateGenerator
                                 subResponse.append("  { "+condString + moreParams.toString() +" }  ");
                             }
                         }
-                        else if (cellMech.getMechanismType().equals(CellMechanism.ION_CONCENTRATION))
+                        else if (cellMech.getMechanismType().equals(CellMechanism.ION_CONCENTRATION) ||
+                                 cellMech.getMechanismType().equals(CellMechanism.SBML_MECHANISM))
                         {
                             
                                 subResponse.append("  { "+moreParams.toString() +" }  ");
