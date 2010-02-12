@@ -28,14 +28,20 @@ package ucl.physiol.neuroconstruct.neuron;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Vector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Result;
 import test.MainTest;
+
 import ucl.physiol.neuroconstruct.gui.ValidityStatus;
 import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings;
+import ucl.physiol.neuroconstruct.mechanisms.CellMechanism;
+import ucl.physiol.neuroconstruct.mechanisms.ChannelMLCellMechanism;
+import ucl.physiol.neuroconstruct.mechanisms.SimulatorMapping;
 import ucl.physiol.neuroconstruct.nmodleditor.processes.ProcessManager;
 import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.simulation.SimEnvHelper;
 import ucl.physiol.neuroconstruct.simulation.SimulationData;
 import static org.junit.Assert.*;
 import ucl.physiol.neuroconstruct.simulation.SimulationDataException;
@@ -68,9 +74,9 @@ public class NeuronFileManagerTest {
         return pm;
     }
     
-    @Test public void testGenerateHoc() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException, Exception
+    @Test public void testGenerateAndRunHoc() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException, Exception
     {
-        System.out.println("---  testGenerateHoc...");
+        System.out.println("---  testGenerateAndRunHoc...");
         
         //ProjectManager pm = loadProject("testProjects/TestGenNetworks/TestGenNetworks.neuro.xml");
 
@@ -110,6 +116,50 @@ public class NeuronFileManagerTest {
         assertTrue(validity, validity.indexOf(ValidityStatus.PROJECT_IS_VALID)>=0);
 
         System.out.println("Project is valid!! Using NeuroML "+ GeneralProperties.getNeuroMLVersionString());
+
+
+
+        Vector<CellMechanism> cellMechs = proj.cellMechanismInfo.getAllCellMechanisms();
+
+        File xslDir = GeneralProperties.getChannelMLSchemataDir();
+
+        for (CellMechanism cellMech: cellMechs)
+        {
+            ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism) cellMech;
+            File implFile = cmlMech.getXMLFile(proj);
+
+            for (SimulatorMapping map: cmlMech.getSimMappings())
+            {
+                String simEnv = map.getSimEnv();
+                File oldXsl = new File (implFile.getParent(), map.getMappingFile());
+                File newXsl = null;
+
+                if (simEnv.equals(SimEnvHelper.NEURON))
+                {
+                    newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_NEURONmod.xsl");
+                }
+                else if (simEnv.equals(SimEnvHelper.GENESIS))
+                {
+                    newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_GENESIStab.xsl");
+                }
+                else if (simEnv.equals(SimEnvHelper.PSICS))
+                {
+                    newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_PSICS.xsl");
+                }
+
+
+                GeneralUtils.copyFileIntoDir(newXsl, implFile.getParentFile());
+                map.setMappingFile(newXsl.getName());
+
+
+            }
+        }
+
+        proj.markProjectAsEdited();
+        proj.saveProject();
+
+
+
 
 
         SimConfig sc = proj.simConfigInfo.getSimConfig("OnlyVoltage");
@@ -236,6 +286,7 @@ public class NeuronFileManagerTest {
         int expectedNum = 20; // As checked through gui
 
         assertEquals(expectedNum, spikeTimes.length);
+
         
         
     }

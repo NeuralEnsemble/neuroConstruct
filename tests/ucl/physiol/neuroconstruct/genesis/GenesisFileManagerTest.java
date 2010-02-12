@@ -44,36 +44,29 @@ import static org.junit.Assert.*;
  */
 public class GenesisFileManagerTest {
 
+
+    private String projName = "TestingGranCell_GENMOO";
+
     public GenesisFileManagerTest() 
     {
     }
 
 
-    @Before
-    public void setUp() 
+    @Before public void setUp()
     {
         System.out.println("---------------   setUp() GenesisFileManagerTest");
     }
     
-    private ProjectManager loadProject(String projectFile) throws ProjectFileParsingException
-    {
-
-        ProjectManager pm = new ProjectManager();
-        
-        pm.loadProject(new File(projectFile));
-        
-        return pm;
-    }
 
 
-    @Test public void testGenerateMooseScripts() throws ProjectFileParsingException, InterruptedException,  IOException, SimulationDataException, GenesisException
+    @Test public void testGenerateMooseScripts() throws ProjectFileParsingException, InterruptedException,  IOException, SimulationDataException, GenesisException, Exception
     {
         System.out.println("---  testGenerateMooseScripts...");
 
         generateScripts(true);
     }
 
-    @Test public void testGenerateGenesisScripts() throws ProjectFileParsingException, InterruptedException,  IOException, SimulationDataException, GenesisException
+    @Test public void testGenerateGenesisScripts() throws ProjectFileParsingException, InterruptedException,  IOException, SimulationDataException, GenesisException, Exception
     {
         System.out.println("---  testGenerateGenesisScripts...");
 
@@ -81,9 +74,11 @@ public class GenesisFileManagerTest {
     }
 
 
-    private void generateScripts(boolean moose) throws ProjectFileParsingException, InterruptedException,  IOException, SimulationDataException, GenesisException
+    private void generateScripts(boolean moose) throws ProjectFileParsingException, InterruptedException,  IOException, SimulationDataException, GenesisException, Exception
     {
         String sim = moose ? "MOOSE":"GENESIS";
+
+        //if (sim.equals("GENESIS")) return;
 
         System.out.println("generateScripts for "+sim);
 
@@ -93,10 +88,34 @@ public class GenesisFileManagerTest {
             return;
         }
         
-        ProjectManager pm = loadProject("testProjects/TestGenNetworks/TestGenNetworks.neuro.xml");
-        
-        Project proj = pm.getCurrentProject();
-        SimConfig sc = proj.simConfigInfo.getDefaultSimConfig();
+
+        File projDir = new File(MainTest.getTempProjectDirectory(), projName);
+
+        if (projDir.exists())
+        {
+            GeneralUtils.removeAllFiles(projDir, false, true, true);
+        }
+
+        System.out.println("Ex "+projDir.getCanonicalFile()+": "+ projDir.exists());
+        projDir.mkdir();
+
+
+        File projFile = new File(projDir, projName+".ncx");
+
+        File oldProjDir = new File(ProjectStructure.getnCModelsDir(), "GranuleCell");
+        File oldProj = new File(oldProjDir, "GranuleCell.ncx");
+
+        ProjectManager pm = new ProjectManager();
+
+        Project proj = pm.copyProject(oldProj, projFile);
+
+
+        System.out.println("Created project at: "+ proj.getProjectFile().getCanonicalPath());
+
+        SimConfig sc = proj.simConfigInfo.getSimConfig("OnlyVoltage");
+
+        proj.simulationParameters.setDt(0.01f);
+
                 
         pm.doGenerate(sc.getName(), 1234);
         
@@ -162,7 +181,7 @@ public class GenesisFileManagerTest {
 
             assertTrue(timesFile.exists());
 
-            Thread.sleep(wait);
+            Thread.sleep(wait*7);
 
             simData.initialise();
 
@@ -182,7 +201,11 @@ public class GenesisFileManagerTest {
 
             File simDataDir = new File(ProjectStructure.getSimulationsDir(proj.getProjectMainDirectory()), simName);
 
-            SimulationData sd = new SimulationData(simDataDir);
+            SimulationData sd = null;
+            double[] volts = new double[]{Float.NaN};
+            double[] times = new double[]{};
+
+            sd = new SimulationData(simDataDir);
 
             sd.initialise();
 
@@ -196,11 +219,11 @@ public class GenesisFileManagerTest {
 
             System.out.println("Data saved: "+ sd.getCellSegRefs(true));
 
-            String ref = "Pacemaker_0";
+            String ref = "Gran_0";
 
 
-            double[] volts = sd.getVoltageAtAllTimes(ref);
-			double[] times = sd.getAllTimes();
+            volts = sd.getVoltageAtAllTimes(ref);
+            times = sd.getAllTimes();
 
 
             System.out.println("volts: "+ volts.length+ ", times: "+ times.length);
@@ -212,7 +235,7 @@ public class GenesisFileManagerTest {
 
             System.out.println("Num spikeTimes for "+sim+": "+ spikeTimes.length);
 
-            int expectedNum = 76; // As checked through gui
+            int expectedNum = 20; // As checked through gui
 
             assertEquals(expectedNum, spikeTimes.length);
 
