@@ -350,7 +350,7 @@ public class CellMechanismInfo extends AbstractTableModel
     /**
      * Added to allow storing of data by XMLEncoder. Should not normally be called!!!
      */
-    public Vector getAllCellMechanisms()
+    public Vector<CellMechanism> getAllCellMechanisms()
     {
         return allCellMechanisms;
     }

@@ -4651,13 +4651,17 @@ public class GenesisFileManager
             response.append("setfield " + timeFileElement + " table->table[{i}] {timeAtStep}\n");
         }
 
-        response.append("end\n\n\n");
+        response.append("end\n\n");
 
         
         if (useTablesToSave)
         {
             response.append("tab2file {strcat {targetDir} {\"" + SimulationData.getStandardTimesFilename()
                     + "\"}} "+timeFileElement+" table -nentries {{steps}+1} -overwrite\n\n");
+        }
+        else
+        {
+            response.append("call "+timeFileElement+" FLUSH\n\n");
         }
 
         response.append(postRunLines.toString()+"\n");

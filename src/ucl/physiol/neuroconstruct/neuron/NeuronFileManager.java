@@ -29,7 +29,6 @@ package ucl.physiol.neuroconstruct.neuron;
 import java.io.*;
 import java.util.*;
 
-import javax.swing.JOptionPane;
 import javax.vecmath.*;
 
 import ucl.physiol.neuroconstruct.cell.*;

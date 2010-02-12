@@ -119,7 +119,7 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener
         insetsPanel2.setBorder(border3);
         label1.setHorizontalAlignment(SwingConstants.LEFT);
         label1.setText("neuroConstruct v"+ GeneralProperties.getVersionNumber());
-        label3.setText("Copyright (c) 2009, Dept of Neuroscience, Pharmacology & Physiology, UCL");
+        label3.setText("Copyright (c) 2010, Dept of Neuroscience, Pharmacology & Physiology, UCL");
         label4.setText("Contact Padraig Gleeson (p.gleeson@ucl.ac.uk) for more information");
 
         label4.setToolTipText("This work is dedicated to the memory of Nancy Gleeson");

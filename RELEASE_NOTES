@@ -2,6 +2,19 @@ Release notes/change log for neuroConstruct
 
 See also the README file
 
+--------- Version 1.3.7 (Feb 2010) ---------
+
+Updated import/export of NeuroML when an Ion concentration is present in cell. This is in line with recent conversations on neuroml-channels@lists.sourceforge.net
+mailing list. Updated way GENESIS calculates "B" value for CaPool. Examples GranuleCell and GranCellLayer updated to reflect best practices of implementing CaPool/Ca
+dep K chan, etc. Python scripts added to test these on NEURON/GENESIS/MOOSE
+
+Minor bugfix: removed problem when generating code on Windows for NEURON when Cygwin is not installed locally. The 'date' system command was used to give textual
+output of the simulation start/stop time. This is only available when Cygwin is installed. Code now checks existance of c:\cygwin or c:\Program Files\cygwin and
+uses date if these are found, doesn't otherwise.
+
+Bug fixed in 3d visualisation. Transparency checkbox now works as before.
+
+
 --------- Version 1.3.6 (Jan 2010) ---------
 
 Much improved MOOSE support. The very latest version of MOOSE from their Subversion repository should be used. The majority of projects which could run on
