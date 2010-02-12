@@ -163,7 +163,8 @@
            debug="${debug}"
            optimize="${optimize}"
            compiler="modern"
-           source="1.5">
+           source="1.5"
+           target="1.5">
       <classpath refid="compile.class.path"/>
       <compilerarg value="-Xlint:serial"/> <!-- As cells can be stored as Java serialised objs, essential to have this check-->
     </javac>

@@ -87,6 +87,21 @@ public class GeneratedElecInputs
                                String cellGroup,
                                int cellNumber,
                                int segmentId,
+                               float fractionAlong)
+    {
+        addSingleInput(inputReference,
+                               inputType,
+                               cellGroup,
+                               cellNumber,
+                               segmentId,
+                               fractionAlong);
+    }
+    
+    public void addSingleInput(String inputReference,
+                               String inputType,
+                               String cellGroup,
+                               int cellNumber,
+                               int segmentId,
                                float fractionAlong,
                                InputInstanceProps ip)
     {
