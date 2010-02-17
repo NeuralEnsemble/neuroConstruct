@@ -113,12 +113,14 @@ public class ViewCanvas extends Canvas
 
         this.addMouseMotionListener(new java.awt.event.MouseMotionAdapter()
         {
+            @Override
             public void mouseMoved(MouseEvent e)
             {
                 //logger.logComment("Event: "+e);
                 this_mouseMoved(e);
             }
 
+            @Override
             public void mouseDragged(MouseEvent e)
             {
                 this_mouseMoved(e);
@@ -446,6 +448,7 @@ public class ViewCanvas extends Canvas
 
 
 
+    @Override
     public void repaint()
     {
         logger.logComment("Repainting...");
@@ -472,6 +475,7 @@ public class ViewCanvas extends Canvas
 
     }
 
+    @Override
     public void paint(Graphics g)
     {
         //long startTime = System.currentTimeMillis();
@@ -633,15 +637,15 @@ public class ViewCanvas extends Canvas
             red.addPoint(x, c.getRed());
             blue.addPoint(x, c.getBlue());
             green.addPoint(x, c.getGreen());
-            if ((x/10f)==(int)(x/10))
-            {
+           // if ((x/10f)==(int)(x/10))
+           // {
                 String ref = "Colour at "+x+" ms, "+(1000/x)+" Hz: "+c.toString();
                 DataSet newColorPoint = new DataSet(ref, ref, "", "", "", "");
                 newColorPoint.addPoint(x, 10);
                 newColorPoint.setGraphColour(c);
                 newColorPoint.setGraphFormat(PlotCanvas.USE_CIRCLES_FOR_PLOT);
                 frame.addDataSet(newColorPoint);
-            }
+           // }
         }
 
         frame.addDataSet(red);
