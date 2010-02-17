@@ -4842,7 +4842,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 if (jCheckBoxGenesisReload.isSelected())
                 {
-                    logger.logComment("Updating jCheckBoxGenesisReload...", true);
+                    logger.logComment("Updating jCheckBoxGenesisReload...");
 
                     jTextFieldGenesisReload.setEnabled(true);
                     //jTextFieldGenesisReload.setEditable(true);
@@ -4870,7 +4870,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 }
                 else
                 {
-                    logger.logComment("Upadting setReloadSimAfterSecs2...", true);
+                    logger.logComment("Updating setReloadSimAfterSecs2...");
                     projManager.getCurrentProject().genesisSettings.setReloadSimAfterSecs(-1);
                     jTextFieldGenesisReload.setEnabled(false);
                     //jTextFieldGenesisReload.setEditable(false);
@@ -4882,7 +4882,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 if (!jCheckBoxGenesisAbsRefract.isSelected())
                 {
-                    logger.logComment("Updating jCheckBoxGenesisAbsRefract...", true);
+                    logger.logComment("Updating jCheckBoxGenesisAbsRefract...");
 
                     jTextFieldGenesisAbsRefract.setEnabled(true);
                     try
@@ -4907,7 +4907,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 }
                 else
                 {
-                    logger.logComment("Updating setAbsRefract...", true);
+                    logger.logComment("Updating setAbsRefract...");
                     projManager.getCurrentProject().genesisSettings.setAbsRefractSpikegen(-1);
                     jTextFieldGenesisAbsRefract.setEnabled(false);
                     jTextFieldGenesisAbsRefract.repaint();
