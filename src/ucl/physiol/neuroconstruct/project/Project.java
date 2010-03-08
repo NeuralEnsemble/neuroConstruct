@@ -239,6 +239,9 @@ public class Project implements TableModelListener
 
         if (!projectFile.exists())
             throw new ProjectFileParsingException("The project file: "+projectFile.getAbsolutePath()+" does not exist!");
+
+        if (projectFile.isDirectory())
+            throw new ProjectFileParsingException("That \"project file\": "+projectFile.getAbsolutePath()+" is a directory!");
         
 
         try

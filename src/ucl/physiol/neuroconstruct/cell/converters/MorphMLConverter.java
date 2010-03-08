@@ -1191,7 +1191,8 @@ public class MorphMLConverter extends FormatImporter
             
             SimpleXMLElement rootElement = null;
             
-            if (level.equals(NeuroMLConstants.NEUROML_LEVEL_1))
+            if (version.equals(NeuroMLConstants.NEUROML_VERSION_1) &&
+                level.equals(NeuroMLConstants.NEUROML_LEVEL_1))
             {
                 rootElement = new SimpleXMLElement(MorphMLConstants.ROOT_ELEMENT);
 
@@ -1208,8 +1209,9 @@ public class MorphMLConverter extends FormatImporter
                                                             +"  " +MorphMLConstants.DEFAULT_SCHEMA_FILENAME));
 
             }
-            else if (level.equals(NeuroMLConstants.NEUROML_LEVEL_2) ||
-                     level.equals(NeuroMLConstants.NEUROML_LEVEL_3))
+            else if (version.equals(NeuroMLConstants.NEUROML_VERSION_1) &&
+                     (level.equals(NeuroMLConstants.NEUROML_LEVEL_2) ||
+                     level.equals(NeuroMLConstants.NEUROML_LEVEL_3)))
             {
                 rootElement = new SimpleXMLElement(NeuroMLConstants.ROOT_ELEMENT);
 
@@ -1239,6 +1241,23 @@ public class MorphMLConverter extends FormatImporter
                 rootElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC,
                                                                 NeuroMLConstants.NAMESPACE_URI
                                                                 + "  " + NeuroMLConstants.DEFAULT_SCHEMA_FILENAME));
+
+            }
+            else if (version.equals(NeuroMLConstants.NEUROML_VERSION_2) &&
+                     level.equals(NeuroMLConstants.NEUROML_VERSION_2_COMPLETE))
+            {
+                rootElement = new SimpleXMLElement(NeuroMLConstants.ROOT_ELEMENT);
+
+                rootElement.addNamespace(new SimpleXMLNamespace("", NeuroMLConstants.NAMESPACE_URI_VERSION_2));
+
+
+
+                rootElement.addNamespace(new SimpleXMLNamespace(NeuroMLConstants.XSI_PREFIX,
+                                                                NeuroMLConstants.XSI_URI));
+
+                rootElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC,
+                                                                NeuroMLConstants.NAMESPACE_URI_VERSION_2
+                                                                + "  " + NeuroMLConstants.DEFAULT_SCHEMA_FILENAME_VERSION_2));
 
             }
 

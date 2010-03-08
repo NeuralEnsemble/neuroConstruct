@@ -593,6 +593,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JRadioButton jRadioButtonNeuroMLLevel1 = new JRadioButton();
     JRadioButton jRadioButtonNeuroMLLevel2 = new JRadioButton();
     JRadioButton jRadioButtonNeuroMLLevel3 = new JRadioButton();
+    JRadioButton jRadioButtonNeuroMLV2 = new JRadioButton();
     //JRadioButton jRadioButtonNeuroMLCellChan = new JRadioButton();
 
     ButtonGroup buttonGroupNeuroML = new ButtonGroup();
@@ -1219,11 +1220,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jRadioButtonNeuroMLLevel1.setText("Level 1 (Anatomy only)");
         jRadioButtonNeuroMLLevel2.setText("Level 2 (L1 & cell biophysics)");
         jRadioButtonNeuroMLLevel3.setText("Level 3 (L2 & network aspects)");
+        jRadioButtonNeuroMLV2.setText("NeuroML v2.0 (alpha)");
         //jRadioButtonNeuroMLCellChan.setText("L3 & channel details");
 
         buttonGroupNeuroML.add(jRadioButtonNeuroMLLevel1);
         buttonGroupNeuroML.add(jRadioButtonNeuroMLLevel2);
         buttonGroupNeuroML.add(jRadioButtonNeuroMLLevel3);
+        buttonGroupNeuroML.add(jRadioButtonNeuroMLV2);
         //buttonGroupNeuroML.add(jRadioButtonNeuroMLCellChan);
 
         jButtonNeuroMLExport.setEnabled(false);
@@ -1236,11 +1239,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             public void actionPerformed(ActionEvent e)
             {
                 if (jRadioButtonNeuroMLLevel1.isSelected())
-                    jButtonNeuroMLExport_actionPerformed(e, NeuroMLConstants.NEUROML_LEVEL_1);
+                    jButtonNeuroMLExport_actionPerformed(e, NeuroMLConstants.NEUROML_LEVEL_1, NeuroMLConstants.NEUROML_VERSION_1);
                 else if (jRadioButtonNeuroMLLevel2.isSelected())
-                    jButtonNeuroMLExport_actionPerformed(e, NeuroMLConstants.NEUROML_LEVEL_2);
+                    jButtonNeuroMLExport_actionPerformed(e, NeuroMLConstants.NEUROML_LEVEL_2, NeuroMLConstants.NEUROML_VERSION_1);
                 else if (jRadioButtonNeuroMLLevel3.isSelected())
-                    jButtonNeuroMLExport_actionPerformed(e, NeuroMLConstants.NEUROML_LEVEL_3);
+                    jButtonNeuroMLExport_actionPerformed(e, NeuroMLConstants.NEUROML_LEVEL_3, NeuroMLConstants.NEUROML_VERSION_1);
+                else if (jRadioButtonNeuroMLV2.isSelected())
+                    jButtonNeuroMLExport_actionPerformed(e, NeuroMLConstants.NEUROML_VERSION_2_COMPLETE, NeuroMLConstants.NEUROML_VERSION_2);
                // else if (jRadioButtonNeuroMLCellChan.isSelected()) {
                //     jButtonNeuroMLExport_actionPerformed(e, "Cells with channels"); //added by Matteo
                // }
@@ -2154,6 +2159,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLLevel1);
         jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLLevel2);
         jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLLevel3);
+        //////////////////jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLV2);
 //        jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLCellChan);
         jRadioButtonNeuroMLLevel2.setSelected(true);
         
@@ -13133,7 +13139,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     }
 
-    void jButtonNeuroMLExport_actionPerformed(ActionEvent e, String level)
+    void jButtonNeuroMLExport_actionPerformed(ActionEvent e, String level, String version)
     {
 
         logger.logComment("Saving the cell morphologies in NeuroML form...");
@@ -13143,42 +13149,16 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         File neuroMLDir = ProjectStructure.getNeuroMLDir(proj.getProjectMainDirectory());
 
         GeneralUtils.removeAllFiles(neuroMLDir, false, false, false);
-        /*
-        if (level.equals("Cells with channels"))
-        {
-            for (int i = 0; i <  (proj.cellManager.getNumberCellTypes()); i++) 
-            {
-                String cellName = proj.cellManager.getAllCellTypeNames().get(i);
-                logger.logComment("saving cell type "+ cellName +" with all the channels details in a XML file");  
-                File cellFile = new File(neuroMLDir,
-                                    cellName
-                                    + ProjectStructure.getMorphMLFileExtension());
-                
-                try 
-                {
-                    ProjectManager.saveCompleteCellXML(proj, cellFile, false, false, cellName);
-                } 
-                catch (NeuroMLException ex)
-                {
-                    logger.logComment("Unable to save cell type "+ cellName);  
-                }
-            }
 
-        }
-        
-        else
-            
-        {*/
 
         MorphCompartmentalisation mc = (MorphCompartmentalisation)jComboBoxNeuroMLComps.getSelectedItem();
 
-   
         try
         {
             MorphMLConverter.saveAllCellsInNeuroML(proj, 
                                                    mc,
                                                    level,
-                                                   NeuroMLConstants.NEUROML_VERSION_1,
+                                                   version,
                                                    null,
                                                    neuroMLDir);
         }

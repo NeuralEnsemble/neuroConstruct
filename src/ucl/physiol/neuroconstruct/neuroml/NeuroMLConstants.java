@@ -46,12 +46,18 @@ public class NeuroMLConstants
     public static String NEUROML_VERSION_1 = "1.x";
     
     public static String NEUROML_VERSION_2 = "2.x";
+    
+    public static String NEUROML_VERSION_2_COMPLETE = "Full Cell v2.0";
 
     public static String ROOT_ELEMENT = "neuroml";
 
     public static String NAMESPACE_URI = "http://morphml.org/neuroml/schema";
 
+    public static String NAMESPACE_URI_VERSION_2 = "http://www.neuroml.org/schema/neuroml";
+
     public static String DEFAULT_SCHEMA_FILENAME = "NeuroML.xsd";
+
+    public static String DEFAULT_SCHEMA_FILENAME_VERSION_2 = "NeuroML_v2.0.xsd";
 
 
     /**
