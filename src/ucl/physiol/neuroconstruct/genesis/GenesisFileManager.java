@@ -3854,7 +3854,8 @@ public class GenesisFileManager
         }
 
 
-        if (project.genesisSettings.getReloadSimAfterSecs()>0)
+        if (project.genesisSettings.getReloadSimAfterSecs()>0 &&
+            MainApplication.isGUIBasedStartupMode())
         {
             logger.logComment("Going to reload data from: "+getDirectoryForSimulationFiles());
             SimulationData sd;
