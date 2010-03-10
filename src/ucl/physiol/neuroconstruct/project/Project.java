@@ -1674,7 +1674,15 @@ public class Project implements TableModelListener
 
     public String getProjectFullFileName() throws NoProjectLoadedException
     {
-        return currentProjectFile.getAbsolutePath();
+        try 
+        {
+           String file = currentProjectFile.getCanonicalPath();
+           return file;
+        }
+        catch (IOException ex)
+        {
+            throw new NoProjectLoadedException("Problem resolving project file: "+currentProjectFile, ex);
+        }
     }
 
     public File getProjectFile()

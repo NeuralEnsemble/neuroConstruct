@@ -5262,7 +5262,7 @@ public class NeuronFileManager
                     {
                         //rt.exec(fullCommand, envParams);#
                         
-                        logger.logComment("== <" + fullCommand+">", true);
+                        logger.logComment("== <" + fullCommand+">");
                         
                         ProcessManager.runCommand(fullCommand, pf, 4);
 

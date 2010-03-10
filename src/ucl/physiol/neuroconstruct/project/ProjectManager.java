@@ -142,10 +142,10 @@ public class ProjectManager implements GenerationReport
                 info.append("No. Morph Net Conns: " + activeProject.morphNetworkConnectionsInfo.getNumSimpleNetConns() + "\n");
                 info.append("No. Vol Net Conns:   " + activeProject.volBasedConnsInfo.getNumConns() + "\n");
                 info.append("No. Inputs:          " + activeProject.elecInputInfo.getAllStims().size() + "\n");
-            } 
-            catch (NoProjectLoadedException ex) 
+            }
+            catch (NoProjectLoadedException ex)
             {
-                info.append("No project loaded!"+"/n");
+                info.append("No project loaded!"+"/n"+ex.getMessage()+"\n");
             }
         }
         

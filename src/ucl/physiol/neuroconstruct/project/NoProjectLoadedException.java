@@ -40,5 +40,10 @@ public class NoProjectLoadedException extends Exception
     public NoProjectLoadedException()
     {
     }
+    
+    public NoProjectLoadedException(String message, Throwable e)
+    {
+        super(message, e);
+    }
 
 }
