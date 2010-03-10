@@ -1399,7 +1399,7 @@ public class SimulationData
             if (pso!=null) synInfo =  " (synapse: "+pso.getSynRef()+")";
             String info = "DataStore"+synInfo+" for "+variable+" on segment: "+segId+" on "+ getCellRef();
 
-            info = info + ": ("+dataPoints[0]+", "+dataPoints[1]+", ... ["+dataPoints.length+" entries])";
+            info = info + ": ("+(float)dataPoints[0]+", "+(float)dataPoints[1]+", ... ["+dataPoints.length+" entries])";
 
             return info;
         }

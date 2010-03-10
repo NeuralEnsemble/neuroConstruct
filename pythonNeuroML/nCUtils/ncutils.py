@@ -16,16 +16,26 @@ import time
 from java.io import File
 
 
-from ucl.physiol.neuroconstruct.neuron import NeuronFileManager
-
-from ucl.physiol.neuroconstruct.nmodleditor.processes import ProcessManager
+from ucl.physiol.neuroconstruct.cell.utils import CellTopologyHelper
 from ucl.physiol.neuroconstruct.cell.compartmentalisation import GenesisCompartmentalisation
-from ucl.physiol.neuroconstruct.utils.units import UnitConverter
+
+from ucl.physiol.neuroconstruct.gui.plotter import PlotManager
+from ucl.physiol.neuroconstruct.gui.plotter import PlotCanvas
+
+from ucl.physiol.neuroconstruct.dataset import DataSet
+
+from ucl.physiol.neuroconstruct.neuron import NeuronFileManager
+from ucl.physiol.neuroconstruct.nmodleditor.processes import ProcessManager
+
+from ucl.physiol.neuroconstruct.project import SimPlot
+from ucl.physiol.neuroconstruct.project import ProjectManager
 
 from ucl.physiol.neuroconstruct.simulation import SimulationData
-from ucl.physiol.neuroconstruct.gui.plotter import PlotManager
-from ucl.physiol.neuroconstruct.project import SimPlot
-from ucl.physiol.neuroconstruct.cell.utils import CellTopologyHelper
+from ucl.physiol.neuroconstruct.simulation import SpikeAnalyser
+
+from ucl.physiol.neuroconstruct.utils.units import UnitConverter
+from ucl.physiol.neuroconstruct.utils import NumberGenerator
+
 
 
 
@@ -44,15 +54,15 @@ def getUnusedSimRef(project, simRefPrefix="P_Sim_"):
 
 
 def generateAndRunGenesis(project,
-                         projectManager,
-                         simConfig,
-                         simRef,
-                         simulatorSeed,
-                         verbose=True,
-                         quitAfterRun=False,
-                         runInBackground=False,
-                         units=-1,
-                         symmetricComps=False):
+                          projectManager,
+                          simConfig,
+                          simRef,
+                          simulatorSeed,
+                          verbose=True,
+                          quitAfterRun=False,
+                          runInBackground=False,
+                          units=-1,
+                          symmetricComps=False):
 
     prefix = "--- GENESIS gen:  "
 
@@ -73,9 +83,9 @@ def generateAndRunGenesis(project,
     compartmentalisation = GenesisCompartmentalisation()
 
     project.genesisFileManager.generateTheGenesisFiles(simConfig,
-                                                            None,
-                                                            compartmentalisation,
-                                                            simulatorSeed)
+                                                       None,
+                                                       compartmentalisation,
+                                                       simulatorSeed)
 
     success = projectManager.doRunGenesis(simConfig)
 
@@ -89,14 +99,14 @@ def generateAndRunGenesis(project,
 
 
 def generateAndRunMoose(project,
-                         projectManager,
-                         simConfig,
-                         simRef,
-                         simulatorSeed,
-                         verbose=True,
-                         quitAfterRun=False,
-                         runInBackground=False,
-                         units=-1):
+                        projectManager,
+                        simConfig,
+                        simRef,
+                        simulatorSeed,
+                        verbose=True,
+                        quitAfterRun=False,
+                        runInBackground=False,
+                        units=-1):
 
     prefix = "--- MOOSE gen:    "
 
@@ -115,9 +125,9 @@ def generateAndRunMoose(project,
     compartmentalisation = GenesisCompartmentalisation()
 
     project.genesisFileManager.generateTheGenesisFiles(simConfig,
-                                                            None,
-                                                            compartmentalisation,
-                                                            simulatorSeed)
+                                                       None,
+                                                       compartmentalisation,
+                                                       simulatorSeed)
 
     success = projectManager.doRunGenesis(simConfig)
 
@@ -130,13 +140,12 @@ def generateAndRunMoose(project,
 
 
 def generateAndRunPsics(project,
-                         projectManager,
-                         simConfig,
-                         simRef,
-                         simulatorSeed,
-                         verbose=True,
-                         quitAfterRun=False,
-                         runInBackground=False):
+                        projectManager,
+                        simConfig,
+                        simRef,
+                        simulatorSeed,
+                        verbose=True,
+                        runInBackground=False):
 
     prefix = "--- PSICS gen:    "
 
@@ -206,7 +215,7 @@ def generateAndRunNeuron(project,
             print prefix+"Set running NEURON simulation: "+simRef
         else:
             print prefix+"Problem running NEURON simulation: "+simRef
-
+ 
         return success
 
     else:
@@ -217,14 +226,15 @@ def generateAndRunNeuron(project,
         
 class SimulationManager():
 
+
     def __init__(self,
-                 project,
-                 projectManager,
-                 numConcurrentSims = 2,
+                 projFile,
+                 numConcurrentSims,
                  verbose =           True):
-                     
-        self.project = project
-        self.projectManager = projectManager
+
+        self.projectManager = ProjectManager()
+        self.project = self.projectManager.loadProject(projFile)
+        
         self.numConcurrentSims = numConcurrentSims
         self.verbose = verbose
 
@@ -232,14 +242,16 @@ class SimulationManager():
         self.printver("This will run up to %i simulations concurrently"%numConcurrentSims)
 
 
+
+
     def printver(self, message):
         if self.verbose:
             print "--- SimMgr:       "+ str(message)
 
-    
 
     allRunningSims = []
     allFinishedSims = []
+
 
     def updateSimsRunning(self):
 
@@ -247,13 +259,13 @@ class SimulationManager():
                 timeFile = File(self.project.getProjectMainDirectory(), "simulations/"+sim+"/time.dat")
                 timeFile2 = File(self.project.getProjectMainDirectory(), "simulations/"+sim+"/time.txt") # for PSICS...
 
-                self.printver("Checking file: "+timeFile.getAbsolutePath() +", exists: "+ str(timeFile.exists()))
+                self.printver("Checking file: "+timeFile.getCanonicalPath() +", exists: "+ str(timeFile.exists()))
 
                 if (timeFile.exists()):
                         self.allFinishedSims.append(sim)
                         self.allRunningSims.remove(sim)
                 else:
-                    self.printver("Checking file: "+timeFile2.getAbsolutePath() +", exists: "+ str(timeFile2.exists()))
+                    self.printver("Checking file: "+timeFile2.getCanonicalPath() +", exists: "+ str(timeFile2.exists()))
                     if (timeFile2.exists()):
                         self.allFinishedSims.append(sim)
                         self.allRunningSims.remove(sim)
@@ -264,20 +276,20 @@ class SimulationManager():
 
     def doCheckNumberSims(self):
 
-        self.printver("Simulations (out of max %s) currently running: %s"%(self.numConcurrentSims, str(self.allRunningSims)))
+        self.printver("%i simulations out of max %s currently running: %s"%(len(self.allRunningSims), self.numConcurrentSims, str(self.allRunningSims)))
 
         while (len(self.allRunningSims)>=self.numConcurrentSims):
-            self.printver("Waiting...")
+            self.printver("Waiting for another simulation slot to become available...")
             time.sleep(4) # wait a while...
             self.updateSimsRunning()
 
 
 
     def reloadSims(self,
-                  waitForAllSimsToFinish =    True,
-                  plotSims =                  True,
-                  analyseSims =               True,
-                  plotVoltageOnly =           False):
+                   waitForAllSimsToFinish =    True,
+                   plotSims =                  True,
+                   analyseSims =               True,
+                   plotVoltageOnly =           False):
 
 
         self.printver("Trying to reload sims: "+str(self.allFinishedSims))
@@ -350,7 +362,7 @@ class SimulationManager():
 
             self.printver("Waiting for sims: %s to finish..."%str(self.allRunningSims))
 
-            time.sleep(2) # wait a while...
+            time.sleep(1) # wait a while...
             self.updateSimsRunning()
             self.reloadSims(True)
 
@@ -359,21 +371,25 @@ class SimulationManager():
     def runMultipleSims(self,
                         simConfigs =            ["Default Simulation Configuration"],
                         maxElecLens =           [-1],
-                        simDt =                 -1,
+                        simDt =                 None,
                         neuroConstructSeed =    12345,
                         simulatorSeed =         11111,
                         simulators =            ["NEURON", "GENESIS_PHYS"],
                         runSims =               True,
                         verboseSims =           True,
                         runInBackground =       False,
-                        varTimestepNeuron =     -1):
+                        varTimestepNeuron =     None,
+                        simRefGlobalSuffix =    '',
+                        simRefGlobalPrefix =    ''):
 
+
+        allSimsSetRunning = []
 
         for simConfigName in simConfigs:
 
           for maxElecLen in maxElecLens:
 
-            if simDt != -1:
+            if simDt is not None:
                 self.project.simulationParameters.setDt(simDt)
 
             simConfig = self.project.simConfigInfo.getSimConfig(simConfigName)
@@ -395,7 +411,7 @@ class SimulationManager():
 
             while self.projectManager.isGenerating():
                     self.printver("Waiting for the project to be generated with Simulation Configuration: "+str(simConfig))
-                    time.sleep(1)
+                    time.sleep(0.5)
 
 
             self.printver("Generated network with %i cell(s)" % self.project.generatedCellPositions.getNumberInAllCellGroups())
@@ -409,14 +425,14 @@ class SimulationManager():
 
             if simulators.count("NEURON")>0:
 
-                simRef = simRefPrefix+"_N"+recompSuffix
+                simRef = simRefGlobalPrefix + simRefPrefix+"_N"+recompSuffix + simRefGlobalSuffix
                 self.project.simulationParameters.setReference(simRef)
 
-                if varTimestepNeuron == -1:
+                if varTimestepNeuron is None:
                     varTimestepNeuron = self.project.neuronSettings.isVarTimeStep()
 
                 if runSims:
-                    generateAndRunNeuron(self.project,
+                    success = generateAndRunNeuron(self.project,
                                          self.projectManager,
                                          simConfig,
                                          simRef,
@@ -424,19 +440,20 @@ class SimulationManager():
                                          verbose=verboseSims,
                                          runInBackground=runInBackground,
                                          varTimestep=varTimestepNeuron)
-
-                self.allRunningSims.append(simRef)
+                    if success:
+                        self.allRunningSims.append(simRef)
+                        allSimsSetRunning.append(simRef)
 
 
             self.doCheckNumberSims()
 
             if simulators.count("PSICS")>0:
 
-                simRef = simRefPrefix+"_P"+recompSuffix
-                project.simulationParameters.setReference(simRef)
+                simRef = simRefGlobalPrefix + simRefPrefix+"_P"+recompSuffix + simRefGlobalSuffix
+                self.project.simulationParameters.setReference(simRef)
 
                 if runSims:
-                    generateAndRunPsics(self.project,
+                    success = generateAndRunPsics(self.project,
                                         self.projectManager,
                                         simConfig,
                                         simRef,
@@ -444,7 +461,10 @@ class SimulationManager():
                                         verbose=verboseSims,
                                         runInBackground=runInBackground)
 
-                self.allRunningSims.append(simRef)
+                    if success:
+                        self.allRunningSims.append(simRef)
+                        allSimsSetRunning.append(simRef)
+
 
 
             self.doCheckNumberSims()
@@ -452,7 +472,7 @@ class SimulationManager():
             for sim in simulators:
               if "MOOSE" in sim:
 
-                simRef = simRefPrefix+"_M"+recompSuffix
+                simRef = simRefGlobalPrefix + simRefPrefix+"_M"+recompSuffix + simRefGlobalSuffix
 
                 units = -1 # leave as what's set in project
 
@@ -467,7 +487,7 @@ class SimulationManager():
 
 
                 if runSims:
-                    generateAndRunMoose(self.project,
+                    success = generateAndRunMoose(self.project,
                                         self.projectManager,
                                         simConfig,
                                         simRef,
@@ -477,16 +497,18 @@ class SimulationManager():
                                         runInBackground=runInBackground,
                                         units=units)
 
-                self.allRunningSims.append(simRef)
+                    if success:
+                        self.allRunningSims.append(simRef)
+                        allSimsSetRunning.append(simRef)
 
-                time.sleep(2) # wait a while before running GENESIS...
+                time.sleep(1) # wait a while before running GENESIS...
 
             self.doCheckNumberSims()
 
             for sim in simulators:
               if "GENESIS" in sim:
 
-                simRef = simRefPrefix+"_G"+recompSuffix
+                simRef = simRefGlobalPrefix + simRefPrefix+"_G"+recompSuffix + simRefGlobalSuffix
 
                 units = -1 # leave as what's set in project
 
@@ -500,7 +522,7 @@ class SimulationManager():
                 self.project.simulationParameters.setReference(simRef)
 
                 if runSims:
-                    generateAndRunGenesis(self.project,
+                    success = generateAndRunGenesis(self.project,
                                           self.projectManager,
                                           simConfig,
                                           simRef,
@@ -511,19 +533,21 @@ class SimulationManager():
                                           units=units,
                                           symmetricComps=False)
 
-                self.allRunningSims.append(simRef)
+                    if success:
+                        self.allRunningSims.append(simRef)
+                        allSimsSetRunning.append(simRef)
 
-                time.sleep(2) # wait a while before running GENESISsym...
+                time.sleep(1) # wait a while before running GENESISsym...
 
             self.doCheckNumberSims()
 
             if simulators.count("GENESISsym")>0:
 
-                simRef = simRefPrefix+"_Gs"+recompSuffix
+                simRef = simRefGlobalPrefix + simRefPrefix+"_Gs"+recompSuffix + simRefGlobalSuffix
                 self.project.simulationParameters.setReference(simRef)
 
                 if runSims:
-                    nc.generateAndRunGenesis(self.project,
+                    success = generateAndRunGenesis(self.project,
                                              self.projectManagerm,
                                              simConfig,
                                              simRef,
@@ -533,14 +557,161 @@ class SimulationManager():
                                              runInBackground=runInBackground,
                                              symmetricComps=True)
 
-                self.allRunningSims.append(simRef)
-
+                    if success:
+                        self.allRunningSims.append(simRef)
+                        allSimsSetRunning.append(simRef)
 
             self.updateSimsRunning()
+
+            self.printver("Finished setting running all simulations for: "+simConfigName)
             
+        return allSimsSetRunning
 
 
+    def generateFICurve(self,
+                        simulator,
+                        simConfigName,
+                        stimAmpLow,
+                        stimAmpInc,
+                        stimAmpHigh,
+                        stimDel,
+                        stimDur,
+                        simDuration,
+                        analyseStartTime,
+                        analyseStopTime,
+                        analyseThreshold,
+                        simPrefix =           'FI_',
+                        neuroConstructSeed =  1234,
+                        plotAllTraces =       False,
+                        verboseSims =         True):
+                             
+        simConfig = self.project.simConfigInfo.getSimConfig(simConfigName)
+
+        if simConfig == None:
+            raise NameError('No such Simulation configuration as: '+ simConfigName)
 
 
-        #if not plotSims:
-        #    sys.exit()
+        simConfig.setSimDuration(simDuration)
+
+        self.projectManager.doGenerate(simConfig.getName(), neuroConstructSeed)
+
+        while self.projectManager.isGenerating():
+            self.printver("Waiting for the project to be generated with Simulation Configuration: "+str(simConfig))
+            time.sleep(1)
+
+        numGenerated = self.project.generatedCellPositions.getNumberInAllCellGroups()
+
+        self.printver("Number of cells generated: " + str(numGenerated))
+
+        if numGenerated > 0:
+
+            self.printver("Generating scripts for simulator: %s..."%simulator)
+
+            if simulator == 'NEURON':
+                self.project.neuronFileManager.setQuitAfterRun(1) # Remove this line to leave the NEURON sim windows open after finishing
+                self.project.neuronSettings.setCopySimFiles(1) # 1 copies hoc/mod files to PySim_0 etc. and will allow multiple sims to run at once
+                self.project.neuronSettings.setGraphicsMode(0) # 0 hides graphs during execution
+
+            if simulator.count('GENESIS')>0 or simulator.count('MOOSE')>0:
+                self.project.genesisFileManager.setQuitAfterRun(1) # Remove this line to leave the NEURON sim windows open after finishing
+                self.project.genesisSettings.setCopySimFiles(1) # 1 copies hoc/mod files to PySim_0 etc. and will allow multiple sims to run at once
+                self.project.genesisSettings.setGraphicsMode(0) # 0 hides graphs during execution
+
+
+            stimAmp = stimAmpLow
+            
+            simRefsVsStims = {}
+
+            while stimAmp <= stimAmpHigh:
+
+                ########  Adjusting the amplitude of the current clamp ###############
+
+                stim = self.project.elecInputInfo.getStim(simConfig.getInputs().get(0))
+
+                stim.setAmp(NumberGenerator(stimAmp))
+                stim.setDel(NumberGenerator(stimDel))
+                stim.setDur(NumberGenerator(stimDur))
+
+                self.project.elecInputInfo.updateStim(stim)
+
+                self.printver("Next stim: "+ str(stim))
+
+
+                simRefs = self.runMultipleSims(simConfigs =          [simConfig.getName()],
+                                               simulators =          [simulator],
+                                               verboseSims =         verboseSims,
+                                               runInBackground =     True,
+                                               simRefGlobalPrefix =  simPrefix,
+                                               simRefGlobalSuffix =  ("_"+str(float(stimAmp))))
+                                               
+                simRefsVsStims[simRefs[0]] = stimAmp # should be just one simRef returned...
+
+                stimAmp = stimAmp + stimAmpInc
+
+            while (len(self.allRunningSims)>0):
+                self.printver("Waiting for all simulations to finish...")
+                time.sleep(1) # wait a while...
+                self.updateSimsRunning()
+
+
+            self.printver("Going to plot traces from recorded sims: %s"%str(simRefsVsStims))
+                    
+
+            plotFrameFI = PlotManager.getPlotterFrame("F-I curve from project: "+str(self.project.getProjectFile())+" on "+simulator , 0, 1)
+            
+            plotFrameVolts = PlotManager.getPlotterFrame("Voltage traces from project: "+str(self.project.getProjectFile())+" on "+simulator , 0, plotAllTraces)
+
+            plotFrameFI.setViewMode(PlotCanvas.INCLUDE_ORIGIN_VIEW)
+
+            info = "F-I curve for Simulation Configuration: "+str(simConfig)
+            
+            dataSet = DataSet(info, info, "nA", "Hz", "Current injected", "Firing frequency")
+            dataSet.setGraphFormat(PlotCanvas.USE_CIRCLES_FOR_PLOT)
+
+
+            simList = simRefsVsStims.keys()
+            simList.sort()
+
+            for sim in simList:
+
+              simDir = File(self.project.getProjectMainDirectory(), "/simulations/"+sim)
+              self.printver("--- Reloading data from simulation in directory: %s"%simDir.getCanonicalPath())
+
+              try:
+                  simData = SimulationData(simDir)
+                  simData.initialise()
+                  self.printver("Data loaded: ")
+                  self.printver(simData.getAllLoadedDataStores())
+
+                  times = simData.getAllTimes()
+                  cellSegmentRef = simConfig.getCellGroups().get(0)+"_0"
+                  volts = simData.getVoltageAtAllTimes(cellSegmentRef)
+
+                  traceInfo = "Voltage at: %s in simulation: %s"%(cellSegmentRef, sim)
+
+                  dataSetV = DataSet(traceInfo, traceInfo, "mV", "ms", "Membrane potential", "Time")
+                  for i in range(len(times)):
+                      dataSetV.addPoint(times[i], volts[i])
+
+                  if plotAllTraces:
+                    plotFrameVolts.addDataSet(dataSetV)
+
+                  spikeTimes = SpikeAnalyser.getSpikeTimes(volts, times, analyseThreshold, analyseStartTime, analyseStopTime)
+                  stimAmp = simRefsVsStims[sim]
+                  self.printver("Number of spikes at %f nA in sim %s: %i"%(stimAmp, sim, len(spikeTimes)))
+
+                  avgFreq = 0
+                  if len(spikeTimes)>1:
+                      avgFreq = len(spikeTimes)/ ((analyseStopTime - analyseStartTime)/1000.0)
+                      dataSet.addPoint(stimAmp,avgFreq)
+                  else:
+                      dataSet.addPoint(stimAmp,0)
+
+              except:
+                  self.printver("Error analysing simulation data from: %s"%simDir.getCanonicalPath())
+                  self.printver(sys.exc_info()[0])
+
+
+            plotFrameFI.addDataSet(dataSet)
+
+      
