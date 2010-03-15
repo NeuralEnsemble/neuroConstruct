@@ -253,11 +253,11 @@
   <!-- =================================================================== -->
   <target name="clean" depends="init"
           description="Removes built files">
-    <delete file="${jar.file}"/>
     <delete dir="${build.dest}"/>
     <mkdir dir="${build.dest}"/>
     <delete dir="${dist.dir}"/>
     <mkdir dir="${dist.dir}"/>
+    <delete file="${jar.file}"/>
   </target>
   
   <!-- =================================================================== -->

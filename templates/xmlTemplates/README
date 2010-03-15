@@ -6,6 +6,10 @@ in this directory to get the latest versions from the NeuroML SVN repository:
 svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/trunk/web/NeuroMLFiles/Examples/ Examples
 svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/trunk/web/NeuroMLFiles/Schemata/ Schemata
 
+If you have checked out the neuroConstruct source code from the neuroConstruct SVN repository, you 
+should be able to run ./updatenC.sh (Linux/Mac) or updatenC.bat (Windows) to update all of the required 
+files from the different repositories for a single consistent set of code/examples/NeuroML files, etc.
+
 The ChannelMLPrototypes directory outlines how some of the examples can be incorporated 
 as templates for channels in neuroConstruct
 

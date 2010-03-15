@@ -263,7 +263,16 @@ public class ProjectStructure
         String nChome = System.getenv(NC_HOME_ENV_VAR);
         if (nChome!=null)
         {
-            return new File(nChome);
+            if (nChome.startsWith("\"")) 
+                nChome = nChome.substring(1);
+            if (nChome.endsWith("\"")) 
+                nChome = nChome.substring(0, nChome.length()-1);
+            /*
+            System.out.println("nChome: "+ nChome);
+            System.out.println("nChome: "+ (new File(nChome)));
+            System.out.println("nChome: "+ (new File(nChome).getAbsoluteFile()));*/
+            
+            return new File(nChome).getAbsoluteFile();
         }
         return new File("").getAbsoluteFile(); // Use working directory
     }

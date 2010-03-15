@@ -62,7 +62,7 @@ if "%1"=="-make" (
 	echo Building the application from source...
 	mkdir classes
 	@echo on
-	javac  -sourcepath src -d classes -classpath %CLASSPATH%  %NC_HOME%/src/ucl/physiol/neuroconstruct/gui/*.java
+	javac  -sourcepath src -d classes -classpath %CLASSPATH%  %NC_HOME%/src/ucl/physiol/neuroconstruct/gui/MainApplication.java
 	@echo off
 	copy %NC_HOME%\src\ucl\physiol\neuroconstruct\gui\* %NC_HOME%\classes\ucl\physiol\neuroconstruct\gui  
   jar -cf neuroConstruct_%NC_VERSION%.jar -C classes .

@@ -93,6 +93,13 @@ Note that an example below <strong>Ex1_CreateNetworkML.py</strong> carries out a
 </p>
 
 <p>&nbsp;</p>
+<p>&nbsp;<a href="python/Ex7_ExtractNeuroML.py"><strong>Ex7_ExtractNeuroML.py</strong></a></p>
+<p>
+    This example opens a neuroConstruct project, and saves cells in NeuroML format. It accesses the utility method <strong>saveAllCellsInNeuroML(...)</strong>
+	in class <a href="http://www.neuroconstruct.org/api-latest/api/index.html?ucl/physiol/neuroconstruct/cell/converters/MorphMLConverter.html">MorphMLConverter</a>.
+</p>
+
+<p>&nbsp;</p>
 
 <p>&nbsp;<strong>Example of Python scripts in use</strong></p>
 

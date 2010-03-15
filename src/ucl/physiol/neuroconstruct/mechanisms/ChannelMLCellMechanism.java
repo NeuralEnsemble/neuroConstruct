@@ -104,9 +104,12 @@ public class ChannelMLCellMechanism extends XMLCellMechanism
             if (!absFile.exists())
             {
                 File readme = new File(ProjectStructure.getXMLTemplatesDir(), "README");
-                throw new ChannelMLException("Directory does not exist: "+ absFile.getAbsolutePath()+"\n" +
-                    "Check that the XML example files and XSL mappings for ChannelML have been downloaded. The latest version of these can\n" +
-                    "be obtained from the Sourceforge SVN repository as outlined in "+readme.getAbsolutePath());
+                throw new ChannelMLException("Directory does not exist: "+ absFile.getAbsolutePath()+"\n\n" +
+                    "Check that the NeuroML example files and XSL mappings for ChannelML have been downloaded. The latest version of these can\n" +
+                    "be obtained from the Sourceforge SVN repository as outlined in "+readme.getAbsolutePath()+"\n\n" +
+                    "If you have checked out the neuroConstruct source code from the neuroConstruct SVN repository, you should be able to run\n" +
+                    "./updatenC.sh (Linux/Mac) or updatenC.bat (Windows) to update all of the required files from the different repositories \n" +
+                    "for a single consistent set of code/examples/NeuroML files, etc.");
             }
 
             File newFile = GeneralUtils.copyFileIntoDir(absFile, dirForCMLFiles);
