@@ -15620,11 +15620,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                 {
                                     File nextFile = procImpl[j].getImplementingFileObject(otherProj, fbmp.getInstanceName());
 
-                                    logger.logComment("Copying file : "+nextFile, true);
+                                    logger.logComment("Copying file : "+nextFile);
 
                                     File newLocation = ProjectStructure.getDirForCellMechFiles(projManager.getCurrentProject(), newName, true);
 
-                                    logger.logComment("Into location: "+ newLocation, true);
+                                    logger.logComment("Into location: "+ newLocation);
 
                                     File newFile = null;
                                     try
@@ -15648,7 +15648,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                     ProjectStructure.getCellMechanismDir(otherProj.getProjectMainDirectory()),
                                     oldName);
 
-                                logger.logComment("Copying file : "+otherProjCellMechFilesLoc, true);
+                                logger.logComment("Copying file : "+otherProjCellMechFilesLoc);
 
                                 File thisProjCellMechFilesLoc = new File(
                                     ProjectStructure.getCellMechanismDir(projManager.getCurrentProject().getProjectMainDirectory()),
@@ -15656,13 +15656,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                                 thisProjCellMechFilesLoc.mkdir();
 
-                                logger.logComment("Into location: "+ thisProjCellMechFilesLoc, true);
+                                logger.logComment("Into location: "+ thisProjCellMechFilesLoc);
 
                                 GeneralUtils.copyDirIntoDir(otherProjCellMechFilesLoc, thisProjCellMechFilesLoc, false, true);
                                 
                                 File propsFile = new File(thisProjCellMechFilesLoc, CellMechanismHelper.PROPERTIES_FILENAME);
                                 
-                                logger.logComment("Initialising cell mech with props from: "+propsFile.getAbsolutePath(), true);
+                                logger.logComment("Initialising cell mech with props from: "+propsFile.getAbsolutePath());
 
                                 ChannelMLCellMechanism cmlCm = new ChannelMLCellMechanism();
 
@@ -15677,7 +15677,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                                     importedCellMech = cmlCm;
 
-                                   logger.logComment("CML Channel mech: "+ cmlCm.toString(), true);
+                                   logger.logComment("CML Channel mech: "+ cmlCm.toString());
                                 }
                                 catch (XMLMechanismException ex1)
                                 {
