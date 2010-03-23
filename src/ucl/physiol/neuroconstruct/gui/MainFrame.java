@@ -15428,7 +15428,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         // set to parent of project dir...
         File defaultDir = projManager.getCurrentProject().getProjectFile().getParentFile().getParentFile();
 
-
         Frame frame = (Frame)this;
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogType(JFileChooser.OPEN_DIALOG);
@@ -15550,24 +15549,23 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     }
 
 
-                    CellMechanism importedCellProc = otherProj.cellMechanismInfo.getCellMechanism(cellMechName);
+                    CellMechanism importedCellMech = otherProj.cellMechanismInfo.getCellMechanism(cellMechName);
 
                     logger.logComment("---  Imported cell mech: ");
-                    //importedCellProc.printDetails();
 
                     if (projManager.getCurrentProject().cellMechanismInfo.getAllCellMechanismNames().contains(cellMechName))
                     {
                         String oldName = new String(cellMechName);
 
 
-                        int useExisting = JOptionPane.showConfirmDialog(this, "This project already contains a Cell Process called "
-                                                          + importedCellProc.getInstanceName()
+                        int useExisting = JOptionPane.showConfirmDialog(this, "This project already contains a Cell Mechanism called "
+                                                          + importedCellMech.getInstanceName()
                                                           +". Do you want to use the current project's "
-                                                          +importedCellProc.getInstanceName()+" on the Cell:\n"
+                                                          +importedCellMech.getInstanceName()+" on the Cell:\n"
                                                           + importedCell.getInstanceName()
-                                                          +"?\n\nSelect No to import and rename the Cell Process as used in project: "
+                                                          +"?\n\nSelect No to import and rename the Cell Mechanism as used in project: "
                                                           + otherProj.getProjectName() + "?",
-                                                          "Use current Cell Process?",
+                                                          "Use current Cell Mechanism?",
                                                           JOptionPane.YES_NO_CANCEL_OPTION);
 
                         if (useExisting==JOptionPane.CANCEL_OPTION)
@@ -15577,9 +15575,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                         }
                         else if (useExisting==JOptionPane.NO_OPTION)
                         {
-                            String suggestedName = importedCellProc.getInstanceName()+"_"+otherProj.getProjectName();
+                            String suggestedName = importedCellMech.getInstanceName()+"_"+otherProj.getProjectName();
                             String newName = JOptionPane.showInputDialog(this,
-                                "Please enter another name for the Cell Process which is present on the Cell: "
+                                "Please enter another name for the Cell Mechanism which is present on the Cell: "
                                 + importedCell.getInstanceName(), suggestedName);
 
                             if (newName==null)
@@ -15589,7 +15587,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                             }
 
 
-                            importedCellProc.setInstanceName(newName);
+                            ///importedCellMech.setInstanceName(newName);
 
                             Hashtable chanMechVsGroups = importedCell.getChanMechsVsGroups();
                             Enumeration enumeration = chanMechVsGroups.keys();
@@ -15611,97 +15609,109 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                 }
                             }
 
-                            if (importedCellProc instanceof FileBasedMembraneMechanism)
+                            if (importedCellMech instanceof FileBasedMembraneMechanism)
                             {
                                 logger.logComment("Copying the impl file into the project");
-                                FileBasedMembraneMechanism fbmp = (FileBasedMembraneMechanism) importedCellProc;
+
+                                FileBasedMembraneMechanism fbmp = (FileBasedMembraneMechanism) importedCellMech;
                                 MechanismImplementation procImpl[] = fbmp.getMechanismImpls();
+
                                 for (int j = 0; j < procImpl.length; j++)
                                 {
                                     File nextFile = procImpl[j].getImplementingFileObject(otherProj, fbmp.getInstanceName());
-                                    //File newLocation = ProjectStructure.getFileBasedCellProcessesDir(projManager.getCurrentProject().getProjectMainDirectory(), true);##
-                                    File newLocation = ProjectStructure.getDirForCellMechFiles(otherProj, fbmp.getInstanceName());
+
+                                    logger.logComment("Copying file : "+nextFile, true);
+
+                                    File newLocation = ProjectStructure.getDirForCellMechFiles(projManager.getCurrentProject(), newName, true);
+
+                                    logger.logComment("Into location: "+ newLocation, true);
 
                                     File newFile = null;
                                     try
                                     {
-                                        newFile = GeneralUtils.copyFileIntoDir(nextFile,
-                                            newLocation);
-                                        ((FileBasedMembraneMechanism)importedCellProc).getMechanismImpls()[j].setImplementingFile(newFile.getName());
+                                        newFile = GeneralUtils.copyFileIntoDir(nextFile, newLocation);
+                                        ((FileBasedMembraneMechanism)importedCellMech).getMechanismImpls()[j].setImplementingFile(newFile.getName());
+                                        importedCellMech.setInstanceName(newName);
                                     }
                                     catch (IOException ex)
                                     {
-                                        GuiUtils.showErrorMessage(logger, "Problem when including new Cell Process", ex, this);
+                                        GuiUtils.showErrorMessage(logger, "Problem when including new Cell Mechanism", ex, this);
                                         return;
                                     }
                                 }
                             }
-                            else if (importedCellProc instanceof ChannelMLCellMechanism)
+                            else if (importedCellMech instanceof ChannelMLCellMechanism)
                             {
-                                logger.logComment("Copying the ChannelMLCellProcess files into the project");
-                                //ChannelMLCellMechanism cmlp = (ChannelMLCellMechanism) importedCellProc;
+                                logger.logComment("Copying the ChannelMLCellMechanism files into the project");
 
-                                File otherProjCellProcFilesLoc = new File(
+                                File otherProjCellMechFilesLoc = new File(
                                     ProjectStructure.getCellMechanismDir(otherProj.getProjectMainDirectory()),
                                     oldName);
 
-                                File thisProjCellProcFilesLoc = new File(
+                                logger.logComment("Copying file : "+otherProjCellMechFilesLoc, true);
+
+                                File thisProjCellMechFilesLoc = new File(
                                     ProjectStructure.getCellMechanismDir(projManager.getCurrentProject().getProjectMainDirectory()),
                                     newName);
 
-                                thisProjCellProcFilesLoc.mkdir();
+                                thisProjCellMechFilesLoc.mkdir();
 
-                                GeneralUtils.copyDirIntoDir(otherProjCellProcFilesLoc, thisProjCellProcFilesLoc, false, true);
+                                logger.logComment("Into location: "+ thisProjCellMechFilesLoc, true);
 
+                                GeneralUtils.copyDirIntoDir(otherProjCellMechFilesLoc, thisProjCellMechFilesLoc, false, true);
+                                
+                                File propsFile = new File(thisProjCellMechFilesLoc, CellMechanismHelper.PROPERTIES_FILENAME);
+                                
+                                logger.logComment("Initialising cell mech with props from: "+propsFile.getAbsolutePath(), true);
 
+                                ChannelMLCellMechanism cmlCm = new ChannelMLCellMechanism();
 
-
-                                /*
-                                ProcessImplementation procImpl[] = fbmp.getProcessImpls();
-                                for (int j = 0; j < procImpl.length; j++)
+                                cmlCm.initPropsFromPropsFile(propsFile);
+                                
+                                try
                                 {
-                                    File nextFile = procImpl[j].getImplementingFileObject(otherProj);
-                                    File newLocation = .getFileBasedCellProcessesDir(projManager.getCurrentProject().getProjectMainDirectory());
-                                    File newFile = null;
-                                    try
-                                    {
-                                        newFile = GeneralUtils.copyFileIntoDir(nextFile,
-                                            newLocation);
-                                        ((FileBasedMembraneProcess)importedCellProc).getProcessImpls()[j].setImplementingFile(newFile.getName());
-                                    }
-                                    catch (IOException ex)
-                                    {
-                                        GuiUtils.showErrorMessage(logger, "Problem when including new Cell Process", ex, this);
-                                        return;
-                                    }
-                                }*/
+                                    cmlCm.setInstanceName(newName);
+
+                                    cmlCm.initialise(projManager.getCurrentProject(), true);
+
+
+                                    importedCellMech = cmlCm;
+
+                                   logger.logComment("CML Channel mech: "+ cmlCm.toString(), true);
+                                }
+                                catch (XMLMechanismException ex1)
+                                {
+                                    GuiUtils.showErrorMessage(logger,
+                                                              "Error creating implementation of Cell Mechanism: " +
+                                                              newName,
+                                                              ex1,
+                                                              this);
+                                }
+
+
                             }
 
-
-
-                            projManager.getCurrentProject().cellMechanismInfo.addCellMechanism(importedCellProc);
+                            projManager.getCurrentProject().cellMechanismInfo.addCellMechanism(importedCellMech);
 
 
                         }
                         else
                         {
-                            logger.logComment("Using existing Cell Process...");
+                            logger.logComment("Using existing Cell Mech...");
                         }
 
 
                     }
                     else
                     {
-                        logger.logComment("Cell process: "+ importedCellProc.getInstanceName()+ " not already in proj...");
-                        projManager.getCurrentProject().cellMechanismInfo.addCellMechanism(importedCellProc);
-
-                        //String oldName = new String(cellProcName);
+                        logger.logComment("Cell Mech: "+ importedCellMech.getInstanceName()+ " not already in proj...");
+                        projManager.getCurrentProject().cellMechanismInfo.addCellMechanism(importedCellMech);
 
 
-                        if (importedCellProc instanceof FileBasedMembraneMechanism)
+                        if (importedCellMech instanceof FileBasedMembraneMechanism)
                         {
 
-                            FileBasedMembraneMechanism fbmp = (FileBasedMembraneMechanism) importedCellProc;
+                            FileBasedMembraneMechanism fbmp = (FileBasedMembraneMechanism) importedCellMech;
 
                             logger.logComment("Copying the impl files from: "+fbmp.getInstanceName()+" into the project");
 
@@ -15722,7 +15732,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                     newFile = GeneralUtils.copyFileIntoDir(nextFile,
                                                                            newLocation);
 
-                                    ((FileBasedMembraneMechanism)importedCellProc).getMechanismImpls()[j].setImplementingFile(newFile.getName());
+                                    ((FileBasedMembraneMechanism)importedCellMech).getMechanismImpls()[j].setImplementingFile(newFile.getName());
 
 
                                 }
@@ -15734,23 +15744,20 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                             }
                         }
-                        else if (importedCellProc instanceof ChannelMLCellMechanism)
+                        else if (importedCellMech instanceof ChannelMLCellMechanism)
                         {
                             logger.logComment("Copying the ChannelMLCellProcess files into the project");
                             //ChannelMLCellMechanism cmlp = (ChannelMLCellMechanism) importedCellProc;
 
-                            File otherProjCellProcFilesLoc = new File(
-                                ProjectStructure.getCellMechanismDir(otherProj.getProjectMainDirectory()),
+                            File otherProjCellMechFilesLoc = new File(ProjectStructure.getCellMechanismDir(otherProj.getProjectMainDirectory()),
                                 cellMechName);
 
-                            File thisProjCellProcFilesLoc = new File(
-                                ProjectStructure.getCellMechanismDir(projManager.getCurrentProject().
-                                                                     getProjectMainDirectory()),
+                            File thisProjCellMechFilesLoc = new File(ProjectStructure.getCellMechanismDir(projManager.getCurrentProject().getProjectMainDirectory()),
                                 cellMechName);
 
-                            thisProjCellProcFilesLoc.mkdir();
+                            thisProjCellMechFilesLoc.mkdir();
 
-                            GeneralUtils.copyDirIntoDir(otherProjCellProcFilesLoc, thisProjCellProcFilesLoc, false, true);
+                            GeneralUtils.copyDirIntoDir(otherProjCellMechFilesLoc, thisProjCellMechFilesLoc, false, true);
                         }
 
                     }
@@ -15771,6 +15778,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 projManager.getCurrentProject().markProjectAsEdited();
                 this.refreshAll();
+
+                GuiUtils.showInfoMessage(logger, "Warning",
+                                         "Cell successfully imported. You should save the project to make sure all new files are correctly stored!", this);
 
             }
             catch (Exception ex2)

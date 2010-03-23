@@ -33,9 +33,6 @@ import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.converters.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.utils.*;
-import ucl.physiol.neuroconstruct.utils.equation.Variable;
-import ucl.physiol.neuroconstruct.utils.equation.Expression;
-import ucl.physiol.neuroconstruct.utils.equation.EquationUnit;
 import ucl.physiol.neuroconstruct.utils.equation.*;
 
 /**
@@ -800,6 +797,7 @@ public class NeuronFileConverter
             }
         }
 
+        @Override
         public String toString()
         {
             return "ForLoop: "+ variableName +" ("+ start+" -> "+end+")";
@@ -870,6 +868,7 @@ public class NeuronFileConverter
             //return lines;
         }
 
+        @Override
         public String toString()
         {
             String[] individualLines = lines.split("\\n");

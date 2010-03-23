@@ -41,8 +41,11 @@ import ucl.physiol.neuroconstruct.utils.*;
 
 public class ProjectStructure
 {
+    private static ClassLogger logger = new ClassLogger("ProjectStructure");
+
     static
     {
+        //logger.setThisClassVerbose(true);
     }
    
     public ProjectStructure()
@@ -738,17 +741,32 @@ public class ProjectStructure
 
     public static File getDirForCellMechFiles(Project project, String cellMechName)
     {
+        return getDirForCellMechFiles(project, cellMechName, false);
+    }
+
+    public static File getDirForCellMechFiles(Project project, String cellMechName, boolean createIfNotFound)
+    {
         File projDir = project.getProjectMainDirectory();
 
         File dir = ProjectStructure.getCellMechanismDir(projDir, false);
 
+        logger.logComment("dir for all cell mechs: "+dir);
+
         if (dir != null && dir.exists())
         {
-            return new File(dir, cellMechName);
+            File f = new File(dir, cellMechName);
+
+            logger.logComment("dir for this cell mech: "+f);
+
+            if (createIfNotFound && !f.exists())
+            {
+                f.mkdir();
+            }
+            return f;
         }
         else
             // old method...
-            return new File(ProjectStructure.getCellProcessesDir(projDir, false),
+            return new File(ProjectStructure.getCellProcessesDir(projDir, createIfNotFound),
                             cellMechName);
     }
 
