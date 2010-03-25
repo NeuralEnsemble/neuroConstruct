@@ -50,7 +50,7 @@ public class MpiSettings
     public static final String MPICH_V2 = "MPICH v2.*";
     public static final String OPENMPI_V2 = "OPENMPI v2.*";
 
-    private String version = MPICH_V1;
+    public static final String DEFAULT_MPI_VERSION = MPICH_V1;
     
     public static final String LOCALHOST = "localhost";
 
@@ -92,6 +92,15 @@ public class MpiSettings
     public static final String LEGION_112PROC = "Legion (28 x 4p)";
     public static final String LEGION_128PROC = "Legion (32 x 4p)";
     public static final String LEGION_256PROC = "Legion (64 x 4p)";
+
+
+    /*
+     * Matthau & Lemmon are consist of 10x and 20x 8 core machines
+     */
+
+    public static final String MATTHAU = "matthau-5-";
+    public static final String LEMMON = "lemmon-5-";
+
     
     public static final String MACHINE_FILE = "machinesToUse";
     
@@ -107,10 +116,14 @@ public class MpiSettings
     {
 
         Hashtable<String, String> simulatorExecutables = new Hashtable<String, String>();
+        Hashtable<String, String> simulatorExecutablesML = new Hashtable<String, String>();
 
         simulatorExecutables.put("NEURON", "/home/ucgbpgl/nrnmpi/x86_64/bin/nrniv");
         simulatorExecutables.put("GENESIS", "/home/ucgbpgl/gen23/genesis");
         simulatorExecutables.put("MOOSE", "/home/ucgbpgl/moose/moose");
+
+        simulatorExecutablesML.put("NEURON", "/share/apps/neuro/nrn62_pympi/x86_64/bin/nrniv");
+        simulatorExecutablesML.put("MOOSE", "/share/apps/neuro/moose");
 
         // This is a 4 processor Linux machine in our lab. Auto ssh login is enabled to it from the
         // machine on which neuroConstruct is running. Jobs are set running directly on this machine
@@ -118,6 +131,12 @@ public class MpiSettings
                                                   "padraig",
                                                   "/home/padraig/nCsims",
                                                   simulatorExecutables);
+
+        // Login node for Matthau/Lemmon cluster
+        RemoteLogin matlemLogin = new RemoteLogin("128.16.14.177",
+                                                  "ucgbpgl",
+                                                  "/home/ucgbpgl/nCsims",
+                                                  simulatorExecutablesML);
 
         // Legion is the UCL supercomputing cluster. Legion operates the Torque batch queueing system
         // and the Moab scheduler, i.e. jobs aren't eecuted directly, but submitted to a queue and will
@@ -373,24 +392,70 @@ public class MpiSettings
             p.setQueueInfo(legionQueue);
             configurations.add(p);
         }
+
+
+        int[] mattNodes = new int[]{1,2,3, 4};
+
+        int[] mattProcs = new int[]{4,8};
+
+
+        for (int nodeNum: mattNodes)
+        {
+            for (int totalProcs: mattProcs)
+            {
+                String name = "Matthau_"+nodeNum+"_"+totalProcs+"PROCS";
+
+                if (getMpiConfiguration(name)==null)
+                {
+                    MpiConfiguration p = new MpiConfiguration(name);
+
+                    /*
+                    int numNodes = (int)Math.ceil(totalProcs/8.0);
+
+                    for (int node = 1;node<=numNodes;node++)
+                    {
+                        p.getHostList().add(new MpiHost(MATTHAU+node, Math.min(8, totalProcs - (node-1)*8), 1));
+                    }*/
+
+                    p.getHostList().add(new MpiHost(MATTHAU+nodeNum, totalProcs, 1));
+
+                    p.setRemoteLogin(matlemLogin);
+                    p.setMpiVersion(MpiSettings.OPENMPI_V2);
+                    p.setUseScp(true);
+                    configurations.add(p);
+
+                }
+            }
+        }
+
+        String name = "Matthau_Lemmon_Test";
+        MpiConfiguration p = new MpiConfiguration(name);
+        p.getHostList().add(new MpiHost(MATTHAU+1, 8, 1));
+        p.getHostList().add(new MpiHost(LEMMON+1, 8, 1));
+
+        p.setRemoteLogin(matlemLogin);
+        p.setMpiVersion(MpiSettings.OPENMPI_V2);
+        p.setUseScp(true);
+        configurations.add(p);
     }
 
-
+    /*
     public void setVersion(String version)
     {
         this.version = version;
-    }
+    }*/
 
-    public String getVersion()
+    protected static String getMPIVersion()
     {
         File mpichV1flag = new File("MPICH1");
         File mpichV2flag = new File("MPICH2");
         File openmpiV2flag = new File("MPI2");
+        
         if (mpichV1flag.exists()) return MPICH_V1;
         if (mpichV2flag.exists()) return MPICH_V2;
         if (openmpiV2flag.exists()) return OPENMPI_V2;
         
-        return this.version;
+        return DEFAULT_MPI_VERSION;
     }
 
     public ArrayList<MpiConfiguration> getMpiConfigurations()

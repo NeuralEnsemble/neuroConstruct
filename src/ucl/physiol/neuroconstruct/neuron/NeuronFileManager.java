@@ -4901,27 +4901,31 @@ public class NeuronFileManager
 
                     /*TODO: Move to hpc/mpi package...*/
 
+                    System.out.println("Generating for: "+ simConfig.getMpiConf().getMpiVersion()+", "+simConfig.getMpiConf().getMpiVersion().equals(MpiSettings.OPENMPI_V2));
+
                     if (simConfig.getMpiConf().isParallelNet())
                     {
-                        MpiSettings mpiSets = new MpiSettings();
                         
                         StringBuffer hostList = new StringBuffer("-map ");
                         
                         String hostSeperator = ":";
                         String mainCmd = "mpirun";
                         
-                        if (mpiSets.getVersion().equals(MpiSettings.OPENMPI_V2))
-                        {
+                        if (simConfig.getMpiConf().getMpiVersion().equals(MpiSettings.OPENMPI_V2))
+                        {                            
                             hostList = new StringBuffer("-host ");
                             hostSeperator = ",";
                             mpiFlags = "-mpi ";
+                            mainCmd = "mpiexec";
                         }
-                        else if (mpiSets.getVersion().equals(MpiSettings.MPICH_V2))
+                        else if (simConfig.getMpiConf().getMpiVersion().equals(MpiSettings.MPICH_V2))
                         {
                             hostSeperator = ",";
                             mpiFlags = "-mpi ";
                             mainCmd = "mpiexec";
                         }
+
+                        logger.logComment("MPI flags: "+ mpiFlags+", hostSeperator: "+ hostSeperator+", hostList: "+ hostList+", mainCmd: "+ mainCmd, true);
 
                         ArrayList<MpiHost> hosts = simConfig.getMpiConf().getHostList();
                         
@@ -4943,7 +4947,7 @@ public class NeuronFileManager
                         }
                         
                         
-                        if (mpiSets.getVersion().equals(MpiSettings.MPICH_V2))
+                        if (simConfig.getMpiConf().getMpiVersion().equals(MpiSettings.MPICH_V2))
                         {
                             
                         
@@ -5102,63 +5106,12 @@ public class NeuronFileManager
                             time = suggestedRemoteRunTime;
                         }
 
-                        /*
-                        int numCells = project.generatedCellPositions.getNumberInAllCellGroups();
-
-                        int totNseg = 0;
-
-                        for (String cg: simConfig.getCellGroups())
-                        {
-                            int numCellsHere = project.generatedCellPositions.getNumberInCellGroup(cg);
-
-                            if (numCellsHere>0)
-                            {
-                                int totNsegHere = 0;
-                                Cell c = project.cellManager.getCell(project.cellGroupsInfo.getCellType(cg));
-                                for(Section s: c.getAllSections())
-                                {
-                                    totNsegHere+=s.getNumberInternalDivisions();
-                                }
-                                totNseg +=(numCellsHere*totNsegHere);
-
-                            }
-                        }
-                        
-                        boolean check = true;
-                        int time = 5;
-
-                        while (simConfig.getMpiConf().getQueueInfo()!=null && check)
-                        {
-                            time = simConfig.getMpiConf().getQueueInfo().getWallTimeMins();
-
-                            String res = JOptionPane.showInputDialog("Simulation: "+project.simulationParameters.getReference()+
-                                    " to run for "+simConfig.getSimDuration()+" ms on "+simConfig.getMpiConf().getTotalNumProcessors()+" processor cores.\n" +
-                                    "Total number of cells: "+numCells+"\n" +
-                                    "Total number of nseg for all sections: "+totNseg+"\n" +
-                                    "nseg per core: "+totNseg/(float)simConfig.getMpiConf().getTotalNumProcessors()+"\n\n" +
-                                "Please enter the time in minutes of the run: ", time);
-
-                            if (res ==null)
-                            {
-                                return;
-                            }
-                        
-                            try
-                            {
-                                float val = Float.parseFloat(res);
-                                
-                                time = Math.max(1,(int)val);
-                                
-                                check = false;
-                            }
-                            catch (Exception e)
-                            {
-                                check = true;
-                            }
-                        }*/
+               
                         
 
-                        scriptText.append(simConfig.getMpiConf().getPushScript(project.getProjectName(), project.simulationParameters.getReference(), "NEURON"));
+                        scriptText.append(simConfig.getMpiConf().getPushScript(project.getProjectName(), 
+                                                                               project.simulationParameters.getReference(),
+                                                                               "NEURON"));
 
                         File simResultsDir = new File(ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()),
                                 project.simulationParameters.getReference());
@@ -5186,6 +5139,11 @@ public class NeuronFileManager
 
                             // bit of a hack...
                             rt.exec(new String[]{"chmod","u+x",submitJobFile.getAbsolutePath()});
+
+                            if (project.neuronSettings.isCopySimFiles())
+                            {
+                                GeneralUtils.copyFileIntoDir(submitJobFile, simResultsDir);
+                            }
 
                         }
 

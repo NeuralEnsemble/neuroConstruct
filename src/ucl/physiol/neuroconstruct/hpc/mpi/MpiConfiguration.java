@@ -52,6 +52,10 @@ public class MpiConfiguration
     
     private ArrayList<MpiHost> hostList = new ArrayList<MpiHost>();
 
+    private String mpiVersion = null;
+
+    private boolean useScp = false;
+
 
     private MpiConfiguration()
     {
@@ -61,6 +65,38 @@ public class MpiConfiguration
     {
         this.name = name;
     }
+
+    public String getMpiVersion()
+    {
+        if (this.mpiVersion==null)
+        {
+            return MpiSettings.getMPIVersion();
+        }
+        else
+        {
+            return this.mpiVersion;
+        }
+    }
+
+    public void setMpiVersion(String mpiVersion)
+    {
+        this.mpiVersion = mpiVersion;
+    }
+
+    public boolean isUseScp()
+    {
+        return useScp;
+    }
+
+    public void setUseScp(boolean useScp)
+    {
+        this.useScp = useScp;
+    }
+
+    
+
+
+
 
     public String getQueueSubmitScript(String projName, String simRef, int timeMins, String simulator)
     {
@@ -186,7 +222,6 @@ public class MpiConfiguration
     }
 
 
-
     public String getPushScript(String projName, String simRef, String simulator)
     {
 
@@ -207,14 +242,36 @@ public class MpiConfiguration
         scriptText.append("simDir=$projDir\"/\"$simRef\n");
         scriptText.append("\n");
         scriptText.append("echo \"Going to send files to dir: \"$simDir\" on \"$remoteHost\n");
+        scriptText.append("echo \"Local dir: \"$PWD\n");
         scriptText.append("\n");
-        scriptText.append("echo \"mpirun -map ");
+
+        String hostFlag = "-map ";
+        String hostSeperator = ":";
+        String mainCmd = "mpirun";
+        String mpiFlags = "";
+
+        if (getMpiVersion().equals(MpiSettings.OPENMPI_V2))
+        {
+            hostFlag = "-host ";
+            hostSeperator = ",";
+            mpiFlags = "-mpi ";
+            mainCmd = "mpiexec";
+        }
+        else if (getMpiVersion().equals(MpiSettings.MPICH_V2))
+        {
+            hostSeperator = ",";
+            mpiFlags = "-mpi ";
+            mainCmd = "mpiexec";
+        }
+
+
+        scriptText.append("echo \"cd $simDir;"+mainCmd+" "+hostFlag+" ");
 
         for (int i = 0; i < getHostList().size(); i++)
         {
             for (int j = 0; j < getHostList().get(i).getNumProcessors(); j++)
             {
-                if (!(i==0 && j==0)) scriptText.append(":");
+                if (!(i==0 && j==0)) scriptText.append(hostSeperator);
 
                 scriptText.append(getHostList().get(i).getHostname());
             }
@@ -222,7 +279,7 @@ public class MpiConfiguration
         }
 
 
-        scriptText.append(" \"$simulatorLocation\" \"$simDir\"/\"$projName\".hoc\">runmpi.sh\n");
+        scriptText.append(" \"$simulatorLocation\" "+mpiFlags+" \"$simDir\"/\"$projName\".hoc\">runmpi.sh\n");
         scriptText.append("\n");
         scriptText.append("chmod u+x runmpi.sh\n");
         scriptText.append("\n");
@@ -238,9 +295,8 @@ public class MpiConfiguration
         scriptText.append("\n");
 
         scriptText.append("echo \"Going to send to: $simDir on $remoteUser@$remoteHost\"\n");
-
-        boolean useScp = false;
-        if (useScp)
+        
+        if (isUseScp())
         {
             scriptText.append("scp $zipFile $remoteUser@$remoteHost:$simDir\n");
         }
@@ -261,7 +317,9 @@ public class MpiConfiguration
 
         if (queueInfo==null)
         {
-            scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;./runmpi.sh\"\n");
+            //scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;./runmpi.sh\"\n");
+
+            scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;ssh "+getHostList().get(0).getHostname()+" /bin/bash -ic  $simDir/runmpi.sh\"\n");
         }
         else
         {
@@ -326,7 +384,7 @@ public class MpiConfiguration
 
         pullScriptText.append("cd $localDir\n");
 
-        if (false)
+        if (isUseScp())
         {
             pullScriptText.append("scp $remoteUser@$remoteHost:$simDir\"/\"$zipFile $localDir\n");
         }
@@ -340,7 +398,9 @@ public class MpiConfiguration
         pullScriptText.append("\n");
         pullScriptText.append("tar xzf $zipFile\n");
         pullScriptText.append("rm $zipFile\n");
-        pullScriptText.append("rm pullFile.b\n\n");
+
+        if (!isUseScp()) pullScriptText.append("rm pullFile.b\n\n");
+
         pullScriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;rm $zipFile\"\n");
 
         return pullScriptText.toString();
@@ -482,6 +542,15 @@ public class MpiConfiguration
         {
             return false;
         }
+        if (this.mpiVersion != other.mpiVersion && (this.mpiVersion == null || !this.mpiVersion.equals(other.mpiVersion)))
+        {
+            return false;
+        }
+
+        if (this.isUseScp() != other.isUseScp() )
+        {
+            return false;
+        }
         return true;
     }
 
@@ -493,6 +562,8 @@ public class MpiConfiguration
         hash = 29 * hash + (this.remoteLogin != null ? this.remoteLogin.hashCode() : 0);
         hash = 29 * hash + (this.queueInfo != null ? this.queueInfo.hashCode() : 0);
         hash = 29 * hash + (this.hostList != null ? this.hostList.hashCode() : 0);
+        hash = 29 * hash + (this.mpiVersion != null ? this.mpiVersion.hashCode() : 0);
+        hash = 29 * hash + (isUseScp() ?  1:0);
         return hash;
     }
 
@@ -517,6 +588,11 @@ public class MpiConfiguration
         {
             mc2.setQueueInfo((QueueInfo)queueInfo.clone());
         }
+        if (mpiVersion!=null)
+        {
+            mc2.setMpiVersion(new String(mpiVersion));
+        }
+        mc2.setUseScp(this.isUseScp());
         
         return mc2;
     }
@@ -544,6 +620,14 @@ public class MpiConfiguration
         {
             info.append(" on "+remoteLogin.getHostname());
         }
+        if (this.mpiVersion!=null)
+        {
+            info.append(" ("+mpiVersion+")");
+        }
+        if (this.isUseScp())
+        {
+            info.append(" (scp)");
+        }
         
         info.append("\n");
         return info.toString();
@@ -559,7 +643,9 @@ public class MpiConfiguration
 
         for(int num=0;num<15;num++)
         {
-        System.out.println("Glob id: "+ num+" is on "+mc.getHostForGlobalId(num) +", "+ mc.getProcForGlobalId(num));
+            System.out.println("Glob id: "+ num+" is on "+mc.getHostForGlobalId(num) +", "+ mc.getProcForGlobalId(num));
         }
+
+        System.out.println(mc.toString());
     }
 }
