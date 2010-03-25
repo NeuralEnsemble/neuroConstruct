@@ -4977,7 +4977,8 @@ public class NeuronFileManager
                     StringBuffer scriptText = new StringBuffer();
 
                     
-                    if (GeneralUtils.isLinuxBasedPlatform() || simConfig.getMpiConf().isRemotelyExecuted())
+                    if ((GeneralUtils.isLinuxBasedPlatform() || simConfig.getMpiConf().isRemotelyExecuted())
+                            && !GeneralUtils.isMacBasedPlatform())
                     {
                         logger.logComment("Is linux platform...");
 
@@ -5034,7 +5035,7 @@ public class NeuronFileManager
                     }
                     else if (GeneralUtils.isMacBasedPlatform())
                     {
-                            logger.logComment("Assuming a Mac based machine...");
+                            logger.logComment("Assuming a Mac based machine it is...");
 
                             executable = basicCommLine.trim();
 
@@ -5106,12 +5107,10 @@ public class NeuronFileManager
                             time = suggestedRemoteRunTime;
                         }
 
-               
-                        
-
                         scriptText.append(simConfig.getMpiConf().getPushScript(project.getProjectName(), 
                                                                                project.simulationParameters.getReference(),
-                                                                               "NEURON"));
+                                                                               "NEURON",
+                                                                               dirToRunInFile));
 
                         File simResultsDir = new File(ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()),
                                 project.simulationParameters.getReference());
@@ -5147,14 +5146,11 @@ public class NeuronFileManager
 
                         }
 
-
-
                         File pullScriptFile = new File(simResultsDir, RemoteLogin.remotePullScriptName);
 
                         String pullScriptText = simConfig.getMpiConf().getPullScript(project.getProjectName(),
                                                                                      project.simulationParameters.getReference(),
                                                                                      ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()));
-
 
                         FileWriter fw = new FileWriter(pullScriptFile);
                         //scriptFile.se
@@ -5209,7 +5205,7 @@ public class NeuronFileManager
                     summary = summary+"]";
 
 
-                    logger.logComment("Going to execute "+summary);
+                    logger.logComment("Going to execute: "+summary);
 
                     if(envParams!=null && envParams.length>0)
                     {
