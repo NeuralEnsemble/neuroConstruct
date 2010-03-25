@@ -222,7 +222,7 @@ public class MpiConfiguration
     }
 
 
-    public String getPushScript(String projName, String simRef, String simulator)
+    public String getPushScript(String projName, String simRef, String simulator, File dirToRunIn)
     {
 
         boolean isNeuron = simulator.equals("NEURON");
@@ -230,6 +230,8 @@ public class MpiConfiguration
         StringBuffer scriptText = new StringBuffer();
 
         scriptText.append("#!/bin/bash -l\n\n");
+        scriptText.append("\n");
+        scriptText.append("cd "+dirToRunIn.getAbsolutePath()+"\n\n");
         scriptText.append("\n");
         scriptText.append("export simRef=\""+simRef+"\"\n");
         scriptText.append("export projName=\""+projName+"\"\n");
