@@ -3752,7 +3752,10 @@ public class GenesisFileManager
                     
                     String simName = mooseCompatMode() ? "MOOSE" : "GENESIS";
 
-                    scriptText.append(simConfig.getMpiConf().getPushScript(project.getProjectName(), project.simulationParameters.getReference(), simName));
+                    scriptText.append(simConfig.getMpiConf().getPushScript(project.getProjectName(),
+                                      project.simulationParameters.getReference(),
+                                      simName,
+                                      dirToRunFrom));
 
                     File simResultsDir = new File(ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()),
                             project.simulationParameters.getReference());
