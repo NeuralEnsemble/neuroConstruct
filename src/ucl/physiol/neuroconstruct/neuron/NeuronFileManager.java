@@ -4982,7 +4982,7 @@ public class NeuronFileManager
                     {
                         logger.logComment("Is linux platform...");
 
-                        if (basicCommLine.indexOf("konsole") >= 0)
+                        if (basicCommLine!=null && basicCommLine.indexOf("konsole") >= 0)
                         {
                             logger.logComment("Assume we're using KDE");
                             titleOpt = "--title";
@@ -4992,7 +4992,7 @@ public class NeuronFileManager
                             extraArgs = "-e /bin/bash ";
                             executable = basicCommLine.trim();
                         }
-                        else if (basicCommLine.indexOf("gnome") >= 0)
+                        else if (basicCommLine!=null && basicCommLine.indexOf("gnome") >= 0)
                         {
                             logger.logComment("Assume we're using Gnome");
                             titleOpt = "--title";
