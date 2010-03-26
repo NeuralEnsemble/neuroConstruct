@@ -394,7 +394,7 @@ public class MpiSettings
         }
 
 
-        int[] mattNodes = new int[]{1,2,3, 4};
+        int[] mattNodes = new int[]{2,3, 4, 5, 6};
 
         int[] mattProcs = new int[]{4,8};
 
