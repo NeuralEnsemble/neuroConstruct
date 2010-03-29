@@ -449,6 +449,8 @@
 
     <echo>Generated the website...</echo>
 
+    <copy file="./RELEASE_NOTES" todir="${website.dir}" />
+    <copy file="./docs/XML/neuroConstruct.xml" todir="${website.dir}" />
 
   </target>
 

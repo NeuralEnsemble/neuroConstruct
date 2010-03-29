@@ -83,7 +83,7 @@ which will be used to configure the chosen Forrest skin.
   <favicon-url>images/favicon.ico</favicon-url>
 
   <!-- The following are used to construct a copyright statement -->
-  <year>2009</year>
+  <year>2010</year>
   <vendor>UCL</vendor>
   <!-- The optional copyright-link URL will be used as a link in the
     copyright statement
@@ -369,6 +369,11 @@ which will be used to configure the chosen Forrest skin.
   -->
   <credits>
   <credit box-location="alt">
+      <name>Funding for this work was received from the Wellcome Trust</name>
+      <url>http://www.wellcome.ac.uk/</url>
+      <image>images/wct.png</image>
+    </credit>
+  <credit box-location="alt">
       <name>Funding for this work was received from the Medical Research Council</name>
       <url>http://www.mrc.ac.uk/</url>
       <image>images/mrcsmall.png</image>
@@ -377,11 +382,6 @@ which will be used to configure the chosen Forrest skin.
       <name>Some of thei work took place as part of the EUSynapse Project</name>
       <url>http://www.eusynapse.mpg.de/</url>
       <image>images/eusynapse.png</image>
-    </credit>
-  <credit box-location="alt">
-      <name>Funding for this work was received from the Wellcome Trust</name>
-      <url>http://www.wellcome.ac.uk/</url>
-      <image>images/wct.png</image>
     </credit>
 
     <!--

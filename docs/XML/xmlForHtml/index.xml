@@ -40,7 +40,7 @@ title="Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, 
         inhibitory synaptic input to look at the effects of short term plasticity on gain control (<a  href="models/index.html#RothmanEtAl_KoleEtAl_PyrCell-N10162">Download neuroConstruct project</a>). </p>
 
 
-        <p>The latest version of neuroConstruct (<strong>v1.3.8, XXX 2010</strong>) is available for download <a href="download/index.html">here</a>. The source code is available with this release under GPL.</p>
+        <p>The latest version of neuroConstruct (<strong>v1.3.7, Feb 2010</strong>) is available for download <a href="download/index.html">here</a>. The source code is available with this release under GPL.</p>
         <p>The paper describing the application has been published: <em>
             P. Gleeson, V. Steuber and R. A. Silver, neuroConstruct: A Tool for Modeling Networks of Neurons in 3D Space, Neuron,
             Volume 54, Issue 2, 19 April 2007, Pages 219-235.</em>
@@ -82,6 +82,12 @@ title="Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, 
 <p>These packages have sophisticated environments for creating neuronal simulations from scratch,
 and controlling all aspects of the simulation run. neuroConstruct automates the generation of script files for these platforms, and provides
 a framework for creating conductance based neuronal models, creating, visualising and analysing networks of cells in 3D, managing simualtions and analysing network firing behaviour.</p>
+
+<p>&nbsp;</p>
+ <p>&nbsp;&nbsp;&nbsp;<a href="http://software.incf.org/software/neuroconstruct/home"><img src="images/incf2.png"
+        alt="INCF Software Center" /></a>&nbsp;&nbsp;&nbsp;
+        <a href="http://www.neuinfo.org/nif/registry/nif-0000-00105"><img src="images/nif.jpg"
+        alt="Neuroscience Information Framework" /></a></p>
 
 
 <p>&nbsp;</p>
