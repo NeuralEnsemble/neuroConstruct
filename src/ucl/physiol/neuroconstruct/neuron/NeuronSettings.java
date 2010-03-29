@@ -44,7 +44,8 @@ public class NeuronSettings
     //String textBeforeCellCreation = null;
     //String textAfterCellCreation = null;
 
-    private Hashtable<Integer, String> nativeBlocks = new Hashtable<Integer, String>();
+    //private Hashtable<Integer, String> nativeBlocks = new Hashtable<Integer, String>();
+    private Hashtable<Float, String> nativeHocBlocks = new Hashtable<Float, String>();
 
     private boolean showShapePlot = false;
 
@@ -79,36 +80,91 @@ public class NeuronSettings
      * Should only be used by XMLEncoder, hence use of deprecated
      * @deprecated
      */
-    public Hashtable<Integer, String> getNativeBlocks()
+    public Hashtable<Float, String> getNativeBlocks()
     {
-        return nativeBlocks;
+        logger.logComment("Calling getNativeBlocks...");
+        return nativeHocBlocks;
     }
 
     /**
      * Should only be used by XMLEncoder, hence use of deprecated
      * @deprecated
      */
-    public void setNativeBlocks(Hashtable<Integer, String> nb)
+    public void setNativeBlocks(Hashtable nb)
     {
-        nativeBlocks = nb;
+        logger.logComment("Calling setNativeBlocks...");
+
+        Enumeration types = nb.keys();
+        while (types.hasMoreElements())
+        {
+            Object t = types.nextElement();
+            if (t instanceof Float)
+            {
+                nativeHocBlocks.put((Float)t, (String)nb.get(t));
+            }
+            if (t instanceof Integer) // old method of storing types
+            {
+                Float f = new Float((Integer)t);
+                nativeHocBlocks.put(f, (String)nb.get(t));
+            }
+        }
     }
+
+    /*
+     * To deal with old method of storing native blocks with type Integer
+     */
+    private void checkNativeBlocks()
+    {
+        Enumeration e = nativeHocBlocks.keys();
+
+        Hashtable<Float, String> newNativeHocBlocks = new Hashtable<Float, String>();
+
+        while (e.hasMoreElements())
+        {
+            Object type = e.nextElement();
+            logger.logComment("nativeHocBlocks has key: "+ type);
+            if (type instanceof Integer)
+            {
+                String block = new String(nativeHocBlocks.get(type));
+                nativeHocBlocks.remove(type);
+                Float newType = new Float((Integer)type);
+                newNativeHocBlocks.put(newType, block);
+            }
+            else if (type instanceof Float)
+            {
+                String block = new String(nativeHocBlocks.get(type));
+                newNativeHocBlocks.put((Float)type, block);
+            }
+        }
+        
+        nativeHocBlocks = newNativeHocBlocks;
+
+    }
+
 
     public String getNativeBlock(NativeCodeLocation ncl)
     {
-        logger.logComment("Looking for text for location: "+ ncl);
+        checkNativeBlocks();
+        logger.logComment("Looking for text for location: ("+ ncl+") out of: "+ nativeHocBlocks.keySet());
+
         ArrayList<NativeCodeLocation> locsAvailable = NativeCodeLocation.getAllKnownLocations();
 
         for (int i = 0; i < locsAvailable.size(); i++)
         {
             NativeCodeLocation nextLoc = locsAvailable.get(i);
-            //System.out.println("Checking: "+nextLoc);
+            logger.logComment("Checking: "+nextLoc.getPositionReference()+ " = "+ncl.getPositionReference());
+
             if (ncl.getPositionReference() == nextLoc.getPositionReference())
             {
-                String text = nativeBlocks.get(new Integer(ncl.getPositionReference()));
-                logger.logComment("Found: "+ text);
+                String text = nativeHocBlocks.get(new Float(ncl.getPositionReference()));
+                if (text == null)
+                    text = nativeHocBlocks.get(new Integer((int)ncl.getPositionReference()));
+                
+                logger.logComment("Found: "+ GeneralUtils.getMaxLenLine(text, 100));
                 return text;
             }
         }
+        logger.logComment("No matching block found!");
         return null;
     }
 
@@ -124,22 +180,12 @@ public class NeuronSettings
             if (ncl.getPositionReference() == nextLoc.getPositionReference())
             {
                 logger.logComment("Setting block type: "+ ncl.getPositionReference()+" to: "+ text);
-                nativeBlocks.put(new Integer(ncl.getPositionReference()), text);
+                nativeHocBlocks.put(new Float(ncl.getPositionReference()), text);
             }
         }
     }
 
 
-
-/*
-    public String getTextAfterCellCreation()
-    {
-        return nativeBlocks.get(NativeCodeLocation.BEFORE_INITIAL);
-    }
-    public String getTextBeforeCellCreation()
-    {
-        return nativeBlocks.get(NativeCodeLocation.BEFORE_CELL_CREATION);
-    }*/
 
     /**
      * Used to ensure compatibility with old method of code blocks...
@@ -149,7 +195,7 @@ public class NeuronSettings
     {
         //this.textAfterCellCreation = textAfterCellCreation;
 
-        nativeBlocks.put(NativeCodeLocation.BEFORE_INITIAL.getPositionReference(), textAfterCellCreation);
+        nativeHocBlocks.put(NativeCodeLocation.BEFORE_INITIAL.getPositionReference(), textAfterCellCreation);
     }
 
     /**
@@ -160,7 +206,7 @@ public class NeuronSettings
     {
         //this.textBeforeCellCreation = textBeforeCellCreation;
 
-        nativeBlocks.put(NativeCodeLocation.BEFORE_CELL_CREATION.getPositionReference(), textBeforeCellCreation);
+        nativeHocBlocks.put(NativeCodeLocation.BEFORE_CELL_CREATION.getPositionReference(), textBeforeCellCreation);
 
     }
 

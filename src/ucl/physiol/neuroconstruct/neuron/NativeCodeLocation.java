@@ -46,7 +46,8 @@ public class NativeCodeLocation
 
 
 
-    private int positionReference = Integer.MIN_VALUE;
+    private float positionRef = Integer.MIN_VALUE;
+
     private String shortDescription = null;
     private String usage = null;
 
@@ -54,6 +55,7 @@ public class NativeCodeLocation
     public static ArrayList<NativeCodeLocation> allLocations = new ArrayList<NativeCodeLocation>();
 
     public static NativeCodeLocation BEFORE_CELL_CREATION = new NativeCodeLocation(-1, "Before Cells created", "The NEURON code will be called before any of the generated cells are created in hoc");
+    public static NativeCodeLocation AFTER_NET_CREATION = new NativeCodeLocation(-0.5f, "After network created", "The NEURON code will be called after all cell groups, net connections, inputs and plots have been created");
     public static NativeCodeLocation BEFORE_INITIAL = new NativeCodeLocation(0, "Before Cell Process mechanism INITIAL blocks", "NEURON FInitializeHandler location. A/c to NEURON docs: \"Called before the mechanism INITIAL blocks\"");
     public static NativeCodeLocation AFTER_INITIAL = new NativeCodeLocation(1, "After Cell Process mechanism INITIAL blocks", "NEURON FInitializeHandler location. A/c to NEURON docs: \"Called after the mechanism INITIAL blocks. This is the best place to change state values.\"");
     public static NativeCodeLocation BEFORE_FINITIALIZE_RETURNS = new NativeCodeLocation(2, "Before return from finitialize()", "NEURON FInitializeHandler location. A/c to NEURON docs: \"Called just before return from finitialize. This is the best place to record values at t=0.\"");
@@ -63,6 +65,7 @@ public class NativeCodeLocation
     static
     {
         allLocations.add(BEFORE_CELL_CREATION);
+        allLocations.add(AFTER_NET_CREATION);
         allLocations.add(BEFORE_INITIAL);
         allLocations.add(AFTER_INITIAL);
         allLocations.add(BEFORE_FINITIALIZE_RETURNS);
@@ -76,7 +79,14 @@ public class NativeCodeLocation
 
     private NativeCodeLocation(int positionReference, String shortDescription, String usage)
     {
-        this.positionReference = positionReference;
+        this.positionRef = positionReference;
+        this.shortDescription = shortDescription;
+        this.usage = usage;
+    }
+
+    private NativeCodeLocation(float positionReference, String shortDescription, String usage)
+    {
+        this.positionRef = positionReference;
         this.shortDescription = shortDescription;
         this.usage = usage;
     }
@@ -92,7 +102,7 @@ public class NativeCodeLocation
 
             if (ncl.shortDescription.equals(shortDescription) &&
                 ncl.usage.equals(usage) &&
-                ncl.positionReference == positionReference)
+                ncl.positionRef == positionRef)
             {
                 return true;
             }
@@ -103,12 +113,14 @@ public class NativeCodeLocation
     @Override
     public int hashCode()
     {
-        int hash = 7;
-        hash = 11 * hash + this.positionReference;
-        hash = 11 * hash + (this.shortDescription != null ? this.shortDescription.hashCode() : 0);
-        hash = 11 * hash + (this.usage != null ? this.usage.hashCode() : 0);
+        int hash = 3;
+        hash = 97 * hash + Float.floatToIntBits(this.positionRef);
+        hash = 97 * hash + (this.shortDescription != null ? this.shortDescription.hashCode() : 0);
+        hash = 97 * hash + (this.usage != null ? this.usage.hashCode() : 0);
         return hash;
     }
+
+
 
 
     public String getShortDescription()
@@ -116,9 +128,9 @@ public class NativeCodeLocation
         return shortDescription;
     }
 
-    public int getPositionReference()
+    public float getPositionReference()
     {
-        return positionReference;
+        return positionRef;
     }
 
     public void setShortDescription(String desc)
@@ -126,9 +138,14 @@ public class NativeCodeLocation
         shortDescription = desc;
     }
 
+    public void setPositionReference(float pr)
+    {
+        positionRef = pr;
+    }
+
     public void setPositionReference(int pr)
     {
-        positionReference = pr;
+        positionRef = pr;
     }
 
 
@@ -189,12 +206,15 @@ public class NativeCodeLocation
     @Override
     public String toString()
     {
-        return "Type "+ positionReference+", "+ this.shortDescription /*+ (present? " *": "")*/;
+        String pr = Math.floor(positionRef)==positionRef ? (int)positionRef+"" : positionRef+"";
+
+        return "Type "+ pr+", "+ this.shortDescription /*+ (present? " *": "")*/;
     }
 
     public String toShortString()
     {
-        return "Type "+ positionReference;
+        String pr = Math.floor(positionRef)==positionRef ? (int)positionRef+"" : positionRef+"";
+        return "Type "+ pr;
     }
 
     public static ArrayList<NativeCodeLocation> getAllKnownLocations()

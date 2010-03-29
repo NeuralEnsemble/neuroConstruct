@@ -650,6 +650,18 @@ public class GeneralUtils
     }
 
 
+
+    public static String getMaxLenLine(String line, int maxLength)
+    {
+        if (line==null)
+            return null;
+        
+        if (line.length()<=maxLength)
+            return line;
+        
+        return line.substring(0, maxLength);
+    }
+
     /**
      * Handy to ensure printed comments etc. are the same width...
      */

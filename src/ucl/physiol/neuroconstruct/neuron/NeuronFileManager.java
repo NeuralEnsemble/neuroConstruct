@@ -640,7 +640,6 @@ public class NeuronFileManager
 
         String text = project.neuronSettings.getNativeBlock(ncl);
 
-
         text = NativeCodeLocation.parseForSimConfigSpecifics(text, simConfig.getName());
 
         logger.logComment("Cleaned up to: "+ text);
@@ -666,8 +665,7 @@ public class NeuronFileManager
         StringBuffer response = new StringBuffer();
 
         NativeCodeLocation[] neuronFInitNcls = new NativeCodeLocation[]
-            {
-            NativeCodeLocation.BEFORE_INITIAL,
+            {NativeCodeLocation.BEFORE_INITIAL,
             NativeCodeLocation.AFTER_INITIAL,
             NativeCodeLocation.BEFORE_FINITIALIZE_RETURNS,
             NativeCodeLocation.START_FINITIALIZE};
@@ -693,7 +691,8 @@ public class NeuronFileManager
 
             if (text != null && text.trim().length() > 0)
             {
-                int ref = neuronFInitNcls[i].getPositionReference();
+                int ref = (int)neuronFInitNcls[i].getPositionReference();
+
                 String objName = "fih_" + ref;
                 String procName = "callfi" + ref;
                 addHocComment(nativeBlocks, "Hoc commands to run at location: " + neuronFInitNcls[i].toString());
@@ -1783,15 +1782,22 @@ public class NeuronFileManager
 
                         logger.logComment("Adding stim: " + nextInput);
 
+
+                        String inputNumName = "n_" + allStims.get(k);
+
                         String stimName = "spikesource_" + allStims.get(k);
                         String synapseName = "synapse_" + allStims.get(k);
                         String connectionName = "connection_" + allStims.get(k);
 
                         if (j == 0) // define arrays...
                         {
-                            response.append("objref " + stimName + "[" + allInputLocs.size() + "]\n\n");
-                            response.append("objref " + synapseName + "[" + allInputLocs.size() + "]\n");
-                            response.append("objref " + connectionName + "[" + allInputLocs.size() + "]\n");
+                            String comm = addComments?"// number of individual inputs in "+allStims.get(k):"";
+
+                            response.append(inputNumName + " = " + allInputLocs.size() + " "+comm+"\n\n");
+
+                            response.append("objref " + stimName + "[" + inputNumName + "]\n\n");
+                            response.append("objref " + synapseName + "[" + inputNumName + "]\n");
+                            response.append("objref " + connectionName + "[" + inputNumName + "]\n");
                             response.append("thresh = -20\n");
                             response.append("delay = 0\n");
                             response.append("weight = 1\n\n");
@@ -4299,6 +4305,8 @@ public class NeuronFileManager
     public String generateRunMechanism()
     {
         StringBuffer response = new StringBuffer();
+
+        response.append(generateNeuronCodeBlock(NativeCodeLocation.AFTER_NET_CREATION));
 
         String dateCommand = "date +%x,%X:%N";
 
