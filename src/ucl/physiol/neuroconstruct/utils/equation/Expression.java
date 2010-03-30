@@ -132,6 +132,57 @@ public class Expression
 
         else
         {
+            // do ^
+            for (int i = 0; i < loneBinaryOperators.size(); i++)
+            {
+                Integer currentPos = (Integer)loneBinaryOperators.elementAt(i);
+
+                int index = currentPos.intValue();
+
+                char operator = line.charAt(index);
+
+                int indexOfPrev = -1;
+                if (i>=1)
+                    indexOfPrev = ((Integer)loneBinaryOperators.elementAt(i-1)).intValue();
+
+                int indexOfNext = line.length();
+                if (i<loneBinaryOperators.size()-1)
+                    indexOfNext = ((Integer)loneBinaryOperators.elementAt(i+1)).intValue();
+
+                logger.logComment("indexOfPrev: "+ indexOfPrev
+                                  + ", index : "+ index
+                                  + ", indexOfNext: "+ indexOfNext);
+
+
+                String before = line.substring(indexOfPrev+1,index);
+                String after = line.substring(index + 1, indexOfNext);
+
+                if (before.trim().length()==0)
+                {
+                    return parseCleansedExpression(line, variables);
+                }
+                logger.logComment("Found before: " + before);
+                logger.logComment("Found operator: " + operator);
+                logger.logComment("Found after: " + after);
+
+
+
+                if (operator == '^')
+                {
+                    String beforeNewBracket = line.substring(0, indexOfPrev+1);
+                    String afterNewBracket = line.substring(indexOfNext);
+
+                    return parseExpression(beforeNewBracket +
+                                          " ("
+                                          + before + " "
+                                          + operator + " "
+                                          + after + ") "
+                                          + afterNewBracket, variables);
+               }
+
+
+
+           }
             // do * and /
             for (int i = 0; i < loneBinaryOperators.size(); i++)
             {

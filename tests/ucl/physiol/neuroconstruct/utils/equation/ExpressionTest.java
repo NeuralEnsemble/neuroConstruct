@@ -70,7 +70,9 @@ public class ExpressionTest {
                                             "v-(-0.065)",
                                             "sin(sin(v)-1)",
                                             "sqrt(v)",
-                                            "H(100+ (-v))"};
+                                            "H(100+ (-v))",
+                                            "v^2 + v^3",
+                                            "2^3+ 2 / 2 ^ 2 * 4"};
         
         Variable v = new Variable("v");
         Variable t = new Variable("t");
@@ -92,6 +94,7 @@ public class ExpressionTest {
         
         Argument[] v0 = new Argument[]{new Argument(v.getName(), 0)};
         Argument[] v1 = new Argument[]{new Argument(v.getName(), 1)};
+        Argument[] v3 = new Argument[]{new Argument(v.getName(), 3)};
         Argument[] v99 = new Argument[]{new Argument(v.getName(), 99)};
         Argument[] v101 = new Argument[]{new Argument(v.getName(), 101)};
         double halfPi = Math.PI/2;
@@ -110,9 +113,12 @@ public class ExpressionTest {
         assertTrue(eqnUnits.get(8).evaluateAt(v90deg)>=0);
         assertTrue(eqnUnits.get(11).evaluateAt(v90deg)==0);
 
-        assertTrue(eqnUnits.get(12).evaluateAt(v90deg)==Math.sqrt(halfPi));
-        assertTrue(eqnUnits.get(13).evaluateAt(v99)==1);
-        assertTrue(eqnUnits.get(13).evaluateAt(v101)==0);
+        assertEquals(eqnUnits.get(12).evaluateAt(v90deg), Math.sqrt(halfPi), 0);
+        assertEquals(eqnUnits.get(13).evaluateAt(v99), 1, 0);
+        assertEquals(eqnUnits.get(13).evaluateAt(v101), 0, 0);
+        assertEquals(eqnUnits.get(14).evaluateAt(v1), 2, 0);
+        assertEquals(eqnUnits.get(14).evaluateAt(v3), 36, 0);
+        assertEquals(eqnUnits.get(15).evaluateAt(v3), 10, 0);
         
     }
     

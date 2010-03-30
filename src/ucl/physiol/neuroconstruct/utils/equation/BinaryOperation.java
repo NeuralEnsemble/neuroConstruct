@@ -53,10 +53,11 @@ public class BinaryOperation extends EquationUnit
     public static final char MINUS = '-';
     public static final char PRODUCT = '*';
     public static final char DIVISION = '/';
+    public static final char POWER = '^';
 
 
     public static char[] allBinaryOps
-           = new char[]{PLUS, MINUS, PRODUCT, DIVISION};
+           = new char[]{PLUS, MINUS, PRODUCT, DIVISION, POWER};
 
 
 
@@ -76,7 +77,12 @@ public class BinaryOperation extends EquationUnit
 
     public double evaluateAt(Argument[] args)  throws EquationException
     {
-        if (operation == PLUS)
+
+        if (operation == POWER)
+        {
+            return Math.pow( first.evaluateAt(args) , second.evaluateAt(args) );
+        }
+        else if (operation == PLUS)
         {
             return first.evaluateAt(args) + second.evaluateAt(args);
         }

@@ -89,7 +89,7 @@ public class Equation
 
             String x = "(("+kk+") * ("+v.getNiceString() +" - ("+ dk + ")))";
 
-            String exp1k = Ak +" * " + x + "/(1 - exp(-1 * "+x+"))";
+            String exp1k = Ak +" * " + x + "/(1 - exp(-1 * "+x+" ^ 2))";
 
             //String exp2k =  Ak +" * (" +Bk +" * " +"(1 -  (("+delVk+"/"+Bk+") / 2 ) )" + ")";
 
