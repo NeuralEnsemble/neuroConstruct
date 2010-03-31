@@ -767,15 +767,18 @@ public class NeuronFileManager
                     {
                         double initVolt = posRecord.getInitV();
                         
-                        addHocComment(response,
-                                   "Giving cell " + posRecord.cellNumber + " an initial potential of: " + initVolt+" based on: "+ cell.getInitialPotential().toString());
+                        //addHocComment(response,
+                        //           "Giving cell " + posRecord.cellNumber + " an initial potential of: " + initVolt+" based on: "+ cell.getInitialPotential().toString());
 
                         if (simConfig.getMpiConf().isParallelNet()) response.append("  if(isCellOnNode(\""+cellGroupName+"\", "
-                                                                        + posRecord.cellNumber + ")) {\n");
+                                                                        + posRecord.cellNumber + ")) {");
 
-                        response.append("    forsec " + nameOfArrayOfTheseCells + "[" + posRecord.cellNumber + "].all {   v = " + initVolt + "  }\n\n");
-                        
-                        if (simConfig.getMpiConf().isParallelNet()) response.append("  }\n");
+                        response.append("    forsec " + nameOfArrayOfTheseCells + "[" + posRecord.cellNumber + "].all {   v = " + initVolt + "  }");
+
+                        if (simConfig.getMpiConf().isParallelNet())
+                            response.append("  }\n");
+                        else
+                            response.append(" \n");
                     }
 
                 }
