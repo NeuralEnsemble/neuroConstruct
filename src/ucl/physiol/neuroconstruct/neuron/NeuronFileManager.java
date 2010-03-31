@@ -773,11 +773,9 @@ public class NeuronFileManager
                         if (simConfig.getMpiConf().isParallelNet()) response.append("  if(isCellOnNode(\""+cellGroupName+"\", "
                                                                         + posRecord.cellNumber + ")) {\n");
 
-                        response.append("    forsec " + nameOfArrayOfTheseCells + "[" + posRecord.cellNumber + "].all {\n");
-                        response.append("        v = " + initVolt + "\n");
-                        response.append("    }\n\n");
+                        response.append("    forsec " + nameOfArrayOfTheseCells + "[" + posRecord.cellNumber + "].all {   v = " + initVolt + "  }\n\n");
                         
-                        if (simConfig.getMpiConf().isParallelNet()) response.append("  }\n\n");
+                        if (simConfig.getMpiConf().isParallelNet()) response.append("  }\n");
                     }
 
                 }
