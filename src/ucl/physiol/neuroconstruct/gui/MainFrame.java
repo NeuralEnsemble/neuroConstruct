@@ -789,6 +789,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JTable jTableMechanisms = new JTable();
     JButton jButtonMechanismDelete = new JButton();
     JButton jButtonMechanismCopy = new JButton();
+    JButton jButtonCompareMechanism = new JButton();
     JButton jButtonMechanismEditIt = new JButton();
     JButton jButtonMechanismUpdateMaps = new JButton();
     JButton jButtonMechanismReloadFile = new JButton();
@@ -1774,7 +1775,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelMechanismMain.setBorder(BorderFactory.createEtchedBorder());
         jPanelMechanismMain.setLayout(borderLayout36);
         jButtonMechanismDelete.setText("Delete selected Cell Mechanism");
-    jButtonMechanismDelete.addActionListener(new java.awt.event.ActionListener() {
+        jButtonMechanismDelete.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         jButtonMechanismDelete_actionPerformed(e);
       }
@@ -1809,6 +1810,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     jButtonMechanismCopy.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
           jButtonMechanismCopy_actionPerformed(e);
+      }
+    });
+    
+    jButtonCompareMechanism.setText("Compare Mechanism...");
+    
+    jButtonCompareMechanism.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+          jButtonCompareMechanism_actionPerformed(e);
       }
     });
     
@@ -4134,6 +4143,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         //// not enough time to finish this..//// jPanelProcessButtonsBottom.add(jButtonMechanismCopy, null);
         jPanelProcessButtonsBottom.add(jButtonMechanismDelete, null);
+        jPanelProcessButtonsBottom.add(jButtonCompareMechanism, null);
 
         jPanelMechanismLabel.add(jPanelProcessButtons,  BorderLayout.SOUTH);
         jPanelMechanismLabel.add(JLabelMechanismMain,  BorderLayout.NORTH);
@@ -9194,6 +9204,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jButtonMechanismUpdateMaps.setEnabled(false);
             this.jButtonMechanismReloadFile.setEnabled(false);
             this.jButtonMechanismCopy.setEnabled(false);
+            this.jButtonCompareMechanism.setEnabled(false);
             this.jButtonMechanismDelete.setEnabled(false);
             jButtonMechanismFileBased.setEnabled(false);
             jButtonMechanismNewCML.setEnabled(false);
@@ -9213,6 +9224,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jButtonMechanismUpdateMaps.setEnabled(true);
             this.jButtonMechanismReloadFile.setEnabled(true);
             this.jButtonMechanismCopy.setEnabled(true);
+            this.jButtonCompareMechanism.setEnabled(true);
             this.jButtonMechanismDelete.setEnabled(true);
             jButtonMechanismFileBased.setEnabled(true);
             jButtonMechanismNewCML.setEnabled(true);
@@ -12864,42 +12876,139 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     {
 
         Cell cellTypeToComp = (Cell) jComboBoxCellTypes.getSelectedItem();
-
-
-
-        ArrayList<String> names = projManager.getCurrentProject().cellManager.getAllCellTypeNames();
-
-        if (names.size()==1)
-        {
-            GuiUtils.showErrorMessage(logger, "There is only a single cell in this project, nothing to compare it to.", null, this);
-            return;
-        }
-
-        String[] otherNames = new String[names.size()-1];
-        int count = 0;
-        for (int i = 0; i < names.size(); i++)
-        {
-            if (!names.get(i).equals(cellTypeToComp.getInstanceName()))
-            {
-                otherNames[count] = names.get(i);
-                count++;
-            }
-        }
-
-        String selection = (String) JOptionPane.showInputDialog(this,
-                                                                "Please select the Cell Type to compare " +
-                                                                cellTypeToComp.getInstanceName() + " to",
-                                                                "Select Cell Type",
+        
+        String[] otherProject = new String[2];
+        otherProject[0] = "this project";
+        otherProject[1] = "other project";
+        String project = (String) JOptionPane.showInputDialog(this,
+                                                                "Compare the cell " +
+                                                                cellTypeToComp.getInstanceName() + " with a cell from:",
+                                                                "Select project",
                                                                 JOptionPane.QUESTION_MESSAGE,
                                                                 null,
-                                                                otherNames,
-                                                                otherNames[0]);
+                                                                otherProject,
+                                                                otherProject[0]);    
+        
+        if (project.equals("this project"))
+        {
+            ArrayList<String> names = projManager.getCurrentProject().cellManager.getAllCellTypeNames();         
 
-        Cell otherCell = projManager.getCurrentProject().cellManager.getCell(selection);
+            if (names.size()==1)
+            {
+                GuiUtils.showErrorMessage(logger, "There is only a single cell in this project, nothing to compare it to.", null, this);
+                return;
+            }
 
-        String comp = CellTopologyHelper.compare(cellTypeToComp, otherCell, true);
+            String[] otherNames = new String[names.size()-1];
+            int count = 0;
+            for (int i = 0; i < names.size(); i++)
+            {
+                if (!names.get(i).equals(cellTypeToComp.getInstanceName()))
+                {
+                    otherNames[count] = names.get(i);
+                    count++;
+                }
+            }
 
-        SimpleViewer.showString(comp, "Comparison of "+cellTypeToComp+" with "+ otherCell, 12, false, true);
+            String selection = (String) JOptionPane.showInputDialog(this,
+                                                                    "Please select the Cell Type to compare " +
+                                                                    cellTypeToComp.getInstanceName() + " to",
+                                                                    "Select Cell Type",
+                                                                    JOptionPane.QUESTION_MESSAGE,
+                                                                    null,
+                                                                    otherNames,
+                                                                    otherNames[0]);
+
+            Cell otherCell = projManager.getCurrentProject().cellManager.getCell(selection);
+
+            String comp = CellTopologyHelper.compare(cellTypeToComp, otherCell, true);
+
+            SimpleViewer.showString(comp, "Comparison of "+cellTypeToComp+" with "+ otherCell, 12, false, true);
+        }
+        
+        else if (project.equals("other project"))
+        {
+            // set to parent of project dir...
+            File defaultDir = projManager.getCurrentProject().getProjectFile().getParentFile().getParentFile();            
+
+            Frame frame = (Frame)this;
+            JFileChooser chooser = new JFileChooser();
+            chooser.setDialogType(JFileChooser.OPEN_DIALOG);
+            chooser.setDialogTitle("Choose neuroConstruct project");
+
+            try
+            {
+                chooser.setCurrentDirectory(defaultDir);
+                logger.logComment("Set Dialog dir to: " + defaultDir);
+            }
+            catch (Exception ex)
+            {
+                logger.logError("Problem with default dir setting: " + defaultDir, ex);
+            }
+            SimpleFileFilter fileFilter = ProjectStructure.getProjectFileFilter();
+
+            chooser.setFileFilter(fileFilter);
+
+            //chooser.sett
+
+            int retval = chooser.showDialog(frame, null);
+
+            if (retval == JFileChooser.APPROVE_OPTION)
+            {
+                try
+                {
+                    Project firstProj = projManager.loadProject(projManager.getCurrentProject().getProjectFile());
+                       
+                    logger.logComment(">>>>  Loading project: " + chooser.getSelectedFile());
+
+                    Project otherProj = Project.loadProject(chooser.getSelectedFile(), this);
+
+                    logger.logComment("<<<<  Loaded project: " + otherProj.getProjectFileName());
+
+                    ArrayList<String> otherCellTypes = otherProj.cellManager.getAllCellTypeNames();
+
+                    if (otherCellTypes.size()==0)
+                    {
+                        GuiUtils.showErrorMessage(logger, "No Cell Types found in that project.", null, this);
+                        return;
+                    }
+
+                    Object selection = JOptionPane.showInputDialog(this,
+                                "Please select the Cell Type that you want to compare "+otherProj.getProjectName(),
+                                "Select Cell Type",
+                                JOptionPane.QUESTION_MESSAGE,
+                                null,
+                                otherCellTypes.toArray(),
+                                otherCellTypes.get(0));
+
+                    if (selection==null)
+                    {
+                        logger.logComment("No selection made...");
+                        return;
+                    }
+                    logger.logComment("Selection: "+ selection);
+
+                    Cell comparedCell = otherProj.cellManager.getCell((String)selection);
+
+                    String comparedCellTypeName = comparedCell.getInstanceName();
+                    
+                    Cell otherCell = projManager.getCurrentProject().cellManager.getCell(comparedCellTypeName);
+
+                    String comp = CellTopologyHelper.compare(cellTypeToComp, otherCell, true, firstProj, otherProj);
+
+                    SimpleViewer.showString(comp, "Comparison of "+cellTypeToComp+" with "+ otherCell, 12, false, true);
+                    
+                }
+                catch (Exception ex2)
+                {
+                    GuiUtils.showErrorMessage(logger, "Problem comparing the Cell", ex2, this);
+
+                    return;
+                }
+            }
+
+        }
+      
 
     }
 
@@ -13662,6 +13771,97 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         //CellMechanism cmPost = new CellMechanism();
         
     }
+    
+    void jButtonCompareMechanism_actionPerformed(ActionEvent e)
+    {
+        // set to parent of project dir...
+            File defaultDir = projManager.getCurrentProject().getProjectFile().getParentFile().getParentFile();            
+
+            Frame frame = (Frame)this;
+            JFileChooser chooser = new JFileChooser();
+            chooser.setDialogType(JFileChooser.OPEN_DIALOG);
+            chooser.setDialogTitle("Choose neuroConstruct project");
+
+            try
+            {
+                chooser.setCurrentDirectory(defaultDir);
+                logger.logComment("Set Dialog dir to: " + defaultDir);
+            }
+            catch (Exception ex)
+            {
+                logger.logError("Problem with default dir setting: " + defaultDir, ex);
+            }
+            SimpleFileFilter fileFilter = ProjectStructure.getProjectFileFilter();
+
+            chooser.setFileFilter(fileFilter);
+
+            //chooser.sett
+
+            int retval = chooser.showDialog(frame, null);
+
+            if (retval == JFileChooser.APPROVE_OPTION)
+            {
+                try
+                {
+                    Project firstProj = projManager.loadProject(projManager.getCurrentProject().getProjectFile());
+                       
+                    logger.logComment(">>>>  Loading project: " + chooser.getSelectedFile());
+
+                    Project otherProj = Project.loadProject(chooser.getSelectedFile(), this);
+
+                    logger.logComment("<<<<  Loaded project: " + otherProj.getProjectFileName());
+
+                    Vector<String> mechanismsList = otherProj.cellMechanismInfo.getAllCellMechanismNames();
+
+                    if (mechanismsList.size()==0)
+                    {
+                        GuiUtils.showErrorMessage(logger, "No Cell Mechanisms found in that project.", null, this);
+                        return;
+                    }
+
+                    Object selection = JOptionPane.showInputDialog(this,
+                                "Please select the Cell Mechanism that you want to compare "+otherProj.getProjectName(),
+                                "Select Cell Mechanism",
+                                JOptionPane.QUESTION_MESSAGE,
+                                null,
+                                mechanismsList.toArray(),
+                                mechanismsList.get(0));
+
+                    if (selection==null)
+                    {
+                        logger.logComment("No selection made...");
+                        return;
+                    }
+                    logger.logComment("Selection: "+ selection);
+
+                    if (!projManager.getCurrentProject().cellMechanismInfo.getAllCellMechanismNames().contains(selection))
+                    {
+                        GuiUtils.showErrorMessage(logger, "No mechanism called "+selection+" exist in the current project...", null, this);
+                        return;
+                    }
+                    
+                    else
+                    {
+                        CellMechanism comparedMech = otherProj.cellMechanismInfo.getCellMechanism((String)selection);
+
+                        String comparedCellMech = comparedMech.getInstanceName();
+                                       
+                        String comp = CellTopologyHelper.compareChannelMech(comparedCellMech, true, firstProj, otherProj);
+
+                        SimpleViewer.showString(comp, "Comparison of "+comparedCellMech+" between "+ firstProj.getProjectName() +" and "+otherProj.getProjectName(), 12, false, true);
+                    }                 
+                    
+                }
+                catch (Exception ex2)
+                {
+                    GuiUtils.showErrorMessage(logger, "Problem comparing the Cell", ex2, this);
+
+                    return;
+                }
+            }
+
+        }
+
     
     void jButtonMechanismReloadFile_actionPerformed(ActionEvent e)
     {
