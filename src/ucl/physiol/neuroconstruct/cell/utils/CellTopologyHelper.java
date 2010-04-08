@@ -28,11 +28,8 @@ package ucl.physiol.neuroconstruct.cell.utils;
 
 import java.io.*;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.logging.Level;
 import javax.vecmath.*;
 
-import org.python.apache.xerces.impl.XMLEntityManager;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.gui.*;
 import ucl.physiol.neuroconstruct.j3D.*;
@@ -42,8 +39,6 @@ import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.compartment.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
-import ucl.physiol.neuroconstruct.neuroml.ChannelMLConstants;
-import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLEntity;
 
 /**
  * Helper class for dealing with cell topology (and other aspects, e.g. biophysiology).
@@ -3264,8 +3259,12 @@ public class CellTopologyHelper
         String EOL = GeneralUtils.getEndLine(html);
         String LT = "<";
         if (html) LT = "&lt;";
+
+        String projAInfo = projectA==null ? "": " from "+projectA.getProjectFile().getAbsolutePath();
+        String projBInfo = projectB==null ? "": " from "+projectB.getProjectFile().getAbsolutePath();
+
         
-        String header = GeneralUtils.getTabbedString("Comparing " + cellA.getInstanceName() + " ("+LT+") to " + cellB.getInstanceName() +
+        String header = GeneralUtils.getTabbedString("Comparing " + cellA.getInstanceName() +projAInfo+ " ("+LT+") to " + cellB.getInstanceName()+ projBInfo +
                                              " (>)", "h3", html) + EOL + EOL;
         boolean identical = true;
 
@@ -3662,17 +3661,15 @@ public class CellTopologyHelper
         {
             logger.logComment("Comparing cells from different projects, mechanisms with the same name may have different implementations");  
 
-            ArrayList<ChannelMechanism> allChanMechsA = cellA.getAllUniformChanMechs(true);
-            ArrayList<ChannelMechanism> allChanMechsB = cellB.getAllUniformChanMechs(true);
+            ArrayList<String> allChanMechsA = cellA.getAllChanMechNames(true);
+            ArrayList<String> allChanMechsB = cellB.getAllChanMechNames(true);
 
-            for (int i = 0; i < allChanMechsA.size(); i++)
+            for (String chanMechName: allChanMechsA)
             {               
-                ChannelMechanism chanMech = allChanMechsA.get(i);
 
-                if (allChanMechsB.contains(chanMech))
+                if (allChanMechsB.contains(chanMechName))
                 {                    
-                    String chanMechName = chanMech.getName();
-                    logger.logComment("   Cheking "+chanMechName);
+                    logger.logComment("Checking "+chanMechName);
                     
                     String chanComp = compareChannelMech(chanMechName, true, projectA, projectB);                  
                                         

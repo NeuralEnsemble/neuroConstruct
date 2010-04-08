@@ -1776,10 +1776,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelMechanismMain.setLayout(borderLayout36);
         jButtonMechanismDelete.setText("Delete selected Cell Mechanism");
         jButtonMechanismDelete.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        jButtonMechanismDelete_actionPerformed(e);
-      }
-    });
+            public void actionPerformed(ActionEvent e) {
+                jButtonMechanismDelete_actionPerformed(e);
+            }
+        });
 
     jButtonMechanismEditIt.setText("Edit selected Cell Mechanism");
     
@@ -12879,7 +12879,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         String[] otherProject = new String[2];
         otherProject[0] = "this project";
-        otherProject[1] = "other project";
+        otherProject[1] = "another project";
         String project = (String) JOptionPane.showInputDialog(this,
                                                                 "Compare the cell " +
                                                                 cellTypeToComp.getInstanceName() + " with a cell from:",
@@ -12889,7 +12889,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                                 otherProject,
                                                                 otherProject[0]);    
         
-        if (project.equals("this project"))
+        if (project.equals(otherProject[0]))
         {
             ArrayList<String> names = projManager.getCurrentProject().cellManager.getAllCellTypeNames();         
 
@@ -12926,7 +12926,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             SimpleViewer.showString(comp, "Comparison of "+cellTypeToComp+" with "+ otherCell, 12, false, true);
         }
         
-        else if (project.equals("other project"))
+        else if (project.equals(otherProject[1]))
         {
             // set to parent of project dir...
             File defaultDir = projManager.getCurrentProject().getProjectFile().getParentFile().getParentFile();            
@@ -12948,8 +12948,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             SimpleFileFilter fileFilter = ProjectStructure.getProjectFileFilter();
 
             chooser.setFileFilter(fileFilter);
-
-            //chooser.sett
 
             int retval = chooser.showDialog(frame, null);
 
@@ -12974,7 +12972,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     }
 
                     Object selection = JOptionPane.showInputDialog(this,
-                                "Please select the Cell Type that you want to compare "+otherProj.getProjectName(),
+                                "Please select the Cell Type from project "+otherProj.getProjectName()+" with which to compare "+cellTypeToComp.getInstanceName(),
                                 "Select Cell Type",
                                 JOptionPane.QUESTION_MESSAGE,
                                 null,
@@ -13820,7 +13818,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     }
 
                     Object selection = JOptionPane.showInputDialog(this,
-                                "Please select the Cell Mechanism that you want to compare "+otherProj.getProjectName(),
+                                "Please select the Cell Mechanism from project "+otherProj.getProjectName()+" which you want to compare to one in this project ",
                                 "Select Cell Mechanism",
                                 JOptionPane.QUESTION_MESSAGE,
                                 null,
