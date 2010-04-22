@@ -13898,7 +13898,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                         return;
                     }
 
-                    Object selection = JOptionPane.showInputDialog(this,
+                    selection = (String) JOptionPane.showInputDialog(this,
                                 "Please select the Cell Mechanism from project "+otherProj.getProjectName()+" which you want to compare to one in this project ",
                                 "Select Cell Mechanism",
                                 JOptionPane.QUESTION_MESSAGE,
