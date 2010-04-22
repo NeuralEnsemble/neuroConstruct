@@ -2872,9 +2872,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 jComboBoxCellTypes_itemStateChanged(e);
             }
         });
-
-
-
+        
+        
+        
         this.jComboBoxNeuroMLComps.addItemListener(new java.awt.event.ItemListener()
         {
             public void itemStateChanged(ItemEvent e)
@@ -9230,7 +9230,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             jButtonMechanismNewCML.setEnabled(true);
             jButtonMechanismTemplateCML.setEnabled(true);
             
-
+        
             jTableMechanisms = new JTable(projManager.getCurrentProject().cellMechanismInfo)
             {
                 @Override
@@ -11207,7 +11207,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
          */
 
     }
-
+    
     void jButtonNeuronCreateLocal_actionPerformed(ActionEvent e)
     {
         logger.logComment("Create hoc file button pressed...");
@@ -13772,7 +13772,88 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     
     void jButtonCompareMechanism_actionPerformed(ActionEvent e)
     {
-        // set to parent of project dir...
+        
+        Project thisProj;
+        try
+        {             
+            thisProj = projManager.loadProject(projManager.getCurrentProject().getProjectFile());
+        }
+        catch (Exception ex2)
+        {
+            GuiUtils.showErrorMessage(logger, "Problem comparing the Cell", ex2, this);
+
+            return;
+        }
+        
+        Vector<String> currentMechs = thisProj.cellMechanismInfo.getAllCellMechanismNames();
+        
+        String selection = (String) JOptionPane.showInputDialog(this,
+                                "Please select the mechanism that you want to compare: ",
+                                "Select mechanisms",
+                                JOptionPane.QUESTION_MESSAGE,
+                                null,
+                                currentMechs.toArray(),
+                                currentMechs.get(0));
+        
+        CellMechanism mechToComp = (CellMechanism) thisProj.cellMechanismInfo.getCellMechanism(selection);
+        
+        String[] otherProject = new String[2];
+        otherProject[0] = "this project";
+        otherProject[1] = "other project";
+        
+        String project = (String) JOptionPane.showInputDialog(this,
+                                                                "Compare mechanism " +
+                                                                mechToComp.getInstanceName() + " with a mechanism from:",
+                                                                "Select project",
+                                                                JOptionPane.QUESTION_MESSAGE,
+                                                                null,
+                                                                otherProject,
+                                                                otherProject[0]);
+                
+        logger.logComment("no option");
+        
+        if (project.equals("this project"))
+        {
+            
+            Vector<String> names = projManager.getCurrentProject().cellMechanismInfo.getAllCellMechanismNames();                                                
+
+            if (names.size()==1)
+            {
+                GuiUtils.showErrorMessage(logger, "There is only one mechanism in this project, nothing to compare it to.", null, this);
+                return;
+            }
+
+            String[] otherNames = new String[names.size()-1];
+            int count = 0;
+            for (int i = 0; i < names.size(); i++)
+            {
+                if (!names.get(i).equals(mechToComp.getInstanceName()))
+                {
+                    otherNames[count] = names.get(i);
+                    count++;
+                }
+            }
+
+            selection = (String) JOptionPane.showInputDialog(this,
+                                                                    "Please select the mechanism to compare " +
+                                                                    mechToComp.getInstanceName() + " to",
+                                                                    "Select mechanism",
+                                                                    JOptionPane.QUESTION_MESSAGE,
+                                                                    null,
+                                                                    otherNames,
+                                                                    otherNames[0]);
+
+            CellMechanism otherMech = projManager.getCurrentProject().cellMechanismInfo.getCellMechanism(selection);          
+
+            String chanComp = CellTopologyHelper.compareChannelMech(mechToComp.getInstanceName(), otherMech.getInstanceName(), true, thisProj, thisProj);
+
+            SimpleViewer.showString(chanComp, "Comparison of "+mechToComp+" with "+ otherMech, 12, false, true);
+               
+        }
+        
+        else if (project.equals("other project"))
+        {
+            // set to parent of project dir...
             File defaultDir = projManager.getCurrentProject().getProjectFile().getParentFile().getParentFile();            
 
             Frame frame = (Frame)this;
@@ -13832,35 +13913,24 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     }
                     logger.logComment("Selection: "+ selection);
 
-                    if (!projManager.getCurrentProject().cellMechanismInfo.getAllCellMechanismNames().contains(selection))
-                    {
-                        GuiUtils.showErrorMessage(logger, "No mechanism called "+selection+" exist in the current project...", null, this);
-                        return;
-                    }
-                    
-                    else
-                    {
-                        CellMechanism comparedMech = otherProj.cellMechanismInfo.getCellMechanism((String)selection);
+                    CellMechanism otherMech = otherProj.cellMechanismInfo.getCellMechanism((String) selection);
 
-                        String comparedCellMech = comparedMech.getInstanceName();
-                                       
-                        String comp = CellTopologyHelper.compareChannelMech(comparedCellMech, true, firstProj, otherProj);
+                    String comp = CellTopologyHelper.compareChannelMech(mechToComp.getInstanceName(), otherMech.getInstanceName(), true, thisProj, otherProj);
 
-                        SimpleViewer.showString(comp, "Comparison of "+comparedCellMech+" between "+ firstProj.getProjectName() +" and "+otherProj.getProjectName(), 12, false, true);
-                    }                 
-                    
-                }
-                catch (Exception ex2)
+                    SimpleViewer.showString(comp, "Comparison of "+mechToComp.getInstanceName()+" with "+ otherMech.getInstanceName(), 12, false, true);
+            
+                } 
+                catch (ProjectFileParsingException ex)
                 {
-                    GuiUtils.showErrorMessage(logger, "Problem comparing the Cell", ex2, this);
+                    GuiUtils.showErrorMessage(logger, "Problem comparing the Cell", ex, this);
 
                     return;
                 }
-            }
-
+            }                
         }
-
+    }
     
+      
     void jButtonMechanismReloadFile_actionPerformed(ActionEvent e)
     {
         logger.logComment("----------------------------         Reloading cell mechanism file...");

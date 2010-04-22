@@ -60,7 +60,7 @@ public class CellTopologyHelper
     public static final String CELL_IS_BIO_VALID = "Cell biophysical parameters are valid.";
 
     public static final String CELLS_ARE_IDENTICAL = "** Cells are identical **";
-    
+
     CachedSynLocInfo cachedPostSynLocInfo = null;
     CachedSynLocInfo cachedPreSynLocInfo = null;
 
@@ -3675,6 +3675,8 @@ public class CellTopologyHelper
                                         
                     info.append(chanComp);
                 }
+                
+                info.append("\n\n");
             }
         }
         
@@ -3767,7 +3769,12 @@ public class CellTopologyHelper
      * @ Matteo Farinella
      */
     public static String compareChannelMech (String chanMechName, boolean html, Project projectA, Project projectB)
-    {        
+    { 
+        return compareChannelMech(chanMechName, chanMechName, html, projectA, projectB);
+    }
+    
+    public static String compareChannelMech (String chanMechNameA, String chanMechNameB, boolean html, Project projectA, Project projectB)
+    {      
         String EOL = GeneralUtils.getEndLine(html);
         String LT = "<";
         if (html) LT = "&lt;";
@@ -3779,18 +3786,22 @@ public class CellTopologyHelper
         
         StringBuilder infoCM = new StringBuilder();
         
-        CellMechanism chanMechA = projectA.cellMechanismInfo.getCellMechanism(chanMechName);
-        CellMechanism chanMechB = projectB.cellMechanismInfo.getCellMechanism(chanMechName);                    
+        CellMechanism chanMechA = projectA.cellMechanismInfo.getCellMechanism(chanMechNameA);
+        CellMechanism chanMechB = projectB.cellMechanismInfo.getCellMechanism(chanMechNameB);
+        
+        String projectNameA = projectA.getProjectFileName();
+        String projectNameB = projectB.getProjectFileName();
 
         // DIFFERENT DESCRIPTION LANGUAGES
         if (!chanMechA.getMechanismModel().equals(chanMechB.getMechanismModel()))
         {
-            infoCM.append(GeneralUtils.getColouredString("The mechanism "+chanMechName+" use different descriptions languages in the two projects", "red", html)+EOL);
+            infoCM.append(GeneralUtils.getColouredString("Mechanism "+chanMechNameA+" from project "+projectNameA+
+                                                         " and mechanism "+chanMechNameB+" from project "+projectNameA+
+                                                         " use different descriptions languages", "red", html)+EOL);
             infoCM.append("\n");
         }
         
 
-//        else if (chanMechA.getMechanismModel().equals("ChannelML based process"))
         else if (chanMechA instanceof ChannelMLCellMechanism)
         {
             ChannelMLCellMechanism mechA = (ChannelMLCellMechanism) chanMechA;
@@ -3802,12 +3813,15 @@ public class CellTopologyHelper
             String fB = GeneralUtils.readShortFile(fileB);
             if (!fA.equals(fB))
             {
-                infoCM.append(GeneralUtils.getColouredString("The ChannelML mechanism "+chanMechName+
-                        " has different implementations in the 2 projectes", "red", html)+EOL);
+                infoCM.append(GeneralUtils.getColouredString("ChannelML mechanism "+chanMechNameA+" from project "+projectNameA
+                                                         +" and ChannelML mechanism "+chanMechNameB+" from project "+projectNameB
+                                                         +" have different implementations", "red", html)+EOL);
             }
              else
             {
-                infoCM.append(GeneralUtils.getColouredString("The ChannelML mechanism "+chanMechName+" is identical in the 2 projects", "green", html)+EOL);
+                infoCM.append(GeneralUtils.getColouredString("ChannelML mechanism "+chanMechNameA+" from project "+projectNameA
+                                                         +" and ChannelML mechanism "+chanMechNameB+" from project "+projectNameB
+                                                         +" are identical", "green", html)+EOL);
             }                                      
         }
 
@@ -3817,18 +3831,22 @@ public class CellTopologyHelper
             FileBasedMembraneMechanism mechB = (FileBasedMembraneMechanism) chanMechB;
             for (int j = 0; j < mechA.getMechanismImpls().length; j++)
             {
-                File fileA = mechA.getMechanismImpls()[j].getImplementingFileObject(projectA, chanMechName);                                
-                File fileB = mechB.getMechanismImpls()[j].getImplementingFileObject(projectB, chanMechName);
+                File fileA = mechA.getMechanismImpls()[j].getImplementingFileObject(projectA, chanMechNameA);                                
+                File fileB = mechB.getMechanismImpls()[j].getImplementingFileObject(projectB, chanMechNameB);
                 String fA = GeneralUtils.readShortFile(fileA);
                 String fB = GeneralUtils.readShortFile(fileB);
                 if (!fA.equals(fB))
                 {
-                    infoCM.append(GeneralUtils.getColouredString("The file based mechanism "+chanMechName+
-                            " has different implementations for the "+mechA.getMechanismImpls()[j].getSimulationEnvironment()+" simulation envirorment", "red", html)+EOL);
+                    infoCM.append(GeneralUtils.getColouredString("File based mechanism "+chanMechNameA+" from project "+projectNameA
+                                                         +" and file based mechanism "+chanMechNameB+" from project "+projectNameB
+                                                         +" have different implementations for the "+mechA.getMechanismImpls()[j].getSimulationEnvironment()
+                                                         +" simulation envirorment", "red", html)+EOL);
                 }
                 else
                 {
-                    infoCM.append(GeneralUtils.getColouredString("The file based mechanism "+chanMechName+" is identical in the 2 projects ", "green", html)+EOL);
+                    infoCM.append(GeneralUtils.getColouredString("File based mechanism "+chanMechNameA+" from project "+projectNameA
+                                                         +" and file based mechanism "+chanMechNameB+" from project "+projectNameB
+                                                         +" are identical", "green", html)+EOL);
                 }
             }                        
         }        
@@ -3841,10 +3859,9 @@ public class CellTopologyHelper
         
         else
         {
-            infoCM.append(GeneralUtils.getColouredString("Not able to compare the "+chanMechName+" cell mechanism...", "black", html)+EOL);
-        }
-
-        
+            infoCM.append(GeneralUtils.getColouredString("Not able to compare mechanism "+chanMechNameA+" from project "+projectNameA
+                                                         +" with mechanism "+chanMechNameB+" from project "+projectNameB, "black", html)+EOL);
+        }      
         
         
         return infoCM.toString();
