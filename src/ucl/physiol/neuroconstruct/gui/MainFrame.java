@@ -11598,6 +11598,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         chooser.setCurrentDirectory(ProjectStructure.getSavedNetworksDir(projManager.getCurrentProject().getProjectMainDirectory()));
 
         chooser.setFileFilter(new SimpleFileFilter(new String[]{ProjectStructure.getNeuroMLFileExtension(),
+                                                   ProjectStructure.getXMLFileExtension(),
                                                    ProjectStructure.getNeuroMLCompressedFileExtension(),
                                                    ProjectStructure.getHDF5FileExtension()}, "(Plaintext, compressed or HDF5) NetworkML files", true));
 
@@ -11692,59 +11693,62 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 {
                     File newFile = chooser.getSelectedFile();
                     logger.logComment("Looking at: " + newFile);
-                    try
+                    if (newFile!=null && !newFile.isDirectory())
                     {
-                        if (newFile.getName().endsWith(ProjectStructure.getNeuroMLCompressedFileExtension()))
+                        try
                         {
-                            openButton.setEnabled(false);
-                            
-                            ZipInputStream zf = new ZipInputStream(new FileInputStream( newFile));
-                            ZipEntry ze = null;
-
-                            //summary.setText("Comment: "+zf.getNextEntry().getComment());
-                            while ((ze=zf.getNextEntry())!=null)
+                            if (newFile.getName().endsWith(ProjectStructure.getNeuroMLCompressedFileExtension()))
                             {
-                                logger.logComment("Entry: " +ze );
-                                summary.setText("Contains: "+ze);
+                                openButton.setEnabled(false);
+
+                                ZipInputStream zf = new ZipInputStream(new FileInputStream( newFile));
+                                ZipEntry ze = null;
+
+                                //summary.setText("Comment: "+zf.getNextEntry().getComment());
+                                while ((ze=zf.getNextEntry())!=null)
+                                {
+                                    logger.logComment("Entry: " +ze );
+                                    summary.setText("Contains: "+ze);
+                                }
+                                summary.setCaretPosition(0);
+
+
                             }
-                            summary.setCaretPosition(0);
+                            else
+                            {
+                                openButton.setEnabled(true);
+                                editButton.setEnabled(true);
 
+                                FileReader fr = null;
 
+                                fr = new FileReader(newFile);
+
+                                LineNumberReader reader = new LineNumberReader(fr);
+                                String nextLine = null;
+
+                                StringBuilder sb = new StringBuilder();
+                                int count = 0;
+                                int maxlines = 100;
+
+                                while (count <= maxlines && (nextLine = reader.readLine()) != null)
+                                {
+                                    sb.append(nextLine + "\n");
+                                    count++;
+                                }
+                                if (count >= maxlines) sb.append("\n\n  ... NetworkML file continues ...");
+                                reader.close();
+                                fr.close();
+                                summary.setText(sb.toString());
+                                summary.setCaretPosition(0);
+
+                                sizeInfo.setText("Size: "+ newFile.length()+" bytes");
+
+                            }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            openButton.setEnabled(true);
-                            editButton.setEnabled(true);
-
-                            FileReader fr = null;
-
-                            fr = new FileReader(newFile);
-
-                            LineNumberReader reader = new LineNumberReader(fr);
-                            String nextLine = null;
-
-                            StringBuilder sb = new StringBuilder();
-                            int count = 0;
-                            int maxlines = 100;
-
-                            while (count <= maxlines && (nextLine = reader.readLine()) != null)
-                            {
-                                sb.append(nextLine + "\n");
-                                count++;
-                            }
-                            if (count >= maxlines) sb.append("\n\n  ... NetworkML file continues ...");
-                            reader.close();
-                            fr.close();
-                            summary.setText(sb.toString());
-                            summary.setCaretPosition(0);
-                            
-                            sizeInfo.setText("Size: "+ newFile.length()+" bytes");
-
+                            summary.setText("Error loading contents of file: " + newFile);
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        summary.setText("Error loading contents of file: " + newFile);
                     }
                 }
 
@@ -13795,7 +13799,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                 currentMechs.toArray(),
                                 currentMechs.get(0));
         
-        CellMechanism mechToComp = (CellMechanism) thisProj.cellMechanismInfo.getCellMechanism(selection);
+        CellMechanism mechToComp = thisProj.cellMechanismInfo.getCellMechanism(selection);
         
         String[] otherProject = new String[2];
         otherProject[0] = "this project";
@@ -13913,7 +13917,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     }
                     logger.logComment("Selection: "+ selection);
 
-                    CellMechanism otherMech = otherProj.cellMechanismInfo.getCellMechanism((String) selection);
+                    CellMechanism otherMech = otherProj.cellMechanismInfo.getCellMechanism(selection);
 
                     String comp = CellTopologyHelper.compareChannelMech(mechToComp.getInstanceName(), otherMech.getInstanceName(), true, thisProj, otherProj);
 
@@ -16100,7 +16104,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         for(Object prop: allEnv)
         {
-            Object val = envProps.get(prop);
+            Object val = envProps.get((String)prop);
             String propName = prop.toString();
             if (propName.length()<=idealPropNameWidth)
             {

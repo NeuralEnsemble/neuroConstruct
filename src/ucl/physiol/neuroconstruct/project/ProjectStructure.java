@@ -60,6 +60,8 @@ public class ProjectStructure
 
     private static final String morphFileExtension = new String(".morph.xml");
 
+    private static final String xmlExtension = new String(".xml");
+
     private static final String neuromlExtension = new String(".nml");
     
     private static final String hdf5Extension = new String(".h5");
@@ -1013,6 +1015,14 @@ public class ProjectStructure
     public static String getNeuroMLFileExtension()
     {
         return neuromlExtension;
+    }
+
+    /**
+     * @return The default extension of XML files
+     */
+    public static String getXMLFileExtension()
+    {
+        return xmlExtension;
     }
     
     /**
