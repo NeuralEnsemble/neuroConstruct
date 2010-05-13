@@ -7,6 +7,7 @@ REM  to date. Note this script may change as the location of the repositories ch
 
 set NML_EX_DIR=templates\xmlTemplates\Examples
 set NML_SC_DIR=templates\xmlTemplates\Schemata
+set SBML2NEU_SC_DIR=templates\SBML2NEURON
 
 set NC_EXAMPLES=nCexamples
 set NC_MODELS=nCmodels
@@ -15,7 +16,6 @@ set NC_MODELS=nCmodels
 if not exist %NML_EX_DIR% (
     svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/trunk/web/NeuroMLFiles/Examples/ %NML_EX_DIR%
 )
-
 echo Updating the examples from the NeuroML Sourceforge repository...
 svn update %NML_EX_DIR%
 
@@ -23,9 +23,15 @@ svn update %NML_EX_DIR%
 if not exist %NML_SC_DIR% (
     svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/trunk/web/NeuroMLFiles/Schemata/ %NML_SC_DIR%
 )
-
 echo Updating the schema files from the NeuroML Sourceforge repository...
 svn update %NML_SC_DIR%
+
+
+if not exist %SBML2NEU_SC_DIR% (
+    svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/SBML2NEURON %SBML2NEU_SC_DIR%
+)
+echo Updating the SBML2NEURON files from the NeuroML Sourceforge repository...
+svn update %SBML2NEU_SC_DIR%
 
 
 
