@@ -733,6 +733,14 @@ public class GeneralProperties
     }
 
 
+    /**
+     * Gets the SBML Readable format XSL mapping. This may change!!!
+     *
+     */
+    public static File getSBMLReadableXSL()
+    {
+        return new File("templates/xmlTemplates/Schemata/Miscellaneous/SimpleSBMLView.xsl");
+    }
 
 
 

@@ -1789,7 +1789,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
       }
     });
     
-    jButtonMechanismUpdateMaps.setText("Update ChannelML mappings");
+    jButtonMechanismUpdateMaps.setText("Update mapping files");
     
     jButtonMechanismUpdateMaps.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -13991,9 +13991,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     {
         logger.logComment("----------------------------         Updating a cell mechanism...");
         
-        String info = "Use this button to update the selected ChannelML based cell mechanism to use the current version of the NEURON/GENESIS\n"
+        String info = "Use this button to update the selected XML based cell mechanism to use the current version of the NEURON/GENESIS\n"
                      +"mapping XSL files (for NeuroML version "+GeneralProperties.getNeuroMLVersionNumber()+"). Note, ChannelML files with older XSL mappings may work perfectly well,\n"
-                     +"but the latest XSL mappings will always be the most well tested and should be considered for any valid ChannelML file.";
+                     +"but the latest XSL mappings will always be the most well tested and should be considered for any valid ChannelML file.\n\n" +
+                     "Note this will also update SBML Python mappings (alpha)";
         
         int[] selectedRows = jTableMechanisms.getSelectedRows();
 
@@ -14011,11 +14012,54 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             CellMechanism cellMech = projManager.getCurrentProject().cellMechanismInfo.getCellMechanismAt(row);
 
-            if (!(cellMech instanceof ChannelMLCellMechanism))
+            if (!(cellMech instanceof ChannelMLCellMechanism) && !(cellMech instanceof SBMLCellMechanism))
             {
                 GuiUtils.showErrorMessage(logger,info, null, this);
             }
-            else
+            else if (cellMech instanceof SBMLCellMechanism)
+            {
+                SBMLCellMechanism sbmlMech = (SBMLCellMechanism) cellMech;
+                File implFile = sbmlMech.getXMLFile(projManager.getCurrentProject());
+
+                for (SimulatorMapping map: sbmlMech.getSimMappings())
+                {
+                    String simEnv = map.getSimEnv();
+
+                    if (simEnv.equals(SimEnvHelper.NEURON))
+                    {
+                        File sbml2neuron = ProjectStructure.getSbml2NeuronFile();
+                        
+                        File oldMapFile = new File (implFile.getParent(), map.getMappingFile());
+
+                        java.util.Date modifiedOld = new java.util.Date(oldMapFile.lastModified());
+                        java.util.Date modifiedNew = new java.util.Date(sbml2neuron.lastModified());
+
+
+                    int ans = JOptionPane.showConfirmDialog(this, "Would you like to replace mapping file: \n\n"+oldMapFile.getAbsolutePath() + " ("+formatter.format(modifiedOld)+")"
+                        +"\n\nfor environment "+simEnv+", SBML mech: " +sbmlMech.getInstanceName()
+                            + " with a copy of file:\n\n"+ sbml2neuron.getAbsolutePath()+ " ("+formatter.format(modifiedNew)+")"+"?" ,
+                            "Replace mapping?", JOptionPane.YES_NO_CANCEL_OPTION);
+
+                    if (ans==JOptionPane.CANCEL_OPTION)
+                        return;
+                    if (ans==JOptionPane.YES_OPTION)
+                    {
+                        try
+                        {
+                            GeneralUtils.copyFileIntoDir(sbml2neuron, implFile.getParentFile());
+                            map.setMappingFile(sbml2neuron.getName());
+                            projManager.getCurrentProject().markProjectAsEdited();
+                        }
+                        catch (IOException ex)
+                        {
+                            GuiUtils.showErrorMessage(logger,"Problem copying that file into the project", ex, this);
+                        }
+                    }
+                    }
+                }
+                
+            }
+            else if (cellMech instanceof ChannelMLCellMechanism)
             {
                 File xslDir = GeneralProperties.getChannelMLSchemataDir();
                 ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism) cellMech;

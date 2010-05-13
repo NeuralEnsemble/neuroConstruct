@@ -224,6 +224,11 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
 
     }
 
+    private boolean isSBMLMechanism()
+    {
+        return xmlDialect.equals(SBML);
+    }
+
     private void jbInit() throws Exception
     {
         this.setTitle("Editing "+xmlDialect+" Cell Mechanism: "+ this.xmlMechanism.getInstanceName());
@@ -500,6 +505,10 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
         File cmlFile = this.xmlMechanism.getXMLFile(project);
         File xslDoc = GeneralProperties.getChannelMLReadableXSL();
 
+        if (this.isSBMLMechanism())
+        {
+            xslDoc = GeneralProperties.getSBMLReadableXSL();
+        }
 
 
         try
@@ -604,23 +613,31 @@ public class ChannelMLEditor extends JFrame implements HyperlinkListener
                     InputSource is = null;
                     try
                     {
-                        SAXParserFactory spf = SAXParserFactory.newInstance();
-                        spf.setNamespaceAware(true);
-                        XMLReader xmlReader = spf.newSAXParser().getXMLReader();
+                        if (!this.isSBMLMechanism())
+                        {
+                            SAXParserFactory spf = SAXParserFactory.newInstance();
+                            spf.setNamespaceAware(true);
+                            XMLReader xmlReader = spf.newSAXParser().getXMLReader();
 
-                        SimpleXMLReader docBuilder = new SimpleXMLReader();
-                        xmlReader.setContentHandler(docBuilder);
+                            SimpleXMLReader docBuilder = new SimpleXMLReader();
+                            xmlReader.setContentHandler(docBuilder);
 
-                        instream = new FileInputStream(implFile);
+                            instream = new FileInputStream(implFile);
 
-                        is = new InputSource(instream);
+                            is = new InputSource(instream);
 
-                        xmlReader.parse(is);
+                            xmlReader.parse(is);
 
-                        xmlDoc = docBuilder.getDocRead();
-                        jEditorPaneImplFile.setContentType("text/html");
+                            xmlDoc = docBuilder.getDocRead();
+                            jEditorPaneImplFile.setContentType("text/html");
 
-                        jEditorPaneImplFile.setText(xmlDoc.getXMLString("", true));
+                            jEditorPaneImplFile.setText(xmlDoc.getXMLString("", true));
+                        }
+                        else
+                        {
+                            String contents = GeneralUtils.readShortFile(implFile);
+                            jEditorPaneImplFile.setText(contents);
+                        }
 
                         jEditorPaneImplFile.setCaretPosition(0);
 

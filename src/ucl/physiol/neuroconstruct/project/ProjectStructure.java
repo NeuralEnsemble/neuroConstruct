@@ -207,6 +207,10 @@ public class ProjectStructure
         + System.getProperty("file.separator")
         + "ChannelMLPrototypes";
 
+    private static String sbmlNeuronMappingDir = "templates"
+        + System.getProperty("file.separator")+"SBML2NEURON";
+
+    private static String sbmlNeuronMappingFile = "SBML2NEURON.py";
 
 
     private static String matlabOctaveDir = "matlabOctave";
@@ -433,6 +437,11 @@ public class ProjectStructure
         return new File(getnCHome(), mainHelpFileInInstall);
     }
 
+
+    public static File getSbml2NeuronFile()
+    {
+        return new File(sbmlNeuronMappingDir,sbmlNeuronMappingFile);
+    }
 
     public static File getRelNotesFile()
     {

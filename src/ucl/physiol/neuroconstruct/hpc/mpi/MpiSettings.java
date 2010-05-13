@@ -428,15 +428,56 @@ public class MpiSettings
             }
         }
 
-        String name = "Matthau_Lemmon_Test";
-        MpiConfiguration p = new MpiConfiguration(name);
-        p.getHostList().add(new MpiHost(MATTHAU+1, 8, 1));
-        p.getHostList().add(new MpiHost(LEMMON+1, 8, 1));
+        String name_16 = "Matthau_Lemmon_Test_16";
+        MpiConfiguration p_16 = new MpiConfiguration(name_16);
+        p_16.getHostList().add(new MpiHost(MATTHAU+5, 8, 1));
+        p_16.getHostList().add(new MpiHost(LEMMON+5, 8, 1));
 
-        p.setRemoteLogin(matlemLogin);
-        p.setMpiVersion(MpiSettings.OPENMPI_V2);
-        p.setUseScp(true);
-        configurations.add(p);
+        p_16.setRemoteLogin(matlemLogin);
+        p_16.setMpiVersion(MpiSettings.OPENMPI_V2);
+        p_16.setUseScp(true);
+        configurations.add(p_16);
+        
+        String name_80 = "Matthau_Lemmon_Test_80";
+        MpiConfiguration p_80 = new MpiConfiguration(name_80);
+        
+        p_80.getHostList().add(new MpiHost(MATTHAU+5, 8, 1));
+        p_80.getHostList().add(new MpiHost(MATTHAU+6, 8, 1));
+        p_80.getHostList().add(new MpiHost(MATTHAU+7, 8, 1));
+        p_80.getHostList().add(new MpiHost(MATTHAU+8, 8, 1));
+        p_80.getHostList().add(new MpiHost(MATTHAU+9, 8, 1));
+        
+        p_80.getHostList().add(new MpiHost(LEMMON+5, 8, 1));
+        p_80.getHostList().add(new MpiHost(LEMMON+6, 8, 1));
+        p_80.getHostList().add(new MpiHost(LEMMON+7, 8, 1));
+        p_80.getHostList().add(new MpiHost(LEMMON+8, 8, 1));
+        p_80.getHostList().add(new MpiHost(LEMMON+9, 8, 1));
+
+        p_80.setRemoteLogin(matlemLogin);
+        p_80.setMpiVersion(MpiSettings.OPENMPI_V2);
+        p_80.setUseScp(true);
+        configurations.add(p_80);
+
+
+        String name_ALL = "Matthau_Lemmon_Test_ALL";
+        MpiConfiguration p_ALL = new MpiConfiguration(name_ALL);
+
+        for(int i=2;i<=9;i++)
+        {
+            p_ALL.getHostList().add(new MpiHost(MATTHAU+i, 8, 1));
+        }
+
+        for(int i=1;i<=19;i++)
+        {
+            p_ALL.getHostList().add(new MpiHost(LEMMON+i, 8, 1));
+        }
+
+        p_ALL.setRemoteLogin(matlemLogin);
+        p_ALL.setMpiVersion(MpiSettings.OPENMPI_V2);
+        p_ALL.setUseScp(true);
+        configurations.add(p_ALL);
+
+
     }
 
     /*
