@@ -52,8 +52,21 @@ public class MorphMLConstants
 
     public static String CELL_NAME_ATTR = "name";
 
+    public static String MORPHOLOGY_V2 = "morphology";
+    public static String PARENT_V2 = "parent";
+    public static String SEGMENT_V2 = "segment";
+    public static String PARENT_FRACT_ALONG_V2 = "fractionAlong";
+
+
+    public static String SEG_GROUP_V2 = "segmentGroup";
+    public static String MEMBER_V2 = "member";
+    public static String INCLUDE_V2 = "include";
+    
+
 
     public static String SEGMENTS_ELEMENT = "segments";
+
+
     public static String SEGMENT_ELEMENT = "segment";
 
     public static String SEGMENT_ID_ATTR = "id";

@@ -57,8 +57,9 @@ public class NeuroMLConstants
 
     public static String DEFAULT_SCHEMA_FILENAME = "NeuroML.xsd";
 
-    public static String DEFAULT_SCHEMA_FILENAME_VERSION_2 = "NeuroML_v2.0.xsd";
+    public static String DEFAULT_SCHEMA_FILENAME_VERSION_2 = "http://neuroml.svn.sourceforge.net/viewvc/neuroml/DemoVer2.0/NMLVer2_Test/web/Schema/NeuroML_v2.0.xsd";
 
+    public static String NEUROML_ID_V2 = "id";
 
     /**
      * General constants used in NeuroML/MorphML

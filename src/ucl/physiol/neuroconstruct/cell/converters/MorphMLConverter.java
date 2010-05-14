@@ -335,6 +335,12 @@ public class MorphMLConverter extends FormatImporter
                 mmlPrefix = MorphMLConstants.PREFIX + ":";
         
             String metadataPrefix = MetadataConstants.PREFIX + ":";
+
+            if (version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+            {
+                mmlPrefix = "";
+                metadataPrefix = "";
+            }
             
             SimpleXMLElement descElement = new SimpleXMLElement(metadataPrefix + MetadataConstants.NOTES_ELEMENT);
             
@@ -345,7 +351,13 @@ public class MorphMLConverter extends FormatImporter
             SimpleXMLElement cellElement = new SimpleXMLElement(MorphMLConstants.CELL_ELEMENT);
             //cellsElement.addChildElement(cellElement);
 
-            SimpleXMLAttribute nameAttr = new SimpleXMLAttribute(MorphMLConstants.CELL_NAME_ATTR,
+            String nameIdAttr = MorphMLConstants.CELL_NAME_ATTR;
+
+            if (version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+            {
+                nameIdAttr = NeuroMLConstants.NEUROML_ID_V2;
+            }
+            SimpleXMLAttribute nameAttr = new SimpleXMLAttribute(nameIdAttr,
                                                                  cell.getInstanceName());
             cellElement.addAttribute(nameAttr);
 
@@ -356,9 +368,21 @@ public class MorphMLConverter extends FormatImporter
                 cellElement.addChildElement(descElement);
             }
             
-            
-            SimpleXMLElement segmentsElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.SEGMENTS_ELEMENT);
-            cellElement.addChildElement(segmentsElement);
+            SimpleXMLElement segmentParentElement;
+
+            if (!version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+            {
+                SimpleXMLElement segsElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.SEGMENTS_ELEMENT);
+                cellElement.addChildElement(segsElement);
+                segmentParentElement = segsElement;
+            }
+            else
+            {
+                SimpleXMLElement morphologyElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.MORPHOLOGY_V2);
+                morphologyElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, "morphology_"+cell.getInstanceName()));
+                cellElement.addChildElement(morphologyElement);
+                segmentParentElement = morphologyElement;
+            }
 
             Vector allSegments = cell.getAllSegments();
             ArrayList<Section> allSections = cell.getAllSections();
@@ -369,7 +393,7 @@ public class MorphMLConverter extends FormatImporter
                 Segment nextSegment = (Segment) allSegments.elementAt(i);
                 SimpleXMLElement segmentElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.SEGMENT_ELEMENT);
 
-                segmentsElement.addChildElement(segmentElement);
+                segmentParentElement.addChildElement(segmentElement);
 
                 segmentElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.SEGMENT_ID_ATTR,
                                                                    nextSegment.getSegmentId() + ""));
@@ -379,14 +403,34 @@ public class MorphMLConverter extends FormatImporter
 
                 if (nextSegment.getParentSegment() != null)
                 {
-                    segmentElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.SEGMENT_PARENT_ATTR,
+                    if (!version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+                    {
+                        segmentElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.SEGMENT_PARENT_ATTR,
                                                                        nextSegment.getParentSegment().getSegmentId() + ""));
+                    }
+                    else
+                    {
+                        SimpleXMLElement parentElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.PARENT_V2);
+                        parentElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.SEGMENT_V2,
+                                                                       nextSegment.getParentSegment().getSegmentId() + ""));
+
+                        if (nextSegment.getFractionAlongParent()!=1)
+                        {
+                            parentElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.PARENT_FRACT_ALONG_V2,
+                                                                       nextSegment.getFractionAlongParent() + ""));
+                        }
+                        segmentElement.addChildElement(parentElement);
+                        segmentElement.addContent("\n                "); // to make it more readable...
+                    }
                 }
 
                 int sectionId = allSections.indexOf(nextSegment.getSection());
 
-                segmentElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.SEGMENT_CABLE_ID_ATTR,
-                                                                   sectionId + ""));
+                if (!version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+                {
+                    segmentElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.SEGMENT_CABLE_ID_ATTR,
+                                                                       sectionId + ""));
+                }
 
                 if (nextSegment.isFirstSectionSegment())
                 {
@@ -446,8 +490,15 @@ public class MorphMLConverter extends FormatImporter
 
             }
 
-            SimpleXMLElement cablesElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.CABLES_ELEMENT);
-            cellElement.addChildElement(cablesElement);
+            SimpleXMLElement cabSegGroupParentElement = null;
+
+            
+            if (!version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+            {
+                SimpleXMLElement cablesElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.CABLES_ELEMENT);
+                cellElement.addChildElement(cablesElement);
+                cabSegGroupParentElement = cablesElement;
+            }
             
             boolean useCableGroup  = false;
             
@@ -458,83 +509,146 @@ public class MorphMLConverter extends FormatImporter
             {
                 Section nextSection =  allSections.get(i);
 
-                SimpleXMLElement cableElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.CABLE_ELEMENT);
-
-                cablesElement.addChildElement(cableElement);
-
-                cableElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.CABLE_ID_ATTR, i + ""));
-                cableElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.CABLE_NAME_ATTR, nextSection.getSectionName()));
-
-                SimpleXMLElement props = new SimpleXMLElement(MetadataConstants.PREFIX + ":" + MorphMLConstants.PROPS_ELEMENT);
-
-                if (nextSection.getNumberInternalDivisions()!=1)
+                if (version.equals(NeuroMLConstants.NEUROML_VERSION_2))
                 {
-                    cableElement.addContent("\n                "); // to make it more readable...
-                    cableElement.addChildElement(props);
-                    props.addContent("\n                    "); // to make it more readable...
+                    SimpleXMLElement segGroupElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.SEG_GROUP_V2);
 
-                    MetadataConstants.addProperty(props,
-                                MorphMLConstants.NUMBER_INTERNAL_DIVS_PROP,
-                                nextSection.getNumberInternalDivisions() + "",
-                                "                    ");
-                    props.addContent("\n                "); // to make it more readable...
-                    cableElement.addContent("\n            "); // to make it more readable...
-                }
+                    segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, nextSection.getSectionName()));
+                    
+                    segmentParentElement.addChildElement(segGroupElement);
 
-                if (nextSection.getComment() != null)
-                {
-                    if (props == null)
+                    for (int p = 0; p < allSegments.size(); p++)
                     {
-                        props = new SimpleXMLElement( /*metadataPrefix + */mmlPrefix + MorphMLConstants.PROPS_ELEMENT);
-                        cableElement.addContent("    "); // to make it more readable...
-                        cableElement.addChildElement(props);
-                        props.addContent("\n                        "); // to make it more readable...
+                        Segment nextSegment = (Segment) allSegments.elementAt(p);
+
+                        if (nextSegment.getSection().getSectionName().equals(nextSection.getSectionName()))
+                        {
+                            SimpleXMLElement memberElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.MEMBER_V2);
+                            memberElement.addAttribute(MorphMLConstants.SEGMENT_V2, nextSegment.getSegmentId()+"");
+                            segGroupElement.addContent("\n            "); // to make it more readable...
+                            segGroupElement.addChildElement(memberElement);
+                            segGroupElement.addContent("\n        "); // to make it more readable...
+
+                        }
                     }
-
-                    MetadataConstants.addProperty(props,
-                                MorphMLConstants.COMMENT_PROP,
-                                nextSection.getComment(),
-                                "                        ");
-
-                }
-
-                if (!useCableGroup)
-                {
-                    Vector groups = nextSection.getGroups();
-                    for (int j = 0; j < groups.size(); j++)
-                    {
-                        SimpleXMLElement grpElement = new SimpleXMLElement(metadataPrefix+ MetadataConstants.GROUP_ELEMENT);
-
-                        grpElement.addContent( (String) groups.elementAt(j));
-                        cableElement.addChildElement(grpElement);
-                    }
+                    segmentParentElement.addContent("\n        "); // to make it more readable...
                 }
                 else
                 {
-                    if (i < allSections.size()-1)
-                        cablesElement.addContent("\n            "); // to make it more readable...
+                    SimpleXMLElement cableElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.CABLE_ELEMENT);
+
+                    cabSegGroupParentElement.addChildElement(cableElement);
+
+                    cableElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.CABLE_ID_ATTR, i + ""));
+                    cableElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.CABLE_NAME_ATTR, nextSection.getSectionName()));
+
+                    SimpleXMLElement props = new SimpleXMLElement(MetadataConstants.PREFIX + ":" + MorphMLConstants.PROPS_ELEMENT);
+
+                    if (nextSection.getNumberInternalDivisions()!=1)
+                    {
+                        cableElement.addContent("\n                "); // to make it more readable...
+                        cableElement.addChildElement(props);
+                        props.addContent("\n                    "); // to make it more readable...
+
+                        MetadataConstants.addProperty(props,
+                                    MorphMLConstants.NUMBER_INTERNAL_DIVS_PROP,
+                                    nextSection.getNumberInternalDivisions() + "",
+                                    "                    ");
+                        props.addContent("\n                "); // to make it more readable...
+                        cableElement.addContent("\n            "); // to make it more readable...
+                    }
+
+                    if (nextSection.getComment() != null)
+                    {
+                        if (props == null)
+                        {
+                            props = new SimpleXMLElement( /*metadataPrefix + */mmlPrefix + MorphMLConstants.PROPS_ELEMENT);
+                            cableElement.addContent("    "); // to make it more readable...
+                            cableElement.addChildElement(props);
+                            props.addContent("\n                        "); // to make it more readable...
+                        }
+
+                        MetadataConstants.addProperty(props,
+                                    MorphMLConstants.COMMENT_PROP,
+                                    nextSection.getComment(),
+                                    "                        ");
+
+                    }
+
+                    if (!useCableGroup)
+                    {
+                        Vector groups = nextSection.getGroups();
+                        for (int j = 0; j < groups.size(); j++)
+                        {
+                            SimpleXMLElement grpElement = new SimpleXMLElement(metadataPrefix+ MetadataConstants.GROUP_ELEMENT);
+
+                            grpElement.addContent( (String) groups.elementAt(j));
+                            cableElement.addChildElement(grpElement);
+                        }
+                    }
                     else
-                        cablesElement.addContent("\n        "); // to make it more readable...
-                        
-                }
+                    {
+                        if (i < allSections.size()-1)
+                            cabSegGroupParentElement.addContent("\n            "); // to make it more readable...
+                        else
+                            cabSegGroupParentElement.addContent("\n        "); // to make it more readable...
 
-                Segment firstSeg = cell.getAllSegmentsInSection(nextSection).getFirst();
+                    }
 
-                if (firstSeg.getFractionAlongParent()!=1)
-                {
-                    float fractAlongParentSec = CellTopologyHelper.getFractionAlongSection(cell, firstSeg.getParentSegment(), firstSeg.getFractionAlongParent());
+                    Segment firstSeg = cell.getAllSegmentsInSection(nextSection).getFirst();
 
-                    if (usePreV1_7_1Format)
-                        cableElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.FRACT_ALONG_PARENT_ATTR_pre_v1_7_1, fractAlongParentSec+""));
-                    else
-                        cableElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.FRACT_ALONG_PARENT_ATTR, fractAlongParentSec+""));
-                        
+                    if (firstSeg.getFractionAlongParent()!=1)
+                    {
+                        float fractAlongParentSec = CellTopologyHelper.getFractionAlongSection(cell, firstSeg.getParentSegment(), firstSeg.getFractionAlongParent());
+
+                        if (usePreV1_7_1Format)
+                            cableElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.FRACT_ALONG_PARENT_ATTR_pre_v1_7_1, fractAlongParentSec+""));
+                        else
+                            cableElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.FRACT_ALONG_PARENT_ATTR, fractAlongParentSec+""));
+
+                    }
                 }
             }
+
+            if (version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+            {
+                Hashtable<String, SimpleXMLElement> segGroupElsVaGroupNames = new Hashtable<String, SimpleXMLElement>();
+
+
+                for (Section sec: allSections)
+                {
+                    for(String group: sec.getGroups())
+                    {
+                        if (!segGroupElsVaGroupNames.containsKey(group))
+                        {
+                            SimpleXMLElement segGroupElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.SEG_GROUP_V2);
+                            segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, group));
+                            segGroupElsVaGroupNames.put(group, segGroupElement);
+
+                            segmentParentElement.addChildElement(segGroupElement);
+                            segmentParentElement.addContent("\n\n        "); // to make it more readable...
+
+                        }
+                        SimpleXMLElement segGroupElement = segGroupElsVaGroupNames.get(group);
+
+                        SimpleXMLElement includeElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.INCLUDE_V2);
+                        includeElement.addAttribute(MorphMLConstants.SEG_GROUP_V2, sec.getSectionName()+"");
+                        segGroupElement.addContent("\n            "); // to make it more readable...
+                        segGroupElement.addChildElement(includeElement);
+                    }
+                }
+                for (SimpleXMLElement segGroupElement: segGroupElsVaGroupNames.values())
+                {
+                    segGroupElement.addContent("\n        "); // to make it more readable...
+                }
+                segmentParentElement.addContent("\n        "); // to make it more readable...
+            
+            }
+
             if (useCableGroup)
             {
                 
-                cablesElement.addContent("\n            "); // to make it more readable...
+                cabSegGroupParentElement.addContent("\n            "); // to make it more readable...
                 //TODO: Check there isn't a more efficient way to do this...
                 Vector<String> groups = cell.getAllGroupNames();
                 
@@ -545,7 +659,7 @@ public class MorphMLConverter extends FormatImporter
                     SimpleXMLElement cableGroupElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.CABLE_GROUP_ELEMENT);
                     cableGroupElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.CABLE_GROUP_NAME, group));
                     
-                    cablesElement.addChildElement(cableGroupElement);
+                    cabSegGroupParentElement.addChildElement(cableGroupElement);
                     for(Section sec: secs)
                     {
                         SimpleXMLElement cableElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.CABLE_ELEMENT);
@@ -599,13 +713,13 @@ public class MorphMLConverter extends FormatImporter
                     }
                     
                     cableGroupElement.addContent("\n            "); // to make it more readable...
-                    cablesElement.addContent("\n            "); // to make it more readable...
+                    cabSegGroupParentElement.addContent("\n            "); // to make it more readable...
                     
                 }
                 
             }
 
-            if (!level.equals(NeuroMLConstants.NEUROML_LEVEL_1) )
+            if (!level.equals(NeuroMLConstants.NEUROML_LEVEL_1) && !version.equals(NeuroMLConstants.NEUROML_VERSION_2))
             {
                 cellElement.addComment(new SimpleXMLComment("Adding the biophysical parameters"));
 
@@ -624,7 +738,12 @@ public class MorphMLConverter extends FormatImporter
 
                 cellElement.addChildElement(bioElement);
 
-                String prefix = BiophysicsConstants.PREFIX + ":";
+                String bioPrefix = BiophysicsConstants.PREFIX + ":";
+
+                if (version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+                {
+                    bioPrefix = "";
+                }
 
                 ArrayList<ChannelMechanism> allUniformChanMechs = cell.getAllUniformChanMechs(true);
 
@@ -634,7 +753,7 @@ public class MorphMLConverter extends FormatImporter
 
                     CellMechanism cm = project.cellMechanismInfo.getCellMechanism(chanMech.getName());
 
-                    SimpleXMLElement mechElement = new SimpleXMLElement(prefix + BiophysicsConstants.MECHANISM_ELEMENT);
+                    SimpleXMLElement mechElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.MECHANISM_ELEMENT);
                     bioElement.addChildElement(mechElement);
 
                     mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_NAME_ATTR,
@@ -655,7 +774,7 @@ public class MorphMLConverter extends FormatImporter
 
                     ArrayList<SimpleXMLElement> allParamGrps = new ArrayList<SimpleXMLElement>();                                         
 
-                    SimpleXMLElement gmaxParamElement = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
+                    SimpleXMLElement gmaxParamElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
                     gmaxParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
                                                                      BiophysicsConstants.PARAMETER_GMAX));
@@ -684,7 +803,7 @@ public class MorphMLConverter extends FormatImporter
                     for(MechParameter mp: mps)
                     {                            
 
-                        SimpleXMLElement pe = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
+                        SimpleXMLElement pe = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
                         pe.addComment(new SimpleXMLComment("Note: Units of extra parameters are not known, except if it's e!!"));
                         
@@ -725,7 +844,7 @@ public class MorphMLConverter extends FormatImporter
                                 mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_PASSIVE_COND_ATTR_pre_v1_7_1,"true"));
                             }
 
-                            SimpleXMLElement revPotParamElement = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
+                            SimpleXMLElement revPotParamElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
                             revPotParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
                                                                              BiophysicsConstants.PARAMETER_REV_POT));
@@ -799,7 +918,7 @@ public class MorphMLConverter extends FormatImporter
 
                             for (int k = 0; k < groups.size(); k++)
                             {
-                                SimpleXMLElement groupElement = new SimpleXMLElement(prefix + BiophysicsConstants.GROUP_ELEMENT);
+                                SimpleXMLElement groupElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.GROUP_ELEMENT);
                                 revPotParamElement.addChildElement(groupElement);
                                 groupElement.addContent(groups.get(k));
 
@@ -816,7 +935,7 @@ public class MorphMLConverter extends FormatImporter
                         
                         for (int k = 0; k < groups.size(); k++)
                         {
-                            SimpleXMLElement groupElement = new SimpleXMLElement(prefix + BiophysicsConstants.GROUP_ELEMENT);
+                            SimpleXMLElement groupElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.GROUP_ELEMENT);
                             paramElement.addChildElement(groupElement);
                             groupElement.addContent(groups.get(k));
 
@@ -834,7 +953,7 @@ public class MorphMLConverter extends FormatImporter
                     ParameterisedGroup pg = allVarChanMechs.get(vm);
                     bioElement.addComment(vm.toString() + " on "+pg);
 
-                    SimpleXMLElement mechElement = new SimpleXMLElement(prefix + BiophysicsConstants.MECHANISM_ELEMENT);
+                    SimpleXMLElement mechElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.MECHANISM_ELEMENT);
                     bioElement.addChildElement(mechElement);
 
                     mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.MECHANISM_NAME_ATTR,
@@ -853,18 +972,18 @@ public class MorphMLConverter extends FormatImporter
                     }
                     
                     
-                    SimpleXMLElement pe = new SimpleXMLElement(prefix + BiophysicsConstants.VAR_PARAMETER_ELEMENT);
+                    SimpleXMLElement pe = new SimpleXMLElement(bioPrefix + BiophysicsConstants.VAR_PARAMETER_ELEMENT);
                     mechElement.addChildElement(pe);
 
                     pe.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
                                                                     vm.getParam().getName()));
 
 
-                    SimpleXMLElement group = new SimpleXMLElement(prefix + BiophysicsConstants.GROUP_ELEMENT);
+                    SimpleXMLElement group = new SimpleXMLElement(bioPrefix + BiophysicsConstants.GROUP_ELEMENT);
                     pe.addChildElement(group);
                     group.addContent(pg.getGroup());
 
-                    SimpleXMLElement iv = new SimpleXMLElement(prefix + BiophysicsConstants.INHOMOGENEOUS_VALUE);
+                    SimpleXMLElement iv = new SimpleXMLElement(bioPrefix + BiophysicsConstants.INHOMOGENEOUS_VALUE);
                     pe.addChildElement(iv);
                     iv.addAttribute(BiophysicsConstants.INHOMOGENEOUS_PARAM_NAME, pg.getName());
                     String convFactor = "";
@@ -895,10 +1014,10 @@ public class MorphMLConverter extends FormatImporter
 
 
 
-                SimpleXMLElement specCapElement = new SimpleXMLElement(prefix + BiophysicsConstants.SPECIFIC_CAP_ELEMENT);
+                SimpleXMLElement specCapElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.SPECIFIC_CAP_ELEMENT);
                 
                 if (usePreV1_7_1Format) 
-                    specCapElement = new SimpleXMLElement(prefix + BiophysicsConstants.SPECIFIC_CAP_ELEMENT_pre_v1_7_1);
+                    specCapElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.SPECIFIC_CAP_ELEMENT_pre_v1_7_1);
 
                 bioElement.addChildElement(specCapElement);
 
@@ -907,7 +1026,7 @@ public class MorphMLConverter extends FormatImporter
 
                 for (Float specCap : specCaps)
                 {
-                    SimpleXMLElement paramElement = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
+                    SimpleXMLElement paramElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
                     paramElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
                                                                      UnitConverter.getSpecificCapacitance(specCap,
@@ -920,7 +1039,7 @@ public class MorphMLConverter extends FormatImporter
 
                     for (String group : groups)
                     {
-                        SimpleXMLElement groupElement2 = new SimpleXMLElement(prefix + BiophysicsConstants.GROUP_ELEMENT);
+                        SimpleXMLElement groupElement2 = new SimpleXMLElement(bioPrefix + BiophysicsConstants.GROUP_ELEMENT);
                         paramElement.addChildElement(groupElement2);
                         groupElement2.addContent(group);
 
@@ -928,10 +1047,10 @@ public class MorphMLConverter extends FormatImporter
 
                 }
 
-                SimpleXMLElement specAxResElement = new SimpleXMLElement(prefix + BiophysicsConstants.SPECIFIC_AX_RES_ELEMENT);
+                SimpleXMLElement specAxResElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.SPECIFIC_AX_RES_ELEMENT);
                 
                 if (usePreV1_7_1Format)
-                    specAxResElement = new SimpleXMLElement(prefix + BiophysicsConstants.SPECIFIC_AX_RES_ELEMENT_pre_v1_7_1);
+                    specAxResElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.SPECIFIC_AX_RES_ELEMENT_pre_v1_7_1);
 
                 bioElement.addChildElement(specAxResElement);
 
@@ -940,7 +1059,7 @@ public class MorphMLConverter extends FormatImporter
 
                 for (Float specAxRes : specAxReses)
                 {
-                    SimpleXMLElement paramElement = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
+                    SimpleXMLElement paramElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
                     paramElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
                                                                      UnitConverter.getSpecificAxialResistance(specAxRes,
@@ -953,21 +1072,21 @@ public class MorphMLConverter extends FormatImporter
 
                     for (String group : groups)
                     {
-                        SimpleXMLElement groupElement3 = new SimpleXMLElement(prefix + BiophysicsConstants.GROUP_ELEMENT);
+                        SimpleXMLElement groupElement3 = new SimpleXMLElement(bioPrefix + BiophysicsConstants.GROUP_ELEMENT);
                         paramElement.addChildElement(groupElement3);
                         groupElement3.addContent(group);
                     }
                 }
 
 
-                SimpleXMLElement initPotElement = new SimpleXMLElement(prefix+BiophysicsConstants.INITIAL_POT_ELEMENT);
+                SimpleXMLElement initPotElement = new SimpleXMLElement(bioPrefix+BiophysicsConstants.INITIAL_POT_ELEMENT);
                 
                 if (usePreV1_7_1Format)
-                    initPotElement = new SimpleXMLElement(prefix+BiophysicsConstants.INITIAL_POT_ELEMENT_pre_v1_7_1);
+                    initPotElement = new SimpleXMLElement(bioPrefix+BiophysicsConstants.INITIAL_POT_ELEMENT_pre_v1_7_1);
 
                 bioElement.addChildElement(initPotElement);
 
-                SimpleXMLElement paramElement = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
+                SimpleXMLElement paramElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
                 paramElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
                                                                  UnitConverter.getVoltage(cell.getInitialPotential().
@@ -979,7 +1098,7 @@ public class MorphMLConverter extends FormatImporter
                 initPotElement.addChildElement(paramElement);
 
 
-               SimpleXMLElement groupElement1 = new SimpleXMLElement(prefix+BiophysicsConstants.GROUP_ELEMENT);
+               SimpleXMLElement groupElement1 = new SimpleXMLElement(bioPrefix+BiophysicsConstants.GROUP_ELEMENT);
                paramElement.addChildElement(groupElement1);
                groupElement1.addContent("all");
 
@@ -989,7 +1108,7 @@ public class MorphMLConverter extends FormatImporter
                {
                     IonProperties ip = e.nextElement();
 
-                    SimpleXMLElement ionPropEl = new SimpleXMLElement(prefix+BiophysicsConstants.ION_PROPS_ELEMENT);
+                    SimpleXMLElement ionPropEl = new SimpleXMLElement(bioPrefix+BiophysicsConstants.ION_PROPS_ELEMENT);
                     ionPropEl.addAttribute(BiophysicsConstants.ION_PROPS_NAME_ATTR, ip.getName());
 
                     bioElement.addChildElement(ionPropEl);
@@ -998,12 +1117,12 @@ public class MorphMLConverter extends FormatImporter
 
                     for(String grp: groups)
                     {
-                        SimpleXMLElement grpEl = new SimpleXMLElement(prefix+BiophysicsConstants.GROUP_ELEMENT);
+                        SimpleXMLElement grpEl = new SimpleXMLElement(bioPrefix+BiophysicsConstants.GROUP_ELEMENT);
                         grpEl.addContent(grp);
 
                         if (ip.revPotSetByConcs())
                         {
-                            SimpleXMLElement paramElExt = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
+                            SimpleXMLElement paramElExt = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
                             paramElExt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR, BiophysicsConstants.PARAMETER_CONC_EXT));
                             paramElExt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,UnitConverter.getConcentration(ip.getExternalConcentration(),
@@ -1013,7 +1132,7 @@ public class MorphMLConverter extends FormatImporter
                             paramElExt.addChildElement(grpEl);
                             ionPropEl.addChildElement(paramElExt);
 
-                            SimpleXMLElement paramElInt = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
+                            SimpleXMLElement paramElInt = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
                             paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR, BiophysicsConstants.PARAMETER_CONC_INT));
                             paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,UnitConverter.getConcentration(ip.getInternalConcentration(),
@@ -1025,7 +1144,7 @@ public class MorphMLConverter extends FormatImporter
                         }
                         else
                         {
-                            SimpleXMLElement paramElInt = new SimpleXMLElement(prefix + BiophysicsConstants.PARAMETER_ELEMENT);
+                            SimpleXMLElement paramElInt = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
                             paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR, BiophysicsConstants.PARAMETER_REV_POT));
                             paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,UnitConverter.getVoltage(ip.getReversalPotential(),
@@ -1045,6 +1164,11 @@ public class MorphMLConverter extends FormatImporter
                {
 
                    String netPrefix = NetworkMLConstants.PREFIX + ":";
+
+                    if (version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+                    {
+                        netPrefix = "";
+                    }
 
                    ArrayList<String> allSyns = cell.getAllAllowedSynapseTypes();
                    
@@ -1261,19 +1385,37 @@ public class MorphMLConverter extends FormatImporter
 
             }
 
+            if (!version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+            {
+                rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS_OLD, "micron"));  // keeping it old for the moment...
+            }
 
-            rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS_OLD, "micron"));  // keeping it old for the moment...
+            if (version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+            {
+                rootElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, cell.getInstanceName()));  // keep it same as cell id for now
+            }
             
             
             rootElement.addContent("\n"); // to make it more readable...
 
-            SimpleXMLElement cellsElement = new SimpleXMLElement(MorphMLConstants.CELLS_ELEMENT);
+            SimpleXMLElement cellElement = MorphMLConverter.getCellXMLElement(cell, project, level, version);
 
-            cellsElement.addChildElement(MorphMLConverter.getCellXMLElement(cell, project, level, version));
+            if (!version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+            {
+                SimpleXMLElement cellsElement = new SimpleXMLElement(MorphMLConstants.CELLS_ELEMENT);
+
+                rootElement.addChildElement(cellsElement);
+
+                cellsElement.addChildElement(cellElement);
+            }
+            else
+            {
+                rootElement.addChildElement(cellElement);
+            }
             
-            rootElement.addChildElement(cellsElement);
 
             doc.addRootElement(rootElement);
+            rootElement.addContent("\n"); // to make it more readable...
 
             FileWriter fw = new FileWriter(neuroMLFile);
 

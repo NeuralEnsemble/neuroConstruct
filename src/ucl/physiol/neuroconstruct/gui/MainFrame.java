@@ -1222,6 +1222,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jRadioButtonNeuroMLLevel2.setText("Level 2 (L1 & cell biophysics)");
         jRadioButtonNeuroMLLevel3.setText("Level 3 (L2 & network aspects)");
         jRadioButtonNeuroMLV2.setText("NeuroML v2.0 (alpha)");
+        jRadioButtonNeuroMLV2.setForeground(Color.red);
         //jRadioButtonNeuroMLCellChan.setText("L3 & channel details");
 
         buttonGroupNeuroML.add(jRadioButtonNeuroMLLevel1);
@@ -2168,9 +2169,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLLevel1);
         jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLLevel2);
         jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLLevel3);
-        //////////////////jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLV2);
-//        jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLCellChan);
+
         jRadioButtonNeuroMLLevel2.setSelected(true);
+        
+        if (MainApplication.isNmlV2TestMode())
+        {
+            jPanelNeuroMLExpButtons.add(jRadioButtonNeuroMLV2);
+            jRadioButtonNeuroMLV2.setSelected(true);
+        }
         
 
         jPanelNeuroMLView.add(jPanelNeuroMLExpButtons,

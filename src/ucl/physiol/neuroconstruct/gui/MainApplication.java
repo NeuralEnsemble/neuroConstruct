@@ -63,6 +63,8 @@ public class MainApplication
 
     private static String favouredLookAndFeel = null;
 
+    private static boolean nmlV2TestMode = true;
+
 
 
     static
@@ -173,6 +175,13 @@ public class MainApplication
         frame.doRunNeuron();
     }
 
+    public static boolean isNmlV2TestMode()
+    {
+        return nmlV2TestMode;
+    }
+
+
+
 
 
     private static void printUsageAndQuit()
@@ -274,6 +283,8 @@ public class MainApplication
 
             for (int i = 0; i < args.length; i++)
             {
+                //System.out.println("Checking arg: ("+args[i]+")");
+
                 if (args[i].equals("-?") || args[i].equalsIgnoreCase("-help") || args[i].equalsIgnoreCase("-h"))
                 {
                     printVersionDetails();
@@ -283,6 +294,10 @@ public class MainApplication
                 {
                     printVersionDetails();
                     System.exit(0);
+                }
+                else if (args[i].equalsIgnoreCase("-nmlv2") )
+                {
+                    nmlV2TestMode = true;
                 }
 
                 else if (args[i].equalsIgnoreCase("-sims"))
