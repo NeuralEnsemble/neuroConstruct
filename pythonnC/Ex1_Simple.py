@@ -3,7 +3,8 @@
 #   A simple example of loading a neuroConstruct project using the Jython scripting interface
 #
 #   To execute this type of file, type '..\nC.bat -python Ex1_Simple.py' (Windows)
-#   or '../nC.sh -python Ex1_Simple.py' (Linux/Mac)
+#   or '../nC.sh -python Ex1_Simple.py' (Linux/Mac). Note: you may have to update the
+#   NC_HOME and NC_MAX_MEMORY variables in nC.bat/nC.sh
 #
 #   Author: Padraig Gleeson
 #
