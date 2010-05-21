@@ -2316,12 +2316,21 @@ public class CellTopologyHelper
         return printDetails(cell, project,html, true, false);
     }
 
-
-    public static String printDetails(Cell cell, 
-    		                          Project project, 
-    		                          boolean html, 
-    		                          boolean longFormat, 
+    public static String printDetails(Cell cell, Project project, boolean html,
+    		                          boolean longFormat,
     		                          boolean projHtml)
+    {
+
+        return printDetails(cell, project,html, longFormat,  projHtml, false);
+    }
+
+
+    public static String printDetails(Cell cell,
+    		                          Project project,
+    		                          boolean html,
+    		                          boolean longFormat,
+    		                          boolean projHtml,
+                                          boolean safeSymbol)
     {
 
         logger.logComment("Printing cell details...");
@@ -2343,7 +2352,9 @@ public class CellTopologyHelper
 
         sb.append("  "+GeneralUtils.getEndLine(html));
         
-        boolean useFullSymbol = html || projHtml;
+        boolean useFullSymbol = !safeSymbol || (html || projHtml);
+
+
         
         String capSymb = useFullSymbol ? UnitConverter.specificCapacitanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol() :
         	UnitConverter.specificCapacitanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSafeSymbol();

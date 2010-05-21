@@ -304,6 +304,7 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
 
 
 
+    @Override
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
@@ -326,6 +327,34 @@ public class OneDimRegSpacingPackingAdapter extends CellPackingAdapter
 
 
         sb.append("other overlap"+": "+(int)parameterList[OTHER_OVERLAP_PARAM].value+"");
+
+
+
+        return (sb.toString());
+    }
+
+
+    @Override
+    public String toNiceString()
+    {
+        StringBuffer sb = new StringBuffer();
+        //String nameOfClass = this.getClass().getName();
+
+        sb.append("Cells arranged in 1D line in ");
+
+        if (parameterList[DIMENSION_PARAM].value == 0) sb.append("X");
+        else if (parameterList[DIMENSION_PARAM].value == 1) sb.append("Y");
+        else if (parameterList[DIMENSION_PARAM].value == 2) sb.append("Z");
+
+
+        sb.append(" dimension, cell number: ");
+
+        sb.append(getNumberCells()+ ", ");
+
+        sb.append(" (must be completely inside region: " +mustBeCompletelyInsideRegion());
+
+
+        sb.append(", can overlap with cells in other group: "+!avoidOtherCellGroups()+")");
 
 
 

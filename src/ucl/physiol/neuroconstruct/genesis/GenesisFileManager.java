@@ -9,7 +9,7 @@
  *  Medical Research Council and the Wellcome Trust
  *  
  *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
+ *  it under the terms of the GNU General Public License as published byi
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *  
@@ -3468,6 +3468,66 @@ public class GenesisFileManager
 
                     }
 
+                }
+                else
+                {
+                    addComment(response, "    "+ip+" is present on "+groups+"");
+                    
+                    if (!nameDefined)
+                    {
+                        response.append("str tempCompName\n\n");
+                        response.append("str tempCellName\n\n");
+                        response.append("str tempChanName\n\n");
+                        nameDefined = true;
+                    }
+
+                    response.append("foreach tempCellName ({el "+getCellGroupElementName(cellGroupName)+"/#})\n");
+
+
+                    ArrayList<String> mechsPassingIon = ionCurrentSources.get(ip.getName());
+
+                    for (String mech: mechsPassingIon)
+                    {
+                        addComment(response, "    "+ip.getName()+" is present on "+groups+" and reversal potential of this through "+mech+" is: "+ip.getReversalPotential()+" mV\n");
+
+
+                        for(String group: groups)
+                        {
+                            ArrayList<String> compsToDo = new ArrayList<String>();
+
+                            if (group.equals(Section.ALL))
+                            {
+                                compsToDo.add("#");
+                            }
+                            else
+                            {
+                                for (Segment seg : mappedCell.getSegmentsInGroup(group))
+                                {
+                                    compsToDo.add(seg.getSegmentName());
+                                }
+
+                            }
+
+                            for (String comp: compsToDo)
+                            {
+
+                                response.append("    foreach tempChanName ({el  {tempCellName}/"+comp+"/"+mech+"})\n");
+
+
+                                response.append("        setfield {tempChanName} Ek "+UnitConverter.getVoltage(ip.getReversalPotential(),
+                                                                                     UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                                     project.genesisSettings.getUnitSystemToUse())+"\n");
+
+
+
+                                response.append("    end\n\n");
+                            }
+
+
+                        }
+                    }
+
+                    response.append("end\n\n");
                 }
             }
 

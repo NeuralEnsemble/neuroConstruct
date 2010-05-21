@@ -33,7 +33,7 @@
             <meta:uri>http://senselab.med.yale.edu/senselab/NeuronDB/channelGene2.htm#table3</meta:uri>
         </meta:neuronDBref>
         
-        <current_voltage_relation cond_law="ohmic" ion="k" default_gmax="36" default_erev="-77.0">
+        <current_voltage_relation cond_law="ohmic" ion="k" default_gmax="36" default_erev="-78">
             
             <gate name="n" instances="4">
                 <closed_state id="n0"/>

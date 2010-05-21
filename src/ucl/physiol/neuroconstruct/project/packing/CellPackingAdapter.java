@@ -319,6 +319,12 @@ public abstract class CellPackingAdapter
     @Override
     public abstract String toString();
 
+    /**
+     * For a more plain english description of the settings
+     */
+    public abstract String toNiceString();
+    //public  String toNiceString(){return null;};
+
 
     public boolean avoidOtherCellGroups()
     {

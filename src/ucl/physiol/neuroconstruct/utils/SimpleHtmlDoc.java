@@ -49,6 +49,8 @@ public class SimpleHtmlDoc
 
     boolean includeReturnsInHtml = true;
 
+    String title = "";
+
 
     public void addTaggedElement(String text, String tab)
     {
@@ -115,6 +117,12 @@ public class SimpleHtmlDoc
     {
     }
 
+    public SimpleHtmlDoc(String title, int fontSize)
+    {
+        this.title = title;
+        this.mainFontSize = fontSize;
+    }
+
     public void setMainFontSize(int fs)
     {
         mainFontSize = fs;
@@ -125,10 +133,15 @@ public class SimpleHtmlDoc
         String ret = "\n";
         if (!includeReturnsInHtml)
             ret = " ";
+
+        String titleInfo = "";
+        if (title!=null && title.length()>0)
+            titleInfo = "<title>"+title+"</title>";
+
         
         String fonts = CustomLookAndFeel.getMainFont()+ ", Dialog, Verdana, Helvetica, sans-serif, Arial";
 
-        StringBuffer message = new StringBuffer("<html>"+ret+"<head>"+ret+"<style type=\"text/css\">"
+        StringBuffer message = new StringBuffer("<html>"+ret+titleInfo+"<head>"+ret+"<style type=\"text/css\">"
 
             + "         h1 {color: gray; font-family: "+fonts+"}"
             + "         h2 {color: gray; font-family: "+fonts+"}"
@@ -314,15 +327,15 @@ public class SimpleHtmlDoc
     {
         try
         {
-        	if (!file.getParentFile().exists())
-        	{
-        		file.getParentFile().mkdir();
-        	}
+            if (!file.getParentFile().exists())
+            {
+                    file.getParentFile().mkdir();
+            }
             FileWriter fw = new FileWriter(file);
             fw.write(this.toHtmlString());
             fw.close();
 
-            logger.logComment("Created doc at: "+ file.getCanonicalPath());
+            logger.logComment("Created doc at: "+ file.getCanonicalPath(), true);
         }
         catch (IOException ex)
         {

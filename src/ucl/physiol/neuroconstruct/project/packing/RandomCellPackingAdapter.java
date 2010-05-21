@@ -240,6 +240,29 @@ public class RandomCellPackingAdapter extends CellPackingAdapter
         return (sb.toString());
     }
 
+    public String toNiceString()
+    {
+        StringBuffer sb = new StringBuffer();
+        //String nameOfClass = this.getClass().getName();
+
+        sb.append("Cells randomly placed in 3D, max cell number: ");
+
+        sb.append(getMaxNumberCells());
+
+
+        sb.append(" (must be completely inside region: " +mustBeCompletelyInsideRegion());
+
+
+        sb.append(", can overlap with cells in this group: "+overlappingAllowed()+"");
+        sb.append(", other groups: "+!avoidOtherCellGroups()+")");
+
+
+
+
+
+        return (sb.toString());
+    }
+
 
     public static void main(String args[])
     {

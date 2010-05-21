@@ -304,6 +304,7 @@ public class CubicClosePackedCellPackingAdapter extends CellPackingAdapter
 
     };
 
+    @Override
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
@@ -316,6 +317,21 @@ public class CubicClosePackedCellPackingAdapter extends CellPackingAdapter
         else sb.append("0; ");
 
         sb.append("EffectiveRadius: "+ getEffectiveRadius() + "]");
+
+        return (sb.toString());
+
+    }
+
+    @Override
+    public String toNiceString()
+    {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("Cells arranged with Cubic Close Packing");
+
+        sb.append(" (must be completely inside region: " +mustBeCompletelyInsideRegion());
+
+        sb.append(", effective radius: "+ getEffectiveRadius() + "um)");
 
         return (sb.toString());
 
@@ -346,6 +362,8 @@ public class CubicClosePackedCellPackingAdapter extends CellPackingAdapter
         }
 
         System.out.println("Number of positions: "+ada.getCurrentNumberPositions());
+
+        System.out.println(ada.toNiceString());
 
     }
 

@@ -250,6 +250,8 @@ public class HexagonalLayerPackingAdapter extends CellPackingAdapter
     };
 
 
+
+    @Override
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
@@ -262,6 +264,20 @@ public class HexagonalLayerPackingAdapter extends CellPackingAdapter
         else sb.append("0; ");
 
         sb.append("CentreSpacing: "+ getCentreSpacing() + "]");
+
+        return (sb.toString());
+    }
+
+    @Override
+    public String toNiceString()
+    {
+        StringBuffer sb = new StringBuffer();
+        sb.append("Cells arranged in hexagonal layer in XZ plane");
+
+
+        sb.append(" (must be completely inside region: " +mustBeCompletelyInsideRegion());
+
+        sb.append(", centre spacing: "+ getCentreSpacing() + ")");
 
         return (sb.toString());
     }

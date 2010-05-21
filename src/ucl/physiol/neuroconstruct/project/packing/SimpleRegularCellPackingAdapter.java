@@ -229,7 +229,7 @@ public class SimpleRegularCellPackingAdapter extends CellPackingAdapter
     }
 
 
-
+    @Override
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
@@ -240,6 +240,19 @@ public class SimpleRegularCellPackingAdapter extends CellPackingAdapter
         sb.append("EdgePolicy: ");
         if (mustBeCompletelyInsideRegion()) sb.append("1]");
         else sb.append("0]");
+
+
+        return (sb.toString());
+    }
+
+    @Override
+    public String toNiceString()
+    {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("Cells placed on regular grid in 3D");
+
+        sb.append(" (must be completely inside region: " +mustBeCompletelyInsideRegion()+")");
 
 
         return (sb.toString());

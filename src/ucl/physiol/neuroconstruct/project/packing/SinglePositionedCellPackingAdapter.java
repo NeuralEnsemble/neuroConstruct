@@ -143,12 +143,33 @@ public class SinglePositionedCellPackingAdapter extends CellPackingAdapter
     };
 
 
+    @Override
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
         //String nameOfClass = this.getClass().getName();
 
         sb.append("Single cell: ");
+
+       sb.append("("
+                 + parameterList[0].value
+                 + ", "
+                 + parameterList[1].value
+                 + ", "
+                 + parameterList[2].value
+                 + ")");
+
+
+        return (sb.toString());
+    }
+
+    @Override
+    public String toNiceString()
+    {
+        StringBuffer sb = new StringBuffer();
+        //String nameOfClass = this.getClass().getName();
+
+        sb.append("A single cell placed at: ");
 
        sb.append("("
                  + parameterList[0].value

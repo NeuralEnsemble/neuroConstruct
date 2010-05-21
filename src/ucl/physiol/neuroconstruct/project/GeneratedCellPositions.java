@@ -327,12 +327,12 @@ public class GeneratedCellPositions
 
         sb.append("GeneratedCellPositions with "+getNumberPositionRecords() +" cell positions in total\n");
 
-        Enumeration keys = myCellGroupPosns.keys();
+        Enumeration<String> keys = myCellGroupPosns.keys();
 
         while(keys.hasMoreElements())
         {
             String cellGroupName = (String)keys.nextElement();
-            ArrayList cellGroupArrayList = myCellGroupPosns.get(cellGroupName);
+            ArrayList<PositionRecord> cellGroupArrayList = myCellGroupPosns.get(cellGroupName);
             sb.append(cellGroupName+" has "+cellGroupArrayList.size()
                       + " entries. First: "+cellGroupArrayList.get(0)+"\n");
         }
