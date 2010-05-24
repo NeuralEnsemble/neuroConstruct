@@ -71,6 +71,7 @@ public class SimulationBrowser extends JDialog
     JButton jButtonCancel = new JButton();
     JButton jButtonInfo = new JButton();
     JButton jButtonRefresh = new JButton();
+    JButton jButtonCompare = new JButton();
     GridLayout gridLayout1 = new GridLayout();
     JScrollPane jScrollPaneMain = new JScrollPane();
     JTable jTableSimulations = null;
@@ -190,12 +191,20 @@ public class SimulationBrowser extends JDialog
                 jButtonInfo_actionPerformed(e);
             }
         });
-        jButtonRefresh.setText("Reload simulation list");
+        jButtonRefresh.setText("Reload list");
         jButtonRefresh.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
                 jButtonRefresh_actionPerformed(e);
+            }
+        });
+        jButtonCompare.setText("Compare sims");
+        jButtonCompare.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonCompare_actionPerformed(e);
             }
         });
         gridLayout1.setHgap(5);
@@ -227,6 +236,7 @@ public class SimulationBrowser extends JDialog
         jPanelButtons.add(jButtonRename, null);
         jPanelButtons.add(jButtonInfo, null);
         jPanelButtons.add(jButtonOpen, null);
+        jPanelButtons.add(jButtonCompare, null);
         jPanelButtons.add(jButtonDelete, null);
         jPanelButtons.add(jButtonCancel, null);
     }
@@ -393,6 +403,43 @@ public class SimulationBrowser extends JDialog
     }
 
 
+    void jButtonCompare_actionPerformed(ActionEvent e)
+    {
+        if(jTableSimulations.getSelectedRowCount()!=2)
+        {
+            GuiUtils.showErrorMessage(logger, "Please select 2 simulations (e.g. using ctrl key) to compare the properties of", null, this);
+            return;
+        }
+
+        int selectedSim1 = jTableSimulations.getSelectedRows()[0];
+        int selectedSim2 = jTableSimulations.getSelectedRows()[1];
+
+        SimulationData simData1 = allSims.getSimulationData(selectedSim1);
+        SimulationData simData2 = allSims.getSimulationData(selectedSim2);
+
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("<h3>Comparing sim reference: " + simData1.getSimulationName() + " to "+simData2.getSimulationName()+"</h3>");
+
+        sb.append(SimulationsInfo.compareSims(simData1.getSimulationDirectory(), simData2.getSimulationDirectory(), true));
+
+        SimpleViewer simpleViewer = new SimpleViewer(sb.toString(),
+                                                     "Comparison of simulation: "
+                                                     + simData1.getSimulationName() + " to "+simData2.getSimulationName(),
+                                                     12,
+                                                     false,
+                                                     true,
+                                                     this,
+                                                     true);
+
+        simpleViewer.setFrameSize(600, 500);
+
+
+        GuiUtils.centreWindow(simpleViewer);
+        simpleViewer.setVisible(true);
+
+    }
+
     void jButtonInfo_actionPerformed(ActionEvent e)
     {
         if(jTableSimulations.getSelectedRowCount()==0) return;
@@ -422,20 +469,8 @@ public class SimulationBrowser extends JDialog
 
         simpleViewer.setFrameSize(600, 500);
 
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension frameSize = simpleViewer.getSize();
-
-        if (frameSize.height > screenSize.height)
-        {
-            frameSize.height = screenSize.height;
-        }
-        if (frameSize.width > screenSize.width)
-        {
-            frameSize.width = screenSize.width;
-
-        }
-        simpleViewer.setLocation( (screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
-        //simpleViewer.setc
+       
+        GuiUtils.centreWindow(simpleViewer);
         simpleViewer.setVisible(true);
     }
 
@@ -463,7 +498,7 @@ public class SimulationBrowser extends JDialog
         }
         //File simDir = new File("../copyNcModels/Parallel/simulations");
         //File simDir = new File("nCmodels/InProgress/TraubEtAl05/simulations");
-        File simDir = new File("nCmodels/InProgress/CA1PyramidalCell/simulations");
+        File simDir = new File("nCmodels/Thalamocortical/simulations");
         //File simDir = new File("projects/temp/simulations/");
         SimulationBrowser dlg = new SimulationBrowser(simDir, null);
 

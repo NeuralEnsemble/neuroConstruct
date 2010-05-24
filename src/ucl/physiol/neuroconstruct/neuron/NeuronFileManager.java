@@ -806,14 +806,15 @@ public class NeuronFileManager
                 }
                 if (cell.getIonPropertiesVsGroups().size()>0)
                 {
-                    NeuronFileManager.addHocComment(responseType1, "    Note: the following are from IonProperties in Cell");
+                    NeuronFileManager.addHocComment(responseType1, "    Note: the following values are from IonProperties in Cell");
 
                     Enumeration<IonProperties> ips = cell.getIonPropertiesVsGroups().keys();
 
 
-                    //response.append("    forsec " + nameOfArrayOfTheseCells + "[" + posRecord.cellNumber + "].all {\n");
                     responseType1.append("    for i = 0, " + nameOfNumberOfTheseCells + "-1 {" + "\n");
 
+                    if (simConfig.getMpiConf().isParallelNet()) responseType1.append("      if(isCellOnNode(\""+cellGroupName
+                                                                        +"\", i)) {\n");
                     while (ips.hasMoreElements())
                     {
                         IonProperties ip = ips.nextElement();
@@ -838,6 +839,7 @@ public class NeuronFileManager
                         }
                     }
 
+                    if (simConfig.getMpiConf().isParallelNet()) responseType1.append("      }\n");
                     responseType1.append("    }\n\n");
                 }
 

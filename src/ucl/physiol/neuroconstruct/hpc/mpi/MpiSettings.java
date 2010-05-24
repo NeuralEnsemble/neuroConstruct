@@ -437,26 +437,43 @@ public class MpiSettings
         p_16.setMpiVersion(MpiSettings.OPENMPI_V2);
         p_16.setUseScp(true);
         configurations.add(p_16);
-        
-        String name_80 = "Matthau_Lemmon_Test_80";
-        MpiConfiguration p_80 = new MpiConfiguration(name_80);
-        
-        p_80.getHostList().add(new MpiHost(MATTHAU+5, 8, 1));
-        p_80.getHostList().add(new MpiHost(MATTHAU+6, 8, 1));
-        p_80.getHostList().add(new MpiHost(MATTHAU+7, 8, 1));
-        p_80.getHostList().add(new MpiHost(MATTHAU+8, 8, 1));
-        p_80.getHostList().add(new MpiHost(MATTHAU+9, 8, 1));
-        
-        p_80.getHostList().add(new MpiHost(LEMMON+5, 8, 1));
-        p_80.getHostList().add(new MpiHost(LEMMON+6, 8, 1));
-        p_80.getHostList().add(new MpiHost(LEMMON+7, 8, 1));
-        p_80.getHostList().add(new MpiHost(LEMMON+8, 8, 1));
-        p_80.getHostList().add(new MpiHost(LEMMON+9, 8, 1));
 
-        p_80.setRemoteLogin(matlemLogin);
-        p_80.setMpiVersion(MpiSettings.OPENMPI_V2);
-        p_80.setUseScp(true);
-        configurations.add(p_80);
+        String name_56l = "Matthau_Lemmon_Test_56l";
+        MpiConfiguration p_56l = new MpiConfiguration(name_56l);
+
+        p_56l.getHostList().add(new MpiHost(LEMMON+10, 8, 1));
+        p_56l.getHostList().add(new MpiHost(LEMMON+11, 8, 1));
+        p_56l.getHostList().add(new MpiHost(LEMMON+12, 8, 1));
+        p_56l.getHostList().add(new MpiHost(LEMMON+13, 8, 1));
+        p_56l.getHostList().add(new MpiHost(LEMMON+14, 8, 1));
+        p_56l.getHostList().add(new MpiHost(LEMMON+15, 8, 1));
+        p_56l.getHostList().add(new MpiHost(LEMMON+16, 8, 1));
+        //p_56l.getHostList().add(new MpiHost(LEMMON+17, 8, 1));
+        //p_56l.getHostList().add(new MpiHost(LEMMON+18, 8, 1));
+        //p_56l.getHostList().add(new MpiHost(LEMMON+19, 8, 1));
+
+
+        p_56l.setRemoteLogin(matlemLogin);
+        p_56l.setMpiVersion(MpiSettings.OPENMPI_V2);
+        p_56l.setUseScp(true);
+        configurations.add(p_56l);
+
+        String name_56 = "Matthau_Lemmon_Test_56";
+        MpiConfiguration p_56 = new MpiConfiguration(name_56);
+
+        p_56.getHostList().add(new MpiHost(MATTHAU+3, 8, 1));
+        p_56.getHostList().add(new MpiHost(MATTHAU+4, 8, 1));
+        p_56.getHostList().add(new MpiHost(MATTHAU+5, 8, 1));
+        p_56.getHostList().add(new MpiHost(MATTHAU+6, 8, 1));
+        p_56.getHostList().add(new MpiHost(MATTHAU+7, 8, 1));
+        p_56.getHostList().add(new MpiHost(MATTHAU+8, 8, 1));
+        p_56.getHostList().add(new MpiHost(MATTHAU+9, 8, 1));
+
+
+        p_56.setRemoteLogin(matlemLogin);
+        p_56.setMpiVersion(MpiSettings.OPENMPI_V2);
+        p_56.setUseScp(true);
+        configurations.add(p_56);
 
 
         String name_ALL = "Matthau_Lemmon_Test_ALL";

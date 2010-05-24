@@ -1191,16 +1191,105 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
 
     }
 
+
+    /**
+     * Compares 2 sim prop directories
+     */
+    public static String compareSims(File simulationDir1, File simulationDir2, boolean html)
+    {
+        Properties props1 = getSimulationProperties(simulationDir1);
+        if (props1==null) return "Problem getting simulation properties from directory: "+ simulationDir1;
+        Properties props2 = getSimulationProperties(simulationDir2);
+        if (props2==null) return "Problem getting simulation properties from directory: "+ simulationDir2;
+
+        StringBuffer sb = new StringBuffer();
+
+        ArrayList<Object> allPropNames = new ArrayList<Object>(props1.keySet());
+        for(Object name: props2.keySet())
+        {
+            if (!allPropNames.contains(name)) allPropNames.add(name);
+        }
+
+        String info = "Comparison of simulations";
+        
+        if (html)
+        {
+            sb.append("<p>"+info+": </p><br></br>\n<table border=\"1\">\n");
+
+            sb.append(createLine("<b><i>Name of property</i></b>",
+                    "<b><i>"+simulationDir1.getName()+"</i></b>",
+                    "<b><i>"+simulationDir2.getName()+"</i></b>", html));
+        }
+        else sb.append(info+": \n\n");
+
+
+        allPropNames = (ArrayList)GeneralUtils.reorderAlphabetically(allPropNames, true);
+
+        // Do the rest
+        for (int i = 0; i < allPropNames.size(); i++)
+        {
+            String propName = (String)allPropNames.get(i);
+            String val1 = props1.getProperty(propName);
+            String val2 = props2.getProperty(propName);
+
+            if (val1==null || val2==null)
+            {
+                if (val1==null) val1 = "-- Property not present --";
+                if (val2==null) val2 = "-- Property not present --";
+            }
+            else if (val1.equals(val2))
+            {
+                val1="=";
+                val2="=";
+            }
+
+
+
+            if(propName.indexOf("Time")>=0 || propName.indexOf("time")>=0)
+            {
+                val1 = GeneralUtils.getNiceStringForSeconds(val1);
+                val2 = GeneralUtils.getNiceStringForSeconds(val2);
+            }
+
+
+            sb.append(createLine(propName, val1, val2, html));
+        }
+
+        if (html) sb.append("</table>");
+
+        return sb.toString();
+
+    }
+
+
+
+
+
     private static String createLine(String name, String val, boolean html)
+    {
+        return createLine(name, val, null, html);
+    }
+
+    private static String createLine(String name, String val1, String val2, boolean html)
     {
         int idealPropNameWidth = 30;
         int idealTotalWidth = 120;
 
         if (html)
         {
-            val = GeneralUtils.replaceAllTokens(val, "\n", "<br></br>");
-            val = GeneralUtils.replaceAllTokens(val, "  ", "&nbsp;&nbsp;");
-            return "<tr><td>" + name + "</td><td><b>" + val + "</b></td></tr>\n";
+            val1 = GeneralUtils.replaceAllTokens(val1, "\n", "<br></br>");
+            val1 = GeneralUtils.replaceAllTokens(val1, "  ", "&nbsp;&nbsp;");
+            
+            String res = "<tr><td>" + name + "</td><td><b>" + val1 + "</b></td>";
+            if (val2!=null)
+            {
+                val2 = GeneralUtils.replaceAllTokens(val2, "\n", "<br></br>");
+                val2 = GeneralUtils.replaceAllTokens(val2, "  ", "&nbsp;&nbsp;");
+                res = res + "<td><b>" + val2 + "</b></td>";
+            }
+            res = res + "</tr>\n";
+
+            return res;
         }
         else
         {
@@ -1214,7 +1303,12 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
                     name = name + " ";
                 }
             }
-            return GeneralUtils.wrapLine(name + val, "\n",idealTotalWidth) + "\n";
+            String res = name + val1;
+            if (val2!=null)
+            {
+                res = name + val1+", "+val2;
+            }
+            return GeneralUtils.wrapLine(res, "\n",idealTotalWidth) + "\n";
         }
 
     };

@@ -169,7 +169,7 @@ public class Expand
 
             mainPage.addRawHtml("<table border=\"1\" width='"+width+"' valign='centre' cellpadding='3'>");
 
-            mainPage.addRawHtml("<tr><td colspan='2'><b>A: Model Summary</b></td></tr>");
+            mainPage.addRawHtml("<tr><td class='header'  colspan='2'><b>A: Model Summary</b></td></tr>");
             mainPage.addRawHtml("<tr><td width='"+width1+"'><b>Description</b></td><td>"+ handleWhitespaces(desc)+"</td></tr>");
             mainPage.addRawHtml("<tr><td><b>Populations</b></td><td>");
             for(String cg: cellGroups)
@@ -204,7 +204,7 @@ public class Expand
                 //mainPage.addRawHtml(cell.getInstanceName());
 
                 String cellPageLoc = getCellTypePage(cell.getInstanceName());
-                mainPage.addRawHtml(" "+"<a href = \""+cellPageLoc+"\">"+cell.getInstanceName()+"</a>");
+                mainPage.addRawHtml(" "+"<a href = \"#"+cell.getInstanceName()+"\">"+cell.getInstanceName()+"</a>");
 
                 if (!cell.equals(cells.get(cells.size()-1)))
                     mainPage.addRawHtml(", ");
@@ -325,7 +325,7 @@ public class Expand
 
             mainPage.addRawHtml("<table border=\"1\" width='"+width+"'  cellpadding='3'>");
 
-            mainPage.addRawHtml("<tr><td colspan='3'><b>B: Populations</b></td></tr>");
+            mainPage.addRawHtml("<tr><td class='header'  colspan='3'><b>B: Populations</b></td></tr>");
 
             mainPage.addRawHtml("<tr><td width='"+width1+"'><b>Name</b></td>" +
                                 "<td  width='100'><b>Elements</b></td>" +
@@ -351,11 +351,10 @@ public class Expand
             mainPage.addRawHtml("</table>");
 
             mainPage.addRawHtml("<p>&nbsp;</p>");
-            mainPage.addRawHtml("<p>&nbsp;</p>");
 
             mainPage.addRawHtml("<table border=\"1\" width='"+width+"' valign='centre' cellpadding='3'>");
 
-            mainPage.addRawHtml("<tr><td colspan='4'><b>C: Connectivity</b></td></tr>");
+            mainPage.addRawHtml("<tr><td class='header'  colspan='4'><b>C: Connectivity</b></td></tr>");
 
 
             mainPage.addRawHtml("<tr><td width='"+width1+"'><b>Name</b></td>" +
@@ -389,105 +388,61 @@ public class Expand
             
 
             mainPage.addRawHtml("<p>&nbsp;</p>");
+
+
+            mainPage.addRawHtml("<table border=\"1\" width='"+width+"' valign='centre' cellpadding='3'>");
+
+            mainPage.addRawHtml("<tr><td class='header' colspan='4'>D: Neuron and Synapse models</b></tr>");
+
+            mainPage.addRawHtml("<tr><td width='"+width1+"'><b>Name</b></td>" +
+                                "<td ><b>Description</b></td>" +
+                                "<td  width='50'><b>Details</b></td></tr>");
+
+            for(Cell cell: cells)
+            {
+                String cellPageLoc = getCellTypePage(cell.getInstanceName());
+
+                mainPage.addRawHtml("<tr>" +
+                                    "<td><a name=\""+cell.getInstanceName()+"\"/>"+cell.getInstanceName()+"</td>" +
+                                    "<td>"+cell.getCellDescription()+"</a></td>" +
+                                    "<td><a href=\""+cellPageLoc+"\">More...</td>" +
+                                    "</tr>");
+
+            }
+
+            mainPage.addRawHtml("</table>");
+            
+            
             mainPage.addRawHtml("<p>&nbsp;</p>");
 
-  /*          
-            mainPage.addTaggedElement("Cell Types present in the project", "h2");
+
+            mainPage.addRawHtml("<table border=\"1\" width='"+width+"' valign='centre' cellpadding='3'>");
+
+            mainPage.addRawHtml("<tr><td class='header' colspan='4'>E: Inputs</b></tr>");
+
+            mainPage.addRawHtml("<tr><td width='"+width1+"'><b>Name</b></td>" +
+                                "<td ><b>Description</b></td>" +
+                                "<td  width='50'><b>Details</b></td></tr>");
 
 
-
-            mainPage.addRawHtml("<table border=\"1\" >");
-
-            for (Cell cell: cells)
-            {
-                mainPage.addRawHtml("<tr><td>"+cell.getInstanceName());
-                mainPage.addRawHtml("</td><td>"+cell.getCellDescription()+"</td><td>");
-
-                String cellPageLoc = getCellTypePage(cell.getInstanceName());
-                mainPage.addRawHtml("<a href = "+cellPageLoc	+">Cell details</a></td></tr>");
+            mainPage.addRawHtml("</table>");
+            
+            
+            mainPage.addRawHtml("<p>&nbsp;</p>");
 
 
-                SimpleHtmlDoc cellPage = new SimpleHtmlDoc();
+            mainPage.addRawHtml("<table border=\"1\" width='"+width+"' valign='centre' cellpadding='3'>");
 
-                cellPage.addRawHtml(CellTopologyHelper.printDetails(cell, project, true, true, true));
+            mainPage.addRawHtml("<tr><td class='header' colspan='4'>F: Measurements</b></tr>");
+
+            mainPage.addRawHtml("<tr><td width='"+width1+"'><b>Name</b></td>" +
+                                "<td ><b>Description</b></td>" +
+                                "<td  width='50'><b>Details</b></td></tr>");
 
 
-                cellPage.saveAsFile(new File(fileToSave.getParentFile(), cellPageLoc));
-
-            }
             mainPage.addRawHtml("</table>");
 
-            mainPage.addTaggedElement("Cell Mechanisms present in the project", "h2");
 
-            mainPage.addRawHtml("<table border=\"1\">");
-
-
-            for (String cmName: cellMechs)
-            {
-                CellMechanism cm = project.cellMechanismInfo.getCellMechanism(cmName);
-
-
-                String cmPageLoc = getCellMechPage(cm.getInstanceName());
-
-                mainPage.addRawHtml("<tr><td>"+cm.getInstanceName());
-                mainPage.addRawHtml("</td><td>"+cm.getDescription()+"</td><td>");
-
-
-                mainPage.addRawHtml("</td><td>"+cm.getMechanismModel()+"</td><td>");
-                mainPage.addRawHtml("</td><td>"+cm.getMechanismType()+"</td><td>");
-
-                mainPage.addRawHtml("<a href = "+cmPageLoc	+">Full details</a></td></tr>");
-
-                File xslDoc = GeneralProperties.getChannelMLReadableXSL();
-
-
-
-                SimpleHtmlDoc cmPage = new SimpleHtmlDoc();
-
-                if (cm instanceof ChannelMLCellMechanism)
-                {
-                    ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism)cm;
-
-
-                    try
-                    {
-                        String readable = XMLUtils.transform(cmlCm.getXMLDoc().getXMLString("", false),xslDoc);
-
-                        cmPage.addRawHtml(readable);
-                    }
-                    catch (XMLMechanismException e)
-                    {
-                        cmPage.addTaggedElement("Unable to generate HTML representation of: "+ cm.getInstanceName(), "b");
-                    }
-                    String cmXmlPageLoc = getCellMechPage(cm.getInstanceName()+".channelml");
-
-                    SimpleHtmlDoc cmXmlPage = new SimpleHtmlDoc();
-
-
-                    try
-                    {
-                        cmXmlPage.addRawHtml(cmlCm.getXMLDoc().getXMLString("", true));
-                    }
-                    catch (XMLMechanismException e)
-                    {
-                        cmXmlPage.addTaggedElement("Unable to generate ChannelML representation of: "+ cm.getInstanceName(), "b");
-                    }
-
-                    cmXmlPage.saveAsFile(new File(fileToSave.getParentFile(), cmXmlPageLoc));
-
-                    mainPage.addRawHtml("</td><td><a href = "+cmXmlPageLoc	+">ChannelML file</td><td>");
-                }
-                else
-                {
-
-                }
-
-
-                cmPage.saveAsFile(new File(fileToSave.getParentFile(), cmPageLoc));
-
-            }
-
-            mainPage.addRawHtml("</table>");*/
             logger.logComment("Going to save: "+ fileToSave.getAbsolutePath(), true);
             mainPage.saveAsFile(fileToSave);
         }
@@ -509,9 +464,10 @@ public class Expand
         {
             //File projFile = new File("examples/Ex6-Cerebellum/Ex6-Cerebellum.neuro.xml");
             //File projFile = new File("C:\\copynCmodels\\TraubEtAl2005\\TraubEtAl2005.neuro.xml");
-            //File projFile = new File("nCmodels/Thalamocortical/Thalamocortical.ncx");
+            File projFile = new File("nCmodels/Thalamocortical/Thalamocortical.ncx");
             //File projFile = new File("nCmodels/CA1PyramidalCell/CA1PyramidalCell.ncx");
-            File projFile = new File("nCmodels/GranCellLayer/GranCellLayer.ncx");
+            //File projFile = new File("nCmodels/GranuleCell/GranuleCell.ncx");
+            //File projFile = new File("nCmodels/GranCellLayer/GranCellLayer.ncx");
             //File projFile = new File("nCexamples/Ex4_HHcell/Ex4_HHcell.ncx");
             //File projFile = new File("/bernal/models/Layer23_names/Layer23_names.neuro.xml");
             

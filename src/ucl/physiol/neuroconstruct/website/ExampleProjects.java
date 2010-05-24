@@ -103,7 +103,7 @@ public class ExampleProjects
 
         ArrayList<String> toIgnore = new ArrayList<String>();
         toIgnore.add("Thalamocortical"); // temporarily
-        toIgnore.add("CA1PyramidalCell"); // temporarily
+        //toIgnore.add("CA1PyramidalCell"); // temporarily
         
         for(File exProjDir: files)
         {
@@ -217,6 +217,8 @@ public class ExampleProjects
          
                 ArrayList<String> ignore = new ArrayList<String> ();
                 ArrayList<String> ignoreNone = new ArrayList<String> ();
+                ArrayList<String> ignoreExtns = new ArrayList<String> ();
+
                 ignore.add("i686");
                 ignore.add("x86_64");
                 ignore.add(".svn");
@@ -224,11 +226,13 @@ public class ExampleProjects
                 ignore.add("generatedNEURON");
                 ignore.add("generatedNeuroML");
                 ignore.add("generatedGENESIS");
+                ignore.add("generatedMOOSE");
                 ignore.add("generatedPyNN");
                 ignore.add("generatedPSICS");
                 ignore.add("dataSets");
+                ignoreExtns.add("bak");
 
-                zipFile = ZipUtils.zipUp(exProjDir, zipFileName, ignore, ignoreNone);
+                zipFile = ZipUtils.zipUp(exProjDir, zipFileName, ignore, ignoreExtns);
 
                 logger.logComment("The zip file: "+ zipFile.getAbsolutePath() + " ("+zipFile.length()+" bytes)  contains all of the project files");
              
