@@ -587,7 +587,9 @@ class SimulationManager():
                              
         simConfig = self.project.simConfigInfo.getSimConfig(simConfigName)
 
-        if simConfig == None:
+        self.printver("Going to generate F-I curve on %s for sim config: %s with amplitude of stim: (%f -> %f ; %f)" % (simulator, simConfigName, stimAmpLow, stimAmpHigh, stimAmpInc))
+
+        if simConfig == None: 
             raise NameError('No such Simulation configuration as: '+ simConfigName)
 
 
