@@ -149,6 +149,7 @@ public class SimpleHtmlDoc
             + "         body  {font-family: "+fonts+"; font-size: "+mainFontSize+"pt}"
             + "         p  {font-family: "+fonts+"; font-size: "+mainFontSize+"pt}"
             + "         td {font-family: "+fonts+"; font-size: "+mainFontSize+"pt}"
+            + "         td.header {font-family: "+fonts+"; font-size: "+mainFontSize+"pt; font-weight:bold; background-color:black; color:white}"
             + "         li {font-family: "+fonts+"}"
             + "         ol {font-family: "+fonts+"}"
             + "         ul {font-family: "+fonts+"}"
