@@ -404,29 +404,34 @@ public class MorphMLReader extends XMLFilterImpl
 
              String id = attributes.getValue(MorphMLConstants.SEGMENT_ID_ATTR);
              String name = attributes.getValue(MorphMLConstants.SEGMENT_NAME_ATTR);
-             String sectionId = attributes.getValue(MorphMLConstants.SEGMENT_CABLE_ID_ATTR);
-
+             if (name==null)
+                name = "Seg_"+id;
+             
              logger.logComment("ID: "+id+", name: "+ name);
 
              Segment newSeg = new Segment();
              newSeg.setSegmentId(Integer.parseInt(id));
              newSeg.setSegmentName(name);
 
-             Section section = null;
-
-             Integer sectionIdInteger = new Integer(sectionId);
-
-             if (this.sections.containsKey(sectionIdInteger))
+             String sectionId = attributes.getValue(MorphMLConstants.SEGMENT_CABLE_ID_ATTR);
+             if (sectionId!=null)
              {
-                 section = sections.get(sectionIdInteger);
-             }
-             else
-             {
-                 section = new Section();
-                 sections.put(sectionIdInteger, section);
-             }
+                 Section section = null;
 
-             newSeg.setSection(section);
+                 Integer sectionIdInteger = new Integer(sectionId);
+
+                 if (this.sections.containsKey(sectionIdInteger))
+                 {
+                     section = sections.get(sectionIdInteger);
+                 }
+                 else
+                 {
+                     section = new Section();
+                     sections.put(sectionIdInteger, section);
+                 }
+
+                 newSeg.setSection(section);
+             }
 
              cell.getAllSegments().add(newSeg);
 

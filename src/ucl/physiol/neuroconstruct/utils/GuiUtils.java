@@ -76,7 +76,7 @@ public class GuiUtils
 
         Throwable nextThrowable = t;
         int numLines = 0;
-        int maxLines = 18;
+        int maxLines = 22;
 
         fullError.addTaggedElement(errorMessage, "b", "p");
 

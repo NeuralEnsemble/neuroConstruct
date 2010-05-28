@@ -81,6 +81,7 @@ public class UncaughtExceptionInfo implements UncaughtExceptionHandler
        else
        {
            logger.logError("Uncaught exception, no GUI warning...\n"+e.getMessage(), e, true);
+           e.printStackTrace();
        }
       
     }
