@@ -48,6 +48,7 @@ import ucl.physiol.neuroconstruct.project.cellchoice.CellChooser;
 import ucl.physiol.neuroconstruct.project.packing.CellPackingAdapter;
 import ucl.physiol.neuroconstruct.project.packing.CellPackingException;
 import ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter;
+import ucl.physiol.neuroconstruct.project.packing.SinglePositionedCellPackingAdapter;
 import ucl.physiol.neuroconstruct.project.segmentchoice.GroupDistributedSegments;
 import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentLocationChooser;
 import ucl.physiol.neuroconstruct.project.stimulation.IClamp;
@@ -585,6 +586,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                                               rand.nextInt(256));
 
                         project.regionsInfo.addRow(currentPopulation+"_region", region, col);
+
                         CellPackingAdapter cp = new RandomCellPackingAdapter();
                         try
                         {
@@ -592,6 +594,12 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                             cp.setParameter(RandomCellPackingAdapter.EDGE_POLICY, 0);
                             cp.setParameter(RandomCellPackingAdapter.SELF_OVERLAP_POLICY, 1);
                             cp.setParameter(RandomCellPackingAdapter.OTHER_OVERLAP_POLICY, 1);
+
+
+                            if (popNumber==1)
+                            {
+                                cp =  new SinglePositionedCellPackingAdapter(0,0,0);
+                            }
 
                         }
                         catch (CellPackingException ex)
@@ -645,6 +653,19 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              }
              
              this.cellPos.addPosition(currentPopulation, posRec);
+
+             if (project.cellGroupsInfo.getCellPackingAdapter(currentPopulation) instanceof SinglePositionedCellPackingAdapter)
+             {
+                 SinglePositionedCellPackingAdapter pa = (SinglePositionedCellPackingAdapter)project.cellGroupsInfo.getCellPackingAdapter(currentPopulation);
+                 try
+                 {
+                    pa.setPosition(posRec.x_pos, posRec.y_pos, posRec.z_pos);
+                 }
+                 catch(CellPackingException e)
+                 {
+                     logger.logError("Problem setting position", e);
+                 }
+             }
              
 
          }
@@ -1151,6 +1172,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
         return new ConnSpecificProps(synType);
     }
     
+    private boolean acceptIncludes = false;
 
     @Override
     public void endElement(String namespaceURI, String localName, String qName) throws SAXException
@@ -1188,9 +1210,11 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                //make some checks before write to the file                  
                   addCell = false;
                    Object choice = "";
-                  if (!testMode && !replaceAll && !renameAll){
+
+                  if (!testMode && !replaceAll && !renameAll && !acceptIncludes){
                       logger.logComment( "Asking the user if the cell type " + cellName+ " has to be added...");
-                      Object[] options = {"Yes", "No"};
+                      Object[] options = {"Yes", "Yes to all", "No"};
+
                       JOptionPane option = new JOptionPane(
                               "Found a new Cell Type in NeuroML file: " + cellName + "\nWould you like to add this to the current project?",
                               JOptionPane.DEFAULT_OPTION,
@@ -1205,11 +1229,13 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
 
                       choice = option.getValue();
                       logger.logComment("User has chosen: " + choice);
+                      if (choice.equals("Yes to all"))
+                              acceptIncludes = true;
                   }                  
                   
                   
                   
-                  if (choice.equals("Yes") || testMode || replaceAll || renameAll) {
+                  if (choice.equals("Yes") || testMode || replaceAll || renameAll || acceptIncludes) {
                       logger.logComment("User accepted the cell type. Checking if it is already defined...") ;   
                       addCell = true;
                           ArrayList<String> existingCells = project.cellManager.getAllCellTypeNames();

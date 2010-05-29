@@ -125,10 +125,10 @@ public class SinglePositionedCellPackingAdapter extends CellPackingAdapter
     public void setParameter(String parameterName,
                              float parameterValue)  throws CellPackingException
     {
-        if (parameterName.equals("X_position")) parameterList[0].value = parameterValue;
-        else if (parameterName.equals("Y_position")) parameterList[1].value = parameterValue;
-        else if (parameterName.equals("Z_position")) parameterList[2].value = parameterValue;
-        else if (parameterName.equals("Relative"))
+        if (parameterName.equals(X_POS)) parameterList[0].value = parameterValue;
+        else if (parameterName.equals(Y_POS)) parameterList[1].value = parameterValue;
+        else if (parameterName.equals(Z_POS)) parameterList[2].value = parameterValue;
+        else if (parameterName.equals(RELATIVE))
         {
             if (parameterValue == 0f || parameterValue == 1f)
             {
@@ -141,6 +141,13 @@ public class SinglePositionedCellPackingAdapter extends CellPackingAdapter
         else throw new CellPackingException("Not a valid Parameter name");
 
     };
+
+    public void setPosition(float x, float y, float z)  throws CellPackingException
+    {
+        setParameter(X_POS, x);
+        setParameter(Y_POS, y);
+        setParameter(Z_POS, z);
+    }
 
 
     @Override
