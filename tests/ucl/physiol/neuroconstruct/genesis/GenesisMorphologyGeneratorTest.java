@@ -36,6 +36,7 @@ import ucl.physiol.neuroconstruct.cell.compartmentalisation.GenesisCompartmental
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.simulation.SimulationData;
 import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 import ucl.physiol.neuroconstruct.simulation.SimulationDataException;
 import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
@@ -69,7 +70,7 @@ public class GenesisMorphologyGeneratorTest
     
     @Test public void testGenerateGenesis() throws ProjectFileParsingException, InterruptedException, GenesisException, IOException, SimulationDataException
     {
-        if (!MainTest.testOnMOOSE()) return;
+        assumeTrue(MainTest.testGENESIS());
 
         System.out.println("---  testGenerateGenesis...");
         

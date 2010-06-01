@@ -51,22 +51,22 @@ public class MainTest
         return tempProjDir.getPath()+"/";
     }
 
-    public static boolean testOnNEURON()
+    public static boolean testNEURON()
     {
         return simulators == null || simulators.contains("NEURON");
     }
 
-    public static boolean testOnPNEURON()
+    public static boolean testPNEURON()
     {
         return simulators == null || simulators.contains("PNEURON");
     }
 
-    public static boolean testOnGENESIS()
+    public static boolean testGENESIS()
     {
         return simulators == null || simulators.contains("GENESIS");
     }
 
-    public static boolean testOnMOOSE()
+    public static boolean testMOOSE()
     {
         return simulators == null || simulators.contains("MOOSE");
     }
@@ -86,10 +86,10 @@ public class MainTest
 
         simulators = System.getProperty("simulators");
 
-        System.out.println("Testing on NEURON: "+ testOnNEURON());
-        System.out.println("Testing on PNEURON: "+ testOnPNEURON());
-        System.out.println("Testing on GENESIS: "+ testOnGENESIS());
-        System.out.println("Testing on MOOSE: "+ testOnMOOSE());
+        System.out.println("Testing on NEURON: "+ testNEURON());
+        System.out.println("Testing on PNEURON: "+ testPNEURON());
+        System.out.println("Testing on GENESIS: "+ testGENESIS());
+        System.out.println("Testing on MOOSE: "+ testMOOSE());
 
         Result r = null;
         
@@ -136,7 +136,9 @@ public class MainTest
         System.out.println("");
         System.out.println("**********************************************");
         System.out.println("      Number of tests:     "+r.getRunCount());
+        System.out.println("      Number of ignores:  "+r.getIgnoreCount());
         System.out.println("      Number of failures:  "+r.getFailures().size());
+        System.out.println("      Number of successes:  "+(r.getRunCount() - r.getFailures().size() - r.getIgnoreCount()));
         System.out.println("**********************************************");
         System.out.println("");
 

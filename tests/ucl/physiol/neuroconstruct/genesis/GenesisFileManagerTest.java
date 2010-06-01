@@ -37,6 +37,7 @@ import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 
 /**
  *
@@ -62,7 +63,7 @@ public class GenesisFileManagerTest
 
     @Test public void testGenerateMooseScripts() throws ProjectFileParsingException, InterruptedException,  IOException, SimulationDataException, GenesisException, Exception
     {
-        if (!MainTest.testOnMOOSE()) return;
+        assumeTrue(MainTest.testMOOSE());
 
         System.out.println("---  testGenerateMooseScripts...");
 
@@ -71,7 +72,7 @@ public class GenesisFileManagerTest
 
     @Test public void testGenerateGenesisScripts() throws ProjectFileParsingException, InterruptedException,  IOException, SimulationDataException, GenesisException, Exception
     {
-        if (!MainTest.testOnGENESIS()) return;
+        assumeTrue(MainTest.testGENESIS());
 
         System.out.println("---  testGenerateGenesisScripts...");
 

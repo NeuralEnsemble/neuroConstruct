@@ -36,6 +36,7 @@ import ucl.physiol.neuroconstruct.nmodleditor.processes.ProcessManager;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.simulation.SimulationData;
 import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 import ucl.physiol.neuroconstruct.simulation.SimulationDataException;
 import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
@@ -67,7 +68,7 @@ public class NeuronTemplateGeneratorTest {
     
     @Test public void testGenerateHoc() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException 
     {
-        if (!MainTest.testOnNEURON()) return;
+        assumeTrue(MainTest.testNEURON());
 
         System.out.println("---  testGenerateHoc...");
         
@@ -179,7 +180,7 @@ public class NeuronTemplateGeneratorTest {
         MainTest.checkResults(r);
         
     }
-    
+
     
 
 }

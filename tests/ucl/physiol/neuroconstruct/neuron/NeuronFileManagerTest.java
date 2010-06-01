@@ -44,6 +44,7 @@ import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.simulation.SimEnvHelper;
 import ucl.physiol.neuroconstruct.simulation.SimulationData;
 import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 import ucl.physiol.neuroconstruct.simulation.SimulationDataException;
 import ucl.physiol.neuroconstruct.simulation.SpikeAnalyser;
 import ucl.physiol.neuroconstruct.utils.GeneralUtils;
@@ -76,7 +77,7 @@ public class NeuronFileManagerTest {
     
     @Test public void testGenerateAndRunHoc() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException, Exception
     {
-        if (!MainTest.testOnNEURON()) return;
+        assumeTrue(MainTest.testNEURON());
 
         System.out.println("---  testGenerateAndRunHoc...");
         
@@ -297,13 +298,14 @@ public class NeuronFileManagerTest {
     
     @Test public void testGenerateParallelHoc() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
     {
-        if (!MainTest.testOnPNEURON()) return;
+        assumeTrue(MainTest.testPNEURON());
+
         System.out.println("---  testGenerateParallelHoc...");
         
         if (GeneralUtils.isWindowsBasedPlatform())
         {
             System.out.println("*** Not running testGenerateParallelHoc, as this is a Windows system!");
-            return;
+            assumeTrue(!GeneralUtils.isWindowsBasedPlatform());
         }
         
         ProjectManager pm = loadProject("testProjects/TestParallel/TestParallel.neuro.xml");
