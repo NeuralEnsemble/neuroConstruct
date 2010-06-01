@@ -43,9 +43,11 @@ import ucl.physiol.neuroconstruct.utils.GeneralUtils;
  *
  * @author padraig
  */
-public class GenesisMorphologyGeneratorTest {
+public class GenesisMorphologyGeneratorTest
+{
 
-    public GenesisMorphologyGeneratorTest() {
+    public GenesisMorphologyGeneratorTest()
+    {
     }
 
 
@@ -67,6 +69,8 @@ public class GenesisMorphologyGeneratorTest {
     
     @Test public void testGenerateGenesis() throws ProjectFileParsingException, InterruptedException, GenesisException, IOException, SimulationDataException
     {
+        if (!MainTest.testOnMOOSE()) return;
+
         System.out.println("---  testGenerateGenesis...");
         
         ProjectManager pm = loadProject("testProjects/TestDetailedMorphs/TestDetailedMorphs.neuro.xml");

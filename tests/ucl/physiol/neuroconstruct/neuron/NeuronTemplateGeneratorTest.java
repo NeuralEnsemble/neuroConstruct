@@ -67,6 +67,8 @@ public class NeuronTemplateGeneratorTest {
     
     @Test public void testGenerateHoc() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException 
     {
+        if (!MainTest.testOnNEURON()) return;
+
         System.out.println("---  testGenerateHoc...");
         
         ProjectManager pm = loadProject("testProjects/TestDetailedMorphs/TestDetailedMorphs.neuro.xml");

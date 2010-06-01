@@ -42,7 +42,8 @@ import static org.junit.Assert.*;
  *
  * @author padraig
  */
-public class GenesisFileManagerTest {
+public class GenesisFileManagerTest
+{
 
 
     private String projName = "TestingGranCell_GENMOO";
@@ -61,6 +62,8 @@ public class GenesisFileManagerTest {
 
     @Test public void testGenerateMooseScripts() throws ProjectFileParsingException, InterruptedException,  IOException, SimulationDataException, GenesisException, Exception
     {
+        if (!MainTest.testOnMOOSE()) return;
+
         System.out.println("---  testGenerateMooseScripts...");
 
         generateScripts(true);
@@ -68,6 +71,8 @@ public class GenesisFileManagerTest {
 
     @Test public void testGenerateGenesisScripts() throws ProjectFileParsingException, InterruptedException,  IOException, SimulationDataException, GenesisException, Exception
     {
+        if (!MainTest.testOnGENESIS()) return;
+
         System.out.println("---  testGenerateGenesisScripts...");
 
         generateScripts(false);

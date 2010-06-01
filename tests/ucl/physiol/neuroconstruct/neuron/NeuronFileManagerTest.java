@@ -76,6 +76,8 @@ public class NeuronFileManagerTest {
     
     @Test public void testGenerateAndRunHoc() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException, Exception
     {
+        if (!MainTest.testOnNEURON()) return;
+
         System.out.println("---  testGenerateAndRunHoc...");
         
         //ProjectManager pm = loadProject("testProjects/TestGenNetworks/TestGenNetworks.neuro.xml");
@@ -293,8 +295,9 @@ public class NeuronFileManagerTest {
     
     
     
-    @Test public void testGenerateParallelHoc() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException 
+    @Test public void testGenerateParallelHoc() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
     {
+        if (!MainTest.testOnPNEURON()) return;
         System.out.println("---  testGenerateParallelHoc...");
         
         if (GeneralUtils.isWindowsBasedPlatform())

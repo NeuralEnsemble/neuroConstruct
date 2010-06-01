@@ -40,7 +40,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Result;
 import test.MainTest;
-import ucl.physiol.neuroconstruct.cell.Cell;
 import static org.junit.Assert.*;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.Hdf5Exception;
 import ucl.physiol.neuroconstruct.project.*;

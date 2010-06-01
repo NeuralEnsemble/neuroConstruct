@@ -36,6 +36,8 @@ import org.junit.runner.notification.*;
  */
 public class MainTest 
 {
+    private static String simulators = null;
+
     public static String getTestProjectDirectory()
     {
         return "testProjects/";
@@ -43,7 +45,30 @@ public class MainTest
 
     public static String getTempProjectDirectory()
     {
-        return "testProjects/TEMP_PROJECTS/projects/";
+        File tempProjDir = new File(getTestProjectDirectory(), "TEMP_PROJECTS/projects/");
+        if (!tempProjDir.exists())
+            tempProjDir.mkdir();
+        return tempProjDir.getPath()+"/";
+    }
+
+    public static boolean testOnNEURON()
+    {
+        return simulators == null || simulators.contains("NEURON");
+    }
+
+    public static boolean testOnPNEURON()
+    {
+        return simulators == null || simulators.contains("PNEURON");
+    }
+
+    public static boolean testOnGENESIS()
+    {
+        return simulators == null || simulators.contains("GENESIS");
+    }
+
+    public static boolean testOnMOOSE()
+    {
+        return simulators == null || simulators.contains("MOOSE");
     }
 
     public static void main(String[] args)
@@ -59,11 +84,16 @@ public class MainTest
             tempProjs.mkdir();
         }
 
+        simulators = System.getProperty("simulators");
+
+        System.out.println("Testing on NEURON: "+ testOnNEURON());
+        System.out.println("Testing on PNEURON: "+ testOnPNEURON());
+        System.out.println("Testing on GENESIS: "+ testOnGENESIS());
+        System.out.println("Testing on MOOSE: "+ testOnMOOSE());
+
         Result r = null;
         
-        r = org.junit.runner.JUnitCore.runClasses(/*ucl.physiol.neuroconstruct.cell.CellSuite.class,*/
-                 
-                ucl.physiol.neuroconstruct.cell.VariableParameterTest.class,
+        r = org.junit.runner.JUnitCore.runClasses(ucl.physiol.neuroconstruct.cell.VariableParameterTest.class,
                 ucl.physiol.neuroconstruct.cell.VariableMechanismTest.class,
                 ucl.physiol.neuroconstruct.cell.SectionTest.class,
                 ucl.physiol.neuroconstruct.cell.ParameterisedGroupTest.class,
@@ -92,7 +122,7 @@ public class MainTest
                 ucl.physiol.neuroconstruct.project.packing.OneDimRegSpacingPackingAdapterTest.class,
                 ucl.physiol.neuroconstruct.simulation.SpikeAnalyserTest.class,
                 ucl.physiol.neuroconstruct.utils.NumberGeneratorTest.class,
-                ucl.physiol.neuroconstruct.utils.equation.ExpressionTest.class/**/); 
+                ucl.physiol.neuroconstruct.utils.equation.ExpressionTest.class/**/);
         
         
         System.out.println("Finished the main nC tests.");
@@ -103,14 +133,15 @@ public class MainTest
     
     public static void checkResults(Result r)
     {
+        System.out.println("");
+        System.out.println("**********************************************");
+        System.out.println("      Number of tests:     "+r.getRunCount());
+        System.out.println("      Number of failures:  "+r.getFailures().size());
+        System.out.println("**********************************************");
+        System.out.println("");
+
         if (!r.wasSuccessful())
         {
-            System.out.println("");
-            System.out.println("**********************************************");
-            System.out.println("      Number of failures: "+r.getFailures().size());
-            System.out.println("**********************************************");
-            System.out.println("");
-
             for (Failure f: r.getFailures())
             {
                 System.out.println("Failure: "+f.getDescription());
