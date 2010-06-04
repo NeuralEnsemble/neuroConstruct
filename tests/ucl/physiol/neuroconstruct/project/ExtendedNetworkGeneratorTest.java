@@ -216,7 +216,7 @@ public class ExtendedNetworkGeneratorTest
         
         System.out.println("Syns: "+proj2.morphNetworkConnectionsInfo.getSynapseList(nc2));
         
-        NumberGenerator ngNum = new NumberGenerator();
+        NumberGenerator ngNum = new NumberGenerator(0);
         ngNum.initialiseAsGaussianIntGenerator(maxPre, minPre, meanPre, stdPre);
         
         proj2.morphNetworkConnectionsInfo.getConnectivityConditions(nc2).setNumConnsInitiatingCellGroup(ngNum);       
@@ -345,7 +345,7 @@ public class ExtendedNetworkGeneratorTest
         
         System.out.println("Syns: "+proj2.volBasedConnsInfo.getSynapseList(nc2));
         
-        NumberGenerator ngNum = new NumberGenerator();
+        NumberGenerator ngNum = new NumberGenerator(0);
         ngNum.initialiseAsGaussianIntGenerator(maxPre, minPre, meanPre, stdPre);
         
         proj2.volBasedConnsInfo.getConnectivityConditions(nc2).setNumConnsInitiatingCellGroup(ngNum);       
@@ -449,7 +449,7 @@ public class ExtendedNetworkGeneratorTest
         proj2.morphNetworkConnectionsInfo.getMaxMinLength(nc2).setDimension("x");        
         proj2.morphNetworkConnectionsInfo.getConnectivityConditions(nc2).setMaxNumInitPerFinishCell(100);        
         
-        NumberGenerator ngNum = new NumberGenerator();
+        NumberGenerator ngNum = new NumberGenerator(0);
         ngNum.initialiseAsGaussianIntGenerator(maxPre, minPre, meanPre, stdPre);
         
         proj2.morphNetworkConnectionsInfo.getConnectivityConditions(nc2).setNumConnsInitiatingCellGroup(ngNum);       
@@ -499,7 +499,7 @@ public class ExtendedNetworkGeneratorTest
         String src = proj.morphNetworkConnectionsInfo.getSourceCellGroup(nc1);
         proj.morphNetworkConnectionsInfo.setTargetCellGroup(nc1, src); //source = target
         
-        NumberGenerator ngNum = new NumberGenerator();
+        NumberGenerator ngNum = new NumberGenerator(0);
         ngNum.initialiseAsGaussianIntGenerator(maxPre, minPre, meanPre, stdPre);
         
         proj.morphNetworkConnectionsInfo.getConnectivityConditions(nc1).setNumConnsInitiatingCellGroup(ngNum);

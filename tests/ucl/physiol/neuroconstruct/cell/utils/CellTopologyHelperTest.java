@@ -71,7 +71,7 @@ public class CellTopologyHelperTest {
         
         cell.setInstanceName("CellName");
         cell.setCellDescription("Cell Desc");
-        NumberGenerator ip = new NumberGenerator();
+        NumberGenerator ip = new NumberGenerator(0);
         ip.initialiseAsRandomFloatGenerator(-70, -90);
         cell.setInitialPotential(ip);
         

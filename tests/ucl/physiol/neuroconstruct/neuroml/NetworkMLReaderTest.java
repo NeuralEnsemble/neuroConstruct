@@ -40,11 +40,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Result;
 import test.MainTest;
+import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelperTest;
 import static org.junit.Assert.*;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.Hdf5Exception;
 import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.mechanisms.*;
+import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.ColourUtils.ColourRecord;
 import ucl.physiol.neuroconstruct.utils.SequenceGenerator.EndOfSequenceException;
+//import static org.junit.Assume.*;
 
 /**
  *
@@ -59,29 +63,20 @@ public class NetworkMLReaderTest
     
     boolean verbose = true;
     
-    public NetworkMLReaderTest() 
-    {
-        
-    }
-
 
 
     @Before
     public void setUp() 
     {
-        
         System.out.println("---------------   setUp() NetworkMLReaderTest");
         
         File projFile = ProjectStructure.findProjectFile(projDir);
-        
         pm = new ProjectManager();
         
         try 
         {
             pm.loadProject(projFile);
-        
             System.out.println("Proj status: "+ pm.getCurrentProject().getProjectStatusAsString());
-            
             
         } 
         catch (ProjectFileParsingException ex) 
@@ -90,10 +85,6 @@ public class NetworkMLReaderTest
         }
     }
 
-    @After
-    public void tearDown() {
-    }
-    
     
     @Test
     public void testSavingLoadingNetworkML() throws InterruptedException, NeuroMLException, Hdf5Exception, EndOfSequenceException, NoProjectLoadedException
@@ -101,7 +92,6 @@ public class NetworkMLReaderTest
         System.out.println("---  testSavingLoadingNetworkML");
         
         Project proj0 = pm.getCurrentProject();
-        
         SimConfig sc = proj0.simConfigInfo.getDefaultSimConfig();
                 
         pm.doGenerate(sc.getName(), 1234);
@@ -111,15 +101,13 @@ public class NetworkMLReaderTest
             Thread.sleep(2000);
         }
         
-        
         StringBuffer stateString1 = new StringBuffer();
         
         stateString1.append(proj0.generatedCellPositions.toLongString(false));
         stateString1.append(proj0.generatedNetworkConnections.details(false));
         stateString1.append(proj0.generatedElecInputs.toString());
-        
-        
-        
+        String input0 = proj0.elecInputInfo.getAllStims().get(0).getElectricalInput().toString();
+        String input1 = proj0.elecInputInfo.getAllStims().get(1).getElectricalInput().toString();
         
         System.out.println("Generated proj with: "+ proj0.generatedCellPositions.getNumberInAllCellGroups()+" cells");
         if (verbose) 
@@ -142,34 +130,15 @@ public class NetworkMLReaderTest
         
         System.out.println("Saved NetworkML in: "+ nmlFile.getAbsolutePath());
         
-        File schemaFile = GeneralProperties.getNeuroMLSchemaFile();
+        assertTrue(validateAgainstNeuroMLSchema(nmlFile));
 
-        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+        String validity1 = pm.getValidityReport(false);
+        validity1 = GeneralUtils.replaceAllTokens(validity1, proj0.getProjectFile()+"", "<proj_path>");
         
-
-        Source schemaFileSource = new StreamSource(schemaFile);
-        try
-        {
-            Schema schema = factory.newSchema(schemaFileSource);
-
-            Validator validator = schema.newValidator();
-
-            Source xmlFileSource = new StreamSource(nmlFile);
-
-            validator.validate(xmlFileSource);
-        } 
-        catch (Exception ex)
-        {
-            fail("Unable to validate saved NetworkML file: "+ nmlFile+" against: "+schemaFile+"\n"+ex.toString());
-        }
-        System.out.println(nmlFile.getAbsolutePath()+" is valid according to: "+ schemaFile);
-        
-         
         proj0.resetGenerated();
-
                 
         pm.doLoadNetworkML(nmlFile, true);
-        
        
         StringBuffer stateString2 = new StringBuffer();
         
@@ -177,6 +146,8 @@ public class NetworkMLReaderTest
         stateString2.append(proj0.generatedNetworkConnections.details(false));
         stateString2.append(proj0.generatedElecInputs.toString());
         //proj0.generatedNetworkConnections.getSynapticConnections(projName)
+        String input1_0 = proj0.elecInputInfo.getAllStims().get(0).getElectricalInput().toString();
+        String input1_1 = proj0.elecInputInfo.getAllStims().get(1).getElectricalInput().toString();
         
         
         System.out.println("Reloaded proj with: "+ proj0.generatedCellPositions.getNumberInAllCellGroups()+" cells");
@@ -184,14 +155,13 @@ public class NetworkMLReaderTest
             System.out.println(stateString2);
         
         assertEquals(stateString1.toString(), stateString2.toString());
-        
         System.out.println("Strings representing internal states equal!");
 
+        assertEquals(input0, input1_0);
+        assertEquals(input1, input1_1);
 
-        
-        
         //test the NetworkML reader on a Level3 file
-        File l3File = new File(saveNetsDir, "l3test.nml");
+        File l3File = new File(saveNetsDir, "Level3Test.xml");
         ProjectManager.saveLevel3NetworkXML(proj0, l3File, false, false, sc.getName(), NetworkMLConstants.UNITS_PHYSIOLOGICAL);
         assertTrue(l3File.exists());
         
@@ -209,23 +179,7 @@ public class NetworkMLReaderTest
 
         System.out.println("Saved Level 3 Network  in: "+ l3File.getAbsolutePath());
 
-        try
-        {
-            Schema schema = factory.newSchema(schemaFileSource);
-
-            Validator validator = schema.newValidator();
-
-            Source xmlFileSource = new StreamSource(l3File);
-
-            validator.validate(xmlFileSource);
-        } 
-        catch (Exception ex)
-        {
-            fail("Unable to validate saved Level 3 file: "+ nmlFile+"\n"+ex.toString());
-        }
-        
-        System.out.println("-----------------  "+l3File.getAbsolutePath()+" is valid according to: "+ schemaFile+"  -----------------");
-               
+        assertTrue(validateAgainstNeuroMLSchema(l3File));
         //proj.resetGenerated();
 
 
@@ -249,6 +203,20 @@ public class NetworkMLReaderTest
         assertTrue(proj0.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().containsAll(proj2.morphNetworkConnectionsInfo.getAllSimpleNetConnNames()));
 
         assertTrue(proj0.elecInputInfo.getAllStimRefs().containsAll(proj2.elecInputInfo.getAllStimRefs()));
+
+        String validity2 = pm.getValidityReport(false);
+
+        validity2 = GeneralUtils.replaceAllTokens(validity2, proj2.getProjectFile().getAbsolutePath(), "<proj_path>");
+
+        assertEquals(validity1, validity2);
+
+        String input2_0 = proj2.elecInputInfo.getAllStims().get(0).getElectricalInput().toString();
+        String input2_1 = proj2.elecInputInfo.getAllStims().get(1).getElectricalInput().toString();
+
+
+
+        assertEquals(input0, input2_0);
+        assertEquals(input1, input2_1);
         
    
         
@@ -263,24 +231,11 @@ public class NetworkMLReaderTest
         boolean annotations = true;
         
         ProjectManager.saveLevel3NetworkXML(proj0, l3FileAnnotations, false, false, annotations, sc.getName(), NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+        
         assertTrue(l3FileAnnotations.exists());
+        assertTrue(validateAgainstNeuroMLSchema(l3FileAnnotations));
  
-        try
-        {
-            Schema schema = factory.newSchema(schemaFileSource);
-
-            Validator validator = schema.newValidator();
-
-            Source xmlFileSource = new StreamSource(l3FileAnnotations);
-
-            validator.validate(xmlFileSource);
-        }
-        catch (Exception ex)
-        {
-            fail("Unable to validate saved Level 3 file: "+ nmlFile+"\n"+ex.toString());
-        }
-
-        System.out.println("-----------------  "+l3FileAnnotations.getAbsolutePath()+" is valid according to: "+ schemaFile+"  -----------------");
+       
 
         pm.doLoadNetworkMLAndGenerate(l3FileAnnotations, true);
         assertTrue(pm.isGenerating());
@@ -321,6 +276,16 @@ public class NetworkMLReaderTest
         System.out.println("OK");
         
         System.out.println("comparing cellMechanismInfo...");
+        System.out.println("Proj 1: ");
+        for (CellMechanism cm: proj0.cellMechanismInfo.getAllCellMechanisms())
+        {
+            System.out.println(cm);
+        }
+        System.out.println("Proj other: ");
+        for (CellMechanism cm: proj3.cellMechanismInfo.getAllCellMechanisms())
+        {
+            System.out.println(cm);
+        }
         assertTrue(compareAbstractTableObjects(proj0.cellMechanismInfo, proj3.cellMechanismInfo));
         System.out.println("OK");
         
@@ -331,7 +296,42 @@ public class NetworkMLReaderTest
         System.out.println("comparing simConfigInfo...");
         proj0.simConfigInfo.equals(proj3.simConfigInfo);
         System.out.println("OK");
+
+
+        String validity3 = pm.getValidityReport(false);
+
+        validity3 = GeneralUtils.replaceAllTokens(validity3, proj3.getProjectFile().getAbsolutePath(), "<proj_path>");
+
+        assertEquals(validity1, validity3);
        
+    }
+
+    //todo: move to utils class
+    public static boolean validateAgainstNeuroMLSchema(File nmlFile)
+    {
+        File schemaFile = GeneralProperties.getNeuroMLSchemaFile();
+
+        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+
+        Source schemaFileSource = new StreamSource(schemaFile);
+        try
+        {
+            Schema schema = factory.newSchema(schemaFileSource);
+
+            Validator validator = schema.newValidator();
+
+            Source xmlFileSource = new StreamSource(nmlFile);
+
+            validator.validate(xmlFileSource);
+        }
+        catch (Exception ex)
+        {
+            System.out.println("Unable to validate saved NetworkML file: "+ nmlFile+" against: "+schemaFile+"\n"+ex.toString());
+            return false;
+        }
+        System.out.println(nmlFile.getAbsolutePath()+" is valid according to: "+ schemaFile);
+        return true;
     }
     
     public boolean compareAbstractTableObjects(AbstractTableModel object1, AbstractTableModel object2)

@@ -142,7 +142,7 @@ public class MorphBasedConnGeneratorTest
         
   
         
-        NumberGenerator ngNum = new NumberGenerator();
+        NumberGenerator ngNum = new NumberGenerator(0);
         ngNum.initialiseAsGaussianIntGenerator(maxPre, minPre, meanPre, stdPre);
         
         proj.morphNetworkConnectionsInfo.getConnectivityConditions(nc1).setNumConnsInitiatingCellGroup(ngNum);
@@ -153,7 +153,7 @@ public class MorphBasedConnGeneratorTest
         proj.morphNetworkConnectionsInfo.getMaxMinLength(nc1).setMaxLength(maxLength);
         proj.morphNetworkConnectionsInfo.getMaxMinLength(nc1).setMinLength(minLength);
         
-        NumberGenerator ngWeight = new NumberGenerator();
+        NumberGenerator ngWeight = new NumberGenerator(0);
         ngWeight.initialiseAsRandomFloatGenerator(weightMax, weightMin);
         proj.morphNetworkConnectionsInfo.getSynapseList(nc1).get(0).setWeightsGenerator(ngWeight);
         
@@ -180,7 +180,7 @@ public class MorphBasedConnGeneratorTest
         ngNum.initialiseAsFixedIntGenerator(maxPre);
         */
         
-        NumberGenerator ngNum2 = new NumberGenerator();
+        NumberGenerator ngNum2 = new NumberGenerator(0);
         ngNum2.initialiseAsGaussianIntGenerator(maxPre*100, minPre, meanPre, stdPre);
         
         proj.morphNetworkConnectionsInfo.getConnectivityConditions(nc1).setNumConnsInitiatingCellGroup(ngNum2);

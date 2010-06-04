@@ -27,8 +27,10 @@
 package test;
 
 import java.io.File;
+import junit.textui.TestRunner;
 import org.junit.runner.*;
 import org.junit.runner.notification.*;
+import ucl.physiol.neuroconstruct.project.ProjectStructure;
 
 /**
  *
@@ -92,6 +94,9 @@ public class MainTest
         System.out.println("Testing on MOOSE: "+ testMOOSE());
 
         Result r = null;
+
+        //TestRunner tr = new TestRunner();
+        //tr.
         
         r = org.junit.runner.JUnitCore.runClasses(ucl.physiol.neuroconstruct.cell.VariableParameterTest.class,
                 ucl.physiol.neuroconstruct.cell.VariableMechanismTest.class,

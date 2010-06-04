@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channelml xmlns="http://morphml.org/channelml/schema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:meta="http://morphml.org/metadata/schema" 
+    xsi:schemaLocation="http://morphml.org/channelml/schema   ../../Schemata/v1.7.2/Level2/ChannelML_v1.7.2.xsd" 
+    units="SI Units">
+
+	<meta:notes>A channel from Maex, R and De Schutter, E. Synchronization of Golgi and Granule Cell Firing in a 
+	Detailed Network Model of the Cerebellar Granule Cell Layer</meta:notes>
+    
+    <ion name="ca" charge="2" role="SignallingSubstance">  
+        <meta:notes>Signifies that the ion is involved in a process which alters its concentration</meta:notes>
+    </ion>
+    
+    <ion_concentration name="Gran_CaPool_98">
+        
+        <status value="stable">
+            <meta:comment>This ChannelML file has been updated to reflect the preferred form of elements/attributes which will be required from v2.0.
+            See info on Version 2 Requirements.</meta:comment>
+            <meta:contributor>
+                <meta:name>Padraig Gleeson</meta:name>
+            </meta:contributor>
+        </status>
+    
+        <meta:notes>An expontially decaying pool of calcium</meta:notes>
+
+        <meta:publication>
+           <meta:fullTitle>Maex, R and De Schutter, E.
+           Synchronization of Golgi and Granule Cell Firing in a Detailed Network Model of the
+           cerebellar Granule Cell Layer. J Neurophysiol, Nov 1998; 80: 2521 - 2537</meta:fullTitle>
+           <meta:pubmedRef>http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;list_uids=9819260&amp;dopt=Abstract</meta:pubmedRef>
+        </meta:publication>
+        
+        <ion_species name="ca"/>
+        
+        <decaying_pool_model resting_conc ="7.55e-5" decay_constant="1e-2">
+            
+            <pool_volume_info shell_thickness = "8.4e-8"/>
+            
+        </decaying_pool_model>
+        
+        
+    </ion_concentration>
+</channelml>

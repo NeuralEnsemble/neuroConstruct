@@ -159,6 +159,7 @@ public class Level3ExportTest {
             //check the cell mechanisms
             SimpleXMLEntity[] l3Channels = doc.getXMLEntities("/neuroml/channels/channel_type/@name");
             SimpleXMLEntity[] l3Synapses = doc.getXMLEntities("/neuroml/channels/synapse_type/@name");
+            SimpleXMLEntity[] l3IonConcs = doc.getXMLEntities("/neuroml/channels/ion_concentration/@name");
             
             Vector<String> allMechs = proj.cellMechanismInfo.getAllCellMechanismNames();
             boolean addChan = false;
@@ -246,7 +247,7 @@ public class Level3ExportTest {
             System.out.println("*****");
             System.out.println(l3Channels.length+" channels in doc + " +l3Synapses.length+" synapses in doc " );
             System.out.println("generated mechanisms " +genMechs.size());
-            assertTrue((l3Channels.length + l3Synapses.length) == genMechs.size());
+            assertTrue((l3Channels.length + l3Synapses.length + l3IonConcs.length) == genMechs.size());
             
             
              //check the network connections

@@ -151,7 +151,7 @@ public class VolumeBasedConnGeneratorTest
         proj.volBasedConnsInfo.getConnectivityConditions(nc2).setMaxNumInitPerFinishCell(maxPostConns2);
         
         
-        NumberGenerator ngWeight = new NumberGenerator();
+        NumberGenerator ngWeight = new NumberGenerator(0);
         ngWeight.initialiseAsRandomFloatGenerator(weightMax, weightMin);
 
         proj.volBasedConnsInfo.getSynapseList(nc1).get(0).setWeightsGenerator(ngWeight);

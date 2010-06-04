@@ -16,7 +16,7 @@ Go to tab Generate, press Generate Cell Positions and Connections, and then to v
 If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</string> 
   </void> 
   <void property="projectFileVersion"> 
-   <string>neuroConstruct v1.3.0</string> 
+   <string>neuroConstruct v1.3.8</string> 
   </void> 
   <void property="projectName"> 
    <string>TestNetworkML</string> 
@@ -129,7 +129,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      <string>SampleCell</string> 
     </void> 
     <void method="add"> 
-     <string>SampleCell</string> 
+     <string>Granule_98</string> 
     </void> 
     <void method="add"> 
      <string>SampleCell</string> 
@@ -336,11 +336,8 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
    <void method="add"> 
     <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings"> 
      <void property="amp"> 
-      <void property="distributionType"> 
-       <int>1</int> 
-      </void> 
       <void property="fixedNum"> 
-       <float>3.3</float> 
+       <float>2.0</float> 
       </void> 
       <void property="max"> 
        <float>3.0</float> 
@@ -364,11 +361,8 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       <string>SampleCellGroup</string> 
      </void> 
      <void property="del"> 
-      <void property="distributionType"> 
-       <int>1</int> 
-      </void> 
       <void property="fixedNum"> 
-       <float>11.0</float> 
+       <float>7.0</float> 
       </void> 
       <void property="max"> 
        <float>11.0</float> 
@@ -401,16 +395,10 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      <void property="fractionAlong"> 
       <float>0.13</float> 
      </void> 
-     <void property="noise"> 
-      <float>10.0</float> 
-     </void> 
      <void property="rate"> 
       <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator"> 
-       <void property="distributionType"> 
-        <int>1</int> 
-       </void> 
        <void property="fixedNum"> 
-        <float>0.05</float> 
+        <float>30.0</float> 
        </void> 
        <void property="max"> 
         <float>0.1</float> 
@@ -465,6 +453,9 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       </void> 
       <void method="add"> 
        <string>NetConn_SampleCellGroup_CellGroup_3</string> 
+      </void> 
+      <void method="add"> 
+       <string>NetConn_SampleCellGroup_CellGroup_2</string> 
       </void> 
      </void> 
      <void property="plots"> 
