@@ -102,7 +102,7 @@ public class ExampleProjects
 
 
         ArrayList<String> toIgnore = new ArrayList<String>();
-        toIgnore.add("Thalamocortical"); // temporarily
+        //toIgnore.add("Thalamocortical"); // temporarily
         //toIgnore.add("CA1PyramidalCell"); // temporarily
         
         for(File exProjDir: files)

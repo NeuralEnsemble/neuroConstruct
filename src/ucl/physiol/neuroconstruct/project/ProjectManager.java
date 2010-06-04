@@ -536,11 +536,9 @@ public class ProjectManager implements GenerationReport
 
         elecInputGenerator.setSimConfig(getCurrentProject().simConfigInfo.getSimConfig(prevSimConfig));
         
-        
         currentlyGenerating = true;
 
         elecInputGenerator.start();
-
 
 
         return false;
@@ -809,9 +807,6 @@ public class ProjectManager implements GenerationReport
                                 GeneralProperties.getVersionNumber()+" on: "+ GeneralUtils.getCurrentTimeAsNiceString() +", "
                                 + GeneralUtils.getCurrentDateAsNiceString()+"\n\n");
             
-            
-    
-            
             Iterator<String> cellGroups = project.generatedCellPositions.getNamesGeneratedCellGroups();
             ArrayList<String> cellGroupsNames = new ArrayList<String>();
             
@@ -869,8 +864,8 @@ public class ProjectManager implements GenerationReport
                                                              NetworkMLConstants.NAMESPACE_URI));
 
             rootElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC,
-                                                            NeuroMLConstants.NAMESPACE_URI+"../../Schemata/v"+GeneralProperties.getNeuroMLVersionNumber()
-                                                            +"/Level3/NeuroML_Level3_v"+GeneralProperties.getNeuroMLVersionNumber()
+                                                            NeuroMLConstants.NAMESPACE_URI+" http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v"+GeneralProperties.getLatestNeuroMLVersionNumber()
+                                                            +"/Level3/NeuroML_Level3_v"+GeneralProperties.getLatestNeuroMLVersionNumber()
                                                             +".xsd"));// + "NeuroMLConstants.NAMESPACE_URI + "  " + NeuroMLConstants.DEFAULT_SCHEMA_FILENAME));
             
 
@@ -953,86 +948,7 @@ public class ProjectManager implements GenerationReport
                 annotation.addContent("\n"+indent); // to make it more readable... 
                 rootElement.addChildElement(annotation);
                 rootElement.addContent("\n\n");
-/*
-                // Writing Cell Groups info --
-                fos= new ByteArrayOutputStream();
-                xmlEncoder = new XMLEncoder(fos);           
-                xmlEncoder.writeObject(project.cellGroupsInfo);    
-                xmlEncoder.close();            
-                //////////////////annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);
-                content =  fos.toString();            
-                content = content.substring(content.indexOf("?>")+2, content.length());
-                indent = "    ";
-                annotation.addContent("\n"+indent); // to make it more readable...
-                annotation.addContent("\n"+content);
-                annotation.addContent("\n"+indent); // to make it more readable...
-                rootElement.addContent("\n\n");
-                rootElement.addChildElement(annotation);
-                rootElement.addContent("\n\n");
 
-                 //  Writing ElecInputInfo --
-                fos= new ByteArrayOutputStream();
-                xmlEncoder = new XMLEncoder(fos);           
-                xmlEncoder.writeObject(project.elecInputInfo);    
-                xmlEncoder.close();            
-                ///////////////annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);
-                content =  fos.toString();            
-                content = content.substring(content.indexOf("?>")+2, content.length());
-                indent = "    ";
-                annotation.addContent("\n"+indent); // to make it more readable...
-                annotation.addContent("\n"+content);
-                annotation.addContent("\n"+indent); // to make it more readable...
-                rootElement.addContent("\n\n");
-                rootElement.addChildElement(annotation);
-                rootElement.addContent("\n\n");
-
-                // Writing Simple Net Conn info --
-                fos= new ByteArrayOutputStream();
-                xmlEncoder = new XMLEncoder(fos);           
-                xmlEncoder.writeObject(project.morphNetworkConnectionsInfo);    
-                xmlEncoder.close();            
-                //////////////annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);
-                content =  fos.toString();            
-                content = content.substring(content.indexOf("?>")+2, content.length());
-                indent = "    ";
-                annotation.addContent("\n"+indent); // to make it more readable...
-                annotation.addContent("\n"+content);
-                annotation.addContent("\n"+indent); // to make it more readable...
-                rootElement.addContent("\n\n");
-                rootElement.addChildElement(annotation);
-                rootElement.addContent("\n\n");
-
-                // Writing Simulation plot info --
-                fos= new ByteArrayOutputStream();
-                xmlEncoder = new XMLEncoder(fos);           
-                xmlEncoder.writeObject(project.simPlotInfo);    
-                xmlEncoder.close();            
-                ///////////////annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);
-                content =  fos.toString();            
-                content = content.substring(content.indexOf("?>")+2, content.length());
-                indent = "    ";
-                annotation.addContent("\n"+indent); // to make it more readable...
-                annotation.addContent("\n"+content);
-                annotation.addContent("\n"+indent); // to make it more readable...
-                rootElement.addContent("\n\n");
-                rootElement.addChildElement(annotation);
-                rootElement.addContent("\n\n");
-
-                //  Reading SimConfigInfo --
-                fos= new ByteArrayOutputStream();
-                xmlEncoder = new XMLEncoder(fos);           
-                xmlEncoder.writeObject(project.simConfigInfo);    
-                xmlEncoder.close();            
-                ///////////////annotation = new SimpleXMLElement(MetadataConstants.PREFIX + ":"+ MetadataConstants.ANNOTATION_ELEMENT);
-                content =  fos.toString();            
-                content = content.substring(content.indexOf("?>")+2, content.length());
-                indent = "    ";
-                annotation.addContent("\n"+indent); // to make it more readable...
-                annotation.addContent("\n"+content);
-                annotation.addContent("\n"+indent); // to make it more readable...
-                rootElement.addContent("\n\n");
-                rootElement.addChildElement(annotation);
-                rootElement.addContent("\n\n");*/
             }          
            
             
@@ -1067,12 +983,16 @@ public class ProjectManager implements GenerationReport
     //The biophysical mechanisms present in the network
             
             SimpleXMLElement cmechsElement = new SimpleXMLElement("channels");
-            cmechsElement.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.UNIT_SCHEME, ChannelMLConstants.PHYSIOLOGICAL_UNITS));           
+            String chosenUnits = null;
+
+            //cmechsElement.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.UNIT_SCHEME, ChannelMLConstants.PHYSIOLOGICAL_UNITS));
 
             boolean addChan = false; //flag to avoid repetitions and unuseful checks
             Vector<String> allm = project.cellMechanismInfo.getAllCellMechanismNames();
-            Vector<String> cellMechs = new Vector<String>();            
-            Vector<String> synCellMechs = new Vector<String>(); 
+
+            Vector<String> cellMechs = new Vector<String>();
+            Vector<String> synCellMechs = new Vector<String>();
+            Vector<String> ionConcMechs = new Vector<String>();
             
             //loop over all the existing cell mechanisms
             //to find all the cell mechanisms in the generated cell groups
@@ -1133,11 +1053,22 @@ public class ProjectManager implements GenerationReport
                 //add channels that are used in the generated cell groups
                 i=0;
                 while ((i<cellGroupsNames.size())&&(addChan==false))
-                {  
-                    if (project.cellManager.getCell(project.cellGroupsInfo.getCellType(cellGroupsNames.get(i))).getAllChanMechNames(true).contains(m)
-                            && !cellMechs.contains(m))
+                {
+                    Cell cell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(cellGroupsNames.get(i)));
+                    CellMechanism cm = project.cellMechanismInfo.getCellMechanism(m);
+
+                    if ( cell.getAllChanMechNames(true).contains(m)
+                            && !cellMechs.contains(m)
+                            && cm.isChannelMechanism())
                     {
                         cellMechs.add(m);
+                        addChan = true;
+                    }
+                    if ( cell.getAllChanMechNames(true).contains(m)
+                            && !ionConcMechs.contains(m)
+                            && cm.isIonConcMechanism())
+                    {
+                        ionConcMechs.add(m);
                         addChan = true;
                     }
                     i++;
@@ -1147,11 +1078,18 @@ public class ProjectManager implements GenerationReport
             //System.out.println("synCellMechs "+synCellMechs.toString());
             
             //add the channelML descriptions for all the cell mechanisms selected
-            ArrayList<SimpleXMLElement> channels = new ArrayList<SimpleXMLElement>();
-            
-            for(String syn: synCellMechs) {
+            LinkedList<SimpleXMLElement> channels = new LinkedList<SimpleXMLElement>();
+
+            for(String syn: synCellMechs)
+            {
                 cellMechs.add(syn);                //for some reason the synapses are stored before the channels and NeuroML requires the other way aorund
             }
+            for(String ic: ionConcMechs)
+            {
+                cellMechs.add(ic);
+            }
+
+            logger.logComment("cellMechs: "+cellMechs, true);
             
             for(String cellMech: cellMechs)
             {
@@ -1160,32 +1098,62 @@ public class ProjectManager implements GenerationReport
                 if ((cm instanceof ChannelMLCellMechanism))
                 {
                     ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism)cm;
-                    SimpleXMLEntity[] elements = cmlCm.getXMLDoc().getXMLEntities(ChannelMLConstants.getChannelTypeXPath());                    
-                    
-                    if (elements.length>=0)
+
+                    String units = cmlCm.getXMLDoc().getValueByXPath(ChannelMLConstants.getUnitsXPath());
+
+                    if (chosenUnits==null)
                     {
-                        for (int j1 = 0; j1 < elements.length; j1++)
-                        {
-                            SimpleXMLElement el = (SimpleXMLElement)elements[j1];
-                            if(!el.hasAttributeValue(NeuroMLConstants.XML_NS))
-                                el.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XML_NS, ChannelMLConstants.NAMESPACE_URI));
-                            channels.add(el);
-                        }    
-                    }   
+                        chosenUnits = units;
+                    }
+                    /*else if (!chosenUnits.equals(units))
+                    {
+                        throw new NeuroMLException("Unfortunately it's not yet possible to export to a single Level 3 file when channels and" +
+                            "synapses have a mix of SI & Physiological Units...\n" +
+                            cmlCm.getInstanceName()+" has "+ units);
+
+                    }*/
+
+
+                    SimpleXMLEntity[] elements = cmlCm.getXMLDoc().getXMLEntities(ChannelMLConstants.getPreV1_7_3IonsXPath());
+
+                    for (int j1 = 0; j1 < elements.length; j1++)
+                    {
+                        SimpleXMLElement el = (SimpleXMLElement)elements[j1];
+                        if(!el.hasAttributeValue(NeuroMLConstants.XML_NS))
+                            el.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XML_NS, ChannelMLConstants.NAMESPACE_URI));
+                        channels.addFirst(el);
+                    }
+
+                    elements = cmlCm.getXMLDoc().getXMLEntities(ChannelMLConstants.getIonConcTypeXPath());
+
+                    for (int j1 = 0; j1 < elements.length; j1++)
+                    {
+                        SimpleXMLElement el = (SimpleXMLElement)elements[j1];
+                        if(!el.hasAttributeValue(NeuroMLConstants.XML_NS))
+                            el.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XML_NS, ChannelMLConstants.NAMESPACE_URI));
+                        channels.addLast(el);
+                    }
+
+                    elements = cmlCm.getXMLDoc().getXMLEntities(ChannelMLConstants.getChannelTypeXPath());
+
+                    for (int j1 = 0; j1 < elements.length; j1++)
+                    {
+                        SimpleXMLElement el = (SimpleXMLElement)elements[j1];
+                        if(!el.hasAttributeValue(NeuroMLConstants.XML_NS))
+                            el.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XML_NS, ChannelMLConstants.NAMESPACE_URI));
+                        channels.addLast(el);
+                    }
                     
                     elements = cmlCm.getXMLDoc().getXMLEntities(ChannelMLConstants.getSynapseTypeXPath());                    
                     
-                    if (elements.length>=0)
+                    for (int j2 = 0; j2 < elements.length; j2++)
                     {
-                        for (int j2 = 0; j2 < elements.length; j2++)
-                        {
-                            SimpleXMLElement el = (SimpleXMLElement)elements[j2];
-                            if(!el.hasAttributeValue(NeuroMLConstants.XML_NS))
-                                el.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XML_NS, ChannelMLConstants.NAMESPACE_URI));
-                            channels.add(el);
-                        }    
-                    }                                                    
-                    
+                        SimpleXMLElement el = (SimpleXMLElement)elements[j2];
+                        if(!el.hasAttributeValue(NeuroMLConstants.XML_NS))
+                            el.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XML_NS, ChannelMLConstants.NAMESPACE_URI));
+                        channels.addLast(el);
+                    }
+
                     
                 }
                 else
@@ -1218,8 +1186,11 @@ public class ProjectManager implements GenerationReport
 //                namesSpaces.get(j2).;
 //            }
 
-                    
+            cmechsElement.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.UNIT_SCHEME, chosenUnits));
             rootElement.addChildElement(cmechsElement);
+
+
+
             rootElement.addContent("\n\n");
             
             
@@ -1695,12 +1666,14 @@ public class ProjectManager implements GenerationReport
 
         report.addTaggedElement("Validating Cell Mechanisms (using NeuroML version "+GeneralProperties.getNeuroMLVersionNumber()+")", "p");
 
-        Vector<String> cellMechNames = this.activeProject.cellMechanismInfo.getAllCellMechanismNames();
+        Vector cellMechNames = this.activeProject.cellMechanismInfo.getAllCellMechanismNames();
 
-        for (String nextCellMechName: cellMechNames)
+        cellMechNames = (Vector)GeneralUtils.reorderAlphabetically(cellMechNames, true);
+
+        for (Object nextCellMech: cellMechNames)
         {
             String cellMechValidity = ValidityStatus.VALIDATION_OK;
-
+            String nextCellMechName = (String)nextCellMech;
             report.addTaggedElement("Checking Cell Mechanism: <b>"+nextCellMechName+"</b>", "p");
             CellMechanism next = activeProject.cellMechanismInfo.getCellMechanism(nextCellMechName);
 

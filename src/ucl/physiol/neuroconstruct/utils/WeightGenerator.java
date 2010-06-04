@@ -63,6 +63,7 @@ public class WeightGenerator extends NumberGenerator
      */
     public WeightGenerator()
     {
+        super(1);
         String inhomoExprString = "r";
         try {
 
@@ -80,6 +81,7 @@ public class WeightGenerator extends NumberGenerator
      */
     public WeightGenerator(String expr, boolean soma) throws EquationException
     {
+        super(1);
         this.distributionType = FUNCTION;
         this.somaToSoma = soma;
         this.inhomoExpr = Expression.parseExpression(expr, VolumeBasedConnGenerator.allowedVars);    

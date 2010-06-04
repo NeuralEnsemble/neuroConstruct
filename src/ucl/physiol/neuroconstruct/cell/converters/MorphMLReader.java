@@ -232,7 +232,7 @@ public class MorphMLReader extends XMLFilterImpl
                      this.getAncestorElement(2).equals(BiophysicsConstants.ION_PROPS_ELEMENT))
             {
                 currentIonPropsGroup = contents;
-                logger.logComment("Found a group: "+currentIonPropsGroup+" for the ion prop: "+ currentIonProps, true);
+                logger.logComment("Found a group: "+currentIonPropsGroup+" for the ion prop: "+ currentIonProps);
 
             }
 
@@ -684,7 +684,7 @@ public class MorphMLReader extends XMLFilterImpl
          {
              String currentIonName = attributes.getValue(BiophysicsConstants.ION_PROPS_NAME_ATTR);
              currentIonProps = new IonProperties(currentIonName, Float.NaN);
-             logger.logComment("Found ionProps element: "+currentIonProps+"...", true);
+             logger.logComment("Found ionProps element: "+currentIonProps+"...");
 
          }
          else if (getCurrentElement().equals(BiophysicsConstants.VAR_PARAMETER_ELEMENT))
@@ -770,7 +770,7 @@ public class MorphMLReader extends XMLFilterImpl
 
              float valInNmlUnits = Float.parseFloat(paramVal);
 
-             logger.logComment("Found new parameter: "+ paramName+", paramVal: "+ paramVal+" for "+ getAncestorElement(1) +" (currentMechName: "+ currentMechName+")", true);
+             logger.logComment("Found new parameter: "+ paramName+", paramVal: "+ paramVal+" for "+ getAncestorElement(1) +" (currentMechName: "+ currentMechName+")");
 
              if (getAncestorElement(1).equals(BiophysicsConstants.ION_PROPS_ELEMENT))
              {
@@ -793,7 +793,7 @@ public class MorphMLReader extends XMLFilterImpl
                      currentIonProps.setInternalConcentration(conc);
                  }
 
-                 logger.logComment("Props now:  "+currentIonProps, true);
+                 logger.logComment("Props now:  "+currentIonProps);
              }
              else if (getAncestorElement(1).equals(BiophysicsConstants.MECHANISM_ELEMENT) &&
                  currentMechType != null && paramName != null &&
@@ -1002,8 +1002,8 @@ public class MorphMLReader extends XMLFilterImpl
 
         else if (getCurrentElement().equals(BiophysicsConstants.ION_PROPS_ELEMENT))
         {
-            logger.logComment("Have a group: "+currentIonPropsGroup+" for the ion prop: "+ currentIonProps, true);
-            logger.logComment("Note!! This will be incorrect if there are different groups for each parameter in the ion_props element!!!", true);
+            logger.logComment("Have a group: "+currentIonPropsGroup+" for the ion prop: "+ currentIonProps);
+            logger.logComment("Note!! This will be incorrect if there are different groups for each parameter in the ion_props element!!!");
             
             cell.associateGroupWithIonProperties(currentIonPropsGroup, currentIonProps);
             currentIonProps = null;
@@ -1014,11 +1014,11 @@ public class MorphMLReader extends XMLFilterImpl
 
          else if (getCurrentElement().equals(BiophysicsConstants.MECHANISM_ELEMENT))
          {
-             logger.logComment("End of mechanism element: "+ currentMechName, true);
+             logger.logComment("End of mechanism element: "+ currentMechName);
 
              if (currentParamName==null && currentMechType.equals(BiophysicsConstants.MECHANISM_TYPE_ION_CONC))
              {
-                 logger.logComment("There has been no parameter specified for this mechanism: Adding it on all without specifying gmax; probably an ion conc", true);
+                 logger.logComment("There has been no parameter specified for this mechanism: Adding it on all without specifying gmax; probably an ion conc");
 
                  ChannelMechanism cm = new ChannelMechanism(currentMechName, 0);
 

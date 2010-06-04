@@ -122,7 +122,7 @@ public class NumberGeneratorDialog extends JDialog
         logger.logComment("NumberGeneratorDialog created with: "+ numGenOriginal);
 
         if (numGenOriginal == null)
-            numGen = new NumberGenerator();
+            numGen = new NumberGenerator(1);
         else
             numGen = numGenOriginal;
         try
@@ -156,7 +156,7 @@ public class NumberGeneratorDialog extends JDialog
 
         logger.logComment("NumberGeneratorDialog created with: "+ numGenOriginal);
         if (numGenOriginal == null)
-            numGen = new NumberGenerator();
+            numGen = new NumberGenerator(1);
         else
             numGen = numGenOriginal;
         try
@@ -288,7 +288,7 @@ public class NumberGeneratorDialog extends JDialog
 
     public static void main(String[] args) throws EquationException
     {
-        NumberGenerator ng = new NumberGenerator();
+        NumberGenerator ng = new NumberGenerator(1);
 
         //ng.initialiseAsGaussianIntGenerator(277, 07, 17, 17);
         ng.initialiseAsFixedIntGenerator(1);

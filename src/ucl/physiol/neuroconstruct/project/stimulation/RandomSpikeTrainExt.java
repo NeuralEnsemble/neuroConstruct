@@ -119,8 +119,7 @@ public class RandomSpikeTrainExt extends ElectricalInput
     public void setRate(float fixedRate)
     {
         //System.out.println("Spiking rate being set at a fixed rate: "+fixedRate);
-        this.rate = new NumberGenerator();
-        rate.initialiseAsFixedFloatGenerator(fixedRate);
+        this.rate = new NumberGenerator(fixedRate);
     }
 
     public void setRate(NumberGenerator rate)
@@ -133,8 +132,7 @@ public class RandomSpikeTrainExt extends ElectricalInput
     public void setDelay(float fixedDelay)
     {
         //System.out.println("Spiking rate being set at a fixed rate: "+fixedRate);
-        this.delay = new NumberGenerator();
-        delay.initialiseAsFixedFloatGenerator(fixedDelay);
+        this.delay = new NumberGenerator(fixedDelay);
     }
     public void setDelay(NumberGenerator delay)
     {

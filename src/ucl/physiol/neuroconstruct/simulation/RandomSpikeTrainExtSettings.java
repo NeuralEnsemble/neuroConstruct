@@ -135,8 +135,7 @@ public class RandomSpikeTrainExtSettings extends StimulationSettings
 
     public void setDelay(float fixedDelay)
     {
-        NumberGenerator delay = new NumberGenerator();
-        delay.initialiseAsFixedFloatGenerator(fixedDelay);
+        NumberGenerator delay = new NumberGenerator(fixedDelay);
 
         randomSpikeTrainExt.setDelay(delay);
     }
@@ -170,8 +169,7 @@ public class RandomSpikeTrainExtSettings extends StimulationSettings
     public void setRate(float fixedRate)
     {
         //System.out.println("Spiking rate being set at a fixed rate: "+fixedRate);
-        NumberGenerator rate = new NumberGenerator();
-        rate.initialiseAsFixedFloatGenerator(fixedRate);
+        NumberGenerator rate = new NumberGenerator(fixedRate);
 
         randomSpikeTrainExt.setRate(rate);
     }

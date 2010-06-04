@@ -812,11 +812,13 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
                 StringBuffer info = new StringBuffer("[");
                 Cell cell = project.cellManager.getCell(cellType);
 
-                ArrayList<ChannelMechanism> allChanMechs = cell.getAllUniformChanMechs(true);
+                ArrayList allChanMechs = cell.getAllUniformChanMechs(true);
+
+                allChanMechs = (ArrayList)GeneralUtils.reorderAlphabetically(allChanMechs, true);
 
                 for (int j = 0; j < allChanMechs.size(); j++)
                 {
-                    ChannelMechanism chanMech = allChanMechs.get(j);
+                    ChannelMechanism chanMech = (ChannelMechanism)allChanMechs.get(j);
                     Vector groups = cell.getGroupsWithChanMech(chanMech);
 
                     info.append(chanMech.getName() + " (" + chanMech.getDensity() + ")" +
@@ -831,10 +833,11 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
                     info.append(vm + " present on: " + pg + ", ");
                 }
 
-                ArrayList<String> allSynapses = cell.getAllAllowedSynapseTypes();
+                ArrayList allSynapses = cell.getAllAllowedSynapseTypes();
+                allSynapses = (ArrayList)GeneralUtils.reorderAlphabetically(allSynapses, true);
                 for (int k = 0; k < allSynapses.size(); k++)
                 {
-                    String syn = allSynapses.get(k);
+                    String syn = (String)allSynapses.get(k);
                     Vector groups = cell.getGroupsWithSynapse(syn);
                     info.append(syn.toString() + " on: " + groups + ", ");
                 }

@@ -135,6 +135,7 @@ public class NumberGenerator implements Serializable
 
     /**
      * Generates a simple NumberGenerator with a fixed value of 1
+     *
      */
     public NumberGenerator()
     {

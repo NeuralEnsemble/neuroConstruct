@@ -5977,7 +5977,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
      {
         if (!dlg.wasBasedOnMorphML())
         {
-            NumberGenerator initPot = new NumberGenerator();
+            NumberGenerator initPot = new NumberGenerator(0);
             initPot.initialiseAsFixedFloatGenerator(projManager.getCurrentProject().simulationParameters.getInitVm());
             newCell.setInitialPotential(initPot);
 

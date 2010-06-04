@@ -53,7 +53,7 @@ public class ConnectivityConditions
      * The number of connections per cell in the source (or target, if
      * generationDirection = TARGET_TO_SOURCE) cell group
      */
-    private NumberGenerator numConnsInitiatingCellGroup = new NumberGenerator();
+    private NumberGenerator numConnsInitiatingCellGroup = new NumberGenerator(1);
 
     /**
      * If true cells in the source (or target, if generationDirection =
@@ -169,7 +169,7 @@ public class ConnectivityConditions
 
         System.out.println("cc old: "+ cc.toString());
         ConnectivityConditions cc2 = new ConnectivityConditions();
-        NumberGenerator num = new NumberGenerator();
+        NumberGenerator num = new NumberGenerator(1);
         num.setDistributionType(NumberGenerator.GAUSSIAN_NUM);
         num.setMean(0.4f);
         cc2.setNumConnsInitiatingCellGroup(num);

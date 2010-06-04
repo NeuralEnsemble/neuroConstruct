@@ -248,8 +248,8 @@ public class GeneralProperties
     {
         // Printing to stdout as GeneralProperties must be fully instantiated before
         // logger created...
-
-        File generalSettingsFile = new File(ProjectStructure.getGeneralSettingsFilename());
+        String settingsFile = ProjectStructure.getGeneralSettingsFilename();
+        File generalSettingsFile = new File(settingsFile);
 
         XMLDecoder xmlDecoder = null;
         FileInputStream fis = null;
@@ -638,10 +638,12 @@ public class GeneralProperties
     public static String getLatestNeuroMLVersionNumber()
     {
         String latestNml = "0.0.0";
+        String toIgnore = "v1.8.2"; // temp ignoring this dir
 
         for(File f: ProjectStructure.getNeuroMLSchemataDir().listFiles())
         {
-            if (f.isDirectory()&&f.getName().startsWith("v"))
+            if (f.isDirectory()&&f.getName().startsWith("v")
+                && !f.getName().equals(toIgnore))
             {
                 String ver = f.getName().substring(1);
                 if (ProjectStructure.compareVersions(ver, latestNml)>0)

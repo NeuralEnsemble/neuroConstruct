@@ -93,6 +93,7 @@ public class ChannelMLConstants
     public static String LEGACY_ION_NAME_ATTR = "name";
     public static String NEW_ION_NAME_ATTR = "ion";
 
+    public static String ION_CHARGE_ATTR = "charge";
     public static String ION_ROLE_ATTR = "role";
 
     public static String ION_ROLE_PERMEATED = "PermeatedSubstance";

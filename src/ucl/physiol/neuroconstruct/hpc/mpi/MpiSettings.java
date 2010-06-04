@@ -430,8 +430,8 @@ public class MpiSettings
 
         String name_16 = "Matthau_Lemmon_Test_16";
         MpiConfiguration p_16 = new MpiConfiguration(name_16);
-        p_16.getHostList().add(new MpiHost(MATTHAU+5, 8, 1));
-        p_16.getHostList().add(new MpiHost(LEMMON+5, 8, 1));
+        p_16.getHostList().add(new MpiHost(MATTHAU+6, 8, 1));
+        p_16.getHostList().add(new MpiHost(LEMMON+9, 8, 1));
 
         p_16.setRemoteLogin(matlemLogin);
         p_16.setMpiVersion(MpiSettings.OPENMPI_V2);
@@ -479,12 +479,12 @@ public class MpiSettings
         String name_ALL = "Matthau_Lemmon_Test_ALL";
         MpiConfiguration p_ALL = new MpiConfiguration(name_ALL);
 
-        for(int i=2;i<=9;i++)
+        for(int i=4;i<=7;i++)
         {
             p_ALL.getHostList().add(new MpiHost(MATTHAU+i, 8, 1));
         }
 
-        for(int i=1;i<=19;i++)
+        for(int i=8;i<=15;i++)
         {
             p_ALL.getHostList().add(new MpiHost(LEMMON+i, 8, 1));
         }

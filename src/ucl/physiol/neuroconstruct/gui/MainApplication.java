@@ -63,7 +63,7 @@ public class MainApplication
 
     private static String favouredLookAndFeel = null;
 
-    private static boolean nmlV2TestMode = true;
+    private static boolean nmlV2TestMode = false;
 
 
 

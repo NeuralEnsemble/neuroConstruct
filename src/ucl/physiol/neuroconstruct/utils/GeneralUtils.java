@@ -955,12 +955,14 @@ public class GeneralUtils
                 }
                 else
                 {
-                    allFiles[i].delete();
+                    boolean res = allFiles[i].delete();
+                    //System.out.println("Deleted: "+ allFiles[i]+": "+ res);
                 }
             }
         }
         if (removeDirToo)
         {
+                    //System.out.println("Deleting: "+ directory);
             directory.delete();
         }
 

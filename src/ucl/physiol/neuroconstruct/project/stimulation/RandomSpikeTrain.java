@@ -49,7 +49,8 @@ public class RandomSpikeTrain extends ElectricalInput
      * they can all have a fixed rate, or a random/gaussian set of rates, etc.
      */
     private NumberGenerator rate = null;
-    private float noise;
+    //private float noise;
+
     
     private String synapseType = null;
 
@@ -59,12 +60,25 @@ public class RandomSpikeTrain extends ElectricalInput
     }
 
     public RandomSpikeTrain(NumberGenerator rate,
+                           String synapseType)
+   {
+        this.setType(TYPE);
+        this.rate = rate;
+        //this.noise = de;
+        this.synapseType = synapseType;
+    }
+
+    /*
+     * noise not currently supported
+     */
+    @Deprecated
+    public RandomSpikeTrain(NumberGenerator rate,
                            float noise,
                            String synapseType)
    {
         this.setType(TYPE);
         this.rate = rate;
-        this.noise = noise;
+        //this.noise = noise;
         this.synapseType = synapseType;
     }
     
@@ -72,7 +86,7 @@ public class RandomSpikeTrain extends ElectricalInput
     {
         NumberGenerator rateClone = (NumberGenerator)rate.clone();
         
-        RandomSpikeTrain rst = new RandomSpikeTrain(rateClone,this.noise, new String(synapseType));
+        RandomSpikeTrain rst = new RandomSpikeTrain(rateClone,new String(synapseType));
         
         return rst;
     }
@@ -83,10 +97,10 @@ public class RandomSpikeTrain extends ElectricalInput
     }
 
 
-    public float getNoise()
-    {
-        return noise;
-    }
+    //public float getNoise()
+    //{
+    //    return noise;
+    //}
 
     /**
      * This is left in to cope with old code where rate was always fixed
@@ -94,8 +108,7 @@ public class RandomSpikeTrain extends ElectricalInput
     public void setRate(float fixedRate)
     {
         //System.out.println("Spiking rate being set at a fixed rate: "+fixedRate);
-        this.rate = new NumberGenerator();
-        rate.initialiseAsFixedFloatGenerator(fixedRate);
+        this.rate = new NumberGenerator(fixedRate);
     }
 
     public void setRate(NumberGenerator rate)
@@ -105,10 +118,10 @@ public class RandomSpikeTrain extends ElectricalInput
     }
 
 
-    public void setNoise(float noise)
-    {
-        this.noise = noise;
-    }
+    //public void setNoise(float noise)
+    //{
+    //    this.noise = noise;
+    //}
     
     @Override
     public String toString()

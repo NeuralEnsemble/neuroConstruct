@@ -41,8 +41,6 @@ import ucl.physiol.neuroconstruct.utils.*;
 
 public class ProjectStructure
 {
-    private static ClassLogger logger = new ClassLogger("ProjectStructure");
-
     static
     {
         //logger.setThisClassVerbose(true);
@@ -51,6 +49,8 @@ public class ProjectStructure
     public ProjectStructure()
     {
     }
+
+    //private static ClassLogger logger = new ClassLogger("ProjectStructure");
     
     private static final String updateCheckUrl = "http://www.neuroConstruct.org/nCinfo/form.php?myversion=";
 
@@ -761,13 +761,9 @@ public class ProjectStructure
 
         File dir = ProjectStructure.getCellMechanismDir(projDir, false);
 
-        logger.logComment("dir for all cell mechs: "+dir);
-
         if (dir != null && dir.exists())
         {
             File f = new File(dir, cellMechName);
-
-            logger.logComment("dir for this cell mech: "+f);
 
             if (createIfNotFound && !f.exists())
             {
