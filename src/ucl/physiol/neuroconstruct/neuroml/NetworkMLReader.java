@@ -49,7 +49,7 @@ import ucl.physiol.neuroconstruct.project.packing.CellPackingAdapter;
 import ucl.physiol.neuroconstruct.project.packing.CellPackingException;
 import ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter;
 import ucl.physiol.neuroconstruct.project.packing.SinglePositionedCellPackingAdapter;
-import ucl.physiol.neuroconstruct.project.segmentchoice.GroupDistributedSegments;
+import ucl.physiol.neuroconstruct.project.segmentchoice.IndividualSegments;
 import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentLocationChooser;
 import ucl.physiol.neuroconstruct.project.stimulation.ElectricalInput;
 import ucl.physiol.neuroconstruct.project.stimulation.IClamp;
@@ -129,7 +129,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
 
     private String currentElecInput = null;
     private String currentInputType = null;
-    private String currentCellGroup = null;
+    private String currentInputCellGroup = null;
     private String currentInputName = null;
 
     private ElectricalInput currentElectricalInput = null;
@@ -842,7 +842,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                  SearchPattern sp = SearchPattern.getRandomSearchPattern();
                  MaxMinLength mml = new MaxMinLength(100, 0, "r", 100);
                  ConnectivityConditions connConds = new ConnectivityConditions();
-                 float jumpSpeed = 0;
+                 float jumpSpeed = Float.MAX_VALUE;
 
                  logger.logComment("Going to add a volume based network connection "+currentProjection+" from group "+source+" to group "+target);
 
@@ -1110,33 +1110,38 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
          
          else if (getCurrentElement().equals(NetworkMLConstants.INPUT_TARGET_ELEMENT))
          {
-             currentCellGroup = attributes.getValue(NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR);
+             currentInputCellGroup = attributes.getValue(NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR);
              
-             if (!project.cellGroupsInfo.isValidCellGroup(currentCellGroup))
+             if (!project.cellGroupsInfo.isValidCellGroup(currentInputCellGroup))
              {
-                 GuiUtils.showWarningMessage(logger, "Error, target cell group: "+currentCellGroup+" not found in project. Current Cell Groups: "+ project.cellGroupsInfo.getAllCellGroupNames(), null);
+                 GuiUtils.showWarningMessage(logger, "Error, target cell group: "+currentInputCellGroup+" not found in project. Current Cell Groups: "+ project.cellGroupsInfo.getAllCellGroupNames(), null);
              }
              
              else if (!annotations && level3 && addStim)
              {
                  StimulationSettings stim = null;
                  CellChooser cellChoose = new AllCells();
-                 SegmentLocationChooser segChoose = new GroupDistributedSegments(project.cellManager.getCell(project.cellGroupsInfo.getCellType(currentCellGroup)).getAllGroupNames().get(0), 1);
+                 
+
+                 ArrayList<Integer> segs = new ArrayList<Integer>();
+                 segs.add(0);
+
+                 SegmentLocationChooser segChoose = new IndividualSegments(segs);
                  
 
                 if (currentInputType.equals(IClamp.TYPE))
                 {
                     IClamp iClamp = (IClamp)currentElectricalInput;
-                    stim = new IClampSettings(currentInputName, currentCellGroup, cellChoose, segChoose, iClamp.getDel(), iClamp.getDur(), iClamp.getAmp(), false);
+                    stim = new IClampSettings(currentInputName, currentInputCellGroup, cellChoose, segChoose, iClamp.getDel(), iClamp.getDur(), iClamp.getAmp(), false);
                 }
                 if (currentInputType.equals(RandomSpikeTrain.TYPE))
                 {
                     RandomSpikeTrain rst = (RandomSpikeTrain)currentElectricalInput;
-                    stim = new RandomSpikeTrainSettings(currentInputName, currentCellGroup, cellChoose, segChoose,  rst.getRate(), rst.getSynapseType());
+                    stim = new RandomSpikeTrainSettings(currentInputName, currentInputCellGroup, cellChoose, segChoose,  rst.getRate(), rst.getSynapseType());
                 }
                 project.elecInputInfo.addStim(stim);
                 importedSimConfig.addInput(stim.getReference());
-                logger.logComment(currentInputType+" electrical input "+currentInputName+" on the cell group "+ currentCellGroup+" added to the project.");
+                logger.logComment(currentInputType+" electrical input "+currentInputName+" on the cell group "+ currentInputCellGroup+" added to the project.");
              }
          }
                
@@ -1150,7 +1155,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              // get fraction along segment of target segment and convert to float so it can be added to SingleElectricalInput in GeneratedInputs
              Float currentFrac = (Float.parseFloat(attributes.getValue(NetworkMLConstants.INPUT_SITE_FRAC_ATTR)));
 
-             currentSingleInput = new SingleElectricalInput(currentInputType, currentCellGroup, currentCellID, currentSegID, currentFrac, null);
+             currentSingleInput = new SingleElectricalInput(currentInputType, currentInputCellGroup, currentCellID, currentSegID, currentFrac, null);
              logger.logComment("New instance: "+ currentSingleInput);
 
              elecInputs.addSingleInput(currentInputName, currentSingleInput);
@@ -1213,8 +1218,9 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
         }
         return new ConnSpecificProps(synType);
     }
-    
-    private boolean acceptIncludes = false;
+
+    private boolean acceptCellTypeIncludes = false;
+    private boolean acceptMakePlots = false;
 
     @Override
     public void endElement(String namespaceURI, String localName, String qName) throws SAXException
@@ -1262,7 +1268,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                 addCell = false;
                 Object choice = "";
 
-                if (!testMode && !replaceAll && !renameAll && !acceptIncludes)
+                if (!testMode && !replaceAll && !renameAll && !acceptCellTypeIncludes)
                 {
                     logger.logComment("Asking the user if the cell type " + cellName + " has to be added...");
                     Object[] options =
@@ -1286,13 +1292,13 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                     logger.logComment("User has chosen: " + choice);
                     if (choice.equals("Yes to all"))
                     {
-                        acceptIncludes = true;
+                        acceptCellTypeIncludes = true;
                     }
                 }
 
                   
                   
-                if (choice.equals("Yes") || testMode || replaceAll || renameAll || acceptIncludes)
+                if (choice.equals("Yes") || testMode || replaceAll || renameAll || acceptCellTypeIncludes)
                 {
                     logger.logComment("User accepted the cell type. Checking if it is already defined...");
                     addCell = true;
@@ -1805,8 +1811,64 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
         
         if (getCurrentElement().equals(NetworkMLConstants.POPULATION_ELEMENT))
         {
+            Vector<SimPlot> simPlots = project.simPlotInfo.getAllSimPlots();
+
+            boolean hasPlot = false;
+            for (SimPlot sp: simPlots)
+            {
+                if (sp.getCellGroup().equals(currentPopulation))
+                    hasPlot = true;
+            }
+            if (!hasPlot)
+            {
+                boolean addPlot = acceptMakePlots || testMode;
+
+                if (!addPlot)
+                {
+                    Object[] options = {"Yes", "Yes to all", "No"};
+
+                    JOptionPane option = new JOptionPane(
+                        "Cell Group: "+currentPopulation+" from NeuroML file has no entry for plotting/saving. " +
+                        "Would you like to add an entry to plot & save all membrane potentials at somas (segment id =0)?",
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.WARNING_MESSAGE,
+                        null,
+                        options,
+                        options[0]);
+
+                    JDialog dialog = option.createDialog(null, "Add plot/save entry?");
+
+                    dialog.setVisible(true);
+
+                    if (option.getValue().equals("Yes to all"))
+                    {
+                        acceptMakePlots = true;
+                    }
+                    addPlot = !option.getValue().equals("No");
+                }
+
+                if (addPlot)
+                {
+                    SimPlot sp = new SimPlot(currentPopulation+"_v",
+                                             currentPopulation+"_g",
+                                             currentPopulation,
+                                             "*",
+                                             "0",
+                                             SimPlot.VOLTAGE,
+                                             -90,
+                                             50,
+                                             SimPlot.PLOT_AND_SAVE);
+
+                    project.simPlotInfo.addSimPlot(sp);
+                    importedSimConfig.addPlot(sp.getPlotReference());
+                }
+            }
+
             currentPopulation = null;
             //this.currentCellType = null;
+
+
+
         }
         else if (getCurrentElement().equals(NetworkMLConstants.INSTANCE_ELEMENT))
         {
@@ -1913,18 +1975,6 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                                   JDialog dialog = fileEnd.createDialog(null, "Imported NeuroML");
                                   dialog.setVisible(true);
         }
-        
-/*        else if (getCurrentElement().equals(NetworkMLConstants.INPUTS_ELEMENT))
-        {
-            //elecInputs.addSingleInput(name, );
-            currentElecInput = null;
-            //this.currentCellType = null;
-        }
-*/
-                    
-              
-
-        
 
         stepDownElement();
     }

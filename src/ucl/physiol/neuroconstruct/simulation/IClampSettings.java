@@ -26,8 +26,10 @@
 
 package ucl.physiol.neuroconstruct.simulation;
 
+import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.project.stimulation.*;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
+import ucl.physiol.neuroconstruct.project.segmentchoice.IndividualSegments;
 import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentLocationChooser;
 import ucl.physiol.neuroconstruct.utils.NumberGenerator;
 import ucl.physiol.neuroconstruct.utils.SequenceGenerator;
@@ -228,7 +230,19 @@ public class IClampSettings extends StimulationSettings
 
     public static void main(String[] args)
     {
-        IClampSettings ic = new IClampSettings();
-        System.out.println("IClampSettings: "+ ic);
+        CellChooser cc = new IndividualCells("1, 4, 7");
+        ArrayList<Integer> segs = new ArrayList<Integer>();
+        segs.add(0);
+        segs.add(4);
+
+        SegmentLocationChooser slc = new IndividualSegments(segs);
+
+        IClampSettings ic = new IClampSettings("IC1", "CG1", cc, slc,
+                                               new NumberGenerator(20),
+                                               new NumberGenerator(20),
+                                               new NumberGenerator(2),
+                                               false);
+        
+        System.out.println("IClampSettings: "+ ic.toLongString());
     }
 }

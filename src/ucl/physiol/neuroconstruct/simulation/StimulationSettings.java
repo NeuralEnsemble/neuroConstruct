@@ -93,7 +93,12 @@ public abstract class StimulationSettings
 
     @Override
     public abstract String toString();
-    
+
+    public String toLongString()
+    {
+        return toString() + " on: "+segmentChooser+" of: "+cellChooser+" in: "+cellGroup;
+    };
+
     
 
     public abstract ElectricalInput getElectricalInput();

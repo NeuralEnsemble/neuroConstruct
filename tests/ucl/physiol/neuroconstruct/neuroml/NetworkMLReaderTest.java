@@ -213,6 +213,9 @@ public class NetworkMLReaderTest
         String input2_0 = proj2.elecInputInfo.getAllStims().get(0).getElectricalInput().toString();
         String input2_1 = proj2.elecInputInfo.getAllStims().get(1).getElectricalInput().toString();
 
+        System.out.println("---- pre:  "+input0);
+        System.out.println("---- post: "+input2_0);
+
 
 
         assertEquals(input0, input2_0);
@@ -303,6 +306,13 @@ public class NetworkMLReaderTest
         validity3 = GeneralUtils.replaceAllTokens(validity3, proj3.getProjectFile().getAbsolutePath(), "<proj_path>");
 
         assertEquals(validity1, validity3);
+
+
+        String input3_0 = proj3.elecInputInfo.getAllStims().get(0).getElectricalInput().toString();
+        String input3_1 = proj3.elecInputInfo.getAllStims().get(1).getElectricalInput().toString();
+
+        assertEquals(input0, input3_0);
+        assertEquals(input1, input3_1);
        
     }
 

@@ -4819,7 +4819,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             if (tableModelName.equals(PROJECT_INFO_TAB))
             {
-                projManager.getCurrentProject().setProjectDescription(jTextAreaProjDescription.getText());
+                if (!updatingTabProjectInfo)
+                    projManager.getCurrentProject().setProjectDescription(jTextAreaProjDescription.getText());
             }
             else if (tableModelName.equals(REGIONS_TAB))
             {
@@ -8726,6 +8727,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     }
 
 
+    boolean updatingTabProjectInfo = false;
 
     /**
      * Refreshes the tab related to general project info
@@ -8779,7 +8781,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
         else
         {
-
+            updatingTabProjectInfo = true;
             this.jLabelMainNumCells.setEnabled(true);
             this.jLabelSimConfigs.setEnabled(true);
             this.jLabelProjDescription.setEnabled(true);
@@ -8788,10 +8790,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jLabelProjFileVersion.setEnabled(true);
             this.jLabelMainLastModified.setEnabled(true);
 
-
             this.jTextAreaProjDescription.setEditable(true);
 
             this.jTextFieldProjName.setText(projManager.getCurrentProject().getProjectName());
+
+            this.jTextAreaProjDescription.setText(projManager.getCurrentProject().getProjectDescription());
 
             //this.jTextFieldNumRegions.setText(this.projManager.getCurrentProject().regionsInfo.getRowCount() + "");
             //this.jTextFieldNumCells.setText(this.projManager.getCurrentProject().cellManager.getNumberCellTypes() + "");
@@ -8989,6 +8992,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             jTextAreaProjDescription.setForeground((new JTextArea()).getForeground());
 
             this.jScrollPaneProjDesc.setEnabled(true);
+
+            updatingTabProjectInfo = true;
         }
     }
 
@@ -12474,6 +12479,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     {
         logger.logComment("Loading elements from NeuroML files levels 1-3...");
 
+        boolean freshProject = projManager.getCurrentProject()==null ||
+            (projManager.getCurrentProject().cellManager.getNumberCellTypes()==0 &&
+            projManager.getCurrentProject().cellMechanismInfo.getAllCellMechanismNames().size()==0);
+
         if (projManager.getCurrentProject() == null)
         {
             int yesNo = JOptionPane.showConfirmDialog(this,"There is no project currently loaded. Would you like to create a new project to load the NeuroML file into?"
@@ -12654,6 +12663,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         if (retval == JOptionPane.OK_OPTION)
         {
             long start = System.currentTimeMillis();
+
+            File l3File = null;
             try
             {
                 
@@ -12667,8 +12678,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     Random tempRandom = new Random();
                     this.jTextFieldRandomGen.setText(tempRandom.nextInt() + "");
                 }
+                l3File = chooser.getSelectedFile();
 
-                NetworkMLnCInfo extraInfo = projManager.doLoadNetworkML(chooser.getSelectedFile(), false);
+                NetworkMLnCInfo extraInfo = projManager.doLoadNetworkML(l3File, false);
                 
                 logger.logComment("Elec inputs read: "+ projManager.getCurrentProject().generatedElecInputs);
                 
@@ -12739,9 +12751,25 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             jComboBoxView3DChoice.setSelectedItem(LATEST_GENERATED_POSITIONS);
 
+            if (freshProject)
+            {
+                projManager.getCurrentProject().setProjectDescription("neuroConstruct project generated from contents" +
+                    " of file: "+ l3File+"\n\nThe cell positions & network connections in memory reflect the " +
+                    "instances in the NetworkML elements of the imported file. Regenerating the network in " +
+                    "neuroConstruct nmay lead to a different network structure.");
+            }
+            else
+            {
+                logger.logComment("There had been other elements in this project", true);
+            }
+
+            logger.logComment("Refreshing all...", true);
+            refreshTabCellTypes();
+            refreshTabProjectInfo();
+
+            refreshAll();
         }
-        
-        refreshAll();
+
 
     }
 

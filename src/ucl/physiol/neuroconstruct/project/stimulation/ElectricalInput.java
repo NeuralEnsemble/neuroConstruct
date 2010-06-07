@@ -51,7 +51,7 @@ public abstract class ElectricalInput
     
     @Override
     public abstract String toString();
-    
+
     public abstract String toLinkedString();
     
     @Override
