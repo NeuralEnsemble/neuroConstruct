@@ -1600,6 +1600,13 @@ public class GenesisFileManager
                 response.append(" // " + getTimeUnitString());
 
             response.append("\n");
+
+            response.append("setclock 2 {dt}");
+
+            if (project.genesisSettings.isGenerateComments())
+                response.append(" // " + getTimeUnitString());
+
+            response.append("\n");
         }
 
         return response.toString();
