@@ -748,6 +748,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
     JCheckBox jCheckBoxNeuronShowShapePlot = new JCheckBox();
+    JCheckBox jCheckBoxNeuronSumatra = new JCheckBox();
 
     //JCheckBox jCheckBoxNeuronNoGraphicsMode = new JCheckBox();
     JRadioButton jRadioButtonNeuronAllGUI = new JRadioButton();
@@ -1721,6 +1722,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
      //   jButtonSimulationRecord.setSelected(false);
     //    jButtonSimulationRecord.setText("Change...");
 
+        jCheckBoxNeuronSumatra.setEnabled(false);
         jCheckBoxNeuronShowShapePlot.setEnabled(false);// jPanelSimulationParams.add(jPanelSimulationWhatToRec,  BorderLayout.NORTH);
 
         this.jRadioButtonNeuronAllGUI.setEnabled(false);
@@ -1748,6 +1750,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         //jCheckBoxGenesisNoGraphicsMode.setEnabled(false);
 
+        jCheckBoxNeuronSumatra.setText("Sumatra support");
         jCheckBoxNeuronShowShapePlot.setText("Show 3D potential");
         jLabelNeuronGUI.setText("  GUI mode: ");
         jLabelGenesisGUI.setText("GUI mode: ");
@@ -4100,6 +4103,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 */
 
         jTabbedPaneGenesis.add(jPanelGenesisExtra,  GENESIS_TAB_EXTRA);
+        jPanelNeuronGraphOptions.add(jCheckBoxNeuronSumatra, null);
         jPanelNeuronGraphOptions.add(jCheckBoxNeuronShowShapePlot, null);
         jPanelNeuronGraphOptions.add(jCheckBoxNeuronComments, null);
         jPanelNeuronGraphOptions.add(this.jLabelNeuronGUI, null);
@@ -10138,6 +10142,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jButtonNeuronView.setEnabled(false);
             this.jButtonNeuronRun.setEnabled(false);
 
+            this.jCheckBoxNeuronSumatra.setEnabled(false);
             this.jCheckBoxNeuronShowShapePlot.setEnabled(false);
 
             this.jRadioButtonNeuronAllGUI.setEnabled(false);
@@ -10230,6 +10235,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             jButtonNeuronCreatePyHDF5.setEnabled(true);
 
 
+            this.jCheckBoxNeuronSumatra.setEnabled(true);
             this.jCheckBoxNeuronShowShapePlot.setEnabled(true);
             this.jRadioButtonNeuronAllGUI.setEnabled(true);
             this.jRadioButtonNeuronNoConsole.setEnabled(true);

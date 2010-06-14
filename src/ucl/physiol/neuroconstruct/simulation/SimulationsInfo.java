@@ -454,12 +454,13 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
 
         File[] childrenDirs = simulationsDir.listFiles();
 
-        logger.logComment("There are " + childrenDirs.length + " files in dir: " +
-                          simulationsDir.getAbsolutePath());
 
         // Quick reorder...
-        if (childrenDirs.length>1)
+        if (childrenDirs!=null && childrenDirs.length>1)
         {
+
+            logger.logComment("There are " + childrenDirs.length + " files in dir: " +
+                          simulationsDir.getAbsolutePath());
             if (listStyle.equals(listStyle.Date))
             {
                 for (int j = 1; j < childrenDirs.length; j++)
@@ -484,142 +485,145 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
 
         int rowNumber = 0;
 
-        for (int i = 0; i < childrenDirs.length; i++)
+        if (childrenDirs!=null)
         {
-            if (childrenDirs[i].isDirectory())
+            for (int i = 0; i < childrenDirs.length; i++)
             {
-                logger.logComment("Looking at directory: " + childrenDirs[i].getAbsolutePath());
-
-                SimulationData simData = null;
-
-                File timeFile = SimulationData.getTimesFile(childrenDirs[i]);
-
-                File pullRemoteScript = new File(childrenDirs[i], RemoteLogin.remotePullScriptName);
-
-                File simSummaryFile = new File(childrenDirs[i], simSummaryFileName);
-
-                if (!simSummaryFile.exists())
+                if (childrenDirs[i].isDirectory())
                 {
-                    logger.logComment("Trying for the legacy name...");
-                    simSummaryFile = new File(childrenDirs[i], oldSimSummaryFileName);
-                }
+                    logger.logComment("Looking at directory: " + childrenDirs[i].getAbsolutePath());
 
-                logger.logComment("Simulation summary file: " + simSummaryFile+", exists: "+ simSummaryFile.exists());
+                    SimulationData simData = null;
 
-                if (pullRemoteScript.exists() && !timeFile.exists() && checkRemote)
-                {
+                    File timeFile = SimulationData.getTimesFile(childrenDirs[i]);
+
+                    File pullRemoteScript = new File(childrenDirs[i], RemoteLogin.remotePullScriptName);
+
+                    File simSummaryFile = new File(childrenDirs[i], simSummaryFileName);
+
+                    if (!simSummaryFile.exists())
+                    {
+                        logger.logComment("Trying for the legacy name...");
+                        simSummaryFile = new File(childrenDirs[i], oldSimSummaryFileName);
+                    }
+
+                    logger.logComment("Simulation summary file: " + simSummaryFile+", exists: "+ simSummaryFile.exists());
+
+                    if (pullRemoteScript.exists() && !timeFile.exists() && checkRemote)
+                    {
+
+                        try
+                        {
+                            String toRun = pullRemoteScript.getAbsolutePath();
+
+                            if (GeneralUtils.isWindowsBasedPlatform())
+                            {
+                                String cygwinFriendlyFile = GeneralUtils.convertToCygwinPath(pullRemoteScript.getAbsolutePath());
+
+                                toRun = "bash -c "+cygwinFriendlyFile; // Assumes cygwin installed...
+                            }
+
+                            String res = ProcessManager.runCommand(toRun, pf, 3000);
+                            logger.logComment("Result of executing pullRemoteScript file: " + pullRemoteScript+": "+ res);
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.logComment("Error running: "+ pullRemoteScript+ex);
+                        }
+                    }
 
                     try
                     {
-                        String toRun = pullRemoteScript.getAbsolutePath();
-
-                        if (GeneralUtils.isWindowsBasedPlatform())
+                        if (simSummaryFile.exists() && timeFile.exists())
                         {
-                            String cygwinFriendlyFile = GeneralUtils.convertToCygwinPath(pullRemoteScript.getAbsolutePath());
-                            
-                            toRun = "bash -c "+cygwinFriendlyFile; // Assumes cygwin installed...
-                        }
+                            simData = new SimulationData(childrenDirs[i].getAbsoluteFile(), true);
 
-                        String res = ProcessManager.runCommand(toRun, pf, 3000);
-                        logger.logComment("Result of executing pullRemoteScript file: " + pullRemoteScript+": "+ res);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.logComment("Error running: "+ pullRemoteScript+ex);
-                    }
-                }
+                            simDataObjs.add(simData);
 
-                try
-                {
-                    if (simSummaryFile.exists() && timeFile.exists())
-                    {
-                        simData = new SimulationData(childrenDirs[i].getAbsoluteFile(), true);
+                            extraColumns.setSize(rowNumber + 1);
 
-                        simDataObjs.add(simData);
+                            Properties simProps = new Properties();
 
-                        extraColumns.setSize(rowNumber + 1);
-
-                        Properties simProps = new Properties();
-
-                        try
-                        {
-                            logger.logComment("Row number: " + rowNumber);
-
-                            //FileInputStream fis = new FileInputStream(simSummaryFile);
-                            //simProps.load(fis);
-                            //fis.close();
-
-                            simProps = getSimulationProperties(simSummaryFile.getParentFile());
-                            logger.logComment("simProps at: " + simSummaryFile.getParentFile()+": "+simProps.keySet());
-
-
-                            extraColumns.setElementAt(simProps, rowNumber);
-                            logger.logComment("extraColumns: " + extraColumns);
-
-                            Enumeration simPropNames = simProps.propertyNames();
-                            while (simPropNames.hasMoreElements())
+                            try
                             {
-                                String nextSimProp = (String) simPropNames.nextElement();
-                                if (!allColumns.contains(nextSimProp))
-                                    allColumns.add(nextSimProp);
+                                logger.logComment("Row number: " + rowNumber);
+
+                                //FileInputStream fis = new FileInputStream(simSummaryFile);
+                                //simProps.load(fis);
+                                //fis.close();
+
+                                simProps = getSimulationProperties(simSummaryFile.getParentFile());
+                                logger.logComment("simProps at: " + simSummaryFile.getParentFile()+": "+simProps.keySet());
+
+
+                                extraColumns.setElementAt(simProps, rowNumber);
+                                logger.logComment("extraColumns: " + extraColumns);
+
+                                Enumeration simPropNames = simProps.propertyNames();
+                                while (simPropNames.hasMoreElements())
+                                {
+                                    String nextSimProp = (String) simPropNames.nextElement();
+                                    if (!allColumns.contains(nextSimProp))
+                                        allColumns.add(nextSimProp);
+                                }
+
+                                rowNumber++;
+
+                                logger.logComment("That's a valid simulation dir...");
+
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.logError("Problem reading the sim summary from file: " + simSummaryFile, ex);
                             }
 
-                            rowNumber++;
-
-                            logger.logComment("That's a valid simulation dir...");
-
                         }
-                        catch (Exception ex)
+                        else if (simSummaryFile.exists() && pullRemoteScript.exists())
                         {
-                            logger.logError("Problem reading the sim summary from file: " + simSummaryFile, ex);
-                        }
 
-                    }
-                    else if (simSummaryFile.exists() && pullRemoteScript.exists())
-                    {
+                            simData = new SimulationData(childrenDirs[i].getAbsoluteFile(), false);
 
-                        simData = new SimulationData(childrenDirs[i].getAbsoluteFile(), false);
+                            simData.setDataAtRemoteLocation(true);
 
-                        simData.setDataAtRemoteLocation(true);
+                            simDataObjs.add(simData);
 
-                        simDataObjs.add(simData);
+                            extraColumns.setSize(rowNumber + 1);
 
-                        extraColumns.setSize(rowNumber + 1);
-
-                        logger.logComment("pullRemoteScript file: " + pullRemoteScript+", exists: "+ pullRemoteScript.exists());
-                        Properties simProps = new Properties();
-                        try
-                        {
-                            simProps = getSimulationProperties(simSummaryFile.getParentFile());
-
-                            extraColumns.setElementAt(simProps, rowNumber);
-                            logger.logComment("extraColumns: " + extraColumns);
-
-                            Enumeration simPropNames = simProps.propertyNames();
-                            while (simPropNames.hasMoreElements())
+                            logger.logComment("pullRemoteScript file: " + pullRemoteScript+", exists: "+ pullRemoteScript.exists());
+                            Properties simProps = new Properties();
+                            try
                             {
-                                String nextSimProp = (String) simPropNames.nextElement();
-                                if (!allColumns.contains(nextSimProp))
-                                    allColumns.add(nextSimProp);
+                                simProps = getSimulationProperties(simSummaryFile.getParentFile());
+
+                                extraColumns.setElementAt(simProps, rowNumber);
+                                logger.logComment("extraColumns: " + extraColumns);
+
+                                Enumeration simPropNames = simProps.propertyNames();
+                                while (simPropNames.hasMoreElements())
+                                {
+                                    String nextSimProp = (String) simPropNames.nextElement();
+                                    if (!allColumns.contains(nextSimProp))
+                                        allColumns.add(nextSimProp);
+                                }
+
+
+                                rowNumber++;
+
+                                logger.logComment("That's a valid simulation dir...");
                             }
-
-
-                            rowNumber++;
-
-                            logger.logComment("That's a valid simulation dir...");
+                            catch (Exception ex)
+                            {
+                                logger.logError("Problem reading the sim summary from file: " + simSummaryFile, ex);
+                            }
                         }
-                        catch (Exception ex)
-                        {
-                            logger.logError("Problem reading the sim summary from file: " + simSummaryFile, ex);
-                        }
+
+                    }
+                    catch (SimulationDataException ex1)
+                    {
+                        logger.logComment("That's not a valid simulation dir...");
                     }
 
                 }
-                catch (SimulationDataException ex1)
-                {
-                    logger.logComment("That's not a valid simulation dir...");
-                }
-
             }
         }
         this.fireTableStructureChanged();

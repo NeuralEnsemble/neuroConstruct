@@ -40,6 +40,7 @@ import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrainExtInstanc
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 
 /**
  *
@@ -102,6 +103,8 @@ ProjectManager pm = null;
     @Test
     public void testAll() throws InterruptedException, NeuronException, IOException, SimulationDataException
     {
+        assumeTrue(MainTest.testNEURON());
+
         setUp();
         
         Project proj = pm.getCurrentProject();

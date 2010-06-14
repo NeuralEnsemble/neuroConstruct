@@ -53,10 +53,12 @@ public class GeneralUtils
     public static final String ARCH_I386 = "i386";
     public static final String ARCH_64BIT = "amd64";
     public static final String ARCH_POWERPC = "ppc";
+    public static final String ARCH_UMAC = "umac";
     
     public static final String DIR_I686 = "i686";
     public static final String DIR_64BIT = "x86_64";
     public static final String DIR_POWERPC = "powerpc";
+    public static final String DIR_UMAC = "umac";
     
 
     private static long lastMeasuredMemory = 0;
@@ -78,8 +80,9 @@ public class GeneralUtils
      */
     public static String getArchSpecificDir()
     {
-        if (System.getProperty("os.arch").equals(ARCH_64BIT) ||
-            System.getProperty("os.arch").indexOf("64")>=0)
+        if (!isMacBasedPlatform() &&
+            (System.getProperty("os.arch").equals(ARCH_64BIT) ||
+            System.getProperty("os.arch").indexOf("64")>=0))
         {
             return DIR_64BIT;
         }

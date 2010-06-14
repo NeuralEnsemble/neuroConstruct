@@ -1276,6 +1276,105 @@ public class ProjectManager implements GenerationReport
         }
         
     }
+
+    public static void generateSedML(Project project,
+                                       File sedMLFile,
+                                       SimConfig simConfig) throws IOException
+    {
+        SimpleXMLDocument sedMlDoc = new SimpleXMLDocument();
+
+
+        SimpleXMLElement root = new SimpleXMLElement("sedML");
+
+        root.addNamespace(new SimpleXMLNamespace("", "http://www.miase.org/"));
+
+
+        root.addNamespace(new SimpleXMLNamespace(NeuroMLConstants.XSI_PREFIX,
+                                                            NeuroMLConstants.XSI_URI));
+
+        root.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC,
+                                                 "http://www.miase.org/   ../../../templates/SBML2NEURON/SED-ML/sedml-version-0-release-1.xsd"));
+
+
+
+        root.addAttribute("version", "0.1");
+
+        sedMlDoc.addRootElement(root);
+
+        SimpleXMLElement listOfSimulations = new SimpleXMLElement("listOfSimulations");
+        SimpleXMLElement listOfModels = new SimpleXMLElement("listOfModels");
+        SimpleXMLElement listOfTasks = new SimpleXMLElement("listOfTasks");
+        SimpleXMLElement listOfDataGenerators = new SimpleXMLElement("listOfDataGenerators");
+        SimpleXMLElement listOfOutputs = new SimpleXMLElement("listOfOutputs");
+
+
+        root.addContent("\n    ");
+        root.addChildElement(listOfSimulations);
+        root.addContent("\n\n    ");
+        root.addChildElement(listOfModels);
+        root.addContent("\n\n    ");
+        root.addChildElement(listOfTasks);
+        root.addContent("\n\n    ");
+        root.addChildElement(listOfDataGenerators);
+        root.addContent("\n\n    ");
+        root.addChildElement(listOfOutputs);
+        root.addContent("\n\n");
+
+
+
+        SimpleXMLElement simulation = new SimpleXMLElement("uniformTimeCourse");
+        simulation.addAttribute("initialTime", "0");
+        simulation.addAttribute("outputStartTime", "0");
+        simulation.addAttribute("outputEndTime", simConfig.getSimDuration()+"");
+        int numPoints = (int)(simConfig.getSimDuration()/project.simulationParameters.getDt());
+        simulation.addAttribute("numberOfPoints", numPoints+"");
+
+        listOfSimulations.addContent("\n        ");
+        listOfSimulations.addChildElement(simulation);
+        listOfSimulations.addContent("\n   ");
+        
+
+
+        SimpleXMLElement model = new SimpleXMLElement("model");
+        model.addAttribute("type", "NeuroML");
+        model.addAttribute("source", project.getProjectFileName());
+        model.addAttribute("name", project.getProjectName());
+
+        listOfModels.addContent("\n        ");
+        listOfModels.addChildElement(model);
+        listOfModels.addContent("\n    ");
+
+
+        SimpleXMLElement task = new SimpleXMLElement("task");
+        task.addAttribute("simulationReference", project.simulationParameters.getReference());
+        task.addAttribute("name", "RUN_"+project.simulationParameters.getReference());
+        task.addAttribute("modelReference", project.getProjectName());
+
+        listOfTasks.addContent("\n        ");
+        listOfTasks.addChildElement(task);
+        listOfTasks.addContent("\n    ");
+
+        for(SimPlot sp: project.simPlotInfo.getAllSimPlots())
+        {
+
+            SimpleXMLElement dg = new SimpleXMLElement("dataGenerator");
+            dg.addAttribute("name", sp.getPlotReference());
+
+            listOfDataGenerators.addContent("\n        ");
+            listOfDataGenerators.addChildElement(dg);
+            listOfDataGenerators.addContent("\n    ");
+
+        }
+
+
+
+        String contents = sedMlDoc.getXMLString("  ", false);
+
+        GeneralUtils.writeShortFile(sedMLFile, contents);
+
+
+
+    }
     
     
        
@@ -2580,13 +2679,33 @@ public class ProjectManager implements GenerationReport
             logger.logComment(">>> "+ update);
     };
     
-    public static void main(String[] args) throws ProjectFileParsingException
+    public static void main(String[] args) throws ProjectFileParsingException, InterruptedException, IOException
     {
         
-        Project proj = Project.loadProject(new File("examples/Ex1-Simple/Ex1-Simple.neuro.xml"), null);
+        Project proj = Project.loadProject(new File("nCexamples/Ex1_Simple/Ex1_Simple.ncx"), null);
         File neuroMLDir = ProjectStructure.getNeuroMLDir(proj.getProjectMainDirectory());
-        File generatedNetworkFile = new File(neuroMLDir, NetworkMLConstants.DEFAULT_NETWORKML_FILENAME_XML);
-        //saveGeneratedNetworkXML(proj, generatedNetworkFile, false, false, proj.simConfigInfo, NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+
+
+        ProjectManager pm = new ProjectManager(null,null);
+        pm.setCurrentProject(proj);
+
+        String simConfName = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
+
+        pm.doGenerate(SimConfigInfo.DEFAULT_SIM_CONFIG_NAME, 123);
+
+        while(pm.isGenerating())
+        {
+            Thread.sleep(200);
+        }
+        System.out.println("Num cells generated: "+ proj.generatedCellPositions.getAllPositionRecords().size());
+
+
+        File sedMlFile = new File(neuroMLDir, "SED.xml");
+
+        generateSedML(proj, sedMlFile, proj.simConfigInfo.getSimConfig(simConfName));
+
+
+        System.out.println("SED-ML doc generated in "+ sedMlFile.getAbsolutePath());
     }
 
 

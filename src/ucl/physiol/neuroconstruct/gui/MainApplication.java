@@ -180,6 +180,11 @@ public class MainApplication
         return nmlV2TestMode;
     }
 
+    public static boolean isSumatraTestMode()
+    {
+        return (new File(ProjectStructure.getnCHome(), "sumatra")).exists();
+    }
+
 
 
 

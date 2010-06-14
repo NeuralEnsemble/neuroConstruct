@@ -4880,7 +4880,10 @@ public class NeuronFileManager
                     }
                     else if (project.neuronSettings.getGraphicsMode().equals(NeuronSettings.GraphicsMode.NO_CONSOLE))
                     {
-                        neuronExecutable = dirToRunInFile.getAbsolutePath()+"/"+GeneralUtils.getArchSpecificDir()+"/special";
+                        String dir = GeneralUtils.getArchSpecificDir();
+                        if (locationOfNeuron.indexOf("umac")>=0)
+                            dir = "umac";
+                        neuronExecutable = dirToRunInFile.getAbsolutePath()+"/"+dir+"/special";
 
                         if(neuronExecutable.indexOf("generated")<0)
                         {
