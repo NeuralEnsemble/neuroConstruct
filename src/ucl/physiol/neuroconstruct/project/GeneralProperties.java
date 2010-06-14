@@ -475,6 +475,11 @@ public class GeneralProperties
                              }
                          }
                      }
+
+                     else if (GeneralUtils.isMacBasedPlatform())
+                     {
+                         suggExec = "open";
+                     }
                      else
                      {
                          suggExec = "/usr/bin/firefox";
