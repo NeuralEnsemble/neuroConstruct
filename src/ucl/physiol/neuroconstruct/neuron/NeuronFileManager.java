@@ -4765,24 +4765,20 @@ public class NeuronFileManager
 
         ProcessFeedback pf = new ProcessFeedback()
         {
-
             public void comment(String comment)
             {
                 logger.logComment("ProcessFeedback: "+comment);
             }
-
             public void error(String comment)
             {
                 logger.logComment("ProcessFeedback: "+comment);
             }
         };
 
-
         logger.logComment("Getting rid of old simulation files...");
 
         File dirForDataFiles = mainHocFile.getParentFile();
         
-
         File[] filesInDir = dirForDataFiles.listFiles();
 
         logger.logComment("Files in dir: "+ dirForDataFiles.getAbsolutePath());
@@ -4819,8 +4815,16 @@ public class NeuronFileManager
                                                   "\n Was the code created in a directory containing a space in its name?", null, null);
                     }
 
-                    fullCommand = GeneralProperties.getExecutableCommandLine() + " "
-                    	+ neuronExecutable + " "+filename;
+                    if (true || !project.neuronSettings.getGraphicsMode().equals(NeuronSettings.GraphicsMode.NO_CONSOLE))
+                    {
+                        fullCommand = GeneralProperties.getExecutableCommandLine() + " "
+                            + neuronExecutable + " "+filename;
+                    }
+                    //todo: Needs further testing
+                    else
+                    {
+                        fullCommand = GeneralUtils.replaceAllTokens(neuronExecutable, "neuron", "nrniv") + " "+filename;
+                    }
 
                     File dirToRunIn = dirForDataFiles;
 

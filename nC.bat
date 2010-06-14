@@ -19,7 +19,7 @@ REM   than half your total physical memory is best.
 REM   *** ASKING FOR MORE MEMORY THAN HALF MAX ON WINDOWS HAS LED TO THE APPLICATION CRASHING ***  
 set NC_MAX_MEMORY=450M 
 
-set NC_VERSION=1.3.8
+set NC_VERSION=1.4.0
 
 REM ##########################################################################
 

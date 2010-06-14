@@ -4041,10 +4041,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 14), 0, 0));
 
 
-
-
-
-
         jPanelSimulationGlobal.add(jLabelElectroLenMax,      new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0
             ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 14, 6, 14), 0, 0));
         jPanelSimulationGlobal.add(jTextFieldElectroLenMax,        new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0
@@ -4061,24 +4057,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 14), 0, 0));
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-       ////////// jPanelSimStorage.add(jCheckBoxNeuronSaveHoc, null);
-
-        //jTabbedPaneSimulators.add(jPanelMainInfo,  "MorphML");
-
         jComboBoxAnalyseCellGroup.addItem(defaultAnalyseCellGroupString);
         jComboBoxAnalyseNetConn.addItem(defaultAnalyseNetConnString);
 
@@ -4089,21 +4067,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jComboBoxView3DChoice.setEnabled(false);
         jTabbedPaneGenesis.setSelectedComponent(jPanelGenesisMain);
 
-        /*
-        jPanelGenesisExtraBefore.add(jLabelGenesisExtraBefore, null);
-        jPanelGenesisExtraBefore.add(jScrollPaneGenesisBefore, null);
-
-        jScrollPaneGenesisBefore.getViewport().add(jTextAreaGenesisBefore, null);
-
-        jPanelGenesisExtra.add(jPanelGenesisExtraBefore, null);
-        jPanelGenesisExtra.add(jPanelGenesisExtraAfter, null);
-        jPanelGenesisExtraAfter.add(jLabelGenesisExtraAfter, null);
-        jPanelGenesisExtraAfter.add(jScrollPaneGenesisAfter, null);
-        jScrollPaneGenesisAfter.getViewport().add(jTextAreaGenesisAfter, null);
-*/
-
         jTabbedPaneGenesis.add(jPanelGenesisExtra,  GENESIS_TAB_EXTRA);
-        jPanelNeuronGraphOptions.add(jCheckBoxNeuronSumatra, null);
+        if (MainApplication.isSumatraTestMode())
+            jPanelNeuronGraphOptions.add(jCheckBoxNeuronSumatra, null);
         jPanelNeuronGraphOptions.add(jCheckBoxNeuronShowShapePlot, null);
         jPanelNeuronGraphOptions.add(jCheckBoxNeuronComments, null);
         jPanelNeuronGraphOptions.add(this.jLabelNeuronGUI, null);
@@ -8997,7 +8963,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             this.jScrollPaneProjDesc.setEnabled(true);
 
-            updatingTabProjectInfo = true;
+            updatingTabProjectInfo = false;
         }
     }
 

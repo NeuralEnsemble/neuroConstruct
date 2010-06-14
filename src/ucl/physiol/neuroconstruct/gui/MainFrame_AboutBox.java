@@ -68,8 +68,8 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener
     FlowLayout flowLayout1 = new FlowLayout();
 
     String comments
-        = "Java application for creating 3D networks of biologically realistic\n"
-         +"neurons for the NEURON, GENESIS, PSICS and PyNN compliant simulators. "
+        = "Java application for creating 3D networks of biologically realistic neurons\n"
+         +"for NEURON, GENESIS, MOOSE, PSICS and PyNN compliant simulators. "
          +"\nThis work is primarily funded by the Wellcome Trust and has also"
          +"\nbeen supported by the Medical Research Council";
 
