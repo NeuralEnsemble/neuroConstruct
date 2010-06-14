@@ -4883,6 +4883,7 @@ public class NeuronFileManager
                         String dir = GeneralUtils.getArchSpecificDir();
                         if (locationOfNeuron.indexOf("umac")>=0)
                             dir = "umac";
+
                         neuronExecutable = dirToRunInFile.getAbsolutePath()+"/"+dir+"/special";
 
                         if(neuronExecutable.indexOf("generated")<0)
@@ -5065,8 +5066,8 @@ public class NeuronFileManager
 
                             postArgs = "";
 
-                            dirToRunInFile = ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory());
-                            dirToRunInPath = "";
+                            //dirToRunInFile = ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory());
+                            //dirToRunInPath = "";
                             title = "";
 
 

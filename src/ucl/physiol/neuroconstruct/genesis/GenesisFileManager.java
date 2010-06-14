@@ -3712,7 +3712,12 @@ public class GenesisFileManager
             {
                 logger.logComment("Assuming *nix environment...");
 
-                genesisExecutable = "genesis";
+                genesisExecutable = "/usr/local/genesis-2.3/genesis/genesis";  // default location for latest Genesis 2
+                if (!(new File(genesisExecutable)).exists())
+                {
+                    genesisExecutable = "genesis"; // Hope it's on the path
+                }
+
                 String title = "GENESIS_simulation" + "___" + project.simulationParameters.getReference();
 
                 
@@ -3780,6 +3785,8 @@ public class GenesisFileManager
 
                 if (!simConfig.getMpiConf().isRemotelyExecuted())
                 {
+
+                    scriptText.append("#!/bin/bash\n");
 
                     scriptText.append("cd " + dirToRunFrom.getAbsolutePath() + "\n" + genesisExecutable
                         + " "

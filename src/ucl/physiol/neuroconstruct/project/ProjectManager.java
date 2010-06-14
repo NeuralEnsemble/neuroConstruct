@@ -283,19 +283,17 @@ public class ProjectManager implements GenerationReport
                 String fn = generatedNeuronFiles[i].getName();
 
                 if (fn.endsWith(".dat")||
-                    fn.endsWith(".props") ||
+                        fn.endsWith(".props") ||
                         fn.endsWith(".py")||
                         fn.endsWith(".xml") ||
-                    (activeProject.neuronSettings.isCopySimFiles() &&
-                        (fn.endsWith(".hoc") ||
-                        fn.endsWith(".mod") ||
-                        fn.endsWith(".dll"))))
+                            (activeProject.neuronSettings.isCopySimFiles() &&
+                            (fn.endsWith(".hoc") ||
+                            fn.endsWith(".mod") ||
+                            fn.endsWith(".dll"))))
                 {
                     try
                     {
-                        //System.out.println("Saving a copy of file: " + generatedNeuronFiles[i]
-                        //                  + " to dir: " +
-                        //                  dirForSimFiles);
+                        //System.out.println("Saving a copy of file: " + generatedNeuronFiles[i]+ " to dir: " + dirForSimFiles);
 
                         GeneralUtils.copyFileIntoDir(generatedNeuronFiles[i],
                                                      dirForSimFiles);
@@ -307,8 +305,10 @@ public class ProjectManager implements GenerationReport
                     }
                 }
                 else if (activeProject.neuronSettings.isCopySimFiles() &&
-                         (generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_I686) || 
-                         generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_64BIT)))
+                         (generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_I686) ||
+                         generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_64BIT) ||
+                         generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_UMAC) ||
+                         generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_POWERPC)))
                 {
                     File toDir = new File(dirForSimFiles, generatedNeuronFiles[i].getName());
                     toDir.mkdir();
@@ -318,6 +318,13 @@ public class ProjectManager implements GenerationReport
                     try
                     {
                         GeneralUtils.copyDirIntoDir(generatedNeuronFiles[i], toDir, true, true);
+
+                        File special = new File(toDir, "special");
+                        logger.logComment("Going to try to change permissions on: "+special.getAbsolutePath());
+                        if (special.exists())
+                        {
+                            Runtime.getRuntime().exec(new String[]{"chmod","u+x",special.getAbsolutePath()});
+                        }
                     }
                     catch (IOException ex1)
                     {
