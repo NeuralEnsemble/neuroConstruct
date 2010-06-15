@@ -1,6 +1,6 @@
 #
 #
-#   File to preform standard tasks on a neuroConstruct project
+#   File to preform some standard tasks on a neuroConstruct project
 #
 #   Author: Padraig Gleeson
 #
@@ -41,7 +41,7 @@ from ucl.physiol.neuroconstruct.utils import NumberGenerator
 
 
 
-def getUnusedSimRef(project, simRefPrefix="P_Sim_"):   
+def getUnusedSimRef(project, simRefPrefix="P_Sim_"):
      
     index = 0
     
@@ -580,10 +580,12 @@ class SimulationManager():
                         analyseStartTime,
                         analyseStopTime,
                         analyseThreshold,
+                        simDt =               None,
                         simPrefix =           'FI_',
                         neuroConstructSeed =  1234,
                         plotAllTraces =       False,
-                        verboseSims =         True):
+                        verboseSims =         True,
+                        varTimestepNeuron =   None):
                              
         simConfig = self.project.simConfigInfo.getSimConfig(simConfigName)
 
@@ -624,11 +626,27 @@ class SimulationManager():
             
             simRefsVsStims = {}
 
-            while stimAmp <= stimAmpHigh:
+            while (stimAmp - stimAmpHigh) < (stimAmpInc/1e9): # to avoid floating point errors
 
                 ########  Adjusting the amplitude of the current clamp ###############
 
                 stim = self.project.elecInputInfo.getStim(simConfig.getInputs().get(0))
+
+                if stim.getElectricalInput().getType() != "IClamp":
+                    raise Exception('Simulation config: '+ simConfigName+' has a non IClamp input: '+str(stim)+'!')
+
+                if simConfig.getInputs()>1:
+                    for stimIndex in range(1, simConfig.getInputs().size()):
+                        stimOther = self.project.elecInputInfo.getStim(simConfig.getInputs().get(stimIndex))
+
+                        if stimOther.getElectricalInput().getType() != "IClamp":
+                            raise Exception('Simulation config: '+ simConfigName+' has a non IClamp input: '+str(stimOther)+'!')
+                        else:
+                            stimOther.setAmp(NumberGenerator(0))
+                            stimOther.setDel(NumberGenerator(0))
+                            stimOther.setDur(NumberGenerator(0))
+
+
 
                 stim.setAmp(NumberGenerator(stimAmp))
                 stim.setDel(NumberGenerator(stimDel))
@@ -641,10 +659,12 @@ class SimulationManager():
 
                 simRefs = self.runMultipleSims(simConfigs =          [simConfig.getName()],
                                                simulators =          [simulator],
+                                               simDt =               simDt,
                                                verboseSims =         verboseSims,
                                                runInBackground =     True,
                                                simRefGlobalPrefix =  simPrefix,
-                                               simRefGlobalSuffix =  ("_"+str(float(stimAmp))))
+                                               simRefGlobalSuffix =  ("_"+str(float(stimAmp))),
+                                               varTimestepNeuron =   varTimestepNeuron)
                                                
                 simRefsVsStims[simRefs[0]] = stimAmp # should be just one simRef returned...
 
