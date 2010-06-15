@@ -227,6 +227,9 @@ def generateAndRunNeuron(project,
 class SimulationManager():
 
 
+    allRunningSims = []
+    allFinishedSims = []
+
     def __init__(self,
                  projFile,
                  numConcurrentSims,
@@ -243,14 +246,10 @@ class SimulationManager():
 
 
 
-
     def printver(self, message):
         if self.verbose:
             print "--- SimMgr:       "+ str(message)
 
-
-    allRunningSims = []
-    allFinishedSims = []
 
 
     def updateSimsRunning(self):
@@ -291,8 +290,7 @@ class SimulationManager():
                    analyseSims =               True,
                    plotVoltageOnly =           False):
 
-
-        self.printver("Trying to reload sims: "+str(self.allFinishedSims))
+        self.printver("Trying to reload simulations: "+str(self.allFinishedSims))
 
         plottedSims = []
 
@@ -339,6 +337,8 @@ class SimulationManager():
 
                             ds = simData.getDataSet(dataStore.getCellSegRef(), dataStore.getVariable(), False)
 
+                            self.printver("Found data store: "+str(dataStore)+", plotting volts only: "+str(plotVoltageOnly))
+
                             if not plotVoltageOnly or dataStore.getVariable() == SimPlot.VOLTAGE:
 
                                 plotFrame = PlotManager.getPlotterFrame("Behaviour of "+dataStore.getVariable() \
@@ -364,7 +364,11 @@ class SimulationManager():
 
             time.sleep(1) # wait a while...
             self.updateSimsRunning()
-            self.reloadSims(True)
+            
+            self.reloadSims(waitForAllSimsToFinish,
+                            plotSims,
+                            analyseSims,
+                            plotVoltageOnly)
 
     
 
