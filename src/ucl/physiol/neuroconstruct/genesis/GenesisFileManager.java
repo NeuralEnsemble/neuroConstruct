@@ -3848,7 +3848,7 @@ public class GenesisFileManager
                         // bit of a hack...
                         rt.exec(new String[]{"chmod","u+x",submitJobFile.getAbsolutePath()});
 
-                        logger.logComment("-------   Written file: "+ submitJobFile.getAbsolutePath(), true);
+                        logger.logComment("-------   Written file: "+ submitJobFile.getAbsolutePath());
                     }
 
 
@@ -3865,7 +3865,7 @@ public class GenesisFileManager
                     fw.write(pullScriptText);
                     fw.close();
 
-                    logger.logComment("-------   Written file: "+ pullScriptFile.getAbsolutePath(), true);
+                    logger.logComment("-------   Written file: "+ pullScriptFile.getAbsolutePath());
 
                     // bit of a hack...
                     rt.exec(new String[]{"chmod","u+x",pullScriptFile.getAbsolutePath()});

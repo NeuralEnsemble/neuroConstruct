@@ -336,7 +336,7 @@ public class SimpleHtmlDoc
             fw.write(this.toHtmlString());
             fw.close();
 
-            logger.logComment("Created doc at: "+ file.getCanonicalPath(), true);
+            logger.logComment("Created doc at: "+ file.getCanonicalPath());
         }
         catch (IOException ex)
         {

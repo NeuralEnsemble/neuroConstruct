@@ -4950,7 +4950,7 @@ public class NeuronFileManager
                             mainCmd = "mpiexec";
                         }
 
-                        logger.logComment("MPI flags: "+ mpiFlags+", hostSeperator: "+ hostSeperator+", hostList: "+ hostList+", mainCmd: "+ mainCmd, true);
+                        logger.logComment("MPI flags: "+ mpiFlags+", hostSeperator: "+ hostSeperator+", hostList: "+ hostList+", mainCmd: "+ mainCmd);
 
                         ArrayList<MpiHost> hosts = simConfig.getMpiConf().getHostList();
                         
@@ -5234,7 +5234,7 @@ public class NeuronFileManager
 
                     if(envParams!=null && envParams.length>0)
                     {
-                        logger.logComment("++ <" + commandToExe+"> + <" + envParams[0]+", ..>", true);
+                        logger.logComment("++ <" + commandToExe+"> + <" + envParams[0]+", ..>");
                         rt.exec(commandToExe, envParams);
                     }
                     else

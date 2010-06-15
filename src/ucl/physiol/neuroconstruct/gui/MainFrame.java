@@ -4160,7 +4160,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             public void itemStateChanged(ItemEvent e)
             {
-                System.out.println("Changing...");
                 if (((JCheckBox)e.getItem()).isSelected())
                 {
                     jButtonGenesisGenerate.setText("Create MOOSE files");
@@ -12732,10 +12731,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
             else
             {
-                logger.logComment("There had been other elements in this project", true);
+                logger.logComment("There had been other elements in this project");
             }
 
-            logger.logComment("Refreshing all...", true);
+            logger.logComment("Refreshing all...");
             refreshTabCellTypes();
             refreshTabProjectInfo();
 
@@ -14947,7 +14946,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 ex.printStackTrace();
             }
 
-            System.out.println("Chan mech: "+cmlMech.toString());
+            //System.out.println("Chan mech: "+cmlMech.toString());
 
             cmlMech.initialise(projManager.getCurrentProject(), true);
 

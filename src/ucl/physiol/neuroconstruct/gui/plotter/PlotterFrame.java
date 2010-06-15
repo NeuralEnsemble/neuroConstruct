@@ -3073,7 +3073,7 @@ public class PlotterFrame extends JFrame
                 String dsFileRef = GeneralUtils.replaceAllTokens(getCompactFilename(ds.getReference()), "/", "_");
                 File dsFile = new File(matplotlibFilesDir, dsFileRef+".dat");
 
-                logger.logComment("Going to write file: "+dsFile, true);
+                logger.logComment("Going to write file: "+dsFile);
                 try
                 {
                     float res = 2000;
@@ -3100,7 +3100,7 @@ public class PlotterFrame extends JFrame
                             lastP = p;
                         }
                     }
-                    logger.logComment("Written "+count+" out of points: "+ds.getNumberPoints(), true);
+                    logger.logComment("Written "+count+" out of points: "+ds.getNumberPoints());
                   
 
                     fw.close();

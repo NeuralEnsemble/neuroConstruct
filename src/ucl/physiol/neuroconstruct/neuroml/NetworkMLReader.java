@@ -490,7 +490,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
             }
             ionElements.put(ionName, ionEl);
 
-             logger.logComment(">>  Current ions: "+ ionElements, true);
+             logger.logComment(">>  Current ions: "+ ionElements);
          }
          
          if (!insideChannel && 

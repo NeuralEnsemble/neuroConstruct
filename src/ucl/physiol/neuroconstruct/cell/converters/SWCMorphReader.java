@@ -222,7 +222,7 @@ public class SWCMorphReader extends FormatImporter
             }
 
             logger.logComment("somaPoints: "+ somaPoints);
-            logger.logComment("repeatedPointAliases: "+ repeatedPointAliases, true);
+            logger.logComment("repeatedPointAliases: "+ repeatedPointAliases);
             
             
             Hashtable<String, Segment> origNamesVsSegments = new Hashtable<String, Segment>();
