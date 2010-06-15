@@ -33,6 +33,8 @@ import java.util.*;
 import java.awt.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings;
 import ucl.physiol.neuroconstruct.project.ProjectStructure;
@@ -727,7 +729,7 @@ public class GeneralUtils
         /** @todo Doing it this way to avoid probs with symbolic links in compiled mod on linux...
          * Check if there is a better way to handle links
          */
-        if (false || !GeneralUtils.isWindowsBasedPlatform() &&
+        if (!GeneralUtils.isWindowsBasedPlatform() &&
                 !originalFile.getAbsolutePath().equals(originalFile.getCanonicalPath()))
         {
             logger.logComment("Assuming we have a symbolic link in linux as abs path: "+
@@ -767,9 +769,7 @@ public class GeneralUtils
                 out.write(buf, 0, len);
             }
             in.close();
-
             out.flush();
-
             out.close();
 
         }
@@ -1028,6 +1028,29 @@ public class GeneralUtils
         
         
         //String dir = "/home/padraig/temp/gg gg/";
+
+        logger.setThisClassVerbose(true);
+
+        File srcDir = new File("../temp/from");
+        File toDir = new File("../temp/to");
+
+        if (toDir.exists())
+        {
+            removeAllFiles(toDir, false, true, true);
+        }
+        toDir.mkdir();
+        
+        String[] filesToTest = new String[]{"one", "two"};
+        try
+        {
+            copyDirIntoDir(srcDir, toDir, true, true);
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+
+
         
         if (true) return;
         String dir = "../../temp/gg gg/";

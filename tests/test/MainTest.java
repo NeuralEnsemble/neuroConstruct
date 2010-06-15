@@ -27,6 +27,8 @@
 package test;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import junit.textui.TestRunner;
 import org.junit.runner.*;
 import org.junit.runner.notification.*;
@@ -129,8 +131,10 @@ public class MainTest
                 ucl.physiol.neuroconstruct.utils.NumberGeneratorTest.class,
                 ucl.physiol.neuroconstruct.utils.equation.ExpressionTest.class/**/);
         
-        
-        System.out.println("Finished the main nC tests.");
+        Date now = new java.util.Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss, EEE dd-MMM-yyyy");
+
+        System.out.println("\n\nFinished all the neuroConstruct tests at "+formatter.format(now)+".");
         
         checkResults(r);
 
@@ -140,9 +144,9 @@ public class MainTest
     {
         System.out.println("");
         System.out.println("**********************************************");
-        System.out.println("      Number of tests:     "+r.getRunCount());
-        System.out.println("      Number of ignores:  "+r.getIgnoreCount());
-        System.out.println("      Number of failures:  "+r.getFailures().size());
+        System.out.println("      Number of tests:      "+r.getRunCount());
+        System.out.println("      Number of ignores:    "+r.getIgnoreCount());
+        System.out.println("      Number of failures:   "+r.getFailures().size());
         System.out.println("      Number of successes:  "+(r.getRunCount() - r.getFailures().size() - r.getIgnoreCount()));
         System.out.println("**********************************************");
         System.out.println("");
