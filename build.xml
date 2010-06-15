@@ -539,6 +539,7 @@
               <include name="*/morphologies/*"/>
               <exclude name="*/morphologies/*.bak"/>
               <include name="*/importedMorphologies/*"/>
+              <include name="*/pythonScripts/*"/>
               <include name="README"/>
           </fileset>
       </copy>

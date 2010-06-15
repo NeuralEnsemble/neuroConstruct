@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.1.1" transformSequenceNumber="2">
   <directoryPresets config="./dist" />
-  <application name="neuroConstruct_v1.3.7" distributionSourceDir="" applicationId="3908-4270-9616-7309" mediaDir="Y:/Padraig/devDocs/releases/install4j" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="neuroConstruct" publisher="Silver Lab, UCL" publisherWeb="http://www.neuroConstruct.org" version="1.3.7" allPathsRelative="true" backupOnSave="true" autoSave="true" convertDotsToUnderscores="true" macSignature="????" javaMinVersion="1.5" javaMaxVersion="" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
+  <application name="neuroConstruct_v1.4.0" distributionSourceDir="" applicationId="3908-4270-9616-7309" mediaDir="Y:/Padraig/devDocs/releases/install4j" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="neuroConstruct" publisher="Silver Lab, UCL" publisherWeb="http://www.neuroConstruct.org" version="1.4.0" allPathsRelative="true" backupOnSave="true" autoSave="true" convertDotsToUnderscores="true" macSignature="????" javaMinVersion="1.5" javaMaxVersion="" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -31,7 +31,7 @@
       <executable name="${compiler:sys.shortName}_${compiler:sys.version}" type="1" iconSet="true" iconFile="" executableDir="." redirectStderr="false" stderrFile="error.log" redirectStdout="false" stdoutFile="output.log" failOnStderrOutput="true" executableMode="2" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker">
         <versionInfo include="true" fileVersion="${compiler:sys.version}.0" fileDescription="${compiler:sys.fullName} launcher" legalCopyright="${compiler:sys.fullName}, Copyright UCL 2008" internalName="${compiler:sys.fullName}" />
       </executable>
-      <splashScreen show="true" autoOff="true" alwaysOnTop="true" width="393" height="100" bitmapFile="Y:/Padraig/images/logo.png" java6SplashScreen="false">
+      <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="393" height="100" bitmapFile="" java6SplashScreen="false">
         <text>
           <statusLine x="31" y="84" text="Starting neuroConstruct..." font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
           <versionLine x="175" y="83" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />

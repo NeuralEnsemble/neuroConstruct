@@ -4,9 +4,22 @@ See also the README file
 
 --------- Version 1.4.0 (Jun 2010) ---------
 
-Improved handling on Macs
+Added 2 new projects in nCmodels: CA1Pyramidal & Thalamocortical which are discussed in the NeuroML paper in PLoS Comp Biol.
 
-Python util script
+Improved general handling on Mac. Better interaction with simulators, execution of Python scripts etc. on the platform.
+
+Improved behaviour of 'nC.sh -make' and 'nC.bat -make' to allow compilation without ant
+
+Added functionality at tab Cell Types to compare cell to a cell in a different project (very handy when using multiple copies of a cell in different project)
+
+Added "Compare simulations" in Simulation Browser interface. Lists different stored properties between two saved simulations (e.g. random seeds).
+
+Adding new NEURON extra code location: -0.5, after all cells & network created but before run
+
+General improvements to saving/loading NeuroML Level 3 files.
+
+Improved the Python neuroConstruct utilities script at pythonNeuroML/nCUtils/ncutils.py which contains a convbenient simulationManager class for running multiple simulations,
+e.g. a frequency versus input current curve as in nCmodels/GranCellLayer/pythonScripts/GranGolgiF_I.py
 
 --------- Version 1.3.7 (Feb 2010) ---------
 
