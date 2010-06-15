@@ -283,7 +283,7 @@
   <!-- =================================================================== -->
 
   <target name="test" depends="compiletests"
-          description="Runs the core neuroConstruct unit tests">
+          description="Runs the core neuroConstruct unit tests. NEURON (incl. Parallel NEURON), GENESIS and MOOSE need to be installed for all tests to pass. Can be run using: ant test -Dsimulators='NEURON GENESIS', to limit the number of simulators tested.">
 
     <property name="simulators" value="NEURON PNEURON GENESIS MOOSE"/>
 

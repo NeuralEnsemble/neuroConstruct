@@ -36,6 +36,7 @@ import javax.xml.*;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import org.junit.After;
+import static org.junit.Assume.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Result;
@@ -84,6 +85,14 @@ public class NetworkMLReaderTest
             fail("Error loading: "+ projFile.getAbsolutePath());
         }
     }
+
+    /*
+    @Test
+    public void testTruth() 
+    {
+        assumeTrue(false);
+        assertEquals(1, 2);
+    }*/
 
     
     @Test
@@ -207,6 +216,9 @@ public class NetworkMLReaderTest
         String validity2 = pm.getValidityReport(false);
 
         validity2 = GeneralUtils.replaceAllTokens(validity2, proj2.getProjectFile().getAbsolutePath(), "<proj_path>");
+
+        System.out.println("..."+ GeneralUtils.replaceAllTokens(validity1, "\n", " "));
+        System.out.println("..."+ GeneralUtils.replaceAllTokens(validity2, "\n", " "));
 
         assertEquals(validity1, validity2);
 
