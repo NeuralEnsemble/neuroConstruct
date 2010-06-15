@@ -394,6 +394,32 @@ public class MpiSettings
         }
 
 
+        int[] lemNodes = new int[]{14,15};
+
+        int[] lemProcs = new int[]{4,8};
+
+
+        for (int nodeNum: lemNodes)
+        {
+            for (int totalProcs: lemProcs)
+            {
+                String name = "Lemmon_"+nodeNum+"_"+totalProcs+"PROCS";
+
+                if (getMpiConfiguration(name)==null)
+                {
+                    MpiConfiguration p = new MpiConfiguration(name);
+
+                    p.getHostList().add(new MpiHost(LEMMON+nodeNum, totalProcs, 1));
+
+                    p.setRemoteLogin(matlemLogin);
+                    p.setMpiVersion(MpiSettings.OPENMPI_V2);
+                    p.setUseScp(true);
+                    configurations.add(p);
+
+                }
+            }
+        }
+
         int[] mattNodes = new int[]{2,3, 4, 5, 6};
 
         int[] mattProcs = new int[]{4,8};
@@ -409,14 +435,6 @@ public class MpiSettings
                 {
                     MpiConfiguration p = new MpiConfiguration(name);
 
-                    /*
-                    int numNodes = (int)Math.ceil(totalProcs/8.0);
-
-                    for (int node = 1;node<=numNodes;node++)
-                    {
-                        p.getHostList().add(new MpiHost(MATTHAU+node, Math.min(8, totalProcs - (node-1)*8), 1));
-                    }*/
-
                     p.getHostList().add(new MpiHost(MATTHAU+nodeNum, totalProcs, 1));
 
                     p.setRemoteLogin(matlemLogin);
@@ -430,8 +448,8 @@ public class MpiSettings
 
         String name_16 = "Matthau_Lemmon_Test_16";
         MpiConfiguration p_16 = new MpiConfiguration(name_16);
-        p_16.getHostList().add(new MpiHost(MATTHAU+6, 8, 1));
-        p_16.getHostList().add(new MpiHost(LEMMON+9, 8, 1));
+        p_16.getHostList().add(new MpiHost(MATTHAU+5, 8, 1));
+        p_16.getHostList().add(new MpiHost(LEMMON+14, 8, 1));
 
         p_16.setRemoteLogin(matlemLogin);
         p_16.setMpiVersion(MpiSettings.OPENMPI_V2);
@@ -479,12 +497,12 @@ public class MpiSettings
         String name_ALL = "Matthau_Lemmon_Test_ALL";
         MpiConfiguration p_ALL = new MpiConfiguration(name_ALL);
 
-        for(int i=4;i<=7;i++)
+        for(int i=3;i<=9;i++)
         {
             p_ALL.getHostList().add(new MpiHost(MATTHAU+i, 8, 1));
         }
 
-        for(int i=8;i<=15;i++)
+        for(int i=14;i<=16;i++)
         {
             p_ALL.getHostList().add(new MpiHost(LEMMON+i, 8, 1));
         }

@@ -210,7 +210,7 @@ public class OptionsFrame extends JFrame
     {
         panelMain.setLayout(borderLayout1);
 
-        Dimension dim = new Dimension(500, 550);
+        Dimension dim = new Dimension(550, 550);
 
         panelMain.setMaximumSize(dim);
         panelMain.setMinimumSize(dim);

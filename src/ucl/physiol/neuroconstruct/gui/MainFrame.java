@@ -1,4 +1,4 @@
-/**
+ /**
  *  neuroConstruct
  *  Software for developing large scale 3D networks of biologically realistic neurons
  * 
@@ -424,7 +424,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JPanel jPanelNeuronNumInt =  new JPanel();
     JCheckBox jCheckBoxNeuronNumInt = new JCheckBox("Use variable time step");
     JCheckBox jCheckBoxNeuronGenAllMod = new JCheckBox("Generate all mod files");
-    JCheckBox jCheckBoxNeuronCopySimFiles = new JCheckBox("Copy files to simulations dir");
+    JCheckBox jCheckBoxNeuronCopySimFiles = new JCheckBox("Copy files to sims dir");
     JCheckBox jCheckBoxGenesisCopySimFiles = new JCheckBox("Copy files to sims dir");
     JCheckBox jCheckBoxGenesisMooseMode = new JCheckBox("MOOSE test mode (beta)     ");
 
