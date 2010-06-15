@@ -1096,7 +1096,7 @@ public class ProjectManager implements GenerationReport
                 cellMechs.add(ic);
             }
 
-            logger.logComment("cellMechs: "+cellMechs, true);
+            logger.logComment("cellMechs: "+cellMechs);
             
             for(String cellMech: cellMechs)
             {
@@ -1695,7 +1695,8 @@ public class ProjectManager implements GenerationReport
 
         String overallValidity = ValidityStatus.VALIDATION_OK;
 
-        ArrayList<String> cellNames = activeProject.cellManager.getAllCellTypeNames();
+        ArrayList cellNames = activeProject.cellManager.getAllCellTypeNames();
+        cellNames = (ArrayList)GeneralUtils.reorderAlphabetically(cellNames, true);
 
         if (cellNames.size()==0)
         {
@@ -1703,8 +1704,9 @@ public class ProjectManager implements GenerationReport
             report.addTaggedElement("No Cell Types in project", "font color=\""+ValidityStatus.VALIDATION_COLOUR_ERROR+"\"");
         }
 
-        for (String cellTypeName: cellNames)
+        for (Object ctName: cellNames)
         {
+            String cellTypeName = (String)ctName;
             report.addTaggedElement("Checking cell: <b>"+cellTypeName+"</b>", "p");
 
             Cell cell = activeProject.cellManager.getCell(cellTypeName);
