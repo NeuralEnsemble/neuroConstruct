@@ -64,7 +64,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
 
 public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 {
-    private static ClassLogger logger = new ClassLogger("OneCell3DPanel");
+    private ClassLogger logger = new ClassLogger("OneCell3DPanel");
 
     public static String highlightSecSegs = "Pick Sections/Segments";
     public static String highlightGroups = "Groups";
@@ -715,7 +715,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         for (int i = 0; i < groups.size(); i++)
         {
-            highlightSingleGroup(this.displayedCell, myOneCell3D, (String)groups.elementAt(i), c);
+            highlightSingleGroup((String)groups.elementAt(i), c);
         }
 
     }
@@ -957,7 +957,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         ColourGenerator colourGen = new ColourGenerator();
         Color c = colourGen.getNextColour();
 
-        highlightSingleGroup(this.displayedCell, myOneCell3D, selectedGroup, c);
+        highlightSingleGroup(selectedGroup, c);
     }
 
 
@@ -1009,14 +1009,14 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
     }
 
 
-    protected static void highlightSingleGroup(Cell cell, OneCell3D myOneCell3D, String group, Color c)
+    void highlightSingleGroup(String group, Color c)
     {
         Appearance app = Utils3D.getGeneralObjectAppearance(c);
 
-        logger.logComment("Highlighting group: "+ group + " in: "+ c, true);
+        logger.logComment("Highlighting group: "+ group + " in: "+ c);
 
 
-        Vector segments = cell.getAllSegments();
+        Vector segments = this.displayedCell.getAllSegments();
 
         for (int i = 0; i < segments.size(); i++)
         {
@@ -1201,10 +1201,9 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                     {
                         fraction = (groupAppv.getSpeed() - minVal) / (maxVal - minVal);
                     }
-                    highlightSingleGroup(this.displayedCell, myOneCell3D, group,
-                                         GeneralUtils.getFractionalColour(segmentHighlightSecondary,
-                                         segmentHighlightMain,
-                                         fraction));
+                    highlightSingleGroup(group, GeneralUtils.getFractionalColour(segmentHighlightSecondary,
+                                                                                 segmentHighlightMain,
+                                                                                 fraction));
                 }
             }
             else
@@ -1224,13 +1223,12 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                             {
                                 fraction = (nextChanMech.getDensity() - minVal) / (maxVal - minVal);
                             }
-                            highlightSingleGroup(this.displayedCell, myOneCell3D, group,
-                                                 GeneralUtils.getFractionalColour(segmentHighlightSecondary,
-                                                 segmentHighlightMain, fraction));
+                            highlightSingleGroup(group, GeneralUtils.getFractionalColour(segmentHighlightSecondary,
+                                segmentHighlightMain, fraction));
                         }
                         else
                         {
-                            highlightSingleGroup(this.displayedCell, myOneCell3D, group, segmentHighlightNoGmax);
+                            highlightSingleGroup(group, segmentHighlightNoGmax);
                             jLabelNoGmax = new JLabel("No Gmax set");
                             jLabelNoGmax.setOpaque(true);
                             jLabelNoGmax.setBackground(segmentHighlightNoGmax);

@@ -1014,7 +1014,6 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                     OneCell3D cell3D = new OneCell3D(cell, i, project);
 
-
                     String newCellReference = SimulationData.getCellRef(cellGroupName, cellNumber);
 
                     all3DCells.put(newCellReference, cell3D);
@@ -1022,9 +1021,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                     logger.logComment("Added the 3D object class in hashtable as: " +
                                       newCellReference);
 
-                    //cell3D.setDefaultCellAppearance(colorOfCellGroup);
-
-                    OneCell3DPanel.highlightSingleGroup(cell, cell3D, "axon_group", Color.red);
+                    cell3D.setDefaultCellAppearance(colorOfCellGroup);
 
                     TransformGroup cellTG = cell3D.createCellTransformGroup();
 
@@ -1955,8 +1952,6 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                 }
 
                 oneCell.setWholeCellAppearance(Utils3D.getGeneralObjectAppearance(colour));
-
-                    OneCell3DPanel.highlightSingleGroup(oneCell.getDisplayedCell(), oneCell, "axon_group", Color.red);
             }
             else
             {
