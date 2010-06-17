@@ -1483,6 +1483,8 @@ public class OneCell3D
             }
         }
 
+                    OneCell3DPanel.highlightSingleGroup(this.getDisplayedCell(), this, "axon_group", Color.red);
+
         cellAppBeforeTempSwitch = null;
         cellAppDuringTempSwitch = null;
     }
