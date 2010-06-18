@@ -284,8 +284,7 @@
   <!-- =================================================================== -->
 
   <target name="test" depends="clean, compiletests"
-          description="Runs the core neuroConstruct unit tests. NEURON (incl. Parallel NEURON), GENESIS and MOOSE need to be installed for all tests to pass.
-          Can be run using: ant test -Dsimulators='NEURON GENESIS', to limit the number of simulators tested.">
+          description="Runs the core neuroConstruct unit tests. NEURON (incl. Parallel NEURON), GENESIS and MOOSE need to be installed for all tests to pass. Can be run using: ant test -Dsimulators='NEURON GENESIS', to limit the number of simulators tested.">
 
     <property name="simulators" value="NEURON PNEURON GENESIS MOOSE"/>
 
@@ -306,12 +305,11 @@
   <target name="testmod" depends="clean, compiletests"
           description="Runs a number of automated tests on neuroConstruct models, mainly the NeuroML based examples in nCmodels.">
 
-    <java classname="${main.test.class}" fork="true">
+    <java classname="${main.testmodels.class}" fork="true">
         <jvmarg value="-Xmx700M" />
         <jvmarg value="-Xms600M" />
         <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
         <jvmarg value="-Dsun.java2d.noddraw=true" />
-        <jvmarg value="-Dsimulators=${simulators}" />
         <classpath refid="run.class.path"/>
     </java>
   </target>

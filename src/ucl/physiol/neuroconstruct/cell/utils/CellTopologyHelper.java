@@ -3879,13 +3879,21 @@ public class CellTopologyHelper
     }   
 
 
+    public static ValidityStatus getValidityStatus(Cell cell)
+    {
+        return getValidityStatus(cell, false, false);
+    }
+
+
     /**
      * Returns a short string detailing the validity of the cell. <b>This covers only morphological aspects</b>
      *
      * NOTE: Check in Help->Glossary->Cell Validity for the conditions under which a cell is "valid"
      *
      */
-    public static ValidityStatus getValidityStatus(Cell cell)
+    public static ValidityStatus getValidityStatus(Cell cell, 
+                                                   boolean ignoreCellNotAtOrigin,
+                                                   boolean ignoreDisconnNonSimpConnSegs)
     {
         Vector<String> segmentsWithNullParent = new Vector<String>();
         Vector<String> segmentsWithNoSection = new Vector<String>();
@@ -4045,7 +4053,7 @@ public class CellTopologyHelper
 
             // check for disconnectedness
 
-            if (segment.getParentSegment()!=null)
+            if (!ignoreDisconnNonSimpConnSegs && segment.getParentSegment()!=null)
             {
                 if (!segment.getParentSegment().getSection().equals(segment.getSection()))
                 {
@@ -4290,11 +4298,17 @@ public class CellTopologyHelper
 
 
         if (cell.getFirstSomaSegment()!=null &&
-            !cell.getFirstSomaSegment().getStartPointPosition().equals(new Point3f()))
+            !cell.getFirstSomaSegment().getStartPointPosition().equals(new Point3f()) &&
+            !ignoreCellNotAtOrigin)
+        {
             warningReport.append("NOTE: Start of soma not at origin (Packing is ill-advised with cells not at origin)\n");
+        }
 
-        if (!checkSimplyConnected(cell))
-            warningReport.append("NOTE: Cell is not Simply Connected, i.e. some segments are connected at points other than the start or end point (0 or 1) of parent\n");
+        if (!ignoreDisconnNonSimpConnSegs && !checkSimplyConnected(cell))
+        {
+            warningReport.append("NOTE: Cell is not Simply Connected, i.e. some segments are " +
+                    "connected at points other than the start or end point (0 or 1) of parent\n");
+        }
 
 
 

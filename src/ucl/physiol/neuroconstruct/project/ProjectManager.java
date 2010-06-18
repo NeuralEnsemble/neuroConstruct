@@ -1674,6 +1674,17 @@ public class ProjectManager implements GenerationReport
 
     public String getValidityReport(boolean html)
     {
+        return getValidityReport(html, false, false, false, null, false, false);
+    }
+
+    public String getValidityReport(boolean html, 
+                                    boolean ignoreNoCellInput,
+                                    boolean ignoreNoCells,
+                                    boolean ignoreCellAtOrigin,
+                                    ArrayList<String> cellsToIgnore,
+                                    boolean ignoreDisconnectedSegments,
+                                    boolean ignoreNotInSimConfigOrCellGroup)
+    {
         boolean verbose = false;
         
         File schemaFile = GeneralProperties.getNeuroMLSchemaFile();
@@ -1698,7 +1709,7 @@ public class ProjectManager implements GenerationReport
         ArrayList cellNames = activeProject.cellManager.getAllCellTypeNames();
         cellNames = (ArrayList)GeneralUtils.reorderAlphabetically(cellNames, true);
 
-        if (cellNames.size()==0)
+        if (cellNames.size()==0 && !ignoreNoCells)
         {
             overallValidity = ValidityStatus.VALIDATION_ERROR;
             report.addTaggedElement("No Cell Types in project", "font color=\""+ValidityStatus.VALIDATION_COLOUR_ERROR+"\"");
@@ -1707,66 +1718,73 @@ public class ProjectManager implements GenerationReport
         for (Object ctName: cellNames)
         {
             String cellTypeName = (String)ctName;
-            report.addTaggedElement("Checking cell: <b>"+cellTypeName+"</b>", "p");
-
-            Cell cell = activeProject.cellManager.getCell(cellTypeName);
-
-            ValidityStatus status = CellTopologyHelper.getValidityStatus(cell);
-
-            overallValidity = ValidityStatus.combineValidities(overallValidity, status.getValidity());
-
-            String format = "font color=\""+status.getColour()+"\"";
-
-            String message = status.getMessage();
-
-            if (html)
+            
+            if(cellsToIgnore!=null && cellsToIgnore.contains(cellTypeName))
             {
-                message = GeneralUtils.replaceAllTokens(message, "\n", "<br>");
+                report.addTaggedElement("Ignoring cell: <b>"+cellTypeName+"</b>", "p");
             }
-
-
-
-            report.addTaggedElement(message, format);
-            report.addBreak();
-
-            ValidityStatus bioStatus = CellTopologyHelper.getBiophysicalValidityStatus(cell, this.activeProject);
-
-
-            String bioFormat = "font color=\""+bioStatus.getColour()+"\"";
-
-            String thisStatus = bioStatus.getValidity();
-
-            if (!activeProject.cellGroupsInfo.getUsedCellTypes().contains(cell.getInstanceName()))
+            else
             {
-                report.addTaggedElement("Note: Cell Type: "+cell.getInstanceName()+" not currently used in any Cell Group",
-                        "font color=\"" + ValidityStatus.VALIDATION_COLOUR_INFO + "\"");
-                report.addBreak();
-                report.addBreak();
+                report.addTaggedElement("Checking cell: <b>"+cellTypeName+"</b>", "p");
 
-                if (bioStatus.isError())
+                Cell cell = activeProject.cellManager.getCell(cellTypeName);
+
+                ValidityStatus status = CellTopologyHelper.getValidityStatus(cell, ignoreCellAtOrigin, ignoreDisconnectedSegments);
+
+                overallValidity = ValidityStatus.combineValidities(overallValidity, status.getValidity());
+
+                String format = "font color=\""+status.getColour()+"\"";
+
+                String message = status.getMessage();
+
+                if (html)
                 {
-                    report.addTaggedElement("Note: Biological valididity status below down graded from erro to warning as cell isn't used in project!\"",
-                        "font color=\"" + ValidityStatus.VALIDATION_COLOUR_INFO + "");
-
-                    report.addBreak();
-                    report.addBreak();
-                    thisStatus = ValidityStatus.VALIDATION_WARN;
-                    bioFormat = "font color=\""+ValidityStatus.VALIDATION_COLOUR_WARN+"\"";
+                    message = GeneralUtils.replaceAllTokens(message, "\n", "<br>");
                 }
-            }
 
 
-            overallValidity = ValidityStatus.combineValidities(overallValidity, thisStatus);
 
-            message = bioStatus.getMessage();
+                report.addTaggedElement(message, format);
+                report.addBreak();
+
+                ValidityStatus bioStatus = CellTopologyHelper.getBiophysicalValidityStatus(cell, this.activeProject);
+
+
+                String bioFormat = "font color=\""+bioStatus.getColour()+"\"";
+
+                String thisStatus = bioStatus.getValidity();
+
+                if (!ignoreNotInSimConfigOrCellGroup && !activeProject.cellGroupsInfo.getUsedCellTypes().contains(cell.getInstanceName()))
+                {
+                    report.addTaggedElement("Note: Cell Type: "+cell.getInstanceName()+" not currently used in any Cell Group",
+                            "font color=\"" + ValidityStatus.VALIDATION_COLOUR_INFO + "\"");
+                    report.addBreak();
+                    report.addBreak();
+
+                    if (bioStatus.isError())
+                    {
+                        report.addTaggedElement("Note: Biological valididity status below downgraded from error to warning as cell isn't used in project!\"",
+                            "font color=\"" + ValidityStatus.VALIDATION_COLOUR_INFO + "");
+
+                        report.addBreak();
+                        report.addBreak();
+                        thisStatus = ValidityStatus.VALIDATION_WARN;
+                        bioFormat = "font color=\""+ValidityStatus.VALIDATION_COLOUR_WARN+"\"";
+                    }
+                }
+
+
+                overallValidity = ValidityStatus.combineValidities(overallValidity, thisStatus);
+
+                message = bioStatus.getMessage();
+
+                if (html)
+                {
+                    message = GeneralUtils.replaceAllTokens(message, "\n", "<br>");
+                }
+                report.addTaggedElement(message, bioFormat);
             
-            if (html)
-            {
-                message = GeneralUtils.replaceAllTokens(message, "\n", "<br>");
             }
-            report.addTaggedElement(message, bioFormat);
-            
-
         }
 
         report.addBreak();
@@ -1992,7 +2010,8 @@ public class ProjectManager implements GenerationReport
                 overallValidity = ValidityStatus.VALIDATION_ERROR;
             }
 
-            if (!(allCellGroupsWithStims.contains(cellGroup)||allPostSynCellGroups.contains(cellGroup)))
+            if ( (!(allCellGroupsWithStims.contains(cellGroup)||allPostSynCellGroups.contains(cellGroup))) &&
+                  !ignoreNoCellInput)
             {
                 report.addTaggedElement("Warning, Cell Group: " + cellGroup + " has neither an electrical stimulation nor is "
                                         +"postsynaptically connected to another Cell Group. Unless the cells are spontaneously active,"
@@ -2004,7 +2023,7 @@ public class ProjectManager implements GenerationReport
                 overallValidity = ValidityStatus.combineValidities(overallValidity, ValidityStatus.VALIDATION_WARN);
 
             }
-            if (!activeProject.simConfigInfo.getAllUsedCellGroups().contains(cellGroup))
+            if (!ignoreNotInSimConfigOrCellGroup && !activeProject.simConfigInfo.getAllUsedCellGroups().contains(cellGroup))
             {
                 report.addBreak();
                 report.addTaggedElement("Note: Cell Group: "+cellGroup+" is not currently included in any Simulation Configuration",
@@ -2081,7 +2100,7 @@ public class ProjectManager implements GenerationReport
                         }
                     }
                 }
-                if(stim.getSegChooser() instanceof GroupDistributedSegments)
+                if (stim.getSegChooser() instanceof GroupDistributedSegments)
                 {
                     String grp = ((GroupDistributedSegments)stim.getSegChooser()).getGroup();
                     int num = ((GroupDistributedSegments)stim.getSegChooser()).getNumberOfSegments();
@@ -2108,7 +2127,7 @@ public class ProjectManager implements GenerationReport
                 }
                     
                 
-                if (!activeProject.simConfigInfo.getAllUsedElectInputs().contains(stim.getReference()))
+                if (!ignoreNotInSimConfigOrCellGroup && !activeProject.simConfigInfo.getAllUsedElectInputs().contains(stim.getReference()))
                 {
                     report.addBreak();
                     report.addTaggedElement("Note: Input: "+stim.getReference()+" is not currently included in any Simulation Configuration",
@@ -2134,7 +2153,7 @@ public class ProjectManager implements GenerationReport
             }
             
             
-            if (!activeProject.simConfigInfo.getAllUsedPlots().contains(plot.getPlotReference()))
+            if (!ignoreNotInSimConfigOrCellGroup && !activeProject.simConfigInfo.getAllUsedPlots().contains(plot.getPlotReference()))
             {
                 report.addBreak();
                 report.addTaggedElement("Note: Plot: "+plot.getPlotReference()+" is not currently included in any Simulation Configuration",
