@@ -19,7 +19,7 @@ export NC_MAX_MEMORY=450M
 
 
 # Current version of neuroConstruct
-export NC_VERSION=1.4.0
+export NC_VERSION=1.4.1
 
 
 # Check for location 
