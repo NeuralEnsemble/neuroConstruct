@@ -3019,6 +3019,13 @@ public class CellTopologyHelper
 
         float minPhysiologicalSpecAxRes = 100f;  //  kohm μm , limit to warn about
         float maxPhysiologicalSpecAxRes = 3000f; //  kohm μm , limit to warn about
+
+
+        float minPhysiologicalPassCondDens = 1e-10f; //  mS um-2 , limit to warn about
+        float maxPhysiologicalPassCondDens = 4e-7f;  //  mS um-2 , limit to warn about
+
+
+        float maxPhysiologicalCondDens = 1e-3f;  //  mS um-2 , limit to warn about
         
 
 
@@ -3070,10 +3077,8 @@ public class CellTopologyHelper
                         +maxPhysiologicalSpecAxRes+" kohm μm");
                 }
             }
-
-
-
         }
+
 
         if (cell.getAllChanMechNames(true).size() == 0)
         {
@@ -3089,6 +3094,37 @@ public class CellTopologyHelper
             ArrayList<String> passChanNames = getPassiveChannels(cell, project);
 
             logger.logComment("Passive chans: "+ passChanNames);
+
+            Hashtable<ChannelMechanism, Vector<String>> chanMechsVsGroups = cell.getChanMechsVsGroups();
+
+            for(ChannelMechanism cm: chanMechsVsGroups.keySet())
+            {
+                if (passChanNames.contains(cm.getName()))
+                {
+                    if (cm.getDensity()>0 /* as some chan mechs use dens = -1 to set extra channel mech params */
+                            && cm.getDensity()<minPhysiologicalPassCondDens)
+                    {
+                        warningReport.append("Warning: channel mechanism: "+cm.toNiceString()+" on group(s) "+chanMechsVsGroups.get(cm)
+                            +" exceeds lower bound of physiological PASSIVE channel conductance density: "
+                        +minPhysiologicalPassCondDens+" mS um-2");
+                    }
+                    if (cm.getDensity()>maxPhysiologicalPassCondDens)
+                    {
+                        warningReport.append("Warning: channel mechanism: "+cm.toNiceString()+" on group(s) "+chanMechsVsGroups.get(cm)
+                            +" exceeds upper bound of physiological PASSIVE channel conductance density: "
+                        +maxPhysiologicalPassCondDens+" mS um-2");
+                    }
+                }
+                else
+                {
+                    if (cm.getDensity()>maxPhysiologicalCondDens)
+                    {
+                        warningReport.append("Warning: channel mechanism: "+cm.toNiceString()+" on group(s) "+chanMechsVsGroups.get(cm)
+                            +" exceeds upper bound of physiological channel conductance density: "
+                        +maxPhysiologicalCondDens+" mS um-2");
+                    }
+                }
+            }
 
             int numNoPassError = 0;
             int numManyPassWarn = 0;
