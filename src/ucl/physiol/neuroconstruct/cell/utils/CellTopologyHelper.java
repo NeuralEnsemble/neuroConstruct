@@ -2990,13 +2990,20 @@ public class CellTopologyHelper
     }
 
 
+    public static ValidityStatus getBiophysicalValidityStatus(Cell cell,
+                                                              Project project)
+    {
+        return getBiophysicalValidityStatus(cell, project, true);
+    }
     /**
      * Returns a short string detailing the validity of the cell from a biophysical point of view
      *
      * NOTE: Check in Help->Glossary->Cell Validity for the conditions under which a cell is "valid"
      *
      */
-    public static ValidityStatus getBiophysicalValidityStatus(Cell cell, Project project)
+    public static ValidityStatus getBiophysicalValidityStatus(Cell cell, 
+                                                              Project project,
+                                                              boolean checkBioBounds)
     {
         if (project == null)
             return ValidityStatus.getErrorStatus("Error: null project. Cannot check biophysical properties outside of context of a particular project");
@@ -3004,7 +3011,69 @@ public class CellTopologyHelper
         StringBuilder errorReport = new StringBuilder();
         StringBuilder warningReport = new StringBuilder();
 
-        //ArrayList<ChannelMechanism> cellMechs = cell.getAllChannelMechanisms();
+        float minPhysiologicalMembPot = -100;  // mV, limit to warn about
+        float maxPhysiologicalMembPot = 100;   // mV, limit to warn about
+
+        float minPhysiologicalSpecCap = 2e-10f;   // μF μm-2, limit to warn about
+        float maxPhysiologicalSpecCap = 2.5e-8f;  // μF μm-2, limit to warn about
+
+        float minPhysiologicalSpecAxRes = 100f;  //  kohm μm , limit to warn about
+        float maxPhysiologicalSpecAxRes = 3000f; //  kohm μm , limit to warn about
+        
+
+
+        if (checkBioBounds)
+        {
+            if (cell.getInitialPotential().getMinPossible()<minPhysiologicalMembPot)
+            {
+                warningReport.append("Warning: initial potential ("+cell.getInitialPotential()+") exceeds lower bound of physiological membrane potentials: "
+                        +minPhysiologicalMembPot+" mV");
+            }
+            if (cell.getInitialPotential().getMaxPossible()>maxPhysiologicalMembPot)
+            {
+                warningReport.append("Warning: initial potential ("+cell.getInitialPotential()+") exceeds upper bound of physiological membrane potentials: "
+                        +maxPhysiologicalMembPot+" mV");
+            }
+
+            Hashtable<Float, Vector<String>> specCapVsGroups = cell.getSpecCapVsGroups();
+
+            for(Float spCap: specCapVsGroups.keySet())
+            {
+                if (spCap<minPhysiologicalSpecCap)
+                {
+                    warningReport.append("Warning: specific capacitance: "+spCap+" uF um-2 on group(s) "+specCapVsGroups.get(spCap)
+                            +" exceeds lower bound of physiological specific capacitance: "
+                        +minPhysiologicalSpecCap+" uF um-2");
+                }
+                if (spCap>maxPhysiologicalSpecCap)
+                {
+                    warningReport.append("Warning: specific capacitance: "+spCap+" uF um-2 on group(s) "+specCapVsGroups.get(spCap)
+                            +" exceeds upper bound of physiological specific capacitance: "
+                        +maxPhysiologicalSpecCap+" uF um-2");
+                }
+            }
+
+            Hashtable<Float, Vector<String>> specAxResVsGroups = cell.getSpecAxResVsGroups();
+
+            for(Float spAxRes: specAxResVsGroups.keySet())
+            {
+                if (spAxRes<minPhysiologicalSpecAxRes)
+                {
+                    warningReport.append("Warning: specific axial resistance: "+spAxRes+" kohm μm on group(s) "+specAxResVsGroups.get(spAxRes)
+                            +" exceeds lower bound of physiological specific axial resistance: "
+                        +minPhysiologicalSpecAxRes+" kohm μm");
+                }
+                if (spAxRes>maxPhysiologicalSpecAxRes)
+                {
+                    warningReport.append("Warning: specific axial resistance: "+spAxRes+" kohm μm on group(s) "+specAxResVsGroups.get(spAxRes)
+                            +" exceeds upper bound of physiological specific axial resistance: "
+                        +maxPhysiologicalSpecAxRes+" kohm μm");
+                }
+            }
+
+
+
+        }
 
         if (cell.getAllChanMechNames(true).size() == 0)
         {
@@ -3015,8 +3084,6 @@ public class CellTopologyHelper
             Vector cellMechNames = project.cellMechanismInfo.getAllCellMechanismNames();
             Vector<String> missingCellMechs = new Vector<String>();
             
-            //cellMechNames.addAll(c)
-
             ArrayList<Section> allSections = cell.getAllSections();
 
             ArrayList<String> passChanNames = getPassiveChannels(cell, project);
@@ -3180,12 +3247,8 @@ public class CellTopologyHelper
 
                 }
 
-                //nextSec.
-
-                //cell.getAllSegmentsInSection()
                 LinkedList<Segment> segs = cell.getAllSegmentsInSection(nextSec);
 
-                //float specAxResVal = cell.getSpecAxRes().getNominalNumber();
                 float totalElecLen = 0;
 
                 if (appv==null) // i.e. no ap prop spped settings
@@ -3922,6 +3985,7 @@ public class CellTopologyHelper
         StringBuilder errorReport = new StringBuilder();
         StringBuilder warningReport = new StringBuilder();
 
+
         for (int i = 0; i < cell.getAllSegments().size(); i++)
         {
             Segment segment = cell.getAllSegments().get(i);
@@ -4308,6 +4372,16 @@ public class CellTopologyHelper
         {
             warningReport.append("NOTE: Cell is not Simply Connected, i.e. some segments are " +
                     "connected at points other than the start or end point (0 or 1) of parent\n");
+        }
+
+        if (cell.getCellDescription().length()<cell.getInstanceName().length())
+        {
+            warningReport.append("NOTE: Cell description is quite short...\n");
+        }
+
+        if (cell.getInstanceName().indexOf(" ")>=0)
+        {
+            errorReport.append("ERROR: Cell name contains spaces! This will lead to errors whn run on most simulators!\n");
         }
 
 

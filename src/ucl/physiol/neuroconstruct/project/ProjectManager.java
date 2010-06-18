@@ -1674,7 +1674,7 @@ public class ProjectManager implements GenerationReport
 
     public String getValidityReport(boolean html)
     {
-        return getValidityReport(html, false, false, false, null, false, false);
+        return getValidityReport(html, false, false, false, null, false, false, false);
     }
 
     public String getValidityReport(boolean html, 
@@ -1683,7 +1683,8 @@ public class ProjectManager implements GenerationReport
                                     boolean ignoreCellAtOrigin,
                                     ArrayList<String> cellsToIgnore,
                                     boolean ignoreDisconnectedSegments,
-                                    boolean ignoreNotInSimConfigOrCellGroup)
+                                    boolean ignoreNotInSimConfigOrCellGroup,
+                                    boolean checkBioBounds)
     {
         boolean verbose = false;
         
@@ -1747,7 +1748,7 @@ public class ProjectManager implements GenerationReport
                 report.addTaggedElement(message, format);
                 report.addBreak();
 
-                ValidityStatus bioStatus = CellTopologyHelper.getBiophysicalValidityStatus(cell, this.activeProject);
+                ValidityStatus bioStatus = CellTopologyHelper.getBiophysicalValidityStatus(cell, this.activeProject, checkBioBounds);
 
 
                 String bioFormat = "font color=\""+bioStatus.getColour()+"\"";

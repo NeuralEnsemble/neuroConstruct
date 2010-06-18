@@ -117,7 +117,11 @@ public class ModelTest
     @Test public void testDentateGyrus()
     {
         String projFileName = "nCmodels/DentateGyrus/DentateGyrus.ncx";
-        checkProject(projFileName);
+
+        ArrayList<String> cellsToIgnore = new ArrayList<String>();
+        cellsToIgnore.add("PerforantPath");  // as it has a low spec cap to give fast response to input
+
+        checkProject(projFileName, cellsToIgnore, true);
     }
     @Test public void testMainenEtAl_PyramidalCell()
     {
@@ -192,6 +196,7 @@ public class ModelTest
                                                true,
                                                cellsToIgnore,
                                                ignoreDisconnectedSegments,
+                                               true,
                                                true);
 
         //System.out.println("Validity: "+ validity);

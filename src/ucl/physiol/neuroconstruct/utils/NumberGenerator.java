@@ -304,6 +304,18 @@ public class NumberGenerator implements Serializable
     }
 
 
+    public float getMinPossible()
+    {
+        if (isTypeFixedNum()) return fixedNum;
+        else return min;
+    }
+
+    public float getMaxPossible()
+    {
+        if (isTypeFixedNum()) return fixedNum;
+        else return max;
+    }
+
     public float getMin()
     {
         return min;
