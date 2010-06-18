@@ -38,7 +38,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.Result;
-import test.MainTest;
+import ucl.physiol.neuroconstruct.test.MainTest;
 import static org.junit.Assert.*;
 
 /**

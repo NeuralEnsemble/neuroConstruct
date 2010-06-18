@@ -30,7 +30,7 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Result;
-import test.MainTest;
+import ucl.physiol.neuroconstruct.test.MainTest;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
 import static org.junit.Assert.*;
 

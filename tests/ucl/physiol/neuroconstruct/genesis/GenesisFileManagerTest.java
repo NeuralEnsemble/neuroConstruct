@@ -31,7 +31,7 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Result;
-import test.MainTest;
+import ucl.physiol.neuroconstruct.test.MainTest;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.GenesisCompartmentalisation;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.simulation.*;

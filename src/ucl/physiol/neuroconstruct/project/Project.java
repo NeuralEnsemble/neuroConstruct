@@ -29,6 +29,7 @@ package ucl.physiol.neuroconstruct.project;
 import java.beans.*;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
 
 import javax.swing.event.*;
 
@@ -1703,6 +1704,23 @@ public class Project implements TableModelListener
     public String getProjectName()
     {
         return basicProjectInfo.getProjectName();
+    }
+
+    @Override
+    public String toString()
+    {
+        String info;
+        try 
+        {
+            info = "Project: " + getProjectName() + " with main file: " + getProjectFullFileName();
+        }
+        catch (NoProjectLoadedException ex) 
+        {
+            info = "Project which has not been saved yet!";
+        }
+
+        return info;
+
     }
 
     public void setProjectName(String projectName)

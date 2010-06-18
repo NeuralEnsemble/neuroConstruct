@@ -33,7 +33,7 @@ import javax.vecmath.Point3f;
 import org.junit.*;
 import org.junit.Test;
 import org.junit.runner.Result;
-import test.MainTest;
+import ucl.physiol.neuroconstruct.test.MainTest;
 import ucl.physiol.neuroconstruct.cell.Cell;
 import ucl.physiol.neuroconstruct.cell.Section;
 import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;

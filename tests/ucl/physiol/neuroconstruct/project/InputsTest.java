@@ -33,7 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
-import test.MainTest;
+import ucl.physiol.neuroconstruct.test.MainTest;
 import ucl.physiol.neuroconstruct.neuron.*;
 import ucl.physiol.neuroconstruct.nmodleditor.processes.ProcessManager;
 import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrainExtInstanceProps;

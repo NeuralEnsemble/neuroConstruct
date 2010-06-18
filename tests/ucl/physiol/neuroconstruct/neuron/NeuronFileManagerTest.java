@@ -32,7 +32,7 @@ import java.util.Vector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Result;
-import test.MainTest;
+import ucl.physiol.neuroconstruct.test.MainTest;
 
 import ucl.physiol.neuroconstruct.gui.ValidityStatus;
 import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings;

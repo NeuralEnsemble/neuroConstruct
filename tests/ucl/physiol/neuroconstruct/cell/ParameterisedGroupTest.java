@@ -31,7 +31,7 @@ import java.io.*;
 import javax.vecmath.Point3f;
 import org.junit.*;
 import org.junit.runner.Result;
-import test.MainTest;
+import ucl.physiol.neuroconstruct.test.MainTest;
 import static org.junit.Assert.*;
 import ucl.physiol.neuroconstruct.cell.ParameterisedGroup.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.GenesisCompartmentalisation;

@@ -24,7 +24,7 @@
  *
  */
 
-package test;
+package ucl.physiol.neuroconstruct.test;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -32,11 +32,13 @@ import java.util.Date;
 import junit.textui.TestRunner;
 import org.junit.runner.*;
 import org.junit.runner.notification.*;
-import ucl.physiol.neuroconstruct.project.ProjectStructure;
 
 /**
  *
- * @author padraig
+ * Test core functionality of neuroConstruct
+ *
+ * @author Padraig Gleeson
+ * 
  */
 public class MainTest 
 {

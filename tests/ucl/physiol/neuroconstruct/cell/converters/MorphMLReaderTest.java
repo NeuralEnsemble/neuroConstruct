@@ -39,7 +39,7 @@ import org.junit.Test;
 import org.junit.runner.Result;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
-import test.MainTest;
+import ucl.physiol.neuroconstruct.test.MainTest;
 import ucl.physiol.neuroconstruct.cell.Cell;
 import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants;

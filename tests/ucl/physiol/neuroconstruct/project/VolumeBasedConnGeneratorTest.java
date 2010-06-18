@@ -31,7 +31,7 @@ import java.util.*;
 import org.junit.*;
 import org.junit.Test;
 import org.junit.runner.Result;
-import test.MainTest;
+import ucl.physiol.neuroconstruct.test.MainTest;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.SingleSynapticConnection;
 import ucl.physiol.neuroconstruct.project.packing.CellPackingException;
 import ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter;

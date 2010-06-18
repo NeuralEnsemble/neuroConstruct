@@ -40,7 +40,7 @@ import static org.junit.Assume.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Result;
-import test.MainTest;
+import ucl.physiol.neuroconstruct.test.MainTest;
 import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelperTest;
 import static org.junit.Assert.*;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.Hdf5Exception;

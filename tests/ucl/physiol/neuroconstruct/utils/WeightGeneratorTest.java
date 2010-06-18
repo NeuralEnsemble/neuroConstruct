@@ -30,7 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
-import test.MainTest;
+import ucl.physiol.neuroconstruct.test.MainTest;
 import static org.junit.Assert.*;
 import ucl.physiol.neuroconstruct.utils.equation.EquationException;
 

@@ -30,7 +30,7 @@ package ucl.physiol.neuroconstruct.utils.equation;
 import java.util.ArrayList;
 import org.junit.*;
 import org.junit.runner.Result;
-import test.MainTest;
+import ucl.physiol.neuroconstruct.test.MainTest;
 import static org.junit.Assert.*;
 
 /**
