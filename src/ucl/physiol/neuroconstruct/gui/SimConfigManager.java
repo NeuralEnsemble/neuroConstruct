@@ -383,6 +383,8 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         {
             String name = (String)plots.elementAt(i);
             JCheckBox newCB = new JCheckBox(name);
+
+            newCB.setFont(newCB.getFont().deriveFont(6));
             jPanelPlots.add(newCB);
             plotCheckBoxes.put(name, newCB);
 
@@ -843,7 +845,8 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
     {
         try
         {
-            Project proj = Project.loadProject(new File("examples/Ex5-Networks/Ex5-Networks.neuro.xml"), null);
+            //Project proj = Project.loadProject(new File("examples/Ex5-Networks/Ex5-Networks.neuro.xml"), null);
+            Project proj = Project.loadProject(new File("nCmodels/Thalamocortical/Thalamocortical.ncx"), null);
 
             SimConfigManager frame = new SimConfigManager(proj.simConfigInfo, null, proj);
 
