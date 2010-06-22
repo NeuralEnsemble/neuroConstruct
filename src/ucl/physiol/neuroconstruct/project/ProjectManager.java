@@ -1863,6 +1863,17 @@ public class ProjectManager implements GenerationReport
                         if (f != null && f.exists())
                         {
                             if (verbose) report.addTaggedElement("Implementation file: " + f.getAbsolutePath() + " found", "p");
+                            
+                            String prefNeuroML = GeneralProperties.getLatestNeuroMLVersionString();
+
+                            if(f.getName().indexOf(prefNeuroML)<=0)
+                            {
+                                report.addTaggedElement("Warning, implementation file: "+f.getAbsolutePath()+" does not seem to be of your preferred " +
+                                        "NeuroML format: "+prefNeuroML+". This can be rectified by the Update mapping files button on the Cell Mechanisms tab",
+                                                        "font color=\""+ValidityStatus.VALIDATION_COLOUR_WARN+"\"", "p");
+
+                                cellMechValidity = ValidityStatus.combineValidities(cellMechValidity, ValidityStatus.VALIDATION_WARN);
+                            }
                         }
                         else
                         {

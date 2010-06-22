@@ -144,14 +144,6 @@ public class MainTest
     
     public static void checkResults(Result r)
     {
-        System.out.println("");
-        System.out.println("**********************************************");
-        System.out.println("      Number of tests:      "+r.getRunCount());
-        System.out.println("      Number of ignores:    "+r.getIgnoreCount());
-        System.out.println("      Number of failures:   "+r.getFailures().size());
-        System.out.println("      Number of successes:  "+(r.getRunCount() - r.getFailures().size() - r.getIgnoreCount()));
-        System.out.println("**********************************************");
-        System.out.println("");
 
         if (!r.wasSuccessful())
         {
@@ -161,10 +153,18 @@ public class MainTest
                 System.out.println("Exception: "+f.getMessage());
                 System.out.println("Trace: "+f.getTrace());
             }
-
-            if (!r.wasSuccessful()) System.exit(-1);
         }
-        else
+
+        System.out.println("");
+        System.out.println("**********************************************");
+        System.out.println("      Number of tests:      "+r.getRunCount());
+        System.out.println("      Number of ignores:    "+r.getIgnoreCount());
+        System.out.println("      Number of failures:   "+r.getFailures().size());
+        System.out.println("      Number of successes:  "+(r.getRunCount() - r.getFailures().size() - r.getIgnoreCount()));
+        System.out.println("**********************************************");
+        System.out.println("");
+
+        if (r.wasSuccessful())
         {
             System.out.println("");
             System.out.println("*******************************");

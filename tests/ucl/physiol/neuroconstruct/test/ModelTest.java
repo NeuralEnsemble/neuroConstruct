@@ -27,13 +27,9 @@
 package ucl.physiol.neuroconstruct.test;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import junit.textui.TestRunner;
 import org.junit.Test;
 import org.junit.runner.*;
-import org.junit.runner.notification.*;
 import ucl.physiol.neuroconstruct.gui.ValidityStatus;
 import ucl.physiol.neuroconstruct.project.Project;
 import ucl.physiol.neuroconstruct.project.ProjectFileParsingException;
@@ -42,7 +38,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * Test core behaviour of neuroConstruct
+ * Test core behaviour of neuroConstruct example models
  *
  * @author Padraig Gleeson
  * 

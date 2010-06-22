@@ -14011,6 +14011,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
         
         SimpleDateFormat formatter = new SimpleDateFormat("H:mm:ss, EEEE MMMM d, yyyy");
+
+        boolean cleanup = GuiUtils.showYesNoMessage(logger, "Would you like to also clean up any old XSL mapping files found which are not being used by the " +
+                "Cell Mechanism (e.g. from a previous version of NeuroML)?", this);
         
         
         for (int row: selectedRows)
@@ -14169,7 +14172,35 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                         
                     }
                 }
+
+                if (cleanup)
+                {
+                    ArrayList<String> filesToKeep = new ArrayList<String>();
+                    filesToKeep.add(implFile.getName());
+                    filesToKeep.add(CellMechanismHelper.PROPERTIES_FILENAME);
+                    for (SimulatorMapping map: cmlMech.getSimMappings())
+                    {
+                        String simEnv = map.getSimEnv();
+                        File xsl = new File (implFile.getParent(), map.getMappingFile());
+                        filesToKeep.add(xsl.getName());
+                    }
+                    for(File f: implFile.getParentFile().listFiles())
+                    {
+                        if (!filesToKeep.contains(f.getName()) && !f.getName().startsWith(".") && !GeneralUtils.isVersionControlDir(f.getName()))
+                        {
+                             logger.logComment("Deleting: "+ f.getAbsolutePath());
+                             f.delete();
+                        }
+                    }
+                }
             }
+        }
+
+
+        boolean save = GuiUtils.showYesNoMessage(logger, "It's best to save the project immediately to make sure the changes are saved. Save now?", this);
+        if (save)
+        {
+            doSave();
         }
         
     }
