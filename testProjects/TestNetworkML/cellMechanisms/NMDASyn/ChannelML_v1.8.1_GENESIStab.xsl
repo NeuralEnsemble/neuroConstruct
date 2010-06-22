@@ -37,7 +37,7 @@
 
 <!-- The unit system (SI or Physiological) we wish to convert into (Note changing this value in this file
      will create a GENESIS script in different units) -->
-<xsl:variable name="targetUnitSystem">SI Units</xsl:variable>
+<xsl:variable name="targetUnitSystem">Physiological Units</xsl:variable>
 
 <!--Main template-->
 
@@ -97,7 +97,19 @@ select="$targetUnitSystem"/>
             <xsl:otherwise>no</xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
-    
+
+    <!-- A special case where there is only caconc dependence, no v dependence, and so a tab2dchannel
+    doesn't need to be used-->
+    <xsl:variable name="voltConcDependenceSimple">
+        <xsl:choose>
+            <xsl:when test="count(//cml:conc_dependence) = 0 or
+                            contains(cml:current_voltage_relation/cml:gate[1]/cml:transition[1]/@expr, 'v') or
+                            contains(cml:current_voltage_relation/cml:gate[1]/cml:transition[2]/@expr, 'v') or
+                            count(cml:current_voltage_relation/cml:gate) &gt; 1">no</xsl:when>
+            <xsl:otherwise>yes</xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+
     <!-- Whether there is a voltage and concentration dependence in the channel-->
     <xsl:variable name="postV1_7_3format">
         <xsl:choose>
@@ -149,6 +161,9 @@ function make_<xsl:value-of select="@name"/>
             <xsl:when test="$passiveChannel = 'yes'">
         create leakage {chanpath}
             </xsl:when>
+            <xsl:when test="$voltConcDependenceSimple = 'yes'">
+        create tabchannel {chanpath}
+            </xsl:when>
             <xsl:when test="$voltConcDependence = 'yes'">
         create tab2Dchannel {chanpath}
             </xsl:when>
@@ -170,14 +185,16 @@ function make_<xsl:value-of select="@name"/>
             Zpower          <xsl:value-of select="cml:current_voltage_relation/cml:ohmic/cml:conductance/cml:gate[3]/@power"/>
             </xsl:if><xsl:if test="count(cml:current_voltage_relation/cml:ohmic/cml:conductance/cml:conc_factor) &gt; 0"> \
             Zpower          1
-            </xsl:if><xsl:if test="count(cml:current_voltage_relation/cml:gate[1]) &gt; 0"> \
+            </xsl:if><xsl:if test="count(cml:current_voltage_relation/cml:gate[1]) &gt; 0 and $voltConcDependenceSimple = 'no'"> \
             Xpower          <xsl:value-of select="cml:current_voltage_relation/cml:gate[1]/@instances"/>
             </xsl:if><xsl:if test="count(cml:current_voltage_relation/cml:gate[2]) &gt; 0"> \
             Ypower          <xsl:value-of select="cml:current_voltage_relation/cml:gate[2]/@instances"/>
             </xsl:if><xsl:if test="count(cml:current_voltage_relation/cml:gate[3]) &gt; 0"> \
             Zpower          <xsl:value-of select="cml:current_voltage_relation/cml:gate[3]/@instances"/>
-            </xsl:if><xsl:if test="count(cml:current_voltage_relation/cml:conc_factor) &gt; 0"> \
+            </xsl:if><xsl:if test="count(cml:current_voltage_relation/cml:conc_factor) &gt; 0 and $voltConcDependenceSimple = 'no'"> \
             Zpower          1
+            </xsl:if><xsl:if test="$voltConcDependenceSimple = 'yes'"> \
+            Zpower          <xsl:value-of select="cml:current_voltage_relation/cml:gate[1]/@instances"/>
             </xsl:if>
             <xsl:text>
         </xsl:text>
@@ -335,11 +352,14 @@ function init_<xsl:value-of select="@name"/>(chanpath)
 
         float tab_divs = <xsl:value-of select="$table_divisions"/>
 
+
+            <xsl:if test="$voltConcDependenceSimple = 'no'">
         float v_min = <xsl:value-of select="$min_v"/>
 
         float v_max = <xsl:value-of select="$max_v"/>
 
         float v, dv, i
+            </xsl:if>
         </xsl:if>
 
         <xsl:for-each select='cml:current_voltage_relation/cml:ohmic/cml:conductance/cml:gate |
@@ -352,9 +372,11 @@ function init_<xsl:value-of select="@name"/>(chanpath)
                 <xsl:if test='position()=3'>Z</xsl:if>
             </xsl:variable>
 
+            <xsl:if test="$voltConcDependenceSimple = 'no'">
         // Creating table for gate <xsl:value-of select="$gateName"/>, using name <xsl:value-of select="$gateRef"/> for it here
 
         float dv = ({v_max} - {v_min})/{tab_divs}
+            </xsl:if>
 
         <xsl:for-each select="../../../../cml:hh_gate[@state=$gateName] | 
                               ../cml:gate[@name=$gateName]">
@@ -379,10 +401,19 @@ function init_<xsl:value-of select="@name"/>(chanpath)
         float <xsl:value-of select="@variable_name"/> = {conc_min}
 
         <!-- Impl here may not be generic enough for all cases -->
+
+            <xsl:if test="$voltConcDependenceSimple = 'no'">
         // Setting up the volt/conc dependent 2D table
         setfield {chanpath}  <xsl:value-of select="$gateRef"/>index {VOLT_C1_INDEX} // assumes all gates are volt/conc dep
+            </xsl:if>
 
+            <xsl:if test="$voltConcDependenceSimple = 'no'">
         call {chanpath} TABCREATE <xsl:value-of select="$gateRef"/> {tab_divs} {v_min} {v_max} {tab_divs} {conc_min} {conc_max}
+            </xsl:if>
+
+            <xsl:if test="$voltConcDependenceSimple = 'yes'">
+        call {chanpath} TABCREATE Z {tab_divs} {conc_min} {conc_max}
+            </xsl:if>
 
         for (c = 0; c &lt;= ({tab_divs}); c = c + 1)
                     </xsl:for-each>
@@ -392,6 +423,7 @@ function init_<xsl:value-of select="@name"/>(chanpath)
                 </xsl:otherwise>
             </xsl:choose>
 
+            <xsl:if test="$voltConcDependenceSimple = 'no'">
         v = {v_min}
 
             <xsl:for-each select="../cml:current_voltage_relation/cml:ohmic/cml:conductance/cml:rate_adjustments/cml:offset |
@@ -405,6 +437,7 @@ function init_<xsl:value-of select="@name"/>(chanpath)
             </xsl:for-each>
 
         for (i = 0; i &lt;= ({tab_divs}); i = i + 1)
+            </xsl:if>
         <xsl:if test="$postV1_7_3format = 'no'">          
             <xsl:for-each select='cml:transition/*/*'>
                 <xsl:if test="name()!='conc_dependence' and name()!='initialisation'">
@@ -783,6 +816,7 @@ function init_<xsl:value-of select="@name"/>(chanpath)
 
             <xsl:variable name='tableEntry'>
                 <xsl:choose>
+                    <xsl:when test="$voltConcDependenceSimple = 'yes'">table[{c}]</xsl:when>
                     <xsl:when test="$voltConcDependence = 'no'">table[{i}]</xsl:when>
                     <xsl:when test="$voltConcDependence = 'yes'">table[{i}][{c}]</xsl:when>
                 </xsl:choose>
@@ -803,8 +837,18 @@ function init_<xsl:value-of select="@name"/>(chanpath)
             echo "Tab <xsl:value-of select="$gateRef"/>: conc: " {<xsl:value-of select="../../cml:conc_dependence/@variable_name"/>}
                 </xsl:if>
             </xsl:if>
+
+                <xsl:choose>
+                    <xsl:when test="$voltConcDependenceSimple = 'no'">
             setfield {chanpath} <xsl:value-of select="$gateRef"/>_A-><xsl:value-of select="$tableEntry"/> {temp_adj_<xsl:value-of select="$gateName"/> * alpha}
             setfield {chanpath} <xsl:value-of select="$gateRef"/>_B-><xsl:value-of select="$tableEntry"/> {temp_adj_<xsl:value-of select="$gateName"/> * (alpha + beta)}
+                    </xsl:when>
+                    <xsl:otherwise>
+            setfield {chanpath} Z_A-><xsl:value-of select="$tableEntry"/> {temp_adj_<xsl:value-of select="$gateName"/> * alpha}
+            setfield {chanpath} Z_B-><xsl:value-of select="$tableEntry"/> {temp_adj_<xsl:value-of select="$gateName"/> * (alpha + beta)}
+                    </xsl:otherwise>
+                </xsl:choose>
+
                 </xsl:when>
                 <xsl:otherwise>
 
@@ -848,9 +892,11 @@ function init_<xsl:value-of select="@name"/>(chanpath)
             </xsl:choose>
         </xsl:if>
 
+            <xsl:if test="$voltConcDependenceSimple = 'no'">
             v = v + dv
 
         end // end of for (i = 0; i &lt;= ({tab_divs}); i = i + 1)
+            </xsl:if>
 
         <xsl:if test="$voltConcDependence = 'yes'">
             <xsl:choose>
@@ -867,14 +913,18 @@ function init_<xsl:value-of select="@name"/>(chanpath)
         end // end of for (c = 0; c &lt;= ({tab_divs}); c = c + 1)
                 </xsl:if>
 
-      <!--      <xsl:if test='count(cml:transition/cml:voltage_gate/cml:tau | cml:transition/cml:voltage_conc_gate/cml:tau) &gt; 0 or
-                      count(cml:transition/cml:voltage_gate/cml:inf | cml:transition/cml:voltage_conc_gate/cml:inf) &gt; 0'>
-        // Using the tau, inf form of rate equations, so tweaking...
-        tweaktau {chanpath} <xsl:value-of select="$gateRef"/>
-            </xsl:if>-->
 
+
+
+                <xsl:choose>
+                    <xsl:when test="$voltConcDependenceSimple = 'no'">
         setfield {chanpath} <xsl:value-of select="$gateRef"/>_A->calc_mode 1 <xsl:value-of select="$gateRef"/>_B->calc_mode 1
-
+                    </xsl:when>
+                    <xsl:otherwise>
+        setfield {chanpath} Z_conc 1
+        setfield {chanpath} Z_A->calc_mode 1 Z_B->calc_mode 1
+                    </xsl:otherwise>
+                </xsl:choose>
 
         </xsl:for-each> <!-- <xsl:for-each select="cml:hh_gate/[@state=$gateName]"> -->
 
@@ -1086,19 +1136,36 @@ end
         
 function connectGapJunction_<xsl:value-of select="@name"/>(compartmentA, compartmentB, weight)
    
-    // Note: current implementation has difficulties with hsolve. Use setmethod 0, and a small timestep
+    // Note: implementation based on suggestion of Reinoud Maex
     
     str compartmentA
     str compartmentB
     float conductance = <xsl:call-template name="convert">
               <xsl:with-param name="value"><xsl:value-of select="cml:electrical_syn/@conductance"/></xsl:with-param>
               <xsl:with-param name="quantity">Conductance</xsl:with-param></xsl:call-template>
-              
-    float resistance = {1/{conductance*weight}}
 
-    addmsg {compartmentA} {compartmentB} RAXIAL {resistance} Vm
-    
-    addmsg {compartmentB} {compartmentA} RAXIAL {resistance} Vm 
+    str diffampname = {strcat "diffamp_" {rand 0 99999999}}  // to ensure a different diffamp name for each gap junc on this comp
+
+    create diffamp {compartmentA}/{diffampname}
+
+    addmsg {compartmentA} {compartmentA}/{diffampname} PLUS Vm
+    addmsg {compartmentB} {compartmentA}/{diffampname} MINUS Vm
+
+    setfield {compartmentA}/{diffampname} gain {conductance * weight}
+    setfield {compartmentA}/{diffampname}  saturation 10e8
+
+    addmsg {compartmentA}/{diffampname} {compartmentB} INJECT output
+
+
+    create diffamp {compartmentB}/{diffampname}
+
+    addmsg {compartmentB} {compartmentB}/{diffampname} PLUS Vm
+    addmsg {compartmentA} {compartmentB}/{diffampname} MINUS Vm
+
+    setfield {compartmentB}/{diffampname} gain {conductance * weight}
+    setfield {compartmentB}/{diffampname}  saturation 10e8
+
+    addmsg {compartmentB}/{diffampname} {compartmentA} INJECT output
     
 end
 
@@ -1131,9 +1198,10 @@ function makechannel_<xsl:value-of select="@name"/>(compartment, name)
               <xsl:with-param name="value"><xsl:value-of select="cml:doub_exp_syn/@max_conductance"/></xsl:with-param>
               <xsl:with-param name="quantity">Conductance</xsl:with-param></xsl:call-template>
 
-            float tau1 = {getfield {compartment}/{name} tau1}
-            if (tau1 == 0)
-                setfield {compartment}/{name} tau1 1e-9  
+            float tau2 = {getfield {compartment}/{name} tau2}
+            
+            if (tau2 == 0)  //  Single exponential synapse
+                setfield {compartment}/{name} tau2 1e-9  
             end
             
             addmsg   {compartment}/{name}   {compartment} CHANNEL Gk Ek
@@ -1227,7 +1295,7 @@ end
                 <xsl:when test="$quantity = 'Voltage'"><xsl:value-of select="number($value div 1000)"/></xsl:when>
                 <xsl:when test="$quantity = 'InvVoltage'"><xsl:value-of select="number($value * 1000)"/></xsl:when>
                 <xsl:when test="$quantity = 'Time'"><xsl:value-of select="number($value div 1000)"/></xsl:when>
-                <xsl:when test="$quantity = 'Length'"><xsl:value-of select="number($value * 1000000)"/></xsl:when>
+                <xsl:when test="$quantity = 'Length'"><xsl:value-of select="number($value div 100)"/></xsl:when> <!--Physiol len is cm!-->
                 <xsl:when test="$quantity = 'InvTime'"><xsl:value-of select="number($value * 1000)"/></xsl:when>
                 <xsl:when test="$quantity = 'Concentration'"><xsl:value-of select="number($value * 1000000)"/></xsl:when>
                 <xsl:when test="$quantity = 'InvConcentration'"><xsl:value-of select="number($value div 1000000)"/></xsl:when>
@@ -1244,7 +1312,7 @@ end
                 <xsl:when test="$quantity = 'Voltage'"><xsl:value-of select="number($value * 1000)"/></xsl:when>
                 <xsl:when test="$quantity = 'InvVoltage'"><xsl:value-of select="number($value div 1000)"/></xsl:when>
                 <xsl:when test="$quantity = 'Time'"><xsl:value-of select="number($value * 1000)"/></xsl:when>
-                <xsl:when test="$quantity = 'Length'"><xsl:value-of select="number($value div 1000000)"/></xsl:when>
+                <xsl:when test="$quantity = 'Length'"><xsl:value-of select="number($value * 100)"/></xsl:when>  <!--Physiol len is cm!-->
                 <xsl:when test="$quantity = 'InvTime'"><xsl:value-of select="number($value div 1000)"/></xsl:when>
                 <xsl:when test="$quantity = 'Concentration'"><xsl:value-of select="number($value div 1000000)"/></xsl:when>
                 <xsl:when test="$quantity = 'InvConcentration'"><xsl:value-of select="number($value * 1000000)"/></xsl:when>

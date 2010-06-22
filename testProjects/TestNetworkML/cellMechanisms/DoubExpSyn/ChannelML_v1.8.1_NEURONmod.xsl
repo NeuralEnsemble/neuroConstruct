@@ -391,12 +391,18 @@ INITIAL {
 NET_RECEIVE(w) {
 
     if (flag == 1) {
-        net_event(t)
-        net_send(t_refrac, 2)
         v = v_reset
         g = g_refrac
+        <xsl:if test="$debug = 1">
+        printf("+++++++ Spiking cell at: %g, v: %g\n", t, v)
+        </xsl:if>
+        net_event(t)
+        net_send(t_refrac, 2)
     }else if (flag == 2) {
         g = 0
+        <xsl:if test="$debug = 1">
+        printf("+++++++ Finished refract at: %g, v: %g\n", t, v)
+        </xsl:if>
     }else if (flag == 3) {
         WATCH (v > thresh) 1
     }	
@@ -433,21 +439,20 @@ INITIAL {
     
     <xsl:for-each select="cml:current_voltage_relation/cml:ohmic/cml:conductance/cml:gate">
     <xsl:variable name="stateName" select="cml:state/@name"/>
-    <xsl:value-of select="$stateName"/> = <xsl:value-of select="$stateName"/>inf<xsl:text>
+    <xsl:value-of select="$stateName"/> = <xsl:value-of select="$stateName"/>inf
         <xsl:if test="$forceCorrectInit='0' and count(../../../../cml:hh_gate[@state=$stateName]/cml:transition/cml:voltage_gate/cml:initialisation) &gt; 0">
             <xsl:value-of select="$stateName"/> = <xsl:value-of select="../../../../cml:hh_gate[@state=$stateName]/cml:transition/cml:voltage_gate/cml:initialisation/@value"/>: Hard coded initialisation!!
         </xsl:if>        
         <xsl:if test="$forceCorrectInit='0' and count(../../../../cml:hh_gate[@state=$stateName]/cml:transition/cml:voltage_conc_gate/cml:initialisation) &gt; 0">
             <xsl:value-of select="$stateName"/> = <xsl:value-of select="../../../../cml:hh_gate[@state=$stateName]/cml:transition/cml:voltage_conc_gate/cml:initialisation/@value"/>: Hard coded initialisation!!
         </xsl:if>
-    </xsl:text></xsl:for-each>
+    </xsl:for-each>
     <xsl:for-each select="cml:current_voltage_relation/cml:gate/cml:open_state">
     <xsl:variable name="stateName" select="@id"/>
-    <xsl:value-of select="$stateName"/> = <xsl:value-of select="$stateName"/>inf<xsl:text>
+    <xsl:value-of select="$stateName"/> = <xsl:value-of select="$stateName"/>inf
         <xsl:if test="$forceCorrectInit='0' and count(../cml:initialisation) &gt; 0">
             <xsl:value-of select="$stateName"/> = <xsl:value-of select="../cml:initialisation/@value"/>: Hard coded initialisation!!
-        </xsl:if>   
-    </xsl:text></xsl:for-each>
+        </xsl:if></xsl:for-each>
     
 }
     
@@ -1611,8 +1616,8 @@ INITIAL {
     M = 0
     P = 0
     deltaw = 0
-    t_post_spike = -1
-    t_pre_spike = -1
+    t_post_spike = 0
+    t_pre_spike = 0
     stdp_weight_factor = 1
     </xsl:if>
 }
@@ -1626,18 +1631,19 @@ BREAKPOINT {
     <xsl:otherwise>g = gmax * (B - A)</xsl:otherwise>
     </xsl:choose>
     i = g*(v - e)
-    
+    <!--
     <xsl:if test="count(cml:stdp_syn)>0 ">
-    if (in_post_spike == 0 &amp;&amp; v > post_spike_thresh) {
     
-        <xsl:if test="$debug = 1">printf("\n-------------------------------------------------------------\n")
-        printf("-- POST SPIKE, t: %g, P: %g, M: %g\n", t, P, M)
+    if (in_post_spike == 0 &amp;&amp; v >= post_spike_thresh) {
+        printf(" t: %g, v: %g\n", t, v)
+        <xsl:if test="$debug = 1">printf("\n...............\n")
+        printf(" POST SPIKE, t: %g, P: %g, M: %g, v: %g, in_post_spike: %g\n", t, P, M, v, in_post_spike)
         
         if (t_post_spike >= 0) {
-            printf("-- Last post spike ago: %g\n", t - t_post_spike)
+            printf(".. Last post spike ago: %g\n", t - t_post_spike)
         }    
         if (t_pre_spike >= 0) {
-            printf("-- Last pre spike ago: %g\n", t - t_pre_spike)
+            printf(".. Last pre spike ago: %g\n", t - t_pre_spike)
         }</xsl:if>
         
         M = M * exp((t_post_spike-t)/tau_ltd) - del_weight_ltd
@@ -1648,17 +1654,21 @@ BREAKPOINT {
         
         stdp_weight_factor = stdp_weight_factor + deltaw
         <xsl:if test="$debug = 1">
-        printf("-- stdp_weight_factor: %g, deltaw: %g, P: %g, M: %g\n", stdp_weight_factor, deltaw, P, M)
+        printf(".. stdp_weight_factor: %g, deltaw: %g, P: %g, M: %g\n", stdp_weight_factor, deltaw, P, M)
         </xsl:if>
         
         t_post_spike = t
         in_post_spike = 1
     }
-    
-    if (v &lt; post_spike_thresh) {
+
+    if (in_post_spike == 1 &amp;&amp; v &lt; post_spike_thresh &amp;&amp; t > (t_post_spike+0.1)) { : TODO: check need for this 0.1
+        <xsl:if test="$debug = 1">
+        printf(".. in_post_spike no longer at :%g, v: %g\n", t, v)
+        </xsl:if>
         in_post_spike = 0
     }
-    </xsl:if>
+    
+    </xsl:if>-->
 }
 
 
@@ -1707,7 +1717,10 @@ NET_RECEIVE(weight (uS)<xsl:if test="count(cml:fac_dep_syn)>0 ">, U, R, tsyn (ms
 
     </xsl:if>
 
-    <xsl:if test="$debug = 1">printf("-- PRE SPIKE at time: %f!\n", t)
+    <xsl:if test="$debug = 1">printf("------------------------------------------------------------\n")
+    </xsl:if>
+    
+    <xsl:if test="$debug = 1">printf("-- SPIKE at time: %f (%g), with weight %g!\n", t, t, weight)
     </xsl:if>
     
     <xsl:if test="count(cml:stdp_syn)>0 ">
@@ -1719,18 +1732,36 @@ NET_RECEIVE(weight (uS)<xsl:if test="count(cml:fac_dep_syn)>0 ">, U, R, tsyn (ms
         printf("-- Last pre spike ago: %g\n", t-t_pre_spike)
     }</xsl:if>
     
-    P = P*exp((t_pre_spike-t)/tau_ltp) + del_weight_ltp
+    if (weight >= 0) {               : this is a pre-synaptic spike
+    
+        P = P*exp((t_pre_spike-t)/tau_ltp) + del_weight_ltp
                         
-    deltaw = wmax * M * exp((t_post_spike - t)/tau_ltd)
+        deltaw = wmax * M * exp((t_post_spike - t)/tau_ltd)
+        
+        t_pre_spike = t
+    
+    } else {                : this is a post-synaptic spike
+    
+        M = M*exp((t_post_spike-t)/tau_ltd) - del_weight_ltd
+        
+        deltaw = wmax * P * exp(-(t - t_pre_spike)/tau_ltp)
+        
+        t_post_spike = t
+        
+    }
+    
+    
+    
 
     stdp_weight_factor = stdp_weight_factor + deltaw
     
     if (stdp_weight_factor > wmax) { stdp_weight_factor = wmax}
     if (stdp_weight_factor &lt; 0)    { stdp_weight_factor = 0}
 
-    t_pre_spike = t
     
     printf("pg-- stdp_weight_factor: %g, deltaw: %g, P: %g, M: %g\n", stdp_weight_factor,deltaw, P, M)
+    
+    if (weight >= 0) {               : this is a pre-synaptic spike
     </xsl:if>
     
     
@@ -1757,6 +1788,9 @@ NET_RECEIVE(weight (uS)<xsl:if test="count(cml:fac_dep_syn)>0 ">, U, R, tsyn (ms
     
     <xsl:if test="count(cml:fac_dep_syn)>0 ">
     tsyn = t
+    </xsl:if>
+    <xsl:if test="count(cml:stdp_syn)>0 ">
+    }
     </xsl:if>
     
 }

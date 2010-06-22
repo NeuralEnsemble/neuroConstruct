@@ -228,6 +228,7 @@ class SimulationManager():
 
 
     allRunningSims = []
+    allRecentlyFinishedSims = []
     allFinishedSims = []
 
     def __init__(self,
@@ -241,14 +242,15 @@ class SimulationManager():
         self.numConcurrentSims = numConcurrentSims
         self.verbose = verbose
 
-        self.printver("Starting Simulation Manager for project: "+self.project.getProjectFullFileName())
+        self.printver("Starting Simulation Manager for project: "+self.project.getProjectFullFileName(), True)
         self.printver("This will run up to %i simulations concurrently"%numConcurrentSims)
 
 
 
-    def printver(self, message):
-        if self.verbose:
+    def printver(self, message, forcePrint=False):
+        if self.verbose or forcePrint:
             print "--- SimMgr:       "+ str(message)
+
 
 
 
@@ -262,13 +264,16 @@ class SimulationManager():
 
                 if (timeFile.exists()):
                         self.allFinishedSims.append(sim)
+                        self.allRecentlyFinishedSims.append(sim)
                         self.allRunningSims.remove(sim)
                 else:
                     self.printver("Checking file: "+timeFile2.getCanonicalPath() +", exists: "+ str(timeFile2.exists()))
                     if (timeFile2.exists()):
                         self.allFinishedSims.append(sim)
+                        self.allRecentlyFinishedSims.append(sim)
                         self.allRunningSims.remove(sim)
 
+        self.printver("allRecentlyFinishedSims: "+str(self.allRecentlyFinishedSims))
         self.printver("allFinishedSims: "+str(self.allFinishedSims))
         self.printver("allRunningSims: "+str(self.allRunningSims))
 
@@ -294,7 +299,7 @@ class SimulationManager():
 
         plottedSims = []
 
-        for simRef in self.allFinishedSims:
+        for simRef in self.allRecentlyFinishedSims:
 
             simDir = File(self.project.getProjectMainDirectory(), "/simulations/"+simRef)
             timeFile = File(simDir, "time.dat")
@@ -310,22 +315,6 @@ class SimulationManager():
                     simData.initialise()
                     times = simData.getAllTimes()
 
-                    if analyseSims:
-
-
-                        '''
-                        volts = simData.getVoltageAtAllTimes(cellSegmentRef)
-
-                        if verbose: print "Got "+str(len(volts))+" data points on cell seg ref: "+cellSegmentRef
-
-                        analyseStartTime = 0
-                        analyseStopTime = simConfig.getSimDuration()
-                        analyseThreshold = -20 # mV
-
-                        spikeTimes = SpikeAnalyser.getSpikeTimes(volts, times, analyseThreshold, analyseStartTime, analyseStopTime)
-
-                        print "Spike times in %s for sim %s: %s"%(cellSegmentRef, simRef, str(spikeTimes))
-                        '''
                     if plotSims:
 
                         simConfigName = simData.getSimulationProperties().getProperty("Sim Config")
@@ -347,15 +336,28 @@ class SimulationManager():
                                 plotFrame.addDataSet(ds)
 
 
+                                if analyseSims:
+
+                                    volts = ds.getYValues()
+
+                                    analyseStartTime = 0
+                                    analyseStopTime = times[-1]
+                                    analyseThreshold = 0 # mV
+
+                                    spikeTimes = SpikeAnalyser.getSpikeTimes(volts, times, analyseThreshold, analyseStartTime, analyseStopTime)
+
+                                    self.printver("Spike times in %s for sim %s: %s"%(dataStore.getCellSegRef(), simRef, str(spikeTimes)), True)
+
+
                         plottedSims.append(simRef)
 
 
                 except:
-                    self.printver("Error analysing simulation data from: %s"%simDir.getCanonicalPath())
-                    self.printver(sys.exc_info())
+                    self.printver("Error analysing simulation data from: %s"%simDir.getCanonicalPath(), True)
+                    self.printver(sys.exc_info(), True)
 
         for simRef in plottedSims:
-            self.allFinishedSims.remove(simRef)
+            self.allRecentlyFinishedSims.remove(simRef)
 
 
         if waitForAllSimsToFinish and len(self.allRunningSims)>0:
@@ -369,6 +371,80 @@ class SimulationManager():
                             plotSims,
                             analyseSims,
                             plotVoltageOnly)
+
+
+    def checkSims(self,
+                  spikeTimesToCheck = {},
+                  spikeTimeAccuracy = 0.01):
+
+        self.updateSimsRunning()
+
+        self.printver( "Trying to check simulations: %s against: %s" % (str(self.allFinishedSims), str(spikeTimesToCheck)))
+
+        report = ""
+        numPassed = 0
+        numFailed = 0
+
+        for simRef in self.allFinishedSims:
+
+            simDir = File(self.project.getProjectMainDirectory(), "/simulations/"+simRef)
+            try:
+                simData = SimulationData(simDir)
+                simData.initialise()
+                times = simData.getAllTimes()
+
+                simConfigName = simData.getSimulationProperties().getProperty("Sim Config")
+
+                if simConfigName.find('(')>=0:
+                    simConfigName = simConfigName[0:simConfigName.find('(')]
+
+                for dataStore in simData.getAllLoadedDataStores():
+
+                    ds = simData.getDataSet(dataStore.getCellSegRef(), dataStore.getVariable(), False)
+
+                    self.printver("Found data store: "+str(dataStore))
+
+                    if dataStore.getVariable() == SimPlot.VOLTAGE:
+
+                        if spikeTimesToCheck is not None:
+
+                            volts = ds.getYValues()
+
+                            analyseStartTime = 0
+                            analyseStopTime = times[-1]
+                            analyseThreshold = 0 # mV
+
+                            spikeTimes = SpikeAnalyser.getSpikeTimes(volts, times, analyseThreshold, analyseStartTime, analyseStopTime)
+
+                            self.printver("Spike times in %s for sim %s: %s"%(dataStore.getCellSegRef(), simRef, str(spikeTimes)))
+
+                            if spikeTimesToCheck.has_key(dataStore.getCellSegRef()):
+                                fail = False
+                                spikeTimesTarget = spikeTimesToCheck[dataStore.getCellSegRef()]
+
+                                if len(spikeTimesTarget) != len(spikeTimesTarget):
+                                    report = report + "ERROR: Number of spikes of %s not same as target list for %s!\n"%(dataStore.getCellSegRef(), simRef)
+                                    fail = True
+
+                                for spikeNum in range(0, len(spikeTimesTarget)):
+                                    if abs(spikeTimesTarget[spikeNum] - spikeTimes[spikeNum]) > spikeTimeAccuracy:
+                                        report = report + "ERROR: Spike time: %f not within %f of %f for %s in %s!\n" % \
+                                                  (spikeTimes[spikeNum], spikeTimeAccuracy, spikeTimesTarget[spikeNum], dataStore.getCellSegRef(), simRef)
+                                        fail = True
+                                if fail:
+                                    numFailed=numFailed+1
+                                else:
+                                    numPassed=numPassed+1
+
+
+
+            except:
+                self.printver("Error analysing simulation data from: %s"%simDir.getCanonicalPath())
+                self.printver(sys.exc_info())
+
+        report = report+"\n  %i tests passed, %i tests failed!\n"%(numPassed, numFailed)
+
+        return report
 
     
 

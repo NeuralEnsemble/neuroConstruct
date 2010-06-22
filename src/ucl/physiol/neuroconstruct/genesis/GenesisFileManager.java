@@ -894,7 +894,7 @@ public class GenesisFileManager
                         else
                         {
                             response.append("msgnum = {getfield " + receivingElement + "/" + newSynapseName
-                                        + " numSynapses} \n\n");
+                                        + " numSynapses} -1 \n\n");
                             response.append("echo \"msgnum is: \" {msgnum}\n\n");
                         }
 

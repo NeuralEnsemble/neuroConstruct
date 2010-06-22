@@ -12,7 +12,7 @@ part of NeuroML or any standardised XML specification. -->
    <string>Simple test project to check generation of N&amp;G simulation codes &amp; non uniform params along cells, e.g. e_pas, g_pas, etc.</string>
   </void>
   <void property="projectFileVersion">
-   <string>neuroConstruct v1.3.8</string>
+   <string>neuroConstruct v1.4.1</string>
   </void>
   <void property="projectName">
    <string>TestDetailedMorphs</string>
@@ -234,6 +234,7 @@ ce /cells/SampleCellGroup/SampleCellGroup_0/Soma
 
 testEquals  {getfield Em} -0.079
 testEquals  {getfield KConductance Ek} -0.073
+testEquals  {getfield NaConductance Ek} 0.0555
 
 float surface = {getfield KConductance surface}
 testEquals {{getfield KConductance Gbar}/surface} 360
@@ -250,7 +251,8 @@ testEquals { { {getfield Ra} * 3.14159265 * {getfield dia} * {getfield dia} } / 
 ce /cells/SampleCellGroup/SampleCellGroup_0/mainAxon
 
 testEquals  {getfield Em}  -0.07
-testEquals  {getfield KConductance Ek} -0.073
+testEquals  {getfield KConductance Ek} -0.077
+testEquals  {getfield NaConductance Ek} 0.0555
 
 float surface = {getfield KConductance surface}
 testEquals {{getfield KConductance Gbar}/surface} 300
@@ -293,7 +295,7 @@ createTestReport</string>
    <float>100.0</float>
   </void>
   <void property="reference">
-   <string>Sim_104</string>
+   <string>Sim_105</string>
   </void>
   <void property="saveCopyGenSimFiles">
    <boolean>true</boolean>

@@ -94,11 +94,6 @@
 </xsl:template>
 
 <xsl:template match="cml:channel_type">
-    <xsl:if test="count(cml:parameters) &gt; 0">
-            
-            Error!! Parameters not yet supported in PSICS!
-            
-    </xsl:if>
     <xsl:choose>
         <xsl:when test="count(//cml:voltage_conc_gate) &gt; 0">
             <xsl:comment>Error: the channel has a voltage_conc gate that is not supported in PSICS</xsl:comment>
@@ -152,7 +147,7 @@
                 <xsl:apply-templates select="cml:transition"/>
             </xsl:when>
             <xsl:otherwise>
-
+                
             <xsl:variable name="offset_part">
                 <xsl:if test="count(../cml:offset) &gt; 0">
      double offset = <xsl:value-of select="../cml:offset/@value"/>;
@@ -258,6 +253,9 @@
     double midpoint = 0;</xsl:if></xsl:variable>
                           
         <TauInfCodedTransition from="{cml:closed_state/@id}" to="{cml:open_state/@id}" tauvar="{$gate_name}tau" infvar="{$gate_name}inf" ><!--  baseTemperature="1" q10="1.0"-->
+            <xsl:for-each select="../../cml:parameters/cml:parameter">
+                <Constant id="{@name}" name="{@name}" value="{@value}"/>
+            </xsl:for-each>
 <xsl:text>
     </xsl:text><xsl:value-of select="$var_defs"/>
 <xsl:text>

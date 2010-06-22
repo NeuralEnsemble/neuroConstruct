@@ -12,7 +12,7 @@ part of NeuroML or any standardised XML specification. -->
    <string>Simple test project to check generation of N&amp;G simulation codes &amp; non uniform params along cells, e.g. e_pas, g_pas, etc.</string>
   </void>
   <void property="projectFileVersion">
-   <string>neuroConstruct v1.3.8</string>
+   <string>neuroConstruct v1.4.1</string>
   </void>
   <void property="projectName">
    <string>TestDetailedMorphs</string>
