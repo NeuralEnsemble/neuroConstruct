@@ -54,6 +54,11 @@ public class GuiUtils
     {
     }
 
+    public static void setShowInfoGuis(boolean show)
+    {
+        showInfoGuis = show;
+    }
+
     /**
      * Show error message to user
      *

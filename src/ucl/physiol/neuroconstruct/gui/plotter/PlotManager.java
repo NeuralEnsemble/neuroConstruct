@@ -75,6 +75,7 @@ public class PlotManager
                                                 boolean standalone, 
                                                 boolean setVisible)
     {
+        GuiUtils.setShowInfoGuis(true); // In case started at command line & Plot frame explicitly called => show dialogs for warnings etc.
 
         if (existingPlotFrames.containsKey(reference))
         {

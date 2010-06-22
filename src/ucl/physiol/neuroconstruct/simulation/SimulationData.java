@@ -528,12 +528,26 @@ public class SimulationData
         DataStore dataStore = getDataAtAllTimes(cellItemRef, variable, incSpikeOrVoltage);
         
         String ref = "Plot of "+ variable+" in "+ cellItemRef+ " ("+this.getSimulationName()+")";
-        String desc = ref;
-        DataSet dataSet = new DataSet(ref, desc, 
+
+        DataSet dataSet = new DataSet(ref, null,
                                        "ms", 
                                        SimPlot.getUnits(variable),
                                        "Time",
                                        SimPlot.getLegend(variable));
+
+        String synInfo = "";
+        if (dataStore.isSynapticMechData()) synInfo = " (synapse: " + dataStore.getPostSynapticObject().getSynRef() + ")";
+
+        String desc  = "Simulation: "
+                + getSimulationName() +
+                ". Plot of " + dataStore.getVariable() + " in seg: " + dataStore.getAssumedSegmentId() + synInfo +
+                ", cell num: " + dataStore.getCellNumber()
+                + " in: " + dataStore.getCellGroupName()
+                + " ";
+
+        desc = desc + "\n\n" + SimulationsInfo.getSimProps(getSimulationDirectory(), false);
+
+        dataSet.setDescription(desc);
         
         double[] points = dataStore.getDataPoints();
 
