@@ -253,7 +253,7 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         //JPanel jPanelCellGroups = new JPanel();
         JPanel jPanelCellGroupsCB = new JPanel();
         jPanelCellGroupsCB.setBorder(BorderFactory.createTitledBorder("Cell Groups included in this simulation configuration"));
-
+        
         //jPanelCellGroups.setMaximumSize(new Dimension(500,500));
         //jPanelCellGroups.setLayout(new GridLayout(cellGroups.size()+1,1));
 
@@ -266,6 +266,17 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         {
             String nextCellGroup = cellGroups.get(i);
             JCheckBox newCB = new JCheckBox(nextCellGroup);
+            
+            if (cellGroups.size() > 50)
+            {
+                Float fontsize = new Float(10);
+                newCB.setFont(newCB.getFont().deriveFont(fontsize));
+            }
+            else
+            {
+                newCB.setFont(newCB.getFont().deriveFont(6));
+            }
+            
             jPanelCellGroupsCB.add(newCB);
             cellGroupCheckBoxes.put(nextCellGroup, newCB);
 
@@ -294,12 +305,25 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         //jPanelNetConns.setMaximumSize(new Dimension(500,500));
         //jPanelNetConns.add(new Label("Network Connections included in this simulation configuration: "));
         jPanelNetConns.setBorder(BorderFactory.createTitledBorder("Network Connections included in this simulation configuration"));
-
+        
+        if (netConns.size() > 0)
+        {
 
         for (int i = 0; i < netConns.size(); i++)
         {
             String name = netConns.elementAt(i);
             JCheckBox newCB = new JCheckBox(name);
+            
+            if (netConns.size() > 50)
+            {
+                Float fontsize = new Float(10);
+                newCB.setFont(newCB.getFont().deriveFont(fontsize));
+            }
+            else
+            {
+                newCB.setFont(newCB.getFont().deriveFont(6));
+            }
+            
             jPanelNetConns.add(newCB);
             netConnCheckBoxes.put(name, newCB);
             String source = null;
@@ -328,13 +352,18 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
                 +"</html>";
 
             newCB.setToolTipText(info);
-
-
+            
+            
             newCB.addItemListener(this);
 
         }
         jPanelCheckBoxes.add(jPanelNetConns);
-
+        }
+        else
+        {
+            jPanelCheckBoxes.setLayout(new GridLayout(3,1));
+        }
+        
         Vector inputs = project.elecInputInfo.getAllStimRefs();
         JPanel jPanelInputs = new JPanel();
         //jPanelInputs.setMaximumSize(new Dimension(500,500));
@@ -345,6 +374,17 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         {
             String name = (String)inputs.elementAt(i);
             JCheckBox newCB = new JCheckBox(name);
+            
+            if (inputs.size() > 50)
+            {
+                Float fontsize = new Float(10*(inputs.size()/50));
+                newCB.setFont(newCB.getFont().deriveFont(fontsize));
+            }
+            else
+            {
+                newCB.setFont(newCB.getFont().deriveFont(6));
+            }
+            
             jPanelInputs.add(newCB);
             inputCheckBoxes.put(name, newCB);
 
@@ -383,8 +423,17 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         {
             String name = (String)plots.elementAt(i);
             JCheckBox newCB = new JCheckBox(name);
+            
+            if (plots.size() > 50)
+            {
+                Float fontsize = new Float(10*(plots.size()/50));
+                newCB.setFont(newCB.getFont().deriveFont(fontsize));
+            }
+            else
+            {
+                newCB.setFont(newCB.getFont().deriveFont(6));
+            }
 
-            newCB.setFont(newCB.getFont().deriveFont(6));
             jPanelPlots.add(newCB);
             plotCheckBoxes.put(name, newCB);
 
