@@ -497,12 +497,12 @@ public class MpiSettings
         String name_ALL = "Matthau_Lemmon_Test_ALL";
         MpiConfiguration p_ALL = new MpiConfiguration(name_ALL);
 
-        for(int i=3;i<=9;i++)
+        for(int i=1;i<=10;i++)
         {
             p_ALL.getHostList().add(new MpiHost(MATTHAU+i, 8, 1));
         }
 
-        for(int i=14;i<=16;i++)
+        for(int i=1;i<=19;i++)
         {
             p_ALL.getHostList().add(new MpiHost(LEMMON+i, 8, 1));
         }
