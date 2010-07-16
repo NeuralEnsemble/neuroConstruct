@@ -211,6 +211,25 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         jListNames.addListSelectionListener(this);
     }
 
+    private void resizeCheckBox(JCheckBox newCB, int totalCBs)
+    {
+        if (totalCBs < 30)
+        {
+            Float fontsize = new Float(12);
+            newCB.setFont(newCB.getFont().deriveFont(fontsize));
+        }
+        else if (totalCBs < 60)
+        {
+            Float fontsize = new Float(10);
+            newCB.setFont(newCB.getFont().deriveFont(fontsize));
+        }
+        else
+        {
+            Float fontsize = new Float(8);
+            newCB.setFont(newCB.getFont().deriveFont(fontsize));
+        }
+    }
+
     private void refresh()
     {
         logger.logComment("<<< Refreshing view on SimConfigManager");
@@ -266,16 +285,8 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         {
             String nextCellGroup = cellGroups.get(i);
             JCheckBox newCB = new JCheckBox(nextCellGroup);
-            
-            if (cellGroups.size() > 50)
-            {
-                Float fontsize = new Float(10);
-                newCB.setFont(newCB.getFont().deriveFont(fontsize));
-            }
-            else
-            {
-                newCB.setFont(newCB.getFont().deriveFont(6));
-            }
+
+            resizeCheckBox(newCB, cellGroups.size());
             
             jPanelCellGroupsCB.add(newCB);
             cellGroupCheckBoxes.put(nextCellGroup, newCB);
@@ -313,16 +324,8 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         {
             String name = netConns.elementAt(i);
             JCheckBox newCB = new JCheckBox(name);
-            
-            if (netConns.size() > 50)
-            {
-                Float fontsize = new Float(10);
-                newCB.setFont(newCB.getFont().deriveFont(fontsize));
-            }
-            else
-            {
-                newCB.setFont(newCB.getFont().deriveFont(6));
-            }
+
+            resizeCheckBox(newCB, netConns.size());
             
             jPanelNetConns.add(newCB);
             netConnCheckBoxes.put(name, newCB);
@@ -374,16 +377,9 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         {
             String name = (String)inputs.elementAt(i);
             JCheckBox newCB = new JCheckBox(name);
-            
-            if (inputs.size() > 50)
-            {
-                Float fontsize = new Float(10*(inputs.size()/50));
-                newCB.setFont(newCB.getFont().deriveFont(fontsize));
-            }
-            else
-            {
-                newCB.setFont(newCB.getFont().deriveFont(6));
-            }
+
+            resizeCheckBox(newCB, inputs.size());
+
             
             jPanelInputs.add(newCB);
             inputCheckBoxes.put(name, newCB);
@@ -423,16 +419,9 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         {
             String name = (String)plots.elementAt(i);
             JCheckBox newCB = new JCheckBox(name);
+
+            resizeCheckBox(newCB, plots.size());
             
-            if (plots.size() > 50)
-            {
-                Float fontsize = new Float(10*(plots.size()/50));
-                newCB.setFont(newCB.getFont().deriveFont(fontsize));
-            }
-            else
-            {
-                newCB.setFont(newCB.getFont().deriveFont(6));
-            }
 
             jPanelPlots.add(newCB);
             plotCheckBoxes.put(name, newCB);
