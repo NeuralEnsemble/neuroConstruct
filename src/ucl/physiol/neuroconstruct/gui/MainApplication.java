@@ -153,6 +153,24 @@ public class MainApplication
         frame.doLoadProject(projectFile);
     }
 
+    private void importNeuroML(String nmlFilename)
+    {
+        File nmlFile = new File(nmlFilename);
+
+        if (!nmlFile.exists())
+        {
+            System.out.println("Error! File not found: "+nmlFile.getAbsolutePath());
+            System.exit(1);
+        }
+        String projectName = nmlFile.getName().indexOf(".")>1 ? nmlFile.getName().substring(0, nmlFile.getName().indexOf(".")) : nmlFile.getName();
+
+        File projectLocation = ProjectStructure.getDefaultnCProjectsDir();
+
+        frame.doNewProject(false, projectLocation, projectName);
+
+        frame.doImportNeuroML(nmlFile, true, true);
+    }
+
     private void generate()
     {
         frame.projManager.doGenerate(SimConfigInfo.DEFAULT_SIM_CONFIG_NAME, System.currentTimeMillis());
@@ -194,21 +212,22 @@ public class MainApplication
         String run = GeneralUtils.isWindowsBasedPlatform()?"nC.bat":"./nC.sh";
         
         System.out.println(
-            "Usage: \n" +
+            "\nUsage: \n" +
             "    "+run+" [-options] [projectfilename]\n" +
             "or\n" +
             "    "+run+" -plot datafilename\n");
         
-        System.out.println("\nwhere projectfilename is a *.ncx (or *.neuro.xml) project file,\n" +
+        System.out.println("where projectfilename is a *.ncx (or *.neuro.xml) project file,\n" +
                             "datafilename is a file containing a single column of data (or a *.ds file as used in Data Set Manager)");
         System.out.println("and where options can include: \n");
 
-        System.out.println("-? -help                  print this help message");
-        System.out.println("-version                  print version information");
-        System.out.println("-lastproj                 reloads the last opened project");
-        System.out.println("-python [projectfilename] use Jython based scripting interface");
-        System.out.println("-make                     build neuroConstruct from source (JDK 1.5+ is needed)");
-        System.out.println("-sims projectfilename     load project with tree based simulation browser");
+        System.out.println("-? -help                    print this help message");
+        System.out.println("-version                    print version information");
+        System.out.println("-lastproj                   reloads the last opened project");
+        System.out.println("-python [projectfilename]   use Jython based scripting interface");
+        System.out.println("-make                       build neuroConstruct from source (JDK 1.5+ is needed)");
+        System.out.println("-sims projectfilename       load project with tree based simulation browser");
+        System.out.println("-neuroml neuromlfilename    import contents of NeuroML file, creating new project");
         System.out.println("");
         
         System.exit(0);
@@ -277,11 +296,14 @@ public class MainApplication
 
             }
 
-            String fileToOpen = null;
+            String projFileToOpen = null;
+            String nmlFileToOpen = null;
+
             boolean reloadLastProject = false;
             boolean generate = false;
             boolean createHoc = false;
             boolean runHoc = false;
+            boolean importNeuroML = false;
             
             String[] pyArgs = null;
             
@@ -303,6 +325,15 @@ public class MainApplication
                 else if (args[i].equalsIgnoreCase("-nmlv2") )
                 {
                     nmlV2TestMode = true;
+                }
+                else if (args[i].equalsIgnoreCase("-neuroml") )
+                {
+                    if (args.length!=2)
+                    {
+                        printUsageAndQuit();
+                    }
+
+                    importNeuroML = true;
                 }
 
                 else if (args[i].equalsIgnoreCase("-sims"))
@@ -392,11 +423,18 @@ public class MainApplication
                 }
                 else
                 {
-                    fileToOpen = args[i];
+                    if (!importNeuroML)
+                    {
+                        projFileToOpen = args[i];
+                    }
+                    else
+                    {
+                        nmlFileToOpen = args[i];
+                    }
                 }
             }
             
-            if ((generate || createHoc) && (fileToOpen==null && !reloadLastProject))
+            if ((generate || createHoc) && (projFileToOpen==null && nmlFileToOpen==null && !reloadLastProject))
             {
                 System.out.println("Please only use -generate etc. when a project file is specified.");
                 System.exit(0);
@@ -416,9 +454,18 @@ public class MainApplication
                         +" starting...\nTo start application with extra memory, see "+script+" in the neuroConstruct home directory.\n");
 
 
-                if (fileToOpen!=null) app.setOpenProject(fileToOpen);
-
-                if (reloadLastProject) app.reloadLastProject();
+                if (projFileToOpen!=null)
+                {
+                    app.setOpenProject(projFileToOpen);
+                }
+                else if (reloadLastProject)
+                {
+                    app.reloadLastProject();
+                }
+                else if (nmlFileToOpen!=null)
+                {
+                    app.importNeuroML(nmlFileToOpen);
+                }
 
                 if (generate|| createHoc|| runHoc)
                 {

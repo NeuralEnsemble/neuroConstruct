@@ -401,7 +401,6 @@ public class MorphMLReader extends XMLFilterImpl
          {
              logger.logComment("\n                           +++++    New Segment!!  +++++");
 
-
              String id = attributes.getValue(MorphMLConstants.SEGMENT_ID_ATTR);
              String name = attributes.getValue(MorphMLConstants.SEGMENT_NAME_ATTR);
              if (name==null)
@@ -430,6 +429,13 @@ public class MorphMLReader extends XMLFilterImpl
                      sections.put(sectionIdInteger, section);
                  }
 
+                 newSeg.setSection(section);
+             }
+             else
+             {
+                 Section section = new Section("Section_"+newSeg.getSegmentName());
+                 int sectionOffset = 1000000;
+                 sections.put(sectionOffset+newSeg.getSegmentId(), section);
                  newSeg.setSection(section);
              }
 
@@ -944,9 +950,38 @@ public class MorphMLReader extends XMLFilterImpl
         if (getAncestorElement(1).equals(MorphMLConstants.CELL_ELEMENT) &&
                 getCurrentElement().equals(MetadataConstants.NOTES_ELEMENT))
         {
-                cell.setCellDescription(notesContents.toString());
-                notesContents = new StringBuffer();
+            cell.setCellDescription(notesContents.toString());
+            notesContents = new StringBuffer();
         }
+        else if (getCurrentElement().equals(MorphMLConstants.CELL_ELEMENT))
+        {
+            // Check for core group defs
+            ArrayList<Section> mySections = cell.getAllSections();
+            boolean somaFound = false;
+
+            for (Section sec: mySections)
+            {
+                if (sec.isSomaSection())
+                    somaFound = true;
+
+                if (sec.getGroups()==null  || sec.getGroups().size()==0 ||
+                    (sec.getGroups().size()==1 && sec.getGroups().get(0).equals(Section.ALL)))
+                {
+                    logger.logComment("No soma/dend/axon group info on: "+sec);
+
+                    if (!somaFound &&
+                            cell.getAllSegmentsInSection(sec).getFirst().getParentSegment()==null)
+                    {
+                        sec.addToGroup(Section.SOMA_GROUP);
+                    }
+                    else
+                    {
+                        sec.addToGroup(Section.DENDRITIC_GROUP);
+                    }
+                }
+            }
+        }
+
         else if (getCurrentElement().equals(MorphMLConstants.CABLE_ELEMENT)
             && getAncestorElement(1).equals(MorphMLConstants.CABLES_ELEMENT))
         {
@@ -1053,7 +1088,6 @@ public class MorphMLReader extends XMLFilterImpl
                     }
                 }
             }
-
 
         }
 

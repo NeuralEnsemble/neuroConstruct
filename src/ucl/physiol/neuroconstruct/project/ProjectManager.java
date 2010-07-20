@@ -553,7 +553,7 @@ public class ProjectManager implements GenerationReport
     
     
     
-    public NetworkMLnCInfo doLoadNetworkML(File networkmlFile, boolean testMode) throws NeuroMLException, Hdf5Exception, EndOfSequenceException
+    public NetworkMLnCInfo doLoadNetworkML(File networkmlFile, boolean acceptDefaults) throws NeuroMLException, Hdf5Exception, EndOfSequenceException
     {
         if (networkmlFile.getName().endsWith(ProjectStructure.getHDF5FileExtension()))
         {
@@ -587,7 +587,7 @@ public class ProjectManager implements GenerationReport
                 ucl.physiol.neuroconstruct.neuroml.NetworkMLReader nmlBuilder
                     = new ucl.physiol.neuroconstruct.neuroml.NetworkMLReader(getCurrentProject());
                 
-                nmlBuilder.setTestMode(testMode);
+                nmlBuilder.setTestMode(acceptDefaults);
 
                 xmlReader.setContentHandler(nmlBuilder);
 

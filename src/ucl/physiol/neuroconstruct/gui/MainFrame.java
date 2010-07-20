@@ -5166,45 +5166,55 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
      */
     private void doNewProject(boolean offerSamples)
     {
+        doNewProject(offerSamples, null, null);
+    }
+
+    public void doNewProject(boolean offerSamples, File projParentDir, String projName)
+    {
         boolean continueClosing = checkToSave();
         if (!continueClosing) return;
         closeProject();
 
         logger.logComment(">>>>>>>>>>>>>>>    Creating new project...");
 
-        String projName = null;
-        String projDir = null;
-
-        NewProjectDialog dlg = new NewProjectDialog(this,
-            "New neuroConstruct project", false);
-        Dimension dlgSize = dlg.getPreferredSize();
-        Dimension frmSize = getSize();
-        Point loc = getLocation();
-        dlg.setLocation( (frmSize.width - dlgSize.width) / 2 + loc.x,
-                        (frmSize.height - dlgSize.height) / 2 + loc.y);
-        dlg.setModal(true);
-        dlg.pack();
-        dlg.setVisible(true);
-
-        projName = dlg.getProjFileName();
-        projDir = dlg.getProjDirName();
-
-        if (dlg.cancelled)
+        if (projParentDir==null || projName==null)
         {
-            logger.logComment("Cancel pressed...");
-            return;
-        }
-        if (projName.length() == 0 || projDir.length() == 0)
-        {
-            GuiUtils.showErrorMessage(logger, "No proj name/directory entered", null, this);
-            return;
+
+            NewProjectDialog dlg = new NewProjectDialog(this,
+                "New neuroConstruct project", false);
+            Dimension dlgSize = dlg.getPreferredSize();
+            Dimension frmSize = getSize();
+            Point loc = getLocation();
+            dlg.setLocation( (frmSize.width - dlgSize.width) / 2 + loc.x,
+                            (frmSize.height - dlgSize.height) / 2 + loc.y);
+            dlg.setModal(true);
+            dlg.pack();
+            dlg.setVisible(true);
+
+
+            if (dlg.cancelled)
+            {
+                logger.logComment("Cancel pressed...");
+                return;
+            }
+
+            projName = dlg.getProjFileName();
+            String proDirName = dlg.getProjFileName();
+
+            if (projName.length() == 0 || proDirName.length() == 0)
+            {
+                GuiUtils.showErrorMessage(logger, "No project name/directory entered", null, this);
+                return;
+            }
+
+            projParentDir = new File(proDirName);
         }
 
         String projectFileExtension = ProjectStructure.getNewProjectFileExtension();
 
         String fileSep = System.getProperty("file.separator");
 
-        String nameNewProjectDir = projDir + fileSep + projName + fileSep;
+        String nameNewProjectDir = projParentDir + fileSep + projName + fileSep;
 
         File newProjectFile = new File(nameNewProjectDir + projName + projectFileExtension);
 
@@ -12633,9 +12643,21 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         if (retval == JOptionPane.OK_OPTION)
         {
+            File nmlFile = chooser.getSelectedFile();
+            doImportNeuroML(nmlFile, false, freshProject);
+        }
+    }
+
+    protected void doImportNeuroML(File nmlFile, boolean acceptDefaults, boolean confirmImport)
+    {
+        if (nmlFile==null || !nmlFile.exists())
+        {
+            GuiUtils.showErrorMessage(logger, "Problem locating file: "+ nmlFile, null, this);
+        }
+        else
+        {
             long start = System.currentTimeMillis();
 
-            File l3File = null;
             try
             {
                 
@@ -12649,9 +12671,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     Random tempRandom = new Random();
                     this.jTextFieldRandomGen.setText(tempRandom.nextInt() + "");
                 }
-                l3File = chooser.getSelectedFile();
 
-                NetworkMLnCInfo extraInfo = projManager.doLoadNetworkML(l3File, false);
+                NetworkMLnCInfo extraInfo = projManager.doLoadNetworkML(nmlFile, acceptDefaults);
                 
                 logger.logComment("Elec inputs read: "+ projManager.getCurrentProject().generatedElecInputs);
                 
@@ -12673,7 +12694,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
             catch (Exception ex)
             {
-                GuiUtils.showErrorMessage(logger, "Error loading network info from: "+chooser.getSelectedFile(), ex, this);
+                GuiUtils.showErrorMessage(logger, "Error loading network info from: "+nmlFile, ex, this);
                 return;
             }
             long end = System.currentTimeMillis();
@@ -12695,7 +12716,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
             String note = "<center><b>NOTE: The following elements have been generated based on Simulation Configuration: "+simConfig.getName()+"</b></center><br>";
 
-            setGeneratorInfo("Cell positions and network connections loaded from: <b>"+chooser.getSelectedFile()+"</b> in "+((end-start)/1000.0)+" seconds<br><br>"
+            setGeneratorInfo("Cell positions and network connections loaded from: <b>"+nmlFile.getAbsolutePath()+"</b> in "+((end-start)/1000.0)+" seconds<br><br>"
                                             +"<center><b>Cell Groups:</b></center>"
                                             +projManager.getCurrentProject().generatedCellPositions.getHtmlReport()
                                             +"<center><b>Network Connections:</b></center>"
@@ -12722,10 +12743,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             jComboBoxView3DChoice.setSelectedItem(LATEST_GENERATED_POSITIONS);
 
-            if (freshProject)
+            if (confirmImport)
             {
                 projManager.getCurrentProject().setProjectDescription("neuroConstruct project generated from contents" +
-                    " of file: "+ l3File+"\n\nThe cell positions & network connections in memory reflect the " +
+                    " of file: "+ nmlFile+"\n\nThe cell positions & network connections in memory reflect the " +
                     "instances in the NetworkML elements of the imported file. Regenerating the network in " +
                     "neuroConstruct nmay lead to a different network structure.");
             }

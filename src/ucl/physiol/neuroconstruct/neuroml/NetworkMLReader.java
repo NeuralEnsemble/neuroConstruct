@@ -139,7 +139,9 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
     private Hashtable<String, SimpleXMLElement> ionElements =  new Hashtable<String, SimpleXMLElement>();
     
     private boolean level3 = false;
-    private String cellBuffer = ""; // contains the cell element of a Level 3 Network that once stored in a file can be parse with morphMLReader
+    
+    private StringBuffer cellInfoBuffer = new StringBuffer(); // contains the cell element of a Level 3 Network that once stored in a file can be parse with morphMLReader
+
     private boolean insideCell = false;
     private String cellPrefix = "";
     private String cellName = "Cell";
@@ -214,7 +216,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
               contents = contents.replace(">", "&gt;");
               contents = contents.replace("\"", "&quot;");
               contents = contents.replace("&", "&amp;");
-              cellBuffer = cellBuffer + contents;            
+              cellInfoBuffer.append(contents);
          }
          else
          {
@@ -418,9 +420,9 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
         {
          String name = attributes.getLocalName(i);
          String val = attributes.getValue(i);
-          val = renamedCells.get(val);
+         String renamedVal = renamedCells.get(val);
 
-         logger.logComment("Attr:  " + name+ " = " + val+ "         (qname: "
+         logger.logComment("Attr:  " + name+ " = " + val+ " ("+renamedVal+")         (qname: "
                            + attributes.getQName(i)+ ", uri: " + attributes.getURI(i)+")");
         }
 
@@ -443,36 +445,54 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
          if (insideCell)             
          {
              
-          //dealing with prefix
-             if (elementStack.contains("segments") || elementStack.contains("cables")){
+             //dealing with prefix
+
+             if (elementStack.contains("segments") || elementStack.contains("cables"))
+             {
                  cellPrefix = MorphMLConstants.PREFIX+":";
+
                  if (getCurrentElement().equals("group"))
                      cellPrefix = MetadataConstants.PREFIX+":";
              }
-             if (elementStack.contains("biophysics")) 
+             else if (elementStack.contains("biophysics"))
+             {
                  cellPrefix = BiophysicsConstants.PREFIX + ":";
-             if (elementStack.contains("connectivity")) 
+             }
+             else if (elementStack.contains("connectivity"))
+             {
                  cellPrefix = NetworkMLConstants.PREFIX + ":";
-             if (getCurrentElement().equals("notes"))
+             }
+             else if (getCurrentElement().equals("notes"))
+             {
                  cellPrefix = MetadataConstants.PREFIX+":";
+             }
+
              if (getCurrentElement().equals("cell") || getCurrentElement().equals("biophysics") || getCurrentElement().equals("connectivity"))
                  cellPrefix = "";
                                    
          //string elongation
              if (getCurrentElement().equals("biophysics"))
-                 cellBuffer = cellBuffer + ("<!--Adding the biophysical parameters-->\n");
-             if (cellBuffer.endsWith(">"))
-                 cellBuffer = cellBuffer + "\n";
-             cellBuffer = cellBuffer + ("<"+cellPrefix+getCurrentElement());
-             for (int i = 0; i < attrsLength; i++) {
+             {
+                 cellInfoBuffer.append("<!--Adding the biophysical parameters-->\n");
+             }
+             if (cellInfoBuffer.length()>1 && cellInfoBuffer.charAt(cellInfoBuffer.length()-1) == '>')
+             {
+                 cellInfoBuffer.append("\n");
+             }
+             cellInfoBuffer.append("<"+cellPrefix+getCurrentElement());
+
+             for (int i = 0; i < attrsLength; i++)
+             {
                  String name = attributes.getLocalName(i);
                  String val = attributes.getValue(i);
 
-                 cellBuffer = cellBuffer + (" "+name+"=\""+val+"\"");
+                 cellInfoBuffer.append(" "+name+"=\""+val+"\"");
              }
-             cellBuffer = cellBuffer +">";
+             cellInfoBuffer.append(">");
 
          }
+
+         logger.logComment("cellPrefix:" +cellPrefix);
 
          if (getCurrentElement().equals(ChannelMLConstants.ION_ELEMENT))
          {
@@ -1256,10 +1276,10 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                 cellPrefix = "";
             }
 
-            cellBuffer = cellBuffer + ("</" + cellPrefix + getCurrentElement() + ">\n");
+            cellInfoBuffer.append("</" + cellPrefix + getCurrentElement() + ">\n");
             if (getCurrentElement().equals(MorphMLConstants.CELL_ELEMENT))
             {
-                logger.logComment("FINISHED CELL STRING for " + cellName + ":\n" + cellBuffer);
+                logger.logComment("FINISHED CELL STRING for " + cellName + ":\n" + cellInfoBuffer.toString());
                 insideCell = false;
                 SimpleXMLDocument doc = new SimpleXMLDocument();
                 SimpleXMLElement rootElement = null;
@@ -1360,7 +1380,8 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                             }
                             renamedCells.put(cellName, newCellName);
                             logger.logComment("cell " + cellName + " renamed " + renamedCells.get(cellName));
-                            cellBuffer = cellBuffer.replaceAll(cellName, renamedCells.get(cellName));
+                            String cellString = cellInfoBuffer.toString();
+                            cellInfoBuffer = new StringBuffer(cellString.replaceAll(cellName, renamedCells.get(cellName)));
                         }
 
                     }
@@ -1403,12 +1424,12 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                     rootElement.addContent("<cells>");
 
                     //add the generated cellBuffer
-                    rootElement.addContent(cellBuffer);
+                    rootElement.addContent(cellInfoBuffer.toString());
                     rootElement.addContent("</cells>");
                     doc.addRootElement(rootElement);
 
                     //reset the string for the next cell
-                    cellBuffer = "";
+                    cellInfoBuffer = new StringBuffer();
 
 
                     //write the NeuroML file
@@ -1798,7 +1819,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                     catch (Exception ex)
                     {
                         nextReadObject = null;
-                        logger.logError("No more objects to read...", ex);
+                        logger.logComment("No more objects to read...");
                     }
 
                 }
