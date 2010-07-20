@@ -935,13 +935,20 @@ public class PlotCanvas extends Canvas
                 // add on a bit for the width of the bars
                 if (dataSets[i].getGraphFormat().equals(USE_BARCHART_FOR_PLOT))
                 {
-                    double xSpacing = dataSets[i].getXSpacing();
-                    if (xSpacing > 0)
+
+                    double xSpacing;
+                    try
                     {
+                        xSpacing = dataSets[i].getXSpacing();
                         double extraSpaceForBars = (xSpacing / 2f);
                         maxXScaleValue = maxXScaleValue + extraSpaceForBars;
                         minXScaleValue = minXScaleValue - extraSpaceForBars;
                     }
+                    catch (DataSetException ex)
+                    {
+                        GuiUtils.showErrorMessage(logger, "Problem gettign spacing for X values", ex, this);
+                    }
+
                 }
             }
             if (dataSets.length == 0)
@@ -1184,12 +1191,16 @@ public class PlotCanvas extends Canvas
                             }
                             else if (dataSets[dataSetIndex].getGraphFormat().equals(USE_BARCHART_FOR_PLOT))
                             {
-                                double xValueSpacing = dataSets[dataSetIndex].getXSpacing();
+                                double xValueSpacing = -1;
 
-                                if (xValueSpacing < 0)
+                                try
+                                {
+                                    xValueSpacing = dataSets[dataSetIndex].getXSpacing();
+                                }
+                                catch (DataSetException ex)
                                 {
                                     GuiUtils.showErrorMessage(logger,
-                                                              "The set of points are not sequential and evenly spaced, and therefore the bar chart format cannot be used.", null, this);
+                                                              "The set of points are not sequential and evenly spaced, and therefore the bar chart format cannot be used.", ex, this);
                                     plotFrame.flagProblemDueToBarSpacing();
                                     return;
                                 }

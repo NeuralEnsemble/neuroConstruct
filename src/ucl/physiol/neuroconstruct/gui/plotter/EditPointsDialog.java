@@ -665,7 +665,15 @@ public class EditPointsDialog extends JDialog implements FocusListener, KeyListe
 
     void jButtonDelete_actionPerformed(ActionEvent e)
     {
-        dataSet.deletePoint(currentPointNumber);
+        try
+        {
+            dataSet.deletePoint(currentPointNumber);
+        }
+        catch(DataSetException ex)
+        {
+            GuiUtils.showErrorMessage(logger, "Point "+currentPointNumber+" does not exist!", ex, this);
+            return;
+        }
 
         if (currentPointNumber>getHighestPointNumber())
             currentPointNumber = getHighestPointNumber();

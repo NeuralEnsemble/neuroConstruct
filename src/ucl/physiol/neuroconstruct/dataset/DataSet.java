@@ -237,13 +237,13 @@ public class DataSet
         return this.xValsStrictlyInc;
     }
 
-    public void deletePoint(int pointNum)
+    public void deletePoint(int pointNum) throws DataSetException
     {
         logger.logComment("Deleting point " + pointNum + " from " + numberValidPoints + " valid points");
 
         if (pointNum >= 0 && pointNum < numberValidPoints)
         {
-            for (int i = pointNum; i < numberValidPoints - 2; i++)
+            for (int i = pointNum; i < numberValidPoints - 1; i++)
             {
                 logger.logComment("Replacing points at " + i + " with points at " + (i + 1));
                 xValues[i] = xValues[i + 1];
@@ -260,10 +260,10 @@ public class DataSet
         }
         else
         {
-            logger.logError("The point number " + pointNum
-                            + " doesn't exist. Only " +
+            throw new DataSetException("The point number " + pointNum + " doesn't exist. Only " +
                             numberValidPoints + " valid points");
         }
+        recheckStrictlyInc();
 
     }
 
@@ -274,9 +274,9 @@ public class DataSet
      * only be used for graphing purposes
      *
      */
-    public double getXSpacing()
+    public double getXSpacing() throws DataSetException
     {
-        if (numberValidPoints < 2) return -1;
+        if (numberValidPoints < 2) throw new DataSetException("There are "+numberValidPoints+" so not enough for an X spacing");
 
         double currentSpacing = -1;
         for (int i = 1; i < numberValidPoints; i++)
@@ -288,11 +288,10 @@ public class DataSet
 
             if (i > 1 && diffSpacing > currentSpacing / 500)
             {
-                logger.logComment("Not evenly spaced " + i + ": " + prevX + ", " + thisX
+                throw new DataSetException("Not evenly spaced " + i + ": " + prevX + ", " + thisX
                                   + ", currentSpacing: " + currentSpacing
                                   + ", (thisX-prevX): " + (thisX - prevX)
                                   + ", diffSpacing: " + diffSpacing);
-                return -1;
             }
 
             currentSpacing = (thisX - prevX);
@@ -316,12 +315,39 @@ public class DataSet
         return justValidPoints;
     }
 
+    private void recheckStrictlyInc()
+    {
+        if (numberValidPoints==0)  
+        {
+            xValsStrictlyInc = false;
+            return;
+        }
+        if (numberValidPoints==1)
+        {
+            xValsStrictlyInc = true;
+            return;
+        }
+        Double diff = xValues[1] - xValues[0];
+        for (int i = 1; i < numberValidPoints; i++)
+        {
+            double newDiff = xValues[i] - xValues[i-1];
+            if (newDiff!=diff)
+            {
+                this.xValsStrictlyInc=false;
+                return;
+            }
+        }
+        this.xValsStrictlyInc=true;
+
+    }
+
     public void setXValue(int pointNum, double value) throws DataSetException
     {
-        if (pointNum >= numberValidPoints)throw new DataSetException("Index out of bounds: " + pointNum
+        if (pointNum >= numberValidPoints) throw new DataSetException("Index out of bounds: " + pointNum
                                                                      + ", only " + numberValidPoints +
                                                                      " points.");
         this.xValues[pointNum] = value;
+        recheckStrictlyInc();
     }
 
     public void setYValue(int pointNum, double value) throws DataSetException
@@ -459,7 +485,7 @@ public class DataSet
     }
 
 
-    public static void main(String[] args)
+    public static void main(String[] args) throws DataSetException
     {
 
 
@@ -508,9 +534,9 @@ public class DataSet
 
         System.out.println("Time taken to parse data set: "+(System.currentTimeMillis()-start)); 
         
-        PlotManager.getPlotterFrame("Test Plotter Frame");
+        PlotterFrame plotFrame = PlotManager.getPlotterFrame("Test Plotter Frame");
         
-        //plotFrame.addDataSet(data1);
+        plotFrame.addDataSet(data1);
         
         //plotFrame
     }

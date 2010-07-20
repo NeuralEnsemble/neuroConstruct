@@ -1277,9 +1277,15 @@ public class PlotterFrame extends JFrame
         {
             logger.logComment("-----   Generating SI for: " + dataSet.getReference());
 
-            double xSpacing = dataSet.getXSpacing();
+            double xSpacing = -1;
+            try
+            {
+                xSpacing = dataSet.getXSpacing();
+            }
+            catch (DataSetException ex)
+            {}
 
-            if (!dataSet.areXvalsStrictlyIncreasing() || xSpacing < 0 || dataSet.getMinX()[0]!=0)
+            if (xSpacing < 0 || dataSet.getMinX()[0]!=0)
             {
                 logger.logComment("dataSet.areXvalsStrictlyIncreasing(): " + dataSet.areXvalsStrictlyIncreasing());
                 logger.logComment("xSpacing: " + xSpacing);
@@ -1365,11 +1371,17 @@ public class PlotterFrame extends JFrame
         {
             logger.logComment("-----   Generating autocorrelogram for : " + dataSet.getReference());
 
-            double xSpacing = dataSet.getXSpacing();
+            double xSpacing = -1;
+            try
+            {
+                xSpacing = dataSet.getXSpacing();
+            }
+            catch (DataSetException ex)
+            {}
 
             double lengthInX = dataSet.getMaxX()[0] - dataSet.getMinX()[0];
 
-            if (!dataSet.areXvalsStrictlyIncreasing() || xSpacing < 0)
+            if (xSpacing < 0)
             {
                 GuiUtils.showErrorMessage(logger,
                                           "The set of points: " + dataSet.getReference()

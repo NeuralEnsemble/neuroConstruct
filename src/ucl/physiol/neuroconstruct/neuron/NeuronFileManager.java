@@ -82,7 +82,7 @@ public class NeuronFileManager
     public static final int RUN_PYTHON_HDF5 = 4;
 
     /**
-     * The random seed placed into the generated NEURON code
+     * The random seed placed into the generated NEURON codeinitiali
      */
     private long randomSeed = 0;
 
@@ -723,21 +723,24 @@ public class NeuronFileManager
 
     private String generateInitialParameters()
     {
-        StringBuffer response = new StringBuffer();
+        StringBuffer responseMain = new StringBuffer();
+        StringBuffer responseType0 = new StringBuffer();
         StringBuffer responseType1 = new StringBuffer();
 
-        addMajorHocComment(response, "Setting initial parameters");
+        addMajorHocComment(responseMain, "Setting initial parameters");
 
-        response.append("strdef simConfig\n");
-        response.append("{simConfig = \""+this.simConfig.getName()+"\"}\n");
+        responseMain.append("strdef simConfig\n");
+        responseMain.append("{simConfig = \""+this.simConfig.getName()+"\"}\n");
 
-        response.append("{celsius = " + project.simulationParameters.getTemperature() + "}\n\n");
+        responseMain.append("{celsius = " + project.simulationParameters.getTemperature() + "}\n\n");
 
-
-
-        response.append("proc initialiseValues0() {\n\n");
+        responseType0.append("proc initialiseValues0() {\n\n");
 
         ArrayList<String> cellGroupNames = project.cellGroupsInfo.getAllCellGroupNames();
+
+        int lineCount = 0;
+        int extraFuncCount=0;
+        ArrayList<String> extraFuncNames = new ArrayList<String>();
 
         for (int cellGroupIndex = 0; cellGroupIndex < cellGroupNames.size(); cellGroupIndex++)
         {
@@ -755,7 +758,7 @@ public class NeuronFileManager
 
                 ArrayList cellGroupPositions = project.generatedCellPositions.getPositionRecords(cellGroupName);
 
-                addHocComment(response, "Setting initial vals in cell group: " + cellGroupName
+                addHocComment(responseType0, "Setting initial vals in cell group: " + cellGroupName
                            + " which has " + cellGroupPositions.size() + " cells");
 
                 for (int cellIndex = 0; cellIndex < cellGroupPositions.size(); cellIndex++)
@@ -765,20 +768,33 @@ public class NeuronFileManager
 
                     if (posRecord.hasUniqueInitV())
                     {
+                        if (lineCount>NeuronTemplateGenerator.MAX_NUM__LINES_IN_PROC)
+                        {
+                            String extraFunc = "initialiseValues0_"+extraFuncCount;
+                            extraFuncNames.add(extraFunc);
+
+                            responseType0.append("    "+extraFunc+"()\n}\n");
+                            responseType0.append("proc "+extraFunc+"() {\n\n");
+                            extraFuncCount++;
+                            lineCount = 0;
+                        }
                         double initVolt = posRecord.getInitV();
-                        
-                        //addHocComment(response,
-                        //           "Giving cell " + posRecord.cellNumber + " an initial potential of: " + initVolt+" based on: "+ cell.getInitialPotential().toString());
 
-                        if (simConfig.getMpiConf().isParallelNet()) response.append("  if(isCellOnNode(\""+cellGroupName+"\", "
-                                                                        + posRecord.cellNumber + ")) {");
-
-                        response.append("    forsec " + nameOfArrayOfTheseCells + "[" + posRecord.cellNumber + "].all {   v = " + initVolt + "  }");
 
                         if (simConfig.getMpiConf().isParallelNet())
-                            response.append("  }\n");
+                        {
+                            responseType0.append("    if(isCellOnNode(\""+cellGroupName+"\", "
+                                                                        + posRecord.cellNumber + ")) {");
+                        }
+
+                        responseType0.append("    forsec " + nameOfArrayOfTheseCells + "[" + posRecord.cellNumber + "].all {   v = " + initVolt + "  }");
+
+                        if (simConfig.getMpiConf().isParallelNet())
+                            responseType0.append("  }\n");
                         else
-                            response.append(" \n");
+                            responseType0.append(" \n");
+
+                        lineCount++;
                     }
 
                 }
@@ -791,25 +807,29 @@ public class NeuronFileManager
                                                                UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                UnitConverter.NEURON_UNITS);
 
-                    addHocComment(response, "Giving all cells an initial potential of: " + initVolt);
+                    addHocComment(responseType0, "Giving all cells an initial potential of: " + initVolt);
 
-                    response.append("    for i = 0, " + nameOfNumberOfTheseCells + "-1 {" + "\n");
-                    response.append("        ");
+                    responseType0.append("    for i = 0, " + nameOfNumberOfTheseCells + "-1 {" + "\n");
+                    responseType0.append("        ");
 
-                    if (simConfig.getMpiConf().isParallelNet()) response.append("if(isCellOnNode(\""+cellGroupName
+                    if (simConfig.getMpiConf().isParallelNet()) responseType0.append("if(isCellOnNode(\""+cellGroupName
                                                                         +"\", i)) ");
 
-                    response.append("forsec " + nameOfArrayOfTheseCells + "[i].all "
+                    responseType0.append("forsec " + nameOfArrayOfTheseCells + "[i].all "
                                     + " v = " + initVolt + "\n\n");
-                    response.append("    }" + "\n\n");
+                    responseType0.append("    }" + "\n\n");
+
+
+                    lineCount+=4;
 
                 }
                 if (cell.getIonPropertiesVsGroups().size()>0)
                 {
-                    NeuronFileManager.addHocComment(responseType1, "    Note: the following values are from IonProperties in Cell");
+                    lineCount+=10; // Note lines from this section shouldn't contribute much to the overall line count.
+
+                    NeuronFileManager.addHocComment(responseMain, "    Note: the following values are from IonProperties in Cell");
 
                     Enumeration<IonProperties> ips = cell.getIonPropertiesVsGroups().keys();
-
 
                     responseType1.append("    for i = 0, " + nameOfNumberOfTheseCells + "-1 {" + "\n");
 
@@ -843,29 +863,37 @@ public class NeuronFileManager
                     responseType1.append("    }\n\n");
                 }
 
-                response.append("\n");
+                responseMain.append("\n");
             }
         }
 
 
 
-        response.append("}\n\n");
+        responseType0.append("}\n\n");
 
-        response.append("objref fih0\n");
-        response.append("{fih0 = new FInitializeHandler(0, \"initialiseValues0()\")}\n\n\n");
+        for (String extraFunc: extraFuncNames)
+        {
+            //responseMain.append(extraFunc+"()\n");
+        }
+        responseMain.append("\n");
+
+        responseMain.append(responseType0.toString());
+
+        responseMain.append("objref fih0\n");
+        responseMain.append("{fih0 = new FInitializeHandler(0, \"initialiseValues0()\")}\n\n\n");
 
         if (responseType1.length()>0)
         {
 
-            response.append("proc initialiseValues1() {\n\n");
-            response.append(responseType1.toString());
-            response.append("}\n\n");
+            responseMain.append("proc initialiseValues1() {\n\n");
+            responseMain.append(responseType1.toString());
+            responseMain.append("}\n\n");
 
-            response.append("objref fih1\n");
-            response.append("{fih1 = new FInitializeHandler(1, \"initialiseValues1()\")}\n\n\n");
+            responseMain.append("objref fih1\n");
+            responseMain.append("{fih1 = new FInitializeHandler(1, \"initialiseValues1()\")}\n\n\n");
         }
 
-        return response.toString();
+        return responseMain.toString();
     }
 
     private String generateAccess()

@@ -58,7 +58,8 @@ public class NeuronTemplateGenerator
     File hocFile = null;
 
     // due to limitation in hoc interpreter, when too many lines are in a procedure
-    int maxNumLinesInProc = 100;
+    static int MAX_NUM__LINES_IN_PROC = 100;
+
     int numSegments = 1;
 
     boolean addGrowthFunctions = true;
@@ -456,7 +457,7 @@ public class NeuronTemplateGenerator
 
         Vector allConnectionLines =  getConnectLines();
 
-        if (allConnectionLines.size()<maxNumLinesInProc)
+        if (allConnectionLines.size()<MAX_NUM__LINES_IN_PROC)
         {
             logger.logComment("Only have "+allConnectionLines.size()+" connections, putting them in one function");
 
@@ -473,7 +474,7 @@ public class NeuronTemplateGenerator
         else
         {
             logger.logComment("Will have to split up the "+allConnectionLines.size()+" connections...");
-            int numberToSplit = Math.round((float)allConnectionLines.size()/(float)maxNumLinesInProc) + 1;
+            int numberToSplit = Math.round((float)allConnectionLines.size()/(float)MAX_NUM__LINES_IN_PROC) + 1;
             logger.logComment("Will create "+numberToSplit+" functions...");
 
             for (int i = 0; i < numberToSplit; i++)
@@ -487,11 +488,11 @@ public class NeuronTemplateGenerator
             for (int i = 0; i < numberToSplit; i++)
             {
                 response.append("proc topol_extra_" + i + "(){\n");
-                for (int j = 0; j < maxNumLinesInProc; j++)
+                for (int j = 0; j < MAX_NUM__LINES_IN_PROC; j++)
                 {
                     try
                     {
-                        int index = (i*maxNumLinesInProc) + j;
+                        int index = (i*MAX_NUM__LINES_IN_PROC) + j;
                         String nextLine = (String) allConnectionLines.elementAt(index);
                         response.append(nextLine + "\n");
                     }
@@ -568,7 +569,7 @@ public class NeuronTemplateGenerator
         Vector allShapeLines = getShapeLines();
 
 
-        if (allShapeLines.size() < maxNumLinesInProc)
+        if (allShapeLines.size() < MAX_NUM__LINES_IN_PROC)
         {
             logger.logComment("Only have " + allShapeLines.size() +" lines of shape info, putting them in one function");
             for (int i = 0; i < allShapeLines.size(); i++)
@@ -582,7 +583,7 @@ public class NeuronTemplateGenerator
         else
         {
             logger.logComment("Will have to split up the " + allShapeLines.size() +" shape info lines...");
-            int numberToSplit = Math.round( (float) allShapeLines.size() / (float) maxNumLinesInProc) +  1;
+            int numberToSplit = Math.round( (float) allShapeLines.size() / (float) MAX_NUM__LINES_IN_PROC) +  1;
             logger.logComment("Will create " + numberToSplit + " functions...");
 
             for (int i = 0; i < numberToSplit; i++)
@@ -595,11 +596,11 @@ public class NeuronTemplateGenerator
             for (int i = 0; i < numberToSplit; i++)
             {
                 response.append("proc basic_shape_extra_" + i + "(){\n");
-                for (int j = 0; j < maxNumLinesInProc; j++)
+                for (int j = 0; j < MAX_NUM__LINES_IN_PROC; j++)
                 {
                     try
                     {
-                        int index = (i * maxNumLinesInProc) + j;
+                        int index = (i * MAX_NUM__LINES_IN_PROC) + j;
                         String nextLine = (String) allShapeLines.elementAt(index);
                         response.append(nextLine + "\n");
                     }
@@ -854,7 +855,7 @@ public class NeuronTemplateGenerator
         response.append("    "+"all = new SectionList()\n");
 
 
-        if (subsetLines.size() < maxNumLinesInProc)
+        if (subsetLines.size() < MAX_NUM__LINES_IN_PROC)
         {
             logger.logComment("..............     Only have " + subsetLines.size() +
                               " lines of subset info, putting them in one function");
@@ -869,7 +870,7 @@ public class NeuronTemplateGenerator
         else
         {
             logger.logComment("Will have to split up the " + subsetLines.size() + " subset info lines...");
-            int numberToSplit = Math.round( (float) subsetLines.size() / (float) maxNumLinesInProc) + 1;
+            int numberToSplit = Math.round( (float) subsetLines.size() / (float) MAX_NUM__LINES_IN_PROC) + 1;
             logger.logComment("Will create " + numberToSplit + " functions...");
 
             for (int i = 0; i < numberToSplit; i++)
@@ -882,11 +883,11 @@ public class NeuronTemplateGenerator
             for (int i = 0; i < numberToSplit; i++)
             {
                 response.append("proc subsets_extra_" + i + "(){\n");
-                for (int j = 0; j < maxNumLinesInProc; j++)
+                for (int j = 0; j < MAX_NUM__LINES_IN_PROC; j++)
                 {
                     try
                     {
-                        int index = (i * maxNumLinesInProc) + j;
+                        int index = (i * MAX_NUM__LINES_IN_PROC) + j;
                         String nextLine = subsetLines.elementAt(index);
                         response.append(nextLine + "\n");
                     }
@@ -987,7 +988,7 @@ public class NeuronTemplateGenerator
         }
         response.append("proc geom_nseg() {\n");
 
-        if (nsegLines.size() < maxNumLinesInProc)
+        if (nsegLines.size() < MAX_NUM__LINES_IN_PROC)
         {
             logger.logComment("..............     Only have " + nsegLines.size() +
                               " nsegLines, putting them in one function");
@@ -1004,7 +1005,7 @@ public class NeuronTemplateGenerator
         {
             logger.logComment("Will have to split up the " + nsegLines.size() + " nsegLines...");
 
-            int numberToSplit = Math.round( (float) nsegLines.size() / (float) maxNumLinesInProc) + 1;
+            int numberToSplit = Math.round( (float) nsegLines.size() / (float) MAX_NUM__LINES_IN_PROC) + 1;
             logger.logComment("Will create " + numberToSplit + " functions...");
 
             for (int i = 0; i < numberToSplit; i++)
@@ -1017,11 +1018,11 @@ public class NeuronTemplateGenerator
             for (int i = 0; i < numberToSplit; i++)
             {
                 response.append("proc geom_nseg_extra_" + i + "(){\n");
-                for (int j = 0; j < maxNumLinesInProc; j++)
+                for (int j = 0; j < MAX_NUM__LINES_IN_PROC; j++)
                 {
                     try
                     {
-                        int index = (i * maxNumLinesInProc) + j;
+                        int index = (i * MAX_NUM__LINES_IN_PROC) + j;
                         String nextLine = nsegLines.elementAt(index);
                         response.append(nextLine + "\n");
                     }
@@ -1411,7 +1412,7 @@ public class NeuronTemplateGenerator
                         if (subResponse.charAt(i)=='\n')
                             numLinesHere++;
                     }
-                    if (totLines+numLinesHere>=maxNumLinesInProc)
+                    if (totLines+numLinesHere>=MAX_NUM__LINES_IN_PROC)
                     {
 
                         response.append("    addChanMechs_"+subProcCount+"()  // Spliting function to prevent errors when proc too big\n");
