@@ -179,7 +179,8 @@ def generateAndRunNeuron(project,
                          verbose=True, 
                          quitAfterRun=False, 
                          runInBackground=False,
-                         varTimestep=False):
+                         varTimestep=False,
+                         varTimestepTolerance=None):
 
     prefix = "--- NEURON gen:   "
 
@@ -191,6 +192,9 @@ def generateAndRunNeuron(project,
         project.neuronSettings.setNoConsole()
 
     project.neuronSettings.setVarTimeStep(varTimestep)
+
+    if varTimestepTolerance is not None:
+        project.neuronSettings.setVarTimeAbsTolerance(varTimestepTolerance)
     
     project.neuronFileManager.generateTheNeuronFiles(simConfig,
                                                      None,
@@ -427,9 +431,10 @@ class SimulationManager():
                                     fail = True
 
                                 for spikeNum in range(0, len(spikeTimesTarget)):
-                                    if abs(spikeTimesTarget[spikeNum] - spikeTimes[spikeNum]) > spikeTimeAccuracy:
-                                        report = report + "ERROR: Spike time: %f not within %f of %f for %s in %s!\n" % \
-                                                  (spikeTimes[spikeNum], spikeTimeAccuracy, spikeTimesTarget[spikeNum], dataStore.getCellSegRef(), simRef)
+                                    delta = spikeTimesTarget[spikeNum] - spikeTimes[spikeNum]
+                                    if abs(delta) > spikeTimeAccuracy:
+                                        report = report + "ERROR: Spike time: %f not within %f of %f (delta = %f) for %s in %s!\n" % \
+                                                  (spikeTimes[spikeNum], spikeTimeAccuracy, spikeTimesTarget[spikeNum], delta, dataStore.getCellSegRef(), simRef) 
                                         fail = True
                                 if fail:
                                     numFailed=numFailed+1
@@ -459,6 +464,7 @@ class SimulationManager():
                         verboseSims =           True,
                         runInBackground =       False,
                         varTimestepNeuron =     None,
+                        varTimestepTolerance =  None,
                         simRefGlobalSuffix =    '',
                         simRefGlobalPrefix =    ''):
 
@@ -511,6 +517,9 @@ class SimulationManager():
                 if varTimestepNeuron is None:
                     varTimestepNeuron = self.project.neuronSettings.isVarTimeStep()
 
+                if varTimestepTolerance is None:
+                    varTimestepTolerance = self.project.neuronSettings.getVarTimeAbsTolerance()
+
                 if runSims:
                     success = generateAndRunNeuron(self.project,
                                          self.projectManager,
@@ -519,7 +528,8 @@ class SimulationManager():
                                          simulatorSeed,
                                          verbose=verboseSims,
                                          runInBackground=runInBackground,
-                                         varTimestep=varTimestepNeuron)
+                                         varTimestep=varTimestepNeuron,
+                                         varTimestepTolerance=varTimestepTolerance)
                     if success:
                         self.allRunningSims.append(simRef)
                         allSimsSetRunning.append(simRef)

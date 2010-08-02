@@ -919,6 +919,7 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
             if (project.neuronSettings.isVarTimeStep())
             {
                 props.setProperty("Num integration method","CVODE");
+                props.setProperty("Variable timestep absolute tolerance", project.neuronSettings.getVarTimeAbsTolerance()+"");
             }
             else
             {

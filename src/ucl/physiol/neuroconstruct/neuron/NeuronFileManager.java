@@ -4447,6 +4447,8 @@ public class NeuronFileManager
             addHocComment(response, "Setting basic variable time step active");
 
             response.append("{cvode.active(1)}\n");
+            response.append("{cvode.atol("+project.neuronSettings.getVarTimeAbsTolerance()+")}\n");
+
             response.append("{run()}\n\n");
 
         }

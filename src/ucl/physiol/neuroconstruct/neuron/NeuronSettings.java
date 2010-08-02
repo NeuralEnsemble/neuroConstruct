@@ -56,6 +56,8 @@ public class NeuronSettings
     private boolean generateComments = true;
 
     private boolean useVarTimeStep = false;
+
+    private float varTimeAbsTolerance = 0.001f; // Default in NEURON is 0.001
     
     private boolean genAllModFiles = false;
 
@@ -285,6 +287,21 @@ public class NeuronSettings
     {
         this.useVarTimeStep = useVarTimeStep;
     }
+
+    /*
+     * Currently these funcs are only used through Python interface
+     */
+    public float getVarTimeAbsTolerance()
+    {
+        return varTimeAbsTolerance;
+    }
+
+    public void setVarTimeAbsTolerance(float varTimeAbsTolerance)
+    {
+        this.varTimeAbsTolerance = varTimeAbsTolerance;
+    }
+
+
 
 
     public boolean isModSilentMode()
