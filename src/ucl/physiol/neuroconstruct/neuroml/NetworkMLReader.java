@@ -1130,11 +1130,21 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
          
          else if (getCurrentElement().equals(NetworkMLConstants.INPUT_TARGET_ELEMENT))
          {
-             currentInputCellGroup = attributes.getValue(NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR);
+             currentInputCellGroup = attributes.getValue(NetworkMLConstants.INPUT_TARGET_POPULATION_ATTR);
+             if (currentInputCellGroup==null)
+             {
+                 currentInputCellGroup = attributes.getValue(NetworkMLConstants.INPUT_TARGET_CELLGROUP_OLD_ATTR); // check old name
+             }
+             if (currentInputCellGroup==null)
+             {
+
+                 GuiUtils.showErrorMessage(logger, "Problem finding population/cell group attribute in "+elementStack, null, null);
+             }
              
              if (!project.cellGroupsInfo.isValidCellGroup(currentInputCellGroup))
              {
-                 GuiUtils.showWarningMessage(logger, "Error, target cell group: "+currentInputCellGroup+" not found in project. Current Cell Groups: "+ project.cellGroupsInfo.getAllCellGroupNames(), null);
+                 GuiUtils.showWarningMessage(logger, "Error, target cell group: "+currentInputCellGroup+" not found in project. Current Cell Groups: "
+                         + project.cellGroupsInfo.getAllCellGroupNames(), null);
              }
              
              else if (!annotations && level3 && addStim)
@@ -1171,9 +1181,19 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              // get cell ID target cell convert to int so it can be added to SingleElectricalInput in GeneratedInputs
              Integer currentCellID = (Integer.parseInt(attributes.getValue(NetworkMLConstants.INPUT_SITE_CELLID_ATTR)));
              // get segment ID of target cell and convert to int so it can be added to SingleElectricalInput in GeneratedInputs
-             Integer currentSegID = (Integer.parseInt(attributes.getValue(NetworkMLConstants.INPUT_SITE_SEGID_ATTR)));
+             Integer currentSegID = 0;
+             
+             if (attributes.getValue(NetworkMLConstants.INPUT_SITE_SEGID_ATTR)!=null)
+             {
+                currentSegID = Integer.parseInt(attributes.getValue(NetworkMLConstants.INPUT_SITE_SEGID_ATTR));
+             }
              // get fraction along segment of target segment and convert to float so it can be added to SingleElectricalInput in GeneratedInputs
-             Float currentFrac = (Float.parseFloat(attributes.getValue(NetworkMLConstants.INPUT_SITE_FRAC_ATTR)));
+             Float currentFrac = 0.5f;
+             
+             if (attributes.getValue(NetworkMLConstants.INPUT_SITE_FRAC_ATTR)!=null)
+             {
+                currentFrac = Float.parseFloat(attributes.getValue(NetworkMLConstants.INPUT_SITE_FRAC_ATTR));
+             }
 
              currentSingleInput = new SingleElectricalInput(currentInputType, currentInputCellGroup, currentCellID, currentSegID, currentFrac, null);
              logger.logComment("New instance: "+ currentSingleInput);

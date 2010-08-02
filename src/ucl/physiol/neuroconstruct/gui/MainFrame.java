@@ -5169,7 +5169,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         doNewProject(offerSamples, null, null);
     }
 
-    public void doNewProject(boolean offerSamples, File projParentDir, String projName)
+    public void doNewProject(boolean offerSamples, File projParDir, String projName)
     {
         boolean continueClosing = checkToSave();
         if (!continueClosing) return;
@@ -5177,7 +5177,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         logger.logComment(">>>>>>>>>>>>>>>    Creating new project...");
 
-        if (projParentDir==null || projName==null)
+        if (projParDir==null || projName==null)
         {
 
             NewProjectDialog dlg = new NewProjectDialog(this,
@@ -5199,33 +5199,32 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
 
             projName = dlg.getProjFileName();
-            String proDirName = dlg.getProjFileName();
+            String projDirName = dlg.getProjDirName();
 
-            if (projName.length() == 0 || proDirName.length() == 0)
+            if (projName.length() == 0 || projDirName.length() == 0)
             {
                 GuiUtils.showErrorMessage(logger, "No project name/directory entered", null, this);
                 return;
             }
 
-            projParentDir = new File(proDirName);
+            projParDir = new File(projDirName);
         }
 
-        String projectFileExtension = ProjectStructure.getNewProjectFileExtension();
+        File projDir = new File(projParDir, projName);
 
-        String fileSep = System.getProperty("file.separator");
+        logger.logComment(":::  projParentDir: "+ projParDir.getAbsolutePath()+", projName: "+ projName+", projDir: "+ projDir);
 
-        String nameNewProjectDir = projParentDir + fileSep + projName + fileSep;
 
-        File newProjectFile = new File(nameNewProjectDir + projName + projectFileExtension);
 
-        if (newProjectFile.exists())
+        if (projDir.listFiles()!=null && projDir.listFiles().length >0)
         {
-            logger.logComment("The file " + newProjectFile.getAbsolutePath() + " already exists");
+            logger.logComment("The file " + projDir.getAbsolutePath() + " is not empty!");
             Object[] options =
                 {"OK", "Cancel"};
 
             JOptionPane option = new JOptionPane(
-                "This project file: " + newProjectFile.getAbsolutePath() + " already exists. Overwrite?\nNOTE: This will remove all files in the project directory!",
+                "This project directory: " + projDir.getAbsolutePath() + " already exists and is not empty. Overwrite?\n" +
+                "NOTE: This will remove all files in the directory!",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.WARNING_MESSAGE,
                 null,
@@ -5242,20 +5241,21 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 logger.logComment("User has changed their mind...");
                 return;
             }
-
-            cleanseDirectory(newProjectFile.getParentFile());
+            cleanseDirectory(projDir);
 
         }
         else
         {
-            logger.logComment("The file " + newProjectFile.getAbsolutePath() + " doesn't already exist");
+            logger.logComment("The file " + projDir.getAbsolutePath() + " doesn't already exist");
         }
         this.initialisingProject = true;
 
-        projManager.setCurrentProject(Project.createNewProject(nameNewProjectDir, projName, this));
+        Project proj = Project.createNewProject(projDir.getAbsolutePath(), projName, this);
+
+        projManager.setCurrentProject(proj);
 
 
-        recentFiles.addToList(newProjectFile.getAbsolutePath());
+        recentFiles.addToList(proj.getProjectFile().getAbsolutePath());
 
         try
         {
@@ -5552,6 +5552,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     {
         if (!dir.isDirectory()) return;
         File[] contents = dir.listFiles();
+
+        logger.logComment("ABOUT TO REMOVE ALL FILES IN: "+ dir.getAbsolutePath(), true);
+
         for (int i = 0; i < contents.length; i++)
         {
             logger.logComment("Removing: "+ contents[i]);

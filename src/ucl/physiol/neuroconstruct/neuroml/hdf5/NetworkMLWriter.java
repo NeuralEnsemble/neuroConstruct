@@ -553,7 +553,7 @@ public class NetworkMLWriter
 
                         //Assign them to the attibutes of the group
 
-                        Attribute cellGroupAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR, cellGroup, h5File);                   
+                        Attribute cellGroupAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_TARGET_POPULATION_ATTR, cellGroup, h5File);
                         Attribute delayAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_DELAY_ATTR, delay, h5File);                    
                         Attribute durationAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_DUR_ATTR, duration, h5File);                    
                         Attribute ampAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_AMP_ATTR, amp, h5File);
@@ -578,7 +578,7 @@ public class NetworkMLWriter
 
                         //Assign them to the attibutes of the group
 
-                        Attribute cellGroupAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR, cellGroup, h5File);
+                        Attribute cellGroupAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.INPUT_TARGET_POPULATION_ATTR, cellGroup, h5File);
                         Attribute stimFreqAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.RND_STIM_FREQ_ATTR, stimFreq, h5File);                    
                         Attribute stimMechAttr = Hdf5Utils.getSimpleAttr(NetworkMLConstants.RND_STIM_MECH_ATTR, stimMech, h5File);                    
 

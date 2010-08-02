@@ -435,7 +435,7 @@ public class GeneratedElecInputs
                 
                 SimpleXMLElement inputTargetElement = new SimpleXMLElement(NetworkMLConstants.INPUT_TARGET_ELEMENT);
                 
-                inputTargetElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_TARGET_CELLGROUP_ATTR, nextStim.getCellGroup()));
+                inputTargetElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_TARGET_POPULATION_ATTR, nextStim.getCellGroup()));
 
                 inputElement.addChildElement(inputTargetElement);
                 inputTargetElement.addContent("\n            ");

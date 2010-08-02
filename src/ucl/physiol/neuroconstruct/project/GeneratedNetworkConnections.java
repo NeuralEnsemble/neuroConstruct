@@ -584,6 +584,8 @@ public class GeneratedNetworkConnections
                 int srcCellNum = project.generatedCellPositions.getNumberInCellGroup(src);
                 int tgtCellNum = project.generatedCellPositions.getNumberInCellGroup(tgt);
 
+                logger.logComment("srcCellNum: "+srcCellNum+", tgtCellNum: "+ tgtCellNum);
+
                 int[] numInEachSrcCell = new int[srcCellNum];
                 int[] numInEachTgtCell = new int[tgtCellNum];
 
@@ -592,6 +594,7 @@ public class GeneratedNetworkConnections
 
                 for (SingleSynapticConnection conn : conns)
                 {
+                    //logger.logComment(conn.toNiceString());
                     numInEachSrcCell[conn.sourceEndPoint.cellNumber]++;
                     numInEachTgtCell[conn.targetEndPoint.cellNumber]++;
 

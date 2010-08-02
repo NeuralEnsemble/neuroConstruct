@@ -98,6 +98,7 @@ public class NewProjectDialog extends JDialog
         jTextFieldProjName.addKeyListener(new java.awt.event.KeyAdapter()
         {
 
+            @Override
             public void keyReleased(KeyEvent e)
             {
                 jTextFieldProjName_keyReleased(e);
@@ -106,6 +107,7 @@ public class NewProjectDialog extends JDialog
         jTextFieldProjDir.setText(GeneralProperties.getnCProjectsDir().getAbsolutePath());
         jTextFieldProjDir.addKeyListener(new java.awt.event.KeyAdapter()
         {
+            @Override
             public void keyReleased(KeyEvent e)
             {
                 jTextFieldProjDir_keyReleased(e);
@@ -214,7 +216,6 @@ public class NewProjectDialog extends JDialog
 
     void jButtonOK_actionPerformed(ActionEvent e)
     {
-        logger.logComment("OK pressed...");
 
         projFileName = new String(this.jTextFieldProjName.getText());
 
@@ -234,6 +235,8 @@ public class NewProjectDialog extends JDialog
 
 
         projDirName = new String(this.jTextFieldProjDir.getText());
+
+        //logger.logComment("projDirName: "+projDirName, true);
 
         this.dispose();
     }
