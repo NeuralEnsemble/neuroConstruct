@@ -4954,7 +4954,7 @@ public class NeuronFileManager
 
                     /*TODO: Move to hpc/mpi package...*/
 
-                    System.out.println("Generating for: "+ simConfig.getMpiConf().getMpiVersion()+", "+simConfig.getMpiConf().getMpiVersion().equals(MpiSettings.OPENMPI_V2));
+                    //System.out.println("Generating for: "+ simConfig.getMpiConf().getMpiVersion()+", "+simConfig.getMpiConf().getMpiVersion().equals(MpiSettings.OPENMPI_V2));
 
                     if (simConfig.getMpiConf().isParallelNet())
                     {

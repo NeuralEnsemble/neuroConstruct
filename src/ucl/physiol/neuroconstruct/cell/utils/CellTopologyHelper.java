@@ -2428,7 +2428,7 @@ public class CellTopologyHelper
             	}
                 else if (projHtml)
             	{
-            		descCm = ClickProjectHelper.getCellMechLink(chanMech.getName())+ " ("+ moreInfo+")";
+                    descCm = ClickProjectHelper.getCellMechLink(chanMech.getName())+ " ("+ moreInfo+")";
                     if (false) // nearly there...
                     {
                         String grpString = new String();

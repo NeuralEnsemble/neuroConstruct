@@ -13,7 +13,7 @@ double totParamVal[32] // max number params
 dummyRevPot = 99999
 
 
-proc cellInfo() {
+proc cellInfoOne() {
 
     totalDiam = 0 
     totalNseg = 0 
@@ -24,7 +24,7 @@ proc cellInfo() {
     
     numSections = 0 
     
-    forall {
+    forsec $s1 {
     
         totalDiam = totalDiam + diam
         totalNseg = totalNseg + nseg
@@ -63,7 +63,7 @@ proc cellInfo() {
     totcao = 0
     numECa = 0
     
-    forall { 
+    forsec $s1 {
         if (ismembrane("k_ion")) {
             numEk = numEk +1
             totEk = totEk + ek
@@ -109,7 +109,7 @@ proc cellInfo() {
          }
          
          
-         forall { 
+         forsec $s1 {
             if (ismembrane(mname)) {
                 numPresent = numPresent + 1
                 
@@ -137,6 +137,11 @@ proc cellInfo() {
     print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
 
+}
+
+
+proc cellInfo() {
+    cellInfoOne("")
 }
 
 

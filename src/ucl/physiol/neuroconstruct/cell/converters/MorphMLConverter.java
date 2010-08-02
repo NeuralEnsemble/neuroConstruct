@@ -1125,7 +1125,7 @@ public class MorphMLConverter extends FormatImporter
                             SimpleXMLElement paramElExt = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
                             paramElExt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR, BiophysicsConstants.PARAMETER_CONC_EXT));
-                            paramElExt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,UnitConverter.getConcentration(ip.getExternalConcentration(),
+                            paramElExt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,(float)UnitConverter.getConcentration(ip.getExternalConcentration(),
                                                     UnitConverter.NEUROCONSTRUCT_UNITS,
                                                     preferredExportUnits) +""));
 
@@ -1135,7 +1135,7 @@ public class MorphMLConverter extends FormatImporter
                             SimpleXMLElement paramElInt = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
                             paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR, BiophysicsConstants.PARAMETER_CONC_INT));
-                            paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,UnitConverter.getConcentration(ip.getInternalConcentration(),
+                            paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,(float)UnitConverter.getConcentration(ip.getInternalConcentration(),
                                                     UnitConverter.NEUROCONSTRUCT_UNITS,
                                                     preferredExportUnits) +""));
 
@@ -1147,7 +1147,7 @@ public class MorphMLConverter extends FormatImporter
                             SimpleXMLElement paramElInt = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
                             paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR, BiophysicsConstants.PARAMETER_REV_POT));
-                            paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,UnitConverter.getVoltage(ip.getReversalPotential(),
+                            paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,(float)UnitConverter.getVoltage(ip.getReversalPotential(),
                                                     UnitConverter.NEUROCONSTRUCT_UNITS,
                                                     preferredExportUnits) +""));
 
