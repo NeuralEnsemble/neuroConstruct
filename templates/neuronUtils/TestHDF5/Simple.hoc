@@ -7,7 +7,7 @@
 {load_file("nrngui.hoc")}
 
 {startsw()}
-nCells = 400
+nCells = 40
 
 create secs[nCells]
 access secs[0]
@@ -29,8 +29,9 @@ showPlot = 0
 //  recOption = 2  => Save vectors in text files using python
 //  recOption = 3  => Save vectors in HDF5 file with 1 table for each cell
 //  recOption = 4  => Save vectors in HDF5 file with 1 table for each cell group
+//  recOption = 5  => Save vectors in HDF5 file with 1 table for each cell group, and use compression
 
-recOption = 4
+recOption = 5
 
 print "Using recording option: ", recOption
 
@@ -56,7 +57,7 @@ for i=0, nCells-1 {
     }
 }
 
-psection()
+//psection()
 
 
 
@@ -137,6 +138,7 @@ print "Finished simulation in ", realruntime ,"seconds"
 print "Current time: ", date
 
 print "Removing old *.dat and *.h data files and storing the new data..."
+print ""
 
 {system("rm -f *dat")}
 {system("rm -f *h5")}
@@ -186,9 +188,6 @@ if (recOption == 1) {
     nrnpython("import tables")
     nrnpython("from neuron import *")
 
-    nrnpython("allVolts = numpy.zeros( (h.nCells, h.numPoints) , dtype=float )")
-    nrnpython("print allVolts.shape")
-
     nrnpython("h5file = tables.openFile('volts.h5', mode = 'w', title = 'Voltages saved from NEURON')")
 
     nrnpython("group = h5file.createGroup('/', 'voltage', 'Arrays of cell membrane potentials')")
@@ -220,6 +219,31 @@ if (recOption == 1) {
     nrnpython("group = h5file.createGroup('/', 'CellGroup1', 'Some cell group')")
 
     nrnpython("h5file.createArray(group, 'voltage', allVolts, 'Some membrane potential values')")
+
+    nrnpython("h5file.close()")
+  
+} else if (recOption == 5) {
+
+    nrnpython("import numpy")
+    nrnpython("import tables")
+    nrnpython("from neuron import *")
+
+    nrnpython("h5file = tables.openFile('volts.h5', mode = 'w', title = 'Voltages saved from NEURON')")
+
+    nrnpython("group = h5file.createGroup('/', 'CellGroup1', 'Some cell group')")
+    
+    nrnpython("atom = tables.Float32Atom()")
+    nrnpython("filters = tables.Filters(complevel=1, complib='zlib')")
+
+    nrnpython("hArray = h5file.createCArray(group, 'voltage', atom, (h.nCells, h.numPoints), title='Some membrane potential values')")
+    
+    for i=0, nCells-1 {
+        nrnpython("volts = h.v_cell[int(h.i)].to_python()")
+
+        nrnpython("hArray[int(h.i),:] = volts")
+    }
+
+   
 
     nrnpython("h5file.close()")
 }
