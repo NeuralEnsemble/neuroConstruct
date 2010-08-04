@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<channelml xmlns="http://morphml.org/channelml/schema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:meta="http://morphml.org/metadata/schema" 
+    xsi:schemaLocation="http://morphml.org/channelml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level2/ChannelML_v1.8.1.xsd"
+    units="SI Units">
+
+    <meta:notes>A channel from Maex, R and De Schutter, E. Synchronization of Golgi and Granule Cell Firing in a 
+    Detailed Network Model of the Cerebellar Granule Cell Layer</meta:notes>
+    
+    <channel_type name="Gran_NaF_98">
+               
+        <status value="stable">
+            <meta:comment>Verified equivalence of NEURON and GENESIS mapping to orig GENESIS impl from www.tnb.ua.ac.be</meta:comment>
+            <meta:comment>Updated to post v1.7.3 new ChannelML format</meta:comment>
+            <meta:issue>Quite a small dt (~0.001 ms) is needed to give matching NEURON/GENESIS results for a compartment with just 
+                this channel (and a leak current)</meta:issue>
+            <meta:contributor>
+                <meta:name>Padraig Gleeson</meta:name>
+            </meta:contributor>
+        </status>
+    
+        <meta:notes>Fast inactivating Na+ channel</meta:notes>
+        
+        <meta:authorList>
+            <meta:modelAuthor>
+                <meta:name>Maex, R.</meta:name>
+            </meta:modelAuthor>
+            <meta:modelAuthor>
+                <meta:name>De Schutter, E.</meta:name>
+            </meta:modelAuthor>
+            <meta:modelTranslator>
+                <meta:name>Padraig Gleeson</meta:name>
+                <meta:institution>UCL</meta:institution>    
+                <meta:email>p.gleeson - at - ucl.ac.uk</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+        
+        
+        <meta:publication>
+           <meta:fullTitle>Maex, R and De Schutter, E. 
+           Synchronization of Golgi and Granule Cell Firing in a Detailed Network Model of the 
+           cerebellar Granule Cell Layer. J Neurophysiol, Nov 1998; 80: 2521 - 2537</meta:fullTitle>
+           <meta:pubmedRef>http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;list_uids=9819260&amp;dopt=Abstract</meta:pubmedRef>
+        </meta:publication>
+
+
+        <meta:neuronDBref>
+            <meta:modelName>Na channels</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/senselab/NeuronDB/channelGene2.htm#table2</meta:uri>
+        </meta:neuronDBref>
+        
+        <current_voltage_relation cond_law="ohmic" ion="na" default_gmax="546.301" default_erev="0.055">
+            
+            <q10_settings q10_factor="3" experimental_temp="17.350264793"/>
+            <offset value="0.010"/>
+            
+            <gate name="m" instances="3">
+                <closed_state id="m0"/>
+                <open_state id="m"/>
+                     
+                <transition name="alpha" from="m0" to="m" expr_form="exponential" rate="1500" scale="0.012345679" midpoint="-0.039" />
+                    
+                <transition name="beta" from="m" to="m0" expr_form="exponential" rate="1500" scale="-0.0151515" midpoint="-0.039" />
+                    
+                <time_course name="tau" from="m0" to="m" expr_form="generic" expr="1/(alpha + beta) &lt; 0.00005 ? 0.00005 : 1/(alpha + beta)" />
+                    
+            </gate>
+        
+            <gate name="h" instances="1">
+                <closed_state id="h0"/>
+                <open_state id="h"/>
+                     
+                <transition name="alpha" from="h0" to="h" expr_form="exponential" rate="120" scale="-0.01123596" midpoint="-0.05" />
+                    
+                <transition name="beta" from="h" to="h0" expr_form="exponential" rate="120" scale="0.01123596" midpoint="-0.05" />
+                    
+                <time_course name="tau" from="h0" to="h" expr_form="generic" expr="1/(alpha + beta) &lt; 0.000225 ? 0.000225 : 1/(alpha + beta)" />
+                    
+            </gate>
+        </current_voltage_relation> 
+        
+
+        
+        <!-- Adding extra table divs due to discontinuity in tau-->
+        <impl_prefs>
+            <table_settings max_v="0.1" min_v="-0.1" table_divisions="4000"/>
+        </impl_prefs>
+        
+    </channel_type>
+</channelml>

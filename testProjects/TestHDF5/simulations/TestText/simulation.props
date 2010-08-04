@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>This is a summary of the simulation parameters to assist reviewing of saved simulations in neuroConstruct.</comment>
+<entry key="Simulation temp">32.0</entry>
+<entry key="Duration">800.0</entry>
+<entry key="Unit system">NEURON Units</entry>
+<entry key="Script format">Hoc</entry>
+<entry key="neuroConstruct random seed">-1160799060</entry>
+<entry key="NEURON random seed">44905354</entry>
+<entry key="Morph summary SampleCell">Segs:6_Secs:6_IntDivs:6</entry>
+<entry key="Sim Config">Default Simulation Configuration (CellGroup_2, SampleCellGroup, NetConn_SampleCellGroup_CellGroup_2, SampleIClamp, SamplePlot, CellGroup_2_v, Var_1, Var_0)</entry>
+<entry key="Parallel configuration">Local machine, serial mode with 1 host, 1 processor
+</entry>
+<entry key="Populations">SampleCellGroup (SampleCell): 8; CellGroup_2 (Granule_98): 4</entry>
+<entry key="Cell Mechanisms on SampleCell">[KConductance (3.6E-7) on: [all], LeakConductance (3.0E-9) on: [all], NaConductance (1.2E-6) on: [all], DoubExpSyn on: [all], MF_AMPA on: [all], NMDA on: [all]]</entry>
+<entry key="Script generation time">0.119</entry>
+<entry key="Global Cm">1.0E-8</entry>
+<entry key="neuroConstruct version">1.4.1</entry>
+<entry key="dt">0.02</entry>
+<entry key="Global Rm">3.33333344E8</entry>
+<entry key="Stimulation: 0">RandomSpikeTrain: [rate: 0.05, synaptic input: DoubExpSyn] on SampleCellGroup</entry>
+<entry key="Cell Mechanisms on Granule_98">[Gran_CaHVA_98 (9.084216E-9) on: [all], Gran_CaPool_98 (0.0) on: [all], Gran_H_98 (3.0905062E-10) on: [all], Gran_KA_98 (1.14567E-8) on: [all], Gran_KCa_98 (1.79811E-7) on: [all], Gran_KDr_98 (8.89691E-8) on: [all], Gran_NaF_98 (5.57227E-7) on: [all], GranPassiveCond (3.30033E-10) on: [all], AMPA_GranGol on: [all], GABAA on: [all], MF_AMPA on: [all], NMDA on: [all]]</entry>
+<entry key="GUI Mode">NO_PLOTS</entry>
+<entry key="Simulator">NEURON</entry>
+<entry key="Net Conn: 0">NetConn_SampleCellGroup_CellGroup_2: SampleCellGroup -&gt; CellGroup_2 (MF_AMPA [thresh: -20.0, delay: 5.0, weight: 0.0 -&gt; 1.0], NMDA [thresh: -20.0, delay: 5.0, weight: 1.0]), Completely Random, Gen Src-&gt;Tgt, 4.0 per Src, max: MAX per Tgt, Pre: axons soma Post: dends soma, Max: MAX, min: 0.0, dim: r (num attempts: 100), APSpeed: 3.4028235E38</entry>
+<entry key="Num integration method">Fixed time step</entry>
+<entry key="Global Ra">300.0</entry>
+<entry key="Morph summary Granule_98">Segs:1_Secs:1_IntDivs:1</entry>
+</properties>
