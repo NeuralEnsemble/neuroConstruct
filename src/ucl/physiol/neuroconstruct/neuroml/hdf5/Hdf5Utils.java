@@ -32,14 +32,13 @@ import java.io.*;
 import java.util.*;
 
 import java.util.ArrayList;
-import javax.xml.parsers.*;
 
 import ncsa.hdf.hdf5lib.HDF5Constants;
-import org.xml.sax.*;
 
 import ucl.physiol.neuroconstruct.dataset.DataSet;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 
 
@@ -54,6 +53,11 @@ import ucl.physiol.neuroconstruct.utils.*;
 public class Hdf5Utils
 {
     private static ClassLogger logger = new ClassLogger("Hdf5Utils");
+
+    static
+    {
+        //logger.setThisClassVerbose(true);
+    }
     
     public Hdf5Utils()
     {
@@ -69,6 +73,7 @@ public class Hdf5Utils
         {
             ClassLoader cl  = ClassLoader.getSystemClassLoader();
             cl.loadClass("ncsa.hdf.object.FileFormat");
+            logger.logComment("HDF5 classes found in classpath!!");
         }
         catch(Exception ex)
         {
@@ -222,6 +227,7 @@ public class Hdf5Utils
     
     public static ArrayList<Attribute> parseGroupForAttributes(Group g) throws Hdf5Exception
     {
+        logger.logComment("Parsing group: "+ g.getFullName()+" for attributes");
         ArrayList<Attribute> attrs = new ArrayList<Attribute>();
         
         try
@@ -232,6 +238,7 @@ public class Hdf5Utils
                 try
                 {
                     Attribute a = (Attribute)obj;
+                    logger.logComment("Found: "+ a.getName());
                     attrs.add(a);
                 }
                 catch (ClassCastException ex)
@@ -244,12 +251,15 @@ public class Hdf5Utils
         {
             throw new Hdf5Exception("Failed to parse Group for Attributes", ex);
         }
+
+        logger.logComment("Found: "+ attrs.size()+" attrs");
         return attrs;
     }
 
     
     public static ArrayList<Attribute> parseDatasetForAttributes(Dataset d) throws Hdf5Exception
     {
+        logger.logComment("Parsing Dataset: "+ d.getFullName()+" for attributes");
         ArrayList<Attribute> attrs = new ArrayList<Attribute>();
         
         try
@@ -272,6 +282,7 @@ public class Hdf5Utils
         {
             throw new Hdf5Exception("Failed to parse Dataset for Attributes", ex);
         }
+        logger.logComment("Found: "+ attrs);
         return attrs;
     }
 
@@ -335,13 +346,160 @@ public class Hdf5Utils
             info = info + "(??? Class: "+a.getValue().getClass()+")";
         }
         
-        p.setProperty(a.getName(), value);
+        if (p!=null)
+            p.setProperty(a.getName(), value);
+
+        logger.logComment(info);
         
         return info;
         
     }
+
+
+
+
+    /*
+     * Look specifically for data in 1D or 2D arrays as saved after a neuroConstruct generated simulation
     
-       
+    public static ArrayList<DataStore> parseGroupForDataStores(Group g, boolean includePoints) throws Exception
+    {
+        parseGroupForDataStores(g, includePoints, null);
+    } */
+
+    /*
+     * Look specifically for data in 1D or 2D arrays as saved after a neuroConstruct generated simulation
+     */
+    public static ArrayList<DataStore> parseGroupForDataStores(Group g, boolean includePoints) throws Hdf5Exception
+    {
+
+        ArrayList<DataStore> dataStores = new ArrayList<DataStore>();
+
+        if (g == null) return dataStores;
+
+        logger.logComment("Searching group "+g.getFullName()+" ("+(g.getParent()==null?"root":"in "+g.getParent())+") for Datasets");
+
+        java.util.List members = g.getMemberList();
+        
+        String currentCellGroup = null;
+
+        ArrayList<Attribute> attrs = parseGroupForAttributes(g);
+
+        for (Attribute attr: attrs)
+        {
+            if (attr.getName().equals(Hdf5Constants.NEUROCONSTRUCT_POPULATION))
+            {
+                Properties p = new Properties();
+                String val = parseAttribute(attr, " -a- ", p);
+                currentCellGroup = p.getProperty(Hdf5Constants.NEUROCONSTRUCT_POPULATION);
+            }
+        }
+        logger.logComment("Current cell group: "+currentCellGroup);
+
+        int n = members.size();
+
+        HObject obj = null;
+
+        for (int i=0; i<n; i++)
+        {
+            obj = (HObject)members.get(i);
+
+            logger.logComment("HObject found: "+obj+" in "+ obj.getPath());
+            java.util.List stuff = null;
+            try
+            {
+                stuff = obj.getMetadata();
+            }
+            catch (Exception ex)
+            {
+                throw new Hdf5Exception("Problem extracting metadata", ex);
+            }
+
+            logger.logComment("There are "+stuff.size()+" items of metadata here");
+
+            Properties p = new Properties();
+
+            for (Object m: stuff)
+            {
+                if (m instanceof Attribute)
+                {
+                    parseAttribute((Attribute)m, "", p);
+
+                }
+            }
+
+            if (obj instanceof Group)
+            {
+                logger.logComment("It is a Group...");
+                ArrayList<DataStore> childDataStores = parseGroupForDataStores((Group)obj, includePoints);
+                dataStores.addAll(childDataStores);
+            }
+
+            if (obj instanceof Dataset)
+            {
+                logger.logComment("It is a Dataset...");
+                Dataset d = (Dataset)obj;
+
+                attrs = parseDatasetForAttributes(d);
+                String currentVariable = "Unknown";
+
+                for (Attribute attr: attrs)
+                {
+                    if (attr.getName().equals(Hdf5Constants.NEUROCONSTRUCT_VARIABLE))
+                    {
+                        Properties dp = new Properties();
+                        String val = parseAttribute(attr, " -a- ", dp);
+                        currentVariable = dp.getProperty(Hdf5Constants.NEUROCONSTRUCT_VARIABLE);
+                    }
+                }
+
+                if (d.getDims().length==1)
+                {
+                    logger.logComment("Dimensions: "+d.getDims()[0]);
+
+                    if (d.getDims()[0]>1)
+                    {
+                        DataSet dataSet = Hdf5Utils.parse1DDataset(d, includePoints, p);
+                        
+                        DataStore dataStore = new DataStore(dataSet.getYValues(), currentCellGroup, -1, -1, currentVariable, "???", "???", null);
+
+
+                        dataStores.add(dataStore);
+                    }
+
+                }
+                if (d.getDims().length==2)
+                {
+                    logger.logComment("Dimensions: "+d.getDims()[0]+", "+d.getDims()[1]);
+
+                    ArrayList<DataSet> dataSetsHere = Hdf5Utils.parse2DDataset(d, includePoints, p);
+
+                    for(int num=0;num<dataSetsHere.size();num++)
+                    {
+                        DataSet dataSet = dataSetsHere.get(num);
+
+                        //TODO: Convert data units!!!
+                        
+                        DataStore dataStore = new DataStore(dataSet.getYValues(), currentCellGroup, num, -1, currentVariable, "ms", "???", null);
+
+                        dataStores.add(dataStore);
+                    }
+                }
+                if (d.getDims().length==3)
+                {
+                    logger.logComment("Dimensions: "+d.getDims()[0]+", "+d.getDims()[1]+", "+d.getDims()[2]);
+                    logger.logComment("Ignoring...");
+                }
+            }
+        }
+        return dataStores;
+    }
+
+
+
+    
+    /*
+     * Look for any data in 1D or 2D arrays
+     */
     public static ArrayList<DataSet> parseGroupForDatasets(Group g, boolean includePoints) throws Exception
     {
         
@@ -352,7 +510,6 @@ public class Hdf5Utils
         logger.logComment("Searching group "+g.getFullName()+" for Datasets");
 
         java.util.List members = g.getMemberList();
-             
 
         int n = members.size();
         
@@ -362,9 +519,12 @@ public class Hdf5Utils
         {
             obj = (HObject)members.get(i);
             
-            logger.logComment(obj+": "+ obj.getPath());
+            logger.logComment("HObject found: "+obj+" in "+ obj.getPath());
             
             java.util.List stuff = obj.getMetadata();
+
+
+            logger.logComment("There are "+stuff.size()+" items of metadata here");
             
             Properties p = new Properties();
             
@@ -379,20 +539,23 @@ public class Hdf5Utils
             
             if (obj instanceof Group)
             {
+                logger.logComment("It is a Group...");
                 ArrayList<DataSet> childDataSets = parseGroupForDatasets((Group)obj, includePoints);
                 dataSets.addAll(childDataSets);
             }
             
             if (obj instanceof Dataset)
             {
+                logger.logComment("It is a Dataset...");
                 Dataset d = (Dataset)obj;
                 
                 if (d.getDims().length==1)
                 {
                     logger.logComment("Dimensions: "+d.getDims()[0]);
+
                     if (d.getDims()[0]>1)
                     {
-                        DataSet ds = Hdf5Utils.parseDataset(d, includePoints, p);
+                        DataSet ds = Hdf5Utils.parse1DDataset(d, includePoints, p);
                         ds.setReference(g.getFullName()+"/"+ds.getReference());
                         
                         logger.logComment(ds.toString());
@@ -411,7 +574,9 @@ public class Hdf5Utils
                 if (d.getDims().length==2)
                 {
                     logger.logComment("Dimensions: "+d.getDims()[0]+", "+d.getDims()[1]);
-                    logger.logComment("Ignoring...");
+
+                    ArrayList<DataSet> dataSetsHere = Hdf5Utils.parse2DDataset(d, includePoints, p);
+                    dataSets.addAll(dataSetsHere);
                 }
                 if (d.getDims().length==3)
                 {
@@ -499,8 +664,143 @@ public class Hdf5Utils
 
                 
     }
+
+    public static ArrayList<DataSet> parse2DDataset(Dataset d, boolean includePoints, Properties p)
+    {
+        String pre = "  -- ";
+        String name = d.getName();
+        StringBuffer desc = new StringBuffer(d.getName()+"\n");
+        desc.append(d.getDatatype().getDatatypeDescription()+"\n");
+
+        String xUnit = "";
+        String xLegend = "x";
+        String yUnit = "";
+        String yLegend = "y";
+
+        if (p.containsKey(Hdf5Constants.NEUROSAGE_TRACE_TYPE) &&
+            p.getProperty(Hdf5Constants.NEUROSAGE_TRACE_TYPE).equals(Hdf5Constants.NEUROSAGE_TRACE_TYPE_WAVEFORM))
+        {
+            xUnit = "s";
+            xLegend = "Time";
+        }
+
+        double xSampling = 1;
+        double yOffset = 0;
+        double yScale = 1;
+
+        if (p.containsKey(Hdf5Constants.NEUROSAGE_TRACE_SAMPLING_RATE))
+        {
+            xSampling = Double.parseDouble(p.getProperty(Hdf5Constants.NEUROSAGE_TRACE_SAMPLING_RATE));
+        }
+
+        if (p.containsKey(Hdf5Constants.NEUROSAGE_TRACE_DATA_AXIS))
+        {
+            yLegend = p.getProperty(Hdf5Constants.NEUROSAGE_TRACE_DATA_AXIS);
+        }
+
+        if (p.containsKey(Hdf5Constants.NEUROSAGE_TRACE_DATA_UNIT))
+        {
+            yUnit = p.getProperty(Hdf5Constants.NEUROSAGE_TRACE_DATA_UNIT);
+        }
+
+        if (p.containsKey(Hdf5Constants.NEUROSAGE_TRACE_TRANSFORM_TYPE) &&
+            p.getProperty(Hdf5Constants.NEUROSAGE_TRACE_TRANSFORM_TYPE).equals(Hdf5Constants.NEUROSAGE_TRACE_TRANSFORM_TYPE_LINEAR))
+        {
+            yOffset = Double.parseDouble(p.getProperty(Hdf5Constants.NEUROSAGE_TRACE_TRANSFORM_OFFSET));
+            yScale = Double.parseDouble(p.getProperty(Hdf5Constants.NEUROSAGE_TRACE_TRANSFORM_SCALE));
+        }
+
+
+
+        logger.logComment(pre+""+d.getDatatype().getDatatypeDescription());
+
+        long[] dims = d.getDims();
+
+        ArrayList<DataSet> dataSets = new ArrayList<DataSet>();
+
+        for(int i=0;i<dims.length;i++)
+        {
+            String dimName = "";
+            if (d.getDimNames()!=null) dimName = d.getDimNames()[i];
+            
+            logger.logComment(pre+"Dimension "+i+": " + dims[i]+", "+ dimName);
+        }
+        if (dims.length==2)
+        {
+            int numCells = (int)dims[1];
+            int numPoints = (int)dims[0];
+
+            try
+            {
+                d.init();
+                Object dataObj = d.getData();
+                logger.logComment(pre+"Got the data: "+ dataObj.toString());
+
+                if (includePoints)
+                {
+                    if (dataObj instanceof short[])
+                    {
+                        short[] data = (short[])dataObj;
+
+                        logger.logComment(pre+"Got array of shorts of size "+data.length+" containing: "+ data[0]);
+
+
+                        for(int cellNum=0;cellNum<numCells;cellNum++)
+                        {
+                            DataSet ds = new DataSet(name+"_"+cellNum, desc.toString(), xUnit, yUnit, xLegend, yLegend);
+                            
+                            for(int i=0;i<numPoints;i++)
+                            {
+                                short point = data[i*numCells + cellNum];
+                                ds.addPoint(i/xSampling, yOffset + (yScale *point));
+                            }
+                            logger.logComment(ds.toString());
+                            dataSets.add(ds);
+                        }
+
+                    }
+                    else if (dataObj instanceof double[])
+                    {
+                        double[] data = (double[])dataObj;
+
+                        logger.logComment(pre+"Got array of doubles of size "+data.length+" containing: "+ data[0]);
+
+
+                        for(int cellNum=0;cellNum<numCells;cellNum++)
+                        {
+                            DataSet ds = new DataSet(name+"_"+cellNum, desc.toString(), xUnit, yUnit, xLegend, yLegend);
+
+                            for(int i=0;i<numPoints;i++)
+                            {
+                                double point = data[i*numCells + cellNum];
+                                ds.addPoint(i/xSampling, yOffset + (yScale *point));
+                            }
+                            logger.logComment(ds.toString());
+                            dataSets.add(ds);
+                        }
+                    }
+                    else
+                    {
+                        logger.logComment(pre+"Couldn't determine that datatype: "+ dataObj.getClass());
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                logger.logComment(pre+"Couldn't read that datatype! ");
+                e.printStackTrace();
+            }
+
+        }
+
+        return dataSets;
+    }
+
+
+
+
     
-    public static DataSet parseDataset(Dataset d, boolean includePoints, Properties p)
+    public static DataSet parse1DDataset(Dataset d, boolean includePoints, Properties p)
     {
         String pre = "  -- ";
         String name = d.getName();
@@ -547,7 +847,7 @@ public class Hdf5Utils
         
         
         
-            logger.logComment(pre+""+d.getDatatype().getDatatypeDescription());
+        logger.logComment(pre+""+d.getDatatype().getDatatypeDescription());
         
         long[] dims = d.getDims();
         
@@ -612,23 +912,115 @@ public class Hdf5Utils
         
         return ds;
     }
-    
-    
 
 
-
-    public static void main(String[] args)
+    public static void printGroup(Group g, String indent) throws Exception
     {
-        String name = "TenMillionSyn";
-        File h5File = new File("../temp/"+name+".h5");
-        File newNMLFile = new File("../temp/"+name+".nml");
+        if (g == null)
+            return;
+
+        java.util.List members = g.getMemberList();
+
+
+        Properties p = new Properties();
+
+        int n = members.size();
+        indent += "    ";
+        HObject obj = null;
+
+        for (int i=0; i<n; i++)
+        {
+            obj = (HObject)members.get(i);
+            System.out.println(indent+obj+": "+ obj.getPath());
+
+            java.util.List stuff = obj.getMetadata();
+
+            for (Object m: stuff)
+            {
+                if (m instanceof Attribute)
+                {
+                    Hdf5Utils.parseAttribute((Attribute)m, indent, p);
+
+                }
+            }
+
+            if (obj instanceof Group)
+            {
+                printGroup((Group)obj, indent);
+            }
+
+            if (obj instanceof Dataset)
+            {
+                Dataset d = (Dataset)obj;
+
+                if (d.getDims().length==1)
+                {
+                    System.out.println(indent+"Dimensions: "+d.getDims()[0]);
+                    if (d.getDims()[0]>1)
+                    {
+                        DataSet ds = Hdf5Utils.parse1DDataset(d, true, p);
+                        System.out.println(indent+ds.toString());
+                    }
+
+                }
+                if (d.getDims().length==2)
+                {
+                    System.out.println(indent+"Dimensions: "+d.getDims()[0]+", "+d.getDims()[1]);
+                }
+                if (d.getDims().length==3)
+                {
+                    System.out.println(indent+"Dimensions: "+d.getDims()[0]+", "+d.getDims()[1]+", "+d.getDims()[2]);
+                }
+            }
+        }
+    }
+
+
+
+
+
+    public static void main(String[] args) throws IOException, Hdf5Exception
+    {
         try
         {
+            File f = null;
+            f = new File("testProjects/TestHDF5/simulations/TestH5/CellGroup_2.VOLTAGE.h5");
+
+
+            System.out.println("Reading a HDF5 file: " + f.getCanonicalPath());
+
+            H5File h5file = Hdf5Utils.openH5file(f);
+
+            Hdf5Utils.open(h5file);
+
+            System.out.println("h5file: "+h5file.getRootNode());
+
+            Group g = Hdf5Utils.getRootGroup(h5file);
+
+
+
+            Hdf5Utils.printGroup(g, "--");
+
+            ArrayList<DataStore> dss = parseGroupForDataStores(g, true);
+
+
+            for(DataStore ds: dss)
+            {
+                System.out.println(ds);
+            }
+
+
+            if (true) System.exit(0);
+
+            String name = "TenMillionSyn";
+            f = new File("../temp/"+name+".h5");
+            File newNMLFile = new File("../temp/"+name+".nml");
+        
             System.setProperty("java.library.path", System.getProperty("java.library.path")+":/home/padraig/neuroConstruct");
             
             logger.logComment("Sys prop: "+System.getProperty("java.library.path"), true);
             
-            Project testProj = Project.loadProject(new File("examples/Ex9-GranCellLayer/Ex9-GranCellLayer.neuro.xml"),
+            Project testProj = Project.loadProject(new File("nCmodels/GranCellLayer/GranCellLayer.ncx"),
                                                    null);
 
 
@@ -637,7 +1029,7 @@ public class Hdf5Utils
             GeneratedNetworkConnections gnc = testProj.generatedNetworkConnections;
 
             int sizeCells = 10000;
-            int sizeConns = 10000000;
+            int sizeConns = 1000000;
             String preGrp = "Mossies";
             String postGrp = "Grans";
             
@@ -655,6 +1047,7 @@ public class Hdf5Utils
                                                             r.nextFloat()*1000, 
                                                             r.nextFloat()*1000));
             }
+            logger.logComment("Cells: " + gcp.getNumberInAllCellGroups(), true);
 
             for(int i=0;i<sizeConns;i++)
             {
@@ -672,13 +1065,17 @@ public class Hdf5Utils
                                           null);
             }
 
-            logger.logComment("Cells: " + gcp.getNumberInAllCellGroups(), true);
             logger.logComment("Net conn num: " + gnc.getNumberSynapticConnections(GeneratedNetworkConnections.ANY_NETWORK_CONNECTION), true);
 
-            NetworkMLWriter.createNetworkMLH5file(h5File, 
+            f = NetworkMLWriter.createNetworkMLH5file(f,
                                                   testProj,
                                                   testProj.simConfigInfo.getDefaultSimConfig(),
                                                   NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+            
+
+            logger.logComment("Created HDF5 file: " + h5file.getCanonicalPath(), true);
+            logger.logComment("Size: " + h5file.length() +" bytes", true);
+
             
             if (true) System.exit(0);
             

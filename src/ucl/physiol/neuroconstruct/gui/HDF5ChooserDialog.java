@@ -60,7 +60,8 @@ public class HDF5ChooserDialog extends javax.swing.JDialog
     
     
     /** Creates new form HDF5ChooserDialog */
-    public HDF5ChooserDialog(java.awt.Frame parent, boolean modal, File hdf5File) {
+    public HDF5ChooserDialog(java.awt.Frame parent, boolean modal, File hdf5File)
+    {
         super(parent, modal);
         initComponents();
         

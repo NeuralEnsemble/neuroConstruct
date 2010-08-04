@@ -226,7 +226,17 @@ public class NeuronFileManager
         try
         {
             File dirForNeuronFiles = ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory());
-            
+
+
+            if (isRunModePythonBased(runMode) || project.neuronSettings.getDataSaveFormat().equals(NeuronSettings.DataSaveFormat.HDF5_NC))
+            {
+                runPythonFile = new File(dirForNeuronFiles, makePythonFriendly("run_"+project.getProjectName() + ".py"));
+                pythonRunWriter = new FileWriter(runPythonFile);
+                
+                pythonRunWriter.write(PythonUtils.getFileHeader());
+                pythonRunWriter.write(generatePythonRunFile());
+            }
+
             if (isRunModePythonBased(runMode))
             {
                 File pyNmlUtils = ProjectStructure.getPythonNeuroMLUtilsDir(project.getProjectMainDirectory());
@@ -280,14 +290,8 @@ public class NeuronFileManager
 
 
                 mainPythonFile = new File(dirForNeuronFiles, makePythonFriendly(project.getProjectName() + ".py"));
-                runPythonFile = new File(dirForNeuronFiles, makePythonFriendly("run_"+project.getProjectName() + ".py"));
                 
                 pythonWriter = new FileWriter(mainPythonFile);
-                pythonRunWriter = new FileWriter(runPythonFile);
-                
-                
-                pythonRunWriter.write(PythonUtils.getFileHeader());
-                pythonRunWriter.write(generatePythonRunFile());
                 
                 
                 
@@ -415,7 +419,10 @@ public class NeuronFileManager
             {
                 pythonWriter.flush();
                 pythonWriter.close();
-                
+            }
+
+            if (isRunModePythonBased(runMode) || project.neuronSettings.getDataSaveFormat().equals(NeuronSettings.DataSaveFormat.HDF5_NC))
+            {
                 pythonRunWriter.flush();
                 pythonRunWriter.close();
             }
@@ -2614,17 +2621,24 @@ public class NeuronFileManager
 
         response.append(generateRunMechanism());
 
+        boolean hdf5Format = project.neuronSettings.getDataSaveFormat().equals(NeuronSettings.DataSaveFormat.HDF5_NC);
+
         if (recordingSomething)
         {
             response.append("print \"Storing the data...\"\n\n");
             response.append("strdef timeFilename\n");
 
+
+            if (hdf5Format)
+            {
+                response.append("nrnpython(\"import numpy\")\n");
+                response.append("nrnpython(\"import tables\")\n\n");
+                response.append("nrnpython(\"from neuron import *\")\n\n\n");
+            }
+
+
             String prefix = "";
             String post = "";
-
-    
-
-
 
 
             for (PlotSaveDetails record : recordings)
@@ -2656,39 +2670,124 @@ public class NeuronFileManager
                             if (isSpikeRecording) objName = objName + "_spike";
 
                             String vectObj = "v_" + objName;
-                            String fileObj = "f_" + objName;
-                            
-                            vectObj = GeneralUtils.replaceAllTokens(vectObj, ".", "_");
-                            fileObj = GeneralUtils.replaceAllTokens(fileObj, ".", "_");
 
-                            response.append("for i=0, " + (numInCellGroup - 1) + " {\n");
-
-                            prefix = "";
-                            post = "";
-
-                            if (simConfig.getMpiConf().isParallelNet())
+                            if (hdf5Format)
                             {
-                                prefix = "    ";
-                                post = "    }" + "\n";
-                                response.append("    if (isCellOnNode(\""
-                                                + cellGroupName + "\", i)) {\n");
+                                if (isSpikeRecording)
+                                {
+                                    GuiUtils.showWarningMessage(logger, "Cannot currently save spiketime data in HDF5 format", null);
+                                }
+
+                                String h5Filename = cellGroupName+"."+record.simPlot.getSafeVarName()+"."+SimPlot.CONTINUOUS_DATA_H5_EXT;
+                                String varName = GeneralUtils.replaceAllTokens(h5Filename, ".", "_");
+
+                                response.append("nrnpython(\"h5file = tables.openFile('"+h5Filename+"', mode = 'w', title = 'Arrays of recordings of "+record.simPlot.getValuePlotted()
+                                        +" from NEURON')\")\n\n");
+
+                                int mode = 4;
+
+                                response.append("print \"Using HDF5 save mode: "+mode+"\"\n");
+
+                                if (mode == 3)
+                                {
+
+                                    response.append("nrnpython(\"group = h5file.createGroup('/', 'voltage', 'Arrays of recordings of "+record.simPlot.getValuePlotted()
+                                            +" from cell group: "+cellGroupName+" ')\")\n");
+
+                                    response.append("for i=0, n_"+cellGroupName+"-1 {\n");
+                                    response.append("    nrnpython(\"volts = h."+vectObj+"[int(h.i)].to_python()\")\n");
+                                    response.append("    nrnpython(\"h5file.createArray(group, 'Cell_'+str(int(h.i)), volts, 'Values of "+record.simPlot.getValuePlotted()
+                                            +" from cell group: "+cellGroupName+"')\")\n");
+                                    response.append("}\n");
+
+                                }
+                                else if (mode == 4)
+                                {
+
+                                    response.append("{nrnpython(\"allData = numpy.zeros( (h.v_time.size(), "+numInCellGroup+") , dtype=float )\")}\n");
+                                    response.append("{nrnpython(\"print allData.shape\")}\n\n");
+
+                                    response.append("for i=0, n_"+cellGroupName+"-1 {\n");
+
+                                    response.append("    { nrnpython(\"allData[:,int(h.i)] = h."+vectObj+"[int(h.i)].to_python()\")}\n");
+                                    response.append("}\n");
+
+                                    response.append("{nrnpython(\"group = h5file.createGroup('/', '"+cellGroupName+"', '"+cellGroupName+"')\")}\n");
+
+                                    response.append("nrnpython(\"group._v_attrs."+Hdf5Constants.NEUROCONSTRUCT_POPULATION+" = '"+cellGroupName+"'\")\n");
+
+                                    response.append("nrnpython(\"hArray = h5file.createArray(group, '"+record.simPlot.getSafeVarName()+"', allData, 'Values of "+record.simPlot.getValuePlotted()
+                                            +" from cell group: "+cellGroupName+"')\")\n");
+
+                                    response.append("nrnpython(\"hArray.setAttr('"+Hdf5Constants.NEUROCONSTRUCT_VARIABLE+"', '"+record.simPlot.getValuePlotted()+"')\")\n");
+
+
+                                }
+                                else if (mode == 5)
+                                {
+                                    response.append("nrnpython(\"group = h5file.createGroup('/', '"+cellGroupName+"', '"+cellGroupName+"')\")\n");
+
+                                    response.append("nrnpython(\"group._v_attrs."+Hdf5Constants.NEUROCONSTRUCT_POPULATION+" = '"+cellGroupName+"'\")\n");
+
+                                    response.append("nrnpython(\"atom = tables.Float32Atom()\")\n");
+                                    //response.append("nrnpython(\"filters_comp = tables.Filters(complevel=1, complib='zlib', fletcher32=True)\")\n");
+                                    response.append("nrnpython(\"filters_comp = None\")\n");
+
+                                    response.append("nrnpython(\"hArray = h5file.createCArray(group, '"+record.simPlot.getSafeVarName()+"', atom, (h.v_time.size(), "
+                                            +numInCellGroup+"), title='Values of "+record.simPlot.getValuePlotted()
+                                            +" from cell group: "+cellGroupName+"', filters=filters_comp)\")\n");
+
+                                    response.append("nrnpython(\"hArray.setAttr('"+Hdf5Constants.NEUROCONSTRUCT_VARIABLE+"', '"+record.simPlot.getValuePlotted()+"')\")\n");
+
+                                    response.append("for i=0, n_"+cellGroupName+"-1 {\n");
+                                    response.append("    nrnpython(\"hArray[:,int(h.i)] = h."+vectObj+"[int(h.i)].to_python()\")\n");
+                                    response.append("}\n");
+
+                                }
+
+                                response.append("nrnpython(\"h5file.close()\")\n");
                             }
+                            else
+                            {
+
+                                String fileObj = "f_" + objName;
+
+                                vectObj = GeneralUtils.replaceAllTokens(vectObj, ".", "_");
+                                fileObj = GeneralUtils.replaceAllTokens(fileObj, ".", "_");
+
+                                response.append("for i=0, " + (numInCellGroup - 1) + " {\n");
+
+                                prefix = "";
+                                post = "";
+
+                                if (simConfig.getMpiConf().isParallelNet())
+                                {
+                                    prefix = "    ";
+                                    post = "    }" + "\n";
+                                    response.append("    if (isCellOnNode(\""
+                                                    + cellGroupName + "\", i)) {\n");
+                                }
 
 
-                            response.append(prefix+"    " + fileObj + "[i] = new File()\n");
-                            response.append(prefix+"    strdef filename\n");
+                                response.append(prefix+"    " + fileObj + "[i] = new File()\n");
+                                response.append(prefix+"    strdef filename\n");
 
-                            String fileName = SimPlot.getFilename(record, segToRecord, "%d");
+                                String fileName = SimPlot.getFilename(record, segToRecord, "%d");
 
-                            response.append(prefix+"    {sprint(filename, \"%s" + fileName + "\", targetDir, i)}\n");
-                            response.append(prefix+"    " + fileObj + "[i].wopen(filename)\n");
-                            response.append(prefix+"    " + vectObj + "[i].printf(" + fileObj + "[i])\n");
-                            response.append(prefix+"    " + fileObj + "[i].close()\n");
-                            response.append(post);
-                            response.append("}\n\n");
+                                response.append(prefix+"    {sprint(filename, \"%s" + fileName + "\", targetDir, i)}\n");
+                                response.append(prefix+"    " + fileObj + "[i].wopen(filename)\n");
+                                response.append(prefix+"    " + vectObj + "[i].printf(" + fileObj + "[i])\n");
+                                response.append(prefix+"    " + fileObj + "[i].close()\n");
+                                response.append(post);
+                                response.append("}\n\n");
+                            }
                         }
                         else
                         {
+                            if (hdf5Format)
+                            {
+                                GuiUtils.showWarningMessage(logger, "Cannot currently save in HDF5 format when not recording all of the cells in a cell group", null);
+                            }
                             for (Integer cellNum : record.cellNumsToPlot)
                             {
                                 if (record.simPlot.isSynapticMechanism())
@@ -2766,8 +2865,8 @@ public class NeuronFileManager
                                     String fileObj = "f_" + objName;
                                     
                              
-                                vectObj = GeneralUtils.replaceAllTokens(vectObj, ".", "_");
-                                fileObj = GeneralUtils.replaceAllTokens(fileObj, ".", "_");
+                                    vectObj = GeneralUtils.replaceAllTokens(vectObj, ".", "_");
+                                    fileObj = GeneralUtils.replaceAllTokens(fileObj, ".", "_");
 
                                     prefix = "";
                                     post = "";
@@ -5121,7 +5220,7 @@ public class NeuronFileManager
 
                         scriptText.append("cd '" + dirToRunInFile.getAbsolutePath() + "'\n");
 
-                        if (genRunMode==RUN_PYTHON_HDF5)
+                        if (genRunMode==RUN_PYTHON_HDF5 || project.neuronSettings.getDataSaveFormat().equals(NeuronSettings.DataSaveFormat.HDF5_NC))
                         {
                             scriptText.append(GeneralUtils.getArchSpecificDir()+"/special -python "+ runPythonFile.getName());
                         }

@@ -49,7 +49,7 @@ public class NeuronSettings
 
     private boolean showShapePlot = false;
 
-    public enum GraphicsMode{ ALL_SHOW, NO_PLOTS, NO_CONSOLE }
+    public enum GraphicsMode{ ALL_SHOW, NO_PLOTS, NO_CONSOLE };
 
     private GraphicsMode graphicsMode = GraphicsMode.ALL_SHOW;
 
@@ -67,8 +67,11 @@ public class NeuronSettings
     
     private boolean copySimFiles = false;
 
-    
     private boolean forceCorrectInit = true;
+
+    public enum DataSaveFormat{ TEXT_NC, HDF5_NC };
+
+    private DataSaveFormat dataSaveFormat = DataSaveFormat.TEXT_NC;
 
     //private subsApPropVel
 
@@ -186,6 +189,18 @@ public class NeuronSettings
             }
         }
     }
+
+    public DataSaveFormat getDataSaveFormat()
+    {
+        return dataSaveFormat;
+    }
+
+    public void setDataSaveFormat(DataSaveFormat dataSaveFormat)
+    {
+        this.dataSaveFormat = dataSaveFormat;
+    }
+
+
 
 
 

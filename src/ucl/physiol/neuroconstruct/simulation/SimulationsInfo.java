@@ -44,7 +44,6 @@ import ucl.physiol.neuroconstruct.genesis.*;
 import ucl.physiol.neuroconstruct.hpc.mpi.RemoteLogin;
 import ucl.physiol.neuroconstruct.hpc.utils.*;
 import ucl.physiol.neuroconstruct.project.*;
-import ucl.physiol.neuroconstruct.simulation.SimulationData.DataStore;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
 

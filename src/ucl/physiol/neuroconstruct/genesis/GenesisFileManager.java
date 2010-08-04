@@ -55,7 +55,6 @@ import ucl.physiol.neuroconstruct.utils.compartment.*;
 import ucl.physiol.neuroconstruct.utils.units.*;
 import ucl.physiol.neuroconstruct.utils.xml.*;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
-import ucl.physiol.neuroconstruct.simulation.SimulationData.DataStore;
 
 
 /**

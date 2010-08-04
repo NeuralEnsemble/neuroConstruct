@@ -26,6 +26,9 @@
 
 package ucl.physiol.neuroconstruct.neuroml.hdf5;
 
+import java.io.File;
+import ucl.physiol.neuroconstruct.gui.plotter.PlotterFrame;
+
 
 
 
@@ -40,20 +43,35 @@ package ucl.physiol.neuroconstruct.neuroml.hdf5;
 public class Hdf5Constants
 {
 
-     public static final String NEUROSAGE_TRACE_TYPE = "Type";
-     
-     public static final String NEUROSAGE_TRACE_TYPE_WAVEFORM = "Waveform";
+    public static final String NEUROCONSTRUCT_POPULATION = "Population"; // As this is the preferred term in NeuroML...
 
-     public static final String NEUROSAGE_TRACE_SAMPLING_RATE = "Sampling Rate";
-     
-     public static final String NEUROSAGE_TRACE_DATA_AXIS = "Data Axis";
-     
-     public static final String NEUROSAGE_TRACE_DATA_UNIT = "Data Unit";
-     
-     public static final String NEUROSAGE_TRACE_TRANSFORM_TYPE = "Transform.Type";
-     public static final String NEUROSAGE_TRACE_TRANSFORM_TYPE_LINEAR = "Linear";
-     
-     public static final String NEUROSAGE_TRACE_TRANSFORM_SCALE = "Transform.Scale";
-     public static final String NEUROSAGE_TRACE_TRANSFORM_OFFSET = "Transform.Offset";
+    public static final String NEUROCONSTRUCT_VARIABLE = "Variable"; // As this is the preferred term in NeuroML...
+
+
+
+    public static final String NEUROSAGE_TRACE_TYPE = "Type";
+
+    public static final String NEUROSAGE_TRACE_TYPE_WAVEFORM = "Waveform";
+
+    public static final String NEUROSAGE_TRACE_SAMPLING_RATE = "Sampling Rate";
+
+    public static final String NEUROSAGE_TRACE_DATA_AXIS = "Data Axis";
+
+    public static final String NEUROSAGE_TRACE_DATA_UNIT = "Data Unit";
+
+    public static final String NEUROSAGE_TRACE_TRANSFORM_TYPE = "Transform.Type";
+    public static final String NEUROSAGE_TRACE_TRANSFORM_TYPE_LINEAR = "Linear";
+
+    public static final String NEUROSAGE_TRACE_TRANSFORM_SCALE = "Transform.Scale";
+    public static final String NEUROSAGE_TRACE_TRANSFORM_OFFSET = "Transform.Offset";
+
+    public static void main(String[] args)
+    {
+        File f = new File("../nC_projects/h5/simulations/sim_4");
+        f = new File("../nC_projects/h5/simulations/hdf5Big");
+        f = new File("testProjects/TestHDF5/simulations/TestH5");
+        
+        PlotterFrame.addHDF5DataSets(f, null);
+    }
 
 }

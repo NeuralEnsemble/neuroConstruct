@@ -106,101 +106,123 @@ public class MpiConfiguration
             return null;
         StringBuffer script = new StringBuffer();
 
-        script.append("#!/bin/bash -l\n");
-        script.append("\n");
-        script.append("#PBS -N "+simRef+"_"+projName+"\n");
-        script.append("#PBS -A "+queueInfo.getAccount()+"\n");
-        script.append("#PBS -j oe\n");
-        script.append("#PBS -l qos=parallel\n");
-        
-        
-        int nodes = hostList.size();
-        int ppn = 0;
-        int totalProcs = 0;
-        for(MpiHost host: hostList)
+        if (this.queueInfo.getQueueType().equals(QueueInfo.QueueType.PBS))
         {
-            totalProcs = totalProcs + host.getNumProcessors();
-            
-            if (host.getNumProcessors()>ppn) ppn = host.getNumProcessors();
-        }
 
-        if (remoteLogin.getHostname().indexOf("legion")>=0 && totalProcs<=4 && timeMins<=6)
+            script.append("#!/bin/bash -l\n");
+            script.append("\n");
+            script.append("#PBS -N "+simRef+"_"+projName+"\n");
+            script.append("#PBS -A "+queueInfo.getAccount()+"\n");
+            script.append("#PBS -j oe\n");
+            script.append("#PBS -l qos=parallel\n");
+
+
+            int nodes = hostList.size();
+            int ppn = 0;
+            int totalProcs = 0;
+            for(MpiHost host: hostList)
+            {
+                totalProcs = totalProcs + host.getNumProcessors();
+
+                if (host.getNumProcessors()>ppn) ppn = host.getNumProcessors();
+            }
+
+            if (remoteLogin.getHostname().indexOf("legion")>=0 && totalProcs<=4 && timeMins<=6)
+            {
+                script.append("# As job is small, using Test queue on Legion...\n");
+                script.append("#PBS -q Test  \n");
+            }
+
+            script.append("\n");
+            script.append("#! Number of nodes \n");
+            script.append("#! The total number of nodes passed to mpirun will be nodes*ppn \n");
+            script.append("#! Second entry: Total amount of wall-clock time (true time). \n");
+            script.append("#! 02:00:00 indicates 02 hours\n");
+            script.append("\n");
+
+
+            script.append("#PBS -l nodes="+nodes+":ppn="+ppn+",walltime=00:"+timeMins+":00\n");
+            script.append("\n");
+            script.append("#! Full path to application + application name\n");
+            script.append("application=\""+remoteLogin.getExecutableForSimulator(simulator)+"\"\n");
+            script.append("\n");
+            script.append("#! Work directory\n");
+            script.append("workdir=\""+getProjectSimDir(projName)+"/"+simRef+"\"\n");
+            script.append("\n");
+            script.append("#! Run options for the application\n");
+
+            if(isNeuron)
+                script.append("options=\"$workdir/"+projName+".hoc\"\n");
+            else
+                script.append("options=\"$workdir/"+projName+".g\"\n");
+
+            script.append("\n");
+            script.append("\n");
+            script.append("###############################################################\n");
+            script.append("### You should not have to change anything below this line ####\n");
+            script.append("###############################################################\n");
+            script.append("\n");
+            script.append("#! change the working directory (default is home directory)\n");
+            script.append("\n");
+            script.append("cd $workdir\n");
+            script.append("\n");
+            script.append("echo Running on the host `hostname`\n");
+            script.append("echo Time is `date`\n");
+            script.append("echo Directory is `pwd`\n");
+            script.append("echo PBS job ID is $PBS_JOBID\n");
+            script.append("echo PATH is $PATH\n");
+            script.append("echo This job runs on the following machines:\n");
+            script.append("echo `cat $PBS_NODEFILE | uniq`\n");
+            script.append(" \n");
+            script.append("#! Create a machine file for MPI\n");
+            script.append("cat $PBS_NODEFILE | uniq > machine.file.$PBS_JOBID\n");
+            script.append("\n");
+            script.append("numnodes=`wc $PBS_NODEFILE | awk '{ print $1 }'`\n");
+            script.append("sleep 1\n");
+            script.append("#! Run the parallel MPI executable (nodes*ppn)\n");
+            script.append("\n");
+            script.append("export LAUNCH_APP=\"$application\"\n");
+            script.append("export LAUNCH_APP_OP=\"$application $options\"\n");
+
+            if (queueInfo.getLauncherScript()!=null && queueInfo.getLauncherScript().length()>0)
+            {
+                script.append("export CVOS_LAUNCHER=\""+queueInfo.getLauncherScript()+"\"\n");
+            }
+            else
+            {
+                script.append("export CVOS_LAUNCHER=\"\"\n");
+            }
+
+            script.append("export MPI_RUN=\"mpirun\"\n");
+            script.append("\n");
+            String exe = "$CVOS_LAUNCHER $MPI_RUN -machinefile machine.file.$PBS_JOBID -np $numnodes  $LAUNCH_APP_OP";
+            script.append("echo \"Running: "+exe+"\"\n");
+            script.append("echo \"--------------------------------------------------------------\"\n");
+            script.append("echo \"\"\n");
+            script.append("\n");
+            script.append(exe+"\n");
+            script.append("\n");
+            script.append("\n");
+            script.append("\n");
+        }
+        else if (this.queueInfo.getQueueType().equals(QueueInfo.QueueType.SGE))
         {
-            script.append("# As job is small, using Test queue on Legion...\n");
-            script.append("#PBS -q Test  \n");
+            script.append("#!/bin/bash -l\n");
+            script.append("\n");
+            String workDir = getProjectSimDir(projName)+"/"+simRef;
+            script.append("#$ -l  vf=2G\n");
+            script.append("#$ -l  h_vmem=2G\n");
+            script.append("#$ -l  h_rt=0:"+timeMins+":0\n");
+            script.append("#$ -wd  "+workDir+"\n");
+            script.append("#$ -o  "+workDir+"/log\n");
+            script.append("#$ -j y\n");
+            script.append("#$ -N  "+simRef+"_"+projName+"\n");
+            script.append("#$ -pe orte  "+getTotalNumProcessors()+"\n");
+
+            //script.append("env\n");
+            script.append("/opt/sun-ct/bin/mpirun -np "+getTotalNumProcessors()+" "+remoteLogin.getExecutableForSimulator(simulator)+" -mpi "+workDir+"/"+projName+".hoc\n");
+
         }
-
-        script.append("\n");
-        script.append("#! Number of nodes \n");
-        script.append("#! The total number of nodes passed to mpirun will be nodes*ppn \n");
-        script.append("#! Second entry: Total amount of wall-clock time (true time). \n");
-        script.append("#! 02:00:00 indicates 02 hours\n");
-        script.append("\n");
-
-
-        script.append("#PBS -l nodes="+nodes+":ppn="+ppn+",walltime=00:"+timeMins+":00\n");
-        script.append("\n");
-        script.append("#! Full path to application + application name\n");
-        script.append("application=\""+remoteLogin.getExecutableForSimulator(simulator)+"\"\n");
-        script.append("\n");
-        script.append("#! Work directory\n");
-        script.append("workdir=\""+getProjectSimDir(projName)+"/"+simRef+"\"\n");
-        script.append("\n");
-        script.append("#! Run options for the application\n");
-
-        if(isNeuron)
-            script.append("options=\"$workdir/"+projName+".hoc\"\n");
-        else
-            script.append("options=\"$workdir/"+projName+".g\"\n");
-
-        script.append("\n");
-        script.append("\n");
-        script.append("###############################################################\n");
-        script.append("### You should not have to change anything below this line ####\n");
-        script.append("###############################################################\n");
-        script.append("\n");
-        script.append("#! change the working directory (default is home directory)\n");
-        script.append("\n");
-        script.append("cd $workdir\n");
-        script.append("\n");
-        script.append("echo Running on the host `hostname`\n");
-        script.append("echo Time is `date`\n");
-        script.append("echo Directory is `pwd`\n");
-        script.append("echo PBS job ID is $PBS_JOBID\n");
-        script.append("echo PATH is $PATH\n");
-        script.append("echo This job runs on the following machines:\n");
-        script.append("echo `cat $PBS_NODEFILE | uniq`\n");
-        script.append(" \n");
-        script.append("#! Create a machine file for MPI\n");
-        script.append("cat $PBS_NODEFILE | uniq > machine.file.$PBS_JOBID\n");
-        script.append("\n");
-        script.append("numnodes=`wc $PBS_NODEFILE | awk '{ print $1 }'`\n");
-        script.append("sleep 1\n");
-        script.append("#! Run the parallel MPI executable (nodes*ppn)\n");
-        script.append("\n");
-        script.append("export LAUNCH_APP=\"$application\"\n");
-        script.append("export LAUNCH_APP_OP=\"$application $options\"\n");
-
-        if (queueInfo.getLauncherScript()!=null && queueInfo.getLauncherScript().length()>0)
-        {
-            script.append("export CVOS_LAUNCHER=\""+queueInfo.getLauncherScript()+"\"\n");
-        }
-        else
-        {
-            script.append("export CVOS_LAUNCHER=\"\"\n");
-        }
-        
-        script.append("export MPI_RUN=\"mpirun\"\n");
-        script.append("\n");
-        String exe = "$CVOS_LAUNCHER $MPI_RUN -machinefile machine.file.$PBS_JOBID -np $numnodes  $LAUNCH_APP_OP";
-        script.append("echo \"Running: "+exe+"\"\n");
-        script.append("echo \"--------------------------------------------------------------\"\n");
-        script.append("echo \"\"\n");
-        script.append("\n");
-        script.append(exe+"\n");
-        script.append("\n");
-        script.append("\n");
-        script.append("\n");
 
         return script.toString();
     }

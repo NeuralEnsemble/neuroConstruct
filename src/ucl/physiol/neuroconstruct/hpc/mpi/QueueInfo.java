@@ -53,6 +53,10 @@ public class QueueInfo
 
     private String launcherScript = "";
 
+    public static enum QueueType {PBS, SGE};
+
+    private QueueType queueType = null;
+
 
     public static final String submitScript = "subjob.sh";
 
@@ -61,11 +65,12 @@ public class QueueInfo
     {
     }
 
-    public QueueInfo(int wallTimeMins, String account, String launcherScript)
+    public QueueInfo(int wallTimeMins, String account, String launcherScript, QueueType queueType)
     {
         this.wallTimeMins = wallTimeMins;
         this.account = account;
         this.launcherScript = launcherScript;
+        this.queueType = queueType;
 
     }
 
@@ -73,7 +78,7 @@ public class QueueInfo
     @Override
     public Object clone()
     {
-        QueueInfo q2 = new QueueInfo(wallTimeMins, new String(account), new String(launcherScript));
+        QueueInfo q2 = new QueueInfo(wallTimeMins, new String(account), new String(launcherScript), queueType);
         return q2;
 
     }
@@ -171,6 +176,18 @@ public class QueueInfo
         this.wallTimeMins = wallTimeMins;
     }
 
+    public QueueType getQueueType()
+    {
+        return queueType;
+    }
+
+    public void setQueueType(QueueType queueType)
+    {
+        this.queueType = queueType;
+    }
+
+
+
     @Override
     public boolean equals(Object obj)
     {
@@ -192,6 +209,10 @@ public class QueueInfo
             return false;
         }
         if ((this.launcherScript == null) ? (other.launcherScript != null) : !this.launcherScript.equals(other.launcherScript))
+        {
+            return false;
+        }
+        if (this.queueType != other.queueType)
         {
             return false;
         }

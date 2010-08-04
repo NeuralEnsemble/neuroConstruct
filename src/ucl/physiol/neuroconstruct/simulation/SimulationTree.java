@@ -38,7 +38,6 @@ import ucl.physiol.neuroconstruct.gui.SimpleViewer;
 import ucl.physiol.neuroconstruct.gui.plotter.PlotManager;
 import ucl.physiol.neuroconstruct.gui.plotter.PlotterFrame;
 import ucl.physiol.neuroconstruct.project.SimPlot;
-import ucl.physiol.neuroconstruct.simulation.SimulationData.DataStore;
 import ucl.physiol.neuroconstruct.utils.*;
 
 /**

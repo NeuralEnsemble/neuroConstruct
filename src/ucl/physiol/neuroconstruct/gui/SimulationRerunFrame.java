@@ -45,7 +45,6 @@ import ucl.physiol.neuroconstruct.gui.view2d.*;
 import ucl.physiol.neuroconstruct.project.cellchoice.AllCells;
 import ucl.physiol.neuroconstruct.project.cellchoice.CellChooser;
 import ucl.physiol.neuroconstruct.project.cellchoice.RegionAssociatedCells;
-import ucl.physiol.neuroconstruct.simulation.SimulationData.DataStore;
 
 /**
  * Frame for rerunning simulations recorded in neuron

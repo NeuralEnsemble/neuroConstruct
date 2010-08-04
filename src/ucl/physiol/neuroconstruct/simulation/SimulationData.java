@@ -30,7 +30,11 @@ import java.io.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
 import java.text.*;
+import ncsa.hdf.object.Group;
+import ncsa.hdf.object.h5.H5File;
 import ucl.physiol.neuroconstruct.dataset.DataSet;
+import ucl.physiol.neuroconstruct.neuroml.hdf5.Hdf5Exception;
+import ucl.physiol.neuroconstruct.neuroml.hdf5.Hdf5Utils;
 import ucl.physiol.neuroconstruct.utils.units.*;
 import ucl.physiol.neuroconstruct.project.SimPlot;
 import ucl.physiol.neuroconstruct.project.PostSynapticObject;
@@ -182,7 +186,8 @@ public class SimulationData
             {
                 if ( (name.endsWith("." + SimPlot.CONTINUOUS_DATA_EXT) || 
                     name.endsWith("." + SimPlot.CONTINUOUS_DATA_EXT+".txt") || /* TEMP for PSICS!!*/
-                    name.endsWith("." + SimPlot.SPIKE_EXT))
+                    name.endsWith("." + SimPlot.SPIKE_EXT) ||
+                    name.endsWith("." + SimPlot.CONTINUOUS_DATA_H5_EXT))
                     && !name.equals(TIME_DATA_FILE_STD)
                     && !name.equals(TIME_DATA_FILE_PSICS)
                     && !name.equals(POSITION_DATA_FILE)
@@ -210,150 +215,178 @@ public class SimulationData
         {
             logger.logComment("-----   Looking at "+fileIndex+": "+cellDataFiles[fileIndex]);
 
-            String dataSourceName = null;
-
-            if (cellDataFiles[fileIndex].getName().indexOf("."+SimPlot.CONTINUOUS_DATA_EXT+".txt")>0)
+            if (cellDataFiles[fileIndex].getName().indexOf("."+SimPlot.CONTINUOUS_DATA_H5_EXT)>0)
             {
-                dataSourceName = cellDataFiles[fileIndex].getName().substring(0, cellDataFiles[fileIndex].getName().length()
-                                                                      - ("." + SimPlot.CONTINUOUS_DATA_EXT+".txt").length());
-            }
-            else if (cellDataFiles[fileIndex].getName().indexOf("."+SimPlot.CONTINUOUS_DATA_EXT)>0)
-            {
-                dataSourceName = cellDataFiles[fileIndex].getName().substring(0, cellDataFiles[fileIndex].getName().length()
-                                                                      - ("." + SimPlot.CONTINUOUS_DATA_EXT).length());
-            }
-            else if (cellDataFiles[fileIndex].getName().indexOf("."+SimPlot.SPIKE_EXT)>0)
-            {
-                dataSourceName = cellDataFiles[fileIndex].getName().substring(0, cellDataFiles[fileIndex].getName().length()
-                                                                      - ("." + SimPlot.SPIKE_EXT).length());
-            }
-
-            logger.logComment("dataSourceName: "+dataSourceName);
-
-            String variable = getVariable(dataSourceName);
-
-            logger.logComment("variable: "+variable);
-
-            String cellSegRef = getCellSegRef(dataSourceName);
-
-            logger.logComment("cellSegRef: "+cellSegRef);
-
-
-            PostSynapticObject pso = getPostSynapticObject(dataSourceName);
-
-            logger.logComment("PostSynapticObject: "+pso);
-
-            int cellNum = getCellNum(cellSegRef);
-
-            int segId = getSegmentId(cellSegRef);
-
-            String cellGroup = getCellGroup(cellSegRef);
-
-
-            logger.logComment("Looking at file: "+ cellDataFiles[fileIndex].getName()
-                              + " for cellGroup: "+ cellGroup
-                              +", cellNum: "+cellNum
-                              +", segId: "+segId
-                              +", variable: "+variable
-                              +", cellSegRef: "+ cellSegRef
-                              +", PostSynapticObject; "+pso);
-
-            if (segId>0)
-            {
-                onlySomaValues = false;
-            }
-            double conversionFactor = 1;
-
-
-            String xUnit = "";
-            String yUnit = "";
-
-
-            if (variable.equals(SimPlot.VOLTAGE) || variable.contains(SimPlot.REV_POT))
-            {
-                conversionFactor = UnitConverter.getVoltage(conversionFactor,
-                                                                    unitSystem,
-                                                                    UnitConverter.NEUROCONSTRUCT_UNITS);
-
-                yUnit = UnitConverter.voltageUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
-            }
-            else if (variable.indexOf(SimPlot.SPIKE)>=0)
-            {
-                conversionFactor = 1;
-            }
-            else if (variable.indexOf(SimPlot.CURRENT) >= 0)
-            {
-                conversionFactor = UnitConverter.getCurrentDensity(conversionFactor,
-                                                                           unitSystem,
-                                                                           UnitConverter.NEUROCONSTRUCT_UNITS);
-
-                yUnit = UnitConverter.currentUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
-            }
-            else if (variable.indexOf(SimPlot.CONCENTRATION) >= 0)
-            {
-                conversionFactor = UnitConverter.getConcentration(conversionFactor,
-                                                                          unitSystem,
-                                                                          UnitConverter.NEUROCONSTRUCT_UNITS);
-                //System.out.println("Conc conv factor: "+ conversionFactor);
-
-                yUnit = UnitConverter.concentrationUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
-            }
-            else if (variable.indexOf(SimPlot.COND_DENS) >= 0)
-            {
-                conversionFactor = UnitConverter.getConductanceDensity(conversionFactor,
-                                                                               unitSystem,
-                                                                               UnitConverter.NEUROCONSTRUCT_UNITS);
-
-                yUnit = UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
-            }
-            else if (variable.indexOf(SimPlot.SYN_COND) >= 0)
-            {
-                conversionFactor = UnitConverter.getConductance(conversionFactor,
-                                                                               unitSystem,
-                                                                               UnitConverter.NEUROCONSTRUCT_UNITS);
-
-                yUnit = UnitConverter.conductanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
-            }
-
-            if (yUnit.length()>0)
-            {
-                xUnit =  "ms";
-            }
-            
-            logger.logComment("yUnit: "+yUnit+", xUnit: "+xUnit+", conversionFactor: "+conversionFactor);
-
-            
-            if (cellNum<0)  // probably from PyNN...
-            {
-                double[][] dataArrays = read2dDataFileToArrays(cellDataFiles[fileIndex], conversionFactor);
-                
-                for (int cellNumIndex= 0 ; cellNumIndex<dataArrays.length;cellNumIndex++)
+                try
                 {
-                    
-                    DataStore ds = new DataStore(dataArrays[cellNumIndex], cellGroup, cellNumIndex, segId, variable, xUnit, yUnit, pso);
+                    H5File h5file = Hdf5Utils.openH5file(cellDataFiles[fileIndex]);
 
-                    logger.logComment("Added a ds: "+ ds);
-                    dataSources.add(ds);
+                    Hdf5Utils.open(h5file);
+
+                    logger.logComment("h5file: "+h5file.getRootNode());
+
+                    Group g = Hdf5Utils.getRootGroup(h5file);
+
+                    ArrayList<DataStore> dataStores = Hdf5Utils.parseGroupForDataStores(g, true);
+
+                    for(DataStore ds: dataStores)
+                    {
+                        dataSources.add(ds);
+                    }
                 }
-                //DataStore ds = new DataStore(dataArray, cellGroup, cellNum, segId, variable, xUnit, yUnit, pso);
-
-                //dataSources.add(ds);
-
-            }
-            else if (variable.indexOf(SimPlot.SPIKE)<0)
-            {
-                double[] dataArray = readDataFileToArray(cellDataFiles[fileIndex], conversionFactor);
-                DataStore ds = new DataStore(dataArray, cellGroup, cellNum, segId, variable, xUnit, yUnit, pso);
-
-                dataSources.add(ds);
-
+                catch (Hdf5Exception ex)
+                {
+                    throw new SimulationDataException("Problem loading HDF5 data from "+cellDataFiles[fileIndex], ex);
+                }
             }
             else
             {
-                double[] spikeArray = readSpikesToArray(cellDataFiles[fileIndex], times, timeConversionFactor);
-                DataStore ds = new DataStore(spikeArray, cellGroup, cellNum, segId, variable, xUnit, yUnit, pso);
 
-                dataSources.add(ds);
+                String dataSourceName = null;
+
+                if (cellDataFiles[fileIndex].getName().indexOf("."+SimPlot.CONTINUOUS_DATA_EXT+".txt")>0)
+                {
+                    dataSourceName = cellDataFiles[fileIndex].getName().substring(0, cellDataFiles[fileIndex].getName().length()
+                                                                          - ("." + SimPlot.CONTINUOUS_DATA_EXT+".txt").length());
+                }
+                else if (cellDataFiles[fileIndex].getName().indexOf("."+SimPlot.CONTINUOUS_DATA_EXT)>0)
+                {
+                    dataSourceName = cellDataFiles[fileIndex].getName().substring(0, cellDataFiles[fileIndex].getName().length()
+                                                                          - ("." + SimPlot.CONTINUOUS_DATA_EXT).length());
+                }
+                else if (cellDataFiles[fileIndex].getName().indexOf("."+SimPlot.SPIKE_EXT)>0)
+                {
+                    dataSourceName = cellDataFiles[fileIndex].getName().substring(0, cellDataFiles[fileIndex].getName().length()
+                                                                          - ("." + SimPlot.SPIKE_EXT).length());
+                }
+
+                logger.logComment("dataSourceName: "+dataSourceName);
+
+                String variable = getVariable(dataSourceName);
+
+                logger.logComment("variable: "+variable);
+
+                String cellSegRef = getCellSegRef(dataSourceName);
+
+                logger.logComment("cellSegRef: "+cellSegRef);
+
+
+                PostSynapticObject pso = getPostSynapticObject(dataSourceName);
+
+                logger.logComment("PostSynapticObject: "+pso);
+
+                int cellNum = getCellNum(cellSegRef);
+
+                int segId = getSegmentId(cellSegRef);
+
+                String cellGroup = getCellGroup(cellSegRef);
+
+
+                logger.logComment("Looking at file: "+ cellDataFiles[fileIndex].getName()
+                                  + " for cellGroup: "+ cellGroup
+                                  +", cellNum: "+cellNum
+                                  +", segId: "+segId
+                                  +", variable: "+variable
+                                  +", cellSegRef: "+ cellSegRef
+                                  +", PostSynapticObject; "+pso);
+
+                if (segId>0)
+                {
+                    onlySomaValues = false;
+                }
+                double conversionFactor = 1;
+
+
+                String xUnit = "";
+                String yUnit = "";
+
+
+                if (variable.equals(SimPlot.VOLTAGE) || variable.contains(SimPlot.REV_POT))
+                {
+                    conversionFactor = UnitConverter.getVoltage(conversionFactor,
+                                                                        unitSystem,
+                                                                        UnitConverter.NEUROCONSTRUCT_UNITS);
+
+                    yUnit = UnitConverter.voltageUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
+                }
+                else if (variable.indexOf(SimPlot.SPIKE)>=0)
+                {
+                    conversionFactor = 1;
+                }
+                else if (variable.indexOf(SimPlot.CURRENT) >= 0)
+                {
+                    conversionFactor = UnitConverter.getCurrentDensity(conversionFactor,
+                                                                               unitSystem,
+                                                                               UnitConverter.NEUROCONSTRUCT_UNITS);
+
+                    yUnit = UnitConverter.currentUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
+                }
+                else if (variable.indexOf(SimPlot.CONCENTRATION) >= 0)
+                {
+                    conversionFactor = UnitConverter.getConcentration(conversionFactor,
+                                                                              unitSystem,
+                                                                              UnitConverter.NEUROCONSTRUCT_UNITS);
+                    //System.out.println("Conc conv factor: "+ conversionFactor);
+
+                    yUnit = UnitConverter.concentrationUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
+                }
+                else if (variable.indexOf(SimPlot.COND_DENS) >= 0)
+                {
+                    conversionFactor = UnitConverter.getConductanceDensity(conversionFactor,
+                                                                                   unitSystem,
+                                                                                   UnitConverter.NEUROCONSTRUCT_UNITS);
+
+                    yUnit = UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
+                }
+                else if (variable.indexOf(SimPlot.SYN_COND) >= 0)
+                {
+                    conversionFactor = UnitConverter.getConductance(conversionFactor,
+                                                                                   unitSystem,
+                                                                                   UnitConverter.NEUROCONSTRUCT_UNITS);
+
+                    yUnit = UnitConverter.conductanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
+                }
+
+                if (yUnit.length()>0)
+                {
+                    xUnit =  "ms";
+                }
+
+                logger.logComment("yUnit: "+yUnit+", xUnit: "+xUnit+", conversionFactor: "+conversionFactor);
+
+
+                if (cellNum<0)  // probably from PyNN...
+                {
+                    double[][] dataArrays = read2dDataFileToArrays(cellDataFiles[fileIndex], conversionFactor);
+
+                    for (int cellNumIndex= 0 ; cellNumIndex<dataArrays.length;cellNumIndex++)
+                    {
+
+                        DataStore ds = new DataStore(dataArrays[cellNumIndex], cellGroup, cellNumIndex, segId, variable, xUnit, yUnit, pso);
+
+                        logger.logComment("Added a ds: "+ ds);
+                        dataSources.add(ds);
+                    }
+                    //DataStore ds = new DataStore(dataArray, cellGroup, cellNum, segId, variable, xUnit, yUnit, pso);
+
+                    //dataSources.add(ds);
+
+                }
+                else if (variable.indexOf(SimPlot.SPIKE)<0)
+                {
+                    double[] dataArray = readDataFileToArray(cellDataFiles[fileIndex], conversionFactor);
+                    DataStore ds = new DataStore(dataArray, cellGroup, cellNum, segId, variable, xUnit, yUnit, pso);
+
+                    dataSources.add(ds);
+
+                }
+                else
+                {
+                    double[] spikeArray = readSpikesToArray(cellDataFiles[fileIndex], times, timeConversionFactor);
+                    DataStore ds = new DataStore(spikeArray, cellGroup, cellNum, segId, variable, xUnit, yUnit, pso);
+
+                    dataSources.add(ds);
+                }
             }
 
         }
@@ -428,7 +461,7 @@ public class SimulationData
             {
                 for (DataStore ds : dataSources)
                 {
-                    if (ds.variable.equals(SimPlot.VOLTAGE))
+                    if (ds.getVariable().equals(SimPlot.VOLTAGE))
                     {
                         refs.add(ds.getCellSegRef());
                     }
@@ -478,13 +511,13 @@ public class SimulationData
             if (var.equals(SimPlot.VOLTAGE))
             {
                 volts = getDataAtAllTimes(cellSegRef, SimPlot.VOLTAGE, true);
-                return volts.dataPoints;
+                return volts.getDataPoints();
             }
 
             if (var.indexOf(SimPlot.SPIKE)>=0)
             {
                 volts = getDataAtAllTimes(cellSegRef, var, true);
-                return volts.dataPoints;
+                return volts.getDataPoints();
             }
         }
         throw new SimulationDataException("Problem finding voltage data in "+cellSegRef+"");
@@ -503,7 +536,7 @@ public class SimulationData
 
         for (DataStore ds : dataSources)
         {
-            if ( (ds.variable.equals(variable) ||
+            if ( (ds.getVariable().equals(variable) ||
                   (incSpikeOrVoltage &&
                    (variable.indexOf(SimPlot.SPIKE) >= 0 || variable.equals(SimPlot.VOLTAGE)) &&
                    (ds.getVariable().indexOf(SimPlot.SPIKE) >= 0 || ds.getVariable().equals(SimPlot.VOLTAGE))))
@@ -909,9 +942,9 @@ public class SimulationData
         for (DataStore ds : dataSources)
         {
 
-            if (!vars.contains(ds.variable))
+            if (!vars.contains(ds.getVariable()))
             {
-                vars.add(ds.variable);
+                vars.add(ds.getVariable());
             }
         }
         return vars;
@@ -965,9 +998,9 @@ public class SimulationData
                 
                 if(cells.contains(ds.getCellNumber()))
                 {
-                    if (ds.pso!=null)
+                    if (ds.getPostSynapticObject()!=null)
                     {
-                        ref = ref +"."+ ds.pso.getSynRef();
+                        ref = ref +"."+ ds.getPostSynapticObject().getSynRef();
                     }
 
                     if (!cellItemRefs.contains(ref))
@@ -1243,27 +1276,38 @@ public class SimulationData
 
 
 
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
-        //File f = new File("projects/PlotSave/simulations/Sim_43/");
-        //File f = new File("projects/Spiky/simulations/Sim_33");
-        File f = new File("nCexamples/Ex6_CerebellumDemo/simulations/Sim_51");
+        File f = null;
+        f = new File("testProjects/TestHDF5/simulations/TestText");
+        f = new File("testProjects/TestHDF5/simulations/TestH5");
+        f = new File("testProjects/TestHDF5/simulations/TestTextBig");
+        f = new File("testProjects/TestHDF5/simulations/TestH5Big");
+
         SimulationData simulationData1 = null;
         try
         {
-            //System.out.println("Info: "+ SimulationsInfo.getSimProps(f, false));
+            GeneralUtils.timeCheck("Going to load data from: "+ f.getCanonicalPath(), true);
+
             simulationData1 = new SimulationData(f, true);
             simulationData1.initialise();
 
+            GeneralUtils.timeCheck("Loaded data from: "+ f.getCanonicalPath(), true);
+
             ArrayList<DataStore> dss= simulationData1.getAllLoadedDataStores();
-            for(DataStore ds: dss)
+
+            GeneralUtils.timeCheck("Grabbed data from: "+ f.getCanonicalPath(), true);
+
+            for(int i=0;i<Math.min(20, dss.size());i++)
             {
-                System.out.println(ds);
+                System.out.println(dss.get(i));
             }
 
-            //System.out.println("dataOnlyForSoma: "+simulationData1.dataOnlyForSoma());
+
+            System.out.println("Total number of data stores: "+dss.size());
+
             System.out.println("Num time steps: "+simulationData1.getNumberTimeSteps());
-            //System.out.println("Cell value: "+simulationData1.getVoltageAtTimeStep(33, "CellGroup_2_3.0"));
+            
 
         }
         catch (SimulationDataException ex)
@@ -1277,8 +1321,8 @@ public class SimulationData
 
     /**
      * Could do with a better name...
-     */
-    public class DataStore
+    
+    public static class DataStore
     {
         private double[] dataPoints;
 
@@ -1293,9 +1337,6 @@ public class SimulationData
         private double maxVal = -1* Double.MAX_VALUE;
         private double minVal = Double.MAX_VALUE;
 
-        /**
-         * Duplication of data here...
-         */
         private PostSynapticObject pso = null;
 
 
@@ -1417,7 +1458,7 @@ public class SimulationData
 
             return info;
         }
-    }
+    } */
 
 
 }

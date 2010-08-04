@@ -95,11 +95,19 @@ public class MpiSettings
 
 
     /*
-     * Matthau & Lemmon are consist of 10x and 20x 8 core machines
+     * Matthau & Lemmon consist of 10x and 20x 8 core machines
      */
-
     public static final String MATTHAU = "matthau-5-";
     public static final String LEMMON = "lemmon-5-";
+
+
+    public static final String MATLEM_1PROC = "MatLem (1 x 1p)";
+    public static final String MATLEM_4PROC = "MatLem (1 x 4p)";
+    public static final String MATLEM_8PROC = "MatLem (1 x 8p)";
+    public static final String MATLEM_16PROC = "MatLem (2 x 8p)";
+    public static final String MATLEM_32PROC = "MatLem (4 x 8p)";
+    public static final String MATLEM_64PROC = "MatLem (8 x 8p)";
+    public static final String MATLEM_128PROC = "MatLem (16 x 8p)";
 
     
     public static final String MACHINE_FILE = "machinesToUse";
@@ -122,7 +130,8 @@ public class MpiSettings
         simulatorExecutables.put("GENESIS", "/home/ucgbpgl/gen23/genesis");
         simulatorExecutables.put("MOOSE", "/home/ucgbpgl/moose/moose");
 
-        simulatorExecutablesML.put("NEURON", "/share/apps/neuro/nrn62_pympi/x86_64/bin/nrniv");
+        //simulatorExecutablesML.put("NEURON", "/share/apps/neuro/nrn62_pympi/x86_64/bin/nrniv");
+        simulatorExecutablesML.put("NEURON", "/share/apps/neuro/nrn71/x86_64/bin/nrniv");
         simulatorExecutablesML.put("MOOSE", "/share/apps/neuro/moose");
 
         // This is a 4 processor Linux machine in our lab. Auto ssh login is enabled to it from the
@@ -153,7 +162,9 @@ public class MpiSettings
 
         //QueueInfo legionQueueCvos = new QueueInfo(6, "ucl/NeuroSci/neuroconst", "cvos-launcher");
 
-        QueueInfo legionQueue = new QueueInfo(6, "ucl/NeuroSci/neuroconst", "cvos-launcher");
+        QueueInfo legionQueue = new QueueInfo(6, "ucl/NeuroSci/neuroconst", "cvos-launcher", QueueInfo.QueueType.PBS);
+
+        QueueInfo matlemQueue = new QueueInfo(6, "", "", QueueInfo.QueueType.SGE);
 
 
         if (getMpiConfiguration(LOCAL_SERIAL)==null)
@@ -182,6 +193,99 @@ public class MpiSettings
             p.getHostList().add(new MpiHost(LOCALHOST,4, 1));
             configurations.add(p);
         }
+
+
+
+        if (getMpiConfiguration(MATLEM_1PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(MATLEM_1PROC);
+
+            p.getHostList().add(new MpiHost("localhost", 1, 1));
+            p.setRemoteLogin(matlemLogin);
+            p.setMpiVersion(MpiSettings.OPENMPI_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(matlemQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(MATLEM_4PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(MATLEM_4PROC);
+
+            for(int i=0;i<1;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+
+            p.setRemoteLogin(matlemLogin);
+            p.setMpiVersion(MpiSettings.OPENMPI_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(matlemQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(MATLEM_8PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(MATLEM_8PROC);
+
+            for(int i=0;i<1;i++)
+                p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+            p.setRemoteLogin(matlemLogin);
+            p.setMpiVersion(MpiSettings.OPENMPI_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(matlemQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(MATLEM_16PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(MATLEM_16PROC);
+
+            for(int i=0;i<2;i++)
+                p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+            p.setRemoteLogin(matlemLogin);
+            p.setMpiVersion(MpiSettings.OPENMPI_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(matlemQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(MATLEM_32PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(MATLEM_32PROC);
+
+            for(int i=0;i<4;i++)
+                p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+            p.setRemoteLogin(matlemLogin);
+            p.setMpiVersion(MpiSettings.OPENMPI_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(matlemQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(MATLEM_64PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(MATLEM_64PROC);
+
+            for(int i=0;i<8;i++)
+                p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+            p.setRemoteLogin(matlemLogin);
+            p.setMpiVersion(MpiSettings.OPENMPI_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(matlemQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(MATLEM_128PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(MATLEM_128PROC);
+
+            for(int i=0;i<16;i++)
+                p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+            p.setRemoteLogin(matlemLogin);
+            p.setMpiVersion(MpiSettings.OPENMPI_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(matlemQueue);
+            configurations.add(p);
+        }
+        
 /*
         if (getMpiConfiguration(multiConfig)==null)
         {
@@ -190,7 +294,9 @@ public class MpiSettings
             p.getHostList().add(new MpiHost("eriugena",4, 1));
             p.getHostList().add(new MpiHost("bernal", 4, 1));
             configurations.add(p);
-        }*/
+        }
+        
+        
 
         if (getMpiConfiguration(CLUSTER_1PROC)==null)
         {
@@ -217,7 +323,7 @@ public class MpiSettings
             p.getHostList().add(new MpiHost(directLogin.getHostname(),4, 1));
             p.setRemoteLogin(directLogin);
             configurations.add(p);
-        }
+        }*/
 
 
         if (getMpiConfiguration(LEGION_1PROC)==null)
@@ -394,6 +500,9 @@ public class MpiSettings
         }
 
 
+
+
+/*
         int[] lemNodes = new int[]{14,15};
 
         int[] lemProcs = new int[]{4,8};
@@ -492,7 +601,7 @@ public class MpiSettings
         p_56.setMpiVersion(MpiSettings.OPENMPI_V2);
         p_56.setUseScp(true);
         configurations.add(p_56);
-
+*/
 
         String name_ALL = "Matthau_Lemmon_Test_ALL";
         MpiConfiguration p_ALL = new MpiConfiguration(name_ALL);

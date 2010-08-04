@@ -443,6 +443,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JCheckBox jCheckBoxNeuronForceCorrInit = new JCheckBox("Force correct ChannelML init");
     JCheckBox jCheckBoxNeuronModSilent = new JCheckBox("Silent mod compile");
 
+    ButtonGroup buttonGroupNeuronFormat = new ButtonGroup();
+    JLabel jLabelNeuronFormat = new JLabel("  Save sim results as:");
+    JRadioButton jRadioButtonNeuronFormatText = new JRadioButton("Text files");
+    JRadioButton jRadioButtonNeuronFormatHDF5 = new JRadioButton("HDF5");
+
     JPanel jPanelNeuronRandomGen =  new JPanel();
     JLabel jLabelNeuronRandomGenDesc = new JLabel("Random seed for NEURON:");
     JTextField jTextFieldNeuronRandomGen = new JTextField();
@@ -3388,19 +3393,27 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
         });
 
-        jPanelNeuronRandomGen.add(jLabelNeuronRandomGenDesc, BorderLayout.WEST);
-        //jPanelNeuronRandomGen.setPreferredSize(new Dimension(700,62));
         jPanelNeuronRandomGen.setLayout(new FlowLayout());
-        jPanelNeuronRandomGen.setBorder(BorderFactory.createEmptyBorder());
+
+        jPanelNeuronRandomGen.add(jLabelNeuronRandomGenDesc);
+
         Dimension dim = new Dimension(600,50);
         jPanelNeuronRandomGen.setPreferredSize(dim);
         jPanelNeuronRandomGen.setMinimumSize(dim);
-        jPanelNeuronRandomGen.add(jTextFieldNeuronRandomGen, BorderLayout.CENTER);
+        jPanelNeuronRandomGen.add(jTextFieldNeuronRandomGen);
 
         jTextFieldNeuronRandomGen.setColumns(12);
         jTextFieldNeuronRandomGen.setText("12345");
         jCheckBoxNeuronRandomGen.setSelected(true);
-        jPanelNeuronRandomGen.add(jCheckBoxNeuronRandomGen, BorderLayout.EAST);
+        jPanelNeuronRandomGen.add(jCheckBoxNeuronRandomGen);
+
+        jPanelNeuronRandomGen.add(jLabelNeuronFormat);
+
+        jPanelNeuronRandomGen.add(jRadioButtonNeuronFormatText);
+        jRadioButtonNeuronFormatText.setSelected(true);
+        jPanelNeuronRandomGen.add(jRadioButtonNeuronFormatHDF5);
+        buttonGroupNeuronFormat.add(jRadioButtonNeuronFormatText);
+        buttonGroupNeuronFormat.add(jRadioButtonNeuronFormatHDF5);
 
         BorderLayout blComp = new BorderLayout();
         blComp.setHgap(12);
@@ -4421,6 +4434,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronNumInt);
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronForceCorrInit);
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronModSilent);
+        addRadioButtonListner(NEURON_SIMULATOR_TAB, jRadioButtonNeuronFormatText);
+        addRadioButtonListner(NEURON_SIMULATOR_TAB, jRadioButtonNeuronFormatHDF5);
        
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronGenAllMod);
         addCheckBoxListner(NEURON_SIMULATOR_TAB, jCheckBoxNeuronCopySimFiles);
@@ -4997,6 +5012,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 projManager.getCurrentProject().neuronSettings.setForceCorrectInit(this.jCheckBoxNeuronForceCorrInit.isSelected());
                 projManager.getCurrentProject().neuronSettings.setModSilentMode(this.jCheckBoxNeuronModSilent.isSelected());
+
+                if (this.jRadioButtonNeuronFormatText.isSelected())
+                {
+                    projManager.getCurrentProject().neuronSettings.setDataSaveFormat(NeuronSettings.DataSaveFormat.TEXT_NC);
+                }
+                else if (this.jRadioButtonNeuronFormatHDF5.isSelected())
+                {
+                    projManager.getCurrentProject().neuronSettings.setDataSaveFormat(NeuronSettings.DataSaveFormat.HDF5_NC);
+                }
 
 
                 try
@@ -10243,6 +10267,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jCheckBoxNeuronCopySimFiles.setSelected(projManager.getCurrentProject().neuronSettings.isCopySimFiles());
             this.jCheckBoxNeuronForceCorrInit.setSelected(projManager.getCurrentProject().neuronSettings.isForceCorrectInit());
             this.jCheckBoxNeuronModSilent.setSelected(projManager.getCurrentProject().neuronSettings.isModSilentMode());
+
+            this.jRadioButtonNeuronFormatText.setSelected(projManager.getCurrentProject().neuronSettings.getDataSaveFormat().equals(NeuronSettings.DataSaveFormat.TEXT_NC));
+            this.jRadioButtonNeuronFormatHDF5.setSelected(projManager.getCurrentProject().neuronSettings.getDataSaveFormat().equals(NeuronSettings.DataSaveFormat.HDF5_NC));
 
             jComboBoxNeuronExtraBlocks.setEnabled(true);
 
