@@ -36,7 +36,7 @@ for fname in dirList:
                 print "Process has finished with return code: "+str(process.returncode)
                 output = repr(stdout_value)
                 formatted = output.replace("\\n", "\n\t")
-                print '\tOutput from running '+pullSimFilename+':\n\t', formatted
+                print 'Output from running '+pullSimFilename+':\n\t', formatted
 
                 if os.path.isfile(timeFile):
                     print "Time file now exists, and so simulation was successful!"
