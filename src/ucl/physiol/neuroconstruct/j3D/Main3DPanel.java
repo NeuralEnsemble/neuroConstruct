@@ -2913,23 +2913,33 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                 if (nextStim.getCellGroup().equals(cellGroupSelected))
                 {
-                    info.append("Cell Group <b>" + cellGroupSelected + "</b> receives input from stimulation: <b>" + nextStim.toString() +
-                                "</b><br>\n");
 
                     ArrayList<SingleElectricalInput>
                         theseInputs = project.generatedElecInputs.getInputLocations(nextStim.getReference());
                     boolean cellGetsStim = false;
 
+
+                    StringBuffer sbTemp = new StringBuffer();
+                    int count = 0;
+
                     for (int j = 0; j < theseInputs.size(); j++)
                     {
                         if (theseInputs.get(j).getCellNumber() == cellNumber)
                         {
-                            info.append(TAB+"Cell num: <b>" + cellNumber + "</b> receives this input on segment: <b>" +
+                            sbTemp.append(TAB+"Cell num: <b>" + cellNumber + "</b> receives this input on segment: <b>" +
                                         theseInputs.get(j).getSegmentId() + "</b>, fraction along: <b>" +
-                                        theseInputs.get(j).getFractionAlong() + "</b><br><br>\n\n");
+                                        theseInputs.get(j).getFractionAlong() + "</b><br>\n");
+                            count++;
                             cellGetsStim = true;
                         }
                     }
+
+                    info.append("Cell Group <b>" + cellGroupSelected + "</b> receives <b>"+count+"</b> inputs from stimulation: <b>" + nextStim.toString() +
+                                "</b><br>\n");
+
+                    info.append(sbTemp.toString());
+
+
                     if (!cellGetsStim) info.append(TAB+"Cell num: <b>" + cellNumber +
                                                    "</b> in this Cell Group does not receive one of these inputs" + "<br><br>\n\n");
 

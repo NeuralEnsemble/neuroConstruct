@@ -2025,14 +2025,14 @@ public class ProjectManager implements GenerationReport
             if ( (!(allCellGroupsWithStims.contains(cellGroup)||allPostSynCellGroups.contains(cellGroup))) &&
                   !ignoreNoCellInput)
             {
-                report.addTaggedElement("Warning, Cell Group: " + cellGroup + " has neither an electrical stimulation nor is "
+                report.addTaggedElement("Cell Group: " + cellGroup + " has neither an electrical stimulation nor is "
                                         +"postsynaptically connected to another Cell Group. Unless the cells are spontaneously active,"
                                         +" nothing much will happen to those cells during a simulation.",
-                                        "font color=\"" + ValidityStatus.VALIDATION_COLOUR_WARN + "\"");
+                                        "font color=\"" + ValidityStatus.VALIDATION_COLOUR_INFO + "\"");
 
                 report.addBreak();
 
-                overallValidity = ValidityStatus.combineValidities(overallValidity, ValidityStatus.VALIDATION_WARN);
+                //overallValidity = ValidityStatus.combineValidities(overallValidity, ValidityStatus.VALIDATION_WARN);
 
             }
             if (!ignoreNotInSimConfigOrCellGroup && !activeProject.simConfigInfo.getAllUsedCellGroups().contains(cellGroup))

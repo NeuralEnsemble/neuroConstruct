@@ -466,7 +466,8 @@ public class Expand
             //File projFile = new File("C:\\copynCmodels\\TraubEtAl2005\\TraubEtAl2005.neuro.xml");
             //File projFile = new File("nCmodels/Thalamocortical/Thalamocortical.ncx");
             //File projFile = new File("nCmodels/CA1PyramidalCell/CA1PyramidalCell.ncx");
-            File projFile = new File("nCmodels/GranuleCell/GranuleCell.ncx");
+            //File projFile = new File("nCmodels/GranuleCell/GranuleCell.ncx");
+            File projFile = new File("nCmodels/SolinasEtAl_GolgiCell/SolinasEtAl_GolgiCell.ncx");
             //File projFile = new File("nCmodels/GranCellLayer/GranCellLayer.ncx");
             //File projFile = new File("nCexamples/Ex4_HHcell/Ex4_HHcell.ncx");
             //File projFile = new File("/bernal/models/Layer23_names/Layer23_names.neuro.xml");
