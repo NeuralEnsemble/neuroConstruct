@@ -3,7 +3,7 @@ Instructions on obtaining & compiling the latest neuroConstruct code from the
 Subversion repository
 
 
-Get the latest version of Subversion from http://subversion.tigris.org/
+Get the latest version of Subversion from http://subversion.tigris.org *
 
 The main neuroConstruct code can be checked out with the command:
 
@@ -16,7 +16,7 @@ in future (as opposed to just "svn update") will ensure a consistent set of
 neuroConstruct source, NeuroML files and example models.
 
 The Java code needs to be compiled and run with the command "ant run", so install
-Ant too: http://ant.apache.org/. Note: you should be able to compile and run 
+Ant too: http://ant.apache.org *. Note: you should be able to compile and run 
 neuroConstruct using "nC.bat -make" and "nC.bat" respectively (replace with nC.sh
 on Linux/Mac) without Ant.
 
@@ -25,5 +25,7 @@ NetBeans is used for development of neuroConstruct, and there is a NetBeans proj
 present in directory nbproj, which can be used to view the code, build and run 
 the application.
 
-Java, Subversion and Ant can be normally be installed with the standard packet
-manager of most Linux distributions (e.g. YAST on SUSE).
+
+* Java, Subversion and Ant can be normally be installed with the standard packet
+manager of most Linux distributions (e.g. YAST on SUSE). Java is preinstalled on
+Macs, Subversion and Ant should be available when the Xcode package is installed.
