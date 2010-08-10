@@ -129,6 +129,9 @@ public class PlotterFrame extends JFrame
     JCheckBoxMenuItem jMenuItemShowAxisTicks = new JCheckBoxMenuItem();
 
 
+    JMenuItem jMenuItemAllOneColour = new JMenuItem();
+
+
     JCheckBoxMenuItem jMenuItemRasterise = new JCheckBoxMenuItem();
 
 
@@ -346,6 +349,7 @@ public class PlotterFrame extends JFrame
 
         jMenuItemShowAxes.setText("Show axes");
         jMenuItemShowAxes.setSelected(true);
+
         jMenuOptions.add(jMenuItemShowAxes);
 
         jMenuItemShowAxes.addActionListener(new java.awt.event.ActionListener()
@@ -402,6 +406,20 @@ public class PlotterFrame extends JFrame
                 jMenuItemRasterise_actionPerformed(e);
             }
         });
+
+
+        jMenuOptions.addSeparator();
+        jMenuItemAllOneColour.setText("Set all Data Sets same colour");
+        jMenuOptions.add(jMenuItemAllOneColour);
+
+        jMenuItemAllOneColour.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jMenuItemAllOneColour_actionPerformed(e);
+            }
+        });
+
 
 
         jMenuBarMainMenu.add(jMenuTools);
@@ -2922,6 +2940,27 @@ public class PlotterFrame extends JFrame
         plotCanvas.repaint();
     }
 
+
+
+    void jMenuItemAllOneColour_actionPerformed(ActionEvent e)
+    {
+
+        logger.logComment("----   Setting "+plotCanvas.getDataSets().length+" data sets to the same colour...", true);
+
+        Color c = JColorChooser.showDialog(this,
+                                           "Please choose a colour for ALL of the data sets",
+                                           Color.black);
+        if (c != null)
+        {
+            for (DataSet ds: plotCanvas.getDataSets())
+            {
+                ds.setGraphColour(c);
+            }
+        }
+        plotCanvas.repaint();
+    }
+
+
     void jMenuDifference_actionPerformed(ActionEvent e)
     {
         logger.logComment("----   Getting difference between "+plotCanvas.getDataSets().length+" data sets...");
@@ -3678,6 +3717,9 @@ public class PlotterFrame extends JFrame
 
 
     }
+
+
+
 
     void jMenuItemRasterise_actionPerformed(ActionEvent e)
     {

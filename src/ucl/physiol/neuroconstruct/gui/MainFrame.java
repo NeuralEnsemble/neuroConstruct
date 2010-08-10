@@ -64,6 +64,7 @@ import ucl.physiol.neuroconstruct.hpc.mpi.*;
 import ucl.physiol.neuroconstruct.j3D.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
+import ucl.physiol.neuroconstruct.neuroml.hdf5.Hdf5Exception;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.NetworkMLWriter;
 import ucl.physiol.neuroconstruct.neuron.*;
 
@@ -11942,6 +11943,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
         long start = System.currentTimeMillis();
         File fileSaved = null;
+
         try
         {
             if (jRadioButtonNMLSavePlainText.isSelected())
@@ -11964,13 +11966,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
             else if(jRadioButtonNMLSaveHDF5.isSelected())
             {
-                fileSaved = NetworkMLWriter.createNetworkMLH5file(networkFile, 
+                    fileSaved = NetworkMLWriter.createNetworkMLH5file(networkFile,
                                                                   projManager.getCurrentProject(),
                                                                   getSelectedSimConfig(),
                                                                   NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+
             }
         }
-        catch (Exception ex1)
+        catch (Hdf5Exception ex1)
         {
             GuiUtils.showErrorMessage(logger, "Problem saving network in HDF5 form of NetworkML\n" +
                 "Note that the jar files for HDF5 (jhdf.jar etc.) should be in the java classpath:\n    "+System.getProperty("java.class.path")
@@ -11979,6 +11982,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 "\nvariable. \n\nNote also that on a 64 bit Windows system, a 32 bit JVM should be used when using any HDF5 functionality, as the HDF5 dlls are 32bit." +
                 "\n\nIt might be best to alter and use the nC.bat/nC.sh files in the install directory.", ex1, this);
         }
+        catch (Exception ex1)
+        {
+            GuiUtils.showErrorMessage(logger, "Problem saving network in NetworkML", ex1, this);
+        }
+        
         long end = System.currentTimeMillis();
         
         float secs = (end-start)/1000f;

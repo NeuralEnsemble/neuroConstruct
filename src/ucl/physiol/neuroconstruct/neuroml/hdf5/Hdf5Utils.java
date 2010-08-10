@@ -300,21 +300,30 @@ public class Hdf5Utils
         return root;
     }
     
-    public static String parseAttribute(Attribute a, String indent, Properties p)
+    public static String parseAttribute(Attribute a, String indent, Properties p, boolean returnOnlyValueString)
     {
-        String info = indent+"  Attribute name: "+ a.getName()+", value: ";
+        String info = "";
+        if (!returnOnlyValueString)
+            info = indent+"  Attribute name: "+ a.getName()+", value: ";
         
         String value = null;
         if (a.getValue() instanceof Object[])
         {
-            for (Object m: (Object[])a.getValue())
+            Object[] objs = (Object[])a.getValue();
+
+            for (Object m: objs)
             {
-                if (((Object[])a.getValue()).length==1)
+                if (objs.length==1)
+                {
                     value = m.toString();
+                    info = info + value+" ";
+                }
                 else
+                {
                     value = value + "("+m.toString()+") ";
+                    info = info + "("+m.toString()+") ";
+                }
                     
-                info = info + "("+m.toString()+") ";
             }
         }
         else if (a.getValue() instanceof int[])
@@ -346,12 +355,11 @@ public class Hdf5Utils
             info = info + "(??? Class: "+a.getValue().getClass()+")";
         }
         
-        if (p!=null)
-            p.setProperty(a.getName(), value);
+        if (p!=null) p.setProperty(a.getName(), value);
 
         logger.logComment(info);
         
-        return info;
+        return info.trim();
         
     }
 
@@ -388,9 +396,7 @@ public class Hdf5Utils
         {
             if (attr.getName().equals(Hdf5Constants.NEUROCONSTRUCT_POPULATION))
             {
-                Properties p = new Properties();
-                String val = parseAttribute(attr, " -a- ", p);
-                currentCellGroup = p.getProperty(Hdf5Constants.NEUROCONSTRUCT_POPULATION);
+                currentCellGroup = parseAttribute(attr, "", null, true);
             }
         }
         logger.logComment("Current cell group: "+currentCellGroup);
@@ -422,7 +428,7 @@ public class Hdf5Utils
             {
                 if (m instanceof Attribute)
                 {
-                    parseAttribute((Attribute)m, "", p);
+                    parseAttribute((Attribute)m, "", p, false);
 
                 }
             }
@@ -442,13 +448,26 @@ public class Hdf5Utils
                 attrs = parseDatasetForAttributes(d);
                 String currentVariable = "Unknown";
 
+                Hashtable<Integer, Integer> cellNumsForColumnIndex = new Hashtable<Integer, Integer>();
+
                 for (Attribute attr: attrs)
                 {
                     if (attr.getName().equals(Hdf5Constants.NEUROCONSTRUCT_VARIABLE))
                     {
-                        Properties dp = new Properties();
-                        String val = parseAttribute(attr, " -a- ", dp);
-                        currentVariable = dp.getProperty(Hdf5Constants.NEUROCONSTRUCT_VARIABLE);
+                        currentVariable = parseAttribute(attr, "", null, true);
+                    }
+                    else if (attr.getName().startsWith(Hdf5Constants.NEUROCONSTRUCT_COLUMN_PREFIX))
+                    {
+                        String cellNumInfo = parseAttribute(attr, "", null, true);
+
+                        logger.logComment("Attribute "+ attr.getName() +" contains : "+ cellNumInfo);
+
+                        int colIndex = Integer.parseInt(attr.getName().substring(Hdf5Constants.NEUROCONSTRUCT_COLUMN_PREFIX.length()));
+                        int cellNum = Integer.parseInt(cellNumInfo.substring(Hdf5Constants.NEUROCONSTRUCT_CELL_NUM_PREFIX.length()));
+                        
+                        logger.logComment("Column "+ colIndex +" contains data for cell num: "+ cellNum);
+                        cellNumsForColumnIndex.put(colIndex, cellNum);
+
                     }
                 }
 
@@ -473,13 +492,17 @@ public class Hdf5Utils
 
                     ArrayList<DataSet> dataSetsHere = Hdf5Utils.parse2DDataset(d, includePoints, p);
 
-                    for(int num=0;num<dataSetsHere.size();num++)
+                    for(int colNum=0;colNum<dataSetsHere.size();colNum++)
                     {
-                        DataSet dataSet = dataSetsHere.get(num);
+                        DataSet dataSet = dataSetsHere.get(colNum);
 
                         //TODO: Convert data units!!!
+
+                        int cellNum = colNum;
+                        if (cellNumsForColumnIndex.containsKey(colNum))
+                            cellNum = cellNumsForColumnIndex.get(colNum);
                         
-                        DataStore dataStore = new DataStore(dataSet.getYValues(), currentCellGroup, num, -1, currentVariable, "ms", "???", null);
+                        DataStore dataStore = new DataStore(dataSet.getYValues(), currentCellGroup, cellNum, -1, currentVariable, "ms", "???", null);
 
                         dataStores.add(dataStore);
                     }
@@ -532,7 +555,7 @@ public class Hdf5Utils
             {
                 if (m instanceof Attribute)
                 {
-                    parseAttribute((Attribute)m, "", p);
+                    parseAttribute((Attribute)m, "", p, false);
 
                 }
             }
@@ -939,7 +962,7 @@ public class Hdf5Utils
             {
                 if (m instanceof Attribute)
                 {
-                    Hdf5Utils.parseAttribute((Attribute)m, indent, p);
+                    Hdf5Utils.parseAttribute((Attribute)m, indent, p, false);
 
                 }
             }

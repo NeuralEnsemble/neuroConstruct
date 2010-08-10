@@ -30,6 +30,7 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
+import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings.KnownSimulators;
 import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
 
@@ -93,14 +94,12 @@ public class MpiConfiguration
         this.useScp = useScp;
     }
 
-    
 
 
 
-
-    public String getQueueSubmitScript(String projName, String simRef, int timeMins, String simulator)
+    public String getQueueSubmitScript(String projName, String simRef, int timeMins, KnownSimulators simulator)
     {
-        boolean isNeuron = simulator.equals("NEURON");
+        boolean isNeuron = simulator.equals(KnownSimulators.NEURON) || simulator.equals(KnownSimulators.PY_NEURON) ;
 
         if (queueInfo==null)
             return null;
@@ -219,8 +218,15 @@ public class MpiConfiguration
             script.append("#$ -N  "+simRef+"_"+projName+"\n");
             script.append("#$ -pe orte  "+getTotalNumProcessors()+"\n");
 
-            //script.append("env\n");
-            script.append("/opt/sun-ct/bin/mpirun -np "+getTotalNumProcessors()+" "+remoteLogin.getExecutableForSimulator(simulator)+" -mpi "+workDir+"/"+projName+".hoc\n");
+            String exec = workDir+"/"+projName+".hoc";
+
+            if (simulator.equals(KnownSimulators.PY_NEURON))
+            {
+                exec = workDir+"/run_"+projName+".py";
+            }
+            //script.append("source ~/.nrnpympienv\n");
+            //script.append("/opt/sun-ct/bin/mpirun -np "+getTotalNumProcessors()+" "+remoteLogin.getExecutableForSimulator(simulator)+" -mpi "+exec+"\n");
+            script.append("/bin/bash -ic '/opt/sun-ct/bin/mpirun -np "+getTotalNumProcessors()+" "+remoteLogin.getExecutableForSimulator(simulator)+" -mpi "+exec+"'\n");
 
         }
 
@@ -244,10 +250,10 @@ public class MpiConfiguration
     }
 
 
-    public String getPushScript(String projName, String simRef, String simulator, File dirToRunIn)
+    public String getPushScript(String projName, String simRef, KnownSimulators simulator, File dirToRunIn)
     {
 
-        boolean isNeuron = simulator.equals("NEURON");
+        boolean isNeuron = simulator.equals(KnownSimulators.NEURON) || simulator.equals(KnownSimulators.PY_NEURON) ;
 
         StringBuffer scriptText = new StringBuffer();
 
@@ -336,7 +342,18 @@ public class MpiConfiguration
 
         if (isNeuron)
         {
-            scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic nrnivmodl\"\n");
+            String nrnivmodl = "nrnivmodl";
+            
+            String[] simLocStrings = remoteLogin.getExecutableForSimulator(simulator).split(" ");
+            for(String s: simLocStrings)
+            {
+                if (s.endsWith("nrniv")) // i.e. full path to nrniv
+                {
+                    nrnivmodl = s+"modl"; // i.e. full path to nrnivmodl
+                }
+            }
+
+            scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic "+nrnivmodl+"\"\n");
         }
 
         if (queueInfo==null)
@@ -351,6 +368,7 @@ public class MpiConfiguration
             {
                 scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic 'qsub "+QueueInfo.submitScript+"'\"\n");
                 scriptText.append("ssh $remoteUser@$remoteHost \"echo 'Submitted job!';/bin/bash -ic 'qstat -u $remoteUser'\"\n");
+                scriptText.append("rm -rf $zipFile\n");
                 scriptText.append("sleep 15\n"); // Quick snooze to see result of qsub...
             }
             else
@@ -400,7 +418,7 @@ public class MpiConfiguration
         pullScriptText.append("\n");
         pullScriptText.append("echo \"Going to zip files into \"$zipFile\n");
         pullScriptText.append("\n");
-        pullScriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;tar czvf $zipFile *.*\"\n");
+        pullScriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;tar czvf $zipFile *.dat *.h5 *.props log\"\n");
         pullScriptText.append("\n");
 
         //pullScriptText.append("scp  $remoteUser@$remoteHost:$simDir\"/\"$zipFile $localDir\n");

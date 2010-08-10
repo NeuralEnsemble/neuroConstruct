@@ -50,7 +50,10 @@ public class MpiSettings
     public static final String MPICH_V2 = "MPICH v2.*";
     public static final String OPENMPI_V2 = "OPENMPI v2.*";
 
+   
     public static final String DEFAULT_MPI_VERSION = MPICH_V1;
+
+    public static enum KnownSimulators {NEURON, PY_NEURON, GENESIS, MOOSE};
     
     public static final String LOCALHOST = "localhost";
 
@@ -61,6 +64,7 @@ public class MpiSettings
     public static final String LOCAL_2PROC = "Local machine (2p)";
     public static final String LOCAL_3PROC = "Local machine (3p)";
     public static final String LOCAL_4PROC = "Local machine (4p)";
+    public static final String LOCAL_8PROC = "Local machine (8p)";
 
     /*
      * To run on a remote machine and execute directly, i.e. no queue
@@ -100,10 +104,14 @@ public class MpiSettings
     public static final String MATTHAU = "matthau-5-";
     public static final String LEMMON = "lemmon-5-";
 
+    public static final String MATLEM_NRN62_1PROC = "MatLem, nrn62 (1 x 1p)";
+    public static final String MATLEM_NRN62_4PROC = "MatLem, nrn62 (1 x 4p)";
+    public static final String MATLEM_NRN62_8PROC = "MatLem, nrn62 (1 x 8p)";
 
     public static final String MATLEM_1PROC = "MatLem (1 x 1p)";
     public static final String MATLEM_4PROC = "MatLem (1 x 4p)";
     public static final String MATLEM_8PROC = "MatLem (1 x 8p)";
+    
     public static final String MATLEM_16PROC = "MatLem (2 x 8p)";
     public static final String MATLEM_32PROC = "MatLem (4 x 8p)";
     public static final String MATLEM_64PROC = "MatLem (8 x 8p)";
@@ -123,16 +131,22 @@ public class MpiSettings
     public MpiSettings()
     {
 
-        Hashtable<String, String> simulatorExecutables = new Hashtable<String, String>();
-        Hashtable<String, String> simulatorExecutablesML = new Hashtable<String, String>();
+        Hashtable<KnownSimulators, String> simulatorExecutables = new Hashtable<KnownSimulators, String>();
+        Hashtable<KnownSimulators, String> simulatorExecutablesML = new Hashtable<KnownSimulators, String>();
+        Hashtable<KnownSimulators, String> simulatorExecutablesMLnrn62 = new Hashtable<KnownSimulators, String>();
 
-        simulatorExecutables.put("NEURON", "/home/ucgbpgl/nrnmpi/x86_64/bin/nrniv");
-        simulatorExecutables.put("GENESIS", "/home/ucgbpgl/gen23/genesis");
-        simulatorExecutables.put("MOOSE", "/home/ucgbpgl/moose/moose");
+        simulatorExecutables.put(KnownSimulators.NEURON, "/home/ucgbpgl/nrnmpi/x86_64/bin/nrniv");
+        simulatorExecutables.put(KnownSimulators.GENESIS, "/home/ucgbpgl/gen23/genesis");
+        simulatorExecutables.put(KnownSimulators.MOOSE, "/home/ucgbpgl/moose/moose");
 
-        //simulatorExecutablesML.put("NEURON", "/share/apps/neuro/nrn62_pympi/x86_64/bin/nrniv");
-        simulatorExecutablesML.put("NEURON", "/share/apps/neuro/nrn71/x86_64/bin/nrniv");
-        simulatorExecutablesML.put("MOOSE", "/share/apps/neuro/moose");
+        
+        simulatorExecutablesMLnrn62.put(KnownSimulators.NEURON, "/share/apps/neuro/nrn62_pympi/x86_64/bin/nrniv");
+        simulatorExecutablesMLnrn62.put(KnownSimulators.PY_NEURON, "/share/apps/neuro/nrn62_pympi/x86_64/bin/nrniv -python");
+        
+        simulatorExecutablesML.put(KnownSimulators.NEURON, "/share/apps/neuro/nrn71/x86_64/bin/nrniv");
+        simulatorExecutablesML.put(KnownSimulators.PY_NEURON, "/share/apps/neuro/nrn71/x86_64/bin/nrniv -python");
+        
+        simulatorExecutablesML.put(KnownSimulators.MOOSE, "/share/apps/neuro/moose");
 
         // This is a 4 processor Linux machine in our lab. Auto ssh login is enabled to it from the
         // machine on which neuroConstruct is running. Jobs are set running directly on this machine
@@ -146,6 +160,11 @@ public class MpiSettings
                                                   "ucgbpgl",
                                                   "/home/ucgbpgl/nCsims",
                                                   simulatorExecutablesML);
+        // Login node for Matthau/Lemmon cluster
+        RemoteLogin matlemLoginNrn62 = new RemoteLogin("128.16.14.177",
+                                                  "ucgbpgl",
+                                                  "/home/ucgbpgl/nCsims",
+                                                  simulatorExecutablesMLnrn62);
 
         // Legion is the UCL supercomputing cluster. Legion operates the Torque batch queueing system
         // and the Moab scheduler, i.e. jobs aren't eecuted directly, but submitted to a queue and will
@@ -193,7 +212,50 @@ public class MpiSettings
             p.getHostList().add(new MpiHost(LOCALHOST,4, 1));
             configurations.add(p);
         }
+        if (getMpiConfiguration(LOCAL_8PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(LOCAL_8PROC);
+            p.getHostList().add(new MpiHost(LOCALHOST,8, 1));
+            configurations.add(p);
+        }
 
+        if (getMpiConfiguration(MATLEM_NRN62_1PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(MATLEM_NRN62_1PROC);
+
+            p.getHostList().add(new MpiHost("localhost", 1, 1));
+            p.setRemoteLogin(matlemLoginNrn62);
+            p.setMpiVersion(MpiSettings.OPENMPI_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(matlemQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(MATLEM_NRN62_4PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(MATLEM_NRN62_4PROC);
+
+            for(int i=0;i<1;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+
+            p.setRemoteLogin(matlemLoginNrn62);
+            p.setMpiVersion(MpiSettings.OPENMPI_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(matlemQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(MATLEM_NRN62_8PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(MATLEM_NRN62_8PROC);
+
+            for(int i=0;i<1;i++)
+                p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+            p.setRemoteLogin(matlemLoginNrn62);
+            p.setMpiVersion(MpiSettings.OPENMPI_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(matlemQueue);
+            configurations.add(p);
+        }
 
 
         if (getMpiConfiguration(MATLEM_1PROC)==null)

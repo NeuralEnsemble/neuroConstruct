@@ -48,6 +48,10 @@ public class Hdf5Constants
     public static final String NEUROCONSTRUCT_VARIABLE = "Variable"; // As this is the preferred term in NeuroML...
 
 
+    public static final String NEUROCONSTRUCT_COLUMN_PREFIX = "column_";
+    public static final String NEUROCONSTRUCT_CELL_NUM_PREFIX = "cellNum_";
+
+    
 
     public static final String NEUROSAGE_TRACE_TYPE = "Type";
 

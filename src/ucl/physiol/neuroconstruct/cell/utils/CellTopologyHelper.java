@@ -3370,6 +3370,8 @@ public class CellTopologyHelper
         String LT = "<";
         if (html) LT = "&lt;";
 
+        logger.logComment("Comparing " + cellA + " in" +projectA+ " to " + cellB+" in "+ projectB);
+
         String projAInfo = projectA==null ? "": " from "+projectA.getProjectFile().getAbsolutePath();
         String projBInfo = projectB==null ? "": " from "+projectB.getProjectFile().getAbsolutePath();
 

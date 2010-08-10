@@ -45,6 +45,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
 import ucl.physiol.neuroconstruct.utils.python.*;
 import ucl.physiol.neuroconstruct.project.GeneratedPlotSaves.*;
 import ucl.physiol.neuroconstruct.hpc.mpi.*;
+import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings.KnownSimulators;
 import ucl.physiol.neuroconstruct.hpc.utils.ProcessFeedback;
 import ucl.physiol.neuroconstruct.hpc.utils.ProcessManager;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.*;
@@ -1055,7 +1056,6 @@ public class NeuronFileManager
     {
         StringBuffer response = new StringBuffer();
         
-        
         if (!simConfig.getMpiConf().isParallelNet())
         {
             if (!isRunModePythonBased(genRunMode))
@@ -1064,7 +1064,6 @@ public class NeuronFileManager
             }
             else
             {
-
                 response.append("\n\nfunc isCellOnNode() {\n");
                 response.append("    return 1 // serial mode, so yes...\n");
                 response.append("}\n");
@@ -2678,10 +2677,16 @@ public class NeuronFileManager
                                     GuiUtils.showWarningMessage(logger, "Cannot currently save spiketime data in HDF5 format", null);
                                 }
 
-                                String h5Filename = cellGroupName+"."+record.simPlot.getSafeVarName()+"."+SimPlot.CONTINUOUS_DATA_H5_EXT;
+                                String hostInfo = "";
+                                if (simConfig.getMpiConf().isParallelNet())
+                                {
+                                    hostInfo = ".host'+str(int(h.hostid))+'";
+                                }
+
+                                String h5Filename = cellGroupName+"."+record.simPlot.getSafeVarName()+hostInfo+"."+SimPlot.CONTINUOUS_DATA_H5_EXT;
                                 String varName = GeneralUtils.replaceAllTokens(h5Filename, ".", "_");
 
-                                response.append("nrnpython(\"h5file = tables.openFile('"+h5Filename+"', mode = 'w', title = 'Arrays of recordings of "+record.simPlot.getValuePlotted()
+                                response.append("nrnpython(\"h5file = tables.openFile(h.targetDir+'"+h5Filename+"', mode = 'w', title = 'Arrays of recordings of "+record.simPlot.getValuePlotted()
                                         +" from NEURON')\")\n\n");
 
                                 int mode = 4;
@@ -2704,22 +2709,43 @@ public class NeuronFileManager
                                 else if (mode == 4)
                                 {
 
-                                    response.append("{nrnpython(\"allData = numpy.zeros( (h.v_time.size(), "+numInCellGroup+") , dtype=float )\")}\n");
+                                    response.append("{nrnpython(\"allData = numpy.zeros( (" + numStepsTotal + ", h.n_"+cellGroupName+"_local ) , dtype=float )\")}\n");
                                     response.append("{nrnpython(\"print allData.shape\")}\n\n");
+                                    response.append("{nrnpython(\"columnsVsCellNums = {}\")}\n\n");
+                                    response.append("{nrnpython(\"columnIndex = 0\")}\n\n");
 
-                                    response.append("for i=0, n_"+cellGroupName+"-1 {\n");
+                                    response.append("for cellNum=0, n_"+cellGroupName+"-1 {\n");
 
-                                    response.append("    { nrnpython(\"allData[:,int(h.i)] = h."+vectObj+"[int(h.i)].to_python()\")}\n");
+                                    if (simConfig.getMpiConf().isParallelNet())
+                                    {
+                                        response.append("  if (isCellOnNode(\""+ cellGroupName + "\", cellNum)) {\n");
+                                    }
+                                    response.append("    { print \"Adding data for cell number \",cellNum,\" in "+cellGroupName+" on host \", hostid}\n");
+                                    
+                                    response.append("    { nrnpython(\"allData[:,columnIndex] = h."+vectObj+"[int(h.cellNum)].to_python()\")}\n");
+
+                                    response.append("    {nrnpython(\"columnsVsCellNums[columnIndex] = int(h.cellNum)\")}\n\n");
+                                    response.append("    {nrnpython(\"columnIndex += 1\")}\n\n");
+
+                                    if (simConfig.getMpiConf().isParallelNet())
+                                    {
+                                        response.append("  }\n");
+                                    }
                                     response.append("}\n");
+                                    response.append("{nrnpython(\"print columnsVsCellNums\")}\n\n");
 
                                     response.append("{nrnpython(\"group = h5file.createGroup('/', '"+cellGroupName+"', '"+cellGroupName+"')\")}\n");
 
-                                    response.append("nrnpython(\"group._v_attrs."+Hdf5Constants.NEUROCONSTRUCT_POPULATION+" = '"+cellGroupName+"'\")\n");
+                                    response.append("{nrnpython(\"group._v_attrs."+Hdf5Constants.NEUROCONSTRUCT_POPULATION+" = '"+cellGroupName+"'\")}\n");
 
-                                    response.append("nrnpython(\"hArray = h5file.createArray(group, '"+record.simPlot.getSafeVarName()+"', allData, 'Values of "+record.simPlot.getValuePlotted()
-                                            +" from cell group: "+cellGroupName+"')\")\n");
+                                    response.append("{nrnpython(\"hArray = h5file.createArray(group, '"+record.simPlot.getSafeVarName()+"', allData, 'Values of "+record.simPlot.getValuePlotted()
+                                            +" from cell group: "+cellGroupName+"')\")}\n");
 
-                                    response.append("nrnpython(\"hArray.setAttr('"+Hdf5Constants.NEUROCONSTRUCT_VARIABLE+"', '"+record.simPlot.getValuePlotted()+"')\")\n");
+                                    response.append("{nrnpython(\"hArray.setAttr('"+Hdf5Constants.NEUROCONSTRUCT_VARIABLE+"', '"+record.simPlot.getValuePlotted()+"')\")}\n");
+
+                                    response.append("{nrnpython(\"for columnIndex in columnsVsCellNums.keys(): " +
+                                            "hArray.setAttr('"+Hdf5Constants.NEUROCONSTRUCT_COLUMN_PREFIX+"'+str(columnIndex), " +
+                                            "'"+Hdf5Constants.NEUROCONSTRUCT_CELL_NUM_PREFIX+"'+ str(columnsVsCellNums[columnIndex]))\")}\n");
 
 
                                 }
@@ -2745,7 +2771,8 @@ public class NeuronFileManager
 
                                 }
 
-                                response.append("nrnpython(\"h5file.close()\")\n");
+                                response.append("{nrnpython(\"print 'Closing file: '+h5file.filename\")}\n");
+                                response.append("{nrnpython(\"h5file.close()\")}\n");
                             }
                             else
                             {
@@ -3331,6 +3358,7 @@ public class NeuronFileManager
                     if (cellGroupPositions.size() > 0)
                     {
                         response.append("{"+nameOfNumberOfTheseCells + " = " + cellGroupPositions.size() + "}\n\n");
+                        response.append("{"+nameOfNumberOfTheseCells + "_local = 0 } // actual number created on this host\n\n");
     
                         response.append("objectvar " + nameOfArrayOfTheseCells + "[" + nameOfNumberOfTheseCells + "]" +
                                         "\n\n");
@@ -3353,7 +3381,8 @@ public class NeuronFileManager
     
                             response.append("for i = 0, " + nameOfNumberOfTheseCells + "-1 {" + "\n");
     
-                            response.append("    addCell_" + cellGroupName + "(i)" + "\n\n");
+                            response.append("    addCell_" + cellGroupName + "(i)" + "\n");
+                            response.append("    "+nameOfNumberOfTheseCells + "_local = "+nameOfNumberOfTheseCells + "_local +1 \n\n");
     
                             response.append("}" + "\n\n");
                         }
@@ -3383,6 +3412,7 @@ public class NeuronFileManager
                             response.append("        pnm.register_cell(getCellGlobalId(\""+cellGroupName+"\", i), a_"+cellGroupName+"[i])\n");
 
                             response.append("        allCells.append(" + nameOfArrayOfTheseCells + "[i])\n");
+                            response.append("        "+nameOfNumberOfTheseCells + "_local = "+nameOfNumberOfTheseCells + "_local + 1 \n\n");
     
                             response.append("    }\n");
     
@@ -5222,7 +5252,25 @@ public class NeuronFileManager
 
                         if (genRunMode==RUN_PYTHON_HDF5 || project.neuronSettings.getDataSaveFormat().equals(NeuronSettings.DataSaveFormat.HDF5_NC))
                         {
-                            scriptText.append(GeneralUtils.getArchSpecificDir()+"/special -python "+ runPythonFile.getName());
+                            //scriptText.append(GeneralUtils.getArchSpecificDir()+"/special -python "+ runPythonFile.getName());
+
+
+                            if (simConfig.getMpiConf().isParallelNet())
+                            {
+                                neuronExecutable = neuronExecutable+" -python ";
+                            }
+                            else
+                            {
+                                neuronExecutable = GeneralUtils.getArchSpecificDir()+"/special -python ";
+                            }
+
+                            scriptText.append(preCommand
+                            + neuronExecutable
+                            + " "
+                            + mpiFlags
+                            + runPythonFile.getName()
+                            + postArgs);
+
                         }
                         else if (true || !isRunModePythonBased(genRunMode))
                         {
@@ -5261,9 +5309,16 @@ public class NeuronFileManager
                             time = suggestedRemoteRunTime;
                         }
 
+                        KnownSimulators sim = KnownSimulators.NEURON;
+
+                        if (genRunMode==RUN_PYTHON_HDF5 || project.neuronSettings.getDataSaveFormat().equals(NeuronSettings.DataSaveFormat.HDF5_NC))
+                        {
+                            sim = KnownSimulators.PY_NEURON;
+                        }
+
                         scriptText.append(simConfig.getMpiConf().getPushScript(project.getProjectName(), 
                                                                                project.simulationParameters.getReference(),
-                                                                               "NEURON",
+                                                                               sim,
                                                                                dirToRunInFile));
 
                         File simResultsDir = new File(ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()),
@@ -5271,7 +5326,7 @@ public class NeuronFileManager
 
                         if (simConfig.getMpiConf().getQueueInfo()!=null)
                         {
-                            String submitJob = simConfig.getMpiConf().getQueueSubmitScript(project.getProjectName(), project.simulationParameters.getReference(), time, "NEURON");
+                            String submitJob = simConfig.getMpiConf().getQueueSubmitScript(project.getProjectName(), project.simulationParameters.getReference(), time, sim);
 
                             File submitJobFile = new File(ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory()), QueueInfo.submitScript);
 

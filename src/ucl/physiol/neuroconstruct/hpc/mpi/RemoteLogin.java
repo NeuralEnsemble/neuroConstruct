@@ -27,6 +27,7 @@
 package ucl.physiol.neuroconstruct.hpc.mpi;
 
 import java.util.Hashtable;
+import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings.KnownSimulators;
 
 
 /**
@@ -44,7 +45,8 @@ public class RemoteLogin
     private String hostname = null;
     private String userName = null;
     private String workDir = null;
-    private Hashtable<String, String> executables = new Hashtable<String, String>();
+
+    private Hashtable<KnownSimulators, String> executables = new Hashtable<KnownSimulators, String>();
 
     public static final String remotePullScriptName = "pullsim.sh";
 
@@ -53,7 +55,7 @@ public class RemoteLogin
 
     }
 
-    public RemoteLogin(String hostname, String userName, String workDir, Hashtable<String, String> executables)
+    public RemoteLogin(String hostname, String userName, String workDir, Hashtable<KnownSimulators, String> executables)
     {
         this.hostname = hostname;
         this.userName = userName;
@@ -62,17 +64,17 @@ public class RemoteLogin
     }
 
 
-    public Hashtable<String, String> getExecutables()
+    public Hashtable<KnownSimulators, String> getExecutables()
     {
         return executables;
     }
 
-    public String getExecutableForSimulator(String simulator)
+    public String getExecutableForSimulator(KnownSimulators simulator)
     {
         return executables.get(simulator);
     }
 
-    public void setExecutables(Hashtable<String, String> executables)
+    public void setExecutables(Hashtable<KnownSimulators, String> executables)
     {
         this.executables = executables;
     }
@@ -112,7 +114,7 @@ public class RemoteLogin
     @Override
     public Object clone()
     {
-        RemoteLogin rl2 = new RemoteLogin(new String(hostname), new String(userName), new String(workDir), new Hashtable<String, String>(executables));
+        RemoteLogin rl2 = new RemoteLogin(new String(hostname), new String(userName), new String(workDir), new Hashtable<KnownSimulators, String>(executables));
         return rl2;
 
     }

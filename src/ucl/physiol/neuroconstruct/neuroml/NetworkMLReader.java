@@ -56,10 +56,7 @@ import ucl.physiol.neuroconstruct.project.stimulation.IClamp;
 import ucl.physiol.neuroconstruct.project.stimulation.IClampInstanceProps;
 import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrain;
 import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrainInstanceProps;
-import ucl.physiol.neuroconstruct.simulation.IClampSettings;
-import ucl.physiol.neuroconstruct.simulation.RandomSpikeTrainSettings;
-import ucl.physiol.neuroconstruct.simulation.SimulationParameters;
-import ucl.physiol.neuroconstruct.simulation.StimulationSettings;
+import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 
 import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
@@ -1087,7 +1084,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
              StimulationSettings ss = project.elecInputInfo.getStim(currentInputName);
              
 
-             if (!(ss instanceof RandomSpikeTrainSettings) && !level3)
+             if (!(ss instanceof RandomSpikeTrainSettings || ss instanceof RandomSpikeTrainExtSettings || ss instanceof RandomSpikeTrainVariableSettings) && !level3)
              {
                   GuiUtils.showWarningMessage(logger, "Error, RandomSpikeTrain "+currentInputName+" not found in project", null);
                   currentInputName = null;
@@ -1112,16 +1109,47 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                  }
                  else
                  {
-                     RandomSpikeTrainSettings currentRandomSpikeTrainSettings = (RandomSpikeTrainSettings)ss;
-
-                     if (currentRandomSpikeTrainSettings.getRate().getFixedNum() != currentRate)
+                     if (ss instanceof RandomSpikeTrainSettings)
                      {
-                       GuiUtils.showWarningMessage(logger, "Error, imported rate ("+currentRate+") for RandomSpikeTrain "+currentInputName+" is different from that currently in the project", null);
+                         RandomSpikeTrainSettings currentRandomSpikeTrainSettings = (RandomSpikeTrainSettings)ss;
+
+                         if (currentRandomSpikeTrainSettings.getRate().getFixedNum() != currentRate)
+                         {
+                           GuiUtils.showWarningMessage(logger, "Error, imported rate ("+currentRate+") for RandomSpikeTrain "+currentInputName+" is different from that currently in the project", null);
+                         }
+
+                         if (!currentRandomSpikeTrainSettings.getSynapseType().equals(currentSynapseType))
+                         {
+                           GuiUtils.showWarningMessage(logger, "Error, imported synapse type ("+currentSynapseType+") for RandomSpikeTrain "+currentInputName+" is different from that currently in the project", null);
+                         }
                      }
-
-                     if (!currentRandomSpikeTrainSettings.getSynapseType().equals(currentSynapseType))
+                     else if (ss instanceof RandomSpikeTrainExtSettings)
                      {
-                       GuiUtils.showWarningMessage(logger, "Error, imported synapse type ("+currentSynapseType+") for RandomSpikeTrain "+currentInputName+" is different from that currently in the project", null);
+                         RandomSpikeTrainExtSettings currentRandomSpikeTrainSettings = (RandomSpikeTrainExtSettings)ss;
+
+                         if (currentRandomSpikeTrainSettings.getRate().getFixedNum() != currentRate)
+                         {
+                           GuiUtils.showWarningMessage(logger, "Error, imported rate ("+currentRate+") for RandomSpikeTrainExtSettings "+currentInputName+" is different from that currently in the project", null);
+                         }
+
+                         if (!currentRandomSpikeTrainSettings.getSynapseType().equals(currentSynapseType))
+                         {
+                           GuiUtils.showWarningMessage(logger, "Error, imported synapse type ("+currentSynapseType+") for RandomSpikeTrainExtSettings "+currentInputName+" is different from that currently in the project", null);
+                         }
+                     }
+                     else if (ss instanceof RandomSpikeTrainVariableSettings)
+                     {
+                         RandomSpikeTrainVariableSettings currentRandomSpikeTrainSettings = (RandomSpikeTrainVariableSettings)ss;
+
+                         if (currentRandomSpikeTrainSettings.getRate().equals(""+currentRate))
+                         {
+                           GuiUtils.showWarningMessage(logger, "Error, imported rate ("+currentRate+") for RandomSpikeTrainVariableSettings "+currentInputName+" is different from that currently in the project", null);
+                         }
+
+                         if (!currentRandomSpikeTrainSettings.getSynapseType().equals(currentSynapseType))
+                         {
+                           GuiUtils.showWarningMessage(logger, "Error, imported synapse type ("+currentSynapseType+") for RandomSpikeTrainVariableSettings "+currentInputName+" is different from that currently in the project", null);
+                         }
                      }
                  }
              }

@@ -38,6 +38,7 @@ import ucl.physiol.neuroconstruct.dataset.DataSet;
 import ucl.physiol.neuroconstruct.gui.MainApplication;
 import ucl.physiol.neuroconstruct.gui.plotter.PlotManager;
 import ucl.physiol.neuroconstruct.gui.plotter.PlotterFrame;
+import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings.KnownSimulators;
 import ucl.physiol.neuroconstruct.hpc.mpi.QueueInfo;
 import ucl.physiol.neuroconstruct.hpc.mpi.RemoteLogin;
 import ucl.physiol.neuroconstruct.hpc.utils.ProcessFeedback;
@@ -3823,11 +3824,11 @@ public class GenesisFileManager
                         time = suggestedRemoteRunTime;
                     }
                     
-                    String simName = mooseCompatMode() ? "MOOSE" : "GENESIS";
+                    KnownSimulators sim = mooseCompatMode() ? KnownSimulators.MOOSE : KnownSimulators.GENESIS;
 
                     scriptText.append(simConfig.getMpiConf().getPushScript(project.getProjectName(),
                                       project.simulationParameters.getReference(),
-                                      simName,
+                                      sim,
                                       dirToRunFrom));
 
                     File simResultsDir = new File(ProjectStructure.getSimulationsDir(project.getProjectMainDirectory()),
@@ -3835,7 +3836,7 @@ public class GenesisFileManager
 
                     if (simConfig.getMpiConf().getQueueInfo()!=null)
                     {
-                        String submitJob = simConfig.getMpiConf().getQueueSubmitScript(project.getProjectName(), project.simulationParameters.getReference(), time, simName);
+                        String submitJob = simConfig.getMpiConf().getQueueSubmitScript(project.getProjectName(), project.simulationParameters.getReference(), time, sim);
 
                         File submitJobFile = new File(dirForSimDataFiles, QueueInfo.submitScript);
 
