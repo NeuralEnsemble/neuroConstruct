@@ -457,6 +457,7 @@ class SimulationManager():
                         simConfigs =            ["Default Simulation Configuration"],
                         maxElecLens =           [-1],
                         simDt =                 None,
+                        simDuration =           None,
                         neuroConstructSeed =    12345,
                         simulatorSeed =         11111,
                         simulators =            ["NEURON", "GENESIS_PHYS"],
@@ -479,6 +480,9 @@ class SimulationManager():
                 self.project.simulationParameters.setDt(simDt)
 
             simConfig = self.project.simConfigInfo.getSimConfig(simConfigName)
+
+            if simDuration is not None:
+                simConfig.setSimDuration(simDuration)
 
             recompSuffix = ""
 
@@ -682,7 +686,7 @@ class SimulationManager():
         self.printver("Going to generate F-I curve on %s for sim config: %s with amplitude of stim: (%f -> %f ; %f)" % (simulator, simConfigName, stimAmpLow, stimAmpHigh, stimAmpInc))
 
         if simConfig == None: 
-            raise NameError('No such Simulation configuration as: '+ simConfigName)
+            raise NameError('No such Simulation configuration as: '+ simConfigName+'. \nExisting sim configs: '+str(self.project.simConfigInfo.getAllSimConfigNames()))
 
 
         simConfig.setSimDuration(simDuration)
