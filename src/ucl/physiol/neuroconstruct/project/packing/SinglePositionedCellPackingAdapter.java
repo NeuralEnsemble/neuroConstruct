@@ -120,6 +120,10 @@ public class SinglePositionedCellPackingAdapter extends CellPackingAdapter
     }
 
 
+    public boolean isRelativeToRegion()
+    {
+        return this.parameterList[3].value==1;
+    }
 
 
     public void setParameter(String parameterName,
@@ -158,13 +162,22 @@ public class SinglePositionedCellPackingAdapter extends CellPackingAdapter
 
         sb.append("Single cell: ");
 
-       sb.append("("
+        sb.append("("
                  + parameterList[0].value
                  + ", "
                  + parameterList[1].value
                  + ", "
                  + parameterList[2].value
                  + ")");
+
+        if (isRelativeToRegion())
+        {
+            sb.append(" relative to region");
+        }
+        else
+        {
+            sb.append(" (absolute position)");
+        }
 
 
         return (sb.toString());
@@ -185,6 +198,15 @@ public class SinglePositionedCellPackingAdapter extends CellPackingAdapter
                  + ", "
                  + parameterList[2].value
                  + ")");
+
+        if (isRelativeToRegion())
+        {
+            sb.append(" relative to Region");
+        }
+        else
+        {
+            sb.append(" (absolute position)");
+        }
 
 
         return (sb.toString());

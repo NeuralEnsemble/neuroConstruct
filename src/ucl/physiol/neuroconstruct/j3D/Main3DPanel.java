@@ -564,6 +564,12 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                     logger.logComment("targetSynAbsolutePosition: " +
                                       Utils3D.getShortStringDesc(targetSynAbsolutePosition));
 
+                    Point3f rel = new Point3f(targetSynAbsolutePosition);
+                    rel.sub(sourceSynAbsolutePosition);
+
+                    logger.logComment("-- target -> src rel Position: " +
+                                      Utils3D.getShortStringDesc(rel)+", len: "+rel.distance(new Point3f()));
+
                     ArrayList<Integer> selNumbers = this.getSelectedCellNums();
 
                     if (!jCheckBoxTransparent.isSelected() ||
