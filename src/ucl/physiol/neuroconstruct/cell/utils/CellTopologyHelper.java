@@ -3480,19 +3480,39 @@ public class CellTopologyHelper
         }
 
         int minSize = Math.min(segmentsA.size(), segmentsB.size());
+
+
+        logger.logComment("Comparing " + segmentsA.size() + " segs to " +segmentsB.size());
         
         StringBuilder segCompare = new StringBuilder();
+
+        int maxDiffSegs = 20;
+        int diffSegs = 0;
+
+        String tooManySegsDiff = "";
         
         for (int i = 0; i < minSize; i++)
         {
             if (!segmentsA.get(i).fullEquals(segmentsB.get(i)))
             {
-                identical = false;
-                segCompare.append(GeneralUtils.getColouredString("A segment does not match:", "red", html)+EOL
-                +LT+" " + segmentsA.get(i).compareTo(segmentsB.get(i), html) + ""+EOL
-                +"> " + segmentsB.get(i).compareTo(segmentsA.get(i), html) + EOL + EOL);
+                diffSegs++;
+
+                if (diffSegs<maxDiffSegs)
+                {
+                    identical = false;
+
+                    segCompare.append(GeneralUtils.getColouredString("A segment does not match:", "red", html)+EOL
+                    +LT+" " + segmentsA.get(i).compareTo(segmentsB.get(i), html) + ""+EOL
+                    +"> " + segmentsB.get(i).compareTo(segmentsA.get(i), html) + EOL + EOL);
+
+                }
+                else
+                {
+                    tooManySegsDiff = GeneralUtils.getColouredString(EOL+"  (In total "+diffSegs+" segments do not match, errors suppressed after the first "+maxDiffSegs+")" + EOL, "red", html)+EOL;
+                }
             }
         }
+
         if(segCompare.length()==0)
         {
             info.append(GeneralUtils.getColouredString("Compared "+minSize+" segments which were equal in both cells", "green", html)+EOL+EOL);
@@ -3501,6 +3521,7 @@ public class CellTopologyHelper
         {
             info.append(segCompare.toString());
         }
+        info.append(tooManySegsDiff);
         
         
         if (segmentsA.size() > minSize)
@@ -3508,9 +3529,13 @@ public class CellTopologyHelper
             info.append(GeneralUtils.getColouredString("There are " + (segmentsA.size() - minSize) + " extra segment(s) in " +
                         cellA.getInstanceName() + EOL + EOL, "red", html));
             
-            for (int j = minSize; j < segmentsA.size(); j++)
+            for (int j = minSize; j < Math.min(segmentsA.size(),minSize+maxDiffSegs) ; j++)
             {
                 info.append(GeneralUtils.getColouredString(LT+" " + segmentsA.get(j) + EOL, "red", html));
+            }
+            if (segmentsA.size()>minSize+maxDiffSegs)
+            {
+                info.append(GeneralUtils.getColouredString(EOL+"   (Suppressing further extra segment info...)" + EOL, "red", html));
             }
 
             info.append(EOL);
@@ -3520,9 +3545,13 @@ public class CellTopologyHelper
             info.append(GeneralUtils.getColouredString("There are " + (segmentsB.size() - minSize) + " extra segment(s) in " +
                         cellB.getInstanceName() + EOL + EOL, "red", html));
 
-            for (int j = minSize; j < segmentsB.size(); j++)
+            for (int j = minSize; j < Math.min(segmentsB.size(),minSize+maxDiffSegs); j++)
             {
                 info.append(GeneralUtils.getColouredString("> " +" " + segmentsB.get(j) + EOL, "red", html));
+            }
+            if (segmentsB.size()>minSize+maxDiffSegs)
+            {
+                info.append(GeneralUtils.getColouredString(EOL+"   (Suppressing further extra segment info...)" + EOL, "red", html));
             }
 
             info.append(EOL);
@@ -3547,15 +3576,28 @@ public class CellTopologyHelper
         minSize = Math.min(secsA.size(), secsB.size());
         
         StringBuilder secCompare = new StringBuilder();
+
+        int maxDiffSecs = 20;
+        int diffSecs = 0;
+        String tooManySecsDiff = "";
         
         for (int i = 0; i < minSize; i++)
         {
             if (!secsA.get(i).equalsG(secsB.get(i), true))
             {
-                identical = false;
-                secCompare.append(GeneralUtils.getColouredString("A section does not match:", "red", html)+EOL
-                +LT+" " + secsA.get(i).compareTo(secsB.get(i), html) + ""+EOL
-                +"> " + secsB.get(i).compareTo(secsA.get(i), html) + EOL + EOL);
+                diffSecs++;
+
+                if(diffSecs<maxDiffSecs)
+                {
+                    identical = false;
+                    secCompare.append(GeneralUtils.getColouredString("A section does not match:", "red", html)+EOL
+                    +LT+" " + secsA.get(i).compareTo(secsB.get(i), html) + ""+EOL
+                    +"> " + secsB.get(i).compareTo(secsA.get(i), html) + EOL + EOL);
+                }
+                else
+                {
+                    tooManySecsDiff = GeneralUtils.getColouredString(EOL+"  (In total "+diffSecs+" sections do not match, errors suppressed after the first "+maxDiffSecs+")" + EOL, "red", html)+EOL;
+                }
             }
         }
         if(secCompare.length()==0)
@@ -3566,6 +3608,8 @@ public class CellTopologyHelper
         {
             info.append(secCompare.toString());
         }
+
+        info.append(tooManySecsDiff);
         
         
         
@@ -3574,9 +3618,13 @@ public class CellTopologyHelper
             info.append(GeneralUtils.getColouredString("There are " + (secsA.size() - minSize) + " extra section(s) in " +
                         cellA.getInstanceName() + EOL + EOL, "red", html));
             
-            for (int j = minSize; j < secsA.size(); j++)
+            for (int j = minSize; j < Math.min(secsA.size(),minSize+maxDiffSecs) ; j++)
             {
                 info.append(GeneralUtils.getColouredString(LT+" " + secsA.get(j) + EOL, "red", html));
+            }
+            if (secsA.size()>minSize+maxDiffSecs)
+            {
+                info.append(GeneralUtils.getColouredString(EOL+"   (Suppressing further extra section info...)" + EOL, "red", html));
             }
 
             info.append(EOL);
@@ -3586,9 +3634,13 @@ public class CellTopologyHelper
             info.append(GeneralUtils.getColouredString("There are " + (secsB.size() - minSize) + " extra section(s) in " +
                         cellB.getInstanceName() + EOL + EOL, "red", html));
 
-            for (int j = minSize; j < secsB.size(); j++)
+            for (int j = minSize; j < Math.min(secsB.size(),minSize+maxDiffSecs); j++)
             {
                 info.append(GeneralUtils.getColouredString("> " +" " + secsB.get(j) + EOL, "red", html));
+            }
+            if (secsB.size()>minSize+maxDiffSecs)
+            {
+                info.append(GeneralUtils.getColouredString(EOL+"   (Suppressing further extra section info...)" + EOL, "red", html));
             }
 
             info.append(EOL);
@@ -5000,7 +5052,7 @@ public class CellTopologyHelper
         try
         {
 
-            Project testProj = Project.loadProject(new File("models/BioMorph/BioMorph.neuro.xml"),
+            Project testProj = Project.loadProject(new File("../nC_projects/GoCSolinas_testclamp/GoCSolinas_testclamp.ncx"),
                                                    new ProjectEventListener()
             {
                 public void tableDataModelUpdated(String tableModelName)
@@ -5014,12 +5066,20 @@ public class CellTopologyHelper
 
             });
 
+            Cell cellB = testProj.cellManager.getCell("Golgi_040408_blue");
+            Cell cellR = testProj.cellManager.getCell("Golgi_040408_red");
+
+            System.out.println("Comp: " +CellTopologyHelper.compare(cellB,cellR, false) );
+
+
+
+            if (true) return;
+
             Cell cell = testProj.cellManager.getCell("Basic");
             //Cell cell = new SimpleCell("dumCell");
 
             System.out.println("Info: " + CellTopologyHelper.printDetails(cell, testProj));
 
-            //if (true) return;
 
             boolean useHtml = true;
 

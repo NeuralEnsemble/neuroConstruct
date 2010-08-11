@@ -2587,13 +2587,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         //jPanelProjInfo.setDebugGraphicsOptions(0);
         jPanelProjInfo.setLayout(gridBagLayout4);
         jTextAreaProjDescription.setBorder(BorderFactory.createEtchedBorder());
-        jTextAreaProjDescription.setMinimumSize(new Dimension(300, 450));
-        jTextAreaProjDescription.setPreferredSize(new Dimension(300, 450));
+        jTextAreaProjDescription.setMinimumSize(new Dimension(300, 750));
+        jTextAreaProjDescription.setPreferredSize(new Dimension(300, 750));
         jTextAreaProjDescription.setEditable(false);
         jTextAreaProjDescription.setText(welcomeText);
         jTextAreaProjDescription.setColumns(50);
         jTextAreaProjDescription.setLineWrap(true);
-        jTextAreaProjDescription.setRows(14);
+        jTextAreaProjDescription.setRows(20);
         jTextAreaProjDescription.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
 
         this.jTextAreaSimConfigDesc.setBorder(BorderFactory.createEtchedBorder());

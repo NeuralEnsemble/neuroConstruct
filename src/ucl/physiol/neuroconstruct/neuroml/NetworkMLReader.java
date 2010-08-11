@@ -290,13 +290,14 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                     Integer nameN = -1;
                     String simName = this.foundSimConfig;
                     SimConfig existingSC = project.simConfigInfo.getSimConfig(foundSimConfig);
+
                     if (foundSimConfig.equals(SimConfigInfo.DEFAULT_SIM_CONFIG_NAME) && existingSC==null)
                     {
                         existingSC = new SimConfig(SimConfigInfo.DEFAULT_SIM_CONFIG_NAME, SimConfigInfo.DEFAULT_SIM_CONFIG_DESC);
                         project.simConfigInfo.add(existingSC);
                     }
 
-                    if (existingSC!=null && existingSC.getCellGroups().size()==0)
+                    if (existingSC!=null /*&& existingSC.getCellGroups().size()==0*/)
                     {
                         importedSimConfig = existingSC;
                     }
@@ -307,6 +308,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                             nameN++;
                             simName = this.foundSimConfig.concat("_imported"+nameN);
                         }
+                        
                         importedSimConfig = new SimConfig(simName, "");
                         project.simConfigInfo.add(importedSimConfig);
                     }
