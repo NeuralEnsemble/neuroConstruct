@@ -237,7 +237,7 @@ class SimulationManager():
 
     def __init__(self,
                  projFile,
-                 numConcurrentSims,
+                 numConcurrentSims = 1,
                  verbose =           True):
 
         self.projectManager = ProjectManager()
@@ -432,7 +432,7 @@ class SimulationManager():
 
                                 for spikeNum in range(0, len(spikeTimesTarget)):
                                     delta = spikeTimesTarget[spikeNum] - spikeTimes[spikeNum]
-                                    if abs(delta) > spikeTimeAccuracy:
+                                    if float(abs(delta)) > float(spikeTimeAccuracy):
                                         report = report + "ERROR: Spike time: %f not within %f of %f (delta = %f) for %s in %s!\n" % \
                                                   (spikeTimes[spikeNum], spikeTimeAccuracy, spikeTimesTarget[spikeNum], delta, dataStore.getCellSegRef(), simRef) 
                                         fail = True
