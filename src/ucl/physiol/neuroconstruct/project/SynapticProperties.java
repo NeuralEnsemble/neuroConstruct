@@ -26,7 +26,6 @@
 
 package ucl.physiol.neuroconstruct.project;
 import ucl.physiol.neuroconstruct.utils.*;
-import ucl.physiol.neuroconstruct.utils.equation.EquationException;
 
 /**
  * Dialog for entry of synaptic connection properties: type, delay threshold, etc.
@@ -110,6 +109,12 @@ public class SynapticProperties
     {
         this.delayGenerator = delayGenerator;
     }
+
+    public void setFixedDelay(float delay)
+    {
+        this.delayGenerator = new NumberGenerator(delay);
+    }
+
     public void setSynapseType(String synapseType)
     {
         this.synapseType = synapseType;

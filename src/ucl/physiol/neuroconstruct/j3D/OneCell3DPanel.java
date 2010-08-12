@@ -90,6 +90,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
     private Hashtable<String, JButton> sectionTypeButtons = new Hashtable<String, JButton>();
     private Hashtable<String, JRadioButton> synLocRadioButtons = new Hashtable<String, JRadioButton>();
+    
     private ButtonGroup synLocButtonGroup = new ButtonGroup();
     private Hashtable<String, JRadioButton> densMechRadioButtons = new Hashtable<String, JRadioButton>();
     private ButtonGroup densMechButtonGroup = new ButtonGroup();
@@ -666,6 +667,8 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         {
             JRadioButton selectedRadioButton = (JRadioButton)cause;
             selectedSynType = selectedRadioButton.getText();
+            if (selectedSynType.indexOf("(")>0)
+                selectedSynType = selectedSynType.substring(0, selectedSynType.indexOf("(")).trim();
         }
         catch (ClassCastException ex)
         {
@@ -681,21 +684,37 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             {
                 String nextSynapseType = allAllowedTypes.get(i);
                 if (selectedSynType==null) selectedSynType = nextSynapseType;
-                JRadioButton next = createGroupRadioButton(nextSynapseType, synLocButtonGroup);
-                synLocRadioButtons.put(next.getText(), next);
+                Vector<String> groups = displayedCell.getGroupsWithSynapse(nextSynapseType);
+                StringBuffer name = new StringBuffer(nextSynapseType +" (");
+                for (String group :groups)
+                {
+                    if (!group.equals(groups.firstElement())) name.append(", ");
+                    name.append(group);
+                }
+                name.append(")");
+                JRadioButton next = createGroupRadioButton(name.toString(), synLocButtonGroup);
+
+                synLocRadioButtons.put(nextSynapseType, next);
             }
         }
-        Enumeration radioButtonNames = synLocRadioButtons.keys();
-        if (!radioButtonNames.hasMoreElements())
+
+        Enumeration<String> synTypeNames = synLocRadioButtons.keys();
+
+        if (!synTypeNames.hasMoreElements())
         {
             jPanelColourControls.add(new JLabel("No synapse types found in this cell", JLabel.CENTER));
         }
 
-        while (radioButtonNames.hasMoreElements())
+        while (synTypeNames.hasMoreElements())
         {
-            JRadioButton nextRadioButton = synLocRadioButtons.get(radioButtonNames.nextElement());
+            String synTypeName = synTypeNames.nextElement();
+
+            JRadioButton nextRadioButton = synLocRadioButtons.get(synTypeName);
             jPanelColourControls.add(nextRadioButton);
-            if (nextRadioButton.getText().equals(selectedSynType))
+
+            logger.logComment("Checking: "+synTypeName+" vs: "+ selectedSynType);
+
+            if (synTypeName.equals(selectedSynType))
             {
                 nextRadioButton.setSelected(true);
             }
@@ -1078,7 +1097,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             }
 
         }
-        Enumeration radioButtonNames = densMechRadioButtons.keys();
+        Enumeration<String> radioButtonNames = densMechRadioButtons.keys();
 
         if (!radioButtonNames.hasMoreElements())
         {
@@ -1555,7 +1574,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             sectionTypeButtons.put(axonButton.getText(), axonButton);
         }
 
-        Enumeration buttonNames = sectionTypeButtons.keys();
+        Enumeration<String> buttonNames = sectionTypeButtons.keys();
         while (buttonNames.hasMoreElements())
         {
             jPanelColourControls.add(sectionTypeButtons.get(buttonNames.nextElement()));
@@ -1922,6 +1941,19 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
 
 
+    public void tempShowSection(String sectionName, String groupName)
+    {
+        jComboBoxHighlight.setSelectedItem(highlightSecSegs);
+
+        this.myOneCell3D.markSectionAsSelected(sectionName, Color.yellow);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException ex) {
+            ///
+        }
+        refreshGroup(groupName);
+
+    }
 
 
     public void refreshGroup(String groupName)
@@ -1932,7 +1964,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         jComboBoxHighlight.setSelectedItem(highlightSecSegs);
         jComboBoxHighlight.setSelectedItem(highlightGroups);
 
-        Enumeration radioButtonNames = groupRadioButtons.keys();
+        Enumeration<String> radioButtonNames = groupRadioButtons.keys();
 
         while (radioButtonNames.hasMoreElements())
         {
@@ -1944,7 +1976,6 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                 highlightGroups(nextRadioButton);
             }
         }
-
 
     };
 
@@ -2031,7 +2062,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             System.out.println("Creating 3D representation of cell: " + cell);
 
 
-            Project testProj = Project.loadProject(new File("examples/Ex6-Cerebellum/Ex6-Cerebellum.neuro.xml"),
+            Project testProj = Project.loadProject(new File("nCexamples/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx"),
                                                new ProjectEventListener()
             {
                 public void tableDataModelUpdated(String tableModelName)

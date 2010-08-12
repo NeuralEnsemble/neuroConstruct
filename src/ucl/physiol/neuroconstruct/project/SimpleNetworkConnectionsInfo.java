@@ -237,6 +237,8 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
         vectorMaxMin.add(countSoFar, maxMin);
         this.vectorAPSpeed.add(jumpSpeed);
 
+
+
         this.fireTableRowsInserted(countSoFar, countSoFar);
     }
 
@@ -246,6 +248,7 @@ public class SimpleNetworkConnectionsInfo extends AbstractTableModel
     public boolean deleteNetConn(int index)
     {
         if (index<0 || index>=vectorNames.size()) return false;
+
         vectorNames.removeElementAt(index);
         vectorSynapseList.removeElementAt(index);
         vectorSource.removeElementAt(index);

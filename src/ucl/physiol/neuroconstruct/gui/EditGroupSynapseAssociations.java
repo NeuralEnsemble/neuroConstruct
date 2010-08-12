@@ -341,8 +341,7 @@ public class EditGroupSynapseAssociations extends JDialog implements ListSelecti
             this.jButtonRemove.setEnabled(true);
             this.jButtonAdd.setEnabled(false);
 
-            jListGroupsOut.setSelectedIndices(new int[]
-                                                {});
+            jListGroupsOut.setSelectedIndices(new int[]{});
 
             if (e.getValueIsAdjusting())
             {
@@ -355,8 +354,7 @@ public class EditGroupSynapseAssociations extends JDialog implements ListSelecti
             this.jButtonRemove.setEnabled(false);
             this.jButtonAdd.setEnabled(true);
 
-            jListGroupsIn.setSelectedIndices(new int[]
-                                               {});
+            jListGroupsIn.setSelectedIndices(new int[]{});
 
             if (e.getValueIsAdjusting())
             {
@@ -393,13 +391,18 @@ public class EditGroupSynapseAssociations extends JDialog implements ListSelecti
         }
         SimpleCell cell = new SimpleCell("");
 
-        cell.associateGroupWithSynapse("all", "syno");
+
+
+        cell.associateGroupWithSynapse("all", "syno1");
+        cell.associateGroupWithSynapse(Section.DENDRITIC_GROUP, "syno2");
 
         Vector<String> list = new Vector<String>();
         
         list.add("gg");
         list.add("hh");
         list.add("jj");
+        list.add("syno1");
+        list.add("syno2");
 
 
         EditGroupSynapseAssociations dlg = new EditGroupSynapseAssociations(cell, null, "Synapse", list);

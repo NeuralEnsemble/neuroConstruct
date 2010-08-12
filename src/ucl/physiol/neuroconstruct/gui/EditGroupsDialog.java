@@ -421,6 +421,8 @@ public class EditGroupsDialog
     {
         logger.logComment("Value changed: " + e);
 
+        String selectedGroup = (String) jComboBoxGroupNames.getSelectedItem();
+
         if (e.getSource().equals(jListSectionsIn))
         {
             logger.logComment("SectionsIn change: " + e.getFirstIndex());
@@ -428,12 +430,23 @@ public class EditGroupsDialog
             this.jButtonRemove.setEnabled(true);
             this.jButtonAdd.setEnabled(false);
 
-            jListSectionsOut.setSelectedIndices(new int[]
-                                                {});
+            jListSectionsOut.setSelectedIndices(new int[] {});
 
             if (e.getValueIsAdjusting())
             {
-                logger.logComment("Selected: " + e.getFirstIndex());
+                int[] sel = jListSectionsIn.getSelectedIndices();
+
+                logger.logComment("Selected: " + e.getFirstIndex()+ " to "+ e.getLastIndex()+", tot selected: "+ sel.length, true);
+
+
+                for (int i: sel)
+                {
+                    SectionHelper selSection = (SectionHelper)listModelSectionsIn.elementAt(i);
+
+                    logger.logComment("Item: " + i + " ("+selSection+") is selected...", true);
+                    this.updateInterface.tempShowSection(selSection.getSection().getSectionName(), selectedGroup);
+
+                }
             }
         }
         else if (e.getSource().equals(jListSectionsOut))
@@ -442,12 +455,22 @@ public class EditGroupsDialog
             this.jButtonRemove.setEnabled(false);
             this.jButtonAdd.setEnabled(true);
 
-            jListSectionsIn.setSelectedIndices(new int[]
-                                               {});
+            jListSectionsIn.setSelectedIndices(new int[] {});
 
             if (e.getValueIsAdjusting())
             {
-                logger.logComment("Selected: " + e.getFirstIndex());
+                int[] sel = jListSectionsOut.getSelectedIndices();
+
+                logger.logComment("Selected: " + e.getFirstIndex()+ " to "+ e.getLastIndex()+", tot selected: "+ sel.length, true);
+
+
+                for (int i: sel)
+                {
+                    SectionHelper selSection = (SectionHelper)listModelSectionsOut.elementAt(i);
+
+                    logger.logComment("Item: " + i + " ("+selSection+") is selected...", true);
+                    this.updateInterface.tempShowSection(selSection.getSection().getSectionName(), selectedGroup);
+                }
             }
         }
 
@@ -479,9 +502,10 @@ public class EditGroupsDialog
 
         }
         UpdateOneCell update = new UpdateOneCell()
-                      {
-                          public void refreshGroup(String groupName){};
-                      };
+        {
+          public void refreshGroup(String groupName){};
+          public void tempShowSection(String secName, String selectedGroup){};
+        };
 
         SimpleCell cell = new SimpleCell("");
         EditGroupsDialog dlg = new EditGroupsDialog(cell, null, "Edit groups", update);
@@ -620,6 +644,7 @@ public class EditGroupsDialog
             mySection = section;
         }
 
+        @Override
         public String toString()
         {
             return mySection.getSectionName();

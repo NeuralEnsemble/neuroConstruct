@@ -3486,7 +3486,7 @@ public class CellTopologyHelper
         
         StringBuilder segCompare = new StringBuilder();
 
-        int maxDiffSegs = 20;
+        int maxDiffSegs = 30;
         int diffSegs = 0;
 
         String tooManySegsDiff = "";
@@ -3577,7 +3577,7 @@ public class CellTopologyHelper
         
         StringBuilder secCompare = new StringBuilder();
 
-        int maxDiffSecs = 20;
+        int maxDiffSecs = 30;
         int diffSecs = 0;
         String tooManySecsDiff = "";
         

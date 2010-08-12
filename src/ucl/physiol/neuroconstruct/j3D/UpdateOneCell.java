@@ -39,4 +39,6 @@ public interface UpdateOneCell
 
     public void refreshGroup(String groupName);
 
+    public void tempShowSection(String sectionName, String groupName);
+
 }

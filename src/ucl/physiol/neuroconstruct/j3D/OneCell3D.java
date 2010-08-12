@@ -1589,6 +1589,42 @@ public class OneCell3D
     }
 
 
+    public void markSectionAsSelected(String secName,
+                                      Color colourSelectedSection)
+    {
+        logger.logComment("markSectionAsSelected: "+secName+", "+colourSelectedSection);
+
+        Color otherColour = Color.yellow;
+
+        float[] secColourRGB = colourSelectedSection.getRGBColorComponents(null);
+        //float[] otherColourRGB = otherColour.getRGBColorComponents(null);
+
+        //Appearance appSegment = Utils3D.getGeneralObjectAppearance(colourSelectedSection);
+
+        //Color intermediateColour = new Color((segColourRGB[0]+otherColourRGB[0]*2)/3f,
+        //                                     (segColourRGB[1]+otherColourRGB[1]*2)/3f,
+        //                                     (segColourRGB[2]+otherColourRGB[2]*2)/3f);
+
+        Appearance appSection = Utils3D.getGeneralObjectAppearance(colourSelectedSection);
+
+
+
+
+        for (int i = 0; i < this.myCell.getAllSegments().size(); i++)
+        {
+            Segment nextSeg = myCell.getAllSegments().get(i);
+
+            if (nextSeg.getSection().getSectionName().equals(secName))
+            {
+                setSegmentAppearance(appSection, nextSeg.getSegmentId());
+            }
+
+        }
+        logger.logComment("Setting the one selected section");
+
+
+    }
+
 
     public Segment markSegmentAsSelected(int segmentID,
                                         Color colourSelectedSegment)
