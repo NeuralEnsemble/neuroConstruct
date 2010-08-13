@@ -7,14 +7,9 @@
   </header>
   <body>
       <p>&nbsp;</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.nature.com/nature/journal/vaop/ncurrent/full/nature07604.html"
-title="Recent Nature paper using neuroConstruct to investigate gain control in detailed cell models">
-  <img src="images/KoleCell.png"
-        alt="Recent Nature paper using neuroConstruct to investigate gain control in detailed cell models"/></a>
-        &nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.elsevier.com/wps/find/bookdescription.cws_home/713686/description"
-title="Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, eds. (Elsevier). Contains chapter on neuroConstruct.">
-  <img src="images/EpilepsyBookCover.PNG"
-        alt="Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, eds. (Elsevier). Contains chapter on neuroConstruct."/></a></p>
+      <a  href="http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1000815">
+          <figure src="images/Fig7nml2.png" alt="A new paper describing the latest version of NeuroML." ></figure>
+      </a>
 
       <p>&nbsp;</p>
     <section>
@@ -33,23 +28,49 @@ title="Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, 
 
 
     <section>
+
         <title>Latest News</title>
-        <p>A recent <a  href="http://www.nature.com/nature/journal/vaop/ncurrent/full/nature07604.html">Nature paper</a> (<em>Jason S. Rothman, Laurence Cathala, Volker Steuber, R. Angus Silver,
-        Synaptic depression enables neuronal gain control. Nature 2009</em>) has used neuroConstruct to investigate
+
+        <p>A paper describing the latest stable version of NeuroML has recently been
+        published: <strong>NeuroML: A Language for Describing Data Driven Models of Neurons and
+        Networks with a High Degree of Biological Detail, P Gleeson, S Crook, RC Cannon, ML Hines, GO Billings, M Farinella, TM Morse, AP Davison,
+        S Ray, US Bhalla, SR Barnes, YD Dimitrova,
+        RA Silver, PLoS Comput Biol 2010</strong>. It can be downloaded <a
+         href="http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1000815">here</a> and it describes in detail the structure of version 1.x (Levels 1-3,
+        MorphML, ChannelML, NetworkML), includes a detailed discussion of the elements
+        present at each level along with example NeuroML code (see the <a href="http://www.ploscompbiol.org/article/fetchSingleRepresentation.action?uri=info:doi/10.1371/journal.pcbi.1000815.s001">supporting text</a>
+        of the paper), outlines current simulator support,
+        and presents a number of new cell and network models which have recently been
+        converted to the format.</p>
+
+        <p>A morphologically detailed CA1 pyramidal
+        cell model and a number of cells from the Traub et al. 2005 thalamocortical
+        network model are available <a href="models/index.html">here</a> for download in NeuroML format or as complete neuroConstruct
+        projects for execution on a number of simulation platforms.
+        These models are also included with the latest version of neuroConstruct (<strong>v1.4.0, Jun 2010</strong>) which is available for download <a href="download/index.html">here</a>.
+        The source code is included with this release under GPL.</p>
+
+
+
+        <p>A recent <a  href="http://www.nature.com/nature/journal/vaop/ncurrent/full/nature07604.html">Nature paper</a> (<strong>Jason S. Rothman, Laurence Cathala, Volker Steuber, R. Angus Silver,
+        Synaptic depression enables neuronal gain control. Nature 2009</strong>) has used neuroConstruct to investigate
         a detailed layer 5 pyramidal cell model (Kole et al 2008) with dendritically distributed excitatory and
         inhibitory synaptic input to look at the effects of short term plasticity on gain control (<a  href="models/index.html#RothmanEtAl_KoleEtAl_PyrCell-N10162">Download neuroConstruct project</a>). </p>
 
 
-        <p>The latest version of neuroConstruct (<strong>v1.4.0, Jun 2010</strong>) is available for download <a href="download/index.html">here</a>. The source code is available with this release under GPL.</p>
-        <p>The paper describing the application has been published: <em>
-            P. Gleeson, V. Steuber and R. A. Silver, neuroConstruct: A Tool for Modeling Networks of Neurons in 3D Space, Neuron,
-            Volume 54, Issue 2, 19 April 2007, Pages 219-235.</em>
+
+        <p>The paper describing the application has been published: <strong>
+            P. Gleeson, V. Steuber and R. A. Silver, neuroConstruct: A Tool for Modeling Networks of Neurons in 3D Space, Neuron 2007</strong>
             It is available via Open Access <a href="http://www.neuron.org/content/article/abstract?uid=PIIS0896627307002486">here</a>.</p>
+
 
             <p>A more complete list of <strong>publications</strong> dealing with neuroConstruct and NeuroML can be found <a href="links/publications.html">here</a>.</p>
 
 
+
         <p>There is a <strong>mailing list</strong> for neuroConstruct related news (<strong>neuroconstruct@ucl.ac.uk</strong>). Sign up <a href="http://www.mailinglists.ucl.ac.uk/mailman/listinfo/neuroconstruct">here</a>. </p>
+
+
     </section>
 
     <section>
@@ -82,6 +103,7 @@ title="Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, 
 <p>These packages have sophisticated environments for creating neuronal simulations from scratch,
 and controlling all aspects of the simulation run. neuroConstruct automates the generation of script files for these platforms, and provides
 a framework for creating conductance based neuronal models, creating, visualising and analysing networks of cells in 3D, managing simualtions and analysing network firing behaviour.</p>
+
 
 <p>&nbsp;</p>
  <p>&nbsp;&nbsp;&nbsp;<a href="http://software.incf.org/software/neuroconstruct/home"><img src="images/incf2.png"

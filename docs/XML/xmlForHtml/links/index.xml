@@ -5,8 +5,14 @@
   <header> 
     <title>Useful neuroConstruct related links</title> 
   </header> 
-  <body> 
-  
+  <body>
+
+      <p>&nbsp;</p>
+  <p>Note that a list of software packages with support for NeuroML is maintained <a href="http://www.neuroml.org/tool_support">here</a>. neuroConstruct can interact with
+  most of these tools through <a href="../docs/neuroml.html">import/export</a> of NeuroML.</p>
+
+      <p>&nbsp;</p>
+
 <table class="noborder">
 
 	<tr>

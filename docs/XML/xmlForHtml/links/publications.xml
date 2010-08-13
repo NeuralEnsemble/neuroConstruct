@@ -14,25 +14,43 @@
 
 <table class="noborder">
 
-	<tr>
-		<td>
-			<p><strong>Padraig Gleeson, Volker Steuber, R. Angus Silver</strong></p>
-			<p><em>neuroConstruct: A Tool for Modeling Networks of Neurons in 3D Space, Neuron, 
-            Volume 54, Issue 2, 19 April 2007, Pages 219-235.</em></p>
-		<p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/17442244">PubMed</a>
-                        <a href="http://www.neuron.org/content/article/abstract?uid=PIIS0896627307002486">Open access download</a></p>
-		</td>
-		<td><p>&nbsp;</p>
-			The main neuroConstruct paper. An introduction to all of the key functionality, including some 
-                        network examples. <p><strong>Please cite this paper if you use neuroConstruct in your research.</strong></p>
-		</td>
-	</tr>
+    <tr>
+        <td>
+            <p><strong>neuroConstruct: A Tool for Modeling Networks of Neurons in 3D Space</strong>, Neuron, Volume 54, Issue 2, 19 April 2007, Pages 219-235.</p>
+            <p>Padraig Gleeson, Volker Steuber, R. Angus Silver</p>
+            <p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/17442244">PubMed</a>
+            <a href="http://www.neuron.org/content/article/abstract?uid=PIIS0896627307002486">Open access download</a></p>
+        </td>
+        <td><p>&nbsp;</p>
+        The main neuroConstruct paper. An introduction to all of the key functionality, including some
+        network examples. <p><strong>Please cite this paper if you use neuroConstruct in your research.</strong></p>
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            <p><strong>NeuroML: A Language for Describing Data Driven Models of Neurons and
+        Networks with a High Degree of Biological Detail</strong>, PLoS Comput Biol 6(6): e1000815</p>
+            <p>Padraig Gleeson, Sharon Crook, Robert C. Cannon, Michael L. Hines, Guy O. Billings, Matteo Farinella, Thomas M. Morse,
+            Andrew P. Davison, Subhasis Ray, Upinder S. Bhalla, Simon R. Barnes, Yoana D. Dimitrova, R. Angus Silver</p>
+            
+            <p><a  href="http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1000815">PLoS Comput Biol</a></p>
+        </td>
+        <td><p>&nbsp;</p>
+        The main NeuroML paper. Describes in detail the structure of version 1.x (Levels 1-3,
+        MorphML, ChannelML, NetworkML), includes a detailed discussion of the elements
+        present at each level along with example NeuroML code (see the <a href="http://www.ploscompbiol.org/article/fetchSingleRepresentation.action?uri=info:doi/10.1371/journal.pcbi.1000815.s001">supporting text</a>
+        of the paper), outlines current simulator support,
+        and presents a number of new cell and network models which have recently been
+        converted to the format. <p><strong>Please cite this paper if you use NeuroML in your research.</strong></p>
+        </td>
+    </tr>
         
 	<tr>
 		<td>
-			<p><strong>Padraig Gleeson, Volker Steuber, R. Angus Silver</strong></p>
-			<p><em>Using neuroConstruct to Develop and Modify Biologically Detailed 3D Neuronal Network Models in Health and Disease. In Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, eds. (Elsevier).
-</em></p>
+			<p><strong>Using neuroConstruct to Develop and Modify Biologically Detailed 3D Neuronal Network Models in Health and Disease. </strong>
+                        In Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, eds. (Elsevier).</p>
+			<p>Padraig Gleeson, Volker Steuber, R. Angus Silver</p>
 		<p><a href="http://www.elsevier.com/wps/find/bookdescription.cws_home/713686/description">Elsevier</a></p>
 		</td>
 		<td><p>&nbsp;</p>
@@ -44,10 +62,11 @@
         
 	<tr>
 		<td>
-			<p><strong>
-                    Sharon Crook, Padraig Gleeson, Fred Howell, Joe Svitak, R. Angus Silver</strong></p>
-			<p><em>MorphML: Level 1 of the NeuroML Standards for Neuronal Morphology Data and Model Specification, 
-                        Neuroinformatics 2007, Volume 5; Number 2, Pages 96-104</em></p>
+			<p><strong>MorphML: Level 1 of the NeuroML Standards for Neuronal Morphology Data and Model Specification</strong>,
+                        Neuroinformatics 2007, Volume 5; Number 2, Pages 96-104</p>
+
+			<p>Sharon Crook, Padraig Gleeson, Fred Howell, Joe Svitak, R. Angus Silver</p>
+
 		<p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/17873371">PubMed</a></p>
                 </td>
 		<td><p>&nbsp;</p>
@@ -58,9 +77,9 @@
 
 	<tr>
 		<td>
-			<p><strong>Robert C. Cannon, Marc-Oliver Gewaltig, Padraig Gleeson, Upinder S. Bhalla, Hugo Cornelis, Michael L. Hines,
-                        Fredrick W. Howell, Eilif Muller, Joel R. Stiles, Stefan Wils, Erik De Schutter</strong></p>
-			<p><em>Interoperability of Neuroscience Modeling Software: Current Status and Future Directions. Neuroinformatics 2007, Volume 5, 127-138.</em></p>
+			<p><strong>Interoperability of Neuroscience Modeling Software: Current Status and Future Directions</strong>, Neuroinformatics 2007, Volume 5, 127-138.</p>
+			<p>Robert C. Cannon, Marc-Oliver Gewaltig, Padraig Gleeson, Upinder S. Bhalla, Hugo Cornelis, Michael L. Hines,
+                        Fredrick W. Howell, Eilif Muller, Joel R. Stiles, Stefan Wils, Erik De Schutter</p>
 		<p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/17873374">PubMed</a></p>
                 </td>
 		<td><p>&nbsp;</p>
@@ -79,14 +98,15 @@
 
 	<tr>
 		<td>
-			<p><strong>Nigel Goddard, Michael Hucka, Fred Howell, Hugo Cornelis, Kavita Shankar, David Beeman</strong></p>
-			<p><em>Towards NeuroML: Model Description Methods for Collaborative Modelling in Neuroscience. Philos Trans R Soc Lond B Biol Sci 356, 1209-1228.</em></p>
+			<p><strong>Towards NeuroML: Model Description Methods for Collaborative Modelling in Neuroscience</strong>, Philos Trans R Soc Lond B Biol Sci 356, 1209-1228.</p>
+			<p>Nigel Goddard, Michael Hucka, Fred Howell, Hugo Cornelis, Kavita Shankar, David Beeman</p>
 		<p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/11545699">PubMed</a></p>
                 </td>
 		<td><p>&nbsp;</p>
 			The original NeuroML introductory paper. Although <strong>the language has evolved significantly since this paper</strong>
                         (with a focus now on key elements which need to be transferred between neuroinformatics applications, as represented by
-                        MorphML, ChannelML and NeuroML, the latest version of which are available <a  href="http://www.morphml.org:8080/NeuroMLValidator/">here</a>) the key aims of NeuroML as outlined in this paper, including clarity, portability and modularity of neuronal model descriptions, remain the same.
+                        MorphML, ChannelML and NeuroML, see <strong>Gleeson et al. 2010</strong> above for details)
+                        the key aims of NeuroML as outlined in this paper, including clarity, portability and modularity of neuronal model descriptions, remain the same.
                         
 		</td>
 	</tr>
@@ -103,8 +123,8 @@
     
 	<tr>
 		<td>
-			<p><strong>Jason S. Rothman, Laurence Cathala, Volker Steuber,  R. Angus Silver</strong></p>
-			<p><em>Synaptic depression enables neuronal gain control. Nature 2009</em></p>
+			<p><strong>Synaptic depression enables neuronal gain control</strong>, Nature 2009</p>
+			<p>Jason S. Rothman, Laurence Cathala, Volker Steuber,  R. Angus Silver</p>
 		<p><a  href="http://www.nature.com/nature/journal/vaop/ncurrent/full/nature07604.html">Advance Online Publication</a></p>
                 </td>
 		<td><p>&nbsp;</p>
@@ -116,8 +136,8 @@
 
 	<tr>
 		<td>
-			<p><strong>Nathan W. Gouwens and Rachel I. Wilson</strong></p>
-			<p><em>Signal Propagation in Drosophila Central Neurons. Journal of Neuroscience 2009</em></p>
+			<p><strong>Signal Propagation in Drosophila Central Neurons</strong>, Journal of Neuroscience 2009</p>
+			<p>Nathan W. Gouwens and Rachel I. Wilson</p>
 		<p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/19439602">Pubmed</a></p>
                 </td>
 		<td><p>&nbsp;</p>
