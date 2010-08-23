@@ -301,10 +301,12 @@ public class Section implements Serializable
             if (!otherSection.getSectionName().equals(sectionName)) // v quick check for most cases
                 return false;
 
+                //System.out.println("getGroups() "+getGroups());
+                //System.out.println("otherSection.getGroups() "+otherSection.getGroups());
 
             if (ignoreGroupOrder)
             {
-                if (!groups.containsAll(otherSection.getGroups()) && otherSection.getGroups().containsAll(groups))
+                if (! (getGroups().containsAll(otherSection.getGroups()) && otherSection.getGroups().containsAll(groups)) )
                         return false;
             }
             else
@@ -312,6 +314,7 @@ public class Section implements Serializable
                 if (!groups.equals(otherSection.getGroups()))
                         return false;
             }
+            //System.out.println("kk");
 
             // detailed checks
             if (((otherSection.getSectionName() == null && sectionName == null) ||

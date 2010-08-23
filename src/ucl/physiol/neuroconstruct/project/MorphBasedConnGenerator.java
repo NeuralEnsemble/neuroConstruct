@@ -1361,9 +1361,9 @@ public class MorphBasedConnGenerator extends Thread
         }
         else
         {
-            generationReport.append("Time taken to generate "
+            generationReport.append("Time taken to generate <b>"
                                     + totNum
-                                    + " connections (in "+totNNum+" net conns): " + seconds + " seconds.<br>");
+                                    + "</b> connections (in <b>"+totNNum+"</b> net conns): " + seconds + " seconds.<br>");
 
             generationReport.append(project.generatedNetworkConnections.getHtmlReport(GeneratedNetworkConnections.MORPH_NETWORK_CONNECTION, simConfig));
 

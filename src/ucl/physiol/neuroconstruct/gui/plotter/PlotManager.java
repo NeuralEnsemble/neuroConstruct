@@ -46,8 +46,8 @@ public class PlotManager
 {
     ClassLogger logger = new ClassLogger("PlotManager");
 
-    private static Hashtable<String, PlotterFrame> existingPlotFrames 
-                                    = new Hashtable<String, PlotterFrame>();
+    private static HashMap<String, PlotterFrame> existingPlotFrames
+                                    = new HashMap<String, PlotterFrame>();
 
     /**
      * Reference to current project, needed for interaction with saved projects
@@ -103,14 +103,17 @@ public class PlotManager
     }
 
 
-    public static Vector<String> getPlotterFrameReferences()
+    public static ArrayList<String> getPlotterFrameReferences()
     {
-        Vector<String> allRefs = new Vector<String>();
+        ArrayList<String> allRefs = new ArrayList<String>();
+
+        allRefs.addAll(existingPlotFrames.keySet());
+        /*
         Enumeration<String> enumeration = existingPlotFrames.keys();
         while (enumeration.hasMoreElements()) {
             allRefs.add(enumeration.nextElement());
 
-        }
+        }*/
         return allRefs;
     }
 

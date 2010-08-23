@@ -96,7 +96,7 @@ public class ConnectivityConditions
     @Override
     public String toString()
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (generationDirection == SOURCE_TO_TARGET)
         {
             sb.append("Gen Src->Tgt, ");

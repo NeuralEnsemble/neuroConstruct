@@ -238,7 +238,11 @@ public class CellPositionGenerator extends Thread
 
         generationReport.append("<center><b>Cell Groups:</b></center>");
 
-        generationReport.append("Time taken to generate positions: " + secondsPosns + " seconds.<br>");
+        int totCells = project.generatedCellPositions.getNumberInAllCellGroups();
+        int totCG = project.generatedCellPositions.getNumberNonEmptyCellGroups();
+
+
+        generationReport.append("Time taken to generate <b>"+totCells+"</b> cell positions in <b>"+totCG+"</b> cell groups: " + secondsPosns + " seconds.<br>");
 
         generationReport.append(project.generatedCellPositions.getHtmlReport());
 

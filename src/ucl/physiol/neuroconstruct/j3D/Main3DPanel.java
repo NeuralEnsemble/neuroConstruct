@@ -1284,10 +1284,10 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         jComboBoxWherePlot.removeAllItems();
 
         jComboBoxWherePlot.addItem(defaultPlotLocation);
-        Vector allPlots = PlotManager.getPlotterFrameReferences();
+        ArrayList<String> allPlots = PlotManager.getPlotterFrameReferences();
         for (int i = 0; i < allPlots.size(); i++)
         {
-                String next = (String)allPlots.elementAt(i);
+                String next = (String)allPlots.get(i);
                 jComboBoxWherePlot.addItem(next);
         }
     }
@@ -2286,7 +2286,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                 String plotFramePrefix = "Sim: " + simRerunFrame.getSimReference() + " Plot_";
                 int suggestedNum = 0;
 
-                Vector allPlotFrameNames = PlotManager.getPlotterFrameReferences();
+                ArrayList<String> allPlotFrameNames = PlotManager.getPlotterFrameReferences();
                 //+allPlotFrameNames.
 
 

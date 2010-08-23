@@ -723,7 +723,7 @@ public class Utils3D
         AxisAngle4f angle4 = Utils3D.getAxisAngle(yAxis, norm);
 
 
-        System.out.println("angle4: "+ angle4);
+        //System.out.println("angle4: "+ angle4);
 
         transRot.setRotation(angle4);
 

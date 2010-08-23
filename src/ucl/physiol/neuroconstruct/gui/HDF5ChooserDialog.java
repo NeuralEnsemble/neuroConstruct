@@ -112,10 +112,10 @@ public class HDF5ChooserDialog extends javax.swing.JDialog
 
         jComboBoxPlotFrames.addItem(defaultPlotLocation);
 
-        Vector allPlots = PlotManager.getPlotterFrameReferences();
+        ArrayList<String> allPlots = PlotManager.getPlotterFrameReferences();
         for (int i = 0; i < allPlots.size(); i++)
         {
-            String next = (String) allPlots.elementAt(i);
+            String next = (String) allPlots.get(i);
             jComboBoxPlotFrames.addItem(next);
         }
 

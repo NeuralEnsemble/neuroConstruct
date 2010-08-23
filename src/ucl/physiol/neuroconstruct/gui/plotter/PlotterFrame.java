@@ -497,6 +497,13 @@ public class PlotterFrame extends JFrame
         logger.logComment("Update menus called...");
         jMenuPlotInfo.removeAll();
 
+        if (plotCanvas.getDataSets().length>5)
+        {
+            JMenuItem numInfo = new JMenuItem(plotCanvas.getDataSets().length+" Data Sets:");
+            numInfo.setEnabled(false);
+            jMenuPlotInfo.add(numInfo);
+        }
+
         for (int i = 0; i < plotCanvas.getDataSets().length; i++)
         {
             DataSet nextDataSet = plotCanvas.getDataSets()[i];
@@ -2003,7 +2010,7 @@ public class PlotterFrame extends JFrame
 
         public void actionPerformed(ActionEvent e)
         {
-            Vector<String> r = PlotManager.getPlotterFrameReferences();
+            ArrayList<String> r = PlotManager.getPlotterFrameReferences();
             int numCurently = plotFrame.getNumDataSets();
             
             if (r.size()==1 && numCurently==1)
@@ -2020,7 +2027,7 @@ public class PlotterFrame extends JFrame
                 r.add(newPlotFrame);
             }
             String[] refs = new String[r.size()];
-            r.copyInto(refs);
+            refs = r.toArray(refs);
             
             String option = (String)JOptionPane.showInputDialog(plotFrame, "Please select Plot Frame to move Data Set to", "Move Data Set", JOptionPane.OK_CANCEL_OPTION, null, refs, refs[0]);
             

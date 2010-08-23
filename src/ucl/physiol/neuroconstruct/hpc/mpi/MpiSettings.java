@@ -117,6 +117,8 @@ public class MpiSettings
     public static final String MATLEM_64PROC = "MatLem (8 x 8p)";
     public static final String MATLEM_128PROC = "MatLem (16 x 8p)";
 
+    public static final String MATLEM_DIRECT = "Matthau_Lemmon_Test_MANY";
+
     
     public static final String MACHINE_FILE = "machinesToUse";
     
@@ -665,23 +667,22 @@ public class MpiSettings
         configurations.add(p_56);
 */
 
-        String name_ALL = "Matthau_Lemmon_Test_ALL";
-        MpiConfiguration p_ALL = new MpiConfiguration(name_ALL);
+        MpiConfiguration p_ML = new MpiConfiguration(MATLEM_DIRECT);
 
         for(int i=1;i<=10;i++)
         {
-            p_ALL.getHostList().add(new MpiHost(MATTHAU+i, 8, 1));
+            p_ML.getHostList().add(new MpiHost(MATTHAU+i, 8, 1));
         }
 
-        for(int i=1;i<=19;i++)
+        for(int i=1;i<=20;i++)
         {
-            p_ALL.getHostList().add(new MpiHost(LEMMON+i, 8, 1));
+            p_ML.getHostList().add(new MpiHost(LEMMON+i, 8, 1));
         }
 
-        p_ALL.setRemoteLogin(matlemLogin);
-        p_ALL.setMpiVersion(MpiSettings.OPENMPI_V2);
-        p_ALL.setUseScp(true);
-        configurations.add(p_ALL);
+        p_ML.setRemoteLogin(matlemLogin);
+        p_ML.setMpiVersion(MpiSettings.OPENMPI_V2);
+        p_ML.setUseScp(true);
+        configurations.add(p_ML);
 
 
     }

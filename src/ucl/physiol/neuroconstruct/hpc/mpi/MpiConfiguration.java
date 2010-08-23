@@ -103,7 +103,7 @@ public class MpiConfiguration
 
         if (queueInfo==null)
             return null;
-        StringBuffer script = new StringBuffer();
+        StringBuilder script = new StringBuilder();
 
         if (this.queueInfo.getQueueType().equals(QueueInfo.QueueType.PBS))
         {
@@ -216,7 +216,17 @@ public class MpiConfiguration
             script.append("#$ -o  "+workDir+"/log\n");
             script.append("#$ -j y\n");
             script.append("#$ -N  "+simRef+"_"+projName+"\n");
-            script.append("#$ -pe orte  "+getTotalNumProcessors()+"\n");
+
+            String parallelEnv = "orte";
+            String procInfo = "-np $NSLOTS";
+
+            if (hostList.size()>1)
+            {
+                parallelEnv = "mpi";
+                procInfo = " -n $NSLOTS -bynode -machinefile $TMP/machines";
+            }
+
+            script.append("#$ -pe "+parallelEnv+"  "+getTotalNumProcessors()+"\n");
 
             String exec = workDir+"/"+projName+".hoc";
 
@@ -226,7 +236,8 @@ public class MpiConfiguration
             }
             //script.append("source ~/.nrnpympienv\n");
             //script.append("/opt/sun-ct/bin/mpirun -np "+getTotalNumProcessors()+" "+remoteLogin.getExecutableForSimulator(simulator)+" -mpi "+exec+"\n");
-            script.append("/bin/bash -ic '/opt/sun-ct/bin/mpirun -np "+getTotalNumProcessors()+" "+remoteLogin.getExecutableForSimulator(simulator)+" -mpi "+exec+"'\n");
+
+            script.append("/bin/bash -ic '/opt/sun-ct/bin/mpirun "+procInfo+" "+remoteLogin.getExecutableForSimulator(simulator)+" -mpi "+exec+"'\n");
 
         }
 

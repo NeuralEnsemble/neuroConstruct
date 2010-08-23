@@ -178,6 +178,19 @@ public class GeneratedCellPositions
         return total;
     }
 
+    public int getNumberNonEmptyCellGroups()
+    {
+        int total = 0;
+        Enumeration<ArrayList<PositionRecord>> posLists =  myCellGroupPosns.elements();
+
+        while (posLists.hasMoreElements())
+        {
+            ArrayList posList = posLists.nextElement();
+            if (!posList.isEmpty()) total+=1;
+        }
+        return total;
+    }
+
 
     public int getNumberInCellGroup(String cellGroupName)
     {

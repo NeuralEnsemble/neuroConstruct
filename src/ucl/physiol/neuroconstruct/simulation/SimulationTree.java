@@ -28,13 +28,15 @@ package ucl.physiol.neuroconstruct.simulation;
 
 
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.Properties;
-import java.util.Vector;
+import java.io.*;
 import javax.swing.*;
 
 import javax.swing.tree.*;
 import ucl.physiol.neuroconstruct.dataset.DataSet;
 import ucl.physiol.neuroconstruct.gui.SimpleViewer;
+import ucl.physiol.neuroconstruct.gui.SimulationTreeFrame;
 import ucl.physiol.neuroconstruct.gui.plotter.PlotManager;
 import ucl.physiol.neuroconstruct.gui.plotter.PlotterFrame;
 import ucl.physiol.neuroconstruct.project.SimPlot;
@@ -61,12 +63,18 @@ public class SimulationTree extends JTree implements ActionListener
     private JMenuItem mi;
 
     private String PLOT = "Plot";
+
+    private String COLOURED_BY_CELL_GROUP = "... coloured by Cell Group";
+
     private String PLOT_IN = "Plot in...";
     private String PLOT_ALL = "Plot all";
     private String PLOT_ALL_IN = "Plot all in...";
     private String PLOT_ALL_VOLTS = "Plot only voltage traces";
     private String PLOT_NON_VOLTS = "Plot all non voltage traces";
-    private String PLOT_SEPARATE_CG_VAR = "Plot all in separate Plot Frames per Cell Group and data type";
+    
+    private String PLOT_SEPARATE_CG_VAR_ALL = "Plot all in separate Plot Frames per Cell Group and data type";
+    private String PLOT_SEPARATE_CG_VAR_SEL = "Plot selection in separate Plot Frames per Cell Group and data type";
+
     private String PLOT_SEPARATE_VAR = "Plot all in separate Plot Frames per data type";
     private String SIM_SUMMARY = "Simulation summary";
     private String SIM_INFO = "Simulation full information";
@@ -80,12 +88,16 @@ public class SimulationTree extends JTree implements ActionListener
         mi = new JMenuItem(PLOT_ALL);
         mi.addActionListener(this);
         popupOneSim.add(mi);
-        
+
         mi = new JMenuItem(PLOT_ALL_IN);
         mi.addActionListener(this);
         popupOneSim.add(mi);
 
-        mi = new JMenuItem(PLOT_SEPARATE_CG_VAR);
+        mi = new JMenuItem(PLOT_SEPARATE_CG_VAR_ALL);
+        mi.addActionListener(this);
+        popupOneSim.add(mi);
+
+        mi = new JMenuItem(PLOT_SEPARATE_CG_VAR_SEL);
         mi.addActionListener(this);
         popupOneSim.add(mi);
 
@@ -252,6 +264,14 @@ public class SimulationTree extends JTree implements ActionListener
                     return;
                 }
 
+                float allProb = -1;
+
+                if (ae.getActionCommand().equals(PLOT_SEPARATE_CG_VAR_SEL))
+                {
+                    String prob = JOptionPane.showInputDialog(this, "Please enter percentage of selected cells to plot","10");
+                    allProb = Float.parseFloat(prob)/100;
+                }
+
                 String plotAllInOption = null;
 
                 for (DataStore ds: simData.getAllLoadedDataStores())
@@ -280,7 +300,11 @@ public class SimulationTree extends JTree implements ActionListener
                                 frameRef = plotAllInOption;
                             }
                         }
-                        else if (ae.getActionCommand().equals(PLOT_SEPARATE_CG_VAR) || ae.getActionCommand().equals(PLOT_SEPARATE_CG_VAR))
+                        else if (ae.getActionCommand().equals(PLOT_SEPARATE_CG_VAR_ALL))
+                        {
+                            frameRef = "Plot of "+ds.getVariable()+" in "+ds.getCellGroupName()+" in "+simData.getSimulationName()+"";
+                        }
+                        else if (ae.getActionCommand().equals(PLOT_SEPARATE_CG_VAR_SEL))
                         {
                             frameRef = "Plot of "+ds.getVariable()+" in "+ds.getCellGroupName()+" in "+simData.getSimulationName()+"";
                         }
@@ -302,6 +326,11 @@ public class SimulationTree extends JTree implements ActionListener
                         else if (ae.getActionCommand().equals(PLOT_NON_VOLTS))
                             plot = !isVoltData;
 
+                        if (allProb>0)
+                        {
+                            plot = Math.random() <= allProb;
+                        }
+
 
                         if (plot)
                         {
@@ -322,6 +351,7 @@ public class SimulationTree extends JTree implements ActionListener
                             {
                                 dataSet.addPoint(times[i], points[i]);
                             }
+                            //System.out.println("col "+ dataSet.getGraphColour());
                             pf.addDataSet(dataSet);
                         }
                     }
@@ -392,9 +422,9 @@ public class SimulationTree extends JTree implements ActionListener
     {
         String frameRef = null;
 
-        Vector<String> r = PlotManager.getPlotterFrameReferences();
+        ArrayList<String> r = PlotManager.getPlotterFrameReferences();
 
-        if (r.size()==0)
+        if (r.isEmpty())
         {
             frameRef = "Plot of data in "+simData.getSimulationName()+"";
         }
@@ -405,7 +435,7 @@ public class SimulationTree extends JTree implements ActionListener
             r.add(newPlotFrame);
 
             String[] refs = new String[r.size()];
-            r.copyInto(refs);
+            refs = r.toArray(refs);
 
             String option = (String)JOptionPane.showInputDialog(this,
                     "Please select Plot Frame", "Select Plot Frame", JOptionPane.OK_CANCEL_OPTION, null, refs, refs[0]);
@@ -431,6 +461,20 @@ public class SimulationTree extends JTree implements ActionListener
 
         return frameRef;
     }
+
+
+    public static void main(String[] args)
+    {
+
+        File projFile = new File("nCmodels/Thalamocortical/Thalamocortical.ncx");
+
+        new SimulationTreeFrame(projFile, true).setVisible(true);
+    }
+
+
+   
+
+    
 
 
 

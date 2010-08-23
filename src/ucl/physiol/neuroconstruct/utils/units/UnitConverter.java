@@ -799,25 +799,25 @@ public class UnitConverter
         System.out.println("--------------------------------------");
 
         int fromUnits = GENESIS_SI_UNITS;
-        PhysicalQuantity concn = new PhysicalQuantity(1, concentrationUnits[fromUnits]);
+        PhysicalQuantity concn = new PhysicalQuantity(1.5, concentrationUnits[fromUnits]);
 
         System.out.println("Concentration: "+ concn);
 
         System.out.println("Concentration GENESIS_SI_UNITS: " + UnitConverter.getConcentration(concn.getMagnitude(),
             fromUnits,
-            UnitConverter.GENESIS_SI_UNITS) + concentrationUnits[GENESIS_SI_UNITS].getSymbol());
+            UnitConverter.GENESIS_SI_UNITS) + " " + concentrationUnits[GENESIS_SI_UNITS].getSymbol());
 
         System.out.println("Concentration GENESIS_PHYSIOLOGICAL_UNITS: " + UnitConverter.getConcentration(concn.getMagnitude(),
             fromUnits,
-            UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + concentrationUnits[GENESIS_PHYSIOLOGICAL_UNITS].getSymbol());
+            UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + " " + concentrationUnits[GENESIS_PHYSIOLOGICAL_UNITS].getSymbol());
 
         System.out.println("Concentration NEURON: " + UnitConverter.getConcentration(concn.getMagnitude(),
             fromUnits,
-            UnitConverter.NEURON_UNITS) + concentrationUnits[NEURON_UNITS].getSymbol());
+            UnitConverter.NEURON_UNITS) + " " + concentrationUnits[NEURON_UNITS].getSymbol());
 
         System.out.println("Concentration nC: " + UnitConverter.getConcentration(concn.getMagnitude(),
             fromUnits,
-            UnitConverter.NEUROCONSTRUCT_UNITS) + concentrationUnits[NEUROCONSTRUCT_UNITS].getSymbol());
+            UnitConverter.NEUROCONSTRUCT_UNITS) + " " + concentrationUnits[NEUROCONSTRUCT_UNITS].getSymbol());
 
 
         System.out.println("--------------------------------------");
@@ -858,13 +858,25 @@ public class UnitConverter
         System.out.println("currDens NEURON_UNITS: " + UnitConverter.getCurrentDensity(currDens.getMagnitude(),
             UnitConverter.NEUROCONSTRUCT_UNITS,
             UnitConverter.NEURON_UNITS));*/
-        
+
+        float mg_conc = 0.2f;
+        System.out.println("mg_conc: "+mg_conc);
+
+        float mg_conc3 = (float)UnitConverter.getConcentration(mg_conc, UnitConverter.GENESIS_SI_UNITS, UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS);
+        System.out.println("mg_conc3: "+mg_conc3);
+
+        float mg_conc2 = (float)UnitConverter.getConcentration(mg_conc3, UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, UnitConverter.NEUROCONSTRUCT_UNITS);
+        System.out.println("mg_conc2: "+mg_conc2);
+
+
+
+
         float curr = 0.2f;
         System.out.println("curr: "+curr);
-        
+
         float curr3 = (float)UnitConverter.getCurrent(curr, UnitConverter.NEUROCONSTRUCT_UNITS, UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS);
         System.out.println("curr3: "+curr3);
-        
+
         float curr2 = (float)UnitConverter.getCurrent(curr3, UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, UnitConverter.NEUROCONSTRUCT_UNITS);
         System.out.println("curr2: "+curr2);
         
