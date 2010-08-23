@@ -170,5 +170,44 @@
         <preferences xmlns="http://www.netbeans.org/ns/auxiliary-configuration-preferences/1">
             <module name="org-netbeans-modules-editor-indent"/>
         </preferences>
+        <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>AMPA</word>
+            <word>apic</word>
+            <word>AxAx</word>
+            <word>CG</word>
+            <word>CortIN</word>
+            <word>DeepFS</word>
+            <word>DeepIN</word>
+            <word>DeepLTS</word>
+            <word>DeepPyr</word>
+            <word>dend</word>
+            <word>dist</word>
+            <word>FRBPyr</word>
+            <word>FS</word>
+            <word>GABAA</word>
+            <word>IB</word>
+            <word>LTS</word>
+            <word>NMDA</word>
+            <word>NonTuftRS</word>
+            <word>nRT</word>
+            <word>NT</word>
+            <word>obl</word>
+            <word>PostCellGroup</word>
+            <word>prox</word>
+            <word>Pyr</word>
+            <word>PyrFRB</word>
+            <word>PyrRS</word>
+            <word>RSPyr</word>
+            <word>SpinStell</word>
+            <word>SS</word>
+            <word>SupAxAx</word>
+            <word>SupBask</word>
+            <word>SupFS</word>
+            <word>SupIN</word>
+            <word>SupLTS</word>
+            <word>Syn</word>
+            <word>TCR</word>
+            <word>TuftIB</word>
+        </spellchecker-wordlist>
     </configuration>
 </project>
