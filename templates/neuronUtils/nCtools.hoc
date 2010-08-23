@@ -282,6 +282,11 @@ proc secinfo() {
 objectvar listNcSyn
 objectvar listNcPre
 
+
+proc netConnInfo() {
+    netConInfo()
+}
+
 /*
  * Helper functions for getting more info on NetConn objects
  */
@@ -292,7 +297,15 @@ proc netConInfo() {
     print "-- ",hostid,"-- NetConn: ", $o1
     if ($o1!=nil) {
         print "-- ",hostid,"-- Pre: ",$o1.precell(),", Syn: ",$o1.syn,"(",$o1.postcell, ")", ", Active: ",$o1.active(),", Valid: ",$o1.valid()
-        if ($o1.precell()!=nil) { print "-- ",hostid,"-- From: ", $o1.precell().toString() }
+        /*
+        // Doesn't seem to work with section in template... 
+        if ($o1.precell()!=nil) { 
+            print "-- ",hostid,"-- From: ", $o1.precell().toString()
+            loc = $o1.preloc()
+            print "-- ",hostid,"-- Section: ", secname(), " - ", loc
+            pop_section()
+
+        }*/
         if ($o1.postcell()!=nil) { print "-- ",hostid,"-- To: ", $o1.postcell().toString() }
         print "-- ",hostid,"-- Weight: ",$o1.weight, ", Delay: ",$o1.delay, ", Thresh: ",$o1.threshold
 

@@ -43,7 +43,7 @@ for fname in dirList:
                 else:
                     print "Time file doesn't exist! Simulation hasn't successfully finished yet."
             else:
-                print "No "+pullSimFile+", so cannot proceed further..."
+                print "No "+pullsimFile+", so cannot proceed further..."
 
 
 
