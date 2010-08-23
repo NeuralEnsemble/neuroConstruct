@@ -146,6 +146,27 @@ public class ModelTest
         checkProject(projFileName);
     }*/
 
+    @Test public void testSolinasEtAl_GolgiCell()
+    {
+        String projFileName = "nCmodels/SolinasEtAl_GolgiCell/SolinasEtAl_GolgiCell.ncx";
+
+        ArrayList<String> cellsToIgnore = new ArrayList<String>();
+
+        checkProject(projFileName, cellsToIgnore, false);
+    }
+  /*
+    @Test public void testVervaekeEtAl_GolgiCellNetwork()
+    {
+        String projFileName = "nCmodels/VervaekeEtAl-GolgiCellNetwork/VervaekeEtAl-GolgiCellNetwork.ncx";
+
+        ArrayList<String> cellsToIgnore = new ArrayList<String>();
+
+        checkProject(projFileName, cellsToIgnore, false);
+    }
+     * 
+     */
+
+  
     @Test public void testThalamocortical()
     {
         String projFileName = "nCmodels/Thalamocortical/Thalamocortical.ncx";
@@ -154,7 +175,6 @@ public class ModelTest
 
         checkProject(projFileName, cellsToIgnore, false);
     }
-
 
 
     private void checkProject(String projFileName)

@@ -28,6 +28,8 @@ package ucl.physiol.neuroconstruct.cell;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.Result;
+import ucl.physiol.neuroconstruct.test.MainTest;
 import static org.junit.Assert.*;
 
 /**
@@ -79,9 +81,57 @@ public class SectionTest {
         
         assertFalse(s.equals(s3));
         
+
+        Section s4 = new Section("TestSection4");
+        s4.setStartPointPositionX(2);
+        s4.setStartPointPositionY(2);
+        s4.setStartPointPositionZ(2);
+        s4.setStartRadius(3);
+
+        Section s5 = (Section)s4.clone();
+        Section s6 = (Section)s4.clone();
         
+        s4.addToGroup("G1");
+        s4.addToGroup("G2");
+
+        s5.addToGroup("G2");
+        s5.addToGroup("G1");
+        
+        s6.addToGroup("G1");
+        s6.addToGroup("G2");
+
+
+        System.out.println("s4: "+s4);
+        System.out.println("s5: "+s5);
+
+        assertFalse(s4.equals(s5));
+
+        assertFalse(s4.equalsG(s5, false));  // boolean ignoreGroupOrder
+
+        assertTrue(s5.equalsG(s4, true));    // boolean ignoreGroupOrder
+
+        s5.addToGroup("G3");
+
+
+        assertFalse(s4.equalsG(s5, false));
+
+        assertFalse(s5.equalsG(s4, true));
+
+
+        assertTrue(s6.equalsG(s4, true));    // boolean ignoreGroupOrder
+        assertTrue(s6.equals(s4));    // boolean ignoreGroupOrder
         
     }
+
+
+    public static void main(String[] args)
+    {
+        SectionTest ct = new SectionTest();
+        Result r = org.junit.runner.JUnitCore.runClasses(ct.getClass());
+        MainTest.checkResults(r);
+
+    }
+
 
   
 
