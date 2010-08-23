@@ -201,9 +201,12 @@ def generateAndRunNeuron(project,
                                                      NeuronFileManager.RUN_HOC,
                                                      simulatorSeed)
     
+
+    if verbose: print prefix+"Generated hoc files for simulation: "+simRef
     
     compileProcManager = ProcessManager(project.neuronFileManager.getMainHocFile())
-    
+
+
     compileSuccess = compileProcManager.compileFileWithNeuron(0,0)
     
     if verbose: print prefix+"Compiled NEURON files for: "+simRef

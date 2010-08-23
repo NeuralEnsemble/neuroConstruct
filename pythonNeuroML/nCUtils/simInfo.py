@@ -3,6 +3,8 @@ import os
 
 simulationInfoFilename = "simulation.props"
 
+currDir = "./"
+
 def getValue(line):
 
     if ">" in line:
@@ -12,11 +14,11 @@ def getValue(line):
 
 print
 
-if not os.path.isfile(simulationInfoFilename):
+if not os.path.isfile(currDir+simulationInfoFilename):
     print "  File: %s doesn't exist!"%simulationInfoFilename
 else:
 
-    simulationInfo = open(simulationInfoFilename, 'r')
+    simulationInfo = open(currDir+simulationInfoFilename, 'r')
 
     for line in simulationInfo:
         if '"dt"' in line:
@@ -31,7 +33,19 @@ else:
                     popInfo = popInfo + "\n                      "
                 popInfo = popInfo +pop
 
-            popInfo = popInfo + "\n                         Total: %i"%total
+            popInfo = popInfo + "\n                         Total:               %i"%total
+
+            allFiles = os.listdir(currDir)
+
+            netInfoFiles = ["NetworkConnections.dat", "ElectricalInputs.dat", "CellPositions.dat", "time.dat"]
+
+            dataFilesFound = 0
+            for file in allFiles:
+                if file.endswith(".dat") and file not in netInfoFiles:
+                    dataFilesFound+=1
+
+            popInfo = popInfo + "\n                         Data files found:    %i"%dataFilesFound
+
 
             print popInfo
         if 'Duration' in line:
@@ -42,10 +56,10 @@ else:
     print
     simulatorInfoFilename = "simulator.props"
 
-    if not os.path.isfile(simulatorInfoFilename):
-        print "  File: %s doesn't exist. Simulation not yet completed..."%simulatorInfoFilename
+    if not os.path.isfile(currDir+simulatorInfoFilename):
+        print "  File: %s doesn't exist. Simulation not yet completed..."%currDir+simulatorInfoFilename
     else:
-        simulatorInfo = open(simulatorInfoFilename, 'r')
+        simulatorInfo = open(currDir+simulatorInfoFilename, 'r')
 
         for line in simulatorInfo:
             if 'RealSimulationTime' in line:
