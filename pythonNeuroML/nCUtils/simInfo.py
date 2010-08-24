@@ -12,6 +12,13 @@ def getValue(line):
 
     return line.split("=")[1].strip()
 
+def getName(line):
+
+    if 'key="' in line:
+        return line.split('key="')[1].split('"')[0].strip()
+
+    return line.split("=")[0].strip()
+
 print
 
 if not os.path.isfile(currDir+simulationInfoFilename):
@@ -19,6 +26,9 @@ if not os.path.isfile(currDir+simulationInfoFilename):
 else:
 
     simulationInfo = open(currDir+simulationInfoFilename, 'r')
+
+
+    print "  Simulation:          %s\n"% os.path.basename(os.path.abspath(currDir))
 
     for line in simulationInfo:
         if '"dt"' in line:
@@ -52,19 +62,26 @@ else:
             print "  Duration:            %s ms"%getValue(line)
         if '"Parallel configuration"' in line:
             print "  Parallel config:     %s"%getValue(line)
+        if 'caling' in line:
+            # e.g. gabaWeightScaling
+            print "  %s:            %s"%(getName(line),getValue(line))
 
     print
     simulatorInfoFilename = "simulator.props"
 
     if not os.path.isfile(currDir+simulatorInfoFilename):
-        print "  File: %s doesn't exist. Simulation not yet completed..."%currDir+simulatorInfoFilename
+        print "  File: %s doesn't exist. Simulation not yet completed..."% (currDir+simulatorInfoFilename)
     else:
         simulatorInfo = open(currDir+simulatorInfoFilename, 'r')
 
         for line in simulatorInfo:
             if 'RealSimulationTime' in line:
                  time = float(getValue(line))/60
-                 print "  Sim time:            %g mins"% (time)
+                 if time<120:
+                     print "  Sim time:            %g mins"% (time)
+                 else:
+                     time = time/60
+                     print "  Sim time:            %g hours"% (time)
             if 'NumberHosts' in line:
                 print "  Number of hosts:     %s"% (getValue(line))
             if 'Host=' in line:
