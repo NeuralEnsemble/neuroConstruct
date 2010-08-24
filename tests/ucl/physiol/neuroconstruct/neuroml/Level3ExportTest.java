@@ -161,7 +161,7 @@ public class Level3ExportTest {
             SimpleXMLEntity[] l3Synapses = doc.getXMLEntities("/neuroml/channels/synapse_type/@name");
             SimpleXMLEntity[] l3IonConcs = doc.getXMLEntities("/neuroml/channels/ion_concentration/@name");
             
-            Vector<String> allMechs = proj.cellMechanismInfo.getAllCellMechanismNames();
+            ArrayList<String> allMechs = proj.cellMechanismInfo.getAllCellMechanismNames();
             boolean addChan = false;
             
             Vector<String> genMechs = new Vector<String>();

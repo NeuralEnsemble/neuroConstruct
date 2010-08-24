@@ -32,7 +32,7 @@ public class SimulationDataTest
 
 
     @Test
-    public void testTextLoad() throws IOException
+    public void testTextHDF5Load() throws IOException
     {
         System.out.println("---  testTextLoad...");
 
@@ -79,8 +79,7 @@ public class SimulationDataTest
         }
         catch (SimulationDataException ex)
         {
-            System.out.println("Error...");
-            ex.printStackTrace();
+            System.out.println("Error..."+ ex.getMessage());
         }
     }
 
