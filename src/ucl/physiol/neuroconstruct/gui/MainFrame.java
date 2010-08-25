@@ -5555,24 +5555,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             return;
         }
 
-        /*
-        logger.logComment("Adding soma simple cell processes...");
-        PassiveMembraneProcess pas = new PassiveMembraneProcess();
-        pas.setInstanceName(pas.getDefaultInstanceName());
-        pas.initialise(this.projManager.getCurrentProject());
-        projManager.getCurrentProject().cellProcessInfo.addCellProcess(pas);
-
-        NaChannelProcess na = new NaChannelProcess();
-        na.setInstanceName(na.getDefaultInstanceName());
-        na.initialise(this.projManager.getCurrentProject());
-        projManager.getCurrentProject().cellProcessInfo.addCellProcess(na);
-
-
-        KChannelProcess k = new KChannelProcess();
-        k.setInstanceName(k.getDefaultInstanceName());
-        k.initialise(this.projManager.getCurrentProject());
-        projManager.getCurrentProject().cellProcessInfo.addCellProcess(k);
-*/
+  
 
 
 
@@ -16154,7 +16137,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                 }
                                 catch (IOException ex)
                                 {
-                                    GuiUtils.showErrorMessage(logger, "Problem when including new Cell Process", ex, this);
+                                    GuiUtils.showErrorMessage(logger, "Problem when including new Cell Mechanism", ex, this);
                                     return;
                                 }
 

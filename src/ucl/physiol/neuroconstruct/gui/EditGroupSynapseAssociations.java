@@ -133,7 +133,7 @@ public class EditGroupSynapseAssociations extends JDialog implements ListSelecti
                                                            nextProcess +
                                                            " is present on this cell, but there is no corresponding "
                                                            +
-                                                           "\nCell Process in the project. Delete the synapse from the cell?",
+                                                           "\nCell Mechanism in the project. Delete the synapse from the cell?",
                                                            "Warning",
                                                            JOptionPane.YES_NO_OPTION);
 

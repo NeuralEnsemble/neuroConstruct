@@ -952,7 +952,7 @@ public class StimDialog extends JDialog
 
             if (synapticTypes.size()==0)
             {
-                GuiUtils.showErrorMessage(logger, "Please add at least one synapse type at the Cell Process Tab", null, this);
+                GuiUtils.showErrorMessage(logger, "Please add at least one synapse type at the Cell Mechanism Tab", null, this);
                 return;
             }
 
@@ -994,7 +994,7 @@ public class StimDialog extends JDialog
             if (synapticTypes.size()==0)
             {
                 GuiUtils.showErrorMessage(logger,
-                                          "Please add at least one synapse type at the Cell Process Tab",
+                                          "Please add at least one synapse type at the Cell Mechanism Tab",
                                           null, this);
                 return;
             }
@@ -1090,7 +1090,7 @@ public class StimDialog extends JDialog
             if (synapticTypes.size()==0)
             {
                 GuiUtils.showErrorMessage(logger,
-                                          "Please add at least one synapse type at the Cell Process Tab",
+                                          "Please add at least one synapse type at the Cell Mechanism Tab",
                                           null, this);
                 return;
             }
