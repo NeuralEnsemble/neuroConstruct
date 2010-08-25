@@ -114,7 +114,7 @@ public class SimulationBrowser extends JDialog
         Vector allAvailableCols = allSims.getAllColumns();
         for (int i = 0; i < columnsToShow.size(); i++)
         {
-                String nextCol = columnsToShow.elementAt(i);
+                String nextCol = columnsToShow.get(i);
                 if (!allAvailableCols.contains(nextCol))
                     columnsToShow.remove(nextCol);
         }
@@ -309,7 +309,7 @@ public class SimulationBrowser extends JDialog
 
         for (int i = 0; i < allPossibleCols.size(); i++)
         {
-                String nextCol = (String)allPossibleCols.elementAt(i);
+                String nextCol = (String)allPossibleCols.get(i);
 
                 JCheckBoxMenuItem jMenuItemNext = new JCheckBoxMenuItem(nextCol);
 

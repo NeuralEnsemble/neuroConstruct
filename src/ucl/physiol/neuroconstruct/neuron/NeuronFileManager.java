@@ -3471,7 +3471,7 @@ public class NeuronFileManager
         {
             
                 File dirForNeuronFiles = ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory());
-        	Vector<String> allAvailableMods = project.cellMechanismInfo.getAllCellMechanismNames();
+        	ArrayList<String> allAvailableMods = project.cellMechanismInfo.getAllCellMechanismNames();
         	
         	for(String cellMech:  allAvailableMods)
         	{

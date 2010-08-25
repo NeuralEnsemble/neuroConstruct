@@ -4574,6 +4574,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         this.jRadioButtonNeuronSimSaveToFile.setToolTipText(newSavingTip);
 
+
+        jLabelNeuronFormat.setToolTipText(toolTipText.getToolTip("HDF5 NEURON Save"));
+        jRadioButtonNeuronFormatText.setToolTipText(toolTipText.getToolTip("HDF5 NEURON Save"));
+        jRadioButtonNeuronFormatHDF5.setToolTipText(toolTipText.getToolTip("HDF5 NEURON Save"));
+
         jCheckBoxGenesisShapePlot.setToolTipText(toolTipText.getToolTip("GENESIS 3D"));
         this.jCheckBoxGenesisSymmetric.setToolTipText(toolTipText.getToolTip("GENESIS Symmetric"));
         this.jRadioButtonGenesisPhy.setToolTipText(toolTipText.getToolTip("GENESIS Units"));
@@ -13853,7 +13858,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             return;
         }
         
-        Vector<String> currentMechs = thisProj.cellMechanismInfo.getAllCellMechanismNames();
+        ArrayList<String> currentMechs = thisProj.cellMechanismInfo.getAllCellMechanismNames();
         
         String selection = (String) JOptionPane.showInputDialog(this,
                                 "Please select the mechanism that you want to compare: ",
@@ -13883,7 +13888,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         if (project.equals("this project"))
         {
             
-            Vector<String> names = projManager.getCurrentProject().cellMechanismInfo.getAllCellMechanismNames();                                                
+            ArrayList<String> names = projManager.getCurrentProject().cellMechanismInfo.getAllCellMechanismNames();
 
             if (names.size()==1)
             {
@@ -13958,7 +13963,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                     logger.logComment("<<<<  Loaded project: " + otherProj.getProjectFileName());
 
-                    Vector<String> mechanismsList = otherProj.cellMechanismInfo.getAllCellMechanismNames();
+                    ArrayList<String> mechanismsList = otherProj.cellMechanismInfo.getAllCellMechanismNames();
 
                     if (mechanismsList.size()==0)
                     {
@@ -14787,7 +14792,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         if (props.getProperty("DefaultName") != null)
             propCellMechanismName = props.getProperty("DefaultName");
 
-        Vector allCellProcs = this.projManager.getCurrentProject().cellMechanismInfo.getAllCellMechanismNames();
+        ArrayList allCellProcs = this.projManager.getCurrentProject().cellMechanismInfo.getAllCellMechanismNames();
 
         while (!goodName)
         {

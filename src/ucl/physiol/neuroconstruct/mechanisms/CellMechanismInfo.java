@@ -54,16 +54,17 @@ public class CellMechanismInfo extends AbstractTableModel
 
     final String[] columnNames = new String[5];
 
+    @SuppressWarnings("UseOfObsoleteCollectionType")
     Vector<CellMechanism> allCellMechanisms = new Vector<CellMechanism>();
 
 
     public CellMechanismInfo()
     {
-        columnNames[COL_NUM_INSTANCE_NAME] = new String("Mechanism Instance Name");
-        columnNames[COL_NUM_MECHANISM_TYPE] = new String("Mechanism Type");
-        columnNames[COL_NUM_MECHANISM_MODEL] = new String("Mechanism Model");
-        columnNames[COL_NUM_DESC] = new String("Description");
-        columnNames[COL_NUM_SIM_ENVS] = new String("Simulation Environments");
+        columnNames[COL_NUM_INSTANCE_NAME] = "Mechanism Instance Name";
+        columnNames[COL_NUM_MECHANISM_TYPE] = "Mechanism Type";
+        columnNames[COL_NUM_MECHANISM_MODEL] = "Mechanism Model";
+        columnNames[COL_NUM_DESC] = "Description";
+        columnNames[COL_NUM_SIM_ENVS] = "Simulation Environments";
     }
 
 
@@ -184,9 +185,9 @@ public class CellMechanismInfo extends AbstractTableModel
         }
     }
 
-    public Vector<String> getAllCellMechanismNames()
+    public ArrayList<String> getAllCellMechanismNames()
     {
-        Vector<String> allNames = new Vector<String>();
+        ArrayList<String> allNames = new ArrayList<String>();
         for (int i = 0; i < getRowCount(); i++)
         {
                allNames.add((String)getValueAt(i, COL_NUM_INSTANCE_NAME));

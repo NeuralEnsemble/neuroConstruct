@@ -995,7 +995,7 @@ public class ProjectManager implements GenerationReport
             //cmechsElement.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.UNIT_SCHEME, ChannelMLConstants.PHYSIOLOGICAL_UNITS));
 
             boolean addChan = false; //flag to avoid repetitions and unuseful checks
-            Vector<String> allm = project.cellMechanismInfo.getAllCellMechanismNames();
+            ArrayList<String> allm = project.cellMechanismInfo.getAllCellMechanismNames();
 
             Vector<String> cellMechs = new Vector<String>();
             Vector<String> synCellMechs = new Vector<String>();
@@ -1793,9 +1793,9 @@ public class ProjectManager implements GenerationReport
 
         report.addTaggedElement("Validating Cell Mechanisms (using NeuroML version "+GeneralProperties.getNeuroMLVersionNumber()+")", "p");
 
-        Vector cellMechNames = this.activeProject.cellMechanismInfo.getAllCellMechanismNames();
+        ArrayList cellMechNames = this.activeProject.cellMechanismInfo.getAllCellMechanismNames();
 
-        cellMechNames = (Vector)GeneralUtils.reorderAlphabetically(cellMechNames, true);
+        cellMechNames = (ArrayList)GeneralUtils.reorderAlphabetically(cellMechNames, true);
 
         for (Object nextCellMech: cellMechNames)
         {

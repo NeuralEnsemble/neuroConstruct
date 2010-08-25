@@ -151,8 +151,8 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
         // create copy...
         
-        Vector<String> mechListTemp = project.cellMechanismInfo.getAllCellMechanismNames();
-        Vector<String> mechList = new Vector<String>();
+        ArrayList<String> mechListTemp = project.cellMechanismInfo.getAllCellMechanismNames();
+        ArrayList<String> mechList = new ArrayList<String>();
         mechList.addAll(mechListTemp);
 
         for (int i = 0; i < mechs.size(); i++)

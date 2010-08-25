@@ -29,7 +29,6 @@ package ucl.physiol.neuroconstruct.project;
 import java.beans.*;
 import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
 
 import javax.swing.event.*;
 
@@ -1221,10 +1220,10 @@ public class Project implements TableModelListener
         xmlEncoder.flush();
         try
         {
-            String message = new String("\n<!-- This is a neuroConstruct project file. It's best to open this\n"
+            String message = "\n<!-- This is a neuroConstruct project file. It's best to open this\n"
                                         + "file with neuroConstruct, as opposed to editing it directly. \n\n"
                                         + "Note that this file is neuroConstruct specific and isn't any \n"
-                                        + "part of NeuroML or any standardised XML specification. -->\n\n");
+                                        + "part of NeuroML or any standardised XML specification. -->\n\n";
 
             fos.write(message.getBytes());
         }
@@ -1291,7 +1290,7 @@ public class Project implements TableModelListener
 
         File dirForCellMechs = ProjectStructure.getCellMechanismDir(this.getProjectMainDirectory());
 
-        Vector<String> allCellMechNames = this.cellMechanismInfo.getAllCellMechanismNames();
+        ArrayList<String> allCellMechNames = this.cellMechanismInfo.getAllCellMechanismNames();
 
         for (int j = 0; j < allCellMechNames.size(); j++)
         {

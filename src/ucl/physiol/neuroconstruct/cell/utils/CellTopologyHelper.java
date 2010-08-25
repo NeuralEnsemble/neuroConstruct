@@ -3086,7 +3086,7 @@ public class CellTopologyHelper
         }
         else
         {
-            Vector cellMechNames = project.cellMechanismInfo.getAllCellMechanismNames();
+            ArrayList cellMechNames = project.cellMechanismInfo.getAllCellMechanismNames();
             Vector<String> missingCellMechs = new Vector<String>();
             
             ArrayList<Section> allSections = cell.getAllSections();

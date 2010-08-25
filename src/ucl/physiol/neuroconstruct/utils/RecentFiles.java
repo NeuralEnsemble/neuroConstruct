@@ -29,8 +29,6 @@ package ucl.physiol.neuroconstruct.utils;
 import java.beans.*;
 import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Handy class for storing recently opened files, and other goodies such as last directories in which

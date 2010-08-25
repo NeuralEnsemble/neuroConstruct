@@ -71,13 +71,13 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
     Vector<String> allColumns = new Vector<String>(minNumberColumns);
     Vector<String> columnsShown = new Vector<String>(minNumberColumns);
 
-    public static final String simSummaryFileName = new String("simulation.props");
+    public static final String simSummaryFileName = "simulation.props";
 
-    private static String oldSimSummaryFileName = new String("sim_summary");
+    private static String oldSimSummaryFileName = "sim_summary";
 
-    public static final String simulatorPropsFileName = new String("simulator.props");
+    public static final String simulatorPropsFileName = "simulator.props";
 
-    public static final String psicsLogFile = new String("log.txt");
+    public static final String psicsLogFile = "log.txt";
 
     Vector<SimulationData> simDataObjs = new Vector<SimulationData>();
 
@@ -87,7 +87,7 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
 
     ProcessFeedback pf = null;
 
-    private static Hashtable<String, String> extraSimProperties = new Hashtable<String, String>();
+    private static HashMap<String, String> extraSimProperties = new HashMap<String, String>();
 
 
     private TreeMap<String, TreeMap<String, TreeMap<Integer, ArrayList<DataStore>>>> dataInSims
@@ -437,7 +437,7 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
     }
 
 
-    public void refresh(boolean checkRemote)
+    public final void refresh(boolean checkRemote)
     {
         logger.logComment("Refreshing the contents of table model");
 
@@ -643,19 +643,19 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
 
     @Override
     public String getColumnName(int col) {
-        return columnsShown.elementAt(col);
+        return columnsShown.get(col);
     }
 
 
     public SimulationData getSimulationData(int row)
     {
-        return simDataObjs.elementAt(row);
+        return simDataObjs.get(row);
     }
 
 
     public Object getValueAt(int row, int col)
     {
-        SimulationData sim = simDataObjs.elementAt(row);
+        SimulationData sim = simDataObjs.get(row);
 
         switch (col)
         {
@@ -770,7 +770,7 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
 
 
 
-        StringBuffer simConfigInfo = new StringBuffer(simConfig.getName()+ " (");
+        StringBuilder simConfigInfo = new StringBuilder(simConfig.getName()+ " (");
         ArrayList<String> allElements = new ArrayList<String>();
 
         allElements.addAll(simConfig.getCellGroups());
@@ -798,7 +798,7 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
 
 
         ArrayList<String> cellGroupNames = project.cellGroupsInfo.getAllCellGroupNames();
-        StringBuffer pops = new StringBuffer();
+        StringBuilder pops = new StringBuilder();
         for (int i = 0; i < cellGroupNames.size(); i++)
         {
             String cellGroupName = cellGroupNames.get(i);
@@ -812,7 +812,7 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
                 pops.append(cellGroupName + " ("+cellType+"): " + num);
                 if (i < cellGroupNames.size() - 1) pops.append("; ");
 
-                StringBuffer info = new StringBuffer("[");
+                StringBuilder info = new StringBuilder("[");
                 Cell cell = project.cellManager.getCell(cellType);
 
                 ArrayList allChanMechs = cell.getAllUniformChanMechs(true);
@@ -822,7 +822,7 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
                 for (int j = 0; j < allChanMechs.size(); j++)
                 {
                     ChannelMechanism chanMech = (ChannelMechanism)allChanMechs.get(j);
-                    Vector groups = cell.getGroupsWithChanMech(chanMech);
+                    Vector<String> groups = cell.getGroupsWithChanMech(chanMech);
 
                     info.append(chanMech.getName() + " (" + chanMech.getDensity() + ")" +
                                 " on: " + groups + ", ");
@@ -1158,7 +1158,7 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
 
         // Show some of the main props first, as the props can come out in undetermined order
 
-        String[] mainProperties = new String[]{"Simulator", "Unit system", "Populations", "Duration", "dt","Sim Config", "RealSimulationTime", "neuroConstruct random seed"};
+        String[] mainProperties = new String[]{"Simulator", "Unit system", "Populations", "Duration", "dt","Sim Config", "RealSimulationTime", "neuroConstruct random seed", "Parallel configuration"};
 
         for (int i = 0; i < mainProperties.length; i++)
         {
@@ -1168,6 +1168,10 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
                 if(mainProperties[i].indexOf("Time")>=0 || mainProperties[i].indexOf("time")>=0)
                 {
                     value = GeneralUtils.getNiceStringForSeconds(value);
+                }
+                if(mainProperties[i].equals("Populations"))
+                {
+                    value = GeneralUtils.replaceAllTokens(value, ";","<br>");
                 }
                 sb.append(createLine(mainProperties[i], value, html));
             }
