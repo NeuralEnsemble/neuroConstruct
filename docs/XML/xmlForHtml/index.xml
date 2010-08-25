@@ -31,6 +31,9 @@
 
         <title>Latest News</title>
 
+        <p>The latest version of neuroConstruct (<strong>v1.4.1, Aug 2010</strong>) is available for download <a href="download/index.html">here</a>.
+        The source code is included with this release under GPL.</p>
+
         <p>A paper describing the latest stable version of NeuroML has recently been
         published: <strong>NeuroML: A Language for Describing Data Driven Models of Neurons and
         Networks with a High Degree of Biological Detail, P Gleeson, S Crook, RC Cannon, ML Hines, GO Billings, M Farinella, TM Morse, AP Davison,
@@ -47,8 +50,7 @@
         cell model and a number of cells from the Traub et al. 2005 thalamocortical
         network model are available <a href="models/index.html">here</a> for download in NeuroML format or as complete neuroConstruct
         projects for execution on a number of simulation platforms.
-        These models are also included with the latest version of neuroConstruct (<strong>v1.4.0, Jun 2010</strong>) which is available for download <a href="download/index.html">here</a>.
-        The source code is included with this release under GPL.</p>
+        These models are also included with the latest version of neuroConstruct.</p>
 
 
 
