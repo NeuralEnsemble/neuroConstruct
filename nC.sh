@@ -9,6 +9,7 @@
 export NC_HOME=$HOME/neuroConstruct
 
 #   Use an altered value below to run the application with extra memory
+#   **OR** set NC_MAX_MEMORY_LOCAL in your .bashrc file
 #   Type java -X for more info
 export NC_MAX_MEMORY=450M 
 
@@ -20,6 +21,10 @@ export NC_MAX_MEMORY=450M
 
 # Current version of neuroConstruct
 export NC_VERSION=1.4.1
+
+if [ -n "$NC_MAX_MEMORY_LOCAL" ]; then
+    export NC_MAX_MEMORY=$NC_MAX_MEMORY_LOCAL
+fi
 
 
 # Check for location 
@@ -33,7 +38,7 @@ if [ ! -d $NC_HOME ]; then
     fi
 fi
 
-echo "Running neuroConstruct from: $NC_HOME"
+echo "Running neuroConstruct from: $NC_HOME with max Java heap size of $NC_MAX_MEMORY"
 
 # Location of jars and native libraries for HDF5
 H5_DIR=$NC_HOME/lib/hdf5

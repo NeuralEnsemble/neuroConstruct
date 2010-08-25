@@ -283,7 +283,7 @@
   <!-- Run tests                                               -->
   <!-- =================================================================== -->
 
-  <target name="test" depends="clean, compiletests"
+  <target name="test" depends="clean, makejar"
           description="Runs the core neuroConstruct unit tests. NEURON (incl. Parallel NEURON), GENESIS and MOOSE need to be installed for all tests to pass. Can be run using: ant test -Dsimulators='NEURON GENESIS', to limit the number of simulators tested.">
 
     <property name="simulators" value="NEURON PNEURON GENESIS MOOSE"/>
@@ -302,7 +302,7 @@
   <!-- Run tests on models                                               -->
   <!-- =================================================================== -->
 
-  <target name="testmod" depends="clean, compiletests"
+  <target name="testmod" depends="clean, makejar"
           description="Runs a number of automated tests on neuroConstruct models, mainly the NeuroML based examples in nCmodels.">
 
     <java classname="${main.testmodels.class}" fork="true">
