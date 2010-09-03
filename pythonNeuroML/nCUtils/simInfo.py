@@ -38,10 +38,11 @@ else:
             popInfo = "  Populations:         "
             total = 0
             for pop in pops.split(";"):
-                total += int(pop.split(":")[1].strip())
-                if not pops.startswith(pop):
-                    popInfo = popInfo + "\n                      "
-                popInfo = popInfo +pop
+                if ":" in pop:
+                    total += int(pop.split(":")[1].strip())
+                    if not pops.startswith(pop):
+                        popInfo = popInfo + "\n                      "
+                    popInfo = popInfo +pop
 
             popInfo = popInfo + "\n                         Total:               %i"%total
 
