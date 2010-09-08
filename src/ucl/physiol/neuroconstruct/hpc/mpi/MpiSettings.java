@@ -66,13 +66,16 @@ public class MpiSettings
     public static final String LOCAL_4PROC = "Local machine (4p)";
     public static final String LOCAL_8PROC = "Local machine (8p)";
 
+
+    public static final String CASPUR_8PROC = "Caspur (8p)";
+
     /*
      * To run on a remote machine and execute directly, i.e. no queue
      * There must be automatic ssh login to this machine
-     */
+    
     public static final String CLUSTER_1PROC = "Cluster (1p)";
     public static final String CLUSTER_2PROC = "Cluster (1 x 2p)";
-    public static final String CLUSTER_4PROC = "Cluster (1 x 4p)";
+    public static final String CLUSTER_4PROC = "Cluster (1 x 4p)"; */
 
     /*
      * To run on a remote machine, jobs set running using a submit script.
@@ -137,6 +140,8 @@ public class MpiSettings
         Hashtable<KnownSimulators, String> simulatorExecutablesML = new Hashtable<KnownSimulators, String>();
         Hashtable<KnownSimulators, String> simulatorExecutablesMLnrn62 = new Hashtable<KnownSimulators, String>();
 
+        Hashtable<KnownSimulators, String> simulatorExecutablesCaspur = new Hashtable<KnownSimulators, String>();
+
         simulatorExecutables.put(KnownSimulators.NEURON, "/home/ucgbpgl/nrnmpi/x86_64/bin/nrniv");
         simulatorExecutables.put(KnownSimulators.GENESIS, "/home/ucgbpgl/gen23/genesis");
         simulatorExecutables.put(KnownSimulators.MOOSE, "/home/ucgbpgl/moose/moose");
@@ -149,6 +154,9 @@ public class MpiSettings
         simulatorExecutablesML.put(KnownSimulators.PY_NEURON, "/share/apps/neuro/nrn71/x86_64/bin/nrniv -python");
         
         simulatorExecutablesML.put(KnownSimulators.MOOSE, "/share/apps/neuro/moose");
+
+
+        simulatorExecutablesCaspur.put(KnownSimulators.NEURON, "/home/sergio/nrn7.0/x86_64/bin/nrniv");
 
         // This is a 4 processor Linux machine in our lab. Auto ssh login is enabled to it from the
         // machine on which neuroConstruct is running. Jobs are set running directly on this machine
@@ -168,6 +176,13 @@ public class MpiSettings
                                                   "/home/ucgbpgl/nCsims",
                                                   simulatorExecutablesMLnrn62);
 
+
+        // Login node for Casper cluster
+        RemoteLogin caspurLogin = new RemoteLogin("matrix.caspur.it",
+                                                  "sergio",
+                                                  "/home/sergio/scratch/",
+                                                  simulatorExecutablesCaspur);
+
         // Legion is the UCL supercomputing cluster. Legion operates the Torque batch queueing system
         // and the Moab scheduler, i.e. jobs aren't eecuted directly, but submitted to a queue and will
         // be run when the requested resources are available.
@@ -186,6 +201,8 @@ public class MpiSettings
         QueueInfo legionQueue = new QueueInfo(6, "ucl/NeuroSci/neuroconst", "cvos-launcher", QueueInfo.QueueType.PBS);
 
         QueueInfo matlemQueue = new QueueInfo(6, "", "", QueueInfo.QueueType.SGE);
+
+        QueueInfo caspurQueue = new QueueInfo(6, "std10-300", "time", QueueInfo.QueueType.PBS);
 
 
         if (getMpiConfiguration(LOCAL_SERIAL)==null)
@@ -220,6 +237,22 @@ public class MpiSettings
             p.getHostList().add(new MpiHost(LOCALHOST,8, 1));
             configurations.add(p);
         }
+
+
+        if (getMpiConfiguration(CASPUR_8PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(CASPUR_8PROC);
+
+            for(int i=0;i<1;i++)
+                p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+            p.setRemoteLogin(caspurLogin);
+            p.setMpiVersion(MpiSettings.OPENMPI_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(caspurQueue);
+            configurations.add(p);
+        }
+
 
         if (getMpiConfiguration(MATLEM_NRN62_1PROC)==null)
         {
@@ -716,7 +749,7 @@ public class MpiSettings
         this.configurations = confs;
     }
 
-    public MpiConfiguration getMpiConfiguration(String name)
+    public final MpiConfiguration getMpiConfiguration(String name)
     {
         for (MpiConfiguration config: configurations)
         {
