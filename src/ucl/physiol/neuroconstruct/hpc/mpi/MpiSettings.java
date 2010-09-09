@@ -68,6 +68,9 @@ public class MpiSettings
 
 
     public static final String CASPUR_8PROC = "Caspur (8p)";
+    public static final String CASPUR_16PROC = "Caspur (16p)";
+    public static final String CASPUR_32PROC = "Caspur (32p)";
+    public static final String CASPUR_64PROC = "Caspur (64p)";
 
     /*
      * To run on a remote machine and execute directly, i.e. no queue
@@ -254,6 +257,49 @@ public class MpiSettings
         }
 
 
+        if (getMpiConfiguration(CASPUR_16PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(CASPUR_16PROC);
+
+            for(int i=0;i<2;i++)
+                p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+            p.setRemoteLogin(caspurLogin);
+            p.setMpiVersion(MpiSettings.OPENMPI_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(caspurQueue);
+            configurations.add(p);
+        }
+
+        if (getMpiConfiguration(CASPUR_32PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(CASPUR_32PROC);
+
+            for(int i=0;i<4;i++)
+                p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+            p.setRemoteLogin(caspurLogin);
+            p.setMpiVersion(MpiSettings.OPENMPI_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(caspurQueue);
+            configurations.add(p);
+        }
+
+        if (getMpiConfiguration(CASPUR_64PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(CASPUR_64PROC);
+
+            for(int i=0;i<8;i++)
+                p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+            p.setRemoteLogin(caspurLogin);
+            p.setMpiVersion(MpiSettings.OPENMPI_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(caspurQueue);
+            configurations.add(p);
+        }
+
+
         if (getMpiConfiguration(MATLEM_NRN62_1PROC)==null)
         {
             MpiConfiguration p = new MpiConfiguration(MATLEM_NRN62_1PROC);
@@ -430,6 +476,7 @@ public class MpiSettings
             p.getHostList().add(new MpiHost("localhost", 1, 1));
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
+            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
 
@@ -440,6 +487,7 @@ public class MpiSettings
             p.getHostList().add(new MpiHost("localhost", 2, 1));
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
+            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
 
@@ -450,6 +498,7 @@ public class MpiSettings
             p.getHostList().add(new MpiHost("localhost",4, 1));
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
+            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
 
@@ -463,6 +512,7 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
+            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
 
@@ -476,6 +526,7 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
+            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
 
@@ -488,6 +539,7 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
+            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
 
@@ -501,6 +553,7 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
+            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
 
@@ -514,6 +567,7 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
+            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
 
@@ -527,6 +581,7 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
+            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
         if (getMpiConfiguration(LEGION_64PROC)==null)
@@ -538,6 +593,7 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
+            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
         if (getMpiConfiguration(LEGION_80PROC)==null)
@@ -549,6 +605,7 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
+            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
         if (getMpiConfiguration(LEGION_96PROC)==null)
@@ -560,6 +617,7 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
+            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
         if (getMpiConfiguration(LEGION_112PROC)==null)
@@ -571,6 +629,7 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
+            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
         if (getMpiConfiguration(LEGION_128PROC)==null)
@@ -582,6 +641,7 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
+            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
         if (getMpiConfiguration(LEGION_256PROC)==null)
@@ -593,6 +653,7 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
+            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
 

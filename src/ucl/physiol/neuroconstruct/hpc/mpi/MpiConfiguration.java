@@ -57,6 +57,8 @@ public class MpiConfiguration
 
     private boolean useScp = false;
 
+    private ArrayList<String> additionalSubOptions = new ArrayList<String>();
+
 
     private MpiConfiguration()
     {
@@ -94,6 +96,11 @@ public class MpiConfiguration
         this.useScp = useScp;
     }
 
+    public void addAdditionalSubOptions(String line)
+    {
+        additionalSubOptions.add(line);
+    }
+
 
 
 
@@ -113,7 +120,12 @@ public class MpiConfiguration
             script.append("#PBS -N "+simRef+"_"+projName+"\n");
             script.append("#PBS -A "+queueInfo.getAccount()+"\n");
             script.append("#PBS -j oe\n");
-            script.append("#PBS -l qos=parallel\n");
+
+            for (String line: additionalSubOptions)
+            {
+                script.append(line+"\n");
+
+            }
 
 
             int nodes = hostList.size();
@@ -151,7 +163,13 @@ public class MpiConfiguration
             script.append("#! Run options for the application\n");
 
             if(isNeuron)
-                script.append("options=\"$workdir/"+projName+".hoc\"\n");
+            {
+                String mpiFlag = "";
+
+                if (getMpiVersion().equals(MpiSettings.OPENMPI_V2)) mpiFlag = "-mpi ";
+
+                script.append("options=\""+mpiFlag+"$workdir/"+projName+".hoc\"\n");
+            }
             else
                 script.append("options=\"$workdir/"+projName+".g\"\n");
 
