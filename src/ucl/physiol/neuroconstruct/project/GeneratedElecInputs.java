@@ -64,7 +64,8 @@ public class GeneratedElecInputs
     public void reset()
     {
         this.myElecInputs.clear();
-        logger.logComment("Reset called. Info: "+ this.toString());
+
+        logger.logComment("Reset called. Info: "+ this.toString()+", empty: "+myElecInputs.isEmpty(), true);
     }
 
     public ArrayList<SingleElectricalInput> getInputLocations(String inputReference)
