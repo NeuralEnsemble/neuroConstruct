@@ -65,7 +65,7 @@ public class GeneratedElecInputs
     {
         this.myElecInputs.clear();
 
-        logger.logComment("Reset called. Info: "+ this.toString()+", empty: "+myElecInputs.isEmpty(), true);
+        logger.logComment("Reset called. Info: "+ this.toString()+"\nEmpty: "+myElecInputs.isEmpty(), true);
     }
 
     public ArrayList<SingleElectricalInput> getInputLocations(String inputReference)
@@ -597,7 +597,12 @@ public class GeneratedElecInputs
             GeneratedElecInputs cpr2 = new GeneratedElecInputs(null);
 
             cpr2.loadFromFile(f);
-            System.out.println("New internal info: \n"+ cpr2.toString()); 
+            System.out.println("New internal info: \n"+ cpr2.toString());
+
+            gei.reset();
+            System.out.println("Internal info gei: \n"+ gei.toString());
+            cpr2.reset();
+            System.out.println("Internal info cpr2: \n"+ cpr2.toString());
 
         }
         catch (Exception ex)
