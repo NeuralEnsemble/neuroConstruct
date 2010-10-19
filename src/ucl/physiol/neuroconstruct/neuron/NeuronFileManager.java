@@ -5438,8 +5438,12 @@ public class NeuronFileManager
             }
             catch (Exception ex)
             {
-                logger.logError("Error running the command: " + fullCommand, ex);
-                throw new NeuronException("Error executing the hoc file: " + mainHocFile+"\n"+ex.getMessage(), ex);
+                logger.logError("Error running command: " + fullCommand, ex);
+                throw new NeuronException("Error executing the hoc file: " + mainHocFile+"\n"
+                        + "Trying to execute command:\n"+fullCommand+"\n\n"
+                        + "This may be resolvable by updating the Command line executable used to run external programs\n"
+                        + "at Settings -> General Properties and Project Defaults. If you're running on a Gnome desktop\n"
+                        + "based Linux install (e.g. Ubuntu), you might want to change \"konsole\" to \"gnome-terminal -x\"\n\n"+ex.getMessage(), ex);
             }
         }
         else
