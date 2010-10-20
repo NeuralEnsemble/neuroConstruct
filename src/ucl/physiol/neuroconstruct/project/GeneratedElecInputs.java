@@ -48,9 +48,9 @@ import ucl.physiol.neuroconstruct.utils.xml.*;
 
 public class GeneratedElecInputs
 {
-    ClassLogger logger = new ClassLogger("GeneratedElecInputs");
+    private ClassLogger logger = new ClassLogger("GeneratedElecInputs");
 
-    Hashtable<String, ArrayList<SingleElectricalInput>> myElecInputs = null;
+    private Hashtable<String, ArrayList<SingleElectricalInput>> myElecInputs = null;
 
     private Project project = null;
     

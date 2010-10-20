@@ -129,7 +129,7 @@ ProjectManager pm = null;
 
         generate();
         
-        ArrayList<SingleElectricalInput> inputs = proj.generatedElecInputs.myElecInputs.get(rsi);
+        ArrayList<SingleElectricalInput> inputs = proj.generatedElecInputs.getInputLocations(rsi);
 
         for (int i = 0; i < inputs.size(); i++) {
             System.out.println("props"+inputs.get(i).getInstanceProps().details(false));

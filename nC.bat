@@ -17,7 +17,7 @@ REM   Use an altered value in the line below to run the application with extra
 REM   memory; type java -X for more details. Choosing a max java heap size slightly less 
 REM   than half your total physical memory is best. 
 REM   *** ASKING FOR MORE MEMORY THAN HALF MAX ON WINDOWS HAS LED TO THE APPLICATION CRASHING ***  
-set NC_MAX_MEMORY=450M 
+set NC_MAX_MEMORY=2850M 
 
 set NC_VERSION=1.4.1
 
