@@ -308,11 +308,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JTextField jTextFieldSimDefDur = new JTextField();
     JPanel jPanelNetSetSimple = new JPanel();
 
-    String defaultCellGroupStimulation = new String("-- No Stimulation --");
-    String cellComboPrompt = new String("-- Please select a cell type --");
+    String defaultCellGroupStimulation = "-- No Stimulation --";
+    String cellComboPrompt = "-- Please select a cell type --";
 
-    String neuronBlockPrompt = new String("-- Please select where to put NEURON code --");
-    String genesisBlockPrompt = new String("-- Please select where to put GENESIS script --");
+    String neuronBlockPrompt = "-- Please select where to put NEURON code --";
+    String genesisBlockPrompt = "-- Please select where to put GENESIS script --";
 
     JPanel jPanelSimSettings = new JPanel();
     JLabel jLabelSimDT = new JLabel();
@@ -445,14 +445,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JCheckBox jCheckBoxNeuronModSilent = new JCheckBox("Silent mod compile");
 
     ButtonGroup buttonGroupNeuronFormat = new ButtonGroup();
-    JLabel jLabelNeuronFormat = new JLabel("  Save sim results as:");
+    JLabel jLabelNeuronFormat = new JLabel(" Save data as:");
     JRadioButton jRadioButtonNeuronFormatText = new JRadioButton("Text files");
     JRadioButton jRadioButtonNeuronFormatHDF5 = new JRadioButton("HDF5");
 
     JPanel jPanelNeuronRandomGen =  new JPanel();
     JLabel jLabelNeuronRandomGenDesc = new JLabel("Random seed for NEURON:");
     JTextField jTextFieldNeuronRandomGen = new JTextField();
-    JCheckBox jCheckBoxNeuronRandomGen = new JCheckBox("Recalculate before creating script files");
+    JCheckBox jCheckBoxNeuronRandomGen = new JCheckBox("Recalculate before generating files");
     
     
     JLabel jLabelPyNNRandomGenDesc = new JLabel("Random seed for PyNN:");
@@ -1155,7 +1155,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
         });
         jButtonCellTypesConnect.setEnabled(false);
-        jButtonCellTypesConnect.setText("Ensure segments connected to parents");
+        jButtonCellTypesConnect.setText("Ensure segs connected to parents");
         jButtonCellTypesConnect.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -1784,7 +1784,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     "the project");
         jPanelMechanismMain.setBorder(BorderFactory.createEtchedBorder());
         jPanelMechanismMain.setLayout(borderLayout36);
-        jButtonMechanismDelete.setText("Delete selected Cell Mechanism");
+        jButtonMechanismDelete.setText("Delete selected");
         jButtonMechanismDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 jButtonMechanismDelete_actionPerformed(e);
@@ -1799,7 +1799,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
       }
     });
     
-    jButtonMechanismUpdateMaps.setText("Update mapping files");
+    jButtonMechanismUpdateMaps.setText("Update mappings");
     
     jButtonMechanismUpdateMaps.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -2325,7 +2325,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelCellTypeMainButtons.add(jPanelCellTypesButtonsInfo, null);
         jPanelCellTypeMainButtons.add(jPanelCellTypesModify, null);
         jPanelCellTypesModify.add(jButtonCellTypesMoveToOrigin, null);
-        jPanelCellTypesModify.add(jButtonCellTypesConnect, null);
+        //jPanelCellTypesModify.add(jButtonCellTypesConnect, null);
         jPanelCellTypesModify.add(jButtonCellTypesMakeSimpConn, null);
         jPanelCellTypeMainButtons.add(jPanelCellTypeManageNumbers, null);
         jPanelNetSetAAControls.add(jPanelNetSetAAConButtons,  BorderLayout.SOUTH);
@@ -3647,14 +3647,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         jPanelNeuronExtraLinks.setBorder(BorderFactory.createEtchedBorder());
         
-        Dimension d = new Dimension(500, 38);
+        Dimension d = new Dimension(600, 38);
         jPanelNeuronExtraLinks.setMinimumSize(d);
         jPanelNeuronExtraLinks.setPreferredSize(d);
         
 
         jPanelGenesisExtraLinks.setBorder(BorderFactory.createEtchedBorder());
         
-        Dimension d2 = new Dimension(400, 32);
+        Dimension d2 = new Dimension(600, 32);
         jPanelGenesisExtraLinks.setMinimumSize(d2);
         jPanelGenesisExtraLinks.setPreferredSize(d2);
         
@@ -6022,7 +6022,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         Vector synapticTypes =  projManager.getCurrentProject().cellMechanismInfo.getAllChemElecSynMechNames();
 
-        if (synapticTypes.size() == 0)
+        if (synapticTypes.isEmpty())
         {
             GuiUtils.showErrorMessage(logger, "There are no synaptic cell mechanisms in the project.\n"
                                       + "Please add some before creating network connections.", null, this);
@@ -6951,7 +6951,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     }
 
 
-    protected void doCheckForLogFiles()
+    protected final void doCheckForLogFiles()
     {
         File logFileDir = GeneralProperties.getLogFileDir();
 
@@ -7795,8 +7795,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             String currentReport = jEditorPaneGenerateInfo.getText();
 
-            String update = new String(currentReport.substring(0, currentReport.lastIndexOf("</body>")) // as the jEditorPane returns html...
-                                       + report);
+            String update = currentReport.substring(0, currentReport.lastIndexOf("</body>")) + report;
 
             setGeneratorInfo(update);
 
@@ -7963,7 +7962,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         if (netConnsUsingIt.size()>0)
         {
-            StringBuffer errorString = new StringBuffer("The Network Connection");
+            StringBuilder errorString = new StringBuilder("The Network Connection");
             if (netConnsUsingIt.size()>1) errorString.append("s: ");
                 else errorString.append(": ");
 

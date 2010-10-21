@@ -88,13 +88,13 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
     private Segment latestSelectedSegment = null;
 
-    private Hashtable<String, JButton> sectionTypeButtons = new Hashtable<String, JButton>();
-    private Hashtable<String, JRadioButton> synLocRadioButtons = new Hashtable<String, JRadioButton>();
+    private HashMap<String, JButton> sectionTypeButtons = new HashMap<String, JButton>();
+    private HashMap<String, JRadioButton> synLocRadioButtons = new HashMap<String, JRadioButton>();
     
     private ButtonGroup synLocButtonGroup = new ButtonGroup();
-    private Hashtable<String, JRadioButton> densMechRadioButtons = new Hashtable<String, JRadioButton>();
+    private HashMap<String, JRadioButton> densMechRadioButtons = new HashMap<String, JRadioButton>();
     private ButtonGroup densMechButtonGroup = new ButtonGroup();
-    private Hashtable<String, JRadioButton> groupRadioButtons = new Hashtable<String, JRadioButton>();
+    private HashMap<String, JRadioButton> groupRadioButtons = new HashMap<String, JRadioButton>();
     private ButtonGroup groupButtonGroup = new ButtonGroup();
     private ButtonGroup paramGroupButtonGroup = new ButtonGroup();
 
@@ -413,7 +413,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             }
         });
 
-        jButtonEditChanMechs.setText("Edit Density Mechanisms");
+        jButtonEditChanMechs.setText("Edit Density Mechs");
         jButtonEditChanMechs.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -698,16 +698,15 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             }
         }
 
-        Enumeration<String> synTypeNames = synLocRadioButtons.keys();
+        Set<String> synTypeNames = synLocRadioButtons.keySet();
 
-        if (!synTypeNames.hasMoreElements())
+        if (synTypeNames.isEmpty())
         {
             jPanelColourControls.add(new JLabel("No synapse types found in this cell", JLabel.CENTER));
         }
 
-        while (synTypeNames.hasMoreElements())
+        for (String synTypeName: synTypeNames)
         {
-            String synTypeName = synTypeNames.nextElement();
 
             JRadioButton nextRadioButton = synLocRadioButtons.get(synTypeName);
             jPanelColourControls.add(nextRadioButton);
@@ -951,10 +950,13 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             jPanelColourControls.setPreferredSize(new Dimension(400, height));
         }
         
-        Enumeration radButtonNames = groupRadioButtons.keys();
-        ArrayList<String> names = GeneralUtils.getOrderedList(radButtonNames, true);
+        Set<String> radButtonNames = groupRadioButtons.keySet();
+        ArrayList<String> names = new ArrayList<String>();
+        names.addAll(radButtonNames);
         
-        if (names.size()==0)
+        names = (ArrayList<String>)GeneralUtils.reorderAlphabetically(names, true);
+        
+        if (names.isEmpty())
         {
             jPanelColourControls.add(new JLabel("No groups found in this cell", JLabel.CENTER));
         }
@@ -1097,16 +1099,16 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             }
 
         }
-        Enumeration<String> radioButtonNames = densMechRadioButtons.keys();
+        Set<String> radioButtonNames = densMechRadioButtons.keySet();
 
-        if (!radioButtonNames.hasMoreElements())
+        if (radioButtonNames.isEmpty())
         {
             jPanelColourControls.add(new JLabel("No membrane density mechanisms found in this cell", JLabel.CENTER));
         }
 
-        while (radioButtonNames.hasMoreElements())
+        for (String name: radioButtonNames)
         {
-            JRadioButton nextRadioButton = densMechRadioButtons.get(radioButtonNames.nextElement());
+            JRadioButton nextRadioButton = densMechRadioButtons.get(name);
             jPanelColourControls.add(nextRadioButton);
             if (nextRadioButton.getText().equals(selectedDensMechName))
             {
@@ -1574,10 +1576,10 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             sectionTypeButtons.put(axonButton.getText(), axonButton);
         }
 
-        Enumeration<String> buttonNames = sectionTypeButtons.keys();
-        while (buttonNames.hasMoreElements())
+        Set<String> buttonNames = sectionTypeButtons.keySet();
+        for (String buttonName: buttonNames)
         {
-            jPanelColourControls.add(sectionTypeButtons.get(buttonNames.nextElement()));
+            jPanelColourControls.add(sectionTypeButtons.get(buttonName));
         }
         jPanelColourControls.repaint();
 
@@ -1782,12 +1784,11 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                         (frmSize.height - dlgSize.height) / 2 + loc.y);
         dlg.setModal(true);
         
-        Enumeration<String> radButtonNames = groupRadioButtons.keys();
+        Set<String> radButtonNames = groupRadioButtons.keySet();
         
         String selected = null;
-        while(radButtonNames.hasMoreElements())
+        for(String name: radButtonNames)
         {
-            String name = radButtonNames.nextElement();
             JRadioButton nextRadioButton = groupRadioButtons.get(name);
             if (nextRadioButton.isSelected())
                 selected = name;
@@ -1848,11 +1849,11 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
     void jButtonEditChanMechs_actionPerformed(ActionEvent e)
     {
         String selected = null;
-        Enumeration<JRadioButton> rButtons = this.densMechRadioButtons.elements();
 
-        while (rButtons.hasMoreElements())
+        Collection<JRadioButton> rButtons = this.densMechRadioButtons.values();
+
+        for (JRadioButton rb: rButtons)
         {
-            JRadioButton rb = rButtons.nextElement();
             if (rb.isSelected()) selected = rb.getText();
         }
 
@@ -1964,11 +1965,11 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         jComboBoxHighlight.setSelectedItem(highlightSecSegs);
         jComboBoxHighlight.setSelectedItem(highlightGroups);
 
-        Enumeration<String> radioButtonNames = groupRadioButtons.keys();
+        Set<String> radioButtonNames = groupRadioButtons.keySet();
 
-        while (radioButtonNames.hasMoreElements())
+        for (String name: radioButtonNames)
         {
-            JRadioButton nextRadioButton = groupRadioButtons.get(radioButtonNames.nextElement());
+            JRadioButton nextRadioButton = groupRadioButtons.get(name);
 
             if (nextRadioButton.getText().equals(groupName))
             {
