@@ -260,7 +260,7 @@ public class ViewCanvas extends Canvas
                 (coord.equals(Y_COORD)? df.format(x2DMappedSpace)+"" : "X");
 
 
-        return "???";
+        return "Can't get3DSpaceCoord...";
     }
 
     public float getWidth2DMappedSpace()

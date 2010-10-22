@@ -154,7 +154,7 @@ public class CellMechanismInfo extends AbstractTableModel
             }
         }
 
-        return "???";
+        return "<<< Problem getting cell mech info at ("+rowIndex+", "+columnIndex+") >>>";
 
     }
 

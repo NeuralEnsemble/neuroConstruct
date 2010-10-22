@@ -305,7 +305,7 @@ public class SimpleHtmlDoc
         public String toString()
         {
         	
-            return "???";
+            return "RawHtml???";
         };
     }
 

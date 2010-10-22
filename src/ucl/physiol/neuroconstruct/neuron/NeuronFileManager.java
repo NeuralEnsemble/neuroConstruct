@@ -2593,6 +2593,10 @@ public class NeuronFileManager
 
         String dataFileDirName = dirForSims.getAbsolutePath() + System.getProperty("file.separator");
 
+
+        response.append("strdef simReference\n");
+        response.append("simReference = \"" + project.simulationParameters.getReference() + "\"\n\n");
+
         if (simConfig.getMpiConf().isRemotelyExecuted())
         {
             response.append("strdef targetDir\n");
@@ -2604,9 +2608,6 @@ public class NeuronFileManager
 
             response.append("\n\nstrdef simsDir\n");
             response.append("simsDir = \"" + hocFriendlyDirName + "\"\n\n");
-
-            response.append("strdef simReference\n");
-            response.append("simReference = \"" + project.simulationParameters.getReference() + "\"\n\n");
 
             addHocComment(response, "Note: to change location of the generated simulation files, just change value of targetDir\ne.g. targetDir=\"\" or targetDir=\"aSubDir/\"");
 
@@ -2672,11 +2673,7 @@ public class NeuronFileManager
 
                             if (hdf5Format)
                             {
-                                if (isSpikeRecording)
-                                {
-                                    GuiUtils.showWarningMessage(logger, "Cannot currently save spiketime data in HDF5 format", null);
-                                }
-
+                               
                                 String hostInfo = "";
                                 if (simConfig.getMpiConf().isParallelNet())
                                 {
@@ -2708,11 +2705,24 @@ public class NeuronFileManager
                                 }
                                 else if (mode == 4)
                                 {
+                                    int lengthTable = numStepsTotal;
 
-                                    response.append("{nrnpython(\"allData = numpy.zeros( (" + numStepsTotal + ", h.n_"+cellGroupName+"_local ) , dtype=float )\")}\n");
+                                    if (isSpikeRecording)
+                                    {
+                                        lengthTable = (int)getSimDuration() * 3; // i.e. max constant firing freq of 3000Hz...
+                                    }
+
+                                    response.append("{nrnpython(\"allData = numpy.ones( (" + lengthTable + ", h.n_"+cellGroupName+"_local ) , dtype=float )\")}\n");
+                                    response.append("{nrnpython(\"allData = allData * -1\")}\n");
+
                                     response.append("{nrnpython(\"print allData.shape\")}\n\n");
                                     response.append("{nrnpython(\"columnsVsCellNums = {}\")}\n\n");
                                     response.append("{nrnpython(\"columnIndex = 0\")}\n\n");
+
+                                    if (isSpikeRecording)
+                                    {
+                                        response.append("{nrnpython(\"maxNumSpikes = 0\")}\n\n");
+                                    }
 
                                     response.append("for cellNum=0, n_"+cellGroupName+"-1 {\n");
 
@@ -2721,18 +2731,34 @@ public class NeuronFileManager
                                         response.append("  if (isCellOnNode(\""+ cellGroupName + "\", cellNum)) {\n");
                                     }
                                     response.append("    { print \"Adding data for cell number \",cellNum,\" in "+cellGroupName+" on host \", hostid}\n");
-                                    
-                                    response.append("    { nrnpython(\"allData[:,columnIndex] = h."+vectObj+"[int(h.cellNum)].to_python()\")}\n");
+
+                                    if (!isSpikeRecording)
+                                    {
+                                        response.append("    { nrnpython(\"allData[:,columnIndex] = h."+vectObj+"[int(h.cellNum)].to_python()\")}\n");
+                                    }
+                                    else
+                                    {
+                                        response.append("    { nrnpython(\"for i in range(len(h."+vectObj+"[int(h.cellNum)])): allData[i,columnIndex] = h."+vectObj+"[int(h.cellNum)].to_python()[i]\")}\n");
+                                        response.append("    {nrnpython(\"maxNumSpikes = max(maxNumSpikes, len(h."+vectObj+"[int(h.cellNum)]))\")}\n");
+                                    }
+
 
                                     response.append("    {nrnpython(\"columnsVsCellNums[columnIndex] = int(h.cellNum)\")}\n\n");
                                     response.append("    {nrnpython(\"columnIndex += 1\")}\n\n");
+
 
                                     if (simConfig.getMpiConf().isParallelNet())
                                     {
                                         response.append("  }\n");
                                     }
-                                    response.append("}\n");
+                                    response.append("}\n\n");
                                     response.append("{nrnpython(\"print columnsVsCellNums\")}\n\n");
+
+
+                                    if (isSpikeRecording)
+                                    {
+                                        response.append("{nrnpython(\"allData = numpy.resize(allData, (maxNumSpikes, h.n_"+cellGroupName+"_local ) )\")}\n");
+                                    }
 
                                     response.append("{nrnpython(\"group = h5file.createGroup('/', '"+cellGroupName+"', '"+cellGroupName+"')\")}\n");
 
@@ -4471,7 +4497,7 @@ public class NeuronFileManager
         String dateCommand = "date +%x,%X:%N";
 
 
-        String timeStepInfo = "dt: "+project.simulationParameters.getDt()+",";
+        String timeStepInfo = "dt: \",dt,\"ms,";
         if(project.neuronSettings.isVarTimeStep())
         {
             timeStepInfo = " variable time step,";
@@ -4516,7 +4542,7 @@ public class NeuronFileManager
             response.append("// which includes the \"date\" unix command. Install under c:\\cygwin\n\n");
         }
         
-        String startUpInfo = "print \"Starting simulation of duration "+simConfig.getSimDuration()+" ms, "+timeStepInfo+" reference: " + project.simulationParameters.getReference() +
+        String startUpInfo = "print \"Starting simulation of duration \",tstop,\"ms, "+timeStepInfo+" reference: \",simReference,\""  +
                     dateInfo+"\"\n\n";
 
         if (simConfig.getMpiConf().isParallelNet())

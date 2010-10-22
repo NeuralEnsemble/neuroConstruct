@@ -1283,8 +1283,8 @@ public class SimulationData
         f = new File("testProjects/TestHDF5/simulations/TestH5");
         f = new File("testProjects/TestHDF5/simulations/TestTextBig");
         f = new File("testProjects/TestHDF5/simulations/TestH5Big");
-        f = new File("../nC_projects/h5/simulations/testcol_7");
-        f = new File("../nC_projects/h5/simulations/testcol_8");
+        f = new File("testProjects/TestHDF5/simulations/TestSpikes");
+        //f = new File("testProjects/TestHDF5/simulations/TestSpikesText");
 
         SimulationData simulationData1 = null;
         try
@@ -1300,7 +1300,7 @@ public class SimulationData
 
             GeneralUtils.timeCheck("Grabbed data from: "+ f.getCanonicalPath(), true);
 
-            for(int i=0;i<Math.min(20, dss.size());i++)
+            for(int i=0;i<Math.min(80, dss.size());i++)
             {
                 System.out.println(dss.get(i));
             }

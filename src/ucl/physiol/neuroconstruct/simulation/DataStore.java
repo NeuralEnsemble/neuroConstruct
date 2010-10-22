@@ -173,7 +173,15 @@ public class DataStore
         if (pso!=null) synInfo =  " (synapse: "+pso.getSynRef()+")";
         String info = "DataStore"+synInfo+" for "+variable+" on segment: "+segId+" on "+ getCellRef();
 
-        info = info + ": ("+(float)dataPoints[0]+", "+(float)dataPoints[1]+", ... ["+dataPoints.length+" entries])";
+        info = info + ": (";
+
+        if (dataPoints.length==1) info = info + (float)dataPoints[0]+")";
+
+        else if(dataPoints.length == 2) info = info + (float) dataPoints[0] + ", " + (float) dataPoints[1] + ")";
+
+        else if(dataPoints.length == 3) info = info + (float) dataPoints[0] + ", " + (float) dataPoints[1] + ", " + (float) dataPoints[2] + ")";
+
+        else info = info + (float) dataPoints[0] + ", " + (float) dataPoints[1] + ", ... [" + dataPoints.length + " entries])";
 
         return info;
     }

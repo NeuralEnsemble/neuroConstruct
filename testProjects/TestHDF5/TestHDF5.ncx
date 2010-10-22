@@ -117,11 +117,31 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       </void>
      </object>
     </void>
+    <void method="add">
+     <object class="ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter">
+      <void property="maxNumberCells">
+       <int>40</int>
+      </void>
+     </object>
+    </void>
+    <void method="add">
+     <object class="ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter">
+      <void property="maxNumberCells">
+       <int>40</int>
+      </void>
+     </object>
+    </void>
    </void>
    <void method="get">
     <string>Cell Type</string>
     <void method="add">
      <string>SampleCell</string>
+    </void>
+    <void method="add">
+     <string>Granule_98</string>
+    </void>
+    <void method="add">
+     <string>Granule_98</string>
     </void>
     <void method="add">
      <string>Granule_98</string>
@@ -134,6 +154,12 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
     </void>
     <void method="add">
      <int>9</int>
+    </void>
+    <void method="add">
+     <int>8</int>
+    </void>
+    <void method="add">
+     <int>7</int>
     </void>
    </void>
    <void method="get">
@@ -154,6 +180,22 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       <int>255</int>
      </object>
     </void>
+    <void method="add">
+     <object class="java.awt.Color">
+      <int>103</int>
+      <int>209</int>
+      <int>207</int>
+      <int>255</int>
+     </object>
+    </void>
+    <void method="add">
+     <object class="java.awt.Color">
+      <int>119</int>
+      <int>244</int>
+      <int>209</int>
+      <int>255</int>
+     </object>
+    </void>
    </void>
    <void method="get">
     <string>Region Name</string>
@@ -163,6 +205,12 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
     <void method="add">
      <string>Regions_2</string>
     </void>
+    <void method="add">
+     <string>SampleRegion</string>
+    </void>
+    <void method="add">
+     <string>SampleRegion</string>
+    </void>
    </void>
    <void method="get">
     <string>Cell Group Name</string>
@@ -171,6 +219,12 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
     </void>
     <void method="add">
      <string>CellGroup_2</string>
+    </void>
+    <void method="add">
+     <string>CG3</string>
+    </void>
+    <void method="add">
+     <string>CG4</string>
     </void>
    </void>
   </void>
@@ -295,6 +349,124 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      </void>
     </object>
    </void>
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.project.SimPlot">
+     <void property="cellGroup">
+      <string>CG3</string>
+     </void>
+     <void property="cellNumber">
+      <string>*</string>
+     </void>
+     <void property="graphWindow">
+      <string>CG3_v</string>
+     </void>
+     <void property="maxValue">
+      <float>50.0</float>
+     </void>
+     <void property="minValue">
+      <float>-90.0</float>
+     </void>
+     <void property="plotAndOrSave">
+      <string>Save only</string>
+     </void>
+     <void property="plotReference">
+      <string>CG3_v</string>
+     </void>
+     <void property="segmentId">
+      <string>0</string>
+     </void>
+     <void property="valuePlotted">
+      <string>SPIKE:-20</string>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.project.SimPlot">
+     <void property="cellGroup">
+      <string>CG4</string>
+     </void>
+     <void property="cellNumber">
+      <string>*</string>
+     </void>
+     <void property="graphWindow">
+      <string>CG4_v</string>
+     </void>
+     <void property="maxValue">
+      <float>50.0</float>
+     </void>
+     <void property="minValue">
+      <float>-90.0</float>
+     </void>
+     <void property="plotAndOrSave">
+      <string>Save only</string>
+     </void>
+     <void property="plotReference">
+      <string>CG4_v</string>
+     </void>
+     <void property="segmentId">
+      <string>0</string>
+     </void>
+     <void property="valuePlotted">
+      <string>SPIKE:-20</string>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.project.SimPlot">
+     <void property="cellGroup">
+      <string>CG3</string>
+     </void>
+     <void property="cellNumber">
+      <string>*</string>
+     </void>
+     <void property="graphWindow">
+      <string>CG3_v</string>
+     </void>
+     <void property="maxValue">
+      <float>50.0</float>
+     </void>
+     <void property="minValue">
+      <float>-90.0</float>
+     </void>
+     <void property="plotAndOrSave">
+      <string>Plot and save</string>
+     </void>
+     <void property="plotReference">
+      <string>CG3_v_1</string>
+     </void>
+     <void property="segmentId">
+      <string>0</string>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.project.SimPlot">
+     <void property="cellGroup">
+      <string>CG4</string>
+     </void>
+     <void property="cellNumber">
+      <string>*</string>
+     </void>
+     <void property="graphWindow">
+      <string>CG4_v</string>
+     </void>
+     <void property="maxValue">
+      <float>50.0</float>
+     </void>
+     <void property="minValue">
+      <float>-90.0</float>
+     </void>
+     <void property="plotAndOrSave">
+      <string>Plot and save</string>
+     </void>
+     <void property="plotReference">
+      <string>CG4_v_1</string>
+     </void>
+     <void property="segmentId">
+      <string>0</string>
+     </void>
+    </object>
+   </void>
   </void>
  </object>
  <object class="ucl.physiol.neuroconstruct.project.ProjectProperties">
@@ -330,11 +502,14 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
   <void property="copySimFiles">
    <boolean>true</boolean>
   </void>
-  <void property="graphicsMode">
+  <void property="dataSaveFormat">
    <object class="java.lang.Enum" method="valueOf">
-    <class>ucl.physiol.neuroconstruct.neuron.NeuronSettings$GraphicsMode</class>
-    <string>NO_PLOTS</string>
+    <class>ucl.physiol.neuroconstruct.neuron.NeuronSettings$DataSaveFormat</class>
+    <string>HDF5_NC</string>
    </object>
+  </void>
+  <void property="generateComments">
+   <boolean>false</boolean>
   </void>
  </object>
  <object class="ucl.physiol.neuroconstruct.genesis.GenesisSettings"/>
@@ -347,7 +522,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
    <float>100.0</float>
   </void>
   <void property="reference">
-   <string>TestTextBig</string>
+   <string>TestSpikesHDF5</string>
   </void>
   <void property="saveCopyGenSimFiles">
    <boolean>true</boolean>
@@ -387,6 +562,39 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      </void>
     </object>
    </void>
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.simulation.RandomSpikeTrainSettings">
+     <void property="cellGroup">
+      <string>CG3</string>
+     </void>
+     <void property="rate">
+      <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator">
+       <void property="fixedNum">
+        <float>0.1</float>
+       </void>
+       <void property="numberType">
+        <int>11</int>
+       </void>
+      </object>
+     </void>
+     <void property="reference">
+      <string>Input_0</string>
+     </void>
+     <void property="segChooser">
+      <object class="ucl.physiol.neuroconstruct.project.segmentchoice.GroupDistributedSegments">
+       <void property="group">
+        <string>all</string>
+       </void>
+       <void property="numberOfSegments">
+        <int>4</int>
+       </void>
+      </object>
+     </void>
+     <void property="synapseType">
+      <string>AMPA_GranGol</string>
+     </void>
+    </object>
+   </void>
   </void>
  </object>
  <object class="ucl.physiol.neuroconstruct.project.SimConfigInfo">
@@ -409,10 +617,89 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
        <string>SampleIClamp</string>
       </void>
      </void>
+     <void id="MpiConfiguration0" property="mpiConf">
+      <void property="hostList">
+       <void index="0">
+        <void property="hostname">
+         <string>node0</string>
+        </void>
+        <void property="numProcessors">
+         <int>8</int>
+        </void>
+       </void>
+      </void>
+      <void property="mpiVersion">
+       <string>OPENMPI v2.*</string>
+      </void>
+      <void property="name">
+       <string>MatLem (1 x 8p)</string>
+      </void>
+      <void property="queueInfo">
+       <object class="ucl.physiol.neuroconstruct.hpc.mpi.QueueInfo">
+        <void property="account">
+         <string></string>
+        </void>
+        <void property="queueType">
+         <object class="java.lang.Enum" method="valueOf">
+          <class>ucl.physiol.neuroconstruct.hpc.mpi.QueueInfo$QueueType</class>
+          <string>SGE</string>
+         </object>
+        </void>
+        <void property="wallTimeMins">
+         <int>6</int>
+        </void>
+       </object>
+      </void>
+      <void property="remoteLogin">
+       <object class="ucl.physiol.neuroconstruct.hpc.mpi.RemoteLogin">
+        <void property="executables">
+         <void method="put">
+          <object class="java.lang.Enum" method="valueOf">
+           <class>ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings$KnownSimulators</class>
+           <string>NEURON</string>
+          </object>
+          <string>/share/apps/neuro/nrn71/x86_64/bin/nrniv</string>
+         </void>
+         <void method="put">
+          <object class="java.lang.Enum" method="valueOf">
+           <class>ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings$KnownSimulators</class>
+           <string>PY_NEURON</string>
+          </object>
+          <string>/share/apps/neuro/nrn71/x86_64/bin/nrniv -python</string>
+         </void>
+         <void method="put">
+          <object class="java.lang.Enum" method="valueOf">
+           <class>ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings$KnownSimulators</class>
+           <string>MOOSE</string>
+          </object>
+          <string>/share/apps/neuro/moose</string>
+         </void>
+        </void>
+        <void property="hostname">
+         <string>128.16.14.177</string>
+        </void>
+        <void property="userName">
+         <string>ucgbpgl</string>
+        </void>
+        <void property="workDir">
+         <string>/home/ucgbpgl/nCsims</string>
+        </void>
+       </object>
+      </void>
+      <void property="useScp">
+       <boolean>true</boolean>
+      </void>
+     </void>
+     <void property="mpiConf">
+      <object idref="MpiConfiguration0"/>
+     </void>
      <void property="name">
       <string>Default Simulation Configuration</string>
      </void>
      <void property="netConns">
+      <void method="add">
+       <string>NetConn_CG3_CG4</string>
+      </void>
       <void method="add">
        <string>NetConn_SampleCellGroup_CellGroup_2</string>
       </void>
@@ -420,6 +707,12 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      <void property="plots">
       <void method="add">
        <string>SamplePlot</string>
+      </void>
+      <void method="add">
+       <string>CG4_v_1</string>
+      </void>
+      <void method="add">
+       <string>CG3_v</string>
       </void>
       <void method="add">
        <string>CellGroup_2_v</string>
@@ -436,6 +729,42 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      </void>
     </object>
    </void>
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.project.SimConfig">
+     <void property="cellGroups">
+      <void method="add">
+       <string>CG4</string>
+      </void>
+      <void method="add">
+       <string>CG3</string>
+      </void>
+     </void>
+     <void property="inputs">
+      <void method="add">
+       <string>Input_0</string>
+      </void>
+     </void>
+     <void property="name">
+      <string>TestSpikeSave</string>
+     </void>
+     <void property="netConns">
+      <void method="add">
+       <string>NetConn_CG3_CG4</string>
+      </void>
+     </void>
+     <void property="plots">
+      <void method="add">
+       <string>CG3_v</string>
+      </void>
+      <void method="add">
+       <string>CG4_v</string>
+      </void>
+     </void>
+     <void property="simDuration">
+      <float>1000.0</float>
+     </void>
+    </object>
+   </void>
   </void>
  </object>
  <object class="ucl.physiol.neuroconstruct.project.SimpleNetworkConnectionsInfo">
@@ -445,9 +774,15 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
     <void method="add">
      <string>NetConn_SampleCellGroup_CellGroup_2</string>
     </void>
+    <void method="add">
+     <string>NetConn_CG3_CG4</string>
+    </void>
    </void>
    <void method="get">
     <string>AP speed</string>
+    <void method="add">
+     <float>3.4028235E38</float>
+    </void>
     <void method="add">
      <float>3.4028235E38</float>
     </void>
@@ -515,9 +850,46 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       </void>
      </object>
     </void>
+    <void method="add">
+     <object class="java.util.Vector">
+      <void method="add">
+       <object class="ucl.physiol.neuroconstruct.project.SynapticProperties">
+        <void property="delayGenerator">
+         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator">
+          <void property="fixedNum">
+           <float>5.0</float>
+          </void>
+          <void property="numberType">
+           <int>11</int>
+          </void>
+         </object>
+        </void>
+        <void property="synapseType">
+         <string>MF_AMPA</string>
+        </void>
+        <void property="threshold">
+         <double>-20.0</double>
+        </void>
+        <void property="weightsGenerator">
+         <object class="ucl.physiol.neuroconstruct.utils.WeightGenerator">
+          <void property="fixedNum">
+           <float>5.0</float>
+          </void>
+          <void property="numberType">
+           <int>11</int>
+          </void>
+         </object>
+        </void>
+       </object>
+      </void>
+     </object>
+    </void>
    </void>
    <void method="get">
     <string>Max/min</string>
+    <void method="add">
+     <object class="ucl.physiol.neuroconstruct.project.MaxMinLength"/>
+    </void>
     <void method="add">
      <object class="ucl.physiol.neuroconstruct.project.MaxMinLength"/>
     </void>
@@ -531,11 +903,21 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       </void>
      </object>
     </void>
+    <void method="add">
+     <object class="ucl.physiol.neuroconstruct.project.SearchPattern">
+      <void property="type">
+       <int>0</int>
+      </void>
+     </object>
+    </void>
    </void>
    <void method="get">
     <string>Source</string>
     <void method="add">
      <string>SampleCellGroup</string>
+    </void>
+    <void method="add">
+     <string>CG3</string>
     </void>
    </void>
    <void method="get">
@@ -552,11 +934,26 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       </void>
      </object>
     </void>
+    <void method="add">
+     <object class="ucl.physiol.neuroconstruct.project.ConnectivityConditions">
+      <void property="allowAutapses">
+       <boolean>false</boolean>
+      </void>
+      <void property="numConnsInitiatingCellGroup">
+       <void property="fixedNum">
+        <float>20.0</float>
+       </void>
+      </void>
+     </object>
+    </void>
    </void>
    <void method="get">
     <string>Target</string>
     <void method="add">
      <string>CellGroup_2</string>
+    </void>
+    <void method="add">
+     <string>CG4</string>
     </void>
    </void>
   </void>

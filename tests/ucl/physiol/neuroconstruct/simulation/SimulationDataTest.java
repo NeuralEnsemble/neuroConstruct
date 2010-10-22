@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Result;
 import static org.junit.Assert.*;
+import ucl.physiol.neuroconstruct.dataset.DataSet;
 import ucl.physiol.neuroconstruct.test.MainTest;
 import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
@@ -34,12 +35,14 @@ public class SimulationDataTest
     @Test
     public void testTextHDF5Load() throws IOException
     {
-        System.out.println("---  testTextLoad...");
+        System.out.println("---  testTextHDF5Load...");
 
         ArrayList<File> files = new ArrayList<File>();
 
         files.add(new File("testProjects/TestHDF5/simulations/TestText"));
         files.add(new File("testProjects/TestHDF5/simulations/TestH5"));
+        files.add(new File("testProjects/TestHDF5/simulations/TestSpikesText"));
+        //files.add(new File("testProjects/TestHDF5/simulations/TestSpikesHDF5"));
 
         SimulationData simulationData1 = null;
         try
@@ -61,14 +64,21 @@ public class SimulationDataTest
 
                 System.out.println("Total number of data stores: "+dss.size());
 
-                assertEquals(dss.size(), 20);
+                int expected = 20;
+                if (f.getName().indexOf("Spike")>0)
+                    expected = 80;
+
+                assertEquals(dss.size(), expected);
 
                 for(int i=0;i<Math.min(20, dss.size());i++)
                 {
                     DataStore ds = dss.get(i);
                     System.out.println(ds);
 
-                    assertEquals(numTimeSteps, ds.getDataPoints().length);
+                    DataSet dataSet = simulationData1.getDataSet(ds.getCellSegRef(), ds.getVariable(), true);
+                    System.out.println(dataSet);
+
+                    assertEquals(numTimeSteps, dataSet.getNumberPoints());
                 }
             }
 

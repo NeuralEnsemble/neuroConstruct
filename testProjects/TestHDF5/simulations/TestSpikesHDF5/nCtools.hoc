@@ -1,0 +1,380 @@
+/*
+ *
+ * A neuroConstruct helper file of some simple utilities for checking the
+ * morphologies of cells loaded into NEURON
+ *
+ * Some of these functions provide GENESIS like output, for comparing models in each simulator
+ * Some functions need a little more tweaking
+ *
+ */
+
+objectvar nil
+
+
+/*
+ * Provides information on the morphology of the current accessed section
+ */
+proc morph() {
+
+    totalarea = 0
+    print "Currently addressed section: ", secname()
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    print "+    Number of 3D info points: ", n3d()
+
+    for i=0,n3d()-1{
+
+		delx = x3d(i)-lastx
+		dely = y3d(i)-lasty
+		delz = z3d(i)-lastz
+		len = sqrt((delx*delx)+(dely*dely)+(delz*delz))
+
+		if (i==0){
+			delx = dely = delz = len = 0
+		}
+
+		 print "+ ", secname(), " ", i, ": (", x3d(i), ", ", y3d(i), ", ", z3d(i),") diam: ", diam3d(i), "  del: (", delx,", ", dely,", ", delz,")  len: ", len
+		
+		lastx = x3d(i)
+		lasty = y3d(i)
+		lastz = z3d(i)
+
+	}
+
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+    print "+    Number of segments (nseg): ", nseg
+
+    for i=0,nseg+1{
+        print "+ ", secname(), " ", i/(nseg+1), " diam: ", diam((i/(nseg+1))), " area: ", area((i/(nseg+1))), " um^2"
+        totalarea = totalarea + area((i/(nseg+1)))
+    }
+    print "+    Total area: ", totalarea
+
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    print ""
+}
+
+
+
+/*
+ * Provides information on the total area, etc.
+ * Useful as a simple test for comparing cells
+ */
+proc areainfo(){
+
+    totalnum = 0
+    totalarea = 0
+
+    forall totalnum = totalnum +1
+
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+    print "+"
+    forall {
+
+        totalsecarea = 0
+
+        for i=0,n3d()-1 print "+ ", secname(), " ", i, ": (", x3d(i), ", ", y3d(i), ", ", z3d(i), ") diam: ", diam3d(i)
+
+        for i=0,nseg+1{
+            //print "+ ", secname(), " ", i/(nseg+1), " diam: ", diam((i/(nseg+1))), " area: ", area((i/(nseg+1))), " um^2"
+            totalsecarea = totalsecarea + area((i/(nseg+1)))
+        }
+        print "+    Total section area in ",secname(), ": ", totalsecarea
+
+        totalarea = totalarea + totalsecarea
+    }
+
+    print "+"
+    print "+    Number of sections: ", totalnum
+    print "+    Total all sections: ", totalarea, " um^2"
+    print "+    Total all sections: ", totalarea/(1000000*1000000), " m^2"
+    print "+    Total all sections: ", totalarea/(10000*10000), " cm^2"
+
+    print "+"
+
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+}
+
+
+/*
+ * Prints voltage of all of the created compartments
+ */
+proc allv(){
+
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+    forall {
+        if (nseg ==1) {
+            print secname(), ": ", v
+        } else {
+            print secname(), " (nseg = ",nseg,"): "
+            for i=0,nseg+1{
+                strdef ind
+                sprint(ind, "    %f: ", (i/(nseg+1)))
+
+                print ind, "\t\t ", v((i/(nseg+1)))
+            }
+    
+        }
+    }
+
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+}
+
+/*
+ * Prints ca conc of all of the created compartments
+ */
+proc allca(){
+
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+    forall {
+        if (ismembrane("ca_ion")) {
+            if (nseg ==1) {
+                print secname(), ": ", cai
+            } else {
+                print secname(), " (nseg = ",nseg,"): "
+                for i=0,nseg+1{
+                    strdef ind
+                    sprint(ind, "    %f: ", (i/(nseg+1)))
+                    print ind, "\t\t ", cai((i/(nseg+1)))
+                }
+        
+            }
+        }
+    }
+
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+}
+
+/*
+ * Prints info on network connections
+ */
+proc allsyns() {
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+    for i=0,allCells.count()-1 {
+
+        allCells.o[i].netInfo()
+
+    }
+
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+}
+
+
+
+/*
+ * Prints info on all cells
+ */
+proc allcells() {
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+    for i=0,allCells.count()-1 {
+        allCells.o[i].toString()
+    }
+
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+}
+
+/*
+ * Provides information on the current section similar to that produced
+ * with "showfield *" in GENESIS
+ */
+proc gen() {
+
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+    totalarea = 0
+    totalRa = 0
+
+
+    print ""
+    print secname()
+    print ""
+    print "Voltage        = ", v
+
+    for i=0,nseg+1{
+
+        thisPoint = i/(nseg+1)
+        nextPoint = (i+1)/(nseg+1)
+        halfWay = thisPoint
+
+
+        areaHere = area(halfWay)
+
+        RaHere = ri(halfWay)
+
+        print "  - Section from ", thisPoint, " to ", nextPoint, ", area: ", areaHere
+
+        print "    Ra to end of this length = ", RaHere*1000, " ohm"
+
+
+        totalarea = totalarea + areaHere
+        if (i>0){
+            totalRa = totalRa + RaHere
+        }
+    }
+
+    print "Total area     = ", totalarea
+    print "Total Ra     = ", totalRa*1000 , " ohm"
+
+
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+}
+
+
+
+
+/*
+ * Provides information on the current section, like an expanded psection()
+ */
+proc secinfo() {
+
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+    totalarea = 0
+    totalRa = 0
+
+
+    print ""
+    print secname()
+    print ""
+    print "Voltage        = ", v
+    print "nseg = ", nseg
+
+
+    for i=1,nseg+1{
+
+        thisPoint = i/(nseg+1)
+        nextPoint = (i+1)/(nseg+1)
+        halfWay = thisPoint
+
+
+        areaHere = area(halfWay)
+
+        RaHere = ri(halfWay)
+
+        print "  - Section from ", thisPoint, ", to ", nextPoint, ", area: ", areaHere
+
+        print "    Ra             = ", RaHere*1000, " ohm"
+
+
+        totalarea = totalarea + areaHere
+        totalRa = totalRa + RaHere
+    }
+
+    print "Total area     = ", totalarea
+    print "Total Ra     = ", totalRa*1000 , " ohm (Note that this doesn't have any physical meaning)"
+
+
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+}
+
+
+objectvar listNcSyn
+objectvar listNcPre
+
+
+proc netConnInfo() {
+    netConInfo()
+}
+
+/*
+ * Helper functions for getting more info on NetConn objects
+ */
+proc netConInfo() {
+
+    
+    print "-- ",hostid,"---------------------------------------------------------"
+    print "-- ",hostid,"-- NetConn: ", $o1
+    if ($o1!=nil) {
+        print "-- ",hostid,"-- Pre: ",$o1.precell(),", Syn: ",$o1.syn,"(",$o1.postcell, ")", ", Active: ",$o1.active(),", Valid: ",$o1.valid()
+        /*
+        // Doesn't seem to work with section in template... 
+        if ($o1.precell()!=nil) { 
+            print "-- ",hostid,"-- From: ", $o1.precell().toString()
+            loc = $o1.preloc()
+            print "-- ",hostid,"-- Section: ", secname(), " - ", loc
+            pop_section()
+
+        }*/
+        if ($o1.postcell()!=nil) { print "-- ",hostid,"-- To: ", $o1.postcell().toString() }
+        print "-- ",hostid,"-- Weight: ",$o1.weight, ", Delay: ",$o1.delay, ", Thresh: ",$o1.threshold
+
+        listNcSyn = $o1.synlist()
+
+        for i=0,listNcSyn.count()-1 {
+            print "-- ",hostid,"-- NetConns sharing syn: ", listNcSyn.o(i)
+        }      
+  
+        listNcPre = $o1.precelllist()
+
+        for i=0,listNcPre.count()-1 {
+            print "-- ",hostid,"-- NetConns sharing pre cell: ", listNcPre.o(i)
+        }
+    }
+
+    print "-- ",hostid,"---------------------------------------------------------"
+}
+
+proc netConInfoParallel() {
+    netConInfo($o1)
+    if ($o1!=nil) {
+        print "-- ",hostid,"----------------------- Src gid: ", $o1.srcgid
+    }
+    print " "
+}
+
+
+// Some utilities for automating testing of generated NEURON
+
+numTestsPassed = 0
+numTestsFailed = 0
+
+
+proc testEquals() {
+
+	if ($1 != $2) { 
+		print "Test failed: ", $1, "  != ", $2
+		numTestsFailed = numTestsFailed + 1
+	} else {
+		numTestsPassed = numTestsPassed + 1
+	}
+
+}
+
+
+objref testResultFile
+
+proc createTestReport() {
+
+    print "------------------------------------------------------------------------------"
+
+    print "    Finished tests. Number of passed tests: ", numTestsPassed, ", number of failed tests: ", numTestsFailed
+
+    {testResultFile = new File()}
+
+    if(numTestsFailed == 0) {
+        testResultFile.wopen("passed")
+    } else {
+        testResultFile.wopen("failed")
+    }
+
+    {testResultFile.printf("numPassed=%g\n", numTestsPassed)}
+    {testResultFile.printf("numFailed=%g\n", numTestsFailed)}
+
+    {testResultFile.close()}
+
+
+    print "------------------------------------------------------------------------------"
+
+}
+

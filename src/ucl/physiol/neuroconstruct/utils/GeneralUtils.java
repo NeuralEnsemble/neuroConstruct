@@ -937,9 +937,9 @@ public class GeneralUtils
             int yesNo = JOptionPane.showConfirmDialog(null, "This will permanently remove all files from directory "
                                                          + directory.getAbsolutePath()+"\nDo you wish to continue?",
                                                          "Confirm delete directory",
-                                                         JOptionPane.YES_NO_CANCEL_OPTION);
+                                                         JOptionPane.YES_NO_OPTION);
 
-            if (yesNo==JOptionPane.NO_OPTION)
+            if (yesNo!=JOptionPane.YES_OPTION)
             {
                 logger.logComment("User cancelled...");
                 return;

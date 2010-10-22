@@ -1,0 +1,165 @@
+/*
+ *
+ * A neuroConstruct helper file to print out details of a single cell's overall state
+ * and a helper function for the current NEURON state
+ *
+ */
+
+objref mt, ms
+mt = new MechanismType(0)
+         
+double totParamVal[32] // max number params
+
+dummyRevPot = 99999
+
+
+proc cellInfoOne() {
+
+    totalDiam = 0 
+    totalNseg = 0 
+    totalL = 0 
+    
+    totalRa = 0
+    totalCm = 0
+    
+    numSections = 0 
+    
+    forsec $s1 {
+    
+        totalDiam = totalDiam + diam
+        totalNseg = totalNseg + nseg
+        totalRa = totalRa + Ra
+        totalCm = totalCm + cm
+        
+        totalL = totalL + L
+        numSections = numSections + 1
+    }
+    
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+    print "+        "
+    print "+        Temperature:        ", celsius
+    print "+        "
+    print "+        Total diam:         ", totalDiam
+    print "+        Total length        ", totalL
+    print "+        Total nseg:         ", totalNseg
+    print "+        Total Ra:           ", totalRa
+    print "+        Total cm:           ", totalCm
+    print "+        "
+    
+    strdef mname
+    strdef pname
+    
+    totEk = 0
+    totko = 0
+    totki = 0
+    numEk = 0
+    totENa = 0
+    totnao = 0
+    totnai = 0
+    numENa = 0
+    totECa = 0
+    totcai = 0
+    totcao = 0
+    numECa = 0
+    
+    forsec $s1 {
+        if (ismembrane("k_ion")) {
+            numEk = numEk +1
+            totEk = totEk + ek
+            totko = totko + ko
+            totki = totki + ki
+        }
+        if (ismembrane("na_ion")) {
+            numENa = numENa +1
+            totENa = totENa + ena
+            totnao = totnao + nao
+            totnai = totnai + nai
+        }
+        if (ismembrane("ca_ion")) {
+            numECa = numECa +1
+            totECa = totECa + eca
+            totcai = totcai + cai
+            totcao = totcao + cao
+        }
+     }
+     
+     if ( numEk != 0 ){
+        print "+        k ion on ", numEk,"secs, ave rev pot:  ", (totEk/numEk), ", int conc: ",(totki/numEk), ", ext conc: ",(totko/numEk)
+     }
+     if ( numENa != 0 ){
+        print "+        na ion on ", numENa,"secs, ave rev pot:  ", (totENa/numENa), ", int conc: ",(totnai/numENa), ", ext conc: ",(totnao/numENa)
+     }
+     if ( numECa != 0 ){
+        print "+        ca ion on ", numECa,"secs, ave rev pot:  ", (totECa/numECa), ", int conc: ",(totcai/numECa), ", ext conc: ",(totcao/numECa)
+     }
+    
+    print "+        "
+    
+    for i=0, mt.count()-1 {
+         mt.select(i)
+         mt.selected(mname)
+         numPresent = 0
+         ms = new MechanismStandard(mname, 1)
+         numParams = ms.count()
+         
+         
+         for j=0, numParams-1 {
+            totParamVal[j] = 0
+         }
+         
+         
+         forsec $s1 {
+            if (ismembrane(mname)) {
+                numPresent = numPresent + 1
+                
+                ms.in() // load with values of current section
+                
+                for j=0, numParams-1 {
+                    ms.name(pname, j)
+                    //print "Param: ", pname, " value: ", ms.get(pname)
+                    
+                    totParamVal[j] = totParamVal[j] + ms.get(pname)
+                }
+            }
+         }
+         
+         if (numPresent>0) {
+            print "+        Mechanism:  ", mname, " present on: ", numPresent, "sections, num params: ", numParams, ""
+            for j=0, numParams-1 {
+                ms.name(pname, j)
+                print "+            - ", pname, " AVE value all sections: ", (totParamVal[j]/numPresent)
+            }
+         }
+    }
+    
+    
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+
+}
+
+
+proc cellInfo() {
+    cellInfoOne("")
+}
+
+
+
+
+proc simInfo() {
+
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    
+    
+    active = cvode.active()
+    
+    
+    print "+    Simulation temperature:       ", celsius
+    print "+    tstop:                        ", tstop
+    print "+    dt:                           ", dt
+    print "+    Variable time step active:    ", active
+    
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+
+}

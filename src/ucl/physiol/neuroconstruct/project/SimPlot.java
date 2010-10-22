@@ -363,7 +363,9 @@ public class SimPlot
 
     public String getSafeVarName()
     {
-        return GeneralUtils.replaceAllTokens(getValuePlotted(), ":", "_");
+        String varName = GeneralUtils.replaceAllTokens(getValuePlotted(), ":", "_");
+
+        return GeneralUtils.replaceAllTokens(varName, "-", "min");
     }
 
 
