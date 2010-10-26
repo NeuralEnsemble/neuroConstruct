@@ -140,11 +140,40 @@ public class MorphMLReaderTest {
 
             System.out.println("Reloaded file and cells are identical");
 
-
-
-
         }
         
+    }
+
+
+    @Test public void testWriteNeuroML2() throws MorphologyException, SAXException, IOException
+    {
+        System.out.println("---  testWriteNeuroML2...");
+
+        Cell cell1 = pm.getCurrentProject().cellManager.getCell("SampleCell_ca");
+
+        cell1.setCellDescription("This is NeuroML2...");
+
+        System.out.println(CellTopologyHelper.printDetails(cell1, pm.getCurrentProject()));
+
+        MorphMLConverter mmlC = new MorphMLConverter();
+
+        File savedNeuroMLDir = ProjectStructure.getNeuroMLDir(projDir);
+
+        int[] units = new int[]{UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, UnitConverter.GENESIS_SI_UNITS};
+
+        for(int unit: units)
+        {
+            MorphMLConverter.setPreferredExportUnits(unit);
+
+            File morphFile = new File(savedNeuroMLDir, "test2_"+unit+".nml");
+
+            MorphMLConverter.saveCellInNeuroMLFormat(cell1, pm.getCurrentProject(), morphFile,
+                NeuroMLConstants.NEUROML_VERSION_2_COMPLETE, NeuroMLConstants.NEUROML_VERSION_2);
+
+            assertTrue(morphFile.exists());
+
+            System.out.println("Saved cell in NeuroML Level 3 file: "+ morphFile.getAbsolutePath());
+        }
     }
     
     

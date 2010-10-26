@@ -165,7 +165,8 @@
            optimize="${optimize}"
            compiler="modern"
            source="1.5"
-           target="1.5">
+           target="1.5"
+           includeantruntime="false">
       <classpath refid="compile.class.path"/>
       <compilerarg value="-Xlint:serial"/> <!-- As cells can be stored as Java serialised objs, essential to have this check-->
     </javac>
@@ -192,7 +193,8 @@
            destdir="${build.dest}"
            debug="${debug}"
            optimize="${optimize}"
-           compiler="modern">
+           compiler="modern"
+           includeantruntime="false">
       <classpath refid="compile.class.path"/>
       <compilerarg value="-Xlint:deprecation"/>
       <compilerarg value="-Xlint:serial"/> <!-- As cells can be stored as Java serialised objs, essential to have this check-->

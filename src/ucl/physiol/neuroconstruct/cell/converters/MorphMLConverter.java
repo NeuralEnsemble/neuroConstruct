@@ -502,7 +502,7 @@ public class MorphMLConverter extends FormatImporter
             
             boolean useCableGroup  = false;
             
-            if (cell.getParameterisedGroups().size()>0)
+            if (cell.getParameterisedGroups().size()>0 && !version.equals(NeuroMLConstants.NEUROML_VERSION_2))
                 useCableGroup  = true;
 
             for (int i = 0; i < allSections.size(); i++)

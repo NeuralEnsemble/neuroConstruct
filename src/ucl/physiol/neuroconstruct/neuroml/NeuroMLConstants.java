@@ -53,7 +53,7 @@ public class NeuroMLConstants
 
     public static String NAMESPACE_URI = "http://morphml.org/neuroml/schema";
 
-    public static String NAMESPACE_URI_VERSION_2 = "http://www.neuroml.org/schema/neuroml";
+    public static String NAMESPACE_URI_VERSION_2 = "http://www.neuroml.org/schema/neuroml2";
 
     public static String DEFAULT_SCHEMA_FILENAME = "NeuroML.xsd";
 
