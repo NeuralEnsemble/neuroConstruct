@@ -1720,7 +1720,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jTextFieldSimulationVLeak.setColumns(6);
         jCheckBoxGenesisSymmetric.setEnabled(false);
         jCheckBoxGenesisSymmetric.setHorizontalAlignment(SwingConstants.CENTER);
-        jCheckBoxGenesisSymmetric.setText("Symmetric compts");
+        jCheckBoxGenesisSymmetric.setText("Symm compts");
         jPanelGenesisSettings.setLayout(borderLayout35);
         //borderLayout35.setHgap(5);
         //borderLayout35.setVgap(5);
@@ -1889,7 +1889,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jCheckBoxGenesisComments.setText("Generate comments");
 
         jCheckBoxGenesisShapePlot.setEnabled(false);
-        jCheckBoxGenesisShapePlot.setText("Show 3D potential plot");
+        jCheckBoxGenesisShapePlot.setText("Show 3D plot");
 
 
         jProgressBarGenerate.setEnabled(false);
