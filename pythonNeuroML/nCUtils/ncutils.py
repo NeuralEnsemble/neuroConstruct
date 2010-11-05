@@ -12,6 +12,8 @@
 
 import sys
 import time
+import os
+import subprocess
 
 from java.io import File
 
@@ -35,6 +37,8 @@ from ucl.physiol.neuroconstruct.simulation import SpikeAnalyser
 
 from ucl.physiol.neuroconstruct.utils.units import UnitConverter
 from ucl.physiol.neuroconstruct.utils import NumberGenerator
+
+from ucl.physiol.neuroconstruct.hpc.mpi import MpiSettings
 
 
 
@@ -262,8 +266,15 @@ class SimulationManager():
 
 
     def updateSimsRunning(self):
+        self.updateSimsRunningR(True)
 
+    def updateSimsRunningR(self, checkRemote):
+
+        remoteChecked = False
         for sim in self.allRunningSims:
+
+                completed = False
+
                 timeFile = File(self.project.getProjectMainDirectory(), "simulations/"+sim+"/time.dat")
                 timeFile2 = File(self.project.getProjectMainDirectory(), "simulations/"+sim+"/time.txt") # for PSICS...
 
@@ -273,16 +284,34 @@ class SimulationManager():
                         self.allFinishedSims.append(sim)
                         self.allRecentlyFinishedSims.append(sim)
                         self.allRunningSims.remove(sim)
+                        completed = True
                 else:
                     self.printver("Checking file: "+timeFile2.getCanonicalPath() +", exists: "+ str(timeFile2.exists()))
                     if (timeFile2.exists()):
                         self.allFinishedSims.append(sim)
                         self.allRecentlyFinishedSims.append(sim)
                         self.allRunningSims.remove(sim)
+                        completed = True
 
-        self.printver("allRecentlyFinishedSims: "+str(self.allRecentlyFinishedSims))
-        self.printver("allFinishedSims: "+str(self.allFinishedSims))
-        self.printver("allRunningSims: "+str(self.allRunningSims))
+                if checkRemote and not completed:
+                    pullFile = File(self.project.getProjectMainDirectory(), "simulations/"+sim+"/pullsim.sh")
+                    checkingRemoteFile = File(self.project.getProjectMainDirectory(), "simulations/"+sim+"/checkingRemote")
+
+                    if pullFile.exists() and not checkingRemoteFile.exists():
+                        pullCmd = ''+pullFile.getAbsolutePath()
+                        self.printver("Going to run: "+pullCmd)
+
+                        subprocess.call(pullCmd,shell=True)
+                        remoteChecked = True
+
+        if remoteChecked:
+            self.printver("Waiting while remote simulations are checked...")
+            time.sleep(30)
+            self.updateSimsRunningR(False)
+        else:
+            self.printver("allRecentlyFinishedSims: "+str(self.allRecentlyFinishedSims))
+            self.printver("allFinishedSims: "+str(self.allFinishedSims))
+            self.printver("allRunningSims: "+str(self.allRunningSims))
 
 
     def doCheckNumberSims(self):
@@ -457,32 +486,46 @@ class SimulationManager():
     
 
     def runMultipleSims(self,
-                        simConfigs =            ["Default Simulation Configuration"],
-                        maxElecLens =           [-1],
-                        simDt =                 None,
-                        simDuration =           None,
-                        neuroConstructSeed =    12345,
-                        simulatorSeed =         11111,
-                        simulators =            ["NEURON", "GENESIS_PHYS"],
-                        runSims =               True,
-                        verboseSims =           True,
-                        runInBackground =       False,
-                        varTimestepNeuron =     None,
-                        varTimestepTolerance =  None,
-                        simRefGlobalSuffix =    '',
-                        simRefGlobalPrefix =    ''):
+                        simConfigs =                ["Default Simulation Configuration"],
+                        maxElecLens =               [-1],
+                        simDt =                     None,
+                        simDuration =               None,
+                        neuroConstructSeed =        12345,
+                        simulatorSeed =             11111,
+                        simulators =                ["NEURON", "GENESIS_PHYS"],
+                        runSims =                   True,
+                        verboseSims =               True,
+                        runInBackground =           False,
+                        varTimestepNeuron =         None,
+                        varTimestepTolerance =      None,
+                        simRefGlobalSuffix =        '',
+                        simRefGlobalPrefix =        '',
+                        mpiConfig =                 MpiSettings.LOCAL_SERIAL,
+                        suggestedRemoteRunTime =    -1):
 
 
         allSimsSetRunning = []
 
         for simConfigName in simConfigs:
 
+          simConfig = self.project.simConfigInfo.getSimConfig(simConfigName)
+
+          self.printver("Going to generate network for Simulation Configuration: "+str(simConfig))
+
+          mpiSettings = MpiSettings()
+          simConfig.setMpiConf(mpiSettings.getMpiConfiguration(mpiConfig))
+
+          print "Parallel configuration: "+ str(simConfig.getMpiConf())
+          
+          if suggestedRemoteRunTime > 0:
+                self.project.neuronFileManager.setSuggestedRemoteRunTime(suggestedRemoteRunTime)
+                self.project.genesisFileManager.setSuggestedRemoteRunTime(suggestedRemoteRunTime)
+
           for maxElecLen in maxElecLens:
 
             if simDt is not None:
                 self.project.simulationParameters.setDt(simDt)
 
-            simConfig = self.project.simConfigInfo.getSimConfig(simConfigName)
 
             if simDuration is not None:
                 simConfig.setSimDuration(simDuration)
@@ -658,7 +701,7 @@ class SimulationManager():
                         self.allRunningSims.append(simRef)
                         allSimsSetRunning.append(simRef)
 
-            self.updateSimsRunning()
+            self.updateSimsRunningR(False)
 
             self.printver("Finished setting running all simulations for: "+simConfigName)
             
@@ -677,12 +720,14 @@ class SimulationManager():
                         analyseStartTime,
                         analyseStopTime,
                         analyseThreshold,
-                        simDt =               None,
-                        simPrefix =           'FI_',
-                        neuroConstructSeed =  1234,
-                        plotAllTraces =       False,
-                        verboseSims =         True,
-                        varTimestepNeuron =   None):
+                        simDt =                   None,
+                        simPrefix =               'FI_',
+                        neuroConstructSeed =      1234,
+                        plotAllTraces =           False,
+                        verboseSims =             True,
+                        varTimestepNeuron =       None,
+                        mpiConfig =               MpiSettings.LOCAL_SERIAL,
+                        suggestedRemoteRunTime =  -1):
                              
         simConfig = self.project.simConfigInfo.getSimConfig(simConfigName)
 
@@ -754,18 +799,21 @@ class SimulationManager():
                 self.printver("Next stim: "+ str(stim))
 
 
-                simRefs = self.runMultipleSims(simConfigs =          [simConfig.getName()],
-                                               simulators =          [simulator],
-                                               simDt =               simDt,
-                                               verboseSims =         verboseSims,
-                                               runInBackground =     True,
-                                               simRefGlobalPrefix =  simPrefix,
-                                               simRefGlobalSuffix =  ("_"+str(float(stimAmp))),
-                                               varTimestepNeuron =   varTimestepNeuron)
+                simRefs = self.runMultipleSims(simConfigs =              [simConfig.getName()],
+                                               simulators =              [simulator],
+                                               simDt =                   simDt,
+                                               verboseSims =             verboseSims,
+                                               runInBackground =         True,
+                                               simRefGlobalPrefix =      simPrefix,
+                                               simRefGlobalSuffix =      ("_"+str(float(stimAmp))),
+                                               varTimestepNeuron =       varTimestepNeuron,
+                                               mpiConfig =               mpiConfig,
+                                               suggestedRemoteRunTime =  suggestedRemoteRunTime)
                                                
                 simRefsVsStims[simRefs[0]] = stimAmp # should be just one simRef returned...
 
                 stimAmp = stimAmp + stimAmpInc
+                if abs(stimAmp) < stimAmpInc/1e9: stimAmp = 0
 
             while (len(self.allRunningSims)>0):
                 self.printver("Waiting for all simulations to finish...")

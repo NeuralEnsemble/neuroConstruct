@@ -155,8 +155,9 @@ public class MpiSettings
         
         simulatorExecutablesML.put(KnownSimulators.NEURON, "/share/apps/neuro/nrn71/x86_64/bin/nrniv");
         simulatorExecutablesML.put(KnownSimulators.PY_NEURON, "/share/apps/neuro/nrn71/x86_64/bin/nrniv -python");
-        
-        simulatorExecutablesML.put(KnownSimulators.MOOSE, "/share/apps/neuro/moose");
+
+        simulatorExecutablesML.put(KnownSimulators.MOOSE, "/share/apps/neuro/moose/moose");
+        simulatorExecutablesML.put(KnownSimulators.GENESIS, "/share/apps/neuro/genesis-2.3/genesis/genesis");
 
 
         simulatorExecutablesCaspur.put(KnownSimulators.NEURON, "/home/sergio/nrn7.0/x86_64/bin/nrniv");
@@ -763,6 +764,41 @@ public class MpiSettings
 
         MpiConfiguration p_ML = new MpiConfiguration(MATLEM_DIRECT);
 
+/*
+        p_ML.getHostList().add(new MpiHost("matthau-5-1", 8, 1));
+        p_ML.getHostList().add(new MpiHost("matthau-5-2", 8, 1));
+        p_ML.getHostList().add(new MpiHost("matthau-5-3", 8, 1));
+        p_ML.getHostList().add(new MpiHost("matthau-5-4", 8, 1));
+        p_ML.getHostList().add(new MpiHost("matthau-5-5", 8, 1));
+        p_ML.getHostList().add(new MpiHost("matthau-5-6", 8, 1));
+        p_ML.getHostList().add(new MpiHost("matthau-5-7", 8, 1));
+        p_ML.getHostList().add(new MpiHost("matthau-5-8", 8, 1));
+        p_ML.getHostList().add(new MpiHost("matthau-5-9", 8, 1));
+        p_ML.getHostList().add(new MpiHost("matthau-5-10", 8, 1));
+
+        p_ML.getHostList().add(new MpiHost("lemmon-5-1", 8, 1));
+        p_ML.getHostList().add(new MpiHost("lemmon-5-2", 8, 1));
+        p_ML.getHostList().add(new MpiHost("lemmon-5-3", 8, 1));*/
+        p_ML.getHostList().add(new MpiHost("lemmon-5-4", 8, 1));
+        p_ML.getHostList().add(new MpiHost("lemmon-5-5", 8, 1));
+        p_ML.getHostList().add(new MpiHost("lemmon-5-6", 8, 1));
+        p_ML.getHostList().add(new MpiHost("lemmon-5-7", 8, 1));
+        p_ML.getHostList().add(new MpiHost("lemmon-5-8", 8, 1));
+        p_ML.getHostList().add(new MpiHost("lemmon-5-9", 8, 1));
+        p_ML.getHostList().add(new MpiHost("lemmon-5-10", 8, 1));
+/*
+        p_ML.getHostList().add(new MpiHost("lemmon-5-11", 8, 1));
+        p_ML.getHostList().add(new MpiHost("lemmon-5-12", 8, 1));
+        p_ML.getHostList().add(new MpiHost("lemmon-5-13", 8, 1));
+        p_ML.getHostList().add(new MpiHost("lemmon-5-14", 8, 1));
+        p_ML.getHostList().add(new MpiHost("lemmon-5-15", 8, 1));
+        p_ML.getHostList().add(new MpiHost("lemmon-5-16", 8, 1));
+        p_ML.getHostList().add(new MpiHost("lemmon-5-17", 8, 1));
+        p_ML.getHostList().add(new MpiHost("lemmon-5-18", 8, 1));
+        p_ML.getHostList().add(new MpiHost("lemmon-5-19", 8, 1));
+        p_ML.getHostList().add(new MpiHost("lemmon-5-20", 8, 1));*/
+
+        /*
         for(int i=1;i<=10;i++)
         {
             p_ML.getHostList().add(new MpiHost(MATTHAU+i, 8, 1));
@@ -771,7 +807,7 @@ public class MpiSettings
         for(int i=1;i<=20;i++)
         {
             p_ML.getHostList().add(new MpiHost(LEMMON+i, 8, 1));
-        }
+        }*/
 
         p_ML.setRemoteLogin(matlemLogin);
         p_ML.setMpiVersion(MpiSettings.OPENMPI_V2);

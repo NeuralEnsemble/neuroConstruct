@@ -746,6 +746,10 @@ public class GeneralUtils
             try
             {
                 currentProcess.waitFor();
+
+                if (currentProcess.getInputStream()!=null) currentProcess.getInputStream().close();
+                if (currentProcess.getOutputStream()!=null) currentProcess.getOutputStream().close();
+                if (currentProcess.getErrorStream()!=null) currentProcess.getErrorStream().close();
             }
             catch (InterruptedException ex1)
             {

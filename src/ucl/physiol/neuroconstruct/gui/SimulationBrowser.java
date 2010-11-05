@@ -20,7 +20,8 @@
 
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  021
+ * 11-1307  USA
  *
  */
 
@@ -214,7 +215,7 @@ public class SimulationBrowser extends JDialog
         jPanelMain.setPreferredSize(mainDim);
         jPanelMain.setMinimumSize(mainDim);
 
-        jButtonDelete.setText("Delete selected simulation(s)");
+        jButtonDelete.setText("Delete selected");
         jButtonDelete.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)

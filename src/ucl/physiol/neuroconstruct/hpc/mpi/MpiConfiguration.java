@@ -27,6 +27,7 @@
 package ucl.physiol.neuroconstruct.hpc.mpi;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
@@ -252,10 +253,18 @@ public class MpiConfiguration
             {
                 exec = workDir+"/run_"+projName+".py";
             }
+            else if(simulator.equals(KnownSimulators.GENESIS) || simulator.equals(KnownSimulators.MOOSE))
+            {
+                exec = workDir+"/"+projName+".g";
+            }
             //script.append("source ~/.nrnpympienv\n");
             //script.append("/opt/sun-ct/bin/mpirun -np "+getTotalNumProcessors()+" "+remoteLogin.getExecutableForSimulator(simulator)+" -mpi "+exec+"\n");
 
-            script.append("/bin/bash -ic '/opt/sun-ct/bin/mpirun "+procInfo+" "+remoteLogin.getExecutableForSimulator(simulator)+" -mpi "+exec+"'\n");
+            String mpiFlag = "";
+
+            if (isNeuron) mpiFlag = "-mpi ";
+
+            script.append("/bin/bash -ic '/opt/sun-ct/bin/mpirun "+procInfo+" "+remoteLogin.getExecutableForSimulator(simulator)+" "+mpiFlag+exec+"'\n");
 
         }
 
@@ -408,12 +417,14 @@ public class MpiConfiguration
         }
         scriptText.append("\n");
         scriptText.append("\n");
+        scriptText.append("rm checkingRemote\n");
+        scriptText.append("\n");
 
         return scriptText.toString();
     }
 
 
-    public String getPullScript(String projName, String simRef, File localDir)
+    public String getPullScript(String projName, String simRef, File localDir) throws IOException
     {
 
         StringBuffer pullScriptText = new StringBuffer();
@@ -432,7 +443,7 @@ public class MpiConfiguration
         pullScriptText.append("projDir="+getProjectSimDir(projName)+"\n");
         pullScriptText.append("simDir=$projDir\"/\"$simRef\n");
         pullScriptText.append("\n");
-        String localPath = localDir.getAbsolutePath();
+        String localPath = localDir.getCanonicalPath();
         if (GeneralUtils.isWindowsBasedPlatform())
         {
             localPath = GeneralUtils.convertToCygwinPath(localPath);
@@ -440,6 +451,21 @@ public class MpiConfiguration
 
         pullScriptText.append("export localDir="+localPath+"\"/\"$simRef\"/\"\n");
         pullScriptText.append("\n");
+
+
+        pullScriptText.append("remoteTimeFile=$simDir\"/time.dat\"\n");
+        pullScriptText.append("localTimeFile=$localDir\"time.dat_temp\"\n");
+
+        pullScriptText.append("scp $remoteUser@$remoteHost:$remoteTimeFile $localTimeFile\n");
+
+        pullScriptText.append("if [ -e $localTimeFile ] \n");
+        pullScriptText.append("then\n");
+
+        pullScriptText.append("\n");
+        pullScriptText.append("rm $localTimeFile\n");
+        pullScriptText.append("\n");
+        pullScriptText.append("checkingRemoteFile=$localDir\"checkingRemote\"\n\n");
+        pullScriptText.append("echo \"Temporary file indicating check is in progress...\">$checkingRemoteFile\n\n");
         pullScriptText.append("\n");
         pullScriptText.append("echo \"Going to get files from dir: \"$simDir\" on \"$remoteHost\" and place them locally on \"$localDir\n");
         pullScriptText.append("\n");
@@ -473,6 +499,14 @@ public class MpiConfiguration
         if (!isUseScp()) pullScriptText.append("rm pullFile.b\n\n");
 
         pullScriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;rm $zipFile\"\n");
+
+        pullScriptText.append("rm $checkingRemoteFile\n\n");
+        
+        pullScriptText.append("else\n");
+
+        pullScriptText.append("echo \"Simulation not finished yet...\"\n");
+
+        pullScriptText.append("fi\n");
 
         return pullScriptText.toString();
     }
