@@ -764,31 +764,31 @@ public class MpiSettings
 
         MpiConfiguration p_ML = new MpiConfiguration(MATLEM_DIRECT);
 
-/*
-        p_ML.getHostList().add(new MpiHost("matthau-5-1", 8, 1));
-        p_ML.getHostList().add(new MpiHost("matthau-5-2", 8, 1));
-        p_ML.getHostList().add(new MpiHost("matthau-5-3", 8, 1));
-        p_ML.getHostList().add(new MpiHost("matthau-5-4", 8, 1));
-        p_ML.getHostList().add(new MpiHost("matthau-5-5", 8, 1));
-        p_ML.getHostList().add(new MpiHost("matthau-5-6", 8, 1));
-        p_ML.getHostList().add(new MpiHost("matthau-5-7", 8, 1));
-        p_ML.getHostList().add(new MpiHost("matthau-5-8", 8, 1));
-        p_ML.getHostList().add(new MpiHost("matthau-5-9", 8, 1));
-        p_ML.getHostList().add(new MpiHost("matthau-5-10", 8, 1));
 
-        p_ML.getHostList().add(new MpiHost("lemmon-5-1", 8, 1));
+        //p_ML.getHostList().add(new MpiHost("matthau-5-1", 8, 1));
+        //p_ML.getHostList().add(new MpiHost("matthau-5-2", 8, 1));
+        //p_ML.getHostList().add(new MpiHost("matthau-5-3", 8, 1));
+        //p_ML.getHostList().add(new MpiHost("matthau-5-4", 8, 1));
+        //p_ML.getHostList().add(new MpiHost("matthau-5-5", 8, 1));
+        //p_ML.getHostList().add(new MpiHost("matthau-5-6", 8, 1));
+        //p_ML.getHostList().add(new MpiHost("matthau-5-7", 8, 1));
+        //p_ML.getHostList().add(new MpiHost("matthau-5-8", 8, 1));
+        //p_ML.getHostList().add(new MpiHost("matthau-5-9", 8, 1));
+        //p_ML.getHostList().add(new MpiHost("matthau-5-10", 8, 1));
+
+        /*p_ML.getHostList().add(new MpiHost("lemmon-5-1", 8, 1));
         p_ML.getHostList().add(new MpiHost("lemmon-5-2", 8, 1));
-        p_ML.getHostList().add(new MpiHost("lemmon-5-3", 8, 1));*/
+        p_ML.getHostList().add(new MpiHost("lemmon-5-3", 8, 1));
         p_ML.getHostList().add(new MpiHost("lemmon-5-4", 8, 1));
-        p_ML.getHostList().add(new MpiHost("lemmon-5-5", 8, 1));
-        p_ML.getHostList().add(new MpiHost("lemmon-5-6", 8, 1));
-        p_ML.getHostList().add(new MpiHost("lemmon-5-7", 8, 1));
-        p_ML.getHostList().add(new MpiHost("lemmon-5-8", 8, 1));
-        p_ML.getHostList().add(new MpiHost("lemmon-5-9", 8, 1));
-        p_ML.getHostList().add(new MpiHost("lemmon-5-10", 8, 1));
-/*
-        p_ML.getHostList().add(new MpiHost("lemmon-5-11", 8, 1));
-        p_ML.getHostList().add(new MpiHost("lemmon-5-12", 8, 1));
+        p_ML.getHostList().add(new MpiHost("lemmon-5-5", 8, 1));*/
+        //p_ML.getHostList().add(new MpiHost("lemmon-5-6", 8, 1));
+        //p_ML.getHostList().add(new MpiHost("lemmon-5-7", 8, 1));
+        //p_ML.getHostList().add(new MpiHost("lemmon-5-8", 8, 1));
+        /*p_ML.getHostList().add(new MpiHost("lemmon-5-9", 8, 1));*/
+        //p_ML.getHostList().add(new MpiHost("lemmon-5-10", 8, 1));
+
+        //p_ML.getHostList().add(new MpiHost("lemmon-5-11", 8, 1));
+        //p_ML.getHostList().add(new MpiHost("lemmon-5-12", 8, 1));*/
         p_ML.getHostList().add(new MpiHost("lemmon-5-13", 8, 1));
         p_ML.getHostList().add(new MpiHost("lemmon-5-14", 8, 1));
         p_ML.getHostList().add(new MpiHost("lemmon-5-15", 8, 1));
@@ -796,7 +796,7 @@ public class MpiSettings
         p_ML.getHostList().add(new MpiHost("lemmon-5-17", 8, 1));
         p_ML.getHostList().add(new MpiHost("lemmon-5-18", 8, 1));
         p_ML.getHostList().add(new MpiHost("lemmon-5-19", 8, 1));
-        p_ML.getHostList().add(new MpiHost("lemmon-5-20", 8, 1));*/
+        p_ML.getHostList().add(new MpiHost("lemmon-5-20", 8, 1));
 
         /*
         for(int i=1;i<=10;i++)
