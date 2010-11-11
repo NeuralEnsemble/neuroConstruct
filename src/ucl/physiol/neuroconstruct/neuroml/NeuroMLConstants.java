@@ -55,9 +55,9 @@ public class NeuroMLConstants
 
     public static String NAMESPACE_URI_VERSION_2 = "http://www.neuroml.org/schema/neuroml2";
 
-    public static String DEFAULT_SCHEMA_FILENAME = "NeuroML.xsd";
+    public static String DEFAULT_SCHEMA_LOCATION = "http://neuroml.svn.sourceforge.net/viewvc/neuroml/trunk/web/NeuroMLFiles/Schemata/v1.8.1/Level3/NeuroML_Level3_v1.8.1.xsd";
 
-    public static String DEFAULT_SCHEMA_FILENAME_VERSION_2 = "http://neuroml.svn.sourceforge.net/viewvc/neuroml/DemoVer2.0/NMLVer2_Test/web/Schema/NeuroML_v2.0.xsd";
+    public static String DEFAULT_SCHEMA_FILENAME_VERSION_2 = "http://neuroml.svn.sourceforge.net/viewvc/neuroml/DemoVer2.0/lems/Schemas/NeuroML2/NeuroML_v2.0.xsd";
 
     public static String NEUROML_ID_V2 = "id";
 

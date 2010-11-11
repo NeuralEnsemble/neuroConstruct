@@ -213,7 +213,7 @@ public class MorphMLConverter extends FormatImporter
 
         e.flush();
 
-        String comment = new String("\n<!-- Note that this XML is specific to the neuroConstruct Java cell object model and not any part of the NeuroML framework -->\n\n");
+        String comment = "\n<!-- Note that this XML is specific to the neuroConstruct Java cell object model and not any part of the NeuroML framework -->\n\n";
 
         fos.write(comment.getBytes());
 
@@ -336,7 +336,9 @@ public class MorphMLConverter extends FormatImporter
         
             String metadataPrefix = MetadataConstants.PREFIX + ":";
 
-            if (version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+            boolean nml2 = version.equals(NeuroMLConstants.NEUROML_VERSION_2);
+
+            if (nml2)
             {
                 mmlPrefix = "";
                 metadataPrefix = "";
@@ -353,7 +355,7 @@ public class MorphMLConverter extends FormatImporter
 
             String nameIdAttr = MorphMLConstants.CELL_NAME_ATTR;
 
-            if (version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+            if (nml2)
             {
                 nameIdAttr = NeuroMLConstants.NEUROML_ID_V2;
             }
@@ -370,7 +372,7 @@ public class MorphMLConverter extends FormatImporter
             
             SimpleXMLElement segmentParentElement;
 
-            if (!version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+            if (!nml2)
             {
                 SimpleXMLElement segsElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.SEGMENTS_ELEMENT);
                 cellElement.addChildElement(segsElement);
@@ -403,7 +405,7 @@ public class MorphMLConverter extends FormatImporter
 
                 if (nextSegment.getParentSegment() != null)
                 {
-                    if (!version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+                    if (!nml2)
                     {
                         segmentElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.SEGMENT_PARENT_ATTR,
                                                                        nextSegment.getParentSegment().getSegmentId() + ""));
@@ -420,13 +422,13 @@ public class MorphMLConverter extends FormatImporter
                                                                        nextSegment.getFractionAlongParent() + ""));
                         }
                         segmentElement.addChildElement(parentElement);
-                        segmentElement.addContent("\n                "); // to make it more readable...
+                        segmentElement.addContent("\n            "); // to make it more readable...
                     }
                 }
 
                 int sectionId = allSections.indexOf(nextSegment.getSection());
 
-                if (!version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+                if (!nml2)
                 {
                     segmentElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.SEGMENT_CABLE_ID_ATTR,
                                                                        sectionId + ""));
@@ -439,7 +441,8 @@ public class MorphMLConverter extends FormatImporter
                                                                    mmlPrefix+
                                                                    MorphMLConstants.SEGMENT_PROXIMAL_ELEMENT));
 
-                    segmentElement.addContent("\n                "); // to make it more readable...
+                    segmentElement.addContent("\n            "); // to make it more readable...
+                    if (!nml2) segmentElement.addContent("    "); // to make it more readable...
                 }
                 segmentElement.addChildElement(getPointElement(nextSegment.getEndPointPosition(),
                                                                nextSegment.getRadius(),
@@ -447,7 +450,8 @@ public class MorphMLConverter extends FormatImporter
                                                                MorphMLConstants.SEGMENT_DISTAL_ELEMENT));
 
 
-                segmentElement.addContent("\n            "); // to make it more readable...
+                segmentElement.addContent("\n        "); // to make it more readable...
+                if (!nml2) segmentElement.addContent("    "); // to make it more readable...
 
                 SimpleXMLElement props = null;
 
@@ -493,7 +497,7 @@ public class MorphMLConverter extends FormatImporter
             SimpleXMLElement cabSegGroupParentElement = null;
 
             
-            if (!version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+            if (!nml2)
             {
                 SimpleXMLElement cablesElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.CABLES_ELEMENT);
                 cellElement.addChildElement(cablesElement);
@@ -502,14 +506,14 @@ public class MorphMLConverter extends FormatImporter
             
             boolean useCableGroup  = false;
             
-            if (cell.getParameterisedGroups().size()>0 && !version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+            if (cell.getParameterisedGroups().size()>0 && !nml2)
                 useCableGroup  = true;
 
             for (int i = 0; i < allSections.size(); i++)
             {
                 Section nextSection =  allSections.get(i);
 
-                if (version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+                if (nml2)
                 {
                     SimpleXMLElement segGroupElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.SEG_GROUP_V2);
 
@@ -610,7 +614,7 @@ public class MorphMLConverter extends FormatImporter
                 }
             }
 
-            if (version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+            if (nml2)
             {
                 Hashtable<String, SimpleXMLElement> segGroupElsVaGroupNames = new Hashtable<String, SimpleXMLElement>();
 
@@ -719,7 +723,7 @@ public class MorphMLConverter extends FormatImporter
                 
             }
 
-            if (!level.equals(NeuroMLConstants.NEUROML_LEVEL_1) && !version.equals(NeuroMLConstants.NEUROML_VERSION_2))
+            if (!level.equals(NeuroMLConstants.NEUROML_LEVEL_1) && !nml2)
             {
                 cellElement.addComment(new SimpleXMLComment("Adding the biophysical parameters"));
 
@@ -1330,7 +1334,7 @@ public class MorphMLConverter extends FormatImporter
 
                 rootElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC,
                                                             MorphMLConstants.NAMESPACE_URI
-                                                            +"  " +MorphMLConstants.DEFAULT_SCHEMA_FILENAME));
+                                                            +"  " +MorphMLConstants.DEFAULT_SCHEMA_LOCATION));
 
             }
             else if (version.equals(NeuroMLConstants.NEUROML_VERSION_1) &&
@@ -1364,7 +1368,7 @@ public class MorphMLConverter extends FormatImporter
 
                 rootElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC,
                                                                 NeuroMLConstants.NAMESPACE_URI
-                                                                + "  " + NeuroMLConstants.DEFAULT_SCHEMA_FILENAME));
+                                                                + "  " + NeuroMLConstants.DEFAULT_SCHEMA_LOCATION));
 
             }
             else if (version.equals(NeuroMLConstants.NEUROML_VERSION_2) &&
@@ -1532,19 +1536,10 @@ public class MorphMLConverter extends FormatImporter
 
     public static void main(String[] args)
     {
-        //File f = new File("");
-
-        //C:\neuroConstruct\projects\Simple\generatedMorphML\CellType_25.morph.xml
-        //File neuroMLFile = new File("C:\\neuroConstruct\\morphml\\JavaXMLToMorphML\\XmlMorphReader.morphml.xml");
-
-        //File neuroMLFile = new File("C:\\neuroConstruct\\projects\\DentateGyrus_copy\\generatedMorphML\\GranuleCell.morph.xml");
-        //File javaXMLFile = new File("C:\\neuroConstruct\\projects\\Project_1\\CellType_1.java.xml");
-
-
         try
         {
             //File f = new File("nCexamples/Ex1_Simple/Ex1_Simple.neuro.xml");
-            File f = new File("../copyNcModels/Inhomogen/Inhomogen.neuro.xml");
+            File f = new File("nCexamples/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx");
            Project testProj = Project.loadProject(f,new ProjectEventListener()
            {
                public void tableDataModelUpdated(String tableModelName)
@@ -1560,22 +1555,13 @@ public class MorphMLConverter extends FormatImporter
 
            Cell cell = testProj.cellManager.getAllCells().firstElement();
 
-           cell.getFirstSomaSegment().setComment("This is the cell root...");
+            System.out.println("Found a cell: "+ cell);
 
-           cell.getAllSegments().elementAt(4).setFractionAlongParent(0.5f);
-           
-           
-            IonProperties na = new IonProperties("na", 55);
-            IonProperties k = new IonProperties("k", -77);
-            IonProperties ca = new IonProperties("ca", 100, 1000);
+           //cell.getFirstSomaSegment().setComment("This is the cell root...");
 
-           cell.associateGroupWithIonProperties(Section.ALL, na);
-           cell.associateGroupWithIonProperties(Section.DENDRITIC_GROUP, k);
-           cell.associateGroupWithIonProperties(Section.ALL, ca);
-
-           File oosFile = new File("../temp/cell.oos");
-           File jXmlFile = new File("../temp/cell.jxml");
-           File mmlFile = new File("../temp/cell.xml");
+           File nml_l1File = new File("../temp/cell_l1.xml");
+           File nml_l2File = new File("../temp/cell_l2.xml");
+           File nml2File = new File("../temp/cell2.xml");
 
            /*
 
@@ -1586,12 +1572,16 @@ public class MorphMLConverter extends FormatImporter
            MorphMLConverter.saveCellInNeuroMLFormat(cell, neuroMLFile, NeuroMLConstants.NEUROML_LEVEL_2);
            */
 
-          MorphMLConverter.saveCellInJavaObjFormat(cell, oosFile);
-          MorphMLConverter.saveCellInJavaXMLFormat(cell, jXmlFile);
-          MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  mmlFile, NeuroMLConstants.NEUROML_LEVEL_2, NeuroMLConstants.NEUROML_VERSION_2);
+          MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  nml_l1File, NeuroMLConstants.NEUROML_LEVEL_1, NeuroMLConstants.NEUROML_VERSION_1);
+          System.out.println("Saved MML file as: " + nml_l1File.getCanonicalPath());
+
+          MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  nml_l2File, NeuroMLConstants.NEUROML_LEVEL_2, NeuroMLConstants.NEUROML_VERSION_1);
+          System.out.println("Saved MML file as: " + nml_l2File.getCanonicalPath());
+          
+          MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  nml2File, NeuroMLConstants.NEUROML_VERSION_2_COMPLETE, NeuroMLConstants.NEUROML_VERSION_2);
+          System.out.println("Saved MML file as: " + nml2File.getCanonicalPath());
 
 
-          System.out.println("Saved MML file as: " + mmlFile.getCanonicalPath());
 
         }
         catch (Exception ex)

@@ -1620,10 +1620,12 @@ public class ProjectManager implements GenerationReport
 
         ArrayList<String> cgNames = activeProject.cellGroupsInfo.getAllCellGroupNames();
 
-        if (cgNames.size()==0)
+        if (cgNames.isEmpty())
         {
             report.addTaggedElement("No Cell Groups in project", "font color=\"red\"");
         }
+        
+        HashMap<Region, Integer> regTotals = new HashMap<Region, Integer>();
 
         for (String cellGroup: cgNames)
         {
@@ -1636,32 +1638,54 @@ public class ProjectManager implements GenerationReport
             String hexString = "#"+Integer.toHexString( colour.getRGB() & 0xFFFFFF ).toUpperCase();
 
             float regionVol = (float)region.getVolume();
-
-            report.addTaggedElement("<b>Cell Group: "+cellGroup+"</b>", "font color=\""+hexString+"\"");
-            report.addTaggedElement("Number of cells of type: "+cellType+" in Cell Group: "+num, "p");
-            report.addTaggedElement("Region: "+region+"<br>"
-                                    +"Region volume: "+ regionVol + " \u03bcm\u00b3 ("+(float)(region.getVolume()*1e-9)+" mm\u00b3)", "p");
+            
+            if (!regTotals.containsKey(region))
+            {
+                regTotals.put(region, 0);
+            }
 
             if (num>0)
             {
+
+                report.addTaggedElement("<b>Cell Group: "+cellGroup+"</b>", "font color=\""+hexString+"\"");
+                report.addTaggedElement("Number of cells of type: "+cellType+" in Cell Group: "+num, "p");
+                regTotals.put(region, regTotals.get(region)+num);
+                
+                report.addTaggedElement("Region: <b>"+region+"</b><br>"
+                                        +"Region volume: "+ regionVol + " \u03bcm\u00b3 ("+(float)(region.getVolume()*1e-9)+" mm\u00b3)", "p");
+
                 float numPerMm3 = (float) (num / (region.getVolume() * 1e-9f));
 
-                report.addTaggedElement("Number of cells per mm\u00b3 in this region: " + numPerMm3, "p");
+                report.addTaggedElement("Number of cells of this type per mm\u00b3 in this region: <b>" + numPerMm3+"</b>", "p");
 
                 float cellVol = CellTopologyHelper.getVolume(cell, false);
 
-                report.addTaggedElement("Volume of single cell: " + cellVol + " \u03bcm\u00b3<br>"
-                                        + num + " cells fill " + (cellVol * num * 100 / regionVol) + "% of volume of region", "p");
+                report.addTaggedElement("Volume of single cell: <b>" + cellVol + " \u03bcm\u00b3</b><br><b>"
+                                        + num + "</b> cells fill <b>" + (cellVol * num * 100 / regionVol) + "%</b> of volume of region", "p");
 
                 float somaVol = CellTopologyHelper.getVolume(cell, true);
 
-                report.addTaggedElement("Total volume of soma of cell: " + somaVol + " \u03bcm\u00b3<br>"
-                                        + num + " cell somas fill " + (somaVol * num * 100 / regionVol) + "% of volume of region",
+                report.addTaggedElement("Total volume of soma of cell: <b>" + somaVol + " \u03bcm\u00b3</b><br><b>"
+                                        + num + "</b> cell somas fill <b>" + (somaVol * num * 100 / regionVol) + "%</b> of volume of region",
                                         "p");
+                
+                report.addBreak();
             }
-            report.addBreak();
 
         }
+        report.addBreak();
+        report.addBreak();
+/*
+        for(Region region: regTotals.keySet())
+        {
+
+            report.addTaggedElement("Region: <b>"+region+"</b><br>"
+                                    +"Region volume: "+ (float)region.getVolume()+ " \u03bcm\u00b3 ("+(float)(region.getVolume()*1e-9)+" mm\u00b3)", "p");
+
+            float numPerMm3 = (float) (regTotals.get(region) / (region.getVolume() * 1e-9f));
+
+            report.addTaggedElement("Total number of cells per mm\u00b3 in this region: <b>" + numPerMm3+"</b>", "p");
+        }*/
 
         if (html) return report.toHtmlString();
         return report.toString();
@@ -2721,8 +2745,10 @@ public class ProjectManager implements GenerationReport
     
     public static void main(String[] args) throws ProjectFileParsingException, InterruptedException, IOException
     {
-        
-        Project proj = Project.loadProject(new File("nCexamples/Ex1_Simple/Ex1_Simple.ncx"), null);
+
+        //Project proj = Project.loadProject(new File("nCexamples/Ex1_Simple/Ex1_Simple.ncx"), null);
+        Project proj = Project.loadProject(new File("nCexamples/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx"), null);
+
         File neuroMLDir = ProjectStructure.getNeuroMLDir(proj.getProjectMainDirectory());
 
 

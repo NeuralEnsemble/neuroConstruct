@@ -44,7 +44,7 @@ public class MorphMLConstants
 
     public static String PREFIX = "mml";
 
-    public static String DEFAULT_SCHEMA_FILENAME = "MorphML.xsd";
+    public static String DEFAULT_SCHEMA_LOCATION = "http://neuroml.svn.sourceforge.net/viewvc/neuroml/trunk/web/NeuroMLFiles/Schemata/v1.8.1/Level1/MorphML_v1.8.1.xsd";
 
 
     public static String CELLS_ELEMENT = "cells";

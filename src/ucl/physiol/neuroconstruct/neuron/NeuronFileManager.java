@@ -4519,6 +4519,10 @@ public class NeuronFileManager
             }
         }
 
+        //Temp for laptop
+                announceDate = false;
+
+
         if (simConfig.getMpiConf().isParallelNet() && simConfig.getMpiConf().getMpiVersion().equals(MpiSettings.OPENMPI_V2))
         {
             //Unresolved error on OpenMPI on Matthau/Lemmon...
