@@ -100,6 +100,8 @@ public class CellPositionGenerator extends Thread
         //ArrayList<String> cellGroupNamesUnordered = simConfig.getCellGroups();
         LinkedList<String> cellGroupNames = simConfig.getPrioritizedCellGroups(project);
 
+        logger.logComment("getPrioritizedCellGroups: "+ cellGroupNames);
+
         project.generatedCellPositions.reset();
 
         for (int l = 0; l < cellGroupNames.size(); l++)
@@ -129,6 +131,21 @@ public class CellPositionGenerator extends Thread
                 }
 
                 CellPackingAdapter adapter = project.cellGroupsInfo.getCellPackingAdapter(nextCellGroup);
+
+                if (adapter==null)
+                {
+                    String error = "Error finding cell packing adaptor!\nAsked for one for "+nextCellGroup+"\n"
+                        + "Have:\n";
+                    for(String cg: project.cellGroupsInfo.getAllCellGroupNames())
+                    {
+                        error = error +cg+": "+ project.cellGroupsInfo.getCellPackingAdapter(cg)+"\n";
+                    }
+                    error = error+project.getProjectFileName()+ "\n";
+                    error = error+project.cellGroupsInfo.getAllCellGroupNames()+ "\n";
+                    error = error+project.cellManager.getAllCells()+ "\n";
+                    GuiUtils.showErrorMessage(logger, error, null, null);
+                    return;
+                }
 
                 adapter.reset();
 

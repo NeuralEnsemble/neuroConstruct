@@ -53,8 +53,6 @@ public class SimConfigInfo
     public static final String DEFAULT_SIM_CONFIG_DESC = "This is the default configuration of the Cell Groups, "
         +"stimulations, plots, etc for this project";
 
-    private static SimConfig DEFAULT_SIM_CONFIG = new SimConfig(DEFAULT_SIM_CONFIG_NAME,
-                                                             DEFAULT_SIM_CONFIG_DESC);
 
     private ArrayList<SimConfig> simConfigs = new ArrayList<SimConfig>();
 
@@ -94,7 +92,9 @@ public class SimConfigInfo
         if (!defaultPresent)
         {
             logger.logComment("---- Adding the default sim config!!");
-            add(DEFAULT_SIM_CONFIG);
+            SimConfig def = new SimConfig(DEFAULT_SIM_CONFIG_NAME,
+                                                             DEFAULT_SIM_CONFIG_DESC);
+            add(def);
         }
     }
 

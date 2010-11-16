@@ -49,13 +49,14 @@ public class OneDimRegSpacingPackingAdapterTest {
 
     @Before
     public void setUp() {
+        System.out.println("---------------   setUp() OneDimRegSpacingPackingAdapterTest");
     }
 
     /**
      * Test of getNumberCells method, of class OneDimRegSpacingPackingAdapter.
      */
     @Test
-    public void testGenerating() throws NamingException, InterruptedException, CellPackingException
+    public void testGenerating() throws NamingException, InterruptedException, CellPackingException, NoProjectLoadedException
     {
         System.out.println("---  testGetNumberCells()");
         
@@ -63,15 +64,17 @@ public class OneDimRegSpacingPackingAdapterTest {
         
         String projName = "TestingFrameworkProject";
     
-        File projDir = new File("../temp");// won't be saved...
+        File projDir = new File(MainTest.getTempProjectDirectory()+"/"+projName);// won't be saved...
     
         Project proj = Project.createNewProject(projDir.getAbsolutePath(), projName, null);
+
+        System.out.println("Created proj: "+proj.getProjectFullFileName());
         
         pm.setCurrentProject(proj);
         
         String regionName = "DummyRegion";
         String cellType = "Dummy";
-        String cellGroup = "DummyGroup";
+        String cellGroup = "ADummyGroup";
         
         int numInGroup = 17;
          
@@ -83,16 +86,25 @@ public class OneDimRegSpacingPackingAdapterTest {
         proj.cellManager.addCellType(dummyCell);
         
         OneDimRegSpacingPackingAdapter oneDim = new OneDimRegSpacingPackingAdapter();
+
+        System.out.println("Packing: "+ oneDim);
         
         oneDim.setParameter(OneDimRegSpacingPackingAdapter.NUMBER_PARAM_NAME, numInGroup);
         oneDim.setParameter(OneDimRegSpacingPackingAdapter.EDGE_POLICY_PARAM_NAME, OneDimRegSpacingPackingAdapter.EDGE_POLICY_PARAM_EXTEND);
         
         proj.cellGroupsInfo.addRow(cellGroup, cellType, regionName, Color.red, oneDim, 1);
+
+
+        System.out.println("CGs: "+ proj.cellGroupsInfo.getAllCellGroupNames());
         
         proj.simConfigInfo.getDefaultSimConfig().addCellGroup(cellGroup);
         
         
         oneDim.setParameter(OneDimRegSpacingPackingAdapter.DIMENSION_PARAM_NAME, OneDimRegSpacingPackingAdapter.DIMENSION_PARAM_X);
+
+        System.out.println("Packing 2: "+ oneDim);
+
+        System.out.println("CGs: "+ proj.cellGroupsInfo.getAllCellGroupNames());
         
         generate(pm);      
         
@@ -101,7 +113,8 @@ public class OneDimRegSpacingPackingAdapterTest {
         assertEquals(box.getHighestXValue(), proj.generatedCellPositions.getOneCellPosition(cellGroup, proj.generatedCellPositions.getNumberInAllCellGroups()-1).x,0);
         
         oneDim.setParameter(OneDimRegSpacingPackingAdapter.DIMENSION_PARAM_NAME, OneDimRegSpacingPackingAdapter.DIMENSION_PARAM_Y);
-        
+
+        System.out.println("Packing 3: "+ oneDim);
         generate(pm);      
         
         assertEquals(proj.generatedCellPositions.getNumberInAllCellGroups(), numInGroup);

@@ -61,8 +61,13 @@ public class MetadataConstants
 
     public static String PROPS_ELEMENT = "properties";
     public static String PROP_ELEMENT = "property";
+
     public static String PROP_TAG_ELEMENT = "tag";
     public static String PROP_VALUE_ELEMENT = "value";
+
+
+    public static String PROP_TAG_ATTR = "tag";
+    public static String PROP_VALUE_ATTR = "value";
 
 
     public static String GROUP_ELEMENT = "group";
@@ -75,7 +80,12 @@ public class MetadataConstants
         SimpleXMLElement propElement = new SimpleXMLElement(metadataPrefix+ MetadataConstants.PROP_ELEMENT);
         propertiesElement.addChildElement(propElement);
 
-        propElement.addContent("\n"+indent+"    "); // to make it more readable...
+        propElement.addAttribute(PROP_TAG_ATTR, tag);
+        propElement.addAttribute(PROP_VALUE_ATTR, value);
+
+        //propElement.addContent("\n"+indent+"    "); // to make it more readable...
+
+        /*
         SimpleXMLElement tagElement = new SimpleXMLElement(metadataPrefix + MetadataConstants.PROP_TAG_ELEMENT);
         tagElement.addContent(tag);
         propElement.addChildElement(tagElement);
@@ -84,7 +94,8 @@ public class MetadataConstants
 
         SimpleXMLElement valElement = new SimpleXMLElement(metadataPrefix + MetadataConstants.PROP_VALUE_ELEMENT);
         valElement.addContent(value);
-        propElement.addChildElement(valElement);
+        propElement.addChildElement(valElement);*/
+        
         propElement.addContent(indent+"\n"+indent); // to make it more readable...
 
     }

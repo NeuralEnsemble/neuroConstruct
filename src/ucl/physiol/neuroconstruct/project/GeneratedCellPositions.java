@@ -20,12 +20,13 @@
 
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USAval
  *
  */
 
 package ucl.physiol.neuroconstruct.project;
 
+import java.awt.Color;
 import java.io.*;
 import java.util.*;
 import java.util.ArrayList;
@@ -522,6 +523,20 @@ public class GeneratedCellPositions
                 //////populationElement.addChildElement(new SimpleXMLElement(NetworkMLConstants.CELLTYPE_ELEMENT, type));
 
                 populationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.CELLTYPE_ATTR, type));
+
+
+                SimpleXMLElement props = new SimpleXMLElement(MetadataConstants.PREFIX + ":" +
+                                                              MorphMLConstants.PROPS_ELEMENT);
+
+
+                populationElement.addChildElement(props);
+
+                Color c = project.cellGroupsInfo.getColourOfCellGroup(cellGroup);
+
+                MetadataConstants.addProperty(props,
+                                          "color",
+                                          (c.getRed()/256.0)+" "+ (c.getGreen()/256.0)+" "+(c.getBlue()/256.0),
+                                          "    ");
 
                 SimpleXMLElement instancesElement = new SimpleXMLElement(NetworkMLConstants.INSTANCES_ELEMENT);
 
