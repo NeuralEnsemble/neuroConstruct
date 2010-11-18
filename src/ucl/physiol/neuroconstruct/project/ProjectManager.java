@@ -56,6 +56,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
 import ucl.physiol.neuroconstruct.utils.xml.*;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
+import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.*;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.*;
 import ucl.physiol.neuroconstruct.neuron.NeuronException;
 import ucl.physiol.neuroconstruct.project.segmentchoice.*;
@@ -632,7 +633,7 @@ public class ProjectManager implements GenerationReport
          try
         {
                     
-            StringBuffer notes = new StringBuffer("\nComplete cell model generated with project: "
+            StringBuilder notes = new StringBuilder("\nComplete cell model generated with project: "
                                 +project.getProjectName() + " saved with neuroConstruct v"+
                                 GeneralProperties.getVersionNumber()+" on: "+ GeneralUtils.getCurrentTimeAsNiceString() +", "
                                 + GeneralUtils.getCurrentDateAsNiceString()+"\n\n");
@@ -688,7 +689,7 @@ public class ProjectManager implements GenerationReport
             SimpleXMLElement morphElement = new SimpleXMLElement("cells");
                             
             Cell cell = project.cellManager.getCell(cellName);
-            SimpleXMLElement element = MorphMLConverter.getCellXMLElement(cell, project, NeuroMLConstants.NEUROML_LEVEL_3, NeuroMLConstants.NEUROML_VERSION_1);
+            SimpleXMLElement element = MorphMLConverter.getCellXMLElement(cell, project, NeuroMLLevel.NEUROML_LEVEL_3, NeuroMLVersion.NEUROML_VERSION_1);
             morphElement.addChildElement(element);
                 
             rootElement.addChildElement(morphElement);
@@ -809,18 +810,25 @@ public class ProjectManager implements GenerationReport
         try
         {
                     
-            StringBuffer notes = new StringBuffer("\nComplete network structure generated with project: "
+            StringBuilder notes = new StringBuilder("\nComplete network structure generated with project: "
                                 +project.getProjectName() + " saved with neuroConstruct v"+
                                 GeneralProperties.getVersionNumber()+" on: "+ GeneralUtils.getCurrentTimeAsNiceString() +", "
                                 + GeneralUtils.getCurrentDateAsNiceString()+"\n\n");
             
             Iterator<String> cellGroups = project.generatedCellPositions.getNamesGeneratedCellGroups();
-            ArrayList<String> cellGroupsNames = new ArrayList<String>();
+            ArrayList<String> cellGroupNamesToInc = new ArrayList<String>();
+
+            if (project.generatedCellPositions.getNumberInAllCellGroups()==0)
+            {
+                // No net positions, so generate all cells in project
+
+                cellGroupNamesToInc = project.cellGroupsInfo.getAllCellGroupNames();
+            }
             
             while (cellGroups.hasNext())
             {
                 String cg = cellGroups.next();
-                cellGroupsNames.add(cg);
+                cellGroupNamesToInc.add(cg);
                 int numHere = project.generatedCellPositions.getNumberInCellGroup(cg);
                 if (numHere>0)
                 notes.append("Cell Group: "+cg+" contains "+numHere+" cells\n");
@@ -833,11 +841,11 @@ public class ProjectManager implements GenerationReport
             
             while (netConns.hasNext())
             {
-            String mc = netConns.next();
-            int numHere = project.generatedNetworkConnections.getSynapticConnections(mc).size();
-            if (numHere>0)
-            notes.append("Network connection: "+mc+" contains "+numHere+" individual synaptic connections\n");
-            
+                String mc = netConns.next();
+                int numHere = project.generatedNetworkConnections.getSynapticConnections(mc).size();
+                if (numHere>0)
+                notes.append("Network connection: "+mc+" contains "+numHere+" individual synaptic connections\n");
+
             }
             notes.append("\n");
             
@@ -967,16 +975,18 @@ public class ProjectManager implements GenerationReport
             
             int i = -1;
             ArrayList<String> ct = new ArrayList<String>();
-            for (int j = 0; j < cellGroupsNames.size(); j++) 
+
+            for (int j = 0; j < cellGroupNamesToInc.size(); j++)
             {
-                String cg = cellGroupsNames.get(j);
+                String cg = cellGroupNamesToInc.get(j);
+
                 if (!ct.contains(project.cellGroupsInfo.getCellType(cg)))
                 {
                     i++;
                     ct.add(project.cellGroupsInfo.getCellType(cg));
                     Cell cell = project.cellManager.getCell(ct.get(i));
                     SimpleXMLElement element = MorphMLConverter.getCellXMLElement(cell, project, 
-                        NeuroMLConstants.NEUROML_LEVEL_3, NeuroMLConstants.NEUROML_VERSION_1);
+                        NeuroMLLevel.NEUROML_LEVEL_3, NeuroMLVersion.NEUROML_VERSION_1);
                     cellsElement.addChildElement(element);                    
                 }
                 
@@ -1059,9 +1069,9 @@ public class ProjectManager implements GenerationReport
                 
                 //add channels that are used in the generated cell groups
                 i=0;
-                while ((i<cellGroupsNames.size())&&(addChan==false))
+                while ((i<cellGroupNamesToInc.size())&&(addChan==false))
                 {
-                    Cell cell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(cellGroupsNames.get(i)));
+                    Cell cell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(cellGroupNamesToInc.get(i)));
                     CellMechanism cm = project.cellMechanismInfo.getCellMechanism(m);
 
                     if ( cell.getAllChanMechNames(true).contains(m)
@@ -1200,47 +1210,51 @@ public class ProjectManager implements GenerationReport
 
             rootElement.addContent("\n\n");
             
-            
-    //The cell populations present in the network
-            SimpleXMLElement el = project.generatedCellPositions.getNetworkMLElement();
-            el.addAttribute(new SimpleXMLAttribute("xmlns", NetworkMLConstants.NAMESPACE_URI));
-            rootElement.addChildElement(el);
 
-            rootElement.addContent("\n\n");
-            
-    //The projections between populations in the network 
+            if (project.generatedCellPositions.getNumberInAllCellGroups()>0)
+            {
+        //The cell populations present in the network
+
+                SimpleXMLElement el = project.generatedCellPositions.getNetworkMLElement();
+                el.addAttribute(new SimpleXMLAttribute("xmlns", NetworkMLConstants.NAMESPACE_URI));
+                rootElement.addChildElement(el);
+
+                rootElement.addContent("\n\n");
+
+        //The projections between populations in the network
 
 
-            SimpleXMLEntity netEntity = project.generatedNetworkConnections.getNetworkMLElement(preferredUnits, extraComments);
-            
-            if (netEntity instanceof SimpleXMLElement)
-            {
-                SimpleXMLElement el2 = (SimpleXMLElement)netEntity;
-                el2.addAttribute(new SimpleXMLAttribute("xmlns", NetworkMLConstants.NAMESPACE_URI));
-                rootElement.addChildElement(el2);
-            }
-            else if (netEntity instanceof SimpleXMLComment)
-            {
-                rootElement.addComment((SimpleXMLComment)netEntity);
+                SimpleXMLEntity netEntity = project.generatedNetworkConnections.getNetworkMLElement(preferredUnits, extraComments);
+
+                if (netEntity instanceof SimpleXMLElement)
+                {
+                    SimpleXMLElement el2 = (SimpleXMLElement)netEntity;
+                    el2.addAttribute(new SimpleXMLAttribute("xmlns", NetworkMLConstants.NAMESPACE_URI));
+                    rootElement.addChildElement(el2);
+                }
+                else if (netEntity instanceof SimpleXMLComment)
+                {
+                    rootElement.addComment((SimpleXMLComment)netEntity);
+                }
+
+                rootElement.addContent("\n\n");
+
+         //The electrical inputs to the cells in the network
+
+                SimpleXMLEntity elecInputEntity = project.generatedElecInputs.getNetworkMLElement(preferredUnits);
+
+                if (elecInputEntity instanceof SimpleXMLElement)
+                {
+                    SimpleXMLElement el3 = (SimpleXMLElement)elecInputEntity;
+                    el3.addAttribute(new SimpleXMLAttribute("xmlns", NetworkMLConstants.NAMESPACE_URI));
+                    rootElement.addChildElement(el3);
+                }
+                else if (elecInputEntity instanceof SimpleXMLComment)
+                {
+                    rootElement.addComment((SimpleXMLComment)elecInputEntity);
+                }
             }
 
-            rootElement.addContent("\n\n");
-            
-     //The electrical inputs to the cells in the network
-            
-            SimpleXMLEntity elecInputEntity = project.generatedElecInputs.getNetworkMLElement(preferredUnits);
-            
-            if (elecInputEntity instanceof SimpleXMLElement)
-            {
-                SimpleXMLElement el3 = (SimpleXMLElement)elecInputEntity;
-                el3.addAttribute(new SimpleXMLAttribute("xmlns", NetworkMLConstants.NAMESPACE_URI));
-                rootElement.addChildElement(el3);
-            }
-            else if (elecInputEntity instanceof SimpleXMLComment)
-            {
-                rootElement.addComment((SimpleXMLComment)elecInputEntity);
-            }
-            
             rootElement.addContent("\n\n");
             
             
@@ -1397,7 +1411,7 @@ public class ProjectManager implements GenerationReport
         try
         {
                     
-            StringBuffer notes = new StringBuffer("\nNetwork structure for project: "
+            StringBuilder notes = new StringBuilder("\nNetwork structure for project: "
                                 +project.getProjectName() + " saved with neuroConstruct v"+
                                 GeneralProperties.getVersionNumber()+" on: "+ GeneralUtils.getCurrentTimeAsNiceString() +", "
                                 + GeneralUtils.getCurrentDateAsNiceString()+"\n\n");
@@ -1734,7 +1748,7 @@ public class ProjectManager implements GenerationReport
         ArrayList cellNames = activeProject.cellManager.getAllCellTypeNames();
         cellNames = (ArrayList)GeneralUtils.reorderAlphabetically(cellNames, true);
 
-        if (cellNames.size()==0 && !ignoreNoCells)
+        if (cellNames.isEmpty() && !ignoreNoCells)
         {
             overallValidity = ValidityStatus.VALIDATION_ERROR;
             report.addTaggedElement("No Cell Types in project", "font color=\""+ValidityStatus.VALIDATION_COLOUR_ERROR+"\"");

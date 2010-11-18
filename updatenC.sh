@@ -6,7 +6,10 @@
 
 export NML_EX_DIR=templates/xmlTemplates/Examples
 export NML_SC_DIR=templates/xmlTemplates/Schemata
+
 export SBML2NEU_SC_DIR=templates/SBML2NEURON
+
+export LEMS_DIR=lems
 
 export NC_EXAMPLES=nCexamples
 export NC_MODELS=nCmodels
@@ -32,6 +35,13 @@ fi
 echo "Updating the SBML2NEURON files from the NeuroML Sourceforge repository..."
 svn update $SBML2NEU_SC_DIR
 
+
+if [ ! -d $LEMS_DIR ]; then
+    svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/DemoVer2.0/lems $LEMS_DIR
+fi
+
+echo "Updating the LEMS/NeuroML 2 files from the NeuroML Sourceforge repository..."
+svn update $LEMS_DIR
 
 
 echo Updating the main neuroConstruct code...

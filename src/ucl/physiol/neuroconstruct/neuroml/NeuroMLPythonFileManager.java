@@ -33,8 +33,10 @@ import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.cell.converters.*;
+import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
+import ucl.physiol.neuroconstruct.utils.XMLUtils;
 
 
 /**
@@ -108,6 +110,16 @@ public class NeuroMLPythonFileManager
                                   boolean singleL3File,
                                   boolean annotations)
     {
+        generateNeuroMLFiles(simConf, NeuroMLVersion.NEUROML_VERSION_1, mc, seed, singleL3File, annotations);
+    }
+
+    public void generateNeuroMLFiles(SimConfig simConf,
+                                     NeuroMLVersion version,
+                                     MorphCompartmentalisation mc,
+                                     int seed,
+                                     boolean singleL3File,
+                                     boolean annotations)
+    {
         logger.logComment("Starting generation of the files...");
 
         this.removeAllPreviousGeneratedFiles();
@@ -156,218 +168,129 @@ public class NeuroMLPythonFileManager
         else
         {
 
-        ArrayList<Cell> generatedCells = null;
-        
-        if (project.generatedCellPositions.getAllPositionRecords().size()==0)
-            simConf = null; // signifies no particular sim conf, so gen all cells, channels, etc.
-        
-        try
-        {
-            generatedCells = MorphMLConverter.saveAllCellsInNeuroML(project, 
-                                                   mc,
-                                                   NeuroMLConstants.NEUROML_LEVEL_3,
-                                                   NeuroMLConstants.NEUROML_VERSION_1,
-                                                   simConf,
-                                                   neuroMLDir);
-        }
-        catch (MorphologyException ex1)
-        {
-            GuiUtils.showErrorMessage(logger, "Problem saving cells in NeuroML format" , ex1, null);
-            return;
-        }
-        
-        ArrayList<String> cellMechFilesHandled = new ArrayList<String>();
-        
-        for(Cell nextCell: generatedCells)
-        {
-            ArrayList<String> cellMechs = new ArrayList<String>();
-            ArrayList<String> chanMechNames = nextCell.getAllChanMechNames(true);
-            
-            for(String cm: chanMechNames)
+            ArrayList<Cell> generatedCells = null;
+
+            if (project.generatedCellPositions.getAllPositionRecords().isEmpty())
+                simConf = null; // signifies no particular sim conf, so gen all cells, channels, etc.
+
+            try
             {
-                cellMechs.add(cm);
+                NeuroMLLevel level = NeuroMLLevel.NEUROML_LEVEL_3;
+
+                if (version.isVersion2())
+                    level = NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL;
+
+                generatedCells = MorphMLConverter.saveAllCellsInNeuroML(project,
+                                                       mc,
+                                                       level,
+                                                       version,
+                                                       simConf,
+                                                       neuroMLDir);
             }
-            ArrayList<String> syns = nextCell.getAllAllowedSynapseTypes();
-            
-            cellMechs.addAll(syns);
-            
-            logger.logComment("cellMechs: "+cellMechs);
-            
-            for(String cellMech: cellMechs)
+            catch (MorphologyException ex1)
             {
-                if (!cellMechFilesHandled.contains(cellMech))
+                GuiUtils.showErrorMessage(logger, "Problem saving cells in NeuroML format" , ex1, null);
+                return;
+            }
+
+            ArrayList<String> cellMechFilesHandled = new ArrayList<String>();
+
+            for(Cell nextCell: generatedCells)
+            {
+                ArrayList<String> cellMechs = new ArrayList<String>();
+                ArrayList<String> chanMechNames = nextCell.getAllChanMechNames(true);
+
+                for(String cm: chanMechNames)
                 {
-                    CellMechanism cm = project.cellMechanismInfo.getCellMechanism(cellMech);
-                    
-                    if (cm== null)
+                    cellMechs.add(cm);
+                }
+                ArrayList<String> syns = nextCell.getAllAllowedSynapseTypes();
+
+                cellMechs.addAll(syns);
+
+                logger.logComment("cellMechs: "+cellMechs);
+
+                for(String cellMech: cellMechs)
+                {
+                    if (!cellMechFilesHandled.contains(cellMech))
                     {
-                        //??
+                        CellMechanism cm = project.cellMechanismInfo.getCellMechanism(cellMech);
+
+                        if (cm== null)
+                        {
+                            //??
+                        }
+                        else if (!(cm instanceof ChannelMLCellMechanism))
+                        {
+                            File warnFile = new File(neuroMLDir, cm.getInstanceName()+".warning");
+                            try
+                            {
+                                FileWriter fw = new FileWriter(warnFile);
+                                fw.write("Warning: cell mechanism "+cm.getInstanceName()+" is not implemented in ChannelML in the project: "+project.getProjectFileName()+", and so cannot be used in the Python/NeuroML test simulation.");
+
+                                fw.close();
+
+                            }
+                            catch(IOException ioe)
+                            {
+                                GuiUtils.showErrorMessage(logger, "Problem writing to file: " +warnFile, ioe, null);
+                            }
+                        }
+                        else
+                        {
+                            ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism)cm;
+
+                            File origCmlFile = cmlCm.getXMLFile(project);
+
+                            File newCmlFile = new File(neuroMLDir, cm.getInstanceName()+".xml");
+
+                            if (cmlCm.getMechanismModel().indexOf("ChannelML")>=0 )
+                            {
+                                File xslChannelML2NeuroML2 = ProjectStructure.getChannelml2Neuroml2File();
+
+                                XMLUtils.transform(origCmlFile, xslChannelML2NeuroML2, neuroMLDir, ".nml");
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    File copied = GeneralUtils.copyFileIntoDir(origCmlFile, neuroMLDir);
+
+                                    copied.renameTo(newCmlFile);
+
+                                }
+                                catch(IOException ioe)
+                                {
+                                    GuiUtils.showErrorMessage(logger, "Problem writing to file: " +cmlCm, ioe, null);
+                                }
+                            }
+                        }
+                        cellMechFilesHandled.add(cellMech);
                     }
-                    else if (!(cm instanceof ChannelMLCellMechanism))
-                    {
-                        File warnFile = new File(neuroMLDir, cm.getInstanceName()+".warning");
-                        try
-                        {
-                            FileWriter fw = new FileWriter(warnFile);
-                            fw.write("Warning: cell mechanism "+cm.getInstanceName()+" is not implemented in ChannelML in the project: "+project.getProjectFileName()+", and so cannot be used in the Python/NeuroML test simulation.");
-                            
-                            fw.close();
-                            
-                        }
-                        catch(IOException ioe)
-                        {
-                            GuiUtils.showErrorMessage(logger, "Problem writing to file: " +warnFile, ioe, null);
-                        }
-                    }
-                    else
-                    {
-                        ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism)cm;
-                        
-                        File cmlFile = new File(neuroMLDir, cm.getInstanceName()+".xml");
-                        try
-                        {
-                            File copied = GeneralUtils.copyFileIntoDir(cmlCm.getXMLFile(project), neuroMLDir);
-                            
-                            copied.renameTo(cmlFile);
-                            
-                        }
-                        catch(IOException ioe)
-                        {
-                            GuiUtils.showErrorMessage(logger, "Problem writing to file: " +cmlCm, ioe, null);
-                        }
-                    }
-                    cellMechFilesHandled.add(cellMech);
                 }
             }
-        }
-        
 
-        File networkFile = new File(neuroMLDir, NetworkMLConstants.DEFAULT_NETWORKML_FILENAME_XML);
-        
-        if (project.generatedCellPositions.getAllPositionRecords().size()>0)
-        {
-            try
+
+            File networkFile = new File(neuroMLDir, NetworkMLConstants.DEFAULT_NETWORKML_FILENAME_XML);
+
+            if (project.generatedCellPositions.getAllPositionRecords().size()>0)
             {
+                try
+                {
 
-                ProjectManager.saveNetworkStructureXML(project,
-                                             networkFile,
-                                             false,
-                                             false,
-                                             simConf.getName(),
-                                             NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+                    ProjectManager.saveNetworkStructureXML(project,
+                                                 networkFile,
+                                                 false,
+                                                 false,
+                                                 simConf.getName(),
+                                                 NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+                }
+                catch (NeuroMLException ex1)
+                {
+                    GuiUtils.showErrorMessage(logger, "Problem saving network in NeuroML", ex1, null);
+                }
             }
-            catch (NeuroMLException ex1)
-            {
-                GuiUtils.showErrorMessage(logger, "Problem saving network in NeuroML", ex1, null);
-            }
-        }
 
-
-        
-        /*
-
-        // Reinitialise the neuroConstruct rand num gen with the neuroConstruct seed
-
-        addComments = project.genesisSettings.isGenerateComments();
-        
-      
-
-        FileWriter fw = null;
-
-        if (!(project.genesisSettings.getUnitSystemToUse()==UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS
-              || project.genesisSettings.getUnitSystemToUse()==UnitConverter.GENESIS_SI_UNITS))
-            throw new
-                GenesisException("The units specified for generation of the GENESIS code are not recognised: "
-                                 +project.genesisSettings.getUnitSystemToUse());
-
-
-        try
-        {
-            generateCellMappings();
-
-            File dirForGenesisFiles = ProjectStructure.getGenesisCodeDir(project.getProjectMainDirectory());
-
-
-            mainGenesisFile = new File(dirForGenesisFiles, project.getProjectName() + ".g");
-
-            logger.logComment("generating: "+ mainGenesisFile);
-            fw = new FileWriter(mainGenesisFile);
-
-            fw.write(getGenesisFileHeader());
-
-            fw.write(generateWelcomeComments());
-
-            fw.write(generateRandomise());
-
-            fw.write(generateGlobals());
-
-            fw.write(generateIncludes());
-
-            fw.write(printEnv());
-
-            fw.write(generateChanMechIncludes());
-
-            fw.write(generateSynMechIncludes());
-
-            fw.write(generateScriptBlock(ScriptLocation.BEFORE_CELL_CREATION));
-
-            fw.write(generateCellGroups());
-
-            fw.write(generateNetworkConnections());
-
-            fw.write(generateStimulations());
-
-            //fw.write(generateAfterCreationText());
-
-            fw.write(generateNumIntegMethod());
-
-            fw.write(generateRunSettings());
-
-            fw.write(generatePlots());
-
-            fw.write(generate3Dplot());
-
-
-            fw.write(generateRunControls());
-
-            //fw.write(generateCellParamControl());
-
-            fw.write(generateGenesisSimulationRecording());
-
-
-            fw.write(generateScriptBlock(ScriptLocation.AFTER_SIMULATION));
-
-            fw.flush();
-            fw.close();
-
-
-            File utilsFile = new File(ProjectStructure.getGenesisUtilsFile());
-            GeneralUtils.copyFileIntoDir(utilsFile, dirForGenesisFiles);
-
-        }
-        catch (IOException ex)
-        {
-            logger.logError("Problem: ",ex);
-            try
-            {
-                fw.close();
-            }
-            catch (IOException ex1)
-            {
-            }
-            throw new GenesisException("Error creating file: " + mainGenesisFile.getAbsolutePath()
-                                      + "\n"+ ex.getMessage());
-
-        }
-
-        this.mainFileGenerated = true;
-
-        long generationTimeEnd = System.currentTimeMillis();
-        genTime = (float) (generationTimeEnd - generationTimeStart) / 1000f;
-
-        logger.logComment("... Created Main GENESIS file: " + mainGenesisFile
-                +" in "+genTime+" seconds. ");
-        */
         }
 
     }
@@ -685,7 +608,7 @@ public class NeuroMLPythonFileManager
 
     public static String getFileHeader()
     {
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
         response.append("//  ******************************************************\n");
         response.append("// \n");
         response.append("//     File generated by: neuroConstruct v"+GeneralProperties.getVersionNumber()+"\n");

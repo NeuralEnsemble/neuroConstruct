@@ -38,12 +38,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Result;
 import static org.junit.Assert.*;
+import org.junit.BeforeClass;
 import org.xml.sax.SAXException;
 import ucl.physiol.neuroconstruct.test.MainTest;
 import ucl.physiol.neuroconstruct.cell.Cell;
 import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants;
+import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.*;
 import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
 
 /**
@@ -52,12 +55,20 @@ import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
  */
 public class MorphMLReaderTest {
 
-    String projName = "TestMorphs";
-    File projDir = new File("testProjects/"+ projName);
+    static String projName = "TestMorphs";
+    static File projDir = new File("testProjects/"+ projName);
         
     ProjectManager pm = null;
     
     public MorphMLReaderTest() {
+    }
+
+    @BeforeClass
+    public static void cleanUp()
+    {
+        System.out.println("---------------   cleanUp() MorphMLReaderTest");
+        File generateDir = new File(projDir, "generatedNeuroML");
+        GeneralUtils.removeAllFiles(generateDir, false, false, true);
     }
 
     @Before
@@ -74,7 +85,7 @@ public class MorphMLReaderTest {
             pm.loadProject(projFile);
         
             System.out.println("Proj status: "+ pm.getCurrentProject().getProjectStatusAsString());
-            
+
             
         } 
         catch (ProjectFileParsingException ex) 
@@ -96,16 +107,17 @@ public class MorphMLReaderTest {
         MorphMLConverter mmlC = new MorphMLConverter();
         
         File savedNeuroMLDir = ProjectStructure.getNeuroMLDir(projDir);
-        File morphFile = new File(savedNeuroMLDir, "test.mml");
 
         int[] units = new int[]{UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, UnitConverter.GENESIS_SI_UNITS};
 
         for(int unit: units)
         {
+            File morphFile = new File(savedNeuroMLDir, "TestNeuroMLv1__"+unit+".xml");
+
             MorphMLConverter.setPreferredExportUnits(unit);
             
             MorphMLConverter.saveCellInNeuroMLFormat(cell1, pm.getCurrentProject(), morphFile,
-                NeuroMLConstants.NEUROML_LEVEL_3, NeuroMLConstants.NEUROML_VERSION_1);
+                NeuroMLLevel.NEUROML_LEVEL_3, NeuroMLVersion.NEUROML_VERSION_1);
 
             assertTrue(morphFile.exists());
 
@@ -126,7 +138,7 @@ public class MorphMLReaderTest {
 
             validator.validate(xmlFileSource);
 
-            System.out.println("File is valid!");
+            System.out.println("File is valid NeuroML v1.x!");
 
             Cell cell2 = mmlC.loadFromMorphologyFile(morphFile, cell1.getInstanceName());
             String compare = CellTopologyHelper.compare(cell1, cell2, false);
@@ -149,7 +161,7 @@ public class MorphMLReaderTest {
     {
         System.out.println("---  testWriteNeuroML2...");
 
-        Cell cell1 = pm.getCurrentProject().cellManager.getCell("SampleCell_ca");
+        Cell cell1 = pm.getCurrentProject().cellManager.getCell("SimpleHH");
 
         cell1.setCellDescription("This is NeuroML2...");
 
@@ -165,14 +177,32 @@ public class MorphMLReaderTest {
         {
             MorphMLConverter.setPreferredExportUnits(unit);
 
-            File morphFile = new File(savedNeuroMLDir, "test2_"+unit+".nml");
+            File morphFile = new File(savedNeuroMLDir, "TestNeuroMLv2__"+unit+".xml");
 
             MorphMLConverter.saveCellInNeuroMLFormat(cell1, pm.getCurrentProject(), morphFile,
-                NeuroMLConstants.NEUROML_VERSION_2_COMPLETE, NeuroMLConstants.NEUROML_VERSION_2);
+                NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2);
 
             assertTrue(morphFile.exists());
 
             System.out.println("Saved cell in NeuroML Level 3 file: "+ morphFile.getAbsolutePath());
+
+
+            File schemaFile = GeneralProperties.getNeuroMLv2SchemaFile();
+
+            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+            System.out.println("Found the XSD file: " + schemaFile.getAbsolutePath());
+
+            Source schemaFileSource = new StreamSource(schemaFile);
+            Schema schema = factory.newSchema(schemaFileSource);
+
+            Validator validator = schema.newValidator();
+
+            Source xmlFileSource = new StreamSource(morphFile);
+
+            validator.validate(xmlFileSource);
+
+            System.out.println("File is valid NeuroML v2.x!");
         }
     }
     

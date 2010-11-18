@@ -226,7 +226,7 @@ public class Units
     {
         if (subUnitList == null) return baseSymbol;
 
-        StringBuffer compositeSymbol = new StringBuffer();
+        StringBuilder compositeSymbol = new StringBuilder();
 
         for (int i = 0; i < subUnitList.length; i++)
         {
@@ -250,7 +250,7 @@ public class Units
     {
         if (subUnitList == null) return baseSymbol;
 
-        StringBuffer compositeSymbol = new StringBuffer();
+        StringBuilder compositeSymbol = new StringBuilder();
 
         for (int i = 0; i < subUnitList.length; i++)
         {
@@ -263,6 +263,32 @@ public class Units
         }
 
         return compositeSymbol.toString().trim();
+    }
+
+    /**
+     * Needed for NeuroML 2
+     */
+    public String getNeuroML2Symbol()
+    {
+        if (subUnitList == null) return baseSymbol;
+
+        StringBuilder compositeSymbol = new StringBuilder();
+
+        for (int i = 0; i < subUnitList.length; i++)
+        {
+            if (subUnitList[i].getExponent()>0) compositeSymbol.append(subUnitList[i].getNeuroML2Symbol() + "_");
+        }
+
+        for (int i = 0; i < subUnitList.length; i++)
+        {
+            if (subUnitList[i].getExponent()<0) compositeSymbol.append(subUnitList[i].getNeuroML2Symbol() + "_");
+        }
+        
+        String sym = compositeSymbol.toString();
+        if (sym.endsWith("_"))
+            sym = sym.substring(0, sym.length()-1);
+
+        return sym.trim();
     }
 
 
@@ -394,7 +420,17 @@ public class Units
 
     public static void main(String[] args)
     {
-        
+        Units specCap = UnitConverter.specificCapacitanceUnits[UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS];
+
+        System.out.println("Spec cap: "+ specCap.getBaseSymbol());
+        System.out.println("Spec cap: "+ specCap.getSafeSymbol());
+        System.out.println("Spec cap: "+ specCap.getNeuroML2Symbol());
+
+        Units condDens = UnitConverter.conductanceDensityUnits[UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS];
+
+        System.out.println("Cond dens: "+ condDens.getBaseSymbol());
+        System.out.println("Cond dens: "+ condDens.getSafeSymbol());
+        System.out.println("Cond dens: "+ condDens.getNeuroML2Symbol());
     }
 
 }

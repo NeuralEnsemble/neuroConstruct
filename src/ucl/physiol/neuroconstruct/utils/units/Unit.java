@@ -98,8 +98,24 @@ public class Unit
     protected String getSafeSymbol()
     {
         String symbol = prefix.getSafeSymbol() + units.getSafeSymbol();
-        if (units.equals(Units.KILOGRAM) && prefix!=Prefix.NONE) symbol = prefix.getSymbol() + "g??";
+        if (units.equals(Units.KILOGRAM) && prefix!=Prefix.NONE)
+            symbol = prefix.getSymbol() + "g??";
         else if (exponent!=1) symbol = symbol + "^" + exponent;
+        else if (exponent==0) symbol = "";
+
+        return symbol;
+
+    }
+
+    protected String getNeuroML2Symbol()
+    {
+        String symbol = prefix.getSafeSymbol() + units.getSafeSymbol();
+
+        if (units.equals(Units.KILOGRAM) && prefix!=Prefix.NONE)
+            symbol = prefix.getSymbol() + "g??";
+
+        else if (exponent>1) symbol = symbol+ exponent;
+        else if (exponent<0) symbol = "per_"+symbol+ exponent*-1;
         else if (exponent==0) symbol = "";
 
         return symbol;

@@ -730,6 +730,14 @@ public class GeneralProperties
         return new File("templates/xmlTemplates/Schemata/"+getNeuroMLVersionString()
                 +"/Level3/NeuroML_Level3_"+getNeuroMLVersionString()+".xsd");
     }
+    /**
+     * Gets the top level NeuroML v2 schema, to which every NeuroML v2 file should comply
+     *
+     */
+    public static File getNeuroMLv2SchemaFile()
+    {
+        return new File("lems/Schemas/NeuroML2/NeuroML_v2alpha.xsd");
+    }
 
 
 

@@ -60,7 +60,8 @@ public class XMLUtils
                                     String extension)
     {
         logger.logComment("Going to transform " + origXmlFileOrDir
-                          + " into " + targetDir);
+                          + " into dir " + targetDir+" using: "+ xslFile, true);
+        
 
         if (!origXmlFileOrDir.exists())
         {

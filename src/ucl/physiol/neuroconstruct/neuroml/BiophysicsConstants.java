@@ -54,6 +54,7 @@ public class BiophysicsConstants
 
     public static String MECHANISM_ELEMENT = "mechanism";
 
+
     public static String PARAMETER_ELEMENT = "parameter";
     public static String VAR_PARAMETER_ELEMENT = "variable_parameter";
 
@@ -95,12 +96,15 @@ public class BiophysicsConstants
 
     public static String SPECIFIC_CAP_ELEMENT_pre_v1_7_1 = "specificCapacitance";
     public static String SPECIFIC_CAP_ELEMENT = "spec_capacitance";
+    public static String SPECIFIC_CAP_ELEMENT_v2 = "specificCapacitance";
     
     public static String SPECIFIC_AX_RES_ELEMENT_pre_v1_7_1 = "specificAxialResistance";
     public static String SPECIFIC_AX_RES_ELEMENT = "spec_axial_resistance";
+    public static String SPECIFIC_AX_RES_ELEMENT_V2 = "resistivity";
 
     public static String INITIAL_POT_ELEMENT_pre_v1_7_1 = "initialMembPotential";
     public static String INITIAL_POT_ELEMENT = "init_memb_potential";
+    public static String INITIAL_POT_ELEMENT_V2 = "initMembPotential";
 
 
     public static String ION_PROPS_ELEMENT = "ion_props";
@@ -111,6 +115,23 @@ public class BiophysicsConstants
     public static String MECHANISM_VALUE_ATTR = "value";
 
     public static String GROUP_ELEMENT = "group";
+
+    public static String GROUP_ATTR_V2 = "sectionGroup";
+
+    public static String VALUE_ATTR_V2 = "value";
+
+
+
+    public static String BIOPHYS_PROPS_ELEMENT_V2 = "biophysicalProperties";
+
+    public static String MEMB_PROPS_ELEMENT_V2 = "membraneProperties";
+    public static String INTRACELL_PROPS_ELEMENT_V2 = "intracellularProperties";
+
+
+    public static String CHAN_DENSITY_ELEMENT_V2 = "channelDensity";
+
+    public static String ION_CHAN_ATTR_V2 = "ionChannel";
+    public static String COND_DENS_ATTR_V2 = "condDensity";
 
     private BiophysicsConstants()
     {

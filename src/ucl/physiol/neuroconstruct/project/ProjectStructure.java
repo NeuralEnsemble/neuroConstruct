@@ -54,9 +54,9 @@ public class ProjectStructure
     
     private static final String updateCheckUrl = "http://www.neuroConstruct.org/nCinfo/form.php?myversion=";
 
-    private static final String oldProjectFileExtension = new String(".neuro.xml");
+    private static final String oldProjectFileExtension = ".neuro.xml";
     
-    private static final String newProjectFileExtension = new String(".ncx");
+    private static final String newProjectFileExtension = ".ncx";
 
     private static final String morphFileExtension = new String(".morph.xml");
 
@@ -211,6 +211,10 @@ public class ProjectStructure
         + System.getProperty("file.separator")+"SBML2NEURON";
 
     private static String sbmlNeuronMappingFile = "SBML2NEURON.py";
+
+    private static String channelml2Neuroml2Dir = "lems/ChannelMLConvert";
+
+    private static String channelml2Neuroml2File = "ChannelML2NeuroML2.xsl";
 
 
     private static String matlabOctaveDir = "matlabOctave";
@@ -441,6 +445,10 @@ public class ProjectStructure
     public static File getSbml2NeuronFile()
     {
         return new File(sbmlNeuronMappingDir,sbmlNeuronMappingFile);
+    }
+    public static File getChannelml2Neuroml2File()
+    {
+        return new File(channelml2Neuroml2Dir,channelml2Neuroml2File);
     }
 
     public static File getRelNotesFile()
