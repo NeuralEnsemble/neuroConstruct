@@ -43,7 +43,6 @@ import org.xml.sax.SAXException;
 import ucl.physiol.neuroconstruct.test.MainTest;
 import ucl.physiol.neuroconstruct.cell.Cell;
 import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
-import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants;
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.GeneralUtils;
@@ -55,7 +54,7 @@ import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
  */
 public class MorphMLReaderTest {
 
-    static String projName = "TestMorphs";
+    static final String projName = "TestMorphs";
     static File projDir = new File("testProjects/"+ projName);
         
     ProjectManager pm = null;
@@ -99,6 +98,7 @@ public class MorphMLReaderTest {
         System.out.println("---  testWriteAndRead...");
         
         Cell cell1 = pm.getCurrentProject().cellManager.getCell("SampleCell_ca");
+        //Cell cell1 = pm.getCurrentProject().cellManager.getCell("SimpleHH");
         
         cell1.setCellDescription("This is\na test\n...");
 

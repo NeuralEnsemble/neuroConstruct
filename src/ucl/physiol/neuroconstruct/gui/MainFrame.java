@@ -598,6 +598,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     JButton jButtonNeuroML1Export = new JButton();
     JButton jButtonNeuroML2Export = new JButton();
+
+    JButton jButtonNeuroML2Lems = new JButton();
     
     JRadioButton jRadioButtonNeuroMLLevel1 = new JRadioButton();
     JRadioButton jRadioButtonNeuroMLLevel2 = new JRadioButton();
@@ -1270,50 +1272,29 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             public void actionPerformed(ActionEvent e)
             {
 
-                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_2);
+                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_2, false);
                     //jButtonNeuroMLExport_actionPerformed(e, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2);
-               
-            }
-        });
-        
-        
-/*
-        jButtonNeuroMLExportLevel2.setEnabled(false);
-        jButtonNeuroMLExportLevel2.setText("Export all Cell Types to Level 2 NeuroML files "
-                                           +"(anatomy & Cell Mechanism placement)");
-        jButtonNeuroMLExportLevel2.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                jButtonNeuroMLExport_actionPerformed(e, NeuroMLConstants.NeuroMLLevel_2);
+
             }
         });
 
+        jButtonNeuroML2Lems.setEnabled(false);
+        jButtonNeuroML2Lems.setText("Generate NeuroML 2 & run with LEMS");
 
-        jButtonNeuroMLExportCellLevel3.setEnabled(false);
-        jButtonNeuroMLExportCellLevel3.setText("Export all Cell Types to Level 3 NeuroML files "
-                                           +"(anatomy & channels & network aspects)");
+        jButtonNeuroML2Lems.setToolTipText("<html>...</html>");
 
-        jButtonNeuroMLExportCellLevel3.addActionListener(new java.awt.event.ActionListener()
+        jButtonNeuroML2Lems.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
-                jButtonNeuroMLExport_actionPerformed(e, NeuroMLConstants.NeuroMLLevel_3);
+
+                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_2, true);
+                    //jButtonNeuroMLExport_actionPerformed(e, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2);
+
             }
-        });*/
+        });
+        
 
-
-        /*
-    jButtonNeuroMLExportNetLevel3.setText("Export cell placement and network connections "
-                                         +"to Level 3 NeuroML file");
-
-        jButtonNeuroMLExportNetLevel3.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                jButtonNeuroMLExportNet_actionPerformed(e);
-            }
-        });*/
 
 
         jLabelNeuroMLMain.setHorizontalAlignment(SwingConstants.CENTER);
@@ -1373,7 +1354,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             public void actionPerformed(ActionEvent e)
             {
-                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_1);
+                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_1, false);
             }
         });
 
@@ -2215,6 +2196,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
 
         nmlV2.add(jButtonNeuroML2Export);
+        nmlV2.add(jButtonNeuroML2Lems);
 
 
         JPanel nmlN = new JPanel(new BorderLayout());
@@ -2281,6 +2263,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelNeuroMLViewFiles.add(jButtonNeuroMLViewFormatted);
 
         nmlS.add(jPanelNeuroMLViewFiles, BorderLayout.CENTER);
+
+        JPanel spacer = new JPanel();
+        //spacer.setBackground(Color.red);
+        spacer.setPreferredSize(new Dimension(100,200));
+        
+        nmlS.add(spacer, BorderLayout.SOUTH);
 
         jPanelNeuroMLMain.add(nmlS, BorderLayout.SOUTH);
         
@@ -7925,7 +7913,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         if (cellGroupsUsingIt.size() > 0)
         {
-            StringBuffer errorString = new StringBuffer("The Cell Group");
+            StringBuilder errorString = new StringBuilder("The Cell Group");
             if (cellGroupsUsingIt.size() > 1) errorString.append("s: ");
             else errorString.append(": ");
 
@@ -9937,6 +9925,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
        {
            jButtonNeuroML1Export.setEnabled(false);
            jButtonNeuroML2Export.setEnabled(false);
+           jButtonNeuroML2Lems.setEnabled(false);
            //jButtonNeuroMLExportLevel2.setEnabled(false);
            //jButtonNeuroMLExportCellLevel3.setEnabled(false);
            //jButtonNeuroMLExportNetLevel3.setEnabled(false);
@@ -9951,6 +9940,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
        {
            jButtonNeuroML1Export.setEnabled(true);
            jButtonNeuroML2Export.setEnabled(true);
+           jButtonNeuroML2Lems.setEnabled(true);
            //jButtonNeuroMLExportLevel2.setEnabled(true);
            //jButtonNeuroMLExportCellLevel3.setEnabled(true);
          //  jButtonNeuroMLExportNetLevel3.setEnabled(true);
@@ -12428,7 +12418,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     {
         logger.logComment("jButtonNetworkFullInfo pressed...");
         
-        StringBuffer netInfo = new StringBuffer();
+        StringBuilder netInfo = new StringBuilder();
         
         netInfo.append(projManager.getCurrentProject().generatedCellPositions.toLongString(true));
         netInfo.append(projManager.getCurrentProject().generatedNetworkConnections.details(true));
@@ -13379,7 +13369,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     }
     
-    void jButtonNeuroMLGenSim_actionPerformed(ActionEvent e, NeuroMLVersion version)
+    void jButtonNeuroMLGenSim_actionPerformed(ActionEvent e, NeuroMLVersion version, boolean runWithLems)
     {
 
         if (projManager.getCurrentProject() == null)
@@ -13421,13 +13411,22 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             genSingleFile = false;
             nCannots = false;
         }
-        
-        projManager.getCurrentProject().neuromlPythonFileManager.generateNeuroMLFiles(this.getSelectedSimConfig(),
+
+        try
+        {
+            projManager.getCurrentProject().neuromlFileManager.generateNeuroMLFiles(this.getSelectedSimConfig(),
                                                                                       version,
+                                                                                      runWithLems,
                                                                                       mc,
                                                                                       1234,
                                                                                       genSingleFile,
                                                                                       nCannots);
+        }
+        catch(IOException ex)
+        {
+            GuiUtils.showErrorMessage(logger , "Error when generating NeuroML", ex, this);
+            return;
+        }
 
         jButtonNeuroMLGenSim.setText(origText);
         
@@ -15860,7 +15859,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         //int selIndex = jComboBoxCellTypes.getSelectedIndex();
         Cell cell = (Cell)jComboBoxCellTypes.getSelectedItem();
 
-        String oldDecs = new String(cell.getCellDescription());
+        String oldDecs = cell.getCellDescription();
 
         SimpleTextInput sti = SimpleTextInput.showString(cell.getCellDescription(),
                                                          "Description of Cell: " + cell.getInstanceName(),
@@ -15953,7 +15952,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
                 ArrayList<String> otherCellTypes = otherProj.cellManager.getAllCellTypeNames();
 
-                if (otherCellTypes.size()==0)
+                if (otherCellTypes.isEmpty())
                 {
                     GuiUtils.showErrorMessage(logger, "No Cell Types found in that project.", null, this);
                     return;
@@ -16293,7 +16292,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         int idealPropNameWidth = 30;
         int idealTotalWidth = 120;
 
-        StringBuffer sb= new StringBuffer();
+        StringBuilder sb= new StringBuilder();
 
         sb.append("    Java properties:\n\n");
 

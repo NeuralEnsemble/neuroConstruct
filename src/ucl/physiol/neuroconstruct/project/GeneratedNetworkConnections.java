@@ -40,6 +40,7 @@ import ucl.physiol.neuroconstruct.cell.utils.*;
 import javax.vecmath.*;
 import ucl.physiol.neuroconstruct.gui.ClickProjectHelper;
 import ucl.physiol.neuroconstruct.gui.ValidityStatus;
+import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.*;
 
 /**
  * Storage for network connection info generated when "Generate cell positions
@@ -831,10 +832,18 @@ public class GeneratedNetworkConnections
 
 
     
+    public SimpleXMLEntity getNetworkMLElement(int unitSystem,
+                                                boolean extraComments) throws NeuroMLException
+    {
+        return getNetworkMLElement(unitSystem,
+                                   extraComments,
+                                   NeuroMLVersion.NEUROML_VERSION_1);
+    }
     
     
     public SimpleXMLEntity getNetworkMLElement(int unitSystem,
-                                                boolean extraComments) throws NeuroMLException
+                                                boolean extraComments,
+                                                NeuroMLVersion version) throws NeuroMLException
     {
         int numConns = this.getNumberSynapticConnections(ANY_NETWORK_CONNECTION);
         
@@ -847,7 +856,12 @@ public class GeneratedNetworkConnections
        
         SimpleXMLElement projectionsElement = null;
 
+
+        boolean nml2 = version.isVersion2();
+
         String metadataPrefix = MetadataConstants.PREFIX + ":";
+        if (nml2) metadataPrefix = "";
+
         try
         {
 

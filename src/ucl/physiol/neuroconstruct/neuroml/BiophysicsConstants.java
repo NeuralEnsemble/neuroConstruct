@@ -94,6 +94,8 @@ public class BiophysicsConstants
     public static String SPEC_CAP_NAME = "cm";
     public static String INIT_POT_NAME = "initV";
 
+    public static String SPIKE_THRESHOLD_v2 = "spikeThresh";
+
     public static String SPECIFIC_CAP_ELEMENT_pre_v1_7_1 = "specificCapacitance";
     public static String SPECIFIC_CAP_ELEMENT = "spec_capacitance";
     public static String SPECIFIC_CAP_ELEMENT_v2 = "specificCapacitance";
@@ -132,6 +134,7 @@ public class BiophysicsConstants
 
     public static String ION_CHAN_ATTR_V2 = "ionChannel";
     public static String COND_DENS_ATTR_V2 = "condDensity";
+    public static String REV_POT_ATTR_V2 = "erev";
 
     private BiophysicsConstants()
     {

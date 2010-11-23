@@ -50,18 +50,7 @@ public class MorphMLConstants
     public static String CELLS_ELEMENT = "cells";
     public static String CELL_ELEMENT = "cell";
 
-    public static String CELL_NAME_ATTR = "name";
-
-    public static String MORPHOLOGY_V2 = "morphology";
-    public static String PARENT_V2 = "parent";
-    public static String SEGMENT_V2 = "segment";
-    public static String PARENT_FRACT_ALONG_V2 = "fractionAlong";
-
-
-    public static String SEG_GROUP_V2 = "segmentGroup";
-    public static String MEMBER_V2 = "member";
-    public static String INCLUDE_V2 = "include";
-    
+    public static String CELL_NAME_ATTR = "name";    
 
 
     public static String SEGMENTS_ELEMENT = "segments";
@@ -117,6 +106,20 @@ public class MorphMLConstants
 
     public static String INHOMO_PARAM_DISTAL = "distal";
     public static String INHOMO_PARAM_DISTAL_NORM_END_ATTR = "normalizationEnd";
+
+
+
+    public static String INCLUDE_V2 = "include";
+    public static String HREF_V2 = "href";
+
+    public static String MORPHOLOGY_V2 = "morphology";
+    public static String PARENT_V2 = "parent";
+    public static String SEGMENT_V2 = "segment";
+    public static String PARENT_FRACT_ALONG_V2 = "fractionAlong";
+
+
+    public static String SEG_GROUP_V2 = "segmentGroup";
+    public static String MEMBER_V2 = "member";
 
 
 

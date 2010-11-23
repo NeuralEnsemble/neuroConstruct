@@ -1397,8 +1397,8 @@ public class ProjectManager implements GenerationReport
 
     }
     
-    
-       
+
+
     public static File saveNetworkStructureXML(Project project,
                                        File neuroMLFile,
                                        boolean zipped,
@@ -1406,161 +1406,15 @@ public class ProjectManager implements GenerationReport
                                        String simConfig,
                                        String units) throws NeuroMLException
     {
-        int preferredUnits = UnitConverter.getUnitSystemIndex(units);
-        
-        try
-        {
-                    
-            StringBuilder notes = new StringBuilder("\nNetwork structure for project: "
-                                +project.getProjectName() + " saved with neuroConstruct v"+
-                                GeneralProperties.getVersionNumber()+" on: "+ GeneralUtils.getCurrentTimeAsNiceString() +", "
-                                + GeneralUtils.getCurrentDateAsNiceString()+"\n\n");
-            
-            
-            Iterator<String> cellGroups = project.generatedCellPositions.getNamesGeneratedCellGroups();
-            
-            while (cellGroups.hasNext())
-            {
-                String cg = cellGroups.next();
-                int numHere = project.generatedCellPositions.getNumberInCellGroup(cg);
-                if (numHere>0)
-                notes.append("Cell Group: "+cg+" contains "+numHere+" cells\n");
-                
-            }
-            notes.append("\n");
-            
-            Iterator<String> netConns = project.generatedNetworkConnections.getNamesNetConnsIter();
-            
-            while (netConns.hasNext())
-            {
-            String mc = netConns.next();
-            int numHere = project.generatedNetworkConnections.getSynapticConnections(mc).size();
-            if (numHere>0)
-            notes.append("Network connection: "+mc+" contains "+numHere+" individual synaptic connections\n");
-            
-            }
-            notes.append("\n");
-            
-            logger.logComment("Going to save network in NeuroML format in " + neuroMLFile.getAbsolutePath());
-
-            SimpleXMLDocument doc = new SimpleXMLDocument();
-
-            SimpleXMLElement rootElement = null;
-
-            rootElement = new SimpleXMLElement(NetworkMLConstants.ROOT_ELEMENT);
-
-            rootElement.addNamespace(new SimpleXMLNamespace("", NetworkMLConstants.NAMESPACE_URI));
-
-            rootElement.addNamespace(new SimpleXMLNamespace(MetadataConstants.PREFIX,
-                                                            MetadataConstants.NAMESPACE_URI));
-
-            rootElement.addNamespace(new SimpleXMLNamespace(NeuroMLConstants.XSI_PREFIX,
-                                                            NeuroMLConstants.XSI_URI));
-
-            rootElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC,
-                                                            NetworkMLConstants.NAMESPACE_URI
-                                                            + "  " + NetworkMLConstants.DEFAULT_SCHEMA_FILENAME));
-
-            rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS_OLD, MetadataConstants.LENGTH_UNITS_MICROMETER));
-
-            doc.addRootElement(rootElement);
-
-            logger.logComment("    ****    Full XML:  ****");
-            logger.logComment("  ");
-
-            rootElement.addContent("\n\n");
-
-            rootElement.addChildElement(new SimpleXMLElement(MetadataConstants.PREFIX + ":" +
-                                                             MetadataConstants.NOTES_ELEMENT, "\n" + notes.toString()));
-
-            SimpleXMLElement props = new SimpleXMLElement(MetadataConstants.PREFIX + ":" +
-                                                          MorphMLConstants.PROPS_ELEMENT);
-
-            rootElement.addContent("\n\n");
-
-            rootElement.addChildElement(props);
-
-            MetadataConstants.addProperty(props,
-                                          NetworkMLConstants.NC_NETWORK_GEN_RAND_SEED,
-                                          project.generatedCellPositions.getRandomSeed() + "",
-                                          "    ");
-
-            if (simConfig!=null)
-            {
-                MetadataConstants.addProperty(props,
-                                              NetworkMLConstants.NC_SIM_CONFIG,
-                                              simConfig,
-                                              "    ");
-            }
-
-            rootElement.addContent("\n\n");
-
-            rootElement.addChildElement(project.generatedCellPositions.getNetworkMLElement());
-
-            rootElement.addContent("\n\n");
-
-            SimpleXMLEntity netEntity = project.generatedNetworkConnections.getNetworkMLElement(preferredUnits, extraComments);
-            
-            if (netEntity instanceof SimpleXMLElement)
-            {
-                rootElement.addChildElement((SimpleXMLElement)netEntity);
-            }
-            else if (netEntity instanceof SimpleXMLComment)
-            {
-                rootElement.addComment((SimpleXMLComment)netEntity);
-            }
-
-            rootElement.addContent("\n\n");
-            
-            SimpleXMLEntity elecInputEntity = project.generatedElecInputs.getNetworkMLElement(preferredUnits);
-            
-            if (elecInputEntity instanceof SimpleXMLElement)
-            {
-                rootElement.addChildElement((SimpleXMLElement)elecInputEntity);
-            }
-            else if (elecInputEntity instanceof SimpleXMLComment)
-            {
-                rootElement.addComment((SimpleXMLComment)elecInputEntity);
-            }
-            
-            rootElement.addContent("\n\n");
-            
-            String stringForm = doc.getXMLString("", false);
-
-            logger.logComment(stringForm);
-
-            if (!zipped)
-            {
-                FileWriter fw = new FileWriter(neuroMLFile);
-                fw.write(stringForm);
-                fw.close();
-                
-                return neuroMLFile;
-            }
-            else
-            {
-                File zipFile = neuroMLFile;
-                
-                if (!neuroMLFile.getName().endsWith(ProjectStructure.getNeuroMLCompressedFileExtension()))
-                    zipFile = new File(neuroMLFile.getAbsolutePath() +
-                                        ProjectStructure.getNeuroMLCompressedFileExtension());
-                
-                String internalFilename = GeneralUtils.replaceAllTokens(zipFile.getName(), 
-                                        ProjectStructure.getNeuroMLCompressedFileExtension(), 
-                                        ProjectStructure.getNeuroMLFileExtension());
-                
-                ZipUtils.zipStringAsFile(stringForm, zipFile, internalFilename, notes.toString());
-                
-                return zipFile;
-            }
-        }
-        catch (Exception ex)
-        {
-            logger.logError("Problem creating NeuroML file: "   + neuroMLFile.getAbsolutePath(), ex);
-            
-            throw new NeuroMLException("Problem creating NeuroML file: "  + neuroMLFile.getAbsolutePath()+"\n"+ex.getMessage(), ex);
-        }
+        return NeuroMLFileManager.saveNetworkStructureXML(project,
+                                       neuroMLFile,
+                                       zipped,
+                                       extraComments,
+                                       simConfig,
+                                       units,
+                                       NeuroMLVersion.NEUROML_VERSION_1);
     }
+
     
     
     public Display3DProperties getProjectDispProps()

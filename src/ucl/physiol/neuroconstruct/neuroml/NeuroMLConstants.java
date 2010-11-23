@@ -99,16 +99,7 @@ public class NeuroMLConstants
         }
     };
 
-/*
-    public static String NEUROML_LEVEL_2 = "Level 2";
 
-    public static String NEUROML_LEVEL_3 = "Level 3";
-
-    public static String NEUROML_VERSION_1 = "1.x";
-    
-    public static String NEUROML_VERSION_2 = "2.x";
-    
-    public static String NEUROML_VERSION_2_COMPLETE = "Full Cell v2.0";*/
 
     public static String ROOT_ELEMENT = "neuroml";
 
@@ -133,6 +124,18 @@ public class NeuroMLConstants
     public static String XSI_URI = "http://www.w3.org/2001/XMLSchema-instance";
 
     public static String XSI_SCHEMA_LOC = "xsi:schemaLocation";
+
+    private static final String prefixNeuroML2Types = "NeuroML2CoreTypes/";
+
+    public static String NEUROML2_CORE_TYPES_UNITS = prefixNeuroML2Types+"NeuroMLCoreDimensions.xml";
+    public static String NEUROML2_CORE_TYPES_CELLS = prefixNeuroML2Types+"Cells.xml";
+    public static String NEUROML2_CORE_TYPES_CHANNELS = prefixNeuroML2Types+"Channels.xml";
+    public static String NEUROML2_CORE_TYPES_SYNAPSES = prefixNeuroML2Types+"Synapses.xml";
+    public static String NEUROML2_CORE_TYPES_INPUTS = prefixNeuroML2Types+"Inputs.xml";
+    public static String NEUROML2_CORE_TYPES_NETWORKS = prefixNeuroML2Types+"Networks.xml";
+
+    public static String NEUROML2_CORE_TYPES_SIMULATION = prefixNeuroML2Types+"Simulation.xml";
+
     
 
 }

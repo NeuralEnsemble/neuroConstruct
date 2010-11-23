@@ -258,7 +258,7 @@ public class ExampleProjects
                 
                 if(!noNeuroML.contains(projName))
                 {
-                    project.neuromlPythonFileManager.generateNeuroMLFiles(null, 
+                    project.neuromlFileManager.generateNeuroMLFiles(null, 
                         new OriginalCompartmentalisation(), 1234, false);
 
                     File neuroMLDir = ProjectStructure.getNeuroMLDir(project.getProjectMainDirectory());

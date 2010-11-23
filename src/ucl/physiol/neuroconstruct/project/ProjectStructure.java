@@ -58,39 +58,39 @@ public class ProjectStructure
     
     private static final String newProjectFileExtension = ".ncx";
 
-    private static final String morphFileExtension = new String(".morph.xml");
+    private static final String morphFileExtension = ".morph.xml";
 
-    private static final String xmlExtension = new String(".xml");
+    private static final String xmlExtension = ".xml";
 
-    private static final String neuromlExtension = new String(".nml");
+    private static final String neuromlExtension = ".nml";
     
-    private static final String hdf5Extension = new String(".h5");
+    private static final String hdf5Extension = ".h5";
 
-    private static final String neuromlCompExtension = new String(".zip");
+    private static final String neuromlCompExtension = ".zip";
 
 
-    public static final String JAVA_XML_FORMAT = new String("Java XML Format");
-    public static final String JAVA_OBJ_FORMAT = new String("Java Serialized Object Format");
+    public static final String JAVA_XML_FORMAT = "Java XML Format";
+    public static final String JAVA_OBJ_FORMAT = "Java Serialized Object Format";
     
     
     
-    public static final String NC_HOME_ENV_VAR = new String("NC_HOME");
+    public static final String NC_HOME_ENV_VAR = "NC_HOME";
 
-    public static final String PROJ_QUICK_SAVE = new String("Quick Save");
-    public static final String PROJ_SVN_SAVE = new String("SVN friendly save");
+    public static final String PROJ_QUICK_SAVE = "Quick Save";
+    public static final String PROJ_SVN_SAVE = "SVN friendly save";
 
 
-    private static final String javaXMLFileExtension = new String(".java.xml");
+    private static final String javaXMLFileExtension = ".java.xml";
 
-    private static final String javaObjFileExtension = new String(".java.ser");
+    private static final String javaObjFileExtension = ".java.ser";
 
-    private static final String oldZippedProjectFileExtension = new String(".neuro.zip");
+    private static final String oldZippedProjectFileExtension = ".neuro.zip";
 
-    private static final String newZippedProjectFileExtension = new String(".ncx.zip");
+    private static final String newZippedProjectFileExtension = ".ncx.zip";
 
-    private static final String dataSetExtension = new String(".ds");
+    private static final String dataSetExtension = ".ds";
 
-    private static final String zippedDataSetExtension = new String(dataSetExtension + ".zip");
+    private static final String zippedDataSetExtension = dataSetExtension + ".zip";
 
     private static final String README = "README";
 
@@ -212,16 +212,18 @@ public class ProjectStructure
 
     private static String sbmlNeuronMappingFile = "SBML2NEURON.py";
 
-    private static String channelml2Neuroml2Dir = "lems/ChannelMLConvert";
+    private static String lemsDir = "lems";
+
+    private static String channelml2Neuroml2Dir = "ChannelMLConvert";
 
     private static String channelml2Neuroml2File = "ChannelML2NeuroML2.xsl";
 
 
-    private static String matlabOctaveDir = "matlabOctave";
+    private static final String matlabOctaveDir = "matlabOctave";
 
     private static String matlabOctaveDirInInstall = matlabOctaveDir;
 
-    private static String igorNeuroMaticDir = "igorNeuroMatic";
+    private static final String igorNeuroMaticDir = "igorNeuroMatic";
 
     private static String igorNeuroMaticDirInInstall = igorNeuroMaticDir;
 
@@ -446,9 +448,16 @@ public class ProjectStructure
     {
         return new File(sbmlNeuronMappingDir,sbmlNeuronMappingFile);
     }
+
     public static File getChannelml2Neuroml2File()
     {
-        return new File(channelml2Neuroml2Dir,channelml2Neuroml2File);
+        return new File(getLemsDir(),channelml2Neuroml2Dir +"/"+channelml2Neuroml2File);
+    }
+
+
+    public static File getLemsDir()
+    {
+        return new File(getnCHome(), lemsDir);
     }
 
     public static File getRelNotesFile()

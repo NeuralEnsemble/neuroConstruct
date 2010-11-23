@@ -128,9 +128,9 @@ public class Project implements TableModelListener
     
 
     /**
-     * Generators of the scripts for the demo Python/NeuroML simulation
+     * Generators of the scripts for NeuroML
      */
-    public NeuroMLPythonFileManager neuromlPythonFileManager = null;
+    public NeuroMLFileManager neuromlFileManager = null;
 
     /**
      * Private, so initialisation methods will have to be used...
@@ -175,34 +175,6 @@ public class Project implements TableModelListener
         return proj;
     }
 
-    /*
-        public void createSimulationsDir()
-        {
-
-            File newProjectSimulationsDir = new File(this.getProjectMainDirectory(),
-                                                     GeneralProperties.getDirForSimulations());
-
-            logger.logComment("Creating new dir: "+ newProjectSimulationsDir);
-
-            if (!(newProjectSimulationsDir.isDirectory()) || !newProjectSimulationsDir.exists())
-            {
-                newProjectSimulationsDir.mkdir();
-                File simulationsDirReadme = new File(newProjectSimulationsDir, "README");
-
-                try
-                {
-                    FileWriter fw = new FileWriter(simulationsDirReadme);
-                    fw.write("This is the directory for the simulation data associated with the project\n");
-                    fw.close();
-                }
-                catch (IOException ex)
-                {
-                    logger.logError("Exception creating readme file...", ex);
-                }
-            }
-
-        }
-     */
 
 
     /**
@@ -911,7 +883,8 @@ public class Project implements TableModelListener
         genesisFileManager = new GenesisFileManager(this);
         psicsFileManager = new PsicsFileManager(this);
         pynnFileManager = new PynnFileManager(this);
-        neuromlPythonFileManager = new NeuroMLPythonFileManager(this);
+
+        neuromlFileManager = new NeuroMLFileManager(this);
 
         proj3Dproperties = new Display3DProperties();
         proj3Dproperties.initialiseDefaultValues();

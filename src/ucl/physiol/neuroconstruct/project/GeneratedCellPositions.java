@@ -38,6 +38,7 @@ import ucl.physiol.neuroconstruct.project.packing.OneDimRegSpacingPackingAdapter
 import ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.xml.*;
+import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.*;
 
 /**
  * Storage for the positions generated when the Generate cell positions... button
@@ -495,14 +496,26 @@ public class GeneratedCellPositions
 
     public SimpleXMLElement getNetworkMLElement() throws NeuroMLException
     {
+        return getNetworkMLElements(NeuroMLVersion.NEUROML_VERSION_1).get(0);
+    }
+
+    public ArrayList<SimpleXMLElement> getNetworkMLElements(NeuroMLVersion version) throws NeuroMLException
+    {
+        ArrayList<SimpleXMLElement> elements = new ArrayList<SimpleXMLElement>();
 
         SimpleXMLElement populationsElement = null;
+
+        boolean nml2 = version.isVersion2();
         try
         {
-            logger.logComment("Going to save file in NeuroML format: " + this.getNumberInAllCellGroups() +
+            logger.logComment("Going to save file in NeuroML format: "+version+", " + this.getNumberInAllCellGroups() +
                               " cells in total");
 
-            populationsElement = new SimpleXMLElement(NetworkMLConstants.POPULATIONS_ELEMENT);
+            String v1Root = NetworkMLConstants.POPULATIONS_ELEMENT;
+
+            populationsElement = new SimpleXMLElement(v1Root);
+
+            if (!nml2) elements.add(populationsElement);
 
             Enumeration keys = myCellGroupPosns.keys();
 
@@ -517,59 +530,80 @@ public class GeneratedCellPositions
 
                 SimpleXMLElement populationElement = new SimpleXMLElement(NetworkMLConstants.POPULATION_ELEMENT);
 
-                populationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.POP_NAME_ATTR, cellGroup));
-
-                ////Pre v1.7.1 specification
-                //////populationElement.addChildElement(new SimpleXMLElement(NetworkMLConstants.CELLTYPE_ELEMENT, type));
-
-                populationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.CELLTYPE_ATTR, type));
-
-
-                SimpleXMLElement props = new SimpleXMLElement(MetadataConstants.PREFIX + ":" +
-                                                              MorphMLConstants.PROPS_ELEMENT);
-
-
-                populationElement.addChildElement(props);
-
-                Color c = project.cellGroupsInfo.getColourOfCellGroup(cellGroup);
-
-                MetadataConstants.addProperty(props,
-                                          "color",
-                                          (c.getRed()/256.0)+" "+ (c.getGreen()/256.0)+" "+(c.getBlue()/256.0),
-                                          "    ");
-
-                SimpleXMLElement instancesElement = new SimpleXMLElement(NetworkMLConstants.INSTANCES_ELEMENT);
-
-                instancesElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INSTANCES_SIZE_ATTR, cellsHere.size()+""));
-
-                for (int i = 0; i < cellsHere.size(); i++)
+                if (nml2)
                 {
-                    PositionRecord posRec = cellsHere.get(i);
+                    populationElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, cellGroup));
+                    populationElement.addAttribute(new SimpleXMLAttribute("component", type));//TODO...
+                    populationElement.addAttribute(new SimpleXMLAttribute("size", cellsHere.size()+""));//TODO...
+                    //populationElement.addContent("\n");
+                }
+                else
+                {
 
-                    SimpleXMLElement instanceElement = new SimpleXMLElement(NetworkMLConstants.INSTANCE_ELEMENT);
+                    populationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.POP_NAME_ATTR, cellGroup));
 
-                    instanceElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INSTANCE_ID_ATTR, i+""));
-                    
-                    if (posRec.getNodeId()!=PositionRecord.NO_NODE_ID)
+                    ////Pre v1.7.1 specification
+                    //////populationElement.addChildElement(new SimpleXMLElement(NetworkMLConstants.CELLTYPE_ELEMENT, type));
+
+                    populationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.CELLTYPE_ATTR, type));
+
+
+                    SimpleXMLElement props = new SimpleXMLElement(MetadataConstants.PREFIX + ":" +
+                                                                  MorphMLConstants.PROPS_ELEMENT);
+
+
+                    populationElement.addChildElement(props);
+
+                    Color c = project.cellGroupsInfo.getColourOfCellGroup(cellGroup);
+
+                    MetadataConstants.addProperty(props,
+                                              "color",
+                                              (c.getRed()/256.0)+" "+ (c.getGreen()/256.0)+" "+(c.getBlue()/256.0),
+                                              "            ",
+                                              version);
+                    props.addContent("\n        ");
+
+                    SimpleXMLElement instancesElement = new SimpleXMLElement(NetworkMLConstants.INSTANCES_ELEMENT);
+
+                    instancesElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INSTANCES_SIZE_ATTR, cellsHere.size()+""));
+
+                    for (int i = 0; i < cellsHere.size(); i++)
                     {
-                        instanceElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NODE_ID_ATTR, posRec.getNodeId()+""));
+                        PositionRecord posRec = cellsHere.get(i);
+
+                        SimpleXMLElement instanceElement = new SimpleXMLElement(NetworkMLConstants.INSTANCE_ELEMENT);
+
+                        instanceElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INSTANCE_ID_ATTR, i+""));
+
+                        if (posRec.getNodeId()!=PositionRecord.NO_NODE_ID)
+                        {
+                            instanceElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NODE_ID_ATTR, posRec.getNodeId()+""));
+                        }
+
+
+                        SimpleXMLElement locationElement = new SimpleXMLElement(NetworkMLConstants.LOCATION_ELEMENT);
+
+                        instanceElement.addChildElement(locationElement);
+                        instanceElement.addContent("\n            ");
+
+                        locationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.LOC_X_ATTR, posRec.x_pos+""));
+                        locationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.LOC_Y_ATTR, posRec.y_pos+""));
+                        locationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.LOC_Z_ATTR, posRec.z_pos+""));
+
+                        instancesElement.addChildElement(instanceElement);
                     }
-                    
 
-                    SimpleXMLElement locationElement = new SimpleXMLElement(NetworkMLConstants.LOCATION_ELEMENT);
-
-                    instanceElement.addChildElement(locationElement);
-                    instanceElement.addContent("\n            ");
-
-                    locationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.LOC_X_ATTR, posRec.x_pos+""));
-                    locationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.LOC_Y_ATTR, posRec.y_pos+""));
-                    locationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.LOC_Z_ATTR, posRec.z_pos+""));
-
-                    instancesElement.addChildElement(instanceElement);
+                    populationElement.addChildElement(instancesElement);
                 }
 
-                populationElement.addChildElement(instancesElement);
-                populationsElement.addChildElement(populationElement);
+                if (!nml2)
+                {
+                    populationsElement.addChildElement(populationElement);
+                }
+                else
+                {
+                    elements.add(populationElement);
+                }
 
             }
             logger.logComment("Finished saving data to populations element");
@@ -580,7 +614,8 @@ public class GeneratedCellPositions
         {
             throw new NeuroMLException("Problem creating populations element file", ex);
         }
-        return populationsElement;
+
+        return elements;
 
     }
 

@@ -26,6 +26,7 @@
 
 package ucl.physiol.neuroconstruct.neuroml;
 import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLElement;
+import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.*;
 
 
 /**
@@ -75,10 +76,18 @@ public class MetadataConstants
 
     public static void addProperty(SimpleXMLElement propertiesElement, String tag, String value, String indent)
     {
-        String metadataPrefix = MetadataConstants.PREFIX + ":";
+        addProperty(propertiesElement, tag, value, indent, NeuroMLVersion.NEUROML_VERSION_1);
+    }
+
+    public static void addProperty(SimpleXMLElement propertiesElement, String tag, String value, String indent, NeuroMLVersion version)
+    {
+        String metadataPrefix = version.isVersion2() ? "" : MetadataConstants.PREFIX + ":";
 
         SimpleXMLElement propElement = new SimpleXMLElement(metadataPrefix+ MetadataConstants.PROP_ELEMENT);
+
+        propertiesElement.addContent("\n"+indent); // to make it more readable...
         propertiesElement.addChildElement(propElement);
+        propertiesElement.addContent("\n"); // to make it more readable...
 
         propElement.addAttribute(PROP_TAG_ATTR, tag);
         propElement.addAttribute(PROP_VALUE_ATTR, value);
@@ -96,7 +105,6 @@ public class MetadataConstants
         valElement.addContent(value);
         propElement.addChildElement(valElement);*/
         
-        propElement.addContent(indent+"\n"+indent); // to make it more readable...
 
     }
     

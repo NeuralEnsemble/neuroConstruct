@@ -192,6 +192,18 @@ public class NetworkMLConstants
     public static String NC_SIM_DURATION = "neuroConstruct_sim_duration";    
     public static String NC_SIM_TIME_STEP = "neuroConstruct_sim_time_step";
     public static String NC_TEMPERATURE = "neuroConstruct_temperature";
+
+
+    public static String NEUROML2_NETWORK_ELEMENT = "network";
+    public static String NEUROML2_NETWORK_ID_PREFIX = "network_";
+
+
+    public static String NEUROML2_PULSE_GEN_ELEMENT = "pulseGenerator";
+
+    public static String NEUROML2_EXP_INPUT_ELEMENT = "explicitInput";
+    public static String NEUROML2_EXP_INPUT_TARGET_ATTR = "target";
+    public static String NEUROML2_EXP_INPUT_INPUT_ATTR = "input";
+
     
     private NetworkMLConstants()
     {

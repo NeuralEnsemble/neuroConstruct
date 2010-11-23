@@ -23,7 +23,7 @@ from ucl.physiol.neuroconstruct.project import ProjectManager
 from ucl.physiol.neuroconstruct.cell.converters import MorphMLConverter
 from ucl.physiol.neuroconstruct.cell.compartmentalisation import OriginalCompartmentalisation
 
-from ucl.physiol.neuroconstruct.neuroml import NeuroMLConstants
+from ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants import NeuroMLLevel, NeuroMLVersion
 
 
 if len(sys.argv) != 3:
@@ -44,8 +44,8 @@ print "Loaded project: " + myProject.getProjectName()
 saveDir = File(sys.argv[2])
 print "Going to save NeuroML files to: " + saveDir.getAbsolutePath()
 
-level = NeuroMLConstants.NEUROML_LEVEL_3
-version = NeuroMLConstants.NEUROML_VERSION_1
+level = NeuroMLLevel.NEUROML_LEVEL_3
+version = NeuroMLVersion.NEUROML_VERSION_1
 
 MorphMLConverter.saveAllCellsInNeuroML(myProject,
                                        OriginalCompartmentalisation(),
