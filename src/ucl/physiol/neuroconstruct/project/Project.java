@@ -545,6 +545,30 @@ public class Project implements TableModelListener
                             proj.cellMechanismInfo.addCellMechanism(sbmlCm);
 
                         }
+                        else if(implMethod.equals(CellMechanism.NEUROML2_BASED_CELL_MECHANISM))
+                        {
+                            NeuroML2Component nml2Cm = new NeuroML2Component();
+
+                            nml2Cm.initPropsFromPropsFile(propsFile);
+
+                            try
+                            {
+                                nml2Cm.initialise(proj, false);
+
+                               logger.logComment("NML 2 Channel mech: "+ nml2Cm.toString());
+                            }
+                            catch (XMLMechanismException ex1)
+                            {
+                                GuiUtils.showErrorMessage(logger,
+                                                          "Error creating implementation of Cell Mechanism: " +
+                                                          nml2Cm.getInstanceName(),
+                                                          ex1,
+                                                          null);
+                            }
+
+                            proj.cellMechanismInfo.addCellMechanism(nml2Cm);
+
+                        }
                         else if (implMethod.equals(CellMechanism.ABSTRACTED_CELL_MECHANISM) ||
                                  implMethod.equals(CellMechanism.FILE_BASED_CELL_MECHANISM))
                         {
@@ -1420,6 +1444,10 @@ public class Project implements TableModelListener
                 if (xmlcm instanceof SBMLCellMechanism)
                 {
                     implMeth = CellMechanism.SBML_BASED_CELL_MECHANISM;
+                }
+                if (xmlcm instanceof NeuroML2Component)
+                {
+                    implMeth = CellMechanism.NEUROML2_BASED_CELL_MECHANISM;
                 }
                 // Note name and description will be taken from the channelml file...
                 cellMechProps.setProperty(CellMechanismHelper.PROP_IMPL_METHOD,

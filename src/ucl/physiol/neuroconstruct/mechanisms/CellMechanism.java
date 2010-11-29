@@ -50,12 +50,14 @@ public abstract class CellMechanism
     public static final String POINT_PROCESS = "Point process";
     public static final String GAP_JUNCTION = "Gap junction";
     public static final String SBML_MECHANISM = "SBML mechanism";
+    public static final String NEUROML2_MECHANISM = "NeuroML 2 component";
 
     /**
      * Implementation methods
      */
     public static final String CHANNELML_BASED_CELL_MECHANISM = "ChannelML based Cell Mechanism";
     public static final String SBML_BASED_CELL_MECHANISM = "SBML based Cell Mechanism";
+    public static final String NEUROML2_BASED_CELL_MECHANISM = "NeuroML 2 Component";
     public static final String ABSTRACTED_CELL_MECHANISM = "Abstracted Cell Mechanism";
     public static final String FILE_BASED_CELL_MECHANISM = "File based Cell Mechanism";
 

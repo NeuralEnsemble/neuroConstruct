@@ -362,10 +362,10 @@ public class NeuroMLFileManager
                                      boolean annotations,
                                      File generateDir) throws IOException
     {
-        logger.logComment("Starting generation of the files int dir: "+ generateDir.getCanonicalPath(), true);
+        logger.logComment("Starting generation of the files into dir: "+ generateDir.getCanonicalPath(), true);
 
 
-        GeneralUtils.removeAllFiles(generateDir, false, true, true);
+        GeneralUtils.removeAllFiles(generateDir, false, false, true);
 
         if (!generateDir.exists())
             generateDir.mkdir();
@@ -740,23 +740,27 @@ public class NeuroMLFileManager
                         }
                     }
                 }
-
-
             }
-
-
 
             lemsElement.addContent("\n\n"); // to make it more readable...
 
             GeneralUtils.writeShortFile(lemsFile, lemsElement.getXMLString("", false));
 
+            String runFileName = "runsim.sh";
+            String lemsExeName = "./lems";
 
-            File runFile = new File(generateDir, "runsim.sh");
+            if (GeneralUtils.isWindowsBasedPlatform())
+            {
+                runFileName = "runsim.bat";
+                lemsExeName = ProjectStructure.getLemsDir().getAbsolutePath() + "\\lems.bat";
+            }
+
+            File runFile = new File(generateDir, runFileName);
 
             StringBuilder runScript = new StringBuilder();
             runScript.append("cd "+ProjectStructure.getLemsDir().getAbsolutePath()+"\n");
 
-            runScript.append("./lems "+lemsFile.getAbsolutePath()+"\n");
+            runScript.append(lemsExeName + " "+lemsFile.getAbsolutePath()+"\n");
 
             GeneralUtils.writeShortFile(runFile, runScript.toString());
 
@@ -764,9 +768,21 @@ public class NeuroMLFileManager
             // bit of a hack...
             rt.exec(new String[]{"chmod","u+x",runFile.getAbsolutePath()});
 
+            String executable = runFile.getAbsolutePath();
 
-            rt.exec(runFile.getAbsolutePath(), null, ProjectStructure.getLemsDir());
+            if (GeneralUtils.isWindowsBasedPlatform())
+            {
+                executable = GeneralProperties.getExecutableCommandLine() + " "+ lemsExeName+" "+lemsFile.getAbsolutePath();
+            }
+            File dirToRunIn = ProjectStructure.getLemsDir();
 
+            logger.logComment("Going to execute: " + executable + " in dir: " +
+                                      dirToRunIn, true);
+
+            Process process = rt.exec(executable, null, dirToRunIn);
+
+
+      
         }
 
     }
@@ -850,12 +866,13 @@ public class NeuroMLFileManager
 
             SimConfig sc = p.simConfigInfo.getDefaultSimConfig();
 
-
-            npfm.generateNeuroMLFiles(sc, NeuroMLVersion.NEUROML_VERSION_2, true, oc, 123, false, false);
+            boolean runLems = false;
+            
+            npfm.generateNeuroMLFiles(sc, NeuroMLVersion.NEUROML_VERSION_2, runLems, oc, 123, false, false);
 
             File tempDir = new File(projFile.getParentFile(), "temp");
 
-            npfm.generateNeuroMLFiles(sc, NeuroMLVersion.NEUROML_VERSION_1, true, oc, 123, false, false, tempDir);
+            npfm.generateNeuroMLFiles(sc, NeuroMLVersion.NEUROML_VERSION_1, false, oc, 123, false, false, tempDir);
             
             //gen.runGenesisFile();
         }

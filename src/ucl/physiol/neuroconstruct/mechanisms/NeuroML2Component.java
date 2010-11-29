@@ -35,7 +35,7 @@ import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
 
 /**
- * Base class for all SBML based Cell Mechanism. Contains (in addition to info
+ * Base class for all NeuroML based Cell Mechanism. Contains (in addition to info
  * in CellMechanism class) a string with the name of the file and a SimpleXMLDocument
  * containing the contents of the xml (once initialised) and a number of mappings to NEURON, etc.
  *
@@ -43,12 +43,12 @@ import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
  *  
  */
 
-public class SBMLCellMechanism extends XMLCellMechanism
+public class NeuroML2Component extends XMLCellMechanism
 {
-    
-    public SBMLCellMechanism()
+    public static final String MECHANISM_TYPE = "NeuroML 2 mechanism";
+    public NeuroML2Component()
     {
-        logger = new ClassLogger("SBMLCellMechanism");
+        logger = new ClassLogger("NeuroML2Component");
         //logger.setThisClassVerbose(true);
     }
 
@@ -56,19 +56,18 @@ public class SBMLCellMechanism extends XMLCellMechanism
     @Override
     public String toString()
     {
-        return "SBML Cell Mechanism [InstanceName: "+this.getInstanceName()+", sbmlFile: "+getXMLFile()+"]";
+        return "NeuroML 2 Component [InstanceName: "+this.getInstanceName()+", neuroml2File: "+getXMLFile()+"]";
     }
-
 
 
     public String getNameXPath()
     {
-        return "/sbml/model/@id";  //todo: move to SBMLConstants...
+        return "/neuroml/@id";  //todo: move to SBMLConstants...
     }
 
     public String getDescriptionXPath()
     {
-        return "/sbml/model/notes";  //todo: move to SBMLConstants...
+        return "/neuroml/notes";  //todo: move to SBMLConstants...
     }
 
 
@@ -76,7 +75,7 @@ public class SBMLCellMechanism extends XMLCellMechanism
     @Override
     public String getMechanismType()
     {
-        return "SBML mechanism";
+        return MECHANISM_TYPE;
     }
 
 
