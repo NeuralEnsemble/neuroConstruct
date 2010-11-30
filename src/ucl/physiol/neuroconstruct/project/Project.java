@@ -26,6 +26,7 @@
 
 package ucl.physiol.neuroconstruct.project;
 
+import java.awt.Toolkit;
 import java.beans.*;
 import java.io.*;
 import java.util.*;
@@ -1753,6 +1754,8 @@ public class Project implements TableModelListener
         System.out.println("Trying...");
         
         System.out.println("nC home proj: "+ProjectStructure.getnCHome().getAbsolutePath());
+
+        Toolkit.getDefaultToolkit().beep();
     }
 
 
