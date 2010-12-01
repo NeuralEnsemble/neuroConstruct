@@ -848,6 +848,9 @@ public class MorphMLConverter extends FormatImporter
 
                             membPropsElement.addChildElement(mechElement);
 
+                            mechElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2,
+                                                                            chanMech.getName()+"_"+group));
+
                             mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.ION_CHAN_ATTR_V2,
                                                                             chanMech.getName()));
 
@@ -855,7 +858,7 @@ public class MorphMLConverter extends FormatImporter
                                                                             condDens+" "+condDensUnit.getNeuroML2Symbol()));
 
                             if (!group.equals(Section.ALL))
-                                mechElement.addAttribute(BiophysicsConstants.GROUP_ATTR_V2, group);
+                                mechElement.addAttribute(BiophysicsConstants.SEG_GROUP_ATTR_V2, group);
 
 
                             if (cm instanceof ChannelMLCellMechanism)
@@ -1233,7 +1236,7 @@ public class MorphMLConverter extends FormatImporter
                             SimpleXMLElement el = new SimpleXMLElement(BiophysicsConstants.SPECIFIC_CAP_ELEMENT_v2);
                             
                             if (!group.equals(Section.ALL))
-                                el.addAttribute(BiophysicsConstants.GROUP_ATTR_V2, group);
+                                el.addAttribute(BiophysicsConstants.SEG_GROUP_ATTR_V2, group);
 
                             el.addAttribute(BiophysicsConstants.VALUE_ATTR_V2, specCapConv+" "+scUnit.getNeuroML2Symbol());
 
@@ -1292,7 +1295,7 @@ public class MorphMLConverter extends FormatImporter
                             SimpleXMLElement el = new SimpleXMLElement(BiophysicsConstants.SPECIFIC_AX_RES_ELEMENT_V2);
 
                             if (!group.equals(Section.ALL))
-                                el.addAttribute(BiophysicsConstants.GROUP_ATTR_V2, group);
+                                el.addAttribute(BiophysicsConstants.SEG_GROUP_ATTR_V2, group);
 
                             el.addAttribute(BiophysicsConstants.VALUE_ATTR_V2, specAxResConv+" "+saxUnit.getNeuroML2Symbol());
 

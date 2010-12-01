@@ -118,7 +118,7 @@ public class BiophysicsConstants
 
     public static String GROUP_ELEMENT = "group";
 
-    public static String GROUP_ATTR_V2 = "sectionGroup";
+    public static String SEG_GROUP_ATTR_V2 = "segmentGroup";
 
     public static String VALUE_ATTR_V2 = "value";
 
