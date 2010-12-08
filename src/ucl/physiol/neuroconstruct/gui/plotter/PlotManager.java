@@ -29,6 +29,7 @@ package ucl.physiol.neuroconstruct.gui.plotter;
 import java.util.*;
 
 import java.awt.*;
+import java.util.Map.Entry;
 
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.project.*;
@@ -125,6 +126,56 @@ public class PlotManager
     public static void setCurrentProject(Project currProject)
     {
         project = currProject;
+    }
+
+    public static void arrangeFrames()
+    {
+        int num = existingPlotFrames.size();
+        Iterator<PlotterFrame>  frames = existingPlotFrames.values().iterator();
+        int i = 0;
+        int[] layout = new int[]{2, 2}; // {across, down}
+
+        if (num<=4) layout = new int[]{2,2};
+        else if(num <= 6) layout = new int[]{2, 3};
+        else if(num <= 9) layout = new int[]{3, 3};
+        else if(num <= 12) layout = new int[]{3, 4};
+        else if(num <= 16) layout = new int[]{4, 4};
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+        while(frames.hasNext())
+        {
+            Frame f = frames.next();
+            int index = i%(layout[0]*layout[1]);
+            int x = i%(layout[0]);
+            int y = (int)i/layout[0];
+
+            //System.out.println("Frime "+i+": "+index+", x="+x+", y="+y);
+            f.setSize(screenSize.width/layout[0], screenSize.height/layout[1]);
+            f.setLocation(x*screenSize.width/layout[0], y*screenSize.height/layout[1]);
+            i++;
+        }
+    }
+
+
+    //Main method
+    public static void main(String[] args) throws InterruptedException
+    {
+        int num = 7;
+        for(int i=0;i<num;i++)
+        {
+            PlotterFrame framex = PlotManager.getPlotterFrame("Test_"+i, true, true);
+            framex.addSampleData();
+        }
+
+        Thread.sleep(3000);
+
+        System.out.println("Plotting all...");
+
+        PlotManager.arrangeFrames();
+
+        System.out.println("Arranged all...");
+
     }
 
 

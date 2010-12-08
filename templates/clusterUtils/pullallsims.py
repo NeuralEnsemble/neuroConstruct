@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 
 This file can be placed in the simulations directory of a neuroConstruct project and
@@ -39,7 +40,7 @@ for fname in dirList:
                 print 'Output from running '+pullSimFilename+':\n\t', formatted
 
                 if os.path.isfile(timeFile):
-                    print "Time file now exists, and so simulation was successful!"
+                    print "Time file %s now exists, and so simulation was successful!"%timeFile
                 else:
                     print "Time file doesn't exist! Simulation hasn't successfully finished yet."
             else:

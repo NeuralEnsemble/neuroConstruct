@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 #
 #   File to preform some standard tasks on a neuroConstruct project
@@ -12,7 +13,6 @@
 
 import sys
 import time
-import os
 import subprocess
 
 from java.io import File
@@ -362,7 +362,7 @@ class SimulationManager():
 
                             ds = simData.getDataSet(dataStore.getCellSegRef(), dataStore.getVariable(), False)
 
-                            self.printver("Found data store: "+str(dataStore)+", plotting volts only: "+str(plotVoltageOnly))
+                            #self.printver("Found data store: "+str(dataStore)+", plotting volts only: "+str(plotVoltageOnly))
 
                             if not plotVoltageOnly or dataStore.getVariable() == SimPlot.VOLTAGE:
 
@@ -438,7 +438,7 @@ class SimulationManager():
 
                     ds = simData.getDataSet(dataStore.getCellSegRef(), dataStore.getVariable(), False)
 
-                    self.printver("Found data store: "+str(dataStore))
+                    #self.printver("Found data store: "+str(dataStore))
 
                     if dataStore.getVariable() == SimPlot.VOLTAGE:
 

@@ -34,6 +34,7 @@ import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.cell.converters.*;
+import ucl.physiol.neuroconstruct.hpc.utils.ProcessManager;
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
@@ -779,7 +780,8 @@ public class NeuroMLFileManager
             logger.logComment("Going to execute: " + executable + " in dir: " +
                                       dirToRunIn, true);
 
-            Process process = rt.exec(executable, null, dirToRunIn);
+            //Process process = rt.exec(executable, null, dirToRunIn);
+            ProcessManager.runCommand(executable, "LEMS", 5);
 
 
       

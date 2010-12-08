@@ -357,6 +357,8 @@ public class SimulationTree extends JTree implements ActionListener
                     }
 
                 }
+
+                PlotManager.arrangeFrames();
             }
             catch (Exception ex)
             {

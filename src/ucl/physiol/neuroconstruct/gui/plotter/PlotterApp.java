@@ -56,18 +56,22 @@ public class PlotterApp
     }
 
     //Main method
-    public static void main(String[] args)
+    public static void main(String[] args) throws InterruptedException
     {
-        try
+        int num = 3;
+        for(int i=0;i<num;i++)
         {
-           // UIManager.setLookAndFeel(favouredLookAndFeel);
+            PlotterFrame framex = PlotManager.getPlotterFrame("Test_"+i, true, true);
+            framex.addSampleData();
         }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        System.out.println("Using look and feel: "+ UIManager.getLookAndFeel().getDescription());
 
-        new PlotterApp();
+        Thread.sleep(3000);
+
+        System.out.println("Plotting all...");
+
+        PlotManager.arrangeFrames();
+
+        System.out.println("Arranged all...");
+
     }
 }

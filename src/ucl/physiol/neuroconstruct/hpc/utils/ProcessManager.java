@@ -43,6 +43,25 @@ public class ProcessManager
 
 
 
+    public static String runCommand(String command, String title, int millisToWait) throws IOException
+    {
+        final String feedbackInfo = title;
+        ProcessFeedback pf = new ProcessFeedback()
+        {
+            public void comment(String comment)
+            {
+                logger.logComment(feedbackInfo+": output >> "+comment);
+            }
+            public void error(String comment)
+            {
+                logger.logComment(feedbackInfo+": error  >> "+comment);
+            }
+        };
+
+        File directoryToExecuteIn =  new File(".");
+        return runCommand(command, pf, directoryToExecuteIn, millisToWait);
+    }
+
     public static String runCommand(String command, ProcessFeedback feedback, int millisToWait) throws IOException
     {
         File directoryToExecuteIn =  new File(".");
