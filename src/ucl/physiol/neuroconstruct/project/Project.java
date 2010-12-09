@@ -26,7 +26,6 @@
 
 package ucl.physiol.neuroconstruct.project;
 
-import java.awt.Toolkit;
 import java.beans.*;
 import java.io.*;
 import java.util.*;
@@ -56,7 +55,14 @@ import javax.swing.*;
 public class Project implements TableModelListener
 {
     private static ClassLogger logger = new ClassLogger("Project");
-
+/*
+    static {
+        boolean assertsEnabled = false;
+        assert assertsEnabled = true; // Intentional side effect!!!
+        if (!assertsEnabled)
+            throw new RuntimeException("Asserts must be enabled!!!");
+    }
+*/
     public final static int PROJECT_NOT_INITIALISED = 0;
     public final static int PROJECT_NOT_YET_EDITED = 1;
     public final static int PROJECT_SAVED = 2;
@@ -710,7 +716,7 @@ public class Project implements TableModelListener
         }
         catch (InterruptedException ex)
         {
-            ex.printStackTrace();
+            //ex.printStackTrace();
         }
 
         logger.logComment("Ensuring the sim config info is up to date...");
@@ -1749,13 +1755,46 @@ public class Project implements TableModelListener
     }
 
     
-    public static void main(String[] args)
+    public static void main(String[] args) throws ProjectFileParsingException
     {
         System.out.println("Trying...");
         
         System.out.println("nC home proj: "+ProjectStructure.getnCHome().getAbsolutePath());
 
-        Toolkit.getDefaultToolkit().beep();
+        Project project = Project.loadProject(new File("nCmodels/Thalamocortical/Thalamocortical.ncx"),
+                                                   new ProjectEventListener()
+            {
+                public void tableDataModelUpdated(String tableModelName)
+                {};
+
+                public void tabUpdated(String tabName)
+                {};
+                public void cellMechanismUpdated()
+                {
+                };
+
+            });
+            
+
+        try {
+            assert project.proj3Dproperties.getDisplayOption().equals(Display3DProperties.DISPLAY_SOMA_SOLID_NEURITE_LINE);
+
+            assert project.simulationParameters.getDt() == 0.025f;
+
+            assert !project.neuronSettings.isVarTimeStep();
+            assert project.neuronSettings.isForceCorrectInit();
+            assert project.neuronSettings.getDataSaveFormat().equals(NeuronSettings.DataSaveFormat.TEXT_NC);
+
+            assert !project.genesisSettings.isSymmetricCompartments();
+            assert project.genesisSettings.isPhysiologicalUnits();
+
+
+            System.out.println("Done all!");
+        }
+        catch (Exception e)
+        {
+            System.out.println("Error: "+e.getMessage());
+        }
     }
 
 

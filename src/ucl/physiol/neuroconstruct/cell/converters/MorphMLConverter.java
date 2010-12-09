@@ -865,31 +865,34 @@ public class MorphMLConverter extends FormatImporter
                             {
                                 ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism)cm;
 
-
-                                String xpath = ChannelMLConstants.getPreV1_7_3IonsXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
-                                String val = cmlCm.getXMLDoc().getValueByXPath(xpath);
-
-                                logger.logComment("Trying to get: "+ xpath+": "+ val);
-
-
-                                logger.logComment("Trying to get: "+ cmlCm.getXMLDoc().getXPathLocations(true));
-
-                                if (val==null || val.trim().length()==0)  // post v1.7.3 format
+                                if (cmlCm.isChannelMechanism())
                                 {
-                                    xpath = ChannelMLConstants.getCurrVoltRelXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
-                                    val = cmlCm.getXMLDoc().getValueByXPath(xpath);
+                                    String xpath = ChannelMLConstants.getPreV1_7_3IonsXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
+                                    String val = cmlCm.getXMLDoc().getValueByXPath(xpath);
+
+                                    logger.logComment("Trying to get: "+ xpath+" in "+cmlCm.getInstanceName()+": "+ val);
+
+
+                                    logger.logComment("Trying to get: "+ cmlCm.getXMLDoc().getXPathLocations(true));
+
+                                    if (val==null || val.trim().length()==0)  // post v1.7.3 format
+                                    {
+                                        xpath = ChannelMLConstants.getCurrVoltRelXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
+                                        logger.logComment("Trying to get now: "+ xpath);
+                                        val = cmlCm.getXMLDoc().getValueByXPath(xpath);
+                                    }
+
+                                    float revPot = Float.parseFloat(val);
+
+                                    logger.logComment("Tried to get: "+ xpath+" in "+cmlCm.getXMLFile(project)+", found: "+revPot, true);
+
+                                    float revPotConv = (float)UnitConverter.getVoltage(revPot,
+                                                                            UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                            preferredExportUnits);
+
+                                    mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.REV_POT_ATTR_V2,
+                                                                                revPotConv+" "+voltUnit.getNeuroML2Symbol()));
                                 }
-
-                                float revPot = Float.parseFloat(val);
-
-                                logger.logComment("Tried to get: "+ xpath+" in "+cmlCm.getXMLFile(project)+", found: "+revPot, true);
-
-                                float revPotConv = (float)UnitConverter.getVoltage(revPot,
-                                                                        UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                                        preferredExportUnits);
-
-                                mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.REV_POT_ATTR_V2,
-                                                                            revPotConv+" "+voltUnit.getNeuroML2Symbol()));
                                 
                             }
 

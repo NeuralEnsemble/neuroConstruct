@@ -53,6 +53,11 @@ public class Expand
     static String CELL_MECHANISMS = "cellMechanisms";
 
     private static int fontSize = 10;
+
+    public static final String COLOUR_AMPA = "#FF0000";
+    public static final String COLOUR_NMDA = "#FF9900";
+    public static final String COLOUR_GABA = "#0000FF";
+    public static final String COLOUR_GAP = "#669966";
     
     public Expand()
     {
@@ -79,6 +84,60 @@ public class Expand
     	return CELL_MECHANISMS+"/"+getItemPage(cellMechName);
     }
 
+    public static String getNetConnInfo(Project project, String nc)
+    {
+        StringBuilder sb = new StringBuilder();
+        //String src = project.morphNetworkConnectionsInfo.getSourceCellGroup(nc);
+        //String tgt = project.morphNetworkConnectionsInfo.getTargetCellGroup(nc);
+
+        if (project.morphNetworkConnectionsInfo.isValidSimpleNetConn(nc))
+        {
+            ConnectivityConditions cc = project.morphNetworkConnectionsInfo.getConnectivityConditions(nc);
+
+            NumberGenerator start = cc.getNumConnsInitiatingCellGroup();
+            int maxFin = cc.getMaxNumInitPerFinishCell();
+
+            if(cc.getGenerationDirection() == ConnectivityConditions.SOURCE_TO_TARGET)
+            {
+                String max = maxFin==Integer.MAX_VALUE ? "X" : "max "+maxFin;
+                sb.append(start.toShortString() +" -> " + max);
+            }
+            else if(cc.getGenerationDirection() == ConnectivityConditions.TARGET_TO_SOURCE)
+            {
+                String max = maxFin==Integer.MAX_VALUE ? "X" : "max "+maxFin;
+                sb.append(max +" -> " + start.toShortString());
+            }
+            Vector<SynapticProperties> syns = project.morphNetworkConnectionsInfo.getSynapseList(nc);
+
+            sb.append("<br/>");
+            for(SynapticProperties syn:syns)
+            {
+                String synRef = syn.getSynapseType();
+                if (synRef.length()>12)
+                {
+                    if (synRef.indexOf("AMPA")>=0) synRef = "AMPA ";
+                    else if(synRef.indexOf("NMDA") >= 0) synRef = "NMDA ";
+                    else if(synRef.indexOf("GABAA") >= 0) synRef = "GABAA ";
+                    else if(synRef.indexOf("GABA") >= 0) synRef = "GABA ";
+                    else if(synRef.indexOf("Elect") >= 0) synRef = "Gap J ";
+                    else if(synRef.indexOf("Gap") >= 0) synRef = "Gap J ";
+                    else synRef = "syn ";
+                }
+                sb.append("<a href = \""+getCellMechPage(syn.getSynapseType())+"\">"+synRef+"</a> ");
+
+            }
+
+            //sb.append(")");
+        }
+        else
+        {
+            ConnectivityConditions cc = project.volBasedConnsInfo.getConnectivityConditions(nc);
+            sb.append(cc.toString());
+        }
+
+        return sb.toString();
+    }
+
     public static File generateMainPage(Project project, File dirToCreateIn)
     {
         String mainPageTitle = "index";
@@ -99,7 +158,7 @@ public class Expand
 
             mainPage.addTaggedElement("neuroConstruct project: "+ project.getProjectName(), "h2");
 
-            mainPage.addTaggedElement("Simulation configurations", "h2");
+            mainPage.addTaggedElement("Simulation Configurations", "h2");
             
             
             for (String sc: project.simConfigInfo.getAllSimConfigNames())
@@ -110,7 +169,7 @@ public class Expand
 
             String desc = project.getProjectDescription();
 
-            Vector<Cell> cells = new Vector<Cell>();
+            ArrayList<Cell> cells = new ArrayList<Cell>();
 
             ArrayList<String> cellMechs = new ArrayList<String>();
             ArrayList<String> cellGroups = new ArrayList<String>();
@@ -119,7 +178,7 @@ public class Expand
 
             if(title.equals(mainPageTitle))
             {
-                cells = project.cellManager.getAllCells();
+                cells.addAll(project.cellManager.getAllCells());
 
                 cellMechs.addAll(project.cellMechanismInfo.getAllCellMechanismNames());
 
@@ -161,6 +220,101 @@ public class Expand
                 }
             }
 
+            mainPage.addTaggedElement("Connectivity Matrix", "h2");
+
+            String connTitle = "Connectivity in "+title;
+            if (title.equals(mainPageTitle))
+                connTitle = "Connectivity in "+SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
+
+
+            ArrayList<String> orderedCellGroups = new ArrayList<String>();
+            String gap = "_____";
+
+            for(String cg: cellGroups)
+            {
+                Region reg = project.regionsInfo.getRegionObject(project.cellGroupsInfo.getRegionName(cg));
+                orderedCellGroups.add((reg.getHighestYValue()+100000)+gap+cg);
+            }
+
+            orderedCellGroups = (ArrayList<String>)GeneralUtils.reorderAlphabetically(orderedCellGroups, false);
+
+            for(int i=0;i<orderedCellGroups.size();i++)
+            {
+                String old = orderedCellGroups.get(i);
+                orderedCellGroups.set(i, old.substring(old.indexOf(gap)+gap.length()));
+            }
+
+
+            if (!title.equals(mainPageTitle))
+            {
+
+                String mFilename = getItemPage(connTitle);
+                File mFile = new File(fileToSave.getParentFile(), mFilename);
+
+                mainPage.addTaggedElement(mainPage.getLinkedText(connTitle, mFilename), "b");
+
+                SimpleHtmlDoc matrixPage = new SimpleHtmlDoc(connTitle, fontSize);
+
+                matrixPage.addTaggedElement(connTitle, "h2");
+
+
+                matrixPage.addRawHtml("<table border=\"1\"  valign='centre' cellpadding='3'>");
+
+                matrixPage.addRawHtml("<tr>");
+                    matrixPage.addRawHtml("<td   colspan='2'>&nbsp;</td>");
+
+                for(String preCG: orderedCellGroups)
+                {
+                    matrixPage.addRawHtml("<td class='header'  colspan='2'>"+preCG+"</td>");
+                }
+                matrixPage.addRawHtml("</tr>");
+                for(String postCG: orderedCellGroups)
+                {
+                    matrixPage.addRawHtml("<tr>");
+                    matrixPage.addRawHtml("<td class='header'  colspan='2'>"+postCG+"</td>");
+
+                    for(String preCG: orderedCellGroups)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        for (String nc: netConns)
+                        {
+                            String src = project.morphNetworkConnectionsInfo.getSourceCellGroup(nc);
+                            String tgt = project.morphNetworkConnectionsInfo.getTargetCellGroup(nc);
+                            if (preCG.equals(src)&&postCG.equals(tgt))
+                            {
+                                if (sb.length()>0) sb.append("<br/>");
+                                String info = getNetConnInfo(project, nc);
+                                if (info.toUpperCase().indexOf("AMPA")>=0 || info.toUpperCase().indexOf("NMDA")>=0  || info.toUpperCase().indexOf("EXC")>=0 )
+                                {
+                                    info = "<font color=\""+COLOUR_AMPA+"\">"+info+"</font>";
+                                }
+                                else if(info.toUpperCase().indexOf("GABA") >= 0 || info.toUpperCase().indexOf("INH") >= 0 )
+                                {
+                                    info = "<font color=\""+COLOUR_GABA+"\">"+info+"</font>";
+                                }
+                                else if(info.toUpperCase().indexOf("GAP") >= 0 || info.indexOf("ELECT") >= 0 )
+                                {
+                                    info = "<font color=\""+COLOUR_GAP+"\">"+info+"</font>";
+                                }
+                                sb.append(info);
+                            }
+                        }
+                        matrixPage.addRawHtml("<td   colspan='2'>"+sb.toString()+"</td>");
+                    }
+                    matrixPage.addRawHtml("</tr>");
+                }
+                matrixPage.addRawHtml("</table>");
+
+
+
+                matrixPage.saveAsFile(mFile);
+            }
+
+
+
+
+
+
             int width = 700;
             int width1 = 140;
 
@@ -186,7 +340,7 @@ public class Expand
             mainPage.addRawHtml("<tr><td><b>Topology</b></td><td>Network of neurons positioned & connected in 3D space</td></tr>");
 
             mainPage.addRawHtml("<tr><td><b>Connectivity</b></td><td>");
-            if (netConns.size()==0)
+            if (netConns.isEmpty())
                 mainPage.addRawHtml("No network connections in this Simulation Configuration");
 
             for(String nc: netConns)
@@ -362,7 +516,7 @@ public class Expand
                     "<td  width='100'><b>Target</b></td>" +
                     "<td><b>Pattern</b></td></tr>");
 
-            if (netConns.size()==0)
+            if (netConns.isEmpty())
             {
                 mainPage.addRawHtml("<tr>" +
                                     "<td colspan='4'>No network connections in this simulation Configuration</td>" +
@@ -373,13 +527,13 @@ public class Expand
             {
                 String src = project.morphNetworkConnectionsInfo.getSourceCellGroup(nc);
                 String tgt = project.morphNetworkConnectionsInfo.getTargetCellGroup(nc);
-                ConnectivityConditions cc = project.morphNetworkConnectionsInfo.getConnectivityConditions(nc);
+                //ConnectivityConditions cc = project.morphNetworkConnectionsInfo.getConnectivityConditions(nc);
 
                 mainPage.addRawHtml("<tr>" +
                                     "<td><a name=\""+nc+"\"/>"+nc+"</td>" +
                                     "<td><a href=\"#"+src+"\">"+src+"</a></td>" +
                                     "<td><a href=\"#"+tgt+"\">"+tgt+"</td>" +
-                                    "<td>"+cc+"</td>" +
+                                    "<td>"+getNetConnInfo(project, nc)+"</td>" +
                                     "</tr>");
 
             }
@@ -458,22 +612,29 @@ public class Expand
 
     public static void main(String[] args)
     {
-        new Expand();
+        Expand expand = new Expand();
         
         try
         {
+
             //File projFile = new File("examples/Ex6-Cerebellum/Ex6-Cerebellum.neuro.xml");
             //File projFile = new File("C:\\copynCmodels\\TraubEtAl2005\\TraubEtAl2005.neuro.xml");
             //File projFile = new File("nCmodels/Thalamocortical/Thalamocortical.ncx");
             //File projFile = new File("nCmodels/CA1PyramidalCell/CA1PyramidalCell.ncx");
             //File projFile = new File("nCmodels/GranuleCell/GranuleCell.ncx");
-            File projFile = new File("nCmodels/SolinasEtAl_GolgiCell/SolinasEtAl_GolgiCell.ncx");
+            //File projFile = new File("nCmodels/SolinasEtAl_GolgiCell/SolinasEtAl_GolgiCell.ncx");
             //File projFile = new File("nCmodels/GranCellLayer/GranCellLayer.ncx");
             //File projFile = new File("nCexamples/Ex4_HHcell/Ex4_HHcell.ncx");
             //File projFile = new File("/bernal/models/Layer23_names/Layer23_names.neuro.xml");
-            
+            File projFile = new File("../copyNcModels/Parallel/Parallel.neuro.xml");
+            projFile = new File("nCmodels/Thalamocortical/Thalamocortical.ncx");
+
+            //projFile = new File("nCexamples/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx");
+            //projFile = new File("nCexamples/Ex5_Networks/Ex5_Networks.ncx");
 
             logger.logComment("Going to create docs for project: "+ projFile.getCanonicalPath(), true);
+
+
             
             
             Project testProj = Project.loadProject(projFile, new ProjectEventListener()
