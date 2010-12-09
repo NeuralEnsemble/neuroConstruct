@@ -759,6 +759,13 @@ public class PlotterFrame extends JFrame
             newMenu.add(moveMenuItem);
 
             moveMenuItem.addActionListener(new DataSetMoveMenuListener(nextDataSet, this));
+
+            JMenuItem detachMenuItem = new JMenuItem();
+            detachMenuItem.setText("Detach Data Set");
+            detachMenuItem.setToolTipText("Removes this Data Set from this Plot Frame and move it to a new one");
+            newMenu.add(detachMenuItem);
+
+            detachMenuItem.addActionListener(new DataSetDetachMenuListener(nextDataSet, this));
             
 
             JMenuItem removeMenuItem = new JMenuItem();
@@ -2012,15 +2019,15 @@ public class PlotterFrame extends JFrame
         {
             ArrayList<String> r = PlotManager.getPlotterFrameReferences();
             int numCurently = plotFrame.getNumDataSets();
-            
+
             if (r.size()==1 && numCurently==1)
             {
                 GuiUtils.showErrorMessage(logger, "Sorry, there seems to be only one Plot Frame with a single Data Set currently open", null, null);
                 return;
             }
-            
+
             String newPlotFrame = "-- New Empty Plot Frame --";
-                
+
             r.remove(plotFrame.getPlotFrameReference());
             if (numCurently>1)
             {
@@ -2028,34 +2035,59 @@ public class PlotterFrame extends JFrame
             }
             String[] refs = new String[r.size()];
             refs = r.toArray(refs);
-            
+
             String option = (String)JOptionPane.showInputDialog(plotFrame, "Please select Plot Frame to move Data Set to", "Move Data Set", JOptionPane.OK_CANCEL_OPTION, null, refs, refs[0]);
-            
+
             if (option == null)
                 return;
-            
+
             String newPlotFrameRef = option;
-            
+
             if (newPlotFrameRef.equals(newPlotFrame))
-            { 
+            {
                 newPlotFrameRef = dataSet.getReference();
-                
+
                 while (r.contains(newPlotFrameRef))
                     newPlotFrameRef = "New Plot Frame: "+newPlotFrameRef;
-                
+
             }
-            
+
             PlotterFrame frame = PlotManager.getPlotterFrame(newPlotFrameRef);
-            
+
             frame.addDataSet(dataSet);
-            
+
             plotFrame.removeDataSet(dataSet);
-            
+
             if (numCurently==1)
             {
                 plotFrame.setVisible(false);
                 plotFrame.dispose();
             }
+        };
+    }
+
+    public class DataSetDetachMenuListener implements ActionListener
+    {
+        DataSet dataSet = null;
+        PlotterFrame plotFrame = null;
+
+        public DataSetDetachMenuListener(DataSet dataSet, PlotterFrame plotFrame)
+        {
+            this.dataSet = dataSet;
+            this.plotFrame = plotFrame;
+        }
+        public void actionPerformed(ActionEvent e)
+        {
+
+            String newPlotFrameRef = dataSet.getReference();
+
+
+            PlotterFrame frame = PlotManager.getPlotterFrame(newPlotFrameRef);
+
+            frame.addDataSet(dataSet);
+
+            plotFrame.removeDataSet(dataSet);
+
         };
     }
 
