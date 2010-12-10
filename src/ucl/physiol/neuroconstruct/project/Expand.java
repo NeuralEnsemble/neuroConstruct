@@ -265,40 +265,54 @@ public class Expand
 
                 for(String preCG: orderedCellGroups)
                 {
-                    matrixPage.addRawHtml("<td class='header'  colspan='2'>"+preCG+"</td>");
+                    String preRef = preCG;
+
+                    if (preCG.startsWith("CG3D_")) preRef = preCG.substring(5);
+                    matrixPage.addRawHtml("<td class='header'  colspan='2'>"+preRef+"</td>");
                 }
                 matrixPage.addRawHtml("</tr>");
                 for(String postCG: orderedCellGroups)
                 {
                     matrixPage.addRawHtml("<tr>");
-                    matrixPage.addRawHtml("<td class='header'  colspan='2'>"+postCG+"</td>");
+                    String postRef = postCG;
+
+                    if (postCG.startsWith("CG3D_")) postRef = postCG.substring(5);
+                    matrixPage.addRawHtml("<td class='header'  colspan='2'>"+postRef+"</td>");
 
                     for(String preCG: orderedCellGroups)
                     {
                         StringBuilder sb = new StringBuilder();
+                        sb.append("<table>");
                         for (String nc: netConns)
                         {
                             String src = project.morphNetworkConnectionsInfo.getSourceCellGroup(nc);
                             String tgt = project.morphNetworkConnectionsInfo.getTargetCellGroup(nc);
                             if (preCG.equals(src)&&postCG.equals(tgt))
                             {
-                                if (sb.length()>0) sb.append("<br/>");
                                 String info = getNetConnInfo(project, nc);
-                                if (info.toUpperCase().indexOf("AMPA")>=0 || info.toUpperCase().indexOf("NMDA")>=0  || info.toUpperCase().indexOf("EXC")>=0 )
+                                String bgCol = "";
+                                String fgCol = " style=\"color:#FFFFFF\"";
+
+                                if (info.toUpperCase().indexOf("AMPA")>=0 || info.toUpperCase().indexOf("NMDA")>=0  || info.toUpperCase().indexOf("EXC")>=0 || info.toUpperCase().indexOf("DOUBEXPSYN")>=0 )
                                 {
-                                    info = "<font color=\""+COLOUR_AMPA+"\">"+info+"</font>";
+                                    bgCol = "bgcolor=\""+COLOUR_AMPA+"\" "+fgCol;
+                                    //info = "<font color=\""+COLOUR_AMPA+"\">"+info+"</font>";
                                 }
                                 else if(info.toUpperCase().indexOf("GABA") >= 0 || info.toUpperCase().indexOf("INH") >= 0 )
                                 {
-                                    info = "<font color=\""+COLOUR_GABA+"\">"+info+"</font>";
+                                    bgCol = "bgcolor=\""+COLOUR_GABA+"\" "+fgCol;
+                                    //info = "<font color=\""+COLOUR_GABA+"\">"+info+"</font>";
                                 }
                                 else if(info.toUpperCase().indexOf("GAP") >= 0 || info.indexOf("ELECT") >= 0 )
                                 {
-                                    info = "<font color=\""+COLOUR_GAP+"\">"+info+"</font>";
+                                    bgCol = "bgcolor=\""+COLOUR_GAP+"\" "+fgCol;
+                                    //info = "<font color=\""+COLOUR_GAP+"\">"+info+"</font>";
                                 }
-                                sb.append(info);
+                                sb.append("<tr><td "+bgCol+">"+info+"</td></td>");
                             }
                         }
+
+                        sb.append("</table>");
                         matrixPage.addRawHtml("<td   colspan='2'>"+sb.toString()+"</td>");
                     }
                     matrixPage.addRawHtml("</tr>");
