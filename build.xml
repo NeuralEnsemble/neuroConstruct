@@ -104,6 +104,7 @@
     <property name="test.dir" value="./tests"/>
     <property name="main.test.class" value="ucl.physiol.neuroconstruct.test.MainTest"/>
     <property name="main.testmodels.class" value="ucl.physiol.neuroconstruct.test.ModelTest"/>
+    <property name="main.testmodpy.class" value="ucl.physiol.neuroconstruct.test.PythonTest"/>
 
 
 
@@ -308,6 +309,22 @@
           description="Runs a number of automated tests on neuroConstruct models, mainly the NeuroML based examples in nCmodels.">
 
     <java classname="${main.testmodels.class}" fork="true">
+        <jvmarg value="-Xmx700M" />
+        <jvmarg value="-Xms600M" />
+        <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
+        <jvmarg value="-Dsun.java2d.noddraw=true" />
+        <classpath refid="run.class.path"/>
+    </java>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Run tests on Python scripts of models                                               -->
+  <!-- =================================================================== -->
+
+  <target name="testmodpy" depends="clean, makejar"
+          description="Runs a number of automated tests on Python scripts of neuroConstruct models, mainly the NeuroML based examples in nCmodels.">
+
+    <java classname="${main.testmodpy.class}" fork="true">
         <jvmarg value="-Xmx700M" />
         <jvmarg value="-Xms600M" />
         <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
