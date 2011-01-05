@@ -584,7 +584,6 @@ public class NeuroMLFileManager
             String lemsFileName = "LEMS_"+project.getProjectName()+".xml";
             File lemsFile = new File(generateDir, lemsFileName);
 
-
             SimpleXMLElement lemsElement = new SimpleXMLElement(LemsConstants.ROOT_LEMS);
 
             lemsElement.addContent("\n\n    "); // to make it more readable...
@@ -648,95 +647,123 @@ public class NeuroMLFileManager
 
             HashMap<String, SimpleXMLElement> displaysAdded = new HashMap<String, SimpleXMLElement>();
 
+            File dirForAllSims = ProjectStructure.getSimulationsDir(project.getProjectMainDirectory());
+            File simDir = new File(dirForAllSims, project.simulationParameters.getReference());
+
+            simDir.mkdir();
+
             for (SimPlot simPlot: project.simPlotInfo.getAllSimPlots())
             {
-                String displayId = simPlot.getGraphWindow();
-
-                String value = convertValue(simPlot.getValuePlotted());
-
-                if (!value.equals("???"))
+                if (simConf.getPlots().contains(simPlot.getPlotReference()))
                 {
-                    ArrayList<Integer> cellNums = new ArrayList<Integer>();
+                    String displayId = simPlot.getGraphWindow();
+                    String value = convertValue(simPlot.getValuePlotted());
 
-                    String cellNumPattern = simPlot.getCellNumber();
+                    logger.logComment("-+- Adding plot: "+ simPlot+" "+simConf.toLongString());
 
-                    int numInCellGroup = project.generatedCellPositions.getNumberInCellGroup(simPlot.getCellGroup());
-
-                    if (cellNumPattern.equals("*"))
+                    if (!value.equals("???"))
                     {
-                        for(int i=0;i<numInCellGroup;i++)
-                        {
-                            cellNums.add(i);
-                        }
-                    }
-                    else if(cellNumPattern.indexOf("#") >= 0)
-                    {
-                        int numToPick = Integer.parseInt(cellNumPattern.substring(0, cellNumPattern.length()-1));
-                        if (numToPick>=numInCellGroup)
+                        ArrayList<Integer> cellNums = new ArrayList<Integer>();
+
+                        String cellNumPattern = simPlot.getCellNumber();
+
+                        int numInCellGroup = project.generatedCellPositions.getNumberInCellGroup(simPlot.getCellGroup());
+
+                        logger.logComment("- Val of: "+ value+" on "+numInCellGroup+", "+ cellNumPattern);
+
+                        if (cellNumPattern.equals("*"))
                         {
                             for(int i=0;i<numInCellGroup;i++)
                             {
                                 cellNums.add(i);
                             }
                         }
-                        else
+                        else if(cellNumPattern.indexOf("#") >= 0)
                         {
-                            Random r = new Random();
-
-                            while(cellNums.size()<numToPick)
+                            int numToPick = Integer.parseInt(cellNumPattern.substring(0, cellNumPattern.length()-1));
+                            if (numToPick>=numInCellGroup)
                             {
-                                int next = r.nextInt(numInCellGroup);
-                                if(!cellNums.contains(next)) cellNums.add(next);
+                                for(int i=0;i<numInCellGroup;i++)
+                                {
+                                    cellNums.add(i);
+                                }
+                            }
+                            else
+                            {
+                                Random r = new Random();
+
+                                while(cellNums.size()<numToPick)
+                                {
+                                    int next = r.nextInt(numInCellGroup);
+                                    if(!cellNums.contains(next)) cellNums.add(next);
+                                }
                             }
                         }
-                    }
-
-                    if (cellNums.size()>0)
-                    {
-
-                        if (!displaysAdded.containsKey(displayId))
+                        else
                         {
-                            SimpleXMLElement dispEl = new SimpleXMLElement(LemsConstants.DISPLAY_ELEMENT);
-
-                            simEl.addChildElement(dispEl);
-                            simEl.addContent("\n    "); // to make it more readable...
-
-
-                            dispEl.addAttribute(LemsConstants.ID_ATTR, displayId);
-                            dispEl.addAttribute(LemsConstants.TITLE_ATTR, project.getProjectName()+": "+ simConf.getName());
-                            dispEl.addAttribute(LemsConstants.TIMESCALE_ATTR, "1ms");
-
-                            displaysAdded.put(displayId, dispEl);
+                            int single = Integer.parseInt(cellNumPattern);
+                            cellNums.add(single);
                         }
 
-
-
-                        for(int cellNum: cellNums)
+                        if (cellNums.size()>0)
                         {
-                            SimpleXMLElement lineEl = new SimpleXMLElement(LemsConstants.LINE_ELEMENT);
-                            SimpleXMLElement dispEl = displaysAdded.get(displayId);
-
-                            dispEl.addContent("\n            "); // to make it more readable...
-                            dispEl.addChildElement(lineEl);
-                            dispEl.addContent("\n        "); // to make it more readable...
-
-                            lineEl.addAttribute(LemsConstants.ID_ATTR, simPlot.getPlotReference());
-
-
-                            String path = simPlot.getCellGroup()+"["+cellNum+"]/"+ value;
-
-                            lineEl.addAttribute(LemsConstants.QUANTITY_ATTR, path);
-                            lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1mV");   //TODO: check for units...
-
-                            //String colourHex = getNextColourHex(displayId);
-                            String colourHex = getNextColourHex("All different colours...");
-
-                            lineEl.addAttribute(LemsConstants.COLOR_ATTR, "#"+colourHex);
-
-                            if (simPlot.toBeSaved())
+                            if (!displaysAdded.containsKey(displayId))
                             {
-                                lineEl.addAttribute(LemsConstants.SAVE_ATTR, simPlot.getCellGroup()+"_"+cellNum+".dat");
+                                SimpleXMLElement dispEl = new SimpleXMLElement(LemsConstants.DISPLAY_ELEMENT);
 
+                                simEl.addChildElement(dispEl);
+                                simEl.addContent("\n    "); // to make it more readable...
+
+                                dispEl.addAttribute(LemsConstants.ID_ATTR, displayId);
+                                dispEl.addAttribute(LemsConstants.TITLE_ATTR, project.getProjectName()+": "+ simConf.getName());
+                                dispEl.addAttribute(LemsConstants.TIMESCALE_ATTR, "1ms");
+
+                                displaysAdded.put(displayId, dispEl);
+                            }
+
+                            for(int cellNum: cellNums)
+                            {
+                                SimpleXMLElement lineEl = new SimpleXMLElement(LemsConstants.LINE_ELEMENT);
+                                SimpleXMLElement dispEl = displaysAdded.get(displayId);
+
+                                dispEl.addContent("\n            "); // to make it more readable...
+                                dispEl.addChildElement(lineEl);
+                                dispEl.addContent("\n        "); // to make it more readable...
+
+                                String titleDisp = dispEl.getAttributeValue(LemsConstants.TITLE_ATTR);
+                                dispEl.setAttributeValue(LemsConstants.TITLE_ATTR, titleDisp+", "+simPlot.getValuePlotted());
+
+                                lineEl.addAttribute(LemsConstants.ID_ATTR, simPlot.getPlotReference());
+
+
+                                String path = simPlot.getCellGroup()+"["+cellNum+"]/"+ value;
+
+                                lineEl.addAttribute(LemsConstants.QUANTITY_ATTR, path);
+
+                                if(simPlot.getPlotReference().equals(SimPlot.VOLTAGE))
+                                {
+                                    lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1mV");   //TODO: check for units...
+                                }
+                                else
+                                {
+                                    lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1");   //TODO: check for units...
+                                }
+
+                                //String colourHex = getNextColourHex(displayId);
+                                String colourHex = getNextColourHex("All different colours...");
+
+                                lineEl.addAttribute(LemsConstants.COLOR_ATTR, "#"+colourHex);
+
+                                if (simPlot.toBeSaved())
+                                {
+                                    String datFile = simPlot.getCellGroup()+"_"+cellNum+".dat";
+                                    File fullFile = new File(simDir, datFile);
+                                    String fileStr = fullFile.getAbsolutePath();
+                                    fileStr = fileStr.replaceAll("\\\\", "\\\\\\\\");
+                                    lineEl.addAttribute(LemsConstants.SAVE_ATTR,fileStr);
+
+                                }
+                                logger.logComment("Adding line: "+ lineEl.getXMLString("", false));
                             }
                         }
                     }
@@ -781,7 +808,7 @@ public class NeuroMLFileManager
                                       dirToRunIn, true);
 
             //Process process = rt.exec(executable, null, dirToRunIn);
-            ProcessManager.runCommand(executable, "LEMS", 5);
+            ProcessManager.runCommand(executable, "LEMS", 5, dirToRunIn);
 
 
       
@@ -793,6 +820,12 @@ public class NeuroMLFileManager
     {
         if (val.equals(SimPlot.VOLTAGE))
             return "v";
+        if (val.split(":").length==2)  // TODO: Make more general!!!!
+        {
+            String cmName = val.split(":")[0];
+            String varName = val.split(":")[1];
+            return "biophys/membraneProperties/"+cmName+"_all/"+cmName+"/"+varName+"/q";
+        }
 
         return "???";
     }
@@ -850,12 +883,15 @@ public class NeuroMLFileManager
         try
         {
             File projFile = new File("lems/nCproject/LemsTest/LemsTest.ncx");
+            projFile = new File("models/VSCSGranCell/VSCSGranCell.neuro.xml");
+            String simConf = "TestSimConf";
+
             Project p = Project.loadProject(projFile, null);
             //Proje
             ProjectManager pm = new ProjectManager(null,null);
             pm.setCurrentProject(p);
 
-            pm.doGenerate(SimConfigInfo.DEFAULT_SIM_CONFIG_NAME, 123);
+            pm.doGenerate(simConf, 123);
 
             Thread.sleep(1000);
 
@@ -866,9 +902,9 @@ public class NeuroMLFileManager
 
             OriginalCompartmentalisation oc = new OriginalCompartmentalisation();
 
-            SimConfig sc = p.simConfigInfo.getDefaultSimConfig();
+            SimConfig sc = p.simConfigInfo.getSimConfig(simConf);
 
-            boolean runLems = false;
+            boolean runLems = true;
             
             npfm.generateNeuroMLFiles(sc, NeuroMLVersion.NEUROML_VERSION_2, runLems, oc, 123, false, false);
 

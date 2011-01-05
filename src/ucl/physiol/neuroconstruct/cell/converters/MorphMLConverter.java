@@ -787,7 +787,7 @@ public class MorphMLConverter extends FormatImporter
                 {
                     biophysElement = new SimpleXMLElement(BiophysicsConstants.BIOPHYS_PROPS_ELEMENT_V2);
 
-                    biophysElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, "biophysics_"+cell.getInstanceName());
+                    biophysElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, "biophys");
 
                     membPropsElement = new SimpleXMLElement(BiophysicsConstants.MEMB_PROPS_ELEMENT_V2);
 

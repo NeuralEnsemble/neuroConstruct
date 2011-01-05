@@ -13414,6 +13414,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         try
         {
+            projManager.getCurrentProject().neuromlFileManager.reset();
+            
             projManager.getCurrentProject().neuromlFileManager.generateNeuroMLFiles(this.getSelectedSimConfig(),
                                                                                       version,
                                                                                       runWithLems,
