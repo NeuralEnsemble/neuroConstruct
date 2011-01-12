@@ -38,6 +38,16 @@
                     <location>${project.dir}/tests</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
+                <source-folder>
+                    <label>lems/src</label>
+                    <type>java</type>
+                    <location>${project.dir}/lems/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>lems/src</label>
+                    <location>${project.dir}/lems/src</location>
+                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -131,6 +141,10 @@
                         <label>tests</label>
                         <location>${project.dir}/tests</location>
                     </source-folder>
+                    <source-folder style="packages">
+                        <label>lems/src</label>
+                        <location>${project.dir}/lems/src</location>
+                    </source-folder>
                     <source-file>
                         <location>${ant.script}</location>
                     </source-file>
@@ -155,7 +169,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>${project.dir}/src</package-root>
-                <classpath mode="compile">${project.dir}/lib/hdf5/jhdf.jar:${project.dir}/lib/hdf5/jhdf4obj.jar:${project.dir}/lib/hdf5/jhdf5.jar:${project.dir}/lib/hdf5/jhdf5obj.jar:${project.dir}/lib/hdf5/jhdfobj.jar:${project.dir}/lib/jython/jython.jar:${project.dir}/lib/junit/junit-4.8.1.jar:${project.dir}/lib/j3d/j3dcore.jar:${project.dir}/lib/j3d/j3dutils.jar:${project.dir}/lib/j3d/vecmath.jar</classpath>
+                <classpath mode="compile">${project.dir}/lib/hdf5/jhdf.jar:${project.dir}/lib/hdf5/jhdf4obj.jar:${project.dir}/lib/hdf5/jhdf5.jar:${project.dir}/lib/hdf5/jhdf5obj.jar:${project.dir}/lib/hdf5/jhdfobj.jar:${project.dir}/lib/jython/jython.jar:${project.dir}/lib/junit/junit-4.8.1.jar:${project.dir}/lib/j3d/j3dcore.jar:${project.dir}/lib/j3d/j3dutils.jar:${project.dir}/lib/j3d/vecmath.jar:${project.dir}/lems/lems-0.6.1.jar</classpath>
                 <built-to>${project.dir}/classes</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
@@ -164,6 +178,10 @@
                 <unit-tests/>
                 <classpath mode="compile">${project.dir}/lib/hdf5/jhdf.jar:${project.dir}/lib/hdf5/jhdf4obj.jar:${project.dir}/lib/hdf5/jhdf5.jar:${project.dir}/lib/hdf5/jhdf5obj.jar:${project.dir}/lib/hdf5/jhdfobj.jar:${project.dir}/lib/jython/jython.jar:${project.dir}/lib/junit/junit-4.8.1.jar:${project.dir}/lib/junit/junit-4.8.1-src.jar:${project.dir}/lib/j3d/j3dcore.jar:${project.dir}/lib/j3d/j3dutils.jar:${project.dir}/lib/j3d/vecmath.jar:${project.dir}/src:${project.dir}/neuroConstruct_1.4.1.jar</classpath>
                 <built-to>${project.dir}/classes</built-to>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>${project.dir}/lems/src</package-root>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

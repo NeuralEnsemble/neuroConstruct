@@ -110,6 +110,9 @@
 
     <property name="jar.file" value="${build.dir}/${name}_${version}.jar"/>
 
+
+    <property name="lems.jar.file" value="./lems/lems-0.6.1.jar"/>
+
     <filter token="year" value="${year}"/>
     <filter token="version" value="${version}"/>
     <filter token="date" value="${TODAY}"/>
@@ -131,6 +134,7 @@
         <fileset dir="${junit.libs}">
           <include name="*.jar"/>
         </fileset>
+        <pathelement location="${lems.jar.file}"/>
 
     </path>
 

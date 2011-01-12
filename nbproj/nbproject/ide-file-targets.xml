@@ -6,7 +6,8 @@
     <property name="ant.script" value="${project.dir}/build.xml"/>
     <!-- TODO: edit the following target according to your needs -->
     <!-- (more info: http://www.netbeans.org/kb/41/freeform-config.html#runsingle) -->
-    
+
+    <property name="lems.jar.file" value="../lems/lems-0.6.1.jar"/>
     
     <target depends="init" name="run-selected-file-in-src">
         <path id="run.class.path">
@@ -23,6 +24,7 @@
                 <include name="*.jar"/>
             </fileset>
             <pathelement location="${project.dir}/${neuroconstruct-core}"/>
+            <pathelement location="${lems.jar.file}"/>
         </path>
         
         
@@ -32,6 +34,7 @@
         
         
         <java classname="${run.class}" dir="${project.dir}" failonerror="true" fork="true">
+            <jvmarg value="-ea"/>
             <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
             <classpath refid="run.class.path"/>
         </java>
@@ -57,6 +60,7 @@
                 <include name="*.jar"/>
             </fileset>
             <pathelement location="${project.dir}/${neuroconstruct-core}"/>
+            <pathelement location="${lems.jar.file}"/>
         </path>
         
         <fail unless="run.class">Must set property 'run.class'</fail>
@@ -100,6 +104,7 @@
                 <include name="*.jar"/>
             </fileset>
             <pathelement location="${project.dir}/${neuroconstruct-core}"/>
+            <pathelement location="${lems.jar.file}"/>
         </path>
         
         <fail unless="run.class">Must set property 'run.class'</fail>
