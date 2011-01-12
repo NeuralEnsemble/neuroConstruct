@@ -483,6 +483,16 @@ public class NeuroMLFileManager
                         {
                             //??
                         }
+                        else if (cm instanceof NeuroML2Component)
+                        {
+                            NeuroML2Component nmlCm = (NeuroML2Component)cm;
+                            String newName = cm.getInstanceName()+".nml";
+                            File copied = GeneralUtils.copyFileIntoDir(nmlCm.getXMLFile(project), generateDir);
+                            copied.renameTo(new File(generateDir, newName));
+
+                            logger.logComment("copied: "+copied, false);
+
+                        }
                         else if (!(cm instanceof ChannelMLCellMechanism))
                         {
                             File warnFile = new File(generateDir, cm.getInstanceName()+".warning");
@@ -711,6 +721,7 @@ public class NeuroMLFileManager
                             {
                                 SimpleXMLElement dispEl = new SimpleXMLElement(LemsConstants.DISPLAY_ELEMENT);
 
+                                simEl.addContent("\n        "); // to make it more readable...
                                 simEl.addChildElement(dispEl);
                                 simEl.addContent("\n    "); // to make it more readable...
 
@@ -740,7 +751,7 @@ public class NeuroMLFileManager
 
                                 lineEl.addAttribute(LemsConstants.QUANTITY_ATTR, path);
 
-                                if(simPlot.getPlotReference().equals(SimPlot.VOLTAGE))
+                                if(simPlot.getValuePlotted().equals(SimPlot.VOLTAGE))
                                 {
                                     lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1mV");   //TODO: check for units...
                                 }
@@ -757,6 +768,9 @@ public class NeuroMLFileManager
                                 if (simPlot.toBeSaved())
                                 {
                                     String datFile = simPlot.getCellGroup()+"_"+cellNum+".dat";
+                                    if (!simPlot.isVoltage())
+                                        datFile = simPlot.getCellGroup()+"_"+cellNum+"."+simPlot.getSafeVarName()+".dat";
+                                    
                                     File fullFile = new File(simDir, datFile);
                                     String fileStr = fullFile.getAbsolutePath();
                                     fileStr = fileStr.replaceAll("\\\\", "\\\\\\\\");
@@ -883,8 +897,10 @@ public class NeuroMLFileManager
         try
         {
             File projFile = new File("lems/nCproject/LemsTest/LemsTest.ncx");
-            projFile = new File("models/VSCSGranCell/VSCSGranCell.neuro.xml");
-            String simConf = "TestSimConf";
+            //projFile = new File("models/VSCSGranCell/VSCSGranCell.neuro.xml");
+            String simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
+            if (projFile.getName().startsWith("VSCSGranCell"))
+                simConf = "TestSimConf";
 
             Project p = Project.loadProject(projFile, null);
             //Proje

@@ -1493,8 +1493,11 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         {
 
         }
-   
-        Project testProj = Project.loadProject(new File("../copyNcModels/Inhomogen/Inhomogen.neuro.xml"),
+        File f = new File("../copyNcModels/Inhomogen/Inhomogen.neuro.xml");
+
+        f = new File("lems/nCproject/LemsTest/LemsTest.ncx");
+        
+        Project testProj = Project.loadProject(f,
                                                new ProjectEventListener()
         {
             public void tableDataModelUpdated(String tableModelName)
@@ -1509,6 +1512,8 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         });
 
         Cell cell = testProj.cellManager.getCell("Longer");
+        if (cell == null)
+            cell = testProj.cellManager.getAllCells().get(0);
         /*
         String expression1 = "100 + 200*(p+10)";
         

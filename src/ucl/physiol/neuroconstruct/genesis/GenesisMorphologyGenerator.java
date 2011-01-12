@@ -80,7 +80,7 @@ public class GenesisMorphologyGenerator
         logger.logComment("GenesisMorphologyGenerator created for: " + cell.toString());
         this.cell = cell;
 
-        StringBuffer spaceLessName = new StringBuffer();
+        StringBuilder spaceLessName = new StringBuilder();
 
         this.project = project;
 
@@ -148,7 +148,7 @@ public class GenesisMorphologyGenerator
     private String checkExtraParams()
     {
         logger.logComment("calling checkExtraParams");
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
         if (CellTopologyHelper.hasExtraCellMechParams(cell))
         {
             GenesisFileManager.addMajorComment(response, "          ****  NOTE  ****\n" +
@@ -165,7 +165,7 @@ public class GenesisMorphologyGenerator
     private String getCommonHeader()
     {
 
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
         response.append("*absolute\n");
         response.append("*cartesian\n");
 
@@ -180,7 +180,7 @@ public class GenesisMorphologyGenerator
     private String getMainMorphology()
     {
         logger.logComment("calling getMainMorphology");
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
 
         //Vector segments = cell.getAllSegments();
         Vector<Segment> segments = cell.getExplicitlyModelledSegments();
@@ -573,7 +573,7 @@ public class GenesisMorphologyGenerator
                                         project.genesisSettings.getUnitSystemToUse())+"\n\n\n";
                 }
 
-                StringBuffer channelCondString = new StringBuffer();
+                StringBuilder channelCondString = new StringBuilder();
 
                 // Consolidating chan mechs for this segment, ie. joining...
                 //  nextChanMech: naf2 (density: -1.0 mS um^-2, fastNa_shift = -2.5)

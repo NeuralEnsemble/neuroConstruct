@@ -2330,7 +2330,7 @@ public class CellTopologyHelper
     		                          boolean html,
     		                          boolean longFormat,
     		                          boolean projHtml,
-                                          boolean safeSymbol)
+                                      boolean safeSymbol)
     {
 
         logger.logComment("Printing cell details...");
@@ -2352,7 +2352,11 @@ public class CellTopologyHelper
 
         sb.append("  "+GeneralUtils.getEndLine(html));
         
-        boolean useFullSymbol = !safeSymbol || (html || projHtml);
+        boolean useFullSymbol = !safeSymbol && (html || projHtml);
+
+
+        //logger.logComment("safeSymbol..."+safeSymbol, true);
+        //logger.logComment("useFullSymbol..."+useFullSymbol, true);
 
 
         

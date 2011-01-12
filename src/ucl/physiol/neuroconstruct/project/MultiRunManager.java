@@ -28,8 +28,6 @@ package ucl.physiol.neuroconstruct.project;
 
 import ucl.physiol.neuroconstruct.utils.SequenceGenerator;
 import java.util.ArrayList;
-import ucl.physiol.neuroconstruct.simulation.IClampSettings;
-import ucl.physiol.neuroconstruct.simulation.StimulationSettings;
 import java.io.File;
 import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.neuron.NeuronFileManager;
@@ -101,12 +99,12 @@ public class MultiRunManager
 
     public String getMultiRunPreScript(String simEnv)
     {
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
         if (isMultiRunSimulation())
         {
             addComment("Adding info for multiple runs", simEnv, response);
-            StringBuffer simNameFormat = new StringBuffer();
-            StringBuffer simNameFormatVals = new StringBuffer();
+            StringBuilder simNameFormat = new StringBuilder();
+            StringBuilder simNameFormatVals = new StringBuilder();
 
             if (simEnv.equals(SimEnvHelper.NEURON))
             {
@@ -190,7 +188,7 @@ public class MultiRunManager
 
     public String getMultiRunPostScript(String simEnv)
     {
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
         if (isMultiRunSimulation())
         {
 
@@ -254,7 +252,7 @@ public class MultiRunManager
 
         if (totalNumberJobsToRun>1)
         {
-            StringBuffer mess = new StringBuffer("Please note that this will result in "+totalNumberJobsToRun+" separate simulations.\n");
+;           StringBuilder mess = new StringBuilder("Please note that this will result in "+totalNumberJobsToRun+" separate simulations.\n");
             mess.append("The parameters over which the simulation will be run are: \n\n");
             for (String next: sequences)
             {
@@ -305,7 +303,7 @@ public class MultiRunManager
     }
 
 
-    public String addComment(String comment, String simEnv, StringBuffer response)
+    public String addComment(String comment, String simEnv, StringBuilder response)
     {
 
         if (simEnv.equals(SimEnvHelper.NEURON))
@@ -317,7 +315,7 @@ public class MultiRunManager
         return response.toString();
     }
 
-    public String addConsoleOut(String comment, String simEnv, StringBuffer response)
+    public String addConsoleOut(String comment, String simEnv, StringBuilder response)
     {
 
         if (simEnv.equals(SimEnvHelper.NEURON))
@@ -333,7 +331,7 @@ public class MultiRunManager
         return response.toString();
     }
 
-    public String addConsoleOut(String comment,String variableName, String simEnv, StringBuffer response)
+    public String addConsoleOut(String comment,String variableName, String simEnv, StringBuilder response)
     {
 
         if (simEnv.equals(SimEnvHelper.NEURON))

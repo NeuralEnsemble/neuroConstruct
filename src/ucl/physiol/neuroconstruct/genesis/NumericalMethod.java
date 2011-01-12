@@ -91,7 +91,7 @@ public class NumericalMethod
     @Override
     public String toString()
     {
-        StringBuffer info = new StringBuffer();
+        StringBuilder info = new StringBuilder();
 
         switch (methodNumber)
         {
@@ -150,7 +150,7 @@ public class NumericalMethod
 
     public String getScript()
     {
-       StringBuffer genesisScript = new StringBuffer();
+       StringBuilder genesisScript = new StringBuilder();
 
        GenesisFileManager.addMajorComment(genesisScript, this.toString());
 

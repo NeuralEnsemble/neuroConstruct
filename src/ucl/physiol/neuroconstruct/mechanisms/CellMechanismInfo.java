@@ -205,7 +205,7 @@ public class CellMechanismInfo extends AbstractTableModel
         {
                 CellMechanism nextCellMech = getCellMechanismAt(i);
                 logger.logComment("-------     Checking cell mechanism: " + nextCellMech);
-                if (nextCellMech.getMechanismType().equals(CellMechanism.CHANNEL_MECHANISM))
+                if (nextCellMech.getMechanismType().indexOf(CellMechanism.CHANNEL_MECHANISM)>=0)
                     allNames.add(nextCellMech.getInstanceName());
 
         }
@@ -219,7 +219,7 @@ public class CellMechanismInfo extends AbstractTableModel
         {
                 CellMechanism nextCellMech = getCellMechanismAt(i);
                 logger.logComment("-------     Checking cell mechanism: " + nextCellMech);
-                if (nextCellMech.getMechanismType().equals(CellMechanism.CHANNEL_MECHANISM) ||
+                if (nextCellMech.getMechanismType().indexOf(CellMechanism.CHANNEL_MECHANISM)>=0 ||
                     nextCellMech.getMechanismType().equals(CellMechanism.ION_CONCENTRATION))
                     allNames.add(nextCellMech.getInstanceName());
 
@@ -248,7 +248,8 @@ public class CellMechanismInfo extends AbstractTableModel
         {
                 CellMechanism nextCellMech = getCellMechanismAt(i);
                 
-                if (nextCellMech.getMechanismType().equals(CellMechanism.POINT_PROCESS))
+                if (nextCellMech.getMechanismType().equals(CellMechanism.POINT_PROCESS) ||
+                        nextCellMech.getMechanismType().equals(CellMechanism.NEUROML2_ABSTRACT_CELL))
                     allNames.add(nextCellMech.getInstanceName());
 
         }

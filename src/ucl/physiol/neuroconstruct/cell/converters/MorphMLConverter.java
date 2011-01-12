@@ -861,6 +861,38 @@ public class MorphMLConverter extends FormatImporter
                                 mechElement.addAttribute(BiophysicsConstants.SEG_GROUP_ATTR_V2, group);
 
 
+                            for(MechParameter mp: chanMech.getExtraParameters())
+                            {
+
+                                //SimpleXMLElement pe = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
+
+                                mechElement.addComment(new SimpleXMLComment("Note: Units of extra parameters are not known, except if it's e!!"));
+
+                                //pe.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
+                                //                                                 mp.getName()));
+
+                                float val = mp.getValue();
+                                String unitSuffix = "";
+
+                                if (mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT) || mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT))
+                                {
+                                    val = (float)UnitConverter.getVoltage(val,
+                                                                            UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                            preferredExportUnits);
+                                    if (preferredExportUnits==UnitConverter.GENESIS_SI_UNITS)
+                                        unitSuffix = " V";
+                                    if (preferredExportUnits==UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS)
+                                        unitSuffix = " mV";
+                                }
+
+
+                                mechElement.addAttribute(mp.getName(), val+unitSuffix);
+
+                                //mechElement.add(pe);
+
+                            }
+
+
                             if (cm instanceof ChannelMLCellMechanism)
                             {
                                 ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism)cm;

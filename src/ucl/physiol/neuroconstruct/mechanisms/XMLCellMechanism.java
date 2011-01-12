@@ -58,6 +58,12 @@ public abstract class XMLCellMechanism extends CellMechanism
         //logger.setThisClassVerbose(true);
     }
 
+
+    public boolean isNeuroML2()
+    {
+        return getMechanismType().indexOf("NeuroML 2")>=0;
+    }
+
     public void initPropsFromPropsFile(File propsFile) throws IOException
     {
         Properties cellMechProps = new Properties();

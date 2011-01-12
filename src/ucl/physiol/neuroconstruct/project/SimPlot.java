@@ -211,6 +211,10 @@ public class SimPlot
         return "";
     }
 
+    public boolean isVoltage()
+    {
+        return valuePlotted.equals(VOLTAGE);
+    }
 
     public boolean isSynapticMechanism()
     {

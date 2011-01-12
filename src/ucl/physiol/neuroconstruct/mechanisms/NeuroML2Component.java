@@ -45,7 +45,8 @@ import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
 
 public class NeuroML2Component extends XMLCellMechanism
 {
-    public static final String MECHANISM_TYPE = "NeuroML 2 mechanism";
+    //public static final String MECHANISM_TYPE = "NeuroML 2 mechanism";
+
     public NeuroML2Component()
     {
         logger = new ClassLogger("NeuroML2Component");
@@ -75,11 +76,8 @@ public class NeuroML2Component extends XMLCellMechanism
     @Override
     public String getMechanismType()
     {
-        return MECHANISM_TYPE;
+        return mechanismType;
     }
-
-
-
 
 
     /**
