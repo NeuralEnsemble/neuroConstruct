@@ -661,8 +661,8 @@ public class Cell implements Serializable
 
 
     /* 
-     * This function starts from the last added segment and works backwards to find the first seg in 
-     * that section. This should be the tip of the section. It then works back along via the parent seg
+     * This function starts from the last added segment and works backwards to find the first refSeg in 
+     * that section. This should be the tip of the section. It then works back along via the parent refSeg
      * until it comes to a segment outside the section. Under all but very abnormal conditions, this will 
      * return the segments ordered from the 0 point of the section to the 1 point
      * 
@@ -684,7 +684,7 @@ public class Cell implements Serializable
             {
                 if (nextSeg.getSection().equals(section)) // unless there's a serious error...
                 {
-                    //logger.logComment("Found a seg "+nextSeg+" for : " + section.getSectionName());
+                    //logger.logComment("Found a refSeg "+nextSeg+" for : " + section.getSectionName());
                     onlySegmentsInSection.add(nextSeg);
                     Segment parent = nextSeg.getParentSegment();
                         //logger.logComment("Going to check: : " + parent);
@@ -809,6 +809,46 @@ public class Cell implements Serializable
         }
         return null;
     }
+    
+    
+    public int getSegmentBranchingOrder(int id)
+    {
+        int branchingOrder = 0;
+        
+        Hashtable segmentChilds = new Hashtable();
+        
+        //builds an hashtable with all the segments Id as keys
+        for (int i = 0; i < allSegments.size(); i++)
+        {
+            Segment seg = allSegments.elementAt(i);
+            segmentChilds.put(seg.getSegmentId(), 0);            
+        }
+        
+        //associates to each segment Id the number of child segments
+        for (int i = 0; i < allSegments.size(); i++)
+        {
+            Segment seg = allSegments.elementAt(i);            
+            if (seg.getParentSegment()!=null)
+            {
+                int pId = seg.getParentSegment().getSegmentId();
+                int pChilds = (Integer)segmentChilds.get(pId) + 1;
+                segmentChilds.put(pId, pChilds);
+            }
+            
+        }
+        
+        Segment refSeg = this.getSegmentWithId(id);
+        
+        //starting from the input segment loops back to the soma calculating the number of segs with more than 1 child (branching points)
+        while (!refSeg.isSomaSegment())
+        {                                       
+            if ((Integer)segmentChilds.get(refSeg.getSegmentId())>1) branchingOrder = branchingOrder + 1;
+            refSeg = refSeg.getParentSegment(); 
+        }             
+        
+        return branchingOrder;
+    }
+    
 
     /**
      * Normally used to get Segment where segName = getSegmentName(), but if allowSimFriendlyName

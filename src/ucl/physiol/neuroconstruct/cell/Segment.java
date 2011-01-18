@@ -241,7 +241,36 @@ public class Segment implements Serializable
 
     }
     
+    public int getSegmentsFromSoma()
+    {
+        int segmentsFromSoma = 0;
+        
+        Segment parent = this;
+        
+        while (!parent.isSomaSegment())
+        {                            
+            segmentsFromSoma = segmentsFromSoma + 1;  
+            parent = parent.getParentSegment();
+        }             
+        
+        return segmentsFromSoma;
+    }
     
+    public float getDistanceFromSoma()
+    {
+        float somaDistance = 0;
+        
+        Segment parent = this;
+        
+        while (!parent.isSomaSegment())
+        {                            
+            somaDistance = somaDistance + parent.getSegmentLength();
+            parent = parent.getParentSegment();
+        }             
+        
+        return somaDistance;
+    }
+         
     public Point3f getPointAlong(float fract)
     {
         if (this.isSpherical()) return new Point3f(endPointPosition);
