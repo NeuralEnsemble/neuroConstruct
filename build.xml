@@ -23,7 +23,11 @@
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
 
+
+  <import file="lems/build.xml"/>  
+  
   <target name="init">
+  
     <tstamp/>
     <property name="name" value="neuroConstruct"/>
     <property name="version" value="1.4.1"/>
@@ -143,6 +147,8 @@
       <pathelement location="${neuroconstruct-core}"/>
 
     </path>
+    
+    <echo>Initialised neuroConstruct project to build jar: ${jar.file}</echo>
 
   </target>
 
@@ -152,6 +158,7 @@
   <!-- Prepares the build directory                                        -->
   <!-- =================================================================== -->
 
+    
   <target name="prepare" depends="init">
     <mkdir dir="${build.dest}"/>
   </target>
@@ -162,7 +169,7 @@
   <!-- Compiles the source directory                                       -->
   <!-- =================================================================== -->
 
-  <target name="compile" depends="prepare" description="Compiles the source code">
+  <target name="compile" depends="prepare, lemsjar" description="Compiles the source code">
 
     <javac srcdir="${src.dir}"
            destdir="${build.dest}"

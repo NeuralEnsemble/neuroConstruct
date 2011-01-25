@@ -124,7 +124,7 @@ public class ProjectManager implements GenerationReport
      */
     public String status()
     {
-        StringBuffer info = new StringBuffer();
+        StringBuilder info = new StringBuilder();
         
         info.append("\n  neuroConstruct v"+GeneralProperties.getVersionNumber()+"\n\n");
             
@@ -530,23 +530,54 @@ public class ProjectManager implements GenerationReport
         if (activeProject!=null) return true;
         return false;
     }
-    
-    public boolean doLoadNetworkMLAndGenerate(File networkmlFile, boolean testMode) throws NeuroMLException, Hdf5Exception, EndOfSequenceException
+
+    /*
+     * This function loads positions, connections & inputs from a NetworkML file, OVERWRITES the inputs by starting the ElecInputGenerator
+     * and generates plot/saves. Replaces earlier doLoadNetworkMLAndGenerate() which had a confusing name
+     */
+    public boolean doLoadNetworkMLAndRegenerateInputs(File networkmlFile, boolean testMode) throws NeuroMLException, Hdf5Exception, EndOfSequenceException
     {
         NetworkMLnCInfo extraInfo = doLoadNetworkML(networkmlFile, testMode);
-                
+
         String prevSimConfig = extraInfo.getSimConfig();
         long randomSeed = extraInfo.getRandomSeed();
-        
+
         setRandomGeneratorSeed(randomSeed);
-        
+
         elecInputGenerator = new ElecInputGenerator(getCurrentProject(), this);
 
         elecInputGenerator.setSimConfig(getCurrentProject().simConfigInfo.getSimConfig(prevSimConfig));
-        
+
         currentlyGenerating = true;
 
         elecInputGenerator.start();
+
+
+        return false;
+    }
+
+    /*
+     * This function loads positions, connections & inputs from a NetworkML file, and generates plot/saves.
+     */
+    public boolean doLoadNetworkMLAndGeneratePlots(File networkmlFile, boolean testMode) throws NeuroMLException, Hdf5Exception, EndOfSequenceException
+    {
+        NetworkMLnCInfo extraInfo = doLoadNetworkML(networkmlFile, testMode);
+
+        logger.logComment("---------    Seed: "+ extraInfo.getRandomSeed());
+        logger.logComment("---------    SimConf: "+ extraInfo.getSimConfig());
+
+        String prevSimConfig = extraInfo.getSimConfig();
+        long randomSeed = extraInfo.getRandomSeed();
+
+        setRandomGeneratorSeed(randomSeed);
+
+        plotSaveGenerator = new PlotSaveGenerator(getCurrentProject(), this);
+
+        plotSaveGenerator.setSimConfig(getCurrentProject().simConfigInfo.getSimConfig(prevSimConfig));
+
+        currentlyGenerating = true;
+
+        plotSaveGenerator.start();
 
 
         return false;

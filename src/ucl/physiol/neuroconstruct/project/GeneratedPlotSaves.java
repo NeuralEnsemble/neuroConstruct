@@ -142,9 +142,22 @@ public class GeneratedPlotSaves
     @Override
     public String toString()
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append(getAllPlotSaveRefs()+"");
+
+        return sb.toString();
+    }
+
+    public String details()
+    {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("There are "+plotSaves.size()+" PlotSaves present:");
+        for (PlotSaveDetails plotSave: plotSaves)
+        {
+            sb.append("\n    "+plotSave.getDescription(false, false));
+        }
 
         return sb.toString();
     }
@@ -175,7 +188,7 @@ public class GeneratedPlotSaves
 
         public String getDescription(boolean saveDetailsOnly, boolean html)
         {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
 
             if (simPlot.getPlotAndOrSave().equals(SimPlot.PLOT_ONLY))
                 sb.append("Plotting ");

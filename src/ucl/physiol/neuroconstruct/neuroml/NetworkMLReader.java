@@ -280,6 +280,9 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
             else if (getCurrentElement().equals(MetadataConstants.PROP_VALUE_ELEMENT)
                      && getAncestorElement(1).equals(MetadataConstants.PROP_ELEMENT))
             {
+                setProperty(currentPropertyName, contents);
+
+                /*
                 if (this.currentPropertyName.equals(NetworkMLConstants.NC_NETWORK_GEN_RAND_SEED))
                 {
                     this.foundRandomSeed = Long.parseLong(contents);
@@ -297,7 +300,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                         project.simConfigInfo.add(existingSC);
                     }
 
-                    if (existingSC!=null /*&& existingSC.getCellGroups().size()==0*/)
+                    if (existingSC!=null )
                     {
                         simConfigToUse = existingSC;
                     }
@@ -332,12 +335,71 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                  {
                      project.simulationParameters.setTemperature(Float.valueOf(contents));
                      logger.logComment(">>>Found a simulation temperature...");
-                 }                
+                 }     */
             }
          }//else annotation
          }//else channel
          }//else cell
         }
+    }
+
+
+    public void setProperty(String name, String value)
+    {
+        logger.logComment("Setting property  "+name+": "+value);
+        if (name.equals(NetworkMLConstants.NC_NETWORK_GEN_RAND_SEED))
+        {
+            this.foundRandomSeed = Long.parseLong(value);
+        }
+        else if (name.equals(NetworkMLConstants.NC_SIM_CONFIG))
+        {
+            this.foundSimConfig = value;
+            Integer nameN = -1;
+            String simName = this.foundSimConfig;
+            SimConfig existingSC = project.simConfigInfo.getSimConfig(foundSimConfig);
+
+            if (foundSimConfig.equals(SimConfigInfo.DEFAULT_SIM_CONFIG_NAME) && existingSC==null)
+            {
+                existingSC = new SimConfig(SimConfigInfo.DEFAULT_SIM_CONFIG_NAME, SimConfigInfo.DEFAULT_SIM_CONFIG_DESC);
+                project.simConfigInfo.add(existingSC);
+            }
+
+            if (existingSC!=null /*&& existingSC.getCellGroups().size()==0*/)
+            {
+                simConfigToUse = existingSC;
+            }
+            else
+            {
+                while (project.simConfigInfo.getAllSimConfigNames().contains(simName))
+                {
+                    nameN++;
+                    simName = this.foundSimConfig.concat("_imported"+nameN);
+                }
+
+                simConfigToUse = new SimConfig(simName, "");
+                project.simConfigInfo.add(simConfigToUse);
+            }
+            logger.logComment(">>>Existing simulation configuration: "+ (existingSC==null?existingSC:existingSC.toLongString()));
+            logger.logComment(">>>Using simulation configuration: "+ simConfigToUse);
+
+        }
+        else if (name.equals(NetworkMLConstants.NC_SIM_DURATION))
+        {
+             project.simulationParameters.setDuration(Float.valueOf(value));
+             simConfigToUse.setSimDuration(Float.valueOf(value));
+             logger.logComment(">>>Found a simulation duration...");
+         }
+        else if (name.equals(NetworkMLConstants.NC_SIM_TIME_STEP))
+        {
+             project.simulationParameters.setDt(Float.valueOf(value));
+             //importedSimConfig.setSimDt(Float.valueOf(contents));
+             logger.logComment(">>>Found a simulation time step duration...");
+        }
+        else if (name.equals(NetworkMLConstants.NC_TEMPERATURE))
+         {
+             project.simulationParameters.setTemperature(Float.valueOf(value));
+             logger.logComment(">>>Found a simulation temperature...");
+         }
     }
 
     public String getSimConfig()
@@ -622,8 +684,16 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
                }
                annotationString = annotationString + ">";
          }
-         
-         if (getCurrentElement().equals(NetworkMLConstants.POPULATION_ELEMENT))
+
+         if(getCurrentElement().equals(MetadataConstants.PROP_ELEMENT)
+             && getAncestorElement(1).equals(MetadataConstants.PROPS_ELEMENT))
+         {
+             String name = attributes.getValue(MetadataConstants.PROP_TAG_ATTR);
+             String value = attributes.getValue(MetadataConstants.PROP_VALUE_ATTR);
+
+             setProperty(name, value);
+         }
+         else if(getCurrentElement().equals(NetworkMLConstants.POPULATION_ELEMENT))
          {
              String name = attributes.getValue(NetworkMLConstants.POP_NAME_ATTR);
              
@@ -1282,6 +1352,10 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
 
              logger.logComment("New instance props: "+ getCurrentElement()+" ("+rp.details(false)+")");
           }
+
+
+
+         
     }
     
     private ConnSpecificProps getGlobalSynProps(String synType)

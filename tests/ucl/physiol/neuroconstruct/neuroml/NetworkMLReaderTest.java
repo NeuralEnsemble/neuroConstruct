@@ -106,18 +106,24 @@ public class NetworkMLReaderTest
         {
             Thread.sleep(2000);
         }
-        
-        StringBuffer stateString1 = new StringBuffer();
+
+        StringBuilder stateString1 = new StringBuilder();
         
         stateString1.append(proj0.generatedCellPositions.toLongString(false));
         stateString1.append(proj0.generatedNetworkConnections.details(false));
         stateString1.append(proj0.generatedElecInputs.toString());
+
+        StringBuilder plotsString1 = new StringBuilder();
+        plotsString1.append(proj0.generatedPlotSaves.details());
+
         String input0 = proj0.elecInputInfo.getAllStims().get(0).getElectricalInput().toString();
         String input1 = proj0.elecInputInfo.getAllStims().get(1).getElectricalInput().toString();
         
         System.out.println("Generated proj with: "+ proj0.generatedCellPositions.getNumberInAllCellGroups()+" cells");
         if (verbose) 
             System.out.println(stateString1);
+
+        System.out.println("------------\nGenerated plots: "+proj0.generatedPlotSaves.details());
         
         File saveNetsDir = ProjectStructure.getSavedNetworksDir(projDir);
         
@@ -144,7 +150,15 @@ public class NetworkMLReaderTest
         
         proj0.resetGenerated();
                 
-        pm.doLoadNetworkML(nmlFile, true);
+        //pm.doLoadNetworkML(nmlFile, true);
+        pm.doLoadNetworkMLAndGeneratePlots(nmlFile, true);
+
+        while(pm.isGenerating())
+        {
+            Thread.sleep(2000);
+        }
+
+        System.out.println("------------\nGenerated plots: "+proj0.generatedPlotSaves.details());
        
         StringBuffer stateString2 = new StringBuffer();
         
@@ -154,6 +168,10 @@ public class NetworkMLReaderTest
         //proj0.generatedNetworkConnections.getSynapticConnections(projName)
         String input1_0 = proj0.elecInputInfo.getAllStims().get(0).getElectricalInput().toString();
         String input1_1 = proj0.elecInputInfo.getAllStims().get(1).getElectricalInput().toString();
+
+
+        StringBuilder plotsString2 = new StringBuilder();
+        plotsString2.append(proj0.generatedPlotSaves.details());
         
         
         System.out.println("Reloaded proj with: "+ proj0.generatedCellPositions.getNumberInAllCellGroups()+" cells");
@@ -165,6 +183,8 @@ public class NetworkMLReaderTest
 
         assertEquals(input0, input1_0);
         assertEquals(input1, input1_1);
+
+        assertEquals(plotsString1.toString(), plotsString2.toString());
 
         //test the NetworkML reader on a Level3 file
         File l3File = new File(saveNetsDir, "Level3Test.xml");
@@ -248,13 +268,19 @@ public class NetworkMLReaderTest
         assertTrue(validateAgainstNeuroMLSchema(l3FileAnnotations));
  
        
+        /*
+        pm.doLoadNetworkMLAndGeneratePlots(l3FileAnnotations, true);
 
-        pm.doLoadNetworkMLAndGenerate(l3FileAnnotations, true);
-        assertTrue(pm.isGenerating());
-        
+
+        System.out.println("-------3-----\nGenerated plots: "+pm.getCurrentProject().generatedPlotSaves.details());
+
+        assertTrue(pm.isGenerating());*/
+
+
         String projName3 = "TestNetworkML_reloaded_withAnnotations";
         File projDir3 = new File(MainTest.getTempProjectDirectory()+ projName3);
         projDir3.mkdir();
+        
         Project proj3 = Project.createNewProject(projDir3.getAbsolutePath(), projName3, null);   
 
         pm.setCurrentProject(proj3);
