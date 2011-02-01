@@ -4738,8 +4738,8 @@ public class CellTopologyHelper
 
            info.append("Space constant lambda: <b>"+ lambda + " "+UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+"</b>" +GeneralUtils.getEndLine(html));
            info.append("Electrotonic length: <b>"+ el + "</b>" + GeneralUtils.getEndLine(html));
-           info.append("Distance from soma: <b>" + segment.getDistanceFromSoma() + " " +UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+"</b>" + GeneralUtils.getEndLine(html) + "</b> ");
-           info.append("Segments from soma: <b>" + segment.getSegmentsFromSoma() + GeneralUtils.getEndLine(html) + "</b> ");
+           info.append("Distance to soma connection point from segment proximal point: <b>" + segment.getDistanceFromSoma() + " " +UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+"</b>" + GeneralUtils.getEndLine(html) + "</b> ");
+           info.append("Segments between soma connection point and segment proximal point: <b>" + segment.getSegmentsFromSoma() + GeneralUtils.getEndLine(html) + "</b> ");
            
         }
 
@@ -4777,7 +4777,7 @@ public class CellTopologyHelper
                     + UnitConverter.lengthUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()
                     + GeneralUtils.getEndLine(html) + "</b> ");               
         
-        info.append("Branching order: <b>" +  cell.getSegmentBranchingOrder(segs.getLast().getSegmentId())
+        info.append("Branching order (from root): <b>" +  cell.getSegmentBranchingOrder(segs.getFirst().getSegmentId())
                     + GeneralUtils.getEndLine(html) + "</b> ");
 
         info.append("Section length: <b>" + totalLengthSection + " "

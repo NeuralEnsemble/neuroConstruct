@@ -245,13 +245,16 @@ public class Segment implements Serializable
     {
         int segmentsFromSoma = 0;
         
-        Segment parent = this;
+        Segment seg = this;
         
-        while (!parent.isSomaSegment())
-        {                            
-            segmentsFromSoma = segmentsFromSoma + 1;  
-            parent = parent.getParentSegment();
-        }             
+        if (!seg.isSomaSegment())
+        {
+            while (!seg.getParentSegment().isSomaSegment())
+            {
+                segmentsFromSoma = segmentsFromSoma + 1;
+                seg = seg.getParentSegment();
+            }
+        }
         
         return segmentsFromSoma;
     }
@@ -260,13 +263,19 @@ public class Segment implements Serializable
     {
         float somaDistance = 0;
         
-        Segment parent = this;
+        Segment seg = this;
+
+        float fraction = seg.getFractionAlongParent();
         
-        while (!parent.isSomaSegment())
-        {                            
-            somaDistance = somaDistance + parent.getSegmentLength();
-            parent = parent.getParentSegment();
-        }             
+        if (!seg.isSomaSegment())
+        {
+            while (!seg.getParentSegment().isSomaSegment())
+            {
+                seg = seg.getParentSegment();
+                somaDistance = somaDistance + fraction*seg.getSegmentLength();
+                fraction = seg.getFractionAlongParent();
+            }
+        }
         
         return somaDistance;
     }

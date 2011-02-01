@@ -838,12 +838,14 @@ public class Cell implements Serializable
         }
         
         Segment refSeg = this.getSegmentWithId(id);
-        
         //starting from the input segment loops back to the soma calculating the number of segs with more than 1 child (branching points)
-        while (!refSeg.isSomaSegment())
-        {                                       
-            if ((Integer)segmentChilds.get(refSeg.getSegmentId())>1) branchingOrder = branchingOrder + 1;
-            refSeg = refSeg.getParentSegment(); 
+        while (!refSeg.isRootSegment())
+        {
+            refSeg = refSeg.getParentSegment();
+            if ((Integer)segmentChilds.get(refSeg.getSegmentId())>1)
+            {
+                branchingOrder = branchingOrder + 1;
+            }
         }             
         
         return branchingOrder;
