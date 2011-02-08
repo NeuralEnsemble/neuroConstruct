@@ -168,7 +168,7 @@ public class SimulationBrowser extends JDialog
         jPanelButtons.setBorder(BorderFactory.createEtchedBorder());
         jPanelButtons.setMaximumSize(new Dimension(300, 39));
         jPanelButtons.setMinimumSize(new Dimension(300, 39));
-        jButtonOpen.setText("Load simualtion");
+        jButtonOpen.setText("Load simulation");
         jButtonOpen.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)

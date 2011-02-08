@@ -1469,6 +1469,10 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
     <name>Plot Average</name>
     <defined>Generate a single graph of the average of each of these graphs at each X value. NOTE: only works if all the Data Sets have the same X values!!</defined>
 </term>
+<term hidden="true">
+    <name>Analyse AP shape</name>
+    <defined>Superimpose the APs made by the selected cells in a given time window for a quick comparison.</defined>
+</term>
 
 <term hidden="true">
     <name>Plot Tools</name>
