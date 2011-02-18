@@ -458,7 +458,7 @@ class SimulationManager():
                                 fail = False
                                 spikeTimesTarget = spikeTimesToCheck[dataStore.getCellSegRef()]
 
-                                if len(spikeTimesTarget) != len(spikeTimesTarget):
+                                if len(spikeTimes) != len(spikeTimesTarget):
                                     report = report + "ERROR: Number of spikes of %s not same as target list for %s!\n"%(dataStore.getCellSegRef(), simRef)
                                     fail = True
 
@@ -478,6 +478,7 @@ class SimulationManager():
             except:
                 self.printver("Error analysing simulation data from: %s"%simDir.getCanonicalPath())
                 self.printver(sys.exc_info())
+                numFailed=numFailed+1
 
         report = report+"\n  %i tests passed, %i tests failed!\n"%(numPassed, numFailed)
 

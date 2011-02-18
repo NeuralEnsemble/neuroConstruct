@@ -26,6 +26,7 @@
 
 package ucl.physiol.neuroconstruct.gui;
 
+import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -37,6 +38,8 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import ucl.physiol.neuroconstruct.cell.examples.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
+import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.utils.equation.*;
 
 /**
  * Dialog for editing which synapses are associated with which groups
@@ -378,7 +381,7 @@ public class EditGroupSynapseAssociations extends JDialog implements ListSelecti
         this.dispose();
     }
 
-    public static void main(String[] args)
+    public static void main(String[] args) throws ProjectFileParsingException, EquationException
     {
         String favouredLookAndFeel = MainApplication.getFavouredLookAndFeel();
         try
@@ -389,20 +392,31 @@ public class EditGroupSynapseAssociations extends JDialog implements ListSelecti
         {
 
         }
-        SimpleCell cell = new SimpleCell("");
+        
+        File f = new File("../copyNcModels/Inhomogen/Inhomogen.neuro.xml");
 
+        f = new File("lems/nCproject/LemsTest/LemsTest.ncx");
+        
+        Project testProj = Project.loadProject(f,
+                                               new ProjectEventListener()
+        {
+            public void tableDataModelUpdated(String tableModelName)
+            {};
 
+            public void tabUpdated(String tabName)
+            {};
+                public void cellMechanismUpdated()
+                {
+                };
 
-        cell.associateGroupWithSynapse("all", "syno1");
-        cell.associateGroupWithSynapse(Section.DENDRITIC_GROUP, "syno2");
+        });
+
+        Cell cell = testProj.cellManager.getCell("Longer");
+        if (cell == null)
+            cell = testProj.cellManager.getAllCells().get(0);
+
 
         Vector<String> list = new Vector<String>();
-        
-        list.add("gg");
-        list.add("hh");
-        list.add("jj");
-        list.add("syno1");
-        list.add("syno2");
 
 
         EditGroupSynapseAssociations dlg = new EditGroupSynapseAssociations(cell, null, "Synapse", list);

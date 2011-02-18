@@ -204,6 +204,12 @@ public class NetworkMLConstants
     public static String NEUROML2_EXP_INPUT_TARGET_ATTR = "target";
     public static String NEUROML2_EXP_INPUT_INPUT_ATTR = "input";
 
+
+    public static String NEUROML2_EXP_CONN_ELEMENT = "explicitConnection";
+    public static String NEUROML2_EXP_CONN_FROM_ATTR = "from";
+    public static String NEUROML2_EXP_CONN_TO_ATTR = "to";
+    public static String NEUROML2_EXP_CONN_SYN_ATTR = "synapse";
+
     
     private NetworkMLConstants()
     {

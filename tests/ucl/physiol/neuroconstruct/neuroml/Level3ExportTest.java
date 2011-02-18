@@ -95,8 +95,6 @@ public class Level3ExportTest {
         try {
             System.out.println("---  testLevel3Exporting");
 
-            setUp();
-
             Project proj = pm.getCurrentProject();
             SimConfig sc = proj.simConfigInfo.getDefaultSimConfig();
             

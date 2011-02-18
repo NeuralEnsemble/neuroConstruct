@@ -239,15 +239,19 @@ public class NeuroMLFileManager
 
             rootElement.addContent("\n\n");
 
-            SimpleXMLEntity netEntity = project.generatedNetworkConnections.getNetworkMLElement(preferredUnits, extraComments, version);
+            ArrayList<SimpleXMLEntity> netEntities = project.generatedNetworkConnections.getNetworkMLElements(preferredUnits, extraComments, version);
 
-            if (netEntity instanceof SimpleXMLElement)
+            for(SimpleXMLEntity netEntity: netEntities)
             {
-                rootElement.addChildElement((SimpleXMLElement)netEntity);
-            }
-            else if (netEntity instanceof SimpleXMLComment)
-            {
-                rootElement.addComment((SimpleXMLComment)netEntity);
+                rootElement.addContent("\n\n        ");
+                if (netEntity instanceof SimpleXMLElement)
+                {
+                    rootElement.addChildElement((SimpleXMLElement)netEntity);
+                }
+                else if (netEntity instanceof SimpleXMLComment)
+                {
+                    rootElement.addComment((SimpleXMLComment)netEntity);
+                }
             }
 
 
@@ -726,7 +730,7 @@ public class NeuroMLFileManager
                                 simEl.addContent("\n    "); // to make it more readable...
 
                                 dispEl.addAttribute(LemsConstants.ID_ATTR, displayId);
-                                dispEl.addAttribute(LemsConstants.TITLE_ATTR, project.getProjectName()+": "+ simConf.getName());
+                                dispEl.addAttribute(LemsConstants.TITLE_ATTR, project.getProjectName()+": "+ simConf.getName()+", "+simPlot.getCellGroup());
                                 dispEl.addAttribute(LemsConstants.TIMESCALE_ATTR, "1ms");
 
                                 displaysAdded.put(displayId, dispEl);
