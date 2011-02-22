@@ -122,7 +122,7 @@ public class NeurolucidaReader extends FormatImporter
                     case UNKNOWN:
                         logger.logComment("Unknown line");
 
-                        if (!unknownLines.contains(nextLine.trim()))
+                        if (!unknownLines.contains(nextLine.trim())&& nextLine.indexOf("Thumbnail")<0)
                             unknownLines.add(nextLine.trim()); // no need to repeat identical unknown lines...
                         break;
 
@@ -228,7 +228,7 @@ public class NeurolucidaReader extends FormatImporter
                             {
                                 logger.logComment("Adding to unknown words...");
 
-                                if (!unknownLines.contains(nextLine.trim()))
+                                if (!unknownLines.contains(nextLine.trim())&& nextLine.indexOf("Thumbnail")<0)
                                     unknownLines.add(nextLine.trim()); // no need to repeat identical unknown lines...
                             }
                         }
@@ -282,9 +282,15 @@ public class NeurolucidaReader extends FormatImporter
                                     recognised = true;
                                 }
                             }
+                            if (ascLine.getDirective().equals("Thumbnail"))
+                            {
+                                ascInfo.setState(ASC_State.UNSUPPORTED_ELEMENT);
+                                logger.logComment("Ignoring element: "+ ascLine.getDirective());
+                                recognised = true;
+                            }
                             if (!recognised)
                             {
-                                if (!unknownLines.contains(nextLine.trim()))
+                                if (!unknownLines.contains(nextLine.trim())&& nextLine.indexOf("Thumbnail")<0)
                                     unknownLines.add(nextLine.trim()); // no need to repeat identical unknown lines...
 
                                 logger.logComment("Unknown line: " + nextLine + ", assuming unsupported element");
@@ -838,6 +844,7 @@ public class NeurolucidaReader extends FormatImporter
         public float x, y, z;
         private float diam;
 
+        @Override
         public String toString()
         {
             return "("+x+", "+y+", "+z+"), diam: "+ diam;
@@ -852,6 +859,7 @@ public class NeurolucidaReader extends FormatImporter
             return diam/2;
         }
 
+        @Override
         public boolean equals(Object obj)
         {
             if (!(obj instanceof PointInfo)) return false;
@@ -900,7 +908,7 @@ public class NeurolucidaReader extends FormatImporter
                "FilledDownTriangle", "SnowFlake", "TriStar", "FilledSquare", "OpenFinial",
                "NinjaStar", "FilledDiamond", "FilledFinial", "KnightsCross", "Flower", "MalteseCross", "Splat"};
 
-        private String[] reservedWords = new String[]{"Sections", "ImageCoords"};
+        private String[] reservedWords = new String[]{"Sections", "ImageCoords", "Thumbnail"};
 
         private ASC_State myState = ASC_State.ROOT;
         private String preferredColour = null;

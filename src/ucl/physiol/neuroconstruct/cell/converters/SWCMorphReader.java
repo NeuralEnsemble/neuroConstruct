@@ -153,7 +153,7 @@ public class SWCMorphReader extends FormatImporter
                         
                         try
                         {
-                            sectionType = Integer.parseInt(items[1]);
+                            sectionType = (int)Float.parseFloat(items[1]);
                         }
                         catch (NumberFormatException e)
                         {
