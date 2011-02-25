@@ -1,3 +1,4 @@
+#!/bin/bash
 #    
 #     neuroConstruct run script for Linux/Mac
 # 
