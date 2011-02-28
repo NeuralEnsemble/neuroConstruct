@@ -233,7 +233,6 @@ public class NeuronFileManager
         {
             File dirForNeuronFiles = ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory());
 
-
             if (isRunModePythonBased(runMode) || project.neuronSettings.getDataSaveFormat().equals(NeuronSettings.DataSaveFormat.HDF5_NC))
             {
                 runPythonFile = new File(dirForNeuronFiles, makePythonFriendly("run_"+project.getProjectName() + ".py"));
@@ -348,7 +347,6 @@ public class NeuronFileManager
 
             hocWriter.write(generateNeuronCodeBlock(NativeCodeLocation.BEFORE_CELL_CREATION));
             
-           
             hocWriter.write(associateCellsWithNodes());
             
             
@@ -373,9 +371,9 @@ public class NeuronFileManager
     
                 generateNetworkConnections(hocWriter);
             }
-
+           
             hocWriter.write(generateStimulations());
-                
+            
             hocWriter.flush();
 
             hocWriter.write(generateAccess());
@@ -494,6 +492,15 @@ public class NeuronFileManager
     {
         firstRecompileComplete = false;
     }
+
+
+    /*
+     * this could be used as a workaround for the "recompile mods at least once" default policy
+     */
+    public void forceNextModNotRecompile()
+    {
+        firstRecompileComplete = true;
+    }
     
     public static String makePythonFriendly(String name)
     {
@@ -554,7 +561,6 @@ public class NeuronFileManager
 
         //GeneralUtils.removeAllFiles(hocFileDir, false, true, true);
         File[] allFiles = hocFileDir.listFiles();
-
         File modsDir = ProjectStructure.getNeuronCodeDir(project.getProjectMainDirectory());
         File forceRegenerateFile = new File(modsDir, NeuronFileManager.FORCE_REGENERATE_MODS_FILENAME);
         
@@ -741,7 +747,7 @@ public class NeuronFileManager
         StringBuilder responseType1 = new StringBuilder();
 
         addMajorHocComment(responseMain, "Setting initial parameters");
-
+        
         responseMain.append("strdef simConfig\n");
         responseMain.append("{simConfig = \""+this.simConfig.getName()+"\"}\n");
 
@@ -752,7 +758,9 @@ public class NeuronFileManager
         ArrayList<String> cellGroupNames = project.cellGroupsInfo.getAllCellGroupNames();
 
         int lineCount = 0;
-        int extraFuncCount=0;
+        int lineCountType1 = 0;
+        int extraFuncCount = 0;
+        int extraFuncCountType1 = 0;
         ArrayList<String> extraFuncNames = new ArrayList<String>();
 
         for (int cellGroupIndex = 0; cellGroupIndex < cellGroupNames.size(); cellGroupIndex++)
@@ -815,6 +823,15 @@ public class NeuronFileManager
                 if (cell.getInitialPotential().getDistributionType() == NumberGenerator.FIXED_NUM &&
                     cellGroupPositions.size() > 0)
                 {
+                    if (lineCount > NeuronTemplateGenerator.MAX_NUM__LINES_IN_PROC) {
+                        String extraFunc = "initialiseValues0_" + extraFuncCount;
+                        extraFuncNames.add(extraFunc);
+
+                        responseType0.append("    " + extraFunc + "()\n}\n");
+                        responseType0.append("proc " + extraFunc + "() {\n\n");
+                        extraFuncCount++;
+                        lineCount = 0;
+                    }
 
                     double initVolt = UnitConverter.getVoltage(cell.getInitialPotential().getNextNumber(),
                                                                UnitConverter.NEUROCONSTRUCT_UNITS,
@@ -838,8 +855,17 @@ public class NeuronFileManager
                 }
                 if (cell.getIonPropertiesVsGroups().size()>0)
                 {
-                    lineCount+=10; // Note lines from this section shouldn't contribute much to the overall line count.
+                    if (lineCountType1 > NeuronTemplateGenerator.MAX_NUM__LINES_IN_PROC) {
+                        String extraFunc = "initialiseValues1_" + extraFuncCountType1;
+                        extraFuncNames.add(extraFunc);
 
+                        responseType1.append("    " + extraFunc + "()\n}\n");
+                        responseType1.append("proc " + extraFunc + "() {\n\n");
+                        extraFuncCountType1++;
+                        lineCountType1 = 0;
+                    }
+                    lineCountType1+=10; // Note lines from this section shouldn't contribute much to the overall line count.
+                    
                     NeuronFileManager.addHocComment(responseMain, "    Note: the following values are from IonProperties in Cell");
 
                     Enumeration<IonProperties> ips = cell.getIonPropertiesVsGroups().keys();
@@ -1578,12 +1604,12 @@ public class NeuronFileManager
         for (int k = 0; k < allStims.size(); k++)
         {
             //StimulationSettings nextStim = project.generatedElecInputs.getStim();
-
+            
             logger.logComment("++++++++++++     Checking for stim ref: " + allStims.get(k));
 
             ArrayList<SingleElectricalInput> allInputLocs =
                 project.generatedElecInputs.getInputLocations(allStims.get(k));
-
+            
             if (allInputLocs.size() > 0)
             {
                 logger.logComment("Going to add stim to " + allInputLocs.size() + " cells in input group: " +
@@ -1592,7 +1618,7 @@ public class NeuronFileManager
                 for (int j = 0; j < allInputLocs.size(); j++)
                 {
                     SingleElectricalInput nextInput = allInputLocs.get(j);
-
+                    
                     if (!project.cellGroupsInfo.getAllCellGroupNames().contains(nextInput.getCellGroup()))
                     {
                         throw new NeuronException("The Cell Group specified for the Stimulation: " + allStims.get(k) +
