@@ -169,6 +169,10 @@ public class ElecInputInfo extends AbstractTableModel
         return;
     }
 
+    public void deleteAllStims()
+    {
+        allStims = new Vector<StimulationSettings>();
+    }
 
 
 

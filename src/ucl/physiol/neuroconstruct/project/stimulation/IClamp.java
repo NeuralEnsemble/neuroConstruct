@@ -102,7 +102,7 @@ public class IClamp extends ElectricalInput
                                (NumberGenerator)this.duration.clone(),
                                (NumberGenerator)this.amplitude.clone(),
                                 this.repeat);
-        return null;
+        return ic;
     };
 
 

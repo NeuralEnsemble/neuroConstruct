@@ -129,6 +129,11 @@ public class CellManager
         allCells.remove(cell);
     }
 
+    public void deleteAllCellTypes()
+    {
+        allCells = new Vector<Cell>();
+    }
+
 
 
 }

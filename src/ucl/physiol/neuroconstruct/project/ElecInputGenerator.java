@@ -146,11 +146,11 @@ public class ElecInputGenerator extends Thread
             }
 
             CellChooser cellChooser = nextStim.getCellChooser();
-
+            
             ArrayList<PositionRecord> positions = project.generatedCellPositions.getPositionRecords(nextStim.getCellGroup());
 
             cellChooser.initialise(positions);
-
+            
             if (cellChooser instanceof RegionAssociatedCells)
             {
                 RegionAssociatedCells rac = (RegionAssociatedCells)cellChooser;

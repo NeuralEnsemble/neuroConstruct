@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.junit.runner.Result;
 import ucl.physiol.neuroconstruct.test.MainTest;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
+import ucl.physiol.neuroconstruct.simulation.IClampSettings;
 import static org.junit.Assert.*;
 
 /**
@@ -107,7 +108,20 @@ public class ElecInputGeneratorTest {
         System.out.println("---  testAll()");
         
         Project proj = pm.getCurrentProject();
-        
+
+        System.out.println("---    testing IClampSettings.clone()");
+        IClampSettings existingStim = (IClampSettings) proj.elecInputInfo.getStim(0);
+        IClampSettings newStim = (IClampSettings) existingStim.clone();
+        try
+        {
+            assertEquals(existingStim.getCellChooser().toString(), newStim.getCellChooser().toString());
+        }catch (java.lang.NullPointerException ex)
+        {
+            System.out.println("---        no cell chooser");
+        }
+        assertEquals(existingStim.getCellGroup(), newStim.getCellGroup());
+        assertEquals(existingStim.getSegChooser().toString(), newStim.getSegChooser().toString());
+        assertEquals(existingStim.toString(), newStim.toString());
         
         proj.elecInputInfo.getAllStims().get(0).setCellChooser(new AllCells());
         

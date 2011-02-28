@@ -94,7 +94,7 @@ public class PlotSaveGenerator extends Thread
         ArrayList<String> simPlotsInSimConfig = simConfig.getPlots();
 
         ArrayList<String> cellGroupsInSimConfig = simConfig.getCellGroups();
-
+        
         for (String simPlotName: simPlotsInSimConfig)
         {
             SimPlot simPlot = project.simPlotInfo.getSimPlot(simPlotName);

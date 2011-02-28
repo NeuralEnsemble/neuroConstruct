@@ -180,6 +180,10 @@ public class SimPlotInfo extends AbstractTableModel
         return;
     }
 
+    public void deleteAllSimPlots()
+    {
+        allPlots = new Vector<SimPlot>();
+    }
 
 
 
