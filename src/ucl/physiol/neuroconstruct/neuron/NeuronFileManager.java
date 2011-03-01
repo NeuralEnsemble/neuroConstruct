@@ -5157,7 +5157,7 @@ public class NeuronFileManager
                         if(neuronExecutable.indexOf("generated")<0)
                         {
                             // Ensure the file is executable
-                            rt.exec(new String[]{"chmod","u+x",neuronExecutable});
+                            rt.exec(new String[]{"chmod","u+x",neuronExecutable}).waitFor();
 
                         }
 
@@ -5450,7 +5450,7 @@ public class NeuronFileManager
                             }
 
                             // bit of a hack...
-                            rt.exec(new String[]{"chmod","u+x",submitJobFile.getAbsolutePath()});
+                            rt.exec(new String[]{"chmod","u+x",submitJobFile.getAbsolutePath()}).waitFor();
 
                             if (project.neuronSettings.isCopySimFiles())
                             {
@@ -5471,7 +5471,7 @@ public class NeuronFileManager
                         fw.close();
 
                         // bit of a hack...
-                        rt.exec(new String[]{"chmod","u+x",pullScriptFile.getAbsolutePath()});
+                        rt.exec(new String[]{"chmod","u+x",pullScriptFile.getAbsolutePath()}).waitFor();
 
 
                     }
@@ -5484,19 +5484,8 @@ public class NeuronFileManager
                     fw.close();
 
                     // bit of a hack...
-                    rt.exec(new String[]{"chmod","u+x",scriptFile.getAbsolutePath()});
+                    rt.exec(new String[]{"chmod","u+x",scriptFile.getAbsolutePath()}).waitFor();
                     
-                    try
-                    {
-                        // This is to make sure the file permission is updated..
-                        Thread.sleep(600);
-                    }
-                    catch (InterruptedException ex)
-                    {
-                        ex.printStackTrace();
-                    }
-
-
                     fullCommand = "";
                     for (int i=0;i<commandToExe.length;i++)
                     {
