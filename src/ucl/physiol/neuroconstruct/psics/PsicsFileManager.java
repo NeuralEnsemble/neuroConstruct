@@ -724,7 +724,7 @@ public class PsicsFileManager
 
     public static String getFileHeader()
     {
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
         response.append("<!--\n");
         response.append("******************************************************\n");
         response.append("\n");

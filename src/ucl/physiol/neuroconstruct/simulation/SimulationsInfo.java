@@ -870,6 +870,10 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
         {
             props.setProperty("Unit system", UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS));
         }
+        else if (simulator.equals("LEMS"))
+        {
+            props.setProperty("Unit system", UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS));
+        }
         else if (simulator.equals("PSICS"))
         {
             props.setProperty("Unit system", UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS));

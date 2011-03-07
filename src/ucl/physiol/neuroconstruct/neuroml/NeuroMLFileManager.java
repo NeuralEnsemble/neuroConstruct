@@ -37,6 +37,8 @@ import ucl.physiol.neuroconstruct.cell.converters.*;
 import ucl.physiol.neuroconstruct.hpc.utils.ProcessManager;
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.*;
 import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.simulation.SimulationData;
+import ucl.physiol.neuroconstruct.simulation.SimulationsInfo;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.XMLUtils;
 import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
@@ -659,10 +661,17 @@ public class NeuroMLFileManager
             simEl.addAttribute(LemsConstants.TARGET_ATTR, NetworkMLConstants.NEUROML2_NETWORK_ID_PREFIX+project.getProjectName());
 
 
+
             HashMap<String, SimpleXMLElement> displaysAdded = new HashMap<String, SimpleXMLElement>();
 
             File dirForAllSims = ProjectStructure.getSimulationsDir(project.getProjectMainDirectory());
             File simDir = new File(dirForAllSims, project.simulationParameters.getReference());
+
+            File summaryFile = new File(simDir, "simulator.props");
+            simEl.addAttribute(LemsConstants.REPORT_ATTR, summaryFile.getAbsolutePath());
+
+            File timesFile = new File(simDir, "time.dat");
+            simEl.addAttribute(LemsConstants.TIMES_FILE_ATTR, timesFile.getAbsolutePath());
 
             simDir.mkdir();
 
@@ -822,6 +831,36 @@ public class NeuroMLFileManager
             }
             File dirToRunIn = ProjectStructure.getLemsDir();
 
+
+            File positionsFile = new File(simDir, SimulationData.POSITION_DATA_FILE);
+            File netConnsFile = new File(simDir, SimulationData.NETCONN_DATA_FILE);
+            File elecInputFile = new File(simDir, SimulationData.ELEC_INPUT_DATA_FILE);
+            try
+            {
+                project.generatedCellPositions.saveToFile(positionsFile);
+                project.generatedNetworkConnections.saveToFile(netConnsFile);
+                project.generatedElecInputs.saveToFile(elecInputFile);
+            }
+            catch (IOException ex)
+            {
+                GuiUtils.showErrorMessage(logger,
+                                          "Problem saving generated positions in file: " + positionsFile.getAbsolutePath(),
+                                          ex, null);
+                return;
+            }
+
+            // Saving summary of the simulation params
+            try
+            {
+                SimulationsInfo.recordSimulationSummary(project, simConf, simDir, "LEMS", null);
+            }
+            catch (IOException ex2)
+            {
+                GuiUtils.showErrorMessage(logger, "Error when trying to save a summary of the simulation settings in dir: "+ simDir +
+                                          "\nThere will be less info on this simulation in the previous simulation browser dialog", ex2, null);
+            }
+
+
             logger.logComment("Going to execute: " + executable + " in dir: " +
                                       dirToRunIn, true);
 
@@ -902,6 +941,7 @@ public class NeuroMLFileManager
         {
             File projFile = new File("lems/nCproject/LemsTest/LemsTest.ncx");
             //projFile = new File("models/VSCSGranCell/VSCSGranCell.neuro.xml");
+
             String simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
             if (projFile.getName().startsWith("VSCSGranCell"))
                 simConf = "TestSimConf";
