@@ -3306,7 +3306,6 @@ public class NeuronFileManager
                                         String contents = GeneralUtils.readShortFile(nml2File);
 
                                         try {
-
                                             StringInclusionReader.addSearchPath(ProjectStructure.getLemsDir());
                                             Sim sim = new Sim(contents);
 

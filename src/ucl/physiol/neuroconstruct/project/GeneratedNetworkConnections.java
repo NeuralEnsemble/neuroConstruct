@@ -447,7 +447,7 @@ public class GeneratedNetworkConnections
     @Override
     public String toString()
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append("GeneratedNetworkConnections with " 
                 + getNumberSynapticConnections(ANY_NETWORK_CONNECTION) +
@@ -459,10 +459,8 @@ public class GeneratedNetworkConnections
         {
             String netConnName = (String) keys.nextElement();
             ArrayList<SingleSynapticConnection> synConns = mySynapticConnectionVectors.get(netConnName);
-            for (int i = 0; i < synConns.size(); i++)
-            {
-                sb.append(synConns.get(i)+"\n");
-            }
+            sb.append(netConnName+" has "+synConns.size()
+                      + " entries. First: "+synConns.get(0)+"\n");
         }
         return sb.toString();
     }
@@ -477,7 +475,7 @@ public class GeneratedNetworkConnections
 
     public String details(boolean html)
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append("Network has " 
                 + GeneralUtils.getTabbedString(getNumberSynapticConnections(ANY_NETWORK_CONNECTION)+"", "b", html) +
@@ -539,7 +537,7 @@ public class GeneratedNetworkConnections
 
     public String getHtmlReport(int connType, SimConfig simConfig)
     {
-        StringBuffer generationReport = new StringBuffer();
+        StringBuilder generationReport = new StringBuilder();
         ArrayList<String> netConns = new ArrayList<String>();
 
         if (connType == MORPH_NETWORK_CONNECTION || connType == ANY_NETWORK_CONNECTION)
@@ -549,14 +547,14 @@ public class GeneratedNetworkConnections
             netConns.addAll(project.volBasedConnsInfo.getAllAAConnNames());
 
 
-        if (netConns.size() == 0)
+        if (netConns.isEmpty())
         {
             generationReport.append("No Network Connections generated.<br><br>");
 
         }
         for (String netConnName: netConns)
         {
-            StringBuffer synNames = new StringBuffer("[");
+            StringBuilder synNames = new StringBuilder("[");
 
             Vector<SynapticProperties> syns = null;
             String src = null;
@@ -565,7 +563,7 @@ public class GeneratedNetworkConnections
             ArrayList<SingleSynapticConnection> conns 
                 = project.generatedNetworkConnections.getSynapticConnections(netConnName);
 
-            if (! (conns.size() == 0))
+            if (! (conns.isEmpty()))
             {
                 if (project.morphNetworkConnectionsInfo.isValidSimpleNetConn(netConnName))
                 {
@@ -702,8 +700,8 @@ public class GeneratedNetworkConnections
                             SimpleXMLEntity[] blockingSyns = firstSyn.getXMLEntities(ChannelMLConstants.BLOCKING_SYN_ELEMENT);
 
                             ArrayList<SimpleXMLEntity> all = new ArrayList<SimpleXMLEntity>();
-                            for (SimpleXMLEntity s: doubExpSyns) all.add(s);
-                            for (SimpleXMLEntity s: blockingSyns) all.add(s);
+                            all.addAll(Arrays.asList(doubExpSyns));
+                            all.addAll(Arrays.asList(blockingSyns));
                             
                             //all.addAll(doubExpSyns);
                             

@@ -529,14 +529,28 @@ public class NeuroMLFileManager
 
                                 File xslChannelML2NeuroML2 = ProjectStructure.getChannelml2Neuroml2File();
 
-                                XMLUtils.transform(origCmlFile, xslChannelML2NeuroML2, generateDir, ".nml");
 
-                                String origFileName = origCmlFile.getName();
+                                String xslContents = GeneralUtils.readShortFile(xslChannelML2NeuroML2);
 
-                                File generatedFile = new File(generateDir, origFileName.substring(0, origFileName.length()-4)+".nml");
+                                //TODO Make celsius a global variable!!
+                                String defaultTemp = project.simulationParameters.getTemperature() +" degC";
+                                int start = xslContents.indexOf("<xsl:variable name=\"defaultTemp\">")+33;
+                                int end = xslContents.indexOf("</xsl:variable>", start);
+                                xslContents = xslContents.substring(0, start)+defaultTemp+xslContents.substring(end);
+                                //System.out.println(xslContents);
+
+                                String nml2Contents = XMLUtils.transform(origCmlFile, xslContents);
+
+                                GeneralUtils.writeShortFile(newCmlFile, nml2Contents);
+
+                                //XMLUtils.transform(origCmlFile, xslChannelML2NeuroML2, generateDir, ".nml");
+
+                                //String origFileName = origCmlFile.getName();
+
+                                //File generatedFile = new File(generateDir, origFileName.substring(0, origFileName.length()-4)+".nml");
 
 
-                                generatedFile.renameTo(newCmlFile);
+                                //generatedFile.renameTo(newCmlFile);
                             }
                             else
                             {
@@ -668,10 +682,14 @@ public class NeuroMLFileManager
             File simDir = new File(dirForAllSims, project.simulationParameters.getReference());
 
             File summaryFile = new File(simDir, "simulator.props");
-            simEl.addAttribute(LemsConstants.REPORT_ATTR, summaryFile.getAbsolutePath());
+            String repFile = summaryFile.getAbsolutePath();
+            repFile = repFile.replaceAll("\\\\", "\\\\\\\\");
+            simEl.addAttribute(LemsConstants.REPORT_ATTR, repFile);
 
             File timesFile = new File(simDir, "time.dat");
-            simEl.addAttribute(LemsConstants.TIMES_FILE_ATTR, timesFile.getAbsolutePath());
+            String timesFilename =  timesFile.getAbsolutePath();
+            timesFilename = timesFilename.replaceAll("\\\\", "\\\\\\\\");
+            simEl.addAttribute(LemsConstants.TIMES_FILE_ATTR,timesFilename);
 
             simDir.mkdir();
 
@@ -943,8 +961,16 @@ public class NeuroMLFileManager
             //projFile = new File("models/VSCSGranCell/VSCSGranCell.neuro.xml");
 
             String simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
+
             if (projFile.getName().startsWith("VSCSGranCell"))
+            {
                 simConf = "TestSimConf";
+            }
+            if (projFile.getName().startsWith("LemsTest"))
+            {
+                //simConf = "GranCell";
+                simConf = "MainenCell";
+            }
 
             Project p = Project.loadProject(projFile, null);
             //Proje

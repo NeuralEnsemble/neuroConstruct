@@ -67,7 +67,7 @@ import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
 
 public class GenesisFileManager
 {
-    private static ClassLogger logger = new ClassLogger("GenesisFileManager");
+    private static final ClassLogger logger = new ClassLogger("GenesisFileManager");
 
     Project project = null;
 
@@ -156,6 +156,13 @@ public class GenesisFileManager
 
 
 
+
+    public void generateTheGenesisFiles(SimConfig simConfig,
+                                        MorphCompartmentalisation mc,
+                                        int seed) throws GenesisException, IOException
+    {
+        generateTheGenesisFiles(simConfig, null, mc, seed);
+    }
 
     public void generateTheGenesisFiles(SimConfig simConfig,
                                        MultiRunManager multiRunManager,
@@ -721,7 +728,7 @@ public class GenesisFileManager
 
                     float apSegmentPropDelay = 0;
 
-                    if (substituteConnPoints.size() == 0 || // there is no ApPropSpeed on cell
+                    if (substituteConnPoints.isEmpty() || // there is no ApPropSpeed on cell
                         !substituteConnPoints.containsKey(new Integer(origId))) // none on this segment
                     {
                         logger.logComment("No ap speed on cell");
@@ -776,7 +783,7 @@ public class GenesisFileManager
                     float synInternalDelay = -1;
                     float weight = -1;
 
-                    if (syn.props==null || syn.props.size()==0)
+                    if (syn.props==null || syn.props.isEmpty())
                     {
                         synInternalDelay = synProps.getDelayGenerator().getNominalNumber();
                         weight = synProps.getWeightsGenerator().getNominalNumber();
@@ -2004,7 +2011,7 @@ public class GenesisFileManager
 
                     String cellNameRef = record.simPlot.getCellGroup() + "_" + cellNum;
 
-                    extraLines = new String("\nif (!{exists " + SCRIPT_OUT_ELEMENT_ROOT + "})\n" +
+                    extraLines = "\nif (!{exists " + SCRIPT_OUT_ELEMENT_ROOT + "})\n" +
                                             "    create neutral " + SCRIPT_OUT_ELEMENT_ROOT + "\n" +
                                             "end\n" +
                                             "\n" +
@@ -2023,7 +2030,7 @@ public class GenesisFileManager
                                             "\n" +
                                             "\n" +
                                             "end\n" +
-                                            "update_" + convName + "\n\n");
+                                            "update_" + convName + "\n\n";
 
                 }
                 else
@@ -2103,7 +2110,7 @@ public class GenesisFileManager
 
                             String cellNameRef = getSingleWordElementName(record.simPlot.getCellGroup() +"_"+cellNum); // cleans up -1 etc
 
-                            extraLines = new String("\nif (!{exists " + SCRIPT_OUT_ELEMENT_ROOT + "})\n" +
+                            extraLines = "\nif (!{exists " + SCRIPT_OUT_ELEMENT_ROOT + "})\n" +
                                 "    create neutral " + SCRIPT_OUT_ELEMENT_ROOT + "\n" +
                                 "end\n" +
                                 "\n" +
@@ -2121,7 +2128,7 @@ public class GenesisFileManager
                                 "    end\n" +
                                 "\n" +
                                 "\n" +
-                                "end\n");
+                                "end\n";
 
                         }
 
@@ -2460,7 +2467,7 @@ public class GenesisFileManager
         StringBuilder response = new StringBuilder();
 
 
-        if (graphsCreated.size()==0)
+        if (graphsCreated.isEmpty())
         {
             response.append("create neutral "+PLOT_ELEMENT_ROOT+"\n\n");
         }
@@ -2643,7 +2650,7 @@ public class GenesisFileManager
 
         //System.out.println(simConfig.toLongString());
 
-        if (cellGroupNames.size() == 0)
+        if (cellGroupNames.isEmpty())
         {
             logger.logComment("There are no cell groups!!");
 
@@ -3558,6 +3565,7 @@ public class GenesisFileManager
         this.suggestedRemoteRunTime = t;
     }
 
+    @SuppressWarnings("SleepWhileHoldingLock")
     public void runGenesisFile() throws GenesisException
     {
         logger.logComment("Trying to run the mainGenesisFile...");
@@ -4802,6 +4810,7 @@ public class GenesisFileManager
     }
 
 
+    @SuppressWarnings("SleepWhileHoldingLock")
     public static void main(String[] args)
     {
 

@@ -284,8 +284,7 @@ public class GeneratedCellPositions
 
     public String getHtmlReport()
     {
-
-        StringBuffer generationReport = new StringBuffer();
+        StringBuilder generationReport = new StringBuilder();
 
         Iterator<String> names = getNamesGeneratedCellGroups();
 
@@ -338,7 +337,7 @@ public class GeneratedCellPositions
     @Override
     public String toString()
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append("GeneratedCellPositions with "+getNumberPositionRecords() +" cell positions in total\n");
 
@@ -370,7 +369,7 @@ public class GeneratedCellPositions
     
     public String toLongString(boolean html)
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append("Network contains "+ GeneralUtils.getBold(getNumberPositionRecords()+"", html) +" cells in total"+GeneralUtils.getEndLine(html)+GeneralUtils.getEndLine(html));
 

@@ -33,6 +33,7 @@ import java.awt.*;
 
 import java.beans.XMLEncoder;
 import java.util.ArrayList;
+import java.util.logging.Level;
 import java.util.zip.*;
 import org.xml.sax.*;
 
@@ -1429,6 +1430,15 @@ public class ProjectManager implements GenerationReport
     }
     
 
+
+    public static File saveNetworkStructureHDF5(Project project,
+                                       File neuroMLFile,
+                                       String simConfig,
+                                       String units) throws Hdf5Exception
+    {
+            return NetworkMLWriter.createNetworkMLH5file(neuroMLFile, project, project.simConfigInfo.getSimConfig(simConfig), units);
+    
+    }
 
     public static File saveNetworkStructureXML(Project project,
                                        File neuroMLFile,
