@@ -3176,7 +3176,7 @@ public class CellTopologyHelper
                 {
                     if (!cellMechNames.contains(synName) && !missingCellMechs.contains(synName))
                     {
-                        warningReport.append("Warning: Project does not contain the synaptic mechanism: " + synName +
+                        errorReport.append("Error: Project does not contain the synaptic mechanism: " + synName +
                                            " referred to in this cell\n");
 
                         missingCellMechs.add(synName);
