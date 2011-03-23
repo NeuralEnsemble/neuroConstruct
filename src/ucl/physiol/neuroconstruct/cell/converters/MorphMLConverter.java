@@ -879,6 +879,7 @@ public class MorphMLConverter extends FormatImporter
                                     val = (float)UnitConverter.getVoltage(val,
                                                                             UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                             preferredExportUnits);
+
                                     if (preferredExportUnits==UnitConverter.GENESIS_SI_UNITS)
                                         unitSuffix = " V";
                                     if (preferredExportUnits==UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS)
@@ -904,7 +905,6 @@ public class MorphMLConverter extends FormatImporter
 
                                     logger.logComment("Trying to get: "+ xpath+" in "+cmlCm.getInstanceName()+": "+ val);
 
-
                                     logger.logComment("Trying to get: "+ cmlCm.getXMLDoc().getXPathLocations(true));
 
                                     if (val==null || val.trim().length()==0)  // post v1.7.3 format
@@ -918,12 +918,14 @@ public class MorphMLConverter extends FormatImporter
 
                                     logger.logComment("Tried to get: "+ xpath+" in "+cmlCm.getXMLFile(project)+", found: "+revPot, true);
 
+                                    String units = cmlCm.getXMLDoc().getValueByXPath(ChannelMLConstants.getUnitsXPath());
+
                                     float revPotConv = (float)UnitConverter.getVoltage(revPot,
-                                                                            UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                            UnitConverter.getUnitSystemIndex(units),
                                                                             preferredExportUnits);
 
                                     mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.REV_POT_ATTR_V2,
-                                                                                revPotConv+" "+voltUnit.getNeuroML2Symbol()));
+                                                                                revPotConv+" "+voltUnit.getNeuroML2Symbol()+""));
                                 }
                                 
                             }
