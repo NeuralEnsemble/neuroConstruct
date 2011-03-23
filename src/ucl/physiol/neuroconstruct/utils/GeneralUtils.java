@@ -933,7 +933,6 @@ public class GeneralUtils
 
     public static void removeAllFiles(File directory, boolean warn, boolean removeDirToo, boolean removeVC)
     {
-
         File[] allFiles = directory.listFiles();
 
         if (warn)
@@ -942,7 +941,6 @@ public class GeneralUtils
                                                          + directory.getAbsolutePath()+"\nDo you wish to continue?",
                                                          "Confirm delete directory",
                                                          JOptionPane.YES_NO_OPTION);
-
             if (yesNo!=JOptionPane.YES_OPTION)
             {
                 logger.logComment("User cancelled...");
@@ -962,15 +960,23 @@ public class GeneralUtils
                 }
                 else
                 {
+                    try{
                     boolean res = allFiles[i].delete();
                     //System.out.println("Deleted: "+ allFiles[i]+": "+ res);
+                    if (!res) allFiles[i].deleteOnExit();
+                    }
+                    catch(SecurityException se)
+                    {
+                        se.printStackTrace();;
+                    }
                 }
             }
         }
         if (removeDirToo)
         {
-                    //System.out.println("Deleting: "+ directory);
-            directory.delete();
+            boolean res = directory.delete();
+            //System.out.println("Deleted: "+ directory+": "+ res);
+            if (!res) directory.deleteOnExit();
         }
 
     }
