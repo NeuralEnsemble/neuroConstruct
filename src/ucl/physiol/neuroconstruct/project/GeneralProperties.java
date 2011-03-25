@@ -47,9 +47,9 @@ public class GeneralProperties
 {
     // FIXED values: Calculated once, can't be changed
 
-    private static final String packageOfCellTypes = new String("ucl.physiol.neuroconstruct.cell");
+    private static final String packageOfCellTypes = "ucl.physiol.neuroconstruct.cell";
 
-    private static final String versionNumber = "1.4.1";
+    private static final String versionNumber = "1.5.0";
 
     //private static final String latestNeuroMLVersionNumber = "1.8.1";
 

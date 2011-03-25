@@ -35,6 +35,7 @@ import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.cell.converters.*;
 import ucl.physiol.neuroconstruct.hpc.utils.ProcessManager;
+import ucl.physiol.neuroconstruct.neuroml.LemsConstants.LemsOption;
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.simulation.SimulationData;
@@ -336,12 +337,12 @@ public class NeuroMLFileManager
                                   boolean singleL3File,
                                   boolean annotations) throws IOException
     {
-        generateNeuroMLFiles(simConf, NeuroMLVersion.NEUROML_VERSION_1, false, mc, seed, singleL3File, annotations);
+        generateNeuroMLFiles(simConf, NeuroMLVersion.NEUROML_VERSION_1, LemsOption.NONE, mc, seed, singleL3File, annotations);
     }
 
     public void generateNeuroMLFiles(SimConfig simConf,
                                      NeuroMLVersion version,
-                                     boolean generateLems,
+                                     LemsOption lemsOption,
                                      MorphCompartmentalisation mc,
                                      int seed,
                                      boolean singleL3File,
@@ -352,7 +353,7 @@ public class NeuroMLFileManager
 
         generateNeuroMLFiles(simConf,
                                      version,
-                                     generateLems,
+                                     lemsOption,
                                      mc,
                                      seed,
                                      singleL3File,
@@ -362,7 +363,7 @@ public class NeuroMLFileManager
 
     public void generateNeuroMLFiles(SimConfig simConf,
                                      NeuroMLVersion version,
-                                     boolean generateLems,
+                                     LemsOption lemsOption,
                                      MorphCompartmentalisation mc,
                                      int seed,
                                      boolean singleL3File,
@@ -475,7 +476,7 @@ public class NeuroMLFileManager
                 }
                 ArrayList<String> syns = nextCell.getAllAllowedSynapseTypes();
 
-                cellMechs.addAll(syns);
+                //cellMechs.addAll(syns);
 
                 logger.logComment("cellMechs: "+cellMechs);
 
@@ -609,7 +610,7 @@ public class NeuroMLFileManager
         }
 
 
-        if (generateLems && version.isVersion2())
+        if (lemsOption.doSomething() && version.isVersion2())
         {
             String lemsFileName = "LEMS_"+project.getProjectName()+".xml";
             File lemsFile = new File(generateDir, lemsFileName);
@@ -833,7 +834,14 @@ public class NeuroMLFileManager
             StringBuilder runScript = new StringBuilder();
             runScript.append("cd "+ProjectStructure.getLemsDir().getAbsolutePath()+"\n");
 
-            runScript.append(lemsExeName + " "+lemsFile.getAbsolutePath()+"\n");
+            runScript.append(lemsExeName + " "+lemsFile.getAbsolutePath());
+
+            if (lemsOption.equals(LemsOption.GENERATE_GRAPH))
+                runScript.append(" -graph");
+            else if(lemsOption.equals(LemsOption.GENERATE_NINEML))
+                runScript.append(" -nineml");
+
+            runScript.append("\n");
 
             GeneralUtils.writeShortFile(runFile, runScript.toString());
 
@@ -968,8 +976,8 @@ public class NeuroMLFileManager
             }
             if (projFile.getName().startsWith("LemsTest"))
             {
-                //simConf = "GranCell";
-                simConf = "MainenCell";
+                simConf = "GranCell";
+                //simConf = "MainenCell";
             }
 
             Project p = Project.loadProject(projFile, null);
@@ -990,13 +998,13 @@ public class NeuroMLFileManager
 
             SimConfig sc = p.simConfigInfo.getSimConfig(simConf);
 
-            boolean runLems = true;
+            LemsOption lo = LemsOption.GENERATE_GRAPH;
             
-            npfm.generateNeuroMLFiles(sc, NeuroMLVersion.NEUROML_VERSION_2, runLems, oc, 123, false, false);
+            npfm.generateNeuroMLFiles(sc, NeuroMLVersion.NEUROML_VERSION_2, lo, oc, 123, false, false);
 
-            File tempDir = new File(projFile.getParentFile(), "temp");
+            //File tempDir = new File(projFile.getParentFile(), "temp");
 
-            npfm.generateNeuroMLFiles(sc, NeuroMLVersion.NEUROML_VERSION_1, false, oc, 123, false, false, tempDir);
+            //npfm.generateNeuroMLFiles(sc, NeuroMLVersion.NEUROML_VERSION_1, false, oc, 123, false, false, tempDir);
             
             //gen.runGenesisFile();
         }

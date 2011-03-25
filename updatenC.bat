@@ -41,8 +41,7 @@ if not exist %LEMS_SC_DIR% (
 echo Updating the LEMS/NeuroML 2 files from the NeuroML Sourceforge repository...
 svn update %LEMS_SC_DIR%
 
-
-
+    
 
 echo Updating the main neuroConstruct code...
 svn update

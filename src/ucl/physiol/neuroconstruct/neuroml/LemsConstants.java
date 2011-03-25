@@ -73,6 +73,47 @@ public class LemsConstants
     
 
 
+    public enum LemsOption
+    {
+        NONE
+        {
+            @Override
+            public String toString()
+            {
+                return "Do nothing";
+            }
+        },
+        EXECUTE_MODEL
+        {
+            @Override
+            public String toString()
+            {
+                return "Run with LEMS Interpreter";
+            }
+        },
+        GENERATE_GRAPH
+        {
+            @Override
+            public String toString()
+            {
+                return "Generate graph from network structure";
+            }
+        },
+        GENERATE_NINEML
+        {
+            @Override
+            public String toString()
+            {
+                return "Generate NineML equivalent";
+            }
+        };
+
+        public boolean doSomething()
+        {
+            return !this.equals(NONE);
+        }
+
+    };
 
 
 

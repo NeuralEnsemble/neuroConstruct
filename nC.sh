@@ -21,7 +21,7 @@ export NC_MAX_MEMORY=450M
 
 
 # Current version of neuroConstruct
-export NC_VERSION=1.4.1
+export NC_VERSION=1.5.0
 
 if [ -n "$NC_MAX_MEMORY_LOCAL" ]; then
     export NC_MAX_MEMORY=$NC_MAX_MEMORY_LOCAL
