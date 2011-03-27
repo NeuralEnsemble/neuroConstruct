@@ -464,6 +464,16 @@ public class NeuroMLFileManager
             }
 
             ArrayList<String> cellMechFilesHandled = new ArrayList<String>();
+            ArrayList<String> synsToInc = new ArrayList<String>();
+            
+            for (String netConn: project.generatedNetworkConnections.getNamesNonEmptyNetConns()){
+                for (SynapticProperties sp: project.morphNetworkConnectionsInfo.getSynapseList(netConn))
+                {
+                    synsToInc.add(sp.getSynapseType());
+                    
+                }
+            }
+            
 
             for(Cell nextCell: generatedCells)
             {
@@ -476,7 +486,9 @@ public class NeuroMLFileManager
                 }
                 ArrayList<String> syns = nextCell.getAllAllowedSynapseTypes();
 
-                //cellMechs.addAll(syns);
+                for (String syn: syns){
+                    if (synsToInc.contains(syn)) cellMechs.add(syn);
+                }
 
                 logger.logComment("cellMechs: "+cellMechs);
 
