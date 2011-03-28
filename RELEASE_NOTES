@@ -2,6 +2,23 @@ Release notes/change log for neuroConstruct
 
 See also the README file
 
+--------- Version 1.5.0 (Mar 2011) ---------
+
+Added preliminary export functionality for NeuroML 2. Morphologies can be exported to NeuroML v2 format, and some simple (HH Na & K) ChannelML files can be translated to the equivalent entities in NeuroML v2alpha. Networks files can be geenrated with simple <population> elements, and the temporary <explicitConnection> and <explicitInput> elements.
+
+Added the NeuroML 2/LEMS code which is being developed on the NeuroML SVN rep (see http://sourceforge.net/apps/trac/neuroml/browser/DemoVer2.0/lems). This can be automatically updated when using nC from the SVN repository by running updatenC.sh/updatenC.bat. Some simple models in NeuroML 2 can now be run through nC using the LEMS interpreter. Note the LEMS interpreter does not yet support multicompartmental cells. Try Ex4_HHCells for a network of 2 HH cells with a simple synapse. Results of a successful simulation on the LEMS interpreter should be listed in the Simulation Browser & can be reloaded/replayed in the usual way. 
+
+More verbose warnings when launching external processes on Linux using konsole & gnome-terminal
+
+Added a graphical tool for the analysis of action potential shapes. Plot a number of cell voltage traces, e.g. population in a network, and in the Plot Frame menu select tools -> AP shape analysis. This will align all spikes in the traces to the same trigger point (e.g. crossing 0mV), to compare shape of APs.
+
+Updated simulation tree quick sim result plotter (button "Quick Plot..." at tab Visualisation). Now when e.g. 6 cell groups are plotted with "Plot is separate plot frame per cell group..." windows are arranged in grid to fit the screen.
+
+Changed behaviour of input instance specific properties when multiple inputs are put onto individual cells: e.g. multiple synaptic inputs (or current clamps) on a cell's dendritic tree. This is only relevant when random synaptic firing rate/pulse amplitude/duration are used! Previously for e.g. input with random/gaussian amplitude etc. a different value of this was used for inputs on each cell, but the same values were used within a cell, e.g. if 4 were placed on dendrites of one cell. Now a different value will be used for each instance, including within one cell. 
+
+Changed function doLoadNetworkMLAndGenerate() to doLoadNetworkMLAndRegenerateInputs() in ProjectManager as this is a more accurate name for its functionality (unchanged: loads positions, connections & inputs from a NetworkML file, OVERWRITES the inputs by starting the ElecInputGenerator and generates plot/saves). Added doLoadNetworkMLAndGeneratePlots() which loads & keeps all info from NetworkML, and generated PlotSaves for values found there.
+
+
 --------- Version 1.4.1 (Aug 2010) ---------
 
 Added option to import NeuroML Level 1-3 file with ./nC.sh -neuroml neuromlfile.nml, etc. and populate new project with cells/populations etc. found.
