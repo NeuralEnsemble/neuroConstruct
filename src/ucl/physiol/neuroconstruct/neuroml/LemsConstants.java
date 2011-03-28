@@ -106,6 +106,14 @@ public class LemsConstants
             {
                 return "Generate NineML equivalent";
             }
+        },
+        GENERATE_NEURON
+        {
+            @Override
+            public String toString()
+            {
+                return "Generate NEURON scripts";
+            }
         };
 
         public boolean doSomething()

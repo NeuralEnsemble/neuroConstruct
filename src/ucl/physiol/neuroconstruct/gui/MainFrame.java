@@ -13496,26 +13496,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             file.getName().endsWith(".svn") ||
             file.getName().endsWith(".gig"))
         {
-            String browserPath = GeneralProperties.getBrowserPath(true);
-            if (browserPath==null)
-            {
-                GuiUtils.showErrorMessage(logger, "Could not start a browser!", null, this);
-                return;
-            }
-            String command = null;
-            try
-            {
-                Runtime rt = Runtime.getRuntime();
-
-                command = browserPath + " file://" + file.getCanonicalPath();
-
-                logger.logComment("Going to execute command: " + command, true);
-                rt.exec(command);
-                logger.logComment("Executed command: " + command, true);
-            }
-            catch (Exception ex)
-            {
-                logger.logError("Error running " + command, ex);
+            try {
+                GuiUtils.showImage(file);
+            } catch (FileNotFoundException ex) {
+                GuiUtils.showErrorMessage(logger, "Problem displaying file: "+file, ex, this);
             }
         }
         else

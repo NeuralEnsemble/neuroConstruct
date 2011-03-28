@@ -852,6 +852,8 @@ public class NeuroMLFileManager
                 runScript.append(" -graph");
             else if(lemsOption.equals(LemsOption.GENERATE_NINEML))
                 runScript.append(" -nineml");
+            else if(lemsOption.equals(LemsOption.GENERATE_NEURON))
+                runScript.append(" -neuron");
 
             runScript.append("\n");
 
@@ -905,7 +907,23 @@ public class NeuroMLFileManager
             //Process process = rt.exec(executable, null, dirToRunIn);
             ProcessManager.runCommand(executable, "LEMS", 5, dirToRunIn);
 
+            if (lemsOption.equals(LemsOption.GENERATE_GRAPH)){
+                File imageFile = new File(generateDir, lemsFileName.replace(".xml", ".png"));
+                logger.logComment("Searching for image: " + imageFile.getAbsolutePath(), true);
 
+                if (imageFile.exists()){
+                    GuiUtils.showImage(imageFile);
+                }
+                else
+                {
+                    try {
+                        Thread.sleep(5000);
+                        GuiUtils.showImage(imageFile);
+                    } catch (Exception ex) {
+                        GuiUtils.showErrorMessage(logger, "Problem displaying file: "+imageFile, ex, null);
+                    }
+                }
+            }
       
         }
 

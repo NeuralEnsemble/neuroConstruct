@@ -27,8 +27,10 @@
 package ucl.physiol.neuroconstruct.utils;
 
 import java.awt.*;
+import java.io.*;
 import javax.swing.*;
 import ucl.physiol.neuroconstruct.gui.MainApplication;
+import ucl.physiol.neuroconstruct.project.GeneralProperties;
 
 /**
  * Some helper stuff for the GUIs
@@ -49,6 +51,7 @@ public class GuiUtils
 
     private static boolean showInfoGuis = !MainApplication.getStartupMode().equals(MainApplication.StartupMode.COMMAND_LINE_INTERFACE_MODE);
 
+    private static ClassLogger logger = new ClassLogger("GuiUtils");
 
     private GuiUtils()
     {
@@ -285,6 +288,35 @@ public class GuiUtils
        win.setLocation( (screenSize.width - dlgSize.width) / 2,
                        (screenSize.height - dlgSize.height) / 2);
 
+   }
+
+   public static void showImage(File imagefile) throws FileNotFoundException
+   {
+       String browserPath = GeneralProperties.getBrowserPath(true);
+
+        if (browserPath==null)
+        {
+            GuiUtils.showErrorMessage(logger, "Could not start a browser!", null, null);
+            return;
+        }
+        String command = null;
+
+        if (!imagefile.exists()) throw new FileNotFoundException("Could not find image file: "+ imagefile);
+
+        try
+        {
+            Runtime rt = Runtime.getRuntime();
+
+            command = browserPath + " file://" + imagefile.getCanonicalPath();
+
+            logger.logComment("Going to execute command: " + command, true);
+            rt.exec(command);
+            logger.logComment("Executed command: " + command, true);
+        }
+        catch (Exception ex)
+        {
+            logger.logError("Error running " + command, ex);
+        }
    }
 
 
