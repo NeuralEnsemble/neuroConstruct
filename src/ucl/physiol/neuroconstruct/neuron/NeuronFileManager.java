@@ -5790,6 +5790,10 @@ public class NeuronFileManager
     {
         try
         {
+            String str = "v < t";
+            System.out.println(NeuronWriter.replaceInFunction(str, "v", "mmm"));
+            System.out.println(NeuronWriter.replaceInFunction(str, "t", "ppp"));
+            //System.exit(0);
 
             int runMode  = RUN_HOC;
 
@@ -5807,6 +5811,7 @@ public class NeuronFileManager
             System.out.println("doGenerate...");
 
             frame.projManager.doGenerate("AbstractCells", 1234);
+            //frame.projManager.doGenerate("Test NeuroML2 ionChannel", 1234);
 
             System.out.println("Snoozing...");
 
@@ -5818,7 +5823,7 @@ public class NeuronFileManager
 
             System.out.println("done create...");
 
-            System.exit(0);
+            //System.exit(0);
 
             frame.projManager.getCurrentProject().neuronFileManager.runNeuronFile(
                 frame.projManager.getCurrentProject().neuronFileManager.getMainHocFile());
@@ -5832,6 +5837,7 @@ public class NeuronFileManager
 
 
     }
+
     public Vector<String> getModFilesToCompile()
     {
         Vector<String> allMods = new Vector<String>(this.stimModFilesRequired);

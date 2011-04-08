@@ -7,7 +7,7 @@
     <!-- TODO: edit the following target according to your needs -->
     <!-- (more info: http://www.netbeans.org/kb/41/freeform-config.html#runsingle) -->
 
-    <property name="lems.jar.file" value="../lems/lems-0.6.1.jar"/>
+    <property name="lems.jar.file" value="../lems/lems-0.7.0.jar"/>
     
     <target depends="init" name="run-selected-file-in-src">
         <path id="run.class.path">
