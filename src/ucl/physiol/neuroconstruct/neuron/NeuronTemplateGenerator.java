@@ -1167,7 +1167,8 @@ public class NeuronTemplateGenerator
                         }
 
 
-                        if (cellMech.getMechanismType().equals(CellMechanism.CHANNEL_MECHANISM))
+                        if (cellMech.getMechanismType().equals(CellMechanism.CHANNEL_MECHANISM) ||
+                            cellMech.getMechanismType().equals(CellMechanism.NEUROML2_ION_CHANNEL))
                         {
                             if (nextChanMech.getName().equals("pas"))
                             {

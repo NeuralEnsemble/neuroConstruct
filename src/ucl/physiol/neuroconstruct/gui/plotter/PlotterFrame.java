@@ -1070,7 +1070,7 @@ public class PlotterFrame extends JFrame {
                     startTime,
                     stopTime);
 
-            Vector interSpikeIntervals = SpikeAnalyser.getInterSpikeIntervals(dataSet.getYValues(),
+            ArrayList interSpikeIntervals = SpikeAnalyser.getInterSpikeIntervals(dataSet.getYValues(),
                     dataSet.getXValues(),
                     threshold,
                     startTime,
@@ -1081,7 +1081,7 @@ public class PlotterFrame extends JFrame {
             double totalISI = 0;
 
             for (int i = 0; i < interSpikeIntervals.size(); i++) {
-                totalISI = totalISI + ((Double) interSpikeIntervals.elementAt(i)).doubleValue();
+                totalISI = totalISI + ((Double) interSpikeIntervals.get(i)).doubleValue();
 
             }
         }
@@ -1194,7 +1194,7 @@ public class PlotterFrame extends JFrame {
                     startTime,
                     stopTime);
 
-            Vector interSpikeIntervals = SpikeAnalyser.getInterSpikeIntervals(dataSet.getYValues(),
+            ArrayList interSpikeIntervals = SpikeAnalyser.getInterSpikeIntervals(dataSet.getYValues(),
                     dataSet.getXValues(),
                     threshold,
                     startTime,
@@ -1205,7 +1205,7 @@ public class PlotterFrame extends JFrame {
             double totalISI = 0;
 
             for (int i = 0; i < interSpikeIntervals.size(); i++) {
-                totalISI = totalISI + ((Double) interSpikeIntervals.elementAt(i)).doubleValue();
+                totalISI = totalISI + ((Double) interSpikeIntervals.get(i)).doubleValue();
 
             }
             double averageISI = totalISI / (double) interSpikeIntervals.size();
@@ -1213,7 +1213,7 @@ public class PlotterFrame extends JFrame {
             double totalDevSqrd = 0;
 
             for (int i = 0; i < interSpikeIntervals.size(); i++) {
-                double dev = ((Double) interSpikeIntervals.elementAt(i)).doubleValue() - averageISI;
+                double dev = ((Double) interSpikeIntervals.get(i)).doubleValue() - averageISI;
 
                 totalDevSqrd = totalDevSqrd + (dev * dev);
             }
@@ -1681,7 +1681,7 @@ public class PlotterFrame extends JFrame {
 
 
 
-            Vector interSpikeIntervals = SpikeAnalyser.getInterSpikeIntervals(dataSet.getYValues(),
+            ArrayList interSpikeIntervals = SpikeAnalyser.getInterSpikeIntervals(dataSet.getYValues(),
                     dataSet.getXValues(),
                     threshold,
                     startTime,
@@ -1703,7 +1703,7 @@ public class PlotterFrame extends JFrame {
                 int totalHere = 0;
 
                 for (int j = 0; j < interSpikeIntervals.size(); j++) {
-                    double isi = ((Double) interSpikeIntervals.elementAt(j)).doubleValue();
+                    double isi = ((Double) interSpikeIntervals.get(j)).doubleValue();
 
                     if (isi >= startISI && isi < endISI) {
                         totalHere++;
@@ -1715,7 +1715,7 @@ public class PlotterFrame extends JFrame {
             ///check more...
             boolean warn = false;
             for (int j = 0; j < interSpikeIntervals.size(); j++) {
-                double isi = ((Double) interSpikeIntervals.elementAt(j)).doubleValue();
+                double isi = ((Double) interSpikeIntervals.get(j)).doubleValue();
 
                 if (isi >= maxSize) {
                     warn = true;
@@ -2991,7 +2991,7 @@ public class PlotterFrame extends JFrame {
 
         // prepare the tables where we will store the spike times, the ISIs and the new DataSets
         double[][] spikeTimesAoa = new double[plotCanvas.dataSets.length][];
-        Vector[] interSpikeIntervalsAoa = new Vector[plotCanvas.dataSets.length];
+        ArrayList[] interSpikeIntervalsAoa = new ArrayList[plotCanvas.dataSets.length];
         DataSet[][] spikeShapes = new DataSet[plotCanvas.dataSets.length][];
 
         // loop over the existing datasets
@@ -3024,8 +3024,8 @@ public class PlotterFrame extends JFrame {
                 spikeShapes[dataSetIndex][j] = new DataSet(name, desc, ds0.getXUnit(), ds0.getYUnit(), ds0.getXLegend(), ds0.getYLegend());
 
                 // calculate the starting and ending point for the AP profile trace
-                double beginning = spikeTimesAoa[dataSetIndex][j] - (Double) interSpikeIntervalsAoa[dataSetIndex].elementAt(j - 1) / 2;
-                double end = spikeTimesAoa[dataSetIndex][j] + (Double) interSpikeIntervalsAoa[dataSetIndex].elementAt(j) / 2;
+                double beginning = spikeTimesAoa[dataSetIndex][j] - (Double) interSpikeIntervalsAoa[dataSetIndex].get(j - 1) / 2;
+                double end = spikeTimesAoa[dataSetIndex][j] + (Double) interSpikeIntervalsAoa[dataSetIndex].get(j) / 2;
 
                 // iterate over the trace points for this cell and add them to this dataset if they are between beginning and end
                 for (int k = 0; k < nextDs.getXValues().length; k++) {

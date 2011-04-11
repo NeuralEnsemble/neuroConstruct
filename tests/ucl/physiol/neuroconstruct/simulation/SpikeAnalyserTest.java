@@ -116,7 +116,7 @@ public class SpikeAnalyserTest {
             volts[i] = 10;
         }
 
-        Vector<Double> isi = SpikeAnalyser.getInterSpikeIntervals(volts, times, -10, 0, dur);
+        ArrayList<Double> isi = SpikeAnalyser.getInterSpikeIntervals(volts, times, -10, 0, dur);
 
         System.out.println("ISIs: "+ isi);
 

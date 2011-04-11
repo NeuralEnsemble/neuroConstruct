@@ -488,8 +488,23 @@ public class GeneratedNetworkConnections
             String netConnName = (String) keys.nextElement();
             
             ArrayList<SingleSynapticConnection> synConns = mySynapticConnectionVectors.get(netConnName);
+            String src, tgt;
+
+            if (project.morphNetworkConnectionsInfo.isValidSimpleNetConn(netConnName))
+            {
+                src = project.morphNetworkConnectionsInfo.getSourceCellGroup(netConnName);
+                tgt = project.morphNetworkConnectionsInfo.getTargetCellGroup(netConnName);
+            }
+            else
+            {
+                src = project.volBasedConnsInfo.getSourceCellGroup(netConnName);
+                tgt = project.volBasedConnsInfo.getTargetCellGroup(netConnName);
+            }
+
             
-            sb.append("Network Connection: "+ GeneralUtils.getBold(netConnName, html) + " has "+
+            sb.append("Network Connection: "+ GeneralUtils.getBold(netConnName, html) + " "
+                    + "("+ GeneralUtils.getBold(src, html) + " -> "+ GeneralUtils.getBold(tgt, html) + ") "
+                    + "has "+
                     GeneralUtils.getBold(synConns.size()+"", html) +" individual synaptic connections"+GeneralUtils.getEndLine(html));
             
             for (int i = 0; i < synConns.size(); i++)

@@ -90,7 +90,10 @@ public class SpikeAnalyser
             logger.logError("Length of voltage array not equal to times array!");
             return null;
         }
-        Vector<Double> spikeTimes = new Vector<Double>();
+
+        //logger.logComment("Getting spikes in data of length "+voltages.length, true);
+
+        ArrayList<Double> spikeTimes = new ArrayList<Double>();
 
         boolean spiking = false;
 
@@ -127,7 +130,7 @@ public class SpikeAnalyser
 
     }
 
-    public static Vector<Double> getInterSpikeIntervals(float[] voltages,
+    public static ArrayList<Double> getInterSpikeIntervals(float[] voltages,
                                                 float[] times,
                                                 float threshold,
                                                 float startTime,
@@ -149,7 +152,7 @@ public class SpikeAnalyser
     }
 
 
-    public static Vector<Double> getInterSpikeIntervals(double[] voltages,
+    public static ArrayList<Double> getInterSpikeIntervals(double[] voltages,
                                                 double[] times,
                                                 float threshold,
                                                 float startTime,
@@ -162,8 +165,8 @@ public class SpikeAnalyser
         }
 
         boolean spiking = false;
-        Vector<Double> spikeTimes = new Vector<Double>();
-        Vector<Double> interSpikeIntervals = new Vector<Double>();
+        ArrayList<Double> spikeTimes = new ArrayList<Double>();
+        ArrayList<Double> interSpikeIntervals = new ArrayList<Double>();
 
         for (int i = 0; i < voltages.length; i++)
         {
@@ -181,8 +184,8 @@ public class SpikeAnalyser
                          if (spikeTimes.size()>1)
                          {
                              interSpikeIntervals.add(new Double(
-                                    (spikeTimes.elementAt(spikeTimes.size()-1)).doubleValue() -
-                                    (spikeTimes.elementAt(spikeTimes.size()-2)).doubleValue()));
+                                    (spikeTimes.get(spikeTimes.size()-1)).doubleValue() -
+                                    (spikeTimes.get(spikeTimes.size()-2)).doubleValue()));
                          }
                      }
                  }
@@ -261,10 +264,7 @@ public class SpikeAnalyser
                                         int numBins)
     {
         double[] doubData = new double[data.length];
-        for (int i = 0; i < data.length; i++)
-        {
-            doubData[i] = data[i];
-        }
+        System.arraycopy(data, 0, doubData, 0, data.length);
 
         return getBinnedValues(doubData,
                                startDataVal,

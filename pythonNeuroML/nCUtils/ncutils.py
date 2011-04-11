@@ -20,6 +20,7 @@ from java.io import File
 
 from ucl.physiol.neuroconstruct.cell.utils import CellTopologyHelper
 from ucl.physiol.neuroconstruct.cell.compartmentalisation import GenesisCompartmentalisation
+from ucl.physiol.neuroconstruct.cell.compartmentalisation import OriginalCompartmentalisation
 
 from ucl.physiol.neuroconstruct.gui.plotter import PlotManager
 from ucl.physiol.neuroconstruct.gui.plotter import PlotCanvas
@@ -28,6 +29,9 @@ from ucl.physiol.neuroconstruct.dataset import DataSet
 
 from ucl.physiol.neuroconstruct.neuron import NeuronFileManager
 from ucl.physiol.neuroconstruct.nmodleditor.processes import ProcessManager
+
+from ucl.physiol.neuroconstruct.neuroml import NeuroMLConstants
+from ucl.physiol.neuroconstruct.neuroml import LemsConstants
 
 from ucl.physiol.neuroconstruct.project import SimPlot
 from ucl.physiol.neuroconstruct.project import ProjectManager
@@ -39,8 +43,6 @@ from ucl.physiol.neuroconstruct.utils.units import UnitConverter
 from ucl.physiol.neuroconstruct.utils import NumberGenerator
 
 from ucl.physiol.neuroconstruct.hpc.mpi import MpiSettings
-
-
 
 
 
@@ -171,6 +173,37 @@ def generateAndRunPsics(project,
         print prefix+"Problem running PSICS simulation: "+simRef
 
     return success
+
+
+def generateAndRunLems(project,
+                        projectManager,
+                        simConfig,
+                        simRef,
+                        simulatorSeed,
+                        verbose=True,
+                        runInBackground=False):
+
+    prefix = "--- LEMS/NeuroML 2 gen:    "
+
+    if verbose: print prefix+"Going to generate LEMS/NeuroML 2 files for: "+simRef
+
+    if runInBackground:
+        print prefix+"*********   Cannot run LEMS/NeuroML 2 in background yet!!!!   ***********"
+
+    compartmentalisation = OriginalCompartmentalisation()
+
+    project.neuromlFileManager.generateNeuroMLFiles(simConfig,
+                                                    NeuroMLConstants.NeuroMLVersion.NEUROML_VERSION_2,
+                                                    LemsConstants.LemsOption.EXECUTE_MODEL,
+                                                    compartmentalisation,
+                                                    simulatorSeed,
+                                                    False,
+                                                    False,
+                                                    not verbose)
+
+
+
+    return 1
     
     
 
@@ -237,15 +270,17 @@ def generateAndRunNeuron(project,
         
 class SimulationManager():
 
-
-    allRunningSims = []
-    allRecentlyFinishedSims = []
-    allFinishedSims = []
+    knownSimulators = ["NEURON", "GENESIS", "GENESIS_SI", "GENESIS_PHYS", "MOOSE", "MOOSE_PHYS", "MOOSE_SI", "PSICS", "LEMS"]
 
     def __init__(self,
                  projFile,
                  numConcurrentSims = 1,
                  verbose =           True):
+
+
+        self.allRunningSims = []
+        self.allRecentlyFinishedSims = []
+        self.allFinishedSims = []
 
         self.projectManager = ProjectManager()
         self.project = self.projectManager.loadProject(projFile)
@@ -504,7 +539,11 @@ class SimulationManager():
                         mpiConfig =                 MpiSettings.LOCAL_SERIAL,
                         suggestedRemoteRunTime =    -1):
 
-
+        for sim in simulators:
+            if sim not in self.knownSimulators:
+                print "Unknown simulator: "+sim+"!"
+                sys.exit(1)
+                
         allSimsSetRunning = []
 
         for simConfigName in simConfigs:
@@ -595,6 +634,26 @@ class SimulationManager():
 
                 if runSims:
                     success = generateAndRunPsics(self.project,
+                                        self.projectManager,
+                                        simConfig,
+                                        simRef,
+                                        simulatorSeed,
+                                        verbose=verboseSims,
+                                        runInBackground=runInBackground)
+
+                    if success:
+                        self.allRunningSims.append(simRef)
+                        allSimsSetRunning.append(simRef)
+
+            self.doCheckNumberSims()
+
+            if simulators.count("LEMS")>0:
+
+                simRef = simRefGlobalPrefix + simRefPrefix+"_L"+recompSuffix + simRefGlobalSuffix
+                self.project.simulationParameters.setReference(simRef)
+
+                if runSims:
+                    success = generateAndRunLems(self.project,
                                         self.projectManager,
                                         simConfig,
                                         simRef,

@@ -43,11 +43,17 @@ import static org.junit.Assert.*;
  */
 public class PythonTest 
 {
-
+/**/
     @Test public void testEx4()
     {
         String projFileName = "nCexamples/Ex4_HHcell/Ex4_HHcell.ncx";
         checkPythonScripts(projFileName);
+    }
+    @Test public void testLems()
+    {
+        String projFileName = "lems/nCproject/LemsTest/LemsTest.ncx";
+        checkPythonScripts(projFileName, "RunTests");
+        checkPythonScripts(projFileName, "RunTests2");
     }
 
     @Test public void testGranuleCell()
@@ -56,7 +62,7 @@ public class PythonTest
         checkPythonScripts(projFileName);
     }
 
-    @Test public void testGranCell()
+    @Test public void testGranCellLayer()
     {
         String projFileName = "nCmodels/GranCellLayer/GranCellLayer.ncx";
         checkPythonScripts(projFileName, "RunGolgiTests");
@@ -97,8 +103,7 @@ public class PythonTest
     {
         String projFileName = "nCmodels/Thalamocortical/Thalamocortical.ncx";
         checkPythonScripts(projFileName);
-    }
-
+    }/**/
 
 
 
@@ -106,6 +111,8 @@ public class PythonTest
     {
         checkPythonScripts(projFileName, "RunTests");
     }
+
+
     private void checkPythonScripts(String projFileName, String testScriptName)
     {
         File projFile = new File(projFileName);
@@ -123,28 +130,27 @@ public class PythonTest
 
         interp.exec("import sys, os");
 
-       interp.exec("sys.path.append(\""+pythonScriptDir.getAbsolutePath()+"\")");
-       interp.exec("os.environ[\"NC_HOME\"] = \""+ ProjectStructure.getnCHome().getAbsolutePath()+"\"");
+        interp.exec("sys.path.append(\""+pythonScriptDir.getAbsolutePath()+"\")");
+        interp.exec("os.environ[\"NC_HOME\"] = \""+ ProjectStructure.getnCHome().getAbsolutePath()+"\"");
 
 
-       interp.exec("os.chdir(\""+ pythonScriptDir.getAbsolutePath()+"\")");
-       interp.exec("print \"Jython working in: \" + os.getcwd()+ \" with sys.path: \"+ str(sys.path)");
+        interp.exec("os.chdir(\""+ pythonScriptDir.getAbsolutePath()+"\")");
+        interp.exec("print \"Jython working in: \" + os.getcwd()+ \" with sys.path: \"+ str(sys.path)");
 
 
-       interp.exec("import "+testScriptName);
-       interp.exec("reload("+testScriptName+")");
-       interp.exec("result = "+testScriptName+".testAll()");
-       interp.exec("print \"Have run test script: "+pythonTestScript+"\"");
+        interp.exec("import "+testScriptName);
+        interp.exec("reload("+testScriptName+")");
+        interp.exec("result = "+testScriptName+".testAll()");
+        interp.exec("print \"Have run test script: "+pythonTestScript+"\"");
 
-       PyObject result = interp.get("result");
+        PyObject result = interp.get("result");
 
-       System.out.println("Result in Java: " + result);
-       
+        System.out.println("Result in Java: " + result);
 
-       assertTrue("More than one failure when running script: "+pythonTestScript+":"+result, result.toString().indexOf(" 0 tests failed")>=0);
+        assertTrue("More than one failure when running script: "+pythonTestScript+":"+result, result.toString().indexOf(" 0 tests failed")>=0);
 
 
-       interp.exec("sys.path.remove(\""+pythonScriptDir.getAbsolutePath()+"\")");
+        interp.exec("sys.path.remove(\""+pythonScriptDir.getAbsolutePath()+"\")");
 
 
     }

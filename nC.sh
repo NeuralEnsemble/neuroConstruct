@@ -22,6 +22,7 @@ export NC_MAX_MEMORY=450M
 
 # Current version of neuroConstruct
 export NC_VERSION=1.5.1
+export LEMS_VERSION=0.7.0
 
 if [ -n "$NC_MAX_MEMORY_LOCAL" ]; then
     export NC_MAX_MEMORY=$NC_MAX_MEMORY_LOCAL
@@ -51,7 +52,7 @@ J3D_DIR=$NC_HOME/lib/j3d
 J3D_JARS=$J3D_DIR/j3dcore.jar:$J3D_DIR/j3dutils.jar:$J3D_DIR/vecmath.jar
 
 
-export CLASSPATH=$NC_HOME/neuroConstruct_$NC_VERSION.jar:$H5_JARS:$J3D_JARS:$NC_HOME/lib/jython/jython.jar
+export CLASSPATH=$NC_HOME/neuroConstruct_$NC_VERSION.jar:$H5_JARS:$J3D_JARS:$NC_HOME/lib/jython/jython.jar:$NC_HOME/lems/lems-$LEMS_VERSION.jar
 
 
 # Determine 32bit or 64bit architecture for JDK

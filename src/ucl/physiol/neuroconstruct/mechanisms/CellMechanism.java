@@ -50,7 +50,7 @@ public abstract class CellMechanism
     public static final String POINT_PROCESS = "Point process";
     public static final String GAP_JUNCTION = "Gap junction";
     public static final String SBML_MECHANISM = "SBML mechanism";
-    public static final String NEUROML2_MECHANISM = "NeuroML 2 component";
+    public static final String NEUROML2_ION_CHANNEL = "NeuroML 2 ion channel";
     public static final String NEUROML2_ABSTRACT_CELL = "NeuroML 2 Abstract cell";
 
     /**

@@ -866,7 +866,7 @@ public class MorphMLConverter extends FormatImporter
 
                                 //SimpleXMLElement pe = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
-                                mechElement.addComment(new SimpleXMLComment("Note: Units of extra parameters are not known, except if it's e!!"));
+                                mechElement.addComment(new SimpleXMLComment("Note: Units of extra parameters are not known, except if it's e or erev!!"));
 
                                 //pe.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
                                 //                                                 mp.getName()));
@@ -874,11 +874,11 @@ public class MorphMLConverter extends FormatImporter
                                 float val = mp.getValue();
                                 String unitSuffix = "";
 
-                                if (mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT) || mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT))
+                                if (mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT) ||
+                                    mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT_2))
                                 {
-                                    val = (float)UnitConverter.getVoltage(val,
-                                                                            UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                                            preferredExportUnits);
+                                    val = (float)UnitConverter.getVoltage(val, UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                          preferredExportUnits);
 
                                     if (preferredExportUnits==UnitConverter.GENESIS_SI_UNITS)
                                         unitSuffix = " V";

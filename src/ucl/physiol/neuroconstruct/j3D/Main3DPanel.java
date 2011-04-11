@@ -113,12 +113,12 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
     private SimpleUniverse simpleU = null;
 
-    private String firstLineCellGroupComboBox = new String("Cell Group:");
-    private String firstLineCellNumberComboBox = new String("Cell num:");
-    private String selectManyCellNumComboBox = new String("Select many...");
-    private String selectAllCellNumComboBox = new String("Select all");
+    private String firstLineCellGroupComboBox = "Cell Group:";
+    private String firstLineCellNumberComboBox = "Cell num:";
+    private String selectManyCellNumComboBox = "Select many...";
+    private String selectAllCellNumComboBox = "Select all";
 
-    private String defaultSegmentBoxText = new String("Segment");
+    private String defaultSegmentBoxText = "Segment";
 
     private Transform3D lastViewingTransform3D = null;
 
@@ -2168,7 +2168,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                 ArrayList<DataStore> dssToPlot = new ArrayList<DataStore>();
 
-                if (dsForCellRef.size() == 0)
+                if (dsForCellRef.isEmpty())
                 {
                     GuiUtils.showErrorMessage(logger, "There is no saved data to plot for segment: "
                                               + jTextFieldSegment.getText() + " on cell number " +
@@ -2191,10 +2191,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                             {
                                 showAllOfType.add(varName);
                                 Object[] tempVars = new Object[dsForCellRef.size()+showAllOfType.size()];
-                                for (int j=0;j<dsForCellRef.size()+showAllOfType.size()-1;j++)
-                                {
-                                    tempVars[j] = vars[j];
-                                }
+                                System.arraycopy(vars, 0, tempVars, 0, dsForCellRef.size() + showAllOfType.size() - 1);
                                 tempVars[i+showAllOfType.size()-1] = allOfType + varName;
                                 vars = tempVars;
 
@@ -4491,7 +4488,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         //DataSet isiHist = new DataSet("Histogram of spiking of Cell Group "+cellGroup, "...");
 
-        Vector<Double> allInterSpikeIntervals = new Vector<Double>();
+        ArrayList<Double> allInterSpikeIntervals = new ArrayList<Double>();
 
         for (int cellNum = 0; cellNum < total; cellNum++)
         {
@@ -4505,7 +4502,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
             logger.logComment("Voltages:  ("+voltages.length+"): "+ voltages[0]+", "+ voltages[1]+", ... , "+ voltages[voltages.length-1]);
 
-            Vector<Double> latestInterSpikeIntervals
+            ArrayList<Double> latestInterSpikeIntervals
                 = SpikeAnalyser.getInterSpikeIntervals(voltages,
                                                        times,
                                                        threshold,
@@ -4531,7 +4528,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
             for (int j = 0; j < allInterSpikeIntervals.size(); j++)
             {
-                    double isi = (allInterSpikeIntervals.elementAt(j)).doubleValue();
+                    double isi = (allInterSpikeIntervals.get(j)).doubleValue();
 
                     if (isi>=startISI && isi<endISI)
                     {
@@ -4546,7 +4543,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         boolean warn = false;
         for (int j = 0; j < allInterSpikeIntervals.size(); j++)
         {
-            double isi = allInterSpikeIntervals.elementAt(j).doubleValue();
+            double isi = allInterSpikeIntervals.get(j).doubleValue();
 
             if (isi >= maxSize)
             {

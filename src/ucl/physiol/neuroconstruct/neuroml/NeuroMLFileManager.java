@@ -1,3 +1,4 @@
+
 /**
  *  neuroConstruct
  *  Software for developing large scale 3D networks of biologically realistic neurons
@@ -348,6 +349,18 @@ public class NeuroMLFileManager
                                      boolean singleL3File,
                                      boolean annotations) throws IOException
     {
+        generateNeuroMLFiles(simConf, version, lemsOption, mc, seed, singleL3File, annotations, false);
+    }
+
+    public void generateNeuroMLFiles(SimConfig simConf,
+                                     NeuroMLVersion version,
+                                     LemsOption lemsOption,
+                                     MorphCompartmentalisation mc,
+                                     int seed,
+                                     boolean singleL3File,
+                                     boolean annotations,
+                                     boolean runInBackground) throws IOException
+    {
 
         File neuroMLDir = ProjectStructure.getNeuroMLDir(project.getProjectMainDirectory());
 
@@ -358,7 +371,8 @@ public class NeuroMLFileManager
                                      seed,
                                      singleL3File,
                                      annotations,
-                                     neuroMLDir);
+                                     neuroMLDir,
+                                     runInBackground);
     }
 
     public void generateNeuroMLFiles(SimConfig simConf,
@@ -368,7 +382,8 @@ public class NeuroMLFileManager
                                      int seed,
                                      boolean singleL3File,
                                      boolean annotations,
-                                     File generateDir) throws IOException
+                                     File generateDir,
+                                     boolean runInBackground) throws IOException
     {
         logger.logComment("Starting generation of the files into dir: "+ generateDir.getCanonicalPath(), true);
 
@@ -937,7 +952,10 @@ public class NeuroMLFileManager
         {
             String cmName = val.split(":")[0];
             String varName = val.split(":")[1];
-            return "biophys/membraneProperties/"+cmName+"_all/"+cmName+"/"+varName+"/q";
+            varName = varName.replaceAll("_", "/");
+            if (!varName.endsWith("/q"))
+                varName = varName +"/q";
+            return "biophys/membraneProperties/"+cmName+"_all/"+cmName+"/"+varName;
         }
 
         return "???";
