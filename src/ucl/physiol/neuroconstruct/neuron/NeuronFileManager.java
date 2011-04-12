@@ -5810,8 +5810,8 @@ public class NeuronFileManager
 
             System.out.println("doGenerate...");
 
-            //frame.projManager.doGenerate("AbstractCells", 1234);
-            frame.projManager.doGenerate("Test NeuroML2 ionChannel", 1234);
+            frame.projManager.doGenerate("AbstractCells", 1234);
+            //frame.projManager.doGenerate("Test NeuroML2 ionChannel", 1234);
 
             System.out.println("Snoozing...");
 

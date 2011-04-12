@@ -446,7 +446,8 @@ class SimulationManager():
 
     def checkSims(self,
                   spikeTimesToCheck = {},
-                  spikeTimeAccuracy = 0.01):
+                  spikeTimeAccuracy = 0.01,
+                  threshold = 0 ): # mV
 
         self.updateSimsRunning()
 
@@ -483,11 +484,10 @@ class SimulationManager():
 
                             analyseStartTime = 0
                             analyseStopTime = times[-1]
-                            analyseThreshold = 0 # mV
 
-                            spikeTimes = SpikeAnalyser.getSpikeTimes(volts, times, analyseThreshold, analyseStartTime, analyseStopTime)
+                            spikeTimes = SpikeAnalyser.getSpikeTimes(volts, times, threshold, analyseStartTime, analyseStopTime)
 
-                            self.printver("Spike times in %s for sim %s: %s"%(dataStore.getCellSegRef(), simRef, str(spikeTimes)))
+                            self.printver("Spike times (crossing %f) from %f to %f in %s for sim %s: %s"%(threshold, analyseStartTime, analyseStopTime, dataStore.getCellSegRef(), simRef, str(spikeTimes)))
 
                             if spikeTimesToCheck.has_key(dataStore.getCellSegRef()):
                                 fail = False

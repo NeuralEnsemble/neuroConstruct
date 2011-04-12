@@ -284,7 +284,7 @@ public class GeneratedElecInputs
     @Override
     public String toString()
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append("GeneratedElecInputs with " + this.getNumberSingleInputs() + " inputs in total\n");
 
@@ -316,7 +316,7 @@ public class GeneratedElecInputs
     
     public String details(boolean html)
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append("Network contains " + GeneralUtils.getBold(this.getNumberSingleInputs(), html) + " inputs in total"+GeneralUtils.getEndLine(html)+GeneralUtils.getEndLine(html));
 
@@ -497,15 +497,6 @@ public class GeneratedElecInputs
                     inputTargetSitesElement.addChildElement(inputTargetSiteElement);
 
 
-                    if (nml2)
-                    {
-                        String target = nextStim.getCellGroup()+"["+sei.getCellNumber()+"]";
-                        SimpleXMLElement expInputElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_EXP_INPUT_ELEMENT);
-                        expInputElement.addAttribute(NetworkMLConstants.NEUROML2_EXP_INPUT_TARGET_ATTR, target);
-                        expInputElement.addAttribute(NetworkMLConstants.NEUROML2_EXP_INPUT_INPUT_ATTR, inputReference);
-
-                        entities.add(expInputElement);
-                    }
 
                     if(sei.getInstanceProps()!=null)
                     {
@@ -516,27 +507,46 @@ public class GeneratedElecInputs
                         {
                             IClampInstanceProps ic = (IClampInstanceProps)sei.getInstanceProps();
 
-                            float delay = ic.getDelay();
-                            float duration = ic.getDuration();
-                            float amp = ic.getAmplitude();
+                            float delay = (float)UnitConverter.getTime(ic.getDelay(), UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem);
+                            float duration = (float)UnitConverter.getTime(ic.getDuration(), UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem);
+                            float amp = (float)UnitConverter.getCurrent(ic.getAmplitude(), UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem);
 
-                            SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.PULSEINPUT_INSTANCE_ELEMENT);
+                            if (!nml2)
+                            {
+                                SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.PULSEINPUT_INSTANCE_ELEMENT);
 
-                            inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DELAY_ATTR,
-                                   (float)UnitConverter.getTime(delay, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+                                inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DELAY_ATTR,delay+""));
 
-                            inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DUR_ATTR,
-                                    (float)UnitConverter.getTime(duration, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
+                                inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_DUR_ATTR, duration+""));
 
-                            double a = UnitConverter.getCurrent(amp, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem);
-                            System.out.println("Converted "+amp+" to "+ a);
-                            inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_AMP_ATTR,
-                                    a+""));
 
-                            inputTargetSiteElement.addContent("                    ");
-                            inputTargetSiteElement.addChildElement(inputTypeElement);
+                                //System.out.println("Converted "+amp+" to "+ a);
+                                inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_AMP_ATTR, amp+""));
 
-                            inputTargetSiteElement.addContent("\n                ");
+                                inputTargetSiteElement.addContent("                    ");
+                                inputTargetSiteElement.addChildElement(inputTypeElement);
+
+                                inputTargetSiteElement.addContent("\n                ");
+                            }
+                            else
+                            {
+                                SimpleXMLElement pulseGenElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_PULSE_GEN_ELEMENT);
+                                pulseGenElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, inputReference+"__"+i);
+                                pulseGenElement.addAttribute(NetworkMLConstants.INPUT_DELAY_ATTR, delay+timeUnits.getNeuroML2Symbol());
+                                pulseGenElement.addAttribute(NetworkMLConstants.INPUT_DUR_ATTR, duration+timeUnits.getNeuroML2Symbol());
+                                pulseGenElement.addAttribute(NetworkMLConstants.INPUT_AMP_ATTR, amp+currentUnits.getNeuroML2Symbol());
+
+                                topLevelCompElement.addContent("\n\n    ");
+                                topLevelCompElement.addChildElement(pulseGenElement);
+                                topLevelCompElement.addContent("\n\n    ");
+
+                                String target = nextStim.getCellGroup()+"["+sei.getCellNumber()+"]";
+                                SimpleXMLElement expInputElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_EXP_INPUT_ELEMENT);
+                                expInputElement.addAttribute(NetworkMLConstants.NEUROML2_EXP_INPUT_TARGET_ATTR, target);
+                                expInputElement.addAttribute(NetworkMLConstants.NEUROML2_EXP_INPUT_INPUT_ATTR, inputReference+"__"+i);
+
+                                entities.add(expInputElement);
+                            }
                         }
                         else if (sei.getInstanceProps() instanceof RandomSpikeTrainInstanceProps)
                         {
@@ -560,6 +570,18 @@ public class GeneratedElecInputs
                         {
                             throw new NeuroMLException("Error trying to save input "+inputReference+". Cannot save in NeuroML an input of type: "+ myElectricalInput.getType());
 
+                        }
+                    }
+                    else
+                    {
+                        if (nml2)
+                        {
+                            String target = nextStim.getCellGroup()+"["+sei.getCellNumber()+"]";
+                            SimpleXMLElement expInputElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_EXP_INPUT_ELEMENT);
+                            expInputElement.addAttribute(NetworkMLConstants.NEUROML2_EXP_INPUT_TARGET_ATTR, target);
+                            expInputElement.addAttribute(NetworkMLConstants.NEUROML2_EXP_INPUT_INPUT_ATTR, inputReference);
+
+                            entities.add(expInputElement);
                         }
                     }
 
