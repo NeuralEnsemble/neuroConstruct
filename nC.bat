@@ -20,6 +20,7 @@ REM   *** ASKING FOR MORE MEMORY THAN HALF MAX ON WINDOWS HAS LED TO THE APPLICA
 set NC_MAX_MEMORY=500M 
 
 set NC_VERSION=1.5.1
+set LEMS_VERSION=0.7.0
 
 REM ##########################################################################
 
@@ -52,8 +53,11 @@ REM Location of jars and native libraries for Java 3D
 set J3D_DIR=%NC_HOME%/lib/j3d
 set J3D_JARS=%J3D_DIR%/j3dcore.jar;%J3D_DIR%/j3dutils.jar;%J3D_DIR%/vecmath.jar
 
+REM Location of jars for LEMS
+set LEMS_JAR=%NC_HOME%/lems/lems-%LEMS_VERSION%.jar
+if not exist %LEMS_JAR% goto WARN_LEMS
 
-set CLASSPATH=%NC_HOME%/neuroConstruct_%NC_VERSION%.jar;%H5_JARS%;%J3D_JARS%;%NC_HOME%/lib/jython/jython.jar
+set CLASSPATH=%NC_HOME%/neuroConstruct_%NC_VERSION%.jar;%H5_JARS%;%J3D_JARS%;%NC_HOME%/lib/jython/jython.jar;%LEMS_JAR%
 
 
 set JAVA_LIBRARY_PATH=%H5_DIR%/win%JDK_ARCH%;%J3D_DIR%/win%JDK_ARCH%
@@ -83,6 +87,10 @@ goto END
 
 :WARN_UPDATE_PATHS
 echo The path %NC_HOME% does not exist! Please set the variable NC_HOME to the correct neuroConstruct install location in nC.bat
+goto END
 
+:WARN_LEMS
+echo The LEMS jar file has not been found! Go to the the lems subfolder and try running make.bat
+goto END
 
 :END
