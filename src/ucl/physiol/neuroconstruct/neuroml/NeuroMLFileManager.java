@@ -728,15 +728,14 @@ public class NeuroMLFileManager
                     String displayId = simPlot.getGraphWindow();
                     String value = convertValue(simPlot.getValuePlotted());
 
-                    logger.logComment("-+- Adding plot: "+ simPlot+" "+simConf.toLongString());
+                    String cellNumPattern = simPlot.getCellNumber();
+                    int numInCellGroup = project.generatedCellPositions.getNumberInCellGroup(simPlot.getCellGroup());
+                        
+                    logger.logComment("-+- Adding plot: "+ simPlot+" "+simConf.toLongString()+" with cells: "+ numInCellGroup);
 
-                    if (!value.equals("???"))
+                    if (numInCellGroup > 0 && !value.equals("???"))
                     {
                         ArrayList<Integer> cellNums = new ArrayList<Integer>();
-
-                        String cellNumPattern = simPlot.getCellNumber();
-
-                        int numInCellGroup = project.generatedCellPositions.getNumberInCellGroup(simPlot.getCellGroup());
 
                         logger.logComment("- Val of: "+ value+" on "+numInCellGroup+", "+ cellNumPattern);
 
@@ -819,8 +818,8 @@ public class NeuroMLFileManager
                                     lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1");   //TODO: check for units...
                                 }
 
-                                //String colourHex = getNextColourHex(displayId);
-                                String colourHex = getNextColourHex("All different colours...");
+                                String colourHex = getNextColourHex(displayId);
+                                //String colourHex = getNextColourHex("All different colours...");
 
                                 lineEl.addAttribute(LemsConstants.COLOR_ATTR, "#"+colourHex);
 
@@ -953,8 +952,15 @@ public class NeuroMLFileManager
             String cmName = val.split(":")[0];
             String varName = val.split(":")[1];
             varName = varName.replaceAll("_", "/");
-            if (!varName.endsWith("/q"))
-                varName = varName +"/q";
+            
+            if (!varName.endsWith("inf")){
+                if (!varName.endsWith("/q"))
+                    varName = varName +"/q";
+            }
+            else{
+                varName = varName.replaceAll("inf", "/inf");
+            }
+            
             return "biophys/membraneProperties/"+cmName+"_all/"+cmName+"/"+varName;
         }
 
@@ -1015,6 +1021,7 @@ public class NeuroMLFileManager
         {
             File projFile = new File("lems/nCproject/LemsTest/LemsTest.ncx");
             //projFile = new File("models/VSCSGranCell/VSCSGranCell.neuro.xml");
+            projFile = new File("nCmodels/RothmanEtAl_KoleEtAl_PyrCell/RothmanEtAl_KoleEtAl_PyrCell.ncx");
 
             String simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
 
@@ -1022,10 +1029,14 @@ public class NeuroMLFileManager
             {
                 simConf = "TestSimConf";
             }
-            if (projFile.getName().startsWith("LemsTest"))
+            else if (projFile.getName().startsWith("LemsTest"))
             {
                 simConf = "GranCell";
                 //simConf = "MainenCell";
+            }
+            else if (projFile.getName().startsWith("RothmanEtAl_KoleEtAl_PyrCell"))
+            {
+                simConf = "TestChannelML";
             }
 
             Project p = Project.loadProject(projFile, null);
@@ -1046,7 +1057,8 @@ public class NeuroMLFileManager
 
             SimConfig sc = p.simConfigInfo.getSimConfig(simConf);
 
-            LemsOption lo = LemsOption.GENERATE_GRAPH;
+            //LemsOption lo = LemsOption.GENERATE_GRAPH;
+            LemsOption lo = LemsOption.EXECUTE_MODEL;
             
             npfm.generateNeuroMLFiles(sc, NeuroMLVersion.NEUROML_VERSION_2, lo, oc, 123, false, false);
 

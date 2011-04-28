@@ -34,6 +34,7 @@ import javax.swing.*;
 import ucl.physiol.neuroconstruct.simulation.SimulationsInfo;
 import ucl.physiol.neuroconstruct.simulation.SimulationTree;
 import ucl.physiol.neuroconstruct.utils.GeneralUtils;
+import ucl.physiol.neuroconstruct.utils.GuiUtils;
 
 
 /**
@@ -95,6 +96,8 @@ public class SimulationTreeFrame extends JFrame
         this.setTitle("Simulations in project: "+ projectFile.getAbsolutePath());
 
         initComponents();
+        
+        GuiUtils.centreWindow(this);
     }
 
     private void initComponents() {
