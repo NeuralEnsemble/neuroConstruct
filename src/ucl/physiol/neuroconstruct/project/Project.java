@@ -968,7 +968,7 @@ public class Project implements TableModelListener
             markProjectAsEdited();
         }
     }
-
+    
     public String getProjectStatusAsString()
     {
         switch (myStatus)

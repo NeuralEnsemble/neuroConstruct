@@ -1017,11 +1017,13 @@ public class NeuroMLFileManager
 
     public static void main(String[] args)
     {
+        System.out.println("Testing NeuroMLFileManager...");
         try
         {
             File projFile = new File("lems/nCproject/LemsTest/LemsTest.ncx");
             //projFile = new File("models/VSCSGranCell/VSCSGranCell.neuro.xml");
-            projFile = new File("nCmodels/RothmanEtAl_KoleEtAl_PyrCell/RothmanEtAl_KoleEtAl_PyrCell.ncx");
+            //projFile = new File("nCmodels/RothmanEtAl_KoleEtAl_PyrCell/RothmanEtAl_KoleEtAl_PyrCell.ncx");
+            projFile = new File("../nC_projects/Thaal/Thaal.ncx");
 
             String simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
 
@@ -1038,7 +1040,7 @@ public class NeuroMLFileManager
             {
                 simConf = "TestChannelML";
             }
-
+            
             Project p = Project.loadProject(projFile, null);
             //Proje
             ProjectManager pm = new ProjectManager(null,null);
@@ -1070,7 +1072,7 @@ public class NeuroMLFileManager
         }
         catch(Exception e)
         {
-            //e.printStackTrace();
+            e.printStackTrace();
         }
     }
 

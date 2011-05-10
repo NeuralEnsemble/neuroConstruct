@@ -916,7 +916,7 @@ public class MorphMLConverter extends FormatImporter
 
                                     float revPot = Float.parseFloat(val);
 
-                                    logger.logComment("Tried to get: "+ xpath+" in "+cmlCm.getXMLFile(project)+", found: "+revPot, true);
+                                    logger.logComment("Tried to get: "+ xpath+" in "+cmlCm.getXMLFile(project)+", found: "+revPot);
 
                                     String units = cmlCm.getXMLDoc().getValueByXPath(ChannelMLConstants.getUnitsXPath());
 
