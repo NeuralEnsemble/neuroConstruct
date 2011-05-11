@@ -371,7 +371,7 @@ public class MorphMLConverter extends FormatImporter
             if (cell.getCellDescription()!=null)
             {
                 descElement = new SimpleXMLElement(metadataPrefix + MetadataConstants.NOTES_ELEMENT);
-                descElement.addContent(cell.getCellDescription());
+                descElement.addContent(GeneralUtils.replaceAllTokens(cell.getCellDescription(), "&", "and"));
                 cellElement.addChildElement(descElement);
                 cellElement.addContent("\n\n        ");
             }

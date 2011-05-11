@@ -419,7 +419,7 @@ public class SWCMorphReader extends FormatImporter
                 origNamesVsSegments.put(pi.name, nextSeg);
             }
 
-            cell.setCellDescription(description.toString());
+            cell.setCellDescription(GeneralUtils.replaceAllTokens(description.toString(), "&", "and"));
         }
         catch (IOException e)
         {
