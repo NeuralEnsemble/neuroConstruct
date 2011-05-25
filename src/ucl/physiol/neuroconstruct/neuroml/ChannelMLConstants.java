@@ -152,8 +152,23 @@ public class ChannelMLConstants
 
     public static String ION_CONC_ELEMENT = "ion_concentration";
     
+    public static String ION_SPECIES_ELEMENT = "ion_species";
+    public static String ION_SPECIES_NAME_ATTR = "name";
+    
+    public static String ION_CONC_MODEL_ELEMENT_V2 = "concentrationModel";
+    public static String ION_CONC_DEC_POOL_ELEMENT_V2 = "decayingPoolConcentrationModel";
+
+    
+    public static String ION_CONC_INT_ATTR_V2 = "initialConcentration";
+    public static String ION_CONC_EXT_ATTR_V2 = "extConcentration";
+    
+    
 
     public static String ION_CONC_DEC_POOL_ELEMENT = "decaying_pool_model";
+
+    public static String ION_CONC_REST_CONC_ATTR = "resting_conc";
+    public static String ION_CONC_DECAY_CONST_ATTR = "decay_constant";
+   
     
     public static String ION_CONC_POOL_VOL_ELEMENT = "pool_volume_info";
     public static String ION_CONC_SHELL_THICK_ELEMENT_prev1_7_3 = "shell_thickness";
@@ -307,6 +322,16 @@ public class ChannelMLConstants
     public static String getIonConcTypeXPath()
     {
         return ChannelMLConstants.ROOT_ELEMENT + "/" + ION_CONC_ELEMENT;
+    }
+
+    public static String getIonSpeciesXPath()
+    {
+        return getIonConcTypeXPath() + "/" + ION_SPECIES_ELEMENT;
+    }
+
+    public static String getIonSpeciesNameXPath()
+    {
+        return getIonSpeciesXPath() + "/@" + ION_SPECIES_NAME_ATTR;
     }
     
     public static String getIonConcDecPoolXPath()

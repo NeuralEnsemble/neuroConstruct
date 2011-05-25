@@ -775,6 +775,9 @@ public class MorphMLConverter extends FormatImporter
 
 
                 Units voltUnit = UnitConverter.voltageUnits[preferredExportUnits];
+                Units concUnits= UnitConverter.concentrationUnits[preferredExportUnits];
+                Units timeUnits= UnitConverter.timeUnits[preferredExportUnits];
+                Units lengthUnits= UnitConverter.lengthUnits[preferredExportUnits];
 
                 if (!nml2)
                 {
@@ -824,6 +827,8 @@ public class MorphMLConverter extends FormatImporter
                 ArrayList<ChannelMechanism> allUniformChanMechs = cell.getAllUniformChanMechs(true);
 
                 Units condDensUnit = UnitConverter.conductanceDensityUnits[preferredExportUnits];
+                
+                HashMap<String, SimpleXMLElement> ionSpeciesV2 = new HashMap<String, SimpleXMLElement>();
 
                 for (int j = 0; j < allUniformChanMechs.size(); j++)
                 {
@@ -836,26 +841,44 @@ public class MorphMLConverter extends FormatImporter
                                                                         preferredExportUnits);
 
                     Vector<String> groups = cell.getGroupsWithChanMech(chanMech);
+                    
 
                     if (nml2)
                     {
                         for(String group: groups)
                         {
 
-                            SimpleXMLElement mechElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.CHAN_DENSITY_ELEMENT_V2);
+                            SimpleXMLElement mechElement = null;
+                            if (cm.isChannelMechanism()) 
+                            {
+                                
+                                mechElement =  new SimpleXMLElement(bioPrefix + BiophysicsConstants.CHAN_DENSITY_ELEMENT_V2);
 
-                            membPropsElement.addContent("\n\n                ");
+                                membPropsElement.addContent("\n\n                ");
 
-                            membPropsElement.addChildElement(mechElement);
-
-                            mechElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2,
-                                                                            chanMech.getName()+"_"+group));
-
-                            mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.ION_CHAN_ATTR_V2,
-                                                                            chanMech.getName()));
-
-                            mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.COND_DENS_ATTR_V2,
+                                membPropsElement.addChildElement(mechElement);
+                                
+                                mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.COND_DENS_ATTR_V2,
                                                                             condDens+" "+condDensUnit.getNeuroML2Symbol()));
+
+                                mechElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2,
+                                                                                chanMech.getName()+"_"+group));
+
+                                mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.ION_CHAN_ATTR_V2,
+                                                                                chanMech.getName()));
+                            }
+                            else if (cm.isIonConcMechanism()) 
+                            {
+                                
+                                mechElement =  new SimpleXMLElement(bioPrefix + BiophysicsConstants.SPECIES_ELEMENT_V2);
+
+                                intraCellPropsElement.addContent("\n\n                ");
+
+                                intraCellPropsElement.addChildElement(mechElement);
+                                
+                            }
+
+
 
                             if (!group.equals(Section.ALL))
                                 mechElement.addAttribute(BiophysicsConstants.SEG_GROUP_ATTR_V2, group);
@@ -898,6 +921,8 @@ public class MorphMLConverter extends FormatImporter
                             {
                                 ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism)cm;
 
+                                String units = cmlCm.getXMLDoc().getValueByXPath(ChannelMLConstants.getUnitsXPath());
+                                    
                                 if (cmlCm.isChannelMechanism())
                                 {
                                     String xpath = ChannelMLConstants.getPreV1_7_3IonsXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
@@ -918,7 +943,6 @@ public class MorphMLConverter extends FormatImporter
 
                                     logger.logComment("Tried to get: "+ xpath+" in "+cmlCm.getXMLFile(project)+", found: "+revPot);
 
-                                    String units = cmlCm.getXMLDoc().getValueByXPath(ChannelMLConstants.getUnitsXPath());
 
                                     float revPotConv = (float)UnitConverter.getVoltage(revPot,
                                                                             UnitConverter.getUnitSystemIndex(units),
@@ -927,7 +951,61 @@ public class MorphMLConverter extends FormatImporter
                                     mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.REV_POT_ATTR_V2,
                                                                                 revPotConv+" "+voltUnit.getNeuroML2Symbol()+""));
                                 }
+                                else if (cm.isIonConcMechanism()) 
+                                {                                    
+                                    String xpath = ChannelMLConstants.getIonSpeciesNameXPath();
+                                    String ion = cmlCm.getXMLDoc().getValueByXPath(xpath);
                                 
+                                    mechElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2,
+                                                                                ion));
+
+                                    SimpleXMLElement concModelEl = new SimpleXMLElement(bioPrefix+ChannelMLConstants.ION_CONC_MODEL_ELEMENT_V2);
+                                    mechElement.addContent("\n                     ");
+                                    mechElement.addChildElement(concModelEl);
+                                    mechElement.addContent("\n                 ");
+                                
+                                    ionSpeciesV2.put(ion, concModelEl);
+                                    
+                                    
+                                    concModelEl.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.TYPE_ATTR_V2,
+                                                                                ChannelMLConstants.ION_CONC_DEC_POOL_ELEMENT_V2));
+                                    
+                                    
+                                    float restConc = Float.parseFloat(cmlCm.getXMLDoc().getValueByXPath(ChannelMLConstants.getIonConcDecPoolXPath()
+                                            +"/@"+ChannelMLConstants.ION_CONC_REST_CONC_ATTR));
+                                    
+                                    restConc = (float)UnitConverter.getConcentration(restConc,
+                                                                        UnitConverter.getUnitSystemIndex(units),
+                                                                        preferredExportUnits);
+                                    
+                                    concModelEl.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.ION_CONC_REST_CONC_ATTR,
+                                                                                restConc+" "+concUnits.getNeuroML2Symbol()));
+                                    
+                                    float decayConst = Float.parseFloat(cmlCm.getXMLDoc().getValueByXPath(ChannelMLConstants.getIonConcDecPoolXPath()
+                                            +"/@"+ChannelMLConstants.ION_CONC_DECAY_CONST_ATTR));
+                                    
+                                    decayConst = (float)UnitConverter.getTime(decayConst,
+                                                                        UnitConverter.getUnitSystemIndex(units),
+                                                                        preferredExportUnits);
+                                    
+                                    concModelEl.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.ION_CONC_DECAY_CONST_ATTR,
+                                                                               decayConst+" "+ timeUnits.getNeuroML2Symbol()));
+                                    
+                                    
+                                    float shellThickness = Float.parseFloat(cmlCm.getXMLDoc().getValueByXPath(ChannelMLConstants.getIonConcPoolVolXPath()
+                                            +"/@"+ChannelMLConstants.ION_CONC_SHELL_THICK_ATTR));
+                                    
+                                    shellThickness = (float)UnitConverter.getLength(shellThickness,
+                                                                        UnitConverter.getUnitSystemIndex(units),
+                                                                        preferredExportUnits);
+                                    
+                                    concModelEl.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.ION_CONC_SHELL_THICK_ATTR,
+                                                                               shellThickness+" "+ lengthUnits.getNeuroML2Symbol()));
+                                    
+                                    
+                                    //xpath = ChannelMLConstants.getIonSpeciesNameXPath();
+                                    
+                                }
                             }
 
                         }
@@ -1402,6 +1480,10 @@ public class MorphMLConverter extends FormatImporter
                         intraCellPropsElement.addChildElement(ionPropEl);
                         intraCellPropsElement.addContent("\n            ");
                     }
+                    else
+                    {
+                        ionPropEl = ionSpeciesV2.get(ip.getName());
+                    }
 
                     Vector<String> groups = cell.getIonPropertiesVsGroups().get(ip);
 
@@ -1413,34 +1495,56 @@ public class MorphMLConverter extends FormatImporter
                         if (ip.revPotSetByConcs())
                         {
                             SimpleXMLElement paramElExt = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
+                            
+                            float extConc = (float)UnitConverter.getConcentration(ip.getExternalConcentration(),
+                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                    preferredExportUnits);
 
                             paramElExt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR, BiophysicsConstants.PARAMETER_CONC_EXT));
-                            paramElExt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,(float)UnitConverter.getConcentration(ip.getExternalConcentration(),
-                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                    preferredExportUnits) +""));
+                            paramElExt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR, extConc+""));
 
-                            paramElExt.addContent("\n                        ");
-                            paramElExt.addChildElement(grpEl);
-                            paramElExt.addContent("\n                    ");
-
-                            ionPropEl.addContent("\n                    ");
-                            ionPropEl.addChildElement(paramElExt);
-                            ionPropEl.addContent("\n                ");
 
                             SimpleXMLElement paramElInt = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
+                            
+                            float intConc = (float)UnitConverter.getConcentration(ip.getInternalConcentration(),
+                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                    preferredExportUnits);
 
                             paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR, BiophysicsConstants.PARAMETER_CONC_INT));
-                            paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,(float)UnitConverter.getConcentration(ip.getInternalConcentration(),
-                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                    preferredExportUnits) +""));
+                            paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR, intConc+""));
 
-                            paramElInt.addContent("\n                        ");
-                            paramElInt.addChildElement(grpEl);
-                            paramElInt.addContent("\n                    ");
+                            if (!nml2)
+                            {
+                                paramElExt.addContent("\n                        ");
+                                paramElExt.addChildElement(grpEl);
+                                paramElExt.addContent("\n                    ");
 
-                            ionPropEl.addContent("\n                    ");
-                            ionPropEl.addChildElement(paramElInt);
-                            ionPropEl.addContent("\n                ");
+                                ionPropEl.addContent("\n                    ");
+                                ionPropEl.addChildElement(paramElExt);
+                                ionPropEl.addContent("\n                ");
+                                paramElInt.addContent("\n                        ");
+                                paramElInt.addChildElement(grpEl);
+                                paramElInt.addContent("\n                    ");
+
+                                ionPropEl.addContent("\n                    ");
+                                ionPropEl.addChildElement(paramElInt);
+                                ionPropEl.addContent("\n                ");
+                            }
+                            else
+                            {
+                                
+                                //SimpleXMLElement concModelEl = new SimpleXMLElement(bioPrefix+BiophysicsConstants.ION_CONC_MODEL_ELEMENT_V2);
+                                //ionPropEl.addContent("\n                     ");
+                                //ionPropEl.addChildElement(concModelEl);
+                                ///ionPropEl.addContent("\n                 ");
+                    
+                                ionPropEl.addAttribute(ChannelMLConstants.ION_CONC_INT_ATTR_V2, intConc+" "+concUnits.getNeuroML2Symbol());
+                                ionPropEl.addAttribute(ChannelMLConstants.ION_CONC_EXT_ATTR_V2, extConc+" "+concUnits.getNeuroML2Symbol());
+                                if (!grp.equals(Section.ALL))
+                                {
+                                    ionPropEl.addAttribute(BiophysicsConstants.SEG_GROUP_ATTR_V2, grp);
+                                }
+                            }
                         }
                         else
                         {

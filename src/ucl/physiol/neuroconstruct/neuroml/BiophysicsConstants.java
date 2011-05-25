@@ -121,6 +121,8 @@ public class BiophysicsConstants
     public static String SEG_GROUP_ATTR_V2 = "segmentGroup";
 
     public static String VALUE_ATTR_V2 = "value";
+    
+    public static String TYPE_ATTR_V2 = "type";
 
 
 
@@ -135,7 +137,9 @@ public class BiophysicsConstants
     public static String ION_CHAN_ATTR_V2 = "ionChannel";
     public static String COND_DENS_ATTR_V2 = "condDensity";
     public static String REV_POT_ATTR_V2 = "erev";
-
+    
+    public static String SPECIES_ELEMENT_V2 = "species";
+    
     private BiophysicsConstants()
     {
     }

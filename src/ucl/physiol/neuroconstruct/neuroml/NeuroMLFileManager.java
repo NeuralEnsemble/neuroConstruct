@@ -44,6 +44,7 @@ import ucl.physiol.neuroconstruct.simulation.SimulationsInfo;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.XMLUtils;
 import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
+import ucl.physiol.neuroconstruct.utils.units.Units;
 import ucl.physiol.neuroconstruct.utils.xml.*;
 
 
@@ -811,7 +812,13 @@ public class NeuroMLFileManager
 
                                 if(simPlot.getValuePlotted().equals(SimPlot.VOLTAGE))
                                 {
-                                    lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1mV");   //TODO: check for units...
+                                    Units u = UnitConverter.voltageUnits[MorphMLConverter.getPreferredExportUnits()];
+                                    lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 "+u.getNeuroML2Symbol());   
+                                }
+                                else if(simPlot.getValuePlotted().indexOf(SimPlot.PLOTTED_VALUE_SEPARATOR+SimPlot.CONCENTRATION+SimPlot.PLOTTED_VALUE_SEPARATOR)>=0)
+                                {
+                                    Units u = UnitConverter.concentrationUnits[MorphMLConverter.getPreferredExportUnits()];
+                                    lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 "+u.getNeuroML2Symbol());   //TODO: check for units...
                                 }
                                 else
                                 {
@@ -947,7 +954,7 @@ public class NeuroMLFileManager
     {
         if (val.equals(SimPlot.VOLTAGE))
             return "v";
-        if (val.split(":").length==2)  // TODO: Make more general!!!!
+        else if (val.split(":").length==2)  // TODO: Make more general!!!!
         {
             String cmName = val.split(":")[0];
             String varName = val.split(":")[1];
@@ -962,6 +969,17 @@ public class NeuroMLFileManager
             }
             
             return "biophys/membraneProperties/"+cmName+"_all/"+cmName+"/"+varName;
+        }
+        else if (val.split(":").length==3)  // TODO: Make more general!!!!
+        {
+            String type = val.split(":")[1];
+            if (type.equals("CONC"))
+            {
+                String ion = val.split(":")[2];
+                //return "biophys/intracellularProperties/"+ion+"/concentration";
+                return "biophys/intracellularProperties/species/concentration";
+                
+            }
         }
 
         return "???";
@@ -1023,7 +1041,7 @@ public class NeuroMLFileManager
             File projFile = new File("lems/nCproject/LemsTest/LemsTest.ncx");
             //projFile = new File("models/VSCSGranCell/VSCSGranCell.neuro.xml");
             //projFile = new File("nCmodels/RothmanEtAl_KoleEtAl_PyrCell/RothmanEtAl_KoleEtAl_PyrCell.ncx");
-            projFile = new File("../nC_projects/Thaal/Thaal.ncx");
+            //projFile = new File("../nC_projects/Thaal/Thaal.ncx");
 
             String simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
 
