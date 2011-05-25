@@ -113,7 +113,8 @@ public abstract class CellMechanism
    
     public boolean isChannelMechanism()
     {
-        return getMechanismType().equals(CellMechanism.CHANNEL_MECHANISM);
+        return getMechanismType().equals(CellMechanism.CHANNEL_MECHANISM) || 
+                getMechanismType().equals(CellMechanism.NEUROML2_ION_CHANNEL);
     }
 
     public boolean isPointProcess()

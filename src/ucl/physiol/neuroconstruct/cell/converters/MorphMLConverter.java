@@ -888,8 +888,15 @@ public class MorphMLConverter extends FormatImporter
                             {
 
                                 //SimpleXMLElement pe = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
-
-                                mechElement.addComment(new SimpleXMLComment("Note: Units of extra parameters are not known, except if it's e or erev!!"));
+                                
+                                try
+                                {
+                                    mechElement.addComment(new SimpleXMLComment("Note: Units of extra parameters are not known, except if it's e or erev!!"));
+                                }
+                                catch (Exception e)
+                                {
+                                    GuiUtils.showErrorMessage(logger, "Problem when annotating chan mech: "+chanMech+", mechElement: "+mechElement, e, null);
+                                }
 
                                 //pe.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR,
                                 //                                                 mp.getName()));
