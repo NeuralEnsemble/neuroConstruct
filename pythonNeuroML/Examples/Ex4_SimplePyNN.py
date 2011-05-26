@@ -88,24 +88,21 @@ for cell in cellsB:
 
 
 
-addrsA = cellsA.addresses()
-addrsB = cellsB.addresses()
+indicesA = []
+indicesB = []
 
-gidsA = []
-gidsB = []
+for idA in cellsA:
+	index  = cellsA.id_to_index(idA)
+	print " - Cell id %s in cellsA (index = %d) is at %s" % (idA, index, idA.position)
+	indicesA.append(index)
 
-for addr in addrsA:
-	gid  = cellsA[addr]
-	print "Cell %s (id = %d) is at %s" % (addr, gid, cellsA[addr].position)
-	gidsA.append(gid)
-
-for addr in addrsB:
-	gid  = cellsB[addr]
-	print "Cell %s (id = %d) is at %s" % (addr, gid, cellsB[addr].position)
-	gidsB.append(gid)
+for idB in cellsB:
+	index  = cellsB.id_to_index(idB)
+	print " - Cell id %s in cellsB (index = %d) is at %s" % (idB, index, idB.position)
+	indicesB.append(index)
 	
-print gidsA
-print gidsB
+print indicesA
+print indicesB
 
 syn_dynam = None
 
@@ -120,12 +117,12 @@ if my_simulator == 'neuron' or my_simulator == 'nest' :
 projConns = []
 
 for i in range(connNum):	
-    src = gidsA[int(NumpyRNG.next(rng) * len(gidsA))]
-    tgt = gidsB[int(NumpyRNG.next(rng) * len(gidsB))]
+    src = indicesA[int(NumpyRNG.next(rng) * len(indicesA))]
+    tgt = indicesB[int(NumpyRNG.next(rng) * len(indicesB))]
 
-    print "-- Connecting cell %s (%s) in %s to cell %s (%s) in %s" % (src, str(cellsA.locate(src)) ,cellsA.label, tgt, str(cellsB.locate(tgt)), cellsB.label)
+    print "-- Connecting cell %s (gid %s) in %s to cell %s (gid %s) in %s" % (src, str(cellsA[src]) ,cellsA.label, tgt, str(cellsB[tgt]), cellsB.label)
 
-    projConns.append([cellsA.locate(src), cellsB.locate(tgt), 0.01, 1.0])
+    projConns.append([src, tgt, 0.01, 1.0])
     
 
 connector= FromListConnector(projConns)               
@@ -161,7 +158,7 @@ for i in input_population:
 inputConns = []
 
 for i in range(0,cellNumA):
-    inputConns.append([input_population.locate(input_population[(i,)]), cellsA.locate(cellsA[(i,)]), 0.1, 3.0])
+    inputConns.append([i, i, 0.1, 3.0])
 
 connector2= FromListConnector(inputConns)               
 input_proj = Projection(input_population, cellsA, connector2, target='excitatory', label='InputProj' ,synapse_dynamics=None)
@@ -191,9 +188,9 @@ input_population.printSpikes("inputs.dat")
 
 print cellsA.describe()
 print cellsB.describe()
-print proj.describe()
-print input_population.describe()
-print input_proj.describe()
+#print proj.describe()
+##print input_population.describe()
+##print input_proj.describe()
 
 print get_time_step()
 	

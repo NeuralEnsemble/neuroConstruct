@@ -326,11 +326,12 @@ public class PynnFileManager
                 fw.write("pynnNetMgr.populations[\""+cg+"\"].initialize('v', "+cell.getInitialPotential().getNominalNumber()+")\n\n");
             }
 
+            /*
             fw.write("for p in pynnNetMgr.populations.values(): \n");
             fw.write("    print p.describe()\n\n");
 
             fw.write("for p in pynnNetMgr.projections.values(): \n");
-            fw.write("    print p.describe()\n\n");
+            fw.write("    print p.describe()\n\n");*/
 
             //fw.write("for p in pynnNetMgr.input_populations.values(): \n");
             //fw.write("    print p.describe()\n\n");
@@ -487,7 +488,7 @@ public class PynnFileManager
 
     public static String getFileHeader()
     {
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
         response.append("'''\n");
         response.append("******************************************************\n");
         response.append("\n");
