@@ -962,7 +962,7 @@ public class NeuronFileManager
 
         ArrayList<String> cellGroupNames = project.cellGroupsInfo.getAllCellGroupNames();
 
-        if (cellGroupNames.size() == 0)
+        if (cellGroupNames.isEmpty())
         {
             logger.logError("There are no cell groups!!", null);
             return "";

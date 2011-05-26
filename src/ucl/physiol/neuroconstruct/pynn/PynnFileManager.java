@@ -53,7 +53,7 @@ import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLEntity;
 
 public class PynnFileManager
 {
-    private static ClassLogger logger = new ClassLogger("PynnFileManager");
+    private static final ClassLogger logger = new ClassLogger("PynnFileManager");
 
     Project project = null;
 
@@ -313,11 +313,18 @@ public class PynnFileManager
             fw.write("parser.parse(open(netFileName)) # The parser opens the file and ultimately the appropriate functions in NetworkHandler get called\n");
 
 
+
             fw.write("print(\"Have read in contents of file: \"+netFileName)\n\n");
             fw.write("print(\"Have created: %s populations, %s projections and %s input sources\" % " +
                     "(len(pynnNetMgr.populations.keys())," +
                     "len(pynnNetMgr.projections.keys())," +
                     "len(pynnNetMgr.input_populations.keys())))\n\n");
+
+            for(String cg: cellGroups)
+            {
+                Cell cell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(cg));
+                fw.write("pynnNetMgr.populations[\""+cg+"\"].initialize('v', "+cell.getInitialPotential().getNominalNumber()+")\n\n");
+            }
 
             fw.write("for p in pynnNetMgr.populations.values(): \n");
             fw.write("    print p.describe()\n\n");
@@ -325,11 +332,11 @@ public class PynnFileManager
             fw.write("for p in pynnNetMgr.projections.values(): \n");
             fw.write("    print p.describe()\n\n");
 
-            fw.write("for p in pynnNetMgr.input_populations.values(): \n");
-            fw.write("    print p.describe()\n\n");
+            //fw.write("for p in pynnNetMgr.input_populations.values(): \n");
+            //fw.write("    print p.describe()\n\n");
 
-            fw.write("for p in pynnNetMgr.input_projections.values(): \n");
-            fw.write("    print p.describe()\n\n");
+            //fw.write("for p in pynnNetMgr.input_projections.values(): \n");
+            //fw.write("    print p.describe()\n\n");
 
             //fw.write("for p in pynnNetMgr.projections.values(): \n");
             //fw.write("    print p\n\n");
@@ -530,7 +537,7 @@ public class PynnFileManager
             
             Hashtable<String, Float> cellParams = new Hashtable<String, Float>();
             
-            cellParams.put("v_init", cell.getInitialPotential().getNominalNumber());
+            ////cellParams.put("v_init", cell.getInitialPotential().getNominalNumber());
             
             float cellArea = cell.getAllSegments().get(0).getSegmentSurfaceArea();
             float specCap = cell.getSpecCapForGroup(Section.ALL);
@@ -578,7 +585,6 @@ public class PynnFileManager
 
                                 cellParams.put("tau_m", membTimeConst);
 
-
                                 float revPot = Float.parseFloat(cmlMech.getValue(ChannelMLConstants.getIonRevPotXPath()));
 
                                 // TODO: check units!!
@@ -611,7 +617,6 @@ public class PynnFileManager
                                     cellParams.put("v_thresh", thresh);
                                     cellParams.put("tau_refrac", tRefrac);
                                     cellParams.put("v_reset", vReset);
-                                    
                                     
                                 }
                             }
@@ -712,16 +717,17 @@ public class PynnFileManager
             
             fw.write("        if parameters == None:\n");
             fw.write("            parameters = {}\n\n");
+
             while(names.hasMoreElements())
             {
                 String name = names.nextElement();
                 float val = cellParams.get(name);
-                
+
                 fw.write("        if not parameters.has_key('"+name+"'): \n");
                 fw.write("            parameters['"+name+"'] = "+val+" \n\n");
                 
             }
-                
+
             fw.write("        "+baseClass+".__init__ (self, parameters)\n");
             fw.write("        print \"Created new "+cellGroup+"...\"\n");
             
@@ -1039,7 +1045,7 @@ public class PynnFileManager
                 String extraArgs = "";
                 String titleOption = "";
                 String workdirOption = "";
-                String noClose = " --noclose";
+                //String noClose = " --noclose";
 
                 if (basicCommLine.indexOf("konsole")>=0)
                 {
@@ -1098,8 +1104,8 @@ public class PynnFileManager
 
                 commandToExecute = executable
                     + " "
-                    + noClose
-                    + " "
+                    /*+ noClose
+                    + " "*/
                     + titleOption
                     + " "
                     + workdirOption
@@ -1154,7 +1160,8 @@ public class PynnFileManager
         {
 
             //Project p = Project.loadProject(new File("projects/Moro/Moro.neuro.xml"), null);
-            Project p = Project.loadProject(new File("models/PyNNTest/PyNNTest.neuro.xml"), null);
+            //Project p = Project.loadProject(new File("models/PyNNTest/PyNNTest.neuro.xml"), null);
+            Project p = Project.loadProject(new File("nCexamples/Ex8_PyNNDemo/Ex8_PyNNDemo.ncx"), null);
             //Proje
             ProjectManager pm = new ProjectManager(null,null);
             pm.setCurrentProject(p);
@@ -1170,7 +1177,7 @@ public class PynnFileManager
             PynnFileManager gen = new PynnFileManager(p);
 
 
-            gen.generateThePynnFiles(p.simConfigInfo.getDefaultSimConfig(), PynnFileManager.PynnSimulator.NEST2, 12345);
+            gen.generateThePynnFiles(p.simConfigInfo.getDefaultSimConfig(), PynnFileManager.PynnSimulator.NEURON, 12345);
         
         }
         catch(Exception e)

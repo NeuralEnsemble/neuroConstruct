@@ -169,7 +169,7 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
           self.isSourceElement = 1
            
            
-    elif name == 'target' and not attrs.has_key('cell_group'):
+    elif name == 'target' and not attrs.has_key('cell_group') and not attrs.has_key('population'):
       if self.currentProjectionName != "":    
           self.isTargetElement = 1  
           
@@ -338,9 +338,12 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
       self.log.info("Found input properties: "+ str(self.currentInputProps))   
       
       
-           
+
     elif name == 'target':
-      self.currentInputTarget = attrs.get('cell_group',"")    
+      self.currentInputTarget = attrs.get('cell_group',"")
+      if len(self.currentInputTarget) == 0:
+        self.currentInputTarget = attrs.get('population',"")
+        
       self.log.info("Input: "+ self.currentInputName+" is to population: "+self.currentInputTarget)   
       
            

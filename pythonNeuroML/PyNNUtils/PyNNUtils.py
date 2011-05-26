@@ -166,7 +166,7 @@ class NetManagerPyNN(NetworkHandler):
         
         self.log.info("-- Conn id: "+str(id)+", delay: "+str(delayTotal)+", localWeight: "+ str(localWeight)+", weight: "+ str(weight)+", threshold: "+ str(localThreshold))
         
-        self.projConns.append([self.populations[source].locate(srcCell),self.populations[target].locate(tgtCell),weight,delayTotal])
+        self.projConns.append([self.populations[source].id_to_index(srcCell),self.populations[target].id_to_index(tgtCell),weight,delayTotal])
         
 
         
@@ -258,7 +258,8 @@ class NetManagerPyNN(NetworkHandler):
         tgtCell = self.populations[self.inputCellGroups[inputName]][(int(cellId),)]
         
         #TODO use max cond*weight for weight here...
-        self.inputConns.append([self.input_populations[inputName].locate(srcInput),self.populations[self.inputCellGroups[inputName]].locate(tgtCell),weight,0.1])
+        connTuple = (self.input_populations[inputName].id_to_index(srcInput)[0],self.populations[self.inputCellGroups[inputName]].id_to_index(tgtCell)[0],weight,0.1)
+        self.inputConns.append(connTuple)
             
         self.inputCount[inputName]+=1
              
@@ -275,6 +276,7 @@ class NetManagerPyNN(NetworkHandler):
         
         input_population = self.input_populations[inputName]
         cellGroup = self.inputCellGroups[inputName]
+        print self.inputConns
         connector=FromListConnector(self.inputConns)
         sd = self.inputSynapseDynamics[inputName]
         
