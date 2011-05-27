@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 #   A simple example of a PyNN script which creates some cells and makes connections 
 #
@@ -148,7 +149,7 @@ stgen.seed(seed)
 
 spike_times = stgen.poisson_generator(rate=freq, t_stop=tstop, array=True)
 
-input_population  = Population(cellNumA, SpikeSourceArray, {'spike_times': spike_times}, "inputsToA")
+input_population  = Population(cellNumA, SpikeSourceArray, {'spike_times': spike_times}, label="inputsToA") 
 
 for i in input_population:
     i.spike_times = stgen.poisson_generator(rate=freq, t_stop=tstop, array=True)
@@ -188,9 +189,9 @@ input_population.printSpikes("inputs.dat")
 
 print cellsA.describe()
 print cellsB.describe()
-#print proj.describe()
-##print input_population.describe()
-##print input_proj.describe()
+print proj.describe()
+print input_population.describe()
+print input_proj.describe()
 
 print get_time_step()
 	

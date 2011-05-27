@@ -326,21 +326,21 @@ public class PynnFileManager
                 fw.write("pynnNetMgr.populations[\""+cg+"\"].initialize('v', "+cell.getInitialPotential().getNominalNumber()+")\n\n");
             }
 
-            /*
+            
             fw.write("for p in pynnNetMgr.populations.values(): \n");
             fw.write("    print p.describe()\n\n");
 
             fw.write("for p in pynnNetMgr.projections.values(): \n");
-            fw.write("    print p.describe()\n\n");*/
+            fw.write("    print p.describe()\n\n");/**/
 
-            //fw.write("for p in pynnNetMgr.input_populations.values(): \n");
-            //fw.write("    print p.describe()\n\n");
+            fw.write("for p in pynnNetMgr.input_populations.values(): \n");
+            fw.write("    print p.describe()\n\n");
 
-            //fw.write("for p in pynnNetMgr.input_projections.values(): \n");
-            //fw.write("    print p.describe()\n\n");
+            fw.write("for p in pynnNetMgr.input_projections.values(): \n");
+            fw.write("    print p.describe()\n\n");
 
-            //fw.write("for p in pynnNetMgr.projections.values(): \n");
-            //fw.write("    print p\n\n");
+            fw.write("for p in pynnNetMgr.projections.values(): \n");
+            fw.write("    print p\n\n");
 
             
             //ArrayList<String> plotSaves = simConfig.getPlots();

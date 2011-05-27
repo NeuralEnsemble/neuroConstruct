@@ -209,7 +209,7 @@ class NetManagerPyNN(NetworkHandler):
             spike_times = self.my_stgen.poisson_generator(rate=freq*1000, t_stop=self.maxSimLength, array=True)
             
             #TODO: check units in nml files and put correct conversion here
-            input_population  = Population(size, SpikeSourceArray, {'spike_times': spike_times }, inputName)
+            input_population  = Population(size, SpikeSourceArray, {'spike_times': spike_times }, label=inputName)
             
             for ip in input_population:
                 
