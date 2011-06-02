@@ -1555,20 +1555,31 @@ public class MorphMLConverter extends FormatImporter
                         }
                         else
                         {
-                            SimpleXMLElement paramElInt = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
+                            if (!nml2)
+                            {
+                                SimpleXMLElement paramElInt = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
-                            paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR, BiophysicsConstants.PARAMETER_REV_POT));
-                            paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,(float)UnitConverter.getVoltage(ip.getReversalPotential(),
-                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
-                                                    preferredExportUnits) +""));
+                                paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_NAME_ATTR, BiophysicsConstants.PARAMETER_REV_POT));
+                                paramElInt.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,(float)UnitConverter.getVoltage(ip.getReversalPotential(),
+                                                        UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                        preferredExportUnits) +""));
 
-                            paramElInt.addContent("\n                        ");
-                            paramElInt.addChildElement(grpEl);
-                            paramElInt.addContent("\n                    ");
+                                paramElInt.addContent("\n                        ");
+                                paramElInt.addChildElement(grpEl);
+                                paramElInt.addContent("\n                    ");
+
+                                try
+                                {
+                                    ionPropEl.addContent("\n                    ");
+                                    ionPropEl.addChildElement(paramElInt);
+                                    ionPropEl.addContent("\n                ");
+                                }
+                                catch(Exception ex)
+                                {
+                                    GuiUtils.showErrorMessage(logger, "Problem adding ion info: "+ip+", grp: "+grp, ex, null);
+                                }
+                            }
                             
-                            ionPropEl.addContent("\n                    ");
-                            ionPropEl.addChildElement(paramElInt);
-                            ionPropEl.addContent("\n                ");
                         }
                         
                     }

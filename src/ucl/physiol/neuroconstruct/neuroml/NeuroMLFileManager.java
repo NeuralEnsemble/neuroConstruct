@@ -39,6 +39,7 @@ import ucl.physiol.neuroconstruct.hpc.utils.ProcessManager;
 import ucl.physiol.neuroconstruct.neuroml.LemsConstants.LemsOption;
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.*;
 import ucl.physiol.neuroconstruct.project.*;
+import ucl.physiol.neuroconstruct.project.GeneratedPlotSaves.PlotSaveDetails;
 import ucl.physiol.neuroconstruct.simulation.SimulationData;
 import ucl.physiol.neuroconstruct.simulation.SimulationsInfo;
 import ucl.physiol.neuroconstruct.utils.*;
@@ -721,19 +722,24 @@ public class NeuroMLFileManager
             simEl.addAttribute(LemsConstants.TIMES_FILE_ATTR,timesFilename);
 
             simDir.mkdir();
+            
 
-            for (SimPlot simPlot: project.simPlotInfo.getAllSimPlots())
+            ArrayList<PlotSaveDetails> plots = project.generatedPlotSaves.getPlottedPlotSaves();
+
+
+            for (PlotSaveDetails plot : plots)
             {
-                if (simConf.getPlots().contains(simPlot.getPlotReference()))
-                {
-                    String displayId = simPlot.getGraphWindow();
-                    String value = convertValue(simPlot.getValuePlotted());
+                ArrayList<Integer> cellNumsToPlot = plot.cellNumsToPlot;
 
-                    String cellNumPattern = simPlot.getCellNumber();
-                    int numInCellGroup = project.generatedCellPositions.getNumberInCellGroup(simPlot.getCellGroup());
+          
+                    String displayId = plot.simPlot.getGraphWindow();
+                    String value = convertValue(plot.simPlot.getValuePlotted());
+
+                    //String cellNumPattern = simPlot.getCellNumber();
+                    //int numInCellGroup = project.generatedCellPositions.getNumberInCellGroup(simPlot.getCellGroup());
                         
-                    logger.logComment("-+- Adding plot: "+ simPlot+" "+simConf.toLongString()+" with cells: "+ numInCellGroup);
-
+                    logger.logComment("-+- Adding plot: "+ plot.simPlot+" "+simConf.toLongString()+" with cells: "+ cellNumsToPlot);
+/*
                     if (numInCellGroup > 0 && !value.equals("???"))
                     {
                         ArrayList<Integer> cellNums = new ArrayList<Integer>();
@@ -772,9 +778,9 @@ public class NeuroMLFileManager
                         {
                             int single = Integer.parseInt(cellNumPattern);
                             cellNums.add(single);
-                        }
+                        }*/
 
-                        if (cellNums.size()>0)
+                        if (cellNumsToPlot.size()>0)
                         {
                             if (!displaysAdded.containsKey(displayId))
                             {
@@ -785,13 +791,13 @@ public class NeuroMLFileManager
                                 simEl.addContent("\n    "); // to make it more readable...
 
                                 dispEl.addAttribute(LemsConstants.ID_ATTR, displayId);
-                                dispEl.addAttribute(LemsConstants.TITLE_ATTR, project.getProjectName()+": "+ simConf.getName()+", "+simPlot.getCellGroup());
+                                dispEl.addAttribute(LemsConstants.TITLE_ATTR, project.getProjectName()+": "+ simConf.getName()+", "+plot.simPlot.getCellGroup());
                                 dispEl.addAttribute(LemsConstants.TIMESCALE_ATTR, "1ms");
 
                                 displaysAdded.put(displayId, dispEl);
                             }
 
-                            for(int cellNum: cellNums)
+                            for(int cellNum: cellNumsToPlot)
                             {
                                 SimpleXMLElement lineEl = new SimpleXMLElement(LemsConstants.LINE_ELEMENT);
                                 SimpleXMLElement dispEl = displaysAdded.get(displayId);
@@ -801,23 +807,33 @@ public class NeuroMLFileManager
                                 dispEl.addContent("\n        "); // to make it more readable...
 
                                 String titleDisp = dispEl.getAttributeValue(LemsConstants.TITLE_ATTR);
-                                dispEl.setAttributeValue(LemsConstants.TITLE_ATTR, titleDisp+", "+simPlot.getValuePlotted());
+                                dispEl.setAttributeValue(LemsConstants.TITLE_ATTR, titleDisp+", "+plot.simPlot.getValuePlotted());
 
-                                lineEl.addAttribute(LemsConstants.ID_ATTR, simPlot.getPlotReference());
+                                lineEl.addAttribute(LemsConstants.ID_ATTR, plot.simPlot.getPlotReference());
 
 
-                                String path = simPlot.getCellGroup()+"["+cellNum+"]/"+ value;
+                                String path = plot.simPlot.getCellGroup()+"["+cellNum+"]/"+ value;
 
                                 lineEl.addAttribute(LemsConstants.QUANTITY_ATTR, path);
 
-                                if(simPlot.getValuePlotted().equals(SimPlot.VOLTAGE))
+                                if(plot.simPlot.getValuePlotted().equals(SimPlot.VOLTAGE))
                                 {
                                     Units u = UnitConverter.voltageUnits[MorphMLConverter.getPreferredExportUnits()];
                                     lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 "+u.getNeuroML2Symbol());   
                                 }
-                                else if(simPlot.getValuePlotted().indexOf(SimPlot.PLOTTED_VALUE_SEPARATOR+SimPlot.CONCENTRATION+SimPlot.PLOTTED_VALUE_SEPARATOR)>=0)
+                                else if(plot.simPlot.getValuePlotted().endsWith("tau"))
+                                {
+                                    Units u = UnitConverter.timeUnits[MorphMLConverter.getPreferredExportUnits()];
+                                    lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 "+u.getNeuroML2Symbol());   
+                                }
+                                else if(plot.simPlot.getValuePlotted().indexOf(SimPlot.PLOTTED_VALUE_SEPARATOR+SimPlot.CONCENTRATION+SimPlot.PLOTTED_VALUE_SEPARATOR)>=0)
                                 {
                                     Units u = UnitConverter.concentrationUnits[MorphMLConverter.getPreferredExportUnits()];
+                                    lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 "+u.getNeuroML2Symbol());   //TODO: check for units...
+                                }
+                                else if(plot.simPlot.getValuePlotted().indexOf(SimPlot.PLOTTED_VALUE_SEPARATOR+SimPlot.COND_DENS+SimPlot.PLOTTED_VALUE_SEPARATOR)>=0)
+                                {
+                                    Units u = UnitConverter.conductanceDensityUnits[MorphMLConverter.getPreferredExportUnits()];
                                     lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 "+u.getNeuroML2Symbol());   //TODO: check for units...
                                 }
                                 else
@@ -830,11 +846,11 @@ public class NeuroMLFileManager
 
                                 lineEl.addAttribute(LemsConstants.COLOR_ATTR, "#"+colourHex);
 
-                                if (simPlot.toBeSaved())
+                                if (plot.simPlot.toBeSaved())
                                 {
-                                    String datFile = simPlot.getCellGroup()+"_"+cellNum+".dat";
-                                    if (!simPlot.isVoltage())
-                                        datFile = simPlot.getCellGroup()+"_"+cellNum+"."+simPlot.getSafeVarName()+".dat";
+                                    String datFile = plot.simPlot.getCellGroup()+"_"+cellNum+".dat";
+                                    if (!plot.simPlot.isVoltage())
+                                        datFile = plot.simPlot.getCellGroup()+"_"+cellNum+"."+plot.simPlot.getSafeVarName()+".dat";
                                     
                                     File fullFile = new File(simDir, datFile);
                                     String fileStr = fullFile.getAbsolutePath();
@@ -846,8 +862,7 @@ public class NeuroMLFileManager
                             }
                         }
                     }
-                }
-            }
+              
 
             lemsElement.addContent("\n\n"); // to make it more readable...
 
@@ -952,32 +967,44 @@ public class NeuroMLFileManager
 
     private String convertValue(String val)
     {
+        logger.logComment("Converting val: "+val, true);
         if (val.equals(SimPlot.VOLTAGE))
+        {
             return "v";
+        }
         else if (val.split(":").length==2)  // TODO: Make more general!!!!
         {
             String cmName = val.split(":")[0];
             String varName = val.split(":")[1];
             varName = varName.replaceAll("_", "/");
             
-            if (!varName.endsWith("inf")){
+            if (!varName.endsWith("inf") && !varName.endsWith("tau")){
                 if (!varName.endsWith("/q"))
                     varName = varName +"/q";
             }
             else{
                 varName = varName.replaceAll("inf", "/inf");
+                varName = varName.replaceAll("tau", "/tau");
             }
             
             return "biophys/membraneProperties/"+cmName+"_all/"+cmName+"/"+varName;
         }
         else if (val.split(":").length==3)  // TODO: Make more general!!!!
         {
+            String cmName = val.split(":")[0];
             String type = val.split(":")[1];
-            if (type.equals("CONC"))
+            if (type.equals(SimPlot.CONCENTRATION))
             {
                 String ion = val.split(":")[2];
                 //return "biophys/intracellularProperties/"+ion+"/concentration";
                 return "biophys/intracellularProperties/species/concentration";
+                
+            }
+            else if (type.equals(SimPlot.COND_DENS))
+            {
+                String ion = val.split(":")[2];
+                //return "biophys/intracellularProperties/"+ion+"/concentration";
+                return "biophys/membraneProperties/"+cmName+"_all/g";
                 
             }
         }
@@ -1052,6 +1079,7 @@ public class NeuroMLFileManager
             else if (projFile.getName().startsWith("LemsTest"))
             {
                 simConf = "GranCell";
+                //simConf = "GranCellTested";
                 //simConf = "MainenCell";
             }
             else if (projFile.getName().startsWith("RothmanEtAl_KoleEtAl_PyrCell"))
