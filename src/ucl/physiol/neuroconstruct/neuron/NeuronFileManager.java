@@ -3317,7 +3317,7 @@ public class NeuronFileManager
 
                                             String modFile = NeuronWriter.generateModFile(comp);
 
-                                            String origName = comp.getComponentType().getName();
+                                            String origName = comp.getComponentClass().getName();
                                             String newName = "MOD_"+cellMechanism.getInstanceName();
 
                                             modFile = modFile.replaceAll(origName, newName);

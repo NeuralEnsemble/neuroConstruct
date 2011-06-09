@@ -29,7 +29,6 @@ package ucl.physiol.neuroconstruct.neuroml;
 
 import java.io.*;
 import java.util.*;
-import java.util.Random;
 
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
@@ -967,7 +966,7 @@ public class NeuroMLFileManager
 
     private String convertValue(String val)
     {
-        logger.logComment("Converting val: "+val, true);
+        logger.logComment("Converting val: "+val);
         if (val.equals(SimPlot.VOLTAGE))
         {
             return "v";
