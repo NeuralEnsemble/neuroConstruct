@@ -97,17 +97,17 @@ public class ModelTest
 
     @Test public void testGranuleCell()
     {
-        String projFileName = "nCmodels/GranuleCell/GranuleCell.ncx";
+        String projFileName = "osb/models/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx";
         checkProject(projFileName);
     }
     @Test public void testGranCellLayer()
     {
-        String projFileName = "nCmodels/GranCellLayer/GranCellLayer.ncx";
+        String projFileName = "osb/models/cerebellum/networks/GranCellLayer/neuroConstruct/GranCellLayer.ncx";
         checkProject(projFileName);
     }
     @Test public void testCA1PyramidalCell()
     {
-        String projFileName = "nCmodels/CA1PyramidalCell/CA1PyramidalCell.ncx";
+        String projFileName = "osb/models/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx";
         checkProject(projFileName);
     }
     @Test public void testDentateGyrus()
@@ -121,7 +121,7 @@ public class ModelTest
     }
     @Test public void testMainenEtAl_PyramidalCell()
     {
-        String projFileName = "nCmodels/MainenEtAl_PyramidalCell/MainenEtAl_PyramidalCell.ncx";
+        String projFileName = "osb/models/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx";
         ArrayList<String> cellsToIgnore = new ArrayList<String>();
         cellsToIgnore.add("MainenCellMod");
 
@@ -148,7 +148,7 @@ public class ModelTest
 
     @Test public void testSolinasEtAl_GolgiCell()
     {
-        String projFileName = "nCmodels/SolinasEtAl_GolgiCell/SolinasEtAl_GolgiCell.ncx";
+        String projFileName = "osb/models/cerebellum/cerebellar_golgi_cell/SolinasEtAl_GolgiCell/neuroConstruct/SolinasEtAl_GolgiCell.ncx";
 
         ArrayList<String> cellsToIgnore = new ArrayList<String>();
 
@@ -169,7 +169,7 @@ public class ModelTest
   
     @Test public void testThalamocortical()
     {
-        String projFileName = "nCmodels/Thalamocortical/Thalamocortical.ncx";
+        String projFileName = "osb/models/cerebral_cortex/networks/Thalamocortical/neuroConstruct/Thalamocortical.ncx";
         ArrayList<String> cellsToIgnore = new ArrayList<String>();
         cellsToIgnore.add("pyrFRB_orig");
 

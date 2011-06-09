@@ -126,10 +126,17 @@ public class GeneralUtils
      */
     public static boolean includeParallelFunc()
     {
-        // If a file named parallel exists in the neuroConstruct main dir, enable testing of 
+        // If a file named parallel exists in the neuroConstruct main dir, enable testing of
         // parallel func...
         File parallelFile = new File(ProjectStructure.getnCHome(), "parallel");
         return parallelFile.exists();
+    }
+
+
+
+    public static boolean includeOsbProjects()
+    {   
+        return ProjectStructure.getOsbProjsDir().exists();
     }
     
 

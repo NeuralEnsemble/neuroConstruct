@@ -524,6 +524,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     
     JMenu jMenuExamples = new JMenu();
     JMenu jMenuModels = new JMenu();
+    JMenu jMenuOsbModels = new JMenu();
     
     
     
@@ -1007,6 +1008,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         jMenuExamples.setText("Load Example Project");
         jMenuModels.setText("Load Detailed Model");
+        jMenuOsbModels.setText("Open Source Brain Project");
 
 
         jComboBoxView3DChoice.addPopupMenuListener(new javax.swing.event.PopupMenuListener()
@@ -8636,6 +8638,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jMenuFile.addSeparator();
         
         jMenuFile.add(jMenuExamples);
+
         jMenuExamples.removeAll();
         
         File[] exProjs = ProjectStructure.getnCExamplesDir().listFiles();
@@ -8662,9 +8665,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
         }
         jMenuFile.add(jMenuModels);
-        
+
         jMenuModels.removeAll();
-        
+
         File[] modProjs = ProjectStructure.getnCModelsDir().listFiles();
         for(File ex: modProjs)
         {
@@ -8683,6 +8686,40 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                         jMenuRecentFile_actionPerformed(e);
                     }
                 });
+            }
+        }
+
+        jMenuFile.addSeparator();
+
+        if (GeneralUtils.includeOsbProjects())
+        {
+            jMenuFile.add(jMenuOsbModels);
+
+            jMenuOsbModels.removeAll();
+
+            ArrayList<File> osbProjs = new ArrayList<File>();
+            ProjectStructure.findProjectFile(ProjectStructure.getOsbProjsDir(), osbProjs);
+            
+            for(File projFile: osbProjs)
+            {
+                    //File projFile = ProjectStructure.findProjectFile(ex, true);
+                    logger.logComment("Found proj file: "+projFile);
+
+                    if (projFile!=null && projFile.exists())
+                    {
+                        JMenuItem jMenuRecentFileItem = new JMenuItem();
+                        jMenuRecentFileItem.setText(projFile.getAbsolutePath());
+                        jMenuOsbModels.add(jMenuRecentFileItem);
+
+                        jMenuRecentFileItem.addActionListener(new ActionListener()
+                        {
+                            public void actionPerformed(ActionEvent e)
+                            {
+                                jMenuRecentFile_actionPerformed(e);
+                            }
+                        });
+                    }
+                
             }
         }
 

@@ -27,6 +27,7 @@
 package ucl.physiol.neuroconstruct.project;
 
 import java.io.*;
+import java.util.*;
 import ucl.physiol.neuroconstruct.gui.SimpleFileFilter;
 import ucl.physiol.neuroconstruct.utils.*;
 
@@ -153,6 +154,7 @@ public class ProjectStructure
     
     private static String nCexamplesDirInInstall = "nCexamples";
     private static String nCmodelsDirInInstall = "nCmodels";
+    private static String osbDir = "osb";
 
     private static String pythonNeuroMLDir = "pythonNeuroML";
     
@@ -525,7 +527,7 @@ public class ProjectStructure
         }
         return examplesDirectory;
     }*/
-    
+
     public static File getnCExamplesDir()
     {
         File examplesDirectory = new File(getnCHome(), nCexamplesDirInInstall);
@@ -535,6 +537,12 @@ public class ProjectStructure
             examplesDirectory.mkdir();
         }
         return examplesDirectory;
+    }
+    public static File getOsbProjsDir()
+    {
+        File osbDirectory = new File(getnCHome(), osbDir);
+
+        return osbDirectory;
     }
     
     
@@ -1018,6 +1026,35 @@ public class ProjectStructure
             return projFile;
 
         return null;
+    }
+
+    public static void findProjectFile(File projectMainDir, ArrayList<File> projFiles)
+    {
+        //System.out.println("Checking for proj file in "+projectMainDir+", so far: "+projFiles);
+
+        File projFile = new File(projectMainDir, projectMainDir.getName()+ProjectStructure.getNewProjectFileExtension());
+        if(projFile.exists())
+            projFiles.add(projFile);
+
+        // e.g. ProjName/neuroConstruct/ProjectName.ncx
+        projFile = new File(projectMainDir, projectMainDir.getParentFile().getName()+ProjectStructure.getNewProjectFileExtension());
+        if(projFile.exists())
+            projFiles.add(projFile);
+
+        projFile = new File(projectMainDir, projectMainDir.getName()+ProjectStructure.getOldProjectFileExtension());
+        if(projFile.exists())
+            projFiles.add(projFile);
+
+       
+        File[] subDir = projectMainDir.listFiles();
+        for (File f: subDir)
+        {
+            if (f.isDirectory())
+            {
+                findProjectFile(f, projFiles);
+            }
+        }
+
     }
 
 
