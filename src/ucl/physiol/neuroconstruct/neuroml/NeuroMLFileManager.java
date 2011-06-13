@@ -654,7 +654,7 @@ public class NeuroMLFileManager
             defRunElement.addAttribute(LemsConstants.COMPONENT_ATTR, LemsConstants.DEFAULT_SIM_ID);
 
 
-            lemsElement.addComment("Include standard NeuroML 2 ComponentType definitions");
+            lemsElement.addComment("Include standard NeuroML 2 ComponentClass definitions");
             lemsElement.addContent("\n    "); // to make it more readable...
 
             SimpleXMLElement incEl1 = new SimpleXMLElement(LemsConstants.INCLUDE_ELEMENT);

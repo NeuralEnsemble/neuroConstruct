@@ -50,6 +50,7 @@ public class SimpleHtmlDoc
     boolean includeReturnsInHtml = true;
 
     String title = "";
+    String extraHead = "";
 
 
     public void addTaggedElement(String text, String tab)
@@ -76,7 +77,10 @@ public class SimpleHtmlDoc
         this.includeReturnsInHtml = includeReturnsInHtml;
     }
 
-
+    public void addToHead(String extra)
+    {
+        extraHead = extra;
+    }
 
     public void addTaggedElement(String text, ArrayList<String> tabs)
     {
@@ -156,7 +160,8 @@ public class SimpleHtmlDoc
             + "         table {border-collapse:collapse}"
 
             /*+ " p {text-align: left; font-size: 12pt; font-family: monospaced}"*/
-            +ret+"</style>"+ret+"</head>"+ret
+            +ret+"</style>"+ret+extraHead+ret
+            +"</head>"+ret
             +"<body>");
 
         for (int i = 0; i < contents.size(); i++)

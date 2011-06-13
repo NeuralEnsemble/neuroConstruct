@@ -54,6 +54,11 @@ public class Expand {
     public static final String COLOUR_GABA = "#0000FF";
     public static final String COLOUR_GAP = "#669966";
 
+    public static final String ccsInfo = "<link href=\"http://opensourcebrain.org:8080/themes/alternate/stylesheets/application.css?1300382035\" media=\"all\" rel=\"stylesheet\" type=\"text/css\" />";
+
+    public static final String tableStyle = "style='list' width='700'";
+    public static final String headerStyle = "style='font-weight:bold; background-color:black; color:white'";
+
     public Expand() {
     }
 
@@ -135,10 +140,14 @@ public class Expand {
         String indexTitle = "index.html";
         GeneralUtils.removeAllFiles(descriptionsDir, false, false, true);
         SimpleHtmlDoc indexPage = new SimpleHtmlDoc("Model descriptions", fontSize);
+        indexPage.addToHead(ccsInfo);
+
+        //
         File fileToSave = new File(dirName, indexTitle);
 
-        indexPage.addTaggedElement("neuroConstruct project descriptions", "h1");
-        indexPage.addRawHtml("This is a collection of automatically-generated descriptions for neuroConstruct projects.");
+
+        indexPage.addTaggedElement("Project summaries", "h1");
+        indexPage.addRawHtml("This is a collection of automatically generated descriptions for projects in the Open Source Brain Repository.");
         indexPage.addRawHtml("<dl>");
 
         for (String projPath : projPaths) {
@@ -170,11 +179,28 @@ public class Expand {
                     projSpecificDir.mkdir();
                 }
 
+
                 File f = generateMainPage(project, projSpecificDir);
                 File projRelativePath = new File(projNameStripped, f.getName());
 
                 indexPage.addTaggedElement(indexPage.getLinkedText(projName, projRelativePath.toString()), "dt");
-                indexPage.addTaggedElement(project.getProjectDescription(), "dd");
+
+                String desc = project.getProjectDescription();
+                desc = desc.substring(0, desc.indexOf(".  ")+2);
+
+                File imgDir = new File(project.getProjectMainDirectory(), "images");
+                File imgTgt = new File(projSpecificDir, "images");
+                imgDir.mkdir();
+                GeneralUtils.copyDirIntoDir(imgDir, imgTgt, true, true);
+
+
+                indexPage.addRawHtml("</br>");
+                indexPage.addTaggedElement("<img src=\""+projNameStripped+"/images/small.png\" align=\"centre\"/>", "dd");
+                indexPage.addRawHtml("</br>");
+                indexPage.addTaggedElement(desc, "dd");
+                indexPage.addRawHtml("</br>");
+
+                //indexPage.addRawHtml("<img src=\""+projNameStripped+"/images/small.png\"/>");
 
                 /*File smallImg = new File(projFile.getParentFile(), "images/small.png");
                 if (smallImg.exists()) {
@@ -220,16 +246,10 @@ public class Expand {
             File fileToSave = new File(dirToCreateIn, getItemPage(title));
 
             SimpleHtmlDoc mainPage = new SimpleHtmlDoc(project.getProjectName() + ": " + title, fontSize);
+            mainPage.addToHead(ccsInfo);
 
             mainPage.addTaggedElement("neuroConstruct project: " + project.getProjectName(), "h2");
 
-            mainPage.addTaggedElement("Simulation Configurations", "h2");
-
-
-            for (String sc : project.simConfigInfo.getAllSimConfigNames()) {
-                String scFile = getItemPage(sc);
-                mainPage.addTaggedElement(mainPage.getLinkedText(sc, scFile), "b");
-            }
 
             String desc = project.getProjectDescription();
 
@@ -241,6 +261,9 @@ public class Expand {
             ArrayList<String> inputs = new ArrayList<String>();
 
             if (title.equals(mainPageTitle)) {
+
+                mainPage.addTaggedElement("<img src=\"images/large.png\" width=\"600\" />", "p");
+
                 cells.addAll(project.cellManager.getAllCells());
 
                 cellMechs.addAll(project.cellMechanismInfo.getAllCellMechanismNames());
@@ -281,6 +304,14 @@ public class Expand {
                 }
             }
 
+            mainPage.addTaggedElement("Simulation Configurations", "h2");
+
+
+            for (String sc : project.simConfigInfo.getAllSimConfigNames()) {
+                String scFile = getItemPage(sc);
+                mainPage.addTaggedElement(mainPage.getLinkedText(sc, scFile), "b");
+            }
+
             mainPage.addTaggedElement("Connectivity Matrix", "h2");
 
             String connTitle = "Connectivity in " + title;
@@ -317,7 +348,7 @@ public class Expand {
                 matrixPage.addTaggedElement(connTitle, "h2");
 
 
-                matrixPage.addRawHtml("<table border=\"1\"  valign='centre' cellpadding='3'>");
+                matrixPage.addRawHtml("<table "+tableStyle+">");
 
                 matrixPage.addRawHtml("<tr>");
                 matrixPage.addRawHtml("<td   colspan='2'>&nbsp;</td>");
@@ -328,7 +359,7 @@ public class Expand {
                     if (preCG.startsWith("CG3D_")) {
                         preRef = preCG.substring(5);
                     }
-                    matrixPage.addRawHtml("<td class='header'  colspan='2'>" + preRef + "</td>");
+                    matrixPage.addRawHtml("<td "+headerStyle+"  colspan='2'>" + preRef + "</td>");
                 }
                 matrixPage.addRawHtml("</tr>");
                 for (String postCG : orderedCellGroups) {
@@ -338,7 +369,7 @@ public class Expand {
                     if (postCG.startsWith("CG3D_")) {
                         postRef = postCG.substring(5);
                     }
-                    matrixPage.addRawHtml("<td class='header'  colspan='2'>" + postRef + "</td>");
+                    matrixPage.addRawHtml("<td "+headerStyle+"  colspan='2'>" + postRef + "</td>");
 
                     for (String preCG : orderedCellGroups) {
                         StringBuilder sb = new StringBuilder();
@@ -388,9 +419,9 @@ public class Expand {
 
             mainPage.addRawHtml("<p>&nbsp;</p>");
 
-            mainPage.addRawHtml("<table border=\"1\" width='" + width + "' valign='centre' cellpadding='3'>");
+            mainPage.addRawHtml("<table "+tableStyle+">");
 
-            mainPage.addRawHtml("<tr><td class='header'  colspan='2'><b>A: Model Summary</b></td></tr>");
+            mainPage.addRawHtml("<tr><td "+headerStyle+"  colspan='2'><b>A: Model Summary</b></td></tr>");
             mainPage.addRawHtml("<tr><td width='" + width1 + "'><b>Description</b></td><td>" + handleWhitespaces(desc) + "</td></tr>");
             mainPage.addRawHtml("<tr><td><b>Populations</b></td><td>");
             for (String cg : cellGroups) {
@@ -452,11 +483,12 @@ public class Expand {
 
                 CellMechanism cm = project.cellMechanismInfo.getCellMechanism(cmName);
 
-
+                if (cm==null)
+                    logger.logError("Problem with "+cmName+" in project "+ project.getProjectName(), true);
+                
                 if (cm.isSynapticMechanism() || cm.isGapJunctionMechanism()) {
                     mechInfo = synInfo;
                 }
-
 
                 //mechInfo.append(cm+" ");
 
@@ -533,9 +565,9 @@ public class Expand {
 
             mainPage.addRawHtml("<p>&nbsp;</p>");
 
-            mainPage.addRawHtml("<table border=\"1\" width='" + width + "'  cellpadding='3'>");
+            mainPage.addRawHtml("<table "+tableStyle+">");
 
-            mainPage.addRawHtml("<tr><td class='header'  colspan='3'><b>B: Populations</b></td></tr>");
+            mainPage.addRawHtml("<tr><td "+headerStyle+"  colspan='3'><b>B: Populations</b></td></tr>");
 
             mainPage.addRawHtml("<tr><td width='" + width1 + "'><b>Name</b></td>"
                     + "<td  width='100'><b>Elements</b></td>"
@@ -561,9 +593,9 @@ public class Expand {
 
             mainPage.addRawHtml("<p>&nbsp;</p>");
 
-            mainPage.addRawHtml("<table border=\"1\" width='" + width + "' valign='centre' cellpadding='3'>");
+            mainPage.addRawHtml("<table "+tableStyle+">");
 
-            mainPage.addRawHtml("<tr><td class='header'  colspan='4'><b>C: Connectivity</b></td></tr>");
+            mainPage.addRawHtml("<tr><td "+headerStyle+"  colspan='4'><b>C: Connectivity</b></td></tr>");
 
 
             mainPage.addRawHtml("<tr><td width='" + width1 + "'><b>Name</b></td>"
@@ -597,9 +629,9 @@ public class Expand {
             mainPage.addRawHtml("<p>&nbsp;</p>");
 
 
-            mainPage.addRawHtml("<table border=\"1\" width='" + width + "' valign='centre' cellpadding='3'>");
+            mainPage.addRawHtml("<table "+tableStyle+">");
 
-            mainPage.addRawHtml("<tr><td class='header' colspan='4'>D: Neuron and Synapse models</b></tr>");
+            mainPage.addRawHtml("<tr><td "+headerStyle+" colspan='4'>D: Neuron and Synapse models</b></tr>");
 
             mainPage.addRawHtml("<tr><td width='" + width1 + "'><b>Name</b></td>"
                     + "<td ><b>Description</b></td>"
@@ -622,9 +654,9 @@ public class Expand {
             mainPage.addRawHtml("<p>&nbsp;</p>");
 
 
-            mainPage.addRawHtml("<table border=\"1\" width='" + width + "' valign='centre' cellpadding='3'>");
+            mainPage.addRawHtml("<table "+tableStyle+">");
 
-            mainPage.addRawHtml("<tr><td class='header' colspan='4'>E: Inputs</b></tr>");
+            mainPage.addRawHtml("<tr><td "+headerStyle+" colspan='4'>E: Inputs</b></tr>");
 
             mainPage.addRawHtml("<tr><td width='" + width1 + "'><b>Name</b></td>"
                     + "<td ><b>Description</b></td>"
@@ -637,9 +669,9 @@ public class Expand {
             mainPage.addRawHtml("<p>&nbsp;</p>");
 
 
-            mainPage.addRawHtml("<table border=\"1\" width='" + width + "' valign='centre' cellpadding='3'>");
+            mainPage.addRawHtml("<table "+tableStyle+">");
 
-            mainPage.addRawHtml("<tr><td class='header' colspan='4'>F: Measurements</b></tr>");
+            mainPage.addRawHtml("<tr><td "+headerStyle+" colspan='4'>F: Measurements</b></tr>");
 
             mainPage.addRawHtml("<tr><td width='" + width1 + "'><b>Name</b></td>"
                     + "<td ><b>Description</b></td>"
@@ -664,20 +696,35 @@ public class Expand {
     public static void main(String[] args) {
         Expand expand = new Expand();
 
+        //String osbLocal =
+
         ArrayList<String> paths = new ArrayList<String>();
         //paths.add("examples/Ex6-Cerebellum/Ex6-Cerebellum.neuro.xml");
         //paths.add("nCmodels/Thalamocortical/Thalamocortical.ncx");
-        paths.add("nCmodels/CA1PyramidalCell/CA1PyramidalCell.ncx");
-        paths.add("nCmodels/GranuleCell/GranuleCell.ncx");
-        paths.add("nCmodels/SolinasEtAl_GolgiCell/SolinasEtAl_GolgiCell.ncx");
-        paths.add("nCmodels/GranCellLayer/GranCellLayer.ncx");
+        
+        paths.add("osb/models/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
+        paths.add("osb/models/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
+        paths.add("osb/models/cerebellum/networks/GranCellLayer/neuroConstruct/GranCellLayer.ncx");
+        boolean all = false;
+        all = true;
+        if (all)
+        {
+            /**/paths.add("osb/models/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx");
+            paths.add("osb/models/cerebellum/cerebellar_golgi_cell/SolinasEtAl_GolgiCell/neuroConstruct/SolinasEtAl_GolgiCell.ncx");
+            paths.add("osb/models/cerebral_cortex/neocortical_pyramidal_neuron/RothmanEtAl_KoleEtAl_PyrCell/neuroConstruct/RothmanEtAl_KoleEtAl_PyrCell.ncx");
+            paths.add("osb/models/cerebellum/cerebellar_purkinje_cell/PurkinjeCell/neuroConstruct/PurkinjeCell.ncx");
+            paths.add("osb/models/cerebellum/networks/VervaekeEtAl-GolgiCellNetwork/neuroConstruct/VervaekeEtAl-GolgiCellNetwork.ncx");
+            paths.add("osb/models/cerebral_cortex/networks/Thalamocortical/neuroConstruct/Thalamocortical.ncx");
+        }
+
+        //paths.add("nCmodels/SolinasEtAl_GolgiCell/SolinasEtAl_GolgiCell.ncx");
         //paths.add("nCexamples/Ex4_HHcell/Ex4_HHcell.ncx");
         //paths.add("/bernal/models/Layer23_names/Layer23_names.neuro.xml");
         //paths.add("../copyNcModels/Parallel/Parallel.neuro.xml");
         //paths.add("nCmodels/Thalamocortical/Thalamocortical.ncx");
         //paths.add("nCexamples/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx");
         //paths.add("nCexamples/Ex5_Networks/Ex5_Networks.ncx");
-        paths.add("/home/eugenio/phd/code/osb/add_more_models/osbModels/PurkinjeCell/PurkinjeCell.ncx");
+        //paths.add("/home/eugenio/phd/code/osb/add_more_models/osbModels/PurkinjeCell/PurkinjeCell.ncx");
 
         paths = (ArrayList<String>) GeneralUtils.reorderAlphabetically(paths, true);
         generateModelDescriptions(paths, "../temp/testExpand");
