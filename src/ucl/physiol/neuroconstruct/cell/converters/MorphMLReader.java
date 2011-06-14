@@ -1166,7 +1166,8 @@ public class MorphMLReader extends XMLFilterImpl
             //File f = new File("..\\copynCmodels\\TraubEtAl2005\\generatedNEURON\\ttt.xml");
 
             //File f = new File("testProjects/TestMorphs/generatedNeuroML/test.mml");
-            File f = new File("../temp/cell.xml");
+            //File f = new File("../temp/cell.xml");
+            File f = new File("../Documents/general/owp/CElegans_ADAL.xml");
 
            // File f = new File("/bernal/a4d.xml");
 

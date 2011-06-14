@@ -4904,6 +4904,7 @@ public class CellTopologyHelper
                     if (cell.getAllSegments().get(parentSearchIndex).getSegmentId() == parentId)
                     {
                         parentIndex = parentSearchIndex;
+                        logger.logComment("1 Found  a parent: "+cell.getAllSegments().get(parentSearchIndex));
                     }
                 }
                 if (parentIndex < 0)
@@ -4914,6 +4915,7 @@ public class CellTopologyHelper
                         if (cell.getAllSegments().get(parentSearchIndex).getSegmentId() == parentId)
                         {
                             parentIndex = parentSearchIndex;
+                            logger.logComment("2 Found  a parent: "+cell.getAllSegments().get(parentSearchIndex));
                         }
                     }
                 }
@@ -4968,12 +4970,22 @@ public class CellTopologyHelper
     public static void zeroFirstSomaSegId(Cell cell)
     {
         Segment somaSeg = cell.getFirstSomaSegment();
+        int orig = somaSeg.getSegmentId();
         if (somaSeg!=null && somaSeg.getSegmentId()!=0)
         {
+            if (cell.getSegmentWithId(0)!=null)
+            {
+                int newSegId = 10000;
+                while(cell.getSegmentWithId(newSegId)!=null)
+                {
+                    newSegId++;
+                }
+                cell.getSegmentWithId(0).setSegmentId(newSegId);
+            }
             somaSeg.setSegmentId(0);
         }
 
-        logger.logComment("-----------    Set first soma seg id to 0...");
+        logger.logComment("-----------    Set first soma seg id to 0 (originally "+orig+")...");
 
     }
 
