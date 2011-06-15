@@ -7,6 +7,8 @@ Note spike number becomes meaningless, use duration instead
 
 Feb 2009: Fixed bug so that no spikes happen after time del + dur
 
+Matteo Farinella, June 2011: added condition to suppress first event if it is later than del+dur (in case ISI is longer than del)
+
 
 ENDCOMMENT
 
@@ -67,7 +69,10 @@ INITIAL {
                     event = 0
             }
             
-            net_send(event, 3)
+            : nor later than del+dur
+            if (event < (del+dur)) {
+                    net_send(event, 3)
+            }
     }
         
 }
