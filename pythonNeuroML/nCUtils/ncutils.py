@@ -157,15 +157,12 @@ def generateAndRunPsics(project,
 
     if verbose: print prefix+"Going to generate PSICS files for: "+simRef
 
-    if runInBackground:
-        print prefix+"*********   Cannot run PSICS in background yet!!!!   ***********"
-
 
     project.psicsFileManager.generateThePsicsFiles(simConfig,
                                                    simulatorSeed)
 
 
-    success = projectManager.doRunPsics(simConfig)
+    success = projectManager.doRunPsics(simConfig, (not runInBackground))
 
     if success:
         print prefix+"Set running PSICS simulation: "+simRef
@@ -187,9 +184,6 @@ def generateAndRunLems(project,
 
     if verbose: print prefix+"Going to generate LEMS/NeuroML 2 files for: "+simRef
 
-    if runInBackground:
-        print prefix+"*********   Cannot run LEMS/NeuroML 2 in background yet!!!!   ***********"
-
     compartmentalisation = OriginalCompartmentalisation()
 
     project.neuromlFileManager.generateNeuroMLFiles(simConfig,
@@ -199,7 +193,7 @@ def generateAndRunLems(project,
                                                     simulatorSeed,
                                                     False,
                                                     False,
-                                                    not verbose)
+                                                    runInBackground)
 
 
 
@@ -299,7 +293,6 @@ class SimulationManager():
 
 
 
-
     def updateSimsRunning(self):
         self.updateSimsRunningR(True)
 
@@ -341,7 +334,7 @@ class SimulationManager():
 
         if remoteChecked:
             self.printver("Waiting while remote simulations are checked...")
-            time.sleep(30)
+            time.sleep(5)
             self.updateSimsRunningR(False)
         else:
             self.printver("allRecentlyFinishedSims: "+str(self.allRecentlyFinishedSims))
@@ -537,6 +530,7 @@ class SimulationManager():
                         simRefGlobalSuffix =        '',
                         simRefGlobalPrefix =        '',
                         mpiConfig =                 MpiSettings.LOCAL_SERIAL,
+                        mpiConfigs =                [],
                         suggestedRemoteRunTime =    -1):
 
         for sim in simulators:
@@ -552,220 +546,244 @@ class SimulationManager():
 
           self.printver("Going to generate network for Simulation Configuration: "+str(simConfig))
 
-          mpiSettings = MpiSettings()
-          simConfig.setMpiConf(mpiSettings.getMpiConfiguration(mpiConfig))
+          if len(mpiConfigs) == 0:
+              mpiConfigs = [mpiConfig]
 
-          print "Parallel configuration: "+ str(simConfig.getMpiConf())
-          
-          if suggestedRemoteRunTime > 0:
-                self.project.neuronFileManager.setSuggestedRemoteRunTime(suggestedRemoteRunTime)
-                self.project.genesisFileManager.setSuggestedRemoteRunTime(suggestedRemoteRunTime)
+          for mpiConfigToUse in mpiConfigs:
 
-          for maxElecLen in maxElecLens:
+              mpiSettings = MpiSettings()
+              simConfig.setMpiConf(mpiSettings.getMpiConfiguration(mpiConfigToUse))
 
-            if simDt is not None:
-                self.project.simulationParameters.setDt(simDt)
+              print "Using Parallel Configuration: "+ str(simConfig.getMpiConf())
 
+              if suggestedRemoteRunTime > 0:
+                    self.project.neuronFileManager.setSuggestedRemoteRunTime(suggestedRemoteRunTime)
+                    self.project.genesisFileManager.setSuggestedRemoteRunTime(suggestedRemoteRunTime)
 
-            if simDuration is not None:
-                simConfig.setSimDuration(simDuration)
+              for maxElecLen in maxElecLens:
 
-            recompSuffix = ""
-
-            if maxElecLen > 0:
-                cellGroup = simConfig.getCellGroups().get(0)
-                cell = self.project.cellManager.getCell(self.project.cellGroupsInfo.getCellType(cellGroup))
-
-                self.printver("Recompartmentalising cell in: "+cellGroup+" which is: "+str(cell))
-
-                info = CellTopologyHelper.recompartmentaliseCell(cell, maxElecLen, self.project)
-                self.printver("*** Recompartmentalised cell: "+info)
-
-                recompSuffix = "_"+str(maxElecLen)
-
-            self.projectManager.doGenerate(simConfig.getName(), neuroConstructSeed)
-
-            while self.projectManager.isGenerating():
-                    self.printver("Waiting for the project to be generated with Simulation Configuration: "+str(simConfig))
-                    time.sleep(0.5)
+                if simDt is not None:
+                    self.project.simulationParameters.setDt(simDt)
 
 
-            self.printver("Generated network with %i cell(s)" % self.project.generatedCellPositions.getNumberInAllCellGroups())
+                if simDuration is not None:
+                    simConfig.setSimDuration(simDuration)
 
-            
-            simRefPrefix = (simConfigName+"_").replace(' ', '')
+                recompSuffix = ""
 
-            self.doCheckNumberSims()
+                if maxElecLen > 0:
+                    cellGroup = simConfig.getCellGroups().get(0)
+                    cell = self.project.cellManager.getCell(self.project.cellGroupsInfo.getCellType(cellGroup))
 
-            self.printver("Going to generate for simulators: "+str(simulators))
+                    self.printver("Recompartmentalising cell in: "+cellGroup+" which is: "+str(cell))
 
-            if simulators.count("NEURON")>0:
+                    info = CellTopologyHelper.recompartmentaliseCell(cell, maxElecLen, self.project)
+                    self.printver("*** Recompartmentalised cell: "+info)
 
-                simRef = simRefGlobalPrefix + simRefPrefix+"_N"+recompSuffix + simRefGlobalSuffix
-                self.project.simulationParameters.setReference(simRef)
+                    recompSuffix = "_"+str(maxElecLen)
 
-                if varTimestepNeuron is None:
-                    varTimestepNeuron = self.project.neuronSettings.isVarTimeStep()
+                self.projectManager.doGenerate(simConfig.getName(), neuroConstructSeed)
 
-                if varTimestepTolerance is None:
-                    varTimestepTolerance = self.project.neuronSettings.getVarTimeAbsTolerance()
-
-                if runSims:
-                    success = generateAndRunNeuron(self.project,
-                                         self.projectManager,
-                                         simConfig,
-                                         simRef,
-                                         simulatorSeed,
-                                         verbose=verboseSims,
-                                         runInBackground=runInBackground,
-                                         varTimestep=varTimestepNeuron,
-                                         varTimestepTolerance=varTimestepTolerance)
-                    if success:
-                        self.allRunningSims.append(simRef)
-                        allSimsSetRunning.append(simRef)
+                while self.projectManager.isGenerating():
+                        self.printver("Waiting for the project to be generated with Simulation Configuration: "+str(simConfig))
+                        time.sleep(0.5)
 
 
-            self.doCheckNumberSims()
+                self.printver("Generated network with %i cell(s)" % self.project.generatedCellPositions.getNumberInAllCellGroups())
 
-            if simulators.count("PSICS")>0:
+                simRefPrefix = (simConfigName+"_").replace(' ', '')
 
-                simRef = simRefGlobalPrefix + simRefPrefix+"_P"+recompSuffix + simRefGlobalSuffix
-                self.project.simulationParameters.setReference(simRef)
+                if len(mpiConfigs) > 0:
+                    simRefPrefix = simRefPrefix+(mpiConfigToUse+"_").replace(' ', '').replace('(', '_').replace(')', '_')
 
-                if runSims:
-                    success = generateAndRunPsics(self.project,
-                                        self.projectManager,
-                                        simConfig,
-                                        simRef,
-                                        simulatorSeed,
-                                        verbose=verboseSims,
-                                        runInBackground=runInBackground)
+                self.doCheckNumberSims()
 
-                    if success:
-                        self.allRunningSims.append(simRef)
-                        allSimsSetRunning.append(simRef)
+                self.printver("Going to generate for simulators: "+str(simulators))
 
-            self.doCheckNumberSims()
+                if simulators.count("NEURON")>0:
 
-            if simulators.count("LEMS")>0:
+                    simRef = simRefGlobalPrefix + simRefPrefix+"_N"+recompSuffix + simRefGlobalSuffix
+                    self.project.simulationParameters.setReference(simRef)
 
-                simRef = simRefGlobalPrefix + simRefPrefix+"_L"+recompSuffix + simRefGlobalSuffix
-                self.project.simulationParameters.setReference(simRef)
+                    if varTimestepNeuron is None:
+                        varTimestepNeuron = self.project.neuronSettings.isVarTimeStep()
 
-                if runSims:
-                    success = generateAndRunLems(self.project,
-                                        self.projectManager,
-                                        simConfig,
-                                        simRef,
-                                        simulatorSeed,
-                                        verbose=verboseSims,
-                                        runInBackground=runInBackground)
+                    if varTimestepTolerance is None:
+                        varTimestepTolerance = self.project.neuronSettings.getVarTimeAbsTolerance()
 
-                    if success:
-                        self.allRunningSims.append(simRef)
-                        allSimsSetRunning.append(simRef)
-
-
-
-            self.doCheckNumberSims()
-
-            for sim in simulators:
-              if "MOOSE" in sim:
-
-                simRef = simRefGlobalPrefix + simRefPrefix+"_M"+recompSuffix + simRefGlobalSuffix
-
-                units = -1 # leave as what's set in project
-
-                if "_SI" in sim:
-                    simRef = simRef+"_SI"
-                    units = UnitConverter.GENESIS_SI_UNITS
-                if "_PHYS" in sim:
-                    simRef = simRef+"_PHYS"
-                    units = UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS
-
-                self.project.simulationParameters.setReference(simRef)
-
-
-                if runSims:
-                    success = generateAndRunMoose(self.project,
-                                        self.projectManager,
-                                        simConfig,
-                                        simRef,
-                                        simulatorSeed,
-                                        verbose=verboseSims,
-                                        quitAfterRun=runInBackground,
-                                        runInBackground=runInBackground,
-                                        units=units)
-
-                    if success:
-                        self.allRunningSims.append(simRef)
-                        allSimsSetRunning.append(simRef)
-
-                time.sleep(1) # wait a while before running GENESIS...
-
-            self.doCheckNumberSims()
-
-            for sim in simulators:
-              if "GENESIS" in sim:
-
-                simRef = simRefGlobalPrefix + simRefPrefix+"_G"+recompSuffix + simRefGlobalSuffix
-
-                units = -1 # leave as what's set in project
-
-                if "_SI" in sim:
-                    simRef = simRef+"_SI"
-                    units = UnitConverter.GENESIS_SI_UNITS
-                if "_PHYS" in sim:
-                    simRef = simRef+"_PHYS"
-                    units = UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS
-
-                self.project.simulationParameters.setReference(simRef)
-
-                if runSims:
-                    success = generateAndRunGenesis(self.project,
-                                          self.projectManager,
-                                          simConfig,
-                                          simRef,
-                                          simulatorSeed,
-                                          verbose=verboseSims,
-                                          quitAfterRun=runInBackground,
-                                          runInBackground=runInBackground,
-                                          units=units,
-                                          symmetricComps=False)
-
-                    if success:
-                        self.allRunningSims.append(simRef)
-                        allSimsSetRunning.append(simRef)
-
-                time.sleep(1) # wait a while before running GENESISsym...
-
-            self.doCheckNumberSims()
-
-            if simulators.count("GENESISsym")>0:
-
-                simRef = simRefGlobalPrefix + simRefPrefix+"_Gs"+recompSuffix + simRefGlobalSuffix
-                self.project.simulationParameters.setReference(simRef)
-
-                if runSims:
-                    success = generateAndRunGenesis(self.project,
-                                             self.projectManagerm,
+                    if runSims:
+                        success = generateAndRunNeuron(self.project,
+                                             self.projectManager,
                                              simConfig,
                                              simRef,
                                              simulatorSeed,
                                              verbose=verboseSims,
-                                             quitAfterRun=runInBackground,
                                              runInBackground=runInBackground,
-                                             symmetricComps=True)
-
-                    if success:
-                        self.allRunningSims.append(simRef)
+                                             varTimestep=varTimestepNeuron,
+                                             varTimestepTolerance=varTimestepTolerance)
+                        if success:
+                            self.allRunningSims.append(simRef)
+                            allSimsSetRunning.append(simRef)
+                    else:
                         allSimsSetRunning.append(simRef)
 
-            self.updateSimsRunningR(False)
 
-            self.printver("Finished setting running all simulations for: "+simConfigName)
+                self.doCheckNumberSims()
+
+                if simulators.count("PSICS")>0:
+
+                    simRef = simRefGlobalPrefix + simRefPrefix+"_P"+recompSuffix + simRefGlobalSuffix
+                    self.project.simulationParameters.setReference(simRef)
+
+                    if runSims:
+                        success = generateAndRunPsics(self.project,
+                                            self.projectManager,
+                                            simConfig,
+                                            simRef,
+                                            simulatorSeed,
+                                            verbose=verboseSims,
+                                            runInBackground=runInBackground)
+
+                        if success:
+                            self.allRunningSims.append(simRef)
+                            allSimsSetRunning.append(simRef)
+                    else:
+                        allSimsSetRunning.append(simRef)
+
+                self.doCheckNumberSims()
+
+                if simulators.count("LEMS")>0:
+
+                    simRef = simRefGlobalPrefix + simRefPrefix+"_L"+recompSuffix + simRefGlobalSuffix
+                    self.project.simulationParameters.setReference(simRef)
+
+                    if runSims:
+                        success = generateAndRunLems(self.project,
+                                            self.projectManager,
+                                            simConfig,
+                                            simRef,
+                                            simulatorSeed,
+                                            verbose=verboseSims,
+                                            runInBackground=runInBackground)
+
+                        if success:
+                            self.allRunningSims.append(simRef)
+                            allSimsSetRunning.append(simRef)
+                    else:
+                        allSimsSetRunning.append(simRef)
+
+
+
+                self.doCheckNumberSims()
+
+                for sim in simulators:
+                  if "MOOSE" in sim:
+
+                    simRef = simRefGlobalPrefix + simRefPrefix+"_M"+recompSuffix + simRefGlobalSuffix
+
+                    units = -1 # leave as what's set in project
+
+                    if "_SI" in sim:
+                        simRef = simRef+"_SI"
+                        units = UnitConverter.GENESIS_SI_UNITS
+                    if "_PHYS" in sim:
+                        simRef = simRef+"_PHYS"
+                        units = UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS
+
+                    self.project.simulationParameters.setReference(simRef)
+
+
+                    if runSims:
+                        success = generateAndRunMoose(self.project,
+                                            self.projectManager,
+                                            simConfig,
+                                            simRef,
+                                            simulatorSeed,
+                                            verbose=verboseSims,
+                                            quitAfterRun=runInBackground,
+                                            runInBackground=runInBackground,
+                                            units=units)
+
+                        if success:
+                            self.allRunningSims.append(simRef)
+                            allSimsSetRunning.append(simRef)
+                    else:
+                        allSimsSetRunning.append(simRef)
+
+                    time.sleep(1) # wait a while before running GENESIS...
+
+                self.doCheckNumberSims()
+
+                for sim in simulators:
+                  if "GENESIS" in sim:
+
+                    simRef = simRefGlobalPrefix + simRefPrefix+"_G"+recompSuffix + simRefGlobalSuffix
+
+                    units = -1 # leave as what's set in project
+
+                    if "_SI" in sim:
+                        simRef = simRef+"_SI"
+                        units = UnitConverter.GENESIS_SI_UNITS
+                    if "_PHYS" in sim:
+                        simRef = simRef+"_PHYS"
+                        units = UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS
+
+                    self.project.simulationParameters.setReference(simRef)
+
+                    if runSims:
+                        success = generateAndRunGenesis(self.project,
+                                              self.projectManager,
+                                              simConfig,
+                                              simRef,
+                                              simulatorSeed,
+                                              verbose=verboseSims,
+                                              quitAfterRun=runInBackground,
+                                              runInBackground=runInBackground,
+                                              units=units,
+                                              symmetricComps=False)
+
+                        if success:
+                            self.allRunningSims.append(simRef)
+                            allSimsSetRunning.append(simRef)
+                    else:
+                        allSimsSetRunning.append(simRef)
+
+                    time.sleep(1) # wait a while before running GENESISsym...
+
+                self.doCheckNumberSims()
+
+                if simulators.count("GENESISsym")>0:
+
+                    simRef = simRefGlobalPrefix + simRefPrefix+"_Gs"+recompSuffix + simRefGlobalSuffix
+                    self.project.simulationParameters.setReference(simRef)
+
+                    if runSims:
+                        success = generateAndRunGenesis(self.project,
+                                                 self.projectManagerm,
+                                                 simConfig,
+                                                 simRef,
+                                                 simulatorSeed,
+                                                 verbose=verboseSims,
+                                                 quitAfterRun=runInBackground,
+                                                 runInBackground=runInBackground,
+                                                 symmetricComps=True)
+
+                        if success:
+                            self.allRunningSims.append(simRef)
+                            allSimsSetRunning.append(simRef)
+                    else:
+                        allSimsSetRunning.append(simRef)
+
+                self.updateSimsRunningR(False)
+
+              self.printver("Finished setting running all simulations for ParallelConfig: "+mpiConfigToUse)
+
+          self.printver("Finished setting running all simulations for sim config: "+simConfigName)
+              
             
+
         return allSimsSetRunning
+
 
 
     def generateFICurve(self,

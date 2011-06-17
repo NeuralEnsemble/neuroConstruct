@@ -174,13 +174,13 @@ public class SimulationData
                                                      UnitConverter.NEUROCONSTRUCT_UNITS);
 
         long timeLen = getTimesFile().length();
-        logger.logComment("Time file "+getTimesFile().getAbsolutePath()+" has length "+ timeLen, true);
+        logger.logComment("Time file "+getTimesFile().getAbsolutePath()+" has length "+ timeLen);
         try {
             Thread.sleep(500);
             
             while (getTimesFile().length() != timeLen) {
                 timeLen = getTimesFile().length();
-                logger.logComment("Time file "+getTimesFile().getAbsolutePath()+" has length "+ timeLen, true);
+                logger.logComment("Time file "+getTimesFile().getAbsolutePath()+" has length "+ timeLen);
                 Thread.sleep(500);
             }
         } catch (InterruptedException ex) {

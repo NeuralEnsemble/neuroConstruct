@@ -20,7 +20,7 @@ REM   *** ASKING FOR MORE MEMORY THAN HALF MAX ON WINDOWS HAS LED TO THE APPLICA
 set NC_MAX_MEMORY=500M 
 
 set NC_VERSION=1.5.1
-set LEMS_VERSION=0.7.0
+set LEMS_VERSION=0.8.0
 
 REM ##########################################################################
 

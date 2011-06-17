@@ -462,6 +462,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     
     JCheckBox jCheckBoxPsicsShowHtml = new JCheckBox("Show HTML summary", false);
     JCheckBox jCheckBoxPsicsShowPlot = new JCheckBox("Quick plot after run", true);
+    JCheckBox jCheckBoxPsicsConsole = new JCheckBox("Show console", false);
 
     JLabel jLabelPsicsSpatDisc = new JLabel("Structural discretization (\u03bcm):");
     JTextField jTextFieldPsicsSpatDisc = new JTextField();
@@ -3558,6 +3559,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         jPanelPsicsPostOptions.add(jCheckBoxPsicsShowHtml);
         jPanelPsicsPostOptions.add(jCheckBoxPsicsShowPlot);
+        jPanelPsicsPostOptions.add(jCheckBoxPsicsConsole);
 
         jPanelPsicsDiscOptions.add(jLabelPsicsSpatDisc);
         jPanelPsicsDiscOptions.add(jTextFieldPsicsSpatDisc);
@@ -4546,6 +4548,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         addCheckBoxListner(PSICS_SIMULATOR_TAB, jCheckBoxPsicsShowHtml);
         addCheckBoxListner(PSICS_SIMULATOR_TAB, jCheckBoxPsicsShowPlot);
+        addCheckBoxListner(PSICS_SIMULATOR_TAB, jCheckBoxPsicsConsole);
 
         addNamedDocumentListner(PSICS_SIMULATOR_TAB, jTextFieldPsicsSpatDisc);
         addNamedDocumentListner(PSICS_SIMULATOR_TAB, jTextFieldPsicsSingleCond);
@@ -5017,6 +5020,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             {
                 projManager.getCurrentProject().psicsSettings.setShowHtmlSummary(jCheckBoxPsicsShowHtml.isSelected());
                 projManager.getCurrentProject().psicsSettings.setShowPlotSummary(jCheckBoxPsicsShowPlot.isSelected());
+                projManager.getCurrentProject().psicsSettings.setShowConsole(jCheckBoxPsicsConsole.isSelected());
 
                 try
                 {
@@ -7300,8 +7304,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
             
             projManager.getCurrentProject().psicsFileManager.runFile(true, 
-                                                jCheckBoxPsicsShowHtml.isSelected(), 
-                                                jCheckBoxPsicsShowPlot.isSelected());
+                                                jCheckBoxPsicsShowHtml.isSelected(),
+                                                jCheckBoxPsicsShowPlot.isSelected(),
+                                                jCheckBoxPsicsConsole.isSelected());
         }
         catch (PsicsException ex)
         {
@@ -9724,6 +9729,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             {
                 jCheckBoxPsicsShowHtml.setSelected(projManager.getCurrentProject().psicsSettings.isShowHtmlSummary());
                 jCheckBoxPsicsShowPlot.setSelected(projManager.getCurrentProject().psicsSettings.isShowPlotSummary());
+                jCheckBoxPsicsConsole.setSelected(projManager.getCurrentProject().psicsSettings.isShowConsole());
 
                 jTextFieldPsicsSpatDisc.setText(projManager.getCurrentProject().psicsSettings.getSpatialDiscretisation()+"");
                 jTextFieldPsicsSingleCond.setText(projManager.getCurrentProject().psicsSettings.getSingleChannelCond()+"");

@@ -167,13 +167,11 @@ public class ProjectManager implements GenerationReport
         PlotManager.setCurrentProject(project);
     }
 
-    public boolean doRunPsics(SimConfig simConfig)
+    public boolean doRunPsics(SimConfig simConfig, boolean showConsole)
     {
-
         try
         {
-
-            activeProject.psicsFileManager.runFile(true, false, false);
+            activeProject.psicsFileManager.runFile(true, false, false, showConsole);
         }
         catch (PsicsException ex)
         {

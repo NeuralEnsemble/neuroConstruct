@@ -26,6 +26,7 @@
 
 package ucl.physiol.neuroconstruct.hpc.mpi;
 
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import ucl.physiol.neuroconstruct.cell.Cell;
 import ucl.physiol.neuroconstruct.cell.Section;
@@ -57,6 +58,9 @@ public class QueueInfo
 
     private QueueType queueType = null;
 
+    private String mpirunPath = null;
+
+    protected ArrayList<String> additionalSubOptions = new ArrayList<String>();
 
     public static final String submitScript = "subjob.sh";
 
@@ -65,12 +69,13 @@ public class QueueInfo
     {
     }
 
-    public QueueInfo(int wallTimeMins, String account, String launcherScript, QueueType queueType)
+    public QueueInfo(int wallTimeMins, String account, String launcherScript, QueueType queueType, String mpirunPath)
     {
         this.wallTimeMins = wallTimeMins;
         this.account = account;
         this.launcherScript = launcherScript;
         this.queueType = queueType;
+        this.mpirunPath = mpirunPath;
 
     }
 
@@ -78,7 +83,8 @@ public class QueueInfo
     @Override
     public Object clone()
     {
-        QueueInfo q2 = new QueueInfo(wallTimeMins, new String(account), new String(launcherScript), queueType);
+        QueueInfo q2 = new QueueInfo(wallTimeMins, account, launcherScript, queueType, mpirunPath);
+        q2.additionalSubOptions.addAll(additionalSubOptions);
         return q2;
 
     }
@@ -141,6 +147,16 @@ public class QueueInfo
             }
         }
         return time;
+    }
+
+    public String getMpirunPath() {
+        return mpirunPath;
+    }
+
+
+    public void addAdditionalSubOptions(String line)
+    {
+        additionalSubOptions.add(line);
     }
 
 

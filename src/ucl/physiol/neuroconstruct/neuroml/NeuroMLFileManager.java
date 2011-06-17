@@ -890,6 +890,10 @@ public class NeuroMLFileManager
             else if(lemsOption.equals(LemsOption.GENERATE_NEURON))
                 runScript.append(" -neuron");
 
+
+            if (runInBackground)
+                runScript.append(" -nogui");
+
             runScript.append("\n");
 
             GeneralUtils.writeShortFile(runFile, runScript.toString());

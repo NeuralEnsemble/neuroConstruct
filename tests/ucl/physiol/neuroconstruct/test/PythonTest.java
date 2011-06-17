@@ -34,6 +34,8 @@ import org.junit.runner.*;
 import ucl.physiol.neuroconstruct.project.ProjectStructure;
 import static org.junit.Assert.*;
 
+import org.neuroml.lems.sim.Sim;
+
 /**
  *
  * Test core behaviour of neuroConstruct example models
@@ -43,19 +45,23 @@ import static org.junit.Assert.*;
  */
 public class PythonTest 
 {
-/**/
+    private static boolean silent = false;
+
     @Test public void testEx4()
     {
         String projFileName = "nCexamples/Ex4_HHcell/Ex4_HHcell.ncx";
         checkPythonScripts(projFileName);
-    }
+    }  
+
+
+     
     @Test public void testLems()
     {
         String projFileName = "lems/nCproject/LemsTest/LemsTest.ncx";
         checkPythonScripts(projFileName, "RunTestsHH");
         checkPythonScripts(projFileName, "RunTestsNML2ionChan");
     }
-
+ 
     @Test public void testGranuleCell()
     {
         String projFileName = "osb/models/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx";
@@ -103,13 +109,13 @@ public class PythonTest
     {
         String projFileName = "osb/models/cerebellum/networks/VervaekeEtAl-GolgiCellNetwork/neuroConstruct/VervaekeEtAl-GolgiCellNetwork.ncx";
         checkPythonScripts(projFileName);
-    }
+    }/**/
 
     @Test public void testThalamocortical()
     {
         String projFileName = "osb/models/cerebral_cortex/networks/Thalamocortical/neuroConstruct/Thalamocortical.ncx";
         checkPythonScripts(projFileName);
-    }/**/
+    }
 
 
 
@@ -146,12 +152,17 @@ public class PythonTest
 
         interp.exec("import "+testScriptName);
         interp.exec("reload("+testScriptName+")");
+
+        if (silent) interp.exec(testScriptName+".plotSims = False");
+
         interp.exec("result = "+testScriptName+".testAll()");
         interp.exec("print \"Have run test script: "+pythonTestScript+"\"");
 
         PyObject result = interp.get("result");
 
-        System.out.println("Result in Java: " + result);
+        System.out.println("\n************************************************\n");
+        System.out.println("Result of test on "+projFile.getName()+": " + result);
+        System.out.println("************************************************\n");
 
         assertTrue("More than one failure when running script: "+pythonTestScript+":"+result, result.toString().indexOf(" 0 tests failed")>=0);
 
@@ -168,6 +179,12 @@ public class PythonTest
     {
         System.out.println("Running the main nC model python script tests...");
 
+        if (args.length>0 && args[0].equals("-silent"))
+        {
+            System.out.println("Switching to stealth mode...");
+            silent = true;
+        }
+        
 
         Result r = null;
 

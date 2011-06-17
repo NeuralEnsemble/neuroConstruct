@@ -767,7 +767,8 @@ public class PsicsFileManager
 
     public void runFile(boolean copyToSimDataDir,
                         boolean htmlSummary,
-                        boolean showPlot) throws PsicsException
+                        boolean showPlot,
+                        boolean showConsole) throws PsicsException
     {
         logger.logComment("Trying to run the mainFile...");
 
@@ -876,6 +877,10 @@ public class PsicsFileManager
                                            "runsim.bat");
                 
                 commandToExecute = "cmd /K start \""+title+"\"  " +  scriptFile.getAbsolutePath();
+                if (!showConsole)
+                {
+                    commandToExecute =  scriptFile.getAbsolutePath();
+                }
                 String runCommand = javaEx+ " "+psicsJar+" "+fullFileToRun.getName();
                 //commandToExecute = "cmd /K start \""+title+"\"  tree c:\\";
 
@@ -978,6 +983,10 @@ public class PsicsFileManager
                     + extraArgs
                     + " " +
                     scriptFile.getAbsolutePath();
+
+                if (!showConsole){
+                    commandToExecute = scriptFile.getAbsolutePath();
+                }
 
 
                 ProcessFeedback pf = new ProcessFeedback()
@@ -1208,7 +1217,7 @@ public class PsicsFileManager
         {
 
             //Project p = Project.loadProject(new File("projects/Moro/Moro.neuro.xml"), null);
-            Project p = Project.loadProject(new File("C:\\nC_projects\\Ex1-SimplePsics\\Ex1-SimplePsics.neuro.xml"), null);
+            Project p = Project.loadProject(new File("nCexamples/Ex7_PSICSDemo/Ex7_PSICSDemo.ncx"), null);
             //Proje
             ProjectManager pm = new ProjectManager(null,null);
             pm.setCurrentProject(p);
@@ -1221,10 +1230,13 @@ public class PsicsFileManager
             }
             System.out.println("Num cells generated: "+ p.generatedCellPositions.getAllPositionRecords().size());
             
+            
             PsicsFileManager gen = new PsicsFileManager(p);
 
 
             gen.generateThePsicsFiles(p.simConfigInfo.getDefaultSimConfig(), 12345);
+
+            gen.runFile(true, false, true, false);
         
         }
         catch(Exception e)

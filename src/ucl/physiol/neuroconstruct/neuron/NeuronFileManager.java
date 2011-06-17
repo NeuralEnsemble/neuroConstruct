@@ -54,7 +54,6 @@ import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
 import org.neuroml.lems.sim.*;
 import org.neuroml.lems.export.*;
 import org.neuroml.lems.type.Component;
-import org.neuroml.lems.util.*;
 
 /**
  * Main file for generating the script files for NEURON
@@ -1037,8 +1036,12 @@ public class NeuronFileManager
                 response.append("{system(\"C:/WINDOWS/SYSTEM32/hostname.exe\", host)}\n");
             else
                 response.append("{system(\"hostname\", host)}\n");
-    
-            response.append("{strFuncs.left(host, strFuncs.len(host)-1)}\n\n");
+
+            response.append("if (strFuncs.len(host)>0) {\n");
+            response.append("    strFuncs.left(host, strFuncs.len(host)-1) \n");
+            response.append("} else {\n");
+            response.append("    host = \"????\" \n");
+            response.append("}\n\n");
         }
         
         return response.toString();

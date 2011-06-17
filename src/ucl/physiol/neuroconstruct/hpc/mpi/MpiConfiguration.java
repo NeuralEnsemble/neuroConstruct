@@ -58,7 +58,6 @@ public class MpiConfiguration
 
     private boolean useScp = false;
 
-    private ArrayList<String> additionalSubOptions = new ArrayList<String>();
 
 
     private MpiConfiguration()
@@ -97,11 +96,6 @@ public class MpiConfiguration
         this.useScp = useScp;
     }
 
-    public void addAdditionalSubOptions(String line)
-    {
-        additionalSubOptions.add(line);
-    }
-
 
 
 
@@ -122,7 +116,7 @@ public class MpiConfiguration
             script.append("#PBS -A "+queueInfo.getAccount()+"\n");
             script.append("#PBS -j oe\n");
 
-            for (String line: additionalSubOptions)
+            for (String line: queueInfo.additionalSubOptions)
             {
                 script.append(line+"\n");
 
@@ -223,29 +217,35 @@ public class MpiConfiguration
             script.append("\n");
             script.append("\n");
         }
-        else if (this.queueInfo.getQueueType().equals(QueueInfo.QueueType.SGE))
+        else if (queueInfo.getQueueType().equals(QueueInfo.QueueType.SGE))
         {
             script.append("#!/bin/bash -l\n");
             script.append("\n");
             String workDir = getProjectSimDir(projName)+"/"+simRef;
             script.append("#$ -l  vf=2G\n");
             script.append("#$ -l  h_vmem=2G\n");
-            script.append("#$ -l  h_rt=0:"+timeMins+":0\n");
+            script.append("#$ -l  h_rt=0:"+timeMins+":0\n\n");
             script.append("#$ -wd  "+workDir+"\n");
             script.append("#$ -o  "+workDir+"/log\n");
             script.append("#$ -j y\n");
-            script.append("#$ -N  "+simRef+"_"+projName+"\n");
+            script.append("#$ -N  "+simRef+"_"+projName+"\n\n");
 
-            String parallelEnv = "orte";
+
+            for (String line: queueInfo.additionalSubOptions)
+            {
+                script.append(line+"\n");
+            }
+
+            String parallelEnv = "smp";
             String procInfo = "-np $NSLOTS";
 
             if (hostList.size()>1)
             {
-                parallelEnv = "mpi";
-                procInfo = " -n $NSLOTS -bynode -machinefile $TMP/machines";
+                parallelEnv = "openmpi";
+                //procInfo = " -n $NSLOTS -bynode -machinefile $TMP/machines";
             }
 
-            script.append("#$ -pe "+parallelEnv+"  "+getTotalNumProcessors()+"\n");
+            script.append("#$ -pe "+parallelEnv+"  "+getTotalNumProcessors()+"\n\n");
 
             String exec = workDir+"/"+projName+".hoc";
 
@@ -264,7 +264,11 @@ public class MpiConfiguration
 
             if (isNeuron) mpiFlag = "-mpi ";
 
-            script.append("/bin/bash -ic '/opt/sun-ct/bin/mpirun "+procInfo+" "+remoteLogin.getExecutableForSimulator(simulator)+" "+mpiFlag+exec+"'\n");
+            String mpirunPath = this.queueInfo.getMpirunPath();
+            if (mpirunPath==null)
+                mpirunPath = "/opt/sun-ct/bin/mpirun";
+
+            script.append("/bin/bash -ic '"+mpirunPath+" "+procInfo+" "+remoteLogin.getExecutableForSimulator(simulator)+" "+mpiFlag+exec+"'\n");
 
         }
 
@@ -331,6 +335,9 @@ public class MpiConfiguration
             mpiFlags = "-mpi ";
             mainCmd = "mpiexec";
         }
+
+        if (queueInfo.getMpirunPath()!=null)
+            mainCmd = queueInfo.getMpirunPath(); // Override any other...
 
 
         scriptText.append("echo \"cd $simDir;"+mainCmd+" "+hostFlag+" ");

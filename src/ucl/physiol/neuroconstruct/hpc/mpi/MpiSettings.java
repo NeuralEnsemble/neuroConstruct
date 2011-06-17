@@ -64,7 +64,8 @@ public class MpiSettings
     public static final String LOCAL_2PROC = "Local machine (2p)";
     public static final String LOCAL_3PROC = "Local machine (3p)";
     public static final String LOCAL_4PROC = "Local machine (4p)";
-    public static final String LOCAL_8PROC = "Local machine (8p)";
+    public static final String LOCAL_8PROC = "Local machine (8p)";    // for testing only!
+    public static final String LOCAL_16PROC = "Local machine (16p)";  // for testing only!
 
 
     public static final String CASPUR_8PROC = "Caspur (8p)";
@@ -115,6 +116,7 @@ public class MpiSettings
     public static final String MATLEM_NRN62_8PROC = "MatLem, nrn62 (1 x 8p)";
 
     public static final String MATLEM_1PROC = "MatLem (1 x 1p)";
+    public static final String MATLEM_2PROC = "MatLem (1 x 2p)";
     public static final String MATLEM_4PROC = "MatLem (1 x 4p)";
     public static final String MATLEM_8PROC = "MatLem (1 x 8p)";
     
@@ -122,6 +124,7 @@ public class MpiSettings
     public static final String MATLEM_32PROC = "MatLem (4 x 8p)";
     public static final String MATLEM_64PROC = "MatLem (8 x 8p)";
     public static final String MATLEM_128PROC = "MatLem (16 x 8p)";
+    public static final String MATLEM_200PROC = "MatLem (25 x 8p)";
 
     public static final String MATLEM_DIRECT = "Matthau_Lemmon_Test_MANY";
 
@@ -188,25 +191,29 @@ public class MpiSettings
                                                   simulatorExecutablesCaspur);
 
         // Legion is the UCL supercomputing cluster. Legion operates the Torque batch queueing system
-        // and the Moab scheduler, i.e. jobs aren't eecuted directly, but submitted to a queue and will
+        // and the Moab scheduler, i.e. jobs aren't executed directly, but submitted to a queue and will
         // be run when the requested resources are available.
         RemoteLogin legionLogin = new RemoteLogin("legion.rc.ucl.ac.uk",
                                                   "ucgbpgl",
-                                                  "/shared/scratch/ucgbpgl/nCsims",
+                                                  "/home/ucgbpgl/nCsims",
                                                   simulatorExecutables);
 
         RemoteLogin legionSerialLogin = new RemoteLogin("legion.rc.ucl.ac.uk",
                                                   "ucgbpgl",
-                                                  "/shared/scratch/ucgbpgl/nCsims",
+                                                  "/home/ucgbpgl/nCsims",
                                                   simulatorExecutables);
 
         //QueueInfo legionQueueCvos = new QueueInfo(6, "ucl/NeuroSci/neuroconst", "cvos-launcher");
 
-        QueueInfo legionQueue = new QueueInfo(6, "ucl/NeuroSci/neuroconst", "cvos-launcher", QueueInfo.QueueType.PBS);
+        QueueInfo legionQueue = new QueueInfo(6, "ucl/NeuroSci/neuroconst", "cvos-launcher", QueueInfo.QueueType.PBS, "mpirun");
+        legionQueue.addAdditionalSubOptions("#PBS -l qos=parallel");
 
-        QueueInfo matlemQueue = new QueueInfo(6, "", "", QueueInfo.QueueType.SGE);
+        QueueInfo matlemQueue = new QueueInfo(6, "", "", QueueInfo.QueueType.SGE, "/opt/SUNWhpc/HPC8.2.1/gnu/bin/mpirun --mca btl openib,self");
+        matlemQueue.addAdditionalSubOptions("#$ -l fc=yes");
+        matlemQueue.addAdditionalSubOptions("#$ -R y");
+        //matlemQueue.addAdditionalSubOptions("#$ -S /bin/bash");
 
-        QueueInfo caspurQueue = new QueueInfo(6, "std10-300", "time", QueueInfo.QueueType.PBS);
+        QueueInfo caspurQueue = new QueueInfo(6, "std10-300", "time", QueueInfo.QueueType.PBS, "mpirun");
 
 
         if (getMpiConfiguration(LOCAL_SERIAL)==null)
@@ -232,13 +239,19 @@ public class MpiSettings
         if (getMpiConfiguration(LOCAL_4PROC)==null)
         {
             MpiConfiguration p = new MpiConfiguration(LOCAL_4PROC);
-            p.getHostList().add(new MpiHost(LOCALHOST,4, 1));
+            p.getHostList().add(new MpiHost(LOCALHOST, 4, 1));
             configurations.add(p);
         }
         if (getMpiConfiguration(LOCAL_8PROC)==null)
         {
             MpiConfiguration p = new MpiConfiguration(LOCAL_8PROC);
-            p.getHostList().add(new MpiHost(LOCALHOST,8, 1));
+            p.getHostList().add(new MpiHost(LOCALHOST, 8, 1));
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(LOCAL_16PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(LOCAL_16PROC);
+            p.getHostList().add(new MpiHost(LOCALHOST, 16, 1));
             configurations.add(p);
         }
 
@@ -351,6 +364,19 @@ public class MpiSettings
             p.setQueueInfo(matlemQueue);
             configurations.add(p);
         }
+        if (getMpiConfiguration(MATLEM_2PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(MATLEM_2PROC);
+
+            for(int i=0;i<1;i++)
+                p.getHostList().add(new MpiHost("node"+i,2, 1));
+
+            p.setRemoteLogin(matlemLogin);
+            p.setMpiVersion(MpiSettings.OPENMPI_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(matlemQueue);
+            configurations.add(p);
+        }
         if (getMpiConfiguration(MATLEM_4PROC)==null)
         {
             MpiConfiguration p = new MpiConfiguration(MATLEM_4PROC);
@@ -429,6 +455,19 @@ public class MpiSettings
             p.setQueueInfo(matlemQueue);
             configurations.add(p);
         }
+        if (getMpiConfiguration(MATLEM_200PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(MATLEM_200PROC);
+
+            for(int i=0;i<25;i++)
+                p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+            p.setRemoteLogin(matlemLogin);
+            p.setMpiVersion(MpiSettings.OPENMPI_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(matlemQueue);
+            configurations.add(p);
+        }
         
 /*
         if (getMpiConfiguration(multiConfig)==null)
@@ -477,7 +516,6 @@ public class MpiSettings
             p.getHostList().add(new MpiHost("localhost", 1, 1));
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
-            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
 
@@ -488,7 +526,6 @@ public class MpiSettings
             p.getHostList().add(new MpiHost("localhost", 2, 1));
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
-            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
 
@@ -499,7 +536,6 @@ public class MpiSettings
             p.getHostList().add(new MpiHost("localhost",4, 1));
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
-            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
 
@@ -513,7 +549,6 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
-            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
 
@@ -527,7 +562,6 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
-            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
 
@@ -540,7 +574,6 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
-            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
 
@@ -554,7 +587,6 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
-            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
 
@@ -568,7 +600,6 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
-            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
 
@@ -582,7 +613,6 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
-            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
         if (getMpiConfiguration(LEGION_64PROC)==null)
@@ -594,7 +624,6 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
-            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
         if (getMpiConfiguration(LEGION_80PROC)==null)
@@ -606,7 +635,6 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
-            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
         if (getMpiConfiguration(LEGION_96PROC)==null)
@@ -618,7 +646,6 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
-            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
         if (getMpiConfiguration(LEGION_112PROC)==null)
@@ -630,7 +657,6 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
-            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
         if (getMpiConfiguration(LEGION_128PROC)==null)
@@ -642,7 +668,6 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
-            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
         if (getMpiConfiguration(LEGION_256PROC)==null)
@@ -654,7 +679,6 @@ public class MpiSettings
 
             p.setRemoteLogin(legionLogin);
             p.setQueueInfo(legionQueue);
-            p.addAdditionalSubOptions("#PBS -l qos=parallel");
             configurations.add(p);
         }
 
@@ -769,7 +793,7 @@ public class MpiSettings
         p_ML.getHostList().add(new MpiHost("matthau-5-2", 8, 1));
         p_ML.getHostList().add(new MpiHost("matthau-5-3", 8, 1));
         p_ML.getHostList().add(new MpiHost("matthau-5-4", 8, 1));
-        //p_ML.getHostList().add(new MpiHost("matthau-5-5", 8, 1));
+        /*p_ML.getHostList().add(new MpiHost("matthau-5-5", 8, 1));
         p_ML.getHostList().add(new MpiHost("matthau-5-6", 8, 1));
         p_ML.getHostList().add(new MpiHost("matthau-5-7", 8, 1));
         p_ML.getHostList().add(new MpiHost("matthau-5-8", 8, 1));
@@ -784,7 +808,7 @@ public class MpiSettings
         p_ML.getHostList().add(new MpiHost("lemmon-5-6", 8, 1));
         p_ML.getHostList().add(new MpiHost("lemmon-5-7", 8, 1));
         p_ML.getHostList().add(new MpiHost("lemmon-5-8", 8, 1));
-        p_ML.getHostList().add(new MpiHost("lemmon-5-9", 8, 1));
+        //p_ML.getHostList().add(new MpiHost("lemmon-5-9", 8, 1));
         p_ML.getHostList().add(new MpiHost("lemmon-5-10", 8, 1));
 
         p_ML.getHostList().add(new MpiHost("lemmon-5-11", 8, 1));
@@ -796,7 +820,7 @@ public class MpiSettings
         p_ML.getHostList().add(new MpiHost("lemmon-5-17", 8, 1));
         p_ML.getHostList().add(new MpiHost("lemmon-5-18", 8, 1));
         p_ML.getHostList().add(new MpiHost("lemmon-5-19", 8, 1));
-        p_ML.getHostList().add(new MpiHost("lemmon-5-20", 8, 1));
+        //p_ML.getHostList().add(new MpiHost("lemmon-5-20", 8, 1));*/
 
         /*
         for(int i=1;i<=10;i++)

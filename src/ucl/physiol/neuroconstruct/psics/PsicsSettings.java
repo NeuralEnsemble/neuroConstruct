@@ -44,6 +44,7 @@ public class PsicsSettings
 
     private boolean showHtmlSummary = true;
     private boolean showPlotSummary = true;
+    private boolean showConsole = true;
     private float spatialDiscretisation = 25;
     private float singleChannelCond = 3e-8f; //mS
 
@@ -70,6 +71,15 @@ public class PsicsSettings
     {
         this.showPlotSummary = showPlotSummary;
     }
+
+    public boolean isShowConsole() {
+        return showConsole;
+    }
+
+    public void setShowConsole(boolean showConsole) {
+        this.showConsole = showConsole;
+    }
+    
 
     public float getSingleChannelCond()
     {
