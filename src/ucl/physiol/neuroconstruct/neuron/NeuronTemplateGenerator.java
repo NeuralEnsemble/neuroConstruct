@@ -31,12 +31,18 @@ import java.util.*;
 
 import javax.vecmath.*;
 
+import org.neuroml.lems.sim.*;
+import org.neuroml.lems.util.*;
+import org.neuroml.lems.export.*;
+import org.neuroml.lems.type.*;
+
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
+import ucl.physiol.neuroconstruct.utils.compartment.CompartmentHelper;
 import ucl.physiol.neuroconstruct.utils.units.*;
 import ucl.physiol.neuroconstruct.utils.xml.*;
 
@@ -1118,6 +1124,61 @@ public class NeuronTemplateGenerator
                             
                             subResponse.append("    "+sec.getSectionName()+" "+name+" = new " + modName + "(0.5) \n");
                         }
+                        
+                        if (cellMech.getMechanismType().equals(CellMechanism.NEUROML2_ABSTRACT_CELL))
+                        {
+                            XMLCellMechanism nml2Mech = (XMLCellMechanism)cellMech;
+
+                            String contents = GeneralUtils.readShortFile(nml2Mech.getXMLFile(project));
+
+                            try
+                            {
+                                StringInclusionReader.addSearchPath(ProjectStructure.getLemsDir());
+                                Sim sim = new Sim(contents);
+
+                                sim.readModel();
+
+                                Component comp = sim.getLems().getComponent(nml2Mech.getInstanceName());
+                                
+                                logger.logComment("Found component: " + comp, true);
+
+                                if (comp.getComponentClass().isOrExtends(NeuroMLConstants.NEUROML2_ABST_CELL_MEMB_POT_CAP))
+                                {
+                                    String cap = comp.getParamValue(NeuroMLConstants.NEUROML2_ABST_CELL_MEMB_POT_CAP__C).stringValue();
+                                    float capacitance =  (float)UnitConverter.getCapacitance(Float.parseFloat(cap),
+                                                                       UnitConverter.GENESIS_SI_UNITS,
+                                                                       UnitConverter.NEURON_UNITS);
+                                    logger.logComment("Total capacitance: "+cap+" F = " + capacitance +" "+ UnitConverter.capacitanceUnits[UnitConverter.NEURON_UNITS].getSymbol(), true);
+
+                                    for (Section sec: secs)
+                                    {
+                                        if (sec.getNumberInternalDivisions()>1)
+                                        {
+                                            GuiUtils.showErrorMessage(logger, "Error: putting "+cellMech.getMechanismType()+" on section with nseg>1!", null, null);
+                                            return null;
+                                        }
+                                        Segment seg = cell.getAllSegmentsInSection(sec).getFirst();
+                                        
+                                        float area = seg.getSegmentSurfaceArea() * 1e-8f; // um2 -> cm2
+
+                                        float specCap = capacitance/area;
+                                        System.out.println("capacitance: "+capacitance+", area: "+area+" cm2, specCap: "+specCap+" um/cm2");
+                                        subResponse.append("    "+sec.getSectionName()+" cm = "+specCap+" \n");
+
+                                    }
+
+
+                                    //float area  =
+
+                                }
+
+                            }
+                            catch (ContentError ce)
+                            {
+                                GuiUtils.showErrorMessage(logger, "Problem parsing XML for cell mech: "+cellMech , ce, null);
+                            }
+                        }
+
                     }
                     else
                     {

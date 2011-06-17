@@ -593,7 +593,7 @@ class SimulationManager():
 
                 simRefPrefix = (simConfigName+"_").replace(' ', '')
 
-                if len(mpiConfigs) > 0:
+                if len(mpiConfigs) > 1:
                     simRefPrefix = simRefPrefix+(mpiConfigToUse+"_").replace(' ', '').replace('(', '_').replace(')', '_')
 
                 self.doCheckNumberSims()
