@@ -90,7 +90,7 @@ echo The path %NC_HOME% does not exist! Please set the variable NC_HOME to the c
 goto END
 
 :WARN_LEMS
-echo The LEMS jar file has not been found! Go to the the lems subfolder and try running make.bat
+echo The LEMS jar file (%LEMS_JAR%) has not been found! Go to the the lems subfolder and try running make.bat
 goto END
 
 :END
