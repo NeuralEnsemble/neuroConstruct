@@ -80,6 +80,10 @@ public class SimulationData
     private boolean dataAtRemoteLocation = false;
 
 
+    private static double NON_SPIKING_VOLTAGE = -100;
+    private static double SPIKING_VOLTAGE = 100;
+
+
     private SimulationData()
     {
     }
@@ -121,7 +125,7 @@ public class SimulationData
 
 
     
-    public File getTimesFile()
+    public final File getTimesFile()
     {
         return getTimesFile(dataDirectory);
     }
@@ -201,7 +205,7 @@ public class SimulationData
                 if ( (name.endsWith("." + SimPlot.CONTINUOUS_DATA_EXT) || 
                     name.endsWith("." + SimPlot.CONTINUOUS_DATA_EXT+".txt") || /* TEMP for PSICS!!*/
                     name.endsWith("." + SimPlot.SPIKE_EXT) ||
-                    name.endsWith("." + SimPlot.CONTINUOUS_DATA_H5_EXT))
+                    name.endsWith("." + SimPlot.H5_EXT))
                     && !name.equals(TIME_DATA_FILE_STD)
                     && !name.equals(TIME_DATA_FILE_PSICS)
                     && !name.equals(POSITION_DATA_FILE)
@@ -229,7 +233,7 @@ public class SimulationData
         {
             logger.logComment("-----   Looking at "+fileIndex+": "+cellDataFiles[fileIndex]);
 
-            if (cellDataFiles[fileIndex].getName().indexOf("."+SimPlot.CONTINUOUS_DATA_H5_EXT)>0)
+            if (cellDataFiles[fileIndex].getName().indexOf("."+SimPlot.H5_EXT)>0)
             {
                 try
                 {
@@ -243,8 +247,17 @@ public class SimulationData
 
                     ArrayList<DataStore> dataStores = Hdf5Utils.parseGroupForDataStores(g, true);
 
+                    
+
                     for(DataStore ds: dataStores)
                     {
+                        if (ds.getVariable().indexOf(SimPlot.SPIKE)>=0)
+                        {
+                            logger.logComment("Going to convert spikes DataStore to vector of volt vals: "+ds, true);
+                            double[] spikeTimes = ds.getDataPoints();
+                            double[] data = convertSpikeTimesToContinuous(spikeTimes, times, NON_SPIKING_VOLTAGE, SPIKING_VOLTAGE, timeConversionFactor);
+                            ds.setDataPoints(data);
+                        }
                         dataSources.add(ds);
                     }
                 }
@@ -601,7 +614,7 @@ public class SimulationData
         for (int i = 0; i < times.length; i++)
         {
             dataSet.addPoint(times[i], points[i]);
-            System.currentTimeMillis();
+            //System.currentTimeMillis();
         }
         
         return dataSet;
@@ -642,10 +655,7 @@ public class SimulationData
                     {
                         double[] tempArray2 = new double[numDataPointsAdded*2];
                         logger.logComment("Rescaling array of data points to size: "+ tempArray2.length);
-                        for(int i=0;i<numDataPointsAdded;i++)
-                        {
-                            tempArray2[i] = tempArray[i];
-                        }
+                        System.arraycopy(tempArray, 0, tempArray2, 0, numDataPointsAdded);
                         tempArray = tempArray2;
                     }
                     tempArray[numDataPointsAdded] = scaleFactor * nextEntry;
@@ -664,11 +674,7 @@ public class SimulationData
             }
             
             data = new double[numDataPointsAdded];
-
-            for (int i = 0; i < numDataPointsAdded; i++)
-            {
-                data[i] = tempArray[i];
-            }
+            System.arraycopy(tempArray, 0, data, 0, numDataPointsAdded);
             //System.out.println("Read in "+data.length+" values. First: "+data[0]+", last: "+data[data.length-1] );
             return data;
         }
@@ -703,7 +709,7 @@ public class SimulationData
 
             /** @todo check if there's a quicker way to do this */
             
-            Hashtable<Integer, ArrayList<Double>> tempList = new Hashtable<Integer, ArrayList<Double>>();
+            HashMap<Integer, ArrayList<Double>> tempList = new HashMap<Integer, ArrayList<Double>>();
 
             while ( (nextLine = reader.readLine()) != null)
             {
@@ -734,11 +740,10 @@ public class SimulationData
             
             data = new double[tempList.keySet().size()][tempList.get(0).size()];
 
-            Enumeration<Integer> cellNums = tempList.keys();
+            Set<Integer> cellNums = tempList.keySet();
             
-            while (cellNums.hasMoreElements())
+            for (int cellNum: cellNums)
             {
-                int cellNum = cellNums.nextElement();
                 ArrayList<Double> vals = tempList.get(cellNum);
                 
                 for (int i = 0; i < vals.size(); i++)
@@ -767,9 +772,6 @@ public class SimulationData
     {
         logger.logComment("Reading spikes from file: "+ spikeFile);
 
-        double nonSpikingVal = -100;
-        double spikingVal = 100;
-
 
         String nextLine = null;
         double[] data = null;
@@ -780,7 +782,7 @@ public class SimulationData
             LineNumberReader reader = new LineNumberReader(in);
 
 
-            ArrayList<Double> spikeTimes = new ArrayList<Double>(suggestedInitCapSpikes);
+            ArrayList<Double> spikeTimesAL = new ArrayList<Double>(suggestedInitCapSpikes);
 
             while ( (nextLine = reader.readLine()) != null && nextLine.length()>0)
             {
@@ -788,16 +790,20 @@ public class SimulationData
                 {
                     double nextEntry = Double.parseDouble(nextLine);
                     //logger.logComment("Found line: "+ nextEntry);
-                    spikeTimes.add(nextEntry);
+                    spikeTimesAL.add(nextEntry);
                 }
             }
 
             in.close();
 
-            if (suggestedInitCapSpikes< spikeTimes.size()) suggestedInitCapSpikes = spikeTimes.size();
+            if (suggestedInitCapSpikes< spikeTimesAL.size()) suggestedInitCapSpikes = spikeTimesAL.size();
 
-            data = new double[times.length];
-            int spikeCount = 0;
+            double[] spikeTimes = new double[spikeTimesAL.size()];
+            for (int i=0;i<spikeTimesAL.size();i++)
+                spikeTimes[i] = spikeTimesAL.get(i);
+
+            data = convertSpikeTimesToContinuous(spikeTimes, times, NON_SPIKING_VOLTAGE, SPIKING_VOLTAGE, timeConversionFactor);
+            /*int spikeCount = 0;
 
             boolean insideSpike = false;
 
@@ -825,7 +831,7 @@ public class SimulationData
                     data[timeStep] = nonSpikingVal;
                     insideSpike = false;
                 }
-            }
+            }*/
 
 
             //System.out.println("Read in "+data.length+" values. First: "+data[0]+", last: "+data[data.length-1] );
@@ -840,6 +846,41 @@ public class SimulationData
             throw new SimulationDataException("Error reading line: ("+nextLine+") from file: "+ spikeFile.getAbsolutePath(), ne);
         }
 
+    }
+
+    public static double[] convertSpikeTimesToContinuous(double[] spikeTimes, double[] times, double nonSpikingVal, double spikingVal, double timeConversionFactor)
+    {
+        double[] data = new double[times.length];
+        int spikeCount = 0;
+
+        boolean insideSpike = false;
+
+        for (int timeStep = 0; timeStep < times.length; timeStep++)
+        {
+            double time = times[timeStep];
+
+            if (spikeCount < spikeTimes.length && time >= (spikeTimes[spikeCount] * timeConversionFactor))
+            {
+                if (!insideSpike)
+                {
+                    data[timeStep] = spikingVal;
+                    spikeCount++;
+
+                    insideSpike = true;
+                }
+                else
+                {
+                    data[timeStep] = nonSpikingVal;
+                    spikeCount++;
+                }
+            }
+            else
+            {
+                data[timeStep] = nonSpikingVal;
+                insideSpike = false;
+            }
+        }
+        return data;
     }
 
 
@@ -1294,10 +1335,11 @@ public class SimulationData
     {
         File f = null;
         f = new File("testProjects/TestHDF5/simulations/TestText");
-        f = new File("testProjects/TestHDF5/simulations/TestH5");
         f = new File("testProjects/TestHDF5/simulations/TestTextBig");
         f = new File("testProjects/TestHDF5/simulations/TestH5Big");
         f = new File("testProjects/TestHDF5/simulations/TestSpikes");
+        f = new File("testProjects/TestHDF5/simulations/TestH5");
+        f = new File("testProjects/TestHDF5/simulations/TestSpikesHDF5");
         //f = new File("testProjects/TestHDF5/simulations/TestSpikesText");
 
         SimulationData simulationData1 = null;
@@ -1329,7 +1371,6 @@ public class SimulationData
         catch (SimulationDataException ex)
         {
             System.out.println("Error...");
-            ex.printStackTrace();
         }
 
     }

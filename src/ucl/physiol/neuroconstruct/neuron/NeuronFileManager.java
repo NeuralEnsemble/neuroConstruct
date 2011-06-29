@@ -2714,7 +2714,7 @@ public class NeuronFileManager
                                     hostInfo = ".host'+str(int(h.hostid))+'";
                                 }
 
-                                String h5Filename = cellGroupName+"."+record.simPlot.getSafeVarName()+hostInfo+"."+SimPlot.CONTINUOUS_DATA_H5_EXT;
+                                String h5Filename = cellGroupName+"."+record.simPlot.getSafeVarName()+hostInfo+"."+SimPlot.H5_EXT;
                                 String varName = GeneralUtils.replaceAllTokens(h5Filename, ".", "_");
 
                                 response.append("nrnpython(\"h5file = tables.openFile(h.targetDir+'"+h5Filename+"', mode = 'w', title = 'Arrays of recordings of "+record.simPlot.getValuePlotted()

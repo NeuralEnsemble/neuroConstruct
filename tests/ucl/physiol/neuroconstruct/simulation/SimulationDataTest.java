@@ -33,7 +33,7 @@ public class SimulationDataTest
 
 
     @Test
-    public void testTextHDF5Load() throws IOException
+    public void testTextHDF5Load() throws IOException, SimulationDataException
     {
         System.out.println("---  testTextHDF5Load...");
 
@@ -41,57 +41,82 @@ public class SimulationDataTest
 
         files.add(new File("testProjects/TestHDF5/simulations/TestText"));
         files.add(new File("testProjects/TestHDF5/simulations/TestH5"));
+        files.add(new File("testProjects/TestHDF5/simulations/TestH5Parallel"));
         files.add(new File("testProjects/TestHDF5/simulations/TestSpikesText"));
-        //files.add(new File("testProjects/TestHDF5/simulations/TestSpikesHDF5"));
+        files.add(new File("testProjects/TestHDF5/simulations/TestSpikesHDF5"));
+        files.add(new File("testProjects/TestHDF5/simulations/TestSpikesHDF5Parallel"));
 
         SimulationData simulationData1 = null;
-        try
+
+        for (File f: files)
         {
-            for (File f: files)
+            GeneralUtils.timeCheck("Going to load data from: "+ f.getCanonicalPath(), true);
+
+            simulationData1 = new SimulationData(f, true);
+            simulationData1.initialise();
+
+            GeneralUtils.timeCheck("Loaded data from: "+ f.getCanonicalPath(), true);
+
+            ArrayList<DataStore> dss= simulationData1.getAllLoadedDataStores();
+
+            GeneralUtils.timeCheck("Grabbed data from: "+ f.getCanonicalPath(), true);
+
+            int numTimeSteps = simulationData1.getNumberTimeSteps();
+
+            System.out.println("Total number of data stores: "+dss.size());
+
+            int expected = 20;
+            if (f.getName().indexOf("Spike")>0)
+                expected = 80;
+
+            assertEquals(dss.size(), expected);
+
+            for(int i=0;i<Math.min(20, dss.size());i++)
             {
-                GeneralUtils.timeCheck("Going to load data from: "+ f.getCanonicalPath(), true);
+                DataStore ds = dss.get(i);
+                System.out.println(ds);
 
-                simulationData1 = new SimulationData(f, true);
-                simulationData1.initialise();
+                DataSet dataSet = simulationData1.getDataSet(ds.getCellSegRef(), ds.getVariable(), true);
+                System.out.println(dataSet);
 
-                GeneralUtils.timeCheck("Loaded data from: "+ f.getCanonicalPath(), true);
-
-                ArrayList<DataStore> dss= simulationData1.getAllLoadedDataStores();
-
-                GeneralUtils.timeCheck("Grabbed data from: "+ f.getCanonicalPath(), true);
-
-                int numTimeSteps = simulationData1.getNumberTimeSteps();
-
-                System.out.println("Total number of data stores: "+dss.size());
-
-                int expected = 20;
-                if (f.getName().indexOf("Spike")>0)
-                    expected = 80;
-
-                assertEquals(dss.size(), expected);
-
-                for(int i=0;i<Math.min(20, dss.size());i++)
-                {
-                    DataStore ds = dss.get(i);
-                    System.out.println(ds);
-
-                    DataSet dataSet = simulationData1.getDataSet(ds.getCellSegRef(), ds.getVariable(), true);
-                    System.out.println(dataSet);
-
-                    assertEquals(numTimeSteps, dataSet.getNumberPoints());
-                }
+                assertEquals(numTimeSteps, dataSet.getNumberPoints());
             }
-
-            System.out.println("Tests completed!");
-
-
-
         }
-        catch (SimulationDataException ex)
-        {
-            System.out.println("Error..."+ ex.getMessage());
-        }
+
+        System.out.println("Tests completed!");
+
+
     }
+
+    @Test
+    public void testConvertSpikeTimesToContinuous()
+    {
+        double[] times = new double[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
+        double[] spikes = new double[]{3,6,8,12};
+
+        int non = 0;
+        int spi = 1;
+
+        double[] volts = SimulationData.convertSpikeTimesToContinuous(spikes, times, non, spi, 1);
+
+        int spikeNum = 0;
+        for (int i=0;i<times.length;i++){
+            System.out.println("Time: "+times[i]+", volt: "+volts[i]);
+            if (spikes[spikeNum] == times[i])
+            {
+                assertEquals(volts[i], spi, 0);
+                System.out.println("Spike match...");
+                if (spikeNum < spikes.length-1)
+                    spikeNum++;
+            }
+            else
+            {
+                assertEquals(volts[i], non, 0);
+            }
+        }
+
+    }
+
 
 
     public static void main(String[] args)

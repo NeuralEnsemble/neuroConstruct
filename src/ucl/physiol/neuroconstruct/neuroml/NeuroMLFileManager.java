@@ -1012,7 +1012,7 @@ public class NeuroMLFileManager
             }
         }
 
-        return "???";
+        return val;
     }
 
 

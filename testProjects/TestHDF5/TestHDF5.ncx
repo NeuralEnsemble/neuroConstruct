@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.6.0_0" class="java.beans.XMLDecoder">
+<java version="1.6.0_20" class="java.beans.XMLDecoder">
 
 <!-- This is a neuroConstruct project file. It's best to open this
 file with neuroConstruct, as opposed to editing it directly. 
@@ -16,7 +16,7 @@ Go to tab Generate, press Generate Cell Positions and Connections, and then to v
 If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</string>
   </void>
   <void property="projectFileVersion">
-   <string>neuroConstruct v1.4.1</string>
+   <string>neuroConstruct v1.5.1</string>
   </void>
   <void property="projectName">
    <string>TestHDF5</string>
@@ -106,14 +106,14 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
     <void method="add">
      <object class="ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter">
       <void property="maxNumberCells">
-       <int>800</int>
+       <int>8</int>
       </void>
      </object>
     </void>
     <void method="add">
      <object class="ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter">
       <void property="maxNumberCells">
-       <int>400</int>
+       <int>4</int>
       </void>
      </object>
     </void>
@@ -522,7 +522,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
    <float>100.0</float>
   </void>
   <void property="reference">
-   <string>TestSpikesHDF5</string>
+   <string>TestSpikesHDF5Parallel</string>
   </void>
   <void property="saveCopyGenSimFiles">
    <boolean>true</boolean>
@@ -620,74 +620,13 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      <void id="MpiConfiguration0" property="mpiConf">
       <void property="hostList">
        <void index="0">
-        <void property="hostname">
-         <string>node0</string>
-        </void>
         <void property="numProcessors">
-         <int>8</int>
+         <int>4</int>
         </void>
        </void>
       </void>
-      <void property="mpiVersion">
-       <string>OPENMPI v2.*</string>
-      </void>
       <void property="name">
-       <string>MatLem (1 x 8p)</string>
-      </void>
-      <void property="queueInfo">
-       <object class="ucl.physiol.neuroconstruct.hpc.mpi.QueueInfo">
-        <void property="account">
-         <string></string>
-        </void>
-        <void property="queueType">
-         <object class="java.lang.Enum" method="valueOf">
-          <class>ucl.physiol.neuroconstruct.hpc.mpi.QueueInfo$QueueType</class>
-          <string>SGE</string>
-         </object>
-        </void>
-        <void property="wallTimeMins">
-         <int>6</int>
-        </void>
-       </object>
-      </void>
-      <void property="remoteLogin">
-       <object class="ucl.physiol.neuroconstruct.hpc.mpi.RemoteLogin">
-        <void property="executables">
-         <void method="put">
-          <object class="java.lang.Enum" method="valueOf">
-           <class>ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings$KnownSimulators</class>
-           <string>NEURON</string>
-          </object>
-          <string>/share/apps/neuro/nrn71/x86_64/bin/nrniv</string>
-         </void>
-         <void method="put">
-          <object class="java.lang.Enum" method="valueOf">
-           <class>ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings$KnownSimulators</class>
-           <string>PY_NEURON</string>
-          </object>
-          <string>/share/apps/neuro/nrn71/x86_64/bin/nrniv -python</string>
-         </void>
-         <void method="put">
-          <object class="java.lang.Enum" method="valueOf">
-           <class>ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings$KnownSimulators</class>
-           <string>MOOSE</string>
-          </object>
-          <string>/share/apps/neuro/moose</string>
-         </void>
-        </void>
-        <void property="hostname">
-         <string>128.16.14.177</string>
-        </void>
-        <void property="userName">
-         <string>ucgbpgl</string>
-        </void>
-        <void property="workDir">
-         <string>/home/ucgbpgl/nCsims</string>
-        </void>
-       </object>
-      </void>
-      <void property="useScp">
-       <boolean>true</boolean>
+       <string>Local machine (4p)</string>
       </void>
      </void>
      <void property="mpiConf">
@@ -743,6 +682,21 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       <void method="add">
        <string>Input_0</string>
       </void>
+     </void>
+     <void id="MpiConfiguration1" property="mpiConf">
+      <void property="hostList">
+       <void index="0">
+        <void property="numProcessors">
+         <int>4</int>
+        </void>
+       </void>
+      </void>
+      <void property="name">
+       <string>Local machine (4p)</string>
+      </void>
+     </void>
+     <void property="mpiConf">
+      <object idref="MpiConfiguration1"/>
      </void>
      <void property="name">
       <string>TestSpikeSave</string>

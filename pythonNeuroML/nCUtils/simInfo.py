@@ -67,18 +67,27 @@ for currDir in dirs:
                             popInfo = popInfo + "\n                      "
                         popInfo = popInfo +pop
 
-                popInfo = popInfo + "\n                         Total:               %i"%total
+                popInfo = popInfo + "\n                         Total cells:         %i"%total
 
                 allFiles = os.listdir(currDir)
 
                 netInfoFiles = ["NetworkConnections.dat", "ElectricalInputs.dat", "CellPositions.dat", "time.dat"]
 
                 dataFilesFound = 0
+                spikeFilesFound = 0
+                h5FilesFound = 0
+
                 for file in allFiles:
                     if file.endswith(".dat") and file not in netInfoFiles:
                         dataFilesFound+=1
+                    elif file.endswith(".spike"):
+                        spikeFilesFound+=1
+                    elif file.endswith(".h5"):
+                        h5FilesFound+=1
 
                 popInfo = popInfo + "\n                         Data files found:    %i"%dataFilesFound
+                popInfo = popInfo + "\n                         Spike files found:   %i"%spikeFilesFound
+                popInfo = popInfo + "\n                         HDF5 files found:    %i"%h5FilesFound
 
 
                 print popInfo

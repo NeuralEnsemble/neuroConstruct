@@ -580,7 +580,7 @@ class SimulationManager():
                     info = CellTopologyHelper.recompartmentaliseCell(cell, maxElecLen, self.project)
                     self.printver("*** Recompartmentalised cell: "+info)
 
-                    recompSuffix = "_"+str(maxElecLen)
+                if len(maxElecLens) > 1 or maxElecLen > 0 : recompSuffix = "_"+str(maxElecLen)
 
                 self.projectManager.doGenerate(simConfig.getName(), neuroConstructSeed)
 

@@ -62,7 +62,7 @@ public class SimPlot
     //Extensions for files
     public static String CONTINUOUS_DATA_EXT = "dat";
     public static String SPIKE_EXT = "spike";
-    public static String CONTINUOUS_DATA_H5_EXT = "h5";
+    public static String H5_EXT = "h5";
 
 
     public static float DEFAULT_THRESHOLD = -20;

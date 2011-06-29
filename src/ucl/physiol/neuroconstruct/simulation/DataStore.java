@@ -78,12 +78,24 @@ public class DataStore
         this.yUnit = yUnit;
         this.pso = pso;
 
+        refreshMaxMin();
+    }
+
+    public void setDataPoints(double[] dataPoints)
+    {
+        this.dataPoints = dataPoints;
+        refreshMaxMin();
+    }
+
+    private void refreshMaxMin()
+    {
+        maxVal = -1* Double.MAX_VALUE;
+        minVal = Double.MAX_VALUE;
         for (int i = 0; i < dataPoints.length; i++)
         {
             if (dataPoints[i]>maxVal) maxVal = dataPoints[i];
             if (dataPoints[i]<minVal) minVal = dataPoints[i];
         }
-
     }
 
     public String getCellRef()
@@ -114,7 +126,6 @@ public class DataStore
     {
         return pso != null;
     }
-
 
 
 
