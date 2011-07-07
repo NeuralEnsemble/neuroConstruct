@@ -31,7 +31,7 @@ showPlot = 0
 //  recOption = 4  => Save vectors in HDF5 file with 1 table for each cell group
 //  recOption = 5  => Save vectors in HDF5 file with 1 table for each cell group, and use compression
 
-recOption = 5
+recOption = 4
 
 print "Using recording option: ", recOption
 
@@ -205,7 +205,7 @@ if (recOption == 1) {
     nrnpython("import tables")
     nrnpython("from neuron import *")
 
-    nrnpython("allVolts = numpy.zeros( (h.numPoints, h.nCells) , dtype=float )")
+    nrnpython("allVolts = numpy.zeros( (h.numPoints, h.nCells) , dtype=numpy.float32 )")
     nrnpython("print allVolts.shape")
 
     nrnpython("h5file = tables.openFile('volts.h5', mode = 'w', title = 'Voltages saved from NEURON')")

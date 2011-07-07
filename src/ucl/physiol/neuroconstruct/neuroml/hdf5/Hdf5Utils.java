@@ -692,7 +692,7 @@ public class Hdf5Utils
     {
         String pre = "  -- ";
         String name = d.getName();
-        StringBuffer desc = new StringBuffer(d.getName()+"\n");
+        StringBuilder desc = new StringBuilder(d.getName()+"\n");
         desc.append(d.getDatatype().getDatatypeDescription()+"\n");
 
         String xUnit = "";
@@ -802,9 +802,30 @@ public class Hdf5Utils
                             dataSets.add(ds);
                         }
                     }
+                    else if (dataObj instanceof float[])
+                    {
+                        float[] data = (float[])dataObj;
+
+                        logger.logComment(pre+"Got array of floats of size "+data.length+" containing: "+ data[0]);
+
+
+                        for(int cellNum=0;cellNum<numCells;cellNum++)
+                        {
+                            DataSet ds = new DataSet(name+"_"+cellNum, desc.toString(), xUnit, yUnit, xLegend, yLegend);
+
+                            for(int i=0;i<numPoints;i++)
+                            {
+                                double point = data[i*numCells + cellNum];
+                                ds.addPoint(i/xSampling, yOffset + (yScale *point));
+                            }
+                            logger.logComment(ds.toString());
+                            dataSets.add(ds);
+                        }
+                    }
                     else
                     {
-                        logger.logComment(pre+"Couldn't determine that datatype: "+ dataObj.getClass());
+                        GuiUtils.showErrorMessage(logger, pre+"Couldn't determine that datatype going in to: "+desc+"! ", null, null);
+                        return null;
                     }
                 }
             }
@@ -919,9 +940,21 @@ public class Hdf5Utils
                             ds.addPoint(i/xSampling, yOffset + (yScale *data[i]));
                         }
                     }
+                    else if (dataObj instanceof float[])
+                    {
+                        float[] data = (float[])dataObj;
+
+                        logger.logComment(pre+"Got array of some: "+ data[0]);
+
+                        for(int i=0;i<data.length;i++)
+                        {
+                            ds.addPoint(i/xSampling, yOffset + (yScale *data[i]));
+                        }
+                    }
                     else
                     {
-                        logger.logComment(pre+"Couldn't determine that datatype! ");
+                        GuiUtils.showErrorMessage(logger, pre+"Couldn't determine that datatype going in to: "+desc+"! ", null, null);
+                        return null;
                     }
                 }
             }

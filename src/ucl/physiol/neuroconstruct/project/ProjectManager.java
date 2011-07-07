@@ -286,6 +286,7 @@ public class ProjectManager implements GenerationReport
                         fn.endsWith(".props") ||
                         fn.endsWith(".py")||
                         fn.endsWith(".xml") ||
+                        fn.endsWith(".h5") ||
                             (activeProject.neuronSettings.isCopySimFiles() &&
                             (fn.endsWith(".hoc") ||
                             fn.endsWith(".mod") ||

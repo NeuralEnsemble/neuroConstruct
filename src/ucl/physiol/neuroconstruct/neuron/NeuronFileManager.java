@@ -2746,7 +2746,7 @@ public class NeuronFileManager
                                         lengthTable = (int)getSimDuration() * 3; // i.e. max constant firing freq of 3000Hz...
                                     }
 
-                                    response.append("{nrnpython(\"allData = numpy.ones( (" + lengthTable + ", h.n_"+cellGroupName+"_local ) , dtype=float )\")}\n");
+                                    response.append("{nrnpython(\"allData = numpy.ones( (" + lengthTable + ", h.n_"+cellGroupName+"_local ) , dtype=numpy.float32 )\")}\n");
                                     response.append("{nrnpython(\"allData = allData * -1\")}\n");
 
                                     response.append("{nrnpython(\"print allData.shape\")}\n\n");

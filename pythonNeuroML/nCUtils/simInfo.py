@@ -82,7 +82,7 @@ for currDir in dirs:
                         dataFilesFound+=1
                     elif file.endswith(".spike"):
                         spikeFilesFound+=1
-                    elif file.endswith(".h5"):
+                    elif file.endswith(".h5") and not file == "Generated.net.h5":
                         h5FilesFound+=1
 
                 popInfo = popInfo + "\n                         Data files found:    %i"%dataFilesFound

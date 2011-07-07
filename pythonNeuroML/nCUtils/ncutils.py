@@ -28,6 +28,7 @@ from ucl.physiol.neuroconstruct.gui.plotter import PlotCanvas
 from ucl.physiol.neuroconstruct.dataset import DataSet
 
 from ucl.physiol.neuroconstruct.neuron import NeuronFileManager
+from ucl.physiol.neuroconstruct.neuron.NeuronSettings import DataSaveFormat
 from ucl.physiol.neuroconstruct.nmodleditor.processes import ProcessManager
 
 from ucl.physiol.neuroconstruct.neuroml import NeuroMLConstants
@@ -207,11 +208,13 @@ def generateAndRunNeuron(project,
                          simConfig, 
                          simRef, 
                          simulatorSeed, 
-                         verbose=True, 
-                         quitAfterRun=False, 
-                         runInBackground=False,
-                         varTimestep=False,
-                         varTimestepTolerance=None):
+                         verbose=               True,
+                         quitAfterRun=          False,
+                         runInBackground=       False,
+                         varTimestep=           False,
+                         varTimestepTolerance=  None,
+                         saveAsHdf5 =           False,
+                         runMode =              NeuronFileManager.RUN_HOC):
 
     prefix = "--- NEURON gen:   "
 
@@ -222,6 +225,12 @@ def generateAndRunNeuron(project,
     if runInBackground:
         project.neuronSettings.setNoConsole()
 
+    if saveAsHdf5:
+        project.neuronSettings.setDataSaveFormat(DataSaveFormat.HDF5_NC)
+    else:
+        project.neuronSettings.setDataSaveFormat(DataSaveFormat.TEXT_NC)
+
+
     project.neuronSettings.setVarTimeStep(varTimestep)
 
     if varTimestepTolerance is not None:
@@ -229,7 +238,7 @@ def generateAndRunNeuron(project,
     
     project.neuronFileManager.generateTheNeuronFiles(simConfig,
                                                      None,
-                                                     NeuronFileManager.RUN_HOC,
+                                                     runMode,
                                                      simulatorSeed)
     
 
@@ -531,7 +540,10 @@ class SimulationManager():
                         simRefGlobalPrefix =        '',
                         mpiConfig =                 MpiSettings.LOCAL_SERIAL,
                         mpiConfigs =                [],
-                        suggestedRemoteRunTime =    -1):
+                        suggestedRemoteRunTime =    -1,
+                        saveAsHdf5 =                False,
+                        saveOnlySpikes =            False,
+                        runMode =                   NeuronFileManager.RUN_HOC):
 
         for sim in simulators:
             if sim not in self.knownSimulators:
@@ -545,6 +557,12 @@ class SimulationManager():
           simConfig = self.project.simConfigInfo.getSimConfig(simConfigName)
 
           self.printver("Going to generate network for Simulation Configuration: "+str(simConfig))
+
+          if saveOnlySpikes:
+              for simPlotName in simConfig.getPlots():
+                  simPlot = self.project.simPlotInfo.getSimPlot(simPlotName)
+                  if simPlot.getValuePlotted() == SimPlot.VOLTAGE:
+                      simPlot.setValuePlotted(SimPlot.SPIKE)
 
           if len(mpiConfigs) == 0:
               mpiConfigs = [mpiConfig]
@@ -617,10 +635,13 @@ class SimulationManager():
                                              simConfig,
                                              simRef,
                                              simulatorSeed,
-                                             verbose=verboseSims,
-                                             runInBackground=runInBackground,
-                                             varTimestep=varTimestepNeuron,
-                                             varTimestepTolerance=varTimestepTolerance)
+                                             verbose=               verboseSims,
+                                             runInBackground=       runInBackground,
+                                             varTimestep=           varTimestepNeuron,
+                                             varTimestepTolerance=  varTimestepTolerance,
+                                             saveAsHdf5 =           saveAsHdf5,
+                                             runMode =              runMode)
+                                             
                         if success:
                             self.allRunningSims.append(simRef)
                             allSimsSetRunning.append(simRef)

@@ -33,6 +33,7 @@ import java.text.*;
 import ncsa.hdf.object.Group;
 import ncsa.hdf.object.h5.H5File;
 import ucl.physiol.neuroconstruct.dataset.DataSet;
+import ucl.physiol.neuroconstruct.neuroml.NetworkMLConstants;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.Hdf5Exception;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.Hdf5Utils;
 import ucl.physiol.neuroconstruct.utils.units.*;
@@ -211,6 +212,8 @@ public class SimulationData
                     && !name.equals(POSITION_DATA_FILE)
                     && !name.equals(NETCONN_DATA_FILE)
                     && !name.equals(ELEC_INPUT_DATA_FILE)
+                    && !name.equals(NetworkMLConstants.DEFAULT_NETWORKML_FILENAME_HDF5)
+                    && !name.equals(NetworkMLConstants.DEFAULT_NETWORKML_FILENAME_XML)
                     && name.indexOf("psics-out")<0)
                 {
                     logger.logComment("-----   Taking " + name);
@@ -247,13 +250,12 @@ public class SimulationData
 
                     ArrayList<DataStore> dataStores = Hdf5Utils.parseGroupForDataStores(g, true);
 
-                    
 
                     for(DataStore ds: dataStores)
                     {
                         if (ds.getVariable().indexOf(SimPlot.SPIKE)>=0)
                         {
-                            logger.logComment("Going to convert spikes DataStore to vector of volt vals: "+ds, true);
+                            logger.logComment("Going to convert spikes DataStore to vector of volt vals: "+ds);
                             double[] spikeTimes = ds.getDataPoints();
                             double[] data = convertSpikeTimesToContinuous(spikeTimes, times, NON_SPIKING_VOLTAGE, SPIKING_VOLTAGE, timeConversionFactor);
                             ds.setDataPoints(data);
@@ -855,17 +857,19 @@ public class SimulationData
 
         boolean insideSpike = false;
 
+        //logger.logComment("------------------------", true);
+
         for (int timeStep = 0; timeStep < times.length; timeStep++)
         {
-            double time = times[timeStep];
+            float time = (float)times[timeStep];
 
-            if (spikeCount < spikeTimes.length && time >= (spikeTimes[spikeCount] * timeConversionFactor))
+            if (spikeCount < spikeTimes.length && time >= (float)(spikeTimes[spikeCount] * timeConversionFactor))
             {
                 if (!insideSpike)
                 {
                     data[timeStep] = spikingVal;
+                    //logger.logComment("Spike time "+spikeTimes[spikeCount]+", #"+spikeCount+" found at "+ time, true);
                     spikeCount++;
-
                     insideSpike = true;
                 }
                 else

@@ -265,9 +265,6 @@ public class SimPlot
 
 
 
-
-
-
     public String getCellGroup()
     {
         return cellGroup;
@@ -276,6 +273,7 @@ public class SimPlot
     {
         return cellNumber;
     }
+
     public float getMaxValue()
     {
         return maxValue;
@@ -284,6 +282,7 @@ public class SimPlot
     {
         return minValue;
     }
+
     public String getPlotReference()
     {
         return plotReference;
@@ -292,6 +291,7 @@ public class SimPlot
     {
         return valuePlotted;
     }
+
     public void setCellGroup(String cellGroup)
     {
         this.cellGroup = cellGroup;
@@ -300,6 +300,7 @@ public class SimPlot
     {
         this.cellNumber = cellNumber;
     }
+
     public void setMaxValue(float maxValue)
     {
         this.maxValue = maxValue;
@@ -308,6 +309,7 @@ public class SimPlot
     {
         this.minValue = minValue;
     }
+
     public void setPlotReference(String plotReference)
     {
         // as spaces in a reference will lead to errors..

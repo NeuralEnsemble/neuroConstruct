@@ -74,8 +74,9 @@ class NetManagerNEURON(NetworkHandler):
             sizeInfo = ", size "+ str(size)+ " cells"
             
             self.log.info("Creating population: "+cellGroup+", cell type: "+cellType+sizeInfo)
-            
+
             self.executeHoc("n_"+cellGroup+" = "+ str(size))
+            self.executeHoc("n_"+cellGroup+"_local = 0")
             self.executeHoc("objectvar a_"+cellGroup+"[n_"+cellGroup+"]")
 
         else:
@@ -104,6 +105,8 @@ class NetManagerNEURON(NetworkHandler):
         newCell.position(float(x), float(y), float(z))
         
         self.h.allCells.append(newCell)
+
+        self.executeHoc("n_"+cellGroup+"_local = n_"+cellGroup+"_local + 1")
         
         self.log.debug("Have just created cell: "+ newCell.reference+" at ("+str(x)+", "+str(y)+", "+str(z)+")")
         

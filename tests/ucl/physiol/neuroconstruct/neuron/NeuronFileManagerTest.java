@@ -35,6 +35,7 @@ import org.junit.runner.Result;
 import ucl.physiol.neuroconstruct.test.MainTest;
 
 import ucl.physiol.neuroconstruct.gui.ValidityStatus;
+import ucl.physiol.neuroconstruct.hpc.mpi.MpiConfiguration;
 import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings;
 import ucl.physiol.neuroconstruct.mechanisms.CellMechanism;
 import ucl.physiol.neuroconstruct.mechanisms.ChannelMLCellMechanism;
@@ -45,6 +46,7 @@ import ucl.physiol.neuroconstruct.simulation.SimEnvHelper;
 import ucl.physiol.neuroconstruct.simulation.SimulationData;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
+import ucl.physiol.neuroconstruct.neuron.NeuronSettings.DataSaveFormat;
 import ucl.physiol.neuroconstruct.simulation.SimulationDataException;
 import ucl.physiol.neuroconstruct.simulation.SpikeAnalyser;
 import ucl.physiol.neuroconstruct.utils.GeneralUtils;
@@ -119,7 +121,6 @@ public class NeuronFileManagerTest {
         assertTrue(validity, validity.indexOf(ValidityStatus.PROJECT_IS_VALID)>=0);
 
         System.out.println("Project is valid!! Using NeuroML "+ GeneralProperties.getNeuroMLVersionString());
-
 
 
         Vector<CellMechanism> cellMechs = proj.cellMechanismInfo.getAllCellMechanisms();
@@ -293,30 +294,103 @@ public class NeuronFileManagerTest {
         
         
     }
-    
-    
-    
-    @Test public void testGenerateParallelHoc() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
+
+    /* No need for this, as it's the case being compared to...
+    @Test public void testCompareHocSerText() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
+    {
+        compareSims(NeuronFileManager.RUN_HOC, false, DataSaveFormat.TEXT_NC);
+    }*/
+    @Test public void testCompareHocParText() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
+    {
+        compareSims(NeuronFileManager.RUN_HOC, true, DataSaveFormat.TEXT_NC);
+    }
+    @Test public void testCompareHocSerH5() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
+    {
+        compareSims(NeuronFileManager.RUN_HOC, false, DataSaveFormat.HDF5_NC);
+    }
+    @Test public void testCompareHocParH5() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
+    {
+        compareSims(NeuronFileManager.RUN_HOC, true, DataSaveFormat.HDF5_NC);
+    }
+
+     
+    @Test public void testComparePyXSerText() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
+    {
+        compareSims(NeuronFileManager.RUN_PYTHON_XML, false, DataSaveFormat.TEXT_NC);
+    }
+   
+    @Test public void testComparePyXParText() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
+    {
+        compareSims(NeuronFileManager.RUN_PYTHON_XML, true, DataSaveFormat.TEXT_NC);
+    }
+    @Test public void testComparePyXSerH5() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
+    {
+        compareSims(NeuronFileManager.RUN_PYTHON_XML, false, DataSaveFormat.HDF5_NC);
+    }
+    @Test public void testComparePyXParH5() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
+    {
+        compareSims(NeuronFileManager.RUN_PYTHON_XML, true, DataSaveFormat.HDF5_NC);
+    }
+
+
+
+       
+
+    @Test public void testComparePyH5SerText() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
+    {
+        compareSims(NeuronFileManager.RUN_PYTHON_HDF5, false, DataSaveFormat.TEXT_NC);
+    }
+ /*
+    @Test public void testComparePyH5ParText() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
+    {
+        compareSims(NeuronFileManager.RUN_PYTHON_HDF5, true, DataSaveFormat.TEXT_NC);
+    }*/
+    @Test public void testComparePyH5SerH5() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
+    {
+        compareSims(NeuronFileManager.RUN_PYTHON_HDF5, false, DataSaveFormat.HDF5_NC);
+    }
+    /*@Test public void testComparePyH5ParH5() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
+    {
+        compareSims(NeuronFileManager.RUN_PYTHON_HDF5, true, DataSaveFormat.HDF5_NC);
+    }
+
+    */
+
+
+/*
+
+    @Test public void testComparePyXml() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
+    {
+        compareSims(NeuronFileManager.RUN_PYTHON_XML);
+    }
+
+    @Test public void testComparePyH5() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
+    {
+        compareSims(NeuronFileManager.RUN_PYTHON_HDF5);
+    }*/
+
+    private void compareSims(int runMode, boolean parallel, DataSaveFormat dsf) throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
     {
         assumeTrue(MainTest.testPNEURON());
 
-        System.out.println("---  testGenerateParallelHoc...");
+        System.out.println("---  compareSims "+runMode+"...");
         
         if (GeneralUtils.isWindowsBasedPlatform())
         {
             System.out.println("*** Not running testGenerateParallelHoc, as this is a Windows system!");
             assumeTrue(!GeneralUtils.isWindowsBasedPlatform());
         }
-        
+
         ProjectManager pm = loadProject("testProjects/TestParallel/TestParallel.neuro.xml");
         
         Project proj = pm.getCurrentProject();
         SimConfig sc = proj.simConfigInfo.getDefaultSimConfig();
+        MpiSettings mpiSettings = new MpiSettings();
+
+        sc.setMpiConf(mpiSettings.getMpiConfiguration(MpiSettings.LOCAL_SERIAL));
+     
+        System.out.println("Running sim in serial/hoc/text data mode");
         
-        
-        System.out.println("Running sim in serial mode");
-        
-                
         pm.doGenerate(sc.getName(), 1234);
         
         int wait = 1000;
@@ -331,7 +405,7 @@ public class NeuronFileManagerTest {
         System.out.println("Project: "+ proj.getProjectFileName()+" loaded and "
                 +numGenSerial+" cells generated using: "+ sc.getMpiConf());
         
-        String simNameSerial = "TestSim";
+        String simNameSerial = "Test";
         
         proj.simulationParameters.setReference(simNameSerial);
         
@@ -339,6 +413,8 @@ public class NeuronFileManagerTest {
         
         if (simDirSerial.exists())
             simDirSerial.delete();
+
+        proj.neuronSettings.setDataSaveFormat(DataSaveFormat.TEXT_NC);
         
         proj.neuronSettings.setGraphicsMode(NeuronSettings.GraphicsMode.NO_CONSOLE);
         proj.neuronSettings.setVarTimeStep(false);
@@ -349,18 +425,15 @@ public class NeuronFileManagerTest {
         
         File mainHoc = proj.neuronFileManager.getMainHocFile();
         
-        
         assertTrue(mainHoc.exists());
         
         System.out.println("Created hoc files, including: "+mainHoc);
-        
         
         ProcessManager prm = new ProcessManager(mainHoc);
         
         boolean success = prm.compileFileWithNeuron(true, false);
         
         assertTrue(success);
-        
         
         System.out.println("Compiled NEURON files: "+ success);
         
@@ -397,118 +470,146 @@ public class NeuronFileManagerTest {
         
         assertEquals(numRecordings, numGenSerial);
         
-        
 
-        System.out.println("Running sim in parallel mode");
-        
-        MpiSettings mpis = new MpiSettings();
-        sc.setMpiConf(mpis.getMpiConfiguration(MpiSettings.LOCAL_4PROC));
-        
-                
+
+        //////////////////////////////////////////////////////////////////////////
+
+        String suffix = "_hoc";
+        if (runMode==NeuronFileManager.RUN_PYTHON_XML)
+            suffix = "_py_xml";
+        else if(runMode == NeuronFileManager.RUN_PYTHON_HDF5)
+            suffix = "_py_h5";
+
+        if (parallel)
+            suffix = suffix + "__par";
+        else
+            suffix = suffix + "__ser";
+
+        if (dsf.equals(DataSaveFormat.TEXT_NC))
+            suffix = suffix + "__textD";
+        else
+            suffix = suffix + "__h5D";
+
+        System.out.println("Running SAME sim in (parallel/h5 data/python) mode");
+
+        if (parallel)
+            sc.setMpiConf(mpiSettings.getMpiConfiguration(MpiSettings.LOCAL_4PROC));
+
+
         pm.doGenerate(sc.getName(), 1234);
-        
+
         wait = 1000;  // Give longer to set up parallel
-        
+
         while(pm.isGenerating())
         {
             Thread.sleep(wait);
         }
-        
+
         int numGenParallel = proj.generatedCellPositions.getNumberInAllCellGroups();
-        
+
         System.out.println("Project: "+ proj.getProjectFileName()+" loaded and "
                 +numGenParallel+" cells generated using: "+ sc.getMpiConf());
-        
+
         assertEquals(numGenParallel, numGenSerial);
+
+
+        String simNameParallel0 = "Test"+suffix;
+
+        proj.simulationParameters.setReference(simNameParallel0);
+
+        File simDirParallel0 = new File(ProjectStructure.getSimulationsDir(proj.getProjectMainDirectory()), simNameParallel0);
+
+        if (simDirParallel0.exists())
+            simDirParallel0.delete();
         
-        
-        String simNameParallel = "TestSimParallel";
-        
-        proj.simulationParameters.setReference(simNameParallel);
-        
-        File simDirParallel = new File(ProjectStructure.getSimulationsDir(proj.getProjectMainDirectory()), simNameParallel);
-        
-        if (simDirParallel.exists())
-            simDirParallel.delete();
+        proj.neuronSettings.setDataSaveFormat(dsf);
 
         proj.neuronSettings.setGraphicsMode(NeuronSettings.GraphicsMode.NO_CONSOLE);
         proj.neuronSettings.setVarTimeStep(false);
-        
+
         proj.neuronFileManager.setQuitAfterRun(true);
-        
-        proj.neuronFileManager.generateTheNeuronFiles(sc, null, NeuronFileManager.RUN_HOC, 1234);
-        
+
+        proj.neuronFileManager.generateTheNeuronFiles(sc, null, runMode, 1234);
+
         mainHoc = proj.neuronFileManager.getMainHocFile();
-        
-        
+
+
         assertTrue(mainHoc.exists());
-        
+
         System.out.println("Created hoc files, including: "+mainHoc);
-        
-        
+
+
         prm = new ProcessManager(mainHoc);
-        
+
         success = prm.compileFileWithNeuron(true, false);
-        
+
         assertTrue(success);
-        
-        
+
+
         System.out.println("Compiled NEURON files: "+ success);
-        
+
         pm.doRunNeuron(sc);
-        
+
         System.out.println("Run NEURON files");
-        
-        
-        SimulationData simDataParallel = new SimulationData(simDirParallel, false);
-        
-        timesFile = simDataParallel.getTimesFile();
-        
+
+
+        SimulationData simDataParallel0 = new SimulationData(simDirParallel0, false);
+
+        timesFile = simDataParallel0.getTimesFile();
+
 
         while (!timesFile.exists())
         {
             System.out.println("Waiting for file to be created: "+ timesFile.getAbsolutePath());
             Thread.sleep(wait);
         }
-        
-        assertTrue(timesFile.exists());
-        
-        simDataParallel.initialise();
 
-        while(!simDataParallel.isDataLoaded())
+        assertTrue(timesFile.exists());
+
+        simDataParallel0.initialise();
+
+        while(!simDataParallel0.isDataLoaded())
         {
             System.out.println("Waiting for data to be loaded");
             Thread.sleep(wait);
         }
-        
-        numRecordings = simDataParallel.getCellSegRefs(false).size();
-        
+
+        numRecordings = simDataParallel0.getCellSegRefs(false).size();
+
         assertEquals(numRecordings, numGenParallel);
-        
-        System.out.println("Have found "+ numRecordings+" recordings in dir: "+ simDataParallel.getSimulationDirectory().getAbsolutePath());
-        
+
+        System.out.println("Have found "+ numRecordings+" recordings in dir: "+ simDataParallel0.getSimulationDirectory().getAbsolutePath());
+
         for(String cg: sc.getCellGroups())
         {
             for(int j=0;j<proj.generatedCellPositions.getNumberInCellGroup(cg);j++)
             {
                 String ref = SimulationData.getCellRef(cg, j);
-                
+
                 double[] voltsSerial = simDataSerial.getVoltageAtAllTimes(ref);
-                double[] voltsParallel = simDataParallel.getVoltageAtAllTimes(ref);
+                double[] voltsParallel = simDataParallel0.getVoltageAtAllTimes(ref);
 
                 assertEquals(voltsParallel.length, voltsSerial.length);
 
+                double tolerance = 0;
+
+                if (dsf.equals(DataSaveFormat.HDF5_NC))
+                    tolerance = 0.0001;
+
+                if (runMode == NeuronFileManager.RUN_PYTHON_HDF5)
+                    tolerance = 0.002;
+
                 for(int i=0;i<voltsSerial.length;i++)
                 {
-                    assertEquals(voltsParallel[i], voltsSerial[i], 0);
+                    assertEquals("Checking point "+i+" of cell ref: "+ref+", tolerance: "+tolerance+"mV in "+simNameParallel0, voltsParallel[i], voltsSerial[i], tolerance);
                 }
-                System.out.println("Parallel data agrees with serial for: "+ref);
+                System.out.println("Parallel data agrees exactly with serial for: "+ref);
             }
         }
-        
-        
-    }
-    
+
+
+     }
+
 
      public static void main(String[] args)
      {
