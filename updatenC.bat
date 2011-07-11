@@ -9,6 +9,7 @@ set NML_EX_DIR=templates\xmlTemplates\Examples
 set NML_SC_DIR=templates\xmlTemplates\Schemata
 set SBML2NEU_SC_DIR=templates\SBML2NEURON
 set LEMS_SC_DIR=lems
+set NEUROML2_DIR=NeuroML2
 
 set NC_EXAMPLES=nCexamples
 set NC_MODELS=nCmodels
@@ -40,6 +41,13 @@ if not exist %LEMS_SC_DIR% (
 )
 echo Updating the LEMS/NeuroML 2 files from the NeuroML Sourceforge repository...
 svn update %LEMS_SC_DIR%
+
+
+if not exist %NEUROML2_DIR% (
+    svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/NeuroML2 %NEUROML2_DIR%
+)
+echo Updating the NeuroML 2 files from the NeuroML Sourceforge repository...
+svn update %NEUROML2_DIR%
 
     
 
