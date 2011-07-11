@@ -20,6 +20,7 @@ REM   *** ASKING FOR MORE MEMORY THAN HALF MAX ON WINDOWS HAS LED TO THE APPLICA
 set NC_MAX_MEMORY=500M 
 
 set NC_VERSION=1.5.1
+set LIB_NEUROML_VERSION=2.0.0
 set LEMS_VERSION=0.8.0
 
 REM ##########################################################################
@@ -54,10 +55,11 @@ set J3D_DIR=%NC_HOME%/lib/j3d
 set J3D_JARS=%J3D_DIR%/j3dcore.jar;%J3D_DIR%/j3dutils.jar;%J3D_DIR%/vecmath.jar
 
 REM Location of jars for LEMS
-set LEMS_JAR=%NC_HOME%/lems/lems-%LEMS_VERSION%.jar
+set LIB_NEUROML_JAR=%NC_HOME%/NeuroML2/lems-%LIB_NEUROML_VERSION%.jar
+set LEMS_JAR=%NC_HOME%/NeuroML2/lib/lems/lems-%LEMS_VERSION%.jar
 if not exist %LEMS_JAR% goto WARN_LEMS
 
-set CLASSPATH=%NC_HOME%/neuroConstruct_%NC_VERSION%.jar;%H5_JARS%;%J3D_JARS%;%NC_HOME%/lib/jython/jython.jar;%LEMS_JAR%
+set CLASSPATH=%NC_HOME%/neuroConstruct_%NC_VERSION%.jar;%H5_JARS%;%J3D_JARS%;%NC_HOME%/lib/jython/jython.jar;%LEMS_JAR%;%LIB_NEUROML_JAR%
 
 
 set JAVA_LIBRARY_PATH=%H5_DIR%/win%JDK_ARCH%;%J3D_DIR%/win%JDK_ARCH%

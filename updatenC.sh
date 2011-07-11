@@ -37,8 +37,9 @@ echo "Updating the SBML2NEURON files from the NeuroML Sourceforge repository..."
 svn update $SBML2NEU_SC_DIR
 
 
-if [ ! -d $LEMS_DIR ]; then
-    svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/DemoVer2.0/lems $LEMS_DIR
+if [ -d $LEMS_DIR ]; then
+    echo "Moving old lems directory to lems_old, as everything needed for NeuroML 2/LEMS is in the NeuroML2 folder"
+    mv $LEMS_DIR lems_old
 fi
 
 echo "Updating the LEMS/NeuroML 2 files from the NeuroML Sourceforge repository..."
