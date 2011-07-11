@@ -366,7 +366,7 @@ public class MpiConfiguration
         scriptText.append("\n");
         scriptText.append("echo \"Going to zip files into \"$zipFile\n");
         scriptText.append("\n");
-        scriptText.append("tar czvf $zipFile *.mod *.hoc *.p *.g *.props *.dat *.sh *.py *.xml *.h5\n");
+        scriptText.append("tar czvf $zipFile *.mod *.hoc *.p *.g *.props *.dat *.sh *.py *.xml *.h5 *Utils\n");
         scriptText.append("\n");
 
         scriptText.append("echo \"Going to send to: $simDir on $remoteUser@$remoteHost\"\n");

@@ -177,8 +177,7 @@ public class GeneralUtils
 
 
 
-    public static void printMemory(boolean forcePrint)
-    {
+    public static void printMemory(boolean forcePrint) {
         Runtime rt = Runtime.getRuntime();
         long maxMemory = rt.maxMemory();
         long totalMemory = rt.totalMemory();
@@ -186,31 +185,33 @@ public class GeneralUtils
 
         long currUsed = totalMemory - freeMemory;
 
-        String summary = "Max memory: " + maxMemory / 1000000l
-            + "MB , total memory available: " + totalMemory / 1000000l
-            + "MB (" + ( (float) totalMemory * 100 / maxMemory) + "% of max), free memory: " + freeMemory / 1000000l
-            + "MB, used: " + (currUsed / 1000l) / 1000f + "MB (" + (currUsed * 10000 / totalMemory) / 100f + "% of avail)";
+        String summary = "\n    Max memory: " + maxMemory / 1000000f
+            + "MB , total avail: " + totalMemory / 1000000f
+            + "MB (" + ((float) totalMemory * 100f / maxMemory) + "% of max), free: " + freeMemory / 1000000f
+            + "MB, used: " + (currUsed / 1000) / 1000f + "MB (" + (currUsed * 10000f / totalMemory) / 100f + "% of avail)";
 
-        if (forcePrint) System.out.println(summary);
-        else logger.logComment(summary);
 
-         long currTime = System.currentTimeMillis();
+        long currTime = System.currentTimeMillis();
 
-         if (lastTimeMemoryMeasured>0)
-         {
-             long increase = (currUsed - lastMeasuredMemory);
+        String change = "";
 
-             String change = "Change in mem usage since "
-                 + (currTime - lastTimeMemoryMeasured)
-                 + "ms ago: " + increase
-                 + ",  " + (increase > 0 ? "+" : "") + ( (float) increase / (float) lastMeasuredMemory) * 100 + "%";
+        if (lastTimeMemoryMeasured > 0) {
+            float increase = (currUsed - lastMeasuredMemory);
 
-             if (forcePrint) System.out.println(change);
-             else logger.logComment(change);
-         }
+            change = "\n    Change in mem usage since "
+                + (currTime - lastTimeMemoryMeasured)
+                + "ms ago: " + (increase/ 1000000f)
+                + "MB,  " + (increase > 0 ? "+" : "") + ((float) increase / (float) lastMeasuredMemory) * 100 + "%";
+        }
 
-         lastTimeMemoryMeasured = currTime;
-         lastMeasuredMemory = currUsed;
+        if (forcePrint) {
+            System.out.println(summary + change + "\n");
+        } else {
+            logger.logComment(summary + change + "\n");
+        }
+
+        lastTimeMemoryMeasured = currTime;
+        lastMeasuredMemory = currUsed;
     }
 
     /*

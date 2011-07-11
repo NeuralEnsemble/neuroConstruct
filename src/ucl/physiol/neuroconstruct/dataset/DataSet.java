@@ -25,6 +25,8 @@
  */
 
 package ucl.physiol.neuroconstruct.dataset;
+
+
 import  java.util.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.awt.*;
@@ -372,7 +374,7 @@ public class DataSet
     @Override
     public String toString()
     {
-        StringBuffer sb = new StringBuffer("DataSet: "+this.getReference()+" [");
+        StringBuilder sb = new StringBuilder("DataSet: "+this.getReference()+" [");
 
         if (numberValidPoints>=1)
         {
@@ -485,61 +487,6 @@ public class DataSet
     }
 
 
-    public static void main(String[] args) throws DataSetException
-    {
-
-
-        double minX = 3;
-        double maxX = 8;
-        int numPoints = 90;
-
-        DataSet data1 = new DataSet("data1", "test data");
-
-        data1.setGraphColour(Color.CYAN);
-
-        data1.setGraphFormat(PlotCanvas.USE_LINES_FOR_PLOT);
-
-        long start = System.currentTimeMillis();
-
-        for (int i = 0; i < numPoints; i++)
-        {
-            double x = minX + (maxX-minX)*((double)i/(numPoints-1));
-            double y1 = 3*Math.sin(x*33);
-            data1.addPoint(x,y1);
-        }
-
-
-
-        System.out.println("Time taken to build data set: "+(System.currentTimeMillis()-start));
-
-        System.out.println("First point: "+ data1.getPoint(0)[0]+", "+ data1.getPoint(0)[1]);
-        System.out.println("Second point: "+ data1.getPoint(1)[0]+", "+ data1.getPoint(1)[1]);
-        System.out.println("Max x: "+ data1.getMaxX());
-        System.out.println("Max y: "+ data1.getMaxY()[1]);
-        System.out.println("Min x: "+ data1.getMinX());
-        System.out.println("Min y: "+ data1.getMinY());
-      //  System.out.println("toString: " + data1.toString());
-        System.out.println("getXSpacing: "+ data1.getXSpacing());
-
-
-        start = System.currentTimeMillis();
-
-        int numPointsInData = data1.getNumberPoints();
-
-        for (int i = 0; i < numPointsInData; i++)
-        {
-            double[] nextPoint = data1.getPoint(i);
-            System.out.println("nextPoint: ("+ nextPoint[0]+", "+ nextPoint[1]+"]");
-        }
-
-        System.out.println("Time taken to parse data set: "+(System.currentTimeMillis()-start)); 
-        
-        PlotterFrame plotFrame = PlotManager.getPlotterFrame("Test Plotter Frame");
-        
-        plotFrame.addDataSet(data1);
-        
-        //plotFrame
-    }
 
 
     public String getXUnit()
@@ -636,7 +583,7 @@ public class DataSet
 
     public String getSafeReference()
     {
-        String refNew = new String(reference);
+        String refNew = reference;
         refNew = GeneralUtils.replaceAllTokens(refNew, " ", "_");
         refNew = GeneralUtils.replaceAllTokens(refNew, "(", "");
         refNew = GeneralUtils.replaceAllTokens(refNew, ")", "");
@@ -659,5 +606,66 @@ public class DataSet
         this.dataSetFile = dataSetFile;
     }
 
+    public static void main(String[] args) throws DataSetException
+    {
+        GeneralUtils.printMemory(true);
+
+        double minX = 3;
+        double maxX = 8;
+        int numPoints = 100000;
+
+        DataSet data1 = new DataSet("data1", "test data");
+
+        data1.setGraphColour(Color.CYAN);
+
+        data1.setGraphFormat(PlotCanvas.USE_LINES_FOR_PLOT);
+
+        long start = System.currentTimeMillis();
+
+        //System.
+
+        for (int i = 0; i < numPoints; i++)
+        {
+            double x = minX + (maxX-minX)*((double)i/(numPoints-1));
+            double y1 = 3*Math.sin(x*13);
+            data1.addPoint(x,y1);
+        }
+
+        GeneralUtils.printMemory(true);
+
+
+
+        System.out.println("Time taken to build data set: "+(System.currentTimeMillis()-start));
+
+        System.out.println("First point: "+ data1.getPoint(0)[0]+", "+ data1.getPoint(0)[1]);
+        System.out.println("Second point: "+ data1.getPoint(1)[0]+", "+ data1.getPoint(1)[1]);
+        System.out.println("Max x: "+ data1.getMaxX()[0]);
+        System.out.println("Max y: "+ data1.getMaxY()[1]);
+        System.out.println("Min x: "+ data1.getMinX()[0]);
+        System.out.println("Min y: "+ data1.getMinY()[1]);
+      //  System.out.println("toString: " + data1.toString());
+        System.out.println("getXSpacing: "+ data1.getXSpacing());
+
+
+        start = System.currentTimeMillis();
+
+        int numPointsInData = data1.getNumberPoints();
+
+        for (int i = 0; i < numPointsInData; i++)
+        {
+            double[] nextPoint = data1.getPoint(i);
+            //System.out.println("nextPoint: ("+ nextPoint[0]+", "+ nextPoint[1]+"]");
+        }
+
+        System.out.println("Time taken to parse data set: "+(System.currentTimeMillis()-start));
+
+        PlotterFrame plotFrame = PlotManager.getPlotterFrame("Test Plotter Frame");
+
+        GeneralUtils.printMemory(true);
+
+        plotFrame.addDataSet(data1);
+
+        GeneralUtils.printMemory(true);
+    }
 
 }

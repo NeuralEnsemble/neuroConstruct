@@ -58,6 +58,14 @@ public class DataStore
      */
     private PostSynapticObject pso = null;
 
+    private boolean containsSpikeTimes = false;
+
+    private double spikingVal = 1;
+    private double nonSpikingVal = 0;
+
+    private double startTime = 0;
+    private double endTime = 100;
+    private double timeStep = 0.01;
 
 
     public DataStore(double[] dataPoints,
@@ -78,23 +86,92 @@ public class DataStore
         this.yUnit = yUnit;
         this.pso = pso;
 
+        containsSpikeTimes = false;
+
         refreshMaxMin();
+    }
+
+    public DataStore(double[] spikeTimes,
+                     double nonSpikingVal,
+                     double spikingVal,
+                     double startTime,
+                     double endTime,
+                     double timeStep,
+                     String cellGroupName,
+                     int cellNumber,
+                     int segId,
+                     String variable,
+                     String xUnit,
+                     String yUnit,
+                     PostSynapticObject pso)
+    {
+        this.dataPoints = spikeTimes;
+
+        this.spikingVal = spikingVal;
+        this.nonSpikingVal = nonSpikingVal;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.timeStep = timeStep;
+
+        this.cellGroupName = cellGroupName;
+        this.cellNumber = cellNumber;
+        this.segId = segId;
+        this.variable = variable;
+        this.xUnit = xUnit;
+        this.yUnit = yUnit;
+        this.pso = pso;
+
+        containsSpikeTimes = true;
+
+        refreshMaxMin();
+    }
+
+    public boolean isSpikeTimes()
+    {
+        return containsSpikeTimes;
     }
 
     public void setDataPoints(double[] dataPoints)
     {
         this.dataPoints = dataPoints;
+        containsSpikeTimes = false;
+        refreshMaxMin();
+    }
+
+    public void setSpikeTimes(double[] spikeTimes,
+                              double nonSpikingVal,
+                              double spikingVal,
+                              double startTime,
+                              double endTime,
+                              double timeStep)
+    {
+        this.dataPoints = spikeTimes;
+        this.spikingVal = spikingVal;
+        this.nonSpikingVal = nonSpikingVal;
+        this.nonSpikingVal = nonSpikingVal;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.timeStep = timeStep;
+        containsSpikeTimes = true;
         refreshMaxMin();
     }
 
     private void refreshMaxMin()
     {
-        maxVal = -1* Double.MAX_VALUE;
-        minVal = Double.MAX_VALUE;
-        for (int i = 0; i < dataPoints.length; i++)
+        if (containsSpikeTimes)
         {
-            if (dataPoints[i]>maxVal) maxVal = dataPoints[i];
-            if (dataPoints[i]<minVal) minVal = dataPoints[i];
+            maxVal = Math.max(spikingVal, nonSpikingVal);
+            minVal = Math.min(spikingVal, nonSpikingVal);
+        }
+        else
+        {
+            maxVal = -1* Double.MAX_VALUE;
+            minVal = Double.MAX_VALUE;
+            for (int i = 0; i < dataPoints.length; i++)
+            {
+                if (dataPoints[i]>maxVal) maxVal = dataPoints[i];
+                if (dataPoints[i]<minVal) minVal = dataPoints[i];
+            }
         }
     }
 
@@ -136,7 +213,21 @@ public class DataStore
 
     public double[] getDataPoints()
     {
-        return dataPoints;
+        if (!containsSpikeTimes)
+        {
+            return dataPoints;
+        }
+        else
+        {
+            double[] continuous 
+                = SimulationData.convertSpikeTimesToContinuous(this.dataPoints, 
+                                                               this.startTime, 
+                                                               this.endTime, 
+                                                               this.timeStep, 
+                                                               this.nonSpikingVal,
+                                                               this.spikingVal);
+            return continuous;
+        }
     }
 
 

@@ -51,9 +51,9 @@ import ucl.physiol.neuroconstruct.hpc.utils.ProcessManager;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.*;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
 
-import org.neuroml.lems.sim.*;
-import org.neuroml.lems.export.*;
-import org.neuroml.lems.type.Component;
+import org.lemsml.sim.*;
+import org.neuroml.exporters.*;
+import org.lemsml.type.Component;
 
 /**
  * Main file for generating the script files for NEURON
@@ -244,6 +244,8 @@ public class NeuronFileManager
             if (isRunModePythonBased(runMode))
             {
                 File pyNmlUtils = ProjectStructure.getPythonNeuroMLUtilsDir(project.getProjectMainDirectory());
+                //System.out.println("pyNmlUtils: "+pyNmlUtils.getAbsolutePath());
+                //System.out.println("pyNmlUtils: "+pyNmlUtils.getCanonicalPath());
 
                 File pyNeuUtils = ProjectStructure.getPythonNeuronUtilsDir(project.getProjectMainDirectory());
                 
@@ -3320,7 +3322,7 @@ public class NeuronFileManager
 
                                             String modFile = NeuronWriter.generateModFile(comp);
 
-                                            String origName = comp.getComponentClass().getName();
+                                            String origName = comp.getComponentType().getName();
                                             String newName = "MOD_"+cellMechanism.getInstanceName();
 
                                             modFile = modFile.replaceAll(origName, newName);

@@ -34,7 +34,7 @@ import org.junit.runner.*;
 import ucl.physiol.neuroconstruct.project.ProjectStructure;
 import static org.junit.Assert.*;
 
-import org.neuroml.lems.sim.Sim;
+import org.lemsml.sim.Sim;
 
 /**
  *

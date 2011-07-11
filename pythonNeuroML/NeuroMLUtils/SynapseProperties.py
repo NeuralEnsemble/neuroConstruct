@@ -1,5 +1,5 @@
           
-class SynapseProperties():
+class SynapseProperties:
 
     internalDelay = 0   # default from NetworkML.xsd
     preDelay = 0        # default from NetworkML.xsd

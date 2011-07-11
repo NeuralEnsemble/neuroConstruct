@@ -196,6 +196,11 @@ public class SimulationData
         times = readDataFileToArray(getTimesFile(), timeConversionFactor);
         logger.logComment("There are "+times.length+" entries in the time file");
 
+        double startTime = times[0];
+        double endTime = times[times.length-1];
+        double timeStepToUse = (endTime-startTime)/(times.length-1);
+
+
         //GeneralUtils.timeCheck("Starting reading voltages");
 
         File[] cellDataFiles = dataDirectory.listFiles(
@@ -255,10 +260,13 @@ public class SimulationData
                     {
                         if (ds.getVariable().indexOf(SimPlot.SPIKE)>=0)
                         {
+                            double[] spikeTimes = ds.getDataPoints();
+                            ds.setSpikeTimes(spikeTimes, NON_SPIKING_VOLTAGE, SPIKING_VOLTAGE, startTime, endTime, timeStepToUse);
+                            /*
                             logger.logComment("Going to convert spikes DataStore to vector of volt vals: "+ds);
                             double[] spikeTimes = ds.getDataPoints();
                             double[] data = convertSpikeTimesToContinuous(spikeTimes, times, NON_SPIKING_VOLTAGE, SPIKING_VOLTAGE, timeConversionFactor);
-                            ds.setDataPoints(data);
+                            ds.setDataPoints(data);*/
                         }
                         dataSources.add(ds);
                     }
@@ -411,8 +419,21 @@ public class SimulationData
                 }
                 else
                 {
-                    double[] spikeArray = readSpikesToArray(cellDataFiles[fileIndex], times, timeConversionFactor);
-                    DataStore ds = new DataStore(spikeArray, cellGroup, cellNum, segId, variable, xUnit, yUnit, pso);
+                    double[] spikeTimes = readDataFileToArray(cellDataFiles[fileIndex], timeConversionFactor);
+                    DataStore ds = new DataStore(spikeTimes,
+                                                 NON_SPIKING_VOLTAGE,
+                                                 SPIKING_VOLTAGE,
+                                                 startTime,
+                                                 endTime,
+                                                 timeStepToUse,
+                                                 cellGroup,
+                                                 cellNum,
+                                                 segId,
+                                                 variable,
+                                                 xUnit,
+                                                 yUnit,
+                                                 pso);
+
 
                     dataSources.add(ds);
                 }
@@ -769,7 +790,7 @@ public class SimulationData
     }
 
 
-
+/*
     public static double[] readSpikesToArray(File spikeFile, double[] times, double timeConversionFactor) throws SimulationDataException
     {
         logger.logComment("Reading spikes from file: "+ spikeFile);
@@ -833,7 +854,7 @@ public class SimulationData
                     data[timeStep] = nonSpikingVal;
                     insideSpike = false;
                 }
-            }*/
+            }
 
 
             //System.out.println("Read in "+data.length+" values. First: "+data[0]+", last: "+data[data.length-1] );
@@ -848,7 +869,7 @@ public class SimulationData
             throw new SimulationDataException("Error reading line: ("+nextLine+") from file: "+ spikeFile.getAbsolutePath(), ne);
         }
 
-    }
+    }*/
 
     public static double[] convertSpikeTimesToContinuous(double[] spikeTimes, double[] times, double nonSpikingVal, double spikingVal, double timeConversionFactor)
     {
@@ -883,6 +904,47 @@ public class SimulationData
                 data[timeStep] = nonSpikingVal;
                 insideSpike = false;
             }
+        }
+        return data;
+    }
+
+    public static double[] convertSpikeTimesToContinuous(double[] spikeTimes, double startTime, double endTime, double timeStep, double nonSpikingVal, double spikingVal)
+    {
+        int numPoints = (int)(Math.floor(endTime-startTime)/timeStep)+1;
+        double[] data = new double[numPoints];
+        int spikeCount = 0;
+
+        boolean insideSpike = false;
+
+        logger.logComment("------------------------checking "+numPoints+" time points", true);
+        double time = startTime;
+
+        for (int i = 0; i < numPoints; i++)
+        {
+            float timeF = (float)time;
+
+            if (spikeCount < spikeTimes.length && timeF >= (float)(spikeTimes[spikeCount]))
+            {
+                if (!insideSpike)
+                {
+                    data[i] = spikingVal;
+                    logger.logComment("Spike time "+spikeTimes[spikeCount]+", spike# "+spikeCount+" found at "+ time +" ("+timeF+"), data# "+i);
+                    spikeCount++;
+                    insideSpike = true;
+                }
+                else
+                {
+                    data[i] = nonSpikingVal;
+                    spikeCount++;
+                }
+            }
+            else
+            {
+                data[i] = nonSpikingVal;
+                insideSpike = false;
+            }
+
+            time = time + timeStep;
         }
         return data;
     }

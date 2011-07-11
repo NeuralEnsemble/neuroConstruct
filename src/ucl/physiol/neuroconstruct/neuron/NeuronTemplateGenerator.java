@@ -31,10 +31,10 @@ import java.util.*;
 
 import javax.vecmath.*;
 
-import org.neuroml.lems.sim.*;
-import org.neuroml.lems.util.*;
-import org.neuroml.lems.export.*;
-import org.neuroml.lems.type.*;
+import org.lemsml.sim.*;
+import org.lemsml.util.*;
+import org.lemsml.type.*;
+import org.neuroml.exporters.*;
 
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
@@ -1142,7 +1142,7 @@ public class NeuronTemplateGenerator
                                 
                                 logger.logComment("Found component: " + comp, true);
 
-                                if (comp.getComponentClass().isOrExtends(NeuroMLConstants.NEUROML2_ABST_CELL_MEMB_POT_CAP))
+                                if (comp.getComponentType().isOrExtends(NeuroMLConstants.NEUROML2_ABST_CELL_MEMB_POT_CAP))
                                 {
                                     String cap = comp.getParamValue(NeuroMLConstants.NEUROML2_ABST_CELL_MEMB_POT_CAP__C).stringValue();
                                     float capacitance =  (float)UnitConverter.getCapacitance(Float.parseFloat(cap),

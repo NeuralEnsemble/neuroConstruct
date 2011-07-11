@@ -89,7 +89,7 @@ public class SimulationDataTest
     }
 
     @Test
-    public void testConvertSpikeTimesToContinuous()
+    public void testConvertSpikeTimesToContinuous1()
     {
         double[] times = new double[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
         double[] spikes = new double[]{3,6,8,12};
@@ -108,6 +108,44 @@ public class SimulationDataTest
                 System.out.println("Spike match...");
                 if (spikeNum < spikes.length-1)
                     spikeNum++;
+            }
+            else
+            {
+                assertEquals(volts[i], non, 0);
+            }
+        }
+
+    }
+
+    @Test
+    public void testConvertSpikeTimesToContinuous2()
+    {
+        double[] spikes = new double[]{100.333,103,106.999,108};
+
+        int non = 0;
+        int spi = 1;
+        double start = 100;
+        double end = 110;
+        double step = 0.1;
+
+        int expNum = 1+ (int)Math.floor((end-start)/step);
+
+
+        double[] volts = SimulationData.convertSpikeTimesToContinuous(spikes, start, end, step, non, spi);
+
+
+        assertEquals(volts.length, expNum, 0);
+
+        int spikeNum = 0;
+        for (int i=0;i<expNum;i++){
+            double time = start + (i*step);
+
+            System.out.println("Time: "+time+/*", next spike: "+spikes[spikeNum]+*/" volt: "+volts[i]);
+            if (spikeNum<spikes.length && time >=spikes[spikeNum])
+            {
+                assertEquals(volts[i], spi, 0);
+                System.out.println("Spike match...");
+                spikeNum++;
             }
             else
             {

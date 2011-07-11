@@ -23,8 +23,6 @@
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
 
-
-  <import file="lems/build.xml"/>  
   
   <target name="init">
   
@@ -115,7 +113,9 @@
     <property name="jar.file" value="${build.dir}/${name}_${version}.jar"/>
 
 
-    <property name="lems.jar.file" value="./lems/lems-0.8.0.jar"/>
+    <property name="libneuroml.dir" value="./NeuroML2"/>
+    <property name="libneuroml.jar.file" value="${libneuroml.dir}/libNeuroML-2.0.0.jar"/>
+    <property name="lems.jar.file" value="${libneuroml.dir}/lib/lems/lems-0.8.1.jar"/>
 
     <filter token="year" value="${year}"/>
     <filter token="version" value="${version}"/>
@@ -138,6 +138,7 @@
         <fileset dir="${junit.libs}">
           <include name="*.jar"/>
         </fileset>
+        <pathelement location="${libneuroml.jar.file}"/>
         <pathelement location="${lems.jar.file}"/>
 
     </path>
@@ -150,6 +151,28 @@
     
     <echo>Initialised neuroConstruct project to build jar: ${jar.file}</echo>
 
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Builds the libNeuroML jar                                        -->
+  <!-- =================================================================== -->
+
+
+  <target name="libneuromljar">
+    <echo>Building the libNeuroML jar: ${libneuroml.jar.file}</echo>
+    <!--TODO-->
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Cleans the libNeuroML dir                                        -->
+  <!-- =================================================================== -->
+
+
+  <target name="cleannml">
+    <echo>Cleaning the libNeuroML...</echo>
+    <!--TODO-->
   </target>
 
 
@@ -169,7 +192,7 @@
   <!-- Compiles the source directory                                       -->
   <!-- =================================================================== -->
 
-  <target name="compile" depends="prepare, lemsjar" description="Compiles the source code">
+  <target name="compile" depends="prepare, libneuromljar" description="Compiles the source code">
 
     <javac srcdir="${src.dir}"
            destdir="${build.dest}"
@@ -269,9 +292,7 @@
   <target name="clean" depends="init"
           description="Removes built files">
     <delete dir="${build.dest}"/>
-    <mkdir dir="${build.dest}"/>
     <delete dir="${dist.dir}"/>
-    <mkdir dir="${dist.dir}"/>
     <delete file="${jar.file}"/>
   </target>
   
@@ -638,15 +659,15 @@
         </fileset>
       </copy>
 
-      <mkdir dir="${temp_ver.dir}/lems"/>
-      <copy todir="${temp_ver.dir}/lems">
-        <fileset dir="lems">
+      <mkdir dir="${temp_ver.dir}/NeuroML2"/>
+      <copy todir="${temp_ver.dir}/NeuroML2">
+        <fileset dir="NeuroML2">
               <include name="**/*"/>
               <exclude name="**/simulations"/>
         </fileset>
       </copy>
-      <delete dir="${temp_ver.dir}/lems/build"/>
-      <delete dir="${temp_ver.dir}/lems/docs"/>
+      <delete dir="${temp_ver.dir}/NeuroML2/build"/>
+      <delete dir="${temp_ver.dir}/NeuroML2/docs"/>
 
       <mkdir dir="${temp_ver.dir}/pythonNeuroML"/>
       <copy todir="${temp_ver.dir}/pythonNeuroML">

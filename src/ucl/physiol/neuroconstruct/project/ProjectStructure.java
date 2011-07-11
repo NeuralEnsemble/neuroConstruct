@@ -647,7 +647,7 @@ public class ProjectStructure
 
     public static File getPythonNeuroMLDir(File projectDir)
     {
-        return getDirandReadme(new File("."), 
+        return getDirandReadme(getnCHome(),
                                pythonNeuroMLDir, 
                                "This is the directory for some Python utility files.\n", 
                                true);
