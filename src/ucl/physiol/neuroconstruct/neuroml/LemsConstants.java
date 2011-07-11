@@ -58,7 +58,7 @@ public class LemsConstants
     public static String LENGTH_ATTR = "length";
     public static String STEP_ATTR = "step";
     public static String TARGET_ATTR = "target";
-    public static String REPORT_ATTR = "report";
+    public static String REPORT_FILE_ATTR = "reportFile";
     public static String TIMES_FILE_ATTR = "timesFile";
 
     public static String DISPLAY_ELEMENT = "Display";

@@ -713,12 +713,12 @@ public class NeuroMLFileManager
             File summaryFile = new File(simDir, "simulator.props");
             String repFile = summaryFile.getAbsolutePath();
             repFile = repFile.replaceAll("\\\\", "\\\\\\\\");
-            simEl.addAttribute(LemsConstants.REPORT_ATTR, repFile);
+            defRunElement.addAttribute(LemsConstants.REPORT_FILE_ATTR, repFile);
 
             File timesFile = new File(simDir, "time.dat");
             String timesFilename =  timesFile.getAbsolutePath();
             timesFilename = timesFilename.replaceAll("\\\\", "\\\\\\\\");
-            simEl.addAttribute(LemsConstants.TIMES_FILE_ATTR,timesFilename);
+            defRunElement.addAttribute(LemsConstants.TIMES_FILE_ATTR,timesFilename);
 
             simDir.mkdir();
             
@@ -868,20 +868,20 @@ public class NeuroMLFileManager
             GeneralUtils.writeShortFile(lemsFile, lemsElement.getXMLString("", false));
 
             String runFileName = "runsim.sh";
-            String lemsExeName = "./lems";
+            String nml2ExeName = "./nml2";
 
             if (GeneralUtils.isWindowsBasedPlatform())
             {
                 runFileName = "runsim.bat";
-                lemsExeName = ProjectStructure.getLemsDir().getAbsolutePath() + "\\lems.bat";
+                nml2ExeName = ProjectStructure.getNeuroML2Dir().getAbsolutePath() + "\\nml2.bat";
             }
 
             File runFile = new File(generateDir, runFileName);
 
             StringBuilder runScript = new StringBuilder();
-            runScript.append("cd "+ProjectStructure.getLemsDir().getAbsolutePath()+"\n");
+            runScript.append("cd "+ProjectStructure.getNeuroML2Dir().getAbsolutePath()+"\n");
 
-            runScript.append(lemsExeName + " "+lemsFile.getAbsolutePath());
+            runScript.append(nml2ExeName + " "+lemsFile.getAbsolutePath());
 
             if (lemsOption.equals(LemsOption.GENERATE_GRAPH))
                 runScript.append(" -graph");
@@ -906,9 +906,9 @@ public class NeuroMLFileManager
 
             if (GeneralUtils.isWindowsBasedPlatform())
             {
-                executable = GeneralProperties.getExecutableCommandLine() + " "+ lemsExeName+" "+lemsFile.getAbsolutePath();
+                executable = GeneralProperties.getExecutableCommandLine() + " "+ nml2ExeName+" "+lemsFile.getAbsolutePath();
             }
-            File dirToRunIn = ProjectStructure.getLemsDir();
+            File dirToRunIn = ProjectStructure.getNeuroML2Dir();
 
 
             File positionsFile = new File(simDir, SimulationData.POSITION_DATA_FILE);
@@ -1068,7 +1068,7 @@ public class NeuroMLFileManager
         System.out.println("Testing NeuroMLFileManager...");
         try
         {
-            File projFile = new File("lems/nCproject/LemsTest/LemsTest.ncx");
+            File projFile = new File("nCexamples/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
             //projFile = new File("models/VSCSGranCell/VSCSGranCell.neuro.xml");
             //projFile = new File("nCmodels/RothmanEtAl_KoleEtAl_PyrCell/RothmanEtAl_KoleEtAl_PyrCell.ncx");
             //projFile = new File("../nC_projects/Thaal/Thaal.ncx");

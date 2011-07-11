@@ -1133,7 +1133,7 @@ public class NeuronTemplateGenerator
 
                             try
                             {
-                                StringInclusionReader.addSearchPath(ProjectStructure.getLemsDir());
+                                StringInclusionReader.addSearchPath(ProjectStructure.getNeuroML2Dir());
                                 Sim sim = new Sim(contents);
 
                                 sim.readModel();

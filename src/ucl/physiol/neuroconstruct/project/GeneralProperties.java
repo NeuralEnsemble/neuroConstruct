@@ -736,7 +736,7 @@ public class GeneralProperties
      */
     public static File getNeuroMLv2SchemaFile()
     {
-        return new File("lems/Schemas/NeuroML2/NeuroML_v2alpha.xsd");
+        return new File("NeuroML2/Schemas/NeuroML2/NeuroML_v2alpha.xsd");
     }
 
 

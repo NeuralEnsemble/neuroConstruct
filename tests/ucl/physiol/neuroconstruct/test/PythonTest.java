@@ -55,11 +55,12 @@ public class PythonTest
 
 
      
-    @Test public void testLems()
+    @Test public void testNeuroML2()
     {
-        String projFileName = "lems/nCproject/LemsTest/LemsTest.ncx";
+        String projFileName = "nCexamples/Ex10_NeuroML2/Ex10_NeuroML2.ncx";
         checkPythonScripts(projFileName, "RunTestsHH");
         checkPythonScripts(projFileName, "RunTestsNML2ionChan");
+        checkPythonScripts(projFileName, "RunTestsDest");
     }
  
     @Test public void testGranuleCell()
