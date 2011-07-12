@@ -21,7 +21,7 @@ set NC_MAX_MEMORY=500M
 
 set NC_VERSION=1.5.1
 set LIB_NEUROML_VERSION=2.0.0
-set LEMS_VERSION=0.8.0
+set LEMS_VERSION=0.8.1
 
 REM ##########################################################################
 
@@ -55,7 +55,7 @@ set J3D_DIR=%NC_HOME%/lib/j3d
 set J3D_JARS=%J3D_DIR%/j3dcore.jar;%J3D_DIR%/j3dutils.jar;%J3D_DIR%/vecmath.jar
 
 REM Location of jars for LEMS
-set LIB_NEUROML_JAR=%NC_HOME%/NeuroML2/lems-%LIB_NEUROML_VERSION%.jar
+set LIB_NEUROML_JAR=%NC_HOME%/NeuroML2/libNeuroML-%LIB_NEUROML_VERSION%.jar
 set LEMS_JAR=%NC_HOME%/NeuroML2/lib/lems/lems-%LEMS_VERSION%.jar
 if not exist %LEMS_JAR% goto WARN_LEMS
 
