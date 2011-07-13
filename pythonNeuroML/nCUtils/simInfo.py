@@ -38,6 +38,16 @@ def getName(line):
 
     return line.split("=")[0].strip()
 
+
+def timeInfo(secVal):
+    time = float(secVal)
+    if time<60:
+        return "%g secs"% (time)
+    elif time<3600:
+        return "%g mins"% (time/60)
+    else:
+        return "%g hours"% (time/3600)
+
 print
 
 for currDir in dirs:
@@ -109,16 +119,12 @@ for currDir in dirs:
 
             for line in simulatorInfo:
                 if 'RealSimulationTime' in line:
-                     time = float(getValue(line))/60
-                     if time<120:
-                         print "  Sim time:            %g mins"% (time)
-                     else:
-                         time = time/60
-                         print "  Sim time:            %g hours"% (time)
+                    print "  Sim time:            %s"% timeInfo(getValue(line))
+                if 'SimulationSetupTime' in line:
+                    print "  Setup time:          %s"% timeInfo(getValue(line))
                 if 'NumberHosts' in line:
                     print "  Number of hosts:     %s"% (getValue(line))
                 if 'Host=' in line:
                     print "  Hosts:               %s"% (getValue(line))
 
     print
-
