@@ -47,9 +47,9 @@ class NetworkMLStruct:
         self.projUnits = projUnits
     
         
-    def addProjection(self, projectionName, source, target):
+    def addProjection(self, projectionName, source, target, projSize=-1):
         
-        newProj = Projection(projectionName, source, target)
+        newProj = Projection(projectionName, source, target, projSize)
         self.projections.append(newProj)
         return newProj
     
@@ -257,12 +257,16 @@ class Instance:
         
 class Projection:
     
-    def __init__(self, projectionName, source, target):
+    def __init__(self, projectionName, source, target, size=-1):
         self.projName = projectionName
         self.source = source
         self.target = target
         self.synapses = []
-        self.connections = []
+
+        if size>0:
+            self.connections = [None]*size
+        else:
+            self.connections = []
         
         
     def addSynapse(self, synapseType, weight, threshold, internalDelay=0, preDelay=0, postDelay=0, propDelay=0):

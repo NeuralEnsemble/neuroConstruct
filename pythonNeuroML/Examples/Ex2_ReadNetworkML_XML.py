@@ -15,6 +15,7 @@
 import sys
 import xml
 import xml.sax
+import time
 
 import logging
  
@@ -23,10 +24,12 @@ sys.path.append("../NeuroMLUtils")
 from NetworkHolder import NetworkHolder
 from NetworkMLSaxHandler import NetworkMLSaxHandler
 
-file_name = 'random.nml'
+file_name = 'small.nml'
+#file_name = 'Generated.net.xml'
 
 logging.basicConfig(level=logging.INFO, format="%(name)-19s %(levelname)-5s - %(message)s")
 
+start = time.time()
 
 print("Going to read contents of a NetworkML file: "+str(file_name))
 
@@ -43,7 +46,8 @@ parser.setContentHandler(curHandler) # Tells the parser to invoke the NetworkMLS
 
 parser.parse(open(file_name)) # The parser opens the file and ultimately the appropriate functions in NetworkHolder get called
 
-print("Have read in contents of file: "+str(file_name))
+end = time.time()
+print("Have read in contents of file: %s in %f seconds"%(file_name, (end-start)))
 
 print (str(nmlHolder.nmlNet))
 

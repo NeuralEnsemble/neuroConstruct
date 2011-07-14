@@ -106,7 +106,7 @@ for currDir in dirs:
             if 'Script format' in line:
                 print "  Script format:       %s"%getValue(line)
             if 'Net connections' in line:
-                print "  Net connections:      %s"%getValue(line)
+                print "  Net connections:     %s"%getValue(line)
             if '"Parallel configuration"' in line:
                 print "  Parallel config:     %s"%getValue(line)
             if 'caling' in line:

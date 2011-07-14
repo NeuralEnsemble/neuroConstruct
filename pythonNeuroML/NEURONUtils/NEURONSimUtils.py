@@ -75,8 +75,8 @@ class NetManagerNEURON(NetworkHandler):
             
             self.log.info("Creating population: "+cellGroup+", cell type: "+cellType+sizeInfo)
 
-            self.executeHoc("n_"+cellGroup+" = "+ str(size))
-            self.executeHoc("n_"+cellGroup+"_local = 0")
+            self.executeHoc("{ n_"+cellGroup+" = "+ str(size)+" }")
+            self.executeHoc("{ n_"+cellGroup+"_local = 0 } ")
             self.executeHoc("objectvar a_"+cellGroup+"[n_"+cellGroup+"]")
 
         else:
@@ -106,13 +106,32 @@ class NetManagerNEURON(NetworkHandler):
         
         self.h.allCells.append(newCell)
 
-        self.executeHoc("n_"+cellGroup+"_local = n_"+cellGroup+"_local + 1")
+        self.executeHoc("{n_"+cellGroup+"_local = n_"+cellGroup+"_local + 1}")
         
         self.log.debug("Have just created cell: "+ newCell.reference+" at ("+str(x)+", "+str(y)+", "+str(z)+")")
         
         if self.isParallel == 1:
-            self.executeHoc("pnm.register_cell(getCellGlobalId(\""+cellGroup+"\", "+id+"), "+cellInArray+")")
-        
+            self.executeHoc("{ pnm.register_cell(getCellGlobalId(\""+cellGroup+"\", "+id+"), "+cellInArray+") }")
+
+    #
+    #  Should be overridden to create cell group/population array
+    #
+    def handleProjection(self, projName, source, target, synapseTypes, size=-1):
+
+        if (size>=0):
+            sizeInfo = " size: "+ str(size)+ " connections."
+        else:
+            raise Exception('Note: XML & H5 NetworkML files MUST specify the size of the connections so that NEURON can create arrays of synapse objects!')
+
+
+        self.log.info("Projection: "+projName+" from "+source+" to "+target+" with "+sizeInfo)
+        for synapseType in synapseTypes.keys():
+
+            synObjName = projName+"_"+synapseType+"["+str(size)+"]"
+            self.log.info("Creating array for syns: "+synObjName)
+
+            self.executeHoc("objref "+synObjName)
+
         
     #
     #  Overridden from NetworkHandler
@@ -133,7 +152,8 @@ class NetManagerNEURON(NetworkHandler):
         
         #self.printConnectionInformation(projName, id, source, target, synapseType, preCellId, postCellId, localWeight)
           
-        
+
+        self.log.debug("\n           --------------------------------------------------------------")
         self.log.debug("Going to create a connection of type " +projName+", id: "+str(id)+", synapse type: "+synapseType)
         self.log.debug("From: "+source+", id: "+str(preCellId)+", segment: "+str(preSegId)+", fraction: "+str(preFract))
         self.log.debug("To  : "+target+", id: "+str(postCellId)+", segment: "+str(postSegId)+", fraction: "+str(postFract))
@@ -158,9 +178,9 @@ class NetManagerNEURON(NetworkHandler):
         if self.h.isCellOnNode(str(target), int(postCellId)) == 1:
             self.log.debug("++++++++++++ PostCell: "+targetCell+" is on this host...")
         
-            synObjName = projName+"_"+synapseType+"_"+str(id)
+            synObjName = projName+"_"+synapseType+"["+str(id)+"]"
             
-            self.executeHoc("objref "+synObjName)
+            ##########self.executeHoc("objref "+synObjName)
             self.executeHoc("{ "+targetCell+".accessSectionForSegId("+str(postSegId)+") }")
                 
             self.executeHoc("{ "+"fractSecPost = "+targetCell+".getFractAlongSection("+str(postFract)+", "+str(postSegId)+") }")
@@ -194,8 +214,6 @@ class NetManagerNEURON(NetworkHandler):
             netConRef = "NetCon_"+str(self.globalPreSynId)
             netConRefTemp = netConRef+"_temp"
             
-            self.executeHoc("objref "+netConRef)
-            self.executeHoc("objref "+netConRefTemp)
             
             preCellSegRef = str(sourceCell+"_"+str(preSegId))
             
@@ -211,19 +229,20 @@ class NetManagerNEURON(NetworkHandler):
                 
             if self.h.isCellOnNode(str(source), int(preCellId)) == 1: 
                 self.log.debug("++++++++++++ PreCell: "+sourceCell+" is here!!")
-           
+
+                self.executeHoc("objref "+netConRef)
                 if  gidToUse == self.globalPreSynId:  # First time use of gid so create NetCon
                     
-                    self.executeHoc(sourceCell+".accessSectionForSegId("+str(preSegId)+")")
+                    self.executeHoc("{ "+sourceCell+".accessSectionForSegId("+str(preSegId)+")"+" }")
                     
-                    self.executeHoc("pnm.pc.set_gid2node("+str(gidToUse)+", hostid)")
-                    self.executeHoc(netConRef+" = new NetCon(&v("+str(preFract) +"), nil)")
+                    self.executeHoc("{ "+"pnm.pc.set_gid2node("+str(gidToUse)+", hostid)"+" }")
+                    self.executeHoc("{ "+netConRef+" = new NetCon(&v("+str(preFract) +"), nil)"+" }")
                     
-                    self.executeHoc(netConRef+".delay = "+str(delayTotal))
-                    self.executeHoc(netConRef+".weight = "+str(localWeight))
-                    self.executeHoc(netConRef+".threshold = "+str(localThreshold))
+                    self.executeHoc("{ "+netConRef+".delay = "+str(delayTotal)+" }")
+                    self.executeHoc("{ "+netConRef+".weight = "+str(localWeight)+" }")
+                    self.executeHoc("{ "+netConRef+".threshold = "+str(localThreshold)+" }")
                     
-                    self.executeHoc("pnm.pc.cell("+str(gidToUse)+", "+netConRef+")")
+                    self.executeHoc("{ "+"pnm.pc.cell("+str(gidToUse)+", "+netConRef+")"+" }")
                     
           
                 
@@ -235,11 +254,12 @@ class NetManagerNEURON(NetworkHandler):
             
             
             if self.isParallel == 1 and self.h.isCellOnNode(str(target), int(postCellId)) == 1:
+                self.executeHoc("objref "+netConRefTemp)
                 self.executeHoc(netConRefTemp+" = pnm.pc.gid_connect("+str(gidToUse)+","+targetCell+".synlist.object(localSynapseId))")
            
-                self.executeHoc(netConRefTemp+".delay = "+str(delayTotal))
-                self.executeHoc(netConRefTemp+".weight = "+str(localWeight))
-                self.executeHoc(netConRefTemp+".threshold = "+str(localThreshold))
+                self.executeHoc("{ "+netConRefTemp+".delay = "+str(delayTotal)+" }")
+                self.executeHoc("{ "+netConRefTemp+".weight = "+str(localWeight)+" }")
+                self.executeHoc("{ "+netConRefTemp+".threshold = "+str(localThreshold)+" }")
                 
             
             #self.executeHoc("netConInfoParallel("+netConRef+")")

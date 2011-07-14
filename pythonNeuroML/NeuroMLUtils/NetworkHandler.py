@@ -40,7 +40,7 @@ class NetworkHandler:
     #  Internal info method, can be reused in overriding classes for debugging
     #        
     def printConnectionInformation(self,  projName, id, source, target, synapseType, preCellId, postCellId, weight):
-        self.log.info("Connection "+str(id)+" of: "+projName+": cell "+str(preCellId)+" in "+source \
+        self.log.debug("Connection "+str(id)+" of: "+projName+": cell "+str(preCellId)+" in "+source \
                               +" -> cell "+str(postCellId)+" in "+target+", syn: "+ str(synapseType)+", weight: "+str(weight))
         
          
@@ -49,7 +49,7 @@ class NetworkHandler:
     #        
     def printInputInformation(self, inputName, cellGroup, inputProps, size=-1):
         sizeInfo = " size: "+ str(size)+ " cells"
-        self.log.info("Input Source: "+inputName+", on population: "+cellGroup+sizeInfo+" with props: "+ str(inputProps))
+        self.log.debug("Input Source: "+inputName+", on population: "+cellGroup+sizeInfo+" with props: "+ str(inputProps))
         
     
 
@@ -71,7 +71,20 @@ class NetworkHandler:
     def handleLocation(self, id, cellGroup, cellType, x, y, z):
         self.printLocationInformation(id, cellGroup, cellType, x, y, z)
         
-            
+
+
+    #
+    #  Should be overridden to create cell group/population array
+    #
+    def handleProjection(self, projName, source, target, synapseTypes, size=-1):
+
+        sizeInfo = " as yet unspecified size"
+        if (size>=0):
+            sizeInfo = " size: "+ str(size)+ " connections"
+
+        self.log.info("Projection: "+projName+" from "+source+" to "+target+" with syns: "+str(synapseTypes)+" with "+sizeInfo)
+
+
     #
     #  Should be overridden to handle network connection
     #  
@@ -116,7 +129,7 @@ class NetworkHandler:
     #  Should be overridden to to connect each input to the target cell
     #  
     def handleSingleInput(self, inputName, cellId, segId = 0, fract = 0.5):
-        self.log.info("Input : %s, cellId: %i, seg: %i, fract: %f" % (inputName,cellId,segId,fract))
+        self.log.debug("Input : %s, cellId: %i, seg: %i, fract: %f" % (inputName,cellId,segId,fract))
         
         
     #

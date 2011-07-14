@@ -103,6 +103,12 @@ class NetworkMLHDF5Handler():
     elif self.currentProjectionName!="":
         self.log.debug("Using data for proj: "+ self.currentProjectionName)
         self.log.debug("Size is: "+str(d.shape[0])+" rows of: "+ str(d.shape[1])+ " entries")
+
+        self.netHandler.handleProjection(self.currentProjectionName,
+                                         self.currentProjectionSource,
+                                         self.currentProjectionTarget,
+                                         self.globalSynapseProps,
+                                         d.shape[0])
         
 
         indexId = -1
@@ -152,47 +158,49 @@ class NetworkMLHDF5Handler():
         self.log.debug("Cols: Id: %d precell: %d, postcell: %d, pre fract: %d, post fract: %d" % (indexId, indexPreCellId, indexPostCellId, indexPreFractAlong, indexPostFractAlong))
         
         self.log.debug("Extra cols: "+str(extraParamIndices) )
+        #print d[5,:]
         
         
         for i in range(0, d.shape[0]):
-          
+            row = d[i,:]
             localSynapseProps = {}
             synTypes = self.globalSynapseProps.keys()
             for synType in synTypes:
                 localSynapseProps[synType] = self.globalSynapseProps[synType].copy()
             
-            id =  int(d[i,indexId])
+            id =  int(row[indexId])
             
-            preCellId =  d[i,indexPreCellId]
+            preCellId =  row[indexPreCellId]
             
             if indexPreSegId >= 0:
-              preSegId = int(d[i,indexPreSegId])
+              preSegId = int(row[indexPreSegId])
             if indexPreFractAlong >= 0:
-              preFractAlong = d[i,indexPreFractAlong]
+              preFractAlong = row[indexPreFractAlong]
             
-            postCellId =  d[i,indexPostCellId]
+            postCellId =  row[indexPostCellId]
             
             if indexPostSegId >= 0:
-              postSegId = int(d[i,indexPostSegId])
+              postSegId = int(row[indexPostSegId])
             if indexPostFractAlong >= 0:
-              postFractAlong = d[i,indexPostFractAlong]
-              
-            for synType in localSynapseProps:
-               for paramName in extraParamIndices.keys():
-                 if paramName.count(synType)>0:
-                   self.log.debug(paramName +"->"+synType)
-                   if paramName.count('weight')>0:
-                      localSynapseProps[synType].weight = d[i,extraParamIndices[paramName]]
-                   if paramName.count('internal_delay')>0:
-                      localSynapseProps[synType].internalDelay = d[i,extraParamIndices[paramName]]
-                   if paramName.count('pre_delay')>0:
-                      localSynapseProps[synType].preDelay = d[i,extraParamIndices[paramName]]
-                   if paramName.count('post_delay')>0:
-                      localSynapseProps[synType].postDelay = d[i,extraParamIndices[paramName]]
-                   if paramName.count('prop_delay')>0:
-                      localSynapseProps[synType].propDelay = d[i,extraParamIndices[paramName]]
-                   if paramName.count('threshold')>0:
-                      localSynapseProps[synType].threshold = d[i,extraParamIndices[paramName]]
+              postFractAlong = row[indexPostFractAlong]
+
+            if len(extraParamIndices)>0:
+                for synType in localSynapseProps:
+                   for paramName in extraParamIndices.keys():
+                     if paramName.count(synType)>0:
+                       self.log.debug(paramName +"->"+synType)
+                       if paramName.count('weight')>0:
+                          localSynapseProps[synType].weight = row[extraParamIndices[paramName]]
+                       if paramName.count('internal_delay')>0:
+                          localSynapseProps[synType].internalDelay = row[extraParamIndices[paramName]]
+                       if paramName.count('pre_delay')>0:
+                          localSynapseProps[synType].preDelay = row[extraParamIndices[paramName]]
+                       if paramName.count('post_delay')>0:
+                          localSynapseProps[synType].postDelay = row[extraParamIndices[paramName]]
+                       if paramName.count('prop_delay')>0:
+                          localSynapseProps[synType].propDelay = row[extraParamIndices[paramName]]
+                       if paramName.count('threshold')>0:
+                          localSynapseProps[synType].threshold = row[extraParamIndices[paramName]]
                
             
             
@@ -239,7 +247,7 @@ class NetworkMLHDF5Handler():
             if node._c_classId == 'ARRAY' and node.name == self.currPopulation:
               size = node.shape[0]
               
-        self.log.info("Found a population: "+ self.currPopulation+", cell type: "+self.currentCellType+", size: "+ str(size))  
+        self.log.debug("Found a population: "+ self.currPopulation+", cell type: "+self.currentCellType+", size: "+ str(size))
         
         self.netHandler.handlePopulation(self.currPopulation, self.currentCellType, size)
         
@@ -248,8 +256,9 @@ class NetworkMLHDF5Handler():
         self.currentProjectionName = g._v_attrs.name[0]
         self.currentProjectionSource = g._v_attrs.source[0]
         self.currentProjectionTarget = g._v_attrs.target[0]
+        self.globalSynapseProps = {}
           
-        self.log.info("------    Found a projection: "+ self.currentProjectionName+ ", from "+ self.currentProjectionSource+" to "+ self.currentProjectionTarget)  
+        self.log.debug("------    Found a projection: "+ self.currentProjectionName+ ", from "+ self.currentProjectionSource+" to "+ self.currentProjectionTarget)
     
     if g._v_name.count('synapse_props_')>=1:
       
@@ -274,11 +283,11 @@ class NetworkMLHDF5Handler():
             if attrName == "threshold":
                newSynapseProps.threshold = val[0]
                
-        self.log.info(str(newSynapseProps) ) 
+        self.log.debug(str(newSynapseProps) )
         
         self.globalSynapseProps[name] = newSynapseProps
           
-        self.log.info("Global syn props: "+ str(self.globalSynapseProps) ) 
+        self.log.debug("Global syn props: "+ str(self.globalSynapseProps) )
     
     
   def endGroup(self, g):

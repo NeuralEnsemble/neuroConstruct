@@ -144,13 +144,14 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
         if self.myNodeId >= 0:
             nodeInfo = " on node id: %d"%self.myNodeId 
         
-        self.log.info('Adding instance: ' +self.currentInstanceId+" of group: "+self.currPopulation+nodeInfo)
+        self.log.debug('Adding instance: ' +self.currentInstanceId+" of group: "+self.currPopulation+nodeInfo)
         
         self.netHandler.handleLocation(self.currentInstanceId, self.currPopulation, self.currentCellType, attrs.get('x',""),\
                                     attrs.get('y',""), \
                                     attrs.get('z',""))
     
-    
+
+
     elif name == 'projection':
       self.currentProjectionName = attrs.get('name',"")   
       self.log.debug("Found projection element: "+ self.currentProjectionName)   
@@ -172,7 +173,23 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
     elif name == 'target' and not attrs.has_key('cell_group') and not attrs.has_key('population'):
       if self.currentProjectionName != "":    
           self.isTargetElement = 1  
-          
+
+
+    elif name == 'connections':
+      if attrs.get('size',"") != "":
+          size = int(attrs.get('size',""))
+          self.netHandler.handleProjection(self.currentProjectionName,
+                                           self.currentProjectionSource,
+                                           self.currentProjectionTarget,
+                                           self.globalSynapseProps,
+                                           size)
+      else:
+          self.netHandler.handleProjection(self.currentProjectionName,
+                                           self.currentProjectionSource,
+                                           self.currentProjectionTarget,
+                                           self.globalSynapseProps)
+
+
           
     elif name == 'connection':
       if self.currentProjectionName != "":
@@ -245,7 +262,7 @@ class NetworkMLSaxHandler(xml.sax.ContentHandler):
         newSynapseProps = SynapseProperties()
 	
         if attrs.has_key('synapse_type'):
-            self.latestSynapseType = attrs.get('synapse_type')
+            self.latestSynapseType = str(attrs.get('synapse_type'))
 
             self.log.debug("synapse_type is: "+self.latestSynapseType)
 

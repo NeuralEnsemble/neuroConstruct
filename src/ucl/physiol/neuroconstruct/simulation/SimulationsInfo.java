@@ -861,6 +861,14 @@ public class SimulationsInfo extends AbstractTableModel implements TreeModel
 
         props.setProperty("Populations", pops.toString());
 
+        StringBuilder conns = new StringBuilder();
+        for (String netConn: project.generatedNetworkConnections.getNamesNonEmptyNetConns())
+        {
+            conns.append(netConn+" ("+project.generatedNetworkConnections.getSynapticConnections(netConn).size()+")  ");
+        }
+
+        props.setProperty("Net connections", conns.toString());
+
         props.setProperty("Simulator", simulator);
 
         props.setProperty("Simulation temp", project.simulationParameters.getTemperature()+"");

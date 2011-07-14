@@ -31,7 +31,7 @@ class NetworkHolder(NetworkHandler):
     #    
     def handlePopulation(self, cellGroup, cellType, size):
       
-        self.nmlNet.addPopulation(cellGroup, cellType)
+        newPop = self.nmlNet.addPopulation(cellGroup, cellType)
         
         if (size>=0):
             sizeInfo = ", size "+ str(size)+ " cells"
@@ -50,7 +50,20 @@ class NetworkHolder(NetworkHandler):
         self.printLocationInformation(id, cellGroup, cellType, x, y, z)
         
         self.nmlNet.getPopulation(cellGroup).addInstance(x,y,z)
-                
+          
+    #
+    #  Overridden from NetworkHandler
+    #
+    def handleProjection(self, projName, source, target, synapseTypes, size=-1):
+
+        proj = self.nmlNet.addProjection(projName, source, target, size)
+
+        sizeInfo = " as yet unspecified size"
+        if (size>=0):
+            sizeInfo = " size: "+ str(size)+ " connections"
+
+        self.log.info("Projection: "+projName+" from "+source+" to "+target+" with syns: "+str(synapseTypes.keys())+" with "+sizeInfo)
+     
         
     #
     #  Overridden from NetworkHandler

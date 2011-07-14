@@ -916,7 +916,7 @@ public class SimulationData
 
         boolean insideSpike = false;
 
-        logger.logComment("------------------------checking "+numPoints+" time points", true);
+        logger.logComment("------------------------checking "+numPoints+" time points");
         double time = startTime;
 
         for (int i = 0; i < numPoints; i++)

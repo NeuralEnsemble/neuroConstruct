@@ -15,7 +15,8 @@
 import sys
 
 import logging
- 
+import time
+
 sys.path.append("../NeuroMLUtils")
 
 from NetworkHolder import NetworkHolder
@@ -24,10 +25,12 @@ from NetworkHolder import NetworkHolder
 from NetworkMLHDF5Handler import NetworkMLHDF5Handler
 
 file_name = 'GranCellLayer.h5'
+#file_name = 'Generated.net.h5'
 
 logging.basicConfig(level=logging.INFO, format="%(name)-19s %(levelname)-5s - %(message)s")
 
 
+start = time.time()
 print("Going to read contents of a HDF5 NetworkML file: "+str(file_name))
 
 
@@ -40,7 +43,8 @@ curHandler.setNodeId(-1)    # Flags to handle cell info for all nodes, as oppose
 curHandler.parse(file_name)
 
 
-print("Have read in contents of file: "+str(file_name))
+end = time.time()
+print("Have read in contents of file: %s in %f seconds"%(file_name, (end-start)))
 
 print (str(nmlHandler.nmlNet))
 

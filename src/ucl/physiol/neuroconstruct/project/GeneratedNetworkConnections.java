@@ -954,6 +954,8 @@ public class GeneratedNetworkConnections
                 SimpleXMLElement connsElement = new SimpleXMLElement(NetworkMLConstants.CONNECTIONS_ELEMENT);
                 projectionElement.addChildElement(connsElement);
 
+                connsElement.addAttribute(NetworkMLConstants.CONNECTIONS_SIZE_ATTR, ""+synConns.size());
+
                 int id = 0;
 
                 for(SingleSynapticConnection synConn: synConns)

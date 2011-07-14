@@ -116,6 +116,8 @@ public class NetworkMLConstants
 
 
     public static String CONNECTIONS_ELEMENT = "connections";
+    public static String CONNECTIONS_SIZE_ATTR = "size";
+
     public static String CONNECTION_ELEMENT = "connection";
 
     public static String CONNECTION_ID_ATTR = "id";
