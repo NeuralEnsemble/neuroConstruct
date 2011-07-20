@@ -297,7 +297,7 @@ public class MpiConfiguration
 
         boolean isNeuron = simulator.equals(KnownSimulators.NEURON) || simulator.equals(KnownSimulators.PY_NEURON) ;
 
-        StringBuffer scriptText = new StringBuffer();
+        StringBuilder scriptText = new StringBuilder();
 
         scriptText.append("#!/bin/bash -l\n\n");
         scriptText.append("\n");
@@ -434,7 +434,7 @@ public class MpiConfiguration
     public String getPullScript(String projName, String simRef, File localDir) throws IOException
     {
 
-        StringBuffer pullScriptText = new StringBuffer();
+        StringBuilder pullScriptText = new StringBuilder();
 
         pullScriptText.append("#!/bin/bash \n\n");
         pullScriptText.append("\n");
@@ -726,7 +726,7 @@ public class MpiConfiguration
         if (totHosts==1) hosts = "1 host, ";
         if (totProcs==1) procs = "1 processor";
 
-        StringBuffer info = new StringBuffer(name+" with "+hosts+procs);
+        StringBuilder info = new StringBuilder(name+" with "+hosts+procs);
 
         if (this.remoteLogin!=null)
         {
@@ -748,16 +748,26 @@ public class MpiConfiguration
 
     public static void main(String[] args)
     {
-        MpiConfiguration mc = new MpiConfiguration("Tester");
-        mc.getHostList().add(new MpiHost("host3", 3, 1));
-        mc.getHostList().add(new MpiHost("host4", 4, 1));
-        mc.getHostList().add(new MpiHost("host5", 5, 1));
+        MpiConfiguration mc0 = new MpiConfiguration("Tester");
+        mc0.getHostList().add(new MpiHost("host3", 3, 1));
+        mc0.getHostList().add(new MpiHost("host4", 4, 1));
+        mc0.getHostList().add(new MpiHost("host5", 5, 1));
 
         for(int num=0;num<15;num++)
         {
-            System.out.println("Glob id: "+ num+" is on "+mc.getHostForGlobalId(num) +", "+ mc.getProcForGlobalId(num));
+            System.out.println("Glob id: "+ num+" is on "+mc0.getHostForGlobalId(num) +", "+ mc0.getProcForGlobalId(num));
         }
 
-        System.out.println(mc.toString());
+        System.out.println(mc0.toString());
+
+        MpiSettings ms = new MpiSettings();
+        MpiConfiguration mc1 = ms.getMpiConfiguration(ms.MATLEM_8PROC);
+        MpiConfiguration mc2 = (MpiConfiguration)mc1.clone();
+
+        System.out.println("Eq? "+mc1.equals(mc2));
+        System.out.println(mc1.hashCode()+",  "+mc2.hashCode());
+
+
+
     }
 }

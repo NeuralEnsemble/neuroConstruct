@@ -357,7 +357,7 @@ public class MpiSettings
         {
             MpiConfiguration p = new MpiConfiguration(MATLEM_1PROC);
 
-            p.getHostList().add(new MpiHost("localhost", 1, 1));
+            p.getHostList().add(new MpiHost("node0", 1, 1));
             p.setRemoteLogin(matlemLogin);
             p.setMpiVersion(MpiSettings.OPENMPI_V2);
             p.setUseScp(true);

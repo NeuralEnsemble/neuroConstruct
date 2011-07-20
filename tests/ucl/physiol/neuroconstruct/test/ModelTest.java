@@ -31,9 +31,11 @@ import java.util.ArrayList;
 import org.junit.Test;
 import org.junit.runner.*;
 import ucl.physiol.neuroconstruct.gui.ValidityStatus;
+import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings;
 import ucl.physiol.neuroconstruct.project.Project;
 import ucl.physiol.neuroconstruct.project.ProjectFileParsingException;
 import ucl.physiol.neuroconstruct.project.ProjectManager;
+import ucl.physiol.neuroconstruct.project.SimConfig;
 import static org.junit.Assert.*;
 
 /**
@@ -220,6 +222,13 @@ public class ModelTest
         if (validity.indexOf(ValidityStatus.PROJECT_IS_VALID)<0)
         {
             fail("Project was not valid: "+ project+"\n"+validity);
+        }
+        MpiSettings ms = new MpiSettings();
+
+        for(SimConfig sc:project.simConfigInfo.getAllSimConfigs())
+        {
+            assertTrue("All MPI Confis need to be set to LOCAL_SERIAL for core projects! It's not in sim conf "+sc+" in: "+project,
+                sc.getMpiConf().equals(ms.getMpiConfiguration(MpiSettings.LOCAL_SERIAL)));
         }
 
         

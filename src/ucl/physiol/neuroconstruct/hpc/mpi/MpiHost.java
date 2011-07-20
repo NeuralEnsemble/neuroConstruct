@@ -77,6 +77,17 @@ public class MpiHost
         return true;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + (this.hostname != null ? this.hostname.hashCode() : 0);
+        hash = 29 * hash + this.numProcessors;
+        hash = 29 * hash + Float.floatToIntBits(this.weight);
+        return hash;
+    }
+
+    
+
     public String getHostname()
     {
         return this.hostname;

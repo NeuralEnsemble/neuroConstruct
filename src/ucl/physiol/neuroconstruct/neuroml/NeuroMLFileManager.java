@@ -386,7 +386,7 @@ public class NeuroMLFileManager
                                      File generateDir,
                                      boolean runInBackground) throws IOException
     {
-        logger.logComment("Starting generation of the files into dir: "+ generateDir.getCanonicalPath(), true);
+        logger.logComment("Starting generation of the files into dir: "+ generateDir.getCanonicalPath()+", version: "+version, true);
 
 
         GeneralUtils.removeAllFiles(generateDir, false, false, true);
@@ -552,7 +552,7 @@ public class NeuroMLFileManager
 
                             File newCmlFile = new File(generateDir, cm.getInstanceName()+".xml");
 
-                            if (cmlCm.getMechanismModel().indexOf("ChannelML")>=0 )
+                            if (cmlCm.getMechanismModel().indexOf("ChannelML")>=0 && version.isVersion2())
                             {
                                 newCmlFile = new File(generateDir, cm.getInstanceName()+".nml");
 

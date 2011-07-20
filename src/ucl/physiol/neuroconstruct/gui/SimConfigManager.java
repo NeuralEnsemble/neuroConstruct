@@ -665,8 +665,14 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
             this.jTextFieldSimDur.setText(simConfig.getSimDuration()+"");
             
             logger.logComment("Before selected: "+jComboBoxMpiConfs.getSelectedItem());
-            
-            jComboBoxMpiConfs.setSelectedItem(simConfig.getMpiConf());
+
+            for (int i=0;i<jComboBoxMpiConfs.getItemCount();i++)
+            {
+                if (((MpiConfiguration)jComboBoxMpiConfs.getItemAt(i)).getName().equals(simConfig.getMpiConf().getName()))
+                {
+                    jComboBoxMpiConfs.setSelectedIndex(i);
+                }
+            }
             
             logger.logComment("After selected: "+jComboBoxMpiConfs.getSelectedItem());
             

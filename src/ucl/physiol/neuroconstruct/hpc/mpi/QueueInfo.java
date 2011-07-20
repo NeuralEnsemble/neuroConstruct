@@ -232,6 +232,10 @@ public class QueueInfo
         {
             return false;
         }
+        if (!this.additionalSubOptions.equals(other.additionalSubOptions))
+        {
+            return false;
+        }
         return true;
     }
 
@@ -245,6 +249,25 @@ public class QueueInfo
         return hash;
     }
 
+    public static void main(String[] args)
+    {
+        QueueInfo qi1 = new QueueInfo(123, "submitScript", "submitScript", QueueInfo.QueueType.PBS, "submitScript");
+        QueueInfo qi2 = new QueueInfo(123, "submitScript", "submitScript", QueueInfo.QueueType.PBS, "submitScript");
+
+        System.out.println("Eq "+qi1.equals(qi2));
+        System.out.println(qi1.hashCode()+ ", "+qi2.hashCode());
+
+        qi1.addAdditionalSubOptions("fff");
+        qi2.addAdditionalSubOptions("fff");
+
+        System.out.println("Eq "+qi1.equals(qi2));
+        System.out.println(qi1.hashCode()+ ", "+qi2.hashCode());
+
+        QueueInfo qi3 = (QueueInfo)qi1.clone();
+        System.out.println("Eq "+qi1.equals(qi3));
+        System.out.println(qi1.hashCode()+ ", "+qi3.hashCode());
+
+    }
 
 
 }
