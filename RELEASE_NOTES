@@ -2,6 +2,22 @@ Release notes/change log for neuroConstruct
 
 See also the README file
 
+
+--------- Version 1.5.1 (July 2011) ---------
+
+Improvements to LEMS/NeuroML 2 integration. Added project at nCexamples/Ex10_NeuroML2/Ex10_NeuroML2.ncx
+with some examples of NeuroML 2 channels and cells which can be run with the LEMS interpreter or NEURON
+
+Made improvements to & added extra tests for saving & reloading continuous & spike train data in HDF5 format
+
+Much more efficient reloading of data if a simulation only saves spike times. Now hundreds of thousands of
+spike trains can be reloaded without filling memory (will max out memory if they're all plotted though)
+
+Fixed bug in NetStimExt: Previously could fire outside of del/dur window if average firing rate was higher
+than time window length, i.e. time of first spike was chosen as after end of duration.
+
+
+
 --------- Version 1.5.0 (Mar 2011) ---------
 
 Added preliminary export functionality for NeuroML 2. Morphologies can be exported to NeuroML v2 format, 
