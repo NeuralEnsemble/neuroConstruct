@@ -34,10 +34,10 @@
 	</Company_Info>
 	<Program_Info>
 		<Program_Name>neuroConstruct</Program_Name>
-		<Program_Version>1.4.0</Program_Version>
-		<Program_Release_Month>06</Program_Release_Month>
-		<Program_Release_Day>15</Program_Release_Day>
-		<Program_Release_Year>2010</Program_Release_Year>
+		<Program_Version>1.5.1</Program_Version>
+		<Program_Release_Month>07</Program_Release_Month>
+		<Program_Release_Day>21</Program_Release_Day>
+		<Program_Release_Year>2011</Program_Release_Year>
 		<Program_Cost_Dollars>0</Program_Cost_Dollars>
 		<Program_Cost_Other_Code />
 		<Program_Cost_Other />
@@ -51,9 +51,9 @@
 		<Program_Category_Class>Education::Science</Program_Category_Class>
 		<Program_System_Requirements />
 		<File_Info>
-			<File_Size_Bytes>40000000</File_Size_Bytes>
-			<File_Size_K>39062</File_Size_K>
-			<File_Size_MB>38.15</File_Size_MB>
+			<File_Size_Bytes>50000000</File_Size_Bytes>
+			<File_Size_K>50062</File_Size_K>
+			<File_Size_MB>50</File_Size_MB>
 		</File_Info>
 		<Expire_Info>
 			<Has_Expire_Info>N</Has_Expire_Info>

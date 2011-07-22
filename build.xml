@@ -648,6 +648,7 @@
               <include name="website/**/*.*"/>
               <include name="helpdocs/**/*.*"/>
               <include name="XML/glossary/**/*.*"/>
+              <exclude name="website/models/downloads"/>
           </fileset>
       </copy>
 
