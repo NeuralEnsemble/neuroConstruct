@@ -143,6 +143,11 @@ public class MainTest
         
         checkResults(r);
 
+        if (!r.wasSuccessful())
+        {
+            System.exit(1);
+        }
+
     }
     
     public static void checkResults(Result r)

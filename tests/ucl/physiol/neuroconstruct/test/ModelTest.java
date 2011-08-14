@@ -250,6 +250,11 @@ public class ModelTest
         r = org.junit.runner.JUnitCore.runClasses(ucl.physiol.neuroconstruct.test.ModelTest.class);
         
         MainTest.checkResults(r);
+        
+        if (!r.wasSuccessful())
+        {
+            System.exit(1);
+        }
 
     }
     

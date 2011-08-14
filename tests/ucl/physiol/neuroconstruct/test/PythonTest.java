@@ -194,6 +194,11 @@ public class PythonTest
         
         MainTest.checkResults(r);
 
+        if (!r.wasSuccessful())
+        {
+            System.exit(1);
+        }
+
     }
     
 }

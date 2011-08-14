@@ -11,7 +11,7 @@
      
 -->
 
-<project default="makejar" basedir=".">
+<project name="neuroConstruct" default="jar" basedir=".">
 
     <!-- FORREST_HOME must be set as an environment variable -->
     <property environment="env"/>
@@ -244,13 +244,17 @@
   <!-- Creates the jar file                                                -->
   <!-- =================================================================== -->
 
-  <target name="makejar" depends="compile, compiletests" description="Creates the jar file">
+  <target name="jar" depends="compile, compiletests" description="Creates the jar file">
 
     <jar jarfile="${jar.file}" basedir="${build.dest}">
         <manifest>
             <attribute name="Main-Class" value="${main.app.class}"/>
         </manifest>
     </jar>
+  </target>
+
+  <target name="makejar" depends="jar" description="Same as target jar">
+
   </target>
 
 
@@ -318,12 +322,32 @@
   <!-- Run tests                                               -->
   <!-- =================================================================== -->
 
-  <target name="test" depends="clean, makejar"
+  <target name="test" depends="clean, jar"
           description="Runs the core neuroConstruct unit tests. NEURON (incl. Parallel NEURON), GENESIS and MOOSE need to be installed for all tests to pass. Can be run using: ant test -Dsimulators='NEURON GENESIS', to limit the number of simulators tested.">
 
     <property name="simulators" value="NEURON PNEURON GENESIS MOOSE"/>
 
-    <java classname="${main.test.class}" fork="true">
+    <java classname="${main.test.class}" fork="true" failonerror="true">
+        <jvmarg value="-Xmx700M" />
+        <jvmarg value="-Xms600M" />
+        <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
+        <jvmarg value="-Dsun.java2d.noddraw=true" />
+        <jvmarg value="-Dsimulators=${simulators}" />
+        <classpath refid="run.class.path"/>
+    </java>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Run tests on core functionality                                     -->
+  <!-- =================================================================== -->
+
+  <target name="testcore" depends="clean, jar"
+          description="Runs the core neuroConstruct unit tests. ">
+
+    <property name="simulators" value=""/>
+
+    <java classname="${main.test.class}" fork="true" failonerror="true">
         <jvmarg value="-Xmx700M" />
         <jvmarg value="-Xms600M" />
         <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
@@ -340,7 +364,7 @@
   <target name="testmod" depends="clean, makejar"
           description="Runs a number of automated tests on neuroConstruct models, mainly the NeuroML based examples in nCmodels.">
 
-    <java classname="${main.testmodels.class}" fork="true">
+    <java classname="${main.testmodels.class}" fork="true" failonerror="true">
         <jvmarg value="-Xmx700M" />
         <jvmarg value="-Xms600M" />
         <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
@@ -350,13 +374,22 @@
   </target>
 
   <!-- =================================================================== -->
+  <!-- Run all tests                                                       -->
+  <!-- =================================================================== -->
+
+  <target name="testall" depends="testcore, testmod, testmodpy"
+          description="Runs all core tests as well as tests on project settings and model behaviour">
+
+  </target>
+
+  <!-- =================================================================== -->
   <!-- Run tests on Python scripts of models                                               -->
   <!-- =================================================================== -->
 
-  <target name="testmodpy" depends="clean, makejar"
+  <target name="testmodpy" depends="clean, jar"
           description="Runs a number of automated tests on Python scripts of neuroConstruct models, mainly the NeuroML based examples in nCmodels and osb.">
 
-    <java classname="${main.testmodpy.class}" fork="true">
+    <java classname="${main.testmodpy.class}" fork="true"  failonerror="true">
         <jvmarg value="-Xmx700M" />
         <jvmarg value="-Xms600M" />
         <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
@@ -369,10 +402,10 @@
   <!-- Run tests on Python scripts of models - run silently - no gui/plots!      -->
   <!-- =================================================================== -->
 
-  <target name="testmodpysil" depends="clean, makejar"
+  <target name="testmodpysil" depends="clean, jar"
           description="Runs a number of automated tests on Python scripts of neuroConstruct models, mainly the NeuroML based examples in nCmodels and osb. Runs silently - no gui/plots.">
 
-    <java classname="${main.testmodpy.class}" fork="true">
+    <java classname="${main.testmodpy.class}" fork="true"  failonerror="true">
         <jvmarg value="-Xmx700M" />
         <jvmarg value="-Xms600M" />
         <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
@@ -387,7 +420,7 @@
   <!-- Run main application                                                -->
   <!-- =================================================================== -->
 
-  <target name="run" depends="makejar"
+  <target name="run" depends="jar"
           description="Runs the main application. Use an altered value with -Xmx in the line below to run the application with extra memory. Choosing a max java heap size of about half your total physical memory is best, errors have been thrown (when 3D view is shown) when the application is run with more than this. Note: the -Dsun.java2d.noddraw=true has been added to solve problems with excessive flickering of the Swing components when showing 3D on some Windows systems">
     <java classname="${main.app.class}" fork="true">
         <jvmarg value="-Xmx700M" />
@@ -404,7 +437,7 @@
   <!-- Run main application, opening last project                          -->
   <!-- =================================================================== -->
 
-  <target name="runlast" depends="makejar"
+  <target name="runlast" depends="jar"
           description="Runs the main application, opening last project">
     <java classname="${main.app.class}" fork="true">
         <jvmarg value="-Xmx700M" />
@@ -421,11 +454,11 @@
   <!-- Run main application with lots of memory, opening last project      -->
   <!-- =================================================================== -->
 
-  <target name="runbiglast" depends="makejar"
+  <target name="runbiglast" depends="jar"
           description="Runs the main application with lots of memory, opening last project">
     <java classname="${main.app.class}" fork="true">
-        <jvmarg value="-Xmx4000M" />
-        <jvmarg value="-Xms2000M" />
+        <jvmarg value="-Xmx1500M" />
+        <jvmarg value="-Xms1500M" />
         <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
         <jvmarg value="-Dsun.java2d.noddraw=true" />
         <arg value="-lastproj"/>
@@ -439,7 +472,7 @@
   <!-- Run main application with lots of memory                            -->
   <!-- =================================================================== -->
 
-  <target name="runbig" depends="makejar"
+  <target name="runbig" depends="jar"
           description="Runs the main application with lots of memory">
     <java classname="${main.app.class}" fork="true">
         <jvmarg value="-Xmx4000M" />
@@ -456,7 +489,7 @@
   <!-- Only used inside NetBeans...                                        -->
   <!-- =================================================================== -->
 
-    <target name="profile" depends="makejar" description="Profile Project (only used inside NetBeans)">
+    <target name="profile" depends="jar" description="Profile Project (only used inside NetBeans)">
         <fail unless="netbeans.home">This target can only run inside the NetBeans IDE.</fail>
 
         <nbprofiledirect>
@@ -483,10 +516,10 @@
   <!-- Generates the xml file for Forrest from Glossary.xml                -->
   <!-- =================================================================== -->
 
-  <target name="glossary" depends="makejar"
+  <target name="glossary" depends="jar"
           description="Generates the xml file for Forrest from Glossary.xml">
     <java classname="${xml.transform.class}"
-          fork="true">
+          fork="true"  failonerror="true">
         <jvmarg value="-Xmx700M" />
         <jvmarg value="-Xms600M" />
         <arg value="${orig.glossary.file}"/>
@@ -504,9 +537,9 @@
   <!-- neuroConstruct examples                                                -->
   <!-- ====================================================================== -->
 
-  <target name="generateexamples" depends="makejar" description="Generates the xml which is used to generate the html page of standard neuroConstruct examples">
+  <target name="generateexamples" depends="jar" description="Generates the xml which is used to generate the html page of standard neuroConstruct examples">
       <java classname="${example.generate.class}"
-          fork="true">
+          fork="true"  failonerror="true">
         <jvmarg value="-Xmx700M" />
         <jvmarg value="-Xms600M" />
         <classpath refid="run.class.path"/>
@@ -553,8 +586,7 @@
           description="Generates the documentation for the help viewer inside neuroConstruct. Makes a simpler version of the docs on the website, using the same base XML">
     <mkdir dir="${helpdocs.dir}"/>
       
-    <java classname="${xml.transform.class}"
-          fork="true">
+    <java classname="${xml.transform.class}" fork="true"  failonerror="true">
         <jvmarg value="-Xmx700M" />
         <jvmarg value="-Xms600M" />
         <arg value="${orig.helpdocs.dir}"/>
@@ -577,7 +609,7 @@
   <!-- Toggles output to screen                                            -->
   <!-- =================================================================== -->
 
-  <target name="logtog" depends="makejar"
+  <target name="logtog" depends="jar"
           description="Toggles output to screen and saves the GeneralProperties setting">
     <java classname="${general.properties.class}"
           fork="true">
