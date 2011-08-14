@@ -156,7 +156,12 @@ public class GenesisFileManager
 
 
 
-
+    // using GenesisCompartmentalisation by default...
+    public void generateTheGenesisFiles(SimConfig simConfig,
+                                        int seed) throws GenesisException, IOException
+    {
+        generateTheGenesisFiles(simConfig, null, new GenesisCompartmentalisation(), seed);
+    }
     public void generateTheGenesisFiles(SimConfig simConfig,
                                         MorphCompartmentalisation mc,
                                         int seed) throws GenesisException, IOException
