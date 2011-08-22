@@ -50,9 +50,9 @@ def timeInfo(secVal):
     if time<60:
         return "%g secs"% (time)
     elif time<3600:
-        return "%g mins"% (time/60)
+        return "%g mins     (%g secs)"% (time/60.0, time)
     else:
-        return "%g hours"% (time/3600)
+        return "%g hours    (%g secs)"% (time/3600.0, time)
 
 print
 
