@@ -144,6 +144,16 @@ for currDir in dirs:
 
     print
 
-print "numProcs = "+str(numProcs)
-print "times = "+str(times)
-print times
+if justTime:
+    numProcsO = []
+    for np in numProcs:
+        numProcsO.append(np)
+    numProcsO.sort()
+    timesO = []
+    for np in numProcsO:
+        timesO.append(times[numProcs.index(np)])
+    print "numProcs = "+str(numProcsO)
+    #print "numProcs = "+str(numProcs)
+    print "times = "+str(timesO)
+
+    
