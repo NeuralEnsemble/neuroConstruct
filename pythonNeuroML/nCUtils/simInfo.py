@@ -10,7 +10,7 @@ dirs = ["./"]
 args = sys.argv
 justTime = False
 
-if sys.argv[1] == '-t':
+if len(args) > 1 and sys.argv[1] == '-t':
     args = sys.argv[1:]
     justTime = True
 
@@ -56,7 +56,8 @@ def timeInfo(secVal):
 
 print
 
-
+numProcs = []
+times = []
 
 for currDir in dirs:
 
@@ -132,11 +133,17 @@ for currDir in dirs:
             for line in simulatorInfo:
                 if 'RealSimulationTime' in line:
                     print "  Sim time:            %s"% timeInfo(getValue(line))
+                    times.append(float(getValue(line)))
                 if 'SimulationSetupTime' in line:
                     print "  Setup time:          %s"% timeInfo(getValue(line))
                 if 'NumberHosts' in line:
                     print "  Number of hosts:     %s"% (getValue(line))
+                    numProcs.append(int(getValue(line)))
                 if 'Host=' in line and not justTime:
                     print "  Hosts:               %s"% (getValue(line))
 
     print
+
+print "numProcs = "+str(numProcs)
+print "times = "+str(times)
+print times
