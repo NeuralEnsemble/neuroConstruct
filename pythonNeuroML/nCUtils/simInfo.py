@@ -7,17 +7,23 @@ import glob
 
 dirs = ["./"]
 
-if len(sys.argv) > 1:
+args = sys.argv
+justTime = False
+
+if sys.argv[1] == '-t':
+    args = sys.argv[1:]
+    justTime = True
+
+if len(args) > 1:
     dirs = []
-    for match in sys.argv[1:]:
+    for match in args[1:]:
+        #print "match: %s"%match
         if match.endswith("/"): match = match[:-1]
         #print "Searching in folder(s) matching: %s"%match
 
         matched = glob.glob(match)
         #print matched
         for m in matched: dirs.append("./"+m+"/")
-
-
 
 
 simulationInfoFilename = "simulation.props"
@@ -50,6 +56,8 @@ def timeInfo(secVal):
 
 print
 
+
+
 for currDir in dirs:
 
     if len(dirs) > 1: print "------------------------------------------------------------------\n"
@@ -64,9 +72,9 @@ for currDir in dirs:
         print "  Simulation:          %s\n"% os.path.basename(os.path.abspath(currDir))
 
         for line in simulationInfo:
-            if '"dt"' in line:
+            if '"dt"' in line and not justTime:
                 print "  dt:                  %s ms"%getValue(line)
-            if 'opulat' in line:
+            if 'opulat' in line and not justTime:
                 pops = getValue(line)
                 popInfo = "  Populations:         "
                 total = 0
@@ -101,19 +109,19 @@ for currDir in dirs:
 
 
                 print popInfo
-            if 'Duration' in line:
+            if 'Duration' in line and not justTime:
                 print "  Duration:            %s ms"%getValue(line)
-            if 'Script format' in line:
+            if 'Script format' in line and not justTime:
                 print "  Script format:       %s"%getValue(line)
-            if 'Net connections' in line:
+            if 'Net connections' in line and not justTime:
                 print "  Net connections:     %s"%getValue(line)
-            if '"Parallel configuration"' in line:
+            if '"Parallel configuration"' in line and not justTime:
                 print "  Parallel config:     %s"%getValue(line)
-            if 'caling' in line:
+            if 'caling' in line and not justTime:
                 # e.g. gabaWeightScaling
                 print "  %s:            %s"%(getName(line),getValue(line))
 
-        print
+        if  not justTime: print
         simulatorInfoFilename = "simulator.props"
 
         if not os.path.isfile(currDir+simulatorInfoFilename):
@@ -128,7 +136,7 @@ for currDir in dirs:
                     print "  Setup time:          %s"% timeInfo(getValue(line))
                 if 'NumberHosts' in line:
                     print "  Number of hosts:     %s"% (getValue(line))
-                if 'Host=' in line:
+                if 'Host=' in line and not justTime:
                     print "  Hosts:               %s"% (getValue(line))
 
     print
