@@ -93,20 +93,28 @@ for currDir in dirs:
                 netInfoFiles = ["NetworkConnections.dat", "ElectricalInputs.dat", "CellPositions.dat", "time.dat"]
 
                 dataFilesFound = 0
+                dataFilesSize = 0
                 spikeFilesFound = 0
+                spikeFilesSize = 0
                 h5FilesFound = 0
+                h5FilesSize = 0
 
                 for file in allFiles:
                     if file.endswith(".dat") and file not in netInfoFiles:
                         dataFilesFound+=1
+                        dataFilesSize += os.path.getsize(currDir+file)
                     elif file.endswith(".spike"):
                         spikeFilesFound+=1
+                        spikeFilesSize += os.path.getsize(currDir+file)
+                        #print "%f, tot %f"%(os.path.getsize(currDir+file),spikeFilesSize)
                     elif file.endswith(".h5") and not file == "Generated.net.h5":
                         h5FilesFound+=1
+                        h5FilesSize += os.path.getsize(currDir+file)
 
-                popInfo = popInfo + "\n                         Data files found:    %i"%dataFilesFound
-                popInfo = popInfo + "\n                         Spike files found:   %i"%spikeFilesFound
-                popInfo = popInfo + "\n                         HDF5 files found:    %i"%h5FilesFound
+                
+                popInfo = popInfo + "\n                         Data files found:    %i, %i bytes"%(dataFilesFound, dataFilesSize)
+                popInfo = popInfo + "\n                         Spike files found:   %i, %i bytes"%(spikeFilesFound, spikeFilesSize)
+                popInfo = popInfo + "\n                         HDF5 files found:    %i, %i bytes"%(h5FilesFound, h5FilesSize)
 
 
                 print popInfo

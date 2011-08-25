@@ -543,6 +543,7 @@ class SimulationManager():
                         suggestedRemoteRunTime =    -1,
                         saveAsHdf5 =                False,
                         saveOnlySpikes =            False,
+                        saveAllContinuous =         False,
                         runMode =                   NeuronFileManager.RUN_HOC):
 
         for sim in simulators:
@@ -563,7 +564,15 @@ class SimulationManager():
                   simPlot = self.project.simPlotInfo.getSimPlot(simPlotName)
                   if simPlot.getValuePlotted() == SimPlot.VOLTAGE:
                       simPlot.setValuePlotted(SimPlot.SPIKE)
-
+                      
+          if saveAllContinuous:
+              for simPlotName in simConfig.getPlots():
+                  simPlot = self.project.simPlotInfo.getSimPlot(simPlotName)
+                  #print simPlot
+                  if SimPlot.SPIKE in simPlot.getValuePlotted():
+                      simPlot.setValuePlotted(SimPlot.VOLTAGE)
+                  #print simPlot
+          
           if len(mpiConfigs) == 0:
               mpiConfigs = [mpiConfig]
 
@@ -609,7 +618,7 @@ class SimulationManager():
 
                 self.printver("Generated network with %i cell(s)" % self.project.generatedCellPositions.getNumberInAllCellGroups())
 
-                simRefPrefix = (simConfigName+"_").replace(' ', '')
+                simRefPrefix = (simConfigName+"_").replace(' ', '').replace(':', '')
 
                 if len(mpiConfigs) > 1:
                     simRefPrefix = simRefPrefix+(mpiConfigToUse+"_").replace(' ', '').replace('(', '_').replace(')', '_')
