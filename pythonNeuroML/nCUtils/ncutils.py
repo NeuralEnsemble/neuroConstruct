@@ -613,7 +613,7 @@ class SimulationManager():
 
                 while self.projectManager.isGenerating():
                         self.printver("Waiting for the project to be generated with Simulation Configuration: "+str(simConfig))
-                        time.sleep(0.5)
+                        time.sleep(15)
 
 
                 self.printver("Generated network with %i cell(s)" % self.project.generatedCellPositions.getNumberInAllCellGroups())
