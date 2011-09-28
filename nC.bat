@@ -57,7 +57,11 @@ set J3D_JARS=%J3D_DIR%/j3dcore.jar;%J3D_DIR%/j3dutils.jar;%J3D_DIR%/vecmath.jar
 REM Location of jars for LEMS
 set LIB_NEUROML_JAR=%NC_HOME%/NeuroML2/libNeuroML-%LIB_NEUROML_VERSION%.jar
 set LEMS_JAR=%NC_HOME%/NeuroML2/lib/lems/lems-%LEMS_VERSION%.jar
-if not exist %LEMS_JAR% goto WARN_LEMS
+if not exist %LIB_NEUROML_JAR% (
+    cd NeuroML2
+	make
+	cd ..
+)
 
 set CLASSPATH=%NC_HOME%/neuroConstruct_%NC_VERSION%.jar;%H5_JARS%;%J3D_JARS%;%NC_HOME%/lib/jython/jython.jar;%LEMS_JAR%;%LIB_NEUROML_JAR%
 
@@ -91,8 +95,5 @@ goto END
 echo The path %NC_HOME% does not exist! Please set the variable NC_HOME to the correct neuroConstruct install location in nC.bat
 goto END
 
-:WARN_LEMS
-echo The LEMS jar file (%LEMS_JAR%) has not been found! Go to the the lems subfolder and try running make.bat
-goto END
 
 :END
