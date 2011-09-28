@@ -159,21 +159,14 @@
   <!-- =================================================================== -->
 
 
-  <target name="libneuromljar">
+  <target name="libneuromljar" depends="init">
     <echo>Building the libNeuroML jar: ${libneuroml.jar.file}</echo>
+    <ant antfile="${libneuroml.dir}/build.xml" target="jarnml"/>
+
     <!--TODO-->
   </target>
 
 
-  <!-- =================================================================== -->
-  <!-- Cleans the libNeuroML dir                                        -->
-  <!-- =================================================================== -->
-
-
-  <target name="cleannml">
-    <echo>Cleaning the libNeuroML...</echo>
-    <!--TODO-->
-  </target>
 
 
 
