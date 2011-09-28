@@ -167,6 +167,16 @@
   </target>
 
 
+  <!-- =================================================================== -->
+  <!-- Cleans the libNeuroML dir                                        -->
+  <!-- =================================================================== -->
+
+
+  <target name="cleannml" depends="init">
+    <echo>Cleaning the libNeuroML...</echo>
+    <ant antfile="${libneuroml.dir}/build.xml" target="cleannml"/>
+    <!--TODO-->
+  </target>
 
 
 
