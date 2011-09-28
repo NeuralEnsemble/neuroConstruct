@@ -175,6 +175,8 @@ public class NeuronFileManager
         this.project = project;
         addComments = project.neuronSettings.isGenerateComments();
 
+        //logger.setThisClassVerbose(true);
+
     }
 
     public static boolean addComments()
@@ -2698,6 +2700,12 @@ public class NeuronFileManager
                         if (record.allCellsInGroup && !record.simPlot.isSynapticMechanism())
                         {
 
+
+                            if (simConfig.getMpiConf().isParallelNet())
+                            {
+                                response.append("if  (n_"+cellGroupName+"_local>0) { // No point in saving if no cells here...\n\n ");
+                            }
+
                             addHocComment(response, "Saving vector for segment: "
                                        + segToRecord.getSegmentName() + "(ID: " + segToRecord.getSegmentId() + ")");
 
@@ -2869,6 +2877,10 @@ public class NeuronFileManager
                                 response.append(prefix+"    " + fileObj + "[i].close()\n");
                                 response.append(post);
                                 response.append("}\n\n");
+                            }
+                            if (simConfig.getMpiConf().isParallelNet())
+                            {
+                                response.append("} // END:  if  (n_"+cellGroupName+"_local>0) \n\n");
                             }
                         }
                         else

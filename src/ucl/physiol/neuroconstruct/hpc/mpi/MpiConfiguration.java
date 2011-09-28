@@ -32,6 +32,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
 import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings.KnownSimulators;
+import ucl.physiol.neuroconstruct.utils.ClassLogger;
 import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
 
@@ -46,6 +47,8 @@ import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
 public class MpiConfiguration
 {
+    private static ClassLogger logger = new ClassLogger("MpiConfiguration");
+
     private String name = null;
 
     private RemoteLogin remoteLogin = null;
@@ -294,7 +297,7 @@ public class MpiConfiguration
 
     public String getPushScript(String projName, String simRef, KnownSimulators simulator, File dirToRunIn)
     {
-
+        logger.logComment("getPushScript for "+projName+", simRef: "+simRef+", simulator: "+simulator+", dirToRunIn: "+ dirToRunIn );
         boolean isNeuron = simulator.equals(KnownSimulators.NEURON) || simulator.equals(KnownSimulators.PY_NEURON) ;
 
         StringBuilder scriptText = new StringBuilder();
@@ -336,7 +339,7 @@ public class MpiConfiguration
             mainCmd = "mpiexec";
         }
 
-        if (queueInfo.getMpirunPath()!=null)
+        if (queueInfo!=null && queueInfo.getMpirunPath()!=null)
             mainCmd = queueInfo.getMpirunPath(); // Override any other...
 
 

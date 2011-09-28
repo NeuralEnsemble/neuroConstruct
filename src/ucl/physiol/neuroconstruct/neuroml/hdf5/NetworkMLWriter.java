@@ -98,7 +98,7 @@ public class NetworkMLWriter
         GeneratedElecInputs gei = project.generatedElecInputs;
         
         
-        StringBuffer notes = new StringBuffer("\nNetwork structure saved with neuroConstruct v"+
+        StringBuilder notes = new StringBuilder("\nNetwork structure saved with neuroConstruct v"+
                         GeneralProperties.getVersionNumber()+" on: "+ GeneralUtils.getCurrentTimeAsNiceString() +", "
                     + GeneralUtils.getCurrentDateAsNiceString()+"\n\n");
 
@@ -661,18 +661,19 @@ public class NetworkMLWriter
             
             //logger.logComment("Sys prop: "+System.getProperty("java.library.path"), true);
             
-            Project testProj = Project.loadProject(new File("examples/Ex9-GranCellLayer/Ex9-GranCellLayer.neuro.xml"),
+            Project testProj = Project.loadProject(new File("nCmodels/GranCellLayer/GranCellLayer.ncx"),
                                                    null);
 
             //File nmlFile = new File("examples/Ex9-GranCellLayer/savedNetworks/600.nml");
-            File nmlFile = new File("examples/Ex9-GranCellLayer/savedNetworks/75.nml");
+            File nmlFile = new File("nCmodels/GranCellLayer/savedNetworks/75.nml");
             //File nmlFile = new File("../copynCmodels/Parallel/savedNetworks/50000.nml");
             //File nmlFile = new File("../copynCmodels/NewGranCellLayer/savedNetworks/87000Rand.nml");
             //File nmlFile = new File("../temp/test.nml");
             //File nmlFile = new File("../copynCmodels/Parallel/savedNetworks/50000.nml");
 
 
-            //logger.logComment("Loading netml cell from " + nmlFile.getAbsolutePath(), true);
+            logger.logComment("Loading netml cell from " + nmlFile.getAbsolutePath(), true);
+            logger.logComment("Saving netml to " + h5File.getAbsolutePath(), true);
 
             GeneratedCellPositions gcp = testProj.generatedCellPositions;
             GeneratedNetworkConnections gnc = testProj.generatedNetworkConnections;

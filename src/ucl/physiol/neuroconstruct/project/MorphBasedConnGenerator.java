@@ -26,12 +26,14 @@
 
 package ucl.physiol.neuroconstruct.project;
 
+import java.io.File;
 import ucl.physiol.neuroconstruct.utils.*;
 import java.util.*;
 import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
 import javax.vecmath.*;
+import ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter;
 
 /**
  * Thread to handle generation of the morphology based network connections
@@ -44,7 +46,7 @@ import javax.vecmath.*;
 
 public class MorphBasedConnGenerator extends Thread
 {
-    ClassLogger logger = new ClassLogger("MorphBasedConnGenerator");
+    private static ClassLogger logger = new ClassLogger("MorphBasedConnGenerator");
 
     public final static String myGeneratorType = "MorphBasedConnGenerator";
 
@@ -388,6 +390,10 @@ public class MorphBasedConnGenerator extends Thread
 
                             logger.logComment("Estimated time left: "+( (1-fract) * time / ( 60f * fract) )+" mins, est total time: "+( time / ( 60f * fract) )+" mins", true);
 
+                            //////////GeneralUtils.printMemory(true);
+                            //System.gc();
+                            //GeneralUtils.printMemory(true);
+
                         }
                         else if(genStartCellNumber== numberInGenStartCellGroup-1)
                         {
@@ -621,7 +627,7 @@ public class MorphBasedConnGenerator extends Thread
                                             genFinishCellNumber = allowedFinishCells[ProjectManager.getRandomGenerator().nextInt(allowedFinishCells.length)];
 
                                             logger.logComment("--------------------------Testing if cell num: " + genFinishCellNumber +
-                                                              " is appropriate for cell number: " + genStartCellNumber);
+                                                              " is appropriate for cell number: " + genStartCellNumber+", ignoreDistance: "+ignoreDistance);
 
                                             logger.logComment("finCellsMaxedOut: " + finCellsMaxedOut);
                                             logger.logComment("availableCellsToConnectTo: " + availableCellsToConnectTo);
@@ -726,6 +732,7 @@ public class MorphBasedConnGenerator extends Thread
 
                                                 if(!ignoreDistance || nonZeroPropDelay)
                                                 {
+                                                    logger.logComment("Distancebeing calc, ignored dist: "+ ignoreDistance+", nonZeroPropDelay: "+nonZeroPropDelay);
                                                     distApart = CellTopologyHelper.getSynapticEndpointsDistance(
                                                                                             project,
                                                                                             genStartCellGroup,
@@ -756,7 +763,7 @@ public class MorphBasedConnGenerator extends Thread
                                                 if (ignoreDistance || (distForMaxMin >= maxMin.getMinLength()
                                                     && distForMaxMin <= maxMin.getMaxLength()))
                                                 {
-                                                    logger.logComment("Distance condition satisfied, ignored dist: "+ ignoreDistance);
+                                                    logger.logComment("Distance condition satisfied, ignored dist: "+ ignoreDistance+", nonZeroPropDelay: "+nonZeroPropDelay);
                                                     foundOne = true;
                                                     connDistance = distApart;
                                                 }
@@ -1218,20 +1225,7 @@ public class MorphBasedConnGenerator extends Thread
                                 ArrayList<ConnSpecificProps> props = new ArrayList<ConnSpecificProps>();
 
 
-                                float distRadial = CellTopologyHelper.getSynapticEndpointsDistance(
-                                                project,
-                                                genStartCellGroup,
-                                                new SynapticConnectionEndPoint(genStartConnPoint,
-                                                genStartCellNumber),
-                                                genFinishCellGroup,
-                                                new SynapticConnectionEndPoint(genFinishConnPoint,
-                                                genFinishCellNumber),
-                                                MaxMinLength.RADIAL);
-
-
                                 for (SynapticProperties synProp : synPropList) {
-
-
 
                                     if (!synProp.getDelayGenerator().isTypeFixedNum() || !synProp.getWeightsGenerator().isTypeFixedNum())
                                     {
@@ -1242,6 +1236,17 @@ public class MorphBasedConnGenerator extends Thread
                                         if (synProp.getWeightsGenerator().isTypeFunction()) {
 
                                             if (!synProp.getWeightsGenerator().isSomaToSoma()) {
+
+
+                                                float distRadial = CellTopologyHelper.getSynapticEndpointsDistance(
+                                                            project,
+                                                            genStartCellGroup,
+                                                            new SynapticConnectionEndPoint(genStartConnPoint,
+                                                            genStartCellNumber),
+                                                            genFinishCellGroup,
+                                                            new SynapticConnectionEndPoint(genFinishConnPoint,
+                                                            genFinishCellNumber),
+                                                            MaxMinLength.RADIAL);
 
                                                 csp.weight = synProp.getWeightsGenerator().getNextNumber(distRadial);
                                                 //System.out.println("csp.weight: " + csp.weight + ", dist " + distRadial);
@@ -1378,5 +1383,40 @@ public class MorphBasedConnGenerator extends Thread
         }
     }
 
+
+    public static void main(String[] args) throws ProjectFileParsingException, InterruptedException, NoProjectLoadedException
+    {
+
+        Project project = Project.loadProject(new File("../nC_projects/Speed/Speed.ncx"),null);
+
+        logger.logComment("Loading proj: "+ project);
+
+        ProjectManager pm = new ProjectManager(null, null);
+
+        pm.setCurrentProject(project);
+
+        //            pm.doLoadNetworkMLAndGenerate(f);
+
+        System.out.println("Loaded: "+ project.getProjectFullFileName());
+
+        ((RandomCellPackingAdapter)project.cellGroupsInfo.getCellPackingAdapter(project.cellGroupsInfo.getCellGroupNameAt(0))).setMaxNumberCells(160000);
+
+
+        pm.doGenerate(SimConfigInfo.DEFAULT_SIM_CONFIG_NAME, 123);
+
+        while (pm.isGenerating())
+        {
+            Thread.sleep(5000);
+            System.out.println("Waiting to generate...");
+        }
+
+
+        System.out.println("Total connections: "+ project.generatedNetworkConnections.getNumAllSynConns());
+
+        GeneralUtils.printMemory(true);
+        System.gc();
+        GeneralUtils.printMemory(true);
+
+    }
 
 }

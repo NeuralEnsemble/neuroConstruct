@@ -396,6 +396,9 @@ public class NumberGenerator implements Serializable
             switch (this.distributionType)
             {
                 case (FIXED_NUM):
+                    if (fixedNum==(int)fixedNum)
+                        return (int)fixedNum+"";
+                    else
                     return this.fixedNum+"";
                 case (RANDOM_NUM):
                     return (  this.min + " -> " + this.max);
@@ -412,7 +415,10 @@ public class NumberGenerator implements Serializable
             switch (this.distributionType)
             {
                 case (FIXED_NUM):
-                    return (this.fixedNum + "");
+                    if (fixedNum==(int)fixedNum)
+                        return (int)fixedNum+"";
+                    else
+                    return this.fixedNum+"";
                 case (RANDOM_NUM):
                     return ( this.min + " -> " + this.max + " (int)");
                 case (GAUSSIAN_NUM):

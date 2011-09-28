@@ -62,6 +62,15 @@ pm.saveNetworkStructureXML(myProject, myNetworkMLFile, 0, 0, simConfig.getName()
 
 print "Network structure saved to file: "+ myNetworkMLFile.getAbsolutePath()
 
+import sys
+
+print sys.argv
+
+if len(sys.argv) > 1 and sys.argv[1]=='-h':
+    myNetworkMLH5File = File("TestPython/savedNetworks/nmlt.h5")
+
+    pm.saveNetworkStructureHDF5(myProject, myNetworkMLH5File, simConfig.getName(), "Physiological Units")
+    print "Network structure also saved to file: "+ myNetworkMLH5File.getAbsolutePath()
 
 System.exit(0)
 
