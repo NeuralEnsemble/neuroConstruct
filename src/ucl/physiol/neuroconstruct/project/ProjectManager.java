@@ -1338,18 +1338,19 @@ public class ProjectManager implements GenerationReport
 
         SimpleXMLElement root = new SimpleXMLElement("sedML");
 
-        root.addNamespace(new SimpleXMLNamespace("", "http://www.miase.org/"));
+        root.addNamespace(new SimpleXMLNamespace("", "http://sed-ml.org/"));
 
 
         root.addNamespace(new SimpleXMLNamespace(NeuroMLConstants.XSI_PREFIX,
                                                             NeuroMLConstants.XSI_URI));
 
         root.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC,
-                                                 "http://www.miase.org/   ../../../templates/SBML2NEURON/SED-ML/sedml-version-0-release-1.xsd"));
+                                                 "http://sed-ml.org/   ../../../NeuroML2/Schemas/SED-ML/sed-ml-L1-V1.xsd"));
 
 
 
-        root.addAttribute("version", "0.1");
+        root.addAttribute("version", "1");
+        root.addAttribute("level", "1");
 
         sedMlDoc.addRootElement(root);
 
@@ -1375,11 +1376,18 @@ public class ProjectManager implements GenerationReport
 
 
         SimpleXMLElement simulation = new SimpleXMLElement("uniformTimeCourse");
+        simulation.addAttribute("id", "utc1");
         simulation.addAttribute("initialTime", "0");
         simulation.addAttribute("outputStartTime", "0");
         simulation.addAttribute("outputEndTime", simConfig.getSimDuration()+"");
         int numPoints = (int)(simConfig.getSimDuration()/project.simulationParameters.getDt());
         simulation.addAttribute("numberOfPoints", numPoints+"");
+        
+        
+        SimpleXMLElement algorithm = new SimpleXMLElement("algorithm");
+        algorithm.addAttribute("kisaoID", "KISAO:0000030");
+        
+        simulation.addChildElement(algorithm);
 
         listOfSimulations.addContent("\n        ");
         listOfSimulations.addChildElement(simulation);
@@ -1388,9 +1396,9 @@ public class ProjectManager implements GenerationReport
 
 
         SimpleXMLElement model = new SimpleXMLElement("model");
-        model.addAttribute("type", "NeuroML");
+        model.addAttribute("language", "urn:sedml:language:neuroml");
         model.addAttribute("source", project.getProjectFileName());
-        model.addAttribute("name", project.getProjectName());
+        model.addAttribute("id", project.getProjectName());
 
         listOfModels.addContent("\n        ");
         listOfModels.addChildElement(model);
@@ -1399,7 +1407,7 @@ public class ProjectManager implements GenerationReport
 
         SimpleXMLElement task = new SimpleXMLElement("task");
         task.addAttribute("simulationReference", project.simulationParameters.getReference());
-        task.addAttribute("name", "RUN_"+project.simulationParameters.getReference());
+        task.addAttribute("id", "RUN_"+project.simulationParameters.getReference());
         task.addAttribute("modelReference", project.getProjectName());
 
         listOfTasks.addContent("\n        ");
@@ -1410,7 +1418,7 @@ public class ProjectManager implements GenerationReport
         {
 
             SimpleXMLElement dg = new SimpleXMLElement("dataGenerator");
-            dg.addAttribute("name", sp.getPlotReference());
+            dg.addAttribute("id", sp.getPlotReference());
 
             listOfDataGenerators.addContent("\n        ");
             listOfDataGenerators.addChildElement(dg);
