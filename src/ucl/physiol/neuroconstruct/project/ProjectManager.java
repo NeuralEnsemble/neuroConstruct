@@ -1330,8 +1330,9 @@ public class ProjectManager implements GenerationReport
     }
 
     public static void generateSedML(Project project,
-                                       File sedMLFile,
-                                       SimConfig simConfig) throws IOException
+                                     File sedMLFile,
+                                     SimConfig simConfig,
+                                     NeuroMLVersion version) throws IOException
     {
         SimpleXMLDocument sedMlDoc = new SimpleXMLDocument();
 
@@ -1386,8 +1387,10 @@ public class ProjectManager implements GenerationReport
         
         SimpleXMLElement algorithm = new SimpleXMLElement("algorithm");
         algorithm.addAttribute("kisaoID", "KISAO:0000030");
-        
+
+        simulation.addContent("\n            ");
         simulation.addChildElement(algorithm);
+        simulation.addContent("\n        ");
 
         listOfSimulations.addContent("\n        ");
         listOfSimulations.addChildElement(simulation);
@@ -1396,8 +1399,29 @@ public class ProjectManager implements GenerationReport
 
 
         SimpleXMLElement model = new SimpleXMLElement("model");
-        model.addAttribute("language", "urn:sedml:language:neuroml");
-        model.addAttribute("source", project.getProjectFileName());
+
+        String ver = "urn:sedml:language:neuroml";
+
+        if (version.equals(NeuroMLVersion.NEUROML_VERSION_1))
+            ver=ver+"version-1_8_1.level-3";
+        else if (version.equals(NeuroMLVersion.NEUROML_VERSION_2))
+            ver=ver+"version-2alpha";
+
+        model.addAttribute("language", ver);
+
+        String sourceFile = null;
+        if (version.isVersion1())
+        {
+            sourceFile = "Generated.net.xml";
+        }
+        else if(version.isVersion2())
+        {
+            sourceFile = project.getProjectName() + ProjectStructure.getNeuroMLFileExtension();
+        }
+
+        model.addAttribute("source", sourceFile);
+
+
         model.addAttribute("id", project.getProjectName());
 
         listOfModels.addContent("\n        ");
@@ -1407,22 +1431,84 @@ public class ProjectManager implements GenerationReport
 
         SimpleXMLElement task = new SimpleXMLElement("task");
         task.addAttribute("simulationReference", project.simulationParameters.getReference());
-        task.addAttribute("id", "RUN_"+project.simulationParameters.getReference());
+        String mainTaskRef = "RUN_"+project.simulationParameters.getReference();
+        task.addAttribute("id", mainTaskRef);
         task.addAttribute("modelReference", project.getProjectName());
 
         listOfTasks.addContent("\n        ");
         listOfTasks.addChildElement(task);
         listOfTasks.addContent("\n    ");
 
+        SimpleXMLElement dg = new SimpleXMLElement("dataGenerator");
+        dg.addAttribute("id", "time");
+        dg.addContent("\n            ");
+        SimpleXMLElement lov = new SimpleXMLElement("listOfVariables");
+        dg.addChildElement(lov);
+        SimpleXMLElement var = new SimpleXMLElement("variable");
+        lov.addContent("\n                ");
+        lov.addChildElement(var);
+        lov.addContent("\n            ");
+        dg.addContent("\n            ");
+        String time_id = "var_time_0";
+        var.addAttribute("id", time_id);
+        var.addAttribute("taskReference", mainTaskRef);
+        var.addAttribute("symbol", "urn:sedml:symbol:time");
+        
+        SimpleXMLElement math = new SimpleXMLElement("math");
+        dg.addChildElement(math);
+        math.addAttribute("xmlns", "http://www.w3.org/1998/Math/MathML");
+        SimpleXMLElement ci = new SimpleXMLElement("ci");
+        ci.addContent( time_id );
+        math.addContent("\n                ");
+        math.addChildElement(ci);
+        math.addContent("\n            ");
+        dg.addContent("\n        ");
+
+
+
+
+        listOfDataGenerators.addContent("\n        ");
+        listOfDataGenerators.addChildElement(dg);
+        listOfDataGenerators.addContent("\n    ");
+
+
         for(SimPlot sp: project.simPlotInfo.getAllSimPlots())
         {
 
-            SimpleXMLElement dg = new SimpleXMLElement("dataGenerator");
+            dg = new SimpleXMLElement("dataGenerator");
             dg.addAttribute("id", sp.getPlotReference());
 
             listOfDataGenerators.addContent("\n        ");
             listOfDataGenerators.addChildElement(dg);
             listOfDataGenerators.addContent("\n    ");
+
+            dg.addContent("\n            ");
+            lov = new SimpleXMLElement("listOfVariables");
+            dg.addChildElement(lov);
+            var = new SimpleXMLElement("variable");
+            lov.addContent("\n                ");
+            lov.addChildElement(var);
+            lov.addContent("\n            ");
+            dg.addContent("\n            ");
+            
+            String varName = sp.getValuePlotted();
+            // Quick & dirty substitution...
+            if (varName.equals(SimPlot.VOLTAGE))
+                varName = "v";
+            var.addAttribute("id", varName);
+            var.addAttribute("taskReference", mainTaskRef);
+            var.addAttribute("target", "/neuroml/populations/population[@name='"+sp.getCellGroup()+"']/instances/instance[@id='"+sp.getCellNumber()
+                +"']/segments/segment[@id='"+sp.getSegmentId()+"']/"+varName);
+
+            math = new SimpleXMLElement("math");
+            dg.addChildElement(math);
+            math.addAttribute("xmlns", "http://www.w3.org/1998/Math/MathML");
+            ci = new SimpleXMLElement("ci");
+            ci.addContent( varName );
+            math.addContent("\n                ");
+            math.addChildElement(ci);
+            math.addContent("\n            ");
+            dg.addContent("\n        ");
 
         }
 
@@ -2684,7 +2770,7 @@ public class ProjectManager implements GenerationReport
 
         File sedMlFile = new File(neuroMLDir, "SED.xml");
 
-        generateSedML(proj, sedMlFile, proj.simConfigInfo.getSimConfig(simConfName));
+        generateSedML(proj, sedMlFile, proj.simConfigInfo.getSimConfig(simConfName), NeuroMLVersion.NEUROML_VERSION_2);
 
 
         System.out.println("SED-ML doc generated in "+ sedMlFile.getAbsolutePath());

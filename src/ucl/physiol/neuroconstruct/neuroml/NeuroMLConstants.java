@@ -97,6 +97,11 @@ public class NeuroMLConstants
         {
             return this.equals(NEUROML_VERSION_2);
         }
+
+        public boolean isVersion1()
+        {
+            return this.equals(NEUROML_VERSION_1);
+        }
     };
 
 

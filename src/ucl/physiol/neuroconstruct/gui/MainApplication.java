@@ -378,6 +378,9 @@ public class MainApplication
                     String plotFrameRef = "Plot of data from "+dataFile.getAbsolutePath();
 
 
+                    RecentFiles.getRecentFilesInstance(ProjectStructure.getNeuConRecentFilesFilename()).setMyLastExportPointsDir(dataFile.getAbsolutePath());
+
+
                     PlotterFrame frame = PlotManager.getPlotterFrame(plotFrameRef);
 
                     frame.setStandAlone(true);
