@@ -40,6 +40,7 @@ from pyNN.random import NumpyRNG
 seed=1234
 rng = NumpyRNG(seed)
 
+'''
 cellTypeToUse = IF_cond_exp
 #cellTypeToUse = IF_cond_alpha
 
@@ -47,11 +48,11 @@ class CellTypeA(cellTypeToUse):
 
     def __init__ (self, parameters): 
         cellTypeToUse.__init__ (self, parameters)
-
+'''
 
 cellNumA = 2
 cellNumB = 4
-cellType = CellTypeA
+cellType = IF_cond_exp
 connNum = 10
 
 tstop = 200.0
@@ -127,7 +128,7 @@ for i in range(connNum):
     
 
 connector= FromListConnector(projConns)               
-proj = Projection(cellsA, cellsB, connector, target='excitatory', label='TestProj' ,synapse_dynamics=syn_dynam)
+proj = Projection(cellsA, cellsB, connector, target='excitatory', label='TestProj' ''',synapse_dynamics=syn_dynam''')
 
 
 if my_simulator == 'neuron' or my_simulator == 'nest' :
@@ -196,3 +197,5 @@ print input_proj.describe()
 print get_time_step()
 	
 end()
+
+print "Successfully executed PyNN script in simulator: "+ my_simulator
