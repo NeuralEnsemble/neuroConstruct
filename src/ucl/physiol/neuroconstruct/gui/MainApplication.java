@@ -162,11 +162,15 @@ public class MainApplication
             System.out.println("Error! File not found: "+nmlFile.getAbsolutePath());
             System.exit(1);
         }
-        String projectName = nmlFile.getName().indexOf(".")>1 ? nmlFile.getName().substring(0, nmlFile.getName().indexOf(".")) : nmlFile.getName();
 
-        File projectLocation = ProjectStructure.getDefaultnCProjectsDir();
+        if (frame.projManager.getCurrentProject()==null)
+        {
+            String projectName = nmlFile.getName().indexOf(".")>1 ? nmlFile.getName().substring(0, nmlFile.getName().indexOf(".")) : nmlFile.getName();
 
-        frame.doNewProject(false, projectLocation, projectName);
+            File projectLocation = ProjectStructure.getDefaultnCProjectsDir();
+
+            frame.doNewProject(false, projectLocation, projectName);
+        }
 
         frame.doImportNeuroML(nmlFile, true, true);
     }
@@ -297,7 +301,7 @@ public class MainApplication
             }
 
             String projFileToOpen = null;
-            String nmlFileToOpen = null;
+            ArrayList<String> nmlFilesToOpen = new ArrayList<String>();
 
             boolean reloadLastProject = false;
             boolean generate = false;
@@ -328,7 +332,7 @@ public class MainApplication
                 }
                 else if (args[i].equalsIgnoreCase("-neuroml") )
                 {
-                    if (args.length!=2)
+                    if (args.length<2)
                     {
                         printUsageAndQuit();
                     }
@@ -432,12 +436,12 @@ public class MainApplication
                     }
                     else
                     {
-                        nmlFileToOpen = args[i];
+                        nmlFilesToOpen.add(args[i]);
                     }
                 }
             }
             
-            if ((generate || createHoc) && (projFileToOpen==null && nmlFileToOpen==null && !reloadLastProject))
+            if ((generate || createHoc) && (projFileToOpen==null && nmlFilesToOpen.isEmpty() && !reloadLastProject))
             {
                 System.out.println("Please only use -generate etc. when a project file is specified.");
                 System.exit(0);
@@ -465,9 +469,16 @@ public class MainApplication
                 {
                     app.reloadLastProject();
                 }
-                else if (nmlFileToOpen!=null)
+                else if (!nmlFilesToOpen.isEmpty())
                 {
-                    app.importNeuroML(nmlFileToOpen);
+                    for (String nmlFileToOpen: nmlFilesToOpen)
+                    {
+                        System.out.println("Importing elements from NeuroML file: "+ nmlFileToOpen);
+                        app.importNeuroML(nmlFileToOpen);
+                        app.frame.refreshAll();
+
+                        
+                    }
                 }
 
                 if (generate|| createHoc|| runHoc)

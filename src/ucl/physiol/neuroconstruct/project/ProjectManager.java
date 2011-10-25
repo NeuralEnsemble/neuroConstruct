@@ -33,7 +33,6 @@ import java.awt.*;
 
 import java.beans.XMLEncoder;
 import java.util.ArrayList;
-import java.util.logging.Level;
 import java.util.zip.*;
 import org.xml.sax.*;
 

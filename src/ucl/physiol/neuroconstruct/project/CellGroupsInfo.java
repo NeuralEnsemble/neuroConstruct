@@ -68,12 +68,12 @@ public class CellGroupsInfo extends AbstractTableModel
 
     public CellGroupsInfo()
     {
-        columnNames[COL_NUM_CELLGROUPNAME] = new String("Cell Group Name");
-        columnNames[COL_NUM_CELLTYPE] = new String("Cell Type");
-        columnNames[COL_NUM_REGIONNAME] = new String("Region Name");
-        columnNames[COL_NUM_COLOUR] = new String("Colour");
-        columnNames[COL_NUM_PACKING_ADAPTER] = new String("Cell Packing Adapter");
-        columnNames[COL_NUM_PRIORITY] = new String("Priority");
+        columnNames[COL_NUM_CELLGROUPNAME] = "Cell Group Name";
+        columnNames[COL_NUM_CELLTYPE] = "Cell Type";
+        columnNames[COL_NUM_REGIONNAME] = "Region Name";
+        columnNames[COL_NUM_COLOUR] = "Colour";
+        columnNames[COL_NUM_PACKING_ADAPTER] = "Cell Packing Adapter";
+        columnNames[COL_NUM_PRIORITY] = "Priority";
     }
 
     public int getColumnCount()
@@ -279,7 +279,7 @@ public class CellGroupsInfo extends AbstractTableModel
 
     private String printSimpleContents()
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < vectorCellGroupNames.size(); i++)
         {
@@ -407,16 +407,22 @@ public class CellGroupsInfo extends AbstractTableModel
     }
 
 
-    public void setAdapter(String cellGroupName, CellPackingAdapter adapter)
+    public void setCellPackingAdapter(String cellGroupName, CellPackingAdapter adapter)
     {
         int index = vectorCellGroupNames.indexOf(cellGroupName);
         this.setValueAt(adapter, index, COL_NUM_PACKING_ADAPTER);
     }
 
+    // Was here first...
+    public void setAdapter(String cellGroupName, CellPackingAdapter adapter)
+    {
+        setCellPackingAdapter(cellGroupName, adapter);
+    }
+
 
 
     /**
-     * Gets the cellgroups names which are in regionName
+     * Gets the cell group names which are in regionName
      */
     public Vector<String> getCellGroupsInRegion(String regionName)
     {

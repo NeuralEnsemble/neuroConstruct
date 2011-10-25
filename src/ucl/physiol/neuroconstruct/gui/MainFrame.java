@@ -8552,7 +8552,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
      *
      */
 
-    private void refreshAll()
+    protected void refreshAll()
     {
         logger.logComment("----------------    *  Refreshing all  *    ----------------");
         int tabCurrentlySelected = jTabbedPaneMain.getSelectedIndex();
@@ -12801,7 +12801,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             try
             {
-                
                 projManager.getCurrentProject().resetGenerated();
 
                 logger.logComment("Removing 3D network, as it's no longer relevant...");
