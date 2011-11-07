@@ -184,7 +184,7 @@ public class ColourUtils
         @Override
         public String toString()
         {
-            return "ColourRecord ["+name+", "+colour.toString()+", "+neuronColourIndex+"]";
+            return "ColourRecord ["+name+", "+colour.toString()+", "+getSequentialColourHex(neuronColourIndex)+", "+neuronColourIndex+"]";
         }
     }
 

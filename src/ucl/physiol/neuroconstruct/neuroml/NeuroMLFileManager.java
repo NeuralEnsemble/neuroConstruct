@@ -29,6 +29,9 @@ package ucl.physiol.neuroconstruct.neuroml;
 
 import java.io.*;
 import java.util.*;
+import org.lemsml.sim.*;
+import org.lemsml.type.*;
+import org.lemsml.util.ContentError;
 
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
@@ -413,7 +416,7 @@ public class NeuroMLFileManager
 
         File generatedNetworkFile = new File(generateDir, fileName);
 
-
+        boolean pynnCellsPresent = true;
         
         if (singleL3File)
         {
@@ -524,6 +527,24 @@ public class NeuroMLFileManager
                             String newName = cm.getInstanceName()+".nml";
                             File copied = GeneralUtils.copyFileIntoDir(nmlCm.getXMLFile(project), generateDir);
                             copied.renameTo(new File(generateDir, newName));
+                            /*
+                            if (!pynnCellsPresent) {
+                                Sim sim = new Sim(nmlCm.getXMLFile(project));
+
+                                try
+                                {
+                                    sim.readModel();
+                                    Lems lems = sim.getLems();
+                                    Component comp = lems.getComponent(cm.getInstanceName());
+                                    if (comp.getComponentType().isOrExtends("pyNNCell"))
+                                        pynnCellsPresent = true;
+                                }
+                                catch (ContentError ce)
+                                {
+                                    throw new IOException("Problem reading LEMS description...", ce);
+                                    // Ignore, assume it's not a valid LEMS file...
+                                }
+                            }*/
 
                             logger.logComment("copied: "+copied, false);
 
@@ -672,6 +693,16 @@ public class NeuroMLFileManager
             incEl3.addAttribute(LemsConstants.FILE_ATTR, NeuroMLConstants.NEUROML2_CORE_TYPES_SIMULATION);
             lemsElement.addChildElement(incEl3);
             lemsElement.addContent("\n\n    "); // to make it more readable...
+
+            if (pynnCellsPresent)
+            {
+                SimpleXMLElement incEl4 = new SimpleXMLElement(LemsConstants.INCLUDE_ELEMENT);
+                incEl4.addAttribute(LemsConstants.FILE_ATTR, NeuroMLConstants.NEUROML2_CORE_TYPES_PYNN);
+                lemsElement.addChildElement(incEl4);
+                lemsElement.addContent("\n\n    "); // to make it more readable...
+            }
+
+
 
 
             lemsElement.addContent("\n\n    "); // to make it more readable...

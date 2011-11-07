@@ -973,6 +973,19 @@ public class GeneratedNetworkConnections
                                     targetCellGroup+"["+synConn.targetEndPoint.cellNumber+"]");
                             connElement.addAttribute(NetworkMLConstants.NEUROML2_EXP_CONN_SYN_ATTR,
                                     synProps.getSynapseType());
+
+                            /*if (synConn.props!=null && synConn.props.size()>0)
+                            {
+                                for (ConnSpecificProps prop:synConn.props)
+                                {
+
+                                    connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_EXP_CONN_DELAY_ATTR,
+                                            (float)UnitConverter.getTime((synConn.apPropDelay+prop.internalDelay), UnitConverter.NEUROCONSTRUCT_UNITS,UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + "ms"));
+
+
+                                    connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_EXP_CONN_WEIGHT_ATTR, prop.weight+""));
+                                }
+                            }*/
                         }
                     }
                     else

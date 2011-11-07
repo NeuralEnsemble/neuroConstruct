@@ -8,4 +8,4 @@
 #    That double clicking on them plots them 
 #
 
-~/neuroConstruct/nC.sh -plot $1
+~/neuroConstruct/nC.sh -plot $*

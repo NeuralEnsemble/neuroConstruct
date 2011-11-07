@@ -208,9 +208,12 @@ public class NetworkMLConstants
 
 
     public static String NEUROML2_EXP_CONN_ELEMENT = "synapticConnection";
+    public static String NEUROML2_EXP_CONN_WD_ELEMENT = "synapticConnectionWD";
     public static String NEUROML2_EXP_CONN_FROM_ATTR = "from";
     public static String NEUROML2_EXP_CONN_TO_ATTR = "to";
     public static String NEUROML2_EXP_CONN_SYN_ATTR = "synapse";
+    public static String NEUROML2_EXP_CONN_WEIGHT_ATTR = "weight";
+    public static String NEUROML2_EXP_CONN_DELAY_ATTR = "delay";
 
     
     private NetworkMLConstants()

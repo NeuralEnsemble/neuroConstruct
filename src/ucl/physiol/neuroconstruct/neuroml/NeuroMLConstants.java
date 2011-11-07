@@ -142,6 +142,8 @@ public class NeuroMLConstants
 
     public static String NEUROML2_CORE_TYPES_SIMULATION = prefixNeuroML2Types+"Simulation.xml";
 
+    public static String NEUROML2_CORE_TYPES_PYNN = prefixNeuroML2Types+"PyNN.xml";
+
     public static String NEUROML2_ABST_CELL = "abstractCell";
     public static String NEUROML2_ABST_CELL_MEMB_POT = "abstractCellMembPot";
     public static String NEUROML2_ABST_CELL_MEMB_POT_CAP = "abstractCellMembPotCap";

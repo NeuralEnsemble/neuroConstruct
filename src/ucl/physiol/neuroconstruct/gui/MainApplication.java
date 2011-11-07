@@ -375,25 +375,37 @@ public class MainApplication
                     {
                         printUsageAndQuit();
                     }
-                    File dataFile = new File(args[i+1]);
+                    String plotFrameRef = "Plot of data from file(s):";
                     
-                    ArrayList<DataSet> dataSets = DataSetManager.loadFromDataSetFile(dataFile, false, DataSetManager.DataReadFormat.UNSPECIFIED);
-                    
-                    String plotFrameRef = "Plot of data from "+dataFile.getAbsolutePath();
-
-
-                    RecentFiles.getRecentFilesInstance(ProjectStructure.getNeuConRecentFilesFilename()).setMyLastExportPointsDir(dataFile.getAbsolutePath());
-
+                    for (int remArg=i+1;remArg<args.length;remArg++)
+                    {
+                        plotFrameRef = plotFrameRef+" "+args[remArg];
+                    }
 
                     PlotterFrame frame = PlotManager.getPlotterFrame(plotFrameRef);
 
-                    frame.setStandAlone(true);
+                    for (int remArg=i+1;remArg<args.length;remArg++)
+                    {
 
-                    for(DataSet dataSet: dataSets)
-                        frame.addDataSet(dataSet);
-                    
+                        File dataFile = new File(args[remArg]);
 
-                    frame.setVisible(true);
+                        ArrayList<DataSet> dataSets = DataSetManager.loadFromDataSetFile(dataFile, false, DataSetManager.DataReadFormat.UNSPECIFIED);
+
+                        //String plotFrameRef = "Plot of data from "+dataFile.getAbsolutePath();
+
+
+                        RecentFiles.getRecentFilesInstance(ProjectStructure.getNeuConRecentFilesFilename()).setMyLastExportPointsDir(dataFile.getAbsolutePath());
+
+
+
+                        frame.setStandAlone(true);
+
+                        for(DataSet dataSet: dataSets)
+                            frame.addDataSet(dataSet);
+
+
+                        frame.setVisible(true);
+                    }
 
                     startupMode = StartupMode.PLOT_ONLY_MODE;
                      

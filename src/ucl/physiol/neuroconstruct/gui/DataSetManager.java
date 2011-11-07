@@ -610,7 +610,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                     {
                         if (splitWords.size()==1)
                         {
-                            if (dataSets.size()==0)
+                            if (dataSets.isEmpty())
                             {
                                 DataSet ds = new DataSet(name, description, xUnit, yUnit, xLegend, yLegend);
                                 ds.setGraphFormat(graphFormat);
@@ -641,7 +641,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                                 
                                 Object[] vars = new Object[]{"Option A", "Option B", "Option C", "Cancel"};
 
-                                int sel = JOptionPane.showOptionDialog(GuiUtils.getMainFrame(), msg, "Select option for data file", 
+                                int sel = JOptionPane.showOptionDialog(GuiUtils.getMainFrame(), msg, "Select option for data file: "+dsFile,
                                                        JOptionPane.OK_OPTION,
                                                        JOptionPane.QUESTION_MESSAGE,
                                                        null,
