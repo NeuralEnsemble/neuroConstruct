@@ -1152,13 +1152,14 @@ public class ProjectManager implements GenerationReport
                     {
                         chosenUnits = units;
                     }
-                    /*else if (!chosenUnits.equals(units))
+                    else if (!chosenUnits.equals(units))
                     {
-                        throw new NeuroMLException("Unfortunately it's not yet possible to export to a single Level 3 file when channels and" +
-                            "synapses have a mix of SI & Physiological Units...\n" +
-                            cmlCm.getInstanceName()+" has "+ units);
+                        throw new NeuroMLException("Unfortunately it's not yet possible to export to a single Level 3 file when channels and\n" +
+                            "synapses have a mixture of SI & Physiological Units...\n"
+                            + "Try exporting as individual MorphML, ChannelML, etc. files\n\n" +
+                            cmlCm.getInstanceName()+" has "+ units+"\n");
 
-                    }*/
+                    }
 
 
                     SimpleXMLEntity[] elements = cmlCm.getXMLDoc().getXMLEntities(ChannelMLConstants.getPreV1_7_3IonsXPath());
@@ -1822,6 +1823,8 @@ public class ProjectManager implements GenerationReport
 
         cellMechNames = (ArrayList)GeneralUtils.reorderAlphabetically(cellMechNames, true);
 
+        String soleUnits = null; // Should only be one units scheme used...
+
         for (Object nextCellMech: cellMechNames)
         {
             String cellMechValidity = ValidityStatus.VALIDATION_OK;
@@ -1912,15 +1915,37 @@ public class ProjectManager implements GenerationReport
                     }
 
                     String status = null;
+                    String units = cmlCm.getValue(ChannelMLConstants.getUnitsXPath());
+
+                    if (soleUnits==null)
+                        soleUnits = units;
+
+                    if (!units.equals(soleUnits))
+                    {
+                        report.addTaggedElement("Warning, there is a mixture of SI and Physiological Units used in the ChannelML files ("+cmlCm.getInstanceName()+" has units "+units+"). This will prevent the generated"
+                            + " project being exported as a single Level 3 NeuroML file.",
+                                                "font color=\""+ValidityStatus.VALIDATION_COLOUR_WARN+"\"", "p");
+
+                        cellMechValidity = ValidityStatus.combineValidities(cellMechValidity, ValidityStatus.VALIDATION_WARN);
+                    }
+
                     
                     if (cmlCm.isChannelMechanism())
+                    {
                         status = cmlCm.getValue(ChannelMLConstants.getChannelStatusValueXPath());
+                    }
                     else if (cmlCm.isSynapticMechanism())
+                    {
                         status = cmlCm.getValue(ChannelMLConstants.getSynapseStatusValueXPath());
+                    }
                     else if (cmlCm.isGapJunctionMechanism())
+                    {
                         status = cmlCm.getValue(ChannelMLConstants.getGapJunctionStatusValueXPath());
+                    }
                     else if (cmlCm.isIonConcMechanism())
+                    {
                         status = cmlCm.getValue(ChannelMLConstants.getIonConcStatusValueXPath());
+                    }
 
                     if (status != null)
                     {

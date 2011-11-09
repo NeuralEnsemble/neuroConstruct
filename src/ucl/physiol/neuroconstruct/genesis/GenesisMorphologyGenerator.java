@@ -475,15 +475,16 @@ public class GenesisMorphologyGenerator
                                     float revPotential = 0;
                                     if (cellMech instanceof PassiveMembraneMechanism)
                                     {
-                                        revPotential = ((PassiveMembraneMechanism)cellMech).getParameter(PassiveMembraneMechanism.
-                                        REV_POTENTIAL);
+                                        revPotential = ((PassiveMembraneMechanism)cellMech).getParameter(PassiveMembraneMechanism.REV_POTENTIAL);
                                     }
                                     else if (cellMech instanceof ChannelMLCellMechanism)
                                     {
                                         String xpath = ChannelMLConstants.getPreV1_7_3IonsXPath();
                                         logger.logComment("Checking xpath: " + xpath);
+                                        ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism)cellMech;
+                                        String units = cmlCm.getUnitsUsedInFile();
 
-                                        SimpleXMLEntity[] ions = ((ChannelMLCellMechanism)cellMech).getXMLDoc().getXMLEntities(xpath);
+                                        SimpleXMLEntity[] ions = cmlCm.getXMLDoc().getXMLEntities(xpath);
 
                                         if (ions != null && ions.length>0)
                                         {
@@ -499,6 +500,8 @@ public class GenesisMorphologyGenerator
                                                     logger.logComment("Setting erev: "+ erev);
 
                                                     revPotential = Float.parseFloat(erev);
+                                                    if (units.equals(ChannelMLConstants.SI_UNITS))
+                                                        revPotential = revPotential*1000;
                                                 }
                                             }
                                         }
@@ -510,6 +513,8 @@ public class GenesisMorphologyGenerator
                                             logger.logComment("Setting erev from post v1.7.3 location: "+ erev);
 
                                             revPotential = Float.parseFloat(erev);
+                                                    if (units.equals(ChannelMLConstants.SI_UNITS))
+                                                        revPotential = revPotential*1000;
                                         }
                                     }
 

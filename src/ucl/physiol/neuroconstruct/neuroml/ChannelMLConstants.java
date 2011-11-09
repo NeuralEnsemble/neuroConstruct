@@ -66,7 +66,7 @@ public class ChannelMLConstants
 
     public static String PHYSIOLOGICAL_UNITS = "Physiological Units";
 
-    public static String XSL_ROOT = "stylesheet";
+    public static final String XSL_ROOT = "stylesheet";
 
     //public static String XSL_VARIABLES = XSL_ROOT + "/variable";
 

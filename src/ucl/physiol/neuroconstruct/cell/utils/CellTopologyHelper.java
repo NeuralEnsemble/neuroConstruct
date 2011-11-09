@@ -3084,7 +3084,7 @@ public class CellTopologyHelper
         }
 
 
-        if (cell.getAllChanMechNames(true).size() == 0)
+        if (cell.getAllChanMechNames(true).isEmpty())
         {
             errorReport.append("Error: Cell does not contain any membrane mechanisms");
         }
@@ -3185,6 +3185,7 @@ public class CellTopologyHelper
                 
                 ArrayList<String> posCondDensChans = new ArrayList<String>();
                 ArrayList<ChannelMechanism> extraParamsOnlyChans = new ArrayList<ChannelMechanism>();
+                boolean nml2Mech = false;
 
                 for (int k = 0; k < fixedMechs.size(); k++)
                 {
@@ -3210,6 +3211,16 @@ public class CellTopologyHelper
                     else
                     {
                         extraParamsOnlyChans.add(cm);
+                    }
+
+                    try
+                    {
+                        NeuroML2Component nml2Comp = (NeuroML2Component)project.cellMechanismInfo.getCellMechanism(cm.getName());
+                        nml2Mech = true;
+                    }
+                    catch (Exception e)
+                    {
+                        //..
                     }
                 }
                 for(VariableMechanism vm: varMechs)
@@ -3254,7 +3265,7 @@ public class CellTopologyHelper
                         validPassiveConds ++;
                 }
                         
-                if (validPassiveConds == 0)
+                if (validPassiveConds == 0 && !nml2Mech)
                 {
                     if (appv==null) // no error if there is a prop vel
                     {
@@ -3291,7 +3302,7 @@ public class CellTopologyHelper
 
                 float totalElecLen = 0;
 
-                if (appv==null) // i.e. no ap prop spped settings
+                if (appv==null && !nml2Mech) // i.e. no ap prop speed settings & it's not nml2
                 {
                     float specMembRes = 0.0F;
                     try

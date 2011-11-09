@@ -4,7 +4,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xmlns:meta="http://morphml.org/metadata/schema" 
     xsi:schemaLocation="http://morphml.org/channelml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level2/ChannelML_v1.8.1.xsd"
-    units="Physiological Units">
+    units="SI Units">
 
     <meta:notes>A channel from Maex, R and De Schutter, E. Synchronization of Golgi and Granule Cell Firing in a 
     Detailed Network Model of the Cerebellar Granule Cell Layer</meta:notes>
@@ -48,17 +48,17 @@
         </meta:neuronDBref>
 
         
-        <current_voltage_relation cond_law="ohmic" ion="k" default_gmax="1.14567" default_erev="-90">
+        <current_voltage_relation cond_law="ohmic" ion="k" default_gmax="11.4567" default_erev="-0.090">
             
             <q10_settings q10_factor="1" experimental_temp="17.350264793"/>
-            <offset value="10"/>
+            <offset value="0.010"/>
             
             <gate name="m" instances="3">
                 <closed_state id="m0"/>
                 <open_state id="m"/>
                      
-                <time_course name="tau" from="m0" to="m" expr_form="generic" expr="0.410 * ((exp (( ((v) + 43.5) / (-42.8))))) + 0.167" />
-                <steady_state name="inf" from="m0" to="m" expr_form="sigmoid" rate="1" scale="-19.8" midpoint="-46.7" />
+                <time_course name="tau" from="m0" to="m" expr_form="generic" expr="0.410e-3 * ((exp (( ((v) + 0.0435) / (-0.0428))))) + 0.167e-3" />
+                <steady_state name="inf" from="m0" to="m" expr_form="sigmoid" rate="1" scale="-0.0198" midpoint="-0.0467" />
                     
             </gate>
         
@@ -66,8 +66,8 @@
                 <closed_state id="h0"/>
                 <open_state id="h"/>
                      
-                <time_course name="tau" from="h0" to="h" expr_form="generic" expr="10.8 + (0.03 * v) + (1 / (57.9 * (exp (v *0.127)) + (134e-6 * (exp (v * -0.059)))))" />
-                <steady_state name="inf" from="h0" to="h" expr_form="sigmoid" rate="1" scale="8.4" midpoint="-78.8" />
+                <time_course name="tau" from="h0" to="h" expr_form="generic" expr="1e-3 * (10.8 + (0.03 * v * 1e3) + (1 / (57.9 * (exp (v *0.127 * 1e3)) + (134e-6 * (exp (v * -0.059 * 1e3))))))" />
+                <steady_state name="inf" from="h0" to="h" expr_form="sigmoid" rate="1" scale="0.0084" midpoint="-0.0788" />
                     
             </gate>
         </current_voltage_relation> 

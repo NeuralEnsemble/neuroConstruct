@@ -209,25 +209,46 @@ public class PhysicalQuantity
         System.out.println("permillimeter: "+ smalldens.cloneWithUnits(permillimeter));
 
 
-        PhysicalQuantity condDens
-            = new PhysicalQuantity(0.5e-18,
-                                   UnitConverter.concentrationUnits[UnitConverter.NEUROCONSTRUCT_UNITS]);
+        PhysicalQuantity condDensity
+            = new PhysicalQuantity(1,
+                                   UnitConverter.conductanceDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS]);
 
-        System.out.println("\n\n\nOrig value: "+ condDens.toString());
+        System.out.println("\n\n\nOrig value: "+ condDensity.toString());
 
         System.out.println("Neuron value: "
-           + UnitConverter.convertFromNeuroConstruct(condDens.getMagnitude(),
-                                                     condDens.getUnits(),
+           + UnitConverter.convertFromNeuroConstruct(condDensity.getMagnitude(),
+                                                     condDensity.getUnits(),
                                                      UnitConverter.NEURON_UNITS));
 
             System.out.println("GENESIS SI value: "
-               + UnitConverter.convertFromNeuroConstruct(condDens.getMagnitude(),
-                                                         condDens.getUnits(),
+               + UnitConverter.convertFromNeuroConstruct(condDensity.getMagnitude(),
+                                                         condDensity.getUnits(),
                                                          UnitConverter.GENESIS_SI_UNITS));
 
             System.out.println("GENESIS PHY value: "
-               + UnitConverter.convertFromNeuroConstruct(condDens.getMagnitude(),
-                                                         condDens.getUnits(),
+               + UnitConverter.convertFromNeuroConstruct(condDensity.getMagnitude(),
+                                                         condDensity.getUnits(),
+                                                         UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS));
+
+        PhysicalQuantity conc
+            = new PhysicalQuantity(1,
+                                   UnitConverter.concentrationUnits[UnitConverter.NEUROCONSTRUCT_UNITS]);
+
+        System.out.println("\n\n\nOrig value: "+ conc.toString());
+
+        System.out.println("Neuron value: "
+           + UnitConverter.convertFromNeuroConstruct(conc.getMagnitude(),
+                                                     conc.getUnits(),
+                                                     UnitConverter.NEURON_UNITS));
+
+            System.out.println("GENESIS SI value: "
+               + UnitConverter.convertFromNeuroConstruct(conc.getMagnitude(),
+                                                         conc.getUnits(),
+                                                         UnitConverter.GENESIS_SI_UNITS));
+
+            System.out.println("GENESIS PHY value: "
+               + UnitConverter.convertFromNeuroConstruct(conc.getMagnitude(),
+                                                         conc.getUnits(),
                                                          UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS));
 
 

@@ -694,7 +694,6 @@ public class Expand {
     }
 
     public static void main(String[] args) {
-        Expand expand = new Expand();
 
         //String osbLocal =
 
@@ -706,7 +705,7 @@ public class Expand {
         paths.add("osb/models/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
         paths.add("osb/models/cerebellum/networks/GranCellLayer/neuroConstruct/GranCellLayer.ncx");
         boolean all = false;
-        all = true;
+        //all = true;
         if (all)
         {
             /**/paths.add("osb/models/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx");

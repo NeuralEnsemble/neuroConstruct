@@ -135,6 +135,16 @@ public class MainTest
                 ucl.physiol.neuroconstruct.simulation.SpikeAnalyserTest.class,
                 ucl.physiol.neuroconstruct.utils.NumberGeneratorTest.class,
                 ucl.physiol.neuroconstruct.utils.equation.ExpressionTest.class/**/);
+
+        /*
+        Class[] cl = new Class[]{ucl.physiol.neuroconstruct.cell.VariableParameterTest.class,
+                ucl.physiol.neuroconstruct.cell.VariableMechanismTest.class};
+        Class[] cl2 = new Class[]{ucl.physiol.neuroconstruct.cell.VariableParameterTest.class,
+                ucl.physiol.neuroconstruct.cell.VariableMechanismTest.class};
+
+        r = org.junit.runner.JUnitCore.runClasses(cl,cl2);*/
+
+
         
         Date now = new java.util.Date();
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss, EEE dd-MMM-yyyy");

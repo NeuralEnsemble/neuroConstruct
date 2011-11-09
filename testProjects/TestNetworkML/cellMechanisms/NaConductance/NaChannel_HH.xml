@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<channelml xmlns="http://morphml.org/channelml/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:meta="http://morphml.org/metadata/schema" xsi:schemaLocation="http://morphml.org/channelml/schema  ../../Schemata/v1.8.1/Level2/ChannelML_v1.8.1.xsd" units="Physiological Units">
+<channelml xmlns="http://morphml.org/channelml/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:meta="http://morphml.org/metadata/schema"
+xsi:schemaLocation="http://morphml.org/channelml/schema  ../../Schemata/v1.8.1/Level2/ChannelML_v1.8.1.xsd" units="SI Units">
 
     <meta:notes>ChannelML file containing a single Channel description</meta:notes>
 
@@ -33,22 +34,22 @@
             <meta:uri>http://senselab.med.yale.edu/senselab/NeuronDB/channelGene2.htm#table2</meta:uri>
         </meta:neuronDBref>
         
-        <current_voltage_relation cond_law="ohmic" ion="na" default_erev="50" default_gmax="120"> 
+        <current_voltage_relation cond_law="ohmic" ion="na" default_erev="0.050" default_gmax="1200">
             
             <gate name="m" instances="3">
                 <closed_state id="m0"/>
                 <open_state id="m"/>
 
-                <transition name="alpha" from="m0" to="m" expr_form="exp_linear" rate="1" scale="10" midpoint="-40"/>  
-                <transition name="beta" from="m" to="m0" expr_form="exponential" rate="4" scale="-18" midpoint="-65"/>  
+                <transition name="alpha" from="m0" to="m" expr_form="exp_linear" rate="1e3" scale="0.010" midpoint="-0.040"/>
+                <transition name="beta" from="m" to="m0" expr_form="exponential" rate="4e3" scale="-0.018" midpoint="-0.065"/>
             </gate>
             
             <gate name="h" instances="1">
                 <closed_state id="h0"/>
                 <open_state id="h"/>
 
-                <transition name="alpha" from="h0" to="h" expr_form="exponential" rate="0.07" scale="-20" midpoint="-65"/>  
-                <transition name="beta" from="h" to="h0" expr_form="sigmoid" rate="1" scale="-10" midpoint="-35"/>    
+                <transition name="alpha" from="h0" to="h" expr_form="exponential" rate="0.07e3" scale="-0.020" midpoint="-0.065"/>
+                <transition name="beta" from="h" to="h0" expr_form="sigmoid" rate="1e3" scale="-0.010" midpoint="-0.035"/>
             </gate>
             
         </current_voltage_relation>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<channelml xmlns="http://morphml.org/channelml/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:meta="http://morphml.org/metadata/schema" xsi:schemaLocation="http://morphml.org/channelml/schema ../../Schemata/v1.8.0/Level2/ChannelML_v1.8.0.xsd" units="Physiological Units">
+<channelml xmlns="http://morphml.org/channelml/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:meta="http://morphml.org/metadata/schema"
+xsi:schemaLocation="http://morphml.org/channelml/schema ../../Schemata/v1.8.0/Level2/ChannelML_v1.8.0.xsd" units="SI Units">
 
     <meta:notes>ChannelML file containing a single Channel description</meta:notes>
 
@@ -33,14 +34,14 @@
             <meta:uri>http://senselab.med.yale.edu/senselab/NeuronDB/channelGene2.htm#table3</meta:uri>
         </meta:neuronDBref>
         
-        <current_voltage_relation cond_law="ohmic" ion="k" default_gmax="36" default_erev="-77.0">
+        <current_voltage_relation cond_law="ohmic" ion="k" default_gmax="360" default_erev="-0.077">
             
             <gate name="n" instances="4">
                 <closed_state id="n0"/>
                 <open_state id="n"/>
                      
-                <transition name="alpha" from="n0" to="n" expr_form="exp_linear" rate="0.1" scale="10" midpoint="-55"/>
-                <transition name="beta" from="n" to="n0" expr_form="exponential" rate="0.125" scale="-80" midpoint="-65"/>
+                <transition name="alpha" from="n0" to="n" expr_form="exp_linear" rate="0.1e3" scale="0.010" midpoint="-0.055"/>
+                <transition name="beta" from="n" to="n0" expr_form="exponential" rate="0.125e3" scale="-0.080" midpoint="-0.065"/>
                     
             </gate>
         </current_voltage_relation>
