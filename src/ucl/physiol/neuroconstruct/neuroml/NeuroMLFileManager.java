@@ -1090,8 +1090,26 @@ public class NeuroMLFileManager
         return colour;
     }
 
+    /*
+     * @TODO Should be moved to libNeuroML!!
+     */
+    public static Sim parseNeuroML2File(File nml2File) throws IOException, ContentError
+    {
+        String src = "<Lems>\n"
+                + "<Include file=\"PyNN.xml\" />\n"
+                + "<Include file=\""+nml2File.getCanonicalPath()+"\" />\n"
+                + "</Lems>";
+
+        FileInclusionReader.addSearchPath(new File(ProjectStructure.getNeuroML2Dir(),"NeuroML2CoreTypes"));
+        StringInclusionReader.addSearchPath(new File(ProjectStructure.getNeuroML2Dir(),"NeuroML2CoreTypes"));
+
+        Sim sim = new Sim(src);
 
 
+        sim.readModel();
+
+        return sim;
+    }
 
 
     public static void main(String[] args)

@@ -281,7 +281,20 @@ public class Cell implements Serializable
 
         this.parameterisedGroups.add(pg);
     }
-    
+
+    public boolean isNeuroML2AbstractCell()
+    {
+        System.out.println("chanMechsVsGroups: "+chanMechsVsGroups);
+        if (this.chanMechsVsGroups.size()>1)
+            return false;
+        ChannelMechanism cm = this.getChanMechsForGroup(Section.ALL).get(0);
+        System.out.println("cm: "+cm);
+        System.out.println("this.getInstanceName(): "+this.getInstanceName());
+
+
+        return cm.getName().equals(this.getInstanceName()) && cm.getDensity()==0;
+
+    }
     
 
     /**

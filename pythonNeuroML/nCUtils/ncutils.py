@@ -45,6 +45,7 @@ from ucl.physiol.neuroconstruct.utils import NumberGenerator
 
 from ucl.physiol.neuroconstruct.hpc.mpi import MpiSettings
 
+from ucl.physiol.neuroconstruct.pynn.PynnFileManager import PynnSimulator
 
 
 
@@ -198,6 +199,42 @@ def generateAndRunLems(project,
 
 
 
+    return 1  # Call above will throw error if it fails
+
+
+def generateAndRunPyNN(pynnSim,
+                        project,
+                        projectManager,
+                        simConfig,
+                        simRef,
+                        simulatorSeed,
+                        verbose=True,
+                        runInBackground=False):
+
+    prefix = "--- PyNN_"+pynnSim+" gen:    "
+
+    if verbose: print prefix+"Going to generate PyNN_"+pynnSim+" files for: "+simRef
+
+    pynnSimulator = None
+
+    if "NEST" in pynnSim:
+        pynnSimulator = PynnSimulator.NEST
+    elif "NEURON" in pynnSim:
+        pynnSimulator = PynnSimulator.NEURON
+    elif "BRIAN" in pynnSim:
+        pynnSimulator = PynnSimulator.BRIAN
+    else:
+        print pynnSim
+
+    #if verbose: print prefix+"Going to generate PyNN_"+str(pynnSimulator)+" files for: "+simRef
+
+    project.pynnFileManager.generateThePynnFiles(simConfig,
+                                                    pynnSimulator,
+                                                    simulatorSeed)
+
+
+    project.pynnFileManager.runFile(True)
+    
     return 1
     
     
@@ -273,7 +310,7 @@ def generateAndRunNeuron(project,
         
 class SimulationManager():
 
-    knownSimulators = ["NEURON", "GENESIS", "GENESIS_SI", "GENESIS_PHYS", "MOOSE", "MOOSE_PHYS", "MOOSE_SI", "PSICS", "LEMS"]
+    knownSimulators = ["NEURON", "GENESIS", "GENESIS_SI", "GENESIS_PHYS", "MOOSE", "MOOSE_PHYS", "MOOSE_SI", "PSICS", "LEMS", "PYNN_NEST", "PYNN_NEURON", "PYNN_BRIAN"]
 
     def __init__(self,
                  projFile,
@@ -549,6 +586,7 @@ class SimulationManager():
         for sim in simulators:
             if sim not in self.knownSimulators:
                 print "Unknown simulator: "+sim+"!"
+                print "Known simulators: "+str(self.knownSimulators)
                 sys.exit(1)
                 
         allSimsSetRunning = []
@@ -702,9 +740,38 @@ class SimulationManager():
                     else:
                         allSimsSetRunning.append(simRef)
 
+                self.doCheckNumberSims()
+
+                for sim in simulators:
+                  if "PYNN_" in sim:
+                      
+                        pynnSim = sim[5:]
+                        simRef = simRefGlobalPrefix + simRefPrefix+"_Py_"+pynnSim+recompSuffix + simRefGlobalSuffix
+                        self.project.simulationParameters.setReference(simRef)
+
+                        if runSims:
+                            success = generateAndRunPyNN(pynnSim,
+                                                self.project,
+                                                self.projectManager,
+                                                simConfig,
+                                                simRef,
+                                                simulatorSeed,
+                                                verbose=verboseSims,
+                                                runInBackground=runInBackground)
+
+                            if success:
+                                self.allRunningSims.append(simRef)
+                                allSimsSetRunning.append(simRef)
+                        else:
+                            allSimsSetRunning.append(simRef)
+
+                  print "Waiting a while before running next PyNN sim..."
+                  time.sleep(2) # wait a while before running PyNN...
 
 
                 self.doCheckNumberSims()
+
+
 
                 for sim in simulators:
                   if "MOOSE" in sim:

@@ -31,6 +31,11 @@ import java.util.*;
 
 
 import java.util.ArrayList;
+import org.lemsml.sim.Sim;
+import org.lemsml.type.Component;
+import org.lemsml.type.Constant;
+import org.lemsml.type.ParamValue;
+import org.lemsml.util.ContentError;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
@@ -535,110 +540,152 @@ public class PynnFileManager
                 throw new PynnException("Error, PyNN does not support multi compartmental cells yet!");
                 
             }
-            
+
             Hashtable<String, Float> cellParams = new Hashtable<String, Float>();
             
-            ////cellParams.put("v_init", cell.getInitialPotential().getNominalNumber());
-            
-            float cellArea = cell.getAllSegments().get(0).getSegmentSurfaceArea();
-            float specCap = cell.getSpecCapForGroup(Section.ALL);
-            
-            ////////// TODO: use correct units, etc.
-
-            float totalCap = cellArea*specCap;  // uF
-            float totalCapPyNN = totalCap*1e3f;  // nF
-
-            cellParams.put("cm", totalCapPyNN); // ????????????
-            
-            
-            Enumeration<ChannelMechanism> cms = cell.getChanMechsVsGroups().keys();
-            while(cms.hasMoreElements())
+            if (cell.isNeuroML2AbstractCell())
             {
-                ChannelMechanism cm = cms.nextElement();
-                try 
-                {
-                    ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism)project.cellMechanismInfo.getCellMechanism(cm.getName());
-                
-                    cmlMech.initialise(project, false);
-                    
-                    if (cmlMech.isChannelMechanism()&& !cmlMech.isPassiveNonSpecificCond())
-                    {
-                            throw new PynnException("Error, only passive channels and Integrate & Fire mechanisms are allowed in PyNN at the moment!\n" +
-                                    "Channels: "+ cell.getChanMechsVsGroups());
+                NeuroML2Component nml2Comp = (NeuroML2Component)project.cellMechanismInfo.getCellMechanism(cell.getInstanceName()); // has to be if it's NML2 cell..
+                try {
+                    Sim sim = NeuroMLFileManager.parseNeuroML2File(nml2Comp.getXMLFile(project));
+                    Component comp = sim.getLems().getComponent(nml2Comp.getInstanceName());
+
+                    System.out.println("comp"+comp.details(""));
+                    ArrayList<String> consts = new ArrayList<String>();
+                    for (Constant c: comp.getComponentType().getConstants()){
+                        consts.add(c.getName());
                     }
-              
 
-                    Vector<String> groups = cell.getChanMechsVsGroups().get(cm);
-                    for(String group: groups)
+                    for (ParamValue pv: comp.getParamValues())
                     {
-                        if (!(group.equals(Section.ALL) || group.equals(Section.SOMA_GROUP)))
+                        if (!consts.contains(pv.getName()) && !pv.getName().equals("v_init"))
                         {
-                            throw new PynnException("Error, only channels on soma group or all allowed!\n" +
-                                    "Channels: "+ cell.getChanMechsVsGroups());
+                            cellParams.put(pv.getName(), (float)pv.getDoubleValue());
                         }
-                        if (cmlMech.isPassiveNonSpecificCond())
+                    }
+                    String[] pynnCompTypes = new String[]{NeuroMLConstants.NEUROML2_PYNN_IF_CURR_ALPHA,
+                                                          NeuroMLConstants.NEUROML2_PYNN_IF_CURR_EXP,
+                                                          NeuroMLConstants.NEUROML2_PYNN_IF_COND_ALPHA,
+                                                          NeuroMLConstants.NEUROML2_PYNN_IF_COND_EXP,
+                                                          NeuroMLConstants.NEUROML2_PYNN_EIF_COND_EXP,
+                                                          NeuroMLConstants.NEUROML2_PYNN_EIF_CURR_ALPHA,
+                                                          NeuroMLConstants.NEUROML2_PYNN_HH_COND_EXP};
+                    for (String type: pynnCompTypes)
+                    {
+                        if (comp.getComponentType().isOrExtends(type))
+                            baseClass = type;
+                    }
+
+
+                } catch (ContentError ex) {
+                    throw new PynnException("Problem parsing the NeuroML 2 component in "+ nml2Comp+"\n"+ex.getMessage(), ex);
+                }
+            }
+            else
+            {
+
+                ////cellParams.put("v_init", cell.getInitialPotential().getNominalNumber());
+
+                float cellArea = cell.getAllSegments().get(0).getSegmentSurfaceArea();
+                float specCap = cell.getSpecCapForGroup(Section.ALL);
+
+                ////////// TODO: use correct units, etc.
+
+                float totalCap = cellArea*specCap;  // uF
+                float totalCapPyNN = totalCap*1e3f;  // nF
+
+                cellParams.put("cm", totalCapPyNN); // ????????????
+
+
+                Enumeration<ChannelMechanism> cms = cell.getChanMechsVsGroups().keys();
+                while(cms.hasMoreElements())
+                {
+                    ChannelMechanism cm = cms.nextElement();
+                    try
+                    {
+                        ChannelMLCellMechanism cmlMech = (ChannelMLCellMechanism)project.cellMechanismInfo.getCellMechanism(cm.getName());
+
+                        cmlMech.initialise(project, false);
+
+                        if (cmlMech.isChannelMechanism()&& !cmlMech.isPassiveNonSpecificCond())
                         {
-                            try
-                            {
-                                float condDens = cm.getDensity();
-                                
-                                float membTimeConst = (specCap/condDens);
-
-                                cellParams.put("tau_m", membTimeConst);
-
-                                float revPot = Float.parseFloat(cmlMech.getValue(ChannelMLConstants.getIonRevPotXPath()));
-
-                                // TODO: check units!!
-                                cellParams.put("v_rest", revPot);
-                            }
-                            catch (NumberFormatException ex) 
-                            {
-                                throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanim, and that it is in the post v1.7.3 format (i.e. no <ohmic> sub element in <current_voltage_relation>)", ex);
-
-                            }
-                            catch (NullPointerException ex) 
-                            {
-                                throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanim, and that it is in the post v1.7.3 format (i.e. no <ohmic> sub element in <current_voltage_relation>)", ex);
-
-                            }
+                                throw new PynnException("Error, only passive channels and Integrate & Fire mechanisms are allowed in PyNN at the moment!\n" +
+                                        "Channels: "+ cell.getChanMechsVsGroups());
                         }
-                        if (cmlMech.isPointProcess())
+
+
+                        Vector<String> groups = cell.getChanMechsVsGroups().get(cm);
+                        for(String group: groups)
                         {
-                            try
+                            if (!(group.equals(Section.ALL) || group.equals(Section.SOMA_GROUP)))
                             {
-                                SimpleXMLEntity[] ents = cmlMech.getXMLDoc().getXMLEntities(ChannelMLConstants.getIandFXPath());
-                                if (ents!=null && ents.length==1)
+                                throw new PynnException("Error, only channels on soma group or all allowed!\n" +
+                                        "Channels: "+ cell.getChanMechsVsGroups());
+                            }
+                            if (cmlMech.isPassiveNonSpecificCond())
+                            {
+                                try
                                 {
-                                    SimpleXMLElement ifElement = (SimpleXMLElement) ents[0];
-                                    float thresh = Float.parseFloat(ifElement.getAttributeValue(ChannelMLConstants.I_AND_F_THRESHOLD));
-                                    float tRefrac = Float.parseFloat(ifElement.getAttributeValue(ChannelMLConstants.I_AND_F_T_REFRAC));
-                                    float vReset = Float.parseFloat(ifElement.getAttributeValue(ChannelMLConstants.I_AND_F_V_RESET));
+                                    float condDens = cm.getDensity();
+
+                                    float membTimeConst = (specCap/condDens);
+
+                                    cellParams.put("tau_m", membTimeConst);
+
+                                    float revPot = Float.parseFloat(cmlMech.getValue(ChannelMLConstants.getIonRevPotXPath()));
 
                                     // TODO: check units!!
-                                    cellParams.put("v_thresh", thresh);
-                                    cellParams.put("tau_refrac", tRefrac);
-                                    cellParams.put("v_reset", vReset);
-                                    
+                                    cellParams.put("v_rest", revPot);
+                                }
+                                catch (NumberFormatException ex)
+                                {
+                                    throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanim, and that it is in the post v1.7.3 format (i.e. no <ohmic> sub element in <current_voltage_relation>)", ex);
+
+                                }
+                                catch (NullPointerException ex)
+                                {
+                                    throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanim, and that it is in the post v1.7.3 format (i.e. no <ohmic> sub element in <current_voltage_relation>)", ex);
+
                                 }
                             }
-                            catch (NullPointerException ex) 
+                            if (cmlMech.isPointProcess())
                             {
-                                throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanim, and that it is in the post v1.7.3 format (i.e. no <ohmic> sub element in <current_voltage_relation>)", ex);
+                                try
+                                {
+                                    SimpleXMLEntity[] ents = cmlMech.getXMLDoc().getXMLEntities(ChannelMLConstants.getIandFXPath());
+                                    if (ents!=null && ents.length==1)
+                                    {
+                                        SimpleXMLElement ifElement = (SimpleXMLElement) ents[0];
+                                        float thresh = Float.parseFloat(ifElement.getAttributeValue(ChannelMLConstants.I_AND_F_THRESHOLD));
+                                        float tRefrac = Float.parseFloat(ifElement.getAttributeValue(ChannelMLConstants.I_AND_F_T_REFRAC));
+                                        float vReset = Float.parseFloat(ifElement.getAttributeValue(ChannelMLConstants.I_AND_F_V_RESET));
 
+                                        // TODO: check units!!
+                                        cellParams.put("v_thresh", thresh);
+                                        cellParams.put("tau_refrac", tRefrac);
+                                        cellParams.put("v_reset", vReset);
+
+                                    }
+                                }
+                                catch (NullPointerException ex)
+                                {
+                                    throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanim, and that it is in the post v1.7.3 format (i.e. no <ohmic> sub element in <current_voltage_relation>)", ex);
+
+                                }
                             }
                         }
                     }
-                } 
-                catch (XMLMechanismException ex)
-                {
-                    throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanim", ex);
-                    
-                }
-                catch (ClassCastException ex) 
-                {
-                    throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanims\n" +
-                        "Note: File Based Cell Mechanisms are not supported for PyNN", ex);
-                    
+                    catch (XMLMechanismException ex)
+                    {
+                        throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanim", ex);
+
+                    }
+                    catch (ClassCastException ex)
+                    {
+                        throw new PynnException("Error initialising channel mechanism: "+cm+". Please ensure this is a valid ChannelML mechanims\n" +
+                            "Note: File Based Cell Mechanisms are not supported for PyNN", ex);
+
+                    }
                 }
             }
 
@@ -939,6 +986,21 @@ public class PynnFileManager
         File dirForSimDataFiles = getDirectoryForSimulationFiles();
         File dirToRunFrom = null;
         File genDir = ProjectStructure.getPynnCodeDir(project.getProjectMainDirectory());
+
+        if (dirForSimDataFiles.exists())
+        {
+            File[] files = dirForSimDataFiles.listFiles();
+            for (int i = 0; i < files.length; i++)
+            {
+                    files[i].delete();
+            }
+            logger.logComment("Directory " + dirForSimDataFiles + " being cleansed");
+        }
+        else
+        {
+            logger.logError("Directory " + dirForSimDataFiles + " doesn't exist...");
+            return;
+        }
         
         if (copyToSimDataDir)
         {
@@ -1167,7 +1229,7 @@ public class PynnFileManager
             ProjectManager pm = new ProjectManager(null,null);
             pm.setCurrentProject(p);
 
-            pm.doGenerate(SimConfigInfo.DEFAULT_SIM_CONFIG_NAME, 123);
+            pm.doGenerate("TestPyNN_NML2", 123);
             
             while(pm.isGenerating())
             {
@@ -1178,7 +1240,7 @@ public class PynnFileManager
             PynnFileManager gen = new PynnFileManager(p);
 
 
-            gen.generateThePynnFiles(p.simConfigInfo.getDefaultSimConfig(), PynnFileManager.PynnSimulator.NEURON, 12345);
+            gen.generateThePynnFiles(p.simConfigInfo.getDefaultSimConfig(), PynnFileManager.PynnSimulator.NEST, 12345);
         
         }
         catch(Exception e)

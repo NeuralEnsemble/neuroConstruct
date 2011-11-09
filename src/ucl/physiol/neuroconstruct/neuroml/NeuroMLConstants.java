@@ -150,6 +150,16 @@ public class NeuroMLConstants
     
     public static String NEUROML2_ABST_CELL_MEMB_POT_CAP__C = "C";
 
+
+    public static String NEUROML2_PYNN_IF_CURR_ALPHA = "IF_curr_alpha";
+    public static String NEUROML2_PYNN_IF_CURR_EXP = "IF_curr_exp";
+    public static String NEUROML2_PYNN_IF_COND_ALPHA = "IF_cond_alpha";
+    public static String NEUROML2_PYNN_IF_COND_EXP = "IF_cond_exp";
+
+    public static String NEUROML2_PYNN_EIF_COND_EXP = "EIF_cond_exp_isfa_ista";
+    public static String NEUROML2_PYNN_EIF_CURR_ALPHA = "EIF_cond_alpha_isfa_ista";
+    public static String NEUROML2_PYNN_HH_COND_EXP = "HH_cond_exp";
+
     
 
 }
