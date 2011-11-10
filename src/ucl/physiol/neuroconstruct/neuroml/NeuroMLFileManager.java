@@ -219,6 +219,23 @@ public class NeuroMLFileManager
                                               version);
             }
 
+            SimConfig sc = project.simConfigInfo.getSimConfig(simConfig);
+
+            MetadataConstants.addProperty(props,
+                                        NetworkMLConstants.NC_SIM_DURATION,
+                                        Float.toString(sc.getSimDuration()),
+                                        "    ");
+
+            MetadataConstants.addProperty(props,
+                                        NetworkMLConstants.NC_SIM_TIME_STEP,
+                                        Float.toString(project.simulationParameters.getDt()),
+                                        "    ");
+
+            MetadataConstants.addProperty(props,
+                                        NetworkMLConstants.NC_TEMPERATURE,
+                                        Float.toString(project.simulationParameters.getTemperature()),
+                                        "    ");
+
             //SimpleXMLElement popRoot = rootElement;
 
             SimpleXMLElement topLevelCompElement = null;

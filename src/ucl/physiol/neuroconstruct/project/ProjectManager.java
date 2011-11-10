@@ -710,7 +710,7 @@ public class ProjectManager implements GenerationReport
                                           NetworkMLConstants.NC_NETWORK_GEN_RAND_SEED,
                                           project.generatedCellPositions.getRandomSeed() + "",
                                           "    ");
-            
+
             
     // add cell morphology
             
@@ -945,10 +945,12 @@ public class ProjectManager implements GenerationReport
                                               simConfig,
                                               "    ");             
             }
+
+            SimConfig sc = project.simConfigInfo.getSimConfig(simConfig);
             
             MetadataConstants.addProperty(props,
                                         NetworkMLConstants.NC_SIM_DURATION,
-                                        Float.toString(project.simulationParameters.getDuration()),
+                                        Float.toString(sc.getSimDuration()),
                                         "    ");
             
             MetadataConstants.addProperty(props,

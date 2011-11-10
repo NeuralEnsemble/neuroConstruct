@@ -52,7 +52,13 @@ public class PythonTest
     }  
 
 
-     
+
+    @Test public void testEx8()
+    {
+        String projFileName = "nCexamples/Ex8_PyNNDemo/Ex8_PyNNDemo.ncx";
+        checkPythonScripts(projFileName);
+    }
+
     @Test public void testNeuroML2()
     {
         String projFileName = "nCexamples/Ex10_NeuroML2/Ex10_NeuroML2.ncx";
