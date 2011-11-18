@@ -490,11 +490,12 @@ class SimulationManager():
 
         self.updateSimsRunning()
 
-        self.printver( "Trying to check simulations: %s against: %s" % (str(self.allFinishedSims), str(spikeTimesToCheck)))
+        self.printver( "Trying to check simulations: %s against: %s, with threshold: %s" % (str(self.allFinishedSims), str(spikeTimesToCheck), str(threshold)))
 
         report = ""
         numPassed = 0
         numFailed = 0
+        checksUnused = spikeTimesToCheck.keys()
 
         for simRef in self.allFinishedSims:
 
@@ -511,9 +512,8 @@ class SimulationManager():
 
                 for dataStore in simData.getAllLoadedDataStores():
 
+                    self.printver("Checking dataStore: "+str(dataStore))
                     ds = simData.getDataSet(dataStore.getCellSegRef(), dataStore.getVariable(), False)
-
-                    #self.printver("Found data store: "+str(dataStore))
 
                     if dataStore.getVariable() == SimPlot.VOLTAGE:
 
@@ -524,11 +524,19 @@ class SimulationManager():
                             analyseStartTime = 0
                             analyseStopTime = times[-1]
 
-                            spikeTimes = SpikeAnalyser.getSpikeTimes(volts, times, threshold, analyseStartTime, analyseStopTime)
+                            threshToUse = threshold
 
-                            self.printver("Spike times (crossing %f) from %f to %f in %s for sim %s: %s"%(threshold, analyseStartTime, analyseStopTime, dataStore.getCellSegRef(), simRef, str(spikeTimes)))
+                            if type(threshold) is dict:
+                                threshToUse = float(threshold[dataStore.getCellSegRef()])
+
+                            spikeTimes = SpikeAnalyser.getSpikeTimes(volts, times, threshToUse, analyseStartTime, analyseStopTime)
+
+                            self.printver("Spike times (crossing %f) from %f to %f in %s for sim %s: %s"%(threshToUse, analyseStartTime, analyseStopTime, dataStore.getCellSegRef(), simRef, str(spikeTimes)))
 
                             if spikeTimesToCheck.has_key(dataStore.getCellSegRef()):
+                                self.printver("Removing %s from %s"%(str(dataStore.getCellSegRef()), str(checksUnused)))
+                                if dataStore.getCellSegRef() in checksUnused:
+                                    checksUnused.remove(dataStore.getCellSegRef())
                                 fail = False
                                 spikeTimesTarget = spikeTimesToCheck[dataStore.getCellSegRef()]
 
@@ -551,10 +559,15 @@ class SimulationManager():
 
             except:
                 self.printver("Error analysing simulation data from: %s"%simDir.getCanonicalPath())
+                raise
                 self.printver(sys.exc_info())
                 numFailed=numFailed+1
 
-        report = report+"\n  %i tests passed, %i tests failed!\n"%(numPassed, numFailed)
+        
+        ignored = "" if len(checksUnused) == 0 else ", %i test conditions ignored"%(len(checksUnused))
+
+
+        report = report+"\n  %i tests passed, %i tests failed%s!\n"%(numPassed, numFailed, ignored)
 
         return report
 
@@ -619,7 +632,7 @@ class SimulationManager():
               mpiSettings = MpiSettings()
               simConfig.setMpiConf(mpiSettings.getMpiConfiguration(mpiConfigToUse))
 
-              print "Using Parallel Configuration: "+ str(simConfig.getMpiConf())
+              self.printver("Using Parallel Configuration: "+ str(simConfig.getMpiConf()))
 
               if suggestedRemoteRunTime > 0:
                     self.project.neuronFileManager.setSuggestedRemoteRunTime(suggestedRemoteRunTime)

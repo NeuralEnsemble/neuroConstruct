@@ -381,6 +381,8 @@ public class NeuronFileManager
 
             hocWriter.write(generateAccess());
             
+            hocWriter.write(generateRunSettings());
+            
             if (runMode != RUN_VIA_CONDOR && !simConfig.getMpiConf().isParallelOrRemote()) // No gui if it's condor or parallel...
             {
                 if (project.neuronSettings.getGraphicsMode().equals(NeuronSettings.GraphicsMode.ALL_SHOW))
@@ -397,8 +399,6 @@ public class NeuronFileManager
             }
             
             hocWriter.write(generateInitHandlers());
-            
-            hocWriter.write(generateRunSettings());
             
             hocWriter.write(generateNeuronSimulationRecording());
                 
@@ -4512,11 +4512,11 @@ public class NeuronFileManager
         {
             response.append("objref " + graphWindow + "\n");
             response.append(graphWindow + " = new Graph(0)\n");
-            response.append("{"+graphWindow + ".size(0," + getSimDuration()
+            response.append("{"+graphWindow + ".size(0, tstop"
                             + "," + minVal
                             + "," + maxVal + ")}\n");
 
-            response.append("{"+graphWindow + ".view(0, " + minVal + ", " + getSimDuration() +
+            response.append("{"+graphWindow + ".view(0, " + minVal + ", tstop" +
                             ", " + (maxVal - minVal) + ", 80, 330, 330, 250)}\n");
 
             graphsCreated.add(graphWindow);
@@ -4653,7 +4653,7 @@ public class NeuronFileManager
 
             response.append(startUpInfo);
 
-            response.append("{pnm.psolve("+simConfig.getSimDuration()+")}\n");
+            response.append("{pnm.psolve(tstop)}\n");
             response.append("{realruntime = startsw() - currenttime}\n");
 
             response.append("print \"Finished simulation in \", realruntime ,\"seconds on host \", hostid\n\n");

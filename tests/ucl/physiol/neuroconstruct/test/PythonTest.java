@@ -64,6 +64,7 @@ public class PythonTest
         String projFileName = "nCexamples/Ex10_NeuroML2/Ex10_NeuroML2.ncx";
         checkPythonScripts(projFileName, "RunTestsHH");
         checkPythonScripts(projFileName, "RunTestsNML2ionChan");
+        checkPythonScripts(projFileName, "RunTestsAbst");
         ////////////checkPythonScripts(projFileName, "RunTestsDest");
     }
  

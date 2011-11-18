@@ -1148,6 +1148,7 @@ public class NeuronTemplateGenerator
                                     float capacitance =  (float)UnitConverter.getCapacitance(Float.parseFloat(cap),
                                                                        UnitConverter.GENESIS_SI_UNITS,
                                                                        UnitConverter.NEURON_UNITS);
+
                                     logger.logComment("Total capacitance: "+cap+" F = " + capacitance +" "+ UnitConverter.capacitanceUnits[UnitConverter.NEURON_UNITS].getSymbol(), true);
 
                                     for (Section sec: secs)
@@ -1167,8 +1168,37 @@ public class NeuronTemplateGenerator
 
                                     }
 
+                                }
+                                else if (comp.getComponentType().isOrExtends(NeuroMLConstants.NEUROML2_ABST_CELL_MEMB_POT))
+                                {
+                                    if (secs.size()>1)
+                                    {
+                                        GuiUtils.showErrorMessage(logger, "Error: putting "+cellMech.getMechanismType()+" on cell with >1 section!", null, null);
+                                        return null;
+                                    }
+                                    Segment seg = cell.getAllSegments().get(0);
+                                    if (seg.getSection().getNumberInternalDivisions()>1)
+                                    {
+                                        GuiUtils.showErrorMessage(logger, "Error: putting "+cellMech.getMechanismType()+" on section with nseg>1!", null, null);
+                                        return null;
+                                    }
 
-                                    //float area  =
+                                    float specCap = cell.getSpecCapForGroup(Section.ALL); // uF um-2
+                                    float specCapSI = specCap * 1e6f; // F m-2
+                                        
+                                    float area = seg.getSegmentSurfaceArea(); // um2
+                                    float areaSI = area * 1e-12f; // m2
+
+                                    float totCapSI = specCapSI * areaSI;
+                                    float targetCapSI = 1e-9f;
+
+                                    if (Math.abs(targetCapSI-totCapSI)>targetCapSI*1e-6)
+                                    {
+                                        GuiUtils.showInfoMessage(logger, "Capacitance info", "Total capacitance: "+totCapSI+" F, area: "+areaSI+" m2 ("+area+" um2), "
+                                            + "specCap: "+specCapSI+" F/m2 ("+specCap+" uF um-2) on cell:\n"
+                                            + cell+ "\nTotal capacitance of cell based on NeuroML 2 component class: "+NeuroMLConstants.NEUROML2_ABST_CELL_MEMB_POT+" ( but"
+                                            + " not "+NeuroMLConstants.NEUROML2_ABST_CELL_MEMB_POT_CAP+") should be "+targetCapSI+" F", null);
+                                    }
 
                                 }
 

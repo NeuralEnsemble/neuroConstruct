@@ -30,16 +30,17 @@ package ucl.physiol.neuroconstruct.neuroml;
 import java.io.*;
 import java.util.*;
 import org.lemsml.sim.*;
-import org.lemsml.type.*;
 import org.lemsml.util.ContentError;
 
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.*;
 import ucl.physiol.neuroconstruct.cell.converters.*;
-import ucl.physiol.neuroconstruct.hpc.utils.ProcessManager;
 import ucl.physiol.neuroconstruct.neuroml.LemsConstants.LemsOption;
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.*;
+import ucl.physiol.neuroconstruct.neuron.NeuronFileManager;
+import ucl.physiol.neuroconstruct.hpc.utils.*;
+import ucl.physiol.neuroconstruct.nmodleditor.processes.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.GeneratedPlotSaves.PlotSaveDetails;
 import ucl.physiol.neuroconstruct.simulation.SimulationData;
@@ -768,6 +769,15 @@ public class NeuroMLFileManager
             timesFilename = timesFilename.replaceAll("\\\\", "\\\\\\\\");
             defRunElement.addAttribute(LemsConstants.TIMES_FILE_ATTR,timesFilename);
 
+            if (simDir.exists())
+            {
+                File[] files = simDir.listFiles();
+                for (int i = 0; i < files.length; i++)
+                {
+                        files[i].delete();
+                }
+                logger.logComment("Directory " + simDir + " being cleansed");
+            }
             simDir.mkdir();
             
 
@@ -992,7 +1002,7 @@ public class NeuroMLFileManager
                                       dirToRunIn, true);
 
             //Process process = rt.exec(executable, null, dirToRunIn);
-            ProcessManager.runCommand(executable, "LEMS", 5, dirToRunIn);
+            ucl.physiol.neuroconstruct.hpc.utils.ProcessManager.runCommand(executable, "LEMS", 5, dirToRunIn);
 
             if (lemsOption.equals(LemsOption.GENERATE_GRAPH)){
                 File imageFile = new File(generateDir, lemsFileName.replace(".xml", ".png"));
@@ -1141,6 +1151,8 @@ public class NeuroMLFileManager
 
             String simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
 
+            simConf = "AbstractCells";
+
             if (projFile.getName().startsWith("VSCSGranCell"))
             {
                 simConf = "TestSimConf";
@@ -1161,13 +1173,15 @@ public class NeuroMLFileManager
             ProjectManager pm = new ProjectManager(null,null);
             pm.setCurrentProject(p);
 
+                p.simulationParameters.setReference("LEMS_test");
+
             pm.doGenerate(simConf, 123);
 
             Thread.sleep(1000);
 
             System.out.println("Generated cells: "+ p.generatedCellPositions.details());
             
-            NeuroMLFileManager npfm = new NeuroMLFileManager(p);
+            NeuroMLFileManager nmlFM = new NeuroMLFileManager(p);
 
 
             OriginalCompartmentalisation oc = new OriginalCompartmentalisation();
@@ -1177,13 +1191,37 @@ public class NeuroMLFileManager
             //LemsOption lo = LemsOption.GENERATE_GRAPH;
             LemsOption lo = LemsOption.EXECUTE_MODEL;
             
-            npfm.generateNeuroMLFiles(sc, NeuroMLVersion.NEUROML_VERSION_2, lo, oc, 123, false, false);
+            nmlFM.generateNeuroMLFiles(sc, NeuroMLVersion.NEUROML_VERSION_2, lo, oc, 123, false, false);
 
             //File tempDir = new File(projFile.getParentFile(), "temp");
 
             //npfm.generateNeuroMLFiles(sc, NeuroMLVersion.NEUROML_VERSION_1, false, oc, 123, false, false, tempDir);
             
             //gen.runGenesisFile();
+
+            //NeuronFileManager nfm = new
+
+            if (simConf.equals("AbstractCells"))
+            {
+                pm.doGenerate(simConf, 123);
+
+                p.simulationParameters.setReference("NEURON_test");
+                
+                p.neuronFileManager.generateTheNeuronFiles(sc, null, NeuronFileManager.RUN_HOC, 1234);
+                
+                System.out.println("Generated: "+ p.neuronFileManager.getMainHocFile());
+                File mainHoc = p.neuronFileManager.getMainHocFile();
+
+                System.out.println("Created hoc files, including: "+mainHoc);
+
+                ucl.physiol.neuroconstruct.nmodleditor.processes.ProcessManager prm = new ucl.physiol.neuroconstruct.nmodleditor.processes.ProcessManager(mainHoc);
+
+                boolean success = prm.compileFileWithNeuron(true, false);
+
+                System.out.println("Compiled NEURON files: "+ success);
+
+                pm.doRunNeuron(sc);
+            }
         }
         catch(Exception e)
         {
