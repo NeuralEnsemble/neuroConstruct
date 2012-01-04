@@ -3,7 +3,8 @@
 # in neuroConstruct on Windows
 
 
-N="`$1/bin/cygpath -u $1`"
+NDEMO="`$1/bin/cygpath -u $1/demo`"  # Make sure we're pointing to the c:\nrn72\demo dir
+N=${NDEMO%/*}                        # parent of this dir...
 PATH=$N/bin
 export PATH
 export N
