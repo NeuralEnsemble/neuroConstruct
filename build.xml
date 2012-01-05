@@ -114,8 +114,12 @@
 
 
     <property name="libneuroml.dir" value="./NeuroML2"/>
-    <property name="libneuroml.jar.file" value="${libneuroml.dir}/libNeuroML-2.0.0.jar"/>
-    <property name="lems.jar.file" value="${libneuroml.dir}/lib/lems/lems-0.8.2.jar"/>
+
+    <available file="./NeuroML2" type="dir" property="libneuroml.dir.exists"/>
+    
+    <!--<property name="libneuroml.jar.file" value="${libneuroml.dir}/libNeuroML-2.0.0.jar"/>
+    <property name="lems.jar.file" value="${libneuroml.dir}/lib/lems/lems-0.8.2.jar"/>-->
+    <property name="neuroml2.libs" value="lib/neuroml2"/>
 
     <filter token="year" value="${year}"/>
     <filter token="version" value="${version}"/>
@@ -138,8 +142,9 @@
         <fileset dir="${junit.libs}">
           <include name="*.jar"/>
         </fileset>
-        <pathelement location="${libneuroml.jar.file}"/>
-        <pathelement location="${lems.jar.file}"/>
+        <fileset dir="${neuroml2.libs}">
+          <include name="*.jar"/>
+        </fileset>
 
     </path>
 
@@ -159,8 +164,9 @@
   <!-- =================================================================== -->
 
 
-  <target name="libneuromljar" depends="init">
-    <echo>Building the libNeuroML jar: ${libneuroml.jar.file}</echo>
+  <target name="libneuromljar" depends="init" if="libneuroml.dir.exists">
+
+    <echo>Building the libNeuroML jar in: ${libneuroml.dir}, ${libneuroml.dir.exists}</echo>
     <ant antfile="${libneuroml.dir}/build.xml" target="jarnml"/>
 
     <!--TODO-->
