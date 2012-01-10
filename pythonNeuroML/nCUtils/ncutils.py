@@ -778,7 +778,7 @@ class SimulationManager():
                         else:
                             allSimsSetRunning.append(simRef)
 
-                  print "Waiting a while before running next PyNN sim..."
+                  print "Waiting a while before running next sim..."
                   time.sleep(2) # wait a while before running PyNN...
 
 
