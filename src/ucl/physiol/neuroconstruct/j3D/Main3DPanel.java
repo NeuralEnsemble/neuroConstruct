@@ -259,14 +259,14 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         logger.logComment(" ------- (Re)adding 3D stuff... ------");
 
-        //GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
 
-
+        /*
         GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
         if (aa) template.setSceneAntialiasing(template.PREFERRED);
         GraphicsConfiguration config =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().
-                getDefaultScreenDevice().getBestConfiguration(template);
+                getDefaultScreenDevice().getBestConfiguration(template);*/
 
         myCanvas3D = new Canvas3D(config);
 

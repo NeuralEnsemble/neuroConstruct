@@ -569,15 +569,15 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         myOneCell3D = new OneCell3D(displayedCell, 0, project);
 
-
+        /*
         GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
         if (Main3DPanel.aa) template.setSceneAntialiasing(template.PREFERRED);
         
         GraphicsConfiguration config =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().
-                getDefaultScreenDevice().getBestConfiguration(template);
+                getDefaultScreenDevice().getBestConfiguration(template);*/
 
-        //GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
 
 
 
