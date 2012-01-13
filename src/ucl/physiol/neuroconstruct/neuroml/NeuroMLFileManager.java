@@ -1151,7 +1151,7 @@ public class NeuroMLFileManager
 
             String simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
 
-            simConf = "AbstractCells";
+            simConf = "GranCellTested";
 
             if (projFile.getName().startsWith("VSCSGranCell"))
             {

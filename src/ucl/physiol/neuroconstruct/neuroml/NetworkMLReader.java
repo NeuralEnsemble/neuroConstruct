@@ -344,10 +344,14 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
     }
 
 
-    public void setProperty(String name, String value)
+    private void setProperty(String name, String value)
     {
         logger.logComment("Setting property  "+name+": "+value);
-        if (name.equals(NetworkMLConstants.NC_NETWORK_GEN_RAND_SEED))
+        if (name == null)
+        {
+            logger.logError("Setting null property:  "+name+": "+value);
+        }
+        else if(name.equals(NetworkMLConstants.NC_NETWORK_GEN_RAND_SEED))
         {
             this.foundRandomSeed = Long.parseLong(value);
         }

@@ -457,7 +457,7 @@ public class MorphMLReader extends XMLFilterImpl
                  }
                  catch(Exception e)
                  {
-                     throw new SAXException("Problem locating parent of "+name);
+                     throw new SAXException("Problem locating parent (id = "+parent+") of "+name+"\nExisting segments: "+segments, e);
                  }
              }
 
@@ -1168,6 +1168,7 @@ public class MorphMLReader extends XMLFilterImpl
             //File f = new File("testProjects/TestMorphs/generatedNeuroML/test.mml");
             //File f = new File("../temp/cell.xml");
             File f = new File("../Documents/general/owp/CElegans_ADAL.xml");
+            f = new File("../models/GrCDiwakar/nd.xml");
 
            // File f = new File("/bernal/a4d.xml");
 

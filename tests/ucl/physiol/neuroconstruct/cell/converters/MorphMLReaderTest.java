@@ -93,7 +93,22 @@ public class MorphMLReaderTest {
         }
     }
 
-    @Test public void testWriteAndRead() throws MorphologyException, SAXException, IOException
+    @Test public void testWriteAndReadLevel1() throws MorphologyException, SAXException, IOException
+    {
+        doWriteAndRead(NeuroMLLevel.NEUROML_LEVEL_1);
+    }
+
+    @Test public void testWriteAndReadLevel2() throws MorphologyException, SAXException, IOException
+    {
+        doWriteAndRead(NeuroMLLevel.NEUROML_LEVEL_2);
+    }
+
+    @Test public void testWriteAndReadLevel3() throws MorphologyException, SAXException, IOException
+    {
+        doWriteAndRead(NeuroMLLevel.NEUROML_LEVEL_3);
+    }
+
+    public void doWriteAndRead(NeuroMLLevel level) throws MorphologyException, SAXException, IOException
     {
         System.out.println("---  testWriteAndRead...");
         
@@ -111,17 +126,17 @@ public class MorphMLReaderTest {
         int[] units = new int[]{UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, UnitConverter.GENESIS_SI_UNITS};
 
         for(int unit: units)
-        {
-            File morphFile = new File(savedNeuroMLDir, "TestNeuroMLv1__"+unit+".xml");
+        { 
+            File morphFile = new File(savedNeuroMLDir, "TestNeuroMLv1__u"+unit+"_"+level.toString().replace(" ", "")+".xml");
 
             MorphMLConverter.setPreferredExportUnits(unit);
             
             MorphMLConverter.saveCellInNeuroMLFormat(cell1, pm.getCurrentProject(), morphFile,
-                NeuroMLLevel.NEUROML_LEVEL_3, NeuroMLVersion.NEUROML_VERSION_1);
+                level, NeuroMLVersion.NEUROML_VERSION_1);
 
             assertTrue(morphFile.exists());
 
-            System.out.println("Saved cell in NeuroML Level 3 file: "+ morphFile.getAbsolutePath());
+            System.out.println("Saved cell in NeuroML "+level+" file: "+ morphFile.getAbsolutePath());
 
             File schemaFile = GeneralProperties.getNeuroMLSchemaFile();
 
@@ -138,12 +153,23 @@ public class MorphMLReaderTest {
 
             validator.validate(xmlFileSource);
 
-            System.out.println("File is valid NeuroML v1.x!");
+            System.out.println("File is valid "+level+" NeuroML v1.x!");
 
             Cell cell2 = mmlC.loadFromMorphologyFile(morphFile, cell1.getInstanceName());
+
+            if (level.equals(NeuroMLLevel.NEUROML_LEVEL_1)){
+                cell1.removeAllBiophysics();
+                cell2.removeAllBiophysics(); // remove default axRes etc
+            }
+
+            if (level.equals(NeuroMLLevel.NEUROML_LEVEL_1) || level.equals(NeuroMLLevel.NEUROML_LEVEL_2)){
+                cell1.removeAllSynapseInfo();
+                cell2.removeAllSynapseInfo(); // remove default axRes etc
+            }
+
             String compare = CellTopologyHelper.compare(cell1, cell2, false);
 
-            System.out.println("Comparison 1: "+ compare);
+            System.out.println("Comparison for "+level+": "+ compare);
 
             System.out.println("Chans 1: "+ cell1.getChanMechsVsGroups());
             System.out.println("Chans 2: "+ cell2.getChanMechsVsGroups());

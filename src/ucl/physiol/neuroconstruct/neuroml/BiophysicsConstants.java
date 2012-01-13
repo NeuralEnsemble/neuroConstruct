@@ -137,6 +137,7 @@ public class BiophysicsConstants
     public static String ION_CHAN_ATTR_V2 = "ionChannel";
     public static String COND_DENS_ATTR_V2 = "condDensity";
     public static String REV_POT_ATTR_V2 = "erev";
+    public static String ION_ATTR_V2 = "ion";
     
     public static String SPECIES_ELEMENT_V2 = "species";
     

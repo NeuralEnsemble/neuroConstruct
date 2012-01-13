@@ -1994,6 +1994,27 @@ public class Cell implements Serializable
     }
 
     /**
+     * For example to compare cells ignoring biophysical properties
+     */
+    public void removeAllBiophysics()
+    {
+        this.chanMechsVsGroups.clear();
+        this.apPropSpeedsVsGroups.clear();
+        this.ionPropsVsGroups.clear();
+        this.varMechsVsParaGroups.clear();
+        this.specAxResVsGroups.clear();
+        this.specCapVsGroups.clear();
+        this.speciesVsGroups.clear();
+    }
+    /**
+     * For example to compare cells ignoring biophysical properties
+     */
+    public void removeAllSynapseInfo()
+    {
+        this.synapsesVsGroups.clear();
+    }
+
+    /**
      * Makes an exact copy of the Cell, with new Segments (as opposed to references)
      * to the old Segments, containing the same morphological data as this Cell
      */

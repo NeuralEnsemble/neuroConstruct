@@ -52,8 +52,8 @@ H5_JARS=$H5_DIR/jhdf.jar:$H5_DIR/jhdf4obj.jar:$H5_DIR/jhdf5.jar:$H5_DIR/jhdf5obj
 J3D_DIR=$NC_HOME/lib/j3d
 J3D_JARS=$J3D_DIR/j3dcore.jar:$J3D_DIR/j3dutils.jar:$J3D_DIR/vecmath.jar
 
-LEMS_JAR=$NC_HOME/NeuroML2/lib/lems/lems-$LEMS_VERSION.jar
-NML2_JAR=$NC_HOME/NeuroML2/libNeuroML-$LIB_NEUROML_VERSION.jar
+LEMS_JAR=$NC_HOME/lib/neuroml2/lems-$LEMS_VERSION.jar
+NML2_JAR=$NC_HOME/lib/neuroml2/libNeuroML-$LIB_NEUROML_VERSION.jar
 
 
 export CLASSPATH=$NC_HOME/neuroConstruct_$NC_VERSION.jar:$H5_JARS:$J3D_JARS:$NC_HOME/lib/jython/jython.jar:$LEMS_JAR:$NML2_JAR
@@ -73,14 +73,6 @@ fi
 
 if [ $# -eq 1 ] ; then
     if [ $1 == "-make" ]; then
-        # Quick & dirty make in case ant isn't present...
-
-        if [ ! -f $NML2_JAR ]; then
-            echo "NeuroML 2 jar file $NML2_JAR doesn't exist. Building it..."
-            cd NeuroML2
-            ./make.sh
-            cd ..
-        fi
 
         mkdir classes
         javac  -sourcepath src -d classes -classpath $CLASSPATH  src/ucl/physiol/neuroconstruct/*/*.java  src/ucl/physiol/neuroconstruct/*/*/*.java  src/ucl/physiol/neuroconstruct/*/*/*/*.java

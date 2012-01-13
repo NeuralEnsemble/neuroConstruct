@@ -251,13 +251,23 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         }
     }
 
+    protected static boolean aa = true;
+
     private void add3DStuff()
     {
         this.removeAll();
 
         logger.logComment(" ------- (Re)adding 3D stuff... ------");
 
-        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+        //GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+
+
+        GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
+        if (aa) template.setSceneAntialiasing(template.PREFERRED);
+        GraphicsConfiguration config =
+                GraphicsEnvironment.getLocalGraphicsEnvironment().
+                getDefaultScreenDevice().getBestConfiguration(template);
+
         myCanvas3D = new Canvas3D(config);
 
         if (!containerFor3D.isVisible()) containerFor3D= this;
@@ -266,6 +276,8 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         add("South", jPanelControls);
 
         simpleU = new SimpleUniverse(myCanvas3D);
+
+        simpleU.getViewer().getView().setSceneAntialiasingEnable(aa);
 
         OrbitBehavior orbit = new OrbitBehavior(myCanvas3D, OrbitBehavior.REVERSE_ALL);
         BoundingSphere bounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0), 10000000);

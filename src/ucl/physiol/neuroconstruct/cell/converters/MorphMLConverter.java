@@ -957,13 +957,26 @@ public class MorphMLConverter extends FormatImporter
 
                                     mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.REV_POT_ATTR_V2,
                                                                                 revPotConv+" "+voltUnit.getNeuroML2Symbol()+""));
+
+                                    String ionXpath = ChannelMLConstants.getCurrVoltRelXPath() +"/@"+ ChannelMLConstants.OHMIC_ION_ATTR;
+                                    logger.logComment("Trying to get now: "+ ionXpath);
+                                    String ion = cmlCm.getXMLDoc().getValueByXPath(ionXpath);
+
+                                    if (ion!=null){
+                                        mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.ION_ATTR_V2,
+                                                                                ion));
+                                    }
                                 }
                                 else if (cm.isIonConcMechanism()) 
                                 {                                    
                                     String xpath = ChannelMLConstants.getIonSpeciesNameXPath();
                                     String ion = cmlCm.getXMLDoc().getValueByXPath(xpath);
-                                
+
                                     mechElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2,
+                                                                                ion));
+
+                                    //TODO: Remove this as id should be sufficient!!
+                                    mechElement.addAttribute(new SimpleXMLAttribute("ion",
                                                                                 ion));
 
                                     SimpleXMLElement concModelEl = new SimpleXMLElement(bioPrefix+ChannelMLConstants.ION_CONC_MODEL_ELEMENT_V2);
@@ -1593,7 +1606,7 @@ public class MorphMLConverter extends FormatImporter
 
 
 
-               if (!nml2)
+               if (!nml2 && level.equals(NeuroMLLevel.NEUROML_LEVEL_3))
                {
 
                    String netPrefix = NetworkMLConstants.PREFIX + ":";
@@ -2006,8 +2019,8 @@ public class MorphMLConverter extends FormatImporter
     {
         try
         {
-            //File f = new File("nCexamples/Ex1_Simple/Ex1_Simple.neuro.xml");
-            File f = new File("nCexamples/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx");
+           //File f = new File("nCexamples/Ex1_Simple/Ex1_Simple.neuro.xml");
+           File f = new File("nCexamples/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx");
            Project testProj = Project.loadProject(f,new ProjectEventListener()
            {
                public void tableDataModelUpdated(String tableModelName)

@@ -4233,29 +4233,34 @@ public class CellTopologyHelper
                     float fract = segment.getFractionAlongParent();
 
                     float allowedAccuracy = (float)Math.max(0.005,  segment.getSegmentLength() /1000f);
+                    
+                    Point3f connPoint = new Point3f((fract*endParent.x + (1-fract)*startParent.x),
+                                                    (fract*endParent.y + (1-fract)*startParent.y),
+                                                    (fract*endParent.z + (1-fract)*startParent.z));
 
-                    if (Math.abs(startSeg.x - (fract*endParent.x + (1-fract)*startParent.x))>allowedAccuracy ||
-                        Math.abs(startSeg.y - (fract*endParent.y + (1-fract)*startParent.y))>allowedAccuracy ||
-                        Math.abs(startSeg.z - (fract*endParent.z + (1-fract)*startParent.z))>allowedAccuracy)
+                    //if (Math.abs(startSeg.x - (fract*endParent.x + (1-fract)*startParent.x))>allowedAccuracy ||
+                    //    Math.abs(startSeg.y - (fract*endParent.y + (1-fract)*startParent.y))>allowedAccuracy ||
+                    //    Math.abs(startSeg.z - (fract*endParent.z + (1-fract)*startParent.z))>allowedAccuracy)
+                    if (connPoint.distance(startSeg)>allowedAccuracy)
                     {
-                        segmentsDisconnected.add("Start point of segment: "
+                        segmentsDisconnected.add("Start point of seg: "
                                                  + segment.getSegmentName()
-                                                 + " "
-                                                 + startSeg
-                                              + " ("
+                                                 + " (id "
                                               + segment.getSegmentId()
 
-                                                 + ") is not "
+                                                 + ") "
+                                                 + startSeg
+                                              + " is not "
                                                  + segment.getFractionAlongParent()
                                                  + " along parent: "
                                                  + segment.getParentSegment().getSegmentName()
-                                              + " ("
+                                              + " (id "
                                               + segment.getParentSegment().getSegmentId()
 
                                                  + ") "
                                                  + startParent
                                                  + " -> "
-                                                 + endParent+" (seg len: "+segment.getSegmentLength()+" < acc: "+allowedAccuracy+")");
+                                                 + endParent+" (dist: "+connPoint.distance(startSeg)+" > "+allowedAccuracy+", child seg len: "+segment.getSegmentLength()+")");
                     }
                 }
             }

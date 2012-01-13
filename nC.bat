@@ -55,13 +55,9 @@ set J3D_DIR=%NC_HOME%/lib/j3d
 set J3D_JARS=%J3D_DIR%/j3dcore.jar;%J3D_DIR%/j3dutils.jar;%J3D_DIR%/vecmath.jar
 
 REM Location of jars for LEMS
-set LIB_NEUROML_JAR=%NC_HOME%/NeuroML2/libNeuroML-%LIB_NEUROML_VERSION%.jar
-set LEMS_JAR=%NC_HOME%/NeuroML2/lib/lems/lems-%LEMS_VERSION%.jar
-if not exist %LIB_NEUROML_JAR% (
-    cd NeuroML2
-	make
-	cd ..
-)
+set LIB_NEUROML_JAR=%NC_HOME%/lib/neuroml2/libNeuroML-%LIB_NEUROML_VERSION%.jar
+set LEMS_JAR=%NC_HOME%/lib/neuroml2/lems-%LEMS_VERSION%.jar
+
 
 set CLASSPATH=%NC_HOME%/neuroConstruct_%NC_VERSION%.jar;%H5_JARS%;%J3D_JARS%;%NC_HOME%/lib/jython/jython.jar;%LEMS_JAR%;%LIB_NEUROML_JAR%
 
