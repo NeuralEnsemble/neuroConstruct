@@ -251,7 +251,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         }
     }
 
-    protected static boolean aa = true;
+    protected static boolean aa = false;
 
     private void add3DStuff()
     {
