@@ -569,17 +569,19 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         myOneCell3D = new OneCell3D(displayedCell, 0, project);
 
-        /*
-        GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
-        if (Main3DPanel.aa) template.setSceneAntialiasing(template.PREFERRED);
-        
-        GraphicsConfiguration config =
-                GraphicsEnvironment.getLocalGraphicsEnvironment().
-                getDefaultScreenDevice().getBestConfiguration(template);*/
+        GraphicsConfiguration config = null;
 
-        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
-
-
+        if (!Main3DPanel.aa)
+        {
+            config = SimpleUniverse.getPreferredConfiguration();
+        }
+        else
+        {
+            GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
+            template.setSceneAntialiasing(template.PREFERRED);
+            config = GraphicsEnvironment.getLocalGraphicsEnvironment().
+                    getDefaultScreenDevice().getBestConfiguration(template);
+        }
 
         if (canvas3D!=null) this.remove(canvas3D);
         canvas3D = new Canvas3D(config);

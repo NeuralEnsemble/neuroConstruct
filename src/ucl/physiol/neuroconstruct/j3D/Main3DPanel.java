@@ -251,7 +251,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         }
     }
 
-    protected static boolean aa = false;
+    protected static boolean aa = true;
 
     private void add3DStuff()
     {
@@ -259,14 +259,19 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         logger.logComment(" ------- (Re)adding 3D stuff... ------");
 
-        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+        GraphicsConfiguration config = null;
 
-        /*
-        GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
-        if (aa) template.setSceneAntialiasing(template.PREFERRED);
-        GraphicsConfiguration config =
-                GraphicsEnvironment.getLocalGraphicsEnvironment().
-                getDefaultScreenDevice().getBestConfiguration(template);*/
+        if (!aa)
+        {
+            config = SimpleUniverse.getPreferredConfiguration();
+        }
+        else
+        {
+            GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
+            template.setSceneAntialiasing(template.PREFERRED);
+            config = GraphicsEnvironment.getLocalGraphicsEnvironment().
+                    getDefaultScreenDevice().getBestConfiguration(template);
+        }
 
         myCanvas3D = new Canvas3D(config);
 
