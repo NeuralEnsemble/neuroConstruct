@@ -67,6 +67,13 @@ public class Display3DProperties
     private boolean showAxonalArbours = true;
     private boolean showSynapseConns = true;
     private boolean showSynapseEndpoints = true;
+
+    public static final int AA_NOT_SET = -1; // to give warning if used for first time...
+    public static final int AA_OFF = 0; // to give warning if used for first time...
+    public static final int AA_ON = 1; // to give warning if used for first time...
+
+    private int antiAliasing = AA_NOT_SET; // to give warning if used for first time...
+
     
     private String showInputsAs = DISPLAY_INPUTS_AS_PROBES;
 
@@ -96,6 +103,7 @@ public class Display3DProperties
                                boolean showAxonalArbours,
                                boolean showSynapseConns,
                                boolean showSynapseEndpoints,
+                               int antiAliasing,
                                String dendriteDisplayOption,
                                float transparency)
     {
@@ -109,6 +117,7 @@ public class Display3DProperties
         this.showSynapseEndpoints = showSynapseEndpoints;
         this.displayOption = dendriteDisplayOption;
         this.transparency = transparency;
+        this.antiAliasing = antiAliasing;
     }
     
     @Override
@@ -138,6 +147,7 @@ public class Display3DProperties
         showSynapseEndpoints = GeneralProperties.getDefaultShowSynapseEndpoints();
         displayOption = GeneralProperties.getDefaultDisplayOption();
         resolution3DElements = GeneralProperties.getDefaultResolution3DElements();
+        antiAliasing = GeneralProperties.getDefaultAntiAliasing();
     }
 
     /**
@@ -203,6 +213,17 @@ public class Display3DProperties
     {
         show3DAxes = showAxes;
     }
+
+    public int getAntiAliasing() {
+        return antiAliasing;
+    }
+
+
+    public void setAntiAliasing(int antiAliasing) {
+        this.antiAliasing = antiAliasing;
+    }
+
+    
 
 
     public boolean getShowInputs()

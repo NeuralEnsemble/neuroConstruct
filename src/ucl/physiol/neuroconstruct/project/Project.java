@@ -953,6 +953,28 @@ public class Project implements TableModelListener
         generatedPlotSaves.reset();
     }
 
+
+
+    public void warnAboutAA()
+    {
+        boolean aa = GuiUtils.showYesNoMessage(logger,
+                "Anti-aliasing has recently been added for the 3D display, allowing smoother rendering of solids and lines.\n"
+              + "This should improve the look of the 3D visualisations, but may have a small performance overhead, and in\n"
+              + "some cases could cause the 3D view to fail to display.\n\n"
+                + "Do you want to enable anti-aliasing? This option can be changed at Project Settings.", null);
+        if (aa)
+        {
+             proj3Dproperties.setAntiAliasing(Display3DProperties.AA_ON);
+             GeneralProperties.setDefaultAntiAliasing(Display3DProperties.AA_ON);
+        }
+        else
+        {
+            proj3Dproperties.setAntiAliasing(Display3DProperties.AA_OFF);
+             GeneralProperties.setDefaultAntiAliasing(Display3DProperties.AA_OFF);
+        }
+
+    }
+
     public void tableChanged(TableModelEvent e)
     {
         logger.logComment("Being told a table has changed: " + e);

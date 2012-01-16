@@ -88,6 +88,7 @@ public class OptionsFrame extends JFrame
     JLabel jLabelBackgroundColour = new JLabel();
     JButton jButtonBackgroundColour = new JButton();
     JCheckBox jCheckBoxShowAxes = new JCheckBox();
+    JCheckBox jCheckBoxAntiAliasing = new JCheckBox();
 
     boolean somethingAlteredInProject = false;
     ButtonGroup buttonGroup3DDisplay = new ButtonGroup();
@@ -113,9 +114,6 @@ public class OptionsFrame extends JFrame
     
     JLabel jLabelNeuroML = new JLabel();
     JComboBox jComboBoxNeuroML = new JComboBox();
-
-
-
 
     JButton jButtonApply = new JButton();
     GridBagLayout gridBagLayout3 = new GridBagLayout();
@@ -193,6 +191,7 @@ public class OptionsFrame extends JFrame
         this.jLabelCellColour.setToolTipText(toolTipText.getToolTip("3D Settings cell colour"));
 
        this.jCheckBoxShowAxes.setToolTipText(toolTipText.getToolTip("Axes in 3D"));
+       this.jCheckBoxAntiAliasing.setToolTipText(toolTipText.getToolTip("Anti Aliasing"));
        this.jButtonCellColour.setToolTipText(toolTipText.getToolTip("3D Settings cell colour"));
        this.jLabelRes3DElements.setToolTipText(toolTipText.getToolTip("3D Resolution"));
        this.jTextFieldRes3DElements.setToolTipText(toolTipText.getToolTip("3D Resolution"));
@@ -263,6 +262,9 @@ public class OptionsFrame extends JFrame
         });
         jCheckBoxShowAxes.setSelected(true);
         jCheckBoxShowAxes.setText("Show coloured 3D Axes");
+
+        jCheckBoxAntiAliasing.setSelected(true);
+        jCheckBoxAntiAliasing.setText("Use anti-aliasing");
 
 
         jPanelGeneral.setDebugGraphicsOptions(0);
@@ -465,7 +467,6 @@ public class OptionsFrame extends JFrame
 
         
         
-
         jPanelProjProps.add(jLabelCellColour, new GridBagConstraints(0, 2, 3, 1, 0.0, 0.0
                                          , GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(6, 12, 6, 0), 0, 0));
         
@@ -474,7 +475,10 @@ public class OptionsFrame extends JFrame
         
         
 
-        jPanelProjProps.add(jCheckBoxShowAxes, new GridBagConstraints(0, 3, 5, 1, 0.0, 0.0, 
+        jPanelProjProps.add(jCheckBoxShowAxes, new GridBagConstraints(0, 3, 2, 1, 0.0, 0.0,
+                                  GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(6, 0, 6, 0), 0, 0));
+
+        jPanelProjProps.add(jCheckBoxAntiAliasing, new GridBagConstraints(1, 3, 4, 1, 0.0, 0.0,
                                   GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(6, 0, 6, 0), 0, 0));
 
 
@@ -743,6 +747,12 @@ public class OptionsFrame extends JFrame
             jButtonCellColour.setBackground(props3D.getCellColour3D());
 
             jCheckBoxShowAxes.setSelected(props3D.getShow3DAxes());
+            if (props3D.getAntiAliasing()==Display3DProperties.AA_NOT_SET)
+            {
+                mainFrame.projManager.getCurrentProject().warnAboutAA();
+            }
+            if (props3D.getAntiAliasing()==Display3DProperties.AA_ON) jCheckBoxAntiAliasing.setSelected(true);
+            if (props3D.getAntiAliasing()==Display3DProperties.AA_OFF) jCheckBoxAntiAliasing.setSelected(false);
 
             //JRadioButtonShowDendAxons.setSelected(props3D.getShowDendAxons());
 
@@ -797,6 +807,12 @@ public class OptionsFrame extends JFrame
             jButtonCellColour.setBackground(GeneralProperties.getDefaultCellColor3D());
 
             jCheckBoxShowAxes.setSelected(GeneralProperties.getDefault3DAxesOption());
+            if (GeneralProperties.getDefaultAntiAliasing()==Display3DProperties.AA_NOT_SET)
+            {
+                mainFrame.projManager.getCurrentProject().warnAboutAA();
+            }
+            if (GeneralProperties.getDefaultAntiAliasing()==Display3DProperties.AA_ON) jCheckBoxAntiAliasing.setSelected(true);
+            if (GeneralProperties.getDefaultAntiAliasing()==Display3DProperties.AA_OFF) jCheckBoxAntiAliasing.setSelected(false);
 
             //JRadioButtonShowDendAxons.setSelected(GeneralProperties.getDefaultShowDendAxons());
             jCheckBoxShowRegions.setSelected(GeneralProperties.getDefaultShowRegions());
@@ -989,6 +1005,7 @@ public class OptionsFrame extends JFrame
             GeneralProperties.setDefaultCellColor3D(jButtonCellColour.getBackground());
 
             GeneralProperties.setDefault3DAxesOption(jCheckBoxShowAxes.isSelected());
+            GeneralProperties.setDefaultAntiAliasing(jCheckBoxAntiAliasing.isSelected()? Display3DProperties.AA_ON : Display3DProperties.AA_OFF);
             
             GeneralProperties.setDefaultDisplayOption((String)jComboBoxDisplayOptions.getSelectedItem());
             GeneralProperties.setDefaultShowRegions(jCheckBoxShowRegions.isSelected());
@@ -1023,6 +1040,7 @@ public class OptionsFrame extends JFrame
             props3D.setCellColour3D(jButtonCellColour.getBackground());
 
             props3D.setShow3DAxes(jCheckBoxShowAxes.isSelected());
+            props3D.setAntiAliasing(jCheckBoxAntiAliasing.isSelected()? Display3DProperties.AA_ON : Display3DProperties.AA_OFF);
             
             props3D.setDisplayOption((String)jComboBoxDisplayOptions.getSelectedItem());
             props3D.setShowRegions(jCheckBoxShowRegions.isSelected());

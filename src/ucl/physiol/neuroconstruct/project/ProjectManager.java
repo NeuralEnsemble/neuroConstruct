@@ -1550,7 +1550,6 @@ public class ProjectManager implements GenerationReport
                                        units,
                                        NeuroMLVersion.NEUROML_VERSION_1);
     }
-
     
     
     public Display3DProperties getProjectDispProps()

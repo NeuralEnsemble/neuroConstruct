@@ -64,7 +64,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
 
 public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 {
-    private ClassLogger logger = new ClassLogger("OneCell3DPanel");
+    private static ClassLogger logger = new ClassLogger("OneCell3DPanel");
 
     public static String highlightSecSegs = "Pick Sections/Segments";
     public static String highlightGroups = "Groups";
@@ -546,7 +546,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
 
 
-    public void repaint3DScene()
+    public final void repaint3DScene()
     {
         logger.logComment("Repainting the 3D objets...");
 
@@ -571,14 +571,21 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         GraphicsConfiguration config = null;
 
-        if (!Main3DPanel.aa)
+        if (project.proj3Dproperties.getAntiAliasing()==Display3DProperties.AA_NOT_SET)
+        {
+            project.warnAboutAA();
+        }
+
+        boolean useAA = project.proj3Dproperties.getAntiAliasing()==Display3DProperties.AA_ON;
+
+        if (!useAA)
         {
             config = SimpleUniverse.getPreferredConfiguration();
         }
         else
         {
             GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
-            template.setSceneAntialiasing(template.PREFERRED);
+            template.setSceneAntialiasing(GraphicsConfigTemplate3D.PREFERRED);
             config = GraphicsEnvironment.getLocalGraphicsEnvironment().
                     getDefaultScreenDevice().getBestConfiguration(template);
         }
@@ -594,7 +601,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         simpleU = new SimpleUniverse(canvas3D);
 
-        simpleU.getViewer().getView().setSceneAntialiasingEnable(Main3DPanel.aa);
+        simpleU.getViewer().getView().setSceneAntialiasingEnable(useAA);
 
         BranchGroup scene = createSceneGraph();
 
@@ -686,7 +693,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         logger.logComment("The selected type is: "+ selectedSynType);
 
-        if (synLocRadioButtons.size()==0)
+        if (synLocRadioButtons.isEmpty())
         {
             ArrayList<String> allAllowedTypes = this.displayedCell.getAllAllowedSynapseTypes();
             for (int i = 0; i < allAllowedTypes.size(); i++)
@@ -694,7 +701,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                 String nextSynapseType = allAllowedTypes.get(i);
                 if (selectedSynType==null) selectedSynType = nextSynapseType;
                 Vector<String> groups = displayedCell.getGroupsWithSynapse(nextSynapseType);
-                StringBuffer name = new StringBuffer(nextSynapseType +" (");
+                StringBuilder name = new StringBuilder(nextSynapseType +" (");
                 for (String group :groups)
                 {
                     if (!group.equals(groups.firstElement())) name.append(", ");
@@ -767,7 +774,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         
         Vector<ParameterisedGroup> pgs = displayedCell.getParameterisedGroups();
         
-        if (pgs.size()==0)
+        if (pgs.isEmpty())
         {
             JButton jButtonAddDefaultParamGroups = new JButton("Add example parameterised groups (beta impl, subject to change...)");
             
@@ -933,7 +940,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         logger.logComment("The selected type is: " + selectedGroup);
 
-        if (groupRadioButtons.size() == 0)
+        if (groupRadioButtons.isEmpty())
         {
             Vector allGroups = this.displayedCell.getAllGroupNames();
 
@@ -1084,7 +1091,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         logger.logComment("The selected density mech is: " + selectedDensMechName);
 
-        if (densMechRadioButtons.size() == 0)
+        if (densMechRadioButtons.isEmpty())
         {
             ArrayList<String> allAllowedChanMechNames = this.displayedCell.getAllChanMechNames(true);
 
@@ -1388,7 +1395,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             logger.logComment("Creating chan dens list...");
             latestSelectedSegment = myOneCell3D.getSelectedPrimitive(selectedPrim);
 
-            StringBuffer chanInfo = new StringBuffer("(Seg: "+ latestSelectedSegment.getSegmentName()
+            StringBuilder chanInfo = new StringBuilder("(Seg: "+ latestSelectedSegment.getSegmentName()
                                                      +", Sec: "+ latestSelectedSegment.getSection().getSectionName()+") ");
 
             ArrayList<ChannelMechanism> chans = this.displayedCell.getUniformChanMechsForSeg(latestSelectedSegment);
@@ -1570,7 +1577,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         logger.logComment("++++++++++++++ Done resetting...");
 
-        if (sectionTypeButtons.size() == 0)
+        if (sectionTypeButtons.isEmpty())
         {
             ColourGenerator colourGen = new ColourGenerator();
             JButton dendButton = createColouredButton("Dendrites", "Dendritic sections", colourGen.getNextColour());
@@ -2269,7 +2276,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
     }
 
 
-    void findCell()
+    final void findCell()
     {
 
         float lowestXToShow = Math.min(0, CellTopologyHelper.getMinXExtent(this.displayedCell, false, true));

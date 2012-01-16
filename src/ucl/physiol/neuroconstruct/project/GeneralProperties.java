@@ -91,6 +91,7 @@ public class GeneralProperties
                                   true,
                                   true,
                                   true,
+                                  Display3DProperties.AA_NOT_SET,
                                   Display3DProperties.DISPLAY_SOMA_NEURITE_SOLID,
                                   0.85f);
 
@@ -857,6 +858,11 @@ public class GeneralProperties
         defaultDisplay3DProps.setShow3DAxes(showAxes);
     }
 
+    public static void setDefaultAntiAliasing(int aa)
+    {
+        defaultDisplay3DProps.setAntiAliasing(aa);
+    }
+
     /**
      * How to display the dendrites etc: sticks or with diameters
      *
@@ -966,6 +972,11 @@ public class GeneralProperties
     public static int getDefaultResolution3DElements()
     {
         return defaultDisplay3DProps.getResolution3DElements();
+    }
+
+    public static int getDefaultAntiAliasing()
+    {
+        return defaultDisplay3DProps.getAntiAliasing();
     }
 
     public static void setDefaultResolution3DElements(int res)

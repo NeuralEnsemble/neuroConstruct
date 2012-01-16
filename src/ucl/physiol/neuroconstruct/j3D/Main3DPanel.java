@@ -251,8 +251,6 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         }
     }
 
-    protected static boolean aa = true;
-
     private void add3DStuff()
     {
         this.removeAll();
@@ -260,15 +258,22 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         logger.logComment(" ------- (Re)adding 3D stuff... ------");
 
         GraphicsConfiguration config = null;
+        
+        if (project.proj3Dproperties.getAntiAliasing()==Display3DProperties.AA_NOT_SET)
+        {
+            project.warnAboutAA();
+        }
 
-        if (!aa)
+        boolean useAA = project.proj3Dproperties.getAntiAliasing()==Display3DProperties.AA_ON;
+
+        if (!useAA)
         {
             config = SimpleUniverse.getPreferredConfiguration();
         }
         else
         {
             GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
-            template.setSceneAntialiasing(template.PREFERRED);
+            template.setSceneAntialiasing(GraphicsConfigTemplate3D.PREFERRED);
             config = GraphicsEnvironment.getLocalGraphicsEnvironment().
                     getDefaultScreenDevice().getBestConfiguration(template);
         }
@@ -282,7 +287,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         simpleU = new SimpleUniverse(myCanvas3D);
 
-        simpleU.getViewer().getView().setSceneAntialiasingEnable(aa);
+        simpleU.getViewer().getView().setSceneAntialiasingEnable(useAA);
 
         OrbitBehavior orbit = new OrbitBehavior(myCanvas3D, OrbitBehavior.REVERSE_ALL);
         BoundingSphere bounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0), 10000000);
@@ -1008,7 +1013,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
             ArrayList currentCellGroupPositions = project.generatedCellPositions.getPositionRecords(cellGroupName);
 
-            if (currentCellGroupPositions == null || currentCellGroupPositions.size() == 0)
+            if (currentCellGroupPositions == null || currentCellGroupPositions.isEmpty())
             {
                 logger.logComment("No cells generated for that cell group...");
             }
@@ -2482,7 +2487,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
     void jButtonSimInfo_actionPerformed(ActionEvent e)
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         //Properties props = SimulationsInfo.getSimulationProperties(simRerunFrame.getSimulationDirectory());
 
@@ -2551,7 +2556,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
     }
 
 
-    void findRegions()
+    final void findRegions()
     {
 
         logger.logComment("Finding best view of all regions and cells, looking down z axis. optimalScale: "+ optimalScale);
@@ -2710,7 +2715,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
             logger.logComment("Going to print network info on cell num: " + cellNumber 
                     + " in group: " + cellGroupSelected);
 
-            StringBuffer info = new StringBuffer();
+            StringBuilder info = new StringBuilder();
 
             Cell cell = project.cellManager.getCell(project.cellGroupsInfo.getCellType(cellGroupSelected));
 
@@ -2939,7 +2944,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                     boolean cellGetsStim = false;
 
 
-                    StringBuffer sbTemp = new StringBuffer();
+                    StringBuilder sbTemp = new StringBuilder();
                     int count = 0;
 
                     for (int j = 0; j < theseInputs.size(); j++)
@@ -3145,7 +3150,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         int total = project.generatedCellPositions.getNumberInCellGroup(cellGroup);
 
-        StringBuffer desc = new StringBuffer("Cell Group : " + cellGroup + " spiking pattern\n");
+        StringBuilder desc = new StringBuilder("Cell Group : " + cellGroup + " spiking pattern\n");
 
         DataSet cellGroupFreqData = new DataSet(simRerunFrame.getSimReference()
                                                 + ": Spiking rates in " + cellGroup, desc.toString(),
@@ -3433,7 +3438,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
 
 
-        StringBuffer desc = new StringBuffer(simRerunFrame.getSimReference()
+        StringBuilder desc = new StringBuilder(simRerunFrame.getSimReference()
                                                 + ": Spiking histogram of " + cellGroup + " for: "+cellChooser.toNiceString());
 
         DataSet cellGroupHist = new DataSet(desc.toString(), desc.toString(),
@@ -3749,7 +3754,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         }
 
 
-        StringBuffer desc = new StringBuffer(simRerunFrame.getSimReference()
+        StringBuilder desc = new StringBuilder(simRerunFrame.getSimReference()
                                                 + ": Spikes synchrony in time of " + cellGroup + " for: "+cellChooser.toNiceString());
 
         DataSet cellGroupSync = new DataSet(desc.toString(), desc.toString(),
@@ -4224,7 +4229,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         ArrayList<DataStore> dsForCellRef = simRerunFrame.getDataForCellSegRef(cellRef, false);
 
 
-        if (dsForCellRef.size()==0)
+        if (dsForCellRef.isEmpty())
         {
             GuiUtils.showErrorMessage(logger, "There is no voltage data for cell number: "
                                       +selcellNum+" in group "+ cellGroupSelected, null, this);
@@ -4263,7 +4268,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
                     dsForCellRef = simRerunFrame.getDataForCellSegRef(cellRef, false);
 
-                    if (dsForCellRef.size() != 0)
+                    if (!dsForCellRef.isEmpty())
                     {
 
                         double[] voltages = simRerunFrame.getVoltageAtAllTimes(cellRef);
@@ -4356,7 +4361,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
 
         int total = project.generatedCellPositions.getNumberInCellGroup(cellGroup);
 
-        StringBuffer desc = new StringBuffer("Cell Group : " + cellGroup + " ISI histogram\n");
+        StringBuilder desc = new StringBuilder("Cell Group : " + cellGroup + " ISI histogram\n");
 
         DataSet popISIHist = new DataSet(simRerunFrame.getSimReference()
                                                 + ": ISI histogram of " + cellGroup, desc.toString(), "ms", "", "Interspike interval", "Number in bin");
