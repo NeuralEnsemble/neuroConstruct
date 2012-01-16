@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.6.0_18" class="java.beans.XMLDecoder">
+<java version="1.6.0_23" class="java.beans.XMLDecoder">
 
 <!-- This is a neuroConstruct project file. It's best to open this
 file with neuroConstruct, as opposed to editing it directly. 
@@ -16,7 +16,7 @@ Go to tab Generate, press Generate Cell Positions and Connections, and then to v
 If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</string>
   </void>
   <void property="projectFileVersion">
-   <string>neuroConstruct v1.4.1</string>
+   <string>neuroConstruct v1.5.2</string>
   </void>
   <void property="projectName">
    <string>TestMorphs</string>

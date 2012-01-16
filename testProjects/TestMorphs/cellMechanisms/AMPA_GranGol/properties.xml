@@ -11,8 +11,7 @@ Note the following:
    Mechanism Type should only have values: Channel mechanism, Synaptic mechanism, Ion concentration, Point process, Gap junction
 
 </comment>
-<entry key="Description">Simple example of a synaptic mechanism, which consists of a postsynaptic conductance which changes as 
-        double exponential function of time. Mappings exist for NEURON and GENESIS.</entry>
+<entry key="Description">AMPA synaptic mechanism from Granule cells to Golgi cells</entry>
 <entry key="NEURON mapping">ChannelML_v1.8.1_NEURONmod.xsl</entry>
 <entry key="GENESIS mapping">ChannelML_v1.8.1_GENESIStab.xsl</entry>
 <entry key="Implementation method">ChannelML based Cell Mechanism</entry>
@@ -20,6 +19,6 @@ Note the following:
 <entry key="Mechanism Type">Synaptic mechanism</entry>
 <entry key="ChannelML file">DoubExpSyn.xml</entry>
 <entry key="GENESIS file requires compilation">false</entry>
-<entry key="Mechanism Name">DoubExpSyn</entry>
+<entry key="Mechanism Name">AMPA_GranGol</entry>
 <entry key="Mechanism Model">Template based ChannelML file</entry>
 </properties>

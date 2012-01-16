@@ -111,8 +111,9 @@ public class MorphMLReaderTest {
     public void doWriteAndRead(NeuroMLLevel level) throws MorphologyException, SAXException, IOException
     {
         System.out.println("---  testWriteAndRead...");
-        
+
         Cell cell1 = pm.getCurrentProject().cellManager.getCell("SampleCell_ca");
+        ////Cell cell1 = pm.getCurrentProject().cellManager.getCell("Granule_98");
         //Cell cell1 = pm.getCurrentProject().cellManager.getCell("SimpleHH");
         
         cell1.setCellDescription("This is\na test\n...");
@@ -187,7 +188,7 @@ public class MorphMLReaderTest {
     {
         System.out.println("---  testWriteNeuroML2...");
 
-        Cell cell1 = pm.getCurrentProject().cellManager.getCell("SimpleHH");
+        Cell cell1 = pm.getCurrentProject().cellManager.getCell("Granule_98");
 
         cell1.setCellDescription("This is NeuroML2...");
 
