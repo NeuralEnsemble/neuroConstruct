@@ -48,6 +48,9 @@
           <archive location="lib/j3d/j3dutils.jar" failOnError="false" />
           <archive location="lib/j3d/j3dcore.jar" failOnError="false" />
           <archive location="lib/j3d/vecmath.jar" failOnError="false" />
+          <archive location="lib/neuroml2/libNeuroML-2.0.0.jar" failOnError="false" />
+          <archive location="lib/neuroml2/lems-0.8.2.jar" failOnError="false" />
+          <archive location="lib/junit/junit-4.8.1.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
