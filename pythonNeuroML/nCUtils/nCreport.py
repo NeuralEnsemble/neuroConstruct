@@ -13,6 +13,7 @@
 import sys
 import os
 import datetime
+#import os.path
 
 try:
 	from java.io import File
@@ -28,26 +29,27 @@ sys.path.append(os.environ["NC_HOME"]+"/pythonNeuroML/nCUtils")
 import ncutils as nc
 from ucl.physiol.neuroconstruct.hpc.mpi import MpiSettings
 
-argList = [ "commandLine", "ProjectFile", "simConfigName", "MpiSettings", "numConcurrentSims", "suggestedRemoteRunTime", "stimAmpLow", "stimAmpHigh","stimAmpInc","stimDel","stimDur","simDuration","startTime","stopTime","threshold" ]
+argList = [ "commandLine", "DEBUG", "ProjectFile", "simConfigName", "MpiSettings", "numConcurrentSims", "suggestedRemoteRunTime", "stimAmpLow", "stimAmpHigh","stimAmpInc","stimDel","stimDur","simDuration","startTime","stopTime","threshold" ]
 argLookup = {}
 argCount = 0
 for arg in sys.argv:
     argLookup[argList[argCount]]=arg
-    print '> ', argCount, argList[argCount], arg
+    if int(argLookup["DEBUG"]) == 1:
+        print '> ', argCount, argList[argCount], arg
     argCount+=1
     if argCount >= len(argList): break
 
 simConfig   = argLookup["simConfigName"]
-stimAmpLow  = argLookup["stimAmpLow"]
-stimAmpInc  = argLookup["stimAmpInc"]
-stimAmpHigh = argLookup["stimAmpHigh"]
-stimDel     = argLookup["stimDel"]
-stimDur     = argLookup["stimDur"]
-simDuration = argLookup["simDuration"]
+stimAmpLow  = float(argLookup["stimAmpLow"])
+stimAmpInc  = float(argLookup["stimAmpInc"])
+stimAmpHigh = float(argLookup["stimAmpHigh"])
+stimDel     = float(argLookup["stimDel"])
+stimDur     = float(argLookup["stimDur"])
+simDuration = float(argLookup["simDuration"])
 
-analyseStartTime    = argLookup["startTime"] # So it's firing at a steady rate...
-analyseStopTime     = argLookup["stopTime"]
-analyseThreshold    = argLookup["threshold"] # mV
+analyseStartTime    = float(argLookup["startTime"]) # So it's firing at a steady rate...
+analyseStopTime     = float(argLookup["stopTime"])
+analyseThreshold    = float(argLookup["threshold"]) # mV
 
 mpiConfig = eval(argLookup["MpiSettings"])
 
@@ -60,33 +62,40 @@ mpiConfig = eval(argLookup["MpiSettings"])
 #if mpiConfig != MpiSettings.LOCAL_SERIAL: numConcurrentSims = 30
 
 # suggestedRemoteRunTime = 33   # mins
-suggestedRemoteRunTime = argLookup["suggestedRemoteRunTime"]
+suggestedRemoteRunTime = int(argLookup["suggestedRemoteRunTime"])
 
-# Load neuroConstruct project
+# Load neuroConstruct project whether given direct ref to file or relative to nConstruct home
 
-# projFile = File(os.environ["NC_HOME"]+"/nCmodels/Thalamocortical/Thalamocortical.ncx")
-# --- wouldn't it be more natural to supply full path to the project file?
-projFile = File(os.environ["NC_HOME"]+argLookup["ProjectFile"])
+if os.path.exists(argLookup["ProjectFile"]):
+    projFile = File(argLookup["ProjectFile"])
+elif os.path.exists(os.environ["NC_HOME"]+argLookup["ProjectFile"]):
+    projFile = File(os.environ["NC_HOME"]+argLookup["ProjectFile"])
+else:
+    print "Critical error: bad argument for project file passed, please check input:",argLookup["ProjectFile"]
+    quit()
 
 simManager = nc.SimulationManager(projFile,
-                                  argLookup["numConcurrentSims"])
+                                  int(argLookup["numConcurrentSims"]))
 
 
 start = "\nSimulations started at: %s"%datetime.datetime.now()
 
-#simManager.generateFICurve("NEURON",
-#                           simConfig,
-#                           stimAmpLow,
-#                           stimAmpInc,
-#                           stimAmpHigh,
-#                           stimDel,
-#                           stimDur,
-#                           simDuration,
-#                           analyseStartTime,
-#                           analyseStopTime,
-#                           analyseThreshold,
-#                           mpiConfig =                mpiConfig,
-#                           suggestedRemoteRunTime =   suggestedRemoteRunTime)
+if int(argLookup["DEBUG"]) == 0:
+    simManager.generateFICurve("NEURON",
+                           simConfig,
+                           stimAmpLow,
+                           stimAmpInc,
+                           stimAmpHigh,
+                           stimDel,
+                           stimDur,
+                           simDuration,
+                           analyseStartTime,
+                           analyseStopTime,
+                           analyseThreshold,
+                           mpiConfig =                mpiConfig,
+                           suggestedRemoteRunTime =   suggestedRemoteRunTime)
+else:
+    print 'Running in DEBUG mode, no simulation run, argLookup["DEBUG"] :',argLookup["DEBUG"]
 
 finish = "Simulations finished at: %s\n"%datetime.datetime.now()
 
