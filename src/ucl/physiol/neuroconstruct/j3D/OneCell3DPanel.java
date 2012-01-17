@@ -573,7 +573,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         if (project.proj3Dproperties.getAntiAliasing()==Display3DProperties.AA_NOT_SET)
         {
-            project.warnAboutAA();
+            project.checkAboutAA();
         }
 
         boolean useAA = project.proj3Dproperties.getAntiAliasing()==Display3DProperties.AA_ON;

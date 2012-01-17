@@ -749,7 +749,7 @@ public class OptionsFrame extends JFrame
             jCheckBoxShowAxes.setSelected(props3D.getShow3DAxes());
             if (props3D.getAntiAliasing()==Display3DProperties.AA_NOT_SET)
             {
-                mainFrame.projManager.getCurrentProject().warnAboutAA();
+                mainFrame.projManager.getCurrentProject().checkAboutAA();
             }
             if (props3D.getAntiAliasing()==Display3DProperties.AA_ON) jCheckBoxAntiAliasing.setSelected(true);
             if (props3D.getAntiAliasing()==Display3DProperties.AA_OFF) jCheckBoxAntiAliasing.setSelected(false);
@@ -809,7 +809,7 @@ public class OptionsFrame extends JFrame
             jCheckBoxShowAxes.setSelected(GeneralProperties.getDefault3DAxesOption());
             if (GeneralProperties.getDefaultAntiAliasing()==Display3DProperties.AA_NOT_SET)
             {
-                mainFrame.projManager.getCurrentProject().warnAboutAA();
+                mainFrame.projManager.getCurrentProject().checkAboutAA();
             }
             if (GeneralProperties.getDefaultAntiAliasing()==Display3DProperties.AA_ON) jCheckBoxAntiAliasing.setSelected(true);
             if (GeneralProperties.getDefaultAntiAliasing()==Display3DProperties.AA_OFF) jCheckBoxAntiAliasing.setSelected(false);
