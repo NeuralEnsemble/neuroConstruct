@@ -3,6 +3,29 @@ Release notes/change log for neuroConstruct
 See also the README file
 
 
+--------- Version 1.5.2 (Jan 2012) ---------
+
+Added anti-aliasing on 3D view for smoother renderings. Can be turned on/off via Settings -> Project Properties 
+or when viewing in 3D, 3D Settings.
+
+Allows multiple NeuroML files to be imported with: ./nC.sh -neuroml nml1.xml nml2.xml channelX.xml
+
+Added option to plot multiple data files with: ./nC.sh -plot mydata1.dat mydata2.dat 
+
+Fixed bug when compiling/running Neuron 7.2 on Windows. See templates\neuronUtils\mknrndll.sh
+
+Improved integration of the NeuroML 2 and nC Ant build scripts. nC by default uses the copy of libNeuroML**.jar 
+and lems**.jar in lib/neuroml2 to facilitate recompiling of downloaded copies of the code and to make sure nC has
+a stable version of the LEMS/NeuroM 2 code.
+
+Fixed bug in genesis export, whereby wrong rev pot of leak conductance was used, only if channelml file for leak 
+cond was in SI units (which no project files used until now...) Put in check that all channelml files in project 
+are in same unit system, either si or physiological. Throws warning at Validate if not the case. Important when 
+exporting to single level 3 file.
+
+Improvement of PyNN export from nC, supports NeuroML 2 based PyNN model descriptions, see Ex8_PyNNDemo, sim config
+TestPyNN_NML2
+
 --------- Version 1.5.1 (July 2011) ---------
 
 Improvements to LEMS/NeuroML 2 integration. Added project at nCexamples/Ex10_NeuroML2/Ex10_NeuroML2.ncx
