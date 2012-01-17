@@ -7,6 +7,8 @@ The application can be run via the desktop/Start Menu links if the automatic
 installers have been used, or in a terminal with nC.bat (Windows) or ./nC.sh (Linux/Mac),
 after Java has been installed. 
 
+If you have Apache ant installed, you can run the application with: ant run.
+
 Full installation and setup instructions can be found in the file docs/website/docs/index.html
 which is normally the same as at http://www.neuroconstruct.org/docs/install.html
 

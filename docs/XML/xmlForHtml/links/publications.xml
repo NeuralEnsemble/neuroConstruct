@@ -125,11 +125,23 @@
 		<td>
 			<p><strong>Synaptic depression enables neuronal gain control</strong>, Nature 2009</p>
 			<p>Jason S. Rothman, Laurence Cathala, Volker Steuber,  R. Angus Silver</p>
-		<p><a  href="http://www.nature.com/nature/journal/vaop/ncurrent/full/nature07604.html">Advance Online Publication</a></p>
+		<p><a  href="http://www.nature.com/nature/journal/vaop/ncurrent/full/nature07604.html">Nature.com</a></p>
                 </td>
 		<td><p>&nbsp;</p>
-			An experimental and modelling paper looking at the effects of short term plasticity on gain control. Used neuroConstruct to investigate
+			<b>(Silver Lab)</b> An experimental and modelling paper looking at the effects of short term plasticity on gain control. Used neuroConstruct to investigate
             a detailed layer 5 pyramidal cell model (Kole et al 2008) with dendritically distributed excitatory and inhibitory synaptic input.
+
+		</td>
+	</tr>
+	
+	<tr>
+		<td>
+			<p><strong>Rapid Desynchronization of an Electrically Coupled Interneuron Network with Sparse Excitatory Synaptic Input</strong>, Neuron 2010</p>
+			<p>Vervaeke, K. and Lőrincz, A. and Gleeson, P. and Farinella, M. and Nusser, Z. and Silver, R. A.</p>
+		<p><a  href="http://www.cell.com/neuron/abstract/S0896-6273%2810%2900512-X">Cell.com</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			<b>(Silver Lab)</b> A highly detailed electrically coupled cerebellar Golgi cell network was created using neuroConstruct to help explain experimental data related to the spread of desynchronisation in this network following sparse synaptic activation. Experimental data on gap junction location, distance dependent coupling strengths, reconstructed cells and realistic conductances were used in the construction of the model.
 
 		</td>
 	</tr>
@@ -145,6 +157,71 @@
 
 		</td>
 	</tr>
+	
+	
+	<tr>
+		<td>
+			<p><strong>Stochastic amplification of calcium-activated potassium currents in Ca2+ microdomains</strong>, Journal of Computational Neuroscience 2011</p>
+			<p>David Stanley, Berj Bardakjian, Mark Spano and William Ditto</p>
+		<p><a  href="http://www.springerlink.com/content/am777546126267x4/">Springer</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			Investigation of the effects of stochastic L-Type Ca<sup>2+</sup> channels on the response of SK channels in Ca<sup>2+</sup> microdomains
+
+		</td>
+	</tr>
+	
+	<tr>
+		<td>
+			<p><strong>Emergence of small-world structure in networks of spiking neurons through STDP plasticity</strong>, in From Brains to Systems Advances (series Experimental Medicine and Biology) 2011</p>
+			<p>Gleb Basalyga, Pablo M. Gleiser and Thomas Wennekers</p>
+		<p><a  href="http://www.springer.com/biomed/neuroscience/book/978-1-4614-0163-6">Springer</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			Looking at the emergence of small world network properties of networks containing synapses with spike timing dependent plasticity
+
+		</td>
+	</tr>
+	
+	<tr>
+		<td>
+			<p><strong>A biophysical cortical column model to study the multi-component origin of the VSDI signal</strong>, NeuroImage 2010</p>
+			<p>Sandrine Chemla and Frédéric Chavane</p>
+		<p><a  href="http://www.sciencedirect.com/science/article/pii/S1053811910008700">ScienceDirect</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			Creating a biophysically detailed cortical column model to study the origin of the voltage sensitive dye imaging signal
+
+		</td>
+	</tr>
+	
+	<tr>
+		<td>
+			<p><strong>Imbalanced pattern completion vs. separation in cognitive disease: network simulations of synaptic pathologies predict a personalized therapeutics strategy</strong>, BMC Neuroscience 2010</p>
+			<p>Jesse Hanson and Daniel Madison</p>
+		<p><a  href="http://www.biomedcentral.com/1471-2202/11/96">BioMedCentral</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			Investigating how synaptic pathologies (alteration in long term depression (LTD)/potentiation (LTP), inhibition or connectivity) can underlie specific cognitive impairments
+
+		</td>
+	</tr>
+	
+	<!--
+	<tr>
+		<td>
+			<p><strong>TTT</strong>, JJ YY</p>
+			<p>NN</p>
+		<p><a  href="UU">Pubmed</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			AAAA
+
+		</td>
+	</tr>
+	-->
+	
+	
         
 
 

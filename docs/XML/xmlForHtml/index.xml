@@ -7,8 +7,8 @@
   </header>
   <body>
       <p>&nbsp;</p>
-      <a  href="http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1000815">
-          <figure src="images/Fig7nml2.png" alt="A new paper describing the latest version of NeuroML." ></figure>
+      <a  href="links/publications.html#N100E0">
+          <figure src="images/golgi9cell.png" alt="A highly detailed electrically coupled cerebellar Golgi cell network was created using neuroConstruct to help explain experimental data related to the spread of desynchronisation in this network following sparse synaptic activation. Experimental data on gap junction location, distance dependent coupling strengths, reconstructed cells and realistic conductances were used in the construction of the model." ></figure>
       </a>
 
       <p>&nbsp;</p>
@@ -31,7 +31,7 @@
 
         <title>Latest News</title>
 
-        <p>The latest version of neuroConstruct (<strong>v1.5.1, July 2011</strong>) is available for download <a href="download/index.html">here</a>.
+        <p>The latest version of neuroConstruct (<strong>v1.5.2, Jan 2012</strong>) is available for download <a href="download/index.html">here</a>.
         The source code is included with this release under GPL.</p>
 
         <p>A paper describing the latest stable version of NeuroML has recently been

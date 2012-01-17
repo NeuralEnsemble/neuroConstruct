@@ -1314,8 +1314,8 @@ is usually added to the neuroConstruct Cell class before it is supported in the 
 </term>
 <term>
     <name>Anti Aliasing</name>
-    <defined>If anti-aliasing is turned on 3D renderings of both solid compartments and line segments will be smoother. This may have soem performance overhead on some video cards,
-    or may prevent the 3D view from displaying, and so should be turned off.</defined>
+    <defined>If anti-aliasing is turned on, 3D renderings of both solid compartments and line segments will be smoother. This may have some performance overhead on some video cards,
+    or may prevent the 3D view from displaying, and so should be turned off. </defined>
 </term>
 
 
