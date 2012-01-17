@@ -589,7 +589,7 @@
   <!-- Generates the main website using Forrest (http://forrest.apache.org)   -->
   <!-- ====================================================================== -->
 
-  <target name="website" depends="glossary"
+  <target name="website" depends="glossary, generateexamples"
           description="Generates the main website using Forrest (http://forrest.apache.org)">
 
     <copy file="./README" todir="${website.dir}/docs" />
