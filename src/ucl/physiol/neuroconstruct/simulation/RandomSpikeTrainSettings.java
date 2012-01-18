@@ -26,9 +26,13 @@
 
 package ucl.physiol.neuroconstruct.simulation;
 
+import java.beans.*;
+import java.io.*;
+import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.project.stimulation.*;
 import ucl.physiol.neuroconstruct.utils.NumberGenerator;
 import ucl.physiol.neuroconstruct.project.cellchoice.*;
+import ucl.physiol.neuroconstruct.project.segmentchoice.IndividualSegments;
 import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentLocationChooser;
 
 
@@ -187,7 +191,44 @@ public class RandomSpikeTrainSettings extends StimulationSettings
 
     public static void main(String[] args)
     {
+        RandomSpikeTrainExtSettings rsts = new RandomSpikeTrainExtSettings("ref",
+                            "cg",
+                            new AllCells(),
+                            new IndividualSegments(new ArrayList<Integer>()),
+                            new NumberGenerator(11.11f),
+                            "synt",
+                            new NumberGenerator(22.22f),
+                            new NumberGenerator(33.33f),
+                            true);
 
+        System.out.println("rsts: "+rsts);
+
+        try
+        {
+            File f = new File("../temp/rs.xml");
+            FileOutputStream fos = new FileOutputStream(f);
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+            XMLEncoder xmlEncoder = new XMLEncoder(bos);
+
+            xmlEncoder.writeObject(rsts);
+
+            xmlEncoder.flush();
+            xmlEncoder.close();
+
+            FileInputStream fis = new FileInputStream(f);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+            XMLDecoder xmlDecoder = new XMLDecoder(bis);
+
+
+             Object obj = xmlDecoder.readObject();
+             System.out.println("Obj: "+ obj);
+
+        }
+        catch (FileNotFoundException ex)
+        {
+            ex.printStackTrace();
+            return;
+        }
     }
 
 }
