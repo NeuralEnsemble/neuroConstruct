@@ -48,8 +48,7 @@ import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentLocationChooser;
 
 public class RandomSpikeTrainSettings extends StimulationSettings
 {
-    public RandomSpikeTrain randomSpikeTrain = null;
-
+    private RandomSpikeTrain randomSpikeTrain = null;
 
     public RandomSpikeTrainSettings()
     {
