@@ -117,10 +117,10 @@ public class RandomSpikeTrainSettings extends StimulationSettings
         
         RandomSpikeTrain rstClone = (RandomSpikeTrain)rstOrig.clone();
         
-        RandomSpikeTrainSettings rsts = new RandomSpikeTrainSettings(this.reference,
-                                 this.cellGroup,
-                                 (CellChooser)this.cellChooser.clone(),
-                                 (SegmentLocationChooser)this.segmentChooser.clone(),
+        RandomSpikeTrainSettings rsts = new RandomSpikeTrainSettings(this.getReference(),
+                                 this.getCellGroup(),
+                                 (CellChooser)this.getCellChooser().clone(),
+                                 (SegmentLocationChooser)this.getSegChooser().clone(),
                                  rstClone.getRate(),
                                  rstClone.getSynapseType());
         

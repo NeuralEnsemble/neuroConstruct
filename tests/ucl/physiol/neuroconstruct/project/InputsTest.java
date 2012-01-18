@@ -134,7 +134,7 @@ ProjectManager pm = null;
         for (int i = 0; i < inputs.size(); i++) {
             System.out.println("props"+inputs.get(i).getInstanceProps().details(false));
             RandomSpikeTrainExtInstanceProps rste = (RandomSpikeTrainExtInstanceProps) inputs.get(i).getInstanceProps();
-            assertTrue((rste.delay>0)&&(rste.delay<1));
+            assertTrue((rste.getDelay()>0)&&(rste.getDelay()<1));
         }
         
         

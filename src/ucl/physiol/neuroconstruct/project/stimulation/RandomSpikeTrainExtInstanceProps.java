@@ -42,9 +42,9 @@ import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
 public class RandomSpikeTrainExtInstanceProps extends InputInstanceProps
 {
-    public float rate = Float.NaN;
-    public float delay = Float.NaN;
-    public float duration = Float.NaN;
+    private float rate = Float.NaN;
+    private float delay = Float.NaN;
+    private float duration = Float.NaN;
     
     @Override
     public String details(boolean html)

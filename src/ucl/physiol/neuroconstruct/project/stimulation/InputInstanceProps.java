@@ -37,9 +37,6 @@ package ucl.physiol.neuroconstruct.project.stimulation;
  */
 
 public abstract class InputInstanceProps 
-
 {
-    
     public abstract String details(boolean html);
-    
 }

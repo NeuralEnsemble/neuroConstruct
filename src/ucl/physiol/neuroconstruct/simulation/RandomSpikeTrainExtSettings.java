@@ -44,7 +44,7 @@ import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentLocationChooser;
 
 public class RandomSpikeTrainExtSettings extends StimulationSettings
 {
-    public RandomSpikeTrainExt randomSpikeTrainExt = null;
+    private RandomSpikeTrainExt randomSpikeTrainExt = null;
 
 
     public RandomSpikeTrainExtSettings()
@@ -88,10 +88,10 @@ public class RandomSpikeTrainExtSettings extends StimulationSettings
         
         RandomSpikeTrainExt rstClone = (RandomSpikeTrainExt)rstOrig.clone();
         
-        RandomSpikeTrainExtSettings rsts = new RandomSpikeTrainExtSettings(this.reference,
-                                 this.cellGroup,
-                                 (CellChooser)this.cellChooser.clone(),
-                                 (SegmentLocationChooser)this.segmentChooser.clone(),
+        RandomSpikeTrainExtSettings rsts = new RandomSpikeTrainExtSettings(this.getReference(),
+                                 this.getCellGroup(),
+                                 (CellChooser)this.getCellChooser().clone(),
+                                 (SegmentLocationChooser)this.getSegChooser().clone(),
                                  rstClone.getRate(),
                                  rstClone.getSynapseType(),
                                  rstClone.getDelay(),

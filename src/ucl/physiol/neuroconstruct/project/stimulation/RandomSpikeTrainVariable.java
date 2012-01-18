@@ -44,11 +44,11 @@ public class RandomSpikeTrainVariable extends ElectricalInput
     public static final String TYPE =  "RandomSpikeTrainVariable";
 
 
-    public String rate = null; // Expression for rate(t)
+    private String rate = null; // Expression for rate(t)
     
-    public String synapseType = null;
-    public NumberGenerator delay = new NumberGenerator(0);
-    public NumberGenerator duration = new NumberGenerator(100);
+    private String synapseType = null;
+    private NumberGenerator delay = new NumberGenerator(0);
+    private NumberGenerator duration = new NumberGenerator(100);
 
 
     public RandomSpikeTrainVariable()

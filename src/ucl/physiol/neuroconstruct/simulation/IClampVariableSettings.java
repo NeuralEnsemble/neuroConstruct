@@ -89,10 +89,10 @@ public class IClampVariableSettings extends StimulationSettings
         
         IClampVariable iclampClone = (IClampVariable)iclampOrig.clone();
         
-        IClampVariableSettings ics = new IClampVariableSettings(this.reference,
-                                 this.cellGroup,
-                                 (CellChooser)this.cellChooser.clone(),
-                                 (SegmentLocationChooser)this.segmentChooser.clone(),
+        IClampVariableSettings ics = new IClampVariableSettings(this.getReference(),
+                                 this.getCellGroup(),
+                                 (CellChooser)this.getCellChooser().clone(),
+                                 (SegmentLocationChooser)this.getSegChooser().clone(),
                                  iclampClone.getDel(),
                                  iclampClone.getDur(),
                                  iclampClone.getAmp());

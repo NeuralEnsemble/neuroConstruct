@@ -44,16 +44,14 @@ public abstract class StimulationSettings
 {
     private static ClassLogger logger = new ClassLogger("StimulationSettings");
 
-    protected String cellGroup;
-    protected String reference;
+    private String cellGroup;
+    private String reference;
 
-    protected CellChooser cellChooser = new AllCells(); // a default...
-
-    protected int segmentID = 0;
+    private CellChooser cellChooser = new AllCells(); // a default...
     
-    protected SegmentLocationChooser segmentChooser = null;
+    private SegmentLocationChooser segmentChooser = null;
     
-    protected float fractionAlong = 0.5f;
+    private float fractionAlong = 0.5f;
 
 
     public StimulationSettings()

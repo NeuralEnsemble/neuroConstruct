@@ -49,11 +49,11 @@ public class RandomSpikeTrainExt extends ElectricalInput
      * This is a NumberGenerator so that, say, if all cells in a cell group have this stim,
      * they can all have a fixed rate, or a random/gaussian set of rates, etc.
      */
-    public NumberGenerator rate = null;
-    public String synapseType = null;
-    public NumberGenerator delay = new NumberGenerator(0);
-    public NumberGenerator duration = new NumberGenerator(100);
-    public boolean repeat = false;
+    private NumberGenerator rate = null;
+    private String synapseType = null;
+    private NumberGenerator delay = new NumberGenerator(0);
+    private NumberGenerator duration = new NumberGenerator(100);
+    private boolean repeat = false;
 
 
     public RandomSpikeTrainExt()

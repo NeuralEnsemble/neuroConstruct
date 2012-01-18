@@ -92,20 +92,20 @@ public class IClampSettings extends StimulationSettings {
         IClamp iclampOrig = (IClamp) this.getElectricalInput();
         IClamp iclampClone = (IClamp) iclampOrig.clone();
         IClampSettings ics = new IClampSettings();
-        if (this.segmentChooser != null) {
-            ics = new IClampSettings(this.reference,
-                    this.cellGroup,
-                    (CellChooser) this.cellChooser.clone(),
-                    (SegmentLocationChooser) this.segmentChooser.clone(),
+        if (this.getSegChooser() != null) {
+            ics = new IClampSettings(this.getReference(),
+                    this.getCellGroup(),
+                    (CellChooser) this.getCellChooser().clone(),
+                    (SegmentLocationChooser) this.getSegChooser().clone(),
                     iclampClone.getDel(),
                     iclampClone.getDur(),
                     iclampClone.getAmp(),
                     iclampClone.isRepeat());
         }else{
-            ics = new IClampSettings(this.reference,
-                    this.cellGroup,
-                    (CellChooser) this.cellChooser.clone(),
-                    this.segmentID,
+            ics = new IClampSettings(this.getReference(),
+                    this.getCellGroup(),
+                    (CellChooser) this.getCellChooser().clone(),
+                    0,
                     iclampClone.getDel(),
                     iclampClone.getDur(),
                     iclampClone.getAmp(),
