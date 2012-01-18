@@ -154,14 +154,14 @@ public class RandomSpikeTrainSettings extends StimulationSettings
 
     /**
      * This is to cope with the old code, where rate was always fixed
-     */
+     
     public void setRate(float fixedRate)
     {
         //System.out.println("Spiking rate being set at a fixed rate: "+fixedRate);
         NumberGenerator rate = new NumberGenerator(fixedRate);
 
         randomSpikeTrain.setRate(rate);
-    }
+    }*/
 
     public void setRate(NumberGenerator rate)
     {
@@ -191,15 +191,12 @@ public class RandomSpikeTrainSettings extends StimulationSettings
 
     public static void main(String[] args)
     {
-        RandomSpikeTrainExtSettings rsts = new RandomSpikeTrainExtSettings("ref",
+        RandomSpikeTrainSettings rsts = new RandomSpikeTrainSettings("ref",
                             "cg",
                             new AllCells(),
                             new IndividualSegments(new ArrayList<Integer>()),
                             new NumberGenerator(11.11f),
-                            "synt",
-                            new NumberGenerator(22.22f),
-                            new NumberGenerator(33.33f),
-                            true);
+                            "synt");
 
         System.out.println("rsts: "+rsts);
 

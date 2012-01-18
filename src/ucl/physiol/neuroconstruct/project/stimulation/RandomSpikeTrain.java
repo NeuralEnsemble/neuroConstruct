@@ -104,12 +104,12 @@ public class RandomSpikeTrain extends ElectricalInput
 
     /**
      * This is left in to cope with old code where rate was always fixed
-     */
+  
     public void setRate(float fixedRate)
     {
         //System.out.println("Spiking rate being set at a fixed rate: "+fixedRate);
         this.rate = new NumberGenerator(fixedRate);
-    }
+    }   */
 
     public void setRate(NumberGenerator rate)
     {
@@ -127,7 +127,7 @@ public class RandomSpikeTrain extends ElectricalInput
     public String toString()
     {
         return this.getType()+": [rate: "
-            +rate.toShortString()+", synaptic input: "+synapseType+"]";
+            +(rate==null?"???":rate.toShortString())+", synaptic input: "+synapseType+"]";
     }
     
     
