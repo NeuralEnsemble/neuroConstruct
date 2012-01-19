@@ -3094,6 +3094,10 @@ public class PlotterFrame extends JFrame {
     }
 
     void jMenuGenerateMatplotlib_actionPerformed(ActionEvent e) {
+        generateMatplotlib();
+    }
+
+    void generateMatplotlib() {
         String lastDir = recentFiles.getMyLastExportPointsDir();
 
         if (lastDir == null) {
