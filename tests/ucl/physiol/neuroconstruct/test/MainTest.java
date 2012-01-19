@@ -106,6 +106,7 @@ public class MainTest
                 ucl.physiol.neuroconstruct.cell.SectionTest.class,
                 ucl.physiol.neuroconstruct.cell.ParameterisedGroupTest.class,
                 ucl.physiol.neuroconstruct.cell.CellTest.class,
+                ucl.physiol.neuroconstruct.cell.IonPropertiesTest.class,
                 ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelperTest.class,
                 ucl.physiol.neuroconstruct.cell.SegmentTest.class,
                 ucl.physiol.neuroconstruct.cell.converters.MorphMLReaderTest.class,

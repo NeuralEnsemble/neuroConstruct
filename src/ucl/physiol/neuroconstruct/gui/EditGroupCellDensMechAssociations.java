@@ -62,6 +62,8 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
     ClassLogger logger = new ClassLogger("EditGroupCellDensMechAssociations");
     public boolean cancelled = false;
 
+    protected boolean standalone = false;
+
     private DefaultListModel listModelGroupsIn = new DefaultListModel();
     private DefaultListModel listModelGroupsOut = new DefaultListModel();
 
@@ -463,8 +465,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
             this.jButtonRemove.setEnabled(true);
             this.jButtonAdd.setEnabled(false);
 
-            jListGroupsOut.setSelectedIndices(new int[]
-                                                {});
+            jListGroupsOut.setSelectedIndices(new int[] {});
 
             if (e.getValueIsAdjusting())
             {
@@ -496,6 +497,8 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         logger.logComment("Cancel button pressed");
         cancelled = true;
         this.dispose();
+        if (standalone)
+            System.exit(0);
     }
 
     void jButtonOK_actionPerformed(ActionEvent e)
@@ -503,6 +506,13 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         logger.logComment("OK button pressed");
 
         this.dispose();
+
+        if (standalone)
+        {
+            logger.logComment(CellTopologyHelper.printDetails(myCell, project));
+            System.exit(0);
+        }
+
     }
     
     
@@ -715,11 +725,13 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                 }
                 else if (selectedMechanism.equals(this.ionPropsSelection))
                 {
-                    IonProperties ip1 = myCell.getIonPropertiesForGroup(groupName);
+                    ArrayList<IonProperties> ips = myCell.getIonPropertiesForGroup(groupName);
+                    for (IonProperties ip: ips)
+                    {
+                        IonProperties ip2 = this.getIonPropertiesForGroup(ip);
+                        myCell.associateGroupWithIonProperties(groupName, ip2);
+                    }
 
-                    IonProperties ip2 = this.getIonPropertiesForGroup(ip1);
-
-                    myCell.associateGroupWithIonProperties(groupName, ip2);
                 }
                 else if (selectedMechanism.equals(this.specAxResSelection))
                 {
@@ -811,17 +823,20 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                 }
                 else if (selectedMechanism.equals(this.ionPropsSelection))
                 {
-                    IonProperties ip = myCell.getIonPropertiesForGroup(nextGroup);
+                    ArrayList<IonProperties> ips = myCell.getIonPropertiesForGroup(nextGroup);
 
-                    if (ip == null)
+                    if (ips.isEmpty())
                     {
-                        if (!listModelGroupsOut.contains(nextGroup))
-                             listModelGroupsOut.addElement(nextGroup);
+                        //...
                     }
                     else
                     {
-                        listModelGroupsIn.addElement(nextGroup + " ( " + ip.toString() + ")");
+                        for (IonProperties ip: ips)
+                            listModelGroupsIn.addElement(nextGroup + " (" + ip.toString() + ")");
                     }
+
+                    if (!listModelGroupsOut.contains(nextGroup))
+                        listModelGroupsOut.addElement(nextGroup);
 
                 }
                 else if (selectedMechanism.equals(this.specCapSelection))
@@ -1079,7 +1094,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
             name = JOptionPane.showInputDialog(this,request,suggested.getName() + "");
 
 
-            request = "Please enter the value for the reversal potential of ion ??? \n"
+            request = "Please enter the value for the reversal potential of ion "+name+" \n"
                 + "on sections in selected groups (Units: "
                 + UnitConverter.voltageUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+ ")";
 
@@ -1156,7 +1171,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
                 if (!myCell.isGroup(group))
                 {
-                    GuiUtils.showErrorMessage(logger, "Note: cannot apply an IonProperties speed to: "+ group, null, this);
+                    GuiUtils.showErrorMessage(logger, "Note: cannot apply an IonProperties to: "+ group, null, this);
                     return;
                 }
                 myCell.associateGroupWithIonProperties(group, val);
@@ -1446,9 +1461,12 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
             {
                 String groupAndDens = (String)listModelGroupsIn.elementAt(selected[i]);
                 String groupName = groupAndDens.substring(0, groupAndDens.indexOf(" ")).trim();
+                String extra = "";
+                if (groupAndDens.indexOf(")")>0)
+                    extra = groupAndDens.substring(groupAndDens.indexOf("(")+1, groupAndDens.indexOf(")")).trim();
 
                 logger.logComment("Item: " + selected[i] + " ("+groupAndDens
-                                  +") is selected, so group: " + groupName);
+                                  +") is selected, so group: " + groupName+", extra: ["+extra+"]");
 
                 if (selectedMech.equals(this.apPropVelSelection))
                 {
@@ -1456,7 +1474,16 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
                 }
                 else if (selectedMech.equals(this.ionPropsSelection))
                 {
-                    myCell.disassociateGroupFromIonProperties(groupName);
+
+                    ArrayList<IonProperties> ips = myCell.getIonPropertiesForGroup(groupName);
+                    logger.logComment("ips: " + ips);
+                    for (IonProperties ip: ips)
+                    {
+                        if (ip.toString().equals(extra))
+                            myCell.disassociateGroupFromIonProperties(groupName, ip);
+                    }
+                    ips = myCell.getIonPropertiesForGroup(groupName);
+                    logger.logComment("ips: " + ips);
                 }
                 else if (selectedMech.equals(this.specCapSelection))
                 {
@@ -1495,7 +1522,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         }
         File f = new File("../copyNcModels/Inhomogen/Inhomogen.neuro.xml");
 
-        f = new File("lems/nCproject/LemsTest/LemsTest.ncx");
+        f = new File("../nC_projects/GG/GG.ncx");
         
         Project testProj = Project.loadProject(f,
                                                new ProjectEventListener()
@@ -1512,6 +1539,8 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         });
 
         Cell cell = testProj.cellManager.getCell("Longer");
+        if (cell == null)
+            cell = testProj.cellManager.getCell("Granule_98");;
         if (cell == null)
             cell = testProj.cellManager.getAllCells().get(0);
         /*
@@ -1551,7 +1580,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
 */
         EditGroupCellDensMechAssociations dlg = new EditGroupCellDensMechAssociations(cell, null, "Cell Density Mechanism", testProj);
-
+        dlg.standalone = true;
         dlg.setModal(true);
         GuiUtils.centreWindow(dlg);
         dlg.setVisible(true);

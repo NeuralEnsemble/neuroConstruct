@@ -58,7 +58,7 @@ public class PythonTest
         String projFileName = "nCexamples/Ex8_PyNNDemo/Ex8_PyNNDemo.ncx";
         checkPythonScripts(projFileName);
     }
-
+/*
     @Test public void testNeuroML2()
     {
         String projFileName = "nCexamples/Ex10_NeuroML2/Ex10_NeuroML2.ncx";
@@ -66,7 +66,7 @@ public class PythonTest
         checkPythonScripts(projFileName, "RunTestsNML2ionChan");
         checkPythonScripts(projFileName, "RunTestsAbst");
         ////////////checkPythonScripts(projFileName, "RunTestsDest");
-    }
+    }*/
  
     @Test public void testGranuleCell()
     {

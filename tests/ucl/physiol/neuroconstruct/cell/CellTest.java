@@ -26,6 +26,7 @@
 
 package ucl.physiol.neuroconstruct.cell;
 
+import java.util.ArrayList;
 import java.util.Vector;
 import javax.vecmath.Point3f;
 import org.junit.After;
@@ -271,6 +272,77 @@ public class CellTest {
 //        assertTrue(foundGroup);
         
         System.out.println("parameterisedGroups: "+cell1.getParameterisedGroups().toString());
+    }
+
+    @Test
+    public void testChanMechGroup()  throws EquationException
+    {
+        System.out.println("---  testChanMechGroup...");
+
+        Cell cell1 = getDetailedCell();
+        ChannelMechanism cm = new ChannelMechanism("channer1", 678);
+
+        cell1.associateGroupWithChanMech(testGroup, cm);
+
+        ArrayList<ChannelMechanism> grps = cell1.getChanMechsForGroup(testGroup);
+
+        assertTrue(grps.contains(cm));
+
+        System.out.println(cell1.getChanMechsVsGroups());
+        
+        cell1.disassociateGroupFromChanMech(testGroup+"xx", cm);
+
+        grps = cell1.getChanMechsForGroup(testGroup);
+
+        assertTrue(grps.contains(cm));
+
+
+
+        cell1.disassociateGroupFromChanMech(testGroup, cm);
+        grps = cell1.getChanMechsForGroup(testGroup);
+
+        System.out.println(cell1.getChanMechsVsGroups());
+
+        assertFalse(grps.contains(cm));
+
+    }
+
+
+    @Test
+    public void testIonPropsGroup()  throws EquationException
+    {
+        System.out.println("---  testIonPropsGroup...");
+
+        Cell cell1 = getDetailedCell();
+        IonProperties ip1 = new IonProperties("mg1", 2348);
+        IonProperties ip2 = new IonProperties("mg2", 2345);
+
+
+        cell1.associateGroupWithIonProperties(testGroup, ip1);
+        cell1.associateGroupWithIonProperties(testGroup, ip2);
+
+        System.out.println(cell1.getIonPropertiesVsGroups());
+
+        ArrayList<IonProperties> ips = cell1.getIonPropertiesForGroup(testGroup);
+        
+        System.out.println("In "+testGroup+": "+ips);
+
+        assertTrue(ips.contains(ip1));
+        assertTrue(ips.contains(ip2));
+
+        ips = cell1.getIonPropertiesForGroup(Section.ALL);
+
+        assertFalse(ips.contains(ip1));
+
+        cell1.disassociateGroupFromIonProperties(testGroup, ip2);
+        ips = cell1.getIonPropertiesForGroup(testGroup);
+
+        System.out.println("In "+testGroup+": "+ips);
+        assertFalse(ips.contains(ip2));
+        assertTrue(ips.contains(ip1));
+
+
+
     }
     
     public static void main(String[] args)

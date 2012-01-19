@@ -1113,27 +1113,6 @@ public class Cell implements Serializable
     }
 
 
-    public IonProperties getIonPropertiesForGroup(String group)
-    {
-        if (ionPropsVsGroups==null)
-        {
-            ionPropsVsGroups = new Hashtable<IonProperties, Vector<String>>();
-        }
-        Enumeration allIps = this.ionPropsVsGroups.keys();
-        while (allIps.hasMoreElements())
-        {
-            IonProperties nextIp = (IonProperties) allIps.nextElement();
-            Vector groupsForThis = (Vector) ionPropsVsGroups.get(nextIp);
-
-            if (groupsForThis.contains(group))
-            {
-                return nextIp; // note there could in theory be more than IonProperties associated with
-                                 // the group, but other checks should disallow this.
-            }
-
-        }
-        return null;
-    }
 
 
     /**
@@ -1156,6 +1135,31 @@ public class Cell implements Serializable
 
         }
         return null;
+    }
+
+
+    public ArrayList<IonProperties> getIonPropertiesForGroup(String group)
+    {
+        if (ionPropsVsGroups==null)
+        {
+            ionPropsVsGroups = new Hashtable<IonProperties, Vector<String>>();
+        }
+
+        ArrayList<IonProperties> ips = new ArrayList<IonProperties>();
+
+        Enumeration allIps = this.ionPropsVsGroups.keys();
+        while (allIps.hasMoreElements())
+        {
+            IonProperties nextIp = (IonProperties) allIps.nextElement();
+            Vector groupsForThis = (Vector) ionPropsVsGroups.get(nextIp);
+
+            if (groupsForThis.contains(group))
+            {
+                if (!ips.contains(nextIp)) ips.add(nextIp);
+            }
+
+        }
+        return ips;
     }
 
 
@@ -1368,7 +1372,7 @@ public class Cell implements Serializable
     }
 
 
-
+/*
     public IonProperties getIonPropertiesForSegment(Segment segment)
     {
         return getIonPropertiesForSection(segment.getSection());
@@ -1378,7 +1382,7 @@ public class Cell implements Serializable
 
     public IonProperties getIonPropertiesForSection(Section section)
     {
-        if (ionPropsVsGroups.size()==0) return null;
+        if (ionPropsVsGroups.isEmpty()) return null;
 
         Vector groups = section.getGroups();
         for (int i = 0; i < groups.size(); i++)
@@ -1389,7 +1393,7 @@ public class Cell implements Serializable
             if (ips!=null) return ips; // Should only be one IonProperties per section!!
         }
         return null;
-    }
+    }*/
 
 
     public boolean associateGroupWithSynapse(String group, String synapseType)
@@ -1760,10 +1764,10 @@ public class Cell implements Serializable
     /**
      * Since there should be only one IonProperties per group
      */
-    public boolean disassociateGroupFromIonProperties(String group)
+    public boolean disassociateGroupFromIonProperties(String group, IonProperties ip)
     {
         logger.logComment("Being told to disassociate group: " + group
-                          + " from all groups: " + getAllGroupNames());
+                          + " from "+ip);
 
         logger.logComment("ionPropsVsGroups: "+ionPropsVsGroups);
 
@@ -1780,13 +1784,18 @@ public class Cell implements Serializable
         while (allIps.hasMoreElements())
         {
             IonProperties nextIp = (IonProperties) allIps.nextElement();
-            Vector groupsForThis = (Vector) ionPropsVsGroups.get(nextIp);
-            if (groupsForThis.contains(group))
+            if (nextIp.equals(ip))
             {
-                success = groupsForThis.remove(group);
-                if (groupsForThis.size()==0) // as it should be...
+                Vector groupsForThis = (Vector) ionPropsVsGroups.get(nextIp);
+
+                if (groupsForThis.contains(group))
                 {
-                    ionPropsVsGroups.remove(nextIp);
+                    success = groupsForThis.remove(group);
+
+                    if (groupsForThis.isEmpty())
+                    {
+                        ionPropsVsGroups.remove(nextIp);
+                    }
                 }
             }
         }

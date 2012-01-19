@@ -70,14 +70,7 @@ public class VariableMechanismTest
 
         vp1 = new VariableParameter("cap", expression1, p, expressionArgs1);
             
-        System.out.println("Var param 1: "+ vp1); 
-        
-        
-
         vm = new VariableMechanism("cm", vp1);
-        
-
-        System.out.println("VariableMechanism: " + vm);
         
         return vm;
         
