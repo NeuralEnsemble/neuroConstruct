@@ -28,9 +28,9 @@
   
     <tstamp/>
     <property name="name" value="neuroConstruct"/>
-    <property name="version" value="1.5.2"/>
+    <property name="version" value="1.5.3"/>
     <property name="version.impl" value="${version}"/>
-    <property name="year" value="2010"/>
+    <property name="year" value="2012"/>
 
     <echo message="----------- ${name} v${version} ------------"/>
 
