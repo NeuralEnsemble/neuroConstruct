@@ -9,8 +9,13 @@ The main neuroConstruct code can be checked out with the command:
 
 svn co svn://87.106.103.176:3999/neuroConstruct/trunk neuroConstruct
 
-After the first successful checkout, run ./updatenC.sh (Linux/Mac) or updatenC.bat 
-(Windows) in the neuroConstruct directory, as there are some NeuroML files needed
+After the first successful checkout, run 
+
+    ./updatenC.sh (Linux/Mac) 
+or 
+    updatenC.bat (Windows) 
+
+in the neuroConstruct directory, as there are some NeuroML files needed
 that reside at the NeuroML Sourceforge repository. Running the updatenC command
 in future (as opposed to just "svn update") will ensure a consistent set of
 neuroConstruct source, NeuroML files and example models.
@@ -29,3 +34,6 @@ the application.
 * Java, Subversion and Ant can be normally be installed with the standard packet
 manager of most Linux distributions (e.g. YAST on SUSE). Java is preinstalled on
 Macs, Subversion and Ant should be available when the Xcode package is installed.
+For Windows, you need just download TortoiseSVN (http://tortoisesvn.net) as this
+can be used to checkout/update/commit from Explorer and includes command line
+tools such as svn.
