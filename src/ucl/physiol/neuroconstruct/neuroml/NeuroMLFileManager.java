@@ -39,8 +39,6 @@ import ucl.physiol.neuroconstruct.cell.converters.*;
 import ucl.physiol.neuroconstruct.neuroml.LemsConstants.LemsOption;
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.*;
 import ucl.physiol.neuroconstruct.neuron.NeuronFileManager;
-import ucl.physiol.neuroconstruct.hpc.utils.*;
-import ucl.physiol.neuroconstruct.nmodleditor.processes.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.project.GeneratedPlotSaves.PlotSaveDetails;
 import ucl.physiol.neuroconstruct.simulation.SimulationData;
@@ -407,8 +405,32 @@ public class NeuroMLFileManager
                                      File generateDir,
                                      boolean runInBackground) throws IOException
     {
+        generateNeuroMLFiles(simConf,
+                             version,
+                             lemsOption,
+                             mc,
+                             seed,
+                             singleL3File,
+                             annotations,
+                             generateDir,
+                             UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS),
+                             runInBackground);
+    }
+
+    public void generateNeuroMLFiles(SimConfig simConf,
+                                     NeuroMLVersion version,
+                                     LemsOption lemsOption,
+                                     MorphCompartmentalisation mc,
+                                     int seed,
+                                     boolean singleL3File,
+                                     boolean annotations,
+                                     File generateDir,
+                                     String units,
+                                     boolean runInBackground) throws IOException
+    {
         logger.logComment("Starting generation of the files into dir: "+ generateDir.getCanonicalPath()+", version: "+version, true);
 
+        int preferredUnits = UnitConverter.getUnitSystemIndex(units);
 
         GeneralUtils.removeAllFiles(generateDir, false, false, true);
 
@@ -446,7 +468,7 @@ public class NeuroMLFileManager
                                                           generatedNetworkFile,
                                                           false, false, annotations,
                                                           simConf.getName(),
-                                                          NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+                                                          units);
                 } catch (NeuroMLException ex) {
                      GuiUtils.showErrorMessage(logger, "Problem saving complete network with annotations in NeuroML", ex, null);
                 }
@@ -458,7 +480,7 @@ public class NeuroMLFileManager
                                                           generatedNetworkFile,
                                                           false, false,
                                                           simConf.getName(),
-                                                          NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+                                                          units);
                 } catch (NeuroMLException ex) {
                      GuiUtils.showErrorMessage(logger, "Problem saving complete network in NeuroML:\n" +
                          ""+ex.getMessage(), ex, null);
@@ -663,7 +685,7 @@ public class NeuroMLFileManager
                                                  false,
                                                  false,
                                                  simConf.getName(),
-                                                 NetworkMLConstants.UNITS_PHYSIOLOGICAL,
+                                                 units,
                                                  version);
 
                     generatedFiles.add(netFile);
@@ -875,23 +897,23 @@ public class NeuroMLFileManager
 
                                 if(plot.simPlot.getValuePlotted().equals(SimPlot.VOLTAGE))
                                 {
-                                    Units u = UnitConverter.voltageUnits[MorphMLConverter.getPreferredExportUnits()];
+                                    Units u = UnitConverter.voltageUnits[preferredUnits];
                                     lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 "+u.getNeuroML2Symbol());   
                                 }
                                 else if(plot.simPlot.getValuePlotted().endsWith("tau"))
                                 {
-                                    Units u = UnitConverter.timeUnits[MorphMLConverter.getPreferredExportUnits()];
+                                    Units u = UnitConverter.timeUnits[preferredUnits];
                                     lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 "+u.getNeuroML2Symbol());   
                                 }
                                 else if(plot.simPlot.getValuePlotted().indexOf(SimPlot.PLOTTED_VALUE_SEPARATOR+SimPlot.CONCENTRATION+SimPlot.PLOTTED_VALUE_SEPARATOR)>=0)
                                 {
-                                    Units u = UnitConverter.concentrationUnits[MorphMLConverter.getPreferredExportUnits()];
-                                    lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 "+u.getNeuroML2Symbol());   //TODO: check for units...
+                                    Units u = UnitConverter.concentrationUnits[preferredUnits];
+                                    lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 "+u.getNeuroML2Symbol()); 
                                 }
                                 else if(plot.simPlot.getValuePlotted().indexOf(SimPlot.PLOTTED_VALUE_SEPARATOR+SimPlot.COND_DENS+SimPlot.PLOTTED_VALUE_SEPARATOR)>=0)
                                 {
-                                    Units u = UnitConverter.conductanceDensityUnits[MorphMLConverter.getPreferredExportUnits()];
-                                    lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 "+u.getNeuroML2Symbol());   //TODO: check for units...
+                                    Units u = UnitConverter.conductanceDensityUnits[preferredUnits];
+                                    lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 "+u.getNeuroML2Symbol());  
                                 }
                                 else
                                 {
@@ -1058,7 +1080,7 @@ public class NeuroMLFileManager
             {
                 String ion = val.split(":")[2];
                 //return "biophys/intracellularProperties/"+ion+"/concentration";
-                return "biophys/intracellularProperties/species/concentration";
+                return ion+"Conc";
                 
             }
             else if (type.equals(SimPlot.COND_DENS))

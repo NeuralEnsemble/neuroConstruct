@@ -798,8 +798,8 @@ public class UnitConverter
 
         System.out.println("--------------------------------------");
 
-        int fromUnits = GENESIS_SI_UNITS;
-        PhysicalQuantity concn = new PhysicalQuantity(1.5, concentrationUnits[fromUnits]);
+        int fromUnits = NEURON_UNITS;
+        PhysicalQuantity concn = new PhysicalQuantity(7.55e-5, concentrationUnits[fromUnits]);
 
         System.out.println("Concentration: "+ concn);
 
