@@ -2,16 +2,17 @@
 #
 #   A file which generates a frequency vs current curve for cell in Thalamocortical project
 #
-#   Author: Padraig Gleeson
+#   Author: Padraig Gleeson, Yates Buckley
 #
 #   This file has been developed as part of the neuroConstruct project
 #   This work has been funded by the Medical Research Council and the
 #   Wellcome Trust
 #
 #
-
 import sys
 import os
+from subprocess import Popen
+
 import datetime
 
 try:
@@ -28,7 +29,16 @@ sys.path.append(os.environ["NC_HOME"]+"/pythonNeuroML/nCUtils")
 import ncutils as nc
 from ucl.physiol.neuroconstruct.hpc.mpi import MpiSettings
 
-argList = [ "commandLine", "DEBUG", "ProjectFile", "simConfigName", "MpiSettings", "numConcurrentSims", "suggestedRemoteRunTime", "stimAmpLow", "stimAmpHigh","stimAmpInc","stimDel","stimDur","simDuration","startTime","stopTime","threshold" ]
+from ucl.physiol.neuroconstruct.gui.plotter import PlotManager
+from ucl.physiol.neuroconstruct.gui.plotter import PlotCanvas
+# from ucl.physiol.neuroconstruct.gui.plotter import PlotterFrame
+
+from ucl.physiol.neuroconstruct.dataset import DataSet
+from ucl.physiol.neuroconstruct.simulation import SimulationData
+from ucl.physiol.neuroconstruct.simulation import SpikeAnalyser
+
+
+argList = [ "commandLine", "DEBUG", "setVisible", "verboseSims", "simulator","ProjectFile", "simConfigName", "MpiSettings", "numConcurrentSims", "suggestedRemoteRunTime", "stimAmpLow", "stimAmpHigh","stimAmpInc","stimDel","stimDur","simDuration","startTime","stopTime","threshold" ]
 argLookup = {}
 argCount = 0
 for arg in sys.argv:
@@ -37,7 +47,10 @@ for arg in sys.argv:
     argCount+=1
     if argCount >= len(argList): break
 
-simConfigName   = argLookup["simConfigName"]
+setVisible   = int(argLookup["setVisible"])
+verboseSims   = argLookup["verboseSims"]
+simulator     = argLookup["simulator"]
+simConfigName = argLookup["simConfigName"]
 stimAmpLow  = float(argLookup["stimAmpLow"])
 stimAmpInc  = float(argLookup["stimAmpInc"])
 stimAmpHigh = float(argLookup["stimAmpHigh"])
@@ -75,7 +88,7 @@ else:
 if int(argLookup["DEBUG"]) == 0:
     simManager = nc.SimulationManager(projFile, int(argLookup["numConcurrentSims"]))
     start = "\nSimulations started at: %s"%datetime.datetime.now()
-    simManager.generateFICurve("NEURON",
+    simManager.generateFICurve(simulator,
                            simConfigName,
                            stimAmpLow,
                            stimAmpInc,
@@ -86,8 +99,10 @@ if int(argLookup["DEBUG"]) == 0:
                            analyseStartTime,
                            analyseStopTime,
                            analyseThreshold,
-                           mpiConfig =                mpiConfig,
-                           suggestedRemoteRunTime =   suggestedRemoteRunTime)
+                           simPrefix        = 'FI_',
+                           verboseSims      = verboseSims,
+                           mpiConfig        = mpiConfig,
+                           suggestedRemoteRunTime = suggestedRemoteRunTime)
     finish = "Simulations finished at: %s\n"%datetime.datetime.now()
     print start
     print finish
@@ -111,32 +126,43 @@ else:
 #                        analyseStartTime,
 #                        analyseStopTime,
 #                        analyseThreshold,
-#                        simDt =                   None,
+#no                        simDt =                   None,
 #no                        simPrefix =               'FI_',
 #no                        neuroConstructSeed =      1234,
 #no                        plotAllTraces =           False,
-#no                        verboseSims =             True,
+#added                        verboseSims =             True,
 #no                        varTimestepNeuron =       None,
 #                        mpiConfig =               MpiSettings.LOCAL_SERIAL,
 #                        suggestedRemoteRunTime =  -1):
-
-from ucl.physiol.neuroconstruct.gui.plotter import PlotManager
-from ucl.physiol.neuroconstruct.gui.plotter import PlotCanvas
-from ucl.physiol.neuroconstruct.dataset import DataSet
-from ucl.physiol.neuroconstruct.simulation import SimulationData
-from ucl.physiol.neuroconstruct.simulation import SpikeAnalyser
-
+#
 # creating simManager and simConfig for later access to project details
 simManager = nc.SimulationManager(projFile, int(argLookup["numConcurrentSims"]))
 simConfig = simManager.project.simConfigInfo.getSimConfig(simConfigName)
 
-plotFrameFI = PlotManager.getPlotterFrame("Fnordly Fnord!", 0, 1)
-plotFrameFI.setViewMode(PlotCanvas.INCLUDE_ORIGIN_VIEW)
+plotFrameFI = PlotManager.getPlotterFrame("Plot Title Entry", 0, setVisible)
+# plotFrameFI.setViewMode(PlotCanvas.INCLUDE_ORIGIN_VIEW)
 
 dataSet = DataSet("info 1", "info 2", "nA", "Hz", "Current injected", "Firing frequency")
 dataSet.setGraphFormat(PlotCanvas.USE_CIRCLES_FOR_PLOT)
 
-simList = [u'FI_Cell6-spinstell-FigA3-333__N_0.5', u'FI_Cell6-spinstell-FigA3-333__N_1.0', u'FI_Cell6-spinstell-FigA3-333__N_0.0']
+simList = []
+
+stimAmp = stimAmpLow
+while (stimAmp - stimAmpHigh) < (stimAmpInc/1e9): # to avoid floating point errors
+    simRefGlobalPrefix =      'FI_'
+    simRefGlobalSuffix =      ("_"+str(float(stimAmp)))
+    simList.append(simRefGlobalPrefix+simConfigName+"__"+simulator[0]+simRefGlobalSuffix)
+
+    stimAmp = stimAmp + stimAmpInc
+    if abs(stimAmp) < stimAmpInc/1e9: stimAmp = 0
+
+simList.sort()
+print simList
+
+# I could make a version of runMultipleSims to get access to the list of names from the range of sim
+# this would help retrieve past simulations, also speed up dev cycle
+
+#simList = [u'FI_Cell6-spinstell-FigA3-333__N_0.0',u'FI_Cell6-spinstell-FigA3-333__N_0.5', u'FI_Cell6-spinstell-FigA3-333__N_1.0']
 
 # get the x-values for current amp
 i00 = 0
@@ -153,6 +179,11 @@ slashparts = projectFileName.split('/')
 basefolder = '/'.join(slashparts[:-1]) + '/'
 print basefolder
 for sim in simList:
+    projectFullDir = basefolder+"/simulations/"+sim
+    if not os.path.exists(projectFullDir):
+        print("--- project not found, directory missing %s ---"%projectFullDir)
+        quit()
+
     simDir = File(basefolder, "/simulations/"+sim)
     print("--- Reloading data from simulation in directory: %s"%simDir.getCanonicalPath())
 
@@ -185,7 +216,7 @@ for sim in simList:
 
       avgFreq = 0
       if len(spikeTimes)>1:
-          avgFreq = len(spikeTimes)/ ((analyseStopTime - analyseStartTime)/1000.0)
+          avgFreq = len(spikeTimes) / ((analyseStopTime - analyseStartTime)/1000.0)
           dataSet.addPoint(stimAmp,avgFreq)
       else:
           dataSet.addPoint(stimAmp,0)
@@ -198,58 +229,27 @@ for sim in simList:
 
 plotFrameFI.addDataSet(dataSet)
 
+# if setMapplotlibDir is set then no file chooser should show
+basefolderMatplotlib = basefolder+"/simulations/"+"render_output_folder/"
+plotFrameFI.setMatplotlibDir(basefolderMatplotlib)
+# maybe should clear the set folder after run
+plotFrameFI.generateMatplotlib()
+#
+while (not os.path.exists(basefolderMatplotlib+"generateEps.py")):
+    self.printver("Checking if Matplotlib is done generating...")
+    time.sleep(1) # wait a while...
+#
+# - fork a process to run the python transformation of the main output to a file
+#   http://www.jython.org/docs/library/subprocess.html
+#   http://www.jython.org/docs/library/cmd.html
+#
 
+print basefolderMatplotlib+"generateEps.py"
+Popen(["python",basefolderMatplotlib+"generateEps.py"], cwd=basefolderMatplotlib)
 
+#try:
+#    output = subprocess.call("python "+basefolderMatplotlib+"generateEps.py",shell = True)
+#
+#except OSError, e:
+#    print >>sys.stderr, "Execution failed:", e
 
-#            plotFrameFI = PlotManager.getPlotterFrame("F-I curve from project: "+str(self.project.getProjectFile())+" on "+simulator , 0, 1)
-#            plotFrameVolts = PlotManager.getPlotterFrame("Voltage traces from project: "+str(self.project.getProjectFile())+" on "+simulator , 0, plotAllTraces)
-#            plotFrameFI.setViewMode(PlotCanvas.INCLUDE_ORIGIN_VIEW)
-#            info = "F-I curve for Simulation Configuration: "+str(simConfig)
-#            dataSet = DataSet(info, info, "nA", "Hz", "Current injected", "Firing frequency")
-#            dataSet.setGraphFormat(PlotCanvas.USE_CIRCLES_FOR_PLOT)
-#            simList = simRefsVsStims.keys()
-#            simList.sort()
-#
-# MAZINGA - simList = [u'FI_Cell6-spinstell-FigA3-333__N_0.5', u'FI_Cell6-spinstell-FigA3-333__N_1.0', u'FI_Cell6-spinstell-FigA3-333__N_0.0']
-#
-#            for sim in simList:
-#              simDir = File(self.project.getProjectMainDirectory(), "/simulations/"+sim)
-#              self.printver("--- Reloading data from simulation in directory: %s"%simDir.getCanonicalPath())
-#
-#              try:
-#                  simData = SimulationData(simDir)
-#                  simData.initialise()
-#                  self.printver("Data loaded: ")
-#                  self.printver(simData.getAllLoadedDataStores())
-#
-#                  times = simData.getAllTimes()
-#                  cellSegmentRef = simConfig.getCellGroups().get(0)+"_0"
-#                  volts = simData.getVoltageAtAllTimes(cellSegmentRef)
-#
-#                  traceInfo = "Voltage at: %s in simulation: %s"%(cellSegmentRef, sim)
-#
-#                  dataSetV = DataSet(traceInfo, traceInfo, "mV", "ms", "Membrane potential", "Time")
-#                  for i in range(len(times)):
-#                      dataSetV.addPoint(times[i], volts[i])
-#
-#                  if plotAllTraces:
-#                    plotFrameVolts.addDataSet(dataSetV)
-#
-#                  spikeTimes = SpikeAnalyser.getSpikeTimes(volts, times, analyseThreshold, analyseStartTime, analyseStopTime)
-#                  stimAmp = simRefsVsStims[sim]
-#                  self.printver("Number of spikes at %f nA in sim %s: %i"%(stimAmp, sim, len(spikeTimes)))
-#
-#                  avgFreq = 0
-#                  if len(spikeTimes)>1:
-#                      avgFreq = len(spikeTimes)/ ((analyseStopTime - analyseStartTime)/1000.0)
-#                      dataSet.addPoint(stimAmp,avgFreq)
-#                  else:
-#                      dataSet.addPoint(stimAmp,0)
-#
-#              except:
-#                  self.printver("Error analysing simulation data from: %s"%simDir.getCanonicalPath())
-#                  self.printver(sys.exc_info()[0])
-#
-#
-#            plotFrameFI.addDataSet(dataSet)
-#
