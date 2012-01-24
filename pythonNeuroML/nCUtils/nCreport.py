@@ -159,9 +159,6 @@ while (stimAmp - stimAmpHigh) < (stimAmpInc/1e9): # to avoid floating point erro
 simList.sort()
 print simList
 
-# I could make a version of runMultipleSims to get access to the list of names from the range of sim
-# this would help retrieve past simulations, also speed up dev cycle
-
 #simList = [u'FI_Cell6-spinstell-FigA3-333__N_0.0',u'FI_Cell6-spinstell-FigA3-333__N_0.5', u'FI_Cell6-spinstell-FigA3-333__N_1.0']
 
 # get the x-values for current amp
@@ -247,9 +244,10 @@ while (not os.path.exists(basefolderMatplotlib+"generateEps.py")):
 print basefolderMatplotlib+"generateEps.py"
 Popen(["python",basefolderMatplotlib+"generateEps.py"], cwd=basefolderMatplotlib)
 
-#try:
-#    output = subprocess.call("python "+basefolderMatplotlib+"generateEps.py",shell = True)
 #
-#except OSError, e:
-#    print >>sys.stderr, "Execution failed:", e
-
+# - the generated pdf file is not showing correct ranges, not sure why
+# - need to generate a good png for this graph
+# - am unsure about the overall structure.. there might be a more elegant way?
+# - need to think about the additional graphs / layout
+# - should consider a more advanced templating structure?
+#
