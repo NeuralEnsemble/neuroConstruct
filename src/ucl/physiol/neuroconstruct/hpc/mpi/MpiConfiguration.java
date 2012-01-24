@@ -271,6 +271,11 @@ public class MpiConfiguration
             if (mpirunPath==null)
                 mpirunPath = "/opt/sun-ct/bin/mpirun";
 
+            if (isNeuron)
+            {
+                script.append("/bin/bash -ic '"+getNrnivmodl()+"'\n");
+            }
+
             script.append("/bin/bash -ic '"+mpirunPath+" "+procInfo+" "+remoteLogin.getExecutableForSimulator(simulator)+" "+mpiFlag+exec+"'\n");
 
         }
@@ -292,6 +297,21 @@ public class MpiConfiguration
         }
 
         return remoteLogin.getWorkDir() + "/" + projName + "_" + hostname;
+    }
+
+    private String getNrnivmodl()
+    {
+        String nrnivmodl = "nrnivmodl";
+
+        String[] simLocStrings = remoteLogin.getExecutableForSimulator(KnownSimulators.NEURON).split(" ");
+        for(String s: simLocStrings)
+        {
+            if (s.endsWith("nrniv")) // i.e. full path to nrniv
+            {
+                nrnivmodl = s+"modl"; // i.e. full path to nrnivmodl
+            }
+        }
+        return nrnivmodl;
     }
 
 
@@ -390,18 +410,9 @@ public class MpiConfiguration
 
         if (isNeuron)
         {
-            String nrnivmodl = "nrnivmodl";
-            
-            String[] simLocStrings = remoteLogin.getExecutableForSimulator(simulator).split(" ");
-            for(String s: simLocStrings)
-            {
-                if (s.endsWith("nrniv")) // i.e. full path to nrniv
-                {
-                    nrnivmodl = s+"modl"; // i.e. full path to nrnivmodl
-                }
-            }
+            String nrnivmodl = getNrnivmodl();
 
-            scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic "+nrnivmodl+"\"\n");
+            scriptText.append("# ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic "+nrnivmodl+"\" # Now run on compute node\n");
         }
 
         if (queueInfo==null)
