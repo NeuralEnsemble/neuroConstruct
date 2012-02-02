@@ -11,6 +11,7 @@
 #
 import sys
 import os
+import time
 from subprocess import Popen
 
 import datetime
@@ -36,6 +37,7 @@ from ucl.physiol.neuroconstruct.gui.plotter import PlotCanvas
 from ucl.physiol.neuroconstruct.dataset import DataSet
 from ucl.physiol.neuroconstruct.simulation import SimulationData
 from ucl.physiol.neuroconstruct.simulation import SpikeAnalyser
+from ucl.physiol.neuroconstruct.project import Expand
 
 
 argList = [ "commandLine", "DEBUG", "setVisible", "verboseSims", "simulator","ProjectFile", "simConfigName", "MpiSettings", "numConcurrentSims", "suggestedRemoteRunTime", "stimAmpLow", "stimAmpHigh","stimAmpInc","stimDel","stimDur","simDuration","startTime","stopTime","threshold" ]
@@ -225,15 +227,20 @@ for sim in simList:
 
 
 plotFrameFI.addDataSet(dataSet)
+#plotFrameFI.setMaxMinScaleValues(2,0,100,0)
 
 # if setMapplotlibDir is set then no file chooser should show
-basefolderMatplotlib = basefolder+"/simulations/"+"render_output_folder/"
+nowdatetime = datetime.datetime.now()
+timestamp = nowdatetime.strftime("_%Y%m%d-%H%M%S")
+
+basefolderMatplotlib = basefolder+"/simulations/"+"render_output_folder"+timestamp+"/"
 plotFrameFI.setMatplotlibDir(basefolderMatplotlib)
 # maybe should clear the set folder after run
 plotFrameFI.generateMatplotlib()
 #
 while (not os.path.exists(basefolderMatplotlib+"generateEps.py")):
-    self.printver("Checking if Matplotlib is done generating...")
+    print("Checking if Matplotlib is done generating...")
+    print("File: "+basefolderMatplotlib+"generateEps.py"+" doesn't exist..")
     time.sleep(1) # wait a while...
 #
 # - fork a process to run the python transformation of the main output to a file
@@ -245,9 +252,13 @@ print basefolderMatplotlib+"generateEps.py"
 Popen(["python",basefolderMatplotlib+"generateEps.py"], cwd=basefolderMatplotlib)
 
 #
-# - the generated pdf file is not showing correct ranges, not sure why
-# - need to generate a good png for this graph
-# - am unsure about the overall structure.. there might be a more elegant way?
-# - need to think about the additional graphs / layout
 # - should consider a more advanced templating structure?
-#
+# - need to warn if the project is already there.. or add an overwrite flag?
+
+expander = Expand()
+expanderPageHtml = expander.generateSimplePage("Page Title","plot.png")
+
+expanderPageFile = open(basefolderMatplotlib+'plot.html','w')
+expanderPageFile.write(expanderPageHtml)
+expanderPageFile.close()
+# generateSimplePage
