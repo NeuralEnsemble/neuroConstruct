@@ -405,6 +405,14 @@ public class PlotterFrame extends JFrame {
         return plotCanvas.getDataSets().length;
     }
 
+    public void setMaxMinScaleValues(double maxXScaleValue,
+                                     double minXScaleValue,
+                                     double maxYScaleValue,
+                                     double minYScaleValue)
+    {
+        plotCanvas.setMaxMinScaleValues(maxXScaleValue,minXScaleValue,maxYScaleValue,minYScaleValue);
+    }
+
     protected void flagProblemDueToBarSpacing() {
         problemDueToBarSpacing = true;
 
@@ -3100,6 +3108,7 @@ public class PlotterFrame extends JFrame {
 
     void jMenuGenerateMatplotlib_actionPerformed(ActionEvent e) {
         generateMatplotlib();
+        
     }
 
     public void generateMatplotlib() {
@@ -3292,8 +3301,10 @@ public class PlotterFrame extends JFrame {
 
         mainScript.append("canvas = FigureCanvas(fig)\n");
 
+        // plotter output formats
         mainScript.append("canvas.print_eps('plot.eps')\n");
         mainScript.append("canvas.print_pdf('plot.pdf')\n");
+        mainScript.append("canvas.print_png('plot.png')\n");
 
         mainScript.append("plt.show()\n");
         mainScript.append("\n");
