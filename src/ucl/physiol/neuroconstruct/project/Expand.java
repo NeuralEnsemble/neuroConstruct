@@ -226,8 +226,16 @@ public class Expand {
         indexPage.addRawHtml("</dl>");
         indexPage.saveAsFile(fileToSave);
 
+    }
 
+    public static String generateSimplePage(String title, String html_elem_1) {
+        SimpleHtmlDoc mainPage = new SimpleHtmlDoc(title, fontSize);
+        mainPage.addToHead(ccsInfo);
+        mainPage.addRawHtml("</br>");
+        mainPage.addRawHtml("<img src=\""+html_elem_1+"\" align=\"centre\"/>");
+        mainPage.addRawHtml("</br>");
 
+        return mainPage.toHtmlString();
     }
 
     public static File generateMainPage(Project project, File dirToCreateIn) {
