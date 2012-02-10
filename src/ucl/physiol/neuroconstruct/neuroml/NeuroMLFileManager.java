@@ -913,7 +913,12 @@ public class NeuroMLFileManager
                                 else if(plot.simPlot.getValuePlotted().indexOf(SimPlot.PLOTTED_VALUE_SEPARATOR+SimPlot.COND_DENS+SimPlot.PLOTTED_VALUE_SEPARATOR)>=0)
                                 {
                                     Units u = UnitConverter.conductanceDensityUnits[preferredUnits];
-                                    lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 "+u.getNeuroML2Symbol());  
+                                    lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 "+u.getNeuroML2Symbol());
+                                }
+                                else if(plot.simPlot.getValuePlotted().indexOf(SimPlot.PLOTTED_VALUE_SEPARATOR+SimPlot.CURR_DENS+SimPlot.PLOTTED_VALUE_SEPARATOR)>=0)
+                                {
+                                    Units u = UnitConverter.currentDensityUnits[preferredUnits];
+                                    lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 "+u.getNeuroML2Symbol());
                                 }
                                 else
                                 {
@@ -1088,8 +1093,15 @@ public class NeuroMLFileManager
                 String ion = val.split(":")[2];
                 //return "biophys/intracellularProperties/"+ion+"/concentration";
                 return "biophys/membraneProperties/"+cmName+"_all/g";
-                
+
             }
+            /*else if (type.equals(SimPlot.CURR_DENS))
+            {
+                String ion = val.split(":")[2];
+                //return "biophys/intracellularProperties/"+ion+"/concentration";
+                return "biophys/membraneProperties/"+cmName+"_all/i";
+
+            }*/
         }
 
         return val;
@@ -1174,6 +1186,7 @@ public class NeuroMLFileManager
             String simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
 
             simConf = "GranCellTested";
+            simConf = "GranTest2";
 
             if (projFile.getName().startsWith("VSCSGranCell"))
             {

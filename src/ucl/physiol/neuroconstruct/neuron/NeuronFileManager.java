@@ -4853,7 +4853,7 @@ public class NeuronFileManager
                                                           UnitConverter.NEUROCONSTRUCT_UNITS,
                                                           UnitConverter.NEURON_UNITS);
         }
-        else if (simIndepVarName.indexOf(SimPlot.CURRENT)>=0)
+        else if (simIndepVarName.indexOf(SimPlot.CURR_DENS)>=0)
         {
             return (float) UnitConverter.getCurrentDensity(val,
                                                            UnitConverter.NEUROCONSTRUCT_UNITS,
@@ -4967,9 +4967,9 @@ public class NeuronFileManager
 
                                 neuronVar = ion + "i"; // assume internal concentration
                             }
-                            else if (variable.startsWith(SimPlot.CURRENT))
+                            else if (variable.startsWith(SimPlot.CURR_DENS))
                             {
-                                logger.logComment("Looking to plot the current...");
+                                logger.logComment("Looking to plot the current density...");
 
                                 String ion = variable.substring(variable.indexOf(SimPlot.
                                     PLOTTED_VALUE_SEPARATOR) + 1);

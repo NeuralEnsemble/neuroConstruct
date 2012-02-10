@@ -46,7 +46,7 @@ public class SimPlot
     public static String SPIKE = "SPIKE";
     public static String CONCENTRATION = "CONC";
     public static String COND_DENS = "COND_DENS";
-    public static String CURRENT = "CURR_DENS";
+    public static String CURR_DENS = "CURR_DENS";
     public static String REV_POT = "REV_POT";
     public static String SYNAPSES = "SYN";
 
@@ -115,15 +115,14 @@ public class SimPlot
     @Override
     public Object clone()
     {
-        SimPlot sp = new SimPlot(new String(plotReference),
-                   new String(graphWindow),
-                   new String(cellGroup),
-                   new String(cellNumber),
-                   new String(segmentId),
-                   new String(valuePlotted),
-                   this.minValue,
-                   this.maxValue,
-                   new String(plotAndOrSave));
+        SimPlot sp = new SimPlot(plotReference,
+                            graphWindow,
+                            cellGroup,
+                            cellNumber,
+                            segmentId,
+                            valuePlotted,
+                            this.minValue,
+                            this.maxValue, plotAndOrSave);
         
         return sp;
     }
@@ -149,9 +148,9 @@ public class SimPlot
         {
             return UnitConverter.concentrationUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
         }
-        else if (variable.indexOf(SimPlot.CURRENT) >= 0)
+        else if (variable.indexOf(SimPlot.CURR_DENS) >= 0)
         {
-            return UnitConverter.currentUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
+            return UnitConverter.currentDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
         }
         else if (variable.indexOf(SimPlot.REV_POT) >= 0)
         {
@@ -191,9 +190,9 @@ public class SimPlot
         {
             return "Concentration";
         }
-        else if (variable.indexOf(SimPlot.CURRENT) >= 0)
+        else if (variable.indexOf(SimPlot.CURR_DENS) >= 0)
         {
-            return "Current";
+            return "Currrent density";
         }
         else if (variable.indexOf(SimPlot.REV_POT) >= 0)
         {

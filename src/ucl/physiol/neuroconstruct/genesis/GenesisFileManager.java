@@ -357,6 +357,8 @@ public class GenesisFileManager
 
     private String getCompElementName(Segment seg, String cellGroupName, int cellNumber)
     {
+        if (cellNumber == -1)
+            cellNumber = 0;
         return getCellElementName(cellGroupName, cellNumber)+"/"
             +SimEnvHelper.getSimulatorFriendlyName(seg.getSegmentName());
     }
@@ -1876,7 +1878,7 @@ public class GenesisFileManager
         }
 
 
-        else if (simIndepVarName.indexOf(SimPlot.CURRENT)>=0)
+        else if (simIndepVarName.indexOf(SimPlot.CURR_DENS)>=0)
         {
             return (float) UnitConverter.getCurrentDensity(val,
                                                            UnitConverter.NEUROCONSTRUCT_UNITS,
@@ -2014,7 +2016,8 @@ public class GenesisFileManager
 
                     surfArea = surfArea * unit * unit;
 
-                    String cellNameRef = record.simPlot.getCellGroup() + "_" + cellNum;
+
+                    String cellNameRef = getSingleWordElementName(record.simPlot.getCellGroup() +"_"+cellNum); // cleans up -1 etc
 
                     extraLines = "\nif (!{exists " + SCRIPT_OUT_ELEMENT_ROOT + "})\n" +
                                             "    create neutral " + SCRIPT_OUT_ELEMENT_ROOT + "\n" +
@@ -2074,7 +2077,7 @@ public class GenesisFileManager
                             variableName = ion.substring(0, 1).toUpperCase() + ion.substring(1);
 
                         }
-                        else if (simIndepVarPart.indexOf(SimPlot.CURRENT)>=0)
+                        else if (simIndepVarPart.indexOf(SimPlot.CURR_DENS)>=0)
                         {
 
                             //String ion = simIndepVarPart.substring(simIndepVarPart.indexOf(SimPlot.

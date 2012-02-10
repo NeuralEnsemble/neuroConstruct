@@ -350,13 +350,13 @@ public class SimulationData
                 {
                     conversionFactor = 1;
                 }
-                else if (variable.indexOf(SimPlot.CURRENT) >= 0)
+                else if (variable.indexOf(SimPlot.CURR_DENS) >= 0)
                 {
                     conversionFactor = UnitConverter.getCurrentDensity(conversionFactor,
                                                                                unitSystem,
                                                                                UnitConverter.NEUROCONSTRUCT_UNITS);
 
-                    yUnit = UnitConverter.currentUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
+                    yUnit = UnitConverter.currentDensityUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol();
                 }
                 else if (variable.indexOf(SimPlot.CONCENTRATION) >= 0)
                 {
