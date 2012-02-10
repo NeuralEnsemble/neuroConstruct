@@ -11,7 +11,10 @@
 	  
 	  <p>The application is available for download <a href="http://www.neuroConstruct.org/nCinfo/form.php" >here</a>.</p>
 	  <p>Instructions for installation are available <a href="../docs/install.html" >here</a>.</p>
-
+<p>&nbsp;</p>
+	  <p>Automatic installers (created with <a href="http://www.ej-technologies.com/products/install4j/overview.html">install4j</a>)
+      for a number of operating systems are available, as well as a zipped file containing the full source code.</p>
+      <!--<p><img src="../images/481905418.png" alt="install4j" ></img></p>-->
 
 
 <p>&nbsp;</p>

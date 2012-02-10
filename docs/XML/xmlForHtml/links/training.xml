@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document> 
+  <header> 
+    <title>neuroConstruct courses</title>
+  </header> 
+  <body>
+
+
+
+<figure src="images/BrainTrainC.png" alt="BrainTrain Cerebnet" ></figure>
+
+<p><b>Introduction to compartmental neuronal modelling with neuroConstruct and recent advances in rapid 2-photon imaging</b></p>
+<p>University College London, May 2-4 2012</p>
+
+
+
+<p>&nbsp;</p>
+<p>This course, being run by the <a href="http://www.ucl.ac.uk/silverlab/">Silver Lab @ UCL</a>, will provide an introduction
+to 3D biophysically detailed neuronal modelling and
+recent advances in 2-photon imaging methods for studying rapid neuronal signalling. Creation of multicompartmental,
+conductance based neuronal models has been greatly facilitated by software packages such as <a  href="http://www.neuron.yale.edu/neuron/">NEURON</a>
+and <a  href="http://www.genesis-sim.org/GENESIS">GENESIS</a>
+and a range of detailed cell and network models are available which are faithful to the anatomical and biophysical
+properties of the corresponding biological entities. <a  href="http://www.neuroconstruct.org" >neuroConstruct</a> is an application
+which facilitates the construction and analysis of such models through a 3D graphical interface and automates
+code generation for a number of widely used simulators. </p>
+
+<p>The course will give an overview of the field of detailed
+compartmental modelling and how it can complement experimental approaches including 2-photon imaging. It will
+consist of some introductory lectures on modeling and imaging, provide hands on experience of using neuroConstruct,
+introduce the existing cortical, cerebellar and hippocampal models which are already available in this format, and outline
+the process of creating new models from experimental data. The course will also cover the simulator independent model
+description language <a href="http://www.neuroml.org/">NeuroML</a> and the <a href="http://www.neuroml.org/tool_support.php">growing number of tools available</a> for handling models in this format.</p>
+
+<p>This course is primarily intended for participants in the <a href="http://www.brain-train.nl/">BrainTrain</a> and
+<a href="http://www.cerebnet.eu/">Marie Curie Cerebnet</a> training programs,
+although there are a limited number of places available for other researchers.</p>
+
+<p>&nbsp;</p>
+<p>Please register for this course <a href="https://docs.google.com/spreadsheet/viewform?formkey=dGlRUU1lOEFSSHhsWTRHeWdvVUtBeGc6MQ">here</a>, or contact p.gleeson -at- ucl.ac.uk for more details</p>
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+  </body>
+</document>

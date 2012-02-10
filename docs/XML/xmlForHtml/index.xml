@@ -14,13 +14,13 @@
       <p>&nbsp;</p>
     <section>
       <title>Introduction</title>
-      <p>neuroConstruct is being developed in the <a href="http://www.ucl.ac.uk/npp/as">Silver Lab</a> in the
+      <p>neuroConstruct is being developed in the <a href="http://www.ucl.ac.uk/silverlab/">Silver Lab</a> in the
 
       <a href="http://www.ucl.ac.uk/npp/">Department of Neuroscience, Physiology and Pharmacology</a> at
           <a href="http://www.ucl.ac.uk">UCL</a>. neuroConstruct has been designed to simplify development of complex networks
           of biologically realistic neurons, i.e. models incorporating dendritic morphologies and realistic cell membrane conductances.
-      It is implemented in Java and generates script files for the <a  href="docs/Glossary_gen.html#NEURON">NEURON</a> and
-      <a  href="docs/Glossary_gen.html#GENESIS">GENESIS</a> simulators, with support for other simulation platforms (including <a  href="http://www.psics.org">PSICS</a>, <a  href="http://moose.sourceforge.net">MOOSE</a> and <a href="http://neuralensemble.org/trac/PyNN">PyNN</a>) in advanced stages of development. It uses the latest <a href="docs/Glossary_gen.html#NeuroML">NeuroML</a> specifications,
+      It is implemented in Java and generates script files for a number of widely used neuronal simulation platforms (including <a  href="docs/Glossary_gen.html#NEURON">NEURON</a>,
+      <a  href="docs/Glossary_gen.html#GENESIS">GENESIS</a>, <a  href="http://moose.sourceforge.net">MOOSE</a>, <a  href="http://www.psics.org">PSICS</a> and <a href="http://neuralensemble.org/trac/PyNN">PyNN</a>). It uses the latest <a href="docs/Glossary_gen.html#NeuroML">NeuroML</a> specifications,
       including <a href="docs/Glossary_gen.html#MorphML">MorphML</a>, <a href="docs/Glossary_gen.html#ChannelML">ChannelML</a> and <a href="docs/Glossary_gen.html#NetworkML">NetworkML</a>.</p>
 
       <p>Development of this software was made possible with funding from the <a href="http://www.wellcome.ac.uk/">Wellcome Trust</a>, the <a href="http://www.mrc.ac.uk/">Medical Research Council</a> and the <a href="http://www.eusynapse.mpg.de">EU Synapse Project</a>.</p>
@@ -73,7 +73,7 @@
         <p>There is a <strong>mailing list</strong> for neuroConstruct related news (<strong>neuroconstruct@ucl.ac.uk</strong>). Sign up <a href="http://www.mailinglists.ucl.ac.uk/mailman/listinfo/neuroconstruct">here</a>. </p>
 
 
-    </section>
+    </section> 
 
     <section>
       <title>What is neuroConstruct?</title>
@@ -90,7 +90,7 @@
 <li>Automatic generation of code to record simulation data and visualisation/analysis of data in neuroConstruct</li>
 
 <li>Recorded simulation runs can be viewed and managed through the Simulation Browser interface</li>
-<li>A <a href="http://www.python.org">Python</a> based scripting interface can be used to control model generation and execution, allowing multiple
+<li>A <a href="docs/python.html">Python</a> based scripting interface can be used to control model generation and execution, allowing multiple
    simulations to be run for cell and network model optimisation</li>
 
 

@@ -328,12 +328,6 @@
           description="Removes generated documentation files">
     <delete dir="${apidocs.dir}"/>
     <mkdir dir="${apidocs.dir}"/>
-    <delete dir="${helpdocs.dir}"/>
-    <mkdir dir="${helpdocs.dir}"/>
-    <delete dir="${website.dir}"/>
-    <mkdir dir="${website.dir}"/>
-    <delete dir="${dist.dir}"/>
-    <mkdir dir="${dist.dir}"/>
   </target>
 
 

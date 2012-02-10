@@ -38,7 +38,8 @@
 
   <links label="Links"  tab="Links"  >
     <links label="Useful links" href="links/index.html" description="Useful neuroConstruct links "/>
-    <links label="Publications" href="links/publications.html" description="Useful neuroConstruct "/>
+    <links label="Publications" href="links/publications.html" description="neuroConstruct publications"/>
+    <links label="Courses" href="links/training.html" description="neuroConstruct courses"/>
   </links>
 
   <contact label="Contact"  href="contact/index.html" tab="Contact"  >
