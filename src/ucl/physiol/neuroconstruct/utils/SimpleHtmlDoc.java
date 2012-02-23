@@ -145,7 +145,7 @@ public class SimpleHtmlDoc
         
         String fonts = CustomLookAndFeel.getMainFont()+ ", Dialog, Verdana, Helvetica, sans-serif, Arial";
 
-        StringBuffer message = new StringBuffer("<html>"+ret+titleInfo+"<head>"+ret+"<style type=\"text/css\">"
+        StringBuilder message = new StringBuilder("<html>"+ret+titleInfo+"<head>"+ret+"<style type=\"text/css\">"
 
             + "         h1 {color: gray; font-family: "+fonts+"}"
             + "         h2 {color: gray; font-family: "+fonts+"}"
@@ -166,7 +166,10 @@ public class SimpleHtmlDoc
 
         for (int i = 0; i < contents.size(); i++)
         {
-            message.append(contents.get(i).toHtmlString(includeReturnsInHtml)+ret);
+            String part = contents.get(i).toHtmlString(includeReturnsInHtml);
+            if (part.indexOf("<")>=0) // i.e. any html element in there...
+                part = part + ret;
+            message.append(part);
         }
         message.append("</body>"+ret+"</html>");
 
@@ -177,7 +180,7 @@ public class SimpleHtmlDoc
     @Override
     public String toString()
     {
-        StringBuffer message = new StringBuffer();
+        StringBuilder message = new StringBuilder();
 
         for (int i = 0; i < contents.size(); i++)
         {
@@ -263,7 +266,7 @@ public class SimpleHtmlDoc
 
         public String toHtmlString(boolean includeReturnsInHtml)
         {
-            String textPart = new String(text);
+            String textPart = text;
 
             if(!includeReturnsInHtml)
             {

@@ -941,6 +941,8 @@ public class GeneralUtils
     {
         File[] allFiles = directory.listFiles();
 
+        //logger.logComment("Removing files from "+ directory+", remove dir too: "+removeDirToo+", remove VC: "+removeVC, true);
+
         if (warn)
         {
             int yesNo = JOptionPane.showConfirmDialog(null, "This will permanently remove all files from directory "
@@ -953,15 +955,18 @@ public class GeneralUtils
                 return;
             }
         }
+        boolean underVersionControl  = false;
         if (allFiles!=null)
         {
             for (int i = 0; i < allFiles.length; i++)
             {
                 if (allFiles[i].isDirectory())
                 {
+                    underVersionControl = underVersionControl || isVersionControlDir(allFiles[i].getName());
+
                     if (!(isVersionControlDir(allFiles[i].getName()) && !removeVC) )
                     {
-                        removeAllFiles(allFiles[i], false, true, true);
+                        removeAllFiles(allFiles[i], false, true, removeVC);
                     }
                 }
                 else
@@ -980,9 +985,11 @@ public class GeneralUtils
         }
         if (removeDirToo)
         {
-            boolean res = directory.delete();
-            //System.out.println("Deleted: "+ directory+": "+ res);
-            if (!res) directory.deleteOnExit();
+            if (! (!removeVC && underVersionControl) ){
+                boolean res = directory.delete();
+                //System.out.println("Deleted: "+ directory+": "+ res);
+                if (!res) directory.deleteOnExit();
+            }
         }
 
     }

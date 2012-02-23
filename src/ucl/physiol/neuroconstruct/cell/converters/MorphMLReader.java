@@ -505,6 +505,10 @@ public class MorphMLReader extends XMLFilterImpl
              logger.logComment("\n                           +++++    New Cable/Section!!  +++++");
              String id = attributes.getValue(MorphMLConstants.CABLE_ID_ATTR);
              String name = attributes.getValue(MorphMLConstants.CABLE_NAME_ATTR);
+             if (name==null || name.length()==0)
+             {
+                 name = new String("Section_"+id);
+             }
 
              logger.logComment("     Have found a cable id: " + id);
 
@@ -1169,6 +1173,7 @@ public class MorphMLReader extends XMLFilterImpl
             //File f = new File("../temp/cell.xml");
             File f = new File("../Documents/general/owp/CElegans_ADAL.xml");
             f = new File("../models/GrCDiwakar/nd.xml");
+            f = new File("../temp/SkeletonTree_ORR_aCC_48h1.xml");
 
            // File f = new File("/bernal/a4d.xml");
 

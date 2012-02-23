@@ -81,7 +81,7 @@ public class SimPlot
     String segmentId = null;
     String valuePlotted = VOLTAGE;
 
-    String plotAndOrSave = PLOT_ONLY;
+    String plotAndOrSave = PLOT_ONLY; // should have been enum...
 
     float minValue = -100;
     float maxValue = 100;
@@ -363,6 +363,17 @@ public class SimPlot
     public String toString()
     {
         return "Plot/save of "+ this.getValuePlotted()+" in "+ this.getCellGroup();
+    }
+
+    public String getPlotSaveString()
+    {
+        if (plotAndOrSave.equals(PLOT_ONLY))
+            return "Plotting";
+        else if(plotAndOrSave.equals(SAVE_ONLY))
+            return "Saving";
+        else if(plotAndOrSave.equals(PLOT_AND_SAVE))
+            return "Plotting and saving";
+        return "";
     }
 
 

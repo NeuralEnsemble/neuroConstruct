@@ -1406,7 +1406,7 @@ public class SimulationData
         f = new File("testProjects/TestHDF5/simulations/TestSpikes");
         f = new File("testProjects/TestHDF5/simulations/TestH5");
         f = new File("testProjects/TestHDF5/simulations/TestSpikesHDF5");
-        //f = new File("testProjects/TestHDF5/simulations/TestSpikesText");
+        f = new File("osb/models/cerebellum/networks/GranCellLayer/neuroConstruct/simulations/DT_SingleGranulecell__M_0.0001");
 
         SimulationData simulationData1 = null;
         try
