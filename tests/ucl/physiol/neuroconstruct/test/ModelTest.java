@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.junit.runner.*;
 import ucl.physiol.neuroconstruct.gui.ValidityStatus;
 import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings;
+import ucl.physiol.neuroconstruct.neuron.NeuronSettings.DataSaveFormat;
 import ucl.physiol.neuroconstruct.project.Project;
 import ucl.physiol.neuroconstruct.project.ProjectFileParsingException;
 import ucl.physiol.neuroconstruct.project.ProjectManager;
@@ -231,8 +232,19 @@ public class ModelTest
                 sc.getMpiConf().equals(ms.getMpiConfiguration(MpiSettings.LOCAL_SERIAL)));
         }
 
-        
+        float maxDt = 0.025f;
 
+        assertTrue("Project's simulation time step: "+project.simulationParameters.getDt()+" is greater than "+maxDt+" ms!", project.simulationParameters.getDt()<=maxDt);
+        assertTrue("Project's simulation time step is zero!", project.simulationParameters.getDt()>0);
+
+
+        assertTrue("Project's NEURON data save format is not text!", project.neuronSettings.getDataSaveFormat().equals(DataSaveFormat.TEXT_NC));
+        assertTrue("Project's NEURON force correct init isn't set!", project.neuronSettings.isForceCorrectInit());
+        assertTrue("Project's NEURON mod silent setting isn't true!", project.neuronSettings.isModSilentMode());
+        assertTrue("Project's NEURON graphics mode isn't show all!", project.neuronSettings.getGraphicsMode().equals(ucl.physiol.neuroconstruct.neuron.NeuronSettings.GraphicsMode.ALL_SHOW));
+        assertTrue("Project's GENESIS graphics mode isn't show all!", project.genesisSettings.getGraphicsMode().equals(ucl.physiol.neuroconstruct.genesis.GenesisSettings.GraphicsMode.ALL_SHOW));
+
+        assertTrue("Project's 3D resolution is too high!", project.proj3Dproperties.getResolution3DElements()<=30);
 
 
     }
