@@ -577,6 +577,7 @@ class SimulationManager():
                         simConfigs =                ["Default Simulation Configuration"],
                         maxElecLens =               [-1],
                         simDt =                     None,
+                        simDtOverride =             None,
                         simDuration =               None,
                         neuroConstructSeed =        12345,
                         simulatorSeed =             11111,
@@ -642,6 +643,8 @@ class SimulationManager():
 
                 if simDt is not None:
                     self.project.simulationParameters.setDt(simDt)
+                else:
+                    simDt = self.project.simulationParameters.getDt() # for later if simDtOverride used...
 
 
                 if simDuration is not None:
@@ -680,6 +683,12 @@ class SimulationManager():
 
                 if simulators.count("NEURON")>0:
 
+                    if simDtOverride is not None:
+                        if simDtOverride.has_key("NEURON"):
+                            self.project.simulationParameters.setDt(simDtOverride["NEURON"])
+                        else:
+                            self.project.simulationParameters.setDt(simDt)
+
                     simRef = simRefGlobalPrefix + simRefPrefix+"_N"+recompSuffix + simRefGlobalSuffix
                     self.project.simulationParameters.setReference(simRef)
 
@@ -713,6 +722,12 @@ class SimulationManager():
 
                 if simulators.count("PSICS")>0:
 
+                    if simDtOverride is not None:
+                        if simDtOverride.has_key("PSICS"):
+                            self.project.simulationParameters.setDt(simDtOverride["PSICS"])
+                        else:
+                            self.project.simulationParameters.setDt(simDt)
+
                     simRef = simRefGlobalPrefix + simRefPrefix+"_P"+recompSuffix + simRefGlobalSuffix
                     self.project.simulationParameters.setReference(simRef)
 
@@ -734,6 +749,12 @@ class SimulationManager():
                 self.doCheckNumberSims()
 
                 if simulators.count("LEMS")>0:
+
+                    if simDtOverride is not None:
+                        if simDtOverride.has_key("LEMS"):
+                            self.project.simulationParameters.setDt(simDtOverride["LEMS"])
+                        else:
+                            self.project.simulationParameters.setDt(simDt)
 
                     simRef = simRefGlobalPrefix + simRefPrefix+"_L"+recompSuffix + simRefGlobalSuffix
                     self.project.simulationParameters.setReference(simRef)
@@ -757,7 +778,13 @@ class SimulationManager():
 
                 for sim in simulators:
                   if "PYNN_" in sim:
-                      
+
+                        if simDtOverride is not None:
+                            if simDtOverride.has_key(sim):
+                                self.project.simulationParameters.setDt(simDtOverride[sim])
+                            else:
+                                self.project.simulationParameters.setDt(simDt)
+
                         pynnSim = sim[5:]
                         simRef = simRefGlobalPrefix + simRefPrefix+"_Py_"+pynnSim+recompSuffix + simRefGlobalSuffix
                         self.project.simulationParameters.setReference(simRef)
@@ -788,6 +815,12 @@ class SimulationManager():
 
                 for sim in simulators:
                   if "MOOSE" in sim:
+
+                    if simDtOverride is not None:
+                        if simDtOverride.has_key(sim):
+                            self.project.simulationParameters.setDt(simDtOverride[sim])
+                        else:
+                            self.project.simulationParameters.setDt(simDt)
 
                     simRef = simRefGlobalPrefix + simRefPrefix+"_M"+recompSuffix + simRefGlobalSuffix
 
@@ -826,6 +859,12 @@ class SimulationManager():
 
                 for sim in simulators:
                   if "GENESIS" in sim:
+
+                    if simDtOverride is not None:
+                        if simDtOverride.has_key(sim):
+                            self.project.simulationParameters.setDt(simDtOverride[sim])
+                        else:
+                            self.project.simulationParameters.setDt(simDt)
 
                     simRef = simRefGlobalPrefix + simRefPrefix+"_G"+recompSuffix + simRefGlobalSuffix
 
