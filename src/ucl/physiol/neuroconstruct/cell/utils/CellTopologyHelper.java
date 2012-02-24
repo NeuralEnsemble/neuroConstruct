@@ -2412,7 +2412,7 @@ public class CellTopologyHelper
         sb.append("  "+GeneralUtils.getEndLine(html));
 
         ArrayList<ChannelMechanism> allChanMechs = cell.getAllUniformChanMechs(true);
-        GeneralUtils.reorderAlphabetically(allChanMechs, true);
+        allChanMechs = (ArrayList<ChannelMechanism>)GeneralUtils.reorderAlphabetically(allChanMechs, true);
         for (int i = 0; i < allChanMechs.size(); i++)
         {
             ChannelMechanism chanMech = allChanMechs.get(i);
@@ -3771,7 +3771,7 @@ public class CellTopologyHelper
             ArrayList<String> infoB = new ArrayList<String>();
             
             ArrayList<ChannelMechanism> allChanMechsB = cellB.getAllUniformChanMechs(true);
-            GeneralUtils.reorderAlphabetically(allChanMechsB, true);
+            allChanMechsB = (ArrayList<ChannelMechanism>)GeneralUtils.reorderAlphabetically(allChanMechsB, true);
             
             for (int i = 0; i < allChanMechsB.size(); i++)
             {
@@ -3789,7 +3789,7 @@ public class CellTopologyHelper
             ArrayList<String> infoA = new ArrayList<String>();
             
             ArrayList<ChannelMechanism> allChanMechsA = cellA.getAllUniformChanMechs(true);
-            GeneralUtils.reorderAlphabetically(allChanMechsA, true);
+            allChanMechsA = (ArrayList<ChannelMechanism>)GeneralUtils.reorderAlphabetically(allChanMechsA, true);
             for (int i = 0; i < allChanMechsA.size(); i++)
             {
                 ChannelMechanism chanMech = allChanMechsA.get(i);

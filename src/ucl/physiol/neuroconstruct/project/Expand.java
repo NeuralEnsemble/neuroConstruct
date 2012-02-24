@@ -200,7 +200,7 @@ public class Expand {
 
 
                 //indexPage.addRawHtml("</br>");
-                indexPage.addTaggedElement(desc, "td");
+                indexPage.addTaggedElement(GeneralUtils.parseForHyperlinks(desc), "td");
                 indexPage.addTaggedElement("<img src=\""+projNameStripped+"/images/small.png\" align=\"centre\"/>", "td");
                 //indexPage.addRawHtml("</br>");
                 //indexPage.addRawHtml("</br>");
@@ -448,7 +448,7 @@ public class Expand {
             mainPage.addRawHtml("<table "+tableStyle+">");
 
             mainPage.addRawHtml("<tr><td "+headerStyle+"  colspan='2'><b>A: Model Summary</b></td></tr>");
-            mainPage.addRawHtml("<tr><td width='" + width1 + "'><b>Description</b></td><td>" + handleWhitespaces(desc) + "</td></tr>");
+            mainPage.addRawHtml("<tr><td width='" + width1 + "'><b>Description</b></td><td>" + handleWhitespaces(GeneralUtils.parseForHyperlinks(desc)) + "</td></tr>");
             mainPage.addRawHtml("<tr><td><b>Populations</b></td><td>");
             for (String cg : cellGroups) {
                 String cellType = project.cellGroupsInfo.getCellType(cg);
@@ -657,7 +657,7 @@ public class Expand {
                 //ConnectivityConditions cc = project.morphNetworkConnectionsInfo.getConnectivityConditions(nc);
 
                 mainPage.addRawHtml("<tr>"
-                        + "<td><a name=\"" + nc + "\"/>" + nc + "</td>"
+                        + "<td>" + nc + "<a name=\"" + nc + "\"/></td>"
                         + "<td><a href=\"#" + src + "\">" + src + "</a></td>"
                         + "<td><a href=\"#" + tgt + "\">" + tgt + "</td>"
                         + "<td>" + getNetConnInfo(project, nc) + "</td>"
@@ -777,16 +777,18 @@ public class Expand {
         ArrayList<String> paths = new ArrayList<String>();
         //paths.add("examples/Ex6-Cerebellum/Ex6-Cerebellum.neuro.xml");
         //paths.add("nCmodels/Thalamocortical/Thalamocortical.ncx");
-        
+
         paths.add("osb/models/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
-        paths.add("osb/models/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
-        paths.add("osb/models/cerebellum/networks/GranCellLayer/neuroConstruct/GranCellLayer.ncx");
         paths.add("osb/models/cerebellum/cerebellar_golgi_cell/SolinasEtAl_GolgiCell/neuroConstruct/SolinasEtAl_GolgiCell.ncx");
+        paths.add("osb/models/cerebellum/cerebellar_granule_cell/GranuleCellVSCS/neuroConstruct/GranuleCellVSCS.ncx");
+        paths.add("osb/models/cerebellum/cerebellar_granule_cell/GranCellSolinasEtAl10/neuroConstruct/GranCellSolinasEtAl10.ncx");
         boolean all = false;
         all = true;
         if (all)
         {
-            /**/paths.add("osb/models/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx");
+            paths.add("osb/models/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
+            paths.add("osb/models/cerebellum/networks/GranCellLayer/neuroConstruct/GranCellLayer.ncx");
+            paths.add("osb/models/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx");
             paths.add("osb/models/cerebral_cortex/neocortical_pyramidal_neuron/RothmanEtAl_KoleEtAl_PyrCell/neuroConstruct/RothmanEtAl_KoleEtAl_PyrCell.ncx");
             paths.add("osb/models/cerebellum/cerebellar_purkinje_cell/PurkinjeCell/neuroConstruct/PurkinjeCell.ncx");
             paths.add("osb/models/cerebellum/networks/VervaekeEtAl-GolgiCellNetwork/neuroConstruct/VervaekeEtAl-GolgiCellNetwork.ncx");

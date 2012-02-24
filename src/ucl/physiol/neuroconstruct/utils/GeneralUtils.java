@@ -520,7 +520,7 @@ public class GeneralUtils
             
             checkpoint = start+link.length();
             
-            System.out.println("text: ("+text+"), text len: ("+text.length()+"), checkpoint: ("+checkpoint+")");
+            //System.out.println("text: ("+text+"), text len: ("+text.length()+"), checkpoint: ("+checkpoint+")");
         }
         //text = replaceAllTokens(text, "&", "&amp;");
         return text;

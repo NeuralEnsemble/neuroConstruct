@@ -2280,9 +2280,9 @@ public class ProjectManager implements GenerationReport
             overallValidity = ValidityStatus.VALIDATION_ERROR;
             //allValid = false;
         }
-        else if (this.activeProject.simulationParameters.getTemperature() >=36)
+        else if (this.activeProject.simulationParameters.getTemperature() >=38)
         {
-            report.addTaggedElement("Warning, simulation temperature above 36 celsius!",
+            report.addTaggedElement("Warning, simulation temperature above 38 celsius!",
                                     "font color=\""+ValidityStatus.VALIDATION_COLOUR_WARN+"\"");
 
             overallValidity = ValidityStatus.combineValidities(overallValidity, ValidityStatus.VALIDATION_WARN);

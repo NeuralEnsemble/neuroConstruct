@@ -1179,7 +1179,7 @@ public class NeuroMLFileManager
         try
         {
             File projFile = new File("nCexamples/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
-            //projFile = new File("models/VSCSGranCell/VSCSGranCell.neuro.xml");
+            projFile = new File("osb/models/cerebellum/cerebellar_granule_cell/GranuleCellVSCS/neuroConstruct/GranuleCellVSCS.ncx");
             //projFile = new File("nCmodels/RothmanEtAl_KoleEtAl_PyrCell/RothmanEtAl_KoleEtAl_PyrCell.ncx");
             //projFile = new File("../nC_projects/Thaal/Thaal.ncx");
 
@@ -1188,9 +1188,9 @@ public class NeuroMLFileManager
             simConf = "GranCellTested";
             simConf = "GranTest2";
 
-            if (projFile.getName().startsWith("VSCSGranCell"))
+            if (projFile.getName().startsWith("GranuleCellVSCS"))
             {
-                simConf = "TestSimConf";
+                simConf = "OneChanBothSims";
             }
             else if (projFile.getName().startsWith("LemsTest"))
             {

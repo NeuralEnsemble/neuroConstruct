@@ -1093,6 +1093,7 @@ public class Cell implements Serializable
             if (nextChanMech.equals(chanMech))
                 theGroups.addAll(chanMechsVsGroups.get(nextChanMech));
         }
+        theGroups = (Vector<String>)GeneralUtils.reorderAlphabetically(theGroups, true);
 
         return theGroups;
     }
