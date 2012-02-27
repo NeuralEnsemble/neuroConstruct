@@ -108,6 +108,27 @@ public class ModelTest
         String projFileName = "osb/models/cerebellum/networks/GranCellLayer/neuroConstruct/GranCellLayer.ncx";
         checkProject(projFileName);
     }
+
+
+    /*
+     * Mix of si & phys units..!
+     * 
+    @Test public void testGranuleCellVSCS()
+    {
+        String projFileName = "osb/models/cerebellum/cerebellar_granule_cell/GranuleCellVSCS/neuroConstruct/GranuleCellVSCS.ncx";
+        checkProject(projFileName);
+    }
+     *
+     */
+
+
+    /*
+     * Channels not valid yet...
+    @Test public void testGranCellSolinasEtAl10()
+    {
+        String projFileName = "osb/models/cerebellum/cerebellar_granule_cell/GranCellSolinasEtAl10/neuroConstruct/GranCellSolinasEtAl10.ncx";
+        checkProject(projFileName);
+    }*/
     @Test public void testCA1PyramidalCell()
     {
         String projFileName = "osb/models/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx";
