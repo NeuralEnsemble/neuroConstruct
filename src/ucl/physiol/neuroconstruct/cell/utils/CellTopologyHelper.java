@@ -120,7 +120,7 @@ public class CellTopologyHelper
             logger.logComment(cell.getInstanceName() + " being asked for post-synaptic point of type " + synapseType +
                               " among my segments");
 
-            if (allSegments.size() == 0)
+            if (allSegments.isEmpty())
             {
                 return null;
             }
@@ -168,7 +168,7 @@ public class CellTopologyHelper
                 logger.logComment("Have found " + idsOfPossibleSegments.size() + " possible segments: " +
                                   idsOfPossibleSegments);
 
-                if (idsOfPossibleSegments.size() == 0)
+                if (idsOfPossibleSegments.isEmpty())
                 {
                     return null;
                 }
@@ -1023,7 +1023,7 @@ public class CellTopologyHelper
 
         logger.logComment("Have found " + idsOfPossibleSegments.size() + " possible segments");
 
-        if (idsOfPossibleSegments.size() == 0)
+        if (idsOfPossibleSegments.isEmpty())
         {
             return null;
         }
@@ -2333,6 +2333,18 @@ public class CellTopologyHelper
                                       boolean safeSymbol)
     {
 
+        return printDetails(cell, project,html, longFormat,  projHtml, false, safeSymbol);
+    }
+
+    public static String printDetails(Cell cell,
+    		                          Project project,
+    		                          boolean html,
+    		                          boolean longFormat,
+    		                          boolean projHtml,
+    		                          boolean expandHtml,
+                                      boolean safeSymbol)
+    {
+
         logger.logComment("Printing cell details...");
         if (cell==null) return "**** Error: cell is null ****";
         
@@ -2426,7 +2438,7 @@ public class CellTopologyHelper
             
             if (html)
             {
-            	if (false)
+            	if (expandHtml)
             	{
             		descCm = "<a href=\"../"+Expand.getCellMechPage(chanMech.getName())+"\">"+chanMech.getName() + "</a> ("+ moreInfo+")";
             	}
@@ -2451,7 +2463,7 @@ public class CellTopologyHelper
             	}
             }
             
-            String type = "Channel mechanism: ";
+            String type = "Channel: ";
             if (project!=null)
             {
                 CellMechanism cm = project.cellMechanismInfo.getCellMechanism(chanMech.getName());
@@ -2466,7 +2478,7 @@ public class CellTopologyHelper
             }
 
             sb.append("    "+type+": "+GeneralUtils.getTabbedString(descCm, "b", html)
-                      +" is present on: "+grpInfo+GeneralUtils.getEndLine(html));
+                      +" is present on groups: "+grpInfo+GeneralUtils.getEndLine(html));
         }
         if (allChanMechs.size()>0) sb.append("  "+GeneralUtils.getEndLine(html));
         
@@ -2917,7 +2929,7 @@ public class CellTopologyHelper
      */
     public static String recompartmentaliseCell(Cell cell, float targetMaxElectLen, Project project, boolean longReport, boolean justTest)
     {
-        StringBuffer report = new StringBuffer();
+        StringBuilder report = new StringBuilder();
 
         ArrayList<Section> secs = cell.getAllSections();
 
@@ -4304,7 +4316,7 @@ public class CellTopologyHelper
         }
 
 
-        if (segmentsWithNullParent.size()==0)
+        if (segmentsWithNullParent.isEmpty())
         {
             errorReport.append("ERROR: No section found with null parent!!\n");
         }
@@ -4425,7 +4437,7 @@ public class CellTopologyHelper
             }
         }
 
-        if (cell.getAllSegments().size()==0)
+        if (cell.getAllSegments().isEmpty())
         {
             errorReport.append("ERROR: No segments in cell!!\n");
 
@@ -4438,7 +4450,7 @@ public class CellTopologyHelper
         }
 
 
-        if (cell.getOnlySomaSegments().size()==0)
+        if (cell.getOnlySomaSegments().isEmpty())
         {
             errorReport.append("ERROR: No sections set as soma sections (i.e. are in group "+Section.SOMA_GROUP+")!!\n");
 
