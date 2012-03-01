@@ -3174,7 +3174,7 @@ public class PlotterFrame extends JFrame {
         //Hashtable<String, String> dataVsLoadScript = new Hashtable<String, String>();
 
 
-        mainScript.append("fig = plt.figure()\n");
+        mainScript.append("fig = plt.figure(facecolor='#FFFFFF', edgecolor='#FFFFFF')\n");
         mainScript.append("p = fig.add_subplot(111, autoscale_on=False, xlim=(" + this.plotCanvas.getMinXScaleValue() + "," + this.plotCanvas.getMaxXScaleValue() + "),"
                 + " ylim=(" + this.plotCanvas.getMinYScaleValue() + "," + this.plotCanvas.getMaxYScaleValue() + "))\n");
 
@@ -3261,7 +3261,8 @@ public class PlotterFrame extends JFrame {
                     marker = "-";
                 }  // TODO, more for barcharts!
 
-
+                mainScript.append("\np.spines['top'].set_color('none')\n"); // show only bottom and left axis
+                mainScript.append("p.spines['right'].set_color('none')\n");
                 mainScript.append("p.plot(" + objRef + "_x, " + objRef + "_y" + pre + ", solid_joinstyle ='round', solid_capstyle ='round', color='#" + rgb + "', linestyle='" + linestyle + "', marker='" + marker + "'" + post + ")\n\n");
 
 

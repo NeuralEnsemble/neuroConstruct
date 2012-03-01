@@ -82,6 +82,8 @@ for arg in sys.argv:
     argCount+=1
     if argCount >= len(argList): break
 
+# the DEBUG flag runs the graphs generation without computing data
+DEBUG         = int(argLookup["DEBUG"])
 setVisible    = int(argLookup["setVisible"])
 verboseSims   = argLookup["verboseSims"]
 simulator     = argLookup["simulator"]
@@ -125,10 +127,6 @@ else:
 #mpiConfig =            MpiSettings.MATLEM_1PROC    # Run on one processor on UCL cluster
 
 
-# logic tied to concurrent sims...
-#numConcurrentSims = 4
-#if mpiConfig != MpiSettings.LOCAL_SERIAL: numConcurrentSims = 30
-
 # suggestedRemoteRunTime = 33   # mins
 suggestedRemoteRunTime = int(argLookup["suggestedRemoteRunTime"])
 
@@ -138,10 +136,9 @@ simList = getSimList(simConfigName,
                     stimAmpHigh,
                     stimAmpInc,
                     simulator[0])
-checkPullsims(simList, os.environ["NC_HOME"]+argLookup["ProjectFile"])
-
     
-if int(argLookup["DEBUG"]) == 0:
+if (DEBUG == 0):
+    checkPullsims(simList, os.environ["NC_HOME"]+argLookup["ProjectFile"])
     simManager = nc.SimulationManager(projFile, numConcurrentSims)
     start = "\nSimulations started at: %s"%datetime.datetime.now()
     simManager.generateBatchCurve(simulator,
@@ -164,7 +161,7 @@ if int(argLookup["DEBUG"]) == 0:
     print start
     print finish
 else:
-    print 'Running in DEBUG mode, no simulation run, argLookup["DEBUG"] :',argLookup["DEBUG"]
+    print 'Running in DEBUG mode, no simulation run, argLookup["DEBUG"] :',DEBUG
 #    quit()
 
 
@@ -172,9 +169,10 @@ else:
 simManager = nc.SimulationManager(projFile, numConcurrentSims)
 simConfig = simManager.project.simConfigInfo.getSimConfig(simConfigName)
 
-plotFrame       = PlotManager.getPlotterFrame("Plot Title Entry Main", 0, setVisible)
-plotFrameAlltraces  = PlotManager.getPlotterFrame("Plot Title Entry Alltraces", 0, setVisible)
-# plotFrame.setViewMode(PlotCanvas.INCLUDE_ORIGIN_VIEW)
+plotFrame           = PlotManager.getPlotterFrame("Plot for "+curveType, 0, setVisible)
+plotFrameAlltraces  = PlotManager.getPlotterFrame("Plot All Traces", 0, setVisible)
+plotFrame.setViewMode(PlotCanvas.INCLUDE_ORIGIN_VIEW)
+plotFrameAlltraces.setViewMode(PlotCanvas.INCLUDE_ORIGIN_VIEW)
 
 
 simList = getSimList(simConfigName,
@@ -234,6 +232,8 @@ for sim in simList:
 
         if plotAllTraces:
             plotFrameAlltraces.addDataSet(dataSetV)
+            # needs adjusting for a comprehensive maxx maxy minx miny
+            plotFrameAlltraces.setMaxMinScaleValues(dataSetV.getMaxX()[0],dataSetV.getMinX()[0],dataSetV.getMaxY()[1],dataSetV.getMinY()[1])
 
         if (curveType == "F-I") :
             print "F-I analisys..."
@@ -254,7 +254,7 @@ for sim in simList:
         elif (curveType == "SS-I") :
             # initialize the dataSet for the graph
             if (dataSet == "") :
-                dataSet = DataSet("info 1", "info 2", "nA", "V", "Current injected", "Steady state Voltage")
+                dataSet = DataSet("info 1", "info 2", "nA", "mV", "Current injected", "Steady state Voltage")
                 dataSet.setGraphFormat(PlotCanvas.USE_CIRCLES_FOR_PLOT)
             print "SS-I analisys..."
             stimAmp = simRefsVsStims[sim]
@@ -291,7 +291,7 @@ for sim in simList:
 
 
 plotFrame.addDataSet(dataSet)
-#plotFrame.setMaxMinScaleValues(2,0,100,0)
+plotFrame.setMaxMinScaleValues(dataSet.getMaxX()[0],dataSet.getMinX()[0],dataSet.getMaxY()[1],dataSet.getMinY()[1])
 
 # if setMapplotlibDir is set then no file chooser should show
 nowdatetime = datetime.datetime.now()
