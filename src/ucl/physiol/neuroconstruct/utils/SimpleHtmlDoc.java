@@ -53,6 +53,8 @@ public class SimpleHtmlDoc
     String extraHead = "";
 
 
+
+
     public void addTaggedElement(String text, String tab)
     {
         contents.add(new TabbedElement(text, tab));
@@ -126,6 +128,12 @@ public class SimpleHtmlDoc
         this.title = title;
         this.mainFontSize = fontSize;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    
 
     public void setMainFontSize(int fs)
     {
