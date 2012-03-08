@@ -3957,7 +3957,7 @@ public class CellTopologyHelper
      * Returns a short string detailing the differences between two channel mechanism with the same name.
      * NOTE: used also in <b>compare</b> function
      * 
-     * @ Matteo Farinella
+     *  Matteo Farinella
      */
     public static String compareChannelMech (String chanMechName, boolean html, Project projectA, Project projectB)
     { 

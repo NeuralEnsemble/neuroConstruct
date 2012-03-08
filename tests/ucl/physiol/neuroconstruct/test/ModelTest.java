@@ -187,8 +187,15 @@ public class ModelTest
 
         checkProject(projFileName, cellsToIgnore, false);
     }
-     * 
-     */
+    @Test public void testVervaekeEtAl_GJCompensate()
+    {
+        String projFileName = "nCmodels/VervaekeEtAl-GJCompensate/VervaekeEtAl-GJCompensate.ncx";
+
+        ArrayList<String> cellsToIgnore = new ArrayList<String>();
+
+        checkProject(projFileName, cellsToIgnore, false);
+    }
+   */
 
   
     @Test public void testThalamocortical()
