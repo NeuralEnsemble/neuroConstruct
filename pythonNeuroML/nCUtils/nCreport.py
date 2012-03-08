@@ -73,7 +73,7 @@ def checkPullsims(simList,
             print "Warning, found file from a previous parallel execution - please delete:"+pullFileName
 
 
-argList = [ "commandLine", "DEBUG", "setVisible", "verboseSims", "simulator","ProjectFile", "simConfigName", "MpiSettings", "numConcurrentSims", "suggestedRemoteRunTime", "stimAmpLow", "stimAmpHigh","stimAmpInc","stimDel","stimDur","simDuration","startTime","stopTime","threshold", "curveType", "plotAllTraces" ]
+argList = [ "commandLine", "DEBUG", "setVisible", "verboseSims", "simulator","ProjectFile", "simConfigName", "MpiSettings", "numConcurrentSims", "suggestedRemoteRunTime", "stimAmpLow", "stimAmpHigh","stimAmpInc","stimDel","stimDur","simDuration","startTime","stopTime","threshold", "curveType", "plotAllTraces", "outDirName" ]
 argLookup = {}
 argCount = 0
 for arg in sys.argv:
@@ -101,6 +101,8 @@ analyseThreshold    = float(argLookup["threshold"]) # mV
 
 mpiConfig           = eval(argLookup["MpiSettings"])
 numConcurrentSims   = int(argLookup["numConcurrentSims"])
+
+outDirName          = argLookup["outDirName"]
 
 curveType           = argLookup["curveType"]
 # note this used to be 'FI_' now will be 'F-I_'
@@ -226,7 +228,7 @@ for sim in simList:
 
         traceInfo = "Voltage at: %s in simulation: %s"%(cellSegmentRef, sim)
 
-        dataSetV = DataSet(traceInfo, traceInfo, "mV", "ms", "Membrane potential", "Time")
+        dataSetV = DataSet(traceInfo, traceInfo, "ms", "mV", "Time", "Membrane potential")
         for i in range(len(times)):
             dataSetV.addPoint(times[i], volts[i])
 
@@ -293,13 +295,19 @@ for sim in simList:
 plotFrame.addDataSet(dataSet)
 plotFrame.setMaxMinScaleValues(dataSet.getMaxX()[0],dataSet.getMinX()[0],dataSet.getMaxY()[1],dataSet.getMinY()[1])
 
-# if setMapplotlibDir is set then no file chooser should show
-nowdatetime = datetime.datetime.now()
-timestamp = nowdatetime.strftime("_%Y%m%d-%H%M%S")
+pageTitle = ""
+if (outDirName <> "none"):
+    basefolderMatplotlib = basefolder+"/simulations/"+outDirName+"/"
+    pageTitle = outDirName
+else :
+    # if setMapplotlibDir is set then no file chooser should show
+    nowdatetime = datetime.datetime.now()
+    timestamp = nowdatetime.strftime("_%Y%m%d-%H%M%S")
+    basefolderMatplotlib = basefolder+"/simulations/"+"render_output_folder"+timestamp+"/"
+    pageTitle = simConfigName+":"+timestamp
 
-basefolderMatplotlib = basefolder+"/simulations/"+"render_output_folder"+timestamp+"/"
 plotFrame.setMatplotlibDir(basefolderMatplotlib)
-#plotFrame.setMatplotlibCurveType(curveType)
+plotFrame.setMatplotlibTitle(pageTitle)
 
 # maybe should clear the set folder after run
 plotFrame.generateMatplotlib()
@@ -315,36 +323,44 @@ while (not os.path.exists(basefolderMatplotlib+"generateEps.py")):
 #
 
 print basefolderMatplotlib+"generateEps.py"
-Popen(["python",basefolderMatplotlib+"generateEps.py"], cwd=basefolderMatplotlib)
+Popen(["python",basefolderMatplotlib+"generateEps.py","-noshow"], cwd=basefolderMatplotlib)
 
 #
 # - should consider a more advanced templating structure?
 # - need to warn if the project is already there.. or add an overwrite flag?
 
 expander = Expand()
-expanderPageHtml = expander.generateSimplePage("Page Title","plot.png")
+expanderPageHtml = expander.generateSimplePage(pageTitle,"plot.png")
 
 expanderPageFile = open(basefolderMatplotlib+'plot.html','w')
 expanderPageFile.write(expanderPageHtml)
 expanderPageFile.close()
 # generateSimplePage
 
+pageTitleAlltraces = ""
 if plotAllTraces:
-    basefolderMatplotlibAlltraces = basefolder+"/simulations/"+"render_output_folder"+timestamp+"_Alltraces/"
+    if (outDirName <> "none"):
+        basefolderMatplotlibAlltraces = basefolder+"/simulations/"+outDirName+"_Alltraces/"
+        pageTitleAlltraces = outDirName
+    else :
+        basefolderMatplotlibAlltraces = basefolder+"/simulations/"+"render_output_folder"+timestamp+"_Alltraces/"
+        pageTitleAlltraces = simConfigName+"_Alltraces:"+timestamp
+
     plotFrameAlltraces.setMatplotlibDir(basefolderMatplotlibAlltraces)
+    plotFrameAlltraces.setMatplotlibTitle(pageTitleAlltraces)
     plotFrameAlltraces.generateMatplotlib()
     while (not os.path.exists(basefolderMatplotlibAlltraces+"generateEps.py")):
         print("Checking if Matplotlib is done generating alltraces...")
         print("File: "+basefolderMatplotlibAlltraces+"generateEps.py"+" doesn't exist..")
         time.sleep(1) # wait a while...
     print basefolderMatplotlibAlltraces+"generateEps.py"
-    Popen(["python",basefolderMatplotlibAlltraces+"generateEps.py"], cwd=basefolderMatplotlibAlltraces)
+    Popen(["python",basefolderMatplotlibAlltraces+"generateEps.py","-noshow"], cwd=basefolderMatplotlibAlltraces)
     expanderAlltraces = Expand()
-    expanderPageHtmlAlltraces = expanderAlltraces.generateSimplePage("Page Title","plot.png")
+    expanderPageHtmlAlltraces = expanderAlltraces.generateSimplePage(pageTitleAlltraces,"plot.png")
     expanderPageFileAlltraces = open(basefolderMatplotlibAlltraces+'plot.html','w')
     expanderPageFileAlltraces.write(expanderPageHtmlAlltraces)
     expanderPageFileAlltraces.close()
 
 
-
+quit()
 

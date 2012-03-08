@@ -61,6 +61,7 @@ public class PlotterFrame extends JFrame {
     protected static String defaultDataFilePrefix = "DataSet_";
     protected static String savedDataSetMenuPrefix = "(Saved) ";
     protected static String defaultMatplotlibDir = "";
+    protected static String defaultMatplotlibTitle = "";
     private boolean rasterised = false;
     private RecentFiles recentFiles = RecentFiles.getRecentFilesInstance(ProjectStructure.getNeuConRecentFilesFilename());
     protected static String generateNew = "Generate new Data Set from this";
@@ -2747,6 +2748,10 @@ public class PlotterFrame extends JFrame {
         defaultMatplotlibDir = dir;
     }
 
+    public void setMatplotlibTitle(String title) {
+        defaultMatplotlibTitle = title;
+    }
+
     public void setStandAlone(boolean st) {
         standAlone = st;
     }
@@ -3168,7 +3173,11 @@ public class PlotterFrame extends JFrame {
         mainScript.append("import matplotlib.pyplot as plt\n");
         mainScript.append("from pylab import *\n");
         mainScript.append("from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas\n\n");
-
+        mainScript.append("showFlag = 1\n");
+        mainScript.append("for arg in sys.argv:\n");
+        mainScript.append("    if (arg == '-noshow'):\n");
+        mainScript.append("        showFlag = 0\n");
+        
         matplotlibFilesDir.mkdir();
 
         //Hashtable<String, String> dataVsLoadScript = new Hashtable<String, String>();
@@ -3265,7 +3274,10 @@ public class PlotterFrame extends JFrame {
                 mainScript.append("p.spines['right'].set_color('none')\n");
                 mainScript.append("p.plot(" + objRef + "_x, " + objRef + "_y" + pre + ", solid_joinstyle ='round', solid_capstyle ='round', color='#" + rgb + "', linestyle='" + linestyle + "', marker='" + marker + "'" + post + ")\n\n");
 
-
+                if (this.defaultMatplotlibDir != "")
+                {
+                    mainScript.append("\ntitle('"+this.defaultMatplotlibTitle+"')\n");
+                }
 
             } catch (IOException ex) {
                 GuiUtils.showErrorMessage(logger, "Error creating file: " + dsFile
@@ -3307,9 +3319,8 @@ public class PlotterFrame extends JFrame {
         mainScript.append("canvas.print_pdf('plot.pdf')\n");
         mainScript.append("canvas.print_png('plot.png')\n");
 
-        mainScript.append("plt.show()\n");
+        mainScript.append("if (showFlag == 1): plt.show()\n");
         mainScript.append("\n");
-
 
         File mainMatplotlibFile = new File(matplotlibFilesDir, ProjectStructure.getMatplotlibEpsFilename());
 
