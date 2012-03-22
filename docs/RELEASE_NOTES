@@ -3,6 +3,17 @@ Release notes/change log for neuroConstruct
 See also the README file
 
 
+--------- Version 1.5.3 (Mar 2012) ---------
+
+Fixed bug which gave problems saving RandomSpikeTrainSettings in projects on Java 1.7
+
+Added option in GUI to edit/remove ion properties from cell & add more than one ion prop per group name.
+
+Updated to use Jython 2.5.2
+
+Added xlrd to Lib/site-packages to allow reading/writing Excel files from nC Jython scripts
+
+
 --------- Version 1.5.2 (Jan 2012) ---------
 
 Added anti-aliasing on 3D view for smoother renderings. Can be turned on/off via Settings -> Project Properties 

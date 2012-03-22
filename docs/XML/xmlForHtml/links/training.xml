@@ -3,7 +3,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document> 
   <header> 
-    <title>neuroConstruct courses</title>
+    <title>neuroConstruct course</title>
   </header> 
   <body>
 
@@ -12,7 +12,9 @@
 <figure src="images/BrainTrainC.png" alt="BrainTrain Cerebnet" ></figure>
 
 <p><b>Introduction to compartmental neuronal modelling with neuroConstruct and recent advances in rapid 2-photon imaging</b></p>
-<p>Christopher Ingold Building (Chemistry), University College London, May 2-4 2012</p>
+<p>Christopher Ingold Building ( 
+  <a href="http://maps.google.co.uk/maps?q=CHRISTOPHER+INGOLD+BUILDING%4051.525417,-0.132244&amp;hl=en&amp;hnear=Christopher+Ingold+Bldg,+United+Kingdom&amp;t=m&amp;z=16">map</a>),
+  University College London, May 2nd-4th 2012</p>
 
 
 
@@ -39,8 +41,20 @@ description language <a href="http://www.neuroml.org/">NeuroML</a> and the <a hr
 although there are a limited number of places available for other researchers.</p>
 
 <p>&nbsp;</p>
-<p>Please register for this course <a href="https://docs.google.com/spreadsheet/viewform?formkey=dGlRUU1lOEFSSHhsWTRHeWdvVUtBeGc6MQ">here</a>.</p>
-<p>Contact <b>p.gleeson -at- ucl.ac.uk</b> for more details</p>
+<p>&nbsp;<b>PRACTICALITIES</b></p>
+<ul>
+    <li><b>Registration for the course is required</b>. Please register <a href="https://docs.google.com/spreadsheet/viewform?formkey=dGlRUU1lOEFSSHhsWTRHeWdvVUtBeGc6MQ">here</a>.</li>
+    <li>The venue for the meeting will be the main campus at UCL, with most of the lectures taking place in G20 in the 
+    <a href="http://maps.google.co.uk/maps?q=CHRISTOPHER+INGOLD+BUILDING%4051.525417,-0.132244&amp;hl=en&amp;hnear=Christopher+Ingold+Bldg,+United+Kingdom&amp;t=m&amp;z=16">Christopher Ingold Building</a>.</li>
+    <li>Booking accomodation in London is the responsibility of attendees (try <a href="http://www.hotelcavendish.com/">Hotel Cavendish</a>, <a href="http://www.gowerhousehotel.co.uk/">Gower House Hotel</a> or <a href="http://www.hotels.com">search</a> for something within your budget).
+    Cerebnet/BrainTrain members should contact their own course administrators regarding refunding expenses.</li>
+    <li>The course will start at 9am on Wed 2nd May and finish at 5pm on Fri 4th May. The overall format will consist of lectures in the morning, hands on modelling in the afternoon.</li>
+    <li>Lunch (2nd-4th May) and dinner (2nd-3rd May) will be provided.</li>
+    <li>Contact <b>p.gleeson -at- ucl.ac.uk</b> for more details.</li>
+</ul>
+
+
+
 
 
 <p>&nbsp;</p>
