@@ -2544,7 +2544,12 @@ public class CellTopologyHelper
             String syn = allSynapses.get(i);
             Vector groups = cell.getGroupsWithSynapse(syn);
             String synString = syn.toString();
-            if (projHtml)
+
+            if (expandHtml)
+            {
+                synString = "<a href=\"../"+Expand.getCellMechPage(syn)+"\">"+syn + "</a>";
+            }
+            else if(projHtml)
             {
                 synString = ClickProjectHelper.getCellMechLink(syn);
             }
