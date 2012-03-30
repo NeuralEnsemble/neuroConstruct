@@ -21,7 +21,7 @@ export NC_MAX_MEMORY=450M
 
 
 # Current version of neuroConstruct
-export NC_VERSION=1.5.3
+export NC_VERSION=1.6.0
 export LIB_NEUROML_VERSION=2.0.0
 export LEMS_VERSION=0.8.2
 
