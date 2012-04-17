@@ -293,7 +293,13 @@ for sim in simList:
 
 
 plotFrame.addDataSet(dataSet)
-plotFrame.setMaxMinScaleValues(dataSet.getMaxX()[0],dataSet.getMinX()[0],dataSet.getMaxY()[1],dataSet.getMinY()[1])
+# 10% space around the main data points
+plotHandleX = ( dataSet.getMaxX()[0] - dataSet.getMinX()[0] )/10
+plotHandleY = ( dataSet.getMaxY()[1] - dataSet.getMinY()[1] )/10
+plotFrame.setMaxMinScaleValues(dataSet.getMaxX()[0]+plotHandleX,dataSet.getMinX()[0]-plotHandleX,dataSet.getMaxY()[1]+plotHandleY,dataSet.getMinY()[1]-plotHandleY)
+
+print("dataSet.getMaxX()[0]: ",dataSet.getMaxX()[0],"dataSet.getMinX()[0]: ",dataSet.getMinX()[0],"plotHandleX: ",plotHandleX, \
+    "dataSet.getMaxY()[1]", dataSet.getMaxY()[1], "dataSet.getMinY()[1]: ", dataSet.getMinY()[1], "plotHandleY: ", plotHandleY)
 
 pageTitle = ""
 if (outDirName <> "none"):
