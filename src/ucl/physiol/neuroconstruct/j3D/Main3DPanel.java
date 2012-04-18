@@ -288,6 +288,8 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         simpleU = new SimpleUniverse(myCanvas3D);
 
         simpleU.getViewer().getView().setSceneAntialiasingEnable(useAA);
+        
+        simpleU.getViewer().getView().setBackClipDistance(1000);
 
         OrbitBehavior orbit = new OrbitBehavior(myCanvas3D, OrbitBehavior.REVERSE_ALL);
         BoundingSphere bounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0), 10000000);
@@ -2566,16 +2568,31 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
         logger.logComment("getRegionEnclosingAllRegions: "+ allRegions);
         
 
-                //float scaleDueToSize = 0.4f / (allRegions.getHighestYValue() - allRegions.getLowestXValue());
+        float minX = 10000;
+        float minY = 10000;
+        float minZ = 10000;
+        float maxX = -10000;
+        float maxY = -10000;
+        float maxZ = -10000;
 
-        float lowestXToShow = Math.min(0, allRegions.getLowestXValue());
-        float highestXToShow = Math.max(0, allRegions.getHighestXValue());
+        if (project.proj3Dproperties.getShow3DAxes())
+        {
+            minX = -100;
+            minY = -100;
+            minZ = -100;
+            maxX = 100;
+            maxY = 100;
+            maxZ = 100;
+        }
 
-        float lowestYToShow = Math.min(0, allRegions.getLowestYValue());
-        float highestYToShow = Math.max(0, allRegions.getHighestYValue());
+        float lowestXToShow = Math.min(minX, allRegions.getLowestXValue());
+        float highestXToShow = Math.max(maxX, allRegions.getHighestXValue());
 
-        float lowestZToShow = Math.min(0, allRegions.getLowestZValue());
-        float highestZToShow = Math.max(0, allRegions.getHighestZValue());
+        float lowestYToShow = Math.min(minY, allRegions.getLowestYValue());
+        float highestYToShow = Math.max(maxY, allRegions.getHighestYValue());
+
+        float lowestZToShow = Math.min(minZ, allRegions.getLowestZValue());
+        float highestZToShow = Math.max(maxZ, allRegions.getHighestZValue());
 
         ArrayList<String> allCellGroups = project.cellGroupsInfo.getAllCellGroupNames();
 

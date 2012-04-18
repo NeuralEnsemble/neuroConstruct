@@ -78,6 +78,8 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
     
     private Color segmentHighlightNoGmax = Color.BLUE.brighter().brighter();
 
+    private BoundingSphere bounds = new BoundingSphere(new Point3d(0.0,0.0,0.0), 20000);
+
     private Canvas3D canvas3D = null;
 
     private SegmentSelector segmentSelector = null;
@@ -293,7 +295,6 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             Utils3D.addAxes(scaleTG, 0.005); // gives axes of 100 units length
         }
         
-        BoundingSphere bounds = new BoundingSphere(new Point3d(0.0,0.0,0.0), 10000000);
 
         Color backgroundColour = project.proj3Dproperties.getBackgroundColour3D();
         Utils3D.addBackground(bounds, objRoot, backgroundColour);
@@ -603,6 +604,8 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
         simpleU.getViewer().getView().setSceneAntialiasingEnable(useAA);
 
+        simpleU.getViewer().getView().setBackClipDistance(1000);
+
         BranchGroup scene = createSceneGraph();
 
 
@@ -625,7 +628,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
         }
 
         OrbitBehavior orbit = new OrbitBehavior(canvas3D, OrbitBehavior.REVERSE_ALL);
-        BoundingSphere bounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0), 10000000);
+
         orbit.setSchedulingBounds(bounds);
         simpleU.getViewingPlatform().setViewPlatformBehavior(orbit);
 
@@ -2093,11 +2096,15 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
             });
 
+            testProj.proj3Dproperties.setDisplayOption(Display3DProperties.DISPLAY_SOMA_NEURITE_SOLID);
+            testProj.proj3Dproperties.setShow3DAxes(true);
+
             if (cell == null) cell = testProj.cellManager.getAllCells().firstElement();
 
             OneCell3DPanel viewer = new OneCell3DPanel(cell, testProj, null);
 
             frame.add("Center", viewer);
+
 
 
             frame.addWindowListener(new WindowAdapter()
@@ -2183,12 +2190,17 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             }
             else
             {
-                cell.getAllSections().get(4).setNumberInternalDivisions(6);
 
+                cell.getAllSections().get(4).setNumberInternalDivisions(6);
+                /*
                 axSec.setStartPointPositionY(15);
                 ArrayList<Section> secs = cell.getAllSections();
 
-                secs.get(secs.size()-1);
+                secs.get(secs.size()-1);*/
+
+                cell = CellTopologyHelper.translateAllPositions(cell, new Vector3f(0,00,0));
+
+
 
                // cell.addDendriticSegment(lastSec.getStartRadius(), "new", );
 
@@ -2278,18 +2290,33 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
 
     final void findCell()
     {
+        float minX = 10000;
+        float minY = 10000;
+        float maxX = -10000;
+        float maxY = -10000;
+        float maxZ = -10000;
 
-        float lowestXToShow = Math.min(0, CellTopologyHelper.getMinXExtent(this.displayedCell, false, true));
-        float highestXToShow = Math.max(0, CellTopologyHelper.getMaxXExtent(this.displayedCell, false, true));
+        if (project.proj3Dproperties.getShow3DAxes())
+        {
+            minX = -100;
+            minY = -100;
+            maxX = 100;
+            maxY = 100;
+            maxZ = 100;
+        }
+        float lowestXToShow = Math.min(minX, CellTopologyHelper.getMinXExtent(this.displayedCell, false, true));
+        float highestXToShow = Math.max(maxX, CellTopologyHelper.getMaxXExtent(this.displayedCell, false, true));
 
-        float lowestYToShow = Math.min(0, CellTopologyHelper.getMinYExtent(this.displayedCell, false, true));
-        float highestYToShow = Math.max(0, CellTopologyHelper.getMaxYExtent(this.displayedCell, false, true));
+        float lowestYToShow = Math.min(minY, CellTopologyHelper.getMinYExtent(this.displayedCell, false, true));
+        float highestYToShow = Math.max(maxY, CellTopologyHelper.getMaxYExtent(this.displayedCell, false, true));
 
         //float lowestZToShow = Math.min(0, CellTopologyHelper.getMinZExtent(this.displayedCell, false, true));
-        float highestZToShow = Math.max(0, CellTopologyHelper.getMaxZExtent(this.displayedCell, false, true));
+        float highestZToShow = Math.max(maxZ, CellTopologyHelper.getMaxZExtent(this.displayedCell, false, true));
 
-        if (highestZToShow ==0) highestZToShow =60;
+        if (highestZToShow <100) highestZToShow = 100;
 
+
+        logger.logComment("To show x: "+lowestXToShow+"->"+highestXToShow+", y: "+lowestYToShow+"->"+highestYToShow+", z: ??->"+highestZToShow+"", true);
 
         float xCoordAfterScale = (highestXToShow+lowestXToShow)/2f;
         float yCoordAfterScale = (highestYToShow+lowestYToShow)/2f;
@@ -2306,7 +2333,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
                                           yCoordAfterScale,
                                           zCoordAfterScale);
 
-        logger.logComment("viewPoint from cell perspective: "+ viewPoint);
+        logger.logComment("viewPoint from cell perspective: "+ viewPoint, true);
 
         float extra = 1;
         if (largestXYExtent>2000)

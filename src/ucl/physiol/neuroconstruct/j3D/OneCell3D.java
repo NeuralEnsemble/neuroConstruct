@@ -175,7 +175,7 @@ public class OneCell3D
     }
 
 
-    public Appearance getDefaultSegmentApp()
+    public final Appearance getDefaultSegmentApp()
     {
         if (!shiny())
             return Utils3D.getDullObjectAppearance(currentDefaultSegmentColour);
@@ -286,233 +286,6 @@ public class OneCell3D
     }
 
 
-
-
-    /**
-     * Should the mapping of the current cell to NEURON format be shown
-     * @return true if its NEURON style
-
-    public boolean neuronStyle()
-    {
-        return false;
-           // project.proj3Dproperties.getDisplayOption().equals(Display3DProperties.DISPLAY_NEURON);
-    }  */
-
-    /**
-     * Should the mapping of the current cell to the simple GENESIS format be shown
-     * @return true if its GENESIS style
-
-    public boolean genesisSimpleStyle()
-    {
-        return false;
-           // project.proj3Dproperties.getDisplayOption().equals(Display3DProperties.DISPLAY_GENESIS_SIMPLE);
-    }*/
-
-
-    /**
-     * Should the mapping of the current cell to the multi compartment GENESIS format be shown
-     * @return true if its GENESIS style
-
-    public boolean genesisMultiCompStyle()
-    {
-        return false;
-      //  project.proj3Dproperties.getDisplayOption().equals(Display3DProperties.DISPLAY_GENESIS_MULTI);
-    } */
-
-
-    /**
-     * This copies the old LineArray into one with 2 extra spaces for the new line...
-     * @param oldLineArray the previous LineArray
-     * @return the new LineArray
-
-    private LineArray increaseLineArraySize(LineArray oldLineArray)
-    {
-        LineArray newLineArray = null;
-
-        System.out.println("Increasing line array...");
-
-        if (oldLineArray == null)
-        {
-            newLineArray = new LineArray(2,
-                                         GeometryArray.COORDINATES
-                                         | GeometryArray.COLOR_3);
-
-            logger.logComment("Created new line array...");
-
-        }
-        else
-        {
-            newLineArray = new LineArray(oldLineArray.getVertexCount() + 2,
-                          GeometryArray.COORDINATES
-                          | GeometryArray.COLOR_3);
-
-            for (int i = 0; i < oldLineArray.getVertexCount(); i++)
-            {
-                Point3f oldCoord = new Point3f();
-                oldLineArray.getCoordinate(i, oldCoord);
-                newLineArray.setCoordinate(i, oldCoord);
-
-                Color3f oldColour = new Color3f();
-                oldLineArray.getColor(i, oldColour);
-                newLineArray.setColor(i, oldColour);
-            }
-        }
-        newLineArray.setCapability(LineArray.ALLOW_COLOR_WRITE);
-        newLineArray.setCapability(LineArray.ALLOW_COLOR_READ);
-        newLineArray.setCapability(LineArray.ALLOW_COORDINATE_READ);
-        newLineArray.setCapability(LineArray.ALLOW_COUNT_READ);
-
-        return newLineArray;
-    } */
-
-
-    /**
-     * Add a segment grown off a Segment on this cell. Used when cells are connected in networks
-     * and the propagation of the action potential along the segment between cells must be taken
-     * into account
-     * @param parent Parent segment from which to grow
-     * @param endPoint end point of grown part
-     * @param radius of grown segment
-     * @param fractionAlong fraction along parent
-
-    public void addGrownSegment(Segment parent,
-                                Point3f endPoint,
-                                float radius,
-                                float fractionAlong)
-    {
-        if (!(showNeuriteDiam() || showSticks()))
-        {
-            logger.logComment("Not showing the added segment due to the option in project.proj3Dproperties...");
-            return;
-        }
-
-        logger.logComment(".................      Adding a grown segment onto: " + parent);
-
-        int segmentsAddedSoFar;
-
-        if (showSticks())
-        {
-            stickGrownSegmentGeom = increaseLineArraySize(stickGrownSegmentGeom);
-            logger.logComment("Counting lines so far...");
-            logger.logComment("stickGrownSegmentGeom size: "+ stickGrownSegmentGeom.getValidVertexCount());
-            logger.logComment("stickGrownSegmentGeom size: "+ stickGrownSegmentGeom.getVertexCount());
-            // note: LineArray has just been increased by 2...
-            segmentsAddedSoFar = (stickGrownSegmentGeom.getVertexCount() / 2) - 1;
-        }
-        else
-        {
-            segmentsAddedSoFar = grownSegmentPrimitives.size();
-        }
-        String currentGrownSegmentName = "GDS_" + segmentsAddedSoFar;
-
-        GrownSegment grownSegment
-            = new GrownSegment(currentGrownSegmentName,
-                               radius,
-                               endPoint,
-                               parent,
-                               fractionAlong);
-
-        grownSegment.setSegmentId(segmentsAddedSoFar);
-
-        logger.logComment("Adding grown segment: " + grownSegment);
-
-        TransformGroup tgOfParent
-            = (TransformGroup)segmentTGs.get(new Integer(grownSegment.getParentSegment().getSegmentId()));
-
-        if (showNeuriteDiam())
-        {
-            TransformGroup currentTG =
-                addPositionedSegment(grownSegment,
-                                     tgOfParent);
-        }
-        else if (showSticks())
-        {
-
-            addPositionedStick(grownSegment,
-                                   stickGrownSegmentGeom,
-                                   grownSegment.getSegmentId());
-
-            if (parent.isAxonalSegment())
-            {
-                replaceLineArray(mainCellTG, stickGrownSegmentGeom);
-            }
-            else
-            {
-                replaceLineArray(mainCellTG, stickGrownSegmentGeom);
-            }
-
-        }
-    }*/
-
-    /**
-     * Checks if the line array lineArray (minus the last 2 points) is in tg, and if so,
-     * removes the old one and replaces it with this.
-     * @param tg the TransformGroup to check
-     * @param lineArray the new lineArray, increased in size by two
-
-    private void replaceLineArray(TransformGroup tg, LineArray lineArray)
-    {
-        if (lineArray.getVertexCount() > 2)
-        {
-            Enumeration childs = tg.getAllChildren();
-
-            while (childs.hasMoreElements())
-            {
-                Node item = (Node) childs.nextElement();
-                if (item instanceof Shape3D)
-                {
-                    //logger.logComment("Got one: "+item.getClass().getName());
-                    Shape3D shape = (Shape3D) item;
-                    Enumeration geoms = shape.getAllGeometries();
-                    while (geoms.hasMoreElements())
-                    {
-                        Geometry geom = (Geometry) geoms.nextElement();
-                        if (geom instanceof LineArray)
-                        {
-                            LineArray oldLA = (LineArray) geom;
-                            //logger.logComment("Got an old line array...");
-                            if (oldLA.getVertexCount() == lineArray.getVertexCount() - 2)
-                            {
-                                Point3f firstOldCoord = new Point3f();
-                                Point3f firstNewCoord = new Point3f();
-                                boolean arraysAreIdentical = true;
-                                for (int i = 0; i < oldLA.getVertexCount(); i++)
-                                {
-                                    oldLA.getCoordinate(i, firstOldCoord);
-                                    lineArray.getCoordinate(i, firstNewCoord);
-                                    if (!firstOldCoord.equals(firstNewCoord))
-                                    {
-
-                                        arraysAreIdentical = false;
-                                    }
-                                    else
-                                    {
-                                        // logger.logComment("Coords match..");
-                                    }
-                                }
-
-                                if (arraysAreIdentical)
-                                {
-                                    //logger.logComment("Found an identical (except for the last 2 points) array, so removing");
-                                    tg.removeChild(tg.indexOfChild(item));
-                                }
-                            }
-                            else
-                            {
-                                //  logger.logComment("Prob with num coords: old: "+ oldLA.getVertexCount()+", new: "+lineArray.getVertexCount());
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    //  logger.logComment("Not got one: "+item.getClass().getName());
-                }
-            }
-        }
-        Shape3D stickShape = new Shape3D(lineArray);
-        tg.addChild(stickShape);
-    } */
 
 
     /**
@@ -672,35 +445,7 @@ public class OneCell3D
                     sectionEndPoints.put(currSegment.getSection().getSectionName(),
                                          new Vector3f(currSegment.getEndPointPosition()));
                 }
-/*
-                // creating point for start and finish of segment and for half way along
-                if (genesisSimpleStyle())
-                {
-                    Vector3f start = new Vector3f(currSegment.getStartPointPosition());
-                    Vector3f end = new Vector3f(currSegment.getEndPointPosition());
 
-                    Utils3D.addSphereAtLocation(internalPointRadius,
-                                                start,
-                                                mainCellTG,
-                                                genesisConnectionColour);
-
-                    Utils3D.addSphereAtLocation(internalPointRadius,
-                                                end,
-                                                mainCellTG,
-                                                genesisConnectionColour);
-
-                    Vector3f middle = new Vector3f(end);
-                    middle.add(start);
-                    middle.scale(0.5f);
-
-                    Utils3D.addSphereAtLocation(internalPointRadius,
-                                                middle,
-                                                mainCellTG,
-                                                genesisMidPointColour);
-                }
-*/
-
-        //GeneralUtils.timeCheck("Step 2..");
 
                 // Adding the first soma segment
                 if (showSomaDiam() &&
@@ -1173,13 +918,6 @@ public class OneCell3D
 
 
         }
-
-
-
-
-
-
-
 
         mainCellTG.addChild(newElementTG);
 
