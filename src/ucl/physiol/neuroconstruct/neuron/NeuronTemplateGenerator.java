@@ -34,7 +34,7 @@ import javax.vecmath.*;
 import org.lemsml.sim.*;
 import org.lemsml.util.*;
 import org.lemsml.type.*;
-import org.neuroml.exporters.*;
+import org.neuroml.Utils;
 
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.*;
@@ -42,7 +42,6 @@ import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.*;
-import ucl.physiol.neuroconstruct.utils.compartment.CompartmentHelper;
 import ucl.physiol.neuroconstruct.utils.units.*;
 import ucl.physiol.neuroconstruct.utils.xml.*;
 
@@ -1130,6 +1129,7 @@ public class NeuronTemplateGenerator
                             XMLCellMechanism nml2Mech = (XMLCellMechanism)cellMech;
 
                             String contents = GeneralUtils.readShortFile(nml2Mech.getXMLFile(project));
+                            contents = Utils.convertNeuroML2ToLems(contents);
 
                             try
                             {

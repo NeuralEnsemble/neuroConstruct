@@ -53,6 +53,7 @@ import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
 
 import org.lemsml.sim.*;
 import org.neuroml.exporters.*;
+import org.neuroml.Utils;
 import org.lemsml.type.Component;
 
 /**
@@ -3321,10 +3322,13 @@ public class NeuronFileManager
                                         logger.logComment("Cell mechanism: " + cellMechanism.getInstanceName()+" is NeuroML 2...");
                                         File nml2File = xmlMechanism.getXMLFile(project);
                                         String contents = GeneralUtils.readShortFile(nml2File);
+                                        contents = Utils.convertNeuroML2ToLems(contents);
+
+                                        logger.logComment("Starting Lems with: "+contents);
 
                                         try {
                                             StringInclusionReader.addSearchPath(ProjectStructure.getNeuroML2Dir());
-                                            Sim sim = new Sim(contents);
+                                            LemsProcess sim = new Sim(contents);
 
                                             sim.readModel();
                                             
