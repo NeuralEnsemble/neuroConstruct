@@ -654,6 +654,21 @@
 
 
 
+  <!-- =================================================================== -->
+  <!-- Generates installers through install4j                              -->
+  <!-- =================================================================== -->
+  
+  <taskdef name="install4j"
+       classname="com.install4j.Install4JTask"
+       classpath="../JavaStuff/install4j5/bin/ant.jar"/>
+       
+  <target name="install4j" description="Generates installers through install4j. Note: install4j needs to be installed for this">
+    <install4j projectfile="install.install4j"/>
+  </target>
+  
+  <target name="binaries" depends="dist, install4j" description="Cleans, makes distribtion, generates installers">
+  </target>
+
 
   <!-- =================================================================== -->
   <!-- Creates a dist dir and a zip file with directory structure, a       -->

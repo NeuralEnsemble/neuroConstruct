@@ -3,6 +3,17 @@ Release notes/change log for neuroConstruct
 See also the README file
 
 
+--------- Version 1.6.0 (April 2012) ---------
+
+Improved 3D visualisation of cells and networks when all segments are located more than a few hundred microns away 
+from the origin. Now 3D view centres on middle of visible cells. Origin is only included if "Show 3D axes" option
+is selected.
+
+Also removed annoying clipping of back of 3D view when zooming out.
+
+
+
+
 --------- Version 1.5.3 (Mar 2012) ---------
 
 Fixed bug which gave problems saving RandomSpikeTrainSettings in projects on Java 1.7
