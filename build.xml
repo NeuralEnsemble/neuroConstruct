@@ -658,11 +658,14 @@
   <!-- Generates installers through install4j                              -->
   <!-- =================================================================== -->
   
+       
+  <target name="install4j" description="Generates installers through install4j. Note: install4j needs to be installed for this">
+  
+  
   <taskdef name="install4j"
        classname="com.install4j.Install4JTask"
        classpath="../JavaStuff/install4j5/bin/ant.jar"/>
        
-  <target name="install4j" description="Generates installers through install4j. Note: install4j needs to be installed for this">
     <install4j projectfile="install.install4j"/>
   </target>
   
