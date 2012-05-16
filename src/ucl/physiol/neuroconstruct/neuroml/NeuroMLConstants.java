@@ -144,9 +144,9 @@ public class NeuroMLConstants
 
     public static String NEUROML2_CORE_TYPES_PYNN = prefixNeuroML2Types+"PyNN.xml";
 
-    public static String NEUROML2_ABST_CELL = "abstractCell";
-    public static String NEUROML2_ABST_CELL_MEMB_POT = "abstractCellMembPot";
-    public static String NEUROML2_ABST_CELL_MEMB_POT_CAP = "abstractCellMembPotCap";
+    public static String NEUROML2_ABST_CELL = "baseCell";
+    public static String NEUROML2_ABST_CELL_MEMB_POT = "baseCellMembPot";
+    public static String NEUROML2_ABST_CELL_MEMB_POT_CAP = "baseCellMembPotCap";
     
     public static String NEUROML2_ABST_CELL_MEMB_POT_CAP__C = "C";
 
