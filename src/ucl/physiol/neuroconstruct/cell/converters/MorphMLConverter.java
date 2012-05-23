@@ -185,9 +185,11 @@ public class MorphMLConverter extends FormatImporter
 
             Cell cell = mmlBuilder.getBuiltCell();
 
-            cell.setInstanceName(name);
+            if (name != null)
+                cell.setInstanceName(name);
 
             logger.logComment("Cell which has been built: ");
+            logger.logComment(cell+"");
             logger.logComment(CellTopologyHelper.printShortDetails(cell));
 
             logger.logComment("-----   Finished decoding...");

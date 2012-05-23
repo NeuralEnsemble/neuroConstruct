@@ -72,6 +72,7 @@ public class ProjectStructure
 
     public static final String JAVA_XML_FORMAT = "Java XML Format";
     public static final String JAVA_OBJ_FORMAT = "Java Serialized Object Format";
+    public static final String NEUROML1_FORMAT = "NeuroML v1.8.1 Format";
     
     
     

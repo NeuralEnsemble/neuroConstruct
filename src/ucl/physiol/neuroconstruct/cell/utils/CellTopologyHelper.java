@@ -4501,7 +4501,7 @@ public class CellTopologyHelper
                     "connected at points other than the start or end point (0 or 1) of parent\n");
         }
 
-        if (cell.getCellDescription().length()<cell.getInstanceName().length())
+        if (cell.getCellDescription()==null || cell.getCellDescription().length()<cell.getInstanceName().length())
         {
             warningReport.append("NOTE: Cell description is quite short...\n");
         }

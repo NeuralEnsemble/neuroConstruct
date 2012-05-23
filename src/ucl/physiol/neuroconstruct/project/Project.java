@@ -44,6 +44,7 @@ import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
 import javax.swing.*;
+import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.NeuroMLLevel;
 
 /**
  * Main class holding references to the important data objects of the project
@@ -766,8 +767,40 @@ public class Project implements TableModelListener
 
                     logger.logComment(CellTopologyHelper.printShortDetails(cellGenerated));
                 }
+                else if(contents[i].getName().endsWith(ProjectStructure.getNeuroMLFileExtension()))
+                {
+                    logger.logComment("Reading Cell Type info from: " + contents[i]);
 
-                if (contents[i].getName().endsWith(ProjectStructure.getJavaXMLFileExtension()))
+                    Cell cellGenerated = null;
+                    MorphMLConverter morphMLConverter = new MorphMLConverter();
+                    try
+                    {
+                        cellGenerated = morphMLConverter.loadFromMorphologyFile(contents[i], null);
+
+                        logger.logComment(CellTopologyHelper.printShortDetails(cellGenerated));
+                    }
+                    catch (MorphologyException ex1)
+                    {
+                        GuiUtils.showErrorMessage(logger,
+                                                  "Problem loading the Cell morphology information in: " + contents[i],
+                                                  ex1, null);
+                    }
+
+                    try
+                    {
+                        proj.cellManager.addCellType(cellGenerated);
+                    }
+                    catch (NamingException ex2)
+                    {
+                        GuiUtils.showErrorMessage(logger, "Problem with morphology file: " + contents[i], ex2, null);
+                    }
+
+                    logger.logComment("Loaded: " + cellGenerated);
+
+                    logger.logComment(CellTopologyHelper.printShortDetails(cellGenerated));
+                }
+
+                else if(contents[i].getName().endsWith(ProjectStructure.getJavaXMLFileExtension()))
                 {
                     logger.logComment("Reading Cell Type info from: " + contents[i]);
 
@@ -802,23 +835,6 @@ public class Project implements TableModelListener
                         // to cope with a legacy method for storing channels
                         CellTopologyHelper.updateChannelMechanisms(cellGenerated, proj);
 
-                        /*
-                                                 // to cope with a time before cell specific  biophys...
-                                                 if (cellGenerated.getInitialPotential()==null)
-                                                 {
-                            NumberGenerator initPot = new NumberGenerator();
-                            initPot.initialiseAsFixedFloatGenerator(proj.simulationParameters.getInitVm());
-                            cellGenerated.setInitialPotential(initPot);
-                                                 }
-                                                 // to cope with a time before cell specific  biophys...
-                                                 if (cellGenerated.getSpecAxRes()==null)
-                                                 {
-                            //NumberGenerator specAxRes = new NumberGenerator();
-                            //specAxRes.initialiseAsFixedFloatGenerator(proj.simulationParameters.getGlobalRa());
-                            //cellGenerated.setSpecAxRes(specAxRes);
-                         cellGenerated.associateGroupWithSpecAxRes(Section.ALL, proj.simulationParameters.getGlobalRa());
-                                                 }*/
-
                         proj.cellManager.addCellType(cellGenerated);
                     }
                     catch (NamingException ex2)
@@ -829,7 +845,7 @@ public class Project implements TableModelListener
                     logger.logComment("Loaded: " + cellGenerated);
                 }
 
-                if (contents[i].getName().endsWith(ProjectStructure.getJavaObjFileExtension()) ||
+                else if(contents[i].getName().endsWith(ProjectStructure.getJavaObjFileExtension()) ||
                     contents[i].getName().endsWith(".obj")) /** @todo remove... */
                 {
                     //System.out.println("----Reading Cell Type info from: " + contents[i]);
@@ -1663,6 +1679,52 @@ public class Project implements TableModelListener
                     problemSaving = ! (MorphMLConverter.saveCellInJavaXMLFormat(cell, xmlFile) && !problemSaving);
 
                     filesDone.add(xmlFile.getName());
+
+                }
+                else if (projProperties.getPreferredSaveFormat().equals(ProjectStructure.NEUROML1_FORMAT))
+                {
+                    boolean canSaveInNml = true;
+
+                    if (!cell.getApPropSpeedsVsGroups().isEmpty())
+                    {
+                        canSaveInNml = false;
+                        GuiUtils.showWarningMessage(logger, "Cell "+cell+" cannot be saved in NeuroML format, as it contains ApPropSpeedsVsGroups. "
+                                + "\n\nChange save format in Project Properties. Saving in Java XML format for now...", null);
+                    }
+                    if (!cell.getAxonalArbours().isEmpty())
+                    {
+                        canSaveInNml = false;
+                        GuiUtils.showWarningMessage(logger, "Cell "+cell+" cannot be saved in NeuroML format, as it contains Axonal arbours. "
+                                + "\n\nChange save format in Project Properties. Saving in Java XML format for now...", null);
+                    }
+
+                    if (canSaveInNml)
+                    {
+                        File nmlFile = new File(dirForProjectMorphologies,
+                                                cell.getInstanceName()
+                                                + ProjectStructure.getNeuroMLFileExtension());
+
+                        MorphMLConverter.saveCellInNeuroMLFormat(cell,
+                                                                 this,
+                                                                 nmlFile,
+                                                                 NeuroMLLevel.NEUROML_LEVEL_3,
+                                                                 NeuroMLConstants.NeuroMLVersion.NEUROML_VERSION_1);
+
+                        logger.logComment("Saved file: "+nmlFile +"("+nmlFile.exists()+")");
+
+                        filesDone.add(nmlFile.getName());
+                    }
+                    else
+                    {
+
+                        File xmlFile = new File(dirForProjectMorphologies,
+                                                cell.getInstanceName()
+                                                + ProjectStructure.getJavaXMLFileExtension());
+
+                        problemSaving = ! (MorphMLConverter.saveCellInJavaXMLFormat(cell, xmlFile) && !problemSaving);
+
+                        filesDone.add(xmlFile.getName());
+                    }
 
                 }
 

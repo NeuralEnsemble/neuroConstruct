@@ -1174,6 +1174,7 @@ public class MorphMLReader extends XMLFilterImpl
             File f = new File("../Documents/general/owp/CElegans_ADAL.xml");
             f = new File("../models/GrCDiwakar/nd.xml");
             f = new File("../temp/SkeletonTree_ORR_aCC_48h1.xml");
+            f = new File("../nC_projects/NMLNative/morphologies/SampleCell.nml");
 
            // File f = new File("/bernal/a4d.xml");
 
@@ -1200,6 +1201,8 @@ public class MorphMLReader extends XMLFilterImpl
 
             //System.out.println("Cell which has been built: ");
             //System.out.println(CellTopologyHelper.printDetails(builtCell, null));
+
+            System.out.println("Details: "+ CellTopologyHelper.printShortDetails(builtCell));
             
             System.out.println("Warnings: "+mmlBuilder.getWarnings());
 

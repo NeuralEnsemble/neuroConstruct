@@ -144,6 +144,7 @@ public class OptionsFrame extends JFrame
     JLabel jLabelSaveInfo = new JLabel();
     JRadioButton jRadioButtonSaveSer = new JRadioButton();
     JRadioButton jRadioButtonJavaXML = new JRadioButton();
+    JRadioButton jRadioButtonNML1 = new JRadioButton();
     GridBagLayout gridBagLayout4 = new GridBagLayout();
     ButtonGroup buttonGroupSaveOptions = new ButtonGroup();
 
@@ -378,6 +379,7 @@ public class OptionsFrame extends JFrame
         jLabelSaveInfo.setText("Format to save morphology files in:");
         jRadioButtonSaveSer.setText("Serialised");
         jRadioButtonJavaXML.setText("Java XML");
+        jRadioButtonNML1.setText("NeuroML v1.8.1");
         //jPanelSave.setLayout(gridBagLayout4);
         //jPanelSave.setAlignmentX((float) 0.5);
         //jPanelSave.setAlignmentY((float) 0.0);
@@ -417,6 +419,7 @@ public class OptionsFrame extends JFrame
         jPanelSave.add(new JLabel("Morphology save format:"));
         jPanelSave.add(jRadioButtonSaveSer);
         jPanelSave.add(jRadioButtonJavaXML);
+        jPanelSave.add(jRadioButtonNML1);
         
         
         jLabelDisplayOptoin.setText("Display: ");
@@ -709,6 +712,7 @@ public class OptionsFrame extends JFrame
 
         buttonGroupSaveOptions.add(jRadioButtonJavaXML);
         buttonGroupSaveOptions.add(jRadioButtonSaveSer);
+        buttonGroupSaveOptions.add(jRadioButtonNML1);
 
 
     }
@@ -740,6 +744,10 @@ public class OptionsFrame extends JFrame
             else if (saveOpt.equals(ProjectStructure.JAVA_OBJ_FORMAT))
             {
                 jRadioButtonSaveSer.setSelected(true);
+            }
+            else if (saveOpt.equals(ProjectStructure.NEUROML1_FORMAT))
+            {
+                jRadioButtonNML1.setSelected(true);
             }
 
 
@@ -851,6 +859,10 @@ public class OptionsFrame extends JFrame
             else if (saveOpt.equals(ProjectStructure.JAVA_OBJ_FORMAT))
             {
                 jRadioButtonSaveSer.setSelected(true);
+            }
+            else if (saveOpt.equals(ProjectStructure.NEUROML1_FORMAT))
+            {
+                jRadioButtonNML1.setSelected(true);
             }
             
             
@@ -991,9 +1003,12 @@ public class OptionsFrame extends JFrame
             
             if (jRadioButtonJavaXML.isSelected())
                 GeneralProperties.setDefaultPreferredSaveFormat(ProjectStructure.JAVA_XML_FORMAT);
-            
+
             else if (jRadioButtonSaveSer.isSelected())
                 GeneralProperties.setDefaultPreferredSaveFormat(ProjectStructure.JAVA_OBJ_FORMAT);
+
+            else if (jRadioButtonNML1.isSelected())
+                GeneralProperties.setDefaultPreferredSaveFormat(ProjectStructure.NEUROML1_FORMAT);
             
         
 
@@ -1029,9 +1044,12 @@ public class OptionsFrame extends JFrame
             
             if (jRadioButtonJavaXML.isSelected())
                 mainFrame.projManager.getProjectProps().setPreferredSaveFormat(ProjectStructure.JAVA_XML_FORMAT);
-            
+
             else if (jRadioButtonSaveSer.isSelected())
                 mainFrame.projManager.getProjectProps().setPreferredSaveFormat(ProjectStructure.JAVA_OBJ_FORMAT);
+
+            else if (jRadioButtonNML1.isSelected())
+                mainFrame.projManager.getProjectProps().setPreferredSaveFormat(ProjectStructure.NEUROML1_FORMAT);
             
 
             Display3DProperties props3D = mainFrame.projManager.getProjectDispProps();
