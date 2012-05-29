@@ -191,7 +191,7 @@ public class Cell implements Serializable
      */
     public String getMorphSummary()
     {
-        StringBuffer info = new StringBuffer();
+        StringBuilder info = new StringBuilder();
         info.append("Segs:"+getAllSegments().size());
         ArrayList<Section> sections = getAllSections();
         info.append("_Secs:"+sections.size());
@@ -302,7 +302,7 @@ public class Cell implements Serializable
      */
     public Vector<Segment> getExplicitlyModelledSegments()
     {
-        if (this.apPropSpeedsVsGroups.size()==0)
+        if (this.apPropSpeedsVsGroups.isEmpty())
         {
             return allSegments;
         }
@@ -595,7 +595,7 @@ public class Cell implements Serializable
                                  Segment parent,
                                  Section section)
     {
-       if (allSegments.size()==0)
+       if (allSegments.isEmpty())
         {
             return  addFirstSomaSegment(radius,
                                 radius,
@@ -1222,7 +1222,7 @@ public class Cell implements Serializable
     private void checkSpecAxRes()
     {
         //logger.logComment("checkSpecAxRes called");
-        if (specAxResVsGroups.size()==0 && tempGlobalSpecAxRes !=null)
+        if (specAxResVsGroups.isEmpty() && tempGlobalSpecAxRes !=null)
         {
             Vector<String> all = new Vector<String>();
             all.add(Section.ALL);
@@ -1238,7 +1238,7 @@ public class Cell implements Serializable
     private void checkSpecCap()
     {
         //logger.logComment("checkSpecCap called");
-        if (specCapVsGroups.size()==0 && tempGlobalSpecCapacitance != null)
+        if (specCapVsGroups.isEmpty() && tempGlobalSpecCapacitance != null)
         {
             logger.logComment("** Adding global spec cap: " + tempGlobalSpecCapacitance +" in cell: "+this.hashCode());
             Vector<String> all = new Vector<String>();
@@ -1359,7 +1359,7 @@ public class Cell implements Serializable
 
     public ApPropSpeed getApPropSpeedForSection(Section section)
     {
-        if (apPropSpeedsVsGroups.size()==0) return null;
+        if (apPropSpeedsVsGroups.isEmpty()) return null;
 
         Vector groups = section.getGroups();
         for (int i = 0; i < groups.size(); i++)
@@ -1764,10 +1764,19 @@ public class Cell implements Serializable
 
     /**
      * Since there should be only one IonProperties per group
+     * Inconsistent spelling version of dissociateGroupFromIonProperties...
      */
     public boolean disassociateGroupFromIonProperties(String group, IonProperties ip)
     {
-        logger.logComment("Being told to disassociate group: " + group
+        return dissociateGroupFromIonProperties(group, ip);
+    }
+
+    /**
+     * Since there should be only one IonProperties per group
+     */
+    public boolean dissociateGroupFromIonProperties(String group, IonProperties ip)
+    {
+        logger.logComment("Being told to dissociate group: " + group
                           + " from "+ip);
 
         logger.logComment("ionPropsVsGroups: "+ionPropsVsGroups);
@@ -1805,11 +1814,20 @@ public class Cell implements Serializable
 
 
     /**
-     * Since there should be only one appv per group, disassociate group from all appvs
+     * Since there should be only one appv per group, dissociate group from all appvs
+     * Inconsistent spelling version of dissociateGroupFromApPropSpeeds...
      */
     public boolean disassociateGroupFromApPropSpeeds(String group)
     {
-        logger.logComment("Being told to disassociate group: " + group
+        return dissociateGroupFromApPropSpeeds(group);
+    }
+
+    /**
+     * Since there should be only one appv per group, dissociate group from all appvs
+     */
+    public boolean dissociateGroupFromApPropSpeeds(String group)
+    {
+        logger.logComment("Being told to dissociate group: " + group
                           + " from all groups: " + getAllGroupNames());
 
         logger.logComment("apPropSpeedsVsGroups: "+apPropSpeedsVsGroups);
@@ -1831,7 +1849,7 @@ public class Cell implements Serializable
             if (groupsForThis.contains(group))
             {
                 success = groupsForThis.remove(group);
-                if (groupsForThis.size()==0) // as it should be...
+                if (groupsForThis.isEmpty()) // as it should be...
                 {
                     apPropSpeedsVsGroups.remove(nextAppv);
                 }
@@ -1843,7 +1861,12 @@ public class Cell implements Serializable
 
     public boolean disassociateGroupFromSynapse(String group, String synapseType)
     {
-        logger.logComment("Being told to disassociate group: "
+        return dissociateGroupFromSynapse(group, synapseType);
+    }
+
+    public boolean dissociateGroupFromSynapse(String group, String synapseType)
+    {
+        logger.logComment("Being told to dissociate group: "
                           + group
                           + " from synapse type: "
                           + synapseType
@@ -1875,12 +1898,20 @@ public class Cell implements Serializable
 
     /**
      * There should be only one spec cap for any given group
+     * Inconsistent spelling version...
      */
     public boolean disassociateGroupFromSpecCap(String group)
     {
+        return dissociateGroupFromSpecCap(group);
+    }
+    /**
+     * There should be only one spec cap for any given group
+     */
+    public boolean dissociateGroupFromSpecCap(String group)
+    {
         this.checkSpecCap();
 
-        logger.logComment("Being told to disassociate group: "
+        logger.logComment("Being told to dissociate group: "
                           + group + ". My groups: " + getAllGroupNames());
 
         Vector<String> grps = getAllGroupNames();
@@ -1910,12 +1941,21 @@ public class Cell implements Serializable
 
     /**
      * There should be only one spec ax res for any given group
+     * Inconsistent spelling version...
      */
     public boolean disassociateGroupFromSpecAxRes(String group)
     {
+        return dissociateGroupFromSpecAxRes(group);
+    }
+    /**
+     * There should be only one spec ax res for any given group
+     *
+     */
+    public boolean dissociateGroupFromSpecAxRes(String group)
+    {
         checkSpecAxRes();
 
-        logger.logComment("Being told to disassociate group: "
+        logger.logComment("Being told to dissociate group: "
                           + group + ". My groups: " + getAllGroupNames());
 
         Vector<String> grps = getAllGroupNames();
@@ -1942,10 +1982,17 @@ public class Cell implements Serializable
     }
 
 
-
+    /*
+     * Inconsistent spelling version of dissociateGroupFromChanMech
+     */
     public boolean disassociateGroupFromChanMech(String group, ChannelMechanism chanMech)
     {
-        logger.logComment("Being told to disassociate group: "
+        return dissociateGroupFromChanMech(group, chanMech);
+    }
+
+    public boolean dissociateGroupFromChanMech(String group, ChannelMechanism chanMech)
+    {
+        logger.logComment("Being told to dissociate group: "
                           + group
                           + " from synapse type: "
                           + chanMech);
@@ -1972,9 +2019,17 @@ public class Cell implements Serializable
 
 
 
+    /*
+     * Inconsistent spelling version of dissociateGroupFromChanMech
+     */
     public boolean disassociateGroupFromChanMech(String group, String chanMechName)
     {
-        logger.logComment("Being told to disassociate group: "
+        return dissociateGroupFromChanMech(group, chanMechName);
+    }
+
+    public boolean dissociateGroupFromChanMech(String group, String chanMechName)
+    {
+        logger.logComment("Being told to dissociate group: "
                           + group
                           + " from synapse type: "
                           + chanMechName);
@@ -1995,7 +2050,7 @@ public class Cell implements Serializable
             ChannelMechanism nextMech = (ChannelMechanism)enumeration.nextElement();
             if (nextMech.getName().equals(chanMechName))
             {
-                boolean thisSuccess = disassociateGroupFromChanMech(group, nextMech);
+                boolean thisSuccess = dissociateGroupFromChanMech(group, nextMech);
                 success = success || thisSuccess;
             }
         }

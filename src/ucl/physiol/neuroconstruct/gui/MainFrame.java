@@ -601,6 +601,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JButton jButtonNeuroML1Export = new JButton();
     JButton jButtonNeuroML2Export = new JButton();
 
+    JCheckBox jCheckBoxSedMl = new JCheckBox("Include SED-ML");
+
     JButton jButtonNeuroML2Lems = new JButton();
     JButton jButtonNeuroML2Graph = new JButton();
     JButton jButtonNeuroML2NineML = new JButton();
@@ -2231,6 +2233,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         nmlV2.add(jButtonNeuroML2Lems);
         nmlV2.add(jButtonNeuroML2Graph);
         ///////////////////////////////////nmlV2.add(jButtonNeuroML2NineML);
+        jCheckBoxSedMl.setSelected(false);
+        jCheckBoxSedMl.setToolTipText("Generate a SED-ML simulation description. Note not currently used by LEMS, but this option "
+                +"should provide sufficient information to run this simulation in a NeuroML 2 & SED-ML compliant application...");
+        
+        nmlV2.add(jCheckBoxSedMl);
 
         Dimension dd = new Dimension(400, 100);
         nmlV2.setPreferredSize(dd);
@@ -8552,7 +8559,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
      *
      */
 
-    protected void refreshAll()
+    protected final void refreshAll()
     {
         logger.logComment("----------------    *  Refreshing all  *    ----------------");
         int tabCurrentlySelected = jTabbedPaneMain.getSelectedIndex();
@@ -13506,6 +13513,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                                                       1234,
                                                                                       genSingleFile,
                                                                                       nCannots);
+
+            if (jCheckBoxSedMl.isSelected())
+            {
+                File sedmlFile = new File(ProjectStructure.getNeuroMLDir(projManager.getCurrentProject().getProjectMainDirectory()), projManager.getCurrentProject().getProjectName()+ ".sedml");
+                projManager.generateSedML(projManager.getCurrentProject(), sedmlFile, this.getSelectedSimConfig(), version);
+            }
         }
         catch(IOException ex)
         {
@@ -13514,6 +13527,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
 
         jButtonNeuroMLGenSim.setText(origText);
+
         
         
         this.refreshAll();

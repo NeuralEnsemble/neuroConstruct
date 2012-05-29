@@ -1474,43 +1474,47 @@ public class ProjectManager implements GenerationReport
         listOfDataGenerators.addContent("\n    ");
 
 
-        for(SimPlot sp: project.simPlotInfo.getAllSimPlots())
+        for(String plot: simConfig.getPlots())
         {
+            SimPlot sp = project.simPlotInfo.getSimPlot(plot);
+            if (simConfig.getCellGroups().contains(sp.getCellGroup()))
+            {
+                dg = new SimpleXMLElement("dataGenerator");
+                dg.addAttribute("id", sp.getPlotReference());
 
-            dg = new SimpleXMLElement("dataGenerator");
-            dg.addAttribute("id", sp.getPlotReference());
+                listOfDataGenerators.addContent("\n        ");
+                listOfDataGenerators.addChildElement(dg);
+                listOfDataGenerators.addContent("\n    ");
 
-            listOfDataGenerators.addContent("\n        ");
-            listOfDataGenerators.addChildElement(dg);
-            listOfDataGenerators.addContent("\n    ");
+                dg.addContent("\n            ");
+                lov = new SimpleXMLElement("listOfVariables");
+                dg.addChildElement(lov);
+                var = new SimpleXMLElement("variable");
+                lov.addContent("\n                ");
+                lov.addChildElement(var);
+                lov.addContent("\n            ");
+                dg.addContent("\n            ");
 
-            dg.addContent("\n            ");
-            lov = new SimpleXMLElement("listOfVariables");
-            dg.addChildElement(lov);
-            var = new SimpleXMLElement("variable");
-            lov.addContent("\n                ");
-            lov.addChildElement(var);
-            lov.addContent("\n            ");
-            dg.addContent("\n            ");
-            
-            String varName = sp.getValuePlotted();
-            // Quick & dirty substitution...
-            if (varName.equals(SimPlot.VOLTAGE))
-                varName = "v";
-            var.addAttribute("id", varName);
-            var.addAttribute("taskReference", mainTaskRef);
-            var.addAttribute("target", "/neuroml/populations/population[@name='"+sp.getCellGroup()+"']/instances/instance[@id='"+sp.getCellNumber()
-                +"']/segments/segment[@id='"+sp.getSegmentId()+"']/"+varName);
+                String varName = sp.getValuePlotted();
+                // Quick & dirty substitution...
+                if (varName.equals(SimPlot.VOLTAGE))
+                    varName = "v";
+                varName = varName.replaceAll(":", "_");
+                var.addAttribute("id", varName);
+                var.addAttribute("taskReference", mainTaskRef);
+                var.addAttribute("target", "/neuroml/populations/population[@name='"+sp.getCellGroup()+"']/instances/instance[@id='"+sp.getCellNumber()
+                    +"']/segments/segment[@id='"+sp.getSegmentId()+"']/"+varName);
 
-            math = new SimpleXMLElement("math");
-            dg.addChildElement(math);
-            math.addAttribute("xmlns", "http://www.w3.org/1998/Math/MathML");
-            ci = new SimpleXMLElement("ci");
-            ci.addContent( varName );
-            math.addContent("\n                ");
-            math.addChildElement(ci);
-            math.addContent("\n            ");
-            dg.addContent("\n        ");
+                math = new SimpleXMLElement("math");
+                dg.addChildElement(math);
+                math.addAttribute("xmlns", "http://www.w3.org/1998/Math/MathML");
+                ci = new SimpleXMLElement("ci");
+                ci.addContent( varName );
+                math.addContent("\n                ");
+                math.addChildElement(ci);
+                math.addContent("\n            ");
+                dg.addContent("\n        ");
+            }
 
         }
 

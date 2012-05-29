@@ -148,7 +148,9 @@ public class Expand {
         indexPage.addToHead(ccsInfo);
 
         //
-        File fileToSave = new File(dirName, indexTitle);
+        File osbDir = new File(descriptionsDir, "osb");
+        osbDir.mkdir();
+        File fileToSave = new File(osbDir, indexTitle);
 
 
         indexPage.addTaggedElement("Project summaries", "h2");
@@ -181,14 +183,23 @@ public class Expand {
 
                 String projName = project.getProjectName();
                 String projNameStripped = GeneralUtils.replaceAllTokens(projName, " ", "_");
-                File projSpecificDir = new File(descriptionsDir, projNameStripped);
+                String projNameLowercase = GeneralUtils.replaceAllTokens(GeneralUtils.replaceAllTokens(projName, "-", ""), "_", "").toLowerCase();
+                if (projName.equals("SolinasEtAl_GolgiCell"))
+                {
+                    projNameLowercase = "cerebellum--cerebellar-golgi-cell--solinasetal-golgicell";
+                }
+
+                File projSpecificDir = new File(descriptionsDir, projNameLowercase);
                 if (!projSpecificDir.exists()) {
                     projSpecificDir.mkdir();
                 }
 
 
                 File f = generateMainPage(project, projSpecificDir);
-                File projRelativePath = new File(projNameStripped, f.getName());
+                File index = new File (f.getParentFile(), "index.html");
+                GeneralUtils.copyFile(f, index);
+                
+                File projRelativePath = new File("../"+projNameLowercase, f.getName());
 
                 indexPage.addRawHtml("<tr>");
                 indexPage.addTaggedElement(indexPage.getLinkedText(projName, projRelativePath.toString()), "td");
@@ -204,7 +215,7 @@ public class Expand {
 
                 //indexPage.addRawHtml("</br>");
                 indexPage.addTaggedElement(GeneralUtils.parseForHyperlinks(desc), "td");
-                indexPage.addTaggedElement("<img src=\""+projNameStripped+"/images/small.png\" align=\"centre\"/>", "td");
+                indexPage.addTaggedElement("<a href=\""+projRelativePath.toString()+"\"><img src=\"../"+projNameLowercase+"/images/small.png\" align=\"centre\"/></a>", "td");
                 //indexPage.addRawHtml("</br>");
                 //indexPage.addRawHtml("</br>");
 
@@ -584,7 +595,7 @@ public class Expand {
 
 
                     if (!cmXmlPageFile.exists() || !cmPageFile.exists()) {
-                        logger.logComment("Writing channelml files for "+cmName, true);
+                        logger.logComment("Writing ChannelML files for "+cmName, true);
                         try {
                             String readable = XMLUtils.transform(cmlCm.getXMLDoc().getXMLString("", false), xslDoc);
 
@@ -840,21 +851,26 @@ public class Expand {
 
         paths.add("osb/models/cerebellum/cerebellar_nucleus_cell/CerebellarNucleusNeuron/neuroConstruct/CerebellarNucleusNeuron.ncx");
         paths.add("osb/models/cerebellum/networks/GranCellLayer/neuroConstruct/GranCellLayer.ncx");
+        paths.add("/home/padraig/CElegansNeuroML/CElegans/CElegans.ncx");
+
         boolean all = false;
 
         all = true;
         if (all)
         {
-            paths.add("osb/models/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
-            paths.add("osb/models/cerebellum/cerebellar_golgi_cell/SolinasEtAl_GolgiCell/neuroConstruct/SolinasEtAl_GolgiCell.ncx");
-            paths.add("osb/models/cerebellum/cerebellar_granule_cell/GranuleCellVSCS/neuroConstruct/GranuleCellVSCS.ncx");
-            paths.add("osb/models/cerebellum/cerebellar_granule_cell/GranCellSolinasEtAl10/neuroConstruct/GranCellSolinasEtAl10.ncx");
-            paths.add("osb/models/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
+
             paths.add("osb/models/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx");
             paths.add("osb/models/cerebral_cortex/neocortical_pyramidal_neuron/RothmanEtAl_KoleEtAl_PyrCell/neuroConstruct/RothmanEtAl_KoleEtAl_PyrCell.ncx");
             paths.add("osb/models/cerebellum/cerebellar_purkinje_cell/PurkinjeCell/neuroConstruct/PurkinjeCell.ncx");
             paths.add("osb/models/cerebellum/networks/VervaekeEtAl-GolgiCellNetwork/neuroConstruct/VervaekeEtAl-GolgiCellNetwork.ncx");
             paths.add("osb/models/cerebral_cortex/networks/Thalamocortical/neuroConstruct/Thalamocortical.ncx");
+
+            paths.add("osb/models/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
+            paths.add("osb/models/cerebellum/cerebellar_golgi_cell/SolinasEtAl_GolgiCell/neuroConstruct/SolinasEtAl_GolgiCell.ncx");
+            paths.add("osb/models/cerebellum/cerebellar_granule_cell/GranuleCellVSCS/neuroConstruct/GranuleCellVSCS.ncx");
+            paths.add("osb/models/cerebellum/cerebellar_granule_cell/GranCellSolinasEtAl10/neuroConstruct/GranCellSolinasEtAl10.ncx");
+            paths.add("osb/models/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
+            
         }
 
         //paths.add("nCmodels/SolinasEtAl_GolgiCell/SolinasEtAl_GolgiCell.ncx");
