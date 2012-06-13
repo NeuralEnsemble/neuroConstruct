@@ -267,6 +267,28 @@ public class SimpleXMLReader extends XMLFilterImpl implements LexicalHandler
 
     }
 
+    public static SimpleXMLDocument getSimpleXMLDoc(String contents) throws IOException, SAXException, ParserConfigurationException
+    {
+
+        InputSource s = new InputSource(new StringReader(contents));
+
+        SAXParserFactory spf = SAXParserFactory.newInstance();
+        spf.setNamespaceAware(true);
+        XMLReader xmlReader = spf.newSAXParser().getXMLReader();
+
+        SimpleXMLReader docBuilder = new SimpleXMLReader();
+        xmlReader.setContentHandler(docBuilder);
+
+        xmlReader.setProperty("http://xml.org/sax/properties/lexical-handler", docBuilder);
+
+        xmlReader.parse(s);
+
+        SimpleXMLDocument doc = docBuilder.getDocRead();
+
+        return doc;
+
+    }
+
 
 
     public static void main(String args[])
@@ -276,9 +298,9 @@ public class SimpleXMLReader extends XMLFilterImpl implements LexicalHandler
         {
 
             //File f = new File("../NeuroMLValidator/web/NeuroMLFiles/Examples/ChannelML/CaPool.xml");
-            File f = new File("models\\GCLayer\\cellMechanisms\\Generic_CaHVA\\CaHVA_Chan.xml");
+            //File f = new File("models\\GCLayer\\cellMechanisms\\Generic_CaHVA\\CaHVA_Chan.xml");
 
-            //File f = new File("../NeuroMLValidator/web/NeuroMLFiles/Schemata/v1.1/Level2/ChannelML_v1.1_GENESIStab.xsl");
+            File f = new File("../NeuroMLValidator/web/NeuroMLFiles/Schemata/v1.1/Level2/ChannelML_v1.1_GENESIStab.xsl");
             //File f = new File("../neuroConstruct/models/MDeSXML/cellProcesses/Generic_H/GenericChannel.xml");
             //File f = new File("C:\\NeuroMLValidator\\web\\NeuroMLFiles\\Examples\\MorphML\\ChansIncluded.xml");
             //File f = new File("");
@@ -291,6 +313,15 @@ public class SimpleXMLReader extends XMLFilterImpl implements LexicalHandler
             System.out.println(stringForm);
              stringForm = doc.getXMLString("", true);
             System.out.println(stringForm);
+
+            String xml = "<root><a b='ff'/></root>";
+
+            SimpleXMLDocument doc2 = SimpleXMLReader.getSimpleXMLDoc(xml);
+
+            System.out.println("Docread: ");
+            //String stringForm = doc.getXMLString("", false);
+            String stringForm2 = doc2.getXMLString("", false);
+            System.out.println(stringForm2);
 
 
 /*

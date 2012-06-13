@@ -39,6 +39,8 @@ import ucl.physiol.neuroconstruct.mechanisms.MechanismImplementation;
 import ucl.physiol.neuroconstruct.mechanisms.XMLMechanismException;
 import ucl.physiol.neuroconstruct.project.packing.CellPackingAdapter;
 import ucl.physiol.neuroconstruct.simulation.StimulationSettings;
+import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLDocument;
+import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLReader;
 
 /**
  * Class for generating HTML representation of neuroConstruct project
@@ -380,99 +382,108 @@ public class Expand {
 
 
             if (!isProjSummaryPage && !netConns.isEmpty()) {
-                if (!isProjSummaryPage)
-                    mainPage.addTaggedElement("Connectivity Matrix", "h3");
 
-                String connTitle = "Connectivity in " + title;
-                if (isProjSummaryPage) {
-                    connTitle = "Connectivity in " + SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
+                if (netConns.size()>=150)
+                {
+                    if (!isProjSummaryPage)
+                        mainPage.addTaggedElement("(Connectivity Matrix not generated, "+netConns.size()+" network connections...)", "i");
                 }
+                else
+                {
+                    if (!isProjSummaryPage)
+                        mainPage.addTaggedElement("Connectivity Matrix", "h3");
 
-
-                ArrayList<String> orderedCellGroups = new ArrayList<String>();
-                String gap = "_____";
-
-                for (String cg : cellGroups) {
-                    Region reg = project.regionsInfo.getRegionObject(project.cellGroupsInfo.getRegionName(cg));
-                    orderedCellGroups.add((reg.getHighestYValue() + 100000) + gap + cg);
-                }
-
-                orderedCellGroups = (ArrayList<String>) GeneralUtils.reorderAlphabetically(orderedCellGroups, false);
-
-                for (int i = 0; i < orderedCellGroups.size(); i++) {
-                    String old = orderedCellGroups.get(i);
-                    orderedCellGroups.set(i, old.substring(old.indexOf(gap) + gap.length()));
-                }
-
-                String mFilename = getItemPage(connTitle);
-                File mFile = new File(fileToSave.getParentFile(), mFilename);
-
-                mainPage.addTaggedElement(mainPage.getLinkedText(connTitle, mFilename), "b");
-
-                SimpleHtmlDoc matrixPage = new SimpleHtmlDoc(connTitle, fontSize);
-
-                matrixPage.addTaggedElement(connTitle, "h2");
-
-
-                matrixPage.addRawHtml("<table "+tableStyle+">");
-
-                matrixPage.addRawHtml("<tr>");
-                matrixPage.addRawHtml("<td   colspan='2'>&nbsp;</td>");
-
-                for (String preCG : orderedCellGroups) {
-                    String preRef = preCG;
-
-                    if (preCG.startsWith("CG3D_")) {
-                        preRef = preCG.substring(5);
+                    String connTitle = "Connectivity in " + title;
+                    if (isProjSummaryPage) {
+                        connTitle = "Connectivity in " + SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
                     }
-                    matrixPage.addRawHtml("<td "+headerStyle+"  colspan='2'>" + preRef + "</td>");
-                }
-                matrixPage.addRawHtml("</tr>");
-                for (String postCG : orderedCellGroups) {
+
+
+                    ArrayList<String> orderedCellGroups = new ArrayList<String>();
+                    String gap = "_____";
+
+                    for (String cg : cellGroups) {
+                        Region reg = project.regionsInfo.getRegionObject(project.cellGroupsInfo.getRegionName(cg));
+                        orderedCellGroups.add((reg.getHighestYValue() + 100000) + gap + cg);
+                    }
+
+                    orderedCellGroups = (ArrayList<String>) GeneralUtils.reorderAlphabetically(orderedCellGroups, false);
+
+                    for (int i = 0; i < orderedCellGroups.size(); i++) {
+                        String old = orderedCellGroups.get(i);
+                        orderedCellGroups.set(i, old.substring(old.indexOf(gap) + gap.length()));
+                    }
+
+                    String mFilename = getItemPage(connTitle);
+                    File mFile = new File(fileToSave.getParentFile(), mFilename);
+
+                    mainPage.addTaggedElement(mainPage.getLinkedText(connTitle, mFilename), "b");
+
+                    SimpleHtmlDoc matrixPage = new SimpleHtmlDoc(connTitle, fontSize);
+
+                    matrixPage.addTaggedElement(connTitle, "h2");
+
+
+                    matrixPage.addRawHtml("<table "+tableStyle+">");
+
                     matrixPage.addRawHtml("<tr>");
-                    String postRef = postCG;
-
-                    if (postCG.startsWith("CG3D_")) {
-                        postRef = postCG.substring(5);
-                    }
-                    matrixPage.addRawHtml("<td "+headerStyle+"  colspan='2'>" + postRef + "</td>");
+                    matrixPage.addRawHtml("<td   colspan='2'>&nbsp;</td>");
 
                     for (String preCG : orderedCellGroups) {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("<table>");
-                        for (String nc : netConns) {
-                            String src = project.morphNetworkConnectionsInfo.getSourceCellGroup(nc);
-                            String tgt = project.morphNetworkConnectionsInfo.getTargetCellGroup(nc);
-                            if (preCG.equals(src) && postCG.equals(tgt)) {
-                                String info = getNetConnInfo(project, nc);
-                                String bgCol = "";
-                                String fgCol = " style=\"color:#FFFFFF\"";
+                        String preRef = preCG;
 
-                                if (info.toUpperCase().indexOf("AMPA") >= 0 || info.toUpperCase().indexOf("NMDA") >= 0 || info.toUpperCase().indexOf("EXC") >= 0 || info.toUpperCase().indexOf("DOUBEXPSYN") >= 0) {
-                                    bgCol = "bgcolor=\"" + COLOUR_AMPA + "\" " + fgCol;
-                                    //info = "<font color=\""+COLOUR_AMPA+"\">"+info+"</font>";
-                                } else if (info.toUpperCase().indexOf("GABA") >= 0 || info.toUpperCase().indexOf("INH") >= 0) {
-                                    bgCol = "bgcolor=\"" + COLOUR_GABA + "\" " + fgCol;
-                                    //info = "<font color=\""+COLOUR_GABA+"\">"+info+"</font>";
-                                } else if (info.toUpperCase().indexOf("GAP") >= 0 || info.indexOf("ELECT") >= 0) {
-                                    bgCol = "bgcolor=\"" + COLOUR_GAP + "\" " + fgCol;
-                                    //info = "<font color=\""+COLOUR_GAP+"\">"+info+"</font>";
-                                }
-                                sb.append("<tr><td " + bgCol + ">" + info + "</td></td>");
-                            }
+                        if (preCG.startsWith("CG3D_")) {
+                            preRef = preCG.substring(5);
                         }
-
-                        sb.append("</table>");
-                        matrixPage.addRawHtml("<td   colspan='2'>" + sb.toString() + "</td>");
+                        matrixPage.addRawHtml("<td "+headerStyle+"  colspan='2'>" + preRef + "</td>");
                     }
                     matrixPage.addRawHtml("</tr>");
+                    for (String postCG : orderedCellGroups) {
+                        matrixPage.addRawHtml("<tr>");
+                        String postRef = postCG;
+
+                        if (postCG.startsWith("CG3D_")) {
+                            postRef = postCG.substring(5);
+                        }
+                        matrixPage.addRawHtml("<td "+headerStyle+"  colspan='2'>" + postRef + "</td>");
+
+                        for (String preCG : orderedCellGroups) {
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("<table>");
+                            for (String nc : netConns) {
+                                String src = project.morphNetworkConnectionsInfo.getSourceCellGroup(nc);
+                                String tgt = project.morphNetworkConnectionsInfo.getTargetCellGroup(nc);
+                                if (preCG.equals(src) && postCG.equals(tgt)) {
+                                    String info = getNetConnInfo(project, nc);
+                                    String bgCol = "";
+                                    String fgCol = " style=\"color:#FFFFFF\"";
+
+                                    if (info.toUpperCase().indexOf("AMPA") >= 0 || info.toUpperCase().indexOf("NMDA") >= 0 || info.toUpperCase().indexOf("EXC") >= 0 || info.toUpperCase().indexOf("DOUBEXPSYN") >= 0) {
+                                        bgCol = "bgcolor=\"" + COLOUR_AMPA + "\" " + fgCol;
+                                        //info = "<font color=\""+COLOUR_AMPA+"\">"+info+"</font>";
+                                    } else if (info.toUpperCase().indexOf("GABA") >= 0 || info.toUpperCase().indexOf("INH") >= 0) {
+                                        bgCol = "bgcolor=\"" + COLOUR_GABA + "\" " + fgCol;
+                                        //info = "<font color=\""+COLOUR_GABA+"\">"+info+"</font>";
+                                    } else if (info.toUpperCase().indexOf("GAP") >= 0 || info.indexOf("ELECT") >= 0) {
+                                        bgCol = "bgcolor=\"" + COLOUR_GAP + "\" " + fgCol;
+                                        //info = "<font color=\""+COLOUR_GAP+"\">"+info+"</font>";
+                                    }
+                                    sb.append("<tr><td " + bgCol + ">" + info + "</td></td>");
+                                }
+                            }
+
+                            sb.append("</table>");
+                            matrixPage.addRawHtml("<td   colspan='2'>" + sb.toString() + "</td>");
+                        }
+                        matrixPage.addRawHtml("</tr>");
+                    }
+                    matrixPage.addRawHtml("</table>");
+
+                    mainPage.addRawHtml("<p>&nbsp;</p>");
+
+
+                    matrixPage.saveAsFile(mFile);
                 }
-                matrixPage.addRawHtml("</table>");
-
-                mainPage.addRawHtml("<p>&nbsp;</p>");
-
-
-                matrixPage.saveAsFile(mFile);
             }
 
             int width = 700;
@@ -564,6 +575,7 @@ public class Expand {
                 }
 
                 String cmPageLoc = getCellMechPage(cm.getInstanceName());
+                File cmPageFile = new File(fileToSave.getParentFile(), cmPageLoc);
 
                 mechInfo.append("<a href = \"" + cmPageLoc + "\">" + cm.getInstanceName() + "</a>");
 
@@ -573,68 +585,92 @@ public class Expand {
 
                 File xslDoc = GeneralProperties.getChannelMLReadableXSL();
 
-                SimpleHtmlDoc chanPage = new SimpleHtmlDoc(project.getProjectName() + ": " + title, fontSize);
-                SimpleHtmlDoc xmlPage = new SimpleHtmlDoc(project.getProjectName() + ": " + title, fontSize);
-                chanPage.addTaggedElement("" + project.getProjectName(), "h2");
-                xmlPage.addTaggedElement("" + project.getProjectName(), "h2");
+                SimpleHtmlDoc summaryPage = new SimpleHtmlDoc(project.getProjectName() + ": " + title, fontSize);
+                SimpleHtmlDoc channelmlPage = new SimpleHtmlDoc(project.getProjectName() + ": " + title, fontSize);
+                SimpleHtmlDoc nml2Page = new SimpleHtmlDoc(project.getProjectName() + ": " + title, fontSize);
 
-                chanPage.setTitle(cm.getMechanismType()+": " + cm.getInstanceName());
-                chanPage.addTaggedElement("Details of "+cm.getMechanismType()+": "+cm.getInstanceName(), "h3");
+                String cmXmlPageLoc = getCellMechPage(cm.getInstanceName() + ".channelml");
+                File cmXmlPageFile = new File(fileToSave.getParentFile(), cmXmlPageLoc);
 
-                File cmPageFile = new File(fileToSave.getParentFile(), cmPageLoc);
+                String nml2PageLoc = getCellMechPage(cm.getInstanceName() + ".nml");
+                File nml2PageFile = new File(fileToSave.getParentFile(), nml2PageLoc);
+
+                ArrayList<SimpleHtmlDoc> versions = new ArrayList<SimpleHtmlDoc>();
+                versions.add(summaryPage);
+                versions.add(channelmlPage);
+                versions.add(nml2Page);
+
+                for (SimpleHtmlDoc page: versions){
+                    page.addTaggedElement("" + project.getProjectName(), "h2");
+                    page.setTitle(cm.getMechanismType()+": " + cm.getInstanceName());
+                    page.addTaggedElement("Details of "+cm.getMechanismType()+": "+cm.getInstanceName(), "h3");
+
+                    page.addLinkedText("Summary", "../"+cmPageLoc);
+                    page.addLinkedText("ChannelML", "../"+cmXmlPageLoc);
+                    page.addLinkedText("NeuroML v2.0", "../"+nml2PageLoc);
+                    page.addBreak();
+                    page.addBreak();
+                }
 
                 if (cm instanceof ChannelMLCellMechanism) {
                     ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism) cm;
 
-                    String cmXmlPageLoc = getCellMechPage(cm.getInstanceName() + ".channelml");
-                    File cmXmlPageFile = new File(fileToSave.getParentFile(), cmXmlPageLoc);
 
-                    chanPage.addLinkedText("ChannelML", "../"+cmXmlPageLoc);
-                    chanPage.addBreak();
-                    chanPage.addBreak();
-
-
-                    if (!cmXmlPageFile.exists() || !cmPageFile.exists()) {
+                    if (!cmXmlPageFile.exists() || !cmPageFile.exists() || !nml2PageFile.exists()) {
                         logger.logComment("Writing ChannelML files for "+cmName, true);
                         try {
                             String readable = XMLUtils.transform(cmlCm.getXMLDoc().getXMLString("", false), xslDoc);
 
-                            chanPage.addRawHtml(readable);
+                            summaryPage.addRawHtml(readable);
                         } catch (XMLMechanismException e) {
-                            chanPage.addTaggedElement("Unable to generate HTML representation of: " + cm.getInstanceName(), "b");
+                            summaryPage.addTaggedElement("Unable to generate HTML representation of: " + cm.getInstanceName(), "b");
                         }
 
-                        xmlPage.setTitle("Cell Mechanism: " + cm.getInstanceName() + " in ChannelML");
-                        xmlPage.addTaggedElement("Cell Mechanism: " + cm.getInstanceName() + " in ChannelML", "h3");
-                        xmlPage.addLinkedText("Summary of "+cm.getMechanismType()+": "+cm.getInstanceName(), "../"+cmPageLoc);
-                        xmlPage.addBreak();
-                        xmlPage.addBreak();
-
+                        channelmlPage.setTitle("Cell Mechanism: " + cm.getInstanceName() + " in ChannelML");
+                        channelmlPage.addTaggedElement("Cell Mechanism: " + cm.getInstanceName() + " in ChannelML", "h3");
+                        channelmlPage.addBreak();
 
                         try {
                             String cmlString = cmlCm.getXMLDoc().getXMLString("", true);
-
-
-                            xmlPage.addRawHtml(cmlString);
+                            channelmlPage.addRawHtml(cmlString);
                         } catch (XMLMechanismException e) {
-                            xmlPage.addTaggedElement("Unable to generate ChannelML representation of: " + cm.getInstanceName(), "b");
+                            channelmlPage.addTaggedElement("Unable to generate ChannelML representation of: " + cm.getInstanceName(), "b");
                         }
 
-                        xmlPage.saveAsFile(cmXmlPageFile);
-                        chanPage.saveAsFile(cmPageFile);
+                        nml2Page.setTitle("Cell Mechanism: " + cm.getInstanceName() + " in NeuroML v2.0");
+                        nml2Page.addTaggedElement("Cell Mechanism: " + cm.getInstanceName() + " in NeuroML v2.0", "h3");
 
-                        //mainPage.addRawHtml("</td><td><a href = "+cmXmlPageLoc	+">ChannelML file</td><td>");
+                        try {
+
+                            String nml2string = XMLUtils.transform(cmlCm.getXMLDoc().getXMLString("", false),
+                                                                 GeneralProperties.getChannelML2NeuroML2());
+
+                            SimpleXMLDocument nml2Doc = SimpleXMLReader.getSimpleXMLDoc(nml2string);
+
+
+                            nml2Page.addRawHtml(nml2Doc.getXMLString("", true));
+                            
+                        } catch (Exception e) {
+                            nml2Page.addTaggedElement("Unable to generate NeuroML v2.0 representation of: " + cm.getInstanceName(), "b");
+                        }
+
+                        channelmlPage.saveAsFile(cmXmlPageFile);
+                        summaryPage.saveAsFile(cmPageFile);
+                        nml2Page.saveAsFile(nml2PageFile);
                     }
+
+
+
                 } else if (cm instanceof FileBasedMembraneMechanism) {
                     FileBasedMembraneMechanism fm = (FileBasedMembraneMechanism)cm;
                     for (MechanismImplementation mi: fm.getMechanismImpls())
                     {
-                        chanPage.addTaggedElement("Implementation of channel "+cm.getInstanceName()+" in "+mi.getSimulationEnvironment(), "h3");
+                        summaryPage.addTaggedElement("Implementation of channel "+cm.getInstanceName()+" in "+mi.getSimulationEnvironment(), "h3");
 
                         String contents = GeneralUtils.readShortFile(mi.getImplementingFileObject(project, cmName));
 
-                        chanPage.addRawHtml(handleWhitespaces(contents));
-                        chanPage.saveAsFile(cmPageFile);
+                        summaryPage.addRawHtml(handleWhitespaces(contents));
+                        summaryPage.saveAsFile(cmPageFile);
                     }
                 }
                 else {

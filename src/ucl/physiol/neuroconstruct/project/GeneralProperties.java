@@ -751,6 +751,14 @@ public class GeneralProperties
         return new File("templates/xmlTemplates/Schemata/"+getNeuroMLVersionString()
                 +"/Level2/ChannelML_"+getNeuroMLVersionString()+"_HTML.xsl");
     }
+    /**
+     * Gets the current ChannelML 2 NeuroML v2.0 converter
+     *
+     */
+    public static File getChannelML2NeuroML2()
+    {
+        return new File("NeuroML2/ChannelMLConvert/ChannelML2NeuroML2.xsl");
+    }
 
 
     /**
