@@ -1000,7 +1000,7 @@ public class MorphMLConverter extends FormatImporter
                                                                         UnitConverter.getUnitSystemIndex(units),
                                                                         preferredExportUnits);
                                     
-                                    concModelEl.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.ION_CONC_REST_CONC_ATTR,
+                                    concModelEl.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.ION_CONC_REST_CONC_ATTR_V2,
                                                                                 restConc+" "+concUnits.getNeuroML2Symbol()));
                                     
                                     float decayConst = Float.parseFloat(cmlCm.getXMLDoc().getValueByXPath(ChannelMLConstants.getIonConcDecPoolXPath()
@@ -1010,7 +1010,7 @@ public class MorphMLConverter extends FormatImporter
                                                                         UnitConverter.getUnitSystemIndex(units),
                                                                         preferredExportUnits);
                                     
-                                    concModelEl.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.ION_CONC_DECAY_CONST_ATTR,
+                                    concModelEl.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.ION_CONC_DECAY_CONST_ATTR_V2,
                                                                                decayConst+" "+ timeUnits.getNeuroML2Symbol()));
                                     
                                     
@@ -1021,7 +1021,7 @@ public class MorphMLConverter extends FormatImporter
                                                                         UnitConverter.getUnitSystemIndex(units),
                                                                         preferredExportUnits);
                                     
-                                    concModelEl.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.ION_CONC_SHELL_THICK_ATTR,
+                                    concModelEl.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.ION_CONC_SHELL_THICK_ATTR_V2,
                                                                                shellThickness+" "+ lengthUnits.getNeuroML2Symbol()));
                                     
                                     

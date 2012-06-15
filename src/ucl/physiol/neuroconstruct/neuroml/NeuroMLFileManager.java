@@ -1179,14 +1179,13 @@ public class NeuroMLFileManager
         try
         {
             File projFile = new File("nCexamples/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
-            projFile = new File("osb/models/cerebellum/cerebellar_granule_cell/GranuleCellVSCS/neuroConstruct/GranuleCellVSCS.ncx");
+            //projFile = new File("osb/models/cerebellum/cerebellar_granule_cell/GranuleCellVSCS/neuroConstruct/GranuleCellVSCS.ncx");
             //projFile = new File("nCmodels/RothmanEtAl_KoleEtAl_PyrCell/RothmanEtAl_KoleEtAl_PyrCell.ncx");
             //projFile = new File("../nC_projects/Thaal/Thaal.ncx");
 
             String simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
 
             simConf = "GranCellTested";
-            simConf = "GranTest2";
 
             if (projFile.getName().startsWith("GranuleCellVSCS"))
             {
@@ -1195,7 +1194,7 @@ public class NeuroMLFileManager
             else if (projFile.getName().startsWith("LemsTest"))
             {
                 simConf = "GranCell";
-                //simConf = "GranCellTested";
+                simConf = "GranCellTested";
                 //simConf = "MainenCell";
             }
             else if (projFile.getName().startsWith("RothmanEtAl_KoleEtAl_PyrCell"))
@@ -1208,7 +1207,7 @@ public class NeuroMLFileManager
             ProjectManager pm = new ProjectManager(null,null);
             pm.setCurrentProject(p);
 
-                p.simulationParameters.setReference("LEMS_test");
+            p.simulationParameters.setReference("LEMS_test");
 
             pm.doGenerate(simConf, 123);
 
@@ -1224,7 +1223,7 @@ public class NeuroMLFileManager
             SimConfig sc = p.simConfigInfo.getSimConfig(simConf);
 
             //LemsOption lo = LemsOption.GENERATE_GRAPH;
-            LemsOption lo = LemsOption.EXECUTE_MODEL;
+            LemsOption lo = LemsOption.NONE;
             
             nmlFM.generateNeuroMLFiles(sc, NeuroMLVersion.NEUROML_VERSION_2, lo, oc, 123, false, false);
 

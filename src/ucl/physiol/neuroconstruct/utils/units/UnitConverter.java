@@ -849,15 +849,20 @@ public class UnitConverter
             UnitConverter.NEURON_UNITS) + conductanceUnits[NEURON_UNITS].getSafeSymbol());
 
 
-/*
-        PhysicalQuantity currDens = new PhysicalQuantity(0.00001, concentrationUnits[NEUROCONSTRUCT_UNITS]);
+
+        PhysicalQuantity currDens = new PhysicalQuantity(0.000001, concentrationUnits[NEUROCONSTRUCT_UNITS]);
+
+        System.out.println("currDens GENESIS_PHYSIOLOGICAL_UNITS: " + UnitConverter.getCurrentDensity(currDens.getMagnitude(),
+            UnitConverter.NEUROCONSTRUCT_UNITS,
+            UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS));
 
         System.out.println("currDens GENESIS_SI_UNITS: " + UnitConverter.getCurrentDensity(currDens.getMagnitude(),
             UnitConverter.NEUROCONSTRUCT_UNITS,
             UnitConverter.GENESIS_SI_UNITS));
+
         System.out.println("currDens NEURON_UNITS: " + UnitConverter.getCurrentDensity(currDens.getMagnitude(),
             UnitConverter.NEUROCONSTRUCT_UNITS,
-            UnitConverter.NEURON_UNITS));*/
+            UnitConverter.NEURON_UNITS));
 
         float mg_conc = 0.2f;
         System.out.println("mg_conc: "+mg_conc);

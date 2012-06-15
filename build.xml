@@ -741,23 +741,28 @@
       <copy todir="${temp_ver.dir}/lib">
         <fileset dir="lib">
               <include name="**/*"/>
+              <exclude name="jython/Lib/test/decimaltestdata/*.decTest"/>
         </fileset>
       </copy>
 
       <mkdir dir="${temp_ver.dir}/NeuroML2"/>
       <copy todir="${temp_ver.dir}/NeuroML2">
         <fileset dir="NeuroML2">
-              <include name="**/*"/>
               <exclude name="**/simulations"/>
+              <exclude name="**/*.pyc"/>
+              <include name="**/*"/>
         </fileset>
       </copy>
       <delete dir="${temp_ver.dir}/NeuroML2/build"/>
       <delete dir="${temp_ver.dir}/NeuroML2/docs"/>
+      <delete dir="${temp_ver.dir}/NeuroML2/exportImportUtils/SBML/sbmlTestSuite"/>
+      <delete dir="${temp_ver.dir}/NeuroML2/examples/inprogress/ab"/>
 
       <mkdir dir="${temp_ver.dir}/pythonNeuroML"/>
       <copy todir="${temp_ver.dir}/pythonNeuroML">
         <fileset dir="pythonNeuroML">
               <include name="**/*"/>
+              <exclude name="Examples/*.dat"/>
         </fileset>
       </copy>
 

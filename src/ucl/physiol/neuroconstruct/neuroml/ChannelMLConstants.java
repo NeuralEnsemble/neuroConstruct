@@ -160,19 +160,24 @@ public class ChannelMLConstants
 
     
     public static String ION_CONC_INT_ATTR_V2 = "initialConcentration";
-    public static String ION_CONC_EXT_ATTR_V2 = "extConcentration";
+    public static String ION_CONC_EXT_ATTR_V2 = "initialExtConcentration";
     
     
 
     public static String ION_CONC_DEC_POOL_ELEMENT = "decaying_pool_model";
 
     public static String ION_CONC_REST_CONC_ATTR = "resting_conc";
+    public static String ION_CONC_REST_CONC_ATTR_V2 = "restingConc";
+
     public static String ION_CONC_DECAY_CONST_ATTR = "decay_constant";
+    public static String ION_CONC_DECAY_CONST_ATTR_V2 = "decayConstant";
    
     
     public static String ION_CONC_POOL_VOL_ELEMENT = "pool_volume_info";
+
     public static String ION_CONC_SHELL_THICK_ELEMENT_prev1_7_3 = "shell_thickness";
     public static String ION_CONC_SHELL_THICK_ATTR = "shell_thickness";
+    public static String ION_CONC_SHELL_THICK_ATTR_V2 = "shellThickness";
 
 
     public static String ION_CONC_FIXED_POOL_ELEMENT = "fixed_pool_info";
