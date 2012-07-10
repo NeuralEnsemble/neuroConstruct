@@ -887,7 +887,9 @@ public class Expand {
 
         paths.add("osb/models/cerebellum/cerebellar_nucleus_cell/CerebellarNucleusNeuron/neuroConstruct/CerebellarNucleusNeuron.ncx");
         paths.add("osb/models/cerebellum/networks/GranCellLayer/neuroConstruct/GranCellLayer.ncx");
-        paths.add("/home/padraig/CElegansNeuroML/CElegans/CElegans.ncx");
+            paths.add("/home/padraig/CElegansNeuroML/CElegans/CElegans.ncx");
+
+        //paths.add("models/LarkumEtAl2009/LarkumEtAl2009.ncx");
 
         boolean all = false;
 

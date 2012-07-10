@@ -765,7 +765,8 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                if (project.proj3Dproperties.getShowInputsAs().equals(Display3DProperties.DISPLAY_INPUTS_AS_SPHERES))
                {
 
-                    Sphere sphere = new Sphere(3);
+                    Sphere sphere = new Sphere(3,
+                                   Utils3D.getGeneralObjectAppearance(Color.RED));
                     shiftAlong.setTranslation(move);
                     TransformGroup shiftedTG = new TransformGroup(shiftAlong);   
                     shiftedTG.addChild(sphere);

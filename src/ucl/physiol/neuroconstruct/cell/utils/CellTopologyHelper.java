@@ -2366,11 +2366,8 @@ public class CellTopologyHelper
         
         boolean useFullSymbol = !safeSymbol && (html || projHtml);
 
-
         //logger.logComment("safeSymbol..."+safeSymbol, true);
         //logger.logComment("useFullSymbol..."+useFullSymbol, true);
-
-
         
         String capSymb = useFullSymbol ? UnitConverter.specificCapacitanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol() :
         	UnitConverter.specificCapacitanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSafeSymbol();
@@ -2539,6 +2536,8 @@ public class CellTopologyHelper
         if (cell.getSpeciesVsGroups().size()>0) sb.append("  "+GeneralUtils.getEndLine(html));
 
         ArrayList<String> allSynapses = cell.getAllAllowedSynapseTypes();
+        allSynapses = (ArrayList<String>)GeneralUtils.reorderAlphabetically(allSynapses, true);
+        
         for (int i = 0; i < allSynapses.size(); i++)
         {
             String syn = allSynapses.get(i);

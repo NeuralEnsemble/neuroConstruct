@@ -1090,6 +1090,11 @@ public class NeuronTemplateGenerator
         int totLines = 0;
         int subProcCount = 0;
 
+
+        // Used to check if there are different values for rev pots of specific ions in different files, e.g. ek=-77 in one
+        // Cml file ek=-80 in another...
+        Hashtable<String, String> cmlFileRevPots = new Hashtable<String, String>();
+
         for (String nextGroup: groupNames)
         {
             logger.logComment("nextGroup: "+nextGroup+"--------------------------------");
@@ -1459,6 +1464,20 @@ public class NeuronTemplateGenerator
                                             if (!revPotSetElsewhere)
                                             {
                                                 subResponse.append("        e" + ionName + " = " + erev + "  // note: this is val from ChannelML, may be reset later\n");
+                                                
+                                                if (cmlFileRevPots.containsKey(ionName))
+                                                {
+                                                    String prevRevPot = cmlFileRevPots.get(ionName);
+                                                    if (!prevRevPot.equals(erev))
+                                                    {
+                                                        GuiUtils.showWarningMessage(logger, "Note: ion: "+ionName+" has default reversal potential "+
+                                                                erev+" mV in ChannelML file for: "+nextChanMech+", but was set to: "+prevRevPot
+                                                                +" mV in another channel mechanism with this ion in project "+project.getProjectName()+". \n\nThis can lead to unexpected consequences, unless "
+                                                                + "each cell explicitly sets the reversal potential of this ion over the whole cell.\n\n"
+                                                                + "It is advised to ensure all ChannelML files using the same ion use the same reversal potential.", null);
+                                                    }
+                                                }
+                                                cmlFileRevPots.put(ionName, erev);
                                             }
                                         }
                                         else
