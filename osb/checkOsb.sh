@@ -1,3 +1,4 @@
+#!/bin/bash
 
 pull=false
 
@@ -48,7 +49,7 @@ standardGHProject 'MainenEtAl_PyramidalCell'
 standardGHProject 'PurkinjeCell'
 standardGHProject 'RothmanEtAl_KoleEtAl_PyrCell'
 standardGHProject 'SolinasEtAl-GolgiCell'
-#standardGHProject 'Thalamocortical'
+standardGHProject 'Thalamocortical'
 standardGHProject 'VervaekeEtAl-GolgiCellNetwork'
 
 popd > /dev/null
