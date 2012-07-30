@@ -70,56 +70,56 @@ public class PythonTest
  
     @Test public void testGranuleCell()
     {
-        String projFileName = "osb/models/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx";
+        String projFileName = "osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx";
         checkPythonScripts(projFileName);
     }
 
     @Test public void testGranCellLayer()
     {
-        String projFileName = "osb/models/cerebellum/networks/GranCellLayer/neuroConstruct/GranCellLayer.ncx";
+        String projFileName = "osb/cerebellum/networks/GranCellLayer/neuroConstruct/GranCellLayer.ncx";
         checkPythonScripts(projFileName, "RunGolgiTests");
         checkPythonScripts(projFileName, "RunGranTests");
     }
 
     @Test public void testCA1()
     {
-        String projFileName = "osb/models/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx";
+        String projFileName = "osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx";
         checkPythonScripts(projFileName);
     }
 
     @Test public void testMainen()
     {
-        String projFileName = "osb/models/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx";
+        String projFileName = "osb/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx";
         checkPythonScripts(projFileName);
     }
 
     @Test public void testRothmanEtAl()
     {
-        String projFileName = "osb/models/cerebral_cortex/neocortical_pyramidal_neuron/RothmanEtAl_KoleEtAl_PyrCell/neuroConstruct/RothmanEtAl_KoleEtAl_PyrCell.ncx";
+        String projFileName = "osb/cerebral_cortex/neocortical_pyramidal_neuron/RothmanEtAl_KoleEtAl_PyrCell/neuroConstruct/RothmanEtAl_KoleEtAl_PyrCell.ncx";
         checkPythonScripts(projFileName);
     }
 
     @Test public void testPurkinje()
     {
-        String projFileName = "osb/models/cerebellum/cerebellar_purkinje_cell/PurkinjeCell/neuroConstruct/PurkinjeCell.ncx";
+        String projFileName = "osb/cerebellum/cerebellar_purkinje_cell/PurkinjeCell/neuroConstruct/PurkinjeCell.ncx";
         checkPythonScripts(projFileName);
     }
 
     @Test public void testSolinasEtAl_GolgiCell()
     {
-        String projFileName = "osb/models/cerebellum/cerebellar_golgi_cell/SolinasEtAl_GolgiCell/neuroConstruct/SolinasEtAl_GolgiCell.ncx";
+        String projFileName = "osb/cerebellum/cerebellar_golgi_cell/SolinasEtAl-GolgiCell/neuroConstruct/SolinasEtAl_GolgiCell.ncx";
         checkPythonScripts(projFileName);
     }
 
     @Test public void testVervaekeEtAl_GolgiCellNetwork()
     {
-        String projFileName = "osb/models/cerebellum/networks/VervaekeEtAl-GolgiCellNetwork/neuroConstruct/VervaekeEtAl-GolgiCellNetwork.ncx";
+        String projFileName = "osb/cerebellum/networks/VervaekeEtAl-GolgiCellNetwork/neuroConstruct/VervaekeEtAl-GolgiCellNetwork.ncx";
         checkPythonScripts(projFileName);
     }/**/
 
     @Test public void testThalamocortical()
     {
-        String projFileName = "osb/models/cerebral_cortex/networks/Thalamocortical/neuroConstruct/Thalamocortical.ncx";
+        String projFileName = "osb/cerebral_cortex/networks/Thalamocortical/neuroConstruct/Thalamocortical.ncx";
         checkPythonScripts(projFileName);
     }
 
