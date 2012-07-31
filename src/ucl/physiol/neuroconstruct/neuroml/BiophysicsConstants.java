@@ -133,6 +133,7 @@ public class BiophysicsConstants
 
 
     public static String CHAN_DENSITY_ELEMENT_V2 = "channelDensity";
+    public static String CHAN_DENSITY_NERNST_ELEMENT_V2 = "channelDensityNernst";
 
     public static String ION_CHAN_ATTR_V2 = "ionChannel";
     public static String COND_DENS_ATTR_V2 = "condDensity";

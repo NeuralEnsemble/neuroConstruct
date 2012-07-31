@@ -1096,10 +1096,38 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
 
             request = "Please enter the value for the reversal potential of ion "+name+" \n"
                 + "on sections in selected groups (Units: "
-                + UnitConverter.voltageUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+ ")";
+                + UnitConverter.voltageUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+ ")\n"
+                + "    - or -\n"
+                + "press Cancel to specify values for the initial internal & external concentration of this ion\n";
 
             String inputValue
                 = JOptionPane.showInputDialog(this,request,suggested.getReversalPotential() + "");
+
+            if (inputValue==null)
+            {
+                request = "Please enter the value for the initial internal concentration of ion "+name+" \n"
+                + "on sections in selected groups (Units: "
+                + UnitConverter.concentrationUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+")";
+
+                String intConc
+                    = JOptionPane.showInputDialog(this,request,suggested.getInternalConcentration() + "");
+
+                request = "Please enter the value for the initial external concentration of ion "+name+" \n"
+                + "on sections in selected groups (Units: "
+                + UnitConverter.concentrationUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getSymbol()+")";
+
+                String extConc
+                    = JOptionPane.showInputDialog(this,request,suggested.getExternalConcentration() + "");
+
+                try
+                {
+                    return new IonProperties(name, Float.parseFloat(intConc), Float.parseFloat(extConc));
+                }
+                catch (NumberFormatException ex)
+                {
+                    GuiUtils.showErrorMessage(logger, "Please enter a valid float value", ex, this);
+                }
+            }
 
             try
             {

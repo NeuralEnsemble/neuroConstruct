@@ -198,6 +198,9 @@ public class NetworkMLConstants
 
     public static String NEUROML2_NETWORK_ELEMENT = "network";
     public static String NEUROML2_NETWORK_ID_PREFIX = "network_";
+    
+    public static String NEUROML2_EXTRACELLULAR_PROPS_ELEMENT = "extracellularProperties";
+    public static String NEUROML2_TEMPERATURE_ATTR = "temperature";
 
 
     public static String NEUROML2_PULSE_GEN_ELEMENT = "pulseGenerator";

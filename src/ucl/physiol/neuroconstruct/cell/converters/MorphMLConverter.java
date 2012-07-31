@@ -931,35 +931,9 @@ public class MorphMLConverter extends FormatImporter
                                 ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism)cm;
 
                                 String units = cmlCm.getXMLDoc().getValueByXPath(ChannelMLConstants.getUnitsXPath());
-                                    
+
                                 if (cmlCm.isChannelMechanism())
                                 {
-                                    String xpath = ChannelMLConstants.getPreV1_7_3IonsXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
-                                    String val = cmlCm.getXMLDoc().getValueByXPath(xpath);
-
-                                    logger.logComment("Trying to get: "+ xpath+" in "+cmlCm.getInstanceName()+": "+ val);
-
-                                    logger.logComment("Trying to get: "+ cmlCm.getXMLDoc().getXPathLocations(true));
-
-                                    if (val==null || val.trim().length()==0)  // post v1.7.3 format
-                                    {
-                                        xpath = ChannelMLConstants.getCurrVoltRelXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
-                                        logger.logComment("Trying to get now: "+ xpath);
-                                        val = cmlCm.getXMLDoc().getValueByXPath(xpath);
-                                    }
-
-                                    float revPot = Float.parseFloat(val);
-
-                                    logger.logComment("Tried to get: "+ xpath+" in "+cmlCm.getXMLFile(project)+", found: "+revPot);
-
-
-                                    float revPotConv = (float)UnitConverter.getVoltage(revPot,
-                                                                            UnitConverter.getUnitSystemIndex(units),
-                                                                            preferredExportUnits);
-
-                                    mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.REV_POT_ATTR_V2,
-                                                                                revPotConv+" "+voltUnit.getNeuroML2Symbol()+""));
-
                                     String ionXpath = ChannelMLConstants.getCurrVoltRelXPath() +"/@"+ ChannelMLConstants.OHMIC_ION_ATTR;
                                     logger.logComment("Trying to get now: "+ ionXpath);
                                     String ion = cmlCm.getXMLDoc().getValueByXPath(ionXpath);
@@ -967,6 +941,70 @@ public class MorphMLConverter extends FormatImporter
                                     if (ion!=null){
                                         mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.ION_ATTR_V2,
                                                                                 ion));
+                                    }
+                                    
+                                    String xpath = ChannelMLConstants.getCurrVoltRelXPath() +"/@"+ ChannelMLConstants.FIXED_ION_REV_POT_ATTR;
+                                    String val = cmlCm.getXMLDoc().getValueByXPath(xpath);
+
+                                    if (ion.equals("ca") && (val==null || val.equals("no")))
+                                    {
+                                        mechElement.addContent("\n\n                ");
+                                        mechElement.addComment("Reversal potential will be calculated by Nernst equation from internal & external calcium");
+                                        mechElement.addContent("\n\n                ");
+                                        mechElement.setName(bioPrefix + BiophysicsConstants.CHAN_DENSITY_NERNST_ELEMENT_V2);
+                                        /*
+                                        try
+                                        {
+                                            IonProperties ip = cell.getIonPropertiesForGroup("all").get(0);
+
+                                            float extConc = (float)UnitConverter.getConcentration(ip.getExternalConcentration(),
+                                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                    preferredExportUnits);
+
+                                            float intConc = (float)UnitConverter.getConcentration(ip.getInternalConcentration(),
+                                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                    preferredExportUnits);
+
+                                            mechElement.addAttribute(ChannelMLConstants.ION_CONC_INT_ATTR_V2, intConc+" "+concUnits.getNeuroML2Symbol());
+                                            mechElement.addAttribute(ChannelMLConstants.ION_CONC_EXT_ATTR_V2, extConc+" "+concUnits.getNeuroML2Symbol());
+
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            throw new NeuroMLException("Problem exporting to NeuroML 2. Note that the cell mechanism: "+cmlCm+
+                                                    "\nspecifies that is does not have a fixed reversal potential for ca. In this case, the cell needs to"
+                                                    + "\nset its initial internal and external concentration of ca (view cell in 3D -> Edit Density Mechs -> Ion Properties)", e);
+                                        }*/
+                                    }
+                                    else
+                                    {
+                                        xpath = ChannelMLConstants.getPreV1_7_3IonsXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
+                                        val = cmlCm.getXMLDoc().getValueByXPath(xpath);
+
+                                        logger.logComment("Trying to get: "+ xpath+" in "+cmlCm.getInstanceName()+": "+ val);
+
+                                        logger.logComment("Trying to get: "+ cmlCm.getXMLDoc().getXPathLocations(true));
+
+                                        if (val==null || val.trim().length()==0)  // post v1.7.3 format
+                                        {
+                                            xpath = ChannelMLConstants.getCurrVoltRelXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
+                                            logger.logComment("Trying to get now: "+ xpath);
+                                            val = cmlCm.getXMLDoc().getValueByXPath(xpath);
+                                        }
+
+                                        float revPot = Float.parseFloat(val);
+
+                                        logger.logComment("Tried to get: "+ xpath+" in "+cmlCm.getXMLFile(project)+", found: "+revPot);
+
+
+                                        float revPotConv = (float)UnitConverter.getVoltage(revPot,
+                                                                                UnitConverter.getUnitSystemIndex(units),
+                                                                                preferredExportUnits);
+
+                                        mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.REV_POT_ATTR_V2,
+                                                                                    revPotConv+" "+voltUnit.getNeuroML2Symbol()+""));
+
+                                        
                                     }
                                 }
                                 else if (cm.isIonConcMechanism()) 

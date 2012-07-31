@@ -247,6 +247,11 @@ public class NeuroMLFileManager
                 topLevelCompElement = rootElement;
                 
                 rootElement = networkNml2;
+
+                SimpleXMLElement excellPropsElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_EXTRACELLULAR_PROPS_ELEMENT);
+                excellPropsElement.addAttribute(NetworkMLConstants.NEUROML2_TEMPERATURE_ATTR, project.simulationParameters.getTemperature()+" degC");
+                networkNml2.addContent("\n\n        ");
+                networkNml2.addChildElement(excellPropsElement);
             }
 
 
@@ -920,6 +925,11 @@ public class NeuroMLFileManager
                                     Units u = UnitConverter.currentDensityUnits[preferredUnits];
                                     lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 "+u.getNeuroML2Symbol());
                                 }
+                                else if(plot.simPlot.getValuePlotted().indexOf(SimPlot.PLOTTED_VALUE_SEPARATOR+SimPlot.REV_POT+SimPlot.PLOTTED_VALUE_SEPARATOR)>=0)
+                                {
+                                    Units u = UnitConverter.voltageUnits[preferredUnits];
+                                    lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1 "+u.getNeuroML2Symbol());
+                                }
                                 else
                                 {
                                     lineEl.addAttribute(LemsConstants.SCALE_ATTR, "1");   //TODO: check for units...
@@ -1092,7 +1102,14 @@ public class NeuroMLFileManager
             {
                 String ion = val.split(":")[2];
                 //return "biophys/intracellularProperties/"+ion+"/concentration";
-                return "biophys/membraneProperties/"+cmName+"_all/g";
+                return "biophys/membraneProperties/"+cmName+"_all/gDensity";
+
+            }
+            else if (type.equals(SimPlot.REV_POT))
+            {
+                String ion = val.split(":")[2];
+                //return "biophys/intracellularProperties/"+ion+"/concentration";
+                return "biophys/membraneProperties/"+cmName+"_all/erev";
 
             }
             /*else if (type.equals(SimPlot.CURR_DENS))
@@ -1178,14 +1195,16 @@ public class NeuroMLFileManager
         System.out.println("Testing NeuroMLFileManager...");
         try
         {
-            File projFile = new File("nCexamples/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
+            //File projFile = new File("nCexamples/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
+            File projFile = new File("models/LarkumEtAl2009/LarkumEtAl2009.ncx");
             //projFile = new File("osb/models/cerebellum/cerebellar_granule_cell/GranuleCellVSCS/neuroConstruct/GranuleCellVSCS.ncx");
             //projFile = new File("nCmodels/RothmanEtAl_KoleEtAl_PyrCell/RothmanEtAl_KoleEtAl_PyrCell.ncx");
             //projFile = new File("../nC_projects/Thaal/Thaal.ncx");
+            //File projFile = new File("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
 
             String simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
 
-            simConf = "GranCellTested";
+            ///simConf = "GranCellTested";
 
             if (projFile.getName().startsWith("GranuleCellVSCS"))
             {
@@ -1200,6 +1219,10 @@ public class NeuroMLFileManager
             else if (projFile.getName().startsWith("RothmanEtAl_KoleEtAl_PyrCell"))
             {
                 simConf = "TestChannelML";
+            }
+            else if (projFile.getName().startsWith("LarkumEtAl2009"))
+            {
+                simConf = "TestIndividualChannels";
             }
             
             Project p = Project.loadProject(projFile, null);
@@ -1223,7 +1246,7 @@ public class NeuroMLFileManager
             SimConfig sc = p.simConfigInfo.getSimConfig(simConf);
 
             //LemsOption lo = LemsOption.GENERATE_GRAPH;
-            LemsOption lo = LemsOption.NONE;
+            LemsOption lo = LemsOption.EXECUTE_MODEL;
             
             nmlFM.generateNeuroMLFiles(sc, NeuroMLVersion.NEUROML_VERSION_2, lo, oc, 123, false, false);
 
