@@ -51,6 +51,7 @@ public abstract class CellMechanism
     public static final String GAP_JUNCTION = "Gap junction";
     public static final String SBML_MECHANISM = "SBML mechanism";
     public static final String NEUROML2_ION_CHANNEL = "NeuroML 2 ion channel";
+    public static final String NEUROML2_CONC_MODEL = "NeuroML 2 concentration model";
     public static final String NEUROML2_ABSTRACT_CELL = "NeuroML 2 Abstract cell";
 
     /**
@@ -136,7 +137,8 @@ public abstract class CellMechanism
 
     public boolean isIonConcMechanism()
     {
-        return getMechanismType().equals(CellMechanism.ION_CONCENTRATION);
+        return getMechanismType().equals(CellMechanism.ION_CONCENTRATION) ||
+                getMechanismType().equals(CellMechanism.NEUROML2_CONC_MODEL);
     }
 
 

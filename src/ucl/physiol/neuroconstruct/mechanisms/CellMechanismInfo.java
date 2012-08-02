@@ -107,7 +107,7 @@ public class CellMechanismInfo extends AbstractTableModel
                 case COL_NUM_SIM_ENVS:
                 {
                     MechanismImplementation[] mechImpls = cellMechanism.getMechanismImpls();
-                    StringBuffer sb = new StringBuffer();
+                    StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < mechImpls.length; i++)
                     {
                         sb.append(mechImpls[i].getSimulationEnvironment());
@@ -140,7 +140,7 @@ public class CellMechanismInfo extends AbstractTableModel
                 {
 
                     ArrayList<SimulatorMapping> simMappings = xmlMech.getSimMappings();
-                    StringBuffer sb = new StringBuffer();
+                    StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < simMappings.size(); i++)
                     {
                         sb.append(simMappings.get(i).getSimEnv());
@@ -220,7 +220,7 @@ public class CellMechanismInfo extends AbstractTableModel
                 CellMechanism nextCellMech = getCellMechanismAt(i);
                 logger.logComment("-------     Checking cell mechanism: " + nextCellMech);
                 if (nextCellMech.getMechanismType().indexOf(CellMechanism.CHANNEL_MECHANISM)>=0 ||
-                    nextCellMech.getMechanismType().equals(CellMechanism.ION_CONCENTRATION))
+                    nextCellMech.isIonConcMechanism())
                     allNames.add(nextCellMech.getInstanceName());
 
         }
