@@ -926,13 +926,13 @@ public class MorphMLConverter extends FormatImporter
                             }
 
 
-                            if (cm instanceof ChannelMLCellMechanism)
+                            if (cm instanceof XMLCellMechanism)
                             {
-                                ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism)cm;
+                                XMLCellMechanism cmlCm = (XMLCellMechanism)cm;
 
                                 String units = cmlCm.getXMLDoc().getValueByXPath(ChannelMLConstants.getUnitsXPath());
 
-                                if (cmlCm.isChannelMechanism())
+                                if (cmlCm.isChannelMechanism() && !cmlCm.isNeuroML2())
                                 {
                                     String ionXpath = ChannelMLConstants.getCurrVoltRelXPath() +"/@"+ ChannelMLConstants.OHMIC_ION_ATTR;
                                     logger.logComment("Trying to get now: "+ ionXpath);
@@ -1012,6 +1012,17 @@ public class MorphMLConverter extends FormatImporter
                                     String xpath = ChannelMLConstants.getIonSpeciesNameXPath();
                                     String ion = cmlCm.getXMLDoc().getValueByXPath(xpath);
 
+                                    //System.out.println("--- cmlCm: "+ cmlCm);
+
+                                    if (cmlCm.isNeuroML2())
+                                    {
+                                        xpath = NeuroMLConstants.ROOT_ELEMENT +"/"+ ChannelMLConstants.ION_CONC_DEC_POOL_ELEMENT_V2 +"/@"+ ChannelMLConstants.ION_ATTR_V2;
+                                        ion = cmlCm.getXMLDoc().getValueByXPath(xpath);
+                                        //System.out.println("--- xpath: "+ xpath);
+                                        //System.out.println("--- ion: "+ ion);
+
+                                    }
+
                                     mechElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2,
                                                                                 ion));
 
@@ -1019,16 +1030,21 @@ public class MorphMLConverter extends FormatImporter
                                     mechElement.addAttribute(new SimpleXMLAttribute("ion",
                                                                                 ion));
 
+                                    mechElement.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.ION_CONC_MODEL_ELEMENT_V2,
+                                                                                cmlCm.getInstanceName()));
+                                
+                                    ionSpeciesV2.put(ion, mechElement);
+
+                                    /*
                                     SimpleXMLElement concModelEl = new SimpleXMLElement(bioPrefix+ChannelMLConstants.ION_CONC_MODEL_ELEMENT_V2);
                                     mechElement.addContent("\n                     ");
                                     mechElement.addChildElement(concModelEl);
                                     mechElement.addContent("\n                 ");
-                                
-                                    ionSpeciesV2.put(ion, concModelEl);
-                                    
-                                    
                                     concModelEl.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.TYPE_ATTR_V2,
                                                                                 ChannelMLConstants.ION_CONC_DEC_POOL_ELEMENT_V2));
+
+                                    concModelEl.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2,
+                                                                                cmlCm.getInstanceName()));
                                     
                                     
                                     float restConc = Float.parseFloat(cmlCm.getXMLDoc().getValueByXPath(ChannelMLConstants.getIonConcDecPoolXPath()
@@ -1061,7 +1077,7 @@ public class MorphMLConverter extends FormatImporter
                                     
                                     concModelEl.addAttribute(new SimpleXMLAttribute(ChannelMLConstants.ION_CONC_SHELL_THICK_ATTR_V2,
                                                                                shellThickness+" "+ lengthUnits.getNeuroML2Symbol()));
-                                    
+                                    */
                                     
                                     //xpath = ChannelMLConstants.getIonSpeciesNameXPath();
                                     

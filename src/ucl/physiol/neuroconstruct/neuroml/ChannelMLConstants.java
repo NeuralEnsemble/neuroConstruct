@@ -47,9 +47,9 @@ public class ChannelMLConstants
 
     public static String NAMESPACE_URI = "http://morphml.org/channelml/schema";
 
-    public static String DEFAULT_FILE_EXTENSION = "xml";
+    public static final String DEFAULT_FILE_EXTENSION = "xml";
 
-    public static String DEFAULT_SCHEMA_EXTENSION = "xsd";
+    public static final String DEFAULT_SCHEMA_EXTENSION = "xsd";
 
     public static String DEFAULT_MAPPING_EXTENSION = "xsl";
 
@@ -157,6 +157,8 @@ public class ChannelMLConstants
     
     public static String ION_CONC_MODEL_ELEMENT_V2 = "concentrationModel";
     public static String ION_CONC_DEC_POOL_ELEMENT_V2 = "decayingPoolConcentrationModel";
+
+    public static String ION_ATTR_V2 = "ion";
 
     
     public static String ION_CONC_INT_ATTR_V2 = "initialConcentration";

@@ -7,7 +7,7 @@
     <!-- TODO: edit the following target according to your needs -->
     <!-- (more info: http://www.netbeans.org/kb/41/freeform-config.html#runsingle) -->
 
-    <property name="lems.jar.file" value="../NeuroML2/lib/lems/lems-0.8.2.jar"/>
+    <property name="lems.jar.file" value="../NeuroML2/lib/lems/lems-0.8.3.jar"/>
     <property name="libneuroml.jar.file" value="../NeuroML2/libNeuroML-2.0.0.jar"/>
     
     <target depends="init" name="run-selected-file-in-src">
