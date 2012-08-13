@@ -1018,6 +1018,11 @@ public class MorphMLConverter extends FormatImporter
                                     {
                                         xpath = NeuroMLConstants.ROOT_ELEMENT +"/"+ ChannelMLConstants.ION_CONC_DEC_POOL_ELEMENT_V2 +"/@"+ ChannelMLConstants.ION_ATTR_V2;
                                         ion = cmlCm.getXMLDoc().getValueByXPath(xpath);
+                                        if (ion==null)
+                                        {
+                                            xpath = NeuroMLConstants.ROOT_ELEMENT +"/"+ ChannelMLConstants.ION_CONC_MODEL_ELEMENT_V2 +"/@"+ ChannelMLConstants.ION_ATTR_V2;
+                                            ion = cmlCm.getXMLDoc().getValueByXPath(xpath);
+                                        }
                                         //System.out.println("--- xpath: "+ xpath);
                                         //System.out.println("--- ion: "+ ion);
 
@@ -1613,6 +1618,9 @@ public class MorphMLConverter extends FormatImporter
                                 //ionPropEl.addContent("\n                     ");
                                 //ionPropEl.addChildElement(concModelEl);
                                 ///ionPropEl.addContent("\n                 ");
+
+                                //System.out.println(ionPropEl);
+                                //System.out.println(ionSpeciesV2);
                     
                                 ionPropEl.addAttribute(ChannelMLConstants.ION_CONC_INT_ATTR_V2, intConc+" "+concUnits.getNeuroML2Symbol());
                                 ionPropEl.addAttribute(ChannelMLConstants.ION_CONC_EXT_ATTR_V2, extConc+" "+concUnits.getNeuroML2Symbol());

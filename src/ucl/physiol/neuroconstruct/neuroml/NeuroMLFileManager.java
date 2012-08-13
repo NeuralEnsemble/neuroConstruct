@@ -627,11 +627,11 @@ public class NeuroMLFileManager
 
                                 String xslContents = GeneralUtils.readShortFile(xslChannelML2NeuroML2);
 
-                                //TODO Make celsius a global variable!!
-                                String defaultTemp = project.simulationParameters.getTemperature() +" degC";
+                                //DONE Make celsius a global variable!!
+                                /*String defaultTemp = project.simulationParameters.getTemperature() +" degC";
                                 int start = xslContents.indexOf("<xsl:variable name=\"defaultTemp\">")+33;
                                 int end = xslContents.indexOf("</xsl:variable>", start);
-                                xslContents = xslContents.substring(0, start)+defaultTemp+xslContents.substring(end);
+                                xslContents = xslContents.substring(0, start)+defaultTemp+xslContents.substring(end);*/
                                 //System.out.println(xslContents);
 
                                 String nml2Contents = XMLUtils.transform(origCmlFile, xslContents);
@@ -1112,13 +1112,13 @@ public class NeuroMLFileManager
                 return "biophys/membraneProperties/"+cmName+"_all/erev";
 
             }
-            /*else if (type.equals(SimPlot.CURR_DENS))
+            else if (type.equals(SimPlot.CURR_DENS))
             {
                 String ion = val.split(":")[2];
                 //return "biophys/intracellularProperties/"+ion+"/concentration";
-                return "biophys/membraneProperties/"+cmName+"_all/i";
+                return "biophys/membraneProperties/"+cmName+"_all/iDensity";
 
-            }*/
+            }
         }
 
         return val;
