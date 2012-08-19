@@ -666,7 +666,7 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                             
                             if (dataReadFormat == DataReadFormat.EACH_COL_DATA)
                             {
-                                if (dataSets.size()==0)
+                                if (dataSets.isEmpty())
                                 {
                                     for(int i=0;i<splitWords.size();i++)
                                     {
@@ -681,14 +681,15 @@ public class DataSetManager extends JFrame implements ListSelectionListener
                                 for(int i=0;i<splitWords.size();i++)
                                 {
                                     int pointNum = dataSets.get(i).addPoint(dataPointIndex, Double.parseDouble(splitWords.get(i).trim()));
-                                    dataPointIndex++;
+                                    
                                     if (comment!=null)
                                         dataSets.get(i).setCommentOnPoint(pointNum, comment);
                                 }
+                                dataPointIndex++;
                             }
                             else if (dataReadFormat == DataReadFormat.FIRST_COL_TIME)
                             {
-                                if (dataSets.size()==0)
+                                if (dataSets.isEmpty())
                                 {
                                     for(int i=0;i<splitWords.size()-1;i++)
                                     {
