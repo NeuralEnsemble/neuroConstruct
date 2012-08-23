@@ -91,7 +91,10 @@ public class ExampleProjects
             
             intro.addContent("Downloadable neuroConstruct projects <strong>based on published conductance based models</strong>. " +
             "Some examples to illustrate the core functionality of neuroConstruct, as opposed to " +
-            "providing electrophysiologically accurate models can be found <a href=\"../samples/index.html\">here</a>");
+            "providing electrophysiologically accurate models can be found <a href=\"../samples/index.html\">here</a>."
+                    + "<p>Note: These models are currently being moved to a repository to allow open source, collaborative development of NeuroML models.</p>"
+                    + "<p>See the <a href=\"http://www.opensourcebrain.org\">Open Source Brain</a> website for full details.&nbsp;&nbsp;&nbsp;&nbsp;"
+                    + "<img alt=\"Open Source Brain\" src=\"http://www.opensourcebrain.org/images/logo.png\"/></p>");
         }
         File[] fileArray = sourceProjDir.listFiles();
 
