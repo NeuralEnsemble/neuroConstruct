@@ -2237,7 +2237,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jCheckBoxSedMl.setToolTipText("Generate a SED-ML simulation description. Note not currently used by LEMS, but this option "
                 +"should provide sufficient information to run this simulation in a NeuroML 2 & SED-ML compliant application...");
         
-        nmlV2.add(jCheckBoxSedMl);
+        //////nmlV2.add(jCheckBoxSedMl);
 
         Dimension dd = new Dimension(400, 100);
         nmlV2.setPreferredSize(dd);
