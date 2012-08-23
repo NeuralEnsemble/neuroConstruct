@@ -3,15 +3,22 @@ Release notes/change log for neuroConstruct
 See also the README file
 
 
---------- Version 1.6.0 (April 2012) ---------
+--------- Version 1.6.0 (August 2012) ---------
 
 Improved 3D visualisation of cells and networks when all segments are located more than a few hundred microns away 
 from the origin. Now 3D view centres on middle of visible cells. Origin is only included if "Show 3D axes" option
-is selected.
+is selected. Also removed annoying clipping of back of 3D view when zooming out.
 
-Also removed annoying clipping of back of 3D view when zooming out.
+Added option to save cells in project in pure NeuroML v1.8.1 format in morphologies folder. Now all channels, synapses &
+cells in a project can be stored natively in NeuroML. Also facilitates comparing versions of morphology files across
+commits.
 
+Added warning if a project contains multiple ChannelML files which have different values for reversal potential
+but use the same ion (e.g. ek=-77 in one k channel, -87 in another). Pops up a warning dialog when such channels are
+used together in one cell (without overriding the ChannelML files using an IonProperty in the cell).
 
+A number of updates to the NeuroML 2 export of cells & channels in line with the developing specification at:
+http://sourceforge.net/apps/trac/neuroml/browser/NeuroML2
 
 
 --------- Version 1.5.3 (Mar 2012) ---------

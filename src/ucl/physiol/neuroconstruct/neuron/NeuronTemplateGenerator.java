@@ -1477,7 +1477,7 @@ public class NeuronTemplateGenerator
                                                                 + "It is advised to ensure all ChannelML files using the same ion use the same reversal potential.", null);
                                                     }
                                                 }
-                                                cmlFileRevPots.put(ionName, erev);
+                                                if (mpErev==null) cmlFileRevPots.put(ionName, erev);
                                             }
                                         }
                                         else
