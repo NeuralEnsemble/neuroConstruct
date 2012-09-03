@@ -34,7 +34,11 @@ standardGHProject()
     tgtDir=$2/$1
     
     if [ ! -d $tgtDir ]; then
-        git clone git@github.com:OpenSourceBrain/$1.git $tgtDir
+        if [ $# == 3 ]; then
+            git clone git@github.com:$3/$1.git $tgtDir
+        else
+            git clone git@github.com:OpenSourceBrain/$1.git $tgtDir
+        fi
     fi
 
     pushd $tgtDir > /dev/null
@@ -50,6 +54,9 @@ standardGHProject()
     popd > /dev/null
 }
 
+standardGHProject 'CElegansNeuroML' 'invertebrate/celegans' 'openworm'
+
+standardGHProject 'PyloricNetwork' 'invertebrate/lobster'
 
 standardGHProject 'CA1PyramidalCell' 'hippocampus/CA1_pyramidal_neuron'
 
@@ -72,6 +79,8 @@ standardGHProject 'RothmanEtAl_KoleEtAl_PyrCell' 'cerebral_cortex/neocortical_py
 
 standardGHProject 'IzhikevichModel' 'cerebral_cortex/networks'
 standardGHProject 'Thalamocortical' 'cerebral_cortex/networks'
+
+
 
 
 popd > /dev/null
