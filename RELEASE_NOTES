@@ -18,7 +18,7 @@ but use the same ion (e.g. ek=-77 in one k channel, -87 in another). Pops up a w
 used together in one cell (without overriding the ChannelML files using an IonProperty in the cell).
 
 A number of updates to the NeuroML 2 export of cells & channels in line with the developing specification at:
-http://sourceforge.net/apps/trac/neuroml/browser/NeuroML2
+http://sourceforge.net/apps/trac/neuroml/browser/NeuroML2.
 
 
 --------- Version 1.5.3 (Mar 2012) ---------

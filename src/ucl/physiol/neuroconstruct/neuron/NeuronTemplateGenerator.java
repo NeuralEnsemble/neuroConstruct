@@ -1129,7 +1129,7 @@ public class NeuronTemplateGenerator
                             subResponse.append("    "+sec.getSectionName()+" "+name+" = new " + modName + "(0.5) \n");
                         }
                         
-                        if (cellMech.getMechanismType().equals(CellMechanism.NEUROML2_ABSTRACT_CELL))
+                        if (cellMech.getMechanismType().equalsIgnoreCase(CellMechanism.NEUROML2_ABSTRACT_CELL))
                         {
                             XMLCellMechanism nml2Mech = (XMLCellMechanism)cellMech;
 

@@ -264,7 +264,7 @@ public class CellMechanismInfo extends AbstractTableModel
         {
             CellMechanism nextCellMech = getCellMechanismAt(i);
             logger.logComment("-------     Checking cell mechanism: " + nextCellMech);
-            if (nextCellMech.getMechanismType().indexOf(CellMechanism.SYNAPTIC_MECHANISM)>=0)
+            if (nextCellMech.isSynapticMechanism())
                 allNames.add(nextCellMech.getInstanceName());
         }
         return allNames;
@@ -278,8 +278,8 @@ public class CellMechanismInfo extends AbstractTableModel
         {
             CellMechanism nextCellMech = getCellMechanismAt(i);
             logger.logComment("-------     Checking cell mechanism: " + nextCellMech);
-            if (nextCellMech.getMechanismType().indexOf(CellMechanism.SYNAPTIC_MECHANISM)>=0 ||
-                nextCellMech.getMechanismType().indexOf(CellMechanism.GAP_JUNCTION)>=0)
+            if (nextCellMech.isSynapticMechanism() ||
+                nextCellMech.isGapJunctionMechanism())
                 allNames.add(nextCellMech.getInstanceName());
         }
         return allNames;
@@ -292,7 +292,7 @@ public class CellMechanismInfo extends AbstractTableModel
         {
             CellMechanism nextCellMech = getCellMechanismAt(i);
             logger.logComment("-------     Checking cell mechanism: " + nextCellMech);
-            if (nextCellMech.getMechanismType().indexOf(CellMechanism.GAP_JUNCTION)>=0)
+            if (nextCellMech.isGapJunctionMechanism())
                 allNames.add(nextCellMech.getInstanceName());
         }
         return allNames;

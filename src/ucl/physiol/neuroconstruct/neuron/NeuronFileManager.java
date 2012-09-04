@@ -3341,8 +3341,11 @@ public class NeuronFileManager
                                             String origName = comp.getComponentType().getName();
                                             String newName = "MOD_"+cellMechanism.getInstanceName();
 
+                                            if (cellMechanism.isSynapticMechanism())
+                                            {
+                                                newName = cellMechanism.getInstanceName();
+                                            }
                                             modFile = modFile.replaceAll(origName, newName);
-
 
                                             newMechFile = new File(dirForNeuronFiles,
                                                                    cellMechanism.getInstanceName() + ".mod");

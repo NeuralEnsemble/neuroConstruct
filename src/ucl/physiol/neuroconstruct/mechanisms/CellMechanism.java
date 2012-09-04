@@ -52,7 +52,8 @@ public abstract class CellMechanism
     public static final String SBML_MECHANISM = "SBML mechanism";
     public static final String NEUROML2_ION_CHANNEL = "NeuroML 2 ion channel";
     public static final String NEUROML2_CONC_MODEL = "NeuroML 2 concentration model";
-    public static final String NEUROML2_ABSTRACT_CELL = "NeuroML 2 Abstract cell";
+    public static final String NEUROML2_ABSTRACT_CELL = "NeuroML 2 abstract cell";
+    public static final String NEUROML2_SYNAPSE = "NeuroML 2 synapse";
 
     /**
      * Implementation methods
@@ -132,13 +133,14 @@ public abstract class CellMechanism
     
     public boolean isSynapticMechanism()
     {
-        return getMechanismType().equals(CellMechanism.SYNAPTIC_MECHANISM);
+        return getMechanismType().equals(CellMechanism.SYNAPTIC_MECHANISM) ||
+               getMechanismType().equalsIgnoreCase(CellMechanism.NEUROML2_SYNAPSE);
     }
 
     public boolean isIonConcMechanism()
     {
         return getMechanismType().equals(CellMechanism.ION_CONCENTRATION) ||
-                getMechanismType().equals(CellMechanism.NEUROML2_CONC_MODEL);
+               getMechanismType().equalsIgnoreCase(CellMechanism.NEUROML2_CONC_MODEL);
     }
 
 
