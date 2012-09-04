@@ -49,7 +49,7 @@ public class GeneralProperties
 
     private static final String packageOfCellTypes = "ucl.physiol.neuroconstruct.cell";
 
-    private static final String versionNumber = "1.6.0";
+    private static final String versionNumber = "1.6.1";
 
     //private static final String latestNeuroMLVersionNumber = "1.8.1";
 

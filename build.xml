@@ -28,7 +28,7 @@
   
     <tstamp/>
     <property name="name" value="neuroConstruct"/>
-    <property name="version" value="1.6.0"/>
+    <property name="version" value="1.6.1"/>
     <property name="version.impl" value="${version}"/>
     <property name="year" value="2012"/>
 
