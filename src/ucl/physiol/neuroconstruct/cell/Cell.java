@@ -919,16 +919,26 @@ public class Cell implements Serializable
     };
 
 
-    public ArrayList<String> getAllAllowedSynapseTypes()
+    public ArrayList<String> getAllAllowedSynapseTypes(boolean orderAlphabetically)
     {
         ArrayList<String> allTypes = new ArrayList<String>();
         Set<String> synapses = synapsesVsGroups.keySet();
         allTypes.addAll(synapses);
 
+        if (orderAlphabetically)
+        {
+           Collections.sort(allTypes);
+        }
+        
         return allTypes;
     }
-
-    public ArrayList<ChannelMechanism> getAllUniformChanMechs(boolean removeRepeats)
+    
+    public ArrayList<String> getAllAllowedSynapseTypes()
+    {
+        return getAllAllowedSynapseTypes(false);
+    }
+    
+    public ArrayList<ChannelMechanism> getAllUniformChanMechs(boolean removeRepeats, boolean orderAlphabetically)
     {
         ArrayList<ChannelMechanism> allChanMechs = new ArrayList<ChannelMechanism>();
         Iterator<ChannelMechanism> chanMechs = chanMechsVsGroups.keySet().iterator();
@@ -940,8 +950,18 @@ public class Cell implements Serializable
             if (!removeRepeats || !allChanMechs.contains(next))
                 allChanMechs.add(next);
         }
+        
+        if (orderAlphabetically)
+        {
+            Collections.sort(allChanMechs);
+        }
 
         return allChanMechs;
+    }
+    
+    public ArrayList<ChannelMechanism> getAllUniformChanMechs(boolean removeRepeats)
+    {
+        return getAllUniformChanMechs(true, false);
     }
     
     public ArrayList<String> getAllChanMechNames(boolean removeRepeats)

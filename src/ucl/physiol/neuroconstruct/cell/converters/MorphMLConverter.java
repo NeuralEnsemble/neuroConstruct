@@ -826,7 +826,7 @@ public class MorphMLConverter extends FormatImporter
                     bioPrefix = "";
                 }
 
-                ArrayList<ChannelMechanism> allUniformChanMechs = cell.getAllUniformChanMechs(true);
+                ArrayList<ChannelMechanism> allUniformChanMechs = cell.getAllUniformChanMechs(true, true);
 
                 Units condDensUnit = UnitConverter.conductanceDensityUnits[preferredExportUnits];
                 
@@ -1680,7 +1680,7 @@ public class MorphMLConverter extends FormatImporter
                         netPrefix = "";
                     }
 
-                   ArrayList<String> allSyns = cell.getAllAllowedSynapseTypes();
+                   ArrayList<String> allSyns = cell.getAllAllowedSynapseTypes(true);
                    
                    
                    

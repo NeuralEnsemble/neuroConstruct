@@ -44,7 +44,7 @@ import ucl.physiol.neuroconstruct.utils.units.*;
 
 @SuppressWarnings("serial")
 
-public class ChannelMechanism implements Serializable
+public class ChannelMechanism implements Serializable, Comparable<ChannelMechanism>
 {
     static final long serialVersionUID = -1884757566565532L;
     
@@ -141,6 +141,12 @@ public class ChannelMechanism implements Serializable
             getExtraParamsDesc()+")";
         
             
+    }
+    
+    @Override
+    public int compareTo(ChannelMechanism otherMech)
+    {
+        return this.getName().compareTo(otherMech.getName());
     }
     
     public String toNiceString()
