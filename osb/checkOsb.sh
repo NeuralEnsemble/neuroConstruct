@@ -46,7 +46,7 @@ standardGHProject()
         git pull
     else
         git status
-        tput setaf 2
+        tput setaf 3
         git fetch --dry-run
     fi
     tput sgr0
@@ -57,6 +57,8 @@ standardGHProject()
 standardGHProject 'CElegansNeuroML' 'invertebrate/celegans' 'openworm'
 
 standardGHProject 'PyloricNetwork' 'invertebrate/lobster'
+
+standardGHProject 'MorrisLecarModel' 'invertebrate/barnacle'
 
 standardGHProject 'CA1PyramidalCell' 'hippocampus/CA1_pyramidal_neuron'
 
