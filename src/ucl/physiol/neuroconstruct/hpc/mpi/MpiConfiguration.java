@@ -226,7 +226,8 @@ public class MpiConfiguration
             script.append("\n");
             String workDir = getProjectSimDir(projName)+"/"+simRef;
             script.append("#$ -l  vf=2G\n");
-            script.append("#$ -l  h_vmem=2G\n");
+            script.append("#$ -l  h_vmem=1.9G\n");
+            script.append("#$ -l  tmem=1.9G\n");
             script.append("#$ -l  h_rt=0:"+timeMins+":0\n\n");
             script.append("#$ -wd  "+workDir+"\n");
             script.append("#$ -o  "+workDir+"/log\n");
