@@ -64,17 +64,26 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
     <void method="add">
      <object class="ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter"/>
     </void>
+    <void method="add">
+     <object class="ucl.physiol.neuroconstruct.project.packing.SinglePositionedCellPackingAdapter"/>
+    </void>
    </void>
    <void method="get">
     <string>Cell Type</string>
     <void method="add">
      <string>SampleCell</string>
     </void>
+    <void method="add">
+     <string>Granule_98</string>
+    </void>
    </void>
    <void method="get">
     <string>Priority</string>
     <void method="add">
      <int>10</int>
+    </void>
+    <void method="add">
+     <int>9</int>
     </void>
    </void>
    <void method="get">
@@ -87,9 +96,20 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
       <int>255</int>
      </object>
     </void>
+    <void method="add">
+     <object class="java.awt.Color">
+      <int>80</int>
+      <int>138</int>
+      <int>253</int>
+      <int>255</int>
+     </object>
+    </void>
    </void>
    <void method="get">
     <string>Region Name</string>
+    <void method="add">
+     <string>SampleRegion</string>
+    </void>
     <void method="add">
      <string>SampleRegion</string>
     </void>
@@ -98,6 +118,9 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
     <string>Cell Group Name</string>
     <void method="add">
      <string>SampleCellGroup</string>
+    </void>
+    <void method="add">
+     <string>GrC</string>
     </void>
    </void>
   </void>
@@ -126,6 +149,34 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      </void>
      <void property="plotReference">
       <string>SamplePlot</string>
+     </void>
+     <void property="segmentId">
+      <string>0</string>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.project.SimPlot">
+     <void property="cellGroup">
+      <string>GrC</string>
+     </void>
+     <void property="cellNumber">
+      <string>*</string>
+     </void>
+     <void property="graphWindow">
+      <string>GrC_v</string>
+     </void>
+     <void property="maxValue">
+      <float>50.0</float>
+     </void>
+     <void property="minValue">
+      <float>-90.0</float>
+     </void>
+     <void property="plotAndOrSave">
+      <string>Plot and save</string>
+     </void>
+     <void property="plotReference">
+      <string>GrC_v</string>
      </void>
      <void property="segmentId">
       <string>0</string>
@@ -233,6 +284,26 @@ allchans</string>
      <void property="plots">
       <void method="add">
        <string>SamplePlot</string>
+      </void>
+     </void>
+     <void property="simDuration">
+      <float>100.0</float>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.project.SimConfig">
+     <void property="cellGroups">
+      <void method="add">
+       <string>GrC</string>
+      </void>
+     </void>
+     <void property="name">
+      <string>Granc</string>
+     </void>
+     <void property="plots">
+      <void method="add">
+       <string>GrC_v</string>
       </void>
      </void>
      <void property="simDuration">

@@ -129,7 +129,7 @@ public class MorphMLReader extends XMLFilterImpl
             else if (getCurrentElement().equals(MetadataConstants.GROUP_ELEMENT) &&
                      this.getAncestorElement(1).equals(MorphMLConstants.CABLE_ELEMENT))
             {
-
+                
                 this.currentSection.addToGroup(contents);
 
                 // Ensure soma segs are finite vol unless something already specified for it
@@ -144,25 +144,7 @@ public class MorphMLReader extends XMLFilterImpl
                     this.foundSomaSection = true;
                 }
             }
-
-            else if (getAncestorElement(3).equals(MorphMLConstants.CABLE_ELEMENT) &&
-                     getAncestorElement(2).equals(MorphMLConstants.PROPS_ELEMENT) &&
-                     getAncestorElement(1).equals(MetadataConstants.PROP_ELEMENT))
-            {
-                logger.logComment("Looking at a property...");
-
-                if (getCurrentElement().equals(MetadataConstants.PROP_TAG_ELEMENT))
-                {
-                    currentPropertyTag = contents;
-                }
-                if (getCurrentElement().equals(MetadataConstants.PROP_VALUE_ELEMENT))
-                {
-                    if (currentPropertyTag.equals(MorphMLConstants.NUMBER_INTERNAL_DIVS_PROP))
-                    {
-                        this.currentSection.setNumberInternalDivisions(Integer.parseInt(contents));
-                    }
-                }
-            }
+            
             else if (getAncestorElement(3).equals(MorphMLConstants.SEGMENT_ELEMENT) &&
                      getAncestorElement(2).equals(MorphMLConstants.PROPS_ELEMENT) &&
                      getAncestorElement(1).equals(MetadataConstants.PROP_ELEMENT))
@@ -553,6 +535,21 @@ public class MorphMLReader extends XMLFilterImpl
              }
 
          }
+         else if (getCurrentElement().equals(MetadataConstants.PROP_ELEMENT) &&
+                  getAncestorElement(1).equals(MorphMLConstants.PROPS_ELEMENT) &&
+                  getAncestorElement(2).equals(MorphMLConstants.CABLE_ELEMENT))
+         {
+             logger.logComment("Looking at a property...");
+
+             currentPropertyTag = attributes.getValue(MetadataConstants.PROP_TAG_ELEMENT);
+             if (currentPropertyTag.equals(MorphMLConstants.NUMBER_INTERNAL_DIVS_PROP))
+                 {
+                     logger.logComment("Setting number of internal divisions");
+                     this.currentSection.setNumberInternalDivisions(
+                             Integer.parseInt(attributes.getValue(MetadataConstants.PROP_VALUE_ELEMENT)));
+                 }
+         }   
+
          else if (getCurrentElement().equals(MorphMLConstants.CABLE_GROUP_ELEMENT)
                   && getAncestorElement(1).equals(MorphMLConstants.CABLES_ELEMENT))
          {
@@ -621,9 +618,7 @@ public class MorphMLReader extends XMLFilterImpl
              {
                  currentParamGroup.setDistalPref(ParameterisedGroup.DistalPref.MOST_DIST_AT_1);
              }
-         }
-
-
+         }    
 
          else if (getCurrentElement().equals(MetadataConstants.GROUP_ELEMENT))
          {
