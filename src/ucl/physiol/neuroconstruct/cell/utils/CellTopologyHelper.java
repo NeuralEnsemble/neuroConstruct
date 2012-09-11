@@ -1731,6 +1731,39 @@ public class CellTopologyHelper
     }
 */
     
+    public static HashMap<Integer, Float> getSegmentDistancesFromRoot(Cell cell, String group)
+    {
+        // Returns an id:distance hashmap for all the segments in the specified group.
+        // Segment distance is defined from proximal end.
+        logger.logComment("Mapping out the distance to soma for all segments in cell " 
+                + cell.getInstanceName() + " which has " + cell.getAllSegments().size() + " segments");
+        HashMap<Integer, Float> distances= new HashMap<Integer, Float>();
+         for(Segment segment: cell.getSegmentsInGroup(group))
+        {
+            int thisSegId = segment.getSegmentId();
+            Segment parent = segment.getParentSegment();
+            if (parent == null)
+            {
+                distances.put(thisSegId, 0.0f);
+            }
+            else
+            {
+                int parentSegId = parent.getSegmentId();
+                if (distances.containsKey(parentSegId))
+                {
+                    float parentDistanceFromSoma = distances.get(parentSegId);
+                    distances.put(thisSegId, parentDistanceFromSoma + segment.getFractionAlongParent() * parent.getSegmentLength());
+                }
+                else
+                {
+                    distances.put(thisSegId, segment.getDistanceFromSoma());
+                }
+            }
+        }
+        
+        return distances;
+    }
+    
     public static float getLengthFromRoot(Cell cell, SegmentLocation location)
     {
         Segment seg = cell.getSegmentWithId(location.getSegmentId());

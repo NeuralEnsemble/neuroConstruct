@@ -28,6 +28,7 @@ package ucl.physiol.neuroconstruct.cell.utils;
 
 import ucl.physiol.neuroconstruct.cell.*;
 import java.util.Vector;
+import java.util.HashMap;
 import javax.vecmath.Point3f;
 import org.junit.After;
 import org.junit.Before;
@@ -152,6 +153,16 @@ public class CellTopologyHelperTest {
         assertEquals(CellTopologyHelper.getMaxLengthFromRoot(cell, Section.DENDRITIC_GROUP), 100, 0);
         assertEquals(CellTopologyHelper.getMaxLengthFromRoot(cell, Section.AXONAL_GROUP), 110, 0);
         assertEquals(CellTopologyHelper.getMaxLengthFromRoot(cell, Section.ALL), 110, 0);
+        
+        HashMap<Integer, Float> expectedDistancesAll = new HashMap<Integer, Float>();
+        expectedDistancesAll.put(0, 0f);
+        expectedDistancesAll.put(1, 0f);
+        expectedDistancesAll.put(2, 10f);
+        assertEquals(CellTopologyHelper.getSegmentDistancesFromRoot(cell, Section.ALL), expectedDistancesAll);
+        
+        HashMap<Integer, Float> expectedDistancesDend = new HashMap<Integer, Float>();
+        expectedDistancesDend.put(1, 0f);
+        assertEquals(CellTopologyHelper.getSegmentDistancesFromRoot(cell, Section.DENDRITIC_GROUP), expectedDistancesDend);
 
         SegmentLocation sl = new SegmentLocation(cell.getOnlyDendriticSegments().firstElement().getSegmentId(), 0.5f);
 
