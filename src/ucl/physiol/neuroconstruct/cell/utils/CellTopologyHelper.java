@@ -1731,24 +1731,24 @@ public class CellTopologyHelper
     }
 */
     
-    public static HashMap<Integer, Float> getSegmentDistancesFromRoot(Cell cell, String group)
+    public static HashMap<Integer, Float> getSegmentDistancesFromSoma(Cell cell, String group)
     {
         // Returns an id:distance hashmap for all the segments in the specified group.
         // Segment distance is defined from proximal end.
-        logger.logComment("Mapping out the distance to soma for all segments in cell " 
+        logger.logComment("Mapping out the distance from soma for all segments in cell " 
                 + cell.getInstanceName() + " which has " + cell.getAllSegments().size() + " segments");
         HashMap<Integer, Float> distances= new HashMap<Integer, Float>();
-         for(Segment segment: cell.getSegmentsInGroup(group))
+        for(Segment segment: cell.getSegmentsInGroup(group))
         {
             int thisSegId = segment.getSegmentId();
             Segment parent = segment.getParentSegment();
-            if (parent == null)
+            if (segment.isSomaSegment() || parent.isSomaSegment())
             {
                 distances.put(thisSegId, 0.0f);
             }
             else
             {
-                int parentSegId = parent.getSegmentId();
+                int parentSegId = parent.getSegmentId();      
                 if (distances.containsKey(parentSegId))
                 {
                     float parentDistanceFromSoma = distances.get(parentSegId);
@@ -1763,6 +1763,42 @@ public class CellTopologyHelper
         
         return distances;
     }
+    
+    
+    public static HashMap<Integer, Float> getSegmentDistancesFromRoot(Cell cell, String group)
+    {
+        // Returns an id:distance hashmap for all the segments in the specified group.
+        // Segment distance is defined from proximal end.
+        logger.logComment("Mapping out the distance from root for all segments in cell " 
+                + cell.getInstanceName() + " which has " + cell.getAllSegments().size() + " segments");
+        HashMap<Integer, Float> distances= new HashMap<Integer, Float>();
+        for(Segment segment: cell.getSegmentsInGroup(group))
+        {
+            int thisSegId = segment.getSegmentId();
+            Segment parent = segment.getParentSegment();
+            if (parent == null)
+            {
+                distances.put(thisSegId, 0.0f);
+            }
+            else
+            {
+                int parentSegId = parent.getSegmentId();
+                if (distances.containsKey(parentSegId))
+                {
+                    float parentDistanceFromRoot = distances.get(parentSegId);
+                    distances.put(thisSegId, parentDistanceFromRoot + segment.getFractionAlongParent() * parent.getSegmentLength());
+                }
+                else
+                {
+                    SegmentLocation loc = new SegmentLocation(thisSegId, 0.0f);
+                    distances.put(thisSegId, getLengthFromRoot(cell, loc));
+                }
+            }
+        }
+        
+        return distances;
+    }
+    
     
     public static float getLengthFromRoot(Cell cell, SegmentLocation location)
     {

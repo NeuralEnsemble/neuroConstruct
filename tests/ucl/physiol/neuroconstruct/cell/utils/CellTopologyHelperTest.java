@@ -91,11 +91,20 @@ public class CellTopologyHelperTest {
         
         Segment somaSeg = cell.addFirstSomaSegment(2, 3, "SomaSeg", new Point3f(0,0,0), new Point3f(10,0,0), sec1);
         
-        Segment dendSeg = cell.addDendriticSegment(2, "DendSeg", new Point3f(0,100,0), somaSeg, 0, "BasalDends", true);
+        Segment dendSeg = cell.addDendriticSegment(2, "DendSeg", new Point3f(0,70,0), somaSeg, 0, "BasalDends", true);
         dendSeg.getSection().addToGroup(testGroup);
+        
+        Segment dendSeg2 = cell.addDendriticSegment(2, "DendSeg2", new Point3f(0,70,20), dendSeg, 1, "BasalDends", true);
+        dendSeg2.getSection().addToGroup(testGroup);
         
         Segment axSeg = cell.addAxonalSegment(2, "AxonSeg", new Point3f(10,-100,0), somaSeg, 1f, "InitialSeg");
         axSeg.getSection().addToGroup(testGroup);
+        
+        Segment axSeg2 = cell.addAxonalSegment(2, "AxonSeg2", new Point3f(10,-100,30), axSeg, 1f, "InitialSeg");
+        axSeg2.getSection().addToGroup(testGroup);
+        
+        Segment axSeg3 = cell.addAxonalSegment(2, "AxonSeg3", new Point3f(10,-100,-15), axSeg, 1f, "InitialSeg");
+        axSeg3.getSection().addToGroup(testGroup);
         
         cell.associateGroupWithSpecAxRes("all", 111);
         cell.associateGroupWithSpecCap("all", 222);
@@ -150,23 +159,39 @@ public class CellTopologyHelperTest {
         Cell cell = getDetailedCell();
 
         assertEquals(CellTopologyHelper.getMaxLengthFromRoot(cell, Section.SOMA_GROUP), 10, 0);
-        assertEquals(CellTopologyHelper.getMaxLengthFromRoot(cell, Section.DENDRITIC_GROUP), 100, 0);
-        assertEquals(CellTopologyHelper.getMaxLengthFromRoot(cell, Section.AXONAL_GROUP), 110, 0);
-        assertEquals(CellTopologyHelper.getMaxLengthFromRoot(cell, Section.ALL), 110, 0);
+        assertEquals(CellTopologyHelper.getMaxLengthFromRoot(cell, Section.DENDRITIC_GROUP), 90, 0);
+        assertEquals(CellTopologyHelper.getMaxLengthFromRoot(cell, Section.AXONAL_GROUP), 140, 0);
+        assertEquals(CellTopologyHelper.getMaxLengthFromRoot(cell, Section.ALL), 140, 0);
         
-        HashMap<Integer, Float> expectedDistancesAll = new HashMap<Integer, Float>();
-        expectedDistancesAll.put(0, 0f);
-        expectedDistancesAll.put(1, 0f);
-        expectedDistancesAll.put(2, 10f);
-        assertEquals(CellTopologyHelper.getSegmentDistancesFromRoot(cell, Section.ALL), expectedDistancesAll);
-        
-        HashMap<Integer, Float> expectedDistancesDend = new HashMap<Integer, Float>();
-        expectedDistancesDend.put(1, 0f);
-        assertEquals(CellTopologyHelper.getSegmentDistancesFromRoot(cell, Section.DENDRITIC_GROUP), expectedDistancesDend);
+        HashMap<Integer, Float> expectedDistancesRootAll = new HashMap<Integer, Float>();
+        expectedDistancesRootAll.put(0, 0f);
+        expectedDistancesRootAll.put(1, 0f);
+        expectedDistancesRootAll.put(2, 70f);
+        expectedDistancesRootAll.put(3, 10f);
+        expectedDistancesRootAll.put(4, 110f);
+        expectedDistancesRootAll.put(5, 110f);
+        assertEquals(expectedDistancesRootAll, CellTopologyHelper.getSegmentDistancesFromRoot(cell, Section.ALL));      
+        HashMap<Integer, Float> expectedDistancesRootDend = new HashMap<Integer, Float>();
+        expectedDistancesRootDend.put(1, 0f);
+        expectedDistancesRootDend.put(2, 70f);
+        assertEquals(expectedDistancesRootDend, CellTopologyHelper.getSegmentDistancesFromRoot(cell, Section.DENDRITIC_GROUP));
 
+        HashMap<Integer, Float> expectedDistancesSomaAll = new HashMap<Integer, Float>();
+        expectedDistancesSomaAll.put(0, 0f);
+        expectedDistancesSomaAll.put(1, 0f);
+        expectedDistancesSomaAll.put(2, 70f);
+        expectedDistancesSomaAll.put(3, 0f);
+        expectedDistancesSomaAll.put(4, 100f);
+        expectedDistancesSomaAll.put(5, 100f);
+        assertEquals(expectedDistancesSomaAll, CellTopologyHelper.getSegmentDistancesFromSoma(cell, Section.ALL));      
+        HashMap<Integer, Float> expectedDistancesSomaDend = new HashMap<Integer, Float>();
+        expectedDistancesSomaDend.put(1, 0f);
+        expectedDistancesSomaDend.put(2, 70f);
+        assertEquals(expectedDistancesSomaDend, CellTopologyHelper.getSegmentDistancesFromSoma(cell, Section.DENDRITIC_GROUP));
+     
         SegmentLocation sl = new SegmentLocation(cell.getOnlyDendriticSegments().firstElement().getSegmentId(), 0.5f);
 
-        assertEquals(CellTopologyHelper.getLengthFromRoot(cell, sl), 50, 0);
+        assertEquals(CellTopologyHelper.getLengthFromRoot(cell, sl), 35, 0);
 
         SegmentLocation sl2 = new SegmentLocation(cell.getOnlyAxonalSegments().firstElement().getSegmentId(), 0.5f);
 
