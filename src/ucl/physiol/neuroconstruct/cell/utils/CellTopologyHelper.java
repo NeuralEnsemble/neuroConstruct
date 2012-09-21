@@ -1764,7 +1764,24 @@ public class CellTopologyHelper
         return distances;
     }
     
-    
+    public static HashMap<Integer, Float> getDistancesFromAncestorSegments(Cell cell, Integer segmentId)
+    {
+            HashMap<Integer, Float> distances = new HashMap<Integer, Float>();
+            Segment segment = cell.getSegmentWithId(segmentId);
+            Segment parent = segment.getParentSegment();
+            distances.put(parent.getSegmentId(), 0.0f);
+            segment = parent;
+            parent = segment.getParentSegment();
+            while (parent != null)
+            {
+                distances.put(parent.getSegmentId(),
+                              distances.get(segment.getSegmentId()) + segment.getSegmentLength());
+                segment = parent;
+                parent = segment.getParentSegment();
+            }         
+            return distances;
+    }   
+        
     public static HashMap<Integer, Float> getSegmentDistancesFromRoot(Cell cell, String group)
     {
         // Returns an id:distance hashmap for all the segments in the specified group.

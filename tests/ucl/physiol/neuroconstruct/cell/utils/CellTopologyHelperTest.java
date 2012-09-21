@@ -87,6 +87,17 @@ public class CellTopologyHelperTest {
         
         sec1.addToGroup(Section.SOMA_GROUP);
         
+        /*
+         * cell topology:            dendrite
+         *              o      soma o-----o
+         *              |           |     |
+         *              o-----------o     o 
+         *              |   axon      
+         *              |
+         *              o
+         */
+        
+        
         
         
         Segment somaSeg = cell.addFirstSomaSegment(2, 3, "SomaSeg", new Point3f(0,0,0), new Point3f(10,0,0), sec1);
@@ -196,7 +207,24 @@ public class CellTopologyHelperTest {
         SegmentLocation sl2 = new SegmentLocation(cell.getOnlyAxonalSegments().firstElement().getSegmentId(), 0.5f);
 
         assertEquals(CellTopologyHelper.getLengthFromRoot(cell, sl2), 60, 0);
-
+        
+    }
+    
+    @Test
+    public void testGetDistancesFromAncestor() throws EquationException
+    {
+        System.out.println("--- testGetDistancesFromAncestor ---");
+        Cell cell = getDetailedCell();
+        HashMap <Integer, Float> expectedDistancesFromSeg4 = new HashMap<Integer, Float>();
+        expectedDistancesFromSeg4.put(3, 0.0f);
+        expectedDistancesFromSeg4.put(0, 100.0f);
+        assertEquals(expectedDistancesFromSeg4, CellTopologyHelper.getDistancesFromAncestorSegments(cell, 4));
+        
+        HashMap <Integer, Float> expectedDistancesFromSeg5 = new HashMap<Integer, Float>();
+        expectedDistancesFromSeg5.put(3, 0.0f);
+        expectedDistancesFromSeg5.put(0, 100.0f);
+        assertEquals(expectedDistancesFromSeg5, CellTopologyHelper.getDistancesFromAncestorSegments(cell, 5));
+        
     }
     
     
