@@ -62,6 +62,8 @@ standardGHProject 'MorrisLecarModel' 'invertebrate/barnacle'
 
 standardGHProject 'CA1PyramidalCell' 'hippocampus/CA1_pyramidal_neuron'
 
+standardGHProject 'StriatalSpinyProjectionNeuron' 'basal_ganglia/striatal_spiny_neuron'
+
 standardGHProject 'SolinasEtAl-GolgiCell' 'cerebellum/cerebellar_golgi_cell'
 
 standardGHProject 'CerebellarNucleusNeuron' 'cerebellum/cerebellar_nucleus_cell'
