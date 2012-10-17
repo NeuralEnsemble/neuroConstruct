@@ -55,6 +55,8 @@ standardGHProject()
 }
 
 standardGHProject 'CElegansNeuroML' 'invertebrate/celegans' 'openworm'
+standardGHProject 'muscle_model' 'invertebrate/celegans' 'openworm'
+
 
 standardGHProject 'PyloricNetwork' 'invertebrate/lobster'
 
