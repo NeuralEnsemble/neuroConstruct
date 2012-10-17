@@ -29,6 +29,7 @@ package ucl.physiol.neuroconstruct.hpc.mpi;
 import java.io.File;
 import java.util.*;
 
+import ucl.physiol.neuroconstruct.project.ProjectStructure;
 import ucl.physiol.neuroconstruct.utils.ClassLogger;
 
 
@@ -1020,9 +1021,9 @@ public class MpiSettings
 
     protected static String getMPIVersion()
     {
-        File mpichV1flag = new File("MPICH1");
-        File mpichV2flag = new File("MPICH2");
-        File openmpiV2flag = new File("MPI2");
+        File mpichV1flag = new File(ProjectStructure.getnCHome(), "MPICH1");
+        File mpichV2flag = new File(ProjectStructure.getnCHome(), "MPICH2");
+        File openmpiV2flag = new File(ProjectStructure.getnCHome(), "MPI2");
         
         if (mpichV1flag.exists()) return MPICH_V1;
         if (mpichV2flag.exists()) return MPICH_V2;
