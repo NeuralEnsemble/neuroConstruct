@@ -25,18 +25,23 @@
  */
 package ucl.physiol.neuroconstruct.project;
 
+import java.util.logging.Level;
+import ucl.physiol.neuroconstruct.cell.converters.MorphologyException;
 import ucl.physiol.neuroconstruct.utils.*;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Vector;
 import ucl.physiol.neuroconstruct.cell.*;
+import ucl.physiol.neuroconstruct.cell.converters.MorphMLConverter;
 import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import ucl.physiol.neuroconstruct.mechanisms.CellMechanism;
 import ucl.physiol.neuroconstruct.mechanisms.ChannelMLCellMechanism;
 import ucl.physiol.neuroconstruct.mechanisms.FileBasedMembraneMechanism;
 import ucl.physiol.neuroconstruct.mechanisms.MechanismImplementation;
 import ucl.physiol.neuroconstruct.mechanisms.XMLMechanismException;
+import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.NeuroMLLevel;
+import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.NeuroMLVersion;
 import ucl.physiol.neuroconstruct.project.packing.CellPackingAdapter;
 import ucl.physiol.neuroconstruct.simulation.StimulationSettings;
 import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLDocument;
@@ -64,6 +69,10 @@ public class Expand {
     public static final String tableStyle = "style='list' width='700' frame='box' rules='all' ";
     public static final String tableStyleNoBorder = "style='list' width='700' ";
     public static final String headerStyle = "style='font-weight:bold; background-color:black; color:white'";
+
+    public static final String preXML = "<table border='0'><tr><td style='width:90%; background-color:white'>";
+    public static final String postXML = "</td></tr></table>";
+    
 
     public Expand() {
     }
@@ -284,11 +293,33 @@ public class Expand {
             
             mainPage.addToHead(ccsInfo);
 
-            mainPage.addTaggedElement("" + project.getProjectName(), "h2");
+            //mainPage.addTaggedElement("" + project.getProjectName(), "h2");
             
 
+            mainPage.addLinkedText("<b>"+project.getProjectName()+"</b>", getItemPage(mainPageTitle));
 
+            if (!isProjSummaryPage)
+            {
+                mainPage.addRawHtml(" / ");
+                mainPage.addLinkedText("Sim Config: "+title, getItemPage(title));
+            }
+
+            
+            if (isProjSummaryPage)
+                mainPage.addTaggedElement("<img src=\"images/large.png\" width=\"600\" />", "p");
+
+            mainPage.addBreak();
+            
             String desc = project.getProjectDescription();
+
+            if (isProjSummaryPage)
+            {
+                mainPage.addBreak();
+                mainPage.addTaggedElement("Description", "h3");
+
+                mainPage.addRawHtml(handleWhitespaces(GeneralUtils.parseForHyperlinks(desc)));
+                mainPage.addBreak();
+            }
 
             ArrayList<Cell> cells = new ArrayList<Cell>();
 
@@ -299,8 +330,6 @@ public class Expand {
             ArrayList<String> plots = new ArrayList<String>();
 
             if (isProjSummaryPage) {
-
-                mainPage.addTaggedElement("<img src=\"images/large.png\" width=\"600\" />", "p");
 
                 cells.addAll(project.cellManager.getAllCells());
 
@@ -314,7 +343,9 @@ public class Expand {
                 inputs.addAll(project.elecInputInfo.getAllStimRefs());
 
                 plots.addAll(project.simPlotInfo.getAllSimPlotRefs());
-            } else {
+            } 
+            else
+            {
                 SimConfig sc = project.simConfigInfo.getSimConfig(title);
                 desc = sc.getDescription();
                 //cells.removeAllElements();
@@ -352,26 +383,19 @@ public class Expand {
             plots = (ArrayList<String>)GeneralUtils.reorderAlphabetically(plots, true);
 
 
-            //mainPage.addTaggedElement("Simulation Configurations", "h3");
+            if (isProjSummaryPage) {
+                mainPage.addTaggedElement("Simulation Configurations", "h3");
 
-            if (!isProjSummaryPage)
-            {
-                mainPage.addTaggedElement(mainPage.getLinkedText("Project Summary", getItemPage(mainPageTitle)), "b");
-                /*cellPage.addTaggedElement(mainPage.getLinkedText("Project Summary", getItemPage(mainPageTitle)), "b");
-                chanPage.addTaggedElement(mainPage.getLinkedText("Project Summary", getItemPage(mainPageTitle)), "b");
-                xmlPage.addTaggedElement(mainPage.getLinkedText("Project Summary", getItemPage(mainPageTitle)), "b");*/
-            }
-
-            for (String sc : project.simConfigInfo.getAllSimConfigNames()) {
-                String scFile = getItemPage(sc);
-                mainPage.addTaggedElement(mainPage.getLinkedText(sc, scFile), "b");
-                /*cellPage.addTaggedElement(mainPage.getLinkedText(sc, scFile), "b");
-                chanPage.addTaggedElement(mainPage.getLinkedText(sc, scFile), "b");
-                xmlPage.addTaggedElement(mainPage.getLinkedText(sc, scFile), "b");*/
-                if (isProjSummaryPage) {
+                for (String sc : project.simConfigInfo.getAllSimConfigNames()) {
+                    String scFile = getItemPage(sc);
+                    mainPage.addTaggedElement(mainPage.getLinkedText(sc, scFile), "b");
+                    /*cellPage.addTaggedElement(mainPage.getLinkedText(sc, scFile), "b");
+                    chanPage.addTaggedElement(mainPage.getLinkedText(sc, scFile), "b");
+                    xmlPage.addTaggedElement(mainPage.getLinkedText(sc, scFile), "b");*/
                     String scDesc = project.simConfigInfo.getSimConfig(sc).getDescription();
                     mainPage.addRawHtml("<i>"+handleWhitespaces(scDesc)+"</i>");
                     mainPage.addBreak();
+
                 }
             }
 
@@ -390,10 +414,10 @@ public class Expand {
                 }
                 else
                 {
-                    if (!isProjSummaryPage)
-                        mainPage.addTaggedElement("Connectivity Matrix", "h3");
+                    //if (!isProjSummaryPage)
+                    //    mainPage.addTaggedElement("Connectivity Matrix", "h3");
 
-                    String connTitle = "Connectivity in " + title;
+                    String connTitle = "Connectivity matrix of: " + title;
                     if (isProjSummaryPage) {
                         connTitle = "Connectivity in " + SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
                     }
@@ -489,43 +513,103 @@ public class Expand {
             int width = 700;
             int width1 = 140;
 
+            if (isProjSummaryPage)
+            {
 
-            mainPage.addRawHtml("<table "+tableStyle+">");
+                mainPage.addTaggedElement("Cells in this project", "h3");
+                for (Cell cell : cells) {
+                    String cellPageLoc = getCellTypePage(cell.getInstanceName());
+                    String ref = isProjSummaryPage ? cellPageLoc : "#"+cell.getInstanceName();
+                    String link = "<a href = \"" + ref + "\"><b>" + cell.getInstanceName() + "</b></a>";
 
-            mainPage.addRawHtml("<tr><td "+headerStyle+"  colspan='2'><b>A: Model Summary</b></td></tr>");
-            mainPage.addRawHtml("<tr><td width='" + width1 + "'><b>Description</b></td><td>" + handleWhitespaces(GeneralUtils.parseForHyperlinks(desc)) + "</td></tr>");
-            mainPage.addRawHtml("<tr><td><b>Populations</b></td><td>");
-
-            for (String cg : cellGroups) {
-                String cellType = project.cellGroupsInfo.getCellType(cg);
-                String cellPageLoc = getCellTypePage(cellType);
-                String ref = isProjSummaryPage ? cellPageLoc : "#"+cg;
-                String link = "<a href=\"" + ref + "\">" + cg + "</a>";
-
-                if (!cg.equals(cellGroups.get(cellGroups.size() - 1))) {
-                    link = link +", ";
+                    if (!cell.equals(cells.get(cells.size() - 1))) {
+                        link = link +", ";
+                    }
+                    mainPage.addRawHtml(link);
                 }
-                mainPage.addRawHtml(link);
-            }
 
-            mainPage.addRawHtml("</td></tr>");
-            mainPage.addRawHtml("<tr><td><b>Topology</b></td><td>Network of neurons positioned & connected in 3D space</td></tr>");
+                mainPage.addBreak();
+                mainPage.addBreak();
 
-            mainPage.addRawHtml("<tr><td><b>Connectivity</b></td><td>");
-            if (netConns.isEmpty()) {
-                mainPage.addRawHtml("No network connections in this Simulation Configuration");
-            }
+                mainPage.addTaggedElement("Ion channels in this project", "h3");
+                for (String cmName : cellMechs) {
 
-            for (String nc : netConns) {
-                mainPage.addRawHtml("<a href=\"#" + nc + "\">" + nc + "</a>");
-                if (!nc.equals(netConns.get(netConns.size() - 1))) {
-                    mainPage.addRawHtml(", ");
+                    CellMechanism cm = project.cellMechanismInfo.getCellMechanism(cmName);
+
+                    String cmPageLoc = getCellMechPage(cm.getInstanceName());
+                    String link = "<b><a href = \"" + cmPageLoc + "\">" + cm.getInstanceName() + "</a></b>";
+
+                    if (!cmName.equals(cellMechs.get(cellMechs.size() - 1))) {
+                        link = link +", ";
+                    }
+                    if (cm.isChannelMechanism())
+                        mainPage.addRawHtml(link);
                 }
+
+                mainPage.addBreak();
+                mainPage.addBreak();
+
+                mainPage.addTaggedElement("Synapses in this project", "h3");
+                for (String cmName : cellMechs) {
+
+                    CellMechanism cm = project.cellMechanismInfo.getCellMechanism(cmName);
+
+
+                    String cmPageLoc = getCellMechPage(cm.getInstanceName());
+                    String link = "<b><a href = \"" + cmPageLoc + "\">" + cm.getInstanceName() + "</a></b>";
+
+                    if (!cmName.equals(cellMechs.get(cellMechs.size() - 1))) {
+                        link = link +", ";
+                    }
+                    if (cm.isGapJunctionMechanism() || cm.isSynapticMechanism())
+                        mainPage.addRawHtml(link);
+                }
+
+                mainPage.addBreak();
+                mainPage.addBreak();
             }
-            mainPage.addRawHtml("</td></tr>");
 
 
-            mainPage.addRawHtml("<tr><td><b>Neuron models</b></td><td>");
+            if (!isProjSummaryPage)
+            {
+
+                mainPage.addRawHtml("<table "+tableStyle+">");
+
+                mainPage.addRawHtml("<tr><td "+headerStyle+"  colspan='2'><b>A: Model Summary</b></td></tr>");
+                mainPage.addRawHtml("<tr><td width='" + width1 + "'><b>Description</b></td><td>" + handleWhitespaces(GeneralUtils.parseForHyperlinks(desc)) + "</td></tr>");
+                mainPage.addRawHtml("<tr><td><b>Populations</b></td><td>");
+
+                for (String cg : cellGroups) {
+                    String cellType = project.cellGroupsInfo.getCellType(cg);
+                    String cellPageLoc = getCellTypePage(cellType);
+                    String ref = isProjSummaryPage ? cellPageLoc : "#"+cg;
+                    String link = "<a href=\"" + ref + "\">" + cg + "</a>";
+
+                    if (!cg.equals(cellGroups.get(cellGroups.size() - 1))) {
+                        link = link +", ";
+                    }
+                    mainPage.addRawHtml(link);
+                }
+
+                mainPage.addRawHtml("</td></tr>");
+                mainPage.addRawHtml("<tr><td><b>Topology</b></td><td>Network of neurons positioned & connected in 3D space</td></tr>");
+
+                mainPage.addRawHtml("<tr><td><b>Connectivity</b></td><td>");
+                if (netConns.isEmpty()) {
+                    mainPage.addRawHtml("No network connections in this Simulation Configuration");
+                }
+
+                for (String nc : netConns) {
+                    mainPage.addRawHtml("<a href=\"#" + nc + "\">" + nc + "</a>");
+                    if (!nc.equals(netConns.get(netConns.size() - 1))) {
+                        mainPage.addRawHtml(", ");
+                    }
+                }
+                mainPage.addRawHtml("</td></tr>");
+
+
+                mainPage.addRawHtml("<tr><td><b>Neuron models</b></td><td>");
+            }
             for (Cell cell : cells) {
                 //mainPage.addRawHtml(cell.getInstanceName());
 
@@ -536,15 +620,63 @@ public class Expand {
                 if (!cell.equals(cells.get(cells.size() - 1))) {
                     link = link +", ";
                 }
-                mainPage.addRawHtml(link);
+                if (!isProjSummaryPage)
+                    mainPage.addRawHtml(link);
 
                 SimpleHtmlDoc cellPage = new SimpleHtmlDoc(project.getProjectName() + ": " + title, fontSize);
-                cellPage.addTaggedElement("" + project.getProjectName(), "h2");
+                SimpleHtmlDoc nml1Page = new SimpleHtmlDoc(project.getProjectName() + ": " + title, fontSize);
+                SimpleHtmlDoc nml2Page = new SimpleHtmlDoc(project.getProjectName() + ": " + title, fontSize);
+
+                String nml1PageLoc = getCellTypePage(cell.getInstanceName() + ".morph");
+                File nml1PageFile = new File(fileToSave.getParentFile(), nml1PageLoc);
+
+                String nml2PageLoc = getCellTypePage(cell.getInstanceName() + ".nml");
+                File nml2PageFile = new File(fileToSave.getParentFile(), nml2PageLoc);
+
+                ArrayList<SimpleHtmlDoc> versions = new ArrayList<SimpleHtmlDoc>();
+                versions.add(cellPage);
+                versions.add(nml1Page);
+                versions.add(nml2Page);
+
+                for (SimpleHtmlDoc page: versions){
+
+                    page.addLinkedText("<b>"+project.getProjectName()+"</b>", "../"+getItemPage(mainPageTitle));
+
+                    page.addRawHtml(" / ");
+
+                    page.addLinkedText("Cell: "+ cell.getInstanceName(), "../"+getCellTypePage(cell.getInstanceName()));
+
+                    page.addBreak();
+                    page.addBreak();
+
+                    page.setTitle("Cell: " + cell.getInstanceName());
 
 
-                cellPage.setTitle("Cell: " + cell.getInstanceName());
+                    page.addLinkedText("Summary", "../"+cellPageLoc);
+                    page.addRawHtml(" | ");
+                    page.addLinkedText("NeuroML v1.8.1", "../"+nml1PageLoc);
+                    page.addRawHtml(" | ");
+                    page.addLinkedText("NeuroML v2.0", "../"+nml2PageLoc);
 
-                cellPage.addTaggedElement("Details of cell: "+cell.getInstanceName(), "h3");
+                    String suffix = "";
+                    if (project.projProperties.getPreferredSaveFormat().equals(ProjectStructure.JAVA_OBJ_FORMAT))
+                        suffix = ProjectStructure.getJavaObjFileExtension();
+                    if (project.projProperties.getPreferredSaveFormat().equals(ProjectStructure.JAVA_XML_FORMAT))
+                        suffix = ProjectStructure.getJavaXMLFileExtension();
+                    if (project.projProperties.getPreferredSaveFormat().equals(ProjectStructure.NEUROML1_FORMAT))
+                        suffix = ProjectStructure.getNeuroMLFileExtension();
+
+                    String repoLoc = "../../../projects/"+project.getProjectName()+"/repository/changes/neuroConstruct/morphologies/"+
+                            cell.getInstanceName()+suffix+"?rev=master";
+                    page.addRawHtml(" | ");
+
+                    page.addLinkedText("Source in repository", repoLoc);
+
+                    page.addBreak();
+                    page.addBreak();
+                }
+
+                //cellPage.addTaggedElement("Details of cell: "+cell.getInstanceName(), "h3");
 
                 cellPage.addRawHtml(CellTopologyHelper.printDetails(cell, project, true, true, false, true, true));
 
@@ -553,8 +685,67 @@ public class Expand {
                     cellPage.saveAsFile(cellFile);
                 }
 
+                int maxSeg = 200;
+                try
+                {
+
+                    if (cell.getAllSegments().size() > maxSeg)
+                    {
+                        nml1Page.addRawHtml("Cell: " + cell.getInstanceName()+" has "+cell.getAllSegments().size()+" segments.<br/><br/>"
+                                + "This is too large to display as NeruoML v1.x. <br/><br/>"
+                                + "Please clone the project and/or download neuroConstruct to view the file and visualise the morphology. ");
+                    }
+                    else
+                    {
+                        String nml1 = MorphMLConverter.getCellInNeuroMLFormat(cell, project, NeuroMLLevel.NEUROML_LEVEL_3, NeuroMLVersion.NEUROML_VERSION_1, true);
+                        nml1Page.addBreak();
+                        nml1Page.addRawHtml(preXML);
+                        nml1Page.addRawHtml(nml1);
+                        nml1Page.addRawHtml(postXML);
+                    }
+                }
+                catch (MorphologyException ex) {
+
+                    nml1Page.addTaggedElement("Unable to generate HTML representation of: " + cell.getInstanceName(), "b");
+
+                }
+                try
+                {
+                    if (cell.getAllSegments().size() > maxSeg)
+                    {
+                        nml2Page.addRawHtml("Cell: " + cell.getInstanceName()+" has "+cell.getAllSegments().size()+" segments.<br/><br/>"
+                                + "This is too large to display as NeruoML v2.x. <br/><br/>"
+                                + "Please clone the project and/or download neuroConstruct to view the file and visualise the morphology. ");
+                    }
+                    else
+                    {
+                        String nml2 = MorphMLConverter.getCellInNeuroMLFormat(cell, project, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2, true);
+                        nml2Page.addBreak();
+                        nml2Page.addRawHtml(preXML);
+                        nml2Page.addRawHtml(nml2);
+                        nml2Page.addRawHtml(postXML);
+                    }
+                }
+                catch (MorphologyException ex) {
+
+                    nml2Page.addTaggedElement("Unable to generate HTML representation of: " + cell.getInstanceName()+"\n"+ex.getMessage(), "b");
+                    ex.printStackTrace();
+
+                }
+
+                if (!nml1PageFile.exists()) {
+                    nml1Page.saveAsFile(nml1PageFile);
+                }
+
+                if (!nml2PageFile.exists()) {
+                    nml2Page.saveAsFile(nml2PageFile);
+                }
+
+
+
             }
-            mainPage.addRawHtml("</td></tr>");
+            if (!isProjSummaryPage)
+                mainPage.addRawHtml("</td></tr>");
 
 
             StringBuffer cmInfo = new StringBuffer();
@@ -569,7 +760,7 @@ public class Expand {
 
                 if (cm==null)
                     logger.logError("Problem with "+cmName+" in project "+ project.getProjectName(), true);
-                
+
                 if (cm.isSynapticMechanism() || cm.isGapJunctionMechanism()) {
                     mechInfo = synInfo;
                 }
@@ -595,19 +786,40 @@ public class Expand {
                 String nml2PageLoc = getCellMechPage(cm.getInstanceName() + ".nml");
                 File nml2PageFile = new File(fileToSave.getParentFile(), nml2PageLoc);
 
+
                 ArrayList<SimpleHtmlDoc> versions = new ArrayList<SimpleHtmlDoc>();
                 versions.add(summaryPage);
                 versions.add(channelmlPage);
                 versions.add(nml2Page);
 
                 for (SimpleHtmlDoc page: versions){
-                    page.addTaggedElement("" + project.getProjectName(), "h2");
+                    //page.addTaggedElement("" + project.getProjectName(), "h2");
                     page.setTitle(cm.getMechanismType()+": " + cm.getInstanceName());
-                    page.addTaggedElement("Details of "+cm.getMechanismType()+": "+cm.getInstanceName(), "h3");
+                    //page.addTaggedElement("Details of "+cm.getMechanismType()+": "+cm.getInstanceName(), "h3");
+
+                    page.addLinkedText("<b>"+project.getProjectName()+"</b>", "../"+getItemPage(mainPageTitle));
+
+                    page.addRawHtml(" / ");
+
+                    page.addLinkedText(""+ cm.getInstanceName(), "../"+getCellMechPage(cm.getInstanceName()));
+
+                    page.addBreak();
+                    page.addBreak();
 
                     page.addLinkedText("Summary", "../"+cmPageLoc);
-                    page.addLinkedText("ChannelML", "../"+cmXmlPageLoc);
-                    page.addLinkedText("NeuroML v2.0", "../"+nml2PageLoc);
+                    if (cm instanceof ChannelMLCellMechanism) {
+                        page.addRawHtml(" | ");
+                        page.addLinkedText("ChannelML", "../"+cmXmlPageLoc);
+                        page.addRawHtml(" | ");
+                        page.addLinkedText("NeuroML v2.0", "../"+nml2PageLoc);
+
+                        ChannelMLCellMechanism cmlCm = (ChannelMLCellMechanism) cm;
+                        String repoLoc = "../../../projects/"+project.getProjectName()+"/repository/changes/neuroConstruct/cellMechanisms/"+
+                                cm.getInstanceName()+"/"+cmlCm.getXMLFile()+"?rev=master";
+                        page.addRawHtml(" | ");
+
+                        page.addLinkedText("Source in repository", repoLoc);
+                    }
                     page.addBreak();
                     page.addBreak();
                 }
@@ -630,6 +842,8 @@ public class Expand {
                         channelmlPage.addTaggedElement("Cell Mechanism: " + cm.getInstanceName() + " in ChannelML", "h3");
                         channelmlPage.addBreak();
 
+                        channelmlPage.addRawHtml(preXML);
+
                         try {
                             String cmlString = cmlCm.getXMLDoc().getXMLString("", true);
                             channelmlPage.addRawHtml(cmlString);
@@ -637,8 +851,12 @@ public class Expand {
                             channelmlPage.addTaggedElement("Unable to generate ChannelML representation of: " + cm.getInstanceName(), "b");
                         }
 
+                        channelmlPage.addRawHtml(postXML);
+
                         nml2Page.setTitle("Cell Mechanism: " + cm.getInstanceName() + " in NeuroML v2.0");
                         nml2Page.addTaggedElement("Cell Mechanism: " + cm.getInstanceName() + " in NeuroML v2.0", "h3");
+
+                        nml2Page.addRawHtml(preXML);
 
                         try {
 
@@ -649,10 +867,12 @@ public class Expand {
 
 
                             nml2Page.addRawHtml(nml2Doc.getXMLString("", true));
-                            
+
                         } catch (Exception e) {
                             nml2Page.addTaggedElement("Unable to generate NeuroML v2.0 representation of: " + cm.getInstanceName(), "b");
                         }
+
+                        nml2Page.addRawHtml(postXML);
 
                         channelmlPage.saveAsFile(cmXmlPageFile);
                         summaryPage.saveAsFile(cmPageFile);
@@ -665,7 +885,7 @@ public class Expand {
                     FileBasedMembraneMechanism fm = (FileBasedMembraneMechanism)cm;
                     for (MechanismImplementation mi: fm.getMechanismImpls())
                     {
-                        summaryPage.addTaggedElement("Implementation of channel "+cm.getInstanceName()+" in "+mi.getSimulationEnvironment(), "h3");
+                        summaryPage.addTaggedElement("Implementation of channel "+cm.getInstanceName()+" in <b>"+mi.getSimulationEnvironment()+"</b>", "h3");
 
                         String contents = GeneralUtils.readShortFile(mi.getImplementingFileObject(project, cmName));
 
@@ -677,8 +897,6 @@ public class Expand {
                     //...
                 }
 
-
-
             }
             String cmString = cmInfo.toString();
             if (cmString.endsWith(", "))
@@ -687,28 +905,29 @@ public class Expand {
             if (synString.endsWith(", "))
                 synString = synString.substring(0, synString.length()-3);
 
+            if (!isProjSummaryPage)
+            {
+                mainPage.addRawHtml("<tr><td><b>Channel models</b></td><td>" + cmString + "</td></tr>");
+                if (synInfo.length() == 0) {
+                    synInfo.append("No synapses present in this Simulation Configuration");
+                }
+                mainPage.addRawHtml("<tr><td><b>Synapse models</b></td><td>" + synString + "</td></tr>");
 
-            mainPage.addRawHtml("<tr><td><b>Channel models</b></td><td>" + cmString + "</td></tr>");
-            if (synInfo.length() == 0) {
-                synInfo.append("No synapses present in this Simulation Configuration");
+
+                mainPage.addRawHtml("<tr><td><b>Inputs</b></td><td>");
+
+                for (String in : inputs) {
+                    String cg = project.elecInputInfo.getStim(in).getCellGroup();
+
+                    mainPage.addRawHtml(" <a href=\"#" + in + "\">" + in + "</a> (to <a href=\"#" + cg + "\">" + cg + "</a>)");
+                }
+                mainPage.addRawHtml("</td></tr>");
+
+                mainPage.addRawHtml("</table>");
+
+
+                mainPage.addRawHtml("<p>&nbsp;</p>");
             }
-            mainPage.addRawHtml("<tr><td><b>Synapse models</b></td><td>" + synString + "</td></tr>");
-
-
-            mainPage.addRawHtml("<tr><td><b>Inputs</b></td><td>");
-
-            for (String in : inputs) {
-                String cg = project.elecInputInfo.getStim(in).getCellGroup();
-
-                mainPage.addRawHtml(" <a href=\"#" + in + "\">" + in + "</a> (to <a href=\"#" + cg + "\">" + cg + "</a>)");
-            }
-            mainPage.addRawHtml("</td></tr>");
-
-            mainPage.addRawHtml("</table>");
-
-
-
-            mainPage.addRawHtml("<p>&nbsp;</p>");
 
             if (!isProjSummaryPage) {
 
@@ -862,6 +1081,7 @@ public class Expand {
 
 
                 mainPage.addRawHtml("</table>");
+                
             }
 
 
@@ -885,9 +1105,9 @@ public class Expand {
         //paths.add("examples/Ex6-Cerebellum/Ex6-Cerebellum.neuro.xml");
         //paths.add("nCmodels/Thalamocortical/Thalamocortical.ncx");
 
-        paths.add("osb/models/cerebellum/cerebellar_nucleus_cell/CerebellarNucleusNeuron/neuroConstruct/CerebellarNucleusNeuron.ncx");
-        paths.add("osb/models/cerebellum/networks/GranCellLayer/neuroConstruct/GranCellLayer.ncx");
-            paths.add("/home/padraig/CElegansNeuroML/CElegans/CElegans.ncx");
+        paths.add("osb/cerebellum/cerebellar_nucleus_cell/CerebellarNucleusNeuron/neuroConstruct/CerebellarNucleusNeuron.ncx");
+        paths.add("osb/cerebellum/networks/GranCellLayer/neuroConstruct/GranCellLayer.ncx");
+            paths.add("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
 
         //paths.add("models/LarkumEtAl2009/LarkumEtAl2009.ncx");
 
@@ -896,18 +1116,18 @@ public class Expand {
         all = true;
         if (all)
         {
+            paths.add("osb/cerebellum/cerebellar_granule_cell/GranCellSolinasEtAl10/neuroConstruct/GranCellSolinasEtAl10.ncx");
+            paths.add("osb/invertebrate/celegans/CElegansNeuroML/CElegans/CElegans.ncx");
 
-            paths.add("osb/models/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx");
-            paths.add("osb/models/cerebral_cortex/neocortical_pyramidal_neuron/RothmanEtAl_KoleEtAl_PyrCell/neuroConstruct/RothmanEtAl_KoleEtAl_PyrCell.ncx");
-            paths.add("osb/models/cerebellum/cerebellar_purkinje_cell/PurkinjeCell/neuroConstruct/PurkinjeCell.ncx");
-            paths.add("osb/models/cerebellum/networks/VervaekeEtAl-GolgiCellNetwork/neuroConstruct/VervaekeEtAl-GolgiCellNetwork.ncx");
-            paths.add("osb/models/cerebral_cortex/networks/Thalamocortical/neuroConstruct/Thalamocortical.ncx");
+            paths.add("osb/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx");
+            paths.add("osb/cerebral_cortex/neocortical_pyramidal_neuron/RothmanEtAl_KoleEtAl_PyrCell/neuroConstruct/RothmanEtAl_KoleEtAl_PyrCell.ncx");
+            paths.add("osb/cerebellum/cerebellar_purkinje_cell/PurkinjeCell/neuroConstruct/PurkinjeCell.ncx");
+            paths.add("osb/cerebellum/networks/VervaekeEtAl-GolgiCellNetwork/neuroConstruct/VervaekeEtAl-GolgiCellNetwork.ncx");
+            paths.add("osb/cerebral_cortex/networks/Thalamocortical/neuroConstruct/Thalamocortical.ncx");
 
-            paths.add("osb/models/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
-            paths.add("osb/models/cerebellum/cerebellar_golgi_cell/SolinasEtAl_GolgiCell/neuroConstruct/SolinasEtAl_GolgiCell.ncx");
-            paths.add("osb/models/cerebellum/cerebellar_granule_cell/GranuleCellVSCS/neuroConstruct/GranuleCellVSCS.ncx");
-            paths.add("osb/models/cerebellum/cerebellar_granule_cell/GranCellSolinasEtAl10/neuroConstruct/GranCellSolinasEtAl10.ncx");
-            paths.add("osb/models/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
+            paths.add("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
+            paths.add("osb/cerebellum/cerebellar_golgi_cell/SolinasEtAl-GolgiCell/neuroConstruct/SolinasEtAl_GolgiCell.ncx");
+            paths.add("osb/cerebellum/cerebellar_granule_cell/GranuleCellVSCS/neuroConstruct/GranuleCellVSCS.ncx");
             
         }
 
@@ -921,7 +1141,7 @@ public class Expand {
         //paths.add("/home/eugenio/phd/code/osb/add_more_models/osbModels/PurkinjeCell/PurkinjeCell.ncx");
 
         paths = (ArrayList<String>) GeneralUtils.reorderAlphabetically(paths, true);
-        generateModelDescriptions(paths, "../temp/testExpand");
+        generateModelDescriptions(paths, "/home/svnsvn/doc/nCGenerated");
 
     }
 }
