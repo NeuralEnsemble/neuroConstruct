@@ -946,7 +946,7 @@ public class MorphMLConverter extends FormatImporter
                                     String xpath = ChannelMLConstants.getCurrVoltRelXPath() +"/@"+ ChannelMLConstants.FIXED_ION_REV_POT_ATTR;
                                     String val = cmlCm.getXMLDoc().getValueByXPath(xpath);
 
-                                    if (ion.equals("ca") && (val==null || val.equals("no")))
+                                    if (ion!=null && ion.equals("ca") && (val==null || val.equals("no")))
                                     {
                                         mechElement.addContent("\n\n                ");
                                         mechElement.addComment("Reversal potential will be calculated by Nernst equation from internal & external calcium");
@@ -1621,12 +1621,16 @@ public class MorphMLConverter extends FormatImporter
 
                                 //System.out.println(ionPropEl);
                                 //System.out.println(ionSpeciesV2);
-                    
-                                ionPropEl.addAttribute(ChannelMLConstants.ION_CONC_INT_ATTR_V2, intConc+" "+concUnits.getNeuroML2Symbol());
-                                ionPropEl.addAttribute(ChannelMLConstants.ION_CONC_EXT_ATTR_V2, extConc+" "+concUnits.getNeuroML2Symbol());
-                                if (!grp.equals(Section.ALL))
+
+                                if (ionPropEl!=null)
                                 {
-                                    ionPropEl.addAttribute(BiophysicsConstants.SEG_GROUP_ATTR_V2, grp);
+
+                                    ionPropEl.addAttribute(ChannelMLConstants.ION_CONC_INT_ATTR_V2, intConc+" "+concUnits.getNeuroML2Symbol());
+                                    ionPropEl.addAttribute(ChannelMLConstants.ION_CONC_EXT_ATTR_V2, extConc+" "+concUnits.getNeuroML2Symbol());
+                                    if (!grp.equals(Section.ALL))
+                                    {
+                                        ionPropEl.addAttribute(BiophysicsConstants.SEG_GROUP_ATTR_V2, grp);
+                                    }
                                 }
                             }
                         }
@@ -1830,7 +1834,27 @@ public class MorphMLConverter extends FormatImporter
     {
         try
         {
-            logger.logComment("Going to save file in NeuroML format: " + neuroMLFile);
+            String nml = getCellInNeuroMLFormat(cell, project, level, version, false);
+
+            FileWriter fw = new FileWriter(neuroMLFile);
+
+            logger.logComment("    ****    Full XML:  ****");
+            logger.logComment("  ");
+
+            logger.logComment(nml);
+            fw.write(nml);
+            fw.close();
+        }
+        catch (Exception ex)
+        {
+            throw new MorphologyException("Problem creating MorphML file", ex);
+        }
+    }
+    public static String getCellInNeuroMLFormat(Cell cell, Project project, NeuroMLLevel level, NeuroMLVersion version, boolean html) throws MorphologyException
+    {
+        try
+        {
+            logger.logComment("Going to save file in NeuroML format...");
 
             SimpleXMLDocument doc = new SimpleXMLDocument();
             
@@ -1959,20 +1983,14 @@ public class MorphMLConverter extends FormatImporter
             doc.addRootElement(rootElement);
             rootElement.addContent("\n"); // to make it more readable...
 
-            FileWriter fw = new FileWriter(neuroMLFile);
 
-            logger.logComment("    ****    Full XML:  ****");
-            logger.logComment("  ");
+            String stringForm = doc.getXMLString("mmmm", html);
 
-            String stringForm = doc.getXMLString("mmmm", false);
-
-            logger.logComment(stringForm);
-            fw.write(stringForm);
-            fw.close();
+            return stringForm;
         }
         catch (Exception ex)
         {
-            throw new MorphologyException(neuroMLFile.getAbsolutePath(), "Problem creating MorphML file", ex);
+            throw new MorphologyException("Problem creating MorphML file", ex);
         }
     }
 
