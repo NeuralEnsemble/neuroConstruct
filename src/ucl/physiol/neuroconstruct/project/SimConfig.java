@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import ucl.physiol.neuroconstruct.utils.ClassLogger;
 import ucl.physiol.neuroconstruct.hpc.mpi.*;
+import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 
 /**
  * Class containing info on a simulation configuration. One of these needs to be
@@ -179,7 +180,7 @@ public class SimConfig
 
     public ArrayList<String> getCellGroups()
     {
-        return cellGroups;
+        return (ArrayList<String>)GeneralUtils.reorderAlphabetically(cellGroups, true);
     }
 
     public LinkedList<String> getPrioritizedCellGroups(Project project)
@@ -246,6 +247,7 @@ public class SimConfig
 
     public ArrayList<String> getNetConns()
     {
+        //return (ArrayList<String>)GeneralUtils.reorderAlphabetically(netConns, true);
         return netConns;
     }
 
@@ -256,7 +258,7 @@ public class SimConfig
 
     public ArrayList<String> getPlots()
     {
-        return plots;
+        return (ArrayList<String>)GeneralUtils.reorderAlphabetically(plots, true);
     }
 
     public void setPlots(ArrayList<String> plots)
@@ -267,7 +269,7 @@ public class SimConfig
 
     public ArrayList<String> getInputs()
     {
-        return inputs;
+        return (ArrayList<String>)GeneralUtils.reorderAlphabetically(inputs, true);
     }
 
     public void setInputs(ArrayList<String> inputs)
@@ -283,10 +285,10 @@ public class SimConfig
 
     public String toLongString()
     {
-        return "SimConfig: "+ name+ ", cellGroups: "+ cellGroups
-            + ", netConns: "+ netConns
-            + ", inputs: "+ inputs
-            + ", plots: "+ plots;
+        return "SimConfig: "+ name+ ", cellGroups: "+ getCellGroups()
+            + ", netConns: "+ getNetConns()
+            + ", inputs: "+ getInputs()
+            + ", plots: "+ getPlots();
     }
 
 

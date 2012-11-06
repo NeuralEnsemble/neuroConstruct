@@ -19,7 +19,7 @@ pushd $HOME/neuroConstruct/osb > /dev/null
 standardGHProject()
 {
     echo
-    echo "-----  Checking:" $1
+    echo "-----  Checking:" $2/$1
     tput setaf 1
 
     if [ ! -d $2 ]; then
@@ -55,8 +55,8 @@ standardGHProject()
 }
 
 standardGHProject 'CElegansNeuroML' 'invertebrate/celegans' 'openworm'
+#standardGHProject 'CelegansNeuromechanicalGaitModulation' 'invertebrate/celegans'
 standardGHProject 'muscle_model' 'invertebrate/celegans' 'openworm'
-
 
 standardGHProject 'PyloricNetwork' 'invertebrate/lobster'
 

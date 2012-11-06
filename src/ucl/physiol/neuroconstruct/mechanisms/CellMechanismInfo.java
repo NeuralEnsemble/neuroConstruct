@@ -220,6 +220,7 @@ public class CellMechanismInfo extends AbstractTableModel
                 CellMechanism nextCellMech = getCellMechanismAt(i);
                 logger.logComment("-------     Checking cell mechanism: " + nextCellMech);
                 if (nextCellMech.getMechanismType().indexOf(CellMechanism.CHANNEL_MECHANISM)>=0 ||
+                    nextCellMech.getMechanismType().equals(CellMechanism.NEUROML2_ION_CHANNEL) ||
                     nextCellMech.isIonConcMechanism())
                     allNames.add(nextCellMech.getInstanceName());
 

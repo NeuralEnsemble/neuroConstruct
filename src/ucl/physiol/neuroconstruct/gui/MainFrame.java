@@ -10037,13 +10037,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
            jComboBoxNeuroML.setEnabled(true);
            jButtonNeuroMLGenSim.setEnabled(true);
 
-           File morphMLDir = ProjectStructure.getNeuroMLDir(projManager.getCurrentProject().getProjectMainDirectory());
+           File genNeuroMLDir = ProjectStructure.getNeuroMLDir(projManager.getCurrentProject().getProjectMainDirectory());
 
            jComboBoxNeuroML.removeAllItems();
-           if (morphMLDir.exists())
+           if (genNeuroMLDir.exists())
            {
 
-               File[] contents = morphMLDir.listFiles();
+               File[] contents = GeneralUtils.reorderAlphabetically(genNeuroMLDir.listFiles(), true);
+
                for (int i = 0; i < contents.length; i++)
                {
                    if (!contents[i].getName().equals("README") && !contents[i].isDirectory())

@@ -1550,7 +1550,7 @@ public class EditGroupCellDensMechAssociations extends JDialog implements ListSe
         }
         File f = new File("../copyNcModels/Inhomogen/Inhomogen.neuro.xml");
 
-        f = new File("../nC_projects/GG/GG.ncx");
+        f = new File("models/LarkumEtAl2009/LarkumEtAl2009.ncx");
         
         Project testProj = Project.loadProject(f,
                                                new ProjectEventListener()

@@ -541,8 +541,8 @@ public class MorphMLReader extends XMLFilterImpl
          {
              logger.logComment("Looking at a property...");
 
-             currentPropertyTag = attributes.getValue(MetadataConstants.PROP_TAG_ELEMENT);
-             if (currentPropertyTag.equals(MorphMLConstants.NUMBER_INTERNAL_DIVS_PROP))
+             currentPropertyTag = attributes.getValue(MetadataConstants.PROP_TAG_ELEMENT); 
+             if (currentPropertyTag!=null && currentPropertyTag.equals(MorphMLConstants.NUMBER_INTERNAL_DIVS_PROP))
                  {
                      logger.logComment("Setting number of internal divisions");
                      this.currentSection.setNumberInternalDivisions(

@@ -1225,6 +1225,10 @@ public class NeuroMLFileManager
             {
                 simConf = "TestIndividualChannels";
             }
+            else if (projFile.getName().startsWith("Ex10_NeuroML2"))
+            {
+                simConf = "Test NeuroML2 ionChannel";
+            }
             
             Project p = Project.loadProject(projFile, null);
             //Proje
@@ -1247,7 +1251,8 @@ public class NeuroMLFileManager
             SimConfig sc = p.simConfigInfo.getSimConfig(simConf);
 
             //LemsOption lo = LemsOption.GENERATE_GRAPH;
-            LemsOption lo = LemsOption.EXECUTE_MODEL;
+            LemsOption lo = LemsOption.NONE;
+            //LemsOption lo = LemsOption.EXECUTE_MODEL;
             
             nmlFM.generateNeuroMLFiles(sc, NeuroMLVersion.NEUROML_VERSION_2, lo, oc, 123, false, false);
 
@@ -1259,7 +1264,7 @@ public class NeuroMLFileManager
 
             //NeuronFileManager nfm = new
 
-            if (simConf.equals("AbstractCells"))
+            if (simConf.equals("TestIndividualChannels"))
             {
                 pm.doGenerate(simConf, 123);
 
@@ -1277,8 +1282,9 @@ public class NeuroMLFileManager
                 boolean success = prm.compileFileWithNeuron(true, false);
 
                 System.out.println("Compiled NEURON files: "+ success);
-
-                pm.doRunNeuron(sc);
+                
+                if (success)
+                    pm.doRunNeuron(sc);
             }
         }
         catch(Exception e)

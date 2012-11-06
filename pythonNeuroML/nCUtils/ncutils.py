@@ -544,10 +544,11 @@ class SimulationManager():
                                 spikeTimesTarget = spikeTimesToCheck[dataStore.getCellSegRef()]
 
                                 if len(spikeTimes) != len(spikeTimesTarget):
-                                    report = report + "ERROR: Number of spikes of %s not same as target list for %s!\n"%(dataStore.getCellSegRef(), simRef)
+                                    report = report + "ERROR: Number of spikes of %s (%i) not same as target list for %s (%i)!\n"% \
+                                        (dataStore.getCellSegRef(), len(spikeTimes), simRef, len(spikeTimesTarget))
                                     fail = True
 
-                                for spikeNum in range(0, len(spikeTimesTarget)):
+                                for spikeNum in range(0, min(len(spikeTimesTarget),len(spikeTimes))):
                                     delta = spikeTimesTarget[spikeNum] - spikeTimes[spikeNum]
                                     if float(abs(delta)) > float(spikeTimeAccuracy):
                                         report = report + "ERROR: Spike time: %f not within %f of %f (delta = %f) for %s in %s!\n" % \
