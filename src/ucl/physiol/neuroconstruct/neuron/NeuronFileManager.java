@@ -5174,6 +5174,8 @@ public class NeuronFileManager
                         String dir = GeneralUtils.getArchSpecificDir();
                         if (locationOfNeuron.indexOf("umac")>=0)
                             dir = "umac";
+                        if (locationOfNeuron.indexOf("i386")>=0)
+                            dir = "i386";
 
                         neuronExecutable = dirToRunInFile.getAbsolutePath()+"/"+dir+"/special";
 
@@ -5380,8 +5382,6 @@ public class NeuronFileManager
 
                         if (genRunMode==RUN_PYTHON_HDF5 || project.neuronSettings.getDataSaveFormat().equals(NeuronSettings.DataSaveFormat.HDF5_NC))
                         {
-                            //scriptText.append(GeneralUtils.getArchSpecificDir()+"/special -python "+ runPythonFile.getName());
-
 
                             if (simConfig.getMpiConf().isParallelNet())
                             {
@@ -5389,7 +5389,13 @@ public class NeuronFileManager
                             }
                             else
                             {
-                                neuronExecutable = GeneralUtils.getArchSpecificDir()+"/special -python ";
+
+                                String dir = GeneralUtils.getArchSpecificDir();
+                                if (locationOfNeuron.indexOf("umac")>=0)
+                                    dir = "umac";
+                                if (locationOfNeuron.indexOf("i386")>=0)
+                                    dir = "i386";
+                                neuronExecutable = dir+"/special -python ";
                             }
 
                             scriptText.append(preCommand
