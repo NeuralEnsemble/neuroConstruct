@@ -13,7 +13,7 @@ if [ $# -eq 1 ] ; then
 fi
 
 
-pushd $HOME/neuroConstruct/osb > /dev/null
+startDir=$(pwd)
 
 
 standardGHProject()
@@ -27,21 +27,35 @@ standardGHProject()
         parent=${parent%/*}
         if [ ! -d $parent ]; then
             mkdir $parent
+            echo "Making new directory: " $parent
+            
         fi
         mkdir $2
+        echo "Making new directory: " $2
         
     fi
-    tgtDir=$2/$1
+    tgtDir=$startDir/$2/$1
+    
+    prefix='git@github.com:'
+    
+    # TODO: better test if GitHub set up
+    if [ ! -f $HOME/.gitconfig ]; then
+        prefix='git://github.com/'
+    fi
     
     if [ ! -d $tgtDir ]; then
+        echo "Cloning to: "$tgtDir
         if [ $# == 3 ]; then
-            git clone git@github.com:$3/$1.git $tgtDir
+            echo "Using repo: "$prefix$3/$1.git
+            git clone $prefix$3/$1.git $tgtDir
         else
-            git clone git@github.com:OpenSourceBrain/$1.git $tgtDir
+            osbOrg='OpenSourceBrain'
+            echo "Using repo: "$prefix$osbOrg/$1.git
+            git clone $prefix$osbOrg/$1.git $tgtDir
         fi
     fi
 
-    pushd $tgtDir > /dev/null
+    cd $tgtDir
     if $pull; then
         git pull
     else
@@ -51,7 +65,7 @@ standardGHProject()
     fi
     tput sgr0
 
-    popd > /dev/null
+    cd $startDir
 }
 
 standardGHProject 'CElegansNeuroML' 'invertebrate/celegans' 'openworm'
@@ -87,9 +101,7 @@ standardGHProject 'IzhikevichModel' 'cerebral_cortex/networks'
 standardGHProject 'Thalamocortical' 'cerebral_cortex/networks'
 
 
-
-
-popd > /dev/null
+cd $startDir
 
 
 
