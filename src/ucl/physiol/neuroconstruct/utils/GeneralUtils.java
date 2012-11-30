@@ -55,7 +55,8 @@ public class GeneralUtils
     public static final String ARCH_64BIT = "amd64";
     public static final String ARCH_POWERPC = "ppc";
     public static final String ARCH_UMAC = "umac";
-    
+
+    public static final String DIR_I386 = "i386";
     public static final String DIR_I686 = "i686";
     public static final String DIR_64BIT = "x86_64";
     public static final String DIR_POWERPC = "powerpc";

@@ -306,6 +306,7 @@ public class ProjectManager implements GenerationReport
                 }
                 else if (activeProject.neuronSettings.isCopySimFiles() &&
                          (generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_I686) ||
+                         generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_I386) ||
                          generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_64BIT) ||
                          generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_UMAC) ||
                          generatedNeuronFiles[i].getName().equals(GeneralUtils.DIR_POWERPC)))
