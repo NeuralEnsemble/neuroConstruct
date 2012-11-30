@@ -5039,6 +5039,18 @@ public class NeuronFileManager
         this.suggestedRemoteRunTime = t;
     }
 
+    private String getArchSpecificDir()
+    {
+        String locationOfNeuron = GeneralProperties.getNeuronHomeDir();
+        String dir = GeneralUtils.getArchSpecificDir();
+        if (locationOfNeuron.indexOf("umac")>=0)
+            dir = "umac";
+        if (locationOfNeuron.indexOf("i386")>=0)
+            dir = "i386";
+
+        return dir;
+
+    }
 
     public void runNeuronFile(File mainHocFile) throws NeuronException
     {
@@ -5171,11 +5183,7 @@ public class NeuronFileManager
                     }
                     else if (project.neuronSettings.getGraphicsMode().equals(NeuronSettings.GraphicsMode.NO_CONSOLE))
                     {
-                        String dir = GeneralUtils.getArchSpecificDir();
-                        if (locationOfNeuron.indexOf("umac")>=0)
-                            dir = "umac";
-                        if (locationOfNeuron.indexOf("i386")>=0)
-                            dir = "i386";
+                        String dir = getArchSpecificDir();
 
                         neuronExecutable = dirToRunInFile.getAbsolutePath()+"/"+dir+"/special";
 
@@ -5390,11 +5398,8 @@ public class NeuronFileManager
                             else
                             {
 
-                                String dir = GeneralUtils.getArchSpecificDir();
-                                if (locationOfNeuron.indexOf("umac")>=0)
-                                    dir = "umac";
-                                if (locationOfNeuron.indexOf("i386")>=0)
-                                    dir = "i386";
+                                String dir = getArchSpecificDir();
+                                
                                 neuronExecutable = dir+"/special -python ";
                             }
 
@@ -5694,18 +5699,18 @@ public class NeuronFileManager
                         }
                     }
 
-                    File libsDir = new File(dirForSimFiles, GeneralUtils.getArchSpecificDir());
+                    File libsDir = new File(dirForSimFiles, getArchSpecificDir());
 
                     // Messy roundabout way to do it...
                     File tempDir = new File(dirForSimFiles, "temp");
                     tempDir.mkdir();
-                    File tempLibsDir = new File(tempDir, GeneralUtils.getArchSpecificDir());
+                    File tempLibsDir = new File(tempDir, getArchSpecificDir());
                     tempLibsDir.mkdir();
 
 
                     GeneralUtils.copyDirIntoDir(libsDir, tempLibsDir, true, true);
 
-                    String zippedLibsFilename = GeneralUtils.getArchSpecificDir() + ".zip";
+                    String zippedLibsFilename = getArchSpecificDir() + ".zip";
 
                     File zipFile = new File(dirForSimFiles, zippedLibsFilename);
 
@@ -5743,7 +5748,7 @@ public class NeuronFileManager
                    //condorBatchFileWriter.write("mkdir i686\n");
                    //condorBatchFileWriter.write("mv \n");
                    condorBatchFileWriter.write("unzip "+zippedLibsFilename+"\n");
-                   condorBatchFileWriter.write("chmod -R a+x "+GeneralUtils.getArchSpecificDir()+"\n");
+                   condorBatchFileWriter.write("chmod -R a+x "+getArchSpecificDir()+"\n");
 
 
                    // for testing...
@@ -5756,7 +5761,7 @@ public class NeuronFileManager
                    condorBatchFileWriter.write("echo\n");
                    condorBatchFileWriter.write("echo Starting NEURON...\n");
 
-                   condorBatchFileWriter.write("/usr/local/nrn/"+GeneralUtils.getArchSpecificDir()+"/bin/nrngui "+mainHocFile.getName()+"\n");
+                   condorBatchFileWriter.write("/usr/local/nrn/"+getArchSpecificDir()+"/bin/nrngui "+mainHocFile.getName()+"\n");
 
 
 
