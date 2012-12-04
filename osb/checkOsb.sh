@@ -76,6 +76,8 @@ standardGHProject 'PyloricNetwork' 'invertebrate/lobster'
 
 standardGHProject 'MorrisLecarModel' 'invertebrate/barnacle'
 
+standardGHProject 'Drosophila_Projection_Neuron' 'invertebrate/drosophila'
+
 standardGHProject 'CA1PyramidalCell' 'hippocampus/CA1_pyramidal_neuron'
 
 standardGHProject 'StriatalSpinyProjectionNeuron' 'basal_ganglia/striatal_spiny_neuron'
