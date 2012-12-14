@@ -599,7 +599,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JPanel jPanelNeuroML = new JPanel();
 
     JButton jButtonNeuroML1Export = new JButton();
-    JButton jButtonNeuroML2Export = new JButton();
+    JButton jButtonNeuroML2aExport = new JButton();
+    JButton jButtonNeuroML2bExport = new JButton();
 
     JCheckBox jCheckBoxSedMl = new JCheckBox("Include SED-ML");
 
@@ -1269,24 +1270,39 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     jButtonNeuroMLExport_actionPerformed(e, NeuroMLLevel.NEUROML_LEVEL_3, NeuroMLVersion.NEUROML_VERSION_1);
             }
         });
-        jButtonNeuroML2Export.setEnabled(false);
-        jButtonNeuroML2Export.setText("Export all to NeuroML v2alpha");
+        jButtonNeuroML2aExport.setEnabled(false);
+        jButtonNeuroML2aExport.setText("Export all to NeuroML v2alpha");
 
-        jButtonNeuroML2Export.setToolTipText("<html>...</html>");
+        jButtonNeuroML2aExport.setToolTipText("<html>...</html>");
 
-        jButtonNeuroML2Export.addActionListener(new java.awt.event.ActionListener()
+        jButtonNeuroML2aExport.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
 
-                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_2, LemsOption.NONE);
+                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_2_ALPHA, LemsOption.NONE);
+                    //jButtonNeuroMLExport_actionPerformed(e, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2);
+
+            }
+        });
+        jButtonNeuroML2bExport.setEnabled(false);
+        jButtonNeuroML2bExport.setText("Export all to NeuroML v2beta (unstable)");
+
+        jButtonNeuroML2bExport.setToolTipText("<html>...</html>");
+
+        jButtonNeuroML2bExport.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+
+                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_2_BETA, LemsOption.NONE);
                     //jButtonNeuroMLExport_actionPerformed(e, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2);
 
             }
         });
 
         jButtonNeuroML2Lems.setEnabled(false);
-        jButtonNeuroML2Lems.setText("Generate NeuroML 2 & run with LEMS");
+        jButtonNeuroML2Lems.setText("Generate NeuroML v2alpha & run with LEMS");
 
         jButtonNeuroML2Lems.setToolTipText("<html>Generate NeuroML 2 Components for the structure of the network and execute using the LEMS interpreter</html>");
 
@@ -1295,7 +1311,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             public void actionPerformed(ActionEvent e)
             {
 
-                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_2, LemsOption.EXECUTE_MODEL);
+                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_2_ALPHA, LemsOption.EXECUTE_MODEL);
                     //jButtonNeuroMLExport_actionPerformed(e, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2);
 
             }
@@ -1309,7 +1325,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             public void actionPerformed(ActionEvent e)
             {
-                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_2, LemsOption.GENERATE_GRAPH);
+                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_2_ALPHA, LemsOption.GENERATE_GRAPH);
 
             }
         });
@@ -1322,7 +1338,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             public void actionPerformed(ActionEvent e)
             {
-                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_2, LemsOption.GENERATE_NINEML);
+                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_2_ALPHA, LemsOption.GENERATE_NINEML);
 
                 refreshTabNeuroML();
             }
@@ -2226,12 +2242,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         JPanel nmlV2 = new JPanel();
 
-        nmlV2.setBorder(BorderFactory.createTitledBorder("NeuroML v2 alpha"));
+        nmlV2.setBorder(BorderFactory.createTitledBorder("NeuroML v2.0"));
 
 
-        nmlV2.add(jButtonNeuroML2Export);
+        nmlV2.add(jButtonNeuroML2aExport);
         nmlV2.add(jButtonNeuroML2Lems);
         nmlV2.add(jButtonNeuroML2Graph);
+        nmlV2.add(jButtonNeuroML2bExport);
         ///////////////////////////////////nmlV2.add(jButtonNeuroML2NineML);
         jCheckBoxSedMl.setSelected(false);
         jCheckBoxSedMl.setToolTipText("Generate a SED-ML simulation description. Note not currently used by LEMS, but this option "
@@ -10010,7 +10027,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
            projManager.getCurrentProject().getProjectStatus() == Project.PROJECT_NOT_INITIALISED)
        {
            jButtonNeuroML1Export.setEnabled(false);
-           jButtonNeuroML2Export.setEnabled(false);
+           jButtonNeuroML2aExport.setEnabled(false);
+           jButtonNeuroML2bExport.setEnabled(false);
            jButtonNeuroML2Lems.setEnabled(false);
            jButtonNeuroML2Graph.setEnabled(false);
            jButtonNeuroML2NineML.setEnabled(false);
@@ -10027,7 +10045,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
        else
        {
            jButtonNeuroML1Export.setEnabled(true);
-           jButtonNeuroML2Export.setEnabled(true);
+           jButtonNeuroML2aExport.setEnabled(true);
+           jButtonNeuroML2bExport.setEnabled(true);
            jButtonNeuroML2Lems.setEnabled(true);
            jButtonNeuroML2Graph.setEnabled(true);
            jButtonNeuroML2NineML.setEnabled(true);
@@ -15900,15 +15919,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         logger.logComment("Validating...");
 
 
-        File schemaFile = GeneralProperties.getNeuroMLSchemaFile();
+        File v1schemaFile = GeneralProperties.getNeuroMLSchemaFile();
 
         try
         {
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
-            logger.logComment("Found the XSD file: " + schemaFile.getAbsolutePath());
+            logger.logComment("Found the XSD file: " + v1schemaFile.getAbsolutePath());
 
-            Source schemaFileSource = new StreamSource(schemaFile);
+            Source schemaFileSource = new StreamSource(v1schemaFile);
             Schema schema = factory.newSchema(schemaFileSource);
 
             Validator validator = schema.newValidator();
@@ -15920,7 +15939,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             validator.validate(xmlFileSource);
 
             GuiUtils.showInfoMessage(logger, "Valid NeuroML v1.x file", "NeuroML file is well formed and valid, according to schema:\n"
-                                 + schemaFile.getAbsolutePath()+"\n\nNote: to change the version of the NeuroML schema with which to validate the file, go to:\n" +
+                                 + v1schemaFile.getAbsolutePath()+"\n\nNote: to change the version of the NeuroML schema with which to validate the file, go to:\n" +
                                  "Settings -> General Properties & Project Defaults -> NeuroML version", this);
 
             return;
@@ -15931,15 +15950,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         }
 
-        schemaFile = GeneralProperties.getNeuroMLv2SchemaFile();
+        File v2alphaSchemaFile = GeneralProperties.getNeuroMLv2alphaSchemaFile();
 
         try
         {
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
-            logger.logComment("Found the XSD file: " + schemaFile.getAbsolutePath());
+            logger.logComment("Found the XSD file: " + v2alphaSchemaFile.getAbsolutePath());
 
-            Source schemaFileSource = new StreamSource(schemaFile);
+            Source schemaFileSource = new StreamSource(v2alphaSchemaFile);
             Schema schema = factory.newSchema(schemaFileSource);
 
             Validator validator = schema.newValidator();
@@ -15950,8 +15969,38 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             validator.validate(xmlFileSource);
 
-            GuiUtils.showInfoMessage(logger, "Valid NeuroML v2.x file", "NeuroML file is well formed and valid, according to schema:\n"
-                                 + schemaFile.getAbsolutePath()+"", this);
+            GuiUtils.showInfoMessage(logger, "Valid NeuroML v2alpha file", "NeuroML file is well formed and valid, according to schema:\n"
+                                 + v2alphaSchemaFile.getAbsolutePath()+"", this);
+
+            return;
+
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        File v2betaSchemaFile = GeneralProperties.getNeuroMLv2betaSchemaFile();
+
+        try
+        {
+            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+            logger.logComment("Found the XSD file: " + v2betaSchemaFile.getAbsolutePath());
+
+            Source schemaFileSource = new StreamSource(v2betaSchemaFile);
+            Schema schema = factory.newSchema(schemaFileSource);
+
+            Validator validator = schema.newValidator();
+
+            String filename = jComboBoxNeuroML.getSelectedItem().toString();
+            filename = filename.substring(0,filename.indexOf("(")).trim();
+            Source xmlFileSource = new StreamSource(new File(filename));
+
+            validator.validate(xmlFileSource);
+
+            GuiUtils.showInfoMessage(logger, "Valid NeuroML v2beta file", "NeuroML file is well formed and valid, according to schema:\n"
+                                 + v2betaSchemaFile.getAbsolutePath()+"", this);
 
             return;
 
@@ -15962,9 +16011,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         }
 
         GuiUtils.showErrorMessage(logger, "Problem validating the NeuroML file. Note that the file was validated\n"
-                                  + "against the version of the NeuroML schema ("+GeneralProperties.getNeuroMLVersionNumber()+") included with this distribution\n"
-                                  + "of neuroConstruct. To validate it against current and past schema see:\n"
-                                  + GeneralProperties.getWebsiteNMLValidator(), null, this);
+                                  + "against the following schemas:\n"
+                                  +"    "+v1schemaFile+"\n"
+                                  +"    "+v2alphaSchemaFile+"\n"
+                                  +"    "+v2betaSchemaFile, null, this);
 
 
     }

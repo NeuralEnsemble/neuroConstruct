@@ -235,7 +235,7 @@ public class GeneralUtils
     public static String readShortFile(File shortFile)
     {
         Reader in = null;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         try
         {
@@ -253,7 +253,7 @@ public class GeneralUtils
         }
         catch (Exception ex)
         {
-            sb.append("Error reading from file: "+shortFile.getAbsolutePath()+":\n"+ex);
+            sb.append("Error reading from file: "+shortFile+":\n"+ex);
         }
         return sb.toString();
 

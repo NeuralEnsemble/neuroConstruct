@@ -339,7 +339,7 @@ public class MorphMLConverter extends FormatImporter
         
             String metadataPrefix = MetadataConstants.PREFIX + ":";
 
-            boolean nml2 = version.equals(NeuroMLVersion.NEUROML_VERSION_2);
+            boolean nml2 = version.isVersion2();
 
             if (nml2)
             {
@@ -1921,7 +1921,7 @@ public class MorphMLConverter extends FormatImporter
                                                                 + "  " + NeuroMLConstants.DEFAULT_SCHEMA_LOCATION));
 
             }
-            else if (version.equals(NeuroMLVersion.NEUROML_VERSION_2) &&
+            else if (version.isVersion2() &&
                      level.equals(NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL))
             {
                 rootElement = new SimpleXMLElement(NeuroMLConstants.ROOT_ELEMENT);
@@ -1933,18 +1933,27 @@ public class MorphMLConverter extends FormatImporter
                 rootElement.addNamespace(new SimpleXMLNamespace(NeuroMLConstants.XSI_PREFIX,
                                                                 NeuroMLConstants.XSI_URI));
 
-                rootElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC,
-                                                                NeuroMLConstants.NAMESPACE_URI_VERSION_2
-                                                                + "  " + NeuroMLConstants.DEFAULT_SCHEMA_FILENAME_VERSION_2));
+                if (version.isVersion2alpha())
+                {
+                    rootElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC,
+                                                                    NeuroMLConstants.NAMESPACE_URI_VERSION_2
+                                                                    + "  " + NeuroMLConstants.DEFAULT_SCHEMA_FILENAME_VERSION_2_ALPHA));
+                }
+                else if (version.isVersion2beta())
+                {
+                    rootElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC,
+                                                                    NeuroMLConstants.NAMESPACE_URI_VERSION_2
+                                                                    + "  " + NeuroMLConstants.DEFAULT_SCHEMA_FILENAME_VERSION_2_BETA));
+                }
 
             }
 
-            if (!version.equals(NeuroMLVersion.NEUROML_VERSION_2))
+            if (!version.isVersion2())
             {
                 rootElement.addAttribute(new SimpleXMLAttribute(MetadataConstants.LENGTH_UNITS_OLD, "micron"));  // keeping it old for the moment...
             }
 
-            if (version.equals(NeuroMLVersion.NEUROML_VERSION_2))
+            if (version.isVersion2())
             {
                 rootElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, cell.getInstanceName()));  // keep it same as cell id for now
             }
@@ -1953,7 +1962,7 @@ public class MorphMLConverter extends FormatImporter
             rootElement.addContent("\n\n    "); // to make it more readable...
 
 
-            if (version.equals(NeuroMLVersion.NEUROML_VERSION_2))
+            if (version.isVersion2())
             {
                 ArrayList<String> allChanMechs = cell.getAllChanMechNames(true);
 
@@ -1970,7 +1979,7 @@ public class MorphMLConverter extends FormatImporter
 
             SimpleXMLElement cellElement = MorphMLConverter.getCellXMLElement(cell, project, level, version);
 
-            if (!version.equals(NeuroMLVersion.NEUROML_VERSION_2))
+            if (!version.isVersion2())
             {
                 SimpleXMLElement cellsElement = new SimpleXMLElement(MorphMLConstants.CELLS_ELEMENT);
 
@@ -2084,7 +2093,7 @@ public class MorphMLConverter extends FormatImporter
 
                 String ext = ProjectStructure.getMorphMLFileExtension();
 
-                if (version.equals(NeuroMLVersion.NEUROML_VERSION_2))
+                if (version.isVersion2())
                 {
                     ext = ProjectStructure.getNeuroMLFileExtension();
                 }
@@ -2151,7 +2160,7 @@ public class MorphMLConverter extends FormatImporter
           MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  nml_l2File, NeuroMLLevel.NEUROML_LEVEL_2, NeuroMLVersion.NEUROML_VERSION_1);
           System.out.println("Saved MML file as: " + nml_l2File.getCanonicalPath());
           
-          MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  nml2File, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2);
+          MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  nml2File, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2_ALPHA);
           System.out.println("Saved MML file as: " + nml2File.getCanonicalPath());
 
 

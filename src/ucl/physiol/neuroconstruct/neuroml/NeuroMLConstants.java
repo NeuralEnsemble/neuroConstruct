@@ -84,18 +84,36 @@ public class NeuroMLConstants
                 return "1.x";
             }
         },
-        NEUROML_VERSION_2
+        NEUROML_VERSION_2_ALPHA
         {
             @Override
             public String toString()
             {
-                return "2.x";
+                return "2alpha";
+            }
+        },
+        NEUROML_VERSION_2_BETA
+        {
+            @Override
+            public String toString()
+            {
+                return "2beta";
             }
         };
 
         public boolean isVersion2()
         {
-            return this.equals(NEUROML_VERSION_2);
+            return this.equals(NEUROML_VERSION_2_ALPHA) || this.equals(NEUROML_VERSION_2_BETA);
+        }
+
+        public boolean isVersion2alpha()
+        {
+            return this.equals(NEUROML_VERSION_2_ALPHA);
+        }
+
+        public boolean isVersion2beta()
+        {
+            return this.equals(NEUROML_VERSION_2_BETA);
         }
 
         public boolean isVersion1()
@@ -115,7 +133,8 @@ public class NeuroMLConstants
 
     public static String DEFAULT_SCHEMA_LOCATION = "http://neuroml.svn.sourceforge.net/viewvc/neuroml/trunk/web/NeuroMLFiles/Schemata/v1.8.1/Level3/NeuroML_Level3_v1.8.1.xsd";
 
-    public static String DEFAULT_SCHEMA_FILENAME_VERSION_2 = "http://neuroml.svn.sourceforge.net/viewvc/neuroml/NeuroML2/Schemas/NeuroML2/NeuroML_v2alpha.xsd";
+    public static String DEFAULT_SCHEMA_FILENAME_VERSION_2_ALPHA = "http://neuroml.svn.sourceforge.net/viewvc/neuroml/NeuroML2/Schemas/NeuroML2/NeuroML_v2alpha.xsd";
+    public static String DEFAULT_SCHEMA_FILENAME_VERSION_2_BETA = "https://raw.github.com/NeuroML/NeuroML2/master/Schemas/NeuroML2/NeuroML_v2beta.xsd";
 
     public static String NEUROML_ID_V2 = "id";
 

@@ -719,7 +719,7 @@ public class Expand {
                     }
                     else
                     {
-                        String nml2 = MorphMLConverter.getCellInNeuroMLFormat(cell, project, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2, true);
+                        String nml2 = MorphMLConverter.getCellInNeuroMLFormat(cell, project, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2_ALPHA, true);
                         nml2Page.addBreak();
                         nml2Page.addRawHtml(preXML);
                         nml2Page.addRawHtml(nml2);
@@ -861,7 +861,7 @@ public class Expand {
                         try {
 
                             String nml2string = XMLUtils.transform(cmlCm.getXMLDoc().getXMLString("", false),
-                                                                 GeneralProperties.getChannelML2NeuroML2());
+                                                                 ProjectStructure.getChannelML2NeuroML2alpha());
 
                             SimpleXMLDocument nml2Doc = SimpleXMLReader.getSimpleXMLDoc(nml2string);
 

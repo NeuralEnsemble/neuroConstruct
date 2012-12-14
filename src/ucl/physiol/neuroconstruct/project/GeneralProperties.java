@@ -734,12 +734,20 @@ public class GeneralProperties
                 +"/Level3/NeuroML_Level3_"+getNeuroMLVersionString()+".xsd");
     }
     /**
-     * Gets the top level NeuroML v2 schema, to which every NeuroML v2 file should comply
+     * Gets the NeuroML v2alpha schema
      *
      */
-    public static File getNeuroMLv2SchemaFile()
+    public static File getNeuroMLv2alphaSchemaFile()
     {
         return new File("NeuroML2/Schemas/NeuroML2/NeuroML_v2alpha.xsd");
+    }
+    /**
+     * Gets the NeuroML v2beta schema
+     *
+     */
+    public static File getNeuroMLv2betaSchemaFile()
+    {
+        return new File("NeuroML2/Schemas/NeuroML2/NeuroML_v2beta.xsd");
     }
 
 
@@ -753,14 +761,7 @@ public class GeneralProperties
         return new File("templates/xmlTemplates/Schemata/"+getNeuroMLVersionString()
                 +"/Level2/ChannelML_"+getNeuroMLVersionString()+"_HTML.xsl");
     }
-    /**
-     * Gets the current ChannelML 2 NeuroML v2.0 converter
-     *
-     */
-    public static File getChannelML2NeuroML2()
-    {
-        return new File("NeuroML2/ChannelMLConvert/ChannelML2NeuroML2.xsl");
-    }
+
 
 
     /**

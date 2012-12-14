@@ -44,6 +44,7 @@ import ucl.physiol.neuroconstruct.test.MainTest;
 import ucl.physiol.neuroconstruct.cell.Cell;
 import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.*;
+import ucl.physiol.neuroconstruct.neuroml.NeuroMLFileManager;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.utils.GeneralUtils;
 import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
@@ -204,32 +205,27 @@ public class MorphMLReaderTest {
         {
             MorphMLConverter.setPreferredExportUnits(unit);
 
-            File morphFile = new File(savedNeuroMLDir, "TestNeuroMLv2__"+unit+".xml");
+            File morphFile = new File(savedNeuroMLDir, "TestNeuroMLv2__"+unit+"a.xml");
 
             MorphMLConverter.saveCellInNeuroMLFormat(cell1, pm.getCurrentProject(), morphFile,
-                NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2);
+                NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2_ALPHA);
 
             assertTrue(morphFile.exists());
 
             System.out.println("Saved cell in NeuroML Level 3 file: "+ morphFile.getAbsolutePath());
 
+            assertTrue("Checking validity of: "+ morphFile.getAbsolutePath(), NeuroMLFileManager.validateAgainstNeuroML2alphaSchema(morphFile));
 
-            File schemaFile = GeneralProperties.getNeuroMLv2SchemaFile();
+            morphFile = new File(savedNeuroMLDir, "TestNeuroMLv2__"+unit+"b.xml");
 
-            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            MorphMLConverter.saveCellInNeuroMLFormat(cell1, pm.getCurrentProject(), morphFile,
+                NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2_BETA);
 
-            System.out.println("Found the XSD file: " + schemaFile.getAbsolutePath());
+            assertTrue(morphFile.exists());
 
-            Source schemaFileSource = new StreamSource(schemaFile);
-            Schema schema = factory.newSchema(schemaFileSource);
+            System.out.println("Saved cell in NeuroML Level 3 file: "+ morphFile.getAbsolutePath());
 
-            Validator validator = schema.newValidator();
-
-            Source xmlFileSource = new StreamSource(morphFile);
-
-            validator.validate(xmlFileSource);
-
-            System.out.println("File is valid NeuroML v2.x!");
+            assertTrue("Checking validity of: "+ morphFile.getAbsolutePath(), NeuroMLFileManager.validateAgainstNeuroML2betaSchema(morphFile));
         }
     }
     

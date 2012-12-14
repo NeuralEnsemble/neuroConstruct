@@ -1407,8 +1407,10 @@ public class ProjectManager implements GenerationReport
 
         if (version.equals(NeuroMLVersion.NEUROML_VERSION_1))
             ver=ver+"version-1_8_1.level-3";
-        else if (version.equals(NeuroMLVersion.NEUROML_VERSION_2))
+        else if (version.equals(NeuroMLVersion.NEUROML_VERSION_2_ALPHA))
             ver=ver+"version-2alpha";
+        else if (version.equals(NeuroMLVersion.NEUROML_VERSION_2_BETA))
+            ver=ver+"version-2beta";
 
         model.addAttribute("language", ver);
 
@@ -2800,7 +2802,7 @@ public class ProjectManager implements GenerationReport
 
         File sedMlFile = new File(neuroMLDir, "SED.xml");
 
-        generateSedML(proj, sedMlFile, proj.simConfigInfo.getSimConfig(simConfName), NeuroMLVersion.NEUROML_VERSION_2);
+        generateSedML(proj, sedMlFile, proj.simConfigInfo.getSimConfig(simConfName), NeuroMLVersion.NEUROML_VERSION_2_ALPHA);
 
 
         System.out.println("SED-ML doc generated in "+ sedMlFile.getAbsolutePath());

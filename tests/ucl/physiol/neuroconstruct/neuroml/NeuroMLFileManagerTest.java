@@ -76,10 +76,10 @@ public class NeuroMLFileManagerTest {
 
 
     @Test
-    public void testNml2Exporting() throws NeuroMLException
+    public void testNml2alphaExporting() throws NeuroMLException
     {
 
-            System.out.println("---  testNml2Exporting");
+            System.out.println("---  testNml2alphaExporting");
 
             Project proj = pm.getCurrentProject();
             SimConfig sc = proj.simConfigInfo.getDefaultSimConfig();
@@ -118,43 +118,70 @@ public class NeuroMLFileManagerTest {
                                                              true,
                                                              sc.getName(),
                                                              NetworkMLConstants.UNITS_PHYSIOLOGICAL,
-                                                             NeuroMLVersion.NEUROML_VERSION_2);
+                                                             NeuroMLVersion.NEUROML_VERSION_2_ALPHA);
 
             assertTrue(nmlFile.exists());
 
             System.out.println("Saved NetworkML in: "+ nmlFile.getAbsolutePath());
 
-            assertTrue("Checking validity of: "+ nmlFile.getAbsolutePath(), validateAgainstNeuroML2Schema(nmlFile));
+            assertTrue("Checking validity of: "+ nmlFile.getAbsolutePath(), NeuroMLFileManager.validateAgainstNeuroML2alphaSchema(nmlFile));
+    }
+
+
+    @Test
+    public void testNml2betaExporting() throws NeuroMLException
+    {
+
+            System.out.println("---  testNml2betaExporting");
+
+            Project proj = pm.getCurrentProject();
+            SimConfig sc = proj.simConfigInfo.getDefaultSimConfig();
+
+            pm.doGenerate(sc.getName(), 1234);
+
+            while(pm.isGenerating())
+            {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ex) {
+                    System.err.println("Error: "+ex);
+                }
+            }
+
+            //proj.generatedNetworkConnections.reset();
+
+            StringBuilder stateString1 = new StringBuilder();
+
+            stateString1.append(proj.generatedCellPositions.toLongString(false));
+            stateString1.append(proj.generatedNetworkConnections.details(false));
+            stateString1.append(proj.generatedElecInputs.toString());
+
+            System.out.println("Generated proj with: "+ proj.generatedCellPositions.getNumberInAllCellGroups()+" cells");
+
+
+            File saveNetsDir = ProjectStructure.getSavedNetworksDir(projDir);
+
+            File nmlFile = new File(saveNetsDir, "testNml2.xml");
+
+            boolean zipped = false;
+
+            nmlFile = NeuroMLFileManager.saveNetworkStructureXML(proj,
+                                                             nmlFile,
+                                                             zipped,
+                                                             true,
+                                                             sc.getName(),
+                                                             NetworkMLConstants.UNITS_PHYSIOLOGICAL,
+                                                             NeuroMLVersion.NEUROML_VERSION_2_BETA);
+
+            assertTrue(nmlFile.exists());
+
+            System.out.println("Saved NetworkML in: "+ nmlFile.getAbsolutePath());
+
+            assertTrue("Checking validity of: "+ nmlFile.getAbsolutePath(), NeuroMLFileManager.validateAgainstNeuroML2betaSchema(nmlFile));
     }
 
 
     //todo: move to utils class
-    public static boolean validateAgainstNeuroML2Schema(File nmlFile)
-    {
-        File schemaFile = GeneralProperties.getNeuroMLv2SchemaFile();
-
-        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-
-
-        Source schemaFileSource = new StreamSource(schemaFile);
-        try
-        {
-            Schema schema = factory.newSchema(schemaFileSource);
-
-            Validator validator = schema.newValidator();
-
-            Source xmlFileSource = new StreamSource(nmlFile);
-
-            validator.validate(xmlFileSource);
-        }
-        catch (Exception ex)
-        {
-            System.out.println("Unable to validate saved NetworkML file: "+ nmlFile+" against: "+schemaFile+"\n"+ex.toString());
-            return false;
-        }
-        System.out.println(nmlFile.getAbsolutePath()+" is valid according to: "+ schemaFile);
-        return true;
-    }
 
 
 

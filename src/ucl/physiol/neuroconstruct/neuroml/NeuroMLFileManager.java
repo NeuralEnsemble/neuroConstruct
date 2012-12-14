@@ -29,6 +29,12 @@ package ucl.physiol.neuroconstruct.neuroml;
 
 import java.io.*;
 import java.util.*;
+import javax.xml.XMLConstants;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 import org.lemsml.sim.*;
 import org.lemsml.util.ContentError;
 
@@ -157,7 +163,10 @@ public class NeuroMLFileManager
             {
                 rootName = NeuroMLConstants.ROOT_ELEMENT;
                 defNamespace = NeuroMLConstants.NAMESPACE_URI_VERSION_2;
-                loc = NeuroMLConstants.DEFAULT_SCHEMA_FILENAME_VERSION_2;
+                if (version.isVersion2alpha())
+                    loc = NeuroMLConstants.DEFAULT_SCHEMA_FILENAME_VERSION_2_ALPHA;
+                if (version.isVersion2beta())
+                    loc = NeuroMLConstants.DEFAULT_SCHEMA_FILENAME_VERSION_2_BETA;
                 metaPrefix = "";
             }
 
@@ -622,7 +631,12 @@ public class NeuroMLFileManager
                             {
                                 newCmlFile = new File(generateDir, cm.getInstanceName()+".nml");
 
-                                File xslChannelML2NeuroML2 = ProjectStructure.getChannelml2Neuroml2File();
+                                File xslChannelML2NeuroML2 = null;
+
+                                if (version.isVersion2alpha())
+                                    xslChannelML2NeuroML2 = ProjectStructure.getChannelML2NeuroML2alpha();
+                                else if(version.isVersion2beta())
+                                    xslChannelML2NeuroML2 = ProjectStructure.getChannelML2NeuroML2beta();
 
 
                                 String xslContents = GeneralUtils.readShortFile(xslChannelML2NeuroML2);
@@ -1190,13 +1204,69 @@ public class NeuroMLFileManager
     }
 
 
+    public static boolean validateAgainstNeuroML2alphaSchema(File nmlFile)
+    {
+        File schemaFile = GeneralProperties.getNeuroMLv2alphaSchemaFile();
+
+        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+
+        Source schemaFileSource = new StreamSource(schemaFile);
+        try
+        {
+            Schema schema = factory.newSchema(schemaFileSource);
+
+            Validator validator = schema.newValidator();
+
+            Source xmlFileSource = new StreamSource(nmlFile);
+
+            validator.validate(xmlFileSource);
+        }
+        catch (Exception ex)
+        {
+            System.out.println("Unable to validate saved NetworkML file: "+ nmlFile+" against: "+schemaFile+"\n"+ex.toString());
+            return false;
+        }
+        System.out.println(nmlFile.getAbsolutePath()+" is valid according to: "+ schemaFile);
+        return true;
+    }
+
+    public static boolean validateAgainstNeuroML2betaSchema(File nmlFile)
+    {
+        File schemaFile = GeneralProperties.getNeuroMLv2betaSchemaFile();
+
+        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+
+        Source schemaFileSource = new StreamSource(schemaFile);
+        try
+        {
+            Schema schema = factory.newSchema(schemaFileSource);
+
+            Validator validator = schema.newValidator();
+
+            Source xmlFileSource = new StreamSource(nmlFile);
+
+            validator.validate(xmlFileSource);
+        }
+        catch (Exception ex)
+        {
+            System.out.println("Unable to validate saved NetworkML file: "+ nmlFile+" against: "+schemaFile+"\n"+ex.toString());
+            return false;
+        }
+        System.out.println(nmlFile.getAbsolutePath()+" is valid according to: "+ schemaFile);
+        return true;
+    }
+
+
     public static void main(String[] args)
     {
         System.out.println("Testing NeuroMLFileManager...");
         try
         {
-            //File projFile = new File("nCexamples/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
-            File projFile = new File("models/LarkumEtAl2009/LarkumEtAl2009.ncx");
+            NeuroMLVersion version = NeuroMLVersion.NEUROML_VERSION_2_BETA;
+            File projFile = new File("nCexamples/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
+            //File projFile = new File("models/LarkumEtAl2009/LarkumEtAl2009.ncx");
             //File projFile = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
             //projFile = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCellVSCS/neuroConstruct/GranuleCellVSCS.ncx");
             //projFile = new File("nCmodels/RothmanEtAl_KoleEtAl_PyrCell/RothmanEtAl_KoleEtAl_PyrCell.ncx");
@@ -1254,7 +1324,7 @@ public class NeuroMLFileManager
             LemsOption lo = LemsOption.NONE;
             //LemsOption lo = LemsOption.EXECUTE_MODEL;
             
-            nmlFM.generateNeuroMLFiles(sc, NeuroMLVersion.NEUROML_VERSION_2, lo, oc, 123, false, false);
+            nmlFM.generateNeuroMLFiles(sc, version, lo, oc, 123, false, false);
 
             //File tempDir = new File(projFile.getParentFile(), "temp");
 

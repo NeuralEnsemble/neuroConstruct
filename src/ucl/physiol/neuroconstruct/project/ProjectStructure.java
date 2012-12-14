@@ -219,7 +219,8 @@ public class ProjectStructure
 
     private static String channelml2Neuroml2Dir = "ChannelMLConvert";
 
-    private static String channelml2Neuroml2File = "ChannelML2NeuroML2.xsl";
+    private static String channelml2Neuroml2alphaFile = "ChannelML2NeuroML2.xsl";
+    private static String channelml2Neuroml2betaFile = "ChannelML2NeuroML2beta.xsl";
 
 
     private static final String matlabOctaveDir = "matlabOctave";
@@ -452,9 +453,14 @@ public class ProjectStructure
         return new File(sbmlNeuronMappingDir,sbmlNeuronMappingFile);
     }
 
-    public static File getChannelml2Neuroml2File()
+    public static File getChannelML2NeuroML2alpha()
     {
-        return new File(getNeuroML2Dir(),channelml2Neuroml2Dir +"/"+channelml2Neuroml2File);
+        return new File(getNeuroML2Dir(),channelml2Neuroml2Dir +"/"+channelml2Neuroml2alphaFile);
+    }
+
+    public static File getChannelML2NeuroML2beta()
+    {
+        return new File(getNeuroML2Dir(),channelml2Neuroml2Dir +"/"+channelml2Neuroml2betaFile);
     }
 
 

@@ -405,7 +405,7 @@ public class GeneratedCellPositions
         logger.logComment("Saving "
                           + getNumberPositionRecords()
                           + " position records to file: "
-                          + positionFile.getAbsolutePath());
+                          + positionFile.getAbsolutePath(), true);
 
         // will create the parent dir if it doesn't exist.
         if (!positionFile.exists())
@@ -413,7 +413,7 @@ public class GeneratedCellPositions
             logger.logComment("File: "+positionFile + " doesn't exist.");
             if (!positionFile.getParentFile().exists())
             {
-                logger.logComment("Parent dir: "+positionFile.getParentFile() + " doesn't exist.");
+                logger.logComment("Parent dir: "+positionFile.getParentFile() + " doesn't exist.", true);
                 //String parentDirName = positionFile.getParentFile().getCanonicalPath();
                 File projectDir = positionFile.getParentFile().getParentFile();
 
@@ -535,6 +535,40 @@ public class GeneratedCellPositions
                     populationElement.addAttribute(new SimpleXMLAttribute("component", type));//TODO...
                     populationElement.addAttribute(new SimpleXMLAttribute("size", cellsHere.size()+""));//TODO...
                     //populationElement.addContent("\n");
+
+                    if (version.isVersion2beta())
+                    {
+                        for (int i = 0; i < cellsHere.size(); i++)
+                        {
+                            PositionRecord posRec = cellsHere.get(i);
+
+                            SimpleXMLElement instanceElement = new SimpleXMLElement(NetworkMLConstants.INSTANCE_ELEMENT);
+
+                            instanceElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INSTANCE_ID_ATTR, i+""));
+
+                            if (posRec.getNodeId()!=PositionRecord.NO_NODE_ID)
+                            {
+                                instanceElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NODE_ID_ATTR, posRec.getNodeId()+""));
+                            }
+
+
+                            SimpleXMLElement locationElement = new SimpleXMLElement(NetworkMLConstants.LOCATION_ELEMENT);
+
+                            populationElement.addContent("\n            ");
+                            instanceElement.addContent("\n                ");
+                            instanceElement.addChildElement(locationElement);
+                            instanceElement.addContent("\n            ");
+
+                            locationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.LOC_X_ATTR, posRec.x_pos+""));
+                            locationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.LOC_Y_ATTR, posRec.y_pos+""));
+                            locationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.LOC_Z_ATTR, posRec.z_pos+""));
+
+                            populationElement.addChildElement(instanceElement);
+
+
+                        }
+                        populationElement.addContent("\n        ");
+                    }
                 }
                 else
                 {
@@ -547,20 +581,23 @@ public class GeneratedCellPositions
                     populationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.CELLTYPE_ATTR, type));
 
 
-                    SimpleXMLElement props = new SimpleXMLElement(MetadataConstants.PREFIX + ":" +
-                                                                  MorphMLConstants.PROPS_ELEMENT);
 
 
-                    populationElement.addChildElement(props);
 
                     Color c = project.cellGroupsInfo.getColourOfCellGroup(cellGroup);
 
-                    MetadataConstants.addProperty(props,
-                                              "color",
-                                              (c.getRed()/256.0)+" "+ (c.getGreen()/256.0)+" "+(c.getBlue()/256.0),
-                                              "            ",
-                                              version);
-                    props.addContent("\n        ");
+                    if (c!=null)
+                    {
+                        SimpleXMLElement props = new SimpleXMLElement(MetadataConstants.PREFIX + ":" +
+                                                                  MorphMLConstants.PROPS_ELEMENT);
+                        populationElement.addChildElement(props);
+                        MetadataConstants.addProperty(props,
+                                                  "color",
+                                                  (c.getRed()/256.0)+" "+ (c.getGreen()/256.0)+" "+(c.getBlue()/256.0),
+                                                  "            ",
+                                                  version);
+                        props.addContent("\n        ");
+                    }
 
                     SimpleXMLElement instancesElement = new SimpleXMLElement(NetworkMLConstants.INSTANCES_ELEMENT);
 
@@ -622,7 +659,7 @@ public class GeneratedCellPositions
     {
         try
         {
-            Project testProj = Project.loadProject(new File("testProjects/testNetworkML/testNetworkML.neuro.xml"),
+            Project testProj = Project.loadProject(new File("testProjects/TestNetworkML/TestNetworkML.neuro.xml"),
                                                    new ProjectEventListener()
             {
                 public void tableDataModelUpdated(String tableModelName)
@@ -649,7 +686,7 @@ public class GeneratedCellPositions
 
             System.out.println("Internal info: \n"+ cpr.toString()); 
 
-            File f = new File("c:\\temp\\try2\\tempp.txt");
+            File f = new File("../temp/tempp.txt");
 
             cpr.saveToFile(f);
 
@@ -659,9 +696,12 @@ public class GeneratedCellPositions
             cpr2.loadFromFile(f);
             System.out.println("New internal info: \n"+ cpr2.toString()); 
 
-            SimpleXMLElement pops = cpr2.getNetworkMLElement();
+            ArrayList<SimpleXMLElement> pops = cpr2.getNetworkMLElements(NeuroMLVersion.NEUROML_VERSION_2_BETA);
 
-            System.out.println("Pops: "+pops.getXMLString("", false));
+            for (SimpleXMLElement pop: pops)
+            {
+                System.out.println("------ Pop: ------\n"+pop.getXMLString("", false));
+            }
 
 
 
