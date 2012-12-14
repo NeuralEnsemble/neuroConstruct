@@ -1979,7 +1979,7 @@ public class CellTopologyHelper
         }
         float fract = distanceToStartOfSection/totalLengthSection;
         if (fract >1) fract = 1; // as sometimes it will produce 1.00000001
-        return (fract);
+        return fract;
     }
 
 

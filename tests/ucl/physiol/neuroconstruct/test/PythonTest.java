@@ -84,7 +84,8 @@ public class PythonTest
     @Test public void testCA1()
     {
         String projFileName = "osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx";
-        checkPythonScripts(projFileName);
+        checkPythonScripts(projFileName, "RunTests");
+        checkPythonScripts(projFileName, "RunTestsCA1");
     }
 
     @Test public void testMainen()

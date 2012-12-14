@@ -579,6 +579,7 @@ public class NeuronFileManager
                     allFiles[i].getName().endsWith(".dll") ||
                     allFiles[i].getName().equals(GeneralUtils.DIR_64BIT) ||
                     allFiles[i].getName().equals(GeneralUtils.DIR_I686) ||
+                    allFiles[i].getName().equals(GeneralUtils.DIR_I386) ||
                     allFiles[i].getName().equals(GeneralUtils.DIR_POWERPC)))
                 {
                     logger.logComment("Leaving in place file: "+ allFiles[i]);

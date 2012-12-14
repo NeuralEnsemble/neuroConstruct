@@ -440,7 +440,7 @@ public class MorphMLConverter extends FormatImporter
                         if (nextSegment.getFractionAlongParent()!=1)
                         {
                             parentElement.addAttribute(new SimpleXMLAttribute(MorphMLConstants.PARENT_FRACT_ALONG_V2,
-                                                                       nextSegment.getFractionAlongParent() + ""));
+                                                                       Math.min(1, nextSegment.getFractionAlongParent()) + ""));
                         }
                         segmentElement.addContent("\n                "); // to make it more readable...
                         segmentElement.addChildElement(parentElement);
@@ -885,7 +885,7 @@ public class MorphMLConverter extends FormatImporter
                             if (!group.equals(Section.ALL))
                                 mechElement.addAttribute(BiophysicsConstants.SEG_GROUP_ATTR_V2, group);
 
-
+                            boolean revPotSetInMP = false;
                             for(MechParameter mp: chanMech.getExtraParameters())
                             {
 
@@ -906,9 +906,12 @@ public class MorphMLConverter extends FormatImporter
                                 float val = mp.getValue();
                                 String unitSuffix = "";
 
+                                String attrName = mp.getName();
+
                                 if (mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT) ||
                                     mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT_2))
                                 {
+                                    revPotSetInMP = true;
                                     val = (float)UnitConverter.getVoltage(val, UnitConverter.NEUROCONSTRUCT_UNITS,
                                                                           preferredExportUnits);
 
@@ -916,10 +919,12 @@ public class MorphMLConverter extends FormatImporter
                                         unitSuffix = " V";
                                     if (preferredExportUnits==UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS)
                                         unitSuffix = " mV";
+
+                                    attrName = BiophysicsConstants.PARAMETER_REV_POT_2;
                                 }
 
 
-                                mechElement.addAttribute(mp.getName(), val+unitSuffix);
+                                mechElement.addAttribute(attrName, val+unitSuffix);
 
                                 //mechElement.add(pe);
 
@@ -978,31 +983,34 @@ public class MorphMLConverter extends FormatImporter
                                     }
                                     else
                                     {
-                                        xpath = ChannelMLConstants.getPreV1_7_3IonsXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
-                                        val = cmlCm.getXMLDoc().getValueByXPath(xpath);
-
-                                        logger.logComment("Trying to get: "+ xpath+" in "+cmlCm.getInstanceName()+": "+ val);
-
-                                        logger.logComment("Trying to get: "+ cmlCm.getXMLDoc().getXPathLocations(true));
-
-                                        if (val==null || val.trim().length()==0)  // post v1.7.3 format
+                                        if (!revPotSetInMP)
                                         {
-                                            xpath = ChannelMLConstants.getCurrVoltRelXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
-                                            logger.logComment("Trying to get now: "+ xpath);
+                                            xpath = ChannelMLConstants.getPreV1_7_3IonsXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
                                             val = cmlCm.getXMLDoc().getValueByXPath(xpath);
+
+                                            logger.logComment("Trying to get: "+ xpath+" in "+cmlCm.getInstanceName()+": "+ val);
+
+                                            logger.logComment("Trying to get: "+ cmlCm.getXMLDoc().getXPathLocations(true));
+
+                                            if (val==null || val.trim().length()==0)  // post v1.7.3 format
+                                            {
+                                                xpath = ChannelMLConstants.getCurrVoltRelXPath() +"/@"+ ChannelMLConstants.ION_REVERSAL_POTENTIAL_ATTR;
+                                                logger.logComment("Trying to get now: "+ xpath);
+                                                val = cmlCm.getXMLDoc().getValueByXPath(xpath);
+                                            }
+
+                                            float revPot = Float.parseFloat(val);
+
+                                            logger.logComment("Tried to get: "+ xpath+" in "+cmlCm.getXMLFile(project)+", found: "+revPot);
+
+
+                                            float revPotConv = (float)UnitConverter.getVoltage(revPot,
+                                                                                    UnitConverter.getUnitSystemIndex(units),
+                                                                                    preferredExportUnits);
+
+                                            mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.REV_POT_ATTR_V2,
+                                                                                        revPotConv+" "+voltUnit.getNeuroML2Symbol()+""));
                                         }
-
-                                        float revPot = Float.parseFloat(val);
-
-                                        logger.logComment("Tried to get: "+ xpath+" in "+cmlCm.getXMLFile(project)+", found: "+revPot);
-
-
-                                        float revPotConv = (float)UnitConverter.getVoltage(revPot,
-                                                                                UnitConverter.getUnitSystemIndex(units),
-                                                                                preferredExportUnits);
-
-                                        mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.REV_POT_ATTR_V2,
-                                                                                    revPotConv+" "+voltUnit.getNeuroML2Symbol()+""));
 
                                         
                                     }
@@ -1243,10 +1251,11 @@ public class MorphMLConverter extends FormatImporter
                                     }
                                 }
 
+                                String unitsUsed = cmlCm.getUnitsUsedInFile();
 
                                 revPotParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
                                                                                  (float)UnitConverter.getVoltage(revPot,
-                                                                        UnitConverter.NEUROCONSTRUCT_UNITS,
+                                                                        UnitConverter.getUnitSystemIndex(unitsUsed),
                                                                         preferredExportUnits) + ""));
 
                                 if (!revPotSetElsewhere)
@@ -2102,7 +2111,8 @@ public class MorphMLConverter extends FormatImporter
         try
         {
            //File f = new File("nCexamples/Ex1_Simple/Ex1_Simple.neuro.xml");
-           File f = new File("nCexamples/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx");
+           //File f = new File("nCexamples/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx");
+           File f = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
            Project testProj = Project.loadProject(f,new ProjectEventListener()
            {
                public void tableDataModelUpdated(String tableModelName)
