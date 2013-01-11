@@ -68,6 +68,11 @@ standardGHProject()
     cd $startDir
 }
 
+
+standardGHProject 'NeuroElectroSciUnit' 'showcase'
+standardGHProject 'NengoNeuroML' 'showcase'
+standardGHProject 'simulator-test-data' 'showcase' 'mikehulluk'
+
 standardGHProject 'CElegansNeuroML' 'invertebrate/celegans' 'openworm'
 #standardGHProject 'CelegansNeuromechanicalGaitModulation' 'invertebrate/celegans'
 standardGHProject 'muscle_model' 'invertebrate/celegans' 'openworm'
