@@ -73,6 +73,8 @@ standardGHProject 'NeuroElectroSciUnit' 'showcase'
 standardGHProject 'NengoNeuroML' 'showcase'
 standardGHProject 'NeuroMorpho' 'showcase'
 standardGHProject 'simulator-test-data' 'showcase' 'mikehulluk'
+standardGHProject 'CSAShowcase' 'showcase'
+
 
 standardGHProject 'CElegansNeuroML' 'invertebrate/celegans' 'openworm'
 #standardGHProject 'CelegansNeuromechanicalGaitModulation' 'invertebrate/celegans'
