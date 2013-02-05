@@ -26,12 +26,17 @@
 
 package ucl.physiol.neuroconstruct.test;
 
+import ucl.physiol.neuroconstruct.simulation.SimEnvHelper;
+import ucl.physiol.neuroconstruct.project.GeneralProperties;
 import java.io.File;
 import java.util.ArrayList;
 import org.junit.Test;
 import org.junit.runner.*;
 import ucl.physiol.neuroconstruct.gui.ValidityStatus;
 import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings;
+import ucl.physiol.neuroconstruct.mechanisms.CellMechanism;
+import ucl.physiol.neuroconstruct.mechanisms.ChannelMLCellMechanism;
+import ucl.physiol.neuroconstruct.mechanisms.SimulatorMapping;
 import ucl.physiol.neuroconstruct.neuron.NeuronSettings.DataSaveFormat;
 import ucl.physiol.neuroconstruct.project.Project;
 import ucl.physiol.neuroconstruct.project.ProjectFileParsingException;
@@ -101,12 +106,12 @@ public class ModelTest
     @Test public void testGranuleCell()
     {
         String projFileName = "osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx";
-        checkProject(projFileName);
+        checkProject(projFileName, null, false, true);
     }
     @Test public void testGranCellLayer()
     {
         String projFileName = "osb/cerebellum/networks/GranCellLayer/neuroConstruct/GranCellLayer.ncx";
-        checkProject(projFileName);
+        checkProject(projFileName, null, false, true);
     }
 
 
@@ -132,7 +137,7 @@ public class ModelTest
     @Test public void testCA1PyramidalCell()
     {
         String projFileName = "osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx";
-        checkProject(projFileName);
+        checkProject(projFileName, null, false, true);
     }
     @Test public void testDentateGyrus()
     {
@@ -216,6 +221,11 @@ public class ModelTest
 
     private void checkProject(String projFileName, ArrayList<String> cellsToIgnore, boolean ignoreDisconnectedSegments)
     {
+        checkProject(projFileName, cellsToIgnore, ignoreDisconnectedSegments, false);
+    }
+
+    private void checkProject(String projFileName, ArrayList<String> cellsToIgnore, boolean ignoreDisconnectedSegments, boolean testXslFiles)
+    {
         File projFile = new File(projFileName);
         System.out.println("Going to check project: "+ projFile.getAbsolutePath());
 
@@ -273,6 +283,42 @@ public class ModelTest
         assertTrue("Project's GENESIS graphics mode isn't show all!", project.genesisSettings.getGraphicsMode().equals(ucl.physiol.neuroconstruct.genesis.GenesisSettings.GraphicsMode.ALL_SHOW));
 
         assertTrue("Project's 3D resolution is too high!", project.proj3Dproperties.getResolution3DElements()<=30);
+
+        File xslDir = GeneralProperties.getChannelMLSchemataDir();
+
+        if (testXslFiles)
+        {
+            for (CellMechanism cm: project.cellMechanismInfo.getAllCellMechanisms())
+            {
+                if (cm instanceof ChannelMLCellMechanism)
+                {
+                    ChannelMLCellMechanism cmlM = (ChannelMLCellMechanism)cm;
+                    File newXsl = null;
+                    File xslFile = null;
+                    for (SimulatorMapping sm: cmlM.getSimMappings())
+                    {
+                        xslFile = new File(cmlM.getXMLFile(project).getParentFile(), sm.getMappingFile());
+
+                        if (sm.getSimEnv().equals(SimEnvHelper.NEURON))
+                        {
+                            newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_NEURONmod.xsl");
+                        }
+                        else if (sm.getSimEnv().equals(SimEnvHelper.GENESIS))
+                        {
+                            newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_GENESIStab.xsl");
+                        }
+                        else if (sm.getSimEnv().equals(SimEnvHelper.PSICS))
+                        {
+                            newXsl = new File(xslDir, "ChannelML_v"+GeneralProperties.getNeuroMLVersionNumber()+"_PSICS.xsl");
+                        }
+
+                        assertEquals("Checking: "+xslFile+" ("+xslFile.length()+" bytes) is same length as "+newXsl+" ("+newXsl.length()+" bytes)", xslFile.length(), newXsl.length());
+
+                    }
+
+                }
+            }
+        }
 
 
     }

@@ -727,36 +727,44 @@ public class NeuroMLFileManager
 
             lemsElement.addContent("\n\n    "); // to make it more readable...
 
-            SimpleXMLElement defRunElement = new SimpleXMLElement(LemsConstants.DEFAULT_RUN_ELEMENT);
-            lemsElement.addChildElement(defRunElement);
+            String targetElementName = LemsConstants.TARGET_ELEMENT;
+            if (version.isVersion2alpha())
+                targetElementName = LemsConstants.DEFAULT_RUN_ELEMENT;
+
+            SimpleXMLElement targetElement = new SimpleXMLElement(targetElementName);
+            lemsElement.addChildElement(targetElement);
             lemsElement.addContent("\n\n    "); // to make it more readable...
 
-            defRunElement.addAttribute(LemsConstants.COMPONENT_ATTR, LemsConstants.DEFAULT_SIM_ID);
+            targetElement.addAttribute(LemsConstants.COMPONENT_ATTR, LemsConstants.DEFAULT_SIM_ID);
 
 
             lemsElement.addComment("Include standard NeuroML 2 ComponentClass definitions");
             lemsElement.addContent("\n    "); // to make it more readable...
 
+            String prefix = "";
+            if (version.isVersion2alpha())
+                prefix = NeuroMLConstants.prefixNeuroML2Types;
+
             SimpleXMLElement incEl1 = new SimpleXMLElement(LemsConstants.INCLUDE_ELEMENT);
-            incEl1.addAttribute(LemsConstants.FILE_ATTR, NeuroMLConstants.NEUROML2_CORE_TYPES_CELLS);
+            incEl1.addAttribute(LemsConstants.FILE_ATTR, prefix+NeuroMLConstants.NEUROML2_CORE_TYPES_CELLS_DEF);
             lemsElement.addChildElement(incEl1);
             lemsElement.addContent("\n    "); // to make it more readable...
 
 
             SimpleXMLElement incEl2 = new SimpleXMLElement(LemsConstants.INCLUDE_ELEMENT);
-            incEl2.addAttribute(LemsConstants.FILE_ATTR, NeuroMLConstants.NEUROML2_CORE_TYPES_NETWORKS);
+            incEl2.addAttribute(LemsConstants.FILE_ATTR, prefix+NeuroMLConstants.NEUROML2_CORE_TYPES_NETWORKS_DEF);
             lemsElement.addChildElement(incEl2);
             lemsElement.addContent("\n    "); // to make it more readable...
 
             SimpleXMLElement incEl3 = new SimpleXMLElement(LemsConstants.INCLUDE_ELEMENT);
-            incEl3.addAttribute(LemsConstants.FILE_ATTR, NeuroMLConstants.NEUROML2_CORE_TYPES_SIMULATION);
+            incEl3.addAttribute(LemsConstants.FILE_ATTR, prefix+NeuroMLConstants.NEUROML2_CORE_TYPES_SIMULATION_DEF);
             lemsElement.addChildElement(incEl3);
             lemsElement.addContent("\n\n    "); // to make it more readable...
 
             if (pynnCellsPresent)
             {
                 SimpleXMLElement incEl4 = new SimpleXMLElement(LemsConstants.INCLUDE_ELEMENT);
-                incEl4.addAttribute(LemsConstants.FILE_ATTR, NeuroMLConstants.NEUROML2_CORE_TYPES_PYNN);
+                incEl4.addAttribute(LemsConstants.FILE_ATTR, prefix+NeuroMLConstants.NEUROML2_CORE_TYPES_PYNN_DEF);
                 lemsElement.addChildElement(incEl4);
                 lemsElement.addContent("\n\n    "); // to make it more readable...
             }
@@ -803,12 +811,19 @@ public class NeuroMLFileManager
             File summaryFile = new File(simDir, "simulator.props");
             String repFile = summaryFile.getAbsolutePath();
             repFile = repFile.replaceAll("\\\\", "\\\\\\\\");
-            defRunElement.addAttribute(LemsConstants.REPORT_FILE_ATTR, repFile);
 
             File timesFile = new File(simDir, "time.dat");
             String timesFilename =  timesFile.getAbsolutePath();
             timesFilename = timesFilename.replaceAll("\\\\", "\\\\\\\\");
-            defRunElement.addAttribute(LemsConstants.TIMES_FILE_ATTR,timesFilename);
+            if (version.isVersion2alpha()) 
+            {
+                targetElement.addAttribute(LemsConstants.REPORT_FILE_ATTR, repFile);
+                targetElement.addAttribute(LemsConstants.TIMES_FILE_ATTR,timesFilename);
+            }
+            else if (version.isVersion2beta())
+            {
+                // TODO...
+            }
 
             if (simDir.exists())
             {
@@ -1321,8 +1336,8 @@ public class NeuroMLFileManager
             SimConfig sc = p.simConfigInfo.getSimConfig(simConf);
 
             //LemsOption lo = LemsOption.GENERATE_GRAPH;
-            LemsOption lo = LemsOption.NONE;
-            //LemsOption lo = LemsOption.EXECUTE_MODEL;
+            //LemsOption lo = LemsOption.NONE;
+            LemsOption lo = LemsOption.EXECUTE_MODEL;
             
             nmlFM.generateNeuroMLFiles(sc, version, lo, oc, 123, false, false);
 

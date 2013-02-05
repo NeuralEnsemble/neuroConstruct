@@ -45,6 +45,7 @@ public class LemsConstants
     public static String DEFAULT_SIM_ID = "sim1";
 
     public static String DEFAULT_RUN_ELEMENT = "DefaultRun";
+    public static String TARGET_ELEMENT = "Target";
 
     public static String COMPONENT_ATTR = "component";
 

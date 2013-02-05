@@ -150,18 +150,18 @@ public class NeuroMLConstants
 
     public static String XSI_SCHEMA_LOC = "xsi:schemaLocation";
 
-    private static final String prefixNeuroML2Types = "NeuroML2CoreTypes/";
+    public static String prefixNeuroML2Types = "NeuroML2CoreTypes/";
 
-    public static String NEUROML2_CORE_TYPES_UNITS = prefixNeuroML2Types+"NeuroMLCoreDimensions.xml";
-    public static String NEUROML2_CORE_TYPES_CELLS = prefixNeuroML2Types+"Cells.xml";
-    public static String NEUROML2_CORE_TYPES_CHANNELS = prefixNeuroML2Types+"Channels.xml";
-    public static String NEUROML2_CORE_TYPES_SYNAPSES = prefixNeuroML2Types+"Synapses.xml";
-    public static String NEUROML2_CORE_TYPES_INPUTS = prefixNeuroML2Types+"Inputs.xml";
-    public static String NEUROML2_CORE_TYPES_NETWORKS = prefixNeuroML2Types+"Networks.xml";
+    public static String NEUROML2_CORE_TYPES_UNITS_DEF = "NeuroMLCoreDimensions.xml";
+    public static String NEUROML2_CORE_TYPES_CELLS_DEF = "Cells.xml";
+    public static String NEUROML2_CORE_TYPES_CHANNELS_DEF = "Channels.xml";
+    public static String NEUROML2_CORE_TYPES_SYNAPSES_DEF = "Synapses.xml";
+    public static String NEUROML2_CORE_TYPES_INPUTS_DEF = "Inputs.xml";
+    public static String NEUROML2_CORE_TYPES_NETWORKS_DEF = "Networks.xml";
 
-    public static String NEUROML2_CORE_TYPES_SIMULATION = prefixNeuroML2Types+"Simulation.xml";
+    public static String NEUROML2_CORE_TYPES_SIMULATION_DEF = "Simulation.xml";
 
-    public static String NEUROML2_CORE_TYPES_PYNN = prefixNeuroML2Types+"PyNN.xml";
+    public static String NEUROML2_CORE_TYPES_PYNN_DEF = "PyNN.xml";
 
     public static String NEUROML2_ABST_CELL = "baseCell";
     public static String NEUROML2_ABST_CELL_MEMB_POT = "baseCellMembPot";

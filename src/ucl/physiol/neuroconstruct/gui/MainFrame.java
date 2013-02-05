@@ -1295,7 +1295,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             public void actionPerformed(ActionEvent e)
             {
 
-                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_2_BETA, LemsOption.NONE);
+                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_2_BETA, LemsOption.EXECUTE_MODEL);
                     //jButtonNeuroMLExport_actionPerformed(e, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2);
 
             }
@@ -2254,7 +2254,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jCheckBoxSedMl.setToolTipText("Generate a SED-ML simulation description. Note not currently used by LEMS, but this option "
                 +"should provide sufficient information to run this simulation in a NeuroML 2 & SED-ML compliant application...");
         
-        //////nmlV2.add(jCheckBoxSedMl);
+        nmlV2.add(jCheckBoxSedMl);
 
         Dimension dd = new Dimension(400, 100);
         nmlV2.setPreferredSize(dd);
