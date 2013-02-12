@@ -31,10 +31,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 import javax.swing.table.AbstractTableModel;
-import javax.xml.validation.*;
-import javax.xml.*;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Result;
@@ -43,6 +39,7 @@ import static org.junit.Assert.*;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.Hdf5Exception;
 import ucl.physiol.neuroconstruct.project.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
+import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.NeuroMLVersion;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.utils.ColourUtils.ColourRecord;
 import ucl.physiol.neuroconstruct.utils.SequenceGenerator.EndOfSequenceException;
@@ -91,6 +88,63 @@ public class NetworkMLReaderTest
         assertEquals(1, 2);
     }*/
 
+
+    @Test
+    public void testSavingNeuroML2() throws InterruptedException, NeuroMLException
+    {
+        System.out.println("---  testSavingLoadingNeuroML2");
+
+        Project proj0 = pm.getCurrentProject();
+        SimConfig sc = proj0.simConfigInfo.getDefaultSimConfig();
+
+        pm.doGenerate(sc.getName(), 1234);
+
+        while(pm.isGenerating())
+        {
+            Thread.sleep(2000);
+        }
+
+        System.out.println("Generated proj with: "+ proj0.generatedCellPositions.getNumberInAllCellGroups()+" cells");
+
+
+        System.out.println("------------\nGenerated plots: "+proj0.generatedPlotSaves.details());
+
+        File saveNetsDir = ProjectStructure.getSavedNetworksDir(projDir);
+
+        boolean zipped = false;
+
+        File nml2aFile = new File(saveNetsDir, "test2a.xml");
+
+        nml2aFile = NeuroMLFileManager.saveNetworkStructureXML(proj0,
+                                                         nml2aFile,
+                                                         zipped,
+                                                         true,
+                                                         sc.getName(),
+                                                         NetworkMLConstants.UNITS_PHYSIOLOGICAL,
+                                                         NeuroMLVersion.NEUROML_VERSION_2_ALPHA);
+
+        assertTrue(nml2aFile.exists());
+
+        System.out.println("Saved NetworkML in: "+ nml2aFile.getAbsolutePath());
+
+        assertTrue(NeuroMLFileManager.validateAgainstNeuroML2alphaSchema(nml2aFile));
+
+        File nml2bFile = new File(saveNetsDir, "test2b.xml");
+
+        nml2bFile = NeuroMLFileManager.saveNetworkStructureXML(proj0,
+                                                         nml2bFile,
+                                                         zipped,
+                                                         true,
+                                                         sc.getName(),
+                                                         NetworkMLConstants.UNITS_PHYSIOLOGICAL,
+                                                         NeuroMLVersion.NEUROML_VERSION_2_BETA);
+
+        assertTrue(nml2bFile.exists());
+
+        System.out.println("Saved NetworkML in: "+ nml2bFile.getAbsolutePath());
+
+        assertTrue(NeuroMLFileManager.validateAgainstNeuroML2betaSchema(nml2bFile));
+    }
     
     @Test
     public void testSavingLoadingNetworkML() throws InterruptedException, NeuroMLException, Hdf5Exception, EndOfSequenceException, NoProjectLoadedException
@@ -142,7 +196,7 @@ public class NetworkMLReaderTest
         
         System.out.println("Saved NetworkML in: "+ nmlFile.getAbsolutePath());
         
-        assertTrue(validateAgainstNeuroMLSchema(nmlFile));
+        assertTrue(NeuroMLFileManager.validateAgainstLatestNeuroML1Schema(nmlFile));
 
 
         String validity1 = pm.getValidityReport(false);
@@ -205,7 +259,7 @@ public class NetworkMLReaderTest
 
         System.out.println("Saved Level 3 Network  in: "+ l3File.getAbsolutePath());
 
-        assertTrue(validateAgainstNeuroMLSchema(l3File));
+        assertTrue(NeuroMLFileManager.validateAgainstLatestNeuroML1Schema(l3File));
         //proj.resetGenerated();
 
 
@@ -265,7 +319,7 @@ public class NetworkMLReaderTest
         ProjectManager.saveLevel3NetworkXML(proj0, l3FileAnnotations, false, false, annotations, sc.getName(), NetworkMLConstants.UNITS_PHYSIOLOGICAL);
         
         assertTrue(l3FileAnnotations.exists());
-        assertTrue(validateAgainstNeuroMLSchema(l3FileAnnotations));
+        assertTrue(NeuroMLFileManager.validateAgainstLatestNeuroML1Schema(l3FileAnnotations));
  
        
         /*
@@ -351,33 +405,6 @@ public class NetworkMLReaderTest
        
     }
 
-    //todo: move to utils class
-    public static boolean validateAgainstNeuroMLSchema(File nmlFile)
-    {
-        File schemaFile = GeneralProperties.getNeuroMLSchemaFile();
-
-        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-
-
-        Source schemaFileSource = new StreamSource(schemaFile);
-        try
-        {
-            Schema schema = factory.newSchema(schemaFileSource);
-
-            Validator validator = schema.newValidator();
-
-            Source xmlFileSource = new StreamSource(nmlFile);
-
-            validator.validate(xmlFileSource);
-        }
-        catch (Exception ex)
-        {
-            System.out.println("Unable to validate saved NetworkML file: "+ nmlFile+" against: "+schemaFile+"\n"+ex.toString());
-            return false;
-        }
-        System.out.println(nmlFile.getAbsolutePath()+" is valid according to: "+ schemaFile);
-        return true;
-    }
     
     public boolean compareAbstractTableObjects(AbstractTableModel object1, AbstractTableModel object2)
     {

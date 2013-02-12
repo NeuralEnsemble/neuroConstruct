@@ -30,6 +30,12 @@ import java.io.*;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
+import javax.xml.XMLConstants;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.w3c.dom.*;
 
@@ -51,6 +57,32 @@ public class XMLUtils
 
     public XMLUtils()
     {
+    }
+
+
+
+    public static boolean validateAgainstSchema(File xmlFile, File schemaFile)
+    {
+        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+        Source schemaFileSource = new StreamSource(schemaFile);
+        try
+        {
+            Schema schema = factory.newSchema(schemaFileSource);
+
+            Validator validator = schema.newValidator();
+
+            Source xmlFileSource = new StreamSource(xmlFile);
+
+            validator.validate(xmlFileSource);
+        }
+        catch (Exception ex)
+        {
+            logger.logError("Unable to validate file: "+ xmlFile+" against: "+schemaFile+"\n"+ex.toString());
+            return false;
+        }
+        logger.logComment(xmlFile.getAbsolutePath()+" is valid according to: "+ schemaFile, true);
+        return true;
     }
 
 

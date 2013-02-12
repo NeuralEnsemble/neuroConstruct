@@ -1218,60 +1218,29 @@ public class NeuroMLFileManager
         return sim;
     }
 
-
     public static boolean validateAgainstNeuroML2alphaSchema(File nmlFile)
     {
         File schemaFile = GeneralProperties.getNeuroMLv2alphaSchemaFile();
 
-        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-
-
-        Source schemaFileSource = new StreamSource(schemaFile);
-        try
-        {
-            Schema schema = factory.newSchema(schemaFileSource);
-
-            Validator validator = schema.newValidator();
-
-            Source xmlFileSource = new StreamSource(nmlFile);
-
-            validator.validate(xmlFileSource);
-        }
-        catch (Exception ex)
-        {
-            System.out.println("Unable to validate saved NetworkML file: "+ nmlFile+" against: "+schemaFile+"\n"+ex.toString());
-            return false;
-        }
-        System.out.println(nmlFile.getAbsolutePath()+" is valid according to: "+ schemaFile);
-        return true;
+        return XMLUtils.validateAgainstSchema(nmlFile, schemaFile);
     }
 
     public static boolean validateAgainstNeuroML2betaSchema(File nmlFile)
     {
         File schemaFile = GeneralProperties.getNeuroMLv2betaSchemaFile();
 
-        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        return XMLUtils.validateAgainstSchema(nmlFile, schemaFile);
 
-
-        Source schemaFileSource = new StreamSource(schemaFile);
-        try
-        {
-            Schema schema = factory.newSchema(schemaFileSource);
-
-            Validator validator = schema.newValidator();
-
-            Source xmlFileSource = new StreamSource(nmlFile);
-
-            validator.validate(xmlFileSource);
-        }
-        catch (Exception ex)
-        {
-            System.out.println("Unable to validate saved NetworkML file: "+ nmlFile+" against: "+schemaFile+"\n"+ex.toString());
-            return false;
-        }
-        System.out.println(nmlFile.getAbsolutePath()+" is valid according to: "+ schemaFile);
-        return true;
     }
+
+    public static boolean validateAgainstLatestNeuroML1Schema(File nmlFile)
+    {
+        File schemaFile = GeneralProperties.getNeuroMLSchemaFile();
+
+        return XMLUtils.validateAgainstSchema(nmlFile, schemaFile);
+
+    }
+
 
 
     public static void main(String[] args)
