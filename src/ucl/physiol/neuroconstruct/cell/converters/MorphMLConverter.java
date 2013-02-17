@@ -476,7 +476,7 @@ public class MorphMLConverter extends FormatImporter
                 SimpleXMLElement props = null;
 
 
-                if (nextSegment.getComment()!=null)
+                if (nextSegment.getComment()!=null && !nml2)
                 {
                     if (props == null)
                     {
