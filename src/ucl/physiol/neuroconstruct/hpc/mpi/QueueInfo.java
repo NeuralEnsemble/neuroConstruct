@@ -54,7 +54,7 @@ public class QueueInfo
 
     private String launcherScript = "";
 
-    public static enum QueueType {PBS, SGE};
+    public static enum QueueType {PBS, SGE, LL};
 
     private QueueType queueType = null;
 

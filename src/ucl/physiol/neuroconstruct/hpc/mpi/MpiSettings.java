@@ -74,6 +74,16 @@ public class MpiSettings
     public static final String CASPUR_32PROC = "Caspur (32p)";
     public static final String CASPUR_64PROC = "Caspur (64p)";
 
+
+    // These are based on tests on a BlueGene using IBM Load Leveler at the Nencki Institute in Warsaw
+    public static final String NOTOS_4PROC = "Notos (4p)";
+    public static final String NOTOS_32PROC = "Notos (32p)";
+    public static final String NOTOS_64PROC = "Notos (64p)";
+    public static final String NOTOS_128PROC = "Notos (128p)";
+    public static final String NOTOS_256PROC = "Notos (256p)";
+    public static final String NOTOS_512PROC = "Notos (512p)";
+    public static final String NOTOS_1024PROC = "Notos (1024p)";
+
     /*
      * To run on a remote machine and execute directly, i.e. no queue
      * There must be automatic ssh login to this machine
@@ -154,6 +164,7 @@ public class MpiSettings
         Hashtable<KnownSimulators, String> simulatorExecutablesMLnrn62 = new Hashtable<KnownSimulators, String>();
 
         Hashtable<KnownSimulators, String> simulatorExecutablesCaspur = new Hashtable<KnownSimulators, String>();
+        Hashtable<KnownSimulators, String> simulatorExecutablesNotos = new Hashtable<KnownSimulators, String>();
 
         simulatorExecutables.put(KnownSimulators.NEURON, "/home/ucgbpgl/nrnmpi/x86_64/bin/nrniv");
         simulatorExecutables.put(KnownSimulators.GENESIS, "/home/ucgbpgl/gen23/genesis");
@@ -171,6 +182,7 @@ public class MpiSettings
 
 
         simulatorExecutablesCaspur.put(KnownSimulators.NEURON, "/home/sergio/nrn7.0/x86_64/bin/nrniv");
+        simulatorExecutablesNotos.put(KnownSimulators.NEURON, "/opt/neuron/powerpc64/bin/nrniv");
 
         // This is a 4 processor Linux machine in our lab. Auto ssh login is enabled to it from the
         // machine on which neuroConstruct is running. Jobs are set running directly on this machine
@@ -196,6 +208,11 @@ public class MpiSettings
                                                   "sergio",
                                                   "/home/sergio/scratch/",
                                                   simulatorExecutablesCaspur);
+        // Login node for Notos cluster
+        RemoteLogin notosLogin = new RemoteLogin("notos",
+                                                  "hela",
+                                                  "/home/users/hela/nCsims",
+                                                  simulatorExecutablesNotos);
 
         // Legion is the UCL supercomputing cluster. Legion operates the Torque batch queueing system
         // and the Moab scheduler, i.e. jobs aren't executed directly, but submitted to a queue and will
@@ -205,7 +222,7 @@ public class MpiSettings
                                                   "/home/ucgbpgl/nCsims",
                                                   simulatorExecutables);
 
-        RemoteLogin legionSerialLogin = new RemoteLogin("legion.rc.ucl.ac.uk",
+        RemoteLogin legionSerialLogin = new RemoteLogin("legion.rc.nucl.ac.uk",
                                                   "ucgbpgl",
                                                   "/home/ucgbpgl/nCsims",
                                                   simulatorExecutables);
@@ -221,6 +238,7 @@ public class MpiSettings
         //matlemQueue.addAdditionalSubOptions("#$ -S /bin/bash");
 
         QueueInfo caspurQueue = new QueueInfo(6, "std10-300", "time", QueueInfo.QueueType.PBS, "mpirun");
+        QueueInfo notosQueue = new QueueInfo(6, "G43-4", "time", QueueInfo.QueueType.LL, "mpirun");
 
 
         if (getMpiConfiguration(LOCAL_SERIAL)==null)
@@ -317,6 +335,101 @@ public class MpiSettings
             p.setMpiVersion(MpiSettings.OPENMPI_V2);
             p.setUseScp(true);
             p.setQueueInfo(caspurQueue);
+            configurations.add(p);
+        }
+
+
+
+        if (getMpiConfiguration(NOTOS_4PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(NOTOS_4PROC);
+
+            for(int i=0;i<1;i++)
+                p.getHostList().add(new MpiHost("node"+i,4, 1));
+
+            p.setRemoteLogin(notosLogin);
+            p.setMpiVersion(MpiSettings.MPICH_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(notosQueue);
+            configurations.add(p);
+        }
+
+        if (getMpiConfiguration(NOTOS_32PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(NOTOS_32PROC);
+
+            for(int i=0;i<4;i++)
+                p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+            p.setRemoteLogin(notosLogin);
+            p.setMpiVersion(MpiSettings.MPICH_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(notosQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(NOTOS_64PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(NOTOS_64PROC);
+
+            for(int i=0;i<8;i++)
+                p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+            p.setRemoteLogin(notosLogin);
+            p.setMpiVersion(MpiSettings.MPICH_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(notosQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(NOTOS_128PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(NOTOS_128PROC);
+
+            for(int i=0;i<16;i++)
+                p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+            p.setRemoteLogin(notosLogin);
+            p.setMpiVersion(MpiSettings.MPICH_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(notosQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(NOTOS_256PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(NOTOS_256PROC);
+
+            for(int i=0;i<32;i++)
+                p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+            p.setRemoteLogin(notosLogin);
+            p.setMpiVersion(MpiSettings.MPICH_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(notosQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(NOTOS_512PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(NOTOS_512PROC);
+
+            for(int i=0;i<64;i++)
+                p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+            p.setRemoteLogin(notosLogin);
+            p.setMpiVersion(MpiSettings.MPICH_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(notosQueue);
+            configurations.add(p);
+        }
+        if (getMpiConfiguration(NOTOS_1024PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(NOTOS_1024PROC);
+
+            for(int i=0;i<128;i++)
+                p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+            p.setRemoteLogin(notosLogin);
+            p.setMpiVersion(MpiSettings.MPICH_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(notosQueue);
             configurations.add(p);
         }
 

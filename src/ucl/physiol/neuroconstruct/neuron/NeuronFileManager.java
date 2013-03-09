@@ -1041,7 +1041,12 @@ public class NeuronFileManager
             if (!generateLinuxBasedScripts())
                 response.append("{system(\"C:/WINDOWS/SYSTEM32/hostname.exe\", host)}\n");
             else
-                response.append("{system(\"hostname\", host)}\n");
+            {
+                if (!(simConfig.getMpiConf().getQueueInfo()!=null && simConfig.getMpiConf().getQueueInfo().getQueueType().equals(QueueInfo.QueueType.LL)))
+                {
+                    response.append("{system(\"hostname\", host)}\n");
+                }
+            }
 
             response.append("if (strFuncs.len(host)>0) {\n");
             response.append("    strFuncs.left(host, strFuncs.len(host)-1) \n");
@@ -1338,7 +1343,8 @@ public class NeuronFileManager
         response.append("print \" \"\n");
         response.append("print  \"*****************************************************\"\n\n");
         
-        if (GeneralUtils.isLinuxBasedPlatform() || GeneralUtils.isMacBasedPlatform())
+        if ((GeneralUtils.isLinuxBasedPlatform() || GeneralUtils.isMacBasedPlatform()) 
+                && !(simConfig.getMpiConf().getQueueInfo()!=null && simConfig.getMpiConf().getQueueInfo().getQueueType().equals(QueueInfo.QueueType.LL)))
         {
             response.append("strdef pwd\n");
     

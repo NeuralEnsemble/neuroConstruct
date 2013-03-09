@@ -280,6 +280,67 @@ public class MpiConfiguration
             script.append("/bin/bash -ic '"+mpirunPath+" "+procInfo+" "+remoteLogin.getExecutableForSimulator(simulator)+" "+mpiFlag+exec+"'\n");
 
         }
+        else if (queueInfo.getQueueType().equals(QueueInfo.QueueType.LL))
+        {
+            script.append("\n");
+            String workDir = getProjectSimDir(projName)+"/"+simRef;
+
+
+            // These settings are based on tests on a BlueGene using IBM Load Leveler at the Nencki Institute in Warsaw
+
+            script.append("# @ job_name = "+simRef+"_"+projName+"\n");
+            script.append("# @ account_no = "+queueInfo.getAccount()+"\n");
+            script.append("# @ class = powiew\n");
+            script.append("# @ error = nrn.err\n");
+            script.append("# @ output = nrn.out\n");
+            script.append("# @ environment = COPY_ALL\n");
+            script.append("# @ wall_clock_limit = 00:"+timeMins+":00\n");
+            script.append("# @ job_type = bluegene\n");
+            script.append("# @ bg_size = "+getTotalNumProcessors()+"\n");
+            script.append("# @ queue\n\n");
+
+
+
+            for (String line: queueInfo.additionalSubOptions)
+            {
+                script.append(line+"\n");
+            }
+
+            String parallelEnv = "smp";
+            String procInfo = "-np "+getTotalNumProcessors();
+
+            if (hostList.size()>1)
+            {
+                parallelEnv = "openmpi";
+                //procInfo = " -n $NSLOTS -bynode -machinefile $TMP/machines";
+            }
+
+            //script.append("#$ -pe "+parallelEnv+"  "+getTotalNumProcessors()+"\n\n");
+
+            String exec = workDir+"/"+projName+".hoc";
+
+            if (simulator.equals(KnownSimulators.PY_NEURON))
+            {
+                exec = workDir+"/run_"+projName+".py";
+            }
+            else if(simulator.equals(KnownSimulators.GENESIS) || simulator.equals(KnownSimulators.MOOSE))
+            {
+                exec = workDir+"/"+projName+".g";
+            }
+            //script.append("source ~/.nrnpympienv\n");
+            //script.append("/opt/sun-ct/bin/mpirun -np "+getTotalNumProcessors()+" "+remoteLogin.getExecutableForSimulator(simulator)+" -mpi "+exec+"\n");
+
+            String mpiFlag = "";
+
+            if (isNeuron) mpiFlag = "-mpi ";
+
+
+    
+
+            //script.append("/bin/bash -ic '"+mpirunPath+" "+procInfo+" "+remoteLogin.getExecutableForSimulator(simulator)+" "+mpiFlag+exec+"'\n");
+            script.append("time mpirun -cwd "+workDir+" -mode SMP "+procInfo+" "+workDir+"/powerpc64/special \""+mpiFlag+exec+"\"\n");
+
+        }
 
         return script.toString();
     }
@@ -413,7 +474,14 @@ public class MpiConfiguration
         {
             String nrnivmodl = getNrnivmodl();
 
-            scriptText.append("# ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic "+nrnivmodl+"\" # Now run on compute node\n");
+            if (!this.queueInfo.getQueueType().equals(QueueInfo.QueueType.LL))
+            {
+                scriptText.append("# ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic "+nrnivmodl+"\" # Now run on compute node\n");
+            }
+            else
+            {
+                scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;module load mpi_default;/bin/bash -ic "+nrnivmodl+"\"\n");
+            }
         }
 
         if (queueInfo==null)
@@ -426,8 +494,8 @@ public class MpiConfiguration
         {
             if (true || isNeuron)
             {
-                scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic 'qsub "+QueueInfo.submitScript+"'\"\n");
-                scriptText.append("ssh $remoteUser@$remoteHost \"echo 'Submitted job!';/bin/bash -ic 'qstat -u $remoteUser'\"\n");
+                scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic 'llsubmit "+QueueInfo.submitScript+"'\"\n");
+                scriptText.append("ssh $remoteUser@$remoteHost \"echo 'Submitted job!';/bin/bash -ic 'llq -u $remoteUser'\"\n");
                 scriptText.append("rm -rf $zipFile\n");
                 scriptText.append("sleep 15\n"); // Quick snooze to see result of qsub...
             }
