@@ -89,6 +89,22 @@ public class QueueInfo
 
     }
 
+    public String getSubmitCommand()
+    {
+        if (this.queueType.equals(QueueType.LL))
+            return "llsubmit";
+        else
+            return "qsub";
+
+    }
+    public String getUserQueueStatusCommand()
+    {
+        if (this.queueType.equals(QueueType.LL))
+            return "llq -u";
+        else 
+            return "qstat -u";
+
+    }
 
     public static int getWallTimeSeconds(Project project, SimConfig simConfig)
     {

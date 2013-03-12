@@ -189,7 +189,7 @@ def generateAndRunLems(project,
     compartmentalisation = OriginalCompartmentalisation()
 
     project.neuromlFileManager.generateNeuroMLFiles(simConfig,
-                                                    NeuroMLConstants.NeuroMLVersion.NEUROML_VERSION_2,
+                                                    NeuroMLConstants.NeuroMLVersion.NEUROML_VERSION_2_ALPHA,
                                                     LemsConstants.LemsOption.EXECUTE_MODEL,
                                                     compartmentalisation,
                                                     simulatorSeed,

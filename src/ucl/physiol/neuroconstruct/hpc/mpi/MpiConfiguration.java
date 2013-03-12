@@ -494,8 +494,8 @@ public class MpiConfiguration
         {
             if (true || isNeuron)
             {
-                scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic 'llsubmit "+QueueInfo.submitScript+"'\"\n");
-                scriptText.append("ssh $remoteUser@$remoteHost \"echo 'Submitted job!';/bin/bash -ic 'llq -u $remoteUser'\"\n");
+                scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic '"+queueInfo.getSubmitCommand()+" "+QueueInfo.submitScript+"'\"\n");
+                scriptText.append("ssh $remoteUser@$remoteHost \"echo 'Submitted job!';/bin/bash -ic '"+queueInfo.getUserQueueStatusCommand()+" $remoteUser'\"\n");
                 scriptText.append("rm -rf $zipFile\n");
                 scriptText.append("sleep 15\n"); // Quick snooze to see result of qsub...
             }
