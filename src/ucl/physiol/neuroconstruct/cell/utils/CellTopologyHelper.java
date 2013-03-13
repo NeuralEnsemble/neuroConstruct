@@ -3351,7 +3351,7 @@ public class CellTopologyHelper
                 
                 for(ChannelMechanism cm: extraParamsOnlyChans)
                 {
-                    if (cm!=null && posCondDensChans!=null && !posCondDensChans.contains(cm.getName()) && !project.cellMechanismInfo.getCellMechanism(cm.getName()).isIonConcMechanism())
+                    if (cm!=null && posCondDensChans!=null && !posCondDensChans.contains(cm.getName()) && project.cellMechanismInfo.getCellMechanism(cm.getName())!=null && !project.cellMechanismInfo.getCellMechanism(cm.getName()).isIonConcMechanism())
                     {
                         errorReport.append("Error: This channel mechanism is specified for section "+nextSec.getSectionName()+": "+cm+"\n");
                         errorReport.append("However, there is no corresponding channel mechanism specified with gmax >=0!\n");
