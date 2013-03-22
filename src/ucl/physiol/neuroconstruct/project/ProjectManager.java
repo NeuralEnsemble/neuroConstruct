@@ -2781,7 +2781,7 @@ public class ProjectManager implements GenerationReport
     {
 
         //Project proj = Project.loadProject(new File("nCexamples/Ex1_Simple/Ex1_Simple.ncx"), null);
-        Project proj = Project.loadProject(new File("nCexamples/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx"), null);
+        Project proj = Project.loadProject(new File("osb/showcase/neuroConstructShowcase/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx"), null);
 
         File neuroMLDir = ProjectStructure.getNeuroMLDir(proj.getProjectMainDirectory());
 

@@ -1217,7 +1217,7 @@ public class PsicsFileManager
         {
 
             //Project p = Project.loadProject(new File("projects/Moro/Moro.neuro.xml"), null);
-            Project p = Project.loadProject(new File("nCexamples/Ex7_PSICSDemo/Ex7_PSICSDemo.ncx"), null);
+            Project p = Project.loadProject(new File(ProjectStructure.getnCExamplesDir(), "Ex7_PSICSDemo/Ex7_PSICSDemo.ncx"), null);
             //Proje
             ProjectManager pm = new ProjectManager(null,null);
             pm.setCurrentProject(p);

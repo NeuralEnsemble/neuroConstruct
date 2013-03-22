@@ -108,7 +108,7 @@ public class GenesisFileManagerTest
 
         File projFile = new File(projDir, projName+".ncx");
 
-        File oldProjDir = new File(ProjectStructure.getnCModelsDir(), "GranuleCell");
+        File oldProjDir = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct");
         File oldProj = new File(oldProjDir, "GranuleCell.ncx");
 
         ProjectManager pm = new ProjectManager();

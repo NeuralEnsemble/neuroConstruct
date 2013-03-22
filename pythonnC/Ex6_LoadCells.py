@@ -31,7 +31,7 @@ myProject = pm.loadProject(projFile)
 print "Loaded project: " + myProject.getProjectName() 
 
 
-morphDir = File("../nCexamples/Ex3_Morphology/importedMorphologies/")
+morphDir = File("../osb/showcase/neuroConstructShowcase/Ex3_Morphology/importedMorphologies/")
 morphmlFile = File(morphDir, "SimplePurkinjeCell.morph.xml")
 
 

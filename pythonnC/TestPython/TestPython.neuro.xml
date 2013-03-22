@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.6.0_18" class="java.beans.XMLDecoder">
+<java version="1.7.0_15" class="java.beans.XMLDecoder">
 
 <!-- This is a neuroConstruct project file. It's best to open this
 file with neuroConstruct, as opposed to editing it directly. 
@@ -12,7 +12,7 @@ part of NeuroML or any standardised XML specification. -->
    <string>This is a simple project....</string>
   </void>
   <void property="projectFileVersion">
-   <string>neuroConstruct v1.4.1</string>
+   <string>neuroConstruct v1.6.1</string>
   </void>
   <void property="projectName">
    <string>TestPython</string>
@@ -42,9 +42,13 @@ part of NeuroML or any standardised XML specification. -->
     <void method="add">
      <object class="ucl.physiol.neuroconstruct.project.RectangularBox">
       <void property="parameterList">
-       <void index="4">
-        <void property="value">
-         <float>50.0</float>
+       <void id="InternalParameter0" index="4">
+        <void class="ucl.physiol.neuroconstruct.project.InternalParameter" method="getField">
+         <string>value</string>
+         <void method="set">
+          <object idref="InternalParameter0"/>
+          <float>50.0</float>
+         </void>
         </void>
        </void>
       </void>
@@ -230,7 +234,7 @@ part of NeuroML or any standardised XML specification. -->
     <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings">
      <void property="amp">
       <void property="fixedNum">
-       <float>0.18253016</float>
+       <float>0.19164109</float>
       </void>
      </void>
      <void property="cellChooser">
@@ -239,9 +243,13 @@ part of NeuroML or any standardised XML specification. -->
      <void property="cellGroup">
       <string>SampleCellGroup</string>
      </void>
-     <void property="dur">
-      <void property="numberType">
-       <int>11</int>
+     <void id="NumberGenerator0" property="dur">
+      <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
+       <string>numberType</string>
+       <void method="set">
+        <object idref="NumberGenerator0"/>
+        <int>11</int>
+       </void>
       </void>
      </void>
      <void property="reference">
@@ -264,12 +272,16 @@ part of NeuroML or any standardised XML specification. -->
        <float>0.0</float>
       </void>
      </void>
-     <void property="dur">
+     <void id="NumberGenerator1" property="dur">
+      <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
+       <string>numberType</string>
+       <void method="set">
+        <object idref="NumberGenerator1"/>
+        <int>11</int>
+       </void>
+      </void>
       <void property="fixedNum">
        <float>1000.0</float>
-      </void>
-      <void property="numberType">
-       <int>11</int>
       </void>
      </void>
      <void property="reference">
@@ -285,10 +297,10 @@ part of NeuroML or any standardised XML specification. -->
     <object class="ucl.physiol.neuroconstruct.project.SimConfig">
      <void property="cellGroups">
       <void method="add">
-       <string>SampleCellGroup</string>
+       <string>CGSingle</string>
       </void>
       <void method="add">
-       <string>CGSingle</string>
+       <string>SampleCellGroup</string>
       </void>
      </void>
      <void property="description">
@@ -296,10 +308,10 @@ part of NeuroML or any standardised XML specification. -->
      </void>
      <void property="inputs">
       <void method="add">
-       <string>SampleIClamp</string>
+       <string>Input_0</string>
       </void>
       <void method="add">
-       <string>Input_0</string>
+       <string>SampleIClamp</string>
       </void>
      </void>
      <void property="name">
@@ -312,10 +324,10 @@ part of NeuroML or any standardised XML specification. -->
      </void>
      <void property="plots">
       <void method="add">
-       <string>SamplePlot</string>
+       <string>CGSingle_v</string>
       </void>
       <void method="add">
-       <string>CGSingle_v</string>
+       <string>SamplePlot</string>
       </void>
      </void>
      <void property="simDuration">
@@ -374,12 +386,16 @@ part of NeuroML or any standardised XML specification. -->
       <void method="add">
        <object class="ucl.physiol.neuroconstruct.project.SynapticProperties">
         <void property="delayGenerator">
-         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator">
+         <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator" id="NumberGenerator2">
+          <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
+           <string>numberType</string>
+           <void method="set">
+            <object idref="NumberGenerator2"/>
+            <int>11</int>
+           </void>
+          </void>
           <void property="fixedNum">
            <float>5.0</float>
-          </void>
-          <void property="numberType">
-           <int>11</int>
           </void>
          </object>
         </void>
@@ -390,9 +406,13 @@ part of NeuroML or any standardised XML specification. -->
          <double>-20.0</double>
         </void>
         <void property="weightsGenerator">
-         <object class="ucl.physiol.neuroconstruct.utils.WeightGenerator">
-          <void property="numberType">
-           <int>11</int>
+         <object class="ucl.physiol.neuroconstruct.utils.WeightGenerator" id="WeightGenerator0">
+          <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
+           <string>numberType</string>
+           <void method="set">
+            <object idref="WeightGenerator0"/>
+            <int>11</int>
+           </void>
           </void>
          </object>
         </void>
@@ -410,9 +430,13 @@ part of NeuroML or any standardised XML specification. -->
    <void method="get">
     <string>Search Pattern</string>
     <void method="add">
-     <object class="ucl.physiol.neuroconstruct.project.SearchPattern">
-      <void property="type">
-       <int>0</int>
+     <object class="ucl.physiol.neuroconstruct.project.SearchPattern" id="SearchPattern0">
+      <void class="ucl.physiol.neuroconstruct.project.SearchPattern" method="getField">
+       <string>type</string>
+       <void method="set">
+        <object idref="SearchPattern0"/>
+        <int>0</int>
+       </void>
       </void>
      </object>
     </void>

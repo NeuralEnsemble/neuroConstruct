@@ -1249,7 +1249,7 @@ public class NeuroMLFileManager
         try
         {
             NeuroMLVersion version = NeuroMLVersion.NEUROML_VERSION_2_BETA;
-            File projFile = new File("nCexamples/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
+            File projFile = new File("osb/showcase/neuroConstructShowcase/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
             //File projFile = new File("models/LarkumEtAl2009/LarkumEtAl2009.ncx");
             //File projFile = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
             //projFile = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCellVSCS/neuroConstruct/GranuleCellVSCS.ncx");

@@ -2082,7 +2082,7 @@ public class OneCell3DPanel extends Base3DPanel implements UpdateOneCell
             System.out.println("Creating 3D representation of cell: " + cell);
 
 
-            Project testProj = Project.loadProject(new File("nCexamples/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx"),
+            Project testProj = Project.loadProject(new File("osb/showcase/neuroConstructShowcase/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx"),
                                                new ProjectEventListener()
             {
                 public void tableDataModelUpdated(String tableModelName)

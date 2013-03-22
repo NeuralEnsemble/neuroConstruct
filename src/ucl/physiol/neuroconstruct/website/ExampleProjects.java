@@ -364,7 +364,7 @@ public class ExampleProjects
         try
         {
             
-            File exsDir = new File("nCexamples");
+            File exsDir = new File("osb/showcase/neuroConstructShowcase");
             
             File mainFile = new File("docs/XML/xmlForHtml/samples/index.xml");
             
@@ -374,7 +374,7 @@ public class ExampleProjects
             generateMainPage(mainFile, exsDir);
             
             logger.logComment("Created doc at: "+ mainFile.getCanonicalPath(), true);
-            
+            /*
             File modelsDir = new File("nCmodels");
             mainFile = new File("docs/XML/xmlForHtml/models/index.xml");
             
@@ -382,6 +382,8 @@ public class ExampleProjects
             generateMainPage(mainFile, modelsDir);
 
             logger.logComment("Created doc at: "+ mainFile.getCanonicalPath(), true);
+             
+             */
         }
         catch(Exception e)
         {

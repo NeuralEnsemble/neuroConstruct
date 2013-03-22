@@ -56,47 +56,47 @@ public class ModelTest
 
     @Test public void testEx1()
     {
-        String projFileName = "nCexamples/Ex1_Simple/Ex1_Simple.ncx";
+        String projFileName = "osb/showcase/neuroConstructShowcase/Ex1_Simple/Ex1_Simple.ncx";
         checkProject(projFileName);
     }
     @Test public void testEx2()
     {
-        String projFileName = "nCexamples/Ex2_Packing/Ex2_Packing.ncx";
+        String projFileName = "osb/showcase/neuroConstructShowcase/Ex2_Packing/Ex2_Packing.ncx";
         checkProject(projFileName);
     }
     @Test public void testEx3()
     {
-        String projFileName = "nCexamples/Ex3_Morphology/Ex3_Morphology.ncx";
+        String projFileName = "osb/showcase/neuroConstructShowcase/Ex3_Morphology/Ex3_Morphology.ncx";
         checkProject(projFileName);
     }
     @Test public void testEx4()
     {
-        String projFileName = "nCexamples/Ex4_HHcell/Ex4_HHcell.ncx";
+        String projFileName = "osb/showcase/neuroConstructShowcase/Ex4_HHcell/Ex4_HHcell.ncx";
         checkProject(projFileName);
     }
     @Test public void testEx5()
     {
-        String projFileName = "nCexamples/Ex5_Networks/Ex5_Networks.ncx";
+        String projFileName = "osb/showcase/neuroConstructShowcase/Ex5_Networks/Ex5_Networks.ncx";
         checkProject(projFileName);
     }
     @Test public void testEx6()
     {
-        String projFileName = "nCexamples/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx";
+        String projFileName = "osb/showcase/neuroConstructShowcase/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx";
         checkProject(projFileName);
     }
     @Test public void testEx7()
     {
-        String projFileName = "nCexamples/Ex7_PSICSDemo/Ex7_PSICSDemo.ncx";
+        String projFileName = "osb/showcase/neuroConstructShowcase/Ex7_PSICSDemo/Ex7_PSICSDemo.ncx";
         checkProject(projFileName);
     }
     @Test public void testEx8()
     {
-        String projFileName = "nCexamples/Ex8_PyNNDemo/Ex8_PyNNDemo.ncx";
+        String projFileName = "osb/showcase/neuroConstructShowcase/Ex8_PyNNDemo/Ex8_PyNNDemo.ncx";
         checkProject(projFileName);
     }
     @Test public void testEx9()
     {
-        String projFileName = "nCexamples/Ex9_Synapses/Ex9_Synapses.ncx";
+        String projFileName = "osb/showcase/neuroConstructShowcase/Ex9_Synapses/Ex9_Synapses.ncx";
         checkProject(projFileName);
     }
 

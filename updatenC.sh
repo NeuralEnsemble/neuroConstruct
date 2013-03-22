@@ -9,11 +9,7 @@ export NML_SC_DIR=templates/xmlTemplates/Schemata
 
 export SBML2NEU_SC_DIR=templates/SBML2NEURON
 
-export LEMS_DIR=lems
 export NEUROML2_DIR=NeuroML2
-
-export NC_EXAMPLES=nCexamples
-export NC_MODELS=nCmodels
 
 
 if [ ! -d $NML_EX_DIR ]; then
@@ -37,14 +33,6 @@ echo "Updating the SBML2NEURON files from the NeuroML Sourceforge repository..."
 svn update $SBML2NEU_SC_DIR
 
 
-if [ -d $LEMS_DIR ]; then
-    echo "Moving old lems directory to lems_old, as everything needed for NeuroML 2/LEMS is in the NeuroML2 folder"
-    mv $LEMS_DIR lems_old
-fi
-
-echo "Updating the LEMS/NeuroML 2 files from the NeuroML Sourceforge repository..."
-svn update $LEMS_DIR
-
 
 if [ ! -d $NEUROML2_DIR ]; then
     svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/NeuroML2 $NEUROML2_DIR
@@ -55,24 +43,24 @@ svn update $NEUROML2_DIR
 
 
 echo Updating the main neuroConstruct code...
-svn update
+git pull
 
 
 
-if [ ! -d $NC_EXAMPLES ]; then
-    svn co svn://87.106.103.176:3999/models/examples/trunk/nCexamples $NC_EXAMPLES
+if [ ! -d osb/showcase ]; then
+    mkdir osb/showcase
 fi
 
-echo Updating the neuroConstruct core functionality examples
-svn update $NC_EXAMPLES
 
-
-if [ ! -d $NC_MODELS ]; then
-    svn co svn://87.106.103.176:3999/models/models/trunk/nCmodels $NC_MODELS
+if [ ! -d osb/showcase/neuroConstructShowcase ]; then
+    git@github.com:OpenSourceBrain/neuroConstructShowcase.git
 fi
 
-echo Updating the neuroConstruct detailed model examples
-svn update $NC_MODELS
+
+echo "Updating the neuroConstruct showcase examples..."
+cd osb/showcase/neuroConstructShowcase
+git pull
+cd -
 
 
 

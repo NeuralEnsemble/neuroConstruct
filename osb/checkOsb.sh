@@ -74,6 +74,7 @@ standardGHProject 'NengoNeuroML' 'showcase'
 standardGHProject 'NeuroMorpho' 'showcase'
 standardGHProject 'simulator-test-data' 'showcase' 'mikehulluk'
 standardGHProject 'CSAShowcase' 'showcase'
+standardGHProject 'neuroConstructShowcase' 'showcase'
 standardGHProject 'osb_vfb_showcase' 'showcase' 'jefferis'
 
 standardGHProject 'CElegansNeuroML' 'invertebrate/celegans' 'openworm'

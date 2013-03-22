@@ -13,6 +13,7 @@ import ucl.physiol.neuroconstruct.test.MainTest;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.cell.utils.CellTopologyHelper;
 import ucl.physiol.neuroconstruct.gui.ValidityStatus;
+import ucl.physiol.neuroconstruct.project.ProjectStructure;
 import static org.junit.Assert.*;
 
 /**
@@ -21,7 +22,7 @@ import static org.junit.Assert.*;
  */
 public class SWCMorphReaderTest {
 
-    File swcFile = new File("nCexamples/Ex3_Morphology/importedMorphologies/l22.swc");
+    File swcFile = new File(ProjectStructure.getnCExamplesDir() ,"/Ex3_Morphology/importedMorphologies/l22.swc");
 
 
 

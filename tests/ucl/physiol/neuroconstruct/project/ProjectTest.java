@@ -130,8 +130,8 @@ public class ProjectTest
 
         
         File projFile = new File(projDirNew, projNameNew+".ncx");
+        File oldProjDir = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct");
 
-        File oldProjDir = new File(ProjectStructure.getnCModelsDir(), "GranuleCell");
         File oldProj = new File(oldProjDir, "GranuleCell.ncx");
 
         ProjectManager p = new ProjectManager();

@@ -25,7 +25,7 @@ except ImportError:
 
 from ucl.physiol.neuroconstruct.project import ProjectManager
 
-file = File("../nCexamples/Ex1_Simple/Ex1_Simple.ncx")
+file = File("../osb/showcase/neuroConstructShowcase/Ex1_Simple/Ex1_Simple.ncx")
 print 'Loading project file: ', file.getAbsolutePath()
 
 pm = ProjectManager()

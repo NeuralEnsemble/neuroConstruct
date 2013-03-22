@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.6.0_18" class="java.beans.XMLDecoder">
+<java version="1.7.0_15" class="java.beans.XMLDecoder">
 
 <!-- Note that this XML is specific to the neuroConstruct Java cell object model and not any part of the NeuroML framework -->
 
  <object class="ucl.physiol.neuroconstruct.cell.Cell">
   <void property="allSegments">
    <void method="add">
-    <object id="Segment0" class="ucl.physiol.neuroconstruct.cell.Segment">
+    <object class="ucl.physiol.neuroconstruct.cell.Segment" id="Segment0">
      <void property="endPointPositionX">
       <float>0.0</float>
      </void>
@@ -55,7 +55,7 @@
     </object>
    </void>
    <void method="add">
-    <object id="Segment1" class="ucl.physiol.neuroconstruct.cell.Segment">
+    <object class="ucl.physiol.neuroconstruct.cell.Segment" id="Segment1">
      <void property="endPointPositionX">
       <float>20.0</float>
      </void>
@@ -313,21 +313,6 @@
    <void method="put">
     <object class="ucl.physiol.neuroconstruct.cell.ChannelMechanism">
      <void property="density">
-      <float>3.0E-9</float>
-     </void>
-     <void property="name">
-      <string>LeakConductance</string>
-     </void>
-    </object>
-    <object class="java.util.Vector">
-     <void method="add">
-      <string>all</string>
-     </void>
-    </object>
-   </void>
-   <void method="put">
-    <object class="ucl.physiol.neuroconstruct.cell.ChannelMechanism">
-     <void property="density">
       <float>1.2E-6</float>
      </void>
      <void property="name">
@@ -347,6 +332,21 @@
      </void>
      <void property="name">
       <string>KConductance</string>
+     </void>
+    </object>
+    <object class="java.util.Vector">
+     <void method="add">
+      <string>all</string>
+     </void>
+    </object>
+   </void>
+   <void method="put">
+    <object class="ucl.physiol.neuroconstruct.cell.ChannelMechanism">
+     <void property="density">
+      <float>3.0E-9</float>
+     </void>
+     <void property="name">
+      <string>LeakConductance</string>
      </void>
     </object>
     <object class="java.util.Vector">

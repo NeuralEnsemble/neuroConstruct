@@ -5840,9 +5840,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         String projectName = this.projManager.getCurrentProject().getProjectName();
 
         if (projManager.getCurrentProject().getProjectMainDirectory().getParentFile().getAbsolutePath().equals(
-                        ProjectStructure.getnCExamplesDir().getAbsolutePath()) ||
-            projManager.getCurrentProject().getProjectMainDirectory().getParentFile().getAbsolutePath().equals(
-                        ProjectStructure.getnCModelsDir().getAbsolutePath()))
+                        ProjectStructure.getnCExamplesDir().getAbsolutePath()))
         {
             boolean goOngoOngoOn = GuiUtils.showYesNoMessage(logger, "Note: the project: "+projManager.getCurrentProject().getProjectFile()
                                       +"\nis one of the included example projects in neuroConstruct. These are referenced in the documentation and paper.\n"
@@ -8693,6 +8691,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 });
             }
         }
+        /*
         jMenuFile.add(jMenuModels);
 
         jMenuModels.removeAll();
@@ -8717,6 +8716,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 });
             }
         }
+         
+         */
 
         jMenuFile.addSeparator();
 
