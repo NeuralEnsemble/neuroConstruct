@@ -1,0 +1,10 @@
+Jython
+
+Used by neuroConstruct for the Jython based scripting interface
+
+See LICENSE_Jython.txt
+
+Obtained from http://www.jython.org/Project
+
+Also included in Lib/site-packages is xlrd library from the http://pypi.python.org/pypi/xlrd,
+a very useful utility for reading/writing excel files
