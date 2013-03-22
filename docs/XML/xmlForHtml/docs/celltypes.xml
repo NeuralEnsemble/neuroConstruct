@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document> 
+  <header> 
+    <title>Cell Types</title> 
+  </header> 
+  <body> 
+  
+  
+    
+
+<p>A prototype cell from which networks are built. There are 3 ways to get new Cell Types into the project:</p>
+<ol>
+<li>Use a hard-coded Cell Types as included with the code. There are a number of simple example cells which  (e.g. Simple Cell, Purkinje Cell)
+can be added to the project. Select tab <strong>Cell Type</strong> -> <strong>Add New Cell Type to Project...</strong> and choose the 
+prototype cell. 
+Their initial morphology is hard coded in Java, but they can be edited in tab <strong>Visualisations</strong>
+-> (select the Cell Type in the drop down box) -> <strong>View</strong>. Select any Segment and press <strong>More...</strong> to edit (Note:
+it is best to display the cell with segments <strong>All solid</strong>, to make it easier to select individual segments)</li>
+
+<li>Cells based on imported morphology files, e.g. GenesisMorphReader where a morphology file (ending in .p) as used in <a href="Glossary_gen.html#GENESIS">GENESIS</a> is specified.
+Select tab <strong>Cell Type</strong> -> <strong>Add New Cell Type to Project...</strong> and choose the morphology importer</li>
+<li>Cells imported from other neuroConstruct projects: <strong>Cell Type</strong> -> <strong>Add Cell Type from another Project...</strong></li>
+
+</ol>
+  </body>
+</document>

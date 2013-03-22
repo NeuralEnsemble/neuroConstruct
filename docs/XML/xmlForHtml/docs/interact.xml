@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document>
+  <header>
+    <title>Interacting with native simulators on various platforms</title>
+  </header>
+  <body>
+
+  <p>Outlined here are some points regarding how neuroConstruct deals with the native simulators on
+  various operating systems</p>
+
+
+    <section>
+      <title>General points</title>
+
+<p>neuroConstruct is written in <a href="http://java.sun.com/">Java</a> and so can be used on any platform with a Java Virtual Machine
+    together with an implementation of Java3D.</p>
+<p>In general, NEURON and/or GENESIS should be present on the same machine as neuroConstruct. The scripts for the target platform 
+    are generated based on the network created by neuroConstruct, and these are set running in separate processes via the 
+    Java <strong>Runtime.exec()</strong> command.</p>
+<p></p>
+
+
+</section>
+
+<section>
+  <title>Linux</title>
+
+  <p>&nbsp;&nbsp;<strong>NEURON</strong></p>
+
+  <p>NEURON hoc and mod files are generated from the network model in neuroConstruct. First, the mod files are compiled using
+  <strong>nrnivmodl</strong>. This executable is found using the value for the NEURON home directory in <strong>Settings -> 
+      General Properties</strong>.
+  </p>
+  <p>Once the native machine libraries for the channels are generated, the main hoc file is run with <strong>nrngui</strong>. Note that 
+      this is   executed in a console window (by prefixing the command with <strong>gnome-terminal -x</strong> (Gnome desktop) or 
+      <strong>konsole</strong> (KDE), also set via <strong>Settings -> General Properties</strong>)</p>
+
+  <p>&nbsp;&nbsp;<strong>GENESIS</strong></p>
+  <p>GENESIS script is generated from the network model and the main file can be run straight away. The <strong>genesis</strong> command,
+  together with the name of the main file are executed via <strong>Runtime.exec()</strong>, therefore the location of this executable
+  should be in the PATH variable. The command is executed in a new console window as above.</p>
+
+
+</section>
+
+
+<section>
+  <title>Windows</title>
+
+  <p>&nbsp;&nbsp;<strong>NEURON</strong></p>
+
+  <p>NEURON hoc and mod files are generated from the network model in neuroConstruct. First, the mod files are compiled using a command of the form
+  <strong>C:\nrn60\bin\rxvt.exe -e C:\nrn60\bin\sh C:\nrn60\lib\mknrndll.sh C:\nrn60</strong>. The <strong>C:\nrn60</strong> is found using the 
+          value for the NEURON home directory in <strong>Settings -> General Properties</strong>.
+  </p>
+  <p>Once the native machine libraries for the channels are generated, the main hoc file is run with <strong>neuron.exe</strong>.</p>
+
+  <p>&nbsp;&nbsp;<strong>GENESIS</strong></p>
+  <p>GENESIS was for many years not available on Windows. A <a href="http://www.genesis-sim.org/GENESIS/genesis-cygwin/">port</a> has 
+      recently been created, which while slower than under Linux, can be used to test generated GENESIS code under Windows. The 
+      following assumes Cygwin has been installed at <strong>C:\cygwin</strong> and GENESIS installed at <strong>/usr/local/genesis</strong> i.e.
+  <strong>C:\cygwin\usr\local\genesis</strong>.</p>
+  <p>
+  GENESIS script is generated from the network model and the main file can be run straight away without further compilation.
+  The file <strong>{NEUROCONSTRUCT_HOME}/templates/genesisUtils/startxwin2.bat</strong> is used to launch the genesis executable. 
+  This is a slightly modified version
+  of the <strong>startxwin.bat</strong> supplied with Cygwin for running an XTerm. This mechanism is a bit flaky (e.g. it doesn't 
+  like NEURON running under Cygwin at the same time). Please report any problems/solutions to bugs - at - neuroConstruct.org</p>
+
+</section>
+
+
+<section>
+  <title>Mac</title>
+
+<p>neuroConstruct and its 3D visualisation capability has been successfully tested on the Mac, but the interaction with simulation platforms needs more testing.
+	NEURON interaction is fine if the Developer Tools (XCode) are installed. Basic GENESIS interaction has been tried successfully too. </p>
+<p>If you are interested in helping test the application on this platform, please <a  href="../contact/index.html" >get in touch</a></p>
+</section>
+
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+  </body>
+</document>

@@ -1,0 +1,12 @@
+This directory contains the jar files needed for HDF5 support. 
+
+Obtained from http://hdf.ncsa.uiuc.edu/hdf-java-html/hdfview/index.html.
+
+The win, linux and linux32 contain the library files for windows and 64bit/32bit linux/mac.
+
+HDF5 functionality not yet tested on Mac. Mail PG if you'd like to use this functionality on that platform.
+
+
+NOTE: Currently HDF5 functionality is not available on a 64bit JDK on Windows. This is because there are no
+pre built 64bit Java HDF5 libraries available for Win, so to use the HDF5 features of neuroConstruct under Win64, 
+use a 32bit JDK and alter run.bat accordingly

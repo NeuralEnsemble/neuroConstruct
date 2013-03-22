@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document>
+  <header>
+      <title>Cell Mechanisms</title>
+  </header>
+  <body>
+
+
+        <section>
+      <title>Introduction</title>
+
+      <p>A Cell Mechanism (previously referred to as Cell Process), as used in neuroConstruct is an abstraction of an electrophysiological mechanism present on a cell.</p>
+
+<p>The three main types are <a href="Glossary_gen.html#Channel Mechanism">Channel Mechanism</a>,
+    <a href="Glossary_gen.html#Synaptic Mechanism">Synaptic Mechanism</a> and <a href="Glossary_gen.html#Ion Concentration">Ion Concentration</a> 
+    (although 2 more: Point process and Gap junction are being added). 
+    The Cell Mechanisms available in a neuroConstruct <a href="Glossary_gen.html#Project">project</a> are
+    listed under tab <strong>Cell Mechanism</strong>. New Cell Mechanisms can be added, and the existing ones edited/deleted here.</p>
+
+<p>There are two ways to create Cell Proceses in neuroConstruct:</p>
+
+<ol>
+    <li><strong>ChannelML based Cell Mechanism: </strong>The parameters of the Cell Mechanism are stored in a <a href="Glossary_gen.html#ChannelML">ChannelML</a> file</li>
+    <li><strong>File based Cell Mechanism: </strong>The core of the Cell Mechanism is contained in files written in the native language of simulators (e.g. <a href="Glossary_gen.html#NMODL">NMODL</a>)</li>
+</ol>
+
+
+    <p>The <strong>Abstracted Cell Mechanism</strong> was an older approach to implementing simulator independent Cell Mechanisms without XML. It is no longer in use.</p>
+
+<p>Each Cell Mechanism will have:
+</p>
+<ul>
+    <li>A unique Mechanism Instance Name by which the Mechanism Model coupled with a specific Parameter Set is known</li>
+    <li>A Mechanism Type: currently either a <a href="Glossary_gen.html#Channel Mechanism">Channel Mechanism</a>, <a href="Glossary_gen.html#Synaptic Mechanism">Synaptic Mechanism</a> or an <a href="Glossary_gen.html#Ion Concentration">Ion Concentration</a></li>
+    <li>A Mechanism Model: the conceptual model behind the Cell Mechanism. A Synaptic Mechanism could be modelled as a Double or 
+        Single Exponential Synapse, for example. ChannelML based Cell Mechanisms have Mechanism Model: Template based ChannelML file</li>
+    <li>A Description, which is a short text description of the Cell Mechanism</li>
+        <li>A Parameter Set for the variables in the model (e.g. a Double Exponential Synapse will have
+    rise/decay time of conductance, etc.) In <a href="Glossary_gen.html#ChannelML">ChannelML</a> based Cell Mechanisms these 
+    are contained in an <a href="Glossary_gen.html#XML">XML file</a></li>
+        <li>Templates containing the mapping to the scripting language of one or more simulation environments (e.g. NEURON, GENESIS)
+    for which implementations of the Cell Mechanism are available.</li>
+</ul>
+</section>
+
+        <section>
+      <title>Mapping to simulation environments</title>
+
+      <p>How neuroConstruct creates the native script codes implementing the Cell Mechanisms (mod files/GENESIS scripts) is as follows:</p>
+
+<p>When the files for a simulation environment (e.g. NEURON) need to be generated, neuroConstruct first checks which
+    Cell Mechanisms are included on each of the Cell Types in the network (see below). If there is not an implementation
+    of that Cell Mechanism for the simulation environment (i.e. a template of the scripting code is present) an error will be thrown.</p>
+
+<p>In the case of a <a href="Glossary_gen.html#File based Cell Mechanisms">File based Cell Mechanisms</a>, the core of the script
+    implementing the Cell Mechanism is already present, e.g. an almost complete mod file is specified for a mapping to NEURON. All that
+    needs to be replaced in the file is the Cell Mechanism name and a maximum conductance (density), as outlined <a href="importneuron.html">here</a>.
+These parameters are inserted into the file, a complete native script is generated (and, if needed, compiled) and so the
+Cell Mechanism can be used by other files which define the cells.</p>
+
+<p>For a <a href="Glossary_gen.html#ChannelML">ChannelML</a> based Cell Mechanism all of the important parameters are present in the XML file.
+The mappings to native scripts takes place by transforming the XML using an <a href="http://www.w3schools.com/xsl/xsl_languages.asp">XSL (EXtensible Stylesheet Language)</a> document.
+XSL allows easy transformation of an XML file into another format, basically restructuring the information present in the file.
+XSL documents are present for each simulation environment, which take the values in the ChannelML file (e.g. maximum conductance density)
+and place them in the correct location in partially written native script files. Examples of valid ChannelML files and mappings to simulators can be found
+<a  href="http://morphml.org:8080/NeuroMLValidator/">here</a>, or opening a ChannelML based Cell Mechanism in neuroConstruct
+will allow inspection of the XML, editing of the parameters, validation of the file and preview of the mapping to NEURON or GENESIS</p>
+
+
+</section>
+
+        <section>
+      <title>Placing Cell Mechanism on Cells</title>
+
+<p>Cell Mechanism need to be placed on cells before the native script files are generated.</p>
+
+<p>Inclusion of Synaptic Mechanism on cells is outlined in the <a href="tutorials/tutorial3.html">Network Connections</a> tutorial.</p>
+
+<p>To place Channel Mechanisms on cells, go to the tab <strong>Visualisation</strong>, select the cell
+name in the drop down box and press <strong>View</strong>.</p>
+
+<p>Note that Channel Mechanisms, like Synaptic Connection Locations, are associated with <a href="Glossary_gen.html#Section Group">
+        Section Groups</a> as opposed to sections. Therefore the Groups of Sections which have similar channel densities should be 
+    constructed first by selecting <strong>Groups</strong> in the bottom right drop down box. Click <strong>Edit Groups</strong>, 
+    or for a simple cell, use the existing Groups. Now select <strong>Cell density mechanisms</strong> in the drop down box, and 
+    click <strong>Edit Density Mechanisms</strong>. In the drop down box of the dialog, all the Cell Mechanism of Mechanism Type: 
+    Channel Mechanism will be listed (if there are none, go to tab <strong>Cell Mechanisms</strong>, click <strong>Add ChennelML 
+        from Template</strong> and add at least a Leak conductance). Select one of these and for each Group with this Channel 
+    Mechanism add it to the list. The Max Conductance Density of the channel needs to be specified. NOTE: This overwrites the 
+    Max Conductance Density as specified in the Parameter Set/ChannelML file. All other parameter values remain the same.</p>
+
+
+<p>Once a number of channels are added, the densities can be seen back in the <strong>Visualisation</strong> view.
+For a Channel Mechanism with different densities on different Groups, a shaded colour between the maximum and minimum is shown.</p>
+
+</section>
+
+        <section>
+      <title>Copying Cell Mechanism between projects</title>
+
+<p>To copy a Cell Mechanism present in one <a href="Glossary_gen.html#Project">project</a> to another, go to the directory 
+    <strong>cellMechanisms</strong> in the project's home directory, and copy the folder named after the cell mechanism into the 
+<strong>cellMechanisms</strong> directory of the target project. That project should now have the cell mechanism listed under the 
+tab <strong>Cell Mechanisms</strong>. Note: make sure there was not already a mechanism with that name before pasting. Also,
+problems may be caused if the project is under version control (CVS or Subversion); remove any CVS or .svn directories from the 
+pasted directory.</p>
+
+</section>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+  </body>
+</document>

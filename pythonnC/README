@@ -1,0 +1,17 @@
+
+These are some example files for interacting with neuroConstruct through the Python interface.
+
+
+****   BETA stage of implementation. 
+
+The interaction is achieved using Jython.
+
+The scripts can be run using the nC script files, e.g. type:
+
+..\nC.bat -python Ex1_Simple.py         (Windows)
+../nC.sh -python Ex1_Simple.py          (Linux/Mac)
+
+All of the required libraries for Jython should be included with the standard neuroConstruct distribution.
+
+NOTE: currently Jython complies with Python 2.2 (v2.5 is the current version of C Python), so some 
+Python modules may not be supported

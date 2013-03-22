@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.ant.freeform</type>
+    <configuration>
+        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
+            <name>neuroConstruct</name>
+        </general-data>
+        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/2">
+            <!-- Do not use Project Properties customizer when editing this file manually. -->
+            <name>neuroConstruct</name>
+            <properties>
+                <property name="project.dir">..</property>
+                <property name="ant.script">${project.dir}/build.xml</property>
+            </properties>
+            <folders>
+                <source-folder>
+                    <label>neuroConstruct</label>
+                    <location>${project.dir}</location>
+                </source-folder>
+                <source-folder>
+                    <label>neuroConstruct</label>
+                    <location>.</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>tests</label>
+                    <location>${project.dir}/tests</location>
+                </source-folder>
+                <source-folder>
+                    <label>lems/src</label>
+                    <location>${project.dir}/lems/src</location>
+                </source-folder>
+                <source-folder>
+                    <label>src</label>
+                    <type>java</type>
+                    <location>${project.dir}/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>tests</label>
+                    <type>java</type>
+                    <location>${project.dir}/tests</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>lems/src</label>
+                    <type>java</type>
+                    <location>${project.dir}/lems/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+            </folders>
+            <ide-actions>
+                <action name="build">
+                    <script>nbproject/nbjdk.xml</script>
+                    <target>makejar</target>
+                </action>
+                <action name="clean">
+                    <script>nbproject/nbjdk.xml</script>
+                    <target>clean</target>
+                </action>
+                <action name="javadoc">
+                    <script>nbproject/nbjdk.xml</script>
+                    <target>javadoc</target>
+                </action>
+                <action name="run">
+                    <script>nbproject/nbjdk.xml</script>
+                    <target>runbiglast</target>
+                </action>
+                <action name="rebuild">
+                    <script>nbproject/nbjdk.xml</script>
+                    <target>clean</target>
+                    <target>makejar</target>
+                </action>
+                <action name="run.single">
+                    <script>nbproject/nbjdk.xml</script>
+                    <target>run-selected-file-in-src</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>${project.dir}/src</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="test.single">
+                    <script>nbproject/nbjdk.xml</script>
+                    <target>test-selected-file-in-src</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>${project.dir}/src</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="debug">
+                    <script>nbproject/nbjdk.xml</script>
+                    <target>debug-nb</target>
+                </action>
+                <action name="test">
+                    <script>${ant.script}</script>
+                    <target>test</target>
+                </action>
+                <action name="run.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>run-selected-file-in-tests</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>${project.dir}/tests</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+            </ide-actions>
+            <export>
+                <type>folder</type>
+                <location>${project.dir}/classes</location>
+                <script>nbproject/nbjdk.xml</script>
+                <build-target>makejar</build-target>
+            </export>
+            <export>
+                <type>folder</type>
+                <location>${project.dir}/classes</location>
+                <script>nbproject/nbjdk.xml</script>
+                <build-target>makejar</build-target>
+            </export>
+            <view>
+                <items>
+                    <source-folder style="packages">
+                        <label>src</label>
+                        <location>${project.dir}/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>tests</label>
+                        <location>${project.dir}/tests</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>lems/src</label>
+                        <location>${project.dir}/lems/src</location>
+                    </source-folder>
+                    <source-file>
+                        <location>${ant.script}</location>
+                    </source-file>
+                </items>
+                <context-menu>
+                    <ide-action name="build"/>
+                    <ide-action name="rebuild"/>
+                    <ide-action name="clean"/>
+                    <ide-action name="javadoc"/>
+                    <ide-action name="run"/>
+                    <ide-action name="test"/>
+                    <ide-action name="debug"/>
+                    <action>
+                        <script>${ant.script}</script>
+                        <label>run no load</label>
+                        <target>run</target>
+                    </action>
+                </context-menu>
+            </view>
+            <subprojects/>
+        </general-data>
+        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
+            <compilation-unit>
+                <package-root>${project.dir}/src</package-root>
+                <classpath mode="compile">${project.dir}/lib/hdf5/jhdf.jar:${project.dir}/lib/hdf5/jhdf4obj.jar:${project.dir}/lib/hdf5/jhdf5.jar:${project.dir}/lib/hdf5/jhdf5obj.jar:${project.dir}/lib/hdf5/jhdfobj.jar:${project.dir}/lib/jython/jython.jar:${project.dir}/lib/junit/junit-4.8.1.jar:${project.dir}/lib/j3d/j3dcore.jar:${project.dir}/lib/j3d/j3dutils.jar:${project.dir}/lib/j3d/vecmath.jar:${project.dir}/NeuroML2/libNeuroML-2.0.0.jar:${project.dir}/NeuroML2/lib/lems/lems-0.8.3.jar</classpath>
+                <built-to>${project.dir}/classes</built-to>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>${project.dir}/tests</package-root>
+                <unit-tests/>
+                <classpath mode="compile">${project.dir}/lib/hdf5/jhdf.jar:${project.dir}/lib/hdf5/jhdf4obj.jar:${project.dir}/lib/hdf5/jhdf5.jar:${project.dir}/lib/hdf5/jhdf5obj.jar:${project.dir}/lib/hdf5/jhdfobj.jar:${project.dir}/lib/jython/jython.jar:${project.dir}/lib/junit/junit-4.8.1.jar:${project.dir}/lib/junit/junit-4.8.1-src.jar:${project.dir}/lib/j3d/j3dcore.jar:${project.dir}/lib/j3d/j3dutils.jar:${project.dir}/lib/j3d/vecmath.jar:${project.dir}/src:${project.dir}/neuroConstruct_1.6.1.jar:${project.dir}/NeuroML2/libNeuroML-2.0.0.jar:${project.dir}/NeuroML2/lib/lems/lems-0.8.3.jar</classpath>
+                <built-to>${project.dir}/classes</built-to>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>${project.dir}/lems/src</package-root>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+        </java-data>
+        <preferences xmlns="http://www.netbeans.org/ns/auxiliary-configuration-preferences/1">
+            <module name="org-netbeans-modules-editor-indent"/>
+        </preferences>
+        <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>AMPA</word>
+            <word>apic</word>
+            <word>AxAx</word>
+            <word>CG</word>
+            <word>CortIN</word>
+            <word>DeepFS</word>
+            <word>DeepIN</word>
+            <word>DeepLTS</word>
+            <word>DeepPyr</word>
+            <word>dend</word>
+            <word>dist</word>
+            <word>FRBPyr</word>
+            <word>FS</word>
+            <word>GABAA</word>
+            <word>IB</word>
+            <word>LTS</word>
+            <word>NMDA</word>
+            <word>NonTuftRS</word>
+            <word>nRT</word>
+            <word>NT</word>
+            <word>obl</word>
+            <word>PostCellGroup</word>
+            <word>prox</word>
+            <word>Pyr</word>
+            <word>PyrFRB</word>
+            <word>PyrRS</word>
+            <word>RSPyr</word>
+            <word>SpinStell</word>
+            <word>SS</word>
+            <word>SupAxAx</word>
+            <word>SupBask</word>
+            <word>SupFS</word>
+            <word>SupIN</word>
+            <word>SupLTS</word>
+            <word>Syn</word>
+            <word>TCR</word>
+            <word>TuftIB</word>
+        </spellchecker-wordlist>
+    </configuration>
+</project>

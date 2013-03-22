@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document>
+  <header>
+    <title>neuroConstruct Documentation</title>
+  </header>
+  <body>
+
+
+<p>An overview of the documentation available for neuroConstruct</p>
+
+
+    <p><a  href="install.html" >Installation</a></p>
+
+<p>&nbsp;&nbsp;&nbsp;First you'll need to get the application installed. Click <a  href="install.html" >here</a> for instructions
+on the system requirements and installation instructions for neuroConstruct</p>
+
+<!--<p>&nbsp;&nbsp;&nbsp;<a  href="RELEASE_NOTES" >Release notes</a></p>
+
+<p>A history of changes in the application can be found <a  href="RELEASE_NOTES" >here</a>.</p>-->
+
+
+
+        <p><a  href="../links/publications.html" >neuroConstruct paper</a></p>
+
+    <p>&nbsp;&nbsp;&nbsp;The best way to get an overview of the functionality offered by neuroConstruct is to read
+    <a  href="../links/publications.html" >the paper published in the journal Neuron</a>.</p>
+
+
+
+    <p><a  href="docMenu.html" >Documentation contents</a></p>
+
+<p>&nbsp;&nbsp;&nbsp;More details on the <a  href="docMenu.html" >contents</a> of the neuroConstruct online documentation</p>
+
+
+
+    <p><a  href="Glossary_gen.html" >Glossary</a></p>
+
+<p>&nbsp;&nbsp;&nbsp;Details on most of the main terms used in the application are provided in a <a  href="Glossary_gen.html" >glossary</a>,
+which provides links to more details on the key concepts used (e.g. Cell Group, Cell Mechanisms) </p>
+
+    <p><a  href="tutorials/index.html" >Tutorials</a></p>
+
+<p>&nbsp;&nbsp;&nbsp;A number of <a  href="tutorials/index.html" >tutorials</a> illustrating the functionality of the application. More
+will be added to these in the near future.</p>
+
+
+
+<p><a  href="http://www.neuroconstruct.org/api-latest/api/" >JavaDoc API for neuroConstruct</a></p>
+
+<p>&nbsp;&nbsp;&nbsp;The API for the latest version of neuroConstruct is available <a  href="http://www.neuroconstruct.org/api-latest/api/" >here</a>.</p>
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+  </body>
+</document>

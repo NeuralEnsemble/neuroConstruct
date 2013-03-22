@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document> 
+  <header> 
+    <title>neuroConstruct course</title>
+  </header> 
+  <body>
+
+
+
+<figure src="images/BrainTrainC.png" alt="BrainTrain Cerebnet" ></figure>
+
+<p><strong>Introduction to compartmental neuronal modelling with neuroConstruct and recent advances in rapid 2-photon imaging</strong></p>
+<p>University College London, May 2nd-4th 2012</p>
+
+
+
+<p>&nbsp;</p>
+<p>This course, being run by the <a href="http://www.ucl.ac.uk/silverlab/">Silver Lab @ UCL</a>, will provide an introduction
+to 3D biophysically detailed neuronal modelling and
+recent advances in 2-photon imaging methods for studying rapid neuronal signalling. Creation of multicompartmental,
+conductance based neuronal models has been greatly facilitated by software packages such as <a  href="http://www.neuron.yale.edu/neuron/">NEURON</a>
+and <a  href="http://www.genesis-sim.org/GENESIS">GENESIS</a>
+and a range of detailed cell and network models are available which are faithful to the anatomical and biophysical
+properties of the corresponding biological entities. <a  href="http://www.neuroconstruct.org" >neuroConstruct</a> is an application
+which facilitates the construction and analysis of such models through a 3D graphical interface and automates
+code generation for a number of widely used simulators. </p>
+
+<p>The course will give an overview of the field of detailed
+compartmental modelling and how it can complement experimental approaches including 2-photon imaging. It will
+consist of some introductory lectures on modeling and imaging, provide hands on experience of using neuroConstruct,
+introduce the existing cortical, cerebellar and hippocampal models which are already available in this format, and outline
+the process of creating new models from experimental data. The course will also cover the simulator independent model
+description language <a href="http://www.neuroml.org/">NeuroML</a> and the <a href="http://www.neuroml.org/tool_support.php">growing number of tools available</a> for handling models in this format.</p>
+
+<p>This course is primarily intended for participants in the <a href="http://www.brain-train.nl/">BrainTrain</a> and
+<a href="http://www.cerebnet.eu/">Marie Curie Cerebnet</a> training programs,
+although there are a limited number of places available for other researchers.</p>
+
+<p>&nbsp;</p>
+<p>&nbsp;<strong>PRACTICALITIES</strong></p>
+<ul>
+    <li><strong>Registration for the course is closed! </strong>. Contact <strong>p.gleeson -at- ucl.ac.uk</strong> for any enquiries.</li>
+    <li>The venue for the meeting will be the main campus at UCL, with morning lectures taking place in the Watson lecture theatre (G02) in the Medawar building and
+    afternoon hands on practical sessions taking place in G20 in the Christopher Ingold Building. See <a href="images/nCcourse.png">here</a> for a map of the locations
+    (or look on <a href="http://maps.google.co.uk/maps?q=CHRISTOPHER+INGOLD+BUILDING%4051.525417,-0.132244&amp;hl=en&amp;hnear=Christopher+Ingold+Bldg,+United+Kingdom&amp;t=m&amp;z=16">Google maps</a>).</li>
+    <li>Booking accomodation in London is the responsibility of attendees (try <a href="http://www.hotelcavendish.com/">Hotel Cavendish</a>, <a href="http://www.gowerhousehotel.co.uk/">Gower House Hotel</a> or <a href="http://www.hotels.com">search</a> for something within your budget).
+    Cerebnet/BrainTrain members should contact their own course administrators regarding refunding expenses.</li>
+    <li>The course will start at 9am on Wed 2nd May and finish at 5pm on Fri 4th May. The overall format will consist of lectures in the morning, hands on modelling in the afternoon.</li>
+    <li>Participants should <strong>bring their own laptops</strong> on which they can install software (and have about 2GB of disk space).</li>
+    <li>Lunch (2nd-4th May) and dinner (2nd-3rd May) will be provided.</li>
+    <li>Contact <strong>p.gleeson -at- ucl.ac.uk</strong> for more details.</li>
+</ul>
+
+<p>&nbsp;</p>
+<p>&nbsp;<strong>COURSE LECTURERS</strong></p>
+<ul>
+    <li>Padraig Gleeson</li>
+    <li>R. Angus Silver</li>
+    <li>Volker Steuber</li>
+    <li>Arnd Roth</li>
+    <li>Guy Billings</li>
+    <li>Matteo Farinella</li>
+    <li>Eugenio Piasini</li>
+    <li>Emmanuelle Chaigneau</li>
+    <li>Tomás Fernández-Alfonso</li>
+    <li>Paul Kirkby</li>
+    <li>K. M. Naga Srinivas Nadella </li>
+</ul>
+<p>&nbsp;</p>
+
+
+<table class="noborder">
+
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;<strong>Day 1, Wednesday 2nd May</strong></td></tr>
+
+<tr><td><strong>9:00</strong></td><td>Welcome, outline of course</td><td>Angus Silver</td><td><strong>Watson lecture theatre, Medawar building</strong></td></tr>
+<tr><td><strong>9:15</strong></td><td>Introduction to cable modelling</td><td>Arnd Roth</td></tr>
+<tr><td><strong>10:00</strong></td><td>Compartmental modelling and the Hodgkin Huxley model</td><td>Volker Steuber</td></tr>
+
+<tr><td><strong>11:00</strong></td><td colspan="2"><em>Coffee</em></td></tr>
+
+<tr><td><strong>11:15</strong></td><td>Introduction to dendritic computation</td><td>Arnd Roth</td></tr>
+<tr><td><strong>12:00</strong></td><td>Overview of simulators</td><td>Padraig Gleeson</td></tr>
+<tr><td><strong>12:30</strong></td><td>Introduction to neuroConstruct (1)</td><td>Padraig Gleeson</td></tr>
+<tr><td><strong>13:15</strong></td><td colspan="2"><em>Lunch</em></td></tr>
+
+
+<tr><td><strong>14:00</strong></td><td>Introduction to neuroConstruct (2)</td><td>Padraig Gleeson</td><td><strong>G20 cluster room, Christopher Ingold Building</strong></td></tr>
+
+
+<tr><td><strong>15:00</strong></td><td>Hands on modelling with neuroConstruct</td></tr>
+
+<tr><td><strong>15:30</strong></td><td colspan="2"><em>Coffee</em></td></tr>
+
+<tr><td><strong>18:00</strong></td><td colspan="2"><em>Finish</em></td></tr>
+
+<tr><td><strong>19:30</strong></td><td colspan="2"><em>Dinner: <a href="http://www.navarros-tapas-london.co.uk/">Navarro's</a>, 67 Charlotte Street</em></td></tr>
+
+<tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;<strong>Day 2, Thursday 3rd May</strong></td></tr>
+
+<tr><td><strong>9:00</strong></td><td>Introduction to NEURON</td><td>Arnd Roth</td><td><strong>Watson lecture theatre, Medawar building</strong></td></tr>
+<tr><td><strong>10:00</strong></td><td>Modelling synapses</td><td>Guy Billings</td></tr>
+
+<tr><td><strong>11:00</strong></td><td colspan="2"><em>Coffee</em></td></tr>
+
+<tr><td><strong>11:15</strong></td><td>NeuroML and related tools/databases</td><td>Padraig Gleeson</td></tr>
+<tr><td><strong>12:00</strong></td><td>Example of using neuroConstruct in a research project: investigating NMDA spikes</td><td>Matteo Farinella	</td></tr>
+<tr><td><strong>12:30</strong></td><td>The Open Source Brain initiative</td><td>Eugenio Piasini</td></tr>
+
+<tr><td><strong>13:00</strong></td><td colspan="2"><em>Lunch</em></td><td><strong>Haldane room, Wilkins building</strong></td></tr>
+
+<tr><td><strong>14:00</strong></td><td>Advanced neuroConstruct: Parallel and Python</td><td>Padraig Gleeson</td><td><strong>G20 cluster room, Christopher Ingold Building</strong></td></tr>
+
+<tr><td><strong>15:00</strong></td><td>Hands on modelling with neuroConstruct</td></tr>
+
+<tr><td><strong>15:30</strong></td><td colspan="2"><em>Coffee</em></td></tr>
+
+
+<tr><td><strong>18:00</strong></td><td colspan="2"><em>Finish</em></td></tr>
+
+<tr><td><strong>19:30</strong></td><td colspan="2"><em>Dinner: <a href="http://www.theartichoke.net">The Queens Head and Artichoke</a>, 30-32 Albany Street, Regents Park</em></td></tr>
+
+<tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;<strong>Day 3, Friday 4th May</strong></td></tr>
+
+<tr><td><strong>9:00</strong></td><td>Introduction to 2-photon microscopy</td><td>Tomás Fernández-Alfonso</td><td><strong>Watson lecture theatre, Medawar building</strong></td></tr>
+<tr><td><strong>10:00</strong></td><td>Principles of 2-photon photolysis</td><td>Emmanuelle Chaigneau</td></tr>
+
+<tr><td><strong>11:00</strong></td><td colspan="2"><em>Coffee</em></td></tr>
+
+<tr><td><strong>11:15</strong></td><td>High speed 3D 2-photon imaging</td><td>Angus Silver</td></tr>
+
+<tr><td><strong>12:15</strong></td><td colspan="2"><em>Lunch</em></td><td><strong>Haldane room, Wilkins building</strong></td></tr>
+
+<tr><td><strong>13:00</strong></td><td colspan="2">Silver Lab visit (2 groups in 2 parallel sessions seeing 2-photon experimental set ups)</td><td><strong>3rd floor, Anatomy Building</strong></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;&nbsp;Paul Kirkby/K. M. Naga Srinivas Nadella/Tomás Fernández-Alfonso: 	High speed 3D 2-photon imaging</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;&nbsp;Emmanuelle Chaigneau:			2-photon uncaging</td></tr>
+
+<tr><td><strong>15:00</strong></td><td>Hands on modelling with neuroConstruct</td><td>Padraig Gleeson</td><td><strong>G20 cluster room, Christopher Ingold Building</strong></td></tr>
+
+<tr><td><strong>15:30</strong></td><td colspan="2"><em>Coffee</em></td></tr>
+<tr><td><strong>17:00</strong></td><td colspan="2"><em>Finish</em></td></tr>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+  </body>
+</document>

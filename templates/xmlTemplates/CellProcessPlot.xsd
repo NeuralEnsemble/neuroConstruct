@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+
+    <!-- This XML Schema describes how to specify "interesting" plots related to Cell Process in neuroConstruct
+         See included examples for usage. Note that this specification is quite likely to change as the Cell Processes
+         themselves become more XML friendly... -->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://www.physiol.ucl.ac.uk/research/silver_a/neuroConstruct/"
+        xmlns="http://www.physiol.ucl.ac.uk/research/silver_a/neuroConstruct/"
+        elementFormDefault="qualified">
+
+    <xs:element name="plotlist">
+
+        <xs:complexType>
+            <xs:sequence>
+
+                <xs:element name="parameter"  maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="parametername" type="xs:string"/>
+                            <xs:element name="symbol" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <xs:element name="plot"   maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="plotname" type="xs:string"/>
+                            <xs:element name="independentvariable" type="xs:string"/>
+                            <xs:element name="maxvalue" type="xs:decimal"/>
+                            <xs:element name="minvalue" type="xs:decimal"/>
+                            <xs:element name="expression" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+            </xs:sequence>
+        </xs:complexType>
+
+    </xs:element>
+
+</xs:schema>
+

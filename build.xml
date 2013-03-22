@@ -1,0 +1,882 @@
+<!--
+
+     This is the neuroConstruct build file for use with Ant (http://ant.apache.org/)
+     
+     Running "ant runlast" will run neuroConstruct and load the last project
+
+     Type ant -p to view all possible build targets
+     
+     NOTE: if the jar file (neuroConstruct_x.x.x.jar) is present, nC.bat/nC.sh can
+     also be used to run the application
+     
+-->
+
+<project name="neuroConstruct" default="jar" basedir=".">
+
+    <!-- FORREST_HOME must be set as an environment variable -->
+    <property environment="env"/>
+    <property name="forrest.home" value="${env.FORREST_HOME}"/>
+    <property name="forrest.antfile" value="${env.FORREST_HOME}/main/forrest.build.xml"/>
+
+
+  <!-- =================================================================== -->
+  <!-- Initialization target                                               -->
+  <!-- =================================================================== -->
+
+  
+  <target name="init">
+  
+    <tstamp/>
+    <property name="name" value="neuroConstruct"/>
+    <property name="version" value="1.6.1"/>
+    <property name="version.impl" value="${version}"/>
+    <property name="year" value="2012"/>
+
+    <echo message="----------- ${name} v${version} ------------"/>
+
+    <property name="build.compiler" value="classic"/>
+    <property name="debug" value="on"/>
+    <property name="optimize" value="on"/>
+    <property name="deprecation" value="on"/>
+    <property name="src.dir" value="./src"/>
+    <property name="nCexamples.dir" value="./nCexamples"/>
+    <property name="nCmodels.dir" value="./nCmodels"/>
+    <property name="testmodels.dir" value="./models"/>
+    <property name="projects.dir" value="./projects"/>
+    <property name="templates.dir" value="./templates"/>
+
+
+    <property name="dist.dir" value="./dist"/>
+
+    <property name="packages" value="ucl.physiol.neuroconstruct.*"/>
+
+
+    <property name="hdf5.libs" value="lib/hdf5"/>
+    <property name="j3d.libs" value="lib/j3d"/>
+    <property name="jython.libs" value="lib/jython"/>
+    <property name="junit.libs" value="lib/junit"/>
+
+
+    <condition property="arch.suffix" value="64" else="32">
+        <os arch="amd64"/>
+    </condition>
+
+    <condition property="java.library.path.touse" value="./lib/hdf5/win${arch.suffix};./lib/j3d/win${arch.suffix}" else="./lib/hdf5/linux${arch.suffix}:./lib/j3d/linux${arch.suffix}">
+        <os family="windows"/>
+    </condition>
+
+
+
+    <property name="build.dir" value="./"/>
+    <property name="build.dest" value="./classes"/>
+
+    <property name="docs.dir" value="./docs"/>
+    <property name="apidocs.dir" value="${docs.dir}/api"/>
+    <property name="helpdocs.dir" value="${docs.dir}/helpdocs"/>
+
+    <property name="website.dir" value="${docs.dir}/website"/>
+    <property name="xmldocs.dir" value="${docs.dir}/XML"/>
+
+    <property name="orig.helpdocs.dir" value="${xmldocs.dir}/xmlForHtml/docs"/>
+
+    <property name="website.python.dir" value="${orig.helpdocs.dir}/python"/>
+
+    <property name="pythonnC.dir" value="./pythonnC"/>
+    <property name="pythonNeuroML.Examples.dir" value="./pythonNeuroML/Examples"/>
+
+    <property name="helpdocs.xsl.file" value="${xmldocs.dir}/helpViewer/helpdocs.xsl"/>
+
+    <property name="orig.glossary.file" value="${xmldocs.dir}/glossary/Glossary.xml"/>
+    <property name="glossary.xsl.file" value="${xmldocs.dir}/glossary/Glossary.xsl"/>
+    <property name="forrest.glossary.dir" value="${xmldocs.dir}/xmlForHtml/docs"/>
+
+
+    <property name="forrest.settings.dir" value="${xmldocs.dir}/Forrest"/>
+
+
+    <property name="main.app.class" value="ucl.physiol.neuroconstruct.gui.MainApplication"/>
+    <property name="general.properties.class" value="ucl.physiol.neuroconstruct.project.GeneralProperties"/>
+    <property name="xml.transform.class" value="ucl.physiol.neuroconstruct.utils.XMLUtils"/>
+    <property name="example.generate.class" value="ucl.physiol.neuroconstruct.website.ExampleProjects"/>
+
+    <property name="main.gui.dir" value="ucl/physiol/neuroconstruct/gui"/>
+    <property name="nmodl.gui.dir" value="ucl/physiol/neuroconstruct/nmodleditor/gui"/>
+
+
+    <property name="test.dir" value="./tests"/>
+    <property name="main.test.class" value="ucl.physiol.neuroconstruct.test.MainTest"/>
+    <property name="main.testmodels.class" value="ucl.physiol.neuroconstruct.test.ModelTest"/>
+    <property name="main.testmodpy.class" value="ucl.physiol.neuroconstruct.test.PythonTest"/>
+
+
+
+    <property name="jar.file" value="${build.dir}/${name}_${version}.jar"/>
+
+
+    <property name="libneuroml.dir" value="./NeuroML2"/>
+
+    <available file="./NeuroML2" type="dir" property="libneuroml.dir.exists"/>
+    
+    <!--<property name="libneuroml.jar.file" value="${libneuroml.dir}/libNeuroML-2.0.0.jar"/>
+    <property name="lems.jar.file" value="${libneuroml.dir}/lib/lems/lems-0.8.2.jar"/>-->
+    <property name="neuroml2.libs" value="lib/neuroml2"/>
+
+    <filter token="year" value="${year}"/>
+    <filter token="version" value="${version}"/>
+    <filter token="date" value="${TODAY}"/>
+
+    <property name="neuroconstruct-core"       value="${build.dest}"/>
+
+
+    <!-- Compilation class path -->
+    <path id="compile.class.path">
+        <fileset dir="${hdf5.libs}">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${j3d.libs}">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${jython.libs}">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${junit.libs}">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${neuroml2.libs}">
+          <include name="*.jar"/>
+        </fileset>
+
+    </path>
+
+    <path id="run.class.path">
+      <path refid="compile.class.path"/>
+      <pathelement location="${neuroconstruct-core}"/>
+
+    </path>
+    
+    <echo>Initialised neuroConstruct project to build jar: ${jar.file}</echo>
+
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Builds the libNeuroML jar                                        -->
+  <!-- =================================================================== -->
+
+
+  <target name="libneuromljar" depends="init" if="libneuroml.dir.exists">
+
+    <echo>Building the libNeuroML jar in: ${libneuroml.dir}, ${libneuroml.dir.exists}</echo>
+    <ant antfile="${libneuroml.dir}/build.xml" target="jarnml"/>
+
+    <!--TODO-->
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Cleans the libNeuroML dir                                        -->
+  <!-- =================================================================== -->
+
+
+  <target name="cleannml" depends="init">
+    <echo>Cleaning the libNeuroML...</echo>
+    <ant antfile="${libneuroml.dir}/build.xml" target="cleannml"/>
+    <!--TODO-->
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Cleans the NeuroML 2 generated example results                                        -->
+  <!-- =================================================================== -->
+
+
+  <target name="cleangen" depends="init">
+    <echo>Cleaning the libNeuroML examples...</echo>
+    <ant antfile="${libneuroml.dir}/build.xml" target="cleangen"/>
+    <!--TODO-->
+  </target>
+
+
+
+  <!-- =================================================================== -->
+  <!-- Prepares the build directory                                        -->
+  <!-- =================================================================== -->
+
+    
+  <target name="prepare" depends="init">
+    <mkdir dir="${build.dest}"/>
+  </target>
+
+
+
+  <!-- =================================================================== -->
+  <!-- Compiles the source directory                                       -->
+  <!-- =================================================================== -->
+
+  <target name="compile" depends="prepare, libneuromljar" description="Compiles the source code">
+
+    <javac srcdir="${src.dir}"
+           destdir="${build.dest}"
+           debug="${debug}"
+           optimize="${optimize}"
+           compiler="modern"
+           source="1.5"
+           target="1.5"
+           includeantruntime="false">
+      <classpath refid="compile.class.path"/>
+      <compilerarg value="-Xlint:serial"/> <!-- As cells can be stored as Java serialised objs, essential to have this check-->
+    </javac>
+
+    <copy todir="${build.dest}/${main.gui.dir}">
+        <fileset dir="${src.dir}/${main.gui.dir}">
+            <include name="*.png"/>
+            <include name="*.PNG"/>
+            <include name="*.gif"/>
+            <include name="*.GIF"/>
+        </fileset>
+    </copy>
+
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Compiles the tests directory                                       -->
+  <!-- =================================================================== -->
+
+  <target name="compiletests" depends="prepare, compile" description="Compiles the test code">
+
+    <javac srcdir="${test.dir}"
+           destdir="${build.dest}"
+           debug="${debug}"
+           optimize="${optimize}"
+           compiler="modern"
+           includeantruntime="false">
+      <classpath refid="compile.class.path"/>
+      <compilerarg value="-Xlint:deprecation"/>
+      <compilerarg value="-Xlint:serial"/> <!-- As cells can be stored as Java serialised objs, essential to have this check-->
+    </javac>
+
+
+  </target>
+
+
+
+  <!-- =================================================================== -->
+  <!-- Creates the jar file                                                -->
+  <!-- =================================================================== -->
+
+  <target name="jar" depends="compile, compiletests" description="Creates the jar file">
+
+    <jar jarfile="${jar.file}" basedir="${build.dest}">
+        <manifest>
+            <attribute name="Main-Class" value="${main.app.class}"/>
+        </manifest>
+    </jar>
+  </target>
+
+  <target name="makejar" depends="jar" description="Same as target jar">
+
+  </target>
+
+
+
+  <!-- =================================================================== -->
+  <!-- Creates the API documentation                                       -->
+  <!-- =================================================================== -->
+
+  <target name="javadoc" depends="init, cleandocs"
+          description="Creates the API documentation with links to JDK 1.4 classes">
+    <mkdir dir="${apidocs.dir}"/>
+    <javadoc packagenames="${packages}"
+             sourcepath="${src.dir}"
+             destdir="${apidocs.dir}"
+             author="true"
+             version="true"
+             use="true"
+             splitindex="true"
+             noindex="false"
+             windowtitle="${name} API"
+             doctitle="${name}"
+             private = "false">
+
+        <classpath refid="run.class.path"/>
+        <tag name="todo" scope="all" description="To do:" />
+
+        <link href="http://java.sun.com/j2se/1.4/docs/api"/>
+        <link href="http://java.sun.com/products/java-media/3D/forDevelopers/J3D_1_2_API/j3dapi"/>
+
+    </javadoc>
+  </target>
+
+
+
+
+  <!-- =================================================================== -->
+  <!-- Clean code targets                                                       -->
+  <!-- =================================================================== -->
+  <target name="clean" depends="init"
+          description="Removes built files">
+    <delete dir="${build.dest}"/>
+    <delete dir="${dist.dir}"/>
+    <delete file="${jar.file}"/>
+  </target>
+  
+  <!-- =================================================================== -->
+  <!-- Clean documentation                                                       -->
+  <!-- =================================================================== -->
+  <target name="cleandocs" depends="init"
+          description="Removes generated documentation files">
+    <delete dir="${apidocs.dir}"/>
+    <mkdir dir="${apidocs.dir}"/>
+  </target>
+
+
+
+  <!-- =================================================================== -->
+  <!-- Run temporary test                                       -->
+  <!-- =================================================================== -->
+
+  <target name="temptest" depends="clean, makejar"
+          description="Temporary test of single class.">
+
+    <java classname="ucl.physiol.neuroconstruct.project.MorphBasedConnGenerator" fork="true">
+        <jvmarg value="-Xmx700M" />
+        <jvmarg value="-Xms600M" />
+        <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
+        <jvmarg value="-Dsun.java2d.noddraw=true" />
+        <classpath refid="run.class.path"/>
+    </java>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Run tests                                               -->
+  <!-- =================================================================== -->
+
+  <target name="test" depends="clean, jar"
+          description="Runs the core neuroConstruct unit tests. NEURON (incl. Parallel NEURON), GENESIS and MOOSE need to be installed for all tests to pass. Can be run using: ant test -Dsimulators='NEURON GENESIS', to limit the number of simulators tested.">
+
+    <property name="simulators" value="NEURON PNEURON GENESIS MOOSE"/>
+
+    <java classname="${main.test.class}" fork="true" failonerror="true">
+        <jvmarg value="-Xmx700M" />
+        <jvmarg value="-Xms600M" />
+        <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
+        <jvmarg value="-Dsun.java2d.noddraw=true" />
+        <jvmarg value="-Dsimulators=${simulators}" />
+        <classpath refid="run.class.path"/>
+    </java>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Run tests on core functionality                                     -->
+  <!-- =================================================================== -->
+
+  <target name="testcore" depends="clean, jar"
+          description="Runs the core neuroConstruct unit tests. ">
+
+    <property name="simulators" value=""/>
+
+    <java classname="${main.test.class}" fork="true" failonerror="true">
+        <jvmarg value="-Xmx700M" />
+        <jvmarg value="-Xms600M" />
+        <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
+        <jvmarg value="-Dsun.java2d.noddraw=true" />
+        <jvmarg value="-Dsimulators=${simulators}" />
+        <classpath refid="run.class.path"/>
+    </java>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Run tests on models                                               -->
+  <!-- =================================================================== -->
+
+  <target name="testmod" depends="clean, makejar"
+          description="Runs a number of automated tests on neuroConstruct models, mainly the NeuroML based examples in nCmodels.">
+
+    <java classname="${main.testmodels.class}" fork="true" failonerror="true">
+        <jvmarg value="-Xmx700M" />
+        <jvmarg value="-Xms600M" />
+        <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
+        <jvmarg value="-Dsun.java2d.noddraw=true" />
+        <classpath refid="run.class.path"/>
+    </java>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Run all tests                                                       -->
+  <!-- =================================================================== -->
+
+  <target name="testall" depends="testcore, testmod, testmodpy"
+          description="Runs all core tests as well as tests on project settings and model behaviour">
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Run tests on Python scripts of models                                               -->
+  <!-- =================================================================== -->
+
+  <target name="testmodpy" depends="clean, jar"
+          description="Runs a number of automated tests on Python scripts of neuroConstruct models, mainly the NeuroML based examples in nCmodels and osb.">
+
+    <java classname="${main.testmodpy.class}" fork="true"  failonerror="true">
+        <jvmarg value="-Xmx700M" />
+        <jvmarg value="-Xms600M" />
+        <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
+        <jvmarg value="-Dsun.java2d.noddraw=true" />
+        <classpath refid="run.class.path"/>
+    </java>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Run tests on Python scripts of models - run silently - no gui/plots!      -->
+  <!-- =================================================================== -->
+
+  <target name="testmodpysil" depends="clean, jar"
+          description="Runs a number of automated tests on Python scripts of neuroConstruct models, mainly the NeuroML based examples in nCmodels and osb. Runs silently - no gui/plots.">
+
+    <java classname="${main.testmodpy.class}" fork="true"  failonerror="true">
+        <jvmarg value="-Xmx700M" />
+        <jvmarg value="-Xms600M" />
+        <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
+        <jvmarg value="-Dsun.java2d.noddraw=true" />
+        <arg value="-silent"/>
+        <classpath refid="run.class.path"/>
+    </java>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Run main application                                                -->
+  <!-- =================================================================== -->
+
+  <target name="run" depends="jar"
+          description="Runs the main application. Use an altered value with -Xmx in the line below to run the application with extra memory. Choosing a max java heap size of about half your total physical memory is best, errors have been thrown (when 3D view is shown) when the application is run with more than this. Note: the -Dsun.java2d.noddraw=true has been added to solve problems with excessive flickering of the Swing components when showing 3D on some Windows systems">
+    <java classname="${main.app.class}" fork="true">
+        <jvmarg value="-Xmx700M" />
+        <jvmarg value="-Xms600M" />
+        <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
+        <jvmarg value="-Dsun.java2d.noddraw=true" />
+        <classpath refid="run.class.path"/>
+    </java>
+  </target>
+
+
+
+  <!-- =================================================================== -->
+  <!-- Run main application, opening last project                          -->
+  <!-- =================================================================== -->
+
+  <target name="runlast" depends="jar"
+          description="Runs the main application, opening last project">
+    <java classname="${main.app.class}" fork="true">
+        <jvmarg value="-Xmx700M" />
+        <jvmarg value="-Xms600M" />
+        <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
+        <jvmarg value="-Dsun.java2d.noddraw=true" />
+        <arg value="-lastproj"/>
+        <classpath refid="run.class.path"/>
+    </java>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Run main application with lots of memory, opening last project      -->
+  <!-- =================================================================== -->
+
+  <target name="runbiglast" depends="jar"
+          description="Runs the main application with lots of memory, opening last project">
+    <java classname="${main.app.class}" fork="true">
+        <jvmarg value="-Xmx1500M" />
+        <jvmarg value="-Xms1500M" />
+        <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
+        <jvmarg value="-Dsun.java2d.noddraw=true" />
+        <arg value="-lastproj"/>
+        <classpath refid="run.class.path"/>
+    </java>
+  </target>
+
+
+
+  <!-- =================================================================== -->
+  <!-- Run main application with lots of memory                            -->
+  <!-- =================================================================== -->
+
+  <target name="runbig" depends="jar"
+          description="Runs the main application with lots of memory">
+    <java classname="${main.app.class}" fork="true">
+        <jvmarg value="-Xmx4000M" />
+        <jvmarg value="-Xms2000M" />
+        <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
+        <jvmarg value="-Dsun.java2d.noddraw=true" />
+        <classpath refid="run.class.path"/>
+    </java>
+  </target>
+
+
+
+  <!-- =================================================================== -->
+  <!-- Only used inside NetBeans...                                        -->
+  <!-- =================================================================== -->
+
+    <target name="profile" depends="jar" description="Profile Project (only used inside NetBeans)">
+        <fail unless="netbeans.home">This target can only run inside the NetBeans IDE.</fail>
+
+        <nbprofiledirect>
+            <!--<classpath> <pathelement location="${main.app.class}"/> </classpath>-->
+            <classpath> <pathelement location="ucl.physiol.neuroconstruct.project.MorphBasedConnGenerator"/> </classpath>
+
+        </nbprofiledirect>
+
+
+        <java classname="${main.app.class}" fork="true">
+            <jvmarg value="${profiler.info.jvmargs.agent}"/>
+            <jvmarg value="-Xmx4000M" />
+            <jvmarg value="-Xms2000M" />
+            <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
+            <jvmarg value="-Dsun.java2d.noddraw=true" />
+            <arg value="-lastproj"/>
+            <classpath refid="run.class.path"/>
+        </java>
+  </target>
+
+
+
+
+
+  <!-- =================================================================== -->
+  <!-- Generates the xml file for Forrest from Glossary.xml                -->
+  <!-- =================================================================== -->
+
+  <target name="glossary" depends="jar"
+          description="Generates the xml file for Forrest from Glossary.xml">
+    <java classname="${xml.transform.class}"
+          fork="true"  failonerror="true">
+        <jvmarg value="-Xmx700M" />
+        <jvmarg value="-Xms600M" />
+        <arg value="${orig.glossary.file}"/>
+        <arg value="${glossary.xsl.file}"/>
+        <arg value="${forrest.glossary.dir}"/>
+        <arg value="_gen.xml"/>
+        <classpath refid="run.class.path"/>
+    </java>
+  </target>
+
+
+
+  <!-- ====================================================================== -->
+  <!-- Generates the xml which is used to generate the html page of standard  -->
+  <!-- neuroConstruct examples                                                -->
+  <!-- ====================================================================== -->
+
+  <target name="generateexamples" depends="jar" description="Generates the xml which is used to generate the html page of standard neuroConstruct examples">
+      <java classname="${example.generate.class}"
+          fork="true"  failonerror="true">
+        <jvmarg value="-Xmx700M" />
+        <jvmarg value="-Xms600M" />
+        <classpath refid="run.class.path"/>
+      </java>
+ </target>
+
+  <!-- ====================================================================== -->
+  <!-- Generates the main website using Forrest (http://forrest.apache.org)   -->
+  <!-- ====================================================================== -->
+
+  <target name="website" depends="glossary, generateexamples"
+          description="Generates the main website using Forrest (http://forrest.apache.org)">
+
+    <copy file="./README" todir="${website.dir}/docs" />
+    <copy file="./RELEASE_NOTES" todir="${website.dir}/docs" />
+
+    <mkdir dir="${website.python.dir}"/>
+
+    <copy todir="${website.python.dir}">
+      <fileset dir="${pythonnC.dir}">
+         <include name="*.py"/>
+      </fileset>
+      <fileset dir="${pythonNeuroML.Examples.dir}">
+         <include name="*.py"/>
+      </fileset>
+    </copy>
+
+    <ant antfile="${forrest.antfile}" dir="${forrest.settings.dir}" target="site"/>
+
+    <echo>Generated the website...</echo>
+
+    <copy file="./RELEASE_NOTES" todir="${website.dir}" />
+    <copy file="./docs/XML/neuroConstruct.xml" todir="${website.dir}" />
+
+  </target>
+
+
+
+  <!-- ====================================================================== -->
+  <!-- Generates the documentation for the help viewer inside neuroConstruct  -->
+  <!-- ====================================================================== -->
+
+  <target name="helpdocs" depends="glossary"
+          description="Generates the documentation for the help viewer inside neuroConstruct. Makes a simpler version of the docs on the website, using the same base XML">
+    <mkdir dir="${helpdocs.dir}"/>
+      
+    <java classname="${xml.transform.class}" fork="true"  failonerror="true">
+        <jvmarg value="-Xmx700M" />
+        <jvmarg value="-Xms600M" />
+        <arg value="${orig.helpdocs.dir}"/>
+        <arg value="${helpdocs.xsl.file}"/>
+        <arg value="${helpdocs.dir}"/>
+        <arg value=".html"/>
+        <classpath refid="run.class.path"/>
+    </java>
+
+     <echo>Generated the helpdocs...</echo>
+
+    <copy file="./README" todir="${helpdocs.dir}" />
+    <copy file="./RELEASE_NOTES" todir="${helpdocs.dir}" />
+
+  </target>
+
+
+
+  <!-- =================================================================== -->
+  <!-- Toggles output to screen                                            -->
+  <!-- =================================================================== -->
+
+  <target name="logtog" depends="jar"
+          description="Toggles output to screen and saves the GeneralProperties setting">
+    <java classname="${general.properties.class}"
+          fork="true">
+        <jvmarg value="-Xmx700M" />
+        <jvmarg value="-Xms600M" />
+        <classpath refid="run.class.path"/>
+    </java>
+  </target>
+
+
+
+  <!-- =================================================================== -->
+  <!-- Generates installers through install4j                              -->
+  <!-- =================================================================== -->
+  
+       
+  <target name="install4j" description="Generates installers through install4j. Note: install4j needs to be installed for this">
+  
+  
+  <taskdef name="install4j"
+       classname="com.install4j.Install4JTask"
+       classpath="../JavaStuff/install4j5/bin/ant.jar"/>
+       
+    <install4j projectfile="install.install4j"/>
+  </target>
+  
+  <target name="binaries" depends="dist, install4j" description="Cleans, makes distribtion, generates installers">
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Creates a dist dir and a zip file with directory structure, a       -->
+  <!-- compiled jar file and the source code                               -->
+  <!-- =================================================================== -->
+
+  <target name="dist" depends="clean, cleandocs, cleannml, cleangen, website,helpdocs" description="Creates a zip file with directory structure, jar but no source">
+ 
+      <property name="temp_ver.dir" value="${dist.dir}/${name}_${version}"/>
+
+      <delete dir="${temp_ver.dir}"/>
+      <mkdir dir="${temp_ver.dir}"/>
+
+      <mkdir dir="${temp_ver.dir}/logs"/>
+      <copy file="./logs/README" todir="${temp_ver.dir}/logs" />
+
+      <mkdir dir="${temp_ver.dir}/templates"/>
+      <copy todir="${temp_ver.dir}/templates">
+        <fileset dir="${templates.dir}">
+          <include name="xmlTemplates/**/*"/>
+          <include name="genesisUtils/**/*"/>
+          <include name="neuronUtils/**/*"/>
+          <include name="modFileTemplates/**/*"/>
+          <include name="README"/>
+        </fileset>
+      </copy>
+
+      <mkdir dir="${temp_ver.dir}/nCexamples"/>
+      <copy todir="${temp_ver.dir}/nCexamples">
+          <fileset dir="${nCexamples.dir}">
+              <include name="*/*.*"/>
+              <include name="*/cellMechanisms/**/*"/>
+              <include name="*/morphologies/*"/>
+              <exclude name="*/morphologies/*.bak"/>
+              <include name="*/importedMorphologies/*"/>
+              <include name="*/pythonScripts/*"/>
+              <include name="README"/>
+          </fileset>
+      </copy>
+      <mkdir dir="${temp_ver.dir}/nCmodels"/>
+      <copy todir="${temp_ver.dir}/nCmodels">
+          <fileset dir="${nCmodels.dir}">
+              <include name="*/*.*"/>
+              <include name="*/cellMechanisms/**/*"/>
+              <include name="*/morphologies/*"/>
+              <exclude name="*/morphologies/*.bak"/>
+              <include name="*/importedMorphologies/*"/>
+              <include name="README"/>
+          </fileset>
+      </copy>
+
+
+      <mkdir dir="${temp_ver.dir}/docs"/>
+      <copy todir="${temp_ver.dir}/docs">
+          <fileset dir="${docs.dir}" >
+              <include name="glossary/**/*.*"/>
+              <include name="website/**/*.*"/>
+              <include name="helpdocs/**/*.*"/>
+              <include name="XML/glossary/**/*.*"/>
+              <exclude name="website/models/**/*.*"/>
+              <exclude name="website/samples/**/*.*"/>
+          </fileset>
+      </copy>
+
+
+      <mkdir dir="${temp_ver.dir}/lib"/>
+      <copy todir="${temp_ver.dir}/lib">
+        <fileset dir="lib">
+              <include name="**/*"/>
+              <exclude name="jython/Lib/test/decimaltestdata/*.decTest"/>
+        </fileset>
+      </copy>
+
+      <mkdir dir="${temp_ver.dir}/NeuroML2"/>
+      <copy todir="${temp_ver.dir}/NeuroML2">
+        <fileset dir="NeuroML2">
+              <exclude name="**/simulations"/>
+              <exclude name="**/*.pyc"/>
+              <include name="**/*"/>
+        </fileset>
+      </copy>
+      <delete dir="${temp_ver.dir}/NeuroML2/build"/>
+      <delete dir="${temp_ver.dir}/NeuroML2/docs"/>
+      <delete dir="${temp_ver.dir}/NeuroML2/exportImportUtils/SBML/sbmlTestSuite"/>
+      <delete dir="${temp_ver.dir}/NeuroML2/examples/inprogress/ab"/>
+
+      <mkdir dir="${temp_ver.dir}/pythonNeuroML"/>
+      <copy todir="${temp_ver.dir}/pythonNeuroML">
+        <fileset dir="pythonNeuroML">
+              <include name="**/*"/>
+              <exclude name="Examples/*.dat"/>
+        </fileset>
+      </copy>
+
+      <mkdir dir="${temp_ver.dir}/pythonnC"/>
+      <copy todir="${temp_ver.dir}/pythonnC">
+        <fileset dir="pythonnC">
+              <include name="**/*"/>
+              <exclude name="TestPython/simulations/*"/>
+        </fileset>
+      </copy>
+
+      <mkdir dir="${temp_ver.dir}/igorNeuroMatic"/>
+      <copy todir="${temp_ver.dir}/igorNeuroMatic">
+        <fileset dir="igorNeuroMatic">
+              <include name="*.*"/>
+              <include name="README"/>
+        </fileset>
+      </copy>
+
+      <mkdir dir="${temp_ver.dir}/matlabOctave"/>
+      <copy todir="${temp_ver.dir}/matlabOctave">
+        <fileset dir="matlabOctave">
+              <include name="*.*"/>
+              <include name="README"/>
+        </fileset>
+      </copy>
+      
+      
+      <mkdir dir="${temp_ver.dir}/src"/>
+      <copy todir="${temp_ver.dir}/src">
+        <fileset dir="src">
+              <include name="**/*.*"/>
+              <include name="README"/>
+        </fileset>
+      </copy>
+
+      <mkdir dir="${temp_ver.dir}/tests"/>
+      <copy todir="${temp_ver.dir}/tests">
+        <fileset dir="tests">
+              <include name="**/*.*"/>
+              <include name="README"/>
+        </fileset>
+      </copy>
+      
+      
+      <mkdir dir="${temp_ver.dir}/testProjects"/>
+      <copy todir="${temp_ver.dir}/testProjects">
+          <fileset dir="testProjects">
+              <include name="*/*.*"/>
+              <include name="*/cellMechanisms/**/*"/>
+              <include name="*/morphologies/*"/>
+              <exclude name="*/morphologies/*.bak"/>
+              <include name="*/importedMorphologies/*"/>
+              <include name="README"/>
+          </fileset>
+      </copy>
+
+
+
+      <copy file="build.xml" todir="${temp_ver.dir}"/>
+      <copy file="nC.bat" todir="${temp_ver.dir}"/>
+      <copy file="nC.sh" todir="${temp_ver.dir}"/>
+      <copy file="nCplot.bat" todir="${temp_ver.dir}"/>
+      <copy file="nCplot.sh" todir="${temp_ver.dir}"/>
+      <copy file="README" todir="${temp_ver.dir}"/>
+      <copy file="RELEASE_NOTES" todir="${temp_ver.dir}"/>
+      <copy file="RELEASE_NOTES" todir="${temp_ver.dir}/docs/helpdocs"/>
+      <copy file="licence.txt" todir="${temp_ver.dir}"/>
+
+
+     <copy file="${name}_${version}.jar" todir="${temp_ver.dir}"/>
+
+      <zip destfile="./${name}_${version}.zip"
+            basedir="${dist.dir}/"
+            whenempty="create"/>
+
+      <copy todir="${dist.dir}">
+          <fileset dir="${temp_ver.dir}"/>
+      </copy>
+
+
+      <delete dir="${temp_ver.dir}"/>
+
+  </target>
+
+
+
+  <!-- =================================================================== -->
+  <!-- Creates a zip file with everything in home directory                -->
+  <!-- =================================================================== -->
+
+  <target name="zipfull" depends="clean,cleandocs,website,helpdocs"
+          description="Creates a (big) zip file with everything in base directory ">
+      <zip destfile="./${name}_full_${version}.zip"
+             basedir="." excludes="*.zip"/>
+  </target>
+
+
+
+  <!-- =================================================================== -->
+  <!-- Replaces the copyright line in the source files, with the one here  -->
+  <!-- =================================================================== -->
+
+    <target name="replacecopyright" depends="init" description="Replaces copyright line in *.java">
+      <replaceregexp
+          match="2008 Padraig Gleeson"
+          replace="2009 Padraig Gleeson"
+          byline="true">
+          <fileset dir="${src.dir}">
+              <filename name="**/*.java"/>
+          </fileset>
+      </replaceregexp>
+    </target>
+
+</project>
+
+<!-- End of file -->

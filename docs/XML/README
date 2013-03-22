@@ -1,0 +1,3 @@
+This directory contains the source for the documentation/webpages related to neuroConstruct.
+
+It's originally in the form of XML and is translated (via XSL and Forrest (http://forrest.apache.org/)) to HTML

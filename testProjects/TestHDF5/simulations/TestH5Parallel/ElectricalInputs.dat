@@ -1,0 +1,9 @@
+SampleIClamp:
+SingleElectricalInput: [Input: RandomSpikeTrain, cellGroup: SampleCellGroup, cellNumber: 0, segmentId: 0, fractionAlong: 0.5]
+SingleElectricalInput: [Input: RandomSpikeTrain, cellGroup: SampleCellGroup, cellNumber: 1, segmentId: 0, fractionAlong: 0.5]
+SingleElectricalInput: [Input: RandomSpikeTrain, cellGroup: SampleCellGroup, cellNumber: 2, segmentId: 0, fractionAlong: 0.5]
+SingleElectricalInput: [Input: RandomSpikeTrain, cellGroup: SampleCellGroup, cellNumber: 3, segmentId: 0, fractionAlong: 0.5]
+SingleElectricalInput: [Input: RandomSpikeTrain, cellGroup: SampleCellGroup, cellNumber: 4, segmentId: 0, fractionAlong: 0.5]
+SingleElectricalInput: [Input: RandomSpikeTrain, cellGroup: SampleCellGroup, cellNumber: 5, segmentId: 0, fractionAlong: 0.5]
+SingleElectricalInput: [Input: RandomSpikeTrain, cellGroup: SampleCellGroup, cellNumber: 6, segmentId: 0, fractionAlong: 0.5]
+SingleElectricalInput: [Input: RandomSpikeTrain, cellGroup: SampleCellGroup, cellNumber: 7, segmentId: 0, fractionAlong: 0.5]

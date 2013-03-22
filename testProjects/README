@@ -1,0 +1,3 @@
+These projects are used with the JUnit tests in the tests directory. 
+
+Altering these projects may cause some of these automated tests to fail!

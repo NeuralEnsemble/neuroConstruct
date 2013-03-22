@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Description: Taken from Michael Hines's initial proposal
+-->
+  
+<channelml xmlns="http://morphml.org/channelml/schema/1.0.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://morphml.org/channelml/schema/1.0.0 
+                        ../../Schemata/ChannelML/v1.0/ChannelML_1.0.xsd">
+                        
+                        
+ <ion name="na" charge="1"/>
+ <ion name="k" charge="1"/>
+ 
+ 
+ <channel_type name="nahh" density="yes">
+ 
+   <current_voltage_relation>
+     <ohmic ion="na">
+       <conductance default_gmax="0.12">
+       <gate power="3">
+         <state name="m" fraction="1"/>
+       </gate>
+       <gate power="1">
+         <state name="h" fraction="1"/>
+       </gate>
+       </conductance>
+     </ohmic>
+   </current_voltage_relation>
+   
+   <hh_gate state="m">
+     <transition>
+       <voltage_gate infinity_tau_format="no">
+         <alpha type="linoid" expr="A*x/(1 - exp(-x)) where x = k*v-d)">
+           <parameter name="A" value="1"/>
+           <parameter name="k" value="0.1"/>
+           <parameter name="d" value="-40"/>
+         </alpha>
+         <beta type="exponential" expr="A*exp(k*(v-d))">
+           <parameter name="A" value="4"/>
+           <parameter name="k" value="-0.0555556"/>
+           <parameter name="d" value="-65"/>
+         </beta>
+       </voltage_gate>
+     </transition>
+   </hh_gate>
+   
+   
+   <hh_gate state="h">
+     <transition>
+       <voltage_gate infinity_tau_format="no">
+         <alpha type="exponential" expr="A*exp(k*(v-d))">
+           <parameter name="A" value="0.07"/>
+           <parameter name="k" value="-0.05"/>
+           <parameter name="d" value="-65"/>
+         </alpha>
+         <beta type="sigmoid" expr="A/(1 + exp(-k*(d-v))">
+           <parameter name="A" value="1"/>
+           <parameter name="k" value="-0.1"/>
+           <parameter name="d" value="-35"/>
+         </beta>
+       </voltage_gate>
+     </transition>
+   </hh_gate>
+   
+ </channel_type>
+ 
+</channelml>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+
+<!--
+     This XML Schema describes how to create XML files giving additional data
+     on ChannelML files. Aliases can be assigned for the more useful data fields
+     for easier access. Functions of the parameters in the channels can be
+     described so that relevant plots can be generated
+
+     NOTE: This is not part of the official ChannelML spec. It's just to help neuroConstruct
+     create a more user friendly view of the data in the XML file.
+ -->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://www.neuroConstruct.org"
+        xmlns="http://www.neuroConstruct.org"
+        elementFormDefault="qualified">
+
+    <xs:element name="cmlmetadata">
+
+        <xs:complexType>
+            <xs:sequence>
+
+                <xs:element name="parameter"  maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="parameterpath" type="xs:string"/>
+                            <xs:element name="alias" type="xs:string"/>
+                            <xs:element name="description" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+
+
+                <xs:element name="plot"   maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="plotname" type="xs:string"/>
+                            <xs:element name="independentvariable" type="xs:string"/>
+                            <xs:element name="maxvalue" type="xs:decimal"/>
+                            <xs:element name="minvalue" type="xs:decimal"/>
+                            <xs:element name="expression" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+            </xs:sequence>
+        </xs:complexType>
+
+    </xs:element>
+
+</xs:schema>

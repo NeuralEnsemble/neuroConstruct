@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document>
+  <header>
+    <title>Support for NeuroML in neuroConstruct</title>
+  </header>
+  <body>
+      
+  <p>Listed here are all the possible ways neuroConstruct can import/export data in <a href="Glossary_gen.html#NeuroML">NeuroML</a> format</p>
+
+
+
+<section>
+      <title>Cell morphologies (Levels 1-3)</title>
+
+      <p>neuroConstruct uses an internal data model for cells which is closely linked to <a href="Glossary_gen.html#MorphML">MorphML</a>. See
+      <a href="Glossary_gen.html#Morphology save format">here</a> for more details.</p>
+
+      <p>&nbsp;</p>
+<p>&nbsp;&nbsp;<strong>Level 1: </strong> only the anatomy of the cell (<a href="Glossary_gen.html#MorphML">MorphML</a> description)</p>
+<p><strong>IMPORT:</strong> go to <strong>Cell Types</strong> press <strong>Add new Cell Type to project...</strong> and select <strong>NeuroMLConverter</strong> in the scroll down menu.</p>
+<p><strong>EXPORT:</strong> go to <strong>Export -> NeuroML</strong> tab and press <strong>Export all Cell Types</strong> with the <strong>Level 1</strong> button selected,
+ a file for each cell type will be saved in the <strong>generatedNeuroML</strong> folder of the current project.</p>
+
+      <p>&nbsp;</p>
+<p>&nbsp;&nbsp;<strong>Level 2:</strong> Level 1 plus cell biophysics (passivel electrical properties and channel placement)</p>
+<p><strong>IMPORT:</strong> go to <strong>Cell Types</strong> tab press <strong>Add new Cell Type to project...</strong> and select <strong>NeuroMLConverter</strong> in the scroll down menu.
+Note that there should be channel mechanisms present in the project with names corresponding to those in the <strong>&lt;biophysics&gt;</strong> element of the file.</p>
+<p><strong>EXPORT:</strong> go to <strong>Export -> NeuroML</strong> tab and press <strong>Export all Cell Types</strong> with the <strong>Level 2</strong> button selected,
+ a file for each cell type will be saved in the <strong>generatedNeuroML</strong> folder of the current project.</p>
+
+      <p>&nbsp;</p>
+<p>&nbsp;&nbsp;<strong>Level 3:</strong> Level 2 plus network aspects (allowed locations of synapse types)</p>
+<p><strong>IMPORT:</strong> go to <strong>Cell Types</strong> press <strong>Add new Cell Type to project...</strong> and select <strong>NeuroMLConverter</strong> in the scroll down menu.
+Note that there should be channel and synaptic mechanisms present in the project with names corresponding to those in the <strong>&lt;biophysics&gt;</strong> and <strong>&lt;connectivity&gt;</strong> elements of the file.</p>
+<p><strong>EXPORT:</strong> go to <strong>Export -> NeuroML</strong> tab and press <strong>Export all Cell Types</strong> with the <strong>Level 3</strong> button selected,
+ a file for each cell type will be saved in the <strong>generatedNeuroML</strong> folder of the current project.</p>
+
+
+
+
+<p>&nbsp;</p>
+</section>
+
+
+<section>
+      <title>ChannelML</title>
+
+      <p><a href="Glossary_gen.html#ChannelML">ChannelML</a> files can be used for <a href="Glossary_gen.html#Cell Mechanism">Cell Mechanisms</a> in neuroConstruct. They can be used for channels
+      (e.g. Na<sup>+</sup>, K<sup>+</sup> distributed ion channels), synapses (fixed and plastic chemical synaptic mechanisms), gap junctions, ion concentrations (e.g. pool of internal 
+      Ca<sup>2+</sup>) and point processes (e.g. simple integrate and fire mechanisms). The ChannelML file, a number of XSL mappings to simulators and a properties.xml file are stored for
+      each cell mechanism in the <strong>cellMechanism</strong> folder of a neuroConstruct project. Details of the process to convert an existing channel script, e.g. a mod file, to ChannelML
+      is outlined <a  href="importneuron.html#Converting+mod+file%2FGENESIS+script+channels+into+ChannelML" >here</a>
+      </p>
+
+      <p>&nbsp;</p>
+<p><strong>IMPORT:</strong> to use a <a href="Glossary_gen.html#ChannelML">ChannelML</a> based cell mechanism in neuroConstruct, ensure the file only contains a single 
+<strong>&lt;channel_type&gt;</strong> element, go to the <strong>Cell Mechanisms</strong> tab, press <strong>Create ChannelML Mechanism</strong>, name the new mechanism
+ and select the file containing the ChannelML description. XSL mappings for
+NEURON and GENESIS can be found under templates/xmlTemplates/Schemata/vx.x.x/Level2 in the local folder of neuroConstruct. Alternatively, a small number of example ChannelML
+mechanisms can be imported (and altered afterwards) by pressing <strong>Add ChannelML from Template</strong>.</p>
+
+      <p>&nbsp;</p>
+<p><strong>EXPORT:</strong> go to <strong>Export -> NeuroML</strong> tab and press <strong>Generate all NeuroML scripts</strong>,
+ a file for each ChannelML based cell mechanism is saved in the <strong>generatedNeuroML</strong> folder of the current project.</p>
+<p>&nbsp;</p>
+
+</section>
+
+
+<section>
+      <title>NetworkML</title>
+      <p><a href="Glossary_gen.html#NetworkML">NetworkML</a> files can be saved and reloaded in neuroConstruct in either XML or <a href="Glossary_gen.html#HDF5">HDF5</a> formats.</p>
+      <p>The NetworkML files read by neuroConstruct can come from any application which generates valid NetworkML, but nothe that the cell group 
+      and cell type names used in the <strong>&lt;populations&gt;</strong> element, and the network connection names used in the <strong>&lt;projections&gt;</strong>
+      element must match the names of these already present in the project. </p>
+      <p>Included with neuroConstruct are a number of <a href="Glossary_gen.html#Python">Python</a>
+      scripts, and these allow reading/writing of NetworkML (in the <strong>pythonNeuroML/Examples</strong> folder in the install directory) and interaction with 
+      neuroConstruct through <a href="http://www.jython.org/">Jython</a> to generate a network which can then be saved as NetworkML (e.g. <strong>Ex4_SaveNetworkML.py</strong> 
+      in the <strong>pythonnC</strong> folder in the install directory). More details can be found <a href="python.html">here</a>.</p>
+
+      
+
+      <p>&nbsp;</p>
+<p><strong>IMPORT:</strong> go to the <strong>Generate</strong> tab, press <strong>Load NetworkML</strong> and select the XML or HDF5 file containing the NetworkML description.
+</p>
+
+      <p>&nbsp;</p>
+<p><strong>EXPORT:</strong> go to the <strong>Generate</strong> tab, press <strong>Save NetworkML</strong>,
+a NetworkML description of the generated network will be saved in the <strong>savedNetworks</strong> folder of the current project.</p>
+</section>
+<p>&nbsp;</p>
+
+<section>
+      <title>Level 3 NeuroML</title>
+
+<p>neuroConstruct is able to generate and import and export <em>single files</em> containing all the model elements covered from Levels 1-3.
+This file is fully NeuroML compliant and allow easy exchange of self-sufficient models between neuroConstruct users.</p>
+      <p>&nbsp;</p>
+<p><strong>IMPORT:</strong> select <strong>File -> Import NeuroML Levels 1, 2, 3...</strong> from the main menu and
+select the Level 3 file to be imported. If the file contains elements (e.g. cell types) with the same names as are used
+in the project, warnings will be shown. It is possible to import a Level 3 file into a new, empty project (or select <strong>Import NeuroML Levels 1, 2, 3...</strong>
+when no project is open) and neuroConstruct specific entities (e.g. 3D Regions) will be created to accomodate the elements in the file.</p>
+      <p>&nbsp;</p>
+<p><strong>EXPORT:</strong> go to <strong>Export -> NeuroML</strong> tab and press <strong>Generate all NeuroML scripts</strong> with the <strong>Generate single NeuroML Level 3 file</strong> box ticked,
+a single file containing all the generated elements will be saved in the <strong>savedNetworks</strong> folder of
+the current project. Tick the <strong>Add neuroConstruct annotations</strong> box if you wish to include the neuroConstruct
+specific settings like regions, simulation configurations etc. This will still produce a valid NeuroML Level 3 file (other
+applications can ignore these annotations), but this will facilitate importing the model in the file into a new neuroConstruct project.</p>
+
+</section>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+  </body>
+</document>

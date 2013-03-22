@@ -1,0 +1,1156 @@
+<!--
+        This XML file was automatically generated from the entries in XML/glossary/Glossary.xml
+        and the stylesheet XML/glossary/Glossary.xsl. To add entries to the glossary, edit that original file
+        AND NOT THIS ONE!!
+    -->
+<document>
+<header>
+<title>Glossary of the main terms used in neuroConstruct</title>
+</header>
+<body>
+<anchor id="top"></anchor>
+<a name="top"></a><a href="#3D View of Cells">3D View of Cells</a> - <a href="#Abstract Cell">Abstract Cell</a> - <a href="#Abstracted Cell Mechanisms">Abstracted Cell Mechanisms</a> - <a href="#Action Potential Propagation Speed">Action Potential Propagation Speed</a> - <a href="#Anti Aliasing">Anti Aliasing</a> - <a href="#Arborization Defined Connection">Arborization Defined Connection</a> - <a href="#ASC">ASC</a> - <a href="#Axes in 3D">Axes in 3D</a> - <a href="#Biophysical validity">Biophysical validity</a> - <a href="#Cell density mechanism">Cell density mechanism</a> - <a href="#Cell Group">Cell Group</a> - <a href="#Cell Group Priority">Cell Group Priority</a> - <a href="#Cell Mechanism">Cell Mechanism</a> - <a href="#Cell Type">Cell Type</a> - <a href="#Channel Mechanism">Channel Mechanism</a> - <a href="#ChannelML">ChannelML</a> - <a href="#Compartmentalisation">Compartmentalisation</a> - <a href="#Cvapp">Cvapp</a> - <a href="#Data Set">Data Set</a> - <a href="#Data Set Manager">Data Set Manager</a> - <a href="#Electrotonic length">Electrotonic length</a> - <a href="#File based Cell Mechanisms">File based Cell Mechanisms</a> - <a href="#Finite volume Segment">Finite volume Segment</a> - <a href="#GENESIS">GENESIS</a> - <a href="#GENESIS Compartmentalisation">GENESIS Compartmentalisation</a> - <a href="#Glomerulus">Glomerulus</a> - <a href="#Graph">Graph</a> - <a href="#Group">Group</a> - <a href="#HDF5">HDF5</a> - <a href="#Internal number of divisions">Internal number of divisions</a> - <a href="#Ion Concentration">Ion Concentration</a> - <a href="#MorphML">MorphML</a> - <a href="#Morphological validity">Morphological validity</a> - <a href="#Morphology Based Connection">Morphology Based Connection</a> - <a href="#Morphology save format">Morphology save format</a> - <a href="#Network Connection">Network Connection</a> - <a href="#NetworkML">NetworkML</a> - <a href="#Neurolucida">Neurolucida</a> - <a href="#NeuroML">NeuroML</a> - <a href="#NEURON">NEURON</a> - <a href="#NMODL">NMODL</a> - <a href="#nseg">nseg</a> - <a href="#Packing Pattern">Packing Pattern</a> - <a href="#Parallel computing support">Parallel computing support</a> - <a href="#Plot/Graph">Plot/Graph</a> - <a href="#Plot Frame">Plot Frame</a> - <a href="#Project">Project</a> - <a href="#Project validity">Project validity</a> - <a href="#Python">Python</a> - <a href="#Region">Region</a> - <a href="#Section">Section</a> - <a href="#Section Group">Section Group</a> - <a href="#Segment">Segment</a> - <a href="#Simply Connected cell">Simply Connected cell</a> - <a href="#Simulation Configuration">Simulation Configuration</a> - <a href="#SWC">SWC</a> - <a href="#Synaptic Connection Location">Synaptic Connection Location</a> - <a href="#Synaptic Mechanism">Synaptic Mechanism</a> - <a href="#Tool Tips">Tool Tips</a> - <a href="#Validity checks">Validity checks</a> - <a href="#Variables to plot/save">Variables to plot/save</a> - <a href="#Volume Based Connection">Volume Based Connection</a> - <a href="#XML">XML</a> - <a href="#Zipped Project">Zipped Project</a> - <a name="3D View of Cells">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>3D View of Cells</b>
+</p>
+</a><span>
+<p>When a single cell is viewed in 3D (at tab <strong>Visualisation</strong>, select the name of the <a href="#Cell Type">Cell Type</a> in the drop down box and press <strong>View</strong>)
+    there are a number of actions possible:
+    <ul>
+            
+<li>Left click anywhere in the view and drag to rotate the cell</li>
+            
+<li>Right click anywhere and drag to translate the cell</li>
+            
+<li>Clicking the middle mouse button and dragging (or turning the middle wheel) will zoom the view. Note that if there
+            is no middle button, there is a zoom slider bar on the GUI</li>
+            
+<li>Pressing the <strong>0</strong> button will reset the view, usually centering on the cell</li>
+            
+<li>Pressing the <strong>^</strong> button will open a window in full screen with just the 3D objects (good for capturing screenshots)</li>
+            
+<li>Left clicking on one of <a href="#Segments">Segments</a> will highlight that segment (red) and any other segments in the same <a href="#Section">Section</a> (yellow) (only when <strong>All solid</strong> is selected)</li>
+            
+<li>When a Segment is selected, a summary of the 3D information on it appears, and the endpoints, etc. can be altered by pressing the <strong>Edit...</strong> button</li>
+    
+</ul>
+    Specifying <a href="#Section Groups">Section Groups</a> allows different subsections of the cell to be assigned as dendrites, etc. and can be used to colour regions of the cells.
+    When multiple cells are being displayed (e.g. when <strong>Latest Generated Positions</strong> is selected, or a simulation is reloaded) the following options are also possible:
+        <ul>
+            
+<li>Clicking on part of a cell highlights that cell. Note this is easiest when the level of detail displayed is <strong>All Solid</strong> (see below). Selecting cells can also be
+                difficult is other objects are close, e.g. transparent regions, synaptic endpoint spheres, 3D axes (turn some of these off via <strong>3D Settings</strong>). If a cell can't be selected by clicking, the cell group and cell number can be selected in the drop down boxes.</li>
+                
+<li>Multiple cells in a cell group can be selected too via the drop down boxes (e.g. all cells, a percentage of cells, etc.). These can then be plotted together as a group if a previous simulation has been loaded.</li>
+            
+<li>When one or more cells are selected, checking the <strong>Transparent mode</strong> box keeps that/those cell opaque, makes cells it is/they are connected to partially transparent and turns other cells almost completely transparent.</li>
+
+        
+</ul>
+    There are a number of settings which can be changed by pressing the <strong>3D Settings</strong> button:
+        <ul>
+            
+<li>The background colour and preferred cell segment colour</li>
+            
+<li>Whether the <a href="#Axes in 3D">3D axes</a> will be shown.</li>
+            
+<li>The resolution of 3D elements. <strong>Note for better 3D performance when viewing large cells/networks this should be set low (&lt;12)!</strong>
+</li>
+            
+<li>A number of items can be excluded or included from the 3D view, e.g. Regions (when viewing generated networks), Inputs, Synaptic Endponts (green for presynaptic location, red for post), etc.</li>
+            
+<li>The level of detail to display (see below)</li>
+        
+</ul>
+        The default view for 3D cells is to show all the segments in full solid detail (spheres or cylinders/truncated cones). However this can be too much detail to show on many
+        machines for large cells. The following options allow different views of the cells, either at reduced details, or transformed for a particular simulator:
+        <ul>
+            
+<li>
+<strong>All solid:</strong> all segments are seen in 3D detail. Note the resolution of these can be increased or decreased under <strong>3D Settings</strong>
+</li>
+            
+<li>
+<strong>Soma solid, neurite lines:</strong> segments in the soma group are solid, all other segments are lines through their centres</li>
+            
+<li>
+<strong>Soma solid, no neurites:</strong> just the soma segments are shown in 3D</li>
+            
+<li>
+<strong>All lines:</strong> all segments are represented by lines</li>
+            
+<li>
+<strong>Original Compartmentalisation:</strong> a transparent view of the cell, showing the segments in 3D, white lines through their centres, blue spheres
+            for their end points, and yellow lines linking segments which are electrically connected, but not physically linked. There will be a red sphere in
+            the middle of each of the <a href="#internal divisions">internal divisions</a>, with small blue spheres connecting them. These red spheres correspond to the simulated
+            points in NEURON as defined by the <a href="#nseg">nseg</a> value.</li>
+            
+<li>
+<strong>GENESIS Compartmentalisation:</strong> this is a <a href="#Compartmentalisation">Compartmentalisation</a> of the cell which converts it to a smaller number of compartments for GENESIS
+            but retains the section groups, total surface area, total dendritic length and total axial resistance.</li>
+
+        
+</ul>
+        Note: see points on allocating extra memory for the application <a href="install.html#Building+and+running">here</a>, which will be important when displaying large networks in 3D. Also,
+        there is sometimes excessive flickering when showing 3D on Windows (a common problem when mixing Java3D and Swing, see <a href="http://www.int.com/products/3d/jview3d/problem_resolution/index.html" target="_blank">here</a>), try updating the drivers for your graphics card, or adding <strong>-Dsun.java2d.noddraw=true</strong> to the command in nC.bat.
+    </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Abstract Cells"></a><a name="Abstract Cell">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Abstract Cell</b>
+</p>
+</a><span>
+<p>A <a href="#Cell Type">Cell Type</a> which represents a real neuron, but whose morphology is described with a much reduced number of segments.
+        These types of cells are useful for investigating basic electrophysiological properties of cells, or in large networks, where simpler individual cells
+        are needed to reduce simulation time. These cells can be created manually by adding a Cell Type based on the included examples (e.g. SimpleCell), viewing in tab <strong>Visualisation</strong>,
+        clicking on one of the segments, and pressing <strong>Edit...</strong>.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Abstracted Cell Mechanisms">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Abstracted Cell Mechanisms</b>
+</p>
+</a><span>
+<p>A <a href="#Cell Mechanism">Cell Mechanism</a> which has been split between model template and parameters, allowing easy mapping onto
+                 each of the available simulation platforms. <strong>Note: This is a pre-</strong><a href="#ChannelML">ChannelML</a><strong> approach to implementing
+                 Cell Mechanisms and shouldn't be used anymore</strong>.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Action Potential Propagation Speed">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Action Potential Propagation Speed</b>
+</p>
+</a><span>
+<p>While the 3D structure of axons is important for creating the correct connectivity (e.g parallel fibers in cerebellar granule cells)
+        the segments representing these axons need not necessarily be explicitly modelled, indeed physiological data on the channels
+        present etc. can be quite difficult to obtain. Instead an average value for the speed of propagation of the Action Potential can
+        be used for these segments, with the axonal propagation delay (calculated using the distance along the segments to the last fully modelled segment)
+        added to the internal synaptic mechanism delay. To specify sections which should be modelled using Action Potential Propagation Speeds, select
+        <a href="#Cell density mechanism">Cell density mechanism</a> in the drop down box when viewing a single cell in the <strong>Visualisation</strong> tab. Note that reducing the number of
+        explicitly modelled segments will reduce the simulation runtime.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Anti Aliasing">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Anti Aliasing</b>
+</p>
+</a><span>
+<p>If anti-aliasing is turned on, 3D renderings of both solid compartments and line segments will be smoother. This may have some performance overhead on some video cards,
+    or may prevent the 3D view from displaying, and so should be turned off. </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Arborization Defined Connection">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Arborization Defined Connection</b>
+</p>
+</a><span>
+<p>See <a href="#Volume Based Connection">Volume Based Connection</a>.
+        </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="ASC">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>ASC</b>
+</p>
+</a><span>
+<p>The file ending given to morphologies saved in the file format used by <a href="#Neurolucida">Neurolucida</a>.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Axes in 3D">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Axes in 3D</b>
+</p>
+</a><span>
+<p>A set of axes can be added in 3D (either when a single cell is being displayed or a generated network). The green axis represents
+             the x direction, the yellow the y direction and the red the z direction. The axes measure 100 microns from the origin in positive
+             and negative directions, the arrow on the positive. The ticks are at 10 micron intervals. Due to perspective the axes should only be
+             used for getting bearings/a concept of scale in the 3D scene.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Biophysical validity">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Biophysical validity</b>
+</p>
+</a><span>
+<p>A number of checks can be carried out on the cells in a project to ensure they meet some minimum
+         requirements for producing realistic results in the chosen simulators. <strong>It is not a complete list.</strong> At the moment these checks are:
+         <ul>
+             
+<li>At least one membrane mechanism on each segment</li>
+             
+<li>At least one passive conductance on each segment </li>
+             
+<li>Each section has an appropriate <a href="#internal number of divisions">internal number of divisions</a> for the specified maximum <a href="#electrotonic length">electrotonic length</a>
+</li>
+         
+</ul>
+
+         The following checks, when failed, lead to warnings:
+         <ul>
+             
+<li>At most one passive conductance on a segment (more than one can lead to erroneous calculations of <a href="#Electrotonic length">Electrotonic length</a>)</li>
+         
+</ul>
+         The intention is to expand these checks to make it easier for non/new computational neuroscientists to catch some
+         common errors when creating cell models. If there are any suggestions for checks to be made, please <a href="contact.html">get in touch</a>.
+     </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Cell density mechanism">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Cell density mechanism</b>
+</p>
+</a><span>
+<p>A term used to describe the mechanisms which can be applied to cell segments to allow simulation of electrophysiological
+                 mechanisms. Density refers to the fact that the effect of the mechanism is dependent on the physical size (surface area/length) of the segment. A 
+                 <a href="#Channel Mechanism">Channel Mechanism</a> is specified as a conductance per unit area, or alternatively an <a href="#Action Potential Propagation Speed">Action Potential Propagation Speed</a> measures the 
+                 rate of propagation of signals along a segment to synaptic connections. Specific capacitance and specific axial resistance can 
+                 be specified on a per group basis also. To specify which cell density mechanisms are present on a cell, select
+        <strong>Cell density mechanism</strong> in the drop down box when viewing a single cell in the <strong>Visualisation</strong> tab.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Cell Groups"></a><a name="Cell Group">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Cell Group</b>
+</p>
+</a><span>
+<p>A number of cells of the same <a href="#Cell Type">Cell Type</a> positioned in 3D space.
+                 These will be laid out relative to a specified <a href="#Region">Region</a> 
+                 and arranged according to a <a href="#Packing Pattern">Packing Pattern</a>. Only Cell Groups
+                 included in the selected <a href="#Simulation Configuration">Simulation Configuration</a> will be generated.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Cell Group Priority">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Cell Group Priority</b>
+</p>
+</a><span>
+<p>Specifies the order in which <a href="#Cell Groups">Cell Groups</a> are placed. Higher priority Cell Groups are always placed first.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Cell Mechanism">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Cell Mechanism</b>
+</p>
+</a><span>
+<p>A general term for an electrophysiological process (currently either a <a href="#Channel Mechanism">Channel Mechanism</a>, a <a href="#Synaptic Mechanism">Synaptic Mechanism</a> or an <a href="#Ion Concentration">Ion Concentration</a>) which is placed 
+        on modelled cell membranes or at the interface of two cells to alter their internal electrical and chemical state.
+        More on Cell Mechanisms in the <a href="cellmechanism.html">main documentation</a>.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Cell Type">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Cell Type</b>
+</p>
+</a><span>
+<p>A prototype cell containing information on its 3D morphology and the various <a href="#Cell density mechanism">Cell density mechanism</a>s which determine its
+        electrophysiological behaviour.
+        Each <a href="#Cell Group">Cell Group</a> specifies a particular Cell Type and from these networks are built. Cell Types can be hard-coded (e.g. Simple Cell,
+        Purkinje Cell)
+        (which can form the basis of manually edited <a href="#Abstract Cells">Abstract Cells</a>) or ones based on imported morphology files, e.g. using GenesisMorphReader
+        where a morphology file (ending in .p) as used in <a href="#GENESIS">GENESIS</a> is specified (<a href="import.html">more on importing morphologies</a>). A Cell Type can be checked for
+        <a href="Glossary_gen.html#Validity checks">validity</a>. More on
+        Cell Types in the <a href="celltypes.html">main documentation</a>
+</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Channel Mechanism">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Channel Mechanism</b>
+</p>
+</a><span>
+<p>An implementation of a model of an electrophysiological process (e.g. a voltage gated ion channel, ion pump, etc.) which is placed 
+        on modelled cells' membranes to alter their behaviour. For <a href="#NEURON">NEURON</a> these are usually implemented in <a href="#NMODL">NMODL</a>.
+        The preferred way to specify these in neuroConstruct is with a <a href="#ChannelML">ChannelML</a> file.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="ChannelML">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>ChannelML</b>
+</p>
+</a><span>
+<p>ChannelML is a language (using <a href="#XML">XML</a> technologies) for specifying the dynamics of various subcellular processes
+        (<a href="#Channel Mechanism">Channel Mechanism</a>s, <a href="#Synaptic Mechanism">Synaptic Mechanism</a>s, etc.) which are present on biologically detailed model neurons.
+        It is a part of Level 2 of <a href="#NeuroML">NeuroML</a>.
+        The ability to model these types of mechanisms is one of the key features of platforms like <a href="#NEURON">NEURON</a> or <a href="#GENESIS">GENESIS</a>, but the implementation
+        of the mechanisms is far from trivial, requiring both knowledge of the physiological processes and of a low level programming language. ChannelML seeks to separate the
+        electrophysiological data from any specific implementation, defining a template for numerous types of cellular mechanism, containing only the relevant biophysical parameters
+        (e.g. reversal potentials, (in)activation rate equations) which can be automatically validated for completeness. These files can then be mapped to
+        script files in the language of the target simulator for inclusion in cell models.
+        The format for valid ChannelML files is described in an <a href="http://www.w3schools.com/schema/default.asp" target="_blank">XML Schema</a> document.
+        Examples of valid ChannelML files and mappings to simulators can be found
+        <a href="http://www.neuroml.org/NeuroMLValidator/Samples.jsp" target="_blank">here</a>, and detailed specifications of the elements allowed in a ChannelML document are
+        available <a href="http://www.neuroml.org/NeuroMLValidator/Latest.jsp?spec=ChannelML" target="_blank">here</a>.
+        A description of the current support
+                 for MorphML and NeuroML in general in neuroConstruct is available <a href="neuroml.html">here</a> and
+        details of the process to convert an existing channel script, e.g. a mod file, to ChannelML is outlined <a href="importneuron.html#Converting+mod+file%2FGENESIS+script+channels+into+ChannelML">here</a>.
+        </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Compartmentalisations"></a><a name="Compartmentalisation">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Compartmentalisation</b>
+</p>
+</a><span>
+<p>Imported morphologies (e.g. <a href="#Neurolucida">Neurolucida</a> files) may not always be in the most efficient <a href="#spatial discretisation">spatial discretisation</a>
+                 for a particular simulator (a number of 3D points/diameters can be specified along an unbranched dendrite to describe the structure,
+                 but these will lead to many segments in a simulator which maps all segments to individual compartments). A Compartmentalisation is a
+                 reorganisation of the structure of segments/sections to retain as many of the properties the cell which are important for electrophysiological
+                 simulations (total membrane area, total axial resistance along branches, total length etc.) but enables mapping on to a smaller number of 
+                 simulated compartments. See <a href="#GENESIS Compartmentalisation">GENESIS Compartmentalisation</a>. The various Compartmentalisations can be visualised in 3D, see <a href="#3D View of Cells">3D View of Cells</a>.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Cvapp">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Cvapp</b>
+</p>
+</a><span>
+<p>This Java application, developed by Robert Cannon, allows transformation between various morphology formats
+        (e.g. from <a href="#Neurolucida">Neurolucida</a> to <a href="#NEURON">NEURON</a> or <a href="#GENESIS">GENESIS</a>), editing of loaded
+        morphologies, along with other functions for cleaning up and optimising morphology files. It also has its own
+        file format (stored in *.swc files). More information <a href="http://www.compneuro.org/CDROM/docs/cvapp.html" target="_blank">here</a>.
+        The <a href="http://www.neuromorpho.org" target="_blank">Neuromorpho database</a> uses SWC as the format for it's curated morphologies.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Data Set">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Data Set</b>
+</p>
+</a><span>
+<p>Set of x, y values which can be plotted in a <a href="#Plot Frame">Plot Frame</a>, saved in the <a href="#Project">Project</a> (for reloading through the <a href="#Data Set Manager">Data Set Manager</a>), exported, etc.
+    The x values do not have to be evenly spaced, unique or sequential. See <a href="#Variables to plot/save">here</a> for information on what variables can be saved/plotted during a simulation run.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Data Set Manager">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Data Set Manager</b>
+</p>
+</a><span>
+<p>A number of <a href="#Data Set">Data Set</a>s can be stored in a neuroConstruct <a href="#Project">Project</a>, showing a concept illustrating a point about the model,
+    e.g. an I-F curve derived from a number of simulation runs. When a Data Set is viewed in a <a href="#Plot Frame">Plot Frame</a> the points can be saved
+    to the project. The Data Set Manager allows these saved Data Sets to be viewed, edited, and redisplayed in a new (or any open) Plot Frame</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="electrotonic length"></a><a name="Electrotonic length">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Electrotonic length</b>
+</p>
+</a><span>
+<p>This measure of the length of dendrites, etc. as "seen" by electrical charge is dependent on the shape, axial
+                 and membrane resistance of the section. See the NEURON or GENESIS books for more details. It is important when
+                 simulating neurons with realistic morphologies that individually simulated points are not too far apart in terms
+                 of electrotonic length (a max of 0.1 is usually fine, though much smaller is needed if trying to match the behaviour of
+                 morphologically complex cells between simulators), i.e. a sufficiently fine-graned spatial discretisation
+                 should be used. Too short an electrotonic length can sometimes lead to problems in numerical integration, and 
+                 neuroConstruct will perform validity checks for both of these (too long and too short). To correct the 
+                 <a href="#internal number of divisions">internal number of divisions</a> in a <a href="#Section">Section</a> to stay below a maximum electrotonic length,
+                 e.g. on an imported morphology, visualise the cell in 3D, showing all solids, click on any section,
+                 then <strong>Edit...</strong> and either manually set the parameter for each Section or select the <strong>Remesh</strong> option in the drop down function selector. See also the note 
+                 about <a href="#Compartmentalisations">Compartmentalisations</a>. Note that electrotonic length is dimensionless, and the term space constant
+                 is used for this measure in microns (see GENESIS book, or Rall's chapter in Koch and Segev 1989).</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="File based Cell Mechanisms">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>File based Cell Mechanisms</b>
+</p>
+</a><span>
+<p>A <a href="#Cell Mechanism">Cell Mechanism</a> whose functionality is hard coded in a native simulation environment's scripting language, e.g a mod file 
+                 for <a href="#NEURON">NEURON</a> or a <a href="#GENESIS">GENESIS</a> script file containing a single <a href="#Cell Mechanism">Cell Mechanism</a>.
+                 Note: there can be a script for each simulation environment associated with the Cell Mechanism, but it is up to the modeller to ensure they 
+                 produce the same results. Details on how to modify native script files for inclusion in neuroConstruct cells is available in the <a href="importneuron.html#CellMechanism">main documentation</a>
+</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Finite volume Segment">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Finite volume Segment</b>
+</p>
+</a><span>
+<p>A <a href="#Segment">Segment</a> on a Cell in neuroConstruct, which for the purposes of <a href="#Packing Pattern">packing</a>
+    is considered to take up space. Normally, only Segments in the soma are considered space filling, and will be packed to avoid each other.
+    Dendrites and axons are ignored in packing as it would normally be impossible to get these well packed taking into account the dendritic arborisations.
+    If large Sections in a specific cell need to be treated differently (e.g. a <a href="#Glomerulus">Glomerulus</a>), these Segments can be specified as having
+    finite volume</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="GENESIS">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>GENESIS</b>
+</p>
+</a><span>
+<p>GENESIS is a general purpose simulation platform which was developed to support the simulation of neural systems 
+                    ranging from complex models of single neurons to simulations of large networks made up of more abstract neuronal components. 
+                    The main tasks of actually simulating what goes on inside the neurons of a network built with neuroConstruct is carried out by simulation packages such as GENESIS. 
+                      GENESIS is available for download <a href="http://www.genesis-sim.org/GENESIS/" target="_blank">here</a>. </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="GENESIS Compartmentalisation">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>GENESIS Compartmentalisation</b>
+</p>
+</a><span>
+<p>This <a href="#Compartmentalisation">Compartmentalisation</a> for the <a href="#GENESIS">GENESIS</a> platform is needed since a simple mapping of each <a href="#Segment">Segment</a> in a detailed neuronal reconstruction
+        to a compartment for running on GENESIS would lead to too great a spatial discretization. This Compartmentalisation maps the n Segments in each <a href="#Section">Section</a>
+        on to two CYLINDRICAL Sections each of half the original Section length, with the radii chosen to preserve total curved surface area and total axial resistance along 
+        the length. For sections with large <a href="#electrotonic length">electrotonic length</a>, and which have an <a href="#internal number of divisions">internal number of divisions</a> (<a href="#nseg">nseg</a>) 
+        greater than 2, these cylinders will be split accordingly (e.g for num int divs = 7 or 8, the 2 cylinders will be split in 4 each).
+    </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Glomerulus">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Glomerulus</b>
+</p>
+</a><span>
+<p>Glomeruli are present in many areas of the CNS. Post synaptic connections from a number of cell types
+                 converge on a single point on a cell axon. An example would be the Mossy Fiber rosette in the cerebellum, where
+                 Granule cell dendrites, Golgi Cells axons and dendrites synapse on boutons on the Mossy Fiber axon.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Graph">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Graph</b>
+</p>
+</a><span>
+<p>See <a href="#Plot/Graph">Plot/Graph</a>
+</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Group">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Group</b>
+</p>
+</a><span>
+<p>See <a href="#Cell Group">Cell Group</a> or <a href="#Section Group">Section Group</a>.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="HDF5">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>HDF5</b>
+</p>
+</a><span>
+<p>HDF5 is a binary file format used for exchanging large amounts of structured data between software applications, widely used in the astrophysics community, among others.
+            Libraries for development and an application, HDFView, for viewing the contents of HDF5 files can be obtained here <a href="http://hdf.ncsa.uiuc.edu/index.html" target="_blank">here</a>.
+            This format is envisioned to be a useful alternative to text files or XML when exchanging voltage trace (or spike time) data, or network structure information (see <a href="#NetworkML">NetworkML</a>) between computational neuroscience applications.
+    </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="spatial discretisation"></a><a name="internal number of divisions"></a><a name="internal divisions"></a><a name="Internal number of divisions">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Internal number of divisions</b>
+</p>
+</a><span>
+<p>A <a href="#Section">Section</a> (in neuroConstruct) can consist of a long list of 3D point/diameters (<a href="#Segment">Segment</a>s).
+               Not all of this 3D information is relevant when modelling the Sections, sometimes just the surface area/axial resistance at a point
+               is sufficient for modelling the dendrite. This is the approach <a href="#NEURON">NEURON</a>
+             takes modelling cables/sections. For long sections, it is possible to specify a number of internal divisions,
+             and the membrane potential at each
+             time step is calculated at the centre of each of these divisions (this is also known as setting the spatial discretisation of the
+             morphology). The term <a href="#nseg">nseg</a> is used for this number in NEURON (see details in the NEURON book). It is also possible
+             to set this parameter for Sections in neuroConstruct. View the cell in 3D (All solid),
+             click on a segment, click <strong>Edit...</strong>, and in the second drop down box, select <strong>Section details</strong>.
+             The number of internal divisions can be chosen automatically too (especially convenient for imported detailed morphologies, after
+             the passive electrical properties are set), see <a href="#electrotonic length">electrotonic length</a>. See information too on
+         <a href="#Compartmentalisations">Compartmentalisations</a>.
+     </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Ion Concentration">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Ion Concentration</b>
+</p>
+</a><span>
+<p>A term used for a mechanism describing how the internal concentration of an ion alters. An example would be a pool of calcium, which decays to a resting value.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="MorphML">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>MorphML</b>
+</p>
+</a><span>
+<p>MorphML is an language which has been developed (using <a href="#XML">XML</a> technologies) to allow data on cell morphologies to be 
+        easily transferred between neuronal simulation applications. More information is available <a href="http://www.neuroml.org" target="_blank">here</a>.
+        It is a part of the <a href="#NeuroML">NeuroML</a> initiative, and is the core of NeuroML Level 1. Detailed specifications of the elements allowed in a MorphML document are
+        available <a href="http://www.neuroml.org/NeuroMLValidator/Latest.jsp?spec=MorphML" target="_blank">here</a>.
+        There has been a <a href="../links/publications.html">paper</a> describing this part of the NeuroML language.
+        A description of the current support
+                 for MorphML and NeuroML in general in neuroConstruct is available <a href="neuroml.html">here</a>.
+    </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Morphological validity">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Morphological validity</b>
+</p>
+</a><span>
+<p>For a cell with multiple <a href="#Sections">Sections</a> and <a href="#Segments">Segments</a>, to be considered valid i.e. in a form that will produce sensible,
+              similar 3D morphologies in each of the simulators we deal with it should meet the following criteria <strong>(not a complete list)</strong>:
+              <ul>
+                 
+<li>  Only one segment without a parent (root segment)</li>
+                 
+<li>  All segments have sections</li>
+                 
+<li>  All segments have endpoints</li>
+                 
+<li>  All Segment IDs unique</li>
+                 
+<li>  All Segment names unique</li>
+                 
+<li>  All Section names unique</li>
+                 
+<li>  Segments after the first in a section are only connected to 1 on parent</li>
+                 
+<li>  At most one segment is spherical and is in the <a href="#Section Group">Section Group</a> <strong>soma_group</strong>
+</li>
+                 
+<li>  At least one segment present in cell</li>
+                 
+<li>  At least one soma section, i.e. section which is in group <strong>soma_group</strong>
+</li>
+                 
+<li>  Cell name present</li>
+                 
+</ul>
+            The following checks, when failed, lead to warnings (due to potential problems when packing, for example):
+            <ul>
+                 
+<li>  First soma segment is at origin</li>
+                 
+<li>  Start point matches point at specified fraction along parent</li>
+                 
+<li>  Cell is a <a href="#Simply Connected cell">Simply Connected cell</a>
+</li>
+                 
+<li>  Each section is part of one of: <strong>soma_group</strong>, <strong>axon_group</strong>, <strong>dendrite_group</strong>
+</li>
+                 
+</ul>
+        
+</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Morphology Based Connection">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Morphology Based Connection</b>
+</p>
+</a><span>
+<p>This type of <a href="#Network Connection">Network Connection</a> is appropriate for connecting cells where the axon of the presynaptic cell is well stereotyped
+            and does not vary significantly between cells (e.g. parallel fiber of cerebellar granule cell). Cell axons can be created in 3D and a sub set of its sections allowing a certain type of <a href="#Synaptic Mechanism">Synaptic Mechanism</a>
+            can be specified. For single compartment cell models this type of Network Connection is most appropriate, <a href="#Section Group">Section Group</a> <strong>all</strong> can be used for 
+            each synapse.
+        </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Morphology save format">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Morphology save format</b>
+</p>
+</a><span>
+<p>There are two possible ways to save morphologies in neuroConstruct projects, both based on a mapping from the 
+set of Java classes describing the cell internally in neuroConstruct:
+<ul>
+        
+<li>XML based Java serialisation (*.java.xml files):  a mapping to an XML file of the classes. Note: not any part of NeuroML.</li>
+
+<li>Serialised Java object form (*.java.ser files):   a serialised representation of the Java classes.</li>
+
+</ul>
+The second of these is quicker to load and save and the files are smaller. The first however can be opened (and edited!)
+with a text editor. Change which format to use via <strong>Settings -&gt; General Properties &amp; Project Defaults/Project properties</strong>.
+
+Cell morphologies are stored in the <strong>morphologies</strong> directory of the project home directory. *.bak files in that dir backup 
+the previously stored morphology before a new one is saved (if a problem occurs saving a morphology, close the application, remove
+the .bak from the name of the morphology file to use the previous structure of the cell when reloading the project).
+
+Note that the cells aren't currently stored in neuroConstruct projects in <a href="#NeuroML">NeuroML</a>/<a href="#MorphML">MorphML</a> format, since new functionality 
+is usually added to the neuroConstruct Cell class before it is supported in the specifications.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Network Connection">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Network Connection</b>
+</p>
+</a><span>
+<p>A connection between a number of points on cells in one <a href="#Cell Group">Cell Group</a> to points in another Cell Group.
+                 Some of the factors which need to be specified are:
+                 <ul>
+                 
+<li>Source Cell Group: (Presynaptic cells)</li>
+                 
+<li>Target Cell Group: (Post synaptic cells)</li>
+                 
+<li>Synaptic Properties: Which <a href="#Synaptic Mechanism">Synaptic Mechanism</a> (under tab <a href="#Cell Mechanism">Cell Mechanism</a>) defines the synapse, the delay, threshold and weight</li>
+                 
+<li>Method of searching for a connection point (random, closest, etc.)</li>
+                 
+<li>Maximum and minimum lengths of the connection</li>
+                 
+<li>Various conditions on the number of connections to make between the Cells Groups</li>
+                 
+</ul>
+                 There are two main types of Network Connection: <a href="#Morphology Based Connection">Morphology Based Connection</a> and <a href="#Volume Based Connection">Volume Based Connection</a>
+                 More on Network Connections in this <a href="tutorials/tutorial3.html">tutorial</a>.
+        </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="NetworkML">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>NetworkML</b>
+</p>
+</a><span>
+<p>NetworkML is a language (based on <a href="#XML">XML</a> technologies and a <a href="#HDF5">HDF5</a> equivalent in development) to allow data on cell placement and
+        connectivity in 3D to be 
+        easily transferred between neuronal simulation applications. More information is available <a href="http://www.neuroml.org" target="_blank">here</a>.
+        It is a part of the <a href="#NeuroML">NeuroML</a> initiative, and is the core of NeuroML Level 3.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Neurolucida">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Neurolucida</b>
+</p>
+</a><span>
+<p>A product by MicroBrightField Bioscience which is a system for "3D neuron reconstruction, serial section reconstruction, and anatomical mapping".
+        It is a popular product for creating 3D morphological reconstructions of neurons with complex dendritic trees (although this is not the only functionality).
+        A number of databases exist containing neuronal information in the file format used by these products (see <a href="http://www.neuromorpho.org" target="_blank">Neuromorpho.org</a>). neuroConstruct can import these files and extract the
+        morphological information to use as the basis of detailed single cell models. See <a href="import.html#Neurolucida">here</a> for more information/limitations.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="NeuroML">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>NeuroML</b>
+</p>
+</a><span>
+<p>
+<a href="http://www.neuroml.org" target="_blank">NeuroML</a>, the Neural Open Markup Language, is a model development language in <a href="#XML">XML</a>
+            that provides a common data format for defining and exchanging descriptions of neuronal cell and network models. 
+                 Currently, there are three Levels of compliance to the NeuroML specifications:
+
+                <ul>
+            
+<li>
+<strong>Level 1</strong> provides a common data format for neuronal morphology data and metadata. <a href="#MorphML">MorphML</a> forms the main part of the specification at this Level.</li>
+            
+<li>
+<strong>Level 2</strong> builds on Level 1 to include specifications for describing passive membrane properties, and the distributions of channels on neuron models.
+                The dynamics of ion channels, synapses, and ion concentration mechanisms can also be described at this Level in <a href="#ChannelML">ChannelML</a>
+</li>
+            
+<li>
+<strong>Level 3</strong> allows networks of cells to be described, either in template form (from which networks can be generated) or as explicit descriptions of 
+                cell placement and synaptic connectivity. The core of this Level is described in <a href="#NetworkML">NetworkML</a>. neuroConstruct can save generated networks in 
+                NetworkML, and load NetworkML files from any other application to use in simulations, provided the cell type/group/network connection names match those in the project.
+            </li>
+                
+</ul>
+                 More information on NeuroML is available <a href="http://www.neuroml.org" target="_blank">here</a>, and a web interface for checking the validity of
+                 any NeuroML file is <a href="http://www.neuroml.org/NeuroMLValidator/Validation.jsp" target="_blank">here</a>. A description of the support
+                 for NeuroML in neuroConstruct is <a href="neuroml.html">here</a>.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="NEURON">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>NEURON</b>
+</p>
+</a><span>
+<p>NEURON is a simulation environment for developing and exercising models of neurons and networks of neurons. 
+                The main tasks of actually simulating what goes on inside the neurons of a network built with neuroConstruct 
+                is done by simulation packages such as NEURON. The package is available for download <a href="http://www.neuron.yale.edu/neuron/" target="_blank">here</a>.
+                More on importing NEURON models in the <a href="importneuron.html">main documentation</a>, and information on the interaction
+                between neuroConstruct and NEURON on various platforms can be found <a href="interact.html">here</a>.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="NMODL">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>NMODL</b>
+</p>
+</a><span>
+<p>
+<a href="#Channel Mechanism">Channel Mechanism</a>s and <a href="#Synaptic Mechanism">Synaptic Mechanism</a>s can be created in NMODL, and these can be placed in the cells in <a href="#NEURON">NEURON</a> simulations. 
+        More info available <a href="http://www.neuron.yale.edu/neuron/papers/nc2000/nmodl.htm" target="_blank">here</a>. See <a href="importneuron.html">here</a> for details on use of NMODL (*.mod) files in neuroConstruct.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="nseg">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>nseg</b>
+</p>
+</a><span>
+<p>A <a href="#NEURON">NEURON</a> section property. See <a href="#Internal number of divisions">Internal number of divisions</a>.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Packing Pattern">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Packing Pattern</b>
+</p>
+</a><span>
+<p>When cells are placed in a <a href="#Region">Region</a>, the somas need to be arranged in a particular pattern. In neuroConstruct, some of the available patterns are:
+            <ul>
+            
+<li>
+<strong>Random:</strong> Cells are placed in random locations in the Region</li>
+            
+<li>
+<strong>Cubic Close Packed:</strong> Cells are placed in Cubic Close Packed formation. A layer is placed in 2D first and the spheres in the next layer lie on top, at the center of the 4 spheres underneath, touching each. This is optimal packing of spheres in 3D</li>
+            
+<li>
+<strong>Simple Regular:</strong> The cells are placed in layers with cell centres directly above each other</li>
+            
+<li>
+<strong>Single Placed Cell:</strong> A single cell is placed in an exact location in the Region (or relative to the origin)</li>
+            
+<li>
+<strong>Hexagonal:</strong> The cells are placed in a single layer in a hexagonal pattern (each soma is surrounded by 6 other somas at equal angles)</li>
+            
+<li>
+<strong>One Dimensional Regular Spacing:</strong> The cells are placed at regular intervals in a straight line </li>
+            
+</ul>
+            Note that for each of these packing patterns a number of variables need to be specified, besides the Region, e.g. the number of cells to place, extra cell spacing
+            whether to avoid existing cells from this (or other) <a href="#Cell Group">Cell Group</a>s.
+            New packing patterns can be added by extending the Java class <strong>CellPackingAdapter</strong>.
+
+    </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Parallel computing support">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Parallel computing support</b>
+</p>
+</a><span>
+<p>Support for generation of networks for execution in parallel computing environments is in development, concentrating on Parallel NEURON over MPI at present.
+        As documentation for this is currently limited, please <a href="contact.html">get in touch</a> for more details.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Plot/Graph">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Plot/Graph</b>
+</p>
+</a><span>
+<p>These terms are used in various ways by <a href="#NEURON">NEURON</a> and <a href="#GENESIS">GENESIS</a> for a) the frame/window showing a number of sets of data and
+    b) the individual sets of points in each trace. In neuroConstruct, <a href="#Data Set">Data Set</a> is used for a set of points which can be plotted, and
+    <a href="#Plot Frame">Plot Frame</a> is used for the window in which a number of these can be viewed. In the <strong>Input/Output</strong> tab, the second table lists the values to
+    to be plotted during a simulation run. For example, the membrane potential of a subset of cells in each group could be plotted. Note that here too is where variables
+    to be saved during the simulation are specified, e.g. all cells' membrane potential could be saved but just one specified to be plotted, etc. The names to use for variables
+    to plot and/or save are given <a href="#Variables to plot/save">here</a>
+    
+</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Plot Frame">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Plot Frame</b>
+</p>
+</a><span>
+<p>The window in which a number of <a href="#Data Set">Data Set</a>s can be viewed. Each Plot Frame has a name and new Data Sets can be added to existing Plot Frames.
+    The Data Sets can be viewed in a number of different ways: all graphs using the same axes, graphs stacked vertically, zoomed in to user selected area, etc. Each Data Set is
+    listed and can be individually analysed (e.g. for mean/std dev values, spiking rates calculated) or the format (colour/point type) edited. See <a href="#Variables to plot/save">here</a>
+    for information on what variables can be saved/plotted during a simulation run.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Projects"></a><a name="projects"></a><a name="Project">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Project</b>
+</p>
+</a><span>
+<p>In neuroConstruct, a Project contains the specification of the <a href="#Cell Type">Cell Type</a>s, <a href="#Region">Region</a>s,
+    <a href="#Cell Group">Cell Group</a>s and <a href="#Network Connection">Network Connection</a>s in a model, along with the simulation parameters (duration, dt, 
+    etc.) and inputs into the network. A Project can be used to generate networks using combinations of these cells/connections etc. in different <a href="#Simulation Configurations">Simulation Configurations</a>.
+    Also associated with a Project are a number of Previous Simulations, 
+    i.e. recorded simulations run in a simulation environment (e.g. <a href="#NEURON">NEURON</a>) which are available for replaying
+    when the project is opened. The main project file (*.neuro.xml) is a proprietary XML file (not part of <a href="#NeuroML">NeuroML</a>), which should
+    only be opened with neuroConstruct (though some minor manual edits are possible if you're careful...). A Project and all of its associated files (morphology files, simulation
+    files, etc.) can be zipped up through the GUI for easy distribution.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Project validity">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Project validity</b>
+</p>
+</a><span>
+<p>To catch many, <strong>but not all</strong>, potential sources of error in a project a number of <a href="#validity checks">validity checks</a> are performed. These include 
+        checks on the morphology and biophysical parameters of each of the cells in the project, and various global checks on the project
+        settings, e.g. appropriate temperature, electrical input or network connection to all cell groups, etc.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Python">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Python</b>
+</p>
+</a><span>
+<p>
+<a href="http://www.python.org" target="_blank">Python</a> is a scripting language which is becoming increasingly widely used in
+        <a href="http://frontiersin.org/neuroinformatics/specialtopics/8/" target="_blank">computational neuroscience</a>. Details of the support for Python in neuroConstruct can
+        be found <a href="python.html">here</a>.        </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Region">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Region</b>
+</p>
+</a><span>
+<p>A volume in 3D space which can be filled with cells. These regions can be also used for specifying bounding regions for selecting cells, e.g. to 
+                 selectively apply stimulations, or to aid in analysis of a subset of cells. In the current version of neuroConstruct, regions can be either rectangular 
+                 boxes, spheres, cylinders or cones. More on Regions in the <a href="regions.html">main documentation</a>
+</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Sections"></a><a name="Section">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Section</b>
+</p>
+</a><span>
+<p>An unbranched part of a cell morphology, corresponding roughly to the concept of a section in <a href="#NEURON">NEURON</a>. 
+             An example would be a non bifurcating dendritic section, or the soma. 
+             Each Section contains at least one <a href="#Segment">Segment</a>. The Section provides the start point and 
+             start radius, and each of the Segments has an end point and radius corresponding to the 3D points along the Section.
+             Sections which have similar properties can be assigned to one or more <a href="#Section Group">Section Group</a>. All of the Segments
+             in a Section are also in these  Groups. Note that a Section is referred to as a cable in <a href="#MorphML">MorphML</a>. A Section is mapped
+             to a section in NEURON, and the start point of this and endpoints of the Segments become the pt3d points along it. <a href="#GENESIS">GENESIS</a>
+             only has the concept of a compartment, so the Segments are each mapped to a compartment as a default (but see <a href="#GENESIS Compartmentalisation">GENESIS Compartmentalisation</a>).
+
+             See the NeuroML Level 1/MorphML <a href="../links/publications.html">paper</a> for more details
+             of the mapping to the different simulation environments.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Section Groups"></a><a name="Section Group">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Section Group</b>
+</p>
+</a><span>
+<p>A group of <a href="#Section">Section</a>s sharing some properties. These can be used to specify the <a href="#Channel Mechanism">Channel Mechanism</a>s placed
+    on areas of the cell (e.g. apical dendrites), or the locations where specific <a href="#Synaptic Mechanism">Synaptic Mechanism</a>s are allowed (see <a href="#Synaptic Connection Location">Synaptic Connection Location</a>).
+    There are four special groups:
+    <ul>
+                 
+<li>
+<strong>all</strong>: every Section is included in this Group</li>
+                 
+<li>
+<strong>soma_group</strong>: The Group containing only one Section, representing the soma</li>
+                 
+<li>
+<strong>dendrite_group</strong>: The Group of dendritic Sections</li>
+                 
+<li>
+<strong>axon_group</strong>: The Group of axonal Sections</li>
+                 
+</ul>
+                 Every Section is part of one and only one of the last 3 Groups. Sections in groups whose names start with <strong>colour_</strong>, e.g. <strong>colour_Yellow</strong>,
+                 will be coloured as such in the single cell 3D view (these colourings may come from morphology files, e.g. <a href="#Neurolucida">Neurolucida</a> format).
+             </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Segments"></a><a name="Segment">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Segment</b>
+</p>
+</a><span>
+<p>The basic unit of the morphological description of the cell. Segments correspond to the concept of a compartment as 
+             used in <a href="#GENESIS">GENESIS</a>. One or more Segments go to make up a <a href="#Section">Section</a>, which maps to a cable in
+             simulation environments using that concept (e.g. the section in <a href="#NEURON">NEURON</a>, where the start point of the Section,
+             and the Segment end points provide the pt3d points along the section). A Segment has a unique name, an end point, a pointer to
+             its <a href="#Section">Section</a>, a pointer to its parent <strong>Segment</strong>, and a value for the fraction (0 to 1) of the
+             <strong>parent Segment's</strong> length at which it's connected. The first Segment in a Section can be connected at a point between 0 and 1 along
+             its parent segment (which will be in another section) but all other segments need to be connected at the 1 point to their
+             parent. Note: there is a difference with how NEURON handles sections, they specify the 0 to 1 point of connectivity along their
+             parent section. When there are n Segments in a Section in neuroConstruct, this will translate to a NEURON section with n+1 pt3d points.
+            See <a href="#Section">Section</a> and the NeuroML Level 1/MorphML <a href="../links/publications.html">paper</a> for more details
+             of the mapping to the different simulation environments.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Simply Connected cell">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Simply Connected cell</b>
+</p>
+</a><span>
+<p>A Cell where each <a href="#Segment">Segment</a> is connected to either the start of end point (0 or 1) of its parent</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Simulation Configurations"></a><a name="Simulation Configuration">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Simulation Configuration</b>
+</p>
+</a><span>
+<p>Most neuroConstruct <a href="#Projects">Projects</a> will illustrate not just a single aspect of a cell 
+                 or network, but will seek to show how the cells react under different inputs, or how a network behaves 
+                 with different <a href="#Cell Groups">Cell Groups</a>/cell populations present, etc. A particular Simulation 
+                 Configuration has a number of Cell Groups, Network Connections, Electrical Inputs, and Plots 
+                 associated with it, along with a simulation duration. As an example, a project accompanying a publication
+                 might have one Simulation Configuration for each figure in the paper. More on Simulation Configurations in 
+                the <a href="simconfigs.html">main documentation</a>
+</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="SWC">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>SWC</b>
+</p>
+</a><span>
+<p>The file ending given to morphologies saved in the file format initially developed for <a href="#Cvapp">Cvapp</a>.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Synaptic Connection Location">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Synaptic Connection Location</b>
+</p>
+</a><span>
+<p>A <a href="#Synaptic Mechanism">Synaptic Mechanism</a> can be associated with a list of <a href="#Section Group">Section Group</a>s. This means that any of the <a href="#Section">Section</a>s in those
+             Groups can be involved in a <a href="#Network Connection">Network Connection</a> involving the Synapse type.
+             Note: Each of the Sections will also be a member of either <strong>soma_group</strong>, <strong>dendrite_group</strong> or <strong>axon_group</strong>. A PRE synaptic connection location is allowed on Sections in
+             <strong>soma_group</strong> or <strong>axon_group</strong> while a POST synaptic connection location is allowed on a Section in <strong>soma_group</strong> or <strong>dendrite_group</strong>.
+
+             See this <a href="tutorials/tutorial3.html">tutorial</a> for more on Synaptic Connection Locations and Network Connections</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Synaptic Mechanism">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Synaptic Mechanism</b>
+</p>
+</a><span>
+<p>An implementation of a model of synaptic transmission. This is a subtype of a <a href="#Cell Mechanism">Cell Mechanism</a>. Usually this
+                 involves an event in one cell influencing the conductance at a point in another cell. For <a href="#NEURON">NEURON</a> these are usually implemented
+                 in <a href="#NMODL">NMODL</a>. Synaptic Mechanisms are needed to specify a <a href="#Synaptic Connection Location">Synaptic Connection Location</a> on a cell.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Tool Tips">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Tool Tips</b>
+</p>
+</a><span>
+<p>These appear when the cursor hovers over certain buttons, panels, checkboxes, etc. and provide hints on usage.
+        They can be turned off via <strong>Settings -&gt; General Properties &amp; Project Defaults</strong> or by clicking on the button in the main toolbar.</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="validity checks"></a><a name="Validity checks">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Validity checks</b>
+</p>
+</a><span>
+<p>Due to the large number of parameters present in a simulation of a network of realistic neurons, a number
+        of automated checks have been created to help ensure sensible data is being given to the simulators. Note that these
+        are <strong>*not complete*</strong> and there is still plenty of opportunity for "garbage in, garbage out". There are checks on:
+        <ul>
+            
+<li>
+<a href="#Morphological validity">Morphological validity</a>: the structure of the cells in the project are valid</li>
+            
+<li>
+<a href="#Biophysical validity">Biophysical validity</a>: the cells in the project have minimal/sensible biophysical properties set</li>
+            
+<li>
+<a href="#Project validity">Project validity</a>: the above two checks are performed on each of the cells in the project along with a number of other tests</li>
+            
+</ul>
+            Note: projects/cells will work and native scripts can be generated even when not valid, but the simulation results should be treated as suspect.
+    </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Variables to plot/save">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Variables to plot/save</b>
+</p>
+</a><span>
+<p>Variables which change during the simulation can be specified to be plotted and/or saved for later display in neuroConstruct via
+             the <strong>Input/Output</strong> tab. Variables have different names in each of the simulation environments (e.g. v or Vm), so a set of 
+             generic names of the most common interesting values has been defined:
+    <ul>
+        
+<li>
+<strong>VOLTAGE</strong> for the membrane potential (v in NEURON, Vm in GENESIS)</li>
+        
+<li>
+<strong>SPIKE</strong> can be used to record spike trains, as opposed to voltage at every timestep, e.g. <strong>SPIKE:-20</strong> sets the spike threshold to -20mV</li>
+    
+</ul>
+    To plot a value present on a Cell Mechanism, use a colon, e.g. <strong>NaConductance:m</strong>. Note, as the gate activation
+    variables are a special case, GENESIS will search through the list of gates (only if the Cell Mechanism is defined by a
+    ChannelML file), search for a gate with the specified name, and plot that variable. See Ex4-NEURONGENESIS for an example. 
+    Other named variables that can be plotted for Cell Mechanisms are:
+    <ul>
+        
+<li>
+<strong>CONC</strong> for the concentration of an ion, e.g. <strong>CaPool:CONC:ca</strong>
+</li>
+        
+<li>
+<strong>REV_POT</strong> for the reversal potential of an ion, e.g. <strong>NaConductance:REV_POT:na</strong>
+</li>
+        
+<li>
+<strong>CURR_DENS</strong> for the current density through a channel, e.g. <strong>NaConductance:CURR_DENS:na</strong>
+</li>
+        
+<li>
+<strong>COND_DENS</strong> for the conductance density of a channel, e.g. <strong>NaConductance:COND_DENS:na</strong>
+</li>
+    
+</ul>
+    
+</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Volume Based Connection">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Volume Based Connection</b>
+</p>
+</a><span>
+<p>This type of <a href="#Network Connection">Network Connection</a> is appropriate for connecting cells where the axon of the presynaptic cell is known to make connections
+            within a certain 3D region (e.g. axonal arborisation of cortical pyramidal cell). This region is defined relative to the cell body and dendrites of postsynaptic cells falling within this region allowing the same type of 
+                <a href="#Synaptic Mechanism">Synaptic Mechanism</a> are candidates for connections. These regions are be specified at tab <strong>Visualisation</strong> in the single cell 3D view when a segment is being edited (select the appropriate function in the drop down box)
+        </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="XML">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>XML</b>
+</p>
+</a><span>
+<p>Short for eXtensible Markup Language, XML is a specification developed by the <a href="http://www.w3c.org" target="_blank">W3C</a>. XML uses a similar tag structure to HTML, 
+        as used for Web documents. However, it allows designers to create their own customised tags, enabling the definition, transmission, validation, 
+        and interpretation of data between applications and between organisations. It is useful in the context of neuroscience when it comes to exchanging
+        anatomical data, model descriptions, etc. between research groups and simulation environments and is the technology used in specifying the <a href="#NeuroML">NeuroML</a> language. </p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+<a name="Zipped Project">
+<p style="font-size: 16;color: white;background-color: #a5b6c6;padding: 5px 5px 5px 5px">
+<b>Zipped Project</b>
+</p>
+</a><span>
+<p>All files in a neuroConstruct <a href="#Project">Project</a> (morphology files, simulation data, etc.) can be zipped up into a
+    single file for easy distribution/backup. To create a zipped neuroConstruct project select <strong>File -&gt; Zip this Project...</strong> and to
+    automatically unzip and open a file created in this way, select <strong>File -&gt; Import Zipped Project...</strong>
+</p>
+</span>
+<p style="font-size: 11">
+<a href="#top">index</a>
+</p>
+</body>
+</document>

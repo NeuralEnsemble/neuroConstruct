@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir=".." name="neuroConstruct-IDE">
+    <import file="../../build.xml"/>
+    <property name="project.dir" value=".."/>
+    <property name="curr.dir" value="."/>
+    <property name="ant.script" value="${project.dir}/build.xml"/>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/41/freeform-config.html#runsingle) -->
+
+    <property name="lems.jar.file" value="../NeuroML2/lib/lems/lems-0.8.3.jar"/>
+    <property name="libneuroml.jar.file" value="../NeuroML2/libNeuroML-2.0.0.jar"/>
+    
+    <target depends="init" name="run-selected-file-in-src">
+        <path id="run.class.path">
+            <fileset dir="${project.dir}/${hdf5.libs}">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${project.dir}/${j3d.libs}">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${project.dir}/${jython.libs}">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${project.dir}/${junit.libs}">
+                <include name="*.jar"/>
+            </fileset>
+            <pathelement location="${project.dir}/${neuroconstruct-core}"/>
+            <pathelement location="${libneuroml.jar.file}"/>
+            <pathelement location="${lems.jar.file}"/>
+        </path>
+        
+        
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        
+        <ant antfile="${ant.script}" inheritall="false" target="makejar"/>
+        
+        
+        <java classname="${run.class}" dir="${project.dir}" failonerror="true" fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
+            <classpath refid="run.class.path"/>
+        </java>
+        
+    </target>
+    
+    
+    
+    <target depends="init" name="test-selected-file-in-src">
+        <echo>Testing a single file</echo>
+        
+        <path id="run.class.path">
+            <fileset dir="${project.dir}/${hdf5.libs}">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${project.dir}/${j3d.libs}">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${project.dir}/${jython.libs}">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${project.dir}/${junit.libs}">
+                <include name="*.jar"/>
+            </fileset>
+            <pathelement location="${project.dir}/${neuroconstruct-core}"/>
+            <pathelement location="${libneuroml.jar.file}"/>
+            <pathelement location="${lems.jar.file}"/>
+        </path>
+        
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        
+        <ant antfile="${ant.script}" inheritall="false" target="makejar"/>
+        
+        <java classname="${run.class}" dir="${project.dir}" failonerror="true" fork="true">
+            <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
+            <classpath refid="run.class.path"/>
+        </java>
+        
+    </target>
+    
+    
+    
+    <property file="nbproject/nbjdk.properties"/>
+    <property location="${netbeans.user}/build.properties" name="user.properties.file"/>
+    <property file="${user.properties.file}"/>
+    
+    
+    <import file="jdk.xml"/>
+    
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/41/freeform-config.html#runsingle) -->
+    
+    
+    <target depends="-jdk-init, init" name="run-selected-file-in-tests">
+        <echo>Testing a single file: run-selected-file-in-tests</echo>
+        
+        <path id="run.class.path">
+            <fileset dir="${project.dir}/${hdf5.libs}">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${project.dir}/${j3d.libs}">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${project.dir}/${jython.libs}">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${project.dir}/${junit.libs}">
+                <include name="*.jar"/>
+            </fileset>
+            <pathelement location="${project.dir}/${neuroconstruct-core}"/>
+            <pathelement location="${libneuroml.jar.file}"/>
+            <pathelement location="${lems.jar.file}"/>
+        </path>
+        
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        <ant antfile="${ant.script}" inheritall="false" target="makejar"/>
+        
+        <java classname="${run.class}" dir="${project.dir}" failonerror="true" fork="true">
+            <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
+            <classpath refid="run.class.path"/>
+        </java>
+        
+        
+    </target>
+</project>

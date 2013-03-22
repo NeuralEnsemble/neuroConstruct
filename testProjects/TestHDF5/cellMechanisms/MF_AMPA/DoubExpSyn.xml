@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channelml xmlns="http://morphml.org/channelml/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:meta="http://morphml.org/metadata/schema" xsi:schemaLocation="http://morphml.org/channelml/schema  ../../Schemata/v1.3beta/Level2/ChannelML_v1.3.xsd" units="Physiological Units">
+    
+    <meta:notes>ChannelML file describing a synaptic mechanism</meta:notes>
+    
+     
+    <synapse_type name="MF_AMPA">
+            
+        <status value="stable">
+            <meta:contributor>
+                <meta:name>Padraig Gleeson</meta:name>
+            </meta:contributor>
+        </status>
+        
+      
+        <meta:notes>Mossy fiber to Granule Cell AMPA synapse</meta:notes>
+      
+      <meta:publication>
+        <meta:fullTitle>Maex, R and De Schutter, E. 
+          Synchronization of Golgi and Granule Cell Firing in a Detailed Network Model of the 
+          cerebellar Granule Cell Layer. J Neurophysiol, Nov 1998; 80: 2521 - 2537</meta:fullTitle>
+        <meta:pubmedRef>http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;list_uids=9819260&amp;dopt=Abstract</meta:pubmedRef>
+        </meta:publication>
+        
+        <meta:neuronDBref>
+        <meta:modelName>Receptor properties</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/senselab/NeuronDB/receptors2.asp</meta:uri>
+        </meta:neuronDBref>
+        
+        <doub_exp_syn max_conductance="1.1238527E-7" rise_time="0.03" decay_time="0.5" reversal_potential="0"/>
+    
+    </synapse_type>
+    
+    
+    
+</channelml>

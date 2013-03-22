@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document>
+  <header>
+    <title>Very quick tutorial</title>
+  </header>
+  <body>
+
+
+
+
+
+<p>The quickest way to create a simulation in in neuroConstruct is as follows:</p>
+<ol>
+
+<li><a  href="../install.html#Building+and+running" >Run</a> neuroConstruct. Click on <strong>File -> New Project</strong></li>
+
+<li>Enter the project name and the directory in which to place the main project folder. Click <strong>OK</strong></li>
+
+<li>Accept the offer to create a few sample objects in the new project.</li>
+
+
+<li>Select the tab <strong>Generate</strong>. Press the <strong>Generate Cell Positions and Connections</strong> button.</li>
+
+
+<li>Go to <strong>Visualisation</strong>. In the drop down box, select <em>Latest Generated Positions</em>.
+Press <strong>View</strong>. You should see an abstract neuron placed in a 3D box. There will also be a pipette like structure
+signifying an electrical input.</li>
+
+
+<li>If <a href="../Glossary_gen.html#NEURON">NEURON</a> or <a href="../Glossary_gen.html#GENESIS">GENESIS</a> are installed (assuming NEURON) go to tab
+<strong>Export</strong> and select the <strong>NEURON</strong> tab.
+Select the <strong>Show 3D potential plot</strong> checkbox, and click <strong>Create hoc simulation</strong>. This will create the hoc code
+for the main file, and a template for the cell, as well as <a href="../Glossary_gen.html#NMODL">NMODL</a> code for the channels. The NMODL files
+will be compiled and a confirmation shown. If there is a problem, go to <strong>Settings -> General Properties</strong> and check location there for the NEURON home directory.
+The contents of the *.mod and *.hoc files can be viewed by selecting the filename and pressing <strong>View</strong>.
+</li>
+
+<li>Click on <strong>Run Simulation</strong>. This should start NEURON and run the simulation you have just created.
+</li>
+
+<li>Back in neuroConstruct, once the simulation has finished, go to tab <strong>Visualisation</strong>, and click on <strong>Previous Simulations</strong>
+You will see a list of all recorded simulations. Click on the simulation just completed and click <strong>Load Simulation</strong>.
+The generated cell appears again. Press <strong>Replay</strong> to view the recorded simulation.
+</li>
+
+
+</ol>
+
+
+<p>Have a look <a href="../Glossary_gen.html#3D View of Cells">here</a> to see the various options which can be set when viewing cells in 3D.</p>
+
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+  </body>
+</document>

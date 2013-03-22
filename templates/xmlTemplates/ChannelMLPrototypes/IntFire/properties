@@ -1,0 +1,7 @@
+#This file provides some additional information to help the import of the ChannelML files into neuroConstruct
+DefaultName=SimpleIntFire
+Description=Simple integrate and fire mechanism. Mapping only available for NEURON
+ChannelMLFile=../../Examples/ChannelML/IntFireMechanism.xml
+MappingNEURON=../../Schemata/v1.8.1/Level2/ChannelML_v1.8.1_NEURONmod.xsl
+NEURONNeedsCompilation=true
+CellProcessType=Point process

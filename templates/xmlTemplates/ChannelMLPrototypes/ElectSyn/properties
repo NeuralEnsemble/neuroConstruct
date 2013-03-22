@@ -1,0 +1,8 @@
+#This file provides some additional information to help the import of the ChannelML files into neuroConstruct
+DefaultName=ElectSyn
+Description=Simple electrical synapse for gap junctions. Mapping available for NEURON and GENESIS
+ChannelMLFile=../../Examples/ChannelMLSyns/ElectSyn.xml
+MappingNEURON=../../Schemata/v1.8.1/Level2/ChannelML_v1.8.1_NEURONmod.xsl
+MappingGENESIS=../../Schemata/v1.8.1/Level2/ChannelML_v1.8.1_GENESIStab.xsl
+NEURONNeedsCompilation=true
+CellProcessType=Gap junction

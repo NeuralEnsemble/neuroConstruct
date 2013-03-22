@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<networkml xmlns="http://morphml.org/networkml/schema" xmlns:meta="http://morphml.org/metadata/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://morphml.org/networkml/schema  http://www.morphml.org:8080/NeuroMLValidator/NeuroMLFiles/Schemata/v1.4/Level3/NetworkML_v1.4.xsd" lengthUnits="micron">
+
+
+
+<meta:notes>A NetworkML file with an older (pre v1.7.1) format for some elements/attributes</meta:notes>
+
+
+
+<populations>
+    <population name="sm2">
+        <cell_type>SampleCell</cell_type>
+        <instances size="4">
+            <instance id="0">
+                <location x="142.76791" y="475.37213" z="444.50317"/>
+            </instance>
+            <instance id="1">
+                <location x="200.96902" y="476.81183" z="55.70529"/>
+            </instance>
+            <instance id="2">
+                <location x="93.32005" y="487.43018" z="396.70734"/>
+            </instance>
+            <instance id="3">
+                <location x="470.88702" y="485.2644" z="730.0065"/>
+            </instance>
+        </instances>
+    </population>
+    <population name="sm1">
+        <cell_type>SampleCell</cell_type>
+        <instances size="4">
+            <instance id="0">
+                <location x="7.171364" y="419.25763" z="514.54944"/>
+            </instance>
+            <instance id="1">
+                <location x="178.40518" y="416.75977" z="494.20514"/>
+            </instance>
+            <instance id="2">
+                <location x="742.14996" y="423.98715" z="787.63885"/>
+            </instance>
+            <instance id="3">
+                <location x="573.3328" y="424.79993" z="657.10126"/>
+            </instance>
+        </instances>
+    </population>
+</populations>
+
+<projections units="Physiological Units">
+    <projection name="NetConn_sm1_sm2">
+        <source>sm1</source>
+        <target>sm2</target>
+        <synapse_props>
+            <synapse_type>DoubExpSyn</synapse_type>
+            <default_values internal_delay="7.5" weight="0.75" threshold="-20.0"/>
+        </synapse_props>
+        <synapse_props>
+            <synapse_type>NMDASyn</synapse_type>
+            <default_values internal_delay="15.0" weight="1.0" threshold="-20.0"/>
+        </synapse_props>
+        <connections>
+            <connection id="0">
+                <pre cell_id="0" segment_id="0"/>
+                <post cell_id="0" segment_id="0"/>
+                <properties prop_delay="0.16260917" synapse_type="DoubExpSyn" internal_delay="5.496891" weight="0.5720778"/>
+                <properties prop_delay="0.16260917" synapse_type="NMDASyn" internal_delay="12.992448" weight="0.8047485"/>
+            </connection>
+            <connection id="1">
+                <pre cell_id="0" segment_id="0"/>
+                <post cell_id="3" segment_id="0"/>
+                <properties prop_delay="0.5155685" synapse_type="DoubExpSyn" internal_delay="5.629693" weight="0.8282993"/>
+                <properties prop_delay="0.5155685" synapse_type="NMDASyn" internal_delay="16.714012" weight="1.3284142"/>
+            </connection>
+            <connection id="2">
+                <pre cell_id="1" segment_id="0"/>
+                <post cell_id="3" segment_id="0"/>
+                <properties prop_delay="0.38189104" synapse_type="DoubExpSyn" internal_delay="8.196297" weight="0.63893855"/>
+                <properties prop_delay="0.38189104" synapse_type="NMDASyn" internal_delay="17.610807" weight="0.5820478"/>
+            </connection>
+            <connection id="3">
+                <pre cell_id="1" segment_id="0"/>
+                <post cell_id="1" segment_id="0"/>
+                <properties prop_delay="0.44316757" synapse_type="DoubExpSyn" internal_delay="6.6639137" weight="0.9674103"/>
+                <properties prop_delay="0.44316757" synapse_type="NMDASyn" internal_delay="19.213696" weight="0.8885849"/>
+            </connection>
+            <connection id="4">
+                <pre cell_id="2" segment_id="0"/>
+                <post cell_id="1" segment_id="0"/>
+                <properties prop_delay="0.91180813" synapse_type="DoubExpSyn" internal_delay="8.523399" weight="0.58134615"/>
+                <properties prop_delay="0.91180813" synapse_type="NMDASyn" internal_delay="12.98205" weight="1.4996347"/>
+            </connection>
+            <connection id="5">
+                <pre cell_id="2" segment_id="0"/>
+                <post cell_id="0" segment_id="0"/>
+                <properties prop_delay="0.69256145" synapse_type="DoubExpSyn" internal_delay="8.774354" weight="1.111111111"/>
+                <properties prop_delay="0.69256145" synapse_type="NMDASyn" internal_delay="14.463575" weight="1.111111111"/>
+            </connection>
+            <connection id="6">
+                <pre cell_id="3" segment_id="0"/>
+                <post cell_id="2" segment_id="0"/>
+                <properties prop_delay="11" synapse_type="DoubExpSyn" />
+                <properties prop_delay="11" synapse_type="NMDASyn"  />
+            </connection>
+            <connection id="7">
+                <pre cell_id="3" segment_id="0"/>
+                <post cell_id="1" segment_id="0"/>
+            </connection>
+        </connections>
+    </projection>
+</projections>
+</networkml>

@@ -1,0 +1,525 @@
+Release notes/change log for neuroConstruct
+
+See also the README file
+
+
+--------- Version 1.6.1 (XXX 2012) ---------
+
+
+
+
+--------- Version 1.6.0 (August 2012) ---------
+
+Improved 3D visualisation of cells and networks when all segments are located more than a few hundred microns away 
+from the origin. Now 3D view centres on middle of visible cells. Origin is only included if "Show 3D axes" option
+is selected. Also removed annoying clipping of back of 3D view when zooming out.
+
+Added option to save cells in project in pure NeuroML v1.8.1 format in morphologies folder. Now all channels, synapses &
+cells in a project can be stored natively in NeuroML. Also facilitates comparing versions of morphology files across
+commits.
+
+Added warning if a project contains multiple ChannelML files which have different values for reversal potential
+but use the same ion (e.g. ek=-77 in one k channel, -87 in another). Pops up a warning dialog when such channels are
+used together in one cell (without overriding the ChannelML files using an IonProperty in the cell).
+
+A number of updates to the NeuroML 2 export of cells & channels in line with the developing specification at:
+http://sourceforge.net/apps/trac/neuroml/browser/NeuroML2.
+
+
+--------- Version 1.5.3 (Mar 2012) ---------
+
+Fixed bug which gave problems saving RandomSpikeTrainSettings in projects on Java 1.7
+
+Added option in GUI to edit/remove ion properties from cell & add more than one ion prop per group name.
+
+Updated to use Jython 2.5.2
+
+Added xlrd to Lib/site-packages to allow reading/writing Excel files from nC Jython scripts
+
+
+--------- Version 1.5.2 (Jan 2012) ---------
+
+Added anti-aliasing on 3D view for smoother renderings. Can be turned on/off via Settings -> Project Properties 
+or when viewing in 3D, 3D Settings.
+
+Allows multiple NeuroML files to be imported with: ./nC.sh -neuroml nml1.xml nml2.xml channelX.xml
+
+Added option to plot multiple data files with: ./nC.sh -plot mydata1.dat mydata2.dat 
+
+Fixed bug when compiling/running Neuron 7.2 on Windows. See templates\neuronUtils\mknrndll.sh
+
+Improved integration of the NeuroML 2 and nC Ant build scripts. nC by default uses the copy of libNeuroML**.jar 
+and lems**.jar in lib/neuroml2 to facilitate recompiling of downloaded copies of the code and to make sure nC has
+a stable version of the LEMS/NeuroM 2 code.
+
+Fixed bug in genesis export, whereby wrong rev pot of leak conductance was used, only if channelml file for leak 
+cond was in SI units (which no project files used until now...) Put in check that all channelml files in project 
+are in same unit system, either si or physiological. Throws warning at Validate if not the case. Important when 
+exporting to single level 3 file.
+
+Improvement of PyNN export from nC, supports NeuroML 2 based PyNN model descriptions, see Ex8_PyNNDemo, sim config
+TestPyNN_NML2
+
+--------- Version 1.5.1 (July 2011) ---------
+
+Improvements to LEMS/NeuroML 2 integration. Added project at nCexamples/Ex10_NeuroML2/Ex10_NeuroML2.ncx
+with some examples of NeuroML 2 channels and cells which can be run with the LEMS interpreter or NEURON
+
+Made improvements to & added extra tests for saving & reloading continuous & spike train data in HDF5 format
+
+Much more efficient reloading of data if a simulation only saves spike times. Now hundreds of thousands of
+spike trains can be reloaded without filling memory (will max out memory if they're all plotted though)
+
+Fixed bug in NetStimExt: Previously could fire outside of del/dur window if average firing rate was higher
+than time window length, i.e. time of first spike was chosen as after end of duration.
+
+
+
+--------- Version 1.5.0 (Mar 2011) ---------
+
+Added preliminary export functionality for NeuroML 2. Morphologies can be exported to NeuroML v2 format, 
+and some simple (e.g. HH Na & K) ChannelML files can be translated to the equivalent entities in NeuroML 
+v2alpha. Networks files can be genenrated with simple <population> elements, and the temporary 
+<explicitConnection> and <explicitInput> elements. The NeuroML 2/LEMS code which is being developed on 
+the NeuroML SVN rep (see http://sourceforge.net/apps/trac/neuroml/browser/DemoVer2.0/lems) is included. 
+This can be automatically updated when using nC from the SVN repository by running updatenC.sh/updatenC.bat. 
+
+Some simple models in NeuroML 2 can now be run through nC using the LEMS interpreter. Note the LEMS 
+interpreter does not yet support multicompartmental cells. Try Ex4_HHCells for a network of 2 HH cells 
+with a simple synapse. Results of a successful simulation on the LEMS interpreter should be listed in 
+the Simulation Browser & can be reloaded/replayed in the usual way. 
+
+More verbose warnings when launching external processes on Linux using konsole & gnome-terminal
+
+Added a graphical tool for the analysis of action potential shapes. Plot a number of cell voltage traces, 
+e.g. population in a network, and in the Plot Frame menu select tools -> AP shape analysis. This will align 
+all spikes in the traces to the same trigger point (e.g. crossing 0mV), to compare shape of APs.
+
+Updated simulation tree quick sim result plotter (button "Quick Plot..." at tab Visualisation). Now when 
+e.g. 6 cell groups are plotted with "Plot is separate plot frame per cell group..." windows are arranged 
+in grid to fit the screen.
+
+Changed behaviour of input instance specific properties when multiple inputs are put onto individual cells: 
+e.g. multiple synaptic inputs (or current clamps) on a cell's dendritic tree. This is only relevant when 
+random synaptic firing rate/pulse amplitude/duration are used! Previously for e.g. input with random/gaussian 
+amplitude etc. a different value of this was used for inputs on each cell, but the same values were used within 
+a cell, e.g. if 4 were placed on dendrites of one cell. Now a different value will be used for each instance, 
+including within one cell. 
+
+Changed function doLoadNetworkMLAndGenerate() to doLoadNetworkMLAndRegenerateInputs() in ProjectManager as this 
+is a more accurate name for its functionality (unchanged: loads positions, connections & inputs from a NetworkML 
+file, OVERWRITES the inputs by starting the ElecInputGenerator and generates plot/saves). Added 
+doLoadNetworkMLAndGeneratePlots() which loads & keeps all info from NetworkML, and generated PlotSaves for 
+values found there.
+
+
+--------- Version 1.4.1 (Aug 2010) ---------
+
+Added option to import NeuroML Level 1-3 file with ./nC.sh -neuroml neuromlfile.nml, etc. and populate new project with cells/populations etc. found.
+
+Added function to set all data traces in plot frame to same colour
+
+Added beta version of saving NEURON simulation data in HDF5 format. Note: you need to be able to run "import tables" when NEURON started in Python mode for this
+to work! Saved HDF5 data files can be reloaded in nC like text based saved simulation data.
+
+When viewing a cell in 3D: added temporary highlight of section in cell 3D view  when Edit Group GUI open and section name is clicked on, facilitates choosing
+which sections to add to a group
+
+Updates in Validate function: Added warning if XSL files aren't latest version (e.g. NChannelML_v1.8.1_NEURONmod.xsl). Added option to clean
+up old XSL files when Updating XSL mappings
+
+Better visualisation of Simulation Configuration check boxes for large projects (text size reduced if >50 check boxes in Sim Config GUI)
+
+
+--------- Version 1.4.0 (Jun 2010) ---------
+
+Added 2 new projects in nCmodels: CA1Pyramidal & Thalamocortical which are discussed in the NeuroML paper in PLoS Comp Biol.
+
+Improved general handling on Mac. Better interaction with simulators, execution of Python scripts etc. on the platform.
+
+Improved behaviour of 'nC.sh -make' and 'nC.bat -make' to allow compilation without ant
+
+Added functionality at tab Cell Types to compare cell to a cell in a different project (very handy when using multiple copies of a cell in different project)
+
+Added "Compare simulations" in Simulation Browser interface. Lists different stored properties between two saved simulations (e.g. random seeds).
+
+Adding new NEURON extra code location: -0.5, after all cells & network created but before run
+
+General improvements to saving/loading NeuroML Level 3 files.
+
+Improved the Python neuroConstruct utilities script at pythonNeuroML/nCUtils/ncutils.py which contains a convbenient simulationManager class for running multiple simulations,
+e.g. a frequency versus input current curve as in nCmodels/GranCellLayer/pythonScripts/GranGolgiF_I.py
+
+
+--------- Version 1.3.7 (Feb 2010) ---------
+
+Updated import/export of NeuroML when an Ion concentration is present in cell. This is in line with recent conversations on neuroml-channels@lists.sourceforge.net
+mailing list. Updated way GENESIS calculates "B" value for CaPool. Examples GranuleCell and GranCellLayer updated to reflect best practices of implementing CaPool/Ca
+dep K chan, etc. Python scripts added to test these on NEURON/GENESIS/MOOSE
+
+Minor bugfix: removed problem when generating code on Windows for NEURON when Cygwin is not installed locally. The 'date' system command was used to give textual
+output of the simulation start/stop time. This is only available when Cygwin is installed. Code now checks existance of c:\cygwin or c:\Program Files\cygwin and
+uses date if these are found, doesn't otherwise.
+
+Bug fixed in 3d visualisation. Transparency checkbox now works as before.
+
+
+--------- Version 1.3.6 (Jan 2010) ---------
+
+Much improved MOOSE support. The very latest version of MOOSE from their Subversion repository should be used. The majority of projects which could run on
+GENESIS should work fine on MOOSE too, but users are advised to double check any simulation results. MOOSE simulations are running 2-5 times faster than
+GENESIS 2
+
+Added new tree based simulation browser GUI to allow quick plotting of simulation results without viewing full network in 3D. Can be run from main GUI via
+"Quick Plot..." button on Visualisation tab. Also can be run in standalone mode using: ./nC.sh -sims projectpath/projectname.ncx (or:
+nC.bat -sims projectpath/projectname.ncx).
+
+Added option in GENESIS tab to make spike transmission behave similarly to NEURON, or to use the usual GENESIS method based on abs_refract. Hover over the
+checkbox on the GENESIS tab for more details. ***Using this may be crucial to getting NEURON & GENESIS network simulations to match***
+
+Added option for GENESIS/MOOSE for reloading simulation if it finishes after a short time (e.g. 10 sec). Can be used for plotting results of short MOOSE
+simulations as soon as they finish.
+
+Updated to Jython 2.5.0, so most standard Python 2.5 modules should be available whn creating scripts to be run using './nC.sh -python'. Improved
+Python scripting documentation. Online at http://www.neuroconstruct.org/docs/python.html
+
+Added more 'GUI mode' options at NEURON & GENESIS tabs so that simulations can be run: in console with plots, in console without plots, or completely in background.
+Very useful when running multiple simulations using Python scripts. See pythonnC/Ex5_MultiSimGenerate.py for example. Note: only works on Linux/Mac so far. The console
+output is put into file: /tmp/logNEURON_Projectname_SimulationRef, etc.
+
+Added simple script to allow neuroConstruct simulations to be loaded/plotted/analysed using NeuroTools (http://neuralensemble.org/trac/NeuroTools). Avaliable at 
+pythonNeuroML/NeuroTools/LoadToNeuroTools.py
+
+Updated many of the fonts used in the GUI & generated HTML views
+
+Added option in nC.sh & nC.bat to build source without ant (using './nC.sh -make', etc.)
+
+Different colours for gap junction connections in 3D view (orange-> orange, not green-> red)
+
+
+--------- Version 1.3.0 (June 09) ---------
+
+- Changed default project extension to ncx. Now it's easier to associate this file type with nC.bat/nC.sh for quick opening of neuroConstruct  
+  projects by (double) clicking on project file in file explorer. However, it may still be better to start nC in a terminal/shell
+  as any error console output will be caught if there is a problem and the application closes.
+
+- Option in Plot Frame when one or more Data Sets being plotted to generate python files which will allow a high resolution PDF, ESP, png of 
+  the data to be created. Requires install of matplotlib (http://matplotlib.sourceforge.net/).
+ 
+- Added (long overdue) option for "silent mod file compilation", e.g. no pop up confirmation etc. when mod files are compiled on Windows.
+
+- Improved import & export of NeuroML, incl Variable Parameters & inhomogenous channel densities. Added option File -> Import NeuroML Levels 1-3, to have all of the 
+  cells, channels, synapses and networks found in a Level 1-3 file imported, possibly into a new project. Also added option (at tab Export -> NeuroML) to include in annotation 
+  in Level 3 file details of neuroConstruct specific objects, to allow easy import of associates plots, sim configs etc. into a new nC project, using a valid Level 3 file 
+  (note: other applications which parse this file will ignore this info, and just get the cell, populations, etc.)
+
+- Reset absolute refractory period for ***NETWORK CONNECTIONS IN GENESIS*** from 10ms to 1ms. May cause functionality change in some networks on GENESIS!!! 
+  But should make net behaviour more similar to NEURON
+
+- Added 2 new options for electrical input to cells: variable current clamp (e.g. ramped input current or sinusoidal input) & variable spike input rate. A generic 
+  function of time can be provided for the input amplitude or the input spike rate. Both of these are only available for NEURON currently.
+
+- Added warning every 10th startup if logging to file is turned on as it can lead to v big log file dir.
+
+- Added some more expressions for equation parser incl sqrt(x) and Heaviside function
+
+- Added option for minimum radius of segments displayed in 3D. Improves 3D display of large cells with thin dendrites
+
+- Updated a number of the example files for controlling nC projects through Python. Generates/runs GENESIS projects now too.
+
+- Added option to add all sections in existing groups (e.g. basal_dendrites, oblique_dendites) to new groups (e.g. basal_plus_obliques) as opposed to having
+  to add all sections individually
+
+- Allowed plotting of a specified max number of cells (e.g. 5# for up to 5 cells in a group)
+
+- Added a number of other options for plotting Data Sets: crosses (x), thicker lines
+
+- Added "MOOSE test mode" option in GENESIS tab. Note: there are known problems with this at the moment!
+
+- Restructured how cell initial potentials are generated so when initial pot of cells in group != fixed num, NEURON & GENESIS use the same set of values
+
+- Improved plotting of internals of ChannelML files when there is a tempreature dependence (q10/generic expressions)
+
+- Improved PSICS export functionality. See nCexamples\Ex7_PSICSDemo for example
+
+- Improved PyNN export functionality. See nCexamples\Ex8_PyNNDemo for example of what is currently supported. Only tested on Linux so far.
+
+- Better support for running on KDE4 & Macs. Min Java version required is 1.5 again, doue to some lack of support for 1.6 on Macs. 
+
+
+--------- Version 1.2.2 (Jan 09) ---------
+
+-  Restructured main examples to 2 new dirs: nCexamples for non anatomical examples used to illustrate 
+   core nC functionality; nCmodels for more biologically realistic examples, mainly based on published 
+   models. Added Pyramidal cell model from Kole et al 2008/Rothman et al 2009.
+
+-  Added preliminary mapping to PSICS. To use the PSICS functionality you will need to get a copy of 
+   the jar file from the PSICS website, save it locally and set the location in Settings -> General 
+   Properties and Project Defaults. The included example nCexamples\Ex7_PSICSDemo illustrates current
+   functionality
+
+-  Added one more Python interface example for loading morphologies by script (Ex6_LoadCells.py)
+
+-  Added option to export project elements in single NeuroML level 3 file
+
+-  Added option in MorphNetConn "Direct recurrent connections not allowed" for connections within a 
+   cell group, so that if cell A is connected to B, B won't form a connection back to A. Useful for 
+   electrical synapses
+
+-  Fixed minor bugs in Morph Conn generator
+
+-  Added option to have weights of syn connections function of radial distance between source & target. 
+   Also can be function of soma to soma distances
+
+-  Optimised viewing of parameterised groups in cells with a large number of segments
+
+-  Updated channel templates to use v1.8.0 ChannelML examples, added gap junction template
+
+-  Moved to GNU GPL v2 licence
+
+
+--------- Version 1.2.0 (Dec 08) ---------
+
+-  Added libraries for Java 3D, Jython and HDF5 in the standard distribution, making the download size larger, but meaning that no
+   extra packages need be installed to use these with neuroConstruct. 
+
+-  Renamed run.bat/run.sh to nC.bat/nC.sh and increased checks for 32/64 bit and win/linux to use correct libraries
+
+-  Large networks in NEURON are more efficient/faster to load due to use of arrays of synapse objects as opposed to naming each individually
+
+-  A number of optimisations have been added for random network connection, to speed up nets including conditions such as uniqueness of post 
+   syn cells and max and min length. May slow smaller networks marginally, but most larger networks using these options will be faster to 
+   generate.
+
+-  Added warnings at generate tab when cell groups (in current sim config) are empty after generation, and if there are fewer than expected 
+   network connections.
+
+-  Allows setting of the version of NeuroML to use for validation, etc. via Settings -> General Properties
+
+-  Renaming of groups in cells enabled in Edit Groups dialog
+
+-  New method to specify segments for inputs, either: give a list of the segment ids to apply inputs to; or specify a group (e.g. dendrite_group)
+   along with how many inputs to generate, and these will be randomly palced over the group. Can be used for adding multiple random synaptic 
+   inputs over a dendritic tree.
+
+-  Updated simulation replay to allow looping of simulation replaying, and "rainbow" shading of voltages
+
+-  Added option to create distribution histogram over either X or Y values in a plotted Data Set (previously only Y). X distribution
+   useful e.g. for plotting number of timesteps used per ms in NEURON variable time step simulation.
+
+-  Updated import function for plotting of data files (now allows import of data in multiple columns). Added helper scripts nCplot.bat/nCplot.sh 
+   with which data files (e.g. *.dat) can be associated, to allow double clicking of such files to plot them in neuroConstruct.
+
+-  Added function for generating a *very simple* field potential from the activities of all somas in cell groups (in Analyse drop down box 
+   when a simulation is reloaded)
+
+-  Updated Volume based connections to allow such connections within a cell group.
+
+-  Added support for new functions in parsable expressions (e.g. in expression for prob of connection in Volume based connections): H(x), 
+   Heaviside function (=0 x<0, =1 otherwise); random(x) for a random number between 0 and x
+
+-  Added links on main NEURON & GENESIS tabs directly to each of the extra code blocks
+
+-  Extra support for gap junctions (no example yet, get in contact if you need one...)
+
+-  Updated examples in pythonNeuroML for creating and for reading in the structure of NetworkML from Python scripts
+
+-  Plotting of rate equations, etc. updated to support new ChannelML format as at: 
+   http://www.morphml.org:8080/NeuroMLValidator/NeuroMLFiles/Examples/ChannelML/NaChannel_newFormat.xml
+
+-  Added very provisional mapping to PSICS (get in contact for more info...)
+
+-  Updated examples in pythonnC for controlling neuroConstruct projects via Python/Jython scripts
+
+-  Added initial version of parameterisation over groups (e.g. 0 to 1 from soma to tips of dends) as step to allow inhomogeneous channel dists
+
+
+
+
+
+-  
+
+
+
+--------- Version 1.1.2 (July 08) ---------
+
+
+-  Morphology based network connection now allows specification of which of the soma/axon/dendrites are allowed for the pre and 
+   post synaptic points. This allows the possibility of axo-axonic and dendro-dendritic connections. Previously presynaptic 
+   connections were on axons & soma, post were on soma & dendrites. Note though that the actual allowed locations are the 
+   intersection of the groups set at Visualisation - View: <Cell> -> Synaptic Conn Locations and the selection of which of 
+   soma/axon/dendrites are allowed for pre/post.
+
+-  Autapses can be specifically allowed or disallowed for Morphology based network connections from a Cell Group to itself.
+
+-  Updated to NeuroML version 1.7.2. Added drop down box at Setting -> General Properties where the version of NeuroML to use for
+   validation, etc. can be set. If one (or all) of the Cell Mechanisms are selected at tab Cell Mechanims, and the Update
+   ChannelML Mappings button is pressed, the XSL files for generating mod files/GENESIS scripts will be updated to the 
+   mappings from this version of NeuroML. Note that there was a bug in the NeuroML v1.7.1 XSL mappings included with 
+   neuroConstruct v1.1.0 which would lead to an error being thrown if used for synaptic mechanisms in GENESIS. Fixed in current
+   specifications.
+
+-  Optimisation of generation of network connections in cells with large morphologies. Also faster generation of NEURON code 
+   for larger cells (e.g. Ex10-MainenEtAl).
+
+-  Fixed bug when saving channel conductances in GENESIS. Included plotting/saving of Na & K conductances in Ex4-NEURONGENESIS.
+
+-  Removed option for generating sequences of simulations with different pulse length/amplitude etc. at Input and Output.
+   This functionality will be obsolete with the new Python scripting interface. Replaced with option to generate a range of 
+   random/gaussian dist values of pulse amp etc. to allow variable input trains to cells in a cell group. These random values
+   for the pulse amplitude/duration/delay will be the same in the generated NEURON and GENESIS simulations allowing direct comparison
+   of simulations (when dt is small enough!).
+
+-  Added new option in Segment Selector for modifiying the 3D end points of segments. A list of end points can be generated 
+   which give a number of (x,y,z) integer value options which keep a specified integer length of the segment. Useful for quickly
+   converting a cell to a more representative 3D shape and keeping segment length constant. Thanks to Michele Mattioni (EBI) for
+   the suggestion/code.
+
+-  Added option in Plot Frame to move Data Set to another open Plot Frame.
+
+-  Updated run.bat & run.sh to set env variable NC_HOME, which is used to find location of directories for templates, etc. 
+   as included with standard neuroConstruct distribution. Useful when starting neuroConstruct from commandline in dir other
+   than the install directory.
+
+-  Added Full Net Info button to Generate panel, for a view of all of the generated network info (contains the information
+   which would go in a NetworkML file)
+
+-  Fixed bug in NEURON template generation. Was only applicable when: soma is spherical AND (soma is not at origin OR first 
+   child segs of soma are not cylindrical).
+
+-  Added new 3D viewing functions. Added network 'slicer' button (button "|" beside buttons "0" and "^" in 3D network view).
+   This renders transparent cells outside movable planes perpendicular to X, Y, Z directions. Useful for visualising dense
+   networks. Another feature is in the rearranged Simulation Replay panel. When this panel is extended to full (press ">>") 
+   a subset of cell groups (or parts thereof) can be specified as the ones to colour during the simulation replay (all other 
+   cells black or transparent). Neither of these features are quite finished, but (with patience) can be used for generating 
+   interesting screenshots/movies.
+
+-  Initial version of Python scripting interface. To use type 'run.bat -python' or './run.sh -python'. No documentation at 
+   the moment, but see test.py in the main directory
+
+-  Added JUnit testing framework & a number of tests on cell structure & NeuroML compatibility. Cleared up minor bugs in 
+   saving & loading NetworkML & MorphML
+
+--------- Version 1.1.0 (based on 1.0.9beta) (May 08) ---------
+
+
+- Added option of saving morphologies in smaller, more efficient format. Existing projects still use old method, 
+  new ones use the smaller format by default. See "Morphology save format" in Glossary.
+
+- Changed handling of mod file generation. Biggest practical change is now mod files are only compiled once (the first time 
+  NEURON scripts are generated), unless any of the XML/XSL files are altered. An option "Copy sim files to results dir" is added,
+  to either: (unselected) use mod files/compiled libraries in the location they're generated (generateNEURON dir, this is default now), 
+  or (selected) copy the files to simulations/Sim_xx and use them there. This second option was the previous way of using accessing 
+  the mods, and may have been the cause of some problems on Linux in the past. Another option "Generate all mod files" has been added, 
+  to compile all mod files in project, even if the cell mechanism isn't used in this simulation configuration.
+
+- NeuroML version 1.7.1 is used. Some of the proposed changes to NetworkML for v2.0 are now included as options, and the old format
+  will be disabled in v2.0, see http://www.morphml.org:8080/NeuroMLValidator/ReqVersion2.jsp. The new format is used in the export of 
+  NetworkML, but both formats can be loaded back in. 
+
+- NeuroML export tab is slightly updated.
+
+- Ability to translate & rotate child segments when the 3D endpoints of a segment are altered (allows you to rotate a cell to align it to the y axis,
+  for example). View single cell in 3D (All solid), click on a segment -> Edit... Also added is function to split a long Section (e.g. 20 Segments)
+  into multiple Sections (option in drop down box in Segment Selector dialog).
+
+- Clickable links in panels giving cell info and network generation summary, i.e. cell group names can be clicked on to go to tab Cell Group, selecting that item.
+
+- Cleaned up electrotonic length handling & updated docs/glossary.
+
+- HDF5 support is added for importing plots/generic traces as 1D datasets in HDF5 files (Tools -> Import data for plot (HDF5 File)). 
+  Also saving and loading of NetworkML structure in HDF5 (note: provisional structure, no electrical inputs saved, subject to change!)
+
+- NetworkML import/export in XML format includes locations of electrical inputs
+
+- Preliminary version of Python classes for generating network structure & saving in NetworkML (XML or HDF5 format) for loading into 
+  neuroConstruct. This will allow network topologies of any given complexity to be built in Python, and saved in NetworkML for
+  visualisation & use in nC projects. Will move to a PyNN friendly format over time.
+
+- Corrected bug in equation parser (used for plotting generic expressions for rate variables in ChannelML files). Expressions like
+  exp ((-v - 40)/ 10) were being parsed as: exp ((-1 * (v - 40))/ 10)
+
+- Solved bug when Input is placed on, e.g. seg id 0, but no seg id 0 is present in cell. Also resolved problem
+  when new Input is added but there's no synaptic mechanism present to use for Random stim.
+
+- Made generation of Matlab and IgorPro extra files for each simulation optional (via Settings. Default: don't generate these extra files)
+
+- Added more options under Help menu item, including link to check for updates.
+
+- For single compartment, spherical cells, the fract along is now always 0.5 in generated network connections
+
+- Can now import GENESIS morphologies which use double_endpoint.
+
+- Gap junctions & point processes (for integrate & fire mechanism) added as possible mechanism types (incomplete)
+
+- Minor additions to project validation: checks if Cell Groups referred to in Elec Inputs and Plots are present in project
+
+
+
+--------- Version 1.0.4.1 (Aug 07) ---------
+
+
+- Only significant update is a bug fix for running NEURON from nC on a Mac (v1.0.4 ran fine on 
+  Mac, but couldn't run the generated NEURON scripts). More warnings about installing Developer tools
+  (XCode) after installing NEURON on the Mac are included too.
+
+
+
+--------- Version 1.0.4 (Aug 07) ---------
+
+
+- Uses NeuroML v1.6. Changes to that are listed at http://www.morphml.org:8080/NeuroMLValidator/NeuroMLFiles/Schemata/v1.6/RELEASE_NOTES. 
+  Main change is addition of <status> element in ChannelML, which is picked up in nC when validating proj with non stable 
+  ChannelML elements
+  
+- Allows user to change default location of new projects, from <user home dir>/nC_projects to wherever (note: no space allowed in dir name)
+
+- Added phase plane plots (dV/dt versus V), for analysis of regular spiking cells, via Plot Info -> Spike Analysis
+
+- Update to options for stimulations (tab Input and Output): pulses can be repeated. Required new version of IClamp.mod (CurrentClampExt)
+
+- Updated import of SWC files. Fixed error of giving segments numbers as names (added suffix Comp_), added a number of options on import and
+  now group compartments in unbranched dendrites into Sections with multiple Segments. Note: this will lead to fewer sections when run on NEURON
+  but the nseg value will have to be increased in long dendrites (see next point).
+
+- Added changable values for max and min electrotonic length at tab Export Network-> Common Simulation Settings. Added possibility to remesh morphology
+  to ensure correct number of internal simulation points/divisions in sections (nseg). Visualise the cell in 3D, showing All Solids, click on any 
+  section, then Edit... and select Remesh option in drop down function selector.
+
+- Added more information in network generation summary on total synaptic conductance for post synaptic cells
+
+- Updated import of NeuroML morphologies, to ease NEURON ModelView exported files. 
+  See http://neuroml.svn.sourceforge.net/viewvc/neuroml/nrn2NeuroML/ to export cells from NEURON in Level 1 & 2 NeuroML.
+
+- Some extra tool tips added, along with warnings/advice, e.g. info on getting extra memory in run.bat/run.sh. Updated Glossary and added a number of
+  new entries.
+
+- Fixed minor bug where project file modified date is changed on loading of project; now reflects when proj last saved
+
+- Caught most (but not all) sources of problems for NEURON/cygwin GENESIS when spaces are present in a
+  Windows file/directory name, e.g. C:\Documents and Settings\Padraig Gleeson\nC_projects. Will give specific warnings 
+  when spaces are present in a directory name: this can cause errors when file names are handed to the process running NEURON, 
+  for example. If an error is thrown, the project should be copied (Save as..) in a dir without spaces in the name.
+  
+- Added dialog box choice when a previous simulation has been reloaded and generate NEURON/GENESIS is requested.
+  Had been a problem that no plots were generated in that case, as no info on plots is stored with simulation structure.
+  
+- Made generated GENESIS more portable between directories: one variable targetDir specifies where all sim data will be stroed
+
+- Removed use of the NEURON system() calls in generated scripts when running under Windows, to deal with some instability there. 
+  Was mainly used for recording of hostname, date, etc.
+
+
+
+--------- Version 1.0.1 (Apr 07) ---------
+
+
+Basically the same as v0.9.8, but with examples outlined in paper included.
+
+
+
+--------- Version 0.9.8 (Mar 07) ---------
+
+
+The first full public release, just before publication of the paper. Uses NeuroML v1.5
+

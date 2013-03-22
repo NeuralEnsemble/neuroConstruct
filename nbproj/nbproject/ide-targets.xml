@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="../.." name="neuroConstruct-IDE">
+    <import file="../../build.xml"/>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/41/freeform-config.html#debugj2se) -->
+    <target depends="makejar" description="Runs the main application, opening last project" name="debug-nb">
+        <nbjpdastart addressproperty="jpda.address" name="neuroConstruct" transport="dt_socket">
+            <classpath refid="run.class.path"/>
+        </nbjpdastart>
+        <java classname="${main.app.class}" fork="true">
+            <jvmarg value="-Xmx700M"/>
+            <jvmarg value="-Xms600M"/>
+            <jvmarg value="-Dsun.java2d.noddraw=true"/>
+            <arg value="-lastproj"/>
+            <classpath refid="run.class.path"/>
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+                <jvmarg value="-Djava.library.path=lib/hdf5/linux"/>
+        </java>
+    </target>
+</project>

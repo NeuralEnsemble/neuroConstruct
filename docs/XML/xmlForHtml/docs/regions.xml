@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document>
+  <header>
+    <title>Regions</title>
+  </header>
+  <body>
+
+
+
+
+<p>A volume in 3D space which can be filled with cells. Regions defined at the tab <strong>Regions</strong> can be also used for specifying bounding regions for selecting cells, for example:</p>
+
+<ul>
+<li>To selectively apply stimulations to a subset of cells, either inside or outside a given region, via tab <strong>Input/Output</strong> </li>
+<li>To select a subset of cells in a 3D network visualisation. Select <strong>Select many...</strong> in the drop down box for Cell Number.</li>
+<li>To select a subset of cells to analyse (e.g. to generate a rasterplot for) when a previous simulation is reloaded.</li>
+</ul>
+
+
+<p>Regions can also be used for:</p>
+<ul>
+<li>Defining extent in 3D of axonal arbours for use in <a href="Glossary_gen.html#Volume%20Based%20Connection">Volume Based Connections</a>. These can be added in the single cell 3D view when a segment is being edited (select function in drop down box)</li>
+</ul>
+
+
+<p>In the current version of neuroConstruct, these can be</p>
+
+<ol>
+<li>Rectangular boxes (i.e. cuboids): where the width, height and depth are specified, along with the location of one of the lower corners</li>
+<li>Spheres: the centre point and the radius are specified</li>
+<li>Cylinders: the centre points of the base and top are specified, as is the radius</li>
+<li>Cones: the centre points of the base and apex are specified, as is the base radius</li>
+</ol>
+
+
+<p>neuroConstruct can be extended (at the source code level) to include more complex 3D Regions,
+e.g. folium like constructs, etc. by extending the Java class <strong>Region</strong>.</p>
+
+  </body>
+</document>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<networkml xmlns="http://morphml.org/networkml/schema" xmlns:meta="http://morphml.org/metadata/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://morphml.org/networkml/schema  NetworkML_v1.7.xsd" lengthUnits="micron">
+
+<meta:notes>
+
+Network structure for project: Ex5-Networks saved with neuroConstruct v1.0.9 on: 15:48:24, 05-Mar-08
+
+Cell Group: ThirdCellGroup contains 12 cells
+Cell Group: UpperCellGroup contains 12 cells
+Cell Group: LowerCellGroup contains 12 cells
+
+Network connection: UpperToThird contains 24 individual synaptic connections
+Network connection: Closest contains 24 individual synaptic connections
+Network connection: ThirdToLower contains 24 individual synaptic connections
+
+</meta:notes>
+
+<meta:properties>
+    <meta:property>
+        <meta:tag>neuroConstruct_random_seed</meta:tag>
+        <meta:value>572446062</meta:value>    
+    </meta:property>
+    <meta:property>
+        <meta:tag>neuroConstruct_sim_config</meta:tag>
+        <meta:value>Three Cell Groups</meta:value>    
+    </meta:property>
+</meta:properties>
+
+<populations>
+    <population name="UpperCellGroup" cell_type="SampleCell">
+        <instances size="12">
+            <instance id="0">
+                <location x="165.75378" y="120.16572" z="76.39077"/>
+            </instance>
+            <instance id="1">
+                <location x="131.94063" y="108.838264" z="77.31577"/>
+            </instance>
+            <instance id="2">
+                <location x="180.3745" y="113.76129" z="101.32341"/>
+            </instance>
+            <instance id="3">
+                <location x="74.136604" y="116.384926" z="78.54172"/>
+            </instance>
+            <instance id="4">
+                <location x="105.98717" y="114.321556" z="23.223888"/>
+            </instance>
+            <instance id="5">
+                <location x="189.96709" y="109.65696" z="143.87617"/>
+            </instance>
+            <instance id="6">
+                <location x="70.09803" y="118.30789" z="8.492184"/>
+            </instance>
+            <instance id="7">
+                <location x="48.94748" y="108.15823" z="61.150085"/>
+            </instance>
+            <instance id="8">
+                <location x="155.44615" y="116.15057" z="12.198269"/>
+            </instance>
+            <instance id="9">
+                <location x="171.54631" y="115.11406" z="107.41096"/>
+            </instance>
+            <instance id="10">
+                <location x="9.278929" y="110.07653" z="18.604315"/>
+            </instance>
+            <instance id="11">
+                <location x="60.61629" y="110.95271" z="17.92593"/>
+            </instance>
+        </instances>
+    </population>
+    <population name="LowerCellGroup" cell_type="SampleCell">
+        <instances size="12">
+            <instance id="0">
+                <location x="174.6713" y="17.843657" z="166.99725"/>
+            </instance>
+            <instance id="1">
+                <location x="109.07995" y="19.761778" z="78.47154"/>
+            </instance>
+            <instance id="2">
+                <location x="54.74875" y="12.540665" z="190.07993"/>
+            </instance>
+            <instance id="3">
+                <location x="69.84366" y="9.642259" z="52.580643"/>
+            </instance>
+            <instance id="4">
+                <location x="16.357946" y="20.431904" z="9.105003"/>
+            </instance>
+            <instance id="5">
+                <location x="65.271935" y="11.965751" z="114.219986"/>
+            </instance>
+            <instance id="6">
+                <location x="191.83601" y="8.712918" z="76.64119"/>
+            </instance>
+            <instance id="7">
+                <location x="107.19129" y="18.296782" z="43.29152"/>
+            </instance>
+            <instance id="8">
+                <location x="149.36288" y="8.633085" z="136.46246"/>
+            </instance>
+            <instance id="9">
+                <location x="142.27788" y="15.194071" z="150.04234"/>
+            </instance>
+            <instance id="10">
+                <location x="55.800175" y="14.073006" z="86.60352"/>
+            </instance>
+            <instance id="11">
+                <location x="168.50237" y="11.61597" z="144.55574"/>
+            </instance>
+        </instances>
+    </population>
+</populations>
+
+<projections units="Physiological Units">
+    
+    <projection name="Closest" source="LowerCellGroup" target="UpperCellGroup">
+        <synapse_props synapse_type="DoubExpSyn" internal_delay="20.0" weight="1.0" threshold="-20.0">
+        </synapse_props>
+        <connections>
+            <connection id="0" pre_cell_id="0" pre_segment_id="2" pre_fraction_along="0.64131624" post_cell_id="5" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.06517675" internal_delay="16.145721" weight="1.0"/>
+            </connection>
+            <connection id="1" pre_cell_id="0" pre_segment_id="2" pre_fraction_along="0.51961046" post_cell_id="9" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.089626916" internal_delay="13.362318" weight="1.0"/>
+            </connection>
+            <connection id="2" pre_cell_id="1" pre_segment_id="2" pre_fraction_along="0.89665204" post_cell_id="1" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.05603212" internal_delay="14.327499" weight="1.0"/>
+            </connection>
+            <connection id="3" pre_cell_id="1" pre_segment_id="2" pre_fraction_along="0.18752396" post_cell_id="3" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.0808175" internal_delay="11.861668" weight="1.0"/>
+            </connection>
+            <connection id="4" pre_cell_id="2" pre_segment_id="2" pre_fraction_along="0.7794895" post_cell_id="3" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.13219431" internal_delay="16.405327" weight="1.0"/>
+            </connection>
+            <connection id="5" pre_cell_id="2" pre_segment_id="2" pre_fraction_along="0.339818" post_cell_id="7" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.14626318" internal_delay="10.404696" weight="1.0"/>
+            </connection>
+            <connection id="6" pre_cell_id="3" pre_segment_id="2" pre_fraction_along="0.06764197" post_cell_id="7" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.08040047" internal_delay="16.18934" weight="1.0"/>
+            </connection>
+            <connection id="7" pre_cell_id="3" pre_segment_id="2" pre_fraction_along="0.25854564" post_cell_id="11" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.08416248" internal_delay="10.099374" weight="1.0"/>
+            </connection>
+            <connection id="8" pre_cell_id="4" pre_segment_id="2" pre_fraction_along="0.42129618" post_cell_id="10" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.06235446" internal_delay="23.946217" weight="1.0"/>
+            </connection>
+            <connection id="9" pre_cell_id="4" pre_segment_id="2" pre_fraction_along="0.4733799" post_cell_id="11" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.0759217" internal_delay="24.028711" weight="1.0"/>
+            </connection>
+            <connection id="10" pre_cell_id="5" pre_segment_id="2" pre_fraction_along="0.6603343" post_cell_id="3" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.08014201" internal_delay="24.71962" weight="1.0"/>
+            </connection>
+            <connection id="11" pre_cell_id="5" pre_segment_id="2" pre_fraction_along="0.53298104" post_cell_id="7" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.08589213" internal_delay="26.85257" weight="1.0"/>
+            </connection>
+            <connection id="12" pre_cell_id="6" pre_segment_id="2" pre_fraction_along="0.9007864" post_cell_id="2" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.07234607" internal_delay="13.698529" weight="1.0"/>
+            </connection>
+            <connection id="13" pre_cell_id="6" pre_segment_id="2" pre_fraction_along="0.20421076" post_cell_id="9" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.09019161" internal_delay="16.356073" weight="1.0"/>
+            </connection>
+            <connection id="14" pre_cell_id="7" pre_segment_id="2" pre_fraction_along="0.4989906" post_cell_id="4" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.06903692" internal_delay="23.626749" weight="1.0"/>
+            </connection>
+            <connection id="15" pre_cell_id="7" pre_segment_id="2" pre_fraction_along="0.55479974" post_cell_id="1" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.072828196" internal_delay="14.115696" weight="1.0"/>
+            </connection>
+            <connection id="16" pre_cell_id="8" pre_segment_id="2" pre_fraction_along="0.49022967" post_cell_id="5" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.08231555" internal_delay="25.18844" weight="1.0"/>
+            </connection>
+            <connection id="17" pre_cell_id="8" pre_segment_id="2" pre_fraction_along="0.660781" post_cell_id="9" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.08187739" internal_delay="26.667734" weight="1.0"/>
+            </connection>
+            <connection id="18" pre_cell_id="9" pre_segment_id="2" pre_fraction_along="0.62411535" post_cell_id="5" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.07844664" internal_delay="20.65063" weight="1.0"/>
+            </connection>
+            <connection id="19" pre_cell_id="9" pre_segment_id="2" pre_fraction_along="0.9892125" post_cell_id="9" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.07931194" internal_delay="25.879349" weight="1.0"/>
+            </connection>
+            <connection id="20" pre_cell_id="10" pre_segment_id="2" pre_fraction_along="0.13808686" post_cell_id="7" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.07603865" internal_delay="16.704416" weight="1.0"/>
+            </connection>
+            <connection id="21" pre_cell_id="10" pre_segment_id="2" pre_fraction_along="0.6997681" post_cell_id="3" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.07119248" internal_delay="13.205985" weight="1.0"/>
+            </connection>
+            <connection id="22" pre_cell_id="11" pre_segment_id="2" pre_fraction_along="0.90999854" post_cell_id="5" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.06357786" internal_delay="28.894703" weight="1.0"/>
+            </connection>
+            <connection id="23" pre_cell_id="11" pre_segment_id="2" pre_fraction_along="0.5616626" post_cell_id="9" post_segment_id="1" post_fraction_along="1.0">
+                <properties prop_delay="0.08130933" internal_delay="16.799782" weight="1.0"/>
+            </connection>
+        </connections>
+    </projection>
+</projections>
+
+</networkml>

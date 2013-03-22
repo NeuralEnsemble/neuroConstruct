@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<channelml xmlns="http://morphml.org/channelml/schema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:meta="http://morphml.org/metadata/schema" 
+    xsi:schemaLocation="http://morphml.org/channelml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level2/ChannelML_v1.8.1.xsd"
+    units="SI Units">
+
+    <meta:notes>A channel from Maex, R and De Schutter, E. Synchronization of Golgi and Granule Cell Firing in a 
+    Detailed Network Model of the Cerebellar Granule Cell Layer</meta:notes>
+
+    <channel_type name="Gran_H_98">
+      
+        <status value="stable">
+            <meta:comment>Verified equivalence of NEURON and GENESIS mapping to orig GENESIS impl from www.tnb.ua.ac.be</meta:comment>
+            <meta:comment>Updated to post v1.7.3 new ChannelML format</meta:comment>
+            <meta:issue>A values don't match table 1 in M and DeS 98</meta:issue>
+            <meta:contributor>
+                <meta:name>Padraig Gleeson</meta:name>
+            </meta:contributor>
+        </status>
+        
+        <meta:notes>Anomalous inward rectifying H conductance</meta:notes>
+
+        <meta:authorList>
+            <meta:modelAuthor>
+                <meta:name>Maex, R.</meta:name>
+            </meta:modelAuthor>
+            <meta:modelAuthor>
+                <meta:name>De Schutter, E.</meta:name>
+            </meta:modelAuthor>
+            <meta:modelTranslator>
+                <meta:name>Padraig Gleeson</meta:name>
+                <meta:institution>UCL</meta:institution>    
+                <meta:email>p.gleeson - at - ucl.ac.uk</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+        
+        <meta:publication>
+           <meta:fullTitle>Maex, R and De Schutter, E. 
+           Synchronization of Golgi and Granule Cell Firing in a Detailed Network Model of the 
+           cerebellar Granule Cell Layer. J Neurophysiol, Nov 1998; 80: 2521 - 2537</meta:fullTitle>
+           <meta:pubmedRef>http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;list_uids=9819260&amp;dopt=Abstract</meta:pubmedRef>
+        </meta:publication>
+        
+        <current_voltage_relation cond_law="ohmic" ion="h" default_gmax="0.30905062" default_erev="-0.042">
+            
+            <q10_settings q10_factor="3" experimental_temp="17.350264793"/>
+            <offset value="0.01"/>
+            
+            <gate name="n" instances="1">
+                <closed_state id="n0"/>
+                <open_state id="n"/>
+                     
+                <transition name="alpha" from="n0" to="n" expr_form="exponential" rate="0.8" scale="-0.01100110011" midpoint="-0.075" />
+                <transition name="beta" from="n" to="n0" expr_form="exponential" rate="0.8" scale="0.01100110011" midpoint="-0.075" />
+                    
+            </gate>
+        </current_voltage_relation>
+         
+
+        
+    </channel_type>
+</channelml>

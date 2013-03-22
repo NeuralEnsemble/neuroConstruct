@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document>
+  <header>
+    <title>Tutorials about neuroConstruct</title>
+  </header>
+  <body>
+
+  <p>These tutorials will give an introduction to the main functionality contained in neuroConstruct</p>
+  <p><strong>Note: These are not intended as introductory tutorials for computational neuroscience.</strong></p>
+
+
+<p> They assume a
+  basic knowledge of the concepts behind simulation of neuronal processes. Introductory tutorials on
+  <a href="http://www.genesis-sim.org/GENESIS/Tutorials/index.html">GENESIS</a> or
+  <a href="http://www.anc.ed.ac.uk/school/neuron/">NEURON</a> will provide this. </p>
+
+<p>&nbsp;&nbsp;<strong>Very quick</strong></p>
+
+
+<p>For those with little time on their hands, a <a href="tutorial1.html">very quick tutorial</a>
+gives an insight to the main concepts of neuroConstruct</p>
+
+
+<p>&nbsp;&nbsp;<strong>Basic functionality</strong></p>
+
+
+<p>A step by step guide to most of the <a href="tutorial2.html">basic functionality</a>
+    of neuroConstruct</p>
+
+<p>&nbsp;&nbsp;<strong>Network functionality</strong></p>
+
+
+<p>A guide to how <a href="tutorial3.html">network connections</a>
+ are set up in neuroConstruct</p>
+
+
+<p>&nbsp;&nbsp;<strong>More...</strong></p>
+<p>&nbsp;</p>
+
+<p>In addition to the above, there are also guides to <a  href="../importneuron.html" >importing NEURON models into neuroConstruct</a> 
+and <a  href="../importneuron.html#Converting+mod+file%2FGENESIS+script+channels+into+ChannelML" >converting channels to ChannelML</a>.</p>
+
+<p>More detailed tutorials will be added in future. If you can suggest any aspect which needs clarification, please <a  href="../contact.html" >get in touch</a>...</p>
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+
+
+  </body>
+</document>

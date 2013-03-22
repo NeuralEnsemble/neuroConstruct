@@ -1,0 +1,21 @@
+This is a file to retrieve a set of neuroConstruct projects from the Open Source Brain repository.
+
+See http://www.opensourcebrain.org for more details.
+
+The sources of these projects are *mainly* in GitHub repositories, e.g. https://github.com/OpenSourceBrain/CA1PyramidalCell
+
+Run:
+      
+	./checkOsb.sh
+
+to check whether the local copies of the repositories are up to date (or to clone the repositories for the first time), or
+
+	./checkOsb.sh -u
+
+will pull the latest sources from the remote repositories
+
+NOTE: 
+
+Structure of this checkout will possibly change, e.g. should it be invertebrate/lobster or invertebrate/crustacea/lobster...
+
+

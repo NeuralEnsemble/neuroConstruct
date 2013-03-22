@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<channelml xmlns="http://morphml.org/channelml/schema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:meta="http://morphml.org/metadata/schema" 
+    xsi:schemaLocation="http://morphml.org/channelml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level2/ChannelML_v1.8.1.xsd"
+    units="SI Units">
+
+    <meta:notes>A channel from Maex, R and De Schutter, E. Synchronization of Golgi and Granule Cell Firing in a 
+    Detailed Network Model of the Cerebellar Granule Cell Layer</meta:notes>
+    
+    <channel_type name="Gran_KDr_98">
+        
+        <status value="stable">
+            <meta:comment>Verified equivalence of NEURON and GENESIS mapping to orig GENESIS impl from www.tnb.ua.ac.be.</meta:comment>
+            <meta:comment>Updated to post v1.7.3 new ChannelML format</meta:comment>
+            <meta:issue>There is a discontinuity in the expression for alpha in h gate</meta:issue>
+            <meta:contributor>
+                <meta:name>Padraig Gleeson</meta:name>
+            </meta:contributor>
+        </status>
+    
+        <meta:notes>Delayed rectifyer K channel</meta:notes>
+    
+        <meta:authorList>
+            <meta:modelAuthor>
+                <meta:name>Maex, R.</meta:name>
+            </meta:modelAuthor>
+            <meta:modelAuthor>
+                <meta:name>De Schutter, E.</meta:name>
+            </meta:modelAuthor>
+            <meta:modelTranslator>
+                <meta:name>Padraig Gleeson</meta:name>
+                <meta:institution>UCL</meta:institution>    
+                <meta:email>p.gleeson - at - ucl.ac.uk</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+        
+        <meta:publication>
+           <meta:fullTitle>Maex, R and De Schutter, E. 
+           Synchronization of Golgi and Granule Cell Firing in a Detailed Network Model of the 
+           cerebellar Granule Cell Layer. J Neurophysiol, Nov 1998; 80: 2521 - 2537</meta:fullTitle>
+           <meta:pubmedRef>http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;list_uids=9819260&amp;dopt=Abstract</meta:pubmedRef>
+        </meta:publication>
+
+        <meta:neuronDBref>
+            <meta:modelName>K channels</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/senselab/NeuronDB/channelGene2.htm#table3</meta:uri>
+        </meta:neuronDBref>
+    
+        
+        <current_voltage_relation cond_law="ohmic" ion="k" default_gmax="8.89691" default_erev="-0.09">
+            
+            <q10_settings q10_factor="3" experimental_temp="17.350264793"/>
+            <offset value="0.010"/>
+            
+            <gate name="m" instances="4">
+                <closed_state id="m0"/>
+                <open_state id="m"/>
+                     
+                <transition name="alpha" from="m0" to="m" expr_form="generic" expr="170 * ((exp (73 *(v - (-0.038)))))" />
+                <transition name="beta" from="m" to="m0" expr_form="generic" expr="170 * ((exp ((-18) *(v - (-0.038)))))" />
+                    
+            </gate>
+        
+            <gate name="h" instances="1">
+                <closed_state id="h0"/>
+                <open_state id="h"/>
+                     
+                <transition name="alpha" from="h0" to="h" expr_form="generic" expr="v &gt; -0.046 ? 0.76 : 0.7 + 0.065*(exp (-80*(v - (-0.046))))" /> 
+                <transition name="beta" from="h" to="h0" expr_form="generic" expr="1.1/(1 + (exp (-80.7 * (v - (-0.044)))))" />
+                    
+            </gate>
+        </current_voltage_relation>  
+        
+        
+    </channel_type>
+</channelml>
+

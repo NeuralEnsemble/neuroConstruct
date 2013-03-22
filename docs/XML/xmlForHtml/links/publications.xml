@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document> 
+  <header> 
+    <title>neuroConstruct and NeuroML related publications</title> 
+  </header> 
+  <body> 
+
+
+
+<section>
+      <title>Core publications</title>
+
+<table class="noborder">
+
+    <tr>
+        <td>
+            <p><strong>neuroConstruct: A Tool for Modeling Networks of Neurons in 3D Space</strong>, Neuron, Volume 54, Issue 2, 19 April 2007, Pages 219-235.</p>
+            <p>Padraig Gleeson, Volker Steuber, R. Angus Silver</p>
+            <p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/17442244">PubMed</a>
+            <a href="http://www.neuron.org/content/article/abstract?uid=PIIS0896627307002486">Open access download</a></p>
+        </td>
+        <td><p>&nbsp;</p>
+        The main neuroConstruct paper. An introduction to all of the key functionality, including some
+        network examples. <p><strong>Please cite this paper if you use neuroConstruct in your research.</strong></p>
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            <p><strong>NeuroML: A Language for Describing Data Driven Models of Neurons and
+        Networks with a High Degree of Biological Detail</strong>, PLoS Comput Biol 6(6): e1000815</p>
+            <p>Padraig Gleeson, Sharon Crook, Robert C. Cannon, Michael L. Hines, Guy O. Billings, Matteo Farinella, Thomas M. Morse,
+            Andrew P. Davison, Subhasis Ray, Upinder S. Bhalla, Simon R. Barnes, Yoana D. Dimitrova, R. Angus Silver</p>
+            
+            <p><a  href="http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1000815">PLoS Comput Biol</a></p>
+        </td>
+        <td><p>&nbsp;</p>
+        The main NeuroML paper. Describes in detail the structure of version 1.x (Levels 1-3,
+        MorphML, ChannelML, NetworkML), includes a detailed discussion of the elements
+        present at each level along with example NeuroML code (see the <a href="http://www.ploscompbiol.org/article/fetchSingleRepresentation.action?uri=info:doi/10.1371/journal.pcbi.1000815.s001">supporting text</a>
+        of the paper), outlines current simulator support,
+        and presents a number of new cell and network models which have recently been
+        converted to the format. <p><strong>Please cite this paper if you use NeuroML in your research.</strong></p>
+        </td>
+    </tr>
+        
+	<tr>
+		<td>
+			<p><strong>Using neuroConstruct to Develop and Modify Biologically Detailed 3D Neuronal Network Models in Health and Disease. </strong>
+                        In Computational Neuroscience in Epilepsy, 2008, I. Soltesz, and K. Staley, eds. (Elsevier).</p>
+			<p>Padraig Gleeson, Volker Steuber, R. Angus Silver</p>
+		<p><a href="http://www.elsevier.com/wps/find/bookdescription.cws_home/713686/description">Elsevier</a></p>
+		</td>
+		<td><p>&nbsp;</p>
+			A chapter in a book outlining the various modelling approached being used in epilepsy research. Attractive image on the book cover...
+                       
+		</td>
+	</tr>
+        
+        
+	<tr>
+		<td>
+			<p><strong>MorphML: Level 1 of the NeuroML Standards for Neuronal Morphology Data and Model Specification</strong>,
+                        Neuroinformatics 2007, Volume 5; Number 2, Pages 96-104</p>
+
+			<p>Sharon Crook, Padraig Gleeson, Fred Howell, Joe Svitak, R. Angus Silver</p>
+
+		<p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/17873371">PubMed</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			The introductory paper to MorphML. Compares morphological representations from 
+                        NEURON, GENESIS, Neurolucida and neuroConstruct to MorphML.
+		</td>
+	</tr>
+
+	<tr>
+		<td>
+			<p><strong>Interoperability of Neuroscience Modeling Software: Current Status and Future Directions</strong>, Neuroinformatics 2007, Volume 5, 127-138.</p>
+			<p>Robert C. Cannon, Marc-Oliver Gewaltig, Padraig Gleeson, Upinder S. Bhalla, Hugo Cornelis, Michael L. Hines,
+                        Fredrick W. Howell, Eilif Muller, Joel R. Stiles, Stefan Wils, Erik De Schutter</p>
+		<p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/17873374">PubMed</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			A review of the current state of interoperability for modelling applications, resulting from a workshop at CNS 2006.
+
+		</td>
+	</tr>
+
+    </table>
+    </section>
+<section>
+      <title>The original NeuroML paper</title>
+
+
+<table class="noborder">
+
+	<tr>
+		<td>
+			<p><strong>Towards NeuroML: Model Description Methods for Collaborative Modelling in Neuroscience</strong>, Philos Trans R Soc Lond B Biol Sci 356, 1209-1228.</p>
+			<p>Nigel Goddard, Michael Hucka, Fred Howell, Hugo Cornelis, Kavita Shankar, David Beeman</p>
+		<p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/11545699">PubMed</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			The original NeuroML introductory paper. Although <strong>the language has evolved significantly since this paper</strong>
+                        (with a focus now on key elements which need to be transferred between neuroinformatics applications, as represented by
+                        MorphML, ChannelML and NeuroML, see <strong>Gleeson et al. 2010</strong> above for details)
+                        the key aims of NeuroML as outlined in this paper, including clarity, portability and modularity of neuronal model descriptions, remain the same.
+                        
+		</td>
+	</tr>
+        
+
+    </table>
+    </section>
+<section>
+      <title>Combined experimental and modelling investigations</title>
+
+
+<table class="noborder">
+
+    
+	<tr>
+		<td>
+			<p><strong>Synaptic depression enables neuronal gain control</strong>, Nature 2009</p>
+			<p>Jason S. Rothman, Laurence Cathala, Volker Steuber,  R. Angus Silver</p>
+		<p><a  href="http://www.nature.com/nature/journal/vaop/ncurrent/full/nature07604.html">Nature.com</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			<b>(Silver Lab)</b> An experimental and modelling paper looking at the effects of short term plasticity on gain control. Used neuroConstruct to investigate
+            a detailed layer 5 pyramidal cell model (Kole et al 2008) with dendritically distributed excitatory and inhibitory synaptic input.
+
+		</td>
+	</tr>
+	
+	<tr>
+		<td>
+			<p><strong>Rapid Desynchronization of an Electrically Coupled Interneuron Network with Sparse Excitatory Synaptic Input</strong>, Neuron 2010</p>
+			<p>Vervaeke, K. and Lőrincz, A. and Gleeson, P. and Farinella, M. and Nusser, Z. and Silver, R. A.</p>
+		<p><a  href="http://www.cell.com/neuron/abstract/S0896-6273%2810%2900512-X">Cell.com</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			<b>(Silver Lab)</b> A highly detailed electrically coupled cerebellar Golgi cell network was created using neuroConstruct to help explain experimental data related to the spread of desynchronisation in this network following sparse synaptic activation. Experimental data on gap junction location, distance dependent coupling strengths, reconstructed cells and realistic conductances were used in the construction of the model.
+
+		</td>
+	</tr>
+	
+	<tr>
+		<td>
+			<p><strong>Gap junctions compensate for sub-linear dendritic integration in an inhibitory network</strong>, Science 2012</p>
+			<p>Vervaeke, K. and Lőrincz, A. and Nusser, Z. and Silver, R. A.</p>
+		<p><a  href="http://www.sciencemag.org/content/early/2012/03/07/science.1215101.short">Sciencemag.org</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			<b>(Silver Lab)</b> This study found that the dendrites of cerebellar Golgi cells have no significant voltage-gated ion channels and 
+            therefore integrate input sub-linearly. Their dendrites are however coupled by gap junctions, predominantly in the molecular layer. 
+            These allow synaptic charge to be shared among cells and compensate for sub-linear integration.
+
+
+		</td>
+	</tr>
+
+
+
+
+
+	<tr>
+		<td>
+			<p><strong>Signal Propagation in Drosophila Central Neurons</strong>, Journal of Neuroscience 2009</p>
+			<p>Nathan W. Gouwens and Rachel I. Wilson</p>
+		<p><a  href="http://www.ncbi.nlm.nih.gov/pubmed/19439602">Pubmed</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			A paper investigating the electrical properties of Drosophila neurons which utilises realistic morphological reconstructions and electrophysiological recordings.
+
+		</td>
+	</tr>
+	
+	
+	<tr>
+		<td>
+			<p><strong>Stochastic amplification of calcium-activated potassium currents in Ca2+ microdomains</strong>, Journal of Computational Neuroscience 2011</p>
+			<p>David Stanley, Berj Bardakjian, Mark Spano and William Ditto</p>
+		<p><a  href="http://www.springerlink.com/content/am777546126267x4/">Springer</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			Investigation of the effects of stochastic L-Type Ca<sup>2+</sup> channels on the response of SK channels in Ca<sup>2+</sup> microdomains
+
+		</td>
+	</tr>
+	
+	<tr>
+		<td>
+			<p><strong>Emergence of small-world structure in networks of spiking neurons through STDP plasticity</strong>, in From Brains to Systems Advances (series Experimental Medicine and Biology) 2011</p>
+			<p>Gleb Basalyga, Pablo M. Gleiser and Thomas Wennekers</p>
+		<p><a  href="http://www.springer.com/biomed/neuroscience/book/978-1-4614-0163-6">Springer</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			Looking at the emergence of small world network properties of networks containing synapses with spike timing dependent plasticity
+
+		</td>
+	</tr>
+	
+	<tr>
+		<td>
+			<p><strong>A biophysical cortical column model to study the multi-component origin of the VSDI signal</strong>, NeuroImage 2010</p>
+			<p>Sandrine Chemla and Frédéric Chavane</p>
+		<p><a  href="http://www.sciencedirect.com/science/article/pii/S1053811910008700">ScienceDirect</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			Creating a biophysically detailed cortical column model to study the origin of the voltage sensitive dye imaging signal
+
+		</td>
+	</tr>
+	
+	<tr>
+		<td>
+			<p><strong>Imbalanced pattern completion vs. separation in cognitive disease: network simulations of synaptic pathologies predict a personalized therapeutics strategy</strong>, BMC Neuroscience 2010</p>
+			<p>Jesse Hanson and Daniel Madison</p>
+		<p><a  href="http://www.biomedcentral.com/1471-2202/11/96">BioMedCentral</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			Investigating how synaptic pathologies (alteration in long term depression (LTD)/potentiation (LTP), inhibition or connectivity) can underlie specific cognitive impairments
+
+		</td>
+	</tr>
+	
+	<!--
+	<tr>
+		<td>
+			<p><strong>TTT</strong>, JJ YY</p>
+			<p>NN</p>
+		<p><a  href="UU">Pubmed</a></p>
+                </td>
+		<td><p>&nbsp;</p>
+			AAAA
+
+		</td>
+	</tr>
+	-->
+	
+	
+        
+
+
+</table>
+
+    </section>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+  </body>
+</document>

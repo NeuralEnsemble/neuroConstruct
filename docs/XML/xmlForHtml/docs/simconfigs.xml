@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document> 
+  <header> 
+    <title>Simulation Configurations</title> 
+  </header> 
+  <body> 
+  
+  
+    
+
+<p>Most neuroConstruct <a href="Glossary_gen.html#Project">Projects</a> will illustrate not just a single aspect of a cell
+    or network, but will seek to show how the cells react under different inputs, or how a network behaves
+    with different <a href="Glossary_gen.html#Cell Group">Cell Groups</a>/cell populations present, etc. A particular Simulation
+                 Configuration has a number of Cell Groups, Network Connections, Electrical Inputs, and Plots 
+                 associated with it, along with a simulation duration. </p>
+
+<p>One of these configurations must be specified
+                 when the network is generated, indicating which of the aspects of the model is to be simulated. A Default
+                 Simulation Configuration is always present, and if there is only this one, all new Cell Groups, etc. will be
+                 automatically associated with it; otherwise new Cell Groups, Network Connections, etc. have to be manually added to 
+                 whichever particular Simulation Configuration they are required for.  </p>
+             
+             
+<p>Ideally there will be one Simulation Configuration associated with the project for each aspect being illustrated by the model as 
+    a whole. If the model is accompanied by a paper, this could translate to one Simulation Configuration for each figure. If a published 
+    model is being reproduced in neuroConstruct, it would be a useful goal to include Simulation Configurations reproducing the figures
+    of the paper as closely as possible. New  Simulation Configurations can also be added to test new features of the network. Having a number 
+    of 'working'  Simulation Configurations is useful when a model is being developed, as following changes in the cells/cell mechanisms, the 
+    older Simulation Configurations can be tested to ensure they are still producing the desired results.</p>
+          
+                 
+
+  </body>
+</document>

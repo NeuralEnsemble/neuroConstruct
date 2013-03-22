@@ -1,0 +1,6 @@
+All *.m files found in this directory can be copied to the directory of new simulations, 
+making the scripts placed here available when the loadsimdata.m file for the simulation is run.
+
+
+Enable automatic generation of files for Matlab/Octave via Settings -> General Properties and Project Defaults
+

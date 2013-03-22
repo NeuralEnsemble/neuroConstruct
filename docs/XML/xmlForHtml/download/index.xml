@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document> 
+  <header> 
+    <title>Download availability</title> 
+  </header> 
+  <body> 
+  
+  
+	  
+	  <p>The application is available for download <a href="http://www.neuroConstruct.org/nCinfo/form.php" >here</a>.</p>
+	  <p>Instructions for installation are available <a href="../docs/install.html" >here</a>.</p>
+<p>&nbsp;</p>
+	  <p>Automatic installers (created with <a href="http://www.ej-technologies.com/products/install4j/overview.html">install4j</a>)
+      for a number of operating systems are available, as well as a zipped file containing the full source code.</p>
+      <!--<p><img src="../images/481905418.png" alt="install4j" ></img></p>-->
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+	  <p>Latest <a href="http://en.wikipedia.org/wiki/Portable_Application_Description" >PAD</a> (Portable Application Description)
+      file: <a href="http://www.neuroConstruct.org/neuroConstruct.xml" ><img src="../images/neuroConstruct32.png" alt="here" ></img></a>.</p>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+ 
+</body>
+</document>

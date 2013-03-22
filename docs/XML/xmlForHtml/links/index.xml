@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document> 
+  <header> 
+    <title>Useful neuroConstruct related links</title> 
+  </header> 
+  <body>
+
+      <p>&nbsp;</p>
+  <p>Note that a list of software packages with support for NeuroML is maintained <a href="http://www.neuroml.org/tool_support">here</a>. neuroConstruct can interact with
+  most of these tools through <a href="../docs/neuroml.html">import/export</a> of NeuroML.</p>
+
+      <p>&nbsp;</p>
+
+<table class="noborder">
+
+	<tr>
+		<td>
+			Silver Lab at University College London
+		</td>
+		<td>
+			<a  href="http://www.ucl.ac.uk/npp/as">http://www.ucl.ac.uk/npp/as</a>
+		</td>
+	</tr>
+
+	<tr>
+		<td>
+			NeuroML
+		</td>
+		<td>
+			<a href="http://www.neuroml.org/">http://www.neuroml.org</a>
+		</td>
+	</tr>
+	
+	<tr>
+		<td>
+			NeuroML Sourceforge site
+		</td>
+		<td>
+			<a href="http://sourceforge.net/projects/neuroml">http://sourceforge.net/projects/neuroml</a>
+		</td>
+	</tr>
+	
+    
+	<tr>
+		<td>
+			Web application for validating MorphML/ChannelML files
+		</td>
+		<td>
+			<a href="http://www.morphml.org:8080/NeuroMLValidator/">http://www.neuroml.org/NeuroMLValidator</a>
+		</td>
+	</tr>            
+    
+    
+    
+	<tr>
+		<td>
+			GENESIS Simulator
+		</td>
+		<td>
+			<a  href="http://www.genesis-sim.org/GENESIS">http://www.genesis-sim.org/GENESIS</a>
+		</td>
+	</tr>
+        
+        <tr>
+		<td>
+			MOOSE Simulator (reimplementation of GENESIS core)
+		</td>
+		<td>
+			<a  href="http://moose.sourceforge.net">http://moose.sourceforge.net</a>
+		</td>
+	</tr>
+        
+        
+	<tr>
+		<td>
+			NEURON Simulator
+		</td>
+		<td>
+			<a  href="http://www.neuron.yale.edu/neuron/">http://www.neuron.yale.edu/neuron</a>
+		</td>
+	</tr>
+        
+	<tr>
+		<td>
+			PyNN simulator language
+		</td>
+		<td>
+			<a  href="http://neuralensemble.org/trac/PyNN">http://neuralensemble.org/trac/PyNN</a>
+		</td>
+	</tr>
+    
+	<tr>
+		<td>
+			PSICS
+		</td>
+		<td>
+			<a  href="http://www.psics.org">http://www.psics.org</a>
+		</td>
+	</tr>
+        
+	<tr>
+		<td>
+			Java
+		</td>
+		<td>
+			<a href="http://java.sun.com">http://java.sun.com</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Java 3D API
+		</td>
+		<td>
+			<a href="https://java3d.dev.java.net/">https://java3d.dev.java.net</a>
+		</td>
+	</tr>
+
+
+</table>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>neuroConstruct is registered
+with the following sites, which contain information on and links to many computational neuroscience tools:</p>
+ <p>&nbsp;&nbsp;&nbsp;<a href="http://software.incf.org/software/neuroconstruct/home"><img src="../images/incf2.png"
+        alt="INCF Software Center" /></a>&nbsp;&nbsp;&nbsp;
+        <a href="http://www.neuinfo.org/nif/registry/nif-0000-00105"><img src="../images/nif.jpg"
+        alt="Neuroscience Information Framework" /></a></p>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+  </body>
+</document>

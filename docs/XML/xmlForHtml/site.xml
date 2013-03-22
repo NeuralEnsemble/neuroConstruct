@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+
+
+<site label="neuroConstruct" href="" xmlns="http://apache.org/forrest/linkmap/1.0" tab="">
+
+  <main label="Home">
+    <index label="Introduction" href="index.html" description="Introduction to neuroConstruct"/>
+  </main>
+  <!--
+  <examples label="Screenshots"  href="examples/index.html" tab="Screenshots" >
+    <screenshots label="Included examples" href="#Examples+included+with+distribution" description="Included examples of neuroConstruct projects"/>
+    <screenshots label="General Screenshots" href="#General+screenshots" description="Screenshots of neuroConstruct"/>
+    <screenshots label="Models" href="#Imported+models" description="Existing models as neuroConstruct projects"/>
+  </examples>-->
+  
+  
+  <projects label="Examples"  href="samples/index.html" tab="Example projects" >
+    <projects label="Examples" href="#" description="Downloadable neuroConstruct example projects"/>
+  </projects>
+  
+  <projects label="Models"  href="models/index.html" tab="Detailed models" >
+    <projects label="Models" href="#" description="Downloadable neuroConstruct detailed models"/>
+  </projects>
+  
+  
+<!---->
+  <documenation label="Documentation"    tab="Documentation">
+    <documenation label="Home" href="docs/index.html" description="Documentation for neuroConstruct"/>
+    <documenation label="Contents" href="docs/docMenu.html" description="Contents of documentation"/>
+    <documenation label="Installation" href="docs/install.html" description="Installing neuroConstruct"/>
+    <documenation label="Tutorials" href="docs/tutorials/index.html" description="Introductory tutorials"/>
+    <documenation label="Glossary" href="docs/Glossary_gen.html" description="Glossary of terms used in neuroConstruct"/>
+  </documenation>
+<!---->
+  <download label="Download"  href="download/index.html" tab="Download"  >
+    <download label="Download code" href="#" description="Download the code"/>
+  </download>
+
+  <links label="Links"  tab="Links"  >
+    <links label="Useful links" href="links/index.html" description="Useful neuroConstruct links "/>
+    <links label="Publications" href="links/publications.html" description="neuroConstruct publications"/>
+    <links label="Courses" href="links/training.html" description="neuroConstruct courses"/>
+  </links>
+
+  <contact label="Contact"  href="contact/index.html" tab="Contact"  >
+    <contact label="Contact us" href="#" description="Find out more"/>
+  </contact>
+
+
+
+</site>

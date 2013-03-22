@@ -1,0 +1,17 @@
+The Examples and Schema directories are taken from the standard NeuroML distribution.
+
+To get the latest version of these, remove the Examples and Schema dirs, and use the following commands 
+in this directory to get the latest versions from the NeuroML SVN repository:
+
+svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/trunk/web/NeuroMLFiles/Examples/ Examples
+svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/trunk/web/NeuroMLFiles/Schemata/ Schemata
+
+If you have checked out the neuroConstruct source code from the neuroConstruct SVN repository, you 
+should be able to run ./updatenC.sh (Linux/Mac) or updatenC.bat (Windows) to update all of the required 
+files from the different repositories for a single consistent set of code/examples/NeuroML files, etc.
+
+The ChannelMLPrototypes directory outlines how some of the examples can be incorporated 
+as templates for channels in neuroConstruct
+
+The other files in this dir are remnants of older methods of creating channels in 
+neuroConstruct and can be ignored...

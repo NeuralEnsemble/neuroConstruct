@@ -1,0 +1,8 @@
+#This file provides some additional information to help the import of the ChannelML files into neuroConstruct
+DefaultName=NMDASyn
+Description=NMDA receptor Synapse mapped to a mod file (NEURON) or synchan/Mg_block objects (GENESIS)
+ChannelMLFile=../../Examples/ChannelMLSyns/NMDA.xml
+MappingNEURON=../../Schemata/v1.8.1/Level2/ChannelML_v1.8.1_NEURONmod.xsl
+MappingGENESIS=../../Schemata/v1.8.1/Level2/ChannelML_v1.8.1_GENESIStab.xsl
+NEURONNeedsCompilation=true
+CellProcessType=Synaptic mechanism

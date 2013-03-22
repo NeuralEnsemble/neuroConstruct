@@ -1,0 +1,7 @@
+These are MOSTLY remnants of a pre ChannelML way for making channel templates.
+
+CurrentClampExt.mod is an extended IClamp extended to replicate some of the 
+behaviour of the GENESIS pulsegen object.
+
+NetStimExt.mod is a reimplentation of NetStim, to function similar to the
+GENESIS randomspike object.

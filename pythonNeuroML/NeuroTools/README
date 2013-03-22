@@ -1,0 +1,10 @@
+
+This file (LoadToNeuroTools.py) will allow neuroConstruct simulations to be loaded into 
+Python using the NeuroTools package.
+
+NeuroTools is available from http://neuralensemble.org/trac/NeuroTools
+
+Just copy this file into the simulation folder (e.g. Project_1/simulations/Sim_1) and run
+
+	python LoadToNeuroTools.py
+

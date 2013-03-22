@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir=".." name="neuroConstruct">
+    <property file="nbproject/nbjdk.properties"/>
+    <property location="${netbeans.user}/build.properties" name="user.properties.file"/>
+    <property file="${user.properties.file}"/>
+    <import file="jdk.xml"/>
+    <target depends="-jdk-init" name="compile">
+        <ant antfile="../build.xml" inheritall="false" target="compile"/>
+    </target>
+    <target depends="-jdk-init" name="makejar">
+        <ant antfile="../build.xml" inheritall="false" target="makejar"/>
+    </target>
+    <target depends="-jdk-init" name="clean">
+        <ant antfile="../build.xml" inheritall="false" target="clean"/>
+    </target>
+    <target depends="-jdk-init" name="javadoc">
+        <ant antfile="../build.xml" inheritall="false" target="javadoc"/>
+    </target>
+    <target depends="-jdk-init" name="runbiglast">
+        <ant antfile="../build.xml" inheritall="false" target="runbiglast"/>
+    </target>
+    <target depends="-jdk-init" name="run-selected-file-in-src">
+        <ant antfile="nbproject/ide-file-targets.xml" inheritall="false" target="run-selected-file-in-src"/>
+    </target>
+    <target depends="-jdk-init" name="test-selected-file-in-src">
+        <ant antfile="nbproject/ide-file-targets.xml" inheritall="false" target="test-selected-file-in-src"/>
+    </target>
+    <target depends="-jdk-init,-jdk-presetdef-nbjpdastart" name="debug-nb">
+        <ant antfile="nbproject/ide-targets.xml" inheritall="false" target="debug-nb"/>
+    </target>
+</project>

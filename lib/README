@@ -1,0 +1,26 @@
+This folder contains some of the non neuroConstruct libraries needed for running the application.
+
+The win & linux/linux32 directories contain the machine specific code (e.g. dlls for windows).
+
+The following packages have been used:
+
+
+Java HDF tools
+From the HDF Group: http://hdf.ncsa.uiuc.edu/index.html
+Note: HDF5 functionality not yet tested on Mac. Mail PG if you'd like to use this functionality on that platform.
+
+
+Jython
+From http://www.jython.org/Project
+Used for the jython based scripting interface (in development)
+
+
+JUnit
+From http://www.junit.org
+Used for unit testing in development
+
+Java3D
+From https://java3d.dev.java.net
+Used for 3D display 
+
+

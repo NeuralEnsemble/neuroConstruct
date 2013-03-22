@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>This is a summary of the simulation parameters to assist reviewing of saved simulations in neuroConstruct.</comment>
+<entry key="Simulation temp">32.0</entry>
+<entry key="Duration">1000.0</entry>
+<entry key="Unit system">NEURON Units</entry>
+<entry key="Script format">Hoc</entry>
+<entry key="neuroConstruct random seed">1552831297</entry>
+<entry key="NEURON random seed">1908075144</entry>
+<entry key="Sim Config">TestSpikeSave (CG4, CG3, NetConn_CG3_CG4, Input_0, CG3_v, CG4_v)</entry>
+<entry key="Parallel configuration">Local machine, serial mode with 1 host, 1 processor
+</entry>
+<entry key="Populations">CG3 (Granule_98): 40; CG4 (Granule_98): 40</entry>
+<entry key="Script generation time">0.498</entry>
+<entry key="Global Cm">1.0E-8</entry>
+<entry key="neuroConstruct version">1.5.1</entry>
+<entry key="dt">0.02</entry>
+<entry key="Global Rm">3.33333344E8</entry>
+<entry key="Stimulation: 1">RandomSpikeTrain: [rate: 0.1, synaptic input: AMPA_GranGol] on CG3</entry>
+<entry key="Cell Mechanisms on Granule_98">[Gran_CaHVA_98 (9.084216E-9) on: [all], Gran_CaPool_98 (0.0) on: [all], Gran_H_98 (3.0905062E-10) on: [all], Gran_KA_98 (1.14567E-8) on: [all], Gran_KCa_98 (1.79811E-7) on: [all], Gran_KDr_98 (8.89691E-8) on: [all], Gran_NaF_98 (5.57227E-7) on: [all], GranPassiveCond (3.30033E-10) on: [all], AMPA_GranGol on: [all], GABAA on: [all], MF_AMPA on: [all], NMDA on: [all]]</entry>
+<entry key="GUI Mode">ALL_SHOW</entry>
+<entry key="Simulator">NEURON</entry>
+<entry key="Net Conn: 1">NetConn_CG3_CG4: CG3 -&gt; CG4 (MF_AMPA [thresh: -20.0, delay: 5.0, weight: 5.0]), Completely Random, Gen Src-&gt;Tgt, 20.0 per Src, max: MAX per Tgt, Pre: axons soma Post: dends soma, Max: MAX, min: 0.0, dim: r (num attempts: 100), APSpeed: 3.4028235E38</entry>
+<entry key="Num integration method">Fixed time step</entry>
+<entry key="Global Ra">300.0</entry>
+<entry key="Morph summary Granule_98">Segs:1_Secs:1_IntDivs:1</entry>
+</properties>

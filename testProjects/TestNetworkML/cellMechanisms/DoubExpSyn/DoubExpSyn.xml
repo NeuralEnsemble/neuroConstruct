@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channelml xmlns="http://morphml.org/channelml/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:meta="http://morphml.org/metadata/schema"
+xsi:schemaLocation="http://morphml.org/neuroml/schema../../Schemata/v1.7.3/Level2/ChannelML_v1.7.3.xsd"
+units="SI Units">
+
+<meta:notes>
+
+ChannelML description of a channel DoubExpSyn generated with project: TestNetworkML saved with neuroConstruct v1.2.3 on: 10:14:10, 23-Feb-09
+
+</meta:notes>
+
+
+
+<synapse_type name="DoubExpSyn">
+<status value="stable">
+<meta:contributor>
+<meta:name>Padraig Gleeson</meta:name>
+</meta:contributor>
+</status>
+<meta:notes>Simple example of a synaptic mechanism, which consists of a postsynaptic conductance which changes as 
+        double exponential function of time. Mappings exist for NEURON and GENESIS.</meta:notes>
+<meta:neuronDBref>
+<meta:modelName>Receptor properties</meta:modelName>
+<meta:uri>http://senselab.med.yale.edu/senselab/NeuronDB/receptors2.asp</meta:uri>
+</meta:neuronDBref>
+<doub_exp_syn max_conductance="1.0E-8" rise_time="0.001" decay_time="0.002" reversal_potential="0"></doub_exp_syn>
+</synapse_type>
+</channelml>

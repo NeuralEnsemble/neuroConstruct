@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="1.6.0_23" class="java.beans.XMLDecoder">
+
+<!-- This is a neuroConstruct project file. It's best to open this
+file with neuroConstruct, as opposed to editing it directly. 
+
+Note that this file is neuroConstruct specific and isn't any 
+part of NeuroML or any standardised XML specification. -->
+
+ <object class="ucl.physiol.neuroconstruct.project.BasicProjectInfo">
+  <void property="projectDescription">
+   <string>This is a simple project with a single cell placed randomly in a 3D rectangular box.
+
+Go to tab Generate, press Generate Cell Positions and Connections, and then to visualise the results, go to tab Visualisation and press View, with Latest Generated Positions selected in the drop down box.
+
+If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</string>
+  </void>
+  <void property="projectFileVersion">
+   <string>neuroConstruct v1.5.2</string>
+  </void>
+  <void property="projectName">
+   <string>TestMorphs</string>
+  </void>
+ </object>
+ <object class="ucl.physiol.neuroconstruct.project.RegionsInfo">
+  <void property="internalData">
+   <void method="get">
+    <string>Name</string>
+    <void method="add">
+     <string>SampleRegion</string>
+    </void>
+   </void>
+   <void method="get">
+    <string>Colour</string>
+    <void method="add">
+     <object class="java.awt.Color">
+      <int>255</int>
+      <int>255</int>
+      <int>255</int>
+      <int>255</int>
+     </object>
+    </void>
+   </void>
+   <void method="get">
+    <string>Description</string>
+    <void method="add">
+     <object class="ucl.physiol.neuroconstruct.project.RectangularBox">
+      <void property="parameterList">
+       <void index="4">
+        <void property="value">
+         <float>50.0</float>
+        </void>
+       </void>
+      </void>
+     </object>
+    </void>
+   </void>
+  </void>
+ </object>
+ <object class="ucl.physiol.neuroconstruct.project.CellGroupsInfo">
+  <void property="internalData">
+   <void method="get">
+    <string>Cell Packing Adapter</string>
+    <void method="add">
+     <object class="ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter"/>
+    </void>
+    <void method="add">
+     <object class="ucl.physiol.neuroconstruct.project.packing.SinglePositionedCellPackingAdapter"/>
+    </void>
+   </void>
+   <void method="get">
+    <string>Cell Type</string>
+    <void method="add">
+     <string>SampleCell</string>
+    </void>
+    <void method="add">
+     <string>Granule_98</string>
+    </void>
+   </void>
+   <void method="get">
+    <string>Priority</string>
+    <void method="add">
+     <int>10</int>
+    </void>
+    <void method="add">
+     <int>9</int>
+    </void>
+   </void>
+   <void method="get">
+    <string>Colour</string>
+    <void method="add">
+     <object class="java.awt.Color">
+      <int>255</int>
+      <int>0</int>
+      <int>0</int>
+      <int>255</int>
+     </object>
+    </void>
+    <void method="add">
+     <object class="java.awt.Color">
+      <int>80</int>
+      <int>138</int>
+      <int>253</int>
+      <int>255</int>
+     </object>
+    </void>
+   </void>
+   <void method="get">
+    <string>Region Name</string>
+    <void method="add">
+     <string>SampleRegion</string>
+    </void>
+    <void method="add">
+     <string>SampleRegion</string>
+    </void>
+   </void>
+   <void method="get">
+    <string>Cell Group Name</string>
+    <void method="add">
+     <string>SampleCellGroup</string>
+    </void>
+    <void method="add">
+     <string>GrC</string>
+    </void>
+   </void>
+  </void>
+ </object>
+ <object class="ucl.physiol.neuroconstruct.project.SimPlotInfo">
+  <void property="allSimPlots">
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.project.SimPlot">
+     <void property="cellGroup">
+      <string>SampleCellGroup</string>
+     </void>
+     <void property="cellNumber">
+      <string>*</string>
+     </void>
+     <void property="graphWindow">
+      <string>SampleGraph</string>
+     </void>
+     <void property="maxValue">
+      <float>50.0</float>
+     </void>
+     <void property="minValue">
+      <float>-90.0</float>
+     </void>
+     <void property="plotAndOrSave">
+      <string>Plot and save</string>
+     </void>
+     <void property="plotReference">
+      <string>SamplePlot</string>
+     </void>
+     <void property="segmentId">
+      <string>0</string>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.project.SimPlot">
+     <void property="cellGroup">
+      <string>GrC</string>
+     </void>
+     <void property="cellNumber">
+      <string>*</string>
+     </void>
+     <void property="graphWindow">
+      <string>GrC_v</string>
+     </void>
+     <void property="maxValue">
+      <float>50.0</float>
+     </void>
+     <void property="minValue">
+      <float>-90.0</float>
+     </void>
+     <void property="plotAndOrSave">
+      <string>Plot and save</string>
+     </void>
+     <void property="plotReference">
+      <string>GrC_v</string>
+     </void>
+     <void property="segmentId">
+      <string>0</string>
+     </void>
+    </object>
+   </void>
+  </void>
+ </object>
+ <object class="ucl.physiol.neuroconstruct.project.ProjectProperties">
+  <void property="preferredSaveFormat">
+   <string>Java Serialized Object Format</string>
+  </void>
+ </object>
+ <object class="ucl.physiol.neuroconstruct.utils.Display3DProperties">
+  <void property="backgroundColour3D">
+   <object class="java.awt.Color">
+    <int>144</int>
+    <int>166</int>
+    <int>232</int>
+    <int>255</int>
+   </object>
+  </void>
+  <void property="cellColour3D">
+   <object class="java.awt.Color">
+    <int>255</int>
+    <int>255</int>
+    <int>255</int>
+    <int>255</int>
+   </object>
+  </void>
+ </object>
+ <object class="ucl.physiol.neuroconstruct.neuron.NeuronSettings"/>
+ <object class="ucl.physiol.neuroconstruct.genesis.GenesisSettings">
+  <void property="nativeBlocks">
+   <void method="put">
+    <int>15</int>
+    <string>print &quot;All done!&quot;
+
+allchans</string>
+   </void>
+  </void>
+ </object>
+ <object class="ucl.physiol.neuroconstruct.psics.PsicsSettings"/>
+ <object class="ucl.physiol.neuroconstruct.simulation.SimulationParameters">
+  <void property="dt">
+   <float>0.02</float>
+  </void>
+  <void property="duration">
+   <float>100.0</float>
+  </void>
+  <void property="reference">
+   <string>Sim_4</string>
+  </void>
+  <void property="saveCopyGenSimFiles">
+   <boolean>true</boolean>
+  </void>
+  <void property="whatToRecord">
+   <int>2</int>
+  </void>
+ </object>
+ <object class="ucl.physiol.neuroconstruct.project.ElecInputInfo">
+  <void property="allStims">
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings">
+     <void property="amp">
+      <void property="fixedNum">
+       <float>0.2</float>
+      </void>
+     </void>
+     <void property="cellGroup">
+      <string>SampleCellGroup</string>
+     </void>
+     <void property="dur">
+      <void property="numberType">
+       <int>11</int>
+      </void>
+     </void>
+     <void property="reference">
+      <string>SampleIClamp</string>
+     </void>
+    </object>
+   </void>
+  </void>
+ </object>
+ <object class="ucl.physiol.neuroconstruct.project.SimConfigInfo">
+  <void property="allSimConfigs">
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.project.SimConfig">
+     <void property="cellGroups">
+      <void method="add">
+       <string>SampleCellGroup</string>
+      </void>
+     </void>
+     <void property="description">
+      <string>This is the default configuration of the Cell Groups, stimulations, plots, etc for this project</string>
+     </void>
+     <void property="inputs">
+      <void method="add">
+       <string>SampleIClamp</string>
+      </void>
+     </void>
+     <void property="name">
+      <string>Default Simulation Configuration</string>
+     </void>
+     <void property="plots">
+      <void method="add">
+       <string>SamplePlot</string>
+      </void>
+     </void>
+     <void property="simDuration">
+      <float>100.0</float>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.project.SimConfig">
+     <void property="cellGroups">
+      <void method="add">
+       <string>GrC</string>
+      </void>
+     </void>
+     <void property="name">
+      <string>Granc</string>
+     </void>
+     <void property="plots">
+      <void method="add">
+       <string>GrC_v</string>
+      </void>
+     </void>
+     <void property="simDuration">
+      <float>100.0</float>
+     </void>
+    </object>
+   </void>
+  </void>
+ </object>
+ <object class="ucl.physiol.neuroconstruct.project.SimpleNetworkConnectionsInfo"/>
+ <object class="ucl.physiol.neuroconstruct.project.ArbourConnectionsInfo"/>
+</java>

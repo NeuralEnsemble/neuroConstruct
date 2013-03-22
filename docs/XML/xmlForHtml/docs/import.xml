@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document>
+  <header>
+    <title>Importing various morphology formats into neuroConstruct</title>
+  </header>
+  <body>
+
+  <p>Outlined here are the various morphology file importation options available in neuroConstruct.</p>
+
+  <p><strong>Note:</strong> it is essential to examine the imported cell
+  carefully before using it in any simulation.
+  Two potential problems which should be checked are: </p>
+
+  <ul><li><strong>Point of connection of dendritic branches to the soma</strong>, e.g. in Neurolucida, there is no explicit soma, but usually an outline.
+  There will normally be a root segment added and this can serve as a basis on which to manually build the soma</li>
+  <li><strong>Zero length sections</strong>, NEURON is fine with consecutive pt3d points being equal (i.e. segment length zero)
+	  but the standard mapping of this will result in an error in GENESIS. A check on the <a  href="Glossary_gen.html#Morphological validity" >
+  Cell Validity</a> will reveal any problem segments. (Note that only the first soma segment should be spherical, which is specified by making start point = end point)</li></ul>
+
+  <p>To reiterate, just because a morphology file is successfully imported doesn't mean it is immediately suitable
+  for use in a neuronal model. Bear in mind that whoever created the file may have had different goals from creation
+  of a single cell model (as with Neurolucida files), or may have created it specifically for a particular simulator, with the
+  eccentricities of that platform in mind.</p>
+  
+  <p>To import a morphology file: Open a new or existing project, go to tab <strong>Cell Types</strong>, click on <strong>Add New Cell Type...</strong> and select one of the 
+  format specific readers, e.g. <strong>GENESISMorphReader</strong>.</p>
+
+    <section>
+      <title>GENESIS</title>
+
+
+<p><a  href="Glossary_gen.html#GENESIS" >GENESIS</a> morphology files can be imported. These are *.p readcell compatible files. The proper
+format for these files is specified <a href ="http://www.genesis-sim.org/GENESIS/Hyperdoc/Manual-25.html#readcell">here</a>.
+</p>
+
+<p>This is a well described format and there exists a number of models containing cells specified in this way.
+However, the whole specification is not supported in neuroConstruct, an inexhaustive compliance list follows:</p>
+<ul>
+<li>Each line is included in the target cell as a <a  href="Glossary_gen.html#Segment" >Segment</a> with it's own
+<a  href="Glossary_gen.html#Section" >Section</a>, i.e. no cables are automatically built</li>
+<li>Relative or absolute coords are supported, but only cartesian, not polar coords</li>
+<li>RM, RA, ELEAK, etc are ignored as they usually refer to variables set outside the file</li>
+<li>When a *compt statement is encountered, a Section group is created for all subsequent segments, until another *compt is encountered</li>
+<li>*spherical will result in a zero length segment</li>
+<li>Channel densities after the coords in segment lines are not imported (however, as Section Groups are created
+from the *compt statements, these should be easy to add later)</li>
+</ul>
+
+<p>Note that cells specified in this way assume the target platform is GENESIS and compartmental modelling,
+as opposed to cable modelling, will be used. Therefore the compartmentalisation will not be ideal for platforms such as NEURON.
+This issue has been addressed with the introduction of <a  href="Glossary_gen.html#Compartmentalisation" >Compartmentalisations</a></p>
+
+</section>
+
+<section>
+  <title>NEURON</title>
+
+
+<p>A subset of <a  href="Glossary_gen.html#NEURON" >NEURON</a> files can be imported. In contrast to GENESIS, there is no fixed format in 
+    NEURON for specifying morphologies (note however, MorphML export is being implemented in a new vesion of NEURON, see 
+    <a  href="http://neuroml.svn.sourceforge.net/viewvc/neuroml/nrn2NeuroML/">here</a>) However, a number of models exist with the 
+    cellular morphology in separate files, many of which were created by the ntscable program. These files are usually characterised 
+    by a large number of lines of coordinates (lines of 4 floats) containing information accessed previously in the file by the fscan()
+    command.</p>
+
+<p> The following is a summary of what can be imported from a given NEURON morphology file:</p>
+<ul>
+<li>create statements, followed by section (array) names, e.g.: create soma, dendrite_1[31]</li>
+<li>connect statements, e.g. soma connect dendrite_1[0] (0), 0.5</li>
+<li>simple for loops</li>
+<li>pt3dclear() and pt3dadd()</li>
+<li>fscan() will attempt to retrieve the next float on a line not recognised as one of the previous commands</li>
+<li>Comments are ignored, forward slashes, used to spread single commands over a number of lines, are recognised as such</li>
+</ul>
+
+<p>This functionality has been tested for a handful of files, but if there are examples of files which you feel are in a
+format which could easily be imported please <a  href="contact.html" >get in touch</a></p>
+
+</section>
+
+
+<section>
+  <title>Cvapp (SWC files)</title>
+
+
+<p>The file format used by <a  href="Glossary_gen.html#Cvapp" >Cvapp</a> (extension SWC) is also supported. It was developed to
+cover most of the information common between in <a  href="Glossary_gen.html#Neurolucida" >Neurolucida</a>,
+<a  href="Glossary_gen.html#NEURON">NEURON</a> and
+<a  href="Glossary_gen.html#GENESIS">GENESIS</a> formats. This format is pretty straightforward, but as mentioned,
+care must be taken with the <strong>first soma segment</strong>. Check the morphology when imported and ensure the root segment 
+is as intended. Note that as of v1.0.4, there was a change in the import of SWC format files, to automatically create 
+<a  href="Glossary_gen.html#Section" >Sections</a> from the 3D points between splits in the dendritic morphologies, resulting in a 
+lower number of Sections but the same number of <a  href="Glossary_gen.html#Segment" >Segments</a>. See the note on 
+<a  href="Glossary_gen.html#Electrotonic length" >Electrotonic length</a> before using those morphologies in simulations.</p>
+
+</section>
+
+
+<section>
+  <title>MorphML</title>
+
+<p>Files can be imported and exported in <a  href="Glossary_gen.html#MorphML" >MorphML</a> format. </p>
+
+<p>Normally the most recent version of the MorphML specifications will be used by neuroConstruct, but to check compliance,
+<a href="http://www.morphml.org:8080/NeuroMLValidator/">this web service</a> should be used.</p>
+
+<p>There is a close relation between the internal model of a cell in neuroConstruct and the information present in a MorphML file,
+so exporting and importing a cell in this format should lead to identical cells (though the names need to be different 
+if they are in the same project).</p>
+
+</section>
+
+<section>
+  <title>Neurolucida</title>
+
+
+<p>The <a href="Glossary_gen.html#Neurolucida">Neurolucida</a> file format is used by MicroBrightField products to store information
+on neuronal reconstructions. Both binary and ASCII format files can be generated by these products, and at this time neuroConstruct can import
+ASCII (*.asc) format V3 files (a heirarchical file structure with "CellBody", "Dendrite", etc). The format allows recording of various anatomical features, not only neuronal processes such as dendrites and cell bodies, but
+can record other microanatomical features of potential interest to anatomists. Not all of these features will be relevant when constructing
+a single cell computational model. Go to <strong>Cell Types -> Add New Cell Type</strong> and select <strong>NeurolucidaReader</strong> in the first drop down box.
+Specify the location of the morphology file and choose a name for the Cell Type. A dialog box will be presented with some options as mentioned below.
+</p>
+
+<p> The main points to note when importing Neurolucida files are:</p>
+
+<ul>
+<li>The soma is normally specified in ASC files as an outline in 2D. An import option is presented for whether to include this information
+in the neuroConstruct cell, to give a visual guideline of where the real soma should be placed. Obviously this will not
+represent a sensible construct to be simulated, and so should be removed before using the morphology (View the cell in 3D with solid Segments,
+select the first Segment in the outline and click on the <strong>Edit...</strong> button. The whole Section can now be deleted).</li>
+
+<li>Another import option concerns how to handle the radii of daughter sections.This is important for example when a small dendrite branches off
+	from a thick main dendrite. The first point on the small dendrite will have a smaller radius than the thick dendrite, and there are two
+	ways to deal with the segment which connects them. The first is to have a truncated cone starting with the larger radius tapering to the
+	radius of the first point on the small dendrite. This probably will lead to more surface area on the small dendrite than intended.
+	The second option is to have the start radius equal to the end radius on this connecting segment. The choice of which approach to take
+	is presented at import of a new Neurolucida file and cannot be changed later.
+</li>
+
+<li>A root Segment is added to form the basis of the real soma. This can be edited to produce a spherical segment filling the soma outline
+or can be the start of a multi Segment Section representing a soma with complex shape.
+</li>
+
+<li>Trees will normally be considered dendrites (and so added to the <a href="Glossary_gen.html#Section Group">group</a>
+<strong>dendrite_group</strong>), unless the property (Axon) is found at the start of the tree.</li>
+<li>As the tree is descended, each line of coordinates will be added as a new Segment. The same Section will be used until
+a branch point is encountered. At this point a child Section will be created. All new Sections will be specified as connected at point 1
+along parent. If the first point on a new Section is equal to the parent endpoint, this point will be used as the start point of a new Section
+and the next line will specify the end point of the first Segment. If the first point on the new Section
+is different from the parent endpoint, a Segment will be added connecting the endpoint to this first point.
+</li>
+
+<li>Statements such as (Color Red) will cause the following segments to be added to the
+<a href="Glossary_gen.html#Section Group">group</a> <strong>colour_red</strong>, etc.</li>
+<li>All (FilledCircle) type statements highlighting boutons, etc. are ignored.</li>
+<li>If more than one cell is present in a single ASC file, all info on the dendrites of each cell will be imported, along with
+each soma outline, and a single root Segment will be created. Select which of the cells to save and based on proximity to the soma outline,
+and possibly the colouring, remove all dendritic trees not associated with the chosen cell. In the future,
+a more automated way of separating the cells can be added, if required.</li>
+</ul>
+
+<p>This functionality uses the bulk of the information in Neurolucida files which might be needed for neuronal modelling.
+Please get in <a  href="contact.html" >contact</a> if there you have example files, some of the information in which you feel could be useful
+in other modelling scenarios.</p>
+
+</section>
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+  </body>
+</document>
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document>
+  <header>
+    <title>Tutorial of basic neuroConstruct functionality</title>
+  </header>
+  <body>
+
+
+
+      <section>
+      <title>Set up project and add cell</title>
+
+      <p><a  href="../install.html#Building+and+running" >Run</a> neuroConstruct. Click on <strong>File -> New Project</strong></p>
+
+      <p>Enter the <a href="../Glossary_gen.html#Project">project</a> name and the directory in which to place
+          the main project folder. Click <strong>OK</strong></p>
+
+
+      <p>Ignore the offer to create a few sample objects in the new project. That would be too easy.</p>
+
+
+      <p>Add a <a  href="../Glossary_gen.html#Cell Type">Cell Type</a>. Select the tab <strong>Cell Types</strong> and
+press <strong>Add New Cell Type to Project</strong>.
+
+Add a SimpleCell to the project (select in drop down menu), naming it Simple. <a  href="../celltypes.html">More on Cell Types</a></p>
+
+
+<p>Now press the <strong>View/edit morphology</strong> button below the panel giving details on the cell. This will change to the <strong>Visualisation</strong> tab and display the cell in 3D. For
+    various tips on what's possible when the cell is displayed in 3D see <a href="../Glossary_gen.html#3D View of Cells">here</a>.</p>
+
+</section>
+
+<section>
+      <title>Add channel mechanism</title>
+
+      <p>There is a morphologically reasonable cell in the project now, but there is something missing. Click on the <strong>Validate</strong> button below the main menu.
+          This signals the fact that there are no cell density mechanisms present. A cell needs these for simulation of realistic electrophysiological behaviour. Other project or cell specific errors
+      will appear here as they occur.</p>
+
+      <p>First a cell mechanism will be added to the project. Go to tab <strong>Cell Mechanisms</strong>. Click <strong>Add ChannelML from Template</strong>. This presents a list
+    of <a href="../Glossary_gen.html#Channel Mechanism">Channel Mechanisms</a> and <a href="../Glossary_gen.html#Synaptic Mechanism">Synaptic Mechanisms</a> whose parameters are
+    specified in <a href="../Glossary_gen.html#ChannelML">ChannelML</a> that serve as templates for your own channels/synapses. Select <strong>Leak Conductance</strong>, which represents
+a passive conductance on the membrane of the cell, i.e. current will leak out/in to the cell if its membrane potential is different from the reversal potential of this channel. Press <strong>OK</strong>
+and accept the name of the cell mechanism. You are presented with a summary of the parameters of the mechanism. Select the second tab <strong>ChannelML file</strong> to see what's actually in the XML file.
+Note: it is also possible to use a cell mechanism based on a NMODL file or GENESIS channel script. See <a href="../importneuron.html">here</a> for an outline of the process</p>
+
+<p>Close this and return to <strong>Visualisation</strong>. Select the cell name in the drop down box and press <strong>View</strong>. Select <strong>Cell density mechanisms</strong> in the lower right drop
+down box and press <strong>Edit density mechanisms</strong>. Under <strong>Cell Mechanisms</strong> select the mechanism you've just added. Select <strong>all</strong> and press the right arrow to indicate this mechanism is
+present on all sections. Accept the default value for maximum conductance density. Press <strong>OK</strong>. Now click <strong>Validate</strong> again and you'll see that the cell meets the minimum requirements for
+use in a simulation.</p>
+
+</section>
+
+<section>
+      <title>Packing in 3D</title>
+
+      <p>Now we need to specify a <a href="../Glossary_gen.html#Region">Region</a> in which to place the cells. Go to the tab
+          <strong>Regions</strong>, select <strong>Add New Region</strong>. Accept the defaults and press <strong>OK</strong>.</p>
+
+
+      <p>Go to the tab <strong>Cell Groups</strong> and click <strong>New Cell Group</strong>. This results in a dialog to
+specify the name, Cell Type (here the only choice is Simple),
+which Region the cells will be placed in, the colour, and the <a  href="../Glossary_gen.html#Packing Pattern">packing pattern</a>.
+Press the <strong>Choose...</strong> button next to Packing Pattern. In the field for Cell Number, enter the number
+of cells you want randomly placed in the Region.</p>
+
+<p>A dialog box will ask if you wish to record the membrane potential of the cell during simulations. Press <strong>Yes</strong>. It would be good to also view the membrane potential while the simulation is running.
+    Go to tab <strong>Input/Output</strong>. Click on the entry for saving the voltage in the lower table and click <strong>Edit selected plot</strong>. This dialog specified what variable to save and/or plot during a simulation,
+    which cells of the Cell Group to record, etc. In the bottom drop down box select <strong>Plot and save</strong>. Press <strong>OK</strong>.
+</p>
+
+<p>A stimulation must be applied to the cell or it will be an uninteresting simulation. Still at tab <strong>Input/Output</strong>,
+    select <strong>Add electrophysiological input</strong>. Keep the default values (a single current pulse on the soma of all cells in the Cell Group) and press <strong>Ok</strong>.</p>
+
+
+<p>Select the tab <strong>Generate</strong>. Press the <strong>Generate Cell Positions and Connections</strong> button.</p>
+
+<p>Go to <strong>Visualisation</strong>. In the drop down box, select <em>Latest Generated Positions</em>.
+    Press <strong>View</strong>.</p>
+
+</section>
+
+<section>
+      <title>Running/replaying simulation</title>
+
+      <p>If <a href="../Glossary_gen.html#NEURON">NEURON</a> or <a href="../Glossary_gen.html#GENESIS">GENESIS</a> are installed (assuming NEURON) go to tab
+<strong>Export</strong> and select the <strong>NEURON</strong> tab.
+Select the <strong>Show 3D potential plot</strong> checkbox, and click <strong>Create hoc simulation</strong>. This will create the hoc code
+for the main file, and a template for the cell, as well as <a href="../Glossary_gen.html#NMODL">NMODL</a> code for the channels. The NMODL files
+will be compiled and a confirmation shown.
+</p>
+
+<p>Click on <strong>Run Simulation</strong>. This should start NEURON and run the simulation you have just created.
+    If there is a problem starting, and it is installed correctly go to <strong>Settings -> General Properties</strong> and check the entries there.</p>
+
+<p>Back in neuroConstruct, once the simulation has finished, go to tab <strong>Visualisation</strong>, and click on <strong>Previous Simulations</strong>
+You will see a list of all recorded simulations. Click on the simulation just completed and click <strong>Load Simulation</strong>.
+The generated cell appears again. Press <strong>Replay</strong> to view the recorded simulation.
+</p>
+<p>Select the Cell Group and Cell Number in the drop down boxes followed by <strong>Plot selected</strong>. This shows the recorded
+voltage trace. Individual cells can also be selected by clicking on them in the 3D view. Note however, if the cell is inside a transparent
+3D Region or if there are other cells close by it may be difficult to select the correct object. Click <strong>3D Settings</strong> and deselect displaying of Regions</p>
+
+
+</section>
+
+<section>
+      <title>Further things to try...</title>
+
+
+      <p>Change the layout of the cells generated. In tab <strong>Cell Groups</strong>, click the table entry under
+          <strong>Cell Packing Adapter</strong>. This will open up the packing pattern dialog. If the random packing adapter is selected,
+          the number of cells to pack into the Region can be changed. There are also options to change settings on whether the cell bodies
+          can overlap, and whether the whole cell body should stay inside the region, or just the centres. The packing pattern itself can be changed too,
+          from randomly placed to a single cell placed at a precise 3D point, a hexagonal pattern, cubic close packed, etc.
+          More on the various types of <a  href="../Glossary_gen.html#Packing Pattern">packing patterns available</a>.</p>
+
+
+      <p>Change the size/shape of the Region. Go to tab <strong>Region</strong>, select the line with the Region details,
+        click on <strong>Edit Selected Region</strong>, and either change the position and size of the Rectangular region
+        or change it to a Spherical Region placed in 3D.</p>
+
+       <p>Edit the morphology of the cell. Go to tab <strong>Visualisation</strong>, select <strong>3D Settings</strong> and make sure display is on <strong>All solid</strong>
+           and the 3D axes are not shown. Save these settings and view the cell you've added. Click on any of the segments. Make sure <strong>Pick Segments/Sections</strong> is selected
+           in the lower right drop down box. It will turn red (if there are any other segments in the same section they will turn yellow). Click on <strong>Edit...</strong> and you can alter the end points, etc.
+           At the drop down box in the Segment selector, there are a number of functions for adding new segments, specifying axonal arbours for <a href="../Glossary_gen.html#Volume Based Connection">Volume Based Connections</a>, etc.</p>
+
+
+    <p>Add some other Cell Mechanisms to the project (e.g. <strong>NaConductance</strong>, <strong>KConductance</strong>) and apply these to the cell membrane in the same way as the leak conductance.</p>
+
+
+</section>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+  </body>
+</document>

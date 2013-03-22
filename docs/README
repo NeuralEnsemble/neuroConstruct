@@ -1,0 +1,14 @@
+This is the folder for the documentation of neuroConstruct
+
+Contents:
+
+XML:        This is the XML source of the documentation. This is translated (via XSL and Forrest 
+            (http://forrest.apache.org/)) into HTML
+
+website:    This is a version of the public website, generated from the contents of XML
+
+helpdocs:   This is a version of the documentation with less graphics, used for the neuroConstruct 
+            internal help viewer
+
+api:        This should conatin the Javadoc for the code. To generate this use "ant javadoc". 
+            See website/docs/install.html

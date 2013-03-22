@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+
+<plotlist xmlns="http://www.physiol.ucl.ac.uk/research/silver_a/neuroConstruct/"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.physiol.ucl.ac.uk/research/silver_a/neuroConstruct/ CellProcessPlot.xsd">
+
+
+    <parameter>
+        <parametername>Max Conductance Density</parametername>
+        <symbol>gmax</symbol>
+    </parameter>
+
+    <parameter>
+        <parametername>Reversal Potential</parametername>
+        <symbol>e</symbol>
+    </parameter>
+
+    <plot>
+        <plotname>Current out of cell</plotname>
+        <independentvariable>v</independentvariable>
+        <maxvalue>100</maxvalue>
+        <minvalue>-100</minvalue>
+        <expression>gbar * (v-e)</expression>
+    </plot>
+
+
+</plotlist>
