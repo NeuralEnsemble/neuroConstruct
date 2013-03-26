@@ -1,3 +1,4 @@
+/nbproj/nbproject/private/private.xml
 /pythonnC/TestPython/savedNetworks/nmlt.nml
 /MPICH2
 NeuroML2
@@ -18,4 +19,4 @@ classes
 *.bak
 
 *py.class
-
+osb2
