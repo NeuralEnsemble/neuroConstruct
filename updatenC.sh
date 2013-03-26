@@ -53,7 +53,9 @@ fi
 
 
 if [ ! -d osb/showcase/neuroConstructShowcase ]; then
-    git@github.com:OpenSourceBrain/neuroConstructShowcase.git
+    cd osb/showcase
+    git clone git@github.com:OpenSourceBrain/neuroConstructShowcase.git
+    cd -
 fi
 
 
