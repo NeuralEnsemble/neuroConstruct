@@ -2,7 +2,13 @@
 /pythonnC/TestPython/savedNetworks/nmlt.nml
 /MPICH2
 NeuroML2
-osb/*
+
+osb/cereb*
+osb/basal*
+osb/invertebrate
+osb/hippo*
+osb/showcase
+
 templates/SBML2NEURON
 templates/xmlTemplates/Examples
 templates/xmlTemplates/Schemata
@@ -17,6 +23,7 @@ simulations
 classes
 *.jar
 *.bak
+*.*~
 
 *py.class
 osb2
