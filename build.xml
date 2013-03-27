@@ -6,8 +6,7 @@
 
      Type ant -p to view all possible build targets
      
-     NOTE: if the jar file (neuroConstruct_x.x.x.jar) is present, nC.bat/nC.sh can
-     also be used to run the application
+     NOTE: nC.bat/nC.sh can also be used to build (nC.bat -make OR ./nC.sh -make) run the application
      
 -->
 
@@ -28,7 +27,7 @@
   
     <tstamp/>
     <property name="name" value="neuroConstruct"/>
-    <property name="version" value="1.6.1"/>
+    <property name="version" value="1.7.0"/>
     <property name="version.impl" value="${version}"/>
     <property name="year" value="2012"/>
 

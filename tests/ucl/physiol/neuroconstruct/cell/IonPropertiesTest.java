@@ -5,7 +5,7 @@
 
 package ucl.physiol.neuroconstruct.cell;
 
-import org.neuroml.test.MainTest;
+import ucl.physiol.neuroconstruct.test.MainTest;
 import org.junit.runner.Result;
 import org.junit.Test;
 import static org.junit.Assert.*;
