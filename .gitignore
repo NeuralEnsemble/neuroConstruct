@@ -27,3 +27,6 @@ classes
 
 *py.class
 osb2
+
+lib/jython/cachedir/packages/*.pkc
+lib/jython/cachedir/packages/packages.idx
