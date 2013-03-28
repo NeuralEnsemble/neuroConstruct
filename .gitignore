@@ -13,6 +13,8 @@ templates/SBML2NEURON
 templates/xmlTemplates/Examples
 templates/xmlTemplates/Schemata
 
+nbproj/nbproject/private
+
 /testProjects/TEMP_PROJECTS
 /testProjects/*/savedNetworks
 generatedNeuroML
