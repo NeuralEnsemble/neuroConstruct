@@ -144,7 +144,28 @@ public class MorphMLReader extends XMLFilterImpl
                     this.foundSomaSection = true;
                 }
             }
-            
+
+            else if (getAncestorElement(3).equals(MorphMLConstants.CABLE_ELEMENT) &&
+                     getAncestorElement(2).equals(MorphMLConstants.PROPS_ELEMENT) &&
+                     getAncestorElement(1).equals(MetadataConstants.PROP_ELEMENT))
+            {
+                logger.logComment("Looking at a property...");
+
+                if (getCurrentElement().equals(MetadataConstants.PROP_TAG_ELEMENT))
+                {
+                    currentPropertyTag = contents;
+                }
+                if (getCurrentElement().equals(MetadataConstants.PROP_VALUE_ELEMENT))
+                {
+                    if (currentPropertyTag.equals(MorphMLConstants.NUMBER_INTERNAL_DIVS_PROP))
+                    {
+                        logger.logComment("Setting number of internal divisions");
+                        this.currentSection.setNumberInternalDivisions(Integer.parseInt(contents));
+                    }
+                }
+
+            }
+
             else if (getAncestorElement(3).equals(MorphMLConstants.SEGMENT_ELEMENT) &&
                      getAncestorElement(2).equals(MorphMLConstants.PROPS_ELEMENT) &&
                      getAncestorElement(1).equals(MetadataConstants.PROP_ELEMENT))
@@ -165,7 +186,7 @@ public class MorphMLReader extends XMLFilterImpl
                         }
                         currentSegment.setComment(contents);
                     }
-                    else if (currentPropertyTag.equals(MorphMLConstants.FRACT_ALONG_PARENT_ATTR) || 
+                    else if (currentPropertyTag.equals(MorphMLConstants.FRACT_ALONG_PARENT_ATTR) ||
                         currentPropertyTag.equals(MorphMLConstants.FRACT_ALONG_PARENT_ATTR_pre_v1_7_1))
                     {
                         currentSegment.setFractionAlongParent(Float.parseFloat(contents));
@@ -543,11 +564,11 @@ public class MorphMLReader extends XMLFilterImpl
 
              currentPropertyTag = attributes.getValue(MetadataConstants.PROP_TAG_ELEMENT); 
              if (currentPropertyTag!=null && currentPropertyTag.equals(MorphMLConstants.NUMBER_INTERNAL_DIVS_PROP))
-                 {
-                     logger.logComment("Setting number of internal divisions");
-                     this.currentSection.setNumberInternalDivisions(
-                             Integer.parseInt(attributes.getValue(MetadataConstants.PROP_VALUE_ELEMENT)));
-                 }
+             {
+                 logger.logComment("Setting number of internal divisions");
+                 this.currentSection.setNumberInternalDivisions(
+                         Integer.parseInt(attributes.getValue(MetadataConstants.PROP_VALUE_ELEMENT)));
+             }
          }   
 
          else if (getCurrentElement().equals(MorphMLConstants.CABLE_GROUP_ELEMENT)
@@ -588,10 +609,11 @@ public class MorphMLReader extends XMLFilterImpl
          else if (getCurrentElement().equals(MorphMLConstants.INHOMO_PARAM)
                   && getAncestorElement(1).equals(MorphMLConstants.CABLE_GROUP_ELEMENT))
          {
+             //System.out.println("attributes: "+attributes.);
              String name = attributes.getValue(MorphMLConstants.INHOMO_PARAM_NAME_ATTR);
              String variable = attributes.getValue(MorphMLConstants.INHOMO_PARAM_VARIABLE_ATTR);
 
-             logger.logComment("     Have found an inhomogeneous_param: " + name+", var: "+variable);
+             logger.logComment("     Have found an inhomogeneous_param: " + name+", var: "+variable, true);
 
              currentParamGroup = new ParameterisedGroup();
              currentParamGroup.setName(name);
@@ -1161,6 +1183,7 @@ public class MorphMLReader extends XMLFilterImpl
 */
 
 
+            //logger.setThisClassVerbose(true);
 
             //File f = new File("..\\copynCmodels\\TraubEtAl2005\\generatedNEURON\\ttt.xml");
 
