@@ -8,11 +8,11 @@ REM  to date. Note this script may change as the location of the repositories ch
 set NML_EX_DIR=templates\xmlTemplates\Examples
 set NML_SC_DIR=templates\xmlTemplates\Schemata
 set SBML2NEU_SC_DIR=templates\SBML2NEURON
-set LEMS_SC_DIR=lems
 set NEUROML2_DIR=NeuroML2
 
-set NC_EXAMPLES=nCexamples
-set NC_MODELS=nCmodels
+set OSB_SHOWCASE_DIR=osb\showcase
+set NC_SHOWCASE_DIR=osb\showcase\neuroConstructShowcase
+
 
 
 if not exist %NML_EX_DIR% (
@@ -36,12 +36,6 @@ echo Updating the SBML2NEURON files from the NeuroML Sourceforge repository...
 svn update %SBML2NEU_SC_DIR%
 
 
-if exist %LEMS_SC_DIR% (
-    echo Moving old lems directory to lems_old, as everything needed for NeuroML 2/LEMS is in the NeuroML2 folder
-    move %LEMS_SC_DIR% lems_old
-)
-
-
 if not exist %NEUROML2_DIR% (
     svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/NeuroML2 %NEUROML2_DIR%
 )
@@ -51,21 +45,24 @@ svn update %NEUROML2_DIR%
     
 
 echo Updating the main neuroConstruct code...
-svn update
+git pull
 
 
-if not exist %NC_EXAMPLES% (
-    svn co svn://87.106.103.176:3999/models/examples/trunk/nCexamples %NC_EXAMPLES%
+if not exist %OSB_SHOWCASE_DIR% (
+	echo Creating %OSB_SHOWCASE_DIR%
+    mkdir %OSB_SHOWCASE_DIR%
 )
 
-echo Updating the neuroConstruct core functionality examples
-svn update %NC_EXAMPLES%
-
-
-if not exist %NC_MODELS% (
-    svn co svn://87.106.103.176:3999/models/models/trunk/nCmodels %NC_MODELS%
+if not exist %NC_SHOWCASE_DIR% (
+	echo ooo
+	echo Cloning neuroConstruct showcase examples into %NC_SHOWCASE_DIR%
+    cd %OSB_SHOWCASE_DIR%
+    git clone git@github.com:OpenSourceBrain/neuroConstructShowcase.git
 )
 
+echo Updating the neuroConstruct showcase examples
+cd %NC_SHOWCASE_DIR%
+git pull
+cd ..\..\..
 
-echo Updating the neuroConstruct detailed model examples
-svn update %NC_MODELS%
+
