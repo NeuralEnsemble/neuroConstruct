@@ -25,7 +25,6 @@
  */
 package ucl.physiol.neuroconstruct.project;
 
-import java.util.logging.Level;
 import ucl.physiol.neuroconstruct.cell.converters.MorphologyException;
 import ucl.physiol.neuroconstruct.utils.*;
 
@@ -714,12 +713,12 @@ public class Expand {
                     if (cell.getAllSegments().size() > maxSeg)
                     {
                         nml2Page.addRawHtml("Cell: " + cell.getInstanceName()+" has "+cell.getAllSegments().size()+" segments.<br/><br/>"
-                                + "This is too large to display as NeruoML v2.x. <br/><br/>"
+                                + "This is too large to display as NeuroML v2.x. <br/><br/>"
                                 + "Please clone the project and/or download neuroConstruct to view the file and visualise the morphology. ");
                     }
                     else
                     {
-                        String nml2 = MorphMLConverter.getCellInNeuroMLFormat(cell, project, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2_ALPHA, true);
+                        String nml2 = MorphMLConverter.getCellInNeuroMLFormat(cell, project, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2_BETA, true);
                         nml2Page.addBreak();
                         nml2Page.addRawHtml(preXML);
                         nml2Page.addRawHtml(nml2);
@@ -861,7 +860,7 @@ public class Expand {
                         try {
 
                             String nml2string = XMLUtils.transform(cmlCm.getXMLDoc().getXMLString("", false),
-                                                                 ProjectStructure.getChannelML2NeuroML2alpha());
+                                                                 ProjectStructure.getChannelML2NeuroML2beta());
 
                             SimpleXMLDocument nml2Doc = SimpleXMLReader.getSimpleXMLDoc(nml2string);
 
@@ -1107,7 +1106,8 @@ public class Expand {
 
         paths.add("osb/cerebellum/cerebellar_nucleus_cell/CerebellarNucleusNeuron/neuroConstruct/CerebellarNucleusNeuron.ncx");
         paths.add("osb/cerebellum/networks/GranCellLayer/neuroConstruct/GranCellLayer.ncx");
-            paths.add("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
+        paths.add("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
+            paths.add("osb/invertebrate/celegans/CElegansNeuroML/CElegans/CElegans.ncx");
 
         //paths.add("models/LarkumEtAl2009/LarkumEtAl2009.ncx");
 
@@ -1117,7 +1117,6 @@ public class Expand {
         if (all)
         {
             paths.add("osb/cerebellum/cerebellar_granule_cell/GranCellSolinasEtAl10/neuroConstruct/GranCellSolinasEtAl10.ncx");
-            paths.add("osb/invertebrate/celegans/CElegansNeuroML/CElegans/CElegans.ncx");
 
             paths.add("osb/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx");
             paths.add("osb/cerebral_cortex/neocortical_pyramidal_neuron/RothmanEtAl_KoleEtAl_PyrCell/neuroConstruct/RothmanEtAl_KoleEtAl_PyrCell.ncx");

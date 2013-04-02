@@ -523,8 +523,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JMenuItem jMenuItemUnzipProject = new JMenuItem();
     JMenuItem jMenuItemImportLevel123 = new JMenuItem();
     
-    JMenu jMenuExamples = new JMenu();
-    JMenu jMenuModels = new JMenu();
+    //JMenu jMenuExamples = new JMenu();
+    //JMenu jMenuModels = new JMenu();
     JMenu jMenuOsbModels = new JMenu();
     
     
@@ -1010,8 +1010,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         });
         
         
-        jMenuExamples.setText("Load Example Project");
-        jMenuModels.setText("Load Detailed Model");
+        //jMenuExamples.setText("Load Example Project");
+        //jMenuModels.setText("Load Detailed Model");
         jMenuOsbModels.setText("Open Source Brain Project");
 
 
@@ -8663,7 +8663,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jMenuFile.addSeparator();
         jMenuFile.add(jMenuItemImportLevel123);
         jMenuFile.addSeparator();
-        
+
+        /*
         jMenuFile.add(jMenuExamples);
 
         jMenuExamples.removeAll();
@@ -8690,7 +8691,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     }
                 });
             }
-        }
+        }*/
         /*
         jMenuFile.add(jMenuModels);
 
@@ -8717,9 +8718,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             }
         }
          
+        jMenuFile.addSeparator();
          */
 
-        jMenuFile.addSeparator();
 
         if (GeneralUtils.includeOsbProjects())
         {
@@ -8729,6 +8730,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             ArrayList<File> osbProjs = new ArrayList<File>();
             ProjectStructure.findProjectFile(ProjectStructure.getOsbProjsDir(), osbProjs);
+
+            HashMap<String, JMenu> menu1 = new HashMap<String, JMenu>();
+            HashMap<String, JMenu> menu2 = new HashMap<String, JMenu>();
+            HashMap<String, JMenu> menu3 = new HashMap<String, JMenu>();
             
             for(File projFile: osbProjs)
             {
@@ -8738,8 +8743,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     if (projFile!=null && projFile.exists())
                     {
                         JMenuItem jMenuRecentFileItem = new JMenuItem();
-                        jMenuRecentFileItem.setText(projFile.getAbsolutePath());
-                        jMenuOsbModels.add(jMenuRecentFileItem);
 
                         jMenuRecentFileItem.addActionListener(new ActionListener()
                         {
@@ -8748,6 +8751,47 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                 jMenuRecentFile_actionPerformed(e);
                             }
                         });
+                        jMenuRecentFileItem.setToolTipText(projFile.getAbsolutePath());
+
+                        String prefName = projFile.getName();
+                        File tempFile = new File(projFile.getParent());
+                        //System.out.println("----tempFile: "+tempFile);
+                        if (tempFile.getName().equals("neuroConstruct")) {
+                            tempFile = tempFile.getParentFile();
+                            prefName = tempFile.getName();
+                        }
+                        //System.out.println("tempFile: "+tempFile);
+
+                        jMenuRecentFileItem.setText(prefName);
+
+                        if (tempFile.equals(ProjectStructure.getOsbProjsDir()))
+                        {
+                            jMenuOsbModels.add(jMenuRecentFileItem);
+
+                        }
+                        else
+                        {
+                            String menu1Name = tempFile.getParentFile().getName();
+                            String menu2Name = tempFile.getParentFile().getParentFile().getName();
+                            
+                            if (!menu2.containsKey(menu2Name)) {
+                                JMenu jMenu2 = new JMenu(betterName(menu2Name));
+                                menu2.put(menu2Name, jMenu2);
+                                jMenuOsbModels.add(jMenu2);
+                            }
+                            JMenu jMenu2 = menu2.get(menu2Name);
+                            if (!menu1.containsKey(menu1Name)) {
+                                JMenu jMenu1 = new JMenu(betterName(menu1Name));
+                                menu1.put(menu1Name, jMenu1);
+                                jMenu2.add(jMenu1);
+                            }
+                            JMenu jMenu1 = menu1.get(menu1Name);
+
+                            jMenu1.add(jMenuRecentFileItem);
+
+                        }
+
+
                     }
                 
             }
@@ -8756,6 +8800,23 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jMenuFile.addSeparator();
     
         
+    }
+
+    /*
+     * Improves name of folders in OSB
+     */
+    private String betterName(String dirName)
+    {
+        String[] words = dirName.split("_");
+        StringBuilder sb = new StringBuilder();
+        for (String word: words)
+        {
+            String caps = word.substring(0, 1).toUpperCase()+ word.substring(1);
+            if (word.startsWith("neuroConstruct"))
+                caps = "neuroConstruct " + word.substring(14);
+            sb.append(caps+" ");
+        }
+        return sb.toString();
     }
 
     /**
@@ -12419,6 +12480,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         logger.logComment("Action event: "+e);
         JMenuItem menuItem =(JMenuItem)e.getSource();
         String recentFileName = menuItem.getText();
+        if (menuItem.getToolTipText()!=null && menuItem.getToolTipText().length()>0)
+            recentFileName = menuItem.getToolTipText();
         logger.logComment("Opening recent file: "+recentFileName);
 
         File recentFile = new File(recentFileName);
