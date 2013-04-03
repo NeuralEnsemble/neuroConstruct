@@ -1,0 +1,48 @@
+* Linux/Mac *
+
+  Quick install:
+
+	git clone git://github.com/NeuralEnsemble/neuroConstruct.git
+	cd neuroConstruct
+	./updatenC.sh
+
+  To get the Open Source Brain models:
+
+	cd osb
+	./checkOsb.sh
+
+  To build & run (using Apache Ant)
+
+	ant run
+
+  To build & run (without Ant)
+
+	<< open nC.sh and change NC_HOME >>
+	./nC.sh -make
+	./nC.sh
+
+* Windows *
+
+  Quick install:
+
+	git clone git://github.com/NeuralEnsemble/neuroConstruct.git
+	cd neuroConstruct
+	updatenC.bat
+
+  To get the Open Source Brain models:
+
+	cd osb
+	checkOsb.bat
+
+  To build & run (using Apache Ant)
+
+	ant run
+
+  To build & run (without Ant)
+
+	<< open nC.bat and change NC_HOME >>
+    nC.bat -make
+	nC.bat
+
+
+
