@@ -1039,26 +1039,38 @@ public class ProjectStructure
     {
         //System.out.println("Checking for proj file in "+projectMainDir+", so far: "+projFiles);
 
+        boolean lookDeeper = true;
         File projFile = new File(projectMainDir, projectMainDir.getName()+ProjectStructure.getNewProjectFileExtension());
         if(projFile.exists())
+        {
             projFiles.add(projFile);
+            lookDeeper = false;
+        }
 
         // e.g. ProjName/neuroConstruct/ProjectName.ncx
         projFile = new File(projectMainDir, projectMainDir.getParentFile().getName()+ProjectStructure.getNewProjectFileExtension());
         if(projFile.exists())
+        {
             projFiles.add(projFile);
+            lookDeeper = false;
+        }
 
         projFile = new File(projectMainDir, projectMainDir.getName()+ProjectStructure.getOldProjectFileExtension());
         if(projFile.exists())
-            projFiles.add(projFile);
-
-       
-        File[] subDir = projectMainDir.listFiles();
-        for (File f: subDir)
         {
-            if (f.isDirectory())
+            projFiles.add(projFile);
+            lookDeeper = false;
+        }
+
+        if (lookDeeper)
+        {
+            File[] subDir = projectMainDir.listFiles();
+            for (File f: subDir)
             {
-                findProjectFile(f, projFiles);
+                if (f.isDirectory() && !GeneralUtils.isVersionControlDir(f))
+                {
+                    findProjectFile(f, projFiles);
+                }
             }
         }
 

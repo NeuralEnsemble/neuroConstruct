@@ -139,6 +139,7 @@ public class ModelTest
         String projFileName = "osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx";
         checkProject(projFileName, null, false, true);
     }
+    /*
     @Test public void testDentateGyrus()
     {
         String projFileName = "nCmodels/DentateGyrus/DentateGyrus.ncx";
@@ -147,7 +148,8 @@ public class ModelTest
         cellsToIgnore.add("PerforantPath");  // as it has a low spec cap to give fast response to input
 
         checkProject(projFileName, cellsToIgnore, true);
-    }
+    }*/
+    
     @Test public void testMainenEtAl_PyramidalCell()
     {
         String projFileName = "osb/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx";
@@ -177,7 +179,7 @@ public class ModelTest
 
     @Test public void testSolinasEtAl_GolgiCell()
     {
-        String projFileName = "osb/cerebellum/cerebellar_golgi_cell/SolinasEtAl-GolgiCell/neuroConstruct/SolinasEtAl_GolgiCell.ncx";
+        String projFileName = "osb/cerebellum/cerebellar_golgi_cell/SolinasEtAl-GolgiCell/neuroConstruct/SolinasEtAl-GolgiCell.ncx";
 
         ArrayList<String> cellsToIgnore = new ArrayList<String>();
 

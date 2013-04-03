@@ -8733,7 +8733,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             HashMap<String, JMenu> menu1 = new HashMap<String, JMenu>();
             HashMap<String, JMenu> menu2 = new HashMap<String, JMenu>();
-            HashMap<String, JMenu> menu3 = new HashMap<String, JMenu>();
             
             for(File projFile: osbProjs)
             {
@@ -8773,6 +8772,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                         {
                             String menu1Name = tempFile.getParentFile().getName();
                             String menu2Name = tempFile.getParentFile().getParentFile().getName();
+                            String path = menu2Name+"/"+menu1Name;
                             
                             if (!menu2.containsKey(menu2Name)) {
                                 JMenu jMenu2 = new JMenu(betterName(menu2Name));
@@ -8780,12 +8780,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                 jMenuOsbModels.add(jMenu2);
                             }
                             JMenu jMenu2 = menu2.get(menu2Name);
-                            if (!menu1.containsKey(menu1Name)) {
+                            if (!menu1.containsKey(path)) {
                                 JMenu jMenu1 = new JMenu(betterName(menu1Name));
-                                menu1.put(menu1Name, jMenu1);
+                                menu1.put(path, jMenu1);
                                 jMenu2.add(jMenu1);
                             }
-                            JMenu jMenu1 = menu1.get(menu1Name);
+                            JMenu jMenu1 = menu1.get(path);
 
                             jMenu1.add(jMenuRecentFileItem);
 

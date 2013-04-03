@@ -194,7 +194,7 @@ public class Expand {
                 String projName = project.getProjectName();
                 String projNameStripped = GeneralUtils.replaceAllTokens(projName, " ", "_");
                 String projNameLowercase = GeneralUtils.replaceAllTokens(GeneralUtils.replaceAllTokens(projName, "-", ""), "_", "").toLowerCase();
-                if (projName.equals("SolinasEtAl_GolgiCell"))
+                if (projName.equals("SolinasEtAl-GolgiCell"))
                 {
                     projNameLowercase = "cerebellum--cerebellar-golgi-cell--solinasetal-golgicell";
                 }
@@ -1125,12 +1125,12 @@ public class Expand {
             paths.add("osb/cerebral_cortex/networks/Thalamocortical/neuroConstruct/Thalamocortical.ncx");
 
             paths.add("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
-            paths.add("osb/cerebellum/cerebellar_golgi_cell/SolinasEtAl-GolgiCell/neuroConstruct/SolinasEtAl_GolgiCell.ncx");
+            paths.add("osb/cerebellum/cerebellar_golgi_cell/SolinasEtAl-GolgiCell/neuroConstruct/SolinasEtAl-GolgiCell.ncx");
             paths.add("osb/cerebellum/cerebellar_granule_cell/GranuleCellVSCS/neuroConstruct/GranuleCellVSCS.ncx");
             
         }
 
-        //paths.add("nCmodels/SolinasEtAl_GolgiCell/SolinasEtAl_GolgiCell.ncx");
+        //paths.add("nCmodels/SolinasEtAl_GolgiCell/SolinasEtAl-GolgiCell.ncx");
         //paths.add("nCexamples/Ex4_HHcell/Ex4_HHcell.ncx");
         //paths.add("/bernal/models/Layer23_names/Layer23_names.neuro.xml");
         //paths.add("../copyNcModels/Parallel/Parallel.neuro.xml");

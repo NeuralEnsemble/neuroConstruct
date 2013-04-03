@@ -108,7 +108,7 @@ public class PythonTest
 
     @Test public void testSolinasEtAl_GolgiCell()
     {
-        String projFileName = "osb/cerebellum/cerebellar_golgi_cell/SolinasEtAl-GolgiCell/neuroConstruct/SolinasEtAl_GolgiCell.ncx";
+        String projFileName = "osb/cerebellum/cerebellar_golgi_cell/SolinasEtAl-GolgiCell/neuroConstruct/SolinasEtAl-GolgiCell.ncx";
         checkPythonScripts(projFileName);
     }
 
