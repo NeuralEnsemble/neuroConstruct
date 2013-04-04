@@ -47,7 +47,7 @@ public class PythonTest
 
     @Test public void testEx4()
     {
-        String projFileName = "nCexamples/Ex4_HHcell/Ex4_HHcell.ncx";
+        String projFileName = "osb/showcase/neuroConstructShowcase/Ex4_HHcell/Ex4_HHcell.ncx";
         checkPythonScripts(projFileName);
     }  
 
@@ -55,7 +55,7 @@ public class PythonTest
 
     @Test public void testEx8()
     {
-        String projFileName = "nCexamples/Ex8_PyNNDemo/Ex8_PyNNDemo.ncx";
+        String projFileName = "osb/showcase/neuroConstructShowcase/Ex8_PyNNDemo/Ex8_PyNNDemo.ncx";
         checkPythonScripts(projFileName);
     }
 /*

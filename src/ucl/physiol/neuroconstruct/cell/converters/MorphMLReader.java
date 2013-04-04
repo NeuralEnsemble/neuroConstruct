@@ -613,7 +613,7 @@ public class MorphMLReader extends XMLFilterImpl
              String name = attributes.getValue(MorphMLConstants.INHOMO_PARAM_NAME_ATTR);
              String variable = attributes.getValue(MorphMLConstants.INHOMO_PARAM_VARIABLE_ATTR);
 
-             logger.logComment("     Have found an inhomogeneous_param: " + name+", var: "+variable, true);
+             logger.logComment("     Have found an inhomogeneous_param: " + name+", var: "+variable);
 
              currentParamGroup = new ParameterisedGroup();
              currentParamGroup.setName(name);
@@ -734,7 +734,7 @@ public class MorphMLReader extends XMLFilterImpl
              {
                  float convFactor = (float)UnitConverter.getConductanceDensity(1, UnitConverter.getUnitSystemIndex(unitsUsed), UnitConverter.NEUROCONSTRUCT_UNITS);
                  String invConvFactor = 1/convFactor + " * ";
-                 if (paramVal.startsWith(paramVal))
+                 if (paramVal.startsWith(invConvFactor))
                  {
                      paramVal = paramVal.substring(invConvFactor.length());
                  }
@@ -1183,7 +1183,6 @@ public class MorphMLReader extends XMLFilterImpl
 */
 
 
-            //logger.setThisClassVerbose(true);
 
             //File f = new File("..\\copynCmodels\\TraubEtAl2005\\generatedNEURON\\ttt.xml");
 
@@ -1192,7 +1191,7 @@ public class MorphMLReader extends XMLFilterImpl
             File f = new File("../Documents/general/owp/CElegans_ADAL.xml");
             f = new File("../models/GrCDiwakar/nd.xml");
             f = new File("../temp/SkeletonTree_ORR_aCC_48h1.xml");
-            f = new File("../nC_projects/NMLNative/morphologies/SampleCell.nml");
+            f = new File("../models/L5bPCmodelsEH/simulationcode/Level2.xml");
 
            // File f = new File("/bernal/a4d.xml");
 
