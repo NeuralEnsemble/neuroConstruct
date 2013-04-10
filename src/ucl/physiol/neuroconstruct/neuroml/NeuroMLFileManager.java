@@ -833,7 +833,6 @@ public class NeuroMLFileManager
 
             ArrayList<PlotSaveDetails> plots = project.generatedPlotSaves.getPlottedPlotSaves();
 
-
             for (PlotSaveDetails plot : plots)
             {
                 ArrayList<Integer> cellNumsToPlot = plot.cellNumsToPlot;
@@ -841,51 +840,9 @@ public class NeuroMLFileManager
           
                     String displayId = plot.simPlot.getGraphWindow();
                     String value = convertValue(plot.simPlot.getValuePlotted());
-
-                    //String cellNumPattern = simPlot.getCellNumber();
-                    //int numInCellGroup = project.generatedCellPositions.getNumberInCellGroup(simPlot.getCellGroup());
                         
                     logger.logComment("-+- Adding plot: "+ plot.simPlot+" "+simConf.toLongString()+" with cells: "+ cellNumsToPlot);
-/*
-                    if (numInCellGroup > 0 && !value.equals("???"))
-                    {
-                        ArrayList<Integer> cellNums = new ArrayList<Integer>();
 
-                        logger.logComment("- Val of: "+ value+" on "+numInCellGroup+", "+ cellNumPattern);
-
-                        if (cellNumPattern.equals("*"))
-                        {
-                            for(int i=0;i<numInCellGroup;i++)
-                            {
-                                cellNums.add(i);
-                            }
-                        }
-                        else if(cellNumPattern.indexOf("#") >= 0)
-                        {
-                            int numToPick = Integer.parseInt(cellNumPattern.substring(0, cellNumPattern.length()-1));
-                            if (numToPick>=numInCellGroup)
-                            {
-                                for(int i=0;i<numInCellGroup;i++)
-                                {
-                                    cellNums.add(i);
-                                }
-                            }
-                            else
-                            {
-                                Random r = new Random();
-
-                                while(cellNums.size()<numToPick)
-                                {
-                                    int next = r.nextInt(numInCellGroup);
-                                    if(!cellNums.contains(next)) cellNums.add(next);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            int single = Integer.parseInt(cellNumPattern);
-                            cellNums.add(single);
-                        }*/
 
                         if (cellNumsToPlot.size()>0)
                         {
@@ -900,6 +857,24 @@ public class NeuroMLFileManager
                                 dispEl.addAttribute(LemsConstants.ID_ATTR, displayId);
                                 dispEl.addAttribute(LemsConstants.TITLE_ATTR, project.getProjectName()+": "+ simConf.getName()+", "+plot.simPlot.getCellGroup());
                                 dispEl.addAttribute(LemsConstants.TIMESCALE_ATTR, "1ms");
+
+                                if (version.isVersion2beta())
+                                {
+                                    float xmin = 0;
+                                    float xmax = simConf.getSimDuration();
+                                    float xdel = (xmax-xmin)*0.1f;
+
+                                    float ymin = plot.simPlot.getMinValue();
+                                    float ymax = plot.simPlot.getMaxValue();
+                                    float ydel = (ymax-ymin)*0.1f;
+
+                                    //TODO: scale with correct units!
+
+                                    dispEl.addAttribute(LemsConstants.XMIN_ATTR, (xmin-xdel)+"");
+                                    dispEl.addAttribute(LemsConstants.XMAX_ATTR, (xmax+xdel)+"");
+                                    dispEl.addAttribute(LemsConstants.YMIN_ATTR, (ymin-ydel)+"");
+                                    dispEl.addAttribute(LemsConstants.YMAX_ATTR, (ymax+ydel)+"");
+                                }
 
                                 displaysAdded.put(displayId, dispEl);
                             }
@@ -919,7 +894,15 @@ public class NeuroMLFileManager
                                 lineEl.addAttribute(LemsConstants.ID_ATTR, plot.simPlot.getPlotReference());
 
 
+
                                 String path = plot.simPlot.getCellGroup()+"["+cellNum+"]/"+ value;
+                                String cellType = project.cellGroupsInfo.getCellType(plot.simPlot.getCellGroup());
+
+                                if (version.isVersion2beta())
+                                {
+                                    lineEl.addAttribute(LemsConstants.TIMESCALE_ATTR, "1ms");
+                                    path = plot.simPlot.getCellGroup()+"/"+cellNum+"/"+cellType+"/"+ value;
+                                }
 
                                 lineEl.addAttribute(LemsConstants.QUANTITY_ATTR, path);
 
@@ -972,7 +955,14 @@ public class NeuroMLFileManager
                                     File fullFile = new File(simDir, datFile);
                                     String fileStr = fullFile.getAbsolutePath();
                                     fileStr = fileStr.replaceAll("\\\\", "\\\\\\\\");
-                                    lineEl.addAttribute(LemsConstants.SAVE_ATTR,fileStr);
+                                    if (version.isVersion2alpha())
+                                    {
+                                        lineEl.addAttribute(LemsConstants.SAVE_ATTR,fileStr);
+                                    }
+                                    else
+                                    {
+                                        ///...
+                                    }
 
                                 }
                                 logger.logComment("Adding line: "+ lineEl.getXMLString("", false));
@@ -997,7 +987,17 @@ public class NeuroMLFileManager
             File runFile = new File(generateDir, runFileName);
 
             StringBuilder runScript = new StringBuilder();
-            runScript.append("cd "+ProjectStructure.getNeuroML2Dir().getAbsolutePath()+"\n");
+
+            if (version.isVersion2beta())
+            {
+                nml2ExeName = "./jnml";
+                runScript.append("cd "+ProjectStructure.getjNeuroMLDir().getAbsolutePath()+"\n");
+            }
+            else
+            {
+                runScript.append("cd "+ProjectStructure.getNeuroML2Dir().getAbsolutePath()+"\n");
+            }
+
 
             runScript.append(nml2ExeName + " "+lemsFile.getAbsolutePath());
 

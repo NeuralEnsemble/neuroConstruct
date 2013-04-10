@@ -149,12 +149,21 @@ public class ModelTest
 
         checkProject(projFileName, cellsToIgnore, true);
     }*/
-    
+
     @Test public void testMainenEtAl_PyramidalCell()
     {
         String projFileName = "osb/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx";
         ArrayList<String> cellsToIgnore = new ArrayList<String>();
         cellsToIgnore.add("MainenCellMod");
+
+        checkProject(projFileName, cellsToIgnore, true);
+    }
+
+    @Test public void testL5bPyrCellHayEtAl2011()
+    {
+        String projFileName = "osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx";
+        ArrayList<String> cellsToIgnore = new ArrayList<String>();
+        cellsToIgnore.add("L5PCbiophys3_pas");
 
         checkProject(projFileName, cellsToIgnore, true);
     }

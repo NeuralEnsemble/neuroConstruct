@@ -1107,7 +1107,7 @@ public class Expand {
         paths.add("osb/cerebellum/cerebellar_nucleus_cell/CerebellarNucleusNeuron/neuroConstruct/CerebellarNucleusNeuron.ncx");
         paths.add("osb/cerebellum/networks/GranCellLayer/neuroConstruct/GranCellLayer.ncx");
         paths.add("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
-            paths.add("osb/invertebrate/celegans/CElegansNeuroML/CElegans/CElegans.ncx");
+        paths.add("osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx");
 
         //paths.add("models/LarkumEtAl2009/LarkumEtAl2009.ncx");
 
@@ -1116,6 +1116,7 @@ public class Expand {
         all = true;
         if (all)
         {
+            paths.add("osb/invertebrate/celegans/CElegansNeuroML/CElegans/CElegans.ncx");
             paths.add("osb/cerebellum/cerebellar_granule_cell/GranCellSolinasEtAl10/neuroConstruct/GranCellSolinasEtAl10.ncx");
 
             paths.add("osb/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx");

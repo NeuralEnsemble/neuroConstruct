@@ -83,9 +83,7 @@ standardGHProject 'CElegansNeuroML' 'invertebrate/celegans' 'openworm'
 standardGHProject 'muscle_model' 'invertebrate/celegans' 'openworm'
 
 standardGHProject 'PyloricNetwork' 'invertebrate/lobster'
-
 standardGHProject 'MorrisLecarModel' 'invertebrate/barnacle'
-
 standardGHProject 'Drosophila_Projection_Neuron' 'invertebrate/drosophila'
 
 standardGHProject 'CA1PyramidalCell' 'hippocampus/CA1_pyramidal_neuron'

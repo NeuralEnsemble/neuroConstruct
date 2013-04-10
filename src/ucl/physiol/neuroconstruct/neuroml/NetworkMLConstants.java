@@ -202,12 +202,23 @@ public class NetworkMLConstants
     public static String NEUROML2_EXTRACELLULAR_PROPS_ELEMENT = "extracellularProperties";
     public static String NEUROML2_TEMPERATURE_ATTR = "temperature";
 
+    public static String NEUROML2_POPULATION_LIST = "populationList";
+
+
 
     public static String NEUROML2_PULSE_GEN_ELEMENT = "pulseGenerator";
 
     public static String NEUROML2_EXP_INPUT_ELEMENT = "explicitInput";
+
     public static String NEUROML2_EXP_INPUT_TARGET_ATTR = "target";
     public static String NEUROML2_EXP_INPUT_INPUT_ATTR = "input";
+
+    public static String NEUROML2_INPUT_ELEMENT = "input";
+    public static String NEUROML2_INPUT_LIST_ELEMENT = "inputList";
+    public static String NEUROML2_INPUT_COMPONENT = "component";
+    public static String NEUROML2_INPUT_POPULATION = "population";
+    public static String NEUROML2_INPUT_DESTINATION = "destination";
+    public static String NEUROML2_INPUT_DESTINATION_DEFAULT = "synapses";
 
 
     public static String NEUROML2_EXP_CONN_ELEMENT = "synapticConnection";

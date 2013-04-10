@@ -97,6 +97,7 @@
     <property name="general.properties.class" value="ucl.physiol.neuroconstruct.project.GeneralProperties"/>
     <property name="xml.transform.class" value="ucl.physiol.neuroconstruct.utils.XMLUtils"/>
     <property name="example.generate.class" value="ucl.physiol.neuroconstruct.website.ExampleProjects"/>
+    <property name="expand.class" value="ucl.physiol.neuroconstruct.project.Expand"/>
 
     <property name="main.gui.dir" value="ucl/physiol/neuroconstruct/gui"/>
     <property name="nmodl.gui.dir" value="ucl/physiol/neuroconstruct/nmodleditor/gui"/>
@@ -563,6 +564,19 @@
   </target>
 
 
+
+  <!-- ====================================================================== -->
+  <!-- Generates the HTML to use on the OSB site. Experimental!!              -->
+  <!-- ====================================================================== -->
+
+  <target name="expand" depends="jar" description="Generates the HTML to use on the OSB site. Experimental!!">
+      <java classname="${expand.class}"
+          fork="true"  failonerror="true">
+        <jvmarg value="-Xmx700M" />
+        <jvmarg value="-Xms600M" />
+        <classpath refid="run.class.path"/>
+      </java>
+ </target>
 
   <!-- ====================================================================== -->
   <!-- Generates the xml which is used to generate the html page of standard  -->

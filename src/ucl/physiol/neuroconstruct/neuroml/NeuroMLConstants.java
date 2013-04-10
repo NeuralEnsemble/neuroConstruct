@@ -115,6 +115,10 @@ public class NeuroMLConstants
         {
             return this.equals(NEUROML_VERSION_2_BETA);
         }
+        public boolean isVersion2betaOrLater()
+        {
+            return !this.equals(NEUROML_VERSION_1) && !this.equals(NEUROML_VERSION_2_ALPHA);
+        }
 
         public boolean isVersion1()
         {
