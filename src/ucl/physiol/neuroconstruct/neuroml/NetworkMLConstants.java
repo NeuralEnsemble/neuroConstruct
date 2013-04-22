@@ -86,6 +86,7 @@ public class NetworkMLConstants
     public static String PROJECTION_ELEMENT = "projection";
 
     public static String PROJ_NAME_ATTR = "name";
+    public static String NEUROML2_PROJ_ID = "id";
 
     ////Pre v1.7.1 specification
     public static String SOURCE_ELEMENT = "source";
@@ -94,6 +95,14 @@ public class NetworkMLConstants
     ////Post v1.7.1 specification
     public static String SOURCE_ATTR = "source";
     public static String TARGET_ATTR = "target";
+    
+    
+    public static String NEUROML2_PROJ_PRE = "presynapticPopulation";
+    public static String NEUROML2_PROJ_POST = "postsynapticPopulation";
+    public static String NEUROML2_PROJ_SYNAPSE = "synapse";
+    
+    public static String NEUROML2_PRE_CELL_ID = "preCellId";
+    public static String NEUROML2_POST_CELL_ID = "postCellId";
 
     public static String SYN_PROPS_ELEMENT = "synapse_props";
     

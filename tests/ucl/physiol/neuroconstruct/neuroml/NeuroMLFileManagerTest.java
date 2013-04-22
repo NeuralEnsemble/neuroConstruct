@@ -27,10 +27,6 @@
 package ucl.physiol.neuroconstruct.neuroml;
 
 import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants.NeuroMLVersion;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.*;
-import javax.xml.*;
 import java.io.File;
 import ucl.physiol.neuroconstruct.project.*;
 import org.junit.Before;
@@ -168,7 +164,7 @@ public class NeuroMLFileManagerTest {
             nmlFile = NeuroMLFileManager.saveNetworkStructureXML(proj,
                                                              nmlFile,
                                                              zipped,
-                                                             true,
+                                                             false,
                                                              sc.getName(),
                                                              NetworkMLConstants.UNITS_PHYSIOLOGICAL,
                                                              NeuroMLVersion.NEUROML_VERSION_2_BETA);

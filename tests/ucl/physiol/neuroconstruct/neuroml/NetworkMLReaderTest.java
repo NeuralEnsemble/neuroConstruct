@@ -125,7 +125,7 @@ public class NetworkMLReaderTest
 
         assertTrue(nml2aFile.exists());
 
-        System.out.println("Saved NetworkML in: "+ nml2aFile.getAbsolutePath());
+        System.out.println("Saved Network 2alpha in: "+ nml2aFile.getAbsolutePath());
 
         assertTrue(NeuroMLFileManager.validateAgainstNeuroML2alphaSchema(nml2aFile));
 
@@ -134,14 +134,14 @@ public class NetworkMLReaderTest
         nml2bFile = NeuroMLFileManager.saveNetworkStructureXML(proj0,
                                                          nml2bFile,
                                                          zipped,
-                                                         true,
+                                                         false,
                                                          sc.getName(),
                                                          NetworkMLConstants.UNITS_PHYSIOLOGICAL,
                                                          NeuroMLVersion.NEUROML_VERSION_2_BETA);
 
         assertTrue(nml2bFile.exists());
 
-        System.out.println("Saved NetworkML in: "+ nml2bFile.getAbsolutePath());
+        System.out.println("Saved Network 2 beta in: "+ nml2bFile.getAbsolutePath());
 
         assertTrue(NeuroMLFileManager.validateAgainstNeuroML2betaSchema(nml2bFile));
     }

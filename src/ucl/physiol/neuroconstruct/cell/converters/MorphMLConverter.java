@@ -1965,6 +1965,8 @@ public class MorphMLConverter extends FormatImporter
             if (version.isVersion2())
             {
                 ArrayList<String> allChanMechs = cell.getAllChanMechNames(true);
+                
+                allChanMechs = (ArrayList<String>)GeneralUtils.reorderAlphabetically(allChanMechs, true);
 
                 for(String chan: allChanMechs)
                 {
