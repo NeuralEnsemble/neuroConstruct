@@ -15,6 +15,17 @@ fi
 
 startDir=$(pwd)
 
+prefix='git@github.com:'
+
+
+if [ -z "$USE_SSH_FOR_GITHUB" ]; then
+    echo
+    echo "If you use SSH to access GitHub, set the environment variable USE_SSH_FOR_GITHUB to 1"
+    echo "This will clone GitHub repos using SSH. Using HTTPS instead"
+    echo
+    prefix='https://github.com/'
+fi
+
 
 standardGHProject()
 {
@@ -36,13 +47,7 @@ standardGHProject()
     fi
     tgtDir=$startDir/$2/$1
     
-    prefix='git@github.com:'
-    
-    # TODO: better test if GitHub set up
-    if [ ! -f $HOME/.gitconfig ]; then
-        prefix='git://github.com/'
-    fi
-    
+
     if [ ! -d $tgtDir ]; then
         echo "Cloning to: "$tgtDir
         if [ $# == 3 ]; then
