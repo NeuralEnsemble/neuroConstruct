@@ -10,6 +10,8 @@ osb/invertebrate
 osb/hippo*
 osb/showcase
 
+logs/*.log
+
 templates/SBML2NEURON
 templates/xmlTemplates/Examples
 templates/xmlTemplates/Schemata
