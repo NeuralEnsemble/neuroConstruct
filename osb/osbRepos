@@ -1,0 +1,30 @@
+
+PyloricNetwork invertebrate lobster 
+MorrisLecarModel invertebrate barnacle
+Drosophila_Projection_Neuron invertebrate drosophila
+
+CA1PyramidalCell hippocampus CA1_pyramidal_neuron
+
+StriatalSpinyProjectionNeuron basal_ganglia striatal_spiny_neuron
+
+SolinasEtAl-GolgiCell cerebellum cerebellar_golgi_cell
+
+CerebellarNucleusNeuron cerebellum cerebellar_nucleus_cell
+
+GranCellRothmanIf cerebellum cerebellar_granule_cell
+GranCellSolinasEtAl10 cerebellum cerebellar_granule_cell
+GranuleCell cerebellum cerebellar_granule_cell
+GranuleCellVSCS cerebellum cerebellar_granule_cell
+
+PurkinjeCell cerebellum cerebellar_purkinje_cell
+
+GranCellLayer cerebellum networks
+VervaekeEtAl-GolgiCellNetwork cerebellum networks
+
+MainenEtAl_PyramidalCell cerebral_cortex neocortical_pyramidal_neuron
+RothmanEtAl_KoleEtAl_PyrCell cerebral_cortex neocortical_pyramidal_neuron
+L5bPyrCellHayEtAl2011 cerebral_cortex neocortical_pyramidal_neuron
+
+IzhikevichModel cerebral_cortex networks
+Thalamocortical cerebral_cortex networks
+Brunel2000 cerebral_cortex networks

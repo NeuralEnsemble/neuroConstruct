@@ -1,5 +1,12 @@
 @echo off
 
+echo Starting check for OSB projects...
+
+FOR /F "tokens=*" %%i IN (osbRepos) DO call :standardGHProject %%i %1
+
+GOTO :EOF
+
+
 REM ***********************************
 REM *** Main
 
@@ -30,7 +37,8 @@ REM ***********************************
 REM *** Function Definitions
 
 :standardGHProject
-    REM echo Params: %~1 %~2 %~3
+    echo -----------------------------------------------
+    REM echo ---- Params: %~1 %~2 %~3
     if not exist %~2 (
         echo Making new dir: %~2
         mkdir %~2

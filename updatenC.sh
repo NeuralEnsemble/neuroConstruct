@@ -13,29 +13,22 @@ export NEUROML2_DIR=NeuroML2
 
 
 if [ ! -d $NML_EX_DIR ]; then
-    svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/trunk/web/NeuroMLFiles/Examples/ $NML_EX_DIR
+    svn co https://svn.code.sf.net/p/neuroml/code/trunk/web/NeuroMLFiles/Examples/ $NML_EX_DIR
 fi
 echo "Updating the examples from the NeuroML Sourceforge repository..."
 svn update $NML_EX_DIR
 
 
 if [ ! -d $NML_SC_DIR ]; then
-    svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/trunk/web/NeuroMLFiles/Schemata/ $NML_SC_DIR
+    svn co https://svn.code.sf.net/p/neuroml/code/trunk/web/NeuroMLFiles/Schemata/ $NML_SC_DIR
 fi
 echo "Updating the schema files from the NeuroML Sourceforge repository..."
 svn update $NML_SC_DIR
 
 
-if [ ! -d $SBML2NEU_SC_DIR ]; then
-    svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/SBML2NEURON/ $SBML2NEU_SC_DIR
-fi
-echo "Updating the SBML2NEURON files from the NeuroML Sourceforge repository..."
-svn update $SBML2NEU_SC_DIR
-
-
 
 if [ ! -d $NEUROML2_DIR ]; then
-    svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/NeuroML2 $NEUROML2_DIR
+    svn co https://svn.code.sf.net/p/neuroml/code/NeuroML2 $NEUROML2_DIR
 fi
 
 echo "Updating the NeuroML 2 files from the NeuroML Sourceforge repository..."

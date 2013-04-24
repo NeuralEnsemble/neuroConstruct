@@ -16,28 +16,24 @@ set NC_SHOWCASE_DIR=osb\showcase\neuroConstructShowcase
 
 
 if not exist %NML_EX_DIR% (
-    svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/trunk/web/NeuroMLFiles/Examples/ %NML_EX_DIR%
+	echo Adding NeuroML v1.x code from SourceForge in %NML_EX_DIR%
+    svn co https://svn.code.sf.net/p/neuroml/code/trunk/web/NeuroMLFiles/Examples/ %NML_EX_DIR%
 )
 echo Updating the examples from the NeuroML Sourceforge repository...
 svn update %NML_EX_DIR%
 
 
 if not exist %NML_SC_DIR% (
-    svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/trunk/web/NeuroMLFiles/Schemata/ %NML_SC_DIR%
+	echo Adding NeuroML v1.x code from SourceForge in %NML_SC_DIR%
+    svn co https://svn.code.sf.net/p/neuroml/code/trunk/web/NeuroMLFiles/Schemata/ %NML_SC_DIR%
 )
 echo Updating the schema files from the NeuroML Sourceforge repository...
 svn update %NML_SC_DIR%
 
 
-if not exist %SBML2NEU_SC_DIR% (
-    svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/SBML2NEURON %SBML2NEU_SC_DIR%
-)
-echo Updating the SBML2NEURON files from the NeuroML Sourceforge repository...
-svn update %SBML2NEU_SC_DIR%
-
-
 if not exist %NEUROML2_DIR% (
-    svn co https://neuroml.svn.sourceforge.net/svnroot/neuroml/NeuroML2 %NEUROML2_DIR%
+	echo Adding NeuroML v2alpha code from SourceForge in %NEUROML2_DIR%
+    svn co https://svn.code.sf.net/p/neuroml/code/NeuroML2 %NEUROML2_DIR%
 )
 echo Updating the NeuroML 2 files from the NeuroML Sourceforge repository...
 svn update %NEUROML2_DIR%
@@ -54,10 +50,10 @@ if not exist %OSB_SHOWCASE_DIR% (
 )
 
 if not exist %NC_SHOWCASE_DIR% (
-	echo ooo
 	echo Cloning neuroConstruct showcase examples into %NC_SHOWCASE_DIR%
     cd %OSB_SHOWCASE_DIR%
     git clone git@github.com:OpenSourceBrain/neuroConstructShowcase.git
+	cd ..\..
 )
 
 echo Updating the neuroConstruct showcase examples
