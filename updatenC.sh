@@ -10,6 +10,7 @@ export NML_SC_DIR=templates/xmlTemplates/Schemata
 export SBML2NEU_SC_DIR=templates/SBML2NEURON
 
 export NEUROML2_DIR=NeuroML2
+export JNEUROMLJAR_DIR=jNeuroMLJar
 
 
 if [ ! -d $NML_EX_DIR ]; then
@@ -30,9 +31,15 @@ svn update $NML_SC_DIR
 if [ ! -d $NEUROML2_DIR ]; then
     svn co https://svn.code.sf.net/p/neuroml/code/NeuroML2 $NEUROML2_DIR
 fi
-
 echo "Updating the NeuroML 2 files from the NeuroML Sourceforge repository..."
 svn update $NEUROML2_DIR
+
+
+if [ ! -d $JNEUROMLJAR_DIR ]; then
+    svn co https://svn.code.sf.net/p/neuroml/code/jNeuroMLJar $JNEUROMLJAR_DIR
+fi
+echo "Updating the jNeuroML Jar from the NeuroML Sourceforge repository..."
+svn update $JNEUROMLJAR_DIR
 
 
 echo Updating the main neuroConstruct code...
