@@ -4,6 +4,8 @@
 NeuroML2
 jNeuroMLJar
 
+.DS_Store
+
 osb/cereb*
 osb/basal*
 osb/invertebrate
