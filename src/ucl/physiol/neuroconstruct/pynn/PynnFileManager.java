@@ -31,11 +31,11 @@ import java.util.*;
 
 
 import java.util.ArrayList;
-import org.lemsml.sim.Sim;
-import org.lemsml.type.Component;
-import org.lemsml.type.Constant;
-import org.lemsml.type.ParamValue;
-import org.lemsml.util.ContentError;
+import org.lemsml.jlems.core.sim.Sim;
+import org.lemsml.jlems.core.type.Component;
+import org.lemsml.jlems.core.type.Constant;
+import org.lemsml.jlems.core.type.ParamValue;
+import org.neuroml.export.Utils;
 import ucl.physiol.neuroconstruct.cell.*;
 import ucl.physiol.neuroconstruct.mechanisms.*;
 import ucl.physiol.neuroconstruct.neuroml.*;
@@ -45,6 +45,7 @@ import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
 import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrain;
+import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
 import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLElement;
 import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLEntity;
 
@@ -68,6 +69,7 @@ public class PynnFileManager
 
     //ArrayList<String> synapseDetails = new ArrayList<String>();
 
+    String pynnSimUnits = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS);
 
     File dirForPynnFiles = null;
 
@@ -547,7 +549,10 @@ public class PynnFileManager
             {
                 NeuroML2Component nml2Comp = (NeuroML2Component)project.cellMechanismInfo.getCellMechanism(cell.getInstanceName()); // has to be if it's NML2 cell..
                 try {
-                    Sim sim = NeuroMLFileManager.parseNeuroML2File(nml2Comp.getXMLFile(project));
+                    
+                                                
+                    Sim sim = Utils.readLemsNeuroMLFile(nml2Comp.getXMLFile(project));
+                    
                     Component comp = sim.getLems().getComponent(nml2Comp.getInstanceName());
 
                     System.out.println("comp"+comp.details(""));
@@ -577,7 +582,7 @@ public class PynnFileManager
                     }
 
 
-                } catch (ContentError ex) {
+                } catch (Exception ex) {
                     throw new PynnException("Problem parsing the NeuroML 2 component in "+ nml2Comp+"\n"+ex.getMessage(), ex);
                 }
             }
@@ -1053,7 +1058,7 @@ public class PynnFileManager
         // Saving summary of the simulation params
         try
         {
-            SimulationsInfo.recordSimulationSummary(project, simConfig, dirForSimDataFiles, "PyNN_"+simulator.moduleName, null);
+            SimulationsInfo.recordSimulationSummary(project, simConfig, dirForSimDataFiles, "PyNN_"+simulator.moduleName, null, pynnSimUnits);
         }
         catch (IOException ex2)
         {

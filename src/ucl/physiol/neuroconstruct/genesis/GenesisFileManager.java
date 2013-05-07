@@ -3684,13 +3684,14 @@ public class GenesisFileManager
         // Saving summary of the simulation params
         try
         {
+            String units = UnitConverter.getUnitSystemDescription(project.genesisSettings.getUnitSystemToUse());
             if (!mooseCompatMode())
             {
-                SimulationsInfo.recordSimulationSummary(project, simConfig, dirForSimDataFiles, "GENESIS", morphComp);
+                SimulationsInfo.recordSimulationSummary(project, simConfig, dirForSimDataFiles, "GENESIS", morphComp, units);
             }
             else
             {
-                SimulationsInfo.recordSimulationSummary(project, simConfig, dirForSimDataFiles, "MOOSE", morphComp);
+                SimulationsInfo.recordSimulationSummary(project, simConfig, dirForSimDataFiles, "MOOSE", morphComp, units);
             }
         }
         catch (IOException ex2)

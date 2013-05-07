@@ -9,6 +9,7 @@
 
     <property name="lems.jar.file" value="../NeuroML2/lib/lems/lems-0.8.3.jar"/>
     <property name="libneuroml.jar.file" value="../NeuroML2/libNeuroML-2.0.0.jar"/>
+    <property name="jneuroml.jar.location" value="../jNeuroMLJar"/>
     
     <target depends="init" name="run-selected-file-in-src">
         <path id="run.class.path">
@@ -27,6 +28,9 @@
             <pathelement location="${project.dir}/${neuroconstruct-core}"/>
             <pathelement location="${libneuroml.jar.file}"/>
             <pathelement location="${lems.jar.file}"/>
+            <fileset dir="${jneuroml.jar.location}">
+                <include name="*.jar"/>
+            </fileset>
         </path>
         
         
@@ -64,6 +68,9 @@
             <pathelement location="${project.dir}/${neuroconstruct-core}"/>
             <pathelement location="${libneuroml.jar.file}"/>
             <pathelement location="${lems.jar.file}"/>
+            <fileset dir="${jneuroml.jar.location}">
+                <include name="*.jar"/>
+            </fileset>
         </path>
         
         <fail unless="run.class">Must set property 'run.class'</fail>
@@ -109,6 +116,9 @@
             <pathelement location="${project.dir}/${neuroconstruct-core}"/>
             <pathelement location="${libneuroml.jar.file}"/>
             <pathelement location="${lems.jar.file}"/>
+            <fileset dir="${jneuroml.jar.location}">
+                <include name="*.jar"/>
+            </fileset>
         </path>
         
         <fail unless="run.class">Must set property 'run.class'</fail>

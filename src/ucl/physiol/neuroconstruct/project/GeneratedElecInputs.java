@@ -294,11 +294,17 @@ public class GeneratedElecInputs
         {
             String input = (String) keys.nextElement();
             ArrayList<SingleElectricalInput> singleInputList = myElecInputs.get(input);
-            sb.append(input + " has " + singleInputList.size()
+            StimulationSettings ss = project.elecInputInfo.getStim(input);
+            sb.append(input + " ("+ss.toLongString()+") has " + singleInputList.size()
                       + " entries.\n");
             for (int i = 0; (i < singleInputList.size() && i < 9); i++)
             {
-                sb.append("   Input "+i+": "+singleInputList.get(i).toString()+"\n");
+                SingleElectricalInput sei = singleInputList.get(i);
+                sb.append("   Input "+i+": "+sei.toString());
+                if (sei.getInstanceProps()!=null)
+                    sb.append(" ("+sei.getInstanceProps().details(false)+")");
+                    
+                sb.append("\n");
             }
 
         }
@@ -639,6 +645,7 @@ public class GeneratedElecInputs
 
         catch (Exception ex)
         {
+            ex.printStackTrace();
             throw new NeuroMLException("Problem creating inputs element file", ex);
         }
         return entities;

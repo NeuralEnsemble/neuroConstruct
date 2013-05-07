@@ -97,6 +97,8 @@ public class ProjectManager implements GenerationReport
     private static long currentSeed = 1;
     
     private boolean currentlyGenerating = false;
+    
+    String neuronSimUnits = UnitConverter.getUnitSystemDescription(UnitConverter.NEURON_UNITS);
 
 
     // Only for Python based startup
@@ -240,7 +242,7 @@ public class ProjectManager implements GenerationReport
         // Saving summary of the simulation params
         try
         {
-            SimulationsInfo.recordSimulationSummary(activeProject, simConfig, genNeuronDir, "NEURON", null);
+            SimulationsInfo.recordSimulationSummary(activeProject, simConfig, genNeuronDir, "NEURON", null, neuronSimUnits);
         }
         catch (IOException ex2)
         {

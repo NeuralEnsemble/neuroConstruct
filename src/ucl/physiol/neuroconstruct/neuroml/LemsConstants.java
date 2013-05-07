@@ -77,6 +77,10 @@ public class LemsConstants
     public static String COLOR_ATTR = "color";
     public static String SAVE_ATTR = "save";
     
+    public static String OUTPUT_FILE_ELEMENT = "OutputFile";
+    public static String OUTPUT_COLUMN_ELEMENT = "OutputColumn";
+    public static String OUTPUT_FILENAME_ATTR = "fileName";
+    
 
 
     public enum LemsOption

@@ -25,6 +25,10 @@ export NC_VERSION=1.7.0
 export LIB_NEUROML_VERSION=2.0.0
 export LEMS_VERSION=0.8.3
 
+export JNEUROML_VERSION=0.3.1
+
+
+
 if [ -n "$NC_MAX_MEMORY_LOCAL" ]; then
     export NC_MAX_MEMORY=$NC_MAX_MEMORY_LOCAL
 fi
@@ -55,8 +59,11 @@ J3D_JARS=$J3D_DIR/j3dcore.jar:$J3D_DIR/j3dutils.jar:$J3D_DIR/vecmath.jar
 LEMS_JAR=$NC_HOME/lib/neuroml2/lems-$LEMS_VERSION.jar
 NML2_JAR=$NC_HOME/lib/neuroml2/libNeuroML-$LIB_NEUROML_VERSION.jar
 
+JNML_JAR=$NC_HOME/jNeuroMLJar/jNeuroML-$JNEUROML_VERSION-jar-with-dependencies.jar
 
-export CLASSPATH=$NC_HOME/neuroConstruct_$NC_VERSION.jar:$H5_JARS:$J3D_JARS:$NC_HOME/lib/jython/jython.jar:$LEMS_JAR:$NML2_JAR
+
+
+export CLASSPATH=$NC_HOME/neuroConstruct_$NC_VERSION.jar:$H5_JARS:$J3D_JARS:$NC_HOME/lib/jython/jython.jar:$LEMS_JAR:$NML2_JAR:$JNML_JAR
 
 
 # Determine 32bit or 64bit architecture for JDK

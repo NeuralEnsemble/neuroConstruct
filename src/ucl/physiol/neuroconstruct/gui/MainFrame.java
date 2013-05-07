@@ -792,9 +792,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     ButtonGroup buttonGroupSimWhatToRecord = new ButtonGroup();
     JRadioButton jRadioButtonSimAllSections = new JRadioButton();
     ButtonGroup buttonGroupGenesisUnits = new ButtonGroup();
+    ButtonGroup buttonGroupNMLUnits = new ButtonGroup();
     JPanel jPanelGenesisUnits = new JPanel();
     JRadioButton jRadioButtonGenesisPhy = new JRadioButton();
     JRadioButton jRadioButtonGenesisSI = new JRadioButton();
+    JRadioButton jRadioButtonNMLPhy = new JRadioButton();
+    JRadioButton jRadioButtonNMLSI = new JRadioButton();
     JPanel jPanelCellMechanisms = new JPanel();
     JPanel jPanelProcessButtons = new JPanel();
     JPanel jPanelProcessButtonsTop = new JPanel();
@@ -1824,6 +1827,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jRadioButtonGenesisPhy.setText("Generate in Physiological units");
         jRadioButtonGenesisSI.setEnabled(false);
         jRadioButtonGenesisSI.setText("Generate in SI units");
+        
+        
+        jRadioButtonNMLPhy.setText("Plot in Physiological units");
+        jRadioButtonNMLSI.setText("Plot in SI units");
+        jRadioButtonNMLSI.setSelected(true);
+        
         jPanelCellMechanisms.setLayout(borderLayout28);
         JLabelMechanismMain.setBorder(border9);
         JLabelMechanismMain.setHorizontalAlignment(SwingConstants.CENTER);
@@ -2249,6 +2258,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         nmlV2.add(jButtonNeuroML2Lems);
         nmlV2.add(jButtonNeuroML2Graph);
         nmlV2.add(jButtonNeuroML2bExport);
+        
+        
+        nmlV2.add(jRadioButtonNMLSI);
+        nmlV2.add(jRadioButtonNMLPhy);
+        
         ///////////////////////////////////nmlV2.add(jButtonNeuroML2NineML);
         jCheckBoxSedMl.setSelected(false);
         jCheckBoxSedMl.setToolTipText("Generate a SED-ML simulation description. Note not currently used by LEMS, but this option "
@@ -4199,6 +4213,9 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelGenesisSettings.add(jPanelGenesisChoices, BorderLayout.SOUTH);
         buttonGroupGenesisUnits.add(jRadioButtonGenesisSI);
         buttonGroupGenesisUnits.add(jRadioButtonGenesisPhy);
+        
+        buttonGroupNMLUnits.add(jRadioButtonNMLSI);
+        buttonGroupNMLUnits.add(jRadioButtonNMLPhy);
 
         jPanelCellMechanisms.add(jPanelMechanismLabel, BorderLayout.NORTH);
         jPanelCellMechanisms.add(jPanelMechanismMain,  BorderLayout.CENTER);
@@ -13590,13 +13607,21 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             projManager.getCurrentProject().neuromlFileManager.reset();
             
+            String units = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_SI_UNITS);
+            if (jRadioButtonNMLSI.isSelected())
+                units = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_SI_UNITS);
+            else if (jRadioButtonNMLPhy.isSelected())
+                units = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS);
+
+            File neuroMLDir = ProjectStructure.getNeuroMLDir(projManager.getCurrentProject().getProjectMainDirectory());
+            
             projManager.getCurrentProject().neuromlFileManager.generateNeuroMLFiles(this.getSelectedSimConfig(),
                                                                                       version,
                                                                                       lemsOption,
                                                                                       mc,
                                                                                       1234,
                                                                                       genSingleFile,
-                                                                                      nCannots);
+                                                                                      nCannots, neuroMLDir, units, false);
 
             if (jCheckBoxSedMl.isSelected())
             {

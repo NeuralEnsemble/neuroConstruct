@@ -114,12 +114,12 @@
 
 
     <property name="libneuroml.dir" value="./NeuroML2"/>
+    <property name="jneuroml.dir" value="./jNeuroMLJar"/>
 
     <available file="./NeuroML2" type="dir" property="libneuroml.dir.exists"/>
     
-    <!--<property name="libneuroml.jar.file" value="${libneuroml.dir}/libNeuroML-2.0.0.jar"/>
-    <property name="lems.jar.file" value="${libneuroml.dir}/lib/lems/lems-0.8.2.jar"/>-->
     <property name="neuroml2.libs" value="lib/neuroml2"/>
+    <property name="jneuroml.libs" value="${jneuroml.dir}"/>
 
     <filter token="year" value="${year}"/>
     <filter token="version" value="${version}"/>
@@ -143,6 +143,9 @@
           <include name="*.jar"/>
         </fileset>
         <fileset dir="${neuroml2.libs}">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${jneuroml.libs}">
           <include name="*.jar"/>
         </fileset>
 
@@ -770,6 +773,14 @@
       <delete dir="${temp_ver.dir}/NeuroML2/docs"/>
       <delete dir="${temp_ver.dir}/NeuroML2/exportImportUtils/SBML/sbmlTestSuite"/>
       <delete dir="${temp_ver.dir}/NeuroML2/examples/inprogress/ab"/>
+      
+      
+      <mkdir dir="${temp_ver.dir}/jNeuroMLJar"/>
+      <copy todir="${temp_ver.dir}/jNeuroMLJar">
+        <fileset dir="jNeuroMLJar">
+              <include name="**/*"/>
+        </fileset>
+      </copy>
 
       <mkdir dir="${temp_ver.dir}/pythonNeuroML"/>
       <copy todir="${temp_ver.dir}/pythonNeuroML">

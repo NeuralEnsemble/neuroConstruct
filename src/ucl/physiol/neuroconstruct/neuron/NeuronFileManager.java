@@ -51,10 +51,16 @@ import ucl.physiol.neuroconstruct.hpc.utils.ProcessManager;
 import ucl.physiol.neuroconstruct.neuroml.hdf5.*;
 import ucl.physiol.neuroconstruct.project.GeneratedNetworkConnections.*;
 
-import org.lemsml.sim.*;
-import org.neuroml.exporters.*;
-import org.neuroml.Utils;
-import org.lemsml.type.Component;
+
+import org.lemsml.sim.StringInclusionReader;
+import org.lemsml.sim.LemsProcess;
+
+
+import org.lemsml.jlems.core.sim.Sim;
+import org.lemsml.jlems.core.type.Component;
+import org.neuroml.export.Utils;
+import org.neuroml.export.neuron.NeuronWriter;
+import org.neuroml.model.util.NeuroMLConverter;
 
 /**
  * Main file for generating the script files for NEURON
@@ -3329,41 +3335,76 @@ public class NeuronFileManager
                                         logger.logComment("Cell mechanism: " + cellMechanism.getInstanceName()+" is NeuroML 2...");
                                         File nml2File = xmlMechanism.getXMLFile(project);
                                         String contents = GeneralUtils.readShortFile(nml2File);
-                                        contents = Utils.convertNeuroML2ToLems(contents);
+                                        
+                                        boolean isV2alpha = contents.indexOf("v2alpha.xsd")>0;
+                                        
+                                        if (isV2alpha) 
+                                        {
+                                            contents = org.neuroml.Utils.convertNeuroML2ToLems(contents);
+                                            logger.logComment("Starting Lems with: "+contents);
 
-                                        logger.logComment("Starting Lems with: "+contents);
+                                            try {
+                                                StringInclusionReader.addSearchPath(ProjectStructure.getNeuroML2Dir());
+                                                LemsProcess sim = new org.lemsml.sim.Sim(contents);
+                                                sim.readModel();
+                                                org.lemsml.type.Component comp = sim.getLems().getComponent(cellMechanism.getInstanceName());
+                                                logger.logComment("Found component: " + comp, true);
 
-                                        try {
-                                            StringInclusionReader.addSearchPath(ProjectStructure.getNeuroML2Dir());
-                                            LemsProcess sim = new Sim(contents);
+                                                String modFile = org.neuroml.exporters.NeuronWriter.generateModFile(comp);
 
-                                            sim.readModel();
-                                            
-                                            Component comp = sim.getLems().getComponent(cellMechanism.getInstanceName());
-                                            //comp.getComponentType("MOD_"+cellMechanism.getInstanceName());
-                                            logger.logComment("Found component: " + comp, true);
+                                                String origName = comp.getComponentType().getName();
+                                                String newName = "MOD_"+cellMechanism.getInstanceName();
 
-                                            String modFile = NeuronWriter.generateModFile(comp);
+                                                if (cellMechanism.isSynapticMechanism())
+                                                {
+                                                    newName = cellMechanism.getInstanceName();
+                                                }
+                                                modFile = modFile.replaceAll(origName, newName);
+                                                newMechFile = new File(dirForNeuronFiles, cellMechanism.getInstanceName() + ".mod");
 
-                                            String origName = comp.getComponentType().getName();
-                                            String newName = "MOD_"+cellMechanism.getInstanceName();
-
-                                            if (cellMechanism.isSynapticMechanism())
-                                            {
-                                                newName = cellMechanism.getInstanceName();
+                                                GeneralUtils.writeShortFile(newMechFile, modFile);
+                                                logger.logComment("Written to file: " + newMechFile);
+                                            } 
+                                            catch (org.lemsml.util.ContentError ex) {
+                                                throw new NeuronException("Problem generating mod file from NeuroML 2/LEMS description", ex);
                                             }
-                                            modFile = modFile.replaceAll(origName, newName);
-
-                                            newMechFile = new File(dirForNeuronFiles,
-                                                                   cellMechanism.getInstanceName() + ".mod");
-
-                                            GeneralUtils.writeShortFile(newMechFile, modFile);
-                                            
-                                            logger.logComment("Written to file: " + newMechFile);
-
-                                        } catch (Exception ex) {
-                                            throw new NeuronException("Problem generating mod file from NeuroML 2/LEMS description", ex);
+                                            catch (IOException ex) {
+                                                throw new NeuronException("Problem generating mod file from NeuroML 2/LEMS description", ex);
+                                            }
                                         }
+                                        else
+                                        {
+                                            contents = NeuroMLConverter.convertNeuroML2ToLems(contents);
+                                            logger.logComment("Starting Lems with: "+contents);
+                                            try
+                                            {
+                                                Sim sim = Utils.readLemsNeuroMLFile(contents);
+                                                
+                                                Component comp = sim.getLems().getComponent(cellMechanism.getInstanceName());
+                                                logger.logComment("Found component: " + comp, true);
+
+                                                String modFile = NeuronWriter.generateModFile(comp);
+
+                                                String origName = comp.getComponentType().getName();
+                                                String newName = "MOD_"+cellMechanism.getInstanceName();
+
+                                                if (cellMechanism.isSynapticMechanism())
+                                                {
+                                                    newName = cellMechanism.getInstanceName();
+                                                }
+                                                modFile = modFile.replaceAll(origName, newName);
+                                                newMechFile = new File(dirForNeuronFiles, cellMechanism.getInstanceName() + ".mod");
+
+                                                GeneralUtils.writeShortFile(newMechFile, modFile);
+                                                logger.logComment("Written to file: " + newMechFile);
+                                            }
+                                            catch (Exception ex) {
+                                                throw new NeuronException("Problem generating mod file from NeuroML 2/LEMS description", ex);
+                                            }
+                                            
+                                            
+                                        }
+                                            
                                     }
                                     else
                                     {
@@ -5833,8 +5874,8 @@ public class NeuronFileManager
         try
         {
             String str = "v < t";
-            System.out.println(NeuronWriter.replaceInFunction(str, "v", "mmm"));
-            System.out.println(NeuronWriter.replaceInFunction(str, "t", "ppp"));
+            System.out.println(org.neuroml.exporters.NeuronWriter.replaceInFunction(str, "v", "mmm"));
+            System.out.println(org.neuroml.exporters.NeuronWriter.replaceInFunction(str, "t", "ppp"));
             //System.exit(0);
 
             int runMode  = RUN_HOC;
@@ -5845,6 +5886,7 @@ public class NeuronFileManager
            // File pf = new File("/bernal/models/Parallel/Parallel.neuro.xml");
             File pf = new File("/home/padraig/nC_projects/Project_1ppp/Project_1ppp.neuro.xml");
             pf = new File("lems/nCproject/LemsTest/LemsTest.ncx");
+            pf = new File("osb/showcase/neuroConstructShowcase/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
 
             //File pf = new File("models/PVMExample/PVMExample.neuro.xml");
 
@@ -5852,8 +5894,13 @@ public class NeuronFileManager
 
             System.out.println("doGenerate...");
 
-            frame.projManager.doGenerate("AbstractCells", 1234);
-            //frame.projManager.doGenerate("Test NeuroML2 ionChannel", 1234);
+            //frame.projManager.doGenerate("AbstractCells", 1234);
+            
+            String simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
+            
+            simConf = "Test NeuroML2 ionChannel";
+            
+            frame.projManager.doGenerate(simConf, 1234);
 
             System.out.println("Snoozing...");
 

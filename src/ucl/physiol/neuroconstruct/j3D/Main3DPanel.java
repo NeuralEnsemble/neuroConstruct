@@ -2387,7 +2387,7 @@ public class Main3DPanel extends Base3DPanel implements SimulationInterface
                     DataSet data = new DataSet(graphTitle,
                                                mainInfo,
                                                "ms",
-                                               SimPlot.getUnits(dsToPlot.getVariable()),
+                                               SimPlot.getUnitSymbol(dsToPlot.getVariable()),
                                                "Time",
                                                SimPlot.getLegend(dsToPlot.getVariable()));
 
