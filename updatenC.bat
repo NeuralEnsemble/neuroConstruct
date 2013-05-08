@@ -41,7 +41,7 @@ svn update %NEUROML2_DIR%
 
 if not exist %JNEUROMLJAR_DIR% (
 	echo Adding jNeuroML jar from SourceForge in %JNEUROMLJAR_DIR%
-    svn co https://svn.code.sf.net/p/neuroml/code/jNeuroMLJar %NEUROML2_DIR%
+    svn co https://svn.code.sf.net/p/neuroml/code/jNeuroMLJar %JNEUROMLJAR_DIR%
 )
 echo Updating the jNeuroMLJar files from the NeuroML Sourceforge repository...
 svn update %JNEUROMLJAR_DIR%
