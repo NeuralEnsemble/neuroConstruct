@@ -21,6 +21,7 @@ else
 	echo "There was an error in the process of creating nrnmech.dll"
 fi
 
+
 if [ $# = 1 ]
 	echo "Press Return key to exit"
 	read a
