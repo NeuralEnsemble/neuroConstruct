@@ -9,6 +9,7 @@ set NML_EX_DIR=templates\xmlTemplates\Examples
 set NML_SC_DIR=templates\xmlTemplates\Schemata
 set SBML2NEU_SC_DIR=templates\SBML2NEURON
 set NEUROML2_DIR=NeuroML2
+set JNEUROMLJAR_DIR=jNeuroMLJar
 
 set OSB_SHOWCASE_DIR=osb\showcase
 set NC_SHOWCASE_DIR=osb\showcase\neuroConstructShowcase
@@ -37,6 +38,13 @@ if not exist %NEUROML2_DIR% (
 )
 echo Updating the NeuroML 2 files from the NeuroML Sourceforge repository...
 svn update %NEUROML2_DIR%
+
+if not exist %JNEUROMLJAR_DIR% (
+	echo Adding jNeuroML jar from SourceForge in %JNEUROMLJAR_DIR%
+    svn co https://svn.code.sf.net/p/neuroml/code/jNeuroMLJar %NEUROML2_DIR%
+)
+echo Updating the jNeuroMLJar files from the NeuroML Sourceforge repository...
+svn update %JNEUROMLJAR_DIR%
 
     
 

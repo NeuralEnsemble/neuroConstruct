@@ -23,6 +23,8 @@ set NC_VERSION=1.7.0
 set LIB_NEUROML_VERSION=2.0.0
 set LEMS_VERSION=0.8.3
 
+set JNEUROML_VERSION=0.3.1
+
 REM ##########################################################################
 
 
@@ -58,8 +60,9 @@ REM Location of jars for LEMS
 set LIB_NEUROML_JAR=%NC_HOME%/lib/neuroml2/libNeuroML-%LIB_NEUROML_VERSION%.jar
 set LEMS_JAR=%NC_HOME%/lib/neuroml2/lems-%LEMS_VERSION%.jar
 
+set JNML_JAR=%NC_HOME%/jNeuroMLJar/jNeuroML-%JNEUROML_VERSION%-jar-with-dependencies.jar
 
-set CLASSPATH=%NC_HOME%/neuroConstruct_%NC_VERSION%.jar;%H5_JARS%;%J3D_JARS%;%NC_HOME%/lib/jython/jython.jar;%LEMS_JAR%;%LIB_NEUROML_JAR%
+set CLASSPATH=%NC_HOME%/neuroConstruct_%NC_VERSION%.jar;%H5_JARS%;%J3D_JARS%;%NC_HOME%/lib/jython/jython.jar;%LEMS_JAR%;%LIB_NEUROML_JAR%;%JNML_JAR%
 
 
 set JAVA_LIBRARY_PATH=%H5_DIR%/win%JDK_ARCH%;%J3D_DIR%/win%JDK_ARCH%
