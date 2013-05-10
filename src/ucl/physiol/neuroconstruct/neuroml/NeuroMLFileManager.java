@@ -444,6 +444,11 @@ public class NeuroMLFileManager
                                      boolean runInBackground) throws IOException
     {
         logger.logComment("Starting generation of the files into dir: " + generateDir.getCanonicalPath() + ", version: " + version, true);
+        
+        if (version.isVersion2alpha()){
+            logger.logComment("Generated units for LEMS/NML 2 alpha must be Physiological units... " , true);
+            units = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS);
+        }
 
         int preferredUnits = UnitConverter.getUnitSystemIndex(units);
 
@@ -1145,7 +1150,10 @@ public class NeuroMLFileManager
             // Saving summary of the simulation params
             try
             {
-                SimulationsInfo.recordSimulationSummary(project, simConf, simDir, "LEMS", null, units);
+                String sim = "LEMS";
+                if (version.isVersion2alpha())
+                    sim = "LEMSalpha";
+                SimulationsInfo.recordSimulationSummary(project, simConf, simDir, sim, null, units);
             }
             catch (IOException ex2)
             {
@@ -1339,7 +1347,10 @@ public class NeuroMLFileManager
         try
         {
             NeuroMLVersion version = NeuroMLVersion.NEUROML_VERSION_2_BETA;
-            //version = NeuroMLVersion.NEUROML_VERSION_2_ALPHA;
+            version = NeuroMLVersion.NEUROML_VERSION_2_ALPHA;
+            
+            //String units = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS);
+            String units = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_SI_UNITS);
             
             File projFile = new File("osb/showcase/neuroConstructShowcase/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
             //File projFile = new File("models/LarkumEtAl2009/LarkumEtAl2009.ncx");
@@ -1381,7 +1392,10 @@ public class NeuroMLFileManager
             ProjectManager pm = new ProjectManager(null, null);
             pm.setCurrentProject(p);
 
-            p.simulationParameters.setReference("LEMS_test");
+            String ref = "LEMS_test";
+            ref= ref + (version == NeuroMLVersion.NEUROML_VERSION_2_BETA? "_beta":"_alpha");
+            ref= ref + (units.equals("GENESIS SI Units") ? "_SI":"_PHYS");
+            p.simulationParameters.setReference(ref);
 
             pm.doGenerate(simConf, 123);
 
@@ -1400,8 +1414,6 @@ public class NeuroMLFileManager
             //LemsOption lo = LemsOption.NONE;
             LemsOption lo = LemsOption.EXECUTE_MODEL;
             
-            String units = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS);
-            //String units = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_SI_UNITS);
             
             File neuroMLDir = ProjectStructure.getNeuroMLDir(p.getProjectMainDirectory());
 

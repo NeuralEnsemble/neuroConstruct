@@ -13607,7 +13607,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         {
             projManager.getCurrentProject().neuromlFileManager.reset();
             
-            String units = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_SI_UNITS);
+            String units = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS);
             if (jRadioButtonNMLSI.isSelected())
                 units = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_SI_UNITS);
             else if (jRadioButtonNMLPhy.isSelected())

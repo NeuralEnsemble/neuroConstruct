@@ -173,7 +173,7 @@ public class SimulationData
         String unitSystemDesc = props.getProperty("Unit system");
         logger.logComment("unitSystemDesc: "+ unitSystemDesc);
         
-        if (props.getProperty("Simulator").contains("LEMS"))
+        if (props.getProperty("Simulator").equals("LEMS"))
         {
             //TODO: allow saving in Phys units in LEMS!!
             unitSystemDesc = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_SI_UNITS);
