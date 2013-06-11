@@ -1,3 +1,3 @@
 language: java
-script: svn co https://svn.code.sf.net/p/neuroml/code/jNeuroMLJar && ant testcore
+script: ./updatenC.sh && ant testcore
 
