@@ -1,0 +1,3 @@
+language: java
+script: mkdir temp && ./updatenC.sh && ant testcore
+
