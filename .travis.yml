@@ -1,3 +1,3 @@
 language: java
-script: mkdir temp && ./updatenC.sh && ant testcore
+script: mkdir temp && ./updatenC.sh && mkdir osb/cerebellum && mkdir osb/cerebellum/cerebellar_granule_cell && git clone https://github.com/OpenSourceBrain/GranuleCell.git osb/cerebellum/cerebellar_granule_cell/GranuleCell &&  ant testcore
 
