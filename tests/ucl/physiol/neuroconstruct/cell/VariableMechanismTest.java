@@ -134,7 +134,7 @@ public class VariableMechanismTest
         FileOutputStream fos = null;
         BufferedOutputStream bos = null;
         
-        File f = new File("../temp/TestVM.ser");
+        File f = new File("testProjects/TEMP_PROJECTS/TestVM.ser");
 
         System.out.println("Saving to: "+f.getCanonicalPath());
         
