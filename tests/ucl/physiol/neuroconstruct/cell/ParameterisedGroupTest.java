@@ -233,7 +233,7 @@ public class ParameterisedGroupTest
         FileOutputStream fos = null;
         BufferedOutputStream bos = null;
         
-        File f = new File("../temp/Test.ser");
+        File f = new File("testProjects/TEMP_PROJECTS/Test.ser");
 
         System.out.println("Saving to: "+f.getCanonicalPath());
         
