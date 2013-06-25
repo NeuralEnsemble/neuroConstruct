@@ -35,7 +35,6 @@ import org.junit.runner.Result;
 import ucl.physiol.neuroconstruct.test.MainTest;
 
 import ucl.physiol.neuroconstruct.gui.ValidityStatus;
-import ucl.physiol.neuroconstruct.hpc.mpi.MpiConfiguration;
 import ucl.physiol.neuroconstruct.hpc.mpi.MpiSettings;
 import ucl.physiol.neuroconstruct.mechanisms.CellMechanism;
 import ucl.physiol.neuroconstruct.mechanisms.ChannelMLCellMechanism;
