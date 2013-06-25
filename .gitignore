@@ -38,3 +38,8 @@ osb2
 
 lib/jython/cachedir/packages/*.pkc
 lib/jython/cachedir/packages/packages.idx
+
+docs/website/
+docs/XML/xmlForHtml/docs/python/
+docs/XML/xmlForHtml/samples/
+docs/XML/Forrest/tmp/

@@ -3341,14 +3341,14 @@ public class NeuronFileManager
                                         if (isV2alpha) 
                                         {
                                             contents = org.neuroml.Utils.convertNeuroML2ToLems(contents);
-                                            logger.logComment("Starting Lems with: "+contents);
+                                            logger.logComment("Starting Lems (alpha) with: "+contents);
 
                                             try {
                                                 StringInclusionReader.addSearchPath(ProjectStructure.getNeuroML2Dir());
                                                 LemsProcess sim = new org.lemsml.sim.Sim(contents);
                                                 sim.readModel();
                                                 org.lemsml.type.Component comp = sim.getLems().getComponent(cellMechanism.getInstanceName());
-                                                logger.logComment("Found component: " + comp, true);
+                                                logger.logComment("Found component: " + comp);
 
                                                 String modFile = org.neuroml.exporters.NeuronWriter.generateModFile(comp);
 
@@ -3375,13 +3375,13 @@ public class NeuronFileManager
                                         else
                                         {
                                             contents = NeuroMLConverter.convertNeuroML2ToLems(contents);
-                                            logger.logComment("Starting Lems with: "+contents);
+                                            logger.logComment("Starting LEMS (beta) with: "+contents);
                                             try
                                             {
                                                 Sim sim = Utils.readLemsNeuroMLFile(contents);
                                                 
                                                 Component comp = sim.getLems().getComponent(cellMechanism.getInstanceName());
-                                                logger.logComment("Found component: " + comp, true);
+                                                logger.logComment("Found component: " + comp);
 
                                                 String modFile = NeuronWriter.generateModFile(comp);
 

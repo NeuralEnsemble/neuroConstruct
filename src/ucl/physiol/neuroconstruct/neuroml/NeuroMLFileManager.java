@@ -766,7 +766,7 @@ public class NeuroMLFileManager
             targetElement.addAttribute(LemsConstants.COMPONENT_ATTR, LemsConstants.DEFAULT_SIM_ID);
 
 
-            lemsElement.addComment("Include standard NeuroML 2 ComponentClass definitions");
+            lemsElement.addComment("Include standard NeuroML 2 ComponentType definitions");
             lemsElement.addContent("\n    "); // to make it more readable...
 
             String prefix = "";
@@ -1347,7 +1347,7 @@ public class NeuroMLFileManager
         try
         {
             NeuroMLVersion version = NeuroMLVersion.NEUROML_VERSION_2_BETA;
-            version = NeuroMLVersion.NEUROML_VERSION_2_ALPHA;
+            //version = NeuroMLVersion.NEUROML_VERSION_2_ALPHA;
             
             //String units = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS);
             String units = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_SI_UNITS);
@@ -1359,6 +1359,7 @@ public class NeuroMLFileManager
             //projFile = new File("nCmodels/RothmanEtAl_KoleEtAl_PyrCell/RothmanEtAl_KoleEtAl_PyrCell.ncx");
             //projFile = new File("../nC_projects/Thaal/Thaal.ncx");
             //File projFile = new File("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
+            projFile = new File("osb/showcase/neuroConstructShowcase/Ex4_HHcell/Ex4_HHcell.ncx");
 
             String simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
 

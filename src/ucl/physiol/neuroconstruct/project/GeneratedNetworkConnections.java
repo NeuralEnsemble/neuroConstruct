@@ -875,7 +875,8 @@ public class GeneratedNetworkConnections
 
         boolean nml2 = version.isVersion2();
         boolean nml2beta = version.isVersion2betaOrLater();
-        boolean nml2alpha = version.isVersion2alpha();
+        boolean wd = false;
+        //boolean nml2alpha = version.isVersion2alpha();
                 
 
         String metadataPrefix = MetadataConstants.PREFIX + ":";
@@ -1012,8 +1013,11 @@ public class GeneratedNetworkConnections
                     }
                     else
                     {
-
-                        SimpleXMLElement connElement = new SimpleXMLElement(NetworkMLConstants.CONNECTION_ELEMENT);
+                        String connElName = NetworkMLConstants.CONNECTION_ELEMENT;
+                        if (nml2beta && wd)
+                            connElName = NetworkMLConstants.NEUROML2_CONNECTION_WD_ELEMENT;
+                        
+                        SimpleXMLElement connElement = new SimpleXMLElement(connElName);
 
                         connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.CONNECTION_ID_ATTR, id+""));
 
@@ -1112,6 +1116,8 @@ public class GeneratedNetworkConnections
                         }
 
                         //UnitConverter.getTime(XXX, UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem)
+                        float totalDelayMs = 0;
+                        float weight = 1;
 
                         if (synConn.props!=null && synConn.props.size()>0)
                         {
@@ -1139,6 +1145,13 @@ public class GeneratedNetworkConnections
                                             (float)UnitConverter.getTime(prop.internalDelay, UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem)+""));
 
                                     propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.WEIGHT_ATTR, prop.weight+""));
+                                } 
+                                else
+                                {
+                                    weight = prop.weight;
+                                    
+                                    totalDelayMs = totalDelayMs + (float)UnitConverter.getTime(synConn.apPropDelay, UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem);
+                                    totalDelayMs = totalDelayMs + (float)UnitConverter.getTime(prop.internalDelay, UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem);
                                 }
                             }
                         }
@@ -1155,6 +1168,10 @@ public class GeneratedNetworkConnections
                                     propElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.PROP_DELAY_ATTR,
                                         (float)UnitConverter.getTime(synConn.apPropDelay, UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem) + ""));
                                 }
+                                else
+                                {
+                                    totalDelayMs += (float)UnitConverter.getTime(synConn.apPropDelay, UnitConverter.NEUROCONSTRUCT_UNITS,unitSystem);
+                                }
                             }
                         }
 
@@ -1165,6 +1182,12 @@ public class GeneratedNetworkConnections
                         }
                         else
                         {
+                            if (wd) 
+                            {
+                                connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_DELAY_ATTR, totalDelayMs + "ms"));
+                                connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_WEIGHT_ATTR, weight+""));
+                            }
+                                    
                             projectionElement.addContent("\n            ");
                             projectionElement.addChildElement(connElement);
                         }
@@ -1177,6 +1200,7 @@ public class GeneratedNetworkConnections
                 } 
                 else if (nml2beta) 
                 {
+                    projectionElement.addContent("\n        ");
                     entities.add(projectionElement);
                 }
             }

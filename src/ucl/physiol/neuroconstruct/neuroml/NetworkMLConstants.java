@@ -97,12 +97,6 @@ public class NetworkMLConstants
     public static String TARGET_ATTR = "target";
     
     
-    public static String NEUROML2_PROJ_PRE = "presynapticPopulation";
-    public static String NEUROML2_PROJ_POST = "postsynapticPopulation";
-    public static String NEUROML2_PROJ_SYNAPSE = "synapse";
-    
-    public static String NEUROML2_PRE_CELL_ID = "preCellId";
-    public static String NEUROML2_POST_CELL_ID = "postCellId";
 
     public static String SYN_PROPS_ELEMENT = "synapse_props";
     
@@ -204,17 +198,45 @@ public class NetworkMLConstants
     public static String NC_SIM_TIME_STEP = "neuroConstruct_sim_time_step";
     public static String NC_TEMPERATURE = "neuroConstruct_temperature";
 
-
+    //Network
+    
     public static String NEUROML2_NETWORK_ELEMENT = "network";
     public static String NEUROML2_NETWORK_ID_PREFIX = "network_";
     
     public static String NEUROML2_EXTRACELLULAR_PROPS_ELEMENT = "extracellularProperties";
     public static String NEUROML2_TEMPERATURE_ATTR = "temperature";
+    
+    // Population
 
     public static String NEUROML2_POPULATION_LIST = "populationList";
 
 
+    // Projection
+    
+    public static String NEUROML2_PROJ_PRE = "presynapticPopulation";
+    public static String NEUROML2_PROJ_POST = "postsynapticPopulation";
+    public static String NEUROML2_PROJ_SYNAPSE = "synapse";
+    
+    public static String NEUROML2_CONNECTION_ELEMENT = "connection";
+    public static String NEUROML2_CONNECTION_WD_ELEMENT = "connectionWD";
+    
+    public static String NEUROML2_WEIGHT_ATTR = "weight";
+    public static String NEUROML2_DELAY_ATTR = "delay";
+    
+    public static String NEUROML2_PRE_CELL_ID = "preCellId";
+    public static String NEUROML2_POST_CELL_ID = "postCellId";
 
+    public static String NEUROML2_EXP_CONN_ELEMENT = "synapticConnection";
+    public static String NEUROML2_EXP_CONN_WD_ELEMENT = "synapticConnectionWD";
+    
+    public static String NEUROML2_EXP_CONN_FROM_ATTR = "from";
+    public static String NEUROML2_EXP_CONN_TO_ATTR = "to";
+    public static String NEUROML2_EXP_CONN_SYN_ATTR = "synapse";
+    public static String NEUROML2_EXP_CONN_WEIGHT_ATTR = "weight";
+    public static String NEUROML2_EXP_CONN_DELAY_ATTR = "delay";
+    
+    // Inputs
+    
     public static String NEUROML2_PULSE_GEN_ELEMENT = "pulseGenerator";
 
     public static String NEUROML2_EXP_INPUT_ELEMENT = "explicitInput";
@@ -228,15 +250,6 @@ public class NetworkMLConstants
     public static String NEUROML2_INPUT_POPULATION = "population";
     public static String NEUROML2_INPUT_DESTINATION = "destination";
     public static String NEUROML2_INPUT_DESTINATION_DEFAULT = "synapses";
-
-
-    public static String NEUROML2_EXP_CONN_ELEMENT = "synapticConnection";
-    public static String NEUROML2_EXP_CONN_WD_ELEMENT = "synapticConnectionWD";
-    public static String NEUROML2_EXP_CONN_FROM_ATTR = "from";
-    public static String NEUROML2_EXP_CONN_TO_ATTR = "to";
-    public static String NEUROML2_EXP_CONN_SYN_ATTR = "synapse";
-    public static String NEUROML2_EXP_CONN_WEIGHT_ATTR = "weight";
-    public static String NEUROML2_EXP_CONN_DELAY_ATTR = "delay";
 
     
     private NetworkMLConstants()
