@@ -64,7 +64,7 @@ public class NeuronFileManagerTest {
     @Before
     public void setUp() 
     {
-        System.out.println("---------------   setUp() NeuronFileManagerTest");
+        System.out.println("---------------   setUp() NeuronFileManagerTest...");
     }
     
     private ProjectManager loadProject(String projectFile) throws ProjectFileParsingException
