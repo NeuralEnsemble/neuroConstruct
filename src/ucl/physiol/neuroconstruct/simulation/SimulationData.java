@@ -247,6 +247,9 @@ public class SimulationData
         for (int fileIndex = 0; fileIndex < cellDataFiles.length; fileIndex++)
         {
             logger.logComment("-----   Looking at "+fileIndex+": "+cellDataFiles[fileIndex]);
+            for (DataStore ds: dataSources)
+                System.out.print(ds.getCellSegRef()+".. ");
+            System.out.println("\nSims so far ("+dataSources.size()+"): ");
 
             if (cellDataFiles[fileIndex].getName().indexOf("."+SimPlot.H5_EXT)>0)
             {
@@ -256,7 +259,7 @@ public class SimulationData
 
                     Hdf5Utils.open(h5file);
 
-                    logger.logComment("h5file: "+h5file.getRootNode());
+                    logger.logComment("h5file: "+h5file.getRootNode(), true);
 
                     Group g = Hdf5Utils.getRootGroup(h5file);
 
