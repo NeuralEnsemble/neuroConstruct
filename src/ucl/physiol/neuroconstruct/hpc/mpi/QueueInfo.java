@@ -79,6 +79,19 @@ public class QueueInfo
 
     }
 
+    @Override
+    public String toString() {
+        return "Default wall time mins: " + wallTimeMins + "\n"
+             + "Account:                " + account + "\n"
+             + "Launcher script:        " + launcherScript + "\n"
+             + "Queue type:             " + queueType + "\n"
+             + "MPI run path:           " + mpirunPath + "\n"
+             + "Additional sub options: " + additionalSubOptions;
+    }
+    
+    
+    
+
 
     @Override
     public Object clone()

@@ -670,7 +670,7 @@ public class SimulationData
         String nextLine = null;
         double[] data;
                         
-        logger.logComment("Reading in data from: "+ dataFile, true);
+        logger.logComment("Reading in data from: "+ dataFile);
         
         try
         {

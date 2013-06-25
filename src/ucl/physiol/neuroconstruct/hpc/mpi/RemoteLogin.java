@@ -62,6 +62,22 @@ public class RemoteLogin
         this.workDir = workDir;
         this.executables = executables;
     }
+    
+    
+    @Override
+    public String toString()
+    {
+        StringBuilder info = new StringBuilder();
+        info.append("Hostname:    "+hostname+"\n");
+        info.append("Username:    "+userName+"\n");
+        info.append("Working dir: "+workDir+"\n");
+        for (KnownSimulators sim: executables.keySet())
+        {
+            info.append("Executable for "+sim+": "+executables.get(sim)+"\n");
+        
+        }            
+        return info.toString();
+    }
 
 
     public Hashtable<KnownSimulators, String> getExecutables()

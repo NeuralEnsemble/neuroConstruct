@@ -76,6 +76,7 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
     JPanel jPanelDescription = new JPanel();
     JPanel jPanelButtons = new JPanel();
     JButton jButtonOK = new JButton("Close");
+    JButton jButtonInfo = new JButton("Info...");
     JButton jButtonEditDesc = new JButton("Edit description");
     JButton jButtonDelete = new JButton("Delete selected");
     JScrollPane jScrollPane1 = new JScrollPane();
@@ -129,6 +130,14 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
             public void actionPerformed(ActionEvent e)
             {
                 jButtonOK_actionPerformed(e);
+            }
+        });
+
+        jButtonInfo.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                jButtonInfo_actionPerformed(e);
             }
         });
 
@@ -207,6 +216,9 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         
         if(GeneralUtils.includeParallelFunc())
             jPanelSimDur.add(jComboBoxMpiConfs);
+        
+        if(GeneralUtils.includeParallelFunc())
+            jPanelSimDur.add(jButtonInfo);
         
         jListNames.addListSelectionListener(this);
     }
@@ -734,6 +746,13 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
     {
         this.dispose();
     }
+    
+    public void jButtonInfo_actionPerformed(ActionEvent e)
+    {
+        SimConfig simConfig = getSelectedSimConfig();
+        MpiConfiguration mpic = simConfig.getMpiConf();
+        GuiUtils.showInfoMessage(logger, "Information on Parallel Configuration: "+mpic, mpic.toLongString(), this);
+    }
 
     public void jButtonDelete_actionPerformed(ActionEvent e)
     {
@@ -890,8 +909,8 @@ public class SimConfigManager extends JFrame implements ListSelectionListener, I
         try
         {
             //Project proj = Project.loadProject(new File("examples/Ex5-Networks/Ex5-Networks.neuro.xml"), null);
-            Project proj = Project.loadProject(new File("nCmodels/Thalamocortical/Thalamocortical.ncx"), null);
-
+            //Project proj = Project.loadProject(new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/L5bPyrCellHayEtAl2011/neuroConstruct/L5bPyrCellHayEtAl2011.ncx"), null);
+            Project proj = Project.loadProject(new File("../neuroConstructSVN/models/Parallel/Parallel.ncx"), null);
             SimConfigManager frame = new SimConfigManager(proj.simConfigInfo, null, proj);
 
             String favouredLookAndFeel = MainApplication.getFavouredLookAndFeel();

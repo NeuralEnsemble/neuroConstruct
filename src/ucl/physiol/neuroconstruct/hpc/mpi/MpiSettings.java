@@ -144,6 +144,17 @@ public class MpiSettings
     public static final String MATLEM_240PROC = "MatLem (30 x 8p)";
 
     public static final String MATLEM_DIRECT = "Matthau_Lemmon_Test_MANY";
+    
+    
+    /*
+     * UCSD NSG Portal infrastructure: http://www.nsgportal.org/
+     * This is temporary configuration until the NSG portal adds a REST API for 
+     * submitting jobs to the portal to run. Contact p.gleeson if you're interested in helping 
+     * test this
+     */
+    public static final String NSG_MAIN = "NSG Portal [trestles]";
+    public static final String NSG_1PROC = NSG_MAIN+" (1 x 1p)";
+    public static final String NSG_8PROC = NSG_MAIN+" (1 x 8p)";
 
     
     public static final String MACHINE_FILE = "machinesToUse";
@@ -165,6 +176,7 @@ public class MpiSettings
 
         Hashtable<KnownSimulators, String> simulatorExecutablesCaspur = new Hashtable<KnownSimulators, String>();
         Hashtable<KnownSimulators, String> simulatorExecutablesNotos = new Hashtable<KnownSimulators, String>();
+        Hashtable<KnownSimulators, String> simulatorExecutablesNsg = new Hashtable<KnownSimulators, String>();
 
         simulatorExecutables.put(KnownSimulators.NEURON, "/home/ucgbpgl/nrnmpi/x86_64/bin/nrniv");
         simulatorExecutables.put(KnownSimulators.GENESIS, "/home/ucgbpgl/gen23/genesis");
@@ -183,6 +195,8 @@ public class MpiSettings
 
         simulatorExecutablesCaspur.put(KnownSimulators.NEURON, "/home/sergio/nrn7.0/x86_64/bin/nrniv");
         simulatorExecutablesNotos.put(KnownSimulators.NEURON, "/opt/neuron/powerpc64/bin/nrniv");
+        
+        simulatorExecutablesNsg.put(KnownSimulators.NEURON, "/opt/neuron/powerpc64/bin/nrniv");
 
         // This is a 4 processor Linux machine in our lab. Auto ssh login is enabled to it from the
         // machine on which neuroConstruct is running. Jobs are set running directly on this machine
@@ -226,6 +240,13 @@ public class MpiSettings
                                                   "ucgbpgl",
                                                   "/home/ucgbpgl/nCsims",
                                                   simulatorExecutables);
+        
+        
+        // Login node for NSG cluster
+        RemoteLogin nsgLogin = new RemoteLogin("trestles-login.sdsc.edu",
+                                                  "pgleeson",
+                                                  "/home/pgleeson",
+                                                  simulatorExecutablesNsg);
 
         //QueueInfo legionQueueCvos = new QueueInfo(6, "ucl/NeuroSci/neuroconst", "cvos-launcher");
 
@@ -239,7 +260,12 @@ public class MpiSettings
 
         QueueInfo caspurQueue = new QueueInfo(6, "std10-300", "time", QueueInfo.QueueType.PBS, "mpirun");
         QueueInfo notosQueue = new QueueInfo(6, "G43-4", "time", QueueInfo.QueueType.LL, "mpirun");
-
+        
+        QueueInfo nsgQueue = new QueueInfo(6, "TG-IBN120011", "time", QueueInfo.QueueType.PBS, "mpirun");
+        nsgQueue.addAdditionalSubOptions("#PBS -q normal");
+        //nsgQueue.addAdditionalSubOptions("#PBS -v QOS=2");
+        nsgQueue.addAdditionalSubOptions("#PBS -M  p.gleeson@ucl.ac.uk"); // CHANGE THIS!!!
+        nsgQueue.addAdditionalSubOptions("#PBS -m ae");
 
         if (getMpiConfiguration(LOCAL_SERIAL)==null)
         {
@@ -1121,6 +1147,36 @@ public class MpiSettings
         {
             p_ML.getHostList().add(new MpiHost(LEMMON+i, 8, 1));
         }*/
+        
+        
+        
+        if (getMpiConfiguration(NSG_1PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(NSG_1PROC);
+
+            for(int i=0;i<1;i++)
+                p.getHostList().add(new MpiHost("node"+i,1, 1));
+
+            p.setRemoteLogin(nsgLogin);
+            p.setMpiVersion(MpiSettings.OPENMPI_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(nsgQueue);
+            configurations.add(p);
+        }
+        
+        if (getMpiConfiguration(NSG_8PROC)==null)
+        {
+            MpiConfiguration p = new MpiConfiguration(NSG_8PROC);
+
+            for(int i=0;i<1;i++)
+                p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+            p.setRemoteLogin(nsgLogin);
+            p.setMpiVersion(MpiSettings.OPENMPI_V2);
+            p.setUseScp(true);
+            p.setQueueInfo(nsgQueue);
+            configurations.add(p);
+        }
 
 
 

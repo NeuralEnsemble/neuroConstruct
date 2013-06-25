@@ -792,15 +792,34 @@ public class MpiConfiguration
         return mc2;
     }
 
-
-    @Override
-    public String toString()
+    public String toLongString()
+    {
+        StringBuilder info = new StringBuilder(procsInfo()+"\n\n");
+        if (this.mpiVersion!=null)
+        {
+            info.append("MPI version: "+mpiVersion+"\n");
+        }
+        info.append("Use scp: "+useScp+"\n\n");
+        
+        if (this.remoteLogin!=null)
+        {
+            info.append("-  Remote Login details:\n");
+            info.append(this.remoteLogin+"\n");
+        }
+        if (this.queueInfo!=null)
+        {
+            info.append("-  Queue info\n");
+            info.append(this.queueInfo+"\n");
+        }
+        return info.toString();
+    }
+    
+    public String procsInfo()
     {
         int totHosts = 0;
         int totProcs = 0;
         for (MpiHost host: hostList)
         {
-            //info.append("   "+host.toString());
             totHosts++;
             totProcs+=host.getNumProcessors();
         }
@@ -809,7 +828,14 @@ public class MpiConfiguration
         if (totHosts==1) hosts = "1 host, ";
         if (totProcs==1) procs = "1 processor";
 
-        StringBuilder info = new StringBuilder(name+" with "+hosts+procs);
+        return name+" with "+hosts+procs;
+    }
+
+    @Override
+    public String toString()
+    {
+
+        StringBuilder info = new StringBuilder(procsInfo());
 
         if (this.remoteLogin!=null)
         {
