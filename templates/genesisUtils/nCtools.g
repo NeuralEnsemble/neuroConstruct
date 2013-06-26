@@ -235,6 +235,63 @@ end
 
 
 /*
+ * Dumps info on all channel tables into files
+ */
+function dumpchans
+
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++"
+
+str compName
+str chanName
+
+foreach compName ({el {cellsRoot}/##[][TYPE=compartment],{cellsRoot}/##[][TYPE=symcompartment]})
+
+    echo "---------  Dumping channels in compartment: " {compName} 
+
+    foreach chanName ({el {compName}/##[][TYPE=tabchannel]})
+        showfield {chanName} 
+        str filename
+        
+        filename = {strcat {chanName} {"_X_inf.dat"}}
+        filename = {strsub {filename} / _ -all}
+        filename = {substring {filename} 7 }
+        echo Saving to: {filename}
+        tab2file {filename} {chanName} X_A -table2 X_B -mode minf
+        
+        filename = {strcat {chanName} {"_X_tau.dat"}}
+        filename = {strsub {filename} / _ -all}
+        filename = {substring {filename} 7 }
+        echo Saving to: {filename}
+        tab2file {filename} {chanName} X_A -mode tau
+        
+        int ypower = {getfield {chanName} Ypower}
+        
+        if ({ypower} == 1)
+        
+          filename = {strcat {chanName} {"_Y_inf.dat"}}
+          filename = {strsub {filename} / _ -all}
+          filename = {substring {filename} 7 }
+          echo Saving to: {filename}
+          tab2file {filename} {chanName} Y_A -table2 Y_B -mode minf
+
+          filename = {strcat {chanName} {"_Y_tau.dat"}}
+          filename = {strsub {filename} / _ -all}
+          filename = {substring {filename} 7 }
+          echo Saving to: {filename}
+          tab2file {filename} {chanName} Y_A -mode tau
+        
+        end
+        
+    end
+
+end
+
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++"
+
+end
+
+
+/*
  * Prints info on all synaptic connections
  */
 function allsyns
