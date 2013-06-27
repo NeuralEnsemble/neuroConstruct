@@ -2686,8 +2686,16 @@ public class NeuronFileManager
                 response.append("nrnpython(\"import numpy\")\n");
                 response.append("nrnpython(\"import tables\")\n\n");
                 response.append("nrnpython(\"from neuron import *\")\n\n\n");
-            }
+		String hostInfo = "";
+		if (simConfig.getMpiConf().isParallelNet())
+		    {
+			hostInfo = ".host'+str(int(h.hostid))+'";
+		    }
+		String h5Filename = project.simulationParameters.getReference()+"_"+hostInfo+"."+SimPlot.H5_EXT;
+		String varName = GeneralUtils.replaceAllTokens(h5Filename, ".", "_");
+		response.append("nrnpython(\"h5file = tables.openFile(h.targetDir+'"+h5Filename+"', mode = 'w', title = 'Generated via neuroConstruct')\")\n\n");
 
+            }
 
             String prefix = "";
             String post = "";
@@ -2702,7 +2710,7 @@ public class NeuronFileManager
                 Cell cell = project.cellManager.getCell(cellType);
 
                 boolean isSpikeRecording = record.simPlot.getValuePlotted().indexOf(SimPlot.SPIKE) >= 0;
-
+		
                 if (numInCellGroup > 0)
                 {
                     addHocComment(response, record.getDescription(true, false));
@@ -2738,11 +2746,10 @@ public class NeuronFileManager
                                     hostInfo = ".host'+str(int(h.hostid))+'";
                                 }
 
-                                String h5Filename = cellGroupName+"."+record.simPlot.getSafeVarName()+hostInfo+"."+SimPlot.H5_EXT;
-                                String varName = GeneralUtils.replaceAllTokens(h5Filename, ".", "_");
+                                //String h5Filename = cellGroupName+"."+record.simPlot.getSafeVarName()+hostInfo+"."+SimPlot.H5_EXT;
+                                //String varName = GeneralUtils.replaceAllTokens(h5Filename, ".", "_");
 
-                                response.append("nrnpython(\"h5file = tables.openFile(h.targetDir+'"+h5Filename+"', mode = 'w', title = 'Arrays of recordings of "+record.simPlot.getValuePlotted()
-                                        +" from NEURON')\")\n\n");
+                                //response.append("nrnpython(\"h5file = tables.openFile(h.targetDir+'"+h5Filename+"', mode = 'a', title = 'Arrays of recordings of "+record.simPlot.getValuePlotted()+" from NEURON')\")\n\n");
 
                                 int mode = 4;
 
@@ -2763,14 +2770,17 @@ public class NeuronFileManager
                                 }
                                 else if (mode == 4)
                                 {
-                                    int lengthTable = numStepsTotal;
+                                    // int lengthTable = numStepsTotal;
 
                                     if (isSpikeRecording)
-                                    {
+					{
+					    int lengthTable = 0;
                                         lengthTable = (int)getSimDuration() * 3; // i.e. max constant firing freq of 3000Hz...
-                                    }
-
-                                    response.append("{nrnpython(\"allData = numpy.ones( (" + lengthTable + ", h.n_"+cellGroupName+"_local ) , dtype=numpy.float32 )\")}\n");
+				    
+					response.append("{nrnpython(\"allData = numpy.ones( ("+lengthTable+", h.n_"+cellGroupName+"_local ) , dtype=numpy.float32 )\")}\n");}
+				    else
+					{response.append("{nrnpython(\"allData = numpy.ones( (h.v_time.size(), h.n_"+cellGroupName+"_local ) , dtype=numpy.float32 )\")}\n");}		
+				    response.append("{nrnpython(\"time_data = numpy.array(h.v_time.to_python()) \")}\n");
                                     response.append("{nrnpython(\"allData = allData * -1\")}\n");
 
                                     response.append("{nrnpython(\"print allData.shape\")}\n\n");
@@ -2818,15 +2828,18 @@ public class NeuronFileManager
                                         response.append("{nrnpython(\"allData = numpy.resize(allData, (maxNumSpikes, h.n_"+cellGroupName+"_local ) )\")}\n");
                                     }
 
-                                    response.append("{nrnpython(\"group = h5file.createGroup('/', '"+cellGroupName+"', '"+cellGroupName+"')\")}\n");
+				    // response.append("{nrnpython(\"group = h5file.createGroup('/', '"+cellGroupName+"', '"+cellGroupName+"')\")}\n");
 
-                                    response.append("{nrnpython(\"group._v_attrs."+Hdf5Constants.NEUROCONSTRUCT_POPULATION+" = '"+cellGroupName+"'\")}\n");
+                                    // response.append("{nrnpython(\"group._v_attrs."+Hdf5Constants.NEUROCONSTRUCT_POPULATION+" = '"+cellGroupName+"'\")}\n");
+				    response.append("{nrnpython(\"group1 = h5file.createGroup('/', '"+vectObj+"')\")}\n");
 
-                                    response.append("{nrnpython(\"hArray = h5file.createArray(group, '"+record.simPlot.getSafeVarName()+"', allData, 'Values of "+record.simPlot.getValuePlotted()
+                                    response.append("{nrnpython(\"hArray = h5file.createArray(group1, '"+record.simPlot.getSafeVarName()+"', allData, 'Values of "+record.simPlot.getValuePlotted()
                                             +" from cell group: "+cellGroupName+"')\")}\n");
+
 
                                     response.append("{nrnpython(\"hArray.setAttr('"+Hdf5Constants.NEUROCONSTRUCT_VARIABLE+"', '"+record.simPlot.getValuePlotted()+"')\")}\n");
 
+				    response.append("{nrnpython(\"hArray = h5file.createArray('/', 'time',time_data , 'Values of time points')\")}\n");
                                     response.append("{nrnpython(\"for columnIndex in columnsVsCellNums.keys(): " +
                                             "hArray.setAttr('"+Hdf5Constants.NEUROCONSTRUCT_COLUMN_PREFIX+"'+str(columnIndex), " +
                                             "'"+Hdf5Constants.NEUROCONSTRUCT_CELL_NUM_PREFIX+"'+ str(columnsVsCellNums[columnIndex]))\")}\n");
@@ -2855,8 +2868,8 @@ public class NeuronFileManager
 
                                 }
 
-                                response.append("{nrnpython(\"print 'Closing file: '+h5file.filename\")}\n");
-                                response.append("{nrnpython(\"h5file.close()\")}\n");
+                                //response.append("{nrnpython(\"print 'Closing file: '+h5file.filename\")}\n");
+                                //response.append("{nrnpython(\"h5file.close()\")}\n");
                             }
                             else
                             {
@@ -3010,6 +3023,7 @@ public class NeuronFileManager
                         }
                     }
                 }
+
             }
             response.append("\n");
 
@@ -3071,6 +3085,11 @@ public class NeuronFileManager
 
             response.append(prefix+"print \"Data stored in \",savetime, \"secs in directory: \", targetDir\n\n");
         }
+	if (hdf5Format)
+	    {
+		response.append("{nrnpython(\"print 'Closing file: '+h5file.filename\")}\n");
+		response.append("{nrnpython(\"h5file.close()\")}\n");
+	    }
 
         return response.toString();
 
@@ -4771,6 +4790,8 @@ public class NeuronFileManager
         response.append(dateInfo);
 
         return response.toString();
+
+
 
     }
 
