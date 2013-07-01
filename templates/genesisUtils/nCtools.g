@@ -235,7 +235,14 @@ end
 
 
 /*
- * Dumps info on all channel tables into files
+ * Dumps info on all channel tables (i.e. channels based on tabchannel) into files
+ * 
+ * Note: this function SHOULD save alpha, beta, tau & inf values to individual files, but there seems to be some 
+ * inconsistency in the descriptions of the options for saving the tables here:
+ * http://www.genesis-sim.org/GENESIS/gum-tutorials/beeman/Hyperdoc/Manual-25.html#ss25.189
+ * and what is actually saved to file
+ * Nevertheless, this function can be very useful for comparing ChannelML implementations of channels to
+ * the original *.g implementations
  */
 function dumpchans
 
@@ -258,7 +265,19 @@ foreach compName ({el {cellsRoot}/##[][TYPE=compartment],{cellsRoot}/##[][TYPE=s
         echo Saving to: {filename}
         tab2file {filename} {chanName} X_A -table2 X_B -mode minf
         
-        filename = {strcat {chanName} {"_X_tau.dat"}}
+        filename = {strcat {chanName} {"_X_alpha.dat"}}
+        filename = {strsub {filename} / _ -all}
+        filename = {substring {filename} 7 }
+        echo Saving to: {filename}
+        tab2file {filename} {chanName} X_A -mode alpha
+        
+        filename = {strcat {chanName} {"_X_beta_supposedly.dat"}}
+        filename = {strsub {filename} / _ -all}
+        filename = {substring {filename} 7 }
+        echo Saving to: {filename}
+        tab2file {filename} {chanName} X_A -table2 X_B -mode beta
+        
+        filename = {strcat {chanName} {"_X_tau_supposedly.dat"}}
         filename = {strsub {filename} / _ -all}
         filename = {substring {filename} 7 }
         echo Saving to: {filename}
@@ -273,8 +292,20 @@ foreach compName ({el {cellsRoot}/##[][TYPE=compartment],{cellsRoot}/##[][TYPE=s
           filename = {substring {filename} 7 }
           echo Saving to: {filename}
           tab2file {filename} {chanName} Y_A -table2 Y_B -mode minf
+        
+          filename = {strcat {chanName} {"_Y_alpha.dat"}}
+          filename = {strsub {filename} / _ -all}
+          filename = {substring {filename} 7 }
+          echo Saving to: {filename}
+          tab2file {filename} {chanName} Y_A -mode alpha
 
-          filename = {strcat {chanName} {"_Y_tau.dat"}}
+          filename = {strcat {chanName} {"_Y_beta_supposedly.dat"}}
+          filename = {strsub {filename} / _ -all}
+          filename = {substring {filename} 7 }
+          echo Saving to: {filename}
+          tab2file {filename} {chanName} Y_A -table2 Y_B -mode beta
+
+          filename = {strcat {chanName} {"_Y_tau_supposedly.dat"}}
           filename = {strsub {filename} / _ -all}
           filename = {substring {filename} 7 }
           echo Saving to: {filename}
