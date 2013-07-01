@@ -72,7 +72,8 @@ public class ExpressionTest {
                                             "sqrt(v)",
                                             "H(100+ (-v))",
                                             "v^2 + v^3",
-                                            "2^3+ 2 / 2 ^ 2 * 4"};
+                                            "2^3+ 2 / 2 ^ 2 * 4",
+                                            "1.0 / (91000 * (v + 0.048)/ (1.0 - (exp ((-1.0 * 0.048 - v)/ 0.005))) + (-1.0 * 62000) * (v + 0.048)/ (1.0 - (exp ((v + 0.048)/ 0.005))))"};
         
         Variable v = new Variable("v");
         Variable t = new Variable("t");

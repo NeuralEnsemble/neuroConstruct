@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channelml xmlns="http://morphml.org/channelml/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:meta="http://morphml.org/metadata/schema" xsi:schemaLocation="http://morphml.org/channelml/schema     ../../Schemata/v1.8.0/Level2/ChannelML_v1.8.0.xsd" units="Physiological Units">
+    
+    <meta:notes>ChannelML file containing a single Channel description</meta:notes>        
+
+    <channel_type name="LeakConductance" density="yes">
+        
+        <status value="stable"/>
+
+        <meta:notes>Simple example of a leak/passive conductance. Note: for GENESIS cells with a single leak conductance,
+        it is better to use the Rm and Em variables for a passive current.</meta:notes>
+
+        <current_voltage_relation cond_law="ohmic" ion="non_specific" default_erev="-54.3" default_gmax="0.3"/>
+
+    </channel_type>
+ 
+</channelml>
