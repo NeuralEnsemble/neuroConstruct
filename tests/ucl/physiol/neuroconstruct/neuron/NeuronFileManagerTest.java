@@ -76,6 +76,7 @@ public class NeuronFileManagerTest {
         return pm;
     }
     
+    /*
     @Test public void testGenerateAndRunHoc() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException, Exception
     {
         assumeTrue(MainTest.testNEURON());
@@ -292,7 +293,7 @@ public class NeuronFileManagerTest {
 
         
         
-    }
+    }*/
 
     /* No need for this, as it's the case being compared to...
     @Test public void testCompareHocSerText() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
@@ -300,7 +301,7 @@ public class NeuronFileManagerTest {
         compareSims(NeuronFileManager.RUN_HOC, false, DataSaveFormat.TEXT_NC);
     }*/
     
-   
+    /*
     @Test public void testCompareHocParText() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
     {
         compareSims(NeuronFileManager.RUN_HOC, true, DataSaveFormat.TEXT_NC);
@@ -321,10 +322,7 @@ public class NeuronFileManagerTest {
     {
         compareSims(NeuronFileManager.RUN_PYTHON_XML, false, DataSaveFormat.HDF5_NC);
     }
-    @Test public void testComparePyXParH5() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
-    {
-        compareSims(NeuronFileManager.RUN_PYTHON_XML, true, DataSaveFormat.HDF5_NC);
-    }
+    
     @Test public void testComparePyH5SerText() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
     {
         compareSims(NeuronFileManager.RUN_PYTHON_HDF5, false, DataSaveFormat.TEXT_NC);
@@ -332,7 +330,13 @@ public class NeuronFileManagerTest {
     @Test public void testComparePyH5SerH5() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
     {
         compareSims(NeuronFileManager.RUN_PYTHON_HDF5, false, DataSaveFormat.HDF5_NC);
-    }  /* 
+    } */ 
+    @Test public void testComparePyXParH5() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
+    {
+        compareSims(NeuronFileManager.RUN_PYTHON_XML, true, DataSaveFormat.HDF5_NC);
+    }
+    
+    /* 
     
     
     @Test public void testCompareHocParH5() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException
@@ -575,7 +579,7 @@ public class NeuronFileManagerTest {
 
         System.out.println("Have found "+ numRecordings+" recordings in dir: "+ simDataParallel0.getSimulationDirectory().getAbsolutePath());
         if (numGenParallel!=numRecordings)
-            System.out.println("Sims: "+simDataParallel0.getCellSegRefs(false));
+            System.out.println("Sims: "+ GeneralUtils.reorderAlphabetically(simDataParallel0.getCellSegRefs(false), true));
         assertEquals(numGenParallel, numRecordings);
 
 
