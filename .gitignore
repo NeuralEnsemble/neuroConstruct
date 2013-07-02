@@ -26,9 +26,9 @@ nbproj/nbproject/private
 
 /testProjects/TEMP_PROJECTS
 /testProjects/*/savedNetworks
-generatedNeuroML
-generatedNEURON
-generatedGENESIS
+generatedNeuroML*
+generatedNEURON*
+generatedGENESIS*
 simulations
 
 classes
