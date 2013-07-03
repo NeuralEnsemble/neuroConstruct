@@ -71,10 +71,6 @@ public class GuiUtils
      */
     public static void showErrorMessage(ClassLogger logger, String errorMessage, Throwable t, Component parent)
     {
-        if (parent == null) parent = getMainFrame();
-
-        SimpleHtmlDoc fullError = new SimpleHtmlDoc();
-        fullError.setIncludeReturnsInHtml(false);
 
         if (logger!=null)
         {
@@ -82,6 +78,11 @@ public class GuiUtils
             logger.logError(errorMessage, t, true);
         }
 
+        if (parent == null) parent = getMainFrame();
+
+        SimpleHtmlDoc fullError = new SimpleHtmlDoc();
+        fullError.setIncludeReturnsInHtml(false);
+        
         Throwable nextThrowable = t;
         int numLines = 0;
         int maxLines = 22;
@@ -103,7 +104,7 @@ public class GuiUtils
                 fullError.addBreak();
         }*/
 
-        StringBuffer throwableError = new StringBuffer();
+        StringBuilder throwableError = new StringBuilder();
         String format = "font color=\"gray\"";
 
         while (nextThrowable !=null)
@@ -196,7 +197,6 @@ public class GuiUtils
      */
    public static void showInfoMessage(ClassLogger logger, String title, String message, Component parent)
    {
-       if (parent == null) parent = getMainFrame();
 
        if (logger!=null)
        {
@@ -206,6 +206,8 @@ public class GuiUtils
            logger.logComment("---------------------------------------------------------");
        }
 
+       if (parent == null) parent = getMainFrame();
+       
        showMessage(parent,
                    message,
                    title,
@@ -222,13 +224,13 @@ public class GuiUtils
     */
    public static void showWarningMessage(ClassLogger logger, String message, Component parent)
    {
-       if (parent == null) parent = getMainFrame();
-
        if (logger != null)
        {
            logger.logComment("User being passed warning...");
            logger.logComment(message);
        }
+       
+       if (parent == null) parent = getMainFrame();
 
        showMessage(parent,
                    message,
@@ -247,13 +249,13 @@ public class GuiUtils
     */
    public static boolean showYesNoMessage(ClassLogger logger, String message, Component parent)
    {
-       if (parent == null) parent = getMainFrame();
-
        if (logger != null)
        {
            logger.logComment("User being asked to confirm...");
            logger.logComment(message);
        }
+       
+       if (parent == null) parent = getMainFrame();
 
        int yesNo = JOptionPane.showConfirmDialog(parent, message, "Please Confirm",
                                                  JOptionPane.YES_NO_OPTION);

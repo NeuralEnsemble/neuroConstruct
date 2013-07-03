@@ -6540,9 +6540,17 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                                                      runMode, 
                                                                                      seed);
         }
-        catch (Exception ex)
+        catch (NeuronException ex)
         {
-            GuiUtils.showErrorMessage(logger, "Problem generating the NEURON files",
+            GuiUtils.showErrorMessage(logger, "Problem generating the NEURON files: "+ex.getMessage(),
+                                      ex, this);
+
+            setNeuronRunEnabled(false, false);
+            return;
+        }
+        catch (IOException ex)
+        {
+            GuiUtils.showErrorMessage(logger, "Problem saving /loading when generating the NEURON files",
                                       ex, this);
 
             setNeuronRunEnabled(false, false);
