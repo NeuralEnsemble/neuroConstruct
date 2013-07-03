@@ -107,6 +107,8 @@
     <property name="main.test.class" value="ucl.physiol.neuroconstruct.test.MainTest"/>
     <property name="main.testmodels.class" value="ucl.physiol.neuroconstruct.test.ModelTest"/>
     <property name="main.testmodpy.class" value="ucl.physiol.neuroconstruct.test.PythonTest"/>
+    
+    <property name="main.testhdf5.class" value="ucl.physiol.neuroconstruct.neuron.NeuronFileManagerTest"/>
 
 
 
@@ -399,6 +401,22 @@
           description="Runs a number of automated tests on neuroConstruct models, mainly the NeuroML based examples in nCmodels.">
 
     <java classname="${main.testmodels.class}" fork="true" failonerror="true">
+        <jvmarg value="-Xmx700M" />
+        <jvmarg value="-Xms600M" />
+        <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
+        <jvmarg value="-Dsun.java2d.noddraw=true" />
+        <classpath refid="run.class.path"/>
+    </java>
+  </target>
+  
+  <!-- =================================================================== -->
+  <!-- Run tests on saving HDF5 in NEURON simulations and reloading        -->
+  <!-- =================================================================== -->
+
+  <target name="testhdf5" depends="clean, makejar"
+          description="Run tests on saving HDF5 in NEURON simulations and reloading.">
+
+    <java classname="${main.testhdf5.class}" fork="true" failonerror="true">
         <jvmarg value="-Xmx700M" />
         <jvmarg value="-Xms600M" />
         <jvmarg value="-Djava.library.path=${java.library.path.touse}"/>
