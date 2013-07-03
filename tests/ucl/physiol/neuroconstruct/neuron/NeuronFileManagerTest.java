@@ -58,12 +58,16 @@ public class NeuronFileManagerTest {
 
     public NeuronFileManagerTest() {
     }
-
+    
+    File testProjectDir = new File("testProjects/TestParallel");
 
     @Before
     public void setUp() 
     {
         System.out.println("---------------   setUp() NeuronFileManagerTest...");
+        
+        File testProjectSims = new File(testProjectDir, "simulations");
+        GeneralUtils.removeAllFiles(testProjectSims, false, false, true);
     }
     
     private ProjectManager loadProject(String projectFile) throws ProjectFileParsingException
@@ -76,7 +80,7 @@ public class NeuronFileManagerTest {
         return pm;
     }
     
-    /*
+    
     @Test public void testGenerateAndRunHoc() throws ProjectFileParsingException, InterruptedException, NeuronException, IOException, SimulationDataException, Exception
     {
         assumeTrue(MainTest.testNEURON());
@@ -293,7 +297,7 @@ public class NeuronFileManagerTest {
 
         
         
-    }*/
+    }
 
     
     
@@ -390,7 +394,7 @@ public class NeuronFileManagerTest {
             assumeTrue(!GeneralUtils.isWindowsBasedPlatform());
         }
 
-        ProjectManager pm = loadProject("testProjects/TestParallel/TestParallel.neuro.xml");
+        ProjectManager pm = loadProject(testProjectDir.getAbsolutePath()+ "/TestParallel.neuro.xml");
         
         Project proj = pm.getCurrentProject();
         SimConfig sc = proj.simConfigInfo.getDefaultSimConfig();
