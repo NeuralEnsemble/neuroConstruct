@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channelml xmlns="http://morphml.org/channelml/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:meta="http://morphml.org/metadata/schema" xsi:schemaLocation="http://morphml.org/channelml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level2/ChannelML_v1.8.1.xsd" units="Physiological Units">
+
+    <meta:notes>ChannelML file containing a single Channel description</meta:notes>
+
+    <channel_type name="NaConductance" density="yes">
+        
+        <status value="stable">
+            <meta:comment>Equations adapted from HH paper for modern convention of external potential being zero</meta:comment>
+            <meta:contributor>
+                <meta:name>Padraig Gleeson</meta:name>
+            </meta:contributor>
+        </status>
+
+        <meta:notes>Simple example of Na conductance in squid giant axon. Based on channel from Hodgkin and Huxley 1952</meta:notes>
+        
+        <meta:authorList>
+            <meta:modelTranslator>
+                <meta:name>Padraig Gleeson</meta:name>
+                <meta:institution>UCL</meta:institution>    
+                <meta:email>p.gleeson - at - ucl.ac.uk</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+
+        <meta:publication>
+            <meta:fullTitle>A. L. Hodgkin and A. F. Huxley, A quantitative description of membrane current and 
+            its application to conduction and excitation in nerve, J. Physiol., vol. 117, pp. 500-544, 1952.</meta:fullTitle>
+            <meta:pubmedRef>http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=pubmed&amp;dopt=Abstract&amp;list_uids=12991237</meta:pubmedRef>
+        </meta:publication>
+
+        <meta:neuronDBref>
+            <meta:modelName>Na channels</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/senselab/NeuronDB/channelGene2.htm#table2</meta:uri>
+        </meta:neuronDBref>
+        
+        <current_voltage_relation cond_law="ohmic" ion="na" default_erev="50" default_gmax="120"> 
+            
+            <gate name="m" instances="3">
+                <closed_state id="m0"/>
+                <open_state id="m"/>
+
+                <transition name="alpha" from="m0" to="m" expr_form="exp_linear" rate="1" scale="10" midpoint="-40"/>  
+                <transition name="beta" from="m" to="m0" expr_form="exponential" rate="4" scale="-18" midpoint="-65"/>  
+            </gate>
+            
+            <gate name="h" instances="1">
+                <closed_state id="h0"/>
+                <open_state id="h"/>
+
+                <transition name="alpha" from="h0" to="h" expr_form="exponential" rate="0.07" scale="-20" midpoint="-65"/>  
+                <transition name="beta" from="h" to="h0" expr_form="sigmoid" rate="1" scale="-10" midpoint="-35"/>    
+            </gate>
+            
+        </current_voltage_relation>
+        
+        
+    </channel_type>
+</channelml>

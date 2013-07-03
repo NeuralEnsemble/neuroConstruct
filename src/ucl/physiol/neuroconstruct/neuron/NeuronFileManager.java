@@ -5407,9 +5407,9 @@ public class NeuronFileManager
                             extraArgs = "-e /bin/bash ";
                             executable = basicCommLine.trim();
                         }
-                        else if (basicCommLine!=null && basicCommLine.indexOf("gnome") >= 0)
+                        else if (basicCommLine!=null && (basicCommLine.indexOf("gnome") >= 0 || basicCommLine.indexOf("terminator") >= 0))
                         {
-                            logger.logComment("Assume we're using Gnome");
+                            logger.logComment("Assume we're using Gnome or terminator (possibly Openbox)");
                             titleOpt = "--title";
                             workdirOpt = "--working-directory";
 

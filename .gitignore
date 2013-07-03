@@ -1,3 +1,6 @@
+/docs/parallel/parallel.out
+/docs/parallel/parallel.log
+/docs/parallel/parallel.aux
 /nbproj/nbproject/private/private.xml
 /pythonnC/TestPython/savedNetworks/nmlt.nml
 /MPICH2
@@ -23,9 +26,9 @@ nbproj/nbproject/private
 
 /testProjects/TEMP_PROJECTS
 /testProjects/*/savedNetworks
-generatedNeuroML
+generatedNeuroML*
 generatedNEURON*
-generatedGENESIS
+generatedGENESIS*
 simulations
 
 classes
