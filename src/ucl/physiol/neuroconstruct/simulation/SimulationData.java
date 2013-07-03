@@ -247,9 +247,8 @@ public class SimulationData
         for (int fileIndex = 0; fileIndex < cellDataFiles.length; fileIndex++)
         {
             logger.logComment("-----   Looking at "+fileIndex+": "+cellDataFiles[fileIndex]);
-            for (DataStore ds: dataSources)
-                System.out.print(ds.getCellSegRef()+".. ");
-            System.out.println("\nSims so far ("+dataSources.size()+"): ");
+            //for (DataStore ds: dataSources)
+            //    System.out.print(ds.getCellSegRef()+".. ");
 
             if (cellDataFiles[fileIndex].getName().indexOf("."+SimPlot.H5_EXT)>0)
             {
