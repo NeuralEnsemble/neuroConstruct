@@ -3418,11 +3418,10 @@ public class NeuronFileManager
                                         }
                                         else
                                         {
-                                            contents = NeuroMLConverter.convertNeuroML2ToLems(contents);
-                                            logger.logComment("Starting LEMS (beta) with: "+contents);
+                                            logger.logComment("Starting LEMS (beta) with: "+nml2File.getPath());
                                             try
                                             {
-                                                Sim sim = Utils.readLemsNeuroMLFile(contents);
+                                                Sim sim = Utils.readNeuroMLFile(nml2File);
                                                 
                                                 Component comp = sim.getLems().getComponent(cellMechanism.getInstanceName());
                                                 logger.logComment("Found component: " + comp);
