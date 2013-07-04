@@ -53,6 +53,7 @@ public class SimPlot
     public static String SYN_COND = "COND";
 
     public static String SYN_CURR = "SYN_CURR";
+    public static String TOTAL_SYN_CURR = "TOTAL_SYN_CURR";
 
     // whether to just plot or plot and save...
     public static String PLOT_ONLY = "Plot only";

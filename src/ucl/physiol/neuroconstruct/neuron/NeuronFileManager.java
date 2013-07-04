@@ -506,8 +506,7 @@ public class NeuronFileManager
         genTime = (float) (generationTimeEnd - generationTimeStart) / 1000f;
 
         logger.logComment("****  Created Main hoc file: " + mainHocFile+" in "+genTime+" seconds. **** \n");
-        
-        return;
+       
 
     }
 
@@ -995,9 +994,9 @@ public class NeuronFileManager
             logger.logError("There are no cell groups!!", null);
             return "";
         }
-        Cell cellToWatch = null;
-        String cellGroupToWatch = null;
-        int cellNumToWatch = -1;
+        Cell cellToWatch;
+        String cellGroupToWatch;
+        int cellNumToWatch;
 
         cellGroupToWatch = null;
         int cellGroupCount = 0;
@@ -1745,7 +1744,7 @@ public class NeuronFileManager
                                         fractionAlongSection +
                                         ")\n");
 
-                        float del = -1, dur = -1, amp = -1;
+                        float del, dur, amp;
                         if (nextInput.getInstanceProps()!=null)
                         {
                             IClampInstanceProps icip = (IClampInstanceProps)nextInput.getInstanceProps();
@@ -1939,7 +1938,7 @@ public class NeuronFileManager
                         response.append(prefix+stimName + "[" + j + "] = new NetStim(" +
                                         fractionAlongSection + ")\n");
 
-                        float rate = -1;
+                        float rate;
 
                         if (nextInput.getInstanceProps()!=null)
                         {
@@ -2069,7 +2068,7 @@ public class NeuronFileManager
 
 
 
-                        float del = -1, dur = -1, rate = -1;
+                        float del, dur, rate;
 
                         if (nextInput.getInstanceProps()!=null)
                         {
@@ -2795,7 +2794,7 @@ public class NeuronFileManager
 
                                     if (isSpikeRecording)
 		                            {
-                                        int lengthTable = 0;
+                                        int lengthTable;
                                         lengthTable = (int) getSimDuration() * 3; // i.e. max constant firing freq of 3000Hz...
 
                                         response.append("{nrnpython(\"allData = numpy.ones( (" + lengthTable + ", h.n_" + cellGroupName + "_local ) , dtype=numpy.float32 )\")}\n");
@@ -3371,7 +3370,7 @@ public class NeuronFileManager
                                 else if (cellMechanism instanceof XMLCellMechanism)
                                 {
                                     XMLCellMechanism xmlMechanism = (XMLCellMechanism) cellMechanism;
-                                    File newMechFile = null;
+                                    File newMechFile;
 
                                     logger.logComment("Cell mechanism: " + cellMechanism.getInstanceName()+" is XML...");
 
@@ -3717,7 +3716,7 @@ public class NeuronFileManager
                             else if (cellMechanism instanceof ChannelMLCellMechanism)
                             {
                                 ChannelMLCellMechanism cmlMechanism = (ChannelMLCellMechanism) cellMechanism;
-                                File newMechFile = null;
+                                File newMechFile;
 
                                 logger.logComment("Sim map: " + cmlMechanism.getSimMapping(SimEnvHelper.NEURON));
 
@@ -4016,7 +4015,7 @@ public class NeuronFileManager
 
                     /** @todo Remove the need for this... Revise how inbuilt synapses are stored/checked.. */
 
-                    String synapseType = null;
+                    String synapseType;
                     if (synProps.getSynapseType().indexOf(" ") > 0)
                     {
                         synapseType = synProps.getSynapseType().substring(0, synProps.getSynapseType().indexOf(" "));
@@ -4694,7 +4693,7 @@ public class NeuronFileManager
             timeStepInfo = " variable time step,";
         }
 
-        boolean announceDate = true;
+        boolean announceDate;
 
         if (GeneralUtils.isWindowsBasedPlatform())
         {
@@ -4978,7 +4977,7 @@ public class NeuronFileManager
 
     public String convertToNeuronVarName(String simIndepVarName)
     {
-        String neuronVar = null;
+        String neuronVar;
         String origIndepName = simIndepVarName;
 
         if (simIndepVarName.equals(SimPlot.VOLTAGE))
@@ -5189,7 +5188,7 @@ public class NeuronFileManager
             {
                 String locationOfNeuron = GeneralProperties.getNeuronHomeDir();
 
-                String neuronExecutable = null;
+                String neuronExecutable;
 
                 if (!generateLinuxBasedScripts())
                 {

@@ -358,6 +358,37 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      </void>
     </object>
    </void>
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.project.SimPlot">
+     <void property="cellGroup">
+      <string>CG2</string>
+     </void>
+     <void property="cellNumber">
+      <string>0</string>
+     </void>
+     <void property="graphWindow">
+      <string>GraphWin_4</string>
+     </void>
+     <void property="maxValue">
+      <float>1.0</float>
+     </void>
+     <void property="minValue">
+      <float>0.0</float>
+     </void>
+     <void property="plotAndOrSave">
+      <string>Plot and save</string>
+     </void>
+     <void property="plotReference">
+      <string>Var_2</string>
+     </void>
+     <void property="segmentId">
+      <string>*</string>
+     </void>
+     <void property="valuePlotted">
+      <string>SYN:TOTAL_SYN_CURR</string>
+     </void>
+    </object>
+   </void>
   </void>
  </object>
  <object class="ucl.physiol.neuroconstruct.project.ProjectProperties">
@@ -406,7 +437,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
    <float>100.0</float>
   </void>
   <void property="reference">
-   <string>Sim_11</string>
+   <string>Sim_13</string>
   </void>
   <void property="saveCopyGenSimFiles">
    <boolean>true</boolean>
