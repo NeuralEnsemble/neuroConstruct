@@ -117,12 +117,13 @@ public class MpiConfiguration
             script.append("\n");
             script.append("#PBS -N "+simRef+"_"+projName+"\n");
             script.append("#PBS -A "+queueInfo.getAccount()+"\n");
-            script.append("#PBS -j oe\n");
+            script.append("#PBS -j oe\n\n");
 
             for (String line: queueInfo.additionalSubOptions)
             {
-                script.append(line+"\n");
-
+                if (line.startsWith("#PBS")) {
+                    script.append(line+"\n");
+                }
             }
 
 
@@ -208,14 +209,30 @@ public class MpiConfiguration
                 script.append("export CVOS_LAUNCHER=\"\"\n");
             }
 
-            script.append("export MPI_RUN=\"mpirun\"\n");
-            script.append("\n");
-            String exe = "$CVOS_LAUNCHER $MPI_RUN -machinefile machine.file.$PBS_JOBID -np $numnodes  $LAUNCH_APP_OP";
-            script.append("echo \"Running: "+exe+"\"\n");
-            script.append("echo \"--------------------------------------------------------------\"\n");
-            script.append("echo \"\"\n");
-            script.append("\n");
-            script.append(exe+"\n");
+            script.append("export MPI_RUN=\"mpirun\"\n\n");
+            
+            boolean runCommandAdded  = false;
+            for (String line: queueInfo.additionalSubOptions)
+            {
+                if (!line.startsWith("#PBS")) {
+                    if (line.startsWith("$MPI_RUN")){
+                        script.append("echo \"Running: "+line+"\"\n");
+                        script.append("echo \"--------------------------------------------------------------\"\n");
+                        runCommandAdded = true;
+                    }
+                    script.append(line+"\n");
+                }
+            }
+            
+            if (!runCommandAdded) {
+                script.append("\n");
+                String exe = "$CVOS_LAUNCHER $MPI_RUN -machinefile machine.file.$PBS_JOBID -np $numnodes  $LAUNCH_APP_OP";
+                script.append("echo \"Running: "+exe+"\"\n");
+                script.append("echo \"--------------------------------------------------------------\"\n");
+                script.append("echo \"\"\n");
+                script.append("\n");
+                script.append(exe+"\n");
+            }
             script.append("\n");
             script.append("\n");
             script.append("\n");
