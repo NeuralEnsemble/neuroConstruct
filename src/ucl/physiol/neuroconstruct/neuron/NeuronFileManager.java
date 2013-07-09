@@ -3395,6 +3395,10 @@ public class NeuronFileManager
                                                 logger.logComment("Found component: " + comp);
 
                                                 String modFile = org.neuroml.exporters.NeuronWriter.generateModFile(comp);
+                                                modFile = "COMMENT\n\n    This mod file was generated with the ALPHA version of the LEMS->NEURON converter!!\n"
+                                                          + "    To ensure the latest version of the exporter is used make sure the NeuroML 2 XML file contains:\n"
+                                                          + "        xsi:schemaLocation=\"http://www.neuroml.org/schema/neuroml2 https://raw.github.com/NeuroML/NeuroML2/master/Schemas/NeuroML2/NeuroML_v2beta.xsd\""
+                                                        + "\n\nENDCOMMENT\n\n"+modFile;
 
                                                 String origName = comp.getComponentType().getName();
                                                 String newName = "MOD_"+cellMechanism.getInstanceName();

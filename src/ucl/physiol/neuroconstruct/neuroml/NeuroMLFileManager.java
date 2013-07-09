@@ -294,17 +294,73 @@ public class NeuroMLFileManager
 
             for (SimpleXMLEntity elecInputEntity : elecInputEntities)
             {
-
+                int endPops = -1;
+                int endProjs = -1;
+                boolean foundPop = false;
+                boolean foundProj = false;
+                ArrayList<SimpleXMLEntity> ents = rootElement.getContents();
+                for (int i=0;i<ents.size();i++){
+                    SimpleXMLEntity sxe = ents.get(i);
+                
+                    boolean isElement = sxe instanceof SimpleXMLElement;
+                    if (isElement)
+                    {
+                        SimpleXMLElement sxel = (SimpleXMLElement)sxe;
+                        
+                        //System.out.println("sxel: "+sxel+", i "+i+", foundPop"+foundPop);
+                        if (!foundPop && sxel.getName().equals(NetworkMLConstants.POPULATION_ELEMENT))
+                        {
+                            foundPop = true;
+                        }
+                        if (foundPop && !sxel.getName().equals(NetworkMLConstants.POPULATION_ELEMENT))
+                        {
+                            foundPop = false;
+                            endPops = i;
+                        }
+                        if (!foundProj && sxel.getName().equals(NetworkMLConstants.PROJECTION_ELEMENT))
+                        {
+                            foundProj = true;
+                        }
+                        if (foundProj && !sxel.getName().equals(NetworkMLConstants.PROJECTIONS_ELEMENT))
+                        {
+                            foundProj = false;
+                            endProjs = i;
+                        }
+                    }
+                        
+                }
+                if (endPops<0)
+                    endPops = ents.size();
+                if (endProjs<0)
+                    endProjs = endPops;
+                
                 rootElement.addContent("\n\n        ");
                 if (elecInputEntity instanceof SimpleXMLElement)
                 {
-                    rootElement.addChildElement((SimpleXMLElement) elecInputEntity);
+                    SimpleXMLElement sxe = (SimpleXMLElement) elecInputEntity;
+                    
+                    if (sxe.getName().equals(NetworkMLConstants.POPULATION_ELEMENT)) 
+                    {
+                        rootElement.addChildElementAt(sxe, endPops);
+                        endPops = endPops+1;
+                    }
+                    else if (sxe.getName().equals(NetworkMLConstants.PROJECTION_ELEMENT)) 
+                    {
+                        rootElement.addChildElementAt(sxe, endProjs);
+                        endProjs = endProjs +1;
+                    }
+                    else 
+                    {
+                        rootElement.addChildElement(sxe);
+                    }
+                    rootElement.addContent("\n\n");
                 }
                 else if (elecInputEntity instanceof SimpleXMLComment)
                 {
                     rootElement.addComment((SimpleXMLComment) elecInputEntity);
                 }
             }
+            rootElement.addContent("\n\n");
 
 
             if (nml2)

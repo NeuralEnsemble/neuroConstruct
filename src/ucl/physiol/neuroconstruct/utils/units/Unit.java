@@ -115,6 +115,7 @@ public class Unit
             symbol = prefix.getSymbol() + "g??";
 
         else if (exponent>1) symbol = symbol+ exponent;
+        else if (exponent==-1) symbol = "per_"+symbol;
         else if (exponent<0) symbol = "per_"+symbol+ exponent*-1;
         else if (exponent==0) symbol = "";
 

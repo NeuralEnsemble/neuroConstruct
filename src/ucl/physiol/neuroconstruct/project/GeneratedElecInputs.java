@@ -379,6 +379,7 @@ public class GeneratedElecInputs
             }
 
             boolean nml2 = version.isVersion2();
+            boolean nml2alpha = version.isVersion2alpha();
 
             if (!nml2)
             {
@@ -459,12 +460,25 @@ public class GeneratedElecInputs
                     String stimMech = rst.getSynapseType();
                    
                     SimpleXMLElement inputTypeElement = new SimpleXMLElement(NetworkMLConstants.RANDOMSTIM_ELEMENT);
+                    float rate = (float)UnitConverter.getRate(stimFreq, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem);
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_FREQ_ATTR, 
                             (float)UnitConverter.getRate(stimFreq, UnitConverter.NEUROCONSTRUCT_UNITS, unitSystem)+""));
                     
                     inputTypeElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.RND_STIM_MECH_ATTR, stimMech));
                     inputElement.addChildElement(inputTypeElement);
                     inputElement.addContent("\n        ");
+                    
+                    if (nml2 && !nml2alpha)
+                    {
+                        SimpleXMLElement spikeGenElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_SPIKE_GEN_POISSON_ELEMENT);
+                        spikeGenElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, inputReference);
+                        spikeGenElement.addAttribute(NetworkMLConstants.NEUROML2_SPIKE_GEN_POISSON_RATE_ATTR, rate+" "+UnitConverter.rateUnits[UnitConverter.NEUROCONSTRUCT_UNITS].getNeuroML2Symbol()+"");
+                        
+
+                        topLevelCompElement.addContent("\n\n    ");
+                        topLevelCompElement.addChildElement(spikeGenElement);
+                        topLevelCompElement.addContent("\n\n    ");
+                    }
                 }
                 else
                 {
@@ -484,17 +498,37 @@ public class GeneratedElecInputs
                 inputTargetSitesElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITES_SIZE_ATTR,inputsHere.size()+""));
 
                 inputTargetElement.addChildElement(inputTargetSitesElement);
+                
+                SimpleXMLElement stimProjElement = null;
 
                 if (version.isVersion2betaOrLater()) {
 
-                    SimpleXMLElement inputListElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_INPUT_LIST_ELEMENT);
-                    entities.add(inputListElement);
-                    inputListElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, nextStim.getReference());
-                    inputListElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_COMPONENT, inputReference);
-                    inputListElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_POPULATION, nextStim.getCellGroup());
+                    
+                    if (myElectricalInput instanceof IClamp)
+                    {
+                        SimpleXMLElement inputListElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_INPUT_LIST_ELEMENT);
+                        entities.add(inputListElement);
+                        inputListElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, nextStim.getReference());
+                        inputListElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_COMPONENT, inputReference);
+                        inputListElement.addAttribute(NetworkMLConstants.NEUROML2_INPUT_POPULATION, nextStim.getCellGroup());
 
-                    //inputElement.addContent("\n    ");
-                    inputTargetSitesElement = inputListElement;
+                        //inputElement.addContent("\n    ");
+                        inputTargetSitesElement = inputListElement;
+                        
+                    }
+                    else if (myElectricalInput instanceof RandomSpikeTrain)
+                    {
+                        SimpleXMLElement popElement = new SimpleXMLElement(NetworkMLConstants.POPULATION_ELEMENT);
+                        entities.add(0, popElement);
+                        popElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, nextStim.getReference()+"_population");
+                        popElement.addAttribute(NetworkMLConstants.NEUROML2_POPULATION_COMPONENT, nextStim.getReference()+"_population");
+                        popElement.addAttribute(NetworkMLConstants.NEUROML2_POPULATION_SIZE, inputsHere.size()+"");
+                        
+                        stimProjElement = new SimpleXMLElement(NetworkMLConstants.PROJECTION_ELEMENT);
+                        stimProjElement.addAttribute(NeuroMLConstants.NEUROML_ID_V2, nextStim.getReference()+"_projection");
+                        entities.add(stimProjElement);
+                        
+                    }
 
                 }
                
@@ -512,6 +546,22 @@ public class GeneratedElecInputs
                     inputTargetSiteElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.INPUT_SITE_FRAC_ATTR, sei.getFractionAlong()+""));
                     
                     if (!nml2) inputTargetSitesElement.addChildElement(inputTargetSiteElement);
+                    
+                    if (nml2 && !nml2alpha)
+                    {
+                        if (myElectricalInput instanceof RandomSpikeTrain)
+                        {
+                            String connElName = NetworkMLConstants.CONNECTION_ELEMENT;
+
+                            SimpleXMLElement connElement = new SimpleXMLElement(connElName);
+
+                            connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.CONNECTION_ID_ATTR, i+""));
+                            stimProjElement.addContent("\n    ");
+                            stimProjElement.addChildElement(connElement);
+                            stimProjElement.addContent("\n    ");
+                        }
+                            
+                    }
 
 
                     if(sei.getInstanceProps()!=null)
@@ -592,6 +642,7 @@ public class GeneratedElecInputs
                             inputTargetSiteElement.addContent("                    ");
                             inputTargetSiteElement.addChildElement(inputTypeElement);
                             inputTargetSiteElement.addContent("\n                ");
+                           
                         }
                         else
                         {

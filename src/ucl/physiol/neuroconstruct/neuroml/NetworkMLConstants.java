@@ -209,6 +209,8 @@ public class NetworkMLConstants
     // Population
 
     public static String NEUROML2_POPULATION_LIST = "populationList";
+    public static String NEUROML2_POPULATION_COMPONENT = "component";
+    public static String NEUROML2_POPULATION_SIZE = "size";
 
 
     // Projection
@@ -238,6 +240,9 @@ public class NetworkMLConstants
     // Inputs
     
     public static String NEUROML2_PULSE_GEN_ELEMENT = "pulseGenerator";
+    
+    public static String NEUROML2_SPIKE_GEN_POISSON_ELEMENT = "spikeGeneratorPoisson";
+    public static String NEUROML2_SPIKE_GEN_POISSON_RATE_ATTR = "averageRate";
 
     public static String NEUROML2_EXP_INPUT_ELEMENT = "explicitInput";
 

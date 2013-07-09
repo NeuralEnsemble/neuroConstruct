@@ -109,6 +109,14 @@ public class SimpleXMLElement extends SimpleXMLEntity
     }
 
 
+    public void addChildElementAt(SimpleXMLElement childElement, int index)
+    {
+        clearCache();
+        childElement.setParent(this);
+        System.out.println("addChildElementAt: "+index);
+        contents.add(index, childElement);
+    }
+    
     public void addChildElement(SimpleXMLElement childElement)
     {
         clearCache();

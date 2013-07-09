@@ -104,7 +104,7 @@ public class NeuroMLFileManagerTest {
 
             File saveNetsDir = ProjectStructure.getSavedNetworksDir(projDir);
 
-            File nmlFile = new File(saveNetsDir, "testNml2.xml");
+            File nmlFile = new File(saveNetsDir, "testNml2alpha.xml");
 
             boolean zipped = false;
 
@@ -122,18 +122,28 @@ public class NeuroMLFileManagerTest {
 
             assertTrue("Checking validity of: "+ nmlFile.getAbsolutePath(), NeuroMLFileManager.validateAgainstNeuroML2alphaSchema(nmlFile));
     }
-
+ 
 
     @Test
-    public void testNml2betaExporting() throws NeuroMLException
+    public void testNml2betaExportingDef() throws NeuroMLException
+    {
+        testNml2betaExporting(SimConfigInfo.DEFAULT_SIM_CONFIG_NAME);
+    }
+   
+    @Test
+    public void testNml2betaExporting2() throws NeuroMLException
+    {
+        testNml2betaExporting("RndStim");
+    }
+
+    private void testNml2betaExporting(String simConfig) throws NeuroMLException
     {
 
-            System.out.println("---  testNml2betaExporting");
+            System.out.println("---  testNml2betaExporting: "+simConfig);
 
             Project proj = pm.getCurrentProject();
-            SimConfig sc = proj.simConfigInfo.getDefaultSimConfig();
 
-            pm.doGenerate(sc.getName(), 1234);
+            pm.doGenerate(simConfig, 1234);
 
             while(pm.isGenerating())
             {
@@ -157,7 +167,7 @@ public class NeuroMLFileManagerTest {
 
             File saveNetsDir = ProjectStructure.getSavedNetworksDir(projDir);
 
-            File nmlFile = new File(saveNetsDir, "testNml2.xml");
+            File nmlFile = new File(saveNetsDir, "testNml2_"+simConfig.replaceAll(" ", "_")+".xml");
 
             boolean zipped = false;
 
@@ -165,7 +175,7 @@ public class NeuroMLFileManagerTest {
                                                              nmlFile,
                                                              zipped,
                                                              false,
-                                                             sc.getName(),
+                                                             simConfig,
                                                              NetworkMLConstants.UNITS_PHYSIOLOGICAL,
                                                              NeuroMLVersion.NEUROML_VERSION_2_BETA);
 

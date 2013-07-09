@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.6.0_20" class="java.beans.XMLDecoder">
+<java version="1.6.0_27" class="java.beans.XMLDecoder">
 
 <!-- This is a neuroConstruct project file. It's best to open this
 file with neuroConstruct, as opposed to editing it directly. 
@@ -16,7 +16,7 @@ Go to tab Generate, press Generate Cell Positions and Connections, and then to v
 If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</string>
   </void>
   <void property="projectFileVersion">
-   <string>neuroConstruct v1.5.2</string>
+   <string>neuroConstruct v1.7.0</string>
   </void>
   <void property="projectName">
    <string>TestNetworkML</string>
@@ -322,7 +322,7 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
    <float>100.0</float>
   </void>
   <void property="reference">
-   <string>Sim_3</string>
+   <string>Sim_5</string>
   </void>
   <void property="saveCopyGenSimFiles">
    <boolean>true</boolean>
@@ -413,6 +413,49 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      </void>
     </object>
    </void>
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.simulation.RandomSpikeTrainSettings">
+     <void property="cellGroup">
+      <string>SampleCellGroup</string>
+     </void>
+     <void property="rate">
+      <object class="ucl.physiol.neuroconstruct.utils.NumberGenerator">
+       <void property="fixedNum">
+        <float>0.05</float>
+       </void>
+       <void property="numberType">
+        <int>11</int>
+       </void>
+      </object>
+     </void>
+     <void property="reference">
+      <string>Input_1</string>
+     </void>
+     <void property="synapseType">
+      <string>DoubExpSyn</string>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings">
+     <void property="amp">
+      <void property="fixedNum">
+       <float>0.2</float>
+      </void>
+     </void>
+     <void property="cellGroup">
+      <string>SampleCellGroup</string>
+     </void>
+     <void property="dur">
+      <void property="numberType">
+       <int>11</int>
+      </void>
+     </void>
+     <void property="reference">
+      <string>Input_2</string>
+     </void>
+    </object>
+   </void>
   </void>
  </object>
  <object class="ucl.physiol.neuroconstruct.project.SimConfigInfo">
@@ -424,10 +467,10 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
        <string>CellGroup_2</string>
       </void>
       <void method="add">
-       <string>SampleCellGroup</string>
+       <string>CellGroup_3</string>
       </void>
       <void method="add">
-       <string>CellGroup_3</string>
+       <string>SampleCellGroup</string>
       </void>
      </void>
      <void property="description">
@@ -435,10 +478,10 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      </void>
      <void property="inputs">
       <void method="add">
-       <string>SampleIClamp</string>
+       <string>Input_0</string>
       </void>
       <void method="add">
-       <string>Input_0</string>
+       <string>SampleIClamp</string>
       </void>
      </void>
      <void property="name">
@@ -457,13 +500,41 @@ If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</s
      </void>
      <void property="plots">
       <void method="add">
-       <string>SamplePlot</string>
+       <string>CellGroup_2_v</string>
       </void>
       <void method="add">
        <string>CellGroup_3_v</string>
       </void>
       <void method="add">
-       <string>CellGroup_2_v</string>
+       <string>SamplePlot</string>
+      </void>
+     </void>
+     <void property="simDuration">
+      <float>100.0</float>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.project.SimConfig">
+     <void property="cellGroups">
+      <void method="add">
+       <string>SampleCellGroup</string>
+      </void>
+     </void>
+     <void property="inputs">
+      <void method="add">
+       <string>Input_1</string>
+      </void>
+      <void method="add">
+       <string>Input_2</string>
+      </void>
+     </void>
+     <void property="name">
+      <string>RndStim</string>
+     </void>
+     <void property="plots">
+      <void method="add">
+       <string>SamplePlot</string>
       </void>
      </void>
      <void property="simDuration">

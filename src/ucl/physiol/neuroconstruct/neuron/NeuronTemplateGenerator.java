@@ -1150,7 +1150,7 @@ public class NeuronTemplateGenerator
                             if (isV2alpha) 
                             {
                                 contents = org.neuroml.Utils.convertNeuroML2ToLems(contents);
-                                logger.logComment("Found contents: " + contents, true);
+                                logger.logComment("Found contents: " + contents);
 
                                 try
                                 {
@@ -1159,7 +1159,7 @@ public class NeuronTemplateGenerator
                                     sim.readModel();
                                     org.lemsml.type.Component comp = sim.getLems().getComponent(nml2Mech.getInstanceName());
 
-                                    logger.logComment("Found component: " + comp, true);
+                                    logger.logComment("Found component: " + comp);
 
                                     if (comp.getComponentType().isOrExtends(NeuroMLConstants.NEUROML2_ABST_CELL_MEMB_POT_CAP))
                                     {
@@ -1224,13 +1224,13 @@ public class NeuronTemplateGenerator
                             {
                                 contents = NeuroMLConverter.convertNeuroML2ToLems(contents);
                                             
-                                logger.logComment("Starting Lems with: "+contents, true);
+                                logger.logComment("Starting Lems with: "+contents);
                                             
                                 try
                                 {
                                     Sim sim = Utils.readLemsNeuroMLFile(contents);
                                     Component comp = sim.getLems().getComponent(nml2Mech.getInstanceName());
-                                    logger.logComment("Found component: " + comp, true);
+                                    logger.logComment("Found component: " + comp);
                                     
                                     if (comp.getComponentType().isOrExtends(NeuroMLConstants.NEUROML2_ABST_CELL_MEMB_POT_CAP))
                                     {

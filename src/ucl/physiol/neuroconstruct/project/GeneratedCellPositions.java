@@ -532,7 +532,7 @@ public class GeneratedCellPositions
                 if (nml2)
                 {
                     populationElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, cellGroup));
-                    populationElement.addAttribute(new SimpleXMLAttribute("component", type));//TODO...
+                    populationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_POPULATION_COMPONENT, type));//TODO...
                     //populationElement.addContent("\n");
 
                     if (version.isVersion2beta())
@@ -572,7 +572,7 @@ public class GeneratedCellPositions
                     }
                     else
                     {
-                       populationElement.addAttribute(new SimpleXMLAttribute("size", cellsHere.size()+""));//TODO...
+                       populationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_POPULATION_SIZE, cellsHere.size()+""));//TODO...
                     }
                 }
                 else

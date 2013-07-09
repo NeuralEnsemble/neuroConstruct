@@ -276,12 +276,19 @@ public class Units
 
         for (int i = 0; i < subUnitList.length; i++)
         {
-            if (subUnitList[i].getExponent()>0) compositeSymbol.append(subUnitList[i].getNeuroML2Symbol() + "_");
+            if (subUnitList[i].getExponent()>0) 
+            {
+                String part = subUnitList[i].getNeuroML2Symbol();
+                compositeSymbol.append(part + "_");
+            }
         }
 
         for (int i = 0; i < subUnitList.length; i++)
         {
-            if (subUnitList[i].getExponent()<0) compositeSymbol.append(subUnitList[i].getNeuroML2Symbol() + "_");
+            if (subUnitList[i].getExponent()<0) 
+            {
+                compositeSymbol.append(subUnitList[i].getNeuroML2Symbol() + "_");
+            }
         }
         
         String sym = compositeSymbol.toString();
@@ -431,6 +438,13 @@ public class Units
         System.out.println("Cond dens: "+ condDens.getBaseSymbol());
         System.out.println("Cond dens: "+ condDens.getSafeSymbol());
         System.out.println("Cond dens: "+ condDens.getNeuroML2Symbol());
+        
+        Units rate = UnitConverter.rateUnits[UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS];
+        
+        System.out.println("Rate: "+ rate.getBaseSymbol());
+        System.out.println("Rate: "+ rate.getSafeSymbol());
+        System.out.println("Rate: "+ rate.getNeuroML2Symbol());
+        
     }
 
 }
