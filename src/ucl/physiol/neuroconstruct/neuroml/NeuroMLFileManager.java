@@ -84,6 +84,27 @@ public class NeuroMLFileManager
         nextColour = new HashMap<String, Integer>();
 
     }
+    
+    public static boolean fileClaimsToBeNeuroML2(File nmlFile) throws NeuroMLException
+    {
+        try 
+        {
+            InputStream fis = new FileInputStream(nmlFile);
+            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+            for (int i=0;i<5;i++)
+            {
+                String line = br.readLine();
+                if (line.indexOf("neuroml2")>0)
+                    return true;
+            }
+        }
+        catch (Exception e) 
+        {
+            throw new NeuroMLException("Unable to determine version of: "+nmlFile, e);
+        }
+        return false;
+        
+    }
 
     public static File saveNetworkStructureXML(Project project,
                                                File neuroMLFile,

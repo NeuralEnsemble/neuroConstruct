@@ -587,6 +587,17 @@ public class ProjectManager implements GenerationReport
     
     
     
+    public NetworkMLnCInfo doLoadNeuroML2Network(File nml2File, boolean acceptDefaults) throws NeuroMLException
+    {
+        NeuroML2Reader nml2Reader = new NeuroML2Reader(activeProject);
+   
+        nml2Reader.parse(nml2File);
+        
+        return nml2Reader;
+        
+    }
+    
+    
     public NetworkMLnCInfo doLoadNetworkML(File networkmlFile, boolean acceptDefaults) throws NeuroMLException, Hdf5Exception, EndOfSequenceException
     {
         if (networkmlFile.getName().endsWith(ProjectStructure.getHDF5FileExtension()))
@@ -607,7 +618,7 @@ public class ProjectManager implements GenerationReport
         }
         else
         {
-            InputSource is = null;
+            InputSource is;
 
             SAXParserFactory spf = SAXParserFactory.newInstance();
             spf.setNamespaceAware(true);
@@ -675,7 +686,7 @@ public class ProjectManager implements GenerationReport
 
            SimpleXMLDocument doc = new SimpleXMLDocument();
 
-            SimpleXMLElement rootElement = null;
+            SimpleXMLElement rootElement;
 
             rootElement = new SimpleXMLElement(NeuroMLConstants.ROOT_ELEMENT);
 
@@ -887,7 +898,7 @@ public class ProjectManager implements GenerationReport
 
             SimpleXMLDocument doc = new SimpleXMLDocument();
 
-            SimpleXMLElement rootElement = null;
+            SimpleXMLElement rootElement;
 
             rootElement = new SimpleXMLElement(NeuroMLConstants.ROOT_ELEMENT);
 
@@ -972,8 +983,8 @@ public class ProjectManager implements GenerationReport
                 rootElement.addComment("Note: the annotation below contains data to facilitate the reloading of this file into an empty neuroConstruct project.\n" +
                         "This information should be ignored by any other NeuroML Level 3 compliant application");
                 rootElement.addContent("\n\n");
-                XMLEncoder xmlEncoder = null;
-                ByteArrayOutputStream fos = null;
+                XMLEncoder xmlEncoder;
+                ByteArrayOutputStream fos;
 
                 /* -- Writing Regions info -- */
                 fos = new ByteArrayOutputStream();
@@ -1559,6 +1570,21 @@ public class ProjectManager implements GenerationReport
                                        units,
                                        NeuroMLVersion.NEUROML_VERSION_1);
     }
+    public static File saveNetworkStructureNeuroML2(Project project,
+                                       File neuroMLFile,
+                                       boolean zipped,
+                                       boolean extraComments,
+                                       String simConfig,
+                                       String units) throws NeuroMLException
+    {
+        return NeuroMLFileManager.saveNetworkStructureXML(project,
+                                       neuroMLFile,
+                                       zipped,
+                                       extraComments,
+                                       simConfig,
+                                       units,
+                                       NeuroMLVersion.NEUROML_VERSION_2_BETA);
+    }
     
     
     public Display3DProperties getProjectDispProps()
@@ -1595,7 +1621,7 @@ public class ProjectManager implements GenerationReport
     {
         logger.logComment("Zipping up the project...");
 
-        File zipFile = null;
+        File zipFile;
         try
         {
             ArrayList<String> ignore = new ArrayList<String> ();
@@ -1607,7 +1633,6 @@ public class ProjectManager implements GenerationReport
             zipFile = ZipUtils.zipUp(dirToZip, nameOfZippedFile, ignore, ignoreExtn);
 
             GuiUtils.showInfoMessage(logger, "Success", "The zip file: "+ zipFile.getAbsolutePath() + " ("+zipFile.length()+" bytes)  contains all of the project files", null);
-            return;
         }
         catch (Exception ex)
         {
@@ -1885,7 +1910,7 @@ public class ProjectManager implements GenerationReport
                     }
                     else
                     {
-                        report.addTaggedElement("Error, ChannelML file: " + cmlFile.getAbsolutePath() + " not found",
+                        report.addTaggedElement("Error, ChannelML file: " + cmlFile + " not found",
                                                 "font color=\"" + ValidityStatus.VALIDATION_COLOUR_ERROR + "\"");
 
                         cellMechValidity = ValidityStatus.VALIDATION_ERROR;
@@ -2306,7 +2331,7 @@ public class ProjectManager implements GenerationReport
 
         report.addTaggedElement("Validation complete.", "p");
 
-        ValidityStatus projectOverallValidity = null;
+        ValidityStatus projectOverallValidity;
 
         if (overallValidity.equals(ValidityStatus.VALIDATION_OK))
         {
@@ -2510,7 +2535,7 @@ public class ProjectManager implements GenerationReport
     public SimulationData reloadSimulation(String simRef)
     {
         File simDataFile = ProjectStructure.getDirForSimFiles(simRef, activeProject);
-        SimulationData simData = null;
+        SimulationData simData;
         try
         {
             simData = new SimulationData(simDataFile, true);

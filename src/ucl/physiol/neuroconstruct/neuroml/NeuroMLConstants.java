@@ -26,7 +26,6 @@
 
 package ucl.physiol.neuroconstruct.neuroml;
 
-import org.neuroml.model.util.NeuroMLConverter;
 
 
 

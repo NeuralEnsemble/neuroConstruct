@@ -69,6 +69,13 @@ public class NeuroMLFileManagerTest {
             fail("Error loading: "+ projFile.getAbsolutePath());
         }
     }
+    
+    @Test
+    public void testFileClaimsToBeNeuroML2() throws NeuroMLException
+    {
+        assertTrue(NeuroMLFileManager.fileClaimsToBeNeuroML2(new File("NeuroML2/examples/NML2_AbstractCells.nml")));
+        assertFalse(NeuroMLFileManager.fileClaimsToBeNeuroML2(new File("templates/xmlTemplates/Examples/ChannelML/NaF_Chan.xml")));
+    }
 
 
     @Test

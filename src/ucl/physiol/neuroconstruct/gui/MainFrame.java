@@ -370,6 +370,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
     JRadioButton jRadioButtonNMLSavePlainText = new JRadioButton("XML");
     JRadioButton jRadioButtonNMLSaveZipped = new JRadioButton("Zipped XML");
     JRadioButton jRadioButtonNMLSaveHDF5 = new JRadioButton("HDF5 (beta impl)");
+    JRadioButton jRadioButtonNMLSaveNML2 = new JRadioButton("NeuroML 2 (unstable)");
     ButtonGroup buttonGroupNMLSave = new ButtonGroup();
     
     JCheckBox jCheckBoxGenerateExtraNetComments = new JCheckBox();
@@ -3075,12 +3076,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jButtonGenerateSave.setEnabled(false);
         jButtonGenerateLoad.setEnabled(false);
         jRadioButtonNMLSaveHDF5.setEnabled(false);
+        jRadioButtonNMLSaveNML2.setEnabled(false);
         jRadioButtonNMLSavePlainText.setEnabled(false);
         jRadioButtonNMLSaveZipped.setEnabled(false);
         
         jRadioButtonNMLSavePlainText.setSelected(true);
         
         buttonGroupNMLSave.add(jRadioButtonNMLSaveHDF5);
+        buttonGroupNMLSave.add(jRadioButtonNMLSaveNML2);
         buttonGroupNMLSave.add(jRadioButtonNMLSavePlainText);
         buttonGroupNMLSave.add(jRadioButtonNMLSaveZipped);
         
@@ -3441,6 +3444,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         jPanelGenerateLoadSave.add(jRadioButtonNMLSavePlainText);
         jPanelGenerateLoadSave.add(jRadioButtonNMLSaveZipped);
         jPanelGenerateLoadSave.add(jRadioButtonNMLSaveHDF5);
+        jPanelGenerateLoadSave.add(jRadioButtonNMLSaveNML2);
         jPanelGenerateLoadSave.add(this.jCheckBoxGenerateExtraNetComments);
         jPanelGenerateLoadSave.add(jButtonGenerateLoad);
 
@@ -9604,6 +9608,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jButtonGenerateSave.setEnabled(false);
             jButtonGenerateLoad.setEnabled(false);
             jRadioButtonNMLSaveHDF5.setEnabled(false);
+            jRadioButtonNMLSaveNML2.setEnabled(false);
             jRadioButtonNMLSavePlainText.setEnabled(false);
             jRadioButtonNMLSaveZipped.setEnabled(false);
         
@@ -9629,6 +9634,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             this.jButtonGenerateSave.setEnabled(true);
             jButtonGenerateLoad.setEnabled(true);
             jRadioButtonNMLSaveHDF5.setEnabled(true);
+            jRadioButtonNMLSaveNML2.setEnabled(true);
             jRadioButtonNMLSavePlainText.setEnabled(true);
             jRadioButtonNMLSaveZipped.setEnabled(true);
         
@@ -12016,8 +12022,17 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                     Random tempRandom = new Random();
                     this.jTextFieldRandomGen.setText(tempRandom.nextInt() + "");
                 }
+                File nmlFile = chooser.getSelectedFile();
+                NetworkMLnCInfo extraInfo;
 
-                NetworkMLnCInfo extraInfo = projManager.doLoadNetworkML(chooser.getSelectedFile(), false);
+                if (NeuroMLFileManager.fileClaimsToBeNeuroML2(nmlFile))
+                {
+                    extraInfo = projManager.doLoadNeuroML2Network(nmlFile, false);
+                }
+                else
+                {
+                    extraInfo = projManager.doLoadNetworkML(nmlFile, false);
+                }
                 
                 logger.logComment("Elec inputs read: "+ projManager.getCurrentProject().generatedElecInputs);
                 
@@ -12136,10 +12151,12 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         if (jRadioButtonNMLSavePlainText.isSelected())
             fullName = fileName+ ProjectStructure.getNeuroMLFileExtension();
-        if (jRadioButtonNMLSaveZipped.isSelected())
+        else if (jRadioButtonNMLSaveZipped.isSelected())
             fullName = fileName+ ProjectStructure.getNeuroMLCompressedFileExtension();
         else if(jRadioButtonNMLSaveHDF5.isSelected())
             fullName = fileName+ ProjectStructure.getHDF5FileExtension();
+        else if(jRadioButtonNMLSaveNML2.isSelected())
+            fullName = fileName+ ProjectStructure.getNeuroMLFileExtension();
 
         File networkFile = new File(savedNetsDir, fullName);
 
@@ -12187,6 +12204,16 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                                   networkFile,
                                                                   getSelectedSimConfig().getName(),
                                                                   NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+
+            }
+            else if(jRadioButtonNMLSaveNML2.isSelected())
+            {
+                fileSaved = ProjectManager.saveNetworkStructureNeuroML2(projManager.getCurrentProject(),
+                                                                 networkFile,
+                                                                 false,
+                                                                 this.jCheckBoxGenerateExtraNetComments.isSelected(),
+                                                                 getSelectedSimConfig().getName(),
+                                                                 NetworkMLConstants.UNITS_PHYSIOLOGICAL);
 
             }
         }

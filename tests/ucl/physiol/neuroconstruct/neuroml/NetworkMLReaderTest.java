@@ -84,8 +84,7 @@ public class NetworkMLReaderTest
     @Test
     public void testTruth() 
     {
-        assumeTrue(false);
-        assertEquals(1, 2);
+        assertEquals(1, 2-1);
     }*/
 
 
@@ -146,6 +145,176 @@ public class NetworkMLReaderTest
         assertTrue(NeuroMLFileManager.validateAgainstNeuroML2betaSchema(nml2bFile));
     }
     
+    
+    
+    @Test
+    public void testSavingLoadingNetworkNML2() throws InterruptedException, NeuroMLException, Hdf5Exception, EndOfSequenceException, NoProjectLoadedException
+    {
+        System.out.println("---  testSavingLoadingNetworkNML2");
+        
+        Project proj0 = pm.getCurrentProject();
+        SimConfig sc = proj0.simConfigInfo.getSimConfig("BasicNet");
+                
+        pm.doGenerate(sc.getName(), 1234);
+        
+        while(pm.isGenerating())
+        {
+            Thread.sleep(2000);
+        }
+
+        StringBuilder stateString1 = new StringBuilder();
+        
+        stateString1.append(proj0.generatedCellPositions.toLongString(false));
+        stateString1.append(proj0.generatedNetworkConnections.details(false));
+        ////////////stateString1.append(proj0.generatedElecInputs.toString());
+
+        StringBuilder plotsString1 = new StringBuilder();
+        plotsString1.append(proj0.generatedPlotSaves.details());
+
+        //String input0 = proj0.elecInputInfo.getAllStims().get(0).getElectricalInput().toString();
+        //String input1 = proj0.elecInputInfo.getAllStims().get(1).getElectricalInput().toString();
+        
+        System.out.println("Generated proj with: "+ proj0.generatedCellPositions.getNumberInAllCellGroups()+" cells");
+        if (verbose) 
+            System.out.println(stateString1);
+
+        
+        File saveNetsDir = ProjectStructure.getSavedNetworksDir(projDir);
+        
+        File nmlFile = new File(saveNetsDir, "test_nml2.xml");
+        
+        boolean zipped = false;
+        
+        nmlFile = NeuroMLFileManager.saveNetworkStructureXML(proj0,
+                                       nmlFile,
+                                       zipped,
+                                       false,
+                                       sc.getName(),
+                                       NetworkMLConstants.UNITS_PHYSIOLOGICAL,
+                                       NeuroMLVersion.NEUROML_VERSION_2_BETA);
+        
+        assertTrue(nmlFile.exists());
+        
+        System.out.println("Saved NetworkML in: "+ nmlFile.getAbsolutePath());
+        
+        assertTrue(NeuroMLFileManager.validateAgainstNeuroML2betaSchema(nmlFile));
+
+        
+        String validity1 = pm.getValidityReport(false);
+        validity1 = GeneralUtils.replaceAllTokens(validity1, proj0.getProjectFile()+"", "<proj_path>");
+        
+        proj0.resetGenerated();
+                
+        //pm.doLoadNetworkML(nmlFile, true);
+        pm.doLoadNeuroML2Network(nmlFile, true);
+
+        while(pm.isGenerating())
+        {
+            Thread.sleep(2000);
+        }
+
+        System.out.println("------------\nGenerated cells: "+proj0.generatedCellPositions.details());
+      
+        StringBuffer stateString2 = new StringBuffer();
+        
+        stateString2.append(proj0.generatedCellPositions.toLongString(false));
+        stateString2.append(proj0.generatedNetworkConnections.details(false));
+        //stateString2.append(proj0.generatedElecInputs.toString());
+        
+        //proj0.generatedNetworkConnections.getSynapticConnections(projName)
+        String input1_0 = proj0.elecInputInfo.getStim("SampleIClamp").getElectricalInput().toString();
+        String input1_1 = proj0.elecInputInfo.getStim("Input_0").getElectricalInput().toString();
+
+
+        StringBuilder plotsString2 = new StringBuilder();
+        plotsString2.append(proj0.generatedPlotSaves.details());
+         
+        
+        System.out.println("Reloaded proj with: "+ proj0.generatedCellPositions.getNumberInAllCellGroups()+" cells");
+        if (verbose) 
+            System.out.println(stateString2);
+        
+        assertEquals(stateString1.toString(), stateString2.toString());
+        System.out.println("Strings representing internal states equal!");
+/*
+        assertEquals(input0, input1_0);
+        assertEquals(input1, input1_1);
+
+        assertEquals(plotsString1.toString(), plotsString2.toString());
+
+        //test the NetworkML reader on a Level3 file
+        File l3File = new File(saveNetsDir, "Level3Test.xml");
+        ProjectManager.saveLevel3NetworkXML(proj0, l3File, false, false, sc.getName(), NetworkMLConstants.UNITS_PHYSIOLOGICAL);
+        assertTrue(l3File.exists());
+        
+        Iterator<String> groups = proj0.generatedCellPositions.getNamesGeneratedCellGroups();
+        ArrayList<String> cells = new ArrayList<String>();
+        while (groups.hasNext()) {
+            String string = groups.next();
+            cells.add(proj0.cellGroupsInfo.getCellType(string));
+        }
+        Iterator<String> nets =  proj0.generatedNetworkConnections.getNamesNetConnsIter();
+        Vector<String> netsVector = new Vector<String>();
+        while (nets.hasNext()) {
+           netsVector.add(nets.next());            
+        }
+
+        System.out.println("Saved Level 3 Network  in: "+ l3File.getAbsolutePath());
+
+        assertTrue(NeuroMLFileManager.validateAgainstLatestNeuroML1Schema(l3File));
+        //proj.resetGenerated();
+
+
+        String projName2 = "TestNetworkML_reloaded";
+        File projDir2 = new File(MainTest.getTempProjectDirectory()+ projName2);
+
+        Project proj2 = Project.createNewProject(projDir2.getAbsolutePath(), projName2, null);
+
+        pm.setCurrentProject(proj2);
+
+        pm.doLoadNetworkML(l3File, true);
+
+        proj2.saveProject();
+
+        //TODO: more thorough checks needed!!
+
+        assertTrue(proj0.cellManager.getAllCellTypeNames().containsAll(proj2.cellManager.getAllCellTypeNames()));
+
+        assertTrue(proj0.cellMechanismInfo.getAllCellMechanismNames().containsAll(proj2.cellMechanismInfo.getAllCellMechanismNames()));
+
+        assertTrue(proj0.morphNetworkConnectionsInfo.getAllSimpleNetConnNames().containsAll(proj2.morphNetworkConnectionsInfo.getAllSimpleNetConnNames()));
+
+        assertTrue(proj0.elecInputInfo.getAllStimRefs().containsAll(proj2.elecInputInfo.getAllStimRefs()));
+
+        String validity2 = pm.getValidityReport(false);
+
+        validity2 = GeneralUtils.replaceAllTokens(validity2, proj2.getProjectFile().getAbsolutePath(), "<proj_path>");
+
+        System.out.println("..."+ GeneralUtils.replaceAllTokens(validity1, "\n", " "));
+        System.out.println("..."+ GeneralUtils.replaceAllTokens(validity2, "\n", " "));
+
+        assertEquals(validity1, validity2);
+
+        String input2_0 = proj2.elecInputInfo.getAllStims().get(0).getElectricalInput().toString();
+        String input2_1 = proj2.elecInputInfo.getAllStims().get(1).getElectricalInput().toString();
+
+        System.out.println("---- pre:  "+input0);
+        System.out.println("---- post: "+input2_0);
+
+
+
+        assertEquals(input0, input2_0);
+        assertEquals(input1, input2_1);
+        
+   
+        */
+        
+       
+    }
+    
+    
+    
+    
     @Test
     public void testSavingLoadingNetworkML() throws InterruptedException, NeuroMLException, Hdf5Exception, EndOfSequenceException, NoProjectLoadedException
     {
@@ -170,8 +339,8 @@ public class NetworkMLReaderTest
         StringBuilder plotsString1 = new StringBuilder();
         plotsString1.append(proj0.generatedPlotSaves.details());
 
-        String input0 = proj0.elecInputInfo.getAllStims().get(0).getElectricalInput().toString();
-        String input1 = proj0.elecInputInfo.getAllStims().get(1).getElectricalInput().toString();
+        String input0 = proj0.elecInputInfo.getStim("SampleIClamp").getElectricalInput().toString();
+        String input1 = proj0.elecInputInfo.getStim("Input_0").getElectricalInput().toString();
         
         System.out.println("Generated proj with: "+ proj0.generatedCellPositions.getNumberInAllCellGroups()+" cells");
         if (verbose) 
@@ -220,8 +389,8 @@ public class NetworkMLReaderTest
         stateString2.append(proj0.generatedNetworkConnections.details(false));
         stateString2.append(proj0.generatedElecInputs.toString());
         //proj0.generatedNetworkConnections.getSynapticConnections(projName)
-        String input1_0 = proj0.elecInputInfo.getAllStims().get(0).getElectricalInput().toString();
-        String input1_1 = proj0.elecInputInfo.getAllStims().get(1).getElectricalInput().toString();
+        String input1_0 = proj0.elecInputInfo.getStim("SampleIClamp").getElectricalInput().toString();
+        String input1_1 = proj0.elecInputInfo.getStim("Input_0").getElectricalInput().toString();
 
 
         StringBuilder plotsString2 = new StringBuilder();
@@ -288,13 +457,13 @@ public class NetworkMLReaderTest
 
         validity2 = GeneralUtils.replaceAllTokens(validity2, proj2.getProjectFile().getAbsolutePath(), "<proj_path>");
 
-        System.out.println("..."+ GeneralUtils.replaceAllTokens(validity1, "\n", " "));
-        System.out.println("..."+ GeneralUtils.replaceAllTokens(validity2, "\n", " "));
+        System.out.println("V1: "+ GeneralUtils.replaceAllTokens(validity1, "\n", "\n"));
+        System.out.println("V2: "+ GeneralUtils.replaceAllTokens(validity2, "\n", "\n"));
 
         assertEquals(validity1, validity2);
 
-        String input2_0 = proj2.elecInputInfo.getAllStims().get(0).getElectricalInput().toString();
-        String input2_1 = proj2.elecInputInfo.getAllStims().get(1).getElectricalInput().toString();
+        String input2_0 = proj2.elecInputInfo.getStim("SampleIClamp").getElectricalInput().toString();
+        String input2_1 = proj2.elecInputInfo.getStim("Input_0").getElectricalInput().toString();
 
         System.out.println("---- pre:  "+input0);
         System.out.println("---- post: "+input2_0);
@@ -397,8 +566,8 @@ public class NetworkMLReaderTest
         assertEquals(validity1, validity3);
 
 
-        String input3_0 = proj3.elecInputInfo.getAllStims().get(0).getElectricalInput().toString();
-        String input3_1 = proj3.elecInputInfo.getAllStims().get(1).getElectricalInput().toString();
+        String input3_0 = proj3.elecInputInfo.getStim("SampleIClamp").getElectricalInput().toString();
+        String input3_1 = proj3.elecInputInfo.getStim("Input_0").getElectricalInput().toString();
 
         assertEquals(input0, input3_0);
         assertEquals(input1, input3_1);
