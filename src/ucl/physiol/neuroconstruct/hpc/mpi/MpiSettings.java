@@ -196,7 +196,7 @@ public class MpiSettings
         simulatorExecutablesCaspur.put(KnownSimulators.NEURON, "/home/sergio/nrn7.0/x86_64/bin/nrniv");
         simulatorExecutablesNotos.put(KnownSimulators.NEURON, "/opt/neuron/powerpc64/bin/nrniv");
         
-        simulatorExecutablesNsg.put(KnownSimulators.NEURON, "/home/nsguser/neuron/nrn/x86_64/bin/nrniv");
+        simulatorExecutablesNsg.put(KnownSimulators.NEURON, "/projects/ps-nsg/home/nsguser/applications/neuron7.3/nrn-7.3/x86_64/bin/nrniv");
 
         // This is a 4 processor Linux machine in our lab. Auto ssh login is enabled to it from the
         // machine on which neuroConstruct is running. Jobs are set running directly on this machine
@@ -253,9 +253,10 @@ public class MpiSettings
         QueueInfo legionQueue = new QueueInfo(6, "ucl/NeuroSci/neuroconst", "cvos-launcher", QueueInfo.QueueType.PBS, "mpirun");
         legionQueue.addAdditionalSubOptions("#PBS -l qos=parallel");
 
-        QueueInfo matlemQueue = new QueueInfo(6, "", "", QueueInfo.QueueType.SGE, "/opt/SUNWhpc/HPC8.2.1/gnu/bin/mpirun --mca btl openib,self");
-        matlemQueue.addAdditionalSubOptions("#$ -l fc=yes");
-        matlemQueue.addAdditionalSubOptions("#$ -R y");
+        ///////QueueInfo matlemQueue = new QueueInfo(6, "", "", QueueInfo.QueueType.SGE, "/opt/SUNWhpc/HPC8.2.1/gnu/bin/mpirun --mca btl openib,self");
+        QueueInfo matlemQueue = new QueueInfo(6, "", "", QueueInfo.QueueType.SGE, "/opt/sun-ct/bin/mpirun");
+        /////////matlemQueue.addAdditionalSubOptions("#$ -l fc=yes");
+        /////////matlemQueue.addAdditionalSubOptions("#$ -R y");
         //matlemQueue.addAdditionalSubOptions("#$ -S /bin/bash");
 
         QueueInfo caspurQueue = new QueueInfo(6, "std10-300", "time", QueueInfo.QueueType.PBS, "mpirun");
@@ -266,11 +267,13 @@ public class MpiSettings
         //nsgQueue.addAdditionalSubOptions("#PBS -v QOS=2");
         nsgQueue.addAdditionalSubOptions("#PBS -M  p.gleeson@ucl.ac.uk"); // TODO: CHANGE THIS!!!
         nsgQueue.addAdditionalSubOptions("#PBS -m ae");
+        //nsgQueue.addAdditionalSubOptions("pwd");
         nsgQueue.addAdditionalSubOptions("source /etc/profile.d/modules.sh");
         nsgQueue.addAdditionalSubOptions("export NPROCS=`wc -l < $PBS_NODEFILE`");
         nsgQueue.addAdditionalSubOptions("cd $workdir"); 
-        nsgQueue.addAdditionalSubOptions("/home/nsguser/neuron/nrn/x86_64/bin/nrnivmodl");
+        //nsgQueue.addAdditionalSubOptions("/home/nsguser/neuron/nrn/x86_64/bin/nrnivmodl");
         nsgQueue.addAdditionalSubOptions("$MPI_RUN $LAUNCH_APP_OP");
+        nsgQueue.setCompileNmodlOnLogin(true);
 
         if (getMpiConfiguration(LOCAL_SERIAL)==null)
         {

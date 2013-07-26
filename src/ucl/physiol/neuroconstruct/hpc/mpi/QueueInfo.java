@@ -63,6 +63,12 @@ public class QueueInfo
     protected ArrayList<String> additionalSubOptions = new ArrayList<String>();
 
     public static final String submitScript = "subjob.sh";
+    
+    /*
+     * Probably a better place for this...
+     */
+    private boolean compileNmodlOnLogin = false;
+    
 
 
     public QueueInfo()
@@ -86,7 +92,18 @@ public class QueueInfo
              + "Launcher script:        " + launcherScript + "\n"
              + "Queue type:             " + queueType + "\n"
              + "MPI run path:           " + mpirunPath + "\n"
+             + "compileNmodlOnLogin:    " + compileNmodlOnLogin + "\n"
              + "Additional sub options: " + additionalSubOptions;
+    }
+
+    public boolean isCompileNmodlOnLogin()
+    {
+        return compileNmodlOnLogin;
+    }
+
+    public void setCompileNmodlOnLogin(boolean compileNmodlOnLogin)
+    {
+        this.compileNmodlOnLogin = compileNmodlOnLogin;
     }
     
     
@@ -98,6 +115,7 @@ public class QueueInfo
     {
         QueueInfo q2 = new QueueInfo(wallTimeMins, account, launcherScript, queueType, mpirunPath);
         q2.additionalSubOptions.addAll(additionalSubOptions);
+        q2.setCompileNmodlOnLogin(compileNmodlOnLogin);
         return q2;
 
     }
@@ -258,6 +276,10 @@ public class QueueInfo
             return false;
         }
         if (this.queueType != other.queueType)
+        {
+            return false;
+        }
+        if (this.compileNmodlOnLogin != other.compileNmodlOnLogin)
         {
             return false;
         }

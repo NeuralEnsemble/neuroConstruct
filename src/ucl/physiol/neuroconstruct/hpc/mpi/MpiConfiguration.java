@@ -476,6 +476,7 @@ public class MpiConfiguration
         if (isUseScp())
         {
             scriptText.append("scp $zipFile $remoteUser@$remoteHost:$simDir\n");
+            scriptText.append("sleep 3\n");
         }
         else
         {
@@ -493,7 +494,15 @@ public class MpiConfiguration
 
             if (!this.queueInfo.getQueueType().equals(QueueInfo.QueueType.LL))
             {
-                scriptText.append("# ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic "+nrnivmodl+"\" # Now run on compute node\n");
+                if (this.queueInfo.isCompileNmodlOnLogin())
+                {
+                    scriptText.append("ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic "+nrnivmodl+"\"\n");
+                }
+                else
+                {
+                    scriptText.append("# ssh $remoteUser@$remoteHost \"cd $simDir;/bin/bash -ic "+nrnivmodl+"\" # Now nrniv is run on compute node\n");
+                }
+                        
             }
             else
             {
