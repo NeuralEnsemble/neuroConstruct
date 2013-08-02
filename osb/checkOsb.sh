@@ -103,6 +103,8 @@ standardGHProject 'GranCellRothmanIf' 'cerebellum/cerebellar_granule_cell'
 standardGHProject 'GranCellSolinasEtAl10' 'cerebellum/cerebellar_granule_cell'
 standardGHProject 'GranuleCell' 'cerebellum/cerebellar_granule_cell'
 standardGHProject 'GranuleCellVSCS' 'cerebellum/cerebellar_granule_cell'
+standardGHProject 'cereb_grc_mc' 'cerebellum/cerebellar_granule_cell'
+
 
 standardGHProject 'PurkinjeCell' 'cerebellum/cerebellar_purkinje_cell'
 
