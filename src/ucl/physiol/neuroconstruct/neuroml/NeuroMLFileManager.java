@@ -827,6 +827,15 @@ public class NeuroMLFileManager
             File lemsFile = new File(generateDir, lemsFileName);
 
             SimpleXMLElement lemsElement = new SimpleXMLElement(LemsConstants.ROOT_LEMS);
+            
+            lemsElement.addNamespace(new SimpleXMLNamespace("", LemsConstants.NAMESPACE_URI));
+            
+            lemsElement.addNamespace(new SimpleXMLNamespace(NeuroMLConstants.XSI_PREFIX,
+                                                                NeuroMLConstants.XSI_URI));
+            
+            lemsElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC,
+                                                                    LemsConstants.NAMESPACE_URI
+                                                                    + "  " + LemsConstants.DEFAULT_SCHEMA_LOCATION));
 
             lemsElement.addContent("\n\n    "); // to make it more readable...
 
@@ -897,7 +906,13 @@ public class NeuroMLFileManager
             lemsElement.addContent("\n\n    "); // to make it more readable...
 
 
-            SimpleXMLElement simEl = new SimpleXMLElement(LemsConstants.SIMULATION_ELEMENT);
+            //SimpleXMLElement simEl = new SimpleXMLElement(LemsConstants.SIMULATION_ELEMENT);
+   
+            lemsElement.addComment("Note: this could be: <Simulation id=\""+LemsConstants.DEFAULT_SIM_ID+"\" ... >, but <Component type=\"Simulation\" ... >\n"
+                                  + "        is used to allow validation of this file according to the LEMS schema specified above...");
+            SimpleXMLElement simEl = new SimpleXMLElement(LemsConstants.COMPONENT_ELEMENT);
+            simEl.addAttribute(LemsConstants.COMPONENT_TYPE_ATTR, LemsConstants.SIMULATION_ELEMENT);
+            
             lemsElement.addChildElement(simEl);
             simEl.addContent("\n        "); // to make it more readable...
 
