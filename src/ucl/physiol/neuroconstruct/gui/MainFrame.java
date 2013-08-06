@@ -16104,15 +16104,15 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         }
 
-        File v2betaSchemaFile = GeneralProperties.getNeuroMLv2betaSchemaFile();
+        File v2beta1SchemaFile = GeneralProperties.getNeuroMLv2beta1SchemaFile();
 
         try
         {
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
-            logger.logComment("Found the XSD file: " + v2betaSchemaFile.getAbsolutePath());
+            logger.logComment("Found the XSD file: " + v2beta1SchemaFile.getAbsolutePath());
 
-            Source schemaFileSource = new StreamSource(v2betaSchemaFile);
+            Source schemaFileSource = new StreamSource(v2beta1SchemaFile);
             Schema schema = factory.newSchema(schemaFileSource);
 
             Validator validator = schema.newValidator();
@@ -16124,7 +16124,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             validator.validate(xmlFileSource);
 
             GuiUtils.showInfoMessage(logger, "Valid NeuroML v2beta file", "NeuroML file is well formed and valid, according to schema:\n"
-                                 + v2betaSchemaFile.getAbsolutePath()+"", this);
+                                 + v2beta1SchemaFile.getAbsolutePath()+"", this);
 
             return;
 
@@ -16138,7 +16138,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                   + "against the following schemas:\n"
                                   +"    "+v1schemaFile+"\n"
                                   +"    "+v2alphaSchemaFile+"\n"
-                                  +"    "+v2betaSchemaFile, null, this);
+                                  +"    "+v2beta1SchemaFile, null, this);
 
 
     }

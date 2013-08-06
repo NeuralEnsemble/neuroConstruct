@@ -1112,6 +1112,13 @@ public class GeneratedNetworkConnections
                                 connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_PRE_CELL_ID, "../"+sourceCellGroup+"/"+ synConn.sourceEndPoint.cellNumber+"/"+sourceCellType));
                                 connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_POST_CELL_ID, "../"+targetCellGroup+"/"+ synConn.targetEndPoint.cellNumber+"/"+targetCellType));
                                 
+                                connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_PRE_SEGMENT_ID, synConn.sourceEndPoint.location.getSegmentId()+""));
+                                connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_PRE_FRACTION_ALONG, synConn.sourceEndPoint.location.getFractAlong()+""));
+                                
+                                connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_POST_SEGMENT_ID, synConn.targetEndPoint.location.getSegmentId()+""));
+                                connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_POST_FRACTION_ALONG, synConn.targetEndPoint.location.getFractAlong()+""));
+                                
+                                
                             }
                         }
 

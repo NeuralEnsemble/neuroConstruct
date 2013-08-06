@@ -1938,13 +1938,13 @@ public class MorphMLConverter extends FormatImporter
                 {
                     rootElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC,
                                                                     NeuroMLConstants.NAMESPACE_URI_VERSION_2
-                                                                    + "  " + NeuroMLElements.DEFAULT_SCHEMA_FILENAME_VERSION_2_ALPHA));
+                                                                    + "  " + NeuroMLElements.DEFAULT_SCHEMA_LOCATION_VERSION_2_ALPHA));
                 }
                 else if (version.isVersion2beta())
                 {
                     rootElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC,
                                                                     NeuroMLConstants.NAMESPACE_URI_VERSION_2
-                                                                    + "  " + NeuroMLElements.DEFAULT_SCHEMA_FILENAME_VERSION_2_BETA));
+                                                                    + "  " + NeuroMLElements.DEFAULT_SCHEMA_LOCATION_VERSION_2_BETA1));
                 }
 
             }

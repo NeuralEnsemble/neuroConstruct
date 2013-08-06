@@ -142,7 +142,7 @@ public class NetworkMLReaderTest
 
         System.out.println("Saved Network 2 beta in: "+ nml2bFile.getAbsolutePath());
 
-        assertTrue(NeuroMLFileManager.validateAgainstNeuroML2betaSchema(nml2bFile));
+        assertTrue(NeuroMLFileManager.validateAgainstNeuroML2beta1Schema(nml2bFile));
     }
     
     
@@ -197,7 +197,7 @@ public class NetworkMLReaderTest
         
         System.out.println("Saved NetworkML in: "+ nmlFile.getAbsolutePath());
         
-        assertTrue(NeuroMLFileManager.validateAgainstNeuroML2betaSchema(nmlFile));
+        assertTrue(NeuroMLFileManager.validateAgainstNeuroML2beta1Schema(nmlFile));
 
         
         String validity1 = pm.getValidityReport(false);

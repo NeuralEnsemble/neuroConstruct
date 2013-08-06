@@ -225,7 +225,7 @@ public class MorphMLReaderTest {
 
             System.out.println("Saved cell in NeuroML Level 3 file: "+ morphFile.getAbsolutePath());
 
-            assertTrue("Checking validity of: "+ morphFile.getAbsolutePath(), NeuroMLFileManager.validateAgainstNeuroML2betaSchema(morphFile));
+            assertTrue("Checking validity of: "+ morphFile.getAbsolutePath(), NeuroMLFileManager.validateAgainstNeuroML2beta1Schema(morphFile));
         }
     }
     

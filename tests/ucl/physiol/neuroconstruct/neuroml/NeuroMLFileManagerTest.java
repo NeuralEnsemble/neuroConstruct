@@ -190,7 +190,7 @@ public class NeuroMLFileManagerTest {
 
             System.out.println("Saved NetworkML in: "+ nmlFile.getAbsolutePath());
 
-            assertTrue("Checking validity of: "+ nmlFile.getAbsolutePath(), NeuroMLFileManager.validateAgainstNeuroML2betaSchema(nmlFile));
+            assertTrue("Checking validity of: "+ nmlFile.getAbsolutePath(), NeuroMLFileManager.validateAgainstNeuroML2beta1Schema(nmlFile));
     }
 
 
