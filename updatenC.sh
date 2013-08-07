@@ -12,6 +12,17 @@ export SBML2NEU_SC_DIR=templates/SBML2NEURON
 export NEUROML2_DIR=NeuroML2
 export JNEUROMLJAR_DIR=jNeuroMLJar
 
+if ! type -p svn > /dev/null; then
+    # svn is not installed on the system
+    echo "svn not found on this machine. please install."
+    exit 1
+fi
+
+if ! type -p git > /dev/null; then
+    # git is not installed on the system
+    echo "git not found on this machine. please install."
+    exit 1
+fi
 
 if [ ! -d $NML_EX_DIR ]; then
     svn co https://svn.code.sf.net/p/neuroml/code/trunk/web/NeuroMLFiles/Examples/ $NML_EX_DIR
