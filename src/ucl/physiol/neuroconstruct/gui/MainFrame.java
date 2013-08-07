@@ -11874,6 +11874,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         editButton.setEnabled(false);
         addedPanel.add(viewPanel, BorderLayout.SOUTH);
         
+        setGeneratorInfo("Loading a NeuroML file...");
+        
         openButton.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
