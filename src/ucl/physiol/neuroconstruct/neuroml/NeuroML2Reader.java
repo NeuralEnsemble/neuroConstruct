@@ -144,7 +144,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                 {
                     Location loc = instance.getLocation();
 
-                    logger.logComment("Adding instance "+instance.getId()+" at: "+ loc+" in "+population.getId(), true);
+                    logger.logComment("Adding instance "+instance.getId()+" at: "+ loc+" in "+population.getId());
                     this.cellPos.addPosition(population.getId(), new PositionRecord(instance.getId().intValue(), loc.getX(), loc.getY(), loc.getZ()));
                 }
             }
