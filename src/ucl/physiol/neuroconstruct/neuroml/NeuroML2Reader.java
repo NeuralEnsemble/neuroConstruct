@@ -124,15 +124,14 @@ public class NeuroML2Reader implements NetworkMLnCInfo
 
             Network network = neuroml.getNetwork().get(0); // Only first network...
 
-            if (network.getExtracellularProperties()!=null && !network.getExtracellularProperties().isEmpty()) {
-                ExtracellularPropertiesLocal ep = network.getExtracellularProperties().get(0);
+            if (network.getType().toString().equals(NetworkMLConstants.NEUROML2_NETWORK_WITH_TEMP_TYPE)) {
 
-                float tempSI = Utils.getMagnitudeInSI(ep.getTemperature());
+                float tempSI = Utils.getMagnitudeInSI(network.getTemperature());
                 float tempnC = Utils.getMagnitudeInSI(project.simulationParameters.getTemperature()+"degC");
 
                 if (Math.abs(tempSI-tempnC)>1e-6)
                 {
-                    GuiUtils.showWarningMessage(logger, "Note that the imported network file specifies a temperature of "+ep.getTemperature()
+                    GuiUtils.showWarningMessage(logger, "Note that the imported network file specifies a temperature of "+network.getTemperature()
                             +", but the neuroConstruct project has a temperature setting of "+project.simulationParameters.getTemperature()+" deg C", null);
 
                 }
