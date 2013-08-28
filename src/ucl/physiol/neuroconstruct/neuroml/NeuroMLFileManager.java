@@ -275,10 +275,19 @@ public class NeuroMLFileManager
 
                 rootElement = networkNml2;
 
-                SimpleXMLElement excellPropsElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_EXTRACELLULAR_PROPS_ELEMENT);
-                excellPropsElement.addAttribute(NetworkMLConstants.NEUROML2_TEMPERATURE_ATTR, project.simulationParameters.getTemperature() + " degC");
-                networkNml2.addContent("\n\n        ");
-                networkNml2.addChildElement(excellPropsElement);
+                if (version.isVersion2alpha())
+                {
+                    SimpleXMLElement excellPropsElement = new SimpleXMLElement(NetworkMLConstants.NEUROML2_ALPHA_EXTRACELLULAR_PROPS_ELEMENT);
+                    excellPropsElement.addAttribute(NetworkMLConstants.NEUROML2_TEMPERATURE_ATTR, project.simulationParameters.getTemperature() + " degC");
+                    networkNml2.addContent("\n\n        ");
+                    networkNml2.addChildElement(excellPropsElement);
+                }
+                else
+                {
+                    networkNml2.addAttribute(NeuroMLConstants.NEUROML_COMP_TYPE_ATTR, NetworkMLConstants.NEUROML2_NETWORK_WITH_TEMP_TYPE);
+                    networkNml2.addAttribute(NetworkMLConstants.NEUROML2_TEMPERATURE_ATTR, project.simulationParameters.getTemperature() + " degC");
+                    networkNml2.addContent("\n\n        ");
+                }
             }
 
 
