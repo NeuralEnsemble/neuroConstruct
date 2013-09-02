@@ -188,6 +188,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         "Note to Vista users: to view the included examples, you may need to give extra permissions to the files" +
         " in the examples folder at C:\\Program Files\\neuroConstruct_xxx. Browse to the folder with My Computer/Explorer, right click on the folder, change settings via Properties -> Security.\n\n";
 
+   File preferredNeuroMLDir = null; 
+   
     // JBuilder added stuff...
 
     JPanel contentPane;
@@ -1299,7 +1301,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             public void actionPerformed(ActionEvent e)
             {
 
-                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.NEUROML_VERSION_2_BETA, LemsOption.EXECUTE_MODEL);
+                jButtonNeuroMLGenSim_actionPerformed(e, NeuroMLVersion.getLatestVersion(), LemsOption.EXECUTE_MODEL);
                     //jButtonNeuroMLExport_actionPerformed(e, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2);
 
             }
@@ -5925,6 +5927,14 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             GuiUtils.showErrorMessage(logger, ex.getMessage(), ex, this);
             closeProject();
         }
+        
+        File neuroML1Dir = ProjectStructure.getNeuroML1Dir(projManager.getCurrentProject().getProjectMainDirectory());
+        File neuroML2Dir = ProjectStructure.getNeuroML1Dir(projManager.getCurrentProject().getProjectMainDirectory());
+        
+        if (neuroML2Dir.exists())
+            preferredNeuroMLDir = neuroML2Dir;
+        else if (neuroML1Dir.exists())
+            preferredNeuroMLDir = neuroML1Dir;
 
         recentFiles.addToList(projFile.getAbsolutePath());
         refreshAll();
@@ -10099,8 +10109,6 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
            jLabelGenesisNumMethod.setText(projManager.getCurrentProject().genesisSettings.getNumMethod().toString());
 
-
-           //if()
        }
 
     }
@@ -10149,13 +10157,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
            jComboBoxNeuroML.setEnabled(true);
            jButtonNeuroMLGenSim.setEnabled(true);
 
-           File genNeuroMLDir = ProjectStructure.getNeuroMLDir(projManager.getCurrentProject().getProjectMainDirectory());
-
            jComboBoxNeuroML.removeAllItems();
-           if (genNeuroMLDir.exists())
+           
+           
+           if (preferredNeuroMLDir!=null && preferredNeuroMLDir.exists())
            {
 
-               File[] contents = GeneralUtils.reorderAlphabetically(genNeuroMLDir.listFiles(), true);
+               File[] contents = GeneralUtils.reorderAlphabetically(preferredNeuroMLDir.listFiles(), true);
 
                for (int i = 0; i < contents.length; i++)
                {
@@ -10166,6 +10174,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                                                 + " bytes)");
                }
            }
+           
            if (jComboBoxNeuroML.getItemCount() == 0) jComboBoxNeuroML.addItem(noNeuroMLFilesFound);
            else
            {
@@ -12764,11 +12773,10 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
                 return;
             }
         }
-
-
+        
         final JFileChooser chooser = new JFileChooser();
 
-        chooser.setCurrentDirectory(ProjectStructure.getNeuroMLDir(projManager.getCurrentProject().getProjectMainDirectory()));
+        chooser.setCurrentDirectory(projManager.getCurrentProject().getProjectMainDirectory());
 
 //        chooser.setFileFilter(new SimpleFileFilter(new String[]{".net.xml"}, "Level 3 NeuroML Network files", true));
 
@@ -13568,7 +13576,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         
         Project proj = projManager.getCurrentProject();
                 
-        File neuroMLDir = ProjectStructure.getNeuroMLDir(proj.getProjectMainDirectory());
+        File neuroMLDir = ProjectStructure.getNeuroMLDir(proj.getProjectMainDirectory(), version);
 
         GeneralUtils.removeAllFiles(neuroMLDir, false, false, false);
 
@@ -13596,6 +13604,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
     }
 
+    
+   
     
     void jButtonNeuroMLGenSim_actionPerformed(ActionEvent e, NeuroMLVersion version, LemsOption lemsOption)
     {
@@ -13650,7 +13660,7 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
             else if (jRadioButtonNMLPhy.isSelected())
                 units = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS);
 
-            File neuroMLDir = ProjectStructure.getNeuroMLDir(projManager.getCurrentProject().getProjectMainDirectory());
+            File neuroMLDir = ProjectStructure.getNeuroMLDir(projManager.getCurrentProject().getProjectMainDirectory(), version);
             
             projManager.getCurrentProject().neuromlFileManager.generateNeuroMLFiles(this.getSelectedSimConfig(),
                                                                                       version,
@@ -13662,9 +13672,11 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
             if (jCheckBoxSedMl.isSelected())
             {
-                File sedmlFile = new File(ProjectStructure.getNeuroMLDir(projManager.getCurrentProject().getProjectMainDirectory()), projManager.getCurrentProject().getProjectName()+ ".sedml");
+                File sedmlFile = new File(neuroMLDir, projManager.getCurrentProject().getProjectName()+ ".sedml");
                 projManager.generateSedML(projManager.getCurrentProject(), sedmlFile, this.getSelectedSimConfig(), version);
             }
+            
+            preferredNeuroMLDir = neuroMLDir;
         }
         catch(IOException ex)
         {

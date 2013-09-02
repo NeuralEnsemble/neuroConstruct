@@ -1940,7 +1940,7 @@ public class MorphMLConverter extends FormatImporter
                                                                     NeuroMLConstants.NAMESPACE_URI_VERSION_2
                                                                     + "  " + NeuroMLElements.DEFAULT_SCHEMA_LOCATION_VERSION_2_ALPHA));
                 }
-                else if (version.isVersion2beta())
+                else if (version.isVersion2Latest())
                 {
                     rootElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.XSI_SCHEMA_LOC,
                                                                     NeuroMLConstants.NAMESPACE_URI_VERSION_2

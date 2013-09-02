@@ -726,7 +726,7 @@ public class Expand {
                     }
                     else
                     {
-                        String nml2 = MorphMLConverter.getCellInNeuroMLFormat(cell, project, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2_BETA, true);
+                        String nml2 = MorphMLConverter.getCellInNeuroMLFormat(cell, project, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.getLatestVersion(), true);
                         nml2Page.addBreak();
                         nml2Page.addRawHtml(preXML);
                         nml2Page.addRawHtml(nml2);

@@ -123,7 +123,7 @@ public class MorphMLReaderTest {
         
         MorphMLConverter mmlC = new MorphMLConverter();
         
-        File savedNeuroMLDir = ProjectStructure.getNeuroMLDir(projDir);
+        File savedNeuroMLDir = ProjectStructure.getNeuroML1Dir(projDir);
 
         int[] units = new int[]{UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, UnitConverter.GENESIS_SI_UNITS};
 
@@ -197,7 +197,7 @@ public class MorphMLReaderTest {
 
         MorphMLConverter mmlC = new MorphMLConverter();
 
-        File savedNeuroMLDir = ProjectStructure.getNeuroMLDir(projDir);
+        File savedNeuroMLDir = ProjectStructure.getNeuroML2Dir(projDir);
 
         int[] units = new int[]{UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, UnitConverter.GENESIS_SI_UNITS};
 
@@ -219,7 +219,7 @@ public class MorphMLReaderTest {
             morphFile = new File(savedNeuroMLDir, "TestNeuroMLv2__"+unit+"b.xml");
 
             MorphMLConverter.saveCellInNeuroMLFormat(cell1, pm.getCurrentProject(), morphFile,
-                NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2_BETA);
+                NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.getLatestVersion());
 
             assertTrue(morphFile.exists());
 

@@ -34,6 +34,7 @@ import java.text.*;
 import java.util.*;
 import java.util.ArrayList;
 import ucl.physiol.neuroconstruct.cell.compartmentalisation.OriginalCompartmentalisation;
+import ucl.physiol.neuroconstruct.neuroml.NeuroMLConstants;
 import ucl.physiol.neuroconstruct.utils.xml.*;
 
 /**
@@ -263,7 +264,7 @@ public class ExampleProjects
                 {
                     project.neuromlFileManager.generateNeuroMLFiles(null,  new OriginalCompartmentalisation(), 1234, false);
 
-                    File neuroMLDir = ProjectStructure.getNeuroMLDir(project.getProjectMainDirectory());
+                    File neuroMLDir = ProjectStructure.getNeuroML1Dir(project.getProjectMainDirectory());
 
                     String nmlZipFileName = targetDownloadDir.getAbsolutePath()+"/"+ projName+"_NeuroML.zip";
 

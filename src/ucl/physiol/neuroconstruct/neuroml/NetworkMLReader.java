@@ -1575,7 +1575,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
 
 
                     //write the NeuroML file
-                    File neuroMLDir = ProjectStructure.getNeuroMLDir(project.getProjectMainDirectory());
+                    File neuroMLDir = ProjectStructure.getNeuroML1Dir(project.getProjectMainDirectory());
                     File morphMLFile = new File(neuroMLDir,
                                                 renamedCells.get(cellName)
                                                 + ProjectStructure.getMorphMLFileExtension());

@@ -80,12 +80,6 @@ public class NetworkMLReaderTest
         }
     }
 
-    /*
-    @Test
-    public void testTruth() 
-    {
-        assertEquals(1, 2-1);
-    }*/
 
 
     @Test
@@ -136,7 +130,7 @@ public class NetworkMLReaderTest
                                                          false,
                                                          sc.getName(),
                                                          NetworkMLConstants.UNITS_PHYSIOLOGICAL,
-                                                         NeuroMLVersion.NEUROML_VERSION_2_BETA);
+                                                         NeuroMLVersion.getLatestVersion());
 
         assertTrue(nml2bFile.exists());
 
@@ -191,7 +185,7 @@ public class NetworkMLReaderTest
                                        false,
                                        sc.getName(),
                                        NetworkMLConstants.UNITS_PHYSIOLOGICAL,
-                                       NeuroMLVersion.NEUROML_VERSION_2_BETA);
+                                       NeuroMLVersion.getLatestVersion());
         
         assertTrue(nmlFile.exists());
         
@@ -491,13 +485,6 @@ public class NetworkMLReaderTest
         assertTrue(NeuroMLFileManager.validateAgainstLatestNeuroML1Schema(l3FileAnnotations));
  
        
-        /*
-        pm.doLoadNetworkMLAndGeneratePlots(l3FileAnnotations, true);
-
-
-        System.out.println("-------3-----\nGenerated plots: "+pm.getCurrentProject().generatedPlotSaves.details());
-
-        assertTrue(pm.isGenerating());*/
 
 
         String projName3 = "TestNetworkML_reloaded_withAnnotations";

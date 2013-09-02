@@ -535,7 +535,7 @@ public class GeneratedCellPositions
                     populationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_POPULATION_COMPONENT, type));//TODO...
                     //populationElement.addContent("\n");
 
-                    if (version.isVersion2beta())
+                    if (version.isVersion2Latest())
                     {
                         populationElement.addAttribute(new SimpleXMLAttribute("type", NetworkMLConstants.NEUROML2_POPULATION_LIST));
 
@@ -701,7 +701,7 @@ public class GeneratedCellPositions
             cpr2.loadFromFile(f);
             System.out.println("New internal info: \n"+ cpr2.toString()); 
 
-            ArrayList<SimpleXMLElement> pops = cpr2.getNetworkMLElements(NeuroMLVersion.NEUROML_VERSION_2_BETA);
+            ArrayList<SimpleXMLElement> pops = cpr2.getNetworkMLElements(NeuroMLVersion.getLatestVersion());
 
             for (SimpleXMLElement pop: pops)
             {
