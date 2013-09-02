@@ -1083,6 +1083,10 @@ public class NeuroMLFileManager
                         ref = GeneralUtils.replaceAllTokens(ref, "/", "_");
                         ref = GeneralUtils.replaceAllTokens(ref, " ", "_");
                         ref = GeneralUtils.replaceAllTokens(ref, ":", "_");
+                        if (project.generatedCellPositions.getNumberInAllCellGroups()>1)
+                        {
+                            ref = ref +"-"+ plot.simPlot.getCellGroup() + "_" + cellNum;
+                        }
                         
                         lineEl.addAttribute(LemsConstants.ID_ATTR, ref);
 
