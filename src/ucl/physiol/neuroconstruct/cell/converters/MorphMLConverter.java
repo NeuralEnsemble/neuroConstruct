@@ -954,9 +954,9 @@ public class MorphMLConverter extends FormatImporter
 
                                     if (ion!=null && ion.equals("ca") && (val==null || val.equals("no")))
                                     {
-                                        mechElement.addContent("\n\n                ");
-                                        mechElement.addComment("Reversal potential will be calculated by Nernst equation from internal & external calcium");
-                                        mechElement.addContent("\n\n                ");
+                                        membPropsElement.addContent("\n\n                ");
+                                        membPropsElement.addComment("Reversal potential will be calculated by Nernst equation from internal & external calcium");
+                                        membPropsElement.addContent("\n\n                ");
                                         mechElement.setName(bioPrefix + BiophysicsConstants.CHAN_DENSITY_NERNST_ELEMENT_V2);
                                         /*
                                         try
