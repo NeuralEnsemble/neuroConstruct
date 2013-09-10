@@ -117,6 +117,7 @@ standardGHProject 'L5bPyrCellHayEtAl2011' 'cerebral_cortex/neocortical_pyramidal
 
 standardGHProject 'IzhikevichModel' 'cerebral_cortex/networks'
 standardGHProject 'Thalamocortical' 'cerebral_cortex/networks'
+standardGHProject 'ACnet2' 'cerebral_cortex/networks'
 standardGHProject 'Brunel2000' 'cerebral_cortex/networks'
 standardGHProject 'VogelsEtAl2011' 'cerebral_cortex/networks'
 standardGHProject 'PospischilEtAl2008' 'cerebral_cortex/multiple'
