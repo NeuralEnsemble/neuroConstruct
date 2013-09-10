@@ -2095,7 +2095,7 @@ public class NetworkMLReader extends XMLFilterImpl implements NetworkMLnCInfo
             String timeInfo = GeneralUtils.getCurrentDateAsNiceString() +"_"+GeneralUtils.getCurrentTimeAsNiceString();
             timeInfo = GeneralUtils.replaceAllTokens(timeInfo, ":", "-");
 
-            String fullName = "Net_" +timeInfo+ ProjectStructure.getNeuroMLFileExtension();
+            String fullName = "Net_" +timeInfo+ ProjectStructure.getNeuroML1FileExtension();
 
             File networkFile = new File(savedNetsDir, fullName);
 

@@ -811,7 +811,7 @@ public class ProjectManager implements GenerationReport
                 
                 String internalFilename = GeneralUtils.replaceAllTokens(zipFile.getName(), 
                                         ProjectStructure.getNeuroMLCompressedFileExtension(), 
-                                        ProjectStructure.getNeuroMLFileExtension());
+                                        ProjectStructure.getNeuroML1FileExtension());
                 
                 ZipUtils.zipStringAsFile(stringForm, zipFile, internalFilename, notes.toString());
                 
@@ -1329,7 +1329,7 @@ public class ProjectManager implements GenerationReport
                 
                 String internalFilename = GeneralUtils.replaceAllTokens(zipFile.getName(), 
                                         ProjectStructure.getNeuroMLCompressedFileExtension(), 
-                                        ProjectStructure.getNeuroMLFileExtension());
+                                        ProjectStructure.getNeuroML1FileExtension());
                 
                 ZipUtils.zipStringAsFile(stringForm, zipFile, internalFilename, notes.toString());
                 
@@ -1434,7 +1434,7 @@ public class ProjectManager implements GenerationReport
         }
         else if(version.isVersion2())
         {
-            sourceFile = project.getProjectName() + ProjectStructure.getNeuroMLFileExtension();
+            sourceFile = project.getProjectName() + ProjectStructure.getNeuroML2FileExtension();
         }
 
         model.addAttribute("source", sourceFile);

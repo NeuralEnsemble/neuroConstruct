@@ -64,7 +64,9 @@ public class ProjectStructure
 
     private static final String xmlExtension = ".xml";
 
-    private static final String neuromlExtension = ".nml";
+    private static final String neuroml1Extension = ".nml1";
+    
+    private static final String neuroml2Extension = ".nml";
     
     private static final String hdf5Extension = ".h5";
 
@@ -1110,11 +1112,19 @@ public class ProjectStructure
     }
 
     /**
-     * @return The extension of NeuroML files as stored by the application
+     * @return The extension of NeuroML 1 files as stored by the application
      */
-    public static String getNeuroMLFileExtension()
+    public static String getNeuroML1FileExtension()
     {
-        return neuromlExtension;
+        return neuroml1Extension;
+    }
+    
+    /**
+     * @return The extension of NeuroML 2 files as stored by the application
+     */
+    public static String getNeuroML2FileExtension()
+    {
+        return neuroml2Extension;
     }
 
     /**

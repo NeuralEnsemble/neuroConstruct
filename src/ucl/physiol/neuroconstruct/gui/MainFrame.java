@@ -11852,7 +11852,8 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
 
         chooser.setCurrentDirectory(ProjectStructure.getSavedNetworksDir(projManager.getCurrentProject().getProjectMainDirectory()));
 
-        chooser.setFileFilter(new SimpleFileFilter(new String[]{ProjectStructure.getNeuroMLFileExtension(),
+        chooser.setFileFilter(new SimpleFileFilter(new String[]{ProjectStructure.getNeuroML1FileExtension(),
+                                                   ProjectStructure.getNeuroML2FileExtension(),
                                                    ProjectStructure.getXMLFileExtension(),
                                                    ProjectStructure.getNeuroMLCompressedFileExtension(),
                                                    ProjectStructure.getHDF5FileExtension()}, "(Plaintext, compressed or HDF5) NetworkML files", true));
@@ -12161,13 +12162,13 @@ public class MainFrame extends JFrame implements ProjectEventListener, Generatio
         String fullName = fileName;
         
         if (jRadioButtonNMLSavePlainText.isSelected())
-            fullName = fileName+ ProjectStructure.getNeuroMLFileExtension();
+            fullName = fileName+ ProjectStructure.getNeuroML1FileExtension();
         else if (jRadioButtonNMLSaveZipped.isSelected())
             fullName = fileName+ ProjectStructure.getNeuroMLCompressedFileExtension();
         else if(jRadioButtonNMLSaveHDF5.isSelected())
             fullName = fileName+ ProjectStructure.getHDF5FileExtension();
         else if(jRadioButtonNMLSaveNML2.isSelected())
-            fullName = fileName+ ProjectStructure.getNeuroMLFileExtension();
+            fullName = fileName+ ProjectStructure.getNeuroML2FileExtension();
 
         File networkFile = new File(savedNetsDir, fullName);
 

@@ -2098,7 +2098,7 @@ public class MorphMLConverter extends FormatImporter
 
                 if (version.isVersion2())
                 {
-                    ext = ProjectStructure.getNeuroMLFileExtension();
+                    ext = ProjectStructure.getNeuroML2FileExtension();
                 }
 
                 cellFile = new File(destDir,

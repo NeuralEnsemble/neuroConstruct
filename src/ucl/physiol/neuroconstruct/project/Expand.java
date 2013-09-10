@@ -671,7 +671,7 @@ public class Expand {
                     if (project.projProperties.getPreferredSaveFormat().equals(ProjectStructure.JAVA_XML_FORMAT))
                         suffix = ProjectStructure.getJavaXMLFileExtension();
                     if (project.projProperties.getPreferredSaveFormat().equals(ProjectStructure.NEUROML1_FORMAT))
-                        suffix = ProjectStructure.getNeuroMLFileExtension();
+                        suffix = ProjectStructure.getNeuroML1FileExtension();
 
                     String repoLoc = "../../../projects/"+project.getProjectName()+"/repository/changes/neuroConstruct/morphologies/"+
                             cell.getInstanceName()+suffix+"?rev=master";

@@ -428,9 +428,10 @@ public class NeuroMLFileManager
                                        + ProjectStructure.getNeuroMLCompressedFileExtension());
                 }
 
+                String extension = version.isVersion2() ? ProjectStructure.getNeuroML2FileExtension() : ProjectStructure.getNeuroML1FileExtension();
                 String internalFilename = GeneralUtils.replaceAllTokens(zipFile.getName(),
                                                                         ProjectStructure.getNeuroMLCompressedFileExtension(),
-                                                                        ProjectStructure.getNeuroMLFileExtension());
+                                                                        extension);
 
                 ZipUtils.zipStringAsFile(stringForm, zipFile, internalFilename, notes.toString());
 
@@ -556,12 +557,15 @@ public class NeuroMLFileManager
         String timeInfo = GeneralUtils.getCurrentDateAsNiceString() + "_" + GeneralUtils.getCurrentTimeAsNiceString();
 
         timeInfo = GeneralUtils.replaceAllTokens(timeInfo, ":", "-");
+        
+        String extension = ProjectStructure.getNeuroML1FileExtension();
 
-        String fileName = "L3Net_" + timeInfo + ProjectStructure.getNeuroMLFileExtension();
+        String fileName = "L3Net_" + timeInfo + ProjectStructure.getNeuroML1FileExtension();
 
         if (version.isVersion2())
         {
-            fileName = project.getProjectName() + ProjectStructure.getNeuroMLFileExtension();
+            extension = ProjectStructure.getNeuroML2FileExtension();
+            fileName = project.getProjectName() + extension;
         }
 
         File fileToGen = new File(generateDir, fileName);
@@ -621,6 +625,7 @@ public class NeuroMLFileManager
                 if (version.isVersion2())
                 {
                     level = NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL;
+                    extension = ProjectStructure.getNeuroML2FileExtension();
                 }
 
                 generatedCells = MorphMLConverter.saveAllCellsInNeuroML(project,
@@ -632,7 +637,7 @@ public class NeuroMLFileManager
 
                 for (Cell cell : generatedCells)
                 {
-                    generatedCellFiles.add(new File(generateDir, cell.getInstanceName() + ProjectStructure.getNeuroMLFileExtension()));
+                    generatedCellFiles.add(new File(generateDir, cell.getInstanceName() + extension));
                 }
             }
             catch (MorphologyException ex1)
@@ -798,13 +803,13 @@ public class NeuroMLFileManager
 
             for (String cellMech : cellMechFilesHandled)
             {
-                generatedChanSynFiles.add(new File(generateDir, cellMech + ProjectStructure.getNeuroMLFileExtension()));
+                generatedChanSynFiles.add(new File(generateDir, cellMech + extension));
             }
 
             String networkFileName = NetworkMLConstants.DEFAULT_NETWORKML_FILENAME_XML;
             if (version.isVersion2())
             {
-                networkFileName = project.getProjectName() + ProjectStructure.getNeuroMLFileExtension();
+                networkFileName = project.getProjectName() + extension;
             }
             File networkFile = new File(generateDir, networkFileName);
 
