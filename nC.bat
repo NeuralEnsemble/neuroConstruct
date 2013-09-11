@@ -23,7 +23,7 @@ set NC_VERSION=1.7.0
 set LIB_NEUROML_VERSION=2.0.0
 set LEMS_VERSION=0.8.3
 
-set JNEUROML_VERSION=0.3.5
+set JNEUROML_VERSION=0.4.0
 
 REM ##########################################################################
 
