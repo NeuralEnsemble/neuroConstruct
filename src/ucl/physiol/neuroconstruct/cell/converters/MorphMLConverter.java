@@ -1151,7 +1151,6 @@ public class MorphMLConverter extends FormatImporter
 
                         for(MechParameter mp: mps)
                         {
-
                             SimpleXMLElement pe = new SimpleXMLElement(bioPrefix + BiophysicsConstants.PARAMETER_ELEMENT);
 
                             pe.addComment(new SimpleXMLComment("Note: Units of extra parameters are not known, except if it's e!!"));
@@ -1161,7 +1160,8 @@ public class MorphMLConverter extends FormatImporter
 
                             float val = mp.getValue();
 
-                            if (mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT))
+                            if (mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT) ||
+                                mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT_2))
                             {
                                 val = (float)UnitConverter.getVoltage(val,
                                                                         UnitConverter.NEUROCONSTRUCT_UNITS,
@@ -1203,7 +1203,6 @@ public class MorphMLConverter extends FormatImporter
 
                                 logger.logComment("Trying to get: "+ xpath+": "+ val);
 
-
                                 logger.logComment("Trying to get: "+ cmlCm.getXMLDoc().getXPathLocations(true));
 
                                 if (val==null || val.trim().length()==0)  // post v1.7.3 format
@@ -1213,14 +1212,19 @@ public class MorphMLConverter extends FormatImporter
                                 }
 
                                 float revPot = Float.parseFloat(val);
+                                
+                                String unitsUsedString = cmlCm.getUnitsUsedInFile();
+                                int unitsUsedInt = UnitConverter.getUnitSystemIndex(unitsUsedString);
 
                                 for(MechParameter mp:chanMech.getExtraParameters())
                                 {
-                                    if (mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT))
+                                    if (mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT) ||
+                                        mp.getName().equals(BiophysicsConstants.PARAMETER_REV_POT_2))
                                     {
-                                        logger.logComment("The reversal potential has been set as one of the extra params");
-
-                                        revPot=mp.getValue();
+                                        revPot = mp.getValue();
+                                        unitsUsedInt = UnitConverter.NEUROCONSTRUCT_UNITS;
+                                        logger.logComment("The reversal potential has been set as one of the extra params: "+revPot, true);
+                                               
                                         // remove from param list, as units dealt with here
                                         SimpleXMLElement toRemove = null;
                                         for(SimpleXMLElement paramElement: allParamGrps)
@@ -1252,11 +1256,10 @@ public class MorphMLConverter extends FormatImporter
                                     }
                                 }
 
-                                String unitsUsed = cmlCm.getUnitsUsedInFile();
 
                                 revPotParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR,
                                                                                  (float)UnitConverter.getVoltage(revPot,
-                                                                        UnitConverter.getUnitSystemIndex(unitsUsed),
+                                                                        unitsUsedInt,
                                                                         preferredExportUnits) + ""));
 
                                 if (!revPotSetElsewhere)
