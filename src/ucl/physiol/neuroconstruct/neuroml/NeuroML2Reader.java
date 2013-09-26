@@ -124,7 +124,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
 
             Network network = neuroml.getNetwork().get(0); // Only first network...
 
-            if (network.getType().toString().equals(NetworkMLConstants.NEUROML2_NETWORK_WITH_TEMP_TYPE)) {
+            if (network.getType()!=null && network.getType().toString().equals(NetworkMLConstants.NEUROML2_NETWORK_WITH_TEMP_TYPE)) {
 
                 float tempSI = Utils.getMagnitudeInSI(network.getTemperature());
                 float tempnC = Utils.getMagnitudeInSI(project.simulationParameters.getTemperature()+"degC");
