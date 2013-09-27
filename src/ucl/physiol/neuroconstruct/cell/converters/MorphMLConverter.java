@@ -1133,17 +1133,15 @@ public class MorphMLConverter extends FormatImporter
 
                         gmaxParamElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PARAMETER_VALUE_ATTR, condDens+ ""));
 
-                        if (cm.isIonConcMechanism() && chanMech.getDensity()==0)
+                        if (cm.isIonConcMechanism() && chanMech.getDensity() == 0)
                         {
 
-                            mechElement.addComment("Note: not adding gmax for Ion Concentration. \n"
-                                    +"Value for scaling factor to apply to current to get change in conc should be\n" +
-                                    " determined from ChannelML file for the CaPool...");
+                            mechElement.addComment("Note: Calcium pools are not proper ion channels, thus this parameter does not represent a proper maximum conductance.\n" 
+						   +"The scaling factor for converting current into change in ion concentration should be\n" 
+						   + " determined from ChannelML file for the CaPool...");
+
                         }
-                        else
-                        {
-                            allParamGrps.add(gmaxParamElement);
-                        }
+			allParamGrps.add(gmaxParamElement);
 
 
 
