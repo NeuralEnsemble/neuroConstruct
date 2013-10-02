@@ -77,6 +77,7 @@ standardGHProject()
 standardGHProject 'NeuroElectroSciUnit' 'showcase'
 standardGHProject 'NengoNeuroML' 'showcase'
 standardGHProject 'NeuroMorpho' 'showcase'
+standardGHProject 'NSGPortalShowcase' 'showcase'
 standardGHProject 'simulator-test-data' 'showcase' 'mikehulluk'
 
 standardGHProject 'CSAShowcase' 'showcase'
@@ -92,6 +93,7 @@ standardGHProject 'MorrisLecarModel' 'invertebrate/barnacle'
 standardGHProject 'Drosophila_Projection_Neuron' 'invertebrate/drosophila'
 
 standardGHProject 'CA1PyramidalCell' 'hippocampus/CA1_pyramidal_neuron'
+standardGHProject 'DentateGyrus2005' 'dentate_gyrus/networks'
 
 standardGHProject 'StriatalSpinyProjectionNeuron' 'basal_ganglia/striatal_spiny_neuron'
 

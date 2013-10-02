@@ -15,6 +15,7 @@ osb/basal*
 osb/invertebrate
 osb/hippo*
 osb/showcase
+osb/dentate*
 
 logs/*.log
 
