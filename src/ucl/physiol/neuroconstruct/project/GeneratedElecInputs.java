@@ -771,7 +771,7 @@ public class GeneratedElecInputs
             for (SimpleXMLEntity el: els)
                 System.out.println(el.getXMLString("    ", false));
 
-            els = gei.getNetworkMLEntities(UnitConverter.GENESIS_SI_UNITS, NeuroMLConstants.NeuroMLVersion.NEUROML_VERSION_2_BETA, null);
+            els = gei.getNetworkMLEntities(UnitConverter.GENESIS_SI_UNITS, NeuroMLConstants.NeuroMLVersion.getLatestVersion(), null);
 
             System.out.println("----  v2.0 beta: ");
             for (SimpleXMLEntity el: els)

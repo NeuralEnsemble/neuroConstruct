@@ -39,6 +39,13 @@ public class LemsConstants
 {
 
     public static String ROOT_LEMS = "Lems";
+    
+    public static String LEMS_SCHEMA_VERSION = "0.7.2";
+    
+    public static String NAMESPACE_URI = "http://www.neuroml.org/lems/"+LEMS_SCHEMA_VERSION;
+
+    //public static String DEFAULT_SCHEMA_LOCATION = "https://raw.github.com/LEMS/LEMS/master/Schemas/LEMS/LEMS_v"+LEMS_SCHEMA_VERSION+".xsd";
+    public static String DEFAULT_SCHEMA_LOCATION = "https://raw.github.com/LEMS/LEMS/development/Schemas/LEMS/LEMS_v"+LEMS_SCHEMA_VERSION+".xsd";
 
     public static String ID_ATTR = "id";
 
@@ -54,6 +61,9 @@ public class LemsConstants
 
     public static String FILE_ATTR = "file";
 
+
+    public static String COMPONENT_ELEMENT = "Component";
+    public static String COMPONENT_TYPE_ATTR = "type";
 
     public static String SIMULATION_ELEMENT = "Simulation";
     public static String LENGTH_ATTR = "length";

@@ -219,8 +219,8 @@ public class SimpleXMLElement extends SimpleXMLEntity
      */
     public static String convertToXMLFriendly(String content)
     {
-        String formattedContent = null;
-        if (content!=null) formattedContent = new String(content);
+        String formattedContent;
+        if (content!=null) formattedContent = content;
         else formattedContent = "";
 
         /** @todo Check if there is a built in version of this function...! */
@@ -238,8 +238,8 @@ public class SimpleXMLElement extends SimpleXMLEntity
      */
     public static String convertXMLToHTMLFriendly(String content)
     {
-        String formattedContent = null;
-        if (content!=null) formattedContent = new String(content);
+        String formattedContent;
+        if (content!=null) formattedContent = content;
         else formattedContent = "";
 
         /** @todo Check if there is a built in version of this function...! */
@@ -281,7 +281,7 @@ public class SimpleXMLElement extends SimpleXMLEntity
         this.parent = parent;
     };
 
-    public void addContent(String text)
+    public final void addContent(String text)
     {
         clearCache();
         SimpleXMLContent content = new SimpleXMLContent(text);
@@ -335,7 +335,7 @@ public class SimpleXMLElement extends SimpleXMLEntity
         {
             logger.logComment("First entity is SimpleXMLElement: " + entities[0]);
             SimpleXMLElement el = (SimpleXMLElement) entities[0];
-            StringBuffer value = new StringBuffer();
+            StringBuilder value = new StringBuilder();
 
             for (int i = 0; i < el.getContents().size(); i++)
             {
@@ -435,8 +435,8 @@ public class SimpleXMLElement extends SimpleXMLEntity
         }
         logger.logComment("simpleXPathExp: "+ simpleXPathExp);
 
-        String firstElement = null;
-        String subElement = null;
+        String firstElement;
+        String subElement;
         int indexFirstSeparator = simpleXPathExp.indexOf("/");
 
         if (indexFirstSeparator>0)
@@ -529,10 +529,7 @@ public class SimpleXMLElement extends SimpleXMLEntity
                             if (partialRes!=null)
                             {
                                 logger.logComment("Repeating over "+partialRes.length+" sub els");
-                                for (int p = 0; p < partialRes.length; p++)
-                                {
-                                    allFoundEntities.add(partialRes[p]);
-                                }
+                                allFoundEntities.addAll(Arrays.asList(partialRes));
                             }
                         }
                     }
@@ -552,7 +549,7 @@ public class SimpleXMLElement extends SimpleXMLEntity
             }
         }
 
-        if (allFoundEntities.size()==0)
+        if (allFoundEntities.isEmpty())
         {
             lastXPathResults.put(simpleXPathExp, emptyArray);
             return emptyArray;
@@ -638,7 +635,7 @@ public class SimpleXMLElement extends SimpleXMLEntity
 
                         Integer numWithThisName = totalEachElementName.get(childElement.getName());
 
-                        String prefix = null;
+                        String prefix;
                         if (numWithThisName.intValue() == 1)
                         {
                             prefix = childElement.getName() + "/";
@@ -684,7 +681,7 @@ public class SimpleXMLElement extends SimpleXMLEntity
         String endOfLine  = "\n";
         if (formatted) endOfLine  = "<br>\n";
 
-        StringBuffer fullXMLString = new StringBuffer();
+        StringBuilder fullXMLString = new StringBuilder();
 
         logger.logComment("Getting XML string for: "+ this);
 
@@ -714,7 +711,7 @@ public class SimpleXMLElement extends SimpleXMLEntity
         //String endOfLine  = "\n";
         //if (formatted) endOfLine  = "<br>\n";
 
-        if (contents.size()==0)
+        if (contents.isEmpty())
         {
             if (!formatted) fullXMLString.append("/>");
             else  fullXMLString.append("/&gt;");

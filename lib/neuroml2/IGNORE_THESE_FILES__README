@@ -1,0 +1,11 @@
+The Schema, LEMS Definitions, examples and export/import Java libraries for NeuroML 2 are in the process of moving to GitHub
+
+See https://github.com/NeuroML/NeuroML2
+https://github.com/NeuroML/org.neuroml.model
+https://github.com/NeuroML/org.neuroml.export, etc.
+
+These old NeuroML2/LEMS jars represent an older version of code being developed on Sourceforge.
+
+The jar files in this folder will eventually be removed in favour of the jar file in the
+jNeuroMLJar folder
+ 

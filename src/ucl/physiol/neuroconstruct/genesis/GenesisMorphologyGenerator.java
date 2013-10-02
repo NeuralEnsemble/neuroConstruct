@@ -193,7 +193,7 @@ public class GenesisMorphologyGenerator
 
 
         logger.logComment("Investigating " + segments.size() + " segments...");
-        String prePassiveLine = null;
+        String prePassiveLine;
         float lastSpecAxRes = -1;
         float lastSpecCap = -1;
 
@@ -347,7 +347,7 @@ public class GenesisMorphologyGenerator
             groups = (Vector<String>)GeneralUtils.reorderAlphabetically(groups, true);
 
             String passParamInfo = new String();
-            String channelCondInfo = new String();
+            String channelCondInfo;
             String comments = new String();
 
             if (groupListVsChanStrings.containsKey(groups)&&!cellHasVarMechs&&false)
@@ -365,7 +365,7 @@ public class GenesisMorphologyGenerator
 
                 for (int j = 0; j < groups.size(); j++)
                 {
-                    ArrayList<ChannelMechanism> thisGroupChanMechs = null;
+                    ArrayList<ChannelMechanism> thisGroupChanMechs;
 
                     if(!chanMechsVsGrps.containsKey(groups.elementAt(j)))
                     {
@@ -726,9 +726,12 @@ public class GenesisMorphologyGenerator
 
                                     /*
                                     System.out.println("thicknessGen: "+ thicknessGen);
-                                    System.out.println("thicknessnC: "+ thicknessnC);
+                                    System.out.println("thicknessnC: "+ thicknessnC+" um?");
+                                    System.out.println("volComp: "+ volComp);
+                                    System.out.println("insideVol: "+ insideVol);
                                     System.out.println("totVol: "+ totVol);
-                                    System.out.println("B: "+ B);*/
+                                    System.out.println("B: "+ B);
+                                    */
 
                                     channelCondString.append(nextChanMech.getUniqueName()+ " -"+ B + " ");
 
@@ -866,7 +869,7 @@ public class GenesisMorphologyGenerator
 
             float equivalentRadius = (float)CompartmentHelper.getEquivalentRadius(r1, r2, h);
 
-            String line = null;
+            String line;
 
             if (segment.getSegmentShape() == Segment.CYLINDRICAL_SHAPE)
             {

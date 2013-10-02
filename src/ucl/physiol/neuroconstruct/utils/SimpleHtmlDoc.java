@@ -51,8 +51,9 @@ public class SimpleHtmlDoc
 
     String title = "";
     String extraHead = "";
+    String extraStyleInHead = "";
 
-
+    
 
 
     public void addTaggedElement(String text, String tab)
@@ -82,6 +83,10 @@ public class SimpleHtmlDoc
     public void addToHead(String extra)
     {
         extraHead = extra;
+    }
+    public void addStyleToHead(String extra)
+    {
+        extraStyleInHead = extra;
     }
 
     public void addTaggedElement(String text, ArrayList<String> tabs)
@@ -166,6 +171,10 @@ public class SimpleHtmlDoc
             + "         ol {font-family: "+fonts+"}"
             + "         ul {font-family: "+fonts+"}"
             + "         table {border-collapse:collapse}"
+            + extraStyleInHead
+                                                  /*
+            + "         table .table-borderless {     border:1px solid white;     } "  
+            + "         table .table-border-summary {     border:1px solid black;     } "  */
 
             /*+ " p {text-align: left; font-size: 12pt; font-family: monospaced}"*/
             +ret+"</style>"+ret+extraHead+ret

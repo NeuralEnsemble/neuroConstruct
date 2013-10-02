@@ -799,7 +799,7 @@ public class UnitConverter
         System.out.println("--------------------------------------");
 
         int fromUnits = NEURON_UNITS;
-        PhysicalQuantity concn = new PhysicalQuantity(7.55e-5, concentrationUnits[fromUnits]);
+        PhysicalQuantity concn = new PhysicalQuantity(3, concentrationUnits[fromUnits]);
 
         System.out.println("Concentration: "+ concn);
 
