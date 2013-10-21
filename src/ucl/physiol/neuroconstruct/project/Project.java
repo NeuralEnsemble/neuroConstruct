@@ -767,7 +767,8 @@ public class Project implements TableModelListener
 
                     logger.logComment(CellTopologyHelper.printShortDetails(cellGenerated));
                 }
-                else if(contents[i].getName().endsWith(ProjectStructure.getNeuroMLFileExtension()))
+                else if(contents[i].getName().endsWith(ProjectStructure.getNeuroML1FileExtension()) ||
+                        contents[i].getName().endsWith(ProjectStructure.getNeuroML2FileExtension()))
                 {
                     logger.logComment("Reading Cell Type info from: " + contents[i]);
 
@@ -1702,7 +1703,7 @@ public class Project implements TableModelListener
                     {
                         File nmlFile = new File(dirForProjectMorphologies,
                                                 cell.getInstanceName()
-                                                + ProjectStructure.getNeuroMLFileExtension());
+                                                + ProjectStructure.getNeuroML1FileExtension());
 
                         MorphMLConverter.saveCellInNeuroMLFormat(cell,
                                                                  this,

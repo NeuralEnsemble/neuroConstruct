@@ -765,7 +765,7 @@ public class ProjectManager implements GenerationReport
                 else
                 {
                     logger.logComment("Warning: cell mechanism "+cm.getInstanceName()+" is not implemented in ChannelML");
-                    File warnFile = new File(ProjectStructure.getNeuroMLDir(project.getProjectMainDirectory()), cm.getInstanceName()+".warning");
+                    File warnFile = new File(ProjectStructure.getNeuroML1Dir(project.getProjectMainDirectory()), cm.getInstanceName()+".warning");
                     try
                     {
                         FileWriter fw = new FileWriter(warnFile);
@@ -811,7 +811,7 @@ public class ProjectManager implements GenerationReport
                 
                 String internalFilename = GeneralUtils.replaceAllTokens(zipFile.getName(), 
                                         ProjectStructure.getNeuroMLCompressedFileExtension(), 
-                                        ProjectStructure.getNeuroMLFileExtension());
+                                        ProjectStructure.getNeuroML1FileExtension());
                 
                 ZipUtils.zipStringAsFile(stringForm, zipFile, internalFilename, notes.toString());
                 
@@ -1223,7 +1223,7 @@ public class ProjectManager implements GenerationReport
                 else
                 {
                     logger.logComment("Warning: cell mechanism "+cm.getInstanceName()+" is not implemented in ChannelML");
-                    File warnFile = new File(ProjectStructure.getNeuroMLDir(project.getProjectMainDirectory()), cm.getInstanceName()+".warning");
+                    File warnFile = new File(ProjectStructure.getNeuroML1Dir(project.getProjectMainDirectory()), cm.getInstanceName()+".warning");
                     try
                     {
                         FileWriter fw = new FileWriter(warnFile);
@@ -1329,7 +1329,7 @@ public class ProjectManager implements GenerationReport
                 
                 String internalFilename = GeneralUtils.replaceAllTokens(zipFile.getName(), 
                                         ProjectStructure.getNeuroMLCompressedFileExtension(), 
-                                        ProjectStructure.getNeuroMLFileExtension());
+                                        ProjectStructure.getNeuroML1FileExtension());
                 
                 ZipUtils.zipStringAsFile(stringForm, zipFile, internalFilename, notes.toString());
                 
@@ -1418,11 +1418,11 @@ public class ProjectManager implements GenerationReport
 
         String ver = "urn:sedml:language:neuroml";
 
-        if (version.equals(NeuroMLVersion.NEUROML_VERSION_1))
+        if (version.isVersion1())
             ver=ver+"version-1_8_1.level-3";
-        else if (version.equals(NeuroMLVersion.NEUROML_VERSION_2_ALPHA))
+        else if (version.isVersion2alpha())
             ver=ver+"version-2alpha";
-        else if (version.equals(NeuroMLVersion.NEUROML_VERSION_2_BETA))
+        else if (version.isVersion2betaOrLater())
             ver=ver+"version-2beta";
 
         model.addAttribute("language", ver);
@@ -1434,7 +1434,7 @@ public class ProjectManager implements GenerationReport
         }
         else if(version.isVersion2())
         {
-            sourceFile = project.getProjectName() + ProjectStructure.getNeuroMLFileExtension();
+            sourceFile = project.getProjectName() + ProjectStructure.getNeuroML2FileExtension();
         }
 
         model.addAttribute("source", sourceFile);
@@ -1583,7 +1583,7 @@ public class ProjectManager implements GenerationReport
                                        extraComments,
                                        simConfig,
                                        units,
-                                       NeuroMLVersion.NEUROML_VERSION_2_BETA);
+                                       NeuroMLVersion.getLatestVersion());
     }
     
     
@@ -2810,7 +2810,7 @@ public class ProjectManager implements GenerationReport
         //Project proj = Project.loadProject(new File("nCexamples/Ex1_Simple/Ex1_Simple.ncx"), null);
         Project proj = Project.loadProject(new File("osb/showcase/neuroConstructShowcase/Ex6_CerebellumDemo/Ex6_CerebellumDemo.ncx"), null);
 
-        File neuroMLDir = ProjectStructure.getNeuroMLDir(proj.getProjectMainDirectory());
+        File neuroML1Dir = ProjectStructure.getNeuroML1Dir(proj.getProjectMainDirectory());
 
 
         ProjectManager pm = new ProjectManager(null,null);
@@ -2827,7 +2827,7 @@ public class ProjectManager implements GenerationReport
         System.out.println("Num cells generated: "+ proj.generatedCellPositions.getAllPositionRecords().size());
 
 
-        File sedMlFile = new File(neuroMLDir, "SED.xml");
+        File sedMlFile = new File(neuroML1Dir, "SED.xml");
 
         generateSedML(proj, sedMlFile, proj.simConfigInfo.getSimConfig(simConfName), NeuroMLVersion.NEUROML_VERSION_2_ALPHA);
 

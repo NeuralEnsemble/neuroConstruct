@@ -184,13 +184,13 @@ public class NeuroMLFileManagerTest {
                                                              false,
                                                              simConfig,
                                                              NetworkMLConstants.UNITS_PHYSIOLOGICAL,
-                                                             NeuroMLVersion.NEUROML_VERSION_2_BETA);
+                                                             NeuroMLVersion.getLatestVersion());
 
             assertTrue(nmlFile.exists());
 
             System.out.println("Saved NetworkML in: "+ nmlFile.getAbsolutePath());
 
-            assertTrue("Checking validity of: "+ nmlFile.getAbsolutePath(), NeuroMLFileManager.validateAgainstNeuroML2betaSchema(nmlFile));
+            assertTrue("Checking validity of: "+ nmlFile.getAbsolutePath(), NeuroMLFileManager.validateAgainstNeuroML2beta1Schema(nmlFile));
     }
 
 

@@ -23,7 +23,7 @@ fi
 
 
 if [ $# = 1 ]
-	echo "Press Return key to exit"
+	echo "Press Return key to exit."
 	read a
 fi
 

@@ -26,20 +26,10 @@
 
 package ucl.physiol.neuroconstruct.neuroml;
 
-import java.awt.Color;
-import java.beans.XMLDecoder;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
-import java.util.ArrayList;
-
-import javax.swing.*;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.*;
 import org.neuroml.export.Utils;
 import org.neuroml.model.Connection;
-import org.neuroml.model.ExtracellularProperties;
 import org.neuroml.model.ExtracellularPropertiesLocal;
 import org.neuroml.model.Instance;
 import org.neuroml.model.Location;
@@ -48,36 +38,9 @@ import org.neuroml.model.NeuroMLDocument;
 import org.neuroml.model.Population;
 import org.neuroml.model.Projection;
 import org.neuroml.model.util.NeuroMLConverter;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
-import ucl.physiol.neuroconstruct.cell.Cell;
-import ucl.physiol.neuroconstruct.cell.converters.MorphMLReader;
-import ucl.physiol.neuroconstruct.genesis.GenesisSettings;
-import ucl.physiol.neuroconstruct.mechanisms.ChannelMLCellMechanism;
-import ucl.physiol.neuroconstruct.mechanisms.SimulatorMapping;
-import ucl.physiol.neuroconstruct.neuron.NeuronSettings;
 import ucl.physiol.neuroconstruct.project.*;
-import ucl.physiol.neuroconstruct.project.cellchoice.AllCells;
-import ucl.physiol.neuroconstruct.project.cellchoice.CellChooser;
-import ucl.physiol.neuroconstruct.project.packing.CellPackingAdapter;
-import ucl.physiol.neuroconstruct.project.packing.CellPackingException;
-import ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter;
-import ucl.physiol.neuroconstruct.project.packing.SinglePositionedCellPackingAdapter;
-import ucl.physiol.neuroconstruct.project.segmentchoice.IndividualSegments;
-import ucl.physiol.neuroconstruct.project.segmentchoice.SegmentLocationChooser;
-import ucl.physiol.neuroconstruct.project.stimulation.ElectricalInput;
-import ucl.physiol.neuroconstruct.project.stimulation.IClamp;
-import ucl.physiol.neuroconstruct.project.stimulation.IClampInstanceProps;
-import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrain;
-import ucl.physiol.neuroconstruct.project.stimulation.RandomSpikeTrainInstanceProps;
-import ucl.physiol.neuroconstruct.simulation.*;
 import ucl.physiol.neuroconstruct.utils.*;
 
-import ucl.physiol.neuroconstruct.utils.units.UnitConverter;
-import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLAttribute;
-import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLDocument;
-import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLElement;
-import ucl.physiol.neuroconstruct.utils.xml.SimpleXMLNamespace;
 
 /**
  * NeuroML 2 file Reader. Importer of NeuroML 2 files to neuroConstruct
@@ -161,16 +124,17 @@ public class NeuroML2Reader implements NetworkMLnCInfo
 
             Network network = neuroml.getNetwork().get(0); // Only first network...
 
-            ExtracellularPropertiesLocal ep = network.getExtracellularProperties().get(0);
+            if (network.getType()!=null && network.getType().toString().equals(NetworkMLConstants.NEUROML2_NETWORK_WITH_TEMP_TYPE)) {
 
-            float tempSI = Utils.getMagnitudeInSI(ep.getTemperature());
-            float tempnC = Utils.getMagnitudeInSI(project.simulationParameters.getTemperature()+"degC");
+                float tempSI = Utils.getMagnitudeInSI(network.getTemperature());
+                float tempnC = Utils.getMagnitudeInSI(project.simulationParameters.getTemperature()+"degC");
 
-            if (Math.abs(tempSI-tempnC)>1e-6)
-            {
-                GuiUtils.showWarningMessage(logger, "Note that the imported network file specifies a temperature of "+ep.getTemperature()
-                        +", but the neuroConstruct project has a temperature setting of "+project.simulationParameters.getTemperature()+" deg C", null);
-              
+                if (Math.abs(tempSI-tempnC)>1e-6)
+                {
+                    GuiUtils.showWarningMessage(logger, "Note that the imported network file specifies a temperature of "+network.getTemperature()
+                            +", but the neuroConstruct project has a temperature setting of "+project.simulationParameters.getTemperature()+" deg C", null);
+
+                }
             }
 
             for (Population population: network.getPopulation())
@@ -179,7 +143,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                 {
                     Location loc = instance.getLocation();
 
-                    logger.logComment("Adding instance "+instance.getId()+" at: "+ loc+" in "+population.getId(), true);
+                    logger.logComment("Adding instance "+instance.getId()+" at: "+ loc+" in "+population.getId());
                     this.cellPos.addPosition(population.getId(), new PositionRecord(instance.getId().intValue(), loc.getX(), loc.getY(), loc.getZ()));
                 }
             }
@@ -189,11 +153,26 @@ public class NeuroML2Reader implements NetworkMLnCInfo
                 String source = projection.getPresynapticPopulation();
                 String target = projection.getPostsynapticPopulation();
                 
-                //TODO: check source & target in 
+                //TODO: check source & target in cell grpups
                 
                 for (Connection conn: projection.getConnection())
                 {
-                    this.netConns.addSynapticConnection(netConn, parseForCellNumber(conn.getPreCellId()), parseForCellNumber(conn.getPostCellId()));
+                    int preSeg = conn.getPreSegmentId()!=null ? conn.getPreSegmentId() : 0;
+                    int postSeg = conn.getPostSegmentId()!=null ? conn.getPostSegmentId() : 0;
+                    
+                    float preFract = conn.getPreFractionAlong()!=null ? conn.getPreFractionAlong().floatValue() : 0.5f;
+                    float postFract = conn.getPostFractionAlong()!=null ? conn.getPostFractionAlong().floatValue() : 0.5f;
+                    
+                    this.netConns.addSynapticConnection(netConn, 
+                                                        GeneratedNetworkConnections.MORPH_NETWORK_CONNECTION,
+                                                        parseForCellNumber(conn.getPreCellId()), 
+                                                        preSeg,
+                                                        preFract,
+                                                        parseForCellNumber(conn.getPostCellId()),
+                                                        postSeg,
+                                                        postFract,
+                                                        0,
+                                                        null);
                 }
             }
         }
@@ -217,9 +196,12 @@ public class NeuroML2Reader implements NetworkMLnCInfo
 
         try
         {
-            Project testProj = Project.loadProject(new File("testProjects/TestNetworkML/TestNetworkML.neuro.xml"),null);
+            //Project testProj = Project.loadProject(new File("testProjects/TestNetworkML/TestNetworkML.neuro.xml"),null);
+            Project testProj = Project.loadProject(new File("osb/invertebrate/celegans/CElegansNeuroML/CElegans/CElegans.ncx"),null);
 
             File f = new File("testProjects/TestNetworkML/savedNetworks/test_nml2.xml");
+            f = new File("testProjects/TestNetworkML/savedNetworks/nnn.nml");
+            f = new File("osb/invertebrate/celegans/CElegansNeuroML/CElegans/pythonScripts/CElegansConnectome.nml");
 
             logger.logComment("Loading nml cell from "+ f.getAbsolutePath()+" for proj: "+ testProj);
             

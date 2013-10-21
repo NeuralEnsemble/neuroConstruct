@@ -874,7 +874,7 @@ public class GeneratedNetworkConnections
 
 
         boolean nml2 = version.isVersion2();
-        boolean nml2beta = version.isVersion2betaOrLater();
+        boolean nml2betaPlus = version.isVersion2betaOrLater();
         boolean wd = false;
         //boolean nml2alpha = version.isVersion2alpha();
                 
@@ -983,7 +983,7 @@ public class GeneratedNetworkConnections
 
                 for(SingleSynapticConnection synConn: synConns)
                 {
-                    if (nml2 && !nml2beta)
+                    if (nml2 && !nml2betaPlus)
                     {
                         for (SynapticProperties synProps:  globalSynPropList)
                         {
@@ -1014,7 +1014,7 @@ public class GeneratedNetworkConnections
                     else
                     {
                         String connElName = NetworkMLConstants.CONNECTION_ELEMENT;
-                        if (nml2beta && wd)
+                        if (nml2betaPlus && wd)
                             connElName = NetworkMLConstants.NEUROML2_CONNECTION_WD_ELEMENT;
                         
                         SimpleXMLElement connElement = new SimpleXMLElement(connElName);
@@ -1112,6 +1112,13 @@ public class GeneratedNetworkConnections
                                 connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_PRE_CELL_ID, "../"+sourceCellGroup+"/"+ synConn.sourceEndPoint.cellNumber+"/"+sourceCellType));
                                 connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_POST_CELL_ID, "../"+targetCellGroup+"/"+ synConn.targetEndPoint.cellNumber+"/"+targetCellType));
                                 
+                                connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_PRE_SEGMENT_ID, synConn.sourceEndPoint.location.getSegmentId()+""));
+                                connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_PRE_FRACTION_ALONG, synConn.sourceEndPoint.location.getFractAlong()+""));
+                                
+                                connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_POST_SEGMENT_ID, synConn.targetEndPoint.location.getSegmentId()+""));
+                                connElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_POST_FRACTION_ALONG, synConn.targetEndPoint.location.getFractAlong()+""));
+                                
+                                
                             }
                         }
 
@@ -1198,7 +1205,7 @@ public class GeneratedNetworkConnections
                 {
                     projectionsElement.addChildElement(projectionElement);
                 } 
-                else if (nml2beta) 
+                else if (nml2betaPlus) 
                 {
                     projectionElement.addContent("\n        ");
                     entities.add(projectionElement);
@@ -1563,7 +1570,7 @@ public class GeneratedNetworkConnections
             
             System.out.println("Ready...");
 
-            ArrayList<SimpleXMLEntity> networkMLElements = gnc.getNetworkMLElements(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, false, NeuroMLVersion.NEUROML_VERSION_2_BETA);
+            ArrayList<SimpleXMLEntity> networkMLElements = gnc.getNetworkMLElements(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, false, NeuroMLVersion.getLatestVersion());
 
             for (SimpleXMLEntity sxe: networkMLElements) {
                 System.out.println("--- conns: "+sxe.getXMLString("", false));

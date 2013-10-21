@@ -3136,7 +3136,7 @@ public class GenesisFileManager
                                     cellProcsTransmittingIon.add(cellMech.getInstanceName());
                             
                                 String fixedRevPot = ((SimpleXMLElement)sxe).getAttributeValue(ChannelMLConstants.FIXED_ION_REV_POT_ATTR);
-                                if (fixedRevPot!=null)
+                                if (fixedRevPot!=null && fixedRevPot.equalsIgnoreCase("yes"))
                                 {
                                     ArrayList<String> cellMechsFixedRevPot = ionCurrFixedRevPot.get(ionName);
                                     
@@ -3362,6 +3362,8 @@ public class GenesisFileManager
                     if (!nameDefined)
                     {
                         response.append("str tempCompName\n\n");
+                        response.append("str tempCellName\n\n");
+                        response.append("str tempChanName\n\n");
                         nameDefined = true;
                     }
                     addComment(response, "Ion "+ion+" is transmitted by "+ cellProcsTransmittingIon

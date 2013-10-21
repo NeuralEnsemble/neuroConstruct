@@ -203,7 +203,9 @@ public class NetworkMLConstants
     public static String NEUROML2_NETWORK_ELEMENT = "network";
     public static String NEUROML2_NETWORK_ID_PREFIX = "network_";
     
-    public static String NEUROML2_EXTRACELLULAR_PROPS_ELEMENT = "extracellularProperties";
+    public static String NEUROML2_ALPHA_EXTRACELLULAR_PROPS_ELEMENT = "extracellularProperties";
+    
+    public static String NEUROML2_NETWORK_WITH_TEMP_TYPE = "networkWithTemperature";
     public static String NEUROML2_TEMPERATURE_ATTR = "temperature";
     
     // Population
@@ -227,6 +229,12 @@ public class NetworkMLConstants
     
     public static String NEUROML2_PRE_CELL_ID = "preCellId";
     public static String NEUROML2_POST_CELL_ID = "postCellId";
+    
+    public static String NEUROML2_PRE_SEGMENT_ID = "preSegmentId";
+    public static String NEUROML2_POST_SEGMENT_ID = "postSegmentId";
+    
+    public static String NEUROML2_PRE_FRACTION_ALONG = "preFractionAlong";
+    public static String NEUROML2_POST_FRACTION_ALONG = "postFractionAlong";
 
     public static String NEUROML2_EXP_CONN_ELEMENT = "synapticConnection";
     public static String NEUROML2_EXP_CONN_WD_ELEMENT = "synapticConnectionWD";

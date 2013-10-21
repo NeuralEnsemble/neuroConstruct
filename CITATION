@@ -1,0 +1,26 @@
+Please cite this paper if you use neuroConstruct in your research:
+
+neuroConstruct: A Tool for Modeling Networks of Neurons in 3D Space, Neuron, Volume 54, Issue 2, 19 April 2007, Pages 219-235. Padraig Gleeson, Volker Steuber, R. Angus Silver
+
+Bibtex:
+
+@article{GleesonEtAl2007,
+   author = {Gleeson, P. and Steuber, V. and Silver, R. A.},
+   title = {neuro{C}onstruct: a tool for modeling networks of neurons in 3{D} space},
+   journal = {Neuron},
+   volume = {54},
+   number = {2},
+   pages = {219-35},
+   abstract = {Conductance-based neuronal network models can help us understand how synaptic and cellular mechanisms underlie brain function. However, these complex models are difficult to develop and are inaccessible to most neuroscientists. Moreover, even the most biologically realistic network models disregard many 3D anatomical features of the brain. Here, we describe a new software application, neuroConstruct, that facilitates the creation, visualization, and analysis of networks of multicompartmental neurons in 3D space. A graphical user interface allows model generation and modification without programming. Models within neuroConstruct are based on new simulator-independent NeuroML standards, allowing automatic generation of code for NEURON or GENESIS simulators. neuroConstruct was tested by reproducing published models and its simulator independence verified by comparing the same model on two simulators. We show how more anatomically realistic network models can be created and their properties 
+compared with experimental measurements by extending a published 1D cerebellar granule cell layer model to 3D.},
+   keywords = {Algorithms
+Cerebellar Cortex/cytology/physiology
+Computer Simulation
+Dentate Gyrus/physiology
+Humans
+Models, Neurological
+Neural Conduction/physiology
+*Neural Networks (Computer)
+Neurons/*physiology/ultrastructure},
+   year = {2007}
+}

@@ -181,7 +181,7 @@ def generateAndRunLems(project,
                         simulatorSeed,
                         verbose=True,
                         runInBackground=False,
-                        version=NeuroMLConstants.NeuroMLVersion.NEUROML_VERSION_2_BETA):
+                        version=NeuroMLConstants.NeuroMLVersion.getLatestVersion()):
 
     prefix = "--- LEMS/NeuroML 2 gen:    "
 
@@ -799,7 +799,7 @@ class SimulationManager():
                                             simulatorSeed,
                                             verbose=verboseSims,
                                             runInBackground=runInBackground,
-                                            version=NeuroMLConstants.NeuroMLVersion.NEUROML_VERSION_2_BETA)
+                                            version=NeuroMLConstants.NeuroMLVersion.getLatestVersion())
 
                         if success:
                             self.allRunningSims.append(simRef)

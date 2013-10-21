@@ -64,9 +64,11 @@ public class Expand {
     public static final String COLOUR_GAP = "#669966";
 
     public static final String ccsInfo = "<link href=\"http://opensourcebrain.org:8080/themes/alternate/stylesheets/application.css?1300382035\" media=\"all\" rel=\"stylesheet\" type=\"text/css\" />";
+    public static final String tableStyleInHead = "         table .table-borderless {     border:1px solid white;     } "  
+            + "         table .table-border-summary {     border:1px solid black;     } ";
 
     public static final String tableStyle = "style='list' width='700' frame='box' rules='all' ";
-    public static final String tableStyleNoBorder = "style='list' width='700' ";
+    public static final String tableStyleNoBorder = " width='700' class='table-borderless'";
     public static final String headerStyle = "style='font-weight:bold; background-color:black; color:white'";
 
     public static final String preXML = "<table border='0'><tr><td style='width:90%; background-color:white'>";
@@ -149,13 +151,12 @@ public class Expand {
         logger.logComment("Going to create documentation at " + dirName + " for " + projPaths, true);
 
         File descriptionsDir = new File(dirName);
-        ArrayList<Project> projects = new ArrayList<Project>();
+        //ArrayList<Project> projects = new ArrayList<Project>();
 
         String indexTitle = "index.html";
         GeneralUtils.removeAllFiles(descriptionsDir, false, false, false);
         
-        SimpleHtmlDoc indexPage = new SimpleHtmlDoc("Model descriptions", fontSize);
-        indexPage.addToHead(ccsInfo);
+        SimpleHtmlDoc indexPage = generateSimpleHtmlDoc("Model descriptions");
 
         //
         File osbDir = new File(descriptionsDir, "osb");
@@ -189,10 +190,10 @@ public class Expand {
 
                     ;
                 });
-                projects.add(project);
+                //projects.add(project);
 
                 String projName = project.getProjectName();
-                String projNameStripped = GeneralUtils.replaceAllTokens(projName, " ", "_");
+                //String projNameStripped = GeneralUtils.replaceAllTokens(projName, " ", "_");
                 String projNameLowercase = GeneralUtils.replaceAllTokens(GeneralUtils.replaceAllTokens(projName, "-", ""), "_", "").toLowerCase();
                 if (projName.equals("SolinasEtAl-GolgiCell"))
                 {
@@ -258,10 +259,18 @@ public class Expand {
         indexPage.saveAsFile(fileToSave);
 
     }
-
-    public static String generateSimplePage(String title, String html_elem_1) {
+    
+    public static SimpleHtmlDoc generateSimpleHtmlDoc(String title) {
         SimpleHtmlDoc mainPage = new SimpleHtmlDoc(title, fontSize);
         mainPage.addToHead(ccsInfo);
+        mainPage.addStyleToHead(tableStyleInHead);
+
+        return mainPage;
+    }
+    
+
+    public static String generateSimplePage(String title, String html_elem_1) {
+        SimpleHtmlDoc mainPage = generateSimpleHtmlDoc(title);
         mainPage.addRawHtml("</br>");
         mainPage.addRawHtml("<img src=\""+html_elem_1+"\" align=\"centre\"/>");
         mainPage.addRawHtml("</br>");
@@ -288,9 +297,8 @@ public class Expand {
             
             File fileToSave = new File(dirToCreateIn, getItemPage(title));
 
-            SimpleHtmlDoc mainPage = new SimpleHtmlDoc(project.getProjectName() + ": " + title, fontSize);
+            SimpleHtmlDoc mainPage = generateSimpleHtmlDoc(project.getProjectName() + ": " + title);
             
-            mainPage.addToHead(ccsInfo);
 
             //mainPage.addTaggedElement("" + project.getProjectName(), "h2");
             
@@ -442,7 +450,7 @@ public class Expand {
 
                     mainPage.addTaggedElement(mainPage.getLinkedText(connTitle, mFilename), "b");
 
-                    SimpleHtmlDoc matrixPage = new SimpleHtmlDoc(connTitle, fontSize);
+                    SimpleHtmlDoc matrixPage = generateSimpleHtmlDoc(connTitle);
 
                     matrixPage.addTaggedElement(connTitle, "h2");
 
@@ -472,7 +480,7 @@ public class Expand {
 
                         for (String preCG : orderedCellGroups) {
                             StringBuilder sb = new StringBuilder();
-                            sb.append("<table>");
+                            sb.append("<table "+tableStyleNoBorder+">");
                             for (String nc : netConns) {
                                 String src = project.morphNetworkConnectionsInfo.getSourceCellGroup(nc);
                                 String tgt = project.morphNetworkConnectionsInfo.getTargetCellGroup(nc);
@@ -622,9 +630,9 @@ public class Expand {
                 if (!isProjSummaryPage)
                     mainPage.addRawHtml(link);
 
-                SimpleHtmlDoc cellPage = new SimpleHtmlDoc(project.getProjectName() + ": " + title, fontSize);
-                SimpleHtmlDoc nml1Page = new SimpleHtmlDoc(project.getProjectName() + ": " + title, fontSize);
-                SimpleHtmlDoc nml2Page = new SimpleHtmlDoc(project.getProjectName() + ": " + title, fontSize);
+                SimpleHtmlDoc cellPage = generateSimpleHtmlDoc(project.getProjectName() + ": " + title);
+                SimpleHtmlDoc nml1Page = generateSimpleHtmlDoc(project.getProjectName() + ": " + title);
+                SimpleHtmlDoc nml2Page = generateSimpleHtmlDoc(project.getProjectName() + ": " + title);
 
                 String nml1PageLoc = getCellTypePage(cell.getInstanceName() + ".morph");
                 File nml1PageFile = new File(fileToSave.getParentFile(), nml1PageLoc);
@@ -663,7 +671,7 @@ public class Expand {
                     if (project.projProperties.getPreferredSaveFormat().equals(ProjectStructure.JAVA_XML_FORMAT))
                         suffix = ProjectStructure.getJavaXMLFileExtension();
                     if (project.projProperties.getPreferredSaveFormat().equals(ProjectStructure.NEUROML1_FORMAT))
-                        suffix = ProjectStructure.getNeuroMLFileExtension();
+                        suffix = ProjectStructure.getNeuroML1FileExtension();
 
                     String repoLoc = "../../../projects/"+project.getProjectName()+"/repository/changes/neuroConstruct/morphologies/"+
                             cell.getInstanceName()+suffix+"?rev=master";
@@ -718,7 +726,7 @@ public class Expand {
                     }
                     else
                     {
-                        String nml2 = MorphMLConverter.getCellInNeuroMLFormat(cell, project, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2_BETA, true);
+                        String nml2 = MorphMLConverter.getCellInNeuroMLFormat(cell, project, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.getLatestVersion(), true);
                         nml2Page.addBreak();
                         nml2Page.addRawHtml(preXML);
                         nml2Page.addRawHtml(nml2);
@@ -775,9 +783,9 @@ public class Expand {
 
                 File xslDoc = GeneralProperties.getChannelMLReadableXSL();
 
-                SimpleHtmlDoc summaryPage = new SimpleHtmlDoc(project.getProjectName() + ": " + title, fontSize);
-                SimpleHtmlDoc channelmlPage = new SimpleHtmlDoc(project.getProjectName() + ": " + title, fontSize);
-                SimpleHtmlDoc nml2Page = new SimpleHtmlDoc(project.getProjectName() + ": " + title, fontSize);
+                SimpleHtmlDoc summaryPage = generateSimpleHtmlDoc(project.getProjectName() + ": " + title);
+                SimpleHtmlDoc channelmlPage = generateSimpleHtmlDoc(project.getProjectName() + ": " + title);
+                SimpleHtmlDoc nml2Page = generateSimpleHtmlDoc(project.getProjectName() + ": " + title);
 
                 String cmXmlPageLoc = getCellMechPage(cm.getInstanceName() + ".channelml");
                 File cmXmlPageFile = new File(fileToSave.getParentFile(), cmXmlPageLoc);
@@ -832,7 +840,9 @@ public class Expand {
                         try {
                             String readable = XMLUtils.transform(cmlCm.getXMLDoc().getXMLString("", false), xslDoc);
 
+                            summaryPage.addRawHtml("<div class='wrapped-channelml'>");
                             summaryPage.addRawHtml(readable);
+                            summaryPage.addRawHtml("</div>");
                         } catch (XMLMechanismException e) {
                             summaryPage.addTaggedElement("Unable to generate HTML representation of: " + cm.getInstanceName(), "b");
                         }
@@ -1111,9 +1121,8 @@ public class Expand {
 
         //paths.add("models/LarkumEtAl2009/LarkumEtAl2009.ncx");
 
-        boolean all = false;
-
-        all = true;
+        boolean all = true;
+        //all = false;
         if (all)
         {
             paths.add("osb/invertebrate/celegans/CElegansNeuroML/CElegans/CElegans.ncx");

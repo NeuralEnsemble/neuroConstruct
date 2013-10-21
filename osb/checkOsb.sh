@@ -77,6 +77,7 @@ standardGHProject()
 standardGHProject 'NeuroElectroSciUnit' 'showcase'
 standardGHProject 'NengoNeuroML' 'showcase'
 standardGHProject 'NeuroMorpho' 'showcase'
+standardGHProject 'NSGPortalShowcase' 'showcase'
 standardGHProject 'simulator-test-data' 'showcase' 'mikehulluk'
 
 standardGHProject 'CSAShowcase' 'showcase'
@@ -92,6 +93,7 @@ standardGHProject 'MorrisLecarModel' 'invertebrate/barnacle'
 standardGHProject 'Drosophila_Projection_Neuron' 'invertebrate/drosophila'
 
 standardGHProject 'CA1PyramidalCell' 'hippocampus/CA1_pyramidal_neuron'
+standardGHProject 'DentateGyrus2005' 'dentate_gyrus/networks'
 
 standardGHProject 'StriatalSpinyProjectionNeuron' 'basal_ganglia/striatal_spiny_neuron'
 
@@ -103,6 +105,8 @@ standardGHProject 'GranCellRothmanIf' 'cerebellum/cerebellar_granule_cell'
 standardGHProject 'GranCellSolinasEtAl10' 'cerebellum/cerebellar_granule_cell'
 standardGHProject 'GranuleCell' 'cerebellum/cerebellar_granule_cell'
 standardGHProject 'GranuleCellVSCS' 'cerebellum/cerebellar_granule_cell'
+standardGHProject 'cereb_grc_mc' 'cerebellum/cerebellar_granule_cell'
+
 
 standardGHProject 'PurkinjeCell' 'cerebellum/cerebellar_purkinje_cell'
 
@@ -115,6 +119,7 @@ standardGHProject 'L5bPyrCellHayEtAl2011' 'cerebral_cortex/neocortical_pyramidal
 
 standardGHProject 'IzhikevichModel' 'cerebral_cortex/networks'
 standardGHProject 'Thalamocortical' 'cerebral_cortex/networks'
+standardGHProject 'ACnet2' 'cerebral_cortex/networks'
 standardGHProject 'Brunel2000' 'cerebral_cortex/networks'
 standardGHProject 'VogelsEtAl2011' 'cerebral_cortex/networks'
 standardGHProject 'PospischilEtAl2008' 'cerebral_cortex/multiple'
