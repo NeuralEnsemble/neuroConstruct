@@ -154,7 +154,6 @@ public class MpiSettings
      */
     public static final String NSG_MAIN = "NSG Portal [trestles]";
     public static final String NSG_1PROC = NSG_MAIN+" (1 x 1p)";
-    public static final String NSG_8PROC = NSG_MAIN+" (1 x 8p)";
 
     
     public static final String MACHINE_FILE = "machinesToUse";
@@ -1171,19 +1170,26 @@ public class MpiSettings
             p.setQueueInfo(nsgQueue);
             configurations.add(p);
         }
-        
-        if (getMpiConfiguration(NSG_8PROC)==null)
+
+        int[] hosts = new int[]{1,2,4,8,16};
+
+        for (int host: hosts)
         {
-            MpiConfiguration p = new MpiConfiguration(NSG_8PROC);
+            String NSG_NPROC = NSG_MAIN+" ("+host+" x 8p)";
 
-            for(int i=0;i<1;i++)
-                p.getHostList().add(new MpiHost("node"+i,8, 1));
+            if (getMpiConfiguration(NSG_NPROC)==null)
+            {
+                MpiConfiguration p = new MpiConfiguration(NSG_NPROC);
 
-            p.setRemoteLogin(nsgLogin);
-            p.setMpiVersion(MpiSettings.OPENMPI_V2);
-            p.setUseScp(true);
-            p.setQueueInfo(nsgQueue);
-            configurations.add(p);
+                for(int i=0;i<host;i++)
+                    p.getHostList().add(new MpiHost("node"+i,8, 1));
+
+                p.setRemoteLogin(nsgLogin);
+                p.setMpiVersion(MpiSettings.OPENMPI_V2);
+                p.setUseScp(true);
+                p.setQueueInfo(nsgQueue);
+                configurations.add(p);
+            }
         }
 
 

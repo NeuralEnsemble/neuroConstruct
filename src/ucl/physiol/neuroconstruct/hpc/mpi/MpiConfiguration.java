@@ -460,9 +460,7 @@ public class MpiConfiguration
         scriptText.append("\n");
         scriptText.append("chmod u+x runmpi.sh\n");
         scriptText.append("\n");
-        scriptText.append("ssh $remoteUser@$remoteHost \"mkdir $projDir\"\n");
-        scriptText.append("ssh $remoteUser@$remoteHost \"rm -rf $simDir\"\n");
-        scriptText.append("ssh $remoteUser@$remoteHost \"mkdir $simDir\"\n");
+        scriptText.append("ssh $remoteUser@$remoteHost \"mkdir $projDir; rm -rf $simDir; mkdir $simDir\"\n");
         scriptText.append("\n");
         scriptText.append("zipFile=$simRef\".tar.gz\"\n");
         scriptText.append("\n");
@@ -470,12 +468,13 @@ public class MpiConfiguration
         scriptText.append("\n");
         scriptText.append("tar czvf $zipFile *.mod *.hoc *.p *.g *.props *.dat *.sh *.py *.xml *.h5 *Utils\n");
         scriptText.append("\n");
+    
 
-        scriptText.append("echo \"Going to send to: $simDir on $remoteUser@$remoteHost\"\n");
+        scriptText.append("echo \"Going to send files in \"$zipFile\" to: $simDir on $remoteUser@$remoteHost\"\n");
         
         if (isUseScp())
         {
-            scriptText.append("scp $zipFile $remoteUser@$remoteHost:$simDir\n");
+            scriptText.append("scp $zipFile $remoteUser@$remoteHost:$simDir/$zipFile\n");
             scriptText.append("sleep 3\n");
         }
         else

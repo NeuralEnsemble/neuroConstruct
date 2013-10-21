@@ -26,6 +26,8 @@ if [ -z "$USE_SSH_FOR_GITHUB" ]; then
     prefix='https://github.com/'
 fi
 
+prefixBB='https://bitbucket.org/'
+
 
 standardGHProject()
 {
@@ -74,6 +76,53 @@ standardGHProject()
 }
 
 
+standardBBProject()
+{
+    echo
+    echo "-----  Checking:" $2/$1
+    tput setaf 1
+
+    if [ ! -d $2 ]; then
+        parent=$2
+        parent=${parent%/*}
+        if [ ! -d $parent ]; then
+            mkdir $parent
+            echo "Making new directory: " $parent
+
+        fi
+        mkdir $2
+        echo "Making new directory: " $2
+
+    fi
+    tgtDir=$startDir/$2/$1
+
+
+    if [ ! -d $tgtDir ]; then
+        echo "Cloning to: "$tgtDir
+        if [ $# == 3 ]; then
+            echo "Using repo: "$prefixBB$3/$1
+            hg clone $prefixBB$3/$1 $tgtDir
+        else
+            osbOrg='OpenSourceBrain'
+            echo "Using repo: "$prefixBB$osbOrg/$1
+            hg clone $prefixBB$osbOrg/$1 $tgtDir
+        fi
+    fi
+
+    cd $tgtDir
+    if $pull; then
+        hg pull -u
+    else
+        hg status
+        tput setaf 3
+        hg in
+    fi
+    tput sgr0
+
+    cd $startDir
+}
+
+
 standardGHProject 'NeuroElectroSciUnit' 'showcase'
 standardGHProject 'NengoNeuroML' 'showcase'
 standardGHProject 'NeuroMorpho' 'showcase'
@@ -94,6 +143,8 @@ standardGHProject 'Drosophila_Projection_Neuron' 'invertebrate/drosophila'
 
 standardGHProject 'CA1PyramidalCell' 'hippocampus/CA1_pyramidal_neuron'
 standardGHProject 'DentateGyrus2005' 'dentate_gyrus/networks'
+standardBBProject 'dentate' 'dentate_gyrus/networks' 'mbezaire'
+standardBBProject 'nc_ca1' 'hippocampus/networks' 'mbezaire'
 
 standardGHProject 'StriatalSpinyProjectionNeuron' 'basal_ganglia/striatal_spiny_neuron'
 
