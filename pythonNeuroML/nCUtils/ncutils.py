@@ -70,7 +70,7 @@ def generateAndRunGenesis(project,
                           quitAfterRun=False,
                           runInBackground=False,
                           units=-1,
-                          symmetricComps=False):
+                          symmetricComps=None):
 
     prefix = "--- GENESIS gen:  "
 
@@ -84,7 +84,8 @@ def generateAndRunGenesis(project,
 
     project.genesisSettings.setMooseCompatMode(False)
 
-    project.genesisSettings.setSymmetricCompartments(symmetricComps)
+    if symmetricComps is not None:
+        project.genesisSettings.setSymmetricCompartments(symmetricComps)
 
     project.genesisFileManager.setQuitAfterRun(quitAfterRun)
 
@@ -922,7 +923,7 @@ class SimulationManager():
                                               quitAfterRun=runInBackground,
                                               runInBackground=runInBackground,
                                               units=units,
-                                              symmetricComps=False)
+                                              symmetricComps=None)
 
                         if success:
                             self.allRunningSims.append(simRef)
