@@ -30,7 +30,6 @@ import java.io.*;
 import java.net.URL;
 import org.neuroml.export.Utils;
 import org.neuroml.model.Connection;
-import org.neuroml.model.ExtracellularPropertiesLocal;
 import org.neuroml.model.Instance;
 import org.neuroml.model.Location;
 import org.neuroml.model.Network;
@@ -111,7 +110,7 @@ public class NeuroML2Reader implements NetworkMLnCInfo
         {
             NeuroMLConverter neuromlConverter=new NeuroMLConverter();
 
-            NeuroMLDocument neuroml = neuromlConverter.urlToNeuroML(new URL("file://"+nml2File.getAbsolutePath()));
+            NeuroMLDocument neuroml = neuromlConverter.urlToNeuroML(nml2File.toURI().toURL());
 
             logger.logComment("Reading in NeuroML 2: "+ neuroml.getId(), true);
 
