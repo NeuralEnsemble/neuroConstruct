@@ -86,7 +86,7 @@ public class CellTopologyHelper
         Vector<Integer> idsOfPossibleSegments = new Vector<Integer>();
         Vector<Float> lensOfPossibleSegments = new Vector<Float>();
         
-        PostSynapticTerminalLocation postSynTerm = null;
+        PostSynapticTerminalLocation postSynTerm;
                        
         if (!(cachedPostSynLocInfo!=null && cachedPostSynLocInfo.isApplicable(cell.getInstanceName(), synapseType))) 
         {
@@ -197,7 +197,7 @@ public class CellTopologyHelper
                 
                 if (idsOfPossibleSegments.size()==1 && lensOfPossibleSegments.size()==1)
                 {
-                    float fract = -1;
+                    float fract;
                     if (lensOfPossibleSegments.get(0)==0) 
                         fract = 0.5f;
                     else
@@ -411,7 +411,7 @@ public class CellTopologyHelper
             logger.logComment("Have found " + idsOfPossibleSegments.size() + " possible segments: " +
                               idsOfPossibleSegments);
 
-            if (idsOfPossibleSegments.size() == 0)
+            if (idsOfPossibleSegments.isEmpty())
             {
                 return null;
             }
@@ -441,7 +441,7 @@ public class CellTopologyHelper
 
             if (idsOfPossibleSegments.size()==1 && lensOfPossibleSegments.size()==1)
             {
-                float fract = -1;
+                float fract;
                 if (lensOfPossibleSegments.get(0)==0) 
                     fract = 0.5f;
                 else
@@ -522,7 +522,7 @@ public class CellTopologyHelper
             return cachedAllCellIds;
         }
         
-        int[] allowedFinishCells = null;
+        int[] allowedFinishCells;
         
         if (maxMinIncludesAll || finishCell.getAllSegments().size()>1)  // TODO: deal with case where post cell size is taken into account...
         {
@@ -535,7 +535,7 @@ public class CellTopologyHelper
         }
         else
         {
-            RectangularBox cellBox = null;
+            RectangularBox cellBox;
             
             if(cachedStartCellType!=null && cachedStartCellType.equals(startCell.getInstanceName()))
             {
@@ -635,11 +635,7 @@ public class CellTopologyHelper
             }
 
             allowedFinishCells = new int[countGoodPos];
-
-            for(int i=0;i<countGoodPos;i++)
-            {
-                allowedFinishCells[i] = tempPosRecs[i];
-            }
+            System.arraycopy(tempPosRecs, 0, allowedFinishCells, 0, countGoodPos);
             logger.logComment("Total finish cells: "+ finishPosRecords.size() +", but returning only: "+ countGoodPos+", box: "+ connBoundBox);
                         
         }
@@ -1144,7 +1140,7 @@ public class CellTopologyHelper
 
         logger.logComment("Have found " + idsOfPossibleSegments.size() + " possible segments");
 
-        if (idsOfPossibleSegments.size() == 0)
+        if (idsOfPossibleSegments.isEmpty())
         {
             return null;
         }
@@ -1347,7 +1343,7 @@ public class CellTopologyHelper
         Point3f targetSynapsePosition = new Point3f(targetCellPosition);
         targetSynapsePosition.add(relativePointTarget);
         
-        float dist = 0;
+        float dist;
 
         if (dimension.equals(MaxMinLength.X_DIR)) 
         {
@@ -1438,7 +1434,7 @@ public class CellTopologyHelper
         Point3f targetSynapsePosition = new Point3f(targetCellPosition);
         targetSynapsePosition.add(relativePointTarget);
 
-        float dist = 0;
+        float dist;
 
         if (dimension.equals(MaxMinLength.X_DIR)) dist = Math.abs(targetSynapsePosition.x - sourceSynapsePosition.x);
         else if (dimension.equals(MaxMinLength.Y_DIR)) dist =  Math.abs(targetSynapsePosition.y - sourceSynapsePosition.y);
@@ -1825,7 +1821,7 @@ public class CellTopologyHelper
         
         float totLen = seg.getSegmentLength() * location.getFractAlong();
         
-        Segment parent = null;
+        Segment parent;
         
         while ((parent = seg.getParentSegment()) != null)
         {
@@ -2037,7 +2033,7 @@ public class CellTopologyHelper
     {
         float maxValue = -1*Float.MAX_VALUE;
 
-        Vector somaSegments = null;
+        Vector somaSegments;
         if (somaOnly)
             somaSegments = cell.getOnlySomaSegments();
         else
@@ -2082,7 +2078,7 @@ public class CellTopologyHelper
     {
         float maxValue = -1*Float.MAX_VALUE;
 
-        Vector somaSegments = null;
+        Vector somaSegments;
         if (somaOnly)
             somaSegments = cell.getOnlySomaSegments();
         else
@@ -2126,7 +2122,7 @@ public class CellTopologyHelper
     {
         float maxValue = -1*Float.MAX_VALUE;
 
-        Vector somaSegments = null;
+        Vector somaSegments;
         if (somaOnly)
             somaSegments = cell.getOnlySomaSegments();
         else
@@ -2170,7 +2166,7 @@ public class CellTopologyHelper
     {
         float minValue = Float.MAX_VALUE;
 
-        Vector somaSegments = null;
+        Vector somaSegments;
 
         if (somaOnly)
             somaSegments = cell.getOnlySomaSegments();
@@ -2214,7 +2210,7 @@ public class CellTopologyHelper
     {
         float minValue = Float.MAX_VALUE;
 
-        Vector somaSegments = null;
+        Vector somaSegments;
                 if (somaOnly)
                     somaSegments = cell.getOnlySomaSegments();
                 else
@@ -2258,7 +2254,7 @@ public class CellTopologyHelper
     {
         float minValue = Float.MAX_VALUE;
 
-        Vector somaSegments = null;
+        Vector somaSegments;
                 if (somaOnly)
                     somaSegments = cell.getOnlySomaSegments();
                 else
@@ -3406,7 +3402,7 @@ public class CellTopologyHelper
 
                 if (appv==null && !nml2Mech) // i.e. no ap prop speed settings & it's not nml2
                 {
-                    float specMembRes = 0.0F;
+                    float specMembRes;
                     try
                     {
                         specMembRes = CellTopologyHelper.getSpecMembResistance(cell, project, nextSec);
@@ -5187,12 +5183,10 @@ public class CellTopologyHelper
 
     public static void main(String[] args)
     {
-
         try
         {
-
-            Project testProj = Project.loadProject(new File("../nC_projects/GoCSolinas_testclamp/GoCSolinas_testclamp.ncx"),
-                                                   new ProjectEventListener()
+            File f = new File("osb/cerebral_cortex/neocortical_pyramidal_neuron/MainenEtAl_PyramidalCell/neuroConstruct/MainenEtAl_PyramidalCell.ncx");
+            Project testProj = Project.loadProject(f, new ProjectEventListener()
             {
                 public void tableDataModelUpdated(String tableModelName)
                 {};
@@ -5202,23 +5196,31 @@ public class CellTopologyHelper
                 public void cellMechanismUpdated()
                 {
                 };
-
             });
 
-            Cell cellB = testProj.cellManager.getCell("Golgi_040408_blue");
-            Cell cellR = testProj.cellManager.getCell("Golgi_040408_red");
-
-            System.out.println("Comp: " +CellTopologyHelper.compare(cellB,cellR, false) );
-
-
-
+            //Cell cellB = testProj.cellManager.getCell("Golgi_040408_blue");
+            //Cell cellR = testProj.cellManager.getCell("Golgi_040408_red");
+            GeneralUtils.timeCheck("-----   Loaded project...", true);
+            
+            Cell cell = testProj.cellManager.getCell("MainenNeuroML");
+            String info = CellTopologyHelper.printDetails(cell, testProj);
+            GeneralUtils.timeCheck("-----   Loaded Info for "+cell.getInstanceName()+", len: "+info.length(), true);
+            
+            cell = testProj.cellManager.getCell("MainenCellMod");
+            info = CellTopologyHelper.printDetails(cell, testProj);
+            GeneralUtils.timeCheck("-----   Loaded Info for "+cell.getInstanceName()+", len: "+info.length(), true);
+            
+            cell = testProj.cellManager.getCell("OneComp_orig");
+            info = CellTopologyHelper.printDetails(cell, testProj);
+            GeneralUtils.timeCheck("-----   Loaded Info for "+cell.getInstanceName()+", len: "+info.length(), true);
+            
             if (true) return;
 
-            Cell cell = testProj.cellManager.getCell("Basic");
+
+            cell = testProj.cellManager.getCell("Basic");
             //Cell cell = new SimpleCell("dumCell");
 
             System.out.println("Info: " + CellTopologyHelper.printDetails(cell, testProj));
-
 
             boolean useHtml = true;
 

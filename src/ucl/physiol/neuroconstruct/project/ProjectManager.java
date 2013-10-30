@@ -1568,7 +1568,8 @@ public class ProjectManager implements GenerationReport
                                        extraComments,
                                        simConfig,
                                        units,
-                                       NeuroMLVersion.NEUROML_VERSION_1);
+                                       NeuroMLVersion.NEUROML_VERSION_1,
+                                       null);
     }
     public static File saveNetworkStructureNeuroML2(Project project,
                                        File neuroMLFile,
@@ -1583,7 +1584,8 @@ public class ProjectManager implements GenerationReport
                                        extraComments,
                                        simConfig,
                                        units,
-                                       NeuroMLVersion.getLatestVersion());
+                                       NeuroMLVersion.getLatestVersion(),
+                                       null);
     }
     
     

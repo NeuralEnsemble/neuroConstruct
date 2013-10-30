@@ -167,8 +167,8 @@ public class MorphMLConverter extends FormatImporter
 
             logger.logComment("Loading mml cell from " + morphologyFile.getAbsolutePath());
 
-            FileInputStream instream = null;
-            InputSource is = null;
+            FileInputStream instream;
+            InputSource is;
 
             SAXParserFactory spf = SAXParserFactory.newInstance();
             spf.setNamespaceAware(true);
@@ -1974,7 +1974,7 @@ public class MorphMLConverter extends FormatImporter
                 {
                     SimpleXMLElement includeElement = new SimpleXMLElement(MorphMLConstants.INCLUDE_V2);
 
-                    includeElement.addAttribute(MorphMLConstants.HREF_V2, chan+".nml");
+                    includeElement.addAttribute(MorphMLConstants.HREF_V2, chan+ProjectStructure.neuroml2ChannelExtension+ProjectStructure.neuroml2Extension);
 
                     rootElement.addChildElement(includeElement);
                     rootElement.addContent("\n\n    ");
@@ -2099,7 +2099,7 @@ public class MorphMLConverter extends FormatImporter
 
                 if (version.isVersion2())
                 {
-                    ext = ProjectStructure.getNeuroML2FileExtension();
+                    ext = ProjectStructure.neuroml2CellExtension+ProjectStructure.getNeuroML2FileExtension();
                 }
 
                 cellFile = new File(destDir,

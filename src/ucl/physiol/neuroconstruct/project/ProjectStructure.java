@@ -66,7 +66,12 @@ public class ProjectStructure
 
     private static final String neuroml1Extension = ".nml1";
     
-    private static final String neuroml2Extension = ".nml";
+    public static final String neuroml2Extension = ".nml";
+    
+    public static final String neuroml2CellExtension = ".cell";
+    public static final String neuroml2ChannelExtension = ".channel";
+    public static final String neuroml2SynapseExtension = ".synapse";
+    public static final String neuroml2NetworkExtension = ".net";
     
     private static final String hdf5Extension = ".h5";
 
@@ -205,7 +210,7 @@ public class ProjectStructure
         + System.getProperty("file.separator")
         + "cellCheck.hoc";
 
-    private static String xmlTemplatesDirInInstall = "templates"
+    private static final String xmlTemplatesDirInInstall = "templates"
         + System.getProperty("file.separator")
         + "xmlTemplates";
 
@@ -240,7 +245,7 @@ public class ProjectStructure
 
 
 
-    private static String toolTipFileInInstall = "docs"
+    private static final String toolTipFileInInstall = "docs"
         + System.getProperty("file.separator")
         + "XML"
         + System.getProperty("file.separator")
@@ -248,23 +253,23 @@ public class ProjectStructure
         + System.getProperty("file.separator")
         + "Glossary.xml";
 
-    private static String helpFileDirInInstall = "docs"
+    private final static String helpFileDirInInstall = "docs"
         + System.getProperty("file.separator")
         + "helpdocs"
         + System.getProperty("file.separator");
 
-    private static String mainHelpFileInInstall = helpFileDirInInstall
+    private static final String mainHelpFileInInstall = helpFileDirInInstall
         + "index.html";
 
-    private static String helpMenuFileInInstall = helpFileDirInInstall + "docMenu.html";
+    private static final String helpMenuFileInInstall = helpFileDirInInstall + "docMenu.html";
 
-    private static String importDocFileInInstall = helpFileDirInInstall + "import.html";
+    private static final String importDocFileInInstall = helpFileDirInInstall + "import.html";
 
-    private static String glossaryHtmlFileInInstall = helpFileDirInInstall + "Glossary_gen.html";
+    private static final String glossaryHtmlFileInInstall = helpFileDirInInstall + "Glossary_gen.html";
 
-    private static String relNotesFileInInstall = helpFileDirInInstall + "RELEASE_NOTES";
+    private static final String relNotesFileInInstall = helpFileDirInInstall + "RELEASE_NOTES";
 
-    private static String matplotlibEpsFilename = "generateEps.py";
+    private static final String matplotlibEpsFilename = "generateEps.py";
 
 
 

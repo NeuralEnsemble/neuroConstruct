@@ -114,7 +114,8 @@ public class NetworkMLReaderTest
                                                          true,
                                                          sc.getName(),
                                                          NetworkMLConstants.UNITS_PHYSIOLOGICAL,
-                                                         NeuroMLVersion.NEUROML_VERSION_2_ALPHA);
+                                                         NeuroMLVersion.NEUROML_VERSION_2_ALPHA,
+                                                         null);
 
         assertTrue(nml2aFile.exists());
 
@@ -130,7 +131,8 @@ public class NetworkMLReaderTest
                                                          false,
                                                          sc.getName(),
                                                          NetworkMLConstants.UNITS_PHYSIOLOGICAL,
-                                                         NeuroMLVersion.getLatestVersion());
+                                                         NeuroMLVersion.getLatestVersion(),
+                                                         null);
 
         assertTrue(nml2bFile.exists());
 
@@ -185,7 +187,8 @@ public class NetworkMLReaderTest
                                        false,
                                        sc.getName(),
                                        NetworkMLConstants.UNITS_PHYSIOLOGICAL,
-                                       NeuroMLVersion.getLatestVersion());
+                                       NeuroMLVersion.getLatestVersion(),
+                                       null);
         
         assertTrue(nmlFile.exists());
         

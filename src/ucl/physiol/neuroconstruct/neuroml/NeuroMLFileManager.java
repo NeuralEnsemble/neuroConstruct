@@ -112,7 +112,8 @@ public class NeuroMLFileManager
                                                boolean extraComments,
                                                String simConfig,
                                                String units,
-                                               NeuroMLVersion version) throws NeuroMLException
+                                               NeuroMLVersion version,
+                                               ArrayList<File> filesToInclude) throws NeuroMLException
     {
         int preferredUnits = UnitConverter.getUnitSystemIndex(units);
 
@@ -216,10 +217,10 @@ public class NeuroMLFileManager
 
 
 
-            rootElement.addContent("\n\n");
+            rootElement.addContent("\n\n    ");
 
             rootElement.addChildElement(new SimpleXMLElement(metaPrefix
-                                                             + MetadataConstants.NOTES_ELEMENT, "\n" + notes.toString()));
+                                                             + MetadataConstants.NOTES_ELEMENT, "\n" + notes.toString()+"\n    "));
 
             SimpleXMLElement props = new SimpleXMLElement(metaPrefix + MorphMLConstants.PROPS_ELEMENT);
 
@@ -268,6 +269,19 @@ public class NeuroMLFileManager
 
             if (nml2)
             {
+                if (filesToInclude!=null) 
+                {
+                    for (File f: filesToInclude) 
+                    {
+                        SimpleXMLElement incEl1 = new SimpleXMLElement(MorphMLConstants.INCLUDE_V2);
+                        incEl1.addAttribute(MorphMLConstants.HREF_V2, f.getName());
+                        
+                        rootElement.addContent("\n    ");
+                        rootElement.addChildElement(incEl1);
+                        
+                    }
+                }
+                
                 SimpleXMLElement networkNml2 = new SimpleXMLElement(NetworkMLConstants.NEUROML2_NETWORK_ELEMENT);
                 networkNml2.addAttribute(NeuroMLConstants.NEUROML_ID_V2, NetworkMLConstants.NEUROML2_NETWORK_ID_PREFIX + project.getProjectName());
 
@@ -429,6 +443,7 @@ public class NeuroMLFileManager
                 }
 
                 String extension = version.isVersion2() ? ProjectStructure.getNeuroML2FileExtension() : ProjectStructure.getNeuroML1FileExtension();
+                
                 String internalFilename = GeneralUtils.replaceAllTokens(zipFile.getName(),
                                                                         ProjectStructure.getNeuroMLCompressedFileExtension(),
                                                                         extension);
@@ -558,14 +573,14 @@ public class NeuroMLFileManager
 
         timeInfo = GeneralUtils.replaceAllTokens(timeInfo, ":", "-");
         
-        String extension = ProjectStructure.getNeuroML1FileExtension();
+        String lastExtension = ProjectStructure.getNeuroML1FileExtension();
 
         String fileName = "L3Net_" + timeInfo + ProjectStructure.getNeuroML1FileExtension();
 
         if (version.isVersion2())
         {
-            extension = ProjectStructure.getNeuroML2FileExtension();
-            fileName = project.getProjectName() + extension;
+            lastExtension = ProjectStructure.getNeuroML2FileExtension();
+            fileName = project.getProjectName() + ProjectStructure.neuroml2NetworkExtension + lastExtension;
         }
 
         File fileToGen = new File(generateDir, fileName);
@@ -621,11 +636,13 @@ public class NeuroMLFileManager
             try
             {
                 NeuroMLLevel level = NeuroMLLevel.NEUROML_LEVEL_3;
+                
+                String cellExtension = lastExtension;
 
                 if (version.isVersion2())
                 {
                     level = NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL;
-                    extension = ProjectStructure.getNeuroML2FileExtension();
+                    cellExtension = ProjectStructure.neuroml2CellExtension+ ProjectStructure.getNeuroML2FileExtension();
                 }
 
                 generatedCells = MorphMLConverter.saveAllCellsInNeuroML(project,
@@ -637,7 +654,7 @@ public class NeuroMLFileManager
 
                 for (Cell cell : generatedCells)
                 {
-                    generatedCellFiles.add(new File(generateDir, cell.getInstanceName() + extension));
+                    generatedCellFiles.add(new File(generateDir, cell.getInstanceName() + cellExtension));
                 }
             }
             catch (MorphologyException ex1)
@@ -682,6 +699,8 @@ public class NeuroMLFileManager
 
                 for (String cellMech : cellMechs)
                 {
+                    String mechExtension = lastExtension;
+                    
                     if (!cellMechFilesHandled.contains(cellMech))
                     {
                         CellMechanism cm = project.cellMechanismInfo.getCellMechanism(cellMech);
@@ -693,9 +712,18 @@ public class NeuroMLFileManager
                         else if (cm instanceof NeuroML2Component)
                         {
                             NeuroML2Component nmlCm = (NeuroML2Component) cm;
-                            String newName = cm.getInstanceName() + ".nml";
+                            String extraExtn = "";
+                            if (nmlCm.isChannelMechanism()) 
+                                extraExtn = ProjectStructure.neuroml2ChannelExtension;
+                            else if (nmlCm.isSynapticMechanism()) 
+                                extraExtn = ProjectStructure.neuroml2SynapseExtension;
+                            mechExtension = extraExtn+ ProjectStructure.neuroml2Extension;
+                            String newName = cm.getInstanceName() + mechExtension;
                             File copied = GeneralUtils.copyFileIntoDir(nmlCm.getXMLFile(project), generateDir);
-                            copied.renameTo(new File(generateDir, newName));
+                            File newFile = new File(generateDir, newName);
+                            copied.renameTo(newFile);
+                            
+                            generatedChanSynFiles.add(newFile);
                             /*
                              if (!pynnCellsPresent) {
                              Sim sim = new Sim(nmlCm.getXMLFile(project));
@@ -726,6 +754,7 @@ public class NeuroMLFileManager
                                 FileWriter fw = new FileWriter(warnFile);
                                 fw.write("Warning: cell mechanism " + cm.getInstanceName() + " is not implemented in ChannelML in the project: " + project.getProjectFileName() + ", and so cannot be used in the Python/NeuroML test simulation.");
 
+                                generatedChanSynFiles.add(warnFile);
                                 fw.close();
 
                             }
@@ -744,7 +773,13 @@ public class NeuroMLFileManager
 
                             if (cmlCm.getMechanismModel().indexOf("ChannelML") >= 0 && version.isVersion2())
                             {
-                                newCmlFile = new File(generateDir, cm.getInstanceName() + ".nml");
+                                String extraExtn = "";
+                                if (cmlCm.isChannelMechanism()) 
+                                    extraExtn = ProjectStructure.neuroml2ChannelExtension;
+                                else if (cmlCm.isSynapticMechanism()) 
+                                    extraExtn = ProjectStructure.neuroml2SynapseExtension;
+                            
+                                newCmlFile = new File(generateDir, cm.getInstanceName() + extraExtn + ".nml");
 
                                 File xslChannelML2NeuroML2 = null;
 
@@ -770,6 +805,7 @@ public class NeuroMLFileManager
                                 String nml2Contents = XMLUtils.transform(origCmlFile, xslContents);
 
                                 GeneralUtils.writeShortFile(newCmlFile, nml2Contents);
+                                generatedChanSynFiles.add(newCmlFile);
 
                                 //XMLUtils.transform(origCmlFile, xslChannelML2NeuroML2, generateDir, ".nml");
 
@@ -787,6 +823,7 @@ public class NeuroMLFileManager
                                     File copied = GeneralUtils.copyFileIntoDir(origCmlFile, generateDir);
 
                                     copied.renameTo(newCmlFile);
+                                    generatedChanSynFiles.add(newCmlFile);
 
                                 }
                                 catch (IOException ioe)
@@ -801,15 +838,10 @@ public class NeuroMLFileManager
             }
 
 
-            for (String cellMech : cellMechFilesHandled)
-            {
-                generatedChanSynFiles.add(new File(generateDir, cellMech + extension));
-            }
-
             String networkFileName = NetworkMLConstants.DEFAULT_NETWORKML_FILENAME_XML;
             if (version.isVersion2())
             {
-                networkFileName = project.getProjectName() + extension;
+                networkFileName = project.getProjectName() + ProjectStructure.neuroml2NetworkExtension+ProjectStructure.neuroml2Extension;
             }
             File networkFile = new File(generateDir, networkFileName);
 
@@ -817,14 +849,17 @@ public class NeuroMLFileManager
             {
                 try
                 {
-
+                    ArrayList<File> allIncludes = new ArrayList<File>();
+                    allIncludes.addAll(generatedCellFiles);
+                    allIncludes.addAll(generatedChanSynFiles);
                     File netFile = saveNetworkStructureXML(project,
                                                            networkFile,
                                                            false,
                                                            false,
                                                            simConf.getName(),
                                                            units,
-                                                           version);
+                                                           version,
+                                                           allIncludes);
 
                     generatedNetFile = netFile;
                 }
@@ -909,6 +944,7 @@ public class NeuroMLFileManager
             lemsElement.addComment("Include the generated NeuroML 2 files");
             lemsElement.addContent("\n\n    "); // to make it more readable...
             
+            
             lemsElement.addComment("   Channel/synapse files");
             
             generatedChanSynFiles = (ArrayList<File>)GeneralUtils.reorderAlphabetically(generatedChanSynFiles, true);
@@ -934,6 +970,7 @@ public class NeuroMLFileManager
                 lemsElement.addChildElement(incElc);
                 lemsElement.addContent("\n    "); // to make it more readable...
             }
+            
             lemsElement.addComment("   Network file");
             
             SimpleXMLElement incElc = new SimpleXMLElement(LemsConstants.INCLUDE_ELEMENT);
@@ -1494,12 +1531,12 @@ public class NeuroMLFileManager
             
             //File projFile = new File("osb/showcase/neuroConstructShowcase/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
             //File projFile = new File("models/LarkumEtAl2009/LarkumEtAl2009.ncx");
-            File projFile = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
+            //File projFile = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
             //projFile = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCellVSCS/neuroConstruct/GranuleCellVSCS.ncx");
             //projFile = new File("nCmodels/RothmanEtAl_KoleEtAl_PyrCell/RothmanEtAl_KoleEtAl_PyrCell.ncx");
             //projFile = new File("../nC_projects/Thaal/Thaal.ncx");
             //File projFile = new File("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
-            //projFile = new File("osb/showcase/neuroConstructShowcase/Ex4_HHcell/Ex4_HHcell.ncx");
+            File projFile = new File("osb/showcase/neuroConstructShowcase/Ex4_HHcell/Ex4_HHcell.ncx");
 
             String simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
 

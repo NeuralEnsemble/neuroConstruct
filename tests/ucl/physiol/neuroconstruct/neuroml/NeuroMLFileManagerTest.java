@@ -121,7 +121,8 @@ public class NeuroMLFileManagerTest {
                                                              true,
                                                              sc.getName(),
                                                              NetworkMLConstants.UNITS_PHYSIOLOGICAL,
-                                                             NeuroMLVersion.NEUROML_VERSION_2_ALPHA);
+                                                             NeuroMLVersion.NEUROML_VERSION_2_ALPHA,
+                                                             null);
 
             assertTrue(nmlFile.exists());
 
@@ -184,7 +185,8 @@ public class NeuroMLFileManagerTest {
                                                              false,
                                                              simConfig,
                                                              NetworkMLConstants.UNITS_PHYSIOLOGICAL,
-                                                             NeuroMLVersion.getLatestVersion());
+                                                             NeuroMLVersion.getLatestVersion(),
+                                                             null);
 
             assertTrue(nmlFile.exists());
 
