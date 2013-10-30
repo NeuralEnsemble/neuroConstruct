@@ -261,7 +261,7 @@ public class MpiSettings
         QueueInfo caspurQueue = new QueueInfo(6, "std10-300", "time", QueueInfo.QueueType.PBS, "mpirun");
         QueueInfo notosQueue = new QueueInfo(6, "G43-4", "time", QueueInfo.QueueType.LL, "mpirun");
         
-        QueueInfo nsgQueue = new QueueInfo(6, "TG-IBN120011", "time", QueueInfo.QueueType.PBS, "mpirun");
+        QueueInfo nsgQueue = new QueueInfo(6, "TG-IBN140002", "time", QueueInfo.QueueType.PBS, "mpirun");
         nsgQueue.addAdditionalSubOptions("#PBS -q normal");
         //nsgQueue.addAdditionalSubOptions("#PBS -v QOS=2");
         nsgQueue.addAdditionalSubOptions("#PBS -M  p.gleeson@ucl.ac.uk"); // TODO: CHANGE THIS!!!
