@@ -45,7 +45,7 @@ PSICS (http://www.psics.org)
 
 * Windows *
 
-  Install the packages listed above
+  Install the packages listed above or check that they're already installed on your system
 
   Quick install:
 
@@ -68,6 +68,6 @@ PSICS (http://www.psics.org)
     nC.bat -make
     nC.bat
 
-* 
+
  
 
