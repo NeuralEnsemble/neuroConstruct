@@ -1,4 +1,26 @@
+To install neuroConstruct from source for any of these platforms you'll need:
+
+Java (http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+Ant (http://ant.apache.org/)
+Git (http://git-scm.com/)
+Subversion (http://subversion.apache.org/)
+
+To run simulations generated from neuroConstruct, try
+
+NEURON (easiest to install, http://www.neuron.yale.edu/neuron)
+
+or
+
+GENESIS (http://genesis-sim.org)
+MOOSE (http://moose.sourceforge.net)
+PSICS (http://www.psics.org)
+
+
 * Linux/Mac *
+
+  Mac Pre-requisites: XCode command line tools downloaded and installed (http://g.ua/WAAB)
+  Git command line tool downloaded and installed (http://git-scm.com/download/mac)
+                                     (https://help.github.com/articles/set-up-git)
 
   Quick install:
 
@@ -9,7 +31,7 @@
   To get the Open Source Brain models:
 
 	cd osb
-	./checkOsb.sh
+	./checkOsb.sh -u
 
   To build & run (using Apache Ant)
 
@@ -23,6 +45,8 @@
 
 * Windows *
 
+  Install the packages listed above
+
   Quick install:
 
 	git clone git://github.com/NeuralEnsemble/neuroConstruct.git
@@ -32,7 +56,7 @@
   To get the Open Source Brain models:
 
 	cd osb
-	checkOsb.bat
+	checkOsb.bat -u
 
   To build & run (using Apache Ant)
 
@@ -42,12 +66,8 @@
 
 	<< open nC.bat and change NC_HOME >>
     nC.bat -make
-	nC.bat
+    nC.bat
 
-* Mac Pre-requisites (without these, updatenC.sh will not work)
-
-  XCode command line tools downloaded and installed (http://g.ua/WAAB)
-  Git command line tool downloaded and installed (http://git-scm.com/download/mac)
-                                     (https://help.github.com/articles/set-up-git)
+* 
  
 
