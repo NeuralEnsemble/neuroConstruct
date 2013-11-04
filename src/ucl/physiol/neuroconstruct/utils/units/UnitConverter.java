@@ -777,28 +777,58 @@ public class UnitConverter
 
         System.out.println("Area: " + areaUnits[from]);
 
-        double specCap = UnitConverter.getSpecificCapacitance(1,
+        
+        System.out.println("--------------------------------------");
+        double specCap = UnitConverter.getSpecificCapacitance(1e-8,
                                                               UnitConverter.NEUROCONSTRUCT_UNITS,
                                                               UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS);
 
         System.out.println("specCap: " + specCap);
+        
+        int fromUnits = GENESIS_SI_UNITS;
+        System.out.println("specCap GENESIS_SI_UNITS: " + UnitConverter.getSpecificCapacitance(specCap,
+                           fromUnits,
+            UnitConverter.GENESIS_SI_UNITS) + " " + specificCapacitanceUnits[GENESIS_SI_UNITS].getSymbol());
 
+        System.out.println("Concentration GENESIS_PHYSIOLOGICAL_UNITS: " + UnitConverter.getSpecificCapacitance(specCap,
+            fromUnits,
+            UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + " " + specificCapacitanceUnits[GENESIS_PHYSIOLOGICAL_UNITS].getSymbol());
+
+        System.out.println("Concentration NEURON: " + UnitConverter.getSpecificCapacitance(specCap,
+            fromUnits,
+            UnitConverter.NEURON_UNITS) + " " + specificCapacitanceUnits[NEURON_UNITS].getSymbol());
+
+        System.out.println("Concentration nC: " + UnitConverter.getSpecificCapacitance(specCap,
+            fromUnits,
+            UnitConverter.NEUROCONSTRUCT_UNITS) + " " + specificCapacitanceUnits[NEUROCONSTRUCT_UNITS].getSymbol());
+        
+        
+        System.out.println("--------------------------------------");
+
+        int from_ = UnitConverter.GENESIS_SI_UNITS;
         PhysicalQuantity axRes = new PhysicalQuantity(1,
-                                                      UnitConverter.specificAxialResistanceUnits[UnitConverter.NEUROCONSTRUCT_UNITS]);
+                                                      UnitConverter.specificAxialResistanceUnits[from_]);
+        
+        
 
         System.out.println("axRes: " + axRes);
 
-        System.out.print("axRes si:" + UnitConverter.getConductance(axRes.getMagnitude(),
-                                                                    UnitConverter.NEUROCONSTRUCT_UNITS,
+        System.out.print("axRes si:" + UnitConverter.getSpecificAxialResistance(axRes.getMagnitude(),
+                                                                    from_,
                                                                     UnitConverter.GENESIS_SI_UNITS) + "\n");
 
-        System.out.print("axRes phys:" + UnitConverter.getConductance(axRes.getMagnitude(),
-                                                                      UnitConverter.NEUROCONSTRUCT_UNITS,
+        System.out.print("axRes phys:" + UnitConverter.getSpecificAxialResistance(axRes.getMagnitude(),
+                                                                      from_,
                                                                       UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS) + "\n");
 
+        System.out.print("axRes neu:" + UnitConverter.getSpecificAxialResistance(axRes.getMagnitude(),
+                                                                      from_,
+                                                                      UnitConverter.NEURON_UNITS) + "\n");
         System.out.println("--------------------------------------");
 
-        int fromUnits = NEURON_UNITS;
+
+
+        fromUnits = NEURON_UNITS;
         PhysicalQuantity concn = new PhysicalQuantity(3, concentrationUnits[fromUnits]);
 
         System.out.println("Concentration: "+ concn);
@@ -886,7 +916,12 @@ public class UnitConverter
         System.out.println("curr2: "+curr2);
         
         
-
+        PhysicalQuantity condDens = new PhysicalQuantity(1, conductanceDensityUnits[GENESIS_SI_UNITS]);
+        System.out.println("condDens: "+condDens);
+        
+        System.out.println("SI: "+UnitConverter.getConductanceDensity(condDens.getMagnitude(), UnitConverter.GENESIS_SI_UNITS, UnitConverter.GENESIS_SI_UNITS));
+        System.out.println("phys: "+UnitConverter.getConductanceDensity(condDens.getMagnitude(), UnitConverter.GENESIS_SI_UNITS, UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS));
+        System.out.println("neuron: "+UnitConverter.getConductanceDensity(condDens.getMagnitude(), UnitConverter.GENESIS_SI_UNITS, UnitConverter.NEURON_UNITS));
 
     }
 

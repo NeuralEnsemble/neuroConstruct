@@ -545,6 +545,7 @@ public class MorphMLConverter extends FormatImporter
 
                 if (nml2)
                 {
+                    
                     SimpleXMLElement segGroupElement = new SimpleXMLElement(mmlPrefix+MorphMLConstants.SEG_GROUP_V2);
 
                     segGroupElement.addAttribute(new SimpleXMLAttribute(NeuroMLConstants.NEUROML_ID_V2, nextSection.getSectionName()));
@@ -2164,7 +2165,7 @@ public class MorphMLConverter extends FormatImporter
           MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  nml_l2File, NeuroMLLevel.NEUROML_LEVEL_2, NeuroMLVersion.NEUROML_VERSION_1);
           System.out.println("Saved MML file as: " + nml_l2File.getCanonicalPath());
           
-          MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  nml2File, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2_ALPHA);
+          MorphMLConverter.saveCellInNeuroMLFormat(cell, testProj,  nml2File, NeuroMLLevel.NEUROML_VERSION_2_SPIKING_CELL, NeuroMLVersion.NEUROML_VERSION_2_BETA1);
           System.out.println("Saved MML file as: " + nml2File.getCanonicalPath());
 
 
