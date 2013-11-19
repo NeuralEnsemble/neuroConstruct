@@ -712,18 +712,25 @@ public class NeuroMLFileManager
                         else if (cm instanceof NeuroML2Component)
                         {
                             NeuroML2Component nmlCm = (NeuroML2Component) cm;
-                            String extraExtn = "";
-                            if (nmlCm.isChannelMechanism()) 
-                                extraExtn = ProjectStructure.neuroml2ChannelExtension;
-                            else if (nmlCm.isSynapticMechanism()) 
-                                extraExtn = ProjectStructure.neuroml2SynapseExtension;
-                            mechExtension = extraExtn+ ProjectStructure.neuroml2Extension;
-                            String newName = cm.getInstanceName() + mechExtension;
-                            File copied = GeneralUtils.copyFileIntoDir(nmlCm.getXMLFile(project), generateDir);
-                            File newFile = new File(generateDir, newName);
-                            copied.renameTo(newFile);
                             
-                            generatedChanSynFiles.add(newFile);
+                            if (!cm.isMechanismForNeuroML2Cell()) // NML2 file will be generated/added when generating nml2 for cell if it's a MechanismForNeuroML2Cell
+                            {
+                                String extraExtn = "";
+                                if (nmlCm.isChannelMechanism()) 
+                                    extraExtn = ProjectStructure.neuroml2ChannelExtension;
+                                else if (nmlCm.isSynapticMechanism()) 
+                                    extraExtn = ProjectStructure.neuroml2SynapseExtension;
+                                mechExtension = extraExtn+ ProjectStructure.neuroml2Extension;
+                                String newName = cm.getInstanceName() + mechExtension;
+                                File copied = GeneralUtils.copyFileIntoDir(nmlCm.getXMLFile(project), generateDir);
+                                File newFile = new File(generateDir, newName);
+                                copied.renameTo(newFile);
+
+                                generatedChanSynFiles.add(newFile);
+                                
+                                logger.logComment("copied: " + copied, false);
+                            }
+                            
                             /*
                              if (!pynnCellsPresent) {
                              Sim sim = new Sim(nmlCm.getXMLFile(project));
@@ -743,7 +750,6 @@ public class NeuroMLFileManager
                              }
                              }*/
 
-                            logger.logComment("copied: " + copied, false);
 
                         }
                         else if (!(cm instanceof ChannelMLCellMechanism))
@@ -1529,14 +1535,14 @@ public class NeuroMLFileManager
             //String units = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS);
             String units = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_SI_UNITS);
             
-            //File projFile = new File("osb/showcase/neuroConstructShowcase/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
+            File projFile = new File("osb/showcase/neuroConstructShowcase/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
             //File projFile = new File("models/LarkumEtAl2009/LarkumEtAl2009.ncx");
             //File projFile = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
             //projFile = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCellVSCS/neuroConstruct/GranuleCellVSCS.ncx");
             //projFile = new File("nCmodels/RothmanEtAl_KoleEtAl_PyrCell/RothmanEtAl_KoleEtAl_PyrCell.ncx");
             //projFile = new File("../nC_projects/Thaal/Thaal.ncx");
             //File projFile = new File("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
-            File projFile = new File("osb/showcase/neuroConstructShowcase/Ex4_HHcell/Ex4_HHcell.ncx");
+            //File projFile = new File("osb/showcase/neuroConstructShowcase/Ex4_HHcell/Ex4_HHcell.ncx");
 
             String simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
 

@@ -828,8 +828,8 @@ public class UnitConverter
 
 
 
-        fromUnits = NEURON_UNITS;
-        PhysicalQuantity concn = new PhysicalQuantity(3, concentrationUnits[fromUnits]);
+        fromUnits = GENESIS_SI_UNITS;
+        PhysicalQuantity concn = new PhysicalQuantity(1, concentrationUnits[fromUnits]);
 
         System.out.println("Concentration: "+ concn);
 

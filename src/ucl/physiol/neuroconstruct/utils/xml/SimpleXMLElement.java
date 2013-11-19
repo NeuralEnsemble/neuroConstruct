@@ -113,7 +113,6 @@ public class SimpleXMLElement extends SimpleXMLEntity
     {
         clearCache();
         childElement.setParent(this);
-        System.out.println("addChildElementAt: "+index);
         contents.add(index, childElement);
     }
     
@@ -136,6 +135,13 @@ public class SimpleXMLElement extends SimpleXMLEntity
         clearCache();
         //comment.setParent(this);
         contents.add(new SimpleXMLComment(comment));
+    }
+    
+    public void addCommentAt(String comment, int index)
+    {
+        clearCache();
+        //comment.setParent(this);
+        contents.add(index, new SimpleXMLComment(comment));
     }
 
 
@@ -286,6 +292,13 @@ public class SimpleXMLElement extends SimpleXMLEntity
         clearCache();
         SimpleXMLContent content = new SimpleXMLContent(text);
         this.contents.add(content);
+    };
+
+    public final void addContentAt(String text, int index)
+    {
+        clearCache();
+        SimpleXMLContent content = new SimpleXMLContent(text);
+        this.contents.add(index, content);
     };
 
 

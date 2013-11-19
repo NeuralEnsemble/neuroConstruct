@@ -128,6 +128,7 @@ standardGHProject 'NengoNeuroML' 'showcase'
 standardGHProject 'NeuroMorpho' 'showcase'
 standardGHProject 'NSGPortalShowcase' 'showcase'
 standardGHProject 'simulator-test-data' 'showcase' 'mikehulluk'
+standardGHProject 'NEURONShowcase' 'showcase' 
 
 standardGHProject 'CSAShowcase' 'showcase'
 standardGHProject 'neuroConstructShowcase' 'showcase'

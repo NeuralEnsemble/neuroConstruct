@@ -142,6 +142,11 @@ public abstract class CellMechanism
         return getMechanismType().equals(CellMechanism.ION_CONCENTRATION) ||
                getMechanismType().equalsIgnoreCase(CellMechanism.NEUROML2_CONC_MODEL);
     }
+    
+    public boolean isMechanismForNeuroML2Cell()
+    {
+        return getMechanismType().equalsIgnoreCase(CellMechanism.NEUROML2_ABSTRACT_CELL);
+    }
 
 
    public void setMechanismModel(String mechanismModel)
