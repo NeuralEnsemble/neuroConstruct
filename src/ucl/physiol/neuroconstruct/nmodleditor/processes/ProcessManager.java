@@ -375,9 +375,18 @@ public class ProcessManager
                 logger.logComment("Unsuccessful compilation. File doesn't exist: "+ fileToBeCreated.getAbsolutePath()
                     +" (and neither does "+otherCheckFileToBeCreated.getAbsolutePath()+")");
 
-                GuiUtils.showErrorMessage(logger, "Problem with the compilation. File doesn't exist: "+ fileToBeCreated.getAbsolutePath()
-                    +" (and neither does "+otherCheckFileToBeCreated.getAbsolutePath()+")\nPlease note that Neuron checks every *.mod file"
-                                          +" in this file's home directory\n("+myFile.getParent()+").\nFor more information when this error occurs, enable logging at Settings -> General Properties & Project Defaults -> Logging",
+                String linMacWarn = "   NOTE: make sure you can compile NEURON mod files on your system!\n\n"
+                    + "Often, extra packages (e.g. dev packages of ncurses & readline) need to be installed to successfully run nrnivmodl, which compiles mod files\n"
+                    + "Go to "+myFile.getParent()+" and try running nrnivmodl";
+                if (GeneralUtils.isWindowsBasedPlatform())
+                    linMacWarn = "";
+                
+                GuiUtils.showErrorMessage(logger, "Problem with mod file compilation. File doesn't exist: "+ fileToBeCreated.getAbsolutePath()+"\n"
+                                 +"(and neither does "+otherCheckFileToBeCreated.getAbsolutePath()+")\n"
+                                 + "Please note that Neuron checks every *.mod file in this file's home directory\n"
+                                 + "("+myFile.getParent()+").\n"
+                    + "For more information when this error occurs, enable logging at Settings -> General Properties & Project Defaults -> Logging\n\n"
+                    + linMacWarn,
                                           null, null);
                 return false;
             }
