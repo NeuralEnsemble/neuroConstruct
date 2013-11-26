@@ -58,7 +58,7 @@ class NetworkHolder(NetworkHandler):
 
         proj = self.nmlNet.addProjection(projName, source, target, size)
 
-        sizeInfo = " as yet unspecified size"
+        sizeInfo = "as yet unspecified size"
         if (size>=0):
             sizeInfo = " size: "+ str(size)+ " connections"
 

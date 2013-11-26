@@ -18,6 +18,15 @@ import logging
 
 from SynapseProperties import SynapseProperties
 
+
+def get_cell_id_format_A(ref):
+	pop, id = handle_lems_cell_format_A(ref)
+	return id
+
+def handle_lems_cell_format_A(ref):
+	words = ref.split('/')
+	return words[1], words[2]
+
 class NeuroML2SaxHandler(xml.sax.ContentHandler):
     
   log = logging.getLogger("NeuroML2SaxHandler")
@@ -63,6 +72,7 @@ class NeuroML2SaxHandler(xml.sax.ContentHandler):
   
   latestSynapseType = ""
     
+
     
   def __init__ (self, netHandler): 
     self.netHandler = netHandler
@@ -163,7 +173,14 @@ class NeuroML2SaxHandler(xml.sax.ContentHandler):
 
       if attrs.has_key('postsynapticPopulation'):
           self.currentProjectionTarget = attrs.get('postsynapticPopulation',"") 
-          self.log.info("Projection: "+ self.currentProjectionName+" is from: "+ self.currentProjectionSource +" to: "+ self.currentProjectionTarget)           
+          self.log.info("Projection: "+ self.currentProjectionName+" is from: "+ self.currentProjectionSource +" to: "+ self.currentProjectionTarget)   
+          
+          
+      if attrs.has_key('synapse'):
+        newSynapseProps = SynapseProperties()
+            
+        self.latestSynapseType = str(attrs.get('synapse'))
+        self.globalSynapseProps[self.latestSynapseType] = newSynapseProps
           
       if attrs.get('size',"") != "":
           size = int(attrs.get('size',""))
@@ -184,28 +201,28 @@ class NeuroML2SaxHandler(xml.sax.ContentHandler):
         self.currentConnId = attrs.get('id',"")   
         self.log.debug("Found connection element: "+ self.currentConnId)  
 
-        if attrs.has_key('pre_cell_id'):
-            self.preCellId = attrs.get('pre_cell_id',"") 
-        if attrs.has_key('pre_segment_id'):
-            self.preSegId = attrs.get('pre_segment_id',"") 
+        if attrs.has_key('preCellId'):
+            self.preCellId = attrs.get('preCellId',"") 
+        if attrs.has_key('preSegmentId'):
+            self.preSegId = attrs.get('preSegmentId',"") 
         else:
             self.preSegId = 0
             
-        if attrs.has_key('pre_fraction_along'):
-            self.preFract = attrs.get('pre_fraction_along',"")  
+        if attrs.has_key('preFractionAlong'):
+            self.preFract = attrs.get('preFractionAlong',"")  
         else:
             self.preFract = 0.5
 
 
-        if attrs.has_key('post_cell_id'):
-            self.postCellId = attrs.get('post_cell_id',"") 
-        if attrs.has_key('post_segment_id'):
-            self.postSegId = attrs.get('post_segment_id',"") 
+        if attrs.has_key('postCellId'):
+            self.postCellId = attrs.get('postCellId',"") 
+        if attrs.has_key('postSegmentId'):
+            self.postSegId = attrs.get('postSegmentId',"") 
         else:
             self.postSegId = 0
             
-        if attrs.has_key('post_fraction_along'):
-            self.postFract = attrs.get('post_fraction_along',"")  
+        if attrs.has_key('postFractionAlong'):
+            self.postFract = attrs.get('postFractionAlong',"")  
         else:
             self.postFract = 0.5
         
@@ -215,9 +232,6 @@ class NeuroML2SaxHandler(xml.sax.ContentHandler):
         for synType in synTypes:
             self.localSynapseProps[synType] = self.globalSynapseProps[synType].copy()
         
-          
-                 
-           
 	   
           
     elif name == 'synapse_props':
@@ -305,9 +319,11 @@ class NeuroML2SaxHandler(xml.sax.ContentHandler):
                       
             self.log.info("Changed vals of local syn props: "+ synapse_type+": "+ str(synProps))      
 	            
-    elif name == 'input':
+    elif name == 'inputList':
       self.currentInputName = attrs.get('id',"")   
-      self.log.info("Found input element: "+ self.currentInputName)   
+      self.currentInputTarget = attrs.get('population',"")
+        
+      self.log.info("Found inputList: "+ self.currentInputName+" to population: "+self.currentInputTarget) 
       
            
     elif name == 'random_stim':
@@ -336,8 +352,9 @@ class NeuroML2SaxHandler(xml.sax.ContentHandler):
       self.netHandler.handleInputSource(self.currentInputName, self.currentInputTarget, self.currentInputProps, size)
       
            
-    elif name == 'site':
-        cell_id = int(attrs.get('cell_id',""))
+    elif name == 'input':
+	target_string = attrs.get('target',"")
+        cell_id = int(get_cell_id_format_A(target_string))
         segment_id = 0
         fract = 0.5
         if attrs.has_key('segment_id'):
@@ -373,7 +390,7 @@ class NeuroML2SaxHandler(xml.sax.ContentHandler):
    if self.isSynapseTypeElement== 1:
      self.latestSynapseType = ch
      
-         
+
          
   def endElement(self, name):
       
@@ -432,7 +449,7 @@ class NeuroML2SaxHandler(xml.sax.ContentHandler):
       self.isSynapseTypeElement = 0    
       self.log.debug("Found end of synapse_type: "+ self.latestSynapseType)       
       
-    elif name == 'input':        
+    elif name == 'inputList':        
         self.netHandler.finaliseInputSource(self.currentInputName) 
         currentInputName = ""
         currentInputProps = {}
