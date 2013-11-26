@@ -318,7 +318,7 @@ public class NeuroMLFileManager
 
             rootElement.addContent("\n\n");
 
-            ArrayList<SimpleXMLEntity> netEntities = project.generatedNetworkConnections.getNetworkMLElements(preferredUnits, extraComments, version);
+            ArrayList<SimpleXMLEntity> netEntities = project.generatedNetworkConnections.getNeuroMLElements(preferredUnits, extraComments, version);
 
             for (SimpleXMLEntity netEntity : netEntities)
             {
@@ -1535,14 +1535,21 @@ public class NeuroMLFileManager
             //String units = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS);
             String units = UnitConverter.getUnitSystemDescription(UnitConverter.GENESIS_SI_UNITS);
             
-            File projFile = new File("osb/showcase/neuroConstructShowcase/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
+            //File projFile = new File("osb/showcase/neuroConstructShowcase/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
             //File projFile = new File("models/LarkumEtAl2009/LarkumEtAl2009.ncx");
             //File projFile = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
             //projFile = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCellVSCS/neuroConstruct/GranuleCellVSCS.ncx");
             //projFile = new File("nCmodels/RothmanEtAl_KoleEtAl_PyrCell/RothmanEtAl_KoleEtAl_PyrCell.ncx");
             //projFile = new File("../nC_projects/Thaal/Thaal.ncx");
             //File projFile = new File("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
-            //File projFile = new File("osb/showcase/neuroConstructShowcase/Ex4_HHcell/Ex4_HHcell.ncx");
+            File projFile = new File("osb/showcase/neuroConstructShowcase/Ex4_HHcell/Ex4_HHcell.ncx");
+            //File projFile = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
+            
+            
+            Project p = Project.loadProject(projFile, null);
+            //Proje
+            ProjectManager pm = new ProjectManager(null, null);
+            pm.setCurrentProject(p);
 
             String simConf = SimConfigInfo.DEFAULT_SIM_CONFIG_NAME;
 
@@ -1566,15 +1573,16 @@ public class NeuroMLFileManager
             {
                 simConf = "TestIndividualChannels";
             }
+            else if (projFile.getName().startsWith("ACnet2"))
+            {
+                simConf = "TestChannels";
+                p.simulationParameters.setDt(0.01f);
+            }
             /*else if (projFile.getName().startsWith("Ex10_NeuroML2"))
             {
                 simConf = "Test NeuroML2 ionChannel";
             }*/
 
-            Project p = Project.loadProject(projFile, null);
-            //Proje
-            ProjectManager pm = new ProjectManager(null, null);
-            pm.setCurrentProject(p);
 
             String ref = "LEMS_test";
             ref= ref + (version.isVersion2betaOrLater() ? "_beta":"_alpha");

@@ -848,13 +848,13 @@ public class GeneratedNetworkConnections
     public SimpleXMLEntity getNetworkMLElement(int unitSystem,
                                                 boolean extraComments) throws NeuroMLException
     {
-        return getNetworkMLElements(unitSystem,
+        return getNeuroMLElements(unitSystem,
                                    extraComments,
                                    NeuroMLVersion.NEUROML_VERSION_1).get(0);
     }
     
     
-    public ArrayList<SimpleXMLEntity> getNetworkMLElements(int unitSystem,
+    public ArrayList<SimpleXMLEntity> getNeuroMLElements(int unitSystem,
                                                 boolean extraComments,
                                                 NeuroMLVersion version) throws NeuroMLException
     {
@@ -1570,7 +1570,7 @@ public class GeneratedNetworkConnections
             
             System.out.println("Ready...");
 
-            ArrayList<SimpleXMLEntity> networkMLElements = gnc.getNetworkMLElements(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, false, NeuroMLVersion.getLatestVersion());
+            ArrayList<SimpleXMLEntity> networkMLElements = gnc.getNeuroMLElements(UnitConverter.GENESIS_PHYSIOLOGICAL_UNITS, false, NeuroMLVersion.getLatestVersion());
 
             for (SimpleXMLEntity sxe: networkMLElements) {
                 System.out.println("--- conns: "+sxe.getXMLString("", false));

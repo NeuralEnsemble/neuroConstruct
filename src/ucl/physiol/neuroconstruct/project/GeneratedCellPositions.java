@@ -538,6 +538,9 @@ public class GeneratedCellPositions
                     if (version.isVersion2Latest())
                     {
                         populationElement.addAttribute(new SimpleXMLAttribute("type", NetworkMLConstants.NEUROML2_POPULATION_LIST));
+                        
+                        // This may be removed in later versions of NML2; redundant info, though useful when parsing large files...
+                        populationElement.addAttribute(new SimpleXMLAttribute(NetworkMLConstants.NEUROML2_POPULATION_SIZE, cellsHere.size()+""));
 
                         for (int i = 0; i < cellsHere.size(); i++)
                         {

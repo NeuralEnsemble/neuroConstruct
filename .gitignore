@@ -1,3 +1,4 @@
+/pythonNeuroML/Examples/random.nml
 /docs/parallel/parallel.out
 /docs/parallel/parallel.log
 /docs/parallel/parallel.aux
@@ -38,6 +39,7 @@ classes
 *.*~
 
 *py.class
+*.pyc
 osb2
 
 lib/jython/cachedir/packages/*.pkc

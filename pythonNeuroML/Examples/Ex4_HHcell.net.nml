@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<neuroml xmlns="http://www.neuroml.org/schema/neuroml2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2  https://raw.github.com/NeuroML/NeuroML2/development/Schemas/NeuroML2/NeuroML_v2beta1.xsd" id="network_Ex4_HHcell">
+
+    <notes>
+
+Network structure (NeuroML 2beta1) for project: Ex4_HHcell saved with neuroConstruct v1.7.0 on: 09:53:17, 26-Nov-13
+
+Cell Group: CG1 contains 1 cells
+Cell Group: CG2 contains 1 cells
+
+Network connection: NetConn_1 contains 1 individual synaptic connections
+
+
+    </notes>
+
+
+    <include href="TestCell_ChannelML.cell.nml"/>
+    <include href="KConductance.channel.nml"/>
+    <include href="NaConductance.channel.nml"/>
+    <include href="LeakConductance.channel.nml"/>
+    <include href="DoubExpSyn.synapse.nml"/>
+
+    <pulseGenerator id="Input_0" delay="0.02s" duration="0.06s" amplitude="2.0E-10A"/>
+
+    
+    <network id="network_Ex4_HHcell" type="networkWithTemperature" temperature="6.3 degC">
+
+        
+
+        <population id="CG1" component="TestCell_ChannelML" type="populationList" size="1">
+            <instance id="0">
+                <location x="36.18885" y="12.664655" z="68.89554"/>
+            </instance>
+        </population>
+
+        <population id="CG2" component="TestCell_ChannelML" type="populationList" size="1">
+            <instance id="0">
+                <location x="73.056046" y="62.944077" z="96.70434"/>
+            </instance>
+        </population>
+
+
+
+        <projection id="NetConn_1" presynapticPopulation="CG1" postsynapticPopulation="CG2" synapse="DoubExpSyn">
+            <connection id="0" preCellId="../CG1/0/TestCell_ChannelML" postCellId="../CG2/0/TestCell_ChannelML" preSegmentId="0" preFractionAlong="0.5" postSegmentId="0" postFractionAlong="0.5"/>
+        </projection>
+
+        <inputList id="Input_0" component="Input_0" population="CG1">
+                <input id="0" target="../CG1/0/TestCell_ChannelML" destination="synapses"/>
+            </inputList>
+
+
+
+
+
+    </network>
+
+</neuroml>
