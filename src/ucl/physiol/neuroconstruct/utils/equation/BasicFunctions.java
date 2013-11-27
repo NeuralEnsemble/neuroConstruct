@@ -51,10 +51,14 @@ public class BasicFunctions implements Serializable
     public static String HEAVISIDE = "H";
     public static String RANDOM = "random";
     public static String SQUAREROOT = "sqrt";
+    public static String HYPERBOLICSINE = "sinh";
+    public static String HYPERBOLICCOSINE = "cosh";
+    public static String HYPERBOLICTANGENT = "tanh";
     //public static String SQUARE = "sqr";      // Note: gets confused with sqrt when parsing eqns! Better name?
 
     public static String[] allFunctions
-        = new String[]{SINE,COSINE,TANGENT,EXPONENT,LN,LOG, HEAVISIDE, RANDOM, SQUAREROOT};
+        = new String[]{SINE,COSINE,TANGENT,EXPONENT,LN,LOG, HEAVISIDE, RANDOM, SQUAREROOT,
+		       HYPERBOLICSINE, HYPERBOLICCOSINE, HYPERBOLICTANGENT};
 
 
  /*
@@ -130,6 +134,22 @@ public class BasicFunctions implements Serializable
          {
 
              FunctionUnit eq = new SqrtFunctionUnit(internalEqn);
+             return eq;
+         }
+         else if (name.equals(HYPERBOLICSINE))
+         {
+             FunctionUnit eq = new HypSinFunctionUnit(internalEqn);
+             return eq;
+         }
+         else if (name.equals(HYPERBOLICCOSINE))
+         {
+             
+             FunctionUnit eq = new HypCosFunctionUnit(internalEqn);
+             return eq;
+         }
+         else if (name.equals(HYPERBOLICTANGENT))
+         {
+             FunctionUnit eq = new HypTanFunctionUnit(internalEqn);
              return eq;
          }
 

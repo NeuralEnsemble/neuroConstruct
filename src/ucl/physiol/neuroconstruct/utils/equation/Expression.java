@@ -508,29 +508,40 @@ public class Expression
 
                 logger.logComment(commentIndent +"Comparing to: "+ nextFunc);
 
-                if (line.startsWith(nextFunc))
+		if (line.startsWith(nextFunc))
                 {
-                    logger.logComment(commentIndent +"Think it's "+ nextFunc);
+                    logger.logComment(commentIndent + "Think it's "+ nextFunc);
+                    logger.logComment(commentIndent + "Looking for bracket");
+
                     int funcBracket  = line.indexOf("(");
+
                     if (funcBracket<0)
                     {
                         throw new EquationException("Unable to determine brackets for function: "
                                                     +nextFunc
                             + " in line: "+ originalLine);
                     }
-                    int endBracket = getIndexClosingBracket(line, nextFunc.length());
 
-                    String internalExp = line.substring(funcBracket+1, endBracket);
+                    logger.logComment(commentIndent + "Any extra stuff before bracket?");
+		    if (line.substring(nextFunc.length(), funcBracket).trim().length() > 0){
+			logger.logComment(commentIndent + "Can be a different function with same prefix!");
+		    }
+		    else{
+
+			int endBracket = getIndexClosingBracket(line, nextFunc.length());
+
+			String internalExp = line.substring(funcBracket+1, endBracket);
 
 
-                    EquationUnit internalEqn = parseCleansedExpression(internalExp, variables);
+			EquationUnit internalEqn = parseCleansedExpression(internalExp, variables);
 
-                    equationSoFar = BasicFunctions.getFunction(nextFunc, internalEqn);
+			equationSoFar = BasicFunctions.getFunction(nextFunc, internalEqn);
 
-                    if (endBracket< line.length()-1)
-                        remainder = line.substring(endBracket+1);
+			if (endBracket< line.length()-1)
+			    remainder = line.substring(endBracket+1);
                     
-                    logger.logComment(commentIndent +"remainder: "+ remainder);
+			logger.logComment(commentIndent +"remainder: "+ remainder);
+		    }
                     
                 }
             }

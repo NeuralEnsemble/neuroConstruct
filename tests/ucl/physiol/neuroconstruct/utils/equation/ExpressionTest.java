@@ -73,7 +73,10 @@ public class ExpressionTest {
                                             "H(100+ (-v))",
                                             "v^2 + v^3",
                                             "2^3+ 2 / 2 ^ 2 * 4",
-                                            "1.0 / (91000 * (v + 0.048)/ (1.0 - (exp ((-1.0 * 0.048 - v)/ 0.005))) + (-1.0 * 62000) * (v + 0.048)/ (1.0 - (exp ((v + 0.048)/ 0.005))))"};
+                                            "1.0 / (91000 * (v + 0.048)/ (1.0 - (exp ((-1.0 * 0.048 - v)/ 0.005))) + (-1.0 * 62000) * (v + 0.048)/ (1.0 - (exp ((v + 0.048)/ 0.005))))",
+					    "cosh(v) ^2 - sinh (v)^2",
+					    "tanh(v) - sinh(v)/cosh  (v)"
+	};
         
         Variable v = new Variable("v");
         Variable t = new Variable("t");
@@ -99,6 +102,7 @@ public class ExpressionTest {
         Argument[] v99 = new Argument[]{new Argument(v.getName(), 99)};
         Argument[] v101 = new Argument[]{new Argument(v.getName(), 101)};
         double halfPi = Math.PI/2;
+
         
         Argument[] v90deg = new Argument[]{new Argument(v.getName(), halfPi)};
         
@@ -120,6 +124,14 @@ public class ExpressionTest {
         assertEquals(eqnUnits.get(14).evaluateAt(v1), 2, 0);
         assertEquals(eqnUnits.get(14).evaluateAt(v3), 36, 0);
         assertEquals(eqnUnits.get(15).evaluateAt(v3), 10, 0);
+
+        assertEquals(eqnUnits.get(17).evaluateAt(v0), 1.0, 1e-12);
+        assertEquals(eqnUnits.get(17).evaluateAt(v1), 1.0, 1e-12);
+        assertEquals(eqnUnits.get(17).evaluateAt(v90deg), 1.0, 1e-16);
+	
+        assertEquals(eqnUnits.get(18).evaluateAt(v0), 0, 1e-16);
+        assertEquals(eqnUnits.get(18).evaluateAt(v99), 0, 1e-16);
+        assertEquals(eqnUnits.get(18).evaluateAt(v90deg), 0, 1e-16);
         
     }
     
