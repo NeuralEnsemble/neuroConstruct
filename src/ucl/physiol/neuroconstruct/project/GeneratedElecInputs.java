@@ -535,7 +535,7 @@ public class GeneratedElecInputs
                 // Iterate around the list of sites
                 for (int i=0; i < inputsHere.size() ; i++)
                 {
-                    inputTargetSitesElement.addContent("\n                ");
+                    inputTargetSitesElement.addContent("\n            ");
 
                     SingleElectricalInput sei = inputsHere.get(i);
                     
@@ -677,7 +677,7 @@ public class GeneratedElecInputs
                     }
 
                     if (i == inputsHere.size()-1) 
-                        inputTargetSitesElement.addContent("\n            ");
+                        inputTargetSitesElement.addContent("\n        ");
                         
                 // Next Site
                 }                

@@ -269,8 +269,10 @@ public class NeuroMLFileManager
 
             if (nml2)
             {
+                    
                 if (filesToInclude!=null) 
                 {
+                    filesToInclude = (ArrayList<File>)GeneralUtils.reorderAlphabetically(filesToInclude, true);
                     for (File f: filesToInclude) 
                     {
                         SimpleXMLElement incEl1 = new SimpleXMLElement(MorphMLConstants.INCLUDE_V2);
@@ -1287,7 +1289,6 @@ public class NeuroMLFileManager
                 runScript.append(" -neuron");
             }
 
-
             if (runInBackground)
             {
                 runScript.append(" -nogui");
@@ -1296,80 +1297,84 @@ public class NeuroMLFileManager
             runScript.append("\n");
 
             GeneralUtils.writeShortFile(runFile, runScript.toString());
-
-            Runtime rt = Runtime.getRuntime();
-            // bit of a hack...
-            rt.exec(new String[]
+            
+            if (!lemsOption.equals(LemsOption.LEMS_WITHOUT_EXECUTE_MODEL))
             {
-                "chmod", "u+x", runFile.getAbsolutePath()
-            });
 
-            String executable = runFile.getAbsolutePath();
-
-            if (GeneralUtils.isWindowsBasedPlatform())
-            {
-                executable = GeneralProperties.getExecutableCommandLine() + " " + nml2ExeName + " " + lemsFile.getAbsolutePath();
-            }
-            File dirToRunIn = ProjectStructure.getNeuroML2Dir();
-
-
-            File positionsFile = new File(simDir, SimulationData.POSITION_DATA_FILE);
-            File netConnsFile = new File(simDir, SimulationData.NETCONN_DATA_FILE);
-            File elecInputFile = new File(simDir, SimulationData.ELEC_INPUT_DATA_FILE);
-            try
-            {
-                project.generatedCellPositions.saveToFile(positionsFile);
-                project.generatedNetworkConnections.saveToFile(netConnsFile);
-                project.generatedElecInputs.saveToFile(elecInputFile);
-            }
-            catch (IOException ex)
-            {
-                GuiUtils.showErrorMessage(logger,
-                                          "Problem saving generated positions in file: " + positionsFile.getAbsolutePath(),
-                                          ex, null);
-                return;
-            }
-
-            // Saving summary of the simulation params
-            try
-            {
-                String sim = "LEMS";
-                if (version.isVersion2alpha())
-                    sim = "LEMSalpha";
-                SimulationsInfo.recordSimulationSummary(project, simConf, simDir, sim, null, units);
-            }
-            catch (IOException ex2)
-            {
-                GuiUtils.showErrorMessage(logger, "Error when trying to save a summary of the simulation settings in dir: " + simDir
-                                                  + "\nThere will be less info on this simulation in the previous simulation browser dialog", ex2, null);
-            }
-
-
-            logger.logComment("Going to execute: " + executable + " in dir: "
-                              + dirToRunIn, true);
-
-            //Process process = rt.exec(executable, null, dirToRunIn);
-            ucl.physiol.neuroconstruct.hpc.utils.ProcessManager.runCommand(executable, "LEMS", 5, dirToRunIn);
-
-            if (lemsOption.equals(LemsOption.GENERATE_GRAPH))
-            {
-                File imageFile = new File(generateDir, lemsFileName.replace(".xml", ".png"));
-                logger.logComment("Searching for image: " + imageFile.getAbsolutePath(), true);
-
-                if (imageFile.exists())
+                Runtime rt = Runtime.getRuntime();
+                // bit of a hack...
+                rt.exec(new String[]
                 {
-                    GuiUtils.showImage(imageFile);
+                    "chmod", "u+x", runFile.getAbsolutePath()
+                });
+
+                String executable = runFile.getAbsolutePath();
+
+                if (GeneralUtils.isWindowsBasedPlatform())
+                {
+                    executable = GeneralProperties.getExecutableCommandLine() + " " + nml2ExeName + " " + lemsFile.getAbsolutePath();
                 }
-                else
+                File dirToRunIn = ProjectStructure.getNeuroML2Dir();
+
+
+                File positionsFile = new File(simDir, SimulationData.POSITION_DATA_FILE);
+                File netConnsFile = new File(simDir, SimulationData.NETCONN_DATA_FILE);
+                File elecInputFile = new File(simDir, SimulationData.ELEC_INPUT_DATA_FILE);
+                try
                 {
-                    try
+                    project.generatedCellPositions.saveToFile(positionsFile);
+                    project.generatedNetworkConnections.saveToFile(netConnsFile);
+                    project.generatedElecInputs.saveToFile(elecInputFile);
+                }
+                catch (IOException ex)
+                {
+                    GuiUtils.showErrorMessage(logger,
+                                              "Problem saving generated positions in file: " + positionsFile.getAbsolutePath(),
+                                              ex, null);
+                    return;
+                }
+
+                // Saving summary of the simulation params
+                try
+                {
+                    String sim = "LEMS";
+                    if (version.isVersion2alpha())
+                        sim = "LEMSalpha";
+                    SimulationsInfo.recordSimulationSummary(project, simConf, simDir, sim, null, units);
+                }
+                catch (IOException ex2)
+                {
+                    GuiUtils.showErrorMessage(logger, "Error when trying to save a summary of the simulation settings in dir: " + simDir
+                                                      + "\nThere will be less info on this simulation in the previous simulation browser dialog", ex2, null);
+                }
+
+
+                logger.logComment("Going to execute: " + executable + " in dir: "
+                                  + dirToRunIn, true);
+
+                //Process process = rt.exec(executable, null, dirToRunIn);
+                ucl.physiol.neuroconstruct.hpc.utils.ProcessManager.runCommand(executable, "LEMS", 5, dirToRunIn);
+
+                if (lemsOption.equals(LemsOption.GENERATE_GRAPH))
+                {
+                    File imageFile = new File(generateDir, lemsFileName.replace(".xml", ".png"));
+                    logger.logComment("Searching for image: " + imageFile.getAbsolutePath(), true);
+
+                    if (imageFile.exists())
                     {
-                        Thread.sleep(5000);
                         GuiUtils.showImage(imageFile);
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        GuiUtils.showErrorMessage(logger, "Problem displaying file: " + imageFile, ex, null);
+                        try
+                        {
+                            Thread.sleep(5000);
+                            GuiUtils.showImage(imageFile);
+                        }
+                        catch (Exception ex)
+                        {
+                            GuiUtils.showErrorMessage(logger, "Problem displaying file: " + imageFile, ex, null);
+                        }
                     }
                 }
             }
@@ -1537,12 +1542,12 @@ public class NeuroMLFileManager
             
             //File projFile = new File("osb/showcase/neuroConstructShowcase/Ex10_NeuroML2/Ex10_NeuroML2.ncx");
             //File projFile = new File("models/LarkumEtAl2009/LarkumEtAl2009.ncx");
-            //File projFile = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
+            File projFile = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCell/neuroConstruct/GranuleCell.ncx");
             //projFile = new File("osb/cerebellum/cerebellar_granule_cell/GranuleCellVSCS/neuroConstruct/GranuleCellVSCS.ncx");
             //projFile = new File("nCmodels/RothmanEtAl_KoleEtAl_PyrCell/RothmanEtAl_KoleEtAl_PyrCell.ncx");
             //projFile = new File("../nC_projects/Thaal/Thaal.ncx");
             //File projFile = new File("osb/hippocampus/CA1_pyramidal_neuron/CA1PyramidalCell/neuroConstruct/CA1PyramidalCell.ncx");
-            File projFile = new File("osb/showcase/neuroConstructShowcase/Ex4_HHcell/Ex4_HHcell.ncx");
+            //File projFile = new File("osb/showcase/neuroConstructShowcase/Ex4_HHcell/Ex4_HHcell.ncx");
             //File projFile = new File("osb/cerebral_cortex/networks/ACnet2/neuroConstruct/ACnet2.ncx");
             
             

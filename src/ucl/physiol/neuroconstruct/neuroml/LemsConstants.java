@@ -100,7 +100,7 @@ public class LemsConstants
             @Override
             public String toString()
             {
-                return "Do nothing";
+                return "Do nothing, just generate NeuroML";
             }
         },
         EXECUTE_MODEL
@@ -108,7 +108,15 @@ public class LemsConstants
             @Override
             public String toString()
             {
-                return "Run with LEMS Interpreter";
+                return "Run with jNeuroML";
+            }
+        },
+        LEMS_WITHOUT_EXECUTE_MODEL
+        {
+            @Override
+            public String toString()
+            {
+                return "Generate LEMS XML file too, but don't execute";
             }
         },
         GENERATE_GRAPH
