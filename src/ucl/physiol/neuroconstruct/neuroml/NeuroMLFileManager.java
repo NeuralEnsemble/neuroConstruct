@@ -98,7 +98,7 @@ public class NeuroMLFileManager
                     return true;
             }
         }
-        catch (Exception e) 
+        catch (IOException e) 
         {
             throw new NeuroMLException("Unable to determine version of: "+nmlFile, e);
         }
@@ -106,6 +106,23 @@ public class NeuroMLFileManager
         
     }
 
+    public static File saveNetworkStructureXML(Project project,
+                                               File neuroMLFile,
+                                               boolean zipped,
+                                               boolean extraComments,
+                                               String simConfig,
+                                               String units,
+                                               NeuroMLVersion version) throws NeuroMLException
+    {
+        return saveNetworkStructureXML(project,
+                                        neuroMLFile,
+                                        zipped,
+                                        extraComments,
+                                        simConfig,
+                                        units,
+                                        version,
+                                        null);
+    }
     public static File saveNetworkStructureXML(Project project,
                                                File neuroMLFile,
                                                boolean zipped,
@@ -455,10 +472,14 @@ public class NeuroMLFileManager
                 return zipFile;
             }
         }
-        catch (Exception ex)
+        catch (NeuroMLException ex)
         {
             logger.logError("Problem creating NeuroML file: " + neuroMLFile.getAbsolutePath(), ex);
 
+            throw new NeuroMLException("Problem creating NeuroML file: " + neuroMLFile.getAbsolutePath() + "\n" + ex.getMessage(), ex);
+        } catch (IOException ex) {
+            logger.logError("Problem creating NeuroML file: " + neuroMLFile.getAbsolutePath(), ex);
+            
             throw new NeuroMLException("Problem creating NeuroML file: " + neuroMLFile.getAbsolutePath() + "\n" + ex.getMessage(), ex);
         }
     }
