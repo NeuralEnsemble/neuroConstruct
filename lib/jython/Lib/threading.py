@@ -12,7 +12,8 @@ import sys as _sys
 from traceback import print_exc as _print_exc
 
 # Rename some stuff so "from threading import *" is safe
-__all__ = ['activeCount', 'Condition', 'currentThread', 'enumerate', 'Event',
+__all__ = ['activeCount', 'active_count', 'Condition', 'currentThread',
+           'current_thread', 'enumerate', 'Event',
            'Lock', 'RLock', 'Semaphore', 'BoundedSemaphore', 'Thread',
            'Timer', 'setprofile', 'settrace', 'local', 'stack_size']
 
@@ -130,8 +131,12 @@ class JavaThread(object):
     def setName(self, name):
         self._thread.setName(str(name))
 
+    name = property(getName, setName)
+
     def isAlive(self):
         return self._thread.isAlive()
+
+    is_alive = isAlive
 
     def isDaemon(self):
         return self._thread.isDaemon()
@@ -261,8 +266,12 @@ def currentThread():
         pythread = JavaThread(jthread)
     return pythread
 
+current_thread = currentThread
+
 def activeCount():
     return len(_threads)
+
+active_count = activeCount
 
 def enumerate():
     return _threads.values()
@@ -384,6 +393,8 @@ class _Event(_Verbose):
 
     def isSet(self):
         return self.__flag
+
+    is_set = isSet
 
     def set(self):
         self.__cond.acquire()

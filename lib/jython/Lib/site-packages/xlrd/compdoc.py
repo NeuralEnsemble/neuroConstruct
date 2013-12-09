@@ -4,7 +4,7 @@
 # Implements the minimal functionality required
 # to extract a "Workbook" or "Book" stream (as one big string)
 # from an OLE2 Compound Document file.
-# <p>Copyright © 2005-2008 Stephen John Machin, Lingfo Pty Ltd</p>
+# <p>Copyright © 2005-2012 Stephen John Machin, Lingfo Pty Ltd</p>
 # <p>This module is part of the xlrd package, which is released under a BSD-style licence.</p>
 ##
 
@@ -15,10 +15,11 @@
 # 2007-05-07 SJM Meaningful exception instead of IndexError if a SAT (sector allocation table) is corrupted.
 # 2007-04-22 SJM Missing "<" in a struct.unpack call => can't open files on bigendian platforms.
 
-
+from __future__ import nested_scopes
 import sys
 from struct import unpack
 from timemachine import *
+import array
 
 ##
 # Magic cookie that should appear in the first 8 bytes of the file.
@@ -28,20 +29,17 @@ EOCSID = -2
 FREESID = -1
 SATSID = -3
 MSATSID = -4
+EVILSID = -5
 
 class CompDocError(Exception):
     pass
 
 class DirNode(object):
 
-    def __init__(self, DID, dent, DEBUG=0):
+    def __init__(self, DID, dent, DEBUG=0, logfile=sys.stdout):
         # dent is the 128-byte directory entry
         self.DID = DID
-        # (cbufsize, self.etype, self.colour, self.left_DID, self.right_DID,
-        # self.root_DID,
-        # self.first_SID,
-        # self.tot_size) = \
-        #     unpack('<HBBiii16x4x8x8xii4x', dent[64:128])
+        self.logfile = logfile
         (cbufsize, self.etype, self.colour, self.left_DID, self.right_DID,
         self.root_DID) = \
             unpack('<HBBiii', dent[64:80])
@@ -58,12 +56,12 @@ class DirNode(object):
             self.dump(DEBUG)
 
     def dump(self, DEBUG=1):
-        print "DID=%d name=%r etype=%d DIDs(left=%d right=%d root=%d parent=%d kids=%r) first_SID=%d tot_size=%d" \
+        print >> self.logfile, "DID=%d name=%r etype=%d DIDs(left=%d right=%d root=%d parent=%d kids=%r) first_SID=%d tot_size=%d" \
             % (self.DID, self.name, self.etype, self.left_DID,
             self.right_DID, self.root_DID, self.parent, self.children, self.first_SID, self.tot_size)
         if DEBUG == 2:
             # cre_lo, cre_hi, mod_lo, mod_hi = tsinfo
-            print "timestamp info", self.tsinfo
+            print >> self.logfile, "timestamp info", self.tsinfo
 
 def _build_family_tree(dirlist, parent_DID, child_DID):
     if child_DID < 0: return
@@ -83,6 +81,7 @@ class CompDoc(object):
 
     def __init__(self, mem, logfile=sys.stdout, DEBUG=0):
         self.logfile = logfile
+        self.DEBUG = DEBUG
         if mem[0:8] != SIGNATURE:
             raise CompDocError('Not an OLE2 compound document')
         if mem[28:30] != '\xFE\xFF':
@@ -104,26 +103,33 @@ class CompDoc(object):
             sssz = 6
         self.sec_size = sec_size = 1 << ssz
         self.short_sec_size = 1 << sssz
+        if self.sec_size != 512 or self.short_sec_size != 64:
+            print >> logfile, "@@@@ sec_size=%d short_sec_size=%d" % (self.sec_size, self.short_sec_size)
         (
             SAT_tot_secs, self.dir_first_sec_sid, _unused, self.min_size_std_stream,
             SSAT_first_sec_sid, SSAT_tot_secs,
-            MSAT_first_sec_sid, MSAT_tot_secs,
+            MSATX_first_sec_sid, MSATX_tot_secs,
         # ) = unpack('<ii4xiiiii', mem[44:76])
         ) = unpack('<iiiiiiii', mem[44:76])
         mem_data_len = len(mem) - 512
         mem_data_secs, left_over = divmod(mem_data_len, sec_size)
         if left_over:
             #### raise CompDocError("Not a whole number of sectors")
+            mem_data_secs += 1
             print >> logfile, \
                 "WARNING *** file size (%d) not 512 + multiple of sector size (%d)" \
                 % (len(mem), sec_size)
+        self.mem_data_secs = mem_data_secs # use for checking later
+        self.mem_data_len = mem_data_len
+        seen = self.seen = array.array('B', [0]) * mem_data_secs
+
         if DEBUG:
             print >> logfile, 'sec sizes', ssz, sssz, sec_size, self.short_sec_size
             print >> logfile, "mem data: %d bytes == %d sectors" % (mem_data_len, mem_data_secs)
             print >> logfile, "SAT_tot_secs=%d, dir_first_sec_sid=%d, min_size_std_stream=%d" \
                 % (SAT_tot_secs, self.dir_first_sec_sid, self.min_size_std_stream,)
             print >> logfile, "SSAT_first_sec_sid=%d, SSAT_tot_secs=%d" % (SSAT_first_sec_sid, SSAT_tot_secs,)
-            print >> logfile, "MSAT_first_sec_sid=%d, MSAT_tot_secs=%d" % (MSAT_first_sec_sid, MSAT_tot_secs,)
+            print >> logfile, "MSATX_first_sec_sid=%d, MSATX_tot_secs=%d" % (MSATX_first_sec_sid, MSATX_tot_secs,)
         nent = int_floor_div(sec_size, 4) # number of SID entries in a sector
         fmt = "<%di" % nent
         trunc_warned = 0
@@ -131,25 +137,56 @@ class CompDoc(object):
         # === build the MSAT ===
         #
         MSAT = list(unpack('<109i', mem[76:512]))
-        sid = MSAT_first_sec_sid
-        while sid >= 0:
-            if sid >= mem_data_secs:
-                raise CompDocError(
-                    "MSAT extension: accessing sector %d but only %d in file" % (sid, mem_data_secs)
-                    )
-            offset = 512 + sec_size * sid
-            news = list(unpack(fmt, mem[offset:offset+sec_size]))
-            sid = news.pop()
-            MSAT.extend(news)
+        SAT_sectors_reqd = int_floor_div(mem_data_secs + nent - 1, nent)
+        expected_MSATX_sectors = max(0, int_floor_div(SAT_sectors_reqd - 109 + nent - 2, nent - 1))
+        actual_MSATX_sectors = 0
+        if MSATX_tot_secs == 0 and MSATX_first_sec_sid in (EOCSID, FREESID, 0):
+            # Strictly, if there is no MSAT extension, then MSATX_first_sec_sid
+            # should be set to EOCSID ... FREESID and 0 have been met in the wild.
+            pass # Presuming no extension
+        else:
+            sid = MSATX_first_sec_sid
+            while sid not in (EOCSID, FREESID):
+                # Above should be only EOCSID according to MS & OOo docs
+                # but Excel doesn't complain about FREESID. Zero is a valid
+                # sector number, not a sentinel.
+                if DEBUG > 1:
+                    print >> logfile, 'MSATX: sid=%d (0x%08X)' % (sid, sid)
+                if sid >= mem_data_secs:
+                    msg = "MSAT extension: accessing sector %d but only %d in file" % (sid, mem_data_secs)
+                    if DEBUG > 1:
+                        print >> logfile, msg
+                        break
+                    raise CompDocError(msg)
+                elif sid < 0:
+                    raise CompDocError("MSAT extension: invalid sector id: %d" % sid)
+                if seen[sid]:
+                    raise CompDocError("MSAT corruption: seen[%d] == %d" % (sid, seen[sid]))
+                seen[sid] = 1
+                actual_MSATX_sectors += 1
+                if DEBUG and actual_MSATX_sectors > expected_MSATX_sectors:
+                    print >> logfile, "[1]===>>>", mem_data_secs, nent, SAT_sectors_reqd, expected_MSATX_sectors, actual_MSATX_sectors
+                offset = 512 + sec_size * sid
+                MSAT.extend(unpack(fmt, mem[offset:offset+sec_size]))
+                sid = MSAT.pop() # last sector id is sid of next sector in the chain
+                
+        if DEBUG and actual_MSATX_sectors != expected_MSATX_sectors:
+            print >> logfile, "[2]===>>>", mem_data_secs, nent, SAT_sectors_reqd, expected_MSATX_sectors, actual_MSATX_sectors
         if DEBUG:
             print >> logfile, "MSAT: len =", len(MSAT)
-            print >> logfile, MSAT
+            dump_list(MSAT, 10, logfile)
         #
         # === build the SAT ===
         #
         self.SAT = []
-        for msid in MSAT:
-            if msid == FREESID: continue
+        actual_SAT_sectors = 0
+        dump_again = 0
+        for msidx in xrange(len(MSAT)):
+            msid = MSAT[msidx]
+            if msid in (FREESID, EOCSID):
+                # Specification: the MSAT array may be padded with trailing FREESID entries.
+                # Toleration: a FREESID or EOCSID entry anywhere in the MSAT array will be ignored.
+                continue
             if msid >= mem_data_secs:
                 if not trunc_warned:
                     print >> logfile, "WARNING *** File is truncated, or OLE2 MSAT is corrupt!!"
@@ -157,29 +194,46 @@ class CompDoc(object):
                         "INFO: Trying to access sector %d but only %d available" \
                         % (msid, mem_data_secs)
                     trunc_warned = 1
+                MSAT[msidx] = EVILSID
+                dump_again = 1
                 continue
+            elif msid < -2:
+                raise CompDocError("MSAT: invalid sector id: %d" % msid)
+            if seen[msid]:
+                raise CompDocError("MSAT extension corruption: seen[%d] == %d" % (msid, seen[msid]))
+            seen[msid] = 2
+            actual_SAT_sectors += 1
+            if DEBUG and actual_SAT_sectors > SAT_sectors_reqd:
+                print >> logfile, "[3]===>>>", mem_data_secs, nent, SAT_sectors_reqd, expected_MSATX_sectors, actual_MSATX_sectors, actual_SAT_sectors, msid
             offset = 512 + sec_size * msid
-            news = list(unpack(fmt, mem[offset:offset+sec_size]))
-            self.SAT.extend(news)
+            self.SAT.extend(unpack(fmt, mem[offset:offset+sec_size]))
+
         if DEBUG:
             print >> logfile, "SAT: len =", len(self.SAT)
-            print >> logfile, self.SAT
+            dump_list(self.SAT, 10, logfile)
             # print >> logfile, "SAT ",
             # for i, s in enumerate(self.SAT):
                 # print >> logfile, "entry: %4d offset: %6d, next entry: %4d" % (i, 512 + sec_size * i, s)
                 # print >> logfile, "%d:%d " % (i, s),
-            print
-
+            print >> logfile
+        if DEBUG and dump_again:
+            print >> logfile, "MSAT: len =", len(MSAT)
+            dump_list(MSAT, 10, logfile)
+            for satx in xrange(mem_data_secs, len(self.SAT)):
+                self.SAT[satx] = EVILSID
+            print >> logfile, "SAT: len =", len(self.SAT)
+            dump_list(self.SAT, 10, logfile)
+        #
         # === build the directory ===
         #
         dbytes = self._get_stream(
             self.mem, 512, self.SAT, self.sec_size, self.dir_first_sec_sid,
-            name="directory")
+            name="directory", seen_id=3)
         dirlist = []
         did = -1
         for pos in xrange(0, len(dbytes), 128):
             did += 1
-            dirlist.append(DirNode(did, dbytes[pos:pos+128], 0))
+            dirlist.append(DirNode(did, dbytes[pos:pos+128], 0, logfile))
         self.dirlist = dirlist
         _build_family_tree(dirlist, 0, dirlist[0].root_DID) # and stand well back ...
         if DEBUG:
@@ -190,7 +244,7 @@ class CompDoc(object):
         #
         sscs_dir = self.dirlist[0]
         assert sscs_dir.etype == 5 # root entry
-        if sscs_dir.first_SID < 0 and sscs_dir.tot_size == 0:
+        if sscs_dir.first_SID < 0 or sscs_dir.tot_size == 0:
             # Problem reported by Frank Hoffsuemmer: some software was
             # writing -1 instead of -2 (EOCSID) for the first_SID
             # when the SCCS was empty. Not having EOCSID caused assertion
@@ -201,7 +255,7 @@ class CompDoc(object):
         else:
             self.SSCS = self._get_stream(
                 self.mem, 512, self.SAT, sec_size, sscs_dir.first_SID,
-                sscs_dir.tot_size, name="SSCS")
+                sscs_dir.tot_size, name="SSCS", seen_id=4)
         # if DEBUG: print >> logfile, "SSCS", repr(self.SSCS)
         #
         # === build the SSAT ===
@@ -214,23 +268,34 @@ class CompDoc(object):
             sid = SSAT_first_sec_sid
             nsecs = SSAT_tot_secs
             while sid >= 0 and nsecs > 0:
+                if seen[sid]:
+                    raise CompDocError("SSAT corruption: seen[%d] == %d" % (sid, seen[sid]))
+                seen[sid] = 5
                 nsecs -= 1
                 start_pos = 512 + sid * sec_size
                 news = list(unpack(fmt, mem[start_pos:start_pos+sec_size]))
                 self.SSAT.extend(news)
                 sid = self.SAT[sid]
-            # assert SSAT_tot_secs == 0 or sid == EOCSID
             if DEBUG: print >> logfile, "SSAT last sid %d; remaining sectors %d" % (sid, nsecs)
             assert nsecs == 0 and sid == EOCSID
-        if DEBUG: print >> logfile, "SSAT", self.SSAT
+        if DEBUG:
+            print >> logfile, "SSAT"
+            dump_list(self.SSAT, 10, logfile)
+        if DEBUG:
+            print >> logfile, "seen"
+            dump_list(seen, 20, logfile)
 
-    def _get_stream(self, mem, base, sat, sec_size, start_sid, size=None, name=''):
+    def _get_stream(self, mem, base, sat, sec_size, start_sid, size=None, name='', seen_id=None):
         # print >> self.logfile, "_get_stream", base, sec_size, start_sid, size
         sectors = []
         s = start_sid
         if size is None:
             # nothing to check against
             while s >= 0:
+                if seen_id is not None:
+                    if self.seen[s]:
+                        raise CompDocError("%s corruption: seen[%d] == %d" % (name, s, self.seen[s]))
+                    self.seen[s] = seen_id
                 start_pos = base + s * sec_size
                 sectors.append(mem[start_pos:start_pos+sec_size])
                 try:
@@ -244,6 +309,10 @@ class CompDoc(object):
         else:
             todo = size
             while s >= 0:
+                if seen_id is not None:
+                    if self.seen[s]:
+                        raise CompDocError("%s corruption: seen[%d] == %d" % (name, s, self.seen[s]))
+                    self.seen[s] = seen_id
                 start_pos = base + s * sec_size
                 grab = sec_size
                 if grab > todo:
@@ -262,6 +331,8 @@ class CompDoc(object):
                 print >> self.logfile, \
                     "WARNING *** OLE2 stream %r: expected size %d, actual size %d" \
                     % (name, size, size - todo)
+        # print >> self.logfile, "_get_stream(%s): seen" % name; dump_list(self.seen, 20, self.logfile)
+
         return ''.join(sectors)
 
     def _dir_search(self, path, storage_DID=0):
@@ -294,11 +365,11 @@ class CompDoc(object):
         if d.tot_size >= self.min_size_std_stream:
             return self._get_stream(
                 self.mem, 512, self.SAT, self.sec_size, d.first_SID,
-                d.tot_size, name=qname)
+                d.tot_size, name=qname, seen_id=d.DID+6)
         else:
             return self._get_stream(
                 self.SSCS, 0, self.SSAT, self.short_sec_size, d.first_SID,
-                d.tot_size, name=qname + " (from SSCS)")
+                d.tot_size, name=qname + " (from SSCS)", seen_id=None)
 
     ##
     # Interrogate the compound document's directory.
@@ -313,20 +384,28 @@ class CompDoc(object):
         d = self._dir_search(qname.split("/"))
         if d is None:
             return (None, 0, 0)
+        if d.tot_size > self.mem_data_len:
+            raise CompDocError("%r stream length (%d bytes) > file data size (%d bytes)"
+                % (qname, d.totsize, self.mem_data_len))
         if d.tot_size >= self.min_size_std_stream:
-            return self._locate_stream(self.mem, 512, self.SAT, self.sec_size, d.first_SID, d.tot_size)
+            result = self._locate_stream(
+                self.mem, 512, self.SAT, self.sec_size, d.first_SID, 
+                d.tot_size, qname, d.DID+6)
+            if self.DEBUG:
+                print >> self.logfile, "\nseen"
+                dump_list(self.seen, 20, self.logfile)
+            return result
         else:
             return (
                 self._get_stream(
                     self.SSCS, 0, self.SSAT, self.short_sec_size, d.first_SID,
-                    d.tot_size, qname + " (from SSCS)"),
+                    d.tot_size, qname + " (from SSCS)", None),
                 0,
                 d.tot_size
                 )
-        return (None, 0, 0) # not found
 
-    def _locate_stream(self, mem, base, sat, sec_size, start_sid, size):
-        # print >> self.logfile, "_locate_stream", base, sec_size, start_sid, size
+    def _locate_stream(self, mem, base, sat, sec_size, start_sid, expected_stream_size, qname, seen_id):
+        # print >> self.logfile, "_locate_stream", base, sec_size, start_sid, expected_stream_size
         s = start_sid
         if s < 0:
             raise CompDocError("_locate_stream: start_sid (%d) is -ve" % start_sid)
@@ -334,7 +413,19 @@ class CompDoc(object):
         start_pos = -9999
         end_pos = -8888
         slices = []
+        tot_found = 0
+        found_limit = int_floor_div(expected_stream_size + sec_size - 1, sec_size)
         while s >= 0:
+            if self.seen[s]:
+                print >> self.logfile, "_locate_stream(%s): seen" % qname; dump_list(self.seen, 20, self.logfile)
+                raise CompDocError("%s corruption: seen[%d] == %d" % (qname, s, self.seen[s]))
+            self.seen[s] = seen_id
+            tot_found += 1
+            if tot_found > found_limit:
+                raise CompDocError(
+                    "%s: size exceeds expected %d bytes; corrupt?"
+                    % (qname, found_limit * sec_size)
+                    ) # Note: expected size rounded up to higher sector
             if s == p+1:
                 # contiguous sectors
                 end_pos += sec_size
@@ -348,11 +439,38 @@ class CompDoc(object):
             p = s
             s = sat[s]
         assert s == EOCSID
-        # print >> self.logfile, len(slices) + 1, "slices"
+        assert tot_found == found_limit
+        # print >> self.logfile, "_locate_stream(%s): seen" % qname; dump_list(self.seen, 20, self.logfile)
         if not slices:
             # The stream is contiguous ... just what we like!
-            return (mem, start_pos, size)
+            return (mem, start_pos, expected_stream_size)
         slices.append((start_pos, end_pos))
-        return (''.join([mem[start_pos:end_pos] for start_pos, end_pos in slices]), 0, size)
+        # print >> self.logfile, "+++>>> %d fragments" % len(slices)
+        return (''.join([mem[start_pos:end_pos] for start_pos, end_pos in slices]), 0, expected_stream_size)
 
 # ==========================================================================================
+def x_dump_line(alist, stride, f, dpos, equal=0):
+    print >> f, "%5d%s" % (dpos, " ="[equal]),
+    for value in alist[dpos:dpos + stride]:
+        print >> f, str(value),
+    print >> f
+
+def dump_list(alist, stride, f=sys.stdout):
+    def _dump_line(dpos, equal=0):
+        print >> f, "%5d%s" % (dpos, " ="[equal]),
+        for value in alist[dpos:dpos + stride]:
+            print >> f, str(value),
+        print >> f
+    pos = None
+    oldpos = None
+    for pos in xrange(0, len(alist), stride):
+        if oldpos is None:
+            _dump_line(pos)
+            oldpos = pos
+        elif alist[pos:pos+stride] != alist[oldpos:oldpos+stride]:
+            if pos - oldpos > stride:
+                _dump_line(pos - stride, equal=1)
+            _dump_line(pos)
+            oldpos = pos
+    if oldpos is not None and pos is not None and pos != oldpos:
+        _dump_line(pos, equal=1)
