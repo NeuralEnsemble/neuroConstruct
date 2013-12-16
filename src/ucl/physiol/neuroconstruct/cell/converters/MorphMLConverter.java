@@ -847,7 +847,7 @@ public class MorphMLConverter extends FormatImporter
                     CellMechanism cm = project.cellMechanismInfo.getCellMechanism(chanMech.getName());
                     float condDens = -1, permeability = -1;
 
-                    MechParameter permPar = chanMech.getExtraParameter("GHK_permeability");
+                    MechParameter permPar = chanMech.getExtraParameter(BiophysicsConstants.PARAMETER_GHK_2);
 
                     if (null != permPar) {
                         permeability = (float) UnitConverter.getPermeability(permPar.getValue(), UnitConverter.NEUROCONSTRUCT_UNITS, preferredExportUnits);
