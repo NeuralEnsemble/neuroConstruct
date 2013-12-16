@@ -69,6 +69,7 @@ public class BiophysicsConstants
     public static String PARAMETER_GMAX = "gmax";
     public static String PARAMETER_REV_POT = "e";
     public static String PARAMETER_REV_POT_2 = "erev";  // Sometimes used...
+    public static String PARAMETER_GHK_2 = "GHK";  // Sometimes used...
 
 
     public static String PARAMETER_CONC_INT = "conc_i";
@@ -134,9 +135,11 @@ public class BiophysicsConstants
 
     public static String CHAN_DENSITY_ELEMENT_V2 = "channelDensity";
     public static String CHAN_DENSITY_NERNST_ELEMENT_V2 = "channelDensityNernst";
+    public static String CHAN_DENSITY_GHK_ELEMENT_V2 = "channelDensityGHK";
 
     public static String ION_CHAN_ATTR_V2 = "ionChannel";
     public static String COND_DENS_ATTR_V2 = "condDensity";
+    public static String PERMEABILITY_ATTR_V2 = "permeability";
     public static String REV_POT_ATTR_V2 = "erev";
     public static String ION_ATTR_V2 = "ion";
     
