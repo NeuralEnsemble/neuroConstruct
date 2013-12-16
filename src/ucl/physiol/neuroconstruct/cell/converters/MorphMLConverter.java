@@ -845,10 +845,12 @@ public class MorphMLConverter extends FormatImporter
                     ChannelMechanism chanMech = allUniformChanMechs.get(j);
 
                     CellMechanism cm = project.cellMechanismInfo.getCellMechanism(chanMech.getName());
-                    float condDens = 0, permeability = 0;
+                    float condDens = -1, permeability = -1;
 
-                    if (null != chanMech.getExtraParameter("GHK")) {
-                        permeability = (float) UnitConverter.getPermeability(chanMech.getDensity(), UnitConverter.NEUROCONSTRUCT_UNITS, preferredExportUnits);
+                    MechParameter permPar = chanMech.getExtraParameter("GHK_permeability");
+
+                    if (null != permPar) {
+                        permeability = (float) UnitConverter.getPermeability(permPar.getValue(), UnitConverter.NEUROCONSTRUCT_UNITS, preferredExportUnits);
 
                     } else {
                         condDens = (float) UnitConverter.getConductanceDensity(chanMech.getDensity(), UnitConverter.NEUROCONSTRUCT_UNITS, preferredExportUnits);
@@ -870,7 +872,7 @@ public class MorphMLConverter extends FormatImporter
 
                                 addAtStartMembPropsElement = true;
 
-                                if (null != chanMech.getExtraParameter("GHK")) {
+                                if (permeability > 0.0) {
                                     mechElement = new SimpleXMLElement(bioPrefix + BiophysicsConstants.CHAN_DENSITY_GHK_ELEMENT_V2);
                                     mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.PERMEABILITY_ATTR_V2,
                                             permeability + " " + permeabilityUnit.getNeuroML2Symbol()));
