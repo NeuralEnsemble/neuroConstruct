@@ -1026,6 +1026,9 @@ public class MorphMLConverter extends FormatImporter
                                                     UnitConverter.getUnitSystemIndex(units),
                                                     preferredExportUnits);
 
+                                            mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.REV_POT_ATTR_V2,
+                                                                                        revPotConv+" "+voltUnit.getNeuroML2Symbol()+""));
+
                                         }
 
 
