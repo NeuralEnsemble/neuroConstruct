@@ -966,19 +966,29 @@ public class MorphMLConverter extends FormatImporter
                                         if (ion != null) {
                                             mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.ION_ATTR_V2, ion));
                                         } else {
-                                            ion = "non_specified";
+                                            ion = "non_specific";
                                         }
 
                                         String xpath = ChannelMLConstants.getCurrVoltRelXPath() + "/@" + ChannelMLConstants.FIXED_ION_REV_POT_ATTR;
                                         String val = cmlCm.getXMLDoc().getValueByXPath(xpath);
 
                                         if (ion.equals("ca") && (val == null || val.equals("no"))) {
-                                            comment = "Reversal potential for " + ion + " in " + cmlCm.getInstanceName()
-                                                    + " will be calculated by Nernst equation from internal & external calcium";
+                                            if (null != chanMech.getExtraParameter(BiophysicsConstants.PARAMETER_GHK_2)){
+                                                comment = "Current for ion " + ion + " in " + cmlCm.getInstanceName()
+                                                        + " will be calculated using the GHK flux equation";
 
-                                            mechElement.setName(bioPrefix + BiophysicsConstants.CHAN_DENSITY_NERNST_ELEMENT_V2);
-                                            addAtStartMembPropsElement = false;
-                                            addAtEndMembPropsElement = true;
+                                                mechElement.setName(bioPrefix + BiophysicsConstants.CHAN_DENSITY_GHK_ELEMENT_V2);
+                                                addAtStartMembPropsElement = false;
+                                                addAtEndMembPropsElement = true;
+                                            }
+                                            else{
+                                                comment = "Reversal potential for " + ion + " in " + cmlCm.getInstanceName()
+                                                        + " will be calculated by Nernst equation from internal & external calcium";
+
+                                                mechElement.setName(bioPrefix + BiophysicsConstants.CHAN_DENSITY_NERNST_ELEMENT_V2);
+                                                addAtStartMembPropsElement = false;
+                                                addAtEndMembPropsElement = true;
+                                            }
 
                                         } else {
                                             if (!revPotSetInMP) {
@@ -1018,9 +1028,8 @@ public class MorphMLConverter extends FormatImporter
                                         mechElement.addAttribute(new SimpleXMLAttribute(BiophysicsConstants.ION_ATTR_V2, ion));
 
                                     }
-                                }//if (cmlCm.isChannelMechanism())
-                                else if (cm.isIonConcMechanism())
-                                {
+                                } else if (cm.isIonConcMechanism()) {
+
                                     String xpath = ChannelMLConstants.getIonSpeciesNameXPath();
                                     String ion = cmlCm.getXMLDoc().getValueByXPath(xpath);
 
