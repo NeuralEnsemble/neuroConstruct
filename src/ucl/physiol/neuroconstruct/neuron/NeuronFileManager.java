@@ -5056,7 +5056,8 @@ public class NeuronFileManager
                 else
                 {
 
-                    if (cp instanceof ChannelMLCellMechanism)
+                    if (cp instanceof ChannelMLCellMechanism ||
+                            cp instanceof NeuroML2Component)
                     {
                         try
                         {
