@@ -256,7 +256,7 @@ public class UnitConverter
                            new Unit(Prefix.NONE, Units.SECOND, -1)}),
                 new Units("NEURON_permeability"
                           , new Unit[]
-                           {new Unit(Prefix.NONE, Units.METER, 1),
+                           {new Unit(Prefix.CENTI, Units.METER, 1),
                            new Unit(Prefix.NONE, Units.SECOND, -1)}),
                 new Units("GENESIS_SI_permeability"
                           , new Unit[]
