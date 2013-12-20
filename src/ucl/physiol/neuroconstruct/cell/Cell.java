@@ -992,6 +992,23 @@ public class Cell implements Serializable
         return allChanMechs;
     }
 
+    public ChannelMechanism getChanMechByName(String name) {
+        Iterator<ChannelMechanism> chanMechs = chanMechsVsGroups.keySet().iterator();
+        ChannelMechanism next = null;
+
+        while (chanMechs.hasNext()) {
+            next = chanMechs.next();
+
+            if (next.getName().equals(name)) {
+                break;
+            }
+        }
+
+        return next;
+    }
+
+
+
     public ArrayList<Float> getDefinedSpecAxResistances()
     {
         this.checkSpecAxRes();
