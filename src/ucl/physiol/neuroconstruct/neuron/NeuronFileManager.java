@@ -60,6 +60,7 @@ import org.lemsml.jlems.core.sim.Sim;
 import org.lemsml.jlems.core.type.Component;
 import org.neuroml.export.Utils;
 import org.neuroml.export.neuron.NeuronWriter;
+import org.neuroml.export.neuron.NeuronWriter.ChannelConductanceOption;
 import org.neuroml.model.util.NeuroMLConverter;
 
 /**
@@ -3426,21 +3427,27 @@ public class NeuronFileManager
                                             try
                                             {
                                                 Sim sim = Utils.readNeuroMLFile(nml2File);
-                                                
-                                                Component comp = sim.getLems().getComponent(cellMechanism.getInstanceName());
+                                                String mecName = cellMechanism.getInstanceName();
+                                                Component comp = sim.getLems().getComponent(mecName);
                                                 logger.logComment("Found component: " + comp);
-
-                                                String modFile = NeuronWriter.generateModFile(comp);
+                                                ChannelConductanceOption opt = null;
+                                                
+                                                if (null != cell.getChanMechByName(mecName).
+                                                        getExtraParameter(BiophysicsConstants.PARAMETER_GHK_2)) {
+                                                        opt = ChannelConductanceOption.USE_GHK;
+                                                }
+                                                
+                                                String modFile = NeuronWriter.generateModFile(comp, opt);
 
                                                 String origName = comp.getComponentType().getName();
-                                                String newName = "MOD_"+cellMechanism.getInstanceName();
+                                                String newName = "MOD_" + mecName;
 
                                                 if (cellMechanism.isSynapticMechanism())
                                                 {
-                                                    newName = cellMechanism.getInstanceName();
+                                                    newName = mecName; 
                                                 }
                                                 modFile = modFile.replaceAll(origName, newName);
-                                                newMechFile = new File(dirForNeuronFiles, cellMechanism.getInstanceName() + ".mod");
+                                                newMechFile = new File(dirForNeuronFiles, mecName + ".mod");
 
                                                 GeneralUtils.writeShortFile(newMechFile, modFile);
                                                 logger.logComment("Written to file: " + newMechFile);
@@ -5056,7 +5063,8 @@ public class NeuronFileManager
                 else
                 {
 
-                    if (cp instanceof ChannelMLCellMechanism)
+                    if (cp instanceof ChannelMLCellMechanism ||
+                            cp instanceof NeuroML2Component)
                     {
                         try
                         {
