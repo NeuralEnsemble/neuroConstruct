@@ -54,7 +54,8 @@ H5_JARS=$H5_DIR/jhdf.jar:$H5_DIR/jhdf4obj.jar:$H5_DIR/jhdf5.jar:$H5_DIR/jhdf5obj
 
 # Location of jars and native libraries for Java 3D
 J3D_DIR=$NC_HOME/lib/j3d
-J3D_JARS=$J3D_DIR/j3dcore.jar:$J3D_DIR/j3dutils.jar:$J3D_DIR/vecmath.jar
+#J3D_JARS=$J3D_DIR/j3dcore.jar:$J3D_DIR/j3dutils.jar:$J3D_DIR/vecmath.jar
+J3D_JARS=$J3D_DIR/gluegen-rt.jar:$J3D_DIR/j3dcore.jar:$J3D_DIR/j3dutils.jar:$J3D_DIR/joal.jar:$J3D_DIR/jogl-all.jar:$J3D_DIR/vecmath.jar
 
 LEMS_JAR=$NC_HOME/lib/neuroml2/lems-$LEMS_VERSION.jar
 NML2_JAR=$NC_HOME/lib/neuroml2/libNeuroML-$LIB_NEUROML_VERSION.jar
