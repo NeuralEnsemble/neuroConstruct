@@ -136,7 +136,12 @@
           <include name="*.jar"/>
         </fileset>
         <fileset dir="${j3d.libs}">
-          <include name="*.jar"/>
+          <include name="gluegen-rt.jar"/>
+          <include name="j3dcore.jar"/>
+          <include name="j3dutils.jar"/>
+          <include name="*joal.jar"/>
+          <include name="*jogl-all.jar"/>
+          <include name="vecmath.jar"/>
         </fileset>
         <fileset dir="${jython.libs}">
           <include name="*.jar"/>
