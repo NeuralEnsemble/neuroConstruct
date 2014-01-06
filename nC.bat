@@ -54,7 +54,8 @@ set H5_JARS=%H5_DIR%/jhdf.jar;%H5_DIR%/jhdf4obj.jar;%H5_DIR%/jhdf5.jar;%H5_DIR%/
 
 REM Location of jars and native libraries for Java 3D
 set J3D_DIR=%NC_HOME%/lib/j3d
-set J3D_JARS=%J3D_DIR%/j3dcore.jar;%J3D_DIR%/j3dutils.jar;%J3D_DIR%/vecmath.jar
+:set J3D_JARS=%J3D_DIR%/j3dcore.jar;%J3D_DIR%/j3dutils.jar;%J3D_DIR%/vecmath.jar
+set J3D_JARS=%J3D_DIR%/gluegen-rt.jar;%J3D_DIR%/j3dcore.jar;%J3D_DIR%/j3dutils.jar;%J3D_DIR%/joal.jar;%J3D_DIR%/jogl-all.jar;%J3D_DIR%/vecmath.jar
 
 REM Location of jars for LEMS
 set LIB_NEUROML_JAR=%NC_HOME%/lib/neuroml2/libNeuroML-%LIB_NEUROML_VERSION%.jar
