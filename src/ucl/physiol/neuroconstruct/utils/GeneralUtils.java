@@ -409,44 +409,32 @@ public class GeneralUtils
         return files;
     }
 
+    class StringifiableComparator implements Comparator{
+
+        public int compare(Object o1, Object o2) {
+            return o1.toString().compareToIgnoreCase(o2.toString());
+        }
+        
+
+    }
 
 
 
     public static AbstractList reorderAlphabetically(AbstractList list, boolean ascending)
     {
-        if (list.size() > 1)
-        {
-            for (int j = 1; j < list.size(); j++)
-            {
-
-                for (int k = 0; k < j; k++)
-                {
-                    if (ascending)
-                    {
-                        if (list.get(j).toString().compareToIgnoreCase(list.get(k).toString()) < 0)
-                        {
-                            Object earlier = list.get(j);
-                            Object later = list.get(k);
-                            list.set(j, later);
-                            list.set(k, earlier);
-                        }
-                    }
-                    else
-                    {
-                        if (list.get(j).toString().compareToIgnoreCase(list.get(k).toString()) > 0)
-                        {
-                            Object earlier = list.get(j);
-                            Object later = list.get(k);
-                            list.set(j, later);
-                            list.set(k, earlier);
-                        }
-                    }
-                }
-            }
-        }
+        java.util.Collections.sort(list, new Comparator()
+                 {
+                     public int compare(Object o1, Object o2)
+                     {
+                           return o1.toString().compareToIgnoreCase(o2.toString());
+                     }        
+                 });
+        if (!ascending)
+            java.util.Collections.reverse(list);
         return list;
     }
 
+    
 
 
 
